@@ -1,0 +1,8 @@
+{
+  ".js": {
+    "style": "module"
+  },
+  ".ts": {
+    "style": "module"
+  }
+}
