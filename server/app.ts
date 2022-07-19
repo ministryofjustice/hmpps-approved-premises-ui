@@ -1,24 +1,22 @@
-import express from 'express'
-
 import path from 'path'
+
+import express from 'express'
 import createError from 'http-errors'
 
-import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
-import { metricsMiddleware } from './monitoring/metricsApp'
-
 import setUpAuthentication from './middleware/setUpAuthentication'
 import setUpCsrf from './middleware/setUpCsrf'
 import setUpCurrentUser from './middleware/setUpCurrentUser'
 import setUpHealthChecks from './middleware/setUpHealthChecks'
-import setUpStaticResources from './middleware/setUpStaticResources'
 import setUpWebRequestParsing from './middleware/setupRequestParsing'
+import setUpStaticResources from './middleware/setUpStaticResources'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
-
+import { metricsMiddleware } from './monitoring/metricsApp'
 import routes from './routes'
 import type { Services } from './services'
+import nunjucksSetup from './utils/nunjucksSetup'
 
 export default function createApp(services: Services): express.Application {
   const app = express()

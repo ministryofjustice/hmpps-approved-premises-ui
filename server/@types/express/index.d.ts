@@ -8,6 +8,7 @@ declare module 'express-session' {
   }
 }
 
+// eslint-disable-next-line
 export declare global {
   namespace Express {
     interface User {

@@ -1,13 +1,14 @@
-import express, { Express } from 'express'
-import cookieSession from 'cookie-session'
-import createError from 'http-errors'
 import path from 'path'
 
-import routes from '../index'
-import nunjucksSetup from '../../utils/nunjucksSetup'
-import errorHandler from '../../errorHandler'
+import cookieSession from 'cookie-session'
+import express, { Express } from 'express'
+import createError from 'http-errors'
+
 import * as auth from '../../authentication/auth'
+import errorHandler from '../../errorHandler'
 import { Services } from '../../services'
+import nunjucksSetup from '../../utils/nunjucksSetup'
+import routes from '../index'
 
 export const user = {
   firstName: 'first',

@@ -1,4 +1,5 @@
 import { SuperAgentRequest } from 'superagent'
+
 import { stubFor } from '../../wiremock'
 
 export default {

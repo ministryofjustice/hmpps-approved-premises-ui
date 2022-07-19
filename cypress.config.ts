@@ -1,7 +1,8 @@
 import { defineConfig } from 'cypress'
-import { resetStubs } from './wiremock'
+
 import auth from './integration_tests/mockApis/auth'
 import tokenVerification from './integration_tests/mockApis/tokenVerification'
+import { resetStubs } from './wiremock'
 
 export default defineConfig({
   chromeWebSecurity: false,

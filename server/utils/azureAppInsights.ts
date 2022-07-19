@@ -1,5 +1,6 @@
+import { DistributedTracingModes, TelemetryClient, defaultClient, setup } from 'applicationinsights'
 import { config } from 'dotenv'
-import { setup, defaultClient, TelemetryClient, DistributedTracingModes } from 'applicationinsights'
+
 import applicationVersion from '../applicationVersion'
 
 function defaultName(): string {

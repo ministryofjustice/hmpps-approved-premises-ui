@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { stubFor } from './index'
-
 import premises from './stubs/premises.json'
 
 const stubs = []
