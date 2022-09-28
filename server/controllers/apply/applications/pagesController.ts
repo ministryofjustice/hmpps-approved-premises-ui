@@ -9,7 +9,7 @@ import {
   catchAPIErrorOrPropogate,
   fetchErrorsAndUserInput,
 } from '../../../utils/validation'
-import paths from '../../../paths/apply'
+import paths from '../../../paths/approved-premises/apply'
 import { UnknownPageError } from '../../../utils/errors'
 
 export default class PagesController {

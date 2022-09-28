@@ -3,7 +3,7 @@ import type { NonArrival, NewNonArrival } from 'approved-premises'
 import { DateFormats } from '../../utils/dateUtils'
 import NonArrivalService from '../../services/nonArrivalService'
 import { catchValidationErrorOrPropogate } from '../../utils/validation'
-import paths from '../../paths/manage'
+import paths from '../../paths/approved-premises/manage'
 
 export default class NonArrivalsController {
   constructor(private readonly nonArrivalService: NonArrivalService) {}

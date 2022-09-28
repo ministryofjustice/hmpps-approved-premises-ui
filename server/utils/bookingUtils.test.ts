@@ -1,6 +1,6 @@
 import bookingActions from './bookingUtils'
 import bookingFactory from '../testutils/factories/booking'
-import paths from '../paths/manage'
+import paths from '../paths/approved-premises/manage'
 
 describe('bookingUtils', () => {
   describe('bookingActions', () => {

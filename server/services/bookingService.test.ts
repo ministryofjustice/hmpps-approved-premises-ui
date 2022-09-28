@@ -6,7 +6,7 @@ import newBookingFactory from '../testutils/factories/newBooking'
 import bookingFactory from '../testutils/factories/booking'
 import referenceDataFactory from '../testutils/factories/referenceData'
 
-import paths from '../paths/manage'
+import paths from '../paths/approved-premises/manage'
 import { DateFormats } from '../utils/dateUtils'
 
 jest.mock('../data/bookingClient.ts')

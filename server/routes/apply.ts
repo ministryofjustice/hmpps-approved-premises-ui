@@ -3,7 +3,7 @@
 import type { Router } from 'express'
 
 import type { Controllers } from '../controllers'
-import paths from '../paths/apply'
+import paths from '../paths/approved-premises/apply'
 
 import actions from './utils'
 

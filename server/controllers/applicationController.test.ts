@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 
 import ApplicationController from './applicationController'
+import paths from '../paths/approved-premises/manage'
 
 describe('ApplicationController', () => {
   const request: DeepMocked<Request> = createMock<Request>({})

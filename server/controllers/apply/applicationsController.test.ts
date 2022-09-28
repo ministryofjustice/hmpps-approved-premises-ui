@@ -9,7 +9,7 @@ import { fetchErrorsAndUserInput } from '../../utils/validation'
 import personFactory from '../../testutils/factories/person'
 import applicationFactory from '../../testutils/factories/application'
 
-import paths from '../../paths/apply'
+import paths from '../../paths/approved-premises/apply'
 import { DateFormats } from '../../utils/dateUtils'
 
 jest.mock('../../utils/validation')

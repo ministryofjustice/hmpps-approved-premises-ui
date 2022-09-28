@@ -14,7 +14,7 @@ import {
   catchAPIErrorOrPropogate,
 } from '../../../utils/validation'
 import { UnknownPageError } from '../../../utils/errors'
-import paths from '../../../paths/apply'
+import paths from '../../../paths/approved-premises/apply'
 
 jest.mock('../../../utils/validation')
 

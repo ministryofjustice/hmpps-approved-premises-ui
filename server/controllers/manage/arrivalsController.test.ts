@@ -5,7 +5,7 @@ import type { ErrorsAndUserInput } from 'approved-premises'
 import ArrivalService from '../../services/arrivalService'
 import ArrivalsController from './arrivalsController'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
-import paths from '../../paths/manage'
+import paths from '../../paths/approved-premises/manage'
 
 jest.mock('../../utils/validation')
 

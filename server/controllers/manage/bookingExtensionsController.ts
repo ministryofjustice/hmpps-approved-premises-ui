@@ -5,7 +5,7 @@ import BookingService from '../../services/bookingService'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 import { DateFormats } from '../../utils/dateUtils'
 
-import paths from '../../paths/manage'
+import paths from '../../paths/approved-premises/manage'
 
 export default class BookingExtensionsController {
   constructor(private readonly bookingService: BookingService) {}

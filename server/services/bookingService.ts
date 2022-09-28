@@ -11,7 +11,7 @@ import type {
 
 import type { RestClientBuilder, ReferenceDataClient } from '../data'
 import BookingClient from '../data/bookingClient'
-import paths from '../paths/manage'
+import paths from '../paths/approved-premises/manage'
 import { DateFormats } from '../utils/dateUtils'
 
 export default class BookingService {

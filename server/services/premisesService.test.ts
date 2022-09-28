@@ -3,7 +3,7 @@ import PremisesClient from '../data/premisesClient'
 import premisesFactory from '../testutils/factories/premises'
 import premisesCapacityItemFactory from '../testutils/factories/premisesCapacityItem'
 import getDateRangesWithNegativeBeds from '../utils/premisesUtils'
-import paths from '../paths/manage'
+import paths from '../paths/approved-premises/manage'
 
 jest.mock('../data/premisesClient')
 jest.mock('../utils/premisesUtils')

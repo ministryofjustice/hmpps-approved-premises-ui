@@ -1,5 +1,5 @@
 import type { ApplicationData } from 'approved-premises'
-import paths from '../paths/apply'
+import paths from '../paths/approved-premises/apply'
 import { taskLink, getTaskStatus } from './applicationUtils'
 
 describe('applicationUtils', () => {

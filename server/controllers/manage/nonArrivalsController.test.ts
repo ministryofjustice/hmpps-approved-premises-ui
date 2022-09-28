@@ -4,7 +4,7 @@ import NonArrivalService from '../../services/nonArrivalService'
 
 import NonArrivalsController from './nonArrivalsController'
 import { catchValidationErrorOrPropogate } from '../../utils/validation'
-import paths from '../../paths/manage'
+import paths from '../../paths/approved-premises/manage'
 
 jest.mock('../../utils/validation')
 

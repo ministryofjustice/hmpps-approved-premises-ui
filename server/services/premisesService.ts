@@ -1,6 +1,6 @@
 import type { Premises, TableRow, SummaryList } from 'approved-premises'
 import type { RestClientBuilder, PremisesClient } from '../data'
-import paths from '../paths/manage'
+import paths from '../paths/approved-premises/manage'
 
 import { DateFormats } from '../utils/dateUtils'
 import getDateRangesWithNegativeBeds, { NegativeDateRange } from '../utils/premisesUtils'

@@ -11,7 +11,7 @@ import bookingFactory from '../../testutils/factories/booking'
 import newBookingFactory from '../../testutils/factories/newBooking'
 import personFactory from '../../testutils/factories/person'
 import referenceDataFactory from '../../testutils/factories/referenceData'
-import paths from '../../paths/manage'
+import paths from '../../paths/approved-premises/manage'
 
 jest.mock('../../utils/validation')
 

@@ -13,8 +13,8 @@ import { statusTag } from './personUtils'
 import bookingActions from './bookingUtils'
 import { DateFormats } from './dateUtils'
 
-import managePaths from '../paths/manage'
-import applyPaths from '../paths/apply'
+import managePaths from '../paths/approved-premises/manage'
+import applyPaths from '../paths/approved-premises/apply'
 
 const production = process.env.NODE_ENV === 'production'
 

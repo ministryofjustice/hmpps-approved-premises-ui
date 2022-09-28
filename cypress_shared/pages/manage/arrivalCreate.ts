@@ -1,7 +1,7 @@
 import type { Arrival, NonArrival } from 'approved-premises'
 
 import Page from '../page'
-import paths from '../../../server/paths/manage'
+import paths from '../../../server/paths/approved-premises/manage'
 
 export default class ArrivalCreatePage extends Page {
   constructor(private readonly premisesId: string, private readonly bookingId: string) {
