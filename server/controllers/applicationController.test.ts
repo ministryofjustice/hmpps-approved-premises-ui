@@ -20,7 +20,7 @@ describe('ApplicationController', () => {
 
       requestHandler(request, response, next)
 
-      expect(response.redirect).toHaveBeenCalledWith('/premises')
+      expect(response.redirect).toHaveBeenCalledWith(paths.premises.index({}))
     })
   })
 })
