@@ -2,8 +2,8 @@
 
 import { Router } from 'express'
 
-import type { Controllers } from '../controllers'
-import actions from './utils'
+import type { Controllers } from '../../controllers'
+import actions from '../utils'
 
 import applyRoutes from './apply'
 import manageRoutes from './manage'
