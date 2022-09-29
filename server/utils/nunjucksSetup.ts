@@ -8,7 +8,7 @@ import * as pathModule from 'path'
 import type { ErrorMessages, Application, TaskNames, PersonStatus } from 'approved-premises'
 import { initialiseName, removeBlankSummaryListItems } from './utils'
 import { dateFieldValues, convertObjectsToRadioItems, convertObjectsToSelectOptions } from './formUtils'
-import { getTaskStatus, taskLink } from './applicationUtils'
+import { getService, getTaskStatus, taskLink } from './applicationUtils'
 import { statusTag } from './personUtils'
 import bookingActions from './bookingUtils'
 import { DateFormats } from './dateUtils'
@@ -22,7 +22,18 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   app.set('view engine', 'njk')
 
   app.locals.asset_path = '/assets/'
-  app.locals.applicationName = 'Approved Premises Ui'
+
+  app.use((req, res, next) => {
+    const service = getService(req)
+
+    if (service === 'approved-premises') {
+      app.locals.applicationName = 'Approved Premises Ui'
+    } else {
+      app.locals.applicationName = 'Temporary Accommodation Ui'
+    }
+
+    next()
+  })
 
   // Cachebusting version string
   if (production) {
