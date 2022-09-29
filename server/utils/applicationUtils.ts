@@ -1,4 +1,6 @@
 import type { ApplicationData, TaskNames } from 'approved-premises'
+import { Request } from 'express'
+import config from '../config'
 import pages from '../form-pages/apply'
 import taskLookup from '../i18n/en/tasks.json'
 import paths from '../paths/approved-premises/apply'
@@ -20,4 +22,33 @@ const taskLink = (task: TaskNames, id: string): string => {
   })}" aria-describedby="eligibility-${task}" data-cy-task-name="${task}">${taskLookup[task]}</a>`
 }
 
-export { getTaskStatus, taskLink }
+const getService = (req: Request): 'approved-premises' | 'temporary-accommodation' => {
+  if (config.serviceSignifier === 'approved-premises-only') {
+    return 'approved-premises'
+  }
+  if (config.serviceSignifier === 'temporary-accommodation-only') {
+    return 'temporary-accommodation'
+  }
+  if (config.serviceSignifier === 'domain') {
+    const subdomain = req.subdomains[req.subdomains.length - 1]
+
+    if (subdomain === config.approvedPremisesSubdomain) {
+      return 'approved-premises'
+    }
+    if (subdomain === config.temporaryAccommodationSubdomain) {
+      return 'temporary-accommodation'
+    }
+  }
+  if (config.serviceSignifier === 'path') {
+    if (req.path.startsWith(`/${config.approvedPremisesRootPath}`)) {
+      return 'approved-premises'
+    }
+    if (req.path.startsWith(`/${config.temporaryAccommodationRootPath}`)) {
+      return 'temporary-accommodation'
+    }
+  }
+
+  return 'approved-premises'
+}
+
+export { getTaskStatus, taskLink, getService }
