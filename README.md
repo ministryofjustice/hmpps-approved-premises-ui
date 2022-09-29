@@ -23,6 +23,12 @@ If you're coming back to the application after a certain amount of time, you can
 script/bootstrap
 ```
 
+Copy the example environment variables across into a new .env file:
+
+```bash
+cp .env.example .env
+```
+
 ## Running the application
 
 To run the server, from the root directory, run:
