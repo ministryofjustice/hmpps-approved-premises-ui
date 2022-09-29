@@ -20,7 +20,7 @@ import setUpWebRequestParsing from './middleware/setupRequestParsing'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 
-import routes from './routes'
+import routes from './routes/approved-premises'
 import type { Controllers } from './controllers'
 import type { Services } from './services'
 
