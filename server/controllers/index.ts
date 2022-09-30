@@ -1,18 +1,20 @@
 /* istanbul ignore file */
 
 import ApplicationController from './applicationController'
-import { controllers as manageControllers } from './manage'
-import { controllers as applyControllers } from './apply'
+import { controllers as apManageControllers } from './approved-premises/manage'
+import { controllers as apApplyControllers } from './approved-premises/apply'
 
-import type { Services } from '../services'
+import type { Services as APServices } from '../services/approved-premises'
 
-export const controllers = (services: Services) => {
+export const controllers = (apServices: APServices) => {
   const applicationController = new ApplicationController()
 
   return {
     applicationController,
-    ...manageControllers(services),
-    ...applyControllers(services),
+    approvedPremises: {
+      ...apManageControllers(apServices),
+      ...apApplyControllers(apServices),
+    }
   }
 }
 
