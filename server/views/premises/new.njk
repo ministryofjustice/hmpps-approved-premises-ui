@@ -1,0 +1,83 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% extends "../partials/layout.njk" %}
+{% from "../partials/showErrorSummary.njk" import showErrorSummary %}
+
+{% set pageTitle = applicationName + " - Add a new property" %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+  {% include "../_messages.njk" %}
+  
+		<h1>Add a new property</h1>
+
+	<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form action="{{ paths.temporaryAccommodation.premises.create() }}" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+        {{ showErrorSummary(errorSummary) }}
+
+		{{ govukInput({
+                    label: {
+                        text: "County",
+                        classes: "govuk-label--m",
+                        isPageHeading: true
+                    },
+                    classes: "govuk-input--width-10",
+                    id: "county",
+                    name: "county",
+                    value: county,
+                    errorMessage: errors.county
+                    }) }}
+
+		{{ govukInput({
+                    label: {
+                        text: "Town",
+                        classes: "govuk-label--m",
+                        isPageHeading: true
+                    },
+                    classes: "govuk-input--width-10",
+                    id: "town",
+                    name: "town",
+                    value: town,
+                    errorMessage: errors.town
+                    }) }}
+
+		{{ govukInput({
+                    label: {
+                        text: "Type",
+                        classes: "govuk-label--m",
+                        isPageHeading: true
+                    },
+                    classes: "govuk-input--width-10",
+                    id: "type",
+                    name: "type",
+                    value: type,
+                    errorMessage: errors.type
+                    }) }}
+
+		{{ govukInput({
+                    label: {
+                        text: "Address",
+                        classes: "govuk-label--m",
+                        isPageHeading: true
+                    },
+                    classes: "govuk-input--width-10",
+                    id: "address",
+                    name: "address",
+                    value: address,
+                    errorMessage: errors.address
+                    }) }}
+
+		
+
+        {{ govukButton({
+                    name: 'submit',
+                    text: "Submit"
+                }) }}
+      </form>
+    </div>
+  </div>
+
+{% endblock %}
