@@ -16,13 +16,13 @@
 
     {{ govukBackLink({
       text: "Back",
-      href: paths.premises.show({premisesId: premisesId})
+      href: paths.approvedPremises.premises.show({premisesId: premisesId})
     }) }}
 
     <h1>{{pageHeading}}</h1>
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form action="{{ paths.bookings.create({ premisesId: premisesId }) }}" method="post">
+            <form action="{{ paths.approvedPremises.bookings.create({ premisesId: premisesId }) }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                 <input type="hidden" name="crn" value="{{ crn }}"/>
 

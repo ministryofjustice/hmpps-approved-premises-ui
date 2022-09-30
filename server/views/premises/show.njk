@@ -18,7 +18,7 @@
 
   {{ govukBackLink({
 		text: "Back",
-		href: paths.premises.index()
+		href: paths.approvedPremises.premises.index()
 	}) }}
 
   {% include "../_messages.njk" %}
@@ -31,11 +31,11 @@
         items: [{
           text: "Create a booking",
           classes: "govuk-button--secondary",
-          href: paths.bookings.new({premisesId: premisesId})
+          href: paths.approvedPremises.bookings.new({premisesId: premisesId})
         }, {
           text: "Record a lost bed",
           classes: "govuk-button--secondary",
-          href: paths.lostBeds.new({premisesId: premisesId})
+          href: paths.approvedPremises.lostBeds.new({premisesId: premisesId})
         }]
       }]
     }) }}

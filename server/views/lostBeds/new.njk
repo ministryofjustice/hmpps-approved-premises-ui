@@ -18,10 +18,10 @@
 
       {{ govukBackLink({
         text: "Back",
-        href: paths.premises.show({premisesId: premisesId})
+        href: paths.approvedPremises.premises.show({premisesId: premisesId})
       }) }}
 
-      <form action="{{ paths.lostBeds.create({ premisesId: premisesId }) }}" method="post">
+      <form action="{{ paths.approvedPremises.lostBeds.create({ premisesId: premisesId }) }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
         {{ showErrorSummary(errorSummary) }}

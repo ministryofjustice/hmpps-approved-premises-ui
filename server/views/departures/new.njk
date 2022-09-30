@@ -16,14 +16,14 @@
 
     {{ govukBackLink({
       text: "Back",
-	  href: paths.bookings.show({ premisesId: premisesId, bookingId: booking.id })
+	  href: paths.approvedPremises.bookings.show({ premisesId: premisesId, bookingId: booking.id })
     }) }}
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1>{{pageHeading}}</h1>
 
-            <form action="{{ paths.bookings.departures.create({ premisesId: premisesId, bookingId: booking.id }) }}" method="post">
+            <form action="{{ paths.approvedPremises.bookings.departures.create({ premisesId: premisesId, bookingId: booking.id }) }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
                 {{ govukSummaryList({
