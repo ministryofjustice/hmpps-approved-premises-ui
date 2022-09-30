@@ -39,6 +39,20 @@ stubs.push({
   },
 })
 
+stubs.push({
+  request: {
+    method: 'POST',
+    url: '/cas3_premises',
+  },
+  response: {
+    status: 201,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8',
+    },
+    jsonBody: premises[0],
+  },
+})
+
 premises.forEach(item => {
   stubs.push({
     request: {

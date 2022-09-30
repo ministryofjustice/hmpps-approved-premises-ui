@@ -28,6 +28,11 @@ const applicationPaths = {
 }
 
 export default {
+  temporaryAccommodation: {
+    premises: {
+      create: path('/cas3_premises'),
+    },
+  },
   premises: {
     index: premisesPaths.premises.index,
     show: premisesPaths.premises.show,
