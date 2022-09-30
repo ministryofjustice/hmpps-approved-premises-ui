@@ -15,6 +15,7 @@ import { DateFormats } from './dateUtils'
 
 import apManagePaths from '../paths/approved-premises/manage'
 import apApplyPaths from '../paths/approved-premises/apply'
+import taManagePaths from '../paths/temporary-accommodation/manage'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -100,7 +101,10 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   njkEnv.addGlobal('bookingActions', bookingActions)
 
-  njkEnv.addGlobal('paths', { approvedPremises: { ...apManagePaths, ...apApplyPaths } })
+  njkEnv.addGlobal('paths', {
+    approvedPremises: { ...apManagePaths, ...apApplyPaths },
+    temporaryAccommodation: { ...taManagePaths },
+  })
 
   njkEnv.addGlobal('getTaskStatus', (task: TaskNames, application: ApplicationData) =>
     markAsSafe(getTaskStatus(task, application)),

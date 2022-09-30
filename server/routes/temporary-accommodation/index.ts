@@ -18,5 +18,7 @@ export default function routes(controllers: Controllers): Router {
   get('/', applicationController.index())
   get(temporaryAccommodationPath.pattern, applicationController.index())
 
+  manageRoutes(controllers, router)
+
   return router
 }
