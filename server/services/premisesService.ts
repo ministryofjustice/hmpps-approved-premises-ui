@@ -1,4 +1,4 @@
-import type { Premises, TableRow, SummaryList, StaffMember } from 'approved-premises'
+import type { Premises, NewPremises, TableRow, SummaryList, StaffMember } from 'approved-premises'
 import type { RestClientBuilder, PremisesClient } from '../data'
 import paths from '../paths/approved-premises/manage'
 
@@ -55,6 +55,55 @@ export default class PremisesService {
     return overcapacityMessage ? [overcapacityMessage] : ''
   }
 
+  async getPremisesSelectList(token: string): Promise<Array<{ text: string; value: string }>> {
+    const premisesClient = this.premisesClientFactory(token)
+    const premises = await premisesClient.all()
+
+    return premises
+      .map(singlePremises => {
+        return { text: `${singlePremises.name}`, value: `${singlePremises.id}` }
+      })
+      .sort((a, b) => {
+        if (a.text < b.text) {
+          return -1
+        }
+        if (a.text > b.text) {
+          return 1
+        }
+        return 0
+      })
+  }
+
+  async create(token: string, newPremises: NewPremises): Promise<Premises> {
+    const premisesClient = this.premisesClientFactory(token)
+    const premises = await premisesClient.create(newPremises)
+
+    return premises
+  }
+
+  private async summaryListForPremises(premises: Premises): Promise<SummaryList> {
+    return {
+      rows: [
+        {
+          key: this.textValue('Code'),
+          value: this.textValue(premises.apCode),
+        },
+        {
+          key: this.textValue('Postcode'),
+          value: this.textValue(premises.postcode),
+        },
+        {
+          key: this.textValue('Number of Beds'),
+          value: this.textValue(premises.bedCount.toString()),
+        },
+        {
+          key: this.textValue('Available Beds'),
+          value: this.textValue(premises.availableBedsForToday.toString()),
+        },
+      ],
+    }
+  }
+
   private generateOvercapacityMessage(overcapacityDateRanges: NegativeDateRange[]) {
     if (overcapacityDateRanges.length === 1) {
       if (!overcapacityDateRanges[0].end) {
@@ -81,48 +130,6 @@ export default class PremisesService {
         <ul class="govuk-list govuk-list--bullet">${dateRanges}</ul>`
     }
     return ''
-  }
-
-  async getPremisesSelectList(token: string): Promise<Array<{ text: string; value: string }>> {
-    const premisesClient = this.premisesClientFactory(token)
-    const premises = await premisesClient.all()
-
-    return premises
-      .map(singlePremises => {
-        return { text: `${singlePremises.name}`, value: `${singlePremises.id}` }
-      })
-      .sort((a, b) => {
-        if (a.text < b.text) {
-          return -1
-        }
-        if (a.text > b.text) {
-          return 1
-        }
-        return 0
-      })
-  }
-
-  async summaryListForPremises(premises: Premises): Promise<SummaryList> {
-    return {
-      rows: [
-        {
-          key: this.textValue('Code'),
-          value: this.textValue(premises.apCode),
-        },
-        {
-          key: this.textValue('Postcode'),
-          value: this.textValue(premises.postcode),
-        },
-        {
-          key: this.textValue('Number of Beds'),
-          value: this.textValue(premises.bedCount.toString()),
-        },
-        {
-          key: this.textValue('Available Beds'),
-          value: this.textValue(premises.availableBedsForToday.toString()),
-        },
-      ],
-    }
   }
 
   private textValue(value: string) {
