@@ -1,4 +1,4 @@
-import type { Premises, PremisesCapacityItem, StaffMember } from 'approved-premises'
+import type { Premises, NewPremises, PremisesCapacityItem, StaffMember } from 'approved-premises'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -26,5 +26,9 @@ export default class PremisesClient {
     return (await this.restClient.get({
       path: paths.premises.staffMembers.index({ premisesId }),
     })) as StaffMember[]
+  }
+
+  async create(data: NewPremises): Promise<Premises> {
+    return (await this.restClient.post({ path: paths.premises.create({}), data })) as Premises
   }
 }
