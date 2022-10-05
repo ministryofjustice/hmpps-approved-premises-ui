@@ -30,6 +30,7 @@ const applicationPaths = {
 
 export default {
   premises: {
+    create: premisesPaths.premises.create,
     index: premisesPaths.premises.index,
     show: premisesPaths.premises.show,
     capacity: premisesPaths.premises.show.path('capacity'),
