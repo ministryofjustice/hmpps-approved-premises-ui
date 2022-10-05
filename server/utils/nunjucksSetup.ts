@@ -13,8 +13,8 @@ import { statusTag } from './personUtils'
 import bookingActions from './bookingUtils'
 import { DateFormats } from './dateUtils'
 
-import managePaths from '../paths/manage'
-import applyPaths from '../paths/apply'
+import apManagePaths from '../paths/manage'
+import apApplyPaths from '../paths/apply'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -28,8 +28,15 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
     if (service === 'approved-premises') {
       app.locals.applicationName = 'Approved Premises'
+
+      njkEnv.addGlobal('paths', {
+        ...apManagePaths,
+        ...apApplyPaths,
+      })
     } else {
       app.locals.applicationName = 'Temporary Accommodation'
+
+      njkEnv.addGlobal('paths', {})
     }
 
     next()
@@ -99,8 +106,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   )
 
   njkEnv.addGlobal('bookingActions', bookingActions)
-
-  njkEnv.addGlobal('paths', { ...managePaths, ...applyPaths })
 
   njkEnv.addGlobal('getTaskStatus', (task: TaskNames, application: Application) =>
     markAsSafe(getTaskStatus(task, application)),
