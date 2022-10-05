@@ -13,8 +13,9 @@ import { statusTag } from './personUtils'
 import bookingActions from './bookingUtils'
 import { DateFormats } from './dateUtils'
 
-import managePaths from '../paths/approved-premises/manage'
-import applyPaths from '../paths/approved-premises/apply'
+import apManagePaths from '../paths/approved-premises/manage'
+import apApplyPaths from '../paths/approved-premises/apply'
+import taManagePaths from '../paths/temporary-accommodation/manage'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -23,13 +24,22 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   app.locals.asset_path = '/assets/'
 
-  app.use((req, res, next) => {
+  app.use((req, _res, next) => {
     const service = getService(req)
 
     if (service === 'approved-premises') {
       app.locals.applicationName = 'Approved Premises Ui'
+
+      njkEnv.addGlobal('paths', {
+        ...apManagePaths,
+        ...apApplyPaths,
+      })
     } else {
       app.locals.applicationName = 'Temporary Accommodation Ui'
+
+      njkEnv.addGlobal('paths', {
+        ...taManagePaths,
+      })
     }
 
     next()
@@ -99,8 +109,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   )
 
   njkEnv.addGlobal('bookingActions', bookingActions)
-
-  njkEnv.addGlobal('paths', { ...managePaths, ...applyPaths })
 
   njkEnv.addGlobal('getTaskStatus', (task: TaskNames, application: Application) =>
     markAsSafe(getTaskStatus(task, application)),
