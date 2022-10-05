@@ -1,22 +1,49 @@
-import managePaths from './manage'
-import applyPaths from './apply'
+import { path } from 'static-path'
+
+const premisesPath = path('/premises')
+const singlePremisesPath = premisesPath.path(':premisesId')
+
+const lostBedsPath = singlePremisesPath.path('lost-beds')
+
+const premisesPaths = {
+  premises: {
+    create: premisesPath,
+    index: premisesPath,
+    show: singlePremisesPath,
+  },
+  lostBeds: {
+    create: lostBedsPath,
+  },
+}
+
+const applicationsPath = path('/applications')
+const applicationPath = applicationsPath.path(':id')
+
+const applicationPaths = {
+  applications: {
+    show: applicationPath,
+    create: applicationsPath,
+    index: applicationsPath,
+    update: applicationPath,
+  },
+}
 
 export default {
   premises: {
-    show: managePaths.premises.show,
-    index: managePaths.premises.index,
-    capacity: managePaths.premises.show.path('capacity'),
+    index: premisesPaths.premises.index,
+    show: premisesPaths.premises.show,
+    capacity: premisesPaths.premises.show.path('capacity'),
     lostBeds: {
-      create: managePaths.lostBeds.create,
+      create: premisesPaths.lostBeds.create,
     },
     staffMembers: {
-      index: managePaths.premises.show.path('staff'),
+      index: premisesPaths.premises.show.path('staff'),
     },
   },
   applications: {
-    show: applyPaths.applications.show,
-    index: applyPaths.applications.index,
-    update: applyPaths.applications.update,
-    new: applyPaths.applications.create,
+    show: applicationPaths.applications.show,
+    index: applicationPaths.applications.index,
+    update: applicationPaths.applications.update,
+    new: applicationPaths.applications.create,
   },
 }
