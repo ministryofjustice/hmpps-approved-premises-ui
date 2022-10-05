@@ -10,7 +10,7 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 import bookingFactory from '../../testutils/factories/booking'
 import newBookingFactory from '../../testutils/factories/newBooking'
 import personFactory from '../../testutils/factories/person'
-import paths from '../../paths/manage'
+import paths from '../../paths/approved-premises/manage'
 
 jest.mock('../../utils/validation')
 

@@ -6,7 +6,7 @@ import { CancellationService, BookingService } from '../../services'
 import { fetchErrorsAndUserInput, catchValidationErrorOrPropogate } from '../../utils/validation'
 import { DateFormats } from '../../utils/dateUtils'
 
-import paths from '../../paths/manage'
+import paths from '../../paths/approved-premises/manage'
 
 export default class CancellationsController {
   constructor(

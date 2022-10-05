@@ -1,5 +1,5 @@
 import Page from '../../page'
-import paths from '../../../../server/paths/manage'
+import paths from '../../../../server/paths/approved-premises/manage'
 
 export default class BookingFindPage extends Page {
   constructor() {

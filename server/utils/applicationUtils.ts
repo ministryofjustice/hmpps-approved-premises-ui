@@ -1,7 +1,7 @@
 import type { Application, TaskNames } from 'approved-premises'
 import pages from '../form-pages/apply'
 import taskLookup from '../i18n/en/tasks.json'
-import paths from '../paths/apply'
+import paths from '../paths/approved-premises/apply'
 
 const getTaskStatus = (task: TaskNames, application: Application): string => {
   if (!application.data[task]) {

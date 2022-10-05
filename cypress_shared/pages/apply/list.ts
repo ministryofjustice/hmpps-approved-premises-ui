@@ -1,6 +1,6 @@
 import type { ApplicationSummary } from 'approved-premises'
 import Page from '../page'
-import paths from '../../../server/paths/apply'
+import paths from '../../../server/paths/approved-premises/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 export default class ListPage extends Page {

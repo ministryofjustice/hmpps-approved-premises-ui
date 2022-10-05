@@ -6,7 +6,7 @@ import ArrivalService from '../../services/arrivalService'
 import PremisesService from '../../services/premisesService'
 
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
-import paths from '../../paths/manage'
+import paths from '../../paths/approved-premises/manage'
 
 export default class ArrivalsController {
   constructor(private readonly arrivalService: ArrivalService, private readonly premisesService: PremisesService) {}

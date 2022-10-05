@@ -1,5 +1,5 @@
 import type { Response, Request, RequestHandler } from 'express'
-import paths from '../paths/manage'
+import paths from '../paths/approved-premises/manage'
 
 export default class ApplicationController {
   index(): RequestHandler {

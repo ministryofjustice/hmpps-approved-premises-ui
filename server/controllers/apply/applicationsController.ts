@@ -4,7 +4,7 @@ import createError from 'http-errors'
 import ApplicationService from '../../services/applicationService'
 import { PersonService } from '../../services'
 import { fetchErrorsAndUserInput } from '../../utils/validation'
-import paths from '../../paths/apply'
+import paths from '../../paths/approved-premises/apply'
 import { DateFormats } from '../../utils/dateUtils'
 
 export default class ApplicationsController {

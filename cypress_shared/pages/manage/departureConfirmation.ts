@@ -1,6 +1,6 @@
 import type { Departure, Booking } from 'approved-premises'
 import Page from '../page'
-import paths from '../../../server/paths/manage'
+import paths from '../../../server/paths/approved-premises/manage'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 export default class DepartureConfirmation extends Page {

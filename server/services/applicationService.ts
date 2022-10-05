@@ -7,7 +7,7 @@ import { UnknownPageError, ValidationError } from '../utils/errors'
 import type { PersonService } from './index'
 
 import pages from '../form-pages/apply'
-import paths from '../paths/apply'
+import paths from '../paths/approved-premises/apply'
 import { DateFormats } from '../utils/dateUtils'
 
 export type DataServices = {

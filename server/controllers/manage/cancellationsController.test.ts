@@ -11,7 +11,7 @@ import { fetchErrorsAndUserInput, catchValidationErrorOrPropogate } from '../../
 import bookingFactory from '../../testutils/factories/booking'
 import cancellationFactory from '../../testutils/factories/cancellation'
 import referenceDataFactory from '../../testutils/factories/referenceData'
-import paths from '../../paths/manage'
+import paths from '../../paths/approved-premises/manage'
 
 jest.mock('../../utils/validation')
 

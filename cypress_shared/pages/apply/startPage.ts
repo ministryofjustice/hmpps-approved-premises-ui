@@ -1,6 +1,6 @@
 import Page from '../page'
 
-import paths from '../../../server/paths/apply'
+import paths from '../../../server/paths/approved-premises/apply'
 
 export default class StartPage extends Page {
   constructor() {

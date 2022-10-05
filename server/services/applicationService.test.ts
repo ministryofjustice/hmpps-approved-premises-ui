@@ -9,7 +9,7 @@ import ApplicationService, { type DataServices } from './applicationService'
 import ApplicationClient from '../data/applicationClient'
 
 import pages from '../form-pages/apply'
-import paths from '../paths/apply'
+import paths from '../paths/approved-premises/apply'
 import applicationFactory from '../testutils/factories/application'
 import { DateFormats } from '../utils/dateUtils'
 
