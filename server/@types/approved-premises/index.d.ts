@@ -1,5 +1,6 @@
 declare module 'approved-premises' {
   export type Premises = schemas['Premises']
+  export type NewPremises = schemas['NewPremises']
   export type Arrival = schemas['Arrival']
   export type NonArrival = schemas['NonArrival']
   export type Departure = schemas['Departure']
@@ -162,6 +163,12 @@ declare module 'approved-premises' {
       bedCount: number
       apAreaId: string
       availableBedsForToday: number
+    }
+    NewPremises: {
+      name: string
+      apCode: string
+      postcode: string
+      bedCount: number
     }
     Booking: {
       id: string
