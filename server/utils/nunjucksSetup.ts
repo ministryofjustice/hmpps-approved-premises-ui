@@ -8,13 +8,13 @@ import * as pathModule from 'path'
 import type { ErrorMessages, Application, TaskNames, PersonStatus } from 'approved-premises'
 import { initialiseName, removeBlankSummaryListItems } from './utils'
 import { dateFieldValues, convertObjectsToRadioItems, convertObjectsToSelectOptions } from './formUtils'
-import { getTaskStatus, taskLink } from './applicationUtils'
+import { getService, getTaskStatus, taskLink } from './applicationUtils'
 import { statusTag } from './personUtils'
 import bookingActions from './bookingUtils'
 import { DateFormats } from './dateUtils'
 
-import managePaths from '../paths/manage'
-import applyPaths from '../paths/apply'
+import apManagePaths from '../paths/manage'
+import apApplyPaths from '../paths/apply'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -22,7 +22,25 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   app.set('view engine', 'njk')
 
   app.locals.asset_path = '/assets/'
-  app.locals.applicationName = 'Approved Premises'
+
+  app.use((req, _res, next) => {
+    const service = getService(req)
+
+    if (service === 'approved-premises') {
+      app.locals.applicationName = 'Approved Premises'
+
+      njkEnv.addGlobal('paths', {
+        ...apManagePaths,
+        ...apApplyPaths,
+      })
+    } else {
+      app.locals.applicationName = 'Temporary Accommodation'
+
+      njkEnv.addGlobal('paths', {})
+    }
+
+    next()
+  })
 
   // Cachebusting version string
   if (production) {
@@ -88,8 +106,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   )
 
   njkEnv.addGlobal('bookingActions', bookingActions)
-
-  njkEnv.addGlobal('paths', { ...managePaths, ...applyPaths })
 
   njkEnv.addGlobal('getTaskStatus', (task: TaskNames, application: Application) =>
     markAsSafe(getTaskStatus(task, application)),

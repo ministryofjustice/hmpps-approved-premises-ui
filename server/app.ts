@@ -21,9 +21,11 @@ import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
 import { setUpSentryRequestHandler, setUpSentryErrorHandler } from './middleware/setUpSentry'
 
-import routes from './routes'
+import apRoutes from './routes'
+import taRoutes from './routes/temporary-accommodation'
 import type { Controllers } from './controllers'
 import type { Services } from './services'
+import { getService } from './utils/applicationUtils'
 
 export default function createApp(controllers: Controllers, services: Services): express.Application {
   const app = express()
@@ -55,7 +57,18 @@ export default function createApp(controllers: Controllers, services: Services):
     res.app.locals.successMessages = req.flash('success')
     return next()
   })
-  app.use(routes(controllers))
+
+  const apRouter = apRoutes(controllers)
+  const taRouter = taRoutes(controllers)
+
+  app.use((req, res, next) => {
+    const service = getService(req)
+
+    if (service === 'approved-premises') {
+      return apRouter(req, res, next)
+    }
+    return taRouter(req, res, next)
+  })
 
   app.use((req, res, next) => next(createError(404, 'Not found')))
   setUpSentryErrorHandler(app)
