@@ -18,7 +18,7 @@ export default class PremisesService {
 
   async tableRows(token: string): Promise<Array<TableRow>> {
     const premisesClient = this.premisesClientFactory(token)
-    const premises = await premisesClient.all()
+    const premises = await premisesClient.all('approved-premises')
 
     return premises
       .sort((a, b) => a.name.localeCompare(b.name))
@@ -57,7 +57,7 @@ export default class PremisesService {
 
   async getPremisesSelectList(token: string): Promise<Array<{ text: string; value: string }>> {
     const premisesClient = this.premisesClientFactory(token)
-    const premises = await premisesClient.all()
+    const premises = await premisesClient.all('approved-premises')
 
     return premises
       .map(singlePremises => {
