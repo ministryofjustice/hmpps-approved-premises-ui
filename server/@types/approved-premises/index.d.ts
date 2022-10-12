@@ -1,23 +1,4 @@
 declare module 'approved-premises' {
-  export type Premises = schemas['Premises']
-  export type Arrival = schemas['Arrival']
-  export type NonArrival = schemas['NonArrival']
-  export type Departure = schemas['Departure']
-  export type Booking = schemas['Booking']
-  export type LostBed = schemas['LostBed']
-  export type ReferenceData = schemas['ReferenceData']
-  export type Cancellation = schemas['Cancellation']
-  export type BookingExtension = schemas['BookingExtension']
-  export type KeyWorker = schemas['KeyWorker']
-  export type Person = schemas['Person']
-  export type PremisesCapacityItem = schemas['PremisesCapacityItem']
-  export type PremisesCapacity = Array<PremisesCapacityItem>
-  export type ApplicationSummary = schemas['ApplicationSummary']
-  export type Application = schemas['Application']
-  export type StaffMember = schemas['StaffMember']
-  export type PersonRisks = schemas['PersonRisks']
-  export type PersonRisksUI = schemas['PersonRisksUI']
-
   // A utility type that allows us to define an object with a date attribute split into
   // date, month, year (and optionally, time) attributes. Designed for use with the GOV.UK
   // date input
