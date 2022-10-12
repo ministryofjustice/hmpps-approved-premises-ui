@@ -16,8 +16,23 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
     "experimentalDecorators": true,
-    "typeRoots": ["./server/@types", "./node_modules/@types"]
+    "typeRoots": ["./server/@types", "./node_modules/@types"],
+    "baseUrl": ".",
+    "paths": {
+      "@approved-premises-shared": ["../@types/api/index.d.ts"],
+      "@approved-premises-ui": ["../@types/approved-premises/index.d.ts"]
+    }
   },
-  "exclude": ["node_modules", "assets/**/*.js", "integration_tests", "cypress_shared", "e2e", "dist", "cypress.config.ts", "cypress.config.e2e.ts", "coverage/**"],
+  "exclude": [
+    "node_modules",
+    "assets/**/*.js",
+    "integration_tests",
+    "cypress_shared",
+    "e2e",
+    "dist",
+    "cypress.config.ts",
+    "cypress.config.e2e.ts",
+    "coverage/**"
+  ],
   "include": ["**/*.js", "**/*.ts"]
 }
