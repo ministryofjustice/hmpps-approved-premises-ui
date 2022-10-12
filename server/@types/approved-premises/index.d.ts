@@ -166,6 +166,9 @@ declare module 'approved-premises' {
   export type TierNumber = '1' | '2' | '3' | '4'
   export type TierLetter = 'A' | 'B' | 'C' | 'D'
   export type RiskTierLevel = `${TierLetter}${TierNumber}`
+
+  export type Service = 'approved-premises' | 'temporary-accommodation'
+
   export interface schemas {
     Premises: {
       id: string
