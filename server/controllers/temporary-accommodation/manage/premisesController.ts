@@ -57,4 +57,14 @@ export default class PremisesController {
       }
     }
   }
+
+  show(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const premises = await this.premisesService.getPremisesDetails(req.user.token, req.params.premisesId)
+
+      return res.render('temporary-accommodation/premises/show', {
+        premises,
+      })
+    }
+  }
 }

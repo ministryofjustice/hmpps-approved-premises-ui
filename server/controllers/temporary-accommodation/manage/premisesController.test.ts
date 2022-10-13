@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 
+import type { SummaryListItem } from 'approved-premises'
 import premisesFactory from '../../../testutils/factories/premises'
 import PremisesService from '../../../services/premisesService'
 import PremisesController from './premisesController'
@@ -103,6 +104,24 @@ describe('PremisesController', () => {
       await requestHandler(request, response, next)
 
       expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(request, response, err, paths.premises.new({}))
+    })
+  })
+
+  describe('show', () => {
+    it('should return the premises detail to the template', async () => {
+      const premises = { name: 'Some premises', summaryList: { rows: [] as Array<SummaryListItem> } }
+      premisesService.getPremisesDetails.mockResolvedValue(premises)
+
+      request.params.premisesId = 'some-uuid'
+
+      const requestHandler = premisesController.show()
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('temporary-accommodation/premises/show', {
+        premises,
+      })
+
+      expect(premisesService.getPremisesDetails).toHaveBeenCalledWith(token, 'some-uuid')
     })
   })
 })
