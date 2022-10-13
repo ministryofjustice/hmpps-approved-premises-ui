@@ -1,0 +1,24 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + premises.name %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+
+  {{ govukBackLink({
+    text: "Back",
+    href: paths.premises.index()
+  }) }}
+
+  {% include "../../_messages.njk" %}
+
+  <h1>{{ premises.name }}</h1>
+
+  {{
+    govukSummaryList(premises.summaryList)
+  }}
+
+{% endblock %}
