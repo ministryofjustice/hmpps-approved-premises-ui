@@ -63,7 +63,7 @@ describe('PremisesController', () => {
   })
 
   describe('create', () => {
-    it('creates a premises and redirects to the new premises page', async () => {
+    it('creates a premises and redirects to the show premises page', async () => {
       const requestHandler = premisesController.create()
 
       const premises = premisesFactory.build()
@@ -72,6 +72,8 @@ describe('PremisesController', () => {
         name: premises.name,
         postcode: premises.postcode,
       }
+
+      premisesService.create.mockResolvedValue(premises)
 
       await requestHandler(request, response, next)
 
@@ -82,7 +84,7 @@ describe('PremisesController', () => {
       })
 
       expect(request.flash).toHaveBeenCalledWith('success', 'Property created')
-      expect(response.redirect).toHaveBeenCalledWith(paths.premises.new({}))
+      expect(response.redirect).toHaveBeenCalledWith(paths.premises.show({ premisesId: premises.id }))
     })
 
     it('renders with errors if the API returns an error', async () => {

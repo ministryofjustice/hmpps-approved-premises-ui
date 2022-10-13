@@ -77,6 +77,7 @@ context('Premises', () => {
     })
 
     cy.task('stubPremisesCreate', premises)
+    cy.task('stubSinglePremises', premises)
 
     const page = PremisesNewPage.visit()
 
@@ -95,8 +96,8 @@ context('Premises', () => {
       expect(requestBody.notes.replaceAll('\r\n', '\n')).equal(newPremises.notes)
     })
 
-    // And I should be redirected to the new premises page
-    const premisesNewPage = PremisesNewPage.verifyOnPage(PremisesNewPage)
+    // And I should be redirected to the show premises page
+    const premisesNewPage = PremisesNewPage.verifyOnPage(PremisesShowPage, premises)
     premisesNewPage.shouldShowBanner('Property created')
   })
 
