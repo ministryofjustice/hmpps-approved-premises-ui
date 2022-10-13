@@ -154,6 +154,8 @@ declare module 'approved-premises' {
 
   export type PersonStatus = 'InCustody' | 'InCommunity'
 
+  export type Service = 'approved-premises' | 'temporary-accommodation'
+
   export interface schemas {
     Premises: {
       id: string
