@@ -77,7 +77,7 @@ stubs.push({
     headers: {
       'Content-Type': 'application/json;charset=UTF-8',
     },
-    jsonBody: premisesFactory.build(),
+    jsonBody: premises[0],
   },
 })
 
