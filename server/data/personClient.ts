@@ -1,4 +1,6 @@
-import type { Person, PersonRisks } from 'approved-premises'
+import type { PersonRisks } from 'approved-premises'
+import type { Person } from 'approved-premises-api-types'
+
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'

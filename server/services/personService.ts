@@ -1,4 +1,5 @@
-import type { Person, PersonRisksUI } from 'approved-premises'
+import type { PersonRisksUI } from 'approved-premises'
+import type { Person } from 'approved-premises-api-types'
 import type { RestClientBuilder, PersonClient } from '../data'
 
 import { mapApiPersonRisksForUi } from '../utils/utils'
