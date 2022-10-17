@@ -177,6 +177,7 @@ declare module 'approved-premises' {
       name: string
       address: string
       postcode: string
+      localAuthorityId: string
       notes: string
       service: Service
     }
