@@ -1,4 +1,5 @@
 import type {
+  NewArrival,
   Arrival,
   Booking,
   NewBooking,
@@ -8,6 +9,7 @@ import type {
   NewCancellation,
   Departure,
   Nonarrival,
+  NewDeparture,
 } from 'approved-premises-api-types'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
