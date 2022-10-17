@@ -183,6 +183,7 @@ declare module 'approved-premises' {
       name: string
       address: string
       postcode: string
+      notes: string
       service: Service
     }
     Booking: {
