@@ -175,7 +175,6 @@ declare module 'approved-premises' {
     }
     NewPremises: {
       name: string
-      apCode: string
       postcode: string
       bedCount: number
       service: Service
