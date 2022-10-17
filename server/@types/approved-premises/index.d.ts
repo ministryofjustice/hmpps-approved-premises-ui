@@ -184,6 +184,7 @@ declare module 'approved-premises' {
       apCode: string
       postcode: string
       bedCount: number
+      service: Service
     }
     Booking: {
       id: string

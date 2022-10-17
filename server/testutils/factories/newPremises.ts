@@ -8,4 +8,5 @@ export default Factory.define<NewPremises>(() => ({
   apCode: faker.random.alphaNumeric(5, { casing: 'upper' }),
   postcode: faker.address.zipCode(),
   bedCount: 50,
+  service: 'temporary-accommodation',
 }))
