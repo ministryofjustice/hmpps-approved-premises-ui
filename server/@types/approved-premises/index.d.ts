@@ -182,7 +182,6 @@ declare module 'approved-premises' {
     NewPremises: {
       name: string
       postcode: string
-      bedCount: number
       service: Service
     }
     Booking: {
