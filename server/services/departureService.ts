@@ -1,4 +1,5 @@
-import type { Departure, ReferenceData, NewDeparture } from 'approved-premises'
+import type { ReferenceData } from 'approved-premises'
+import type { Departure, NewDeparture } from 'approved-premises-api-types'
 import type { RestClientBuilder, BookingClient, ReferenceDataClient } from '../data'
 import { DateFormats } from '../utils/dateUtils'
 
