@@ -1,5 +1,6 @@
 import type { Request } from 'express'
-import type { Application, HtmlItem, TextItem } from 'approved-premises'
+import type { HtmlItem, TextItem } from 'approved-premises'
+import type { Application } from 'approved-premises-api-types'
 
 import type TasklistPage from '../form-pages/tasklistPage'
 import type { RestClientBuilder, ApplicationClient } from '../data'

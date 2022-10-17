@@ -1,4 +1,4 @@
-import type { ApplicationSummary, Application } from 'approved-premises'
+import type { Application } from 'approved-premises-api-types'
 
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
@@ -26,7 +26,7 @@ export default class ApplicationClient {
     })) as Application
   }
 
-  async all(): Promise<ApplicationSummary[]> {
-    return (await this.restClient.get({ path: paths.applications.index.pattern })) as ApplicationSummary[]
+  async all(): Promise<Application[]> {
+    return (await this.restClient.get({ path: paths.applications.index.pattern })) as Application[]
   }
 }
