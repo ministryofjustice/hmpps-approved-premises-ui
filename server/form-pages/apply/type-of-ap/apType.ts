@@ -1,4 +1,4 @@
-import type { Application } from 'approved-premises'
+import type { Application } from 'approved-premises-api-types'
 
 import TasklistPage from '../../tasklistPage'
 import { convertKeyValuePairToRadioItems } from '../../../utils/formUtils'
