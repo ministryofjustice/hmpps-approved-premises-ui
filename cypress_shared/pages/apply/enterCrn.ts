@@ -1,4 +1,4 @@
-import type { Person } from 'approved-premises'
+import type { Person } from '@approved-premises-ui'
 
 import Page from '../page'
 

@@ -1,4 +1,4 @@
-import type { Nonarrival } from 'approved-premises-api-types'
+import type { Nonarrival } from '@approved-premises-shared'
 import type { RestClientBuilder, BookingClient } from '../data'
 
 export default class NonarrivalService {

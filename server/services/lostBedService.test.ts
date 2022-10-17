@@ -1,4 +1,4 @@
-import type { LostBed, NewLostBed } from 'approved-premises-api-types'
+import type { LostBed, NewLostBed } from '@approved-premises-shared'
 
 import LostBedService from './lostBedService'
 import LostBedClient from '../data/lostBedClient'

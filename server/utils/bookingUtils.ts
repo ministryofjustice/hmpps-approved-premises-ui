@@ -1,5 +1,5 @@
-import type { IdentityBarMenu } from 'approved-premises'
-import type { Booking } from 'approved-premises-api-types'
+import type { IdentityBarMenu } from '@approved-premises-ui'
+import type { Booking } from '@approved-premises-shared'
 import paths from '../paths/manage'
 
 export default function bookingActions(booking: Booking, premisesId: string): Array<IdentityBarMenu> {

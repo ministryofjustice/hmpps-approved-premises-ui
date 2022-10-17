@@ -1,5 +1,5 @@
-import type { YesOrNo, ObjectWithDateParts } from 'approved-premises'
-import type { Application } from 'approved-premises-api-types'
+import type { YesOrNo, ObjectWithDateParts } from '@approved-premises-ui'
+import type { Application } from '@approved-premises-shared'
 
 import TasklistPage from '../../tasklistPage'
 import { convertToTitleCase } from '../../../utils/utils'

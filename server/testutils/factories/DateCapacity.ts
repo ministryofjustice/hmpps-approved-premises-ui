@@ -1,7 +1,7 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { DateCapacity } from 'approved-premises-api-types'
+import type { DateCapacity } from '@approved-premises-shared'
 import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<DateCapacity>(() => ({

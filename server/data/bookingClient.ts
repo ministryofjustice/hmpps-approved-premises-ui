@@ -10,7 +10,7 @@ import type {
   Departure,
   Nonarrival,
   NewDeparture,
-} from 'approved-premises-api-types'
+} from '@approved-premises-shared'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 

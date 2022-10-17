@@ -1,4 +1,4 @@
-import type { Cancellation, Booking } from 'approved-premises'
+import type { Cancellation, Booking } from '@approved-premises-ui'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import Page from '../page'
 

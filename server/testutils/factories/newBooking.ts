@@ -1,7 +1,7 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { NewBooking } from 'approved-premises-api-types'
+import type { NewBooking } from '@approved-premises-shared'
 
 import personFactory from './person'
 import { DateFormats } from '../../utils/dateUtils'

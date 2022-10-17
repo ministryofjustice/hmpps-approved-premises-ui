@@ -1,4 +1,4 @@
-import type { Nonarrival } from 'approved-premises-api-types'
+import type { Nonarrival } from '@approved-premises-shared'
 
 import NonarrivalService from './nonArrivalService'
 import BookingClient from '../data/bookingClient'

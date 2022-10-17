@@ -1,4 +1,4 @@
-import type { Arrival, NewArrival } from 'approved-premises-api-types'
+import type { Arrival, NewArrival } from '@approved-premises-shared'
 import type { RestClientBuilder, BookingClient } from '../data'
 
 export default class ArrivalService {

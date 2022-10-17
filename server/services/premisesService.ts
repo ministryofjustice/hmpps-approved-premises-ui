@@ -1,5 +1,5 @@
-import type { TableRow, SummaryList } from 'approved-premises'
-import type { Premises, StaffMember } from 'approved-premises-api-types'
+import type { TableRow, SummaryList } from '@approved-premises-ui'
+import type { Premises, StaffMember } from '@approved-premises-shared'
 import type { RestClientBuilder, PremisesClient } from '../data'
 import paths from '../paths/manage'
 

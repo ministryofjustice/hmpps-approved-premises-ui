@@ -1,4 +1,4 @@
-import type { NewBooking } from 'approved-premises-api-types'
+import type { NewBooking } from '@approved-premises-shared'
 import type { Request, Response, RequestHandler } from 'express'
 
 import { BookingService, PremisesService, PersonService } from '../../services'

@@ -1,6 +1,6 @@
 import type { Response, Request, RequestHandler } from 'express'
 
-import type { NewArrival } from 'approved-premises-api-types'
+import type { NewArrival } from '@approved-premises-shared'
 
 import { DateFormats } from '../../utils/dateUtils'
 import ArrivalService from '../../services/arrivalService'

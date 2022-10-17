@@ -1,5 +1,5 @@
-import type { ReferenceData } from 'approved-premises'
-import type { LostBed, NewLostBed } from 'approved-premises-api-types'
+import type { ReferenceData } from '@approved-premises-ui'
+import type { LostBed, NewLostBed } from '@approved-premises-shared'
 import type { RestClientBuilder, LostBedClient, ReferenceDataClient } from '../data'
 
 export type LostBedReferenceData = Array<ReferenceData>

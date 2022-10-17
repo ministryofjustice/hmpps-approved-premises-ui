@@ -1,7 +1,7 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { LostBed } from 'approved-premises-api-types'
+import type { LostBed } from '@approved-premises-shared'
 import referenceDataFactory from './referenceData'
 import { DateFormats } from '../../utils/dateUtils'
 

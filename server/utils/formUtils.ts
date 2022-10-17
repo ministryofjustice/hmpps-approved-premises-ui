@@ -1,4 +1,4 @@
-import type { ErrorMessages, RadioItems, SelectOptions } from 'approved-premises'
+import type { ErrorMessages, RadioItems, SelectOptions } from '@approved-premises-ui'
 
 export const dateFieldValues = (fieldName: string, context: Record<string, unknown>, errors: ErrorMessages = {}) => {
   const errorClass = errors[fieldName] ? 'govuk-input--error' : ''

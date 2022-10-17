@@ -1,5 +1,5 @@
-import type { ReferenceData } from 'approved-premises'
-import type { Cancellation, NewCancellation } from 'approved-premises-api-types'
+import type { ReferenceData } from '@approved-premises-ui'
+import type { Cancellation, NewCancellation } from '@approved-premises-shared'
 import type { BookingClient, RestClientBuilder, ReferenceDataClient } from '../data'
 
 export default class CancellationService {

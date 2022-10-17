@@ -1,4 +1,4 @@
-import type { Application } from 'approved-premises-api-types'
+import type { Application } from '@approved-premises-shared'
 
 import { SessionDataError } from '../../../utils/errors'
 import { retrieveQuestionResponseFromApplication } from '../../../utils/utils'

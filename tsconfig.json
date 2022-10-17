@@ -19,8 +19,8 @@
     "typeRoots": ["./server/@types", "./node_modules/@types"],
     "baseUrl": ".",
     "paths": {
-      "@approved-premises-shared": ["../@types/api/index.d.ts"],
-      "@approved-premises-ui": ["../@types/approved-premises/index.d.ts"]
+      "@approved-premises-shared": ["server/@types/shared/index.d.ts"],
+      "@approved-premises-ui": ["server/@types/ui/index.d.ts"]
     }
   },
   "exclude": [

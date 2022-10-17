@@ -1,4 +1,4 @@
-import type { Premises, DateCapacity, StaffMember } from 'approved-premises-api-types'
+import type { Premises, DateCapacity, StaffMember } from '@approved-premises-shared'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'

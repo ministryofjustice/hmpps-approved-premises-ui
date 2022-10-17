@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { DeepPartial } from 'fishery'
 
-import type { Premises } from 'approved-premises-api-types'
+import type { Premises } from '@approved-premises-shared'
 import { bulkStub } from './index'
 
 import premisesJson from './stubs/premises.json'

@@ -1,4 +1,4 @@
-import type { Application } from 'approved-premises-api-types'
+import type { Application } from '@approved-premises-shared'
 
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'

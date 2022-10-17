@@ -1,4 +1,4 @@
-import type { Cancellation } from 'approved-premises'
+import type { Cancellation } from '@approved-premises-ui'
 import Page from '../page'
 import paths from '../../../server/paths/manage'
 

@@ -1,5 +1,5 @@
 import type { Response, Request, RequestHandler } from 'express'
-import type { NewDeparture } from 'approved-premises-api-types'
+import type { NewDeparture } from '@approved-premises-shared'
 
 import { DateFormats } from '../../utils/dateUtils'
 import DepartureService from '../../services/departureService'

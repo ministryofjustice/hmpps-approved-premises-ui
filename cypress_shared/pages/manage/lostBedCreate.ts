@@ -1,4 +1,4 @@
-import type { LostBed } from 'approved-premises'
+import type { LostBed } from '@approved-premises-ui'
 import paths from '../../../server/paths/manage'
 
 import Page from '../page'

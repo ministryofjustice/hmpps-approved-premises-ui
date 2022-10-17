@@ -1,6 +1,6 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
-import type { Extension } from 'approved-premises-api-types'
+import type { Extension } from '@approved-premises-shared'
 
 import { DateFormats } from '../../utils/dateUtils'
 

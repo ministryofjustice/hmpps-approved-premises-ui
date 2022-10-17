@@ -1,6 +1,6 @@
 import { Response, Request, RequestHandler } from 'express'
 
-import type { Nonarrival } from 'approved-premises-api-types'
+import type { Nonarrival } from '@approved-premises-shared'
 
 import { DateFormats } from '../../utils/dateUtils'
 import NonArrivalService from '../../services/nonArrivalService'

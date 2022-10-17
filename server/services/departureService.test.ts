@@ -1,4 +1,4 @@
-import type { Departure } from 'approved-premises-api-types'
+import type { Departure } from '@approved-premises-shared'
 
 import DepartureService from './departureService'
 import BookingClient from '../data/bookingClient'

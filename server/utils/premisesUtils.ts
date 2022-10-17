@@ -1,4 +1,4 @@
-import type { DateCapacity } from 'approved-premises-api-types'
+import type { DateCapacity } from '@approved-premises-shared'
 
 export type NegativeDateRange = { start?: string; end?: string }
 

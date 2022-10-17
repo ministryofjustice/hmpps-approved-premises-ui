@@ -1,7 +1,7 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { Application } from 'approved-premises'
+import type { Application } from @approved-premises-ui-types
 import personFactory from './person'
 import { DateFormats } from '../../utils/dateUtils'
 
