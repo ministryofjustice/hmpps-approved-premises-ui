@@ -3,6 +3,7 @@ import type { Application } from '@approved-premises-shared'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
+import { ApplicationSummary } from '../testutils/factories/applicationSummary'
 
 export default class ApplicationClient {
   restClient: RestClient
@@ -26,7 +27,7 @@ export default class ApplicationClient {
     })) as Application
   }
 
-  async all(): Promise<Application[]> {
-    return (await this.restClient.get({ path: paths.applications.index.pattern })) as Application[]
+  async all(): Promise<ApplicationSummary[]> {
+    return (await this.restClient.get({ path: paths.applications.index.pattern })) as ApplicationSummary[]
   }
 }
