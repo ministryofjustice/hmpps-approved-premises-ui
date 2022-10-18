@@ -18,6 +18,7 @@ declare module 'approved-premises' {
   export type StaffMember = schemas['StaffMember']
   export type PersonRisks = schemas['PersonRisks']
   export type PersonRisksUI = schemas['PersonRisksUI']
+  export type LocalAuthority = schemas['LocalAuthority']
 
   // A utility type that allows us to define an object with a date attribute split into
   // date, month, year (and optionally, time) attributes. Designed for use with the GOV.UK
@@ -335,6 +336,10 @@ declare module 'approved-premises' {
     FlagsEnvelope: {
       status: RiskEnvelopeStatus
       value: Array<string>
+    }
+    LocalAuthority: {
+      id: string
+      name: string
     }
   }
 }
