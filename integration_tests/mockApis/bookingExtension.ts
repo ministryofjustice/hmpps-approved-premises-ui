@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { Booking } from '@approved-premises-ui'
+import type { Booking } from '@approved-premises-shared'
 
 import { stubFor, getMatchingRequests } from '../../wiremock'
 import { errorStub } from '../../wiremock/utils'

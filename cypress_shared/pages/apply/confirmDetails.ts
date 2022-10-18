@@ -1,4 +1,4 @@
-import type { Person } from '@approved-premises-ui'
+import type { Person } from '@approved-premises-shared'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import Page from '../page'

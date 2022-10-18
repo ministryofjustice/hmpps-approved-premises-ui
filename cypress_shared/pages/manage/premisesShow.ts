@@ -1,4 +1,4 @@
-import type { Premises, Booking } from '@approved-premises-ui'
+import type { Premises, Booking } from '@approved-premises-shared'
 
 import Page from '../page'
 import paths from '../../../server/paths/manage'

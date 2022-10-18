@@ -1,7 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { PersonRisks } from '@approved-premises-ui'
-import type { Person } from '@approved-premises-shared'
+import type { Person, PersonRisks } from '@approved-premises-shared'
 
 import { stubFor, getMatchingRequests } from '../../wiremock'
 

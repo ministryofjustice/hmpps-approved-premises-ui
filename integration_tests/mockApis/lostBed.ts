@@ -1,6 +1,6 @@
 import { SuperAgentRequest, Response } from 'superagent'
 
-import type { LostBed } from '@approved-premises-ui'
+import type { LostBed } from '@approved-premises-shared'
 
 import { stubFor, getMatchingRequests } from '../../wiremock'
 import { errorStub } from '../../wiremock/utils'

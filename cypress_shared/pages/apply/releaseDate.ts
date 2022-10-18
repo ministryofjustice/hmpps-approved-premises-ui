@@ -1,4 +1,4 @@
-import type { Person } from '@approved-premises-ui'
+import type { Person } from '@approved-premises-shared'
 import Page from '../page'
 
 export default class ReleaseDatePage extends Page {

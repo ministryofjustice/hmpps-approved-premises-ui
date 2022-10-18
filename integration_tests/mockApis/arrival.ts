@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { Arrival } from '@approved-premises-ui'
+import type { Arrival } from '@approved-premises-shared'
 
 import { stubFor, getMatchingRequests } from '../../wiremock'
 import { errorStub } from '../../wiremock/utils'
