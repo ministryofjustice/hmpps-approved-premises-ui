@@ -13,7 +13,7 @@ context('Departures', () => {
     cy.task('stubDepartureReferenceData')
   })
 
-  it('creates an departure', () => {
+  it('creates a departure', () => {
     // Given I am logged in
     cy.signIn()
 
@@ -27,7 +27,6 @@ context('Departures', () => {
     const departure = departureFactory.build({
       dateTime: new Date(2022, 1, 11, 12, 35).toISOString(),
       reason: departureReason,
-      destinationProvider: premises[2],
       moveOnCategory,
     })
 
