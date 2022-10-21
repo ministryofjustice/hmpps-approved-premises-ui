@@ -2,13 +2,13 @@ import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { ApArea, ProbationRegion, LocalAuthorityArea } from '@approved-premises/api'
-import { Premises } from '../../@types/ui'
+import { Premises } from '@approved-premises/ui'
 
 export default Factory.define<Premises>(() => ({
   id: faker.datatype.uuid(),
   name: `${faker.word.adjective()} ${faker.word.adverb()} ${faker.word.noun()}`,
-  address: faker.address.streetAddress(),
   apCode: faker.random.alphaNumeric(5, { casing: 'upper' }),
+  address: faker.address.streetAddress(),
   postcode: faker.address.zipCode(),
   bedCount: 50,
   availableBedsForToday: faker.datatype.number({ min: 0, max: 50 }),
@@ -16,6 +16,7 @@ export default Factory.define<Premises>(() => ({
   probationRegion: probationRegionFactory.build(),
   apArea: apAreaFactory.build(),
   localAuthorityArea: localAuthorityAreaFactory.build(),
+  notes: faker.lorem.lines(5),
 }))
 
 const probationRegionFactory = Factory.define<ProbationRegion>(() => ({
