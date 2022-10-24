@@ -20,11 +20,11 @@
 
     <h1>Manage a property</h1>
 
-    {% set foo = premises.address | e %}
+    {% set foo = premises.addressLine1 | e %}
 
     {{ mojIdentityBar({
       title: {
-        html: '<h2>' + (premises.address | e) + ', ' + (premises.postcode | e) + '</h2>'
+        html: '<h2>' + (premises.addressLine1 | e) + ', ' + (premises.postcode | e) + '</h2>'
       },
       menus: [{
         items: [{
