@@ -1,39 +1,46 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% extends "../../partials/layout.njk" %}
+{% from "../../partials/breadCrumb.njk" import breadCrumb %}
 
-{% set pageTitle = applicationName + " - Properties" %}
+{% set pageTitle = applicationName + " - List of properties" %}
+{% set mainClasses = "app-container govuk-body" %}
 
 {% block content %}
+  
+  {{ breadCrumb('List of properties', []) }}
+
   {% include "../../_messages.njk" %}
   
-  <main class="app-container govuk-body">
-    <h1>Properties</h1>
+  <h1>List of properties</h1>
 
+  <div class="add-property-button-container">
     {{ govukButton({
-      text: "Add a new property",
+      text: "Add a property",
       href: paths.premises.new()
     }) }}
+  </div>
 
-    {{ govukTable({
-      captionClasses: "govuk-table__caption--m",
-      firstCellIsHeader: true,
-        head: [
-        {
-          text: "Name"
-        },
-        {
-          text: "Code"
-        },
-        {
-          text: "Bed Count"
-        },
-        {
-          html: '<span class="govuk-visually-hidden">Actions</span>'
-        }
-      ],
-      rows: tableRows
-    }) }}
-  </main>
+  {{ govukTable({
+    captionClasses: "govuk-table__caption--m",
+    head: [
+      {
+        text: "Address"
+      },
+      {
+        text: "Bedspaces"
+      },
+      {
+        text: "Location"
+      },
+      {
+        text: "Occupancy"
+      },
+      {
+        html: '<span class="govuk-visually-hidden">Actions</span>'
+      }
+    ],
+    rows: tableRows
+  }) }} 
 
 {% endblock %}

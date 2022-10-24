@@ -1,4 +1,3 @@
-import type { Service } from '@approved-premises/ui'
 import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
 import premisesFactory from '../testutils/factories/premises'
@@ -40,75 +39,166 @@ describe('PremisesService', () => {
     })
   })
 
-  describe('tableRows', () => {
-    describe.each([
-      ['approved-premises' as Service, apPaths.premises.show],
-      ['temporary-accommodation' as Service, taPaths.premises.show],
-    ])('when the given service is %p', (serviceName, showPath) => {
-      it(`returns a table view of the premises for ${serviceName}`, async () => {
-        const premises1 = premisesFactory.build({ name: 'XYZ' })
-        const premises2 = premisesFactory.build({ name: 'ABC' })
-        const premises3 = premisesFactory.build({ name: 'GHI' })
+  describe('approvedPremisesTableRows', () => {
+    it('returns a sorted table view of the premises for Approved Premises', async () => {
+      const premises1 = premisesFactory.build({ name: 'XYZ' })
+      const premises2 = premisesFactory.build({ name: 'ABC' })
+      const premises3 = premisesFactory.build({ name: 'GHI' })
 
-        const premises = [premises1, premises2, premises3]
-        premisesClient.all.mockResolvedValue(premises)
+      const premises = [premises1, premises2, premises3]
+      premisesClient.all.mockResolvedValue(premises)
 
-        const rows = await service.tableRows(token, serviceName)
+      const rows = await service.approvedPremisesTableRows(token)
 
-        expect(rows).toEqual([
-          [
-            {
-              text: premises2.name,
-            },
-            {
-              text: premises2.apCode,
-            },
-            {
-              text: premises2.bedCount.toString(),
-            },
-            {
-              html: `<a href="${showPath({
-                premisesId: premises2.id,
-              })}">View<span class="govuk-visually-hidden">about ${premises2.name}</span></a>`,
-            },
-          ],
-          [
-            {
-              text: premises3.name,
-            },
-            {
-              text: premises3.apCode,
-            },
-            {
-              text: premises3.bedCount.toString(),
-            },
-            {
-              html: `<a href="${showPath({
-                premisesId: premises3.id,
-              })}">View<span class="govuk-visually-hidden">about ${premises3.name}</span></a>`,
-            },
-          ],
-          [
-            {
-              text: premises1.name,
-            },
-            {
-              text: premises1.apCode,
-            },
-            {
-              text: premises1.bedCount.toString(),
-            },
-            {
-              html: `<a href="${showPath({
-                premisesId: premises1.id,
-              })}">View<span class="govuk-visually-hidden">about ${premises1.name}</span></a>`,
-            },
-          ],
-        ])
+      expect(rows).toEqual([
+        [
+          {
+            text: premises2.name,
+          },
+          {
+            text: premises2.apCode,
+          },
+          {
+            text: premises2.bedCount.toString(),
+          },
+          {
+            html: `<a href="${apPaths.premises.show({
+              premisesId: premises2.id,
+            })}">View<span class="govuk-visually-hidden">about ${premises2.name}</span></a>`,
+          },
+        ],
+        [
+          {
+            text: premises3.name,
+          },
+          {
+            text: premises3.apCode,
+          },
+          {
+            text: premises3.bedCount.toString(),
+          },
+          {
+            html: `<a href="${apPaths.premises.show({
+              premisesId: premises3.id,
+            })}">View<span class="govuk-visually-hidden">about ${premises3.name}</span></a>`,
+          },
+        ],
+        [
+          {
+            text: premises1.name,
+          },
+          {
+            text: premises1.apCode,
+          },
+          {
+            text: premises1.bedCount.toString(),
+          },
+          {
+            html: `<a href="${apPaths.premises.show({
+              premisesId: premises1.id,
+            })}">View<span class="govuk-visually-hidden">about ${premises1.name}</span></a>`,
+          },
+        ],
+      ])
 
-        expect(premisesClientFactory).toHaveBeenCalledWith(token)
-        expect(premisesClient.all).toHaveBeenCalledWith(serviceName)
-      })
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.all).toHaveBeenCalledWith('approved-premises')
+    })
+  })
+
+  describe('temporaryAccommodationTableRows', () => {
+    it('returns a sorted table view of the premises for Temporary Accommodation', async () => {
+      const premises1 = premisesFactory.build({ address: 'XYZ', postcode: '123' })
+      const premises2 = premisesFactory.build({ address: 'ABC', postcode: '123' })
+      const premises3 = premisesFactory.build({ address: 'GHI', postcode: '456' })
+      const premises4 = premisesFactory.build({ address: 'GHI', postcode: '123' })
+
+      const premises = [premises1, premises2, premises3, premises4]
+      premisesClient.all.mockResolvedValue(premises)
+
+      const rows = await service.temporaryAccommodationTableRows(token)
+
+      expect(rows).toEqual([
+        [
+          {
+            text: 'ABC, 123',
+          },
+          {
+            text: premises2.bedCount.toString(),
+          },
+          {
+            text: '',
+          },
+          {
+            text: '',
+          },
+          {
+            html: `<a href="${taPaths.premises.show({
+              premisesId: premises2.id,
+            })}">Manage<span class="govuk-visually-hidden"> ABC, 123</span></a>`,
+          },
+        ],
+        [
+          {
+            text: 'GHI, 123',
+          },
+          {
+            text: premises4.bedCount.toString(),
+          },
+          {
+            text: '',
+          },
+          {
+            text: '',
+          },
+          {
+            html: `<a href="${taPaths.premises.show({
+              premisesId: premises4.id,
+            })}">Manage<span class="govuk-visually-hidden"> GHI, 123</span></a>`,
+          },
+        ],
+        [
+          {
+            text: 'GHI, 456',
+          },
+          {
+            text: premises3.bedCount.toString(),
+          },
+          {
+            text: '',
+          },
+          {
+            text: '',
+          },
+          {
+            html: `<a href="${taPaths.premises.show({
+              premisesId: premises3.id,
+            })}">Manage<span class="govuk-visually-hidden"> GHI, 456</span></a>`,
+          },
+        ],
+        [
+          {
+            text: 'XYZ, 123',
+          },
+          {
+            text: premises1.bedCount.toString(),
+          },
+          {
+            text: '',
+          },
+          {
+            text: '',
+          },
+          {
+            html: `<a href="${taPaths.premises.show({
+              premisesId: premises1.id,
+            })}">Manage<span class="govuk-visually-hidden"> XYZ, 123</span></a>`,
+          },
+        ],
+      ])
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.all).toHaveBeenCalledWith('temporary-accommodation')
     })
   })
 

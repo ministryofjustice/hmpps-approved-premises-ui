@@ -1,11 +1,11 @@
-import type { Premises } from '@approved-premises/api'
+import type { Premises } from '@approved-premises/ui'
 
 import Page from '../../page'
 import paths from '../../../../server/paths/temporary-accommodation/manage'
 
 export default class PremisesListPage extends Page {
   constructor() {
-    super('Properties')
+    super('List of properties')
   }
 
   static visit(): PremisesListPage {
@@ -15,20 +15,22 @@ export default class PremisesListPage extends Page {
 
   shouldShowPremises(premises: Array<Premises>): void {
     premises.forEach((item: Premises) => {
-      cy.contains(item.name)
+      const shortAddress = `${item.address}, ${item.postcode}`
+
+      cy.contains(shortAddress)
         .parent()
         .within(() => {
-          cy.get('td').eq(0).contains(item.apCode)
+          cy.get('td').eq(0).contains(shortAddress)
           cy.get('td').eq(1).contains(item.bedCount)
           cy.get('td')
-            .eq(2)
-            .contains('View')
+            .eq(4)
+            .contains('Manage')
             .should('have.attr', 'href', paths.premises.show({ premisesId: item.id }))
         })
     })
   }
 
   clickAddPremisesButton() {
-    cy.get('a').contains('Add a new property').click()
+    cy.get('a').contains('Add a property').click()
   }
 }
