@@ -105,7 +105,7 @@ describe('PremisesService', () => {
       ])
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.all).toHaveBeenCalledWith('approved-premises')
+      expect(premisesClient.all).toHaveBeenCalled()
     })
   })
 
@@ -201,7 +201,7 @@ describe('PremisesService', () => {
       ])
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.all).toHaveBeenCalledWith('temporary-accommodation')
+      expect(premisesClient.all).toHaveBeenCalled()
     })
   })
 
