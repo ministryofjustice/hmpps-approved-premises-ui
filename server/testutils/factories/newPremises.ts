@@ -8,5 +8,5 @@ export default Factory.define<NewPremises>(() => ({
   postcode: faker.address.zipCode(),
   localAuthorityAreaId: faker.datatype.uuid(),
   notes: faker.lorem.lines(),
-  service: 'temporary-accommodation',
+  service: undefined,
 }))
