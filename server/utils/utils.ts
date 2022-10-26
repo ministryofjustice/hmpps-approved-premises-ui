@@ -1,3 +1,5 @@
+import Case from 'case'
+
 import type { SummaryListItem, PersonRisksUI } from '@approved-premises/ui'
 import type { Application, PersonRisks } from '@approved-premises/api'
 
@@ -41,6 +43,12 @@ const kebabCase = (string: string) =>
     .replace(/[\s_]+/g, '-')
     .toLowerCase()
 
+/**
+ * Converts a string from any case to Sentence case
+ * @param string string to be converted.
+ * @returns name converted to sentence case.
+ */
+export const sentenceCase = (string: string) => Case.sentence(string)
 /**
  * Retrieves response for a given question from the application object.
  * @param application the application to fetch the response from.
