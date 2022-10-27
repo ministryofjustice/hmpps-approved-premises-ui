@@ -9,6 +9,7 @@ import {
   TaskListPage,
   TypeOfApPage,
 } from '../../../cypress_shared/pages/apply'
+import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
 import PlacementPurposePage from '../../../cypress_shared/pages/apply/placementPurpose'
 import RiskManagementFeatures from '../../../cypress_shared/pages/apply/riskManagementFeatures'
 
@@ -188,6 +189,10 @@ context('Apply', () => {
     const riskManagementFeaturesPage = new RiskManagementFeatures()
     riskManagementFeaturesPage.completeForm()
     riskManagementFeaturesPage.clickSubmit()
+
+    const dateOfOffencePage = new DateOfOffence()
+    dateOfOffencePage.completeForm()
+    dateOfOffencePage.clickSubmit()
 
     // Then I should be taken back to the task list
     // And the risk management task should show a completed status
