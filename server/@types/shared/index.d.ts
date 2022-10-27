@@ -5,6 +5,7 @@
 export type { AnyValue } from './models/AnyValue';
 export type { ApArea } from './models/ApArea';
 export type { Application } from './models/Application';
+export type { ApprovedPremises } from './models/ApprovedPremises';
 export type { Arrival } from './models/Arrival';
 export type { Assessment } from './models/Assessment';
 export type { Booking } from './models/Booking';
@@ -57,6 +58,7 @@ export type { StaffMember } from './models/StaffMember';
 export type { SupervisingOfficer } from './models/SupervisingOfficer';
 export type { SupervisingProvider } from './models/SupervisingProvider';
 export type { SupervisingTeam } from './models/SupervisingTeam';
+export type { TemporaryAccommodationPremises } from './models/TemporaryAccommodationPremises';
 export type { UpdateApplication } from './models/UpdateApplication';
 export type { UpdateAssessment } from './models/UpdateAssessment';
 export type { User } from './models/User';
