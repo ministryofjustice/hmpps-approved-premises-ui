@@ -1,9 +1,9 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { ApArea, Premises, ProbationRegion, LocalAuthorityArea } from '@approved-premises/api'
+import type { ApArea, ApprovedPremises, ProbationRegion, LocalAuthorityArea } from '@approved-premises/api'
 
-export default Factory.define<Premises>(() => ({
+export default Factory.define<ApprovedPremises>(() => ({
   id: faker.datatype.uuid(),
   name: `${faker.word.adjective()} ${faker.word.adverb()} ${faker.word.noun()}`,
   apCode: faker.random.alphaNumeric(5, { casing: 'upper' }),
