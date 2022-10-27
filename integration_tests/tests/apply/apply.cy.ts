@@ -103,8 +103,8 @@ context('Apply', () => {
   })
 
   it('shows a tasklist', () => {
-    const application = applicationFactory.build()
-    const person = personFactory.build({ crn: application.person.crn })
+    const person = personFactory.build()
+    const application = applicationFactory.build({ person })
     const apiRisks = risksFactory.build({ crn: person.crn })
     const uiRisks = mapApiPersonRisksForUi(apiRisks)
 
