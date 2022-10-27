@@ -1,5 +1,5 @@
 import type { TableRow, SummaryList } from '@approved-premises/ui'
-import type { Premises, StaffMember } from '@approved-premises/api'
+import type { ApprovedPremises, StaffMember } from '@approved-premises/api'
 import type { RestClientBuilder, PremisesClient } from '../data'
 import paths from '../paths/manage'
 
@@ -23,7 +23,7 @@ export default class PremisesService {
 
     return premises
       .sort((a, b) => a.name.localeCompare(b.name))
-      .map((p: Premises) => {
+      .map((p: ApprovedPremises) => {
         return [
           this.textValue(p.name),
           this.textValue(p.apCode),
@@ -103,7 +103,7 @@ export default class PremisesService {
       })
   }
 
-  async summaryListForPremises(premises: Premises): Promise<SummaryList> {
+  async summaryListForPremises(premises: ApprovedPremises): Promise<SummaryList> {
     return {
       rows: [
         {

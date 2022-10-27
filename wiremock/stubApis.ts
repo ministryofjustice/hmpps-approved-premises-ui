@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { DeepPartial } from 'fishery'
 
-import type { Premises } from '@approved-premises/api'
+import type { ApprovedPremises } from '@approved-premises/api'
 import { bulkStub } from './index'
 
 import premisesJson from './stubs/premises.json'
@@ -24,7 +24,7 @@ import staffMemberFactory from '../server/testutils/factories/staffMember'
 
 const stubs = []
 
-const premises = premisesJson.map(item => premisesFactory.build(item as DeepPartial<Premises>))
+const premises = premisesJson.map(item => premisesFactory.build(item as DeepPartial<ApprovedPremises>))
 
 stubs.push({
   request: {
