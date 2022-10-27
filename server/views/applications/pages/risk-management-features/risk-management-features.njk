@@ -1,0 +1,56 @@
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+  <h1 class="govuk-heading-l">What features of AP will support the management of risk?</h1>
+  <p class="govuk-body">
+    <b>AP placements provide the following support, restrictions, and monitoring as standard:</b>
+  </p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>24 hour staff support and monitoring</li>
+    <li>Overnight curfew (from 11pm until 6am)</li>
+    <li>CCTV</li>
+    <li>Room searches</li>
+    <li>Rehabilitative interventions (formerly purposeful activities)</li>
+    <li>Medication monitoring</li>
+    <li>Drug and alcohol testing</li>
+  </ul>
+
+  {{ govukTextarea({
+    name: "manage-risk-detail",
+    id: "more-detail",
+    label: {
+      classes: "govuk-label--s",
+      text: "Describe why an AP placement is needed to manage the risk of this person"
+    },
+    hint: {
+      text: "This information will help inform the decision on whether an AP placement 
+      is suitable."
+    }
+  }) }}
+
+  <p class="govuk-body">
+    <b>AP placements can also provide additional measures if needed. For example:</b>
+  </p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>Additional curfews or sign-ins at specific times or intervals</li>
+    <li>Trigger plans</li>
+    <li>Regular drug and alcohol testing</li>
+    <li>Monitoring the possession of electronic devices</li>
+  </ul>
+  {{ govukTextarea({
+    name: "additional-features-detail",
+    id: "additional-features-detail",
+    label: {
+      classes: "govuk-label--s",
+      text: "Provide details of any additional measures that will be necessary for the management of risk"
+    },
+    hint: {
+      text: "Provide the frequency and any specific times for these measures."
+    }
+  }) }}
+
+{% endblock %}

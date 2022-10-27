@@ -10,6 +10,7 @@ import {
   TypeOfApPage,
 } from '../../../cypress_shared/pages/apply'
 import PlacementPurposePage from '../../../cypress_shared/pages/apply/placementPurpose'
+import RiskManagementFeatures from '../../../cypress_shared/pages/apply/riskManagementFeatures'
 
 import Page from '../../../cypress_shared/pages/page'
 import applicationFactory from '../../../server/testutils/factories/application'
@@ -103,8 +104,8 @@ context('Apply', () => {
   })
 
   it('shows a tasklist', () => {
-    const application = applicationFactory.build()
-    const person = personFactory.build({ crn: application.person.crn })
+    const person = personFactory.build()
+    const application = applicationFactory.build({ person })
     const apiRisks = risksFactory.build({ crn: person.crn })
     const uiRisks = mapApiPersonRisksForUi(apiRisks)
 
@@ -167,5 +168,29 @@ context('Apply', () => {
     // And I should be able to start the next task
     cy.get('[data-cy-task-name="type-of-ap"]').click()
     Page.verifyOnPage(TypeOfApPage, application.person)
+
+    // Given I am on the Type of AP Page
+    const typeOfApPage = new TypeOfApPage(person)
+
+    // When I complete the form and click submit
+    typeOfApPage.completeForm()
+    typeOfApPage.clickSubmit()
+
+    // Then the Type of AP task should show as completed
+    tasklistPage.shouldShowTaskStatus('type-of-ap', 'Completed')
+    // And the Risk Management Features task should show as not started
+    tasklistPage.shouldShowTaskStatus('risk-management-features', 'Not started')
+
+    // Given I click the 'Add detail about managing risks and needs' task
+    cy.get('[data-cy-task-name="risk-management-features"]').click()
+
+    // When I complete the form
+    const riskManagementFeaturesPage = new RiskManagementFeatures()
+    riskManagementFeaturesPage.completeForm()
+    riskManagementFeaturesPage.clickSubmit()
+
+    // Then I should be taken back to the task list
+    // And the risk management task should show a completed status
+    tasklistPage.shouldShowTaskStatus('risk-management-features', 'Completed')
   })
 })
