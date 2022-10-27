@@ -22,7 +22,7 @@ context('Premises', () => {
     cy.task('stubPremises', { premises, service: 'temporary-accommodation' })
 
     // When I visit the premises page
-    const page = PremisesListPage.visit()
+    // const page = PremisesListPage.visit()
 
     // Then I should see all of the premises listed
     page.shouldShowPremises(premises)
