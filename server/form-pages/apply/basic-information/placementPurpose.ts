@@ -54,7 +54,7 @@ export default class PlacementPurpose implements TasklistPage {
       errors.placementPurposes = 'You must choose at least one placement purpose'
     }
 
-    if (this.responseNeedsFreeTextReason(this.body)) {
+    if (this.responseNeedsFreeTextReason(this.body) && !this.body.otherReason) {
       errors.placementPurposes = 'You must explain the reason'
     }
 
