@@ -28,7 +28,7 @@ export default class RiskManagementFeatures implements TasklistPage {
   }
 
   next() {
-    return 'date-of-offence'
+    return 'convicted-offences'
   }
 
   response() {

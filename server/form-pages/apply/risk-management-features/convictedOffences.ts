@@ -27,7 +27,7 @@ export default class ConvictedOffences implements TasklistPage {
   }
 
   previous() {
-    return ''
+    return 'risk-management-features'
   }
 
   next() {
