@@ -8,17 +8,18 @@ export default class RiskManagementFeatures implements TasklistPage {
 
   title = `How will an Approved Premises (AP) placement support the management of risk?`
 
-  body: { manageRiskDetails: string; additionalFeatures: string }
+  body: { manageRiskDetails: string; additionalFeaturesDetails: string }
 
   questions = {
     manageRiskDetails: `Describe why an AP placement is needed to manage the risk of ${this.application.person.name}`,
-    additionalFeatures: 'Provide details of any additional measures that will be necessary for the management of risk',
+    additionalFeaturesDetails:
+      'Provide details of any additional measures that will be necessary for the management of risk',
   }
 
   constructor(body: Record<string, unknown>, private readonly application: Application) {
     this.body = {
       manageRiskDetails: body.manageRiskDetails as string,
-      additionalFeatures: body.additionalFeatures as string,
+      additionalFeaturesDetails: body.additionalFeaturesDetails as string,
     }
   }
 
@@ -34,7 +35,7 @@ export default class RiskManagementFeatures implements TasklistPage {
     return {
       [this.title]: {
         [this.questions.manageRiskDetails]: this.body.manageRiskDetails,
-        [this.questions.additionalFeatures]: this.body.additionalFeatures,
+        [this.questions.additionalFeaturesDetails]: this.body.additionalFeaturesDetails,
       },
     }
   }

@@ -14,11 +14,11 @@ describe('RiskManagementFeatures', () => {
   describe('body', () => {
     it('should strip unknown attributes from the body', () => {
       const page = new RiskManagementFeatures(
-        { manageRiskDetails: 'some details', additionalFeatures: 'some features', something: 'else' },
+        { manageRiskDetails: 'some details', additionalFeaturesDetails: 'some features', something: 'else' },
         application,
       )
 
-      expect(page.body).toEqual({ additionalFeatures: 'some features', manageRiskDetails: 'some details' })
+      expect(page.body).toEqual({ additionalFeaturesDetails: 'some features', manageRiskDetails: 'some details' })
     })
   })
 
@@ -43,7 +43,7 @@ describe('RiskManagementFeatures', () => {
   describe('response', () => {
     it('should return a translated version of the response', () => {
       const page = new RiskManagementFeatures(
-        { manageRiskDetails: 'some details', additionalFeatures: 'some features' },
+        { manageRiskDetails: 'some details', additionalFeaturesDetails: 'some features' },
         application,
       )
 
