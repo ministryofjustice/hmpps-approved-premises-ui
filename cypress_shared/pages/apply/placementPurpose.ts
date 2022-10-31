@@ -6,8 +6,8 @@ export default class PlacementPurposePage extends Page {
   }
 
   completeForm() {
-    this.checkCheckboxByNameAndValue('placementPurpose', 'drugAlcoholSupport')
-    this.checkCheckboxByNameAndValue('placementPurpose', 'otherReason')
+    this.checkCheckboxByNameAndValue('placementPurposes', 'drugAlcoholSupport')
+    this.checkCheckboxByNameAndValue('placementPurposes', 'otherReason')
     this.getTextInputByIdAndEnterDetails('otherReason', 'Another reason')
   }
 }

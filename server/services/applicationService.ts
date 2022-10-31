@@ -69,7 +69,7 @@ export default class ApplicationService {
   async save(page: TasklistPage, request: Request) {
     const errors = page.errors()
 
-    if (errors.length) {
+    if (Object.keys(errors).length) {
       throw new ValidationError<typeof page>(errors)
     } else {
       const application = await this.getApplicationFromSessionOrAPI(request)
