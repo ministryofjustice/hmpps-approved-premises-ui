@@ -9,6 +9,7 @@ import {
   TaskListPage,
   TypeOfApPage,
 } from '../../../cypress_shared/pages/apply'
+import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
 import PlacementPurposePage from '../../../cypress_shared/pages/apply/placementPurpose'
 import RiskManagementFeatures from '../../../cypress_shared/pages/apply/riskManagementFeatures'
@@ -189,6 +190,10 @@ context('Apply', () => {
     const riskManagementFeaturesPage = new RiskManagementFeatures()
     riskManagementFeaturesPage.completeForm()
     riskManagementFeaturesPage.clickSubmit()
+
+    const convictedOffencesPage = new ConvictedOffences(person)
+    convictedOffencesPage.completeForm()
+    convictedOffencesPage.clickSubmit()
 
     const dateOfOffencePage = new DateOfOffence()
     dateOfOffencePage.completeForm()
