@@ -31,7 +31,7 @@ export default class ConvictedOffences implements TasklistPage {
   }
 
   next() {
-    return 'date-of-offence'
+    return this.body.response === 'yes' ? 'type-of-convicted-offence' : ''
   }
 
   response() {
