@@ -1,0 +1,20 @@
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+    <h1 class="govuk-heading-l">Convicted offences</h1>
+    <h2 class="govuk-heading-m">Is this a current or previous offence?</h2>
+
+    <p class="govuk-body">You can select both if the offence is current and they have previously been convicted for the same offence.</p>
+
+    {{govukTable({
+          caption: title,
+          captionClasses: "govuk-table__caption--m",
+          firstCellIsHeader: true,
+          head: page.renderTableHead(),
+          rows: page.renderTableBody()
+        })}}
+
+{% endblock %}
