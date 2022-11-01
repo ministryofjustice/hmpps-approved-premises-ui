@@ -22,7 +22,7 @@ describe('DateOfOffence', () => {
     })
   })
 
-  itShouldHavePreviousValue(new DateOfOffence({}), 'type-of-offence')
+  itShouldHavePreviousValue(new DateOfOffence({}), 'convicted-offences')
 
   itShouldHaveNextValue(new DateOfOffence({}), '')
 

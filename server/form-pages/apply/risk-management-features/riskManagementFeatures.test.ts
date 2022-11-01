@@ -24,7 +24,7 @@ describe('RiskManagementFeatures', () => {
 
   itShouldHavePreviousValue(new RiskManagementFeatures({}, application), '')
 
-  itShouldHaveNextValue(new RiskManagementFeatures({}, application), 'date-of-offence')
+  itShouldHaveNextValue(new RiskManagementFeatures({}, application), 'convicted-offences')
 
   describe('errors', () => {
     it('should return an empty object if the manageRiskDetails are populated', () => {
