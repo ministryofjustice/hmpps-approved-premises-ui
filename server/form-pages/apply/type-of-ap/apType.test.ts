@@ -8,13 +8,11 @@ import personFactory from '../../../testutils/factories/person'
 jest.mock('../../../utils/formUtils')
 
 describe('ApType', () => {
-  let application = applicationFactory.build()
+  const person = personFactory.build({ name: 'John Wayne' })
+  const application = applicationFactory.build({ person })
 
   describe('title', () => {
     it('shold add the name of the person', () => {
-      const person = personFactory.build({ name: 'John Wayne' })
-      application = applicationFactory.build({ person })
-
       const page = new ApType({}, application)
 
       expect(page.title).toEqual('Which type of AP does John Wayne require?')
