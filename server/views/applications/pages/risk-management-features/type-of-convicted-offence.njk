@@ -1,0 +1,20 @@
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+  <h1 class="govuk-heading-l">{{page.title}}</h1>
+
+  <p class="govuk-body">This information will be used to match the person to a bed in an Approved Premises</p>
+
+  {{ govukCheckboxes({
+        id: "offenceConvictions",
+        name: "offenceConvictions",
+        hint: {
+          text: "You can select more than one option"
+        },
+        items: page.items()
+      }) }}
+
+{% endblock %}
