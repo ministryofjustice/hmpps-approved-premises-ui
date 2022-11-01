@@ -22,9 +22,9 @@ describe('DateOfOffence', () => {
     })
   })
 
-  itShouldHavePreviousValue(new DateOfOffence({}), 'convicted-offences')
+  itShouldHavePreviousValue(new DateOfOffence({}), 'type-of-convicted-offence')
 
-  itShouldHaveNextValue(new DateOfOffence({}), '')
+  itShouldHaveNextValue(new DateOfOffence({}), 'rehabilitative-interventions')
 
   describe('errors', () => {
     it('should return an empty object if the time period for one offence is present', () => {

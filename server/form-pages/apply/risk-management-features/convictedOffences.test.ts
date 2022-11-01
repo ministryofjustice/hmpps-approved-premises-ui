@@ -26,7 +26,7 @@ describe('ConvictedOffences', () => {
   })
 
   describe('if the response is no', () => {
-    itShouldHaveNextValue(new ConvictedOffences({ response: 'no' }, application), '')
+    itShouldHaveNextValue(new ConvictedOffences({ response: 'no' }, application), 'rehabilitative-interventions')
   })
 
   describe('errors', () => {
