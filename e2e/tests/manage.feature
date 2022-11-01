@@ -19,10 +19,12 @@ Feature: Manage an Approved Premises
 
         Scenario: Extending a booking
                 Given I'm managing a premises
-                And I extend a booking
+                And I have created a booking
+                And I extend that booking
                 Then I should see a message on the booking page confirming the extension
 
         Scenario: Showing booking extension errors
                 Given I'm managing a premises
-                And I attempt to extend a booking without entering the date
+                And I have created a booking
+                And I attempt to extend that booking without entering the date
                 Then I should see an error

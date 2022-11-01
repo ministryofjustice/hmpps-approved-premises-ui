@@ -1,8 +1,8 @@
 import { Given, Then } from '@badeball/cypress-cucumber-preprocessor'
 
 import {
-  PremisesShowPage,
   BookingShowPage,
+  BookingConfirmationPage,
   BookingExtensionCreatePage,
   BookingExtensionConfirmationPage,
 } from '../../../cypress_shared/pages/manage'
@@ -11,9 +11,9 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 
 const extensionDate = DateFormats.formatApiDate(new Date(2050, 0, 1))
 
-Given('I extend a booking', () => {
-  cy.get('@premisesShowPage').then((premisesShowPage: PremisesShowPage) => {
-    premisesShowPage.selectBooking()
+Given('I extend that booking', () => {
+  cy.get('@bookingConfirmationPage').then((bookingConfirmationPage: BookingConfirmationPage) => {
+    bookingConfirmationPage.clickToViewBooking()
   })
 
   const bookingShowPage = new BookingShowPage()
@@ -30,9 +30,9 @@ Then('I should see a message on the booking page confirming the extension', () =
   bookingExtensionCreatePage.verifyNewExpectedDepartureDate(extensionDate)
 })
 
-Then('I attempt to extend a booking without entering the date', () => {
-  cy.get('@premisesShowPage').then((premisesShowPage: PremisesShowPage) => {
-    premisesShowPage.selectBooking()
+Then('I attempt to extend that booking without entering the date', () => {
+  cy.get('@bookingConfirmationPage').then((bookingConfirmationPage: BookingConfirmationPage) => {
+    bookingConfirmationPage.clickToViewBooking()
   })
 
   const bookingShowPage = new BookingShowPage()
