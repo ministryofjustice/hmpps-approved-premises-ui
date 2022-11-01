@@ -27,7 +27,7 @@ export default class PremisesShowPage extends Page {
   }
 
   selectBooking() {
-    cy.get('#arriving-today > .govuk-table > .govuk-table__body > :nth-child(1) > :nth-child(3) > a').click()
+    cy.get('#current-residents > .govuk-table > .govuk-table__body > :nth-child(1) > :nth-child(3) > a').click()
   }
 
   shouldShowPremisesDetail(): void {
