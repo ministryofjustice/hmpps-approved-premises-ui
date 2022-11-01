@@ -5,5 +5,6 @@
 export type NewRoom = {
     name: string;
     notes?: string;
+    characteristics: Array<string>;
 };
 
