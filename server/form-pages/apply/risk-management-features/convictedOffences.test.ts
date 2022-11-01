@@ -21,7 +21,13 @@ describe('ConvictedOffences', () => {
 
   itShouldHavePreviousValue(new ConvictedOffences({}, application), 'risk-management-features')
 
-  itShouldHaveNextValue(new ConvictedOffences({}, application), 'date-of-offence')
+  describe('if the response is yes', () => {
+    itShouldHaveNextValue(new ConvictedOffences({ response: 'yes' }, application), 'type-of-convicted-offence')
+  })
+
+  describe('if the response is no', () => {
+    itShouldHaveNextValue(new ConvictedOffences({ response: 'no' }, application), '')
+  })
 
   describe('errors', () => {
     it('should return an empty object if the response is populated', () => {

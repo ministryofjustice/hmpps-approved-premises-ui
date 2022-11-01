@@ -13,6 +13,7 @@ import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffe
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
 import PlacementPurposePage from '../../../cypress_shared/pages/apply/placementPurpose'
 import RiskManagementFeatures from '../../../cypress_shared/pages/apply/riskManagementFeatures'
+import TypeOfConvictedOffence from '../../../cypress_shared/pages/apply/typeOfConvictedOffence'
 
 import Page from '../../../cypress_shared/pages/page'
 import applicationFactory from '../../../server/testutils/factories/application'
@@ -194,6 +195,10 @@ context('Apply', () => {
     const convictedOffencesPage = new ConvictedOffences(person)
     convictedOffencesPage.completeForm()
     convictedOffencesPage.clickSubmit()
+
+    const typeOfConvictedOffencePage = new TypeOfConvictedOffence(person)
+    typeOfConvictedOffencePage.completeForm()
+    typeOfConvictedOffencePage.clickSubmit()
 
     const dateOfOffencePage = new DateOfOffence()
     dateOfOffencePage.completeForm()
