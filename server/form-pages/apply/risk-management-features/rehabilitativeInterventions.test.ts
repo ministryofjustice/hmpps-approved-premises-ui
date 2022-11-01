@@ -30,6 +30,32 @@ describe('RehabilitativeInterventions', () => {
 
   itShouldHaveNextValue(new RehabilitativeInterventions({}, application, previousPage), '')
 
+  describe('errors', () => {
+    it("should return an empty object if 'interventions' isn't populated", () => {
+      const page = new RehabilitativeInterventions({}, application, previousPage)
+      expect(page.errors()).toEqual({})
+    })
+
+    it('should return an empty object if "interventions" is populated with an array of interventions', () => {
+      const page = new RehabilitativeInterventions({ interventions: ['accomodation'] }, application, previousPage)
+      expect(page.errors()).toEqual({})
+    })
+
+    it('should return an error if "interventions" includes "other" and no other intervention is supplied', () => {
+      expect(
+        new RehabilitativeInterventions(
+          { interventions: ['other', 'accomodation'] },
+          application,
+          previousPage,
+        ).errors(),
+      ).toEqual({ otherIntervention: 'You must specify the other intervention' })
+
+      expect(new RehabilitativeInterventions({ interventions: 'other' }, application, previousPage).errors()).toEqual({
+        otherIntervention: 'You must specify the other intervention',
+      })
+    })
+  })
+
   describe('response', () => {
     describe('should return a translated version of the response', () => {
       it('When there are multiple interventions', () => {

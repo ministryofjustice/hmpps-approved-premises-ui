@@ -62,6 +62,14 @@ export default class RehabilitativeInterventions implements TasklistPage {
     return { ...response, 'Other intervention': this.body.otherIntervention }
   }
 
+  errors() {
+    const errors: TaskListErrors<this> = {}
+    if (this.otherInterventionDetailIsNeeded(this.body.interventions) && !this.body.otherIntervention) {
+      errors.otherIntervention = 'You must specify the other intervention'
+    }
+    return errors
+  }
+
   items() {
     const { other, ...uiInterventions } = interventionsTranslations
     return convertKeyValuePairToCheckBoxItems(uiInterventions, this.body.interventions)
