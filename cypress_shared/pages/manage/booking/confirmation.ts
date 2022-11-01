@@ -28,6 +28,10 @@ export default class BookingConfirmationPage extends Page {
     })
   }
 
+  clickToViewBooking(): void {
+    cy.get('a').contains('Back to dashboard').click()
+  }
+
   shouldShowOvercapacityMessage(
     firstOvercapacityPeriod: OvercapacityPeriod,
     secondOvercapacityPeriod: OvercapacityPeriod,

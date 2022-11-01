@@ -18,7 +18,7 @@ const offenderCrn = Cypress.env('offender_crn') || throwMissingCypressEnvError('
 const person = personFactory.build({ name: offenderName, crn: offenderCrn })
 const booking = bookingFactory.build({ person })
 
-Given('I create a booking', () => {
+const createBooking = (): void => {
   cy.get('@premisesShowPage').then((premisesShowPage: PremisesShowPage) => {
     premisesShowPage.clickCreateBookingOption()
   })
@@ -32,10 +32,21 @@ Given('I create a booking', () => {
   form.verifyPersonIsVisible(person)
   form.completeForm(booking)
   form.clickSubmit()
+}
+
+Given('I create a booking', () => {
+  createBooking()
 })
 
 Then('I should see a confirmation screen for my booking', () => {
   const page = new BookingConfirmationPage()
 
   page.verifyBookingIsVisible(booking)
+})
+
+Given('I have created a booking', () => {
+  createBooking()
+
+  const page = new BookingConfirmationPage()
+  cy.wrap(page).as('bookingConfirmationPage')
 })
