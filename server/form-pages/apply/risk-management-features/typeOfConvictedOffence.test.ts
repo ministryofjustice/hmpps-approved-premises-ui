@@ -47,7 +47,7 @@ describe('TypeOfConvictedOffence', () => {
 
         expect(page.response()).toEqual({
           'What type of offending has John Wayne been convicted of?': {
-            Offences: 'Arson, Sexual Offence, Hate Crimes, Non-sexual offences against children',
+            Offences: 'Arson offences, Sexual offences, Hate crimes, Non-sexual offences against children',
           },
         })
       })
@@ -56,7 +56,7 @@ describe('TypeOfConvictedOffence', () => {
 
         expect(page.response()).toEqual({
           'What type of offending has John Wayne been convicted of?': {
-            Offences: 'Arson',
+            Offences: 'Arson offences',
           },
         })
       })
