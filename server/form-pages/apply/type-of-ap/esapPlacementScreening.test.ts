@@ -8,13 +8,11 @@ import personFactory from '../../../testutils/factories/person'
 jest.mock('../../../utils/formUtils')
 
 describe('EsapPlacementScreening', () => {
-  let application = applicationFactory.build()
+  const person = personFactory.build({ name: 'John Wayne' })
+  const application = applicationFactory.build({ person })
 
   describe('title', () => {
     it('shold add the name of the person', () => {
-      const person = personFactory.build({ name: 'John Wayne' })
-      application = applicationFactory.build({ person })
-
       const page = new EsapPlacementScreening({}, application)
 
       expect(page.title).toEqual('Why does John Wayne require an enhanced security placement?')

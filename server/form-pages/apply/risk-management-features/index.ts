@@ -1,11 +1,13 @@
 import RiskManagementFeatures from './riskManagementFeatures'
-import DateOfOffence from './dateOfOffence'
 import ConvictedOffences from './convictedOffences'
+import DateOfOffence from './dateOfOffence'
 import TypeOfConvictedOffence from './typeOfConvictedOffence'
+import RehabilitativeInterventions from './rehabilitativeInterventions'
 
 export default {
   'risk-management-features': RiskManagementFeatures,
-  'date-of-offence': DateOfOffence,
   'convicted-offences': ConvictedOffences,
   'type-of-convicted-offence': TypeOfConvictedOffence,
+  'date-of-offence': DateOfOffence,
+  'rehabilitative-interventions': RehabilitativeInterventions,
 }

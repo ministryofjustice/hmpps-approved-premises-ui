@@ -4,13 +4,8 @@ import applicationFactory from '../../../testutils/factories/application'
 import Situation from './situation'
 
 describe('Situation', () => {
-  let application = applicationFactory.build({
+  const application = applicationFactory.build({
     data: { 'basic-information': { 'sentence-type': { sentenceType: 'communityOrder' } } },
-  })
-  beforeEach(() => {
-    application = applicationFactory.build({
-      data: { 'basic-information': { 'sentence-type': { sentenceType: 'communityOrder' } } },
-    })
   })
 
   describe('body', () => {

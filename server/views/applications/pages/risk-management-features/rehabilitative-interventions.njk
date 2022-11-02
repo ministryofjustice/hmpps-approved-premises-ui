@@ -1,0 +1,43 @@
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+{% extends "../layout.njk" %}
+
+{% set interventions = page.items() %}
+
+{% block questions %}
+
+    <h1 class="govuk-heading-l">{{page.title}}</h1>
+
+    <p class="govuk-body">Formerly known as purposeful activities.</p>
+    <p class="govuk-body">Select any additional needs the person has that an AP could help meet. For example, support getting qualifications or finding work.</p>
+
+    {% set otherIntervention %}
+    {{ govukInput({
+                id: "otherIntervention",
+                name: "otherIntervention",
+                type: "text",
+                autocomplete: "text",
+                spellcheck: false,
+                classes: "govuk-!-width-two-thirds",
+                label: {
+                    text: "Please specify"
+                }
+                }) }}
+    {% endset %}
+
+    {{ govukCheckboxes({
+        idPrefix: "rehabilitativeInterventions",
+        name: "rehabilitativeInterventions",
+        hint: {
+          text: "You can select more than one option"
+        },
+        items: (interventions.push({
+    value: "other",
+    text: "Other",
+    conditional: {
+        html: otherIntervention
+    }
+}), interventions) 
+      }) }}
+
+{% endblock %}

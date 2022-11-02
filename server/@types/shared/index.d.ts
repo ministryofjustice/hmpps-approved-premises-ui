@@ -8,6 +8,7 @@ export type { Application } from './models/Application';
 export type { ApprovedPremises } from './models/ApprovedPremises';
 export type { Arrival } from './models/Arrival';
 export type { Assessment } from './models/Assessment';
+export type { AssessmentDecision } from './models/AssessmentDecision';
 export type { Bed } from './models/Bed';
 export type { Booking } from './models/Booking';
 export type { BookingBody } from './models/BookingBody';

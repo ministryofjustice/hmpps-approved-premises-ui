@@ -5,13 +5,11 @@ import applicationFactory from '../../../testutils/factories/application'
 import personFactory from '../../../testutils/factories/person'
 
 describe('OralHearing', () => {
-  let application = applicationFactory.build()
+  const person = personFactory.build({ name: 'John Wayne' })
+  const application = applicationFactory.build({ person })
 
   describe('title', () => {
     it('shold add the name of the person', () => {
-      const person = personFactory.build({ name: 'John Wayne' })
-      application = applicationFactory.build({ person })
-
       const page = new OralHearing({}, application)
 
       expect(page.title).toEqual('Do you know John Wayne’s oral hearing date?')

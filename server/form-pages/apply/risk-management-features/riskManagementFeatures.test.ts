@@ -7,9 +7,8 @@ import personFactory from '../../../testutils/factories/person'
 jest.mock('../../../utils/formUtils')
 
 describe('RiskManagementFeatures', () => {
-  let application = applicationFactory.build()
   const person = personFactory.build({ name: 'John Wayne' })
-  application = applicationFactory.build({ person })
+  const application = applicationFactory.build({ person })
 
   describe('body', () => {
     it('should strip unknown attributes from the body', () => {

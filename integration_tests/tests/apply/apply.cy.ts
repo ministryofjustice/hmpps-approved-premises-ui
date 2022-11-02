@@ -12,6 +12,7 @@ import {
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
 import PlacementPurposePage from '../../../cypress_shared/pages/apply/placementPurpose'
+import RehabilitativeInterventions from '../../../cypress_shared/pages/apply/rehabilitativeInterventions'
 import RiskManagementFeatures from '../../../cypress_shared/pages/apply/riskManagementFeatures'
 import TypeOfConvictedOffence from '../../../cypress_shared/pages/apply/typeOfConvictedOffence'
 
@@ -203,6 +204,10 @@ context('Apply', () => {
     const dateOfOffencePage = new DateOfOffence()
     dateOfOffencePage.completeForm()
     dateOfOffencePage.clickSubmit()
+
+    const rehabilitativeInterventionsPage = new RehabilitativeInterventions()
+    rehabilitativeInterventionsPage.completeForm()
+    rehabilitativeInterventionsPage.clickSubmit()
 
     // Then I should be taken back to the task list
     // And the risk management task should show a completed status

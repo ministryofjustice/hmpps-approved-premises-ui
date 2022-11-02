@@ -5,9 +5,9 @@ import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import TasklistPage from '../../tasklistPage'
 
 export const offences = {
-  arson: 'Arson',
-  sexualOffence: 'Sexual Offence',
-  hateCrimes: 'Hate Crimes',
+  arson: 'Arson offences',
+  sexualOffence: 'Sexual offences',
+  hateCrimes: 'Hate crimes',
   childNonSexualOffence: 'Non-sexual offences against children',
 } as const
 
