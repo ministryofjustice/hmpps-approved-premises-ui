@@ -27,13 +27,14 @@ export default class PlacementPurpose implements TasklistPage {
   previousPage: string
 
   constructor(body: Record<string, unknown>, private readonly _application: Application, previousPage: string) {
+    const placementPurposesResponse = [body.placementPurposes].flat() as Array<PlacementPurposeT>
     if (this.responseNeedsFreeTextReason(body)) {
       this.body = {
-        placementPurposes: body.placementPurposes as Array<PlacementPurposeT>,
+        placementPurposes: placementPurposesResponse,
         otherReason: body.otherReason as string,
       }
     } else {
-      this.body = { placementPurposes: body.placementPurposes as Array<PlacementPurposeT> }
+      this.body = { placementPurposes: placementPurposesResponse }
     }
 
     this.previousPage = previousPage
