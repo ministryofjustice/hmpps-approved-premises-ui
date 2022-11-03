@@ -59,7 +59,7 @@ export default class PlacementPurpose implements TasklistPage {
     }
 
     if (this.responseNeedsFreeTextReason(this.body) && !this.body.otherReason) {
-      errors.placementPurposes = 'You must explain the reason'
+      errors.otherReason = 'You must explain the reason'
     }
 
     return errors

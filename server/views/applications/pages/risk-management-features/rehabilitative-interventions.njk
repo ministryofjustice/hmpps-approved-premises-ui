@@ -31,13 +31,14 @@
         hint: {
           text: "You can select more than one option"
         },
+        errorMessage: errors.otherIntervention,
         items: (interventions.push({
-    value: "other",
-    text: "Other",
-    conditional: {
-        html: otherIntervention
-    }
-}), interventions) 
-      }) }}
+            value: "other",
+            text: "Other",
+            conditional: {
+                html: otherIntervention
+            }
+            }), interventions) 
+        }) }}
 
 {% endblock %}
