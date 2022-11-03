@@ -27,7 +27,10 @@ export default class PlacementPurpose implements TasklistPage {
   previousPage: string
 
   constructor(body: Record<string, unknown>, private readonly _application: Application, previousPage: string) {
-    const placementPurposesResponse = [body.placementPurposes].flat() as Array<PlacementPurposeT>
+    const placementPurposesResponse = body?.placementPurposes
+      ? ([body.placementPurposes].flat() as Array<PlacementPurposeT>)
+      : []
+
     if (this.responseNeedsFreeTextReason(body)) {
       this.body = {
         placementPurposes: placementPurposesResponse,
@@ -63,7 +66,7 @@ export default class PlacementPurpose implements TasklistPage {
   }
 
   private responseContainsReasons(body: Record<string, unknown>): body is { placementPurposes: Array<unknown> } {
-    if (body?.placementPurposes && Array.isArray(body.placementPurposes)) {
+    if (body?.placementPurposes && Array.isArray(body.placementPurposes) && body.placementPurposes.length) {
       return true
     }
     return false
@@ -79,7 +82,7 @@ export default class PlacementPurpose implements TasklistPage {
   }
 
   items() {
-    return convertKeyValuePairToCheckBoxItems(placementPurposes, this.body.placementPurposes)
+    return convertKeyValuePairToCheckBoxItems(placementPurposes, this.body?.placementPurposes)
   }
 
   response() {
