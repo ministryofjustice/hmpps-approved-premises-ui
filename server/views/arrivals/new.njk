@@ -65,7 +65,7 @@
           id: "keyWorkerStaffId",
           name: "arrival[keyWorkerStaffId]",
           items: convertObjectsToSelectOptions(staffMembers, 'Select a keyworker', 'name', 'id', 'keyWorkerStaffId'),
-          errorMessage: errors.keyWorkerStaffId
+          errorMessage: errors.keyWorkerStaffId.empty
         }) }}
 
         {{ govukTextarea({
