@@ -30,7 +30,7 @@ export default class RehabilitativeInterventions implements TasklistPage {
     private readonly _application: Application,
     private readonly previousPage: string,
   ) {
-    const interventions = [body.interventions].flat() as Interventions
+    const interventions = body.interventions ? ([body.interventions].flat() as Interventions) : []
 
     this.body = { interventions }
 
@@ -64,7 +64,7 @@ export default class RehabilitativeInterventions implements TasklistPage {
 
   errors() {
     const errors: TaskListErrors<this> = {}
-    if (this.otherInterventionDetailIsNeeded(this.body.interventions) && !this.body.otherIntervention) {
+    if (this.otherInterventionDetailIsNeeded(this.body?.interventions) && !this.body?.otherIntervention) {
       errors.otherIntervention = 'You must specify the other intervention'
     }
     return errors
@@ -72,7 +72,7 @@ export default class RehabilitativeInterventions implements TasklistPage {
 
   items() {
     const { other, ...uiInterventions } = interventionsTranslations
-    return convertKeyValuePairToCheckBoxItems(uiInterventions, this.body.interventions)
+    return convertKeyValuePairToCheckBoxItems(uiInterventions, this.body?.interventions)
   }
 
   private otherInterventionDetailIsNeeded(interventions: Interventions) {

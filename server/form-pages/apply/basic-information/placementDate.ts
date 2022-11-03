@@ -35,7 +35,7 @@ export default class PlacementDate implements TasklistPage {
   }
 
   previous() {
-    return 'oral-hearing'
+    return 'release-date'
   }
 
   response() {

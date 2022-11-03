@@ -14,7 +14,7 @@
 
 {% block content %}
 
-  {% if page.previous %}
+  {% if page.previous() %}
     {{ govukBackLink({
       text: "Back",
       href: paths.applications.pages.show({ id: applicationId, task: task, page: page.previous() })

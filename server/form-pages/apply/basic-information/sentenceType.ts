@@ -47,6 +47,8 @@ export default class SentenceType implements TasklistPage {
         return 'release-type'
       case 'ipp':
         return 'release-type'
+      case 'nonStatutory':
+        return 'release-type'
       case 'life':
         return 'release-type'
       default:
