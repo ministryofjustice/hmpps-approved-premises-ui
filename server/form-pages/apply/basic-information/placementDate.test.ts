@@ -34,7 +34,7 @@ describe('PlacementDate', () => {
   })
 
   itShouldHaveNextValue(new PlacementDate({}, application), 'placement-purpose')
-  itShouldHavePreviousValue(new PlacementDate({}, application), 'oral-hearing')
+  itShouldHavePreviousValue(new PlacementDate({}, application), 'release-date')
 
   describe('errors', () => {
     it('should return an empty object if the release date is the same as the start date', () => {
