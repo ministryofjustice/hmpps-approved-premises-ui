@@ -61,6 +61,9 @@
       "<rootDir>/(server|job)/**/?(*.)(cy|test).{ts,js,jsx,mjs}",
       "<rootDir>/wiremock/?(*.)(cy|test).{ts,js,jsx,mjs}"
     ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/server/form-pages/utils/templates/test.ts"
+    ],
     "testEnvironment": "node",
     "reporters": [
       "default",
