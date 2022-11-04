@@ -33,13 +33,15 @@
           text: "You must select at least one option"
         },
         errorMessage: errors.otherIntervention,
+        values: interventions,
         items: (interventions.push({
-            value: "other",
-            text: "Other",
-            conditional: {
-                html: otherIntervention
-            }
-            }), interventions) 
-        }) }}
+                    value: "other",
+                    text: "Other",
+                    checked: page.responseContainsOther(),
+                    conditional: {
+                        html: otherIntervention
+                        }
+                    }), interventions)
+    }) }}
 
 {% endblock %}
