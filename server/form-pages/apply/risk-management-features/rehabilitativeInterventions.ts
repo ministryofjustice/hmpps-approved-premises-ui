@@ -36,7 +36,7 @@ export default class RehabilitativeInterventions implements TasklistPage {
 
     this.body = { rehabilitativeInterventions }
 
-    if (this.otherInterventionDetailIsNeeded(rehabilitativeInterventions)) {
+    if (this.responseContainsOther(rehabilitativeInterventions)) {
       this.body = {
         rehabilitativeInterventions,
         otherIntervention: body.otherIntervention as string,
@@ -59,7 +59,7 @@ export default class RehabilitativeInterventions implements TasklistPage {
         .join(', '),
     }
 
-    if (!this.otherInterventionDetailIsNeeded(this.body.rehabilitativeInterventions)) {
+    if (!this.responseContainsOther(this.body.rehabilitativeInterventions)) {
       return response
     }
 
@@ -73,7 +73,7 @@ export default class RehabilitativeInterventions implements TasklistPage {
       errors.rehabilitativeInterventions = 'You must select at least one option'
     }
 
-    if (this.otherInterventionDetailIsNeeded(this.body?.rehabilitativeInterventions) && !this.body?.otherIntervention) {
+    if (this.responseContainsOther(this.body?.rehabilitativeInterventions) && !this.body?.otherIntervention) {
       errors.otherIntervention = 'You must specify the other intervention'
     }
 
@@ -86,7 +86,7 @@ export default class RehabilitativeInterventions implements TasklistPage {
     return convertKeyValuePairToCheckBoxItems(uiInterventions, this.body?.rehabilitativeInterventions)
   }
 
-  private otherInterventionDetailIsNeeded(interventions: Interventions) {
-    return interventions.find(element => element === 'other')
+  private responseContainsOther(interventions: Interventions = this.body.rehabilitativeInterventions): boolean {
+    return !!interventions.find(element => element === 'other')
   }
 }
