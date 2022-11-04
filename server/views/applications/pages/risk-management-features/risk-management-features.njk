@@ -23,6 +23,7 @@
     name: "manageRiskDetails",
     id: "manageRiskDetails",
     errorMessage: errors.manageRiskDetails,
+    value: manageRiskDetails,
     label: {
       classes: "govuk-label--s",
       text: "Describe why an AP placement is needed to manage the risk of this person"
@@ -42,9 +43,11 @@
     <li>Regular drug and alcohol testing</li>
     <li>Monitoring the possession of electronic devices</li>
   </ul>
+
   {{ govukTextarea({
-    name: "additionalFeaturesDetail",
-    id: "additionalFeaturesDetail",
+    name: "additionalFeaturesDetails",
+    id: "additionalFeaturesDetails",
+    value: additionalFeaturesDetails,
     label: {
       classes: "govuk-label--s",
       text: "Provide details of any additional measures that will be necessary for the management of risk"
