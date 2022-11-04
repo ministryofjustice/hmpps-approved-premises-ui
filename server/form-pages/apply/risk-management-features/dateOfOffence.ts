@@ -14,7 +14,7 @@ const offencesList = Object.keys(offences)
 
 type Offence = keyof typeof offences
 
-type Response = 'current' | 'previous' | ['current', 'previous'] | undefined
+type Response = ['current'] | ['previous'] | ['current', 'previous']
 
 export default class DateOfOffence implements TasklistPage {
   name = 'date-of-offence'
@@ -30,7 +30,7 @@ export default class DateOfOffence implements TasklistPage {
   constructor(body: Record<string, unknown>) {
     this.body = offencesList.reduce((prev, offence) => {
       if (body[offence]) {
-        return { ...prev, [offence]: body[offence] as Response }
+        return { ...prev, [offence]: [body[offence]].flat() as Response }
       }
       return prev
     }, {})
@@ -57,7 +57,7 @@ export default class DateOfOffence implements TasklistPage {
 
   getPlainEnglishAnswerFromFormData(formData: Response) {
     if (formData) {
-      return Array.isArray(formData) ? 'Current and previous' : sentenceCase(formData)
+      return formData.length === 2 ? 'Current and previous' : sentenceCase(formData[0])
     }
     return 'Neither'
   }
@@ -79,8 +79,8 @@ export default class DateOfOffence implements TasklistPage {
   renderTableRow(offence: string) {
     return [
       this.textValue(sentenceCase(offence)),
-      this.checkbox(offence, 'current'),
-      this.checkbox(offence, 'previous'),
+      this.checkbox(offence, 'current', this.isSelected(offence, 'current')),
+      this.checkbox(offence, 'previous', this.isSelected(offence, 'previous')),
     ]
   }
 
@@ -96,13 +96,19 @@ export default class DateOfOffence implements TasklistPage {
     return { html: value }
   }
 
-  private checkbox(offence: string, date: 'current' | 'previous') {
+  private checkbox(offence: string, date: 'current' | 'previous', checked: boolean) {
     return this.htmlValue(
       `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="${offence}-${date}" name="${offence}" type="checkbox" value="${date}">
+                <input class="govuk-checkboxes__input" id="${offence}-${date}" name="${offence}" type="checkbox" value="${date}" ${
+        checked ? 'checked' : ''
+      }>
                 <label class="govuk-label govuk-checkboxes__label" for="${offence.concat(`-${date}`)}"></label>
             </div>`,
     )
+  }
+
+  private isSelected(offence: string, timePeriod: string) {
+    return Boolean(this?.body?.[offence]?.find((item: string) => item === timePeriod))
   }
 }
