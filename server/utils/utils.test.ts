@@ -7,6 +7,8 @@ import {
   retrieveQuestionResponseFromApplication,
   removeBlankSummaryListItems,
   mapApiPersonRisksForUi,
+  pascalCase,
+  camelCase,
 } from './utils'
 import risksFactory from '../testutils/factories/risks'
 import { DateFormats } from './dateUtils'
@@ -24,6 +26,18 @@ describe('convert to title case', () => {
     ['Hyphenated', 'Robert-John SmiTH-jONes-WILSON', 'Robert-John Smith-Jones-Wilson'],
   ])('%s convertToTitleCase(%s, %s)', (_: string, a: string, expected: string) => {
     expect(convertToTitleCase(a)).toEqual(expected)
+  })
+})
+
+describe('pascalCase', () => {
+  it('converts a string to Pascal Case', () => {
+    expect(pascalCase('my-string')).toEqual('MyString')
+  })
+})
+
+describe('camelCase', () => {
+  it('converts a string to camel Case', () => {
+    expect(camelCase('my-string')).toEqual('myString')
   })
 })
 
