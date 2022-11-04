@@ -15,6 +15,6 @@ export default class RehabilitativeInterventions extends Page {
     this.checkCheckboxByNameAndValue('rehabilitativeInterventions', 'attitudesAndBehaviour')
     this.checkCheckboxByNameAndValue('rehabilitativeInterventions', 'abuse')
     this.checkCheckboxByNameAndValue('rehabilitativeInterventions', 'other')
-    this.getTextInputByIdAndEnterDetails('otherIntervention', 'another one')
+    this.getTextInputByIdAndEnterDetails('otherIntervention', 'Another')
   }
 }
