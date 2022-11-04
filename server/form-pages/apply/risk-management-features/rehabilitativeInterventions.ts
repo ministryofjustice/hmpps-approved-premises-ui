@@ -23,20 +23,22 @@ export default class RehabilitativeInterventions implements TasklistPage {
 
   title = `Which rehabilitative interventions will support the person's Approved Premises (AP) placement?`
 
-  body: { interventions: Interventions; otherIntervention?: string }
+  body: { rehabilitativeInterventions: Interventions; otherIntervention?: string }
 
   constructor(
     body: Record<string, unknown>,
     private readonly _application: Application,
     private readonly previousPage: string,
   ) {
-    const interventions = body.interventions ? ([body.interventions].flat() as Interventions) : []
+    const rehabilitativeInterventions = body.rehabilitativeInterventions
+      ? ([body.rehabilitativeInterventions].flat() as Interventions)
+      : []
 
-    this.body = { interventions }
+    this.body = { rehabilitativeInterventions }
 
-    if (this.otherInterventionDetailIsNeeded(interventions)) {
+    if (this.otherInterventionDetailIsNeeded(rehabilitativeInterventions)) {
       this.body = {
-        interventions,
+        rehabilitativeInterventions,
         otherIntervention: body.otherIntervention as string,
       }
     }
@@ -52,10 +54,12 @@ export default class RehabilitativeInterventions implements TasklistPage {
 
   response() {
     const response = {
-      [this.title]: this.body.interventions.map(intervention => interventionsTranslations[intervention]).join(', '),
+      [this.title]: this.body.rehabilitativeInterventions
+        .map(intervention => interventionsTranslations[intervention])
+        .join(', '),
     }
 
-    if (!this.otherInterventionDetailIsNeeded(this.body.interventions)) {
+    if (!this.otherInterventionDetailIsNeeded(this.body.rehabilitativeInterventions)) {
       return response
     }
 
@@ -67,12 +71,14 @@ export default class RehabilitativeInterventions implements TasklistPage {
     if (this.otherInterventionDetailIsNeeded(this.body?.interventions) && !this.body?.otherIntervention) {
       errors.otherIntervention = 'You must specify the other intervention'
     }
+
     return errors
   }
 
   items() {
     const { other, ...uiInterventions } = interventionsTranslations
-    return convertKeyValuePairToCheckBoxItems(uiInterventions, this.body?.interventions)
+
+    return convertKeyValuePairToCheckBoxItems(uiInterventions, this.body?.rehabilitativeInterventions)
   }
 
   private otherInterventionDetailIsNeeded(interventions: Interventions) {
