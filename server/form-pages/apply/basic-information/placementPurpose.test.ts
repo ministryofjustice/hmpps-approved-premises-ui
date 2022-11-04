@@ -75,7 +75,7 @@ describe('PlacementPurpose', () => {
 
     it('should return an error if the placementPurpose is "Other reason" and the reason is note given', () => {
       const page = new PlacementPurpose({ placementPurposes: ['otherReason'] }, application, 'somePage')
-      expect(page.errors()).toEqual({ placementPurposes: 'You must explain the reason' })
+      expect(page.errors()).toEqual({ otherReason: 'You must explain the reason' })
     })
   })
 

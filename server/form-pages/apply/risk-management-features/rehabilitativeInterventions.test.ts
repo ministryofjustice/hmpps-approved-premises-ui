@@ -15,12 +15,12 @@ describe('RehabilitativeInterventions', () => {
   describe('body', () => {
     it('should strip unknown attributes from the body', () => {
       const page = new RehabilitativeInterventions(
-        { interventions: 'accomodation', something: 'else' },
+        { rehabilitativeInterventions: 'accomodation', something: 'else' },
         application,
         previousPage,
       )
 
-      expect(page.body).toEqual({ interventions: ['accomodation'] })
+      expect(page.body).toEqual({ rehabilitativeInterventions: ['accomodation'] })
     })
   })
 
@@ -31,26 +31,32 @@ describe('RehabilitativeInterventions', () => {
   itShouldHaveNextValue(new RehabilitativeInterventions({}, application, previousPage), '')
 
   describe('errors', () => {
-    it("should return an empty object if 'interventions' isn't populated", () => {
+    it("should return an error if 'rehabilitativeInterventions' isn't populated", () => {
       const page = new RehabilitativeInterventions({}, application, previousPage)
+      expect(page.errors()).toEqual({ rehabilitativeInterventions: 'You must select at least one option' })
+    })
+
+    it('should return an empty object if "rehabilitativeInterventions" is populated with an array of interventions', () => {
+      const page = new RehabilitativeInterventions(
+        { rehabilitativeInterventions: ['accomodation'] },
+        application,
+        previousPage,
+      )
       expect(page.errors()).toEqual({})
     })
 
-    it('should return an empty object if "interventions" is populated with an array of interventions', () => {
-      const page = new RehabilitativeInterventions({ interventions: ['accomodation'] }, application, previousPage)
-      expect(page.errors()).toEqual({})
-    })
-
-    it('should return an error if "interventions" includes "other" and no other intervention is supplied', () => {
+    it('should return an error if "rehabilitativeInterventions" includes "other" and no other intervention is supplied', () => {
       expect(
         new RehabilitativeInterventions(
-          { interventions: ['other', 'accomodation'] },
+          { rehabilitativeInterventions: ['other', 'accomodation'] },
           application,
           previousPage,
         ).errors(),
       ).toEqual({ otherIntervention: 'You must specify the other intervention' })
 
-      expect(new RehabilitativeInterventions({ interventions: 'other' }, application, previousPage).errors()).toEqual({
+      expect(
+        new RehabilitativeInterventions({ rehabilitativeInterventions: 'other' }, application, previousPage).errors(),
+      ).toEqual({
         otherIntervention: 'You must specify the other intervention',
       })
     })
@@ -61,7 +67,7 @@ describe('RehabilitativeInterventions', () => {
       it('When there are multiple interventions', () => {
         const page = new RehabilitativeInterventions(
           {
-            interventions: [
+            rehabilitativeInterventions: [
               'accomodation',
               'drugsAndAlcohol',
               'childrenAndFamilies',
@@ -86,7 +92,11 @@ describe('RehabilitativeInterventions', () => {
       })
 
       it('When there is a single intervention', () => {
-        const page = new RehabilitativeInterventions({ interventions: 'health' }, application, previousPage)
+        const page = new RehabilitativeInterventions(
+          { rehabilitativeInterventions: 'health' },
+          application,
+          previousPage,
+        )
 
         expect(page.response()).toEqual({
           "Which rehabilitative interventions will support the person's Approved Premises (AP) placement?": 'Health',
@@ -97,7 +107,7 @@ describe('RehabilitativeInterventions', () => {
   describe('items', () => {
     it('calls convertKeyValuePairToCheckBoxItems with the correct arguments', () => {
       const { other, ...interventionsForCheckboxes } = interventionsTranslations
-      new RehabilitativeInterventions({ interventions: 'health' }, application, previousPage).items()
+      new RehabilitativeInterventions({ rehabilitativeInterventions: 'health' }, application, previousPage).items()
       expect(convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(interventionsForCheckboxes, ['health'])
     })
   })

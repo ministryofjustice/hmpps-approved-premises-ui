@@ -8,11 +8,11 @@ export default class RiskManagementFeatures extends Page {
   }
 
   enterRiskManagementDetails() {
-    this.getTextInputByIdAndEnterDetails('manageRiskDetails', faker.lorem.sentence())
+    this.getTextInputByIdAndEnterDetails('manageRiskDetails', faker.lorem.words())
   }
 
   enterAdditionalFeaturesDetails() {
-    this.getTextInputByIdAndEnterDetails('additionalFeaturesDetail', faker.lorem.sentence())
+    this.getTextInputByIdAndEnterDetails('additionalFeaturesDetails', faker.lorem.words())
   }
 
   completeForm() {
