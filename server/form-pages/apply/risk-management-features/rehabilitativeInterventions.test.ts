@@ -31,9 +31,9 @@ describe('RehabilitativeInterventions', () => {
   itShouldHaveNextValue(new RehabilitativeInterventions({}, application, previousPage), '')
 
   describe('errors', () => {
-    it("should return an empty object if 'interventions' isn't populated", () => {
+    it("should return an error if 'rehabilitativeInterventions' isn't populated", () => {
       const page = new RehabilitativeInterventions({}, application, previousPage)
-      expect(page.errors()).toEqual({})
+      expect(page.errors()).toEqual({ rehabilitativeInterventions: 'You must select at least one option' })
     })
 
     it('should return an empty object if "rehabilitativeInterventions" is populated with an array of interventions', () => {

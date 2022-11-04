@@ -68,7 +68,12 @@ export default class RehabilitativeInterventions implements TasklistPage {
 
   errors() {
     const errors: TaskListErrors<this> = {}
-    if (this.otherInterventionDetailIsNeeded(this.body?.interventions) && !this.body?.otherIntervention) {
+
+    if (this.body?.rehabilitativeInterventions?.length <= 0) {
+      errors.rehabilitativeInterventions = 'You must select at least one option'
+    }
+
+    if (this.otherInterventionDetailIsNeeded(this.body?.rehabilitativeInterventions) && !this.body?.otherIntervention) {
       errors.otherIntervention = 'You must specify the other intervention'
     }
 

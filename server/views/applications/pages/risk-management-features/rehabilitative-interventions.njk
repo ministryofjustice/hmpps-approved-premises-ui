@@ -13,23 +13,24 @@
 
     {% set otherIntervention %}
     {{ govukInput({
-                id: "otherIntervention",
-                name: "otherIntervention",
-                type: "text",
-                autocomplete: "text",
-                spellcheck: false,
-                classes: "govuk-!-width-two-thirds",
-                label: {
-                    text: "Please specify"
-                }
-                }) }}
+            id: "otherIntervention",
+            name: "otherIntervention",
+            type: "text",
+            autocomplete: "text",
+            spellcheck: false,
+            classes: "govuk-!-width-two-thirds",
+            value: otherIntervention,
+            label: {
+                text: "Please specify"
+            }
+        }) }}
     {% endset %}
 
     {{ govukCheckboxes({
         idPrefix: "rehabilitativeInterventions",
         name: "rehabilitativeInterventions",
         hint: {
-          text: "You can select more than one option"
+          text: "You must select at least one option"
         },
         errorMessage: errors.otherIntervention,
         items: (interventions.push({
