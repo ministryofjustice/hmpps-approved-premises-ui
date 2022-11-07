@@ -1,5 +1,3 @@
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
-
 {% extends "../layout.njk" %}
 
 {% block questions %}
@@ -13,21 +11,24 @@
             <li>{{offence}}</li>
         {% endfor %}
     </ul>
-    {{ govukRadios({
-        idPrefix: "response",
-        name: "response",
-        errorMessage: errors.response,
-        value: response,
-        items: [
+
+    {{
+      applyRadios(
+        {
+          fieldName: "response",
+          items: [
             {
-            value: "yes",
-            text: "Yes"
+              value: "yes",
+              text: "Yes"
             },
             {
-            value: "no",
-            text: "No"
+              value: "no",
+              text: "No"
             }
-        ]
-    }) }}
+          ]
+        },
+        fetchContext()
+      )
+    }}
 
 {% endblock %}

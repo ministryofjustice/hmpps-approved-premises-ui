@@ -1,4 +1,3 @@
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% extends "../layout.njk" %}
@@ -37,35 +36,33 @@
     }) }}
   {% endset -%}
 
-  {{ govukRadios({
-    idPrefix: "knowReleaseDate",
-    name: "knowReleaseDate",
-    errorMessage: errors.knowReleaseDate,
-    fieldset: {
-      legend: {
-        text: page.title,
-        isPageHeading: true,
-        classes: "govuk-fieldset__legend--l"
-      }
-    },
-    items: [
+  {{
+    applyRadios(
       {
-        value: "yes",
-        text: "Yes",
-        checked: knowReleaseDate == 'yes',
-        conditional: {
-          html: releaseDateHTML
-        }
+        fieldName: "knowReleaseDate",
+        fieldset: {
+          legend: {
+            text: page.title,
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes",
+            conditional: {
+              html: releaseDateHTML
+            }
+          },
+          {
+            text: "No",
+            value: "no"
+          }
+        ]
       },
-      {
-        text: "No",
-        value: "no",
-        checked: knowReleaseDate == 'no',
-        conditional: {
-          html: bannerHTML
-        }
-      }
-    ]
-    }) }}
+      fetchContext()
+    )
+  }}
 
 {% endblock %}

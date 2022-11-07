@@ -1,6 +1,3 @@
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
-
 {% extends "../layout.njk" %}
 
 {% block questions %}
@@ -25,32 +22,33 @@
   }}
   {% endset -%}
 
-  {{ govukRadios({
-    idPrefix: "opdPathway",
-    name: "opdPathway",
-    errorMessage: errors.opdPathway,
-    fieldset: {
-      legend: {
-        text: page.title,
-        isPageHeading: true,
-        classes: "govuk-fieldset__legend--l"
-      }
-    },
-    items: [
+  {{
+    applyRadios(
       {
-        value: "yes",
-        text: "Yes",
-        checked: opdPathway == 'yes',
-        conditional: {
-          html: opdPathwayDateHTML
-        }
+        fieldName: "opdPathway",
+        fieldset: {
+          legend: {
+            text: page.title,
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes",
+            conditional: {
+              html: opdPathwayDateHTML
+            }
+          },
+          {
+            text: "No",
+            value: "no"
+          }
+        ]
       },
-      {
-        text: "No",
-        value: "no",
-        checked: opdPathway == 'no'
-      }
-    ]
-    }) }}
+      fetchContext()
+    )
+  }}
 
 {% endblock %}

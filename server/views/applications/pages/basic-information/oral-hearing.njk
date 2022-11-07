@@ -1,4 +1,3 @@
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% extends "../layout.njk" %}
@@ -37,35 +36,35 @@
     }) }}
   {% endset -%}
 
-  {{ govukRadios({
-    idPrefix: "knowOralHearingDate",
-    name: "knowOralHearingDate",
-    errorMessage: errors.knowOralHearingDate,
-    fieldset: {
-      legend: {
-        text: page.title,
-        isPageHeading: true,
-        classes: "govuk-fieldset__legend--l"
-      }
-    },
-    items: [
+  {{ applyRadios(
       {
-        value: "yes",
-        text: "Yes",
-        checked: knowOralHearingDate == 'yes',
-        conditional: {
-          html: oralHearingDateHTML
-        }
+        fieldset: {
+          legend: {
+            text: page.title,
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes",
+            conditional: {
+              html: oralHearingDateHTML
+            }
+          },
+          {
+            text: "No",
+            value: "no",
+            conditional: {
+              html: bannerHTML
+            }
+          }
+        ],
+        fieldName: "knowOralHearingDate"
       },
-      {
-        text: "No",
-        value: "no",
-        checked: knowOralHearingDate == 'no',
-        conditional: {
-          html: bannerHTML
-        }
-      }
-    ]
-    }) }}
+      fetchContext()
+    )
+  }}
 
 {% endblock %}

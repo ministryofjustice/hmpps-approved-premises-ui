@@ -4,30 +4,31 @@
 
 {% block questions %}
 
-  {{ govukRadios({
-      idPrefix: "pipeReferral",
-      name: "pipeReferral",
-      errorMessage: errors.pipeReferral,
-      fieldset: {
-        legend: {
-          text: page.title,
-          isPageHeading: true,
-          classes: "govuk-fieldset__legend--l"
-        }
-      },
-      items: [
-        {
-          value: "yes",
-          text: "Yes",
-          checked: pipeReferral == 'yes'
+  {{
+    applyRadios(
+      {
+        fieldName: "pipeReferral",
+        fieldset: {
+          legend: {
+            text: page.title,
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
         },
-        {
-          value: "no",
-          text: "No",
-          checked: pipeReferral == 'no'
-        }
-      ]
-    }) }}
+        items: [
+          {
+            value: "yes",
+            text: "Yes"
+          },
+          {
+            text: "No",
+            value: "no"
+          }
+        ]
+      },
+      fetchContext()
+    )
+  }}
 
   {{
     applyTextarea(

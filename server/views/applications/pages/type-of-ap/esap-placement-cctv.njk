@@ -1,5 +1,4 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
 
 {% extends "../layout.njk" %}
 
@@ -34,13 +33,37 @@
     )
   }}
   {% endset -%}
+
+  {{
+    applyRadios(
       {
-        text: "No",
-        value: "no",
-        checked: cctvIntelligence == 'no'
-      }
-    ]
-    }) }}
+        fieldName: "cctvIntelligence",
+        hint: {
+          text: "For example, DOS, JEXU or NSD."
+        },
+        fieldset: {
+          legend: {
+            text: page.questions.cctvIntelligence,
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes",
+            conditional: {
+              html: yesDetails
+            }
+          },
+          {
+            text: "No",
+            value: "no"
+          }
+        ]
+      },
+      fetchContext()
+    )
+  }}
 
   <h2 class="govuk-heading-s">{{ page.questions.cctvNotes }}</h2>
 
