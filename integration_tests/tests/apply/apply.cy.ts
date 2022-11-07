@@ -218,9 +218,9 @@ context('Apply', () => {
     cy.get('[data-cy-task-name="location-factors"]').click()
 
     // When I complete the form
-    const describeLocationFactors = new DescribeLocationFactors()
-    describeLocationFactors.completeForm()
-    describeLocationFactors.clickSubmit()
+    const describeLocationFactorsPage = new DescribeLocationFactors()
+    describeLocationFactorsPage.completeForm()
+    describeLocationFactorsPage.clickSubmit()
 
     // Then I should be taken back to the task list
     // And the location factors task should show a completed status
