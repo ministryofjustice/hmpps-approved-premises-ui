@@ -39,15 +39,15 @@ if (!fs.existsSync(path.resolve(__dirname, '..', dirName))) {
 
 // Create Page Definition
 const pageClassName = pascalCase(pageName)
-const pageClassPath = path.resolve(__dirname, `../${pagePath}.ts`)
-const pageClassTestPath = path.resolve(__dirname, `../${pagePath}.test.ts`)
+const pageClassPath = path.resolve(__dirname, `../${formName}/${sectionName}/${camelCase(pageClassName)}.ts`)
+const pageClassTestPath = path.resolve(__dirname, `../${formName}/${sectionName}/${camelCase(pageClassName)}.test.ts`)
 
 fs.writeFileSync(pageClassPath, pageTemplate(pageClassName, pageName), {
   flag: 'w+',
 })
 
 // Create test file for Page Definition
-fs.writeFileSync(pageClassTestPath, testTemplate(pageClassName, pageName), {
+fs.writeFileSync(pageClassTestPath, testTemplate(pageClassName, camelCase(pageName)), {
   flag: 'w+',
 })
 
@@ -57,7 +57,7 @@ const indexPath = path.resolve(__dirname, `../${dirName}/index.ts`)
 if (!newSection) {
   const indexFile = fs.readFileSync(indexPath, 'utf8')
 
-  const importLine = `import ${pageClassName} from './${pageName}'`
+  const importLine = `import ${pageClassName} from './${camelCase(pageName)}'`
   const pageDefLine = `  '${pageName}': ${pageClassName},`
 
   if (!indexFile.includes(importLine) || !indexFile.includes(pageDefLine)) {
