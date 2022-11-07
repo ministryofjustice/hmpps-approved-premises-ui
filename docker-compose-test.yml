@@ -6,7 +6,7 @@ services:
     networks:
       - hmpps_int
     ports:
-      - '6379:6379'
+      - '6380:6379'
 
   wiremock:
     image: wiremock/wiremock
@@ -16,7 +16,7 @@ services:
     restart: always
     command: --local-response-templating
     ports:
-      - "9091:8080"
+      - "9999:8080"
 
 networks:
   hmpps_int:
