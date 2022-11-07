@@ -48,12 +48,7 @@ const kebabCase = (string: string) =>
  * @param string string to be converted.
  * @returns name converted to camelCase.
  */
-export const camelCase = (string: string) =>
-  string
-    .toLowerCase()
-    .replace(/[-_]+/g, ' ')
-    .replace(/[^\w\s]/g, '')
-    .replace(/\s+(.)(\w*)/g, (_$1, $2, $3) => `${$2.toUpperCase() + $3}`)
+export const camelCase = (string: string) => Case.camel(string)
 
 /**
  * Converts a string from any case to PascalCase
