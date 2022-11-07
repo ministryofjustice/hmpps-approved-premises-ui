@@ -1,5 +1,4 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% extends "../layout.njk" %}
@@ -7,20 +6,23 @@
 {% block questions %}
 
   {% set oralHearingDateHTML %}
-  {{ govukDateInput({
-      id: "oralHearingDate",
-      namePrefix: "oralHearingDate",
-      errorMessage: errors.oralHearingDate,
-      fieldset: {
-        legend: {
-          text: "Expected oral hearing date"
-        }
+  {{
+    applyDateInput(
+      {
+        fieldName: "oralHearingDate",
+        fieldset: {
+          legend: {
+            text: "Expected oral hearing date"
+          }
+        },
+        hint: {
+          text: "For example, 27 3 2007"
+        },
+        items: dateFieldValues('oralHearingDate', errors)
       },
-      hint: {
-        text: "For example, 27 3 2007"
-      },
-      items: dateFieldValues('oralHearingDate', errors)
-    }) }}
+      fetchContext()
+    )
+  }}
   {% endset -%}
 
   {% set bannerHTML %}
