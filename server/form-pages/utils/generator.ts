@@ -39,8 +39,8 @@ if (!fs.existsSync(path.resolve(__dirname, '..', dirName))) {
 
 // Create Page Definition
 const pageClassName = pascalCase(pageName)
-const pageClassPath = path.resolve(__dirname, `../${pagePath}.ts`)
-const pageClassTestPath = path.resolve(__dirname, `../${pagePath}.test.ts`)
+const pageClassPath = path.resolve(__dirname, `../${formName}/${sectionName}/${camelCase(pageClassName)}.ts`)
+const pageClassTestPath = path.resolve(__dirname, `../${formName}/${sectionName}/${camelCase(pageClassName)}.test.ts`)
 
 fs.writeFileSync(pageClassPath, pageTemplate(pageClassName, pageName), {
   flag: 'w+',
