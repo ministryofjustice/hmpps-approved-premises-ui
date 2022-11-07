@@ -1,0 +1,110 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+  <h1 class="govuk-heading-l">{{page.title}}</h1>
+
+  {{ applyCheckboxes({
+      fieldName: "additionalNeeds",
+      hint: {
+        text: page.questions.needs.hint
+      },
+      fieldset: {
+        legend: {
+          text: page.questions.needs.question,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: page.needsCheckboxes()
+    }, fetchContext()) }}
+
+  {% set culturalNeeds %}
+  {{ applyTextarea({
+      fieldName: 'religiousOrCulturalNeedsDetails',
+      spellcheck: false,
+      label: {
+        text: "Provide details"
+      }
+    },fetchContext()) }}
+  {% endset %}
+
+  {{ applyRadios({
+      fieldName: "religiousOrCulturalNeeds",
+      fieldset: {
+        legend: {
+          text: page.questions.religiousOrCulturalNeeds.question,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          conditional: {
+            html: culturalNeeds
+          }
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    },fetchContext()) }}
+
+  {% set needInterpreter %}
+  {{ applyInput({
+        fieldName: "interpreterLanguage",
+        label: {
+          text: "Which language?"
+        }
+      },fetchContext()) }}
+  {% endset -%}
+
+  {{ applyRadios({
+        fieldName: "needsInterpreter",
+        fieldset: {
+          legend: {
+            text: page.questions.interpreter.language,
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes",
+            conditional: {
+              html: needInterpreter
+            }
+          },
+          {
+            value: "no",
+            text: "No"
+          }
+        ]
+      },fetchContext()) }}
+
+  {{ applyRadios({
+        fieldName: "careActAssessmentCompleted",
+        fieldset: {
+          legend: {
+            text: page.questions.careActAssessmentCompleted,
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes"
+          },
+          {
+            value: "no",
+            text: "No"
+          },
+          {
+            value: "dontKnow",
+            text: "I don't know"
+          }
+        ]
+      },fetchContext()) }}
+
+{% endblock %}

@@ -23,6 +23,7 @@ import applicationFactory from '../../../server/testutils/factories/application'
 import personFactory from '../../../server/testutils/factories/person'
 import risksFactory from '../../../server/testutils/factories/risks'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
+import AccessNeedsPage from '../../../cypress_shared/pages/apply/accessNeeds'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -230,5 +231,15 @@ context('Apply', () => {
     // Then I should be taken back to the task list
     // And the location factors task should show a completed status
     tasklistPage.shouldShowTaskStatus('location-factors', 'Completed')
+
+    // Given I click the 'Provide access and healthcare information' task
+    cy.get('[data-cy-task-name="access-and-healthcare"]').click()
+
+    // When I complete the form
+    const accessNeedsPage = new AccessNeedsPage()
+    accessNeedsPage.completeForm()
+    accessNeedsPage.clickSubmit()
+
+    Page.verifyOnPage(TaskListPage)
   })
 })
