@@ -58,6 +58,6 @@
     "invalid": "The end date is an invalid date",
     "beforeStartDate": "The end date must be before the start date"
   },
-  "numberOfBeds": { "empty": "You must enter the number of beds lost" },
+  "numberOfBeds": { "empty": "You must enter the number of beds lost", "isZero": "Number of beds lost cannot be zero" },
   "referenceNumber": { "empty": "You must enter a reference number" }
 }
