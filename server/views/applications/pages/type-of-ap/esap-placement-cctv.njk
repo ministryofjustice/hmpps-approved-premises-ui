@@ -1,6 +1,5 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 
 {% extends "../layout.njk" %}
 
@@ -21,41 +20,20 @@
     }) }}
 
   {% set yesDetails %}
-  {{ govukTextarea({
-    id: "cctvIntelligenceDetails",
-    name: "cctvIntelligenceDetails",
-    type: "textarea",
-    spellcheck: false,
-    errorMessage: errors.cctvIntelligenceDetails,
-    label: {
-      text: page.questions.cctvIntelligenceDetails
-    },
-    value: cctvIntelligenceDetails
-  }) }}
-  {% endset -%}
-
-  {{ govukRadios({
-    idPrefix: "cctvIntelligence",
-    name: "cctvIntelligence",
-    errorMessage: errors.cctvIntelligence,
-    hint: {
-      text: "For example, DOS, JEXU or NSD."
-    },
-    fieldset: {
-      legend: {
-        text: page.questions.cctvIntelligence,
-        classes: "govuk-fieldset__legend--m"
-      }
-    },
-    items: [
+  {{
+    applyTextarea(
       {
-        value: "yes",
-        text: "Yes",
-        checked: cctvIntelligence == 'yes',
-        conditional: {
-          html: yesDetails
+        fieldName: "cctvIntelligenceDetails",
+        type: "textarea",
+        spellcheck: false,
+        label: {
+          text: page.questions.cctvIntelligenceDetails
         }
       },
+      fetchContext()
+    )
+  }}
+  {% endset -%}
       {
         text: "No",
         value: "no",
@@ -66,10 +44,13 @@
 
   <h2 class="govuk-heading-s">{{ page.questions.cctvNotes }}</h2>
 
-  {{ govukTextarea({
-      name: "cctvNotes",
-      id: "cctvNotes",
-      value: cctvNotes
-  }) }}
+  {{
+    applyTextarea(
+      {
+        fieldName: "cctvNotes"
+      },
+      fetchContext()
+    )
+  }}
 
 {% endblock %}
