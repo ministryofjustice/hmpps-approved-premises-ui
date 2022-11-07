@@ -16,7 +16,12 @@ export type ObjectWithDateParts<K extends string | number> = { [P in `${K}-${'ye
 
 export type BookingStatus = 'arrived' | 'awaiting-arrival' | 'not-arrived' | 'departed' | 'cancelled'
 
-export type TaskNames = 'basic-information' | 'type-of-ap' | 'risk-management-features' | 'location-factors'
+export type TaskNames =
+  | 'basic-information'
+  | 'type-of-ap'
+  | 'risk-management-features'
+  | 'location-factors'
+  | 'access-and-healthcare'
 
 export type Task = {
   id: string
@@ -125,6 +130,7 @@ export interface ErrorsAndUserInput {
 export type TaskListErrors<K extends TasklistPage> = Partial<Record<keyof K['body'], string>>
 
 export type YesOrNo = 'yes' | 'no'
+export type YesNoOrIDK = YesOrNo | 'dontKnow'
 
 export type PersonStatus = 'InCustody' | 'InCommunity'
 

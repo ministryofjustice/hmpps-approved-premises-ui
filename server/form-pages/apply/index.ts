@@ -5,6 +5,7 @@ import basicInfomationPages from './basic-information'
 import typeOfApPages from './type-of-ap'
 import riskAndNeedPages from './risk-management-features'
 import locationFactorPages from './location-factors'
+import accessAndHealthcarePages from './access-and-healthcare'
 
 const pages: {
   [key in TaskNames]: Record<string, unknown>
@@ -13,6 +14,7 @@ const pages: {
   'type-of-ap': typeOfApPages,
   'risk-management-features': riskAndNeedPages,
   'location-factors': locationFactorPages,
+  'access-and-healthcare': accessAndHealthcarePages,
 }
 
 const sections: FormSections = [
@@ -43,6 +45,11 @@ const sections: FormSections = [
         id: 'location-factors',
         title: 'Describe location factors',
         pages: locationFactorPages,
+      },
+      {
+        id: 'access-and-healthcare',
+        title: 'Provide access and healthcare information',
+        pages: accessAndHealthcarePages,
       },
     ],
   },
