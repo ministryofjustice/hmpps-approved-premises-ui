@@ -47,7 +47,7 @@ fs.writeFileSync(pageClassPath, pageTemplate(pageClassName, pageName), {
 })
 
 // Create test file for Page Definition
-fs.writeFileSync(pageClassTestPath, testTemplate(pageClassName, pageName), {
+fs.writeFileSync(pageClassTestPath, testTemplate(pageClassName, camelCase(pageName)), {
   flag: 'w+',
 })
 
@@ -57,7 +57,7 @@ const indexPath = path.resolve(__dirname, `../${dirName}/index.ts`)
 if (!newSection) {
   const indexFile = fs.readFileSync(indexPath, 'utf8')
 
-  const importLine = `import ${pageClassName} from './${pageName}'`
+  const importLine = `import ${pageClassName} from './${camelCase(pageName)}'`
   const pageDefLine = `  '${pageName}': ${pageClassName},`
 
   if (!indexFile.includes(importLine) || !indexFile.includes(pageDefLine)) {
