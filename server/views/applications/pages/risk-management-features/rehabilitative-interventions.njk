@@ -2,7 +2,7 @@
 
 {% extends "../layout.njk" %}
 
-{% set interventions = page.items() %}
+{% set interventionOptions = page.items() %}
 
 {% block questions %}
 
@@ -29,22 +29,25 @@
     }}
     {% endset %}
 
-    {{ govukCheckboxes({
-        idPrefix: "rehabilitativeInterventions",
-        name: "rehabilitativeInterventions",
-        hint: {
-          text: "You must select at least one option"
-        },
-        errorMessage: errors.otherIntervention,
-        values: interventions,
-        items: (interventions.push({
-                    value: "other",
-                    text: "Other",
-                    checked: page.responseContainsOther(),
-                    conditional: {
-                        html: otherIntervention
-                        }
-                    }), interventions)
-    }) }}
+    {{
+        applyCheckboxes(
+            {
+                fieldName: "rehabilitativeInterventions",
+                hint: {
+                    text: "You can select more than one option"
+                },
+                items: (
+                        interventionOptions.push({
+                            value: "other",
+                            text: "Other",
+                            conditional: {
+                                html: otherIntervention
+                            }
+                        }), interventionOptions
+                    )
+            },
+            fetchContext()
+        )
+    }}
 
 {% endblock %}
