@@ -10,7 +10,7 @@ export default Factory.define<LostBed>(() => ({
   notes: faker.lorem.sentence(),
   startDate: DateFormats.formatApiDate(faker.date.soon()),
   endDate: DateFormats.formatApiDate(faker.date.future()),
-  numberOfBeds: faker.datatype.number({ max: 10 }),
+  numberOfBeds: faker.datatype.number({ min: 1, max: 10 }),
   referenceNumber: faker.datatype.uuid(),
   reason: referenceDataFactory.lostBedReasons().build(),
 }))
