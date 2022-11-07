@@ -19,20 +19,22 @@
     <li>Drug and alcohol testing</li>
   </ul>
 
-  {{ govukTextarea({
-    name: "manageRiskDetails",
-    id: "manageRiskDetails",
-    errorMessage: errors.manageRiskDetails,
-    value: manageRiskDetails,
-    label: {
-      classes: "govuk-label--s",
-      text: "Describe why an AP placement is needed to manage the risk of this person"
-    },
-    hint: {
-      text: "This information will help inform the decision on whether an AP placement 
-      is suitable."
-    }
-  }) }}
+  {{
+    applyTextarea(
+      {
+        fieldName: "manageRiskDetails",
+        label: {
+          classes: "govuk-label--s",
+          text: page.questions.manageRiskDetails
+        },
+        hint: {
+          text: "This information will help inform the decision on whether an AP placement
+          is suitable."
+        }
+      },
+      fetchContext()
+    )
+  }}
 
   <p class="govuk-body">
     <b>AP placements can also provide additional measures if needed. For example:</b>
@@ -44,17 +46,20 @@
     <li>Monitoring the possession of electronic devices</li>
   </ul>
 
-  {{ govukTextarea({
-    name: "additionalFeaturesDetails",
-    id: "additionalFeaturesDetails",
-    value: additionalFeaturesDetails,
-    label: {
-      classes: "govuk-label--s",
-      text: "Provide details of any additional measures that will be necessary for the management of risk"
-    },
-    hint: {
-      text: "Provide the frequency and any specific times for these measures."
-    }
-  }) }}
+  {{
+    applyTextarea(
+      {
+        fieldName: "additionalFeaturesDetails",
+        label: {
+          classes: "govuk-label--s",
+          text: page.questions.additionalFeaturesDetails
+        },
+        hint: {
+          text: "Provide the frequency and any specific times for these measures."
+        }
+      },
+      fetchContext()
+    )
+  }}
 
 {% endblock %}

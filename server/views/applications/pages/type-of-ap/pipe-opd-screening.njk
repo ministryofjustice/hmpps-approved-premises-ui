@@ -1,42 +1,45 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 
 {% extends "../layout.njk" %}
 
 {% block questions %}
 
-  {{ govukRadios({
-      idPrefix: "pipeReferral",
-      name: "pipeReferral",
-      errorMessage: errors.pipeReferral,
-      fieldset: {
-        legend: {
-          text: page.title,
-          isPageHeading: true,
-          classes: "govuk-fieldset__legend--l"
+  {{
+    applyRadios(
+      {
+        fieldName: "pipeReferral",
+        fieldset: {
+          legend: {
+            text: page.title,
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes"
+          },
+          {
+            text: "No",
+            value: "no"
+          }
+        ]
+      },
+      fetchContext()
+    )
+  }}
+
+  {{
+    applyTextarea(
+      {
+        fieldName: "pipeReferralMoreDetail",
+        label: {
+          text: page.questions.pipeReferralMoreDetail
         }
       },
-      items: [
-        {
-          value: "yes",
-          text: "Yes",
-          checked: pipeReferral == 'yes'
-        },
-        {
-          value: "no",
-          text: "No",
-          checked: pipeReferral == 'no'
-        }
-      ]
-    }) }}
-
-  {{ govukTextarea({
-      name: "pipeReferralMoreDetail",
-      id: "pipeReferralMoreDetail",
-      value: pipeReferralMoreDetail,
-      label: {
-        text: page.questions.pipeReferralMoreDetail
-      }
-    }) }}
+      fetchContext()
+    )
+  }}
 
 {% endblock %}

@@ -1,5 +1,3 @@
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% extends "../layout.njk" %}
@@ -7,48 +5,52 @@
 {% block questions %}
 
   {% set startDateHTML %}
-  {{ govukDateInput({
-      id: "startDate",
-      namePrefix: "startDate",
-      errorMessage: errors.startDate,
-      fieldset: {
-        legend: {
-          text: "Expected arrival date"
-        }
+  {{
+    applyDateInput(
+      {
+        fieldName: "startDate",
+        fieldset: {
+          legend: {
+            text: "Expected arrival date"
+          }
+        },
+        hint: {
+          text: "For example, 27 3 2007"
+        },
+        items: dateFieldValues('startDate', errors)
       },
-      hint: {
-        text: "For example, 27 3 2007"
-      },
-      items: dateFieldValues('startDate', errors)
-    }) }}
+      fetchContext()
+    )
+  }}
   {% endset -%}
 
-  {{ govukRadios({
-    idPrefix: "startDateSameAsReleaseDate",
-    name: "startDateSameAsReleaseDate",
-    errorMessage: errors.startDateSameAsReleaseDate,
-    fieldset: {
-      legend: {
-        text: page.title,
-        isPageHeading: true,
-        classes: "govuk-fieldset__legend--l"
-      }
-    },
-    items: [
+  {{
+    applyRadios(
       {
-        value: "yes",
-        text: "Yes",
-        checked: startDateSameAsReleaseDate == 'yes'
+        fieldName: "startDateSameAsReleaseDate",
+        fieldset: {
+          legend: {
+            text: page.title,
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes"
+          },
+          {
+            text: "No",
+            value: "no",
+            conditional: {
+              html: startDateHTML
+            }
+          }
+        ]
       },
-      {
-        text: "No",
-        value: "no",
-        checked: startDateSameAsReleaseDate == 'no',
-        conditional: {
-          html: startDateHTML
-        }
-      }
-    ]
-    }) }}
+      fetchContext()
+    )
+  }}
 
 {% endblock %}

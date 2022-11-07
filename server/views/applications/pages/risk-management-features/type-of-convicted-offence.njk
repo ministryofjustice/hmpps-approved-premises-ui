@@ -8,8 +8,10 @@
 
   <p class="govuk-body">This information will be used to match them to a bed in an Approved Premises</p>
 
-  {{ govukCheckboxes({
-        id: "offenceConvictions",
+  {{
+    applyCheckboxes(
+      {
+        fieldName: "offenceConvictions",
         name: "offenceConvictions",
         errorMessage: errors.offenceConvictions, 
         values: offenceConvictions,
@@ -17,6 +19,9 @@
           text: "You can select more than one option"
         },
         items: page.items()
-      }) }}
+      },
+      fetchContext()
+    )
+  }}
 
 {% endblock %}

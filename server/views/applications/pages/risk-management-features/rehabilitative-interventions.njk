@@ -2,7 +2,7 @@
 
 {% extends "../layout.njk" %}
 
-{% set interventions = page.items() %}
+{% set interventionOptions = page.items() %}
 
 {% block questions %}
 
@@ -12,36 +12,42 @@
     <p class="govuk-body">Select any additional needs the person has that an AP could help meet. For example, support getting qualifications or finding work.</p>
 
     {% set otherIntervention %}
-    {{ govukInput({
-            id: "otherIntervention",
-            name: "otherIntervention",
-            type: "text",
-            autocomplete: "text",
-            spellcheck: false,
-            classes: "govuk-!-width-two-thirds",
-            value: otherIntervention,
-            label: {
-                text: "Please specify"
-            }
-        }) }}
+    {{
+        applyInput(
+            {
+                fieldName: "otherIntervention",
+                type: "text",
+                autocomplete: "text",
+                spellcheck: false,
+                classes: "govuk-!-width-two-thirds",
+                label: {
+                    text: "Please specify"
+                }
+            },
+            fetchContext()
+        )
+    }}
     {% endset %}
 
-    {{ govukCheckboxes({
-        idPrefix: "rehabilitativeInterventions",
-        name: "rehabilitativeInterventions",
-        hint: {
-          text: "You must select at least one option"
-        },
-        errorMessage: errors.otherIntervention,
-        values: interventions,
-        items: (interventions.push({
-                    value: "other",
-                    text: "Other",
-                    checked: page.responseContainsOther(),
-                    conditional: {
-                        html: otherIntervention
-                        }
-                    }), interventions)
-    }) }}
+    {{
+        applyCheckboxes(
+            {
+                fieldName: "rehabilitativeInterventions",
+                hint: {
+                    text: "You can select more than one option"
+                },
+                items: (
+                        interventionOptions.push({
+                            value: "other",
+                            text: "Other",
+                            conditional: {
+                                html: otherIntervention
+                            }
+                        }), interventionOptions
+                    )
+            },
+            fetchContext()
+        )
+    }}
 
 {% endblock %}

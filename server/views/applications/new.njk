@@ -1,6 +1,7 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "./components/formFields/apply-input/macro.njk" import applyInput %}
 
 {% extends "../partials/layout.njk" %}
 
@@ -16,21 +17,23 @@
 
         {{ showErrorSummary(errorSummary) }}
 
-        {{ govukInput({
-                    label: {
-                        text: "Enter the individual's CRN",
-                        classes: "govuk-label--l",
-                        isPageHeading: true
-                    },
-                    hint: {
-                      html:"<p>Enter the CRN for the individual needing an AP placement.</p><p>We'll import their details into your application</p>"
-                      },
-                    classes: "govuk-input--width-10",
-                    id: "crn",
-                    name: "crn",
-                    value: crn,
-                    errorMessage: errors.crn
-                    }) }}
+        {{
+          applyInput(
+            {
+              label: {
+                text: "Enter the individual's CRN",
+                classes: "govuk-label--l",
+                isPageHeading: true
+              },
+              hint: {
+                html: "<p>Enter the CRN for the individual needing an AP placement.</p><p>We'll import their details into your application.</p>"
+              },
+              classes: "govuk-input--width-10",
+              fieldName: "crn"
+            },
+            fetchContext()
+          )
+        }}
 
         {{ govukButton({
                     name: 'submit',

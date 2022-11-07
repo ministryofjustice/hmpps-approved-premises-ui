@@ -6,28 +6,36 @@
 
   <h1 class="govuk-heading-l">{{ page.title }}</h1>
 
-  {{ govukCheckboxes({
-      name: "esapReasons",
-      errorMessage: errors.esapReasons,
-      fieldset: {
-        legend: {
-          text: "Select at least one of the following reasons.",
-          classes: "govuk-fieldset__legend--m"
-        }
+  {{
+    applyCheckboxes(
+      {
+        fieldName: "esapReasons",
+        fieldset: {
+          legend: {
+            text: "Select at least one of the following reasons.",
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        items: page.reasons()
       },
-      items: page.reasons()
-    }) }}
+      fetchContext()
+    )
+  }}
 
-  {{ govukCheckboxes({
-      name: "esapFactors",
-      errorMessage: errors.esapFactors,
-      fieldset: {
-        legend: {
-          text: page.questions.esapFactors,
-          classes: "govuk-fieldset__legend--m"
-        }
+  {{
+    applyCheckboxes(
+      {
+        fieldName: "esapFactors",
+        fieldset: {
+          legend: {
+            text: page.questions.esapFactors,
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        items: page.factors()
       },
-      items: page.factors()
-    }) }}
+      fetchContext()
+    )
+  }}
 
 {% endblock %}

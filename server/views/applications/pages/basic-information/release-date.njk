@@ -1,5 +1,3 @@
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% extends "../layout.njk" %}
@@ -7,20 +5,23 @@
 {% block questions %}
 
   {% set releaseDateHTML %}
-  {{ govukDateInput({
-      id: "releaseDate",
-      namePrefix: "releaseDate",
-      errorMessage: errors.releaseDate,
-      fieldset: {
-        legend: {
-          text: "Expected release date"
-        }
+  {{
+    applyDateInput(
+      {
+        fieldName: "releaseDate",
+        fieldset: {
+          legend: {
+            text: "Expected release date"
+          }
+        },
+        hint: {
+          text: "For example, 27 3 2007"
+        },
+        items: dateFieldValues('releaseDate', errors)
       },
-      hint: {
-        text: "For example, 27 3 2007"
-      },
-      items: dateFieldValues('releaseDate', errors)
-    }) }}
+      fetchContext()
+    )
+  }}
   {% endset -%}
 
   {% set bannerHTML %}
@@ -35,35 +36,33 @@
     }) }}
   {% endset -%}
 
-  {{ govukRadios({
-    idPrefix: "knowReleaseDate",
-    name: "knowReleaseDate",
-    errorMessage: errors.knowReleaseDate,
-    fieldset: {
-      legend: {
-        text: page.title,
-        isPageHeading: true,
-        classes: "govuk-fieldset__legend--l"
-      }
-    },
-    items: [
+  {{
+    applyRadios(
       {
-        value: "yes",
-        text: "Yes",
-        checked: knowReleaseDate == 'yes',
-        conditional: {
-          html: releaseDateHTML
-        }
+        fieldName: "knowReleaseDate",
+        fieldset: {
+          legend: {
+            text: page.title,
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes",
+            conditional: {
+              html: releaseDateHTML
+            }
+          },
+          {
+            text: "No",
+            value: "no"
+          }
+        ]
       },
-      {
-        text: "No",
-        value: "no",
-        checked: knowReleaseDate == 'no',
-        conditional: {
-          html: bannerHTML
-        }
-      }
-    ]
-    }) }}
+      fetchContext()
+    )
+  }}
 
 {% endblock %}

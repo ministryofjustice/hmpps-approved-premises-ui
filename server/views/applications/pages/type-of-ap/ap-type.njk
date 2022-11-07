@@ -4,18 +4,21 @@
 
 {% block questions %}
 
-  {{ govukRadios({
-    idPrefix: "type",
-    name: "type",
-    errorMessage: errors.type,
-    fieldset: {
-      legend: {
-        text: page.title,
-        isPageHeading: true,
-        classes: "govuk-fieldset__legend--l"
-      }
-    },
-    items: page.items()
-    }) }}
+  {{
+    applyRadios(
+      {
+        fieldName: "type",
+        fieldset: {
+          legend: {
+            text: page.title,
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        items: page.items()
+      },
+      fetchContext()
+    )
+  }}
 
 {% endblock %}
