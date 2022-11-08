@@ -22,6 +22,7 @@ export type TaskNames =
   | 'risk-management-features'
   | 'location-factors'
   | 'access-and-healthcare'
+  | 'further-considerations'
 
 export type Task = {
   id: string

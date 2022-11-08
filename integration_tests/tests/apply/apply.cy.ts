@@ -9,6 +9,7 @@ import {
   TaskListPage,
   TypeOfApPage,
   DescribeLocationFactors,
+  RoomSharingPage,
 } from '../../../cypress_shared/pages/apply'
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
@@ -246,5 +247,17 @@ context('Apply', () => {
     accessNeedsMobilityPage.clickSubmit()
 
     Page.verifyOnPage(TaskListPage)
+
+    // Given I click the 'Detail further considerations for placement' task
+    cy.get('[data-cy-task-name="further-considerations"]').click()
+
+    // And I complete the Room Sharing page
+    const roomSharingPage = new RoomSharingPage()
+    roomSharingPage.completeForm()
+    roomSharingPage.clickSubmit()
+
+    // Then I should be taken back to the task list
+    // And the further considerations task should show a completed status
+    tasklistPage.shouldShowTaskStatus('further-considerations', 'Completed')
   })
 })
