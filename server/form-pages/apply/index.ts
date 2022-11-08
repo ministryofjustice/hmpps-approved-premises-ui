@@ -6,6 +6,7 @@ import typeOfApPages from './type-of-ap'
 import riskAndNeedPages from './risk-management-features'
 import locationFactorPages from './location-factors'
 import accessAndHealthcarePages from './access-and-healthcare'
+import furtherConsiderationsPages from './further-considerations'
 
 const pages: {
   [key in TaskNames]: Record<string, unknown>
@@ -15,6 +16,7 @@ const pages: {
   'risk-management-features': riskAndNeedPages,
   'location-factors': locationFactorPages,
   'access-and-healthcare': accessAndHealthcarePages,
+  'further-considerations': furtherConsiderationsPages,
 }
 
 const sections: FormSections = [
@@ -50,6 +52,11 @@ const sections: FormSections = [
         id: 'access-and-healthcare',
         title: 'Provide access and healthcare information',
         pages: accessAndHealthcarePages,
+      },
+      {
+        id: 'further-considerations',
+        title: 'Detail further considerations for placement',
+        pages: furtherConsiderationsPages,
       },
     ],
   },
