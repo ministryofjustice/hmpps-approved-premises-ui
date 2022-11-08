@@ -24,6 +24,7 @@ import personFactory from '../../../server/testutils/factories/person'
 import risksFactory from '../../../server/testutils/factories/risks'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import AccessNeedsPage from '../../../cypress_shared/pages/apply/accessNeeds'
+import AccessNeedsMobilityPage from '../../../cypress_shared/pages/apply/accessNeedsMobility'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -239,6 +240,10 @@ context('Apply', () => {
     const accessNeedsPage = new AccessNeedsPage()
     accessNeedsPage.completeForm()
     accessNeedsPage.clickSubmit()
+
+    const accessNeedsMobilityPage = new AccessNeedsMobilityPage(person)
+    accessNeedsMobilityPage.completeForm()
+    accessNeedsMobilityPage.clickSubmit()
 
     Page.verifyOnPage(TaskListPage)
   })

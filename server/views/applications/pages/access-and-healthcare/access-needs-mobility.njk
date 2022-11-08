@@ -1,0 +1,52 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+    <h1 class="govuk-heading-l">Access needs</h1>
+    <p class="govuk-body">Specify any additional details and the adjustments required</p>
+
+    {{ applyRadios({
+      fieldName: "needsWheelchair",
+      fieldset: {
+        legend: {
+          text: page.questions.wheelchair,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        html: '<p>If the person requires use of a wheelchair around the Approved Premises select yes. <a href="">What wheelchair accessibiltiy means within an AP.</a></p>'
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }, fetchContext()) }}
+
+    {{ applyTextarea({
+      fieldName: 'mobilityNeeds',
+      label: {
+        text: page.questions.mobilityNeeds,
+        classes: "govuk-label--s"
+        },
+        hint: {
+          text: "For example, if step-free access for reduced mobility is required"
+        }
+    }, fetchContext()) }}
+
+    {{ applyTextarea({
+        fieldName: "visualImpairment",
+        label: {
+        text: page.questions.visualImpairment,
+          classes: "govuk-label--s"
+        },
+        hint: {
+            text: "For example, if braille or tactile flooring is required"
+          }
+    }, fetchContext()) }}
+
+{% endblock %}
