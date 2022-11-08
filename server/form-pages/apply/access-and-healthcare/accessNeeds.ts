@@ -63,7 +63,7 @@ export default class AccessNeeds implements TasklistPage {
   }
 
   next() {
-    return ''
+    return this.body.additionalNeeds.includes('mobility') ? 'access-needs-mobility' : ''
   }
 
   response() {

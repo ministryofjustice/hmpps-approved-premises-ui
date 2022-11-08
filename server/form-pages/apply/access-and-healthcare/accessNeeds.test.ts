@@ -42,6 +42,7 @@ describe('AccessNeeds', () => {
   })
 
   itShouldHaveNextValue(new AccessNeeds({}, application), '')
+  itShouldHaveNextValue(new AccessNeeds({ additionalNeeds: ['mobility'] }, application), 'access-needs-mobility')
   itShouldHavePreviousValue(new AccessNeeds({}, application), '')
 
   describe('errors', () => {
