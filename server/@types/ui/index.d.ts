@@ -16,7 +16,7 @@ export type ObjectWithDateParts<K extends string | number> = { [P in `${K}-${'ye
 
 export type BookingStatus = 'arrived' | 'awaiting-arrival' | 'not-arrived' | 'departed' | 'cancelled'
 
-export type TaskNames = 'basic-information' | 'type-of-ap' | 'risk-management-features'
+export type TaskNames = 'basic-information' | 'type-of-ap' | 'risk-management-features' | 'location-factors'
 
 export type Task = {
   id: string

@@ -1,0 +1,136 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+  <h1 class="govuk-heading-l">{{page.title}}</h1>
+
+  {{ govukInput({
+    label: {
+      text: page.questions.postcodeArea,
+      classes: "govuk-label--m"
+    },
+    hint: {
+      text: "Please provide a postcode area - for example: SW1"
+    },
+    id: "postcodeArea",
+    name: "postcodeArea",
+    value: postcodeArea,
+    errorMessage: errors.postcodeArea
+  }) }}
+
+  {{ govukTextarea({
+    name: "positiveFactors",
+    id: "positiveFactors",
+    errorMessage: errors.positiveFactors,
+    value: positiveFactors,
+    label: {
+      text: page.questions.positiveFactors
+    }
+  }) }}
+
+  {% set placementRestrictions %}
+  {{ govukTextarea({
+      id: "restrictionDetail",
+      name: "restrictionDetail",
+      spellcheck: false,
+      errorMessage: errors.restrictionDetail,
+      label: {
+        text: page.questions.restrictionDetail
+      }
+    }) }}
+  {% endset -%}
+
+  {{ govukRadios({
+    idPrefix: "restrictions",
+    name: "restrictions",
+    errorMessage: errors.restrictions,
+    fieldset: {
+      legend: {
+        text: page.questions.restrictions,
+        classes: "govuk-fieldset__legend--m"
+      }
+    },
+    hint: {
+      text: "Where there's a risk to a known person, exclusion zones or limits on movements."
+    },
+    items: [
+      {
+        value: "yes",
+        text: "Yes",
+        checked: restrictions == 'yes',
+        conditional: {
+          html: placementRestrictions
+        }
+      },
+      {
+        value: "no",
+        checked: restrictions == 'no',
+        text: "No"
+      }
+    ]
+  }) }}
+
+  {% set alternativeRadiusSelect %}
+  {{ govukSelect({
+    label: {
+      text: page.questions.alternativeRadius
+    },
+    id: "alternativeRadius",
+    name: "alternativeRadius",
+    items: convertObjectsToSelectOptions(page.radiusItems(), 'Please Select', 'key', 'value', 'alternativeRadius'),
+    errorMessage: errors.alternativeRadius
+  }) }}
+  {% endset -%}
+
+  {{ govukRadios({
+    idPrefix: "alternativeRadiusAccepted",
+    name: "alternativeRadiusAccepted",
+    errorMessage: errors.alternativeRadiusAccepted,
+    fieldset: {
+      legend: {
+        text: page.questions.alternativeRadiusAccepted,
+        classes: "govuk-fieldset__legend--m"
+      }
+    },
+    items: [
+      {
+        value: "yes",
+        text: "Yes",
+        checked: alternativeRadiusAccepted == 'yes',
+        conditional: {
+          html: alternativeRadiusSelect
+        }
+      },
+      {
+        value: "no",
+        checked: alternativeRadiusAccepted == 'no',
+        text: "No"
+      }
+    ]
+  }) }}
+
+  {{ govukRadios({
+    idPrefix: "differentPDU",
+    name: "differentPDU",
+    errorMessage: errors.differentPDU,
+    fieldset: {
+      legend: {
+        text: page.questions.differentPDU,
+        classes: "govuk-fieldset__legend--m"
+      }
+    },
+    items: [
+      {
+        value: "yes",
+        text: "Yes",
+        checked: differentPDU == 'yes'
+      },
+      {
+        value: "no",
+        checked: differentPDU == 'no',
+        text: "No"
+      }
+    ]
+  }) }}
+
+{% endblock %}

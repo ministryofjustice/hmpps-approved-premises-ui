@@ -8,6 +8,7 @@ import {
   ReleaseDatePage,
   TaskListPage,
   TypeOfApPage,
+  DescribeLocationFactors,
 } from '../../../cypress_shared/pages/apply'
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
@@ -212,5 +213,17 @@ context('Apply', () => {
     // Then I should be taken back to the task list
     // And the risk management task should show a completed status
     tasklistPage.shouldShowTaskStatus('risk-management-features', 'Completed')
+
+    // Given I click the 'Describe location factors' task
+    cy.get('[data-cy-task-name="location-factors"]').click()
+
+    // When I complete the form
+    const describeLocationFactors = new DescribeLocationFactors()
+    describeLocationFactors.completeForm()
+    describeLocationFactors.clickSubmit()
+
+    // Then I should be taken back to the task list
+    // And the location factors task should show a completed status
+    tasklistPage.shouldShowTaskStatus('location-factors', 'Completed')
   })
 })

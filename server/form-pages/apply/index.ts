@@ -4,6 +4,7 @@ import type { TaskNames, FormSections } from '@approved-premises/ui'
 import basicInfomationPages from './basic-information'
 import typeOfApPages from './type-of-ap'
 import riskAndNeedPages from './risk-management-features'
+import locationFactorPages from './location-factors'
 
 const pages: {
   [key in TaskNames]: Record<string, unknown>
@@ -11,6 +12,7 @@ const pages: {
   'basic-information': basicInfomationPages,
   'type-of-ap': typeOfApPages,
   'risk-management-features': riskAndNeedPages,
+  'location-factors': locationFactorPages,
 }
 
 const sections: FormSections = [
@@ -36,6 +38,11 @@ const sections: FormSections = [
         id: 'risk-management-features',
         title: 'Add detail about managing risks and needs',
         pages: riskAndNeedPages,
+      },
+      {
+        id: 'location-factors',
+        title: 'Describe location factors',
+        pages: locationFactorPages,
       },
     ],
   },
