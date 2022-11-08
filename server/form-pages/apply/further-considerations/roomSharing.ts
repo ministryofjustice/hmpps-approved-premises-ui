@@ -40,6 +40,10 @@ export default class RoomSharing implements TasklistPage {
     sharingBenefits: `Is there ${this.questionPredicates.sharingBenefits}?`,
   }
 
+  hints = {
+    traumaConcerns: 'For example, a survivor of sexual abuse or violence or a witness of suicide in custody.',
+  }
+
   body: YesOrNoWithDetail<'riskToStaff'> &
     YesOrNoWithDetail<'riskToOthers'> &
     YesOrNoWithDetail<'sharingConcerns'> &

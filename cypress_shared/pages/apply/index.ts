@@ -9,6 +9,7 @@ import ReleaseDatePage from './releaseDate'
 import TaskListPage from './taskListPage'
 import TypeOfApPage from './typeOfAp'
 import DescribeLocationFactors from './describeLocationFactors'
+import RoomSharingPage from './roomSharing'
 
 export {
   ConfirmDetailsPage,
@@ -22,4 +23,5 @@ export {
   TaskListPage,
   TypeOfApPage,
   DescribeLocationFactors,
+  RoomSharingPage,
 }

@@ -1,0 +1,61 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+  <h1 class="govuk-heading-l">
+    <span class="govuk-caption-l">Room sharing</span>
+    Further placement considerations
+  </h1>
+
+  <p>This information is used to match a person with a suitable room in a suitable premises.</p>
+
+  {% for key, value in page.questions %}
+
+    {% set yesDetails %}
+    {{
+      applyTextarea(
+        {
+          fieldName: (key + "Detail"),
+          type: "textarea",
+          spellcheck: false,
+          label: {
+            text: "Provide details"
+          }
+        },
+        fetchContext()
+      )
+    }}
+    {% endset -%}
+
+    {{
+      applyRadios({
+        fieldName: key,
+        fieldset: {
+          legend: {
+            text: value,
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        hint: {
+          text: page.hints[key]
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes",
+            conditional: {
+              html: yesDetails
+            }
+          },
+          {
+            value: "no",
+            text: "No"
+          }
+        ]
+      },
+      fetchContext()
+      )
+    }}
+
+  {% endfor %}
+
+{% endblock %}
