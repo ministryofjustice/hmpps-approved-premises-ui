@@ -12,6 +12,7 @@ import {
 } from '../../../cypress_shared/pages/apply'
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
+import PduTransferPage from '../../../cypress_shared/pages/apply/pduTransfer'
 import PlacementPurposePage from '../../../cypress_shared/pages/apply/placementPurpose'
 import RehabilitativeInterventions from '../../../cypress_shared/pages/apply/rehabilitativeInterventions'
 import RiskManagementFeatures from '../../../cypress_shared/pages/apply/riskManagementFeatures'
@@ -218,9 +219,13 @@ context('Apply', () => {
     cy.get('[data-cy-task-name="location-factors"]').click()
 
     // When I complete the form
-    const describeLocationFactors = new DescribeLocationFactors()
-    describeLocationFactors.completeForm()
-    describeLocationFactors.clickSubmit()
+    const describeLocationFactorsPage = new DescribeLocationFactors()
+    describeLocationFactorsPage.completeForm()
+    describeLocationFactorsPage.clickSubmit()
+
+    const pduTransferPage = new PduTransferPage(person)
+    pduTransferPage.completeForm()
+    pduTransferPage.clickSubmit()
 
     // Then I should be taken back to the task list
     // And the location factors task should show a completed status

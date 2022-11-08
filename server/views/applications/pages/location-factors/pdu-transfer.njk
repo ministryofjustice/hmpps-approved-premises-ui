@@ -1,0 +1,48 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+  {% set pduTransfer %}
+  {{ applyInput({
+        fieldName: "probationPractitioner",
+        autocomplete: "text",
+        spellcheck: false,
+        label: {
+          text: "Who have you agreed this with? Enter the probation practitioner's full name."
+        }
+      },
+      fetchContext()
+      ) }}
+  {% endset %}
+
+  {{ applyRadios({
+        fieldName: "transferStatus",
+        fieldset: {
+          legend: {
+            text: page.title,
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes",
+            conditional: {
+              html: pduTransfer
+            }
+          },
+          {
+            value: "noNeedToMakeArrangements",
+            text: page.questions.noNeedToMakeArrangements
+          },
+          {
+            value: "noProbationPractitioner",
+            text: page.questions.noProbationPractitioner
+          }
+        ]  
+      },
+      fetchContext()
+      ) }}
+
+{% endblock %}

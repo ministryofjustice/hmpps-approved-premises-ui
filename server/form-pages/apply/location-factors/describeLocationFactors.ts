@@ -51,6 +51,9 @@ export default class DescribeLocationFactors implements TasklistPage {
   }
 
   next() {
+    if (this.body.differentPDU) {
+      return 'pdu-transfer'
+    }
     return ''
   }
 
