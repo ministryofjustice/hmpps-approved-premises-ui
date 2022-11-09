@@ -10,6 +10,7 @@ import TaskListPage from './taskListPage'
 import TypeOfApPage from './typeOfAp'
 import DescribeLocationFactors from './describeLocationFactors'
 import RoomSharingPage from './roomSharing'
+import VulnerabilityPage from './vulnerability'
 
 export {
   ConfirmDetailsPage,
@@ -24,4 +25,5 @@ export {
   TypeOfApPage,
   DescribeLocationFactors,
   RoomSharingPage,
+  VulnerabilityPage,
 }

@@ -1,0 +1,45 @@
+{% set yesDetails %}
+{{
+  applyTextarea(
+    {
+      fieldName: (key + "Detail"),
+      type: "textarea",
+      spellcheck: false,
+      label: {
+        text: "Provide details"
+      }
+    },
+    fetchContext()
+  )
+}}
+{% endset -%}
+
+{{
+  applyRadios({
+    fieldName: key,
+    fieldset: {
+      legend: {
+        text: value,
+        classes: "govuk-fieldset__legend--m"
+      }
+    },
+    hint: {
+      text: page.hints[key]
+    },
+    items: [
+      {
+        value: "yes",
+        text: "Yes",
+        conditional: {
+          html: yesDetails
+        }
+      },
+      {
+        value: "no",
+        text: "No"
+      }
+    ]
+  },
+  fetchContext()
+  )
+}}

@@ -24,6 +24,12 @@ export type TaskNames =
   | 'access-and-healthcare'
   | 'further-considerations'
 
+export type YesOrNoWithDetail<T extends string> = {
+  [K in T]: YesOrNo
+} & {
+  [K in `${T}Detail`]: string
+}
+
 export type Task = {
   id: string
   title: string

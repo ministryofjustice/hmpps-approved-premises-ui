@@ -1,6 +1,7 @@
-import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 
 import TasklistPage from '../../tasklistPage'
+import { applyYesOrNo, yesOrNoResponseWithDetail } from '../../utils'
 
 export const questionKeys = [
   'riskToStaff',
@@ -11,13 +12,6 @@ export const questionKeys = [
 ] as const
 
 type QuestionKeys = typeof questionKeys[number]
-
-type YesOrNoWithDetail<T extends QuestionKeys> = {
-  [K in T]: YesOrNo
-} & {
-  [K in `${T}Detail`]: string
-}
-
 export default class RoomSharing implements TasklistPage {
   name = 'room-sharing'
 
@@ -52,11 +46,11 @@ export default class RoomSharing implements TasklistPage {
 
   constructor(body: Record<string, unknown>) {
     this.body = {
-      ...this.applyYesOrNo('riskToStaff', body),
-      ...this.applyYesOrNo('riskToOthers', body),
-      ...this.applyYesOrNo('sharingConcerns', body),
-      ...this.applyYesOrNo('traumaConcerns', body),
-      ...this.applyYesOrNo('sharingBenefits', body),
+      ...applyYesOrNo<QuestionKeys>('riskToStaff', body),
+      ...applyYesOrNo<QuestionKeys>('riskToOthers', body),
+      ...applyYesOrNo<QuestionKeys>('sharingConcerns', body),
+      ...applyYesOrNo<QuestionKeys>('traumaConcerns', body),
+      ...applyYesOrNo<QuestionKeys>('sharingBenefits', body),
     }
   }
 
@@ -65,14 +59,14 @@ export default class RoomSharing implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'vulnerability'
   }
 
   response() {
     const response = {}
 
-    questionKeys.forEach((k: string) => {
-      response[this.questions[k]] = this.body[k] === 'yes' ? `Yes - ${this.body[`${k}Detail`]}` : 'No'
+    questionKeys.forEach((k: QuestionKeys) => {
+      response[this.questions[k]] = yesOrNoResponseWithDetail<QuestionKeys>(k, this.body)
     })
 
     return response
@@ -92,12 +86,5 @@ export default class RoomSharing implements TasklistPage {
     })
 
     return errors
-  }
-
-  private applyYesOrNo<K extends QuestionKeys>(key: K, body: Record<string, unknown>): YesOrNoWithDetail<K> {
-    return {
-      [`${key}`]: body[`${key}`] as YesOrNo,
-      [`${key}Detail`]: body[`${key}Detail`] as string,
-    } as YesOrNoWithDetail<K>
   }
 }
