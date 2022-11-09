@@ -35,7 +35,7 @@ export default class Catering implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'arson'
   }
 
   response() {

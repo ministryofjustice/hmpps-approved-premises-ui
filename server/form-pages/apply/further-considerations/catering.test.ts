@@ -31,7 +31,7 @@ describe('Catering', () => {
     })
   })
 
-  itShouldHaveNextValue(new Catering(body, application), '')
+  itShouldHaveNextValue(new Catering(body, application), 'arson')
   itShouldHavePreviousValue(new Catering(body, application), 'complex-case-board')
 
   describe('errors', () => {
