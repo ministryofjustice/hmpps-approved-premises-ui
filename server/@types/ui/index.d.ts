@@ -30,6 +30,12 @@ export type YesOrNoWithDetail<T extends string> = {
   [K in `${T}Detail`]: string
 }
 
+export type YesNoOrIDKWithDetail<T extends string> = {
+  [K in T]: YesNoOrIDK
+} & {
+  [K in `${T}Detail`]: string
+}
+
 export type Task = {
   id: string
   title: string
