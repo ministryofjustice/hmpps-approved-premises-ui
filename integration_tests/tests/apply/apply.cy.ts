@@ -32,6 +32,7 @@ import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import AccessNeedsPage from '../../../cypress_shared/pages/apply/accessNeeds'
 import AccessNeedsMobilityPage from '../../../cypress_shared/pages/apply/accessNeedsMobility'
 import CovidPage from '../../../cypress_shared/pages/apply/covid'
+import AccessNeedsAdditionalAdjustmentsPage from '../../../cypress_shared/pages/apply/accessNeedsAdditionalAdjustments'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -168,7 +169,7 @@ context('Apply', () => {
     placementPurposePage.completeForm()
     placementPurposePage.clickSubmit()
 
-    // // Then I should be redirected to the task list
+    // Then I should be redirected to the task list
     const tasklistPage = Page.verifyOnPage(TaskListPage)
 
     // And the task should be marked as completed
@@ -251,6 +252,10 @@ context('Apply', () => {
     const accessNeedsMobilityPage = new AccessNeedsMobilityPage(person)
     accessNeedsMobilityPage.completeForm()
     accessNeedsMobilityPage.clickSubmit()
+
+    const accessNeedsAdditionalAdjustmentsPage = new AccessNeedsAdditionalAdjustmentsPage()
+    accessNeedsAdditionalAdjustmentsPage.completeForm()
+    accessNeedsAdditionalAdjustmentsPage.clickSubmit()
 
     const covidPage = new CovidPage()
     covidPage.completeForm()
