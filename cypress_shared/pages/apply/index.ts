@@ -12,6 +12,7 @@ import DescribeLocationFactors from './describeLocationFactors'
 import RoomSharingPage from './roomSharing'
 import VulnerabilityPage from './vulnerability'
 import PreviousPlacements from './previousPlacements'
+import ComplexCaseBoard from './complexCaseBoard'
 
 export {
   ConfirmDetailsPage,
@@ -28,4 +29,5 @@ export {
   RoomSharingPage,
   VulnerabilityPage,
   PreviousPlacements,
+  ComplexCaseBoard,
 }
