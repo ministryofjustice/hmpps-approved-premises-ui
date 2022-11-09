@@ -10,6 +10,7 @@ import {
   TypeOfApPage,
   DescribeLocationFactors,
   RoomSharingPage,
+  VulnerabilityPage,
 } from '../../../cypress_shared/pages/apply'
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
@@ -255,6 +256,11 @@ context('Apply', () => {
     const roomSharingPage = new RoomSharingPage()
     roomSharingPage.completeForm()
     roomSharingPage.clickSubmit()
+
+    // And I complete the Vulnerability page
+    const vulnerabilityPage = new VulnerabilityPage(person)
+    vulnerabilityPage.completeForm()
+    vulnerabilityPage.clickSubmit()
 
     // Then I should be taken back to the task list
     // And the further considerations task should show a completed status
