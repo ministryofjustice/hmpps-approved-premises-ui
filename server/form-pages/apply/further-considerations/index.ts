@@ -5,6 +5,7 @@ import Vulnerability from './vulnerability'
 import PreviousPlacements from './previousPlacements'
 import ComplexCaseBoard from './complexCaseBoard'
 import Catering from './catering'
+import Arson from './arson'
 
 const pages = {
   'room-sharing': RoomSharing,
@@ -12,6 +13,7 @@ const pages = {
   'previous-placements': PreviousPlacements,
   'complex-case-board': ComplexCaseBoard,
   catering: Catering,
+  arson: Arson,
 }
 
 export default pages
