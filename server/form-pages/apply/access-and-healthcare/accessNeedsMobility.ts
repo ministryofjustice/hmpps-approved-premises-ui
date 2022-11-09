@@ -34,7 +34,7 @@ export default class AccessNeedsMobility implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'covid'
   }
 
   response() {
