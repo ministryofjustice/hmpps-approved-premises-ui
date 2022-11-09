@@ -39,7 +39,7 @@ export default class PreviousPlacements implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'complex-case-board'
   }
 
   response() {
