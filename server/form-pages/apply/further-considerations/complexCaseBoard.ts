@@ -35,7 +35,7 @@ export default class ComplexCaseBoard implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'catering'
   }
 
   response() {
