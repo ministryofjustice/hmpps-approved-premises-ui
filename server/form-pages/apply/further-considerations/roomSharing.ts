@@ -1,7 +1,7 @@
 import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 
 import TasklistPage from '../../tasklistPage'
-import { applyYesOrNo } from '../../utils'
+import { applyYesOrNo, yesOrNoResponseWithDetail } from '../../utils'
 
 export const questionKeys = [
   'riskToStaff',
@@ -65,8 +65,8 @@ export default class RoomSharing implements TasklistPage {
   response() {
     const response = {}
 
-    questionKeys.forEach((k: string) => {
-      response[this.questions[k]] = this.body[k] === 'yes' ? `Yes - ${this.body[`${k}Detail`]}` : 'No'
+    questionKeys.forEach((k: QuestionKeys) => {
+      response[this.questions[k]] = yesOrNoResponseWithDetail<QuestionKeys>(k, this.body)
     })
 
     return response
