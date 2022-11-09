@@ -11,6 +11,7 @@ import TypeOfApPage from './typeOfAp'
 import DescribeLocationFactors from './describeLocationFactors'
 import RoomSharingPage from './roomSharing'
 import VulnerabilityPage from './vulnerability'
+import PreviousPlacements from './previousPlacements'
 
 export {
   ConfirmDetailsPage,
@@ -26,4 +27,5 @@ export {
   DescribeLocationFactors,
   RoomSharingPage,
   VulnerabilityPage,
+  PreviousPlacements,
 }

@@ -1,4 +1,4 @@
-import { applyYesOrNo, yesOrNoResponseWithDetail } from './index'
+import { applyYesOrNo, yesOrNoResponseWithDetail, yesNoOrDontKnowResponseWithDetail } from './index'
 
 describe('utils', () => {
   describe('applyYesOrNo', () => {
@@ -26,6 +26,26 @@ describe('utils', () => {
       const body = { foo: 'no' }
 
       expect(yesOrNoResponseWithDetail('foo', body)).toEqual('No')
+    })
+  })
+
+  describe('yesNoOrDontKnowResponseWithDetail', () => {
+    it('returns a response with detail if the answer is yes', () => {
+      const body = { foo: 'yes', fooDetail: 'Some Detail' }
+
+      expect(yesNoOrDontKnowResponseWithDetail('foo', body)).toEqual('Yes - Some Detail')
+    })
+
+    it('returns No if the answer is no', () => {
+      const body = { foo: 'no' }
+
+      expect(yesNoOrDontKnowResponseWithDetail('foo', body)).toEqual('No')
+    })
+
+    it("returns Don't know if the answer is iDontKnow", () => {
+      const body = { foo: 'iDontKnow' }
+
+      expect(yesNoOrDontKnowResponseWithDetail('foo', body)).toEqual("Don't know")
     })
   })
 })
