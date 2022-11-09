@@ -1,6 +1,7 @@
-import type { TaskListErrors, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
+import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 
 import TasklistPage from '../../tasklistPage'
+import { applyYesOrNo } from '../../utils'
 
 export const questionKeys = [
   'riskToStaff',
@@ -45,11 +46,11 @@ export default class RoomSharing implements TasklistPage {
 
   constructor(body: Record<string, unknown>) {
     this.body = {
-      ...this.applyYesOrNo('riskToStaff', body),
-      ...this.applyYesOrNo('riskToOthers', body),
-      ...this.applyYesOrNo('sharingConcerns', body),
-      ...this.applyYesOrNo('traumaConcerns', body),
-      ...this.applyYesOrNo('sharingBenefits', body),
+      ...applyYesOrNo<QuestionKeys>('riskToStaff', body),
+      ...applyYesOrNo<QuestionKeys>('riskToOthers', body),
+      ...applyYesOrNo<QuestionKeys>('sharingConcerns', body),
+      ...applyYesOrNo<QuestionKeys>('traumaConcerns', body),
+      ...applyYesOrNo<QuestionKeys>('sharingBenefits', body),
     }
   }
 
@@ -85,12 +86,5 @@ export default class RoomSharing implements TasklistPage {
     })
 
     return errors
-  }
-
-  private applyYesOrNo<K extends QuestionKeys>(key: K, body: Record<string, unknown>): YesOrNoWithDetail<K> {
-    return {
-      [`${key}`]: body[`${key}`] as YesOrNo,
-      [`${key}Detail`]: body[`${key}Detail`] as string,
-    } as YesOrNoWithDetail<K>
   }
 }
