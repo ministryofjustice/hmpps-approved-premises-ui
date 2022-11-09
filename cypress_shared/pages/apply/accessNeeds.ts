@@ -11,7 +11,6 @@ export default class AccessNeedsPage extends Page {
     this.checkCheckboxByNameAndValue('additionalNeeds', 'mobility')
     this.checkCheckboxByNameAndValue('additionalNeeds', 'learningDisability')
     this.checkCheckboxByNameAndValue('additionalNeeds', 'neurodivergentConditions')
-    this.checkCheckboxByNameAndValue('additionalNeeds', 'none')
   }
 
   completeReligiousAndCulturalNeedsSection() {
