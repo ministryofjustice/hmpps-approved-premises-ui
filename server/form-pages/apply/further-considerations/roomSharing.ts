@@ -35,7 +35,7 @@ export default class RoomSharing implements TasklistPage {
   }
 
   hints = {
-    traumaConcerns: 'For example, a survivor of sexual abuse or violence or a witness of suicide in custody.',
+    traumaConcerns: { text: 'For example, a survivor of sexual abuse or violence or a witness of suicide in custody.' },
   }
 
   body: YesOrNoWithDetail<'riskToStaff'> &
