@@ -1,4 +1,4 @@
-import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type { TaskListErrors, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
 
 import TasklistPage from '../../tasklistPage'
 
@@ -11,13 +11,6 @@ export const questionKeys = [
 ] as const
 
 type QuestionKeys = typeof questionKeys[number]
-
-type YesOrNoWithDetail<T extends QuestionKeys> = {
-  [K in T]: YesOrNo
-} & {
-  [K in `${T}Detail`]: string
-}
-
 export default class RoomSharing implements TasklistPage {
   name = 'room-sharing'
 
