@@ -24,7 +24,7 @@ describe('RoomSharing', () => {
     })
   })
 
-  itShouldHaveNextValue(new RoomSharing({}), '')
+  itShouldHaveNextValue(new RoomSharing({}), 'vulnerability')
   itShouldHavePreviousValue(new RoomSharing({}), '')
 
   describe('errors', () => {

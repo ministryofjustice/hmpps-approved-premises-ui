@@ -59,7 +59,7 @@ export default class RoomSharing implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'vulnerability'
   }
 
   response() {
