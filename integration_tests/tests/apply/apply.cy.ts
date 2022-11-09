@@ -11,6 +11,7 @@ import {
   DescribeLocationFactors,
   RoomSharingPage,
   VulnerabilityPage,
+  PreviousPlacements,
 } from '../../../cypress_shared/pages/apply'
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
@@ -266,6 +267,11 @@ context('Apply', () => {
     const vulnerabilityPage = new VulnerabilityPage(person)
     vulnerabilityPage.completeForm()
     vulnerabilityPage.clickSubmit()
+
+    // And I complete the Previous Placements page
+    const previousPlacementsPage = new PreviousPlacements(person)
+    previousPlacementsPage.completeForm()
+    previousPlacementsPage.clickSubmit()
 
     // Then I should be taken back to the task list
     // And the further considerations task should show a completed status
