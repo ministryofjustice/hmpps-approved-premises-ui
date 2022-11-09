@@ -27,6 +27,7 @@ import risksFactory from '../../../server/testutils/factories/risks'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import AccessNeedsPage from '../../../cypress_shared/pages/apply/accessNeeds'
 import AccessNeedsMobilityPage from '../../../cypress_shared/pages/apply/accessNeedsMobility'
+import CovidPage from '../../../cypress_shared/pages/apply/covid'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -113,7 +114,7 @@ context('Apply', () => {
     crnPage.shouldShowErrorMessage(person)
   })
 
-  it('shows a tasklist', () => {
+  it('allows completion of the form', () => {
     const person = personFactory.build()
     const application = applicationFactory.build({ person })
     const apiRisks = risksFactory.build({ crn: person.crn })
@@ -163,7 +164,7 @@ context('Apply', () => {
     placementPurposePage.completeForm()
     placementPurposePage.clickSubmit()
 
-    // Then I should be redirected to the task list
+    // // Then I should be redirected to the task list
     const tasklistPage = Page.verifyOnPage(TaskListPage)
 
     // And the task should be marked as completed
@@ -246,6 +247,10 @@ context('Apply', () => {
     const accessNeedsMobilityPage = new AccessNeedsMobilityPage(person)
     accessNeedsMobilityPage.completeForm()
     accessNeedsMobilityPage.clickSubmit()
+
+    const covidPage = new CovidPage()
+    covidPage.completeForm()
+    covidPage.clickSubmit()
 
     Page.verifyOnPage(TaskListPage)
 
