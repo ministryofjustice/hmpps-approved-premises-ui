@@ -137,7 +137,7 @@ export interface ErrorsAndUserInput {
 export type TaskListErrors<K extends TasklistPage> = Partial<Record<keyof K['body'], string>>
 
 export type YesOrNo = 'yes' | 'no'
-export type YesNoOrIDK = YesOrNo | 'dontKnow'
+export type YesNoOrIDK = YesOrNo | 'iDontKnow'
 
 export type PersonStatus = 'InCustody' | 'InCommunity'
 

@@ -32,7 +32,7 @@ describe('AccessNeedsMobility', () => {
     })
   })
 
-  itShouldHaveNextValue(new AccessNeedsMobility({}, application), '')
+  itShouldHaveNextValue(new AccessNeedsMobility({}, application), 'covid')
   itShouldHavePreviousValue(new AccessNeedsMobility({}, application), 'access-needs')
 
   describe('errors', () => {

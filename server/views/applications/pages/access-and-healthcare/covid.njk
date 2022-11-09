@@ -1,0 +1,72 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+  <h1 class="govuk-heading-l">
+    {{page.title}}
+  </h1>
+  <p>This information will be used to help decide whether the person can room share.</p>
+
+  {{ applyRadios({
+      fieldName: "fullyVaccinated",
+      fieldset: {
+        legend: {
+          text: page.questions.fullyVaccinated.question,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        text: page.questions.fullyVaccinated.hint
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No"
+        },
+        {
+          value: "dontKnow",
+          text: "I don't know"
+        }
+      ]
+    }, fetchContext()) }}
+
+  {{ applyRadios({
+      fieldName: "highRisk",
+      fieldset: {
+        legend: {
+          text: page.questions.highRisk.question,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        text: page.questions.highRisk.question
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No"
+        },
+        {
+          value: "iDontKnow",
+          text: "I don't know"
+        }
+      ]
+    }, fetchContext()) }}
+
+  {{ applyTextarea({
+      fieldName: "additionalCovidInfo",
+      label: {
+        text: page.questions.additionalCovidInfo,
+        classes: "govuk-label--s"
+        }
+    }, fetchContext()) }}
+
+{% endblock %}
