@@ -23,6 +23,21 @@ export default class Arson implements TasklistPage {
     arson: `Does ${this.application.person.name} need ${this.questionPredicates.arson}?`,
   }
 
+  hints = {
+    arson: {
+      html: `
+      <p class="govuk-body">Consider whether the person poses an ongoing risk of setting fires based on:</p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>their current and previous offences,</li>
+        <li>factors outside of the offences they were charged for,</li>
+        <li>their behaviour in custody,</li>
+        <li>and your expectations for how they'll behave in an AP setting.</li>
+      </ul>
+    `,
+    },
+  }
+
   constructor(body: Record<string, unknown>, private readonly application: Application) {
     this.body = {
       arson: body.arson,

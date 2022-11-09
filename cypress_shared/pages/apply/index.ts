@@ -14,6 +14,7 @@ import VulnerabilityPage from './vulnerability'
 import PreviousPlacements from './previousPlacements'
 import ComplexCaseBoard from './complexCaseBoard'
 import CateringPage from './catering'
+import ArsonPage from './arson'
 
 export {
   ConfirmDetailsPage,
@@ -32,4 +33,5 @@ export {
   PreviousPlacements,
   ComplexCaseBoard,
   CateringPage,
+  ArsonPage,
 }
