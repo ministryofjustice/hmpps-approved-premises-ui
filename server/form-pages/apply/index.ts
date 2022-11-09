@@ -30,7 +30,7 @@ const sections: FormSections = [
       },
       {
         id: 'type-of-ap',
-        title: 'Type of Approved Premises required',
+        title: 'Type of AP required',
         pages: typeOfApPages,
       },
     ],
