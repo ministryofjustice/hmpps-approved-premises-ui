@@ -63,7 +63,10 @@ export default class AccessNeeds implements TasklistPage {
   }
 
   next() {
-    return this.body.additionalNeeds.includes('mobility') ? 'access-needs-mobility' : 'covid'
+    if (this.body.additionalNeeds.includes('mobility')) return 'access-needs-mobility'
+    if (this.body.additionalNeeds[0] === 'none') return 'covid'
+
+    return 'access-needs-additional-adjustments'
   }
 
   response() {

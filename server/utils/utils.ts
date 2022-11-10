@@ -63,6 +63,9 @@ export const pascalCase = (string: string) => camelCase(string).replace(/\w/, s 
  * @returns name converted to sentence case.
  */
 export const sentenceCase = (string: string) => Case.sentence(string)
+
+export const lowerCase = (string: string) => Case.lower(string)
+
 /**
  * Retrieves response for a given question from the application object.
  * @param application the application to fetch the response from.
