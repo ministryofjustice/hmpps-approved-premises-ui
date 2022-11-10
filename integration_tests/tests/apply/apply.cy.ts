@@ -15,6 +15,7 @@ import {
   ComplexCaseBoard,
   CateringPage,
   ArsonPage,
+  PlacementDurationPage,
 } from '../../../cypress_shared/pages/apply'
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
@@ -299,5 +300,17 @@ context('Apply', () => {
     // Then I should be taken back to the task list
     // And the further considerations task should show a completed status
     tasklistPage.shouldShowTaskStatus('further-considerations', 'Completed')
+
+    // Given I click the 'Add move on information' task
+    cy.get('[data-cy-task-name="move-on"]').click()
+
+    const placementDurationPage = new PlacementDurationPage()
+    placementDurationPage.completeForm()
+    placementDurationPage.expectedDepartureDateShouldBeCompleted(releaseDate)
+    placementDurationPage.clickSubmit()
+
+    // Then I should be taken back to the task list
+    // And the move on information task should show a completed status
+    tasklistPage.shouldShowTaskStatus('move-on', 'Completed')
   })
 })
