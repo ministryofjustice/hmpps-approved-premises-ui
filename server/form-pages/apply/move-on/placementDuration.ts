@@ -1,4 +1,7 @@
 import type { TaskListErrors } from '@approved-premises/ui'
+import { Application } from '@approved-premises/api'
+import { SessionDataError } from '../../../utils/errors'
+import { DateFormats } from '../../../utils/dateUtils'
 
 import TasklistPage from '../../tasklistPage'
 
@@ -12,12 +15,14 @@ export default class PlacementDuration implements TasklistPage {
     durationDetail: string
   }
 
+  arrivalDate: Date = this.fetchArrivalDate()
+
   questions = {
     duration: 'What duration of placement do you recommend?',
     durationDetail: 'Provide any additional information',
   }
 
-  constructor(body: Record<string, unknown>) {
+  constructor(body: Record<string, unknown>, private readonly application: Application) {
     this.body = {
       duration: body.duration as number,
       durationDetail: body.durationDetail as string,
@@ -52,5 +57,29 @@ export default class PlacementDuration implements TasklistPage {
     }
 
     return errors
+  }
+
+  private fetchArrivalDate(): Date {
+    try {
+      const basicInformation = this.application.data['basic-information']
+
+      if (!basicInformation) throw new SessionDataError('No basic information')
+
+      const placementDate = basicInformation['placement-date']
+
+      if (!placementDate) throw new SessionDataError('No placement date')
+
+      if (placementDate.startDateSameAsReleaseDate === 'yes') {
+        const releaseDate = basicInformation['release-date']
+
+        if (!releaseDate) throw new SessionDataError('No release date')
+
+        return DateFormats.convertIsoToDateObj(releaseDate.releaseDate)
+      }
+
+      return DateFormats.convertIsoToDateObj(placementDate.startDate)
+    } catch (e) {
+      throw new SessionDataError(`Move on information placement duration error: ${e}`)
+    }
   }
 }
