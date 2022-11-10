@@ -33,6 +33,11 @@ describe('ArrivalsController', () => {
     it('renders the form', async () => {
       const requestHandler = arrivalsController.new()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: {}, errorSummary: [], userInput: {} })
+      const staffMember1 = staffMemberFactory.build({ keyWorker: false })
+      const staffMember2 = staffMemberFactory.build({ keyWorker: true })
+      const staffMember3 = staffMemberFactory.build({ keyWorker: false })
+
+      premisesService.getStaffMembers.mockResolvedValue([staffMember1, staffMember2, staffMember3])
 
       request.params = {
         bookingId: 'bookingId',
@@ -47,12 +52,16 @@ describe('ArrivalsController', () => {
         pageHeading: 'Mark the person as arrived',
         errors: {},
         errorSummary: [],
-        staffMembers,
+        staffMembers: [staffMember2],
       })
     })
 
     it('renders the form with errors and user input if an error has been sent to the flash', async () => {
       const requestHandler = arrivalsController.new()
+      const staffMember1 = staffMemberFactory.build({ keyWorker: true })
+      const staffMember2 = staffMemberFactory.build({ keyWorker: false })
+
+      premisesService.getStaffMembers.mockResolvedValue([staffMember1, staffMember2])
 
       request.params = {
         bookingId: 'bookingId',
@@ -71,7 +80,7 @@ describe('ArrivalsController', () => {
         pageHeading: 'Mark the person as arrived',
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
-        staffMembers,
+        staffMembers: [staffMember1],
         ...errorsAndUserInput.userInput,
       })
     })
@@ -95,7 +104,7 @@ describe('ArrivalsController', () => {
         'expectedDepartureDate-day': 12,
         arrival: {
           notes: 'Some notes',
-          keyWorkerStaffId: 'some-staff-id',
+          keyWorkerStaffCode: 'some-staff-id',
         },
       }
 
@@ -103,7 +112,7 @@ describe('ArrivalsController', () => {
 
       const expectedArrival = {
         notes: request.body.arrival.notes,
-        keyWorkerStaffId: request.body.arrival.keyWorkerStaffId,
+        keyWorkerStaffCode: request.body.arrival.keyWorkerStaffCode,
         arrivalDate: '2022-12-11',
         expectedDepartureDate: '2022-11-12',
       }

@@ -24,7 +24,7 @@ export default class ArrivalsController {
         bookingId,
         errors,
         errorSummary,
-        staffMembers,
+        staffMembers: staffMembers.filter(staffMember => staffMember.keyWorker),
         pageHeading: 'Mark the person as arrived',
         ...userInput,
       })
@@ -40,7 +40,7 @@ export default class ArrivalsController {
       const { expectedDepartureDate } = DateFormats.convertDateAndTimeInputsToIsoString(body, 'expectedDepartureDate')
 
       const arrival: NewArrival = {
-        keyWorkerStaffId: body.arrival.keyWorkerStaffId,
+        keyWorkerStaffCode: body.arrival.keyWorkerStaffCode,
         notes: body.arrival.notes,
         arrivalDate,
         expectedDepartureDate,

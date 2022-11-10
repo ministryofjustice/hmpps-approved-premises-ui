@@ -5,7 +5,7 @@ import { ArrivalCreatePage, PremisesShowPage } from '../../../cypress_shared/pag
 import dateCapacityFactory from '../../../server/testutils/factories/dateCapacity'
 import staffMemberFactory from '../../../server/testutils/factories/staffMember'
 
-const staff = staffMemberFactory.buildList(5)
+const staff = staffMemberFactory.buildList(5, { keyWorker: true })
 
 context('Arrivals', () => {
   beforeEach(() => {
@@ -36,7 +36,7 @@ context('Arrivals', () => {
 
     // When I mark the booking as having arrived
     const page = ArrivalCreatePage.visit(premises.id, bookingId)
-    page.completeArrivalForm(arrival, staff[0].id.toString())
+    page.completeArrivalForm(arrival, staff[0].code)
 
     // Then an arrival should be created in the API
     cy.task('verifyArrivalCreate', { premisesId: premises.id, bookingId }).then(requests => {
@@ -47,7 +47,7 @@ context('Arrivals', () => {
 
       expect(requestBody.notes).equal(arrival.notes)
       expect(requestBody.arrivalDate).equal(arrivalDate)
-      expect(requestBody.keyWorkerStaffId).equal(staff[0].id.toString())
+      expect(requestBody.keyWorkerStaffCode).equal(staff[0].code)
       expect(requestBody.expectedDepartureDate).equal(expectedDepartureDate)
     })
 
@@ -74,7 +74,7 @@ context('Arrivals', () => {
     cy.task('stubArrivalErrors', {
       premisesId: premises.id,
       bookingId,
-      params: ['date', 'expectedDepartureDate', 'keyWorkerStaffId'],
+      params: ['date', 'expectedDepartureDate', 'keyWorkerStaffCode'],
     })
     page.submitArrivalFormWithoutFields()
 

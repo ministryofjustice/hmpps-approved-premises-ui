@@ -13,7 +13,7 @@ export default class ArrivalCreatePage extends Page {
     return new ArrivalCreatePage(premisesId, bookingId)
   }
 
-  public completeArrivalForm(arrival: Arrival, staffMemberId: string): void {
+  public completeArrivalForm(arrival: Arrival, staffMemberCode: string): void {
     const arrivalDate = new Date(Date.parse(arrival.arrivalDate))
     const expectedDeparture = new Date(Date.parse(arrival.expectedDepartureDate))
 
@@ -26,7 +26,7 @@ export default class ArrivalCreatePage extends Page {
     cy.get('input[name="expectedDepartureDate-year"]').type(String(expectedDeparture.getFullYear()))
 
     this.getLabel('Key Worker')
-    this.getSelectInputByIdAndSelectAnEntry('keyWorkerStaffId', staffMemberId)
+    this.getSelectInputByIdAndSelectAnEntry('keyWorkerStaffCode', staffMemberCode)
 
     cy.get('[name="arrival[notes]"]').type(arrival.notes)
 
