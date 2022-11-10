@@ -24,7 +24,7 @@ export default class PreviousPlacements implements TasklistPage {
   }
 
   hints = {
-    previousPlacement: "You may be able to find this information in the person's case notes.",
+    previousPlacement: { text: "You may be able to find this information in the person's case notes." },
   }
 
   constructor(body: Record<string, unknown>, private readonly application: Application) {
