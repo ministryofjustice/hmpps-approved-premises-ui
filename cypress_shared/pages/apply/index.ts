@@ -13,6 +13,7 @@ import RoomSharingPage from './roomSharing'
 import VulnerabilityPage from './vulnerability'
 import PreviousPlacements from './previousPlacements'
 import ComplexCaseBoard from './complexCaseBoard'
+import CateringPage from './catering'
 
 export {
   ConfirmDetailsPage,
@@ -30,4 +31,5 @@ export {
   VulnerabilityPage,
   PreviousPlacements,
   ComplexCaseBoard,
+  CateringPage,
 }

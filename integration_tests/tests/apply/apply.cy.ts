@@ -13,6 +13,7 @@ import {
   VulnerabilityPage,
   PreviousPlacements,
   ComplexCaseBoard,
+  CateringPage,
 } from '../../../cypress_shared/pages/apply'
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
@@ -278,6 +279,11 @@ context('Apply', () => {
     const complexCaseBoardPage = new ComplexCaseBoard(person)
     complexCaseBoardPage.completeForm()
     complexCaseBoardPage.clickSubmit()
+
+    // And I complete the Catering page
+    const cateringPage = new CateringPage(person)
+    cateringPage.completeForm()
+    cateringPage.clickSubmit()
 
     // Then I should be taken back to the task list
     // And the further considerations task should show a completed status

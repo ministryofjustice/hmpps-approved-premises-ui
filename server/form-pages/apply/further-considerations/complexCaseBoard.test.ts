@@ -31,7 +31,7 @@ describe('ComplexCaseBoard', () => {
     })
   })
 
-  itShouldHaveNextValue(new ComplexCaseBoard(body, application), '')
+  itShouldHaveNextValue(new ComplexCaseBoard(body, application), 'catering')
   itShouldHavePreviousValue(new ComplexCaseBoard(body, application), 'previous-placements')
 
   describe('errors', () => {
