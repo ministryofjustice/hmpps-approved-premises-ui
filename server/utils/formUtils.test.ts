@@ -7,6 +7,7 @@ import {
   convertKeyValuePairToRadioItems,
   convertObjectsToSelectOptions,
   convertKeyValuePairToCheckBoxItems,
+  validPostcodeArea,
 } from './formUtils'
 
 describe('formUtils', () => {
@@ -308,6 +309,15 @@ describe('formUtils', () => {
           selected: false,
         },
       ])
+    })
+  })
+  describe('validPostcodeArea', () => {
+    it('when passed a postcode area it returns true', () => {
+      expect(validPostcodeArea('HR1')).toBe(true)
+    })
+
+    it('when passed a non-postcode string returns false', () => {
+      expect(validPostcodeArea('foo')).toBe(false)
     })
   })
 })
