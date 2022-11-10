@@ -7,6 +7,7 @@ import riskAndNeedPages from './risk-management-features'
 import locationFactorPages from './location-factors'
 import accessAndHealthcarePages from './access-and-healthcare'
 import furtherConsiderationsPages from './further-considerations'
+import moveOnPages from './move-on'
 
 const pages: {
   [key in TaskNames]: Record<string, unknown>
@@ -17,6 +18,7 @@ const pages: {
   'location-factors': locationFactorPages,
   'access-and-healthcare': accessAndHealthcarePages,
   'further-considerations': furtherConsiderationsPages,
+  'move-on': moveOnPages,
 }
 
 const sections: FormSections = [
@@ -57,6 +59,16 @@ const sections: FormSections = [
         id: 'further-considerations',
         title: 'Detail further considerations for placement',
         pages: furtherConsiderationsPages,
+      },
+    ],
+  },
+  {
+    title: 'Considerations for when the placement ends',
+    tasks: [
+      {
+        id: 'move-on',
+        title: 'Add move on information',
+        pages: moveOnPages,
       },
     ],
   },
