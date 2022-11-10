@@ -13,6 +13,16 @@ export default class AccessNeedsPage extends Page {
     this.checkCheckboxByNameAndValue('additionalNeeds', 'neurodivergentConditions')
   }
 
+  checkingAdditionalNeedsOtherDisablesOtherCheckBoxes() {
+    this.checkAdditionalNeedsBoxes()
+
+    this.checkCheckboxByNameAndValue('additionalNeeds', 'none')
+
+    cy.get('input[name="additionalNeeds"]:not([value="none"])').should('be.disabled')
+
+    this.uncheckCheckboxbyNameAndValue('additionalNeeds', 'none')
+  }
+
   completeReligiousOrCulturalNeedsSection() {
     this.checkRadioByNameAndValue('religiousOrCulturalNeeds', 'yes')
     this.getTextInputByIdAndEnterDetails('religiousOrCulturalNeedsDetails', faker.lorem.words())
@@ -24,6 +34,7 @@ export default class AccessNeedsPage extends Page {
   }
 
   completeForm() {
+    this.checkingAdditionalNeedsOtherDisablesOtherCheckBoxes()
     this.checkAdditionalNeedsBoxes()
     this.completeReligiousOrCulturalNeedsSection()
     this.completeNeedsInterpreterSection()
