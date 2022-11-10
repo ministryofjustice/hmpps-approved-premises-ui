@@ -8,6 +8,7 @@ export default class TypeOfAccomodationPage extends Page {
   }
 
   completeForm() {
-    this.checkRadioByNameAndValue('accommodationType', 'privateRented')
+    this.checkRadioByNameAndValue('accommodationType', 'other')
+    this.getTextInputByIdAndEnterDetails('otherAccommodationType', 'Another type')
   }
 }

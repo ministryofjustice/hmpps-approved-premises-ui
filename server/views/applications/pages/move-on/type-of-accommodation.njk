@@ -1,0 +1,41 @@
+{% extends "../layout.njk" %}
+
+{% set accommodationTypes = page.items() %}
+
+{% block questions %}
+  <h1 class="govuk-heading-l">
+    {{page.title}}
+  </h1>
+
+  {% set otherAccommodationType %}
+  {{ applyInput({
+        fieldName: 'otherAccommodationType',
+        classes: "govuk-!-width-two-thirds",
+        label: {
+          text: "Other accommodation type"
+        }
+      }, fetchContext()) }}
+  {% endset %}
+
+  {{ applyRadios({
+      fieldName: "accommodationType",
+      hint: {
+        text: page.question
+      },
+      fieldset: {
+        legend: {
+          text: page.questions.needs.question,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: (accommodationTypes.push({
+              value: "other",
+              text: page.otherQuestion,
+              checked: page.body.accommodationType === 'other',
+              conditional: {
+                  html: otherAccommodationType
+              }
+          }), accommodationTypes
+        )
+    }, fetchContext()) }}
+{% endblock %}

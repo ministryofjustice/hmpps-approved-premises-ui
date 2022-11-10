@@ -36,6 +36,7 @@ import CovidPage from '../../../cypress_shared/pages/apply/covid'
 import AccessNeedsAdditionalAdjustmentsPage from '../../../cypress_shared/pages/apply/accessNeedsAdditionalAdjustments'
 import RelocationRegionPage from '../../../cypress_shared/pages/apply/relocationRegion'
 import PlansInPlacePage from '../../../cypress_shared/pages/apply/plansInPlace'
+import TypeOfAccomodationPage from '../../../cypress_shared/pages/apply/typeOfAccommodation'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -318,6 +319,10 @@ context('Apply', () => {
     const plansInPlacePage = new PlansInPlacePage()
     plansInPlacePage.completeForm()
     plansInPlacePage.clickSubmit()
+
+    const typeOfAccommodationPage = new TypeOfAccomodationPage(person)
+    typeOfAccommodationPage.completeForm()
+    typeOfAccommodationPage.clickSubmit()
 
     // Then I should be taken back to the task list
     // And the move on information task should show a completed status
