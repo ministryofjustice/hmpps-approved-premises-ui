@@ -95,7 +95,7 @@ describe('ArrivalsController', () => {
         'expectedDepartureDate-day': 12,
         arrival: {
           notes: 'Some notes',
-          keyWorkerStaffId: 'some-staff-id',
+          keyWorkerStaffCode: 'some-staff-id',
         },
       }
 
@@ -103,7 +103,7 @@ describe('ArrivalsController', () => {
 
       const expectedArrival = {
         notes: request.body.arrival.notes,
-        keyWorkerStaffId: request.body.arrival.keyWorkerStaffId,
+        keyWorkerStaffCode: request.body.arrival.keyWorkerStaffCode,
         arrivalDate: '2022-12-11',
         expectedDepartureDate: '2022-11-12',
       }
