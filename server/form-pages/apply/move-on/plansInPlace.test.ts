@@ -14,7 +14,7 @@ describe('PlansInPlace', () => {
     })
   })
 
-  itShouldHaveNextValue(new PlansInPlace({}), '')
+  itShouldHaveNextValue(new PlansInPlace({}), 'type-of-accommodation')
   itShouldHavePreviousValue(new PlansInPlace({}), 'pdu-region')
 
   describe('errors', () => {

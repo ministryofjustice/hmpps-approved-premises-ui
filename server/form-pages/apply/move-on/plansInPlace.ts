@@ -23,7 +23,7 @@ export default class PlansInPlace implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'type-of-accommodation'
   }
 
   response() {
