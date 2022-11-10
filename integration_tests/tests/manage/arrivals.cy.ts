@@ -5,7 +5,7 @@ import { ArrivalCreatePage, PremisesShowPage } from '../../../cypress_shared/pag
 import dateCapacityFactory from '../../../server/testutils/factories/dateCapacity'
 import staffMemberFactory from '../../../server/testutils/factories/staffMember'
 
-const staff = staffMemberFactory.buildList(5)
+const staff = staffMemberFactory.buildList(5, { keyWorker: true })
 
 context('Arrivals', () => {
   beforeEach(() => {

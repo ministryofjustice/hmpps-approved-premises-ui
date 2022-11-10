@@ -24,7 +24,7 @@ export default class ArrivalsController {
         bookingId,
         errors,
         errorSummary,
-        staffMembers,
+        staffMembers: staffMembers.filter(staffMember => staffMember.keyWorker),
         pageHeading: 'Mark the person as arrived',
         ...userInput,
       })
