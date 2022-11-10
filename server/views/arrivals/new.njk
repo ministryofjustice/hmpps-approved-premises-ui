@@ -62,10 +62,10 @@
               classes: "govuk-label--m"
           },
           classes: "govuk-input--width-20",
-          id: "keyWorkerStaffId",
-          name: "arrival[keyWorkerStaffId]",
-          items: convertObjectsToSelectOptions(staffMembers, 'Select a keyworker', 'name', 'id', 'keyWorkerStaffId'),
-          errorMessage: errors.keyWorkerStaffId.empty
+          id: "keyWorkerStaffCode",
+          name: "arrival[keyWorkerStaffCode]",
+          items: convertObjectsToSelectOptions(staffMembers, 'Select a keyworker', 'name', 'code', 'keyWorkerStaffCode'),
+          errorMessage: errors.keyWorkerStaffCode.empty
         }) }}
 
         {{ govukTextarea({

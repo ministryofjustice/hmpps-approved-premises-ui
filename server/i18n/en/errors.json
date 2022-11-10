@@ -34,7 +34,7 @@
     "invalid": "The expected departure date is an invalid date",
     "beforeBookingArrivalDate": "The departure date cannot be before the arrival date"
   },
-  "keyWorkerStaffId": {
+  "keyWorkerStaffCode": {
     "empty": "You must choose a keyworker"
   },
   "dateTime": {
