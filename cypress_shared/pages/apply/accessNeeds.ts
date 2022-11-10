@@ -13,7 +13,7 @@ export default class AccessNeedsPage extends Page {
     this.checkCheckboxByNameAndValue('additionalNeeds', 'neurodivergentConditions')
   }
 
-  completeReligiousAndCulturalNeedsSection() {
+  completeReligiousOrCulturalNeedsSection() {
     this.checkRadioByNameAndValue('religiousOrCulturalNeeds', 'yes')
     this.getTextInputByIdAndEnterDetails('religiousOrCulturalNeedsDetails', faker.lorem.words())
   }
@@ -25,7 +25,7 @@ export default class AccessNeedsPage extends Page {
 
   completeForm() {
     this.checkAdditionalNeedsBoxes()
-    this.completeReligiousAndCulturalNeedsSection()
+    this.completeReligiousOrCulturalNeedsSection()
     this.completeNeedsInterpreterSection()
     this.checkRadioByNameAndValue('careActAssessmentCompleted', 'yes')
   }

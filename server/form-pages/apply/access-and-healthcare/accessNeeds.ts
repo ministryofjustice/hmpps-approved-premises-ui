@@ -27,7 +27,7 @@ export default class AccessNeeds implements TasklistPage {
       question: `Does ${this.application.person.name} have any of the following needs?`,
       hint: `For example, if ${this.application.person.name} has a visual impairment, uses a hearing aid or has a learning difficulty.`,
     },
-    religiousAndCulturalNeeds: {
+    religiousOrCulturalNeeds: {
       question: `Does ${this.application.person.name} have any religious or cultural needs?`,
       furtherDetails: `Details of religious or cultural needs`,
     },
@@ -75,8 +75,8 @@ export default class AccessNeeds implements TasklistPage {
         [this.questions.needs.question]: this.body.additionalNeeds
           .map((need, i) => (i < 1 ? additionalNeeds[need] : additionalNeeds[need].toLowerCase()))
           .join(', '),
-        [this.questions.religiousAndCulturalNeeds.question]: sentenceCase(this.body.religiousOrCulturalNeeds),
-        [this.questions.religiousAndCulturalNeeds.furtherDetails]: this.body.religiousOrCulturalNeedsDetails,
+        [this.questions.religiousOrCulturalNeeds.question]: sentenceCase(this.body.religiousOrCulturalNeeds),
+        [this.questions.religiousOrCulturalNeeds.furtherDetails]: this.body.religiousOrCulturalNeedsDetails,
         [this.questions.interpreter.question]: sentenceCase(this.body.needsInterpreter),
         [this.questions.careActAssessmentCompleted]:
           this.body.careActAssessmentCompleted === 'yes' || this.body.careActAssessmentCompleted === 'no'
