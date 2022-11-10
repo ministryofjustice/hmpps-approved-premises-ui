@@ -23,6 +23,7 @@ export type TaskNames =
   | 'location-factors'
   | 'access-and-healthcare'
   | 'further-considerations'
+  | 'move-on'
 
 export type YesOrNoWithDetail<T extends string> = {
   [K in T]: YesOrNo

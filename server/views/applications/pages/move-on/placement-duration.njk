@@ -1,0 +1,91 @@
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+  <h1 class="govuk-heading-l">{{ page.title }}</h2>
+
+  <h3 class="govuk-heading-m">{{ page.questions.duration }}</h3>
+  <p>We'll use this to calculate the date the person will be expected to leave the AP, if they're accepted. </p>
+
+  {{ govukDetails({
+      summaryText: "How to decide the duration of an AP placement",
+      text: "Standard AP placements usually last up to 12 weeks but can sometimes be longer. PIPE placements usually last up to 26 weeks. Consider the level of support and risk management you expect the AP to provide and how long it will take to be effective. When is the person most likely to resettle successfully in the community?"
+    }) }}
+
+  {{
+    applyInput(
+      {
+        label: {
+          text: "Duration in weeks"
+        },
+        classes: "govuk-input--width-2",
+        fieldName: "duration"
+      },
+      fetchContext()
+    )
+  }}
+
+  <div
+    id="durationWrapper"
+    class="govuk-visually-hidden"
+    data-expected-dates
+    data-arrivalDate="{{ page.arrivalDate.toISOString() }}"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <h3 class="govuk-heading-m">Expected dates of stay in Approved Premises:</h3>
+    <p>
+      <b>Arrival date:</b>
+      {{ formatDate(page.arrivalDate.toISOString()) }}</p>
+    <p>
+      <b>Departure date:</b>
+      <span data-departure-date></span></p>
+  </div>
+
+  <br>
+
+  {{
+    applyTextarea(
+      {
+        fieldName: "durationDetail",
+        label: {
+          text: page.questions.durationDetail,
+          classes: "govuk-label--m"
+        },
+        hint: {
+          text: "If the duration of placement is not a standard length (12 weeks) provide reason as to why it is not."
+        }
+      },
+      fetchContext()
+    )
+  }}
+
+{% endblock %}
+
+{% block extraScripts %}
+  <script type="text/javascript" nonce="{{ cspNonce }}">
+    var duration = document.querySelector('#duration')
+    var expectedDatesContainer = document.querySelector('div[data-expected-dates]')
+
+    duration.addEventListener('input', function (e) {
+      var numWeeks = duration.value
+      var arrivalDate = new Date(expectedDatesContainer.dataset.arrivaldate)
+      var departureDate = arrivalDate.setDate(arrivalDate.getDate() + numWeeks * 7)
+      var departureDateContainer = document.querySelector('[data-departure-date]')
+
+      departureDateContainer.innerHTML = new Date(departureDate)
+        .toLocaleString('en-GB', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
+        .replace(',', '')
+      expectedDatesContainer.setAttribute('class', '')
+
+      e.preventDefault()
+    })
+  </script>
+{% endblock %}
