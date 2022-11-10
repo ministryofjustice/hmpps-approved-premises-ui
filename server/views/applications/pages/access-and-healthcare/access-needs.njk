@@ -108,3 +108,23 @@
       },fetchContext()) }}
 
 {% endblock %}
+
+{% block extraScripts %}
+  <script type="text/javascript" nonce="{{ cspNonce }}">
+    var none = document.querySelector('input[name="additionalNeeds"][value="none"]')
+    var checkBoxes = document.querySelectorAll('input[name="additionalNeeds"]:not([value="none"])')
+
+    none.addEventListener('change', function () {
+      if (this.checked) {
+        for (let i = 0; i < checkBoxes.length; i++) {
+          checkBoxes[i].checked = false
+          checkBoxes[i].setAttribute('disabled', true)
+        }
+      } else {
+        for (let i = 0; i < checkBoxes.length; i++) {
+          checkBoxes[i].removeAttribute('disabled')
+        }
+      }
+    });
+  </script>
+{% endblock %}
