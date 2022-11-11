@@ -86,3 +86,12 @@ export function convertKeyValuePairToCheckBoxItems<T>(
     }
   })
 }
+
+/**
+ * Performs validation on the area of a postcode (IE the first three characters)
+ * @param string string to be validated.
+ * @returns true if the string is valid, false otherwise.
+ */
+export function validPostcodeArea(potentialPostcode: string) {
+  return /[A-Z][0-9]{1,2}|[A-Z][A-HJ-Y][0-9]{1,2}|[A-Z][0-9][A-Z]|[A-Z][A-HJ-Y][0-9]?[A-Z]/.test(potentialPostcode)
+}

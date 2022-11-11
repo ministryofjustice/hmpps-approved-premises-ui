@@ -1,4 +1,5 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import { validPostcodeArea } from '../../../utils/formUtils'
 import { sentenceCase } from '../../../utils/utils'
 
 import TasklistPage from '../../tasklistPage'
@@ -62,9 +63,7 @@ export default class DescribeLocationFactors implements TasklistPage {
 
     if (!this.body.postcodeArea) {
       errors.postcodeArea = 'You must specify a preferred postcode area for the placement'
-    } else if (
-      !this.body.postcodeArea.match(/[A-Z][0-9]{1,2}|[A-Z][A-HJ-Y][0-9]{1,2}|[A-Z][0-9][A-Z]|[A-Z][A-HJ-Y][0-9]?[A-Z]/)
-    ) {
+    } else if (!validPostcodeArea(this.body.postcodeArea)) {
       errors.postcodeArea = 'The preferred postcode area must be a valid postcode area (i.e SW1A)'
     }
 
