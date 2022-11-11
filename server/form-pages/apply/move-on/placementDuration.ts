@@ -34,7 +34,7 @@ export default class PlacementDuration implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'relocation-region'
   }
 
   response() {
