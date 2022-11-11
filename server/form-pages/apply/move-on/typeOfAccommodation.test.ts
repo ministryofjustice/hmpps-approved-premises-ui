@@ -37,7 +37,15 @@ describe('TypeOfAccomodation', () => {
     })
   })
 
-  itShouldHaveNextValue(new TypeOfAccommodation({}, application), '')
+  describe('if the response is foreignNational the user is taken to the foreign-national page', () => {
+    itShouldHaveNextValue(
+      new TypeOfAccommodation({ accommodationType: 'foreignNational' }, application),
+      'foreign-national',
+    )
+  })
+  describe('if the response is not foreign national the user is take to the task list', () => {
+    itShouldHaveNextValue(new TypeOfAccommodation({ accommodationType: 'cas3' }, application), '')
+  })
   itShouldHavePreviousValue(new TypeOfAccommodation({}, application), 'plans-in-place')
 
   describe('errors', () => {
