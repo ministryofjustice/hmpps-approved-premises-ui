@@ -26,7 +26,7 @@ export default class RelocationRegion implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'plans-in-place'
   }
 
   response() {

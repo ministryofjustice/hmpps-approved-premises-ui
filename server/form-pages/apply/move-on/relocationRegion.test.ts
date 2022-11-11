@@ -19,7 +19,7 @@ describe('RelocationRegion', () => {
     })
   })
 
-  itShouldHaveNextValue(new RelocationRegion({}, application), '')
+  itShouldHaveNextValue(new RelocationRegion({}, application), 'plans-in-place')
   itShouldHavePreviousValue(new RelocationRegion({}, application), 'placement-duration')
 
   describe('errors', () => {
