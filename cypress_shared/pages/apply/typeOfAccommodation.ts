@@ -8,7 +8,6 @@ export default class TypeOfAccomodationPage extends Page {
   }
 
   completeForm() {
-    this.checkRadioByNameAndValue('accommodationType', 'other')
-    this.getTextInputByIdAndEnterDetails('otherAccommodationType', 'Another type')
+    this.checkRadioByNameAndValue('accommodationType', 'foreignNational')
   }
 }

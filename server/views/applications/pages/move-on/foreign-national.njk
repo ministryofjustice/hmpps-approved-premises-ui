@@ -1,0 +1,45 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+  <h1 class="govuk-heading-l">{{page.title}}</h1>
+
+  {% set fnInformed %}
+  {{ applyDateInput({
+        fieldName: 'date',
+        classes: "govuk-!-width-two-thirds",
+        value: page.date,
+        errorMessage: errors.date,
+        label: {
+          text: page.subquestion
+        }
+      }) }}
+  {% endset %}
+
+  {{ applyRadios({
+      fieldName: 'response',
+      fieldset: {
+        legend: {
+          text: page.question,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        text: page.hint
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          conditional: {
+            html: fnInformed
+          }
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }) }}
+
+{% endblock %}
