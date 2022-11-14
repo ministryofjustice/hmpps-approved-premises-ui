@@ -1,0 +1,28 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+  <h1 class="govuk-heading-l">{{page.title}}
+  </h1>
+
+  {{ applyRadios({
+        fieldName: "arePlansInPlace",
+        fieldset: {
+          legend: {
+            text: page.question,
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes"
+          },
+          {
+            value: "no",
+            text: "No"
+          }
+        ]
+    },fetchContext()) }}
+
+{% endblock %}
