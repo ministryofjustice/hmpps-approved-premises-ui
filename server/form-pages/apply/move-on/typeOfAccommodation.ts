@@ -13,11 +13,11 @@ export const accommodationType = {
   supportedAccommodation: 'Supported accommodation',
   supportedHousing: 'Supported housing',
   cas3: 'CAS3 (Community Accommodation Service) provided',
-  homeOffice: 'Accommodation provided through Home Office section 10 for foreign national',
+  foreignNational: 'Accommodation provided through Home Office section 10 for foreign national',
   other: 'Other, please specify',
 }
 
-type AccommodationType = keyof typeof accommodationType & 'other'
+type AccommodationType = keyof typeof accommodationType | 'other'
 
 export default class TypeOfAccommodation implements TasklistPage {
   name = 'type-of-accommodation'
@@ -45,6 +45,7 @@ export default class TypeOfAccommodation implements TasklistPage {
   }
 
   next() {
+    if (this.body.accommodationType === 'foreignNational') return 'foreign-national'
     return ''
   }
 
