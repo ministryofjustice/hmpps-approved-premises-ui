@@ -1,12 +1,12 @@
-import { Person } from '../../../server/@types/shared'
-import Page from '../page'
+import { Application } from '../../../server/@types/shared'
+import ApplyPage from './applyPage'
 
-export default class TypeOfApPage extends Page {
-  constructor(person: Person) {
-    super(`Which type of AP does ${person.name} require?`)
+export default class TypeOfApPage extends ApplyPage {
+  constructor(application: Application) {
+    super(`Which type of AP does ${application.person.name} require?`, application, 'type-of-ap', 'ap-type')
   }
 
   completeForm() {
-    this.checkRadioByNameAndValue('type', 'standard')
+    this.checkRadioButtonFromPageBody('type')
   }
 }

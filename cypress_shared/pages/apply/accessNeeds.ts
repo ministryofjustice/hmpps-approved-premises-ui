@@ -1,16 +1,14 @@
-import { faker } from '@faker-js/faker/locale/en_GB'
+import { Application } from '@approved-premises/api'
 
-import Page from '../page'
+import ApplyPage from './applyPage'
 
-export default class AccessNeedsPage extends Page {
-  constructor() {
-    super('Access needs')
+export default class AccessNeedsPage extends ApplyPage {
+  constructor(application: Application) {
+    super('Access needs', application, 'access-and-healthcare', 'access-needs')
   }
 
   checkAdditionalNeedsBoxes() {
-    this.checkCheckboxByNameAndValue('additionalNeeds', 'mobility')
-    this.checkCheckboxByNameAndValue('additionalNeeds', 'learningDisability')
-    this.checkCheckboxByNameAndValue('additionalNeeds', 'neurodivergentConditions')
+    this.checkCheckboxesFromPageBody('additionalNeeds')
   }
 
   checkingAdditionalNeedsOtherDisablesOtherCheckBoxes() {
@@ -24,13 +22,13 @@ export default class AccessNeedsPage extends Page {
   }
 
   completeReligiousOrCulturalNeedsSection() {
-    this.checkRadioByNameAndValue('religiousOrCulturalNeeds', 'yes')
-    this.getTextInputByIdAndEnterDetails('religiousOrCulturalNeedsDetails', faker.lorem.words())
+    this.checkRadioButtonFromPageBody('religiousOrCulturalNeeds')
+    this.completeTextInputFromPageBody('religiousOrCulturalNeedsDetails')
   }
 
   completeNeedsInterpreterSection() {
     this.checkRadioByNameAndValue('needsInterpreter', 'yes')
-    this.getTextInputByIdAndEnterDetails('interpreterLanguage', faker.lorem.words())
+    this.completeTextInputFromPageBody('interpreterLanguage')
   }
 
   completeForm() {

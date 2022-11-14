@@ -1,14 +1,17 @@
-import Page from '../page'
-import { Person } from '../../../server/@types/shared'
+import { Application } from '@approved-premises/api'
 
-export default class CateringPage extends Page {
-  constructor(person: Person) {
-    super('Catering requirements')
-    cy.get('.govuk-form-group').contains(`Do you have any concerns about ${person.name} catering for themselves?`)
+import ApplyPage from './applyPage'
+
+export default class CateringPage extends ApplyPage {
+  constructor(application: Application) {
+    super('Catering requirements', application, 'further-considerations', 'catering')
+    cy.get('.govuk-form-group').contains(
+      `Do you have any concerns about ${application.person.name} catering for themselves?`,
+    )
   }
 
   completeForm(): void {
-    this.checkRadioByNameAndValue('catering', 'yes')
-    this.completeTextArea('cateringDetail', 'Some details here')
+    this.checkRadioButtonFromPageBody('catering')
+    this.completeTextInputFromPageBody('cateringDetail')
   }
 }

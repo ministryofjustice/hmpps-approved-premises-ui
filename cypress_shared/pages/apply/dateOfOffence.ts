@@ -1,14 +1,15 @@
-import Page from '../page'
+import { Application } from '@approved-premises/api'
 
-export default class DateOfOffence extends Page {
-  constructor() {
-    super('Convicted offences')
+import ApplyPage from './applyPage'
+
+export default class DateOfOffence extends ApplyPage {
+  constructor(application: Application) {
+    super('Convicted offences', application, 'risk-management-features', 'date-of-offence')
   }
 
   completeForm(): void {
-    this.checkCheckboxByNameAndValue('arsonOffence', 'current')
-    this.checkCheckboxByNameAndValue('hateCrime', 'previous')
-    this.checkCheckboxByNameAndValue('inPersonSexualOffence', 'previous')
-    this.checkCheckboxByNameAndValue('inPersonSexualOffence', 'current')
+    this.checkCheckboxesFromPageBody('arsonOffence')
+    this.checkCheckboxesFromPageBody('hateCrime')
+    this.checkCheckboxesFromPageBody('inPersonSexualOffence')
   }
 }

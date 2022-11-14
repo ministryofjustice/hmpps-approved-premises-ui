@@ -1,15 +1,18 @@
-import Page from '../page'
-import { Person } from '../../../server/@types/shared'
+import { Application } from '@approved-premises/api'
 
-export default class TypeOfConvictedOffence extends Page {
-  constructor(person: Person) {
-    super(`What type of offending has ${person.name} been convicted of?`)
+import ApplyPage from './applyPage'
+
+export default class TypeOfConvictedOffence extends ApplyPage {
+  constructor(application: Application) {
+    super(
+      `What type of offending has ${application.person.name} been convicted of?`,
+      application,
+      'risk-management-features',
+      'type-of-convicted-offence',
+    )
   }
 
   completeForm(): void {
-    this.checkCheckboxByNameAndValue('offenceConvictions', 'arson')
-    this.checkCheckboxByNameAndValue('offenceConvictions', 'sexualOffence')
-    this.checkCheckboxByNameAndValue('offenceConvictions', 'hateCrimes')
-    this.checkCheckboxByNameAndValue('offenceConvictions', 'childNonSexualOffence')
+    this.checkCheckboxesFromPageBody('offenceConvictions')
   }
 }

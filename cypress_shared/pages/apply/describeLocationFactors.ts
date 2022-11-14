@@ -1,17 +1,19 @@
-import Page from '../page'
+import { Application } from '@approved-premises/api'
 
-export default class DescribeLocationFactors extends Page {
-  constructor() {
-    super('Location factors')
+import ApplyPage from './applyPage'
+
+export default class DescribeLocationFactors extends ApplyPage {
+  constructor(application: Application) {
+    super('Location factors', application, 'location-factors', 'describe-location-factors')
   }
 
   completeForm(): void {
-    this.getTextInputByIdAndEnterDetails('postcodeArea', 'SW1')
-    this.getTextInputByIdAndEnterDetails('positiveFactors', 'Some positive factors')
-    this.checkRadioByNameAndValue('restrictions', 'yes')
-    this.getTextInputByIdAndEnterDetails('restrictionDetail', 'Restrictions go here')
-    this.checkRadioByNameAndValue('alternativeRadiusAccepted', 'yes')
-    this.getSelectInputByIdAndSelectAnEntry('alternativeRadius', '70')
-    this.checkRadioByNameAndValue('differentPDU', 'no')
+    this.completeTextInputFromPageBody('postcodeArea')
+    this.completeTextInputFromPageBody('positiveFactors')
+    this.checkRadioButtonFromPageBody('restrictions')
+    this.completeTextInputFromPageBody('restrictionDetail')
+    this.checkRadioButtonFromPageBody('alternativeRadiusAccepted')
+    this.selectSelectOptionFromPageBody('alternativeRadius')
+    this.checkRadioButtonFromPageBody('differentPDU')
   }
 }

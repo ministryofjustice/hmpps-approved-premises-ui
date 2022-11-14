@@ -1,12 +1,14 @@
-import Page from '../page'
+import { Application } from '@approved-premises/api'
 
-export default class ForeignNationalPage extends Page {
-  constructor() {
-    super('Placement duration and move on')
+import ApplyPage from './applyPage'
+
+export default class ForeignNationalPage extends ApplyPage {
+  constructor(application: Application) {
+    super('Placement duration and move on', application, 'move-on', 'foreign-national')
   }
 
   completeForm() {
-    this.checkRadioByNameAndValue('response', 'yes')
-    this.completeDateInputs('date', new Date().toISOString())
+    this.checkRadioButtonFromPageBody('response')
+    this.completeDateInputsFromPageBody('date')
   }
 }

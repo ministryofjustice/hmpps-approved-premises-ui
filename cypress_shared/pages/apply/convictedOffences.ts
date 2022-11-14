@@ -1,12 +1,18 @@
-import Page from '../page'
-import { Person } from '../../../server/@types/shared'
+import { Application } from '@approved-premises/api'
 
-export default class ConvictedOffences extends Page {
-  constructor(person: Person) {
-    super(`Has ${person.name} ever been convicted of the following offences?`)
+import ApplyPage from './applyPage'
+
+export default class ConvictedOffences extends ApplyPage {
+  constructor(application: Application) {
+    super(
+      `Has ${application.person.name} ever been convicted of the following offences?`,
+      application,
+      'risk-management-features',
+      'convicted-offences',
+    )
   }
 
   completeForm(): void {
-    this.checkRadioByNameAndValue('response', 'yes')
+    this.checkRadioButtonFromPageBody('response')
   }
 }

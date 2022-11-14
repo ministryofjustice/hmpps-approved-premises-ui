@@ -1,13 +1,19 @@
-import { Person } from '../../../server/@types/shared'
-import Page from '../page'
+import { Application } from '@approved-premises/api'
 
-export default class PduTransferPage extends Page {
-  constructor(person: Person) {
-    super(`Have you agreed ${person.name}'s transfer/supervision with the receiving PDU?`)
+import ApplyPage from './applyPage'
+
+export default class PduTransferPage extends ApplyPage {
+  constructor(application: Application) {
+    super(
+      `Have you agreed ${application.person.name}'s transfer/supervision with the receiving PDU?`,
+      application,
+      'location-factors',
+      'pdu-transfer',
+    )
   }
 
   completeForm() {
-    this.checkRadioByNameAndValue('transferStatus', 'yes')
-    this.getTextInputByIdAndEnterDetails('probationPractitioner', 'Probation Practicioner')
+    this.checkRadioButtonFromPageBody('transferStatus')
+    this.completeTextInputFromPageBody('probationPractitioner')
   }
 }

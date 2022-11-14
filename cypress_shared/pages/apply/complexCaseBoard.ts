@@ -1,16 +1,17 @@
-import Page from '../page'
-import { Person } from '../../../server/@types/shared'
+import { Application } from '@approved-premises/api'
 
-export default class ComplexCaseBoardPage extends Page {
-  constructor(person: Person) {
-    super('Complex case board')
+import ApplyPage from './applyPage'
+
+export default class ComplexCaseBoardPage extends ApplyPage {
+  constructor(application: Application) {
+    super('Complex case board', application, 'further-considerations', 'complex-case-board')
     cy.get('.govuk-form-group').contains(
-      `Does ${person.name}'s gender identity require a complex case board to review their application? `,
+      `Does ${application.person.name}'s gender identity require a complex case board to review their application? `,
     )
   }
 
   completeForm(): void {
-    this.checkRadioByNameAndValue('complexCaseBoard', 'yes')
-    this.completeTextArea('complexCaseBoardDetail', 'Some details here')
+    this.checkRadioButtonFromPageBody('complexCaseBoard')
+    this.completeTextInputFromPageBody('complexCaseBoardDetail')
   }
 }

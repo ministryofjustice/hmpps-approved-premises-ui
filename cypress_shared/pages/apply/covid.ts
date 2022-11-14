@@ -1,13 +1,15 @@
-import Page from '../page'
+import { Application } from '@approved-premises/api'
 
-export default class CovidPage extends Page {
-  constructor() {
-    super('Healthcare information')
+import ApplyPage from './applyPage'
+
+export default class CovidPage extends ApplyPage {
+  constructor(application: Application) {
+    super('Healthcare information', application, 'access-and-healthcare', 'covid')
   }
 
   completeForm() {
-    this.checkRadioByNameAndValue('fullyVaccinated', 'yes')
-    this.checkRadioByNameAndValue('highRisk', 'yes')
-    this.getTextInputByIdAndEnterDetails('additionalCovidInfo', 'additional info')
+    this.checkRadioButtonFromPageBody('fullyVaccinated')
+    this.checkRadioButtonFromPageBody('highRisk')
+    this.completeTextInputFromPageBody('additionalCovidInfo')
   }
 }

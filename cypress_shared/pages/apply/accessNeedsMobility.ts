@@ -1,17 +1,16 @@
-import { faker } from '@faker-js/faker/locale/en_GB'
-import { Person } from '../../../server/@types/shared'
+import { Application } from '@approved-premises/api'
 
-import Page from '../page'
+import ApplyPage from './applyPage'
 
-export default class AccessNeedsMobilityPage extends Page {
-  constructor(person: Person) {
-    super('Access needs')
-    cy.get('.govuk-form-group').contains(`Does ${person.name} require use of a wheelchair?`)
+export default class AccessNeedsMobilityPage extends ApplyPage {
+  constructor(application: Application) {
+    super('Access needs', application, 'access-and-healthcare', 'access-needs-mobility')
+    cy.get('.govuk-form-group').contains(`Does ${application.person.name} require use of a wheelchair?`)
   }
 
   completeForm() {
-    this.checkRadioByNameAndValue('needsWheelchair', 'yes')
-    this.getTextInputByIdAndEnterDetails('mobilityNeeds', faker.lorem.word())
-    this.getTextInputByIdAndEnterDetails('visualImpairment', faker.lorem.word())
+    this.checkRadioButtonFromPageBody('needsWheelchair')
+    this.completeTextInputFromPageBody('mobilityNeeds')
+    this.completeTextInputFromPageBody('visualImpairment')
   }
 }
