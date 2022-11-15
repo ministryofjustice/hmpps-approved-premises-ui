@@ -62,6 +62,7 @@ export type { RoshRisks } from './models/RoshRisks';
 export type { RoshRisksEnvelope } from './models/RoshRisksEnvelope';
 export type { ServiceName } from './models/ServiceName';
 export type { StaffMember } from './models/StaffMember';
+export type { SubmitApplication } from './models/SubmitApplication';
 export type { SupervisingOfficer } from './models/SupervisingOfficer';
 export type { SupervisingProvider } from './models/SupervisingProvider';
 export type { SupervisingTeam } from './models/SupervisingTeam';
