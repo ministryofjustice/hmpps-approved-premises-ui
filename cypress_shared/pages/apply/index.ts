@@ -17,6 +17,7 @@ import CateringPage from './catering'
 import ArsonPage from './arson'
 import PlacementDurationPage from './placementDuration'
 import ForeignNationalPage from './foreignNational'
+import CheckYourAnswersPage from './checkYourAnswersPage'
 
 export {
   ConfirmDetailsPage,
@@ -38,4 +39,5 @@ export {
   ArsonPage,
   PlacementDurationPage,
   ForeignNationalPage,
+  CheckYourAnswersPage,
 }

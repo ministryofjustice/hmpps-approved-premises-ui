@@ -53,6 +53,18 @@ export default {
         transformers: ['response-template'],
       },
     }),
+  stubApplicationGet: (args: { application: Application }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/applications/${args.application.id}`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.application,
+      },
+    }),
   verifyApplicationUpdate: async (applicationId: string) =>
     (
       await getMatchingRequests({

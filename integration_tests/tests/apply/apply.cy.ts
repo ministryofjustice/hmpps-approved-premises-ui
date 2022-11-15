@@ -17,6 +17,7 @@ import {
   ArsonPage,
   PlacementDurationPage,
   ForeignNationalPage,
+  CheckYourAnswersPage,
 } from '../../../cypress_shared/pages/apply'
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
@@ -143,6 +144,7 @@ context('Apply', () => {
 
       cy.task('stubApplicationCreate', { application })
       cy.task('stubApplicationUpdate', { application })
+      cy.task('stubApplicationGet', { application })
 
       const startPage = StartPage.visit()
       startPage.startApplication()
@@ -175,6 +177,7 @@ context('Apply', () => {
       placementPurposePage.completeForm()
       placementPurposePage.clickSubmit()
 
+      const basicInformationPages = [sentenceTypePage, releaseDatePage, placementStartPage, placementPurposePage]
 
       // Then I should be redirected to the task list
       const tasklistPage = Page.verifyOnPage(TaskListPage)
@@ -230,6 +233,13 @@ context('Apply', () => {
       rehabilitativeInterventionsPage.completeForm()
       rehabilitativeInterventionsPage.clickSubmit()
 
+      const riskManagementPages = [
+        riskManagementFeaturesPage,
+        convictedOffencesPage,
+        typeOfConvictedOffencePage,
+        dateOfOffencePage,
+        rehabilitativeInterventionsPage,
+      ]
 
       // Then I should be taken back to the task list
       // And the risk management task should show a completed status
@@ -273,6 +283,13 @@ context('Apply', () => {
       covidPage.completeForm()
       covidPage.clickSubmit()
 
+      const accessAndHealthcarePages = [
+        accessNeedsPage,
+        accessNeedsMobilityPage,
+        accessNeedsAdditionalAdjustmentsPage,
+        covidPage,
+      ]
+
       Page.verifyOnPage(TaskListPage)
 
       // Given I click the 'Detail further considerations for placement' task
@@ -308,6 +325,15 @@ context('Apply', () => {
       arsonPage.completeForm()
       arsonPage.clickSubmit()
 
+      const furtherConsiderationsPages = [
+        roomSharingPage,
+        vulnerabilityPage,
+        previousPlacementsPage,
+        complexCaseBoardPage,
+        cateringPage,
+        arsonPage,
+      ]
+
       // Then I should be taken back to the task list
       // And the further considerations task should show a completed status
       tasklistPage.shouldShowTaskStatus('further-considerations', 'Completed')
@@ -339,9 +365,33 @@ context('Apply', () => {
       foreignNationalPage.completeForm()
       foreignNationalPage.clickSubmit()
 
+      const moveOnPages = [
+        placementDurationPage,
+        relocationRegion,
+        plansInPlacePage,
+        typeOfAccommodationPage,
+        foreignNationalPage,
+      ]
+
       // Then I should be taken back to the task list
       // And the move on information task should show a completed status
       tasklistPage.shouldShowTaskStatus('move-on', 'Completed')
+
+      // Given I click the check your answers task
+      cy.get('[data-cy-task-name="check-your-answers"]').click()
+
+      // Then I should be on the check your answers page
+      const checkYourAnswersPage = new CheckYourAnswersPage()
+
+      // And the page should be populated with my answers
+      checkYourAnswersPage.shouldShowPersonInformation(person)
+      checkYourAnswersPage.shouldShowBasicInformationAnswers(basicInformationPages)
+      checkYourAnswersPage.shouldShowTypeOfApAnswers(typeOfApPages)
+      checkYourAnswersPage.shouldShowRiskManagementAnswers(riskManagementPages)
+      checkYourAnswersPage.shouldShowLocationFactorsAnswers(locationFactorsPages)
+      checkYourAnswersPage.shouldShowAccessAndHealthcareAnswers(accessAndHealthcarePages)
+      checkYourAnswersPage.shouldShowFurtherConsiderationsAnswers(furtherConsiderationsPages)
+      checkYourAnswersPage.shouldShowMoveOnAnswers(moveOnPages)
     })
   })
 })
