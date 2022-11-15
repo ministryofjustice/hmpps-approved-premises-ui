@@ -71,33 +71,27 @@ export default class AccessNeeds implements TasklistPage {
 
   response() {
     const response = {
-      [this.title]: {
-        [this.questions.needs.question]: this.body.additionalNeeds
-          .map((need, i) => (i < 1 ? additionalNeeds[need] : additionalNeeds[need].toLowerCase()))
-          .join(', '),
-        [this.questions.religiousOrCulturalNeeds.question]: sentenceCase(this.body.religiousOrCulturalNeeds),
-        [this.questions.religiousOrCulturalNeeds.furtherDetails]: this.body.religiousOrCulturalNeedsDetails,
-        [this.questions.interpreter.question]: sentenceCase(this.body.needsInterpreter),
-        [this.questions.careActAssessmentCompleted]:
-          this.body.careActAssessmentCompleted === 'yes' || this.body.careActAssessmentCompleted === 'no'
-            ? pascalCase(this.body.careActAssessmentCompleted)
-            : "I don't know",
-      },
+      [this.questions.needs.question]: this.body.additionalNeeds
+        .map((need, i) => (i < 1 ? additionalNeeds[need] : additionalNeeds[need].toLowerCase()))
+        .join(', '),
+      [this.questions.religiousOrCulturalNeeds.question]: sentenceCase(this.body.religiousOrCulturalNeeds),
+      [this.questions.religiousOrCulturalNeeds.furtherDetails]: this.body.religiousOrCulturalNeedsDetails,
+      [this.questions.interpreter.question]: sentenceCase(this.body.needsInterpreter),
+      [this.questions.careActAssessmentCompleted]:
+        this.body.careActAssessmentCompleted === 'yes' || this.body.careActAssessmentCompleted === 'no'
+          ? pascalCase(this.body.careActAssessmentCompleted)
+          : "I don't know",
     }
     if (this.body.needsInterpreter === 'yes') {
       return {
-        [this.title]: {
-          ...response[this.title],
-          [this.questions.interpreter.language]: this.body.interpreterLanguage,
-        },
+        ...response,
+        [this.questions.interpreter.language]: this.body.interpreterLanguage,
       }
     }
     if (this.body.religiousOrCulturalNeeds === 'yes') {
       return {
-        [this.title]: {
-          ...response[this.title],
-          religiousOrCulturalNeedsDetails: this.body.religiousOrCulturalNeedsDetails,
-        },
+        ...response,
+        religiousOrCulturalNeedsDetails: this.body.religiousOrCulturalNeedsDetails,
       }
     }
 
