@@ -46,18 +46,15 @@ describe('TypeOfConvictedOffence', () => {
         )
 
         expect(page.response()).toEqual({
-          'What type of offending has John Wayne been convicted of?': {
-            Offences: 'Arson offences, Sexual offences, Hate crimes, Non-sexual offences against children',
-          },
+          'What type of offending has John Wayne been convicted of?':
+            'Arson offences, Sexual offences, Hate crimes, Non-sexual offences against children',
         })
       })
       it('When there is a single conviction', () => {
         const page = new TypeOfConvictedOffence({ offenceConvictions: 'arson' }, application)
 
         expect(page.response()).toEqual({
-          'What type of offending has John Wayne been convicted of?': {
-            Offences: 'Arson offences',
-          },
+          'What type of offending has John Wayne been convicted of?': 'Arson offences',
         })
       })
     })
