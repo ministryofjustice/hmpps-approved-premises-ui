@@ -14,5 +14,7 @@ export default abstract class TasklistPage {
 
   abstract errors(): TaskListErrors<this>
 
+  abstract response(): Record<string, unknown>
+
   async setup?(request: Request, dataServices: DataServices): Promise<void>
 }
