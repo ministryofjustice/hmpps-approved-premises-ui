@@ -33,10 +33,8 @@ export default class RiskManagementFeatures implements TasklistPage {
 
   response() {
     return {
-      [this.title]: {
-        [this.questions.manageRiskDetails]: this.body.manageRiskDetails,
-        [this.questions.additionalFeaturesDetails]: this.body.additionalFeaturesDetails,
-      },
+      [this.questions.manageRiskDetails]: this.body.manageRiskDetails,
+      [this.questions.additionalFeaturesDetails]: this.body.additionalFeaturesDetails,
     }
   }
 

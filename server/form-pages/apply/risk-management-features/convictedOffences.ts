@@ -1,6 +1,7 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { Application } from '../../../@types/shared'
 import { convertKeyValuePairToRadioItems } from '../../../utils/formUtils'
+import { lowerCase, sentenceCase } from '../../../utils/utils'
 
 import TasklistPage from '../../tasklistPage'
 
@@ -35,8 +36,11 @@ export default class ConvictedOffences implements TasklistPage {
   }
 
   response() {
+    const offenceList = lowerCase(`${this.offences.slice(0, -1).join(', ')} or ${this.offences.slice(-1)}`)
     return {
-      [this.title]: { furtherDetails: this.furtherDetails, offences: this.offences.join(', ') },
+      [`Has ${this.application.person.name} ever been convicted of any ${offenceList}?`]: sentenceCase(
+        this.body.response,
+      ),
     }
   }
 

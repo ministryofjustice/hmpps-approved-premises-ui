@@ -1,5 +1,5 @@
 import type { TaskListErrors } from '@approved-premises/ui'
-import { sentenceCase } from '../../../utils/utils'
+import { sentenceCase, lowerCase } from '../../../utils/utils'
 
 import TasklistPage from '../../tasklistPage'
 
@@ -45,14 +45,13 @@ export default class DateOfOffence implements TasklistPage {
   }
 
   response() {
-    return {
-      [this.title]: {
-        [this.questions.currentOrPrevious]: offencesList.reduce(
-          (prev, curr) => ({ ...prev, [sentenceCase(curr)]: this.getPlainEnglishAnswerFromFormData(this.body[curr]) }),
-          {},
-        ),
-      },
-    }
+    return offencesList.reduce(
+      (prev, curr) => ({
+        ...prev,
+        [`Is the ${lowerCase(curr)} current or previous?`]: this.getPlainEnglishAnswerFromFormData(this.body[curr]),
+      }),
+      {},
+    )
   }
 
   getPlainEnglishAnswerFromFormData(formData: Response) {

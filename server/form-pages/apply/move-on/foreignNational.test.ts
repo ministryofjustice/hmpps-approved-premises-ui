@@ -16,7 +16,13 @@ describe('ForeignNational', () => {
         'date-year': 2022,
         something: 'else',
       })
-      expect(page.body).toEqual({ response: 'yes', date: '2022-02-22' })
+      expect(page.body).toEqual({
+        response: 'yes',
+        date: '2022-02-22',
+        'date-day': 22,
+        'date-month': 2,
+        'date-year': 2022,
+      })
     })
   })
 

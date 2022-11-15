@@ -36,11 +36,9 @@ export default class TypeOfConvictedOffence implements TasklistPage {
 
   response() {
     return {
-      [this.title]: {
-        Offences: Array.isArray(this.body.offenceConvictions)
-          ? this.body.offenceConvictions.map(offence => offences[offence]).join(', ')
-          : offences[this.body.offenceConvictions],
-      },
+      [`${this.title}`]: Array.isArray(this.body.offenceConvictions)
+        ? this.body.offenceConvictions.map(offence => offences[offence]).join(', ')
+        : offences[this.body.offenceConvictions],
     }
   }
 

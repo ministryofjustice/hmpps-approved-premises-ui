@@ -2,7 +2,7 @@ import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 import { sentenceCase } from '../../../utils/utils'
 
 import TasklistPage from '../../tasklistPage'
-import { DateFormats } from '../../../utils/dateUtils'
+import { DateFormats, dateIsBlank } from '../../../utils/dateUtils'
 
 export default class ForeignNational implements TasklistPage {
   name = 'foreign-national'
@@ -18,10 +18,9 @@ export default class ForeignNational implements TasklistPage {
     'For any foreign nationals without recourse to public funds, you must notify the Home Office before you submit your application. You do not need to have any offers of accommodation yet.'
 
   body:
-    | {
+    | ({
         response: 'yes'
-        date: string
-      }
+      } & ObjectWithDateParts<'date'>)
     | { response: 'no' }
 
   constructor(body: Record<string, unknown>) {
@@ -31,6 +30,9 @@ export default class ForeignNational implements TasklistPage {
     if (body.response === 'yes') {
       this.body = {
         response: body.response as 'yes',
+        'date-year': body['date-year'] as string,
+        'date-month': body['date-month'] as string,
+        'date-day': body['date-day'] as string,
         date: DateFormats.convertDateAndTimeInputsToIsoString(body as ObjectWithDateParts<'date'>, 'date').date,
       }
     }
@@ -61,7 +63,8 @@ export default class ForeignNational implements TasklistPage {
       errors.response =
         'You must confirm whether you have informed the Home Office that accommodation will be required after placement'
 
-    if (this.body.response === 'yes' && !this.body.date) errors.date = 'You must confirm the date of notification'
+    if (this.body.response === 'yes' && dateIsBlank(this.body))
+      errors.date = 'You must confirm the date of notification'
 
     return errors
   }

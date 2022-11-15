@@ -45,13 +45,11 @@ describe('ConvictedOffences', () => {
 
   describe('response', () => {
     it('should return a translated version of the response', () => {
-      const page = new ConvictedOffences({ reponse: 'yes' }, application)
+      const page = new ConvictedOffences({ response: 'yes' }, application)
 
       expect(page.response()).toEqual({
-        'Has John Wayne ever been convicted of the following offences?': {
-          furtherDetails: 'This includes any spent or unspent convictions over their lifetime.',
-          offences: 'Arson offences, Sexual offences, Hate crimes, Non-sexual offences against children',
-        },
+        'Has John Wayne ever been convicted of any arson offences, sexual offences, hate crimes or non-sexual offences against children?':
+          'Yes',
       })
     })
   })

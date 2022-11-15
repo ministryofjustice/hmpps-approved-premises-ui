@@ -85,14 +85,12 @@ describe('AccessNeeds', () => {
       )
 
       expect(page.response()).toEqual({
-        'Access needs': {
-          'Does John Wayne have any of the following needs?': 'Mobility needs, visual impairment',
-          'Does John Wayne need an interpreter?': 'Yes',
-          'Which language is an interpreter needed for?': 'French',
-          'Does John Wayne have any religious or cultural needs?': 'Yes',
-          'Details of religious or cultural needs': 'Some details',
-          'Has a care act assessment been completed?': 'Yes',
-        },
+        'Does John Wayne have any of the following needs?': 'Mobility needs, visual impairment',
+        'Does John Wayne need an interpreter?': 'Yes',
+        'Which language is an interpreter needed for?': 'French',
+        'Does John Wayne have any religious or cultural needs?': 'Yes',
+        'Details of religious or cultural needs': 'Some details',
+        'Has a care act assessment been completed?': 'Yes',
       })
     })
   })
