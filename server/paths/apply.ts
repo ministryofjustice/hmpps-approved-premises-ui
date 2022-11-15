@@ -14,6 +14,7 @@ const paths = {
     index: applicationsPath,
     show: applicationPath,
     update: applicationPath,
+    checkYourAnswers: applicationPath.path('check-your-answers'),
     pages: {
       show: pagesPath,
       update: pagesPath,

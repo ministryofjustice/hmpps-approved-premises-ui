@@ -1,18 +1,23 @@
-import { faker } from '@faker-js/faker'
+import { Application } from '@approved-premises/api'
 
-import Page from '../page'
+import ApplyPage from './applyPage'
 
-export default class RiskManagementFeatures extends Page {
-  constructor() {
-    super('What features of AP will support the management of risk?')
+export default class RiskManagementFeatures extends ApplyPage {
+  constructor(application: Application) {
+    super(
+      'What features of AP will support the management of risk?',
+      application,
+      'risk-management-features',
+      'risk-management-features',
+    )
   }
 
   enterRiskManagementDetails() {
-    this.getTextInputByIdAndEnterDetails('manageRiskDetails', faker.lorem.words())
+    this.completeTextInputFromPageBody('manageRiskDetails')
   }
 
   enterAdditionalFeaturesDetails() {
-    this.getTextInputByIdAndEnterDetails('additionalFeaturesDetails', faker.lorem.words())
+    this.completeTextInputFromPageBody('additionalFeaturesDetails')
   }
 
   completeForm() {

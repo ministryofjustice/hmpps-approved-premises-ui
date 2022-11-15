@@ -16,6 +16,8 @@ import {
   CateringPage,
   ArsonPage,
   PlacementDurationPage,
+  ForeignNationalPage,
+  CheckYourAnswersPage,
 } from '../../../cypress_shared/pages/apply'
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
@@ -37,7 +39,6 @@ import AccessNeedsAdditionalAdjustmentsPage from '../../../cypress_shared/pages/
 import RelocationRegionPage from '../../../cypress_shared/pages/apply/relocationRegion'
 import PlansInPlacePage from '../../../cypress_shared/pages/apply/plansInPlace'
 import TypeOfAccomodationPage from '../../../cypress_shared/pages/apply/typeOfAccommodation'
-import ForeignNationalPage from '../../../cypress_shared/pages/apply/foreignNational'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -47,10 +48,6 @@ context('Apply', () => {
   })
 
   it('shows the details of a person from their CRN', () => {
-    const application = applicationFactory.build()
-    cy.task('stubApplicationCreate', { application })
-    cy.task('stubApplicationUpdate', { application })
-
     // Given I am logged in
     cy.signIn()
 
@@ -59,47 +56,52 @@ context('Apply', () => {
     cy.task('stubFindPerson', { person })
 
     // And I have started an application
-    const startPage = StartPage.visit()
-    startPage.startApplication()
+    cy.fixture('applicationData.json').then(applicationData => {
+      const application = applicationFactory.build({ person, data: applicationData })
+      cy.task('stubApplicationCreate', { application })
+      cy.task('stubApplicationUpdate', { application })
+      const startPage = StartPage.visit()
+      startPage.startApplication()
 
-    // When I enter a CRN
-    const crnPage = new EnterCRNPage()
-    crnPage.enterCrn(person.crn)
-    crnPage.clickSubmit()
+      // When I enter a CRN
+      const crnPage = new EnterCRNPage()
+      crnPage.enterCrn(person.crn)
+      crnPage.clickSubmit()
 
-    // Then I should see the person's detail
-    const confirmDetailsPage = new ConfirmDetailsPage(person)
-    confirmDetailsPage.verifyPersonIsVisible()
+      // Then I should see the person's detail
+      const confirmDetailsPage = new ConfirmDetailsPage(person)
+      confirmDetailsPage.verifyPersonIsVisible()
 
-    // When I click submit
-    confirmDetailsPage.clickSubmit()
+      // When I click submit
+      confirmDetailsPage.clickSubmit()
 
-    // Then I should be on the Sentence Type page
-    const sentenceTypePage = new SentenceTypePage()
+      // Then I should be on the Sentence Type page
+      const sentenceTypePage = new SentenceTypePage(application)
 
-    // When I select 'Bail Placement'
-    sentenceTypePage.checkRadioByNameAndValue('sentenceType', 'bailPlacement')
-    sentenceTypePage.clickSubmit()
+      // When I select 'Bail Placement'
+      sentenceTypePage.checkRadioByNameAndValue('sentenceType', 'bailPlacement')
+      sentenceTypePage.clickSubmit()
 
-    // Then I should be on the Situation Page
-    const situationPage = new SituationPage()
+      // Then I should be on the Situation Page
+      const situationPage = new SituationPage(application)
 
-    // When I select 'Bail Sentence'
-    situationPage.checkRadioByNameAndValue('situation', 'bailSentence')
-    situationPage.clickSubmit()
+      // When I select 'Bail Sentence'
+      situationPage.checkRadioByNameAndValue('situation', 'bailSentence')
+      situationPage.clickSubmit()
 
-    // Then I should be asked if I know the release date
-    Page.verifyOnPage(ReleaseDatePage, application.person)
+      // Then I should be asked if I know the release date
+      Page.verifyOnPage(ReleaseDatePage, application)
 
-    // And the API should have recieved the updated application
-    cy.task('verifyApplicationUpdate', application.id).then(requests => {
-      expect(requests).to.have.length(2)
+      // And the API should have recieved the updated application
+      cy.task('verifyApplicationUpdate', application.id).then(requests => {
+        expect(requests).to.have.length(2)
 
-      const firstRequestData = JSON.parse(requests[0].body).data
-      const secondRequestData = JSON.parse(requests[1].body).data
+        const firstRequestData = JSON.parse(requests[0].body).data
+        const secondRequestData = JSON.parse(requests[1].body).data
 
-      expect(firstRequestData['basic-information']['sentence-type'].sentenceType).equal('bailPlacement')
-      expect(secondRequestData['basic-information'].situation.situation).equal('bailSentence')
+        expect(firstRequestData['basic-information']['sentence-type'].sentenceType).equal('bailPlacement')
+        expect(secondRequestData['basic-information'].situation.situation).equal('bailSentence')
+      })
     })
   })
 
@@ -126,12 +128,8 @@ context('Apply', () => {
 
   it('allows completion of the form', () => {
     const person = personFactory.build()
-    const application = applicationFactory.build({ person })
     const apiRisks = risksFactory.build({ crn: person.crn })
     const uiRisks = mapApiPersonRisksForUi(apiRisks)
-
-    cy.task('stubApplicationCreate', { application })
-    cy.task('stubApplicationUpdate', { application })
 
     // Given I am logged in
     cy.signIn()
@@ -141,196 +139,259 @@ context('Apply', () => {
     cy.task('stubFindPerson', { person })
 
     // And I have started an application
-    const startPage = StartPage.visit()
-    startPage.startApplication()
+    cy.fixture('applicationData.json').then(applicationData => {
+      const application = applicationFactory.build({ person, data: applicationData })
 
-    // And I complete the first step
-    const crnPage = new EnterCRNPage()
-    crnPage.enterCrn(person.crn)
-    crnPage.clickSubmit()
+      cy.task('stubApplicationCreate', { application })
+      cy.task('stubApplicationUpdate', { application })
+      cy.task('stubApplicationGet', { application })
 
-    const confirmDetailsPage = new ConfirmDetailsPage(person)
-    confirmDetailsPage.clickSubmit()
+      const startPage = StartPage.visit()
+      startPage.startApplication()
 
-    const sentenceTypePage = new SentenceTypePage()
-    sentenceTypePage.checkRadioByNameAndValue('sentenceType', 'bailPlacement')
-    sentenceTypePage.clickSubmit()
+      // And I complete the first step
+      const crnPage = new EnterCRNPage()
+      crnPage.enterCrn(person.crn)
+      crnPage.clickSubmit()
 
-    const situationPage = new SituationPage()
-    situationPage.checkRadioByNameAndValue('situation', 'bailSentence')
-    situationPage.clickSubmit()
+      const confirmDetailsPage = new ConfirmDetailsPage(person)
+      confirmDetailsPage.clickSubmit()
 
-    const releaseDate = new Date().toISOString()
-    const releaseDatePage = new ReleaseDatePage(application.person)
-    releaseDatePage.checkRadioByNameAndValue('knowReleaseDate', 'yes')
-    releaseDatePage.completeDateInputs('releaseDate', releaseDate)
-    situationPage.clickSubmit()
+      const sentenceTypePage = new SentenceTypePage(application)
+      sentenceTypePage.completeForm()
+      sentenceTypePage.clickSubmit()
 
-    const placementStartPage = new PlacementStartPage(releaseDate)
-    placementStartPage.checkRadioByNameAndValue('startDateSameAsReleaseDate', 'yes')
-    placementStartPage.clickSubmit()
+      const situationPage = new SituationPage(application)
+      situationPage.completeForm()
+      situationPage.clickSubmit()
 
-    const placementPurposePage = new PlacementPurposePage()
-    placementPurposePage.completeForm()
-    placementPurposePage.clickSubmit()
+      const releaseDatePage = new ReleaseDatePage(application)
+      releaseDatePage.completeForm()
+      releaseDatePage.clickSubmit()
 
-    // Then I should be redirected to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+      const placementStartPage = new PlacementStartPage(application)
+      placementStartPage.completeForm()
+      placementStartPage.clickSubmit()
 
-    // And the task should be marked as completed
-    tasklistPage.shouldShowTaskStatus('basic-information', 'Completed')
+      const placementPurposePage = new PlacementPurposePage(application)
+      placementPurposePage.completeForm()
+      placementPurposePage.clickSubmit()
 
-    // And the next task should be marked as not started
-    tasklistPage.shouldShowTaskStatus('type-of-ap', 'Not started')
+      const basicInformationPages = [sentenceTypePage, releaseDatePage, placementStartPage, placementPurposePage]
 
-    // And the risk widgets should be visible
-    tasklistPage.shouldShowRiskWidgets(uiRisks)
+      // Then I should be redirected to the task list
+      const tasklistPage = Page.verifyOnPage(TaskListPage)
 
-    // And I should be able to start the next task
-    cy.get('[data-cy-task-name="type-of-ap"]').click()
-    Page.verifyOnPage(TypeOfApPage, application.person)
+      // And the task should be marked as completed
+      tasklistPage.shouldShowTaskStatus('basic-information', 'Completed')
 
-    // Given I am on the Type of AP Page
-    const typeOfApPage = new TypeOfApPage(person)
+      // And the next task should be marked as not started
+      tasklistPage.shouldShowTaskStatus('type-of-ap', 'Not started')
 
-    // When I complete the form and click submit
-    typeOfApPage.completeForm()
-    typeOfApPage.clickSubmit()
+      // And the risk widgets should be visible
+      tasklistPage.shouldShowRiskWidgets(uiRisks)
 
-    // Then the Type of AP task should show as completed
-    tasklistPage.shouldShowTaskStatus('type-of-ap', 'Completed')
-    // And the Risk Management Features task should show as not started
-    tasklistPage.shouldShowTaskStatus('risk-management-features', 'Not started')
+      // And I should be able to start the next task
+      cy.get('[data-cy-task-name="type-of-ap"]').click()
+      Page.verifyOnPage(TypeOfApPage, application)
 
-    // Given I click the 'Add detail about managing risks and needs' task
-    cy.get('[data-cy-task-name="risk-management-features"]').click()
+      // Given I am on the Type of AP Page
+      const typeOfApPage = new TypeOfApPage(application)
 
-    // When I complete the form
-    const riskManagementFeaturesPage = new RiskManagementFeatures()
-    riskManagementFeaturesPage.completeForm()
-    riskManagementFeaturesPage.clickSubmit()
+      // When I complete the form and click submit
+      typeOfApPage.completeForm()
+      typeOfApPage.clickSubmit()
 
-    const convictedOffencesPage = new ConvictedOffences(person)
-    convictedOffencesPage.completeForm()
-    convictedOffencesPage.clickSubmit()
+      // Then the Type of AP task should show as completed
+      tasklistPage.shouldShowTaskStatus('type-of-ap', 'Completed')
+      // And the Risk Management Features task should show as not started
+      tasklistPage.shouldShowTaskStatus('risk-management-features', 'Not started')
 
-    const typeOfConvictedOffencePage = new TypeOfConvictedOffence(person)
-    typeOfConvictedOffencePage.completeForm()
-    typeOfConvictedOffencePage.clickSubmit()
+      // Given I click the 'Add detail about managing risks and needs' task
+      cy.get('[data-cy-task-name="risk-management-features"]').click()
 
-    const dateOfOffencePage = new DateOfOffence()
-    dateOfOffencePage.completeForm()
-    dateOfOffencePage.clickSubmit()
+      const typeOfApPages = [typeOfApPage]
 
-    const rehabilitativeInterventionsPage = new RehabilitativeInterventions()
-    rehabilitativeInterventionsPage.completeForm()
-    rehabilitativeInterventionsPage.clickSubmit()
+      // When I complete the form
+      const riskManagementFeaturesPage = new RiskManagementFeatures(application)
+      riskManagementFeaturesPage.completeForm()
+      riskManagementFeaturesPage.clickSubmit()
 
-    // Then I should be taken back to the task list
-    // And the risk management task should show a completed status
-    tasklistPage.shouldShowTaskStatus('risk-management-features', 'Completed')
+      const convictedOffencesPage = new ConvictedOffences(application)
+      convictedOffencesPage.completeForm()
+      convictedOffencesPage.clickSubmit()
 
-    // Given I click the 'Describe location factors' task
-    cy.get('[data-cy-task-name="location-factors"]').click()
+      const typeOfConvictedOffencePage = new TypeOfConvictedOffence(application)
+      typeOfConvictedOffencePage.completeForm()
+      typeOfConvictedOffencePage.clickSubmit()
 
-    // When I complete the form
-    const describeLocationFactorsPage = new DescribeLocationFactors()
-    describeLocationFactorsPage.completeForm()
-    describeLocationFactorsPage.clickSubmit()
+      const dateOfOffencePage = new DateOfOffence(application)
+      dateOfOffencePage.completeForm()
+      dateOfOffencePage.clickSubmit()
 
-    const pduTransferPage = new PduTransferPage(person)
-    pduTransferPage.completeForm()
-    pduTransferPage.clickSubmit()
+      const rehabilitativeInterventionsPage = new RehabilitativeInterventions(application)
+      rehabilitativeInterventionsPage.completeForm()
+      rehabilitativeInterventionsPage.clickSubmit()
 
-    // Then I should be taken back to the task list
-    // And the location factors task should show a completed status
-    tasklistPage.shouldShowTaskStatus('location-factors', 'Completed')
+      const riskManagementPages = [
+        riskManagementFeaturesPage,
+        convictedOffencesPage,
+        typeOfConvictedOffencePage,
+        dateOfOffencePage,
+        rehabilitativeInterventionsPage,
+      ]
 
-    // Given I click the 'Provide access and healthcare information' task
-    cy.get('[data-cy-task-name="access-and-healthcare"]').click()
+      // Then I should be taken back to the task list
+      // And the risk management task should show a completed status
+      tasklistPage.shouldShowTaskStatus('risk-management-features', 'Completed')
 
-    // When I complete the form
-    const accessNeedsPage = new AccessNeedsPage()
-    accessNeedsPage.completeForm()
-    accessNeedsPage.clickSubmit()
+      // Given I click the 'Describe location factors' task
+      cy.get('[data-cy-task-name="location-factors"]').click()
 
-    const accessNeedsMobilityPage = new AccessNeedsMobilityPage(person)
-    accessNeedsMobilityPage.completeForm()
-    accessNeedsMobilityPage.clickSubmit()
+      // When I complete the form
+      const describeLocationFactorsPage = new DescribeLocationFactors(application)
+      describeLocationFactorsPage.completeForm()
+      describeLocationFactorsPage.clickSubmit()
 
-    const accessNeedsAdditionalAdjustmentsPage = new AccessNeedsAdditionalAdjustmentsPage()
-    accessNeedsAdditionalAdjustmentsPage.completeForm()
-    accessNeedsAdditionalAdjustmentsPage.clickSubmit()
+      const pduTransferPage = new PduTransferPage(application)
+      pduTransferPage.completeForm()
+      pduTransferPage.clickSubmit()
 
-    const covidPage = new CovidPage()
-    covidPage.completeForm()
-    covidPage.clickSubmit()
+      const locationFactorsPages = [describeLocationFactorsPage, pduTransferPage]
 
-    Page.verifyOnPage(TaskListPage)
+      // Then I should be taken back to the task list
+      // And the location factors task should show a completed status
+      tasklistPage.shouldShowTaskStatus('location-factors', 'Completed')
 
-    // Given I click the 'Detail further considerations for placement' task
-    cy.get('[data-cy-task-name="further-considerations"]').click()
+      // Given I click the 'Provide access and healthcare information' task
+      cy.get('[data-cy-task-name="access-and-healthcare"]').click()
 
-    // And I complete the Room Sharing page
-    const roomSharingPage = new RoomSharingPage()
-    roomSharingPage.completeForm()
-    roomSharingPage.clickSubmit()
+      // When I complete the form
+      const accessNeedsPage = new AccessNeedsPage(application)
+      accessNeedsPage.completeForm()
+      accessNeedsPage.clickSubmit()
 
-    // And I complete the Vulnerability page
-    const vulnerabilityPage = new VulnerabilityPage(person)
-    vulnerabilityPage.completeForm()
-    vulnerabilityPage.clickSubmit()
+      const accessNeedsMobilityPage = new AccessNeedsMobilityPage(application)
+      accessNeedsMobilityPage.completeForm()
+      accessNeedsMobilityPage.clickSubmit()
 
-    // And I complete the Previous Placements page
-    const previousPlacementsPage = new PreviousPlacements(person)
-    previousPlacementsPage.completeForm()
-    previousPlacementsPage.clickSubmit()
+      const accessNeedsAdditionalAdjustmentsPage = new AccessNeedsAdditionalAdjustmentsPage(application)
+      accessNeedsAdditionalAdjustmentsPage.completeForm()
+      accessNeedsAdditionalAdjustmentsPage.clickSubmit()
 
-    // And I complete the Complex Case Board page
-    const complexCaseBoardPage = new ComplexCaseBoard(person)
-    complexCaseBoardPage.completeForm()
-    complexCaseBoardPage.clickSubmit()
+      const covidPage = new CovidPage(application)
+      covidPage.completeForm()
+      covidPage.clickSubmit()
 
-    // And I complete the Catering page
-    const cateringPage = new CateringPage(person)
-    cateringPage.completeForm()
-    cateringPage.clickSubmit()
+      const accessAndHealthcarePages = [
+        accessNeedsPage,
+        accessNeedsMobilityPage,
+        accessNeedsAdditionalAdjustmentsPage,
+        covidPage,
+      ]
 
-    // And I complete the Arson page
-    const arsonPage = new ArsonPage(person)
-    arsonPage.completeForm()
-    arsonPage.clickSubmit()
+      Page.verifyOnPage(TaskListPage)
 
-    // Then I should be taken back to the task list
-    // And the further considerations task should show a completed status
-    tasklistPage.shouldShowTaskStatus('further-considerations', 'Completed')
+      // Given I click the 'Detail further considerations for placement' task
+      cy.get('[data-cy-task-name="further-considerations"]').click()
 
-    // Given I click the 'Add move on information' task
-    cy.get('[data-cy-task-name="move-on"]').click()
+      // And I complete the Room Sharing page
+      const roomSharingPage = new RoomSharingPage(application)
+      roomSharingPage.completeForm()
+      roomSharingPage.clickSubmit()
 
-    const placementDurationPage = new PlacementDurationPage()
-    placementDurationPage.completeForm()
-    placementDurationPage.expectedDepartureDateShouldBeCompleted(releaseDate)
-    placementDurationPage.clickSubmit()
+      // And I complete the Vulnerability page
+      const vulnerabilityPage = new VulnerabilityPage(application)
+      vulnerabilityPage.completeForm()
+      vulnerabilityPage.clickSubmit()
 
-    const relocationRegion = new RelocationRegionPage(person)
-    relocationRegion.completeForm()
-    relocationRegion.clickSubmit()
+      // And I complete the Previous Placements page
+      const previousPlacementsPage = new PreviousPlacements(application)
+      previousPlacementsPage.completeForm()
+      previousPlacementsPage.clickSubmit()
 
-    const plansInPlacePage = new PlansInPlacePage()
-    plansInPlacePage.completeForm()
-    plansInPlacePage.clickSubmit()
+      // And I complete the Complex Case Board page
+      const complexCaseBoardPage = new ComplexCaseBoard(application)
+      complexCaseBoardPage.completeForm()
+      complexCaseBoardPage.clickSubmit()
 
-    const typeOfAccommodationPage = new TypeOfAccomodationPage(person)
-    typeOfAccommodationPage.completeForm()
-    typeOfAccommodationPage.clickSubmit()
+      // And I complete the Catering page
+      const cateringPage = new CateringPage(application)
+      cateringPage.completeForm()
+      cateringPage.clickSubmit()
 
-    const foreignNationalPage = new ForeignNationalPage()
-    foreignNationalPage.completeForm()
-    foreignNationalPage.clickSubmit()
+      // And I complete the Arson page
+      const arsonPage = new ArsonPage(application)
+      arsonPage.completeForm()
+      arsonPage.clickSubmit()
 
-    // Then I should be taken back to the task list
-    // And the move on information task should show a completed status
-    tasklistPage.shouldShowTaskStatus('move-on', 'Completed')
+      const furtherConsiderationsPages = [
+        roomSharingPage,
+        vulnerabilityPage,
+        previousPlacementsPage,
+        complexCaseBoardPage,
+        cateringPage,
+        arsonPage,
+      ]
+
+      // Then I should be taken back to the task list
+      // And the further considerations task should show a completed status
+      tasklistPage.shouldShowTaskStatus('further-considerations', 'Completed')
+
+      // Given I click the 'Add move on information' task
+      cy.get('[data-cy-task-name="move-on"]').click()
+
+      // And I complete the Placement Duration page
+      const placementDurationPage = new PlacementDurationPage(application)
+      placementDurationPage.completeForm()
+      placementDurationPage.clickSubmit()
+
+      // And I complete the relocation region page
+      const relocationRegion = new RelocationRegionPage(application)
+      relocationRegion.completeForm()
+      relocationRegion.clickSubmit()
+
+      // And I complete the plans in place page
+      const plansInPlacePage = new PlansInPlacePage(application)
+      plansInPlacePage.completeForm()
+      plansInPlacePage.clickSubmit()
+
+      // And I complete the type of accommodation page
+      const typeOfAccommodationPage = new TypeOfAccomodationPage(application)
+      typeOfAccommodationPage.completeForm()
+      typeOfAccommodationPage.clickSubmit()
+
+      const foreignNationalPage = new ForeignNationalPage(application)
+      foreignNationalPage.completeForm()
+      foreignNationalPage.clickSubmit()
+
+      const moveOnPages = [
+        placementDurationPage,
+        relocationRegion,
+        plansInPlacePage,
+        typeOfAccommodationPage,
+        foreignNationalPage,
+      ]
+
+      // Then I should be taken back to the task list
+      // And the move on information task should show a completed status
+      tasklistPage.shouldShowTaskStatus('move-on', 'Completed')
+
+      // Given I click the check your answers task
+      cy.get('[data-cy-task-name="check-your-answers"]').click()
+
+      // Then I should be on the check your answers page
+      const checkYourAnswersPage = new CheckYourAnswersPage()
+
+      // And the page should be populated with my answers
+      checkYourAnswersPage.shouldShowPersonInformation(person)
+      checkYourAnswersPage.shouldShowBasicInformationAnswers(basicInformationPages)
+      checkYourAnswersPage.shouldShowTypeOfApAnswers(typeOfApPages)
+      checkYourAnswersPage.shouldShowRiskManagementAnswers(riskManagementPages)
+      checkYourAnswersPage.shouldShowLocationFactorsAnswers(locationFactorsPages)
+      checkYourAnswersPage.shouldShowAccessAndHealthcareAnswers(accessAndHealthcarePages)
+      checkYourAnswersPage.shouldShowFurtherConsiderationsAnswers(furtherConsiderationsPages)
+      checkYourAnswersPage.shouldShowMoveOnAnswers(moveOnPages)
+    })
   })
 })

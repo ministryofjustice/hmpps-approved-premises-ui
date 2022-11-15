@@ -1,20 +1,19 @@
-import Page from '../page'
+import { Application } from '@approved-premises/api'
 
-export default class RehabilitativeInterventions extends Page {
-  constructor() {
-    super("Which rehabilitative interventions will support the person's Approved Premises (AP) placement?")
+import ApplyPage from './applyPage'
+
+export default class RehabilitativeInterventions extends ApplyPage {
+  constructor(application: Application) {
+    super(
+      "Which rehabilitative interventions will support the person's Approved Premises (AP) placement?",
+      application,
+      'risk-management-features',
+      'rehabilitative-interventions',
+    )
   }
 
   completeForm(): void {
-    this.checkCheckboxByNameAndValue('rehabilitativeInterventions', 'accomodation')
-    this.checkCheckboxByNameAndValue('rehabilitativeInterventions', 'drugsAndAlcohol')
-    this.checkCheckboxByNameAndValue('rehabilitativeInterventions', 'childrenAndFamilies')
-    this.checkCheckboxByNameAndValue('rehabilitativeInterventions', 'health')
-    this.checkCheckboxByNameAndValue('rehabilitativeInterventions', 'educationTrainingAndEmployment')
-    this.checkCheckboxByNameAndValue('rehabilitativeInterventions', 'financeBenefitsAndDebt')
-    this.checkCheckboxByNameAndValue('rehabilitativeInterventions', 'attitudesAndBehaviour')
-    this.checkCheckboxByNameAndValue('rehabilitativeInterventions', 'abuse')
-    this.checkCheckboxByNameAndValue('rehabilitativeInterventions', 'other')
-    this.getTextInputByIdAndEnterDetails('otherIntervention', 'Another')
+    this.checkCheckboxesFromPageBody('rehabilitativeInterventions')
+    this.completeTextInputFromPageBody('otherIntervention')
   }
 }

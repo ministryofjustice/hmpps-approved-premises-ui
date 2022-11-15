@@ -1,16 +1,18 @@
-import Page from '../page'
+import { Application } from '@approved-premises/api'
 
-export default class RoomSharingPage extends Page {
-  constructor() {
-    super('Room sharing')
+import ApplyPage from './applyPage'
+
+export default class RoomSharingPage extends ApplyPage {
+  constructor(application: Application) {
+    super('Room sharing', application, 'further-considerations', 'room-sharing')
   }
 
   completeForm(): void {
-    this.checkRadioByNameAndValue('riskToStaff', 'no')
-    this.checkRadioByNameAndValue('riskToOthers', 'no')
-    this.checkRadioByNameAndValue('sharingConcerns', 'yes')
-    this.completeTextArea('sharingConcernsDetail', 'Some details here')
-    this.checkRadioByNameAndValue('traumaConcerns', 'no')
-    this.checkRadioByNameAndValue('sharingBenefits', 'no')
+    this.checkRadioButtonFromPageBody('riskToStaff')
+    this.checkRadioButtonFromPageBody('riskToOthers')
+    this.checkRadioButtonFromPageBody('sharingConcerns')
+    this.completeTextInputFromPageBody('sharingConcernsDetail')
+    this.checkRadioButtonFromPageBody('traumaConcerns')
+    this.checkRadioButtonFromPageBody('sharingBenefits')
   }
 }

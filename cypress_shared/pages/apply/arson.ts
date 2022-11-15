@@ -1,14 +1,15 @@
-import Page from '../page'
-import { Person } from '../../../server/@types/shared'
+import { Application } from '@approved-premises/api'
 
-export default class ArsonPage extends Page {
-  constructor(person: Person) {
-    super('Arson')
-    cy.get('.govuk-form-group').contains(`Does ${person.name} need a specialist arson room?`)
+import ApplyPage from './applyPage'
+
+export default class ArsonPage extends ApplyPage {
+  constructor(application: Application) {
+    super('Arson', application, 'further-considerations', 'arson')
+    cy.get('.govuk-form-group').contains(`Does ${application.person.name} need a specialist arson room?`)
   }
 
   completeForm(): void {
-    this.checkRadioByNameAndValue('arson', 'yes')
-    this.completeTextArea('arsonDetail', 'Some details here')
+    this.checkRadioButtonFromPageBody('arson')
+    this.completeTextInputFromPageBody('arsonDetail')
   }
 }

@@ -1,5 +1,5 @@
 import type { Request } from 'express'
-import type { HtmlItem, TextItem, DataServices } from '@approved-premises/ui'
+import type { HtmlItem, TextItem, DataServices, SummaryListItem } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
 
 import type TasklistPage from '../form-pages/tasklistPage'
@@ -61,6 +61,43 @@ export default class ApplicationService {
 
     Object.keys(application.data).forEach(taskName => {
       responses[taskName] = this.getResponsesForTask(application, taskName)
+    })
+
+    return responses
+  }
+
+  getResponsesAsSummaryListItems(application: Application): Record<string, Array<SummaryListItem>> {
+    const responses = {}
+
+    Object.keys(pages).forEach(taskName => {
+      const pageNames = Object.keys(application.data[taskName])
+      const items: Array<SummaryListItem> = []
+
+      pageNames.forEach(pageName => {
+        const response = this.getResponseForPage(application, taskName, pageName)
+
+        Object.keys(response).forEach(key => {
+          items.push({
+            key: {
+              text: key,
+            },
+            value: {
+              text: response[key],
+            },
+            actions: {
+              items: [
+                {
+                  href: paths.applications.pages.show({ task: taskName, page: pageName, id: application.id }),
+                  text: 'Change',
+                  visuallyHiddenText: key,
+                },
+              ],
+            },
+          })
+        })
+      })
+
+      responses[taskName] = items
     })
 
     return responses

@@ -1,15 +1,17 @@
-import Page from '../page'
+import { Application } from '@approved-premises/api'
 
-export default class AccessNeedsAdditionalAdjustmentsPage extends Page {
-  constructor() {
-    super('Access needs')
+import ApplyPage from './applyPage'
+
+export default class AccessNeedsAdditionalAdjustmentsPage extends ApplyPage {
+  constructor(application: Application) {
+    super('Access needs', application, 'access-and-healthcare', 'access-needs-additional-adjustments')
     cy.get('legend').contains(
       /Does the placement require adjustments for the mobility, learning disability and neurodivergent conditions needs you selected?/,
     )
   }
 
   completeForm() {
-    this.checkRadioByNameAndValue('adjustments', 'yes')
-    this.completeTextArea('adjustmentsDetail', 'Some details here')
+    this.checkRadioButtonFromPageBody('adjustments')
+    this.completeTextInputFromPageBody('adjustmentsDetail')
   }
 }

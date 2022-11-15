@@ -1,15 +1,22 @@
 import { add } from 'date-fns'
+import { Application } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import Page from '../page'
 
-export default class PlacementDurationPage extends Page {
-  constructor() {
-    super('Placement duration and move on')
+import ApplyPage from './applyPage'
+
+export default class PlacementDurationPage extends ApplyPage {
+  application: Application
+
+  constructor(application: Application) {
+    super('Placement duration and move on', application, 'move-on', 'placement-duration')
+    this.application = application
   }
 
   completeForm() {
-    this.getTextInputByIdAndEnterDetails('duration', '10')
-    this.completeTextArea('durationDetail', 'Some more information')
+    this.completeTextInputFromPageBody('duration')
+    this.completeTextInputFromPageBody('durationDetail')
+
+    this.expectedDepartureDateShouldBeCompleted(this.application.data['basic-information']['release-date'].releaseDate)
   }
 
   expectedDepartureDateShouldBeCompleted(releaseDate: string) {

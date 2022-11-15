@@ -1,13 +1,16 @@
-import { Person } from '../../../server/@types/shared'
-import Page from '../page'
+import { Application } from '@approved-premises/api'
 
-export default class RelocationRegionPage extends Page {
-  constructor(person: Person) {
-    super('Placement duration and move on')
-    cy.get('.govuk-form-group').contains(`Where is ${person.name} most likely to live when they move on from the AP?`)
+import ApplyPage from './applyPage'
+
+export default class RelocationRegionPage extends ApplyPage {
+  constructor(application: Application) {
+    super('Placement duration and move on', application, 'move-on', 'relocation-region')
+    cy.get('.govuk-form-group').contains(
+      `Where is ${application.person.name} most likely to live when they move on from the AP?`,
+    )
   }
 
   completeForm() {
-    this.getTextInputByIdAndEnterDetails('postcodeArea', 'XX1')
+    this.completeTextInputFromPageBody('postcodeArea')
   }
 }

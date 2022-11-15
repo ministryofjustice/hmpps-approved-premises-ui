@@ -16,6 +16,8 @@ import ComplexCaseBoard from './complexCaseBoard'
 import CateringPage from './catering'
 import ArsonPage from './arson'
 import PlacementDurationPage from './placementDuration'
+import ForeignNationalPage from './foreignNational'
+import CheckYourAnswersPage from './checkYourAnswersPage'
 
 export {
   ConfirmDetailsPage,
@@ -36,4 +38,6 @@ export {
   CateringPage,
   ArsonPage,
   PlacementDurationPage,
+  ForeignNationalPage,
+  CheckYourAnswersPage,
 }

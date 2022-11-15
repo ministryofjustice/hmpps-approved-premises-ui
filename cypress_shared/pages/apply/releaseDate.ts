@@ -1,8 +1,14 @@
-import type { Person } from '@approved-premises/api'
-import Page from '../page'
+import type { Application } from '@approved-premises/api'
 
-export default class ReleaseDatePage extends Page {
-  constructor(person: Person) {
-    super(`Do you know ${person.name}’s release date?`)
+import ApplyPage from './applyPage'
+
+export default class ReleaseDatePage extends ApplyPage {
+  constructor(application: Application) {
+    super(`Do you know ${application.person.name}’s release date?`, application, 'basic-information', 'release-date')
+  }
+
+  completeForm() {
+    this.checkRadioButtonFromPageBody('knowReleaseDate')
+    this.completeDateInputsFromPageBody('releaseDate')
   }
 }

@@ -1,0 +1,116 @@
+{
+  "basic-information": {
+    "sentence-type": { "sentenceType": "bailPlacement" },
+    "situation": { "situation": "bailSentence" },
+    "release-date": {
+      "releaseDate-year": "2022",
+      "releaseDate-month": "11",
+      "releaseDate-day": "14",
+      "releaseDate": "2022-11-14",
+      "knowReleaseDate": "yes"
+    },
+    "placement-date": {
+      "startDate-year": "",
+      "startDate-month": "",
+      "startDate-day": "",
+      "startDateSameAsReleaseDate": "yes"
+    },
+    "placement-purpose": { "placementPurposes": ["drugAlcoholSupport", "otherReason"], "otherReason": "Reason" }
+  },
+  "type-of-ap": { "ap-type": { "type": "standard" } },
+  "risk-management-features": {
+    "risk-management-features": {
+      "manageRiskDetails": "est vero nesciunt",
+      "additionalFeaturesDetails": "deleniti enim necessitatibus"
+    },
+    "convicted-offences": { "response": "yes" },
+    "type-of-convicted-offence": {
+      "offenceConvictions": ["arson", "sexualOffence", "hateCrimes", "childNonSexualOffence"]
+    },
+    "date-of-offence": {
+      "arsonOffence": ["current"],
+      "hateCrime": ["previous"],
+      "inPersonSexualOffence": ["current", "previous"]
+    },
+    "rehabilitative-interventions": {
+      "rehabilitativeInterventions": [
+        "accomodation",
+        "drugsAndAlcohol",
+        "childrenAndFamilies",
+        "health",
+        "educationTrainingAndEmployment",
+        "financeBenefitsAndDebt",
+        "attitudesAndBehaviour",
+        "abuse",
+        "other"
+      ],
+      "otherIntervention": "Another"
+    }
+  },
+  "location-factors": {
+    "describe-location-factors": {
+      "postcodeArea": "SW1",
+      "positiveFactors": "Some positive factors",
+      "restrictions": "yes",
+      "restrictionDetail": "Restrictions go here",
+      "alternativeRadiusAccepted": "yes",
+      "alternativeRadius": "70",
+      "differentPDU": "no"
+    },
+    "pdu-transfer": { "transferStatus": "yes", "probationPractitioner": "Probation Practicioner" }
+  },
+  "access-and-healthcare": {
+    "access-needs": {
+      "additionalNeeds": ["mobility", "learningDisability", "neurodivergentConditions"],
+      "religiousOrCulturalNeeds": "yes",
+      "religiousOrCulturalNeedsDetails": "sunt at minus",
+      "needsInterpreter": "yes",
+      "interpreterLanguage": "beatae eligendi explicabo",
+      "careActAssessmentCompleted": "yes"
+    },
+    "access-needs-mobility": {
+      "needsWheelchair": "yes",
+      "mobilityNeeds": "laboriosam",
+      "visualImpairment": "exercitationem"
+    },
+    "access-needs-additional-adjustments": { "adjustments": "yes", "adjustmentsDetail": "Some details here" },
+    "covid": { "fullyVaccinated": "yes", "highRisk": "yes", "additionalCovidInfo": "additional info" }
+  },
+  "further-considerations": {
+    "room-sharing": {
+      "riskToStaff": "no",
+      "riskToStaffDetail": "",
+      "riskToOthers": "no",
+      "riskToOthersDetail": "",
+      "sharingConcerns": "yes",
+      "sharingConcernsDetail": "Some details here",
+      "traumaConcerns": "no",
+      "traumaConcernsDetail": "",
+      "sharingBenefits": "no",
+      "sharingBenefitsDetail": ""
+    },
+    "vulnerability": {
+      "exploitable": "no",
+      "exploitableDetail": "",
+      "exploitOthers": "yes",
+      "exploitOthersDetail": "Some details here"
+    },
+    "previous-placements": { "previousPlacement": "yes", "previousPlacementDetail": "Some details here" },
+    "complex-case-board": { "complexCaseBoard": "yes", "complexCaseBoardDetail": "Some details here" },
+    "catering": { "catering": "yes", "cateringDetail": "Some details here" },
+    "arson": { "arson": "yes", "arsonDetail": "Some details here" }
+  },
+  "move-on": {
+    "placement-duration": { "duration": "10", "durationDetail": "Some more information" },
+    "relocation-region": { "postcodeArea": "XX1" },
+    "plans-in-place": { "arePlansInPlace": "yes" },
+    "type-of-accommodation": { "accommodationType": "foreignNational" },
+    "foreign-national": {
+      "response": "yes",
+      "date": "2015-01-01",
+      "date-year": "2015",
+      "date-month": "01",
+      "date-day": "01"
+    }
+  }
+}
