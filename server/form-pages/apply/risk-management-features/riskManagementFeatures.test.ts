@@ -47,11 +47,8 @@ describe('RiskManagementFeatures', () => {
       )
 
       expect(page.response()).toEqual({
-        'How will an Approved Premises (AP) placement support the management of risk?': {
-          'Describe why an AP placement is needed to manage the risk of John Wayne': 'some details',
-          'Provide details of any additional measures that will be necessary for the management of risk':
-            'some features',
-        },
+        'Describe why an AP placement is needed to manage the risk of John Wayne': 'some details',
+        'Provide details of any additional measures that will be necessary for the management of risk': 'some features',
       })
     })
   })
