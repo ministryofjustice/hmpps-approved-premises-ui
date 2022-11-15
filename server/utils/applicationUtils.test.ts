@@ -2,14 +2,23 @@ import type { Task } from '@approved-premises/ui'
 
 import applicationFactory from '../testutils/factories/application'
 import paths from '../paths/apply'
+import { pages } from '../form-pages/apply'
 
-import { taskLink, getTaskStatus, getCompleteSectionCount } from './applicationUtils'
+import { taskLink, getTaskStatus, getCompleteSectionCount, getResponses } from './applicationUtils'
+
+const FirstPage = jest.fn()
+const SecondPage = jest.fn()
 
 jest.mock('../form-pages/apply', () => {
   return {
     pages: { 'basic-information': {}, 'type-of-ap': {} },
   }
 })
+
+pages['basic-information'] = {
+  first: FirstPage,
+  second: SecondPage,
+}
 
 describe('applicationUtils', () => {
   const task = {
@@ -119,6 +128,27 @@ describe('applicationUtils', () => {
       })
 
       expect(getCompleteSectionCount(sections, application)).toEqual(2)
+    })
+  })
+
+  describe('getResponses', () => {
+    it('returns the responses from all answered questions', () => {
+      FirstPage.mockReturnValue({
+        response: () => {
+          return { foo: 'bar' }
+        },
+      })
+
+      SecondPage.mockReturnValue({
+        response: () => {
+          return { bar: 'foo' }
+        },
+      })
+
+      const application = applicationFactory.build()
+      application.data = { 'basic-information': { first: '', second: '' } }
+
+      expect(getResponses(application)).toEqual({ 'basic-information': [{ foo: 'bar' }, { bar: 'foo' }] })
     })
   })
 })

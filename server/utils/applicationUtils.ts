@@ -2,6 +2,10 @@ import type { Task, FormSections, FormSection } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
 import paths from '../paths/apply'
 import { pages } from '../form-pages/apply'
+import { UnknownPageError } from './errors'
+
+type PageResponse = Record<string, string>
+type ApplicationResponse = Record<string, Array<PageResponse>>
 
 const taskIds = Object.keys(pages)
 
@@ -13,6 +17,7 @@ const previousTaskIsComplete = (task: Task, application: Application): boolean =
   const previousTaskId = taskIds[taskIds.indexOf(task.id) - 1]
   return previousTaskId ? application.data[previousTaskId] : true
 }
+
 const getTaskStatus = (task: Task, application: Application): string => {
   if (!taskIsComplete(task, application) && !previousTaskIsComplete(task, application)) {
     return `<strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="${task.id}-status">Cannot start yet</strong>`
@@ -44,4 +49,41 @@ const taskLink = (task: Task, application: Application): string => {
   return task.title
 }
 
-export { getTaskStatus, taskLink, getCompleteSectionCount }
+const getResponses = (application: Application): ApplicationResponse => {
+  const responses = {}
+
+  Object.keys(application.data).forEach(taskName => {
+    responses[taskName] = getResponsesForTask(application, taskName)
+  })
+
+  return responses
+}
+
+const getResponsesForTask = (application: Application, taskName: string): Array<PageResponse> => {
+  const pageNames = Object.keys(application.data[taskName])
+  const responsesForPages = pageNames.map(pageName => getResponseForPage(application, taskName, pageName))
+  return responsesForPages
+}
+
+const getResponseForPage = (application: Application, taskName: string, pageName: string): PageResponse => {
+  const Page = getPage(taskName, pageName)
+
+  const body = application?.data?.[taskName]?.[pageName]
+  const page = new Page(body, application)
+
+  return page.response()
+}
+
+const getPage = (taskName: string, pageName: string) => {
+  const pageList = pages[taskName]
+
+  const Page = pageList[pageName]
+
+  if (!Page) {
+    throw new UnknownPageError()
+  }
+
+  return Page
+}
+
+export { getTaskStatus, taskLink, getCompleteSectionCount, getResponses, getResponseForPage, getPage }

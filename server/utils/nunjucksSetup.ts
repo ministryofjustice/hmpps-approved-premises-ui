@@ -10,6 +10,8 @@ import type { Application } from '@approved-premises/api'
 import { initialiseName, removeBlankSummaryListItems } from './utils'
 import { dateFieldValues, convertObjectsToRadioItems, convertObjectsToSelectOptions } from './formUtils'
 import { getTaskStatus, taskLink, getCompleteSectionCount } from './applicationUtils'
+import { checkYourAnswersSections } from './checkYourAnswersUtils'
+
 import { statusTag } from './personUtils'
 import bookingActions from './bookingUtils'
 import { DateFormats } from './dateUtils'
@@ -114,4 +116,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   })
 
   njkEnv.addFilter('removeBlankSummaryListItems', removeBlankSummaryListItems)
+
+  njkEnv.addGlobal('checkYourAnswersSections', checkYourAnswersSections)
 }

@@ -1,5 +1,5 @@
 import type { Request } from 'express'
-import type { HtmlItem, TextItem, DataServices, SummaryListItem } from '@approved-premises/ui'
+import type { HtmlItem, TextItem, DataServices } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
 
 import type TasklistPage from '../form-pages/tasklistPage'
@@ -9,9 +9,7 @@ import { UnknownPageError, ValidationError } from '../utils/errors'
 import { pages } from '../form-pages/apply'
 import paths from '../paths/apply'
 import { DateFormats } from '../utils/dateUtils'
-
-type PageResponse = Record<string, string>
-type ApplicationResponse = Record<string, Array<PageResponse>>
+import { getPage } from '../utils/applicationUtils'
 
 export default class ApplicationService {
   constructor(private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>) {}
@@ -43,7 +41,7 @@ export default class ApplicationService {
 
     request.params.page = request.params.page || this.firstPageForTask(request.params.task)
 
-    const Page = this.getPage(request.params.task, request.params.page)
+    const Page = getPage(request.params.task, request.params.page)
 
     const application = await this.getApplicationFromSessionOrAPI(request)
     const body = this.getBody(application, request, userInput)
@@ -54,53 +52,6 @@ export default class ApplicationService {
     }
 
     return page
-  }
-
-  getResponses(application: Application): ApplicationResponse {
-    const responses = {}
-
-    Object.keys(application.data).forEach(taskName => {
-      responses[taskName] = this.getResponsesForTask(application, taskName)
-    })
-
-    return responses
-  }
-
-  getResponsesAsSummaryListItems(application: Application): Record<string, Array<SummaryListItem>> {
-    const responses = {}
-
-    Object.keys(pages).forEach(taskName => {
-      const pageNames = Object.keys(application.data[taskName])
-      const items: Array<SummaryListItem> = []
-
-      pageNames.forEach(pageName => {
-        const response = this.getResponseForPage(application, taskName, pageName)
-
-        Object.keys(response).forEach(key => {
-          items.push({
-            key: {
-              text: key,
-            },
-            value: {
-              text: response[key],
-            },
-            actions: {
-              items: [
-                {
-                  href: paths.applications.pages.show({ task: taskName, page: pageName, id: application.id }),
-                  text: 'Change',
-                  visuallyHiddenText: key,
-                },
-              ],
-            },
-          })
-        })
-      })
-
-      responses[taskName] = items
-    })
-
-    return responses
   }
 
   async save(page: TasklistPage, request: Request) {
@@ -118,33 +69,6 @@ export default class ApplicationService {
       this.saveToSession(application, page, request)
       await this.saveToApi(application, request)
     }
-  }
-
-  private getResponsesForTask(application: Application, taskName: string): Array<PageResponse> {
-    const pageNames = Object.keys(application.data[taskName])
-    const responsesForPages = pageNames.map(pageName => this.getResponseForPage(application, taskName, pageName))
-    return responsesForPages
-  }
-
-  private getResponseForPage(application: Application, taskName: string, pageName: string): PageResponse {
-    const Page = this.getPage(taskName, pageName)
-
-    const body = application?.data?.[taskName]?.[pageName]
-    const page = new Page(body, application)
-
-    return page.response()
-  }
-
-  private getPage(taskName: string, pageName: string) {
-    const pageList = pages[taskName]
-
-    const Page = pageList[pageName]
-
-    if (!Page) {
-      throw new UnknownPageError()
-    }
-
-    return Page
   }
 
   private firstPageForTask(taskName: string) {
