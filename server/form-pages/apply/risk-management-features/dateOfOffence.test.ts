@@ -46,14 +46,10 @@ describe('DateOfOffence', () => {
       })
 
       expect(page.response()).toEqual({
-        'Date of convicted offences': {
-          'Is the offence a current or previous offence?': {
-            'Arson offence': 'Current',
-            'Hate crime': 'Previous',
-            'In person sexual offence': 'Neither',
-            'Online sexual offence': 'Current and previous',
-          },
-        },
+        'Is the arson offence current or previous?': 'Current',
+        'Is the hate crime current or previous?': 'Previous',
+        'Is the in person sexual offence current or previous?': 'Neither',
+        'Is the online sexual offence current or previous?': 'Current and previous',
       })
     })
   })
