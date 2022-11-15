@@ -1,15 +1,27 @@
 import type { Task, FormSections, FormSection } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
 import paths from '../paths/apply'
+import { pages } from '../form-pages/apply'
+
+const taskIds = Object.keys(pages)
 
 const taskIsComplete = (task: Task, application: Application): boolean => {
   return application.data[task.id]
 }
 
+const previousTaskIsComplete = (task: Task, application: Application): boolean => {
+  const previousTaskId = taskIds[taskIds.indexOf(task.id) - 1]
+  return previousTaskId ? application.data[previousTaskId] : true
+}
 const getTaskStatus = (task: Task, application: Application): string => {
-  if (!taskIsComplete(task, application)) {
+  if (!taskIsComplete(task, application) && !previousTaskIsComplete(task, application)) {
+    return `<strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="${task.id}-status">Cannot start yet</strong>`
+  }
+
+  if (!taskIsComplete(task, application) && previousTaskIsComplete(task, application)) {
     return `<strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="${task.id}-status">Not started</strong>`
   }
+
   return `<strong class="govuk-tag app-task-list__tag" id="${task.id}-status">Completed</strong>`
 }
 
@@ -19,14 +31,17 @@ const getCompleteSectionCount = (sections: FormSections, application: Applicatio
   }).length
 }
 
-const taskLink = (task: Task, applicationId: string): string => {
-  const firstPage = Object.keys(task.pages)[0]
+const taskLink = (task: Task, application: Application): string => {
+  if (previousTaskIsComplete(task, application)) {
+    const firstPage = Object.keys(task.pages)[0]
 
-  return `<a href="${paths.applications.pages.show({
-    id: applicationId,
-    task: task.id,
-    page: firstPage,
-  })}" aria-describedby="eligibility-${task.id}" data-cy-task-name="${task.id}">${task.title}</a>`
+    return `<a href="${paths.applications.pages.show({
+      id: application.id,
+      task: task.id,
+      page: firstPage,
+    })}" aria-describedby="eligibility-${task.id}" data-cy-task-name="${task.id}">${task.title}</a>`
+  }
+  return task.title
 }
 
 export { getTaskStatus, taskLink, getCompleteSectionCount }

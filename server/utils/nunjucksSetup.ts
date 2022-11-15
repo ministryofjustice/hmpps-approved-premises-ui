@@ -101,7 +101,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     markAsSafe(getTaskStatus(task, application)),
   )
 
-  njkEnv.addGlobal('taskLink', (task: Task, applicationId: string) => markAsSafe(taskLink(task, applicationId)))
+  njkEnv.addGlobal('taskLink', (task: Task, application: Application) => markAsSafe(taskLink(task, application)))
 
   njkEnv.addGlobal('statusTag', (status: PersonStatus) => markAsSafe(statusTag(status)))
 
