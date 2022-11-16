@@ -392,6 +392,15 @@ context('Apply', () => {
       checkYourAnswersPage.shouldShowAccessAndHealthcareAnswers(accessAndHealthcarePages)
       checkYourAnswersPage.shouldShowFurtherConsiderationsAnswers(furtherConsiderationsPages)
       checkYourAnswersPage.shouldShowMoveOnAnswers(moveOnPages)
+
+      // When I have checked my answers
+      checkYourAnswersPage.clickSubmit()
+
+      // Then I should be taken back to the task list
+      Page.verifyOnPage(TaskListPage)
+
+      // And the check your answers task should show a completed status
+      tasklistPage.shouldShowTaskStatus('check-your-answers', 'Completed')
     })
   })
 })
