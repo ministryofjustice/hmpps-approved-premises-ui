@@ -24,6 +24,7 @@ export type TaskNames =
   | 'access-and-healthcare'
   | 'further-considerations'
   | 'move-on'
+  | 'check-your-answers'
 
 export type YesOrNoWithDetail<T extends string> = {
   [K in T]: YesOrNo

@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 import type { TaskNames, FormSections } from '@approved-premises/ui'
+
 import basicInfomationPages from './basic-information'
 import typeOfApPages from './type-of-ap'
 import riskAndNeedPages from './risk-management-features'
@@ -8,6 +9,7 @@ import locationFactorPages from './location-factors'
 import accessAndHealthcarePages from './access-and-healthcare'
 import furtherConsiderationsPages from './further-considerations'
 import moveOnPages from './move-on'
+import checkYourAnswersPages from './check-your-answers'
 
 const pages: {
   [key in TaskNames]: Record<string, unknown>
@@ -19,6 +21,7 @@ const pages: {
   'access-and-healthcare': accessAndHealthcarePages,
   'further-considerations': furtherConsiderationsPages,
   'move-on': moveOnPages,
+  'check-your-answers': checkYourAnswersPages,
 }
 
 const sections: FormSections = [
@@ -69,6 +72,16 @@ const sections: FormSections = [
         id: 'move-on',
         title: 'Add move on information',
         pages: moveOnPages,
+      },
+    ],
+  },
+  {
+    title: 'Check your answers',
+    tasks: [
+      {
+        id: 'check-your-answers',
+        title: 'Check your answers',
+        pages: checkYourAnswersPages,
       },
     ],
   },
