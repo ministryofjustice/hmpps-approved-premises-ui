@@ -1,5 +1,5 @@
-import type { Request, Response, RequestHandler, NextFunction } from 'express'
-import createError from 'http-errors'
+import type { Request, Response, RequestHandler } from 'express'
+import type { Application } from '@approved-premises/api'
 
 import ApplicationService from '../../services/applicationService'
 import { PersonService } from '../../services'
@@ -28,16 +28,14 @@ export default class ApplicationsController {
   }
 
   show(): RequestHandler {
-    return async (req: Request, res: Response, next: NextFunction) => {
-      const { application } = req.session
+    return async (req: Request, res: Response) => {
+      const application: Application = req.session.application
+        ? req.session.application
+        : await this.applicationService.findApplication(req.user.token, req.params.id)
 
-      if (application) {
-        const risks = await this.personService.getPersonRisks(req.user.token, application.person.crn)
+      const risks = await this.personService.getPersonRisks(req.user.token, application.person.crn)
 
-        res.render('applications/show', { application, risks, sections })
-      } else {
-        next(createError(404, 'Not found'))
-      }
+      res.render('applications/show', { application, risks, sections })
     }
   }
 

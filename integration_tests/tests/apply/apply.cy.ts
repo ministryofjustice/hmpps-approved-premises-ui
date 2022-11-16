@@ -60,6 +60,8 @@ context('Apply', () => {
       const application = applicationFactory.build({ person, data: applicationData })
       cy.task('stubApplicationCreate', { application })
       cy.task('stubApplicationUpdate', { application })
+      cy.task('stubApplicationGet', { application })
+
       const startPage = StartPage.visit()
       startPage.startApplication()
 
