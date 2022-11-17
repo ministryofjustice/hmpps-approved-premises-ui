@@ -14,30 +14,28 @@ export const placementPurposes = {
 } as const
 
 type PlacementPurposeT = keyof typeof placementPurposes
+type PlacementPurposeBody = { placementPurposes: Array<PlacementPurposeT>; otherReason?: string }
 
 export default class PlacementPurpose implements TasklistPage {
   name = 'placement-purpose'
 
   title = `What is the purpose of the AP placement?`
 
-  body: { placementPurposes: Array<PlacementPurposeT>; otherReason?: string } | Record<string, never>
+  body: PlacementPurposeBody
 
   purposes = placementPurposes
 
   previousPage: string
 
   constructor(body: Record<string, unknown>, private readonly _application: Application, previousPage: string) {
-    const placementPurposesResponse = body?.placementPurposes
+    this.body = {} as PlacementPurposeBody
+
+    this.body.placementPurposes = body?.placementPurposes
       ? ([body.placementPurposes].flat() as Array<PlacementPurposeT>)
       : []
 
-    if (this.responseNeedsFreeTextReason(body)) {
-      this.body = {
-        placementPurposes: placementPurposesResponse,
-        otherReason: body.otherReason as string,
-      }
-    } else {
-      this.body = { placementPurposes: placementPurposesResponse }
+    if (this.responseNeedsFreeTextReason(this.body)) {
+      this.body.otherReason = body.otherReason as string
     }
 
     this.previousPage = previousPage
@@ -65,7 +63,9 @@ export default class PlacementPurpose implements TasklistPage {
     return errors
   }
 
-  private responseContainsReasons(body: Record<string, unknown>): body is { placementPurposes: Array<unknown> } {
+  private responseContainsReasons(
+    body: Record<string, unknown>,
+  ): body is { placementPurposes: Array<PlacementPurposeT> } {
     if (body?.placementPurposes && Array.isArray(body.placementPurposes) && body.placementPurposes.length) {
       return true
     }

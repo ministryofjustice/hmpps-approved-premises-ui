@@ -51,6 +51,22 @@ describe('PlacementPurpose', () => {
         placementPurposes: ['publicProtection'],
       })
     })
+
+    it('should apply `otherReason` to the body when `otherReason` is the only `placementPurposes` option', () => {
+      const page = new PlacementPurpose(
+        {
+          placementPurposes: 'otherReason',
+          otherReason: 'Another reason',
+        },
+        application,
+        'previousPage',
+      )
+
+      expect(page.body).toEqual({
+        placementPurposes: ['otherReason'],
+        otherReason: 'Another reason',
+      })
+    })
   })
 
   describe('when knowReleaseDate is set to yes', () => {
