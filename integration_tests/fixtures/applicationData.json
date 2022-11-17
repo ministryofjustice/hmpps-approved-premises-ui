@@ -15,7 +15,7 @@
       "startDate-day": "",
       "startDateSameAsReleaseDate": "yes"
     },
-    "placement-purpose": { "placementPurposes": ["drugAlcoholSupport", "otherReason"], "otherReason": "Reason" }
+    "placement-purpose": { "placementPurposes": ["drugAlcoholMonitoring", "otherReason"], "otherReason": "Reason" }
   },
   "type-of-ap": { "ap-type": { "type": "standard" } },
   "risk-management-features": {
