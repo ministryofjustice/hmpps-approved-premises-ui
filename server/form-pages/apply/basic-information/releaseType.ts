@@ -11,7 +11,6 @@ const allReleaseTypes = {
   hdc: 'Home detention curfew (HDC)',
   license: 'License',
   pss: 'Post Sentence Supervision (PSS)',
-  rerelease: 'Re-release following recall',
 } as const
 
 type AllReleaseTypes = typeof allReleaseTypes
@@ -81,7 +80,6 @@ export default class ReleaseType implements TasklistPage {
       return {
         rotl: 'Release on Temporary License (ROTL)',
         license: 'License',
-        rerelease: 'Re-release following recall',
       }
     }
     throw new SessionDataError(`Unknown release type ${sessionReleaseType}`)
