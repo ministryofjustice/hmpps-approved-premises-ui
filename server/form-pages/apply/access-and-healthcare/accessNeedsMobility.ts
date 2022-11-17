@@ -10,7 +10,7 @@ export default class AccessNeedsMobility implements TasklistPage {
   title = 'Access needs'
 
   questions = {
-    wheelchair: `Does ${this.application.person.name} require use of a wheelchair?`,
+    wheelchair: `Does ${this.application.person.name} require a wheelchair accessible room?`,
     mobilityNeeds: 'Mobility needs',
     visualImpairment: 'Visual Impairment',
   }

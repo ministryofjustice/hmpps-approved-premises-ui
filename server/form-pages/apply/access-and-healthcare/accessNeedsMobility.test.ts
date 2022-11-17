@@ -54,7 +54,7 @@ describe('AccessNeedsMobility', () => {
       )
 
       expect(page.response()).toEqual({
-        'Does John Wayne require use of a wheelchair?': 'Yes',
+        'Does John Wayne require a wheelchair accessible room?': 'Yes',
         'Mobility needs': 'Mobility needs',
         'Visual Impairment': 'Visual impairment',
       })
