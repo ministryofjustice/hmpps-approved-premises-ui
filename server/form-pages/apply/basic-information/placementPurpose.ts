@@ -9,7 +9,7 @@ export const placementPurposes = {
   preventContact: 'Prevent Contact',
   readjust: 'Help individual readjust to life outside custody',
   drugAlcoholMonitoring: 'Provide drug or alcohol monitoring',
-  preventSelfHalf: 'Prevent self harm or suicide',
+  preventSelfHarm: 'Prevent self harm or suicide',
   otherReason: 'Other (please specify)',
 } as const
 
@@ -81,8 +81,15 @@ export default class PlacementPurpose implements TasklistPage {
     return false
   }
 
-  items() {
-    return convertKeyValuePairToCheckBoxItems(placementPurposes, this.body?.placementPurposes)
+  items(conditionalHtml: string) {
+    const items = convertKeyValuePairToCheckBoxItems(placementPurposes, this.body?.placementPurposes)
+    const other = items.pop()
+
+    items.push({
+      divider: 'or',
+    })
+
+    return [...items, { ...other, conditional: { html: conditionalHtml } }]
   }
 
   response() {

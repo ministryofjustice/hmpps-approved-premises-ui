@@ -74,11 +74,15 @@ export interface RadioItem {
   checked?: boolean
 }
 
-export interface CheckBoxItem {
-  text: string
-  value: string
-  checked?: boolean
-}
+export type CheckBoxItem =
+  | {
+      text: string
+      value: string
+      checked?: boolean
+    }
+  | CheckBoxDivider
+
+export type CheckBoxDivider = { divider: string }
 
 export interface SelectOption {
   text: string
