@@ -98,11 +98,40 @@ describe('PlacementPurpose', () => {
   })
 
   describe('response', () => {
-    it('should return a translated version of the response when the user does not know the release date', () => {
-      const page = new PlacementPurpose({ placementPurposes: ['drugAlcoholMonitoring'] }, application, 'somePage')
+    it('should return a translated version of the placement purposes', () => {
+      const page = new PlacementPurpose(
+        {
+          placementPurposes: [
+            'publicProtection',
+            'preventContact',
+            'readjust',
+            'drugAlcoholMonitoring',
+            'preventSelfHarm',
+          ],
+        },
+        application,
+        'somePage',
+      )
 
       expect(page.response()).toEqual({
-        [page.title]: 'Provide drug or alcohol monitoring',
+        [page.title]:
+          'Public protection, Prevent Contact, Help individual readjust to life outside custody, Provide drug or alcohol monitoring, Prevent self harm or suicide',
+      })
+    })
+
+    it('should include an other reason if one is present', () => {
+      const page = new PlacementPurpose(
+        {
+          placementPurposes: ['drugAlcoholMonitoring', 'otherReason'],
+          otherReason: 'Another reason',
+        },
+        application,
+        'somePage',
+      )
+
+      expect(page.response()).toEqual({
+        [page.title]: 'Provide drug or alcohol monitoring, Other (please specify)',
+        'Other purpose for AP Placement': 'Another reason',
       })
     })
   })

@@ -93,6 +93,12 @@ export default class PlacementPurpose implements TasklistPage {
   }
 
   response() {
-    return { [this.title]: this.body.placementPurposes.map(purpose => placementPurposes[purpose]).join(', ') }
+    const response = { [this.title]: this.body.placementPurposes.map(purpose => placementPurposes[purpose]).join(', ') }
+
+    if (this.body.otherReason) {
+      response['Other purpose for AP Placement'] = this.body.otherReason
+    }
+
+    return response
   }
 }
