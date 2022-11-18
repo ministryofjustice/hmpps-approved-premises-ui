@@ -171,5 +171,7 @@ export type GroupedListofBookings = {
 }
 
 export type DataServices = {
-  personService: PersonService
+  personService: {
+    getPrisonCaseNotes: (token: string, crn: string) => Promise<PrisonCaseNote[]>
+  }
 }
