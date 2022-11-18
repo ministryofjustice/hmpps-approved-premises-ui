@@ -53,5 +53,6 @@ export default {
       show: personPath.path('risks'),
     },
     search: peoplePath.path('search'),
+    prisonCaseNotes: personPath.path('prison-case-notes'),
   },
 }
