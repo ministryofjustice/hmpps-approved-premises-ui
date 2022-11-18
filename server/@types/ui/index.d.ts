@@ -20,6 +20,7 @@ export type TaskNames =
   | 'basic-information'
   | 'type-of-ap'
   | 'risk-management-features'
+  | 'prison-information'
   | 'location-factors'
   | 'access-and-healthcare'
   | 'further-considerations'
