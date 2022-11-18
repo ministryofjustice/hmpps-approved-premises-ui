@@ -4,7 +4,8 @@ import applicationFactory from '../testutils/factories/application'
 import paths from '../paths/apply'
 import { pages } from '../form-pages/apply'
 
-import { taskLink, getTaskStatus, getCompleteSectionCount, getResponses } from './applicationUtils'
+import { taskLink, getTaskStatus, getCompleteSectionCount, getResponses, getPage } from './applicationUtils'
+import { UnknownPageError } from './errors'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -149,6 +150,19 @@ describe('applicationUtils', () => {
       application.data = { 'basic-information': { first: '', second: '' } }
 
       expect(getResponses(application)).toEqual({ 'basic-information': [{ foo: 'bar' }, { bar: 'foo' }] })
+    })
+  })
+
+  describe('getPage', () => {
+    it('should return a page if it exists', () => {
+      expect(getPage('basic-information', 'first')).toEqual(FirstPage)
+      expect(getPage('basic-information', 'second')).toEqual(SecondPage)
+    })
+
+    it('should raise an error if the page is not found', async () => {
+      expect(() => {
+        getPage('basic-information', 'bar')
+      }).toThrow(UnknownPageError)
     })
   })
 })

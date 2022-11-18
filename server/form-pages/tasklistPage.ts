@@ -1,5 +1,5 @@
-import type { Request } from 'express'
 import type { TaskListErrors, DataServices } from '@approved-premises/ui'
+import { Application } from '@approved-premises/api'
 
 export default abstract class TasklistPage {
   abstract name: string
@@ -16,5 +16,5 @@ export default abstract class TasklistPage {
 
   abstract response(): Record<string, unknown>
 
-  async setup?(request: Request, dataServices: DataServices): Promise<void>
+  static async initialize?(application: Application, token: string, dataServices: DataServices): Promise<TasklistPage>
 }
