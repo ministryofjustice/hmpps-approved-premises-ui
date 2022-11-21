@@ -251,12 +251,13 @@ context('Apply', () => {
 
       // Given there is prison case notes for the person in the DB
       const prisonCaseNotes = prisonCaseNotesFactory.buildList(3)
+      const selectedPrisonCaseNotes = [prisonCaseNotes[0], prisonCaseNotes[1]]
       cy.task('stubPrisonCaseNotes', { prisonCaseNotes, person })
 
       // And I click the 'Review prison information' task
       cy.get('[data-cy-task-name="prison-information"]').click()
 
-      const caseNotesPage = new CaseNotesPage(application, prisonCaseNotes)
+      const caseNotesPage = new CaseNotesPage(application, selectedPrisonCaseNotes)
       caseNotesPage.completeForm()
       caseNotesPage.clickSubmit()
 
@@ -403,6 +404,7 @@ context('Apply', () => {
       checkYourAnswersPage.shouldShowBasicInformationAnswers(basicInformationPages)
       checkYourAnswersPage.shouldShowTypeOfApAnswers(typeOfApPages)
       checkYourAnswersPage.shouldShowRiskManagementAnswers(riskManagementPages)
+      checkYourAnswersPage.shouldShowCaseNotes(selectedPrisonCaseNotes)
       checkYourAnswersPage.shouldShowLocationFactorsAnswers(locationFactorsPages)
       checkYourAnswersPage.shouldShowAccessAndHealthcareAnswers(accessAndHealthcarePages)
       checkYourAnswersPage.shouldShowFurtherConsiderationsAnswers(furtherConsiderationsPages)

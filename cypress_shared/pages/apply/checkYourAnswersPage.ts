@@ -1,4 +1,4 @@
-import type { Person } from '@approved-premises/api'
+import type { Person, PrisonCaseNote } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import ApplyPage from './applyPage'
 
@@ -50,6 +50,25 @@ export default class CheckYourAnswersPage extends Page {
 
   shouldShowMoveOnAnswers(pages: Array<ApplyPage>) {
     this.shouldShowAnswersForTask('move-on', pages)
+  }
+
+  shouldShowCaseNotes(caseNotes: Array<PrisonCaseNote>) {
+    cy.get(`[data-cy-check-your-answers-section="prison-information"]`).within(() => {
+      cy.get('dl.govuk-summary-list--embedded').then($items => {
+        cy.wrap($items).should('have.length', caseNotes.length)
+        caseNotes.forEach((caseNote, i) => {
+          cy.wrap($items[i]).within(() => {
+            this.assertDefinition('Date created', DateFormats.isoDateToUIDate(caseNote.createdAt))
+            this.assertDefinition('Date occurred', DateFormats.isoDateToUIDate(caseNote.occurredAt))
+            this.assertDefinition('Is the case note sensitive?', caseNote.sensitive ? 'Yes' : 'No')
+            this.assertDefinition('Name of author', caseNote.authorName)
+            this.assertDefinition('Type', caseNote.type)
+            this.assertDefinition('Subtype', caseNote.subType)
+            this.assertDefinition('Note', caseNote.note)
+          })
+        })
+      })
+    })
   }
 
   private shouldShowAnswersForTask(taskName: string, pages: Array<ApplyPage>) {
