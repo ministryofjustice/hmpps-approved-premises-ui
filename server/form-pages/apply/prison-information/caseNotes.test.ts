@@ -120,29 +120,35 @@ describe('CaseNotes', () => {
     const page = new CaseNotes({ selectedCaseNotes: caseNotes, moreDetail: 'some detail' }, application)
 
     expect(page.response()).toEqual({
-      'Selected prison case notes that support this application': `\nDate created: Friday 31 January 2020,
-Date occurred: Wednesday 1 January 2020,
-Is the case note sensitive?: No,
-Name of author: Dennis Ziemann,
-Type: some type,
-Subtype: some subtype,
-Note: a note
-
-Date created: Sunday 31 January 2021,
-Date occurred: Friday 1 January 2021,
-Is the case note sensitive?: No,
-Name of author: Dennis Ziemann,
-Type: some type,
-Subtype: some subtype,
-Note: another note
-
-Date created: Monday 31 January 2022,
-Date occurred: Saturday 1 January 2022,
-Is the case note sensitive?: No,
-Name of author: Dennis Ziemann,
-Type: some type,
-Subtype: some subtype,
-Note: a further note`,
+      'Selected prison case notes that support this application': [
+        {
+          'Date created': 'Friday 31 January 2020',
+          'Date occurred': 'Wednesday 1 January 2020',
+          'Is the case note sensitive?': 'No',
+          'Name of author': 'Dennis Ziemann',
+          Note: 'a note',
+          Subtype: 'some subtype',
+          Type: 'some type',
+        },
+        {
+          'Date created': 'Sunday 31 January 2021',
+          'Date occurred': 'Friday 1 January 2021',
+          'Is the case note sensitive?': 'No',
+          'Name of author': 'Dennis Ziemann',
+          Note: 'another note',
+          Subtype: 'some subtype',
+          Type: 'some type',
+        },
+        {
+          'Date created': 'Monday 31 January 2022',
+          'Date occurred': 'Saturday 1 January 2022',
+          'Is the case note sensitive?': 'No',
+          'Name of author': 'Dennis Ziemann',
+          Note: 'a further note',
+          Subtype: 'some subtype',
+          Type: 'some type',
+        },
+      ],
       'Are there additional circumstances that have helped John Wayne do well in the past?': 'some detail',
     })
   })

@@ -66,19 +66,17 @@ export default class CaseNotes implements TasklistPage {
     const response = {}
 
     if (this.body.selectedCaseNotes) {
-      const res = this.body.selectedCaseNotes.reduce((prev, curr, i, arr) => {
-        const caseNotes: string = prev.concat(
-          `\nDate created: ${DateFormats.isoDateToUIDate(
-            curr.createdAt,
-          )},\nDate occurred: ${DateFormats.isoDateToUIDate(curr.occurredAt)},\nIs the case note sensitive?: ${
-            curr.sensitive ? 'Yes' : 'No'
-          },\nName of author: ${curr.authorName},\nType: ${curr.type},\nSubtype: ${curr.subType},\nNote: ${curr.note}`,
-        )
-        if (i !== arr.length - 1) {
-          return caseNotes.concat('\n')
+      const res = this.body.selectedCaseNotes.map(caseNote => {
+        return {
+          'Date created': DateFormats.isoDateToUIDate(caseNote.createdAt),
+          'Date occurred': DateFormats.isoDateToUIDate(caseNote.occurredAt),
+          'Is the case note sensitive?': caseNote.sensitive ? 'Yes' : 'No',
+          'Name of author': caseNote.authorName,
+          Type: caseNote.type,
+          Subtype: caseNote.subType,
+          Note: caseNote.note,
         }
-        return caseNotes
-      }, '')
+      })
 
       response[this.questions.caseNotesSelectionQuestion] = res
     }
