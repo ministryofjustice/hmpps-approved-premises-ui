@@ -7,7 +7,7 @@ import * as pathModule from 'path'
 
 import type { ErrorMessages, PersonStatus, Task } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
-import { initialiseName, removeBlankSummaryListItems } from './utils'
+import { initialiseName, removeBlankSummaryListItems, sentenceCase } from './utils'
 import { dateFieldValues, convertObjectsToRadioItems, convertObjectsToSelectOptions } from './formUtils'
 import { getTaskStatus, taskLink, getCompleteSectionCount } from './applicationUtils'
 import { checkYourAnswersSections } from './checkYourAnswersUtils'
@@ -63,6 +63,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('formatDate', (date: string, options: { format: 'short' | 'long' } = { format: 'long' }) =>
     DateFormats.isoDateToUIDate(date, options),
   )
+  njkEnv.addGlobal('formatDateTime', (date: string) => DateFormats.isoDateTimeToUIDateTime(date))
 
   njkEnv.addGlobal('dateFieldValues', function sendContextToDateFieldValues(fieldName: string, errors: ErrorMessages) {
     return dateFieldValues(fieldName, this.ctx, errors)
@@ -116,6 +117,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   })
 
   njkEnv.addFilter('removeBlankSummaryListItems', removeBlankSummaryListItems)
+  njkEnv.addFilter('sentenceCase', sentenceCase)
 
   njkEnv.addGlobal('checkYourAnswersSections', checkYourAnswersSections)
 }

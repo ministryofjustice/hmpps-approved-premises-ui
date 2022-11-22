@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { Person, PersonRisks, PrisonCaseNote } from '@approved-premises/api'
+import type { Person, PersonRisks, PrisonCaseNote, Adjudication } from '@approved-premises/api'
 
 import { stubFor, getMatchingRequests } from '../../wiremock'
 
@@ -47,7 +47,7 @@ export default {
       })
     ).body.requests,
 
-  stubPrisonCaseNotes: async (args: { person: Person; prisonCaseNotes: PrisonCaseNote[] }) =>
+  stubPrisonCaseNotes: (args: { person: Person; prisonCaseNotes: PrisonCaseNote[] }) =>
     stubFor({
       request: {
         method: 'GET',
@@ -57,6 +57,19 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: args.prisonCaseNotes,
+      },
+    }),
+
+  stubAdjudications: (args: { person: Person; adjudications: Adjudication[] }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/people/${args.person.crn}/adjudications`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.adjudications,
       },
     }),
 }
