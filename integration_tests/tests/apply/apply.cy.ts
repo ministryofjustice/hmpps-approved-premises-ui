@@ -18,6 +18,7 @@ import {
   PlacementDurationPage,
   ForeignNationalPage,
   CheckYourAnswersPage,
+  ListPage,
 } from '../../../cypress_shared/pages/apply'
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
@@ -42,6 +43,8 @@ import RelocationRegionPage from '../../../cypress_shared/pages/apply/relocation
 import PlansInPlacePage from '../../../cypress_shared/pages/apply/plansInPlace'
 import TypeOfAccomodationPage from '../../../cypress_shared/pages/apply/typeOfAccommodation'
 import CaseNotesPage from '../../../cypress_shared/pages/apply/caseNotes'
+import applicationSummaryFactory from '../../../server/testutils/factories/applicationSummary'
+import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -145,8 +148,8 @@ context('Apply', () => {
 
     // And I have started an application
     cy.fixture('applicationData.json').then(applicationData => {
-      const application = applicationFactory.build({ person, data: applicationData })
-
+      const application = applicationFactory.build({ person })
+      application.data = applicationData
       cy.task('stubApplicationCreate', { application })
       cy.task('stubApplicationUpdate', { application })
       cy.task('stubApplicationGet', { application })
@@ -424,6 +427,39 @@ context('Apply', () => {
 
       // And the check your answers task should show a completed status
       tasklistPage.shouldShowTaskStatus('check-your-answers', 'Completed')
+
+      // Given the application exists in the database
+      cy.task('stubApplicationSubmit', { application })
+
+      // When I click submit
+      tasklistPage.clickSubmit()
+
+      // Then the application should be submitted to the API
+      cy.task('verifyApplicationUpdate', application.id).then(requests => {
+        expect(requests).to.have.length(30)
+        const requestBody = JSON.parse(requests[29].body)
+
+        expect(requestBody.data).to.deep.equal(applicationData)
+      })
+
+      cy.task('verifyApplicationSubmit', application.id).then(requests => {
+        expect(requests).to.have.length(1)
+
+        expect(requests[0].url).to.equal(`/applications/${application.id}/submission`)
+      })
+
+      // And I should be taken to the confirmation page
+      const confirmationPage = new SubmissionConfirmation()
+
+      // Given there are applications in the database
+      const applicationSummaries = applicationSummaryFactory.buildList(5)
+      cy.task('stubApplications', applicationSummaries)
+
+      // When I click 'Back to dashboard'
+      confirmationPage.clickBackToDashboard()
+
+      // Then I am taken back to the dashboard
+      Page.verifyOnPage(ListPage)
     })
   })
 })
