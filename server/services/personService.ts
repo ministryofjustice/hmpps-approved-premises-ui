@@ -1,5 +1,5 @@
 import type { PersonRisksUI } from '@approved-premises/ui'
-import type { Person } from '@approved-premises/api'
+import type { Person, PrisonCaseNote } from '@approved-premises/api'
 import type { RestClientBuilder, PersonClient } from '../data'
 
 import { mapApiPersonRisksForUi } from '../utils/utils'
@@ -20,5 +20,13 @@ export default class PersonService {
     const risks = await personClient.risks(crn)
 
     return mapApiPersonRisksForUi(risks)
+  }
+
+  async getPrisonCaseNotes(token: string, crn: string): Promise<PrisonCaseNote[]> {
+    const personClient = this.personClientFactory(token)
+
+    const prisonCaseNotes = await personClient.prisonCaseNotes(crn)
+
+    return prisonCaseNotes
   }
 }

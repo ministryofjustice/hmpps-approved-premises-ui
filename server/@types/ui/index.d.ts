@@ -20,6 +20,7 @@ export type TaskNames =
   | 'basic-information'
   | 'type-of-ap'
   | 'risk-management-features'
+  | 'prison-information'
   | 'location-factors'
   | 'access-and-healthcare'
   | 'further-considerations'
@@ -171,5 +172,7 @@ export type GroupedListofBookings = {
 }
 
 export type DataServices = {
-  personService: PersonService
+  personService: {
+    getPrisonCaseNotes: (token: string, crn: string) => Promise<PrisonCaseNote[]>
+  }
 }

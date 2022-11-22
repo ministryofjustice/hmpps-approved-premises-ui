@@ -1,4 +1,4 @@
-import type { Person, PersonRisks } from '@approved-premises/api'
+import type { Person, PersonRisks, PrisonCaseNote } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -24,5 +24,11 @@ export default class PersonClient {
     })
 
     return response as PersonRisks
+  }
+
+  async prisonCaseNotes(crn: string): Promise<PrisonCaseNote[]> {
+    const response = await this.restClient.get({ path: paths.people.prisonCaseNotes({ crn }) })
+
+    return response as PrisonCaseNote[]
   }
 }

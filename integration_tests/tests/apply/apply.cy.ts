@@ -29,6 +29,7 @@ import TypeOfConvictedOffence from '../../../cypress_shared/pages/apply/typeOfCo
 
 import Page from '../../../cypress_shared/pages/page'
 import applicationFactory from '../../../server/testutils/factories/application'
+import prisonCaseNotesFactory from '../../../server/testutils/factories/prisonCaseNotes'
 import personFactory from '../../../server/testutils/factories/person'
 import risksFactory from '../../../server/testutils/factories/risks'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
@@ -39,6 +40,7 @@ import AccessNeedsAdditionalAdjustmentsPage from '../../../cypress_shared/pages/
 import RelocationRegionPage from '../../../cypress_shared/pages/apply/relocationRegion'
 import PlansInPlacePage from '../../../cypress_shared/pages/apply/plansInPlace'
 import TypeOfAccomodationPage from '../../../cypress_shared/pages/apply/typeOfAccommodation'
+import CaseNotesPage from '../../../cypress_shared/pages/apply/caseNotes'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -247,6 +249,18 @@ context('Apply', () => {
       // And the risk management task should show a completed status
       tasklistPage.shouldShowTaskStatus('risk-management-features', 'Completed')
 
+      // Given there is prison case notes for the person in the DB
+      const prisonCaseNotes = prisonCaseNotesFactory.buildList(3)
+      const selectedPrisonCaseNotes = [prisonCaseNotes[0], prisonCaseNotes[1]]
+      cy.task('stubPrisonCaseNotes', { prisonCaseNotes, person })
+
+      // And I click the 'Review prison information' task
+      cy.get('[data-cy-task-name="prison-information"]').click()
+
+      const caseNotesPage = new CaseNotesPage(application, selectedPrisonCaseNotes)
+      caseNotesPage.completeForm()
+      caseNotesPage.clickSubmit()
+
       // Given I click the 'Describe location factors' task
       cy.get('[data-cy-task-name="location-factors"]').click()
 
@@ -390,6 +404,7 @@ context('Apply', () => {
       checkYourAnswersPage.shouldShowBasicInformationAnswers(basicInformationPages)
       checkYourAnswersPage.shouldShowTypeOfApAnswers(typeOfApPages)
       checkYourAnswersPage.shouldShowRiskManagementAnswers(riskManagementPages)
+      checkYourAnswersPage.shouldShowCaseNotes(selectedPrisonCaseNotes)
       checkYourAnswersPage.shouldShowLocationFactorsAnswers(locationFactorsPages)
       checkYourAnswersPage.shouldShowAccessAndHealthcareAnswers(accessAndHealthcarePages)
       checkYourAnswersPage.shouldShowFurtherConsiderationsAnswers(furtherConsiderationsPages)
