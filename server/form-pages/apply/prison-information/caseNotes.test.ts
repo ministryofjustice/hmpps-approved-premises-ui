@@ -5,6 +5,7 @@ import prisonCaseNotesFactory from '../../../testutils/factories/prisonCaseNotes
 import { DateFormats } from '../../../utils/dateUtils'
 import applicationFactory from '../../../testutils/factories/application'
 import personFactory from '../../../testutils/factories/person'
+import adjudicationsFactory from '../../../testutils/factories/adjudication'
 
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
@@ -17,6 +18,8 @@ describe('CaseNotes', () => {
   const application = applicationFactory.build({ person })
 
   let personService: DeepMocked<PersonService>
+
+  const adjudications = adjudicationsFactory.buildList(5)
 
   const caseNotes = [
     prisonCaseNotesFactory.build({
@@ -90,7 +93,12 @@ describe('caseNoteCheckbox', () => {
   describe('body', () => {
     it('should strip unknown attributes from the body and marshal the IDs', () => {
       const page = new CaseNotes(
-        { selectedCaseNotes: [caseNotes[0], caseNotes[1]], moreDetail: 'some detail', something: 'else' },
+        {
+          selectedCaseNotes: [caseNotes[0], caseNotes[1]],
+          moreDetail: 'some detail',
+          something: 'else',
+          adjudications,
+        },
         application,
       )
 
@@ -98,15 +106,20 @@ describe('caseNoteCheckbox', () => {
         selectedCaseNotes: [caseNotes[0], caseNotes[1]],
         moreDetail: 'some detail',
         caseNoteIds: ['A', 'B'],
+        adjudications,
       })
     })
   })
 
   describe('initialize', () => {
     const getPrisonCaseNotesMock = jest.fn().mockResolvedValue(caseNotes)
+    const getAdjudicationsMock = jest.fn().mockResolvedValue(adjudications)
 
     beforeEach(() => {
-      personService = createMock<PersonService>({ getPrisonCaseNotes: getPrisonCaseNotesMock })
+      personService = createMock<PersonService>({
+        getPrisonCaseNotes: getPrisonCaseNotesMock,
+        getAdjudications: getAdjudicationsMock,
+      })
     })
 
     it('calls the getPrisonCaseNotes method on the with a token and the persons CRN', async () => {
@@ -117,12 +130,21 @@ describe('caseNoteCheckbox', () => {
       expect(getPrisonCaseNotesMock).toHaveBeenCalledWith('some-token', application.person.crn)
     })
 
-    it('initializes the caseNotes class with the selected case notes', async () => {
+    it('calls the getAdjudications method on the with a token and the persons CRN', async () => {
+      const page = await CaseNotes.initialize({}, application, 'some-token', { personService })
+
+      expect(page.caseNotes).toEqual(caseNotes)
+
+      expect(getAdjudicationsMock).toHaveBeenCalledWith('some-token', application.person.crn)
+    })
+
+    it('initializes the caseNotes class with the selected case notes and adjudications', async () => {
       const page = await CaseNotes.initialize({ caseNoteIds: ['A'] }, application, 'some-token', { personService })
 
       expect(page.body).toEqual({
         caseNoteIds: ['A'],
         selectedCaseNotes: [caseNotes[0]],
+        adjudications,
       })
     })
 
@@ -132,6 +154,7 @@ describe('caseNoteCheckbox', () => {
       expect(page.body).toEqual({
         caseNoteIds: ['A'],
         selectedCaseNotes: [caseNotes[0]],
+        adjudications,
       })
     })
 
@@ -141,6 +164,7 @@ describe('caseNoteCheckbox', () => {
       expect(page.body).toEqual({
         caseNoteIds: [],
         selectedCaseNotes: [],
+        adjudications,
       })
     })
   })

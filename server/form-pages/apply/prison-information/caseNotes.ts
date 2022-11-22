@@ -1,11 +1,16 @@
 import type { DataServices } from '@approved-premises/ui'
 
-import type { Application, PrisonCaseNote } from '@approved-premises/api'
+import type { Application, PrisonCaseNote, Adjudication } from '@approved-premises/api'
 
 import TasklistPage from '../../tasklistPage'
 import { DateFormats } from '../../../utils/dateUtils'
 
-type CaseNotesBody = { caseNoteIds: Array<string>; selectedCaseNotes: Array<PrisonCaseNote>; moreDetail: string }
+type CaseNotesBody = {
+  caseNoteIds: Array<string>
+  selectedCaseNotes: Array<PrisonCaseNote>
+  moreDetail: string
+  adjudications: Array<Adjudication>
+}
 
 export const caseNoteCheckbox = (caseNote: PrisonCaseNote, checked: boolean) => {
   return `
@@ -46,6 +51,7 @@ export default class CaseNotes implements TasklistPage {
       caseNoteIds: caseNoteIds as Array<string>,
       selectedCaseNotes,
       moreDetail: body.moreDetail as string,
+      adjudications: body.adjudications as Array<Adjudication>,
     }
   }
 
@@ -56,8 +62,10 @@ export default class CaseNotes implements TasklistPage {
     dataServices: DataServices,
   ) {
     const caseNotes = await dataServices.personService.getPrisonCaseNotes(token, application.person.crn)
+    const adjudications = await dataServices.personService.getAdjudications(token, application.person.crn)
 
     body.caseNoteIds = body.caseNoteIds ? [body.caseNoteIds].flat() : []
+    body.adjudications = adjudications
 
     body.selectedCaseNotes = ((body.caseNoteIds || []) as Array<string>).map((noteId: string) => {
       return caseNotes.find(caseNote => caseNote.id === noteId)
