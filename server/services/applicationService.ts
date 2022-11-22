@@ -70,6 +70,12 @@ export default class ApplicationService {
     }
   }
 
+  async submit(token: string, application: Application) {
+    const client = this.applicationClientFactory(token)
+
+    await client.submit(application)
+  }
+
   private firstPageForTask(taskName: string) {
     return Object.keys(pages[taskName])[0]
   }
