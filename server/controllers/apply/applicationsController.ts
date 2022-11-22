@@ -7,6 +7,7 @@ import { fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import { sections } from '../../form-pages/apply'
+import { getResponses } from '../../utils/applicationUtils'
 
 export default class ApplicationsController {
   constructor(private readonly applicationService: ApplicationService, private readonly personService: PersonService) {}
@@ -76,6 +77,16 @@ export default class ApplicationsController {
       res.redirect(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' }),
       )
+    }
+  }
+
+  submit(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const application = await this.applicationService.findApplication(req.user.token, req.params.id)
+      application.document = getResponses(application)
+
+      await this.applicationService.submit(req.user.token, application)
+      res.render('applications/confirm', { pageHeading: 'Application confirmation' })
     }
   }
 }
