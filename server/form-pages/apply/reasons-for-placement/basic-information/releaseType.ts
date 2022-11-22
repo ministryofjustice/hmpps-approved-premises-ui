@@ -15,7 +15,7 @@ const allReleaseTypes = {
 } as const
 
 type AllReleaseTypes = typeof allReleaseTypes
-type ReducedReleaseTypes = Pick<AllReleaseTypes, 'rotl' | 'license' | 'rerelease'>
+type ReducedReleaseTypes = Pick<AllReleaseTypes, 'rotl' | 'license'>
 type SentenceType = Extract<SentenceTypesT, 'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life'>
 
 @Page({ name: 'release-type', bodyProperties: ['releaseType'] })
