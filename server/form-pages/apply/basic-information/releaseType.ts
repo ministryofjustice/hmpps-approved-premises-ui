@@ -14,7 +14,7 @@ const allReleaseTypes = {
 } as const
 
 type AllReleaseTypes = typeof allReleaseTypes
-type ReducedReleaseTypes = Pick<AllReleaseTypes, 'rotl' | 'license' | 'rerelease'>
+type ReducedReleaseTypes = Pick<AllReleaseTypes, 'rotl' | 'license'>
 type SentenceType = Extract<SentenceTypesT, 'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life'>
 
 export default class ReleaseType implements TasklistPage {
