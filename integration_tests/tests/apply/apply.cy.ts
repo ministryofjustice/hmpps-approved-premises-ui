@@ -410,6 +410,7 @@ context('Apply', () => {
       checkYourAnswersPage.shouldShowTypeOfApAnswers(typeOfApPages)
       checkYourAnswersPage.shouldShowRiskManagementAnswers(riskManagementPages)
       checkYourAnswersPage.shouldShowCaseNotes(selectedPrisonCaseNotes)
+      checkYourAnswersPage.shouldShowAdjudications(adjudications)
       checkYourAnswersPage.shouldShowLocationFactorsAnswers(locationFactorsPages)
       checkYourAnswersPage.shouldShowAccessAndHealthcareAnswers(accessAndHealthcarePages)
       checkYourAnswersPage.shouldShowFurtherConsiderationsAnswers(furtherConsiderationsPages)

@@ -2,6 +2,7 @@ import type { DataServices } from '@approved-premises/ui'
 
 import type { Application, PrisonCaseNote, Adjudication } from '@approved-premises/api'
 
+import { sentenceCase } from '../../../utils/utils'
 import TasklistPage from '../../tasklistPage'
 import { DateFormats } from '../../../utils/dateUtils'
 
@@ -10,6 +11,28 @@ type CaseNotesBody = {
   selectedCaseNotes: Array<PrisonCaseNote>
   moreDetail: string
   adjudications: Array<Adjudication>
+}
+
+export const caseNoteResponse = (caseNote: PrisonCaseNote) => {
+  return {
+    'Date created': DateFormats.isoDateToUIDate(caseNote.createdAt),
+    'Date occurred': DateFormats.isoDateToUIDate(caseNote.occurredAt),
+    'Is the case note sensitive?': caseNote.sensitive ? 'Yes' : 'No',
+    'Name of author': caseNote.authorName,
+    Type: caseNote.type,
+    Subtype: caseNote.subType,
+    Note: caseNote.note,
+  }
+}
+
+export const adjudicationResponse = (adjudication: Adjudication) => {
+  return {
+    'Adjudication number': adjudication.id,
+    'Report date and time': DateFormats.isoDateTimeToUIDateTime(adjudication.reportedAt),
+    Establishment: adjudication.establishment,
+    'Offence description': adjudication.offenceDescription,
+    Finding: sentenceCase(adjudication.finding),
+  }
 }
 
 export const caseNoteCheckbox = (caseNote: PrisonCaseNote, checked: boolean) => {
@@ -51,7 +74,7 @@ export default class CaseNotes implements TasklistPage {
       caseNoteIds: caseNoteIds as Array<string>,
       selectedCaseNotes,
       moreDetail: body.moreDetail as string,
-      adjudications: body.adjudications as Array<Adjudication>,
+      adjudications: (body.adjudications || []) as Array<Adjudication>,
     }
   }
 
@@ -86,22 +109,14 @@ export default class CaseNotes implements TasklistPage {
   }
 
   response() {
-    const response = {}
+    const response: Record<string, unknown> = {}
 
     if (this.body.selectedCaseNotes) {
-      const res = this.body.selectedCaseNotes.map(caseNote => {
-        return {
-          'Date created': DateFormats.isoDateToUIDate(caseNote.createdAt),
-          'Date occurred': DateFormats.isoDateToUIDate(caseNote.occurredAt),
-          'Is the case note sensitive?': caseNote.sensitive ? 'Yes' : 'No',
-          'Name of author': caseNote.authorName,
-          Type: caseNote.type,
-          Subtype: caseNote.subType,
-          Note: caseNote.note,
-        }
-      })
+      response[this.questions.caseNotesSelectionQuestion] = this.body.selectedCaseNotes.map(caseNoteResponse)
+    }
 
-      response[this.questions.caseNotesSelectionQuestion] = res
+    if (this.body.selectedCaseNotes) {
+      response.Adjudications = this.body.adjudications.map(adjudicationResponse)
     }
 
     if (this.body.moreDetail) {

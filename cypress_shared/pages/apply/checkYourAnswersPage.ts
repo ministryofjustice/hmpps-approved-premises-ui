@@ -3,6 +3,8 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 import ApplyPage from './applyPage'
 
 import Page from '../page'
+import { Adjudication } from '../../../server/@types/shared'
+import { sentenceCase } from '../../../server/utils/utils'
 
 export default class CheckYourAnswersPage extends Page {
   constructor() {
@@ -54,20 +56,50 @@ export default class CheckYourAnswersPage extends Page {
 
   shouldShowCaseNotes(caseNotes: Array<PrisonCaseNote>) {
     cy.get(`[data-cy-check-your-answers-section="prison-information"]`).within(() => {
-      cy.get('dl.govuk-summary-list--embedded').then($items => {
-        cy.wrap($items).should('have.length', caseNotes.length)
-        caseNotes.forEach((caseNote, i) => {
-          cy.wrap($items[i]).within(() => {
-            this.assertDefinition('Date created', DateFormats.isoDateToUIDate(caseNote.createdAt))
-            this.assertDefinition('Date occurred', DateFormats.isoDateToUIDate(caseNote.occurredAt))
-            this.assertDefinition('Is the case note sensitive?', caseNote.sensitive ? 'Yes' : 'No')
-            this.assertDefinition('Name of author', caseNote.authorName)
-            this.assertDefinition('Type', caseNote.type)
-            this.assertDefinition('Subtype', caseNote.subType)
-            this.assertDefinition('Note', caseNote.note)
+      cy.get('dt')
+        .contains('Selected prison case notes that support this application')
+        .parent()
+        .within(() => {
+          cy.get('dl.govuk-summary-list--embedded').then($items => {
+            cy.wrap($items).should('have.length', caseNotes.length)
+            caseNotes.forEach((caseNote, i) => {
+              cy.wrap($items[i]).within(() => {
+                this.assertDefinition('Date created', DateFormats.isoDateToUIDate(caseNote.createdAt))
+                this.assertDefinition('Date occurred', DateFormats.isoDateToUIDate(caseNote.occurredAt))
+                this.assertDefinition('Is the case note sensitive?', caseNote.sensitive ? 'Yes' : 'No')
+                this.assertDefinition('Name of author', caseNote.authorName)
+                this.assertDefinition('Type', caseNote.type)
+                this.assertDefinition('Subtype', caseNote.subType)
+                this.assertDefinition('Note', caseNote.note)
+              })
+            })
           })
         })
-      })
+    })
+  }
+
+  shouldShowAdjudications(adjudications: Array<Adjudication>) {
+    cy.get(`[data-cy-check-your-answers-section="prison-information"]`).within(() => {
+      cy.get('dt')
+        .contains('Adjudications')
+        .parent()
+        .within(() => {
+          cy.get('dl.govuk-summary-list--embedded').then($items => {
+            cy.wrap($items).should('have.length', adjudications.length)
+            adjudications.forEach((adjudication, i) => {
+              cy.wrap($items[i]).within(() => {
+                this.assertDefinition('Adjudication number', String(adjudication.id))
+                this.assertDefinition(
+                  'Report date and time',
+                  DateFormats.isoDateTimeToUIDateTime(adjudication.reportedAt),
+                )
+                this.assertDefinition('Establishment', adjudication.establishment)
+                this.assertDefinition('Offence description', adjudication.offenceDescription)
+                this.assertDefinition('Finding', sentenceCase(String(adjudication.finding)))
+              })
+            })
+          })
+        })
     })
   }
 
