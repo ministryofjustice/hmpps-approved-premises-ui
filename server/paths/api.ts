@@ -27,6 +27,7 @@ const applyPaths = {
     create: applicationsPath,
     index: applicationsPath,
     update: singleApplicationPath,
+    submission: singleApplicationPath.path('submission'),
   },
 }
 
@@ -47,6 +48,7 @@ export default {
     index: applyPaths.applications.index,
     update: applyPaths.applications.update,
     new: applyPaths.applications.create,
+    submission: applyPaths.applications.submission,
   },
   people: {
     risks: {
