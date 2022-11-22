@@ -1,32 +1,34 @@
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+
 {% extends "../layout.njk" %}
 
 {% set columnClasses = "govuk-grid-column-full" %}
 
 {% block questions %}
   <div class="govuk-grid-row">
-
     <div>
       <h1 class="govuk-heading-l">{{page.title}}</h1>
       <p>Select any prison case notes that will help Approved Premises (AP) managers understand factors that may help with the person's risk management in an AP. </p>
       <p>Adjudications from the person's current sentence and ACCT (Assessment, Care in Custody and Teamwork) information will be sent automatically.</p>
     </div>
 
-    <nav class="moj-sub-navigation" aria-label="Sub navigation">
-
-      <ul class="moj-sub-navigation__list">
-        <li class="moj-sub-navigation__item">
-          <a class="moj-sub-navigation__link"  aria-current="page" href="prison-behaviours.html">Prison case notes</a>
-        </li>
-
-        <li class="moj-sub-navigation__item">
-          <a class="moj-sub-navigation__link" href="prison-adjudications.html">Adjudications</a>
-        </li>
-
-        <li class="moj-sub-navigation__item">
-          <a class="moj-sub-navigation__link"  href="prison-acct.html">ACCT</a>
-        </li>
-      </ul>
-    </nav>
+    {{ mojSubNavigation({
+        label: 'Sub navigation',
+        attributes: {
+          'data-sub-nav': 'true'
+        },
+        items: [{
+          text: 'Prison case notes',
+          href: '#caseNotes',
+          active: true
+        }, {
+          text: 'Adjudications',
+          href: '#adjudications'
+        }, {
+          text: 'Acct',
+          href: '#acct'
+        }]
+      }) }}
   </div>
 
   <div class="govuk-column-full-width panel" id="caseNotes">
