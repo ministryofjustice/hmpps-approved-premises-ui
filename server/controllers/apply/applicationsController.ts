@@ -48,7 +48,7 @@ export default class ApplicationsController {
       if (crnArr.length) {
         const person = await this.personService.findByCrn(req.user.token, crnArr[0])
 
-        return res.render(`applications/confirm`, {
+        return res.render(`applications/people/confirm`, {
           pageHeading: `Confirm ${person.name}'s details`,
           ...person,
           date: DateFormats.dateObjtoUIDate(new Date()),

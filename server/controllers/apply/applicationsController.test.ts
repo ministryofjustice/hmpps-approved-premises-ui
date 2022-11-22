@@ -126,7 +126,7 @@ describe('applicationsController', () => {
 
         await requestHandler(request, response, next)
 
-        expect(response.render).toHaveBeenCalledWith('applications/confirm', {
+        expect(response.render).toHaveBeenCalledWith('applications/people/confirm', {
           pageHeading: `Confirm ${person.name}'s details`,
           ...person,
           date: DateFormats.dateObjtoUIDate(new Date()),
@@ -147,7 +147,7 @@ describe('applicationsController', () => {
 
         await requestHandler(request, response, next)
 
-        expect(response.render).toHaveBeenCalledWith('applications/confirm', {
+        expect(response.render).toHaveBeenCalledWith('applications/people/confirm', {
           pageHeading: `Confirm ${person.name}'s details`,
           ...person,
           date: DateFormats.dateObjtoUIDate(new Date()),
