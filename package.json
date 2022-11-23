@@ -59,6 +59,9 @@
     "testPathIgnorePatterns": [
       "<rootDir>/server/form-pages/utils/templates/test.ts"
     ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/server/testutils/jest.setup.ts"
+    ],
     "testEnvironment": "node",
     "reporters": [
       "default",

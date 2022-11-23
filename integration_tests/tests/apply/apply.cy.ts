@@ -32,6 +32,7 @@ import applicationFactory from '../../../server/testutils/factories/application'
 import prisonCaseNotesFactory from '../../../server/testutils/factories/prisonCaseNotes'
 import personFactory from '../../../server/testutils/factories/person'
 import risksFactory from '../../../server/testutils/factories/risks'
+import adjudicationsFactory from '../../../server/testutils/factories/adjudication'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import AccessNeedsPage from '../../../cypress_shared/pages/apply/accessNeeds'
 import AccessNeedsMobilityPage from '../../../cypress_shared/pages/apply/accessNeedsMobility'
@@ -252,12 +253,16 @@ context('Apply', () => {
       // Given there is prison case notes for the person in the DB
       const prisonCaseNotes = prisonCaseNotesFactory.buildList(3)
       const selectedPrisonCaseNotes = [prisonCaseNotes[0], prisonCaseNotes[1]]
+      const adjudications = adjudicationsFactory.buildList(5)
+
       cy.task('stubPrisonCaseNotes', { prisonCaseNotes, person })
+      cy.task('stubAdjudications', { adjudications, person })
 
       // And I click the 'Review prison information' task
       cy.get('[data-cy-task-name="prison-information"]').click()
 
       const caseNotesPage = new CaseNotesPage(application, selectedPrisonCaseNotes)
+      caseNotesPage.shouldDisplayAdjudications(adjudications)
       caseNotesPage.completeForm()
       caseNotesPage.clickSubmit()
 
@@ -405,6 +410,7 @@ context('Apply', () => {
       checkYourAnswersPage.shouldShowTypeOfApAnswers(typeOfApPages)
       checkYourAnswersPage.shouldShowRiskManagementAnswers(riskManagementPages)
       checkYourAnswersPage.shouldShowCaseNotes(selectedPrisonCaseNotes)
+      checkYourAnswersPage.shouldShowAdjudications(adjudications)
       checkYourAnswersPage.shouldShowLocationFactorsAnswers(locationFactorsPages)
       checkYourAnswersPage.shouldShowAccessAndHealthcareAnswers(accessAndHealthcarePages)
       checkYourAnswersPage.shouldShowFurtherConsiderationsAnswers(furtherConsiderationsPages)

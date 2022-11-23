@@ -6,6 +6,7 @@ import PersonFactory from '../testutils/factories/person'
 import risksFactory from '../testutils/factories/risks'
 import { mapApiPersonRisksForUi } from '../utils/utils'
 import prisonCaseNotesFactory from '../testutils/factories/prisonCaseNotes'
+import adjudicationsFactory from '../testutils/factories/adjudication'
 
 jest.mock('../data/personClient.ts')
 
@@ -63,6 +64,21 @@ describe('PersonService', () => {
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
       expect(personClient.prisonCaseNotes).toHaveBeenCalledWith('crn')
+    })
+  })
+
+  describe('getAdjudications', () => {
+    it("on success returns the person's adjudications notes given their CRN", async () => {
+      const adjudications = adjudicationsFactory.buildList(3)
+
+      personClient.adjudications.mockResolvedValue(adjudications)
+
+      const servicePrisonCaseNotes = await service.getAdjudications(token, 'crn')
+
+      expect(servicePrisonCaseNotes).toEqual(adjudications)
+
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.adjudications).toHaveBeenCalledWith('crn')
     })
   })
 })
