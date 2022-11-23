@@ -46,7 +46,6 @@ describe('ReleaseType', () => {
         expect(items[1].value).toEqual('hdc')
         expect(items[2].value).toEqual('license')
         expect(items[3].value).toEqual('pss')
-        expect(items[4].value).toEqual('rerelease')
       })
 
       it('if the sentence type is "extendedDeterminate" then the reduced list of items should be shown', () => {
@@ -60,7 +59,6 @@ describe('ReleaseType', () => {
         expect(items.length).toEqual(3)
         expect(items[0].value).toEqual('rotl')
         expect(items[1].value).toEqual('license')
-        expect(items[2].value).toEqual('rerelease')
       })
 
       it('if the sentence type is "ipp" then the reduced list of items should be shown', () => {
@@ -72,7 +70,6 @@ describe('ReleaseType', () => {
         expect(items.length).toEqual(3)
         expect(items[0].value).toEqual('rotl')
         expect(items[1].value).toEqual('license')
-        expect(items[2].value).toEqual('rerelease')
       })
 
       it('if the sentence type is "life" then the reduced list of items should be shown', () => {
@@ -84,7 +81,6 @@ describe('ReleaseType', () => {
         expect(items.length).toEqual(3)
         expect(items[0].value).toEqual('rotl')
         expect(items[1].value).toEqual('license')
-        expect(items[2].value).toEqual('rerelease')
       })
     })
 
