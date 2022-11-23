@@ -25,7 +25,7 @@ export default class OralHearing implements TasklistPage {
   }
 
   next() {
-    return 'placement-date'
+    return ''
   }
 
   previous() {

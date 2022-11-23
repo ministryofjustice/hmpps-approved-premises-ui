@@ -38,7 +38,7 @@ describe('OralHearing', () => {
     })
   })
 
-  itShouldHaveNextValue(new OralHearing({}, application), 'placement-date')
+  itShouldHaveNextValue(new OralHearing({}, application), '')
   itShouldHavePreviousValue(new OralHearing({}, application), 'release-date')
 
   describe('errors', () => {
