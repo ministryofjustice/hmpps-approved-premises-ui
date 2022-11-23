@@ -8,7 +8,7 @@ import personFactory from '../../../testutils/factories/person'
 
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
-import CaseNotes from './caseNotes'
+import CaseNotes, { caseNoteCheckbox } from './caseNotes'
 
 jest.mock('../../../services/personService.ts')
 
@@ -43,6 +43,12 @@ describe('CaseNotes', () => {
       id: 'C',
       createdAt: DateFormats.formatApiDate(new Date(2022, 1, 0)),
       occurredAt: DateFormats.formatApiDate(new Date(2022, 0, 1)),
+describe('caseNoteCheckbox', () => {
+  it('should return a checkbox for a given case note', () => {
+    const caseNote = prisonCaseNotesFactory.build({
+      id: 'A',
+      createdAt: DateFormats.formatApiDate(new Date(2020, 1, 0)),
+      occurredAt: DateFormats.formatApiDate(new Date(2020, 0, 1)),
       sensitive: false,
       authorName: 'Dennis Ziemann',
       subType: 'some subtype',
@@ -50,6 +56,32 @@ describe('CaseNotes', () => {
       note: 'a further note',
     }),
   ]
+      note: 'a note',
+    })
+
+    expect(caseNoteCheckbox(caseNote, true)).toMatchStringIgnoringWhitespace(`
+    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+      <div class="govuk-checkboxes__item">
+        <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="A" id="A" checked>
+        <label class="govuk-label govuk-checkboxes__label" for="A">
+          <span class="govuk-visually-hidden">Select case note from Friday 31 January 2020</span>
+        </label>
+      </div>
+     </div>
+    `)
+
+    expect(caseNoteCheckbox(caseNote, false)).toMatchStringIgnoringWhitespace(`
+    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+        <div class="govuk-checkboxes__item">
+          <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="A" id="A">
+          <label class="govuk-label govuk-checkboxes__label" for="A">
+            <span class="govuk-visually-hidden">Select case note from Friday 31 January 2020</span>
+          </label>
+        </div>
+    </div>
+    `)
+  })
+})
 
   describe('title', () => {
     expect(new CaseNotes({}, application).title).toBe('Prison information')
@@ -153,58 +185,27 @@ describe('CaseNotes', () => {
     })
   })
 
-  describe('tableRows', () => {
+  describe('checkBoxForCaseNoteId', () => {
     const page = new CaseNotes(
       { selectedCaseNotes: [caseNotes[0], caseNotes[1]], moreDetail: 'some detail' },
       application,
     )
 
-    page.caseNotes = caseNotes
+    beforeEach(() => {
+      page.caseNotes = caseNotes
+    })
 
-    expect(page.tableRows()).toEqual([
-      [
-        {
-          html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-              <div class="govuk-checkboxes__item">
-                <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="A" id="A" checked>
-                <label class="govuk-label govuk-checkboxes__label" for="A">
-                  <span class="govuk-visually-hidden">Select case note from Friday 31 January 2020</span>
-                </label>
-              </div>
-            </div>`,
-        },
-        { text: 'Friday 31 January 2020' },
-        { html: '<p><strong>Type: some type: some subtype</strong></p><p>a note</p>' },
-      ],
-      [
-        {
-          html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-              <div class="govuk-checkboxes__item">
-                <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="B" id="B" checked>
-                <label class="govuk-label govuk-checkboxes__label" for="B">
-                  <span class="govuk-visually-hidden">Select case note from Sunday 31 January 2021</span>
-                </label>
-              </div>
-            </div>`,
-        },
-        { text: 'Sunday 31 January 2021' },
-        { html: '<p><strong>Type: some type: some subtype</strong></p><p>another note</p>' },
-      ],
-      [
-        {
-          html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-              <div class="govuk-checkboxes__item">
-                <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="C" id="C" >
-                <label class="govuk-label govuk-checkboxes__label" for="C">
-                  <span class="govuk-visually-hidden">Select case note from Monday 31 January 2022</span>
-                </label>
-              </div>
-            </div>`,
-        },
-        { text: 'Monday 31 January 2022' },
-        { html: '<p><strong>Type: some type: some subtype</strong></p><p>a further note</p>' },
-      ],
-    ])
+    it('should mark selected case notes as checked', () => {
+      expect(page.checkBoxForCaseNoteId(caseNotes[0].id)).toEqual(caseNoteCheckbox(caseNotes[0], true))
+      expect(page.checkBoxForCaseNoteId(caseNotes[1].id)).toEqual(caseNoteCheckbox(caseNotes[1], true))
+      expect(page.checkBoxForCaseNoteId(caseNotes[2].id)).toEqual(caseNoteCheckbox(caseNotes[2], false))
+    })
+
+    it('should raise an error if the ID is not present in the list of case notes', () => {
+      expect(() => page.checkBoxForCaseNoteId('foo')).toThrowError(
+        `Case note with id foo not found for CRN ${application.person.crn}`,
+      )
+    })
   })
 
   describe('errors', () => {

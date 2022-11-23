@@ -7,6 +7,23 @@ import { DateFormats } from '../../../utils/dateUtils'
 
 type CaseNotesBody = { caseNoteIds: Array<string>; selectedCaseNotes: Array<PrisonCaseNote>; moreDetail: string }
 
+export const caseNoteCheckbox = (caseNote: PrisonCaseNote, checked: boolean) => {
+  return `
+  <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+    <div class="govuk-checkboxes__item">
+      <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="${caseNote.id}" id="${
+    caseNote.id
+  }" ${checked ? 'checked' : ''}>
+      <label class="govuk-label govuk-checkboxes__label" for="${caseNote.id}">
+        <span class="govuk-visually-hidden">Select case note from ${DateFormats.isoDateToUIDate(
+          caseNote.createdAt,
+        )}</span>
+      </label>
+    </div>
+  </div>
+  `
+}
+
 export default class CaseNotes implements TasklistPage {
   name = 'case-notes'
 
@@ -16,8 +33,6 @@ export default class CaseNotes implements TasklistPage {
     caseNotesSelectionQuestion: 'Selected prison case notes that support this application',
     moreDetailsQuestion: `Are there additional circumstances that have helped ${this.application.person.name} do well in the past?`,
   }
-
-  tableHeaders = [{ text: 'Select' }, { text: 'Date, time and officer' }, { text: 'Comments' }]
 
   body: CaseNotesBody
 
@@ -94,44 +109,15 @@ export default class CaseNotes implements TasklistPage {
     return errors
   }
 
-  tableRows() {
-    const rows = this.caseNotes.map(caseNote => {
-      return [
-        {
-          html: this.tableRowCheckbox(caseNote, this.caseNoteSelected(caseNote)),
-        },
-        {
-          text: `${DateFormats.isoDateToUIDate(caseNote.createdAt)}`,
-        },
-        {
-          html: `<p><strong>Type: ${caseNote.type}: ${caseNote.subType}</strong></p><p>${caseNote.note}</p>`,
-        },
-      ]
-    })
+  checkBoxForCaseNoteId(caseNoteId: string) {
+    const caseNote = this.caseNotes.find(c => c.id === caseNoteId)
 
-    return rows
-  }
-
-  tableRowCheckbox(caseNote: PrisonCaseNote, checked: boolean) {
-    return `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-              <div class="govuk-checkboxes__item">
-                <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="${caseNote.id}" id="${
-      caseNote.id
-    }" ${checked ? 'checked' : ''}>
-                <label class="govuk-label govuk-checkboxes__label" for="${caseNote.id}">
-                  <span class="govuk-visually-hidden">Select case note from ${DateFormats.isoDateToUIDate(
-                    caseNote.createdAt,
-                  )}</span>
-                </label>
-              </div>
-            </div>`
-  }
-
-  caseNoteSelected(caseNote: PrisonCaseNote): boolean {
-    if (!this.body.selectedCaseNotes) {
-      return false
+    if (!caseNote) {
+      throw new Error(`Case note with id ${caseNoteId} not found for CRN ${this.application.person.crn}`)
     }
 
-    return this.body.caseNoteIds.includes(caseNote.id)
+    const checked = !this.body.selectedCaseNotes ? false : this.body.caseNoteIds.includes(caseNote.id)
+
+    return caseNoteCheckbox(caseNote, checked)
   }
 }
