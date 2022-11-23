@@ -94,4 +94,5 @@ export default BookingFactory.define(() => ({
   arrival: arrivalFactory.build(),
   departure: departureFactory.build(),
   extensions: [],
+  serviceName: 'approved-premises' as const,
 }))

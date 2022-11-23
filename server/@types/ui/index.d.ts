@@ -20,6 +20,7 @@ export type TaskNames =
   | 'basic-information'
   | 'type-of-ap'
   | 'risk-management-features'
+  | 'prison-information'
   | 'location-factors'
   | 'access-and-healthcare'
   | 'further-considerations'
@@ -74,11 +75,15 @@ export interface RadioItem {
   checked?: boolean
 }
 
-export interface CheckBoxItem {
-  text: string
-  value: string
-  checked?: boolean
-}
+export type CheckBoxItem =
+  | {
+      text: string
+      value: string
+      checked?: boolean
+    }
+  | CheckBoxDivider
+
+export type CheckBoxDivider = { divider: string }
 
 export interface SelectOption {
   text: string
@@ -167,5 +172,7 @@ export type GroupedListofBookings = {
 }
 
 export type DataServices = {
-  personService: PersonService
+  personService: {
+    getPrisonCaseNotes: (token: string, crn: string) => Promise<PrisonCaseNote[]>
+  }
 }

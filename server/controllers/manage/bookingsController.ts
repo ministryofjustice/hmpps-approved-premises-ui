@@ -59,6 +59,7 @@ export default class BookingsController {
       const { premisesId } = req.params
 
       const booking: NewBooking = {
+        serviceName: 'approved-premises',
         ...req.body,
         ...DateFormats.convertDateAndTimeInputsToIsoString(req.body, 'arrivalDate'),
         ...DateFormats.convertDateAndTimeInputsToIsoString(req.body, 'departureDate'),

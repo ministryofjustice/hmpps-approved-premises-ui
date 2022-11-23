@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from 'express'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
-import createError from 'http-errors'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
@@ -64,40 +63,45 @@ describe('applicationsController', () => {
   })
 
   describe('show', () => {
-    it('renders the task list if an application exists', async () => {
-      const risks = mapApiPersonRisksForUi(risksFactory.build())
-      personService.getPersonRisks.mockResolvedValue(risks)
+    const application = createMock<Application>({ person: { crn: 'some-crn' } })
+    const risks = mapApiPersonRisksForUi(risksFactory.build())
 
-      const requestHandler = applicationsController.show()
-
-      const application = createMock<Application>()
-
+    beforeEach(() => {
       request = createMock<Request>({
         params: { id: application.id },
-        session: { application: { person: { crn: 'some-crn' }, ...application } },
         user: {
           token,
         },
       })
 
+      personService.getPersonRisks.mockResolvedValue(risks)
+    })
+
+    it('fetches the application from session and renders the task list if an application exists and is in the session', async () => {
+      const requestHandler = applicationsController.show()
+
+      request.session.application = application
+
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('applications/show', { application, risks, sections })
+
       expect(personService.getPersonRisks).toHaveBeenCalledWith(token, 'some-crn')
+      expect(applicationService.findApplication).not.toHaveBeenCalledWith(token, application.id)
     })
 
-    it('404s if the application is not present in the session', async () => {
+    it('fetches the application from the API and renders the task list if an application exists and is not in the session', async () => {
       const requestHandler = applicationsController.show()
 
-      const id = 'some-uuid'
-
-      request = createMock<Request>({
-        params: { id },
-      })
+      request.session.application = undefined
+      applicationService.findApplication.mockResolvedValue(application)
 
       await requestHandler(request, response, next)
 
-      expect(next).toHaveBeenCalledWith(createError(404, 'Not found'))
+      expect(response.render).toHaveBeenCalledWith('applications/show', { application, risks, sections })
+
+      expect(personService.getPersonRisks).toHaveBeenCalledWith(token, 'some-crn')
+      expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
     })
   })
 

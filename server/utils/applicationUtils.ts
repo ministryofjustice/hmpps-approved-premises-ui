@@ -4,7 +4,7 @@ import paths from '../paths/apply'
 import { pages } from '../form-pages/apply'
 import { UnknownPageError } from './errors'
 
-type PageResponse = Record<string, string>
+type PageResponse = Record<string, string | Array<Record<string, unknown>>>
 type ApplicationResponse = Record<string, Array<PageResponse>>
 
 const taskIds = Object.keys(pages)

@@ -2,10 +2,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-e
 
 import applicationFactory from '../../../testutils/factories/application'
 
-import PlacementPurpose, { placementPurposes } from './placementPurpose'
-import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
-
-jest.mock('../../../utils/formUtils')
+import PlacementPurpose from './placementPurpose'
 
 describe('PlacementPurpose', () => {
   const application = applicationFactory.build()
@@ -54,6 +51,22 @@ describe('PlacementPurpose', () => {
         placementPurposes: ['publicProtection'],
       })
     })
+
+    it('should apply `otherReason` to the body when `otherReason` is the only `placementPurposes` option', () => {
+      const page = new PlacementPurpose(
+        {
+          placementPurposes: 'otherReason',
+          otherReason: 'Another reason',
+        },
+        application,
+        'previousPage',
+      )
+
+      expect(page.body).toEqual({
+        placementPurposes: ['otherReason'],
+        otherReason: 'Another reason',
+      })
+    })
   })
 
   describe('when knowReleaseDate is set to yes', () => {
@@ -79,35 +92,69 @@ describe('PlacementPurpose', () => {
     })
   })
 
-  describe('calls convertKeyValuePairToCheckBoxItems', () => {
-    it('should return an empty object if the placement purpose is specified as a reason other than "Other reason"', () => {
-      const page = new PlacementPurpose({ placementPurposes: ['publicProtection'] }, application, 'somePage')
-      page.items()
-      expect(convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(placementPurposes, ['publicProtection'])
-    })
-  })
-
   it('should return an error if the reason is not populated', () => {
     const page = new PlacementPurpose({}, application, 'somePage')
     expect(page.errors()).toEqual({ placementPurposes: 'You must choose at least one placement purpose' })
   })
 
   describe('response', () => {
-    it('should return a translated version of the response when the user does not know the release date', () => {
-      const page = new PlacementPurpose({ placementPurposes: ['drugAlcoholMonitoring'] }, application, 'somePage')
+    it('should return a translated version of the placement purposes', () => {
+      const page = new PlacementPurpose(
+        {
+          placementPurposes: [
+            'publicProtection',
+            'preventContact',
+            'readjust',
+            'drugAlcoholMonitoring',
+            'preventSelfHarm',
+          ],
+        },
+        application,
+        'somePage',
+      )
 
       expect(page.response()).toEqual({
-        [page.title]: 'Provide drug or alcohol monitoring',
+        [page.title]:
+          'Public protection, Prevent Contact, Help individual readjust to life outside custody, Provide drug or alcohol monitoring, Prevent self harm or suicide',
+      })
+    })
+
+    it('should include an other reason if one is present', () => {
+      const page = new PlacementPurpose(
+        {
+          placementPurposes: ['drugAlcoholMonitoring', 'otherReason'],
+          otherReason: 'Another reason',
+        },
+        application,
+        'somePage',
+      )
+
+      expect(page.response()).toEqual({
+        [page.title]: 'Provide drug or alcohol monitoring, Other (please specify)',
+        'Other purpose for AP Placement': 'Another reason',
       })
     })
   })
 
   describe('items', () => {
-    it('it calls convertKeyValuePairToRadioItems', () => {
+    it('it returns radio buttons with a divider and conditional HTML for the `other` option', () => {
       const page = new PlacementPurpose({}, application, 'somePage')
-      page.items()
+      const items = page.items('<strong>Some HTML</strong>')
 
-      expect(convertKeyValuePairToCheckBoxItems).toHaveBeenCalled()
+      expect(items).toEqual([
+        { checked: false, text: 'Public protection', value: 'publicProtection' },
+        { checked: false, text: 'Prevent Contact', value: 'preventContact' },
+        { checked: false, text: 'Help individual readjust to life outside custody', value: 'readjust' },
+        { checked: false, text: 'Provide drug or alcohol monitoring', value: 'drugAlcoholMonitoring' },
+        { checked: false, text: 'Prevent self harm or suicide', value: 'preventSelfHarm' },
+        { divider: 'or' },
+        {
+          checked: false,
+          conditional: { html: '<strong>Some HTML</strong>' },
+          text: 'Other (please specify)',
+          value: 'otherReason',
+        },
+      ])
     })
   })
 })

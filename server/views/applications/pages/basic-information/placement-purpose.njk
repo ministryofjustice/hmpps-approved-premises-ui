@@ -26,34 +26,7 @@
         hint: {
           text: "Select all that apply."
         },
-        items: [
-          {
-            value: "publicProtection",
-            text: "Public protection"
-          },
-          {
-            value: "resettlement",
-            text: "Support resettlement into the community"
-          },
-          {
-            value: "drugAlcoholSupport",
-            text: "Enhanced drug or alcohol support"
-          },
-          {
-            value: "risktoSelff",
-            text: "Support the management of risk to self"
-          },
-          {
-            divider: "or"
-          },
-          {
-            value: "otherReason",
-            text: "Other",
-            conditional: {
-              html: otherReason
-            }
-          }
-        ]
+        items: page.items(otherReason)
       },
       fetchContext()
     )

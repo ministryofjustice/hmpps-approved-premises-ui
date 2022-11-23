@@ -45,11 +45,10 @@ export default class ApplicationService {
 
     const application = await this.getApplicationFromSessionOrAPI(request)
     const body = this.getBody(application, request, userInput)
-    const page = new Page(body, application, request.session.previousPage)
 
-    if (page.setup) {
-      await page.setup(request, dataServices)
-    }
+    const page = Page.initialize
+      ? await Page.initialize(body, application, request.user.token, dataServices)
+      : new Page(body, application, request.session.previousPage)
 
     return page
   }
