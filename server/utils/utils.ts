@@ -108,18 +108,18 @@ export const mapApiPersonRisksForUi = (risks: PersonRisks): PersonRisksUI => {
   return {
     ...risks,
     roshRisks: {
-      ...risks.roshRisks.value,
-      lastUpdated: risks.roshRisks.value.lastUpdated
+      ...risks.roshRisks?.value,
+      lastUpdated: risks.roshRisks?.value?.lastUpdated
         ? DateFormats.isoDateToUIDate(risks.roshRisks.value.lastUpdated)
         : '',
     },
     mappa: {
-      ...risks.mappa.value,
-      lastUpdated: DateFormats.isoDateToUIDate(risks.mappa.value.lastUpdated),
+      ...risks.mappa?.value,
+      lastUpdated: risks.mappa?.value?.lastUpdated ? DateFormats.isoDateToUIDate(risks.mappa.value.lastUpdated) : '',
     },
     tier: {
-      ...risks.tier.value,
-      lastUpdated: DateFormats.isoDateToUIDate(risks.tier.value.lastUpdated),
+      ...risks.tier?.value,
+      lastUpdated: risks.tier?.value?.lastUpdated ? DateFormats.isoDateToUIDate(risks.tier.value.lastUpdated) : '',
     },
     flags: risks.flags.value,
   }
