@@ -257,6 +257,7 @@ context('Apply', () => {
       const prisonCaseNotes = prisonCaseNotesFactory.buildList(3)
       const selectedPrisonCaseNotes = [prisonCaseNotes[0], prisonCaseNotes[1]]
       const adjudications = adjudicationsFactory.buildList(5)
+      const moreDetail = 'some details'
 
       cy.task('stubPrisonCaseNotes', { prisonCaseNotes, person })
       cy.task('stubAdjudications', { adjudications, person })
@@ -266,7 +267,7 @@ context('Apply', () => {
 
       const caseNotesPage = new CaseNotesPage(application, selectedPrisonCaseNotes)
       caseNotesPage.shouldDisplayAdjudications(adjudications)
-      caseNotesPage.completeForm()
+      caseNotesPage.completeForm(moreDetail)
       caseNotesPage.clickSubmit()
 
       // Given I click the 'Describe location factors' task
