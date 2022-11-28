@@ -1,6 +1,6 @@
-{% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% extends "../partials/layout.njk" %}
 
@@ -8,131 +8,36 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block content %}
-  {{ govukBackLink({
-    text: "Back",
-    href: paths.applications.new()
-  }) }}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-      <form action="{{ paths.applications.create() }}" method="post">
-
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-        <input type="hidden" name="name" value="{{ name }}"/>
-        <input type="hidden" name="crn" value="{{ crn }}"/>
-        <input type="hidden" name="dateOfBirth" value="{{ dateOfBirth }}"/>
-        <input type="hidden" name="sex" value="{{ sex }}"/>
-        <input type="hidden" name="nationality" value="{{ nationality }}"/>
-        <input type="hidden" name="religion" value="{{ religion }}"/>
-
-        <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-
-        <p>
-          Taken from NDelius, <strong>{{ date }}</strong>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ govukPanel({
+                titleText: "Application confirmation"
+            }) }}
+            <p>
+          We’ve sent you a confirmation email.
         </p>
+            <p>
+                <a href="">Download a copy of this application (PDF, 708 KB) </a>
+            </p>
 
-        {{ govukSummaryList({
-          rows: ([
-            {
-              key: {
-                text: "Names"
-              },
-              value: {
-                text: name
-              }
-            },
-            {
-              key: {
-                text: "CRN"
-              },
-              value: {
-                text: crn
-              }
-            },
-            {
-              key: {
-                text: "Date of Birth"
-              },
-              value: {
-                text: dateOfBirth
-              }
-            },
-            {
-              key: {
-                text: "NOMS Number"
-              },
-              value: {
-                text: nomsNumber
-              }
-            },
-            {
-              key: {
-                text: "Nationality"
-              },
-              value: {
-                text: nationality
-              }
-            },
-            {
-              key: {
-                text: "Religion or belief"
-              },
-              value: {
-                text: religionOrBelief
-              }
-            },
-            {
-              key: {
-                text: "Sex"
-              },
-              value: {
-                text: sex
-              }
-            },
-            {
-              key: {
-                text: "Gender Identity"
-              },
-              value: {
-                text: genderIdentity
-              }
-            }
-          ] | removeBlankSummaryListItems)
-        }) }}
+            <h2 class="govuk-heading-m">What happens next</h2>
 
-        {{ govukSummaryList({
-          rows: [
-            {
-              key: {
-                text: "Status"
-              },
-              value: {
-                html: statusTag(status)
-              }
-            },
-            {
-              key: {
-                text: "Prison"
-              },
-              value: {
-                text: prisonName
-              }
-            }
-          ]
-        }) }}
+            <p>We’ve sent your application to the Midlands central referral unit (CRU) for Approved Premises (AP).</p>
+            <p>The Midlands CRU will review your application within 10 working days.</p>
+            <p>You'll receive an email when the status of your application changes, or you can check the status in your <a href="">AP applications dashboard.</a>
+            </p>
+            <p>If you could not provide a release date you will need to email the Midlands CRU as soon as this date is confirmed.</p>
+            <p>
+                <a href="https://www.gov.uk/service-manual/user-centred-design/resources/patterns/feedback-pages.html">What did you think of this service?</a> (takes 30 seconds)</p>
 
-        <p>If these details are wrong, update this case in nDelius before you continue.</p>
-        <p>If you've entered the wrong CRN, go back to the start.</p>
-
-        {{ govukButton({
-            text: "Save and continue"
-        }) }}
-
-        <p>
-          <a href="{{ paths.applications.new() }}"> Back to CRU screen </a>
-        </p>
-
-      </form>
+        </div>
     </div>
-  </div>
+
+    {{ govukButton({
+          text: "Back to dashboard",
+          href: paths.applications.index()
+        }) }}
+</div>
+</div>
 {% endblock %}

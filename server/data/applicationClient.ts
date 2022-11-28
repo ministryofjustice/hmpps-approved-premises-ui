@@ -29,4 +29,11 @@ export default class ApplicationClient {
   async all(): Promise<ApplicationSummary[]> {
     return (await this.restClient.get({ path: paths.applications.index.pattern })) as ApplicationSummary[]
   }
+
+  async submit(application: Application): Promise<void> {
+    await this.restClient.post({
+      path: paths.applications.submission({ id: application.id }),
+      data: { translatedDocument: application.document },
+    })
+  }
 }

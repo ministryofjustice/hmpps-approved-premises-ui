@@ -7,6 +7,7 @@ import { fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import { sections } from '../../form-pages/apply'
+import { getResponses } from '../../utils/applicationUtils'
 
 export default class ApplicationsController {
   constructor(private readonly applicationService: ApplicationService, private readonly personService: PersonService) {}
@@ -48,7 +49,7 @@ export default class ApplicationsController {
       if (crnArr.length) {
         const person = await this.personService.findByCrn(req.user.token, crnArr[0])
 
-        return res.render(`applications/confirm`, {
+        return res.render(`applications/people/confirm`, {
           pageHeading: `Confirm ${person.name}'s details`,
           ...person,
           date: DateFormats.dateObjtoUIDate(new Date()),
@@ -76,6 +77,16 @@ export default class ApplicationsController {
       res.redirect(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' }),
       )
+    }
+  }
+
+  submit(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const application = await this.applicationService.findApplication(req.user.token, req.params.id)
+      application.document = getResponses(application)
+
+      await this.applicationService.submit(req.user.token, application)
+      res.render('applications/confirm', { pageHeading: 'Application confirmation' })
     }
   }
 }

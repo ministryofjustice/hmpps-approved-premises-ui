@@ -90,4 +90,19 @@ describe('ApplicationClient', () => {
       expect(nock.isDone()).toBeTruthy()
     })
   })
+
+  describe('submit', () => {
+    it('should submit the application', async () => {
+      const application = applicationFactory.build()
+
+      fakeApprovedPremisesApi
+        .post(paths.applications.submission({ id: application.id }))
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(201, application)
+
+      await applicationClient.submit(application)
+
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
 })

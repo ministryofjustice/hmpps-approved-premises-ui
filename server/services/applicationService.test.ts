@@ -290,4 +290,19 @@ describe('ApplicationService', () => {
       })
     })
   })
+
+  describe('submit', () => {
+    const token = 'some-token'
+    const request = createMock<Request>({
+      user: { token },
+    })
+    const application = applicationFactory.build()
+
+    it('saves data to the session', async () => {
+      await service.submit(request.user.token, application)
+
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.submit).toHaveBeenCalledWith(application)
+    })
+  })
 })

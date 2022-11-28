@@ -18,6 +18,7 @@ import {
   PlacementDurationPage,
   ForeignNationalPage,
   CheckYourAnswersPage,
+  ListPage,
 } from '../../../cypress_shared/pages/apply'
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
@@ -42,6 +43,8 @@ import RelocationRegionPage from '../../../cypress_shared/pages/apply/relocation
 import PlansInPlacePage from '../../../cypress_shared/pages/apply/plansInPlace'
 import TypeOfAccomodationPage from '../../../cypress_shared/pages/apply/typeOfAccommodation'
 import CaseNotesPage from '../../../cypress_shared/pages/apply/caseNotes'
+import applicationSummaryFactory from '../../../server/testutils/factories/applicationSummary'
+import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -145,8 +148,8 @@ context('Apply', () => {
 
     // And I have started an application
     cy.fixture('applicationData.json').then(applicationData => {
-      const application = applicationFactory.build({ person, data: applicationData })
-
+      const application = applicationFactory.build({ person })
+      application.data = applicationData
       cy.task('stubApplicationCreate', { application })
       cy.task('stubApplicationUpdate', { application })
       cy.task('stubApplicationGet', { application })
@@ -251,9 +254,56 @@ context('Apply', () => {
       tasklistPage.shouldShowTaskStatus('risk-management-features', 'Completed')
 
       // Given there is prison case notes for the person in the DB
-      const prisonCaseNotes = prisonCaseNotesFactory.buildList(3)
-      const selectedPrisonCaseNotes = [prisonCaseNotes[0], prisonCaseNotes[1]]
-      const adjudications = adjudicationsFactory.buildList(5)
+      const prisonCaseNote1 = prisonCaseNotesFactory.build({
+        authorName: 'Denise Collins',
+        id: 'a30173ca-061f-42c9-a1a2-28c70b282d3f',
+        createdAt: '2022-11-10',
+        occurredAt: '2022-10-19',
+        sensitive: false,
+        subType: 'Ressettlement',
+        type: 'Social Care',
+        note: 'Note 1',
+      })
+      const prisonCaseNote2 = prisonCaseNotesFactory.build({
+        authorName: 'Leticia Mann',
+        id: '4a477187-b77f-4fcc-a919-43a6633ee868',
+        createdAt: '2022-07-24',
+        occurredAt: '2022-09-22',
+        sensitive: true,
+        subType: 'Quality Work',
+        type: 'General',
+        note: 'Note 2',
+      })
+      const prisonCaseNote3 = prisonCaseNotesFactory.build()
+      const prisonCaseNotes = [prisonCaseNote1, prisonCaseNote2, prisonCaseNote3]
+      const selectedPrisonCaseNotes = [prisonCaseNote1, prisonCaseNote2]
+
+      const adjudication1 = adjudicationsFactory.build({
+        id: 69927,
+        reportedAt: '2022-10-09',
+        establishment: 'Hawthorne',
+        offenceDescription: 'Nam vel nisi fugiat veniam possimus omnis.',
+        hearingHeld: false,
+        finding: 'NOT_PROVED',
+      })
+      const adjudication2 = adjudicationsFactory.build({
+        id: 39963,
+        reportedAt: '2022-07-10',
+        establishment: 'Oklahoma City',
+        offenceDescription: 'Illum maxime enim explicabo soluta sequi voluptas.',
+        hearingHeld: true,
+        finding: 'PROVED',
+      })
+      const adjudication3 = adjudicationsFactory.build({
+        id: 77431,
+        reportedAt: '2022-05-30',
+        establishment: 'Jurupa Valley',
+        offenceDescription: 'Quis porro nemo voluptates doloribus atque quis provident iure.',
+        hearingHeld: false,
+        finding: 'PROVED',
+      })
+      const adjudications = [adjudication1, adjudication2, adjudication3]
+      const moreDetail = 'some details'
 
       cy.task('stubPrisonCaseNotes', { prisonCaseNotes, person })
       cy.task('stubAdjudications', { adjudications, person })
@@ -263,7 +313,7 @@ context('Apply', () => {
 
       const caseNotesPage = new CaseNotesPage(application, selectedPrisonCaseNotes)
       caseNotesPage.shouldDisplayAdjudications(adjudications)
-      caseNotesPage.completeForm()
+      caseNotesPage.completeForm(moreDetail)
       caseNotesPage.clickSubmit()
 
       // Given I click the 'Describe location factors' task
@@ -424,6 +474,39 @@ context('Apply', () => {
 
       // And the check your answers task should show a completed status
       tasklistPage.shouldShowTaskStatus('check-your-answers', 'Completed')
+
+      // Given the application exists in the database
+      cy.task('stubApplicationSubmit', { application })
+
+      // When I click submit
+      tasklistPage.clickSubmit()
+
+      // Then the application should be submitted to the API
+      cy.task('verifyApplicationUpdate', application.id).then(requests => {
+        expect(requests).to.have.length(30)
+        const requestBody = JSON.parse(requests[29].body)
+
+        expect(requestBody.data).to.deep.equal(applicationData)
+      })
+
+      cy.task('verifyApplicationSubmit', application.id).then(requests => {
+        expect(requests).to.have.length(1)
+
+        expect(requests[0].url).to.equal(`/applications/${application.id}/submission`)
+      })
+
+      // And I should be taken to the confirmation page
+      const confirmationPage = new SubmissionConfirmation()
+
+      // Given there are applications in the database
+      const applicationSummaries = applicationSummaryFactory.buildList(5)
+      cy.task('stubApplications', applicationSummaries)
+
+      // When I click 'Back to dashboard'
+      confirmationPage.clickBackToDashboard()
+
+      // Then I am taken back to the dashboard
+      Page.verifyOnPage(ListPage)
     })
   })
 })

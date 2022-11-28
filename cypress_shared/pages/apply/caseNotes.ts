@@ -1,5 +1,5 @@
 import { Application, PrisonCaseNote, Adjudication } from '@approved-premises/api'
-import { faker } from '@faker-js/faker'
+
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { sentenceCase } from '../../../server/utils/utils'
 
@@ -33,7 +33,7 @@ export default class CaseNotesPage extends Page {
     })
   }
 
-  completeForm() {
+  completeForm(moreDetail: string) {
     cy.get('a').contains('Prison case notes').click()
 
     this.prisonCaseNotes.forEach(note => {
@@ -42,6 +42,6 @@ export default class CaseNotesPage extends Page {
         .check()
     })
 
-    this.getTextInputByIdAndEnterDetails('moreDetail', faker.lorem.word())
+    this.getTextInputByIdAndEnterDetails('moreDetail', moreDetail)
   }
 }

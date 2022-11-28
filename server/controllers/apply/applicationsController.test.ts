@@ -14,8 +14,10 @@ import { sections } from '../../form-pages/apply'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import { mapApiPersonRisksForUi } from '../../utils/utils'
+import { getResponses } from '../../utils/applicationUtils'
 
 jest.mock('../../utils/validation')
+jest.mock('../../utils/applicationUtils')
 
 describe('applicationsController', () => {
   const token = 'SOME_TOKEN'
@@ -126,7 +128,7 @@ describe('applicationsController', () => {
 
         await requestHandler(request, response, next)
 
-        expect(response.render).toHaveBeenCalledWith('applications/confirm', {
+        expect(response.render).toHaveBeenCalledWith('applications/people/confirm', {
           pageHeading: `Confirm ${person.name}'s details`,
           ...person,
           date: DateFormats.dateObjtoUIDate(new Date()),
@@ -147,7 +149,7 @@ describe('applicationsController', () => {
 
         await requestHandler(request, response, next)
 
-        expect(response.render).toHaveBeenCalledWith('applications/confirm', {
+        expect(response.render).toHaveBeenCalledWith('applications/people/confirm', {
           pageHeading: `Confirm ${person.name}'s details`,
           ...person,
           date: DateFormats.dateObjtoUIDate(new Date()),
@@ -233,6 +235,27 @@ describe('applicationsController', () => {
       await requestHandler(request, response, next)
 
       expect(request.session.application).toEqual(application)
+    })
+  })
+
+  describe('submit', () => {
+    it('calls the application service with the application id', async () => {
+      const application = applicationFactory.build()
+      application.data = { 'basic-information': { 'sentence-type': '' } }
+      applicationService.findApplication.mockResolvedValue(application)
+
+      const requestHandler = applicationsController.submit()
+
+      request.params.id = 'some-id'
+
+      await requestHandler(request, response, next)
+
+      expect(applicationService.findApplication).toHaveBeenCalledWith(token, 'some-id')
+      expect(getResponses).toHaveBeenCalledWith(application)
+      expect(applicationService.submit).toHaveBeenCalledWith(token, application)
+      expect(response.render).toHaveBeenCalledWith('applications/confirm', {
+        pageHeading: 'Application confirmation',
+      })
     })
   })
 })

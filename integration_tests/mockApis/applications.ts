@@ -65,11 +65,29 @@ export default {
         jsonBody: args.application,
       },
     }),
+  stubApplicationSubmit: (args: { application: Application }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: `/applications/${args.application.id}/submission`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      },
+    }),
   verifyApplicationUpdate: async (applicationId: string) =>
     (
       await getMatchingRequests({
         method: 'PUT',
         url: `/applications/${applicationId}`,
+      })
+    ).body.requests,
+  verifyApplicationSubmit: async (applicationId: string) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: `/applications/${applicationId}/submission`,
       })
     ).body.requests,
 }
