@@ -12,6 +12,8 @@ jobs:
   generate-types:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out code
+        uses: actions/checkout@v3
       - name: Generate Types
         run: ./script/generate-types
       - name: Create Pull Request
