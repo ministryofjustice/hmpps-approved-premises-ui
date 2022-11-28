@@ -68,7 +68,7 @@ describe('ApplicationService', () => {
 
       applicationClient.all.mockResolvedValue(applicationSummaries)
 
-      const result = await service.tableRows(token)
+      const result = await service.dashboardTableRows(token)
 
       expect(result).toEqual([
         [
