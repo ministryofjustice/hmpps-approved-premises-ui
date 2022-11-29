@@ -109,12 +109,11 @@ describe('CaseNotes', () => {
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body and marshal the IDs', () => {
+    it('should set the body and marshal the IDs', () => {
       const page = new CaseNotes(
         {
           selectedCaseNotes: [caseNotes[0], caseNotes[1]],
           moreDetail: 'some detail',
-          something: 'else',
           adjudications,
         },
         application,

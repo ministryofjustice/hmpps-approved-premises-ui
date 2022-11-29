@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import type { DataServices } from '@approved-premises/ui'
 
 import type { Application, PrisonCaseNote, Adjudication } from '@approved-premises/api'
@@ -5,6 +6,7 @@ import type { Application, PrisonCaseNote, Adjudication } from '@approved-premis
 import { sentenceCase } from '../../../utils/utils'
 import TasklistPage from '../../tasklistPage'
 import { DateFormats } from '../../../utils/dateUtils'
+import { Page } from '../../utils/decorators'
 
 type CaseNotesBody = {
   caseNoteIds: Array<string>
@@ -52,9 +54,8 @@ export const caseNoteCheckbox = (caseNote: PrisonCaseNote, checked: boolean) => 
   `
 }
 
+@Page({ name: 'case-notes', bodyProperties: ['caseNoteIds', 'selectedCaseNotes', 'moreDetail', 'adjudications'] })
 export default class CaseNotes implements TasklistPage {
-  name = 'case-notes'
-
   title = 'Prison information'
 
   questions = {
@@ -62,19 +63,23 @@ export default class CaseNotes implements TasklistPage {
     moreDetailsQuestion: `Are there additional circumstances that have helped ${this.application.person.name} do well in the past?`,
   }
 
-  body: CaseNotesBody
-
   caseNotes: PrisonCaseNote[] | undefined
 
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    const selectedCaseNotes = (body.selectedCaseNotes || []) as Array<PrisonCaseNote>
-    const caseNoteIds = body.caseNoteIds ? body.caseNoteIds : selectedCaseNotes.map(n => n.id)
+  constructor(private _body: Partial<CaseNotesBody>, private readonly application: Application) {}
 
-    this.body = {
+  public get body(): CaseNotesBody {
+    return this._body as CaseNotesBody
+  }
+
+  public set body(value: CaseNotesBody) {
+    const selectedCaseNotes = (value.selectedCaseNotes || []) as Array<PrisonCaseNote>
+    const caseNoteIds = value.caseNoteIds ? value.caseNoteIds : selectedCaseNotes.map(n => n.id)
+
+    this._body = {
       caseNoteIds: caseNoteIds as Array<string>,
       selectedCaseNotes,
-      moreDetail: body.moreDetail as string,
-      adjudications: (body.adjudications || []) as Array<Adjudication>,
+      moreDetail: value.moreDetail as string,
+      adjudications: (value.adjudications || []) as Array<Adjudication>,
     }
   }
 
