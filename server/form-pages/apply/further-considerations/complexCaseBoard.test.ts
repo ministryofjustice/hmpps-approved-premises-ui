@@ -1,3 +1,4 @@
+import { YesOrNo } from '@approved-premises/ui'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import ComplexCaseBoard from './complexCaseBoard'
@@ -9,7 +10,7 @@ describe('ComplexCaseBoard', () => {
   const application = applicationFactory.build({ person })
 
   const body = {
-    complexCaseBoard: 'yes',
+    complexCaseBoard: 'yes' as YesOrNo,
     complexCaseBoardDetail: 'Complex case board detail',
   }
 
@@ -24,8 +25,8 @@ describe('ComplexCaseBoard', () => {
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new ComplexCaseBoard({ ...body, something: 'else' }, application)
+    it('should set the body', () => {
+      const page = new ComplexCaseBoard(body, application)
 
       expect(page.body).toEqual(body)
     })

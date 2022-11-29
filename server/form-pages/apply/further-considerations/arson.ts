@@ -1,5 +1,6 @@
 import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 import { yesOrNoResponseWithDetail } from '../../utils'
@@ -8,12 +9,9 @@ export const questionKeys = ['arson'] as const
 
 type QuestionKeys = typeof questionKeys[number]
 
+@Page({ name: 'arson', bodyProperties: ['arson', 'arsonDetail'] })
 export default class Arson implements TasklistPage {
-  name = 'arson'
-
   title = 'Arson'
-
-  body: YesOrNoWithDetail<'arson'>
 
   questionPredicates = {
     arson: 'a specialist arson room',
@@ -38,12 +36,7 @@ export default class Arson implements TasklistPage {
     },
   }
 
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      arson: body.arson,
-      arsonDetail: body.arsonDetail,
-    } as YesOrNoWithDetail<'arson'>
-  }
+  constructor(public body: Partial<YesOrNoWithDetail<'arson'>>, private readonly application: Application) {}
 
   previous() {
     return 'catering'

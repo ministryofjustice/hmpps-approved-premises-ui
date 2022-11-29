@@ -1,5 +1,6 @@
 import type { TaskListErrors, YesNoOrIDKWithDetail } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 import { yesNoOrDontKnowResponseWithDetail } from '../../utils'
@@ -8,12 +9,11 @@ export const questionKeys = ['previousPlacement'] as const
 
 type QuestionKeys = typeof questionKeys[number]
 
+@Page({ name: 'previous-placements', bodyProperties: ['previousPlacement', 'previousPlacementDetail'] })
 export default class PreviousPlacements implements TasklistPage {
   name = 'previous-placements'
 
   title = 'Previous placements'
-
-  body: YesNoOrIDKWithDetail<'previousPlacement'>
 
   questionPredicates = {
     previousPlacement: `stayed or been offered a placement in an AP before`,
@@ -27,12 +27,10 @@ export default class PreviousPlacements implements TasklistPage {
     previousPlacement: { text: "You may be able to find this information in the person's case notes." },
   }
 
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      previousPlacement: body.previousPlacement,
-      previousPlacementDetail: body.previousPlacementDetail,
-    } as YesNoOrIDKWithDetail<'previousPlacement'>
-  }
+  constructor(
+    public body: Partial<YesNoOrIDKWithDetail<'previousPlacement'>>,
+    private readonly application: Application,
+  ) {}
 
   previous() {
     return 'vulnerability'

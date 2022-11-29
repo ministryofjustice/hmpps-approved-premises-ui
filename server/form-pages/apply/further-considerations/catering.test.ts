@@ -1,3 +1,4 @@
+import { YesOrNo } from '@approved-premises/ui'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import Catering from './catering'
@@ -9,7 +10,7 @@ describe('Catering', () => {
   const application = applicationFactory.build({ person })
 
   const body = {
-    catering: 'yes',
+    catering: 'yes' as YesOrNo,
     cateringDetail: 'Catering detail',
   }
 
@@ -24,8 +25,8 @@ describe('Catering', () => {
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new Catering({ ...body, something: 'else' }, application)
+    it('should set the body', () => {
+      const page = new Catering(body, application)
 
       expect(page.body).toEqual(body)
     })

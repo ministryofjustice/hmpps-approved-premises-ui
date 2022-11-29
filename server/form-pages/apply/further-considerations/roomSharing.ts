@@ -1,7 +1,8 @@
 import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
-import { applyYesOrNo, yesOrNoResponseWithDetail } from '../../utils'
+import { yesOrNoResponseWithDetail } from '../../utils'
 
 export const questionKeys = [
   'riskToStaff',
@@ -12,6 +13,27 @@ export const questionKeys = [
 ] as const
 
 type QuestionKeys = typeof questionKeys[number]
+
+type RoomSharingBody = YesOrNoWithDetail<'riskToStaff'> &
+  YesOrNoWithDetail<'riskToOthers'> &
+  YesOrNoWithDetail<'sharingConcerns'> &
+  YesOrNoWithDetail<'traumaConcerns'> &
+  YesOrNoWithDetail<'sharingBenefits'>
+@Page({
+  name: 'room-sharing',
+  bodyProperties: [
+    'riskToStaff',
+    'riskToStaffDetail',
+    'riskToOthers',
+    'riskToOthersDetail',
+    'sharingConcerns',
+    'sharingConcernsDetail',
+    'traumaConcerns',
+    'traumaConcernsDetail',
+    'sharingBenefits',
+    'sharingBenefitsDetail',
+  ],
+})
 export default class RoomSharing implements TasklistPage {
   name = 'room-sharing'
 
@@ -38,21 +60,7 @@ export default class RoomSharing implements TasklistPage {
     traumaConcerns: { text: 'For example, a survivor of sexual abuse or violence or a witness of suicide in custody.' },
   }
 
-  body: YesOrNoWithDetail<'riskToStaff'> &
-    YesOrNoWithDetail<'riskToOthers'> &
-    YesOrNoWithDetail<'sharingConcerns'> &
-    YesOrNoWithDetail<'traumaConcerns'> &
-    YesOrNoWithDetail<'sharingBenefits'>
-
-  constructor(body: Record<string, unknown>) {
-    this.body = {
-      ...applyYesOrNo<QuestionKeys>('riskToStaff', body),
-      ...applyYesOrNo<QuestionKeys>('riskToOthers', body),
-      ...applyYesOrNo<QuestionKeys>('sharingConcerns', body),
-      ...applyYesOrNo<QuestionKeys>('traumaConcerns', body),
-      ...applyYesOrNo<QuestionKeys>('sharingBenefits', body),
-    }
-  }
+  constructor(public body: Partial<RoomSharingBody>) {}
 
   previous() {
     return ''
