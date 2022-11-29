@@ -91,7 +91,7 @@ export default class ApplicationService {
 
   private async saveToSession(application: Application, page: TasklistPage, request: Request) {
     request.session.application = application
-    request.session.previousPage = page.name
+    request.session.previousPage = request.params.page
   }
 
   private async saveToApi(application: Application, request: Request) {

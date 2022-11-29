@@ -2,8 +2,6 @@ import type { TaskListErrors, DataServices } from '@approved-premises/ui'
 import { Application } from '@approved-premises/api'
 
 export default abstract class TasklistPage {
-  abstract name: string
-
   abstract title: string
 
   abstract body: Record<string, unknown>
