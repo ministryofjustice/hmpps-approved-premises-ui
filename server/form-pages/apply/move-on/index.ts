@@ -1,4 +1,5 @@
 /* istanbul ignore file */
+import { Task } from '../../utils/decorators'
 
 import RelocationRegion from './relocationRegion'
 import PlacementDuration from './placementDuration'
@@ -15,3 +16,10 @@ const pages = {
 }
 
 export default pages
+
+@Task({
+  slug: 'move-on',
+  name: 'Add move on information',
+  pages: [PlacementDuration, RelocationRegion, PlansInPlace, TypeOfAccommodation, ForeignNational],
+})
+export class MoveOn {}

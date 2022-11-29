@@ -1,3 +1,5 @@
+import { Task } from '../../utils/decorators'
+
 import RiskManagementFeatures from './riskManagementFeatures'
 import ConvictedOffences from './convictedOffences'
 import DateOfOffence from './dateOfOffence'
@@ -11,3 +13,16 @@ export default {
   'date-of-offence': DateOfOffence,
   'rehabilitative-interventions': RehabilitativeInterventions,
 }
+
+@Task({
+  slug: 'risk-management-features',
+  name: 'Add detail about managing risks and needs',
+  pages: [
+    RiskManagementFeatures,
+    ConvictedOffences,
+    TypeOfConvictedOffence,
+    DateOfOffence,
+    RehabilitativeInterventions,
+  ],
+})
+export class RiskManagement {}

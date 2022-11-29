@@ -7,6 +7,7 @@ import ReleaseDate from './releaseDate'
 import OralHearing from './oralHearing'
 import PlacementDate from './placementDate'
 import PlacementPurpose from './placementPurpose'
+import { Task } from '../../utils/decorators'
 
 const pages = {
   'sentence-type': SentenceType,
@@ -19,3 +20,10 @@ const pages = {
 }
 
 export default pages
+
+@Task({
+  name: 'Basic Information',
+  slug: 'basic-information',
+  pages: [SentenceType, ReleaseType, Situation, ReleaseDate, OralHearing, PlacementDate, PlacementPurpose],
+})
+export class BasicInformation {}

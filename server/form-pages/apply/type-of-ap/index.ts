@@ -1,4 +1,5 @@
 /* istanbul ignore file */
+import { Task } from '../../utils/decorators'
 
 import ApType from './apType'
 import PipeReferral from './pipeReferral'
@@ -17,3 +18,10 @@ const pages = {
 }
 
 export default pages
+
+@Task({
+  slug: 'type-of-ap',
+  name: 'Type of AP required',
+  pages: [ApType, PipeReferral, PipeOpdScreening, EsapPlacementScreening, EsapPlacementSecreting, EsapPlacementCCTV],
+})
+export class TypeOfAp {}
