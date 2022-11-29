@@ -7,12 +7,12 @@ describe('Review', () => {
   const application = applicationFactory.build({})
 
   const body = {
-    reviewed: '1',
+    reviewed: 1,
   }
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new Review({ ...body, something: 'else' }, application)
+    it('should set the body', () => {
+      const page = new Review(body, application)
 
       expect(page.body).toEqual(body)
     })

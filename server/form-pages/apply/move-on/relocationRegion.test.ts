@@ -13,8 +13,8 @@ describe('RelocationRegion', () => {
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new RelocationRegion({ postcodeArea: 'some code', something: 'else' }, application)
+    it('should set the body', () => {
+      const page = new RelocationRegion({ postcodeArea: 'some code' }, application)
       expect(page.body).toEqual({ postcodeArea: 'some code' })
     })
   })

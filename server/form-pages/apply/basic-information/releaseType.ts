@@ -5,6 +5,7 @@ import { SessionDataError } from '../../../utils/errors'
 import { retrieveQuestionResponseFromApplication } from '../../../utils/utils'
 import TasklistPage from '../../tasklistPage'
 import { SentenceTypesT } from './sentenceType'
+import { Page } from '../../utils/decorators'
 
 const allReleaseTypes = {
   rotl: 'Release on Temporary License (ROTL)',
@@ -18,16 +19,18 @@ type AllReleaseTypes = typeof allReleaseTypes
 type ReducedReleaseTypes = Pick<AllReleaseTypes, 'rotl' | 'license' | 'rerelease'>
 type SentenceType = Extract<SentenceTypesT, 'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life'>
 
+@Page({ name: 'release-type', bodyProperties: ['releaseType'] })
 export default class ReleaseType implements TasklistPage {
   name = 'release-type'
 
   title = 'What type of release will the application support?'
 
-  body: { releaseType: keyof (AllReleaseTypes | ReducedReleaseTypes) }
-
   releaseTypes: AllReleaseTypes | ReducedReleaseTypes
 
-  constructor(body: Record<string, unknown>, application: Application) {
+  constructor(
+    readonly body: { releaseType?: keyof AllReleaseTypes | keyof ReducedReleaseTypes },
+    readonly application: Application,
+  ) {
     const sessionSentenceType = retrieveQuestionResponseFromApplication<SentenceType>(
       application,
       'basic-information',

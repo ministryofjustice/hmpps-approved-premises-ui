@@ -1,20 +1,16 @@
 import type { TaskListErrors } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 
+@Page({ name: 'review', bodyProperties: ['reviewed'] })
 export default class Review implements TasklistPage {
   name = 'review'
 
   title = 'Check your answers'
 
-  body: { reviewed: boolean }
-
-  constructor(body: Record<string, unknown>, readonly application: Application) {
-    this.body = {
-      reviewed: body.reviewed as boolean,
-    }
-  }
+  constructor(public body: { reviewed?: number }, readonly application: Application) {}
 
   previous() {
     return ''

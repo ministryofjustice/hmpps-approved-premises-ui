@@ -1,3 +1,4 @@
+import { YesOrNo } from '@approved-premises/ui'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import Arson from './arson'
@@ -9,7 +10,7 @@ describe('Arson', () => {
   const application = applicationFactory.build({ person })
 
   const body = {
-    arson: 'yes',
+    arson: 'yes' as YesOrNo,
     arsonDetail: 'Arson detail',
   }
 
@@ -24,8 +25,8 @@ describe('Arson', () => {
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new Arson({ ...body, something: 'else' }, application)
+    it('should set the body', () => {
+      const page = new Arson(body, application)
 
       expect(page.body).toEqual(body)
     })

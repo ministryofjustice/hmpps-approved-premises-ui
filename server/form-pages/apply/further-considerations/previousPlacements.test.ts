@@ -1,3 +1,4 @@
+import { YesNoOrIDK } from '@approved-premises/ui'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import PreviousPlacements from './previousPlacements'
@@ -9,7 +10,7 @@ describe('PreviousPlacements', () => {
   const application = applicationFactory.build({ person })
 
   const body = {
-    previousPlacement: 'yes',
+    previousPlacement: 'yes' as YesNoOrIDK,
     previousPlacementDetail: 'Previous placement detail',
   }
 
@@ -24,8 +25,8 @@ describe('PreviousPlacements', () => {
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new PreviousPlacements({ ...body, something: 'else' }, application)
+    it('should set the body', () => {
+      const page = new PreviousPlacements(body, application)
 
       expect(page.body).toEqual(body)
     })

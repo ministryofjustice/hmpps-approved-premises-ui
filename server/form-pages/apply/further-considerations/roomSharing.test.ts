@@ -1,24 +1,25 @@
+import { YesOrNo } from '@approved-premises/ui'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import RoomSharing from './roomSharing'
 
 const body = {
-  riskToStaff: 'yes',
+  riskToStaff: 'yes' as YesOrNo,
   riskToStaffDetail: 'Risk to staff detail',
-  riskToOthers: 'yes',
+  riskToOthers: 'yes' as YesOrNo,
   riskToOthersDetail: 'Risk to others detail',
-  sharingConcerns: 'yes',
+  sharingConcerns: 'yes' as YesOrNo,
   sharingConcernsDetail: 'Sharing concerns detail',
-  traumaConcerns: 'yes',
+  traumaConcerns: 'yes' as YesOrNo,
   traumaConcernsDetail: 'Trauma concerns detail',
-  sharingBenefits: 'yes',
+  sharingBenefits: 'yes' as YesOrNo,
   sharingBenefitsDetail: 'Sharing benefits detail',
 }
 
 describe('RoomSharing', () => {
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new RoomSharing({ ...body, something: 'else' })
+    it('should set the body', () => {
+      const page = new RoomSharing(body)
 
       expect(page.body).toEqual(body)
     })

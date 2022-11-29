@@ -1,9 +1,11 @@
 import type { TaskListErrors } from '@approved-premises/ui'
 import { Application } from '../../../@types/shared'
 import { validPostcodeArea } from '../../../utils/formUtils'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 
+@Page({ name: 'relocation-region', bodyProperties: ['postcodeArea'] })
 export default class RelocationRegion implements TasklistPage {
   name = 'relocation-region'
 
@@ -13,13 +15,12 @@ export default class RelocationRegion implements TasklistPage {
 
   hint = 'Postcode area'
 
-  body: {
-    postcodeArea: string
-  }
-
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = { postcodeArea: body.postcodeArea as string }
-  }
+  constructor(
+    public body: {
+      postcodeArea?: string
+    },
+    private readonly application: Application,
+  ) {}
 
   previous() {
     return 'placement-duration'

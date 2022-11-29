@@ -8,23 +8,14 @@ describe('ReleaseDate', () => {
   const person = personFactory.build({ name: 'John Wayne' })
   const application = applicationFactory.build({ person })
 
-  describe('title', () => {
-    it('shold add the name of the person', () => {
-      const page = new ReleaseDate({}, application, 'previousPage')
-
-      expect(page.title).toEqual('Do you know John Wayne’s release date?')
-    })
-  })
-
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
+    it('should set the body', () => {
       const page = new ReleaseDate(
         {
           knowReleaseDate: 'yes',
-          'releaseDate-year': 2022,
-          'releaseDate-month': 3,
-          'releaseDate-day': 3,
-          something: 'else',
+          'releaseDate-year': '2022',
+          'releaseDate-month': '3',
+          'releaseDate-day': '3',
         },
         application,
         'previousPage',
@@ -32,10 +23,19 @@ describe('ReleaseDate', () => {
 
       expect(page.body).toEqual({
         knowReleaseDate: 'yes',
-        'releaseDate-year': 2022,
-        'releaseDate-month': 3,
-        'releaseDate-day': 3,
+        'releaseDate-year': '2022',
+        'releaseDate-month': '3',
+        'releaseDate-day': '3',
+        releaseDate: '2022-03-03',
       })
+    })
+  })
+
+  describe('title', () => {
+    it('shold add the name of the person', () => {
+      const page = new ReleaseDate({}, application, 'previousPage')
+
+      expect(page.title).toEqual('Do you know John Wayne’s release date?')
     })
   })
 
@@ -57,9 +57,9 @@ describe('ReleaseDate', () => {
         const page = new ReleaseDate(
           {
             knowReleaseDate: 'yes',
-            'releaseDate-year': 2022,
-            'releaseDate-month': 3,
-            'releaseDate-day': 3,
+            'releaseDate-year': '2022',
+            'releaseDate-month': '3',
+            'releaseDate-day': '3',
           },
           application,
           'somePage',
@@ -82,9 +82,9 @@ describe('ReleaseDate', () => {
         const page = new ReleaseDate(
           {
             knowReleaseDate: 'yes',
-            'releaseDate-year': 99,
-            'releaseDate-month': 99,
-            'releaseDate-day': 99,
+            'releaseDate-year': '99',
+            'releaseDate-month': '99',
+            'releaseDate-day': '99',
           },
           application,
           'somePage',
@@ -129,7 +129,9 @@ describe('ReleaseDate', () => {
       const page = new ReleaseDate(
         {
           knowReleaseDate: 'yes',
-          releaseDate: '2022-11-11T00:00:00.000Z',
+          'releaseDate-year': '2022',
+          'releaseDate-month': '11',
+          'releaseDate-day': '11',
         },
         application,
         'somePage',

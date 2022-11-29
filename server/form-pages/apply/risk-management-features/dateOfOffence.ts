@@ -1,4 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 import type { TaskListErrors } from '@approved-premises/ui'
+import { Page } from '../../utils/decorators'
 import { sentenceCase, lowerCase } from '../../../utils/utils'
 
 import TasklistPage from '../../tasklistPage'
@@ -14,23 +16,26 @@ const offencesList = Object.keys(offences)
 
 type Offence = keyof typeof offences
 
-type Response = ['current'] | ['previous'] | ['current', 'previous']
+type Response = Array<'previous' | 'current'> | 'previous' | 'current'
 
+@Page({ name: 'date-of-offence', bodyProperties: Object.keys(offences) })
 export default class DateOfOffence implements TasklistPage {
-  name = 'date-of-offence'
-
   title = `Date of convicted offences`
-
-  body: Record<Offence, Response> | Record<string, never>
 
   questions = {
     currentOrPrevious: 'Is the offence a current or previous offence?',
   }
 
-  constructor(body: Record<string, unknown>) {
-    this.body = offencesList.reduce((prev, offence) => {
-      if (body[offence]) {
-        return { ...prev, [offence]: [body[offence]].flat() as Response }
+  constructor(private _body: Partial<Record<Offence, Response>>) {}
+
+  public get body(): Partial<Record<Offence, Response>> {
+    return this._body
+  }
+
+  public set body(value: Partial<Record<Offence, Response>>) {
+    this._body = offencesList.reduce((prev, offence) => {
+      if (value[offence]) {
+        return { ...prev, [offence]: [value[offence]].flat() as Response }
       }
       return prev
     }, {})

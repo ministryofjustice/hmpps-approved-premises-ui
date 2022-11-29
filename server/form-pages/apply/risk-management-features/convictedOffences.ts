@@ -1,4 +1,5 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import { Page } from '../../utils/decorators'
 import { Application } from '../../../@types/shared'
 import { convertKeyValuePairToRadioItems } from '../../../utils/formUtils'
 import { lowerCase, sentenceCase } from '../../../utils/utils'
@@ -10,22 +11,15 @@ export const responses = {
   no: 'No',
 }
 
+@Page({ name: 'convicted-offences', bodyProperties: ['response'] })
 export default class ConvictedOffences implements TasklistPage {
-  name = 'convicted-offences'
-
   title = `Has ${this.application.person.name} ever been convicted of the following offences?`
-
-  body: { response: YesOrNo }
 
   furtherDetails = `This includes any spent or unspent convictions over their lifetime.`
 
   offences = ['Arson offences', 'Sexual offences', 'Hate crimes', 'Non-sexual offences against children']
 
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      response: body.response as YesOrNo,
-    }
-  }
+  constructor(public body: { response?: YesOrNo }, private readonly application: Application) {}
 
   previous() {
     return 'risk-management-features'

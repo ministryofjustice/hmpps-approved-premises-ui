@@ -1,31 +1,49 @@
+/* eslint-disable no-underscore-dangle */
 import type { ObjectWithDateParts, YesOrNo, TaskListErrors } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 import { dateAndTimeInputsAreValidDates, dateIsBlank, DateFormats } from '../../../utils/dateUtils'
 import { convertToTitleCase } from '../../../utils/utils'
 
-export default class ReleaseDate implements TasklistPage {
-  name = 'release-date'
+type ReleaseDateType = ObjectWithDateParts<'releaseDate'> & {
+  knowReleaseDate: YesOrNo
+}
 
+@Page({
+  name: 'release-date',
+  bodyProperties: ['releaseDate', 'releaseDate-year', 'releaseDate-month', 'releaseDate-day', 'knowReleaseDate'],
+})
+export default class ReleaseDate implements TasklistPage {
   title = `Do you know ${this.application.person.name}’s release date?`
 
-  body: ObjectWithDateParts<'releaseDate'> & {
-    knowReleaseDate: YesOrNo
+  constructor(
+    private _body: Partial<ReleaseDateType>,
+    readonly application: Application,
+    readonly previousPage: string,
+  ) {}
+
+  public set body(value: Partial<ReleaseDateType>) {
+    this._body = {
+      knowReleaseDate: value.knowReleaseDate as YesOrNo,
+    }
+    if (value.knowReleaseDate === 'yes') {
+      this._body = {
+        knowReleaseDate: value.knowReleaseDate as YesOrNo,
+        'releaseDate-year': value['releaseDate-year'] as string,
+        'releaseDate-month': value['releaseDate-month'] as string,
+        'releaseDate-day': value['releaseDate-day'] as string,
+        releaseDate: DateFormats.convertDateAndTimeInputsToIsoString(
+          value as ObjectWithDateParts<'releaseDate'>,
+          'releaseDate',
+        ).releaseDate,
+      }
+    }
   }
 
-  previousPage: string
-
-  constructor(body: Record<string, unknown>, private readonly application: Application, previousPage: string) {
-    this.body = {
-      'releaseDate-year': body['releaseDate-year'] as string,
-      'releaseDate-month': body['releaseDate-month'] as string,
-      'releaseDate-day': body['releaseDate-day'] as string,
-      releaseDate: body.releaseDate as string,
-      knowReleaseDate: body.knowReleaseDate as YesOrNo,
-    }
-
-    this.previousPage = previousPage
+  public get body(): ReleaseDateType {
+    return this._body as ReleaseDateType
   }
 
   next() {
@@ -58,7 +76,7 @@ export default class ReleaseDate implements TasklistPage {
     if (this.body.knowReleaseDate === 'yes') {
       if (dateIsBlank(this.body)) {
         errors.releaseDate = 'You must specify the release date'
-      } else if (!dateAndTimeInputsAreValidDates(this.body, 'releaseDate')) {
+      } else if (!dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'releaseDate'>, 'releaseDate')) {
         errors.releaseDate = 'The release date is an invalid date'
       }
     }

@@ -1,8 +1,10 @@
+/* eslint-disable no-underscore-dangle */
 import type { TaskListErrors } from '@approved-premises/ui'
 import { Application } from '../../../@types/shared'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 
 import TasklistPage from '../../tasklistPage'
+import { Page } from '../../utils/decorators'
 
 export const offences = {
   arson: 'Arson offences',
@@ -12,18 +14,25 @@ export const offences = {
 } as const
 
 type Offences = Array<keyof typeof offences>
+type RawOffences = Array<keyof typeof offences> | keyof typeof offences
 
+type TypeOfConvictedOffenceBody = { offenceConvictions: Offences }
+type RawTypeOfConvictedOffenceBody = { offenceConvictions?: RawOffences }
+
+@Page({ name: 'type-of-convicted-offence', bodyProperties: ['offenceConvictions'] })
 export default class TypeOfConvictedOffence implements TasklistPage {
-  name = 'type-of-convicted-offence'
-
   title = `What type of offending has ${this.application.person.name} been convicted of?`
 
-  body: { offenceConvictions: Offences }
+  constructor(private _body: RawTypeOfConvictedOffenceBody, private readonly application: Application) {}
 
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      offenceConvictions: body.offenceConvictions as Offences,
-    }
+  public get body(): TypeOfConvictedOffenceBody {
+    return this._body as TypeOfConvictedOffenceBody
+  }
+
+  public set body(value: RawTypeOfConvictedOffenceBody) {
+    const offenceConvictions: Offences = value.offenceConvictions ? [value.offenceConvictions].flat() : []
+
+    this._body = { offenceConvictions }
   }
 
   previous() {
@@ -45,7 +54,7 @@ export default class TypeOfConvictedOffence implements TasklistPage {
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    if (!this.body.offenceConvictions) {
+    if (!this.body.offenceConvictions.length) {
       errors.offenceConvictions = `You must specify at least one type of offence`
     }
 

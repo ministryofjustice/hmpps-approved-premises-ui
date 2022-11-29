@@ -9,8 +9,8 @@ describe('ReleaseType', () => {
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new ReleaseType({ releaseType: 'rotl', something: 'else' }, application)
+    it('should set the body', () => {
+      const page = new ReleaseType({ releaseType: 'rotl' }, application)
 
       expect(page.body).toEqual({ releaseType: 'rotl' })
     })
@@ -26,16 +26,16 @@ describe('ReleaseType', () => {
     })
 
     it('should return an errors if the release type is not populated', () => {
-      const page = new ReleaseType({ releaseType: '' }, application)
+      const page = new ReleaseType({}, application)
       expect(page.errors()).toEqual({ releaseType: 'You must choose a release type' })
     })
   })
 
   describe('items', () => {
     describe('releaseType', () => {
-      it('if the release type is "standardDeterminate" then all the items should be shown', () => {
+      it('if the sentence type is "standardDeterminate" then all the items should be shown', () => {
         const items = new ReleaseType(
-          { releaseType: 'standardDeterminate' },
+          {},
           applicationFactory.build({
             data: { 'basic-information': { 'sentence-type': { sentenceType: 'standardDeterminate' } } },
           }),
@@ -49,9 +49,9 @@ describe('ReleaseType', () => {
         expect(items[4].value).toEqual('rerelease')
       })
 
-      it('if the release type is "extendedDeterminate" then the reduced list of items should be shown', () => {
+      it('if the sentence type is "extendedDeterminate" then the reduced list of items should be shown', () => {
         const items = new ReleaseType(
-          { releaseType: 'extendedDeterminate' },
+          {},
           applicationFactory.build({
             data: { 'basic-information': { 'sentence-type': { sentenceType: 'extendedDeterminate' } } },
           }),
@@ -63,9 +63,9 @@ describe('ReleaseType', () => {
         expect(items[2].value).toEqual('rerelease')
       })
 
-      it('if the release type is "ipp" then the reduced list of items should be shown', () => {
+      it('if the sentence type is "ipp" then the reduced list of items should be shown', () => {
         const items = new ReleaseType(
-          { releaseType: 'ipp' },
+          {},
           applicationFactory.build({ data: { 'basic-information': { 'sentence-type': { sentenceType: 'ipp' } } } }),
         ).items()
 
@@ -75,9 +75,9 @@ describe('ReleaseType', () => {
         expect(items[2].value).toEqual('rerelease')
       })
 
-      it('if the release type is "life" then the reduced list of items should be shown', () => {
+      it('if the sentence type is "life" then the reduced list of items should be shown', () => {
         const items = new ReleaseType(
-          { releaseType: 'life' },
+          {},
           applicationFactory.build({ data: { 'basic-information': { 'sentence-type': { sentenceType: 'life' } } } }),
         ).items()
 

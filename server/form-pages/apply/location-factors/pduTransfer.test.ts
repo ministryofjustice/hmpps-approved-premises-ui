@@ -10,16 +10,17 @@ describe('PduTransfer', () => {
   const application = applicationFactory.build({ person })
 
   describe('title', () => {
-    expect(new PduTransfer({ transferStatus: '' }, application).title).toBe(
+    expect(new PduTransfer({}, application).title).toBe(
       "Have you agreed John Wayne's transfer/supervision with the receiving PDU?",
     )
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      expect(
-        new PduTransfer({ transferStatus: 'yes', probationPractitioner: 'bob', someProperty: 'bye' }, application).body,
-      ).toEqual({ transferStatus: 'yes', probationPractitioner: 'bob' })
+    it('should set the body', () => {
+      expect(new PduTransfer({ transferStatus: 'yes', probationPractitioner: 'bob' }, application).body).toEqual({
+        transferStatus: 'yes',
+        probationPractitioner: 'bob',
+      })
     })
   })
 

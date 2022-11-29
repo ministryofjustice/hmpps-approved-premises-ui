@@ -1,6 +1,7 @@
 import type { Application } from '@approved-premises/api'
 import type { YesOrNo, TaskListErrors } from '@approved-premises/ui'
 
+import { Page } from '../../utils/decorators'
 import TasklistPage from '../../tasklistPage'
 import { convertToTitleCase, retrieveQuestionResponseFromApplication } from '../../../utils/utils'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
@@ -18,17 +19,12 @@ export const secretingHistory = {
 
 type SecretingHistory = typeof secretingHistory
 
+@Page({
+  name: 'esap-placement-secreting',
+  bodyProperties: ['secretingHistory', 'secretingIntelligence', 'secretingIntelligenceDetails', 'secretingNotes'],
+})
 export default class EsapPlacementSecreting implements TasklistPage {
-  name = 'esap-placement-secreting'
-
   title = 'Enhanced room searches using body worn technology'
-
-  body: {
-    secretingHistory: Array<keyof SecretingHistory>
-    secretingIntelligence: YesOrNo
-    secretingIntelligenceDetails: string
-    secretingNotes: string
-  }
 
   questions = {
     secretingHistory: `Which items does ${this.application.person.name} have a history of secreting?`,
@@ -38,14 +34,15 @@ export default class EsapPlacementSecreting implements TasklistPage {
     secretingNotes: `Provide any supporting information about why ${this.application.person.name} requires enhanced room searches`,
   }
 
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      secretingHistory: body.secretingHistory as Array<keyof SecretingHistory>,
-      secretingIntelligence: body.secretingIntelligence as YesOrNo,
-      secretingIntelligenceDetails: body.secretingIntelligenceDetails as string,
-      secretingNotes: body.secretingNotes as string,
-    }
-  }
+  constructor(
+    public body: Partial<{
+      secretingHistory: Array<keyof SecretingHistory>
+      secretingIntelligence: YesOrNo
+      secretingIntelligenceDetails: string
+      secretingNotes: string
+    }>,
+    private readonly application: Application,
+  ) {}
 
   previous() {
     return 'esap-placement-screening'

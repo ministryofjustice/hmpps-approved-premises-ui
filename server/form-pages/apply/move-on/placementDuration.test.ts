@@ -22,9 +22,9 @@ describe('PlacementDuration', () => {
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
+    it('should set the body', () => {
       const body = { duration: 4, durationDetail: 'Some detail' }
-      const page = new PlacementDuration({ ...body, something: 'else' }, application)
+      const page = new PlacementDuration(body, application)
 
       expect(page.body).toEqual(body)
     })

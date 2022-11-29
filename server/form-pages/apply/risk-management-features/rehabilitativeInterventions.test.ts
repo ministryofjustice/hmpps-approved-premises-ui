@@ -13,9 +13,9 @@ describe('RehabilitativeInterventions', () => {
   const previousPage = 'previousPage'
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
+    it('should set the body', () => {
       const page = new RehabilitativeInterventions(
-        { rehabilitativeInterventions: 'accomodation', something: 'else' },
+        { rehabilitativeInterventions: 'accomodation' },
         application,
         previousPage,
       )

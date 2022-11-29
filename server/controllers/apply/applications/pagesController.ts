@@ -21,7 +21,7 @@ export default class PagesController {
         const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
         const page = await this.applicationService.getCurrentPage(req, this.dataServices, userInput)
 
-        res.render(`applications/pages/${req.params.task}/${page.name}`, {
+        res.render(`applications/pages/${req.params.task}/${req.params.page}`, {
           applicationId: req.params.id,
           errors,
           errorSummary,
@@ -56,7 +56,7 @@ export default class PagesController {
           req,
           res,
           err,
-          paths.applications.pages.show({ id: req.params.id, task: req.params.task, page: page.name }),
+          paths.applications.pages.show({ id: req.params.id, task: req.params.task, page: req.params.page }),
         )
       }
     }

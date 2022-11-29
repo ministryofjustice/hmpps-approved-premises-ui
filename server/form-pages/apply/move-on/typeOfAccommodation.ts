@@ -1,6 +1,7 @@
 import type { TaskListErrors } from '@approved-premises/ui'
 import { Application } from '../../../@types/shared'
 import { convertKeyValuePairToRadioItems } from '../../../utils/formUtils'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 
@@ -19,26 +20,20 @@ export const accommodationType = {
 
 type AccommodationType = keyof typeof accommodationType | 'other'
 
-export default class TypeOfAccommodation implements TasklistPage {
-  name = 'type-of-accommodation'
+type TypeOfAccommodationBody = {
+  accommodationType: AccommodationType
+  otherAccommodationType: string
+}
 
+@Page({ name: 'type-of-accommodation', bodyProperties: ['accommodationType', 'otherAccommodationType'] })
+export default class TypeOfAccommodation implements TasklistPage {
   title = 'Placement duration and move on'
 
   question = `What type of accommodation will ${this.application.person.name} have when they leave the AP?`
 
   otherQuestion = accommodationType.other
 
-  body: {
-    accommodationType: AccommodationType
-    otherAccommodationType: string
-  }
-
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      accommodationType: body.accommodationType as AccommodationType,
-      otherAccommodationType: body.otherAccommodationType as string,
-    }
-  }
+  constructor(public body: Partial<TypeOfAccommodationBody>, private readonly application: Application) {}
 
   previous() {
     return 'plans-in-place'

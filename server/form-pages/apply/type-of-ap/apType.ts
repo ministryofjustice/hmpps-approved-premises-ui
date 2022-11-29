@@ -3,6 +3,7 @@ import type { TaskListErrors } from '@approved-premises/ui'
 
 import TasklistPage from '../../tasklistPage'
 import { convertKeyValuePairToRadioItems } from '../../../utils/formUtils'
+import { Page } from '../../utils/decorators'
 
 const apTypes = {
   standard: 'Standard',
@@ -12,18 +13,11 @@ const apTypes = {
 
 type ApTypes = typeof apTypes
 
+@Page({ name: 'ap-type', bodyProperties: ['type'] })
 export default class ApType implements TasklistPage {
-  name = 'ap-type'
-
   title = `Which type of AP does ${this.application.person.name} require?`
 
-  body: { type: keyof ApTypes }
-
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      type: body.type as keyof ApTypes,
-    }
-  }
+  constructor(public body: { type?: keyof ApTypes }, private readonly application: Application) {}
 
   previous() {
     return ''

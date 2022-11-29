@@ -17,23 +17,23 @@ describe('PipeReferral', () => {
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
+    it('should set the body correctly', () => {
       const page = new PipeReferral(
         {
           opdPathway: 'yes',
-          'opdPathwayDate-year': 2022,
-          'opdPathwayDate-month': 3,
-          'opdPathwayDate-day': 3,
-          something: 'else',
+          'opdPathwayDate-year': '2022',
+          'opdPathwayDate-month': '3',
+          'opdPathwayDate-day': '3',
         },
         application,
       )
 
       expect(page.body).toEqual({
         opdPathway: 'yes',
-        'opdPathwayDate-year': 2022,
-        'opdPathwayDate-month': 3,
-        'opdPathwayDate-day': 3,
+        'opdPathwayDate-year': '2022',
+        'opdPathwayDate-month': '3',
+        'opdPathwayDate-day': '3',
+        opdPathwayDate: '2022-03-03',
       })
     })
   })
@@ -48,9 +48,9 @@ describe('PipeReferral', () => {
         const page = new PipeReferral(
           {
             opdPathway: 'yes',
-            'opdPathwayDate-year': 2022,
-            'opdPathwayDate-month': 3,
-            'opdPathwayDate-day': 3,
+            'opdPathwayDate-year': '2022',
+            'opdPathwayDate-month': '3',
+            'opdPathwayDate-day': '3',
           },
           application,
         )
@@ -71,9 +71,9 @@ describe('PipeReferral', () => {
         const page = new PipeReferral(
           {
             opdPathway: 'yes',
-            'opdPathwayDate-year': 99,
-            'opdPathwayDate-month': 99,
-            'opdPathwayDate-day': 99,
+            'opdPathwayDate-year': '99',
+            'opdPathwayDate-month': '99',
+            'opdPathwayDate-day': '99',
           },
           application,
         )
@@ -117,7 +117,9 @@ describe('PipeReferral', () => {
       const page = new PipeReferral(
         {
           opdPathway: 'yes',
-          opdPathwayDate: '2022-11-11T00:00:00.000Z',
+          'opdPathwayDate-year': '2022',
+          'opdPathwayDate-month': '11',
+          'opdPathwayDate-day': '11',
         },
         application,
       )

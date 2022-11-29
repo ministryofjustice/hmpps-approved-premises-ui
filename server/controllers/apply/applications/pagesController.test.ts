@@ -32,14 +32,13 @@ describe('pagesController', () => {
   })
 
   describe('show', () => {
-    const page = createMock<TasklistPage>({
-      name: 'page-name',
-    })
+    const page = createMock<TasklistPage>({})
 
     beforeEach(() => {
       request.params = {
         id: 'some-uuid',
         task: 'some-task',
+        page: 'some-page',
       }
 
       applicationService.getCurrentPage.mockResolvedValue(page)
@@ -56,7 +55,7 @@ describe('pagesController', () => {
 
       expect(applicationService.getCurrentPage).toHaveBeenCalledWith(request, dataServices, {})
 
-      expect(response.render).toHaveBeenCalledWith(`applications/pages/${request.params.task}/${page.name}`, {
+      expect(response.render).toHaveBeenCalledWith(`applications/pages/${request.params.task}/${request.params.page}`, {
         applicationId: request.params.id,
         task: request.params.task,
         page,
@@ -80,7 +79,7 @@ describe('pagesController', () => {
         errorsAndUserInput.userInput,
       )
 
-      expect(response.render).toHaveBeenCalledWith(`applications/pages/${request.params.task}/${page.name}`, {
+      expect(response.render).toHaveBeenCalledWith(`applications/pages/${request.params.task}/${request.params.page}`, {
         applicationId: request.params.id,
         task: request.params.task,
         page,
@@ -118,14 +117,13 @@ describe('pagesController', () => {
   })
 
   describe('update', () => {
-    const page = createMock<TasklistPage>({
-      name: 'page-name',
-    })
+    const page = createMock<TasklistPage>({})
 
     beforeEach(() => {
       request.params = {
         id: 'some-uuid',
         task: 'some-task',
+        page: 'page-name',
       }
 
       applicationService.getCurrentPage.mockResolvedValue(page)
@@ -175,7 +173,7 @@ describe('pagesController', () => {
         request,
         response,
         err,
-        paths.applications.pages.show({ id: request.params.id, task: request.params.task, page: page.name }),
+        paths.applications.pages.show({ id: request.params.id, task: request.params.task, page: request.params.page }),
       )
     })
   })

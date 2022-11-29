@@ -8,25 +8,26 @@ describe('PlacementDate', () => {
   const releaseDate = new Date().toISOString()
   const application = applicationFactory.build({ data: { 'basic-information': { 'release-date': { releaseDate } } } })
 
-  describe('title and body', () => {
-    it('should strip unknown attributes from the body', () => {
+  describe('title', () => {
+    it('set the title and body correctly', () => {
       const page = new PlacementDate(
         {
           startDateSameAsReleaseDate: 'no',
-          'startDate-year': 2020,
-          'startDate-month': 12,
-          'startDate-day': 1,
-          something: 'else',
+          'startDate-year': '2020',
+          'startDate-month': '12',
+          'startDate-day': '1',
         },
         application,
       )
 
       expect(page.body).toEqual({
         startDateSameAsReleaseDate: 'no',
-        'startDate-year': 2020,
-        'startDate-month': 12,
-        'startDate-day': 1,
+        'startDate-year': '2020',
+        'startDate-month': '12',
+        'startDate-day': '1',
+        startDate: '2020-12-01',
       })
+
       expect(page.title).toEqual(
         `Is ${DateFormats.isoDateToUIDate(releaseDate)} the date you want the placement to start?`,
       )
@@ -52,9 +53,9 @@ describe('PlacementDate', () => {
         const page = new PlacementDate(
           {
             startDateSameAsReleaseDate: 'no',
-            'startDate-year': 2020,
-            'startDate-month': 12,
-            'startDate-day': 1,
+            'startDate-year': '2020',
+            'startDate-month': '12',
+            'startDate-day': '1',
           },
           application,
         )
@@ -75,9 +76,9 @@ describe('PlacementDate', () => {
         const page = new PlacementDate(
           {
             startDateSameAsReleaseDate: 'no',
-            'startDate-year': 999999,
-            'startDate-month': 99999,
-            'startDate-day': 9999,
+            'startDate-year': '999999',
+            'startDate-month': '99999',
+            'startDate-day': '9999',
           },
           application,
         )
@@ -111,7 +112,9 @@ describe('PlacementDate', () => {
       const page = new PlacementDate(
         {
           startDateSameAsReleaseDate: 'no',
-          startDate: '2022-11-11T00:00:00.000Z',
+          'startDate-year': '2022',
+          'startDate-month': '11',
+          'startDate-day': '11',
         },
         application,
       )

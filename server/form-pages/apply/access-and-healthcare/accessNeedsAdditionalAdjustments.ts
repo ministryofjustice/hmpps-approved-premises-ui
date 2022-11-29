@@ -2,10 +2,12 @@ import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 import { Application } from '../../../@types/shared'
 import { SessionDataError } from '../../../utils/errors'
 import { lowerCase } from '../../../utils/utils'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
-import { applyYesOrNo, yesOrNoResponseWithDetail } from '../../utils'
+import { yesOrNoResponseWithDetail } from '../../utils'
 
+@Page({ name: 'access-needs-additional-adjustments', bodyProperties: ['adjustments', 'adjustmentsDetail'] })
 export default class AccessNeedsAdditionalAdjustments implements TasklistPage {
   name = 'access-needs-additional-adjustments'
 
@@ -16,14 +18,10 @@ export default class AccessNeedsAdditionalAdjustments implements TasklistPage {
   body: YesOrNoWithDetail<'adjustments'>
 
   constructor(
-    body: Record<string, unknown>,
+    body: Partial<YesOrNoWithDetail<'adjustments'>>,
     private readonly application: Application,
     private readonly previousPage: string,
-  ) {
-    this.body = {
-      ...applyYesOrNo('adjustments', body),
-    }
-  }
+  ) {}
 
   previous() {
     return this.previousPage

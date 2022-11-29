@@ -1,14 +1,20 @@
+/* eslint-disable no-underscore-dangle */
 import type { YesOrNo, ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 import { convertToTitleCase } from '../../../utils/utils'
 import { dateIsBlank, dateAndTimeInputsAreValidDates, DateFormats } from '../../../utils/dateUtils'
 
+type PipeReferralBody = ObjectWithDateParts<'opdPathwayDate'> & { opdPathway: YesOrNo }
+
+@Page({
+  name: 'pipe-referral',
+  bodyProperties: ['opdPathway', 'opdPathwayDate', 'opdPathwayDate-year', 'opdPathwayDate-month', 'opdPathwayDate-day'],
+})
 export default class PipeReferral implements TasklistPage {
   name = 'pipe-referral'
-
-  body: ObjectWithDateParts<'opdPathwayDate'> & { opdPathway: YesOrNo }
 
   title = `Has ${this.application.person.name} been screened into the OPD pathway?`
 
@@ -17,14 +23,28 @@ export default class PipeReferral implements TasklistPage {
     opdPathwayDate: `When was ${this.application.person.name}'s last consultation or formulation?`,
   }
 
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      'opdPathwayDate-year': body['opdPathwayDate-year'] as string,
-      'opdPathwayDate-month': body['opdPathwayDate-month'] as string,
-      'opdPathwayDate-day': body['opdPathwayDate-day'] as string,
-      opdPathwayDate: body.opdPathwayDate as string,
-      opdPathway: body.opdPathway as YesOrNo,
+  constructor(private _body: Partial<PipeReferralBody>, private readonly application: Application) {}
+
+  public set body(value: Partial<PipeReferralBody>) {
+    this._body = {
+      opdPathway: value.opdPathway as YesOrNo,
     }
+    if (value.opdPathway === 'yes') {
+      this._body = {
+        opdPathway: value.opdPathway as YesOrNo,
+        'opdPathwayDate-year': value['opdPathwayDate-year'] as string,
+        'opdPathwayDate-month': value['opdPathwayDate-month'] as string,
+        'opdPathwayDate-day': value['opdPathwayDate-day'] as string,
+        opdPathwayDate: DateFormats.convertDateAndTimeInputsToIsoString(
+          value as ObjectWithDateParts<'opdPathwayDate'>,
+          'opdPathwayDate',
+        ).opdPathwayDate,
+      }
+    }
+  }
+
+  public get body(): PipeReferralBody {
+    return this._body as PipeReferralBody
   }
 
   next() {
@@ -57,7 +77,9 @@ export default class PipeReferral implements TasklistPage {
     if (this.body.opdPathway === 'yes') {
       if (dateIsBlank(this.body)) {
         errors.opdPathwayDate = 'You must enter an OPD Pathway date'
-      } else if (!dateAndTimeInputsAreValidDates(this.body, 'opdPathwayDate')) {
+      } else if (
+        !dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'opdPathwayDate'>, 'opdPathwayDate')
+      ) {
         errors.opdPathwayDate = 'The OPD Pathway date is an invalid date'
       }
     }

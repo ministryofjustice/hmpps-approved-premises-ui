@@ -1,5 +1,7 @@
+/* eslint-disable no-underscore-dangle */
 import type { TaskListErrors } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
@@ -14,31 +16,35 @@ export const placementPurposes = {
 } as const
 
 type PlacementPurposeT = keyof typeof placementPurposes
-type PlacementPurposeBody = { placementPurposes: Array<PlacementPurposeT>; otherReason?: string }
-
+type PlacementPurposeBody = { placementPurposes?: Array<PlacementPurposeT> | PlacementPurposeT; otherReason?: string }
+@Page({ name: 'placement-purpose', bodyProperties: ['placementPurposes', 'otherReason'] })
 export default class PlacementPurpose implements TasklistPage {
   name = 'placement-purpose'
 
   title = `What is the purpose of the AP placement?`
 
-  body: PlacementPurposeBody
-
   purposes = placementPurposes
 
-  previousPage: string
-
-  constructor(body: Record<string, unknown>, private readonly _application: Application, previousPage: string) {
-    this.body = {} as PlacementPurposeBody
-
-    this.body.placementPurposes = body?.placementPurposes
-      ? ([body.placementPurposes].flat() as Array<PlacementPurposeT>)
+  constructor(
+    private _body: PlacementPurposeBody,
+    private readonly _application: Application,
+    private readonly previousPage: string,
+  ) {
+    this._body.placementPurposes = _body?.placementPurposes
+      ? ([_body.placementPurposes].flat() as Array<PlacementPurposeT>)
       : []
+  }
 
-    if (this.responseNeedsFreeTextReason(this.body)) {
-      this.body.otherReason = body.otherReason as string
+  public get body(): PlacementPurposeBody {
+    if (!this.responseNeedsFreeTextReason(this._body)) {
+      this._body.otherReason = undefined
     }
 
-    this.previousPage = previousPage
+    return this._body
+  }
+
+  public set body(value: PlacementPurposeBody) {
+    this._body = value
   }
 
   next() {
@@ -82,7 +88,10 @@ export default class PlacementPurpose implements TasklistPage {
   }
 
   items(conditionalHtml: string) {
-    const items = convertKeyValuePairToCheckBoxItems(placementPurposes, this.body?.placementPurposes)
+    const items = convertKeyValuePairToCheckBoxItems(
+      placementPurposes,
+      this.body?.placementPurposes as Array<PlacementPurposeT>,
+    )
     const other = items.pop()
 
     items.push({
@@ -93,7 +102,11 @@ export default class PlacementPurpose implements TasklistPage {
   }
 
   response() {
-    const response = { [this.title]: this.body.placementPurposes.map(purpose => placementPurposes[purpose]).join(', ') }
+    const response = {
+      [this.title]: (this.body.placementPurposes as Array<PlacementPurposeT>)
+        .map(purpose => placementPurposes[purpose])
+        .join(', '),
+    }
 
     if (this.body.otherReason) {
       response['Other purpose for AP Placement'] = this.body.otherReason

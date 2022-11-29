@@ -1,12 +1,18 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { Application } from '../../../@types/shared'
 import { sentenceCase } from '../../../utils/utils'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 
-export default class AccessNeedsMobility implements TasklistPage {
-  name = 'access-needs-mobility'
+type AccessNeedsMobilityBody = {
+  needsWheelchair: YesOrNo
+  mobilityNeeds: string
+  visualImpairment: string
+}
 
+@Page({ name: 'access-needs-mobility', bodyProperties: ['needsWheelchair', 'mobilityNeeds', 'visualImpairment'] })
+export default class AccessNeedsMobility implements TasklistPage {
   title = 'Access needs'
 
   questions = {
@@ -15,19 +21,7 @@ export default class AccessNeedsMobility implements TasklistPage {
     visualImpairment: 'Visual Impairment',
   }
 
-  body: {
-    needsWheelchair: YesOrNo
-    mobilityNeeds: string
-    visualImpairment: string
-  }
-
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      needsWheelchair: body.needsWheelchair as YesOrNo,
-      mobilityNeeds: body.mobilityNeeds as string,
-      visualImpairment: body.visualImpairment as string,
-    }
-  }
+  constructor(public body: Partial<AccessNeedsMobilityBody>, private readonly application: Application) {}
 
   previous() {
     return 'access-needs'

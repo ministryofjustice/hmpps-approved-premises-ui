@@ -1,6 +1,8 @@
+/* eslint-disable no-underscore-dangle */
 import type { TaskListErrors } from '@approved-premises/ui'
 import { Application } from '../../../@types/shared'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 
@@ -17,29 +19,36 @@ export const interventionsTranslations = {
 } as const
 
 type Interventions = Array<keyof typeof interventionsTranslations>
+type RawInterventions = Interventions | keyof typeof interventionsTranslations
 
+type RawRehabilitativeInterventionsBody = { rehabilitativeInterventions?: RawInterventions; otherIntervention?: string }
+type RehabilitativeInterventionsBody = { rehabilitativeInterventions: Interventions; otherIntervention?: string }
+
+@Page({ name: 'rehabilitative-interventions', bodyProperties: ['rehabilitativeInterventions', 'otherIntervention'] })
 export default class RehabilitativeInterventions implements TasklistPage {
-  name = 'rehabilitative-interventions'
-
   title = `Which rehabilitative interventions will support the person's Approved Premises (AP) placement?`
 
-  body: { rehabilitativeInterventions: Interventions; otherIntervention?: string }
-
   constructor(
-    body: Record<string, unknown>,
+    private _body: RawRehabilitativeInterventionsBody,
     private readonly _application: Application,
     private readonly previousPage: string,
-  ) {
-    const rehabilitativeInterventions = body.rehabilitativeInterventions
-      ? ([body.rehabilitativeInterventions].flat() as Interventions)
+  ) {}
+
+  public get body(): RehabilitativeInterventionsBody {
+    return this._body as RehabilitativeInterventionsBody
+  }
+
+  public set body(value: RehabilitativeInterventionsBody) {
+    const rehabilitativeInterventions: Interventions = value.rehabilitativeInterventions
+      ? [value.rehabilitativeInterventions].flat()
       : []
 
-    this.body = { rehabilitativeInterventions }
+    this._body = { rehabilitativeInterventions }
 
     if (this.responseContainsOther(rehabilitativeInterventions)) {
-      this.body = {
+      this._body = {
         rehabilitativeInterventions,
-        otherIntervention: body.otherIntervention as string,
+        otherIntervention: value.otherIntervention as string,
       }
     }
   }
@@ -73,7 +82,7 @@ export default class RehabilitativeInterventions implements TasklistPage {
       errors.rehabilitativeInterventions = 'You must select at least one option'
     }
 
-    if (this.responseContainsOther(this.body?.rehabilitativeInterventions) && !this.body?.otherIntervention) {
+    if (this.responseContainsOther(this.body.rehabilitativeInterventions) && !this.body?.otherIntervention) {
       errors.otherIntervention = 'You must specify the other intervention'
     }
 
@@ -83,10 +92,12 @@ export default class RehabilitativeInterventions implements TasklistPage {
   items() {
     const { other, ...uiInterventions } = interventionsTranslations
 
-    return convertKeyValuePairToCheckBoxItems(uiInterventions, this.body?.rehabilitativeInterventions)
+    return convertKeyValuePairToCheckBoxItems(uiInterventions, this.body.rehabilitativeInterventions)
   }
 
-  private responseContainsOther(interventions: Interventions = this.body.rehabilitativeInterventions): boolean {
+  private responseContainsOther(
+    interventions: Array<keyof typeof interventionsTranslations> = this.body.rehabilitativeInterventions,
+  ): boolean {
     return !!interventions.find(element => element === 'other')
   }
 }

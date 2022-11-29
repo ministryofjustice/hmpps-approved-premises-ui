@@ -1,33 +1,51 @@
+/* eslint-disable no-underscore-dangle */
 import type { ObjectWithDateParts, YesOrNo, TaskListErrors } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
 
 import TasklistPage from '../../tasklistPage'
 import { retrieveQuestionResponseFromApplication, convertToTitleCase } from '../../../utils/utils'
 import { dateIsBlank, dateAndTimeInputsAreValidDates, DateFormats } from '../../../utils/dateUtils'
+import { Page } from '../../utils/decorators'
 
+type PlacementDateBody = ObjectWithDateParts<'startDate'> & {
+  startDateSameAsReleaseDate: YesOrNo
+}
+
+@Page({
+  name: 'placement-date',
+  bodyProperties: ['startDate', 'startDate-day', 'startDate-month', 'startDate-year', 'startDateSameAsReleaseDate'],
+})
 export default class PlacementDate implements TasklistPage {
-  name = 'placement-date'
-
   title: string
 
-  body: ObjectWithDateParts<'startDate'> & {
-    startDateSameAsReleaseDate: YesOrNo
-  }
-
-  constructor(body: Record<string, unknown>, application: Application) {
-    this.body = {
-      'startDate-year': body['startDate-year'] as string,
-      'startDate-month': body['startDate-month'] as string,
-      'startDate-day': body['startDate-day'] as string,
-      startDate: body.startDate as string,
-      startDateSameAsReleaseDate: body.startDateSameAsReleaseDate as YesOrNo,
-    }
-
+  constructor(private _body: Partial<PlacementDateBody>, application: Application) {
     const formattedReleaseDate = DateFormats.isoDateToUIDate(
       retrieveQuestionResponseFromApplication(application, 'basic-information', 'releaseDate'),
     )
 
     this.title = `Is ${formattedReleaseDate} the date you want the placement to start?`
+  }
+
+  public set body(value: Partial<PlacementDateBody>) {
+    this._body = {
+      startDateSameAsReleaseDate: value.startDateSameAsReleaseDate as YesOrNo,
+    }
+    if (value.startDateSameAsReleaseDate === 'no') {
+      this._body = {
+        startDateSameAsReleaseDate: value.startDateSameAsReleaseDate as YesOrNo,
+        'startDate-year': value['startDate-year'] as string,
+        'startDate-month': value['startDate-month'] as string,
+        'startDate-day': value['startDate-day'] as string,
+        startDate: DateFormats.convertDateAndTimeInputsToIsoString(
+          value as ObjectWithDateParts<'startDate'>,
+          'startDate',
+        ).startDate,
+      }
+    }
+  }
+
+  public get body(): PlacementDateBody {
+    return this._body as PlacementDateBody
   }
 
   next() {
@@ -60,7 +78,7 @@ export default class PlacementDate implements TasklistPage {
     if (this.body.startDateSameAsReleaseDate === 'no') {
       if (dateIsBlank(this.body)) {
         errors.startDate = 'You must enter a start date'
-      } else if (!dateAndTimeInputsAreValidDates(this.body, 'startDate')) {
+      } else if (!dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'startDate'>, 'startDate')) {
         errors.startDate = 'The start date is an invalid date'
       }
     }

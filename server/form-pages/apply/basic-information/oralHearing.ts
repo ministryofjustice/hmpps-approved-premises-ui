@@ -1,27 +1,51 @@
+/* eslint-disable no-underscore-dangle */
 import type { ObjectWithDateParts, YesOrNo, TaskListErrors } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
 
 import TasklistPage from '../../tasklistPage'
 import { dateAndTimeInputsAreValidDates, dateIsBlank, DateFormats } from '../../../utils/dateUtils'
 import { convertToTitleCase } from '../../../utils/utils'
+import { Page } from '../../utils/decorators'
 
+type OralHearingBody = ObjectWithDateParts<'oralHearingDate'> & {
+  knowOralHearingDate: YesOrNo
+}
+
+@Page({
+  name: 'oral-hearing',
+  bodyProperties: [
+    'oralHearingDate',
+    'oralHearingDate-day',
+    'oralHearingDate-month',
+    'oralHearingDate-year',
+    'knowOralHearingDate',
+  ],
+})
 export default class OralHearing implements TasklistPage {
-  name = 'oral-hearing'
-
   title = `Do you know ${this.application.person.name}’s oral hearing date?`
 
-  body: ObjectWithDateParts<'oralHearingDate'> & {
-    knowOralHearingDate: YesOrNo
+  constructor(private _body: Partial<OralHearingBody>, private readonly application: Application) {}
+
+  public set body(value: Partial<OralHearingBody>) {
+    this._body = {
+      knowOralHearingDate: value.knowOralHearingDate as YesOrNo,
+    }
+    if (value.knowOralHearingDate === 'yes') {
+      this._body = {
+        knowOralHearingDate: value.knowOralHearingDate as YesOrNo,
+        'oralHearingDate-year': value['oralHearingDate-year'] as string,
+        'oralHearingDate-month': value['oralHearingDate-month'] as string,
+        'oralHearingDate-day': value['oralHearingDate-day'] as string,
+        oralHearingDate: DateFormats.convertDateAndTimeInputsToIsoString(
+          value as ObjectWithDateParts<'oralHearingDate'>,
+          'oralHearingDate',
+        ).oralHearingDate,
+      }
+    }
   }
 
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      'oralHearingDate-year': body['oralHearingDate-year'] as string,
-      'oralHearingDate-month': body['oralHearingDate-month'] as string,
-      'oralHearingDate-day': body['oralHearingDate-day'] as string,
-      oralHearingDate: body.oralHearingDate as string,
-      knowOralHearingDate: body.knowOralHearingDate as YesOrNo,
-    }
+  public get body(): OralHearingBody {
+    return this._body as OralHearingBody
   }
 
   next() {
@@ -54,7 +78,9 @@ export default class OralHearing implements TasklistPage {
     if (this.body.knowOralHearingDate === 'yes') {
       if (dateIsBlank(this.body)) {
         errors.oralHearingDate = 'You must specify the oral hearing date'
-      } else if (!dateAndTimeInputsAreValidDates(this.body, 'oralHearingDate')) {
+      } else if (
+        !dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'oralHearingDate'>, 'oralHearingDate')
+      ) {
         errors.oralHearingDate = 'The oral hearing date is an invalid date'
       }
     }

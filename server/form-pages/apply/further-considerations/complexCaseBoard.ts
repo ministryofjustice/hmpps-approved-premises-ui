@@ -1,5 +1,6 @@
 import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 import { yesOrNoResponseWithDetail } from '../../utils'
@@ -8,12 +9,9 @@ export const questionKeys = ['complexCaseBoard'] as const
 
 type QuestionKeys = typeof questionKeys[number]
 
+@Page({ name: 'complex-case-board', bodyProperties: ['complexCaseBoard', 'complexCaseBoardDetail'] })
 export default class ComplexCaseBoard implements TasklistPage {
-  name = 'complex-case-board'
-
   title = 'Complex case board'
-
-  body: YesOrNoWithDetail<'complexCaseBoard'>
 
   questionPredicates = {
     complexCaseBoard: `gender identity require a complex case board to review their application`,
@@ -23,12 +21,7 @@ export default class ComplexCaseBoard implements TasklistPage {
     complexCaseBoard: `Does ${this.application.person.name}'s ${this.questionPredicates.complexCaseBoard}?`,
   }
 
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      complexCaseBoard: body.complexCaseBoard,
-      complexCaseBoardDetail: body.complexCaseBoardDetail,
-    } as YesOrNoWithDetail<'complexCaseBoard'>
-  }
+  constructor(public body: Partial<YesOrNoWithDetail<'complexCaseBoard'>>, private readonly application: Application) {}
 
   previous() {
     return 'previous-placements'

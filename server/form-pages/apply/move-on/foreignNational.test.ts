@@ -8,20 +8,19 @@ describe('ForeignNational', () => {
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
+    it('should set the body', () => {
       const page = new ForeignNational({
         response: 'yes',
-        'date-day': 22,
-        'date-month': 2,
-        'date-year': 2022,
-        something: 'else',
+        'date-day': '22',
+        'date-month': '2',
+        'date-year': '2022',
       })
       expect(page.body).toEqual({
         response: 'yes',
         date: '2022-02-22',
-        'date-day': 22,
-        'date-month': 2,
-        'date-year': 2022,
+        'date-day': '22',
+        'date-month': '2',
+        'date-year': '2022',
       })
     })
   })
@@ -64,9 +63,9 @@ describe('ForeignNational', () => {
       expect(
         new ForeignNational({
           response: 'yes',
-          'date-day': 22,
-          'date-month': 2,
-          'date-year': 2022,
+          'date-day': '22',
+          'date-month': '2',
+          'date-year': '2022',
         }).response(),
       ).toEqual({
         "Have you informed the Home Office 'Foreign National Returns Command' that accommodation will be required after placement?":

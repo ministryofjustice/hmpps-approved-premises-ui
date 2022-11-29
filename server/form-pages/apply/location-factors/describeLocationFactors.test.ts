@@ -1,11 +1,12 @@
+import { YesOrNo } from '@approved-premises/ui'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import DescribeLocationFactors from './describeLocationFactors'
 
 describe('ConvictedOffences', () => {
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new DescribeLocationFactors({ postcodeArea: 'E17', something: 'else' })
+    it('should set the body', () => {
+      const page = new DescribeLocationFactors({ postcodeArea: 'E17' })
 
       expect(page.body).toEqual({ postcodeArea: 'E17' })
     })
@@ -34,11 +35,11 @@ describe('ConvictedOffences', () => {
       const body = {
         postcodeArea: 'E17',
         positiveFactors: 'Positive Factors',
-        restrictions: 'yes',
+        restrictions: 'yes' as YesOrNo,
         restrictionDetail: 'Some restriction detail',
-        alternativeRadiusAccepted: 'yes',
-        alternativeRadius: '20',
-        differentPDU: 'no',
+        alternativeRadiusAccepted: 'yes' as YesOrNo,
+        alternativeRadius: '60' as const,
+        differentPDU: 'no' as YesOrNo,
       }
 
       const page = new DescribeLocationFactors(body)
@@ -51,7 +52,7 @@ describe('ConvictedOffences', () => {
           'Some restriction detail',
         'If an AP Placement is not available in the persons preferred area, would a placement further away be considered?':
           'Yes',
-        'Choose the maximum radius (in miles)': '20 miles',
+        'Choose the maximum radius (in miles)': '60 miles',
         "Is the person moving to a different area where they'll be managed by a different probation delivery unit (PDU)?":
           'No',
       })
@@ -61,9 +62,9 @@ describe('ConvictedOffences', () => {
       const body = {
         postcodeArea: 'E17',
         positiveFactors: 'Positive Factors',
-        restrictions: 'no',
-        alternativeRadiusAccepted: 'no',
-        differentPDU: 'no',
+        restrictions: 'no' as YesOrNo,
+        alternativeRadiusAccepted: 'no' as YesOrNo,
+        differentPDU: 'no' as YesOrNo,
       }
 
       const page = new DescribeLocationFactors(body)
@@ -82,7 +83,7 @@ describe('ConvictedOffences', () => {
 
   describe('radiusItems', () => {
     it('it calls convertKeyValuePairToRadioItems with a key/value pair of radiuses', () => {
-      const page = new DescribeLocationFactors({ alternativeRadius: 90 })
+      const page = new DescribeLocationFactors({ alternativeRadius: '90' })
       page.radiusItems()
 
       expect(page.radiusItems()).toEqual([

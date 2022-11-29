@@ -8,8 +8,8 @@ describe('PlansInPlace', () => {
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new PlansInPlace({ arePlansInPlace: 'yes', other: 'thing' })
+    it('should set the body', () => {
+      const page = new PlansInPlace({ arePlansInPlace: 'yes' })
       expect(page.body).toEqual({ arePlansInPlace: 'yes' })
     })
   })
