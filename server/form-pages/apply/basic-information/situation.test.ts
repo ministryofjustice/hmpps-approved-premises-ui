@@ -9,8 +9,8 @@ describe('Situation', () => {
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new Situation({ situation: 'riskManagement', something: 'else' }, application)
+    it('should set the body', () => {
+      const page = new Situation({ situation: 'riskManagement' }, application)
 
       expect(page.body).toEqual({ situation: 'riskManagement' })
     })
@@ -26,7 +26,7 @@ describe('Situation', () => {
     })
 
     it('should return an errors if the situation is not populated', () => {
-      const page = new Situation({ situation: '' }, application)
+      const page = new Situation({}, application)
       expect(page.errors()).toEqual({ situation: 'You must choose a situation' })
     })
   })

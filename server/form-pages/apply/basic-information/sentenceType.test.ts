@@ -4,8 +4,8 @@ import SentenceType from './sentenceType'
 
 describe('SentenceType', () => {
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new SentenceType({ sentenceType: 'standardDeterminate', something: 'else' })
+    it('should set the body', () => {
+      const page = new SentenceType({ sentenceType: 'standardDeterminate' })
 
       expect(page.body).toEqual({ sentenceType: 'standardDeterminate' })
     })
@@ -41,12 +41,6 @@ describe('SentenceType', () => {
       const page = new SentenceType({ sentenceType: 'life' })
       expect(page.next()).toEqual('release-type')
     })
-
-    it('should throw an error if the sentence is not expected', () => {
-      const page = new SentenceType({ sentenceType: 'foo' })
-
-      expect(() => page.next()).toThrowError()
-    })
   })
 
   itShouldHavePreviousValue(new SentenceType({}), '')
@@ -58,7 +52,7 @@ describe('SentenceType', () => {
     })
 
     it('should return an errors if the sentence type is not populated', () => {
-      const page = new SentenceType({ sentenceType: '' })
+      const page = new SentenceType({})
       expect(page.errors()).toEqual({ sentenceType: 'You must choose a sentence type' })
     })
   })

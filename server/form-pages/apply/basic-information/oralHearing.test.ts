@@ -8,33 +8,33 @@ describe('OralHearing', () => {
   const person = personFactory.build({ name: 'John Wayne' })
   const application = applicationFactory.build({ person })
 
-  describe('title', () => {
-    it('shold add the name of the person', () => {
-      const page = new OralHearing({}, application)
-
-      expect(page.title).toEqual('Do you know John Wayne’s oral hearing date?')
-    })
-  })
-
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
+    it('should set the body', () => {
       const page = new OralHearing(
         {
           knowOralHearingDate: 'yes',
-          'oralHearingDate-year': 2022,
-          'oralHearingDate-month': 3,
-          'oralHearingDate-day': 3,
-          something: 'else',
+          'oralHearingDate-year': '2022',
+          'oralHearingDate-month': '3',
+          'oralHearingDate-day': '3',
         },
         application,
       )
 
       expect(page.body).toEqual({
         knowOralHearingDate: 'yes',
-        'oralHearingDate-year': 2022,
-        'oralHearingDate-month': 3,
-        'oralHearingDate-day': 3,
+        'oralHearingDate-year': '2022',
+        'oralHearingDate-month': '3',
+        'oralHearingDate-day': '3',
+        oralHearingDate: '2022-03-03',
       })
+    })
+  })
+
+  describe('title', () => {
+    it('shold add the name of the person', () => {
+      const page = new OralHearing({}, application)
+
+      expect(page.title).toEqual('Do you know John Wayne’s oral hearing date?')
     })
   })
 
@@ -47,9 +47,9 @@ describe('OralHearing', () => {
         const page = new OralHearing(
           {
             knowOralHearingDate: 'yes',
-            'oralHearingDate-year': 2022,
-            'oralHearingDate-month': 3,
-            'oralHearingDate-day': 3,
+            'oralHearingDate-year': '2022',
+            'oralHearingDate-month': '3',
+            'oralHearingDate-day': '3',
           },
           application,
         )
@@ -70,9 +70,9 @@ describe('OralHearing', () => {
         const page = new OralHearing(
           {
             knowOralHearingDate: 'yes',
-            'oralHearingDate-year': 99,
-            'oralHearingDate-month': 99,
-            'oralHearingDate-day': 99,
+            'oralHearingDate-year': '99',
+            'oralHearingDate-month': '99',
+            'oralHearingDate-day': '99',
           },
           application,
         )
@@ -114,7 +114,9 @@ describe('OralHearing', () => {
       const page = new OralHearing(
         {
           knowOralHearingDate: 'yes',
-          oralHearingDate: '2022-11-11T00:00:00.000Z',
+          'oralHearingDate-year': '2022',
+          'oralHearingDate-month': '11',
+          'oralHearingDate-day': '11',
         },
         application,
       )

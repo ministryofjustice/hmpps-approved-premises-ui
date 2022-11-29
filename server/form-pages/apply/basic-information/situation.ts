@@ -1,5 +1,6 @@
 import type { Application } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
+import { Page } from '../../utils/decorators'
 
 import { SessionDataError } from '../../../utils/errors'
 import { retrieveQuestionResponseFromApplication } from '../../../utils/utils'
@@ -17,16 +18,16 @@ type CommunityOrderSituations = Pick<typeof situations, 'riskManagement' | 'resi
 type BailPlacementSituations = Pick<typeof situations, 'bailAssessment' | 'bailSentence'>
 type SentenceType = Extract<SentenceTypesT, 'communityOrder' | 'bailPlacement'>
 
+@Page({ name: 'situation', bodyProperties: ['situation'] })
 export default class Situation implements TasklistPage {
-  name = 'situation'
-
   title = 'Which of the following options best describes the situation?'
-
-  body: { situation: keyof (CommunityOrderSituations | BailPlacementSituations) }
 
   situations: CommunityOrderSituations | BailPlacementSituations
 
-  constructor(body: Record<string, unknown>, application: Application) {
+  constructor(
+    readonly body: { situation?: keyof CommunityOrderSituations | keyof BailPlacementSituations },
+    readonly application: Application,
+  ) {
     const sessionSentenceType = retrieveQuestionResponseFromApplication<SentenceType>(
       application,
       'basic-information',
@@ -34,10 +35,6 @@ export default class Situation implements TasklistPage {
     )
 
     this.situations = this.getSituationsForSentenceType(sessionSentenceType)
-
-    this.body = {
-      situation: body.situation as keyof (CommunityOrderSituations | BailPlacementSituations),
-    }
   }
 
   next() {

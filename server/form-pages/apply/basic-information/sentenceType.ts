@@ -1,4 +1,5 @@
 import type { TaskListErrors } from '@approved-premises/ui'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 
@@ -14,18 +15,11 @@ export const sentenceTypes = {
 
 export type SentenceTypesT = keyof typeof sentenceTypes
 
+@Page({ name: 'sentence-type', bodyProperties: ['sentenceType'] })
 export default class SentenceType implements TasklistPage {
-  name = 'sentence-type'
-
   title = 'Which of the following best describes the sentence type?'
 
-  body: { sentenceType: SentenceTypesT }
-
-  constructor(body: Record<string, unknown>) {
-    this.body = {
-      sentenceType: body.sentenceType as SentenceTypesT,
-    }
-  }
+  constructor(readonly body: { sentenceType?: SentenceTypesT }) {}
 
   response() {
     return { [this.title]: sentenceTypes[this.body.sentenceType] }
