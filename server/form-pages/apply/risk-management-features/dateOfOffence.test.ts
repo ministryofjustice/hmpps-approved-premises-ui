@@ -6,7 +6,7 @@ jest.mock('../../../utils/formUtils')
 
 describe('DateOfOffence', () => {
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
+    it('should set the body', () => {
       const page = new DateOfOffence({
         arsonOffence: 'current',
         onlineSexualOffence: ['previous', 'current'],

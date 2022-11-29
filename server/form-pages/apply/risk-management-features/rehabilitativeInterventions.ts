@@ -29,7 +29,7 @@ export default class RehabilitativeInterventions implements TasklistPage {
   title = `Which rehabilitative interventions will support the person's Approved Premises (AP) placement?`
 
   constructor(
-    public _body: RawRehabilitativeInterventionsBody,
+    private _body: RawRehabilitativeInterventionsBody,
     private readonly _application: Application,
     private readonly previousPage: string,
   ) {}

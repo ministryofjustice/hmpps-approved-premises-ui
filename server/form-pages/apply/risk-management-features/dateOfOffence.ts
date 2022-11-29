@@ -26,7 +26,7 @@ export default class DateOfOffence implements TasklistPage {
     currentOrPrevious: 'Is the offence a current or previous offence?',
   }
 
-  constructor(public _body: Partial<Record<Offence, Response>>) {}
+  constructor(private _body: Partial<Record<Offence, Response>>) {}
 
   public get body(): Partial<Record<Offence, Response>> {
     return this._body

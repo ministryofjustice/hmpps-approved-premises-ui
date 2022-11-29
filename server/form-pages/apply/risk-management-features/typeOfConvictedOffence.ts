@@ -23,7 +23,7 @@ type RawTypeOfConvictedOffenceBody = { offenceConvictions?: RawOffences }
 export default class TypeOfConvictedOffence implements TasklistPage {
   title = `What type of offending has ${this.application.person.name} been convicted of?`
 
-  constructor(public _body: RawTypeOfConvictedOffenceBody, private readonly application: Application) {}
+  constructor(private _body: RawTypeOfConvictedOffenceBody, private readonly application: Application) {}
 
   public get body(): TypeOfConvictedOffenceBody {
     return this._body as TypeOfConvictedOffenceBody

@@ -11,7 +11,7 @@ describe('RiskManagementFeatures', () => {
   const application = applicationFactory.build({ person })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
+    it('should set the body', () => {
       const page = new RiskManagementFeatures(
         { manageRiskDetails: 'some details', additionalFeaturesDetails: 'some features' },
         application,
