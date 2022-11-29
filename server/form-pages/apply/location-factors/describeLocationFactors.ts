@@ -1,4 +1,5 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import { Page } from '../../utils/decorators'
 import { validPostcodeArea } from '../../../utils/formUtils'
 import { sentenceCase } from '../../../utils/utils'
 
@@ -6,22 +7,30 @@ import TasklistPage from '../../tasklistPage'
 
 const radiuses = ['60', '70', '80', '90', '100', '110', '120', '130', '140', '150'] as const
 
-type Radiuses = typeof radiuses[number]
+type DescribeLocationFactorsBody = {
+  postcodeArea: string
+  positiveFactors: string
+  restrictions: YesOrNo
+  restrictionDetail: string
+  alternativeRadiusAccepted: YesOrNo
+  alternativeRadius: typeof radiuses[number]
+  differentPDU: YesOrNo
+}
 
+@Page({
+  name: 'describe-location-factors',
+  bodyProperties: [
+    'postcodeArea',
+    'positiveFactors',
+    'restrictions',
+    'restrictionDetail',
+    'alternativeRadiusAccepted',
+    'alternativeRadius',
+    'differentPDU',
+  ],
+})
 export default class DescribeLocationFactors implements TasklistPage {
-  name = 'describe-location-factors'
-
   title = 'Location factors'
-
-  body: {
-    postcodeArea: string
-    positiveFactors: string
-    restrictions: YesOrNo
-    restrictionDetail: string
-    alternativeRadiusAccepted: YesOrNo
-    alternativeRadius: typeof radiuses[number]
-    differentPDU: YesOrNo
-  }
 
   questions = {
     postcodeArea: 'What is the preferred location for the AP placement?',
@@ -35,17 +44,7 @@ export default class DescribeLocationFactors implements TasklistPage {
     differentPDU: `Is the person moving to a different area where they'll be managed by a different probation delivery unit (PDU)?`,
   }
 
-  constructor(body: Record<string, unknown>) {
-    this.body = {
-      postcodeArea: body.postcodeArea as string,
-      positiveFactors: body.positiveFactors as string,
-      restrictions: body.restrictions as YesOrNo,
-      restrictionDetail: body.restrictionDetail as string,
-      alternativeRadiusAccepted: body.alternativeRadiusAccepted as YesOrNo,
-      alternativeRadius: body.alternativeRadius as Radiuses,
-      differentPDU: body.differentPDU as YesOrNo,
-    }
-  }
+  constructor(public body: Partial<DescribeLocationFactorsBody>) {}
 
   previous() {
     return ''

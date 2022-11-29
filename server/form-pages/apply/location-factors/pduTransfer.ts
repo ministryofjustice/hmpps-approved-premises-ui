@@ -1,5 +1,6 @@
 import type { TaskListErrors } from '@approved-premises/ui'
 import { Application } from '../../../@types/shared'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 
@@ -11,21 +12,16 @@ const questions = {
 
 type Response = keyof typeof questions
 
+@Page({ name: 'pdu-transfer', bodyProperties: ['transferStatus', 'probationPractitioner'] })
 export default class PduTransfer implements TasklistPage {
-  name = 'pdu-transfer'
-
   title = `Have you agreed ${this.application.person.name}'s transfer/supervision with the receiving PDU?`
-
-  body: { transferStatus: Response; probationPractitioner?: string }
 
   questions = questions
 
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = { transferStatus: body.transferStatus as Response }
-    if (this.body.transferStatus === 'yes') {
-      this.body.probationPractitioner = body.probationPractitioner as string
-    }
-  }
+  constructor(
+    public body: { transferStatus?: Response; probationPractitioner?: string },
+    private readonly application: Application,
+  ) {}
 
   previous() {
     return 'describe-location-factors'
