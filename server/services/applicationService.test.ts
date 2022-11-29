@@ -2,7 +2,6 @@ import type { Request } from 'express'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { TaskListErrors, DataServices } from '@approved-premises/ui'
 
-import applicationSummaryFactory from '../testutils/factories/applicationSummary'
 import type TasklistPage from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
 import ApplicationService from './applicationService'
@@ -13,7 +12,7 @@ import Apply from '../form-pages/apply'
 import paths from '../paths/apply'
 import applicationFactory from '../testutils/factories/application'
 import { DateFormats } from '../utils/dateUtils'
-import { getPage } from '../utils/applicationUtils'
+import { getArrivalDate, getPage } from '../utils/applicationUtils'
 import { tierEnvelopeFactory } from '../testutils/factories/risks'
 import { PersonRisks } from '../@types/shared'
 
@@ -51,9 +50,9 @@ describe('ApplicationService', () => {
 
   describe('getApplications', () => {
     it('calls the all method on the client and returns the data in the correct format for the table in the view', async () => {
+      const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
       const application = applicationFactory.withReleaseDate(arrivalDate).build({
         person: { name: 'A' },
-        id: 'some-id',
       })
 
       const tier = tierEnvelopeFactory.build({ value: { level: 'A1' } })
@@ -62,6 +61,7 @@ describe('ApplicationService', () => {
       applicationClient.all.mockResolvedValue([application])
 
       personClient.risks.mockResolvedValueOnce({ tier } as PersonRisks)
+      ;(getArrivalDate as jest.Mock).mockReturnValue(arrivalDate)
 
       const result = await service.dashboardTableRows(token)
 

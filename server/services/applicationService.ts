@@ -9,7 +9,7 @@ import { UnknownPageError, ValidationError } from '../utils/errors'
 import Apply from '../form-pages/apply'
 import paths from '../paths/apply'
 import { DateFormats } from '../utils/dateUtils'
-import { getPage } from '../utils/applicationUtils'
+import { getArrivalDate, getPage } from '../utils/applicationUtils'
 
 export default class ApplicationService {
   constructor(
@@ -131,7 +131,7 @@ export default class ApplicationService {
           this.createNameAnchorElement(application.person.name, application.id),
           this.textValue(application.person.crn),
           this.createTierBadge(tier.value.level),
-          this.textValue(DateFormats.isoDateToUIDate(application.arrivalDate)),
+          this.textValue(DateFormats.isoDateToUIDate(getArrivalDate(application), { format: 'short' })),
         ]
       }),
     )
