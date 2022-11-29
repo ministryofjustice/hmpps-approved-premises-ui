@@ -96,7 +96,7 @@ describe('AccessNeedsAdditionalAdjustments', () => {
   })
 
   describe('body', () => {
-    it('should apply the body', () => {
+    it('should set the body', () => {
       const page = new AccessNeedsAdditionalAdjustments(
         { adjustments: 'yes', adjustmentsDetail: 'some details' },
         application,

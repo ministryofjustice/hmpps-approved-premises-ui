@@ -15,7 +15,7 @@ describe('Covid', () => {
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
+    it('should set the body', () => {
       const page = new Covid(
         {
           fullyVaccinated: 'yes',
