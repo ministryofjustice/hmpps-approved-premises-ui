@@ -18,7 +18,7 @@ export class DateFormats {
    * @param date JS Date object.
    * @returns the date in the format '2019-09-18T19:00:52Z'.
    */
-  static formatApiDateTime(date: Date) {
+  static dateObjToIsoDateTime(date: Date) {
     return formatISO(date)
   }
 
