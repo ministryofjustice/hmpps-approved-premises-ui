@@ -12,8 +12,8 @@ describe('ConvictedOffences', () => {
   const application = applicationFactory.build({ person })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new ConvictedOffences({ response: 'yes', something: 'else' }, application)
+    it('should set the body', () => {
+      const page = new ConvictedOffences({ response: 'yes' }, application)
 
       expect(page.body).toEqual({ response: 'yes' })
     })

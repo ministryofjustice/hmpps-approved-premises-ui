@@ -8,10 +8,9 @@ describe('DateOfOffence', () => {
   describe('body', () => {
     it('should strip unknown attributes from the body', () => {
       const page = new DateOfOffence({
-        arsonOffence: ['current'],
+        arsonOffence: 'current',
         onlineSexualOffence: ['previous', 'current'],
         hateCrime: ['previous'],
-        something: 'else',
       })
 
       expect(page.body).toEqual({

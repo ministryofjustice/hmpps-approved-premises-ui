@@ -13,7 +13,7 @@ describe('RiskManagementFeatures', () => {
   describe('body', () => {
     it('should strip unknown attributes from the body', () => {
       const page = new RiskManagementFeatures(
-        { manageRiskDetails: 'some details', additionalFeaturesDetails: 'some features', something: 'else' },
+        { manageRiskDetails: 'some details', additionalFeaturesDetails: 'some features' },
         application,
       )
 
@@ -32,7 +32,7 @@ describe('RiskManagementFeatures', () => {
     })
 
     it('should return an error if the details are not populated', () => {
-      const page = new RiskManagementFeatures({ additionalFeatures: 'some features' }, application)
+      const page = new RiskManagementFeatures({ additionalFeaturesDetails: 'some features' }, application)
       expect(page.errors()).toEqual({
         manageRiskDetails: 'You must describe why an AP placement is needed to manage the risk of John Wayne',
       })

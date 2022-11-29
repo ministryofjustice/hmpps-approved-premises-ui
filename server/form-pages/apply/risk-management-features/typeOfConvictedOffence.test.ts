@@ -12,10 +12,10 @@ describe('TypeOfConvictedOffence', () => {
   const application = applicationFactory.build({ person })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new TypeOfConvictedOffence({ offenceConvictions: 'some offence', something: 'else' }, application)
+    it('should set attributes correctly', () => {
+      const page = new TypeOfConvictedOffence({ offenceConvictions: 'arson' }, application)
 
-      expect(page.body).toEqual({ offenceConvictions: 'some offence' })
+      expect(page.body).toEqual({ offenceConvictions: ['arson'] })
     })
   })
 
@@ -25,7 +25,7 @@ describe('TypeOfConvictedOffence', () => {
 
   describe('errors', () => {
     it('should return an empty object if the offenceConvictions are populated', () => {
-      const page = new TypeOfConvictedOffence({ offenceConvictions: 'some offence' }, application)
+      const page = new TypeOfConvictedOffence({ offenceConvictions: ['arson'] }, application)
       expect(page.errors()).toEqual({})
     })
 
@@ -50,6 +50,7 @@ describe('TypeOfConvictedOffence', () => {
             'Arson offences, Sexual offences, Hate crimes, Non-sexual offences against children',
         })
       })
+
       it('When there is a single conviction', () => {
         const page = new TypeOfConvictedOffence({ offenceConvictions: 'arson' }, application)
 
@@ -62,7 +63,7 @@ describe('TypeOfConvictedOffence', () => {
   describe('items', () => {
     it('calls convertKeyValuePairToCheckBoxItems with the correct arguments', () => {
       new TypeOfConvictedOffence({ offenceConvictions: 'arson' }, application).items()
-      expect(convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(offences, 'arson')
+      expect(convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(offences, ['arson'])
     })
   })
 })
