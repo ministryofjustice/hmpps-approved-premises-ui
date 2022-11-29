@@ -1,6 +1,6 @@
 import { StartPage, ListPage } from '../../../cypress_shared/pages/apply'
 
-import applicationSummaryFactory from '../../../server/testutils/factories/applicationSummary'
+import applicationFactory from '../../../server/testutils/factories/application'
 import risksFactory from '../../../server/testutils/factories/risks'
 import Page from '../../../cypress_shared/pages/page'
 
@@ -16,8 +16,8 @@ context('Applications dashboard', () => {
     cy.signIn()
 
     // And there are applications in the database
-    const applicationSummaries = applicationSummaryFactory.buildList(5)
-    cy.task('stubApplications', applicationSummaries)
+    const applications = applicationFactory.withReleaseDate().buildList(5)
+    cy.task('stubApplications', applications)
 
     // And there are risks for the persons related to these applications
     const risks = risksFactory.buildList(5)

@@ -46,7 +46,7 @@ describe('applicationsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('applications/list', {
         pageHeading: 'Approved Premises applications',
-        applicationSummaries: [],
+        applicationTableRows: [],
       })
       expect(applicationService.dashboardTableRows).toHaveBeenCalled()
     })

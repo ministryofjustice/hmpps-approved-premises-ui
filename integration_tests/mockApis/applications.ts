@@ -1,12 +1,11 @@
 import { SuperAgentRequest } from 'superagent'
 
 import type { Application } from '@approved-premises/api'
-import type { ApplicationSummary } from '../../server/testutils/factories/applicationSummary'
 
 import { getMatchingRequests, stubFor } from '../../wiremock'
 
 export default {
-  stubApplications: (applicationSummaries: ApplicationSummary): SuperAgentRequest =>
+  stubApplications: (applications: Application): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
@@ -15,7 +14,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: applicationSummaries,
+        jsonBody: applications,
       },
     }),
   stubApplicationCreate: (args: { application: Application }): SuperAgentRequest =>

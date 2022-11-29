@@ -1,6 +1,5 @@
 import { guidRegex } from './index'
 
-import applicationSummaryFactory from '../server/testutils/factories/applicationSummary'
 import applicationFactory from '../server/testutils/factories/application'
 
 export default [
@@ -12,7 +11,7 @@ export default [
     response: {
       status: 200,
       headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-      jsonBody: applicationSummaryFactory.buildList(20),
+      jsonBody: applicationFactory.buildList(20),
     },
   },
   {

@@ -1,5 +1,4 @@
 import type { Application } from '@approved-premises/api'
-import { ApplicationSummary } from '../testutils/factories/applicationSummary'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -26,8 +25,8 @@ export default class ApplicationClient {
     })) as Application
   }
 
-  async all(): Promise<ApplicationSummary[]> {
-    return (await this.restClient.get({ path: paths.applications.index.pattern })) as ApplicationSummary[]
+  async all(): Promise<Application[]> {
+    return (await this.restClient.get({ path: paths.applications.index.pattern })) as Application[]
   }
 
   async submit(application: Application): Promise<void> {
