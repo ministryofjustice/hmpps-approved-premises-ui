@@ -21,7 +21,6 @@ describe('Covid', () => {
           fullyVaccinated: 'yes',
           highRisk: 'yes',
           additionalCovidInfo: 'some info',
-          somethingElse: 'ok',
         },
         application,
         previousPage,

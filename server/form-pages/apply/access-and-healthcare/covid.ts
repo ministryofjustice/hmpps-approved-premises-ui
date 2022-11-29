@@ -1,19 +1,19 @@
 import type { TaskListErrors, YesNoOrIDK } from '@approved-premises/ui'
 import { Application } from '../../../@types/shared'
 import { sentenceCase } from '../../../utils/utils'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 
+type CovidBody = {
+  fullyVaccinated: YesNoOrIDK
+  highRisk: YesNoOrIDK
+  additionalCovidInfo: string
+}
+
+@Page({ name: 'covid', bodyProperties: ['fullyVaccinated', 'highRisk', 'additionalCovidInfo'] })
 export default class Covid implements TasklistPage {
-  name = 'covid'
-
   title = 'Healthcare information'
-
-  body: {
-    fullyVaccinated: YesNoOrIDK
-    highRisk: YesNoOrIDK
-    additionalCovidInfo: string
-  }
 
   questions = {
     fullyVaccinated: {
@@ -28,16 +28,10 @@ export default class Covid implements TasklistPage {
   }
 
   constructor(
-    body: Record<string, unknown>,
+    public body: Partial<CovidBody>,
     private readonly application: Application,
     private readonly previousPage: string,
-  ) {
-    this.body = {
-      fullyVaccinated: body.fullyVaccinated as YesNoOrIDK,
-      highRisk: body.highRisk as YesNoOrIDK,
-      additionalCovidInfo: body.additionalCovidInfo as string,
-    }
-  }
+  ) {}
 
   previous() {
     return this.previousPage

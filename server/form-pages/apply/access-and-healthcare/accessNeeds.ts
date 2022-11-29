@@ -2,6 +2,7 @@ import type { TaskListErrors, YesNoOrIDK, YesOrNo } from '@approved-premises/ui'
 import { Application } from '../../../@types/shared'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
 import { pascalCase, sentenceCase } from '../../../utils/utils'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 
@@ -17,9 +18,27 @@ export const additionalNeeds = {
 
 type AdditionalNeed = keyof typeof additionalNeeds
 
-export default class AccessNeeds implements TasklistPage {
-  name = 'access-needs'
+type AccessNeedsBody = {
+  additionalNeeds: AdditionalNeed[]
+  religiousOrCulturalNeeds: YesOrNo
+  religiousOrCulturalNeedsDetails: string
+  careActAssessmentCompleted: YesNoOrIDK
+  needsInterpreter: YesOrNo
+  interpreterLanguage: string
+}
 
+@Page({
+  name: 'access-needs',
+  bodyProperties: [
+    'additionalNeeds',
+    'religiousOrCulturalNeeds',
+    'religiousOrCulturalNeedsDetails',
+    'careActAssessmentCompleted',
+    'needsInterpreter',
+    'interpreterLanguage',
+  ],
+})
+export default class AccessNeeds implements TasklistPage {
   title = 'Access needs'
 
   questions = {
@@ -38,25 +57,7 @@ export default class AccessNeeds implements TasklistPage {
     careActAssessmentCompleted: 'Has a care act assessment been completed?',
   }
 
-  body: {
-    additionalNeeds: AdditionalNeed[]
-    religiousOrCulturalNeeds: YesOrNo
-    religiousOrCulturalNeedsDetails: string
-    careActAssessmentCompleted: YesNoOrIDK
-    needsInterpreter: YesOrNo
-    interpreterLanguage: string
-  }
-
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      additionalNeeds: body.additionalNeeds ? ([body.additionalNeeds].flat() as Array<AdditionalNeed>) : [],
-      religiousOrCulturalNeeds: body.religiousOrCulturalNeeds as YesOrNo,
-      religiousOrCulturalNeedsDetails: (body.religiousOrCulturalNeedsDetails as string) || '',
-      needsInterpreter: body.needsInterpreter as YesOrNo,
-      interpreterLanguage: body.interpreterLanguage as string,
-      careActAssessmentCompleted: body.careActAssessmentCompleted as YesNoOrIDK,
-    }
-  }
+  constructor(public body: Partial<AccessNeedsBody>, private readonly application: Application) {}
 
   previous() {
     return ''
@@ -101,7 +102,7 @@ export default class AccessNeeds implements TasklistPage {
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    if (!this.body.additionalNeeds.length) {
+    if (!this.body.additionalNeeds || !this.body.additionalNeeds.length) {
       errors.additionalNeeds = `You must confirm whether ${this.application.person.name} has any additional needs`
     }
     if (!this.body.religiousOrCulturalNeeds) {

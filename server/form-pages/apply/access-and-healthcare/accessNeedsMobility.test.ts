@@ -20,7 +20,6 @@ describe('AccessNeedsMobility', () => {
           needsWheelchair: 'yes',
           mobilityNeeds: 'mobility needs',
           visualImpairment: 'visual impairment',
-          anotherThing: 'here',
         },
         application,
       )

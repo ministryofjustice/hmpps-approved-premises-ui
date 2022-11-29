@@ -96,9 +96,9 @@ describe('AccessNeedsAdditionalAdjustments', () => {
   })
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
+    it('should apply the body', () => {
       const page = new AccessNeedsAdditionalAdjustments(
-        { adjustments: 'yes', adjustmentsDetail: 'some details', something: 'else' },
+        { adjustments: 'yes', adjustmentsDetail: 'some details' },
         application,
         previousPage,
       )

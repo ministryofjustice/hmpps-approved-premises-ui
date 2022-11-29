@@ -1,3 +1,4 @@
+import { YesOrNo } from '@approved-premises/ui'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import AccessNeeds, { additionalNeeds } from './accessNeeds'
@@ -20,12 +21,11 @@ describe('AccessNeeds', () => {
     it('should strip unknown attributes from the body', () => {
       const page = new AccessNeeds(
         {
-          additionalNeeds: 'mobility',
+          additionalNeeds: ['mobility'],
           careActAssessmentCompleted: 'yes',
           interpreterLanguage: 'french',
           needsInterpreter: 'no',
-          anotherThing: 'here',
-          religiousOrCulturalNeeds: 'Yes',
+          religiousOrCulturalNeeds: 'Yes' as YesOrNo,
           religiousOrCulturalNeedsDetails: 'Some details',
         },
         application,
@@ -76,8 +76,7 @@ describe('AccessNeeds', () => {
           additionalNeeds: ['mobility', 'visualImpairment'],
           needsInterpreter: 'yes',
           interpreterLanguage: 'French',
-          anotherThing: 'here',
-          religiousOrCulturalNeeds: 'Yes',
+          religiousOrCulturalNeeds: 'yes',
           religiousOrCulturalNeedsDetails: 'Some details',
           careActAssessmentCompleted: 'yes',
         },
