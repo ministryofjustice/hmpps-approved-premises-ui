@@ -69,10 +69,10 @@ export default class PlacementDuration implements TasklistPage {
 
         if (!releaseDate) throw new SessionDataError('No release date')
 
-        return DateFormats.convertIsoToDateObj(releaseDate.releaseDate)
+        return DateFormats.isoToDateObj(releaseDate.releaseDate)
       }
 
-      return DateFormats.convertIsoToDateObj(placementDate.startDate)
+      return DateFormats.isoToDateObj(placementDate.startDate)
     } catch (e) {
       throw new SessionDataError(`Move on information placement duration error: ${e}`)
     }

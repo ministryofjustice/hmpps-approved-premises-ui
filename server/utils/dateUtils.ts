@@ -40,7 +40,7 @@ export class DateFormats {
    * @returns A Date object
    * @throws {InvalidDateStringError} If the string is not a valid ISO8601 datetime string
    */
-  static convertIsoToDateObj(date: string) {
+  static isoToDateObj(date: string) {
     const parsedDate = parseISO(date)
 
     if (Number.isNaN(parsedDate.getTime())) {
@@ -55,7 +55,7 @@ export class DateFormats {
    * @returns the date in the to be shown in the UI: "Thursday, 20 December 2012".
    */
   static isoDateToUIDate(isoDate: string, options: { format: 'short' | 'long' } = { format: 'long' }) {
-    return DateFormats.dateObjtoUIDate(DateFormats.convertIsoToDateObj(isoDate), options)
+    return DateFormats.dateObjtoUIDate(DateFormats.isoToDateObj(isoDate), options)
   }
 
   /**
@@ -63,7 +63,7 @@ export class DateFormats {
    * @returns the date in the to be shown in the UI: "Thursday, 20 December 2012".
    */
   static isoDateTimeToUIDateTime(isoDate: string) {
-    return format(DateFormats.convertIsoToDateObj(isoDate), 'd MMM y, HH:mm')
+    return format(DateFormats.isoToDateObj(isoDate), 'd MMM y, HH:mm')
   }
 
   /**
@@ -101,7 +101,7 @@ export const dateAndTimeInputsAreValidDates = <K extends string | number>(
   const dateString = DateFormats.convertDateAndTimeInputsToIsoString(dateInputObj, key)
 
   try {
-    DateFormats.convertIsoToDateObj(dateString[key])
+    DateFormats.isoToDateObj(dateString[key])
   } catch (err) {
     if (err instanceof InvalidDateStringError) {
       return false
