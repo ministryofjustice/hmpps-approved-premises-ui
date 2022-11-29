@@ -3,6 +3,7 @@ import type { TaskListErrors } from '@approved-premises/ui'
 
 import TasklistPage from '../../tasklistPage'
 import { convertKeyValuePairToCheckBoxItems } from '../../../utils/formUtils'
+import { Page } from '../../utils/decorators'
 
 export const esapReasons = {
   secreting:
@@ -24,6 +25,7 @@ export const esapFactors = {
 export type EsapReasons = typeof esapReasons
 export type EsapFactors = typeof esapFactors
 
+@Page({ name: 'esap-placement-screening', bodyProperties: ['esapReasons', 'esapFactors'] })
 export default class EsapPlacementScreening implements TasklistPage {
   name = 'esap-placement-screening'
 
@@ -34,14 +36,10 @@ export default class EsapPlacementScreening implements TasklistPage {
     esapFactors: 'Do any of the following factors also apply?',
   }
 
-  body: { esapReasons: Array<keyof EsapReasons>; esapFactors: Array<keyof EsapFactors> }
-
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      esapReasons: body.esapReasons as Array<keyof EsapReasons>,
-      esapFactors: body.esapFactors as Array<keyof EsapFactors>,
-    }
-  }
+  constructor(
+    public body: Partial<{ esapReasons: Array<keyof EsapReasons>; esapFactors: Array<keyof EsapFactors> }>,
+    private readonly application: Application,
+  ) {}
 
   previous() {
     return 'ap-type'

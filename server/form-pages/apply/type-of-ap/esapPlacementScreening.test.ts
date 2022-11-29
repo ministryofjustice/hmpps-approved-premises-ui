@@ -19,17 +19,6 @@ describe('EsapPlacementScreening', () => {
     })
   })
 
-  describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new EsapPlacementScreening(
-        { esapReasons: ['secreting'], esapFactors: ['neurodiverse'], something: 'else' },
-        application,
-      )
-
-      expect(page.body).toEqual({ esapReasons: ['secreting'], esapFactors: ['neurodiverse'] })
-    })
-  })
-
   itShouldHavePreviousValue(new EsapPlacementScreening({}, application), 'ap-type')
 
   describe('next', () => {
@@ -55,7 +44,7 @@ describe('EsapPlacementScreening', () => {
   describe('response', () => {
     it('should translate the response correctly', () => {
       const page = new EsapPlacementScreening(
-        { esapReasons: ['secreting', 'cctv'], esapFactors: ['neurodiverse', 'complexPersonality'], something: 'else' },
+        { esapReasons: ['secreting', 'cctv'], esapFactors: ['neurodiverse', 'complexPersonality'] },
         application,
       )
 

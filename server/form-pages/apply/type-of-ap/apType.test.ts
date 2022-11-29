@@ -19,14 +19,6 @@ describe('ApType', () => {
     })
   })
 
-  describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new ApType({ type: 'standard', something: 'else' }, application)
-
-      expect(page.body).toEqual({ type: 'standard' })
-    })
-  })
-
   itShouldHavePreviousValue(new ApType({}, application), '')
 
   describe('when type is set to pipe', () => {
@@ -43,19 +35,19 @@ describe('ApType', () => {
 
   describe('errors', () => {
     it('should return an empty object if the type is populated', () => {
-      const page = new ApType({ type: 'riskManagement' }, application)
+      const page = new ApType({ type: 'standard' }, application)
       expect(page.errors()).toEqual({})
     })
 
     it('should return an errors if the type is not populated', () => {
-      const page = new ApType({ type: '' }, application)
+      const page = new ApType({}, application)
       expect(page.errors()).toEqual({ type: 'You must specify an AP type' })
     })
   })
 
   describe('items', () => {
     it('it calls convertKeyValuePairToRadioItems', () => {
-      const page = new ApType({ type: '' }, application)
+      const page = new ApType({}, application)
       page.items()
 
       expect(convertKeyValuePairToRadioItems).toHaveBeenCalled()

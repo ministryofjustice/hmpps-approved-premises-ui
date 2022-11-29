@@ -11,13 +11,12 @@ describe('EsapPlacementSecreting', () => {
   const application = applicationFactory.build()
 
   describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
+    it('set the body correctly', () => {
       const page = new EsapPlacementSecreting(
         {
           secretingHistory: ['radicalisationLiterature'],
           secretingIntelligence: 'yes',
           secretingNotes: 'notes',
-          something: 'else',
         },
         application,
       )

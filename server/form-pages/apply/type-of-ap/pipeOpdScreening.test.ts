@@ -12,7 +12,6 @@ describe('PipeOpdScreening', () => {
         {
           pipeReferral: 'yes',
           pipeReferralMoreDetail: 'More detail',
-          something: 'else',
         },
         application,
       )
@@ -31,7 +30,7 @@ describe('PipeOpdScreening', () => {
     })
 
     it('should return an errors if the pipeReferral is not populated', () => {
-      const page = new PipeOpdScreening({ pipeReferral: '' }, application)
+      const page = new PipeOpdScreening({}, application)
       expect(page.errors()).toEqual({
         pipeReferral: 'You must specify if  a referral for PIPE placement has been recommended in the OPD pathway plan',
       })

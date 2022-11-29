@@ -10,26 +10,6 @@ jest.mock('../../../utils/formUtils')
 describe('EsapPlacementCCTV', () => {
   const application = applicationFactory.build()
 
-  describe('body', () => {
-    it('should strip unknown attributes from the body', () => {
-      const page = new EsapPlacementCCTV(
-        {
-          cctvHistory: ['prisonerAssualt'],
-          cctvIntelligence: 'yes',
-          cctvNotes: 'notes',
-          something: 'else',
-        },
-        application,
-      )
-
-      expect(page.body).toEqual({
-        cctvHistory: ['prisonerAssualt'],
-        cctvIntelligence: 'yes',
-        cctvNotes: 'notes',
-      })
-    })
-  })
-
   itShouldHaveNextValue(new EsapPlacementCCTV({}, application), '')
 
   describe('previous', () => {

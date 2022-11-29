@@ -1,5 +1,6 @@
 import type { YesOrNo, TaskListErrors } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 import { convertToTitleCase, retrieveQuestionResponseFromApplication } from '../../../utils/utils'
@@ -18,17 +19,12 @@ export const cctvHistory = {
 
 type CCTVHistory = typeof cctvHistory
 
+@Page({
+  name: 'esap-placement-cctv',
+  bodyProperties: ['cctvHistory', 'cctvIntelligence', 'cctvIntelligenceDetails', 'cctvNotes'],
+})
 export default class EsapPlacementCCTV implements TasklistPage {
-  name = 'esap-placement-cctv'
-
   title = 'Enhanced CCTV Provision'
-
-  body: {
-    cctvHistory: Array<keyof CCTVHistory>
-    cctvIntelligence: YesOrNo
-    cctvIntelligenceDetails: string
-    cctvNotes: string
-  }
 
   questions = {
     cctvHistory: `Which behaviours has ${this.application.person.name} demonstrated that require enhanced CCTV provision to monitor?`,
@@ -37,14 +33,15 @@ export default class EsapPlacementCCTV implements TasklistPage {
     cctvNotes: `Provide any supporting information about why ${this.application.person.name} requires enhanced CCTV provision`,
   }
 
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      cctvHistory: body.cctvHistory as Array<keyof CCTVHistory>,
-      cctvIntelligence: body.cctvIntelligence as YesOrNo,
-      cctvIntelligenceDetails: body.cctvIntelligenceDetails as string,
-      cctvNotes: body.cctvNotes as string,
-    }
-  }
+  constructor(
+    public body: Partial<{
+      cctvHistory: Array<keyof CCTVHistory>
+      cctvIntelligence: YesOrNo
+      cctvIntelligenceDetails: string
+      cctvNotes: string
+    }>,
+    private readonly application: Application,
+  ) {}
 
   previous() {
     const esapReasons = retrieveQuestionResponseFromApplication(
