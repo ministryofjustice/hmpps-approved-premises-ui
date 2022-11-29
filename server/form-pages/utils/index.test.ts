@@ -1,4 +1,6 @@
-import { applyYesOrNo, yesOrNoResponseWithDetail, yesNoOrDontKnowResponseWithDetail } from './index'
+/* eslint-disable max-classes-per-file */
+import 'reflect-metadata'
+import { applyYesOrNo, yesOrNoResponseWithDetail, yesNoOrDontKnowResponseWithDetail, getTask } from './index'
 
 describe('utils', () => {
   describe('applyYesOrNo', () => {
@@ -46,6 +48,23 @@ describe('utils', () => {
       const body = { foo: 'iDontKnow' }
 
       expect(yesNoOrDontKnowResponseWithDetail('foo', body)).toEqual("Don't know")
+    })
+  })
+
+  describe('getTask', () => {
+    it('fetches metadata for a specific task and pages', () => {
+      class Task {}
+      class Page1 {}
+      class Page2 {}
+
+      Reflect.defineMetadata('page:name', 'Page 1', Page1)
+      Reflect.defineMetadata('page:name', 'Page 2', Page2)
+
+      Reflect.defineMetadata('task:slug', 'slug', Task)
+      Reflect.defineMetadata('task:name', 'Name', Task)
+      Reflect.defineMetadata('task:pages', [Page1, Page2], Task)
+
+      expect(getTask(Task)).toEqual({ id: 'slug', title: 'Name', pages: { 'Page 1': Page1, 'Page 2': Page2 } })
     })
   })
 })

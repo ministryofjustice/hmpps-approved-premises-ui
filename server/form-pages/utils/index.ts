@@ -14,3 +14,21 @@ export const yesOrNoResponseWithDetail = <K extends string>(key: K, body: Record
 export const yesNoOrDontKnowResponseWithDetail = <K extends string>(key: K, body: Record<string, string>) => {
   return body[key] === 'iDontKnow' ? "Don't know" : yesOrNoResponseWithDetail<K>(key, body)
 }
+
+export const getTask = <T>(task: T) => {
+  const taskPages = {}
+  const slug = Reflect.getMetadata('task:slug', task)
+  const name = Reflect.getMetadata('task:name', task)
+  const pageClasses = Reflect.getMetadata('task:pages', task)
+
+  pageClasses.forEach(<PageType>(page: PageType) => {
+    const pageName = Reflect.getMetadata('page:name', page)
+    taskPages[pageName] = page
+  })
+
+  return {
+    id: slug,
+    title: name,
+    pages: taskPages,
+  }
+}

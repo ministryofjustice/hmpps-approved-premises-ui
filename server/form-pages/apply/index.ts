@@ -2,15 +2,17 @@
 
 import type { TaskNames, FormSections } from '@approved-premises/ui'
 
-import basicInfomationPages from './basic-information'
-import typeOfApPages from './type-of-ap'
-import riskAndNeedPages from './risk-management-features'
-import prisonInformationPages from './prison-information'
-import locationFactorPages from './location-factors'
-import accessAndHealthcarePages from './access-and-healthcare'
-import furtherConsiderationsPages from './further-considerations'
-import moveOnPages from './move-on'
-import checkYourAnswersPages from './check-your-answers'
+import basicInfomationPages, { BasicInformation } from './basic-information'
+import typeOfApPages, { TypeOfAp } from './type-of-ap'
+import riskAndNeedPages, { RiskManagement } from './risk-management-features'
+import prisonInformationPages, { PrisonInformation } from './prison-information'
+import locationFactorPages, { LocationFactors } from './location-factors'
+import accessAndHealthcarePages, { AccessAndHealthcare } from './access-and-healthcare'
+import furtherConsiderationsPages, { FurtherConsiderations } from './further-considerations'
+import moveOnPages, { MoveOn } from './move-on'
+import checkYourAnswersPages, { CheckYourAnswers } from './check-your-answers'
+
+import { getTask } from '../utils'
 
 const pages: {
   [key in TaskNames]: Record<string, unknown>
@@ -29,68 +31,25 @@ const pages: {
 const sections: FormSections = [
   {
     title: 'Reasons for placement',
-    tasks: [
-      {
-        id: 'basic-information',
-        title: 'Basic Information',
-        pages: basicInfomationPages,
-      },
-      {
-        id: 'type-of-ap',
-        title: 'Type of AP required',
-        pages: typeOfApPages,
-      },
-    ],
+    tasks: [getTask(BasicInformation), getTask(TypeOfAp)],
   },
   {
     title: 'Risk and need factors',
     tasks: [
-      {
-        id: 'risk-management-features',
-        title: 'Add detail about managing risks and needs',
-        pages: riskAndNeedPages,
-      },
-      {
-        id: 'prison-information',
-        title: 'Review prison information',
-        pages: prisonInformationPages,
-      },
-      {
-        id: 'location-factors',
-        title: 'Describe location factors',
-        pages: locationFactorPages,
-      },
-      {
-        id: 'access-and-healthcare',
-        title: 'Provide access and healthcare information',
-        pages: accessAndHealthcarePages,
-      },
-      {
-        id: 'further-considerations',
-        title: 'Detail further considerations for placement',
-        pages: furtherConsiderationsPages,
-      },
+      getTask(RiskManagement),
+      getTask(PrisonInformation),
+      getTask(LocationFactors),
+      getTask(AccessAndHealthcare),
+      getTask(FurtherConsiderations),
     ],
   },
   {
     title: 'Considerations for when the placement ends',
-    tasks: [
-      {
-        id: 'move-on',
-        title: 'Add move on information',
-        pages: moveOnPages,
-      },
-    ],
+    tasks: [getTask(MoveOn)],
   },
   {
     title: 'Check your answers',
-    tasks: [
-      {
-        id: 'check-your-answers',
-        title: 'Check your answers',
-        pages: checkYourAnswersPages,
-      },
-    ],
+    tasks: [getTask(CheckYourAnswers)],
   },
 ]
 
