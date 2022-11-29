@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import type { TaskListErrors } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
-import { Page } from '../../../utils/decorators'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
