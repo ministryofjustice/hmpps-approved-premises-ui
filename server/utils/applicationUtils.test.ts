@@ -4,8 +4,15 @@ import applicationFactory from '../testutils/factories/application'
 import paths from '../paths/apply'
 import Apply from '../form-pages/apply'
 
-import { taskLink, getTaskStatus, getCompleteSectionCount, getResponses, getPage } from './applicationUtils'
-import { UnknownPageError } from './errors'
+import {
+  taskLink,
+  getTaskStatus,
+  getCompleteSectionCount,
+  getResponses,
+  getPage,
+  getArrivalDate,
+} from './applicationUtils'
+import { SessionDataError, UnknownPageError } from './errors'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -163,6 +170,45 @@ describe('applicationUtils', () => {
       expect(() => {
         getPage('basic-information', 'bar')
       }).toThrow(UnknownPageError)
+    })
+  })
+
+  describe('getArrivalDate', () => {
+    it('returns the arrival date when the release date is known and is the same as the start date', () => {
+      const application = applicationFactory.build({
+        data: {
+          'basic-information': {
+            'release-date': { knowReleaseDate: 'yes', releaseDate: '2022-11-14' },
+            'placement-date': { startDateSameAsReleaseDate: 'yes' },
+          },
+        },
+      })
+      expect(getArrivalDate(application)).toEqual('2022-11-14')
+    })
+
+    it('returns the arrival date when the release date is known but there is a different start date', () => {
+      const application = applicationFactory.build({
+        data: {
+          'basic-information': {
+            'release-date': { knowReleaseDate: 'yes', releaseDate: '2022-11-14' },
+            'placement-date': { startDateSameAsReleaseDate: 'no', startDate: '2023-10-13' },
+          },
+        },
+      })
+
+      expect(getArrivalDate(application)).toEqual('2023-10-13')
+    })
+
+    it('returns an empty string when the release date is not known', () => {
+      const application = applicationFactory.build({
+        data: {
+          'basic-information': {
+            'release-date': { knowReleaseDate: 'no' },
+          },
+        },
+      })
+
+      expect(() => getArrivalDate(application)).toThrow(new SessionDataError('No known release date'))
     })
   })
 })
