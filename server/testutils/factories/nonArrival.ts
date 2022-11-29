@@ -10,5 +10,5 @@ export default Factory.define<Nonarrival>(() => ({
   bookingId: faker.datatype.uuid(),
   notes: faker.lorem.sentence(),
   reason: referenceDataFactory.nonArrivalReason().build(),
-  date: DateFormats.formatApiDate(faker.date.soon()),
+  date: DateFormats.dateObjToIsoDate(faker.date.soon()),
 }))

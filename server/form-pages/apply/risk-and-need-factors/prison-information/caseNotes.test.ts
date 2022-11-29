@@ -17,8 +17,8 @@ describe('caseNoteResponse', () => {
   it('returns a response for a case note', () => {
     const caseNote = prisonCaseNotesFactory.build({
       id: 'A',
-      createdAt: DateFormats.formatApiDate(new Date(2020, 1, 0)),
-      occurredAt: DateFormats.formatApiDate(new Date(2020, 0, 1)),
+      createdAt: DateFormats.dateObjToIsoDate(new Date(2020, 1, 0)),
+      occurredAt: DateFormats.dateObjToIsoDate(new Date(2020, 0, 1)),
       sensitive: false,
       authorName: 'Dennis Ziemann',
       subType: 'some subtype',
@@ -62,8 +62,8 @@ describe('caseNoteCheckbox', () => {
   it('should return a checkbox for a given case note', () => {
     const caseNote = prisonCaseNotesFactory.build({
       id: 'A',
-      createdAt: DateFormats.formatApiDate(new Date(2020, 1, 0)),
-      occurredAt: DateFormats.formatApiDate(new Date(2020, 0, 1)),
+      createdAt: DateFormats.dateObjToIsoDate(new Date(2020, 1, 0)),
+      occurredAt: DateFormats.dateObjToIsoDate(new Date(2020, 0, 1)),
       sensitive: false,
       authorName: 'Dennis Ziemann',
       subType: 'some subtype',

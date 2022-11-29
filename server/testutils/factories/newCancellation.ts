@@ -9,7 +9,7 @@ export default Factory.define<NewCancellation>(() => {
   const date = faker.date.soon()
   return {
     id: faker.datatype.uuid(),
-    date: DateFormats.formatApiDate(faker.date.soon()),
+    date: DateFormats.dateObjToIsoDate(faker.date.soon()),
     'date-day': date.getDate().toString(),
     'date-month': date.getMonth().toString(),
     'date-year': date.getFullYear().toString(),
