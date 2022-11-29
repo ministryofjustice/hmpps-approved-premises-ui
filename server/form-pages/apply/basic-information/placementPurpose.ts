@@ -26,7 +26,7 @@ export default class PlacementPurpose implements TasklistPage {
   purposes = placementPurposes
 
   constructor(
-    public _body: PlacementPurposeBody,
+    private _body: PlacementPurposeBody,
     private readonly _application: Application,
     private readonly previousPage: string,
   ) {
