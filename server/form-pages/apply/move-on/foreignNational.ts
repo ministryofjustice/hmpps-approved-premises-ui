@@ -1,9 +1,18 @@
+/* eslint-disable no-underscore-dangle */
 import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 import { sentenceCase } from '../../../utils/utils'
 
 import TasklistPage from '../../tasklistPage'
 import { DateFormats, dateIsBlank } from '../../../utils/dateUtils'
+import { Page } from '../../utils/decorators'
 
+type ForeignNationalBody =
+  | ({
+      response: 'yes'
+    } & ObjectWithDateParts<'date'>)
+  | { response: 'no' }
+
+@Page({ name: 'foreign-national', bodyProperties: ['response', 'date-year', 'date-month', 'date-day', 'date'] })
 export default class ForeignNational implements TasklistPage {
   name = 'foreign-national'
 
@@ -17,25 +26,25 @@ export default class ForeignNational implements TasklistPage {
   hint =
     'For any foreign nationals without recourse to public funds, you must notify the Home Office before you submit your application. You do not need to have any offers of accommodation yet.'
 
-  body:
-    | ({
-        response: 'yes'
-      } & ObjectWithDateParts<'date'>)
-    | { response: 'no' }
+  constructor(private _body: Partial<ForeignNationalBody>) {}
 
-  constructor(body: Record<string, unknown>) {
-    this.body = {
-      response: body.response as 'no',
+  public set body(value: Partial<ForeignNationalBody>) {
+    this._body = {
+      response: value.response as 'no',
     }
-    if (body.response === 'yes') {
-      this.body = {
-        response: body.response as 'yes',
-        'date-year': body['date-year'] as string,
-        'date-month': body['date-month'] as string,
-        'date-day': body['date-day'] as string,
-        date: DateFormats.convertDateAndTimeInputsToIsoString(body as ObjectWithDateParts<'date'>, 'date').date,
+    if (value.response === 'yes') {
+      this._body = {
+        response: value.response as 'yes',
+        'date-year': value['date-year'] as string,
+        'date-month': value['date-month'] as string,
+        'date-day': value['date-day'] as string,
+        date: DateFormats.convertDateAndTimeInputsToIsoString(value as ObjectWithDateParts<'date'>, 'date').date,
       }
     }
+  }
+
+  public get body(): ForeignNationalBody {
+    return this._body as ForeignNationalBody
   }
 
   previous() {

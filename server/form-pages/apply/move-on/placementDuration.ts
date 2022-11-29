@@ -2,18 +2,18 @@ import type { TaskListErrors } from '@approved-premises/ui'
 import { Application } from '@approved-premises/api'
 import { SessionDataError } from '../../../utils/errors'
 import { DateFormats } from '../../../utils/dateUtils'
+import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 
+type PlacementDurationBody = {
+  duration: number
+  durationDetail: string
+}
+
+@Page({ name: 'placement-duration', bodyProperties: ['duration', 'durationDetail'] })
 export default class PlacementDuration implements TasklistPage {
-  name = 'placement-duration'
-
   title = 'Placement duration and move on'
-
-  body: {
-    duration: number
-    durationDetail: string
-  }
 
   arrivalDate: Date = this.fetchArrivalDate()
 
@@ -22,12 +22,7 @@ export default class PlacementDuration implements TasklistPage {
     durationDetail: 'Provide any additional information',
   }
 
-  constructor(body: Record<string, unknown>, private readonly application: Application) {
-    this.body = {
-      duration: body.duration as number,
-      durationDetail: body.durationDetail as string,
-    }
-  }
+  constructor(public body: Partial<PlacementDurationBody>, private readonly application: Application) {}
 
   previous() {
     return ''
