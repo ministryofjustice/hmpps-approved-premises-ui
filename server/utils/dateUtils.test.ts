@@ -80,7 +80,7 @@ describe('DateFormats', () => {
         'date-day': '11',
       }
 
-      const result = DateFormats.convertDateAndTimeInputsToIsoString(obj, 'date')
+      const result = DateFormats.dateAndTimeInputsToIsoString(obj, 'date')
 
       expect(result.date).toEqual('2022-12-11')
     })
@@ -92,7 +92,7 @@ describe('DateFormats', () => {
         'date-day': '1',
       }
 
-      const result = DateFormats.convertDateAndTimeInputsToIsoString(obj, 'date')
+      const result = DateFormats.dateAndTimeInputsToIsoString(obj, 'date')
 
       expect(result.date).toEqual('2022-01-01')
     })
@@ -105,7 +105,7 @@ describe('DateFormats', () => {
         'date-time': '12:35',
       }
 
-      const result = DateFormats.convertDateAndTimeInputsToIsoString(obj, 'date')
+      const result = DateFormats.dateAndTimeInputsToIsoString(obj, 'date')
 
       expect(result.date).toEqual('2022-01-01T12:35:00.000Z')
     })
@@ -117,7 +117,7 @@ describe('DateFormats', () => {
         'date-day': '',
       }
 
-      const result = DateFormats.convertDateAndTimeInputsToIsoString(obj, 'date')
+      const result = DateFormats.dateAndTimeInputsToIsoString(obj, 'date')
 
       expect(result.date).toBeUndefined()
     })
@@ -129,7 +129,7 @@ describe('DateFormats', () => {
         'date-day': 'foo',
       }
 
-      const result = DateFormats.convertDateAndTimeInputsToIsoString(obj, 'date')
+      const result = DateFormats.dateAndTimeInputsToIsoString(obj, 'date')
 
       expect(result.date.toString()).toEqual('twothousandtwentytwo-20-oo')
     })

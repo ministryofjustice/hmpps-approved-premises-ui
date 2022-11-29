@@ -36,10 +36,8 @@ export default class PlacementDate implements TasklistPage {
         'startDate-year': value['startDate-year'] as string,
         'startDate-month': value['startDate-month'] as string,
         'startDate-day': value['startDate-day'] as string,
-        startDate: DateFormats.convertDateAndTimeInputsToIsoString(
-          value as ObjectWithDateParts<'startDate'>,
-          'startDate',
-        ).startDate,
+        startDate: DateFormats.dateAndTimeInputsToIsoString(value as ObjectWithDateParts<'startDate'>, 'startDate')
+          .startDate,
       }
     }
   }

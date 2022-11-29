@@ -34,7 +34,7 @@ export default class DeparturesController {
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, bookingId } = req.params
-      const { dateTime } = DateFormats.convertDateAndTimeInputsToIsoString(req.body, 'dateTime')
+      const { dateTime } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'dateTime')
 
       const departure = {
         ...req.body.departure,

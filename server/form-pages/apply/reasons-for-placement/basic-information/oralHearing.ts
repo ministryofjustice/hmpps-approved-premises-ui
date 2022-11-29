@@ -36,7 +36,7 @@ export default class OralHearing implements TasklistPage {
         'oralHearingDate-year': value['oralHearingDate-year'] as string,
         'oralHearingDate-month': value['oralHearingDate-month'] as string,
         'oralHearingDate-day': value['oralHearingDate-day'] as string,
-        oralHearingDate: DateFormats.convertDateAndTimeInputsToIsoString(
+        oralHearingDate: DateFormats.dateAndTimeInputsToIsoString(
           value as ObjectWithDateParts<'oralHearingDate'>,
           'oralHearingDate',
         ).oralHearingDate,

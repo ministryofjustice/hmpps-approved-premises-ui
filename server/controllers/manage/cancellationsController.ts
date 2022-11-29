@@ -38,7 +38,7 @@ export default class CancellationsController {
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, bookingId } = req.params
-      const { date } = DateFormats.convertDateAndTimeInputsToIsoString(req.body, 'date')
+      const { date } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'date')
 
       const cancellation = {
         ...req.body.cancellation,

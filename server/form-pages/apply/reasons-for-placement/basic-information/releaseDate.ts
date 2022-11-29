@@ -34,7 +34,7 @@ export default class ReleaseDate implements TasklistPage {
         'releaseDate-year': value['releaseDate-year'] as string,
         'releaseDate-month': value['releaseDate-month'] as string,
         'releaseDate-day': value['releaseDate-day'] as string,
-        releaseDate: DateFormats.convertDateAndTimeInputsToIsoString(
+        releaseDate: DateFormats.dateAndTimeInputsToIsoString(
           value as ObjectWithDateParts<'releaseDate'>,
           'releaseDate',
         ).releaseDate,
