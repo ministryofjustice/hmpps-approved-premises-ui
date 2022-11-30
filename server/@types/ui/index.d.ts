@@ -158,6 +158,7 @@ export interface ReferenceData {
   id: string
   name: string
   isActive: boolean
+  serviceScope: string
 }
 
 export interface PersonRisksUI {
