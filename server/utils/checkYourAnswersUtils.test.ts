@@ -1,7 +1,7 @@
 import { Task } from '@approved-premises/ui'
 import applicationFactory from '../testutils/factories/application'
 import paths from '../paths/apply'
-import { pages } from '../form-pages/apply'
+import Apply from '../form-pages/apply'
 
 import { checkYourAnswersSections, embeddedSummaryListItem } from './checkYourAnswersUtils'
 
@@ -30,7 +30,7 @@ jest.mock('../form-pages/apply', () => {
   }
 })
 
-pages['basic-information'] = {
+Apply.pages['basic-information'] = {
   first: FirstPage,
   second: SecondPage,
 }

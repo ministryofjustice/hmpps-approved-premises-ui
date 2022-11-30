@@ -1,13 +1,13 @@
 /* eslint-disable import/prefer-default-export */
 import { Application } from '@approved-premises/api'
 import { HtmlItem, SummaryListItem, Task, TextItem } from '@approved-premises/ui'
-import { sections } from '../form-pages/apply'
+import Apply from '../form-pages/apply'
 import paths from '../paths/apply'
 
 import { getResponseForPage } from './applicationUtils'
 
 const checkYourAnswersSections = (application: Application) => {
-  const nonCheckYourAnswersSections = sections.slice(0, -1)
+  const nonCheckYourAnswersSections = Apply.sections.slice(0, -1)
 
   return nonCheckYourAnswersSections.map(section => {
     return {

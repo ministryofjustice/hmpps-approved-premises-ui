@@ -2,7 +2,7 @@ import Page from '../page'
 import TasklistPage from '../../../server/form-pages/tasklistPage'
 import { Application } from '../../../server/@types/shared/models/Application'
 
-import { pages } from '../../../server/form-pages/apply'
+import Apply from '../../../server/form-pages/apply'
 
 export default class ApplyPage extends Page {
   tasklistPage: TasklistPage
@@ -11,7 +11,7 @@ export default class ApplyPage extends Page {
     super(title)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const Class = pages[taskName][pageName] as any
+    const Class = Apply.pages[taskName][pageName] as any
 
     this.tasklistPage = new Class(application.data?.[taskName]?.[pageName], application)
   }

@@ -6,7 +6,7 @@ import { PersonService } from '../../services'
 import { fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import { sections } from '../../form-pages/apply'
+import Apply from '../../form-pages/apply'
 import { getResponses } from '../../utils/applicationUtils'
 
 export default class ApplicationsController {
@@ -36,7 +36,7 @@ export default class ApplicationsController {
 
       const risks = await this.personService.getPersonRisks(req.user.token, application.person.crn)
 
-      res.render('applications/show', { application, risks, sections })
+      res.render('applications/show', { application, risks, sections: Apply.sections })
     }
   }
 

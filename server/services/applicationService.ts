@@ -6,7 +6,7 @@ import type TasklistPage from '../form-pages/tasklistPage'
 import type { RestClientBuilder, ApplicationClient } from '../data'
 import { UnknownPageError, ValidationError } from '../utils/errors'
 
-import { pages } from '../form-pages/apply'
+import Apply from '../form-pages/apply'
 import paths from '../paths/apply'
 import { DateFormats } from '../utils/dateUtils'
 import { getPage } from '../utils/applicationUtils'
@@ -77,7 +77,7 @@ export default class ApplicationService {
   }
 
   private firstPageForTask(taskName: string) {
-    return Object.keys(pages[taskName])[0]
+    return Object.keys(Apply.pages[taskName])[0]
   }
 
   private getApplicationFromSessionOrAPI(request: Request): Promise<Application> | Application {

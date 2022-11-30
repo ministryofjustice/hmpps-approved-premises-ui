@@ -8,7 +8,7 @@ import { ValidationError } from '../utils/errors'
 import ApplicationService from './applicationService'
 import ApplicationClient from '../data/applicationClient'
 
-import { pages } from '../form-pages/apply'
+import Apply from '../form-pages/apply'
 import paths from '../paths/apply'
 import applicationFactory from '../testutils/factories/application'
 import { DateFormats } from '../utils/dateUtils'
@@ -23,7 +23,7 @@ jest.mock('../form-pages/apply', () => {
   }
 })
 
-pages['my-task'] = {
+Apply.pages['my-task'] = {
   first: FirstPage,
   second: SecondPage,
 }

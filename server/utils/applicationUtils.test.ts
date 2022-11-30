@@ -2,7 +2,7 @@ import type { Task } from '@approved-premises/ui'
 
 import applicationFactory from '../testutils/factories/application'
 import paths from '../paths/apply'
-import { pages } from '../form-pages/apply'
+import Apply from '../form-pages/apply'
 
 import { taskLink, getTaskStatus, getCompleteSectionCount, getResponses, getPage } from './applicationUtils'
 import { UnknownPageError } from './errors'
@@ -16,7 +16,7 @@ jest.mock('../form-pages/apply', () => {
   }
 })
 
-pages['basic-information'] = {
+Apply.pages['basic-information'] = {
   first: FirstPage,
   second: SecondPage,
 }
