@@ -501,6 +501,11 @@ context('Apply', () => {
       // Given there are applications in the database
       const applicationSummaries = applicationSummaryFactory.buildList(5)
       cy.task('stubApplications', applicationSummaries)
+      // And there are risks in the database
+      const risks = risksFactory.buildList(5)
+      applications.forEach((stubbedApplication, i) => {
+        cy.task('stubPersonRisks', { person: stubbedApplication.person, risks: risks[i] })
+      })
 
       // When I click 'Back to dashboard'
       confirmationPage.clickBackToDashboard()

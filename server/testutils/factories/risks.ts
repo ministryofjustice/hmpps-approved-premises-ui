@@ -54,7 +54,7 @@ const numbersFactory: () => TierNumber = () => faker.helpers.arrayElement<TierNu
 
 export const riskTierLevel: RiskTierLevel = `${lettersFactory()}${numbersFactory()}`
 
-const tierEnvelopeFactory = Factory.define<PersonRisks['tier']>(() => ({
+export const tierEnvelopeFactory = Factory.define<PersonRisks['tier']>(() => ({
   status: faker.helpers.arrayElement(riskEnvelopeStatuses),
   value: {
     level: riskTierLevel,

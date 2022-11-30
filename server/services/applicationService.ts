@@ -3,7 +3,7 @@ import type { HtmlItem, TextItem, DataServices } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
 
 import type TasklistPage from '../form-pages/tasklistPage'
-import type { RestClientBuilder, ApplicationClient } from '../data'
+import type { RestClientBuilder, ApplicationClient, PersonClient } from '../data'
 import { UnknownPageError, ValidationError } from '../utils/errors'
 
 import Apply from '../form-pages/apply'
@@ -12,7 +12,10 @@ import { DateFormats } from '../utils/dateUtils'
 import { getPage } from '../utils/applicationUtils'
 
 export default class ApplicationService {
-  constructor(private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>) {}
+  constructor(
+    private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>,
+    private readonly personClientFactory: RestClientBuilder<PersonClient>,
+  ) {}
 
   async createApplication(token: string, crn: string): Promise<Application> {
     const applicationClient = this.applicationClientFactory(token)
@@ -116,18 +119,25 @@ export default class ApplicationService {
 
   async dashboardTableRows(token: string): Promise<(TextItem | HtmlItem)[][]> {
     const applicationClient = this.applicationClientFactory(token)
+    const personClient = this.personClientFactory(token)
 
-    const applicationSummaries = await applicationClient.all()
+    const applications = await applicationClient.all()
 
-    return applicationSummaries.map(application => {
-      return [
-        this.createNameAnchorElement(application.person.name, application.id),
-        this.textValue(application.person.crn),
-        this.createTierBadge(application.tier.level),
-        this.textValue(DateFormats.isoDateToUIDate(application.arrivalDate)),
-        this.createStatusTag(application.status),
-      ]
-    })
+    const tableRows = Promise.all(
+      applications.map(async application => {
+        const { tier } = await personClient.risks(application.person.crn)
+
+        return [
+          this.createNameAnchorElement(application.person.name, application.id),
+          this.textValue(application.person.crn),
+          this.createTierBadge(tier.value.level),
+          this.textValue(DateFormats.isoDateToUIDate(application.arrivalDate)),
+          this.createStatusTag(application.status),
+        ]
+      }),
+    )
+
+    return tableRows
   }
 
   private textValue(value: string) {
@@ -147,7 +157,6 @@ export default class ApplicationService {
   private createNameAnchorElement(name: string, applicationId: string) {
     return this.htmlValue(`<a href=${paths.applications.show({ id: applicationId })}>${name}</a>`)
   }
-
   private createStatusTag(value: string) {
     const colour = {
       'In progress': 'govuk-tag--blue',
