@@ -54,12 +54,10 @@ describe('ApplicationService', () => {
       const application = applicationFactory.withReleaseDate(arrivalDate).build({
         person: { name: 'A' },
       })
-
       const tier = tierEnvelopeFactory.build({ value: { level: 'A1' } })
-
       const token = 'SOME_TOKEN'
-      applicationClient.all.mockResolvedValue([application])
 
+      applicationClient.all.mockResolvedValue([application])
       personClient.risks.mockResolvedValueOnce({ tier } as PersonRisks)
       ;(getArrivalDate as jest.Mock).mockReturnValue(arrivalDate)
 
@@ -78,6 +76,9 @@ describe('ApplicationService', () => {
           },
           {
             text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
+          },
+          {
+            text: DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' }),
           },
         ],
       ])

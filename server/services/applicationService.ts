@@ -132,6 +132,7 @@ export default class ApplicationService {
           this.textValue(application.person.crn),
           this.createTierBadge(tier.value.level),
           this.textValue(DateFormats.isoDateToUIDate(getArrivalDate(application), { format: 'short' })),
+          this.textValue(DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' })),
         ]
       }),
     )
