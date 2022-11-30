@@ -47,3 +47,15 @@ export const getSection = <T>(section: T) => {
     tasks,
   }
 }
+
+export const getPagesForSections = <T>(sections: Array<T>) => {
+  const pages = {}
+  sections.forEach(sectionClass => {
+    const section = getSection(sectionClass)
+    const { tasks } = section
+    tasks.forEach(t => {
+      pages[t.id] = t.pages
+    })
+  })
+  return pages
+}
