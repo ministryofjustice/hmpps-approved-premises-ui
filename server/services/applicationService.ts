@@ -132,7 +132,6 @@ export default class ApplicationService {
           this.textValue(application.person.crn),
           this.createTierBadge(tier.value.level),
           this.textValue(DateFormats.isoDateToUIDate(application.arrivalDate)),
-          this.createStatusTag(application.status),
         ]
       }),
     )
@@ -156,15 +155,5 @@ export default class ApplicationService {
 
   private createNameAnchorElement(name: string, applicationId: string) {
     return this.htmlValue(`<a href=${paths.applications.show({ id: applicationId })}>${name}</a>`)
-  }
-  private createStatusTag(value: string) {
-    const colour = {
-      'In progress': 'govuk-tag--blue',
-      Submitted: '',
-      'Information Requested': 'govuk-tag--yellow',
-      Rejected: 'govuk-tag--red',
-    }[value]
-
-    return this.htmlValue(`<strong class="govuk-tag ${colour}">${value}</strong>`)
   }
 }

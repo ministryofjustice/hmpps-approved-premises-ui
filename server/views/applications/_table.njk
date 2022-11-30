@@ -1,8 +1,8 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 
 {% macro applicationsTable(title, rows) %}
-    {% if rows %}
-      {{
+  {% if rows %}
+    {{
         govukTable({
           caption: title,
           captionClasses: "govuk-table__caption--m",
@@ -19,13 +19,10 @@
             },
             {
               text: "Arrival date"
-            },
-              {
-              text: "Status"
             }
           ],
           rows: rows
         })
       }}
-    {% endif %}
+  {% endif %}
 {% endmacro %}

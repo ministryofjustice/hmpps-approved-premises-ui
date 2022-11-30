@@ -79,9 +79,6 @@ describe('ApplicationService', () => {
           {
             text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
           },
-          {
-            html: `<strong class="govuk-tag govuk-tag--yellow">${applicationSummaryB.status}</strong>`,
-          },
         ],
       ])
 
