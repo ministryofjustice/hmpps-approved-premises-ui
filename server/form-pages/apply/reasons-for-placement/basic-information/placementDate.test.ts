@@ -6,7 +6,7 @@ import applicationFactory from '../../../../testutils/factories/application'
 
 describe('PlacementDate', () => {
   const releaseDate = new Date().toISOString()
-  const application = applicationFactory.build({ data: { 'basic-information': { 'release-date': { releaseDate } } } })
+  const application = applicationFactory.withReleaseDate(releaseDate).build()
 
   describe('title', () => {
     it('set the title and body correctly', () => {

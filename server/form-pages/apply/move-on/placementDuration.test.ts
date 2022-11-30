@@ -10,15 +10,7 @@ describe('PlacementDuration', () => {
   let application: Application
 
   beforeEach(() => {
-    data = {
-      'basic-information': {
-        'placement-date': {
-          startDateSameAsReleaseDate: 'no',
-          startDate: '2022-11-11',
-        },
-      },
-    }
-    application = applicationFactory.build({ data })
+    application = applicationFactory.withReleaseDate().build()
   })
 
   describe('body', () => {
