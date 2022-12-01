@@ -1,6 +1,6 @@
 import type { Application } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
-import { Page } from '../../utils/decorators'
+import { Page } from '../../../utils/decorators'
 
 import { SessionDataError } from '../../../../utils/errors'
 import { retrieveQuestionResponseFromApplication } from '../../../../utils/utils'

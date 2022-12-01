@@ -1,5 +1,5 @@
 import type { TaskListErrors } from '@approved-premises/ui'
-import { Page } from '../../utils/decorators'
+import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 

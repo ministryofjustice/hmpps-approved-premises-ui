@@ -5,7 +5,7 @@ import { SessionDataError } from '../../../../utils/errors'
 import { retrieveQuestionResponseFromApplication } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
 import { SentenceTypesT } from './sentenceType'
-import { Page } from '../../utils/decorators'
+import { Page } from '../../../utils/decorators'
 
 const allReleaseTypes = {
   rotl: 'Release on Temporary License (ROTL)',
