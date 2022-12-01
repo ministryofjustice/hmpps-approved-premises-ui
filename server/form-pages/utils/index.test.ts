@@ -1,6 +1,12 @@
 /* eslint-disable max-classes-per-file */
 import 'reflect-metadata'
-import { applyYesOrNo, yesOrNoResponseWithDetail, yesNoOrDontKnowResponseWithDetail, getTask } from './index'
+import {
+  applyYesOrNo,
+  yesOrNoResponseWithDetail,
+  yesNoOrDontKnowResponseWithDetail,
+  getTask,
+  getSection,
+} from './index'
 
 describe('utils', () => {
   describe('applyYesOrNo', () => {
@@ -65,6 +71,31 @@ describe('utils', () => {
       Reflect.defineMetadata('task:pages', [Page1, Page2], Task)
 
       expect(getTask(Task)).toEqual({ id: 'slug', title: 'Name', pages: { 'Page 1': Page1, 'Page 2': Page2 } })
+    })
+  })
+
+  describe('getSection', () => {
+    it('fetches metadata for a specific section and tasks', () => {
+      class Section {}
+      class Task {}
+
+      class Page1 {}
+      class Page2 {}
+
+      Reflect.defineMetadata('page:name', 'Page 1', Page1)
+      Reflect.defineMetadata('page:name', 'Page 2', Page2)
+
+      Reflect.defineMetadata('task:slug', 'slug', Task)
+      Reflect.defineMetadata('task:name', 'Name', Task)
+      Reflect.defineMetadata('task:pages', [Page1, Page2], Task)
+
+      Reflect.defineMetadata('section:name', 'Section', Section)
+      Reflect.defineMetadata('section:tasks', [Task], Section)
+
+      expect(getSection(Section)).toEqual({
+        title: 'Section',
+        tasks: [getTask(Task)],
+      })
     })
   })
 })

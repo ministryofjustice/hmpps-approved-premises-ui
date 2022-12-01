@@ -1,4 +1,4 @@
-import type { YesOrNoWithDetail, YesOrNo } from '@approved-premises/ui'
+import type { YesOrNoWithDetail, YesOrNo, Task } from '@approved-premises/ui'
 
 export const applyYesOrNo = <K extends string>(key: K, body: Record<string, unknown>): YesOrNoWithDetail<K> => {
   return {
@@ -30,5 +30,20 @@ export const getTask = <T>(task: T) => {
     id: slug,
     title: name,
     pages: taskPages,
+  }
+}
+
+export const getSection = <T>(section: T) => {
+  const tasks: Array<Task> = []
+  const name = Reflect.getMetadata('section:name', section)
+  const taskClasses = Reflect.getMetadata('section:tasks', section)
+
+  taskClasses.forEach(<PageType>(task: PageType) => {
+    tasks.push(getTask(task))
+  })
+
+  return {
+    title: name,
+    tasks,
   }
 }
