@@ -9,7 +9,7 @@ import { fetchErrorsAndUserInput } from '../../utils/validation'
 import personFactory from '../../testutils/factories/person'
 import applicationFactory from '../../testutils/factories/application'
 import risksFactory from '../../testutils/factories/risks'
-import { sections } from '../../form-pages/apply'
+import Apply from '../../form-pages/apply'
 
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
@@ -86,7 +86,11 @@ describe('applicationsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('applications/show', { application, risks, sections })
+      expect(response.render).toHaveBeenCalledWith('applications/show', {
+        application,
+        risks,
+        sections: Apply.sections,
+      })
 
       expect(personService.getPersonRisks).toHaveBeenCalledWith(token, 'some-crn')
       expect(applicationService.findApplication).not.toHaveBeenCalledWith(token, application.id)
@@ -100,7 +104,11 @@ describe('applicationsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('applications/show', { application, risks, sections })
+      expect(response.render).toHaveBeenCalledWith('applications/show', {
+        application,
+        risks,
+        sections: Apply.sections,
+      })
 
       expect(personService.getPersonRisks).toHaveBeenCalledWith(token, 'some-crn')
       expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)

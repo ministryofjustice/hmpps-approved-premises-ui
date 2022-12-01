@@ -1,13 +1,13 @@
 import type { Task, FormSections, FormSection } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
 import paths from '../paths/apply'
-import { pages } from '../form-pages/apply'
+import Apply from '../form-pages/apply'
 import { UnknownPageError } from './errors'
 
 type PageResponse = Record<string, string | Array<Record<string, unknown>>>
 type ApplicationResponse = Record<string, Array<PageResponse>>
 
-const taskIds = Object.keys(pages)
+const taskIds = Object.keys(Apply.pages)
 
 const taskIsComplete = (task: Task, application: Application): boolean => {
   return application.data[task.id]
@@ -75,7 +75,7 @@ const getResponseForPage = (application: Application, taskName: string, pageName
 }
 
 const getPage = (taskName: string, pageName: string) => {
-  const pageList = pages[taskName]
+  const pageList = Apply.pages[taskName]
 
   const Page = pageList[pageName]
 
