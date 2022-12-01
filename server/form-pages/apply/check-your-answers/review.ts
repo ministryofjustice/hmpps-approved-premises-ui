@@ -10,7 +10,7 @@ export default class Review implements TasklistPage {
 
   title = 'Check your answers'
 
-  constructor(public body: { reviewed?: number }, readonly application: Application) {}
+  constructor(public body: { reviewed?: string }, readonly application: Application) {}
 
   previous() {
     return ''
