@@ -1,7 +1,7 @@
-import type { ApplicationSummary } from '../../../server/testutils/factories/applicationSummary'
 import Page from '../page'
 import paths from '../../../server/paths/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
+import { Application, PersonRisks } from '../../../server/@types/shared'
 
 export default class ListPage extends Page {
   constructor() {
@@ -14,17 +14,26 @@ export default class ListPage extends Page {
     return new ListPage()
   }
 
-  shouldShowApplicationSummaries(applicationSummaries: Array<ApplicationSummary>): void {
-    applicationSummaries.forEach(summary => {
-      cy.contains(summary.person.name)
-        .should('have.attr', 'href', paths.applications.show({ id: summary.id }))
+  shouldShowApplications(applications: Array<Application>, personRisks: PersonRisks[]): void {
+    applications.forEach((application, i) => {
+      cy.contains(application.person.name)
+        .should('have.attr', 'href', paths.applications.show({ id: application.id }))
         .parent()
         .parent()
         .within(() => {
-          cy.get('td').eq(0).contains(summary.person.crn)
-          cy.get('td').eq(1).contains(summary.tier.level)
-          cy.get('td').eq(2).contains(DateFormats.isoDateToUIDate(summary.arrivalDate))
-          cy.get('td').eq(3).contains(summary.status)
+          cy.get('th').eq(0).contains(application.person.name)
+          cy.get('td').eq(0).contains(application.person.crn)
+          cy.get('td').eq(1).contains(personRisks[i].tier.value.level)
+          cy.get('td')
+            .eq(2)
+            .contains(
+              DateFormats.isoDateToUIDate(application.data['basic-information']['release-date'].releaseDate, {
+                format: 'short',
+              }),
+            )
+          cy.get('td')
+            .eq(3)
+            .contains(DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' }))
         })
     })
   }

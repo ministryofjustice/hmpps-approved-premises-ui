@@ -2,17 +2,19 @@ import type { Request } from 'express'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import type { TaskListErrors, DataServices } from '@approved-premises/ui'
 
-import applicationSummaryFactory from '../testutils/factories/applicationSummary'
 import type TasklistPage from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
 import ApplicationService from './applicationService'
 import ApplicationClient from '../data/applicationClient'
+import PersonClient from '../data/personClient'
 
 import Apply from '../form-pages/apply'
 import paths from '../paths/apply'
 import applicationFactory from '../testutils/factories/application'
 import { DateFormats } from '../utils/dateUtils'
-import { getPage } from '../utils/applicationUtils'
+import { getArrivalDate, getPage } from '../utils/applicationUtils'
+import { tierEnvelopeFactory } from '../testutils/factories/risks'
+import { PersonRisks } from '../@types/shared'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -29,90 +31,62 @@ Apply.pages['my-task'] = {
 }
 
 jest.mock('../data/applicationClient.ts')
+jest.mock('../data/personClient.ts')
 jest.mock('../utils/applicationUtils')
 
 describe('ApplicationService', () => {
   const applicationClient = new ApplicationClient(null) as jest.Mocked<ApplicationClient>
   const applicationClientFactory = jest.fn()
+  const personClient = new PersonClient(null) as jest.Mocked<PersonClient>
+  const personClientFactory = jest.fn()
 
-  const service = new ApplicationService(applicationClientFactory)
+  const service = new ApplicationService(applicationClientFactory, personClientFactory)
 
   beforeEach(() => {
     jest.resetAllMocks()
     applicationClientFactory.mockReturnValue(applicationClient)
+    personClientFactory.mockReturnValue(personClient)
   })
 
   describe('getApplications', () => {
     it('calls the all method on the client and returns the data in the correct format for the table in the view', async () => {
-      const applicationSummaryA = applicationSummaryFactory.build({
-        arrivalDate: new Date(2022, 0, 1).toISOString(),
-        person: { name: 'A', crn: '1' },
-        currentLocation: 'Location 1',
-        daysSinceApplicationRecieved: 1,
-        id: 'some-id',
-        status: 'In progress',
-        tier: { lastUpdated: '', level: 'A1' },
+      const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
+      const application = applicationFactory.withReleaseDate(arrivalDate).build({
+        person: { name: 'A' },
       })
-      const applicationSummaryB = applicationSummaryFactory.build({
-        arrivalDate: new Date(2022, 1, 1).toISOString(),
-        person: { name: 'B', crn: '2' },
-        currentLocation: 'Location 2',
-        daysSinceApplicationRecieved: 2,
-        id: 'some-id',
-        status: 'Information Requested',
-        tier: { lastUpdated: '', level: 'B1' },
-      })
-
-      const applicationSummaries = [applicationSummaryA, applicationSummaryB]
+      const tier = tierEnvelopeFactory.build({ value: { level: 'A1' } })
       const token = 'SOME_TOKEN'
 
-      applicationClient.all.mockResolvedValue(applicationSummaries)
+      applicationClient.all.mockResolvedValue([application])
+      personClient.risks.mockResolvedValueOnce({ tier } as PersonRisks)
+      ;(getArrivalDate as jest.Mock).mockReturnValue(arrivalDate)
 
-      const result = await service.tableRows(token)
+      const result = await service.dashboardTableRows(token)
 
       expect(result).toEqual([
         [
           {
-            html: `<a href=${paths.applications.show({ id: applicationSummaryA.id })}>${
-              applicationSummaryA.person.name
-            }</a>`,
+            html: `<a href=${paths.applications.show({ id: application.id })}>${application.person.name}</a>`,
           },
           {
-            text: applicationSummaryA.person.crn,
+            text: application.person.crn,
           },
           {
-            html: `<span class="moj-badge moj-badge--red">${applicationSummaryA.tier.level}</span>`,
+            html: `<span class="moj-badge moj-badge--red">${tier.value.level}</span>`,
           },
           {
-            text: DateFormats.isoDateToUIDate(applicationSummaryA.arrivalDate),
+            text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
           },
           {
-            html: `<strong class="govuk-tag govuk-tag--blue">${applicationSummaryA.status}</strong>`,
-          },
-        ],
-        [
-          {
-            html: `<a href=${paths.applications.show({ id: applicationSummaryB.id })}>${
-              applicationSummaryB.person.name
-            }</a>`,
-          },
-          {
-            text: applicationSummaryB.person.crn,
-          },
-          {
-            html: `<span class="moj-badge moj-badge--purple">${applicationSummaryB.tier.level}</span>`,
-          },
-          {
-            text: DateFormats.isoDateToUIDate(applicationSummaryB.arrivalDate),
-          },
-          {
-            html: `<strong class="govuk-tag govuk-tag--yellow">${applicationSummaryB.status}</strong>`,
+            text: DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' }),
           },
         ],
       ])
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.all).toHaveBeenCalled()
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.risks).toHaveBeenCalledWith(application.person.crn)
     })
   })
 

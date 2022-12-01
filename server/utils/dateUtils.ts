@@ -10,7 +10,7 @@ export class DateFormats {
    * @param date JS Date object.
    * @returns the date in the format '2019-09-18'.
    */
-  static formatApiDate(date: Date) {
+  static dateObjToIsoDate(date: Date) {
     return formatISO(date, { representation: 'date' })
   }
 
@@ -18,7 +18,7 @@ export class DateFormats {
    * @param date JS Date object.
    * @returns the date in the format '2019-09-18T19:00:52Z'.
    */
-  static formatApiDateTime(date: Date) {
+  static dateObjToIsoDateTime(date: Date) {
     return formatISO(date)
   }
 
@@ -40,7 +40,7 @@ export class DateFormats {
    * @returns A Date object
    * @throws {InvalidDateStringError} If the string is not a valid ISO8601 datetime string
    */
-  static convertIsoToDateObj(date: string) {
+  static isoToDateObj(date: string) {
     const parsedDate = parseISO(date)
 
     if (Number.isNaN(parsedDate.getTime())) {
@@ -55,7 +55,7 @@ export class DateFormats {
    * @returns the date in the to be shown in the UI: "Thursday, 20 December 2012".
    */
   static isoDateToUIDate(isoDate: string, options: { format: 'short' | 'long' } = { format: 'long' }) {
-    return DateFormats.dateObjtoUIDate(DateFormats.convertIsoToDateObj(isoDate), options)
+    return DateFormats.dateObjtoUIDate(DateFormats.isoToDateObj(isoDate), options)
   }
 
   /**
@@ -63,7 +63,7 @@ export class DateFormats {
    * @returns the date in the to be shown in the UI: "Thursday, 20 December 2012".
    */
   static isoDateTimeToUIDateTime(isoDate: string) {
-    return format(DateFormats.convertIsoToDateObj(isoDate), 'd MMM y, HH:mm')
+    return format(DateFormats.isoToDateObj(isoDate), 'd MMM y, HH:mm')
   }
 
   /**
@@ -73,7 +73,7 @@ export class DateFormats {
    * @param key the key that prefixes each item in the dateInputObj, also the name of the property which the date object will be returned in the return value.
    * @returns an ISO8601 date string.
    */
-  static convertDateAndTimeInputsToIsoString<K extends string | number>(dateInputObj: ObjectWithDateParts<K>, key: K) {
+  static dateAndTimeInputsToIsoString<K extends string | number>(dateInputObj: ObjectWithDateParts<K>, key: K) {
     const day = `0${dateInputObj[`${key}-day`]}`.slice(-2)
     const month = `0${dateInputObj[`${key}-month`]}`.slice(-2)
     const year = dateInputObj[`${key}-year`]
@@ -98,10 +98,10 @@ export const dateAndTimeInputsAreValidDates = <K extends string | number>(
   dateInputObj: ObjectWithDateParts<K>,
   key: K,
 ): boolean => {
-  const dateString = DateFormats.convertDateAndTimeInputsToIsoString(dateInputObj, key)
+  const dateString = DateFormats.dateAndTimeInputsToIsoString(dateInputObj, key)
 
   try {
-    DateFormats.convertIsoToDateObj(dateString[key])
+    DateFormats.isoToDateObj(dateString[key])
   } catch (err) {
     if (err instanceof InvalidDateStringError) {
       return false

@@ -36,8 +36,8 @@ export default class ArrivalsController {
       const { premisesId, bookingId } = req.params
       const { body } = req
 
-      const { arrivalDate } = DateFormats.convertDateAndTimeInputsToIsoString(body, 'arrivalDate')
-      const { expectedDepartureDate } = DateFormats.convertDateAndTimeInputsToIsoString(body, 'expectedDepartureDate')
+      const { arrivalDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'arrivalDate')
+      const { expectedDepartureDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'expectedDepartureDate')
 
       const arrival: NewArrival = {
         keyWorkerStaffCode: body.arrival.keyWorkerStaffCode,

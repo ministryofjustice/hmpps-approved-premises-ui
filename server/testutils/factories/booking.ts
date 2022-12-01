@@ -8,10 +8,11 @@ import departureFactory from './departure'
 import personFactory from './person'
 import { DateFormats } from '../../utils/dateUtils'
 
-const today = DateFormats.formatApiDate(startOfToday())
-const soon = () => DateFormats.formatApiDate(faker.date.soon(5, addDays(new Date(new Date().setHours(0, 0, 0, 0)), 1)))
-const past = () => DateFormats.formatApiDate(faker.date.past())
-const future = () => DateFormats.formatApiDate(faker.date.future())
+const today = DateFormats.dateObjToIsoDate(startOfToday())
+const soon = () =>
+  DateFormats.dateObjToIsoDate(faker.date.soon(5, addDays(new Date(new Date().setHours(0, 0, 0, 0)), 1)))
+const past = () => DateFormats.dateObjToIsoDate(faker.date.past())
+const future = () => DateFormats.dateObjToIsoDate(faker.date.future())
 class BookingFactory extends Factory<Booking> {
   arrivingToday() {
     return this.params({
@@ -86,8 +87,8 @@ class BookingFactory extends Factory<Booking> {
 
 export default BookingFactory.define(() => ({
   person: personFactory.build(),
-  arrivalDate: DateFormats.formatApiDate(faker.date.soon()),
-  departureDate: DateFormats.formatApiDate(faker.date.future()),
+  arrivalDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
+  departureDate: DateFormats.dateObjToIsoDate(faker.date.future()),
   name: `${faker.name.firstName()} ${faker.name.lastName()}`,
   id: faker.datatype.uuid(),
   status: 'awaiting-arrival' as const,

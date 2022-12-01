@@ -39,16 +39,16 @@ describe('applicationsController', () => {
 
   describe('list', () => {
     it('renders the list view', async () => {
-      applicationService.tableRows.mockResolvedValue([])
+      applicationService.dashboardTableRows.mockResolvedValue([])
       const requestHandler = applicationsController.index()
 
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('applications/list', {
         pageHeading: 'Approved Premises applications',
-        applicationSummaries: [],
+        applicationTableRows: [],
       })
-      expect(applicationService.tableRows).toHaveBeenCalled()
+      expect(applicationService.dashboardTableRows).toHaveBeenCalled()
     })
   })
 

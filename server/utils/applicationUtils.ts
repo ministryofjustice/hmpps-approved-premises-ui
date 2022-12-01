@@ -2,7 +2,7 @@ import type { Task, FormSections, FormSection } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
 import paths from '../paths/apply'
 import Apply from '../form-pages/apply'
-import { UnknownPageError } from './errors'
+import { SessionDataError, UnknownPageError } from './errors'
 
 type PageResponse = Record<string, string | Array<Record<string, unknown>>>
 type ApplicationResponse = Record<string, Array<PageResponse>>
@@ -86,4 +86,42 @@ const getPage = (taskName: string, pageName: string) => {
   return Page
 }
 
-export { getTaskStatus, taskLink, getCompleteSectionCount, getResponses, getResponseForPage, getPage }
+const getArrivalDate = (application: Application): string | null => {
+  const basicInformation = application.data['basic-information']
+
+  if (!basicInformation) throw new SessionDataError('No basic information')
+
+  const {
+    knowReleaseDate = '',
+    startDateSameAsReleaseDate = '',
+    releaseDate = '',
+    startDate = '',
+  } = {
+    ...basicInformation['release-date'],
+    ...basicInformation['placement-date'],
+  }
+
+  if (!knowReleaseDate || knowReleaseDate === 'no') {
+    throw new SessionDataError('No known release date')
+  }
+
+  if (knowReleaseDate === 'yes' && startDateSameAsReleaseDate === 'yes') {
+    if (!releaseDate) {
+      throw new SessionDataError('No release date')
+    }
+
+    return releaseDate
+  }
+
+  if (startDateSameAsReleaseDate === 'no') {
+    if (!startDate) {
+      throw new SessionDataError('No start date')
+    }
+
+    return startDate
+  }
+
+  return null
+}
+
+export { getTaskStatus, taskLink, getCompleteSectionCount, getResponses, getResponseForPage, getPage, getArrivalDate }

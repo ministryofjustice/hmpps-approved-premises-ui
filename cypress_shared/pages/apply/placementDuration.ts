@@ -20,7 +20,7 @@ export default class PlacementDurationPage extends ApplyPage {
   }
 
   expectedDepartureDateShouldBeCompleted(releaseDate: string) {
-    const departureDate = DateFormats.dateObjtoUIDate(add(DateFormats.convertIsoToDateObj(releaseDate), { weeks: 10 }))
+    const departureDate = DateFormats.dateObjtoUIDate(add(DateFormats.isoToDateObj(releaseDate), { weeks: 10 }))
     cy.get('span[data-departure-date]').contains(departureDate)
   }
 }

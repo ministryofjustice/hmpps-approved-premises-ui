@@ -30,8 +30,8 @@ export default class LostBedsController {
     return async (req: Request, res: Response) => {
       const { premisesId } = req.params
 
-      const { startDate } = DateFormats.convertDateAndTimeInputsToIsoString(req.body, 'startDate')
-      const { endDate } = DateFormats.convertDateAndTimeInputsToIsoString(req.body, 'endDate')
+      const { startDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'startDate')
+      const { endDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'endDate')
 
       const lostBed: NewLostBed = { ...req.body.lostBed, startDate, endDate }
 

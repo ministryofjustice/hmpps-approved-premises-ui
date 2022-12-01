@@ -9,7 +9,7 @@ import {
 
 import { DateFormats } from '../../../server/utils/dateUtils'
 
-const extensionDate = DateFormats.formatApiDate(new Date(2050, 0, 1))
+const extensionDate = DateFormats.dateObjToIsoDate(new Date(2050, 0, 1))
 
 Given('I extend that booking', () => {
   cy.get('@bookingConfirmationPage').then((bookingConfirmationPage: BookingConfirmationPage) => {
