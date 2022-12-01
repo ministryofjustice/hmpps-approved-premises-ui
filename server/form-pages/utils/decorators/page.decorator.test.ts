@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { Application } from '@approved-premises/api'
 import Page from './page.decorator'

@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import 'reflect-metadata'
 // Use a wildcard import to allow us to use jest.spyOn on functions within this module
 import * as utils from './index'
