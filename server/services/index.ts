@@ -33,7 +33,7 @@ export const services = () => {
   const departureService = new DepartureService(bookingClientBuilder, referenceDataClientBuilder)
   const cancellationService = new CancellationService(bookingClientBuilder, referenceDataClientBuilder)
   const lostBedService = new LostBedService(lostBedClientBuilder, referenceDataClientBuilder)
-  const applicationService = new ApplicationService(applicationClientBuilder)
+  const applicationService = new ApplicationService(applicationClientBuilder, personClient)
 
   return {
     userService,

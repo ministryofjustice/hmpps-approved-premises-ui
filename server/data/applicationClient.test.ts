@@ -2,7 +2,6 @@ import nock from 'nock'
 
 import ApplicationClient from './applicationClient'
 import config from '../config'
-import applicationSummaryFactory from '../testutils/factories/applicationSummary'
 import applicationFactory from '../testutils/factories/application'
 import paths from '../paths/api'
 
@@ -77,7 +76,7 @@ describe('ApplicationClient', () => {
 
   describe('all', () => {
     it('should get all previous applications', async () => {
-      const previousApplications = applicationSummaryFactory.build()
+      const previousApplications = applicationFactory.build()
 
       fakeApprovedPremisesApi
         .get(paths.applications.index.pattern)

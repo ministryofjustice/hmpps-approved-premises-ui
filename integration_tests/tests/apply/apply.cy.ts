@@ -43,7 +43,6 @@ import RelocationRegionPage from '../../../cypress_shared/pages/apply/relocation
 import PlansInPlacePage from '../../../cypress_shared/pages/apply/plansInPlace'
 import TypeOfAccomodationPage from '../../../cypress_shared/pages/apply/typeOfAccommodation'
 import CaseNotesPage from '../../../cypress_shared/pages/apply/caseNotes'
-import applicationSummaryFactory from '../../../server/testutils/factories/applicationSummary'
 import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
 
 context('Apply', () => {
@@ -499,8 +498,14 @@ context('Apply', () => {
       const confirmationPage = new SubmissionConfirmation()
 
       // Given there are applications in the database
-      const applicationSummaries = applicationSummaryFactory.buildList(5)
-      cy.task('stubApplications', applicationSummaries)
+      const applications = applicationFactory.withReleaseDate().buildList(5)
+      cy.task('stubApplications', applications)
+
+      // And there are risks in the database
+      const risks = risksFactory.buildList(5)
+      applications.forEach((stubbedApplication, i) => {
+        cy.task('stubPersonRisks', { person: stubbedApplication.person, risks: risks[i] })
+      })
 
       // When I click 'Back to dashboard'
       confirmationPage.clickBackToDashboard()

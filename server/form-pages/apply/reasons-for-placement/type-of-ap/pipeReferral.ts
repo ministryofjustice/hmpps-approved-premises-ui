@@ -35,7 +35,7 @@ export default class PipeReferral implements TasklistPage {
         'opdPathwayDate-year': value['opdPathwayDate-year'] as string,
         'opdPathwayDate-month': value['opdPathwayDate-month'] as string,
         'opdPathwayDate-day': value['opdPathwayDate-day'] as string,
-        opdPathwayDate: DateFormats.convertDateAndTimeInputsToIsoString(
+        opdPathwayDate: DateFormats.dateAndTimeInputsToIsoString(
           value as ObjectWithDateParts<'opdPathwayDate'>,
           'opdPathwayDate',
         ).opdPathwayDate,

@@ -27,7 +27,7 @@ export default class BookingExtensionsController {
 
       const bookingExtension: NewExtension = {
         ...req.body,
-        ...DateFormats.convertDateAndTimeInputsToIsoString(req.body, 'newDepartureDate'),
+        ...DateFormats.dateAndTimeInputsToIsoString(req.body, 'newDepartureDate'),
       }
 
       try {

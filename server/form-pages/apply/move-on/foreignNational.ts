@@ -38,7 +38,7 @@ export default class ForeignNational implements TasklistPage {
         'date-year': value['date-year'] as string,
         'date-month': value['date-month'] as string,
         'date-day': value['date-day'] as string,
-        date: DateFormats.convertDateAndTimeInputsToIsoString(value as ObjectWithDateParts<'date'>, 'date').date,
+        date: DateFormats.dateAndTimeInputsToIsoString(value as ObjectWithDateParts<'date'>, 'date').date,
       }
     }
   }

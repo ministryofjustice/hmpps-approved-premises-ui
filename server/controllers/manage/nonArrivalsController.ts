@@ -30,7 +30,7 @@ export default class NonArrivalsController {
     return async (req: Request, res: Response) => {
       const { premisesId, bookingId } = req.params
 
-      const { nonArrivalDate } = DateFormats.convertDateAndTimeInputsToIsoString(req.body, 'nonArrivalDate')
+      const { nonArrivalDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'nonArrivalDate')
 
       const nonArrival: Omit<Nonarrival, 'id' | 'bookingId'> = {
         ...req.body.nonArrival,
