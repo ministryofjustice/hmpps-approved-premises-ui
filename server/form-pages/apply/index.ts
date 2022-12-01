@@ -2,17 +2,20 @@
 
 import type { TaskNames, FormSections } from '@approved-premises/ui'
 
-import basicInfomationPages, { BasicInformation } from './basic-information'
-import typeOfApPages, { TypeOfAp } from './type-of-ap'
-import riskAndNeedPages, { RiskManagement } from './risk-management-features'
-import prisonInformationPages, { PrisonInformation } from './prison-information'
-import locationFactorPages, { LocationFactors } from './location-factors'
-import accessAndHealthcarePages, { AccessAndHealthcare } from './access-and-healthcare'
-import furtherConsiderationsPages, { FurtherConsiderations } from './further-considerations'
-import moveOnPages, { MoveOn } from './move-on'
-import checkYourAnswersPages, { CheckYourAnswers } from './check-your-answers'
+import basicInfomationPages from './reasons-for-placement/basic-information'
+import typeOfApPages from './reasons-for-placement/type-of-ap'
+import riskAndNeedPages from './risk-and-need-factors/risk-management-features'
+import prisonInformationPages from './risk-and-need-factors/prison-information'
+import locationFactorPages from './risk-and-need-factors/location-factors'
+import accessAndHealthcarePages from './risk-and-need-factors/access-and-healthcare'
+import furtherConsiderationsPages from './risk-and-need-factors/further-considerations'
 
-import { getTask } from '../utils'
+import checkYourAnswersPages, { CheckYourAnswers } from './check-your-answers'
+import moveOnPages, { MoveOn } from './move-on'
+import ReasonsForPlacement from './reasons-for-placement'
+import RiskAndNeedFactors from './risk-and-need-factors'
+
+import { getSection } from '../utils'
 
 const pages: {
   [key in TaskNames]: Record<string, unknown>
@@ -29,28 +32,10 @@ const pages: {
 }
 
 const sections: FormSections = [
-  {
-    title: 'Reasons for placement',
-    tasks: [getTask(BasicInformation), getTask(TypeOfAp)],
-  },
-  {
-    title: 'Risk and need factors',
-    tasks: [
-      getTask(RiskManagement),
-      getTask(PrisonInformation),
-      getTask(LocationFactors),
-      getTask(AccessAndHealthcare),
-      getTask(FurtherConsiderations),
-    ],
-  },
-  {
-    title: 'Considerations for when the placement ends',
-    tasks: [getTask(MoveOn)],
-  },
-  {
-    title: 'Check your answers',
-    tasks: [getTask(CheckYourAnswers)],
-  },
+  getSection(ReasonsForPlacement),
+  getSection(RiskAndNeedFactors),
+  getSection(MoveOn),
+  getSection(CheckYourAnswers),
 ]
 
 export { pages, sections }

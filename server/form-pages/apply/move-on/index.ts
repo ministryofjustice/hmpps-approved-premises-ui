@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { Task } from '../../utils/decorators'
+import { Task, Section } from '../../utils/decorators'
 
 import RelocationRegion from './relocationRegion'
 import PlacementDuration from './placementDuration'
@@ -21,5 +21,9 @@ export default pages
   slug: 'move-on',
   name: 'Add move on information',
   pages: [PlacementDuration, RelocationRegion, PlansInPlace, TypeOfAccommodation, ForeignNational],
+})
+@Section({
+  name: 'Considerations for when the placement ends',
+  tasks: [MoveOn],
 })
 export class MoveOn {}
