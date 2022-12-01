@@ -3,12 +3,6 @@
 import Review from './review'
 import { Task, Section } from '../../utils/decorators'
 
-const pages = {
-  review: Review,
-}
-
-export default pages
-
 @Task({
   name: 'Check your answers',
   slug: 'check-your-answers',
@@ -18,4 +12,4 @@ export default pages
   name: 'Check your answers',
   tasks: [CheckYourAnswers],
 })
-export class CheckYourAnswers {}
+export default class CheckYourAnswers {}
