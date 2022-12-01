@@ -114,7 +114,7 @@ describe('PlacementPurpose', () => {
 
       expect(page.response()).toEqual({
         [page.title]:
-          'Public protection, Prevent Contact, Help individual readjust to life outside custody, Provide drug or alcohol monitoring, Prevent self harm or suicide',
+          'Public protection, Prevent contact, Help individual readjust to life outside custody, Provide drug or alcohol monitoring, Prevent self harm or suicide',
       })
     })
 
@@ -142,7 +142,7 @@ describe('PlacementPurpose', () => {
 
       expect(items).toEqual([
         { checked: false, text: 'Public protection', value: 'publicProtection' },
-        { checked: false, text: 'Prevent Contact', value: 'preventContact' },
+        { checked: false, text: 'Prevent contact', value: 'preventContact' },
         { checked: false, text: 'Help individual readjust to life outside custody', value: 'readjust' },
         { checked: false, text: 'Provide drug or alcohol monitoring', value: 'drugAlcoholMonitoring' },
         { checked: false, text: 'Prevent self harm or suicide', value: 'preventSelfHarm' },
