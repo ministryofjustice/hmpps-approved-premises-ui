@@ -1,4 +1,13 @@
-import { RoshRisks, RiskTier, FlagsEnvelope, Mappa, Application, Assessment, Person } from '@approved-premises/api'
+import {
+  RoshRisks,
+  RiskTier,
+  FlagsEnvelope,
+  Mappa,
+  Application,
+  Assessment,
+  Person,
+  OASysSection,
+} from '@approved-premises/api'
 
 interface TasklistPage {
   body: Record<string, unknown>
@@ -178,6 +187,7 @@ export type DataServices = {
   personService: {
     getPrisonCaseNotes: (token: string, crn: string) => Promise<Array<PrisonCaseNote>>
     getAdjudications: (token: string, crn: string) => Promise<Array<Adjudication>>
+    getOasysSelections: (token: string, crn: string) => Promise<Array<OASysSection>>
   }
 }
 
