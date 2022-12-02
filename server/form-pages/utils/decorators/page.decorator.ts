@@ -36,6 +36,7 @@ const Page = (options: { bodyProperties: Array<string>; name: string }) => {
     }
 
     Reflect.defineMetadata('page:name', options.name, TaskListPage)
+    Reflect.defineMetadata('page:className', constructor.name, TaskListPage)
     Reflect.defineMetadata('page:bodyProperties', options.bodyProperties, TaskListPage)
 
     return TaskListPage

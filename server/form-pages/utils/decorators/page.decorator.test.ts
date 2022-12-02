@@ -24,9 +24,11 @@ describe('tasklistPageDecorator', () => {
 
     it('sets metadata for the class', () => {
       const name = Reflect.getMetadata('page:name', SimpleClass)
+      const className = Reflect.getMetadata('page:className', SimpleClass)
       const bodyProperties = Reflect.getMetadata('page:bodyProperties', SimpleClass)
 
       expect(name).toEqual('Some Name')
+      expect(className).toEqual('SimpleClass')
       expect(bodyProperties).toEqual(['foo', 'bar', 'baz'])
     })
   })

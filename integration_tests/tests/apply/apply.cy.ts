@@ -486,6 +486,10 @@ context('Apply', () => {
         const requestBody = JSON.parse(requests[29].body)
 
         expect(requestBody.data).to.deep.equal(applicationData)
+
+        cy.task('validateBodyAgainstApplySchema', requestBody.data).then(result => {
+          expect(result).to.equal(true)
+        })
       })
 
       cy.task('verifyApplicationSubmit', application.id).then(requests => {

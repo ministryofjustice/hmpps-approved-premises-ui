@@ -7,7 +7,7 @@ describe('Review', () => {
   const application = applicationFactory.build({})
 
   const body = {
-    reviewed: 1,
+    reviewed: '1',
   }
 
   describe('body', () => {

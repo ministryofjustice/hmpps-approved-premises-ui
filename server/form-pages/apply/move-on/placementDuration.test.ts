@@ -15,7 +15,7 @@ describe('PlacementDuration', () => {
 
   describe('body', () => {
     it('should set the body', () => {
-      const body = { duration: 4, durationDetail: 'Some detail' }
+      const body = { duration: '4', durationDetail: 'Some detail' }
       const page = new PlacementDuration(body, application)
 
       expect(page.body).toEqual(body)
@@ -115,7 +115,7 @@ describe('PlacementDuration', () => {
 
   describe('response', () => {
     it('should return a translated version of the response', () => {
-      const page = new PlacementDuration({ duration: 4, durationDetail: 'Some detail' }, application)
+      const page = new PlacementDuration({ duration: '4', durationDetail: 'Some detail' }, application)
 
       expect(page.response()).toEqual({
         'What duration of placement do you recommend?': '4 weeks',
@@ -124,7 +124,7 @@ describe('PlacementDuration', () => {
     })
 
     it("should not include the detail if it's blank", () => {
-      const page = new PlacementDuration({ duration: 4, durationDetail: '' }, application)
+      const page = new PlacementDuration({ duration: '4', durationDetail: '' }, application)
 
       expect(page.response()).toEqual({ 'What duration of placement do you recommend?': '4 weeks' })
     })

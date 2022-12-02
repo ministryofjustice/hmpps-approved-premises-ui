@@ -7,7 +7,7 @@ import { Page } from '../../utils/decorators'
 import TasklistPage from '../../tasklistPage'
 
 type PlacementDurationBody = {
-  duration: number
+  duration: string
   durationDetail: string
 }
 

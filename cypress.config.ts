@@ -13,6 +13,8 @@ import lostBed from './integration_tests/mockApis/lostBed'
 import person from './integration_tests/mockApis/person'
 import applications from './integration_tests/mockApis/applications'
 
+import schemaValidator from './integration_tests/tasks/schemaValidator'
+
 export default defineConfig({
   chromeWebSecurity: false,
   fixturesFolder: 'integration_tests/fixtures',
@@ -40,6 +42,7 @@ export default defineConfig({
         ...lostBed,
         ...person,
         ...applications,
+        ...schemaValidator,
       })
     },
     baseUrl: 'http://localhost:3007',
