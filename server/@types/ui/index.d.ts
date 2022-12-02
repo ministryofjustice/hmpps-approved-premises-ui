@@ -54,14 +54,6 @@ export type FormSections = Array<FormSection>
 
 export type FormPages = { [key in TaskNames]: Record<string, unknown> }
 
-export interface Form {
-  pages: FormPages
-  sections: Array<{
-    title: string
-    tasks: Array<Task>
-  }>
-}
-
 export interface HtmlAttributes {
   [key: string]: string
 }
