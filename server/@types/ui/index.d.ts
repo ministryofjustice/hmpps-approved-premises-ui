@@ -180,3 +180,9 @@ export type DataServices = {
     getAdjudications: (token: string, crn: string) => Promise<Adjudication[]>
   }
 }
+
+export interface GroupedAssessment {
+  completed: Array<Assessment>
+  requestedFurtherInformation: Array<Assessment>
+  awaiting: Array<Assessment>
+}
