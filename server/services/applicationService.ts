@@ -5,6 +5,7 @@ import type { ActiveOffence, Application } from '@approved-premises/api'
 import type TasklistPage from '../form-pages/tasklistPage'
 import type { RestClientBuilder, ApplicationClient, PersonClient } from '../data'
 import { UnknownPageError, ValidationError } from '../utils/errors'
+import { tierBadge } from '../utils/personUtils'
 
 import Apply from '../form-pages/apply'
 import paths from '../paths/apply'
@@ -130,7 +131,7 @@ export default class ApplicationService {
         return [
           this.createNameAnchorElement(application.person.name, application.id),
           this.textValue(application.person.crn),
-          this.createTierBadge(tier.value.level),
+          this.htmlValue(tierBadge(tier.value.level)),
           this.textValue(DateFormats.isoDateToUIDate(getArrivalDate(application), { format: 'short' })),
           this.textValue(DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' })),
         ]
@@ -146,12 +147,6 @@ export default class ApplicationService {
 
   private htmlValue(value: string) {
     return { html: value }
-  }
-
-  private createTierBadge(tier: string) {
-    const colour = { A: 'moj-badge--red', B: 'moj-badge--purple' }[tier[0]]
-
-    return this.htmlValue(`<span class="moj-badge ${colour}">${tier}</span>`)
   }
 
   private createNameAnchorElement(name: string, applicationId: string) {
