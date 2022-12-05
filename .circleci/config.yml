@@ -108,14 +108,14 @@ workflows:
       - request-preprod-approval:
           type: approval
           requires:
-           - deploy_dev
-           - e2e_environment_test
+            - deploy_dev
+            - e2e_environment_test
       - hmpps/deploy_env:
           name: deploy_preprod
-          env: "preprod"
+          env: 'preprod'
           context:
             - hmpps-common-vars
-            - approved-premises-ui-preprod
+            - hmpps-approved-premises-ui-preprod
           requires:
             - request-preprod-approval
 
