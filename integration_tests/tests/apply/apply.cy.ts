@@ -32,6 +32,7 @@ import TypeOfConvictedOffence from '../../../cypress_shared/pages/apply/typeOfCo
 import Page from '../../../cypress_shared/pages/page'
 import applicationFactory from '../../../server/testutils/factories/application'
 import prisonCaseNotesFactory from '../../../server/testutils/factories/prisonCaseNotes'
+import oasysSectionFactory from '../../../server/testutils/factories/oasysSection'
 import personFactory from '../../../server/testutils/factories/person'
 import activeOffenceFactory from '../../../server/testutils/factories/activeOffence'
 import risksFactory from '../../../server/testutils/factories/risks'
@@ -46,6 +47,7 @@ import PlansInPlacePage from '../../../cypress_shared/pages/apply/plansInPlace'
 import TypeOfAccomodationPage from '../../../cypress_shared/pages/apply/typeOfAccommodation'
 import CaseNotesPage from '../../../cypress_shared/pages/apply/caseNotes'
 import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
+import OptionalOasysSectionsPage from '../../../cypress_shared/pages/apply/optionalOasysSections'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -287,6 +289,49 @@ context('Apply', () => {
 
       // Then the Type of AP task should show as completed
       tasklistPage.shouldShowTaskStatus('type-of-ap', 'Completed')
+
+      // And the OASys import task should show as not started
+      tasklistPage.shouldShowTaskStatus('oasys-import', 'Not started')
+
+      // Given there are OASys sections in the db
+      const oasysSectionA = oasysSectionFactory.needsLinkedToReoffending().build({
+        section: 1,
+        name: 'accommodation',
+      })
+      const oasysSectionB = oasysSectionFactory.needsLinkedToReoffending().build({
+        section: 2,
+        name: 'relationships',
+        linkedToHarm: false,
+        linkedToReOffending: true,
+      })
+      const oasysSectionC = oasysSectionFactory.needsNotLinkedToReoffending().build({
+        section: 3,
+        name: 'emotional',
+        linkedToHarm: false,
+        linkedToReOffending: false,
+      })
+      const oasysSectionD = oasysSectionFactory.needsNotLinkedToReoffending().build({
+        section: 4,
+        name: 'thinking',
+        linkedToHarm: false,
+        linkedToReOffending: false,
+      })
+      const oasysSectionsLinkedToReoffending = [oasysSectionA, oasysSectionB]
+      const otherOasysSections = [oasysSectionC, oasysSectionD]
+      const oasysSections = [...oasysSectionsLinkedToReoffending, ...otherOasysSections]
+      cy.task('stubOasysSelection', { person, oasysSections })
+
+      // Given I click the 'Import Oasys' task
+      cy.get('[data-cy-task-name="oasys-import"]').click()
+      const optionalOasysImportPage = new OptionalOasysSectionsPage(application)
+
+      // When I complete the form
+      optionalOasysImportPage.completeForm(oasysSectionsLinkedToReoffending, otherOasysSections)
+      optionalOasysImportPage.clickSubmit()
+
+      // Then I should be taken back to the tasklist
+      tasklistPage.shouldShowTaskStatus('oasys-import', 'Completed')
+
       // And the Risk Management Features task should show as not started
       tasklistPage.shouldShowTaskStatus('risk-management-features', 'Not started')
 
@@ -533,6 +578,7 @@ context('Apply', () => {
       checkYourAnswersPage.shouldShowPersonInformation(person)
       checkYourAnswersPage.shouldShowBasicInformationAnswers(basicInformationPages)
       checkYourAnswersPage.shouldShowTypeOfApAnswers(typeOfApPages)
+      checkYourAnswersPage.shouldShowOptionalOasysSectionsAnswers([optionalOasysImportPage])
       checkYourAnswersPage.shouldShowRiskManagementAnswers(riskManagementPages)
       checkYourAnswersPage.shouldShowCaseNotes(selectedPrisonCaseNotes)
       checkYourAnswersPage.shouldShowAdjudications(adjudications)
@@ -558,8 +604,8 @@ context('Apply', () => {
 
       // Then the application should be submitted to the API
       cy.task('verifyApplicationUpdate', application.id).then(requests => {
-        expect(requests).to.have.length(30)
-        const requestBody = JSON.parse(requests[29].body)
+        expect(requests).to.have.length(31)
+        const requestBody = JSON.parse(requests[30].body)
 
         expect(requestBody.data).to.deep.equal(applicationData)
 

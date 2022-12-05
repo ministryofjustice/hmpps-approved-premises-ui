@@ -34,6 +34,10 @@ export default class CheckYourAnswersPage extends Page {
     this.shouldShowAnswersForTask('type-of-ap', pages)
   }
 
+  shouldShowOptionalOasysSectionsAnswers(pages: Array<ApplyPage>) {
+    this.shouldShowAnswersForTask('oasys-import', pages)
+  }
+
   shouldShowRiskManagementAnswers(pages: Array<ApplyPage>) {
     this.shouldShowAnswersForTask('risk-management-features', pages)
   }
