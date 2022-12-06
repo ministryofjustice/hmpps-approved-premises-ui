@@ -7,6 +7,7 @@ import personFactory from '../testutils/factories/person'
 import prisonCaseNotesFactory from '../testutils/factories/prisonCaseNotes'
 import paths from '../paths/api'
 import adjudicationsFactory from '../testutils/factories/adjudication'
+import activeOffenceFactory from '../testutils/factories/activeOffence'
 
 describe('PersonClient', () => {
   let fakeApprovedPremisesApi: nock.Scope
@@ -92,6 +93,23 @@ describe('PersonClient', () => {
       const result = await personClient.adjudications(crn)
 
       expect(result).toEqual(adjudications)
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
+
+  describe('offences', () => {
+    it('should return the offences for a person', async () => {
+      const crn = 'crn'
+      const offences = activeOffenceFactory.buildList(5)
+
+      fakeApprovedPremisesApi
+        .get(paths.people.offences({ crn }))
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(201, offences)
+
+      const result = await personClient.offences(crn)
+
+      expect(result).toEqual(offences)
       expect(nock.isDone()).toBeTruthy()
     })
   })

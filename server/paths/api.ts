@@ -57,5 +57,6 @@ export default {
     search: peoplePath.path('search'),
     prisonCaseNotes: personPath.path('prison-case-notes'),
     adjudications: personPath.path('adjudications'),
+    offences: personPath.path('offences'),
   },
 }
