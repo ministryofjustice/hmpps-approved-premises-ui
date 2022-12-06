@@ -20,6 +20,7 @@ const singleApplicationPath = applicationsPath.path(':id')
 
 const peoplePath = path('/people')
 const personPath = peoplePath.path(':crn')
+const oasysPath = personPath.path('oasys')
 
 const assessmentsPath = path('/assessments')
 
@@ -64,5 +65,8 @@ export default {
     prisonCaseNotes: personPath.path('prison-case-notes'),
     adjudications: personPath.path('adjudications'),
     offences: personPath.path('offences'),
+    oasys: {
+      selection: oasysPath.path('selection'),
+    },
   },
 }
