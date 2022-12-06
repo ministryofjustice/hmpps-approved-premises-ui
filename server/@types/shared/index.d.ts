@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export type { ActiveOffence } from './models/ActiveOffence';
 export type { Adjudication } from './models/Adjudication';
 export type { AnyValue } from './models/AnyValue';
 export type { ApArea } from './models/ApArea';
