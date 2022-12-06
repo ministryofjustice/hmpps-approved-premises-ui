@@ -8,6 +8,7 @@ import {
   daysUntilDue,
   daysSinceInfoRequest,
   requestedFurtherInformationTableRows,
+  completedTableRows,
 } from './assessmentUtils'
 import { DateFormats } from './dateUtils'
 
@@ -157,6 +158,33 @@ describe('assessmentUtils', () => {
           { text: formatDays(daysSinceReceived(assessment)) },
           { text: formatDays(daysSinceInfoRequest(assessment)) },
           { html: `<strong class="govuk-tag govuk-tag--yellow">Info Request</strong>` },
+        ],
+      ])
+
+      expect(tierBadgeSpy).toHaveBeenCalledWith(risks.tier.value.level)
+    })
+  })
+
+  describe('completedTableRows', () => {
+    it('returns table rows for the assessments', () => {
+      const assessment = assessmentFactory.build()
+      const risks = risksFactory.build()
+      const assessmentWithRisks = {
+        ...assessment,
+        application: { person: { ...assessment.application.person, risks } },
+      } as AssessmentWithRisks
+
+      jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+
+      const tierBadgeSpy = jest.spyOn(personUtils, 'tierBadge').mockReturnValue('TIER_BADGE')
+
+      expect(completedTableRows([assessmentWithRisks])).toEqual([
+        [
+          { html: `<a href="#">${assessment.application.person.name}</a>` },
+          { html: assessment.application.person.crn },
+          { html: 'TIER_BADGE' },
+          { text: formattedArrivalDate(assessment) },
+          { html: getStatus(assessment) },
         ],
       ])
 

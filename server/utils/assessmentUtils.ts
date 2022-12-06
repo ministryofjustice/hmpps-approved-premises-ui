@@ -38,6 +38,32 @@ const awaitingAssessmentTableRows = (assessments: Array<AssessmentWithRisks>): A
   return rows
 }
 
+const completedTableRows = (assessments: Array<AssessmentWithRisks>): Array<TableRow> => {
+  const rows = [] as Array<TableRow>
+
+  assessments.forEach(assessment => {
+    rows.push([
+      {
+        html: `<a href="#">${assessment.application.person.name}</a>`,
+      },
+      {
+        html: assessment.application.person.crn,
+      },
+      {
+        html: tierBadge(assessment.application.person.risks.tier.value.level),
+      },
+      {
+        text: formattedArrivalDate(assessment),
+      },
+      {
+        html: getStatus(assessment),
+      },
+    ])
+  })
+
+  return rows
+}
+
 const requestedFurtherInformationTableRows = (assessments: Array<AssessmentWithRisks>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
@@ -124,4 +150,5 @@ export {
   daysSinceInfoRequest,
   formatDays,
   daysUntilDue,
+  completedTableRows,
 }
