@@ -85,6 +85,19 @@ context('Apply', () => {
       // When I click submit
       confirmDetailsPage.clickSubmit()
 
+      // Then the API should have created the application
+      cy.task('verifyApplicationCreate').then(requests => {
+        expect(requests).to.have.length(1)
+
+        const body = JSON.parse(requests[0].body)
+        const offence = offences[0]
+
+        expect(body.crn).equal(person.crn)
+        expect(body.convictionId).equal(offence.convictionId)
+        expect(body.deliusEventNumber).equal(offence.deliusEventNumber)
+        expect(body.offenceId).equal(offence.offenceId)
+      })
+
       // Then I should be on the Sentence Type page
       const sentenceTypePage = new SentenceTypePage(application)
 

@@ -79,7 +79,11 @@ export default class ApplicationsController {
 
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const application = await this.applicationService.createApplication(req.user.token, req.body.crn)
+      const { crn } = req.body
+      const offences = await this.personService.getOffences(req.user.token, crn)
+      const indexOffence = offences.find(o => o.offenceId === req.body.offenceId)
+
+      const application = await this.applicationService.createApplication(req.user.token, crn, indexOffence)
       req.session.application = application
 
       res.redirect(

@@ -1,6 +1,6 @@
 import type { Request } from 'express'
 import type { HtmlItem, TextItem, DataServices } from '@approved-premises/ui'
-import type { Application } from '@approved-premises/api'
+import type { ActiveOffence, Application } from '@approved-premises/api'
 
 import type TasklistPage from '../form-pages/tasklistPage'
 import type { RestClientBuilder, ApplicationClient, PersonClient } from '../data'
@@ -17,10 +17,10 @@ export default class ApplicationService {
     private readonly personClientFactory: RestClientBuilder<PersonClient>,
   ) {}
 
-  async createApplication(token: string, crn: string): Promise<Application> {
+  async createApplication(token: string, crn: string, activeOffence: ActiveOffence): Promise<Application> {
     const applicationClient = this.applicationClientFactory(token)
 
-    const application = await applicationClient.create(crn)
+    const application = await applicationClient.create(crn, activeOffence)
 
     return application
   }

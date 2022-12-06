@@ -3,6 +3,7 @@ import nock from 'nock'
 import ApplicationClient from './applicationClient'
 import config from '../config'
 import applicationFactory from '../testutils/factories/application'
+import activeOffenceFactory from '../testutils/factories/activeOffence'
 import paths from '../paths/api'
 
 describe('ApplicationClient', () => {
@@ -29,13 +30,19 @@ describe('ApplicationClient', () => {
   describe('create', () => {
     it('should return an application when a crn is posted', async () => {
       const application = applicationFactory.build()
+      const offence = activeOffenceFactory.build()
 
       fakeApprovedPremisesApi
-        .post(paths.applications.new.pattern)
+        .post(paths.applications.new.pattern, {
+          crn: application.person.crn,
+          convictionId: offence.convictionId,
+          deliusEventNumber: offence.deliusEventNumber,
+          offenceId: offence.offenceId,
+        })
         .matchHeader('authorization', `Bearer ${token}`)
         .reply(201, application)
 
-      const result = await applicationClient.create(application.person.crn)
+      const result = await applicationClient.create(application.person.crn, offence)
 
       expect(result).toEqual(application)
       expect(nock.isDone()).toBeTruthy()

@@ -11,6 +11,7 @@ import PersonClient from '../data/personClient'
 import Apply from '../form-pages/apply'
 import paths from '../paths/apply'
 import applicationFactory from '../testutils/factories/application'
+import activeOffenceFactory from '../testutils/factories/activeOffence'
 import { DateFormats } from '../utils/dateUtils'
 import { getArrivalDate, getPage } from '../utils/applicationUtils'
 import { tierEnvelopeFactory } from '../testutils/factories/risks'
@@ -93,16 +94,18 @@ describe('ApplicationService', () => {
   describe('createApplication', () => {
     it('calls the create method and returns an application', async () => {
       const application = applicationFactory.build()
+      const offence = activeOffenceFactory.build()
+
       const token = 'SOME_TOKEN'
 
       applicationClient.create.mockResolvedValue(application)
 
-      const result = await service.createApplication(token, application.person.crn)
+      const result = await service.createApplication(token, application.person.crn, offence)
 
       expect(result).toEqual(application)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.create).toHaveBeenCalledWith(application.person.crn)
+      expect(applicationClient.create).toHaveBeenCalledWith(application.person.crn, offence)
     })
   })
 

@@ -217,32 +217,32 @@ describe('applicationsController', () => {
   })
 
   describe('create', () => {
-    let application: Application
+    const application = applicationFactory.build()
+    const offences = activeOffenceFactory.buildList(2)
 
     beforeEach(() => {
       request = createMock<Request>({
         user: { token },
       })
       request.body.crn = 'some-crn'
-      application = applicationFactory.build()
+      request.body.offenceId = offences[0].offenceId
+
+      personService.getOffences.mockResolvedValue(offences)
+      applicationService.createApplication.mockResolvedValue(application)
     })
 
     it('creates an application and redirects to the first page of the first step', async () => {
-      applicationService.createApplication.mockResolvedValue(application)
-
       const requestHandler = applicationsController.create()
 
       await requestHandler(request, response, next)
 
-      expect(applicationService.createApplication).toHaveBeenCalledWith('SOME_TOKEN', 'some-crn')
+      expect(applicationService.createApplication).toHaveBeenCalledWith('SOME_TOKEN', 'some-crn', offences[0])
       expect(response.redirect).toHaveBeenCalledWith(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' }),
       )
     })
 
     it('saves the application to the session', async () => {
-      applicationService.createApplication.mockResolvedValue(application)
-
       const requestHandler = applicationsController.create()
 
       await requestHandler(request, response, next)
