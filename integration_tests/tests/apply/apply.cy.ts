@@ -32,6 +32,7 @@ import Page from '../../../cypress_shared/pages/page'
 import applicationFactory from '../../../server/testutils/factories/application'
 import prisonCaseNotesFactory from '../../../server/testutils/factories/prisonCaseNotes'
 import personFactory from '../../../server/testutils/factories/person'
+import activeOffenceFactory from '../../../server/testutils/factories/activeOffence'
 import risksFactory from '../../../server/testutils/factories/risks'
 import adjudicationsFactory from '../../../server/testutils/factories/adjudication'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
@@ -58,7 +59,9 @@ context('Apply', () => {
 
     // And a person is in Delius
     const person = personFactory.build()
+    const offences = activeOffenceFactory.buildList(2)
     cy.task('stubFindPerson', { person })
+    cy.task('stubPersonOffences', { person, offences })
 
     // And I have started an application
     cy.fixture('applicationData.json').then(applicationData => {
@@ -137,6 +140,7 @@ context('Apply', () => {
     const person = personFactory.build()
     const apiRisks = risksFactory.build({ crn: person.crn })
     const uiRisks = mapApiPersonRisksForUi(apiRisks)
+    const offences = activeOffenceFactory.buildList(2)
 
     // Given I am logged in
     cy.signIn()
@@ -144,6 +148,7 @@ context('Apply', () => {
     // And a person is in Delius
     cy.task('stubPersonRisks', { person, risks: apiRisks })
     cy.task('stubFindPerson', { person })
+    cy.task('stubPersonOffences', { person, offences })
 
     // And I have started an application
     cy.fixture('applicationData.json').then(applicationData => {

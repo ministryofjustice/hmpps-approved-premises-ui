@@ -9,6 +9,7 @@ import { fetchErrorsAndUserInput } from '../../utils/validation'
 import personFactory from '../../testutils/factories/person'
 import applicationFactory from '../../testutils/factories/application'
 import risksFactory from '../../testutils/factories/risks'
+import activeOffenceFactory from '../../testutils/factories/activeOffence'
 import Apply from '../../form-pages/apply'
 
 import paths from '../../paths/apply'
@@ -118,6 +119,7 @@ describe('applicationsController', () => {
   describe('new', () => {
     describe('If there is a CRN in the flash', () => {
       const person = personFactory.build()
+      const offences = activeOffenceFactory.buildList(2)
 
       beforeEach(() => {
         request = createMock<Request>({
@@ -125,6 +127,7 @@ describe('applicationsController', () => {
           flash: jest.fn().mockReturnValue([person.crn]),
         })
         personService.findByCrn.mockResolvedValue(person)
+        personService.getOffences.mockResolvedValue(offences)
       })
 
       it('it should render the start of the application form', async () => {
@@ -141,6 +144,7 @@ describe('applicationsController', () => {
           ...person,
           date: DateFormats.dateObjtoUIDate(new Date()),
           dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
+          offenceId: offences[0].offenceId,
           errors: {},
           errorSummary: [],
         })
@@ -162,6 +166,7 @@ describe('applicationsController', () => {
           ...person,
           date: DateFormats.dateObjtoUIDate(new Date()),
           dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
+          offenceId: offences[0].offenceId,
           errors: errorsAndUserInput.errors,
           errorSummary: errorsAndUserInput.errorSummary,
           ...errorsAndUserInput.userInput,

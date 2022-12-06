@@ -47,13 +47,21 @@ export default class ApplicationsController {
       const crnArr = req.flash('crn')
 
       if (crnArr.length) {
-        const person = await this.personService.findByCrn(req.user.token, crnArr[0])
+        const crn = crnArr[0]
+        const person = await this.personService.findByCrn(req.user.token, crn)
+        const offences = await this.personService.getOffences(req.user.token, crn)
+
+        // TODO: For now, we treat the first offence as the index offence, going
+        // forward, we'll need to design an approach to select one if there are
+        // more than one
+        const offence = offences[0]
 
         return res.render(`applications/people/confirm`, {
           pageHeading: `Confirm ${person.name}'s details`,
           ...person,
           date: DateFormats.dateObjtoUIDate(new Date()),
           dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
+          offenceId: offence.offenceId,
           errors,
           errorSummary,
           ...userInput,
