@@ -9,6 +9,8 @@ import {
   daysSinceInfoRequest,
   requestedFurtherInformationTableRows,
   completedTableRows,
+  assessmentsApproachingDue,
+  assessmentsApproachingDueBadge,
 } from './assessmentUtils'
 import { DateFormats } from './dateUtils'
 
@@ -189,6 +191,37 @@ describe('assessmentUtils', () => {
       ])
 
       expect(tierBadgeSpy).toHaveBeenCalledWith(risks.tier.value.level)
+    })
+  })
+
+  describe('assessmentsApproachingDue', () => {
+    it('returns the number of assessments where the due date is less than DUE_DATE_APPROACHING_WINDOW away', () => {
+      const assessments = [
+        assessmentFactory.createdXDaysAgo(1).build(),
+        assessmentFactory.createdXDaysAgo(2).build(),
+        assessmentFactory.createdXDaysAgo(9).build(),
+        assessmentFactory.createdXDaysAgo(7).build(),
+      ]
+
+      expect(assessmentsApproachingDue(assessments)).toEqual(2)
+    })
+  })
+
+  describe('assessmentsApproachingDueBadge', () => {
+    it('returns blank when there are no assessments approaching the due date', () => {
+      const assessments = assessmentFactory.buildList(2, {
+        createdAt: DateFormats.dateObjToIsoDate(new Date()),
+      })
+
+      expect(assessmentsApproachingDueBadge(assessments)).toEqual('')
+    })
+
+    it('returns a badge when there are assessments approaching the due date', () => {
+      const assessments = assessmentFactory.createdXDaysAgo(9).buildList(2)
+
+      expect(assessmentsApproachingDueBadge(assessments)).toEqual(
+        '<span id="notifications" class="moj-notification-badge">2<span class="govuk-visually-hidden"> assessments approaching due date</span></span>',
+      )
     })
   })
 })

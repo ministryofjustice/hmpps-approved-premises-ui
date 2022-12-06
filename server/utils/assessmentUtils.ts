@@ -6,6 +6,8 @@ import { tierBadge } from './personUtils'
 import { DateFormats } from './dateUtils'
 import { getArrivalDate } from './applicationUtils'
 
+const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
+
 const awaitingAssessmentTableRows = (assessments: Array<AssessmentWithRisks>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
@@ -141,6 +143,19 @@ const daysSinceInfoRequest = (assessment: Assessment): number => {
   return differenceInDays(new Date(), infoRequestDate)
 }
 
+const assessmentsApproachingDueBadge = (assessments: Array<Assessment>): string => {
+  const dueCount = assessmentsApproachingDue(assessments)
+
+  if (dueCount === 0) {
+    return ''
+  }
+  return `<span id="notifications" class="moj-notification-badge">${dueCount}<span class="govuk-visually-hidden"> assessments approaching due date</span></span>`
+}
+
+const assessmentsApproachingDue = (assessments: Array<Assessment>): number => {
+  return assessments.filter(a => daysUntilDue(a) < DUE_DATE_APPROACHING_DAYS_WINDOW).length
+}
+
 export {
   awaitingAssessmentTableRows,
   getStatus,
@@ -151,4 +166,6 @@ export {
   formatDays,
   daysUntilDue,
   completedTableRows,
+  assessmentsApproachingDue,
+  assessmentsApproachingDueBadge,
 }
