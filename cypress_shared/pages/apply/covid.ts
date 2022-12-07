@@ -4,7 +4,7 @@ import ApplyPage from './applyPage'
 
 export default class CovidPage extends ApplyPage {
   constructor(application: Application) {
-    super('Healthcare information', application, 'access-and-healthcare', 'covid')
+    super('COVID information', application, 'access-and-healthcare', 'covid')
   }
 
   completeForm() {

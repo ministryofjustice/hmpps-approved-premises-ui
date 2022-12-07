@@ -11,7 +11,7 @@ describe('Covid', () => {
   const previousPage = 'previousPage'
 
   describe('title', () => {
-    expect(new Covid({}, application, '').title).toBe('Healthcare information')
+    expect(new Covid({}, application, '').title).toBe('COVID information')
   })
 
   describe('body', () => {
@@ -40,7 +40,7 @@ describe('Covid', () => {
     const page = new Covid({}, application, '')
     expect(page.errors()).toEqual({
       fullyVaccinated: 'You must confirm if John Wayne has been fully vaccinated',
-      highRisk: 'You must confirm if John Wayne is at high risk from COVID-19',
+      highRisk: 'You must confirm if John Wayne is at a higher risk from COVID-19',
     })
   })
 
@@ -57,7 +57,7 @@ describe('Covid', () => {
 
     expect(page.response()).toEqual({
       'Has John Wayne been fully vaccinated for COVID-19?': 'Yes',
-      'Is the John Wayne at high risk from COVID-19?': 'Yes',
+      'Is the John Wayne at a higher risk from COVID-19?': 'Yes',
       'Other considerations and comments on COVID-19': 'Some info',
     })
   })

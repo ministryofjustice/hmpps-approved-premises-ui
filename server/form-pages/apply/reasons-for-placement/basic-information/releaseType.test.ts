@@ -41,12 +41,11 @@ describe('ReleaseType', () => {
           }),
         ).items()
 
-        expect(items.length).toEqual(5)
+        expect(items.length).toEqual(4)
         expect(items[0].value).toEqual('rotl')
         expect(items[1].value).toEqual('hdc')
         expect(items[2].value).toEqual('license')
         expect(items[3].value).toEqual('pss')
-        expect(items[4].value).toEqual('rerelease')
       })
 
       it('if the sentence type is "extendedDeterminate" then the reduced list of items should be shown', () => {
@@ -57,10 +56,9 @@ describe('ReleaseType', () => {
           }),
         ).items()
 
-        expect(items.length).toEqual(3)
+        expect(items.length).toEqual(2)
         expect(items[0].value).toEqual('rotl')
         expect(items[1].value).toEqual('license')
-        expect(items[2].value).toEqual('rerelease')
       })
 
       it('if the sentence type is "ipp" then the reduced list of items should be shown', () => {
@@ -69,10 +67,9 @@ describe('ReleaseType', () => {
           applicationFactory.build({ data: { 'basic-information': { 'sentence-type': { sentenceType: 'ipp' } } } }),
         ).items()
 
-        expect(items.length).toEqual(3)
+        expect(items.length).toEqual(2)
         expect(items[0].value).toEqual('rotl')
         expect(items[1].value).toEqual('license')
-        expect(items[2].value).toEqual('rerelease')
       })
 
       it('if the sentence type is "life" then the reduced list of items should be shown', () => {
@@ -81,10 +78,9 @@ describe('ReleaseType', () => {
           applicationFactory.build({ data: { 'basic-information': { 'sentence-type': { sentenceType: 'life' } } } }),
         ).items()
 
-        expect(items.length).toEqual(3)
+        expect(items.length).toEqual(2)
         expect(items[0].value).toEqual('rotl')
         expect(items[1].value).toEqual('license')
-        expect(items[2].value).toEqual('rerelease')
       })
     })
 
