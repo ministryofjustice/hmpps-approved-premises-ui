@@ -62,7 +62,7 @@ export default class Covid implements TasklistPage {
     }
 
     if (!this.body.highRisk) {
-      errors.highRisk = `You must confirm if ${this.application.person.name} is at at a higher risk from COVID-19`
+      errors.highRisk = `You must confirm if ${this.application.person.name} is at a higher risk from COVID-19`
     }
 
     return errors
