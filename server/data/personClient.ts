@@ -1,4 +1,4 @@
-import type { Adjudication, Person, PersonRisks, PrisonCaseNote } from '@approved-premises/api'
+import type { ActiveOffence, Adjudication, Person, PersonRisks, PrisonCaseNote } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -36,5 +36,11 @@ export default class PersonClient {
     const response = await this.restClient.get({ path: paths.people.adjudications({ crn }) })
 
     return response as Adjudication[]
+  }
+
+  async offences(crn: string): Promise<ActiveOffence[]> {
+    const response = await this.restClient.get({ path: paths.people.offences({ crn }) })
+
+    return response as ActiveOffence[]
   }
 }

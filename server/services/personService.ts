@@ -1,5 +1,5 @@
 import type { PersonRisksUI } from '@approved-premises/ui'
-import type { Adjudication, Person, PrisonCaseNote } from '@approved-premises/api'
+import type { ActiveOffence, Adjudication, Person, PrisonCaseNote } from '@approved-premises/api'
 import type { RestClientBuilder, PersonClient } from '../data'
 
 import { mapApiPersonRisksForUi } from '../utils/utils'
@@ -12,6 +12,13 @@ export default class PersonService {
 
     const person = await personClient.search(crn)
     return person
+  }
+
+  async getOffences(token: string, crn: string): Promise<Array<ActiveOffence>> {
+    const personClient = this.personClientFactory(token)
+
+    const offences = await personClient.offences(crn)
+    return offences
   }
 
   async getPersonRisks(token: string, crn: string): Promise<PersonRisksUI> {

@@ -9,6 +9,7 @@ import { fetchErrorsAndUserInput } from '../../utils/validation'
 import personFactory from '../../testutils/factories/person'
 import applicationFactory from '../../testutils/factories/application'
 import risksFactory from '../../testutils/factories/risks'
+import activeOffenceFactory from '../../testutils/factories/activeOffence'
 import Apply from '../../form-pages/apply'
 
 import paths from '../../paths/apply'
@@ -118,6 +119,7 @@ describe('applicationsController', () => {
   describe('new', () => {
     describe('If there is a CRN in the flash', () => {
       const person = personFactory.build()
+      const offences = activeOffenceFactory.buildList(2)
 
       beforeEach(() => {
         request = createMock<Request>({
@@ -125,6 +127,7 @@ describe('applicationsController', () => {
           flash: jest.fn().mockReturnValue([person.crn]),
         })
         personService.findByCrn.mockResolvedValue(person)
+        personService.getOffences.mockResolvedValue(offences)
       })
 
       it('it should render the start of the application form', async () => {
@@ -141,6 +144,7 @@ describe('applicationsController', () => {
           ...person,
           date: DateFormats.dateObjtoUIDate(new Date()),
           dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
+          offenceId: offences[0].offenceId,
           errors: {},
           errorSummary: [],
         })
@@ -162,6 +166,7 @@ describe('applicationsController', () => {
           ...person,
           date: DateFormats.dateObjtoUIDate(new Date()),
           dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
+          offenceId: offences[0].offenceId,
           errors: errorsAndUserInput.errors,
           errorSummary: errorsAndUserInput.errorSummary,
           ...errorsAndUserInput.userInput,
@@ -212,32 +217,32 @@ describe('applicationsController', () => {
   })
 
   describe('create', () => {
-    let application: Application
+    const application = applicationFactory.build()
+    const offences = activeOffenceFactory.buildList(2)
 
     beforeEach(() => {
       request = createMock<Request>({
         user: { token },
       })
       request.body.crn = 'some-crn'
-      application = applicationFactory.build()
+      request.body.offenceId = offences[0].offenceId
+
+      personService.getOffences.mockResolvedValue(offences)
+      applicationService.createApplication.mockResolvedValue(application)
     })
 
     it('creates an application and redirects to the first page of the first step', async () => {
-      applicationService.createApplication.mockResolvedValue(application)
-
       const requestHandler = applicationsController.create()
 
       await requestHandler(request, response, next)
 
-      expect(applicationService.createApplication).toHaveBeenCalledWith('SOME_TOKEN', 'some-crn')
+      expect(applicationService.createApplication).toHaveBeenCalledWith('SOME_TOKEN', 'some-crn', offences[0])
       expect(response.redirect).toHaveBeenCalledWith(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' }),
       )
     })
 
     it('saves the application to the session', async () => {
-      applicationService.createApplication.mockResolvedValue(application)
-
       const requestHandler = applicationsController.create()
 
       await requestHandler(request, response, next)

@@ -75,6 +75,13 @@ export default {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       },
     }),
+  verifyApplicationCreate: async () =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: `/applications`,
+      })
+    ).body.requests,
   verifyApplicationUpdate: async (applicationId: string) =>
     (
       await getMatchingRequests({
