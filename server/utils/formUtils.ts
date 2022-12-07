@@ -95,3 +95,27 @@ export function convertKeyValuePairToCheckBoxItems<T>(
 export function validPostcodeArea(potentialPostcode: string) {
   return /[A-Z][0-9]{1,2}|[A-Z][A-HJ-Y][0-9]{1,2}|[A-Z][0-9][A-Z]|[A-Z][A-HJ-Y][0-9]?[A-Z]/.test(potentialPostcode)
 }
+
+/**
+ * Returns the input if it is an array other.
+ * If the input is truthy and not an array it returns the input in an array
+ * Useful for checkboxes where if a single value is returned it is string but when multiple values are selected they are an array of strings.
+ * @param input input to be put into a flat array.
+ * @returns a flat array or an empty array.
+ */
+export function flattenCheckboxInput<T extends string | Array<T>>(input: T | Array<T>) {
+  if (Array.isArray(input)) return input
+  if (input) return [input].flat()
+  return []
+}
+
+/**
+ * @param input any
+ * @returns true if the input is an empty array, an array of strings or a string otherwise false
+ */
+export function isStringOrArrayOfStrings(input: unknown) {
+  return (
+    (Array.isArray(input) && input.every((element: unknown) => typeof element === 'string')) ||
+    typeof input === 'string'
+  )
+}
