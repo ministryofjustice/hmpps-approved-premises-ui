@@ -6,13 +6,17 @@ import {
   awaitingAssessmentTableRows,
   formatDays,
   daysUntilDue,
+  daysSinceInfoRequest,
+  requestedFurtherInformationTableRows,
 } from './assessmentUtils'
+import { DateFormats } from './dateUtils'
 
 import * as personUtils from './personUtils'
 import * as applicationUtils from './applicationUtils'
 
 import assessmentFactory from '../testutils/factories/assessment'
 import risksFactory from '../testutils/factories/risks'
+import clarificationNoteFactory from '../testutils/factories/clarificationNote'
 
 jest.mock('./applicationUtils')
 jest.mock('./personUtils')
@@ -27,6 +31,26 @@ describe('assessmentUtils', () => {
       const assessment = assessmentFactory.createdXDaysAgo(10).build()
 
       expect(daysSinceReceived(assessment)).toEqual(10)
+    })
+  })
+
+  describe('daysSinceInfoRequest', () => {
+    it('returns the difference in days since the assessment has been received', () => {
+      const today = new Date()
+
+      const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 4)
+      const infoRequest = clarificationNoteFactory.build({ createdAt: DateFormats.dateObjToIsoDate(date) })
+      const assessment = assessmentFactory.build({
+        clarificationNotes: [clarificationNoteFactory.build(), infoRequest],
+      })
+
+      expect(daysSinceInfoRequest(assessment)).toEqual(4)
+    })
+
+    it('returns undefined if there are no info requests', () => {
+      const assessment = assessmentFactory.build({ clarificationNotes: [] })
+
+      expect(daysSinceInfoRequest(assessment)).toEqual(undefined)
     })
   })
 
@@ -104,6 +128,35 @@ describe('assessmentUtils', () => {
           { text: assessment.application.person.prisonName },
           { text: formatDays(daysUntilDue(assessment)) },
           { html: getStatus(assessment) },
+        ],
+      ])
+
+      expect(tierBadgeSpy).toHaveBeenCalledWith(risks.tier.value.level)
+    })
+  })
+
+  describe('requestedInformationTableRows', () => {
+    it('returns table rows for the assessments', () => {
+      const assessment = assessmentFactory.build({ clarificationNotes: clarificationNoteFactory.buildList(2) })
+      const risks = risksFactory.build()
+      const assessmentWithRisks = {
+        ...assessment,
+        application: { person: { ...assessment.application.person, risks } },
+      } as AssessmentWithRisks
+
+      jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+
+      const tierBadgeSpy = jest.spyOn(personUtils, 'tierBadge').mockReturnValue('TIER_BADGE')
+
+      expect(requestedFurtherInformationTableRows([assessmentWithRisks])).toEqual([
+        [
+          { html: `<a href="#">${assessment.application.person.name}</a>` },
+          { html: assessment.application.person.crn },
+          { html: 'TIER_BADGE' },
+          { text: formattedArrivalDate(assessment) },
+          { text: formatDays(daysSinceReceived(assessment)) },
+          { text: formatDays(daysSinceInfoRequest(assessment)) },
+          { html: `<strong class="govuk-tag govuk-tag--yellow">Info Request</strong>` },
         ],
       ])
 

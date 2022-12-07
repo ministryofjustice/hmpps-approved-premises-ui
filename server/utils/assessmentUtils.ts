@@ -38,6 +38,38 @@ const awaitingAssessmentTableRows = (assessments: Array<AssessmentWithRisks>): A
   return rows
 }
 
+const requestedFurtherInformationTableRows = (assessments: Array<AssessmentWithRisks>): Array<TableRow> => {
+  const rows = [] as Array<TableRow>
+
+  assessments.forEach(assessment => {
+    rows.push([
+      {
+        html: `<a href="#">${assessment.application.person.name}</a>`,
+      },
+      {
+        html: assessment.application.person.crn,
+      },
+      {
+        html: tierBadge(assessment.application.person.risks.tier.value.level),
+      },
+      {
+        text: formattedArrivalDate(assessment),
+      },
+      {
+        text: formatDays(daysSinceReceived(assessment)),
+      },
+      {
+        text: formatDays(daysSinceInfoRequest(assessment)),
+      },
+      {
+        html: `<strong class="govuk-tag govuk-tag--yellow">Info Request</strong>`,
+      },
+    ])
+  })
+
+  return rows
+}
+
 const formattedArrivalDate = (assessment: Assessment): string => {
   const arrivalDate = getArrivalDate(assessment.application)
   return format(DateFormats.isoToDateObj(arrivalDate), 'd MMM yyyy')
@@ -73,4 +105,23 @@ const daysSinceReceived = (assessment: Assessment): number => {
   return differenceInDays(new Date(), receivedDate)
 }
 
-export { awaitingAssessmentTableRows, getStatus, daysSinceReceived, formattedArrivalDate, formatDays, daysUntilDue }
+const daysSinceInfoRequest = (assessment: Assessment): number => {
+  const lastInfoRequest = assessment.clarificationNotes[assessment.clarificationNotes.length - 1]
+  if (!lastInfoRequest) {
+    return undefined
+  }
+  const infoRequestDate = DateFormats.isoToDateObj(lastInfoRequest.createdAt)
+
+  return differenceInDays(new Date(), infoRequestDate)
+}
+
+export {
+  awaitingAssessmentTableRows,
+  getStatus,
+  daysSinceReceived,
+  formattedArrivalDate,
+  requestedFurtherInformationTableRows,
+  daysSinceInfoRequest,
+  formatDays,
+  daysUntilDue,
+}
