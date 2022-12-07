@@ -1,4 +1,4 @@
-import { RoshRisks, RiskTier, FlagsEnvelope, Mappa } from '@approved-premises/api'
+import { RoshRisks, RiskTier, FlagsEnvelope, Mappa, Application, Assessment, Person } from '@approved-premises/api'
 
 interface TasklistPage {
   body: Record<string, unknown>
@@ -179,4 +179,22 @@ export type DataServices = {
     getPrisonCaseNotes: (token: string, crn: string) => Promise<PrisonCaseNote[]>
     getAdjudications: (token: string, crn: string) => Promise<Adjudication[]>
   }
+}
+
+export interface GroupedAssessmentWithRisks {
+  completed: Array<AssessmentWithRisks>
+  requestedFurtherInformation: Array<AssessmentWithRisks>
+  awaiting: Array<AssessmentWithRisks>
+}
+
+export interface AssessmentWithRisks extends Assessment {
+  application: ApplicationWithRisks
+}
+
+export interface ApplicationWithRisks extends Application {
+  person: PersonWithRisks
+}
+
+export interface PersonWithRisks extends Person {
+  risks: PersonRisks
 }

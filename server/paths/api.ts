@@ -21,6 +21,8 @@ const singleApplicationPath = applicationsPath.path(':id')
 const peoplePath = path('/people')
 const personPath = peoplePath.path(':crn')
 
+const assessmentsPath = path('/assessments')
+
 const applyPaths = {
   applications: {
     show: singleApplicationPath,
@@ -49,6 +51,9 @@ export default {
     update: applyPaths.applications.update,
     new: applyPaths.applications.create,
     submission: applyPaths.applications.submission,
+  },
+  assessments: {
+    index: assessmentsPath,
   },
   people: {
     risks: {

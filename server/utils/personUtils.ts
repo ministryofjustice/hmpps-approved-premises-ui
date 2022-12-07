@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import type { PersonStatus } from '@approved-premises/ui'
 
 const statusTag = (status: PersonStatus): string => {
@@ -9,4 +8,10 @@ const statusTag = (status: PersonStatus): string => {
   return `<strong class="govuk-tag" data-cy-status="${status}">In Custody</strong>`
 }
 
-export { statusTag }
+const tierBadge = (tier: string): string => {
+  const colour = { A: 'moj-badge--red', B: 'moj-badge--purple' }[tier[0]]
+
+  return `<span class="moj-badge ${colour}">${tier}</span>`
+}
+
+export { statusTag, tierBadge }
