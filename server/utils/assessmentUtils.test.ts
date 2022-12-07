@@ -11,6 +11,7 @@ import {
   completedTableRows,
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
+  formatDaysUntilDueWithWarning,
 } from './assessmentUtils'
 import { DateFormats } from './dateUtils'
 
@@ -129,7 +130,7 @@ describe('assessmentUtils', () => {
           { html: 'TIER_BADGE' },
           { text: formattedArrivalDate(assessment) },
           { text: assessment.application.person.prisonName },
-          { text: formatDays(daysUntilDue(assessment)) },
+          { html: formatDaysUntilDueWithWarning(assessment) },
           { html: getStatus(assessment) },
         ],
       ])
@@ -221,6 +222,24 @@ describe('assessmentUtils', () => {
 
       expect(assessmentsApproachingDueBadge(assessments)).toEqual(
         '<span id="notifications" class="moj-notification-badge">2<span class="govuk-visually-hidden"> assessments approaching due date</span></span>',
+      )
+    })
+  })
+
+  describe('formatDaysUntilDueWithWarning', () => {
+    it('returns the number of days without a warning if the due date is not soon', () => {
+      const assessment = assessmentFactory.build({
+        createdAt: DateFormats.dateObjToIsoDate(new Date()),
+      })
+
+      expect(formatDaysUntilDueWithWarning(assessment)).toEqual('9 Days')
+    })
+
+    it('returns the number of days with a warning if the due date is soon', () => {
+      const assessment = assessmentFactory.createdXDaysAgo(8).build()
+
+      expect(formatDaysUntilDueWithWarning(assessment)).toEqual(
+        '<strong class="assessments--index__warning">1 Day<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>',
       )
     })
   })

@@ -29,7 +29,7 @@ const awaitingAssessmentTableRows = (assessments: Array<AssessmentWithRisks>): A
         text: assessment.application.person.prisonName,
       },
       {
-        text: formatDays(daysUntilDue(assessment)),
+        html: formatDaysUntilDueWithWarning(assessment),
       },
       {
         html: getStatus(assessment),
@@ -133,6 +133,16 @@ const daysSinceReceived = (assessment: Assessment): number => {
   return differenceInDays(new Date(), receivedDate)
 }
 
+const formatDaysUntilDueWithWarning = (assessment: Assessment): string => {
+  const days = daysUntilDue(assessment)
+  if (days < DUE_DATE_APPROACHING_DAYS_WINDOW) {
+    return `<strong class="assessments--index__warning">${formatDays(
+      days,
+    )}<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`
+  }
+  return formatDays(days)
+}
+
 const daysSinceInfoRequest = (assessment: Assessment): number => {
   const lastInfoRequest = assessment.clarificationNotes[assessment.clarificationNotes.length - 1]
   if (!lastInfoRequest) {
@@ -168,4 +178,5 @@ export {
   completedTableRows,
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
+  formatDaysUntilDueWithWarning,
 }
