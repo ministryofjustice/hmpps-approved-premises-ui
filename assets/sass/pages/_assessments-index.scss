@@ -1,0 +1,9 @@
+.assessments--index {
+  .govuk-tag {
+    white-space: nowrap;
+  }
+
+  &__warning {
+    color: #d4351c;
+  }
+}
