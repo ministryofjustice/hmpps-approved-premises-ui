@@ -41,7 +41,7 @@ describe('ReleaseType', () => {
           }),
         ).items()
 
-        expect(items.length).toEqual(5)
+        expect(items.length).toEqual(4)
         expect(items[0].value).toEqual('rotl')
         expect(items[1].value).toEqual('hdc')
         expect(items[2].value).toEqual('license')
@@ -56,7 +56,7 @@ describe('ReleaseType', () => {
           }),
         ).items()
 
-        expect(items.length).toEqual(3)
+        expect(items.length).toEqual(2)
         expect(items[0].value).toEqual('rotl')
         expect(items[1].value).toEqual('license')
       })
@@ -67,7 +67,7 @@ describe('ReleaseType', () => {
           applicationFactory.build({ data: { 'basic-information': { 'sentence-type': { sentenceType: 'ipp' } } } }),
         ).items()
 
-        expect(items.length).toEqual(3)
+        expect(items.length).toEqual(2)
         expect(items[0].value).toEqual('rotl')
         expect(items[1].value).toEqual('license')
       })
@@ -78,7 +78,7 @@ describe('ReleaseType', () => {
           applicationFactory.build({ data: { 'basic-information': { 'sentence-type': { sentenceType: 'life' } } } }),
         ).items()
 
-        expect(items.length).toEqual(3)
+        expect(items.length).toEqual(2)
         expect(items[0].value).toEqual('rotl')
         expect(items[1].value).toEqual('license')
       })
