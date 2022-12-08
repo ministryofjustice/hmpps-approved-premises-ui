@@ -2,7 +2,7 @@ import { Application } from '@approved-premises/api'
 import 'reflect-metadata'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
-type Constructor = new (...args: any[]) => {}
+type Constructor = new (...args: Array<any>) => {}
 
 const Page = (options: { bodyProperties: Array<string>; name: string }) => {
   return <T extends Constructor>(constructor: T) => {
@@ -16,7 +16,7 @@ const Page = (options: { bodyProperties: Array<string>; name: string }) => {
       previousPage: string
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      constructor(...args: any[]) {
+      constructor(...args: Array<any>) {
         super(...args)
         const [body, application, previousPage] = args
 
@@ -26,7 +26,7 @@ const Page = (options: { bodyProperties: Array<string>; name: string }) => {
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      createBody<K extends string>(body: Record<string, any>, ...keys: K[]): { [Key in K]: Key } {
+      createBody<K extends string>(body: Record<string, any>, ...keys: Array<K>): { [Key in K]: Key } {
         const record = {} as { [Key in K]: Key }
         keys.forEach(key => {
           record[key] = body[key]

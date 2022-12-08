@@ -59,7 +59,7 @@ export default {
       })
     ).body.requests,
 
-  stubPrisonCaseNotes: (args: { person: Person; prisonCaseNotes: PrisonCaseNote[] }) =>
+  stubPrisonCaseNotes: (args: { person: Person; prisonCaseNotes: Array<PrisonCaseNote> }) =>
     stubFor({
       request: {
         method: 'GET',
@@ -72,7 +72,7 @@ export default {
       },
     }),
 
-  stubAdjudications: (args: { person: Person; adjudications: Adjudication[] }) =>
+  stubAdjudications: (args: { person: Person; adjudications: Array<Adjudication> }) =>
     stubFor({
       request: {
         method: 'GET',

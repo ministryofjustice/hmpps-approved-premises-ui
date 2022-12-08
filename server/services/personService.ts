@@ -29,7 +29,7 @@ export default class PersonService {
     return mapApiPersonRisksForUi(risks)
   }
 
-  async getPrisonCaseNotes(token: string, crn: string): Promise<PrisonCaseNote[]> {
+  async getPrisonCaseNotes(token: string, crn: string): Promise<Array<PrisonCaseNote>> {
     const personClient = this.personClientFactory(token)
 
     const prisonCaseNotes = await personClient.prisonCaseNotes(crn)
@@ -37,7 +37,7 @@ export default class PersonService {
     return prisonCaseNotes
   }
 
-  async getAdjudications(token: string, crn: string): Promise<Adjudication[]> {
+  async getAdjudications(token: string, crn: string): Promise<Array<Adjudication>> {
     const personClient = this.personClientFactory(token)
 
     const adjudications = await personClient.adjudications(crn)

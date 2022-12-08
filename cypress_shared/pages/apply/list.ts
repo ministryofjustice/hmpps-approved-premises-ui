@@ -14,7 +14,7 @@ export default class ListPage extends Page {
     return new ListPage()
   }
 
-  shouldShowApplications(applications: Array<Application>, personRisks: PersonRisks[]): void {
+  shouldShowApplications(applications: Array<Application>, personRisks: Array<PersonRisks>): void {
     applications.forEach((application, i) => {
       cy.contains(application.person.name)
         .should('have.attr', 'href', paths.applications.show({ id: application.id }))

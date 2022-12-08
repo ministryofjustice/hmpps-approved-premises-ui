@@ -3,10 +3,10 @@
 
 import TasklistPage from '../../tasklistPage'
 
-type Constructor = new (...args: any[]) => {}
+type Constructor = new (...args: Array<any>) => {}
 
 interface Type<T> extends Function {
-  new (...args: any[]): T
+  new (...args: Array<any>): T
 }
 
 const Task = (options: { name: string; slug: string; pages: Array<Type<TasklistPage>> }) => {
