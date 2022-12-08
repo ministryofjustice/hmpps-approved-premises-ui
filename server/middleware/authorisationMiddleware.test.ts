@@ -3,7 +3,7 @@ import type { Request, Response } from 'express'
 
 import authorisationMiddleware from './authorisationMiddleware'
 
-function createToken(authorities: string[]) {
+function createToken(authorities: Array<string>) {
   const payload = {
     user_name: 'USER1',
     scope: ['read', 'write'],
@@ -20,7 +20,7 @@ describe('authorisationMiddleware', () => {
   let req: Request
   const next = jest.fn()
 
-  function createResWithToken({ authorities }: { authorities: string[] }): Response {
+  function createResWithToken({ authorities }: { authorities: Array<string> }): Response {
     return {
       locals: {
         user: {

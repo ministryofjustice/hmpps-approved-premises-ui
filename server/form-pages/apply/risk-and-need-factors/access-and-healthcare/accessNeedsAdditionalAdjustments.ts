@@ -47,7 +47,8 @@ export default class AccessNeedsAdditionalAdjustments implements TasklistPage {
 
   private getNeeds() {
     try {
-      const additionalNeeds = this.application.data['access-and-healthcare']['access-needs'].additionalNeeds as string[]
+      const additionalNeeds = this.application.data['access-and-healthcare']['access-needs']
+        .additionalNeeds as Array<string>
 
       if (!additionalNeeds.length) throw new SessionDataError('No additional needs')
 

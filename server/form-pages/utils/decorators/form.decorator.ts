@@ -3,7 +3,7 @@
 import 'reflect-metadata'
 import { getSection, getPagesForSections } from '../index'
 
-type Constructor = new (...args: any[]) => {}
+type Constructor = new (...args: Array<any>) => {}
 
 const Form = (options: { sections: Array<unknown> }) => {
   return <T extends Constructor>(constructor: T) => {

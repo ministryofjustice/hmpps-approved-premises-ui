@@ -18,13 +18,13 @@ export default class PremisesClient {
     return (await this.restClient.get({ path: paths.premises.show({ premisesId: id }) })) as ApprovedPremises
   }
 
-  async capacity(id: string): Promise<DateCapacity[]> {
-    return (await this.restClient.get({ path: paths.premises.capacity({ premisesId: id }) })) as DateCapacity[]
+  async capacity(id: string): Promise<Array<DateCapacity>> {
+    return (await this.restClient.get({ path: paths.premises.capacity({ premisesId: id }) })) as Array<DateCapacity>
   }
 
   async getStaffMembers(premisesId: string): Promise<Array<StaffMember>> {
     return (await this.restClient.get({
       path: paths.premises.staffMembers.index({ premisesId }),
-    })) as StaffMember[]
+    })) as Array<StaffMember>
   }
 }

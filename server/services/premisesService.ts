@@ -45,7 +45,7 @@ export default class PremisesService {
     return { name: premises.name, summaryList }
   }
 
-  async getOvercapacityMessage(token: string, premisesId: string): Promise<string[] | string> {
+  async getOvercapacityMessage(token: string, premisesId: string): Promise<Array<string> | string> {
     const premisesClient = this.premisesClientFactory(token)
     const premisesDateCapacities = await premisesClient.capacity(premisesId)
 
@@ -56,7 +56,7 @@ export default class PremisesService {
     return overcapacityMessage ? [overcapacityMessage] : ''
   }
 
-  private generateOvercapacityMessage(overcapacityDateRanges: NegativeDateRange[]) {
+  private generateOvercapacityMessage(overcapacityDateRanges: Array<NegativeDateRange>) {
     if (overcapacityDateRanges.length === 1) {
       if (!overcapacityDateRanges[0].end) {
         return `<h4 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity on ${DateFormats.isoDateToUIDate(

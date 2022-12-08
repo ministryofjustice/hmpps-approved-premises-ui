@@ -2,9 +2,9 @@ import type { DateCapacity } from '@approved-premises/api'
 
 export type NegativeDateRange = { start?: string; end?: string }
 
-export default function getDateRangesWithNegativeBeds(premisesCapacity: DateCapacity[]): NegativeDateRange[] {
+export default function getDateRangesWithNegativeBeds(premisesCapacity: Array<DateCapacity>): Array<NegativeDateRange> {
   let dateRange: NegativeDateRange = {}
-  const result: NegativeDateRange[] = []
+  const result: Array<NegativeDateRange> = []
 
   premisesCapacity.forEach((premisesCapacityItem, i, arr) => {
     if (premisesCapacityItem.availableBeds < 0 && !dateRange?.start) {

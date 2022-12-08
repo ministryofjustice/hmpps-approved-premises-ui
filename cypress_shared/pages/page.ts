@@ -4,7 +4,7 @@ import { DateFormats } from '../../server/utils/dateUtils'
 export type PageElement = Cypress.Chainable<JQuery>
 
 export default abstract class Page {
-  static verifyOnPage<T>(constructor: new (...args: unknown[]) => T, ...args: unknown[]): T {
+  static verifyOnPage<T>(constructor: new (...args: Array<unknown>) => T, ...args: Array<unknown>): T {
     return new constructor(...args)
   }
 

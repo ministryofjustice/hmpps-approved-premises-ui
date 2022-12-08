@@ -118,7 +118,7 @@ export default class ApplicationService {
     return application.data?.[request.params.task]?.[request.params.page] || {}
   }
 
-  async dashboardTableRows(token: string): Promise<(TextItem | HtmlItem)[][]> {
+  async dashboardTableRows(token: string): Promise<Array<Array<TextItem | HtmlItem>>> {
     const applicationClient = this.applicationClientFactory(token)
     const personClient = this.personClientFactory(token)
 

@@ -10,7 +10,7 @@ export default class AssessmentClient {
     this.restClient = new RestClient('assessmentClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async all(): Promise<Assessment[]> {
-    return (await this.restClient.get({ path: paths.assessments.index.pattern })) as Assessment[]
+  async all(): Promise<Array<Assessment>> {
+    return (await this.restClient.get({ path: paths.assessments.index.pattern })) as Array<Assessment>
   }
 }

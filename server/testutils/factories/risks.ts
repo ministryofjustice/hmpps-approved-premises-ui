@@ -5,8 +5,8 @@ import type { PersonRisks, RiskEnvelopeStatus } from '@approved-premises/api'
 import { RiskLevel, TierLetter, TierNumber, RiskTierLevel } from '@approved-premises/ui'
 import { DateFormats } from '../../utils/dateUtils'
 
-const riskLevels: RiskLevel[] = ['Low', 'Medium', 'High', 'Very High']
-const riskEnvelopeStatuses: RiskEnvelopeStatus[] = ['retrieved', 'not_found', 'error']
+const riskLevels: Array<RiskLevel> = ['Low', 'Medium', 'High', 'Very High']
+const riskEnvelopeStatuses: Array<RiskEnvelopeStatus> = ['retrieved', 'not_found', 'error']
 
 export default Factory.define<PersonRisks>(() => ({
   crn: `C${faker.datatype.number({ min: 100000, max: 999999 })}`,

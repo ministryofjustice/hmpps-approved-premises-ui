@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import 'reflect-metadata'
 
-type Constructor = new (...args: any[]) => {}
+type Constructor = new (...args: Array<any>) => {}
 
 const Section = (options: { name: string; tasks: Array<Constructor> }) => {
   return <T extends Constructor>(constructor: T) => {

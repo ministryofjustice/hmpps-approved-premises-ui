@@ -19,7 +19,7 @@ export const additionalNeeds = {
 type AdditionalNeed = keyof typeof additionalNeeds
 
 type AccessNeedsBody = {
-  additionalNeeds: AdditionalNeed[]
+  additionalNeeds: Array<AdditionalNeed>
   religiousOrCulturalNeeds: YesOrNo
   religiousOrCulturalNeedsDetails: string
   careActAssessmentCompleted: YesNoOrIDK

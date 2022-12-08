@@ -63,7 +63,7 @@ export default class CaseNotes implements TasklistPage {
     moreDetailsQuestion: `Are there additional circumstances that have helped ${this.application.person.name} do well in the past?`,
   }
 
-  caseNotes: PrisonCaseNote[] | undefined
+  caseNotes: Array<PrisonCaseNote> | undefined
 
   constructor(private _body: Partial<CaseNotesBody>, private readonly application: Application) {}
 

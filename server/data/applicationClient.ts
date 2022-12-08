@@ -30,8 +30,8 @@ export default class ApplicationClient {
     })) as Application
   }
 
-  async all(): Promise<Application[]> {
-    return (await this.restClient.get({ path: paths.applications.index.pattern })) as Application[]
+  async all(): Promise<Array<Application>> {
+    return (await this.restClient.get({ path: paths.applications.index.pattern })) as Array<Application>
   }
 
   async submit(application: Application): Promise<void> {

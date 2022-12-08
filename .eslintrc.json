@@ -66,6 +66,7 @@
   "extends": ["airbnb-base", "plugin:prettier/recommended"],
 
   "rules": {
+    "@typescript-eslint/array-type": ["error", { "default": "generic" }],
     "no-unused-vars": [
       1,
       {

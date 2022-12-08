@@ -33,7 +33,7 @@ export default class TaskListPage extends Page {
     cy.get('p').contains(`Last updated: ${tier.lastUpdated}`)
   }
 
-  shouldShowDeliusRiskFlags = (flags: string[]): void => {
+  shouldShowDeliusRiskFlags = (flags: Array<string>): void => {
     cy.get('h3').contains(`Delius risk flags (registers)`)
     cy.get('.risk-flag-widget > ul').within($item => {
       flags.forEach(flag => {

@@ -26,21 +26,21 @@ export default class PersonClient {
     return response as PersonRisks
   }
 
-  async prisonCaseNotes(crn: string): Promise<PrisonCaseNote[]> {
+  async prisonCaseNotes(crn: string): Promise<Array<PrisonCaseNote>> {
     const response = await this.restClient.get({ path: paths.people.prisonCaseNotes({ crn }) })
 
-    return response as PrisonCaseNote[]
+    return response as Array<PrisonCaseNote>
   }
 
-  async adjudications(crn: string): Promise<Adjudication[]> {
+  async adjudications(crn: string): Promise<Array<Adjudication>> {
     const response = await this.restClient.get({ path: paths.people.adjudications({ crn }) })
 
-    return response as Adjudication[]
+    return response as Array<Adjudication>
   }
 
-  async offences(crn: string): Promise<ActiveOffence[]> {
+  async offences(crn: string): Promise<Array<ActiveOffence>> {
     const response = await this.restClient.get({ path: paths.people.offences({ crn }) })
 
-    return response as ActiveOffence[]
+    return response as Array<ActiveOffence>
   }
 }

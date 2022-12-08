@@ -6,9 +6,9 @@ import { sentenceCase } from '../../../server/utils/utils'
 import Page from '../page'
 
 export default class CaseNotesPage extends Page {
-  prisonCaseNotes: PrisonCaseNote[]
+  prisonCaseNotes: Array<PrisonCaseNote>
 
-  constructor(application: Application, prisonCaseNotes: PrisonCaseNote[]) {
+  constructor(application: Application, prisonCaseNotes: Array<PrisonCaseNote>) {
     super('Prison information')
 
     cy.get('label').contains(
