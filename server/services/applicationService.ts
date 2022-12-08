@@ -131,7 +131,7 @@ export default class ApplicationService {
         return [
           this.createNameAnchorElement(application.person.name, application.id),
           this.textValue(application.person.crn),
-          this.htmlValue(tierBadge(tier.value.level)),
+          this.htmlValue(tierBadge(tier.value?.level || '')),
           this.textValue(DateFormats.isoDateToUIDate(getArrivalDate(application), { format: 'short' })),
           this.textValue(DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' })),
         ]

@@ -49,17 +49,22 @@ describe('ApplicationService', () => {
     personClientFactory.mockReturnValue(personClient)
   })
 
-  describe('getApplications', () => {
+  describe('dashboardTableRows', () => {
     it('calls the all method on the client and returns the data in the correct format for the table in the view', async () => {
       const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
-      const application = applicationFactory.withReleaseDate(arrivalDate).build({
+      const applicationA = applicationFactory.withReleaseDate(arrivalDate).build({
         person: { name: 'A' },
       })
-      const tier = tierEnvelopeFactory.build({ value: { level: 'A1' } })
+      const tierA = tierEnvelopeFactory.build({ value: { level: 'A1' } })
+      const applicationB = applicationFactory.withReleaseDate(arrivalDate).build({
+        person: { name: 'A' },
+      })
+      const tierB = tierEnvelopeFactory.build({ value: null })
       const token = 'SOME_TOKEN'
 
-      applicationClient.all.mockResolvedValue([application])
-      personClient.risks.mockResolvedValueOnce({ tier } as PersonRisks)
+      applicationClient.all.mockResolvedValue([applicationA, applicationB])
+      personClient.risks.mockResolvedValueOnce({ tier: tierA } as PersonRisks)
+      personClient.risks.mockResolvedValueOnce({ tier: tierB } as PersonRisks)
       ;(getArrivalDate as jest.Mock).mockReturnValue(arrivalDate)
 
       const result = await service.dashboardTableRows(token)
@@ -67,19 +72,36 @@ describe('ApplicationService', () => {
       expect(result).toEqual([
         [
           {
-            html: `<a href=${paths.applications.show({ id: application.id })}>${application.person.name}</a>`,
+            html: `<a href=${paths.applications.show({ id: applicationA.id })}>${applicationA.person.name}</a>`,
           },
           {
-            text: application.person.crn,
+            text: applicationA.person.crn,
           },
           {
-            html: `<span class="moj-badge moj-badge--red">${tier.value.level}</span>`,
+            html: `<span class="moj-badge moj-badge--red">${tierA.value.level}</span>`,
           },
           {
             text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
           },
           {
-            text: DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' }),
+            text: DateFormats.isoDateToUIDate(applicationA.submittedAt, { format: 'short' }),
+          },
+        ],
+        [
+          {
+            html: `<a href=${paths.applications.show({ id: applicationB.id })}>${applicationB.person.name}</a>`,
+          },
+          {
+            text: applicationB.person.crn,
+          },
+          {
+            html: '',
+          },
+          {
+            text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
+          },
+          {
+            text: DateFormats.isoDateToUIDate(applicationB.submittedAt, { format: 'short' }),
           },
         ],
       ])
@@ -87,7 +109,8 @@ describe('ApplicationService', () => {
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.all).toHaveBeenCalled()
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.risks).toHaveBeenCalledWith(application.person.crn)
+      expect(personClient.risks).toHaveBeenCalledWith(applicationA.person.crn)
+      expect(personClient.risks).toHaveBeenCalledWith(applicationB.person.crn)
     })
   })
 

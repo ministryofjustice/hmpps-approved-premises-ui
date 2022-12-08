@@ -9,6 +9,8 @@ const statusTag = (status: PersonStatus): string => {
 }
 
 const tierBadge = (tier: string): string => {
+  if (!tier) return ''
+
   const colour = { A: 'moj-badge--red', B: 'moj-badge--purple' }[tier[0]]
 
   return `<span class="moj-badge ${colour}">${tier}</span>`
