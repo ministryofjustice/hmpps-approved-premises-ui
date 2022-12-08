@@ -28,16 +28,16 @@ describe('AssessmentClient', () => {
 
   describe('all', () => {
     it('should get all assessments', async () => {
-      const previousApplications = assessmentFactory.build()
+      const assessments = assessmentFactory.buildList(3)
 
       fakeApprovedPremisesApi
         .get(paths.assessments.index.pattern)
         .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, previousApplications)
+        .reply(200, assessments)
 
       const result = await assessmentClient.all()
 
-      expect(result).toEqual(previousApplications)
+      expect(result).toEqual(assessments)
       expect(nock.isDone()).toBeTruthy()
     })
   })
