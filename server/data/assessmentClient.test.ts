@@ -41,4 +41,20 @@ describe('AssessmentClient', () => {
       expect(nock.isDone()).toBeTruthy()
     })
   })
+
+  describe('find', () => {
+    it('should get an assessment', async () => {
+      const assessment = assessmentFactory.build()
+
+      fakeApprovedPremisesApi
+        .get(paths.assessments.show({ id: assessment.id }))
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, assessment)
+
+      const result = await assessmentClient.find(assessment.id)
+
+      expect(result).toEqual(assessment)
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
 })
