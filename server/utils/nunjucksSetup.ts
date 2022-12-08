@@ -15,7 +15,9 @@ import { checkYourAnswersSections } from './checkYourAnswersUtils'
 import { statusTag } from './personUtils'
 import bookingActions from './bookingUtils'
 import { DateFormats } from './dateUtils'
+
 import * as AssessmentUtils from './assessmentUtils'
+import * as OffenceUtils from './offenceUtils'
 
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
@@ -123,4 +125,5 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('checkYourAnswersSections', checkYourAnswersSections)
 
   njkEnv.addGlobal('AssessmentUtils', AssessmentUtils)
+  njkEnv.addGlobal('OffenceUtils', OffenceUtils)
 }

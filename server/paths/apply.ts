@@ -4,12 +4,16 @@ const applicationsPath = path('/applications')
 const applicationPath = applicationsPath.path(':id')
 
 const pagesPath = applicationPath.path('tasks/:task/pages/:page')
+const peoplePath = applicationsPath.path('people')
 
 const paths = {
   applications: {
     new: applicationsPath.path('new'),
     start: applicationsPath.path('start'),
-    people: applicationsPath.path('people').path('find'),
+    people: {
+      find: peoplePath.path('find'),
+      selectOffence: peoplePath.path(':crn').path('select-offence'),
+    },
     create: applicationsPath,
     index: applicationsPath,
     show: applicationPath,

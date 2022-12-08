@@ -19,6 +19,7 @@ import {
   ForeignNationalPage,
   CheckYourAnswersPage,
   ListPage,
+  SelectOffencePage,
 } from '../../../cypress_shared/pages/apply'
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
@@ -53,13 +54,70 @@ context('Apply', () => {
     cy.task('stubAuthUser')
   })
 
+  it('allows the user to select an index offence if there is more than one offence', () => {
+    // Given I am logged in
+    cy.signIn()
+
+    // And a person is in Delius
+    const person = personFactory.build()
+    cy.task('stubFindPerson', { person })
+
+    // And that person has more than one offence listed under their CRN
+    const offences = activeOffenceFactory.buildList(4)
+    cy.task('stubPersonOffences', { person, offences })
+
+    // And I have started an application
+    cy.fixture('applicationData.json').then(applicationData => {
+      const application = applicationFactory.build({ person, data: applicationData })
+      cy.task('stubApplicationCreate', { application })
+
+      const startPage = StartPage.visit()
+      startPage.startApplication()
+
+      // When I enter a CRN
+      const crnPage = new EnterCRNPage()
+      crnPage.enterCrn(person.crn)
+      crnPage.clickSubmit()
+
+      // And I click submit
+      const confirmDetailsPage = new ConfirmDetailsPage(person)
+      confirmDetailsPage.clickSubmit()
+
+      // Then I should be forwarded to select an offence
+      const selectOffencePage = Page.verifyOnPage(SelectOffencePage, person, offences)
+      selectOffencePage.shouldDisplayOffences()
+
+      // When I select an offence
+      const selectedOffence = offences[0]
+      selectOffencePage.selectOffence(selectedOffence)
+
+      // And I click submit
+      selectOffencePage.clickSubmit()
+
+      // Then the API should have created the application with my selected offence
+      cy.task('verifyApplicationCreate').then(requests => {
+        expect(requests).to.have.length(1)
+
+        const body = JSON.parse(requests[0].body)
+
+        expect(body.crn).equal(person.crn)
+        expect(body.convictionId).equal(selectedOffence.convictionId)
+        expect(body.deliusEventNumber).equal(selectedOffence.deliusEventNumber)
+        expect(body.offenceId).equal(selectedOffence.offenceId)
+      })
+
+      // Then I should be on the Sentence Type page
+      Page.verifyOnPage(SentenceTypePage, application)
+    })
+  })
+
   it('shows the details of a person from their CRN', () => {
     // Given I am logged in
     cy.signIn()
 
     // And a person is in Delius
     const person = personFactory.build()
-    const offences = activeOffenceFactory.buildList(2)
+    const offences = activeOffenceFactory.buildList(1)
     cy.task('stubFindPerson', { person })
     cy.task('stubPersonOffences', { person, offences })
 
@@ -153,7 +211,7 @@ context('Apply', () => {
     const person = personFactory.build()
     const apiRisks = risksFactory.build({ crn: person.crn })
     const uiRisks = mapApiPersonRisksForUi(apiRisks)
-    const offences = activeOffenceFactory.buildList(2)
+    const offences = activeOffenceFactory.buildList(1)
 
     // Given I am logged in
     cy.signIn()

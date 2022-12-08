@@ -119,7 +119,7 @@ describe('applicationsController', () => {
   describe('new', () => {
     describe('If there is a CRN in the flash', () => {
       const person = personFactory.build()
-      const offences = activeOffenceFactory.buildList(2)
+      const offence = activeOffenceFactory.build()
 
       beforeEach(() => {
         request = createMock<Request>({
@@ -127,29 +127,51 @@ describe('applicationsController', () => {
           flash: jest.fn().mockReturnValue([person.crn]),
         })
         personService.findByCrn.mockResolvedValue(person)
-        personService.getOffences.mockResolvedValue(offences)
+        personService.getOffences.mockResolvedValue([offence])
       })
 
-      it('it should render the start of the application form', async () => {
-        ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
-          return { errors: {}, errorSummary: [], userInput: {} }
+      describe('if an error has not been sent to the flash', () => {
+        beforeEach(() => {
+          ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
+            return { errors: {}, errorSummary: [], userInput: {} }
+          })
         })
 
-        const requestHandler = applicationsController.new()
+        it('it should render the start of the application form', async () => {
+          const requestHandler = applicationsController.new()
 
-        await requestHandler(request, response, next)
+          await requestHandler(request, response, next)
 
-        expect(response.render).toHaveBeenCalledWith('applications/people/confirm', {
-          pageHeading: `Confirm ${person.name}'s details`,
-          ...person,
-          date: DateFormats.dateObjtoUIDate(new Date()),
-          dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
-          offenceId: offences[0].offenceId,
-          errors: {},
-          errorSummary: [],
+          expect(response.render).toHaveBeenCalledWith('applications/people/confirm', {
+            pageHeading: `Confirm ${person.name}'s details`,
+            ...person,
+            date: DateFormats.dateObjtoUIDate(new Date()),
+            dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
+            offenceId: offence.offenceId,
+            errors: {},
+            errorSummary: [],
+          })
+          expect(personService.findByCrn).toHaveBeenCalledWith(token, person.crn)
+          expect(request.flash).toHaveBeenCalledWith('crn')
         })
-        expect(personService.findByCrn).toHaveBeenCalledWith(token, person.crn)
-        expect(request.flash).toHaveBeenCalledWith('crn')
+
+        it('should not send an offence ID to the view if there are more than one offences returned', async () => {
+          const offences = activeOffenceFactory.buildList(2)
+          personService.getOffences.mockResolvedValue(offences)
+
+          const requestHandler = applicationsController.new()
+          await requestHandler(request, response, next)
+
+          expect(response.render).toHaveBeenCalledWith('applications/people/confirm', {
+            pageHeading: `Confirm ${person.name}'s details`,
+            ...person,
+            date: DateFormats.dateObjtoUIDate(new Date()),
+            dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
+            offenceId: null,
+            errors: {},
+            errorSummary: [],
+          })
+        })
       })
 
       it('renders the form with errors and user input if an error has been sent to the flash', async () => {
@@ -166,7 +188,7 @@ describe('applicationsController', () => {
           ...person,
           date: DateFormats.dateObjtoUIDate(new Date()),
           dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
-          offenceId: offences[0].offenceId,
+          offenceId: offence.offenceId,
           errors: errorsAndUserInput.errors,
           errorSummary: errorsAndUserInput.errorSummary,
           ...errorsAndUserInput.userInput,
@@ -239,6 +261,20 @@ describe('applicationsController', () => {
       expect(applicationService.createApplication).toHaveBeenCalledWith('SOME_TOKEN', 'some-crn', offences[0])
       expect(response.redirect).toHaveBeenCalledWith(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' }),
+      )
+    })
+
+    it('redirects to the select offences step if an offence has not been provided', async () => {
+      request.body.offenceId = null
+
+      const requestHandler = applicationsController.create()
+
+      await requestHandler(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.applications.people.selectOffence({
+          crn: request.body.crn,
+        }),
       )
     })
 
