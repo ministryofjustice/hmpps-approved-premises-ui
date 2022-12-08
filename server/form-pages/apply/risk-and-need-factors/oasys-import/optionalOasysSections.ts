@@ -1,7 +1,6 @@
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-
 import { flattenCheckboxInput, isStringOrArrayOfStrings } from '../../../../utils/formUtils'
 import { Application, OASysSection } from '../../../../@types/shared'
 import { DataServices } from '../../../../@types/ui'

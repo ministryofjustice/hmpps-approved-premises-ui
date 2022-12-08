@@ -1,4 +1,6 @@
 import type { Response } from 'express'
+import qs from 'qs'
+
 import type {
   ActiveOffence,
   Adjudication,
@@ -6,6 +8,7 @@ import type {
   PersonRisks,
   PrisonCaseNote,
   OASysSection,
+  OASysSections,
 } from '@approved-premises/api'
 
 import RestClient from './restClient'
@@ -57,6 +60,18 @@ export default class PersonClient {
     const response = await this.restClient.get({ path: paths.people.oasys.selection({ crn }) })
 
     return response as Array<OASysSection>
+  }
+
+  async oasysSections(crn: string, selectedSections?: Array<number>): Promise<OASysSections> {
+    const queryString = qs.stringify({ 'selected-sections': selectedSections })
+      ? `?${qs.stringify({ 'selected-sections': selectedSections })}`
+      : ''
+
+    const path = `${paths.people.oasys.sections({ crn })}${queryString}`
+
+    const response = await this.restClient.get({ path })
+
+    return response as OASysSections
   }
 
   async document(crn: string, documentId: string, response: Response): Promise<void> {
