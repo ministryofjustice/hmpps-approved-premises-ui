@@ -5,6 +5,7 @@ import { Assessment } from '@approved-premises/api'
 import { tierBadge } from './personUtils'
 import { DateFormats } from './dateUtils'
 import { getArrivalDate } from './applicationUtils'
+import paths from '../paths/assess'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
@@ -14,7 +15,7 @@ const awaitingAssessmentTableRows = (assessments: Array<AssessmentWithRisks>): A
   assessments.forEach(assessment => {
     rows.push([
       {
-        html: `<a href="#">${assessment.application.person.name}</a>`,
+        html: assessmentLink(assessment),
       },
       {
         html: assessment.application.person.crn,
@@ -46,7 +47,7 @@ const completedTableRows = (assessments: Array<AssessmentWithRisks>): Array<Tabl
   assessments.forEach(assessment => {
     rows.push([
       {
-        html: `<a href="#">${assessment.application.person.name}</a>`,
+        html: assessmentLink(assessment),
       },
       {
         html: assessment.application.person.crn,
@@ -72,7 +73,7 @@ const requestedFurtherInformationTableRows = (assessments: Array<AssessmentWithR
   assessments.forEach(assessment => {
     rows.push([
       {
-        html: `<a href="#">${assessment.application.person.name}</a>`,
+        html: assessmentLink(assessment),
       },
       {
         html: assessment.application.person.crn,
@@ -96,6 +97,12 @@ const requestedFurtherInformationTableRows = (assessments: Array<AssessmentWithR
   })
 
   return rows
+}
+
+const assessmentLink = (assessment: Assessment): string => {
+  return `<a href="${paths.assessments.show({ id: assessment.id })}" data-cy-assessmentId="${assessment.id}">${
+    assessment.application.person.name
+  }</a>`
 }
 
 const formattedArrivalDate = (assessment: Assessment): string => {
@@ -179,4 +186,5 @@ export {
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
   formatDaysUntilDueWithWarning,
+  assessmentLink,
 }
