@@ -264,6 +264,20 @@ describe('applicationsController', () => {
       )
     })
 
+    it('redirects to the select offences step if an offence has not been provided', async () => {
+      request.body.offenceId = null
+
+      const requestHandler = applicationsController.create()
+
+      await requestHandler(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.applications.people.selectOffence({
+          crn: request.body.crn,
+        }),
+      )
+    })
+
     it('saves the application to the session', async () => {
       const requestHandler = applicationsController.create()
 

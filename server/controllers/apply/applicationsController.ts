@@ -76,16 +76,20 @@ export default class ApplicationsController {
 
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { crn } = req.body
-      const offences = await this.personService.getOffences(req.user.token, crn)
-      const indexOffence = offences.find(o => o.offenceId === req.body.offenceId)
+      const { crn, offenceId } = req.body
+      if (!offenceId) {
+        res.redirect(paths.applications.people.selectOffence({ crn }))
+      } else {
+        const offences = await this.personService.getOffences(req.user.token, crn)
+        const indexOffence = offences.find(o => o.offenceId === offenceId)
 
-      const application = await this.applicationService.createApplication(req.user.token, crn, indexOffence)
-      req.session.application = application
+        const application = await this.applicationService.createApplication(req.user.token, crn, indexOffence)
+        req.session.application = application
 
-      res.redirect(
-        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' }),
-      )
+        res.redirect(
+          paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' }),
+        )
+      }
     }
   }
 

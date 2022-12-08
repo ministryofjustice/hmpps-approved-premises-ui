@@ -59,7 +59,7 @@ context('Apply', () => {
 
     // And a person is in Delius
     const person = personFactory.build()
-    const offences = activeOffenceFactory.buildList(2)
+    const offences = activeOffenceFactory.buildList(1)
     cy.task('stubFindPerson', { person })
     cy.task('stubPersonOffences', { person, offences })
 
@@ -153,7 +153,7 @@ context('Apply', () => {
     const person = personFactory.build()
     const apiRisks = risksFactory.build({ crn: person.crn })
     const uiRisks = mapApiPersonRisksForUi(apiRisks)
-    const offences = activeOffenceFactory.buildList(2)
+    const offences = activeOffenceFactory.buildList(1)
 
     // Given I am logged in
     cy.signIn()
