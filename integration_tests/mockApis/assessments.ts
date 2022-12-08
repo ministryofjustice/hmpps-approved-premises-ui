@@ -17,4 +17,16 @@ export default {
         jsonBody: assessments,
       },
     }),
+  stubAssessment: (assessment: Assessment): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/assessments/${assessment.id}`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: assessment,
+      },
+    }),
 }

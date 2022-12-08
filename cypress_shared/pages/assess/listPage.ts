@@ -16,8 +16,8 @@ export default class ListPage extends Page {
 
   static visit(
     awaitingAssessments: Array<Assessment>,
-    assessmentsCloseToDueDate: Array<Assessment>,
-    completedAssesssments: Array<Assessment>,
+    assessmentsCloseToDueDate: Array<Assessment> = [],
+    completedAssesssments: Array<Assessment> = [],
   ): ListPage {
     cy.visit(paths.assessments.index({}))
     return new ListPage(awaitingAssessments, assessmentsCloseToDueDate, completedAssesssments)
@@ -90,5 +90,9 @@ export default class ListPage extends Page {
 
   clickCompleted() {
     cy.get('a').contains('Completed').click()
+  }
+
+  clickAssessment(assessment: Assessment): void {
+    cy.get(`a[data-cy-assessmentId="${assessment.id}"]`).click()
   }
 }

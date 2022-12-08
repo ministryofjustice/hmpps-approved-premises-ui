@@ -1,0 +1,79 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
+{% extends "../partials/layout.njk" %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-width-container">
+      <h1 class="govuk-heading-xl">
+        {{ pageHeading }}
+      </h1>
+
+      <h2 class="govuk-heading-s govuk-!-margin-bottom-2">Assessment incomplete</h2>
+      <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ getCompleteSectionCount(sections, application) }} of {{ (sections | length) }} sections.</p>
+    </div>
+
+    <div class="govuk-grid-column-two-thirds">
+      <ol class="app-task-list">
+        {% for section in sections %}
+          <li>
+            <h2 class="app-task-list__section">
+              <span class="app-task-list__section-number">{{loop.index}}. </span>
+              {{ section.title }}
+            </h2>
+            <ul class="app-task-list__items">
+              {% for task in section.tasks %}
+                <li class="app-task-list__item">
+                  <span class="app-task-list__task-name">
+                    {{ taskLink(task, assessment)  }}
+                  </span>
+                  {{ getTaskStatus(task, assessment) }}
+                </li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% endfor %}
+
+        <li>
+          <h2 class="app-task-list__section">
+            <span class="app-task-list__section-number">
+              {{ (sections | length) + 1 }}.
+            </span>
+            Submit your assessment
+          </h2>
+
+          {{ govukCheckboxes({
+            idPrefix: "confirmation",
+            name: "confirmation",
+            items: [
+              {
+                value: "submit",
+                text: "I confirm the information provided is complete, accurate and up to date."
+              }
+            ]
+          }) }}
+        </li>
+      </ol>
+
+      <form action="#" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+        {{ govukButton({
+          text: "Submit application"
+          }) }}
+      </form>
+
+      {{ govukButton({
+        text: "Save and come back later",
+        classes: "govuk-button--secondary",
+        href: "#"
+      }) }}
+
+    </div>
+
+  </div>
+
+{% endblock %}
