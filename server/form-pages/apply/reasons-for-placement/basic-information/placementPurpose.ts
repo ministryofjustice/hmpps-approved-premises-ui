@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import type { TaskListErrors } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'

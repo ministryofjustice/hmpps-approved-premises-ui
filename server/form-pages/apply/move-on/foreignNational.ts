@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 import { sentenceCase } from '../../../utils/utils'
 

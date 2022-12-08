@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import type { TaskListErrors } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
 import { sentenceCase, lowerCase } from '../../../../utils/utils'
