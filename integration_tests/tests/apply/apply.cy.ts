@@ -33,7 +33,7 @@ import TypeOfConvictedOffence from '../../../cypress_shared/pages/apply/typeOfCo
 import Page from '../../../cypress_shared/pages/page'
 import applicationFactory from '../../../server/testutils/factories/application'
 import prisonCaseNotesFactory from '../../../server/testutils/factories/prisonCaseNotes'
-import oasysSectionFactory from '../../../server/testutils/factories/oasysSection'
+import oasysSelectionFactory from '../../../server/testutils/factories/oasysSelection'
 import personFactory from '../../../server/testutils/factories/person'
 import activeOffenceFactory from '../../../server/testutils/factories/activeOffence'
 import risksFactory from '../../../server/testutils/factories/risks'
@@ -298,32 +298,32 @@ context('Apply', () => {
       tasklistPage.shouldShowTaskStatus('oasys-import', 'Not started')
 
       // Given there are OASys sections in the db
-      const oasysSectionA = oasysSectionFactory.needsLinkedToReoffending().build({
+      const oasysSelectionA = oasysSelectionFactory.needsLinkedToReoffending().build({
         section: 1,
         name: 'accommodation',
       })
-      const oasysSectionB = oasysSectionFactory.needsLinkedToReoffending().build({
+      const oasysSelectionB = oasysSelectionFactory.needsLinkedToReoffending().build({
         section: 2,
         name: 'relationships',
         linkedToHarm: false,
         linkedToReOffending: true,
       })
-      const oasysSectionC = oasysSectionFactory.needsNotLinkedToReoffending().build({
+      const oasysSelectionC = oasysSelectionFactory.needsNotLinkedToReoffending().build({
         section: 3,
         name: 'emotional',
         linkedToHarm: false,
         linkedToReOffending: false,
       })
-      const oasysSectionD = oasysSectionFactory.needsNotLinkedToReoffending().build({
+      const oasysSelectionD = oasysSelectionFactory.needsNotLinkedToReoffending().build({
         section: 4,
         name: 'thinking',
         linkedToHarm: false,
         linkedToReOffending: false,
       })
-      const oasysSectionsLinkedToReoffending = [oasysSectionA, oasysSectionB]
-      const otherOasysSections = [oasysSectionC, oasysSectionD]
-      const oasysSections = [...oasysSectionsLinkedToReoffending, ...otherOasysSections]
-      cy.task('stubOasysSelection', { person, oasysSections })
+      const oasysSectionsLinkedToReoffending = [oasysSelectionA, oasysSelectionB]
+      const otherOasysSections = [oasysSelectionC, oasysSelectionD]
+      const oasysSelection = [...oasysSectionsLinkedToReoffending, ...otherOasysSections]
+      cy.task('stubOasysSelection', { person, oasysSelection })
 
       // Given I click the 'Import Oasys' task
       cy.get('[data-cy-task-name="oasys-import"]').click()

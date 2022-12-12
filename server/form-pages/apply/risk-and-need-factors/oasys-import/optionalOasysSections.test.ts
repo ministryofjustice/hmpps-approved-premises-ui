@@ -1,7 +1,7 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import { ApplicationService, PersonService } from '../../../../services'
 import applicationFactory from '../../../../testutils/factories/application'
-import oasysSectionFactory from '../../../../testutils/factories/oasysSection'
+import oasysSelectionFactory from '../../../../testutils/factories/oasysSelection'
 import { sentenceCase } from '../../../../utils/utils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
@@ -10,15 +10,15 @@ import OptionalOasysSections from './optionalOasysSections'
 jest.mock('../../../../services/personService.ts')
 
 describe('OptionalOasysSections', () => {
-  const oasysSections = oasysSectionFactory.buildList(3)
-  const needsLinkedToHarm = oasysSectionFactory.needsLinkedToHarm().buildList(2)
-  let needsLinkedToReoffending = oasysSectionFactory.needsLinkedToReoffending().buildList(2)
-  let otherNeeds = oasysSectionFactory.needsNotLinkedToReoffending().buildList(2)
+  const oasysSelection = oasysSelectionFactory.buildList(3)
+  const needsLinkedToHarm = oasysSelectionFactory.needsLinkedToHarm().buildList(2)
+  let needsLinkedToReoffending = oasysSelectionFactory.needsLinkedToReoffending().buildList(2)
+  let otherNeeds = oasysSelectionFactory.needsNotLinkedToReoffending().buildList(2)
 
   const application = applicationFactory.build()
 
   describe('initialize', () => {
-    const getOasysSelectionsMock = jest.fn().mockResolvedValue(oasysSections)
+    const getOasysSelectionsMock = jest.fn().mockResolvedValue(oasysSelection)
     let personService: DeepMocked<PersonService>
     const applicationService = createMock<ApplicationService>({})
 
@@ -51,8 +51,8 @@ describe('OptionalOasysSections', () => {
     })
 
     it('initializes the OptionalOasysSections class with the selected sections', async () => {
-      needsLinkedToReoffending = oasysSectionFactory.needsLinkedToReoffending().buildList(1, { section: 1 })
-      otherNeeds = oasysSectionFactory.needsNotLinkedToReoffending().buildList(1, { section: 2 })
+      needsLinkedToReoffending = oasysSelectionFactory.needsLinkedToReoffending().buildList(1, { section: 1 })
+      otherNeeds = oasysSelectionFactory.needsNotLinkedToReoffending().buildList(1, { section: 2 })
 
       getOasysSelectionsMock.mockResolvedValueOnce([...needsLinkedToReoffending, ...otherNeeds])
 
@@ -97,14 +97,14 @@ describe('OptionalOasysSections', () => {
   })
 
   describe('response', () => {
-    const needLinkedToReoffendingA = oasysSectionFactory
+    const needLinkedToReoffendingA = oasysSelectionFactory
       .needsLinkedToReoffending()
       .build({ section: 1, name: 'Some section' })
-    const needLinkedToReoffendingB = oasysSectionFactory
+    const needLinkedToReoffendingB = oasysSelectionFactory
       .needsLinkedToReoffending()
       .build({ section: 2, name: 'Some other Section' })
-    const otherNeedA = oasysSectionFactory.needsNotLinkedToReoffending().build({ section: 3, name: 'Foo Section' })
-    const otherNeedB = oasysSectionFactory.needsNotLinkedToReoffending().build({ section: 4, name: 'Bar Section' })
+    const otherNeedA = oasysSelectionFactory.needsNotLinkedToReoffending().build({ section: 3, name: 'Foo Section' })
+    const otherNeedB = oasysSelectionFactory.needsNotLinkedToReoffending().build({ section: 4, name: 'Bar Section' })
 
     describe('should return a translated version of the OASys sections', () => {
       it('when every need is selected', () => {
@@ -124,10 +124,10 @@ describe('OptionalOasysSections', () => {
       })
 
       it('when only one need is selected', () => {
-        const needLinkedToReoffending = oasysSectionFactory
+        const needLinkedToReoffending = oasysSelectionFactory
           .needsLinkedToReoffending()
           .build({ section: 1, name: 'Some section' })
-        const otherNeed = oasysSectionFactory
+        const otherNeed = oasysSelectionFactory
           .needsNotLinkedToReoffending()
           .build({ section: 2, name: 'Some other section' })
 
@@ -151,7 +151,7 @@ describe('OptionalOasysSections', () => {
       })
 
       it('returns an object with only one key if only needsLinkedToReoffending or otherNeeds are given', () => {
-        const needLinkedToReoffending = oasysSectionFactory
+        const needLinkedToReoffending = oasysSelectionFactory
           .needsLinkedToReoffending()
           .build({ section: 1, name: 'Some section' })
 
@@ -164,7 +164,7 @@ describe('OptionalOasysSections', () => {
           [pageWithOnlyNeedsLinkedToReoffending.needsLinkedToReoffendingHeading]: '1. Some section',
         })
 
-        const otherNeed = oasysSectionFactory
+        const otherNeed = oasysSelectionFactory
           .needsNotLinkedToReoffending()
           .build({ section: 2, name: 'Some other section' })
 
@@ -182,11 +182,11 @@ describe('OptionalOasysSections', () => {
 
   describe('reoffendingNeedsItems', () => {
     it('it returns reoffending needs as checkbox items', () => {
-      const needLinkedToReoffendingA = oasysSectionFactory
+      const needLinkedToReoffendingA = oasysSelectionFactory
         .needsLinkedToReoffending()
         .build({ section: 1, name: 'emotional' })
-      const needLinkedToReoffendingB = oasysSectionFactory.needsLinkedToReoffending().build({ section: 2 })
-      const needLinkedToReoffendingC = oasysSectionFactory.needsLinkedToReoffending().build({ section: 3 })
+      const needLinkedToReoffendingB = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 2 })
+      const needLinkedToReoffendingC = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 3 })
 
       const page = new OptionalOasysSections({ needsLinkedToReoffending: [needLinkedToReoffendingA] })
       page.allNeedsLinkedToReoffending = [needLinkedToReoffendingA, needLinkedToReoffendingB, needLinkedToReoffendingC]
@@ -214,9 +214,9 @@ describe('OptionalOasysSections', () => {
 
   describe('otherNeedsItems', () => {
     it('it returns other needs as checkbox items', () => {
-      const otherNeedA = oasysSectionFactory.needsNotLinkedToReoffending().build({ section: 1 })
-      const otherNeedB = oasysSectionFactory.needsNotLinkedToReoffending().build({ section: 2, name: 'thinking' })
-      const otherNeedC = oasysSectionFactory.needsNotLinkedToReoffending().build({ section: 3 })
+      const otherNeedA = oasysSelectionFactory.needsNotLinkedToReoffending().build({ section: 1 })
+      const otherNeedB = oasysSelectionFactory.needsNotLinkedToReoffending().build({ section: 2, name: 'thinking' })
+      const otherNeedC = oasysSelectionFactory.needsNotLinkedToReoffending().build({ section: 3 })
 
       const page = new OptionalOasysSections({ otherNeeds: [otherNeedB] })
       page.allOtherNeeds = [otherNeedA, otherNeedB, otherNeedC]

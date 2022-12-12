@@ -10,7 +10,7 @@ import prisonCaseNotesFactory from '../testutils/factories/prisonCaseNotes'
 import paths from '../paths/api'
 import adjudicationsFactory from '../testutils/factories/adjudication'
 import activeOffenceFactory from '../testutils/factories/activeOffence'
-import oasysSectionFactory from '../testutils/factories/oasysSection'
+import oasysSelectionFactory from '../testutils/factories/oasysSelection'
 
 describe('PersonClient', () => {
   let fakeApprovedPremisesApi: nock.Scope
@@ -102,7 +102,7 @@ describe('PersonClient', () => {
     describe('oasysSelection', () => {
       it('should return the importable sections of OASys', async () => {
         const crn = 'crn'
-        const oasysSections = oasysSectionFactory.buildList(5)
+        const oasysSections = oasysSelectionFactory.buildList(5)
 
         fakeApprovedPremisesApi
           .get(paths.people.oasys.selection({ crn }))

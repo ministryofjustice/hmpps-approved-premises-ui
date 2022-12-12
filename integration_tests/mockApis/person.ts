@@ -95,7 +95,7 @@ export default {
       },
     }),
 
-  stubOasysSelection: (args: { person: Person; oasysSections: Array<OASysSection> }) =>
+  stubOasysSelection: (args: { person: Person; oasysSelection: Array<OASysSection> }) =>
     stubFor({
       request: {
         method: 'GET',
@@ -104,7 +104,7 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: args.oasysSections,
+        jsonBody: args.oasysSelection,
       },
     }),
 
