@@ -12,13 +12,14 @@ echo "==> Pulling the latest type from the API repo"
 
 npm run generate-types
 
+echo "==> Typechecking the code"
+
+npm run typecheck
+
 echo "==> Generating the schema"
 
 npm run generate:schema:apply
 
-echo "==> Typechecking the code"
-
-npm run typecheck
 
 echo "==> Linting the code"
 
