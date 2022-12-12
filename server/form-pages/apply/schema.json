@@ -462,6 +462,41 @@
               }
             }
           }
+        },
+        "rosh-summary": {
+          "type": "object",
+          "properties": {
+            "roshAnswers": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "object"
+                }
+              ]
+            },
+            "roshSummaries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "questionNumber": {
+                    "type": "string"
+                  },
+                  "answer": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
