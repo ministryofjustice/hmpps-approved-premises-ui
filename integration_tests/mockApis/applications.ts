@@ -64,6 +64,18 @@ export default {
         jsonBody: args.application,
       },
     }),
+  stubApplicationDocuments: (args: { application: Application; documents: Array<Document> }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/applications/${args.application.id}/documents`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.documents,
+      },
+    }),
   stubApplicationSubmit: (args: { application: Application }): SuperAgentRequest =>
     stubFor({
       request: {

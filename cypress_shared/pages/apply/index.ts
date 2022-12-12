@@ -19,6 +19,7 @@ import PlacementDurationPage from './placementDuration'
 import ForeignNationalPage from './foreignNational'
 import CheckYourAnswersPage from './checkYourAnswersPage'
 import SelectOffencePage from './selectOffence'
+import AttachDocumentsPage from './attachDocumentsPage'
 
 export {
   ConfirmDetailsPage,
@@ -42,4 +43,5 @@ export {
   ForeignNationalPage,
   CheckYourAnswersPage,
   SelectOffencePage,
+  AttachDocumentsPage,
 }

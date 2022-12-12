@@ -20,6 +20,7 @@ import {
   CheckYourAnswersPage,
   ListPage,
   SelectOffencePage,
+  AttachDocumentsPage,
 } from '../../../cypress_shared/pages/apply'
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
@@ -37,6 +38,7 @@ import personFactory from '../../../server/testutils/factories/person'
 import activeOffenceFactory from '../../../server/testutils/factories/activeOffence'
 import risksFactory from '../../../server/testutils/factories/risks'
 import adjudicationsFactory from '../../../server/testutils/factories/adjudication'
+import documentFactory from '../../../server/testutils/factories/document'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import AccessNeedsPage from '../../../cypress_shared/pages/apply/accessNeeds'
 import AccessNeedsMobilityPage from '../../../cypress_shared/pages/apply/accessNeedsMobility'
@@ -48,6 +50,8 @@ import TypeOfAccomodationPage from '../../../cypress_shared/pages/apply/typeOfAc
 import CaseNotesPage from '../../../cypress_shared/pages/apply/caseNotes'
 import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
 import OptionalOasysSectionsPage from '../../../cypress_shared/pages/apply/optionalOasysSections'
+
+import { documentsFromApplication } from '../../support/helpers'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -568,6 +572,25 @@ context('Apply', () => {
       // And the move on information task should show a completed status
       tasklistPage.shouldShowTaskStatus('move-on', 'Completed')
 
+      // Given there are documents in the database
+      const selectedDocuments = documentsFromApplication(application)
+      const documents = [selectedDocuments, documentFactory.buildList(4)].flat()
+
+      cy.task('stubApplicationDocuments', { application, documents })
+
+      // Given I click on the Attach Documents task
+      cy.get('[data-cy-task-name="attach-required-documents"]').click()
+
+      // And I attach the relevant documents
+      const attachDocumentsPage = new AttachDocumentsPage(documents, selectedDocuments)
+      attachDocumentsPage.shouldDisplayDocuments()
+      attachDocumentsPage.completeForm()
+      attachDocumentsPage.clickSubmit()
+
+      // Then I should be taken back to the task list
+      // And the Attach Documents task should show a completed status
+      tasklistPage.shouldShowTaskStatus('attach-required-documents', 'Completed')
+
       // Given I click the check your answers task
       cy.get('[data-cy-task-name="check-your-answers"]').click()
 
@@ -586,6 +609,7 @@ context('Apply', () => {
       checkYourAnswersPage.shouldShowAccessAndHealthcareAnswers(accessAndHealthcarePages)
       checkYourAnswersPage.shouldShowFurtherConsiderationsAnswers(furtherConsiderationsPages)
       checkYourAnswersPage.shouldShowMoveOnAnswers(moveOnPages)
+      checkYourAnswersPage.shouldShowDocuments(attachDocumentsPage.selectedDocuments)
 
       // When I have checked my answers
       checkYourAnswersPage.clickSubmit()
@@ -604,8 +628,8 @@ context('Apply', () => {
 
       // Then the application should be submitted to the API
       cy.task('verifyApplicationUpdate', application.id).then(requests => {
-        expect(requests).to.have.length(31)
-        const requestBody = JSON.parse(requests[30].body)
+        expect(requests).to.have.length(32)
+        const requestBody = JSON.parse(requests[31].body)
 
         expect(requestBody.data).to.deep.equal(applicationData)
 
