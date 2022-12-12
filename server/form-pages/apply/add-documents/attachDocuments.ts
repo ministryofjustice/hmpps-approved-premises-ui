@@ -9,6 +9,7 @@ type AttachDocumentsBody = {
 }
 
 type AttachDocumentsResponse = {
+  selectedDocuments?: Array<Document>
   documentIds?: Array<string> | string
   documentDescriptions?: Record<string, string>
 }
@@ -31,14 +32,16 @@ export default class AttachDocuments implements TasklistPage {
     const documentIds = [body.documentIds].flat()
     const documentDescriptions = body.documentDescriptions || {}
 
-    const selectedDocuments = documents
-      .filter((d: Document) => documentIds.includes(d.id))
-      .map(document => {
-        return {
-          ...document,
-          description: documentDescriptions[document.id],
-        }
-      })
+    const selectedDocuments = body.selectedDocuments
+      ? body.selectedDocuments
+      : documents
+          .filter((d: Document) => documentIds.includes(d.id))
+          .map(document => {
+            return {
+              ...document,
+              description: documentDescriptions[document.id],
+            }
+          })
 
     const page = new AttachDocuments({ selectedDocuments })
     page.documents = documents

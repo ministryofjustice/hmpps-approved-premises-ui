@@ -65,6 +65,22 @@ describe('attachDocuments', () => {
 
       expect(page.body).toEqual({ selectedDocuments: [documents[0]] })
     })
+
+    it('returns the selected documents if they are already defined', async () => {
+      const page = await AttachDocuments.initialize(
+        {
+          selectedDocuments: [documents[0]],
+        },
+        application,
+        'SOME_TOKEN',
+        { applicationService, personService },
+      )
+
+      expect(page.body).toEqual({
+        selectedDocuments: [documents[0]],
+      })
+      expect(page.documents).toEqual(documents)
+    })
   })
 
   itShouldHaveNextValue(new AttachDocuments({}), '')
