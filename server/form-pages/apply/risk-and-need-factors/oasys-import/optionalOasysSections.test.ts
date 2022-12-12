@@ -85,7 +85,7 @@ describe('OptionalOasysSections', () => {
     })
   })
 
-  itShouldHaveNextValue(new OptionalOasysSections({}), '')
+  itShouldHaveNextValue(new OptionalOasysSections({}), 'rosh-summary')
 
   itShouldHavePreviousValue(new OptionalOasysSections({}), '')
 
