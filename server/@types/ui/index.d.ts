@@ -7,6 +7,7 @@ import {
   Assessment,
   Person,
   OASysSection,
+  Document,
 } from '@approved-premises/api'
 
 interface TasklistPage {
@@ -188,6 +189,9 @@ export type DataServices = {
     getPrisonCaseNotes: (token: string, crn: string) => Promise<Array<PrisonCaseNote>>
     getAdjudications: (token: string, crn: string) => Promise<Array<Adjudication>>
     getOasysSelections: (token: string, crn: string) => Promise<Array<OASysSection>>
+  }
+  applicationService: {
+    getDocuments: (token: string, application: Application) => Promise<Array<Document>>
   }
 }
 

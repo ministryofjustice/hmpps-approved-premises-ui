@@ -1,5 +1,5 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
-import { PersonService } from '../../../../services'
+import { ApplicationService, PersonService } from '../../../../services'
 import applicationFactory from '../../../../testutils/factories/application'
 import oasysSectionFactory from '../../../../testutils/factories/oasysSection'
 import { sentenceCase } from '../../../../utils/utils'
@@ -20,6 +20,7 @@ describe('OptionalOasysSections', () => {
   describe('initialize', () => {
     const getOasysSelectionsMock = jest.fn().mockResolvedValue(oasysSections)
     let personService: DeepMocked<PersonService>
+    const applicationService = createMock<ApplicationService>({})
 
     beforeEach(() => {
       personService = createMock<PersonService>({
@@ -28,7 +29,7 @@ describe('OptionalOasysSections', () => {
     })
 
     it('calls the getOasysSelections method on the client with a token and the persons CRN', async () => {
-      await OptionalOasysSections.initialize({}, application, 'some-token', { personService })
+      await OptionalOasysSections.initialize({}, application, 'some-token', { personService, applicationService })
 
       expect(getOasysSelectionsMock).toHaveBeenCalledWith('some-token', application.person.crn)
     })
@@ -40,7 +41,10 @@ describe('OptionalOasysSections', () => {
         ...otherNeeds,
       ])
 
-      const page = await OptionalOasysSections.initialize({}, application, 'some-token', { personService })
+      const page = await OptionalOasysSections.initialize({}, application, 'some-token', {
+        personService,
+        applicationService,
+      })
 
       expect(page.allNeedsLinkedToReoffending).toEqual(needsLinkedToReoffending)
       expect(page.allOtherNeeds).toEqual(otherNeeds)
@@ -58,6 +62,7 @@ describe('OptionalOasysSections', () => {
         'some-token',
         {
           personService,
+          applicationService,
         },
       )
 
