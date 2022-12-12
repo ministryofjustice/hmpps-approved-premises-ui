@@ -85,15 +85,21 @@ class BookingFactory extends Factory<Booking> {
   }
 }
 
-export default BookingFactory.define(() => ({
-  person: personFactory.build(),
-  arrivalDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
-  departureDate: DateFormats.dateObjToIsoDate(faker.date.future()),
-  name: `${faker.name.firstName()} ${faker.name.lastName()}`,
-  id: faker.datatype.uuid(),
-  status: 'awaiting-arrival' as const,
-  arrival: arrivalFactory.build(),
-  departure: departureFactory.build(),
-  extensions: [],
-  serviceName: 'approved-premises' as const,
-}))
+export default BookingFactory.define(() => {
+  const arrivalDate = DateFormats.dateObjToIsoDate(faker.date.soon())
+  const departureDate = DateFormats.dateObjToIsoDate(faker.date.future())
+  return {
+    person: personFactory.build(),
+    arrivalDate,
+    originalArrivalDate: arrivalDate,
+    departureDate,
+    originalDepartureDate: departureDate,
+    name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+    id: faker.datatype.uuid(),
+    status: 'awaiting-arrival' as const,
+    arrival: arrivalFactory.build(),
+    departure: departureFactory.build(),
+    extensions: [],
+    serviceName: 'approved-premises' as const,
+  }
+})
