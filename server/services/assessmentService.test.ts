@@ -49,4 +49,16 @@ describe('AssessmentService', () => {
       awaiting: assessmentWithRisks(awaitingAssessments),
     })
   })
+
+  it('finds an assessment by its ID', async () => {
+    const assessment = assessmentFactory.build()
+
+    assessmentClient.find.mockResolvedValue(assessment)
+
+    const result = await service.findAssessment('token', assessment.id)
+
+    expect(result).toEqual(assessment)
+
+    expect(assessmentClient.find).toHaveBeenCalledWith(assessment.id)
+  })
 })

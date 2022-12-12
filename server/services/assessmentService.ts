@@ -1,3 +1,4 @@
+import { Assessment } from '@approved-premises/api'
 import type { AssessmentWithRisks, GroupedAssessmentWithRisks } from '@approved-premises/ui'
 
 import type { RestClientBuilder, AssessmentClient, PersonClient } from '../data'
@@ -29,5 +30,12 @@ export default class AssessmentService {
     )
 
     return result
+  }
+
+  async findAssessment(token: string, id: string): Promise<Assessment> {
+    const client = this.assessmentClientFactory(token)
+    const assessment = await client.find(id)
+
+    return assessment
   }
 }

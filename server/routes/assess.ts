@@ -12,6 +12,7 @@ export default function routes(controllers: Controllers, router: Router): Router
   const { assessmentsController } = controllers
 
   get(paths.assessments.index.pattern, assessmentsController.index())
+  get(paths.assessments.show.pattern, assessmentsController.show())
 
   return router
 }

@@ -54,6 +54,7 @@ export default {
   },
   assessments: {
     index: assessmentsPath,
+    show: assessmentsPath.path(':id'),
   },
   people: {
     risks: {

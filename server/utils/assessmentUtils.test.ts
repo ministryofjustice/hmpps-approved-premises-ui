@@ -12,8 +12,10 @@ import {
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
   formatDaysUntilDueWithWarning,
+  assessmentLink,
 } from './assessmentUtils'
 import { DateFormats } from './dateUtils'
+import paths from '../paths/assess'
 
 import * as personUtils from './personUtils'
 import * as applicationUtils from './applicationUtils'
@@ -125,7 +127,7 @@ describe('assessmentUtils', () => {
 
       expect(awaitingAssessmentTableRows([assessmentWithRisks])).toEqual([
         [
-          { html: `<a href="#">${assessment.application.person.name}</a>` },
+          { html: assessmentLink(assessment) },
           { html: assessment.application.person.crn },
           { html: 'TIER_BADGE' },
           { text: formattedArrivalDate(assessment) },
@@ -154,7 +156,7 @@ describe('assessmentUtils', () => {
 
       expect(requestedFurtherInformationTableRows([assessmentWithRisks])).toEqual([
         [
-          { html: `<a href="#">${assessment.application.person.name}</a>` },
+          { html: assessmentLink(assessment) },
           { html: assessment.application.person.crn },
           { html: 'TIER_BADGE' },
           { text: formattedArrivalDate(assessment) },
@@ -183,7 +185,7 @@ describe('assessmentUtils', () => {
 
       expect(completedTableRows([assessmentWithRisks])).toEqual([
         [
-          { html: `<a href="#">${assessment.application.person.name}</a>` },
+          { html: assessmentLink(assessment) },
           { html: assessment.application.person.crn },
           { html: 'TIER_BADGE' },
           { text: formattedArrivalDate(assessment) },
@@ -241,6 +243,16 @@ describe('assessmentUtils', () => {
       expect(formatDaysUntilDueWithWarning(assessment)).toEqual(
         '<strong class="assessments--index__warning">1 Day<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>',
       )
+    })
+  })
+
+  describe('assessmentLink', () => {
+    it('returns a link to an assessment', () => {
+      const assessment = assessmentFactory.build({ id: '123', application: { person: { name: 'John Wayne' } } })
+
+      expect(assessmentLink(assessment)).toMatchStringIgnoringWhitespace(`
+        <a href="${paths.assessments.show({ id: '123' })}" data-cy-assessmentId="123">John Wayne</a>
+      `)
     })
   })
 })

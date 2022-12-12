@@ -6,6 +6,9 @@ import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import AssessmentsController from './assessmentsController'
 import { AssessmentService } from '../../services'
 
+import assessmentFactory from '../../testutils/factories/assessment'
+import Assess from '../../form-pages/assess'
+
 describe('assessmentsController', () => {
   const token = 'SOME_TOKEN'
 
@@ -34,6 +37,30 @@ describe('assessmentsController', () => {
         assessments,
       })
       expect(assessmentService.getAllForLoggedInUser).toHaveBeenCalled()
+    })
+  })
+
+  describe('show', () => {
+    const assessment = assessmentFactory.build()
+
+    beforeEach(() => {
+      request.params.id = assessment.id
+
+      assessmentService.findAssessment.mockResolvedValue(assessment)
+    })
+
+    it('fetches the assessment and renders the task list', async () => {
+      const requestHandler = assessmentsController.show()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('assessments/show', {
+        assessment,
+        pageHeading: 'Assess an Approved Premises (AP) application',
+        sections: Assess.sections,
+      })
+
+      expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
     })
   })
 })
