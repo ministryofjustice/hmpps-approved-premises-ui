@@ -31,21 +31,37 @@ describe('attachDocuments', () => {
 
     it('assigns the selected documents', async () => {
       const page = await AttachDocuments.initialize(
-        { documentIds: [documents[0].id, documents[1].id] },
+        {
+          documentIds: [documents[0].id, documents[1].id],
+          documentDescriptions: {
+            [documents[0].id]: 'Document 1 Description',
+            [documents[1].id]: 'Document 2 Description',
+          },
+        },
         application,
         'SOME_TOKEN',
         { applicationService, personService },
       )
 
-      expect(page.body).toEqual({ selectedDocuments: [documents[0], documents[1]] })
+      expect(page.body).toEqual({
+        selectedDocuments: [
+          { ...documents[0], description: 'Document 1 Description' },
+          { ...documents[1], description: 'Document 2 Description' },
+        ],
+      })
       expect(page.documents).toEqual(documents)
     })
 
     it('assigns the selected documents if the selection is not an array', async () => {
-      const page = await AttachDocuments.initialize({ documentIds: documents[0].id }, application, 'SOME_TOKEN', {
-        applicationService,
-        personService,
-      })
+      const page = await AttachDocuments.initialize(
+        { documentIds: documents[0].id, documentDescriptions: { [documents[0].id]: documents[0].description } },
+        application,
+        'SOME_TOKEN',
+        {
+          applicationService,
+          personService,
+        },
+      )
 
       expect(page.body).toEqual({ selectedDocuments: [documents[0]] })
     })

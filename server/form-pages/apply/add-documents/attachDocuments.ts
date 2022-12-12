@@ -10,6 +10,7 @@ type AttachDocumentsBody = {
 
 type AttachDocumentsResponse = {
   documentIds?: Array<string> | string
+  documentDescriptions?: Record<string, string>
 }
 
 @Page({ name: 'attach-documents', bodyProperties: ['selectedDocuments'] })
@@ -28,7 +29,16 @@ export default class AttachDocuments implements TasklistPage {
   ): Promise<AttachDocuments> {
     const documents = await dataServices.applicationService.getDocuments(token, application)
     const documentIds = [body.documentIds].flat()
-    const selectedDocuments = documents.filter((d: Document) => documentIds.includes(d.id))
+    const documentDescriptions = body.documentDescriptions || {}
+
+    const selectedDocuments = documents
+      .filter((d: Document) => documentIds.includes(d.id))
+      .map(document => {
+        return {
+          ...document,
+          description: documentDescriptions[document.id],
+        }
+      })
 
     const page = new AttachDocuments({ selectedDocuments })
     page.documents = documents
