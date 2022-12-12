@@ -8,6 +8,7 @@ import prisonCaseNotesFactory from '../testutils/factories/prisonCaseNotes'
 import paths from '../paths/api'
 import adjudicationsFactory from '../testutils/factories/adjudication'
 import activeOffenceFactory from '../testutils/factories/activeOffence'
+import oasysSectionFactory from '../testutils/factories/oasysSection'
 
 describe('PersonClient', () => {
   let fakeApprovedPremisesApi: nock.Scope
@@ -94,6 +95,23 @@ describe('PersonClient', () => {
 
       expect(result).toEqual(adjudications)
       expect(nock.isDone()).toBeTruthy()
+    })
+
+    describe('oasysSelection', () => {
+      it('should return the importable sections of OASys', async () => {
+        const crn = 'crn'
+        const oasysSections = oasysSectionFactory.buildList(5)
+
+        fakeApprovedPremisesApi
+          .get(paths.people.oasys.selection({ crn }))
+          .matchHeader('authorization', `Bearer ${token}`)
+          .reply(201, oasysSections)
+
+        const result = await personClient.oasysSelections(crn)
+
+        expect(result).toEqual(oasysSections)
+        expect(nock.isDone()).toBeTruthy()
+      })
     })
   })
 

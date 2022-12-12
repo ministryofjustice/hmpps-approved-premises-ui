@@ -1,4 +1,12 @@
-import type { ActiveOffence, Adjudication, Person, PersonRisks, PrisonCaseNote } from '@approved-premises/api'
+import type {
+  ActiveOffence,
+  Adjudication,
+  Person,
+  PersonRisks,
+  PrisonCaseNote,
+  OASysSection,
+} from '@approved-premises/api'
+
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -42,5 +50,11 @@ export default class PersonClient {
     const response = await this.restClient.get({ path: paths.people.offences({ crn }) })
 
     return response as Array<ActiveOffence>
+  }
+
+  async oasysSelections(crn: string): Promise<Array<OASysSection>> {
+    const response = await this.restClient.get({ path: paths.people.oasys.selection({ crn }) })
+
+    return response as Array<OASysSection>
   }
 }

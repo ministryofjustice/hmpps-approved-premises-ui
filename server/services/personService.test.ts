@@ -8,6 +8,7 @@ import { mapApiPersonRisksForUi } from '../utils/utils'
 import prisonCaseNotesFactory from '../testutils/factories/prisonCaseNotes'
 import adjudicationsFactory from '../testutils/factories/adjudication'
 import activeOffenceFactory from '../testutils/factories/activeOffence'
+import oasysSectionFactory from '../testutils/factories/oasysSection'
 
 jest.mock('../data/personClient.ts')
 
@@ -94,6 +95,21 @@ describe('PersonService', () => {
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
       expect(personClient.adjudications).toHaveBeenCalledWith('crn')
+    })
+  })
+
+  describe('getOasysSections', () => {
+    it("on success returns the person's OASys selections given their CRN", async () => {
+      const oasysSections = oasysSectionFactory.buildList(3)
+
+      personClient.oasysSelections.mockResolvedValue(oasysSections)
+
+      const serviceOasysSelections = await service.getOasysSelections(token, 'crn')
+
+      expect(serviceOasysSelections).toEqual(oasysSections)
+
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.oasysSelections).toHaveBeenCalledWith('crn')
     })
   })
 })

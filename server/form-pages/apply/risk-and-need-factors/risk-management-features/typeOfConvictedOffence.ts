@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import type { TaskListErrors } from '@approved-premises/ui'
 import { Application } from '../../../../@types/shared'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'

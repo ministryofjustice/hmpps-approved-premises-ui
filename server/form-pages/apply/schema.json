@@ -5,6 +5,7 @@
   "required": [
     "basic-information",
     "type-of-ap",
+    "oasys-import",
     "risk-management-features",
     "prison-information",
     "location-factors",
@@ -42,7 +43,6 @@
                 "hdc",
                 "license",
                 "pss",
-                "rerelease",
                 "rotl"
               ],
               "type": "string"
@@ -408,6 +408,56 @@
             },
             "cctvNotes": {
               "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "oasys-import": {
+      "type": "object",
+      "properties": {
+        "optional-oasys-sections": {
+          "type": "object",
+          "properties": {
+            "needsLinkedToReoffending": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "section": {
+                    "type": "number"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "linkedToHarm": {
+                    "type": "boolean"
+                  },
+                  "linkedToReOffending": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "otherNeeds": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "section": {
+                    "type": "number"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "linkedToHarm": {
+                    "type": "boolean"
+                  },
+                  "linkedToReOffending": {
+                    "type": "boolean"
+                  }
+                }
+              }
             }
           }
         }

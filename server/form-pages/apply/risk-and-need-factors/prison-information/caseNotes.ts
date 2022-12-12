@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import type { DataServices } from '@approved-premises/ui'
 
 import type { Application, PrisonCaseNote, Adjudication } from '@approved-premises/api'

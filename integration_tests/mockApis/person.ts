@@ -1,6 +1,13 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { Person, PersonRisks, PrisonCaseNote, Adjudication, ActiveOffence } from '@approved-premises/api'
+import type {
+  Person,
+  PersonRisks,
+  PrisonCaseNote,
+  Adjudication,
+  ActiveOffence,
+  OASysSection,
+} from '@approved-premises/api'
 
 import { stubFor, getMatchingRequests } from '../../wiremock'
 
@@ -82,6 +89,19 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: args.adjudications,
+      },
+    }),
+
+  stubOasysSelection: (args: { person: Person; oasysSections: Array<OASysSection> }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/people/${args.person.crn}/oasys/selection`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.oasysSections,
       },
     }),
 }

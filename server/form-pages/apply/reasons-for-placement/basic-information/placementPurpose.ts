@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import type { TaskListErrors } from '@approved-premises/ui'
 import type { Application } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
@@ -8,7 +7,7 @@ import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 
 export const placementPurposes = {
   publicProtection: 'Public protection',
-  preventContact: 'Prevent Contact',
+  preventContact: 'Prevent contact',
   readjust: 'Help individual readjust to life outside custody',
   drugAlcoholMonitoring: 'Provide drug or alcohol monitoring',
   preventSelfHarm: 'Prevent self harm or suicide',

@@ -8,6 +8,8 @@ import {
   convertObjectsToSelectOptions,
   convertKeyValuePairToCheckBoxItems,
   validPostcodeArea,
+  flattenCheckboxInput,
+  isStringOrArrayOfStrings,
 } from './formUtils'
 
 describe('formUtils', () => {
@@ -311,6 +313,7 @@ describe('formUtils', () => {
       ])
     })
   })
+
   describe('validPostcodeArea', () => {
     it('when passed a postcode area it returns true', () => {
       expect(validPostcodeArea('HR1')).toBe(true)
@@ -318,6 +321,30 @@ describe('formUtils', () => {
 
     it('when passed a non-postcode string returns false', () => {
       expect(validPostcodeArea('foo')).toBe(false)
+    })
+  })
+
+  describe('flattenCheckboxInput', () => {
+    it('returns the input in an array', () => {
+      expect(flattenCheckboxInput('test')).toEqual(['test'])
+    })
+    it('returns the input if it is already an array', () => {
+      expect(flattenCheckboxInput(['test'])).toEqual(['test'])
+    })
+    it('returns an empty array if the value is falsy', () => {
+      expect(flattenCheckboxInput(null)).toEqual([])
+    })
+  })
+
+  describe('isStringOrArrayOfStrings', () => {
+    it('returns true if the input is a string', () => {
+      expect(isStringOrArrayOfStrings('test')).toEqual(true)
+    })
+    it('returns true if the input is an array of strings', () => {
+      expect(isStringOrArrayOfStrings(['test', 'test'])).toEqual(true)
+    })
+    it('returns false if array contains a non-string value ', () => {
+      expect(isStringOrArrayOfStrings(['test', 1, 'test'])).toEqual(false)
     })
   })
 })
