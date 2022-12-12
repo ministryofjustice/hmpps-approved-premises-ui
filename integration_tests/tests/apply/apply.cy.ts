@@ -50,8 +50,9 @@ import TypeOfAccomodationPage from '../../../cypress_shared/pages/apply/typeOfAc
 import CaseNotesPage from '../../../cypress_shared/pages/apply/caseNotes'
 import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
 import OptionalOasysSectionsPage from '../../../cypress_shared/pages/apply/optionalOasysSections'
+import RoshSummaryPage from '../../../cypress_shared/pages/apply/roshSummary'
 
-import { documentsFromApplication } from '../../support/helpers'
+import { documentsFromApplication, roshSummariesFromApplication } from '../../support/helpers'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -325,6 +326,9 @@ context('Apply', () => {
       const oasysSelection = [...oasysSectionsLinkedToReoffending, ...otherOasysSections]
       cy.task('stubOasysSelection', { person, oasysSelection })
 
+      const roshSummaries = roshSummariesFromApplication(application)
+      cy.task('stubOasysSections', { person, oasysSections: { roshSummary: roshSummaries } })
+
       // Given I click the 'Import Oasys' task
       cy.get('[data-cy-task-name="oasys-import"]').click()
       const optionalOasysImportPage = new OptionalOasysSectionsPage(application)
@@ -332,6 +336,11 @@ context('Apply', () => {
       // When I complete the form
       optionalOasysImportPage.completeForm(oasysSectionsLinkedToReoffending, otherOasysSections)
       optionalOasysImportPage.clickSubmit()
+
+      const roshSummaryPage = new RoshSummaryPage(application, roshSummaries)
+      roshSummaryPage.shouldShowRiskWidgets(uiRisks)
+      roshSummaryPage.completeForm()
+      roshSummaryPage.clickSubmit()
 
       // Then I should be taken back to the tasklist
       tasklistPage.shouldShowTaskStatus('oasys-import', 'Completed')
@@ -342,7 +351,7 @@ context('Apply', () => {
       // Given I click the 'Add detail about managing risks and needs' task
       cy.get('[data-cy-task-name="risk-management-features"]').click()
 
-      const typeOfApPages = [typeOfApPage]
+      const oasysPages = [optionalOasysImportPage, roshSummaryPage]
 
       // When I complete the form
       const riskManagementFeaturesPage = new RiskManagementFeatures(application)
@@ -606,8 +615,8 @@ context('Apply', () => {
       // And the page should be populated with my answers
       checkYourAnswersPage.shouldShowPersonInformation(person)
       checkYourAnswersPage.shouldShowBasicInformationAnswers(basicInformationPages)
-      checkYourAnswersPage.shouldShowTypeOfApAnswers(typeOfApPages)
-      checkYourAnswersPage.shouldShowOptionalOasysSectionsAnswers([optionalOasysImportPage])
+      checkYourAnswersPage.shouldShowTypeOfApAnswers([typeOfApPage])
+      checkYourAnswersPage.shouldShowOptionalOasysSectionsAnswers(oasysPages)
       checkYourAnswersPage.shouldShowRiskManagementAnswers(riskManagementPages)
       checkYourAnswersPage.shouldShowCaseNotes(selectedPrisonCaseNotes)
       checkYourAnswersPage.shouldShowAdjudications(adjudications)
@@ -634,8 +643,8 @@ context('Apply', () => {
 
       // Then the application should be submitted to the API
       cy.task('verifyApplicationUpdate', application.id).then(requests => {
-        expect(requests).to.have.length(32)
-        const requestBody = JSON.parse(requests[31].body)
+        expect(requests).to.have.length(33)
+        const requestBody = JSON.parse(requests[32].body)
 
         expect(requestBody.data).to.deep.equal(applicationData)
 
