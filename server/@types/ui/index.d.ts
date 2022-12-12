@@ -76,7 +76,7 @@ export interface HtmlItem {
   html: string
 }
 
-export type TableCell = { text: string; attributes?: HtmlAttributes } | { html: string }
+export type TableCell = { text: string; attributes?: HtmlAttributes; classes?: string } | { html: string }
 export interface TableRow {
   [index: number]: TableCell
 }
