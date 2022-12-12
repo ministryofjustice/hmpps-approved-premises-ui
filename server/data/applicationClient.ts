@@ -1,4 +1,4 @@
-import type { ActiveOffence, Application } from '@approved-premises/api'
+import type { ActiveOffence, Application, Document } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -39,5 +39,11 @@ export default class ApplicationClient {
       path: paths.applications.submission({ id: application.id }),
       data: { translatedDocument: application.document },
     })
+  }
+
+  async documents(application: Application): Promise<Array<Document>> {
+    return (await this.restClient.get({
+      path: paths.applications.documents({ id: application.id }),
+    })) as Array<Document>
   }
 }

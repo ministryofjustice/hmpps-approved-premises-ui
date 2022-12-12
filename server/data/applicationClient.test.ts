@@ -4,6 +4,7 @@ import ApplicationClient from './applicationClient'
 import config from '../config'
 import applicationFactory from '../testutils/factories/application'
 import activeOffenceFactory from '../testutils/factories/activeOffence'
+import documentFactory from '../testutils/factories/document'
 import paths from '../paths/api'
 
 describe('ApplicationClient', () => {
@@ -108,6 +109,23 @@ describe('ApplicationClient', () => {
 
       await applicationClient.submit(application)
 
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
+
+  describe('documents', () => {
+    it('should return documents for an application', async () => {
+      const application = applicationFactory.build()
+      const documents = documentFactory.buildList(5)
+
+      fakeApprovedPremisesApi
+        .get(paths.applications.documents({ id: application.id }))
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, documents)
+
+      const result = await applicationClient.documents(application)
+
+      expect(result).toEqual(documents)
       expect(nock.isDone()).toBeTruthy()
     })
   })
