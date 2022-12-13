@@ -10,6 +10,7 @@ import {
   validPostcodeArea,
   flattenCheckboxInput,
   isStringOrArrayOfStrings,
+  escape,
 } from './formUtils'
 
 describe('formUtils', () => {
@@ -345,6 +346,20 @@ describe('formUtils', () => {
     })
     it('returns false if array contains a non-string value ', () => {
       expect(isStringOrArrayOfStrings(['test', 1, 'test'])).toEqual(false)
+    })
+  })
+
+  describe('escape', () => {
+    it('escapes HTML tags', () => {
+      expect(escape('<b>Formatted text</b>')).toEqual('&lt;b&gt;Formatted text&lt;/b&gt;')
+    })
+
+    it('escapes reserved characters', () => {
+      expect(escape('"Quoted text"')).toEqual('&quot;Quoted text&quot;')
+    })
+
+    it('returns the empty string when given null', () => {
+      expect(escape(null)).toEqual('')
     })
   })
 })
