@@ -5,6 +5,7 @@ const applicationPath = applicationsPath.path(':id')
 
 const pagesPath = applicationPath.path('tasks/:task/pages/:page')
 const peoplePath = applicationsPath.path('people')
+const personPath = peoplePath.path(':crn')
 
 const paths = {
   applications: {
@@ -12,7 +13,8 @@ const paths = {
     start: applicationsPath.path('start'),
     people: {
       find: peoplePath.path('find'),
-      selectOffence: peoplePath.path(':crn').path('select-offence'),
+      selectOffence: personPath.path('select-offence'),
+      documents: personPath.path('documents/:documentId'),
     },
     create: applicationsPath,
     index: applicationsPath,
