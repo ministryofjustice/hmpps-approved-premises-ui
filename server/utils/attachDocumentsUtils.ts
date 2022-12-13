@@ -1,11 +1,13 @@
-import { Document } from '@approved-premises/api'
+import { Document, Application } from '@approved-premises/api'
 import { ErrorMessages, TableRow } from '@approved-premises/ui'
 
 import { DateFormats } from './dateUtils'
+import paths from '../paths/apply'
 
 const tableRows = (
   documents: Array<Document>,
   selectedDocuments: Array<Document>,
+  application: Application,
   errors: ErrorMessages,
 ): Array<TableRow> => {
   const rows = [] as Array<TableRow>
@@ -25,7 +27,10 @@ const tableRows = (
         classes: 'applications--pages--attach-document__column-date',
       },
       {
-        html: '<a href="#">Download</a>',
+        html: `<a href="${paths.applications.people.documents({
+          crn: application.person.crn,
+          documentId: document.id,
+        })}" data-cy-documentId="${document.id}">Download</a>`,
         classes: 'applications--pages--attach-document__column-download',
       },
       {
