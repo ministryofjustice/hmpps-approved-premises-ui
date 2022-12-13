@@ -1,7 +1,14 @@
 import nock from 'nock'
+import { Response } from 'express'
+import { createMock } from '@golevelup/ts-jest'
+import { Readable } from 'stream'
+import logger from '../../logger'
 
 import type { ApiConfig } from '../config'
 import RestClient from './restClient'
+
+jest.mock('express')
+jest.mock('../../logger')
 
 describe('restClient', () => {
   let fakeApprovedPremisesApi: nock.Scope
@@ -99,6 +106,45 @@ describe('restClient', () => {
 
       expect(result).toEqual({ some: 'data' })
       expect(nock.isDone()).toBeTruthy()
+    })
+  })
+
+  describe('pipe', () => {
+    const response = createMock<Response>({})
+    const mockReadStream = jest.fn().mockImplementation(() => {
+      const readable = new Readable()
+      readable.push('hello')
+      readable.push('world')
+      readable.push(null)
+
+      return readable
+    })
+
+    it('should pipe a streaming response to a response', async () => {
+      fakeApprovedPremisesApi.get('/some/path').reply(200, () => mockReadStream())
+
+      const writeSpy = jest.spyOn(response, 'write')
+
+      await restClient.pipe({ path: '/some/path' }, response)
+
+      expect(writeSpy).toHaveBeenCalledWith(Buffer.from('hello', 'utf-8'))
+      expect(writeSpy).toHaveBeenCalledWith(Buffer.from('world', 'utf-8'))
+
+      expect(nock.isDone()).toBeTruthy()
+    })
+
+    it('should throw error if the response is unsuccessful', async () => {
+      fakeApprovedPremisesApi.get('/some/path').reply(404)
+
+      const loggerSpy = jest.spyOn(logger, 'warn')
+
+      await expect(restClient.pipe({ path: '/some/path' }, response)).rejects.toThrowError(
+        'cannot GET /some/path (404)',
+      )
+
+      expect(loggerSpy).toHaveBeenCalledWith(new Error('cannot GET /some/path (404)'), 'Error calling premisesClient')
+
+      nock.cleanAll()
     })
   })
 })

@@ -3,6 +3,7 @@
 import superagent from 'superagent'
 import Agent, { HttpsAgent } from 'agentkeepalive'
 import { Readable } from 'stream'
+import type { Response } from 'express'
 
 import logger from '../../logger'
 import sanitiseError from '../sanitisedError'
@@ -29,6 +30,12 @@ interface PostRequest {
 interface PutRequest extends PostRequest {}
 
 interface StreamRequest {
+  path?: string
+  headers?: Record<string, string>
+  errorLogger?: (e: UnsanitisedError) => void
+}
+
+interface PipeRequest {
   path?: string
   headers?: Record<string, string>
   errorLogger?: (e: UnsanitisedError) => void
@@ -112,6 +119,37 @@ export default class RestClient {
             resolve(s)
           }
         })
+    })
+  }
+
+  async pipe({ path = null, headers = {} }: PipeRequest, response: Response): Promise<void> {
+    logger.info(`Get using user credentials: calling ${this.name}: ${path}`)
+    return new Promise((resolve, reject) => {
+      const stream = superagent
+        .get(`${this.apiUrl()}${path}`)
+        .agent(this.agent)
+        .auth(this.token, { type: 'bearer' })
+        .use(restClientMetricsMiddleware)
+        .retry(2, (err, res) => {
+          if (err) logger.info(`Retry handler found API error with ${err.code} ${err.message}`)
+          return undefined // retry handler only for logging retries, not to influence retry logic
+        })
+        .timeout(this.timeoutConfig())
+        .set({ ...this.defaultHeaders, ...headers })
+
+      stream.on('end', () => {
+        resolve()
+      })
+
+      stream.on('response', res => {
+        if (res.status !== 200) {
+          logger.warn(res.error, `Error calling ${this.name}`)
+          stream.abort()
+          reject(res.error)
+        }
+      })
+
+      stream.pipe(response)
     })
   }
 
