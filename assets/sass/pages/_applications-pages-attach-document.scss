@@ -1,0 +1,29 @@
+.applications--pages--attach-document {
+  &__table {
+    table-layout:fixed;
+    width: 100%;
+
+    .govuk-textarea {
+      margin-bottom: 10px;
+    }
+  }
+
+  &__results {
+    text-align: right;
+    padding-bottom: 20px;
+  }
+
+  &__column, &__header {
+    &-name, &-description {
+      width: 33%;
+    }
+
+    &-name {
+      word-break: break-all;
+    }
+
+    &-date, &-download {
+      width: 16.5%;
+    }
+  }
+}

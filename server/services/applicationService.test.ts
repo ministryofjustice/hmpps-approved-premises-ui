@@ -12,6 +12,7 @@ import Apply from '../form-pages/apply'
 import paths from '../paths/apply'
 import applicationFactory from '../testutils/factories/application'
 import activeOffenceFactory from '../testutils/factories/activeOffence'
+import documentFactory from '../testutils/factories/document'
 import { DateFormats } from '../utils/dateUtils'
 import { getArrivalDate, getPage } from '../utils/applicationUtils'
 import { tierEnvelopeFactory } from '../testutils/factories/risks'
@@ -145,6 +146,24 @@ describe('ApplicationService', () => {
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.find).toHaveBeenCalledWith(application.id)
+    })
+  })
+
+  describe('getDocuments', () => {
+    it('calls the documents method and returns a list of documents', async () => {
+      const application = applicationFactory.build()
+      const documents = documentFactory.buildList(5)
+
+      const token = 'SOME_TOKEN'
+
+      applicationClient.documents.mockResolvedValue(documents)
+
+      const result = await service.getDocuments(token, application)
+
+      expect(result).toEqual(documents)
+
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.documents).toHaveBeenCalledWith(application)
     })
   })
 

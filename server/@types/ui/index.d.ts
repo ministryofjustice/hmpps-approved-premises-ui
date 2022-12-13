@@ -7,6 +7,7 @@ import {
   Assessment,
   Person,
   OASysSection,
+  Document,
 } from '@approved-premises/api'
 
 interface TasklistPage {
@@ -75,7 +76,7 @@ export interface HtmlItem {
   html: string
 }
 
-export type TableCell = { text: string; attributes?: HtmlAttributes } | { html: string }
+export type TableCell = { text: string; attributes?: HtmlAttributes; classes?: string } | { html: string }
 export interface TableRow {
   [index: number]: TableCell
 }
@@ -158,7 +159,7 @@ export interface ErrorsAndUserInput {
   userInput: Record<string, unknown>
 }
 
-export type TaskListErrors<K extends TasklistPage> = Partial<Record<keyof K['body'], string>>
+export type TaskListErrors<K extends TasklistPage> = Partial<Record<keyof K['body'], unknown>>
 
 export type YesOrNo = 'yes' | 'no'
 export type YesNoOrIDK = YesOrNo | 'iDontKnow'
@@ -188,6 +189,9 @@ export type DataServices = {
     getPrisonCaseNotes: (token: string, crn: string) => Promise<Array<PrisonCaseNote>>
     getAdjudications: (token: string, crn: string) => Promise<Array<Adjudication>>
     getOasysSelections: (token: string, crn: string) => Promise<Array<OASysSection>>
+  }
+  applicationService: {
+    getDocuments: (token: string, application: Application) => Promise<Array<Document>>
   }
 }
 

@@ -30,6 +30,7 @@ export default class SchemaGenerator {
       $schema: 'https://json-schema.org/draft/2019-09/schema',
       type: 'object',
       title: 'Apply Schema',
+      additionalProperties: false,
       required: Object.keys(pages),
       properties: {},
     }

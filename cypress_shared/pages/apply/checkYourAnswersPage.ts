@@ -1,4 +1,4 @@
-import type { Person, PrisonCaseNote } from '@approved-premises/api'
+import type { Person, PrisonCaseNote, Document } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import ApplyPage from './applyPage'
 
@@ -56,6 +56,14 @@ export default class CheckYourAnswersPage extends Page {
 
   shouldShowMoveOnAnswers(pages: Array<ApplyPage>) {
     this.shouldShowAnswersForTask('move-on', pages)
+  }
+
+  shouldShowDocuments(selectedDocuments: Array<Document>) {
+    cy.get(`[data-cy-check-your-answers-section="attach-required-documents"]`).within(() => {
+      selectedDocuments.forEach(d => {
+        this.assertDefinition(d.fileName, d.description)
+      })
+    })
   }
 
   shouldShowCaseNotes(caseNotes: Array<PrisonCaseNote>) {

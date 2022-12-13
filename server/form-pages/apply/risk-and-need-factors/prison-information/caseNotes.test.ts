@@ -1,5 +1,5 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
-import { PersonService } from '../../../../services'
+import { ApplicationService, PersonService } from '../../../../services'
 
 import prisonCaseNotesFactory from '../../../../testutils/factories/prisonCaseNotes'
 import { DateFormats } from '../../../../utils/dateUtils'
@@ -100,6 +100,7 @@ describe('CaseNotes', () => {
   const application = applicationFactory.build({ person })
 
   let personService: DeepMocked<PersonService>
+  const applicationService = createMock<ApplicationService>({})
 
   const adjudications = adjudicationsFactory.buildList(5)
   const caseNotes = prisonCaseNotesFactory.buildList(3)
@@ -140,7 +141,7 @@ describe('CaseNotes', () => {
     })
 
     it('calls the getPrisonCaseNotes method on the with a token and the persons CRN', async () => {
-      const page = await CaseNotes.initialize({}, application, 'some-token', { personService })
+      const page = await CaseNotes.initialize({}, application, 'some-token', { personService, applicationService })
 
       expect(page.caseNotes).toEqual(caseNotes)
 
@@ -148,7 +149,7 @@ describe('CaseNotes', () => {
     })
 
     it('calls the getAdjudications method on the with a token and the persons CRN', async () => {
-      const page = await CaseNotes.initialize({}, application, 'some-token', { personService })
+      const page = await CaseNotes.initialize({}, application, 'some-token', { personService, applicationService })
 
       expect(page.caseNotes).toEqual(caseNotes)
 
@@ -158,6 +159,7 @@ describe('CaseNotes', () => {
     it('initializes the caseNotes class with the selected case notes and adjudications', async () => {
       const page = await CaseNotes.initialize({ caseNoteIds: [caseNotes[0].id] }, application, 'some-token', {
         personService,
+        applicationService,
       })
 
       expect(page.body).toEqual({
@@ -170,6 +172,7 @@ describe('CaseNotes', () => {
     it('initializes the caseNotes class correctly when caseNoteIds is a string', async () => {
       const page = await CaseNotes.initialize({ caseNoteIds: caseNotes[0].id }, application, 'some-token', {
         personService,
+        applicationService,
       })
 
       expect(page.body).toEqual({
@@ -180,7 +183,7 @@ describe('CaseNotes', () => {
     })
 
     it('initializes correctly when caseNoteIds is not present', async () => {
-      const page = await CaseNotes.initialize({}, application, 'some-token', { personService })
+      const page = await CaseNotes.initialize({}, application, 'some-token', { personService, applicationService })
 
       expect(page.body).toEqual({
         caseNoteIds: [],

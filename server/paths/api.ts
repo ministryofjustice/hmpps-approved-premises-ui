@@ -52,6 +52,7 @@ export default {
     update: applyPaths.applications.update,
     new: applyPaths.applications.create,
     submission: applyPaths.applications.submission,
+    documents: applyPaths.applications.show.path('documents'),
   },
   assessments: {
     index: assessmentsPath,

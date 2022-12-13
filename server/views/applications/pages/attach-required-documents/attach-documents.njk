@@ -1,0 +1,65 @@
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% extends "../layout.njk" %}
+
+{% set columnClasses = "govuk-grid-column-full applications--pages--attach-documents" %}
+
+{% block questions %}
+  <h1 class="govuk-heading-l">{{page.title}}</h1>
+
+  <p>Select any additional documents that you want to include to support your application. </p>
+
+  {% set detailsHTML %}
+  <p class="govuk-body">
+    Please ensure that identified documents have been attached to this application.
+  </p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>Precons</li>
+    <li>CPS documents from current event</li>
+    <li>SO registration</li>
+    <li>Sexual harm prevention order (SOPO)  </li>
+    <li>Psychiatric reports</li>
+    <li>Parole reports</li>
+    <li>ARMS assessment</li>
+    <li>Pre sentence</li>
+    <li>Bail notice</li>
+    <li>VOO</li>
+    <li>Exclusion zone map</li>
+  </ul>
+  {% endset %}
+
+  {{
+    govukDetails({
+      summaryText: "View required documents",
+      html: detailsHTML
+    })
+  }}
+
+  <p class="applications--pages--attach-document__results">Showing <b>{{ page.documents | length }}</b> documents</p>
+
+  {{ govukTable({
+    firstCellIsHeader: true,
+    classes: "applications--pages--attach-document__table",
+    head: [
+      {
+        html: "Document name",
+        classes: "applications--pages--attach-document__header-name"
+      },
+      {
+        text: "Date uploaded",
+        classes: "applications--pages--attach-document__header-date"
+      },
+      {
+        text: "Download",
+        classes: "applications--pages--attach-document__header-download"
+      },
+      {
+        text: "Provide description",
+        classes: "applications--pages--attach-document__header-description"
+      }
+    ],
+    rows: AttachDocumentsUtils.tableRows(page.documents, page.body.selectedDocuments, errors)
+  }) }}
+
+{% endblock %}

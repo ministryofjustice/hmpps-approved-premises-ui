@@ -1,6 +1,6 @@
 import type { Request } from 'express'
 import type { HtmlItem, TextItem, DataServices } from '@approved-premises/ui'
-import type { ActiveOffence, Application } from '@approved-premises/api'
+import type { ActiveOffence, Application, Document } from '@approved-premises/api'
 
 import type TasklistPage from '../form-pages/tasklistPage'
 import type { RestClientBuilder, ApplicationClient, PersonClient } from '../data'
@@ -32,6 +32,14 @@ export default class ApplicationService {
     const application = await applicationClient.find(id)
 
     return application
+  }
+
+  async getDocuments(token: string, application: Application): Promise<Array<Document>> {
+    const applicationClient = this.applicationClientFactory(token)
+
+    const documents = await applicationClient.documents(application)
+
+    return documents
   }
 
   async getCurrentPage(

@@ -18,6 +18,7 @@ import { DateFormats } from './dateUtils'
 
 import * as AssessmentUtils from './assessmentUtils'
 import * as OffenceUtils from './offenceUtils'
+import * as AttachDocumentsUtils from './attachDocumentsUtils'
 
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
@@ -126,4 +127,5 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   njkEnv.addGlobal('AssessmentUtils', AssessmentUtils)
   njkEnv.addGlobal('OffenceUtils', OffenceUtils)
+  njkEnv.addGlobal('AttachDocumentsUtils', AttachDocumentsUtils)
 }
