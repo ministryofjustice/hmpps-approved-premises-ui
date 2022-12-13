@@ -184,7 +184,7 @@ export type GroupedListofBookings = {
   [K in 'arrivingToday' | 'departingToday' | 'upcomingArrivals' | 'upcomingDepartures']: Array<TableRow>
 }
 
-export type DataServices = {
+export type DataServices = Partial<{
   personService: {
     getPrisonCaseNotes: (token: string, crn: string) => Promise<Array<PrisonCaseNote>>
     getAdjudications: (token: string, crn: string) => Promise<Array<Adjudication>>
@@ -193,7 +193,7 @@ export type DataServices = {
   applicationService: {
     getDocuments: (token: string, application: Application) => Promise<Array<Document>>
   }
-}
+}>
 
 export interface GroupedAssessmentWithRisks {
   completed: Array<AssessmentWithRisks>
