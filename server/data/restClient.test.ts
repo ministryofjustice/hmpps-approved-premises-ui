@@ -133,6 +133,18 @@ describe('restClient', () => {
       expect(nock.isDone()).toBeTruthy()
     })
 
+    it('should send the content-disposition header to the response', async () => {
+      fakeApprovedPremisesApi
+        .get('/some/path')
+        .reply(200, () => mockReadStream(), { 'content-disposition': 'attachment; filename=foo.txt' })
+
+      const setSpy = jest.spyOn(response, 'set')
+
+      await restClient.pipe({ path: '/some/path', passThroughHeaders: ['content-disposition'] }, response)
+
+      expect(setSpy).toHaveBeenCalledWith('content-disposition', 'attachment; filename=foo.txt')
+    })
+
     it('should throw error if the response is unsuccessful', async () => {
       fakeApprovedPremisesApi.get('/some/path').reply(404)
 

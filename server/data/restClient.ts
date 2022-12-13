@@ -39,6 +39,7 @@ interface PipeRequest {
   path?: string
   headers?: Record<string, string>
   errorLogger?: (e: UnsanitisedError) => void
+  passThroughHeaders?: Array<string>
 }
 
 export default class RestClient {
@@ -122,7 +123,7 @@ export default class RestClient {
     })
   }
 
-  async pipe({ path = null, headers = {} }: PipeRequest, response: Response): Promise<void> {
+  async pipe({ path = null, headers = {}, passThroughHeaders = [] }: PipeRequest, response: Response): Promise<void> {
     logger.info(`Get using user credentials: calling ${this.name}: ${path}`)
     return new Promise((resolve, reject) => {
       const stream = superagent
@@ -147,6 +148,9 @@ export default class RestClient {
           stream.abort()
           reject(res.error)
         }
+        passThroughHeaders.forEach(header => {
+          response.set(header, res.headers[header])
+        })
       })
 
       stream.pipe(response)
