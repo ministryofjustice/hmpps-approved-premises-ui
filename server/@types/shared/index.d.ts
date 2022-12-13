@@ -21,6 +21,7 @@ export type { ArrayOfOASysSupportingInformationQuestions } from './models/ArrayO
 export type { Arrival } from './models/Arrival';
 export type { Assessment } from './models/Assessment';
 export type { AssessmentDecision } from './models/AssessmentDecision';
+export type { AssessmentRejection } from './models/AssessmentRejection';
 export type { Bed } from './models/Bed';
 export type { Booking } from './models/Booking';
 export type { BookingBody } from './models/BookingBody';
