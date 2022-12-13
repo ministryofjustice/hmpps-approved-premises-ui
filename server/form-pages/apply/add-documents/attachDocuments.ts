@@ -20,7 +20,7 @@ export default class AttachDocuments implements TasklistPage {
 
   documents: Array<Document> | undefined
 
-  constructor(public body: AttachDocumentsBody) {}
+  constructor(public body: AttachDocumentsBody, public readonly application: Application) {}
 
   static async initialize(
     body: AttachDocumentsResponse,
@@ -43,7 +43,7 @@ export default class AttachDocuments implements TasklistPage {
             }
           })
 
-    const page = new AttachDocuments({ selectedDocuments })
+    const page = new AttachDocuments({ selectedDocuments }, application)
     page.documents = documents
 
     return page

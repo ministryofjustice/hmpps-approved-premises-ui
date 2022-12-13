@@ -83,9 +83,9 @@ describe('attachDocuments', () => {
     })
   })
 
-  itShouldHaveNextValue(new AttachDocuments({}), '')
+  itShouldHaveNextValue(new AttachDocuments({}, application), '')
 
-  itShouldHavePreviousValue(new AttachDocuments({}), '')
+  itShouldHavePreviousValue(new AttachDocuments({}, application), '')
 
   describe('errors', () => {
     it('should return an error if a document does not have a description', () => {
@@ -94,7 +94,7 @@ describe('attachDocuments', () => {
         documentFactory.build({ fileName: 'file2.pdf', description: null }),
       ]
 
-      const page = new AttachDocuments({ selectedDocuments })
+      const page = new AttachDocuments({ selectedDocuments }, application)
       expect(page.errors()).toEqual({
         [`selectedDocuments_${selectedDocuments[1].id}`]: `You must enter a description for the document '${selectedDocuments[1].fileName}'`,
       })
@@ -108,7 +108,7 @@ describe('attachDocuments', () => {
         documentFactory.build({ fileName: 'file2.pdf', description: null }),
       ]
 
-      const page = new AttachDocuments({ selectedDocuments })
+      const page = new AttachDocuments({ selectedDocuments }, application)
 
       expect(page.response()).toEqual({ 'file1.pdf': 'Description goes here', 'file2.pdf': 'No description' })
     })
