@@ -41,10 +41,8 @@ export default class RoshSummary implements TasklistPage {
     const risks = await dataServices.personService.getPersonRisks(token, application.person.crn)
 
     const roshSummaries = oasysSections.roshSummary.sort((a, b) => Number(a.questionNumber) - Number(b.questionNumber))
-    const roshAnswers = body?.roshAnswers ? body.roshAnswers : []
 
     body.roshSummaries = roshSummaries
-    body.roshAnswers = roshAnswers
 
     const page = new RoshSummary(body)
     page.roshSummary = roshSummaries
