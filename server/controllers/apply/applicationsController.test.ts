@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import ApplicationsController from './applicationsController'
 import { ApplicationService, PersonService } from '../../services'
 import { fetchErrorsAndUserInput } from '../../utils/validation'
@@ -38,18 +38,20 @@ describe('applicationsController', () => {
     response = createMock<Response>({})
   })
 
-  describe('list', () => {
-    it('renders the list view', async () => {
-      applicationService.dashboardTableRows.mockResolvedValue([])
+  describe('index', () => {
+    it('renders the index view', async () => {
+      const applications = applicationFactory.buildList(5)
+      applicationService.getAllForLoggedInUser.mockResolvedValue(applications)
+
       const requestHandler = applicationsController.index()
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('applications/list', {
+      expect(response.render).toHaveBeenCalledWith('applications/index', {
         pageHeading: 'Approved Premises applications',
-        applicationTableRows: [],
+        applications,
       })
-      expect(applicationService.dashboardTableRows).toHaveBeenCalled()
+      expect(applicationService.getAllForLoggedInUser).toHaveBeenCalled()
     })
   })
 
@@ -66,7 +68,7 @@ describe('applicationsController', () => {
   })
 
   describe('show', () => {
-    const application = createMock<Application>({ person: { crn: 'some-crn' } })
+    const application = createMock<ApprovedPremisesApplication>({ person: { crn: 'some-crn' } })
     const risks = mapApiPersonRisksForUi(risksFactory.build())
 
     beforeEach(() => {

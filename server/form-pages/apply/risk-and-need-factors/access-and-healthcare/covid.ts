@@ -1,5 +1,5 @@
 import type { TaskListErrors, YesNoOrIDK } from '@approved-premises/ui'
-import { Application } from '../../../../@types/shared'
+import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 
@@ -31,7 +31,7 @@ export default class Covid implements TasklistPage {
 
   constructor(
     public body: Partial<CovidBody>,
-    private readonly application: Application,
+    private readonly application: ApprovedPremisesApplication,
     private readonly previousPage: string,
   ) {}
 

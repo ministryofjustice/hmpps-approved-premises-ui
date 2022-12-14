@@ -1,4 +1,4 @@
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 
 import TasklistPage from '../../../tasklistPage'
@@ -17,7 +17,7 @@ type ApTypes = typeof apTypes
 export default class ApType implements TasklistPage {
   title = `Which type of AP does ${this.application.person.name} require?`
 
-  constructor(public body: { type?: keyof ApTypes }, private readonly application: Application) {}
+  constructor(public body: { type?: keyof ApTypes }, private readonly application: ApprovedPremisesApplication) {}
 
   previous() {
     return ''

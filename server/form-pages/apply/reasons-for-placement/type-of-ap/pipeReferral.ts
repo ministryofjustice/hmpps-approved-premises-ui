@@ -1,5 +1,5 @@
 import type { YesOrNo, ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -22,7 +22,7 @@ export default class PipeReferral implements TasklistPage {
     opdPathwayDate: `When was ${this.application.person.name}'s last consultation or formulation?`,
   }
 
-  constructor(private _body: Partial<PipeReferralBody>, private readonly application: Application) {}
+  constructor(private _body: Partial<PipeReferralBody>, private readonly application: ApprovedPremisesApplication) {}
 
   public set body(value: Partial<PipeReferralBody>) {
     this._body = {

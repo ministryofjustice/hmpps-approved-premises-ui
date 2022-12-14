@@ -1,6 +1,6 @@
 import type { DataServices } from '@approved-premises/ui'
 
-import type { Application, PrisonCaseNote, Adjudication } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, PrisonCaseNote, Adjudication } from '@approved-premises/api'
 
 import { sentenceCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
@@ -64,7 +64,7 @@ export default class CaseNotes implements TasklistPage {
 
   caseNotes: Array<PrisonCaseNote> | undefined
 
-  constructor(private _body: Partial<CaseNotesBody>, private readonly application: Application) {}
+  constructor(private _body: Partial<CaseNotesBody>, private readonly application: ApprovedPremisesApplication) {}
 
   public get body(): CaseNotesBody {
     return this._body as CaseNotesBody
@@ -84,7 +84,7 @@ export default class CaseNotes implements TasklistPage {
 
   static async initialize(
     body: Record<string, unknown>,
-    application: Application,
+    application: ApprovedPremisesApplication,
     token: string,
     dataServices: DataServices,
   ) {

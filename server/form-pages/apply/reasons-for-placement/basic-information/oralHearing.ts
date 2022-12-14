@@ -1,5 +1,5 @@
 import type { ObjectWithDateParts, YesOrNo, TaskListErrors } from '@approved-premises/ui'
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 
 import TasklistPage from '../../../tasklistPage'
 import { dateAndTimeInputsAreValidDates, dateIsBlank, DateFormats } from '../../../../utils/dateUtils'
@@ -23,7 +23,7 @@ type OralHearingBody = ObjectWithDateParts<'oralHearingDate'> & {
 export default class OralHearing implements TasklistPage {
   title = `Do you know ${this.application.person.name}’s oral hearing date?`
 
-  constructor(private _body: Partial<OralHearingBody>, private readonly application: Application) {}
+  constructor(private _body: Partial<OralHearingBody>, private readonly application: ApprovedPremisesApplication) {}
 
   public set body(value: Partial<OralHearingBody>) {
     this._body = {

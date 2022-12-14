@@ -1,9 +1,9 @@
-import { Application } from '@approved-premises/api'
+import { ApprovedPremisesApplication } from '@approved-premises/api'
 
 import ApplyPage from './applyPage'
 
 export default class ComplexCaseBoardPage extends ApplyPage {
-  constructor(application: Application) {
+  constructor(application: ApprovedPremisesApplication) {
     super('Complex case board', application, 'further-considerations', 'complex-case-board')
     cy.get('.govuk-form-group').contains(
       `Does ${application.person.name}'s gender identity require a complex case board to review their application? `,

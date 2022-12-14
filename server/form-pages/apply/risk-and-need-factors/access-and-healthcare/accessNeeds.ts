@@ -1,5 +1,5 @@
 import type { TaskListErrors, YesNoOrIDK, YesOrNo } from '@approved-premises/ui'
-import { Application } from '../../../../@types/shared'
+import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { pascalCase, sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
@@ -57,7 +57,7 @@ export default class AccessNeeds implements TasklistPage {
     careActAssessmentCompleted: 'Has a care act assessment been completed?',
   }
 
-  constructor(public body: Partial<AccessNeedsBody>, private readonly application: Application) {}
+  constructor(public body: Partial<AccessNeedsBody>, private readonly application: ApprovedPremisesApplication) {}
 
   previous() {
     return ''

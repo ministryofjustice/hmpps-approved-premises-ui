@@ -1,5 +1,5 @@
 import type { TaskListErrors, DataServices } from '@approved-premises/ui'
-import { Application } from '@approved-premises/api'
+import { ApprovedPremisesApplication } from '@approved-premises/api'
 
 export default abstract class TasklistPage {
   abstract title: string
@@ -14,5 +14,9 @@ export default abstract class TasklistPage {
 
   abstract response(): Record<string, unknown>
 
-  static async initialize?(application: Application, token: string, dataServices: DataServices): Promise<TasklistPage>
+  static async initialize?(
+    application: ApprovedPremisesApplication,
+    token: string,
+    dataServices: DataServices,
+  ): Promise<TasklistPage>
 }

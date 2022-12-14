@@ -1,5 +1,5 @@
 import type { YesOrNo, TaskListErrors } from '@approved-premises/ui'
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
@@ -16,7 +16,7 @@ export default class PipeOpdReferral implements TasklistPage {
 
   constructor(
     public body: Partial<{ pipeReferral: YesOrNo; pipeReferralMoreDetail: string }>,
-    private readonly application: Application,
+    private readonly application: ApprovedPremisesApplication,
   ) {}
 
   next() {

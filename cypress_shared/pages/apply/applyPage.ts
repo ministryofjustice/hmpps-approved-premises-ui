@@ -1,13 +1,13 @@
+import { ApprovedPremisesApplication } from '@approved-premises/api'
 import Page from '../page'
 import TasklistPage from '../../../server/form-pages/tasklistPage'
-import { Application } from '../../../server/@types/shared/models/Application'
 
 import Apply from '../../../server/form-pages/apply'
 
 export default class ApplyPage extends Page {
   tasklistPage: TasklistPage
 
-  constructor(title: string, application: Application, taskName: string, pageName: string) {
+  constructor(title: string, application: ApprovedPremisesApplication, taskName: string, pageName: string) {
     super(title)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

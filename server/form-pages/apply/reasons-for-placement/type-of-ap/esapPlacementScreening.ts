@@ -1,4 +1,4 @@
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 
 import TasklistPage from '../../../tasklistPage'
@@ -38,7 +38,7 @@ export default class EsapPlacementScreening implements TasklistPage {
 
   constructor(
     public body: Partial<{ esapReasons: Array<keyof EsapReasons>; esapFactors: Array<keyof EsapFactors> }>,
-    private readonly application: Application,
+    private readonly application: ApprovedPremisesApplication,
   ) {}
 
   previous() {

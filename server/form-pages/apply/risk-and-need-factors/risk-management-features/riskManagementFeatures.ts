@@ -1,4 +1,4 @@
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 
 import TasklistPage from '../../../tasklistPage'
@@ -16,7 +16,7 @@ export default class RiskManagementFeatures implements TasklistPage {
 
   constructor(
     public body: { manageRiskDetails?: string; additionalFeaturesDetails?: string },
-    private readonly application: Application,
+    private readonly application: ApprovedPremisesApplication,
   ) {}
 
   previous() {

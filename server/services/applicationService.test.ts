@@ -4,19 +4,14 @@ import type { TaskListErrors, DataServices } from '@approved-premises/ui'
 
 import type TasklistPage from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
+import { getPage } from '../utils/applicationUtils'
 import ApplicationService from './applicationService'
 import ApplicationClient from '../data/applicationClient'
-import PersonClient from '../data/personClient'
 
 import Apply from '../form-pages/apply'
-import paths from '../paths/apply'
 import applicationFactory from '../testutils/factories/application'
 import activeOffenceFactory from '../testutils/factories/activeOffence'
 import documentFactory from '../testutils/factories/document'
-import { DateFormats } from '../utils/dateUtils'
-import { getArrivalDate, getPage } from '../utils/applicationUtils'
-import { tierEnvelopeFactory } from '../testutils/factories/risks'
-import { PersonRisks } from '../@types/shared'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -39,79 +34,27 @@ jest.mock('../utils/applicationUtils')
 describe('ApplicationService', () => {
   const applicationClient = new ApplicationClient(null) as jest.Mocked<ApplicationClient>
   const applicationClientFactory = jest.fn()
-  const personClient = new PersonClient(null) as jest.Mocked<PersonClient>
-  const personClientFactory = jest.fn()
 
-  const service = new ApplicationService(applicationClientFactory, personClientFactory)
+  const service = new ApplicationService(applicationClientFactory)
 
   beforeEach(() => {
     jest.resetAllMocks()
     applicationClientFactory.mockReturnValue(applicationClient)
-    personClientFactory.mockReturnValue(personClient)
   })
 
-  describe('dashboardTableRows', () => {
-    it('calls the all method on the client and returns the data in the correct format for the table in the view', async () => {
-      const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
-      const applicationA = applicationFactory.withReleaseDate(arrivalDate).build({
-        person: { name: 'A' },
-      })
-      const tierA = tierEnvelopeFactory.build({ value: { level: 'A1' } })
-      const applicationB = applicationFactory.withReleaseDate(arrivalDate).build({
-        person: { name: 'A' },
-      })
-      const tierB = tierEnvelopeFactory.build({ value: null })
+  describe('getAllForLoggedInUser', () => {
+    it('fetches all applications', async () => {
       const token = 'SOME_TOKEN'
 
-      applicationClient.all.mockResolvedValue([applicationA, applicationB])
-      personClient.risks.mockResolvedValueOnce({ tier: tierA } as PersonRisks)
-      personClient.risks.mockResolvedValueOnce({ tier: tierB } as PersonRisks)
-      ;(getArrivalDate as jest.Mock).mockReturnValue(arrivalDate)
+      const applications = applicationFactory.buildList(5)
+      applicationClient.all.mockResolvedValue(applications)
 
-      const result = await service.dashboardTableRows(token)
+      const result = await service.getAllForLoggedInUser(token)
 
-      expect(result).toEqual([
-        [
-          {
-            html: `<a href=${paths.applications.show({ id: applicationA.id })}>${applicationA.person.name}</a>`,
-          },
-          {
-            text: applicationA.person.crn,
-          },
-          {
-            html: `<span class="moj-badge moj-badge--red">${tierA.value.level}</span>`,
-          },
-          {
-            text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
-          },
-          {
-            text: DateFormats.isoDateToUIDate(applicationA.submittedAt, { format: 'short' }),
-          },
-        ],
-        [
-          {
-            html: `<a href=${paths.applications.show({ id: applicationB.id })}>${applicationB.person.name}</a>`,
-          },
-          {
-            text: applicationB.person.crn,
-          },
-          {
-            html: '',
-          },
-          {
-            text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
-          },
-          {
-            text: DateFormats.isoDateToUIDate(applicationB.submittedAt, { format: 'short' }),
-          },
-        ],
-      ])
+      expect(result).toEqual(applications)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.all).toHaveBeenCalled()
-      expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.risks).toHaveBeenCalledWith(applicationA.person.crn)
-      expect(personClient.risks).toHaveBeenCalledWith(applicationB.person.crn)
     })
   })
 

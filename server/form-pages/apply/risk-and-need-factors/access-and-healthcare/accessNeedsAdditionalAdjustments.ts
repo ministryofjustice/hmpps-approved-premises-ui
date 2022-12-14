@@ -1,5 +1,5 @@
 import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
-import { Application } from '../../../../@types/shared'
+import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { SessionDataError } from '../../../../utils/errors'
 import { lowerCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
@@ -19,7 +19,7 @@ export default class AccessNeedsAdditionalAdjustments implements TasklistPage {
 
   constructor(
     body: Partial<YesOrNoWithDetail<'adjustments'>>,
-    private readonly application: Application,
+    private readonly application: ApprovedPremisesApplication,
     private readonly previousPage: string,
   ) {}
 

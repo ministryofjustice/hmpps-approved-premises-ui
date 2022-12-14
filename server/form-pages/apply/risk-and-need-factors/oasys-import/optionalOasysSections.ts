@@ -2,7 +2,7 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { flattenCheckboxInput, isStringOrArrayOfStrings } from '../../../../utils/formUtils'
-import { Application, OASysSection } from '../../../../@types/shared'
+import { ApprovedPremisesApplication, OASysSection } from '../../../../@types/shared'
 import { DataServices } from '../../../../@types/ui'
 import { sentenceCase } from '../../../../utils/utils'
 
@@ -35,7 +35,7 @@ export default class OptionalOasysSections implements TasklistPage {
 
   static async initialize(
     body: Partial<Response>,
-    application: Application,
+    application: ApprovedPremisesApplication,
     token: string,
     dataServices: DataServices,
   ) {

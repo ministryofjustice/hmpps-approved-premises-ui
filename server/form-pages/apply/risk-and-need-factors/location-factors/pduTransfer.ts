@@ -1,5 +1,5 @@
 import type { TaskListErrors } from '@approved-premises/ui'
-import { Application } from '../../../../@types/shared'
+import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -20,7 +20,7 @@ export default class PduTransfer implements TasklistPage {
 
   constructor(
     public body: { transferStatus?: Response; probationPractitioner?: string },
-    private readonly application: Application,
+    private readonly application: ApprovedPremisesApplication,
   ) {}
 
   previous() {

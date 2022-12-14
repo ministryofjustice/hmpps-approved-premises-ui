@@ -1,5 +1,5 @@
 import type { ObjectWithDateParts, YesOrNo, TaskListErrors } from '@approved-premises/ui'
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 
 import TasklistPage from '../../../tasklistPage'
 import { retrieveQuestionResponseFromApplication, convertToTitleCase } from '../../../../utils/utils'
@@ -17,7 +17,7 @@ type PlacementDateBody = ObjectWithDateParts<'startDate'> & {
 export default class PlacementDate implements TasklistPage {
   title: string
 
-  constructor(private _body: Partial<PlacementDateBody>, application: Application) {
+  constructor(private _body: Partial<PlacementDateBody>, application: ApprovedPremisesApplication) {
     const formattedReleaseDate = DateFormats.isoDateToUIDate(
       retrieveQuestionResponseFromApplication(application, 'basic-information', 'releaseDate'),
     )

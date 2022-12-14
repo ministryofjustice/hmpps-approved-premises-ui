@@ -1,9 +1,9 @@
-import { Application, OASysSection } from '@approved-premises/api'
+import { ApprovedPremisesApplication, OASysSection } from '@approved-premises/api'
 
 import ApplyPage from './applyPage'
 
 export default class OptionalOasysSectionsPage extends ApplyPage {
-  constructor(application: Application) {
+  constructor(application: ApprovedPremisesApplication) {
     super(
       'Which of the following sections of OASys do you want to import?',
       application,

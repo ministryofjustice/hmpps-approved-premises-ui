@@ -1,4 +1,4 @@
-import { Application } from '@approved-premises/api'
+import { ApprovedPremisesApplication } from '@approved-premises/api'
 import 'reflect-metadata'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
@@ -11,7 +11,7 @@ const Page = (options: { bodyProperties: Array<string>; name: string }) => {
 
       body: Record<string, unknown>
 
-      application: Application
+      application: ApprovedPremisesApplication
 
       previousPage: string
 

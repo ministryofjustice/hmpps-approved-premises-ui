@@ -1,12 +1,12 @@
 /* eslint-disable import/prefer-default-export */
-import { Application } from '@approved-premises/api'
+import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { HtmlItem, SummaryListItem, Task, TextItem } from '@approved-premises/ui'
 import Apply from '../form-pages/apply'
 import paths from '../paths/apply'
 
 import { getResponseForPage } from './applicationUtils'
 
-const checkYourAnswersSections = (application: Application) => {
+const checkYourAnswersSections = (application: ApprovedPremisesApplication) => {
   const nonCheckYourAnswersSections = Apply.sections.slice(0, -1)
 
   return nonCheckYourAnswersSections.map(section => {
@@ -22,7 +22,10 @@ const checkYourAnswersSections = (application: Application) => {
   })
 }
 
-const getTaskResponsesAsSummaryListItems = (task: Task, application: Application): Array<SummaryListItem> => {
+const getTaskResponsesAsSummaryListItems = (
+  task: Task,
+  application: ApprovedPremisesApplication,
+): Array<SummaryListItem> => {
   const items: Array<SummaryListItem> = []
 
   if (!application.data[task.id]) {
@@ -75,7 +78,7 @@ const summaryListItemForResponse = (
   value: TextItem | HtmlItem,
   task: Task,
   pageName: string,
-  application: Application,
+  application: ApprovedPremisesApplication,
 ) => {
   return {
     key: {

@@ -1,24 +1,22 @@
 import type { Request } from 'express'
-import type { HtmlItem, TextItem, DataServices } from '@approved-premises/ui'
-import type { ActiveOffence, Application, Document } from '@approved-premises/api'
+import type { DataServices } from '@approved-premises/ui'
+import type { ActiveOffence, ApprovedPremisesApplication, Document } from '@approved-premises/api'
 
 import type TasklistPage from '../form-pages/tasklistPage'
-import type { RestClientBuilder, ApplicationClient, PersonClient } from '../data'
+import type { RestClientBuilder, ApplicationClient } from '../data'
 import { UnknownPageError, ValidationError } from '../utils/errors'
-import { tierBadge } from '../utils/personUtils'
 
 import Apply from '../form-pages/apply'
-import paths from '../paths/apply'
-import { DateFormats } from '../utils/dateUtils'
-import { getArrivalDate, getPage } from '../utils/applicationUtils'
+import { getPage } from '../utils/applicationUtils'
 
 export default class ApplicationService {
-  constructor(
-    private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>,
-    private readonly personClientFactory: RestClientBuilder<PersonClient>,
-  ) {}
+  constructor(private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>) {}
 
-  async createApplication(token: string, crn: string, activeOffence: ActiveOffence): Promise<Application> {
+  async createApplication(
+    token: string,
+    crn: string,
+    activeOffence: ActiveOffence,
+  ): Promise<ApprovedPremisesApplication> {
     const applicationClient = this.applicationClientFactory(token)
 
     const application = await applicationClient.create(crn, activeOffence)
@@ -26,7 +24,7 @@ export default class ApplicationService {
     return application
   }
 
-  async findApplication(token: string, id: string): Promise<Application> {
+  async findApplication(token: string, id: string): Promise<ApprovedPremisesApplication> {
     const applicationClient = this.applicationClientFactory(token)
 
     const application = await applicationClient.find(id)
@@ -34,7 +32,13 @@ export default class ApplicationService {
     return application
   }
 
-  async getDocuments(token: string, application: Application): Promise<Array<Document>> {
+  async getAllForLoggedInUser(token: string): Promise<Array<ApprovedPremisesApplication>> {
+    const applicationClient = this.applicationClientFactory(token)
+
+    return applicationClient.all()
+  }
+
+  async getDocuments(token: string, application: ApprovedPremisesApplication): Promise<Array<Document>> {
     const applicationClient = this.applicationClientFactory(token)
 
     const documents = await applicationClient.documents(application)
@@ -82,7 +86,7 @@ export default class ApplicationService {
     }
   }
 
-  async submit(token: string, application: Application) {
+  async submit(token: string, application: ApprovedPremisesApplication) {
     const client = this.applicationClientFactory(token)
 
     await client.submit(application)
@@ -92,7 +96,9 @@ export default class ApplicationService {
     return Object.keys(Apply.pages[taskName])[0]
   }
 
-  private getApplicationFromSessionOrAPI(request: Request): Promise<Application> | Application {
+  private getApplicationFromSessionOrAPI(
+    request: Request,
+  ): Promise<ApprovedPremisesApplication> | ApprovedPremisesApplication {
     const { application } = request.session
 
     if (application && application.id === request.params.id) {
@@ -101,18 +107,18 @@ export default class ApplicationService {
     return this.findApplication(request.user.token, request.params.id)
   }
 
-  private async saveToSession(application: Application, page: TasklistPage, request: Request) {
+  private async saveToSession(application: ApprovedPremisesApplication, page: TasklistPage, request: Request) {
     request.session.application = application
     request.session.previousPage = request.params.page
   }
 
-  private async saveToApi(application: Application, request: Request) {
+  private async saveToApi(application: ApprovedPremisesApplication, request: Request) {
     const client = this.applicationClientFactory(request.user.token)
 
     await client.update(application)
   }
 
-  private getBody(application: Application, request: Request, userInput: Record<string, unknown>) {
+  private getBody(application: ApprovedPremisesApplication, request: Request, userInput: Record<string, unknown>) {
     if (userInput && Object.keys(userInput).length) {
       return userInput
     }
@@ -122,42 +128,7 @@ export default class ApplicationService {
     return this.getPageDataFromApplication(application, request)
   }
 
-  private getPageDataFromApplication(application: Application, request: Request) {
+  private getPageDataFromApplication(application: ApprovedPremisesApplication, request: Request) {
     return application.data?.[request.params.task]?.[request.params.page] || {}
-  }
-
-  async dashboardTableRows(token: string): Promise<Array<Array<TextItem | HtmlItem>>> {
-    const applicationClient = this.applicationClientFactory(token)
-    const personClient = this.personClientFactory(token)
-
-    const applications = await applicationClient.all()
-
-    const tableRows = Promise.all(
-      applications.map(async application => {
-        const { tier } = await personClient.risks(application.person.crn)
-
-        return [
-          this.createNameAnchorElement(application.person.name, application.id),
-          this.textValue(application.person.crn),
-          this.htmlValue(tierBadge(tier.value?.level || '')),
-          this.textValue(DateFormats.isoDateToUIDate(getArrivalDate(application), { format: 'short' })),
-          this.textValue(DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' })),
-        ]
-      }),
-    )
-
-    return tableRows
-  }
-
-  private textValue(value: string) {
-    return { text: value }
-  }
-
-  private htmlValue(value: string) {
-    return { html: value }
-  }
-
-  private createNameAnchorElement(name: string, applicationId: string) {
-    return this.htmlValue(`<a href=${paths.applications.show({ id: applicationId })}>${name}</a>`)
   }
 }

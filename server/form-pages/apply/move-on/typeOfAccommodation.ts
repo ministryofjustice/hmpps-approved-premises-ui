@@ -1,5 +1,5 @@
 import type { TaskListErrors } from '@approved-premises/ui'
-import { Application } from '../../../@types/shared'
+import { ApprovedPremisesApplication } from '../../../@types/shared'
 import { convertKeyValuePairToRadioItems } from '../../../utils/formUtils'
 import { Page } from '../../utils/decorators'
 
@@ -33,7 +33,10 @@ export default class TypeOfAccommodation implements TasklistPage {
 
   otherQuestion = accommodationType.other
 
-  constructor(public body: Partial<TypeOfAccommodationBody>, private readonly application: Application) {}
+  constructor(
+    public body: Partial<TypeOfAccommodationBody>,
+    private readonly application: ApprovedPremisesApplication,
+  ) {}
 
   previous() {
     return 'plans-in-place'

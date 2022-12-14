@@ -1,7 +1,7 @@
 import Case from 'case'
 
 import type { SummaryListItem, PersonRisksUI } from '@approved-premises/ui'
-import type { Application, PersonRisks } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, PersonRisks } from '@approved-premises/api'
 
 import { SessionDataError } from './errors'
 import { DateFormats } from './dateUtils'
@@ -75,7 +75,7 @@ export const lowerCase = (string: string) => Case.lower(string)
  * @returns the response for the given task/page/question.
  */
 export const retrieveQuestionResponseFromApplication = <T>(
-  application: Application,
+  application: ApprovedPremisesApplication,
   task: string,
   page: string,
   question?: string,
