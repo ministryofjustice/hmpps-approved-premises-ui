@@ -20,11 +20,11 @@ type RoshSummaryBody = {
 export default class RoshSummary implements TasklistPage {
   title = 'Edit risk information'
 
-  roshSummary: ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
+  roshSummary: RoshSummaryBody['roshSummaries']
 
   risks: PersonRisksUI
 
-  roshAnswers: Record<string, string>
+  roshAnswers: RoshSummaryBody['roshAnswers']
 
   constructor(public body: Partial<RoshSummaryBody>) {}
 
