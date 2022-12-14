@@ -1,5 +1,5 @@
 import type { ErrorMessages } from '@approved-premises/ui'
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 
 export default {}
 
@@ -8,7 +8,7 @@ declare module 'express-session' {
   interface SessionData {
     returnTo: string
     nowInMinutes: number
-    application: Application
+    application: ApprovedPremisesApplication
     previousPage: string
   }
 }

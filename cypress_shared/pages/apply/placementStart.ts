@@ -1,9 +1,9 @@
-import { Application } from '@approved-premises/api'
+import { ApprovedPremisesApplication } from '@approved-premises/api'
 import ApplyPage from './applyPage'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 export default class PlacementStartPage extends ApplyPage {
-  constructor(application: Application) {
+  constructor(application: ApprovedPremisesApplication) {
     const { releaseDate } = application.data['basic-information']['release-date']
 
     super(

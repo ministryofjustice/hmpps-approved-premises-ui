@@ -1,5 +1,5 @@
 import type { TaskListErrors } from '@approved-premises/ui'
-import { Application } from '../../../../@types/shared'
+import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 
 import TasklistPage from '../../../tasklistPage'
@@ -22,7 +22,10 @@ type RawTypeOfConvictedOffenceBody = { offenceConvictions?: RawOffences }
 export default class TypeOfConvictedOffence implements TasklistPage {
   title = `What type of offending has ${this.application.person.name} been convicted of?`
 
-  constructor(private _body: RawTypeOfConvictedOffenceBody, private readonly application: Application) {}
+  constructor(
+    private _body: RawTypeOfConvictedOffenceBody,
+    private readonly application: ApprovedPremisesApplication,
+  ) {}
 
   public get body(): TypeOfConvictedOffenceBody {
     return this._body as TypeOfConvictedOffenceBody

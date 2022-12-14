@@ -1,4 +1,4 @@
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 
 import { SessionDataError } from '../../../../utils/errors'
@@ -28,7 +28,7 @@ export default class ReleaseType implements TasklistPage {
 
   constructor(
     readonly body: { releaseType?: keyof AllReleaseTypes | keyof ReducedReleaseTypes },
-    readonly application: Application,
+    readonly application: ApprovedPremisesApplication,
   ) {
     const sessionSentenceType = retrieveQuestionResponseFromApplication<SentenceType>(
       application,

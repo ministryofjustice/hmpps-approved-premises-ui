@@ -6,7 +6,7 @@ import express from 'express'
 import * as pathModule from 'path'
 
 import type { ErrorMessages, PersonStatus, Task } from '@approved-premises/ui'
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import { initialiseName, removeBlankSummaryListItems, sentenceCase } from './utils'
 import { dateFieldValues, convertObjectsToRadioItems, convertObjectsToSelectOptions } from './formUtils'
 import { getTaskStatus, taskLink, getCompleteSectionCount } from './applicationUtils'
@@ -104,11 +104,13 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   njkEnv.addGlobal('getCompleteSectionCount', getCompleteSectionCount)
 
-  njkEnv.addGlobal('getTaskStatus', (task: Task, application: Application) =>
+  njkEnv.addGlobal('getTaskStatus', (task: Task, application: ApprovedPremisesApplication) =>
     markAsSafe(getTaskStatus(task, application)),
   )
 
-  njkEnv.addGlobal('taskLink', (task: Task, application: Application) => markAsSafe(taskLink(task, application)))
+  njkEnv.addGlobal('taskLink', (task: Task, application: ApprovedPremisesApplication) =>
+    markAsSafe(taskLink(task, application)),
+  )
 
   njkEnv.addGlobal('statusTag', (status: PersonStatus) => markAsSafe(statusTag(status)))
 

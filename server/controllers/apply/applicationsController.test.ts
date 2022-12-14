@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import ApplicationsController from './applicationsController'
 import { ApplicationService, PersonService } from '../../services'
 import { fetchErrorsAndUserInput } from '../../utils/validation'
@@ -66,7 +66,7 @@ describe('applicationsController', () => {
   })
 
   describe('show', () => {
-    const application = createMock<Application>({ person: { crn: 'some-crn' } })
+    const application = createMock<ApprovedPremisesApplication>({ person: { crn: 'some-crn' } })
     const risks = mapApiPersonRisksForUi(risksFactory.build())
 
     beforeEach(() => {

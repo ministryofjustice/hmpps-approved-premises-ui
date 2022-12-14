@@ -1,4 +1,4 @@
-import { Application } from '@approved-premises/api'
+import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 import { SessionDataError } from '../../../utils/errors'
 
@@ -7,7 +7,7 @@ import applicationFactory from '../../../testutils/factories/application'
 
 describe('PlacementDuration', () => {
   let data: Record<string, unknown>
-  let application: Application
+  let application: ApprovedPremisesApplication
 
   beforeEach(() => {
     application = applicationFactory.withReleaseDate().build()

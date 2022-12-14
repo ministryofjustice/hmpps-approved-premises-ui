@@ -1,5 +1,5 @@
 import type { TaskListErrors } from '@approved-premises/ui'
-import { Application } from '@approved-premises/api'
+import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { SessionDataError } from '../../../utils/errors'
 import { DateFormats } from '../../../utils/dateUtils'
 import { Page } from '../../utils/decorators'
@@ -22,7 +22,7 @@ export default class PlacementDuration implements TasklistPage {
     durationDetail: 'Provide any additional information',
   }
 
-  constructor(public body: Partial<PlacementDurationBody>, private readonly application: Application) {}
+  constructor(public body: Partial<PlacementDurationBody>, private readonly application: ApprovedPremisesApplication) {}
 
   previous() {
     return ''

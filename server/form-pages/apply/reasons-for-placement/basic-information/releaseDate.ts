@@ -1,5 +1,5 @@
 import type { ObjectWithDateParts, YesOrNo, TaskListErrors } from '@approved-premises/ui'
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -19,7 +19,7 @@ export default class ReleaseDate implements TasklistPage {
 
   constructor(
     private _body: Partial<ReleaseDateType>,
-    readonly application: Application,
+    readonly application: ApprovedPremisesApplication,
     readonly previousPage: string,
   ) {}
 

@@ -1,4 +1,4 @@
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
 
@@ -26,7 +26,7 @@ export default class Situation implements TasklistPage {
 
   constructor(
     readonly body: { situation?: keyof CommunityOrderSituations | keyof BailPlacementSituations },
-    readonly application: Application,
+    readonly application: ApprovedPremisesApplication,
   ) {
     const sessionSentenceType = retrieveQuestionResponseFromApplication<SentenceType>(
       application,

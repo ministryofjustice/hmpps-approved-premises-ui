@@ -4,11 +4,11 @@ import AccessNeedsAdditionalAdjustments from './accessNeedsAdditionalAdjustments
 
 import applicationFactory from '../../../../testutils/factories/application'
 import personFactory from '../../../../testutils/factories/person'
-import { Application, Person } from '../../../../@types/shared'
+import { ApprovedPremisesApplication, Person } from '../../../../@types/shared'
 import { SessionDataError } from '../../../../utils/errors'
 
 describe('AccessNeedsAdditionalAdjustments', () => {
-  let application: Application
+  let application: ApprovedPremisesApplication
   let person: Person
   const previousPage = 'previousPage'
 

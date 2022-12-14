@@ -1,9 +1,12 @@
-import { Application, ArrayOfOASysRiskOfSeriousHarmSummaryQuestions } from '@approved-premises/api'
+import { ApprovedPremisesApplication, ArrayOfOASysRiskOfSeriousHarmSummaryQuestions } from '@approved-premises/api'
 
 import ApplyPage from './applyPage'
 
 export default class RoshSummary extends ApplyPage {
-  constructor(application: Application, private readonly roshSummary: ArrayOfOASysRiskOfSeriousHarmSummaryQuestions) {
+  constructor(
+    application: ApprovedPremisesApplication,
+    private readonly roshSummary: ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
+  ) {
     super('Edit risk information', application, 'oasys-import', 'rosh-summary')
   }
 

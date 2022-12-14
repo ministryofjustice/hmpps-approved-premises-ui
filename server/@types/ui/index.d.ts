@@ -3,7 +3,7 @@ import {
   RiskTier,
   FlagsEnvelope,
   Mappa,
-  Application,
+  ApprovedPremisesApplication,
   Assessment,
   Person,
   OASysSection,
@@ -193,7 +193,7 @@ export type DataServices = Partial<{
     getPersonRisks: (token: string, crn: string) => Promise<PersonRisksUI>
   }
   applicationService: {
-    getDocuments: (token: string, application: Application) => Promise<Array<Document>>
+    getDocuments: (token: string, application: ApprovedPremisesApplication) => Promise<Array<Document>>
   }
 }>
 
@@ -204,7 +204,7 @@ export interface GroupedAssessmentWithRisks {
 }
 
 export interface AssessmentWithRisks extends Assessment {
-  application: ApplicationWithRisks
+  application: ApprovedPremisesApplicationWithRisks
 }
 
 export interface ApplicationWithRisks extends Application {

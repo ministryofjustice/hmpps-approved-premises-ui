@@ -1,5 +1,5 @@
 import type { Request, Response, RequestHandler } from 'express'
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 
 import ApplicationService from '../../services/applicationService'
 import { PersonService } from '../../services'
@@ -30,7 +30,7 @@ export default class ApplicationsController {
 
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const application: Application = req.session.application
+      const application: ApprovedPremisesApplication = req.session.application
         ? req.session.application
         : await this.applicationService.findApplication(req.user.token, req.params.id)
 

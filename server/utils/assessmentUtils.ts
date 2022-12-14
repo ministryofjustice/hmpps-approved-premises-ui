@@ -1,7 +1,7 @@
 import { TableRow, AssessmentWithRisks } from '@approved-premises/ui'
 import { format, differenceInDays, add } from 'date-fns'
 
-import { Assessment } from '@approved-premises/api'
+import { Assessment, ApprovedPremisesApplication } from '@approved-premises/api'
 import { tierBadge } from './personUtils'
 import { DateFormats } from './dateUtils'
 import { getArrivalDate } from './applicationUtils'
@@ -106,7 +106,7 @@ const assessmentLink = (assessment: Assessment): string => {
 }
 
 const formattedArrivalDate = (assessment: Assessment): string => {
-  const arrivalDate = getArrivalDate(assessment.application)
+  const arrivalDate = getArrivalDate(assessment.application as ApprovedPremisesApplication)
   return format(DateFormats.isoToDateObj(arrivalDate), 'd MMM yyyy')
 }
 

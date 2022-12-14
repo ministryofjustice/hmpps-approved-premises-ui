@@ -1,5 +1,5 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
-import { Application } from '../../../../@types/shared'
+import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 
@@ -21,7 +21,10 @@ export default class AccessNeedsMobility implements TasklistPage {
     visualImpairment: 'Visual Impairment',
   }
 
-  constructor(public body: Partial<AccessNeedsMobilityBody>, private readonly application: Application) {}
+  constructor(
+    public body: Partial<AccessNeedsMobilityBody>,
+    private readonly application: ApprovedPremisesApplication,
+  ) {}
 
   previous() {
     return 'access-needs'

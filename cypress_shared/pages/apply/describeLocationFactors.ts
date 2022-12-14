@@ -1,9 +1,9 @@
-import { Application } from '@approved-premises/api'
+import { ApprovedPremisesApplication } from '@approved-premises/api'
 
 import ApplyPage from './applyPage'
 
 export default class DescribeLocationFactors extends ApplyPage {
-  constructor(application: Application) {
+  constructor(application: ApprovedPremisesApplication) {
     super('Location factors', application, 'location-factors', 'describe-location-factors')
   }
 

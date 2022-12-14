@@ -1,7 +1,7 @@
 import Page from '../page'
 import paths from '../../../server/paths/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import { Application, PersonRisks } from '../../../server/@types/shared'
+import { ApprovedPremisesApplication, PersonRisks } from '../../../server/@types/shared'
 
 export default class ListPage extends Page {
   constructor() {
@@ -14,7 +14,7 @@ export default class ListPage extends Page {
     return new ListPage()
   }
 
-  shouldShowApplications(applications: Array<Application>, personRisks: Array<PersonRisks>): void {
+  shouldShowApplications(applications: Array<ApprovedPremisesApplication>, personRisks: Array<PersonRisks>): void {
     applications.forEach((application, i) => {
       cy.contains(application.person.name)
         .should('have.attr', 'href', paths.applications.show({ id: application.id }))

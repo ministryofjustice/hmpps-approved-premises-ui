@@ -1,6 +1,6 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
-import { Application } from '../../../../@types/shared'
+import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
 import { lowerCase, sentenceCase } from '../../../../utils/utils'
 
@@ -19,7 +19,7 @@ export default class ConvictedOffences implements TasklistPage {
 
   offences = ['Arson offences', 'Sexual offences', 'Hate crimes', 'Non-sexual offences against children']
 
-  constructor(public body: { response?: YesOrNo }, private readonly application: Application) {}
+  constructor(public body: { response?: YesOrNo }, private readonly application: ApprovedPremisesApplication) {}
 
   previous() {
     return 'risk-management-features'

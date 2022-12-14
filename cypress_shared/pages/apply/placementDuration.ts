@@ -1,13 +1,13 @@
 import { add } from 'date-fns'
-import { Application } from '@approved-premises/api'
+import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import ApplyPage from './applyPage'
 
 export default class PlacementDurationPage extends ApplyPage {
-  application: Application
+  application: ApprovedPremisesApplication
 
-  constructor(application: Application) {
+  constructor(application: ApprovedPremisesApplication) {
     super('Placement duration and move on', application, 'move-on', 'placement-duration')
     this.application = application
   }

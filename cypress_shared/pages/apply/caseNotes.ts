@@ -1,4 +1,4 @@
-import { Application, PrisonCaseNote, Adjudication } from '@approved-premises/api'
+import { ApprovedPremisesApplication, PrisonCaseNote, Adjudication } from '@approved-premises/api'
 
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { sentenceCase } from '../../../server/utils/utils'
@@ -8,7 +8,7 @@ import Page from '../page'
 export default class CaseNotesPage extends Page {
   prisonCaseNotes: Array<PrisonCaseNote>
 
-  constructor(application: Application, prisonCaseNotes: Array<PrisonCaseNote>) {
+  constructor(application: ApprovedPremisesApplication, prisonCaseNotes: Array<PrisonCaseNote>) {
     super('Prison information')
 
     cy.get('label').contains(

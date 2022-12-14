@@ -1,4 +1,4 @@
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import type { YesOrNo, TaskListErrors } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
@@ -41,7 +41,7 @@ export default class EsapPlacementSecreting implements TasklistPage {
       secretingIntelligenceDetails: string
       secretingNotes: string
     }>,
-    private readonly application: Application,
+    private readonly application: ApprovedPremisesApplication,
   ) {}
 
   previous() {

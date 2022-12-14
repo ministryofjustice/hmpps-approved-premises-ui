@@ -1,5 +1,5 @@
 import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -36,7 +36,10 @@ export default class Arson implements TasklistPage {
     },
   }
 
-  constructor(public body: Partial<YesOrNoWithDetail<'arson'>>, private readonly application: Application) {}
+  constructor(
+    public body: Partial<YesOrNoWithDetail<'arson'>>,
+    private readonly application: ApprovedPremisesApplication,
+  ) {}
 
   previous() {
     return 'catering'

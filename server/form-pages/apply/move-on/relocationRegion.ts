@@ -1,5 +1,5 @@
 import type { TaskListErrors } from '@approved-premises/ui'
-import { Application } from '../../../@types/shared'
+import { ApprovedPremisesApplication } from '../../../@types/shared'
 import { validPostcodeArea } from '../../../utils/formUtils'
 import { Page } from '../../utils/decorators'
 
@@ -19,7 +19,7 @@ export default class RelocationRegion implements TasklistPage {
     public body: {
       postcodeArea?: string
     },
-    private readonly application: Application,
+    private readonly application: ApprovedPremisesApplication,
   ) {}
 
   previous() {
