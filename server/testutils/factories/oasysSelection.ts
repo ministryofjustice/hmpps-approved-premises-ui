@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { OASysSection } from '@approved-premises/api'
 
-class OasysSectionFactory extends Factory<OASysSection> {
+class OasysSelectionFactory extends Factory<OASysSection> {
   needsLinkedToHarm() {
     return this.params({ linkedToHarm: true, linkedToReOffending: true })
   }
@@ -17,7 +17,7 @@ class OasysSectionFactory extends Factory<OASysSection> {
   }
 }
 
-export default OasysSectionFactory.define(() => ({
+export default OasysSelectionFactory.define(() => ({
   section: faker.datatype.number({ min: 1, max: 20 }),
   name: faker.helpers.arrayElement([
     'accommodation',

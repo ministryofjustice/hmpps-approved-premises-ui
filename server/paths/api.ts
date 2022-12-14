@@ -69,6 +69,7 @@ export default {
     documents: path('/documents/:crn/:documentId'),
     oasys: {
       selection: oasysPath.path('selection'),
+      sections: oasysPath.path('sections'),
     },
   },
 }

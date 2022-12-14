@@ -1,6 +1,13 @@
 import type { Response } from 'express'
 import type { PersonRisksUI } from '@approved-premises/ui'
-import type { ActiveOffence, Adjudication, Person, PrisonCaseNote, OASysSection } from '@approved-premises/api'
+import type {
+  ActiveOffence,
+  Adjudication,
+  Person,
+  PrisonCaseNote,
+  OASysSection,
+  OASysSections,
+} from '@approved-premises/api'
 import type { RestClientBuilder, PersonClient } from '../data'
 
 import { mapApiPersonRisksForUi } from '../utils/utils'
@@ -50,6 +57,14 @@ export default class PersonService {
     const personClient = this.personClientFactory(token)
 
     const oasysSections = await personClient.oasysSelections(crn)
+
+    return oasysSections
+  }
+
+  async getOasysSections(token: string, crn: string): Promise<OASysSections> {
+    const personClient = this.personClientFactory(token)
+
+    const oasysSections = await personClient.oasysSections(crn)
 
     return oasysSections
   }

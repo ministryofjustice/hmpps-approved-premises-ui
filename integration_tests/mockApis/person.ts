@@ -9,6 +9,7 @@ import type {
   Adjudication,
   ActiveOffence,
   OASysSection,
+  OASysSections,
   Document,
 } from '@approved-premises/api'
 
@@ -95,11 +96,25 @@ export default {
       },
     }),
 
-  stubOasysSelection: (args: { person: Person; oasysSections: Array<OASysSection> }) =>
+  stubOasysSelection: (args: { person: Person; oasysSelection: Array<OASysSection> }) =>
     stubFor({
       request: {
         method: 'GET',
         url: `/people/${args.person.crn}/oasys/selection`,
+      },
+
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.oasysSelection,
+      },
+    }),
+
+  stubOasysSections: (args: { person: Person; oasysSections: OASysSections }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/people/${args.person.crn}/oasys/sections`,
       },
       response: {
         status: 200,

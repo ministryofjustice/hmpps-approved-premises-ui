@@ -1,3 +1,4 @@
+import * as nunjucks from 'nunjucks'
 import type { ErrorMessages, RadioItem, CheckBoxItem, SelectOption } from '@approved-premises/ui'
 
 export const dateFieldValues = (fieldName: string, context: Record<string, unknown>, errors: ErrorMessages = {}) => {
@@ -118,4 +119,9 @@ export function isStringOrArrayOfStrings(input: unknown) {
     (Array.isArray(input) && input.every((element: unknown) => typeof element === 'string')) ||
     typeof input === 'string'
   )
+}
+
+export const escape = (text: string): string => {
+  const escapeFilter = new nunjucks.Environment().getFilter('escape')
+  return escapeFilter(text).val
 }

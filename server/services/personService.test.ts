@@ -10,7 +10,8 @@ import { mapApiPersonRisksForUi } from '../utils/utils'
 import prisonCaseNotesFactory from '../testutils/factories/prisonCaseNotes'
 import adjudicationsFactory from '../testutils/factories/adjudication'
 import activeOffenceFactory from '../testutils/factories/activeOffence'
-import oasysSectionFactory from '../testutils/factories/oasysSection'
+import oasysSelectionFactory from '../testutils/factories/oasysSelection'
+import oasysSectionsFactory from '../testutils/factories/oasysSections'
 
 jest.mock('../data/personClient.ts')
 
@@ -100,18 +101,33 @@ describe('PersonService', () => {
     })
   })
 
-  describe('getOasysSections', () => {
+  describe('getOasysSelections', () => {
     it("on success returns the person's OASys selections given their CRN", async () => {
-      const oasysSections = oasysSectionFactory.buildList(3)
+      const oasysSelections = oasysSelectionFactory.buildList(3)
 
-      personClient.oasysSelections.mockResolvedValue(oasysSections)
+      personClient.oasysSelections.mockResolvedValue(oasysSelections)
 
       const serviceOasysSelections = await service.getOasysSelections(token, 'crn')
 
-      expect(serviceOasysSelections).toEqual(oasysSections)
+      expect(serviceOasysSelections).toEqual(oasysSelections)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
       expect(personClient.oasysSelections).toHaveBeenCalledWith('crn')
+    })
+  })
+
+  describe('getOasysSections', () => {
+    it("on success returns the person's OASys selections given their CRN", async () => {
+      const oasysSections = oasysSectionsFactory.build()
+
+      personClient.oasysSections.mockResolvedValue(oasysSections)
+
+      const serviceOasysSections = await service.getOasysSections(token, 'crn')
+
+      expect(serviceOasysSections).toEqual(oasysSections)
+
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.oasysSections).toHaveBeenCalledWith('crn')
     })
   })
 
