@@ -1,22 +1,16 @@
 import type { Request } from 'express'
-import type { HtmlItem, TextItem, DataServices } from '@approved-premises/ui'
+import type { DataServices } from '@approved-premises/ui'
 import type { ActiveOffence, ApprovedPremisesApplication, Document } from '@approved-premises/api'
 
 import type TasklistPage from '../form-pages/tasklistPage'
-import type { RestClientBuilder, ApplicationClient, PersonClient } from '../data'
+import type { RestClientBuilder, ApplicationClient } from '../data'
 import { UnknownPageError, ValidationError } from '../utils/errors'
-import { tierBadge } from '../utils/personUtils'
 
 import Apply from '../form-pages/apply'
-import paths from '../paths/apply'
-import { DateFormats } from '../utils/dateUtils'
-import { getArrivalDate, getPage } from '../utils/applicationUtils'
+import { getPage } from '../utils/applicationUtils'
 
 export default class ApplicationService {
-  constructor(
-    private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>,
-    private readonly personClientFactory: RestClientBuilder<PersonClient>,
-  ) {}
+  constructor(private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>) {}
 
   async createApplication(
     token: string,
@@ -136,40 +130,5 @@ export default class ApplicationService {
 
   private getPageDataFromApplication(application: ApprovedPremisesApplication, request: Request) {
     return application.data?.[request.params.task]?.[request.params.page] || {}
-  }
-
-  async dashboardTableRows(token: string): Promise<Array<Array<TextItem | HtmlItem>>> {
-    const applicationClient = this.applicationClientFactory(token)
-    const personClient = this.personClientFactory(token)
-
-    const applications = await applicationClient.all()
-
-    const tableRows = Promise.all(
-      applications.map(async application => {
-        const { tier } = await personClient.risks(application.person.crn)
-
-        return [
-          this.createNameAnchorElement(application.person.name, application.id),
-          this.textValue(application.person.crn),
-          this.htmlValue(tierBadge(tier.value?.level || '')),
-          this.textValue(DateFormats.isoDateToUIDate(getArrivalDate(application), { format: 'short' })),
-          this.textValue(DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' })),
-        ]
-      }),
-    )
-
-    return tableRows
-  }
-
-  private textValue(value: string) {
-    return { text: value }
-  }
-
-  private htmlValue(value: string) {
-    return { html: value }
-  }
-
-  private createNameAnchorElement(name: string, applicationId: string) {
-    return this.htmlValue(`<a href=${paths.applications.show({ id: applicationId })}>${name}</a>`)
   }
 }
