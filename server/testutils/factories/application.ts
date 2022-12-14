@@ -1,12 +1,13 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { Application } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 
 import personFactory from './person'
+import risksFactory from './risks'
 import { DateFormats } from '../../utils/dateUtils'
 
-class ApplicationFactory extends Factory<Application> {
+class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
   withReleaseDate(releaseDate = DateFormats.dateObjToIsoDate(faker.date.soon())) {
     return this.params({
       data: {
@@ -32,4 +33,5 @@ export default ApplicationFactory.define(() => ({
   outdatedSchema: faker.datatype.boolean(),
   isWomensApplication: faker.datatype.boolean(),
   isPipeApplication: faker.datatype.boolean(),
+  risks: risksFactory.build(),
 }))
