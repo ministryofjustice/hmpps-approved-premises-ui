@@ -9,7 +9,7 @@ export default Factory.define<OASysSections>(() => ({
   assessmentState: faker.helpers.arrayElement(['Completed', 'Incomplete']),
   dateStarted: DateFormats.dateObjToIsoDate(faker.date.past()),
   dateCompleted: DateFormats.dateObjToIsoDate(faker.date.recent()),
-  offenceDetails: [],
+  offenceDetails: offenceDetailsFactory.buildList(5),
   roshSummary: roshSummaryFactory.buildList(5),
   supportingInformation: [],
   riskToSelf: [],
@@ -23,6 +23,20 @@ export const roshSummaryFactory = Factory.define<OASysQuestion>(options => ({
     'What is the nature of the risk?',
     'When is the risk likely to be greatest?',
     'What circumstances are likely to increase risk?',
+  ]),
+  answer: faker.lorem.paragraph(),
+}))
+
+const offenceDetailsFactory = Factory.define<OASysQuestion>(options => ({
+  questionNumber: options.sequence.toString(),
+  label: faker.helpers.arrayElement([
+    'Offence analysis',
+    'Others involved',
+    'Issues contributing to risk',
+    'Motivation and triggers',
+    'Victim impact',
+    'Victim Information',
+    'Previous offences',
   ]),
   answer: faker.lorem.paragraph(),
 }))
