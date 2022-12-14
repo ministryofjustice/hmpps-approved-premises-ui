@@ -1,5 +1,7 @@
+import applicationFactory from '../testutils/factories/application'
 import { roshSummaryFactory } from '../testutils/factories/oasysSections'
-import { oasysImportReponse, textareas } from './oasysImportUtils'
+import oasysSelectionFactory from '../testutils/factories/oasysSelection'
+import { fetchOptionalOasysSections, oasysImportReponse, textareas } from './oasysImportUtils'
 
 describe('OASysImportUtils', () => {
   describe('textareas', () => {
@@ -63,6 +65,39 @@ describe('OASysImportUtils', () => {
       const result = oasysImportReponse([], [])
 
       expect(result).toEqual({})
+    })
+  })
+
+  describe('fetchOptionalOasysSections', () => {
+    it('returns an error if the application doesnt have an OASys section', () => {
+      const application = applicationFactory.build()
+      expect(() => fetchOptionalOasysSections(application)).toThrow(
+        'Oasys supporting information error: Error: No OASys import section',
+      )
+    })
+    it('returns an error if the application doesnt have any optional OASys imports', () => {
+      const application = applicationFactory.build({
+        data: {
+          'oasys-import': {
+            'optional-oasys-sections': null,
+          },
+        },
+      })
+
+      expect(() => fetchOptionalOasysSections(application)).toThrow(
+        'Oasys supporting information error: Error: No optional OASys imports',
+      )
+    })
+
+    it('returns the optional OASys sections to import if they exist', () => {
+      const application = applicationFactory
+        .withOptionalOasysSectionsSelected(
+          oasysSelectionFactory.needsLinkedToReoffending().buildList(1, { section: 1 }),
+          oasysSelectionFactory.needsNotLinkedToReoffending().buildList(1, { section: 2 }),
+        )
+        .build()
+
+      expect(fetchOptionalOasysSections(application)).toEqual([1, 2])
     })
   })
 })

@@ -1,5 +1,6 @@
-import { OASysQuestion } from '../@types/shared'
 import { OasysImportArrays } from '../@types/ui'
+import { Application, OASysQuestion, OASysSection } from '../@types/shared'
+import { SessionDataError } from './errors'
 import { escape } from './formUtils'
 
 export const textareas = (questions: OasysImportArrays, key: 'roshAnswers' | 'offenceDetails') => {
@@ -38,4 +39,20 @@ export const oasysImportReponse = (
   return answers
 }
 
-export default textareas
+export const fetchOptionalOasysSections = (application: Application): Array<number> => {
+  try {
+    const oasysImport = application.data['oasys-import']
+
+    if (!oasysImport) throw new SessionDataError('No OASys import section')
+
+    const optionalOasysSections = oasysImport['optional-oasys-sections']
+
+    if (!optionalOasysSections) throw new SessionDataError('No optional OASys imports')
+
+    return [...optionalOasysSections.needsLinkedToReoffending, ...optionalOasysSections.otherNeeds].map(
+      (oasysSection: OASysSection) => oasysSection.section,
+    )
+  } catch (e) {
+    throw new SessionDataError(`Oasys supporting information error: ${e}`)
+  }
+}
