@@ -40,7 +40,7 @@ describe('OffenceDetails', () => {
       expect(page.risks).toEqual(mapApiPersonRisksForUi(personRisks))
     })
 
-    itShouldHaveNextValue(new OffenceDetails({}), '')
+    itShouldHaveNextValue(new OffenceDetails({}), 'supporting-information')
 
     itShouldHavePreviousValue(new OffenceDetails({}), 'rosh-summary')
 

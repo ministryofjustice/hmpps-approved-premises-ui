@@ -61,7 +61,7 @@ export default class OffenceDetails implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'supporting-information'
   }
 
   response() {
