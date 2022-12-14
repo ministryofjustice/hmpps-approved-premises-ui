@@ -203,7 +203,7 @@ describe('applicationUtils', () => {
       expect(getArrivalDate(application)).toEqual('2023-10-13')
     })
 
-    it('returns an empty string when the release date is not known', () => {
+    it('throws an error or returns null when the release date is not known', () => {
       const application = applicationFactory.build({
         data: {
           'basic-information': {
@@ -213,6 +213,7 @@ describe('applicationUtils', () => {
       })
 
       expect(() => getArrivalDate(application)).toThrow(new SessionDataError('No known release date'))
+      expect(getArrivalDate(application, false)).toEqual(null)
     })
   })
 
@@ -220,8 +221,10 @@ describe('applicationUtils', () => {
     it('returns an array of applications as table rows', async () => {
       const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
 
-      const applicationA = applicationFactory.withReleaseDate(arrivalDate).build({
+      const applicationA = applicationFactory.build({
         person: { name: 'A' },
+        data: {},
+        submittedAt: null,
         risks: { tier: tierEnvelopeFactory.build({ value: { level: 'A1' } }) },
       })
       const applicationB = applicationFactory.withReleaseDate(arrivalDate).build({
@@ -243,10 +246,10 @@ describe('applicationUtils', () => {
             html: tierBadge('A1'),
           },
           {
-            text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
+            text: 'N/A',
           },
           {
-            text: DateFormats.isoDateToUIDate(applicationA.submittedAt, { format: 'short' }),
+            text: 'N/A',
           },
         ],
         [

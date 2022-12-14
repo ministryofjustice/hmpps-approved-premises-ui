@@ -13,12 +13,16 @@ const taskIds = Object.keys(Apply.pages)
 
 const dashboardTableRows = (applications: Array<ApprovedPremisesApplication>): Array<TableRow> => {
   return applications.map(application => {
+    const arrivalDate = getArrivalDate(application, false)
+
     return [
       createNameAnchorElement(application.person.name, application.id),
       textValue(application.person.crn),
       htmlValue(tierBadge(application.risks.tier.value?.level || '')),
-      textValue(DateFormats.isoDateToUIDate(getArrivalDate(application), { format: 'short' })),
-      textValue(DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' })),
+      textValue(arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'),
+      textValue(
+        application.submittedAt ? DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' }) : 'N/A',
+      ),
     ]
   })
 }
@@ -116,10 +120,18 @@ const getPage = (taskName: string, pageName: string) => {
   return Page
 }
 
-const getArrivalDate = (application: ApprovedPremisesApplication): string | null => {
-  const basicInformation = application.data['basic-information']
+const getArrivalDate = (application: ApprovedPremisesApplication, raiseOnMissing = true): string | null => {
+  const throwOrReturnNull = (message: string): null => {
+    if (raiseOnMissing) {
+      throw new SessionDataError(message)
+    }
 
-  if (!basicInformation) throw new SessionDataError('No basic information')
+    return null
+  }
+
+  const basicInformation = application.data?.['basic-information']
+
+  if (!basicInformation) return throwOrReturnNull('No basic information')
 
   const {
     knowReleaseDate = '',
@@ -132,12 +144,12 @@ const getArrivalDate = (application: ApprovedPremisesApplication): string | null
   }
 
   if (!knowReleaseDate || knowReleaseDate === 'no') {
-    throw new SessionDataError('No known release date')
+    return throwOrReturnNull('No known release date')
   }
 
   if (knowReleaseDate === 'yes' && startDateSameAsReleaseDate === 'yes') {
     if (!releaseDate) {
-      throw new SessionDataError('No release date')
+      return throwOrReturnNull('No release date')
     }
 
     return releaseDate
@@ -145,7 +157,7 @@ const getArrivalDate = (application: ApprovedPremisesApplication): string | null
 
   if (startDateSameAsReleaseDate === 'no') {
     if (!startDate) {
-      throw new SessionDataError('No start date')
+      return throwOrReturnNull('No start date')
     }
 
     return startDate
