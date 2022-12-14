@@ -127,4 +127,13 @@ export default abstract class Page {
     this.shouldShowTier(risks.tier)
     this.shouldShowDeliusRiskFlags(risks.flags)
   }
+
+  completeOasysImportQuestions(section, sectionName: string): void {
+    section.forEach(summary => {
+      cy.get('.govuk-label').contains(summary.label)
+      cy.get(`textarea[name="${sectionName}[${summary.questionNumber}]"]`)
+        .should('contain', summary.answer)
+        .type(`. With an extra comment ${summary.questionNumber}`)
+    })
+  }
 }

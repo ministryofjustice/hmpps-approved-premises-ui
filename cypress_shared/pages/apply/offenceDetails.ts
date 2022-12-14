@@ -11,11 +11,6 @@ export default class OffenceDetails extends ApplyPage {
   }
 
   completeForm() {
-    this.offenceDetailSummaries.forEach(summary => {
-      cy.get('.govuk-label').contains(summary.label)
-      cy.get(`textarea[name="offenceDetailsAnswers[${summary.questionNumber}]"]`)
-        .should('contain', summary.answer)
-        .type(`. With an extra comment ${summary.questionNumber}`)
-    })
+    this.completeOasysImportQuestions(this.offenceDetailSummaries, 'offenceDetailsAnswers')
   }
 }
