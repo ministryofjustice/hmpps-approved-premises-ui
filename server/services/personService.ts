@@ -61,10 +61,10 @@ export default class PersonService {
     return oasysSections
   }
 
-  async getOasysSections(token: string, crn: string): Promise<OASysSections> {
+  async getOasysSections(token: string, crn: string, selectedSections: Array<number> = []): Promise<OASysSections> {
     const personClient = this.personClientFactory(token)
 
-    const oasysSections = await personClient.oasysSections(crn)
+    const oasysSections = await personClient.oasysSections(crn, selectedSections)
 
     return oasysSections
   }
