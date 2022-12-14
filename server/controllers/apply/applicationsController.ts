@@ -14,9 +14,9 @@ export default class ApplicationsController {
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const applicationTableRows = await this.applicationService.dashboardTableRows(req.user.token)
+      const applications = await this.applicationService.getAllForLoggedInUser(req.user.token)
 
-      res.render('applications/list', { pageHeading: 'Approved Premises applications', applicationTableRows })
+      res.render('applications/index', { pageHeading: 'Approved Premises applications', applications })
     }
   }
 

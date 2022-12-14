@@ -38,18 +38,20 @@ describe('applicationsController', () => {
     response = createMock<Response>({})
   })
 
-  describe('list', () => {
-    it('renders the list view', async () => {
-      applicationService.dashboardTableRows.mockResolvedValue([])
+  describe('index', () => {
+    it('renders the index view', async () => {
+      const applications = applicationFactory.buildList(5)
+      applicationService.getAllForLoggedInUser.mockResolvedValue(applications)
+
       const requestHandler = applicationsController.index()
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('applications/list', {
+      expect(response.render).toHaveBeenCalledWith('applications/index', {
         pageHeading: 'Approved Premises applications',
-        applicationTableRows: [],
+        applications,
       })
-      expect(applicationService.dashboardTableRows).toHaveBeenCalled()
+      expect(applicationService.getAllForLoggedInUser).toHaveBeenCalled()
     })
   })
 
