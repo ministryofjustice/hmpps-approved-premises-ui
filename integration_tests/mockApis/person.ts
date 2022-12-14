@@ -1,6 +1,7 @@
 import { SuperAgentRequest } from 'superagent'
 import { readFileSync } from 'fs'
 import path from 'path'
+import qs from 'qs'
 
 import type {
   Person,
@@ -115,6 +116,26 @@ export default {
       request: {
         method: 'GET',
         url: `/people/${args.person.crn}/oasys/sections`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.oasysSections,
+      },
+    }),
+
+  stubOasysSectionsWithSelectedSections: (args: {
+    person: Person
+    oasysSections: OASysSections
+    selectedSections: Array<number>
+  }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/people/${args.person.crn}/oasys/sections?${qs.stringify(
+          { 'selected-sections': args.selectedSections },
+          { encode: false, indices: false },
+        )}`,
       },
       response: {
         status: 200,

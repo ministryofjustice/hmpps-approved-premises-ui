@@ -1,6 +1,5 @@
 import {
   ApprovedPremisesApplication,
-  Application,
   ArrayOfOASysOffenceDetailsQuestions,
   ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
   Document,
@@ -16,9 +15,23 @@ const roshSummariesFromApplication = (
   return application.data['oasys-import']['rosh-summary'].roshSummaries as ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
 }
 
-const offenceDetailSummariesFromApplication = (application: Application): ArrayOfOASysOffenceDetailsQuestions => {
+const offenceDetailSummariesFromApplication = (
+  application: ApprovedPremisesApplication,
+): ArrayOfOASysOffenceDetailsQuestions => {
   return application.data['oasys-import']['offence-details']
     .offenceDetailsSummaries as ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
 }
 
-export { documentsFromApplication, roshSummariesFromApplication, offenceDetailSummariesFromApplication }
+const supportInformationFromApplication = (
+  application: ApprovedPremisesApplication,
+): ArrayOfOASysOffenceDetailsQuestions => {
+  return application.data['oasys-import']['supporting-information']
+    .supportingInformationSummaries as ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
+}
+
+export {
+  documentsFromApplication,
+  roshSummariesFromApplication,
+  offenceDetailSummariesFromApplication,
+  supportInformationFromApplication,
+}

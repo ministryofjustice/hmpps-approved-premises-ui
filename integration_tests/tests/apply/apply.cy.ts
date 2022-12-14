@@ -39,6 +39,7 @@ import activeOffenceFactory from '../../../server/testutils/factories/activeOffe
 import risksFactory from '../../../server/testutils/factories/risks'
 import adjudicationsFactory from '../../../server/testutils/factories/adjudication'
 import documentFactory from '../../../server/testutils/factories/document'
+import oasysSectionsFactory from '../../../server/testutils/factories/oasysSections'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import AccessNeedsPage from '../../../cypress_shared/pages/apply/accessNeeds'
 import AccessNeedsMobilityPage from '../../../cypress_shared/pages/apply/accessNeedsMobility'
@@ -56,8 +57,10 @@ import {
   documentsFromApplication,
   offenceDetailSummariesFromApplication,
   roshSummariesFromApplication,
+  supportInformationFromApplication,
 } from '../../support/helpers'
 import OffenceDetailsPage from '../../../cypress_shared/pages/apply/offenceDetails'
+import SupportingInformationPage from '../../../cypress_shared/pages/apply/supportingInformation'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -237,6 +240,7 @@ context('Apply', () => {
     cy.fixture('applicationData.json').then(applicationData => {
       const application = applicationFactory.build({ person })
       application.data = applicationData
+      application.risks = apiRisks
       cy.task('stubApplicationCreate', { application })
       cy.task('stubApplicationUpdate', { application })
       cy.task('stubApplicationGet', { application })
@@ -331,11 +335,23 @@ context('Apply', () => {
       const oasysSelection = [...oasysSectionsLinkedToReoffending, ...otherOasysSections]
       cy.task('stubOasysSelection', { person, oasysSelection })
 
+      const oasysSections = oasysSectionsFactory.build()
       const roshSummaries = roshSummariesFromApplication(application)
       const offenceDetailSummaries = offenceDetailSummariesFromApplication(application)
+      const supportingInformationSummaries = supportInformationFromApplication(application)
       cy.task('stubOasysSections', {
         person,
-        oasysSections: { roshSummary: roshSummaries, offenceDetails: offenceDetailSummaries },
+        oasysSections: { ...oasysSections, roshSummary: roshSummaries, offenceDetails: offenceDetailSummaries },
+      })
+      cy.task('stubOasysSectionsWithSelectedSections', {
+        person,
+        oasysSections: {
+          ...oasysSections,
+          roshSummary: roshSummaries,
+          offenceDetails: offenceDetailSummaries,
+          supportingInformation: supportingInformationSummaries,
+        },
+        selectedSections: [1, 2, 3, 4],
       })
 
       // Given I click the 'Import Oasys' task
@@ -356,6 +372,10 @@ context('Apply', () => {
       offenceDetailsPage.completeForm()
       offenceDetailsPage.clickSubmit()
 
+      const supportingInformationPage = new SupportingInformationPage(application, supportingInformationSummaries)
+      supportingInformationPage.completeForm()
+      supportingInformationPage.clickSubmit()
+
       // Then I should be taken back to the tasklist
       tasklistPage.shouldShowTaskStatus('oasys-import', 'Completed')
 
@@ -365,7 +385,7 @@ context('Apply', () => {
       // Given I click the 'Add detail about managing risks and needs' task
       cy.get('[data-cy-task-name="risk-management-features"]').click()
 
-      const oasysPages = [optionalOasysImportPage, roshSummaryPage, offenceDetailsPage]
+      const oasysPages = [optionalOasysImportPage, roshSummaryPage, offenceDetailsPage, supportingInformationPage]
 
       // When I complete the form
       const riskManagementFeaturesPage = new RiskManagementFeatures(application)
@@ -657,8 +677,8 @@ context('Apply', () => {
 
       // Then the application should be submitted to the API
       cy.task('verifyApplicationUpdate', application.id).then(requests => {
-        expect(requests).to.have.length(34)
-        const requestBody = JSON.parse(requests[33].body)
+        expect(requests).to.have.length(35)
+        const requestBody = JSON.parse(requests[34].body)
 
         expect(requestBody.data).to.deep.equal(applicationData)
 
