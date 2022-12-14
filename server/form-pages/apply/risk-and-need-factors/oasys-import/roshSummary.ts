@@ -6,7 +6,6 @@ import type { Application, ArrayOfOASysRiskOfSeriousHarmSummaryQuestions, OASysS
 import TasklistPage from '../../../tasklistPage'
 
 import { Page } from '../../../utils/decorators'
-import { escape } from '../../../../utils/formUtils'
 
 type RoshSummaryBody = {
   roshAnswers: Array<string> | Record<string, string>
@@ -57,24 +56,6 @@ export default class RoshSummary implements TasklistPage {
 
   next() {
     return ''
-  }
-
-  roshTextAreas() {
-    return this.roshSummary
-      .map(roshQuestion => {
-        return `<div class="govuk-form-group">
-                <h3 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--m" for=roshAnswers[${roshQuestion.questionNumber}]>
-                        ${roshQuestion.label}
-                    </label>
-                </h3>
-                <textarea class="govuk-textarea" id=roshAnswers[${roshQuestion.questionNumber}] name=roshAnswers[${
-          roshQuestion.questionNumber
-        }] rows="8">${escape(roshQuestion?.answer)}</textarea>
-            </div>
-            <hr>`
-      })
-      .join('')
   }
 
   response() {

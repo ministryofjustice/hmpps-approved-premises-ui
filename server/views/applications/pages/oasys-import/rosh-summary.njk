@@ -41,7 +41,7 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds" id="roshSummary" role="tabpanel" >
-      {{page.roshTextAreas() | safe }}
+      {{OasysImportUtils.textareas(page.roshSummary, 'roshAnswers') | safe}}
     </div>
 
     <div class="govuk-grid-column-one-third">

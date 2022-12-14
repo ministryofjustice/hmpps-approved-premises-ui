@@ -71,35 +71,6 @@ describe('RoshSummary', () => {
 
         expect(page.response()).toEqual({})
       })
-
-      describe('roshTextAreas', () => {
-        it('it returns reoffending needs as textareas', () => {
-          const roshSummaries = roshSummaryFactory.buildList(2)
-          const page = new RoshSummary({})
-          page.roshSummary = roshSummaries
-          const items = page.roshTextAreas()
-
-          expect(items).toMatchStringIgnoringWhitespace(`
-        <div class="govuk-form-group">
-        <h3 class="govuk-label-wrapper">
-            <label class="govuk-label govuk-label--m" for=roshAnswers[${roshSummaries[0].questionNumber}]>
-                ${roshSummaries[0].label}
-            </label>
-        </h3>
-        <textarea class="govuk-textarea" id=roshAnswers[${roshSummaries[0].questionNumber}] name=roshAnswers[${roshSummaries[0].questionNumber}] rows="8">${roshSummaries[0].answer}</textarea>
-    </div>
-    <hr>
-    <div class="govuk-form-group">
-    <h3 class="govuk-label-wrapper">
-        <label class="govuk-label govuk-label--m" for=roshAnswers[${roshSummaries[1].questionNumber}]>
-            ${roshSummaries[1].label}
-        </label>
-    </h3>
-    <textarea class="govuk-textarea" id=roshAnswers[${roshSummaries[1].questionNumber}] name=roshAnswers[${roshSummaries[1].questionNumber}] rows="8">${roshSummaries[1].answer}</textarea>
-</div>
-<hr>`)
-        })
-      })
     })
   })
 })
