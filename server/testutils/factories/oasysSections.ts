@@ -14,7 +14,7 @@ export default Factory.define<OASysSections>(() => ({
   roshSummary: roshSummaryFactory.buildList(5),
   supportingInformation: supportingInformationFactory.buildList(5),
   riskToSelf: [],
-  riskManagementPlan: [],
+  riskManagementPlan: riskManagementPlanFactory.buildList(5),
 }))
 
 export const roshSummaryFactory = Factory.define<OASysQuestion>(options => ({
@@ -52,3 +52,18 @@ export const supportingInformationFactory = Factory.define<OASysSupportingInform
     answer: faker.lorem.paragraph(),
   }
 })
+
+const riskManagementPlanFactory = Factory.define<OASysQuestion>(options => ({
+  questionNumber: options.sequence.toString(),
+  label: faker.helpers.arrayElement([
+    'Key information about current situation',
+    'Further considerations about current situation',
+    'Supervision',
+    'Monitoring and control',
+    'Intervention and treatment',
+    'Victim safety planning',
+    'Contingency Plans',
+    'Additional comments',
+  ]),
+  answer: faker.lorem.paragraph(),
+}))
