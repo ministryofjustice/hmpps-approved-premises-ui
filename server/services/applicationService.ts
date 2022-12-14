@@ -38,6 +38,12 @@ export default class ApplicationService {
     return application
   }
 
+  async getAllForLoggedInUser(token: string): Promise<Array<ApprovedPremisesApplication>> {
+    const applicationClient = this.applicationClientFactory(token)
+
+    return applicationClient.all()
+  }
+
   async getDocuments(token: string, application: ApprovedPremisesApplication): Promise<Array<Document>> {
     const applicationClient = this.applicationClientFactory(token)
 

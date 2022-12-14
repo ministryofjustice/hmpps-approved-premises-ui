@@ -50,6 +50,22 @@ describe('ApplicationService', () => {
     personClientFactory.mockReturnValue(personClient)
   })
 
+  describe('getAllForLoggedInUser', () => {
+    it('fetches all applications', async () => {
+      const token = 'SOME_TOKEN'
+
+      const applications = applicationFactory.buildList(5)
+      applicationClient.all.mockResolvedValue(applications)
+
+      const result = await service.getAllForLoggedInUser(token)
+
+      expect(result).toEqual(applications)
+
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.all).toHaveBeenCalled()
+    })
+  })
+
   describe('dashboardTableRows', () => {
     it('calls the all method on the client and returns the data in the correct format for the table in the view', async () => {
       const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
