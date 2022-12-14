@@ -1,4 +1,5 @@
 import { Document } from '@approved-premises/api'
+import path from 'path'
 
 import { DateFormats } from '../../../server/utils/dateUtils'
 
@@ -26,6 +27,28 @@ export default class AttachDocumentsPage extends Page {
         .within(() => {
           cy.get('td').eq(0).contains(DateFormats.isoDateToUIDate(document.createdAt))
         })
+    })
+  }
+
+  shouldBeAbleToDownloadDocuments() {
+    this.documents.forEach(document => {
+      // This is a hack to stop `cy.click()` from waiting for a page load
+      // See: https://github.com/cypress-io/cypress/issues/14857
+      cy.window()
+        .document()
+        .then(doc => {
+          doc.addEventListener('click', () => {
+            setTimeout(() => {
+              doc.location.reload()
+            }, 300)
+          })
+          cy.get(`a[data-cy-documentId="${document.id}"]`).click()
+        })
+
+      const downloadsFolder = Cypress.config('downloadsFolder')
+      const downloadedFilename = path.join(downloadsFolder, document.fileName)
+
+      cy.readFile(downloadedFilename, 'binary', { timeout: 300 })
     })
   }
 
