@@ -577,12 +577,18 @@ context('Apply', () => {
       const documents = [selectedDocuments, documentFactory.buildList(4)].flat()
 
       cy.task('stubApplicationDocuments', { application, documents })
+      documents.forEach(document => {
+        cy.task('stubPersonDocument', { person: application.person, document })
+      })
 
       // Given I click on the Attach Documents task
       cy.get('[data-cy-task-name="attach-required-documents"]').click()
+      const attachDocumentsPage = new AttachDocumentsPage(documents, selectedDocuments)
+
+      // Then I should be able to download the documents
+      attachDocumentsPage.shouldBeAbleToDownloadDocuments()
 
       // And I attach the relevant documents
-      const attachDocumentsPage = new AttachDocumentsPage(documents, selectedDocuments)
       attachDocumentsPage.shouldDisplayDocuments()
       attachDocumentsPage.completeForm()
       attachDocumentsPage.clickSubmit()

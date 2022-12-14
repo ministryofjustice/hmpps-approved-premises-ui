@@ -20,6 +20,8 @@ export default defineConfig({
   chromeWebSecurity: false,
   fixturesFolder: 'integration_tests/fixtures',
   screenshotsFolder: 'integration_tests/screenshots',
+  trashAssetsBeforeRuns: true,
+  downloadsFolder: 'integration_tests/downloads',
   videosFolder: 'integration_tests/videos',
   reporter: 'cypress-multi-reporters',
   reporterOptions: {

@@ -1,3 +1,4 @@
+import type { Response } from 'express'
 import type {
   ActiveOffence,
   Adjudication,
@@ -56,5 +57,12 @@ export default class PersonClient {
     const response = await this.restClient.get({ path: paths.people.oasys.selection({ crn }) })
 
     return response as Array<OASysSection>
+  }
+
+  async document(crn: string, documentId: string, response: Response): Promise<void> {
+    await this.restClient.pipe(
+      { path: paths.people.documents({ crn, documentId }), passThroughHeaders: ['content-disposition'] },
+      response,
+    )
   }
 }

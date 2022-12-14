@@ -1,4 +1,6 @@
 import nock from 'nock'
+import { Response } from 'express'
+import { createMock } from '@golevelup/ts-jest'
 
 import PersonClient from './personClient'
 import config from '../config'
@@ -128,6 +130,23 @@ describe('PersonClient', () => {
       const result = await personClient.offences(crn)
 
       expect(result).toEqual(offences)
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
+
+  describe('document', () => {
+    it('should pipe the document from the API', async () => {
+      const crn = 'crn'
+      const documentId = '123'
+      const response = createMock<Response>({})
+
+      fakeApprovedPremisesApi
+        .get(paths.people.documents({ crn, documentId }))
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200)
+
+      await personClient.document(crn, documentId, response)
+
       expect(nock.isDone()).toBeTruthy()
     })
   })

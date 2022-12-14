@@ -2,11 +2,15 @@ import { ErrorMessages } from '@approved-premises/ui'
 import { tableRows, documentCheckbox, documentWithDescription, descriptionTextArea } from './attachDocumentsUtils'
 
 import documentFactory from '../testutils/factories/document'
+import applicationFactory from '../testutils/factories/application'
+import paths from '../paths/apply'
+
 import { DateFormats } from './dateUtils'
 
 describe('attachDocumentsUtils', () => {
   describe('tableRows', () => {
     it('returns table rows for documents', () => {
+      const application = applicationFactory.build()
       const documents = documentFactory.buildList(2)
       const selectedDocuments = [documents[0]]
       const errors = {
@@ -16,7 +20,7 @@ describe('attachDocumentsUtils', () => {
         },
       } as ErrorMessages
 
-      expect(tableRows(documents, selectedDocuments, errors)).toEqual([
+      expect(tableRows(documents, selectedDocuments, application, errors)).toEqual([
         [
           {
             html: documentCheckbox(documents[0], [documents[0].id]),
@@ -30,7 +34,10 @@ describe('attachDocumentsUtils', () => {
             classes: 'applications--pages--attach-document__column-date',
           },
           {
-            html: '<a href="#">Download</a>',
+            html: `<a href="${paths.applications.people.documents({
+              crn: application.person.crn,
+              documentId: documents[0].id,
+            })}" data-cy-documentId="${documents[0].id}">Download</a>`,
             classes: 'applications--pages--attach-document__column-download',
           },
           {
@@ -51,7 +58,10 @@ describe('attachDocumentsUtils', () => {
             classes: 'applications--pages--attach-document__column-date',
           },
           {
-            html: '<a href="#">Download</a>',
+            html: `<a href="${paths.applications.people.documents({
+              crn: application.person.crn,
+              documentId: documents[1].id,
+            })}" data-cy-documentId="${documents[1].id}">Download</a>`,
             classes: 'applications--pages--attach-document__column-download',
           },
           {

@@ -66,6 +66,7 @@ export default {
     prisonCaseNotes: personPath.path('prison-case-notes'),
     adjudications: personPath.path('adjudications'),
     offences: personPath.path('offences'),
+    documents: path('/documents/:crn/:documentId'),
     oasys: {
       selection: oasysPath.path('selection'),
     },

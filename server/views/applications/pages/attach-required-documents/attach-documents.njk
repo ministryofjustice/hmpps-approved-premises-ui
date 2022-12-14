@@ -59,7 +59,7 @@
         classes: "applications--pages--attach-document__header-description"
       }
     ],
-    rows: AttachDocumentsUtils.tableRows(page.documents, page.body.selectedDocuments, errors)
+    rows: AttachDocumentsUtils.tableRows(page.documents, page.body.selectedDocuments, page.application, errors)
   }) }}
 
 {% endblock %}

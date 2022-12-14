@@ -1,4 +1,6 @@
 import type { Person } from '@approved-premises/api'
+import { Response } from 'express'
+import { createMock } from '@golevelup/ts-jest'
 
 import PersonService from './personService'
 import PersonClient from '../data/personClient'
@@ -110,6 +112,16 @@ describe('PersonService', () => {
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
       expect(personClient.oasysSelections).toHaveBeenCalledWith('crn')
+    })
+  })
+
+  describe('getDocument', () => {
+    it('pipes the document to the response', async () => {
+      const response = createMock<Response>({})
+      await service.getDocument(token, 'crn', 'applicationId', response)
+
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.document).toHaveBeenCalledWith('crn', 'applicationId', response)
     })
   })
 })
