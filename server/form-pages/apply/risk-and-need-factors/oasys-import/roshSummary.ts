@@ -6,7 +6,7 @@ import type { Application, ArrayOfOASysRiskOfSeriousHarmSummaryQuestions, OASysS
 import TasklistPage from '../../../tasklistPage'
 
 import { Page } from '../../../utils/decorators'
-import { escape } from '../../../../utils/formUtils'
+import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
 
 type RoshSummaryBody = {
   roshAnswers: Array<string> | Record<string, string>
@@ -20,11 +20,11 @@ type RoshSummaryBody = {
 export default class RoshSummary implements TasklistPage {
   title = 'Edit risk information'
 
-  roshSummary: ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
+  roshSummary: RoshSummaryBody['roshSummaries']
 
   risks: PersonRisksUI
 
-  roshAnswers: Record<string, string>
+  roshAnswers: RoshSummaryBody['roshAnswers']
 
   constructor(public body: Partial<RoshSummaryBody>) {}
 
@@ -41,10 +41,8 @@ export default class RoshSummary implements TasklistPage {
     const risks = await dataServices.personService.getPersonRisks(token, application.person.crn)
 
     const roshSummaries = oasysSections.roshSummary.sort((a, b) => Number(a.questionNumber) - Number(b.questionNumber))
-    const roshAnswers = body?.roshAnswers ? body.roshAnswers : []
 
     body.roshSummaries = roshSummaries
-    body.roshAnswers = roshAnswers
 
     const page = new RoshSummary(body)
     page.roshSummary = roshSummaries
@@ -58,40 +56,11 @@ export default class RoshSummary implements TasklistPage {
   }
 
   next() {
-    return ''
-  }
-
-  roshTextAreas() {
-    return this.roshSummary
-      .map(roshQuestion => {
-        return `<div class="govuk-form-group">
-                <h3 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--m" for=roshAnswers[${roshQuestion.questionNumber}]>
-                        ${roshQuestion.label}
-                    </label>
-                </h3>
-                <textarea class="govuk-textarea" id=roshAnswers[${roshQuestion.questionNumber}] name=roshAnswers[${
-          roshQuestion.questionNumber
-        }] rows="8">${escape(roshQuestion?.answer)}</textarea>
-            </div>
-            <hr>`
-      })
-      .join('')
+    return 'offence-details'
   }
 
   response() {
-    if (Array.isArray(this.body.roshAnswers)) {
-      return (this.body.roshAnswers as Array<string>).reduce((prev, question, i) => {
-        return {
-          ...prev,
-          [`${this.body.roshSummaries[i].questionNumber}. ${this.body.roshSummaries[i].label}`]: question,
-        }
-      }, {}) as Record<string, string>
-    }
-    if (!this.body.roshAnswers) {
-      return {}
-    }
-    return this.body.roshAnswers
+    return oasysImportReponse(this.body.roshAnswers, this.body.roshSummaries)
   }
 
   errors() {

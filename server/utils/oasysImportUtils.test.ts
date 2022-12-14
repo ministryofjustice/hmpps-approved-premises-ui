@@ -1,0 +1,68 @@
+import { roshSummaryFactory } from '../testutils/factories/oasysSections'
+import { oasysImportReponse, textareas } from './oasysImportUtils'
+
+describe('OASysImportUtils', () => {
+  describe('textareas', () => {
+    it('it returns reoffending needs as textareas', () => {
+      const roshSummaries = roshSummaryFactory.buildList(2)
+      const sectionName = 'roshAnswers'
+      const result = textareas(roshSummaries, sectionName)
+
+      expect(result).toMatchStringIgnoringWhitespace(`
+              <div class="govuk-form-group">
+              <h3 class="govuk-label-wrapper">
+                  <label class="govuk-label govuk-label--m" for=${sectionName}[${roshSummaries[0].questionNumber}]>
+                      ${roshSummaries[0].label}
+                  </label>
+              </h3>
+              <textarea class="govuk-textarea" id=${sectionName}[${roshSummaries[0].questionNumber}] name=${sectionName}[${roshSummaries[0].questionNumber}] rows="8">${roshSummaries[0].answer}</textarea>
+          </div>
+          <hr>
+          <div class="govuk-form-group">
+          <h3 class="govuk-label-wrapper">
+              <label class="govuk-label govuk-label--m" for=${sectionName}[${roshSummaries[1].questionNumber}]>
+                  ${roshSummaries[1].label}
+              </label>
+          </h3>
+          <textarea class="govuk-textarea" id=${sectionName}[${roshSummaries[1].questionNumber}] name=${sectionName}[${roshSummaries[1].questionNumber}] rows="8">${roshSummaries[1].answer}</textarea>
+      </div>
+      <hr>`)
+    })
+  })
+
+  describe('oasysImportReponse', () => {
+    it('returns a human readable response for reach question', () => {
+      const answers = ['answer 1', 'answer 2', 'answer 3']
+      const summaries = [
+        {
+          questionNumber: '1',
+          label: 'The first question',
+          answer: 'Some answer for the first question',
+        },
+        {
+          questionNumber: '2',
+          label: 'The second question',
+          answer: 'Some answer for the second question',
+        },
+        {
+          questionNumber: '3',
+          label: 'The third question',
+          answer: 'Some answer for the third question',
+        },
+      ]
+      const result = oasysImportReponse(answers, summaries)
+
+      expect(result).toEqual({
+        [`${summaries[0].questionNumber}. ${summaries[0].label}`]: `${answers[0]}`,
+        [`${summaries[1].questionNumber}. ${summaries[1].label}`]: `${answers[1]}`,
+        [`${summaries[2].questionNumber}. ${summaries[2].label}`]: `${answers[2]}`,
+      })
+    })
+
+    it('returns no response when there arent any questions', () => {
+      const result = oasysImportReponse([], [])
+
+      expect(result).toEqual({})
+    })
+  })
+})

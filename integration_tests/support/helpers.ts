@@ -1,6 +1,7 @@
-/* eslint-disable import/prefer-default-export */
 import {
   ApprovedPremisesApplication,
+  Application,
+  ArrayOfOASysOffenceDetailsQuestions,
   ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
   Document,
 } from '@approved-premises/api'
@@ -15,4 +16,9 @@ const roshSummariesFromApplication = (
   return application.data['oasys-import']['rosh-summary'].roshSummaries as ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
 }
 
-export { documentsFromApplication, roshSummariesFromApplication }
+const offenceDetailSummariesFromApplication = (application: Application): ArrayOfOASysOffenceDetailsQuestions => {
+  return application.data['oasys-import']['offence-details']
+    .offenceDetailsSummaries as ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
+}
+
+export { documentsFromApplication, roshSummariesFromApplication, offenceDetailSummariesFromApplication }

@@ -19,12 +19,11 @@
         },
         items: [{
           text: 'RoSH summary',
-          href: '#roshSummary',
-          active: true
+          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'rosh-summary' })
         }, 
         {
           text: 'Offence details',
-          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'offence-details' }) 
+          active: true
         }, 
         {
           text: 'Supporting information'
@@ -39,8 +38,8 @@
   </div>
 
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds" id="roshSummary" role="tabpanel" >
-      {{OasysImportUtils.textareas(page.roshSummary, 'roshAnswers') | safe}}
+    <div class="govuk-grid-column-two-thirds" id="offenceDetails" role="tabpanel" >
+      {{OasysImportUtils.textareas(page.offenceDetailsSummaries, 'offenceDetailsAnswers') | safe}}
     </div>
 
     <div class="govuk-grid-column-one-third">

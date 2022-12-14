@@ -8,6 +8,11 @@ import {
   Person,
   OASysSection,
   Document,
+  ArrayOfOASysOffenceDetailsQuestions,
+  ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
+  ArrayOfOASysSupportingInformationQuestions,
+  ArrayOfOASysRiskToSelfQuestions,
+  ArrayOfOASysRiskManagementPlanQuestions,
 } from '@approved-premises/api'
 
 interface TasklistPage {
@@ -214,3 +219,10 @@ export interface ApplicationWithRisks extends Application {
 export interface PersonWithRisks extends Person {
   risks: PersonRisks
 }
+
+export type OasysImportArrays =
+  | ArrayOfOASysOffenceDetailsQuestions
+  | ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
+  | ArrayOfOASysSupportingInformationQuestions
+  | ArrayOfOASysRiskToSelfQuestions
+  | ArrayOfOASysRiskManagementPlanQuestions

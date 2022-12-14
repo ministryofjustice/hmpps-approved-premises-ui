@@ -70,6 +70,30 @@
           "answer": "Some answer for the third question"
         }
       ]
+    },
+    "offence-details": {
+      "offenceDetailsAnswers": [
+        "Some answer for the first question. With an extra comment 1",
+        "Some answer for the second question. With an extra comment 2",
+        "Some answer for the third question. With an extra comment 3"
+      ],
+      "offenceDetailsSummaries": [
+        {
+          "questionNumber": "1",
+          "label": "The first question",
+          "answer": "Some answer for the first question"
+        },
+        {
+          "questionNumber": "2",
+          "label": "The second question",
+          "answer": "Some answer for the second question"
+        },
+        {
+          "questionNumber": "3",
+          "label": "The third question",
+          "answer": "Some answer for the third question"
+        }
+      ]
     }
   },
   "risk-management-features": {

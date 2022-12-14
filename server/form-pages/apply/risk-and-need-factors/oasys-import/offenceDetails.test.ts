@@ -3,13 +3,14 @@ import { PersonService } from '../../../../services'
 import applicationFactory from '../../../../testutils/factories/application'
 import oasysSectionsFactory from '../../../../testutils/factories/oasysSections'
 import risksFactory from '../../../../testutils/factories/risks'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
-import RoshSummary from './roshSummary'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+
+import OffenceDetails from './offenceDetails'
 
 jest.mock('../../../../services/personService.ts')
 
-describe('RoshSummary', () => {
+describe('OffenceDetails', () => {
   const oasysSections = oasysSectionsFactory.build()
   const personRisks = risksFactory.build()
   const application = applicationFactory.build()
@@ -27,26 +28,26 @@ describe('RoshSummary', () => {
     })
 
     it('calls the getOasysSections and getPersonRisks method on the client with a token and the persons CRN', async () => {
-      await RoshSummary.initialize({}, application, 'some-token', { personService })
+      await OffenceDetails.initialize({}, application, 'some-token', { personService })
 
       expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn)
       expect(getPersonRisksMock).toHaveBeenCalledWith('some-token', application.person.crn)
     })
 
-    it('adds the roshSummary and personRisks to the page object', async () => {
-      const page = await RoshSummary.initialize({}, application, 'some-token', { personService })
+    it('adds the offenceDetailsSummaries and personRisks to the page object', async () => {
+      const page = await OffenceDetails.initialize({}, application, 'some-token', { personService })
 
-      expect(page.roshSummary).toEqual(oasysSections.roshSummary)
+      expect(page.offenceDetailsSummaries).toEqual(oasysSections.offenceDetails)
       expect(page.risks).toEqual(personRisks)
     })
 
-    itShouldHaveNextValue(new RoshSummary({}), 'offence-details')
+    itShouldHaveNextValue(new OffenceDetails({}), '')
 
-    itShouldHavePreviousValue(new RoshSummary({}), 'optional-oasys-sections')
+    itShouldHavePreviousValue(new OffenceDetails({}), 'rosh-summary')
 
     describe('errors', () => {
       it('should return an empty object', () => {
-        const page = new RoshSummary({})
+        const page = new OffenceDetails({})
         expect(page.errors()).toEqual({})
       })
     })
@@ -61,8 +62,9 @@ describe('RoshSummary', () => {
             answer: 'Some answer for the first question',
           },
         ]
-        const page = new RoshSummary({ roshAnswers: answers, roshSummaries: summaries })
+        const page = new OffenceDetails({ offenceDetailsAnswers: answers, offenceDetailsSummaries: summaries })
         const result = page.response()
+
         expect(result).toEqual(oasysImportReponse(answers, summaries))
       })
     })

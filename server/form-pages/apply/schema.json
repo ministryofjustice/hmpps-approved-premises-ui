@@ -497,6 +497,41 @@
               }
             }
           }
+        },
+        "offence-details": {
+          "type": "object",
+          "properties": {
+            "offenceDetailsAnswers": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "object"
+                }
+              ]
+            },
+            "offenceDetailsSummaries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "questionNumber": {
+                    "type": "string"
+                  },
+                  "answer": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },

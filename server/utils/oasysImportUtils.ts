@@ -1,0 +1,41 @@
+import { OASysQuestion } from '../@types/shared'
+import { OasysImportArrays } from '../@types/ui'
+import { escape } from './formUtils'
+
+export const textareas = (questions: OasysImportArrays, key: 'roshAnswers' | 'offenceDetails') => {
+  return questions
+    .map(question => {
+      return `<div class="govuk-form-group">
+                <h3 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--m" for=${key}[${question.questionNumber}]>
+                        ${question.label}
+                    </label>
+                </h3>
+                <textarea class="govuk-textarea" id=${key}[${question.questionNumber}] name=${key}[${
+        question.questionNumber
+      }] rows="8">${escape(question?.answer)}</textarea>
+            </div>
+            <hr>`
+    })
+    .join('')
+}
+
+export const oasysImportReponse = (
+  answers: Array<string> | Record<string, string>,
+  summaries: Array<OASysQuestion>,
+) => {
+  if (Array.isArray(answers)) {
+    return (answers as Array<string>).reduce((prev, question, i) => {
+      return {
+        ...prev,
+        [`${summaries[i].questionNumber}. ${summaries[i].label}`]: question,
+      }
+    }, {}) as Record<string, string>
+  }
+  if (!answers) {
+    return {}
+  }
+  return answers
+}
+
+export default textareas
