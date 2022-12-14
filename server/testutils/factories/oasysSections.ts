@@ -1,8 +1,9 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { OASysQuestion, OASysSections } from '@approved-premises/api'
+import { OASysQuestion, OASysSections, OASysSupportingInformationQuestion } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
+import oasysSelectionFactory from './oasysSelection'
 
 export default Factory.define<OASysSections>(() => ({
   assessmentId: faker.datatype.number(),
@@ -11,7 +12,7 @@ export default Factory.define<OASysSections>(() => ({
   dateCompleted: DateFormats.dateObjToIsoDate(faker.date.recent()),
   offenceDetails: offenceDetailsFactory.buildList(5),
   roshSummary: roshSummaryFactory.buildList(5),
-  supportingInformation: [],
+  supportingInformation: supportingInformationFactory.buildList(5),
   riskToSelf: [],
   riskManagementPlan: [],
 }))
@@ -27,7 +28,7 @@ export const roshSummaryFactory = Factory.define<OASysQuestion>(options => ({
   answer: faker.lorem.paragraph(),
 }))
 
-const offenceDetailsFactory = Factory.define<OASysQuestion>(options => ({
+export const offenceDetailsFactory = Factory.define<OASysQuestion>(options => ({
   questionNumber: options.sequence.toString(),
   label: faker.helpers.arrayElement([
     'Offence analysis',
@@ -40,3 +41,14 @@ const offenceDetailsFactory = Factory.define<OASysQuestion>(options => ({
   ]),
   answer: faker.lorem.paragraph(),
 }))
+
+export const supportingInformationFactory = Factory.define<OASysSupportingInformationQuestion>(options => {
+  const oasysSelection = oasysSelectionFactory.build()
+
+  return {
+    ...oasysSelection,
+    questionNumber: options.sequence.toString(),
+    label: oasysSelection.name,
+    answer: faker.lorem.paragraph(),
+  }
+})
