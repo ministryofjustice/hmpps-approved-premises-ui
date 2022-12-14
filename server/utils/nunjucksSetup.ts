@@ -9,7 +9,7 @@ import type { ErrorMessages, PersonStatus, Task } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import { initialiseName, removeBlankSummaryListItems, sentenceCase } from './utils'
 import { dateFieldValues, convertObjectsToRadioItems, convertObjectsToSelectOptions } from './formUtils'
-import { getTaskStatus, taskLink, getCompleteSectionCount } from './applicationUtils'
+import { getTaskStatus, taskLink, getCompleteSectionCount, dashboardTableRows } from './applicationUtils'
 import { checkYourAnswersSections } from './checkYourAnswersUtils'
 
 import { statusTag } from './personUtils'
@@ -126,6 +126,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addFilter('sentenceCase', sentenceCase)
 
   njkEnv.addGlobal('checkYourAnswersSections', checkYourAnswersSections)
+  njkEnv.addGlobal('dashboardTableRows', dashboardTableRows)
 
   njkEnv.addGlobal('AssessmentUtils', AssessmentUtils)
   njkEnv.addGlobal('OffenceUtils', OffenceUtils)

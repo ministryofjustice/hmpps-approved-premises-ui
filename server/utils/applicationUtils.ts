@@ -1,13 +1,39 @@
-import type { Task, FormSections, FormSection } from '@approved-premises/ui'
+import type { Task, FormSections, FormSection, TableRow } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import paths from '../paths/apply'
 import Apply from '../form-pages/apply'
 import { SessionDataError, UnknownPageError } from './errors'
+import { tierBadge } from './personUtils'
+import { DateFormats } from './dateUtils'
 
 type PageResponse = Record<string, string | Array<Record<string, unknown>>>
 type ApplicationResponse = Record<string, Array<PageResponse>>
 
 const taskIds = Object.keys(Apply.pages)
+
+const dashboardTableRows = (applications: Array<ApprovedPremisesApplication>): Array<TableRow> => {
+  return applications.map(application => {
+    return [
+      createNameAnchorElement(application.person.name, application.id),
+      textValue(application.person.crn),
+      htmlValue(tierBadge(application.risks.tier.value?.level || '')),
+      textValue(DateFormats.isoDateToUIDate(getArrivalDate(application), { format: 'short' })),
+      textValue(DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' })),
+    ]
+  })
+}
+
+const textValue = (value: string) => {
+  return { text: value }
+}
+
+const htmlValue = (value: string) => {
+  return { html: value }
+}
+
+const createNameAnchorElement = (name: string, applicationId: string) => {
+  return htmlValue(`<a href=${paths.applications.show({ id: applicationId })}>${name}</a>`)
+}
 
 const taskIsComplete = (task: Task, application: ApprovedPremisesApplication): boolean => {
   return application.data[task.id]
@@ -128,4 +154,13 @@ const getArrivalDate = (application: ApprovedPremisesApplication): string | null
   return null
 }
 
-export { getTaskStatus, taskLink, getCompleteSectionCount, getResponses, getResponseForPage, getPage, getArrivalDate }
+export {
+  getTaskStatus,
+  taskLink,
+  getCompleteSectionCount,
+  getResponses,
+  getResponseForPage,
+  getPage,
+  getArrivalDate,
+  dashboardTableRows,
+}
