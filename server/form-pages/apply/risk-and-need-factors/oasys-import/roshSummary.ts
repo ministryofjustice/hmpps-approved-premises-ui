@@ -6,6 +6,7 @@ import type { Application, ArrayOfOASysRiskOfSeriousHarmSummaryQuestions, OASysS
 import TasklistPage from '../../../tasklistPage'
 
 import { Page } from '../../../utils/decorators'
+import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
 
 type RoshSummaryBody = {
   roshAnswers: Array<string> | Record<string, string>
@@ -59,18 +60,7 @@ export default class RoshSummary implements TasklistPage {
   }
 
   response() {
-    if (Array.isArray(this.body.roshAnswers)) {
-      return (this.body.roshAnswers as Array<string>).reduce((prev, question, i) => {
-        return {
-          ...prev,
-          [`${this.body.roshSummaries[i].questionNumber}. ${this.body.roshSummaries[i].label}`]: question,
-        }
-      }, {}) as Record<string, string>
-    }
-    if (!this.body.roshAnswers) {
-      return {}
-    }
-    return this.body.roshAnswers
+    return oasysImportReponse(this.body.roshAnswers, this.body.roshSummaries)
   }
 
   errors() {

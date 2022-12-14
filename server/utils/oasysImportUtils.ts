@@ -20,4 +20,22 @@ export const textareas = (questions: OasysImportArrays, key: 'roshAnswers' | 'of
     .join('')
 }
 
+export const oasysImportReponse = (
+  answers: Array<string> | Record<string, string>,
+  summaries: Array<OASysQuestion>,
+) => {
+  if (Array.isArray(answers)) {
+    return (answers as Array<string>).reduce((prev, question, i) => {
+      return {
+        ...prev,
+        [`${summaries[i].questionNumber}. ${summaries[i].label}`]: question,
+      }
+    }, {}) as Record<string, string>
+  }
+  if (!answers) {
+    return {}
+  }
+  return answers
+}
+
 export default textareas

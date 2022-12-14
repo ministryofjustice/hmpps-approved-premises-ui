@@ -1,10 +1,10 @@
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import { PersonService } from '../../../../services'
 import applicationFactory from '../../../../testutils/factories/application'
-import oasysSectionsFactory, { roshSummaryFactory } from '../../../../testutils/factories/oasysSections'
+import oasysSectionsFactory from '../../../../testutils/factories/oasysSections'
 import risksFactory from '../../../../testutils/factories/risks'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-
+import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
 import RoshSummary from './roshSummary'
 
 jest.mock('../../../../services/personService.ts')
@@ -52,24 +52,18 @@ describe('RoshSummary', () => {
     })
 
     describe('response', () => {
-      it('returns a human readable response for reach question', () => {
-        const roshSummaries = roshSummaryFactory.buildList(3)
-        const page = new RoshSummary({
-          roshAnswers: ['answer 1', 'answer 2', 'answer 3'],
-          roshSummaries,
-        })
-
-        expect(page.response()).toEqual({
-          [`${roshSummaries[0].questionNumber}. ${roshSummaries[0].label}`]: 'answer 1',
-          [`${roshSummaries[1].questionNumber}. ${roshSummaries[1].label}`]: 'answer 2',
-          [`${roshSummaries[2].questionNumber}. ${roshSummaries[2].label}`]: 'answer 3',
-        })
-      })
-
-      it('returns no response when there arent any questions', () => {
-        const page = new RoshSummary({})
-
-        expect(page.response()).toEqual({})
+      it('calls oasysImportReponse with the correct arguments', () => {
+        const answers = ['answer 1']
+        const summaries = [
+          {
+            questionNumber: '1',
+            label: 'The first question',
+            answer: 'Some answer for the first question',
+          },
+        ]
+        const page = new RoshSummary({ roshAnswers: answers, roshSummaries: summaries })
+        const result = page.response()
+        expect(result).toEqual(oasysImportReponse(answers, summaries))
       })
     })
   })
