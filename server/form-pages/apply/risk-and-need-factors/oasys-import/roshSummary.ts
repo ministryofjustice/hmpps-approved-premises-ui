@@ -56,7 +56,7 @@ export default class RoshSummary implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'offence-details'
   }
 
   response() {

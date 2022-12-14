@@ -40,7 +40,7 @@ describe('RoshSummary', () => {
       expect(page.risks).toEqual(personRisks)
     })
 
-    itShouldHaveNextValue(new RoshSummary({}), '')
+    itShouldHaveNextValue(new RoshSummary({}), 'offence-details')
 
     itShouldHavePreviousValue(new RoshSummary({}), 'optional-oasys-sections')
 

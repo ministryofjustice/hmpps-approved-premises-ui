@@ -20,12 +20,11 @@
         items: [{
           text: 'RoSH summary',
           href: '#roshSummary',
-          attributes: {
-            active: true
-          }
+          active: true
         }, 
         {
-          text: 'Offence details'
+          text: 'Offence details',
+          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'offence-details' }) 
         }, 
         {
           text: 'Supporting information'
