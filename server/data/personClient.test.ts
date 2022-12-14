@@ -99,55 +99,55 @@ describe('PersonClient', () => {
       expect(result).toEqual(adjudications)
       expect(nock.isDone()).toBeTruthy()
     })
+  })
 
-    describe('oasysSelection', () => {
-      it('should return the importable sections of OASys', async () => {
-        const crn = 'crn'
-        const oasysSections = oasysSelectionFactory.buildList(5)
+  describe('oasysSelection', () => {
+    it('should return the importable sections of OASys', async () => {
+      const crn = 'crn'
+      const oasysSections = oasysSelectionFactory.buildList(5)
 
-        fakeApprovedPremisesApi
-          .get(paths.people.oasys.selection({ crn }))
-          .matchHeader('authorization', `Bearer ${token}`)
-          .reply(201, oasysSections)
+      fakeApprovedPremisesApi
+        .get(paths.people.oasys.selection({ crn }))
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(201, oasysSections)
 
-        const result = await personClient.oasysSelections(crn)
+      const result = await personClient.oasysSelections(crn)
 
-        expect(result).toEqual(oasysSections)
-        expect(nock.isDone()).toBeTruthy()
-      })
+      expect(result).toEqual(oasysSections)
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
+
+  describe('oasysSection', () => {
+    it('should return the sections of OASys when there is optional selected sections', async () => {
+      const crn = 'crn'
+      const optionalSections = [1, 2, 3]
+      const oasysSections = oasysSectionsFactory.build()
+
+      fakeApprovedPremisesApi
+        .get(`${paths.people.oasys.sections({ crn })}?selected-sections=1&selected-sections=2&selected-sections=3`)
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(201, oasysSections)
+
+      const result = await personClient.oasysSections(crn, optionalSections)
+
+      expect(result).toEqual(oasysSections)
+      expect(nock.isDone()).toBeTruthy()
     })
 
-    describe('oasysSection', () => {
-      it('should return the sections of OASys when there is optional selected sections', async () => {
-        const crn = 'crn'
-        const optionalSections = [1, 2, 3]
-        const oasysSections = oasysSectionsFactory.build()
+    it('should return the sections of OASys with no optional selected sections', async () => {
+      const crn = 'crn'
+      const oasysSections = oasysSectionsFactory.build()
 
-        fakeApprovedPremisesApi
-          .get(`${paths.people.oasys.sections({ crn })}?selected-sections=1&selected-sections=2&selected-sections=3`)
-          .matchHeader('authorization', `Bearer ${token}`)
-          .reply(201, oasysSections)
+      fakeApprovedPremisesApi
+        .get(`${paths.people.oasys.sections({ crn })}`)
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(201, oasysSections)
 
-        const result = await personClient.oasysSections(crn, optionalSections)
+      const result = await personClient.oasysSections(crn)
 
-        expect(result).toEqual(oasysSections)
-        expect(nock.isDone()).toBeTruthy()
-      })
-
-      it('should return the sections of OASys with no optional selected sections', async () => {
-        const crn = 'crn'
-        const oasysSections = oasysSectionsFactory.build()
-
-        fakeApprovedPremisesApi
-          .get(`${paths.people.oasys.sections({ crn })}`)
-          .matchHeader('authorization', `Bearer ${token}`)
-          .reply(201, oasysSections)
-
-        const result = await personClient.oasysSections(crn)
-
-        expect(result).toEqual(oasysSections)
-        expect(nock.isDone()).toBeTruthy()
-      })
+      expect(result).toEqual(oasysSections)
+      expect(nock.isDone()).toBeTruthy()
     })
   })
 
