@@ -47,7 +47,7 @@ describe('SupportingInformation', () => {
       expect(page.risks).toEqual(mapApiPersonRisksForUi(personRisks))
     })
 
-    itShouldHaveNextValue(new SupportingInformation({}), '')
+    itShouldHaveNextValue(new SupportingInformation({}), 'risk-management-plan')
 
     itShouldHavePreviousValue(new SupportingInformation({}), 'offence-details')
 

@@ -6,14 +6,14 @@
 {% set columnClasses = "govuk-grid-column-full" %}
 
 {% block questions %}
-    <div class="govuk-grid-row">
-        <div>
-            <h1 class="govuk-heading-l">{{page.title}}</h1>
-            <p>Imported from OASys 23 October 2022</p>
-            <p>OASys last updated {{page.oasysCompleted}}</p>
-        </div>
+  <div class="govuk-grid-row">
+    <div>
+      <h1 class="govuk-heading-l">{{page.title}}</h1>
+      <p>Imported from OASys 23 October 2022</p>
+      <p>OASys last updated {{page.oasysCompleted}}</p>
+    </div>
 
-        {{ mojSubNavigation({
+    {{ mojSubNavigation({
         label: 'Sub navigation',
         attributes: {
           'role': 'tablist'
@@ -33,23 +33,24 @@
           active: true
         },  
         {
-          text: 'Risk management plan'
+          text: 'Risk management plan',
+          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'risk-management-plan' }) 
         },
         {
           text: 'Risk to self'
         }]
       }) }}
 
+  </div>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds" id="roshSummary" role="tabpanel" >
+      {{OasysImportUtils.textareas(page.supportingInformationSummaries, 'supportingInformationAnswers') | safe }}
     </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds" id="roshSummary" role="tabpanel" >
-            {{OasysImportUtils.textareas(page.supportingInformationSummaries, 'supportingInformationAnswers') | safe }}
-        </div>
-
-        <div class="govuk-grid-column-one-third">
-            {{ widgets(page.risks) }}
-        </div>
+    <div class="govuk-grid-column-one-third">
+      {{ widgets(page.risks) }}
     </div>
+  </div>
 
 {% endblock %}

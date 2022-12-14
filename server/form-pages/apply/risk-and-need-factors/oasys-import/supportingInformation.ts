@@ -66,7 +66,7 @@ export default class SupportingInformation implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'risk-management-plan'
   }
 
   response() {
