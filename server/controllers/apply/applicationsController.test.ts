@@ -82,10 +82,10 @@ describe('applicationsController', () => {
       personService.getPersonRisks.mockResolvedValue(risks)
     })
 
-    it('fetches the application from session and renders the task list if an application exists and is in the session', async () => {
+    it('fetches the application from session or the API and renders the task list', async () => {
       const requestHandler = applicationsController.show()
 
-      request.session.application = application
+      applicationService.getApplicationFromSessionOrAPI.mockResolvedValue(application)
 
       await requestHandler(request, response, next)
 
@@ -97,24 +97,6 @@ describe('applicationsController', () => {
 
       expect(personService.getPersonRisks).toHaveBeenCalledWith(token, 'some-crn')
       expect(applicationService.findApplication).not.toHaveBeenCalledWith(token, application.id)
-    })
-
-    it('fetches the application from the API and renders the task list if an application exists and is not in the session', async () => {
-      const requestHandler = applicationsController.show()
-
-      request.session.application = undefined
-      applicationService.findApplication.mockResolvedValue(application)
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('applications/show', {
-        application,
-        risks,
-        sections: Apply.sections,
-      })
-
-      expect(personService.getPersonRisks).toHaveBeenCalledWith(token, 'some-crn')
-      expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
     })
   })
 
