@@ -60,8 +60,11 @@ describe('utils', () => {
     class Page2 {}
 
     beforeEach(() => {
-      Reflect.defineMetadata('page:name', 'Page 1', Page1)
-      Reflect.defineMetadata('page:name', 'Page 2', Page2)
+      Reflect.defineMetadata('page:name', 'page-1', Page1)
+      Reflect.defineMetadata('page:name', 'page-2', Page2)
+
+      Reflect.defineMetadata('page:task', 'task-1', Page1)
+      Reflect.defineMetadata('page:task', 'task-2', Page2)
 
       Reflect.defineMetadata('task:slug', 'slug', Task)
       Reflect.defineMetadata('task:name', 'Name', Task)
@@ -73,7 +76,7 @@ describe('utils', () => {
 
     describe('getTask', () => {
       it('fetches metadata for a specific task and pages', () => {
-        expect(utils.getTask(Task)).toEqual({ id: 'slug', title: 'Name', pages: { 'Page 1': Page1, 'Page 2': Page2 } })
+        expect(utils.getTask(Task)).toEqual({ id: 'slug', title: 'Name', pages: { 'page-1': Page1, 'page-2': Page2 } })
       })
     })
 
@@ -114,6 +117,16 @@ describe('utils', () => {
             'page-4': Page2,
           },
         })
+      })
+    })
+
+    describe('viewPath', () => {
+      it('returns the view path for a page', () => {
+        const page1 = new Page1()
+        const page2 = new Page2()
+
+        expect(utils.viewPath(page1)).toEqual('applications/pages/task-1/page-1')
+        expect(utils.viewPath(page2)).toEqual('applications/pages/task-2/page-2')
       })
     })
   })
