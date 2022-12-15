@@ -1,7 +1,7 @@
 import { TableRow, AssessmentWithRisks } from '@approved-premises/ui'
 import { format, differenceInDays, add } from 'date-fns'
 
-import { Assessment, ApprovedPremisesApplication } from '@approved-premises/api'
+import { ApprovedPremisesAssessment as Assessment, ApprovedPremisesApplication } from '@approved-premises/api'
 import { tierBadge } from './personUtils'
 import { DateFormats } from './dateUtils'
 import { getArrivalDate } from './applicationUtils'

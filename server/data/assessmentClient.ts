@@ -1,4 +1,4 @@
-import type { Assessment } from '@approved-premises/api'
+import type { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'

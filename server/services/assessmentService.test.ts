@@ -1,4 +1,4 @@
-import { Assessment } from '@approved-premises/api'
+import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { AssessmentClient, PersonClient } from '../data'
 import AssessmentService from './assessmentService'
 
