@@ -127,7 +127,7 @@ describe('PersonService', () => {
       expect(serviceOasysSections).toEqual(oasysSections)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.oasysSections).toHaveBeenCalledWith('crn')
+      expect(personClient.oasysSections).toHaveBeenCalledWith('crn', [])
     })
   })
 

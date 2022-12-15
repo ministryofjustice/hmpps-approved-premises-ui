@@ -49,49 +49,73 @@
     },
     "rosh-summary": {
       "roshAnswers": [
-        "Some answer for the first question. With an extra comment 1",
-        "Some answer for the second question. With an extra comment 2",
-        "Some answer for the third question. With an extra comment 3"
+        "Some answer for the first RoSH question. With an extra comment 1",
+        "Some answer for the second RoSH question. With an extra comment 2",
+        "Some answer for the third RoSH question. With an extra comment 3"
       ],
       "roshSummaries": [
         {
           "questionNumber": "1",
-          "label": "The first question",
-          "answer": "Some answer for the first question"
+          "label": "The first RoSH question",
+          "answer": "Some answer for the first RoSH question"
         },
         {
           "questionNumber": "2",
-          "label": "The second question",
-          "answer": "Some answer for the second question"
+          "label": "The second RoSH question",
+          "answer": "Some answer for the second RoSH question"
         },
         {
           "questionNumber": "3",
-          "label": "The third question",
-          "answer": "Some answer for the third question"
+          "label": "The third RoSH question",
+          "answer": "Some answer for the third RoSH question"
         }
       ]
     },
     "offence-details": {
       "offenceDetailsAnswers": [
-        "Some answer for the first question. With an extra comment 1",
-        "Some answer for the second question. With an extra comment 2",
-        "Some answer for the third question. With an extra comment 3"
+        "Some answer for the first offence details question. With an extra comment 1",
+        "Some answer for the second offence details question. With an extra comment 2",
+        "Some answer for the third offence details question. With an extra comment 3"
       ],
       "offenceDetailsSummaries": [
         {
           "questionNumber": "1",
-          "label": "The first question",
-          "answer": "Some answer for the first question"
+          "label": "The first offence details question",
+          "answer": "Some answer for the first offence details question"
         },
         {
           "questionNumber": "2",
-          "label": "The second question",
-          "answer": "Some answer for the second question"
+          "label": "The second offence details question",
+          "answer": "Some answer for the second offence details question"
         },
         {
           "questionNumber": "3",
-          "label": "The third question",
-          "answer": "Some answer for the third question"
+          "label": "The third offence details question",
+          "answer": "Some answer for the third offence details question"
+        }
+      ]
+    },
+    "supporting-information": {
+      "supportingInformationAnswers": [
+        "Some answer for the first supporting information question. With an extra comment 1",
+        "Some answer for the second supporting information question. With an extra comment 2",
+        "Some answer for the third supporting information question. With an extra comment 3"
+      ],
+      "supportingInformationSummaries": [
+        {
+          "questionNumber": "1",
+          "label": "The first supporting information question",
+          "answer": "Some answer for the first supporting information question"
+        },
+        {
+          "questionNumber": "2",
+          "label": "The second supporting information question",
+          "answer": "Some answer for the second supporting information question"
+        },
+        {
+          "questionNumber": "3",
+          "label": "The third supporting information question",
+          "answer": "Some answer for the third supporting information question"
         }
       ]
     }

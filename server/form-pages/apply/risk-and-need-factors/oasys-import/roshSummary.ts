@@ -1,12 +1,17 @@
 /* eslint-disable no-underscore-dangle */
 import type { DataServices, PersonRisksUI } from '@approved-premises/ui'
 
-import type { Application, ArrayOfOASysRiskOfSeriousHarmSummaryQuestions, OASysSections } from '@approved-premises/api'
+import type {
+  ApprovedPremisesApplication,
+  ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
+  OASysSections,
+} from '@approved-premises/api'
 
 import TasklistPage from '../../../tasklistPage'
 
 import { Page } from '../../../utils/decorators'
 import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
+import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type RoshSummaryBody = {
   roshAnswers: Array<string> | Record<string, string>
@@ -30,7 +35,7 @@ export default class RoshSummary implements TasklistPage {
 
   static async initialize(
     body: Record<string, unknown>,
-    application: Application,
+    application: ApprovedPremisesApplication,
     token: string,
     dataServices: DataServices,
   ) {
@@ -38,7 +43,6 @@ export default class RoshSummary implements TasklistPage {
       token,
       application.person.crn,
     )
-    const risks = await dataServices.personService.getPersonRisks(token, application.person.crn)
 
     const roshSummaries = oasysSections.roshSummary.sort((a, b) => Number(a.questionNumber) - Number(b.questionNumber))
 
@@ -46,7 +50,7 @@ export default class RoshSummary implements TasklistPage {
 
     const page = new RoshSummary(body)
     page.roshSummary = roshSummaries
-    page.risks = risks
+    page.risks = mapApiPersonRisksForUi(application.risks)
 
     return page
   }

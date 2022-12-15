@@ -532,6 +532,50 @@
               }
             }
           }
+        },
+        "supporting-information": {
+          "type": "object",
+          "properties": {
+            "supportingInformationAnswers": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "object"
+                }
+              ]
+            },
+            "supportingInformationSummaries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "sectionNumber": {
+                    "type": "number"
+                  },
+                  "questionNumber": {
+                    "type": "string"
+                  },
+                  "linkedToHarm": {
+                    "type": "boolean"
+                  },
+                  "linkedToReOffending": {
+                    "type": "boolean"
+                  },
+                  "answer": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },

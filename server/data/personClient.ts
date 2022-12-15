@@ -63,11 +63,12 @@ export default class PersonClient {
   }
 
   async oasysSections(crn: string, selectedSections?: Array<number>): Promise<OASysSections> {
-    const queryString = qs.stringify({ 'selected-sections': selectedSections })
-      ? `?${qs.stringify({ 'selected-sections': selectedSections })}`
-      : ''
+    const queryString: string = qs.stringify(
+      { 'selected-sections': selectedSections },
+      { encode: false, indices: false },
+    )
 
-    const path = `${paths.people.oasys.sections({ crn })}${queryString}`
+    const path = `${paths.people.oasys.sections({ crn })}${queryString ? `?${queryString}` : ''}`
 
     const response = await this.restClient.get({ path })
 

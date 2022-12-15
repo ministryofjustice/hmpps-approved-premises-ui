@@ -11,11 +11,6 @@ export default class RoshSummary extends ApplyPage {
   }
 
   completeForm() {
-    this.roshSummary.forEach(summary => {
-      cy.get('.govuk-label').contains(summary.label)
-      cy.get(`textarea[name="roshAnswers[${summary.questionNumber}]"]`)
-        .should('contain', summary.answer)
-        .type(`. With an extra comment ${summary.questionNumber}`)
-    })
+    this.completeOasysImportQuestions(this.roshSummary, 'roshAnswers')
   }
 }
