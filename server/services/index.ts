@@ -36,7 +36,7 @@ export const services = () => {
   const cancellationService = new CancellationService(bookingClientBuilder, referenceDataClientBuilder)
   const lostBedService = new LostBedService(lostBedClientBuilder, referenceDataClientBuilder)
   const applicationService = new ApplicationService(applicationClientBuilder)
-  const assessmentService = new AssessmentService(assessmentClientBuilder, personClient)
+  const assessmentService = new AssessmentService(assessmentClientBuilder)
 
   return {
     userService,

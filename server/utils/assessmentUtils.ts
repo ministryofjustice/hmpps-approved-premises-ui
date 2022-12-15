@@ -1,4 +1,4 @@
-import { TableRow, AssessmentWithRisks } from '@approved-premises/ui'
+import { TableRow } from '@approved-premises/ui'
 import { format, differenceInDays, add } from 'date-fns'
 
 import { ApprovedPremisesAssessment as Assessment, ApprovedPremisesApplication } from '@approved-premises/api'
@@ -9,7 +9,7 @@ import paths from '../paths/assess'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
-const awaitingAssessmentTableRows = (assessments: Array<AssessmentWithRisks>): Array<TableRow> => {
+const awaitingAssessmentTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   assessments.forEach(assessment => {
@@ -21,7 +21,7 @@ const awaitingAssessmentTableRows = (assessments: Array<AssessmentWithRisks>): A
         html: assessment.application.person.crn,
       },
       {
-        html: tierBadge(assessment.application.person.risks.tier.value.level),
+        html: tierBadge(assessment.application.risks.tier.value.level),
       },
       {
         text: formattedArrivalDate(assessment),
@@ -41,7 +41,7 @@ const awaitingAssessmentTableRows = (assessments: Array<AssessmentWithRisks>): A
   return rows
 }
 
-const completedTableRows = (assessments: Array<AssessmentWithRisks>): Array<TableRow> => {
+const completedTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   assessments.forEach(assessment => {
@@ -53,7 +53,7 @@ const completedTableRows = (assessments: Array<AssessmentWithRisks>): Array<Tabl
         html: assessment.application.person.crn,
       },
       {
-        html: tierBadge(assessment.application.person.risks.tier.value.level),
+        html: tierBadge(assessment.application.risks.tier.value.level),
       },
       {
         text: formattedArrivalDate(assessment),
@@ -67,7 +67,7 @@ const completedTableRows = (assessments: Array<AssessmentWithRisks>): Array<Tabl
   return rows
 }
 
-const requestedFurtherInformationTableRows = (assessments: Array<AssessmentWithRisks>): Array<TableRow> => {
+const requestedFurtherInformationTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   assessments.forEach(assessment => {
@@ -79,7 +79,7 @@ const requestedFurtherInformationTableRows = (assessments: Array<AssessmentWithR
         html: assessment.application.person.crn,
       },
       {
-        html: tierBadge(assessment.application.person.risks.tier.value.level),
+        html: tierBadge(assessment.application.risks.tier.value.level),
       },
       {
         text: formattedArrivalDate(assessment),

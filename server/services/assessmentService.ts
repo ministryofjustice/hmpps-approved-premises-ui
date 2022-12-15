@@ -1,31 +1,20 @@
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
-import type { AssessmentWithRisks, GroupedAssessmentWithRisks } from '@approved-premises/ui'
+import type { GroupedAssessments } from '@approved-premises/ui'
 
-import type { RestClientBuilder, AssessmentClient, PersonClient } from '../data'
+import type { RestClientBuilder, AssessmentClient } from '../data'
 
 export default class AssessmentService {
-  constructor(
-    private readonly assessmentClientFactory: RestClientBuilder<AssessmentClient>,
-    private readonly personClientFactory: RestClientBuilder<PersonClient>,
-  ) {}
+  constructor(private readonly assessmentClientFactory: RestClientBuilder<AssessmentClient>) {}
 
-  async getAllForLoggedInUser(token: string): Promise<GroupedAssessmentWithRisks> {
+  async getAllForLoggedInUser(token: string): Promise<GroupedAssessments> {
     const client = this.assessmentClientFactory(token)
-    const personClient = this.personClientFactory(token)
 
-    const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessmentWithRisks
+    const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments
     const assessments = await client.all()
 
     await Promise.all(
       assessments.map(async assessment => {
-        const risks = await personClient.risks(assessment.application.person.crn)
-        const assessmentWithRisks = {
-          ...assessment,
-          application: { ...assessment.application, person: { ...assessment.application.person, risks } },
-        } as AssessmentWithRisks
-        return assessment.decision
-          ? result.completed.push(assessmentWithRisks)
-          : result.awaiting.push(assessmentWithRisks)
+        return assessment.decision ? result.completed.push(assessment) : result.awaiting.push(assessment)
       }),
     )
 
