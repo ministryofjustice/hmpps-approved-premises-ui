@@ -7,6 +7,7 @@ import { ValidationError } from '../utils/errors'
 import { getPage } from '../utils/applicationUtils'
 import ApplicationService from './applicationService'
 import ApplicationClient from '../data/applicationClient'
+import { getPageName, getTaskName } from '../form-pages/utils'
 
 import Apply from '../form-pages/apply'
 import applicationFactory from '../testutils/factories/application'
@@ -30,6 +31,7 @@ Apply.pages['my-task'] = {
 jest.mock('../data/applicationClient.ts')
 jest.mock('../data/personClient.ts')
 jest.mock('../utils/applicationUtils')
+jest.mock('../form-pages/utils')
 
 describe('ApplicationService', () => {
   const applicationClient = new ApplicationClient(null) as jest.Mocked<ApplicationClient>
@@ -246,6 +248,8 @@ describe('ApplicationService', () => {
           },
           body: { foo: 'bar' },
         })
+        ;(getPageName as jest.Mock).mockReturnValue('some-page')
+        ;(getTaskName as jest.Mock).mockReturnValue('some-task')
       })
 
       it('does not throw an error', () => {

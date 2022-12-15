@@ -59,3 +59,18 @@ export const getPagesForSections = <T>(sections: Array<T>) => {
   })
   return pages
 }
+
+export const viewPath = <T>(page: T) => {
+  const pageName = getPageName(page)
+  const taskName = getTaskName(page)
+
+  return `applications/pages/${taskName}/${pageName}`
+}
+
+export const getPageName = <T>(page: T) => {
+  return Reflect.getMetadata('page:name', page.constructor)
+}
+
+export const getTaskName = <T>(page: T) => {
+  return Reflect.getMetadata('page:task', page.constructor)
+}
