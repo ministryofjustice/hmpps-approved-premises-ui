@@ -36,10 +36,18 @@ const riskManagementPlanFromApplication = (
     .riskManagementSummaries as ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
 }
 
+const riskToSelfSummariesFromApplication = (
+  application: ApprovedPremisesApplication,
+): ArrayOfOASysOffenceDetailsQuestions => {
+  return application.data['oasys-import']['risk-to-self']
+    .riskToSelfSummaries as ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
+}
+
 export {
   documentsFromApplication,
   roshSummariesFromApplication,
   offenceDetailSummariesFromApplication,
   supportInformationFromApplication,
   riskManagementPlanFromApplication,
+  riskToSelfSummariesFromApplication,
 }

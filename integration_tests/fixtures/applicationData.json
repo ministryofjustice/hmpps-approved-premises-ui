@@ -142,6 +142,30 @@
           "answer": "Some answer for the third risk management question"
         }
       ]
+    },
+    "risk-to-self": {
+      "riskToSelfAnswers": [
+        "Some answer for the first risk to self question. With an extra comment 1",
+        "Some answer for the second risk to self question. With an extra comment 2",
+        "Some answer for the third risk to self question. With an extra comment 3"
+      ],
+      "riskToSelfSummaries": [
+        {
+          "questionNumber": "1",
+          "label": "The first risk to self question",
+          "answer": "Some answer for the first risk to self question"
+        },
+        {
+          "questionNumber": "2",
+          "label": "The second risk to self question",
+          "answer": "Some answer for the second risk to self question"
+        },
+        {
+          "questionNumber": "3",
+          "label": "The third risk to self question",
+          "answer": "Some answer for the third risk to self question"
+        }
+      ]
     }
   },
   "risk-management-features": {
