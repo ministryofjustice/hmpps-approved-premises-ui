@@ -8,13 +8,11 @@ import { ApplicationService, PersonService } from '../../services'
 import { fetchErrorsAndUserInput } from '../../utils/validation'
 import personFactory from '../../testutils/factories/person'
 import applicationFactory from '../../testutils/factories/application'
-import risksFactory from '../../testutils/factories/risks'
 import activeOffenceFactory from '../../testutils/factories/activeOffence'
 import Apply from '../../form-pages/apply'
 
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import { mapApiPersonRisksForUi } from '../../utils/utils'
 import { getResponses } from '../../utils/applicationUtils'
 
 jest.mock('../../utils/validation')
@@ -69,7 +67,6 @@ describe('applicationsController', () => {
 
   describe('show', () => {
     const application = createMock<ApprovedPremisesApplication>({ person: { crn: 'some-crn' } })
-    const risks = mapApiPersonRisksForUi(risksFactory.build())
 
     beforeEach(() => {
       request = createMock<Request>({
@@ -78,8 +75,6 @@ describe('applicationsController', () => {
           token,
         },
       })
-
-      personService.getPersonRisks.mockResolvedValue(risks)
     })
 
     it('fetches the application from session or the API and renders the task list', async () => {
@@ -91,11 +86,9 @@ describe('applicationsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('applications/show', {
         application,
-        risks,
         sections: Apply.sections,
       })
 
-      expect(personService.getPersonRisks).toHaveBeenCalledWith(token, 'some-crn')
       expect(applicationService.findApplication).not.toHaveBeenCalledWith(token, application.id)
     })
   })

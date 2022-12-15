@@ -31,9 +31,7 @@ export default class ApplicationsController {
     return async (req: Request, res: Response) => {
       const application = await this.applicationService.getApplicationFromSessionOrAPI(req)
 
-      const risks = await this.personService.getPersonRisks(req.user.token, application.person.crn)
-
-      res.render('applications/show', { application, risks, sections: Apply.sections })
+      res.render('applications/show', { application, sections: Apply.sections })
     }
   }
 
