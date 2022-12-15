@@ -9,7 +9,7 @@ import type {
 import TasklistPage from '../../../tasklistPage'
 
 import { Page } from '../../../utils/decorators'
-import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
+import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/oasysImportUtils'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
@@ -46,9 +46,7 @@ export default class RiskManagementPlan implements TasklistPage {
       application.person.crn,
     )
 
-    const riskManagement = oasysSections.riskManagementPlan.sort(
-      (a, b) => Number(a.questionNumber) - Number(b.questionNumber),
-    )
+    const riskManagement = sortOasysImportSummaries(oasysSections.riskManagementPlan)
 
     body.riskManagementSummaries = riskManagement
 

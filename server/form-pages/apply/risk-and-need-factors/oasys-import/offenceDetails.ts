@@ -9,7 +9,7 @@ import type {
 import TasklistPage from '../../../tasklistPage'
 
 import { Page } from '../../../utils/decorators'
-import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
+import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/oasysImportUtils'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type OffenceDetailsBody = {
@@ -43,9 +43,7 @@ export default class OffenceDetails implements TasklistPage {
       application.person.crn,
     )
 
-    const offenceDetails = oasysSections.offenceDetails.sort(
-      (a, b) => Number(a.questionNumber) - Number(b.questionNumber),
-    )
+    const offenceDetails = sortOasysImportSummaries(oasysSections.offenceDetails)
 
     body.offenceDetailsSummaries = offenceDetails
 

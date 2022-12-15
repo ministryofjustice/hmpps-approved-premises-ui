@@ -10,7 +10,7 @@ import type {
 import TasklistPage from '../../../tasklistPage'
 
 import { Page } from '../../../utils/decorators'
-import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
+import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/oasysImportUtils'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type RoshSummaryBody = {
@@ -44,8 +44,7 @@ export default class RoshSummary implements TasklistPage {
       application.person.crn,
     )
 
-    const roshSummaries = oasysSections.roshSummary.sort((a, b) => Number(a.questionNumber) - Number(b.questionNumber))
-
+    const roshSummaries = sortOasysImportSummaries(oasysSections.roshSummary)
     body.roshSummaries = roshSummaries
 
     const page = new RoshSummary(body)
