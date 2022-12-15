@@ -51,5 +51,9 @@ describe('Task', () => {
     expect(slug).toEqual('my-task')
     expect(name).toEqual('My Task')
     expect(pages).toEqual([Page1, Page2, Page3])
+
+    expect(Reflect.getMetadata('page:task', Page1)).toEqual('my-task')
+    expect(Reflect.getMetadata('page:task', Page2)).toEqual('my-task')
+    expect(Reflect.getMetadata('page:task', Page3)).toEqual('my-task')
   })
 })
