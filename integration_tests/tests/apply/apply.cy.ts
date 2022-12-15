@@ -56,11 +56,15 @@ import RoshSummaryPage from '../../../cypress_shared/pages/apply/roshSummary'
 import {
   documentsFromApplication,
   offenceDetailSummariesFromApplication,
+  riskManagementPlanFromApplication,
+  riskToSelfSummariesFromApplication,
   roshSummariesFromApplication,
   supportInformationFromApplication,
 } from '../../support/helpers'
 import OffenceDetailsPage from '../../../cypress_shared/pages/apply/offenceDetails'
 import SupportingInformationPage from '../../../cypress_shared/pages/apply/supportingInformation'
+import RiskManagementPlanPage from '../../../cypress_shared/pages/apply/riskManagementPlan'
+import RiskToSelfPage from '../../../cypress_shared/pages/apply/riskToSelf'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -339,9 +343,18 @@ context('Apply', () => {
       const roshSummaries = roshSummariesFromApplication(application)
       const offenceDetailSummaries = offenceDetailSummariesFromApplication(application)
       const supportingInformationSummaries = supportInformationFromApplication(application)
+      const riskManagementPlanSummaries = riskManagementPlanFromApplication(application)
+      const riskToSelfSummaries = riskToSelfSummariesFromApplication(application)
+
       cy.task('stubOasysSections', {
         person,
-        oasysSections: { ...oasysSections, roshSummary: roshSummaries, offenceDetails: offenceDetailSummaries },
+        oasysSections: {
+          ...oasysSections,
+          roshSummary: roshSummaries,
+          offenceDetails: offenceDetailSummaries,
+          riskManagementPlan: riskManagementPlanSummaries,
+          riskToSelf: riskToSelfSummaries,
+        },
       })
       cy.task('stubOasysSectionsWithSelectedSections', {
         person,
@@ -376,6 +389,14 @@ context('Apply', () => {
       supportingInformationPage.completeForm()
       supportingInformationPage.clickSubmit()
 
+      const riskManagementPlanPage = new RiskManagementPlanPage(application, riskManagementPlanSummaries)
+      riskManagementPlanPage.completeForm()
+      riskManagementPlanPage.clickSubmit()
+
+      const riskToSelfPage = new RiskToSelfPage(application, riskToSelfSummaries)
+      riskToSelfPage.completeForm()
+      riskToSelfPage.clickSubmit()
+
       // Then I should be taken back to the tasklist
       tasklistPage.shouldShowTaskStatus('oasys-import', 'Completed')
 
@@ -385,7 +406,14 @@ context('Apply', () => {
       // Given I click the 'Add detail about managing risks and needs' task
       cy.get('[data-cy-task-name="risk-management-features"]').click()
 
-      const oasysPages = [optionalOasysImportPage, roshSummaryPage, offenceDetailsPage, supportingInformationPage]
+      const oasysPages = [
+        optionalOasysImportPage,
+        roshSummaryPage,
+        offenceDetailsPage,
+        supportingInformationPage,
+        riskManagementPlanPage,
+        riskToSelfPage,
+      ]
 
       // When I complete the form
       const riskManagementFeaturesPage = new RiskManagementFeatures(application)
@@ -677,8 +705,8 @@ context('Apply', () => {
 
       // Then the application should be submitted to the API
       cy.task('verifyApplicationUpdate', application.id).then(requests => {
-        expect(requests).to.have.length(35)
-        const requestBody = JSON.parse(requests[34].body)
+        expect(requests).to.have.length(37)
+        const requestBody = JSON.parse(requests[36].body)
 
         expect(requestBody.data).to.deep.equal(applicationData)
 

@@ -2,24 +2,21 @@ import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import { PersonService } from '../../../../services'
 import applicationFactory from '../../../../testutils/factories/application'
 import oasysSectionsFactory from '../../../../testutils/factories/oasysSections'
-import oasysSelectionFactory from '../../../../testutils/factories/oasysSelection'
 import risksFactory from '../../../../testutils/factories/risks'
-import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
-import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-
-import SupportingInformation from './supportingInformation'
+import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
+import RiskManagementPlan from './riskManagementPlan'
+import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 jest.mock('../../../../services/personService.ts')
 
-describe('SupportingInformation', () => {
+describe('RiskManagement', () => {
   const oasysSections = oasysSectionsFactory.build()
   const personRisks = risksFactory.build()
-  let application = applicationFactory.withOptionalOasysSectionsSelected([], []).build({ risks: personRisks })
+  const application = applicationFactory.build({ risks: personRisks })
 
   describe('initialize', () => {
     const getOasysSectionsMock = jest.fn().mockResolvedValue(oasysSections)
-
     let personService: DeepMocked<PersonService>
 
     beforeEach(() => {
@@ -29,31 +26,25 @@ describe('SupportingInformation', () => {
     })
 
     it('calls the getOasysSections and getPersonRisks method on the client with a token and the persons CRN', async () => {
-      const needsLinkedToReoffending = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 1 })
-      const otherNeeds = oasysSelectionFactory.needsNotLinkedToReoffending().build({ section: 2 })
-      application = applicationFactory
-        .withOptionalOasysSectionsSelected([needsLinkedToReoffending], [otherNeeds])
-        .build({ risks: personRisks })
+      await RiskManagementPlan.initialize({}, application, 'some-token', { personService })
 
-      await SupportingInformation.initialize({}, application, 'some-token', { personService })
-
-      expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn, [1, 2])
+      expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn)
     })
 
-    it('adds the supportingInformationSummaries and personRisks to the page object', async () => {
-      const page = await SupportingInformation.initialize({}, application, 'some-token', { personService })
+    it('adds the riskManagementSummaries and personRisks to the page object', async () => {
+      const page = await RiskManagementPlan.initialize({}, application, 'some-token', { personService })
 
-      expect(page.supportingInformationSummaries).toEqual(oasysSections.supportingInformation)
+      expect(page.riskManagementSummaries).toEqual(oasysSections.riskManagementPlan)
       expect(page.risks).toEqual(mapApiPersonRisksForUi(personRisks))
     })
 
-    itShouldHaveNextValue(new SupportingInformation({}), 'risk-management-plan')
+    itShouldHaveNextValue(new RiskManagementPlan({}), 'risk-to-self')
 
-    itShouldHavePreviousValue(new SupportingInformation({}), 'offence-details')
+    itShouldHavePreviousValue(new RiskManagementPlan({}), 'supporting-information')
 
     describe('errors', () => {
       it('should return an empty object', () => {
-        const page = new SupportingInformation({})
+        const page = new RiskManagementPlan({})
         expect(page.errors()).toEqual({})
       })
     })
@@ -68,12 +59,8 @@ describe('SupportingInformation', () => {
             answer: 'Some answer for the first question',
           },
         ]
-        const page = new SupportingInformation({
-          supportingInformationAnswers: answers,
-          supportingInformationSummaries: summaries,
-        })
+        const page = new RiskManagementPlan({ riskManagementAnswers: answers, riskManagementSummaries: summaries })
         const result = page.response()
-
         expect(result).toEqual(oasysImportReponse(answers, summaries))
       })
     })

@@ -9,7 +9,6 @@
   <div class="govuk-grid-row">
     <div>
       <h1 class="govuk-heading-l">{{page.title}}</h1>
-      <p>Imported from OASys 23 October 2022</p>
       <p>OASys last updated {{page.oasysCompleted}}</p>
     </div>
 
@@ -18,10 +17,9 @@
         attributes: {
           'role': 'tablist'
         },
-        items: [
-        {
+        items: [{
           text: 'RoSH summary',
-          href:  paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'rosh-summary' })
+          href: '#roshSummary'
         }, 
         {
           text: 'Offence details',
@@ -29,8 +27,7 @@
         }, 
         {
           text: 'Supporting information',
-          href:'', 
-          active: true
+          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'supporting-information' })
         },  
         {
           text: 'Risk management plan',
@@ -38,15 +35,15 @@
         },
         {
           text: 'Risk to self',
-          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'risk-to-self' })
+          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'risk-to-self' }),          
+          active: true
         }]
       }) }}
-
   </div>
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds" id="roshSummary" role="tabpanel" >
-      {{OasysImportUtils.textareas(page.supportingInformationSummaries, 'supportingInformationAnswers') | safe }}
+      {{OasysImportUtils.textareas(page.riskToSelfSummaries, 'riskToSelfAnswers') | safe}}
     </div>
 
     <div class="govuk-grid-column-one-third">
