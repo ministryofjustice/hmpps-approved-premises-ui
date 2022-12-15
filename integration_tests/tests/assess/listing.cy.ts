@@ -1,8 +1,6 @@
-import { PersonRisks } from '@approved-premises/api'
 import { ListPage } from '../../../cypress_shared/pages/assess'
 
 import assessmentFactory from '../../../server/testutils/factories/assessment'
-import risksFactory from '../../../server/testutils/factories/risks'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -39,21 +37,11 @@ context('Assess', () => {
 
     cy.task('stubAssessments', assessments.flat())
 
-    const crnRisks: Record<string, PersonRisks> = {}
-
-    assessments.flat().forEach(assessment => {
-      const { person } = assessment.application
-      const risks = risksFactory.build({ crn: person.crn })
-      crnRisks[person.crn] = risks
-
-      cy.task('stubPersonRisks', { person, risks })
-    })
-
     // When I visit the assessments dashboard
     const listPage = ListPage.visit(assessmentsAwaiting, assessmentsCloseToDueDate, completedAssesssments)
 
     // Then I should see the assessments that are awaiting
-    listPage.shouldShowAwaitingAssessments(crnRisks)
+    listPage.shouldShowAwaitingAssessments()
 
     // And there should be a notification
     listPage.shouldShowNotification()
@@ -65,6 +53,6 @@ context('Assess', () => {
     listPage.clickCompleted()
 
     // Then I should see the completed assessments
-    listPage.shouldShowCompletedAssessments(crnRisks)
+    listPage.shouldShowCompletedAssessments()
   })
 })

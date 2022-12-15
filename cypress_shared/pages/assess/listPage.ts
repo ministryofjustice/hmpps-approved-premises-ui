@@ -1,4 +1,4 @@
-import type { ApprovedPremisesAssessment as Assessment, PersonRisks } from '@approved-premises/api'
+import type { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { format } from 'date-fns'
 
 import Page from '../page'
@@ -23,7 +23,7 @@ export default class ListPage extends Page {
     return new ListPage(awaitingAssessments, assessmentsCloseToDueDate, completedAssesssments)
   }
 
-  shouldShowAwaitingAssessments(risks: Record<string, PersonRisks>): void {
+  shouldShowAwaitingAssessments(): void {
     const assessments = [this.awaitingAssessments, this.assessmentsCloseToDueDate].flat()
     assessments.forEach((item: Assessment) => {
       cy.contains(item.application.person.name)
@@ -31,7 +31,7 @@ export default class ListPage extends Page {
         .parent()
         .within(() => {
           cy.get('td').eq(0).contains(item.application.person.crn)
-          cy.get('td').eq(1).contains(risks[item.application.person.crn].tier.value.level)
+          cy.get('td').eq(1).contains(item.application.risks.tier.value.level)
           cy.get('td')
             .eq(2)
             .contains(
@@ -66,7 +66,7 @@ export default class ListPage extends Page {
     })
   }
 
-  shouldShowCompletedAssessments(risks: Record<string, PersonRisks>): void {
+  shouldShowCompletedAssessments(): void {
     this.completedAssesssments.forEach((item: Assessment) => {
       cy.log(item.application.data['basic-information']['release-date'])
       cy.contains(item.application.person.name)
@@ -74,7 +74,7 @@ export default class ListPage extends Page {
         .parent()
         .within(() => {
           cy.get('td').eq(0).contains(item.application.person.crn)
-          cy.get('td').eq(1).contains(risks[item.application.person.crn].tier.value.level)
+          cy.get('td').eq(1).contains(item.application.risks.tier.value.level)
           cy.get('td')
             .eq(2)
             .contains(
