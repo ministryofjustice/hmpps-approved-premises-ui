@@ -14,8 +14,10 @@ import {
 } from '../../../utils/validation'
 import { UnknownPageError } from '../../../utils/errors'
 import paths from '../../../paths/apply'
+import { viewPath } from '../../../form-pages/utils'
 
 jest.mock('../../../utils/validation')
+jest.mock('../../../form-pages/utils')
 
 describe('pagesController', () => {
   const request: DeepMocked<Request> = createMock<Request>({})
@@ -42,6 +44,7 @@ describe('pagesController', () => {
       }
 
       applicationService.getCurrentPage.mockResolvedValue(page)
+      ;(viewPath as jest.Mock).mockReturnValue('applications/pages/some/view')
     })
 
     it('renders a page', async () => {
@@ -55,7 +58,7 @@ describe('pagesController', () => {
 
       expect(applicationService.getCurrentPage).toHaveBeenCalledWith(request, dataServices, {})
 
-      expect(response.render).toHaveBeenCalledWith(`applications/pages/${request.params.task}/${request.params.page}`, {
+      expect(response.render).toHaveBeenCalledWith('applications/pages/some/view', {
         applicationId: request.params.id,
         task: request.params.task,
         page,
@@ -79,7 +82,7 @@ describe('pagesController', () => {
         errorsAndUserInput.userInput,
       )
 
-      expect(response.render).toHaveBeenCalledWith(`applications/pages/${request.params.task}/${request.params.page}`, {
+      expect(response.render).toHaveBeenCalledWith('applications/pages/some/view', {
         applicationId: request.params.id,
         task: request.params.task,
         page,

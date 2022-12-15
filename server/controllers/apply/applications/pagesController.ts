@@ -11,6 +11,7 @@ import {
 } from '../../../utils/validation'
 import paths from '../../../paths/apply'
 import { UnknownPageError } from '../../../utils/errors'
+import { viewPath } from '../../../form-pages/utils'
 
 export default class PagesController {
   constructor(private readonly applicationService: ApplicationService, private readonly dataServices: DataServices) {}
@@ -21,7 +22,7 @@ export default class PagesController {
         const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
         const page = await this.applicationService.getCurrentPage(req, this.dataServices, userInput)
 
-        res.render(`applications/pages/${req.params.task}/${req.params.page}`, {
+        res.render(viewPath(page), {
           applicationId: req.params.id,
           errors,
           errorSummary,
