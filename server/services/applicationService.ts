@@ -8,6 +8,7 @@ import { UnknownPageError, ValidationError } from '../utils/errors'
 
 import Apply from '../form-pages/apply'
 import { getPage } from '../utils/applicationUtils'
+import { getPageName, getTaskName } from '../form-pages/utils'
 
 export default class ApplicationService {
   constructor(private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>) {}
@@ -77,9 +78,12 @@ export default class ApplicationService {
     } else {
       const application = await this.getApplicationFromSessionOrAPI(request)
 
+      const pageName = getPageName(page)
+      const taskName = getTaskName(page)
+
       application.data = application.data || {}
-      application.data[request.params.task] = application.data[request.params.task] || {}
-      application.data[request.params.task][request.params.page] = page.body
+      application.data[taskName] = application.data[taskName] || {}
+      application.data[taskName][pageName] = page.body
 
       this.saveToSession(application, page, request)
       await this.saveToApi(application, request)

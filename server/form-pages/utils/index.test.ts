@@ -129,5 +129,21 @@ describe('utils', () => {
         expect(utils.viewPath(page2)).toEqual('applications/pages/task-2/page-2')
       })
     })
+
+    describe('getPageName', () => {
+      it('returns the page name', () => {
+        const page = new Page1()
+
+        expect(utils.getPageName(page)).toEqual('page-1')
+      })
+    })
+
+    describe('getTaskName', () => {
+      it('returns the task name', () => {
+        const page = new Page1()
+
+        expect(utils.getTaskName(page)).toEqual('task-1')
+      })
+    })
   })
 })
