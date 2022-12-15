@@ -65,7 +65,7 @@ export default class RiskManagementPlan implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'risk-to-self'
   }
 
   response() {

@@ -38,7 +38,7 @@ describe('RiskManagement', () => {
       expect(page.risks).toEqual(mapApiPersonRisksForUi(personRisks))
     })
 
-    itShouldHaveNextValue(new RiskManagementPlan({}), '')
+    itShouldHaveNextValue(new RiskManagementPlan({}), 'risk-to-self')
 
     itShouldHavePreviousValue(new RiskManagementPlan({}), 'supporting-information')
 
