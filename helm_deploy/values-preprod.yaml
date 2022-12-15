@@ -16,7 +16,5 @@ generic-service:
     TOKEN_VERIFICATION_API_URL: 'https://token-verification-api-preprod.prison.service.justice.gov.uk'
     COMMUNITY_ACCOMMODATION_API_SERVICE_NAME: approved-premises
 
-  allowlist: null
-
 generic-prometheus-alerts:
   alertSeverity: digital-prison-service-dev
