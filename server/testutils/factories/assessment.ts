@@ -1,11 +1,11 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
-import type { Assessment } from '@approved-premises/api'
+import type { ApprovedPremisesAssessment } from '@approved-premises/api'
 
 import { DateFormats } from '../../utils/dateUtils'
 import applicationFactory from './application'
 
-class AssessmentFactory extends Factory<Assessment> {
+class AssessmentFactory extends Factory<ApprovedPremisesAssessment> {
   createdXDaysAgo(days: number) {
     const today = new Date()
     return this.params({

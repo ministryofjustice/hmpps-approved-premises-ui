@@ -1,4 +1,4 @@
-import type { Assessment, PersonRisks } from '@approved-premises/api'
+import type { ApprovedPremisesAssessment as Assessment, PersonRisks } from '@approved-premises/api'
 import { format } from 'date-fns'
 
 import Page from '../page'

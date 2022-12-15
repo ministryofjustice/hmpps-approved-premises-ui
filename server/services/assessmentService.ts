@@ -1,4 +1,4 @@
-import { Assessment } from '@approved-premises/api'
+import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import type { AssessmentWithRisks, GroupedAssessmentWithRisks } from '@approved-premises/ui'
 
 import type { RestClientBuilder, AssessmentClient, PersonClient } from '../data'
