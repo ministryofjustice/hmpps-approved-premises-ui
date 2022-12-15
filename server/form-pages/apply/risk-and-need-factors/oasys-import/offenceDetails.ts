@@ -1,11 +1,16 @@
 import type { DataServices, PersonRisksUI } from '@approved-premises/ui'
 
-import type { Application, ArrayOfOASysOffenceDetailsQuestions, OASysSections } from '@approved-premises/api'
+import type {
+  ApprovedPremisesApplication,
+  ArrayOfOASysOffenceDetailsQuestions,
+  OASysSections,
+} from '@approved-premises/api'
 
 import TasklistPage from '../../../tasklistPage'
 
 import { Page } from '../../../utils/decorators'
 import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
+import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type OffenceDetailsBody = {
   offenceDetailsAnswers: Array<string> | Record<string, string>
@@ -29,7 +34,7 @@ export default class OffenceDetails implements TasklistPage {
 
   static async initialize(
     body: Record<string, unknown>,
-    application: Application,
+    application: ApprovedPremisesApplication,
     token: string,
     dataServices: DataServices,
   ) {
@@ -37,7 +42,6 @@ export default class OffenceDetails implements TasklistPage {
       token,
       application.person.crn,
     )
-    const risks = await dataServices.personService.getPersonRisks(token, application.person.crn)
 
     const offenceDetails = oasysSections.offenceDetails.sort(
       (a, b) => Number(a.questionNumber) - Number(b.questionNumber),
@@ -47,7 +51,7 @@ export default class OffenceDetails implements TasklistPage {
 
     const page = new OffenceDetails(body)
     page.offenceDetailsSummaries = offenceDetails
-    page.risks = risks
+    page.risks = mapApiPersonRisksForUi(application.risks)
 
     return page
   }
