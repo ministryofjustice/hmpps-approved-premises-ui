@@ -7,7 +7,7 @@ import * as pathModule from 'path'
 
 import type { ErrorMessages, PersonStatus, Task } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
-import { initialiseName, removeBlankSummaryListItems, sentenceCase } from './utils'
+import { initialiseName, removeBlankSummaryListItems, sentenceCase, mapApiPersonRisksForUi } from './utils'
 import { dateFieldValues, convertObjectsToRadioItems, convertObjectsToSelectOptions } from './formUtils'
 import { getTaskStatus, taskLink, getCompleteSectionCount, dashboardTableRows } from './applicationUtils'
 import { checkYourAnswersSections } from './checkYourAnswersUtils'
@@ -122,6 +122,8 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('fetchContext', function fetchContext() {
     return this.ctx
   })
+
+  njkEnv.addFilter('mapApiPersonRisksForUi', mapApiPersonRisksForUi)
 
   njkEnv.addFilter('removeBlankSummaryListItems', removeBlankSummaryListItems)
   njkEnv.addFilter('sentenceCase', sentenceCase)
