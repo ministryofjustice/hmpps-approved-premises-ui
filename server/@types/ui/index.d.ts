@@ -4,7 +4,7 @@ import {
   FlagsEnvelope,
   Mappa,
   ApprovedPremisesApplication,
-  Assessment,
+  ApprovedPremisesAssessment as Assessment,
   Person,
   OASysSection,
   Document,
@@ -202,14 +202,10 @@ export type DataServices = Partial<{
   }
 }>
 
-export interface GroupedAssessmentWithRisks {
-  completed: Array<AssessmentWithRisks>
-  requestedFurtherInformation: Array<AssessmentWithRisks>
-  awaiting: Array<AssessmentWithRisks>
-}
-
-export interface AssessmentWithRisks extends Assessment {
-  application: ApprovedPremisesApplicationWithRisks
+export interface GroupedAssessments {
+  completed: Array<Assessment>
+  requestedFurtherInformation: Array<Assessment>
+  awaiting: Array<Assessment>
 }
 
 export interface ApplicationWithRisks extends Application {

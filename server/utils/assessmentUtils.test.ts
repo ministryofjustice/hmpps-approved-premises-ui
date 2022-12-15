@@ -1,4 +1,3 @@
-import { AssessmentWithRisks } from '@approved-premises/ui'
 import {
   daysSinceReceived,
   getStatus,
@@ -21,7 +20,6 @@ import * as personUtils from './personUtils'
 import * as applicationUtils from './applicationUtils'
 
 import assessmentFactory from '../testutils/factories/assessment'
-import risksFactory from '../testutils/factories/risks'
 import clarificationNoteFactory from '../testutils/factories/clarificationNote'
 
 jest.mock('./applicationUtils')
@@ -115,17 +113,12 @@ describe('assessmentUtils', () => {
   describe('awaitingAssessmentTableRows', () => {
     it('returns table rows for the assessments', () => {
       const assessment = assessmentFactory.build()
-      const risks = risksFactory.build()
-      const assessmentWithRisks = {
-        ...assessment,
-        application: { person: { ...assessment.application.person, risks } },
-      } as AssessmentWithRisks
 
       jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
 
       const tierBadgeSpy = jest.spyOn(personUtils, 'tierBadge').mockReturnValue('TIER_BADGE')
 
-      expect(awaitingAssessmentTableRows([assessmentWithRisks])).toEqual([
+      expect(awaitingAssessmentTableRows([assessment])).toEqual([
         [
           { html: assessmentLink(assessment) },
           { html: assessment.application.person.crn },
@@ -137,24 +130,19 @@ describe('assessmentUtils', () => {
         ],
       ])
 
-      expect(tierBadgeSpy).toHaveBeenCalledWith(risks.tier.value.level)
+      expect(tierBadgeSpy).toHaveBeenCalledWith(assessment.application.risks.tier.value.level)
     })
   })
 
   describe('requestedInformationTableRows', () => {
     it('returns table rows for the assessments', () => {
       const assessment = assessmentFactory.build({ clarificationNotes: clarificationNoteFactory.buildList(2) })
-      const risks = risksFactory.build()
-      const assessmentWithRisks = {
-        ...assessment,
-        application: { person: { ...assessment.application.person, risks } },
-      } as AssessmentWithRisks
 
       jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
 
       const tierBadgeSpy = jest.spyOn(personUtils, 'tierBadge').mockReturnValue('TIER_BADGE')
 
-      expect(requestedFurtherInformationTableRows([assessmentWithRisks])).toEqual([
+      expect(requestedFurtherInformationTableRows([assessment])).toEqual([
         [
           { html: assessmentLink(assessment) },
           { html: assessment.application.person.crn },
@@ -166,24 +154,19 @@ describe('assessmentUtils', () => {
         ],
       ])
 
-      expect(tierBadgeSpy).toHaveBeenCalledWith(risks.tier.value.level)
+      expect(tierBadgeSpy).toHaveBeenCalledWith(assessment.application.risks.tier.value.level)
     })
   })
 
   describe('completedTableRows', () => {
     it('returns table rows for the assessments', () => {
       const assessment = assessmentFactory.build()
-      const risks = risksFactory.build()
-      const assessmentWithRisks = {
-        ...assessment,
-        application: { person: { ...assessment.application.person, risks } },
-      } as AssessmentWithRisks
 
       jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
 
       const tierBadgeSpy = jest.spyOn(personUtils, 'tierBadge').mockReturnValue('TIER_BADGE')
 
-      expect(completedTableRows([assessmentWithRisks])).toEqual([
+      expect(completedTableRows([assessment])).toEqual([
         [
           { html: assessmentLink(assessment) },
           { html: assessment.application.person.crn },
@@ -193,7 +176,7 @@ describe('assessmentUtils', () => {
         ],
       ])
 
-      expect(tierBadgeSpy).toHaveBeenCalledWith(risks.tier.value.level)
+      expect(tierBadgeSpy).toHaveBeenCalledWith(assessment.application.risks.tier.value.level)
     })
   })
 

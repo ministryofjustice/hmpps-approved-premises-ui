@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express'
-import type { GroupedAssessmentWithRisks } from '@approved-premises/ui'
+import type { GroupedAssessments } from '@approved-premises/ui'
 
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 
@@ -26,7 +26,7 @@ describe('assessmentsController', () => {
 
   describe('index', () => {
     it('should list all the assessments for a user', async () => {
-      const assessments = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessmentWithRisks
+      const assessments = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments
       assessmentService.getAllForLoggedInUser.mockResolvedValue(assessments)
       const requestHandler = assessmentsController.index()
 
