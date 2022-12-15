@@ -110,6 +110,50 @@ describe('ApplicationService', () => {
     })
   })
 
+  describe('getApplicationFromSessionOrAPI', () => {
+    let request: DeepMocked<Request>
+
+    const application = applicationFactory.build()
+
+    beforeEach(() => {
+      request = createMock<Request>({
+        params: { id: application.id },
+      })
+    })
+
+    it('should fetch the application from the API if it is not in the session', async () => {
+      request.session.application = undefined
+      applicationClient.find.mockResolvedValue(application)
+
+      const result = await service.getApplicationFromSessionOrAPI(request)
+
+      expect(result).toEqual(application)
+
+      expect(applicationClient.find).toHaveBeenCalledWith(request.params.id)
+    })
+
+    it('should fetch the application from the session if it is present', async () => {
+      request.session.application = application
+
+      const result = await service.getApplicationFromSessionOrAPI(request)
+
+      expect(result).toEqual(application)
+
+      expect(applicationClient.find).not.toHaveBeenCalled()
+    })
+
+    it('should fetch the application from the API if and application is in the session but it is not the same application as the one being requested', async () => {
+      request.session.application = applicationFactory.build()
+      applicationClient.find.mockResolvedValue(application)
+
+      const result = await service.getApplicationFromSessionOrAPI(request)
+
+      expect(result).toEqual(application)
+
+      expect(applicationClient.find).toHaveBeenCalledWith(request.params.id)
+    })
+  })
+
   describe('getCurrentPage', () => {
     let request: DeepMocked<Request>
 

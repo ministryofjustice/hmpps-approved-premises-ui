@@ -92,19 +92,17 @@ export default class ApplicationService {
     await client.submit(application)
   }
 
-  private firstPageForTask(taskName: string) {
-    return Object.keys(Apply.pages[taskName])[0]
-  }
-
-  private getApplicationFromSessionOrAPI(
-    request: Request,
-  ): Promise<ApprovedPremisesApplication> | ApprovedPremisesApplication {
+  async getApplicationFromSessionOrAPI(request: Request): Promise<ApprovedPremisesApplication> {
     const { application } = request.session
 
     if (application && application.id === request.params.id) {
       return application
     }
     return this.findApplication(request.user.token, request.params.id)
+  }
+
+  private firstPageForTask(taskName: string) {
+    return Object.keys(Apply.pages[taskName])[0]
   }
 
   private async saveToSession(application: ApprovedPremisesApplication, page: TasklistPage, request: Request) {
