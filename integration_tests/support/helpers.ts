@@ -29,9 +29,17 @@ const supportInformationFromApplication = (
     .supportingInformationSummaries as ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
 }
 
+const riskManagementPlanFromApplication = (
+  application: ApprovedPremisesApplication,
+): ArrayOfOASysOffenceDetailsQuestions => {
+  return application.data['oasys-import']['risk-management-plan']
+    .riskManagementSummaries as ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
+}
+
 export {
   documentsFromApplication,
   roshSummariesFromApplication,
   offenceDetailSummariesFromApplication,
   supportInformationFromApplication,
+  riskManagementPlanFromApplication,
 }
