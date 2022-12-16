@@ -21,6 +21,7 @@ export type { ArrayOfOASysRiskToSelfQuestions } from './models/ArrayOfOASysRiskT
 export type { ArrayOfOASysSupportingInformationQuestions } from './models/ArrayOfOASysSupportingInformationQuestions';
 export type { Arrival } from './models/Arrival';
 export type { Assessment } from './models/Assessment';
+export type { AssessmentAcceptance } from './models/AssessmentAcceptance';
 export type { AssessmentDecision } from './models/AssessmentDecision';
 export type { AssessmentRejection } from './models/AssessmentRejection';
 export type { Bed } from './models/Bed';

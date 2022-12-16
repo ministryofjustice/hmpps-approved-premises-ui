@@ -4,8 +4,7 @@
 
 import type { AnyValue } from './AnyValue';
 
-export type AssessmentRejection = {
+export type AssessmentAcceptance = {
     document: AnyValue;
-    rejectionRationale: string;
 };
 
