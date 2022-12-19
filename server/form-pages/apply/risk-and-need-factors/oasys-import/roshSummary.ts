@@ -12,6 +12,7 @@ import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
 import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/oasysImportUtils'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
+import { DateFormats } from '../../../../utils/dateUtils'
 
 type RoshSummaryBody = {
   roshAnswers: Array<string> | Record<string, string>
@@ -31,6 +32,8 @@ export default class RoshSummary implements TasklistPage {
 
   roshAnswers: RoshSummaryBody['roshAnswers']
 
+  oasysCompleted: string
+
   constructor(public body: Partial<RoshSummaryBody>) {}
 
   static async initialize(
@@ -49,6 +52,7 @@ export default class RoshSummary implements TasklistPage {
 
     const page = new RoshSummary(body)
     page.roshSummary = roshSummaries
+    page.oasysCompleted = DateFormats.isoDateToUIDate(oasysSections?.dateCompleted || '')
     page.risks = mapApiPersonRisksForUi(application.risks)
 
     return page
