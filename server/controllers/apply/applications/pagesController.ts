@@ -17,10 +17,10 @@ import { viewPath } from '../../../form-pages/utils'
 export default class PagesController {
   constructor(private readonly applicationService: ApplicationService, private readonly dataServices: DataServices) {}
 
-  show(): RequestHandler {
+  show(taskName: string, pageName: string): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const Page = getPage(req.params.task, req.params.page)
+        const Page = getPage(taskName, pageName)
 
         const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
         const page = await this.applicationService.initializePage(Page, req, this.dataServices, userInput)
@@ -29,7 +29,7 @@ export default class PagesController {
           applicationId: req.params.id,
           errors,
           errorSummary,
-          task: req.params.task,
+          task: taskName,
           page,
           ...page.body,
         })
@@ -43,16 +43,16 @@ export default class PagesController {
     }
   }
 
-  update() {
+  update(taskName: string, pageName: string) {
     return async (req: Request, res: Response) => {
-      const Page = getPage(req.params.task, req.params.page)
+      const Page = getPage(taskName, pageName)
       const page = await this.applicationService.initializePage(Page, req, this.dataServices)
 
       try {
         await this.applicationService.save(page, req)
         const next = page.next()
         if (next) {
-          res.redirect(paths.applications.pages.show({ id: req.params.id, task: req.params.task, page: page.next() }))
+          res.redirect(paths.applications.pages.show({ id: req.params.id, task: taskName, page: page.next() }))
         } else {
           res.redirect(paths.applications.show({ id: req.params.id }))
         }
@@ -61,7 +61,7 @@ export default class PagesController {
           req,
           res,
           err,
-          paths.applications.pages.show({ id: req.params.id, task: req.params.task, page: req.params.page }),
+          paths.applications.pages.show({ id: req.params.id, task: taskName, page: pageName }),
         )
       }
     }

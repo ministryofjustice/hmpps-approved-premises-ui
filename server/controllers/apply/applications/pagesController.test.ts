@@ -52,8 +52,6 @@ describe('pagesController', () => {
     beforeEach(() => {
       request.params = {
         id: 'some-uuid',
-        task: 'some-task',
-        page: 'some-page',
       }
       ;(viewPath as jest.Mock).mockReturnValue('applications/pages/some/view')
     })
@@ -63,16 +61,16 @@ describe('pagesController', () => {
         return { errors: {}, errorSummary: [], userInput: {} }
       })
 
-      const requestHandler = pagesController.show()
+      const requestHandler = pagesController.show('some-task', 'some-page')
 
       await requestHandler(request, response, next)
 
-      expect(getPage).toHaveBeenCalledWith(request.params.task, request.params.page)
+      expect(getPage).toHaveBeenCalledWith('some-task', 'some-page')
       expect(applicationService.initializePage).toHaveBeenCalledWith(PageConstructor, request, dataServices, {})
 
       expect(response.render).toHaveBeenCalledWith('applications/pages/some/view', {
         applicationId: request.params.id,
-        task: request.params.task,
+        task: 'some-task',
         page,
         errors: {},
         errorSummary: [],
@@ -84,7 +82,7 @@ describe('pagesController', () => {
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
-      const requestHandler = pagesController.show()
+      const requestHandler = pagesController.show('some-task', 'some-page')
 
       await requestHandler(request, response, next)
 
@@ -97,7 +95,7 @@ describe('pagesController', () => {
 
       expect(response.render).toHaveBeenCalledWith('applications/pages/some/view', {
         applicationId: request.params.id,
-        task: request.params.task,
+        task: 'some-task',
         page,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
@@ -110,7 +108,7 @@ describe('pagesController', () => {
         throw new UnknownPageError()
       })
 
-      const requestHandler = pagesController.show()
+      const requestHandler = pagesController.show('some-task', 'some-page')
 
       await requestHandler(request, response, next)
 
@@ -124,7 +122,7 @@ describe('pagesController', () => {
         throw genericError
       })
 
-      const requestHandler = pagesController.show()
+      const requestHandler = pagesController.show('some-task', 'some-page')
 
       await requestHandler(request, response, next)
 
@@ -136,8 +134,6 @@ describe('pagesController', () => {
     beforeEach(() => {
       request.params = {
         id: 'some-uuid',
-        task: 'some-task',
-        page: 'page-name',
       }
 
       applicationService.initializePage.mockResolvedValue(page)
@@ -148,21 +144,21 @@ describe('pagesController', () => {
 
       applicationService.save.mockResolvedValue()
 
-      const requestHandler = pagesController.update()
+      const requestHandler = pagesController.update('some-task', 'page-name')
 
       await requestHandler({ ...request }, response)
 
       expect(applicationService.save).toHaveBeenCalledWith(page, request)
 
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.applications.pages.show({ id: request.params.id, task: request.params.task, page: 'next-page' }),
+        paths.applications.pages.show({ id: request.params.id, task: 'some-task', page: 'next-page' }),
       )
     })
 
     it('redirects to the tasklist if there is no next page', async () => {
       page.next.mockReturnValue(undefined)
 
-      const requestHandler = pagesController.update()
+      const requestHandler = pagesController.update('some-task', 'page-name')
 
       await requestHandler(request, response)
 
@@ -177,7 +173,7 @@ describe('pagesController', () => {
         throw err
       })
 
-      const requestHandler = pagesController.update()
+      const requestHandler = pagesController.update('some-task', 'page-name')
 
       await requestHandler(request, response)
 
@@ -187,7 +183,7 @@ describe('pagesController', () => {
         request,
         response,
         err,
-        paths.applications.pages.show({ id: request.params.id, task: request.params.task, page: request.params.page }),
+        paths.applications.pages.show({ id: request.params.id, task: 'some-task', page: 'page-name' }),
       )
     })
   })
