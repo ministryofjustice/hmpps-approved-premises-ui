@@ -1,4 +1,4 @@
-import type { Nonarrival } from '@approved-premises/api'
+import type { NewNonarrival, Nonarrival } from '@approved-premises/api'
 import type { RestClientBuilder, BookingClient } from '../data'
 
 export default class NonarrivalService {
@@ -8,7 +8,7 @@ export default class NonarrivalService {
     token: string,
     premisesId: string,
     bookingId: string,
-    arrival: Omit<Nonarrival, 'id' | 'bookingId'>,
+    arrival: NewNonarrival,
   ): Promise<Nonarrival> {
     const bookingClient = this.bookingClientFactory(token)
 

@@ -1,6 +1,6 @@
 import { Response, Request, RequestHandler } from 'express'
 
-import type { Nonarrival } from '@approved-premises/api'
+import type { NewNonarrival } from '@approved-premises/api'
 
 import { DateFormats } from '../../utils/dateUtils'
 import NonArrivalService from '../../services/nonArrivalService'
@@ -32,7 +32,7 @@ export default class NonArrivalsController {
 
       const { nonArrivalDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'nonArrivalDate')
 
-      const nonArrival: Omit<Nonarrival, 'id' | 'bookingId'> = {
+      const nonArrival: NewNonarrival = {
         ...req.body.nonArrival,
         date: nonArrivalDate,
       }
