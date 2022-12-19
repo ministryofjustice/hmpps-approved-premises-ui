@@ -1,12 +1,12 @@
-import type { Task, FormSections, FormSection, TableRow } from '@approved-premises/ui'
+import type { Task, FormSections, FormSection, TableRow, PageResponse } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import paths from '../paths/apply'
 import Apply from '../form-pages/apply'
 import { SessionDataError, UnknownPageError } from './errors'
 import { tierBadge } from './personUtils'
 import { DateFormats } from './dateUtils'
+import { TasklistPageInterface } from '../form-pages/tasklistPage'
 
-type PageResponse = Record<string, string | Array<Record<string, unknown>>>
 type ApplicationResponse = Record<string, Array<PageResponse>>
 
 const taskIds = Object.keys(Apply.pages)
@@ -108,7 +108,7 @@ const getResponseForPage = (
   return page.response()
 }
 
-const getPage = (taskName: string, pageName: string) => {
+const getPage = (taskName: string, pageName: string): TasklistPageInterface => {
   const pageList = Apply.pages[taskName]
 
   const Page = pageList[pageName]
@@ -117,7 +117,7 @@ const getPage = (taskName: string, pageName: string) => {
     throw new UnknownPageError()
   }
 
-  return Page
+  return Page as TasklistPageInterface
 }
 
 const getArrivalDate = (application: ApprovedPremisesApplication, raiseOnMissing = true): string | null => {

@@ -1,4 +1,4 @@
-import type { DataServices } from '@approved-premises/ui'
+import type { DataServices, PageResponse } from '@approved-premises/ui'
 
 import type { ApprovedPremisesApplication, PrisonCaseNote, Adjudication } from '@approved-premises/api'
 
@@ -113,7 +113,7 @@ export default class CaseNotes implements TasklistPage {
   }
 
   response() {
-    const response: Record<string, unknown> = {}
+    const response: PageResponse = {}
 
     if (this.body.selectedCaseNotes) {
       response[this.questions.caseNotesSelectionQuestion] = this.body.selectedCaseNotes.map(caseNoteResponse)
