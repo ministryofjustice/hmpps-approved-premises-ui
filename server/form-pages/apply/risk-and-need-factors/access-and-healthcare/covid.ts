@@ -23,7 +23,7 @@ export default class Covid implements TasklistPage {
       hint: `A person is considered fully vaccinated if they have had two doses and a booster of a COVID-19 vaccine.`,
     },
     highRisk: {
-      question: `Is the ${this.application.person.name} at a higher risk from COVID-19?`,
+      question: `Is ${this.application.person.name} at a higher risk from COVID-19?`,
       hint: `This includes autoimmune diseases and those eligible for nMAB treatment.`,
     },
     additionalCovidInfo: 'Other considerations and comments on COVID-19',
