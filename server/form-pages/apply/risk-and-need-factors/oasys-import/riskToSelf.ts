@@ -9,7 +9,7 @@ import type {
 import TasklistPage from '../../../tasklistPage'
 
 import { Page } from '../../../utils/decorators'
-import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
+import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/oasysImportUtils'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type RiskToSelfBody = {
@@ -43,7 +43,7 @@ export default class RiskToSelf implements TasklistPage {
       application.person.crn,
     )
 
-    const riskToSelf = oasysSections.riskToSelf.sort((a, b) => Number(a.questionNumber) - Number(b.questionNumber))
+    const riskToSelf = sortOasysImportSummaries(oasysSections.riskToSelf)
 
     body.riskToSelfSummaries = riskToSelf
 

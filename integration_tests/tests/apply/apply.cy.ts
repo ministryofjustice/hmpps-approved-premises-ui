@@ -305,6 +305,8 @@ context('Apply', () => {
       typeOfApPage.completeForm()
       typeOfApPage.clickSubmit()
 
+      const typeOfApPages = [typeOfApPage]
+
       // Then the Type of AP task should show as completed
       tasklistPage.shouldShowTaskStatus('type-of-ap', 'Completed')
 
@@ -677,7 +679,7 @@ context('Apply', () => {
       // And the page should be populated with my answers
       checkYourAnswersPage.shouldShowPersonInformation(person)
       checkYourAnswersPage.shouldShowBasicInformationAnswers(basicInformationPages)
-      checkYourAnswersPage.shouldShowTypeOfApAnswers([typeOfApPage])
+      checkYourAnswersPage.shouldShowTypeOfApAnswers(typeOfApPages)
       checkYourAnswersPage.shouldShowOptionalOasysSectionsAnswers(oasysPages)
       checkYourAnswersPage.shouldShowRiskManagementAnswers(riskManagementPages)
       checkYourAnswersPage.shouldShowCaseNotes(selectedPrisonCaseNotes)
@@ -687,6 +689,19 @@ context('Apply', () => {
       checkYourAnswersPage.shouldShowFurtherConsiderationsAnswers(furtherConsiderationsPages)
       checkYourAnswersPage.shouldShowMoveOnAnswers(moveOnPages)
       checkYourAnswersPage.shouldShowDocuments(attachDocumentsPage.selectedDocuments)
+
+      const numberOfPages = [
+        ...basicInformationPages,
+        ...typeOfApPages,
+        ...oasysPages,
+        ...riskManagementPages,
+        ...selectedPrisonCaseNotes,
+        ...locationFactorsPages,
+        ...accessAndHealthcarePages,
+        ...furtherConsiderationsPages,
+        ...moveOnPages,
+        ...attachDocumentsPage.selectedDocuments,
+      ].length
 
       // When I have checked my answers
       checkYourAnswersPage.clickSubmit()
@@ -704,9 +719,9 @@ context('Apply', () => {
       tasklistPage.clickSubmit()
 
       // Then the application should be submitted to the API
-      cy.task('verifyApplicationUpdate', application.id).then(requests => {
-        expect(requests).to.have.length(37)
-        const requestBody = JSON.parse(requests[36].body)
+      cy.task('verifyApplicationUpdate', application.id).then((requests: Array<{ body: string }>) => {
+        expect(requests).to.have.length(numberOfPages)
+        const requestBody = JSON.parse(requests[requests.length - 1].body)
 
         expect(requestBody.data).to.deep.equal(applicationData)
 

@@ -1,7 +1,7 @@
 import applicationFactory from '../testutils/factories/application'
 import { roshSummaryFactory } from '../testutils/factories/oasysSections'
 import oasysSelectionFactory from '../testutils/factories/oasysSelection'
-import { fetchOptionalOasysSections, oasysImportReponse, textareas } from './oasysImportUtils'
+import { fetchOptionalOasysSections, oasysImportReponse, textareas, sortOasysImportSummaries } from './oasysImportUtils'
 
 describe('OASysImportUtils', () => {
   describe('textareas', () => {
@@ -98,6 +98,17 @@ describe('OASysImportUtils', () => {
         .build()
 
       expect(fetchOptionalOasysSections(application)).toEqual([1, 2])
+    })
+  })
+
+  describe('sortOasysImportSummaries', () => {
+    it('sorts the imports into order of questions', () => {
+      const oasysSummary1 = roshSummaryFactory.build({ questionNumber: '1' })
+      const oasysSummary2 = roshSummaryFactory.build({ questionNumber: '2' })
+      const oasysSummary3 = roshSummaryFactory.build({ questionNumber: '3' })
+
+      const result = sortOasysImportSummaries([oasysSummary3, oasysSummary2, oasysSummary1])
+      expect(result).toEqual([oasysSummary1, oasysSummary2, oasysSummary3])
     })
   })
 })

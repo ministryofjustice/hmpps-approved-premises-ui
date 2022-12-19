@@ -9,8 +9,9 @@ import type {
 import TasklistPage from '../../../tasklistPage'
 
 import { Page } from '../../../utils/decorators'
-import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
+import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/oasysImportUtils'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
+import { DateFormats } from '../../../../utils/dateUtils'
 
 type OffenceDetailsBody = {
   offenceDetailsAnswers: Array<string> | Record<string, string>
@@ -30,6 +31,8 @@ export default class OffenceDetails implements TasklistPage {
 
   risks: PersonRisksUI
 
+  oasysCompleted: string
+
   constructor(public body: Partial<OffenceDetailsBody>) {}
 
   static async initialize(
@@ -43,14 +46,13 @@ export default class OffenceDetails implements TasklistPage {
       application.person.crn,
     )
 
-    const offenceDetails = oasysSections.offenceDetails.sort(
-      (a, b) => Number(a.questionNumber) - Number(b.questionNumber),
-    )
+    const offenceDetails = sortOasysImportSummaries(oasysSections.offenceDetails)
 
     body.offenceDetailsSummaries = offenceDetails
 
     const page = new OffenceDetails(body)
     page.offenceDetailsSummaries = offenceDetails
+    page.oasysCompleted = DateFormats.isoDateToUIDate(oasysSections?.dateCompleted || '')
     page.risks = mapApiPersonRisksForUi(application.risks)
 
     return page

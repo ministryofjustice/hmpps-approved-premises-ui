@@ -56,3 +56,7 @@ export const fetchOptionalOasysSections = (application: Application): Array<numb
     throw new SessionDataError(`Oasys supporting information error: ${e}`)
   }
 }
+
+export const sortOasysImportSummaries = (summaries: Array<OASysQuestion>): Array<OASysQuestion> => {
+  return summaries.sort((a, b) => Number(a.questionNumber) - Number(b.questionNumber))
+}

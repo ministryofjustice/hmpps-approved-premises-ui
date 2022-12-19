@@ -9,7 +9,11 @@ import type {
 import TasklistPage from '../../../tasklistPage'
 
 import { Page } from '../../../utils/decorators'
-import { fetchOptionalOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
+import {
+  fetchOptionalOasysSections,
+  oasysImportReponse,
+  sortOasysImportSummaries,
+} from '../../../../utils/oasysImportUtils'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
@@ -47,9 +51,7 @@ export default class SupportingInformation implements TasklistPage {
       fetchOptionalOasysSections(application),
     )
 
-    const supportingInformation = oasysSections.supportingInformation.sort(
-      (a, b) => Number(a.questionNumber) - Number(b.questionNumber),
-    )
+    const supportingInformation = sortOasysImportSummaries(oasysSections.supportingInformation)
 
     body.supportingInformationSummaries = supportingInformation
 
