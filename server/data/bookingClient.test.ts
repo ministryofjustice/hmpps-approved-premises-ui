@@ -11,6 +11,7 @@ import departureFactory from '../testutils/factories/departure'
 import newDepartureFactory from '../testutils/factories/newDeparture'
 import nonArrivalFactory from '../testutils/factories/nonArrival'
 import newArrivalFactory from '../testutils/factories/newArrival'
+import newNonArrivalFactory from '../testutils/factories/newNonArrival'
 
 import config from '../config'
 
@@ -204,11 +205,11 @@ describe('BookingClient', () => {
   describe('markNonArrival', () => {
     it('should create an non-arrival', async () => {
       const nonArrival = nonArrivalFactory.build()
-      const payload = {
+      const payload = newNonArrivalFactory.build({
         date: nonArrival.date.toString(),
         notes: nonArrival.notes,
-        reason: nonArrival.reason,
-      }
+        reason: nonArrival.reason.id,
+      })
 
       fakeApprovedPremisesApi
         .post(`/premises/premisesId/bookings/bookingId/non-arrivals`, payload)

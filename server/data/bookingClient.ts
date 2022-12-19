@@ -8,6 +8,7 @@ import type {
   Cancellation,
   NewCancellation,
   Departure,
+  NewNonarrival,
   Nonarrival,
   NewDeparture,
 } from '@approved-premises/api'
@@ -83,11 +84,7 @@ export default class BookingClient {
     return response as Departure
   }
 
-  async markNonArrival(
-    premisesId: string,
-    bookingId: string,
-    nonArrival: Omit<Nonarrival, 'id' | 'bookingId'>,
-  ): Promise<Nonarrival> {
+  async markNonArrival(premisesId: string, bookingId: string, nonArrival: NewNonarrival): Promise<Nonarrival> {
     const response = await this.restClient.post({
       path: `${this.bookingPath(premisesId, bookingId)}/non-arrivals`,
       data: nonArrival,
