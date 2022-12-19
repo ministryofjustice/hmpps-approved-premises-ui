@@ -71,7 +71,7 @@ export default class DescribeLocationFactors implements TasklistPage {
     }
 
     if (this.body.restrictions === 'yes' && !this.body.restrictionDetail) {
-      errors.restrictionDetail = 'You must provide details of any restrictions  linked to placement location'
+      errors.restrictionDetail = 'You must provide details of any restrictions linked to placement location'
     }
 
     if (!this.body.alternativeRadiusAccepted) {
