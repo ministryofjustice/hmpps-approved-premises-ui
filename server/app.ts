@@ -19,11 +19,20 @@ import setUpStaticResources from './middleware/setUpStaticResources'
 import setUpWebRequestParsing from './middleware/setupRequestParsing'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
+import rateLimiter from './middleware/rateLimiter'
+
 import { setUpSentryRequestHandler, setUpSentryErrorHandler } from './middleware/setUpSentry'
 
 import routes from './routes'
 import type { Controllers } from './controllers'
 import type { Services } from './services'
+
+// Add rate limits for each environment
+const authenticationRateLimitWindow = process.env.NODE_ENV === 'production' ? 10 * 60 * 1000 : 60
+const authenticationRateLimitMaxRequests = process.env.NODE_ENV === 'production' ? 10 : 100
+
+const authorisationRateLimitWindow = process.env.NODE_ENV === 'production' ? 60 * 1000 : 60
+const authorisationRateLimitMaxRequests = process.env.NODE_ENV === 'production' ? 60 * 1000 : 60
 
 export default function createApp(controllers: Controllers, services: Services): express.Application {
   const app = express()
@@ -46,10 +55,21 @@ export default function createApp(controllers: Controllers, services: Services):
 
   app.use(flash())
   nunjucksSetup(app, path)
-  app.use(setUpAuthentication())
-  app.use(authorisationMiddleware())
+
+  app.use(
+    setUpAuthentication(),
+    rateLimiter({ windowMs: authenticationRateLimitWindow, maxRequests: authenticationRateLimitMaxRequests }),
+  )
+  app.use(
+    authorisationMiddleware(),
+    rateLimiter({ windowMs: authorisationRateLimitWindow, maxRequests: authorisationRateLimitMaxRequests }),
+  )
+  app.use(
+    setUpCurrentUser(services),
+    rateLimiter({ windowMs: authorisationRateLimitWindow, maxRequests: authorisationRateLimitMaxRequests }),
+  )
+
   app.use(setUpCsrf())
-  app.use(setUpCurrentUser(services))
   app.use((req, res, next) => {
     res.app.locals.infoMessages = req.flash('info')
     res.app.locals.successMessages = req.flash('success')
