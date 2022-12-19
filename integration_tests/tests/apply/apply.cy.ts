@@ -44,7 +44,6 @@ import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import AccessNeedsPage from '../../../cypress_shared/pages/apply/accessNeeds'
 import AccessNeedsMobilityPage from '../../../cypress_shared/pages/apply/accessNeedsMobility'
 import CovidPage from '../../../cypress_shared/pages/apply/covid'
-import AccessNeedsAdditionalAdjustmentsPage from '../../../cypress_shared/pages/apply/accessNeedsAdditionalAdjustments'
 import RelocationRegionPage from '../../../cypress_shared/pages/apply/relocationRegion'
 import PlansInPlacePage from '../../../cypress_shared/pages/apply/plansInPlace'
 import TypeOfAccommodationPage from '../../../cypress_shared/pages/apply/typeOfAccommodation'
@@ -544,20 +543,11 @@ context('Apply', () => {
       accessNeedsMobilityPage.completeForm()
       accessNeedsMobilityPage.clickSubmit()
 
-      const accessNeedsAdditionalAdjustmentsPage = new AccessNeedsAdditionalAdjustmentsPage(application)
-      accessNeedsAdditionalAdjustmentsPage.completeForm()
-      accessNeedsAdditionalAdjustmentsPage.clickSubmit()
-
       const covidPage = new CovidPage(application)
       covidPage.completeForm()
       covidPage.clickSubmit()
 
-      const accessAndHealthcarePages = [
-        accessNeedsPage,
-        accessNeedsMobilityPage,
-        accessNeedsAdditionalAdjustmentsPage,
-        covidPage,
-      ]
+      const accessAndHealthcarePages = [accessNeedsPage, accessNeedsMobilityPage, covidPage]
 
       Page.verifyOnPage(TaskListPage)
 

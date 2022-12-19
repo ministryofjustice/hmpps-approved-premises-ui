@@ -282,10 +282,6 @@
       "mobilityNeeds": "laboriosam",
       "visualImpairment": "exercitationem"
     },
-    "access-needs-additional-adjustments": {
-      "adjustments": "yes",
-      "adjustmentsDetail": "Some details here"
-    },
     "covid": {
       "fullyVaccinated": "yes",
       "highRisk": "yes",

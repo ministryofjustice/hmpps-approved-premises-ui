@@ -31,7 +31,7 @@ describe('AccessNeedsMobility', () => {
     })
   })
 
-  itShouldHaveNextValue(new AccessNeedsMobility({}, application), 'access-needs-additional-adjustments')
+  itShouldHaveNextValue(new AccessNeedsMobility({}, application), 'covid')
   itShouldHavePreviousValue(new AccessNeedsMobility({}, application), 'access-needs')
 
   describe('errors', () => {

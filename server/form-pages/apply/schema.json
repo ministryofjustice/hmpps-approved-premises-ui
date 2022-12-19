@@ -1048,30 +1048,6 @@
               "type": "string"
             }
           }
-        },
-        "access-needs-additional-adjustments": {
-          "allOf": [
-            {
-              "type": "object",
-              "properties": {
-                "adjustments": {
-                  "enum": [
-                    "no",
-                    "yes"
-                  ],
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "adjustmentsDetail": {
-                  "type": "string"
-                }
-              }
-            }
-          ]
         }
       }
     },

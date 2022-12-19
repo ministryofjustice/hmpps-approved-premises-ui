@@ -46,14 +46,7 @@ describe('AccessNeeds', () => {
   })
 
   describe('when the response contains an answer other than "none"', () => {
-    itShouldHaveNextValue(
-      new AccessNeeds({ additionalNeeds: ['visualImpairment'] }, application),
-      'access-needs-additional-adjustments',
-    )
-  })
-
-  describe('when the response contains "none"', () => {
-    itShouldHaveNextValue(new AccessNeeds({ additionalNeeds: ['none'] }, application), 'covid')
+    itShouldHaveNextValue(new AccessNeeds({ additionalNeeds: ['visualImpairment'] }, application), 'covid')
   })
 
   itShouldHavePreviousValue(new AccessNeeds({}, application), 'dashboard')
