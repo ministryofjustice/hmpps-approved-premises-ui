@@ -2,10 +2,12 @@ import type { Request, Response, NextFunction } from 'express'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import createError from 'http-errors'
 
-import type { ErrorsAndUserInput, DataServices } from '@approved-premises/ui'
+import type { ErrorsAndUserInput, DataServices, FormPages } from '@approved-premises/ui'
 import PagesController from './pagesController'
 import { ApplicationService } from '../../../services'
 import TasklistPage from '../../../form-pages/tasklistPage'
+import Apply from '../../../form-pages/apply'
+import { getPage } from '../../../utils/applicationUtils'
 
 import {
   fetchErrorsAndUserInput,
@@ -18,6 +20,14 @@ import { viewPath } from '../../../form-pages/utils'
 
 jest.mock('../../../utils/validation')
 jest.mock('../../../form-pages/utils')
+jest.mock('../../../utils/applicationUtils')
+jest.mock('../../../form-pages/apply', () => {
+  return {
+    pages: { 'my-task': {} },
+  }
+})
+
+Apply.pages = {} as FormPages
 
 describe('pagesController', () => {
   const request: DeepMocked<Request> = createMock<Request>({})
@@ -27,23 +37,24 @@ describe('pagesController', () => {
   const applicationService = createMock<ApplicationService>({})
   const dataServices = createMock<DataServices>({}) as DataServices
 
+  const PageConstructor = jest.fn()
+  const page = createMock<TasklistPage>({})
+
   let pagesController: PagesController
 
   beforeEach(() => {
     pagesController = new PagesController(applicationService, dataServices)
+    applicationService.initializePage.mockResolvedValue(page)
+    ;(getPage as jest.Mock).mockReturnValue(PageConstructor)
   })
 
   describe('show', () => {
-    const page = createMock<TasklistPage>({})
-
     beforeEach(() => {
       request.params = {
         id: 'some-uuid',
         task: 'some-task',
         page: 'some-page',
       }
-
-      applicationService.getCurrentPage.mockResolvedValue(page)
       ;(viewPath as jest.Mock).mockReturnValue('applications/pages/some/view')
     })
 
@@ -56,7 +67,8 @@ describe('pagesController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(applicationService.getCurrentPage).toHaveBeenCalledWith(request, dataServices, {})
+      expect(getPage).toHaveBeenCalledWith(request.params.task, request.params.page)
+      expect(applicationService.initializePage).toHaveBeenCalledWith(PageConstructor, request, dataServices, {})
 
       expect(response.render).toHaveBeenCalledWith('applications/pages/some/view', {
         applicationId: request.params.id,
@@ -76,7 +88,8 @@ describe('pagesController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(applicationService.getCurrentPage).toHaveBeenCalledWith(
+      expect(applicationService.initializePage).toHaveBeenCalledWith(
+        PageConstructor,
         request,
         dataServices,
         errorsAndUserInput.userInput,
@@ -93,7 +106,7 @@ describe('pagesController', () => {
     })
 
     it('returns a 404 when the page cannot be found', async () => {
-      applicationService.getCurrentPage.mockImplementation(() => {
+      applicationService.initializePage.mockImplementation(() => {
         throw new UnknownPageError()
       })
 
@@ -107,7 +120,7 @@ describe('pagesController', () => {
     it('calls catchAPIErrorOrPropogate if the error is not an unknown page error', async () => {
       const genericError = new Error()
 
-      applicationService.getCurrentPage.mockImplementation(() => {
+      applicationService.initializePage.mockImplementation(() => {
         throw genericError
       })
 
@@ -120,8 +133,6 @@ describe('pagesController', () => {
   })
 
   describe('update', () => {
-    const page = createMock<TasklistPage>({})
-
     beforeEach(() => {
       request.params = {
         id: 'some-uuid',
@@ -129,7 +140,7 @@ describe('pagesController', () => {
         page: 'page-name',
       }
 
-      applicationService.getCurrentPage.mockResolvedValue(page)
+      applicationService.initializePage.mockResolvedValue(page)
     })
 
     it('updates an application and redirects to the next page', async () => {

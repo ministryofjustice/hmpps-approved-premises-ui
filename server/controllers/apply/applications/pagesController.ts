@@ -2,6 +2,7 @@ import type { Request, Response, RequestHandler, NextFunction } from 'express'
 import createError from 'http-errors'
 
 import type { DataServices } from '@approved-premises/ui'
+import { getPage } from '../../../utils/applicationUtils'
 import { ApplicationService } from '../../../services'
 
 import {
@@ -19,8 +20,10 @@ export default class PagesController {
   show(): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
+        const Page = getPage(req.params.task, req.params.page)
+
         const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
-        const page = await this.applicationService.getCurrentPage(req, this.dataServices, userInput)
+        const page = await this.applicationService.initializePage(Page, req, this.dataServices, userInput)
 
         res.render(viewPath(page), {
           applicationId: req.params.id,
@@ -42,7 +45,8 @@ export default class PagesController {
 
   update() {
     return async (req: Request, res: Response) => {
-      const page = await this.applicationService.getCurrentPage(req, this.dataServices)
+      const Page = getPage(req.params.task, req.params.page)
+      const page = await this.applicationService.initializePage(Page, req, this.dataServices)
 
       try {
         await this.applicationService.save(page, req)

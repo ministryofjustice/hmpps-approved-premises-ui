@@ -2,12 +2,10 @@ import type { Request } from 'express'
 import type { DataServices } from '@approved-premises/ui'
 import type { ActiveOffence, ApprovedPremisesApplication, Document } from '@approved-premises/api'
 
-import type TasklistPage from '../form-pages/tasklistPage'
+import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import type { RestClientBuilder, ApplicationClient } from '../data'
-import { UnknownPageError, ValidationError } from '../utils/errors'
+import { ValidationError } from '../utils/errors'
 
-import Apply from '../form-pages/apply'
-import { getPage } from '../utils/applicationUtils'
 import { getPageName, getTaskName } from '../form-pages/utils'
 
 export default class ApplicationService {
@@ -47,19 +45,12 @@ export default class ApplicationService {
     return documents
   }
 
-  async getCurrentPage(
+  async initializePage(
+    Page: TasklistPageInterface,
     request: Request,
     dataServices: DataServices,
     userInput?: Record<string, unknown>,
   ): Promise<TasklistPage> {
-    if (!request.params.task) {
-      throw new UnknownPageError()
-    }
-
-    request.params.page = request.params.page || this.firstPageForTask(request.params.task)
-
-    const Page = getPage(request.params.task, request.params.page)
-
     const application = await this.getApplicationFromSessionOrAPI(request)
     const body = this.getBody(application, request, userInput)
 
@@ -103,10 +94,6 @@ export default class ApplicationService {
       return application
     }
     return this.findApplication(request.user.token, request.params.id)
-  }
-
-  private firstPageForTask(taskName: string) {
-    return Object.keys(Apply.pages[taskName])[0]
   }
 
   private async saveToSession(application: ApprovedPremisesApplication, page: TasklistPage, request: Request) {
