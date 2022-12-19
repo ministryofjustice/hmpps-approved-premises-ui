@@ -52,7 +52,7 @@ export default class ApplicationService {
     userInput?: Record<string, unknown>,
   ): Promise<TasklistPage> {
     const application = await this.getApplicationFromSessionOrAPI(request)
-    const body = this.getBody(application, request, userInput)
+    const body = this.getBody(Page, application, request, userInput)
 
     const page = Page.initialize
       ? await Page.initialize(body, application, request.user.token, dataServices)
@@ -107,17 +107,25 @@ export default class ApplicationService {
     await client.update(application)
   }
 
-  private getBody(application: ApprovedPremisesApplication, request: Request, userInput: Record<string, unknown>) {
+  private getBody(
+    Page: TasklistPageInterface,
+    application: ApprovedPremisesApplication,
+    request: Request,
+    userInput: Record<string, unknown>,
+  ) {
     if (userInput && Object.keys(userInput).length) {
       return userInput
     }
     if (Object.keys(request.body).length) {
       return request.body
     }
-    return this.getPageDataFromApplication(application, request)
+    return this.getPageDataFromApplication(Page, application)
   }
 
-  private getPageDataFromApplication(application: ApprovedPremisesApplication, request: Request) {
-    return application.data?.[request.params.task]?.[request.params.page] || {}
+  private getPageDataFromApplication(Page: TasklistPageInterface, application: ApprovedPremisesApplication) {
+    const pageName = getPageName(Page)
+    const taskName = getTaskName(Page)
+
+    return application.data?.[taskName]?.[pageName] || {}
   }
 }

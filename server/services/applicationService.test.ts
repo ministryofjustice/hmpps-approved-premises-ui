@@ -203,6 +203,8 @@ describe('ApplicationService', () => {
     it('should load from the session if the body and userInput are blank', async () => {
       request.body = {}
       request.session.application.data = { 'my-task': { first: { foo: 'bar' } } }
+      ;(getTaskName as jest.Mock).mockReturnValue('my-task')
+      ;(getPageName as jest.Mock).mockReturnValue('first')
 
       const result = await service.initializePage(Page, request, dataServices)
 
