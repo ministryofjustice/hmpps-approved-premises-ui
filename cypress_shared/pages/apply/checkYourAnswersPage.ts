@@ -1,14 +1,20 @@
-import type { Person, PrisonCaseNote, Document } from '@approved-premises/api'
+import type { Person, PrisonCaseNote, Document, ApprovedPremisesApplication } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import ApplyPage from './applyPage'
 
-import Page from '../page'
 import { Adjudication } from '../../../server/@types/shared'
 import { sentenceCase } from '../../../server/utils/utils'
+import paths from '../../../server/paths/apply'
 
-export default class CheckYourAnswersPage extends Page {
-  constructor() {
-    super('Check your answers')
+export default class CheckYourAnswersPage extends ApplyPage {
+  constructor(application: ApprovedPremisesApplication) {
+    super(
+      'Check your answers',
+      application,
+      'check-your-answers',
+      'review',
+      paths.applications.show({ id: application.id }),
+    )
   }
 
   shouldShowPersonInformation(person: Person) {

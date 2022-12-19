@@ -105,7 +105,7 @@ export default class CaseNotes implements TasklistPage {
   }
 
   previous() {
-    return ''
+    return 'dashboard'
   }
 
   next() {

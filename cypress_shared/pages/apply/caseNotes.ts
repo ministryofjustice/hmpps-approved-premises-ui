@@ -1,15 +1,22 @@
 import { ApprovedPremisesApplication, PrisonCaseNote, Adjudication } from '@approved-premises/api'
+import paths from '../../../server/paths/apply'
 
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { sentenceCase } from '../../../server/utils/utils'
 
-import Page from '../page'
+import ApplyPage from './applyPage'
 
-export default class CaseNotesPage extends Page {
+export default class CaseNotesPage extends ApplyPage {
   prisonCaseNotes: Array<PrisonCaseNote>
 
   constructor(application: ApprovedPremisesApplication, prisonCaseNotes: Array<PrisonCaseNote>) {
-    super('Prison information')
+    super(
+      'Prison information',
+      application,
+      'prison-information',
+      'case-notes',
+      paths.applications.show({ id: application.id }),
+    )
 
     cy.get('label').contains(
       `Are there additional circumstances that have helped ${application.person.name} do well in the past?`,

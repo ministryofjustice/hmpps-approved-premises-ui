@@ -20,7 +20,7 @@ export default class RiskManagementFeatures implements TasklistPage {
   ) {}
 
   previous() {
-    return ''
+    return 'dashboard'
   }
 
   next() {

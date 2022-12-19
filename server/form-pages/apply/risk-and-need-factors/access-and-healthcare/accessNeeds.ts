@@ -60,7 +60,7 @@ export default class AccessNeeds implements TasklistPage {
   constructor(public body: Partial<AccessNeedsBody>, private readonly application: ApprovedPremisesApplication) {}
 
   previous() {
-    return ''
+    return 'dashboard'
   }
 
   next() {

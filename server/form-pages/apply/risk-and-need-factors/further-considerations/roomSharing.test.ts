@@ -26,7 +26,7 @@ describe('RoomSharing', () => {
   })
 
   itShouldHaveNextValue(new RoomSharing({}), 'vulnerability')
-  itShouldHavePreviousValue(new RoomSharing({}), '')
+  itShouldHavePreviousValue(new RoomSharing({}), 'dashboard')
 
   describe('errors', () => {
     it('shows errors when the yes/no questions are blank', () => {

@@ -1,10 +1,21 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
+import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
 
 export default class PreviousPlacementsPage extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
-    super('Previous placements', application, 'further-considerations', 'previous-placements')
+    super(
+      'Previous placements',
+      application,
+      'further-considerations',
+      'previous-placements',
+      paths.applications.pages.show({
+        id: application.id,
+        task: 'further-considerations',
+        page: 'vulnerability',
+      }),
+    )
     cy.get('.govuk-form-group').contains(
       `Has ${application.person.name} stayed or been offered a placement in an AP before?`,
     )

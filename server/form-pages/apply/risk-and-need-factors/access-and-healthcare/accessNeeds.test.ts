@@ -56,7 +56,7 @@ describe('AccessNeeds', () => {
     itShouldHaveNextValue(new AccessNeeds({ additionalNeeds: ['none'] }, application), 'covid')
   })
 
-  itShouldHavePreviousValue(new AccessNeeds({}, application), '')
+  itShouldHavePreviousValue(new AccessNeeds({}, application), 'dashboard')
 
   describe('errors', () => {
     const page = new AccessNeeds({}, application)

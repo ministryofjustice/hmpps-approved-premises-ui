@@ -13,7 +13,7 @@ export default class Review implements TasklistPage {
   constructor(public body: { reviewed?: string }, readonly application: ApprovedPremisesApplication) {}
 
   previous() {
-    return ''
+    return 'dashboard'
   }
 
   next() {

@@ -19,7 +19,7 @@ describe('Review', () => {
   })
 
   itShouldHaveNextValue(new Review(body, application), '')
-  itShouldHavePreviousValue(new Review(body, application), '')
+  itShouldHavePreviousValue(new Review(body, application), 'dashboard')
 
   describe('errors', () => {
     it('should return an empty object', () => {

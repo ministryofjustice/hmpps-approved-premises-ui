@@ -63,7 +63,7 @@ export default class RoomSharing implements TasklistPage {
   constructor(public body: Partial<RoomSharingBody>) {}
 
   previous() {
-    return ''
+    return 'dashboard'
   }
 
   next() {

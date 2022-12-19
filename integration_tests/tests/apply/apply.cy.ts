@@ -380,6 +380,7 @@ context('Apply', () => {
       const roshSummaryPage = new RoshSummaryPage(application, roshSummaries)
       roshSummaryPage.shouldShowRiskWidgets(uiRisks)
       roshSummaryPage.completeForm()
+
       roshSummaryPage.clickSubmit()
 
       const offenceDetailsPage = new OffenceDetailsPage(application, offenceDetailSummaries)
@@ -656,7 +657,7 @@ context('Apply', () => {
 
       // Given I click on the Attach Documents task
       cy.get('[data-cy-task-name="attach-required-documents"]').click()
-      const attachDocumentsPage = new AttachDocumentsPage(documents, selectedDocuments)
+      const attachDocumentsPage = new AttachDocumentsPage(documents, selectedDocuments, application)
 
       // Then I should be able to download the documents
       attachDocumentsPage.shouldBeAbleToDownloadDocuments()
@@ -674,7 +675,7 @@ context('Apply', () => {
       cy.get('[data-cy-task-name="check-your-answers"]').click()
 
       // Then I should be on the check your answers page
-      const checkYourAnswersPage = new CheckYourAnswersPage()
+      const checkYourAnswersPage = new CheckYourAnswersPage(application)
 
       // And the page should be populated with my answers
       checkYourAnswersPage.shouldShowPersonInformation(person)

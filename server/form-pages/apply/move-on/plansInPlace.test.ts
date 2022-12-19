@@ -15,7 +15,7 @@ describe('PlansInPlace', () => {
   })
 
   itShouldHaveNextValue(new PlansInPlace({}), 'type-of-accommodation')
-  itShouldHavePreviousValue(new PlansInPlace({}), 'pdu-region')
+  itShouldHavePreviousValue(new PlansInPlace({}), 'relocation-region')
 
   describe('errors', () => {
     const page = new PlansInPlace({})

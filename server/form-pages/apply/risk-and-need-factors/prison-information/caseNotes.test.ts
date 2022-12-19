@@ -194,7 +194,7 @@ describe('CaseNotes', () => {
   })
 
   itShouldHaveNextValue(new CaseNotes({}, application), '')
-  itShouldHavePreviousValue(new CaseNotes({}, application), '')
+  itShouldHavePreviousValue(new CaseNotes({}, application), 'dashboard')
 
   describe('response', () => {
     const page = new CaseNotes({ selectedCaseNotes: caseNotes, moreDetail: 'some detail', adjudications }, application)
