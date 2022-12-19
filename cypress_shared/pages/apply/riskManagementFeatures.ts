@@ -6,7 +6,7 @@ import ApplyPage from './applyPage'
 export default class RiskManagementFeatures extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
     super(
-      'What features of AP will support the management of risk?',
+      'What features of an AP will support the management of risk?',
       application,
       'risk-management-features',
       'risk-management-features',
