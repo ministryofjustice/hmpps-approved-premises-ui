@@ -69,8 +69,8 @@ export default class ApplicationService {
     } else {
       const application = await this.getApplicationFromSessionOrAPI(request)
 
-      const pageName = getPageName(page)
-      const taskName = getTaskName(page)
+      const pageName = getPageName(page.constructor)
+      const taskName = getTaskName(page.constructor)
 
       application.data = application.data || {}
       application.data[taskName] = application.data[taskName] || {}
