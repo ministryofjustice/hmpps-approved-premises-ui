@@ -789,7 +789,7 @@
               "items": {
                 "enum": [
                   "abuse",
-                  "accomodation",
+                  "accommodation",
                   "attitudesAndBehaviour",
                   "childrenAndFamilies",
                   "drugsAndAlcohol",
@@ -1264,7 +1264,7 @@
                 "foreignNational",
                 "livingWithPartnerFamilyOrFriends",
                 "other",
-                "ownAccomodation",
+                "ownaccommodation",
                 "privateRented",
                 "rentedThroughHousingAssociation",
                 "rentedThroughLocalAuthority",

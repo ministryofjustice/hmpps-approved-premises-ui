@@ -6,7 +6,7 @@ import { Page } from '../../utils/decorators'
 import TasklistPage from '../../tasklistPage'
 
 export const accommodationType = {
-  ownAccomodation: 'Own accommodation',
+  ownaccommodation: 'Own accommodation',
   livingWithPartnerFamilyOrFriends: 'Living with partner, family or friends',
   rentedThroughLocalAuthority: 'Rented through local authority',
   rentedThroughHousingAssociation: 'Rented through housing association',

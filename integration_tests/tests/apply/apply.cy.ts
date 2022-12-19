@@ -47,7 +47,7 @@ import CovidPage from '../../../cypress_shared/pages/apply/covid'
 import AccessNeedsAdditionalAdjustmentsPage from '../../../cypress_shared/pages/apply/accessNeedsAdditionalAdjustments'
 import RelocationRegionPage from '../../../cypress_shared/pages/apply/relocationRegion'
 import PlansInPlacePage from '../../../cypress_shared/pages/apply/plansInPlace'
-import TypeOfAccomodationPage from '../../../cypress_shared/pages/apply/typeOfAccommodation'
+import TypeOfAccommodationPage from '../../../cypress_shared/pages/apply/typeOfAccommodation'
 import CaseNotesPage from '../../../cypress_shared/pages/apply/caseNotes'
 import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
 import OptionalOasysSectionsPage from '../../../cypress_shared/pages/apply/optionalOasysSections'
@@ -625,7 +625,7 @@ context('Apply', () => {
       plansInPlacePage.clickSubmit()
 
       // And I complete the type of accommodation page
-      const typeOfAccommodationPage = new TypeOfAccomodationPage(application)
+      const typeOfAccommodationPage = new TypeOfAccommodationPage(application)
       typeOfAccommodationPage.completeForm()
       typeOfAccommodationPage.clickSubmit()
 
