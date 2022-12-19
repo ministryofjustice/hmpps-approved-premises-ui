@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 import type { Router } from 'express'
+import Apply from '../form-pages/apply'
 
 import type { Controllers } from '../controllers'
 import paths from '../paths/apply'
@@ -8,6 +9,7 @@ import paths from '../paths/apply'
 import actions from './utils'
 
 export default function routes(controllers: Controllers, router: Router): Router {
+  const { pages } = Apply
   const { get, post, put } = actions(router)
   const { applicationsController, pagesController, peopleController, offencesController, documentsController } =
     controllers
@@ -23,8 +25,13 @@ export default function routes(controllers: Controllers, router: Router): Router
   get(paths.applications.people.selectOffence.pattern, offencesController.selectOffence())
   get(paths.applications.people.documents.pattern, documentsController.show())
 
-  get(paths.applications.pages.show.pattern, pagesController.show())
-  put(paths.applications.pages.update.pattern, pagesController.update())
+  Object.keys(pages).forEach((taskKey: string) => {
+    Object.keys(pages[taskKey]).forEach((pageKey: string) => {
+      const { pattern } = paths.applications.show.path(`tasks/${taskKey}/pages/${pageKey}`)
+      get(pattern, pagesController.show(taskKey, pageKey))
+      put(pattern, pagesController.update(taskKey, pageKey))
+    })
+  })
 
   return router
 }

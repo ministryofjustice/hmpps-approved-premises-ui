@@ -28,6 +28,32 @@ describe('ConvictedOffences', () => {
         restrictions: 'You must specify if there are any restrictions linked to placement location',
       })
     })
+
+    it('should show an error if the postcode area is invalid', () => {
+      const page = new DescribeLocationFactors({ postcodeArea: 'Not a postcode area' })
+
+      const errors = page.errors()
+
+      expect(errors.postcodeArea).toEqual('The preferred postcode area must be a valid postcode area (i.e SW1A)')
+    })
+
+    it('should show an error if restrictions is yes, but no detail is provided', () => {
+      const page = new DescribeLocationFactors({ restrictions: 'yes' })
+
+      const errors = page.errors()
+
+      expect(errors.restrictionDetail).toEqual(
+        'You must provide details of any restrictions linked to placement location',
+      )
+    })
+
+    it('should show an error if an alternative radius is required', () => {
+      const page = new DescribeLocationFactors({ alternativeRadiusAccepted: 'yes' })
+
+      const errors = page.errors()
+
+      expect(errors.alternativeRadius).toEqual('You must choose an alternative radius')
+    })
   })
 
   describe('response', () => {

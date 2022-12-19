@@ -2,10 +2,12 @@ import type { Request, Response, NextFunction } from 'express'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import createError from 'http-errors'
 
-import type { ErrorsAndUserInput, DataServices } from '@approved-premises/ui'
+import type { ErrorsAndUserInput, DataServices, FormPages } from '@approved-premises/ui'
 import PagesController from './pagesController'
 import { ApplicationService } from '../../../services'
 import TasklistPage from '../../../form-pages/tasklistPage'
+import Apply from '../../../form-pages/apply'
+import { getPage } from '../../../utils/applicationUtils'
 
 import {
   fetchErrorsAndUserInput,
@@ -18,6 +20,14 @@ import { viewPath } from '../../../form-pages/utils'
 
 jest.mock('../../../utils/validation')
 jest.mock('../../../form-pages/utils')
+jest.mock('../../../utils/applicationUtils')
+jest.mock('../../../form-pages/apply', () => {
+  return {
+    pages: { 'my-task': {} },
+  }
+})
+
+Apply.pages = {} as FormPages
 
 describe('pagesController', () => {
   const request: DeepMocked<Request> = createMock<Request>({})
@@ -27,23 +37,22 @@ describe('pagesController', () => {
   const applicationService = createMock<ApplicationService>({})
   const dataServices = createMock<DataServices>({}) as DataServices
 
+  const PageConstructor = jest.fn()
+  const page = createMock<TasklistPage>({})
+
   let pagesController: PagesController
 
   beforeEach(() => {
     pagesController = new PagesController(applicationService, dataServices)
+    applicationService.initializePage.mockResolvedValue(page)
+    ;(getPage as jest.Mock).mockReturnValue(PageConstructor)
   })
 
   describe('show', () => {
-    const page = createMock<TasklistPage>({})
-
     beforeEach(() => {
       request.params = {
         id: 'some-uuid',
-        task: 'some-task',
-        page: 'some-page',
       }
-
-      applicationService.getCurrentPage.mockResolvedValue(page)
       ;(viewPath as jest.Mock).mockReturnValue('applications/pages/some/view')
     })
 
@@ -52,15 +61,16 @@ describe('pagesController', () => {
         return { errors: {}, errorSummary: [], userInput: {} }
       })
 
-      const requestHandler = pagesController.show()
+      const requestHandler = pagesController.show('some-task', 'some-page')
 
       await requestHandler(request, response, next)
 
-      expect(applicationService.getCurrentPage).toHaveBeenCalledWith(request, dataServices, {})
+      expect(getPage).toHaveBeenCalledWith('some-task', 'some-page')
+      expect(applicationService.initializePage).toHaveBeenCalledWith(PageConstructor, request, dataServices, {})
 
       expect(response.render).toHaveBeenCalledWith('applications/pages/some/view', {
         applicationId: request.params.id,
-        task: request.params.task,
+        task: 'some-task',
         page,
         errors: {},
         errorSummary: [],
@@ -72,11 +82,12 @@ describe('pagesController', () => {
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
-      const requestHandler = pagesController.show()
+      const requestHandler = pagesController.show('some-task', 'some-page')
 
       await requestHandler(request, response, next)
 
-      expect(applicationService.getCurrentPage).toHaveBeenCalledWith(
+      expect(applicationService.initializePage).toHaveBeenCalledWith(
+        PageConstructor,
         request,
         dataServices,
         errorsAndUserInput.userInput,
@@ -84,7 +95,7 @@ describe('pagesController', () => {
 
       expect(response.render).toHaveBeenCalledWith('applications/pages/some/view', {
         applicationId: request.params.id,
-        task: request.params.task,
+        task: 'some-task',
         page,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
@@ -93,11 +104,11 @@ describe('pagesController', () => {
     })
 
     it('returns a 404 when the page cannot be found', async () => {
-      applicationService.getCurrentPage.mockImplementation(() => {
+      applicationService.initializePage.mockImplementation(() => {
         throw new UnknownPageError()
       })
 
-      const requestHandler = pagesController.show()
+      const requestHandler = pagesController.show('some-task', 'some-page')
 
       await requestHandler(request, response, next)
 
@@ -107,11 +118,11 @@ describe('pagesController', () => {
     it('calls catchAPIErrorOrPropogate if the error is not an unknown page error', async () => {
       const genericError = new Error()
 
-      applicationService.getCurrentPage.mockImplementation(() => {
+      applicationService.initializePage.mockImplementation(() => {
         throw genericError
       })
 
-      const requestHandler = pagesController.show()
+      const requestHandler = pagesController.show('some-task', 'some-page')
 
       await requestHandler(request, response, next)
 
@@ -120,16 +131,12 @@ describe('pagesController', () => {
   })
 
   describe('update', () => {
-    const page = createMock<TasklistPage>({})
-
     beforeEach(() => {
       request.params = {
         id: 'some-uuid',
-        task: 'some-task',
-        page: 'page-name',
       }
 
-      applicationService.getCurrentPage.mockResolvedValue(page)
+      applicationService.initializePage.mockResolvedValue(page)
     })
 
     it('updates an application and redirects to the next page', async () => {
@@ -137,21 +144,21 @@ describe('pagesController', () => {
 
       applicationService.save.mockResolvedValue()
 
-      const requestHandler = pagesController.update()
+      const requestHandler = pagesController.update('some-task', 'page-name')
 
       await requestHandler({ ...request }, response)
 
       expect(applicationService.save).toHaveBeenCalledWith(page, request)
 
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.applications.pages.show({ id: request.params.id, task: request.params.task, page: 'next-page' }),
+        paths.applications.pages.show({ id: request.params.id, task: 'some-task', page: 'next-page' }),
       )
     })
 
     it('redirects to the tasklist if there is no next page', async () => {
       page.next.mockReturnValue(undefined)
 
-      const requestHandler = pagesController.update()
+      const requestHandler = pagesController.update('some-task', 'page-name')
 
       await requestHandler(request, response)
 
@@ -166,7 +173,7 @@ describe('pagesController', () => {
         throw err
       })
 
-      const requestHandler = pagesController.update()
+      const requestHandler = pagesController.update('some-task', 'page-name')
 
       await requestHandler(request, response)
 
@@ -176,7 +183,7 @@ describe('pagesController', () => {
         request,
         response,
         err,
-        paths.applications.pages.show({ id: request.params.id, task: request.params.task, page: request.params.page }),
+        paths.applications.pages.show({ id: request.params.id, task: 'some-task', page: 'page-name' }),
       )
     })
   })
