@@ -17,7 +17,7 @@ export default [
   {
     request: {
       method: 'GET',
-      url: `/applications/${guidRegex}`,
+      urlPathPattern: `/applications/${guidRegex}`,
     },
     response: {
       status: 200,
