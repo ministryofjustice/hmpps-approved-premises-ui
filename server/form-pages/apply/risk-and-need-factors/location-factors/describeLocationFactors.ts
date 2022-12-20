@@ -33,7 +33,7 @@ export default class DescribeLocationFactors implements TasklistPage {
   title = 'Location factors'
 
   questions = {
-    postcodeArea: 'What is the preferred location for the AP placement?',
+    postcodeArea: 'What is the preferred postcode area for the Approved Premises (AP) placement?',
     positiveFactors: 'Give details of any positive factors for the person in this location.',
     restrictions: 'Are there any restrictions linked to placement location?',
     restrictionDetail:

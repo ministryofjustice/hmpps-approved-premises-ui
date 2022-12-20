@@ -72,7 +72,7 @@ describe('ConvictedOffences', () => {
 
       expect(page.response()).toEqual({
         'Give details of any positive factors for the person in this location.': 'Positive Factors',
-        'What is the preferred location for the AP placement?': 'E17',
+        'What is the preferred postcode area for the Approved Premises (AP) placement?': 'E17',
         'Are there any restrictions linked to placement location?': 'Yes',
         'Provide details of any restraining orders, exclusion zones, inclusion zones or other location based licence conditions.':
           'Some restriction detail',
@@ -97,7 +97,7 @@ describe('ConvictedOffences', () => {
 
       expect(page.response()).toEqual({
         'Give details of any positive factors for the person in this location.': 'Positive Factors',
-        'What is the preferred location for the AP placement?': 'E17',
+        'What is the preferred postcode area for the Approved Premises (AP) placement?': 'E17',
         'Are there any restrictions linked to placement location?': 'No',
         'If an AP Placement is not available in the persons preferred area, would a placement further away be considered?':
           'No',
