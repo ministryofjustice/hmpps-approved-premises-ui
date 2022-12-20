@@ -13,7 +13,8 @@ const extensionDate = DateFormats.dateObjToIsoDate(new Date(2050, 0, 1))
 
 Given('I extend that booking', () => {
   cy.get('@bookingConfirmationPage').then((bookingConfirmationPage: BookingConfirmationPage) => {
-    bookingConfirmationPage.clickToViewBooking()
+    bookingConfirmationPage.clickBackToDashboard()
+    cy.get('.govuk-table__cell').contains('Manage').click()
   })
 
   const bookingShowPage = new BookingShowPage()
@@ -32,7 +33,8 @@ Then('I should see a message on the booking page confirming the extension', () =
 
 Then('I attempt to extend that booking without entering the date', () => {
   cy.get('@bookingConfirmationPage').then((bookingConfirmationPage: BookingConfirmationPage) => {
-    bookingConfirmationPage.clickToViewBooking()
+    bookingConfirmationPage.clickBackToDashboard()
+    cy.get('.govuk-table__cell').contains('Manage').click()
   })
 
   const bookingShowPage = new BookingShowPage()
