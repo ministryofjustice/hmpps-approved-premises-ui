@@ -43,7 +43,7 @@
             "releaseType": {
               "enum": [
                 "hdc",
-                "license",
+                "licence",
                 "pss",
                 "rotl"
               ],

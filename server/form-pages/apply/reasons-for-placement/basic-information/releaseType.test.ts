@@ -44,7 +44,7 @@ describe('ReleaseType', () => {
         expect(items.length).toEqual(4)
         expect(items[0].value).toEqual('rotl')
         expect(items[1].value).toEqual('hdc')
-        expect(items[2].value).toEqual('license')
+        expect(items[2].value).toEqual('licence')
         expect(items[3].value).toEqual('pss')
       })
 
@@ -58,7 +58,7 @@ describe('ReleaseType', () => {
 
         expect(items.length).toEqual(2)
         expect(items[0].value).toEqual('rotl')
-        expect(items[1].value).toEqual('license')
+        expect(items[1].value).toEqual('licence')
       })
 
       it('if the sentence type is "ipp" then the reduced list of items should be shown', () => {
@@ -69,7 +69,7 @@ describe('ReleaseType', () => {
 
         expect(items.length).toEqual(2)
         expect(items[0].value).toEqual('rotl')
-        expect(items[1].value).toEqual('license')
+        expect(items[1].value).toEqual('licence')
       })
 
       it('if the sentence type is "life" then the reduced list of items should be shown', () => {
@@ -80,7 +80,7 @@ describe('ReleaseType', () => {
 
         expect(items.length).toEqual(2)
         expect(items[0].value).toEqual('rotl')
-        expect(items[1].value).toEqual('license')
+        expect(items[1].value).toEqual('licence')
       })
     })
 
@@ -107,7 +107,7 @@ describe('ReleaseType', () => {
       const page = new ReleaseType({ releaseType: 'rotl' }, application)
 
       expect(page.response()).toEqual({
-        [page.title]: 'Release on Temporary License (ROTL)',
+        [page.title]: 'Release on Temporary Licence (ROTL)',
       })
     })
   })

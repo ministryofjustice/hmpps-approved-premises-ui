@@ -8,18 +8,18 @@ import { SentenceTypesT } from './sentenceType'
 import { Page } from '../../../utils/decorators'
 
 const allReleaseTypes = {
-  rotl: 'Release on Temporary License (ROTL)',
+  rotl: 'Release on Temporary Licence (ROTL)',
   hdc: 'Home detention curfew (HDC)',
-  license: 'License',
+  licence: 'Licence',
   pss: 'Post Sentence Supervision (PSS)',
 } as const
 
 type AllReleaseTypes = typeof allReleaseTypes
-type ReducedReleaseTypes = Pick<AllReleaseTypes, 'rotl' | 'license'>
+type ReducedReleaseTypes = Pick<AllReleaseTypes, 'rotl' | 'licence'>
 type SentenceType = Extract<
   SentenceTypesT,
   'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life' | 'nonStatutory'
->
+> 
 
 @Page({ name: 'release-type', bodyProperties: ['releaseType'] })
 export default class ReleaseType implements TasklistPage {
@@ -84,8 +84,8 @@ export default class ReleaseType implements TasklistPage {
     }
     if (sessionReleaseType === 'extendedDeterminate' || sessionReleaseType === 'ipp' || sessionReleaseType === 'life') {
       return {
-        rotl: 'Release on Temporary License (ROTL)',
-        license: 'License',
+        rotl: 'Release on Temporary Licence (ROTL)',
+        licence: 'Licence',
       }
     }
     throw new SessionDataError(`Unknown release type ${sessionReleaseType}`)
