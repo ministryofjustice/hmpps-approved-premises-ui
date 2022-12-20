@@ -16,7 +16,10 @@ const allReleaseTypes = {
 
 type AllReleaseTypes = typeof allReleaseTypes
 type ReducedReleaseTypes = Pick<AllReleaseTypes, 'rotl' | 'license'>
-type SentenceType = Extract<SentenceTypesT, 'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life'>
+type SentenceType = Extract<
+  SentenceTypesT,
+  'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life' | 'nonStatutory'
+>
 
 @Page({ name: 'release-type', bodyProperties: ['releaseType'] })
 export default class ReleaseType implements TasklistPage {
@@ -76,7 +79,7 @@ export default class ReleaseType implements TasklistPage {
   }
 
   getReleaseTypes(sessionReleaseType: SentenceType): AllReleaseTypes | ReducedReleaseTypes {
-    if (sessionReleaseType === 'standardDeterminate') {
+    if (sessionReleaseType === 'standardDeterminate' || sessionReleaseType === 'nonStatutory') {
       return allReleaseTypes
     }
     if (sessionReleaseType === 'extendedDeterminate' || sessionReleaseType === 'ipp' || sessionReleaseType === 'life') {
