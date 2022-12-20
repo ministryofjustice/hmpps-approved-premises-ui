@@ -28,7 +28,7 @@ export default class BookingConfirmationPage extends Page {
     })
   }
 
-  clickToViewBooking(): void {
+  clickBackToDashboard(): void {
     cy.get('a').contains('Back to dashboard').click()
   }
 
