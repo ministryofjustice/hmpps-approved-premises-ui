@@ -4,7 +4,7 @@ import Page from '../page'
 
 export default class EnterCRNPage extends Page {
   constructor() {
-    super("Enter the individual's CRN")
+    super("Enter the person's CRN")
   }
 
   enterCrn(crn: string): void {

@@ -61,7 +61,7 @@ export default class ApplicationsController {
       }
 
       return res.render('applications/new', {
-        pageHeading: "Enter the individual's CRN",
+        pageHeading: "Enter the person's CRN",
         errors,
         errorSummary,
         ...userInput,
