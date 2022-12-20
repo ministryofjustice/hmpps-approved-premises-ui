@@ -19,7 +19,7 @@ type ReducedReleaseTypes = Pick<AllReleaseTypes, 'rotl' | 'licence'>
 type SentenceType = Extract<
   SentenceTypesT,
   'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life' | 'nonStatutory'
-> 
+>
 
 @Page({ name: 'release-type', bodyProperties: ['releaseType'] })
 export default class ReleaseType implements TasklistPage {
