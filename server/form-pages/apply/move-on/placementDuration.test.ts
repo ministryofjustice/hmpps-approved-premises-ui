@@ -102,7 +102,7 @@ describe('PlacementDuration', () => {
     application = applicationFactory.build({ data })
 
     itShouldHaveNextValue(new PlacementDuration({}, application), 'relocation-region')
-    itShouldHavePreviousValue(new PlacementDuration({}, application), '')
+    itShouldHavePreviousValue(new PlacementDuration({}, application), 'dashboard')
   })
 
   describe('errors', () => {

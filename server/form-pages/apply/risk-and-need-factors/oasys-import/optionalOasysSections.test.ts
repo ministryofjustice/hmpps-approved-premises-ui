@@ -87,7 +87,7 @@ describe('OptionalOasysSections', () => {
 
   itShouldHaveNextValue(new OptionalOasysSections({}), 'rosh-summary')
 
-  itShouldHavePreviousValue(new OptionalOasysSections({}), '')
+  itShouldHavePreviousValue(new OptionalOasysSections({}), 'dashboard')
 
   describe('errors', () => {
     it('should return an empty object', () => {

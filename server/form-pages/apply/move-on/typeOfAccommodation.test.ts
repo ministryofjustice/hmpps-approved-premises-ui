@@ -12,7 +12,7 @@ jest.mock('../../../utils/formUtils', () => ({
     .mockImplementation(() => [{ value: 'other' }, { value: 'anotherTypeofAccommodation' }]),
 }))
 
-describe('TypeOfAccomodation', () => {
+describe('TypeOfaccommodation', () => {
   const person = personFactory.build({ name: 'John Wayne' })
   const application = applicationFactory.build({ person })
   describe('title', () => {
@@ -48,7 +48,7 @@ describe('TypeOfAccomodation', () => {
   itShouldHavePreviousValue(new TypeOfAccommodation({}, application), 'plans-in-place')
 
   describe('errors', () => {
-    it('returns an error if no accomodation type is selected', () => {
+    it('returns an error if no accommodation type is selected', () => {
       const page = new TypeOfAccommodation({}, application)
 
       expect(page.errors()).toEqual({ accommodationType: 'You must specify a type of accommodation' })

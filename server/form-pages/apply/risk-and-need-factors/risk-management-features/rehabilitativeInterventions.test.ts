@@ -15,12 +15,12 @@ describe('RehabilitativeInterventions', () => {
   describe('body', () => {
     it('should set the body', () => {
       const page = new RehabilitativeInterventions(
-        { rehabilitativeInterventions: 'accomodation' },
+        { rehabilitativeInterventions: 'accommodation' },
         application,
         previousPage,
       )
 
-      expect(page.body).toEqual({ rehabilitativeInterventions: ['accomodation'] })
+      expect(page.body).toEqual({ rehabilitativeInterventions: ['accommodation'] })
     })
   })
 
@@ -38,7 +38,7 @@ describe('RehabilitativeInterventions', () => {
 
     it('should return an empty object if "rehabilitativeInterventions" is populated with an array of interventions', () => {
       const page = new RehabilitativeInterventions(
-        { rehabilitativeInterventions: ['accomodation'] },
+        { rehabilitativeInterventions: ['accommodation'] },
         application,
         previousPage,
       )
@@ -48,7 +48,7 @@ describe('RehabilitativeInterventions', () => {
     it('should return an error if "rehabilitativeInterventions" includes "other" and no other intervention is supplied', () => {
       expect(
         new RehabilitativeInterventions(
-          { rehabilitativeInterventions: ['other', 'accomodation'] },
+          { rehabilitativeInterventions: ['other', 'accommodation'] },
           application,
           previousPage,
         ).errors(),
@@ -68,7 +68,7 @@ describe('RehabilitativeInterventions', () => {
         const page = new RehabilitativeInterventions(
           {
             rehabilitativeInterventions: [
-              'accomodation',
+              'accommodation',
               'drugsAndAlcohol',
               'childrenAndFamilies',
               'health',
@@ -86,7 +86,7 @@ describe('RehabilitativeInterventions', () => {
 
         expect(page.response()).toEqual({
           "Which rehabilitative interventions will support the person's Approved Premises (AP) placement?":
-            'Accomodation, Drugs and alcohol, Children and families, Health, Education, training and employment, Finance, benefits and debt, Attitudes, thinking and behaviour, Abuse, Other',
+            'accommodation, Drugs and alcohol, Children and families, Health, Education, training and employment, Finance, benefits and debt, Attitudes, thinking and behaviour, Abuse, Other',
           'Other intervention': 'Some intervention',
         })
       })

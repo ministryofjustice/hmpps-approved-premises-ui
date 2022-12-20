@@ -1,17 +1,28 @@
-import { Document } from '@approved-premises/api'
+import { ApprovedPremisesApplication, Document } from '@approved-premises/api'
 import path from 'path'
+import paths from '../../../server/paths/apply'
 
 import { DateFormats } from '../../../server/utils/dateUtils'
 
-import Page from '../page'
+import ApplyPage from './applyPage'
 
-export default class AttachDocumentsPage extends Page {
+export default class AttachDocumentsPage extends ApplyPage {
   documents: Array<Document>
 
   selectedDocuments: Array<Document>
 
-  constructor(documents: Array<Document>, selectedDocuments: Array<Document>) {
-    super('Select associated documents')
+  constructor(
+    documents: Array<Document>,
+    selectedDocuments: Array<Document>,
+    application: ApprovedPremisesApplication,
+  ) {
+    super(
+      'Select associated documents',
+      application,
+      'attach-required-documents',
+      'attach-documents',
+      paths.applications.show({ id: application.id }),
+    )
 
     this.documents = documents
     this.selectedDocuments = selectedDocuments

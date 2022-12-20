@@ -7,13 +7,23 @@ import Apply from '../../../server/form-pages/apply'
 export default class ApplyPage extends Page {
   tasklistPage: TasklistPage
 
-  constructor(title: string, application: ApprovedPremisesApplication, taskName: string, pageName: string) {
+  constructor(
+    title: string,
+    application: ApprovedPremisesApplication,
+    taskName: string,
+    pageName: string,
+    backLink?: string,
+  ) {
     super(title)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const Class = Apply.pages[taskName][pageName] as any
 
     this.tasklistPage = new Class(application.data?.[taskName]?.[pageName], application)
+
+    if (backLink) {
+      this.checkForBackButton(backLink)
+    }
   }
 
   checkRadioButtonFromPageBody(fieldName: string) {
@@ -37,5 +47,9 @@ export default class ApplyPage extends Page {
 
   selectSelectOptionFromPageBody(fieldName: string) {
     this.getSelectInputByIdAndSelectAnEntry(fieldName, this.tasklistPage.body[fieldName] as string)
+  }
+
+  checkForBackButton(path: string) {
+    cy.get('.govuk-back-link').should('have.attr', 'href').and('include', path)
   }
 }

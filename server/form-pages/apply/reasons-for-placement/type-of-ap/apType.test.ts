@@ -19,7 +19,7 @@ describe('ApType', () => {
     })
   })
 
-  itShouldHavePreviousValue(new ApType({}, application), '')
+  itShouldHavePreviousValue(new ApType({}, application), 'dashboard')
 
   describe('when type is set to pipe', () => {
     itShouldHaveNextValue(new ApType({ type: 'pipe' }, application), 'pipe-referral')

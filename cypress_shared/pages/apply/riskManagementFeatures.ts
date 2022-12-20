@@ -1,4 +1,5 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
+import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
 
@@ -9,6 +10,7 @@ export default class RiskManagementFeatures extends ApplyPage {
       application,
       'risk-management-features',
       'risk-management-features',
+      paths.applications.show({ id: application.id }),
     )
   }
 

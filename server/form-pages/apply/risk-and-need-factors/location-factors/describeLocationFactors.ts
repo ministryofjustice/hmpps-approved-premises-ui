@@ -47,7 +47,7 @@ export default class DescribeLocationFactors implements TasklistPage {
   constructor(public body: Partial<DescribeLocationFactorsBody>) {}
 
   previous() {
-    return ''
+    return 'dashboard'
   }
 
   next() {

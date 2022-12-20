@@ -25,7 +25,7 @@ export default class PlacementDuration implements TasklistPage {
   constructor(public body: Partial<PlacementDurationBody>, private readonly application: ApprovedPremisesApplication) {}
 
   previous() {
-    return ''
+    return 'dashboard'
   }
 
   next() {

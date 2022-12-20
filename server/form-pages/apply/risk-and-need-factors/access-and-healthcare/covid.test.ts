@@ -57,7 +57,7 @@ describe('Covid', () => {
 
     expect(page.response()).toEqual({
       'Has John Wayne been fully vaccinated for COVID-19?': 'Yes',
-      'Is the John Wayne at a higher risk from COVID-19?': 'Yes',
+      'Is John Wayne at a higher risk from COVID-19?': 'Yes',
       'Other considerations and comments on COVID-19': 'Some info',
     })
   })

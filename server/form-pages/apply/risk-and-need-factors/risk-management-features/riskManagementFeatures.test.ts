@@ -21,7 +21,7 @@ describe('RiskManagementFeatures', () => {
     })
   })
 
-  itShouldHavePreviousValue(new RiskManagementFeatures({}, application), '')
+  itShouldHavePreviousValue(new RiskManagementFeatures({}, application), 'dashboard')
 
   itShouldHaveNextValue(new RiskManagementFeatures({}, application), 'convicted-offences')
 

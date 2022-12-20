@@ -21,7 +21,12 @@
 
 {% block content %}
 
-  {% if page.previous() %}
+  {% if page.previous() === 'dashboard' %}
+    {{ govukBackLink({
+      text: "Back",
+      href: paths.applications.show({ id: applicationId })
+    }) }}
+  {% elif page.previous() %}
     {{ govukBackLink({
       text: "Back",
       href: paths.applications.pages.show({ id: applicationId, task: task, page: page.previous() })

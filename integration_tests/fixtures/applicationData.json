@@ -186,7 +186,7 @@
     },
     "rehabilitative-interventions": {
       "rehabilitativeInterventions": [
-        "accomodation",
+        "accommodation",
         "drugsAndAlcohol",
         "childrenAndFamilies",
         "health",
@@ -281,10 +281,6 @@
       "needsWheelchair": "yes",
       "mobilityNeeds": "laboriosam",
       "visualImpairment": "exercitationem"
-    },
-    "access-needs-additional-adjustments": {
-      "adjustments": "yes",
-      "adjustmentsDetail": "Some details here"
     },
     "covid": {
       "fullyVaccinated": "yes",

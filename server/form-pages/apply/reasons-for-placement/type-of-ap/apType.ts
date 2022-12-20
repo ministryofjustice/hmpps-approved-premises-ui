@@ -20,7 +20,7 @@ export default class ApType implements TasklistPage {
   constructor(public body: { type?: keyof ApTypes }, private readonly application: ApprovedPremisesApplication) {}
 
   previous() {
-    return ''
+    return 'dashboard'
   }
 
   next() {

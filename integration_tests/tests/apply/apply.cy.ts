@@ -44,10 +44,9 @@ import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import AccessNeedsPage from '../../../cypress_shared/pages/apply/accessNeeds'
 import AccessNeedsMobilityPage from '../../../cypress_shared/pages/apply/accessNeedsMobility'
 import CovidPage from '../../../cypress_shared/pages/apply/covid'
-import AccessNeedsAdditionalAdjustmentsPage from '../../../cypress_shared/pages/apply/accessNeedsAdditionalAdjustments'
 import RelocationRegionPage from '../../../cypress_shared/pages/apply/relocationRegion'
 import PlansInPlacePage from '../../../cypress_shared/pages/apply/plansInPlace'
-import TypeOfAccomodationPage from '../../../cypress_shared/pages/apply/typeOfAccommodation'
+import TypeOfAccommodationPage from '../../../cypress_shared/pages/apply/typeOfAccommodation'
 import CaseNotesPage from '../../../cypress_shared/pages/apply/caseNotes'
 import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
 import OptionalOasysSectionsPage from '../../../cypress_shared/pages/apply/optionalOasysSections'
@@ -380,6 +379,7 @@ context('Apply', () => {
       const roshSummaryPage = new RoshSummaryPage(application, roshSummaries)
       roshSummaryPage.shouldShowRiskWidgets(uiRisks)
       roshSummaryPage.completeForm()
+
       roshSummaryPage.clickSubmit()
 
       const offenceDetailsPage = new OffenceDetailsPage(application, offenceDetailSummaries)
@@ -543,20 +543,11 @@ context('Apply', () => {
       accessNeedsMobilityPage.completeForm()
       accessNeedsMobilityPage.clickSubmit()
 
-      const accessNeedsAdditionalAdjustmentsPage = new AccessNeedsAdditionalAdjustmentsPage(application)
-      accessNeedsAdditionalAdjustmentsPage.completeForm()
-      accessNeedsAdditionalAdjustmentsPage.clickSubmit()
-
       const covidPage = new CovidPage(application)
       covidPage.completeForm()
       covidPage.clickSubmit()
 
-      const accessAndHealthcarePages = [
-        accessNeedsPage,
-        accessNeedsMobilityPage,
-        accessNeedsAdditionalAdjustmentsPage,
-        covidPage,
-      ]
+      const accessAndHealthcarePages = [accessNeedsPage, accessNeedsMobilityPage, covidPage]
 
       Page.verifyOnPage(TaskListPage)
 
@@ -625,7 +616,7 @@ context('Apply', () => {
       plansInPlacePage.clickSubmit()
 
       // And I complete the type of accommodation page
-      const typeOfAccommodationPage = new TypeOfAccomodationPage(application)
+      const typeOfAccommodationPage = new TypeOfAccommodationPage(application)
       typeOfAccommodationPage.completeForm()
       typeOfAccommodationPage.clickSubmit()
 
@@ -656,7 +647,7 @@ context('Apply', () => {
 
       // Given I click on the Attach Documents task
       cy.get('[data-cy-task-name="attach-required-documents"]').click()
-      const attachDocumentsPage = new AttachDocumentsPage(documents, selectedDocuments)
+      const attachDocumentsPage = new AttachDocumentsPage(documents, selectedDocuments, application)
 
       // Then I should be able to download the documents
       attachDocumentsPage.shouldBeAbleToDownloadDocuments()
@@ -674,7 +665,7 @@ context('Apply', () => {
       cy.get('[data-cy-task-name="check-your-answers"]').click()
 
       // Then I should be on the check your answers page
-      const checkYourAnswersPage = new CheckYourAnswersPage()
+      const checkYourAnswersPage = new CheckYourAnswersPage(application)
 
       // And the page should be populated with my answers
       checkYourAnswersPage.shouldShowPersonInformation(person)

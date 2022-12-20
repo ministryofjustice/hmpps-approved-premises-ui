@@ -15,7 +15,7 @@ export default class PlansInPlace implements TasklistPage {
   constructor(public body: { arePlansInPlace?: YesOrNo }) {}
 
   previous() {
-    return 'pdu-region'
+    return 'relocation-region'
   }
 
   next() {
