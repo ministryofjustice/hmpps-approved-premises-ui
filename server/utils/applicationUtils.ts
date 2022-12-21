@@ -66,19 +66,6 @@ const getCompleteSectionCount = (sections: FormSections, application: ApprovedPr
   }).length
 }
 
-const taskLink = (task: Task, application: ApprovedPremisesApplication): string => {
-  if (previousTaskIsComplete(task, application)) {
-    const firstPage = Object.keys(task.pages)[0]
-
-    return `<a href="${paths.applications.pages.show({
-      id: application.id,
-      task: task.id,
-      page: firstPage,
-    })}" aria-describedby="eligibility-${task.id}" data-cy-task-name="${task.id}">${task.title}</a>`
-  }
-  return task.title
-}
-
 const getResponses = (application: ApprovedPremisesApplication): ApplicationResponse => {
   const responses = {}
 
@@ -168,11 +155,11 @@ const getArrivalDate = (application: ApprovedPremisesApplication, raiseOnMissing
 
 export {
   getTaskStatus,
-  taskLink,
   getCompleteSectionCount,
   getResponses,
   getResponseForPage,
   getPage,
   getArrivalDate,
   dashboardTableRows,
+  previousTaskIsComplete,
 }
