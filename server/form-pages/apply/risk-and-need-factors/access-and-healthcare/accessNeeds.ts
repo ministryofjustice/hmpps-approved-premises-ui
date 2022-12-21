@@ -1,6 +1,6 @@
 import type { TaskListErrors, YesNoOrIDK, YesOrNo } from '@approved-premises/ui'
 import { ApprovedPremisesApplication } from '../../../../@types/shared'
-import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
+import { convertKeyValuePairToCheckBoxItems, flattenCheckboxInput } from '../../../../utils/formUtils'
 import { pascalCase, sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 
@@ -19,7 +19,7 @@ export const additionalNeeds = {
 type AdditionalNeed = keyof typeof additionalNeeds
 
 type AccessNeedsBody = {
-  additionalNeeds: Array<AdditionalNeed>
+  additionalNeeds: Array<AdditionalNeed> | AdditionalNeed
   religiousOrCulturalNeeds: YesOrNo
   religiousOrCulturalNeedsDetails: string
   careActAssessmentCompleted: YesNoOrIDK
@@ -57,7 +57,9 @@ export default class AccessNeeds implements TasklistPage {
     careActAssessmentCompleted: 'Has a care act assessment been completed?',
   }
 
-  constructor(public body: Partial<AccessNeedsBody>, private readonly application: ApprovedPremisesApplication) {}
+  constructor(public body: Partial<AccessNeedsBody>, private readonly application: ApprovedPremisesApplication) {
+    this.body.additionalNeeds = flattenCheckboxInput(body.additionalNeeds)
+  }
 
   previous() {
     return 'dashboard'
@@ -70,7 +72,7 @@ export default class AccessNeeds implements TasklistPage {
 
   response() {
     const response = {
-      [this.questions.needs.question]: this.body.additionalNeeds
+      [this.questions.needs.question]: (this.body.additionalNeeds as Array<AdditionalNeed>)
         .map((need, i) => (i < 1 ? additionalNeeds[need] : additionalNeeds[need].toLowerCase()))
         .join(', '),
       [this.questions.religiousOrCulturalNeeds.question]: sentenceCase(this.body.religiousOrCulturalNeeds),
@@ -117,6 +119,6 @@ export default class AccessNeeds implements TasklistPage {
   }
 
   needsCheckboxes() {
-    return convertKeyValuePairToCheckBoxItems(additionalNeeds, this.body.additionalNeeds)
+    return convertKeyValuePairToCheckBoxItems(additionalNeeds, this.body.additionalNeeds as Array<AdditionalNeed>)
   }
 }
