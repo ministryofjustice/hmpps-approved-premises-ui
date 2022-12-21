@@ -12,8 +12,6 @@ jest.mock('../../../../services/personService.ts')
 describe('OptionalOasysSections', () => {
   const oasysSelection = oasysSelectionFactory.buildList(3)
   const needsLinkedToHarm = oasysSelectionFactory.needsLinkedToHarm().buildList(2)
-  let needsLinkedToReoffending = oasysSelectionFactory.needsLinkedToReoffending().buildList(2)
-  let otherNeeds = oasysSelectionFactory.needsNotLinkedToReoffending().buildList(2)
 
   const application = applicationFactory.build()
 
@@ -22,10 +20,24 @@ describe('OptionalOasysSections', () => {
     let personService: DeepMocked<PersonService>
     const applicationService = createMock<ApplicationService>({})
 
+    const needsLinkedToReoffending = [
+      oasysSelectionFactory.needsLinkedToReoffending().build({ section: 1 }),
+      oasysSelectionFactory.needsLinkedToReoffending().build({ section: 2 }),
+      oasysSelectionFactory.needsLinkedToReoffending().build({ section: 3 }),
+    ]
+
+    const otherNeeds = [
+      oasysSelectionFactory.needsNotLinkedToReoffending().build({ section: 7 }),
+      oasysSelectionFactory.needsNotLinkedToReoffending().build({ section: 8 }),
+      oasysSelectionFactory.needsNotLinkedToReoffending().build({ section: 9 }),
+    ]
+
     beforeEach(() => {
       personService = createMock<PersonService>({
         getOasysSelections: getOasysSelectionsMock,
       })
+
+      getOasysSelectionsMock.mockResolvedValue([...needsLinkedToHarm, ...needsLinkedToReoffending, ...otherNeeds])
     })
 
     it('calls the getOasysSelections method on the client with a token and the persons CRN', async () => {
@@ -35,12 +47,6 @@ describe('OptionalOasysSections', () => {
     })
 
     it('filters the OASys sections into needs linked to reoffending and other needs not linked to reoffending or harm', async () => {
-      personService.getOasysSelections.mockResolvedValue([
-        ...needsLinkedToHarm,
-        ...needsLinkedToReoffending,
-        ...otherNeeds,
-      ])
-
       const page = await OptionalOasysSections.initialize({}, application, 'some-token', {
         personService,
         applicationService,
@@ -50,14 +56,22 @@ describe('OptionalOasysSections', () => {
       expect(page.allOtherNeeds).toEqual(otherNeeds)
     })
 
-    it('initializes the OptionalOasysSections class with the selected sections', async () => {
-      needsLinkedToReoffending = oasysSelectionFactory.needsLinkedToReoffending().buildList(1, { section: 1 })
-      otherNeeds = oasysSelectionFactory.needsNotLinkedToReoffending().buildList(1, { section: 2 })
+    it('returns an empty array for the selected needs if the body is empty', async () => {
+      const page = await OptionalOasysSections.initialize({}, application, 'some-token', {
+        personService,
+        applicationService,
+      })
 
-      getOasysSelectionsMock.mockResolvedValueOnce([...needsLinkedToReoffending, ...otherNeeds])
+      expect(page.body.needsLinkedToReoffending).toEqual([])
+      expect(page.body.otherNeeds).toEqual([])
+    })
 
+    it('initializes the OptionalOasysSections class with the selected sections when sections are a string', async () => {
       const page = await OptionalOasysSections.initialize(
-        { needsLinkedToReoffending: '1', otherNeeds: '2' },
+        {
+          needsLinkedToReoffending: needsLinkedToReoffending[0].section.toString(),
+          otherNeeds: [otherNeeds[0].section.toString(), otherNeeds[1].section.toString()],
+        },
         application,
         'some-token',
         {
@@ -66,22 +80,23 @@ describe('OptionalOasysSections', () => {
         },
       )
 
-      expect(page.body.needsLinkedToReoffending).toEqual([
+      expect(page.body.needsLinkedToReoffending).toEqual([needsLinkedToReoffending[0]])
+      expect(page.body.otherNeeds).toEqual([otherNeeds[0], otherNeeds[1]])
+    })
+
+    it('initializes the OptionalOasysSections class with the selected sections when sections are section objects', async () => {
+      const page = await OptionalOasysSections.initialize(
+        { needsLinkedToReoffending: [needsLinkedToReoffending[0]], otherNeeds: [otherNeeds[0], otherNeeds[1]] },
+        application,
+        'some-token',
         {
-          linkedToHarm: false,
-          linkedToReOffending: true,
-          name: needsLinkedToReoffending[0].name,
-          section: 1,
+          personService,
+          applicationService,
         },
-      ])
-      expect(page.body.otherNeeds).toEqual([
-        {
-          linkedToHarm: false,
-          linkedToReOffending: false,
-          name: otherNeeds[0].name,
-          section: 2,
-        },
-      ])
+      )
+
+      expect(page.body.needsLinkedToReoffending).toEqual([needsLinkedToReoffending[0]])
+      expect(page.body.otherNeeds).toEqual([otherNeeds[0], otherNeeds[1]])
     })
   })
 

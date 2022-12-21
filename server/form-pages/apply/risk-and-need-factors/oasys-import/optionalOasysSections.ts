@@ -46,22 +46,11 @@ export default class OptionalOasysSections implements TasklistPage {
     )
     const allOtherNeeds = oasysSelections.filter(section => !section.linkedToHarm && !section.linkedToReOffending)
 
-    const fullLists = {
-      needsLinkedToReoffending: allNeedsLinkedToReoffending,
-      otherNeeds: allOtherNeeds,
-    }
-
-    const lists = ['needsLinkedToReoffending', 'otherNeeds']
-
-    lists.forEach(section => {
-      if (isStringOrArrayOfStrings(body[section])) {
-        body[section] = flattenCheckboxInput(body[section])
-      }
-
-      body[section] = (body[section] || []).map((need: string) =>
-        fullLists[section].find((n: OASysSection) => need === n.section.toString()),
-      )
-    })
+    body.needsLinkedToReoffending = OptionalOasysSections.getSelectedNeeds(
+      body.needsLinkedToReoffending,
+      allNeedsLinkedToReoffending,
+    )
+    body.otherNeeds = OptionalOasysSections.getSelectedNeeds(body.otherNeeds, allOtherNeeds)
 
     const page = new OptionalOasysSections(body as Body)
 
@@ -69,6 +58,23 @@ export default class OptionalOasysSections implements TasklistPage {
     page.allOtherNeeds = allOtherNeeds
 
     return page
+  }
+
+  private static getSelectedNeeds(
+    selectedSections: string | Array<string> | Array<OASysSection>,
+    allSections: Array<OASysSection>,
+  ): Array<OASysSection> {
+    if (!selectedSections) {
+      return []
+    }
+
+    if (isStringOrArrayOfStrings(selectedSections)) {
+      const sectionIds = flattenCheckboxInput(selectedSections as string | Array<string>) || []
+
+      return sectionIds.map((need: string) => allSections.find((n: OASysSection) => need === n.section.toString()))
+    }
+
+    return selectedSections as Array<OASysSection>
   }
 
   previous() {
