@@ -1,3 +1,5 @@
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
 {% extends "../layout.njk" %}
 
 {% block questions %}
@@ -21,30 +23,34 @@
 
     <h2 class="govuk-heading-s">Needs linked to risk of serious harm are automatically imported</h2>
 
-    {{ applyCheckboxes({
-        fieldName: "needsLinkedToReoffending",
-        fieldset: {
-            legend: {
-            text: "Optional - Needs linked to reoffending",
-            classes: "govuk-fieldset__legend--m"
-            }
-        },
-        items: page.reoffendingNeedsItems()
-        }, 
-        fetchContext()) 
+    {{
+        govukCheckboxes({
+            idPrefix: "needsLinkedToReoffending",
+            name: "needsLinkedToReoffending",
+            errorMessage: errors.needsLinkedToReoffending,
+            fieldset: {
+                legend: {
+                    text: "Optional - Needs linked to reoffending",
+                    classes: "govuk-fieldset__legend--m"
+                }
+            },
+            items: page.reoffendingNeedsItems()
+        })
     }}
 
-    {{ applyCheckboxes({
-        fieldName: "otherNeeds",
-        fieldset: {
-            legend: {
-            text: "Optional - Needs not linked to risk of serious harm or reoffending",
-            classes: "govuk-fieldset__legend--m"
-            }
-        },
-        items: page.otherNeedsItems()
-        }, 
-        fetchContext()) 
+    {{
+        govukCheckboxes({
+            idPrefix: "otherNeeds",
+            name: "otherNeeds",
+            errorMessage: errors.otherNeeds,
+            fieldset: {
+                legend: {
+                    text: "Optional - Needs not linked to risk of serious harm or reoffending",
+                    classes: "govuk-fieldset__legend--m"
+                }
+            },
+            items: page.otherNeedsItems()
+        })
     }}
 
 {% endblock %}
