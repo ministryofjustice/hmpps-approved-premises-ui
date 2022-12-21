@@ -86,7 +86,7 @@ describe('RehabilitativeInterventions', () => {
 
         expect(page.response()).toEqual({
           "Which rehabilitative interventions will support the person's Approved Premises (AP) placement?":
-            'accommodation, Drugs and alcohol, Children and families, Health, Education, training and employment, Finance, benefits and debt, Attitudes, thinking and behaviour, Abuse, Other',
+            'Accommodation, Drugs and alcohol, Children and families, Health, Education, training and employment, Finance, benefits and debt, Attitudes, thinking and behaviour, Abuse, Other',
           'Other intervention': 'Some intervention',
         })
       })
