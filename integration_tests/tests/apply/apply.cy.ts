@@ -24,7 +24,6 @@ import {
 } from '../../../cypress_shared/pages/apply'
 import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
 import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
-import PduTransferPage from '../../../cypress_shared/pages/apply/pduTransfer'
 import PlacementPurposePage from '../../../cypress_shared/pages/apply/placementPurpose'
 import RehabilitativeInterventions from '../../../cypress_shared/pages/apply/rehabilitativeInterventions'
 import RiskManagementFeatures from '../../../cypress_shared/pages/apply/riskManagementFeatures'
@@ -521,11 +520,7 @@ context('Apply', () => {
       describeLocationFactorsPage.completeForm()
       describeLocationFactorsPage.clickSubmit()
 
-      const pduTransferPage = new PduTransferPage(application)
-      pduTransferPage.completeForm()
-      pduTransferPage.clickSubmit()
-
-      const locationFactorsPages = [describeLocationFactorsPage, pduTransferPage]
+      const locationFactorsPages = [describeLocationFactorsPage]
 
       // Then I should be taken back to the task list
       // And the location factors task should show a completed status

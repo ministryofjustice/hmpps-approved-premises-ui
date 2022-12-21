@@ -262,10 +262,6 @@
       "alternativeRadiusAccepted": "yes",
       "alternativeRadius": "70",
       "differentPDU": "no"
-    },
-    "pdu-transfer": {
-      "transferStatus": "yes",
-      "probationPractitioner": "Probation Practicioner"
     }
   },
   "access-and-healthcare": {

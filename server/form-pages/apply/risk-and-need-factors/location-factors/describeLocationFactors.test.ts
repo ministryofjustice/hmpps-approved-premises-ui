@@ -13,7 +13,6 @@ describe('ConvictedOffences', () => {
   })
 
   itShouldHavePreviousValue(new DescribeLocationFactors({}), 'dashboard')
-  itShouldHaveNextValue(new DescribeLocationFactors({ differentPDU: 'yes' }), 'pdu-transfer')
   itShouldHaveNextValue(new DescribeLocationFactors({}), '')
 
   describe('errors', () => {
