@@ -2,6 +2,7 @@ import { OasysImportArrays } from '../@types/ui'
 import { Application, OASysQuestion, OASysSection } from '../@types/shared'
 import { SessionDataError } from './errors'
 import { escape } from './formUtils'
+import { sentenceCase } from './utils'
 
 export const textareas = (questions: OasysImportArrays, key: 'roshAnswers' | 'offenceDetails') => {
   return questions
@@ -59,4 +60,15 @@ export const fetchOptionalOasysSections = (application: Application): Array<numb
 
 export const sortOasysImportSummaries = (summaries: Array<OASysQuestion>): Array<OASysQuestion> => {
   return summaries.sort((a, b) => Number(a.questionNumber) - Number(b.questionNumber))
+}
+
+export const sectionCheckBoxes = (fullList: Array<OASysSection>, selectedList: Array<OASysSection>) => {
+  return fullList.map(need => {
+    const sectionAndName = `${need.section}. ${sentenceCase(need.name)}`
+    return {
+      value: need.section.toString(),
+      text: sectionAndName,
+      checked: selectedList.map(n => n.section).includes(need.section),
+    }
+  })
 }

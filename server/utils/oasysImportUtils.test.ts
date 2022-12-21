@@ -1,7 +1,14 @@
 import applicationFactory from '../testutils/factories/application'
 import { roshSummaryFactory } from '../testutils/factories/oasysSections'
 import oasysSelectionFactory from '../testutils/factories/oasysSelection'
-import { fetchOptionalOasysSections, oasysImportReponse, textareas, sortOasysImportSummaries } from './oasysImportUtils'
+import { sentenceCase } from './utils'
+import {
+  fetchOptionalOasysSections,
+  oasysImportReponse,
+  textareas,
+  sortOasysImportSummaries,
+  sectionCheckBoxes,
+} from './oasysImportUtils'
 
 describe('OASysImportUtils', () => {
   describe('textareas', () => {
@@ -109,6 +116,39 @@ describe('OASysImportUtils', () => {
 
       const result = sortOasysImportSummaries([oasysSummary3, oasysSummary2, oasysSummary1])
       expect(result).toEqual([oasysSummary1, oasysSummary2, oasysSummary3])
+    })
+  })
+
+  describe('sectionCheckBoxes', () => {
+    it('it returns needs as checkbox items', () => {
+      const needLinkedToReoffendingA = oasysSelectionFactory
+        .needsLinkedToReoffending()
+        .build({ section: 1, name: 'emotional' })
+      const needLinkedToReoffendingB = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 2 })
+      const needLinkedToReoffendingC = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 3 })
+
+      const items = sectionCheckBoxes(
+        [needLinkedToReoffendingA, needLinkedToReoffendingB, needLinkedToReoffendingC],
+        [needLinkedToReoffendingA],
+      )
+
+      expect(items).toEqual([
+        {
+          checked: true,
+          text: `1. ${sentenceCase(needLinkedToReoffendingA.name)}`,
+          value: '1',
+        },
+        {
+          checked: false,
+          text: `2. ${sentenceCase(needLinkedToReoffendingB.name)}`,
+          value: '2',
+        },
+        {
+          checked: false,
+          text: `3. ${sentenceCase(needLinkedToReoffendingC.name)}`,
+          value: '3',
+        },
+      ])
     })
   })
 })
