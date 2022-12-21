@@ -15,6 +15,7 @@ const checkYourAnswersSections = (application: ApprovedPremisesApplication) => {
       tasks: section.tasks.map(task => {
         return {
           id: task.id,
+          title: task.title,
           rows: getTaskResponsesAsSummaryListItems(task, application),
         }
       }),
