@@ -109,6 +109,7 @@ describe('applicationUtils', () => {
           tasks: [
             {
               id: 'basic-information',
+              title: 'Basic Information',
               rows: [
                 {
                   key: { text: 'foo' },
@@ -178,6 +179,7 @@ describe('applicationUtils', () => {
           tasks: [
             {
               id: 'basic-information',
+              title: 'Basic Information',
               rows: [
                 {
                   key: { text: 'foo' },

@@ -20,9 +20,9 @@
       </h1>
 
       <div class="main-box">
-        <div class="box-title govuk-heading-m">
+        <h3 class="box-title govuk-heading-m">
           Person Details
-        </div>
+        </h3>
         <div class="box-content" data-cy-check-your-answers-section="person-details">
           {{ govukSummaryList({
           rows: ([
@@ -114,11 +114,11 @@
       {% for section in checkYourAnswersSections(page.application) %}
         <h2 class="govuk-heading-l">{{ section.title }}</h2>
         {% for task in section.tasks %}
-          <div class="main-box">
-            <div class="box-title govuk-heading-m">
+          <div class="main-box" data-cy-check-your-answers-section="{{ task.id }}">
+            <h3 class="box-title govuk-heading-m">
               {{ task.title }}
-            </div>
-            <div class="box-content" data-cy-check-your-answers-section="{{ task.id }}">
+            </h3>
+            <div class="box-content">
               {{
                 govukSummaryList({
                   rows: task.rows

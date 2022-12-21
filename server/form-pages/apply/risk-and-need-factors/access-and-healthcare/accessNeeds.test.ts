@@ -7,8 +7,6 @@ import applicationFactory from '../../../../testutils/factories/application'
 import personFactory from '../../../../testutils/factories/person'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 
-jest.mock('../../../../utils/formUtils')
-
 describe('AccessNeeds', () => {
   const person = personFactory.build({ name: 'John Wayne' })
   const application = applicationFactory.build({ person })
@@ -21,7 +19,7 @@ describe('AccessNeeds', () => {
     it('should set the body', () => {
       const page = new AccessNeeds(
         {
-          additionalNeeds: ['mobility'],
+          additionalNeeds: 'mobility',
           careActAssessmentCompleted: 'yes',
           interpreterLanguage: 'french',
           needsInterpreter: 'no',
@@ -89,12 +87,11 @@ describe('AccessNeeds', () => {
 
   describe('needsCheckboxes', () => {
     it('calls convertKeyValuePairToCheckBoxItems with the correct arguments', () => {
-      new AccessNeeds({ additionalNeeds: ['mobility', 'neurodivergentConditions'] }, application).needsCheckboxes()
+      const page = new AccessNeeds({ additionalNeeds: ['mobility', 'neurodivergentConditions'] }, application)
 
-      expect(convertKeyValuePairToCheckBoxItems).toHaveBeenCalledWith(additionalNeeds, [
-        'mobility',
-        'neurodivergentConditions',
-      ])
+      expect(page.needsCheckboxes()).toEqual(
+        convertKeyValuePairToCheckBoxItems(additionalNeeds, ['mobility', 'neurodivergentConditions']),
+      )
     })
   })
 })
