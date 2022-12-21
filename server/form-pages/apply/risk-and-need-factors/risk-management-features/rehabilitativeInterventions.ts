@@ -6,7 +6,7 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 
 export const interventionsTranslations = {
-  accommodation: 'accommodation',
+  accommodation: 'Accommodation',
   drugsAndAlcohol: 'Drugs and alcohol',
   childrenAndFamilies: 'Children and families',
   health: 'Health',
