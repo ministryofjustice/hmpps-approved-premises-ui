@@ -1,53 +1,9 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "../../components/riskWidgets/macro.njk" import widgets %}
 
-{% extends "../layout.njk" %}
+{% extends "./_oasys-screen.njk" %}
 
 {% set columnClasses = "govuk-grid-column-full" %}
-
-{% block questions %}
-  <div class="govuk-grid-row">
-    <div>
-      <h1 class="govuk-heading-l">{{page.title}}</h1>
-      <p>OASys last updated {{page.oasysCompleted}}</p>
-    </div>
-
-    {{ mojSubNavigation({
-        label: 'Sub navigation',
-        attributes: {
-          'role': 'tablist'
-        },
-        items: [{
-          text: 'RoSH summary',
-          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'rosh-summary' })
-        }, 
-        {
-          text: 'Offence details',
-          active: true
-        }, 
-        {
-          text: 'Supporting information', 
-          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'supporting-information' })
-        },  
-         {
-          text: 'Risk management plan',
-          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'risk-management-plan' }) 
-        },
-        {
-          text: 'Risk to self',
-          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'risk-to-self' })
-        }]
-      }) }}
-  </div>
-
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds" id="offenceDetails" >
-      {{OasysImportUtils.textareas(page.offenceDetailsSummaries, 'offenceDetailsAnswers') | safe}}
-    </div>
-
-    <div class="govuk-grid-column-one-third">
-      {{ widgets(page.risks) }}
-    </div>
-  </div>
-
-{% endblock %}
+{% set pageName = "offenceDetails" %}
+{% set questions = page.offenceDetailsSummaries %}
+{% set key = "offenceDetailsAnswers" %}

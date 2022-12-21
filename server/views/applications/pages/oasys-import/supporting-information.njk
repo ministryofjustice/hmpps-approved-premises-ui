@@ -1,57 +1,9 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "../../components/riskWidgets/macro.njk" import widgets %}
 
-{% extends "../layout.njk" %}
+{% extends "./_oasys-screen.njk" %}
 
 {% set columnClasses = "govuk-grid-column-full" %}
-
-{% block questions %}
-  <div class="govuk-grid-row">
-    <div>
-      <h1 class="govuk-heading-l">{{page.title}}</h1>
-      <p>Imported from OASys 23 October 2022</p>
-      <p>OASys last updated {{page.oasysCompleted}}</p>
-    </div>
-
-    {{ mojSubNavigation({
-        label: 'Sub navigation',
-        attributes: {
-          'role': 'tablist'
-        },
-        items: [
-        {
-          text: 'RoSH summary',
-          href:  paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'rosh-summary' })
-        }, 
-        {
-          text: 'Offence details',
-          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'offence-details' }) 
-        }, 
-        {
-          text: 'Supporting information',
-          href:'', 
-          active: true
-        },  
-        {
-          text: 'Risk management plan',
-          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'risk-management-plan' }) 
-        },
-        {
-          text: 'Risk to self',
-          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'risk-to-self' })
-        }]
-      }) }}
-
-  </div>
-
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds" id="supportingInformation">
-      {{OasysImportUtils.textareas(page.supportingInformationSummaries, 'supportingInformationAnswers') | safe }}
-    </div>
-
-    <div class="govuk-grid-column-one-third">
-      {{ widgets(page.risks) }}
-    </div>
-  </div>
-
-{% endblock %}
+{% set pageName = "supportingInformation" %}
+{% set questions = page.supportingInformationSummaries %}
+{% set key = "supportingInformationAnswers" %}
