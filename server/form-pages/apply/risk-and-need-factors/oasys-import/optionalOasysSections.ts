@@ -104,25 +104,6 @@ export default class OptionalOasysSections implements TasklistPage {
     return ''
   }
 
-  reoffendingNeedsItems() {
-    return this.checkboxes(this.allNeedsLinkedToReoffending, this.body.needsLinkedToReoffending)
-  }
-
-  otherNeedsItems() {
-    return this.checkboxes(this.allOtherNeeds, this.body.otherNeeds)
-  }
-
-  private checkboxes(fullList: Array<OASysSection>, selectedList: Array<OASysSection>) {
-    return fullList.map(need => {
-      const sectionAndName = `${need.section}. ${sentenceCase(need.name)}`
-      return {
-        value: need.section.toString(),
-        text: sectionAndName,
-        checked: selectedList.map(n => n.section).includes(need.section),
-      }
-    })
-  }
-
   errors() {
     return {}
   }

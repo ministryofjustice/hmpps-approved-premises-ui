@@ -2,7 +2,6 @@ import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import { ApplicationService, PersonService } from '../../../../services'
 import applicationFactory from '../../../../testutils/factories/application'
 import oasysSelectionFactory from '../../../../testutils/factories/oasysSelection'
-import { sentenceCase } from '../../../../utils/utils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import OptionalOasysSections from './optionalOasysSections'
@@ -192,69 +191,6 @@ describe('OptionalOasysSections', () => {
           [pageWithOnlyOtherNeeds.otherNeedsHeading]: '2. Some other section',
         })
       })
-    })
-  })
-
-  describe('reoffendingNeedsItems', () => {
-    it('it returns reoffending needs as checkbox items', () => {
-      const needLinkedToReoffendingA = oasysSelectionFactory
-        .needsLinkedToReoffending()
-        .build({ section: 1, name: 'emotional' })
-      const needLinkedToReoffendingB = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 2 })
-      const needLinkedToReoffendingC = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 3 })
-
-      const page = new OptionalOasysSections({ needsLinkedToReoffending: [needLinkedToReoffendingA] })
-      page.allNeedsLinkedToReoffending = [needLinkedToReoffendingA, needLinkedToReoffendingB, needLinkedToReoffendingC]
-      const items = page.reoffendingNeedsItems()
-
-      expect(items).toEqual([
-        {
-          checked: true,
-          text: `1. ${sentenceCase(needLinkedToReoffendingA.name)}`,
-          value: '1',
-        },
-        {
-          checked: false,
-          text: `2. ${sentenceCase(needLinkedToReoffendingB.name)}`,
-          value: '2',
-        },
-        {
-          checked: false,
-          text: `3. ${sentenceCase(needLinkedToReoffendingC.name)}`,
-          value: '3',
-        },
-      ])
-    })
-  })
-
-  describe('otherNeedsItems', () => {
-    it('it returns other needs as checkbox items', () => {
-      const otherNeedA = oasysSelectionFactory.needsNotLinkedToReoffending().build({ section: 1 })
-      const otherNeedB = oasysSelectionFactory.needsNotLinkedToReoffending().build({ section: 2, name: 'thinking' })
-      const otherNeedC = oasysSelectionFactory.needsNotLinkedToReoffending().build({ section: 3 })
-
-      const page = new OptionalOasysSections({ otherNeeds: [otherNeedB] })
-      page.allOtherNeeds = [otherNeedA, otherNeedB, otherNeedC]
-
-      const items = page.otherNeedsItems()
-
-      expect(items).toEqual([
-        {
-          checked: false,
-          text: `1. ${sentenceCase(otherNeedA.name)}`,
-          value: '1',
-        },
-        {
-          checked: true,
-          text: `2. ${sentenceCase(otherNeedB.name)}`,
-          value: '2',
-        },
-        {
-          checked: false,
-          text: `3. ${sentenceCase(otherNeedC.name)}`,
-          value: '3',
-        },
-      ])
     })
   })
 })

@@ -34,7 +34,7 @@
                     classes: "govuk-fieldset__legend--m"
                 }
             },
-            items: page.reoffendingNeedsItems()
+            items: OasysImportUtils.sectionCheckBoxes(page.allNeedsLinkedToReoffending, page.body.needsLinkedToReoffending)
         })
     }}
 
@@ -49,7 +49,7 @@
                     classes: "govuk-fieldset__legend--m"
                 }
             },
-            items: page.otherNeedsItems()
+            items: OasysImportUtils.sectionCheckBoxes(page.allOtherNeeds, page.body.otherNeeds)
         })
     }}
 
