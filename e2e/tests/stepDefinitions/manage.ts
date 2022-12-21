@@ -19,7 +19,12 @@ Given("I'm managing a premises", () => {
   cy.get('.govuk-table tbody tr')
     .first()
     .within($row => {
-      cy.wrap($row).get('th').first().invoke('text').as('premisesName')
+      cy.wrap($row)
+        .get('th')
+        .first()
+        .then($header => {
+          cy.wrap($header.text()).as('premisesName')
+        })
       cy.wrap($row).get('a').click()
     })
 
