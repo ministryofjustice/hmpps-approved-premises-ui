@@ -28,6 +28,8 @@ export default class RiskToSelf implements TasklistPage {
 
   riskToSelfAnswers: RiskToSelfBody['riskToSelfAnswers']
 
+  oasysCompleted: string
+
   risks: PersonRisksUI
 
   constructor(public body: Partial<RiskToSelfBody>) {}
@@ -49,6 +51,7 @@ export default class RiskToSelf implements TasklistPage {
 
     const page = new RiskToSelf(body)
     page.riskToSelfSummaries = riskToSelf
+    page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
     page.risks = mapApiPersonRisksForUi(application.risks)
 
     return page

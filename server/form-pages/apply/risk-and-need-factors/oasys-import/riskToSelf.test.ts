@@ -38,6 +38,14 @@ describe('RiskToSelf', () => {
 
       expect(page.riskToSelfSummaries).toEqual(oasysSections.riskToSelf)
       expect(page.risks).toEqual(mapApiPersonRisksForUi(personRisks))
+      expect(page.oasysCompleted).toEqual(oasysSections.dateCompleted)
+    })
+
+    it('sets dateCompleted to dateStarted if dateCompleted is null', async () => {
+      getOasysSectionsMock.mockResolvedValue({ ...oasysSections, dateCompleted: null })
+
+      const page = await RiskToSelf.initialize({}, application, 'some-token', { personService })
+      expect(page.oasysCompleted).toEqual(oasysSections.dateStarted)
     })
 
     itShouldHaveNextValue(new RiskToSelf({}), '')

@@ -10,7 +10,6 @@ import TasklistPage from '../../../tasklistPage'
 
 import { Page } from '../../../utils/decorators'
 import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/oasysImportUtils'
-import { DateFormats } from '../../../../utils/dateUtils'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type RiskManagementBody = {
@@ -52,7 +51,7 @@ export default class RiskManagementPlan implements TasklistPage {
 
     const page = new RiskManagementPlan(body)
     page.riskManagementSummaries = riskManagement
-    page.oasysCompleted = DateFormats.isoDateToUIDate(oasysSections?.dateCompleted || '')
+    page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
     page.risks = mapApiPersonRisksForUi(application.risks)
 
     return page

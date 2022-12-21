@@ -14,7 +14,6 @@ import {
   oasysImportReponse,
   sortOasysImportSummaries,
 } from '../../../../utils/oasysImportUtils'
-import { DateFormats } from '../../../../utils/dateUtils'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type SupportingInformationBody = {
@@ -57,7 +56,7 @@ export default class SupportingInformation implements TasklistPage {
 
     const page = new SupportingInformation(body)
     page.supportingInformationSummaries = supportingInformation
-    page.oasysCompleted = DateFormats.isoDateToUIDate(oasysSections?.dateCompleted || '')
+    page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
     page.risks = mapApiPersonRisksForUi(application.risks)
 
     return page

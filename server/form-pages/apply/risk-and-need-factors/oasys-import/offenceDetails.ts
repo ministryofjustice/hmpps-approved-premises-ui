@@ -11,7 +11,6 @@ import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
 import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/oasysImportUtils'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
-import { DateFormats } from '../../../../utils/dateUtils'
 
 type OffenceDetailsBody = {
   offenceDetailsAnswers: Array<string> | Record<string, string>
@@ -52,7 +51,7 @@ export default class OffenceDetails implements TasklistPage {
 
     const page = new OffenceDetails(body)
     page.offenceDetailsSummaries = offenceDetails
-    page.oasysCompleted = DateFormats.isoDateToUIDate(oasysSections?.dateCompleted || '')
+    page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
     page.risks = mapApiPersonRisksForUi(application.risks)
 
     return page

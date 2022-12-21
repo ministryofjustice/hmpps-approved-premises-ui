@@ -18,7 +18,7 @@ describe('SupportingInformation', () => {
   let application = applicationFactory.withOptionalOasysSectionsSelected([], []).build({ risks: personRisks })
 
   describe('initialize', () => {
-    const getOasysSectionsMock = jest.fn().mockResolvedValue(oasysSections)
+    const getOasysSectionsMock = jest.fn()
 
     let personService: DeepMocked<PersonService>
 
@@ -26,6 +26,11 @@ describe('SupportingInformation', () => {
       personService = createMock<PersonService>({
         getOasysSections: getOasysSectionsMock,
       })
+      getOasysSectionsMock.mockResolvedValue(oasysSections)
+    })
+
+    afterEach(() => {
+      jest.resetAllMocks()
     })
 
     it('calls the getOasysSections and getPersonRisks method on the client with a token and the persons CRN', async () => {
@@ -45,6 +50,14 @@ describe('SupportingInformation', () => {
 
       expect(page.supportingInformationSummaries).toEqual(oasysSections.supportingInformation)
       expect(page.risks).toEqual(mapApiPersonRisksForUi(personRisks))
+      expect(page.oasysCompleted).toEqual(oasysSections.dateCompleted)
+    })
+
+    it('sets dateCompleted to dateStarted if dateCompleted is null', async () => {
+      getOasysSectionsMock.mockResolvedValue({ ...oasysSections, dateCompleted: null })
+
+      const page = await SupportingInformation.initialize({}, application, 'some-token', { personService })
+      expect(page.oasysCompleted).toEqual(oasysSections.dateStarted)
     })
 
     itShouldHaveNextValue(new SupportingInformation({}), 'risk-management-plan')
