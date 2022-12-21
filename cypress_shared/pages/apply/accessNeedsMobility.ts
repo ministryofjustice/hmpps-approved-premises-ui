@@ -6,7 +6,7 @@ import ApplyPage from './applyPage'
 export default class AccessNeedsMobilityPage extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
     super(
-      'Access needs',
+      'Access, cultural and healthcare needs',
       application,
       'access-and-healthcare',
       'access-needs-mobility',

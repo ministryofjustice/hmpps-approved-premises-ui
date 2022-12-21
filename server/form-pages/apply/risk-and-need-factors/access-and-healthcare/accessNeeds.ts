@@ -39,12 +39,12 @@ type AccessNeedsBody = {
   ],
 })
 export default class AccessNeeds implements TasklistPage {
-  title = 'Access needs'
+  title = 'Access, cultural and healthcare needs'
 
   questions = {
     needs: {
       question: `Does ${this.application.person.name} have any of the following needs?`,
-      hint: `For example, if ${this.application.person.name} has a visual impairment, uses a hearing aid or has a learning difficulty.`,
+      hint: `For example, if ${this.application.person.name} has a visual impairment, uses a hearing aid or has an ADHD diagnosis.`,
     },
     religiousOrCulturalNeeds: {
       question: `Does ${this.application.person.name} have any religious or cultural needs?`,
