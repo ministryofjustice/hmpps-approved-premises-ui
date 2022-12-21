@@ -928,13 +928,6 @@
                 "90"
               ],
               "type": "string"
-            },
-            "differentPDU": {
-              "enum": [
-                "no",
-                "yes"
-              ],
-              "type": "string"
             }
           }
         }

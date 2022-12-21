@@ -21,6 +21,5 @@ export default class DescribeLocationFactors extends ApplyPage {
     this.completeTextInputFromPageBody('restrictionDetail')
     this.checkRadioButtonFromPageBody('alternativeRadiusAccepted')
     this.selectSelectOptionFromPageBody('alternativeRadius')
-    this.checkRadioButtonFromPageBody('differentPDU')
   }
 }

@@ -119,32 +119,5 @@
     )
   }}
 
- 
-  
-
-  {{
-    applyRadios(
-      {
-        fieldName: "differentPDU",
-        fieldset: {
-          legend: {
-            text: page.questions.differentPDU,
-            classes: "govuk-fieldset__legend--m"
-          }
-        },
-        items: [
-          {
-            value: "yes",
-            text: "Yes"
-          },
-          {
-            value: "no",
-            text: "No"
-          }
-        ]
-      },
-      fetchContext()
-    )
-  }}
 
 {% endblock %}

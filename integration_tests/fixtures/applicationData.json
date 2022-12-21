@@ -260,8 +260,7 @@
       "restrictions": "yes",
       "restrictionDetail": "Restrictions go here",
       "alternativeRadiusAccepted": "yes",
-      "alternativeRadius": "70",
-      "differentPDU": "no"
+      "alternativeRadius": "70"
     }
   },
   "access-and-healthcare": {
