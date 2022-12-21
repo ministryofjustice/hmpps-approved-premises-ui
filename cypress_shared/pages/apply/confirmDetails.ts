@@ -9,7 +9,7 @@ export default class ConfirmDetailsPage extends Page {
   }
 
   verifyPersonIsVisible(): void {
-    cy.get('dl').within(() => {
+    cy.get('dl[data-cy-person-info]').within(() => {
       this.assertDefinition('Name', this.person.name)
       this.assertDefinition('CRN', this.person.crn)
       this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(this.person.dateOfBirth, { format: 'short' }))
@@ -17,7 +17,9 @@ export default class ConfirmDetailsPage extends Page {
       this.assertDefinition('Nationality', this.person.nationality)
       this.assertDefinition('Religion or belief', this.person.religionOrBelief)
       this.assertDefinition('Sex', this.person.sex)
+    })
 
+    cy.get('dl[data-cy-prison-info]').within(() => {
       cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', this.person.status)
       this.assertDefinition('Prison', this.person.prisonName)
     })
