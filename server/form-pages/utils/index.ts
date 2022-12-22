@@ -1,4 +1,7 @@
 import type { YesOrNoWithDetail, YesOrNo, Task } from '@approved-premises/ui'
+import type { Request } from 'express'
+import { TasklistPageInterface } from '../tasklistPage'
+import { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '../../@types/shared'
 
 export const applyYesOrNo = <K extends string>(key: K, body: Record<string, unknown>): YesOrNoWithDetail<K> => {
   return {
@@ -73,4 +76,29 @@ export const getPageName = <T>(page: T) => {
 
 export const getTaskName = <T>(page: T) => {
   return Reflect.getMetadata('page:task', page)
+}
+
+export function getBody(
+  Page: TasklistPageInterface,
+  application: ApprovedPremisesApplication | ApprovedPremisesAssessment,
+  request: Request,
+  userInput: Record<string, unknown>,
+) {
+  if (userInput && Object.keys(userInput).length) {
+    return userInput
+  }
+  if (Object.keys(request.body).length) {
+    return request.body
+  }
+  return getPageDataFromApplication(Page, application)
+}
+
+export function getPageDataFromApplication(
+  Page: TasklistPageInterface,
+  application: ApprovedPremisesApplication | ApprovedPremisesAssessment,
+) {
+  const pageName = getPageName(Page)
+  const taskName = getTaskName(Page)
+
+  return application.data?.[taskName]?.[pageName] || {}
 }

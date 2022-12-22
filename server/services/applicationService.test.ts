@@ -6,7 +6,7 @@ import type TasklistPage from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
 import ApplicationService from './applicationService'
 import ApplicationClient from '../data/applicationClient'
-import { getPageName, getTaskName } from '../form-pages/utils'
+import { getBody, getPageName, getTaskName } from '../form-pages/utils'
 
 import Apply from '../form-pages/apply'
 import applicationFactory from '../testutils/factories/application'
@@ -174,6 +174,7 @@ describe('ApplicationService', () => {
     it('should fetch the application from the API if it is not in the session', async () => {
       request.session.application = undefined
       applicationClient.find.mockResolvedValue(application)
+      ;(getBody as jest.Mock).mockReturnValue(request.body)
 
       const result = await service.initializePage(Page, request, dataServices)
 
@@ -184,6 +185,8 @@ describe('ApplicationService', () => {
     })
 
     it('should return the session and a page from a page list', async () => {
+      ;(getBody as jest.Mock).mockReturnValue(request.body)
+
       const result = await service.initializePage(Page, request, dataServices)
 
       expect(result).toBeInstanceOf(Page)
@@ -193,6 +196,8 @@ describe('ApplicationService', () => {
 
     it('should initialize the page with the session and the userInput if specified', async () => {
       const userInput = { foo: 'bar' }
+      ;(getBody as jest.Mock).mockReturnValue(userInput)
+
       const result = await service.initializePage(Page, request, dataServices, userInput)
 
       expect(result).toBeInstanceOf(Page)
@@ -203,8 +208,7 @@ describe('ApplicationService', () => {
     it('should load from the session if the body and userInput are blank', async () => {
       request.body = {}
       request.session.application.data = { 'my-task': { first: { foo: 'bar' } } }
-      ;(getTaskName as jest.Mock).mockReturnValue('my-task')
-      ;(getPageName as jest.Mock).mockReturnValue('first')
+      ;(getBody as jest.Mock).mockReturnValue(request.session.application.data['my-task'].first)
 
       const result = await service.initializePage(Page, request, dataServices)
 
@@ -215,6 +219,7 @@ describe('ApplicationService', () => {
 
     it("should call a service's initialize method if it exists", async () => {
       const OtherPage = { initialize: jest.fn() } as unknown as TasklistPageInterface
+      ;(getBody as jest.Mock).mockReturnValue(request.body)
 
       await service.initializePage(OtherPage, request, dataServices)
 
@@ -222,6 +227,8 @@ describe('ApplicationService', () => {
     })
 
     it("retrieve the 'previousPage' value from the session and call the Page object's constructor with that value", async () => {
+      ;(getBody as jest.Mock).mockReturnValue(request.body)
+
       request.session.previousPage = 'previous-page-name'
       await service.initializePage(Page, request, dataServices)
 
