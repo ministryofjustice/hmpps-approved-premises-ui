@@ -6,6 +6,9 @@ import { tierBadge } from './personUtils'
 import { DateFormats } from './dateUtils'
 import { getArrivalDate } from './applicationUtils'
 import paths from '../paths/assess'
+import { TasklistPageInterface } from '../form-pages/tasklistPage'
+import Assess from '../form-pages/assess'
+import { UnknownPageError } from './errors'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
@@ -173,9 +176,22 @@ const assessmentsApproachingDue = (assessments: Array<Assessment>): number => {
   return assessments.filter(a => daysUntilDue(a) < DUE_DATE_APPROACHING_DAYS_WINDOW).length
 }
 
+const getPage = (taskName: string, pageName: string): TasklistPageInterface => {
+  const pageList = Assess.pages[taskName]
+
+  const Page = pageList[pageName]
+
+  if (!Page) {
+    throw new UnknownPageError()
+  }
+
+  return Page as TasklistPageInterface
+}
+
 export {
   awaitingAssessmentTableRows,
   getStatus,
+  getPage,
   daysSinceReceived,
   formattedArrivalDate,
   requestedFurtherInformationTableRows,

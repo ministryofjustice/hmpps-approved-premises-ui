@@ -12,6 +12,7 @@ import {
   assessmentsApproachingDueBadge,
   formatDaysUntilDueWithWarning,
   assessmentLink,
+  getPage,
 } from './assessmentUtils'
 import { DateFormats } from './dateUtils'
 import paths from '../paths/assess'
@@ -21,9 +22,24 @@ import * as applicationUtils from './applicationUtils'
 
 import assessmentFactory from '../testutils/factories/assessment'
 import clarificationNoteFactory from '../testutils/factories/clarificationNote'
+import Assess from '../form-pages/assess'
+import { UnknownPageError } from './errors'
+
+const FirstPage = jest.fn()
+const SecondPage = jest.fn()
 
 jest.mock('./applicationUtils')
 jest.mock('./personUtils')
+jest.mock('../form-pages/assess', () => {
+  return {
+    pages: { 'review-application': {}, 'sufficient-information': {} },
+  }
+})
+
+Assess.pages['review-application'] = {
+  first: FirstPage,
+  second: SecondPage,
+}
 
 describe('assessmentUtils', () => {
   beforeEach(() => {
@@ -236,6 +252,19 @@ describe('assessmentUtils', () => {
       expect(assessmentLink(assessment)).toMatchStringIgnoringWhitespace(`
         <a href="${paths.assessments.show({ id: '123' })}" data-cy-assessmentId="123">John Wayne</a>
       `)
+    })
+  })
+
+  describe('getPage', () => {
+    it('should return a page if it exists', () => {
+      expect(getPage('review-application', 'first')).toEqual(FirstPage)
+      expect(getPage('review-application', 'second')).toEqual(SecondPage)
+    })
+
+    it('should raise an error if the page is not found', async () => {
+      expect(() => {
+        getPage('review-application', 'bar')
+      }).toThrow(UnknownPageError)
     })
   })
 })
