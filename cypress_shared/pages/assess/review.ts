@@ -1,0 +1,98 @@
+import type { Person, PrisonCaseNote, Document, ApprovedPremisesAssessment } from '@approved-premises/api'
+import { DateFormats } from '../../../server/utils/dateUtils'
+
+import { Adjudication } from '../../../server/@types/shared'
+import { sentenceCase } from '../../../server/utils/utils'
+import Page from '../page'
+
+export default class ReviewPage extends Page {
+  constructor() {
+    super('Review application')
+  }
+
+  shouldShowPersonInformation(person: Person) {
+    cy.get('[data-cy-review-section="person-details"]').within(() => {
+      this.assertDefinition('Name', person.name)
+      this.assertDefinition('CRN', person.crn)
+      this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
+      this.assertDefinition('NOMS Number', person.nomsNumber)
+      this.assertDefinition('Nationality', person.nationality)
+      this.assertDefinition('Religion or Belief', person.religionOrBelief)
+      this.assertDefinition('Sex', person.sex)
+
+      cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', person.status)
+      this.assertDefinition('Prison', person.prisonName)
+    })
+  }
+
+  shouldShowDocuments(selectedDocuments: Array<Document>) {
+    cy.get(`[data-cy-review-section="attach-required-documents"]`).within(() => {
+      selectedDocuments.forEach(d => {
+        this.assertDefinition(d.fileName, d.description)
+      })
+    })
+  }
+
+  shouldShowCaseNotes(caseNotes: Array<PrisonCaseNote>) {
+    cy.get(`[data-cy-review-section="prison-information"]`).within(() => {
+      cy.get('dt')
+        .contains('Selected prison case notes that support this application')
+        .parent()
+        .within(() => {
+          cy.get('dl.govuk-summary-list--embedded').then($items => {
+            cy.wrap($items).should('have.length', caseNotes.length)
+            caseNotes.forEach((caseNote, i) => {
+              cy.wrap($items[i]).within(() => {
+                this.assertDefinition('Date created', DateFormats.isoDateToUIDate(caseNote.createdAt))
+                this.assertDefinition('Date occurred', DateFormats.isoDateToUIDate(caseNote.occurredAt))
+                this.assertDefinition('Is the case note sensitive?', caseNote.sensitive ? 'Yes' : 'No')
+                this.assertDefinition('Name of author', caseNote.authorName)
+                this.assertDefinition('Type', caseNote.type)
+                this.assertDefinition('Subtype', caseNote.subType)
+                this.assertDefinition('Note', caseNote.note)
+              })
+            })
+          })
+        })
+    })
+  }
+
+  shouldShowAdjudications(adjudications: Array<Adjudication>) {
+    cy.get(`[data-cy-review-section="prison-information"]`).within(() => {
+      cy.get('dt')
+        .contains('Adjudications')
+        .parent()
+        .within(() => {
+          cy.get('dl.govuk-summary-list--embedded').then($items => {
+            cy.wrap($items).should('have.length', adjudications.length)
+            adjudications.forEach((adjudication, i) => {
+              cy.wrap($items[i]).within(() => {
+                this.assertDefinition('Adjudication number', String(adjudication.id))
+                this.assertDefinition(
+                  'Report date and time',
+                  DateFormats.isoDateTimeToUIDateTime(adjudication.reportedAt),
+                )
+                this.assertDefinition('Establishment', adjudication.establishment)
+                this.assertDefinition('Offence description', adjudication.offenceDescription)
+                this.assertDefinition('Finding', sentenceCase(String(adjudication.finding)))
+              })
+            })
+          })
+        })
+    })
+  }
+
+  shouldShowAnswers(assessment: ApprovedPremisesAssessment) {
+    this.shouldShowPersonInformation(assessment.application.person)
+
+    this.shouldShowDocuments(
+      assessment.application.data?.['attach-required-documents']['attach-documents'].selectedDocuments,
+    )
+    this.shouldShowCaseNotes(assessment.application.data?.['prison-information']['case-notes'].selectedCaseNotes)
+    this.shouldShowAdjudications(assessment.application.data?.['prison-information']['case-notes'].adjudications)
+  }
+
+  completeForm() {
+    this.checkRadioByNameAndValue('reviewed', 'yes')
+  }
+}

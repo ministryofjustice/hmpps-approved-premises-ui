@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { Assessment } from '@approved-premises/api'
+import type { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 
 import { stubFor } from '../../wiremock'
 
@@ -25,6 +25,18 @@ export default {
       },
       response: {
         status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: assessment,
+      },
+    }),
+  stubAssessmentUpdate: (assessment: Assessment): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PUT',
+        url: `/assessments/${args.assessment.id}`,
+      },
+      response: {
+        status: 201,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: assessment,
       },
