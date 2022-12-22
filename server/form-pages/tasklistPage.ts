@@ -1,13 +1,17 @@
 /* istanbul ignore file */
 
 import type { TaskListErrors, DataServices, PageResponse } from '@approved-premises/ui'
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '@approved-premises/api'
 
 export interface TasklistPageInterface {
-  new (body: Record<string, unknown>, application?: ApprovedPremisesApplication, previousPage?: string): TasklistPage
+  new (
+    body: Record<string, unknown>,
+    document?: ApprovedPremisesApplication | ApprovedPremisesAssessment,
+    previousPage?: string,
+  ): TasklistPage
   initialize?(
     body: Record<string, unknown>,
-    application: ApprovedPremisesApplication,
+    document: ApprovedPremisesApplication | ApprovedPremisesAssessment,
     token: string,
     dataServices: DataServices,
   ): Promise<TasklistPage>
