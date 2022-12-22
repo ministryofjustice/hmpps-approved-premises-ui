@@ -1,4 +1,4 @@
-import type { YesOrNoWithDetail, YesOrNo, Task } from '@approved-premises/ui'
+import type { YesOrNoWithDetail, YesOrNo, Task, JourneyType } from '@approved-premises/ui'
 import type { Request } from 'express'
 import { TasklistPageInterface } from '../tasklistPage'
 import { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '../../@types/shared'
@@ -63,11 +63,11 @@ export const getPagesForSections = <T>(sections: Array<T>) => {
   return pages
 }
 
-export const viewPath = <T>(page: T) => {
+export const viewPath = <T>(page: T, journeyType: JourneyType) => {
   const pageName = getPageName(page.constructor)
   const taskName = getTaskName(page.constructor)
 
-  return `applications/pages/${taskName}/${pageName}`
+  return `${journeyType}/pages/${taskName}/${pageName}`
 }
 
 export const getPageName = <T>(page: T) => {

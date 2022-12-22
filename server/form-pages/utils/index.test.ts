@@ -131,8 +131,8 @@ describe('utils', () => {
         const page1 = new Page1()
         const page2 = new Page2()
 
-        expect(utils.viewPath(page1)).toEqual('applications/pages/task-1/page-1')
-        expect(utils.viewPath(page2)).toEqual('applications/pages/task-2/page-2')
+        expect(utils.viewPath(page1, 'applications')).toEqual('applications/pages/task-1/page-1')
+        expect(utils.viewPath(page2, 'assessments')).toEqual('assessments/pages/task-2/page-2')
       })
     })
 
