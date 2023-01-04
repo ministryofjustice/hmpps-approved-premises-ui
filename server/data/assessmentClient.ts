@@ -14,7 +14,7 @@ export default class AssessmentClient {
     return (await this.restClient.get({ path: paths.assessments.index.pattern })) as Array<Assessment>
   }
 
-  async find(applicationId: string): Promise<Assessment> {
-    return (await this.restClient.get({ path: paths.assessments.show({ id: applicationId }) })) as Assessment
+  async find(assessmentId: string): Promise<Assessment> {
+    return (await this.restClient.get({ path: paths.assessments.show({ id: assessmentId }) })) as Assessment
   }
 }
