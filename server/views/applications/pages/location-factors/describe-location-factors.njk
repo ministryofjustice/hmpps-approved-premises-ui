@@ -4,6 +4,7 @@
 
   <h1 class="govuk-heading-l">{{page.title}}</h1>
 
+
   {{
     applyInput(
       {
@@ -12,7 +13,7 @@
           classes: "govuk-label--m"
         },
         hint: {
-          text: "Please provide a postcode area - for example: SW1"
+          text: "For example SW1."
         },
         fieldName: "postcodeArea"
       },
@@ -27,6 +28,46 @@
         label: {
           text: page.questions.positiveFactors
         }
+      },
+      fetchContext()
+    )
+  }}
+
+   {% set alternativeRadiusSelect %}
+  {{ govukSelect({
+    label: {
+      text: page.questions.alternativeRadius
+    },
+    id: "alternativeRadius",
+    name: "alternativeRadius",
+    items: convertObjectsToSelectOptions(page.radiusItems(), 'Please Select', 'key', 'value', 'alternativeRadius'),
+    errorMessage: errors.alternativeRadius
+  }) }}
+  {% endset -%}
+
+  {{
+    applyRadios(
+      {
+        fieldName: "alternativeRadiusAccepted",
+        fieldset: {
+          legend: {
+            text: page.questions.alternativeRadiusAccepted,
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes",
+            conditional: {
+              html: alternativeRadiusSelect
+            }
+          },
+          {
+            value: "no",
+            text: "No"
+          }
+        ]
       },
       fetchContext()
     )
@@ -78,69 +119,5 @@
     )
   }}
 
-  {% set alternativeRadiusSelect %}
-  {{ govukSelect({
-    label: {
-      text: page.questions.alternativeRadius
-    },
-    id: "alternativeRadius",
-    name: "alternativeRadius",
-    items: convertObjectsToSelectOptions(page.radiusItems(), 'Please Select', 'key', 'value', 'alternativeRadius'),
-    errorMessage: errors.alternativeRadius
-  }) }}
-  {% endset -%}
-
-  {{
-    applyRadios(
-      {
-        fieldName: "alternativeRadiusAccepted",
-        fieldset: {
-          legend: {
-            text: page.questions.alternativeRadiusAccepted,
-            classes: "govuk-fieldset__legend--m"
-          }
-        },
-        items: [
-          {
-            value: "yes",
-            text: "Yes",
-            conditional: {
-              html: alternativeRadiusSelect
-            }
-          },
-          {
-            value: "no",
-            text: "No"
-          }
-        ]
-      },
-      fetchContext()
-    )
-  }}
-
-  {{
-    applyRadios(
-      {
-        fieldName: "differentPDU",
-        fieldset: {
-          legend: {
-            text: page.questions.differentPDU,
-            classes: "govuk-fieldset__legend--m"
-          }
-        },
-        items: [
-          {
-            value: "yes",
-            text: "Yes"
-          },
-          {
-            value: "no",
-            text: "No"
-          }
-        ]
-      },
-      fetchContext()
-    )
-  }}
 
 {% endblock %}

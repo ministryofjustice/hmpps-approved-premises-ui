@@ -13,7 +13,7 @@ type AccessNeedsMobilityBody = {
 
 @Page({ name: 'access-needs-mobility', bodyProperties: ['needsWheelchair', 'mobilityNeeds', 'visualImpairment'] })
 export default class AccessNeedsMobility implements TasklistPage {
-  title = 'Access needs'
+  title = 'Access, cultural and healthcare needs'
 
   questions = {
     wheelchair: `Does ${this.application.person.name} require a wheelchair accessible room?`,

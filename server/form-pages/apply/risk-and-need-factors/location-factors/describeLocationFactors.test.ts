@@ -13,7 +13,6 @@ describe('ConvictedOffences', () => {
   })
 
   itShouldHavePreviousValue(new DescribeLocationFactors({}), 'dashboard')
-  itShouldHaveNextValue(new DescribeLocationFactors({ differentPDU: 'yes' }), 'pdu-transfer')
   itShouldHaveNextValue(new DescribeLocationFactors({}), '')
 
   describe('errors', () => {
@@ -22,8 +21,6 @@ describe('ConvictedOffences', () => {
 
       expect(page.errors()).toEqual({
         alternativeRadiusAccepted: 'You must specify if a placement in an alternative locality would be considered',
-        differentPDU:
-          "You must specify if the person is moving to a different area where they'll be managed by a different probation delivery unit",
         postcodeArea: 'You must specify a preferred postcode area for the placement',
         restrictions: 'You must specify if there are any restrictions linked to placement location',
       })
@@ -65,22 +62,19 @@ describe('ConvictedOffences', () => {
         restrictionDetail: 'Some restriction detail',
         alternativeRadiusAccepted: 'yes' as YesOrNo,
         alternativeRadius: '60' as const,
-        differentPDU: 'no' as YesOrNo,
       }
 
       const page = new DescribeLocationFactors(body)
 
       expect(page.response()).toEqual({
         'Give details of any positive factors for the person in this location.': 'Positive Factors',
-        'What is the preferred location for the AP placement?': 'E17',
+        'What is the preferred postcode area for the Approved Premises (AP) placement?': 'E17',
         'Are there any restrictions linked to placement location?': 'Yes',
         'Provide details of any restraining orders, exclusion zones, inclusion zones or other location based licence conditions.':
           'Some restriction detail',
         'If an AP Placement is not available in the persons preferred area, would a placement further away be considered?':
           'Yes',
         'Choose the maximum radius (in miles)': '60 miles',
-        "Is the person moving to a different area where they'll be managed by a different probation delivery unit (PDU)?":
-          'No',
       })
     })
 
@@ -90,18 +84,15 @@ describe('ConvictedOffences', () => {
         positiveFactors: 'Positive Factors',
         restrictions: 'no' as YesOrNo,
         alternativeRadiusAccepted: 'no' as YesOrNo,
-        differentPDU: 'no' as YesOrNo,
       }
 
       const page = new DescribeLocationFactors(body)
 
       expect(page.response()).toEqual({
         'Give details of any positive factors for the person in this location.': 'Positive Factors',
-        'What is the preferred location for the AP placement?': 'E17',
+        'What is the preferred postcode area for the Approved Premises (AP) placement?': 'E17',
         'Are there any restrictions linked to placement location?': 'No',
         'If an AP Placement is not available in the persons preferred area, would a placement further away be considered?':
-          'No',
-        "Is the person moving to a different area where they'll be managed by a different probation delivery unit (PDU)?":
           'No',
       })
     })

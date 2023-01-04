@@ -260,12 +260,7 @@
       "restrictions": "yes",
       "restrictionDetail": "Restrictions go here",
       "alternativeRadiusAccepted": "yes",
-      "alternativeRadius": "70",
-      "differentPDU": "no"
-    },
-    "pdu-transfer": {
-      "transferStatus": "yes",
-      "probationPractitioner": "Probation Practicioner"
+      "alternativeRadius": "70"
     }
   },
   "access-and-healthcare": {

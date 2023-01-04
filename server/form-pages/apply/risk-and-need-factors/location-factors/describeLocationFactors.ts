@@ -14,7 +14,6 @@ type DescribeLocationFactorsBody = {
   restrictionDetail: string
   alternativeRadiusAccepted: YesOrNo
   alternativeRadius: typeof radiuses[number]
-  differentPDU: YesOrNo
 }
 
 @Page({
@@ -26,14 +25,13 @@ type DescribeLocationFactorsBody = {
     'restrictionDetail',
     'alternativeRadiusAccepted',
     'alternativeRadius',
-    'differentPDU',
   ],
 })
 export default class DescribeLocationFactors implements TasklistPage {
   title = 'Location factors'
 
   questions = {
-    postcodeArea: 'What is the preferred location for the AP placement?',
+    postcodeArea: 'What is the preferred postcode area for the Approved Premises (AP) placement?',
     positiveFactors: 'Give details of any positive factors for the person in this location.',
     restrictions: 'Are there any restrictions linked to placement location?',
     restrictionDetail:
@@ -41,7 +39,6 @@ export default class DescribeLocationFactors implements TasklistPage {
     alternativeRadiusAccepted:
       'If an AP Placement is not available in the persons preferred area, would a placement further away be considered?',
     alternativeRadius: 'Choose the maximum radius (in miles)',
-    differentPDU: `Is the person moving to a different area where they'll be managed by a different probation delivery unit (PDU)?`,
   }
 
   constructor(public body: Partial<DescribeLocationFactorsBody>) {}
@@ -51,9 +48,6 @@ export default class DescribeLocationFactors implements TasklistPage {
   }
 
   next() {
-    if (this.body.differentPDU) {
-      return 'pdu-transfer'
-    }
     return ''
   }
 
@@ -83,10 +77,6 @@ export default class DescribeLocationFactors implements TasklistPage {
       errors.alternativeRadius = 'You must choose an alternative radius'
     }
 
-    if (!this.body.differentPDU) {
-      errors.differentPDU = `You must specify if the person is moving to a different area where they'll be managed by a different probation delivery unit`
-    }
-
     return errors
   }
 
@@ -98,7 +88,6 @@ export default class DescribeLocationFactors implements TasklistPage {
       [this.questions.restrictionDetail]: this.body.restrictionDetail,
       [this.questions.alternativeRadiusAccepted]: sentenceCase(this.body.alternativeRadiusAccepted),
       [this.questions.alternativeRadius]: this.body.alternativeRadius ? `${this.body.alternativeRadius} miles` : '',
-      [this.questions.differentPDU]: sentenceCase(this.body.differentPDU),
     }
 
     Object.keys(response).forEach(key => {

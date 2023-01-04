@@ -43,7 +43,7 @@
             "releaseType": {
               "enum": [
                 "hdc",
-                "license",
+                "licence",
                 "pss",
                 "rotl"
               ],
@@ -928,29 +928,6 @@
                 "90"
               ],
               "type": "string"
-            },
-            "differentPDU": {
-              "enum": [
-                "no",
-                "yes"
-              ],
-              "type": "string"
-            }
-          }
-        },
-        "pdu-transfer": {
-          "type": "object",
-          "properties": {
-            "transferStatus": {
-              "enum": [
-                "noNeedToMakeArrangements",
-                "noProbationPractitioner",
-                "yes"
-              ],
-              "type": "string"
-            },
-            "probationPractitioner": {
-              "type": "string"
             }
           }
         }
@@ -1240,7 +1217,7 @@
                 "foreignNational",
                 "livingWithPartnerFamilyOrFriends",
                 "other",
-                "ownaccommodation",
+                "ownAccommodation",
                 "privateRented",
                 "rentedThroughHousingAssociation",
                 "rentedThroughLocalAuthority",

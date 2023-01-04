@@ -10,7 +10,7 @@ describe('AccessNeedsMobility', () => {
   const application = applicationFactory.build({ person })
 
   describe('title', () => {
-    expect(new AccessNeedsMobility({}, application).title).toBe('Access needs')
+    expect(new AccessNeedsMobility({}, application).title).toBe('Access, cultural and healthcare needs')
   })
 
   describe('body', () => {
