@@ -8,7 +8,7 @@ generic-service:
     hosts:
       - approved-premises-test.hmpps.service.justice.gov.uk
     contextColour: green
-    tlsSecretName: approved-premises-test-cert
+    tlsSecretName: hmpps-approved-premises-test-cert
 
   env:
     ENVIRONMENT: test
