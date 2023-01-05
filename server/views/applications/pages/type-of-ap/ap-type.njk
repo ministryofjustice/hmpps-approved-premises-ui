@@ -1,8 +1,18 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% extends "../layout.njk" %}
 
 {% block questions %}
+
+    {{ govukDetails({
+      summaryText: "What are the different types of AP?",
+      html: '<p><b>Standard AP</b> provide 24 hour staff support and monitoring, an overnight curfew, CCTV, room searches, rehabilitative activities, medication monitoring, and drug and alcohol testing.</p>
+            <p><b>Psychologically Informed Planned Environment (PIPE)</b> AP are for people who screen into the Offender Personality Disorder (OPD) pathway. PIPE staff have additional training to manage individuals and create an enhanced safe and supportive environment. </p>
+            <p><b>Enhanced Security AP (ESAP)</b> offer additional security measures and are intended to individuals whose risk management plan and ability to manage in the community are reliant on those measures. </p>
+            <p><b>Recovery Focused AP (RFAP)</b></p>'
+    }) 
+    }}
 
   {{
     formPageRadios(
