@@ -22,8 +22,6 @@ const peoplePath = path('/people')
 const personPath = peoplePath.path(':crn')
 const oasysPath = personPath.path('oasys')
 
-const assessmentsPath = path('/assessments')
-
 const applyPaths = {
   applications: {
     show: singleApplicationPath,
@@ -32,6 +30,11 @@ const applyPaths = {
     update: singleApplicationPath,
     submission: singleApplicationPath.path('submission'),
   },
+}
+
+const assessPaths = {
+  assessments: path('/assessments'),
+  singleAssessment: path('/assessments/:id'),
 }
 
 export default {
@@ -55,8 +58,9 @@ export default {
     documents: applyPaths.applications.show.path('documents'),
   },
   assessments: {
-    index: assessmentsPath,
-    show: assessmentsPath.path(':id'),
+    index: assessPaths.assessments,
+    show: assessPaths.singleAssessment,
+    update: assessPaths.singleAssessment,
   },
   people: {
     risks: {
