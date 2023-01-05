@@ -17,4 +17,11 @@ export default class AssessmentClient {
   async find(assessmentId: string): Promise<Assessment> {
     return (await this.restClient.get({ path: paths.assessments.show({ id: assessmentId }) })) as Assessment
   }
+
+  async update(assessment: Assessment): Promise<Assessment> {
+    return (await this.restClient.put({
+      path: paths.assessments.update({ id: assessment.id }),
+      data: { data: assessment.data },
+    })) as Assessment
+  }
 }
