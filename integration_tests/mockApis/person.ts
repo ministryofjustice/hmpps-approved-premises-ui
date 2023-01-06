@@ -156,7 +156,9 @@ export default {
           'Content-Type': 'application/octet-stream',
           'content-disposition': `attachment; filename=${args.document.fileName}`,
         },
-        base64Body: readFileSync(path.resolve(__dirname, '..', 'fixtures', 'document.pdf'), { encoding: 'base64' }),
+        base64Body: readFileSync(path.resolve(__dirname, '..', '..', 'cypress_shared', 'fixtures', 'document.pdf'), {
+          encoding: 'base64',
+        }),
       },
     }),
 }

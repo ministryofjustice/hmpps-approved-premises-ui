@@ -18,7 +18,7 @@ import schemaValidator from './integration_tests/tasks/schemaValidator'
 
 export default defineConfig({
   chromeWebSecurity: false,
-  fixturesFolder: 'integration_tests/fixtures',
+  fixturesFolder: 'cypress_shared/fixtures',
   screenshotsFolder: 'integration_tests/screenshots',
   trashAssetsBeforeRuns: true,
   downloadsFolder: 'integration_tests/downloads',
