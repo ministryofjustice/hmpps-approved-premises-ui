@@ -1,68 +1,20 @@
 import {
-  StartPage,
   EnterCRNPage,
-  ConfirmDetailsPage,
-  SentenceTypePage,
-  SituationPage,
-  PlacementStartPage,
-  ReleaseDatePage,
-  TaskListPage,
-  TypeOfApPage,
-  DescribeLocationFactors,
-  RoomSharingPage,
-  VulnerabilityPage,
-  PreviousPlacements,
-  ComplexCaseBoard,
-  CateringPage,
-  ArsonPage,
-  PlacementDurationPage,
-  ForeignNationalPage,
-  CheckYourAnswersPage,
   ListPage,
   SelectOffencePage,
-  AttachDocumentsPage,
+  SentenceTypePage,
+  StartPage,
 } from '../../../cypress_shared/pages/apply'
-import ConvictedOffences from '../../../cypress_shared/pages/apply/convictedOffences'
-import DateOfOffence from '../../../cypress_shared/pages/apply/dateOfOffence'
-import PlacementPurposePage from '../../../cypress_shared/pages/apply/placementPurpose'
-import RehabilitativeInterventions from '../../../cypress_shared/pages/apply/rehabilitativeInterventions'
-import RiskManagementFeatures from '../../../cypress_shared/pages/apply/riskManagementFeatures'
-import TypeOfConvictedOffence from '../../../cypress_shared/pages/apply/typeOfConvictedOffence'
 
-import Page from '../../../cypress_shared/pages/page'
-import applicationFactory from '../../../server/testutils/factories/application'
-import prisonCaseNotesFactory from '../../../server/testutils/factories/prisonCaseNotes'
-import oasysSelectionFactory from '../../../server/testutils/factories/oasysSelection'
-import personFactory from '../../../server/testutils/factories/person'
-import activeOffenceFactory from '../../../server/testutils/factories/activeOffence'
-import risksFactory from '../../../server/testutils/factories/risks'
-import adjudicationsFactory from '../../../server/testutils/factories/adjudication'
-import documentFactory from '../../../server/testutils/factories/document'
-import oasysSectionsFactory from '../../../server/testutils/factories/oasysSections'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
-import AccessNeedsPage from '../../../cypress_shared/pages/apply/accessNeeds'
-import AccessNeedsMobilityPage from '../../../cypress_shared/pages/apply/accessNeedsMobility'
-import CovidPage from '../../../cypress_shared/pages/apply/covid'
-import RelocationRegionPage from '../../../cypress_shared/pages/apply/relocationRegion'
-import PlansInPlacePage from '../../../cypress_shared/pages/apply/plansInPlace'
-import TypeOfAccommodationPage from '../../../cypress_shared/pages/apply/typeOfAccommodation'
-import CaseNotesPage from '../../../cypress_shared/pages/apply/caseNotes'
-import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
-import OptionalOasysSectionsPage from '../../../cypress_shared/pages/apply/optionalOasysSections'
-import RoshSummaryPage from '../../../cypress_shared/pages/apply/roshSummary'
 
-import {
-  documentsFromApplication,
-  offenceDetailSummariesFromApplication,
-  riskManagementPlanFromApplication,
-  riskToSelfSummariesFromApplication,
-  roshSummariesFromApplication,
-  supportInformationFromApplication,
-} from '../../support/helpers'
-import OffenceDetailsPage from '../../../cypress_shared/pages/apply/offenceDetails'
-import SupportingInformationPage from '../../../cypress_shared/pages/apply/supportingInformation'
-import RiskManagementPlanPage from '../../../cypress_shared/pages/apply/riskManagementPlan'
-import RiskToSelfPage from '../../../cypress_shared/pages/apply/riskToSelf'
+import activeOffenceFactory from '../../../server/testutils/factories/activeOffence'
+import applicationFactory from '../../../server/testutils/factories/application'
+import ApplyHelper from '../../../cypress_shared/helpers/apply'
+import Page from '../../../cypress_shared/pages/page'
+import personFactory from '../../../server/testutils/factories/person'
+import risksFactory from '../../../server/testutils/factories/risks'
+import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -88,17 +40,8 @@ context('Apply', () => {
       const application = applicationFactory.build({ person, data: applicationData })
       cy.task('stubApplicationCreate', { application })
 
-      const startPage = StartPage.visit()
-      startPage.startApplication()
-
-      // When I enter a CRN
-      const crnPage = new EnterCRNPage()
-      crnPage.enterCrn(person.crn)
-      crnPage.clickSubmit()
-
-      // And I click submit
-      const confirmDetailsPage = new ConfirmDetailsPage(person)
-      confirmDetailsPage.clickSubmit()
+      const apply = new ApplyHelper(application, person, 'integration')
+      apply.startApplication()
 
       // Then I should be forwarded to select an offence
       const selectOffencePage = Page.verifyOnPage(SelectOffencePage, person, offences)
@@ -128,7 +71,7 @@ context('Apply', () => {
     })
   })
 
-  it('shows the details of a person from their CRN', () => {
+  it("creates and updates an application given a person's CRN", () => {
     // Given I am logged in
     cy.signIn()
 
@@ -145,20 +88,8 @@ context('Apply', () => {
       cy.task('stubApplicationUpdate', { application })
       cy.task('stubApplicationGet', { application })
 
-      const startPage = StartPage.visit()
-      startPage.startApplication()
-
-      // When I enter a CRN
-      const crnPage = new EnterCRNPage()
-      crnPage.enterCrn(person.crn)
-      crnPage.clickSubmit()
-
-      // Then I should see the person's detail
-      const confirmDetailsPage = new ConfirmDetailsPage(person)
-      confirmDetailsPage.verifyPersonIsVisible()
-
-      // When I click submit
-      confirmDetailsPage.clickSubmit()
+      const apply = new ApplyHelper(application, person, 'integration')
+      apply.startApplication()
 
       // Then the API should have created the application
       cy.task('verifyApplicationCreate').then(requests => {
@@ -173,27 +104,11 @@ context('Apply', () => {
         expect(body.offenceId).equal(offence.offenceId)
       })
 
-      // Then I should be on the Sentence Type page
-      const sentenceTypePage = new SentenceTypePage(application)
+      // And I complete the basic information step
+      apply.completeBasicInformation()
 
-      // When I select 'Bail Placement'
-      sentenceTypePage.checkRadioByNameAndValue('sentenceType', 'bailPlacement')
-      sentenceTypePage.clickSubmit()
-
-      // Then I should be on the Situation Page
-      const situationPage = new SituationPage(application)
-
-      // When I select 'Bail Sentence'
-      situationPage.checkRadioByNameAndValue('situation', 'bailSentence')
-      situationPage.clickSubmit()
-
-      // Then I should be asked if I know the release date
-      Page.verifyOnPage(ReleaseDatePage, application)
-
-      // And the API should have recieved the updated application
+      // Then the API should have recieved the updated application
       cy.task('verifyApplicationUpdate', application.id).then(requests => {
-        expect(requests).to.have.length(2)
-
         const firstRequestData = JSON.parse(requests[0].body).data
         const secondRequestData = JSON.parse(requests[1].body).data
 
@@ -243,470 +158,16 @@ context('Apply', () => {
       const application = applicationFactory.build({ person })
       application.data = applicationData
       application.risks = apiRisks
-      cy.task('stubApplicationCreate', { application })
-      cy.task('stubApplicationUpdate', { application })
-      cy.task('stubApplicationGet', { application })
 
-      const startPage = StartPage.visit()
-      startPage.startApplication()
-
-      // And I complete the first step
-      const crnPage = new EnterCRNPage()
-      crnPage.enterCrn(person.crn)
-      crnPage.clickSubmit()
-
-      const confirmDetailsPage = new ConfirmDetailsPage(person)
-      confirmDetailsPage.clickSubmit()
-
-      const sentenceTypePage = new SentenceTypePage(application)
-      sentenceTypePage.completeForm()
-      sentenceTypePage.clickSubmit()
-
-      const situationPage = new SituationPage(application)
-      situationPage.completeForm()
-      situationPage.clickSubmit()
-
-      const releaseDatePage = new ReleaseDatePage(application)
-      releaseDatePage.completeForm()
-      releaseDatePage.clickSubmit()
-
-      const placementStartPage = new PlacementStartPage(application)
-      placementStartPage.completeForm()
-      placementStartPage.clickSubmit()
-
-      const placementPurposePage = new PlacementPurposePage(application)
-      placementPurposePage.completeForm()
-      placementPurposePage.clickSubmit()
-
-      const basicInformationPages = [sentenceTypePage, releaseDatePage, placementStartPage, placementPurposePage]
-
-      // Then I should be redirected to the task list
-      const tasklistPage = Page.verifyOnPage(TaskListPage)
-
-      // And the task should be marked as completed
-      tasklistPage.shouldShowTaskStatus('basic-information', 'Completed')
-
-      // And the next task should be marked as not started
-      tasklistPage.shouldShowTaskStatus('type-of-ap', 'Not started')
-
-      // And the risk widgets should be visible
-      tasklistPage.shouldShowRiskWidgets(uiRisks)
-
-      // And I should be able to start the next task
-      cy.get('[data-cy-task-name="type-of-ap"]').click()
-      Page.verifyOnPage(TypeOfApPage, application)
-
-      // Given I am on the Type of AP Page
-      const typeOfApPage = new TypeOfApPage(application)
-
-      // When I complete the form and click submit
-      typeOfApPage.completeForm()
-      typeOfApPage.clickSubmit()
-
-      const typeOfApPages = [typeOfApPage]
-
-      // Then the Type of AP task should show as completed
-      tasklistPage.shouldShowTaskStatus('type-of-ap', 'Completed')
-
-      // And the OASys import task should show as not started
-      tasklistPage.shouldShowTaskStatus('oasys-import', 'Not started')
-
-      // Given there are OASys sections in the db
-      const oasysSelectionA = oasysSelectionFactory.needsLinkedToReoffending().build({
-        section: 1,
-        name: 'accommodation',
-      })
-      const oasysSelectionB = oasysSelectionFactory.needsLinkedToReoffending().build({
-        section: 2,
-        name: 'relationships',
-        linkedToHarm: false,
-        linkedToReOffending: true,
-      })
-      const oasysSelectionC = oasysSelectionFactory.needsNotLinkedToReoffending().build({
-        section: 3,
-        name: 'emotional',
-        linkedToHarm: false,
-        linkedToReOffending: false,
-      })
-      const oasysSelectionD = oasysSelectionFactory.needsNotLinkedToReoffending().build({
-        section: 4,
-        name: 'thinking',
-        linkedToHarm: false,
-        linkedToReOffending: false,
-      })
-      const oasysSectionsLinkedToReoffending = [oasysSelectionA, oasysSelectionB]
-      const otherOasysSections = [oasysSelectionC, oasysSelectionD]
-      const oasysSelection = [...oasysSectionsLinkedToReoffending, ...otherOasysSections]
-      cy.task('stubOasysSelection', { person, oasysSelection })
-
-      const oasysSections = oasysSectionsFactory.build()
-      const roshSummaries = roshSummariesFromApplication(application)
-      const offenceDetailSummaries = offenceDetailSummariesFromApplication(application)
-      const supportingInformationSummaries = supportInformationFromApplication(application)
-      const riskManagementPlanSummaries = riskManagementPlanFromApplication(application)
-      const riskToSelfSummaries = riskToSelfSummariesFromApplication(application)
-
-      cy.task('stubOasysSections', {
-        person,
-        oasysSections: {
-          ...oasysSections,
-          roshSummary: roshSummaries,
-          offenceDetails: offenceDetailSummaries,
-          riskManagementPlan: riskManagementPlanSummaries,
-          riskToSelf: riskToSelfSummaries,
-        },
-      })
-      cy.task('stubOasysSectionsWithSelectedSections', {
-        person,
-        oasysSections: {
-          ...oasysSections,
-          roshSummary: roshSummaries,
-          offenceDetails: offenceDetailSummaries,
-          supportingInformation: supportingInformationSummaries,
-        },
-        selectedSections: [1, 2, 3, 4],
-      })
-
-      // Given I click the 'Import Oasys' task
-      cy.get('[data-cy-task-name="oasys-import"]').click()
-      const optionalOasysImportPage = new OptionalOasysSectionsPage(application)
-
-      // When I complete the form
-      optionalOasysImportPage.completeForm(oasysSectionsLinkedToReoffending, otherOasysSections)
-      optionalOasysImportPage.clickSubmit()
-
-      const roshSummaryPage = new RoshSummaryPage(application, roshSummaries)
-      roshSummaryPage.shouldShowRiskWidgets(uiRisks)
-      roshSummaryPage.completeForm()
-
-      roshSummaryPage.clickSubmit()
-
-      const offenceDetailsPage = new OffenceDetailsPage(application, offenceDetailSummaries)
-      offenceDetailsPage.shouldShowRiskWidgets(uiRisks)
-      offenceDetailsPage.completeForm()
-      offenceDetailsPage.clickSubmit()
-
-      const supportingInformationPage = new SupportingInformationPage(application, supportingInformationSummaries)
-      supportingInformationPage.completeForm()
-      supportingInformationPage.clickSubmit()
-
-      const riskManagementPlanPage = new RiskManagementPlanPage(application, riskManagementPlanSummaries)
-      riskManagementPlanPage.completeForm()
-      riskManagementPlanPage.clickSubmit()
-
-      const riskToSelfPage = new RiskToSelfPage(application, riskToSelfSummaries)
-      riskToSelfPage.completeForm()
-      riskToSelfPage.clickSubmit()
-
-      // Then I should be taken back to the tasklist
-      tasklistPage.shouldShowTaskStatus('oasys-import', 'Completed')
-
-      // And the Risk Management Features task should show as not started
-      tasklistPage.shouldShowTaskStatus('risk-management-features', 'Not started')
-
-      // Given I click the 'Add detail about managing risks and needs' task
-      cy.get('[data-cy-task-name="risk-management-features"]').click()
-
-      const oasysPages = [
-        optionalOasysImportPage,
-        roshSummaryPage,
-        offenceDetailsPage,
-        supportingInformationPage,
-        riskManagementPlanPage,
-        riskToSelfPage,
-      ]
-
-      // When I complete the form
-      const riskManagementFeaturesPage = new RiskManagementFeatures(application)
-      riskManagementFeaturesPage.completeForm()
-      riskManagementFeaturesPage.clickSubmit()
-
-      const convictedOffencesPage = new ConvictedOffences(application)
-      convictedOffencesPage.completeForm()
-      convictedOffencesPage.clickSubmit()
-
-      const typeOfConvictedOffencePage = new TypeOfConvictedOffence(application)
-      typeOfConvictedOffencePage.completeForm()
-      typeOfConvictedOffencePage.clickSubmit()
-
-      const dateOfOffencePage = new DateOfOffence(application)
-      dateOfOffencePage.completeForm()
-      dateOfOffencePage.clickSubmit()
-
-      const rehabilitativeInterventionsPage = new RehabilitativeInterventions(application)
-      rehabilitativeInterventionsPage.completeForm()
-      rehabilitativeInterventionsPage.clickSubmit()
-
-      const riskManagementPages = [
-        riskManagementFeaturesPage,
-        convictedOffencesPage,
-        typeOfConvictedOffencePage,
-        dateOfOffencePage,
-        rehabilitativeInterventionsPage,
-      ]
-
-      // Then I should be taken back to the task list
-      // And the risk management task should show a completed status
-      tasklistPage.shouldShowTaskStatus('risk-management-features', 'Completed')
-
-      // Given there is prison case notes for the person in the DB
-      const prisonCaseNote1 = prisonCaseNotesFactory.build({
-        authorName: 'Denise Collins',
-        id: 'a30173ca-061f-42c9-a1a2-28c70b282d3f',
-        createdAt: '2022-11-10',
-        occurredAt: '2022-10-19',
-        sensitive: false,
-        subType: 'Ressettlement',
-        type: 'Social Care',
-        note: 'Note 1',
-      })
-      const prisonCaseNote2 = prisonCaseNotesFactory.build({
-        authorName: 'Leticia Mann',
-        id: '4a477187-b77f-4fcc-a919-43a6633ee868',
-        createdAt: '2022-07-24',
-        occurredAt: '2022-09-22',
-        sensitive: true,
-        subType: 'Quality Work',
-        type: 'General',
-        note: 'Note 2',
-      })
-      const prisonCaseNote3 = prisonCaseNotesFactory.build()
-      const prisonCaseNotes = [prisonCaseNote1, prisonCaseNote2, prisonCaseNote3]
-      const selectedPrisonCaseNotes = [prisonCaseNote1, prisonCaseNote2]
-
-      const adjudication1 = adjudicationsFactory.build({
-        id: 69927,
-        reportedAt: '2022-10-09',
-        establishment: 'Hawthorne',
-        offenceDescription: 'Nam vel nisi fugiat veniam possimus omnis.',
-        hearingHeld: false,
-        finding: 'NOT_PROVED',
-      })
-      const adjudication2 = adjudicationsFactory.build({
-        id: 39963,
-        reportedAt: '2022-07-10',
-        establishment: 'Oklahoma City',
-        offenceDescription: 'Illum maxime enim explicabo soluta sequi voluptas.',
-        hearingHeld: true,
-        finding: 'PROVED',
-      })
-      const adjudication3 = adjudicationsFactory.build({
-        id: 77431,
-        reportedAt: '2022-05-30',
-        establishment: 'Jurupa Valley',
-        offenceDescription: 'Quis porro nemo voluptates doloribus atque quis provident iure.',
-        hearingHeld: false,
-        finding: 'PROVED',
-      })
-      const adjudications = [adjudication1, adjudication2, adjudication3]
-      const moreDetail = 'some details'
-
-      cy.task('stubPrisonCaseNotes', { prisonCaseNotes, person })
-      cy.task('stubAdjudications', { adjudications, person })
-
-      // And I click the 'Review prison information' task
-      cy.get('[data-cy-task-name="prison-information"]').click()
-
-      const caseNotesPage = new CaseNotesPage(application, selectedPrisonCaseNotes)
-      caseNotesPage.shouldDisplayAdjudications(adjudications)
-      caseNotesPage.completeForm(moreDetail)
-      caseNotesPage.clickSubmit()
-
-      // Given I click the 'Describe location factors' task
-      cy.get('[data-cy-task-name="location-factors"]').click()
-
-      // When I complete the form
-      const describeLocationFactorsPage = new DescribeLocationFactors(application)
-      describeLocationFactorsPage.completeForm()
-      describeLocationFactorsPage.clickSubmit()
-
-      const locationFactorsPages = [describeLocationFactorsPage]
-
-      // Then I should be taken back to the task list
-      // And the location factors task should show a completed status
-      tasklistPage.shouldShowTaskStatus('location-factors', 'Completed')
-
-      // Given I click the 'Provide access and healthcare information' task
-      cy.get('[data-cy-task-name="access-and-healthcare"]').click()
-
-      // When I complete the form
-      const accessNeedsPage = new AccessNeedsPage(application)
-      accessNeedsPage.completeForm()
-      accessNeedsPage.clickSubmit()
-
-      const accessNeedsMobilityPage = new AccessNeedsMobilityPage(application)
-      accessNeedsMobilityPage.completeForm()
-      accessNeedsMobilityPage.clickSubmit()
-
-      const covidPage = new CovidPage(application)
-      covidPage.completeForm()
-      covidPage.clickSubmit()
-
-      const accessAndHealthcarePages = [accessNeedsPage, accessNeedsMobilityPage, covidPage]
-
-      Page.verifyOnPage(TaskListPage)
-
-      // Given I click the 'Detail further considerations for placement' task
-      cy.get('[data-cy-task-name="further-considerations"]').click()
-
-      // And I complete the Room Sharing page
-      const roomSharingPage = new RoomSharingPage(application)
-      roomSharingPage.completeForm()
-      roomSharingPage.clickSubmit()
-
-      // And I complete the Vulnerability page
-      const vulnerabilityPage = new VulnerabilityPage(application)
-      vulnerabilityPage.completeForm()
-      vulnerabilityPage.clickSubmit()
-
-      // And I complete the Previous Placements page
-      const previousPlacementsPage = new PreviousPlacements(application)
-      previousPlacementsPage.completeForm()
-      previousPlacementsPage.clickSubmit()
-
-      // And I complete the Complex Case Board page
-      const complexCaseBoardPage = new ComplexCaseBoard(application)
-      complexCaseBoardPage.completeForm()
-      complexCaseBoardPage.clickSubmit()
-
-      // And I complete the Catering page
-      const cateringPage = new CateringPage(application)
-      cateringPage.completeForm()
-      cateringPage.clickSubmit()
-
-      // And I complete the Arson page
-      const arsonPage = new ArsonPage(application)
-      arsonPage.completeForm()
-      arsonPage.clickSubmit()
-
-      const furtherConsiderationsPages = [
-        roomSharingPage,
-        vulnerabilityPage,
-        previousPlacementsPage,
-        complexCaseBoardPage,
-        cateringPage,
-        arsonPage,
-      ]
-
-      // Then I should be taken back to the task list
-      // And the further considerations task should show a completed status
-      tasklistPage.shouldShowTaskStatus('further-considerations', 'Completed')
-
-      // Given I click the 'Add move on information' task
-      cy.get('[data-cy-task-name="move-on"]').click()
-
-      // And I complete the Placement Duration page
-      const placementDurationPage = new PlacementDurationPage(application)
-      placementDurationPage.completeForm()
-      placementDurationPage.clickSubmit()
-
-      // And I complete the relocation region page
-      const relocationRegion = new RelocationRegionPage(application)
-      relocationRegion.completeForm()
-      relocationRegion.clickSubmit()
-
-      // And I complete the plans in place page
-      const plansInPlacePage = new PlansInPlacePage(application)
-      plansInPlacePage.completeForm()
-      plansInPlacePage.clickSubmit()
-
-      // And I complete the type of accommodation page
-      const typeOfAccommodationPage = new TypeOfAccommodationPage(application)
-      typeOfAccommodationPage.completeForm()
-      typeOfAccommodationPage.clickSubmit()
-
-      const foreignNationalPage = new ForeignNationalPage(application)
-      foreignNationalPage.completeForm()
-      foreignNationalPage.clickSubmit()
-
-      const moveOnPages = [
-        placementDurationPage,
-        relocationRegion,
-        plansInPlacePage,
-        typeOfAccommodationPage,
-        foreignNationalPage,
-      ]
-
-      // Then I should be taken back to the task list
-      // And the move on information task should show a completed status
-      tasklistPage.shouldShowTaskStatus('move-on', 'Completed')
-
-      // Given there are documents in the database
-      const selectedDocuments = documentsFromApplication(application)
-      const documents = [selectedDocuments, documentFactory.buildList(4)].flat()
-
-      cy.task('stubApplicationDocuments', { application, documents })
-      documents.forEach(document => {
-        cy.task('stubPersonDocument', { person: application.person, document })
-      })
-
-      // Given I click on the Attach Documents task
-      cy.get('[data-cy-task-name="attach-required-documents"]').click()
-      const attachDocumentsPage = new AttachDocumentsPage(documents, selectedDocuments, application)
-
-      // Then I should be able to download the documents
-      attachDocumentsPage.shouldBeAbleToDownloadDocuments()
-
-      // And I attach the relevant documents
-      attachDocumentsPage.shouldDisplayDocuments()
-      attachDocumentsPage.completeForm()
-      attachDocumentsPage.clickSubmit()
-
-      // Then I should be taken back to the task list
-      // And the Attach Documents task should show a completed status
-      tasklistPage.shouldShowTaskStatus('attach-required-documents', 'Completed')
-
-      // Given I click the check your answers task
-      cy.get('[data-cy-task-name="check-your-answers"]').click()
-
-      // Then I should be on the check your answers page
-      const checkYourAnswersPage = new CheckYourAnswersPage(application)
-
-      // And the page should be populated with my answers
-      checkYourAnswersPage.shouldShowPersonInformation(person)
-      checkYourAnswersPage.shouldShowBasicInformationAnswers(basicInformationPages)
-      checkYourAnswersPage.shouldShowTypeOfApAnswers(typeOfApPages)
-      checkYourAnswersPage.shouldShowOptionalOasysSectionsAnswers(oasysPages)
-      checkYourAnswersPage.shouldShowRiskManagementAnswers(riskManagementPages)
-      checkYourAnswersPage.shouldShowCaseNotes(selectedPrisonCaseNotes)
-      checkYourAnswersPage.shouldShowAdjudications(adjudications)
-      checkYourAnswersPage.shouldShowLocationFactorsAnswers(locationFactorsPages)
-      checkYourAnswersPage.shouldShowAccessAndHealthcareAnswers(accessAndHealthcarePages)
-      checkYourAnswersPage.shouldShowFurtherConsiderationsAnswers(furtherConsiderationsPages)
-      checkYourAnswersPage.shouldShowMoveOnAnswers(moveOnPages)
-      checkYourAnswersPage.shouldShowDocuments(attachDocumentsPage.selectedDocuments)
-
-      const numberOfPages = [
-        ...basicInformationPages,
-        ...typeOfApPages,
-        ...oasysPages,
-        ...riskManagementPages,
-        ...selectedPrisonCaseNotes,
-        ...locationFactorsPages,
-        ...accessAndHealthcarePages,
-        ...furtherConsiderationsPages,
-        ...moveOnPages,
-        ...attachDocumentsPage.selectedDocuments,
-      ].length
-
-      // When I have checked my answers
-      checkYourAnswersPage.clickSubmit()
-
-      // Then I should be taken back to the task list
-      Page.verifyOnPage(TaskListPage)
-
-      // And the check your answers task should show a completed status
-      tasklistPage.shouldShowTaskStatus('check-your-answers', 'Completed')
-
-      // Given the application exists in the database
-      cy.task('stubApplicationSubmit', { application })
-
-      // When I click submit
-      tasklistPage.clickSubmit()
+      // And I complete the application
+      const apply = new ApplyHelper(application, person, 'integration')
+      apply.setupApplicationStubs(uiRisks)
+      apply.startApplication()
+      apply.completeApplication()
 
       // Then the application should be submitted to the API
       cy.task('verifyApplicationUpdate', application.id).then((requests: Array<{ body: string }>) => {
-        expect(requests).to.have.length(numberOfPages)
+        expect(requests).to.have.length(apply.numberOfPages())
         const requestBody = JSON.parse(requests[requests.length - 1].body)
 
         expect(requestBody.data).to.deep.equal(applicationData)
