@@ -1,13 +1,16 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 
 {% macro bookingTable(title, dateField, rows) %}
-	{% if rows %}
-		{{
+  {% if rows %}
+    {{
       govukTable({
         caption: title,
         captionClasses: "govuk-table__caption--m",
         firstCellIsHeader: true,
         head: [
+          {
+            text: "Name"
+          },
           {
             text: "CRN"
           },
@@ -21,5 +24,5 @@
         rows: rows
       })
     }}
-	{% endif %}
+  {% endif %}
 {% endmacro %}

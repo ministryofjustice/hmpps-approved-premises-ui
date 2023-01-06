@@ -19,6 +19,9 @@ export const bookingsToTableRows = (
 ): Array<TableRow> => {
   return bookings.map(booking => [
     {
+      text: booking.person.name,
+    },
+    {
       text: booking.person.crn,
     },
     {

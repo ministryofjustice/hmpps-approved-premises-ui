@@ -86,12 +86,13 @@ export default class PremisesShowPage extends Page {
   private tableShouldContainBookings(bookings: Array<Booking>, type: 'arrival' | 'departure') {
     bookings.forEach((item: Booking) => {
       const date = type === 'arrival' ? item.arrivalDate : item.departureDate
-      cy.contains(item.person.crn)
+      cy.contains(item.person.name)
         .parent()
         .within(() => {
-          cy.get('td').eq(0).contains(DateFormats.isoDateToUIDate(date))
+          cy.get('td').eq(0).contains(item.person.crn)
+          cy.get('td').eq(1).contains(DateFormats.isoDateToUIDate(date))
           cy.get('td')
-            .eq(1)
+            .eq(2)
             .contains('Manage')
             .should('have.attr', 'href', paths.bookings.show({ premisesId: this.premises.id, bookingId: item.id }))
         })
@@ -101,12 +102,13 @@ export default class PremisesShowPage extends Page {
   shouldShowCurrentResidents(currentResidents: Array<Booking>) {
     cy.get('h2').should('contain', 'Current residents')
     currentResidents.forEach((item: Booking) => {
-      cy.contains(item.person.crn)
+      cy.contains(item.person.name)
         .parent()
         .within(() => {
-          cy.get('td').eq(0).contains(DateFormats.isoDateToUIDate(item.departureDate))
+          cy.get('td').eq(0).contains(item.person.crn)
+          cy.get('td').eq(1).contains(DateFormats.isoDateToUIDate(item.departureDate))
           cy.get('td')
-            .eq(1)
+            .eq(2)
             .contains('Manage')
             .should('have.attr', 'href', paths.bookings.show({ premisesId: this.premises.id, bookingId: item.id }))
         })

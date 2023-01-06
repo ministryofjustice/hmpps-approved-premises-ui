@@ -41,6 +41,9 @@ describe('bookingUtils', () => {
       expect(bookingsToTableRows(bookings, premisesId, 'arrival')).toEqual([
         [
           {
+            text: bookings[0].person.name,
+          },
+          {
             text: bookings[0].person.crn,
           },
           {
@@ -51,6 +54,9 @@ describe('bookingUtils', () => {
           },
         ],
         [
+          {
+            text: bookings[1].person.name,
+          },
           {
             text: bookings[1].person.crn,
           },
@@ -68,6 +74,9 @@ describe('bookingUtils', () => {
       expect(bookingsToTableRows(bookings, premisesId, 'departure')).toEqual([
         [
           {
+            text: bookings[0].person.name,
+          },
+          {
             text: bookings[0].person.crn,
           },
           {
@@ -78,6 +87,9 @@ describe('bookingUtils', () => {
           },
         ],
         [
+          {
+            text: bookings[1].person.name,
+          },
           {
             text: bookings[1].person.crn,
           },
