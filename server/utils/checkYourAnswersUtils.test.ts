@@ -1,41 +1,17 @@
-import { Task } from '@approved-premises/ui'
 import applicationFactory from '../testutils/factories/application'
-import paths from '../paths/apply'
-import Apply from '../form-pages/apply'
+import { getResponseForPage } from './applicationUtils'
 
-import { checkYourAnswersSections, embeddedSummaryListItem } from './checkYourAnswersUtils'
+import {
+  checkYourAnswersSections,
+  embeddedSummaryListItem,
+  getTaskResponsesAsSummaryListItems,
+} from './checkYourAnswersUtils'
+import reviewSections from './reviewUtils'
 
-const FirstPage = jest.fn()
-const SecondPage = jest.fn()
+jest.mock('./reviewUtils')
+jest.mock('./applicationUtils')
 
-jest.mock('../form-pages/apply', () => {
-  return {
-    pages: { 'basic-information': {}, 'type-of-ap': {} },
-    sections: [
-      {
-        title: 'First',
-        tasks: [
-          {
-            id: 'basic-information',
-            title: 'Basic Information',
-            pages: { 'basic-information': {}, 'type-of-ap': {} },
-          },
-        ] as Array<Task>,
-      },
-      {
-        title: 'Second',
-        tasks: [] as Array<Task>,
-      },
-    ],
-  }
-})
-
-Apply.pages['basic-information'] = {
-  first: FirstPage,
-  second: SecondPage,
-}
-
-describe('applicationUtils', () => {
+describe('checkYourAnswersUtils', () => {
   describe('embeddedSummaryListItem', () => {
     it('returns a summary list for an array of records', () => {
       const result = embeddedSummaryListItem([
@@ -87,142 +63,46 @@ describe('applicationUtils', () => {
   })
 
   describe('checkYourAnswersSections', () => {
-    it('returns the check your answers sections for an application', () => {
-      FirstPage.mockReturnValue({
-        response: () => {
-          return { foo: 'bar' }
-        },
-      })
-
-      SecondPage.mockReturnValue({
-        response: () => {
-          return { bar: 'foo' }
-        },
-      })
-
+    it('calls reviewSections with the correct arguments', () => {
       const application = applicationFactory.build()
-      application.data = { 'basic-information': { first: '', second: '' }, 'type-of-ap': {} }
 
-      expect(checkYourAnswersSections(application)).toEqual([
-        {
-          title: 'First',
-          tasks: [
-            {
-              id: 'basic-information',
-              title: 'Basic Information',
-              rows: [
-                {
-                  key: { text: 'foo' },
-                  value: { text: 'bar' },
-                  actions: {
-                    items: [
-                      {
-                        href: paths.applications.pages.show({
-                          task: 'basic-information',
-                          page: 'first',
-                          id: application.id,
-                        }),
-                        text: 'Change',
-                        visuallyHiddenText: 'foo',
-                      },
-                    ],
-                  },
-                },
-                {
-                  key: { text: 'bar' },
-                  value: { text: 'foo' },
-                  actions: {
-                    items: [
-                      {
-                        href: paths.applications.pages.show({
-                          task: 'basic-information',
-                          page: 'second',
-                          id: application.id,
-                        }),
-                        text: 'Change',
-                        visuallyHiddenText: 'bar',
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          ],
-        },
-      ])
+      checkYourAnswersSections(application)
+
+      expect(reviewSections).toHaveBeenCalledWith(application, getTaskResponsesAsSummaryListItems)
+    })
+  })
+
+  describe('getTaskResponsesAsSummaryListItems', () => {
+    it('returns an empty array if there isnt any responses for the task', () => {
+      const application = applicationFactory.build()
+
+      expect(getTaskResponsesAsSummaryListItems({ id: '42', title: '42', pages: {} }, application)).toEqual([])
     })
 
-    it('returns an embeded summary list if the response is an array of objects', () => {
-      FirstPage.mockReturnValue({
-        response: () => {
-          return {
-            foo: [
-              { foo: 'bar', bar: 'baz' },
-              { foo: 'bar', bar: 'baz' },
-            ],
-          }
-        },
-      })
-
-      SecondPage.mockReturnValue({
-        response: () => {
-          return { bar: 'foo' }
-        },
-      })
-
+    it('returns the task responses as Summary List items and adds the actions object', () => {
       const application = applicationFactory.build()
-      application.data = { 'basic-information': { first: '', second: '' } }
+      application.data = { foo: ['bar'] }
+      ;(getResponseForPage as jest.Mock).mockImplementation(() => ({
+        title: 'response',
+      }))
 
-      expect(checkYourAnswersSections(application)).toEqual([
+      expect(getTaskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application)).toEqual([
         {
-          title: 'First',
-          tasks: [
-            {
-              id: 'basic-information',
-              title: 'Basic Information',
-              rows: [
-                {
-                  key: { text: 'foo' },
-                  value: {
-                    html: embeddedSummaryListItem([
-                      { foo: 'bar', bar: 'baz' },
-                      { foo: 'bar', bar: 'baz' },
-                    ]),
-                  },
-                  actions: {
-                    items: [
-                      {
-                        href: paths.applications.pages.show({
-                          task: 'basic-information',
-                          page: 'first',
-                          id: application.id,
-                        }),
-                        text: 'Change',
-                        visuallyHiddenText: 'foo',
-                      },
-                    ],
-                  },
-                },
-                {
-                  key: { text: 'bar' },
-                  value: { text: 'foo' },
-                  actions: {
-                    items: [
-                      {
-                        href: paths.applications.pages.show({
-                          task: 'basic-information',
-                          page: 'second',
-                          id: application.id,
-                        }),
-                        text: 'Change',
-                        visuallyHiddenText: 'bar',
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          ],
+          actions: {
+            items: [
+              {
+                href: `/applications/${application.id}/tasks/foo/pages/0`,
+                text: 'Change',
+                visuallyHiddenText: 'title',
+              },
+            ],
+          },
+          key: {
+            text: 'title',
+          },
+          value: {
+            text: 'response',
+          },
         },
       ])
     })

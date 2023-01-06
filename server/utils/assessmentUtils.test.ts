@@ -13,6 +13,8 @@ import {
   formatDaysUntilDueWithWarning,
   assessmentLink,
   getPage,
+  assessmentSections,
+  getTaskResponsesAsSummaryListItems,
 } from './assessmentUtils'
 import { DateFormats } from './dateUtils'
 import paths from '../paths/assess'
@@ -24,15 +26,42 @@ import assessmentFactory from '../testutils/factories/assessment'
 import clarificationNoteFactory from '../testutils/factories/clarificationNote'
 import Assess from '../form-pages/assess'
 import { UnknownPageError } from './errors'
+import applicationFactory from '../testutils/factories/application'
+import reviewSections from './reviewUtils'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
 
 jest.mock('./applicationUtils')
+jest.mock('./checkYourAnswersUtils')
 jest.mock('./personUtils')
+jest.mock('./reviewUtils')
+
 jest.mock('../form-pages/assess', () => {
   return {
     pages: { 'review-application': {}, 'sufficient-information': {} },
+  }
+})
+
+jest.mock('../form-pages/apply', () => {
+  return {
+    pages: { 'basic-information': {}, 'type-of-ap': {} },
+    sections: [
+      {
+        title: 'First',
+        tasks: [
+          {
+            id: 'basic-information',
+            title: 'Basic Information',
+            pages: { 'basic-information': {}, 'type-of-ap': {} },
+          },
+        ],
+      },
+      {
+        title: 'Second',
+        tasks: [],
+      },
+    ],
   }
 })
 
@@ -265,6 +294,43 @@ describe('assessmentUtils', () => {
       expect(() => {
         getPage('review-application', 'bar')
       }).toThrow(UnknownPageError)
+    })
+  })
+
+  describe('assessmentSections', () => {
+    it('calls reviewSections with the supplied arguments', () => {
+      const application = applicationFactory.build()
+
+      assessmentSections(application)
+
+      expect(reviewSections).toHaveBeenCalledWith(application, getTaskResponsesAsSummaryListItems)
+    })
+  })
+
+  describe('getTaskResponsesAsSummaryListItems', () => {
+    it('returns an empty array if there isnt any responses for the task', () => {
+      const application = applicationFactory.build()
+
+      expect(getTaskResponsesAsSummaryListItems({ id: '42', title: '42', pages: {} }, application)).toEqual([])
+    })
+
+    it('returns the task responses as Summary List items', () => {
+      const application = applicationFactory.build()
+      application.data = { foo: ['bar'] }
+      ;(applicationUtils.getResponseForPage as jest.Mock).mockImplementation(() => ({
+        title: 'response',
+      }))
+
+      expect(getTaskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application)).toEqual([
+        {
+          key: {
+            text: 'title',
+          },
+          value: {
+            text: 'response',
+          },
+        },
+      ])
     })
   })
 })

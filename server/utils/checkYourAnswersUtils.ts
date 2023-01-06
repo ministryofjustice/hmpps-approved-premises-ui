@@ -1,29 +1,15 @@
-/* eslint-disable import/prefer-default-export */
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { HtmlItem, SummaryListItem, Task, TextItem } from '@approved-premises/ui'
-import Apply from '../form-pages/apply'
+
 import paths from '../paths/apply'
 
 import { getResponseForPage } from './applicationUtils'
+import reviewSections from './reviewUtils'
 
-const checkYourAnswersSections = (application: ApprovedPremisesApplication) => {
-  const nonCheckYourAnswersSections = Apply.sections.slice(0, -1)
+const checkYourAnswersSections = (application: ApprovedPremisesApplication) =>
+  reviewSections(application, getTaskResponsesAsSummaryListItems)
 
-  return nonCheckYourAnswersSections.map(section => {
-    return {
-      title: section.title,
-      tasks: section.tasks.map(task => {
-        return {
-          id: task.id,
-          title: task.title,
-          rows: getTaskResponsesAsSummaryListItems(task, application),
-        }
-      }),
-    }
-  })
-}
-
-const getTaskResponsesAsSummaryListItems = (
+export const getTaskResponsesAsSummaryListItems = (
   task: Task,
   application: ApprovedPremisesApplication,
 ): Array<SummaryListItem> => {

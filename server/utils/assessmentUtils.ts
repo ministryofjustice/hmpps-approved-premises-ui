@@ -1,14 +1,16 @@
-import { TableRow } from '@approved-premises/ui'
+import { HtmlItem, SummaryListItem, TableRow, Task, TextItem } from '@approved-premises/ui'
 import { format, differenceInDays, add } from 'date-fns'
 
 import { ApprovedPremisesAssessment as Assessment, ApprovedPremisesApplication } from '@approved-premises/api'
 import { tierBadge } from './personUtils'
 import { DateFormats } from './dateUtils'
-import { getArrivalDate } from './applicationUtils'
+import { getArrivalDate, getResponseForPage } from './applicationUtils'
 import paths from '../paths/assess'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import Assess from '../form-pages/assess'
 import { UnknownPageError } from './errors'
+import { embeddedSummaryListItem } from './checkYourAnswersUtils'
+import reviewSections from './reviewUtils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
@@ -188,12 +190,50 @@ const getPage = (taskName: string, pageName: string): TasklistPageInterface => {
   return Page as TasklistPageInterface
 }
 
+const assessmentSections = (application: ApprovedPremisesApplication) => {
+  return reviewSections(application, getTaskResponsesAsSummaryListItems)
+}
+
+const getTaskResponsesAsSummaryListItems = (
+  task: Task,
+  application: ApprovedPremisesApplication,
+): Array<SummaryListItem> => {
+  const items: Array<SummaryListItem> = []
+
+  if (!application.data[task.id]) {
+    return items
+  }
+
+  const pageNames = Object.keys(application.data[task.id])
+
+  pageNames.forEach(pageName => {
+    const response = getResponseForPage(application, task.id, pageName)
+    Object.keys(response).forEach(key => {
+      const value =
+        typeof response[key] === 'string' || response[key] instanceof String
+          ? ({ text: response[key] } as TextItem)
+          : ({ html: embeddedSummaryListItem(response[key] as Array<Record<string, unknown>>) } as HtmlItem)
+
+      items.push({
+        key: {
+          text: key,
+        },
+        value,
+      })
+    })
+  })
+
+  return items
+}
 export {
+  assessmentSections,
+  assessmentLink,
   awaitingAssessmentTableRows,
-  getStatus,
-  getPage,
   daysSinceReceived,
   formattedArrivalDate,
+  getStatus,
+  getPage,
+  getTaskResponsesAsSummaryListItems,
   requestedFurtherInformationTableRows,
   daysSinceInfoRequest,
   formatDays,
@@ -202,5 +242,4 @@ export {
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
   formatDaysUntilDueWithWarning,
-  assessmentLink,
 }
