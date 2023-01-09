@@ -13,7 +13,7 @@ type DescribeLocationFactorsBody = {
   restrictions: YesOrNo
   restrictionDetail: string
   alternativeRadiusAccepted: YesOrNo
-  alternativeRadius: typeof radiuses[number]
+  alternativeRadius: (typeof radiuses)[number]
 }
 
 @Page({

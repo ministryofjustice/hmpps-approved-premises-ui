@@ -12,7 +12,7 @@ export const questionKeys = [
   'sharingBenefits',
 ] as const
 
-type QuestionKeys = typeof questionKeys[number]
+type QuestionKeys = (typeof questionKeys)[number]
 
 type RoomSharingBody = YesOrNoWithDetail<'riskToStaff'> &
   YesOrNoWithDetail<'riskToOthers'> &
