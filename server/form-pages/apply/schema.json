@@ -940,19 +940,35 @@
           "type": "object",
           "properties": {
             "additionalNeeds": {
-              "type": "array",
-              "items": {
-                "enum": [
-                  "hearingImpairment",
-                  "learningDisability",
-                  "mobility",
-                  "neurodivergentConditions",
-                  "none",
-                  "other",
-                  "visualImpairment"
-                ],
-                "type": "string"
-              }
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "hearingImpairment",
+                      "learningDisability",
+                      "mobility",
+                      "neurodivergentConditions",
+                      "none",
+                      "other",
+                      "visualImpairment"
+                    ],
+                    "type": "string"
+                  }
+                },
+                {
+                  "enum": [
+                    "hearingImpairment",
+                    "learningDisability",
+                    "mobility",
+                    "neurodivergentConditions",
+                    "none",
+                    "other",
+                    "visualImpairment"
+                  ],
+                  "type": "string"
+                }
+              ]
             },
             "religiousOrCulturalNeeds": {
               "enum": [
