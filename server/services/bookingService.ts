@@ -1,11 +1,10 @@
 import { isSameDay, isWithinInterval, addDays } from 'date-fns'
 
 import type { Booking, NewBooking, Extension, NewExtension } from '@approved-premises/api'
-import type { TableRow, GroupedListofBookings } from '@approved-premises/ui'
+import type { GroupedListofBookings } from '@approved-premises/ui'
 
 import type { RestClientBuilder, ReferenceDataClient } from '../data'
 import BookingClient from '../data/bookingClient'
-import paths from '../paths/manage'
 import { DateFormats } from '../utils/dateUtils'
 
 export default class BookingService {
@@ -32,12 +31,10 @@ export default class BookingService {
     return booking
   }
 
-  async listOfBookingsForPremisesId(token: string, premisesId: string): Promise<Array<TableRow>> {
+  async listOfBookingsForPremisesId(token: string, premisesId: string): Promise<Array<Booking>> {
     const bookingClient = this.bookingClientFactory(token)
 
-    const bookings = await bookingClient.allBookingsForPremisesId(premisesId)
-
-    return this.bookingsToTableRows(bookings, premisesId, 'arrival')
+    return bookingClient.allBookingsForPremisesId(premisesId)
   }
 
   async groupedListOfBookingsForPremisesId(token: string, premisesId: string): Promise<GroupedListofBookings> {
@@ -47,10 +44,10 @@ export default class BookingService {
     const today = new Date(new Date().setHours(0, 0, 0, 0))
 
     return {
-      arrivingToday: this.bookingsToTableRows(this.bookingsArrivingToday(bookings, today), premisesId, 'arrival'),
-      departingToday: this.bookingsToTableRows(this.bookingsDepartingToday(bookings, today), premisesId, 'departure'),
-      upcomingArrivals: this.bookingsToTableRows(this.upcomingArrivals(bookings, today), premisesId, 'arrival'),
-      upcomingDepartures: this.bookingsToTableRows(this.upcomingDepartures(bookings, today), premisesId, 'departure'),
+      arrivingToday: this.bookingsArrivingToday(bookings, today),
+      departingToday: this.bookingsDepartingToday(bookings, today),
+      upcomingArrivals: this.upcomingArrivals(bookings, today),
+      upcomingDepartures: this.upcomingDepartures(bookings, today),
     }
   }
 
@@ -67,51 +64,12 @@ export default class BookingService {
     return confirmedBooking
   }
 
-  bookingsToTableRows(bookings: Array<Booking>, premisesId: string, type: 'arrival' | 'departure'): Array<TableRow> {
-    return bookings.map(booking => [
-      {
-        text: booking.person.crn,
-      },
-      {
-        text: DateFormats.isoDateToUIDate(type === 'arrival' ? booking.arrivalDate : booking.departureDate),
-      },
-      {
-        html: `<a href="${paths.bookings.show({ premisesId, bookingId: booking.id })}">
-          Manage
-          <span class="govuk-visually-hidden">
-            booking for ${booking.person.crn}
-          </span>
-        </a>`,
-      },
-    ])
-  }
-
-  async currentResidents(token: string, premisesId: string): Promise<Array<TableRow>> {
+  async currentResidents(token: string, premisesId: string): Promise<Array<Booking>> {
     const bookingClient = this.bookingClientFactory(token)
 
     const bookings = await bookingClient.allBookingsForPremisesId(premisesId)
-    const arrivedBookings = this.arrivedBookings(bookings)
 
-    return this.currentResidentsToTableRows(arrivedBookings, premisesId)
-  }
-
-  currentResidentsToTableRows(bookings: Array<Booking>, premisesId: string): Array<TableRow> {
-    return bookings.map(booking => [
-      {
-        text: booking.person.crn,
-      },
-      {
-        text: DateFormats.isoDateToUIDate(booking.departureDate),
-      },
-      {
-        html: `<a href="${paths.bookings.show({ premisesId, bookingId: booking.id })}">
-        Manage
-        <span class="govuk-visually-hidden">
-          booking for ${booking.person.crn}
-        </span>
-      </a>`,
-      },
-    ])
+    return this.arrivedBookings(bookings)
   }
 
   private bookingsArrivingToday(bookings: Array<Booking>, today: Date): Array<Booking> {
