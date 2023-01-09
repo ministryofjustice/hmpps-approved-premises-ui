@@ -11,6 +11,8 @@ import Assess from '../form-pages/assess'
 import { UnknownPageError } from './errors'
 import { embeddedSummaryListItem } from './checkYourAnswersUtils'
 import reviewSections from './reviewUtils'
+import Apply from '../form-pages/apply'
+import { kebabCase } from './utils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
@@ -225,6 +227,17 @@ const getTaskResponsesAsSummaryListItems = (
 
   return items
 }
+
+const getReviewNavigationItems = () => {
+  const applySections = Apply.sections.slice(0, -1)
+  return applySections.map(applicationSection => {
+    return {
+      href: `#${kebabCase(applicationSection.title)}`,
+      text: applicationSection.title,
+    }
+  })
+}
+
 export {
   assessmentSections,
   assessmentLink,
@@ -234,6 +247,7 @@ export {
   getStatus,
   getPage,
   getTaskResponsesAsSummaryListItems,
+  getReviewNavigationItems,
   requestedFurtherInformationTableRows,
   daysSinceInfoRequest,
   formatDays,

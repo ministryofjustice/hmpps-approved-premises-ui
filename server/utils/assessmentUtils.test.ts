@@ -15,6 +15,7 @@ import {
   getPage,
   assessmentSections,
   getTaskResponsesAsSummaryListItems,
+  getReviewNavigationItems,
 } from './assessmentUtils'
 import { DateFormats } from './dateUtils'
 import paths from '../paths/assess'
@@ -331,6 +332,12 @@ describe('assessmentUtils', () => {
           },
         },
       ])
+    })
+  })
+
+  describe('getReviewNavigationItems', () => {
+    it('returns an array of objects with the link and human readable text for each of the Apply pages', () => {
+      expect(getReviewNavigationItems()).toEqual([{ href: '#first', text: 'First' }])
     })
   })
 })
