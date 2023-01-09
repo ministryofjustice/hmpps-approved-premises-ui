@@ -16,6 +16,7 @@ import {
   assessmentSections,
   getTaskResponsesAsSummaryListItems,
   getReviewNavigationItems,
+  getSectionSuffix,
 } from './assessmentUtils'
 import { DateFormats } from './dateUtils'
 import paths from '../paths/assess'
@@ -338,6 +339,24 @@ describe('assessmentUtils', () => {
   describe('getReviewNavigationItems', () => {
     it('returns an array of objects with the link and human readable text for each of the Apply pages', () => {
       expect(getReviewNavigationItems()).toEqual([{ href: '#first', text: 'First' }])
+    })
+  })
+
+  describe('getSectionSuffix', () => {
+    it('returns an empty string if the task id isnt oasys-import or prison-information', () => {
+      expect(getSectionSuffix({ id: 'foo', title: '', pages: {} })).toBe('')
+    })
+
+    it('returns the correct html if supplied a task with an ID of oasys-import', () => {
+      expect(getSectionSuffix({ id: 'oasys-import', title: '', pages: {} })).toBe(
+        '<p><a href="oasys-link">View detailed risk information</a></p>',
+      )
+    })
+
+    it('returns the correct html if supplied a task with an ID of prison-information', () => {
+      expect(getSectionSuffix({ id: 'prison-information', title: '', pages: {} })).toBe(
+        '<p><a href="prison-link">View additional prison information</a></p>',
+      )
     })
   })
 })

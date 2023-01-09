@@ -238,6 +238,25 @@ const getReviewNavigationItems = () => {
   })
 }
 
+const getSectionSuffix = (task: Task) => {
+  let link: string
+  let copy: string
+
+  if (task.id !== 'oasys-import' && task.id !== 'prison-information') return ''
+
+  if (task.id === 'oasys-import') {
+    link = 'oasys-link'
+    copy = 'View detailed risk information'
+  }
+
+  if (task.id === 'prison-information') {
+    link = 'prison-link'
+    copy = 'View additional prison information'
+  }
+
+  return `<p><a href="${link}">${copy}</a></p>`
+}
+
 export {
   assessmentSections,
   assessmentLink,
@@ -248,6 +267,7 @@ export {
   getPage,
   getTaskResponsesAsSummaryListItems,
   getReviewNavigationItems,
+  getSectionSuffix,
   requestedFurtherInformationTableRows,
   daysSinceInfoRequest,
   formatDays,
