@@ -7,7 +7,7 @@ import { yesOrNoResponseWithDetail } from '../../../utils'
 
 export const questionKeys = ['complexCaseBoard'] as const
 
-type QuestionKeys = typeof questionKeys[number]
+type QuestionKeys = (typeof questionKeys)[number]
 
 @Page({ name: 'complex-case-board', bodyProperties: ['complexCaseBoard', 'complexCaseBoardDetail'] })
 export default class ComplexCaseBoard implements TasklistPage {

@@ -7,7 +7,7 @@ import { yesNoOrDontKnowResponseWithDetail } from '../../../utils'
 
 export const questionKeys = ['previousPlacement'] as const
 
-type QuestionKeys = typeof questionKeys[number]
+type QuestionKeys = (typeof questionKeys)[number]
 
 @Page({ name: 'previous-placements', bodyProperties: ['previousPlacement', 'previousPlacementDetail'] })
 export default class PreviousPlacements implements TasklistPage {

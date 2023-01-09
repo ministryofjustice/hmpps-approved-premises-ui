@@ -7,7 +7,7 @@ import { yesOrNoResponseWithDetail } from '../../../utils'
 
 export const questionKeys = ['catering'] as const
 
-type QuestionKeys = typeof questionKeys[number]
+type QuestionKeys = (typeof questionKeys)[number]
 @Page({ name: 'catering', bodyProperties: ['catering', 'cateringDetail'] })
 export default class Catering implements TasklistPage {
   title = 'Catering requirements'
