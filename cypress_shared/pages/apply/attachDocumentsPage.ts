@@ -1,5 +1,4 @@
 import { ApprovedPremisesApplication, Document } from '@approved-premises/api'
-import path from 'path'
 import paths from '../../../server/paths/apply'
 
 import { DateFormats } from '../../../server/utils/dateUtils'
@@ -57,8 +56,7 @@ export default class AttachDocumentsPage extends ApplyPage {
         })
 
       const downloadsFolder = Cypress.config('downloadsFolder')
-      const downloadedFilename = path.join(downloadsFolder, document.fileName)
-
+      const downloadedFilename = `${downloadsFolder}/${document.fileName}`
       cy.readFile(downloadedFilename, 'binary', { timeout: 300 })
     })
   }

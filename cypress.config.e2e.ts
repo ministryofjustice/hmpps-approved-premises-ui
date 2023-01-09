@@ -23,7 +23,7 @@ async function setupNodeEvents(
 
 export default defineConfig({
   chromeWebSecurity: false,
-  fixturesFolder: 'e2e/fixtures',
+  fixturesFolder: 'cypress_shared/fixtures',
   screenshotsFolder: 'e2e/screenshots',
   videosFolder: 'e2e/videos',
   reporter: 'cypress-multi-reporters',

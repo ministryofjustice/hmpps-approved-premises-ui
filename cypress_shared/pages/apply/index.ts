@@ -1,47 +1,87 @@
-import StartPage from './startPage'
-import EnterCRNPage from './enterCrn'
+import AccessNeedsMobilityPage from './accessNeedsMobility'
+import AccessNeedsPage from './accessNeeds'
+import ArsonPage from './arson'
+import AttachDocumentsPage from './attachDocumentsPage'
+import CaseNotesPage from './caseNotes'
+import CateringPage from './catering'
+import CheckYourAnswersPage from './checkYourAnswersPage'
+import ComplexCaseBoard from './complexCaseBoard'
 import ConfirmDetailsPage from './confirmDetails'
+import ConvictedOffences from './convictedOffences'
+import CovidPage from './covid'
+import DateOfOffence from './dateOfOffence'
+import DescribeLocationFactors from './describeLocationFactors'
+import EnterCRNPage from './enterCrn'
+import ForeignNationalPage from './foreignNational'
 import ListPage from './list'
+import OffenceDetailsPage from './offenceDetails'
+import OptionalOasysSectionsPage from './optionalOasysSections'
+import PlacementDurationPage from './placementDuration'
+import PlacementPurposePage from './placementPurpose'
+import PlacementStartPage from './placementStart'
+import PlansInPlacePage from './plansInPlace'
+import PreviousPlacements from './previousPlacements'
+import RehabilitativeInterventions from './rehabilitativeInterventions'
+import ReleaseDatePage from './releaseDate'
+import RelocationRegionPage from './relocationRegion'
+import RiskManagementFeatures from './riskManagementFeatures'
+import RiskManagementPlanPage from './riskManagementPlan'
+import RiskToSelfPage from './riskToSelf'
+import RoomSharingPage from './roomSharing'
+import RoshSummaryPage from './roshSummary'
+import SelectOffencePage from './selectOffence'
 import SentenceTypePage from './sentenceType'
 import SituationPage from './situationPage'
-import PlacementStartPage from './placementStart'
-import ReleaseDatePage from './releaseDate'
+import StartPage from './startPage'
+import SubmissionConfirmation from './submissionConfirmation'
+import SupportingInformationPage from './supportingInformation'
 import TaskListPage from './taskListPage'
+import TypeOfAccommodationPage from './typeOfAccommodation'
 import TypeOfApPage from './typeOfAp'
-import DescribeLocationFactors from './describeLocationFactors'
-import RoomSharingPage from './roomSharing'
+import TypeOfConvictedOffence from './typeOfConvictedOffence'
 import VulnerabilityPage from './vulnerability'
-import PreviousPlacements from './previousPlacements'
-import ComplexCaseBoard from './complexCaseBoard'
-import CateringPage from './catering'
-import ArsonPage from './arson'
-import PlacementDurationPage from './placementDuration'
-import ForeignNationalPage from './foreignNational'
-import CheckYourAnswersPage from './checkYourAnswersPage'
-import SelectOffencePage from './selectOffence'
-import AttachDocumentsPage from './attachDocumentsPage'
 
 export {
+  AccessNeedsMobilityPage,
+  AccessNeedsPage,
+  ArsonPage,
+  AttachDocumentsPage,
+  CaseNotesPage,
+  CateringPage,
+  CheckYourAnswersPage,
+  ComplexCaseBoard,
   ConfirmDetailsPage,
+  ConvictedOffences,
+  CovidPage,
+  DateOfOffence,
+  DescribeLocationFactors,
   EnterCRNPage,
-  StartPage,
+  ForeignNationalPage,
   ListPage,
+  OffenceDetailsPage,
+  OptionalOasysSectionsPage,
+  PlacementDurationPage,
+  PlacementPurposePage,
+  PlacementStartPage,
+  PlansInPlacePage,
+  PreviousPlacements,
+  RehabilitativeInterventions,
+  ReleaseDatePage,
+  RelocationRegionPage,
+  RiskManagementFeatures,
+  RiskManagementPlanPage,
+  RiskToSelfPage,
+  RoomSharingPage,
+  RoshSummaryPage,
+  SelectOffencePage,
   SentenceTypePage,
   SituationPage,
-  PlacementStartPage,
-  ReleaseDatePage,
+  StartPage,
+  SubmissionConfirmation,
+  SupportingInformationPage,
   TaskListPage,
+  TypeOfAccommodationPage,
   TypeOfApPage,
-  DescribeLocationFactors,
-  RoomSharingPage,
+  TypeOfConvictedOffence,
   VulnerabilityPage,
-  PreviousPlacements,
-  ComplexCaseBoard,
-  CateringPage,
-  ArsonPage,
-  PlacementDurationPage,
-  ForeignNationalPage,
-  CheckYourAnswersPage,
-  SelectOffencePage,
-  AttachDocumentsPage,
 }
