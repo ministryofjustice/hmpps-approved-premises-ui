@@ -47,7 +47,9 @@ context('Assess', () => {
 
       // And be able to complete the form
       reviewPage.shouldShowAnswers(assessment)
+      reviewPage.shouldBeAbleToDownloadDocuments(documents)
       reviewPage.completeForm()
+
       reviewPage.clickSubmit()
 
       // Then I should be taken to the task list

@@ -30,6 +30,7 @@ import Assess from '../form-pages/assess'
 import { UnknownPageError } from './errors'
 import applicationFactory from '../testutils/factories/application'
 import reviewSections from './reviewUtils'
+import documentFactory from '../testutils/factories/document'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -333,6 +334,34 @@ describe('assessmentUtils', () => {
           },
         },
       ])
+    })
+
+    describe('if the page name includes "attach-documents"', () => {
+      it('then the correct array is returned', () => {
+        const application = applicationFactory.build()
+        const documents = documentFactory.buildList(1)
+
+        ;(applicationUtils.documentsFromApplication as jest.Mock).mockReturnValue(documents)
+
+        application.data['attach-required-documents'] = {
+          'attach-documents': {
+            selectedDocuments: documents,
+          },
+        }
+
+        expect(
+          getTaskResponsesAsSummaryListItems({ id: 'attach-required-documents', title: 'bar', pages: {} }, application),
+        ).toEqual([
+          {
+            key: {
+              html: `<a href="/applications/people/${application.person.crn}/documents/${documents[0].id}" data-cy-documentId="${documents[0].id}" />${documents[0].fileName}</a>`,
+            },
+            value: {
+              text: documents[0].description,
+            },
+          },
+        ])
+      })
     })
   })
 
