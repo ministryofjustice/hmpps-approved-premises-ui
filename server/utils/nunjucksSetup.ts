@@ -13,13 +13,13 @@ import { getTaskStatus, taskLink, getCompleteSectionCount, dashboardTableRows } 
 import { checkYourAnswersSections } from './checkYourAnswersUtils'
 
 import { statusTag } from './personUtils'
-import bookingActions from './bookingUtils'
 import { DateFormats } from './dateUtils'
 
 import * as AssessmentUtils from './assessmentUtils'
 import * as OffenceUtils from './offenceUtils'
 import * as AttachDocumentsUtils from './attachDocumentsUtils'
 import * as OasysImportUtils from './oasysImportUtils'
+import * as BookingUtils from './bookingUtils'
 
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
@@ -99,8 +99,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     },
   )
 
-  njkEnv.addGlobal('bookingActions', bookingActions)
-
   njkEnv.addGlobal('paths', { ...managePaths, ...applyPaths })
 
   njkEnv.addGlobal('getCompleteSectionCount', getCompleteSectionCount)
@@ -135,4 +133,5 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('OffenceUtils', OffenceUtils)
   njkEnv.addGlobal('AttachDocumentsUtils', AttachDocumentsUtils)
   njkEnv.addGlobal('OasysImportUtils', OasysImportUtils)
+  njkEnv.addGlobal('BookingUtils', BookingUtils)
 }

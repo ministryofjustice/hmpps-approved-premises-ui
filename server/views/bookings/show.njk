@@ -22,7 +22,7 @@
          title: {
           html: "<h1>" + pageHeading + "</h1>"
         },
-        menus: bookingActions(booking, premisesId)
+        menus: BookingUtils.bookingActions(booking, premisesId)
       }) }}
 
       <br>
@@ -152,4 +152,3 @@
     new MOJFrontend.ButtonMenu({container: $('.moj-button-menu'), mq: "(min-width: 200em)", buttonText: "Actions", menuClasses: "moj-button-menu__wrapper--right"});
   </script>
 {% endblock %}
-

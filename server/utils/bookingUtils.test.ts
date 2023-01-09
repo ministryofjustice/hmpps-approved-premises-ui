@@ -1,8 +1,97 @@
-import bookingActions from './bookingUtils'
+import { bookingActions, bookingsToTableRows, manageBookingLink } from './bookingUtils'
 import bookingFactory from '../testutils/factories/booking'
+import personFactory from '../testutils/factories/person'
 import paths from '../paths/manage'
+import { DateFormats } from './dateUtils'
 
 describe('bookingUtils', () => {
+  const premisesId = 'e8f29a4a-dd4d-40a2-aa58-f3f60245c8fc'
+
+  describe('manageBookingLink', () => {
+    it('returns a link for a booking', () => {
+      const booking = bookingFactory.build()
+
+      expect(manageBookingLink(premisesId, booking)).toMatchStringIgnoringWhitespace(`<a href="${paths.bookings.show({
+        premisesId,
+        bookingId: booking.id,
+      })}">
+      Manage
+      <span class="govuk-visually-hidden">
+        booking for ${booking.person.crn}
+      </span>
+    </a>`)
+    })
+  })
+
+  describe('bookingsToTableRows', () => {
+    const bookings = [
+      bookingFactory.build({
+        person: personFactory.build({ crn: 'ABC123' }),
+        arrivalDate: '2022-01-01',
+        departureDate: '2022-03-01',
+      }),
+      bookingFactory.build({
+        person: personFactory.build({ crn: 'XYZ345' }),
+        arrivalDate: '2022-01-02',
+        departureDate: '2022-03-02',
+      }),
+    ]
+
+    it('casts a group of bookings to table rows with the arrival date', () => {
+      expect(bookingsToTableRows(bookings, premisesId, 'arrival')).toEqual([
+        [
+          {
+            text: bookings[0].person.crn,
+          },
+          {
+            text: DateFormats.isoDateToUIDate(bookings[0].arrivalDate),
+          },
+          {
+            html: manageBookingLink(premisesId, bookings[0]),
+          },
+        ],
+        [
+          {
+            text: bookings[1].person.crn,
+          },
+          {
+            text: DateFormats.isoDateToUIDate(bookings[1].arrivalDate),
+          },
+          {
+            html: manageBookingLink(premisesId, bookings[1]),
+          },
+        ],
+      ])
+    })
+
+    it('casts a group of bookings to table rows with the departure date', () => {
+      expect(bookingsToTableRows(bookings, premisesId, 'departure')).toEqual([
+        [
+          {
+            text: bookings[0].person.crn,
+          },
+          {
+            text: DateFormats.isoDateToUIDate(bookings[0].departureDate),
+          },
+          {
+            html: manageBookingLink(premisesId, bookings[0]),
+          },
+        ],
+        [
+          {
+            text: bookings[1].person.crn,
+          },
+          {
+            text: DateFormats.isoDateToUIDate(bookings[1].departureDate),
+          },
+          {
+            html: manageBookingLink(premisesId, bookings[1]),
+          },
+        ],
+      ])
+    })
+  })
+
   describe('bookingActions', () => {
     it('should return null when the booking is cancelled, departed or did not arrive', () => {
       const cancelledBooking = bookingFactory.cancelledWithFutureArrivalDate().build()
