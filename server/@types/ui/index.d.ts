@@ -13,6 +13,7 @@ import {
   ArrayOfOASysSupportingInformationQuestions,
   ArrayOfOASysRiskToSelfQuestions,
   ArrayOfOASysRiskManagementPlanQuestions,
+  Booking,
 } from '@approved-premises/api'
 
 interface TasklistPage {
@@ -188,7 +189,7 @@ export interface PersonRisksUI {
 }
 
 export type GroupedListofBookings = {
-  [K in 'arrivingToday' | 'departingToday' | 'upcomingArrivals' | 'upcomingDepartures']: Array<TableRow>
+  [K in 'arrivingToday' | 'departingToday' | 'upcomingArrivals' | 'upcomingDepartures']: Array<Booking>
 }
 
 export type DataServices = Partial<{

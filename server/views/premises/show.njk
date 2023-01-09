@@ -55,28 +55,28 @@
       label: "Arriving Today",
       id: "arriving-today",
       panel: {
-        html: bookingTable("Arriving Today", "Arrival", bookings.arrivingToday)
+        html: bookingTable("Arriving Today", "Arrival", BookingUtils.bookingsToTableRows(bookings.arrivingToday, premisesId, 'arrival'))
       }
     },
     {
       label: "Departing Today",
       id: "departing-today",
       panel: {
-        html: bookingTable("Departing Today", "Departure", bookings.departingToday)
+        html: bookingTable("Departing Today", "Departure", BookingUtils.bookingsToTableRows(bookings.departingToday, premisesId, 'departure'))
       }
     },
     {
       label: "Upcoming Arrivals",
       id: "upcoming-arrivals",
       panel: {
-        html: bookingTable("Upcoming Arrivals", "Arrival", bookings.upcomingArrivals)
+        html: bookingTable("Upcoming Arrivals", "Arrival", BookingUtils.bookingsToTableRows(bookings.upcomingArrivals, premisesId, 'arrival'))
       }
     },
     {
       label: "Upcoming Departures",
       id: "upcoming-departures",
       panel: {
-        html: bookingTable("Upcoming Departures", "Departure", bookings.upcomingDepartures)
+        html: bookingTable("Upcoming Departures", "Departure", BookingUtils.bookingsToTableRows(bookings.upcomingDepartures, premisesId, 'departure'))
       }
     }
   ]
@@ -91,7 +91,10 @@
     firstCellIsHeader: true,
     head: [
       {
-        text: "Resident"
+        text: "Resident Name"
+      },
+      {
+        text: "CRN"
       },
       {
         text: "Expected Departure Date"
@@ -100,7 +103,7 @@
         text: "Actions"
       }
     ],
-    rows: currentResidents
+    rows: BookingUtils.bookingsToTableRows(currentResidents, premisesId, 'departure')
   }) }}
 
 {% endblock %}

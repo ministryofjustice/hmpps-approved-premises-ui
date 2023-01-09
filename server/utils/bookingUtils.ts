@@ -1,8 +1,39 @@
-import type { IdentityBarMenu } from '@approved-premises/ui'
+import type { IdentityBarMenu, TableRow } from '@approved-premises/ui'
 import type { Booking } from '@approved-premises/api'
 import paths from '../paths/manage'
+import { DateFormats } from './dateUtils'
 
-export default function bookingActions(booking: Booking, premisesId: string): Array<IdentityBarMenu> {
+export const manageBookingLink = (premisesId: string, booking: Booking): string => {
+  return `<a href="${paths.bookings.show({ premisesId, bookingId: booking.id })}">
+    Manage
+    <span class="govuk-visually-hidden">
+      booking for ${booking.person.crn}
+    </span>
+  </a>`
+}
+
+export const bookingsToTableRows = (
+  bookings: Array<Booking>,
+  premisesId: string,
+  type: 'arrival' | 'departure',
+): Array<TableRow> => {
+  return bookings.map(booking => [
+    {
+      text: booking.person.name,
+    },
+    {
+      text: booking.person.crn,
+    },
+    {
+      text: DateFormats.isoDateToUIDate(type === 'arrival' ? booking.arrivalDate : booking.departureDate),
+    },
+    {
+      html: manageBookingLink(premisesId, booking),
+    },
+  ])
+}
+
+export const bookingActions = (booking: Booking, premisesId: string): Array<IdentityBarMenu> => {
   if (booking.status === 'awaiting-arrival' || booking.status === 'arrived') {
     const items = []
 

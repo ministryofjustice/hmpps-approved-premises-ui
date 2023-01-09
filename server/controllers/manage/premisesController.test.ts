@@ -1,7 +1,8 @@
 import type { Request, Response, NextFunction } from 'express'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 
-import type { SummaryListItem, GroupedListofBookings, TableRow } from '@approved-premises/ui'
+import type { SummaryListItem, GroupedListofBookings } from '@approved-premises/ui'
+import { Booking } from '@approved-premises/api'
 import PremisesService from '../../services/premisesService'
 import BookingService from '../../services/bookingService'
 import PremisesController from './premisesController'
@@ -34,7 +35,7 @@ describe('PremisesController', () => {
     it('should return the premises detail to the template', async () => {
       const premises = { name: 'Some premises', summaryList: { rows: [] as Array<SummaryListItem> } }
       const bookings = createMock<GroupedListofBookings>()
-      const currentResidents = createMock<Array<TableRow>>()
+      const currentResidents = createMock<Array<Booking>>()
       const overcapacityMessage = 'The premises is over capacity for the period January 1st 2023 to Feburary 3rd 2023'
       premisesService.getPremisesDetails.mockResolvedValue(premises)
       premisesService.getOvercapacityMessage.mockResolvedValue([overcapacityMessage])
