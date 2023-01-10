@@ -5,12 +5,13 @@ import nunjucks from 'nunjucks'
 import express from 'express'
 import * as pathModule from 'path'
 
-import type { ErrorMessages, PersonStatus, Task } from '@approved-premises/ui'
+import type { ErrorMessages, JourneyType, PersonStatus, Task } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
-import { initialiseName, removeBlankSummaryListItems, sentenceCase, mapApiPersonRisksForUi } from './utils'
+import { initialiseName, removeBlankSummaryListItems, sentenceCase, mapApiPersonRisksForUi, kebabCase } from './utils'
 import { dateFieldValues, convertObjectsToRadioItems, convertObjectsToSelectOptions } from './formUtils'
-import { getTaskStatus, taskLink, getCompleteSectionCount, dashboardTableRows } from './applicationUtils'
+import { getTaskStatus, getCompleteSectionCount, dashboardTableRows } from './applicationUtils'
 import { checkYourAnswersSections } from './checkYourAnswersUtils'
+import taskLinkHelper from './taskListUtils'
 
 import { statusTag } from './personUtils'
 import { DateFormats } from './dateUtils'
@@ -23,6 +24,7 @@ import * as BookingUtils from './bookingUtils'
 
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
+import assessPaths from '../paths/assess'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -99,7 +101,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     },
   )
 
-  njkEnv.addGlobal('paths', { ...managePaths, ...applyPaths })
+  njkEnv.addGlobal('paths', { ...managePaths, ...applyPaths, ...assessPaths })
 
   njkEnv.addGlobal('getCompleteSectionCount', getCompleteSectionCount)
 
@@ -107,8 +109,8 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     markAsSafe(getTaskStatus(task, application)),
   )
 
-  njkEnv.addGlobal('taskLink', (task: Task, application: ApprovedPremisesApplication) =>
-    markAsSafe(taskLink(task, application)),
+  njkEnv.addGlobal('taskLink', (task: Task, application: ApprovedPremisesApplication, journeyType?: JourneyType) =>
+    markAsSafe(taskLinkHelper(task, application, journeyType)),
   )
 
   njkEnv.addGlobal('statusTag', (status: PersonStatus) => markAsSafe(statusTag(status)))
@@ -125,6 +127,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   njkEnv.addFilter('removeBlankSummaryListItems', removeBlankSummaryListItems)
   njkEnv.addFilter('sentenceCase', sentenceCase)
+  njkEnv.addFilter('kebabCase', kebabCase)
 
   njkEnv.addGlobal('checkYourAnswersSections', checkYourAnswersSections)
   njkEnv.addGlobal('dashboardTableRows', dashboardTableRows)

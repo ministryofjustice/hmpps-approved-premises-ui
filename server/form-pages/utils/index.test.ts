@@ -1,6 +1,12 @@
+import { Request } from 'express'
+import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import 'reflect-metadata'
+
 // Use a wildcard import to allow us to use jest.spyOn on functions within this module
 import * as utils from './index'
+import { TasklistPageInterface } from '../tasklistPage'
+import { ApprovedPremisesApplication } from '../../@types/shared'
+import applicationFactory from '../../testutils/factories/application'
 
 describe('utils', () => {
   describe('applyYesOrNo', () => {
@@ -125,8 +131,8 @@ describe('utils', () => {
         const page1 = new Page1()
         const page2 = new Page2()
 
-        expect(utils.viewPath(page1)).toEqual('applications/pages/task-1/page-1')
-        expect(utils.viewPath(page2)).toEqual('applications/pages/task-2/page-2')
+        expect(utils.viewPath(page1, 'applications')).toEqual('applications/pages/task-1/page-1')
+        expect(utils.viewPath(page2, 'assessments')).toEqual('assessments/pages/task-2/page-2')
       })
     })
 
@@ -140,6 +146,35 @@ describe('utils', () => {
       it('returns the task name', () => {
         expect(utils.getTaskName(Page1)).toEqual('task-1')
       })
+    })
+  })
+
+  describe('getBody', () => {
+    it('if there is userInput it returns it', () => {
+      const input = { user: 'input' }
+
+      expect(
+        utils.getBody({} as TasklistPageInterface, {} as ApprovedPremisesApplication, {} as Request, input),
+      ).toEqual(input)
+    })
+
+    it('if there isnt userInput and there is a request body the request body is returned', () => {
+      const request: DeepMocked<Request> = createMock<Request>()
+
+      expect(utils.getBody({} as TasklistPageInterface, {} as ApprovedPremisesApplication, request, {}))
+    })
+
+    it('if there is neither a request body or userInput then getPageFromApplicationData is called and returns the data for that page', () => {
+      const page: DeepMocked<TasklistPageInterface> = createMock<TasklistPageInterface>()
+      const pageData = { task: { page: 'returnMe' } }
+      const application = applicationFactory.build({ data: pageData })
+
+      jest.spyOn(utils, 'getPageName').mockImplementation(() => 'page')
+      jest.spyOn(utils, 'getTaskName').mockImplementation(() => 'task')
+
+      jest.spyOn(utils, 'getPageDataFromApplication').mockImplementation((_, applicationInput) => applicationInput.data)
+
+      expect(utils.getBody(page, application, { body: {} } as Request, {})).toBe('returnMe')
     })
   })
 })

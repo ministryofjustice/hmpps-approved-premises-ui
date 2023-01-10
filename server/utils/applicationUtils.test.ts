@@ -8,7 +8,6 @@ import { DateFormats } from './dateUtils'
 import { tierBadge } from './personUtils'
 
 import {
-  taskLink,
   getTaskStatus,
   getCompleteSectionCount,
   getResponses,
@@ -62,26 +61,6 @@ describe('applicationUtils', () => {
       expect(getTaskStatus(task, application)).toEqual(
         '<strong class="govuk-tag app-task-list__tag" id="type-of-ap-status">Completed</strong>',
       )
-    })
-  })
-
-  describe('taskLink', () => {
-    it('should return a link to a task when the previous task is complete', () => {
-      const application = applicationFactory.build({ id: 'some-uuid', data: { 'basic-information': { foo: 'bar' } } })
-
-      expect(taskLink(task, application)).toEqual(
-        `<a href="${paths.applications.pages.show({
-          id: 'some-uuid',
-          task: 'type-of-ap',
-          page: 'foo',
-        })}" aria-describedby="eligibility-type-of-ap" data-cy-task-name="type-of-ap">Type of Approved Premises required</a>`,
-      )
-    })
-
-    it('should return the task name when the previous task is incomplete', () => {
-      const application = applicationFactory.build({ id: 'some-uuid' })
-
-      expect(taskLink(task, application)).toEqual(`Type of Approved Premises required`)
     })
   })
 

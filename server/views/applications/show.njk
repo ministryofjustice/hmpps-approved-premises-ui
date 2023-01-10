@@ -34,7 +34,7 @@
               {% for task in section.tasks %}
                 <li class="app-task-list__item">
                   <span class="app-task-list__task-name">
-                    {{ taskLink(task, application)  }}
+                    {{ taskLink(task, application, 'applications')  }}
                   </span>
                   {{ getTaskStatus(task, application) }}
                 </li>

@@ -13,7 +13,6 @@
       </h1>
 
       <h2 class="govuk-heading-s govuk-!-margin-bottom-2">Assessment incomplete</h2>
-      <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ getCompleteSectionCount(sections, application) }} of {{ (sections | length) }} sections.</p>
     </div>
 
     <div class="govuk-grid-column-two-thirds">
@@ -28,7 +27,7 @@
               {% for task in section.tasks %}
                 <li class="app-task-list__item">
                   <span class="app-task-list__task-name">
-                    {{ taskLink(task, assessment)  }}
+                    {{ taskLink(task, assessment, 'assessments')  }}
                   </span>
                   {{ getTaskStatus(task, assessment) }}
                 </li>

@@ -25,7 +25,7 @@ export default class PagesController {
         const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
         const page = await this.applicationService.initializePage(Page, req, this.dataServices, userInput)
 
-        res.render(viewPath(page), {
+        res.render(viewPath(page, 'applications'), {
           applicationId: req.params.id,
           errors,
           errorSummary,

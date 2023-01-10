@@ -225,3 +225,5 @@ export type OasysImportArrays =
   | ArrayOfOASysSupportingInformationQuestions
   | ArrayOfOASysRiskToSelfQuestions
   | ArrayOfOASysRiskManagementPlanQuestions
+
+export type JourneyType = 'applications' | 'assessments'

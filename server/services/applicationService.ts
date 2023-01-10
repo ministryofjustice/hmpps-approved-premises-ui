@@ -6,7 +6,7 @@ import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import type { RestClientBuilder, ApplicationClient } from '../data'
 import { ValidationError } from '../utils/errors'
 
-import { getPageName, getTaskName } from '../form-pages/utils'
+import { getBody, getPageName, getTaskName } from '../form-pages/utils'
 
 export default class ApplicationService {
   constructor(private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>) {}
@@ -52,7 +52,7 @@ export default class ApplicationService {
     userInput?: Record<string, unknown>,
   ): Promise<TasklistPage> {
     const application = await this.getApplicationFromSessionOrAPI(request)
-    const body = this.getBody(Page, application, request, userInput)
+    const body = getBody(Page, application, request, userInput)
 
     const page = Page.initialize
       ? await Page.initialize(body, application, request.user.token, dataServices)
@@ -105,27 +105,5 @@ export default class ApplicationService {
     const client = this.applicationClientFactory(request.user.token)
 
     await client.update(application)
-  }
-
-  private getBody(
-    Page: TasklistPageInterface,
-    application: ApprovedPremisesApplication,
-    request: Request,
-    userInput: Record<string, unknown>,
-  ) {
-    if (userInput && Object.keys(userInput).length) {
-      return userInput
-    }
-    if (Object.keys(request.body).length) {
-      return request.body
-    }
-    return this.getPageDataFromApplication(Page, application)
-  }
-
-  private getPageDataFromApplication(Page: TasklistPageInterface, application: ApprovedPremisesApplication) {
-    const pageName = getPageName(Page)
-    const taskName = getTaskName(Page)
-
-    return application.data?.[taskName]?.[pageName] || {}
   }
 }

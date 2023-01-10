@@ -57,4 +57,20 @@ describe('AssessmentClient', () => {
       expect(nock.isDone()).toBeTruthy()
     })
   })
+
+  describe('update', () => {
+    it('should return an assessment when a PUT request is made', async () => {
+      const assessment = assessmentFactory.build()
+
+      fakeApprovedPremisesApi
+        .put(paths.assessments.update({ id: assessment.id }), { data: assessment.data })
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(201, assessment)
+
+      const result = await assessmentClient.update(assessment)
+
+      expect(result).toEqual(assessment)
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
 })

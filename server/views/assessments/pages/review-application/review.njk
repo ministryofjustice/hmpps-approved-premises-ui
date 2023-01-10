@@ -1,0 +1,171 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "../../../applications/components/formFields/apply-radios/macro.njk" import applyRadios %}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + page.title %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+  {{ govukBackLink({
+      text: "Back"
+  }) }}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-width-container">
+      <h1 class="govuk-heading-xl">
+        {{ page.title }}
+      </h1>
+
+      {{ mojSubNavigation({
+        label: 'Sub navigation',
+        attributes: {
+          'role': 'tablist'
+        },
+        items: AssessmentUtils.getReviewNavigationItems()
+      }) }}
+
+      <div class="main-box">
+        <h3 class="box-title govuk-heading-m">
+          Person Details
+        </h3>
+        <div class="box-content" data-cy-review-section="person-details" >
+          {{ govukSummaryList({
+          rows: ([
+            {
+              key: {
+                text: "Names"
+              },
+              value: {
+                text: page.document.application.person.name
+              }
+            },
+            {
+              key: {
+                text: "CRN"
+              },
+              value: {
+                text: page.document.application.person.crn
+              }
+            },
+            {
+              key: {
+                text: "Date of Birth"
+              },
+              value: {
+                text: formatDate(page.document.application.person.dateOfBirth, { format: 'short' })
+              }
+            },
+            {
+              key: {
+                text: "NOMS Number"
+              },
+              value: {
+                text: page.document.application.person.nomsNumber
+              }
+            },
+            {
+              key: {
+                text: "Nationality"
+              },
+              value: {
+                text: page.document.application.person.nationality
+              }
+            },
+            {
+              key: {
+                text: "Religion or Belief"
+              },
+              value: {
+                text: page.document.application.person.religionOrBelief
+              }
+            },
+            {
+              key: {
+                text: "Sex"
+              },
+              value: {
+                text: page.document.application.person.sex
+              }
+            },
+            {
+              key: {
+                text: "Gender Identity"
+              },
+              value: {
+                text: page.document.application.person.genderIdentity
+              }
+            },
+            {
+              key: {
+                text: "Status"
+              },
+              value: {
+                html: statusTag(page.document.application.person.status)
+              }
+            },
+            {
+              key: {
+                text: "Prison"
+              },
+              value: {
+                text: page.document.application.person.prisonName
+              }
+            }
+          ])
+        }) }}
+        </div>
+      </div>
+
+      {% for section in AssessmentUtils.assessmentSections(page.document.application) %}
+        <h2 class="govuk-heading-l" id={{section.title | kebabCase }}>{{ section.title }}</h2>
+        {% for task in section.tasks %}
+          <div class="main-box">
+            <h3 class="box-title govuk-heading-m">
+              {{ task.title }}
+            </h3>
+            <div class="box-content" data-cy-review-section="{{ task.id }}">
+              {{
+                govukSummaryList({
+                  rows: task.rows
+                })
+              }}
+            </div>
+          </div>
+        {% endfor %}
+      {% endfor %}
+
+      <form action="{{ paths.assessments.pages.update({ id: assessmentId, task: task, page: page.name }) }}?_method=PUT" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+        {{ applyRadios({
+          fieldName: "reviewed",
+          fieldset: {
+            legend: {
+              text: "Have you reviewed all of the application and documents provided?",
+              classes: "govuk-fieldset__legend--m"
+            }
+          },
+          items: [
+            {
+              value: "yes",
+              text: "Yes"
+            },
+            {
+              value: "no",
+              text: "No"
+            }
+          ]
+        },fetchContext()) }}
+
+        {{ govukButton({
+            text: "Continue"
+        }) }}
+      </form>
+
+    </div>
+  </div>
+{% endblock %}

@@ -4,6 +4,10 @@
 
 set -e
 
+echo "==> Linting the code"
+
+npm run lint
+
 echo "==> Checking shell scripts"
 
 node_modules/.bin/shellcheck ./script/**/*[^utils] ./script/utils/**
@@ -19,11 +23,6 @@ npm run typecheck
 echo "==> Generating the schema"
 
 npm run generate:schema:apply
-
-
-echo "==> Linting the code"
-
-npm run lint
 
 echo "==> Running unit tests..."
 

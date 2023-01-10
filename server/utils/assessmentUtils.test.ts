@@ -12,6 +12,10 @@ import {
   assessmentsApproachingDueBadge,
   formatDaysUntilDueWithWarning,
   assessmentLink,
+  getPage,
+  assessmentSections,
+  getTaskResponsesAsSummaryListItems,
+  getReviewNavigationItems,
 } from './assessmentUtils'
 import { DateFormats } from './dateUtils'
 import paths from '../paths/assess'
@@ -21,9 +25,51 @@ import * as applicationUtils from './applicationUtils'
 
 import assessmentFactory from '../testutils/factories/assessment'
 import clarificationNoteFactory from '../testutils/factories/clarificationNote'
+import Assess from '../form-pages/assess'
+import { UnknownPageError } from './errors'
+import applicationFactory from '../testutils/factories/application'
+import reviewSections from './reviewUtils'
+
+const FirstPage = jest.fn()
+const SecondPage = jest.fn()
 
 jest.mock('./applicationUtils')
+jest.mock('./checkYourAnswersUtils')
 jest.mock('./personUtils')
+jest.mock('./reviewUtils')
+
+jest.mock('../form-pages/assess', () => {
+  return {
+    pages: { 'review-application': {}, 'sufficient-information': {} },
+  }
+})
+
+jest.mock('../form-pages/apply', () => {
+  return {
+    pages: { 'basic-information': {}, 'type-of-ap': {} },
+    sections: [
+      {
+        title: 'First',
+        tasks: [
+          {
+            id: 'basic-information',
+            title: 'Basic Information',
+            pages: { 'basic-information': {}, 'type-of-ap': {} },
+          },
+        ],
+      },
+      {
+        title: 'Second',
+        tasks: [],
+      },
+    ],
+  }
+})
+
+Assess.pages['review-application'] = {
+  first: FirstPage,
+  second: SecondPage,
+}
 
 describe('assessmentUtils', () => {
   beforeEach(() => {
@@ -236,6 +282,62 @@ describe('assessmentUtils', () => {
       expect(assessmentLink(assessment)).toMatchStringIgnoringWhitespace(`
         <a href="${paths.assessments.show({ id: '123' })}" data-cy-assessmentId="123">John Wayne</a>
       `)
+    })
+  })
+
+  describe('getPage', () => {
+    it('should return a page if it exists', () => {
+      expect(getPage('review-application', 'first')).toEqual(FirstPage)
+      expect(getPage('review-application', 'second')).toEqual(SecondPage)
+    })
+
+    it('should raise an error if the page is not found', async () => {
+      expect(() => {
+        getPage('review-application', 'bar')
+      }).toThrow(UnknownPageError)
+    })
+  })
+
+  describe('assessmentSections', () => {
+    it('calls reviewSections with the supplied arguments', () => {
+      const application = applicationFactory.build()
+
+      assessmentSections(application)
+
+      expect(reviewSections).toHaveBeenCalledWith(application, getTaskResponsesAsSummaryListItems)
+    })
+  })
+
+  describe('getTaskResponsesAsSummaryListItems', () => {
+    it('returns an empty array if there isnt any responses for the task', () => {
+      const application = applicationFactory.build()
+
+      expect(getTaskResponsesAsSummaryListItems({ id: '42', title: '42', pages: {} }, application)).toEqual([])
+    })
+
+    it('returns the task responses as Summary List items', () => {
+      const application = applicationFactory.build()
+      application.data = { foo: ['bar'] }
+      ;(applicationUtils.getResponseForPage as jest.Mock).mockImplementation(() => ({
+        title: 'response',
+      }))
+
+      expect(getTaskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application)).toEqual([
+        {
+          key: {
+            text: 'title',
+          },
+          value: {
+            text: 'response',
+          },
+        },
+      ])
+    })
+  })
+
+  describe('getReviewNavigationItems', () => {
+    it('returns an array of objects with the link and human readable text for each of the Apply pages', () => {
+      expect(getReviewNavigationItems()).toEqual([{ href: '#first', text: 'First' }])
     })
   })
 })

@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import type { ApprovedPremisesAssessment } from '@approved-premises/api'
@@ -12,6 +14,12 @@ class AssessmentFactory extends Factory<ApprovedPremisesAssessment> {
       createdAt: DateFormats.dateObjToIsoDate(new Date(today.getFullYear(), today.getMonth(), today.getDate() - days)),
     })
   }
+
+  completedAssessment() {
+    return this.params({
+      decision: 'accepted' as const,
+    })
+  }
 }
 
 export default AssessmentFactory.define(() => ({
@@ -23,7 +31,7 @@ export default AssessmentFactory.define(() => ({
   createdAt: DateFormats.dateObjToIsoDate(faker.date.past()),
   allocatedAt: DateFormats.dateObjToIsoDate(faker.date.past()),
   submittedAt: DateFormats.dateObjToIsoDate(faker.date.past()),
-  decision: 'accepted' as const,
+  decision: faker.helpers.arrayElement(['accepted' as const, 'rejected' as const, undefined]),
   data: JSON.parse(faker.datatype.json()),
   clarificationNotes: [],
 }))
