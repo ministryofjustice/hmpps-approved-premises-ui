@@ -59,7 +59,7 @@ describe('ApType', () => {
       const page = new ApType({ type: 'pipe' }, application)
 
       expect(page.response()).toEqual({
-        [page.title]: 'PIPE (physcologically informed planned environment)',
+        [page.title]: 'Psychologically Informed Planned Environment (PIPE)',
       })
     })
   })

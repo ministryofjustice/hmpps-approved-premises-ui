@@ -6,9 +6,9 @@ import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
 import { Page } from '../../../utils/decorators'
 
 const apTypes = {
-  standard: 'Standard',
-  pipe: 'PIPE (physcologically informed planned environment)',
-  esap: 'ESAP (enhanced security AP)',
+  standard: 'Standard AP',
+  pipe: 'Psychologically Informed Planned Environment (PIPE)',
+  esap: 'Enhanced Security AP (ESAP)',
 } as const
 
 type ApTypes = typeof apTypes
