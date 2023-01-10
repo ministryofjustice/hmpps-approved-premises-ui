@@ -9,4 +9,5 @@ export default Factory.define<ClarificationNote>(() => ({
   createdAt: DateFormats.dateObjToIsoDate(faker.date.past()),
   createdByStaffMemberId: faker.datatype.uuid(),
   text: faker.lorem.paragraph(),
+  query: faker.lorem.sentence(),
 }))
