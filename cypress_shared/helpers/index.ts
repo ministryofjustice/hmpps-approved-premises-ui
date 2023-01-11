@@ -5,12 +5,7 @@ import {
   ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
   ArrayOfOASysRiskToSelfQuestions,
   ArrayOfOASysSupportingInformationQuestions,
-  Document,
 } from '@approved-premises/api'
-
-const documentsFromApplication = (application: ApprovedPremisesApplication): Array<Document> => {
-  return application.data['attach-required-documents']['attach-documents'].selectedDocuments as Array<Document>
-}
 
 const roshSummariesFromApplication = (
   application: ApprovedPremisesApplication,
@@ -46,7 +41,6 @@ const riskToSelfSummariesFromApplication = (
 }
 
 export {
-  documentsFromApplication,
   roshSummariesFromApplication,
   offenceDetailSummariesFromApplication,
   supportInformationFromApplication,
