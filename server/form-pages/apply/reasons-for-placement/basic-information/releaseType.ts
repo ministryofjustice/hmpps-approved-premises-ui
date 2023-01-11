@@ -8,9 +8,9 @@ import { SentenceTypesT } from './sentenceType'
 import { Page } from '../../../utils/decorators'
 
 const allReleaseTypes = {
+  licence: 'Licence',
   rotl: 'Release on Temporary Licence (ROTL)',
   hdc: 'Home detention curfew (HDC)',
-  licence: 'Licence',
   pss: 'Post Sentence Supervision (PSS)',
 } as const
 
