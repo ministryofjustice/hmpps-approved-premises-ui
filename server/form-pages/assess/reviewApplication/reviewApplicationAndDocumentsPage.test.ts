@@ -1,8 +1,16 @@
+import { createMock } from '@golevelup/ts-jest'
+import assessmentFactory from '../../../testutils/factories/assessment'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import Review from './reviewApplicationAndDocumentsPage'
+import { ApplicationService } from '../../../services'
+import documentFactory from '../../../testutils/factories/document'
+import { documentsFromApplication, overwriteApplicationDocuments } from '../../../utils/applicationUtils'
+import { Document } from '../../../@types/shared'
 
 describe('Review', () => {
+  const assessment = assessmentFactory.build()
+  const token = 'my-token'
   describe('title', () => {
     expect(new Review({}, assessment).title).toBe('Review application')
   })
@@ -14,7 +22,45 @@ describe('Review', () => {
     })
   })
 
-  itShouldHaveNextValue(new Review({}), '')
+  describe('initialize', () => {
+    beforeEach(() => {
+      assessment.application = overwriteApplicationDocuments(assessment.application, [])
+    })
+
+    it('should call the API to fetch documents for the application', async () => {
+      const getDocumentsMock = jest.fn().mockResolvedValue(documentFactory.buildList(3))
+      const applicationService = createMock<ApplicationService>({ getDocuments: getDocumentsMock })
+
+      await Review.initialize({}, assessment, token, { applicationService })
+
+      expect(applicationService.getDocuments).toHaveBeenCalledWith(token, assessment.application)
+    })
+
+    it('should add the full Document objects given the document filenames supplied on the application', async () => {
+      const allDocuments = [
+        documentFactory.build({ fileName: 'documentA' }),
+        documentFactory.build({ fileName: 'documentB' }),
+        documentFactory.build({ fileName: 'documentC' }),
+      ]
+      assessment.application = overwriteApplicationDocuments(assessment.application, [
+        { fileName: allDocuments[0].fileName } as Document,
+        { fileName: allDocuments[1].fileName } as Document,
+      ])
+
+      const getDocumentsMock = jest.fn().mockResolvedValue(allDocuments)
+
+      const applicationService = createMock<ApplicationService>({ getDocuments: getDocumentsMock })
+
+      const page = await Review.initialize({}, assessment, token, { applicationService })
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const actualDocuments = documentsFromApplication((page as any).document.application)
+
+      expect(actualDocuments).toEqual([allDocuments[0], allDocuments[1]])
+    })
+  })
+
+  itShouldHaveNextValue(new Review({}, assessment), '')
 
   itShouldHavePreviousValue(new Review({}, assessment), 'dashboard')
 
