@@ -3,6 +3,8 @@ import ReviewPage from '../../../cypress_shared/pages/assess/review'
 import Page from '../../../cypress_shared/pages/page'
 
 import assessmentFactory from '../../../server/testutils/factories/assessment'
+import documentFactory from '../../../server/testutils/factories/document'
+import { overwriteApplicationDocuments } from '../../../server/utils/applicationUtils'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -17,10 +19,16 @@ context('Assess', () => {
     cy.fixture('applicationData.json').then(applicationData => {
       // And there is an application awaiting assessment
       const assessment = assessmentFactory.build({ decision: undefined, application: { data: applicationData } })
+      const documents = documentFactory.buildList(4)
+      assessment.application = overwriteApplicationDocuments(assessment.application, documents)
 
       cy.task('stubAssessments', [assessment])
       cy.task('stubAssessment', assessment)
       cy.task('stubAssessmentUpdate', assessment)
+      cy.task('stubApplicationDocuments', { application: assessment.application, documents })
+      documents.forEach(document => {
+        cy.task('stubPersonDocument', { person: assessment.application.person, document })
+      })
 
       // When I visit the assessments dashboard
       const listPage = ListPage.visit([assessment])
