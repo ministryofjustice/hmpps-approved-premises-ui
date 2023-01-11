@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import createError from 'http-errors'
 
-import type { ErrorsAndUserInput, FormPages } from '@approved-premises/ui'
+import type { DataServices, ErrorsAndUserInput, FormPages } from '@approved-premises/ui'
 import PagesController from './pagesController'
 import { AssessmentService } from '../../services'
 import TasklistPage from '../../form-pages/tasklistPage'
@@ -39,6 +39,7 @@ describe('pagesController', () => {
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const assessmentService = createMock<AssessmentService>({})
+  const dataServices = createMock<DataServices>({}) as DataServices
 
   const PageConstructor = jest.fn()
   const page = createMock<TasklistPage>({})
@@ -52,17 +53,19 @@ describe('pagesController', () => {
       ;(viewPath as jest.Mock).mockReturnValue('assessments/pages/some/view')
       ;(getPage as jest.Mock).mockReturnValue(PageConstructor)
       assessmentService.initializePage.mockResolvedValue(page)
-      pagesController = new PagesController(assessmentService)
+      pagesController = new PagesController(assessmentService, dataServices)
     })
 
     it('renders a page', async () => {
       ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
         return { errors: {}, errorSummary: [], userInput: {} }
       })
+
       const requestHandler = pagesController.show('some-task', 'some-page')
       await requestHandler(request, response, next)
+
       expect(getPage).toHaveBeenCalledWith('some-task', 'some-page')
-      expect(assessmentService.initializePage).toHaveBeenCalledWith(PageConstructor, request, {})
+      expect(assessmentService.initializePage).toHaveBeenCalledWith(PageConstructor, request, {}, {})
       expect(response.render).toHaveBeenCalledWith('assessments/pages/some/view', {
         assessmentId: request.params.id,
         task: 'some-task',
@@ -76,12 +79,15 @@ describe('pagesController', () => {
     it('shows errors and user input when returning from an error state', async () => {
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+
       const requestHandler = pagesController.show('some-task', 'some-page')
       await requestHandler(request, response, next)
+
       expect(assessmentService.initializePage).toHaveBeenCalledWith(
         PageConstructor,
         request,
         errorsAndUserInput.userInput,
+        {},
       )
       expect(response.render).toHaveBeenCalledWith('assessments/pages/some/view', {
         assessmentId: request.params.id,
