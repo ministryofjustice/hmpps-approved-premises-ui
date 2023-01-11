@@ -9,7 +9,7 @@ export default class Review implements TasklistPage {
 
   title = 'Review application'
 
-  constructor(public body: { reviewed?: string }) {}
+  constructor(public body: { reviewed?: string }, private readonly assessment: Assessment) {}
 
   previous() {
     return 'dashboard'
