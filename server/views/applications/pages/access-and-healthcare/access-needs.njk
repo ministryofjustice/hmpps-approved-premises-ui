@@ -4,7 +4,7 @@
 
   <h1 class="govuk-heading-l">{{page.title}}</h1>
 
-  {{ applyCheckboxes({
+  {{ formPageCheckboxes({
       fieldName: "additionalNeeds",
       hint: {
         text: page.questions.needs.hint
@@ -19,7 +19,7 @@
     }, fetchContext()) }}
 
   {% set culturalNeeds %}
-  {{ applyTextarea({
+  {{ formPageTextarea({
       fieldName: 'religiousOrCulturalNeedsDetails',
       spellcheck: false,
       label: {
@@ -28,7 +28,7 @@
     },fetchContext()) }}
   {% endset %}
 
-  {{ applyRadios({
+  {{ formPageRadios({
       fieldName: "religiousOrCulturalNeeds",
       fieldset: {
         legend: {
@@ -52,7 +52,7 @@
     },fetchContext()) }}
 
   {% set needInterpreter %}
-  {{ applyInput({
+  {{ formPageInput({
         fieldName: "interpreterLanguage",
         label: {
           text: "Which language?"
@@ -60,7 +60,7 @@
       },fetchContext()) }}
   {% endset -%}
 
-  {{ applyRadios({
+  {{ formPageRadios({
         fieldName: "needsInterpreter",
         fieldset: {
           legend: {
@@ -83,7 +83,7 @@
         ]
       },fetchContext()) }}
 
-  {{ applyRadios({
+  {{ formPageRadios({
         fieldName: "careActAssessmentCompleted",
         fieldset: {
           legend: {

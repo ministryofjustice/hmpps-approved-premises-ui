@@ -1,7 +1,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "../../../applications/components/formFields/apply-radios/macro.njk" import applyRadios %}
+{% from "../../../components/formFields/form-page-radios/macro.njk" import formPageRadios %}
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 
 {% extends "../../../partials/layout.njk" %}
@@ -142,7 +142,7 @@
       <form action="{{ paths.assessments.pages.update({ id: assessmentId, task: task, page: page.name }) }}?_method=PUT" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
-        {{ applyRadios({
+        {{ formPageRadios({
           fieldName: "reviewed",
           fieldset: {
             legend: {

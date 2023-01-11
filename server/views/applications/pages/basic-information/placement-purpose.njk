@@ -6,7 +6,7 @@
 
   {% set otherReason %}
   {{
-    applyInput(
+    formPageInput(
       {
         fieldName: "otherReason",
         type: "text",
@@ -20,7 +20,7 @@
   {% endset %}
 
   {{
-    applyCheckboxes(
+    formPageCheckboxes(
       {
         fieldName: "placementPurposes",
         hint: {

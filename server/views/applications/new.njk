@@ -1,7 +1,7 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "../partials/showErrorSummary.njk" import showErrorSummary %}
-{% from "./components/formFields/apply-input/macro.njk" import applyInput %}
+{% from "../components/formFields/form-page-input/macro.njk" import formPageInput %}
 
 {% extends "../partials/layout.njk" %}
 
@@ -18,7 +18,7 @@
         {{ showErrorSummary(errorSummary) }}
 
         {{
-          applyInput(
+          formPageInput(
             {
               label: {
                 text: "Enter the person's CRN",
