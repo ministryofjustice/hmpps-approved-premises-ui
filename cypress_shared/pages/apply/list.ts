@@ -5,7 +5,7 @@ import { ApprovedPremisesApplication } from '../../../server/@types/shared'
 
 export default class ListPage extends Page {
   constructor() {
-    super('Previous applications dashboard')
+    super('Approved Premises applications')
   }
 
   static visit(): ListPage {
