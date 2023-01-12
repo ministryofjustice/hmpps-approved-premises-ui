@@ -1,6 +1,6 @@
 import type { YesOrNoWithDetail, YesOrNo, Task, JourneyType } from '@approved-premises/ui'
 import type { Request } from 'express'
-import { TasklistPageInterface } from '../tasklistPage'
+import TasklistPage, { TasklistPageInterface } from '../tasklistPage'
 import { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '../../@types/shared'
 
 export const applyYesOrNo = <K extends string>(key: K, body: Record<string, unknown>): YesOrNoWithDetail<K> => {
@@ -76,6 +76,20 @@ export const getPageName = <T>(page: T) => {
 
 export const getTaskName = <T>(page: T) => {
   return Reflect.getMetadata('page:task', page)
+}
+
+export const updateAssessmentData = (
+  page: TasklistPage,
+  assessment: ApprovedPremisesAssessment,
+): ApprovedPremisesAssessment => {
+  const pageName = getPageName(page.constructor)
+  const taskName = getTaskName(page.constructor)
+
+  assessment.data = assessment.data || {}
+  assessment.data[taskName] = assessment.data[taskName] || {}
+  assessment.data[taskName][pageName] = page.body
+
+  return assessment
 }
 
 export function getBody(

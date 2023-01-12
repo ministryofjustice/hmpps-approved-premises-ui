@@ -4,7 +4,7 @@ import type { DataServices, GroupedAssessments } from '@approved-premises/ui'
 
 import type { RestClientBuilder, AssessmentClient } from '../data'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
-import { getBody, getPageName, getTaskName } from '../form-pages/utils'
+import { getBody, updateAssessmentData } from '../form-pages/utils'
 import { ValidationError } from '../utils/errors'
 
 export default class AssessmentService {
@@ -55,17 +55,11 @@ export default class AssessmentService {
       throw new ValidationError<typeof page>(errors)
     } else {
       const assessment = await this.findAssessment(request.user.token, request.params.id)
-
-      const pageName = getPageName(page.constructor)
-      const taskName = getTaskName(page.constructor)
-
-      assessment.data = assessment.data || {}
-      assessment.data[taskName] = assessment.data[taskName] || {}
-      assessment.data[taskName][pageName] = page.body
+      const updatedAssessment = updateAssessmentData(page, assessment)
 
       const client = this.assessmentClientFactory(request.user.token)
 
-      await client.update(assessment)
+      await client.update(updatedAssessment)
     }
   }
 }
