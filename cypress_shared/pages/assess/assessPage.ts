@@ -8,6 +8,9 @@ import Page from '../page'
 export default class AssessPage extends Page {
   pageClass: TasklistPage
 
+  // Initialize this to ensure all the decorators are called for the Assess journey
+  pages = Assess.pages
+
   constructor(private readonly assessment: Assessment, title: string) {
     super(title)
   }
