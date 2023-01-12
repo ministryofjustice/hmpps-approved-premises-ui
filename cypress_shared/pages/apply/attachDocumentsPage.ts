@@ -40,27 +40,6 @@ export default class AttachDocumentsPage extends ApplyPage {
     })
   }
 
-  shouldBeAbleToDownloadDocuments() {
-    this.documents.forEach(document => {
-      // This is a hack to stop `cy.click()` from waiting for a page load
-      // See: https://github.com/cypress-io/cypress/issues/14857
-      cy.window()
-        .document()
-        .then(doc => {
-          doc.addEventListener('click', () => {
-            setTimeout(() => {
-              doc.location.reload()
-            }, 300)
-          })
-          cy.get(`a[data-cy-documentId="${document.id}"]`).click()
-        })
-
-      const downloadsFolder = Cypress.config('downloadsFolder')
-      const downloadedFilename = `${downloadsFolder}/${document.fileName}`
-      cy.readFile(downloadedFilename, 'binary', { timeout: 300 })
-    })
-  }
-
   completeForm() {
     this.selectedDocuments.forEach(d => {
       cy.get('label').contains(d.fileName).click()

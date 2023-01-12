@@ -638,7 +638,7 @@ export default class ApplyHelper {
     const attachDocumentsPage = new AttachDocumentsPage(this.documents, this.selectedDocuments, this.application)
 
     // Then I should be able to download the documents
-    attachDocumentsPage.shouldBeAbleToDownloadDocuments()
+    attachDocumentsPage.shouldBeAbleToDownloadDocuments(this.documents)
 
     // And I attach the relevant documents
     attachDocumentsPage.shouldDisplayDocuments()

@@ -1,3 +1,4 @@
+import { Document } from '../../server/@types/shared'
 import { PersonRisksUI } from '../../server/@types/ui'
 import errorLookups from '../../server/i18n/en/errors.json'
 import { DateFormats } from '../../server/utils/dateUtils'
@@ -134,6 +135,27 @@ export default abstract class Page {
       cy.get(`textarea[name="${sectionName}[${summary.questionNumber}]"]`)
         .should('contain', summary.answer)
         .type(`. With an extra comment ${summary.questionNumber}`)
+    })
+  }
+
+  shouldBeAbleToDownloadDocuments(documents: Array<Document>) {
+    documents.forEach(document => {
+      // This is a hack to stop `cy.click()` from waiting for a page load
+      // See: https://github.com/cypress-io/cypress/issues/14857
+      cy.window()
+        .document()
+        .then(doc => {
+          doc.addEventListener('click', () => {
+            setTimeout(() => {
+              doc.location.reload()
+            }, 300)
+          })
+          cy.get(`a[data-cy-documentId="${document.id}"]`).click()
+        })
+
+      const downloadsFolder = Cypress.config('downloadsFolder')
+      const downloadedFilename = `${downloadsFolder}/${document.fileName}`
+      cy.readFile(downloadedFilename, 'binary', { timeout: 300 })
     })
   }
 }
