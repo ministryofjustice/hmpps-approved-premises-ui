@@ -4,9 +4,11 @@ import 'reflect-metadata'
 
 // Use a wildcard import to allow us to use jest.spyOn on functions within this module
 import * as utils from './index'
-import { TasklistPageInterface } from '../tasklistPage'
+import TasklistPage, { TasklistPageInterface } from '../tasklistPage'
 import { ApprovedPremisesApplication } from '../../@types/shared'
+
 import applicationFactory from '../../testutils/factories/application'
+import assessmentFactory from '../../testutils/factories/assessment'
 
 describe('utils', () => {
   describe('applyYesOrNo', () => {
@@ -175,6 +177,37 @@ describe('utils', () => {
       jest.spyOn(utils, 'getPageDataFromApplication').mockImplementation((_, applicationInput) => applicationInput.data)
 
       expect(utils.getBody(page, application, { body: {} } as Request, {})).toBe('returnMe')
+    })
+  })
+
+  describe('updateAssessmentData', () => {
+    const page = createMock<TasklistPage>({
+      body: { foo: 'bar' },
+    })
+
+    beforeEach(() => {
+      ;(utils.getPageName as jest.Mock).mockReturnValue('some-page')
+      ;(utils.getTaskName as jest.Mock).mockReturnValue('some-task')
+    })
+
+    it('returns an assessment with an updated body', () => {
+      const assessment = assessmentFactory.build()
+      assessment.data = { 'first-task': { page: { foo: 'bar' } } }
+
+      const updatedAssessment = utils.updateAssessmentData(page, assessment)
+
+      expect(updatedAssessment.data).toEqual({
+        'first-task': {
+          page: {
+            foo: 'bar',
+          },
+        },
+        'some-task': {
+          'some-page': {
+            foo: 'bar',
+          },
+        },
+      })
     })
   })
 })

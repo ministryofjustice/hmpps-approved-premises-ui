@@ -1,13 +1,16 @@
-import type { Person, PrisonCaseNote, Document, ApprovedPremisesAssessment } from '@approved-premises/api'
+import type { Person, PrisonCaseNote, Document, ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import { Adjudication } from '../../../server/@types/shared'
 import { sentenceCase } from '../../../server/utils/utils'
-import Page from '../page'
+import AssessPage from './assessPage'
 
-export default class ReviewPage extends Page {
-  constructor() {
-    super('Review application')
+import Review from '../../../server/form-pages/assess/reviewApplication/reviewApplicationAndDocuments/review'
+
+export default class ReviewPage extends AssessPage {
+  constructor(assessment: Assessment) {
+    super(assessment, 'Review application')
+    this.pageClass = new Review({ reviewed: 'yes' }, assessment)
   }
 
   shouldShowPersonInformation(person: Person) {
@@ -82,7 +85,7 @@ export default class ReviewPage extends Page {
     })
   }
 
-  shouldShowAnswers(assessment: ApprovedPremisesAssessment) {
+  shouldShowAnswers(assessment: Assessment) {
     this.shouldShowPersonInformation(assessment.application.person)
 
     this.shouldShowDocuments(
@@ -93,6 +96,6 @@ export default class ReviewPage extends Page {
   }
 
   completeForm() {
-    this.checkRadioByNameAndValue('reviewed', 'yes')
+    this.checkRadioByNameAndValue('reviewed', this.pageClass.body.reviewed as string)
   }
 }

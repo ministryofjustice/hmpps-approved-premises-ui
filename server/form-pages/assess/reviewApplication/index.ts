@@ -1,8 +1,9 @@
 import { Section } from '../../utils/decorators'
-import ReviewApplication from './reviewApplicationAndDocumentsTask'
+
+import ReviewApplicationAndDocuments from './reviewApplicationAndDocuments'
 
 @Section({
   name: 'Review application',
-  tasks: [ReviewApplication],
+  tasks: [ReviewApplicationAndDocuments],
 })
-export default class ReviewApplicationSection {}
+export default class ReviewApplication {}

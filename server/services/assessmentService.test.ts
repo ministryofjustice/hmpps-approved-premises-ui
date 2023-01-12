@@ -5,7 +5,7 @@ import { AssessmentClient } from '../data'
 import AssessmentService from './assessmentService'
 import assessmentFactory from '../testutils/factories/assessment'
 
-import { getBody } from '../form-pages/utils'
+import { getBody, updateAssessmentData } from '../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { DataServices, TaskListErrors } from '../@types/ui'
 import { ValidationError } from '../utils/errors'
@@ -106,6 +106,8 @@ describe('AssessmentService', () => {
       let page: DeepMocked<TasklistPage>
 
       beforeEach(() => {
+        ;(updateAssessmentData as jest.Mock).mockReturnValue(assessment)
+
         page = createMock<TasklistPage>({
           errors: () => {
             return {} as TaskListErrors<TasklistPage>

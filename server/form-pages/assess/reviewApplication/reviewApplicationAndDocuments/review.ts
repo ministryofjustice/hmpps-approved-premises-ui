@@ -1,9 +1,10 @@
 import type { DataServices, TaskListErrors } from '@approved-premises/ui'
-import { Page } from '../../utils/decorators'
+import { ApprovedPremisesAssessment as Assessment, Document } from '@approved-premises/api'
 
-import TasklistPage from '../../tasklistPage'
-import { documentsFromApplication, overwriteApplicationDocuments } from '../../../utils/applicationUtils'
-import { ApprovedPremisesAssessment as Assessment, Document } from '../../../@types/shared'
+import { Page } from '../../../utils/decorators'
+import TasklistPage from '../../../tasklistPage'
+
+import { documentsFromApplication, overwriteApplicationDocuments } from '../../../../utils/applicationUtils'
 
 @Page({ name: 'review', bodyProperties: ['reviewed'] })
 export default class Review implements TasklistPage {

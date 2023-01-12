@@ -1,10 +1,8 @@
-import { ListPage, TaskListPage } from '../../../cypress_shared/pages/assess'
-import ReviewPage from '../../../cypress_shared/pages/assess/review'
-import Page from '../../../cypress_shared/pages/page'
-
 import assessmentFactory from '../../../server/testutils/factories/assessment'
 import documentFactory from '../../../server/testutils/factories/document'
 import { overwriteApplicationDocuments } from '../../../server/utils/applicationUtils'
+
+import AssessHelper from '../../../cypress_shared/helpers/assess'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -18,42 +16,23 @@ context('Assess', () => {
     cy.signIn()
     cy.fixture('applicationData.json').then(applicationData => {
       // And there is an application awaiting assessment
-      const assessment = assessmentFactory.build({ decision: undefined, application: { data: applicationData } })
+      const assessment = assessmentFactory.build({
+        decision: undefined,
+        application: { data: applicationData },
+      })
+      assessment.data = {}
       const documents = documentFactory.buildList(4)
       assessment.application = overwriteApplicationDocuments(assessment.application, documents)
 
-      cy.task('stubAssessments', [assessment])
-      cy.task('stubAssessment', assessment)
-      cy.task('stubAssessmentUpdate', assessment)
-      cy.task('stubApplicationDocuments', { application: assessment.application, documents })
-      documents.forEach(document => {
-        cy.task('stubPersonDocument', { person: assessment.application.person, document })
-      })
+      const assessHelper = new AssessHelper(assessment, documents)
 
-      // When I visit the assessments dashboard
-      const listPage = ListPage.visit([assessment])
+      assessHelper.setupStubs()
 
-      // And I click on the assessment
-      listPage.clickAssessment(assessment)
+      // And I start an assessment
+      assessHelper.startAssessment()
 
-      // Then I should be taken to the task list
-      Page.verifyOnPage(TaskListPage)
-
-      // When I click on the 'review application' link
-      cy.get('[data-cy-task-name="review-application"]').click()
-
-      // Then I should be taken to the review page
-      const reviewPage = new ReviewPage()
-
-      // And be able to complete the form
-      reviewPage.shouldShowAnswers(assessment)
-      reviewPage.shouldBeAbleToDownloadDocuments(documents)
-      reviewPage.completeForm()
-
-      reviewPage.clickSubmit()
-
-      // Then I should be taken to the task list
-      Page.verifyOnPage(TaskListPage)
+      // And I complete an assessment
+      assessHelper.completeAssessment()
     })
   })
 })
