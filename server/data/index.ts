@@ -15,6 +15,7 @@ import HmppsAuthClient from './hmppsAuthClient'
 import PremisesClient from './premisesClient'
 import ReferenceDataClient from './referenceDataClient'
 import PersonClient from './personClient'
+import UserClient from './userClient'
 
 import { createRedisClient } from './redisClient'
 import TokenStore from './tokenStore'
@@ -34,6 +35,7 @@ export const dataAccess = () => ({
   personClient: ((token: string) => new PersonClient(token)) as RestClientBuilder<PersonClient>,
   applicationClientBuilder: ((token: string) => new ApplicationClient(token)) as RestClientBuilder<ApplicationClient>,
   assessmentClientBuilder: ((token: string) => new AssessmentClient(token)) as RestClientBuilder<AssessmentClient>,
+  userClientBuilder: ((token: string) => new UserClient(token)) as RestClientBuilder<UserClient>,
 })
 
 export type DataAccess = ReturnType<typeof dataAccess>
@@ -48,4 +50,5 @@ export {
   PersonClient,
   ApplicationClient,
   AssessmentClient,
+  UserClient,
 }
