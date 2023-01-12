@@ -1,7 +1,9 @@
-import type { TaskListErrors } from '@approved-premises/ui'
+import type { DataServices, TaskListErrors } from '@approved-premises/ui'
 import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
+import { documentsFromApplication, overwriteApplicationDocuments } from '../../../utils/applicationUtils'
+import { ApprovedPremisesAssessment as Assessment, Document } from '../../../@types/shared'
 
 @Page({ name: 'review', bodyProperties: ['reviewed'] })
 export default class Review implements TasklistPage {
@@ -9,7 +11,25 @@ export default class Review implements TasklistPage {
 
   title = 'Review application'
 
-  constructor(public body: { reviewed?: string }) {}
+  constructor(public body: { reviewed?: string }, private readonly assessment: Assessment) {}
+
+  static async initialize(
+    body: Record<string, unknown>,
+    assessment: Assessment,
+    token: string,
+    dataServices: DataServices,
+  ) {
+    const documents = await dataServices.applicationService.getDocuments(token, assessment.application)
+    const selectedDocuments = documentsFromApplication(assessment.application).map(selectedDocument => {
+      return documents.find((document: Document) => document.fileName === selectedDocument.fileName)
+    })
+
+    if (selectedDocuments.length) {
+      assessment.application = overwriteApplicationDocuments(assessment.application, selectedDocuments)
+    }
+
+    return new Review(body, assessment)
+  }
 
   previous() {
     return 'dashboard'

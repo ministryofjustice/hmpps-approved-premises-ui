@@ -1,6 +1,6 @@
 import type { Request } from 'express'
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
-import type { GroupedAssessments } from '@approved-premises/ui'
+import type { DataServices, GroupedAssessments } from '@approved-premises/ui'
 
 import type { RestClientBuilder, AssessmentClient } from '../data'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
@@ -32,11 +32,20 @@ export default class AssessmentService {
     return assessment
   }
 
-  async initializePage(Page: TasklistPageInterface, request: Request, userInput?: Record<string, unknown>) {
+  async initializePage(
+    Page: TasklistPageInterface,
+    request: Request,
+    dataServices: DataServices,
+    userInput?: Record<string, unknown>,
+  ) {
     const assessment = await this.findAssessment(request.user.token, request.params.id)
     const body = getBody(Page, assessment, request, userInput)
 
-    return new Page(body, assessment, request.session.previousPage)
+    const page = Page.initialize
+      ? await Page.initialize(body, assessment, request.user.token, dataServices)
+      : new Page(body, assessment, request.session.previousPage)
+
+    return page
   }
 
   async save(page: TasklistPage, request: Request) {

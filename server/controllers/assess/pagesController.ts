@@ -13,9 +13,10 @@ import paths from '../../paths/assess'
 import { UnknownPageError } from '../../utils/errors'
 import { viewPath } from '../../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../../form-pages/tasklistPage'
+import { DataServices } from '../../@types/ui'
 
 export default class PagesController {
-  constructor(private readonly assessmentService: AssessmentService) {}
+  constructor(private readonly assessmentService: AssessmentService, private readonly dataServices: DataServices) {}
 
   show(taskName: string, pageName: string): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -23,7 +24,7 @@ export default class PagesController {
         const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
         const Page: TasklistPageInterface = getPage(taskName, pageName)
-        const page: TasklistPage = await this.assessmentService.initializePage(Page, req, userInput)
+        const page: TasklistPage = await this.assessmentService.initializePage(Page, req, this.dataServices, userInput)
 
         res.render(viewPath(page, 'assessments'), {
           assessmentId: req.params.id,
@@ -47,7 +48,7 @@ export default class PagesController {
     return async (req: Request, res: Response) => {
       try {
         const Page: TasklistPageInterface = getPage(taskName, pageName)
-        const page: TasklistPage = await this.assessmentService.initializePage(Page, req)
+        const page: TasklistPage = await this.assessmentService.initializePage(Page, req, this.dataServices)
         await this.assessmentService.save(page, req)
 
         const next = page.next()

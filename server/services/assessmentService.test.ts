@@ -6,8 +6,8 @@ import AssessmentService from './assessmentService'
 import assessmentFactory from '../testutils/factories/assessment'
 
 import { getBody } from '../form-pages/utils'
-import TasklistPage from '../form-pages/tasklistPage'
-import { TaskListErrors } from '../@types/ui'
+import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
+import { DataServices, TaskListErrors } from '../@types/ui'
 import { ValidationError } from '../utils/errors'
 
 jest.mock('../data/assessmentClient.ts')
@@ -78,6 +78,18 @@ describe('AssessmentService', () => {
 
       expect(Page).toHaveBeenCalledWith(request.body, assessment, '')
       expect(assessmentClient.find).toHaveBeenCalledWith(request.params.id)
+    })
+
+    it("should call a service's initialize method if it exists", async () => {
+      const dataServices = createMock<DataServices>({}) as DataServices
+      assessmentClient.find.mockResolvedValue(assessment)
+      ;(getBody as jest.Mock).mockReturnValue(request.body)
+
+      const TestPage = { initialize: jest.fn() } as unknown as TasklistPageInterface
+
+      await service.initializePage(TestPage, request, dataServices)
+
+      expect(TestPage.initialize).toHaveBeenCalledWith(request.body, assessment, request.user.token, dataServices)
     })
   })
 

@@ -1,5 +1,5 @@
 import type { Task, FormSections, FormSection, TableRow, PageResponse } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, Document } from '@approved-premises/api'
 import paths from '../paths/apply'
 import Apply from '../form-pages/apply'
 import { SessionDataError, UnknownPageError } from './errors'
@@ -153,7 +153,27 @@ const getArrivalDate = (application: ApprovedPremisesApplication, raiseOnMissing
   return null
 }
 
+const documentsFromApplication = (application: ApprovedPremisesApplication): Array<Document> => {
+  return (
+    application?.data?.['attach-required-documents']?.['attach-documents']?.selectedDocuments || ([] as Array<Document>)
+  )
+}
+
+const overwriteApplicationDocuments = (
+  application: ApprovedPremisesApplication,
+  selectedDocuments: Array<Document>,
+): ApprovedPremisesApplication => {
+  application.data['attach-required-documents'] = {
+    'attach-documents': {
+      selectedDocuments,
+    },
+  }
+
+  return application
+}
+
 export {
+  documentsFromApplication,
   getTaskStatus,
   getCompleteSectionCount,
   getResponses,
@@ -161,5 +181,6 @@ export {
   getPage,
   getArrivalDate,
   dashboardTableRows,
+  overwriteApplicationDocuments,
   previousTaskIsComplete,
 }

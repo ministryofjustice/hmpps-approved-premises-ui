@@ -16,6 +16,7 @@ import {
   assessmentSections,
   getTaskResponsesAsSummaryListItems,
   getReviewNavigationItems,
+  getSectionSuffix,
 } from './assessmentUtils'
 import { DateFormats } from './dateUtils'
 import paths from '../paths/assess'
@@ -29,6 +30,7 @@ import Assess from '../form-pages/assess'
 import { UnknownPageError } from './errors'
 import applicationFactory from '../testutils/factories/application'
 import reviewSections from './reviewUtils'
+import documentFactory from '../testutils/factories/document'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -333,11 +335,57 @@ describe('assessmentUtils', () => {
         },
       ])
     })
+
+    describe('if the page name includes "attach-documents"', () => {
+      it('then the correct array is returned', () => {
+        const application = applicationFactory.build()
+        const documents = documentFactory.buildList(1)
+
+        ;(applicationUtils.documentsFromApplication as jest.Mock).mockReturnValue(documents)
+
+        application.data['attach-required-documents'] = {
+          'attach-documents': {
+            selectedDocuments: documents,
+          },
+        }
+
+        expect(
+          getTaskResponsesAsSummaryListItems({ id: 'attach-required-documents', title: 'bar', pages: {} }, application),
+        ).toEqual([
+          {
+            key: {
+              html: `<a href="/applications/people/${application.person.crn}/documents/${documents[0].id}" data-cy-documentId="${documents[0].id}" />${documents[0].fileName}</a>`,
+            },
+            value: {
+              text: documents[0].description,
+            },
+          },
+        ])
+      })
+    })
   })
 
   describe('getReviewNavigationItems', () => {
     it('returns an array of objects with the link and human readable text for each of the Apply pages', () => {
       expect(getReviewNavigationItems()).toEqual([{ href: '#first', text: 'First' }])
+    })
+  })
+
+  describe('getSectionSuffix', () => {
+    it('returns an empty string if the task id isnt oasys-import or prison-information', () => {
+      expect(getSectionSuffix({ id: 'foo', title: '', pages: {} })).toBe('')
+    })
+
+    it('returns the correct html if supplied a task with an ID of oasys-import', () => {
+      expect(getSectionSuffix({ id: 'oasys-import', title: '', pages: {} })).toBe(
+        '<p><a href="oasys-link">View detailed risk information</a></p>',
+      )
+    })
+
+    it('returns the correct html if supplied a task with an ID of prison-information', () => {
+      expect(getSectionSuffix({ id: 'prison-information', title: '', pages: {} })).toBe(
+        '<p><a href="prison-link">View additional prison information</a></p>',
+      )
     })
   })
 })

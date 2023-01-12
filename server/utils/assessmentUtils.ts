@@ -1,10 +1,10 @@
-import { HtmlItem, SummaryListItem, TableRow, Task, TextItem } from '@approved-premises/ui'
+import { HtmlItem, PageResponse, SummaryListItem, TableRow, Task, TextItem } from '@approved-premises/ui'
 import { format, differenceInDays, add } from 'date-fns'
 
 import { ApprovedPremisesAssessment as Assessment, ApprovedPremisesApplication } from '@approved-premises/api'
 import { tierBadge } from './personUtils'
 import { DateFormats } from './dateUtils'
-import { getArrivalDate, getResponseForPage } from './applicationUtils'
+import { getArrivalDate, getResponseForPage, documentsFromApplication } from './applicationUtils'
 import paths from '../paths/assess'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import Assess from '../form-pages/assess'
@@ -200,28 +200,52 @@ const getTaskResponsesAsSummaryListItems = (
   task: Task,
   application: ApprovedPremisesApplication,
 ): Array<SummaryListItem> => {
-  const items: Array<SummaryListItem> = []
-
   if (!application.data[task.id]) {
-    return items
+    return []
   }
 
   const pageNames = Object.keys(application.data[task.id])
 
-  pageNames.forEach(pageName => {
+  return pageNames.reduce((prev, pageName) => {
     const response = getResponseForPage(application, task.id, pageName)
-    Object.keys(response).forEach(key => {
-      const value =
-        typeof response[key] === 'string' || response[key] instanceof String
-          ? ({ text: response[key] } as TextItem)
-          : ({ html: embeddedSummaryListItem(response[key] as Array<Record<string, unknown>>) } as HtmlItem)
+    const summaryListItems =
+      pageName === 'attach-documents'
+        ? getAttatchDocumentsSummaryListItems(application)
+        : getGenericSummaryListItems(response)
 
-      items.push({
-        key: {
-          text: key,
-        },
-        value,
-      })
+    return [...prev, ...summaryListItems]
+  }, [])
+}
+
+const getGenericSummaryListItems = (response: PageResponse) => {
+  const items: Array<SummaryListItem> = []
+
+  Object.keys(response).forEach(key => {
+    const value =
+      typeof response[key] === 'string' || response[key] instanceof String
+        ? ({ text: response[key] } as TextItem)
+        : ({ html: embeddedSummaryListItem(response[key] as Array<Record<string, unknown>>) } as HtmlItem)
+
+    items.push({
+      key: {
+        text: key,
+      },
+      value,
+    })
+  })
+
+  return items
+}
+
+const getAttatchDocumentsSummaryListItems = (application: ApprovedPremisesApplication) => {
+  const items: Array<SummaryListItem> = []
+
+  documentsFromApplication(application).forEach(document => {
+    items.push({
+      key: {
+        html: `<a href="/applications/people/${application.person.crn}/documents/${document.id}" data-cy-documentId="${document.id}" />${document.fileName}</a>`,
+      },
+      value: { text: document?.description || '' },
     })
   })
 
@@ -238,6 +262,25 @@ const getReviewNavigationItems = () => {
   })
 }
 
+const getSectionSuffix = (task: Task) => {
+  let link: string
+  let copy: string
+
+  if (task.id !== 'oasys-import' && task.id !== 'prison-information') return ''
+
+  if (task.id === 'oasys-import') {
+    link = 'oasys-link'
+    copy = 'View detailed risk information'
+  }
+
+  if (task.id === 'prison-information') {
+    link = 'prison-link'
+    copy = 'View additional prison information'
+  }
+
+  return `<p><a href="${link}">${copy}</a></p>`
+}
+
 export {
   assessmentSections,
   assessmentLink,
@@ -248,6 +291,7 @@ export {
   getPage,
   getTaskResponsesAsSummaryListItems,
   getReviewNavigationItems,
+  getSectionSuffix,
   requestedFurtherInformationTableRows,
   daysSinceInfoRequest,
   formatDays,

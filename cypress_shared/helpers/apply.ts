@@ -64,7 +64,6 @@ import oasysSelectionFactory from '../../server/testutils/factories/oasysSelecti
 import prisonCaseNotesFactory from '../../server/testutils/factories/prisonCaseNotes'
 
 import {
-  documentsFromApplication,
   offenceDetailSummariesFromApplication,
   riskManagementPlanFromApplication,
   riskToSelfSummariesFromApplication,
@@ -72,6 +71,7 @@ import {
   supportInformationFromApplication,
 } from './index'
 import ApplyPage from '../pages/apply/applyPage'
+import { documentsFromApplication } from '../../server/utils/applicationUtils'
 
 export default class ApplyHelper {
   pages = {
@@ -638,7 +638,7 @@ export default class ApplyHelper {
     const attachDocumentsPage = new AttachDocumentsPage(this.documents, this.selectedDocuments, this.application)
 
     // Then I should be able to download the documents
-    attachDocumentsPage.shouldBeAbleToDownloadDocuments()
+    attachDocumentsPage.shouldBeAbleToDownloadDocuments(this.documents)
 
     // And I attach the relevant documents
     attachDocumentsPage.shouldDisplayDocuments()
