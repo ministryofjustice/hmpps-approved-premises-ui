@@ -3,6 +3,7 @@ import nock from 'nock'
 import AssessmentClient from './assessmentClient'
 import config from '../config'
 import assessmentFactory from '../testutils/factories/assessment'
+import clarificationNoteFactory from '../testutils/factories/clarificationNote'
 import paths from '../paths/api'
 
 describe('AssessmentClient', () => {
@@ -70,6 +71,23 @@ describe('AssessmentClient', () => {
       const result = await assessmentClient.update(assessment)
 
       expect(result).toEqual(assessment)
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
+
+  describe('createClarificationNote', () => {
+    it('should return a note when a POST request is made', async () => {
+      const assessmentId = 'some-id'
+      const note = clarificationNoteFactory.build()
+
+      fakeApprovedPremisesApi
+        .post(paths.assessments.clarificationNotes.create({ id: assessmentId }), note)
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(201, note)
+
+      const result = await assessmentClient.createClarificationNote(assessmentId, note)
+
+      expect(result).toEqual(note)
       expect(nock.isDone()).toBeTruthy()
     })
   })
