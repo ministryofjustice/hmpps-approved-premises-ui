@@ -4,6 +4,7 @@ import { Request } from 'express'
 import { AssessmentClient } from '../data'
 import AssessmentService from './assessmentService'
 import assessmentFactory from '../testutils/factories/assessment'
+import clarificationNoteFactory from '../testutils/factories/clarificationNote'
 
 import { getBody, updateAssessmentData } from '../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
@@ -146,6 +147,23 @@ describe('AssessmentService', () => {
           expect(e).toEqual(new ValidationError(errors))
         }
       })
+    })
+  })
+
+  describe('createClarificationNote', () => {
+    it('calls the client with the expected arguments', async () => {
+      const token = 'token'
+      const id = 'some-uuid'
+      const clarificationNote = clarificationNoteFactory.build()
+
+      assessmentClient.createClarificationNote.mockResolvedValue(clarificationNote)
+
+      const result = await service.createClarificationNote(token, id, clarificationNote)
+
+      expect(result).toEqual(clarificationNote)
+
+      expect(assessmentClientFactory).toHaveBeenCalledWith(token)
+      expect(assessmentClient.createClarificationNote).toHaveBeenCalledWith(id, clarificationNote)
     })
   })
 })
