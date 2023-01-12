@@ -1,5 +1,5 @@
 import { ApprovedPremisesAssessment as Assessment, Document } from '@approved-premises/api'
-import { ReviewPage, ListPage, TaskListPage } from '../pages/assess'
+import { ReviewPage, ListPage, TaskListPage, SufficientInformationPage } from '../pages/assess'
 import Page from '../pages/page'
 import { updateAssessmentData } from '../../server/form-pages/utils'
 import AssessPage from '../pages/assess/assessPage'
@@ -30,6 +30,7 @@ export default class AseessHelper {
 
   completeAssessment() {
     this.completeReviewApplicationSection()
+    this.completeSuitabilityAssessmentSection()
   }
 
   private completeReviewApplicationSection() {
@@ -50,6 +51,23 @@ export default class AseessHelper {
     const tasklistPage = Page.verifyOnPage(TaskListPage)
 
     // And the review application task should show a completed status
+    tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
+  }
+
+  private completeSuitabilityAssessmentSection() {
+    // When I click on the 'suitability-assessment' link
+    cy.get('[data-cy-task-name="suitability-assessment"]').click()
+
+    // Then I should be taken to the sufficient information page
+    const page = new SufficientInformationPage(this.assessment)
+    page.completeForm()
+    page.clickSubmit()
+    this.updateAssessmentAndStub(page)
+
+    // Then I should be taken to the task list
+    const tasklistPage = Page.verifyOnPage(TaskListPage)
+
+    // And the suitability-assessment application task should show a completed status
     tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
   }
 

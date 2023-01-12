@@ -2,18 +2,18 @@
 
 {% block questions %}
 
-    <h1 class="govuk-heading-l">{{page.title}}</h1>
+  <h1 class="govuk-heading-l">{{page.title}}</h1>
 
-    <p class="govuk-body">{{page.furtherDetails}}</p>
+  <p class="govuk-body">{{page.furtherDetails}}</p>
 
-    <ul class="govuk-list govuk-list--bullet">
-        {% for offence in page.offences %}
-            <li>{{offence}}</li>
-        {% endfor %}
-    </ul>
+  <ul class="govuk-list govuk-list--bullet">
+    {% for offence in page.offences %}
+      <li>{{offence}}</li>
+    {% endfor %}
+  </ul>
 
-    {{
-      applyRadios(
+  {{
+      formPageRadios(
         {
           fieldName: "response",
           items: [

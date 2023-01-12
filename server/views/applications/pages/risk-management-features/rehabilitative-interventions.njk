@@ -6,14 +6,14 @@
 
 {% block questions %}
 
-    <h1 class="govuk-heading-l">{{page.title}}</h1>
+  <h1 class="govuk-heading-l">{{page.title}}</h1>
 
-    <p class="govuk-body">Formerly known as purposeful activities.</p>
-    <p class="govuk-body">Select any additional needs the person has that an AP could help meet. For example, support getting qualifications or finding work.</p>
+  <p class="govuk-body">Formerly known as purposeful activities.</p>
+  <p class="govuk-body">Select any additional needs the person has that an AP could help meet. For example, support getting qualifications or finding work.</p>
 
-    {% set otherIntervention %}
-    {{
-        applyInput(
+  {% set otherIntervention %}
+  {{
+        formPageInput(
             {
                 fieldName: "otherIntervention",
                 type: "text",
@@ -27,10 +27,10 @@
             fetchContext()
         )
     }}
-    {% endset %}
+  {% endset %}
 
-    {{
-        applyCheckboxes(
+  {{
+        formPageCheckboxes(
             {
                 fieldName: "rehabilitativeInterventions",
                 hint: {

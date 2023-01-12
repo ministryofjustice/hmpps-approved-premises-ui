@@ -8,7 +8,7 @@
   </h1>
 
   {% set otherAccommodationType %}
-  {{ applyInput({
+  {{ formPageInput({
         fieldName: 'otherAccommodationType',
         classes: "govuk-!-width-two-thirds",
         label: {
@@ -17,7 +17,7 @@
       }, fetchContext()) }}
   {% endset %}
 
-  {{ applyRadios({
+  {{ formPageRadios({
       fieldName: "accommodationType",
       hint: {
         text: page.question

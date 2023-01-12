@@ -1,6 +1,6 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
-{% macro applyCheckboxes(params, context) %}
+{% macro formPageCheckboxes(params, context) %}
   {% set checkboxItems = [] %}
 
   {% for item in params.items %}

@@ -7,7 +7,7 @@
   </h1>
   <p>This information will be used to help decide whether the person can room share.</p>
 
-  {{ applyRadios({
+  {{ formPageRadios({
       fieldName: "fullyVaccinated",
       fieldset: {
         legend: {
@@ -34,7 +34,7 @@
       ]
     }, fetchContext()) }}
 
-  {{ applyRadios({
+  {{ formPageRadios({
       fieldName: "highRisk",
       fieldset: {
         legend: {
@@ -61,7 +61,7 @@
       ]
     }, fetchContext()) }}
 
-  {{ applyTextarea({
+  {{ formPageTextarea({
       fieldName: "additionalCovidInfo",
       label: {
         text: page.questions.additionalCovidInfo,

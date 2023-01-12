@@ -4,9 +4,8 @@
 
   <h1 class="govuk-heading-l">{{page.title}}</h1>
 
-
   {{
-    applyInput(
+    formPageInput(
       {
         label: {
           text: page.questions.postcodeArea,
@@ -22,7 +21,7 @@
   }}
 
   {{
-    applyTextarea(
+    formPageTextarea(
       {
         fieldName: "positiveFactors",
         label: {
@@ -33,7 +32,7 @@
     )
   }}
 
-   {% set alternativeRadiusSelect %}
+  {% set alternativeRadiusSelect %}
   {{ govukSelect({
     label: {
       text: page.questions.alternativeRadius
@@ -46,7 +45,7 @@
   {% endset -%}
 
   {{
-    applyRadios(
+    formPageRadios(
       {
         fieldName: "alternativeRadiusAccepted",
         fieldset: {
@@ -75,7 +74,7 @@
 
   {% set placementRestrictions %}
   {{
-    applyTextarea(
+    formPageTextarea(
       {
         fieldName: "restrictionDetail",
         spellcheck: false,
@@ -89,7 +88,7 @@
   {% endset -%}
 
   {{
-    applyRadios(
+    formPageRadios(
       {
         fieldName: "restrictions",
         fieldset: {
@@ -118,6 +117,5 @@
       fetchContext()
     )
   }}
-
 
 {% endblock %}

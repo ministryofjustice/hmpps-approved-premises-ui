@@ -9,11 +9,11 @@
   <p class="govuk-body">This information will be used to match them to a bed in an Approved Premises</p>
 
   {{
-    applyCheckboxes(
+    formPageCheckboxes(
       {
         fieldName: "offenceConvictions",
         name: "offenceConvictions",
-        errorMessage: errors.offenceConvictions, 
+        errorMessage: errors.offenceConvictions,
         values: offenceConvictions,
         hint: {
           text: "You can select more than one option"

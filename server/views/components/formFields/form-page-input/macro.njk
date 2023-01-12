@@ -1,8 +1,8 @@
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
 
-{% macro applyTextarea(params, context) %}
+{% macro formPageInput(params, context) %}
   {{
-      govukTextarea(
+      govukInput(
         mergeObjects(
           params,
           { id: params.fieldName, name: params.fieldName, errorMessage: context.errors[params.fieldName], value: context[params.fieldName] }

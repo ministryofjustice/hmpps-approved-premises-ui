@@ -24,9 +24,10 @@ export const services = () => {
     personClient,
     applicationClientBuilder,
     assessmentClientBuilder,
+    userClientBuilder,
   } = dataAccess()
 
-  const userService = new UserService(hmppsAuthClient)
+  const userService = new UserService(hmppsAuthClient, userClientBuilder)
   const premisesService = new PremisesService(approvedPremisesClientBuilder)
   const personService = new PersonService(personClient)
   const bookingService = new BookingService(bookingClientBuilder)

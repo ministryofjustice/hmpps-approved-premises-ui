@@ -34,7 +34,7 @@ describe('hmppsAuthClient', () => {
         .matchHeader('authorization', `Bearer ${token.access_token}`)
         .reply(200, response)
 
-      const output = await hmppsAuthClient.getUser(token.access_token)
+      const output = await hmppsAuthClient.getActingUser(token.access_token)
       expect(output).toEqual(response)
     })
   })

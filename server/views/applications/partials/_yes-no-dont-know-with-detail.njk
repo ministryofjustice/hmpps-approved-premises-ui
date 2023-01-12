@@ -1,6 +1,6 @@
 {% set yesDetails %}
 {{
-  applyTextarea(
+  formPageTextarea(
     {
       fieldName: (key + "Detail"),
       type: "textarea",
@@ -15,7 +15,7 @@
 {% endset -%}
 
 {{
-  applyRadios({
+  formPageRadios({
     fieldName: key,
     fieldset: {
       legend: {

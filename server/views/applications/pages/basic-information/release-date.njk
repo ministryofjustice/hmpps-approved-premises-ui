@@ -6,7 +6,7 @@
 
   {% set releaseDateHTML %}
   {{
-    applyDateInput(
+    formPageDateInput(
       {
         fieldName: "releaseDate",
         fieldset: {
@@ -37,7 +37,7 @@
   {% endset -%}
 
   {{
-    applyRadios(
+    formPageRadios(
       {
         fieldName: "knowReleaseDate",
         fieldset: {

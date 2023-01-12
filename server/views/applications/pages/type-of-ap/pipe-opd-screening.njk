@@ -5,7 +5,7 @@
 {% block questions %}
 
   {{
-    applyRadios(
+    formPageRadios(
       {
         fieldName: "pipeReferral",
         fieldset: {
@@ -31,7 +31,7 @@
   }}
 
   {{
-    applyTextarea(
+    formPageTextarea(
       {
         fieldName: "pipeReferralMoreDetail",
         label: {

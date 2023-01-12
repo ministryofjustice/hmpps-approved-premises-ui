@@ -22,6 +22,8 @@ const peoplePath = path('/people')
 const personPath = peoplePath.path(':crn')
 const oasysPath = personPath.path('oasys')
 
+const usersPath = path('/users')
+
 const applyPaths = {
   applications: {
     show: singleApplicationPath,
@@ -75,5 +77,8 @@ export default {
       selection: oasysPath.path('selection'),
       sections: oasysPath.path('sections'),
     },
+  },
+  users: {
+    show: usersPath.path(':id'),
   },
 }
