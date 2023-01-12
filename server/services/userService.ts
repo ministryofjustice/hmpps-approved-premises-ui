@@ -14,14 +14,14 @@ export default class UserService {
     private readonly userClientFactory: RestClientBuilder<UserClient>,
   ) {}
 
-  async getUser(token: string): Promise<UserDetails> {
-    const user = await this.hmppsAuthClient.getUser(token)
+  async getActingUser(token: string): Promise<UserDetails> {
+    const user = await this.hmppsAuthClient.getActingUser(token)
     return { ...user, displayName: convertToTitleCase(user.name) }
   }
 
   async getUserById(token: string, id: string): Promise<User> {
     const client = this.userClientFactory(token)
 
-    return client.getUser(id)
+    return client.getActingUser(id)
   }
 }

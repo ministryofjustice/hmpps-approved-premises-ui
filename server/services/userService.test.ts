@@ -27,17 +27,17 @@ describe('User service', () => {
 
   describe('getUser', () => {
     it('Retrieves and formats user name', async () => {
-      hmppsAuthClient.getUser.mockResolvedValue({ name: 'john smith' } as User)
+      hmppsAuthClient.getActingUser.mockResolvedValue({ name: 'john smith' } as User)
 
-      const result = await userService.getUser(token)
+      const result = await userService.getActingUser(token)
 
       expect(result.displayName).toEqual('John Smith')
     })
 
     it('Propagates error', async () => {
-      hmppsAuthClient.getUser.mockRejectedValue(new Error('some error'))
+      hmppsAuthClient.getActingUser.mockRejectedValue(new Error('some error'))
 
-      await expect(userService.getUser(token)).rejects.toEqual(new Error('some error'))
+      await expect(userService.getActingUser(token)).rejects.toEqual(new Error('some error'))
     })
   })
 
@@ -46,13 +46,13 @@ describe('User service', () => {
       const id = 'SOME_ID'
       const user = userFactory.build()
 
-      userClient.getUser.mockResolvedValue(user)
+      userClient.getActingUser.mockResolvedValue(user)
 
       const result = await userService.getUserById(token, id)
 
       expect(result).toEqual(user)
 
-      expect(userClient.getUser).toHaveBeenCalledWith(id)
+      expect(userClient.getActingUser).toHaveBeenCalledWith(id)
     })
   })
 })

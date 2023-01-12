@@ -36,7 +36,7 @@ describe('UserClient', () => {
         .matchHeader('authorization', `Bearer ${token}`)
         .reply(200, user)
 
-      const output = await userClient.getUser(id)
+      const output = await userClient.getActingUser(id)
       expect(output).toEqual(user)
     })
   })
