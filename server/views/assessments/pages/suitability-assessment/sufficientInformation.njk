@@ -1,0 +1,94 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% extends "../layout.njk" %}
+
+{% block questions %}
+  <h1 class="govuk-heading-l">
+    Suitability Assessment
+  </h1>
+
+  {% set hintHtml %}
+  <p>Consider if there is enough information to make an assessment of suitability for an Approved Premises placement.</p>
+
+  <details class="govuk-details" data-module="govuk-details">
+    <summary class="govuk-details__summary">
+      <span class="govuk-details__summary-text">
+                View guidance notes
+              </span>
+    </summary>
+    <div class="govuk-details__text">
+      <p>
+        <strong>Missing information that you need to make a decision</strong>
+      </p>
+      <p>If you are missing information that is essential to making a decision, request further information from the probation practitioner by clicking 'No, I need more information'.</p>
+      <p>This information must be provided to you within 5 working days. </p>
+
+      <p>If the information is not received within 5 working days, mark the decision as 'Requested information not provided by probation practitioner' when submitting your assessment. </p>
+      <p>
+        <strong>Missing information that is not required to make a decision</strong>
+      </p>
+      <p>If there is missing information that would be useful to inform a placement but is not essential to making a decision click 'Yes' and continue with the assessment.</p>
+
+      <p>Note this information in your assessment as part of the additional actions required by the probation practitioner to support a placement. These actions will then be followed up as part of pre-arrival planning.</p>
+    </div>
+  </details>
+  {% endset %}
+
+  {% set notEnoughInfo %}
+  <p>Contact the Probation Practicioner for additional information. Information requests should be responded to within 5 days.</p>
+  <p> You are required to log this information on the next screen.</p>
+  {{ govukSummaryList({
+          rows: [
+            {
+              key: {
+                text: "Name"
+              },
+              value: {
+                text: page.user.name
+              }
+            },
+            {
+              key: {
+                text: "Email"
+              },
+              value: {
+                text: page.user.email
+              }
+            },
+            {
+              key: {
+                text: "Contact number"
+              },
+              value: {
+                html: page.user.telephoneNumber
+              }
+            }
+          ]
+        }) }}
+  {% endset -%}
+
+  {{ formPageRadios({
+        fieldName: "sufficientInformation",
+        fieldset: {
+          legend: {
+            html: '<h2 class="govuk-heading-m">' + page.title + '</h2>'
+          }
+        },
+        hint: {
+          html: hintHtml
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes"
+          },
+          {
+            value: "no",
+            text: "No",
+            conditional: {
+              html: notEnoughInfo
+            }
+          }
+        ]
+    },fetchContext()) }}
+{% endblock %}
