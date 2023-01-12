@@ -203,6 +203,9 @@ export type DataServices = Partial<{
   applicationService: {
     getDocuments: (token: string, application: ApprovedPremisesApplication) => Promise<Array<Document>>
   }
+  userService: {
+    getUserById: (token: string, id: string) => Promise<User>
+  }
 }>
 
 export interface GroupedAssessments {
