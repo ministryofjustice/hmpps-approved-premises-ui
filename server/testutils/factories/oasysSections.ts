@@ -31,13 +31,13 @@ export const roshSummaryFactory = Factory.define<OASysQuestion>(options => ({
 export const offenceDetailsFactory = Factory.define<OASysQuestion>(options => ({
   questionNumber: options.sequence.toString(),
   label: faker.helpers.arrayElement([
-    'Offence analysis',
+    'Briefly describe the details of the offence(s)',
     'Others involved',
-    'Issues contributing to risk',
-    'Motivation and triggers',
-    'Victim impact',
+    'Identify issues related to the offence that contribute to the risk of offending and harm. Please include any positive factors',
+    'Provide evidence of the motivation and triggers for the offending',
+    'Provide details of the impact on the victim',
     'Victim Information',
-    'Previous offences',
+    'Is there a pattern of offending? Consider details of previous convictions',
   ]),
   answer: faker.lorem.paragraph(),
 }))
@@ -62,7 +62,7 @@ const riskManagementPlanFactory = Factory.define<OASysQuestion>(options => ({
     'Monitoring and control',
     'Intervention and treatment',
     'Victim safety planning',
-    'Contingency Plans',
+    'Contingency plans',
     'Additional comments',
   ]),
   answer: faker.lorem.paragraph(),
