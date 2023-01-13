@@ -42,9 +42,9 @@ describe('ReleaseType', () => {
         ).items()
 
         expect(items.length).toEqual(4)
-        expect(items[0].value).toEqual('rotl')
-        expect(items[1].value).toEqual('hdc')
-        expect(items[2].value).toEqual('licence')
+        expect(items[0].value).toEqual('licence')
+        expect(items[1].value).toEqual('rotl')
+        expect(items[2].value).toEqual('hdc')
         expect(items[3].value).toEqual('pss')
       })
 

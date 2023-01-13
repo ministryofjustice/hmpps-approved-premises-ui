@@ -5,7 +5,7 @@ import Covid from './covid'
 import { Task } from '../../../utils/decorators'
 
 @Task({
-  name: 'Provide access and healthcare information',
+  name: 'Add access, cultural and healthcare needs',
   slug: 'access-and-healthcare',
   pages: [AccessNeeds, AccessNeedsMobility, Covid],
 })

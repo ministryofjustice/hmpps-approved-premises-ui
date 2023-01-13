@@ -14,7 +14,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
 
-            <h1 class="govuk-heading-l">Previous applications dashboard</h1>
+            <h1 class="govuk-heading-l">Approved Premises applications</h1>
 
             {{ govukTabs({
                 items: [
@@ -28,6 +28,13 @@
                     {
                         label: "Further information requested",
                         id: "further-information-requested",
+                        panel: {
+                            html: '<h3>TODO</h3>'
+                        }
+                    },
+                    {
+                        label: "Submitted",
+                        id: "applications-submitted",
                         panel: {
                             html: '<h3>TODO</h3>'
                         }
