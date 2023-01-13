@@ -1,10 +1,10 @@
 import { Section } from '../../utils/decorators'
 
 import ReviewApplicationAndDocuments from './reviewApplicationAndDocuments'
-import SuitabilityAssessment from './suitabilityAssessment'
+import SufficientInformation from './sufficientInformation'
 
 @Section({
   name: 'Review application',
-  tasks: [ReviewApplicationAndDocuments, SuitabilityAssessment],
+  tasks: [ReviewApplicationAndDocuments, SufficientInformation],
 })
 export default class ReviewApplication {}

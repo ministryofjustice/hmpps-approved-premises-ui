@@ -30,7 +30,7 @@ export default class AseessHelper {
 
   completeAssessment() {
     this.completeReviewApplicationSection()
-    this.completeSuitabilityAssessmentSection()
+    this.completeSufficientInformationQuestion()
   }
 
   private completeReviewApplicationSection() {
@@ -54,9 +54,9 @@ export default class AseessHelper {
     tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
   }
 
-  private completeSuitabilityAssessmentSection() {
+  private completeSufficientInformationQuestion() {
     // When I click on the 'suitability-assessment' link
-    cy.get('[data-cy-task-name="suitability-assessment"]').click()
+    cy.get('[data-cy-task-name="sufficient-information"]').click()
 
     // Then I should be taken to the sufficient information page
     const page = new SufficientInformationPage(this.assessment)
