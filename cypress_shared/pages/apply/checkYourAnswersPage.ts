@@ -53,7 +53,7 @@ export default class CheckYourAnswersPage extends ApplyPage {
   }
 
   shouldShowAccessAndHealthcareAnswers(pages: Array<ApplyPage>) {
-    this.shouldShowTitle('access-and-healthcare', 'Provide access and healthcare information')
+    this.shouldShowTitle('access-and-healthcare', 'Add access, cultural and healthcare needs')
     this.shouldShowAnswersForTask('access-and-healthcare', pages)
   }
 
