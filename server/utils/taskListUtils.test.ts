@@ -28,5 +28,11 @@ describe('taskListUtils', () => {
 
       expect(taskLinkHelper(task, application, 'applications')).toEqual(`Type of Approved Premises required`)
     })
+
+    it('should return the task name when the application has no data', () => {
+      const application = applicationFactory.build({ id: 'some-uuid', data: null })
+
+      expect(taskLinkHelper(task, application, 'applications')).toEqual(`Type of Approved Premises required`)
+    })
   })
 })
