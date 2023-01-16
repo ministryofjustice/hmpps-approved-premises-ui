@@ -40,12 +40,12 @@ const createNameAnchorElement = (name: string, applicationId: string) => {
 }
 
 const taskIsComplete = (task: Task, application: ApprovedPremisesApplication): boolean => {
-  return application.data[task.id]
+  return application.data?.[task.id]
 }
 
 const previousTaskIsComplete = (task: Task, application: ApprovedPremisesApplication): boolean => {
   const previousTaskId = taskIds[taskIds.indexOf(task.id) - 1]
-  return previousTaskId ? application.data[previousTaskId] : true
+  return previousTaskId ? application.data?.[previousTaskId] : true
 }
 
 const getTaskStatus = (task: Task, application: ApprovedPremisesApplication): string => {

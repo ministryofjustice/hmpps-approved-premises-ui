@@ -65,6 +65,13 @@ describe('applicationUtils', () => {
         '<strong class="govuk-tag app-task-list__tag" id="type-of-ap-status">Completed</strong>',
       )
     })
+
+    it('works when the application has no data', () => {
+      const application = applicationFactory.build({ data: null })
+      expect(getTaskStatus(task, application)).toEqual(
+        '<strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="type-of-ap-status">Cannot start yet</strong>',
+      )
+    })
   })
 
   describe('getCompleteSectionCount', () => {
