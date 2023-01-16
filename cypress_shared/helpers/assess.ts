@@ -3,6 +3,7 @@ import { ReviewPage, ListPage, TaskListPage, SufficientInformationPage } from '.
 import Page from '../pages/page'
 import { updateAssessmentData } from '../../server/form-pages/utils'
 import AssessPage from '../pages/assess/assessPage'
+import SuitabilityAssessmentPage from '../pages/assess/suitabilityAssessmentPage'
 
 export default class AseessHelper {
   constructor(private readonly assessment: Assessment, private readonly documents: Array<Document>) {}
@@ -31,6 +32,7 @@ export default class AseessHelper {
   completeAssessment() {
     this.completeReviewApplicationSection()
     this.completeSufficientInformationQuestion()
+    this.completeSuitabilityOfAssessmentQuestion()
   }
 
   private completeReviewApplicationSection() {
@@ -55,7 +57,7 @@ export default class AseessHelper {
   }
 
   private completeSufficientInformationQuestion() {
-    // When I click on the 'suitability-assessment' link
+    // When I click on the 'sufficient-information' link
     cy.get('[data-cy-task-name="sufficient-information"]').click()
 
     // Then I should be taken to the sufficient information page
@@ -67,8 +69,25 @@ export default class AseessHelper {
     // Then I should be taken to the task list
     const tasklistPage = Page.verifyOnPage(TaskListPage)
 
+    // And the sufficient-information application task should show a completed status
+    tasklistPage.shouldShowTaskStatus('sufficient-information', 'Completed')
+  }
+
+  private completeSuitabilityOfAssessmentQuestion() {
+    // When I click on the 'suitability-assessment' link
+    cy.get('[data-cy-task-name="suitability-assessment"]').click()
+
+    // Then I should be taken to the suitability assessment page
+    const page = new SuitabilityAssessmentPage(this.assessment)
+    page.completeForm()
+    page.clickSubmit()
+    this.updateAssessmentAndStub(page)
+
+    // Then I should be taken to the task list
+    const tasklistPage = Page.verifyOnPage(TaskListPage)
+
     // And the suitability-assessment application task should show a completed status
-    tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
+    tasklistPage.shouldShowTaskStatus('suitability-assessment', 'Completed')
   }
 
   updateAssessmentAndStub(pageObject: AssessPage) {
