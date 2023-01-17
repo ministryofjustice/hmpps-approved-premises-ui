@@ -1,4 +1,4 @@
-import type { Task, FormSections, FormSection, TableRow, PageResponse } from '@approved-premises/ui'
+import type { TableRow, PageResponse } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication, Document } from '@approved-premises/api'
 import paths from '../paths/apply'
 import Apply from '../form-pages/apply'
@@ -8,8 +8,6 @@ import { DateFormats } from './dateUtils'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 
 type ApplicationResponse = Record<string, Array<PageResponse>>
-
-const taskIds = Object.keys(Apply.pages)
 
 const dashboardTableRows = (applications: Array<ApprovedPremisesApplication>): Array<TableRow> => {
   return applications.map(application => {
@@ -37,33 +35,6 @@ const htmlValue = (value: string) => {
 
 const createNameAnchorElement = (name: string, applicationId: string) => {
   return htmlValue(`<a href=${paths.applications.show({ id: applicationId })}>${name}</a>`)
-}
-
-const taskIsComplete = (task: Task, application: ApprovedPremisesApplication): boolean => {
-  return application.data?.[task.id]
-}
-
-const previousTaskIsComplete = (task: Task, application: ApprovedPremisesApplication): boolean => {
-  const previousTaskId = taskIds[taskIds.indexOf(task.id) - 1]
-  return previousTaskId ? application.data?.[previousTaskId] : true
-}
-
-const getTaskStatus = (task: Task, application: ApprovedPremisesApplication): string => {
-  if (!taskIsComplete(task, application) && !previousTaskIsComplete(task, application)) {
-    return `<strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="${task.id}-status">Cannot start yet</strong>`
-  }
-
-  if (!taskIsComplete(task, application) && previousTaskIsComplete(task, application)) {
-    return `<strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="${task.id}-status">Not started</strong>`
-  }
-
-  return `<strong class="govuk-tag app-task-list__tag" id="${task.id}-status">Completed</strong>`
-}
-
-const getCompleteSectionCount = (sections: FormSections, application: ApprovedPremisesApplication): number => {
-  return sections.filter((section: FormSection) => {
-    return section.tasks.filter((task: Task) => taskIsComplete(task, application)).length === section.tasks.length
-  }).length
 }
 
 const getResponses = (application: ApprovedPremisesApplication): ApplicationResponse => {
@@ -174,13 +145,10 @@ const overwriteApplicationDocuments = (
 
 export {
   documentsFromApplication,
-  getTaskStatus,
-  getCompleteSectionCount,
   getResponses,
   getResponseForPage,
   getPage,
   getArrivalDate,
   dashboardTableRows,
   overwriteApplicationDocuments,
-  previousTaskIsComplete,
 }

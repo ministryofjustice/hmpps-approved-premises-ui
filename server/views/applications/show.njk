@@ -19,7 +19,7 @@
       </h1>
 
       <h2 class="govuk-heading-s govuk-!-margin-bottom-2">Application incomplete</h2>
-      <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ getCompleteSectionCount(sections, application) }} of {{ (sections | length) }} sections.</p>
+      <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ TasklistUtils.getCompleteSectionCount(sections, application) }} of {{ (sections | length) }} sections.</p>
     </div>
 
     <div class="govuk-grid-column-two-thirds">
@@ -34,9 +34,9 @@
               {% for task in section.tasks %}
                 <li class="app-task-list__item">
                   <span class="app-task-list__task-name">
-                    {{ taskLink(task, application, 'applications')  }}
+                    {{ TasklistUtils.taskLink(task, application, 'applications') | safe  }}
                   </span>
-                  {{ getTaskStatus(task, application) }}
+                  {{ TasklistUtils.getTaskStatus(task, application) | safe }}
                 </li>
               {% endfor %}
             </ul>
