@@ -45,6 +45,7 @@ describe('Review', () => {
       assessment.application = overwriteApplicationDocuments(assessment.application, [
         { fileName: allDocuments[0].fileName } as Document,
         { fileName: allDocuments[1].fileName } as Document,
+        { fileName: 'document1' } as Document,
       ])
 
       const getDocumentsMock = jest.fn().mockResolvedValue(allDocuments)
