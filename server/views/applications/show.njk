@@ -34,7 +34,7 @@
               {% for task in section.tasks %}
                 <li class="app-task-list__item">
                   <span class="app-task-list__task-name">
-                    {{ TasklistUtils.taskLink(task, application, 'applications') | safe  }}
+                    {{ TasklistUtils.taskLink(task, application) | safe  }}
                   </span>
                   {{ TasklistUtils.getTaskStatus(task, application) | safe }}
                 </li>
