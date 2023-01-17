@@ -21,8 +21,11 @@ export default class Review implements TasklistPage {
     dataServices: DataServices,
   ) {
     const documents = await dataServices.applicationService.getDocuments(token, assessment.application)
-    const selectedDocuments = documentsFromApplication(assessment.application).map(selectedDocument => {
-      return documents.find((document: Document) => document.fileName === selectedDocument.fileName)
+    const selectedDocuments: Array<Document> = []
+
+    documentsFromApplication(assessment.application).forEach(selectedDocument => {
+      const foundDocument = documents.find((document: Document) => document.fileName === selectedDocument.fileName)
+      if (foundDocument) selectedDocuments.push(foundDocument)
     })
 
     if (selectedDocuments.length) {
