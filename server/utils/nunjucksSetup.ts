@@ -5,13 +5,11 @@ import nunjucks from 'nunjucks'
 import express from 'express'
 import * as pathModule from 'path'
 
-import type { ErrorMessages, JourneyType, PersonStatus, Task } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { ErrorMessages, PersonStatus } from '@approved-premises/ui'
 import { initialiseName, removeBlankSummaryListItems, sentenceCase, mapApiPersonRisksForUi, kebabCase } from './utils'
 import { dateFieldValues, convertObjectsToRadioItems, convertObjectsToSelectOptions } from './formUtils'
-import { getTaskStatus, getCompleteSectionCount, dashboardTableRows } from './applicationUtils'
+import { dashboardTableRows } from './applicationUtils'
 import { checkYourAnswersSections } from './checkYourAnswersUtils'
-import taskLinkHelper from './taskListUtils'
 
 import { statusTag } from './personUtils'
 import { DateFormats } from './dateUtils'
@@ -21,6 +19,7 @@ import * as OffenceUtils from './offenceUtils'
 import * as AttachDocumentsUtils from './attachDocumentsUtils'
 import * as OasysImportUtils from './oasysImportUtils'
 import * as BookingUtils from './bookingUtils'
+import * as TasklistUtils from './taskListUtils'
 
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
@@ -103,16 +102,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   njkEnv.addGlobal('paths', { ...managePaths, ...applyPaths, ...assessPaths })
 
-  njkEnv.addGlobal('getCompleteSectionCount', getCompleteSectionCount)
-
-  njkEnv.addGlobal('getTaskStatus', (task: Task, application: ApprovedPremisesApplication) =>
-    markAsSafe(getTaskStatus(task, application)),
-  )
-
-  njkEnv.addGlobal('taskLink', (task: Task, application: ApprovedPremisesApplication, journeyType?: JourneyType) =>
-    markAsSafe(taskLinkHelper(task, application, journeyType)),
-  )
-
   njkEnv.addGlobal('statusTag', (status: PersonStatus) => markAsSafe(statusTag(status)))
 
   njkEnv.addGlobal('mergeObjects', (obj1: Record<string, unknown>, obj2: Record<string, unknown>) => {
@@ -137,4 +126,5 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('AttachDocumentsUtils', AttachDocumentsUtils)
   njkEnv.addGlobal('OasysImportUtils', OasysImportUtils)
   njkEnv.addGlobal('BookingUtils', BookingUtils)
+  njkEnv.addGlobal('TasklistUtils', TasklistUtils)
 }
