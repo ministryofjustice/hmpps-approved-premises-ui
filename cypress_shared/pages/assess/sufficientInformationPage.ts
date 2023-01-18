@@ -2,7 +2,7 @@ import type { ApprovedPremisesAssessment as Assessment } from '@approved-premise
 
 import AssessPage from './assessPage'
 
-import SufficientInformation from '../../../server/form-pages/assess/reviewApplication/suitabilityAssessment/sufficientInformation'
+import SufficientInformation from '../../../server/form-pages/assess/reviewApplication/sufficientInformation/sufficientInformation'
 
 export default class SufficientInformationPage extends AssessPage {
   pageClass = new SufficientInformation({ sufficientInformation: 'yes' })
