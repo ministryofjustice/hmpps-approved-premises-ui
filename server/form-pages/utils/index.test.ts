@@ -210,4 +210,14 @@ describe('utils', () => {
       })
     })
   })
+
+  describe('generateResponsesForYesNoAndCommentsSections ', () => {
+    it('generates the responses given the sections and body', () => {
+      expect(
+        utils.responsesForYesNoAndCommentsSections({ questionName: 'question copy' }, { questionName: 'response' }),
+      ).toEqual({
+        'question copy': 'Response',
+      })
+    })
+  })
 })

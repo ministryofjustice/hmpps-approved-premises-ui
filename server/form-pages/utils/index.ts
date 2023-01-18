@@ -2,6 +2,7 @@ import type { YesOrNoWithDetail, YesOrNo, Task, JourneyType } from '@approved-pr
 import type { Request } from 'express'
 import TasklistPage, { TasklistPageInterface } from '../tasklistPage'
 import { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '../../@types/shared'
+import { sentenceCase } from '../../utils/utils'
 
 export const applyYesOrNo = <K extends string>(key: K, body: Record<string, unknown>): YesOrNoWithDetail<K> => {
   return {
@@ -115,4 +116,22 @@ export function getPageDataFromApplication(
   const taskName = getTaskName(Page)
 
   return application.data?.[taskName]?.[pageName] || {}
+}
+
+export const responsesForYesNoAndCommentsSections = (
+  sections: Record<string, string>,
+  body: Record<string, string>,
+) => {
+  return Object.keys(sections).reduce((prev, section) => {
+    const response = {
+      ...prev,
+      [sections[section]]: sentenceCase(body[section]),
+    }
+
+    if (body[`${section}Comments`]) {
+      response[`${sections[section]} Additional comments`] = body[`${section}Comments`]
+    }
+
+    return response
+  }, {})
 }

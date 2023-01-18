@@ -3,7 +3,7 @@ import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-pre
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-import { generateResponsesForYesNoAndCommentsSections } from '../../../../utils/formUtils'
+import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
 import { dateIsBlank, DateFormats } from '../../../../utils/dateUtils'
 
 export type RequiredActionsSections = {
@@ -90,7 +90,7 @@ export default class RequiredActions implements TasklistPage {
       reponse[this.areaManagerQuestions.dateOfDiscussion] = DateFormats.isoDateToUIDate(this.body.dateOfDiscussion)
       reponse[this.areaManagerQuestions.outlineOfDiscussion] = this.body.outlineOfDiscussion
     }
-    return { ...reponse, ...generateResponsesForYesNoAndCommentsSections(this.sections, this.body) }
+    return { ...reponse, ...responsesForYesNoAndCommentsSections(this.sections, this.body) }
   }
 
   errors() {
