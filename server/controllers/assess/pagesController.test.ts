@@ -101,7 +101,7 @@ describe('pagesController', () => {
 
     it('returns a 404 when the page cannot be found', async () => {
       assessmentService.initializePage.mockImplementation(() => {
-        throw new UnknownPageError()
+        throw new UnknownPageError('some-page')
       })
       const requestHandler = pagesController.show('some-task', 'some-page')
       await requestHandler(request, response, next)
