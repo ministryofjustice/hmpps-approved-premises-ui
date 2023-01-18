@@ -186,7 +186,7 @@ const getPage = (taskName: string, pageName: string): TasklistPageInterface => {
   const Page = pageList[pageName]
 
   if (!Page) {
-    throw new UnknownPageError()
+    throw new UnknownPageError(pageName)
   }
 
   return Page as TasklistPageInterface
