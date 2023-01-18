@@ -1,5 +1,7 @@
 import assessmentFactory from '../../../server/testutils/factories/assessment'
 import documentFactory from '../../../server/testutils/factories/document'
+import clarificationNoteFactory from '../../../server/testutils/factories/clarificationNote'
+
 import { overwriteApplicationDocuments } from '../../../server/utils/applicationUtils'
 
 import AssessHelper from '../../../cypress_shared/helpers/assess'
@@ -33,6 +35,32 @@ context('Assess', () => {
 
       // And I complete an assessment
       assessHelper.completeAssessment()
+    })
+  })
+
+  it('allows me to create and update a clarification note', () => {
+    // Given I am logged in
+    cy.signIn()
+    cy.fixture('applicationData.json').then(applicationData => {
+      // And there is an application awaiting assessment
+      const assessment = assessmentFactory.build({
+        decision: undefined,
+        application: { data: applicationData },
+      })
+      assessment.data = {}
+      const documents = documentFactory.buildList(4)
+      const clarificationNote = clarificationNoteFactory.build()
+      assessment.application = overwriteApplicationDocuments(assessment.application, documents)
+
+      const assessHelper = new AssessHelper(assessment, documents, clarificationNote)
+
+      assessHelper.setupStubs()
+
+      // And I start an assessment
+      assessHelper.startAssessment()
+
+      // And I add a clarification note
+      assessHelper.addClarificationNote()
     })
   })
 })

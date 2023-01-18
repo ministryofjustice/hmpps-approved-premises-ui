@@ -1,23 +1,35 @@
-import { ApprovedPremisesAssessment as Assessment, Document } from '@approved-premises/api'
+import { ApprovedPremisesAssessment as Assessment, ClarificationNote, Document } from '@approved-premises/api'
 import {
-  ReviewPage,
+  ClarificationNoteConfirmPage,
   ListPage,
-  TaskListPage,
+  RequestInformationPage,
+  RequiredActionsPage,
+  ReviewPage,
   SufficientInformationPage,
   SuitabilityAssessmentPage,
-  RequiredActionsPage,
+  TaskListPage,
 } from '../pages/assess'
 import Page from '../pages/page'
 import { updateAssessmentData } from '../../server/form-pages/utils'
 import AssessPage from '../pages/assess/assessPage'
 
 export default class AseessHelper {
-  constructor(private readonly assessment: Assessment, private readonly documents: Array<Document>) {}
+  constructor(
+    private readonly assessment: Assessment,
+    private readonly documents: Array<Document>,
+    private readonly clarificationNote?: ClarificationNote,
+  ) {}
 
   setupStubs() {
     cy.task('stubAssessments', [this.assessment])
     cy.task('stubAssessment', this.assessment)
     cy.task('stubAssessmentUpdate', this.assessment)
+    if (this.clarificationNote) {
+      cy.task('stubClarificationNoteCreate', {
+        assessment: this.assessment,
+        clarificationNote: { query: this.clarificationNote },
+      })
+    }
     cy.task('stubApplicationDocuments', { application: this.assessment.application, documents: this.documents })
     this.documents.forEach(document => {
       cy.task('stubPersonDocument', { person: this.assessment.application.person, document })
@@ -40,6 +52,35 @@ export default class AseessHelper {
     this.completeSufficientInformationQuestion()
     this.completeSuitabilityOfAssessmentQuestion()
     this.completeRequiredActionsQuestion()
+  }
+
+  addClarificationNote() {
+    this.completeReviewApplicationSection()
+
+    // When I click on the 'sufficient-information' link
+    cy.get('[data-cy-task-name="sufficient-information"]').click()
+
+    // Then I should be taken to the sufficient information page
+    const page = new SufficientInformationPage(this.assessment, 'no')
+
+    // And I answer no to the sufficient information question
+    page.completeForm()
+    page.clickSubmit()
+
+    // Then I should be taken to the request information page
+    const requestInformationPage = Page.verifyOnPage(RequestInformationPage)
+
+    // And I should be able to create a note
+    requestInformationPage.completeForm()
+    requestInformationPage.clickSubmit()
+
+    // And I should see a confirmation screen
+    const confirmationScreen = Page.verifyOnPage(ClarificationNoteConfirmPage)
+
+    // And I should be able to return to the dashboard
+    confirmationScreen.clickBackToDashboard()
+
+    Page.verifyOnPage(ListPage)
   }
 
   private completeReviewApplicationSection() {
