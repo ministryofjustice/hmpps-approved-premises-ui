@@ -2,6 +2,7 @@
 
 import AssessmentsController from './assessmentsController'
 import AssessmentPagesController from './pagesController'
+import ClarificationNotesController from './assessments/clarificationNotesController'
 
 import type { Services } from '../../services'
 
@@ -13,10 +14,12 @@ export const controllers = (services: Services) => {
     applicationService,
     userService,
   })
+  const clarificationNotesController = new ClarificationNotesController(assessmentService)
 
   return {
     assessmentsController,
     assessmentPagesController,
+    clarificationNotesController,
   }
 }
 
