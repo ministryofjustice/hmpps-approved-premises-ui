@@ -11,6 +11,7 @@ import {
   flattenCheckboxInput,
   isStringOrArrayOfStrings,
   escape,
+  convertArrayToRadioItems,
 } from './formUtils'
 
 describe('formUtils', () => {
@@ -360,6 +361,15 @@ describe('formUtils', () => {
 
     it('returns the empty string when given null', () => {
       expect(escape(null)).toEqual('')
+    })
+  })
+
+  describe('convertArrayToRadioItems', () => {
+    it('returns the array as radio items with the value in sentence case', () => {
+      expect(convertArrayToRadioItems(['one', 'two'], 'two')).toEqual([
+        { text: 'One', value: 'one', checked: false },
+        { text: 'Two', value: 'two', checked: true },
+      ])
     })
   })
 })

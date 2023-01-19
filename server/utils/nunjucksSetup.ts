@@ -25,6 +25,7 @@ import * as AttachDocumentsUtils from './attachDocumentsUtils'
 import * as OasysImportUtils from './oasysImportUtils'
 import * as BookingUtils from './bookingUtils'
 import * as TasklistUtils from './taskListUtils'
+import * as FormUtils from './formUtils'
 
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
@@ -152,4 +153,5 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('OasysImportUtils', OasysImportUtils)
   njkEnv.addGlobal('BookingUtils', BookingUtils)
   njkEnv.addGlobal('TasklistUtils', TasklistUtils)
+  njkEnv.addGlobal('FormUtils', FormUtils)
 }

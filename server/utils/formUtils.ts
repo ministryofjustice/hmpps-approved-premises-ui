@@ -1,5 +1,6 @@
 import * as nunjucks from 'nunjucks'
 import type { ErrorMessages, RadioItem, CheckBoxItem, SelectOption } from '@approved-premises/ui'
+import { sentenceCase } from './utils'
 
 export const dateFieldValues = (fieldName: string, context: Record<string, unknown>, errors: ErrorMessages = {}) => {
   const errorClass = errors[fieldName] ? 'govuk-input--error' : ''
@@ -84,6 +85,16 @@ export function convertKeyValuePairToCheckBoxItems<T>(
       value: key,
       text: object[key],
       checked: checkedItems.includes(key),
+    }
+  })
+}
+
+export function convertArrayToRadioItems(array: Array<string>, checkedItem: string): Array<RadioItem> {
+  return array.map(key => {
+    return {
+      value: key,
+      text: sentenceCase(key),
+      checked: checkedItem === key,
     }
   })
 }
