@@ -2,12 +2,11 @@ import type { Request, Response, NextFunction } from 'express'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import createError from 'http-errors'
 
-import type { DataServices, ErrorsAndUserInput, FormPages } from '@approved-premises/ui'
+import type { DataServices, FormPages } from '@approved-premises/ui'
 import PagesController from './pagesController'
 import { AssessmentService } from '../../../services'
 import TasklistPage from '../../../form-pages/tasklistPage'
 import Assess from '../../../form-pages/assess'
-import { getPage } from '../../../utils/assessmentUtils'
 
 import {
   fetchErrorsAndUserInput,
@@ -21,17 +20,13 @@ import { viewPath } from '../../../form-pages/utils'
 import clarificationNoteFactory from '../../../testutils/factories/clarificationNote'
 import assessmentFactory from '../../../testutils/factories/assessment'
 
+const PageConstructor = jest.fn()
+
 jest.mock('../../../utils/validation')
 jest.mock('../../../form-pages/utils')
-jest.mock('../../../utils/assessmentUtils')
-jest.mock('../../../form-pages/assess', () => {
+jest.mock('../../../utils/assessmentUtils', () => {
   return {
-    pages: { 'my-task': {} },
-  }
-})
-jest.mock('../../../form-pages/apply', () => {
-  return {
-    pages: { 'my-task': {} },
+    getPage: () => PageConstructor,
   }
 })
 
@@ -44,48 +39,46 @@ describe('pagesController', () => {
   const assessmentService = createMock<AssessmentService>({})
   const dataServices = createMock<DataServices>({}) as DataServices
 
-  const PageConstructor = jest.fn()
   const page = createMock<TasklistPage>({})
 
   const assessment = assessmentFactory.build()
 
-  let pagesController: PagesController
+  const pagesController = new PagesController(assessmentService, dataServices)
+
+  beforeEach(() => {
+    assessmentService.initializePage.mockResolvedValue(page)
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
 
   describe('show', () => {
     const request: DeepMocked<Request> = createMock<Request>({ url: 'assessments' })
+    const errorsAndUserInput = { errors: {}, errorSummary: [] as Array<never>, userInput: {} }
 
     beforeEach(() => {
       ;(viewPath as jest.Mock).mockReturnValue('assessments/pages/some/view')
-      ;(getPage as jest.Mock).mockReturnValue(PageConstructor)
+      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
       assessmentService.findAssessment.mockResolvedValue(assessment)
-      assessmentService.initializePage.mockResolvedValue(page)
-      pagesController = new PagesController(assessmentService, dataServices)
     })
 
     it('renders a page', async () => {
-      ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
-        return { errors: {}, errorSummary: [], userInput: {} }
-      })
-
       const requestHandler = pagesController.show('some-task', 'some-page')
       await requestHandler(request, response, next)
 
-      expect(getPage).toHaveBeenCalledWith('some-task', 'some-page')
       expect(assessmentService.initializePage).toHaveBeenCalledWith(PageConstructor, assessment, request, {}, {})
       expect(response.render).toHaveBeenCalledWith('assessments/pages/some/view', {
         assessmentId: request.params.id,
         task: 'some-task',
         page,
         errors: {},
-        errorSummary: [],
+        errorSummary: errorsAndUserInput.errorSummary,
         ...page.body,
       })
     })
 
     it('shows errors and user input when returning from an error state', async () => {
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
-      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
-
       const requestHandler = pagesController.show('some-task', 'some-page')
       await requestHandler(request, response, next)
 
@@ -93,9 +86,10 @@ describe('pagesController', () => {
         PageConstructor,
         assessment,
         request,
+        dataServices,
         errorsAndUserInput.userInput,
-        {},
       )
+
       expect(response.render).toHaveBeenCalledWith('assessments/pages/some/view', {
         assessmentId: request.params.id,
         task: 'some-task',
@@ -110,8 +104,11 @@ describe('pagesController', () => {
       assessmentService.initializePage.mockImplementation(() => {
         throw new UnknownPageError('some-page')
       })
+
       const requestHandler = pagesController.show('some-task', 'some-page')
+
       await requestHandler(request, response, next)
+
       expect(next).toHaveBeenCalledWith(createError(404, 'Not found'))
     })
 
@@ -126,153 +123,204 @@ describe('pagesController', () => {
     })
   })
 
-  describe('update', () => {
-    const request = createMock<Request>({ url: 'assessments', params: { id: 'some-uuid' } })
-
-    beforeEach(() => {
-      ;(getPage as jest.Mock).mockReturnValue(PageConstructor)
-      assessmentService.initializePage.mockResolvedValue(page)
+  describe('update actions', () => {
+    const request = createMock<Request>({
+      url: 'assessments',
+      params: { id: 'some-uuid' },
+      user: { token: 'some-token' },
     })
 
-    it('updates an assessment and redirects to the next page', async () => {
-      page.next.mockReturnValue('next-page')
+    describe('update', () => {
+      it('updates an assessment and redirects to the next page', async () => {
+        page.next.mockReturnValue('next-page')
 
-      assessmentService.save.mockResolvedValue()
+        assessmentService.save.mockResolvedValue()
 
-      const requestHandler = pagesController.update('some-task', 'page-name')
+        const requestHandler = pagesController.update('some-task', 'page-name')
 
-      await requestHandler(request, response)
+        await requestHandler(request, response)
 
-      expect(assessmentService.save).toHaveBeenCalledWith(page, request)
+        expect(assessmentService.save).toHaveBeenCalledWith(page, request)
 
-      expect(response.redirect).toHaveBeenCalledWith(
-        paths.assessments.pages.show({ id: request.params.id, task: 'some-task', page: 'next-page' }),
-      )
-    })
-
-    it('redirects to the tasklist if there is no next page', async () => {
-      page.next.mockReturnValue(undefined)
-
-      const requestHandler = pagesController.update('some-task', 'page-name')
-
-      await requestHandler(request, response)
-
-      expect(assessmentService.save).toHaveBeenCalledWith(page, request)
-
-      expect(response.redirect).toHaveBeenCalledWith(paths.assessments.show({ id: request.params.id }))
-    })
-
-    it('sets a flash and redirects if there are errors', async () => {
-      const err = new Error()
-      assessmentService.save.mockImplementation(() => {
-        throw err
+        expect(response.redirect).toHaveBeenCalledWith(
+          paths.assessments.pages.show({ id: request.params.id, task: 'some-task', page: 'next-page' }),
+        )
       })
 
-      const requestHandler = pagesController.update('some-task', 'page-name')
+      it('redirects to the tasklist if there is no next page', async () => {
+        page.next.mockReturnValue(undefined)
 
-      await requestHandler(request, response)
+        const requestHandler = pagesController.update('some-task', 'page-name')
 
-      expect(assessmentService.save).toHaveBeenCalledWith(page, request)
+        await requestHandler(request, response)
 
-      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
-        response,
-        err,
-        paths.assessments.pages.show({ id: request.params.id, task: 'some-task', page: 'page-name' }),
-      )
+        expect(assessmentService.save).toHaveBeenCalledWith(page, request)
+
+        expect(response.redirect).toHaveBeenCalledWith(paths.assessments.show({ id: request.params.id }))
+      })
+
+      it('sets a flash and redirects if there are errors', async () => {
+        const err = new Error()
+        assessmentService.save.mockImplementation(() => {
+          throw err
+        })
+
+        const requestHandler = pagesController.update('some-task', 'page-name')
+
+        await requestHandler(request, response)
+
+        expect(assessmentService.save).toHaveBeenCalledWith(page, request)
+
+        expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          err,
+          paths.assessments.pages.show({ id: request.params.id, task: 'some-task', page: 'page-name' }),
+        )
+      })
     })
-  })
 
-  describe('updateSufficientInformation', () => {
-    const note = clarificationNoteFactory.build()
-    const updateHandler = jest.fn()
+    describe('updateSufficientInformation', () => {
+      const note = clarificationNoteFactory.build()
+      const updateHandler = jest.fn()
 
-    let updateSpy: jest.SpyInstance
+      let updateSpy: jest.SpyInstance
 
-    beforeEach(() => {
-      jest.resetAllMocks()
-      assessmentService.createClarificationNote.mockResolvedValue(note)
-      updateSpy = jest.spyOn(pagesController, 'update').mockReturnValue(updateHandler)
-    })
+      beforeEach(() => {
+        assessmentService.createClarificationNote.mockResolvedValue(note)
+        updateSpy = jest.spyOn(pagesController, 'update').mockReturnValue(updateHandler)
+      })
 
-    afterEach(() => {
-      updateSpy.mockRestore()
-    })
+      it('creates a note and redirects if sufficientInformation is no and there is a query provided', async () => {
+        assessmentService.save.mockResolvedValue()
 
-    it('creates a note and redirects if sufficientInformation is no and there is a query provided', async () => {
-      ;(getPage as jest.Mock).mockReturnValue(PageConstructor)
-      assessmentService.initializePage.mockResolvedValue(page)
+        const requestHandler = pagesController.updateSufficientInformation('some-task', 'page-name')
 
-      const requestHandler = pagesController.updateSufficientInformation('some-task', 'page-name')
-      const request = createMock<Request>({
-        params: { id: 'some-uuid' },
-        body: {
+        await requestHandler({ ...request, body: { sufficientInformation: 'no', query: 'some text' } }, response)
+
+        expect(assessmentService.createClarificationNote).toHaveBeenCalledWith(
+          request.user.token,
+          request.params.id,
+          page.body,
+        )
+
+        expect(response.redirect).toHaveBeenCalledWith(
+          paths.assessments.clarificationNotes.confirm({ id: request.params.id }),
+        )
+
+        expect(updateSpy).not.toHaveBeenCalled()
+      })
+
+      it('forwards to the update action if sufficientInformation is yes', async () => {
+        const requestHandler = pagesController.updateSufficientInformation('some-task', 'page-name')
+
+        const res = createMock<Response>()
+
+        await requestHandler({ ...request, body: { sufficientInformation: 'yes' } }, res)
+
+        expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
+
+        expect(updateSpy).toHaveBeenCalledWith('some-task', 'page-name')
+        expect(updateHandler).toHaveBeenCalledWith(request, res)
+      })
+
+      it('catches an error if sufficientInformation is no but the body is invalid', async () => {
+        const requestHandler = pagesController.updateSufficientInformation('some-task', 'page-name')
+
+        request.body = {
           sufficientInformation: 'no',
-          query: 'some text',
-        },
+        }
+
+        const err = new Error()
+
+        assessmentService.save.mockImplementation(() => {
+          throw err
+        })
+
+        const res = createMock<Response>()
+
+        await requestHandler(request, res)
+
+        expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          res,
+          err,
+          paths.assessments.pages.show({ id: request.params.id, task: 'some-task', page: 'page-name' }),
+        )
       })
-
-      await requestHandler(request, response)
-
-      expect(assessmentService.createClarificationNote).toHaveBeenCalledWith(
-        request.user.token,
-        request.params.id,
-        page.body,
-      )
-
-      expect(response.redirect).toHaveBeenCalledWith(
-        paths.assessments.clarificationNotes.confirm({ id: request.params.id }),
-      )
-
-      expect(updateSpy).not.toHaveBeenCalled()
     })
 
-    it('forwards to the update action if sufficientInformation is yes', async () => {
-      const requestHandler = pagesController.updateSufficientInformation('some-task', 'page-name')
+    describe('updateInformationRecieved', () => {
+      const note = clarificationNoteFactory.build()
+      const updateHandler = jest.fn()
 
-      const request = createMock<Request>({
-        params: { id: 'some-uuid' },
-        body: {
-          sufficientInformation: 'yes',
-        },
+      let updateSpy: jest.SpyInstance
+
+      beforeEach(() => {
+        assessment.clarificationNotes = [
+          clarificationNoteFactory.build({ response: 'some text' }),
+          clarificationNoteFactory.build({ response: null }),
+        ]
+        assessmentService.findAssessment.mockResolvedValue(assessment)
+
+        assessmentService.createClarificationNote.mockResolvedValue(note)
+        updateSpy = jest.spyOn(pagesController, 'update').mockReturnValue(updateHandler)
       })
 
-      const res = createMock<Response>()
+      it('updates the assessment and the correct clarification note if informationReceived is yes', async () => {
+        assessmentService.save.mockResolvedValue()
 
-      await requestHandler(request, res)
+        const requestHandler = pagesController.updateInformationRecieved('some-task', 'page-name')
 
-      expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
+        await requestHandler(
+          { ...request, body: { informationReceived: 'yes', response: 'some text', responseReceivedOn: '2022-01-02' } },
+          response,
+        )
 
-      expect(updateSpy).toHaveBeenCalledWith('some-task', 'page-name')
-      expect(updateHandler).toHaveBeenCalledWith(request, res)
-    })
+        expect(assessmentService.save).toHaveBeenCalled()
+        expect(assessmentService.updateClarificationNote).toHaveBeenCalledWith(
+          request.user.token,
+          request.params.id,
+          assessment.clarificationNotes[1].id,
+          page.body,
+        )
 
-    it('catches an error if sufficientInformation is no but the body is invalid', async () => {
-      const requestHandler = pagesController.updateSufficientInformation('some-task', 'page-name')
-
-      const request = createMock<Request>({
-        params: { id: 'some-uuid' },
-        body: {
-          sufficientInformation: 'no',
-        },
+        expect(response.redirect).toHaveBeenCalledWith(paths.assessments.show({ id: request.params.id }))
       })
 
-      const err = new Error()
+      it('catches an error if informationReceived is yes but the body is invalid', async () => {
+        const requestHandler = pagesController.updateInformationRecieved('some-task', 'page-name')
 
-      assessmentService.save.mockImplementation(() => {
-        throw err
+        const err = new Error()
+
+        assessmentService.save.mockImplementation(() => {
+          throw err
+        })
+
+        const res = createMock<Response>()
+
+        await requestHandler({ ...request, body: { informationReceived: 'yes' } }, res)
+
+        expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          res,
+          err,
+          paths.assessments.pages.show({ id: request.params.id, task: 'some-task', page: 'page-name' }),
+        )
       })
 
-      const res = createMock<Response>()
+      it('forwards to the update action if informationReceived is no', async () => {
+        const requestHandler = pagesController.updateInformationRecieved('some-task', 'page-name')
 
-      await requestHandler(request, res)
+        const res = createMock<Response>()
 
-      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
-        res,
-        err,
-        paths.assessments.pages.show({ id: request.params.id, task: 'some-task', page: 'page-name' }),
-      )
+        await requestHandler({ ...request, body: { informationReceived: 'no' } }, res)
+
+        expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
+
+        expect(updateSpy).toHaveBeenCalledWith('some-task', 'page-name')
+        expect(updateHandler).toHaveBeenCalledWith(request, res)
+      })
     })
   })
 })
