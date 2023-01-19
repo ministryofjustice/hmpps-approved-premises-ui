@@ -1,0 +1,44 @@
+import type { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { faker } from '@faker-js/faker/locale/en_GB'
+
+import AssessPage from './assessPage'
+
+import RequiredActions from '../../../server/form-pages/assess/assessApplication/requiredActions/requiredActions'
+import { DateFormats } from '../../../server/utils/dateUtils'
+
+export default class RequiredActionsPage extends AssessPage {
+  pageClass = new RequiredActions({
+    additionalActions: 'yes',
+    additionalActionsComments: '',
+    curfewsOrSignIns: 'yes',
+    curfewsOrSignInsComments: '',
+    concernsOfUnmanagableRisk: 'yes',
+    concernsOfUnmanagableRiskComments: '',
+    additionalRecommendations: 'yes',
+    additionalRecommendationsComments: '',
+    nameOfAreaManager: '',
+    dateOfDiscussion: '',
+    outlineOfDiscussion: '',
+  })
+
+  constructor(assessment: Assessment) {
+    super(assessment, 'Required actions to support a placement')
+  }
+
+  completeForm() {
+    this.checkRadioByNameAndValue('additionalActions', this.pageClass.body.additionalActions)
+    this.completeTextArea('additionalActionsComments', 'One')
+
+    this.checkRadioByNameAndValue('curfewsOrSignIns', this.pageClass.body.curfewsOrSignIns)
+    this.completeTextArea('curfewsOrSignInsComments', 'Two')
+
+    this.checkRadioByNameAndValue('concernsOfUnmanagableRisk', this.pageClass.body.concernsOfUnmanagableRisk)
+    this.getTextInputByIdAndEnterDetails('nameOfAreaManager', 'Frank')
+    this.completeDateInputs('dateOfDiscussion', DateFormats.dateObjToIsoDate(faker.date.past()))
+    this.completeTextArea('outlineOfDiscussion', 'foo bar baz')
+
+    this.completeTextArea('concernsOfUnmanagableRiskComments', 'Three')
+    this.checkRadioByNameAndValue('additionalRecommendations', this.pageClass.body.additionalActions)
+    this.completeTextArea('additionalRecommendationsComments', 'Four')
+  }
+}

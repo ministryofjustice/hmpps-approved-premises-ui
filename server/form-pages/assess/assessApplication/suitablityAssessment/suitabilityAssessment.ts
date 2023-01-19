@@ -1,9 +1,9 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
-import { sentenceCase } from '../../../../utils/utils'
 
 import TasklistPage from '../../../tasklistPage'
+import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
 
 export type SuitabilityAssessmentSection = {
   riskFactors: string
@@ -59,18 +59,7 @@ export default class SuitabilityAssessment implements TasklistPage {
   }
 
   response() {
-    return Object.keys(this.sections).reduce((prev, section) => {
-      const response = {
-        ...prev,
-        [this.sections[section]]: sentenceCase(this.body[section]),
-      }
-
-      if (this.body[`${section}Comments`]) {
-        response[`${this.sections[section]} Additional comments`] = this.body[`${section}Comments`]
-      }
-
-      return response
-    }, {})
+    return responsesForYesNoAndCommentsSections(this.sections, this.body)
   }
 
   errors() {

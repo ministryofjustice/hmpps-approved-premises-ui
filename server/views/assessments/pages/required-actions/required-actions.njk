@@ -1,0 +1,115 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+    <h1 class="govuk-heading-l">{{page.title}}</h1>
+
+    {% for sectionName, question in page.sections %}
+        {% if sectionName === 'concernsOfUnmanagableRisk' %}
+
+            {% set unmanageableRisks %}
+
+            {{
+                formPageInput(
+                {
+                label: {
+                    text: "Name of area manager"
+                },
+                fieldName: "nameOfAreaManager"
+                },
+                fetchContext()
+            )
+            }}
+
+            {{
+                formPageDateInput(
+                    {
+                    label: {
+                        text: "Date of discussion"
+                    },
+                    fieldName: "dateOfDiscussion"
+                    },
+                    fetchContext()
+                )
+            }}
+
+            {{ formPageTextarea({
+                fieldName: 'outlineOfDiscussion',
+                label: {
+                    text: "Outline the discussion, including any additional measures that have been agreed."
+                    }
+            }, fetchContext()) }}
+            {% endset %}
+
+            {{ formPageRadios({
+                fieldName: sectionName,
+                fieldset: {
+                    legend: {
+                        text: question,
+                        classes: "govuk-fieldset__legend--s"
+                    }
+                },
+                hint: {
+                    text: "If yes, the application must be discussed with the Approved Premises Area Manager (APAM) to identify additional support that may be required"
+                },
+                items: [
+                    {
+                        value: "yes",
+                        text: "Yes",
+                        conditional: {
+                            html: unmanageableRisks
+                    }
+                    },
+                    {
+                        value: "no",
+                        text: "No"
+                    }
+                ]
+            }, fetchContext())}}
+
+        {% else %}
+            {{ formPageRadios({
+                fieldName: sectionName,
+                fieldset: {
+                    legend: {
+                        text: question,
+                        classes: "govuk-fieldset__legend--s"
+                    }
+                },
+                items: [
+                    {
+                        value: "yes",
+                        text: "Yes"
+                    },
+                    {
+                        value: "no",
+                        text: "No"
+                    }
+                ]
+            }, fetchContext()) }}
+
+        {% endif %}
+
+        <details class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                          View guidance notes
+                        </span>
+            </summary>
+
+            <div class="govuk-details__text">
+                {% include './partials/' + sectionName + '.njk' %}
+            </div>
+        </details>
+
+        {{ formPageTextarea({
+                    fieldName: sectionName + "Comments",
+                    label: {
+                        text: "Additional comments",
+                        classes: "govuk-label--s"
+                    }
+                }, fetchContext()) }}
+
+    {%endfor %}
+
+{% endblock %}
