@@ -2,7 +2,6 @@ import { ApprovedPremisesAssessment as Assessment, ClarificationNote, Document, 
 import {
   ClarificationNoteConfirmPage,
   ListPage,
-  RequestInformationPage,
   RequiredActionsPage,
   ReviewPage,
   SufficientInformationPage,
