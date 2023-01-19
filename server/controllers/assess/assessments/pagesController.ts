@@ -68,4 +68,20 @@ export default class PagesController {
       }
     }
   }
+
+  updateSufficientInformation(taskName: string, pageName: string) {
+    return async (req: Request, res: Response) => {
+      if (req.body.sufficientInformation === 'no' && req.body.query) {
+        const clarificationNote = {
+          query: req.body.query,
+        }
+        await this.assessmentService.createClarificationNote(req.user.token, req.params.id, clarificationNote)
+
+        res.redirect(paths.assessments.clarificationNotes.confirm({ id: req.params.id }))
+      } else {
+        const requestHandler = this.update(taskName, pageName)
+        await requestHandler(req, res)
+      }
+    }
+  }
 }

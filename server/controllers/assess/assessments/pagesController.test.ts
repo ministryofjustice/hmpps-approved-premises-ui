@@ -177,4 +177,84 @@ describe('pagesController', () => {
       )
     })
   })
+
+  describe('updateSufficientInformation', () => {
+    const note = clarificationNoteFactory.build()
+    const updateHandler = jest.fn()
+
+    let updateSpy: jest.SpyInstance
+
+    beforeEach(() => {
+      jest.resetAllMocks()
+      assessmentService.createClarificationNote.mockResolvedValue(note)
+      updateSpy = jest.spyOn(pagesController, 'update').mockReturnValue(updateHandler)
+    })
+
+    afterEach(() => {
+      updateSpy.mockRestore()
+    })
+
+    it('creates a note and redirects if sufficientInformation is no and there is a query provided', async () => {
+      const requestHandler = pagesController.updateSufficientInformation('some-task', 'page-name')
+      const request = createMock<Request>({
+        params: { id: 'some-uuid' },
+        body: {
+          sufficientInformation: 'no',
+          query: 'some text',
+        },
+      })
+
+      await requestHandler(request, response)
+
+      expect(assessmentService.createClarificationNote).toHaveBeenCalledWith(request.user.token, request.params.id, {
+        query: request.body.query,
+      })
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.assessments.clarificationNotes.confirm({ id: request.params.id }),
+      )
+
+      expect(updateSpy).not.toHaveBeenCalled()
+    })
+
+    it('forwards to the update action if sufficientInformation is yes', async () => {
+      const requestHandler = pagesController.updateSufficientInformation('some-task', 'page-name')
+
+      const request = createMock<Request>({
+        params: { id: 'some-uuid' },
+        body: {
+          sufficientInformation: 'yes',
+        },
+      })
+
+      const res = createMock<Response>()
+
+      await requestHandler(request, res)
+
+      expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
+
+      expect(updateSpy).toHaveBeenCalledWith('some-task', 'page-name')
+      expect(updateHandler).toHaveBeenCalledWith(request, res)
+    })
+
+    it('forwards to the update action if sufficientInformation is no but the query is blank', async () => {
+      const requestHandler = pagesController.updateSufficientInformation('some-task', 'page-name')
+
+      const request = createMock<Request>({
+        params: { id: 'some-uuid' },
+        body: {
+          sufficientInformation: 'no',
+        },
+      })
+
+      const res = createMock<Response>()
+
+      await requestHandler(request, res)
+
+      expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
+
+      expect(updateSpy).toHaveBeenCalledWith('some-task', 'page-name')
+      expect(updateHandler).toHaveBeenCalledWith(request, res)
+    })
+  })
 })
