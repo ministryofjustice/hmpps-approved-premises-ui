@@ -69,26 +69,23 @@ describe('AssessmentService', () => {
       })
     })
 
-    it('should fetch the assessment from the API', async () => {
-      assessmentClient.find.mockResolvedValue(assessment)
+    it('should return a page', async () => {
       ;(getBody as jest.Mock).mockReturnValue(request.body)
 
-      const result = await service.initializePage(Page, request, {})
+      const result = await service.initializePage(Page, assessment, request, {})
 
       expect(result).toBeInstanceOf(Page)
 
       expect(Page).toHaveBeenCalledWith(request.body, assessment, '')
-      expect(assessmentClient.find).toHaveBeenCalledWith(request.params.id)
     })
 
-    it("should call a service's initialize method if it exists", async () => {
+    it("should call a page's initialize method if it exists", async () => {
       const dataServices = createMock<DataServices>({}) as DataServices
-      assessmentClient.find.mockResolvedValue(assessment)
       ;(getBody as jest.Mock).mockReturnValue(request.body)
 
       const TestPage = { initialize: jest.fn() } as unknown as TasklistPageInterface
 
-      await service.initializePage(TestPage, request, dataServices)
+      await service.initializePage(TestPage, assessment, request, dataServices)
 
       expect(TestPage.initialize).toHaveBeenCalledWith(request.body, assessment, request.user.token, dataServices)
     })

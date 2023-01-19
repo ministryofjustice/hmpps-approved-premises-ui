@@ -48,11 +48,11 @@ export default class AssessmentService {
 
   async initializePage(
     Page: TasklistPageInterface,
+    assessment: Assessment,
     request: Request,
     dataServices: DataServices,
     userInput?: Record<string, unknown>,
   ) {
-    const assessment = await this.findAssessment(request.user.token, request.params.id)
     const body = getBody(Page, assessment, request, userInput)
 
     const page = Page.initialize
