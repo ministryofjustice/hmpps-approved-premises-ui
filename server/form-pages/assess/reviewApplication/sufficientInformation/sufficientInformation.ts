@@ -6,7 +6,11 @@ import { sentenceCase } from '../../../../utils/utils'
 
 import TasklistPage from '../../../tasklistPage'
 
-@Page({ name: 'sufficient-information', bodyProperties: ['sufficientInformation'] })
+@Page({
+  name: 'sufficient-information',
+  bodyProperties: ['sufficientInformation'],
+  controllerActions: { update: 'updateSufficientInformation' },
+})
 export default class SufficientInformation implements TasklistPage {
   name = 'sufficient-information'
 
