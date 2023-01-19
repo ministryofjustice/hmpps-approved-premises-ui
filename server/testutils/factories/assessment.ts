@@ -14,12 +14,6 @@ class AssessmentFactory extends Factory<ApprovedPremisesAssessment> {
       createdAt: DateFormats.dateObjToIsoDate(new Date(today.getFullYear(), today.getMonth(), today.getDate() - days)),
     })
   }
-
-  completedAssessment() {
-    return this.params({
-      decision: 'accepted' as const,
-    })
-  }
 }
 
 export default AssessmentFactory.define(() => ({

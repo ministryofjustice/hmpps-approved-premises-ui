@@ -1,6 +1,7 @@
 import { ListPage } from '../../../cypress_shared/pages/assess'
 
 import assessmentFactory from '../../../server/testutils/factories/assessment'
+import clarificationNoteFactory from '../../../server/testutils/factories/clarificationNote'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -16,21 +17,29 @@ context('Assess', () => {
     const assessments = []
 
     // Given there are some applications awaiting assessment
-    const assessmentsAwaiting = assessmentFactory.createdXDaysAgo(2).buildList(3, { decision: undefined })
+    const assessmentsAwaiting = assessmentFactory.createdXDaysAgo(2).buildList(3, { status: 'active' })
     assessments.push(assessmentsAwaiting)
 
     // And two of those assessments are running close to the due date
     const assessmentsCloseToDueDate = [
-      assessmentFactory.createdXDaysAgo(8).build({ decision: undefined }),
-      assessmentFactory.createdXDaysAgo(8).build({ decision: undefined }),
+      assessmentFactory.createdXDaysAgo(8).build({ status: 'active' }),
+      assessmentFactory.createdXDaysAgo(8).build({ status: 'active' }),
     ]
 
     assessments.push(assessmentsCloseToDueDate)
+
+    // And there are some pending assessments
+    const pendingAssessments = assessmentFactory
+      .createdXDaysAgo(3)
+      .buildList(4, { status: 'pending', clarificationNotes: [clarificationNoteFactory.createdXDaysAgo(1).build()] })
+
+    assessments.push(pendingAssessments)
+
     // And there are some completed assessments
     const completedAssesssments = [
-      assessmentFactory.build({ decision: 'accepted' }),
-      assessmentFactory.build({ decision: 'accepted' }),
-      assessmentFactory.build({ decision: 'rejected' }),
+      assessmentFactory.build({ status: 'completed' }),
+      assessmentFactory.build({ status: 'completed' }),
+      assessmentFactory.build({ status: 'completed' }),
     ]
 
     assessments.push(completedAssesssments)
@@ -48,6 +57,12 @@ context('Assess', () => {
 
     // And the assessments that are running close to the due date should be highlighted
     listPage.shouldHighlightAssessmentsApproachingDueDate()
+
+    // When I click on the awaiting tab
+    listPage.clickRequestedFurtherInformation()
+
+    // Then I should see the assessments that are pending
+    listPage.shouldShowPendingAssessments()
 
     // When I click on the completed tab
     listPage.clickCompleted()
