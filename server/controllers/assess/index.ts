@@ -14,7 +14,7 @@ export const controllers = (services: Services) => {
     applicationService,
     userService,
   })
-  const clarificationNotesController = new ClarificationNotesController(assessmentService)
+  const clarificationNotesController = new ClarificationNotesController(assessmentService, userService)
 
   return {
     assessmentsController,

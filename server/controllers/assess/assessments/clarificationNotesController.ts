@@ -1,12 +1,12 @@
 import type { Request, Response, RequestHandler } from 'express'
 import { catchValidationErrorOrPropogate } from '../../../utils/validation'
 
-import { AssessmentService } from '../../../services'
+import { AssessmentService, UserService } from '../../../services'
 
 import paths from '../../../paths/assess'
 
 export default class ClarificationNotesController {
-  constructor(private readonly assessmentService: AssessmentService) {}
+  constructor(private readonly assessmentService: AssessmentService, private readonly userService: UserService) {}
 
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
@@ -31,7 +31,13 @@ export default class ClarificationNotesController {
 
   confirm(): RequestHandler {
     return async (req: Request, res: Response) => {
-      res.render('assessments/clarificationNotes/confirmation', { pageHeading: 'Note Created' })
+      const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
+      const user = await this.userService.getUserById(req.user.token, assessment.application.createdByUserId)
+
+      res.render('assessments/clarificationNotes/confirmation', {
+        pageHeading: 'Request information from probation practicioner',
+        user,
+      })
     }
   }
 }
