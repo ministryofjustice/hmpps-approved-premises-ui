@@ -7,7 +7,12 @@ import * as pathModule from 'path'
 
 import type { ErrorMessages, PersonStatus } from '@approved-premises/ui'
 import { initialiseName, removeBlankSummaryListItems, sentenceCase, mapApiPersonRisksForUi, kebabCase } from './utils'
-import { dateFieldValues, convertObjectsToRadioItems, convertObjectsToSelectOptions } from './formUtils'
+import {
+  dateFieldValues,
+  convertObjectsToRadioItems,
+  convertObjectsToSelectOptions,
+  convertKeyValuePairToRadioItems,
+} from './formUtils'
 import { dashboardTableRows } from './applicationUtils'
 import { checkYourAnswersSections } from './checkYourAnswersUtils'
 
@@ -98,6 +103,12 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
       fieldName: string,
     ) {
       return convertObjectsToSelectOptions(items, prompt, textKey, valueKey, fieldName, this.ctx)
+    },
+  )
+  njkEnv.addGlobal(
+    'convertKeyValuePairToRadioItems',
+    function sendConvertKeyValuePairToRadioItems(items: Record<string, string>, checkedItem: string) {
+      return convertKeyValuePairToRadioItems(items, checkedItem)
     },
   )
 
