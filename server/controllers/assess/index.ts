@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
 import AssessmentsController from './assessmentsController'
-import AssessmentPagesController from './pagesController'
+import AssessmentPagesController from './assessments/pagesController'
 import ClarificationNotesController from './assessments/clarificationNotesController'
 
 import type { Services } from '../../services'

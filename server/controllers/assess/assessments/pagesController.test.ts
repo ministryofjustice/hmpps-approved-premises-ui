@@ -4,29 +4,31 @@ import createError from 'http-errors'
 
 import type { DataServices, ErrorsAndUserInput, FormPages } from '@approved-premises/ui'
 import PagesController from './pagesController'
-import { AssessmentService } from '../../services'
-import TasklistPage from '../../form-pages/tasklistPage'
-import Assess from '../../form-pages/assess'
-import { getPage } from '../../utils/assessmentUtils'
+import { AssessmentService } from '../../../services'
+import TasklistPage from '../../../form-pages/tasklistPage'
+import Assess from '../../../form-pages/assess'
+import { getPage } from '../../../utils/assessmentUtils'
 
 import {
   fetchErrorsAndUserInput,
   catchValidationErrorOrPropogate,
   catchAPIErrorOrPropogate,
-} from '../../utils/validation'
-import { UnknownPageError } from '../../utils/errors'
-import paths from '../../paths/assess'
-import { viewPath } from '../../form-pages/utils'
+} from '../../../utils/validation'
+import { UnknownPageError } from '../../../utils/errors'
+import paths from '../../../paths/assess'
+import { viewPath } from '../../../form-pages/utils'
 
-jest.mock('../../utils/validation')
-jest.mock('../../form-pages/utils')
-jest.mock('../../utils/assessmentUtils')
-jest.mock('../../form-pages/assess', () => {
+import clarificationNoteFactory from '../../../testutils/factories/clarificationNote'
+
+jest.mock('../../../utils/validation')
+jest.mock('../../../form-pages/utils')
+jest.mock('../../../utils/assessmentUtils')
+jest.mock('../../../form-pages/assess', () => {
   return {
     pages: { 'my-task': {} },
   }
 })
-jest.mock('../../form-pages/apply', () => {
+jest.mock('../../../form-pages/apply', () => {
   return {
     pages: { 'my-task': {} },
   }
