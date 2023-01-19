@@ -13,6 +13,7 @@ import lostBed from './integration_tests/mockApis/lostBed'
 import person from './integration_tests/mockApis/person'
 import applications from './integration_tests/mockApis/applications'
 import assessments from './integration_tests/mockApis/assessments'
+import users from './integration_tests/mockApis/users'
 
 import schemaValidator from './integration_tests/tasks/schemaValidator'
 
@@ -47,6 +48,7 @@ export default defineConfig({
         ...applications,
         ...schemaValidator,
         ...assessments,
+        ...users,
       })
     },
     baseUrl: 'http://localhost:3007',

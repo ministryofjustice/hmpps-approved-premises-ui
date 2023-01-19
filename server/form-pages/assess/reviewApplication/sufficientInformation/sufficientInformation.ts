@@ -6,7 +6,11 @@ import { sentenceCase } from '../../../../utils/utils'
 
 import TasklistPage from '../../../tasklistPage'
 
-@Page({ name: 'sufficient-information', bodyProperties: ['sufficientInformation'] })
+@Page({
+  name: 'sufficient-information',
+  bodyProperties: ['sufficientInformation'],
+  controllerActions: { update: 'updateSufficientInformation' },
+})
 export default class SufficientInformation implements TasklistPage {
   name = 'sufficient-information'
 
@@ -14,7 +18,7 @@ export default class SufficientInformation implements TasklistPage {
 
   user: User
 
-  constructor(public body: { sufficientInformation?: YesOrNo }) {}
+  constructor(public body: { sufficientInformation?: YesOrNo; query?: string }) {}
 
   static async initialize(
     body: Record<string, unknown>,
@@ -50,6 +54,10 @@ export default class SufficientInformation implements TasklistPage {
     if (!this.body.sufficientInformation)
       errors.sufficientInformation =
         'You must confirm if there is enough information in the application to make a decision'
+
+    if (this.body.sufficientInformation === 'no' && !this.body.query) {
+      errors.query = 'You must specify what additional information is required'
+    }
 
     return errors
   }

@@ -4,29 +4,31 @@ import createError from 'http-errors'
 
 import type { DataServices, ErrorsAndUserInput, FormPages } from '@approved-premises/ui'
 import PagesController from './pagesController'
-import { AssessmentService } from '../../services'
-import TasklistPage from '../../form-pages/tasklistPage'
-import Assess from '../../form-pages/assess'
-import { getPage } from '../../utils/assessmentUtils'
+import { AssessmentService } from '../../../services'
+import TasklistPage from '../../../form-pages/tasklistPage'
+import Assess from '../../../form-pages/assess'
+import { getPage } from '../../../utils/assessmentUtils'
 
 import {
   fetchErrorsAndUserInput,
   catchValidationErrorOrPropogate,
   catchAPIErrorOrPropogate,
-} from '../../utils/validation'
-import { UnknownPageError } from '../../utils/errors'
-import paths from '../../paths/assess'
-import { viewPath } from '../../form-pages/utils'
+} from '../../../utils/validation'
+import { UnknownPageError } from '../../../utils/errors'
+import paths from '../../../paths/assess'
+import { viewPath } from '../../../form-pages/utils'
 
-jest.mock('../../utils/validation')
-jest.mock('../../form-pages/utils')
-jest.mock('../../utils/assessmentUtils')
-jest.mock('../../form-pages/assess', () => {
+import clarificationNoteFactory from '../../../testutils/factories/clarificationNote'
+
+jest.mock('../../../utils/validation')
+jest.mock('../../../form-pages/utils')
+jest.mock('../../../utils/assessmentUtils')
+jest.mock('../../../form-pages/assess', () => {
   return {
     pages: { 'my-task': {} },
   }
 })
-jest.mock('../../form-pages/apply', () => {
+jest.mock('../../../form-pages/apply', () => {
   return {
     pages: { 'my-task': {} },
   }
@@ -173,6 +175,86 @@ describe('pagesController', () => {
         err,
         paths.assessments.pages.show({ id: request.params.id, task: 'some-task', page: 'page-name' }),
       )
+    })
+  })
+
+  describe('updateSufficientInformation', () => {
+    const note = clarificationNoteFactory.build()
+    const updateHandler = jest.fn()
+
+    let updateSpy: jest.SpyInstance
+
+    beforeEach(() => {
+      jest.resetAllMocks()
+      assessmentService.createClarificationNote.mockResolvedValue(note)
+      updateSpy = jest.spyOn(pagesController, 'update').mockReturnValue(updateHandler)
+    })
+
+    afterEach(() => {
+      updateSpy.mockRestore()
+    })
+
+    it('creates a note and redirects if sufficientInformation is no and there is a query provided', async () => {
+      const requestHandler = pagesController.updateSufficientInformation('some-task', 'page-name')
+      const request = createMock<Request>({
+        params: { id: 'some-uuid' },
+        body: {
+          sufficientInformation: 'no',
+          query: 'some text',
+        },
+      })
+
+      await requestHandler(request, response)
+
+      expect(assessmentService.createClarificationNote).toHaveBeenCalledWith(request.user.token, request.params.id, {
+        query: request.body.query,
+      })
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.assessments.clarificationNotes.confirm({ id: request.params.id }),
+      )
+
+      expect(updateSpy).not.toHaveBeenCalled()
+    })
+
+    it('forwards to the update action if sufficientInformation is yes', async () => {
+      const requestHandler = pagesController.updateSufficientInformation('some-task', 'page-name')
+
+      const request = createMock<Request>({
+        params: { id: 'some-uuid' },
+        body: {
+          sufficientInformation: 'yes',
+        },
+      })
+
+      const res = createMock<Response>()
+
+      await requestHandler(request, res)
+
+      expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
+
+      expect(updateSpy).toHaveBeenCalledWith('some-task', 'page-name')
+      expect(updateHandler).toHaveBeenCalledWith(request, res)
+    })
+
+    it('forwards to the update action if sufficientInformation is no but the query is blank', async () => {
+      const requestHandler = pagesController.updateSufficientInformation('some-task', 'page-name')
+
+      const request = createMock<Request>({
+        params: { id: 'some-uuid' },
+        body: {
+          sufficientInformation: 'no',
+        },
+      })
+
+      const res = createMock<Response>()
+
+      await requestHandler(request, res)
+
+      expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
+
+      expect(updateSpy).toHaveBeenCalledWith('some-task', 'page-name')
+      expect(updateHandler).toHaveBeenCalledWith(request, res)
     })
   })
 })

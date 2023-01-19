@@ -1,19 +1,19 @@
 import type { Request, Response, RequestHandler, NextFunction } from 'express'
 import createError from 'http-errors'
 
-import { getPage } from '../../utils/assessmentUtils'
-import { AssessmentService } from '../../services'
+import { getPage } from '../../../utils/assessmentUtils'
+import { AssessmentService } from '../../../services'
 
 import {
   catchValidationErrorOrPropogate,
   catchAPIErrorOrPropogate,
   fetchErrorsAndUserInput,
-} from '../../utils/validation'
-import paths from '../../paths/assess'
-import { UnknownPageError } from '../../utils/errors'
-import { viewPath } from '../../form-pages/utils'
-import TasklistPage, { TasklistPageInterface } from '../../form-pages/tasklistPage'
-import { DataServices } from '../../@types/ui'
+} from '../../../utils/validation'
+import paths from '../../../paths/assess'
+import { UnknownPageError } from '../../../utils/errors'
+import { viewPath } from '../../../form-pages/utils'
+import TasklistPage, { TasklistPageInterface } from '../../../form-pages/tasklistPage'
+import { DataServices } from '../../../@types/ui'
 
 export default class PagesController {
   constructor(private readonly assessmentService: AssessmentService, private readonly dataServices: DataServices) {}
@@ -65,6 +65,22 @@ export default class PagesController {
           err,
           paths.assessments.pages.show({ id: req.params.id, task: taskName, page: pageName }),
         )
+      }
+    }
+  }
+
+  updateSufficientInformation(taskName: string, pageName: string) {
+    return async (req: Request, res: Response) => {
+      if (req.body.sufficientInformation === 'no' && req.body.query) {
+        const clarificationNote = {
+          query: req.body.query,
+        }
+        await this.assessmentService.createClarificationNote(req.user.token, req.params.id, clarificationNote)
+
+        res.redirect(paths.assessments.clarificationNotes.confirm({ id: req.params.id }))
+      } else {
+        const requestHandler = this.update(taskName, pageName)
+        await requestHandler(req, res)
       }
     }
   }

@@ -62,6 +62,14 @@ describe('SufficientInformation', () => {
         sufficientInformation: 'You must confirm if there is enough information in the application to make a decision',
       })
     })
+
+    it('should have an error if the answer is no and no query is specified', () => {
+      const page = new SufficientInformation({ sufficientInformation: 'no' })
+
+      expect(page.errors()).toEqual({
+        query: 'You must specify what additional information is required',
+      })
+    })
   })
 
   describe('response', () => {
