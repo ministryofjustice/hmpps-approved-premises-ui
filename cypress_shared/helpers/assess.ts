@@ -8,6 +8,7 @@ import {
   SufficientInformationPage,
   SuitabilityAssessmentPage,
   TaskListPage,
+  MakeADecisionPage,
 } from '../pages/assess'
 import Page from '../pages/page'
 import { updateAssessmentData } from '../../server/form-pages/utils'
@@ -52,6 +53,7 @@ export default class AseessHelper {
     this.completeSufficientInformationQuestion()
     this.completeSuitabilityOfAssessmentQuestion()
     this.completeRequiredActionsQuestion()
+    this.completeMakeADecisionPage()
   }
 
   addClarificationNote() {
@@ -153,6 +155,23 @@ export default class AseessHelper {
 
     // And the required-actions application task should show a completed status
     tasklistPage.shouldShowTaskStatus('required-actions', 'Completed')
+  }
+
+  private completeMakeADecisionPage() {
+    // When I click on the 'make-a-decision' link
+    cy.get('[data-cy-task-name="make-a-decision"]').click()
+
+    // Then I should be taken to the suitability assessment page
+    const page = new MakeADecisionPage(this.assessment)
+    page.completeForm()
+    page.clickSubmit()
+    this.updateAssessmentAndStub(page)
+
+    // Then I should be taken to the task list
+    const tasklistPage = Page.verifyOnPage(TaskListPage)
+
+    // And the make-a-decision application task should show a completed status
+    tasklistPage.shouldShowTaskStatus('make-a-decision', 'Completed')
   }
 
   updateAssessmentAndStub(pageObject: AssessPage) {
