@@ -8,6 +8,7 @@ import ReviewPage from './reviewPage'
 import SufficientInformationPage from './sufficientInformationPage'
 import SuitabilityAssessmentPage from './suitabilityAssessmentPage'
 import TaskListPage from './taskListPage'
+import MatchingInformationPage from './matchingInformationPage'
 
 export {
   ClarificationNoteConfirmPage,
@@ -19,4 +20,5 @@ export {
   SufficientInformationPage,
   SuitabilityAssessmentPage,
   TaskListPage,
+  MatchingInformationPage,
 }
