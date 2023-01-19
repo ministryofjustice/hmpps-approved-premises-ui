@@ -29,6 +29,7 @@ import * as TasklistUtils from './taskListUtils'
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
+import { radioMatrixTable } from './radioMatrixTable'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -109,6 +110,18 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     'convertKeyValuePairToRadioItems',
     function sendConvertKeyValuePairToRadioItems(items: Record<string, string>, checkedItem: string) {
       return convertKeyValuePairToRadioItems(items, checkedItem)
+    },
+  )
+
+  njkEnv.addGlobal(
+    'placementRequirementsTable',
+    function sendPlacementRequirementsTable(
+      headings: Array<string>,
+      requirements: Array<string>,
+      preferences: Array<string>,
+      body: Record<string, string>,
+    ) {
+      return radioMatrixTable(headings, requirements, preferences, body)
     },
   )
 
