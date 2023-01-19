@@ -11,13 +11,12 @@ import { getPage } from '../utils/assessmentUtils'
 
 export default function routes(controllers: Controllers, router: Router): Router {
   const { pages } = Assess
-  const { get, put, post } = actions(router)
+  const { get, put } = actions(router)
   const { assessmentsController, assessmentPagesController, clarificationNotesController } = controllers
 
   get(paths.assessments.index.pattern, assessmentsController.index())
   get(paths.assessments.show.pattern, assessmentsController.show())
 
-  post(paths.assessments.clarificationNotes.create.pattern, clarificationNotesController.create())
   get(paths.assessments.clarificationNotes.confirm.pattern, clarificationNotesController.confirm())
 
   Object.keys(pages).forEach((taskKey: string) => {
