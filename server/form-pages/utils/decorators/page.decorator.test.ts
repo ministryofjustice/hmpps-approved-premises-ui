@@ -8,6 +8,7 @@ describe('tasklistPageDecorator', () => {
     @Page({
       bodyProperties: ['foo', 'bar', 'baz'],
       name: 'Some Name',
+      controllerActions: { update: 'foo' },
     })
     class SimpleClass {
       name: string
@@ -26,10 +27,12 @@ describe('tasklistPageDecorator', () => {
       const name = Reflect.getMetadata('page:name', SimpleClass)
       const className = Reflect.getMetadata('page:className', SimpleClass)
       const bodyProperties = Reflect.getMetadata('page:bodyProperties', SimpleClass)
+      const controllerAction = Reflect.getMetadata('page:controllerActions:update', SimpleClass)
 
       expect(name).toEqual('Some Name')
       expect(className).toEqual('SimpleClass')
       expect(bodyProperties).toEqual(['foo', 'bar', 'baz'])
+      expect(controllerAction).toEqual('foo')
     })
   })
 

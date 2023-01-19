@@ -4,7 +4,7 @@ import 'reflect-metadata'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
 type Constructor = new (...args: Array<any>) => {}
 
-const Page = (options: { bodyProperties: Array<string>; name: string }) => {
+const Page = (options: { bodyProperties: Array<string>; name: string; controllerActions?: { update: string } }) => {
   return <T extends Constructor>(constructor: T) => {
     const TaskListPage = class extends constructor {
       name = options.name
@@ -38,6 +38,7 @@ const Page = (options: { bodyProperties: Array<string>; name: string }) => {
     Reflect.defineMetadata('page:name', options.name, TaskListPage)
     Reflect.defineMetadata('page:className', constructor.name, TaskListPage)
     Reflect.defineMetadata('page:bodyProperties', options.bodyProperties, TaskListPage)
+    Reflect.defineMetadata('page:controllerActions:update', options.controllerActions?.update, TaskListPage)
 
     return TaskListPage
   }
