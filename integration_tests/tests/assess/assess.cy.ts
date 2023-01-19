@@ -60,7 +60,16 @@ context('Assess', () => {
       assessHelper.startAssessment()
 
       // And I add a clarification note
-      assessHelper.addClarificationNote()
+      const note = 'Note goes here'
+      assessHelper.addClarificationNote(note)
+
+      // Then the API should have had a clarification note added
+      cy.task('verifyClarificationNoteCreate', assessment).then(requests => {
+        expect(requests).to.have.length(1)
+        const body = JSON.parse(requests[0].body)
+
+        expect(body.query).equal(note)
+      })
     })
   })
 })

@@ -4,7 +4,7 @@
 
 {% block questions %}
   <h1 class="govuk-heading-l">
-    Suitability Assessment
+    Sufficient information
   </h1>
 
   {% set hintHtml %}
@@ -35,36 +35,12 @@
   {% endset %}
 
   {% set notEnoughInfo %}
-  <p>Contact the Probation Practicioner for additional information. Information requests should be responded to within 5 days.</p>
-  <p> You are required to log this information on the next screen.</p>
-  {{ govukSummaryList({
-          rows: [
-            {
-              key: {
-                text: "Name"
-              },
-              value: {
-                text: page.user.name
-              }
-            },
-            {
-              key: {
-                text: "Email"
-              },
-              value: {
-                text: page.user.email
-              }
-            },
-            {
-              key: {
-                text: "Contact number"
-              },
-              value: {
-                html: page.user.telephoneNumber
-              }
+  {{ formPageTextarea({
+            fieldName: 'query',
+            label: {
+              text: "What additional information is required?"
             }
-          ]
-        }) }}
+          }, fetchContext()) }}
   {% endset -%}
 
   {{ formPageRadios({

@@ -56,7 +56,7 @@ export default class AseessHelper {
     this.completeMakeADecisionPage()
   }
 
-  addClarificationNote() {
+  addClarificationNote(note: string) {
     this.completeReviewApplicationSection()
 
     // When I click on the 'sufficient-information' link
@@ -67,16 +67,14 @@ export default class AseessHelper {
 
     // And I answer no to the sufficient information question
     page.completeForm()
+
+    // And I add a note
+    page.addNote(note)
+
+    // And I click submit
     page.clickSubmit()
 
-    // Then I should be taken to the request information page
-    const requestInformationPage = Page.verifyOnPage(RequestInformationPage)
-
-    // And I should be able to create a note
-    requestInformationPage.completeForm()
-    requestInformationPage.clickSubmit()
-
-    // And I should see a confirmation screen
+    // Then I should see a confirmation screen
     const confirmationScreen = Page.verifyOnPage(ClarificationNoteConfirmPage)
 
     // And I should be able to return to the dashboard

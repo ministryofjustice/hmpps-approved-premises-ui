@@ -2,7 +2,7 @@ import { SuperAgentRequest } from 'superagent'
 
 import type { ApprovedPremisesAssessment as Assessment, NewClarificationNote } from '@approved-premises/api'
 
-import { stubFor } from '../../wiremock'
+import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
 
 export default {
@@ -54,4 +54,11 @@ export default {
         jsonBody: args.note,
       },
     }),
+  verifyClarificationNoteCreate: async (assessment: Assessment) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.assessments.clarificationNotes.create({ id: assessment.id }),
+      })
+    ).body.requests,
 }
