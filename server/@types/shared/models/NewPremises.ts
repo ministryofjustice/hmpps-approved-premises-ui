@@ -7,9 +7,11 @@ import type { PropertyStatus } from './PropertyStatus';
 export type NewPremises = {
     name: string;
     addressLine1: string;
+    addressLine2?: string;
+    town?: string;
     postcode: string;
     notes?: string;
-    localAuthorityAreaId: string;
+    localAuthorityAreaId?: string;
     probationRegionId: string;
     characteristicIds: Array<string>;
     status: PropertyStatus;

@@ -12,6 +12,8 @@ export type Premises = {
     id: string;
     name: string;
     addressLine1: string;
+    addressLine2?: string;
+    town?: string;
     postcode: string;
     bedCount: number;
     availableBedsForToday: number;
@@ -19,7 +21,7 @@ export type Premises = {
     notes?: string;
     probationRegion: ProbationRegion;
     apArea: ApArea;
-    localAuthorityArea: LocalAuthorityArea;
+    localAuthorityArea?: LocalAuthorityArea;
     characteristics?: Array<Characteristic>;
     status: PropertyStatus;
 };
