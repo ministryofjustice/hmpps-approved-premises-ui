@@ -1,9 +1,9 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import type { ApprovedPremisesAssessment as Assessment, NewClarificationNote } from '@approved-premises/api'
 
 import { stubFor } from '../../wiremock'
-import paths from '../../server/paths/assess'
+import paths from '../../server/paths/api'
 
 export default {
   stubAssessments: (assessments: Array<Assessment>): SuperAgentRequest =>
@@ -40,6 +40,18 @@ export default {
         status: 201,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: assessment,
+      },
+    }),
+  stubClarificationNoteCreate: (args: { assessment: Assessment; note: NewClarificationNote }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: paths.assessments.clarificationNotes.create({ id: args.assessment.id }),
+      },
+      response: {
+        status: 201,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.note,
       },
     }),
 }

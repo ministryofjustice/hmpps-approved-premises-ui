@@ -39,6 +39,10 @@ const assessPaths = {
   singleAssessment: path('/assessments/:id'),
 }
 
+const clarificationNotePaths = {
+  notes: assessPaths.singleAssessment.path('notes'),
+}
+
 export default {
   premises: {
     show: managePaths.premises.show,
@@ -63,6 +67,9 @@ export default {
     index: assessPaths.assessments,
     show: assessPaths.singleAssessment,
     update: assessPaths.singleAssessment,
+    clarificationNotes: {
+      create: clarificationNotePaths.notes,
+    },
   },
   people: {
     risks: {

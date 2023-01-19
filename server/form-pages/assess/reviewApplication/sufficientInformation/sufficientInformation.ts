@@ -35,7 +35,7 @@ export default class SufficientInformation implements TasklistPage {
   }
 
   next() {
-    return ''
+    return this.body.sufficientInformation === 'yes' ? '' : 'request-information'
   }
 
   response() {

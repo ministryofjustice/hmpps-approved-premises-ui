@@ -1,0 +1,41 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "../../../components/formFields/form-page-textarea/macro.njk" import formPageTextarea %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + page.title %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+
+  {{ govukBackLink({
+    text: "Back",
+    href: paths.assessments.pages.show({ id: assessmentId, task: task, page: page.previous() })
+  }) }}
+
+  <div class="govuk-grid-row">
+    <div class="{{ columnClasses | default("govuk-grid-column-two-thirds") }}">
+      <form action="{{ paths.assessments.clarificationNotes.create({ id: assessmentId }) }}" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+        <h1>{{ page.title }}</h1>
+
+        {{ showErrorSummary(errorSummary) }}
+
+        {{ formPageTextarea({
+            fieldName: 'query',
+            label: {
+              text: "What do you need to ask the PP?"
+            }
+          }, fetchContext()) }}
+
+        {{ govukButton({
+            text: "Submit"
+        }) }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

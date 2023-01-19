@@ -1,5 +1,5 @@
 import type { Request } from 'express'
-import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { ApprovedPremisesAssessment as Assessment, NewClarificationNote } from '@approved-premises/api'
 import type { DataServices, GroupedAssessments } from '@approved-premises/ui'
 
 import type { RestClientBuilder, AssessmentClient } from '../data'
@@ -61,5 +61,11 @@ export default class AssessmentService {
 
       await client.update(updatedAssessment)
     }
+  }
+
+  async createClarificationNote(token: string, assessmentId: string, clarificationNote: NewClarificationNote) {
+    const client = this.assessmentClientFactory(token)
+
+    return client.createClarificationNote(assessmentId, clarificationNote)
   }
 }
