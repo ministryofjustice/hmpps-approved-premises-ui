@@ -166,4 +166,25 @@ describe('AssessmentService', () => {
       expect(assessmentClient.createClarificationNote).toHaveBeenCalledWith(id, clarificationNote)
     })
   })
+
+  describe('updateClarificationNote', () => {
+    it('calls the client with the expected arguments', async () => {
+      const token = 'token'
+      const id = 'some-uuid'
+      const clarificationNote = clarificationNoteFactory.build()
+      const updatedNote = {
+        response: clarificationNote.response,
+        responseReceivedOn: clarificationNote.responseReceivedOn,
+      }
+
+      assessmentClient.updateClarificationNote.mockResolvedValue(clarificationNote)
+
+      const result = await service.updateClarificationNote(token, id, clarificationNote.id, updatedNote)
+
+      expect(result).toEqual(clarificationNote)
+
+      expect(assessmentClientFactory).toHaveBeenCalledWith(token)
+      expect(assessmentClient.updateClarificationNote).toHaveBeenCalledWith(id, clarificationNote.id, updatedNote)
+    })
+  })
 })
