@@ -18,7 +18,17 @@ export default class AssessmentService {
 
     await Promise.all(
       assessments.map(async assessment => {
-        return assessment.decision ? result.completed.push(assessment) : result.awaiting.push(assessment)
+        switch (assessment.status) {
+          case 'completed':
+            result.completed.push(assessment)
+            break
+          case 'pending':
+            result.requestedFurtherInformation.push(assessment)
+            break
+          default:
+            result.awaiting.push(assessment)
+            break
+        }
       }),
     )
 

@@ -10,6 +10,7 @@ export default class ListPage extends Page {
     private readonly awaitingAssessments: Array<Assessment>,
     private readonly assessmentsCloseToDueDate: Array<Assessment>,
     private readonly completedAssesssments: Array<Assessment>,
+    private readonly pendingAssessments: Array<Assessment>,
   ) {
     super('Approved Premises applications')
   }
@@ -18,9 +19,10 @@ export default class ListPage extends Page {
     awaitingAssessments: Array<Assessment>,
     assessmentsCloseToDueDate: Array<Assessment> = [],
     completedAssesssments: Array<Assessment> = [],
+    pendingAssessments: Array<Assessment> = [],
   ): ListPage {
     cy.visit(paths.assessments.index({}))
-    return new ListPage(awaitingAssessments, assessmentsCloseToDueDate, completedAssesssments)
+    return new ListPage(awaitingAssessments, assessmentsCloseToDueDate, completedAssesssments, pendingAssessments)
   }
 
   shouldShowAwaitingAssessments(): void {
@@ -45,6 +47,29 @@ export default class ListPage extends Page {
             .eq(4)
             .contains(this.awaitingAssessments.includes(item) ? '7 Days' : '1 Day')
           cy.get('td').eq(5).contains('In progress')
+        })
+    })
+  }
+
+  shouldShowPendingAssessments(): void {
+    this.pendingAssessments.forEach((item: Assessment) => {
+      cy.contains(item.application.person.name)
+        .parent()
+        .parent()
+        .within(() => {
+          cy.get('td').eq(0).contains(item.application.person.crn)
+          cy.get('td').eq(1).contains(item.application.risks.tier.value.level)
+          cy.get('td')
+            .eq(2)
+            .contains(
+              format(
+                DateFormats.isoToDateObj(item.application.data['basic-information']['release-date'].releaseDate),
+                'd MMM yyyy',
+              ),
+            )
+          cy.get('td').eq(3).contains('3 Days')
+          cy.get('td').eq(4).contains('1 Day')
+          cy.get('td').eq(5).contains('Info Request')
         })
     })
   }
@@ -94,5 +119,9 @@ export default class ListPage extends Page {
 
   clickAssessment(assessment: Assessment): void {
     cy.get(`a[data-cy-assessmentId="${assessment.id}"]`).click()
+  }
+
+  clickRequestedFurtherInformation() {
+    cy.get('a').contains('Requested further information').click()
   }
 }

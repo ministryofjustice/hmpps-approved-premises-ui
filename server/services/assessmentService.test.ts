@@ -28,18 +28,18 @@ describe('AssessmentService', () => {
   })
 
   it('gets all the assesments for the logged in user and groups them by status', async () => {
-    const acceptedAssessments = assessmentFactory.buildList(2, { decision: 'accepted' })
-    const rejectedAssessments = assessmentFactory.buildList(3, { decision: 'rejected' })
-    const awaitingAssessments = assessmentFactory.buildList(5, { decision: undefined })
+    const completedAssessments = assessmentFactory.buildList(2, { status: 'completed' })
+    const pendingAssessments = assessmentFactory.buildList(3, { status: 'pending' })
+    const activeAssessments = assessmentFactory.buildList(5, { status: 'active' })
 
-    assessmentClient.all.mockResolvedValue([acceptedAssessments, rejectedAssessments, awaitingAssessments].flat())
+    assessmentClient.all.mockResolvedValue([completedAssessments, pendingAssessments, activeAssessments].flat())
 
     const result = await service.getAllForLoggedInUser('token')
 
     expect(result).toEqual({
-      completed: [acceptedAssessments, rejectedAssessments].flat(),
-      requestedFurtherInformation: [],
-      awaiting: awaitingAssessments,
+      completed: completedAssessments,
+      requestedFurtherInformation: pendingAssessments,
+      awaiting: activeAssessments,
     })
   })
 
