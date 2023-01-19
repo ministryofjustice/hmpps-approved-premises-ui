@@ -121,20 +121,20 @@ describe('assessmentUtils', () => {
   })
 
   describe('getStatus', () => {
-    it('returns Not started for an assessment without data', () => {
-      const assessment = assessmentFactory.build({ data: undefined })
+    it('returns Not started for an active assessment without data', () => {
+      const assessment = assessmentFactory.build({ status: 'active', data: undefined })
 
       expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--grey">Not started</strong>')
     })
 
-    it('returns In Progress for an assessment with data and no decision', () => {
-      const assessment = assessmentFactory.build({ decision: undefined })
+    it('returns In Progress for an an active assessment with data', () => {
+      const assessment = assessmentFactory.build({ status: 'active' })
 
       expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--blue">In progress</strong>')
     })
 
-    it('returns Completed for an assessment with data and a decision', () => {
-      const assessment = assessmentFactory.build({ decision: 'accepted' })
+    it('returns Completed for a completed assessment', () => {
+      const assessment = assessmentFactory.build({ status: 'completed' })
 
       expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag">Completed</strong>')
     })

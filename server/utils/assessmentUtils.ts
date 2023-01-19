@@ -132,12 +132,14 @@ const daysUntilDue = (assessment: Assessment): number => {
 }
 
 const getStatus = (assessment: Assessment): string => {
-  if (assessment.data) {
-    if (!assessment.decision) {
-      return `<strong class="govuk-tag govuk-tag--blue">In progress</strong>`
-    }
+  if (assessment.status === 'completed') {
     return `<strong class="govuk-tag govuk-tag">Completed</strong>`
   }
+
+  if (assessment.data) {
+    return `<strong class="govuk-tag govuk-tag--blue">In progress</strong>`
+  }
+
   return `<strong class="govuk-tag govuk-tag--grey">Not started</strong>`
 }
 
