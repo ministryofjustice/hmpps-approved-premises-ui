@@ -9,6 +9,8 @@ import { AssessmentService } from '../../services'
 import assessmentFactory from '../../testutils/factories/assessment'
 import Assess from '../../form-pages/assess'
 
+import paths from '../../paths/assess'
+
 describe('assessmentsController', () => {
   const token = 'SOME_TOKEN'
 
@@ -59,6 +61,24 @@ describe('assessmentsController', () => {
         pageHeading: 'Assess an Approved Premises (AP) application',
         sections: Assess.sections,
       })
+
+      expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
+    })
+
+    it('redirects if the assessment is in a pending state', async () => {
+      assessment.status = 'pending'
+
+      const requestHandler = assessmentsController.show()
+
+      await requestHandler(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.assessments.pages.show({
+          id: assessment.id,
+          task: 'sufficient-information',
+          page: 'information-received',
+        }),
+      )
 
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
     })
