@@ -1,6 +1,7 @@
 import assessmentFactory from '../../../server/testutils/factories/assessment'
 import documentFactory from '../../../server/testutils/factories/document'
 import clarificationNoteFactory from '../../../server/testutils/factories/clarificationNote'
+import userFactory from '../../../server/testutils/factories/user'
 
 import { overwriteApplicationDocuments } from '../../../server/utils/applicationUtils'
 
@@ -25,8 +26,9 @@ context('Assess', () => {
       assessment.data = {}
       const documents = documentFactory.buildList(4)
       assessment.application = overwriteApplicationDocuments(assessment.application, documents)
+      const user = userFactory.build()
 
-      const assessHelper = new AssessHelper(assessment, documents)
+      const assessHelper = new AssessHelper(assessment, documents, user)
 
       assessHelper.setupStubs()
 
@@ -51,8 +53,9 @@ context('Assess', () => {
       const documents = documentFactory.buildList(4)
       const clarificationNote = clarificationNoteFactory.build()
       assessment.application = overwriteApplicationDocuments(assessment.application, documents)
+      const user = userFactory.build()
 
-      const assessHelper = new AssessHelper(assessment, documents, clarificationNote)
+      const assessHelper = new AssessHelper(assessment, documents, user, clarificationNote)
 
       assessHelper.setupStubs()
 

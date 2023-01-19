@@ -1,4 +1,4 @@
-import { ApprovedPremisesAssessment as Assessment, ClarificationNote, Document } from '@approved-premises/api'
+import { ApprovedPremisesAssessment as Assessment, ClarificationNote, Document, User } from '@approved-premises/api'
 import {
   ClarificationNoteConfirmPage,
   ListPage,
@@ -18,12 +18,14 @@ export default class AseessHelper {
   constructor(
     private readonly assessment: Assessment,
     private readonly documents: Array<Document>,
+    private readonly user: User,
     private readonly clarificationNote?: ClarificationNote,
   ) {}
 
   setupStubs() {
     cy.task('stubAssessments', [this.assessment])
     cy.task('stubAssessment', this.assessment)
+    cy.task('stubFindUser', { user: this.user, id: this.assessment.application.createdByUserId })
     cy.task('stubAssessmentUpdate', this.assessment)
     if (this.clarificationNote) {
       cy.task('stubClarificationNoteCreate', {
@@ -76,6 +78,9 @@ export default class AseessHelper {
 
     // Then I should see a confirmation screen
     const confirmationScreen = Page.verifyOnPage(ClarificationNoteConfirmPage)
+
+    // And the PP's details should be visible
+    confirmationScreen.confirmUserDetails(this.user)
 
     // And I should be able to return to the dashboard
     confirmationScreen.clickBackToDashboard()
