@@ -1,6 +1,7 @@
 import type { Request, Response, RequestHandler, NextFunction } from 'express'
 import createError from 'http-errors'
 
+import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { getPage } from '../../../utils/assessmentUtils'
 import { AssessmentService } from '../../../services'
 
@@ -22,9 +23,16 @@ export default class PagesController {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+        const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
 
         const Page: TasklistPageInterface = getPage(taskName, pageName)
-        const page: TasklistPage = await this.assessmentService.initializePage(Page, req, this.dataServices, userInput)
+        const page: TasklistPage = await this.assessmentService.initializePage(
+          Page,
+          assessment,
+          req,
+          this.dataServices,
+          userInput,
+        )
 
         res.render(viewPath(page, 'assessments'), {
           assessmentId: req.params.id,
@@ -46,25 +54,16 @@ export default class PagesController {
 
   update(taskName: string, pageName: string) {
     return async (req: Request, res: Response) => {
-      try {
-        const Page: TasklistPageInterface = getPage(taskName, pageName)
-        const page: TasklistPage = await this.assessmentService.initializePage(Page, req, this.dataServices)
-        await this.assessmentService.save(page, req)
-
+      const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
+      const page = await this.saveAndValidate(assessment, taskName, pageName, req, res)
+      if (page) {
         const next = page.next()
 
         if (next) {
-          res.redirect(paths.assessments.pages.show({ id: req.params.id, task: taskName, page: page.next() }))
+          res.redirect(paths.assessments.pages.show({ id: req.params.id, task: taskName, page: next }))
         } else {
           res.redirect(paths.assessments.show({ id: req.params.id }))
         }
-      } catch (err) {
-        catchValidationErrorOrPropogate(
-          req,
-          res,
-          err,
-          paths.assessments.pages.show({ id: req.params.id, task: taskName, page: pageName }),
-        )
       }
     }
   }
@@ -82,6 +81,29 @@ export default class PagesController {
         const requestHandler = this.update(taskName, pageName)
         await requestHandler(req, res)
       }
+    }
+  }
+
+  private async saveAndValidate(
+    assessment: Assessment,
+    taskName: string,
+    pageName: string,
+    req: Request,
+    res: Response,
+  ) {
+    try {
+      const Page: TasklistPageInterface = getPage(taskName, pageName)
+      const page: TasklistPage = await this.assessmentService.initializePage(Page, assessment, req, this.dataServices)
+      await this.assessmentService.save(page, req)
+
+      return page
+    } catch (err) {
+      return catchValidationErrorOrPropogate(
+        req,
+        res,
+        err,
+        paths.assessments.pages.show({ id: req.params.id, task: taskName, page: pageName }),
+      )
     }
   }
 }

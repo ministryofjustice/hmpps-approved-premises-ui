@@ -19,6 +19,7 @@ import paths from '../../../paths/assess'
 import { viewPath } from '../../../form-pages/utils'
 
 import clarificationNoteFactory from '../../../testutils/factories/clarificationNote'
+import assessmentFactory from '../../../testutils/factories/assessment'
 
 jest.mock('../../../utils/validation')
 jest.mock('../../../form-pages/utils')
@@ -46,6 +47,8 @@ describe('pagesController', () => {
   const PageConstructor = jest.fn()
   const page = createMock<TasklistPage>({})
 
+  const assessment = assessmentFactory.build()
+
   let pagesController: PagesController
 
   describe('show', () => {
@@ -54,6 +57,7 @@ describe('pagesController', () => {
     beforeEach(() => {
       ;(viewPath as jest.Mock).mockReturnValue('assessments/pages/some/view')
       ;(getPage as jest.Mock).mockReturnValue(PageConstructor)
+      assessmentService.findAssessment.mockResolvedValue(assessment)
       assessmentService.initializePage.mockResolvedValue(page)
       pagesController = new PagesController(assessmentService, dataServices)
     })
@@ -67,7 +71,7 @@ describe('pagesController', () => {
       await requestHandler(request, response, next)
 
       expect(getPage).toHaveBeenCalledWith('some-task', 'some-page')
-      expect(assessmentService.initializePage).toHaveBeenCalledWith(PageConstructor, request, {}, {})
+      expect(assessmentService.initializePage).toHaveBeenCalledWith(PageConstructor, assessment, request, {}, {})
       expect(response.render).toHaveBeenCalledWith('assessments/pages/some/view', {
         assessmentId: request.params.id,
         task: 'some-task',
@@ -87,6 +91,7 @@ describe('pagesController', () => {
 
       expect(assessmentService.initializePage).toHaveBeenCalledWith(
         PageConstructor,
+        assessment,
         request,
         errorsAndUserInput.userInput,
         {},
