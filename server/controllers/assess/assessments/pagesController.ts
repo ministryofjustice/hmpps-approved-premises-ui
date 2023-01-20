@@ -1,7 +1,7 @@
 import type { Request, Response, RequestHandler, NextFunction } from 'express'
 import createError from 'http-errors'
 
-import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { ApprovedPremisesAssessment as Assessment, NewClarificationNote } from '@approved-premises/api'
 import { getPage } from '../../../utils/assessmentUtils'
 import { AssessmentService } from '../../../services'
 
@@ -70,13 +70,19 @@ export default class PagesController {
 
   updateSufficientInformation(taskName: string, pageName: string) {
     return async (req: Request, res: Response) => {
-      if (req.body.sufficientInformation === 'no' && req.body.query) {
-        const clarificationNote = {
-          query: req.body.query,
-        }
-        await this.assessmentService.createClarificationNote(req.user.token, req.params.id, clarificationNote)
+      if (req.body.sufficientInformation === 'no') {
+        const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
+        const page = await this.saveAndValidate(assessment, taskName, pageName, req, res)
 
-        res.redirect(paths.assessments.clarificationNotes.confirm({ id: req.params.id }))
+        if (page) {
+          await this.assessmentService.createClarificationNote(
+            req.user.token,
+            req.params.id,
+            page.body as NewClarificationNote,
+          )
+
+          res.redirect(paths.assessments.clarificationNotes.confirm({ id: req.params.id }))
+        }
       } else {
         const requestHandler = this.update(taskName, pageName)
         await requestHandler(req, res)

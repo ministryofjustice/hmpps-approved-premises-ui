@@ -200,6 +200,9 @@ describe('pagesController', () => {
     })
 
     it('creates a note and redirects if sufficientInformation is no and there is a query provided', async () => {
+      ;(getPage as jest.Mock).mockReturnValue(PageConstructor)
+      assessmentService.initializePage.mockResolvedValue(page)
+
       const requestHandler = pagesController.updateSufficientInformation('some-task', 'page-name')
       const request = createMock<Request>({
         params: { id: 'some-uuid' },
@@ -211,9 +214,11 @@ describe('pagesController', () => {
 
       await requestHandler(request, response)
 
-      expect(assessmentService.createClarificationNote).toHaveBeenCalledWith(request.user.token, request.params.id, {
-        query: request.body.query,
-      })
+      expect(assessmentService.createClarificationNote).toHaveBeenCalledWith(
+        request.user.token,
+        request.params.id,
+        page.body,
+      )
 
       expect(response.redirect).toHaveBeenCalledWith(
         paths.assessments.clarificationNotes.confirm({ id: request.params.id }),
@@ -242,7 +247,7 @@ describe('pagesController', () => {
       expect(updateHandler).toHaveBeenCalledWith(request, res)
     })
 
-    it('forwards to the update action if sufficientInformation is no but the query is blank', async () => {
+    it('catches an error if sufficientInformation is no but the body is invalid', async () => {
       const requestHandler = pagesController.updateSufficientInformation('some-task', 'page-name')
 
       const request = createMock<Request>({
@@ -252,14 +257,22 @@ describe('pagesController', () => {
         },
       })
 
+      const err = new Error()
+
+      assessmentService.save.mockImplementation(() => {
+        throw err
+      })
+
       const res = createMock<Response>()
 
       await requestHandler(request, res)
 
-      expect(assessmentService.createClarificationNote).not.toHaveBeenCalled()
-
-      expect(updateSpy).toHaveBeenCalledWith('some-task', 'page-name')
-      expect(updateHandler).toHaveBeenCalledWith(request, res)
+      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        res,
+        err,
+        paths.assessments.pages.show({ id: request.params.id, task: 'some-task', page: 'page-name' }),
+      )
     })
   })
 })
