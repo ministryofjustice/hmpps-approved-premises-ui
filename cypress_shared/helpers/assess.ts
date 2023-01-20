@@ -1,4 +1,10 @@
-import { ApprovedPremisesAssessment as Assessment, ClarificationNote, Document, User } from '@approved-premises/api'
+import {
+  ApprovedPremisesAssessment as Assessment,
+  AssessmentStatus,
+  ClarificationNote,
+  Document,
+  User,
+} from '@approved-premises/api'
 import {
   ClarificationNoteConfirmPage,
   ListPage,
@@ -8,6 +14,7 @@ import {
   SuitabilityAssessmentPage,
   TaskListPage,
   MakeADecisionPage,
+  InformationReceivedPage,
 } from '../pages/assess'
 import Page from '../pages/page'
 import { updateAssessmentData } from '../../server/form-pages/utils'
@@ -31,11 +38,22 @@ export default class AseessHelper {
         assessment: this.assessment,
         clarificationNote: { query: this.clarificationNote },
       })
+      cy.task('stubClarificationNoteUpdate', {
+        assessment: this.assessment,
+        clarificationNoteId: this.clarificationNote.id,
+        clarificationNote: { query: this.clarificationNote },
+      })
     }
     cy.task('stubApplicationDocuments', { application: this.assessment.application, documents: this.documents })
     this.documents.forEach(document => {
       cy.task('stubPersonDocument', { person: this.assessment.application.person, document })
     })
+  }
+
+  updateAssessmentStatus(status: AssessmentStatus) {
+    this.assessment.status = status
+    cy.task('stubAssessments', [this.assessment])
+    return cy.task('stubAssessment', this.assessment)
   }
 
   startAssessment() {
@@ -58,7 +76,14 @@ export default class AseessHelper {
   }
 
   addClarificationNote(note: string) {
-    this.completeReviewApplicationSection()
+    // When I click on the 'review application' link
+    cy.get('[data-cy-task-name="review-application"]').click()
+
+    // Then I should be taken to the review page
+    const reviewPage = new ReviewPage(this.assessment)
+
+    reviewPage.clickSubmit()
+    this.updateAssessmentAndStub(reviewPage)
 
     // When I click on the 'sufficient-information' link
     cy.get('[data-cy-task-name="sufficient-information"]').click()
@@ -85,6 +110,22 @@ export default class AseessHelper {
     confirmationScreen.clickBackToDashboard()
 
     Page.verifyOnPage(ListPage)
+  }
+
+  updateClarificationNote(response: string, responseReceivedOn: string) {
+    this.updateAssessmentStatus('active').then(() => {
+      const informationReceivedPage = Page.verifyOnPage(InformationReceivedPage, this.assessment, {
+        informationReceived: 'yes',
+        response,
+        responseReceivedOn,
+      })
+
+      this.updateAssessmentAndStub(informationReceivedPage).then(() => {
+        // When I complete the form
+        informationReceivedPage.completeForm()
+        informationReceivedPage.clickSubmit()
+      })
+    })
   }
 
   private completeReviewApplicationSection() {
@@ -178,6 +219,6 @@ export default class AseessHelper {
 
   updateAssessmentAndStub(pageObject: AssessPage) {
     const updatedAssessement = updateAssessmentData(pageObject.pageClass, this.assessment)
-    cy.task('stubAssessment', updatedAssessement)
+    return cy.task('stubAssessment', updatedAssessement)
   }
 }
