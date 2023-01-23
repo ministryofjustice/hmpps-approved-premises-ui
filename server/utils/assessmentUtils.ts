@@ -106,6 +106,14 @@ const requestedFurtherInformationTableRows = (assessments: Array<Assessment>): A
   return rows
 }
 
+const informationSetAsNotReceived = (assessment: Assessment): boolean => {
+  if (assessment.status === 'pending' && assessment.data) {
+    const response = assessment.data?.['sufficient-information']?.['information-received']?.informationReceived
+    return response === 'no'
+  }
+  return false
+}
+
 const assessmentLink = (assessment: Assessment): string => {
   return `<a href="${paths.assessments.show({ id: assessment.id })}" data-cy-assessmentId="${assessment.id}">${
     assessment.application.person.name
@@ -302,4 +310,5 @@ export {
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
   formatDaysUntilDueWithWarning,
+  informationSetAsNotReceived,
 }
