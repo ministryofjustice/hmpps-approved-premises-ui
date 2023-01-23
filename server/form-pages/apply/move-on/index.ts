@@ -13,7 +13,7 @@ import ForeignNational from './foreignNational'
   pages: [PlacementDuration, RelocationRegion, PlansInPlace, TypeOfAccommodation, ForeignNational],
 })
 @Section({
-  name: 'Considerations for when the placement ends',
+  title: 'Considerations for when the placement ends',
   tasks: [MoveOn],
 })
 export default class MoveOn {}

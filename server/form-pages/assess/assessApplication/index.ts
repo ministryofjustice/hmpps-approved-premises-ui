@@ -3,7 +3,7 @@ import SuitabilityAssessment from './suitablityAssessment'
 import RequiredActions from './requiredActions'
 
 @Section({
-  name: 'Assess application',
+  title: 'Assess application',
   tasks: [SuitabilityAssessment, RequiredActions],
 })
 export default class AssessApplication {}

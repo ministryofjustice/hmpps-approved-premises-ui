@@ -4,9 +4,10 @@ import 'reflect-metadata'
 
 type Constructor = new (...args: Array<any>) => {}
 
-const Section = (options: { name: string; tasks: Array<Constructor> }) => {
+const Section = (options: { title: string; tasks: Array<Constructor> }) => {
   return <T extends Constructor>(constructor: T) => {
-    Reflect.defineMetadata('section:name', options.name, constructor)
+    Reflect.defineMetadata('section:title', options.title, constructor)
+    Reflect.defineMetadata('section:name', constructor.name, constructor)
     Reflect.defineMetadata('section:tasks', options.tasks, constructor)
   }
 }

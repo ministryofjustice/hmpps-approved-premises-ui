@@ -78,7 +78,7 @@ describe('utils', () => {
       Reflect.defineMetadata('task:name', 'Name', Task)
       Reflect.defineMetadata('task:pages', [Page1, Page2], Task)
 
-      Reflect.defineMetadata('section:name', 'Section', Section)
+      Reflect.defineMetadata('section:title', 'Section', Section)
       Reflect.defineMetadata('section:tasks', [Task], Section)
     })
 
@@ -106,11 +106,13 @@ describe('utils', () => {
           if (section === Section1) {
             return {
               title: 'Section 1',
+              name: 'Section1',
               tasks: [{ id: 'foo', title: 'Foo', pages: { 'page-1': Page1, 'page-2': Page2 } }],
             }
           }
           return {
             title: 'Section 2',
+            name: 'Section2',
             tasks: [{ id: 'bar', title: 'Bar', pages: { 'page-3': Page1, 'page-4': Page2 } }],
           }
         })

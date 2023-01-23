@@ -5,6 +5,7 @@ export default class BaseForm {
 
   static sections: Array<{
     title: string
+    name: string
     tasks: Array<Task>
   }>
 }

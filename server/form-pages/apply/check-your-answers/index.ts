@@ -9,7 +9,7 @@ import { Task, Section } from '../../utils/decorators'
   pages: [Review],
 })
 @Section({
-  name: 'Check your answers',
+  title: 'Check your answers',
   tasks: [CheckYourAnswers],
 })
 export default class CheckYourAnswers {}
