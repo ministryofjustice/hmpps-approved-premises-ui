@@ -11,7 +11,7 @@ export default class ClarificationNotesController {
       const user = await this.userService.getUserById(req.user.token, assessment.application.createdByUserId)
 
       res.render('assessments/clarificationNotes/confirmation', {
-        pageHeading: 'Request information from probation practicioner',
+        pageHeading: 'Request information from probation practitioner',
         user,
       })
     }

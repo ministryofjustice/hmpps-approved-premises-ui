@@ -8,7 +8,7 @@ import TasklistPage from '../../../tasklistPage'
 
 @Page({
   name: 'sufficient-information',
-  bodyProperties: ['sufficientInformation'],
+  bodyProperties: ['sufficientInformation', 'query'],
   controllerActions: { update: 'updateSufficientInformation' },
 })
 export default class SufficientInformation implements TasklistPage {

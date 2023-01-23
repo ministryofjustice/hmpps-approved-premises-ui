@@ -91,4 +91,28 @@ describe('AssessmentClient', () => {
       expect(nock.isDone()).toBeTruthy()
     })
   })
+
+  describe('updateClarificationNote', () => {
+    it('should return a note when a PUT request is made', async () => {
+      const assessmentId = 'some-id'
+      const note = clarificationNoteFactory.build()
+      const updatedNote = {
+        response: note.response,
+        responseReceivedOn: note.responseReceivedOn,
+      }
+
+      fakeApprovedPremisesApi
+        .put(
+          paths.assessments.clarificationNotes.update({ id: assessmentId, clarificationNoteId: note.id }),
+          updatedNote,
+        )
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(201, note)
+
+      const result = await assessmentClient.updateClarificationNote(assessmentId, note.id, updatedNote)
+
+      expect(result).toEqual(note)
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
 })

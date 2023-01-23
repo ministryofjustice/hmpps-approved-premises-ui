@@ -1,6 +1,11 @@
 import type { Request, Response, RequestHandler, NextFunction } from 'express'
 import createError from 'http-errors'
 
+import {
+  ApprovedPremisesAssessment as Assessment,
+  NewClarificationNote,
+  UpdatedClarificationNote,
+} from '@approved-premises/api'
 import { getPage } from '../../../utils/assessmentUtils'
 import { AssessmentService } from '../../../services'
 
@@ -22,9 +27,16 @@ export default class PagesController {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+        const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
 
         const Page: TasklistPageInterface = getPage(taskName, pageName)
-        const page: TasklistPage = await this.assessmentService.initializePage(Page, req, this.dataServices, userInput)
+        const page: TasklistPage = await this.assessmentService.initializePage(
+          Page,
+          assessment,
+          req,
+          this.dataServices,
+          userInput,
+        )
 
         res.render(viewPath(page, 'assessments'), {
           assessmentId: req.params.id,
@@ -46,42 +58,86 @@ export default class PagesController {
 
   update(taskName: string, pageName: string) {
     return async (req: Request, res: Response) => {
-      try {
-        const Page: TasklistPageInterface = getPage(taskName, pageName)
-        const page: TasklistPage = await this.assessmentService.initializePage(Page, req, this.dataServices)
-        await this.assessmentService.save(page, req)
-
+      const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
+      const page = await this.saveAndValidate(assessment, taskName, pageName, req, res)
+      if (page) {
         const next = page.next()
 
         if (next) {
-          res.redirect(paths.assessments.pages.show({ id: req.params.id, task: taskName, page: page.next() }))
+          res.redirect(paths.assessments.pages.show({ id: req.params.id, task: taskName, page: next }))
         } else {
           res.redirect(paths.assessments.show({ id: req.params.id }))
         }
-      } catch (err) {
-        catchValidationErrorOrPropogate(
-          req,
-          res,
-          err,
-          paths.assessments.pages.show({ id: req.params.id, task: taskName, page: pageName }),
-        )
       }
     }
   }
 
   updateSufficientInformation(taskName: string, pageName: string) {
     return async (req: Request, res: Response) => {
-      if (req.body.sufficientInformation === 'no' && req.body.query) {
-        const clarificationNote = {
-          query: req.body.query,
-        }
-        await this.assessmentService.createClarificationNote(req.user.token, req.params.id, clarificationNote)
+      if (req.body.sufficientInformation === 'no') {
+        const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
+        const page = await this.saveAndValidate(assessment, taskName, pageName, req, res)
 
-        res.redirect(paths.assessments.clarificationNotes.confirm({ id: req.params.id }))
+        if (page) {
+          await this.assessmentService.createClarificationNote(
+            req.user.token,
+            req.params.id,
+            page.body as NewClarificationNote,
+          )
+
+          res.redirect(paths.assessments.clarificationNotes.confirm({ id: req.params.id }))
+        }
       } else {
         const requestHandler = this.update(taskName, pageName)
         await requestHandler(req, res)
       }
+    }
+  }
+
+  updateInformationRecieved(taskName: string, pageName: string) {
+    return async (req: Request, res: Response) => {
+      if (req.body.informationReceived === 'yes') {
+        const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
+        const clarificationNote = assessment.clarificationNotes.find(note => !note.response)
+
+        const page = await this.saveAndValidate(assessment, taskName, pageName, req, res)
+
+        if (page) {
+          await this.assessmentService.updateClarificationNote(
+            req.user.token,
+            req.params.id,
+            clarificationNote.id,
+            page.body as UpdatedClarificationNote,
+          )
+          res.redirect(paths.assessments.show({ id: req.params.id }))
+        }
+      } else {
+        const requestHandler = this.update(taskName, pageName)
+        await requestHandler(req, res)
+      }
+    }
+  }
+
+  private async saveAndValidate(
+    assessment: Assessment,
+    taskName: string,
+    pageName: string,
+    req: Request,
+    res: Response,
+  ) {
+    try {
+      const Page: TasklistPageInterface = getPage(taskName, pageName)
+      const page: TasklistPage = await this.assessmentService.initializePage(Page, assessment, req, this.dataServices)
+      await this.assessmentService.save(page, req)
+
+      return page
+    } catch (err) {
+      return catchValidationErrorOrPropogate(
+        req,
+        res,
+        err,
+        paths.assessments.pages.show({ id: req.params.id, task: taskName, page: pageName }),
+      )
     }
   }
 }

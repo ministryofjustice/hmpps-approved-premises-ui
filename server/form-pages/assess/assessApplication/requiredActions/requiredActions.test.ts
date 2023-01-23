@@ -95,7 +95,7 @@ describe('RequiredActions', () => {
 
       expect(page.errors()).toEqual({
         additionalActions:
-          'You must state if there are additional actions required by the probation practicioner to make a placement viable',
+          'You must state if there are additional actions required by the probation practitioner to make a placement viable',
         curfewsOrSignIns: 'You must state if there are any additional curfews or sign ins recommended',
         concernsOfUnmanagableRisk:
           'You must state if there are any concerns that the person poses an potentially unmanageable risk to staff or others',

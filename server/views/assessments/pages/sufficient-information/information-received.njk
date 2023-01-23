@@ -1,0 +1,55 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% extends "../layout.njk" %}
+
+{% block questions %}
+  <h1 class="govuk-heading-l">
+    Additional information
+  </h1>
+
+  {% set informationReceivedHtml %}
+  {{ formPageTextarea({
+            fieldName: 'response',
+            label: {
+              text: "Provide the additional information received from the probation practitioner"
+            }
+          }, fetchContext()) }}
+
+  {{
+    formPageDateInput(
+      {
+        fieldName: "responseReceivedOn",
+        fieldset: {
+          legend: {
+            text: "When did you receive this information?"
+          }
+        },
+        items: dateFieldValues('responseReceivedOn', errors)
+      },
+      fetchContext()
+    )
+  }}
+  {% endset -%}
+
+  {{ formPageRadios({
+        fieldName: "informationReceived",
+        fieldset: {
+          legend: {
+            html: '<h2 class="govuk-heading-m">' + page.title + '</h2>'
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes",
+            conditional: {
+              html: informationReceivedHtml
+            }
+          },
+          {
+            value: "no",
+            text: "No"
+          }
+        ]
+    },fetchContext()) }}
+{% endblock %}

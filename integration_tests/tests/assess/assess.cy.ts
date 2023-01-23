@@ -6,6 +6,8 @@ import userFactory from '../../../server/testutils/factories/user'
 import { overwriteApplicationDocuments } from '../../../server/utils/applicationUtils'
 
 import AssessHelper from '../../../cypress_shared/helpers/assess'
+import { ListPage, TaskListPage } from '../../../cypress_shared/pages/assess'
+import Page from '../../../cypress_shared/pages/page'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -45,13 +47,14 @@ context('Assess', () => {
     cy.signIn()
     cy.fixture('applicationData.json').then(applicationData => {
       // And there is an application awaiting assessment
+      const clarificationNote = clarificationNoteFactory.build({ response: undefined })
       const assessment = assessmentFactory.build({
         decision: undefined,
         application: { data: applicationData },
+        clarificationNotes: [clarificationNote],
       })
       assessment.data = {}
       const documents = documentFactory.buildList(4)
-      const clarificationNote = clarificationNoteFactory.build()
       assessment.application = overwriteApplicationDocuments(assessment.application, documents)
       const user = userFactory.build()
 
@@ -67,12 +70,41 @@ context('Assess', () => {
       assessHelper.addClarificationNote(note)
 
       // Then the API should have had a clarification note added
-      cy.task('verifyClarificationNoteCreate', assessment).then(requests => {
-        expect(requests).to.have.length(1)
-        const body = JSON.parse(requests[0].body)
+      cy.task('verifyClarificationNoteCreate', assessment)
+        .then(requests => {
+          expect(requests).to.have.length(1)
+          const body = JSON.parse(requests[0].body)
 
-        expect(body.query).equal(note)
-      })
+          expect(body.query).equal(note)
+        })
+        .then(() => {
+          // And I should be on redirected to the dashboard
+          const listPage = Page.verifyOnPage(ListPage)
+
+          // And my assessment should be put into a pending state
+          assessHelper.updateAssessmentStatus('pending').then(() => {
+            // When I click on my assessment
+            listPage.clickAssessment(assessment)
+
+            // And I complete the form
+            assessHelper.updateClarificationNote('response text', '2023-09-02')
+
+            // Then I should be redirected to the tasklist page
+            const tasklistPage = Page.verifyOnPage(TaskListPage)
+
+            // And the sufficient information task should show a completed status
+            tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
+
+            // And the API should have had a clarification note update request
+            cy.task('verifyClarificationNoteUpdate', assessment).then(requests => {
+              expect(requests).to.have.length(1)
+              const body = JSON.parse(requests[0].body)
+
+              expect(body.response).equal('response text')
+              expect(body.responseReceivedOn).equal('2023-09-02')
+            })
+          })
+        })
     })
   })
 })

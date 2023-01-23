@@ -98,7 +98,7 @@ export default class RequiredActions implements TasklistPage {
 
     if (!this.body.additionalActions)
       errors.additionalActions =
-        'You must state if there are additional actions required by the probation practicioner to make a placement viable'
+        'You must state if there are additional actions required by the probation practitioner to make a placement viable'
 
     if (!this.body.curfewsOrSignIns)
       errors.curfewsOrSignIns = 'You must state if there are any additional curfews or sign ins recommended'

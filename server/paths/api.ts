@@ -69,6 +69,7 @@ export default {
     update: assessPaths.singleAssessment,
     clarificationNotes: {
       create: clarificationNotePaths.notes,
+      update: clarificationNotePaths.notes.path(':clarificationNoteId'),
     },
   },
   people: {

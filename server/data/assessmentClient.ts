@@ -2,6 +2,7 @@ import type {
   ApprovedPremisesAssessment as Assessment,
   ClarificationNote,
   NewClarificationNote,
+  UpdatedClarificationNote,
 } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
@@ -35,6 +36,17 @@ export default class AssessmentClient {
   ): Promise<ClarificationNote> {
     return (await this.restClient.post({
       path: paths.assessments.clarificationNotes.create({ id: assessmentId }),
+      data: clarificationNote,
+    })) as ClarificationNote
+  }
+
+  async updateClarificationNote(
+    assessmentId: string,
+    clarificationNoteId: string,
+    clarificationNote: UpdatedClarificationNote,
+  ): Promise<ClarificationNote> {
+    return (await this.restClient.put({
+      path: paths.assessments.clarificationNotes.update({ id: assessmentId, clarificationNoteId }),
       data: clarificationNote,
     })) as ClarificationNote
   }
