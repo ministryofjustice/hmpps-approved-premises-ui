@@ -10,6 +10,9 @@ import assessmentFactory from '../../testutils/factories/assessment'
 import Assess from '../../form-pages/assess'
 
 import paths from '../../paths/assess'
+import { informationSetAsNotReceived } from '../../utils/assessmentUtils'
+
+jest.mock('../../utils/assessmentUtils')
 
 describe('assessmentsController', () => {
   const token = 'SOME_TOKEN'
@@ -65,7 +68,8 @@ describe('assessmentsController', () => {
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
     })
 
-    it('redirects if the assessment is in a pending state', async () => {
+    it('redirects if the assessment is in a pending state and informationSetAsNotReceived is false', async () => {
+      ;(informationSetAsNotReceived as jest.Mock).mockReturnValue(false)
       assessment.status = 'pending'
 
       const requestHandler = assessmentsController.show()
@@ -79,6 +83,23 @@ describe('assessmentsController', () => {
           page: 'information-received',
         }),
       )
+
+      expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
+    })
+
+    it('fetches the assessment and renders the task list  if the assessment is in a pending state and informationSetAsNotReceived is true', async () => {
+      ;(informationSetAsNotReceived as jest.Mock).mockReturnValue(true)
+      assessment.status = 'pending'
+
+      const requestHandler = assessmentsController.show()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('assessments/show', {
+        assessment,
+        pageHeading: 'Assess an Approved Premises (AP) application',
+        sections: Assess.sections,
+      })
 
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
     })
