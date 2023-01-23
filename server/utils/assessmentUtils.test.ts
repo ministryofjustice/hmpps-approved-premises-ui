@@ -18,6 +18,7 @@ import {
   getReviewNavigationItems,
   getSectionSuffix,
   informationSetAsNotReceived,
+  getSections,
 } from './assessmentUtils'
 import { DateFormats } from './dateUtils'
 import paths from '../paths/assess'
@@ -44,6 +45,16 @@ jest.mock('./reviewUtils')
 jest.mock('../form-pages/assess', () => {
   return {
     pages: { 'review-application': {}, 'sufficient-information': {} },
+    sections: [
+      {
+        title: 'Review Application',
+        name: 'ReviewApplication',
+      },
+      {
+        title: 'Assess Application',
+        name: 'AssessApplication',
+      },
+    ],
   }
 })
 
@@ -415,6 +426,40 @@ describe('assessmentUtils', () => {
       assessment.status = 'active'
 
       expect(informationSetAsNotReceived(assessment)).toEqual(false)
+    })
+  })
+
+  describe('getSections', () => {
+    const assessment = assessmentFactory.build({ status: 'pending' })
+
+    it('returns all sections if informationReceived is yes', () => {
+      assessment.data = { 'sufficient-information': { 'information-received': { informationReceived: 'yes' } } }
+
+      const sections = getSections(assessment)
+      const sectionNames = sections.map(s => s.name)
+
+      expect(sections.length).toEqual(Assess.sections.length)
+      expect(sectionNames).toContain('AssessApplication')
+    })
+
+    it('returns all sections if informationReceived is not yet answered', () => {
+      assessment.data = {}
+
+      const sections = getSections(assessment)
+      const sectionNames = sections.map(s => s.name)
+
+      expect(sections.length).toEqual(Assess.sections.length)
+      expect(sectionNames).toContain('AssessApplication')
+    })
+
+    it('removes the assess section if informationReceived is no', () => {
+      assessment.data = { 'sufficient-information': { 'information-received': { informationReceived: 'no' } } }
+
+      const sections = getSections(assessment)
+      const sectionNames = sections.map(s => s.name)
+
+      expect(sections.length).toEqual(Assess.sections.length - 1)
+      expect(sectionNames).not.toContain('AssessApplication')
     })
   })
 })

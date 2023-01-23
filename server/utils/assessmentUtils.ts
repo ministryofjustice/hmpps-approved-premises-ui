@@ -2,6 +2,7 @@ import { HtmlItem, PageResponse, SummaryListItem, TableRow, Task, TextItem } fro
 import { format, differenceInDays, add } from 'date-fns'
 
 import { ApprovedPremisesAssessment as Assessment, ApprovedPremisesApplication } from '@approved-premises/api'
+import AssessApplication from '../form-pages/assess/assessApplication'
 import { tierBadge } from './personUtils'
 import { DateFormats } from './dateUtils'
 import { getArrivalDate, getResponseForPage, documentsFromApplication } from './applicationUtils'
@@ -112,6 +113,16 @@ const informationSetAsNotReceived = (assessment: Assessment): boolean => {
     return response === 'no'
   }
   return false
+}
+
+const getSections = (assessment: Assessment) => {
+  let { sections } = Assess
+
+  if (informationSetAsNotReceived(assessment)) {
+    sections = sections.filter(section => section.name !== AssessApplication.name)
+  }
+
+  return sections
 }
 
 const assessmentLink = (assessment: Assessment): string => {
@@ -311,4 +322,5 @@ export {
   assessmentsApproachingDueBadge,
   formatDaysUntilDueWithWarning,
   informationSetAsNotReceived,
+  getSections,
 }
