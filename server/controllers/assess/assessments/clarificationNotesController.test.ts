@@ -37,7 +37,7 @@ describe('clarificationNotesController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('assessments/clarificationNotes/confirmation', {
-        pageHeading: 'Request information from probation practicioner',
+        pageHeading: 'Request information from probation practitioner',
         user,
       })
 
