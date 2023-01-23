@@ -119,6 +119,25 @@ describe('RequiredActions', () => {
         outlineOfDiscussion: 'You must state the outline of the discussion',
       })
     })
+
+    it('should have an error if the answer to "concernsOfUnmanagableRisk" is yes and the date is invalid', () => {
+      const page = new RequiredActions({
+        additionalActions: 'no',
+        curfewsOrSignIns: 'no',
+        concernsOfUnmanagableRisk: 'yes',
+        additionalRecommendations: 'no',
+        additionalActionsComments: 'comment',
+        nameOfAreaManager: 'frank',
+        outlineOfDiscussion: 'foo',
+        'dateOfDiscussion-year': '12312321312321',
+        'dateOfDiscussion-month': '1232131',
+        'dateOfDiscussion-day': '12312321',
+      })
+
+      expect(page.errors()).toEqual({
+        dateOfDiscussion: 'You must enter a valid date for the date of discussion',
+      })
+    })
   })
 
   describe('response', () => {

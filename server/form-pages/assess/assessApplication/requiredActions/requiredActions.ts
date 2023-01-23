@@ -4,7 +4,7 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
-import { dateIsBlank, DateFormats } from '../../../../utils/dateUtils'
+import { dateIsBlank, DateFormats, dateAndTimeInputsAreValidDates } from '../../../../utils/dateUtils'
 
 export type RequiredActionsSections = {
   additionalActions: string
@@ -113,6 +113,11 @@ export default class RequiredActions implements TasklistPage {
           'You must state the additional recommendations due to there being concerns that the person poses a potentially unmanageable risk to staff and others'
 
       if (dateIsBlank(this.body)) errors.dateOfDiscussion = 'You must state the date of discussion'
+      else if (
+        !dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'dateOfDiscussion'>, 'dateOfDiscussion')
+      ) {
+        errors.dateOfDiscussion = 'You must enter a valid date for the date of discussion'
+      }
       if (!this.body.nameOfAreaManager) errors.nameOfAreaManager = 'You must state the name of the area manager'
       if (!this.body.outlineOfDiscussion) errors.outlineOfDiscussion = 'You must state the outline of the discussion'
     }
