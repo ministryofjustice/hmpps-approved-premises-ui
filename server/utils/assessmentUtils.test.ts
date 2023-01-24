@@ -33,6 +33,7 @@ import { UnknownPageError } from './errors'
 import applicationFactory from '../testutils/factories/application'
 import reviewSections from './reviewUtils'
 import documentFactory from '../testutils/factories/document'
+import { documentsFromApplication } from './assessments/documentUtils'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -41,6 +42,7 @@ jest.mock('./applicationUtils')
 jest.mock('./checkYourAnswersUtils')
 jest.mock('./personUtils')
 jest.mock('./reviewUtils')
+jest.mock('./assessments/documentUtils')
 
 jest.mock('../form-pages/assess', () => {
   return {
@@ -353,7 +355,7 @@ describe('assessmentUtils', () => {
         const application = applicationFactory.build()
         const documents = documentFactory.buildList(1)
 
-        ;(applicationUtils.documentsFromApplication as jest.Mock).mockReturnValue(documents)
+        ;(documentsFromApplication as jest.Mock).mockReturnValue(documents)
 
         application.data['attach-required-documents'] = {
           'attach-documents': {

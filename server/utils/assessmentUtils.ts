@@ -5,7 +5,7 @@ import { ApprovedPremisesAssessment as Assessment, ApprovedPremisesApplication }
 import AssessApplication from '../form-pages/assess/assessApplication'
 import { tierBadge } from './personUtils'
 import { DateFormats } from './dateUtils'
-import { getArrivalDate, getResponseForPage, documentsFromApplication } from './applicationUtils'
+import { getArrivalDate, getResponseForPage } from './applicationUtils'
 import paths from '../paths/assess'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import Assess from '../form-pages/assess'
@@ -14,6 +14,7 @@ import { embeddedSummaryListItem } from './checkYourAnswersUtils'
 import reviewSections from './reviewUtils'
 import Apply from '../form-pages/apply'
 import { kebabCase } from './utils'
+import { documentsFromApplication } from './assessments/documentUtils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 

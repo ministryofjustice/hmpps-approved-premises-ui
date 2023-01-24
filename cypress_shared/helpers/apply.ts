@@ -71,7 +71,7 @@ import {
   supportInformationFromApplication,
 } from './index'
 import ApplyPage from '../pages/apply/applyPage'
-import { documentsFromApplication } from '../../server/utils/applicationUtils'
+import { documentsFromApplication } from '../../server/utils/assessments/documentUtils'
 
 export default class ApplyHelper {
   pages = {

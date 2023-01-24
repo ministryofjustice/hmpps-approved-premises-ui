@@ -124,31 +124,4 @@ const getArrivalDate = (application: ApprovedPremisesApplication, raiseOnMissing
   return null
 }
 
-const documentsFromApplication = (application: ApprovedPremisesApplication): Array<Document> => {
-  return (
-    application?.data?.['attach-required-documents']?.['attach-documents']?.selectedDocuments || ([] as Array<Document>)
-  )
-}
-
-const overwriteApplicationDocuments = (
-  application: ApprovedPremisesApplication,
-  selectedDocuments: Array<Document>,
-): ApprovedPremisesApplication => {
-  application.data['attach-required-documents'] = {
-    'attach-documents': {
-      selectedDocuments,
-    },
-  }
-
-  return application
-}
-
-export {
-  documentsFromApplication,
-  getResponses,
-  getResponseForPage,
-  getPage,
-  getArrivalDate,
-  dashboardTableRows,
-  overwriteApplicationDocuments,
-}
+export { getResponses, getResponseForPage, getPage, getArrivalDate, dashboardTableRows }
