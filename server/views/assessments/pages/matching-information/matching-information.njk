@@ -1,0 +1,55 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+  <h1 class="govuk-heading-l">{{page.title}}</h1>
+  <p>Please specify requirements for matching the person to a bed within an Approved Premises (AP).</p>
+
+  {{ formPageRadios({
+      fieldName: "apType",
+      fieldset: {
+        legend: {
+          text: page.apTypeQuestion
+        }
+      },
+      items: convertKeyValuePairToRadioItems(page.apTypes, page.apType)
+    },fetchContext()) }}
+
+  {{ formPageRadios({
+      fieldName: "apGender",
+      fieldset: {
+        legend: {
+          text: page.apGenderQuestion
+        }
+      },
+      items: FormUtils.convertArrayToRadioItems(page.apGenders, page.apGender)
+    },fetchContext()) }}
+
+  <div class="govuk-form-group">
+    <fieldset class="govuk-fieldset" aria-describedby="mentalHealthSupport-hint">
+      <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+        <h2 class="govuk-fieldset__heading">
+          {{page.mentalHealthSupport.question}}
+        </h2>
+      </legend>
+      <div id="mentalHealthSupport-hint" class="govuk-hint">
+        {{page.mentalHealthSupport.hint}}
+      </div>
+      <div class="govuk-checkboxes__item">
+        <input class="govuk-checkboxes__input" id="mentalHealthSupport" name="mentalHealthSupport" type="checkbox" value="mentalHealthSupport">
+        <label class="govuk-label govuk-checkboxes__label" for="mentalHealthSupport">
+          {{page.mentalHealthSupport.label}}
+        </label>
+      </div>
+    </fieldset>
+  </div>
+
+  <h2 class="govuk-heading-m">Specify placement requirements</h2>
+
+  {{placementRequirementsTable(page.placementRequirementTableHeadings, page.placementRequirements, page.placementRequirementPreferences, page.body) | safe}}
+
+  <h2 class="govuk-heading-m">Provide relevant offence and risk information</h2>
+
+  {{placementRequirementsTable(page.relevantInformationTableHeadings, page.offenceAndRiskInformationKeys, page.offenceAndRiskInformationRelevance, page.body) | safe}}
+
+{% endblock %}

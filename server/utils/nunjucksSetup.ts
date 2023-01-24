@@ -25,10 +25,12 @@ import * as AttachDocumentsUtils from './attachDocumentsUtils'
 import * as OasysImportUtils from './oasysImportUtils'
 import * as BookingUtils from './bookingUtils'
 import * as TasklistUtils from './taskListUtils'
+import * as FormUtils from './formUtils'
 
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
+import { radioMatrixTable } from './radioMatrixTable'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -112,6 +114,18 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     },
   )
 
+  njkEnv.addGlobal(
+    'placementRequirementsTable',
+    function sendPlacementRequirementsTable(
+      headings: Array<string>,
+      requirements: Array<string>,
+      preferences: Array<string>,
+      body: Record<string, string>,
+    ) {
+      return radioMatrixTable(headings, requirements, preferences, body)
+    },
+  )
+
   njkEnv.addGlobal('paths', { ...managePaths, ...applyPaths, ...assessPaths })
 
   njkEnv.addGlobal('statusTag', (status: PersonStatus) => markAsSafe(statusTag(status)))
@@ -139,4 +153,5 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('OasysImportUtils', OasysImportUtils)
   njkEnv.addGlobal('BookingUtils', BookingUtils)
   njkEnv.addGlobal('TasklistUtils', TasklistUtils)
+  njkEnv.addGlobal('FormUtils', FormUtils)
 }

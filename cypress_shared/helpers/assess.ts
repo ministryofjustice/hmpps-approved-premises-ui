@@ -16,6 +16,7 @@ import {
   TaskListPage,
   MakeADecisionPage,
   InformationReceivedPage,
+  MatchingInformationPage,
 } from '../pages/assess'
 import Page from '../pages/page'
 import { updateAssessmentData } from '../../server/form-pages/utils'
@@ -72,6 +73,7 @@ export default class AseessHelper {
     this.completeSuitabilityOfAssessmentQuestion()
     this.completeRequiredActionsQuestion()
     this.completeMakeADecisionPage()
+    this.completeMatchingInformationPage()
   }
 
   addClarificationNote(note: string) {
@@ -217,6 +219,23 @@ export default class AseessHelper {
 
     // And the make-a-decision application task should show a completed status
     tasklistPage.shouldShowTaskStatus('make-a-decision', 'Completed')
+  }
+
+  private completeMatchingInformationPage() {
+    // When I click on the 'matching-information' link
+    cy.get('[data-cy-task-name="matching-information"]').click()
+
+    // Then I should be taken to the suitability assessment page
+    const page = new MatchingInformationPage(this.assessment)
+    page.completeForm()
+    page.clickSubmit()
+    this.updateAssessmentAndStub(page)
+
+    // Then I should be taken to the task list
+    const tasklistPage = Page.verifyOnPage(TaskListPage)
+
+    // And the matching-information application task should show a completed status
+    tasklistPage.shouldShowTaskStatus('matching-information', 'Completed')
   }
 
   updateAssessmentAndStub(pageObject: AssessPage) {
