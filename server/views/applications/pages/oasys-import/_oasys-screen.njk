@@ -50,12 +50,18 @@
   </div>
 
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds" id="{{ pageName }}">
-      {{OasysImportUtils.textareas(questions, key) | safe}}
-    </div>
+    {% if oasysDisabled %}
+      <div class="govuk-grid-column-full" id="{{ pageName }}">
+        {{OasysImportUtils.textareas(questions, key) | safe}}
+      </div>
+    {% else %}
+      <div class="govuk-grid-column-two-thirds" id="{{ pageName }}">
+        {{OasysImportUtils.textareas(questions, key) | safe}}
+      </div>
 
-    <div class="govuk-grid-column-one-third">
-      {{ widgets(page.risks) }}
-    </div>
+      <div class="govuk-grid-column-one-third">
+        {{ widgets(page.risks) }}
+      </div>
+    {% endif %}
   </div>
 {% endblock %}
