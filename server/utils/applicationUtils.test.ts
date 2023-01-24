@@ -2,14 +2,16 @@ import applicationFactory from '../testutils/factories/application'
 import { tierEnvelopeFactory } from '../testutils/factories/risks'
 import paths from '../paths/apply'
 import Apply from '../form-pages/apply'
+import Assess from '../form-pages/assess'
 import { DateFormats } from './dateUtils'
 import { tierBadge } from './personUtils'
 
 import { getResponses, getPage, getArrivalDate, dashboardTableRows } from './applicationUtils'
 import { SessionDataError, UnknownPageError } from './errors'
 
-const FirstPage = jest.fn()
-const SecondPage = jest.fn()
+const FirstApplyPage = jest.fn()
+const SecondApplyPage = jest.fn()
+const AssessPage = jest.fn()
 
 jest.mock('../form-pages/apply', () => {
   return {
@@ -17,21 +19,31 @@ jest.mock('../form-pages/apply', () => {
   }
 })
 
+jest.mock('../form-pages/assess', () => {
+  return {
+    pages: { 'assess-page': {} },
+  }
+})
+
 Apply.pages['basic-information'] = {
-  first: FirstPage,
-  second: SecondPage,
+  first: FirstApplyPage,
+  second: SecondApplyPage,
+}
+
+Assess.pages['assess-page'] = {
+  first: AssessPage,
 }
 
 describe('applicationUtils', () => {
   describe('getResponses', () => {
     it('returns the responses from all answered questions', () => {
-      FirstPage.mockReturnValue({
+      FirstApplyPage.mockReturnValue({
         response: () => {
           return { foo: 'bar' }
         },
       })
 
-      SecondPage.mockReturnValue({
+      SecondApplyPage.mockReturnValue({
         response: () => {
           return { bar: 'foo' }
         },
@@ -45,9 +57,13 @@ describe('applicationUtils', () => {
   })
 
   describe('getPage', () => {
-    it('should return a page if it exists', () => {
-      expect(getPage('basic-information', 'first')).toEqual(FirstPage)
-      expect(getPage('basic-information', 'second')).toEqual(SecondPage)
+    it('should return a page from Apply if it exists', () => {
+      expect(getPage('basic-information', 'first')).toEqual(FirstApplyPage)
+      expect(getPage('basic-information', 'second')).toEqual(SecondApplyPage)
+    })
+
+    it('should return a page from assess if passed the option', () => {
+      expect(getPage('assess-page', 'first', true)).toEqual(AssessPage)
     })
 
     it('should raise an error if the page is not found', async () => {

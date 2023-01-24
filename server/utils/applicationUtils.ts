@@ -1,11 +1,13 @@
 import type { TableRow, PageResponse } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication, Document } from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import paths from '../paths/apply'
 import Apply from '../form-pages/apply'
 import { SessionDataError, UnknownPageError } from './errors'
 import { tierBadge } from './personUtils'
 import { DateFormats } from './dateUtils'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
+import Assess from '../form-pages/assess'
+import isAssessment from './assessments/isAssessment'
 
 type ApplicationResponse = Record<string, Array<PageResponse>>
 
@@ -58,7 +60,7 @@ const getResponseForPage = (
   taskName: string,
   pageName: string,
 ): PageResponse => {
-  const Page = getPage(taskName, pageName)
+  const Page = getPage(taskName, pageName, isAssessment(application))
 
   const body = application?.data?.[taskName]?.[pageName]
   const page = new Page(body, application)
@@ -66,8 +68,8 @@ const getResponseForPage = (
   return page.response()
 }
 
-const getPage = (taskName: string, pageName: string): TasklistPageInterface => {
-  const pageList = Apply.pages[taskName]
+const getPage = (taskName: string, pageName: string, isAnAssessment?: boolean): TasklistPageInterface => {
+  const pageList = isAnAssessment ? Assess.pages[taskName] : Apply.pages[taskName]
 
   const Page = pageList[pageName]
 
