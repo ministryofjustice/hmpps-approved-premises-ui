@@ -8,13 +8,15 @@ describe('Task', () => {
 
     class Task3 {}
 
-    @Section({ name: 'My Section', tasks: [Task1, Task2, Task3] })
+    @Section({ title: 'My Section', tasks: [Task1, Task2, Task3] })
     class MySection {}
 
+    const title = Reflect.getMetadata('section:title', MySection)
     const name = Reflect.getMetadata('section:name', MySection)
     const tasks = Reflect.getMetadata('section:tasks', MySection)
 
-    expect(name).toEqual('My Section')
+    expect(title).toEqual('My Section')
+    expect(name).toEqual('MySection')
     expect(tasks).toEqual([Task1, Task2, Task3])
   })
 })

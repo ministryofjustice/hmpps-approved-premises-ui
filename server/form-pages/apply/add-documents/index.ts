@@ -9,7 +9,7 @@ import { Task, Section } from '../../utils/decorators'
   pages: [AttachDocuments],
 })
 @Section({
-  name: 'Add documents',
+  title: 'Add documents',
   tasks: [AddDocuments],
 })
 export default class AddDocuments {}

@@ -18,14 +18,17 @@ export default class InformationReceivedPage extends AssessPage {
     },
   ) {
     super(assessment, 'Additional information')
-    const parsedDate = DateFormats.isoToDateObj(body.responseReceivedOn)
-
-    this.pageClass = new InformationReceived({
-      ...body,
-      'responseReceivedOn-day': String(parsedDate.getDate()),
-      'responseReceivedOn-month': String(parsedDate.getMonth() + 1),
-      'responseReceivedOn-year': String(parsedDate.getFullYear()),
-    })
+    if (body.responseReceivedOn) {
+      const parsedDate = DateFormats.isoToDateObj(body.responseReceivedOn)
+      this.pageClass = new InformationReceived({
+        ...body,
+        'responseReceivedOn-day': String(parsedDate.getDate()),
+        'responseReceivedOn-month': String(parsedDate.getMonth() + 1),
+        'responseReceivedOn-year': String(parsedDate.getFullYear()),
+      })
+    } else {
+      this.pageClass = new InformationReceived(body)
+    }
   }
 
   completeForm() {

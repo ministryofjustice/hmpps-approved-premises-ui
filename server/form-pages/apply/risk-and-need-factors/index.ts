@@ -8,7 +8,7 @@ import PrisonInformation from './prison-information'
 import RiskManagement from './risk-management-features'
 
 @Section({
-  name: 'Risk and need factors',
+  title: 'Risk and need factors',
   tasks: [OasysImport, RiskManagement, PrisonInformation, LocationFactors, AccessAndHealthcare, FurtherConsiderations],
 })
 export default class RiskAndNeedFactors {}

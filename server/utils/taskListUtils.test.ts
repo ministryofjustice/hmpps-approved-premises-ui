@@ -15,9 +15,11 @@ jest.mock('../form-pages/apply', () => {
   }
 })
 
-jest.mock('../form-pages/assess', () => {
+jest.mock('./assessmentUtils', () => {
   return {
-    pages: { 'first-task': {}, 'second-task': {} },
+    getSections: () => {
+      return { 'first-task': {}, 'second-task': {} }
+    },
   }
 })
 

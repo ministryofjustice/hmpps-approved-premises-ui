@@ -5,6 +5,7 @@ import {
   Document,
   User,
 } from '@approved-premises/api'
+import { YesOrNo } from '@approved-premises/ui'
 import {
   ClarificationNoteConfirmPage,
   ListPage,
@@ -33,17 +34,15 @@ export default class AseessHelper {
     cy.task('stubAssessment', this.assessment)
     cy.task('stubFindUser', { user: this.user, id: this.assessment.application.createdByUserId })
     cy.task('stubAssessmentUpdate', this.assessment)
-    if (this.clarificationNote) {
-      cy.task('stubClarificationNoteCreate', {
-        assessment: this.assessment,
-        clarificationNote: { query: this.clarificationNote },
-      })
-      cy.task('stubClarificationNoteUpdate', {
-        assessment: this.assessment,
-        clarificationNoteId: this.clarificationNote.id,
-        clarificationNote: { query: this.clarificationNote },
-      })
-    }
+    cy.task('stubClarificationNoteCreate', {
+      assessment: this.assessment,
+      clarificationNote: { query: this.clarificationNote },
+    })
+    cy.task('stubClarificationNoteUpdate', {
+      assessment: this.assessment,
+      clarificationNoteId: this.clarificationNote.id,
+      clarificationNote: { query: this.clarificationNote },
+    })
     cy.task('stubApplicationDocuments', { application: this.assessment.application, documents: this.documents })
     this.documents.forEach(document => {
       cy.task('stubPersonDocument', { person: this.assessment.application.person, document })
@@ -107,24 +106,27 @@ export default class AseessHelper {
     confirmationScreen.confirmUserDetails(this.user)
 
     // And I should be able to return to the dashboard
-    confirmationScreen.clickBackToDashboard()
-
-    Page.verifyOnPage(ListPage)
+    return confirmationScreen.clickBackToDashboard()
   }
 
-  updateClarificationNote(response: string, responseReceivedOn: string) {
-    this.updateAssessmentStatus('active').then(() => {
+  updateClarificationNote(informationReceived: YesOrNo, response?: string, responseReceivedOn?: string) {
+    const assessmentStatus = informationReceived === 'yes' ? 'active' : 'pending'
+    this.updateAssessmentStatus(assessmentStatus).then(() => {
       const informationReceivedPage = Page.verifyOnPage(InformationReceivedPage, this.assessment, {
-        informationReceived: 'yes',
+        informationReceived,
         response,
         responseReceivedOn,
       })
 
-      this.updateAssessmentAndStub(informationReceivedPage).then(() => {
-        // When I complete the form
-        informationReceivedPage.completeForm()
-        informationReceivedPage.clickSubmit()
-      })
+      this.updateAssessmentAndStub(informationReceivedPage)
+        .then(() => {
+          // When I complete the form
+          informationReceivedPage.completeForm()
+          informationReceivedPage.clickSubmit()
+        })
+        .then(() => {
+          this.updateAssessmentAndStub(informationReceivedPage)
+        })
     })
   }
 

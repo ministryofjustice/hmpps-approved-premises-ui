@@ -39,6 +39,7 @@ export const getTask = <T>(task: T) => {
 
 export const getSection = <T>(section: T) => {
   const tasks: Array<Task> = []
+  const title = Reflect.getMetadata('section:title', section)
   const name = Reflect.getMetadata('section:name', section)
   const taskClasses = Reflect.getMetadata('section:tasks', section)
 
@@ -47,7 +48,8 @@ export const getSection = <T>(section: T) => {
   })
 
   return {
-    title: name,
+    title,
+    name,
     tasks,
   }
 }
