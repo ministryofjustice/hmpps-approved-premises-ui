@@ -1,5 +1,5 @@
 import { ApprovedPremisesAssessment as Assessment } from '../../../server/@types/shared'
-import MakeADecision from '../../../server/form-pages/assess/makeADecision/makeADecisionPage/makeADecision'
+import MakeADecision from '../../../server/form-pages/assess/makeADecision/makeADecisionTask/makeADecision'
 import AssessPage from './assessPage'
 
 export default class MakeADecisionPage extends AssessPage {
