@@ -34,17 +34,15 @@ export default class AseessHelper {
     cy.task('stubAssessment', this.assessment)
     cy.task('stubFindUser', { user: this.user, id: this.assessment.application.createdByUserId })
     cy.task('stubAssessmentUpdate', this.assessment)
-    if (this.clarificationNote) {
-      cy.task('stubClarificationNoteCreate', {
-        assessment: this.assessment,
-        clarificationNote: { query: this.clarificationNote },
-      })
-      cy.task('stubClarificationNoteUpdate', {
-        assessment: this.assessment,
-        clarificationNoteId: this.clarificationNote.id,
-        clarificationNote: { query: this.clarificationNote },
-      })
-    }
+    cy.task('stubClarificationNoteCreate', {
+      assessment: this.assessment,
+      clarificationNote: { query: this.clarificationNote },
+    })
+    cy.task('stubClarificationNoteUpdate', {
+      assessment: this.assessment,
+      clarificationNoteId: this.clarificationNote.id,
+      clarificationNote: { query: this.clarificationNote },
+    })
     cy.task('stubApplicationDocuments', { application: this.assessment.application, documents: this.documents })
     this.documents.forEach(document => {
       cy.task('stubPersonDocument', { person: this.assessment.application.person, document })
