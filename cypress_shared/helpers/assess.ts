@@ -5,6 +5,7 @@ import {
   Document,
   User,
 } from '@approved-premises/api'
+import { YesOrNo } from '@approved-premises/ui'
 import {
   ClarificationNoteConfirmPage,
   ListPage,
@@ -107,24 +108,27 @@ export default class AseessHelper {
     confirmationScreen.confirmUserDetails(this.user)
 
     // And I should be able to return to the dashboard
-    confirmationScreen.clickBackToDashboard()
-
-    Page.verifyOnPage(ListPage)
+    return confirmationScreen.clickBackToDashboard()
   }
 
-  updateClarificationNote(response: string, responseReceivedOn: string) {
-    this.updateAssessmentStatus('active').then(() => {
+  updateClarificationNote(informationReceived: YesOrNo, response?: string, responseReceivedOn?: string) {
+    const assessmentStatus = informationReceived === 'yes' ? 'active' : 'pending'
+    this.updateAssessmentStatus(assessmentStatus).then(() => {
       const informationReceivedPage = Page.verifyOnPage(InformationReceivedPage, this.assessment, {
-        informationReceived: 'yes',
+        informationReceived,
         response,
         responseReceivedOn,
       })
 
-      this.updateAssessmentAndStub(informationReceivedPage).then(() => {
-        // When I complete the form
-        informationReceivedPage.completeForm()
-        informationReceivedPage.clickSubmit()
-      })
+      this.updateAssessmentAndStub(informationReceivedPage)
+        .then(() => {
+          // When I complete the form
+          informationReceivedPage.completeForm()
+          informationReceivedPage.clickSubmit()
+        })
+        .then(() => {
+          this.updateAssessmentAndStub(informationReceivedPage)
+        })
     })
   }
 

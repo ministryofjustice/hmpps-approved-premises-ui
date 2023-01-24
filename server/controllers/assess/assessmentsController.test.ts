@@ -7,10 +7,9 @@ import AssessmentsController from './assessmentsController'
 import { AssessmentService } from '../../services'
 
 import assessmentFactory from '../../testutils/factories/assessment'
-import Assess from '../../form-pages/assess'
 
 import paths from '../../paths/assess'
-import { informationSetAsNotReceived } from '../../utils/assessmentUtils'
+import { getSections, informationSetAsNotReceived } from '../../utils/assessmentUtils'
 
 jest.mock('../../utils/assessmentUtils')
 
@@ -62,7 +61,7 @@ describe('assessmentsController', () => {
       expect(response.render).toHaveBeenCalledWith('assessments/show', {
         assessment,
         pageHeading: 'Assess an Approved Premises (AP) application',
-        sections: Assess.sections,
+        sections: getSections(assessment),
       })
 
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
@@ -98,7 +97,7 @@ describe('assessmentsController', () => {
       expect(response.render).toHaveBeenCalledWith('assessments/show', {
         assessment,
         pageHeading: 'Assess an Approved Premises (AP) application',
-        sections: Assess.sections,
+        sections: getSections(assessment),
       })
 
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)

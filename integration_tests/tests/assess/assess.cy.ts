@@ -87,7 +87,7 @@ context('Assess', () => {
             listPage.clickAssessment(assessment)
 
             // And I complete the form
-            assessHelper.updateClarificationNote('response text', '2023-09-02')
+            assessHelper.updateClarificationNote('yes', 'response text', '2023-09-02')
 
             // Then I should be redirected to the tasklist page
             const tasklistPage = Page.verifyOnPage(TaskListPage)
@@ -105,6 +105,57 @@ context('Assess', () => {
             })
           })
         })
+    })
+  })
+
+  it('should allow me to reject an application where I have not received the correct information', () => {
+    // Given I am logged in
+    cy.signIn()
+    cy.fixture('applicationData.json').then(applicationData => {
+      // And there is an application awaiting assessment
+      const clarificationNote = clarificationNoteFactory.build({ response: undefined })
+      const assessment = assessmentFactory.build({
+        application: { data: applicationData },
+        clarificationNotes: [clarificationNote],
+        status: 'active',
+      })
+      assessment.data = {}
+      const documents = documentFactory.buildList(4)
+      assessment.application = overwriteApplicationDocuments(assessment.application, documents)
+      const user = userFactory.build()
+
+      const assessHelper = new AssessHelper(assessment, documents, user, clarificationNote)
+
+      assessHelper.setupStubs()
+
+      // And I start an assessment
+      assessHelper.startAssessment()
+
+      // And I add a clarification note
+      assessHelper.addClarificationNote('Note goes here').then(() => {
+        const listPage = Page.verifyOnPage(ListPage)
+
+        // And my assessment should be put into a pending state
+        assessHelper.updateAssessmentStatus('pending').then(() => {
+          // When I click on my assessment
+          listPage.clickAssessment(assessment)
+
+          // And I respond 'no' to the 'informationReceived' question
+          assessHelper.updateClarificationNote('no')
+
+          // Then I should be redirected to the tasklist page
+          const tasklistPage = Page.verifyOnPage(TaskListPage)
+
+          // And the sufficient information task should show a completed status
+          tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
+
+          // And I should not see the AssessApplication section
+          tasklistPage.shouldNotShowSection('Assess application')
+
+          // And I should be able to start the make a decision task
+          tasklistPage.shouldShowTaskStatus('make-a-decision', 'Not started')
+        })
+      })
     })
   })
 })

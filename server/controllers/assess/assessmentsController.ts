@@ -1,8 +1,7 @@
 import type { Request, Response, RequestHandler } from 'express'
 
 import { AssessmentService } from '../../services'
-import Assess from '../../form-pages/assess'
-import { informationSetAsNotReceived } from '../../utils/assessmentUtils'
+import { getSections, informationSetAsNotReceived } from '../../utils/assessmentUtils'
 
 import paths from '../../paths/assess'
 
@@ -34,7 +33,7 @@ export default class AssessmentsController {
         res.render('assessments/show', {
           assessment,
           pageHeading: 'Assess an Approved Premises (AP) application',
-          sections: Assess.sections,
+          sections: getSections(assessment),
         })
       }
     }
