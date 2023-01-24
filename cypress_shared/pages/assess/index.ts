@@ -9,6 +9,7 @@ import SufficientInformationPage from './sufficientInformationPage'
 import SuitabilityAssessmentPage from './suitabilityAssessmentPage'
 import TaskListPage from './taskListPage'
 import MatchingInformationPage from './matchingInformationPage'
+import CheckYourAnswersPage from './checkYourAnswersPage'
 
 export {
   ClarificationNoteConfirmPage,
@@ -21,4 +22,5 @@ export {
   SuitabilityAssessmentPage,
   TaskListPage,
   MatchingInformationPage,
+  CheckYourAnswersPage,
 }

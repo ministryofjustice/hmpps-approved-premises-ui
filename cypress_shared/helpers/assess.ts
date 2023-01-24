@@ -17,12 +17,22 @@ import {
   MakeADecisionPage,
   InformationReceivedPage,
   MatchingInformationPage,
+  CheckYourAnswersPage,
 } from '../pages/assess'
 import Page from '../pages/page'
 import { updateAssessmentData } from '../../server/form-pages/utils'
 import AssessPage from '../pages/assess/assessPage'
 
 export default class AseessHelper {
+  pages = {
+    reviewApplication: [] as Array<AssessPage>,
+    sufficientInformation: [] as Array<AssessPage>,
+    assessSuitability: [] as Array<AssessPage>,
+    requiredActions: [] as Array<AssessPage>,
+    makeADecision: [] as Array<AssessPage>,
+    matchingInformation: [] as Array<AssessPage>,
+  }
+
   constructor(
     private readonly assessment: Assessment,
     private readonly documents: Array<Document>,
@@ -74,6 +84,7 @@ export default class AseessHelper {
     this.completeRequiredActionsQuestion()
     this.completeMakeADecisionPage()
     this.completeMatchingInformationPage()
+    this.completeCheckYourAnswersPage()
   }
 
   addClarificationNote(note: string) {
@@ -145,6 +156,7 @@ export default class AseessHelper {
     reviewPage.shouldBeAbleToDownloadDocuments(this.documents)
     reviewPage.clickSubmit()
     this.updateAssessmentAndStub(reviewPage)
+    this.pages.reviewApplication = [reviewPage]
 
     // Then I should be taken to the task list
     const tasklistPage = Page.verifyOnPage(TaskListPage)
@@ -162,6 +174,7 @@ export default class AseessHelper {
     page.completeForm()
     page.clickSubmit()
     this.updateAssessmentAndStub(page)
+    this.pages.sufficientInformation = [page]
 
     // Then I should be taken to the task list
     const tasklistPage = Page.verifyOnPage(TaskListPage)
@@ -179,6 +192,7 @@ export default class AseessHelper {
     page.completeForm()
     page.clickSubmit()
     this.updateAssessmentAndStub(page)
+    this.pages.assessSuitability = [page]
 
     // Then I should be taken to the task list
     const tasklistPage = Page.verifyOnPage(TaskListPage)
@@ -191,11 +205,12 @@ export default class AseessHelper {
     // When I click on the 'required-actions' link
     cy.get('[data-cy-task-name="required-actions"]').click()
 
-    // Then I should be taken to the suitability assessment page
+    // Then I should be taken to the required actions page
     const page = new RequiredActionsPage(this.assessment)
     page.completeForm()
     page.clickSubmit()
     this.updateAssessmentAndStub(page)
+    this.pages.requiredActions = [page]
 
     // Then I should be taken to the task list
     const tasklistPage = Page.verifyOnPage(TaskListPage)
@@ -208,11 +223,12 @@ export default class AseessHelper {
     // When I click on the 'make-a-decision' link
     cy.get('[data-cy-task-name="make-a-decision"]').click()
 
-    // Then I should be taken to the suitability assessment page
+    // Then I should be taken to the make a decision page
     const page = new MakeADecisionPage(this.assessment)
     page.completeForm()
     page.clickSubmit()
     this.updateAssessmentAndStub(page)
+    this.pages.makeADecision.push(page)
 
     // Then I should be taken to the task list
     const tasklistPage = Page.verifyOnPage(TaskListPage)
@@ -225,17 +241,41 @@ export default class AseessHelper {
     // When I click on the 'matching-information' link
     cy.get('[data-cy-task-name="matching-information"]').click()
 
-    // Then I should be taken to the suitability assessment page
+    // Then I should be taken to the matching information page
     const page = new MatchingInformationPage(this.assessment)
     page.completeForm()
     page.clickSubmit()
     this.updateAssessmentAndStub(page)
+    this.pages.matchingInformation.push(page)
 
     // Then I should be taken to the task list
     const tasklistPage = Page.verifyOnPage(TaskListPage)
 
     // And the matching-information application task should show a completed status
     tasklistPage.shouldShowTaskStatus('matching-information', 'Completed')
+  }
+
+  private completeCheckYourAnswersPage() {
+    // When I click on the 'check-your-answers' link
+    cy.get('[data-cy-task-name="check-your-answers"]').click()
+
+    // Then I should be taken to the check your answers page
+    const page = new CheckYourAnswersPage(this.assessment)
+    page.shouldShowReviewAnswer(this.pages.reviewApplication)
+    page.shouldShowSufficientInformationAnswer(this.pages.sufficientInformation)
+    page.shouldShowAssessSuitabilityAnswers(this.pages.assessSuitability)
+    page.shouldShowRequirementsAnswers(this.pages.requiredActions)
+    page.shouldShowDecision(this.pages.makeADecision)
+    page.shouldShowMatchingInformation(this.pages.matchingInformation)
+
+    page.clickSubmit()
+    this.updateAssessmentAndStub(page)
+
+    // Then I should be taken to the task list
+    const tasklistPage = Page.verifyOnPage(TaskListPage)
+
+    // And the check-your-answers application task should show a completed status
+    tasklistPage.shouldShowTaskStatus('check-your-answers', 'Completed')
   }
 
   updateAssessmentAndStub(pageObject: AssessPage) {
