@@ -32,6 +32,8 @@ import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import { radioMatrixTable } from './radioMatrixTable'
 
+import config from '../config'
+
 const production = process.env.NODE_ENV === 'production'
 
 export default function nunjucksSetup(app: express.Express, path: pathModule.PlatformPath): void {
@@ -137,6 +139,8 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('fetchContext', function fetchContext() {
     return this.ctx
   })
+
+  njkEnv.addGlobal('oasysDisabled', config.flags.oasysDisabled)
 
   njkEnv.addFilter('mapApiPersonRisksForUi', mapApiPersonRisksForUi)
 
