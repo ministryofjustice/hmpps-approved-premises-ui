@@ -33,47 +33,47 @@ export default class CheckYourAnswersPage extends ApplyPage {
   }
 
   shouldShowBasicInformationAnswers(pages: Array<ApplyPage>) {
-    this.shouldShowCyaTitle('basic-information', 'Basic Information')
+    this.shouldShowCheckYourAnswersTitle('basic-information', 'Basic Information')
     this.shouldShowAnswersForTask('basic-information', pages)
   }
 
   shouldShowTypeOfApAnswers(pages: Array<ApplyPage>) {
-    this.shouldShowCyaTitle('type-of-ap', 'Type of AP required')
+    this.shouldShowCheckYourAnswersTitle('type-of-ap', 'Type of AP required')
     this.shouldShowAnswersForTask('type-of-ap', pages)
   }
 
   shouldShowOptionalOasysSectionsAnswers(pages: Array<ApplyPage>) {
-    this.shouldShowCyaTitle('oasys-import', 'Choose sections of OASys to import')
+    this.shouldShowCheckYourAnswersTitle('oasys-import', 'Choose sections of OASys to import')
     this.shouldShowAnswersForTask('oasys-import', pages)
   }
 
   shouldShowRiskManagementAnswers(pages: Array<ApplyPage>) {
-    this.shouldShowCyaTitle('risk-management-features', 'Add detail about managing risks and needs')
+    this.shouldShowCheckYourAnswersTitle('risk-management-features', 'Add detail about managing risks and needs')
     this.shouldShowAnswersForTask('risk-management-features', pages)
   }
 
   shouldShowAccessAndHealthcareAnswers(pages: Array<ApplyPage>) {
-    this.shouldShowCyaTitle('access-and-healthcare', 'Add access, cultural and healthcare needs')
+    this.shouldShowCheckYourAnswersTitle('access-and-healthcare', 'Add access, cultural and healthcare needs')
     this.shouldShowAnswersForTask('access-and-healthcare', pages)
   }
 
   shouldShowLocationFactorsAnswers(pages: Array<ApplyPage>) {
-    this.shouldShowCyaTitle('location-factors', 'Describe location factors')
+    this.shouldShowCheckYourAnswersTitle('location-factors', 'Describe location factors')
     this.shouldShowAnswersForTask('location-factors', pages)
   }
 
   shouldShowFurtherConsiderationsAnswers(pages: Array<ApplyPage>) {
-    this.shouldShowCyaTitle('further-considerations', 'Detail further considerations for placement')
+    this.shouldShowCheckYourAnswersTitle('further-considerations', 'Detail further considerations for placement')
     this.shouldShowAnswersForTask('further-considerations', pages)
   }
 
   shouldShowMoveOnAnswers(pages: Array<ApplyPage>) {
-    this.shouldShowCyaTitle('move-on', 'Add move on information')
+    this.shouldShowCheckYourAnswersTitle('move-on', 'Add move on information')
     this.shouldShowAnswersForTask('move-on', pages)
   }
 
   shouldShowDocuments(selectedDocuments: Array<Document>) {
-    this.shouldShowCyaTitle('attach-required-documents', 'Attach required documents')
+    this.shouldShowCheckYourAnswersTitle('attach-required-documents', 'Attach required documents')
     cy.get(`[data-cy-check-your-answers-section="attach-required-documents"]`).within(() => {
       selectedDocuments.forEach(d => {
         this.assertDefinition(d.fileName, d.description)
@@ -82,7 +82,7 @@ export default class CheckYourAnswersPage extends ApplyPage {
   }
 
   shouldShowCaseNotes(caseNotes: Array<PrisonCaseNote>) {
-    this.shouldShowCyaTitle('prison-information', 'Review prison information')
+    this.shouldShowCheckYourAnswersTitle('prison-information', 'Review prison information')
     cy.get(`[data-cy-check-your-answers-section="prison-information"]`).within(() => {
       cy.get('dt')
         .contains('Selected prison case notes that support this application')

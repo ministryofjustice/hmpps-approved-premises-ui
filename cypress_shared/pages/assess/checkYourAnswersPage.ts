@@ -11,32 +11,35 @@ export default class CheckYourAnswersPage extends AssessPage {
   }
 
   shouldShowReviewAnswer(pages: Array<AssessPage>) {
-    this.shouldShowCyaTitle('review-application', 'Review application and documents')
+    this.shouldShowCheckYourAnswersTitle('review-application', 'Review application and documents')
     this.shouldShowAnswersForTask('review-application', pages)
   }
 
   shouldShowSufficientInformationAnswer(pages: Array<AssessPage>) {
-    this.shouldShowCyaTitle('sufficient-information', 'Check there is sufficient information to make a decision')
+    this.shouldShowCheckYourAnswersTitle(
+      'sufficient-information',
+      'Check there is sufficient information to make a decision',
+    )
     this.shouldShowAnswersForTask('sufficient-information', pages)
   }
 
   shouldShowAssessSuitabilityAnswers(pages: Array<AssessPage>) {
-    this.shouldShowCyaTitle('suitability-assessment', 'Assess suitability of application')
+    this.shouldShowCheckYourAnswersTitle('suitability-assessment', 'Assess suitability of application')
     this.shouldShowAnswersForTask('suitability-assessment', pages)
   }
 
   shouldShowRequirementsAnswers(pages: Array<AssessPage>) {
-    this.shouldShowCyaTitle('required-actions', 'Provide any requirements to support placement')
+    this.shouldShowCheckYourAnswersTitle('required-actions', 'Provide any requirements to support placement')
     this.shouldShowAnswersForTask('required-actions', pages)
   }
 
   shouldShowDecision(pages: Array<AssessPage>) {
-    this.shouldShowCyaTitle('make-a-decision', 'Make a decision')
+    this.shouldShowCheckYourAnswersTitle('make-a-decision', 'Make a decision')
     this.shouldShowAnswersForTask('make-a-decision', pages)
   }
 
   shouldShowMatchingInformation(pages: Array<AssessPage>) {
-    this.shouldShowCyaTitle('matching-information', 'Matching information')
+    this.shouldShowCheckYourAnswersTitle('matching-information', 'Matching information')
     this.shouldShowAnswersForTask('matching-information', pages)
   }
 

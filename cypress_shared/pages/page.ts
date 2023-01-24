@@ -159,7 +159,7 @@ export default abstract class Page {
     })
   }
 
-  shouldShowCyaTitle(taskName: string, taskTitle: string) {
+  shouldShowCheckYourAnswersTitle(taskName: string, taskTitle: string) {
     cy.get(`[data-cy-check-your-answers-section="${taskName}"]`).within(() => {
       cy.get('.box-title').should('contain', taskTitle)
     })
