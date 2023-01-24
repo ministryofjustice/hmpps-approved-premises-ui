@@ -15,7 +15,7 @@ const pages = config.flags.oasysDisabled
 
 @Task({
   slug: 'oasys-import',
-  name: 'Choose sections of OASys to import',
-  pages: [OptionalOasysSections, RoshSummary, OffenceDetails, SupportingInformation, RiskManagementPlan, RiskToSelf],
+  name: config.flags.oasysDisabled ? 'Add OASys Information' : 'Choose sections of OASys to import',
+  pages,
 })
 export default class OasysImport {}
