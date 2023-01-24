@@ -5,6 +5,7 @@ import { getSections as getAssessmentSections } from './assessmentUtils'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import Apply from '../form-pages/apply'
+import isAssessment from './assessments/isAssessment'
 
 const taskIsComplete = (task: Task, applicationOrAssessment: Application | Assessment): boolean => {
   return applicationOrAssessment.data?.[task.id]
@@ -38,10 +39,6 @@ const getCompleteSectionCount = (sections: FormSections, applicationOrAssessment
       section.tasks.length
     )
   }).length
-}
-
-const isAssessment = (applicationOrAssessment: Application | Assessment): applicationOrAssessment is Assessment => {
-  return 'allocatedToStaffMemberId' in applicationOrAssessment
 }
 
 const taskLink = (task: Task, applicationOrAssessment: Application | Assessment): string => {
