@@ -4,7 +4,6 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 import AssessPage from './assessPage'
 
 import RequiredActions from '../../../server/form-pages/assess/assessApplication/requiredActions/requiredActions'
-import { DateFormats } from '../../../server/utils/dateUtils'
 
 export default class RequiredActionsPage extends AssessPage {
   pageClass = new RequiredActions({
@@ -16,8 +15,10 @@ export default class RequiredActionsPage extends AssessPage {
     concernsOfUnmanagableRiskComments: '',
     additionalRecommendations: 'yes',
     additionalRecommendationsComments: '',
-    nameOfAreaManager: '',
-    dateOfDiscussion: '',
+    nameOfAreaManager: faker.name.fullName(),
+    'dateOfDiscussion-day': '1',
+    'dateOfDiscussion-month': '2',
+    'dateOfDiscussion-year': '2022',
     outlineOfDiscussion: '',
   })
 
@@ -34,7 +35,7 @@ export default class RequiredActionsPage extends AssessPage {
 
     this.checkRadioByNameAndValue('concernsOfUnmanagableRisk', this.pageClass.body.concernsOfUnmanagableRisk)
     this.getTextInputByIdAndEnterDetails('nameOfAreaManager', 'Frank')
-    this.completeDateInputs('dateOfDiscussion', DateFormats.dateObjToIsoDate(faker.date.past()))
+
     this.completeTextArea('outlineOfDiscussion', 'foo bar baz')
 
     this.completeTextArea('concernsOfUnmanagableRiskComments', 'Three')
