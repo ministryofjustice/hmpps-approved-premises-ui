@@ -1,5 +1,5 @@
 import { OasysImportArrays } from '../@types/ui'
-import { Application, OASysQuestion, OASysSection } from '../@types/shared'
+import { ApprovedPremisesApplication as Application, OASysQuestion, OASysSection } from '../@types/shared'
 import { SessionDataError } from './errors'
 import { escape } from './formUtils'
 import { sentenceCase } from './utils'

@@ -70,6 +70,7 @@ export type { OASysQuestion } from './models/OASysQuestion';
 export type { OASysSection } from './models/OASysSection';
 export type { OASysSections } from './models/OASysSections';
 export type { OASysSupportingInformationQuestion } from './models/OASysSupportingInformationQuestion';
+export type { OfflineApplication } from './models/OfflineApplication';
 export type { Person } from './models/Person';
 export type { PersonAcctAlert } from './models/PersonAcctAlert';
 export type { PersonRisks } from './models/PersonRisks';
