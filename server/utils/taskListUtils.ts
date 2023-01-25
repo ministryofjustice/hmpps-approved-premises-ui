@@ -1,7 +1,7 @@
 import type { FormSections, FormSection } from '@approved-premises/ui'
 import { ApprovedPremisesApplication as Application, ApprovedPremisesAssessment as Assessment } from '../@types/shared'
 import { Task } from '../@types/ui'
-import { getSections as getAssessmentSections } from './assessmentUtils'
+import getAssessmentSections from './assessments/getSections'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import Apply from '../form-pages/apply'
@@ -15,6 +15,7 @@ const previousTaskIsComplete = (task: Task, applicationOrAssessment: Application
   const taskIds = isAssessment(applicationOrAssessment)
     ? Object.keys(getAssessmentSections(applicationOrAssessment))
     : Object.keys(Apply.pages)
+
   const previousTaskId = taskIds[taskIds.indexOf(task.id) - 1]
 
   return previousTaskId ? applicationOrAssessment.data?.[previousTaskId] : true
