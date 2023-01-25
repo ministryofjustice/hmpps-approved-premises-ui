@@ -8,8 +8,12 @@
 {% block questions %}
   <div class="govuk-grid-row">
     <div>
-      <h1 class="govuk-heading-l">{{page.title}}</h1>
-      <p>OASys last updated: {{formatDate(page.oasysCompleted)}}</p>
+      {% if oasysDisabled %}
+        <h1 class="govuk-heading-l">Input risk information</h1>
+      {% else %}
+        <h1 class="govuk-heading-l">{{page.title}}</h1>
+        <p>OASys last updated: {{formatDate(page.oasysCompleted)}}</p>
+      {% endif %}
     </div>
 
     {{ mojSubNavigation({
@@ -46,12 +50,18 @@
   </div>
 
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds" id="{{ pageName }}">
-      {{OasysImportUtils.textareas(questions, key) | safe}}
-    </div>
+    {% if oasysDisabled %}
+      <div class="govuk-grid-column-full" id="{{ pageName }}">
+        {{OasysImportUtils.textareas(questions, key) | safe}}
+      </div>
+    {% else %}
+      <div class="govuk-grid-column-two-thirds" id="{{ pageName }}">
+        {{OasysImportUtils.textareas(questions, key) | safe}}
+      </div>
 
-    <div class="govuk-grid-column-one-third">
-      {{ widgets(page.risks) }}
-    </div>
+      <div class="govuk-grid-column-one-third">
+        {{ widgets(page.risks) }}
+      </div>
+    {% endif %}
   </div>
 {% endblock %}

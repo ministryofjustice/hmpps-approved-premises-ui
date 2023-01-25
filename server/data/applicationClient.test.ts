@@ -15,6 +15,7 @@ describe('ApplicationClient', () => {
 
   beforeEach(() => {
     config.apis.approvedPremises.url = 'http://localhost:8080'
+    config.flags.oasysDisabled = false
     fakeApprovedPremisesApi = nock(config.apis.approvedPremises.url)
     applicationClient = new ApplicationClient(token)
   })
@@ -34,7 +35,7 @@ describe('ApplicationClient', () => {
       const offence = activeOffenceFactory.build()
 
       fakeApprovedPremisesApi
-        .post(paths.applications.new.pattern, {
+        .post(`${paths.applications.new.pattern}?createWithRisks=true`, {
           crn: application.person.crn,
           convictionId: offence.convictionId,
           deliusEventNumber: offence.deliusEventNumber,
@@ -47,6 +48,32 @@ describe('ApplicationClient', () => {
 
       expect(result).toEqual(application)
       expect(nock.isDone()).toBeTruthy()
+    })
+
+    describe('when oasys integration is disabled', () => {
+      beforeEach(() => {
+        config.flags.oasysDisabled = true
+      })
+
+      it('should request that the risks are skipped', async () => {
+        const application = applicationFactory.build()
+        const offence = activeOffenceFactory.build()
+
+        fakeApprovedPremisesApi
+          .post(`${paths.applications.new.pattern}?createWithRisks=false`, {
+            crn: application.person.crn,
+            convictionId: offence.convictionId,
+            deliusEventNumber: offence.deliusEventNumber,
+            offenceId: offence.offenceId,
+          })
+          .matchHeader('authorization', `Bearer ${token}`)
+          .reply(201, application)
+
+        const result = await applicationClient.create(application.person.crn, offence)
+
+        expect(result).toEqual(application)
+        expect(nock.isDone()).toBeTruthy()
+      })
     })
   })
 

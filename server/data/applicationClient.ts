@@ -20,7 +20,7 @@ export default class ApplicationClient {
     const { convictionId, deliusEventNumber, offenceId } = activeOffence
 
     return (await this.restClient.post({
-      path: paths.applications.new.pattern,
+      path: `${paths.applications.new.pattern}?createWithRisks=${!config.flags.oasysDisabled}`,
       data: { crn, convictionId, deliusEventNumber, offenceId },
     })) as ApprovedPremisesApplication
   }

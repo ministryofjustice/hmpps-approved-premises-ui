@@ -15,6 +15,8 @@ import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
 
+import oasysStubs from './stubs/oasysStubs.json'
+
 export default class PersonClient {
   restClient: RestClient
 
@@ -63,14 +65,20 @@ export default class PersonClient {
   }
 
   async oasysSections(crn: string, selectedSections?: Array<number>): Promise<OASysSections> {
-    const queryString: string = qs.stringify(
-      { 'selected-sections': selectedSections },
-      { encode: false, indices: false },
-    )
+    let response: OASysSections
 
-    const path = `${paths.people.oasys.sections({ crn })}${queryString ? `?${queryString}` : ''}`
+    if (config.flags.oasysDisabled) {
+      response = oasysStubs as OASysSections
+    } else {
+      const queryString: string = qs.stringify(
+        { 'selected-sections': selectedSections },
+        { encode: false, indices: false },
+      )
 
-    const response = await this.restClient.get({ path })
+      const path = `${paths.people.oasys.sections({ crn })}${queryString ? `?${queryString}` : ''}`
+
+      response = (await this.restClient.get({ path })) as OASysSections
+    }
 
     return response as OASysSections
   }

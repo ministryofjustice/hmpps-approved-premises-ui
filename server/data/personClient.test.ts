@@ -13,6 +13,8 @@ import activeOffenceFactory from '../testutils/factories/activeOffence'
 import oasysSelectionFactory from '../testutils/factories/oasysSelection'
 import oasysSectionsFactory from '../testutils/factories/oasysSections'
 
+import oasysStubs from './stubs/oasysStubs.json'
+
 describe('PersonClient', () => {
   let fakeApprovedPremisesApi: nock.Scope
   let personClient: PersonClient
@@ -21,6 +23,7 @@ describe('PersonClient', () => {
 
   beforeEach(() => {
     config.apis.approvedPremises.url = 'http://localhost:8080'
+    config.flags.oasysDisabled = false
     fakeApprovedPremisesApi = nock(config.apis.approvedPremises.url)
     personClient = new PersonClient(token)
   })
@@ -148,6 +151,31 @@ describe('PersonClient', () => {
 
       expect(result).toEqual(oasysSections)
       expect(nock.isDone()).toBeTruthy()
+    })
+
+    describe('when oasys integration is disabled', () => {
+      beforeEach(() => {
+        config.flags.oasysDisabled = true
+      })
+
+      afterEach(() => {
+        nock.abortPendingRequests()
+        nock.cleanAll()
+      })
+
+      it('should return the stub dataset with blank responses', async () => {
+        const crn = 'crn'
+        const url = `${paths.people.oasys.sections({ crn })}`
+
+        fakeApprovedPremisesApi.get(url).matchHeader('authorization', `Bearer ${token}`).reply(200)
+
+        const result = await personClient.oasysSections(crn)
+
+        expect(result).toEqual(oasysStubs)
+
+        expect(nock.isDone()).toBeFalsy()
+        expect(nock.pendingMocks()).toEqual([`GET ${config.apis.approvedPremises.url}${url}`])
+      })
     })
   })
 
