@@ -3,14 +3,16 @@ import { ApprovedPremisesAssessment as Assessment, Document } from '@approved-pr
 
 import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
-
-import { documentsFromApplication, overwriteApplicationDocuments } from '../../../../utils/applicationUtils'
+import { documentsFromApplication, overwriteApplicationDocuments } from '../../../../utils/assessments/documentUtils'
+import { sentenceCase } from '../../../../utils/utils'
 
 @Page({ name: 'review', bodyProperties: ['reviewed'] })
 export default class Review implements TasklistPage {
   name = 'review'
 
   title = 'Review application'
+
+  question = 'Have you reviewed all of the application and documents provided?'
 
   constructor(public body: { reviewed?: string }, private readonly assessment: Assessment) {}
 
@@ -44,7 +46,7 @@ export default class Review implements TasklistPage {
   }
 
   response() {
-    return {}
+    return { [this.question]: sentenceCase(this.body.reviewed) }
   }
 
   errors() {

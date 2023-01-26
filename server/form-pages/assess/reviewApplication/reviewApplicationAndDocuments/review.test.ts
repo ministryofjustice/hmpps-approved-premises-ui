@@ -87,7 +87,7 @@ describe('Review', () => {
     it('returns an empty object', () => {
       const page = new Review({ reviewed: 'yes' }, assessment)
 
-      expect(page.response()).toEqual({})
+      expect(page.response()).toEqual({ [page.question]: 'Yes' })
     })
   })
 })
