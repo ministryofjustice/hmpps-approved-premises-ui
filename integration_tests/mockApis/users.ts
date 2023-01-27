@@ -1,4 +1,4 @@
-import { User } from '@approved-premises/api'
+import { ApprovedPremisesUser as User } from '@approved-premises/api'
 import { stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
 

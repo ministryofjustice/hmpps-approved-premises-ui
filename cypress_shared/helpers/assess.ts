@@ -3,7 +3,7 @@ import {
   AssessmentStatus,
   ClarificationNote,
   Document,
-  User,
+  ApprovedPremisesUser as User,
 } from '@approved-premises/api'
 import { YesOrNo } from '@approved-premises/ui'
 import {
