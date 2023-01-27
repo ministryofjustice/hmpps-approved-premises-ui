@@ -28,4 +28,5 @@ export default AssessmentFactory.define(() => ({
   decision: faker.helpers.arrayElement(['accepted' as const, 'rejected' as const, undefined]),
   data: JSON.parse(faker.datatype.json()),
   clarificationNotes: [],
+  rejectionRationale: faker.lorem.sentence(),
 }))

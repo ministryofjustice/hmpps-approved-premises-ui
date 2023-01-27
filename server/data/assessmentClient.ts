@@ -38,6 +38,17 @@ export default class AssessmentClient {
     })
   }
 
+  async rejection(
+    assessmentId: string,
+    document: ApplicationOrAssessmentResponse,
+    rejectionRationale: string,
+  ): Promise<void> {
+    await this.restClient.post({
+      path: paths.assessments.rejection({ id: assessmentId }),
+      data: { data: { document, rejectionRationale } },
+    })
+  }
+
   async createClarificationNote(
     assessmentId: string,
     clarificationNote: NewClarificationNote,

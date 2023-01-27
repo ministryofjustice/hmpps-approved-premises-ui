@@ -38,6 +38,7 @@ const assessPaths = {
   assessments: path('/assessments'),
   singleAssessment: path('/assessments/:id'),
   acceptance: path('/assessments/:id/acceptance'),
+  rejection: path('/assessments/:id/rejection'),
 }
 
 const clarificationNotePaths = {
@@ -69,6 +70,7 @@ export default {
     show: assessPaths.singleAssessment,
     update: assessPaths.singleAssessment,
     acceptance: assessPaths.acceptance,
+    rejection: assessPaths.rejection,
     clarificationNotes: {
       create: clarificationNotePaths.notes,
       update: clarificationNotePaths.notes.path(':clarificationNoteId'),

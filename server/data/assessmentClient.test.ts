@@ -91,6 +91,24 @@ describe('AssessmentClient', () => {
     })
   })
 
+  describe('rejection', () => {
+    it('should call the rejection endpoint with the assessment', async () => {
+      const assessment = assessmentFactory.build()
+      const response = { section: [{ task: 'response' }] }
+
+      fakeApprovedPremisesApi
+        .post(paths.assessments.rejection({ id: assessment.id }), {
+          data: { document: response, rejectionRationale: assessment.rejectionRationale },
+        })
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(201)
+
+      await assessmentClient.rejection(assessment.id, response, assessment.rejectionRationale)
+
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
+
   describe('createClarificationNote', () => {
     it('should return a note when a POST request is made', async () => {
       const assessmentId = 'some-id'
