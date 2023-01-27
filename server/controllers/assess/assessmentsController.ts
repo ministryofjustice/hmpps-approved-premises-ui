@@ -35,10 +35,41 @@ export default class AssessmentsController {
       } else {
         res.render('assessments/show', {
           assessment,
-          pageHeading: 'Assess an Approved Premises (AP) application',
+          pageHeading: tasklistPageHeading,
           sections: getSections(assessment),
         })
       }
+    }
+  }
+
+  submit(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
+
+      if (req.body?.confirmation !== 'confirmed') {
+        const errorMessage = 'You must confirm the information provided is complete, accurate and up to date.'
+        const errorObject = { text: errorMessage }
+
+        return res.render('assessments/show', {
+          assessment,
+          errorSummary: [
+            {
+              text: errorMessage,
+              href: '#confirmation',
+            },
+          ],
+          errorObject,
+          pageHeading: tasklistPageHeading,
+          sections: getSections(assessment),
+        })
+      }
+
+      await this.assessmentService.submit(req.user.token, assessment)
+
+      return res.render('assessments/confirm', {
+        pageHeading: 'Assessment submission confirmed',
+        assessment,
+      })
     }
   }
 }
