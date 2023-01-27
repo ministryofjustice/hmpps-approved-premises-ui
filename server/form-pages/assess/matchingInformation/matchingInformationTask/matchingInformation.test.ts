@@ -6,7 +6,7 @@ const defaultArguments = {
   apGender: 'female',
   apType: 'esap',
   wheelchairAccessible: 'essential',
-  mentalHealthSupport: true,
+  mentalHealthSupport: '1',
   singleRoom: 'essential',
   adaptedForHearingImpairments: 'essential',
   adaptedForVisualImpairments: 'essential',
