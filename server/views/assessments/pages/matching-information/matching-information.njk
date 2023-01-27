@@ -25,24 +25,29 @@
       items: FormUtils.convertArrayToRadioItems(page.apGenders, page.apGender)
     },fetchContext()) }}
 
-  <div class="govuk-form-group">
-    <fieldset class="govuk-fieldset" aria-describedby="mentalHealthSupport-hint">
-      <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-        <h2 class="govuk-fieldset__heading">
-          {{page.mentalHealthSupport.question}}
-        </h2>
-      </legend>
-      <div id="mentalHealthSupport-hint" class="govuk-hint">
-        {{page.mentalHealthSupport.hint}}
-      </div>
-      <div class="govuk-checkboxes__item">
-        <input class="govuk-checkboxes__input" id="mentalHealthSupport" name="mentalHealthSupport" type="checkbox" value="mentalHealthSupport">
-        <label class="govuk-label govuk-checkboxes__label" for="mentalHealthSupport">
-          {{page.mentalHealthSupport.label}}
-        </label>
-      </div>
-    </fieldset>
-  </div>
+  {{
+    formPageCheckboxes(
+      {
+        fieldName: "mentalHealthSupport",
+        fieldset: {
+          legend: {
+            text: page.mentalHealthSupport.question,
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        hint: {
+          text: page.mentalHealthSupport.hint
+        },
+      items: [
+      {
+        value: "1",
+        text: page.mentalHealthSupport.label,
+        checked: page.mentalHealthSupport.value === '1'
+      }]
+      }, 
+      fetchContext()
+    )
+  }}
 
   <h2 class="govuk-heading-m">Specify placement requirements</h2>
 
