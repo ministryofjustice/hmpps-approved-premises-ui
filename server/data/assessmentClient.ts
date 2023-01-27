@@ -7,6 +7,7 @@ import type {
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
+import { ApplicationOrAssessmentResponse } from '../utils/applicationUtils'
 
 export default class AssessmentClient {
   restClient: RestClient
@@ -28,6 +29,13 @@ export default class AssessmentClient {
       path: paths.assessments.update({ id: assessment.id }),
       data: { data: assessment.data },
     })) as Assessment
+  }
+
+  async acceptance(assessmentId: string, document: ApplicationOrAssessmentResponse): Promise<void> {
+    await this.restClient.post({
+      path: paths.assessments.acceptance({ id: assessmentId }),
+      data: { data: document },
+    })
   }
 
   async createClarificationNote(

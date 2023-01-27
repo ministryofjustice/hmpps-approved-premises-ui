@@ -75,6 +75,22 @@ describe('AssessmentClient', () => {
     })
   })
 
+  describe('acceptance', () => {
+    it('should call the acceptance endpoint with the assessment', async () => {
+      const assessmentId = 'some-id'
+      const response = { section: [{ task: 'response' }] }
+
+      fakeApprovedPremisesApi
+        .post(paths.assessments.acceptance({ id: assessmentId }), { data: response })
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(201)
+
+      await assessmentClient.acceptance(assessmentId, response)
+
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
+
   describe('createClarificationNote', () => {
     it('should return a note when a POST request is made', async () => {
       const assessmentId = 'some-id'
