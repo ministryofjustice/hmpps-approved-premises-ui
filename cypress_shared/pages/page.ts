@@ -158,4 +158,10 @@ export default abstract class Page {
       cy.readFile(downloadedFilename, 'binary', { timeout: 300 })
     })
   }
+
+  shouldShowCheckYourAnswersTitle(taskName: string, taskTitle: string) {
+    cy.get(`[data-cy-check-your-answers-section="${taskName}"]`).within(() => {
+      cy.get('.box-title').should('contain', taskTitle)
+    })
+  }
 }

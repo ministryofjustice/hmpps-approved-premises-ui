@@ -9,9 +9,12 @@ import { AssessmentService } from '../../services'
 import assessmentFactory from '../../testutils/factories/assessment'
 
 import paths from '../../paths/assess'
-import { getSections, informationSetAsNotReceived } from '../../utils/assessmentUtils'
+import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
+import getSections from '../../utils/assessments/getSections'
 
 jest.mock('../../utils/assessmentUtils')
+jest.mock('../../utils/assessments/informationSetAsNotReceived')
+jest.mock('../../utils/assessments/getSections')
 
 describe('assessmentsController', () => {
   const token = 'SOME_TOKEN'

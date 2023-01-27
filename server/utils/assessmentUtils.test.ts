@@ -17,8 +17,6 @@ import {
   getTaskResponsesAsSummaryListItems,
   getReviewNavigationItems,
   getSectionSuffix,
-  informationSetAsNotReceived,
-  getSections,
 } from './assessmentUtils'
 import { DateFormats } from './dateUtils'
 import paths from '../paths/assess'
@@ -33,6 +31,7 @@ import { UnknownPageError } from './errors'
 import applicationFactory from '../testutils/factories/application'
 import reviewSections from './reviewUtils'
 import documentFactory from '../testutils/factories/document'
+import { documentsFromApplication } from './assessments/documentUtils'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -41,6 +40,7 @@ jest.mock('./applicationUtils')
 jest.mock('./checkYourAnswersUtils')
 jest.mock('./personUtils')
 jest.mock('./reviewUtils')
+jest.mock('./assessments/documentUtils')
 
 jest.mock('../form-pages/assess', () => {
   return {
@@ -353,7 +353,7 @@ describe('assessmentUtils', () => {
         const application = applicationFactory.build()
         const documents = documentFactory.buildList(1)
 
-        ;(applicationUtils.documentsFromApplication as jest.Mock).mockReturnValue(documents)
+        ;(documentsFromApplication as jest.Mock).mockReturnValue(documents)
 
         application.data['attach-required-documents'] = {
           'attach-documents': {
@@ -398,68 +398,6 @@ describe('assessmentUtils', () => {
       expect(getSectionSuffix({ id: 'prison-information', title: '', pages: {} })).toBe(
         '<p><a href="prison-link">View additional prison information</a></p>',
       )
-    })
-  })
-
-  describe('informationSetAsNotReceived', () => {
-    const assessment = assessmentFactory.build({ status: 'pending' })
-
-    it('returns false when there is no data', () => {
-      assessment.data = {}
-
-      expect(informationSetAsNotReceived(assessment)).toEqual(false)
-    })
-
-    it('returns false when informationReceived is set to yes', () => {
-      assessment.data = { 'sufficient-information': { 'information-received': { informationReceived: 'yes' } } }
-
-      expect(informationSetAsNotReceived(assessment)).toEqual(false)
-    })
-
-    it('returns true when informationReceived is set to no', () => {
-      assessment.data = { 'sufficient-information': { 'information-received': { informationReceived: 'no' } } }
-
-      expect(informationSetAsNotReceived(assessment)).toEqual(true)
-    })
-
-    it('returns false when the application is not pending', () => {
-      assessment.status = 'active'
-
-      expect(informationSetAsNotReceived(assessment)).toEqual(false)
-    })
-  })
-
-  describe('getSections', () => {
-    const assessment = assessmentFactory.build({ status: 'pending' })
-
-    it('returns all sections if informationReceived is yes', () => {
-      assessment.data = { 'sufficient-information': { 'information-received': { informationReceived: 'yes' } } }
-
-      const sections = getSections(assessment)
-      const sectionNames = sections.map(s => s.name)
-
-      expect(sections.length).toEqual(Assess.sections.length)
-      expect(sectionNames).toContain('AssessApplication')
-    })
-
-    it('returns all sections if informationReceived is not yet answered', () => {
-      assessment.data = {}
-
-      const sections = getSections(assessment)
-      const sectionNames = sections.map(s => s.name)
-
-      expect(sections.length).toEqual(Assess.sections.length)
-      expect(sectionNames).toContain('AssessApplication')
-    })
-
-    it('removes the assess section if informationReceived is no', () => {
-      assessment.data = { 'sufficient-information': { 'information-received': { informationReceived: 'no' } } }
-
-      const sections = getSections(assessment)
-      const sectionNames = sections.map(s => s.name)
-
-      expect(sections.length).toEqual(Assess.sections.length - 1)
-      expect(sectionNames).not.toContain('AssessApplication')
     })
   })
 })

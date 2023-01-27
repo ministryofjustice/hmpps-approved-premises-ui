@@ -1,10 +1,11 @@
 import type { FormSections, FormSection } from '@approved-premises/ui'
 import { ApprovedPremisesApplication as Application, ApprovedPremisesAssessment as Assessment } from '../@types/shared'
 import { Task } from '../@types/ui'
-import { getSections as getAssessmentSections } from './assessmentUtils'
+import getAssessmentSections from './assessments/getSections'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import Apply from '../form-pages/apply'
+import isAssessment from './assessments/isAssessment'
 
 const taskIsComplete = (task: Task, applicationOrAssessment: Application | Assessment): boolean => {
   return applicationOrAssessment.data?.[task.id]
@@ -14,6 +15,7 @@ const previousTaskIsComplete = (task: Task, applicationOrAssessment: Application
   const taskIds = isAssessment(applicationOrAssessment)
     ? Object.keys(getAssessmentSections(applicationOrAssessment))
     : Object.keys(Apply.pages)
+
   const previousTaskId = taskIds[taskIds.indexOf(task.id) - 1]
 
   return previousTaskId ? applicationOrAssessment.data?.[previousTaskId] : true
@@ -38,10 +40,6 @@ const getCompleteSectionCount = (sections: FormSections, applicationOrAssessment
       section.tasks.length
     )
   }).length
-}
-
-const isAssessment = (applicationOrAssessment: Application | Assessment): applicationOrAssessment is Assessment => {
-  return 'allocatedToStaffMemberId' in applicationOrAssessment
 }
 
 const taskLink = (task: Task, applicationOrAssessment: Application | Assessment): string => {

@@ -5,7 +5,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 import Review from './review'
 import { ApplicationService } from '../../../../services'
 import documentFactory from '../../../../testutils/factories/document'
-import { documentsFromApplication, overwriteApplicationDocuments } from '../../../../utils/applicationUtils'
+import { documentsFromApplication, overwriteApplicationDocuments } from '../../../../utils/assessments/documentUtils'
 import { Document } from '../../../../@types/shared'
 
 describe('Review', () => {
@@ -87,7 +87,7 @@ describe('Review', () => {
     it('returns an empty object', () => {
       const page = new Review({ reviewed: 'yes' }, assessment)
 
-      expect(page.response()).toEqual({})
+      expect(page.response()).toEqual({ [page.question]: 'Yes' })
     })
   })
 })

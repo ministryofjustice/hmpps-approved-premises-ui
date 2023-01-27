@@ -1,15 +1,16 @@
-import { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '../@types/shared'
+import { ApprovedPremisesApplication as Application, ApprovedPremisesAssessment as Assessment } from '../@types/shared'
 import { SummaryListItem, Task } from '../@types/ui'
 import Apply from '../form-pages/apply'
+import getSections from './assessments/getSections'
+import isAssessment from './assessments/isAssessment'
 
 const reviewSections = (
-  application: ApprovedPremisesApplication,
-  rowFunction: (
-    task: Task,
-    document: ApprovedPremisesApplication | ApprovedPremisesAssessment,
-  ) => Array<SummaryListItem>,
+  applicationOrAssessment: Application | Assessment,
+  rowFunction: (task: Task, document: Application | Assessment) => Array<SummaryListItem>,
 ) => {
-  const nonCheckYourAnswersSections = Apply.sections.slice(0, -1)
+  const nonCheckYourAnswersSections = isAssessment(applicationOrAssessment)
+    ? getSections(applicationOrAssessment).slice(0, -1)
+    : Apply.sections.slice(0, -1)
 
   return nonCheckYourAnswersSections.map(section => {
     return {
@@ -18,7 +19,7 @@ const reviewSections = (
         return {
           id: task.id,
           title: task.title,
-          rows: rowFunction(task, application),
+          rows: rowFunction(task, applicationOrAssessment),
         }
       }),
     }

@@ -1,5 +1,5 @@
 import { Section } from '../../utils/decorators'
-import MakeADecisionTask from './makeADecisionPage'
+import MakeADecisionTask from './makeADecisionTask'
 
 @Section({
   title: 'Make a decision',

@@ -1,7 +1,8 @@
 import type { Request, Response, RequestHandler } from 'express'
 
 import { AssessmentService } from '../../services'
-import { getSections, informationSetAsNotReceived } from '../../utils/assessmentUtils'
+import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
+import getSections from '../../utils/assessments/getSections'
 
 import paths from '../../paths/assess'
 

@@ -3,7 +3,7 @@ import documentFactory from '../../../server/testutils/factories/document'
 import clarificationNoteFactory from '../../../server/testutils/factories/clarificationNote'
 import userFactory from '../../../server/testutils/factories/user'
 
-import { overwriteApplicationDocuments } from '../../../server/utils/applicationUtils'
+import { overwriteApplicationDocuments } from '../../../server/utils/assessments/documentUtils'
 
 import AssessHelper from '../../../cypress_shared/helpers/assess'
 import { ListPage, TaskListPage } from '../../../cypress_shared/pages/assess'
