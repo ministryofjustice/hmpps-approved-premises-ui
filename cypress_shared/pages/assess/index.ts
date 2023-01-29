@@ -10,6 +10,7 @@ import SuitabilityAssessmentPage from './suitabilityAssessmentPage'
 import TaskListPage from './taskListPage'
 import MatchingInformationPage from './matchingInformationPage'
 import CheckYourAnswersPage from './checkYourAnswersPage'
+import SubmissionConfirmation from './submissionConfirmation'
 
 export {
   ClarificationNoteConfirmPage,
@@ -23,4 +24,5 @@ export {
   TaskListPage,
   MatchingInformationPage,
   CheckYourAnswersPage,
+  SubmissionConfirmation,
 }

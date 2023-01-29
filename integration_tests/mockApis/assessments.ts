@@ -46,6 +46,17 @@ export default {
         jsonBody: assessment,
       },
     }),
+  stubAssessmentRejection: (assessment: Assessment): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: paths.assessments.rejection({ id: assessment.id }),
+      },
+      response: {
+        status: 201,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      },
+    }),
   stubClarificationNoteCreate: (args: { assessment: Assessment; note: NewClarificationNote }): SuperAgentRequest =>
     stubFor({
       request: {
