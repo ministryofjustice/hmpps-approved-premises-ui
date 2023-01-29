@@ -19,8 +19,8 @@ jest.mock('../../utils/assessments/getSections')
 describe('assessmentsController', () => {
   const token = 'SOME_TOKEN'
 
-  const request: DeepMocked<Request> = createMock<Request>({ user: { token } })
-  const response: DeepMocked<Response> = createMock<Response>({})
+  let request: DeepMocked<Request> = createMock<Request>({ user: { token } })
+  let response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const assessmentService = createMock<AssessmentService>({})
@@ -29,6 +29,8 @@ describe('assessmentsController', () => {
 
   beforeEach(() => {
     assessmentsController = new AssessmentsController(assessmentService)
+    response = createMock<Response>({})
+    request = createMock<Request>({ user: { token } })
   })
 
   describe('index', () => {
