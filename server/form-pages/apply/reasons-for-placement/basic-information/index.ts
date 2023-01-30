@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 import IsExceptionalCase from './isExceptionalCase'
+import ExceptionDetails from './exceptionDetails'
 import SentenceType from './sentenceType'
 import ReleaseType from './releaseType'
 import Situation from './situation'
@@ -15,6 +16,7 @@ import { Task } from '../../../utils/decorators'
   slug: 'basic-information',
   pages: [
     IsExceptionalCase,
+    ExceptionDetails,
     SentenceType,
     ReleaseType,
     Situation,

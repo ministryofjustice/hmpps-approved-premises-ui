@@ -1,0 +1,72 @@
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+  <h1 class="govuk-heading-l">
+    {{ page.title }}
+  </h1>
+
+  {% set conditionalHTML %}
+  {{ formPageInput({
+        fieldName: "managerName",
+        label: {
+          text: page.questions.managerName
+        }
+      },fetchContext()) }}
+
+  {{
+    formPageDateInput(
+      {
+        fieldName: "agreementDate",
+        fieldset: {
+          legend: {
+            text: page.questions.agreementDate
+          }
+        },
+        hint: {
+          text: "For example, 27 3 2007"
+        },
+        items: dateFieldValues('agreementDate', errors)
+      },
+      fetchContext()
+    )
+  }}
+
+  {{ formPageTextarea({
+      fieldName: 'agreementSummary',
+      label: {
+        text: page.questions.agreementSummary
+        }
+    }, fetchContext()) }}
+
+  {% endset -%}
+
+  {{ formPageRadios(
+      {
+        fieldset: {
+          legend: {
+            text: page.questions.agreedCaseWithManager,
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes",
+            conditional: {
+              html: conditionalHTML
+            }
+          },
+          {
+            text: "No",
+            value: "no"
+          }
+        ],
+        fieldName: "agreedCaseWithManager"
+      },
+      fetchContext()
+    )
+  }}
+
+{% endblock %}
