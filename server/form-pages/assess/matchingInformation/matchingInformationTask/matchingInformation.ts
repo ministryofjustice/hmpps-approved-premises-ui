@@ -81,13 +81,14 @@ export default class MatchingInformation implements TasklistPage {
     question: 'If this person requires specialist mental health support, select the box below',
     hint: 'There are only two AP nationally with a semi-specialism in mental health. Placement in one of these AP is not guaranteed.',
     label: 'Semi-specialist mental health',
+    value: '',
   }
 
   constructor(
     public body: {
       apType: ApTypes
       apGender: ApGenders[number]
-      mentalHealthSupport?: boolean
+      mentalHealthSupport?: '1' | '' | undefined
       wheelchairAccessible: PlacementRequirementPreference
       singleRoom: PlacementRequirementPreference
       adaptedForHearingImpairments: PlacementRequirementPreference
@@ -103,7 +104,9 @@ export default class MatchingInformation implements TasklistPage {
       hateBasedOffences: OffenceAndRiskInformationRelevance
       vulnerableToExploitation: OffenceAndRiskInformationRelevance
     },
-  ) {}
+  ) {
+    this.mentalHealthSupport.value = body.mentalHealthSupport
+  }
 
   previous() {
     return 'dashboard'
@@ -117,9 +120,8 @@ export default class MatchingInformation implements TasklistPage {
     const response = {
       [this.apTypeQuestion]: this.apTypes[this.body.apType],
       [this.apGenderQuestion]: sentenceCase(this.apGenders[this.body.apGender === 'male' ? 0 : 1]),
-      [this.mentalHealthSupport.question]: this.body.mentalHealthSupport
-        ? `${this.mentalHealthSupport.label} selected`
-        : 'Unselected',
+      [this.mentalHealthSupport.question]:
+        this.body.mentalHealthSupport === '1' ? `${this.mentalHealthSupport.label} selected` : 'Unselected',
     }
 
     this.placementRequirements.forEach(placementRequirement => {

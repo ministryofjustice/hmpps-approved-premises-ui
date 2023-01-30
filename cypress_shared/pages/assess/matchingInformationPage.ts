@@ -9,7 +9,7 @@ export default class MatchingInformationPage extends AssessPage {
   pageClass = new MatchingInformation({
     apGender: 'female',
     apType: 'esap',
-    mentalHealthSupport: true,
+    mentalHealthSupport: '1',
     wheelchairAccessible: 'essential',
     singleRoom: 'desirable',
     adaptedForHearingImpairments: 'notRelevant',
@@ -33,7 +33,8 @@ export default class MatchingInformationPage extends AssessPage {
   completeForm() {
     this.checkRadioByNameAndValue('apType', this.pageClass.body.apType)
     this.checkRadioByNameAndValue('apGender', this.pageClass.body.apGender)
-    this.checkCheckboxByLabel('mentalHealthSupport')
+    this.checkCheckboxByNameAndValue('mentalHealthSupport', '1')
+
     placementRequirements.forEach(requirement => {
       this.checkRadioByNameAndValue(requirement, this.pageClass.body[requirement])
     })
