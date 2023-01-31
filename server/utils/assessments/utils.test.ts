@@ -20,6 +20,7 @@ import {
   getSectionSuffix,
   decisionFromAssessment,
   confirmationPageMessage,
+  confirmationPageResult,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
@@ -473,6 +474,29 @@ describe('utils', () => {
       expect(confirmationPageMessage(assessment))
         .toMatchStringIgnoringWhitespace(`<p>We've sent you a confirmation email.</p>
         <p>We've notified the Probation Practitioner that this application has been rejected as unsuitable for an Approved Premises.</p>`)
+    })
+  })
+
+  describe('confirmationPageResult', () => {
+    it('returns the release date copy if the decision is "releaseDate"', () => {
+      const assessment = assessmentFactory.build({
+        data: { 'make-a-decision': { 'make-a-decision': { decision: 'releaseDate' } } },
+      })
+      expect(confirmationPageResult(assessment)).toBe('You have marked this application as suitable.')
+    })
+
+    it('returns the hold copy if the decision is "hold"', () => {
+      const assessment = assessmentFactory.build({
+        data: { 'make-a-decision': { 'make-a-decision': { decision: 'hold' } } },
+      })
+      expect(confirmationPageResult(assessment)).toBe('You have marked this application as suitable.')
+    })
+
+    it('returns the rejection copy if the decision isnt "hold" or "releaseDate" ', () => {
+      const assessment = assessmentFactory.build({
+        data: { 'make-a-decision': { 'make-a-decision': { decision: '' } } },
+      })
+      expect(confirmationPageResult(assessment)).toBe('You have marked this application as unsuitable.')
     })
   })
 })

@@ -319,13 +319,26 @@ const confirmationPageMessage = (assessment: Assessment) => {
   }
 }
 
+const confirmationPageResult = (assessment: Assessment) => {
+  switch (applicationAccepted(assessment)) {
+    case true:
+      return 'You have marked this application as suitable.'
+      break
+    default:
+      return 'You have marked this application as unsuitable.'
+      break
+  }
+}
+
 export {
   applicationAccepted,
   assessmentSections,
   assessmentLink,
   awaitingAssessmentTableRows,
   confirmationPageMessage,
+  confirmationPageResult,
   daysSinceReceived,
+  decisionFromAssessment,
   formattedArrivalDate,
   getStatus,
   getPage,
