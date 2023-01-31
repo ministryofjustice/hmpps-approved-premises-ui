@@ -12,7 +12,7 @@ import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 import getSections from '../../utils/assessments/getSections'
 
-jest.mock('../../utils/assessmentUtils')
+jest.mock('../../utils/assessments/utils')
 jest.mock('../../utils/assessments/informationSetAsNotReceived')
 jest.mock('../../utils/assessments/getSections')
 

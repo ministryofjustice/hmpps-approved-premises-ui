@@ -6,7 +6,7 @@ import {
   NewClarificationNote,
   UpdatedClarificationNote,
 } from '@approved-premises/api'
-import { getPage } from '../../../utils/assessmentUtils'
+import { getPage } from '../../../utils/assessments/utils'
 import { AssessmentService } from '../../../services'
 
 import {

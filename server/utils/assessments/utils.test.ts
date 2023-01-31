@@ -17,32 +17,32 @@ import {
   getTaskResponsesAsSummaryListItems,
   getReviewNavigationItems,
   getSectionSuffix,
-} from './assessmentUtils'
-import { DateFormats } from './dateUtils'
-import paths from '../paths/assess'
+} from './utils'
+import { DateFormats } from '../dateUtils'
+import paths from '../../paths/assess'
 
-import * as personUtils from './personUtils'
-import * as applicationUtils from './applicationUtils'
+import * as personUtils from '../personUtils'
+import * as applicationUtils from '../applicationUtils'
 
-import assessmentFactory from '../testutils/factories/assessment'
-import clarificationNoteFactory from '../testutils/factories/clarificationNote'
-import Assess from '../form-pages/assess'
-import { UnknownPageError } from './errors'
-import applicationFactory from '../testutils/factories/application'
-import reviewSections from './reviewUtils'
-import documentFactory from '../testutils/factories/document'
-import { documentsFromApplication } from './assessments/documentUtils'
+import assessmentFactory from '../../testutils/factories/assessment'
+import clarificationNoteFactory from '../../testutils/factories/clarificationNote'
+import Assess from '../../form-pages/assess'
+import { UnknownPageError } from '../errors'
+import applicationFactory from '../../testutils/factories/application'
+import reviewSections from '../reviewUtils'
+import documentFactory from '../../testutils/factories/document'
+import { documentsFromApplication } from './documentUtils'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
 
-jest.mock('./applicationUtils')
-jest.mock('./checkYourAnswersUtils')
-jest.mock('./personUtils')
-jest.mock('./reviewUtils')
-jest.mock('./assessments/documentUtils')
+jest.mock('../applicationUtils')
+jest.mock('../checkYourAnswersUtils')
+jest.mock('../personUtils')
+jest.mock('../reviewUtils')
+jest.mock('./documentUtils')
 
-jest.mock('../form-pages/assess', () => {
+jest.mock('../../form-pages/assess', () => {
   return {
     pages: { 'review-application': {}, 'sufficient-information': {} },
     sections: [
@@ -58,7 +58,7 @@ jest.mock('../form-pages/assess', () => {
   }
 })
 
-jest.mock('../form-pages/apply', () => {
+jest.mock('../../form-pages/apply', () => {
   return {
     pages: { 'basic-information': {}, 'type-of-ap': {} },
     sections: [
@@ -85,7 +85,7 @@ Assess.pages['review-application'] = {
   second: SecondPage,
 }
 
-describe('assessmentUtils', () => {
+describe('utils', () => {
   beforeEach(() => {
     jest.resetAllMocks()
   })

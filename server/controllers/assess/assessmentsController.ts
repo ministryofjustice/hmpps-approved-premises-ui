@@ -6,6 +6,8 @@ import getSections from '../../utils/assessments/getSections'
 
 import paths from '../../paths/assess'
 
+export const tasklistPageHeading = 'Assess an Approved Premises (AP) application'
+
 export default class AssessmentsController {
   constructor(private readonly assessmentService: AssessmentService) {}
 

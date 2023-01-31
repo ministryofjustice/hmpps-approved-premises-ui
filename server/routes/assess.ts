@@ -7,7 +7,7 @@ import Assess from '../form-pages/assess'
 import paths from '../paths/assess'
 
 import actions from './utils'
-import { getPage } from '../utils/assessmentUtils'
+import { getPage } from '../utils/assessments/utils'
 
 export default function routes(controllers: Controllers, router: Router): Router {
   const { pages } = Assess
