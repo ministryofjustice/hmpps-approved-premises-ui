@@ -1,5 +1,8 @@
 import type { TableRow, PageResponse } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication as Application } from '@approved-premises/api'
+import type {
+  ApprovedPremisesApplication as Application,
+  ApprovedPremisesAssessment as Assessment,
+} from '@approved-premises/api'
 import paths from '../paths/apply'
 import Apply from '../form-pages/apply'
 import { SessionDataError, UnknownPageError } from './errors'
@@ -8,8 +11,6 @@ import { DateFormats } from './dateUtils'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import Assess from '../form-pages/assess'
 import isAssessment from './assessments/isAssessment'
-
-type ApplicationResponse = Record<string, Array<PageResponse>>
 
 const dashboardTableRows = (applications: Array<Application>): Array<TableRow> => {
   return applications.map(application => {
@@ -39,27 +40,36 @@ const createNameAnchorElement = (name: string, applicationId: string) => {
   return htmlValue(`<a href=${paths.applications.show({ id: applicationId })}>${name}</a>`)
 }
 
-const getResponses = (application: Application): ApplicationResponse => {
+export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>
+
+const getResponses = (applicationOrAssessment: Application | Assessment): ApplicationOrAssessmentResponse => {
   const responses = {}
 
-  Object.keys(application.data).forEach(taskName => {
-    responses[taskName] = getResponsesForTask(application, taskName)
+  Object.keys(applicationOrAssessment.data).forEach(taskName => {
+    responses[taskName] = getResponsesForTask(applicationOrAssessment, taskName)
   })
 
   return responses
 }
 
-const getResponsesForTask = (application: Application, taskName: string): Array<PageResponse> => {
-  const pageNames = Object.keys(application.data[taskName])
-  const responsesForPages = pageNames.map(pageName => getResponseForPage(application, taskName, pageName))
+const getResponsesForTask = (
+  applicationOrAssessment: Application | Assessment,
+  taskName: string,
+): Array<PageResponse> => {
+  const pageNames = Object.keys(applicationOrAssessment.data[taskName])
+  const responsesForPages = pageNames.map(pageName => getResponseForPage(applicationOrAssessment, taskName, pageName))
   return responsesForPages
 }
 
-const getResponseForPage = (application: Application, taskName: string, pageName: string): PageResponse => {
-  const Page = getPage(taskName, pageName, isAssessment(application))
+const getResponseForPage = (
+  applicationOrAssessment: Application | Assessment,
+  taskName: string,
+  pageName: string,
+): PageResponse => {
+  const Page = getPage(taskName, pageName, isAssessment(applicationOrAssessment))
 
-  const body = application?.data?.[taskName]?.[pageName]
-  const page = new Page(body, application)
+  const body = applicationOrAssessment?.data?.[taskName]?.[pageName]
+  const page = new Page(body, applicationOrAssessment)
 
   return page.response()
 }
