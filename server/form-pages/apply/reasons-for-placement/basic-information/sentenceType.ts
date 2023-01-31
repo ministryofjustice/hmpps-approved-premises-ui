@@ -7,11 +7,11 @@ import TasklistPage from '../../../tasklistPage'
 export const sentenceTypes = {
   standardDeterminate: 'Standard determinate custody',
   life: 'Life sentence',
-  ipp: 'Indeterminate Public Protection',
+  ipp: 'Indeterminate Public Protection (IPP)',
   extendedDeterminate: 'Extended determinate custody',
-  communityOrder: 'Community Order',
+  communityOrder: 'Community Order (CO) / Suspended Sentence Order (SSO)',
   bailPlacement: 'Bail placement',
-  nonStatutory: 'Non-statutory',
+  nonStatutory: 'Non-statutory, MAPPA case',
 } as const
 
 export type SentenceTypesT = keyof typeof sentenceTypes
