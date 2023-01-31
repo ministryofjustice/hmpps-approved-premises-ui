@@ -12,6 +12,7 @@ import {
   getArrivalDate,
   dashboardTableRows,
   firstPageOfApplicationJourney,
+  isUnapplicable,
 } from './applicationUtils'
 import { SessionDataError, UnknownPageError } from './errors'
 
@@ -197,6 +198,38 @@ describe('applicationUtils', () => {
       expect(firstPageOfApplicationJourney(application)).toEqual(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' }),
       )
+    })
+  })
+
+  describe('isUnapplicable', () => {
+    const application = applicationFactory.build()
+
+    it('should return true if the applicant has answered no to the isExceptionalCase question', () => {
+      application.data = {
+        'basic-information': {
+          'is-exceptional-case': {
+            isExceptionalCase: 'no',
+          },
+        },
+      }
+
+      expect(isUnapplicable(application)).toEqual(true)
+    })
+
+    it('should return false if the applicant has answered yes to the isExceptionalCase question', () => {
+      application.data = {
+        'basic-information': {
+          'is-exceptional-case': {
+            isExceptionalCase: 'yes',
+          },
+        },
+      }
+
+      expect(isUnapplicable(application)).toEqual(false)
+    })
+
+    it('should return false if the applicant has not answered the isExceptionalCase question', () => {
+      expect(isUnapplicable(application)).toEqual(false)
     })
   })
 })

@@ -126,6 +126,13 @@ const getArrivalDate = (application: ApprovedPremisesApplication, raiseOnMissing
   return null
 }
 
+const isUnapplicable = (application: ApprovedPremisesApplication): boolean => {
+  const basicInformation = application.data?.['basic-information']
+  const isExceptionalCase = basicInformation?.['is-exceptional-case']?.isExceptionalCase
+
+  return isExceptionalCase === 'no'
+}
+
 const firstPageOfApplicationJourney = (application: ApprovedPremisesApplication) => {
   if (isApplicableTier(application.person.sex, application.risks.tier.value.level)) {
     return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' })
@@ -134,4 +141,12 @@ const firstPageOfApplicationJourney = (application: ApprovedPremisesApplication)
   return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' })
 }
 
-export { getResponses, getResponseForPage, getPage, getArrivalDate, dashboardTableRows, firstPageOfApplicationJourney }
+export {
+  getResponses,
+  getResponseForPage,
+  getPage,
+  getArrivalDate,
+  dashboardTableRows,
+  firstPageOfApplicationJourney,
+  isUnapplicable,
+}
