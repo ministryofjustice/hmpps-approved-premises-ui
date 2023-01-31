@@ -13,7 +13,7 @@ import Apply from '../../form-pages/apply'
 
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import { getResponses } from '../../utils/applicationUtils'
+import { firstPageOfApplicationJourney, getResponses } from '../../utils/applicationUtils'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applicationUtils')
@@ -231,14 +231,16 @@ describe('applicationsController', () => {
     })
 
     it('creates an application and redirects to the first page of the first step', async () => {
+      const firstPage = '/foo/bar'
+      ;(firstPageOfApplicationJourney as jest.Mock).mockReturnValue(firstPage)
+
       const requestHandler = applicationsController.create()
 
       await requestHandler(request, response, next)
 
       expect(applicationService.createApplication).toHaveBeenCalledWith('SOME_TOKEN', 'some-crn', offences[0])
-      expect(response.redirect).toHaveBeenCalledWith(
-        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' }),
-      )
+      expect(firstPageOfApplicationJourney).toHaveBeenCalledWith(application)
+      expect(response.redirect).toHaveBeenCalledWith(firstPage)
     })
 
     it('redirects to the select offences step if an offence has not been provided', async () => {

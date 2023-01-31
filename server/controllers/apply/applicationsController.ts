@@ -6,7 +6,7 @@ import { fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import Apply from '../../form-pages/apply'
-import { getResponses } from '../../utils/applicationUtils'
+import { firstPageOfApplicationJourney, getResponses } from '../../utils/applicationUtils'
 
 export default class ApplicationsController {
   constructor(private readonly applicationService: ApplicationService, private readonly personService: PersonService) {}
@@ -81,9 +81,7 @@ export default class ApplicationsController {
         const application = await this.applicationService.createApplication(req.user.token, crn, indexOffence)
         req.session.application = application
 
-        res.redirect(
-          paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' }),
-        )
+        res.redirect(firstPageOfApplicationJourney(application))
       }
     }
   }

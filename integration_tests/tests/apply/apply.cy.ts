@@ -15,6 +15,8 @@ import Page from '../../../cypress_shared/pages/page'
 import personFactory from '../../../server/testutils/factories/person'
 import risksFactory, { tierEnvelopeFactory } from '../../../server/testutils/factories/risks'
 import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
+import IsExceptionalCasePage from '../../../cypress_shared/pages/apply/isExceptionalCase'
+import ExceptionDetailsPage from '../../../cypress_shared/pages/apply/ExceptionDetails'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -75,6 +77,36 @@ context('Apply', () => {
       expect(body.deliusEventNumber).equal(selectedOffence.deliusEventNumber)
       expect(body.offenceId).equal(selectedOffence.offenceId)
     })
+
+    // Then I should be on the Sentence Type page
+    Page.verifyOnPage(SentenceTypePage, this.application)
+  })
+
+  it(`allows the user to specify if the case is exceptional if the offender's tier is not eligible`, function test() {
+    // And that person does not have an eligible risk tier
+    const risks = risksFactory.build({
+      crn: this.person.crn,
+      tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
+    })
+    this.application.risks = risks
+
+    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    apply.setupApplicationStubs()
+    apply.startApplication()
+
+    // Then I should be prompted to confirm that the case is exceptional
+    const isExceptionalCasePage = Page.verifyOnPage(IsExceptionalCasePage)
+
+    // And I select yes
+    isExceptionalCasePage.completeForm()
+    isExceptionalCasePage.clickSubmit()
+
+    // Then I should be prompted to enter the details of the exception
+    const exceptionDetailsPage = Page.verifyOnPage(ExceptionDetailsPage)
+
+    // And I enter the details
+    exceptionDetailsPage.completeForm()
+    exceptionDetailsPage.clickSubmit()
 
     // Then I should be on the Sentence Type page
     Page.verifyOnPage(SentenceTypePage, this.application)
