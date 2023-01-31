@@ -4,9 +4,15 @@ import paths from '../paths/apply'
 import Apply from '../form-pages/apply'
 import Assess from '../form-pages/assess'
 import { DateFormats } from './dateUtils'
-import { tierBadge } from './personUtils'
+import { tierBadge, isApplicableTier } from './personUtils'
 
-import { getResponses, getPage, getArrivalDate, dashboardTableRows } from './applicationUtils'
+import {
+  getResponses,
+  getPage,
+  getArrivalDate,
+  dashboardTableRows,
+  firstPageOfApplicationJourney,
+} from './applicationUtils'
 import { SessionDataError, UnknownPageError } from './errors'
 
 const FirstApplyPage = jest.fn()
@@ -24,6 +30,8 @@ jest.mock('../form-pages/assess', () => {
     pages: { 'assess-page': {} },
   }
 })
+
+jest.mock('./personUtils')
 
 Apply.pages['basic-information'] = {
   first: FirstApplyPage,
@@ -115,6 +123,7 @@ describe('applicationUtils', () => {
 
   describe('dashboardTableRows', () => {
     it('returns an array of applications as table rows', async () => {
+      ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')
       const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
 
       const applicationA = applicationFactory.build({
@@ -130,6 +139,8 @@ describe('applicationUtils', () => {
 
       const result = dashboardTableRows([applicationA, applicationB])
 
+      expect(tierBadge).toHaveBeenCalledWith('A1')
+
       expect(result).toEqual([
         [
           {
@@ -139,7 +150,7 @@ describe('applicationUtils', () => {
             text: applicationA.person.crn,
           },
           {
-            html: tierBadge('A1'),
+            html: 'TIER_BADGE',
           },
           {
             text: 'N/A',
@@ -156,7 +167,7 @@ describe('applicationUtils', () => {
             text: applicationB.person.crn,
           },
           {
-            html: '',
+            html: 'TIER_BADGE',
           },
           {
             text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
@@ -166,6 +177,26 @@ describe('applicationUtils', () => {
           },
         ],
       ])
+    })
+  })
+
+  describe('firstPageOfApplicationJourney', () => {
+    it('returns the sentence type page for an applicable application', () => {
+      ;(isApplicableTier as jest.Mock).mockReturnValue(true)
+      const application = applicationFactory.build()
+
+      expect(firstPageOfApplicationJourney(application)).toEqual(
+        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' }),
+      )
+    })
+
+    it('returns the is exceptional case page for an unapplicable application', () => {
+      ;(isApplicableTier as jest.Mock).mockReturnValue(false)
+      const application = applicationFactory.build()
+
+      expect(firstPageOfApplicationJourney(application)).toEqual(
+        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' }),
+      )
     })
   })
 })
