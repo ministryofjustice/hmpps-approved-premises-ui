@@ -19,6 +19,7 @@ import {
   getReviewNavigationItems,
   getSectionSuffix,
   decisionFromAssessment,
+  confirmationPageMessage,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
@@ -442,6 +443,36 @@ describe('utils', () => {
       const rejectedAssessment = assessmentFactory.build()
 
       expect(applicationAccepted(rejectedAssessment)).toBe(false)
+    })
+  })
+
+  describe('confirmationPageMessage', () => {
+    it('returns the release date copy if the decision is "releaseDate"', () => {
+      const assessment = assessmentFactory.build({
+        data: { 'make-a-decision': { 'make-a-decision': { decision: 'releaseDate' } } },
+      })
+      expect(confirmationPageMessage(assessment))
+        .toMatchStringIgnoringWhitespace(`<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
+      <p>The assessment can now be used to match Robert Brown to a bed in an Approved Premises.</p>`)
+    })
+
+    it('returns the hold copy if the decision is "hold"', () => {
+      const assessment = assessmentFactory.build({
+        data: { 'make-a-decision': { 'make-a-decision': { decision: 'hold' } } },
+      })
+      expect(confirmationPageMessage(assessment))
+        .toMatchStringIgnoringWhitespace(`<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
+        <p>This case is now paused until the oral hearing outcome has been provided by the Probation Practitioner and a release date is confirmed.</p>
+        <p>It will be added to the matching queue if the oral hearing is successful.</p>`)
+    })
+
+    it('returns the rejection copy if the decision isnt "hold" or "releaseDate" ', () => {
+      const assessment = assessmentFactory.build({
+        data: { 'make-a-decision': { 'make-a-decision': { decision: '' } } },
+      })
+      expect(confirmationPageMessage(assessment))
+        .toMatchStringIgnoringWhitespace(`<p>We've sent you a confirmation email.</p>
+        <p>We've notified the Probation Practitioner that this application has been rejected as unsuitable for an Approved Premises.</p>`)
     })
   })
 })
