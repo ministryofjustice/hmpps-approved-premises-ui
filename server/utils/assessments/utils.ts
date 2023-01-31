@@ -284,6 +284,9 @@ const getSectionSuffix = (task: Task) => {
   return `<p><a href="${link}">${copy}</a></p>`
 }
 
+const decisionFromAssessment = (assessment: Assessment) =>
+  assessment?.data?.['make-a-decision']?.['make-a-decision']?.decision || ''
+
 const applicationAccepted = (assessment: Assessment) => {
   switch (decisionFromAssessment(assessment)) {
     case 'releaseDate':

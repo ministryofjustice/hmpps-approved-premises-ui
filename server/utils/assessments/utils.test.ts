@@ -18,6 +18,7 @@ import {
   getTaskResponsesAsSummaryListItems,
   getReviewNavigationItems,
   getSectionSuffix,
+  decisionFromAssessment,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
@@ -401,6 +402,21 @@ describe('utils', () => {
       )
     })
   })
+
+  describe('decisionFromAssessment', () => {
+    it('returns the decision from the assessment if it exists', () => {
+      const assessment = assessmentFactory.build({
+        data: { 'make-a-decision': { 'make-a-decision': { decision: 'the decision' } } },
+      })
+      expect(decisionFromAssessment(assessment)).toEqual('the decision')
+    })
+
+    it('returns an empty string of the decision doesnt exist', () => {
+      const assessment = assessmentFactory.build({ data: {} })
+      expect(decisionFromAssessment(assessment)).toEqual('')
+    })
+  })
+
   describe('applicationAccepted', () => {
     it('returns true if the assessment has either of the two decisions which accept an applicaiton', () => {
       const acceptedAssessment1 = assessmentFactory.build({
