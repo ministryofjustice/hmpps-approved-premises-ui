@@ -1,0 +1,79 @@
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+  <h1 class="govuk-heading-l">
+    This application is not eligible
+  </h1>
+
+  <h2 class="govuk-heading-m">
+    This person is managed at <strong>Tier {{ page.tier }}</strong>
+  </h2>
+
+  <p>People in prison or people on probation who are managed at the following Tiers would be eligible to apply for an Approved Premises (AP) placement.</p>
+
+  <ul class="govuk-list govuk-list--bullet">
+    <li>A3</li>
+    <li>A2</li>
+    <li>B1</li>
+    <li>B3</li>
+    <li>B2</li>
+    <li>B1</li>
+    <li>C3 (women only)</li>
+  </ul>
+
+  <p>Applications for an AP placement can still be made in exceptional circumstances.</p>
+
+  {% set detailsHTML %}
+  <p>An AP placement may occasionally be required to manage the risk posed by, or to, people managed in Tiers C3, C2, C1, or people in specific circumstances.</p>
+
+  <p>This may include (but is not limited to):</p>
+  <ul class="govuk-list govuk-list--bullet">
+    <li>People in the community who have been convicted of sex offences and have been publicly identified, for example through social media (Tier C)</li>
+    <li>Life / IPP or other prisoners who have served long periods (over 10 years) in custody</li>
+    <li>People with a high national media profile (Tier C) </li>
+    <li>People managed at MAPPA Level 2 or 3 (Tier C) </li>
+    <li>People who are managed on Post Sentence Supervision or Community Orders without a multi-agency contingency plan in place </li>
+  </ul>
+
+  <p>Where this is being considered, there should be a discussion between the Head/Deputy Head of Probation Delivery Unit (PDU) or Community Head of Public Protection (HoPP) and an AP Area Manager / CRU Manager or Head of Public Protection (Residential).</p>
+  <p>In these exceptional cases an application to an AP can be made, but a placement is not guaranteed.</p>
+  {% endset %}
+
+  {% set hintHTML %}
+  {{ govukDetails({
+    summaryText: "What is an exceptional case?",
+    html: detailsHTML
+  }) }}
+  {% endset %}
+
+  {{
+    formPageRadios(
+      {
+        fieldName: "isExceptionalCase",
+        fieldset: {
+          legend: {
+            text: page.title,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        hint: {
+          html: hintHTML
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes"
+          },
+          {
+            text: "No",
+            value: "no"
+          }
+        ]
+      },
+      fetchContext()
+    )
+  }}
+
+{% endblock %}

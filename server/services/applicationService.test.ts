@@ -13,6 +13,7 @@ import applicationFactory from '../testutils/factories/application'
 import activeOffenceFactory from '../testutils/factories/activeOffence'
 import documentFactory from '../testutils/factories/document'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
+import { isUnapplicable } from '../utils/applicationUtils'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -32,6 +33,7 @@ jest.mock('../data/applicationClient.ts')
 jest.mock('../data/personClient.ts')
 jest.mock('../utils/applicationUtils')
 jest.mock('../form-pages/utils')
+jest.mock('../utils/applicationUtils')
 
 describe('ApplicationService', () => {
   const applicationClient = new ApplicationClient(null) as jest.Mocked<ApplicationClient>
@@ -45,10 +47,10 @@ describe('ApplicationService', () => {
   })
 
   describe('getAllForLoggedInUser', () => {
-    it('fetches all applications', async () => {
-      const token = 'SOME_TOKEN'
+    const token = 'SOME_TOKEN'
+    const applications = applicationFactory.buildList(5)
 
-      const applications = applicationFactory.buildList(5)
+    it('fetches all applications', async () => {
       applicationClient.all.mockResolvedValue(applications)
 
       const result = await service.getAllForLoggedInUser(token)
@@ -57,6 +59,17 @@ describe('ApplicationService', () => {
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.all).toHaveBeenCalled()
+    })
+
+    it('should filter out unapplicable applications', async () => {
+      const unapplicableApplication = applicationFactory.build()
+      ;(isUnapplicable as jest.Mock).mockImplementation(application => application === unapplicableApplication)
+
+      applicationClient.all.mockResolvedValue([applications, unapplicableApplication].flat())
+
+      const result = await service.getAllForLoggedInUser(token)
+
+      expect(result).toEqual(applications)
     })
   })
 

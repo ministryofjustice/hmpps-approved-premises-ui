@@ -2,6 +2,7 @@ import type { Request } from 'express'
 import type { DataServices } from '@approved-premises/ui'
 import type { ActiveOffence, ApprovedPremisesApplication, Document } from '@approved-premises/api'
 
+import { isUnapplicable } from '../utils/applicationUtils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import type { RestClientBuilder, ApplicationClient } from '../data'
 import { ValidationError } from '../utils/errors'
@@ -33,8 +34,9 @@ export default class ApplicationService {
 
   async getAllForLoggedInUser(token: string): Promise<Array<ApprovedPremisesApplication>> {
     const applicationClient = this.applicationClientFactory(token)
+    const applications = await applicationClient.all()
 
-    return applicationClient.all()
+    return applications.filter(application => !isUnapplicable(application))
   }
 
   async getDocuments(token: string, application: ApprovedPremisesApplication): Promise<Array<Document>> {

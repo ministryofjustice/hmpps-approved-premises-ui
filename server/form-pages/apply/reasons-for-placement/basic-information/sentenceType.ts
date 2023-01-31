@@ -1,4 +1,5 @@
 import type { TaskListErrors } from '@approved-premises/ui'
+import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -19,13 +20,16 @@ export type SentenceTypesT = keyof typeof sentenceTypes
 export default class SentenceType implements TasklistPage {
   title = 'Which of the following best describes the sentence type?'
 
-  constructor(readonly body: { sentenceType?: SentenceTypesT }) {}
+  constructor(readonly body: { sentenceType?: SentenceTypesT }, readonly application: Application) {}
 
   response() {
     return { [this.title]: sentenceTypes[this.body.sentenceType] }
   }
 
   previous() {
+    if (this.application.data?.['basic-information']?.['exception-details']) {
+      return 'exception-details'
+    }
     return ''
   }
 

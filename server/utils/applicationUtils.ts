@@ -3,7 +3,7 @@ import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import paths from '../paths/apply'
 import Apply from '../form-pages/apply'
 import { SessionDataError, UnknownPageError } from './errors'
-import { tierBadge } from './personUtils'
+import { isApplicableTier, tierBadge } from './personUtils'
 import { DateFormats } from './dateUtils'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import Assess from '../form-pages/assess'
@@ -126,4 +126,27 @@ const getArrivalDate = (application: ApprovedPremisesApplication, raiseOnMissing
   return null
 }
 
-export { getResponses, getResponseForPage, getPage, getArrivalDate, dashboardTableRows }
+const isUnapplicable = (application: ApprovedPremisesApplication): boolean => {
+  const basicInformation = application.data?.['basic-information']
+  const isExceptionalCase = basicInformation?.['is-exceptional-case']?.isExceptionalCase
+
+  return isExceptionalCase === 'no'
+}
+
+const firstPageOfApplicationJourney = (application: ApprovedPremisesApplication) => {
+  if (isApplicableTier(application.person.sex, application.risks.tier.value.level)) {
+    return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' })
+  }
+
+  return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' })
+}
+
+export {
+  getResponses,
+  getResponseForPage,
+  getPage,
+  getArrivalDate,
+  dashboardTableRows,
+  firstPageOfApplicationJourney,
+  isUnapplicable,
+}

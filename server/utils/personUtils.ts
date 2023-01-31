@@ -16,4 +16,13 @@ const tierBadge = (tier: string): string => {
   return `<span class="moj-badge ${colour}">${tier}</span>`
 }
 
-export { statusTag, tierBadge }
+const isApplicableTier = (sex: string, tier: string): boolean => {
+  const applicableTiersAll = ['A3', 'A2', 'B1', 'B3', 'B2', 'B1']
+  const applicableTiersWomen = ['C3']
+
+  const applicableTiers = sex === 'Female' ? [applicableTiersAll, applicableTiersWomen].flat() : applicableTiersAll
+
+  return applicableTiers.includes(tier)
+}
+
+export { statusTag, tierBadge, isApplicableTier }

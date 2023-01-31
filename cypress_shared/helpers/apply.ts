@@ -1,4 +1,5 @@
 import {
+  ActiveOffence,
   Adjudication,
   ApprovedPremisesApplication as Application,
   ArrayOfOASysOffenceDetailsQuestions,
@@ -114,6 +115,7 @@ export default class ApplyHelper {
   constructor(
     private readonly application: Application,
     private readonly person: Person,
+    private readonly offences: Array<ActiveOffence>,
     private readonly type: 'e2e' | 'integration',
   ) {}
 
@@ -122,13 +124,15 @@ export default class ApplyHelper {
     this.otherOasysSections = otherOasysSections
   }
 
-  setupApplicationStubs(uiRisks: PersonRisksUI) {
+  setupApplicationStubs(uiRisks?: PersonRisksUI) {
     this.uiRisks = uiRisks
+    this.stubPersonEndpoints()
     this.stubApplicationEndpoints()
     this.stubOasysEndpoints()
     this.stubPrisonCaseNoteEndpoints()
     this.stubAdjudicationEndpoints()
     this.stubDocumentEndpoints()
+    this.stubOffences()
   }
 
   startApplication() {
@@ -176,6 +180,15 @@ export default class ApplyHelper {
       ...this.pages.moveOn,
       ...this.selectedDocuments,
     ].length
+  }
+
+  private stubPersonEndpoints() {
+    cy.task('stubPersonRisks', { person: this.person, risks: this.application.risks })
+    cy.task('stubFindPerson', { person: this.person })
+  }
+
+  private stubOffences() {
+    cy.task('stubPersonOffences', { person: this.person, offences: this.offences })
   }
 
   private stubApplicationEndpoints() {

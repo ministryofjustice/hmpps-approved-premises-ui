@@ -6,7 +6,7 @@ import { fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import Apply from '../../form-pages/apply'
-import { getResponses } from '../../utils/applicationUtils'
+import { firstPageOfApplicationJourney, getResponses, isUnapplicable } from '../../utils/applicationUtils'
 
 export default class ApplicationsController {
   constructor(private readonly applicationService: ApplicationService, private readonly personService: PersonService) {}
@@ -31,7 +31,11 @@ export default class ApplicationsController {
     return async (req: Request, res: Response) => {
       const application = await this.applicationService.getApplicationFromSessionOrAPI(req)
 
-      res.render('applications/show', { application, sections: Apply.sections })
+      if (isUnapplicable(application)) {
+        res.render('applications/notEligible')
+      } else {
+        res.render('applications/show', { application, sections: Apply.sections })
+      }
     }
   }
 
@@ -81,9 +85,7 @@ export default class ApplicationsController {
         const application = await this.applicationService.createApplication(req.user.token, crn, indexOffence)
         req.session.application = application
 
-        res.redirect(
-          paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' }),
-        )
+        res.redirect(firstPageOfApplicationJourney(application))
       }
     }
   }

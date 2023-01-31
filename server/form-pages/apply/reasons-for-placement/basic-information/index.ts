@@ -1,5 +1,7 @@
 /* istanbul ignore file */
 
+import IsExceptionalCase from './isExceptionalCase'
+import ExceptionDetails from './exceptionDetails'
 import SentenceType from './sentenceType'
 import ReleaseType from './releaseType'
 import Situation from './situation'
@@ -12,6 +14,16 @@ import { Task } from '../../../utils/decorators'
 @Task({
   name: 'Basic Information',
   slug: 'basic-information',
-  pages: [SentenceType, ReleaseType, Situation, ReleaseDate, OralHearing, PlacementDate, PlacementPurpose],
+  pages: [
+    IsExceptionalCase,
+    ExceptionDetails,
+    SentenceType,
+    ReleaseType,
+    Situation,
+    ReleaseDate,
+    OralHearing,
+    PlacementDate,
+    PlacementPurpose,
+  ],
 })
 export default class BasicInformation {}

@@ -12,7 +12,7 @@ const person = personFactory.build(personData)
 const application = applicationFactory.build({ person, data: applicationData })
 
 Given('I start a new application', () => {
-  const apply = new ApplyHelper(application, person, 'e2e')
+  const apply = new ApplyHelper(application, person, [], 'e2e')
   apply.startApplication()
 })
 
@@ -21,7 +21,7 @@ Given('I fill in and complete an application', () => {
     const id = url.match(/applications\/(.+)\/tasks/)[1]
     application.id = id
 
-    const apply = new ApplyHelper(application, person, 'e2e')
+    const apply = new ApplyHelper(application, person, [], 'e2e')
 
     apply.completeApplication()
   })
