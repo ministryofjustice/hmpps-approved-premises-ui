@@ -17,6 +17,7 @@ import risksFactory, { tierEnvelopeFactory } from '../../../server/testutils/fac
 import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
 import IsExceptionalCasePage from '../../../cypress_shared/pages/apply/isExceptionalCase'
 import ExceptionDetailsPage from '../../../cypress_shared/pages/apply/ExceptionDetails'
+import NotEligiblePage from '../../../cypress_shared/pages/apply/notEligiblePage'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -98,7 +99,7 @@ context('Apply', () => {
     const isExceptionalCasePage = Page.verifyOnPage(IsExceptionalCasePage)
 
     // And I select yes
-    isExceptionalCasePage.completeForm()
+    isExceptionalCasePage.completeForm('yes')
     isExceptionalCasePage.clickSubmit()
 
     // Then I should be prompted to enter the details of the exception
@@ -110,6 +111,29 @@ context('Apply', () => {
 
     // Then I should be on the Sentence Type page
     Page.verifyOnPage(SentenceTypePage, this.application)
+  })
+
+  it('tells the user that their application is not applicable if the tier is not eligible and it is not an exceptional case', function test() {
+    // And that person does not have an eligible risk tier
+    const risks = risksFactory.build({
+      crn: this.person.crn,
+      tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
+    })
+    this.application.risks = risks
+
+    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    apply.setupApplicationStubs()
+    apply.startApplication()
+
+    // Then I should be prompted to confirm that the case is exceptional
+    const isExceptionalCasePage = Page.verifyOnPage(IsExceptionalCasePage)
+
+    // And I select no
+    isExceptionalCasePage.completeForm('no')
+    isExceptionalCasePage.clickSubmit()
+
+    // Then I should be told the application is not eligible
+    Page.verifyOnPage(NotEligiblePage)
   })
 
   it("creates and updates an application given a person's CRN", function test() {

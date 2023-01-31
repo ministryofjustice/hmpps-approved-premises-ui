@@ -13,7 +13,7 @@ import Apply from '../../form-pages/apply'
 
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import { firstPageOfApplicationJourney, getResponses } from '../../utils/applicationUtils'
+import { firstPageOfApplicationJourney, getResponses, isUnapplicable } from '../../utils/applicationUtils'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applicationUtils')
@@ -90,6 +90,15 @@ describe('applicationsController', () => {
       })
 
       expect(applicationService.findApplication).not.toHaveBeenCalledWith(token, application.id)
+    })
+
+    it('renders the not applicable page if the application is not applicable', async () => {
+      const requestHandler = applicationsController.show()
+      ;(isUnapplicable as jest.Mock).mockReturnValue(true)
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/notEligible')
     })
   })
 

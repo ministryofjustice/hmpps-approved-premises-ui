@@ -1,3 +1,4 @@
+import { YesOrNo } from '@approved-premises/ui'
 import Page from '../page'
 
 export default class IsExceptionalCasePage extends Page {
@@ -5,7 +6,7 @@ export default class IsExceptionalCasePage extends Page {
     super('This application is not eligible')
   }
 
-  completeForm() {
-    this.checkRadioByNameAndValue('isExceptionalCase', 'yes')
+  completeForm(answer: YesOrNo) {
+    this.checkRadioByNameAndValue('isExceptionalCase', answer)
   }
 }
