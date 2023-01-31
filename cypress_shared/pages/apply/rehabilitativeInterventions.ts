@@ -5,7 +5,7 @@ import ApplyPage from './applyPage'
 export default class RehabilitativeInterventions extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
     super(
-      "Which rehabilitative interventions will support the person's Approved Premises (AP) placement?",
+      "Which of the rehabilitative activities will assist the person's rehabilitation in the Approved Premises (AP)?",
       application,
       'risk-management-features',
       'rehabilitative-interventions',

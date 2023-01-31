@@ -9,7 +9,7 @@ export const offences = {
   arson: 'Arson offences',
   sexualOffence: 'Sexual offences',
   hateCrimes: 'Hate crimes',
-  childNonSexualOffence: 'Non-sexual offences against children',
+  childNonSexualOffence: 'Offences against children',
 } as const
 
 type Offences = Array<keyof typeof offences>
