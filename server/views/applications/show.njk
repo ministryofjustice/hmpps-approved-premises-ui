@@ -25,35 +25,37 @@
     {{ showErrorSummary(errorSummary) }}
 
     <div class="govuk-grid-column-two-thirds">
-      <ol class="app-task-list">
-        {% for section in sections %}
+      <form action="{{ paths.applications.submission({id: application.id}) }}" method="post">
+
+        <ol class="app-task-list">
+          {% for section in sections %}
+            <li>
+              <h2 class="app-task-list__section">
+                <span class="app-task-list__section-number">{{loop.index}}. </span>
+                {{ section.title }}
+              </h2>
+              <ul class="app-task-list__items">
+                {% for task in section.tasks %}
+                  <li class="app-task-list__item">
+                    <span class="app-task-list__task-name">
+                      {{ TasklistUtils.taskLink(task, application) | safe  }}
+                    </span>
+                    {{ TasklistUtils.getTaskStatus(task, application) | safe }}
+                  </li>
+                {% endfor %}
+              </ul>
+            </li>
+          {% endfor %}
+
           <li>
             <h2 class="app-task-list__section">
-              <span class="app-task-list__section-number">{{loop.index}}. </span>
-              {{ section.title }}
-            </h2>
-            <ul class="app-task-list__items">
-              {% for task in section.tasks %}
-                <li class="app-task-list__item">
-                  <span class="app-task-list__task-name">
-                    {{ TasklistUtils.taskLink(task, application) | safe  }}
-                  </span>
-                  {{ TasklistUtils.getTaskStatus(task, application) | safe }}
-                </li>
-              {% endfor %}
-            </ul>
-          </li>
-        {% endfor %}
-
-        <li>
-          <h2 class="app-task-list__section">
-            <span class="app-task-list__section-number">
-              {{ (sections | length) + 1 }}.
+              <span class="app-task-list__section-number">
+                {{ (sections | length) + 1 }}.
             </span>
             Submit your application
           </h2>
 
-          {{ govukCheckboxes({
+            {{ govukCheckboxes({
             idPrefix: "confirmation",
             name: "confirmation",
             errorMessage: errorObject,
@@ -64,10 +66,9 @@
               }
             ]
           }) }}
-        </li>
-      </ol>
+          </li>
+        </ol>
 
-      <form action="{{ paths.applications.submission({id: application.id}) }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
         {{ govukButton({
