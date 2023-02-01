@@ -1,5 +1,5 @@
 import type { Request } from 'express'
-import type { DataServices } from '@approved-premises/ui'
+import type { DataServices, GroupedApplications } from '@approved-premises/ui'
 import type { ActiveOffence, ApprovedPremisesApplication, Document } from '@approved-premises/api'
 
 import { isUnapplicable } from '../utils/applicationUtils'
@@ -32,11 +32,34 @@ export default class ApplicationService {
     return application
   }
 
-  async getAllForLoggedInUser(token: string): Promise<Array<ApprovedPremisesApplication>> {
+  async getAllForLoggedInUser(token: string): Promise<GroupedApplications> {
     const applicationClient = this.applicationClientFactory(token)
-    const applications = await applicationClient.all()
+    const allApplications = await applicationClient.all()
+    const result = {
+      inProgress: [],
+      requestedFurtherInformation: [],
+      submitted: [],
+    } as GroupedApplications
 
-    return applications.filter(application => !isUnapplicable(application))
+    const applications = allApplications.filter(application => !isUnapplicable(application))
+
+    await Promise.all(
+      applications.map(async application => {
+        switch (application.status) {
+          case 'submitted':
+            result.submitted.push(application)
+            break
+          case 'requestedFurtherInformation':
+            result.requestedFurtherInformation.push(application)
+            break
+          default:
+            result.inProgress.push(application)
+            break
+        }
+      }),
+    )
+
+    return result
   }
 
   async getDocuments(token: string, application: ApprovedPremisesApplication): Promise<Array<Document>> {

@@ -48,14 +48,24 @@ describe('ApplicationService', () => {
 
   describe('getAllForLoggedInUser', () => {
     const token = 'SOME_TOKEN'
-    const applications = applicationFactory.buildList(5)
+    const submittedApplications = applicationFactory.buildList(5, { status: 'submitted' })
+    const inProgressApplications = applicationFactory.buildList(2, { status: 'inProgress' })
+    const requestedFurtherInformationApplications = applicationFactory.buildList(1, {
+      status: 'requestedFurtherInformation',
+    })
+
+    const applications = [submittedApplications, inProgressApplications, requestedFurtherInformationApplications].flat()
 
     it('fetches all applications', async () => {
       applicationClient.all.mockResolvedValue(applications)
 
       const result = await service.getAllForLoggedInUser(token)
 
-      expect(result).toEqual(applications)
+      expect(result).toEqual({
+        inProgress: inProgressApplications,
+        requestedFurtherInformation: requestedFurtherInformationApplications,
+        submitted: submittedApplications,
+      })
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.all).toHaveBeenCalled()
@@ -69,7 +79,11 @@ describe('ApplicationService', () => {
 
       const result = await service.getAllForLoggedInUser(token)
 
-      expect(result).toEqual(applications)
+      expect(result).toEqual({
+        inProgress: inProgressApplications,
+        requestedFurtherInformation: requestedFurtherInformationApplications,
+        submitted: submittedApplications,
+      })
     })
   })
 

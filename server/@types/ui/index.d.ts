@@ -14,6 +14,7 @@ import {
   ArrayOfOASysRiskToSelfQuestions,
   ArrayOfOASysRiskManagementPlanQuestions,
   Booking,
+  Application,
 } from '@approved-premises/api'
 
 interface TasklistPage {
@@ -212,6 +213,12 @@ export interface GroupedAssessments {
   completed: Array<Assessment>
   requestedFurtherInformation: Array<Assessment>
   awaiting: Array<Assessment>
+}
+
+export interface GroupedApplications {
+  inProgress: Array<Application>
+  requestedFurtherInformation: Array<Application>
+  submitted: Array<Application>
 }
 
 export interface ApplicationWithRisks extends Application {

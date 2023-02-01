@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 
-import type { ErrorsAndUserInput } from '@approved-premises/ui'
+import type { ErrorsAndUserInput, GroupedApplications } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import ApplicationsController, { tasklistPageHeading } from './applicationsController'
 import { ApplicationService, PersonService } from '../../services'
@@ -38,7 +38,8 @@ describe('applicationsController', () => {
 
   describe('index', () => {
     it('renders the index view', async () => {
-      const applications = applicationFactory.buildList(5)
+      const applications: GroupedApplications = { inProgress: [], requestedFurtherInformation: [], submitted: [] }
+
       applicationService.getAllForLoggedInUser.mockResolvedValue(applications)
 
       const requestHandler = applicationsController.index()
