@@ -2,18 +2,18 @@ import { HtmlItem, PageResponse, SummaryListItem, TableRow, Task, TextItem } fro
 import { format, differenceInDays, add } from 'date-fns'
 
 import { ApprovedPremisesAssessment as Assessment, ApprovedPremisesApplication } from '@approved-premises/api'
-import { tierBadge } from './personUtils'
-import { DateFormats } from './dateUtils'
-import { getArrivalDate, getResponseForPage } from './applicationUtils'
-import paths from '../paths/assess'
-import { TasklistPageInterface } from '../form-pages/tasklistPage'
-import Assess from '../form-pages/assess'
-import { UnknownPageError } from './errors'
-import { embeddedSummaryListItem } from './checkYourAnswersUtils'
-import reviewSections from './reviewUtils'
-import Apply from '../form-pages/apply'
-import { kebabCase } from './utils'
-import { documentsFromApplication } from './assessments/documentUtils'
+import { tierBadge } from '../personUtils'
+import { DateFormats } from '../dateUtils'
+import { getArrivalDate, getResponseForPage } from '../applicationUtils'
+import paths from '../../paths/assess'
+import { TasklistPageInterface } from '../../form-pages/tasklistPage'
+import Assess from '../../form-pages/assess'
+import { UnknownPageError } from '../errors'
+import { embeddedSummaryListItem } from '../checkYourAnswersUtils'
+import reviewSections from '../reviewUtils'
+import Apply from '../../form-pages/apply'
+import { kebabCase } from '../utils'
+import { documentsFromApplication } from './documentUtils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
@@ -284,11 +284,61 @@ const getSectionSuffix = (task: Task) => {
   return `<p><a href="${link}">${copy}</a></p>`
 }
 
+const decisionFromAssessment = (assessment: Assessment) =>
+  assessment?.data?.['make-a-decision']?.['make-a-decision']?.decision || ''
+
+const applicationAccepted = (assessment: Assessment) => {
+  switch (decisionFromAssessment(assessment)) {
+    case 'releaseDate':
+      return true
+      break
+    case 'hold':
+      return true
+      break
+    default:
+      return false
+      break
+  }
+}
+
+const confirmationPageMessage = (assessment: Assessment) => {
+  switch (decisionFromAssessment(assessment)) {
+    case 'releaseDate':
+      return `<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
+      <p>The assessment can now be used to match Robert Brown to a bed in an Approved Premises.</p>`
+      break
+    case 'hold':
+      return `<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
+      <p>This case is now paused until the oral hearing outcome has been provided by the Probation Practitioner and a release date is confirmed.</p>
+      <p>It will be added to the matching queue if the oral hearing is successful.</p>`
+      break
+    default:
+      return `<p>We've sent you a confirmation email.</p>
+      <p>We've notified the Probation Practitioner that this application has been rejected as unsuitable for an Approved Premises.</p>`
+      break
+  }
+}
+
+const confirmationPageResult = (assessment: Assessment) => {
+  switch (applicationAccepted(assessment)) {
+    case true:
+      return 'You have marked this application as suitable.'
+      break
+    default:
+      return 'You have marked this application as unsuitable.'
+      break
+  }
+}
+
 export {
+  applicationAccepted,
   assessmentSections,
   assessmentLink,
   awaitingAssessmentTableRows,
+  confirmationPageMessage,
+  confirmationPageResult,
   daysSinceReceived,
+  decisionFromAssessment,
   formattedArrivalDate,
   getStatus,
   getPage,

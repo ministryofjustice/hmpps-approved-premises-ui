@@ -19,7 +19,7 @@ import { checkYourAnswersSections } from './checkYourAnswersUtils'
 import { statusTag } from './personUtils'
 import { DateFormats } from './dateUtils'
 
-import * as AssessmentUtils from './assessmentUtils'
+import * as AssessmentUtils from './assessments/utils'
 import * as OffenceUtils from './offenceUtils'
 import * as AttachDocumentsUtils from './attachDocumentsUtils'
 import * as OasysImportUtils from './oasysImportUtils'

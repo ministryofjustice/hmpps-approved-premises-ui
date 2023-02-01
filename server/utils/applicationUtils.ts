@@ -1,5 +1,8 @@
 import type { TableRow, PageResponse } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type {
+  ApprovedPremisesApplication as Application,
+  ApprovedPremisesAssessment as Assessment,
+} from '@approved-premises/api'
 import paths from '../paths/apply'
 import Apply from '../form-pages/apply'
 import { SessionDataError, UnknownPageError } from './errors'
@@ -9,9 +12,7 @@ import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import Assess from '../form-pages/assess'
 import isAssessment from './assessments/isAssessment'
 
-type ApplicationResponse = Record<string, Array<PageResponse>>
-
-const dashboardTableRows = (applications: Array<ApprovedPremisesApplication>): Array<TableRow> => {
+const dashboardTableRows = (applications: Array<Application>): Array<TableRow> => {
   return applications.map(application => {
     const arrivalDate = getArrivalDate(application, false)
 
@@ -39,31 +40,36 @@ const createNameAnchorElement = (name: string, applicationId: string) => {
   return htmlValue(`<a href=${paths.applications.show({ id: applicationId })}>${name}</a>`)
 }
 
-const getResponses = (application: ApprovedPremisesApplication): ApplicationResponse => {
+export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>
+
+const getResponses = (applicationOrAssessment: Application | Assessment): ApplicationOrAssessmentResponse => {
   const responses = {}
 
-  Object.keys(application.data).forEach(taskName => {
-    responses[taskName] = getResponsesForTask(application, taskName)
+  Object.keys(applicationOrAssessment.data).forEach(taskName => {
+    responses[taskName] = getResponsesForTask(applicationOrAssessment, taskName)
   })
 
   return responses
 }
 
-const getResponsesForTask = (application: ApprovedPremisesApplication, taskName: string): Array<PageResponse> => {
-  const pageNames = Object.keys(application.data[taskName])
-  const responsesForPages = pageNames.map(pageName => getResponseForPage(application, taskName, pageName))
+const getResponsesForTask = (
+  applicationOrAssessment: Application | Assessment,
+  taskName: string,
+): Array<PageResponse> => {
+  const pageNames = Object.keys(applicationOrAssessment.data[taskName])
+  const responsesForPages = pageNames.map(pageName => getResponseForPage(applicationOrAssessment, taskName, pageName))
   return responsesForPages
 }
 
 const getResponseForPage = (
-  application: ApprovedPremisesApplication,
+  applicationOrAssessment: Application | Assessment,
   taskName: string,
   pageName: string,
 ): PageResponse => {
-  const Page = getPage(taskName, pageName, isAssessment(application))
+  const Page = getPage(taskName, pageName, isAssessment(applicationOrAssessment))
 
-  const body = application?.data?.[taskName]?.[pageName]
-  const page = new Page(body, application)
+  const body = applicationOrAssessment?.data?.[taskName]?.[pageName]
+  const page = new Page(body, applicationOrAssessment)
 
   return page.response()
 }
@@ -80,7 +86,7 @@ const getPage = (taskName: string, pageName: string, isAnAssessment?: boolean): 
   return Page as TasklistPageInterface
 }
 
-const getArrivalDate = (application: ApprovedPremisesApplication, raiseOnMissing = true): string | null => {
+const getArrivalDate = (application: Application, raiseOnMissing = true): string | null => {
   const throwOrReturnNull = (message: string): null => {
     if (raiseOnMissing) {
       throw new SessionDataError(message)
@@ -126,14 +132,14 @@ const getArrivalDate = (application: ApprovedPremisesApplication, raiseOnMissing
   return null
 }
 
-const isUnapplicable = (application: ApprovedPremisesApplication): boolean => {
+const isUnapplicable = (application: Application): boolean => {
   const basicInformation = application.data?.['basic-information']
   const isExceptionalCase = basicInformation?.['is-exceptional-case']?.isExceptionalCase
 
   return isExceptionalCase === 'no'
 }
 
-const firstPageOfApplicationJourney = (application: ApprovedPremisesApplication) => {
+const firstPageOfApplicationJourney = (application: Application) => {
   if (isApplicableTier(application.person.sex, application.risks.tier.value.level)) {
     return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' })
   }

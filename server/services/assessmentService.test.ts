@@ -10,10 +10,12 @@ import { getBody, updateAssessmentData } from '../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { DataServices, TaskListErrors } from '../@types/ui'
 import { ValidationError } from '../utils/errors'
+import { getResponses } from '../utils/applicationUtils'
 
 jest.mock('../data/assessmentClient.ts')
 jest.mock('../data/personClient.ts')
 jest.mock('../form-pages/utils')
+jest.mock('../utils/applicationUtils')
 
 describe('AssessmentService', () => {
   const assessmentClient = new AssessmentClient(null) as jest.Mocked<AssessmentClient>
@@ -144,6 +146,37 @@ describe('AssessmentService', () => {
           expect(e).toEqual(new ValidationError(errors))
         }
       })
+    })
+  })
+
+  describe('submit', () => {
+    const token = 'some-token'
+    const document = { document: 'foo' }
+
+    it('if the assessment is accepted the accept client method is called', async () => {
+      const assessment = assessmentFactory.acceptedAssessment().build()
+      ;(getResponses as jest.Mock).mockReturnValue(document)
+
+      await service.submit(token, assessment)
+
+      expect(assessmentClientFactory).toHaveBeenCalledWith(token)
+      expect(assessmentClient.acceptance).toHaveBeenCalledWith(assessment.id, document)
+    })
+
+    it('if the assessment is rejected the rejection client method is called with the rejectionRationale', async () => {
+      const assessment = assessmentFactory.build({
+        rejectionRationale: 'Reject, risk too high (must be approved by an AP Area Manager (APAM)',
+      })
+      ;(getResponses as jest.Mock).mockReturnValue(document)
+
+      await service.submit(token, assessment)
+
+      expect(assessmentClientFactory).toHaveBeenCalledWith(token)
+      expect(assessmentClient.rejection).toHaveBeenCalledWith(
+        assessment.id,
+        document,
+        'Reject, risk too high (must be approved by an AP Area Manager (APAM)',
+      )
     })
   })
 

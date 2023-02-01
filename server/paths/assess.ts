@@ -6,6 +6,8 @@ const assessmentPath = assessmentsPath.path(':id')
 
 const pagesPath = assessmentPath.path('tasks/:task/pages/:page')
 
+const submission = assessmentPath.path('submission')
+
 const paths = {
   assessments: {
     index: assessmentsPath,
@@ -17,6 +19,7 @@ const paths = {
     clarificationNotes: {
       confirm: assessmentPath.path('clarification-notes/confirmation'),
     },
+    submission,
   },
 }
 

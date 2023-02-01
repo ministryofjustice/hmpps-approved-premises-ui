@@ -18,6 +18,7 @@ import {
   InformationReceivedPage,
   MatchingInformationPage,
   CheckYourAnswersPage,
+  SubmissionConfirmation,
 } from '../pages/assess'
 import Page from '../pages/page'
 import { updateAssessmentData } from '../../server/form-pages/utils'
@@ -58,6 +59,7 @@ export default class AseessHelper {
     this.documents.forEach(document => {
       cy.task('stubPersonDocument', { person: this.assessment.application.person, document })
     })
+    cy.task('stubAssessmentRejection', this.assessment)
   }
 
   updateAssessmentStatus(status: AssessmentStatus) {
@@ -85,6 +87,7 @@ export default class AseessHelper {
     this.completeMakeADecisionPage()
     this.completeMatchingInformationPage()
     this.completeCheckYourAnswersPage()
+    this.submitAssessment()
   }
 
   addClarificationNote(note: string) {
@@ -276,6 +279,14 @@ export default class AseessHelper {
 
     // And the check-your-answers application task should show a completed status
     tasklistPage.shouldShowTaskStatus('check-your-answers', 'Completed')
+  }
+
+  submitAssessment() {
+    const tasklistPage = Page.verifyOnPage(TaskListPage)
+
+    tasklistPage.checkCheckboxByLabel('confirmed')
+    tasklistPage.clickSubmit()
+    Page.verifyOnPage(SubmissionConfirmation)
   }
 
   updateAssessmentAndStub(pageObject: AssessPage) {

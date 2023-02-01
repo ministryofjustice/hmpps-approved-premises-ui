@@ -14,6 +14,12 @@ class AssessmentFactory extends Factory<ApprovedPremisesAssessment> {
       createdAt: DateFormats.dateObjToIsoDate(new Date(today.getFullYear(), today.getMonth(), today.getDate() - days)),
     })
   }
+
+  acceptedAssessment() {
+    return this.params({
+      data: { 'make-a-decision': { 'make-a-decision': { decision: 'releaseDate' } } },
+    })
+  }
 }
 
 export default AssessmentFactory.define(() => ({
@@ -28,4 +34,5 @@ export default AssessmentFactory.define(() => ({
   decision: faker.helpers.arrayElement(['accepted' as const, 'rejected' as const, undefined]),
   data: JSON.parse(faker.datatype.json()),
   clarificationNotes: [],
+  rejectionRationale: faker.lorem.sentence(),
 }))

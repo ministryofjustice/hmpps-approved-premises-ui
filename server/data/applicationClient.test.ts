@@ -132,7 +132,7 @@ describe('ApplicationClient', () => {
       fakeApprovedPremisesApi
         .post(paths.applications.submission({ id: application.id }))
         .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, application)
+        .reply(201)
 
       await applicationClient.submit(application)
 

@@ -10,6 +10,8 @@ import type { RestClientBuilder, AssessmentClient } from '../data'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getBody, updateAssessmentData } from '../form-pages/utils'
 import { ValidationError } from '../utils/errors'
+import { getResponses } from '../utils/applicationUtils'
+import { applicationAccepted } from '../utils/assessments/utils'
 
 export default class AssessmentService {
   constructor(private readonly assessmentClientFactory: RestClientBuilder<AssessmentClient>) {}
@@ -75,6 +77,18 @@ export default class AssessmentService {
 
       await client.update(updatedAssessment)
     }
+  }
+
+  async submit(token: string, assessment: Assessment) {
+    const client = this.assessmentClientFactory(token)
+
+    const responses = getResponses(assessment)
+
+    if (!applicationAccepted(assessment)) {
+      return client.rejection(assessment.id, responses, assessment.rejectionRationale)
+    }
+
+    return client.acceptance(assessment.id, responses)
   }
 
   async createClarificationNote(token: string, assessmentId: string, clarificationNote: NewClarificationNote) {

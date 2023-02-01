@@ -24,7 +24,7 @@ const PageConstructor = jest.fn()
 
 jest.mock('../../../utils/validation')
 jest.mock('../../../form-pages/utils')
-jest.mock('../../../utils/assessmentUtils', () => {
+jest.mock('../../../utils/assessments/utils', () => {
   return {
     getPage: () => PageConstructor,
   }

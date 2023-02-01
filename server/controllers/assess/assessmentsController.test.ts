@@ -3,7 +3,7 @@ import type { GroupedAssessments } from '@approved-premises/ui'
 
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 
-import AssessmentsController from './assessmentsController'
+import AssessmentsController, { tasklistPageHeading } from './assessmentsController'
 import { AssessmentService } from '../../services'
 
 import assessmentFactory from '../../testutils/factories/assessment'
@@ -12,15 +12,15 @@ import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 import getSections from '../../utils/assessments/getSections'
 
-jest.mock('../../utils/assessmentUtils')
+jest.mock('../../utils/assessments/utils')
 jest.mock('../../utils/assessments/informationSetAsNotReceived')
 jest.mock('../../utils/assessments/getSections')
 
 describe('assessmentsController', () => {
   const token = 'SOME_TOKEN'
 
-  const request: DeepMocked<Request> = createMock<Request>({ user: { token } })
-  const response: DeepMocked<Response> = createMock<Response>({})
+  let request: DeepMocked<Request> = createMock<Request>({ user: { token } })
+  let response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const assessmentService = createMock<AssessmentService>({})
@@ -29,6 +29,8 @@ describe('assessmentsController', () => {
 
   beforeEach(() => {
     assessmentsController = new AssessmentsController(assessmentService)
+    response = createMock<Response>({})
+    request = createMock<Request>({ user: { token } })
   })
 
   describe('index', () => {
@@ -104,6 +106,60 @@ describe('assessmentsController', () => {
       })
 
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
+    })
+  })
+
+  describe('submit', () => {
+    const assessment = assessmentFactory.build()
+
+    beforeEach(() => {
+      request.params.id = assessment.id
+
+      assessmentService.findAssessment.mockResolvedValue(assessment)
+    })
+
+    describe('if the "confirmation" input isnt "confirmed"', () => {
+      it('renders the "show" view with errors', async () => {
+        request.params.id = 'some-id'
+        request.body.confirmation = 'some-id'
+
+        const requestHandler = assessmentsController.submit()
+
+        await requestHandler(request, response, next)
+
+        expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, request)
+        expect(response.render).toHaveBeenCalledWith('assessments/show', {
+          assessment,
+          errorObject: {
+            text: 'You must confirm the information provided is complete, accurate and up to date.',
+          },
+          errorSummary: [
+            {
+              href: '#confirmation',
+              text: 'You must confirm the information provided is complete, accurate and up to date.',
+            },
+          ],
+          pageHeading: tasklistPageHeading,
+          sections: getSections(assessment),
+        })
+      })
+    })
+
+    describe('if the "confirmation" input is "confirmed"', () => {
+      it('renders the success view', async () => {
+        request.params.id = 'some-id'
+        request.body.confirmation = 'confirmed'
+
+        const requestHandler = assessmentsController.submit()
+
+        await requestHandler(request, response, next)
+
+        expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, request)
+        expect(response.render).toHaveBeenCalledWith('assessments/confirm', {
+          pageHeading: 'Assessment submission confirmed',
+          assessment,
+        })
+      })
     })
   })
 })
