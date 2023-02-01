@@ -8,6 +8,8 @@ import { DateFormats } from '../../utils/dateUtils'
 import Apply from '../../form-pages/apply'
 import { firstPageOfApplicationJourney, getResponses, isUnapplicable } from '../../utils/applicationUtils'
 
+export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
+
 export default class ApplicationsController {
   constructor(private readonly applicationService: ApplicationService, private readonly personService: PersonService) {}
 
@@ -22,7 +24,7 @@ export default class ApplicationsController {
   start(): RequestHandler {
     return (_req: Request, res: Response) => {
       res.render('applications/start', {
-        pageHeading: 'Apply for an Approved Premises (AP) placement',
+        pageHeading: tasklistPageHeading,
       })
     }
   }
@@ -95,8 +97,26 @@ export default class ApplicationsController {
       const application = await this.applicationService.findApplication(req.user.token, req.params.id)
       application.document = getResponses(application)
 
+      if (req.body?.confirmation !== 'submit') {
+        const errorMessage = 'You must confirm the information provided is complete, accurate and up to date.'
+        const errorObject = { text: errorMessage }
+
+        return res.render('applications/show', {
+          application,
+          errorSummary: [
+            {
+              text: errorMessage,
+              href: '#confirmation',
+            },
+          ],
+          errorObject,
+          pageHeading: tasklistPageHeading,
+          sections: Apply.sections,
+        })
+      }
+
       await this.applicationService.submit(req.user.token, application)
-      res.render('applications/confirm', { pageHeading: 'Application confirmation' })
+      return res.render('applications/confirm', { pageHeading: 'Application confirmation' })
     }
   }
 }

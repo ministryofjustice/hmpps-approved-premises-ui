@@ -2,6 +2,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "../partials/showErrorSummary.njk" import showErrorSummary %}
 
 {% from "../components/riskWidgets/macro.njk" import widgets %}
 
@@ -21,6 +22,7 @@
       <h2 class="govuk-heading-s govuk-!-margin-bottom-2">Application incomplete</h2>
       <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ TasklistUtils.getCompleteSectionCount(sections, application) }} of {{ (sections | length) }} sections.</p>
     </div>
+    {{ showErrorSummary(errorSummary) }}
 
     <div class="govuk-grid-column-two-thirds">
       <ol class="app-task-list">
@@ -54,6 +56,7 @@
           {{ govukCheckboxes({
             idPrefix: "confirmation",
             name: "confirmation",
+            errorMessage: errorObject,
             items: [
               {
                 value: "submit",
