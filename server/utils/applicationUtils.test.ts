@@ -13,6 +13,7 @@ import {
   dashboardTableRows,
   firstPageOfApplicationJourney,
   isUnapplicable,
+  getStatus,
 } from './applicationUtils'
 import { SessionDataError, UnknownPageError } from './errors'
 
@@ -157,7 +158,7 @@ describe('applicationUtils', () => {
             text: 'N/A',
           },
           {
-            text: 'N/A',
+            html: getStatus(applicationB),
           },
         ],
         [
@@ -174,10 +175,24 @@ describe('applicationUtils', () => {
             text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
           },
           {
-            text: DateFormats.isoDateToUIDate(applicationB.submittedAt, { format: 'short' }),
+            html: getStatus(applicationB),
           },
         ],
       ])
+    })
+  })
+
+  describe('getStatus', () => {
+    it('returns the correct tag for each status', () => {
+      const inProgressApplication = applicationFactory.build({ status: 'inProgress' })
+      const submittedApplication = applicationFactory.build({ status: 'submitted' })
+      const informationRequestedApplication = applicationFactory.build({ status: 'requestedFurtherInformation' })
+
+      expect(getStatus(inProgressApplication)).toEqual('<strong class="govuk-tag govuk-tag--blue">In Progress</strong>')
+      expect(getStatus(submittedApplication)).toEqual('<strong class="govuk-tag">Submitted</strong>')
+      expect(getStatus(informationRequestedApplication)).toEqual(
+        '<strong class="govuk-tag govuk-tag--yellow">Info Request</strong>',
+      )
     })
   })
 
