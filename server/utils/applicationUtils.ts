@@ -21,11 +21,20 @@ const dashboardTableRows = (applications: Array<Application>): Array<TableRow> =
       textValue(application.person.crn),
       htmlValue(tierBadge(application.risks.tier.value?.level || '')),
       textValue(arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'),
-      textValue(
-        application.submittedAt ? DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' }) : 'N/A',
-      ),
+      htmlValue(getStatus(application)),
     ]
   })
+}
+
+const getStatus = (application: Application): string => {
+  switch (application.status) {
+    case 'submitted':
+      return `<strong class="govuk-tag">Submitted</strong>`
+    case 'requestedFurtherInformation':
+      return `<strong class="govuk-tag govuk-tag--yellow">Info Request</strong>`
+    default:
+      return `<strong class="govuk-tag govuk-tag--blue">In Progress</strong>`
+  }
 }
 
 const textValue = (value: string) => {
@@ -155,4 +164,5 @@ export {
   dashboardTableRows,
   firstPageOfApplicationJourney,
   isUnapplicable,
+  getStatus,
 }

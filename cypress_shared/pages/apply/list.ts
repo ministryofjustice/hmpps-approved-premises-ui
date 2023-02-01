@@ -23,15 +23,15 @@ export default class ListPage extends Page {
   }
 
   shouldShowInProgressApplications(): void {
-    this.shouldShowApplications(this.inProgressApplications)
+    this.shouldShowApplications(this.inProgressApplications, 'In Progress')
   }
 
   shouldShowFurtherInformationRequestedApplications(): void {
-    this.shouldShowApplications(this.requestedFurtherInformationApplications)
+    this.shouldShowApplications(this.requestedFurtherInformationApplications, 'Info Request')
   }
 
   shouldShowSubmittedApplications(): void {
-    this.shouldShowApplications(this.submittedApplications)
+    this.shouldShowApplications(this.submittedApplications, 'Submitted')
   }
 
   clickSubmit() {
@@ -46,7 +46,7 @@ export default class ListPage extends Page {
     cy.get('a').contains('Submitted').click()
   }
 
-  private shouldShowApplications(applications: Array<Application>): void {
+  private shouldShowApplications(applications: Array<Application>, status: string): void {
     applications.forEach(application => {
       cy.contains(application.person.name)
         .should('have.attr', 'href', paths.applications.show({ id: application.id }))
@@ -63,9 +63,7 @@ export default class ListPage extends Page {
                 format: 'short',
               }),
             )
-          cy.get('td')
-            .eq(3)
-            .contains(DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' }))
+          cy.get('td').eq(3).contains(status)
         })
     })
   }
