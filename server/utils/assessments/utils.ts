@@ -284,7 +284,22 @@ const getSectionSuffix = (task: Task) => {
   return `<p><a href="${link}">${copy}</a></p>`
 }
 
+const applicationAccepted = (assessment: Assessment) => {
+  switch (decisionFromAssessment(assessment)) {
+    case 'releaseDate':
+      return true
+      break
+    case 'hold':
+      return true
+      break
+    default:
+      return false
+      break
+  }
+}
+
 export {
+  applicationAccepted,
   assessmentSections,
   assessmentLink,
   awaitingAssessmentTableRows,

@@ -1,4 +1,5 @@
 import {
+  applicationAccepted,
   daysSinceReceived,
   getStatus,
   formattedArrivalDate,
@@ -398,6 +399,33 @@ describe('utils', () => {
       expect(getSectionSuffix({ id: 'prison-information', title: '', pages: {} })).toBe(
         '<p><a href="prison-link">View additional prison information</a></p>',
       )
+    })
+  })
+  describe('applicationAccepted', () => {
+    it('returns true if the assessment has either of the two decisions which accept an applicaiton', () => {
+      const acceptedAssessment1 = assessmentFactory.build({
+        data: { 'make-a-decision': { 'make-a-decision': { decision: 'releaseDate' } } },
+      })
+      const acceptedAssessment2 = assessmentFactory.build({
+        data: { 'make-a-decision': { 'make-a-decision': { decision: 'releaseDate' } } },
+      })
+
+      expect(applicationAccepted(acceptedAssessment1)).toBe(true)
+      expect(applicationAccepted(acceptedAssessment2)).toBe(true)
+    })
+
+    it('returns false if the assessment has any other decision', () => {
+      const rejectedAssessment = assessmentFactory.build({
+        data: { 'make-a-decision': { 'make-a-decision': { decision: 'reject' } } },
+      })
+
+      expect(applicationAccepted(rejectedAssessment)).toBe(false)
+    })
+
+    it('returns false if the assessment has no decision', () => {
+      const rejectedAssessment = assessmentFactory.build()
+
+      expect(applicationAccepted(rejectedAssessment)).toBe(false)
     })
   })
 })
