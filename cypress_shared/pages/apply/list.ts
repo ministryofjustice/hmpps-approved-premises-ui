@@ -1,20 +1,52 @@
 import Page from '../page'
 import paths from '../../../server/paths/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import { ApprovedPremisesApplication } from '../../../server/@types/shared'
+import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
 
 export default class ListPage extends Page {
-  constructor() {
+  constructor(
+    private readonly inProgressApplications: Array<Application>,
+    private readonly submittedApplications: Array<Application>,
+    private readonly requestedFurtherInformationApplications: Array<Application>,
+  ) {
     super('Approved Premises applications')
   }
 
-  static visit(): ListPage {
+  static visit(
+    inProgressApplications: Array<Application>,
+    submittedApplications: Array<Application>,
+    requestedFurtherInformationApplications: Array<Application>,
+  ): ListPage {
     cy.visit(paths.applications.index.pattern)
 
-    return new ListPage()
+    return new ListPage(inProgressApplications, submittedApplications, requestedFurtherInformationApplications)
   }
 
-  shouldShowApplications(applications: Array<ApprovedPremisesApplication>): void {
+  shouldShowInProgressApplications(): void {
+    this.shouldShowApplications(this.inProgressApplications)
+  }
+
+  shouldShowFurtherInformationRequestedApplications(): void {
+    this.shouldShowApplications(this.requestedFurtherInformationApplications)
+  }
+
+  shouldShowSubmittedApplications(): void {
+    this.shouldShowApplications(this.submittedApplications)
+  }
+
+  clickSubmit() {
+    cy.get('.govuk-button').click()
+  }
+
+  clickFurtherInformationRequestedTab() {
+    cy.get('a').contains('Further information requested').click()
+  }
+
+  clickSubmittedTab() {
+    cy.get('a').contains('Submitted').click()
+  }
+
+  private shouldShowApplications(applications: Array<Application>): void {
     applications.forEach(application => {
       cy.contains(application.person.name)
         .should('have.attr', 'href', paths.applications.show({ id: application.id }))
@@ -36,9 +68,5 @@ export default class ListPage extends Page {
             .contains(DateFormats.isoDateToUIDate(application.submittedAt, { format: 'short' }))
         })
     })
-  }
-
-  clickSubmit() {
-    cy.get('.govuk-button').click()
   }
 }

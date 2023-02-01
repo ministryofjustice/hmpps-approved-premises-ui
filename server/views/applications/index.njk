@@ -19,24 +19,24 @@
             {{ govukTabs({
                 items: [
                     {
-                        label: "Applications",
+                        label: "In Progress",
                         id: "applications",
                         panel: {
-                            html: applicationsTable("Applications", dashboardTableRows(applications))
+                            html: applicationsTable("Applications", dashboardTableRows(applications.inProgress))
                         }
                     },
                     {
                         label: "Further information requested",
                         id: "further-information-requested",
                         panel: {
-                            html: '<h3>TODO</h3>'
+                            html: applicationsTable("Applications", dashboardTableRows(applications.requestedFurtherInformation))
                         }
                     },
                     {
                         label: "Submitted",
                         id: "applications-submitted",
                         panel: {
-                            html: '<h3>TODO</h3>'
+                            html: applicationsTable("Applications", dashboardTableRows(applications.submitted))
                         }
                     }
                 ]
