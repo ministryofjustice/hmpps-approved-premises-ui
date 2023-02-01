@@ -13,7 +13,7 @@ export default class RelocationRegion implements TasklistPage {
 
   question = `Where is ${this.application.person.name} most likely to live when they move on from the AP?`
 
-  hint = 'Postcode area'
+  hint = 'Please provide a postcode area (for example SW1)'
 
   constructor(
     public body: {
@@ -40,9 +40,9 @@ export default class RelocationRegion implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.postcodeArea) {
-      errors.postcodeArea = 'You must enter a postcode region'
+      errors.postcodeArea = 'You must enter a postcode area'
     } else if (!validPostcodeArea(this.body.postcodeArea)) {
-      errors.postcodeArea = 'You must enter a valid postcode region'
+      errors.postcodeArea = 'You must enter a valid postcode area'
     }
 
     return errors

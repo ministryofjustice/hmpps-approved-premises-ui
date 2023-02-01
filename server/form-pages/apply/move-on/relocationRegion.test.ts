@@ -27,7 +27,7 @@ describe('RelocationRegion', () => {
       const page = new RelocationRegion({}, application)
 
       expect(page.errors()).toEqual({
-        postcodeArea: 'You must enter a postcode region',
+        postcodeArea: 'You must enter a postcode area',
       })
     })
 
@@ -35,7 +35,7 @@ describe('RelocationRegion', () => {
       const page = new RelocationRegion({ postcodeArea: 'foo' }, application)
 
       expect(page.errors()).toEqual({
-        postcodeArea: 'You must enter a valid postcode region',
+        postcodeArea: 'You must enter a valid postcode area',
       })
     })
   })
