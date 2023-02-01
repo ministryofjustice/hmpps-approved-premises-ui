@@ -66,7 +66,7 @@ describe('AssessmentService', () => {
     beforeEach(() => {
       request = createMock<Request>({
         params: { id: assessment.id, task: 'my-task', page: 'first' },
-        session: { application: assessment, previousPage: '' },
+        session: { previousPage: '' },
         user: { token: 'some-token' },
       })
     })
