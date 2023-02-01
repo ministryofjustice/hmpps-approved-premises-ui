@@ -702,6 +702,7 @@ export default class ApplyHelper {
 
   private submitApplication() {
     const tasklistPage = Page.verifyOnPage(TaskListPage)
+    tasklistPage.checkCheckboxByLabel('submit')
 
     tasklistPage.clickSubmit()
   }

@@ -3,7 +3,7 @@ import { createMock, DeepMocked } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
-import ApplicationsController from './applicationsController'
+import ApplicationsController, { tasklistPageHeading } from './applicationsController'
 import { ApplicationService, PersonService } from '../../services'
 import { fetchErrorsAndUserInput } from '../../utils/validation'
 import personFactory from '../../testutils/factories/person'
@@ -276,7 +276,7 @@ describe('applicationsController', () => {
   })
 
   describe('submit', () => {
-    it('calls the application service with the application id', async () => {
+    it('calls the application service with the application id if the checkbox is ticked', async () => {
       const application = applicationFactory.build()
       application.data = { 'basic-information': { 'sentence-type': '' } }
       applicationService.findApplication.mockResolvedValue(application)
@@ -284,6 +284,7 @@ describe('applicationsController', () => {
       const requestHandler = applicationsController.submit()
 
       request.params.id = 'some-id'
+      request.body.confirmation = 'submit'
 
       await requestHandler(request, response, next)
 
@@ -292,6 +293,33 @@ describe('applicationsController', () => {
       expect(applicationService.submit).toHaveBeenCalledWith(token, application)
       expect(response.render).toHaveBeenCalledWith('applications/confirm', {
         pageHeading: 'Application confirmation',
+      })
+    })
+
+    it('renders the "show" view with errors if the checkbox isnt ticked ', async () => {
+      const application = applicationFactory.build()
+      request.params.id = 'some-id'
+      request.body.confirmation = 'some-id'
+      applicationService.findApplication.mockResolvedValue(application)
+
+      const requestHandler = applicationsController.submit()
+
+      await requestHandler(request, response, next)
+
+      expect(applicationService.findApplication).toHaveBeenCalledWith(token, request)
+      expect(response.render).toHaveBeenCalledWith('applications/show', {
+        application,
+        errorObject: {
+          text: 'You must confirm the information provided is complete, accurate and up to date.',
+        },
+        errorSummary: [
+          {
+            href: '#confirmation',
+            text: 'You must confirm the information provided is complete, accurate and up to date.',
+          },
+        ],
+        pageHeading: tasklistPageHeading,
+        sections: Apply.sections,
       })
     })
   })
