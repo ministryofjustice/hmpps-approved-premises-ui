@@ -125,7 +125,7 @@
                   rows: task.rows
                 })
               }}
-          {{AssessmentUtils.getSectionSuffix(task) | safe}}
+          {{AssessmentUtils.getSectionSuffix(task, assessmentId) | safe}}
         </div>
       </div>
     {% endfor %}

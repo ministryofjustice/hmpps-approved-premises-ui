@@ -390,19 +390,20 @@ describe('utils', () => {
   })
 
   describe('getSectionSuffix', () => {
+    const id = 'id'
     it('returns an empty string if the task id isnt oasys-import or prison-information', () => {
-      expect(getSectionSuffix({ id: 'foo', title: '', pages: {} })).toBe('')
+      expect(getSectionSuffix({ id: 'foo', title: '', pages: {} }, id)).toBe('')
     })
 
     it('returns the correct html if supplied a task with an ID of oasys-import', () => {
-      expect(getSectionSuffix({ id: 'oasys-import', title: '', pages: {} })).toBe(
+      expect(getSectionSuffix({ id: 'oasys-import', title: '', pages: {} }, id)).toBe(
         '<p><a href="oasys-link">View detailed risk information</a></p>',
       )
     })
 
     it('returns the correct html if supplied a task with an ID of prison-information', () => {
-      expect(getSectionSuffix({ id: 'prison-information', title: '', pages: {} })).toBe(
-        '<p><a href="prison-link">View additional prison information</a></p>',
+      expect(getSectionSuffix({ id: 'prison-information', title: '', pages: {} }, id)).toBe(
+        '<p><a href="/assessments/id/prison-information">View additional prison information</a></p>',
       )
     })
   })
