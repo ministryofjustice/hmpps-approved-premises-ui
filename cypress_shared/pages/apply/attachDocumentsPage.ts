@@ -16,7 +16,7 @@ export default class AttachDocumentsPage extends ApplyPage {
     application: ApprovedPremisesApplication,
   ) {
     super(
-      'Select associated documents',
+      'Select any additional documents that are required to support your application',
       application,
       'attach-required-documents',
       'attach-documents',
