@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express'
 import type { GroupedAssessments } from '@approved-premises/ui'
-
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
+import { Adjudication, ApprovedPremisesAssessment as Assessment } from '../../@types/shared'
 
 import AssessmentsController, { tasklistPageHeading } from './assessmentsController'
 import { AssessmentService } from '../../services'
@@ -11,6 +11,7 @@ import assessmentFactory from '../../testutils/factories/assessment'
 import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 import getSections from '../../utils/assessments/getSections'
+import { DateFormats } from '../../utils/dateUtils'
 
 jest.mock('../../utils/assessments/utils')
 jest.mock('../../utils/assessments/informationSetAsNotReceived')
@@ -160,6 +161,38 @@ describe('assessmentsController', () => {
           assessment,
         })
       })
+    })
+  })
+
+  describe('adjudications', () => {
+    let assessment: Assessment
+    let adjudications: Array<Adjudication>
+
+    beforeEach(() => {
+      request.params.id = 'some-id'
+      assessment = assessmentFactory.build()
+      assessment.application.data = {
+        'prison-information': {
+          'case-notes': {
+            adjudications,
+          },
+        },
+      }
+      assessmentService.findAssessment.mockResolvedValue(assessment)
+    })
+
+    it('renders the view', async () => {
+      const requestHandler = assessmentsController.adjudications()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toBeCalledWith('assessments/pages/risk-information/prison-information', {
+        adjudications,
+        assessmentId: assessment.id,
+        dateOfImport: DateFormats.isoDateToUIDate(assessment.application.submittedAt),
+        pageHeading: 'Prison information',
+      })
+      expect(assessmentService.findAssessment).toBeCalledWith(token, request.params.id)
     })
   })
 })
