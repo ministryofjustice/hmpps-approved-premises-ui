@@ -27,24 +27,28 @@
     )
   }}
 
-  <div
-    id="durationWrapper"
-    class="govuk-visually-hidden"
-    data-expected-dates
-    data-arrivalDate="{{ page.arrivalDate.toISOString() }}"
-    aria-live="polite"
-    aria-atomic="true"
-  >
-    <h3 class="govuk-heading-m">Expected dates of stay in Approved Premises:</h3>
-    <p>
-      <b>Arrival date:</b>
-      {{ formatDate(page.arrivalDate.toISOString()) }}</p>
-    <p>
-      <b>Departure date:</b>
-      <span data-departure-date></span></p>
-  </div>
+  {% if page.arrivalDate %}
 
-  <br>
+    <div
+      id="durationWrapper"
+      class="govuk-visually-hidden"
+      data-expected-dates
+      data-arrivalDate="{{ page.arrivalDate.toISOString() }}"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      <h3 class="govuk-heading-m">Expected dates of stay in Approved Premises:</h3>
+      <p>
+        <b>Arrival date:</b>
+        {{ formatDate(page.arrivalDate.toISOString()) }}</p>
+      <p>
+        <b>Departure date:</b>
+        <span data-departure-date></span></p>
+    </div>
+
+    <br>
+
+  {% endif %}
 
   {{
     formPageTextarea(

@@ -62,9 +62,9 @@ export default class PlacementDuration implements TasklistPage {
 
       const placementDate = basicInformation['placement-date']
 
-      if (!placementDate) throw new SessionDataError('No placement date')
+      if (!placementDate) return undefined
 
-      if (placementDate.startDateSameAsReleaseDate === 'yes') {
+      if (placementDate && placementDate.startDateSameAsReleaseDate === 'yes') {
         const releaseDate = basicInformation['release-date']
 
         if (!releaseDate) throw new SessionDataError('No release date')
