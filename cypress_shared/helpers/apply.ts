@@ -73,6 +73,8 @@ import {
 } from './index'
 import ApplyPage from '../pages/apply/applyPage'
 import { documentsFromApplication } from '../../server/utils/assessments/documentUtils'
+import IsExceptionalCasePage from '../pages/apply/isExceptionalCase'
+import ExceptionDetailsPage from '../pages/apply/ExceptionDetails'
 
 export default class ApplyHelper {
   pages = {
@@ -153,7 +155,10 @@ export default class ApplyHelper {
     confirmDetailsPage.clickSubmit()
   }
 
-  completeApplication() {
+  completeApplication(isExceptionalCase?: boolean) {
+    if (isExceptionalCase) {
+      this.completeExceptionalCase()
+    }
     this.completeBasicInformation()
     this.completeTypeOfApSection()
     this.completeOasysSection()
@@ -334,6 +339,18 @@ export default class ApplyHelper {
 
     // And the application exists in the database
     cy.task('stubApplicationSubmit', { application: this.application })
+  }
+
+  completeExceptionalCase() {
+    const isExceptionalCasePage = new IsExceptionalCasePage()
+
+    isExceptionalCasePage.completeForm('yes')
+    isExceptionalCasePage.clickSubmit()
+
+    const exceptionDetailsPage = new ExceptionDetailsPage()
+
+    exceptionDetailsPage.completeForm()
+    exceptionDetailsPage.clickSubmit()
   }
 
   completeBasicInformation() {
