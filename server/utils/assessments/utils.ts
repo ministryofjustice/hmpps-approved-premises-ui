@@ -330,7 +330,11 @@ const confirmationPageResult = (assessment: Assessment) => {
   }
 }
 
+const adjudicationsFromAssessment = (assessment: Assessment) =>
+  assessment.application?.data?.['prison-information']?.['case-notes'].adjudications || ''
+
 export {
+  adjudicationsFromAssessment,
   applicationAccepted,
   assessmentSections,
   assessmentLink,

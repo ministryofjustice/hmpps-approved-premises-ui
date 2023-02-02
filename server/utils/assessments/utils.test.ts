@@ -21,6 +21,7 @@ import {
   decisionFromAssessment,
   confirmationPageMessage,
   confirmationPageResult,
+  adjudicationsFromAssessment,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
@@ -36,6 +37,7 @@ import applicationFactory from '../../testutils/factories/application'
 import reviewSections from '../reviewUtils'
 import documentFactory from '../../testutils/factories/document'
 import { documentsFromApplication } from './documentUtils'
+import adjudicationFactory from '../../testutils/factories/adjudication'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -497,6 +499,16 @@ describe('utils', () => {
         data: { 'make-a-decision': { 'make-a-decision': { decision: '' } } },
       })
       expect(confirmationPageResult(assessment)).toBe('You have marked this application as unsuitable.')
+    })
+  })
+
+  describe('adjudicationsFromAssessment', () => {
+    it('returns the adjudications from the assessment', () => {
+      const adjudications = adjudicationFactory.buildList(2)
+      const assessment = assessmentFactory.build()
+      assessment.application.data['prison-information'] = { 'case-notes': { adjudications } }
+
+      expect(adjudicationsFromAssessment(assessment)).toEqual(adjudications)
     })
   })
 })
