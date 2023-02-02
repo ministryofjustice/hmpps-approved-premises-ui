@@ -16,7 +16,6 @@ import personFactory from '../../../server/testutils/factories/person'
 import risksFactory, { tierEnvelopeFactory } from '../../../server/testutils/factories/risks'
 import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
 import IsExceptionalCasePage from '../../../cypress_shared/pages/apply/isExceptionalCase'
-import ExceptionDetailsPage from '../../../cypress_shared/pages/apply/ExceptionDetails'
 import NotEligiblePage from '../../../cypress_shared/pages/apply/notEligiblePage'
 
 context('Apply', () => {
@@ -95,21 +94,10 @@ context('Apply', () => {
     apply.setupApplicationStubs()
     apply.startApplication()
 
-    // Then I should be prompted to confirm that the case is exceptional
-    const isExceptionalCasePage = Page.verifyOnPage(IsExceptionalCasePage)
+    // Then I should be able to confirm that the case is exceptional
+    apply.completeExceptionalCase()
 
-    // And I select yes
-    isExceptionalCasePage.completeForm('yes')
-    isExceptionalCasePage.clickSubmit()
-
-    // Then I should be prompted to enter the details of the exception
-    const exceptionDetailsPage = Page.verifyOnPage(ExceptionDetailsPage)
-
-    // And I enter the details
-    exceptionDetailsPage.completeForm()
-    exceptionDetailsPage.clickSubmit()
-
-    // Then I should be on the Sentence Type page
+    // And I should be on the Sentence Type page
     Page.verifyOnPage(SentenceTypePage, this.application)
   })
 

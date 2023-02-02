@@ -23,7 +23,7 @@ Given('I fill in and complete an application', () => {
 
     const apply = new ApplyHelper(application, person, [], 'e2e')
 
-    apply.completeApplication()
+    apply.completeApplication(true)
   })
 })
 
