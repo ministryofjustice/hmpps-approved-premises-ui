@@ -85,14 +85,25 @@ export default class ReviewPage extends AssessPage {
     })
   }
 
+  adjudicationsPageShowsAdjudications(adjudications: Array<Adjudication>) {
+    cy.get('a').contains('View additional prison information').click()
+
+    this.shouldDisplayAdjudications(adjudications)
+    this.clickBack()
+  }
+
   shouldShowAnswers(assessment: Assessment) {
     this.shouldShowPersonInformation(assessment.application.person)
 
     this.shouldShowDocuments(
       assessment.application.data?.['attach-required-documents']['attach-documents'].selectedDocuments,
     )
+
     this.shouldShowCaseNotes(assessment.application.data?.['prison-information']['case-notes'].selectedCaseNotes)
     this.shouldShowAdjudications(assessment.application.data?.['prison-information']['case-notes'].adjudications)
+    this.adjudicationsPageShowsAdjudications(
+      assessment.application.data?.['prison-information']['case-notes'].adjudications,
+    )
   }
 
   completeForm() {

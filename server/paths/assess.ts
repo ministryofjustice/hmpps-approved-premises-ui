@@ -6,6 +6,8 @@ const assessmentPath = assessmentsPath.path(':id')
 
 const pagesPath = assessmentPath.path('tasks/:task/pages/:page')
 
+const prisonInformationPath = assessmentPath.path('prison-information')
+
 const submission = assessmentPath.path('submission')
 
 const paths = {
@@ -15,6 +17,7 @@ const paths = {
     pages: {
       show: pagesPath,
       update: pagesPath,
+      prisonInformationPath,
     },
     clarificationNotes: {
       confirm: assessmentPath.path('clarification-notes/confirmation'),

@@ -19,6 +19,8 @@ export default function routes(controllers: Controllers, router: Router): Router
 
   get(paths.assessments.clarificationNotes.confirm.pattern, clarificationNotesController.confirm())
 
+  get(paths.assessments.pages.prisonInformationPath.pattern, assessmentsController.adjudications())
+
   post(paths.assessments.submission.pattern, assessmentsController.submit())
 
   Object.keys(pages).forEach((taskKey: string) => {

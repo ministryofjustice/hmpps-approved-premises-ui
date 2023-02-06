@@ -265,7 +265,7 @@ const getReviewNavigationItems = () => {
   })
 }
 
-const getSectionSuffix = (task: Task) => {
+const getSectionSuffix = (task: Task, assessmentId: string) => {
   let link: string
   let copy: string
 
@@ -277,7 +277,7 @@ const getSectionSuffix = (task: Task) => {
   }
 
   if (task.id === 'prison-information') {
-    link = 'prison-link'
+    link = paths.assessments.pages.prisonInformationPath({ id: assessmentId })
     copy = 'View additional prison information'
   }
 
@@ -330,7 +330,11 @@ const confirmationPageResult = (assessment: Assessment) => {
   }
 }
 
+const adjudicationsFromAssessment = (assessment: Assessment) =>
+  assessment.application?.data?.['prison-information']?.['case-notes'].adjudications || ''
+
 export {
+  adjudicationsFromAssessment,
   applicationAccepted,
   assessmentSections,
   assessmentLink,
