@@ -22,6 +22,7 @@ import {
   confirmationPageMessage,
   confirmationPageResult,
   adjudicationsFromAssessment,
+  caseNotesFromAssessment,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
@@ -38,6 +39,7 @@ import reviewSections from '../reviewUtils'
 import documentFactory from '../../testutils/factories/document'
 import { documentsFromApplication } from './documentUtils'
 import adjudicationFactory from '../../testutils/factories/adjudication'
+import prisonCaseNotesFactory from '../../testutils/factories/prisonCaseNotes'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -512,11 +514,28 @@ describe('utils', () => {
       expect(adjudicationsFromAssessment(assessment)).toEqual(adjudications)
     })
 
-    it('returns an empty string if the case notes dont exist', () => {
+    it('returns an empty string if the case notes are empty', () => {
       const assessment = assessmentFactory.build()
-      assessment.application.data['prison-information'] = { 'case-notes': {} }
+      assessment.application.data['prison-information'] = {}
 
       expect(adjudicationsFromAssessment(assessment)).toEqual('')
+    })
+  })
+
+  describe('caseNotesFromAssessment', () => {
+    it('returns the caseNotes from the assessment', () => {
+      const selectedCaseNotes = prisonCaseNotesFactory.buildList(2)
+      const assessment = assessmentFactory.build()
+      assessment.application.data['prison-information'] = { 'case-notes': { selectedCaseNotes } }
+
+      expect(caseNotesFromAssessment(assessment)).toEqual(selectedCaseNotes)
+    })
+
+    it('returns an empty string if the case notes are empty', () => {
+      const assessment = assessmentFactory.build()
+      assessment.application.data['prison-information'] = {}
+
+      expect(caseNotesFromAssessment(assessment)).toEqual('')
     })
   })
 })
