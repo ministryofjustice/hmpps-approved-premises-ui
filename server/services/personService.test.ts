@@ -12,6 +12,7 @@ import adjudicationsFactory from '../testutils/factories/adjudication'
 import activeOffenceFactory from '../testutils/factories/activeOffence'
 import oasysSelectionFactory from '../testutils/factories/oasysSelection'
 import oasysSectionsFactory from '../testutils/factories/oasysSections'
+import acctAlertFactory from '../testutils/factories/acctAlert'
 
 jest.mock('../data/personClient.ts')
 
@@ -98,6 +99,21 @@ describe('PersonService', () => {
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
       expect(personClient.adjudications).toHaveBeenCalledWith('crn')
+    })
+  })
+
+  describe('getAcctAlerts', () => {
+    it("on success returns the person's adjudications notes given their CRN", async () => {
+      const acctAlerts = acctAlertFactory.buildList(3)
+
+      personClient.acctAlerts.mockResolvedValue(acctAlerts)
+
+      const serviceAcctAlerts = await service.getAcctAlerts(token, 'crn')
+
+      expect(serviceAcctAlerts).toEqual(acctAlerts)
+
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.acctAlerts).toHaveBeenCalledWith('crn')
     })
   })
 
