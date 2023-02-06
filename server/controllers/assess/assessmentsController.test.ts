@@ -7,6 +7,7 @@ import AssessmentsController, { tasklistPageHeading } from './assessmentsControl
 import { AssessmentService } from '../../services'
 
 import assessmentFactory from '../../testutils/factories/assessment'
+import adjudicationFactory from '../../testutils/factories/adjudication'
 
 import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
@@ -174,7 +175,7 @@ describe('assessmentsController', () => {
       assessment.application.data = {
         'prison-information': {
           'case-notes': {
-            adjudications,
+            adjudications: adjudicationFactory.buildList(2),
           },
         },
       }
