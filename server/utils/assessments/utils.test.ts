@@ -511,5 +511,12 @@ describe('utils', () => {
 
       expect(adjudicationsFromAssessment(assessment)).toEqual(adjudications)
     })
+
+    it('returns an empty string if the case notes dont exist', () => {
+      const assessment = assessmentFactory.build()
+      assessment.application.data['prison-information'] = { 'case-notes': {} }
+
+      expect(adjudicationsFromAssessment(assessment)).toEqual('')
+    })
   })
 })
