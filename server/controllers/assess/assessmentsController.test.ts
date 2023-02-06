@@ -165,7 +165,7 @@ describe('assessmentsController', () => {
     })
   })
 
-  describe('adjudications', () => {
+  describe('prisonInformation', () => {
     let assessment: Assessment
     let adjudications: Array<Adjudication>
 

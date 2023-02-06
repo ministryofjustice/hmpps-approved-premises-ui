@@ -19,7 +19,7 @@ export default function routes(controllers: Controllers, router: Router): Router
 
   get(paths.assessments.clarificationNotes.confirm.pattern, clarificationNotesController.confirm())
 
-  get(paths.assessments.pages.prisonInformationPath.pattern, assessmentsController.adjudications())
+  get(paths.assessments.pages.prisonInformationPath.pattern, assessmentsController.prisonInformation())
 
   post(paths.assessments.submission.pattern, assessmentsController.submit())
 

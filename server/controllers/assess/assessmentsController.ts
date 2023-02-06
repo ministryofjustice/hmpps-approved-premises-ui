@@ -76,7 +76,7 @@ export default class AssessmentsController {
     }
   }
 
-  adjudications(): RequestHandler {
+  prisonInformation(): RequestHandler {
     return async (req: Request, res: Response) => {
       const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
 
