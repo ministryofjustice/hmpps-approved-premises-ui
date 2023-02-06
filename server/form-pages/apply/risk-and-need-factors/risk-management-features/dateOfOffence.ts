@@ -19,7 +19,7 @@ type Response = Array<'previous' | 'current'> | 'previous' | 'current'
 
 @Page({ name: 'date-of-offence', bodyProperties: Object.keys(offences) })
 export default class DateOfOffence implements TasklistPage {
-  title = `Date of convicted offences`
+  title = `Convicted offences`
 
   questions = {
     currentOrPrevious: 'Is the offence a current or previous offence?',
