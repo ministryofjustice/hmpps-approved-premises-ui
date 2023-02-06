@@ -40,7 +40,7 @@ describe('Covid', () => {
     const page = new Covid({}, application, '')
     expect(page.errors()).toEqual({
       fullyVaccinated: 'You must confirm if John Wayne has been fully vaccinated',
-      highRisk: 'You must confirm if John Wayne is at a higher risk from COVID-19',
+      highRisk: 'You must confirm if John Wayne is at a higher risk from COVID-19 based on the NHS guidance',
     })
   })
 
@@ -57,7 +57,7 @@ describe('Covid', () => {
 
     expect(page.response()).toEqual({
       'Has John Wayne been fully vaccinated for COVID-19?': 'Yes',
-      'Is John Wayne at a higher risk from COVID-19?': 'Yes',
+      'Is John Wayne at a higher risk from COVID-19 based on the NHS guidance?': 'Yes',
       'Other considerations and comments on COVID-19': 'Some info',
     })
   })
