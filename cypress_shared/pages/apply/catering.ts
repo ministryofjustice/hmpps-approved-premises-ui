@@ -13,7 +13,7 @@ export default class CateringPage extends ApplyPage {
       paths.applications.pages.show({ id: application.id, task: 'further-considerations', page: 'complex-case-board' }),
     )
     cy.get('.govuk-form-group').contains(
-      `Do you have any concerns about ${application.person.name} catering for themselves?`,
+      `Can ${application.person.name} be placed in a self-catered Approved Premises?`,
     )
   }
 

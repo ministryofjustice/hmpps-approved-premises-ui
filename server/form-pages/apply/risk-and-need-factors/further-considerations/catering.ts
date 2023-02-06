@@ -13,11 +13,11 @@ export default class Catering implements TasklistPage {
   title = 'Catering requirements'
 
   questionPredicates = {
-    catering: 'catering for themselves',
+    catering: 'be placed in a self-catered Approved Premises',
   }
 
   questions = {
-    catering: `Do you have any concerns about ${this.application.person.name} ${this.questionPredicates.catering}?`,
+    catering: `Can ${this.application.person.name} ${this.questionPredicates.catering}?`,
   }
 
   constructor(
@@ -43,11 +43,11 @@ export default class Catering implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.catering) {
-      errors.catering = `You must specify if you have any concerns about ${this.application.person.name} ${this.questionPredicates.catering}`
+      errors.catering = `You must specify if ${this.application.person.name} can ${this.questionPredicates.catering}`
     }
 
     if (this.body.catering === 'yes' && !this.body.cateringDetail) {
-      errors.cateringDetail = `You must specify details about if you have any concerns about ${this.application.person.name} ${this.questionPredicates.catering}`
+      errors.cateringDetail = `You must specify details if you have any concerns about ${this.application.person.name} catering for themselves`
     }
 
     return errors
