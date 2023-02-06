@@ -19,7 +19,7 @@ describe('Arson', () => {
       const page = new Arson(body, application)
 
       expect(page.questions).toEqual({
-        arson: 'Does John Wayne need a specialist arson room?',
+        arson: 'Does John Wayne pose an arson risk?',
       })
     })
   })
@@ -40,7 +40,7 @@ describe('Arson', () => {
       const page = new Arson({}, application)
 
       expect(page.errors()).toEqual({
-        arson: 'You must specify if John Wayne needs a specialist arson room',
+        arson: 'You must specify if John Wayne poses an arson risk',
       })
     })
 
@@ -48,7 +48,7 @@ describe('Arson', () => {
       const page = new Arson({ ...body, arsonDetail: '' }, application)
 
       expect(page.errors()).toEqual({
-        arsonDetail: 'You must specify details about if John Wayne needs a specialist arson room',
+        arsonDetail: 'You must specify details if John Wayne poses an arson risk',
       })
     })
   })
@@ -58,7 +58,7 @@ describe('Arson', () => {
       const page = new Arson(body, application)
 
       expect(page.response()).toEqual({
-        'Does John Wayne need a specialist arson room?': 'Yes - Arson detail',
+        'Does John Wayne pose an arson risk?': 'Yes - Arson detail',
       })
     })
 
@@ -66,7 +66,7 @@ describe('Arson', () => {
       const page = new Arson({ ...body, arson: 'no' }, application)
 
       expect(page.response()).toEqual({
-        'Does John Wayne need a specialist arson room?': 'No',
+        'Does John Wayne pose an arson risk?': 'No',
       })
     })
   })
