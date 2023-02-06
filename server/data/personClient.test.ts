@@ -9,6 +9,7 @@ import personFactory from '../testutils/factories/person'
 import prisonCaseNotesFactory from '../testutils/factories/prisonCaseNotes'
 import paths from '../paths/api'
 import adjudicationsFactory from '../testutils/factories/adjudication'
+import acctAlertFactory from '../testutils/factories/acctAlert'
 import activeOffenceFactory from '../testutils/factories/activeOffence'
 import oasysSelectionFactory from '../testutils/factories/oasysSelection'
 import oasysSectionsFactory from '../testutils/factories/oasysSections'
@@ -100,6 +101,23 @@ describe('PersonClient', () => {
       const result = await personClient.adjudications(crn)
 
       expect(result).toEqual(adjudications)
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
+
+  describe('acctAlerts', () => {
+    it('should return the acctAlerts for a person', async () => {
+      const crn = 'crn'
+      const acctAlerts = acctAlertFactory.buildList(5)
+
+      fakeApprovedPremisesApi
+        .get(paths.people.acctAlerts({ crn }))
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(201, acctAlerts)
+
+      const result = await personClient.acctAlerts(crn)
+
+      expect(result).toEqual(acctAlerts)
       expect(nock.isDone()).toBeTruthy()
     })
   })
