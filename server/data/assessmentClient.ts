@@ -34,7 +34,7 @@ export default class AssessmentClient {
   async acceptance(assessmentId: string, document: ApplicationOrAssessmentResponse): Promise<void> {
     await this.restClient.post({
       path: paths.assessments.acceptance({ id: assessmentId }),
-      data: { data: document },
+      data: { document },
     })
   }
 
@@ -45,7 +45,7 @@ export default class AssessmentClient {
   ): Promise<void> {
     await this.restClient.post({
       path: paths.assessments.rejection({ id: assessmentId }),
-      data: { data: { document, rejectionRationale } },
+      data: { document, rejectionRationale },
     })
   }
 

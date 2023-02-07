@@ -78,14 +78,14 @@ describe('AssessmentClient', () => {
   describe('acceptance', () => {
     it('should call the acceptance endpoint with the assessment', async () => {
       const assessmentId = 'some-id'
-      const response = { section: [{ task: 'response' }] }
+      const document = { section: [{ task: 'response' }] }
 
       fakeApprovedPremisesApi
-        .post(paths.assessments.acceptance({ id: assessmentId }), { data: response })
+        .post(paths.assessments.acceptance({ id: assessmentId }), { document })
         .matchHeader('authorization', `Bearer ${token}`)
         .reply(201)
 
-      await assessmentClient.acceptance(assessmentId, response)
+      await assessmentClient.acceptance(assessmentId, document)
 
       expect(nock.isDone()).toBeTruthy()
     })
@@ -98,7 +98,8 @@ describe('AssessmentClient', () => {
 
       fakeApprovedPremisesApi
         .post(paths.assessments.rejection({ id: assessment.id }), {
-          data: { document: response, rejectionRationale: assessment.rejectionRationale },
+          document: response,
+          rejectionRationale: assessment.rejectionRationale,
         })
         .matchHeader('authorization', `Bearer ${token}`)
         .reply(201)
