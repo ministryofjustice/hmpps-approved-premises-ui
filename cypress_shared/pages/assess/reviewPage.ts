@@ -85,10 +85,12 @@ export default class ReviewPage extends AssessPage {
     })
   }
 
-  adjudicationsPageShowsAdjudications(adjudications: Array<Adjudication>) {
+  adjudicationsPageShowsAdjudications(adjudications: Array<Adjudication>, prisonCaseNotes: Array<PrisonCaseNote>) {
     cy.get('a').contains('View additional prison information').click()
 
+    this.shouldDisplayPrisonCaseNotes(prisonCaseNotes)
     this.shouldDisplayAdjudications(adjudications)
+
     this.clickBack()
   }
 
@@ -103,6 +105,7 @@ export default class ReviewPage extends AssessPage {
     this.shouldShowAdjudications(assessment.application.data?.['prison-information']['case-notes'].adjudications)
     this.adjudicationsPageShowsAdjudications(
       assessment.application.data?.['prison-information']['case-notes'].adjudications,
+      assessment.application.data?.['prison-information']['case-notes'].selectedCaseNotes,
     )
   }
 

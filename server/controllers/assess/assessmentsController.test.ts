@@ -1,12 +1,14 @@
 import type { Request, Response, NextFunction } from 'express'
 import type { GroupedAssessments } from '@approved-premises/ui'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
-import { Adjudication, ApprovedPremisesAssessment as Assessment } from '../../@types/shared'
+import { Adjudication, ApprovedPremisesAssessment as Assessment, PrisonCaseNote } from '../../@types/shared'
 
 import AssessmentsController, { tasklistPageHeading } from './assessmentsController'
 import { AssessmentService } from '../../services'
 
 import assessmentFactory from '../../testutils/factories/assessment'
+import adjudicationFactory from '../../testutils/factories/adjudication'
+import prisonCaseNotesFactory from '../../testutils/factories/prisonCaseNotes'
 
 import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
@@ -164,9 +166,10 @@ describe('assessmentsController', () => {
     })
   })
 
-  describe('adjudications', () => {
+  describe('prisonInformation', () => {
     let assessment: Assessment
     let adjudications: Array<Adjudication>
+    let caseNotes: Array<PrisonCaseNote>
 
     beforeEach(() => {
       request.params.id = 'some-id'
@@ -174,7 +177,8 @@ describe('assessmentsController', () => {
       assessment.application.data = {
         'prison-information': {
           'case-notes': {
-            adjudications,
+            adjudications: adjudicationFactory.buildList(2),
+            selectedCaseNotes: prisonCaseNotesFactory.buildList(2),
           },
         },
       }
@@ -182,12 +186,13 @@ describe('assessmentsController', () => {
     })
 
     it('renders the view', async () => {
-      const requestHandler = assessmentsController.adjudications()
+      const requestHandler = assessmentsController.prisonInformation()
 
       await requestHandler(request, response, next)
 
       expect(response.render).toBeCalledWith('assessments/pages/risk-information/prison-information', {
         adjudications,
+        caseNotes,
         assessmentId: assessment.id,
         dateOfImport: DateFormats.isoDateToUIDate(assessment.application.submittedAt),
         pageHeading: 'Prison information',

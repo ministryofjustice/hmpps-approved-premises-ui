@@ -1,4 +1,4 @@
-import { Adjudication, Document } from '../../server/@types/shared'
+import { Adjudication, Document, PrisonCaseNote } from '../../server/@types/shared'
 import { PersonRisksUI } from '../../server/@types/ui'
 import errorLookups from '../../server/i18n/en/errors.json'
 import { DateFormats } from '../../server/utils/dateUtils'
@@ -180,6 +180,20 @@ export default abstract class Page {
           cy.get('td')
             .eq(4)
             .contains(sentenceCase(adjudication?.finding || ''))
+        })
+    })
+  }
+
+  shouldDisplayPrisonCaseNotes(prisonCaseNotes: Array<PrisonCaseNote>) {
+    prisonCaseNotes.forEach(caseNote => {
+      cy.get('tr')
+        .contains(DateFormats.isoDateToUIDate(caseNote.createdAt))
+        .parent()
+        .within(() => {
+          cy.get('td').eq(1).contains(caseNote.type).contains(caseNote.subType)
+          cy.get('td')
+            .eq(1)
+            .contains(sentenceCase(caseNote.note || ''))
         })
     })
   }

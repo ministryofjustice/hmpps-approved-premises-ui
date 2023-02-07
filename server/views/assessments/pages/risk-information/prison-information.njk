@@ -11,6 +11,7 @@
     {{ govukBackLink({
 		text: "Back",
 		href: paths.assessments.pages.show({ task: 'review-application', page: 'review', id: assessmentId })
+
 	}) }}
 
     <div class="govuk-grid-row">
@@ -30,94 +31,131 @@
                 'role': 'tablist'
                 },
                 items: [{
-                text: 'Adjudications',
-                href: '#adjudications',
-                attributes: {
-                    'aria-controls': 'adjudications',
-                    'id': 'adjudicationsTab',
-                    role: 'tab'
-                }
-                }, {
-                text: 'ACCT',
-                href: '#acct',
-                attributes: {
-                    'aria-controls': 'ACCT',
-                    'id': 'acctTab',
-                    role: 'tab'
-                }
+                    text: 'Prison case notes',
+                    href: '#caseNotes',
+                    attributes: {
+                        'aria-controls': 'caseNotes',
+                        'id': 'caseNotesTab',
+                        role: 'tab',
+                        'aria-selected': true
+                    }
+                },
+                {
+                    text: 'Adjudications',
+                    href: '#adjudications',
+                    attributes: {
+                        'aria-controls': 'adjudications',
+                        'id': 'adjudicationsTab',
+                        role: 'tab'
+                    }
+                },
+                {
+                    text: '',
+                    href: '#acct',
+                    attributes: {
+                        'aria-controls': 'ACCT',
+                        'id': 'acctTab',
+                        role: 'tab'
+                    }
                 }]
             }) }}
 
-            <div class="govuk-column-full-width" id="adjudications" role="tabpanel" aria-labelledby="adjudicationsTab" hidden>
+            <div class="govuk-column-full-width" id="caseNotes" role="tabpanel" aria-labelledby="caseNotesTab" hidden>
                 <table class="govuk-table">
-                    <caption class="govuk-table__caption govuk-table__caption--m">Adjudications</caption>
+                    <caption class="govuk-table__caption govuk-table__caption--m">Prison case notes</caption>
 
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">Adjudication number</th>
-                            <th scope="col" class="govuk-table__header">Report date and time</th>
-                            <th scope="col" class="govuk-table__header">Establishment</th>
-                            <th scope="col" class="govuk-table__header govuk-!-width-one-third">Offence description	</th>
-                            <th scope="col" class="govuk-table__header">Finding</th>
+                            <th scope="col" class="govuk-table__header">Created</th>
+                            <th scope="col" class="govuk-table__header">Comments</th>
                         </tr>
                     </thead>
 
                     <tbody class="govuk-table__body">
-                        {% for adjudication in adjudications %}
+                        {% for caseNote in caseNotes %}
                             <tr class="govuk-table__row">
-                                <td scope="row" class="govuk-table__cell">{{ adjudication.id }}</td>
-                                <td scope="row" class="govuk-table__cell">{{ formatDateTime(adjudication.reportedAt) }}</td>
-                                <td scope="row" class="govuk-table__cell">{{ adjudication.establishment }}</td>
-                                <td scope="row" class="govuk-table__cell">{{ adjudication.offenceDescription }}</td>
-                                <td scope="row" class="govuk-table__cell">{{ adjudication.finding | sentenceCase }}</td>
+                                <td scope="row" class="govuk-table__cell">{{ formatDate(caseNote.createdAt) }}</td>
+                                <td scope="row" class="govuk-table__cell">
+                                    <p>
+                                        <strong>Type: {{caseNote.type}}: {{caseNote.subType}}</strong>
+                                    </p>
+                                    <p>{{caseNote.note}}</p>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
 
+                <div class="govuk-column-full-width" id="adjudications" role="tabpanel" aria-labelledby="adjudicationsTab" hidden>
+                    <table class="govuk-table">
+                        <caption class="govuk-table__caption govuk-table__caption--m">Adjudications</caption>
+
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header">Adjudication number</th>
+                                <th scope="col" class="govuk-table__header">Report date and time</th>
+                                <th scope="col" class="govuk-table__header">Establishment</th>
+                                <th scope="col" class="govuk-table__header govuk-!-width-one-third">Offence description	</th>
+                                <th scope="col" class="govuk-table__header">Finding</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="govuk-table__body">
+                            {% for adjudication in adjudications %}
+                                <tr class="govuk-table__row">
+                                    <td scope="row" class="govuk-table__cell">{{ adjudication.id }}</td>
+                                    <td scope="row" class="govuk-table__cell">{{ formatDateTime(adjudication.reportedAt) }}</td>
+                                    <td scope="row" class="govuk-table__cell">{{ adjudication.establishment }}</td>
+                                    <td scope="row" class="govuk-table__cell">{{ adjudication.offenceDescription }}</td>
+                                    <td scope="row" class="govuk-table__cell">{{ adjudication.finding | sentenceCase }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
             </div>
-        </div>
 
-        {% block extraScripts %}
-            <script type="text/javascript" nonce="{{ cspNonce }}">
-                function hidePanels() {
-                    for (var i = 0; i < panels.length; i++) {
-                        panels[i].setAttribute('hidden', 'true')
-                    }
-                }
-
-                function showPanel(panel) {
-                    hidePanels()
-                    panel.removeAttribute('hidden')
-                }
-
-                function setCurrent(current) {
-                    for (var i = 0; i < panels.length; i++) {
-                        navLinks[i].removeAttribute('aria-selected')
+            {% block extraScripts %}
+                <script type="text/javascript" nonce="{{ cspNonce }}">
+                    function hidePanels() {
+                        for (var i = 0; i < panels.length; i++) {
+                            panels[i].setAttribute('hidden', 'true')
+                        }
                     }
 
-                    current.setAttribute('aria-selected', 'true')
-                }
+                    function showPanel(panel) {
+                        hidePanels()
+                        panel.removeAttribute('hidden')
+                    }
 
-                var navLinks = document.querySelectorAll('[role="tab"]')
-                var panels = document.querySelectorAll('[role="tabpanel"')
+                    function setCurrent(current) {
+                        for (var i = 0; i < panels.length; i++) {
+                            navLinks[i].removeAttribute('aria-selected')
+                        }
 
-                showPanel(panels[0])
+                        current.setAttribute('aria-selected', 'true')
+                    }
 
-                for (var i = 0; i < navLinks.length; i++) {
-                    navLinks[i].addEventListener('click', function (e) {
-                        var link = e.target
-                        var id = link
-                            .attributes['aria-controls']
-                            .value
-                        var panel = document.querySelector('#' + id)
+                    var navLinks = document.querySelectorAll('[role="tab"]')
+                    var panels = document.querySelectorAll('[role="tabpanel"')
 
-                        showPanel(panel)
-                        setCurrent(link)
+                    showPanel(panels[0])
 
-                        e.preventDefault()
-                    })
-                }
-            </script>
+                    for (var i = 0; i < navLinks.length; i++) {
+                        navLinks[i].addEventListener('click', function (e) {
+                            var link = e.target
+                            var id = link
+                                .attributes['aria-controls']
+                                .value
+                            var panel = document.querySelector('#' + id)
+
+                            showPanel(panel)
+                            setCurrent(link)
+
+                            e.preventDefault()
+                        })
+                    }
+                </script>
+            {% endblock %}
         {% endblock %}
-    {% endblock %}

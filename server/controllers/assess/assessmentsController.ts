@@ -2,7 +2,7 @@ import type { Request, Response, RequestHandler } from 'express'
 
 import { AssessmentService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
-import { adjudicationsFromAssessment } from '../../utils/assessments/utils'
+import { adjudicationsFromAssessment, caseNotesFromAssessment } from '../../utils/assessments/utils'
 
 import getSections from '../../utils/assessments/getSections'
 
@@ -76,12 +76,13 @@ export default class AssessmentsController {
     }
   }
 
-  adjudications(): RequestHandler {
+  prisonInformation(): RequestHandler {
     return async (req: Request, res: Response) => {
       const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
 
       res.render('assessments/pages/risk-information/prison-information', {
         adjudications: adjudicationsFromAssessment(assessment),
+        caseNotes: caseNotesFromAssessment(assessment),
         pageHeading: 'Prison information',
         dateOfImport: DateFormats.isoDateToUIDate(assessment.application.submittedAt),
         assessmentId: assessment.id,

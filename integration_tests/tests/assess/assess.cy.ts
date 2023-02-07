@@ -27,6 +27,7 @@ context('Assess', () => {
         application: { data: applicationData },
         clarificationNotes: [clarificationNote],
       })
+
       assessment.data = {}
       const documents = documentFactory.buildList(4)
       assessment.application = overwriteApplicationDocuments(assessment.application, documents)
