@@ -321,6 +321,10 @@ describe('formUtils', () => {
       expect(validPostcodeArea('HR1')).toBe(true)
     })
 
+    it('when passed a lowecase postcode area it returns true', () => {
+      expect(validPostcodeArea('hr1')).toBe(true)
+    })
+
     it('when passed a non-postcode string returns false', () => {
       expect(validPostcodeArea('foo')).toBe(false)
     })

@@ -13,7 +13,8 @@ export default class RelocationRegion implements TasklistPage {
 
   question = `Where is ${this.application.person.name} most likely to live when they move on from the AP?`
 
-  hint = 'Postcode area'
+  hint =
+    'Please provide the postcode area only. To get the postcode from the full postcode remove the last 3 characters. For example, the postcode area for SW1A 0AA is SW1A.'
 
   constructor(
     public body: {
@@ -40,9 +41,9 @@ export default class RelocationRegion implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.postcodeArea) {
-      errors.postcodeArea = 'You must enter a postcode region'
+      errors.postcodeArea = 'You must enter a postcode area'
     } else if (!validPostcodeArea(this.body.postcodeArea)) {
-      errors.postcodeArea = 'You must enter a valid postcode region'
+      errors.postcodeArea = 'You must enter a valid postcode area'
     }
 
     return errors

@@ -1,6 +1,7 @@
 import * as nunjucks from 'nunjucks'
 import type { ErrorMessages, RadioItem, CheckBoxItem, SelectOption } from '@approved-premises/ui'
 import { sentenceCase } from './utils'
+import postcodeAreas from '../etc/postcodeAreas.json'
 
 export const dateFieldValues = (fieldName: string, context: Record<string, unknown>, errors: ErrorMessages = {}) => {
   const errorClass = errors[fieldName] ? 'govuk-input--error' : ''
@@ -100,12 +101,12 @@ export function convertArrayToRadioItems(array: Array<string>, checkedItem: stri
 }
 
 /**
- * Performs validation on the area of a postcode (IE the first three characters)
+ * Performs validation on the area of a postcode (IE the first three or four characters)
  * @param string string to be validated.
  * @returns true if the string is valid, false otherwise.
  */
 export function validPostcodeArea(potentialPostcode: string) {
-  return /[A-Z][0-9]{1,2}|[A-Z][A-HJ-Y][0-9]{1,2}|[A-Z][0-9][A-Z]|[A-Z][A-HJ-Y][0-9]?[A-Z]/.test(potentialPostcode)
+  return postcodeAreas.includes(potentialPostcode.toUpperCase())
 }
 
 /**
