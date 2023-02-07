@@ -40,4 +40,18 @@ describe('UserClient', () => {
       expect(output).toEqual(user)
     })
   })
+
+  describe('getUserProfile', () => {
+    const user = userFactory.build()
+
+    it('should return a user', async () => {
+      fakeApprovedPremisesApi
+        .get(paths.users.profile({}))
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, user)
+
+      const output = await userClient.getUserProfile()
+      expect(output).toEqual(user)
+    })
+  })
 })
