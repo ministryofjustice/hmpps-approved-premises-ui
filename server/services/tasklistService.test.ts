@@ -116,6 +116,24 @@ describe('tasklistService', () => {
     })
   })
 
+  describe('status', () => {
+    it('returns complete when all sections are complete', () => {
+      ;(getTaskStatus as jest.Mock).mockReturnValue('complete')
+
+      const tasklistService = new TasklistService(application)
+
+      expect(tasklistService.status).toEqual('complete')
+    })
+
+    it('returns incomplete when not all sections are complete', () => {
+      ;(getTaskStatus as jest.Mock).mockReturnValue('not_started')
+
+      const tasklistService = new TasklistService(application)
+
+      expect(tasklistService.status).toEqual('incomplete')
+    })
+  })
+
   describe('sections', () => {
     it('returns the section data with the status of each task and the section number', () => {
       ;(getTaskStatus as jest.Mock).mockReturnValue('cannot_start')

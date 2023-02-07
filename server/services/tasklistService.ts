@@ -48,6 +48,11 @@ export default class TasklistService {
     })
   }
 
+  get status() {
+    const completeTasks = Object.values(this.taskStatuses).filter(t => t === 'complete')
+    return completeTasks.length === Object.keys(this.taskStatuses).length ? 'complete' : 'incomplete'
+  }
+
   addStatusToTask(task: Task): TaskWithStatus {
     return { ...task, status: this.taskStatuses[task.id] }
   }
