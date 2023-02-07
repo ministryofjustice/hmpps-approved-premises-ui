@@ -1,5 +1,6 @@
 import type { Request, Response, RequestHandler } from 'express'
 
+import TasklistService from '../../services/tasklistService'
 import ApplicationService from '../../services/applicationService'
 import { PersonService } from '../../services'
 import { fetchErrorsAndUserInput } from '../../utils/validation'
@@ -32,11 +33,12 @@ export default class ApplicationsController {
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
       const application = await this.applicationService.getApplicationFromSessionOrAPI(req)
+      const taskList = new TasklistService(application)
 
       if (isUnapplicable(application)) {
         res.render('applications/notEligible')
       } else {
-        res.render('applications/show', { application, sections: Apply.sections })
+        res.render('applications/show', { application, taskList })
       }
     }
   }

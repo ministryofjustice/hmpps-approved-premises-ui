@@ -19,8 +19,8 @@
         Apply for an Approved Premises (AP) placement
       </h1>
 
-      <h2 class="govuk-heading-s govuk-!-margin-bottom-2">Application incomplete</h2>
-      <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ TasklistUtils.getCompleteSectionCount(sections, application) }} of {{ (sections | length) }} sections.</p>
+      <h2 class="govuk-heading-s govuk-!-margin-bottom-2" data-cy-status>Application {{ taskList.status }}</h2>
+      <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ taskList.completeSectionCount }} of {{ (taskList.sections | length) }} sections.</p>
     </div>
     {{ showErrorSummary(errorSummary) }}
 
@@ -28,29 +28,13 @@
       <form action="{{ paths.applications.submission({id: application.id}) }}" method="post">
 
         <ol class="app-task-list">
-          {% for section in sections %}
-            <li>
-              <h2 class="app-task-list__section">
-                <span class="app-task-list__section-number">{{loop.index}}. </span>
-                {{ section.title }}
-              </h2>
-              <ul class="app-task-list__items">
-                {% for task in section.tasks %}
-                  <li class="app-task-list__item">
-                    <span class="app-task-list__task-name">
-                      {{ TasklistUtils.taskLink(task, application) | safe  }}
-                    </span>
-                    {{ TasklistUtils.getTaskStatus(task, application) | safe }}
-                  </li>
-                {% endfor %}
-              </ul>
-            </li>
-          {% endfor %}
+          {% set applicationOrAssessment = application %}
+          {% include '../partials/taskListItems.njk' %}
 
           <li>
             <h2 class="app-task-list__section">
               <span class="app-task-list__section-number">
-                {{ (sections | length) + 1 }}.
+                {{ (taskList.sections | length) + 1 }}.
             </span>
             Submit your application
           </h2>

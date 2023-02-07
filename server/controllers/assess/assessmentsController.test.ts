@@ -3,6 +3,7 @@ import type { GroupedAssessments } from '@approved-premises/ui'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
 import { Adjudication, ApprovedPremisesAssessment as Assessment, PrisonCaseNote } from '../../@types/shared'
 
+import TasklistService from '../../services/tasklistService'
 import AssessmentsController, { tasklistPageHeading } from './assessmentsController'
 import { AssessmentService } from '../../services'
 
@@ -17,7 +18,7 @@ import { DateFormats } from '../../utils/dateUtils'
 
 jest.mock('../../utils/assessments/utils')
 jest.mock('../../utils/assessments/informationSetAsNotReceived')
-jest.mock('../../utils/assessments/getSections')
+jest.mock('../../services/tasklistService')
 
 describe('assessmentsController', () => {
   const token = 'SOME_TOKEN'
@@ -54,11 +55,15 @@ describe('assessmentsController', () => {
 
   describe('show', () => {
     const assessment = assessmentFactory.build()
+    const stubTaskList = jest.fn()
 
     beforeEach(() => {
       request.params.id = assessment.id
 
       assessmentService.findAssessment.mockResolvedValue(assessment)
+      ;(TasklistService as jest.Mock).mockImplementation(() => {
+        return stubTaskList
+      })
     })
 
     it('fetches the assessment and renders the task list', async () => {
@@ -69,7 +74,7 @@ describe('assessmentsController', () => {
       expect(response.render).toHaveBeenCalledWith('assessments/show', {
         assessment,
         pageHeading: 'Assess an Approved Premises (AP) application',
-        sections: getSections(assessment),
+        taskList: stubTaskList,
       })
 
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
@@ -105,7 +110,7 @@ describe('assessmentsController', () => {
       expect(response.render).toHaveBeenCalledWith('assessments/show', {
         assessment,
         pageHeading: 'Assess an Approved Premises (AP) application',
-        sections: getSections(assessment),
+        taskList: stubTaskList,
       })
 
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
