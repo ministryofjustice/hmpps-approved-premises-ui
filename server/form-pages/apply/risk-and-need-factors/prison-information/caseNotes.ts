@@ -7,11 +7,16 @@ import TasklistPage from '../../../tasklistPage'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { Page } from '../../../utils/decorators'
 
+type CaseNotesAdjudication = Omit<Adjudication, 'finding'> & {
+  /** @nullable */
+  finding?: string | null
+}
+
 type CaseNotesBody = {
   caseNoteIds: Array<string>
   selectedCaseNotes: Array<PrisonCaseNote>
   moreDetail: string
-  adjudications: Array<Adjudication>
+  adjudications: Array<CaseNotesAdjudication>
 }
 
 export const caseNoteResponse = (caseNote: PrisonCaseNote) => {
