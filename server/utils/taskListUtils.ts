@@ -1,49 +1,24 @@
-import type { FormSections, FormSection } from '@approved-premises/ui'
+import type { TaskWithStatus } from '@approved-premises/ui'
 import { ApprovedPremisesApplication as Application, ApprovedPremisesAssessment as Assessment } from '../@types/shared'
-import { Task } from '../@types/ui'
-import getAssessmentSections from './assessments/getSections'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
-import Apply from '../form-pages/apply'
 import isAssessment from './assessments/isAssessment'
 
-const taskIsComplete = (task: Task, applicationOrAssessment: Application | Assessment): boolean => {
-  return applicationOrAssessment.data?.[task.id]
-}
-
-const previousTaskIsComplete = (task: Task, applicationOrAssessment: Application | Assessment): boolean => {
-  const taskIds = isAssessment(applicationOrAssessment)
-    ? Object.keys(getAssessmentSections(applicationOrAssessment))
-    : Object.keys(Apply.pages)
-
-  const previousTaskId = taskIds[taskIds.indexOf(task.id) - 1]
-
-  return previousTaskId ? applicationOrAssessment.data?.[previousTaskId] : true
-}
-
-const getTaskStatus = (task: Task, applicationOrAssessment: Application | Assessment): string => {
-  if (!taskIsComplete(task, applicationOrAssessment) && !previousTaskIsComplete(task, applicationOrAssessment)) {
-    return `<strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="${task.id}-status">Cannot start yet</strong>`
+export const statusTag = (task: TaskWithStatus): string => {
+  switch (task.status) {
+    case 'complete':
+      return `<strong class="govuk-tag app-task-list__tag" id="${task.id}-status">Completed</strong>`
+    case 'in_progress':
+      return `<strong class="govuk-tag govuk-tag--blue app-task-list__tag" id="${task.id}-status">In progress</strong>`
+    case 'not_started':
+      return `<strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="${task.id}-status">Not started</strong>`
+    default:
+      return `<strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="${task.id}-status">Cannot start yet</strong>`
   }
-
-  if (!taskIsComplete(task, applicationOrAssessment) && previousTaskIsComplete(task, applicationOrAssessment)) {
-    return `<strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="${task.id}-status">Not started</strong>`
-  }
-
-  return `<strong class="govuk-tag app-task-list__tag" id="${task.id}-status">Completed</strong>`
 }
 
-const getCompleteSectionCount = (sections: FormSections, applicationOrAssessment: Application | Assessment): number => {
-  return sections.filter((section: FormSection) => {
-    return (
-      section.tasks.filter((task: Task) => taskIsComplete(task, applicationOrAssessment)).length ===
-      section.tasks.length
-    )
-  }).length
-}
-
-const taskLink = (task: Task, applicationOrAssessment: Application | Assessment): string => {
-  if (previousTaskIsComplete(task, applicationOrAssessment)) {
+export const taskLink = (task: TaskWithStatus, applicationOrAssessment: Application | Assessment): string => {
+  if (task.status !== 'cannot_start') {
     const firstPage = Object.keys(task.pages)[0]
 
     const link = isAssessment(applicationOrAssessment)
@@ -62,5 +37,3 @@ const taskLink = (task: Task, applicationOrAssessment: Application | Assessment)
   }
   return task.title
 }
-
-export { taskLink, getCompleteSectionCount, getTaskStatus, previousTaskIsComplete, taskIsComplete }
