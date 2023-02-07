@@ -64,8 +64,11 @@ export type Task = {
 
 export type TaskStatus = 'not_started' | 'in_progress' | 'complete' | 'cannot_start'
 
+export type TaskWithStatus = Task & { status: TaskStatus }
+
 export type FormSection = {
   title: string
+  name: string
   tasks: Array<Task>
 }
 
