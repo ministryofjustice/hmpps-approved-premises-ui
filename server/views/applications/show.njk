@@ -19,7 +19,7 @@
         Apply for an Approved Premises (AP) placement
       </h1>
 
-      <h2 class="govuk-heading-s govuk-!-margin-bottom-2">Application incomplete</h2>
+      <h2 class="govuk-heading-s govuk-!-margin-bottom-2" data-cy-status>Application {{ taskList.status }}</h2>
       <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ taskList.completeSectionCount }} of {{ (taskList.sections | length) }} sections.</p>
     </div>
     {{ showErrorSummary(errorSummary) }}
