@@ -62,6 +62,8 @@ export type Task = {
   pages: Record<string, unknown>
 }
 
+export type TaskStatus = 'not_started' | 'in_progress' | 'complete' | 'cannot_start'
+
 export type FormSection = {
   title: string
   tasks: Array<Task>
