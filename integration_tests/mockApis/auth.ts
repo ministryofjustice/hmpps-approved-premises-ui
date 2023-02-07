@@ -138,6 +138,23 @@ const stubUser = (name: string) =>
     },
   })
 
+const stubProfile = () =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: '/profile',
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: {
+        roles: [],
+      },
+    },
+  })
+
 const stubUserRoles = () =>
   stubFor({
     request: {
@@ -158,5 +175,6 @@ export default {
   stubAuthPing: ping,
   stubSignIn: (): Promise<[Response, Response, Response, Response, Response, Response]> =>
     Promise.all([favicon(), redirect(), signOut(), manageDetails(), token(), tokenVerification.stubVerifyToken()]),
-  stubAuthUser: (name = 'john smith'): Promise<[Response, Response]> => Promise.all([stubUser(name), stubUserRoles()]),
+  stubAuthUser: (name = 'john smith'): Promise<[Response, Response, Response]> =>
+    Promise.all([stubUser(name), stubUserRoles(), stubProfile()]),
 }

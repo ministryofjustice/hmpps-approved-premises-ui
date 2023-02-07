@@ -1,4 +1,4 @@
-import { User } from '@approved-premises/api'
+import { User, UserRole } from '@approved-premises/api'
 import { RestClientBuilder, UserClient } from '../data'
 import { convertToTitleCase } from '../utils/utils'
 import type HmppsAuthClient from '../data/hmppsAuthClient'
@@ -6,6 +6,7 @@ import type HmppsAuthClient from '../data/hmppsAuthClient'
 interface UserDetails {
   name: string
   displayName: string
+  roles: Array<UserRole>
 }
 
 export default class UserService {
@@ -16,7 +17,9 @@ export default class UserService {
 
   async getActingUser(token: string): Promise<UserDetails> {
     const user = await this.hmppsAuthClient.getActingUser(token)
-    return { ...user, displayName: convertToTitleCase(user.name) }
+    const client = this.userClientFactory(token)
+    const profile = await client.getUserProfile()
+    return { ...user, displayName: convertToTitleCase(user.name), roles: profile.roles }
   }
 
   async getUserById(token: string, id: string): Promise<User> {
