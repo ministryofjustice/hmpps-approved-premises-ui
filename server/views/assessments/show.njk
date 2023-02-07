@@ -13,17 +13,19 @@
       </h1>
 
       <h2 class="govuk-heading-s govuk-!-margin-bottom-2">Assessment incomplete</h2>
+      <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ taskList.completeSectionCount }} of {{ (sections | length) }} sections.</p>
     </div>
 
     {{ showErrorSummary(errorSummary) }}
+
     <form action="{{ paths.assessments.submission({id: assessment.id}) }}" method="post">
 
       <div class="govuk-grid-column-two-thirds">
         <ol class="app-task-list">
-          {% for section in sections %}
+          {% for section in taskList.sections %}
             <li>
               <h2 class="app-task-list__section">
-                <span class="app-task-list__section-number">{{loop.index}}. </span>
+                <span class="app-task-list__section-number">{{ section.sectionNumber }}. </span>
                 {{ section.title }}
               </h2>
               <ul class="app-task-list__items">
@@ -32,7 +34,7 @@
                     <span class="app-task-list__task-name">
                       {{ TasklistUtils.taskLink(task, assessment) | safe   }}
                     </span>
-                    {{ TasklistUtils.getTaskStatus(task, assessment) | safe  }}
+                    {{ TasklistUtils.statusTag(task) | safe  }}
                   </li>
                 {% endfor %}
               </ul>
