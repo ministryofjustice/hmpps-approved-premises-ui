@@ -12,6 +12,7 @@ const token = 'some token'
 describe('User service', () => {
   const userClient: jest.Mocked<UserClient> = new UserClient(null) as jest.Mocked<UserClient>
   const userClientFactory = jest.fn()
+  const userProfile = userFactory.build({ roles: ['workflow_manager', 'assessor'] })
 
   let hmppsAuthClient: jest.Mocked<HmppsAuthClient>
   let userService: UserService
@@ -23,6 +24,8 @@ describe('User service', () => {
     userClientFactory.mockReturnValue(userClient)
 
     userService = new UserService(hmppsAuthClient, userClientFactory)
+
+    userClient.getUserProfile.mockResolvedValue(userProfile)
   })
 
   describe('getUser', () => {
@@ -32,6 +35,14 @@ describe('User service', () => {
       const result = await userService.getActingUser(token)
 
       expect(result.displayName).toEqual('John Smith')
+    })
+
+    it('retrieves and populates roles', async () => {
+      hmppsAuthClient.getActingUser.mockResolvedValue({ name: 'john smith' } as User)
+
+      const result = await userService.getActingUser(token)
+
+      expect(result.roles).toEqual(['workflow_manager', 'assessor'])
     })
 
     it('Propagates error', async () => {
