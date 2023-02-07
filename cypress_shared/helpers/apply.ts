@@ -10,6 +10,7 @@ import {
   Document,
   OASysSection,
   Person,
+  PersonAcctAlert,
   PrisonCaseNote,
 } from '@approved-premises/api'
 import { PersonRisksUI } from '@approved-premises/ui'
@@ -59,6 +60,7 @@ import {
 import Page from '../pages'
 
 import adjudicationsFactory from '../../server/testutils/factories/adjudication'
+import acctAlertFactory from '../../server/testutils/factories/acctAlert'
 import documentFactory from '../../server/testutils/factories/document'
 import oasysSectionsFactory from '../../server/testutils/factories/oasysSections'
 import oasysSelectionFactory from '../../server/testutils/factories/oasysSelection'
@@ -108,6 +110,8 @@ export default class ApplyHelper {
 
   adjudications: Array<Adjudication> = []
 
+  acctAlerts: Array<PersonAcctAlert> = []
+
   moreDetail = 'Some detail'
 
   documents: Array<Document> = []
@@ -133,6 +137,7 @@ export default class ApplyHelper {
     this.stubOasysEndpoints()
     this.stubPrisonCaseNoteEndpoints()
     this.stubAdjudicationEndpoints()
+    this.stubAcctAlertsEndpoint()
     this.stubDocumentEndpoints()
     this.stubOffences()
   }
@@ -325,6 +330,29 @@ export default class ApplyHelper {
     this.moreDetail = 'some details'
 
     cy.task('stubAdjudications', { adjudications: this.adjudications, person: this.person })
+  }
+
+  private stubAcctAlertsEndpoint() {
+    const acctAlert1 = acctAlertFactory.build({
+      alertId: 47419,
+      dateCreated: '2022-12-05',
+      dateExpires: '2023-05-29',
+      comment: 'Soluta harum harum hic maxime reprehenderit quis harum necessitatibus.',
+      expired: false,
+      active: true,
+    })
+    const acctAlert2 = acctAlertFactory.build({
+      alertId: 429,
+      dateCreated: '2022-05-21',
+      dateExpires: '2023-12-16',
+      comment: 'Quia ex nisi deserunt voluptatibus sit ipsa.',
+      expired: false,
+      active: true,
+    })
+
+    this.acctAlerts = [acctAlert1, acctAlert2]
+
+    cy.task('stubAcctAlerts', { person: this.person, acctAlerts: this.acctAlerts })
   }
 
   private stubDocumentEndpoints() {
@@ -523,6 +551,7 @@ export default class ApplyHelper {
 
     const caseNotesPage = new CaseNotesPage(this.application, this.selectedPrisonCaseNotes)
     caseNotesPage.shouldDisplayAdjudications(this.adjudications)
+    caseNotesPage.shouldDisplayAcctAlerts(this.acctAlerts)
     caseNotesPage.completeForm(this.moreDetail)
     caseNotesPage.clickSubmit()
 

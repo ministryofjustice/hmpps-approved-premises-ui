@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication, PrisonCaseNote } from '@approved-premises/api'
+import { ApprovedPremisesApplication, PrisonCaseNote, PersonAcctAlert } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import { DateFormats } from '../../../server/utils/dateUtils'
@@ -33,5 +33,21 @@ export default class CaseNotesPage extends ApplyPage {
     })
 
     this.getTextInputByIdAndEnterDetails('moreDetail', moreDetail)
+  }
+
+  shouldDisplayAcctAlerts(acctAlerts: Array<PersonAcctAlert>) {
+    cy.get('a').contains('ACCT').click()
+    acctAlerts.forEach(acctAlert => {
+      cy.get('tr')
+        .contains(`${acctAlert.alertId}`)
+        .parent()
+        .within(() => {
+          cy.get('td').eq(1).contains(acctAlert.comment)
+          cy.get('td').eq(2).contains(DateFormats.isoDateToUIDate(acctAlert.dateCreated))
+          cy.get('td')
+            .eq(3)
+            .contains(DateFormats.isoDateToUIDate(acctAlert.dateExpires as string))
+        })
+    })
   }
 }

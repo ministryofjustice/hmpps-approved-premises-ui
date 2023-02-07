@@ -1,6 +1,6 @@
 import type { DataServices, PageResponse } from '@approved-premises/ui'
 
-import type { ApprovedPremisesApplication, PrisonCaseNote, Adjudication } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, PrisonCaseNote, Adjudication, PersonAcctAlert } from '@approved-premises/api'
 
 import { sentenceCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
@@ -16,7 +16,8 @@ type CaseNotesBody = {
   caseNoteIds: Array<string>
   selectedCaseNotes: Array<PrisonCaseNote>
   moreDetail: string
-  adjudications: Array<CaseNotesAdjudication>
+  adjudications: Array<Adjudication>
+  acctAlerts: Array<PersonAcctAlert>
 }
 
 export const caseNoteResponse = (caseNote: PrisonCaseNote) => {
@@ -58,7 +59,10 @@ export const caseNoteCheckbox = (caseNote: PrisonCaseNote, checked: boolean) => 
   `
 }
 
-@Page({ name: 'case-notes', bodyProperties: ['caseNoteIds', 'selectedCaseNotes', 'moreDetail', 'adjudications'] })
+@Page({
+  name: 'case-notes',
+  bodyProperties: ['caseNoteIds', 'selectedCaseNotes', 'moreDetail', 'adjudications', 'acctAlerts'],
+})
 export default class CaseNotes implements TasklistPage {
   title = 'Prison information'
 
@@ -83,7 +87,8 @@ export default class CaseNotes implements TasklistPage {
       caseNoteIds: caseNoteIds as Array<string>,
       selectedCaseNotes,
       moreDetail: value.moreDetail as string,
-      adjudications: (value.adjudications || []) as Array<Adjudication>,
+      adjudications: (value.adjudications || []) as Array<CaseNotesAdjudication>,
+      acctAlerts: (value.acctAlerts || []) as Array<PersonAcctAlert>,
     }
   }
 
@@ -95,9 +100,11 @@ export default class CaseNotes implements TasklistPage {
   ) {
     const caseNotes = await dataServices.personService.getPrisonCaseNotes(token, application.person.crn)
     const adjudications = await dataServices.personService.getAdjudications(token, application.person.crn)
+    const acctAlerts = await dataServices.personService.getAcctAlerts(token, application.person.crn)
 
     body.caseNoteIds = body.caseNoteIds ? [body.caseNoteIds].flat() : []
     body.adjudications = adjudications
+    body.acctAlerts = acctAlerts
 
     body.selectedCaseNotes = ((body.caseNoteIds || []) as Array<string>).map((noteId: string) => {
       return caseNotes.find(caseNote => caseNote.id === noteId)

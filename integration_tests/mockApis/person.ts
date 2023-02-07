@@ -12,9 +12,11 @@ import type {
   OASysSection,
   OASysSections,
   Document,
+  PersonAcctAlert,
 } from '@approved-premises/api'
 
 import { stubFor, getMatchingRequests } from '../../wiremock'
+import paths from '../../server/paths/api'
 
 export default {
   stubFindPerson: (args: { person: Person }): SuperAgentRequest =>
@@ -94,6 +96,19 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: args.adjudications,
+      },
+    }),
+
+  stubAcctAlerts: (args: { person: Person; acctAlerts: Array<PersonAcctAlert> }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.people.acctAlerts({ crn: args.person.crn }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.acctAlerts,
       },
     }),
 

@@ -122,6 +122,7 @@ describe('CaseNotes', () => {
 
       expect(page.body).toEqual({
         selectedCaseNotes: [caseNotes[0], caseNotes[1]],
+        acctAlerts: [],
         moreDetail: 'some detail',
         caseNoteIds: [caseNotes[0].id, caseNotes[1].id],
         adjudications,
