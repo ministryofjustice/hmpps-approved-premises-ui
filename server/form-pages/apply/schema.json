@@ -922,27 +922,39 @@
             "adjudications": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "number"
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number"
+                      },
+                      "reportedAt": {
+                        "type": "string"
+                      },
+                      "establishment": {
+                        "type": "string"
+                      },
+                      "offenceDescription": {
+                        "type": "string"
+                      },
+                      "hearingHeld": {
+                        "type": "boolean"
+                      }
+                    }
                   },
-                  "reportedAt": {
-                    "type": "string"
-                  },
-                  "establishment": {
-                    "type": "string"
-                  },
-                  "offenceDescription": {
-                    "type": "string"
-                  },
-                  "hearingHeld": {
-                    "type": "boolean"
-                  },
-                  "finding": {
-                    "type": "string"
+                  {
+                    "type": "object",
+                    "properties": {
+                      "finding": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
                   }
-                }
+                ]
               }
             }
           }
