@@ -1,5 +1,6 @@
 import type { Request, Response, RequestHandler } from 'express'
 
+import TasklistService from '../../services/tasklistService'
 import { AssessmentService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 import { adjudicationsFromAssessment, caseNotesFromAssessment } from '../../utils/assessments/utils'
@@ -26,6 +27,7 @@ export default class AssessmentsController {
     return async (req: Request, res: Response) => {
       const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
       const noteAwaitingResponse = assessment.status === 'pending' && !informationSetAsNotReceived(assessment)
+      const taskList = new TasklistService(assessment)
 
       if (noteAwaitingResponse) {
         res.redirect(
@@ -39,7 +41,7 @@ export default class AssessmentsController {
         res.render('assessments/show', {
           assessment,
           pageHeading: tasklistPageHeading,
-          sections: getSections(assessment),
+          taskList,
         })
       }
     }

@@ -3,6 +3,7 @@ import { createMock, DeepMocked } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput, GroupedApplications } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import TasklistService from '../../services/tasklistService'
 import ApplicationsController, { tasklistPageHeading } from './applicationsController'
 import { ApplicationService, PersonService } from '../../services'
 import { fetchErrorsAndUserInput } from '../../utils/validation'
@@ -17,6 +18,7 @@ import { firstPageOfApplicationJourney, getResponses, isUnapplicable } from '../
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applicationUtils')
+jest.mock('../../services/tasklistService')
 
 describe('applicationsController', () => {
   const token = 'SOME_TOKEN'
@@ -80,14 +82,18 @@ describe('applicationsController', () => {
 
     it('fetches the application from session or the API and renders the task list', async () => {
       const requestHandler = applicationsController.show()
+      const stubTaskList = jest.fn()
 
       applicationService.getApplicationFromSessionOrAPI.mockResolvedValue(application)
+      ;(TasklistService as jest.Mock).mockImplementation(() => {
+        return stubTaskList
+      })
 
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('applications/show', {
         application,
-        sections: Apply.sections,
+        taskList: stubTaskList,
       })
 
       expect(applicationService.findApplication).not.toHaveBeenCalledWith(token, application.id)
