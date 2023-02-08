@@ -435,13 +435,10 @@ const applicationAccepted = (assessment: Assessment) => {
   switch (decisionFromAssessment(assessment)) {
     case 'releaseDate':
       return true
-      break
     case 'hold':
       return true
-      break
     default:
       return false
-      break
   }
 }
 
@@ -450,16 +447,13 @@ const confirmationPageMessage = (assessment: Assessment) => {
     case 'releaseDate':
       return `<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
       <p>The assessment can now be used to match Robert Brown to a bed in an Approved Premises.</p>`
-      break
     case 'hold':
       return `<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
       <p>This case is now paused until the oral hearing outcome has been provided by the Probation Practitioner and a release date is confirmed.</p>
       <p>It will be added to the matching queue if the oral hearing is successful.</p>`
-      break
     default:
       return `<p>We've sent you a confirmation email.</p>
       <p>We've notified the Probation Practitioner that this application has been rejected as unsuitable for an Approved Premises.</p>`
-      break
   }
 }
 
@@ -467,10 +461,8 @@ const confirmationPageResult = (assessment: Assessment) => {
   switch (applicationAccepted(assessment)) {
     case true:
       return 'You have marked this application as suitable.'
-      break
     default:
       return 'You have marked this application as unsuitable.'
-      break
   }
 }
 
