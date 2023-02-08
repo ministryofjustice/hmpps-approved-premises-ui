@@ -13,7 +13,7 @@ type DescribeLocationFactorsBody = {
   restrictions: YesOrNo
   restrictionDetail: string
   alternativeRadiusAccepted: YesOrNo
-  alternativeRadius: (typeof radiuses)[number]
+  alternativeRadius?: (typeof radiuses)[number]
 }
 
 @Page({
@@ -41,7 +41,16 @@ export default class DescribeLocationFactors implements TasklistPage {
     alternativeRadius: 'Choose the maximum radius (in miles)',
   }
 
-  constructor(public body: Partial<DescribeLocationFactorsBody>) {}
+  body: DescribeLocationFactorsBody
+
+  constructor(body: Partial<DescribeLocationFactorsBody>) {
+    if (body.alternativeRadiusAccepted === 'yes') {
+      this.body = body as DescribeLocationFactorsBody
+    } else {
+      delete body.alternativeRadius
+      this.body = body as DescribeLocationFactorsBody
+    }
+  }
 
   previous() {
     return 'dashboard'
