@@ -16,6 +16,19 @@ import { applicationAccepted } from '../utils/assessments/utils'
 export default class AssessmentService {
   constructor(private readonly assessmentClientFactory: RestClientBuilder<AssessmentClient>) {}
 
+  async getAll(token: string): Promise<Array<Assessment>> {
+    const client = this.assessmentClientFactory(token)
+
+    return client.all()
+  }
+
+  async getAllForUser(token: string, userId: string): Promise<Array<Assessment>> {
+    const client = this.assessmentClientFactory(token)
+    const assessments = await client.all()
+
+    return assessments.filter(a => a.allocatedToStaffMember?.id === userId)
+  }
+
   async getAllForLoggedInUser(token: string): Promise<GroupedAssessments> {
     const client = this.assessmentClientFactory(token)
 

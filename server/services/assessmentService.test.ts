@@ -5,6 +5,7 @@ import { AssessmentClient } from '../data'
 import AssessmentService from './assessmentService'
 import assessmentFactory from '../testutils/factories/assessment'
 import clarificationNoteFactory from '../testutils/factories/clarificationNote'
+import userFactory from '../testutils/factories/user'
 
 import { getBody, updateAssessmentData } from '../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
@@ -27,6 +28,43 @@ describe('AssessmentService', () => {
   beforeEach(() => {
     jest.resetAllMocks()
     assessmentClientFactory.mockReturnValue(assessmentClient)
+  })
+
+  describe('getting all assessments', () => {
+    const user = userFactory.build({ id: 'some-uuid' })
+    const otherUser = userFactory.build({ id: 'some-other-uuid' })
+
+    const assessmentsForUser = assessmentFactory.buildList(2, {
+      allocatedToStaffMember: user,
+    })
+    const assessmentsForDifferentUser = assessmentFactory.buildList(2, {
+      status: 'completed',
+      allocatedToStaffMember: otherUser,
+    })
+    const unallocatedAssessments = assessmentFactory.buildList(2, {
+      allocatedToStaffMember: null,
+    })
+
+    beforeEach(() => {
+      assessmentClient.all.mockResolvedValue(
+        [assessmentsForUser, assessmentsForDifferentUser, unallocatedAssessments].flat(),
+      )
+    })
+
+    describe('getAll', () => {
+      it('should return all assessments', async () => {
+        const result = await service.getAll('token')
+
+        expect(result).toEqual([assessmentsForUser, assessmentsForDifferentUser, unallocatedAssessments].flat())
+      })
+    })
+
+    describe('getAllForUser', () => {
+      it('should return all assessments for that user', async () => {
+        const result = await service.getAllForUser('token', user.id)
+        expect(result).toEqual(assessmentsForUser)
+      })
+    })
   })
 
   it('gets all the assesments for the logged in user and groups them by status', async () => {
