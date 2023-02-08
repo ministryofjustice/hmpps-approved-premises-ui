@@ -150,6 +150,7 @@ const stubProfile = () =>
         'Content-Type': 'application/json;charset=UTF-8',
       },
       jsonBody: {
+        id: '70596333-63d4-4fb2-8acc-9ca55563d878',
         roles: [],
       },
     },

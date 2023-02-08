@@ -37,11 +37,12 @@ describe('User service', () => {
       expect(result.displayName).toEqual('John Smith')
     })
 
-    it('retrieves and populates roles', async () => {
+    it('retrieves and populates information from the API', async () => {
       hmppsAuthClient.getActingUser.mockResolvedValue({ name: 'john smith' } as User)
 
       const result = await userService.getActingUser(token)
 
+      expect(result.id).toEqual(userProfile.id)
       expect(result.roles).toEqual(['workflow_manager', 'assessor'])
     })
 
