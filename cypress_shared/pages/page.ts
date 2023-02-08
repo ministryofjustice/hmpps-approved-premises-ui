@@ -1,4 +1,4 @@
-import { Adjudication, Document, PrisonCaseNote } from '../../server/@types/shared'
+import { Adjudication, Document, PersonAcctAlert, PrisonCaseNote } from '../../server/@types/shared'
 import { PersonRisksUI } from '../../server/@types/ui'
 import errorLookups from '../../server/i18n/en/errors.json'
 import { DateFormats } from '../../server/utils/dateUtils'
@@ -194,6 +194,22 @@ export default abstract class Page {
           cy.get('td')
             .eq(1)
             .contains(sentenceCase(caseNote.note || ''))
+        })
+    })
+  }
+
+  shouldDisplayAcctAlerts(acctAlerts: Array<PersonAcctAlert>) {
+    cy.get('a').contains('ACCT').click()
+    acctAlerts.forEach(acctAlert => {
+      cy.get('tr')
+        .contains(`${acctAlert.alertId}`)
+        .parent()
+        .within(() => {
+          cy.get('td').eq(1).contains(acctAlert.comment)
+          cy.get('td').eq(2).contains(DateFormats.isoDateToUIDate(acctAlert.dateCreated))
+          cy.get('td')
+            .eq(3)
+            .contains(DateFormats.isoDateToUIDate(acctAlert.dateExpires as string))
         })
     })
   }

@@ -23,6 +23,7 @@ import {
   confirmationPageResult,
   adjudicationsFromAssessment,
   caseNotesFromAssessment,
+  acctAlertsFromAssessment,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
@@ -30,16 +31,17 @@ import paths from '../../paths/assess'
 import * as personUtils from '../personUtils'
 import * as applicationUtils from '../applicationUtils'
 
-import assessmentFactory from '../../testutils/factories/assessment'
-import clarificationNoteFactory from '../../testutils/factories/clarificationNote'
 import Assess from '../../form-pages/assess'
 import { UnknownPageError } from '../errors'
+import assessmentFactory from '../../testutils/factories/assessment'
 import applicationFactory from '../../testutils/factories/application'
-import reviewSections from '../reviewUtils'
+import clarificationNoteFactory from '../../testutils/factories/clarificationNote'
 import documentFactory from '../../testutils/factories/document'
-import { documentsFromApplication } from './documentUtils'
 import adjudicationFactory from '../../testutils/factories/adjudication'
 import prisonCaseNotesFactory from '../../testutils/factories/prisonCaseNotes'
+import acctAlertFactory from '../../testutils/factories/acctAlert'
+import reviewSections from '../reviewUtils'
+import { documentsFromApplication } from './documentUtils'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -518,7 +520,7 @@ describe('utils', () => {
       const assessment = assessmentFactory.build()
       assessment.application.data['prison-information'] = {}
 
-      expect(adjudicationsFromAssessment(assessment)).toEqual('')
+      expect(adjudicationsFromAssessment(assessment)).toEqual([])
     })
   })
 
@@ -535,7 +537,24 @@ describe('utils', () => {
       const assessment = assessmentFactory.build()
       assessment.application.data['prison-information'] = {}
 
-      expect(caseNotesFromAssessment(assessment)).toEqual('')
+      expect(caseNotesFromAssessment(assessment)).toEqual([])
+    })
+  })
+
+  describe('acctAlertsFromAssessment', () => {
+    it('returns the acctAlerts from the assessment', () => {
+      const acctAlerts = acctAlertFactory.buildList(2)
+      const assessment = assessmentFactory.build()
+      assessment.application.data['prison-information'] = { 'case-notes': { acctAlerts } }
+
+      expect(acctAlertsFromAssessment(assessment)).toEqual(acctAlerts)
+    })
+
+    it('returns an empty string if the case notes are empty', () => {
+      const assessment = assessmentFactory.build()
+      assessment.application.data['prison-information'] = {}
+
+      expect(acctAlertsFromAssessment(assessment)).toEqual([])
     })
   })
 })

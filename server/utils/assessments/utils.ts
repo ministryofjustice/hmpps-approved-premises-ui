@@ -331,12 +331,16 @@ const confirmationPageResult = (assessment: Assessment) => {
 }
 
 const adjudicationsFromAssessment = (assessment: Assessment) =>
-  assessment.application?.data?.['prison-information']?.['case-notes']?.adjudications || ''
+  assessment.application?.data?.['prison-information']?.['case-notes']?.adjudications || []
 
 const caseNotesFromAssessment = (assessment: Assessment) =>
-  assessment.application?.data?.['prison-information']?.['case-notes']?.selectedCaseNotes || ''
+  assessment.application?.data?.['prison-information']?.['case-notes']?.selectedCaseNotes || []
+
+const acctAlertsFromAssessment = (assessment: Assessment) =>
+  assessment.application?.data?.['prison-information']?.['case-notes']?.acctAlerts || []
 
 export {
+  acctAlertsFromAssessment,
   adjudicationsFromAssessment,
   applicationAccepted,
   assessmentSections,

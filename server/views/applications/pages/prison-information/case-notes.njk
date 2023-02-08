@@ -1,80 +1,42 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+{% from "../../../components/formFields/form-page-textarea/macro.njk" import formPageTextarea %}
+{% from "../../../partials/prisonInformationTable.njk" import prisonInformationTable %}
+
+{% set title = "Select prison case notes" %}
 
 {% extends "../layout.njk" %}
 
 {% set columnClasses = "govuk-grid-column-full" %}
 
-{% block questions %}
-  <div class="govuk-grid-row">
-    <div>
-      <h1 class="govuk-heading-l">{{page.title}}</h1>
-      <p>Select any prison case notes that will help Approved Premises (AP) managers understand factors that may help with the person's risk management in an AP. </p>
-      <p>Adjudications from the person's current sentence and ACCT (Assessment, Care in Custody and Teamwork) information will be sent automatically.</p>
-    </div>
+{% set caseNotes %}
+<table class="govuk-table">
+  <caption class="govuk-table__caption govuk-table__caption--m">Prison case notes</caption>
 
-    {{ mojSubNavigation({
-        label: 'Sub navigation',
-        attributes: {
-          'role': 'tablist'
-        },
-        items: [{
-          text: 'Prison case notes',
-          href: '#caseNotes',
-          attributes: {
-            'aria-controls': 'caseNotes',
-            'id': 'caseNotesTab',
-            role: 'tab',
-            'aria-selected': true
-          }
-        }, {
-          text: 'Adjudications',
-          href: '#adjudications',
-          attributes: {
-            'aria-controls': 'adjudications',
-            'id': 'adjudicationsTab',
-            role: 'tab'
-          }
-        }, {
-          text: 'ACCT',
-          href: '#acct',
-          attributes: {
-            'aria-controls': 'acct',
-            'id': 'acctTab',
-            role: 'tab'
-          }
-        }]
-      }) }}
-  </div>
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th scope="col" class="govuk-table__header">Select</th>
+      <th scope="col" class="govuk-table__header">Created</th>
+      <th scope="col" class="govuk-table__header">Comments</th>
+    </tr>
+  </thead>
 
-  <div class="govuk-column-full-width" id="caseNotes" role="tabpanel" aria-labelledby="caseNotesTab" hidden>
-    <table class="govuk-table">
-      <caption class="govuk-table__caption govuk-table__caption--m">Prison case notes</caption>
+  <tbody class="govuk-table__body">
+    {% for caseNote in page.caseNotes %}
+      <tr class="govuk-table__row">
+        <td scope="row" class="govuk-table__cell">{{ page.checkBoxForCaseNoteId(caseNote.id) | safe }}</td>
+        <td scope="row" class="govuk-table__cell">{{ formatDate(caseNote.createdAt) }}</td>
+        <td scope="row" class="govuk-table__cell">
+          <p>
+            <strong>Type: {{caseNote.type}}: {{caseNote.subType}}</strong>
+          </p>
+          <p>{{caseNote.note}}</p>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
-      <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-          <th scope="col" class="govuk-table__header">Select</th>
-          <th scope="col" class="govuk-table__header">Created</th>
-          <th scope="col" class="govuk-table__header">Comments</th>
-        </tr>
-      </thead>
-
-      <tbody class="govuk-table__body">
-        {% for caseNote in page.caseNotes %}
-          <tr class="govuk-table__row">
-            <td scope="row" class="govuk-table__cell">{{ page.checkBoxForCaseNoteId(caseNote.id) | safe }}</td>
-            <td scope="row" class="govuk-table__cell">{{ formatDate(caseNote.createdAt) }}</td>
-            <td scope="row" class="govuk-table__cell">
-              <p>
-                <strong>Type: {{caseNote.type}}: {{caseNote.subType}}</strong>
-              </p>
-              <p>{{caseNote.note}}</p>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    {{ formPageTextarea({
+{{ formPageTextarea({
       fieldName: 'moreDetail',
       label: {
         text: page.questions.moreDetailsQuestion,
@@ -84,104 +46,16 @@
         text: "Provide details (optional)"
       }
     }) }}
+{% endset %}
+
+{% block questions %}
+  <div class="govuk-grid-row">
+    <div>
+      <h1 class="govuk-heading-l">{{page.title}}</h1>
+      <p>Select any prison case notes that will help Approved Premises (AP) managers understand factors that may help with the person's risk management in an AP. </p>
+      <p>Adjudications from the person's current sentence and ACCT (Assessment, Care in Custody and Teamwork) information will be sent automatically.</p>
+    </div>
+
+    {{prisonInformationTable(caseNotes, page.body.adjudications, page.body.acctAlerts)}}
   </div>
-
-  <div class="govuk-column-full-width" id="adjudications" role="tabpanel" aria-labelledby="adjudicationsTab" hidden>
-    <table class="govuk-table">
-      <caption class="govuk-table__caption govuk-table__caption--m">Adjudications</caption>
-
-      <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-          <th scope="col" class="govuk-table__header">Adjudication number</th>
-          <th scope="col" class="govuk-table__header">Report date and time</th>
-          <th scope="col" class="govuk-table__header">Establishment</th>
-          <th scope="col" class="govuk-table__header govuk-!-width-one-third">Offence description	</th>
-          <th scope="col" class="govuk-table__header">Finding</th>
-        </tr>
-      </thead>
-
-      <tbody class="govuk-table__body">
-        {% for adjudication in page.body.adjudications %}
-          <tr class="govuk-table__row">
-            <td scope="row" class="govuk-table__cell">{{ adjudication.id }}</td>
-            <td scope="row" class="govuk-table__cell">{{ formatDateTime(adjudication.reportedAt) }}</td>
-            <td scope="row" class="govuk-table__cell">{{ adjudication.establishment }}</td>
-            <td scope="row" class="govuk-table__cell">{{ adjudication.offenceDescription }}</td>
-            <td scope="row" class="govuk-table__cell">{{ adjudication.finding | sentenceCase }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-    <input name="adjudications" type="hidden" value="{{ page.body.adjudications | dump }}"/>
-  </div>
-
-  <div class="govuk-column-full-width" id="acct" role="tabpanel" aria-labelledby="acctTab" hidden>
-    <table class="govuk-table">
-      <caption class="govuk-table__caption govuk-table__caption--m">ACCT</caption>
-      <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-          <th scope="col" class="govuk-table__header" style="width:100px;">Alert type</th>
-          <th scope="col" class="govuk-table__header">ACCT description</th>
-          <th scope="col" class="govuk-table__header">Date created</th>
-          <th scope="col" class="govuk-table__header">Expiry date</th>
-        </tr>
-      </thead>
-
-      <tbody class="govuk-table__body">
-        {% for alert in page.body.acctAlerts %}
-          <tr class="govuk-table__row">
-            <td scope="row" class="govuk-table__cell">{{ alert.alertId }}</td>
-            <td scope="row" class="govuk-table__cell">{{ alert.comment }}</td>
-            <td scope="row" class="govuk-table__cell">{{ formatDate(alert.dateCreated) }}</td>
-            <td scope="row" class="govuk-table__cell">{{ formatDate(alert.dateExpires) }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-{% endblock %}
-
-{% block extraScripts %}
-  <script type="text/javascript" nonce="{{ cspNonce }}">
-    function hidePanels() {
-      for (var i = 0; i < panels.length; i++) {
-        panels[i].setAttribute('hidden', 'true')
-      }
-    }
-
-    function showPanel(panel) {
-      hidePanels()
-      panel.removeAttribute('hidden')
-    }
-
-    function setCurrent(current) {
-      for (var i = 0; i < panels.length; i++) {
-        navLinks[i].removeAttribute('aria-selected')
-      }
-
-      current.setAttribute('aria-selected', 'true')
-    }
-
-    var navLinks = document.querySelectorAll('[role="tab"]')
-    var panels = document.querySelectorAll('[role="tabpanel"')
-
-    showPanel(panels[0])
-
-    for (var i = 0; i < navLinks.length; i++) {
-      navLinks[i].addEventListener('click', function (e) {
-        var link = e.target
-        var id = link
-          .attributes['aria-controls']
-          .value
-        var panel = document.querySelector('#' + id)
-
-        showPanel(panel)
-        setCurrent(link)
-
-        e.preventDefault()
-      })
-    }
-  </script>
 {% endblock %}

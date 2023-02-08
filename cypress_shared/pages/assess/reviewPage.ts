@@ -1,7 +1,7 @@
 import type { Person, PrisonCaseNote, Document, ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
-import { Adjudication } from '../../../server/@types/shared'
+import { Adjudication, PersonAcctAlert } from '../../../server/@types/shared'
 import { sentenceCase } from '../../../server/utils/utils'
 import AssessPage from './assessPage'
 
@@ -85,11 +85,16 @@ export default class ReviewPage extends AssessPage {
     })
   }
 
-  adjudicationsPageShowsAdjudications(adjudications: Array<Adjudication>, prisonCaseNotes: Array<PrisonCaseNote>) {
+  prisonInformationPage(
+    adjudications: Array<Adjudication>,
+    prisonCaseNotes: Array<PrisonCaseNote>,
+    acctAlerts: Array<PersonAcctAlert>,
+  ) {
     cy.get('a').contains('View additional prison information').click()
 
     this.shouldDisplayPrisonCaseNotes(prisonCaseNotes)
     this.shouldDisplayAdjudications(adjudications)
+    this.shouldDisplayAcctAlerts(acctAlerts)
 
     this.clickBack()
   }
@@ -103,9 +108,10 @@ export default class ReviewPage extends AssessPage {
 
     this.shouldShowCaseNotes(assessment.application.data?.['prison-information']['case-notes'].selectedCaseNotes)
     this.shouldShowAdjudications(assessment.application.data?.['prison-information']['case-notes'].adjudications)
-    this.adjudicationsPageShowsAdjudications(
+    this.prisonInformationPage(
       assessment.application.data?.['prison-information']['case-notes'].adjudications,
       assessment.application.data?.['prison-information']['case-notes'].selectedCaseNotes,
+      assessment.application.data?.['prison-information']['case-notes'].acctAlerts,
     )
   }
 

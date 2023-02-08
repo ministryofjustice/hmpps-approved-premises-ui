@@ -3,7 +3,11 @@ import type { Request, Response, RequestHandler } from 'express'
 import TasklistService from '../../services/tasklistService'
 import { AssessmentService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
-import { adjudicationsFromAssessment, caseNotesFromAssessment } from '../../utils/assessments/utils'
+import {
+  acctAlertsFromAssessment,
+  adjudicationsFromAssessment,
+  caseNotesFromAssessment,
+} from '../../utils/assessments/utils'
 
 import getSections from '../../utils/assessments/getSections'
 
@@ -85,6 +89,7 @@ export default class AssessmentsController {
       res.render('assessments/pages/risk-information/prison-information', {
         adjudications: adjudicationsFromAssessment(assessment),
         caseNotes: caseNotesFromAssessment(assessment),
+        acctAlerts: acctAlertsFromAssessment(assessment),
         pageHeading: 'Prison information',
         dateOfImport: DateFormats.isoDateToUIDate(assessment.application.submittedAt),
         assessmentId: assessment.id,
