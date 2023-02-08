@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express'
 import type { GroupedAssessments } from '@approved-premises/ui'
 import { createMock, DeepMocked } from '@golevelup/ts-jest'
-import { Adjudication, ApprovedPremisesAssessment as Assessment, PrisonCaseNote } from '../../@types/shared'
+import { ApprovedPremisesAssessment as Assessment } from '../../@types/shared'
 
 import TasklistService from '../../services/tasklistService'
 import AssessmentsController, { tasklistPageHeading } from './assessmentsController'
@@ -15,6 +15,12 @@ import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 import getSections from '../../utils/assessments/getSections'
 import { DateFormats } from '../../utils/dateUtils'
+import acctAlertFactory from '../../testutils/factories/acctAlert'
+import {
+  acctAlertsFromAssessment,
+  adjudicationsFromAssessment,
+  caseNotesFromAssessment,
+} from '../../utils/assessments/utils'
 
 jest.mock('../../utils/assessments/utils')
 jest.mock('../../utils/assessments/informationSetAsNotReceived')
@@ -173,24 +179,23 @@ describe('assessmentsController', () => {
 
   describe('prisonInformation', () => {
     let assessment: Assessment
-    let adjudications: Array<Adjudication>
-    let caseNotes: Array<PrisonCaseNote>
 
     beforeEach(() => {
       request.params.id = 'some-id'
       assessment = assessmentFactory.build()
-      assessment.application.data = {
-        'prison-information': {
-          'case-notes': {
-            adjudications: adjudicationFactory.buildList(2),
-            selectedCaseNotes: prisonCaseNotesFactory.buildList(2),
-          },
-        },
-      }
+
       assessmentService.findAssessment.mockResolvedValue(assessment)
     })
 
     it('renders the view', async () => {
+      const adjudications = adjudicationFactory.buildList(2)
+      const caseNotes = prisonCaseNotesFactory.buildList(2)
+      const acctAlerts = acctAlertFactory.buildList(2)
+
+      ;(adjudicationsFromAssessment as jest.Mock).mockReturnValue(adjudications)
+      ;(caseNotesFromAssessment as jest.Mock).mockReturnValue(caseNotes)
+      ;(acctAlertsFromAssessment as jest.Mock).mockReturnValue(acctAlerts)
+
       const requestHandler = assessmentsController.prisonInformation()
 
       await requestHandler(request, response, next)
@@ -198,6 +203,7 @@ describe('assessmentsController', () => {
       expect(response.render).toBeCalledWith('assessments/pages/risk-information/prison-information', {
         adjudications,
         caseNotes,
+        acctAlerts,
         assessmentId: assessment.id,
         dateOfImport: DateFormats.isoDateToUIDate(assessment.application.submittedAt),
         pageHeading: 'Prison information',
