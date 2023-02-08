@@ -9,7 +9,7 @@ import {
   Task,
   TextItem,
 } from '@approved-premises/ui'
-import { format, differenceInDays, add } from 'date-fns'
+import { format, differenceInDays, add, getUnixTime } from 'date-fns'
 
 import { ApprovedPremisesAssessment as Assessment, ApprovedPremisesApplication } from '@approved-premises/api'
 import { tierBadge } from '../personUtils'
@@ -88,9 +88,15 @@ const allocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> => 
       },
       {
         text: formattedArrivalDate(assessment),
+        attributes: {
+          'data-sort-value': `${arriveDateAsTimestamp(assessment)}`,
+        },
       },
       {
         html: formatDaysUntilDueWithWarning(assessment),
+        attributes: {
+          'data-sort-value': `${daysUntilDue(assessment)}`,
+        },
       },
       {
         text: assessment.allocatedToStaffMember.name,
@@ -120,9 +126,15 @@ const unallocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> =
       },
       {
         text: formattedArrivalDate(assessment),
+        attributes: {
+          'data-sort-value': `${arriveDateAsTimestamp(assessment)}`,
+        },
       },
       {
         html: formatDaysUntilDueWithWarning(assessment),
+        attributes: {
+          'data-sort-value': `${daysUntilDue(assessment)}`,
+        },
       },
       {
         text: getApplicationType(assessment),
@@ -243,6 +255,11 @@ const assessmentLink = (assessment: Assessment, linkText = '', hiddenText = ''):
 const formattedArrivalDate = (assessment: Assessment): string => {
   const arrivalDate = getArrivalDate(assessment.application as ApprovedPremisesApplication)
   return format(DateFormats.isoToDateObj(arrivalDate), 'd MMM yyyy')
+}
+
+const arriveDateAsTimestamp = (assessment: Assessment): number => {
+  const arrivalDate = getArrivalDate(assessment.application as ApprovedPremisesApplication)
+  return getUnixTime(DateFormats.isoToDateObj(arrivalDate))
 }
 
 const formatDays = (days: number): string => {
@@ -496,4 +513,5 @@ export {
   allocatedTableRows,
   unallocatedTableRows,
   getApplicationType,
+  arriveDateAsTimestamp,
 }

@@ -28,6 +28,7 @@ import {
   acctAlertsFromAssessment,
   groupAssessmements,
   unallocatedTableRows,
+  arriveDateAsTimestamp,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
@@ -213,6 +214,16 @@ describe('utils', () => {
     })
   })
 
+  describe('arriveDateAsTimestamp', () => {
+    it('returns the arrival date from the application as a unix timestamp', () => {
+      const assessment = assessmentFactory.build()
+      const getDateSpy = jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+
+      expect(arriveDateAsTimestamp(assessment)).toEqual(1640995200)
+      expect(getDateSpy).toHaveBeenCalledWith(assessment.application)
+    })
+  })
+
   describe('getApplicationType', () => {
     it('returns standard when the application is not PIPE', () => {
       const assessment = assessmentFactory.build({
@@ -241,9 +252,19 @@ describe('utils', () => {
 
       expect(allocatedTableRows([assessment])).toEqual([
         [
-          { html: assessment.application.person.name },
-          { text: formattedArrivalDate(assessment) },
-          { html: formatDaysUntilDueWithWarning(assessment) },
+          { text: assessment.application.person.name },
+          {
+            text: formattedArrivalDate(assessment),
+            attributes: {
+              'data-sort-value': `${arriveDateAsTimestamp(assessment)}`,
+            },
+          },
+          {
+            html: formatDaysUntilDueWithWarning(assessment),
+            attributes: {
+              'data-sort-value': `${daysUntilDue(assessment)}`,
+            },
+          },
           { text: assessment.allocatedToStaffMember.name },
           { text: getApplicationType(assessment) },
           { html: getStatus(assessment) },
@@ -263,9 +284,19 @@ describe('utils', () => {
 
       expect(unallocatedTableRows([assessment])).toEqual([
         [
-          { html: assessment.application.person.name },
-          { text: formattedArrivalDate(assessment) },
-          { html: formatDaysUntilDueWithWarning(assessment) },
+          { text: assessment.application.person.name },
+          {
+            text: formattedArrivalDate(assessment),
+            attributes: {
+              'data-sort-value': `${arriveDateAsTimestamp(assessment)}`,
+            },
+          },
+          {
+            html: formatDaysUntilDueWithWarning(assessment),
+            attributes: {
+              'data-sort-value': `${daysUntilDue(assessment)}`,
+            },
+          },
           { text: getApplicationType(assessment) },
           { html: getStatus(assessment) },
           { html: assessmentLink(assessment, 'Allocate', `assessment for ${assessment.application.person.name}`) },
