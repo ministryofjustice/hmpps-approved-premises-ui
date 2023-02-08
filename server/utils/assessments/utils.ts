@@ -336,7 +336,11 @@ const adjudicationsFromAssessment = (assessment: Assessment) =>
 const caseNotesFromAssessment = (assessment: Assessment) =>
   assessment.application?.data?.['prison-information']?.['case-notes']?.selectedCaseNotes || []
 
+const acctAlertsFromAssessment = (assessment: Assessment) =>
+  assessment.application?.data?.['prison-information']?.['case-notes']?.acctAlerts || []
+
 export {
+  acctAlertsFromAssessment,
   adjudicationsFromAssessment,
   applicationAccepted,
   assessmentSections,
