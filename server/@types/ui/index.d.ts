@@ -258,6 +258,8 @@ export type OasysImportArrays =
   | ArrayOfOASysRiskToSelfQuestions
   | ArrayOfOASysRiskManagementPlanQuestions
 
+export type OasysSummariesSection = { [index: string]: OasysImportArrays }
+
 export type JourneyType = 'applications' | 'assessments'
 
 export type UserDetails = {
