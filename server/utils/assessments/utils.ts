@@ -160,10 +160,15 @@ const requestedFurtherInformationTableRows = (assessments: Array<Assessment>): A
   return rows
 }
 
-const assessmentLink = (assessment: Assessment): string => {
-  return `<a href="${paths.assessments.show({ id: assessment.id })}" data-cy-assessmentId="${assessment.id}">${
-    assessment.application.person.name
-  }</a>`
+const assessmentLink = (assessment: Assessment, linkText = '', hiddenText = ''): string => {
+  let linkBody = linkText || assessment.application.person.name
+
+  if (hiddenText) {
+    linkBody = `${linkBody} <span class="govuk-visually-hidden">${hiddenText}</span>`
+  }
+  return `<a href="${paths.assessments.show({ id: assessment.id })}" data-cy-assessmentId="${
+    assessment.id
+  }">${linkBody}</a>`
 }
 
 const formattedArrivalDate = (assessment: Assessment): string => {
