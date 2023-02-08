@@ -10,6 +10,26 @@ describe('ConvictedOffences', () => {
 
       expect(page.body).toEqual({ postcodeArea: 'E17' })
     })
+
+    it('should remove the radius if alternativeRadiusAccepted is no', () => {
+      const page = new DescribeLocationFactors({
+        postcodeArea: 'E17',
+        alternativeRadiusAccepted: 'no',
+        alternativeRadius: '60',
+      })
+
+      expect(page.body).toEqual({ postcodeArea: 'E17', alternativeRadiusAccepted: 'no' })
+    })
+
+    it('should not remove the radius if alternativeRadiusAccepted is yes', () => {
+      const page = new DescribeLocationFactors({
+        postcodeArea: 'E17',
+        alternativeRadiusAccepted: 'yes',
+        alternativeRadius: '60',
+      })
+
+      expect(page.body).toEqual({ postcodeArea: 'E17', alternativeRadiusAccepted: 'yes', alternativeRadius: '60' })
+    })
   })
 
   itShouldHavePreviousValue(new DescribeLocationFactors({}), 'dashboard')
