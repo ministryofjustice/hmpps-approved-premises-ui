@@ -24,6 +24,7 @@ import {
   adjudicationsFromAssessment,
   caseNotesFromAssessment,
   acctAlertsFromAssessment,
+  groupAssessmements,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
@@ -98,6 +99,22 @@ Assess.pages['review-application'] = {
 describe('utils', () => {
   beforeEach(() => {
     jest.resetAllMocks()
+  })
+
+  describe('groupAssessmements', () => {
+    it('groups assessments by their status', () => {
+      const completedAssessments = assessmentFactory.buildList(2, { status: 'completed' })
+      const pendingAssessments = assessmentFactory.buildList(3, { status: 'pending' })
+      const activeAssessments = assessmentFactory.buildList(5, { status: 'active' })
+
+      const assessments = [completedAssessments, pendingAssessments, activeAssessments].flat()
+
+      expect(groupAssessmements(assessments)).toEqual({
+        completed: completedAssessments,
+        requestedFurtherInformation: pendingAssessments,
+        awaiting: activeAssessments,
+      })
+    })
   })
 
   describe('daysSinceReceived', () => {

@@ -1,4 +1,12 @@
-import { HtmlItem, PageResponse, SummaryListItem, TableRow, Task, TextItem } from '@approved-premises/ui'
+import {
+  GroupedAssessments,
+  HtmlItem,
+  PageResponse,
+  SummaryListItem,
+  TableRow,
+  Task,
+  TextItem,
+} from '@approved-premises/ui'
 import { format, differenceInDays, add } from 'date-fns'
 
 import { ApprovedPremisesAssessment as Assessment, ApprovedPremisesApplication } from '@approved-premises/api'
@@ -16,6 +24,26 @@ import { kebabCase } from '../utils'
 import { documentsFromApplication } from './documentUtils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
+
+const groupAssessmements = (assessments: Array<Assessment>): GroupedAssessments => {
+  const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments
+
+  assessments.map(async assessment => {
+    switch (assessment.status) {
+      case 'completed':
+        result.completed.push(assessment)
+        break
+      case 'pending':
+        result.requestedFurtherInformation.push(assessment)
+        break
+      default:
+        result.awaiting.push(assessment)
+        break
+    }
+  })
+
+  return result
+}
 
 const awaitingAssessmentTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
@@ -365,4 +393,5 @@ export {
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
   formatDaysUntilDueWithWarning,
+  groupAssessmements,
 }
