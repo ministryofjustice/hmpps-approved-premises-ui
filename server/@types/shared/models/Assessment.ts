@@ -6,11 +6,9 @@ import type { AnyValue } from './AnyValue';
 import type { AssessmentDecision } from './AssessmentDecision';
 import type { AssessmentStatus } from './AssessmentStatus';
 import type { ClarificationNote } from './ClarificationNote';
-import type { User } from './User';
 
 export type Assessment = {
     id: string;
-    allocatedToStaffMember?: User;
     schemaVersion: string;
     outdatedSchema: boolean;
     createdAt: string;
