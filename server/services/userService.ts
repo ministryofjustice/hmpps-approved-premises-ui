@@ -1,14 +1,8 @@
-import { User, UserRole } from '@approved-premises/api'
+import { User } from '@approved-premises/api'
+import { UserDetails } from '@approved-premises/ui'
 import { RestClientBuilder, UserClient } from '../data'
 import { convertToTitleCase } from '../utils/utils'
 import type HmppsAuthClient from '../data/hmppsAuthClient'
-
-interface UserDetails {
-  id: string
-  name: string
-  displayName: string
-  roles: Array<UserRole>
-}
 
 export default class UserService {
   constructor(

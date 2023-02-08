@@ -16,6 +16,7 @@ import {
   Booking,
   Application,
   PersonAcctAlert,
+  UserRole,
 } from '@approved-premises/api'
 
 interface TasklistPage {
@@ -244,3 +245,10 @@ export type OasysImportArrays =
   | ArrayOfOASysRiskManagementPlanQuestions
 
 export type JourneyType = 'applications' | 'assessments'
+
+export type UserDetails = {
+  id: string
+  name: string
+  displayName: string
+  roles: Array<UserRole>
+}
