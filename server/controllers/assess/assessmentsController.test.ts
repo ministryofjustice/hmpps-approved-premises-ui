@@ -49,7 +49,11 @@ describe('assessmentsController', () => {
   describe('index', () => {
     it('should list all the assessments when the user is not a workflow manager', async () => {
       const assesments = assessmentFactory.buildList(3)
-      const groupedAssessments = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments
+      const groupedAssessments = {
+        completed: [],
+        requestedFurtherInformation: [],
+        awaiting: [],
+      } as GroupedAssessments<'status'>
 
       assessmentService.getAll.mockResolvedValue(assesments)
       ;(groupAssessmements as jest.Mock).mockReturnValue(groupedAssessments)
@@ -63,29 +67,63 @@ describe('assessmentsController', () => {
         pageHeading: 'Approved Premises applications',
         assessments: groupedAssessments,
       })
+      expect(groupAssessmements).toHaveBeenCalledWith(assesments, 'status')
       expect(assessmentService.getAll).toHaveBeenCalled()
     })
 
-    it('should list all the assessments for a given user when the user is a workflow manager', async () => {
-      const assesments = assessmentFactory.buildList(3)
-      const groupedAssessments = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments
-
-      assessmentService.getAllForUser.mockResolvedValue(assesments)
-      ;(groupAssessmements as jest.Mock).mockReturnValue(groupedAssessments)
-      ;(hasRole as jest.Mock).mockReturnValue(true)
-
-      const requestHandler = assessmentsController.index()
-
+    describe('when the user is a workflow manager', () => {
       const user = { id: 'some-id ' }
-      response = createMock<Response>({ locals: { user } })
+      const assesments = assessmentFactory.buildList(3)
 
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('assessments/index', {
-        pageHeading: 'Approved Premises applications',
-        assessments: groupedAssessments,
+      beforeEach(() => {
+        ;(hasRole as jest.Mock).mockReturnValue(true)
+        response = createMock<Response>({ locals: { user } })
       })
-      expect(assessmentService.getAllForUser).toHaveBeenCalledWith(token, user.id)
+
+      it('should list all the assessments for a given user when `myAssessments` is set', async () => {
+        const groupedAssessments = {
+          completed: [],
+          requestedFurtherInformation: [],
+          awaiting: [],
+        } as GroupedAssessments<'status'>
+
+        assessmentService.getAllForUser.mockResolvedValue(assesments)
+        ;(groupAssessmements as jest.Mock).mockReturnValue(groupedAssessments)
+
+        const requestHandler = assessmentsController.index()
+        request.query = { type: 'myAssessments' }
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('assessments/index', {
+          pageHeading: 'Approved Premises applications',
+          assessments: groupedAssessments,
+          type: 'myAssessments',
+        })
+        expect(groupAssessmements).toHaveBeenCalledWith(assesments, 'status')
+        expect(assessmentService.getAllForUser).toHaveBeenCalledWith(token, user.id)
+      })
+
+      it('should list all allocated and unallocated assessments when `user` is not set', async () => {
+        const groupedAssessments = {
+          allocated: [],
+          unallocated: [],
+        } as GroupedAssessments<'allocation'>
+
+        assessmentService.getAll.mockResolvedValue(assesments)
+        ;(groupAssessmements as jest.Mock).mockReturnValue(groupedAssessments)
+
+        const requestHandler = assessmentsController.index()
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('assessments/index', {
+          pageHeading: 'Approved Premises applications',
+          assessments: groupedAssessments,
+        })
+        expect(groupAssessmements).toHaveBeenCalledWith(assesments, 'allocation')
+        expect(assessmentService.getAll).toHaveBeenCalledWith(token)
+      })
     })
   })
 

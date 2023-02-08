@@ -1,5 +1,7 @@
 import type { Request, Response, RequestHandler } from 'express'
 
+import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { AssessmentGroupingCategory } from '@approved-premises/ui'
 import TasklistService from '../../services/tasklistService'
 import { AssessmentService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
@@ -23,13 +25,24 @@ export default class AssessmentsController {
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const assessments = hasRole(res.locals.user, 'workflow_manager')
-        ? await this.assessmentService.getAllForUser(req.user.token, res.locals.user.id)
-        : await this.assessmentService.getAll(req.user.token)
+      let assessments: Array<Assessment>
+      let groupingCategory: AssessmentGroupingCategory = 'status'
+
+      if (hasRole(res.locals.user, 'workflow_manager')) {
+        if (req.query.type === 'myAssessments') {
+          assessments = await this.assessmentService.getAllForUser(req.user.token, res.locals.user.id)
+        } else {
+          assessments = await this.assessmentService.getAll(req.user.token)
+          groupingCategory = 'allocation'
+        }
+      } else {
+        assessments = await this.assessmentService.getAll(req.user.token)
+      }
 
       res.render('assessments/index', {
         pageHeading: 'Approved Premises applications',
-        assessments: groupAssessmements(assessments),
+        assessments: groupAssessmements(assessments, groupingCategory),
+        type: req.query.type,
       })
     }
   }
