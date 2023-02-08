@@ -1,4 +1,5 @@
 import {
+  AssessmentGroupingCategory,
   GroupedAssessments,
   HtmlItem,
   PageResponse,
@@ -25,10 +26,10 @@ import { documentsFromApplication } from './documentUtils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
-const groupAssessmements = (assessments: Array<Assessment>): GroupedAssessments => {
-  const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments
+const groupAssessmementsByStatus = (assessments: Array<Assessment>): GroupedAssessments<'status'> => {
+  const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments<'status'>
 
-  assessments.map(async assessment => {
+  assessments.forEach(assessment => {
     switch (assessment.status) {
       case 'completed':
         result.completed.push(assessment)
@@ -43,6 +44,30 @@ const groupAssessmements = (assessments: Array<Assessment>): GroupedAssessments 
   })
 
   return result
+}
+
+const groupAssessmementsByAllocation = (assessments: Array<Assessment>): GroupedAssessments<'allocation'> => {
+  const result = { allocated: [], unallocated: [] } as GroupedAssessments<'allocation'>
+
+  assessments.forEach(assessment => {
+    if (assessment.allocatedToStaffMember) {
+      result.allocated.push(assessment)
+    } else {
+      result.unallocated.push(assessment)
+    }
+  })
+
+  return result
+}
+
+const groupAssessmements = <T extends AssessmentGroupingCategory>(
+  assessments: Array<Assessment>,
+  category: T,
+): GroupedAssessments<T> => {
+  const result =
+    category === 'status' ? groupAssessmementsByStatus(assessments) : groupAssessmementsByAllocation(assessments)
+
+  return result as GroupedAssessments<T>
 }
 
 const awaitingAssessmentTableRows = (assessments: Array<Assessment>): Array<TableRow> => {

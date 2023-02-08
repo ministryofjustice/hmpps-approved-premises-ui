@@ -109,10 +109,22 @@ describe('utils', () => {
 
       const assessments = [completedAssessments, pendingAssessments, activeAssessments].flat()
 
-      expect(groupAssessmements(assessments)).toEqual({
+      expect(groupAssessmements(assessments, 'status')).toEqual({
         completed: completedAssessments,
         requestedFurtherInformation: pendingAssessments,
         awaiting: activeAssessments,
+      })
+    })
+
+    it('groups assessments by their allocation', () => {
+      const allocatedAssessments = assessmentFactory.buildList(2, { allocatedToStaffMember: userFactory.build() })
+      const unallocatedAssessments = assessmentFactory.buildList(3, { allocatedToStaffMember: null })
+
+      const assessments = [allocatedAssessments, unallocatedAssessments].flat()
+
+      expect(groupAssessmements(assessments, 'allocation')).toEqual({
+        allocated: allocatedAssessments,
+        unallocated: unallocatedAssessments,
       })
     })
   })
