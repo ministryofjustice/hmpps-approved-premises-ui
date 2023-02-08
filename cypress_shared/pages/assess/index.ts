@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import ClarificationNoteConfirmPage from './clarificationNoteConfirmPage'
 import InformationReceivedPage from './informationReceivedPage'
 import ListPage from './listPage'
