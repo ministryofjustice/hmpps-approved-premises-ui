@@ -518,7 +518,7 @@ describe('utils', () => {
       const assessment = assessmentFactory.build()
       assessment.application.data['prison-information'] = {}
 
-      expect(adjudicationsFromAssessment(assessment)).toEqual('')
+      expect(adjudicationsFromAssessment(assessment)).toEqual([])
     })
   })
 
@@ -535,7 +535,7 @@ describe('utils', () => {
       const assessment = assessmentFactory.build()
       assessment.application.data['prison-information'] = {}
 
-      expect(caseNotesFromAssessment(assessment)).toEqual('')
+      expect(caseNotesFromAssessment(assessment)).toEqual([])
     })
   })
 })
