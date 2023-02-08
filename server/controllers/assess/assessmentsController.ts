@@ -7,12 +7,14 @@ import {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
   caseNotesFromAssessment,
+  groupAssessmements,
 } from '../../utils/assessments/utils'
 
 import getSections from '../../utils/assessments/getSections'
 
 import paths from '../../paths/assess'
 import { DateFormats } from '../../utils/dateUtils'
+import { hasRole } from '../../utils/userUtils'
 
 export const tasklistPageHeading = 'Assess an Approved Premises (AP) application'
 
@@ -21,9 +23,14 @@ export default class AssessmentsController {
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const assessments = await this.assessmentService.getAllForLoggedInUser(req.user.token)
+      const assessments = hasRole(res.locals.user, 'workflow_manager')
+        ? await this.assessmentService.getAllForUser(req.user.token, res.locals.user.id)
+        : await this.assessmentService.getAll(req.user.token)
 
-      res.render('assessments/index', { pageHeading: 'Approved Premises applications', assessments })
+      res.render('assessments/index', {
+        pageHeading: 'Approved Premises applications',
+        assessments: groupAssessmements(assessments),
+      })
     }
   }
 
