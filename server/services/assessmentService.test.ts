@@ -67,22 +67,6 @@ describe('AssessmentService', () => {
     })
   })
 
-  it('gets all the assesments for the logged in user and groups them by status', async () => {
-    const completedAssessments = assessmentFactory.buildList(2, { status: 'completed' })
-    const pendingAssessments = assessmentFactory.buildList(3, { status: 'pending' })
-    const activeAssessments = assessmentFactory.buildList(5, { status: 'active' })
-
-    assessmentClient.all.mockResolvedValue([completedAssessments, pendingAssessments, activeAssessments].flat())
-
-    const result = await service.getAllForLoggedInUser('token')
-
-    expect(result).toEqual({
-      completed: completedAssessments,
-      requestedFurtherInformation: pendingAssessments,
-      awaiting: activeAssessments,
-    })
-  })
-
   it('finds an assessment by its ID', async () => {
     const assessment = assessmentFactory.build()
 
