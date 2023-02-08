@@ -922,39 +922,53 @@
             "adjudications": {
               "type": "array",
               "items": {
-                "allOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "number"
-                      },
-                      "reportedAt": {
-                        "type": "string"
-                      },
-                      "establishment": {
-                        "type": "string"
-                      },
-                      "offenceDescription": {
-                        "type": "string"
-                      },
-                      "hearingHeld": {
-                        "type": "boolean"
-                      }
-                    }
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
                   },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "finding": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+                  "reportedAt": {
+                    "type": "string"
+                  },
+                  "establishment": {
+                    "type": "string"
+                  },
+                  "offenceDescription": {
+                    "type": "string"
+                  },
+                  "hearingHeld": {
+                    "type": "boolean"
+                  },
+                  "finding": {
+                    "type": "string"
                   }
-                ]
+                }
+              }
+            },
+            "acctAlerts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "alertId": {
+                    "type": "number"
+                  },
+                  "comment": {
+                    "type": "string"
+                  },
+                  "dateCreated": {
+                    "type": "string"
+                  },
+                  "dateExpires": {
+                    "type": "string"
+                  },
+                  "expired": {
+                    "type": "boolean"
+                  },
+                  "active": {
+                    "type": "boolean"
+                  }
+                }
               }
             }
           }

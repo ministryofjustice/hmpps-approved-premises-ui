@@ -7,6 +7,7 @@ import type {
   PrisonCaseNote,
   OASysSection,
   OASysSections,
+  PersonAcctAlert,
 } from '@approved-premises/api'
 import type { RestClientBuilder, PersonClient } from '../data'
 
@@ -51,6 +52,14 @@ export default class PersonService {
     const adjudications = await personClient.adjudications(crn)
 
     return adjudications
+  }
+
+  async getAcctAlerts(token: string, crn: string): Promise<Array<PersonAcctAlert>> {
+    const personClient = this.personClientFactory(token)
+
+    const acctAlerts = await personClient.acctAlerts(crn)
+
+    return acctAlerts
   }
 
   async getOasysSelections(token: string, crn: string): Promise<Array<OASysSection>> {

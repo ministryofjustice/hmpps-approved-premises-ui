@@ -15,6 +15,7 @@ import {
   ArrayOfOASysRiskManagementPlanQuestions,
   Booking,
   Application,
+  PersonAcctAlert,
 } from '@approved-premises/api'
 
 interface TasklistPage {
@@ -202,6 +203,7 @@ export type DataServices = Partial<{
   personService: {
     getPrisonCaseNotes: (token: string, crn: string) => Promise<Array<PrisonCaseNote>>
     getAdjudications: (token: string, crn: string) => Promise<Array<Adjudication>>
+    getAcctAlerts: (token: string, crn: string) => Promise<Array<PersonAcctAlert>>
     getOasysSelections: (token: string, crn: string) => Promise<Array<OASysSection>>
     getOasysSections: (token: string, crn: string, selectedSections?: Array<number>) => Promise<OASysSections>
     getPersonRisks: (token: string, crn: string) => Promise<PersonRisksUI>
