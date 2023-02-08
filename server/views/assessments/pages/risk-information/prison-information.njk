@@ -50,10 +50,10 @@
                     }
                 },
                 {
-                    text: '',
+                    text: 'ACCT',
                     href: '#acct',
                     attributes: {
-                        'aria-controls': 'ACCT',
+                        'aria-controls': 'acct',
                         'id': 'acctTab',
                         role: 'tab'
                     }
@@ -114,6 +114,31 @@
                     </table>
 
                 </div>
+            </div>
+
+            <div class="govuk-column-full-width" id="acct" role="tabpanel" aria-labelledby="acctTab" hidden>
+                <table class="govuk-table">
+                    <caption class="govuk-table__caption govuk-table__caption--m">ACCT</caption>
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header" style="width:100px;">Alert type</th>
+                            <th scope="col" class="govuk-table__header">ACCT description</th>
+                            <th scope="col" class="govuk-table__header">Date created</th>
+                            <th scope="col" class="govuk-table__header">Expiry date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="govuk-table__body">
+                        {% for alert in acctAlerts %}
+                            <tr class="govuk-table__row">
+                                <td scope="row" class="govuk-table__cell">{{ alert.alertId }}</td>
+                                <td scope="row" class="govuk-table__cell">{{ alert.comment }}</td>
+                                <td scope="row" class="govuk-table__cell">{{ formatDate(alert.dateCreated) }}</td>
+                                <td scope="row" class="govuk-table__cell">{{ formatDate(alert.dateExpires) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
 
             {% block extraScripts %}
