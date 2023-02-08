@@ -1,5 +1,6 @@
 import {
   applicationAccepted,
+  allocatedTableRows,
   daysSinceReceived,
   getStatus,
   formattedArrivalDate,
@@ -15,6 +16,7 @@ import {
   assessmentLink,
   getPage,
   assessmentSections,
+  getApplicationType,
   getTaskResponsesAsSummaryListItems,
   getReviewNavigationItems,
   getSectionSuffix,
@@ -25,6 +27,7 @@ import {
   caseNotesFromAssessment,
   acctAlertsFromAssessment,
   groupAssessmements,
+  unallocatedTableRows,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
@@ -41,6 +44,7 @@ import documentFactory from '../../testutils/factories/document'
 import adjudicationFactory from '../../testutils/factories/adjudication'
 import prisonCaseNotesFactory from '../../testutils/factories/prisonCaseNotes'
 import acctAlertFactory from '../../testutils/factories/acctAlert'
+import userFactory from '../../testutils/factories/user'
 import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from './documentUtils'
 
@@ -206,6 +210,67 @@ describe('utils', () => {
 
       expect(formattedArrivalDate(assessment)).toEqual('1 Jan 2022')
       expect(getDateSpy).toHaveBeenCalledWith(assessment.application)
+    })
+  })
+
+  describe('getApplicationType', () => {
+    it('returns standard when the application is not PIPE', () => {
+      const assessment = assessmentFactory.build({
+        application: applicationFactory.build({ isPipeApplication: false }),
+      })
+
+      expect(getApplicationType(assessment)).toEqual('Standard')
+    })
+
+    it('returns PIPE when the application is PIPE', () => {
+      const assessment = assessmentFactory.build({
+        application: applicationFactory.build({ isPipeApplication: true }),
+      })
+
+      expect(getApplicationType(assessment)).toEqual('PIPE')
+    })
+  })
+
+  describe('allocatedTableRows', () => {
+    it('returns table rows for the assessments', () => {
+      const staffMember = userFactory.build()
+      const assessment = assessmentFactory.build({
+        allocatedToStaffMember: staffMember,
+      })
+      jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+
+      expect(allocatedTableRows([assessment])).toEqual([
+        [
+          { html: assessment.application.person.name },
+          { text: formattedArrivalDate(assessment) },
+          { html: formatDaysUntilDueWithWarning(assessment) },
+          { text: assessment.allocatedToStaffMember.name },
+          { text: getApplicationType(assessment) },
+          { html: getStatus(assessment) },
+          { html: assessmentLink(assessment, 'Reallocate', `assessment for ${assessment.application.person.name}`) },
+        ],
+      ])
+    })
+  })
+
+  describe('unallocatedTableRows', () => {
+    it('returns table rows for the assessments', () => {
+      const staffMember = userFactory.build()
+      const assessment = assessmentFactory.build({
+        allocatedToStaffMember: staffMember,
+      })
+      jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+
+      expect(unallocatedTableRows([assessment])).toEqual([
+        [
+          { html: assessment.application.person.name },
+          { text: formattedArrivalDate(assessment) },
+          { html: formatDaysUntilDueWithWarning(assessment) },
+          { text: getApplicationType(assessment) },
+          { html: getStatus(assessment) },
+          { html: assessmentLink(assessment, 'Allocate', `assessment for ${assessment.application.person.name}`) },
+        ],
+      ])
     })
   })
 

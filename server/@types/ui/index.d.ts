@@ -153,6 +153,8 @@ export type TierNumber = '1' | '2' | '3' | '4'
 export type TierLetter = 'A' | 'B' | 'C' | 'D'
 export type RiskTierLevel = `${TierLetter}${TierNumber}`
 
+export type ApplicationType = 'Standard' | 'PIPE'
+
 export interface ErrorMessage {
   text: string
   attributes: {

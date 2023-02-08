@@ -1,4 +1,5 @@
 import {
+  ApplicationType,
   AssessmentGroupingCategory,
   GroupedAssessments,
   HtmlItem,
@@ -68,6 +69,74 @@ const groupAssessmements = <T extends AssessmentGroupingCategory>(
     category === 'status' ? groupAssessmementsByStatus(assessments) : groupAssessmementsByAllocation(assessments)
 
   return result as GroupedAssessments<T>
+}
+
+const getApplicationType = (assessment: Assessment): ApplicationType => {
+  if (assessment.application.isPipeApplication) {
+    return 'PIPE'
+  }
+  return 'Standard'
+}
+
+const allocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
+  const rows = [] as Array<TableRow>
+
+  assessments.forEach(assessment => {
+    rows.push([
+      {
+        text: assessment.application.person.name,
+      },
+      {
+        text: formattedArrivalDate(assessment),
+      },
+      {
+        html: formatDaysUntilDueWithWarning(assessment),
+      },
+      {
+        text: assessment.allocatedToStaffMember.name,
+      },
+      {
+        text: getApplicationType(assessment),
+      },
+      {
+        html: getStatus(assessment),
+      },
+      {
+        html: assessmentLink(assessment, 'Reallocate', `assessment for ${assessment.application.person.name}`),
+      },
+    ])
+  })
+
+  return rows
+}
+
+const unallocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
+  const rows = [] as Array<TableRow>
+
+  assessments.forEach(assessment => {
+    rows.push([
+      {
+        text: assessment.application.person.name,
+      },
+      {
+        text: formattedArrivalDate(assessment),
+      },
+      {
+        html: formatDaysUntilDueWithWarning(assessment),
+      },
+      {
+        text: getApplicationType(assessment),
+      },
+      {
+        html: getStatus(assessment),
+      },
+      {
+        html: assessmentLink(assessment, 'Allocate', `assessment for ${assessment.application.person.name}`),
+      },
+    ])
+  })
+
+  return rows
 }
 
 const awaitingAssessmentTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
@@ -424,4 +493,7 @@ export {
   assessmentsApproachingDueBadge,
   formatDaysUntilDueWithWarning,
   groupAssessmements,
+  allocatedTableRows,
+  unallocatedTableRows,
+  getApplicationType,
 }
