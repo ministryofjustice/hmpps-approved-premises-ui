@@ -1,0 +1,121 @@
+{% set awaitingHtml %}
+{{
+  govukTable({
+    caption: "Applications to assess",
+    captionClasses: "govuk-table__caption--m",
+    firstCellIsHeader: true,
+    head: [
+      {
+        text: "Name"
+      },
+      {
+        text: "CRN"
+      },
+      {
+        text: "Tier"
+      },
+      {
+        text: "Arrival date"
+      },
+      {
+        text: "Current location"
+      },
+      {
+        text: "Days until application due"
+      },
+      {
+        text: "Status"
+      }
+    ],
+    rows: AssessmentUtils.awaitingAssessmentTableRows(assessments.awaiting)
+  })
+}}
+{% endset -%}
+
+{% set infoRequestHtml %}
+{{
+  govukTable({
+      caption: "Requested further information",
+      captionClasses: "govuk-table__caption--m",
+      firstCellIsHeader: true,
+      head: [
+        {
+          text: "Name"
+        },
+        {
+          text: "CRN"
+        },
+        {
+          text: "Tier"
+        },
+        {
+          text: "Arrival date"
+        },
+        {
+          text: "Days since application received"
+        },
+        {
+          text: "Date of info request"
+        },
+        {
+          text: "Status"
+        }
+      ],
+      rows: AssessmentUtils.requestedFurtherInformationTableRows(assessments.requestedFurtherInformation)
+    })
+  }}
+{% endset -%}
+
+{% set completedHtml %}
+{{
+    govukTable({
+      caption: "Completed Assessments",
+      captionClasses: "govuk-table__caption--m",
+      firstCellIsHeader: true,
+      head: [
+        {
+          text: "Name"
+        },
+        {
+          text: "CRN"
+        },
+        {
+          text: "Tier"
+        },
+        {
+          text: "Arrival date"
+        },
+        {
+          text: "Status"
+        }
+      ],
+      rows: AssessmentUtils.completedTableRows(assessments.completed)
+    })
+  }}
+{% endset -%}
+
+{{ govukTabs({
+  items: [
+    {
+      label: ('Applications' + AssessmentUtils.assessmentsApproachingDueBadge(assessments.awaiting)) | safe,
+      id: "applications",
+      panel: {
+        html: awaitingHtml
+      }
+    },
+    {
+      label: "Requested further information",
+      id: "infoRequest",
+      panel: {
+        html: infoRequestHtml
+      }
+    },
+    {
+      label: "Completed",
+      id: "completed",
+      panel: {
+        html: completedHtml
+      }
+    }
+  ]
+}) }}
