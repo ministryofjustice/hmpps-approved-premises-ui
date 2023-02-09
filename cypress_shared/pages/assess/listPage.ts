@@ -1,9 +1,13 @@
 import type { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
-import { format } from 'date-fns'
 
 import Page from '../page'
 import paths from '../../../server/paths/assess'
-import { DateFormats } from '../../../server/utils/dateUtils'
+import { shouldShowTableRows } from '../../helpers'
+import {
+  awaitingAssessmentTableRows,
+  completedTableRows,
+  requestedFurtherInformationTableRows,
+} from '../../../server/utils/assessments/utils'
 
 export default class ListPage extends Page {
   constructor(
@@ -27,51 +31,11 @@ export default class ListPage extends Page {
 
   shouldShowAwaitingAssessments(): void {
     const assessments = [this.awaitingAssessments, this.assessmentsCloseToDueDate].flat()
-    assessments.forEach((item: Assessment) => {
-      cy.contains(item.application.person.name)
-        .parent()
-        .parent()
-        .within(() => {
-          cy.get('td').eq(0).contains(item.application.person.crn)
-          cy.get('td').eq(1).contains(item.application.risks.tier.value.level)
-          cy.get('td')
-            .eq(2)
-            .contains(
-              format(
-                DateFormats.isoToDateObj(item.application.data['basic-information']['release-date'].releaseDate),
-                'd MMM yyyy',
-              ),
-            )
-          cy.get('td').eq(3).contains(item.application.person.prisonName)
-          cy.get('td')
-            .eq(4)
-            .contains(this.awaitingAssessments.includes(item) ? '7 Days' : '1 Day')
-          cy.get('td').eq(5).contains('In progress')
-        })
-    })
+    shouldShowTableRows(assessments, awaitingAssessmentTableRows)
   }
 
   shouldShowPendingAssessments(): void {
-    this.pendingAssessments.forEach((item: Assessment) => {
-      cy.contains(item.application.person.name)
-        .parent()
-        .parent()
-        .within(() => {
-          cy.get('td').eq(0).contains(item.application.person.crn)
-          cy.get('td').eq(1).contains(item.application.risks.tier.value.level)
-          cy.get('td')
-            .eq(2)
-            .contains(
-              format(
-                DateFormats.isoToDateObj(item.application.data['basic-information']['release-date'].releaseDate),
-                'd MMM yyyy',
-              ),
-            )
-          cy.get('td').eq(3).contains('3 Days')
-          cy.get('td').eq(4).contains('1 Day')
-          cy.get('td').eq(5).contains('Info Request')
-        })
-    })
+    shouldShowTableRows(this.pendingAssessments, requestedFurtherInformationTableRows)
   }
 
   shouldShowNotification(): void {
@@ -92,25 +56,7 @@ export default class ListPage extends Page {
   }
 
   shouldShowCompletedAssessments(): void {
-    this.completedAssesssments.forEach((item: Assessment) => {
-      cy.log(item.application.data['basic-information']['release-date'])
-      cy.contains(item.application.person.name)
-        .parent()
-        .parent()
-        .within(() => {
-          cy.get('td').eq(0).contains(item.application.person.crn)
-          cy.get('td').eq(1).contains(item.application.risks.tier.value.level)
-          cy.get('td')
-            .eq(2)
-            .contains(
-              format(
-                DateFormats.isoToDateObj(item.application.data['basic-information']['release-date'].releaseDate),
-                'd MMM yyyy',
-              ),
-            )
-          cy.get('td').eq(3).contains('Completed')
-        })
-    })
+    shouldShowTableRows(this.completedAssesssments, completedTableRows)
   }
 
   clickCompleted() {
