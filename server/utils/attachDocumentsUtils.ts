@@ -84,7 +84,7 @@ const documentWithDescription = (document: Document, selectedDocuments: Array<Do
     return document
   }
 
-  return { ...document, description: selectedDocument.description }
+  return { ...document, description: selectedDocument.description || selectedDocument?.typeDescription }
 }
 
 export { tableRows, documentCheckbox, descriptionTextArea, documentWithDescription }

@@ -112,6 +112,20 @@ describe('attachDocumentsUtils', () => {
       })
     })
 
+    it('uses the typeDescription if the document description is undefined', () => {
+      const document = documentFactory.build({ id: '123', description: null })
+      const selectedDocument = documentFactory.build({
+        id: '123',
+        description: undefined,
+        typeDescription: 'PNC previous convictions',
+      })
+
+      expect(documentWithDescription(document, [selectedDocument, documentFactory.build()])).toEqual({
+        ...document,
+        description: 'PNC previous convictions',
+      })
+    })
+
     it('returns the document if the document with the same ID is not in the selectedDocuments argument', () => {
       const document = documentFactory.build({ id: '123', description: null })
 
