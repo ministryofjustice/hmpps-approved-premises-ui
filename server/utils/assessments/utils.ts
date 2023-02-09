@@ -1,5 +1,15 @@
-import { HtmlItem, PageResponse, SummaryListItem, TableRow, Task, TextItem } from '@approved-premises/ui'
-import { format, differenceInDays, add } from 'date-fns'
+import {
+  ApplicationType,
+  AssessmentGroupingCategory,
+  GroupedAssessments,
+  HtmlItem,
+  PageResponse,
+  SummaryListItem,
+  TableRow,
+  Task,
+  TextItem,
+} from '@approved-premises/ui'
+import { format, differenceInDays, add, getUnixTime } from 'date-fns'
 
 import { ApprovedPremisesAssessment as Assessment, ApprovedPremisesApplication } from '@approved-premises/api'
 import { tierBadge } from '../personUtils'
@@ -16,6 +26,130 @@ import { kebabCase } from '../utils'
 import { documentsFromApplication } from './documentUtils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
+
+const groupAssessmementsByStatus = (assessments: Array<Assessment>): GroupedAssessments<'status'> => {
+  const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments<'status'>
+
+  assessments.forEach(assessment => {
+    switch (assessment.status) {
+      case 'completed':
+        result.completed.push(assessment)
+        break
+      case 'pending':
+        result.requestedFurtherInformation.push(assessment)
+        break
+      default:
+        result.awaiting.push(assessment)
+        break
+    }
+  })
+
+  return result
+}
+
+const groupAssessmementsByAllocation = (assessments: Array<Assessment>): GroupedAssessments<'allocation'> => {
+  const result = { allocated: [], unallocated: [] } as GroupedAssessments<'allocation'>
+
+  assessments.forEach(assessment => {
+    if (assessment.allocatedToStaffMember) {
+      result.allocated.push(assessment)
+    } else {
+      result.unallocated.push(assessment)
+    }
+  })
+
+  return result
+}
+
+const groupAssessmements = <T extends AssessmentGroupingCategory>(
+  assessments: Array<Assessment>,
+  category: T,
+): GroupedAssessments<T> => {
+  const result =
+    category === 'status' ? groupAssessmementsByStatus(assessments) : groupAssessmementsByAllocation(assessments)
+
+  return result as GroupedAssessments<T>
+}
+
+const getApplicationType = (assessment: Assessment): ApplicationType => {
+  if (assessment.application.isPipeApplication) {
+    return 'PIPE'
+  }
+  return 'Standard'
+}
+
+const allocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
+  const rows = [] as Array<TableRow>
+
+  assessments.forEach(assessment => {
+    rows.push([
+      {
+        text: assessment.application.person.name,
+      },
+      {
+        text: formattedArrivalDate(assessment),
+        attributes: {
+          'data-sort-value': `${arriveDateAsTimestamp(assessment)}`,
+        },
+      },
+      {
+        html: formatDaysUntilDueWithWarning(assessment),
+        attributes: {
+          'data-sort-value': `${daysUntilDue(assessment)}`,
+        },
+      },
+      {
+        text: assessment.allocatedToStaffMember.name,
+      },
+      {
+        text: getApplicationType(assessment),
+      },
+      {
+        html: getStatus(assessment),
+      },
+      {
+        html: assessmentLink(assessment, 'Reallocate', `assessment for ${assessment.application.person.name}`),
+      },
+    ])
+  })
+
+  return rows
+}
+
+const unallocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
+  const rows = [] as Array<TableRow>
+
+  assessments.forEach(assessment => {
+    rows.push([
+      {
+        text: assessment.application.person.name,
+      },
+      {
+        text: formattedArrivalDate(assessment),
+        attributes: {
+          'data-sort-value': `${arriveDateAsTimestamp(assessment)}`,
+        },
+      },
+      {
+        html: formatDaysUntilDueWithWarning(assessment),
+        attributes: {
+          'data-sort-value': `${daysUntilDue(assessment)}`,
+        },
+      },
+      {
+        text: getApplicationType(assessment),
+      },
+      {
+        html: getStatus(assessment),
+      },
+      {
+        html: assessmentLink(assessment, 'Allocate', `assessment for ${assessment.application.person.name}`),
+      },
+    ])
+  })
+
+  return rows
+}
 
 const awaitingAssessmentTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
@@ -107,15 +241,25 @@ const requestedFurtherInformationTableRows = (assessments: Array<Assessment>): A
   return rows
 }
 
-const assessmentLink = (assessment: Assessment): string => {
-  return `<a href="${paths.assessments.show({ id: assessment.id })}" data-cy-assessmentId="${assessment.id}">${
-    assessment.application.person.name
-  }</a>`
+const assessmentLink = (assessment: Assessment, linkText = '', hiddenText = ''): string => {
+  let linkBody = linkText || assessment.application.person.name
+
+  if (hiddenText) {
+    linkBody = `${linkBody} <span class="govuk-visually-hidden">${hiddenText}</span>`
+  }
+  return `<a href="${paths.assessments.show({ id: assessment.id })}" data-cy-assessmentId="${
+    assessment.id
+  }">${linkBody}</a>`
 }
 
 const formattedArrivalDate = (assessment: Assessment): string => {
   const arrivalDate = getArrivalDate(assessment.application as ApprovedPremisesApplication)
   return format(DateFormats.isoToDateObj(arrivalDate), 'd MMM yyyy')
+}
+
+const arriveDateAsTimestamp = (assessment: Assessment): number => {
+  const arrivalDate = getArrivalDate(assessment.application as ApprovedPremisesApplication)
+  return getUnixTime(DateFormats.isoToDateObj(arrivalDate))
 }
 
 const formatDays = (days: number): string => {
@@ -365,4 +509,9 @@ export {
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
   formatDaysUntilDueWithWarning,
+  groupAssessmements,
+  allocatedTableRows,
+  unallocatedTableRows,
+  getApplicationType,
+  arriveDateAsTimestamp,
 }

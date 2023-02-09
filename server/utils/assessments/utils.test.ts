@@ -1,5 +1,6 @@
 import {
   applicationAccepted,
+  allocatedTableRows,
   daysSinceReceived,
   getStatus,
   formattedArrivalDate,
@@ -15,6 +16,7 @@ import {
   assessmentLink,
   getPage,
   assessmentSections,
+  getApplicationType,
   getTaskResponsesAsSummaryListItems,
   getReviewNavigationItems,
   getSectionSuffix,
@@ -24,6 +26,9 @@ import {
   adjudicationsFromAssessment,
   caseNotesFromAssessment,
   acctAlertsFromAssessment,
+  groupAssessmements,
+  unallocatedTableRows,
+  arriveDateAsTimestamp,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
@@ -40,6 +45,7 @@ import documentFactory from '../../testutils/factories/document'
 import adjudicationFactory from '../../testutils/factories/adjudication'
 import prisonCaseNotesFactory from '../../testutils/factories/prisonCaseNotes'
 import acctAlertFactory from '../../testutils/factories/acctAlert'
+import userFactory from '../../testutils/factories/user'
 import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from './documentUtils'
 
@@ -98,6 +104,34 @@ Assess.pages['review-application'] = {
 describe('utils', () => {
   beforeEach(() => {
     jest.resetAllMocks()
+  })
+
+  describe('groupAssessmements', () => {
+    it('groups assessments by their status', () => {
+      const completedAssessments = assessmentFactory.buildList(2, { status: 'completed' })
+      const pendingAssessments = assessmentFactory.buildList(3, { status: 'pending' })
+      const activeAssessments = assessmentFactory.buildList(5, { status: 'active' })
+
+      const assessments = [completedAssessments, pendingAssessments, activeAssessments].flat()
+
+      expect(groupAssessmements(assessments, 'status')).toEqual({
+        completed: completedAssessments,
+        requestedFurtherInformation: pendingAssessments,
+        awaiting: activeAssessments,
+      })
+    })
+
+    it('groups assessments by their allocation', () => {
+      const allocatedAssessments = assessmentFactory.buildList(2, { allocatedToStaffMember: userFactory.build() })
+      const unallocatedAssessments = assessmentFactory.buildList(3, { allocatedToStaffMember: null })
+
+      const assessments = [allocatedAssessments, unallocatedAssessments].flat()
+
+      expect(groupAssessmements(assessments, 'allocation')).toEqual({
+        allocated: allocatedAssessments,
+        unallocated: unallocatedAssessments,
+      })
+    })
   })
 
   describe('daysSinceReceived', () => {
@@ -177,6 +211,97 @@ describe('utils', () => {
 
       expect(formattedArrivalDate(assessment)).toEqual('1 Jan 2022')
       expect(getDateSpy).toHaveBeenCalledWith(assessment.application)
+    })
+  })
+
+  describe('arriveDateAsTimestamp', () => {
+    it('returns the arrival date from the application as a unix timestamp', () => {
+      const assessment = assessmentFactory.build()
+      const getDateSpy = jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+
+      expect(arriveDateAsTimestamp(assessment)).toEqual(1640995200)
+      expect(getDateSpy).toHaveBeenCalledWith(assessment.application)
+    })
+  })
+
+  describe('getApplicationType', () => {
+    it('returns standard when the application is not PIPE', () => {
+      const assessment = assessmentFactory.build({
+        application: applicationFactory.build({ isPipeApplication: false }),
+      })
+
+      expect(getApplicationType(assessment)).toEqual('Standard')
+    })
+
+    it('returns PIPE when the application is PIPE', () => {
+      const assessment = assessmentFactory.build({
+        application: applicationFactory.build({ isPipeApplication: true }),
+      })
+
+      expect(getApplicationType(assessment)).toEqual('PIPE')
+    })
+  })
+
+  describe('allocatedTableRows', () => {
+    it('returns table rows for the assessments', () => {
+      const staffMember = userFactory.build()
+      const assessment = assessmentFactory.build({
+        allocatedToStaffMember: staffMember,
+      })
+      jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+
+      expect(allocatedTableRows([assessment])).toEqual([
+        [
+          { text: assessment.application.person.name },
+          {
+            text: formattedArrivalDate(assessment),
+            attributes: {
+              'data-sort-value': `${arriveDateAsTimestamp(assessment)}`,
+            },
+          },
+          {
+            html: formatDaysUntilDueWithWarning(assessment),
+            attributes: {
+              'data-sort-value': `${daysUntilDue(assessment)}`,
+            },
+          },
+          { text: assessment.allocatedToStaffMember.name },
+          { text: getApplicationType(assessment) },
+          { html: getStatus(assessment) },
+          { html: assessmentLink(assessment, 'Reallocate', `assessment for ${assessment.application.person.name}`) },
+        ],
+      ])
+    })
+  })
+
+  describe('unallocatedTableRows', () => {
+    it('returns table rows for the assessments', () => {
+      const staffMember = userFactory.build()
+      const assessment = assessmentFactory.build({
+        allocatedToStaffMember: staffMember,
+      })
+      jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+
+      expect(unallocatedTableRows([assessment])).toEqual([
+        [
+          { text: assessment.application.person.name },
+          {
+            text: formattedArrivalDate(assessment),
+            attributes: {
+              'data-sort-value': `${arriveDateAsTimestamp(assessment)}`,
+            },
+          },
+          {
+            html: formatDaysUntilDueWithWarning(assessment),
+            attributes: {
+              'data-sort-value': `${daysUntilDue(assessment)}`,
+            },
+          },
+          { text: getApplicationType(assessment) },
+          { html: getStatus(assessment) },
+          { html: assessmentLink(assessment, 'Allocate', `assessment for ${assessment.application.person.name}`) },
+        ],
+      ])
     })
   })
 
@@ -300,11 +425,25 @@ describe('utils', () => {
   })
 
   describe('assessmentLink', () => {
-    it('returns a link to an assessment', () => {
-      const assessment = assessmentFactory.build({ id: '123', application: { person: { name: 'John Wayne' } } })
+    const assessment = assessmentFactory.build({ id: '123', application: { person: { name: 'John Wayne' } } })
 
+    it('returns a link to an assessment', () => {
       expect(assessmentLink(assessment)).toMatchStringIgnoringWhitespace(`
         <a href="${paths.assessments.show({ id: '123' })}" data-cy-assessmentId="123">John Wayne</a>
+      `)
+    })
+
+    it('allows custom text to be specified', () => {
+      expect(assessmentLink(assessment, 'My Text')).toMatchStringIgnoringWhitespace(`
+        <a href="${paths.assessments.show({ id: '123' })}" data-cy-assessmentId="123">My Text</a>
+      `)
+    })
+
+    it('allows custom text and hidden text to be specified', () => {
+      expect(assessmentLink(assessment, 'My Text', 'and some hidden text')).toMatchStringIgnoringWhitespace(`
+        <a href="${paths.assessments.show({
+          id: '123',
+        })}" data-cy-assessmentId="123">My Text <span class="govuk-visually-hidden">and some hidden text</span></a>
       `)
     })
   })

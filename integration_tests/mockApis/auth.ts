@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { Response } from 'superagent'
+import { UserRole } from '../../server/@types/shared/models/UserRole'
 
 import { stubFor, getMatchingRequests } from '../../wiremock'
 import tokenVerification from './tokenVerification'
@@ -138,7 +139,7 @@ const stubUser = (name: string) =>
     },
   })
 
-const stubProfile = () =>
+const stubProfile = (roles = [], userId = '70596333-63d4-4fb2-8acc-9ca55563d878') =>
   stubFor({
     request: {
       method: 'GET',
@@ -150,7 +151,8 @@ const stubProfile = () =>
         'Content-Type': 'application/json;charset=UTF-8',
       },
       jsonBody: {
-        roles: [],
+        id: userId,
+        roles,
       },
     },
   })
@@ -175,6 +177,8 @@ export default {
   stubAuthPing: ping,
   stubSignIn: (): Promise<[Response, Response, Response, Response, Response, Response]> =>
     Promise.all([favicon(), redirect(), signOut(), manageDetails(), token(), tokenVerification.stubVerifyToken()]),
-  stubAuthUser: (name = 'john smith'): Promise<[Response, Response, Response]> =>
-    Promise.all([stubUser(name), stubUserRoles(), stubProfile()]),
+  stubAuthUser: (
+    args: { name?: string; userId?: string; roles?: Array<UserRole> } = {},
+  ): Promise<[Response, Response, Response]> =>
+    Promise.all([stubUser(args.name || 'john smith'), stubUserRoles(), stubProfile(args.roles || [], args.userId)]),
 }

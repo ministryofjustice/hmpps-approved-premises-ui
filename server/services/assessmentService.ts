@@ -4,7 +4,7 @@ import {
   NewClarificationNote,
   UpdatedClarificationNote,
 } from '@approved-premises/api'
-import type { DataServices, GroupedAssessments } from '@approved-premises/ui'
+import type { DataServices } from '@approved-premises/ui'
 
 import type { RestClientBuilder, AssessmentClient } from '../data'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
@@ -16,29 +16,17 @@ import { applicationAccepted } from '../utils/assessments/utils'
 export default class AssessmentService {
   constructor(private readonly assessmentClientFactory: RestClientBuilder<AssessmentClient>) {}
 
-  async getAllForLoggedInUser(token: string): Promise<GroupedAssessments> {
+  async getAll(token: string): Promise<Array<Assessment>> {
     const client = this.assessmentClientFactory(token)
 
-    const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments
+    return client.all()
+  }
+
+  async getAllForUser(token: string, userId: string): Promise<Array<Assessment>> {
+    const client = this.assessmentClientFactory(token)
     const assessments = await client.all()
 
-    await Promise.all(
-      assessments.map(async assessment => {
-        switch (assessment.status) {
-          case 'completed':
-            result.completed.push(assessment)
-            break
-          case 'pending':
-            result.requestedFurtherInformation.push(assessment)
-            break
-          default:
-            result.awaiting.push(assessment)
-            break
-        }
-      }),
-    )
-
-    return result
+    return assessments.filter(a => a.allocatedToStaffMember?.id === userId)
   }
 
   async findAssessment(token: string, id: string): Promise<Assessment> {

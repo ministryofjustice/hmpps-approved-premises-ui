@@ -1,6 +1,7 @@
 {% extends "../partials/layout.njk" %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
@@ -12,128 +13,70 @@
 
       <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-      {% set awaitingHtml %}
-      {{
-        govukTable({
-          caption: "Applications to assess",
-          captionClasses: "govuk-table__caption--m",
-          firstCellIsHeader: true,
-          head: [
-            {
-              text: "Name"
-            },
-            {
-              text: "CRN"
-            },
-            {
-              text: "Tier"
-            },
-            {
-              text: "Arrival date"
-            },
-            {
-              text: "Current location"
-            },
-            {
-              text: "Days until application due"
-            },
-            {
-              text: "Status"
-            }
-          ],
-          rows: AssessmentUtils.awaitingAssessmentTableRows(assessments.awaiting)
-        })
-      }}
-      {% endset -%}
-
-      {% set infoRequestHtml %}
-      {{
-        govukTable({
-          caption: "Requested further information",
-          captionClasses: "govuk-table__caption--m",
-          firstCellIsHeader: true,
-          head: [
-            {
-              text: "Name"
-            },
-            {
-              text: "CRN"
-            },
-            {
-              text: "Tier"
-            },
-            {
-              text: "Arrival date"
-            },
-            {
-              text: "Days since application received"
-            },
-            {
-              text: "Date of info request"
-            },
-            {
-              text: "Status"
-            }
-          ],
-          rows: AssessmentUtils.requestedFurtherInformationTableRows(assessments.requestedFurtherInformation)
-        })
-      }}
-      {% endset -%}
-
-      {% set completedHtml %}
-      {{
-        govukTable({
-          caption: "Completed Assessments",
-          captionClasses: "govuk-table__caption--m",
-          firstCellIsHeader: true,
-          head: [
-            {
-              text: "Name"
-            },
-            {
-              text: "CRN"
-            },
-            {
-              text: "Tier"
-            },
-            {
-              text: "Arrival date"
-            },
-            {
-              text: "Status"
-            }
-          ],
-          rows: AssessmentUtils.completedTableRows(assessments.completed)
-        })
-      }}
-      {% endset -%}
-
-      {{ govukTabs({
-        items: [
-          {
-            label: ('Applications' + AssessmentUtils.assessmentsApproachingDueBadge(assessments.awaiting)) | safe,
-            id: "applications",
-            panel: {
-              html: awaitingHtml
-            }
+      {% if UserUtils.hasRole(user, 'workflow_manager') %}
+        {{ mojSubNavigation({
+          label: 'Sub navigation',
+          items: [{
+            text: 'All Assessments',
+            href: paths.assessments.index({}),
+            active: (type !== 'myAssessments')
           },
           {
-            label: "Requested further information",
-            id: "infoRequest",
-            panel: {
-              html: infoRequestHtml
-            }
-          },
-          {
-            label: "Completed",
-            id: "completed",
-            panel: {
-              html: completedHtml
-            }
-          }
-        ]
-      }) }}
+            text: 'My Assessments',
+            href: paths.assessments.index({}) + '?type=myAssessments',
+            active: (type === 'myAssessments')
+          }]
+        }) }}
 
+        {% if type === 'myAssessments' %}
+          {% include './_assessmentsForUser.njk' %}
+        {% else %}
+          {% include './_assessmentAllocationList.njk' %}
+        {% endif %}
+      {% else %}
+        {% include './_assessmentsForUser.njk' %}
+      {% endif %}
     </div>
   </div>
+{% endblock %}
+
+{% block extraScripts %}
+  <script type="text/javascript" nonce="{{ cspNonce }}">
+    window
+      .MOJFrontend
+      .initAll()
+
+    // This is a temporary fix to ensure table sorting works correctly with row headers
+    // This can be removed once https://github.com/ministryofjustice/moj-frontend/pull/442 is merged
+    window.MOJFrontend.SortableTable.prototype.sort = function (rows, columnNumber, sortDirection) {
+      var newRows = rows.sort($.proxy(function (rowA, rowB) {
+        var tdA = $(rowA)
+          .find('td,th')
+          .eq(columnNumber);
+        var tdB = $(rowB)
+          .find('td,th')
+          .eq(columnNumber);
+        var valueA = this.getCellValue(tdA);
+        var valueB = this.getCellValue(tdB);
+        if (sortDirection === 'ascending') {
+          if (valueA < valueB) {
+            return -1;
+          }
+          if (valueA > valueB) {
+            return 1;
+          }
+          return 0;
+        } else {
+          if (valueB < valueA) {
+            return -1;
+          }
+          if (valueB > valueA) {
+            return 1;
+          }
+          return 0;
+        }
+      }, this));
+      return newRows;
+    };
+  </script>
 {% endblock %}

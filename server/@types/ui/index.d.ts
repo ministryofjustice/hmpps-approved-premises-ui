@@ -16,6 +16,7 @@ import {
   Booking,
   Application,
   PersonAcctAlert,
+  UserRole,
 } from '@approved-premises/api'
 
 interface TasklistPage {
@@ -152,6 +153,8 @@ export type TierNumber = '1' | '2' | '3' | '4'
 export type TierLetter = 'A' | 'B' | 'C' | 'D'
 export type RiskTierLevel = `${TierLetter}${TierNumber}`
 
+export type ApplicationType = 'Standard' | 'PIPE'
+
 export interface ErrorMessage {
   text: string
   attributes: {
@@ -216,10 +219,22 @@ export type DataServices = Partial<{
   }
 }>
 
-export interface GroupedAssessments {
-  completed: Array<Assessment>
-  requestedFurtherInformation: Array<Assessment>
-  awaiting: Array<Assessment>
+export type AssessmentGroupingCategory = 'status' | 'allocation'
+
+export type GroupedAssessments<T extends AssessmentGroupingCategory> = T extends 'status'
+  ? {
+      completed: Array<Assessment>
+      requestedFurtherInformation: Array<Assessment>
+      awaiting: Array<Assessment>
+    }
+  : {
+      allocated: Array<Assessment>
+      unallocated: Array<Assessment>
+    }
+
+export interface AllocatedAndUnallocatedAssessments {
+  allocated: Array<Assessment>
+  unallocated: Array<Assessment>
 }
 
 export interface GroupedApplications {
@@ -244,3 +259,10 @@ export type OasysImportArrays =
   | ArrayOfOASysRiskManagementPlanQuestions
 
 export type JourneyType = 'applications' | 'assessments'
+
+export type UserDetails = {
+  id: string
+  name: string
+  displayName: string
+  roles: Array<UserRole>
+}

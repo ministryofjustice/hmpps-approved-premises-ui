@@ -5,6 +5,7 @@ import { AssessmentClient } from '../data'
 import AssessmentService from './assessmentService'
 import assessmentFactory from '../testutils/factories/assessment'
 import clarificationNoteFactory from '../testutils/factories/clarificationNote'
+import userFactory from '../testutils/factories/user'
 
 import { getBody, updateAssessmentData } from '../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
@@ -29,19 +30,40 @@ describe('AssessmentService', () => {
     assessmentClientFactory.mockReturnValue(assessmentClient)
   })
 
-  it('gets all the assesments for the logged in user and groups them by status', async () => {
-    const completedAssessments = assessmentFactory.buildList(2, { status: 'completed' })
-    const pendingAssessments = assessmentFactory.buildList(3, { status: 'pending' })
-    const activeAssessments = assessmentFactory.buildList(5, { status: 'active' })
+  describe('getting all assessments', () => {
+    const user = userFactory.build({ id: 'some-uuid' })
+    const otherUser = userFactory.build({ id: 'some-other-uuid' })
 
-    assessmentClient.all.mockResolvedValue([completedAssessments, pendingAssessments, activeAssessments].flat())
+    const assessmentsForUser = assessmentFactory.buildList(2, {
+      allocatedToStaffMember: user,
+    })
+    const assessmentsForDifferentUser = assessmentFactory.buildList(2, {
+      status: 'completed',
+      allocatedToStaffMember: otherUser,
+    })
+    const unallocatedAssessments = assessmentFactory.buildList(2, {
+      allocatedToStaffMember: null,
+    })
 
-    const result = await service.getAllForLoggedInUser('token')
+    beforeEach(() => {
+      assessmentClient.all.mockResolvedValue(
+        [assessmentsForUser, assessmentsForDifferentUser, unallocatedAssessments].flat(),
+      )
+    })
 
-    expect(result).toEqual({
-      completed: completedAssessments,
-      requestedFurtherInformation: pendingAssessments,
-      awaiting: activeAssessments,
+    describe('getAll', () => {
+      it('should return all assessments', async () => {
+        const result = await service.getAll('token')
+
+        expect(result).toEqual([assessmentsForUser, assessmentsForDifferentUser, unallocatedAssessments].flat())
+      })
+    })
+
+    describe('getAllForUser', () => {
+      it('should return all assessments for that user', async () => {
+        const result = await service.getAllForUser('token', user.id)
+        expect(result).toEqual(assessmentsForUser)
+      })
     })
   })
 

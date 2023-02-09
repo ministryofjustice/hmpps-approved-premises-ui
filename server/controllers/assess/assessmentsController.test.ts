@@ -20,9 +20,12 @@ import {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
   caseNotesFromAssessment,
+  groupAssessmements,
 } from '../../utils/assessments/utils'
+import { hasRole } from '../../utils/userUtils'
 
 jest.mock('../../utils/assessments/utils')
+jest.mock('../../utils/userUtils')
 jest.mock('../../utils/assessments/informationSetAsNotReceived')
 jest.mock('../../services/tasklistService')
 
@@ -44,18 +47,83 @@ describe('assessmentsController', () => {
   })
 
   describe('index', () => {
-    it('should list all the assessments for a user', async () => {
-      const assessments = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments
-      assessmentService.getAllForLoggedInUser.mockResolvedValue(assessments)
+    it('should list all the assessments when the user is not a workflow manager', async () => {
+      const assesments = assessmentFactory.buildList(3)
+      const groupedAssessments = {
+        completed: [],
+        requestedFurtherInformation: [],
+        awaiting: [],
+      } as GroupedAssessments<'status'>
+
+      assessmentService.getAll.mockResolvedValue(assesments)
+      ;(groupAssessmements as jest.Mock).mockReturnValue(groupedAssessments)
+      ;(hasRole as jest.Mock).mockReturnValue(false)
+
       const requestHandler = assessmentsController.index()
 
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('assessments/index', {
         pageHeading: 'Approved Premises applications',
-        assessments,
+        assessments: groupedAssessments,
       })
-      expect(assessmentService.getAllForLoggedInUser).toHaveBeenCalled()
+      expect(groupAssessmements).toHaveBeenCalledWith(assesments, 'status')
+      expect(assessmentService.getAll).toHaveBeenCalled()
+    })
+
+    describe('when the user is a workflow manager', () => {
+      const user = { id: 'some-id ' }
+      const assesments = assessmentFactory.buildList(3)
+
+      beforeEach(() => {
+        ;(hasRole as jest.Mock).mockReturnValue(true)
+        response = createMock<Response>({ locals: { user } })
+      })
+
+      it('should list all the assessments for a given user when `myAssessments` is set', async () => {
+        const groupedAssessments = {
+          completed: [],
+          requestedFurtherInformation: [],
+          awaiting: [],
+        } as GroupedAssessments<'status'>
+
+        assessmentService.getAllForUser.mockResolvedValue(assesments)
+        ;(groupAssessmements as jest.Mock).mockReturnValue(groupedAssessments)
+
+        const requestHandler = assessmentsController.index()
+        request.query = { type: 'myAssessments' }
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('assessments/index', {
+          pageHeading: 'Approved Premises applications',
+          assessments: groupedAssessments,
+          type: 'myAssessments',
+        })
+        expect(groupAssessmements).toHaveBeenCalledWith(assesments, 'status')
+        expect(assessmentService.getAllForUser).toHaveBeenCalledWith(token, user.id)
+      })
+
+      it('should list all allocated and unallocated assessments when `user` is not set', async () => {
+        const groupedAssessments = {
+          allocated: [],
+          unallocated: [],
+        } as GroupedAssessments<'allocation'>
+
+        assessmentService.getAll.mockResolvedValue(assesments)
+        ;(groupAssessmements as jest.Mock).mockReturnValue(groupedAssessments)
+
+        const requestHandler = assessmentsController.index()
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('assessments/index', {
+          pageHeading: 'Approved Premises applications',
+          assessments: groupedAssessments,
+        })
+        expect(groupAssessmements).toHaveBeenCalledWith(assesments, 'allocation')
+        expect(assessmentService.getAll).toHaveBeenCalledWith(token)
+      })
     })
   })
 

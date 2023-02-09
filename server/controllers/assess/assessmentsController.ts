@@ -1,5 +1,7 @@
 import type { Request, Response, RequestHandler } from 'express'
 
+import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { AssessmentGroupingCategory } from '@approved-premises/ui'
 import TasklistService from '../../services/tasklistService'
 import { AssessmentService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
@@ -7,12 +9,14 @@ import {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
   caseNotesFromAssessment,
+  groupAssessmements,
 } from '../../utils/assessments/utils'
 
 import getSections from '../../utils/assessments/getSections'
 
 import paths from '../../paths/assess'
 import { DateFormats } from '../../utils/dateUtils'
+import { hasRole } from '../../utils/userUtils'
 
 export const tasklistPageHeading = 'Assess an Approved Premises (AP) application'
 
@@ -21,9 +25,25 @@ export default class AssessmentsController {
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const assessments = await this.assessmentService.getAllForLoggedInUser(req.user.token)
+      let assessments: Array<Assessment>
+      let groupingCategory: AssessmentGroupingCategory = 'status'
 
-      res.render('assessments/index', { pageHeading: 'Approved Premises applications', assessments })
+      if (hasRole(res.locals.user, 'workflow_manager')) {
+        if (req.query.type === 'myAssessments') {
+          assessments = await this.assessmentService.getAllForUser(req.user.token, res.locals.user.id)
+        } else {
+          assessments = await this.assessmentService.getAll(req.user.token)
+          groupingCategory = 'allocation'
+        }
+      } else {
+        assessments = await this.assessmentService.getAll(req.user.token)
+      }
+
+      res.render('assessments/index', {
+        pageHeading: 'Approved Premises applications',
+        assessments: groupAssessmements(assessments, groupingCategory),
+        type: req.query.type,
+      })
     }
   }
 

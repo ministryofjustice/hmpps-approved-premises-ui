@@ -1,4 +1,4 @@
-/* eslint-disable import/prefer-default-export */
+import AllocationsListPage from './allocationsListPage'
 import ClarificationNoteConfirmPage from './clarificationNoteConfirmPage'
 import InformationReceivedPage from './informationReceivedPage'
 import ListPage from './listPage'
@@ -13,6 +13,7 @@ import CheckYourAnswersPage from './checkYourAnswersPage'
 import SubmissionConfirmation from './submissionConfirmation'
 
 export {
+  AllocationsListPage,
   ClarificationNoteConfirmPage,
   InformationReceivedPage,
   ListPage,
