@@ -530,6 +530,14 @@ const caseNotesFromAssessment = (assessment: Assessment) =>
 const acctAlertsFromAssessment = (assessment: Assessment) =>
   assessment.application?.data?.['prison-information']?.['case-notes']?.acctAlerts || []
 
+const rejectionRationaleFromAssessmentResponses = (assessment: Assessment): string => {
+  const response = getResponseForPage(assessment, 'make-a-decision', 'make-a-decision')?.Decision || ''
+
+  if (Array.isArray(response)) return ''
+
+  return response
+}
+
 export {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
@@ -563,4 +571,5 @@ export {
   groupAssessmements,
   requestedFurtherInformationTableRows,
   unallocatedTableRows,
+  rejectionRationaleFromAssessmentResponses,
 }

@@ -31,6 +31,7 @@ import {
   arriveDateAsTimestamp,
   allocationSummary,
   allocationLink,
+  rejectionRationaleFromAssessmentResponses,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
@@ -797,6 +798,22 @@ describe('utils', () => {
           },
         },
       ])
+    })
+  })
+
+  describe('rejectionRationaleFromAssessmentResponses', () => {
+    it('returns the rejectionRationale from the assessment when it exists', () => {
+      const assessment = assessmentFactory.build()
+
+      ;(applicationUtils.getResponseForPage as jest.Mock).mockImplementation(() => ({ Decision: 'some rationale' }))
+
+      expect(rejectionRationaleFromAssessmentResponses(assessment)).toEqual('some rationale')
+    })
+
+    it('returns an empty string when the rationale doesnt exists', () => {
+      const assessment = assessmentFactory.build()
+
+      expect(rejectionRationaleFromAssessmentResponses(assessment)).toEqual('')
     })
   })
 })
