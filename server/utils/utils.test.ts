@@ -1,3 +1,4 @@
+import { path } from 'static-path'
 import type { SummaryListItem } from '@approved-premises/ui'
 import { PersonRisks } from '@approved-premises/api'
 import { SessionDataError } from './errors'
@@ -10,6 +11,7 @@ import {
   mapApiPersonRisksForUi,
   pascalCase,
   camelCase,
+  linkTo,
 } from './utils'
 import risksFactory from '../testutils/factories/risks'
 import { DateFormats } from './dateUtils'
@@ -295,5 +297,29 @@ describe('mapApiPersonRiskForUI', () => {
         level: risks.tier.value.level,
       },
     })
+  })
+})
+
+describe('linkTo', () => {
+  it('returns a generic link', () => {
+    expect(linkTo(path('/foo'), {}, { text: 'Hello' })).toMatchStringIgnoringWhitespace('<a href="/foo">Hello</a>')
+  })
+
+  it('allows params to be specified', () => {
+    expect(linkTo(path('/foo/:id'), { id: '123' }, { text: 'Hello' })).toMatchStringIgnoringWhitespace(
+      '<a href="/foo/123">Hello</a>',
+    )
+  })
+
+  it('allows hidden text to be specified', () => {
+    expect(
+      linkTo(path('/foo/:id'), { id: '123' }, { text: 'Hello', hiddenText: 'Hidden' }),
+    ).toMatchStringIgnoringWhitespace('<a href="/foo/123">Hello <span class="govuk-visually-hidden">Hidden</span></a>')
+  })
+
+  it('allows attributes to be specified', () => {
+    expect(
+      linkTo(path('/foo/:id'), { id: '123' }, { text: 'Hello', attributes: { class: 'some-class' } }),
+    ).toMatchStringIgnoringWhitespace('<a href="/foo/123" class="some-class">Hello</a>')
   })
 })

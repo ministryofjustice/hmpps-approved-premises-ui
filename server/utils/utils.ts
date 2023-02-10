@@ -1,4 +1,5 @@
 import Case from 'case'
+import { Path, Params } from 'static-path'
 
 import type { SummaryListItem, PersonRisksUI } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication, PersonRisks } from '@approved-premises/api'
@@ -123,4 +124,31 @@ export const mapApiPersonRisksForUi = (risks: PersonRisks): PersonRisksUI => {
     },
     flags: risks.flags.value,
   }
+}
+
+export const linkTo = <Pattern extends `/${string}`>(
+  path: Path<Pattern>,
+  params: Params<Pattern>,
+  {
+    text,
+    attributes = {},
+    hiddenText = '',
+  }: {
+    text: string
+    params?: Params<Pattern>
+    attributes?: Record<string, string>
+    hiddenText?: string
+  },
+): string => {
+  let linkBody = text
+
+  if (hiddenText) {
+    linkBody = `${linkBody} <span class="govuk-visually-hidden">${hiddenText}</span>`
+  }
+
+  const attrBody = Object.keys(attributes)
+    .map(a => `${a}="${attributes[a]}"`)
+    .join(' ')
+
+  return `<a href="${path(params)}" ${attrBody}>${linkBody}</a>`
 }

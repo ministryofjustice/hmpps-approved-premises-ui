@@ -22,7 +22,7 @@ import { UnknownPageError } from '../errors'
 import { embeddedSummaryListItem } from '../checkYourAnswersUtils'
 import reviewSections from '../reviewUtils'
 import Apply from '../../form-pages/apply'
-import { kebabCase } from '../utils'
+import { kebabCase, linkTo } from '../utils'
 import { documentsFromApplication } from './documentUtils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
@@ -284,14 +284,15 @@ const requestedFurtherInformationTableRows = (assessments: Array<Assessment>): A
 }
 
 const assessmentLink = (assessment: Assessment, linkText = '', hiddenText = ''): string => {
-  let linkBody = linkText || assessment.application.person.name
-
-  if (hiddenText) {
-    linkBody = `${linkBody} <span class="govuk-visually-hidden">${hiddenText}</span>`
-  }
-  return `<a href="${paths.assessments.show({ id: assessment.id })}" data-cy-assessmentId="${
-    assessment.id
-  }">${linkBody}</a>`
+  return linkTo(
+    paths.assessments.show,
+    { id: assessment.id },
+    {
+      text: linkText || assessment.application.person.name,
+      hiddenText,
+      attributes: { 'data-cy-assessmentId': assessment.id },
+    },
+  )
 }
 
 const formattedArrivalDate = (assessment: Assessment): string => {
