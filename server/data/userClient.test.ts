@@ -54,4 +54,48 @@ describe('UserClient', () => {
       expect(output).toEqual(user)
     })
   })
+
+  describe('getUsers', () => {
+    const users = userFactory.buildList(4)
+
+    it('should return all users when no queries are specified', async () => {
+      fakeApprovedPremisesApi
+        .get(paths.users.index({}))
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, users)
+
+      const output = await userClient.getUsers()
+      expect(output).toEqual(users)
+    })
+
+    it('should query by role', async () => {
+      fakeApprovedPremisesApi
+        .get(`${paths.users.index({})}?roles=assessor,matcher`)
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, users)
+
+      const output = await userClient.getUsers(['assessor', 'matcher'])
+      expect(output).toEqual(users)
+    })
+
+    it('should query by qualifications', async () => {
+      fakeApprovedPremisesApi
+        .get(`${paths.users.index({})}?qualifications=pipe,womens`)
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, users)
+
+      const output = await userClient.getUsers([], ['pipe', 'womens'])
+      expect(output).toEqual(users)
+    })
+
+    it('should query by qualifications and roles', async () => {
+      fakeApprovedPremisesApi
+        .get(`${paths.users.index({})}?roles=assessor,matcher&qualifications=pipe,womens`)
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, users)
+
+      const output = await userClient.getUsers(['assessor', 'matcher'], ['pipe', 'womens'])
+      expect(output).toEqual(users)
+    })
+  })
 })

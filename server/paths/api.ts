@@ -92,6 +92,7 @@ export default {
     },
   },
   users: {
+    index: usersPath,
     show: usersPath.path(':id'),
     profile: path('/profile'),
   },
