@@ -29,6 +29,7 @@ import {
   groupAssessmements,
   unallocatedTableRows,
   arriveDateAsTimestamp,
+  allocationSummary,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
@@ -700,6 +701,87 @@ describe('utils', () => {
       assessment.application.data['prison-information'] = {}
 
       expect(acctAlertsFromAssessment(assessment)).toEqual([])
+    })
+  })
+
+  describe('allocationSummary', () => {
+    beforeEach(() => {
+      jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+    })
+
+    it('returns the summary list when the assessment has a staff member allocated', () => {
+      const staffMember = userFactory.build()
+      const assessment = assessmentFactory.build({
+        allocatedToStaffMember: staffMember,
+      })
+
+      expect(allocationSummary(assessment)).toEqual([
+        {
+          key: {
+            text: 'CRN',
+          },
+          value: {
+            text: assessment.application.person.crn,
+          },
+        },
+        {
+          key: {
+            text: 'Arrival date',
+          },
+          value: {
+            text: formattedArrivalDate(assessment),
+          },
+        },
+        {
+          key: {
+            text: 'Application Type',
+          },
+          value: {
+            text: getApplicationType(assessment),
+          },
+        },
+        {
+          key: {
+            text: 'Allocated To',
+          },
+          value: {
+            text: assessment.allocatedToStaffMember.name,
+          },
+        },
+      ])
+    })
+
+    it('returns the summary list when the assessment does not have a staff member allocated', () => {
+      const assessment = assessmentFactory.build({
+        allocatedToStaffMember: null,
+      })
+
+      expect(allocationSummary(assessment)).toEqual([
+        {
+          key: {
+            text: 'CRN',
+          },
+          value: {
+            text: assessment.application.person.crn,
+          },
+        },
+        {
+          key: {
+            text: 'Arrival date',
+          },
+          value: {
+            text: formattedArrivalDate(assessment),
+          },
+        },
+        {
+          key: {
+            text: 'Application Type',
+          },
+          value: {
+            text: getApplicationType(assessment),
+          },
+        },
+      ])
     })
   })
 })

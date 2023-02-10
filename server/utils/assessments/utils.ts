@@ -78,6 +78,48 @@ const getApplicationType = (assessment: Assessment): ApplicationType => {
   return 'Standard'
 }
 
+const allocationSummary = (assessment: Assessment): Array<SummaryListItem> => {
+  const summary = [
+    {
+      key: {
+        text: 'CRN',
+      },
+      value: {
+        text: assessment.application.person.crn,
+      },
+    },
+    {
+      key: {
+        text: 'Arrival date',
+      },
+      value: {
+        text: formattedArrivalDate(assessment),
+      },
+    },
+    {
+      key: {
+        text: 'Application Type',
+      },
+      value: {
+        text: getApplicationType(assessment),
+      },
+    },
+  ]
+
+  if (assessment.allocatedToStaffMember) {
+    summary.push({
+      key: {
+        text: 'Allocated To',
+      },
+      value: {
+        text: assessment.allocatedToStaffMember.name,
+      },
+    })
+  }
+
+  return summary
+}
+
 const allocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
@@ -479,12 +521,13 @@ export {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
   allocatedTableRows,
+  allocationSummary,
   applicationAccepted,
   arriveDateAsTimestamp,
   assessmentLink,
-  assessmentSections,
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
+  assessmentSections,
   awaitingAssessmentTableRows,
   caseNotesFromAssessment,
   completedTableRows,
