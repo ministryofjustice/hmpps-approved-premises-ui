@@ -1,6 +1,7 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "../../../partials/prisonInformationTable.njk" import prisonInformationTable %}
+{% from "../../../components/riskWidgets/macro.njk" import widgets %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -17,7 +18,7 @@
     <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+        <div class="govuk-grid-column-two-thirds">
             <div>
                 <p>Imported from OASys: <strong>{{dateOfImport}}</strong>
                 </p>
@@ -80,6 +81,9 @@
 
             {{OASysUtils.oasysTableTabs(oasysSections) | safe}}
 
+        </div>
+        <div class="govuk-grid-column-one-third">
+            {{ widgets(risks | mapApiPersonRisksForUi) }}
         </div>
     </div>
 
