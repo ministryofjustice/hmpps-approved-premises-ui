@@ -36,4 +36,8 @@ export default class AllocationsListPage extends Page {
   clickUnallocated() {
     cy.get('a').contains('Unallocated').click()
   }
+
+  clickAssessment(assessment: Assessment) {
+    cy.get(`a[data-cy-assessmentId="${assessment.id}"]`).click()
+  }
 }

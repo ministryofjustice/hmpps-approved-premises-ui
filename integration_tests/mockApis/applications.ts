@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from '../../wiremock'
 
@@ -62,6 +62,21 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: args.application,
+      },
+    }),
+  stubApplicationAssessment: (args: {
+    application: ApprovedPremisesApplication
+    assessment: ApprovedPremisesAssessment
+  }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/applications/${args.application.id}/assessment`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.assessment,
       },
     }),
   stubApplicationDocuments: (args: {
