@@ -67,4 +67,18 @@ describe('User service', () => {
       expect(userClient.getActingUser).toHaveBeenCalledWith(id)
     })
   })
+
+  describe('getUsers', () => {
+    it('returns users by role and qualification', async () => {
+      const users = userFactory.buildList(4)
+
+      userClient.getUsers.mockResolvedValue(users)
+
+      const result = await userService.getUsers(token, ['applicant', 'assessor'], ['pipe'])
+
+      expect(result).toEqual(users)
+
+      expect(userClient.getUsers).toHaveBeenCalledWith(['applicant', 'assessor'], ['pipe'])
+    })
+  })
 })
