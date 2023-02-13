@@ -30,6 +30,7 @@ export default function routes(controllers: Controllers, router: Router): Router
   post(paths.assessments.submission.pattern, assessmentsController.submit())
 
   get(paths.allocations.show.pattern, allocationsController.show())
+  post(paths.allocations.create.pattern, allocationsController.create())
 
   Object.keys(pages).forEach((taskKey: string) => {
     Object.keys(pages[taskKey]).forEach((pageKey: string) => {

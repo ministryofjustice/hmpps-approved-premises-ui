@@ -11,6 +11,8 @@ const supportingInformationPath = assessmentPath.path('supporting-information/:c
 
 const submission = assessmentPath.path('submission')
 
+const allocationPath = applyPaths.applications.show.path('allocation')
+
 const paths = {
   assessments: {
     index: assessmentsPath,
@@ -26,7 +28,8 @@ const paths = {
     submission,
   },
   allocations: {
-    show: applyPaths.applications.show.path('/allocation'),
+    show: allocationPath,
+    create: allocationPath,
   },
 }
 
