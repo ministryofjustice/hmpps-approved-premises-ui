@@ -3,6 +3,11 @@ import { Request, Response, RequestHandler } from 'express'
 import { AssessmentService } from '../../services'
 import { DateFormats } from '../../utils/dateUtils'
 
+import {
+  adjudicationsFromAssessment,
+  caseNotesFromAssessment,
+  acctAlertsFromAssessment,
+} from '../../utils/assessments/utils'
 import { oasysInformationFromAssessment } from '../../utils/assessments/oasysUtils'
 
 export default class SupportingInformationController {
@@ -12,6 +17,7 @@ export default class SupportingInformationController {
     return async (req: Request, res: Response) => {
       const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
 
+      if (req.params.category === 'risk-information') {
         const oasys = oasysInformationFromAssessment(assessment)
 
         res.render('assessments/pages/risk-information/oasys-information', {
@@ -27,6 +33,16 @@ export default class SupportingInformationController {
           assessmentId: assessment.id,
           risks: assessment.application.risks,
         })
+      } else {
+        res.render('assessments/pages/risk-information/prison-information', {
+          adjudications: adjudicationsFromAssessment(assessment),
+          caseNotes: caseNotesFromAssessment(assessment),
+          acctAlerts: acctAlertsFromAssessment(assessment),
+          pageHeading: 'Prison information',
+          dateOfImport: DateFormats.isoDateToUIDate(assessment.application.submittedAt),
+          assessmentId: assessment.id,
+        })
       }
     }
   }
+}

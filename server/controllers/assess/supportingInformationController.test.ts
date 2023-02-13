@@ -10,6 +10,9 @@ import oasysSectionsFactory from '../../testutils/factories/oasysSections'
 import SupportingInformationController from './supportingInformationController'
 import { AssessmentService } from '../../services'
 import { DateFormats } from '../../utils/dateUtils'
+import adjudicationFactory from '../../testutils/factories/adjudication'
+import prisonCaseNotesFactory from '../../testutils/factories/prisonCaseNotes'
+import acctAlertFactory from '../../testutils/factories/acctAlert'
 
 describe('supportingInformationController', () => {
   const token = 'SOME_TOKEN'
@@ -82,6 +85,30 @@ describe('supportingInformationController', () => {
         })
         expect(assessmentService.findAssessment).toBeCalledWith(token, request.params.id)
       })
+    })
+
+    it('for "prison-information', async () => {
+      const adjudications = adjudicationFactory.buildList(2)
+      const caseNotes = prisonCaseNotesFactory.buildList(2)
+      const acctAlerts = acctAlertFactory.buildList(2)
+
+      assessment.application.data = {
+        'prison-information': { 'case-notes': { adjudications, selectedCaseNotes: caseNotes, acctAlerts } },
+      }
+      assessmentService.findAssessment.mockResolvedValue(assessment)
+
+      const requestHandler = supportingInformationController.show()
+      await requestHandler(request, response, next)
+
+      expect(response.render).toBeCalledWith('assessments/pages/risk-information/prison-information', {
+        adjudications,
+        caseNotes,
+        acctAlerts,
+        assessmentId: assessment.id,
+        dateOfImport: DateFormats.isoDateToUIDate(assessment.application.submittedAt),
+        pageHeading: 'Prison information',
+      })
+      expect(assessmentService.findAssessment).toBeCalledWith(token, request.params.id)
     })
   })
 })

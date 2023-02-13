@@ -416,12 +416,12 @@ const getSectionSuffix = (task: Task, assessmentId: string) => {
   if (task.id !== 'oasys-import' && task.id !== 'prison-information') return ''
 
   if (task.id === 'oasys-import') {
-    link = 'oasys-link'
+    link = paths.assessments.supportingInformationPath({ id: assessmentId, category: 'risk-information' })
     copy = 'View detailed risk information'
   }
 
   if (task.id === 'prison-information') {
-    link = paths.assessments.pages.prisonInformationPath({ id: assessmentId })
+    link = paths.assessments.supportingInformationPath({ id: assessmentId, category: 'prison-information' })
     copy = 'View additional prison information'
   }
 

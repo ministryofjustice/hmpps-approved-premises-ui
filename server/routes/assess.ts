@@ -12,7 +12,6 @@ import { getPage } from '../utils/assessments/utils'
 export default function routes(controllers: Controllers, router: Router): Router {
   const { pages } = Assess
   const { get, put, post } = actions(router)
-  const { assessmentsController, assessmentPagesController, clarificationNotesController } = controllers
   const {
     assessmentsController,
     assessmentPagesController,
@@ -24,8 +23,6 @@ export default function routes(controllers: Controllers, router: Router): Router
   get(paths.assessments.show.pattern, assessmentsController.show())
 
   get(paths.assessments.clarificationNotes.confirm.pattern, clarificationNotesController.confirm())
-
-  get(paths.assessments.pages.prisonInformationPath.pattern, assessmentsController.prisonInformation())
 
   get(paths.assessments.supportingInformationPath.pattern, supportingInformationController.show())
 
