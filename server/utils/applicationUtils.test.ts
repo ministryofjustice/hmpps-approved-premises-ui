@@ -83,6 +83,27 @@ describe('applicationUtils', () => {
     })
   })
 
+  describe('getResponseForPage', () => {
+    it('returns the response for a given page', () => {
+      FirstApplyPage.mockReturnValue({
+        response: () => {
+          return { foo: 'bar' }
+        },
+      })
+
+      SecondApplyPage.mockReturnValue({
+        response: () => {
+          return { bar: 'foo' }
+        },
+      })
+
+      const application = applicationFactory.build()
+      application.data = { 'basic-information': { first: '', second: '' } }
+
+      expect(getResponses(application)).toEqual({ 'basic-information': [{ foo: 'bar' }, { bar: 'foo' }] })
+    })
+  })
+
   describe('getArrivalDate', () => {
     it('returns the arrival date when the release date is known and is the same as the start date', () => {
       const application = applicationFactory.build({
