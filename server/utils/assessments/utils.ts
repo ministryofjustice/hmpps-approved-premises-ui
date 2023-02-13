@@ -150,7 +150,7 @@ const allocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> => 
         html: getStatus(assessment),
       },
       {
-        html: assessmentLink(assessment, 'Reallocate', `assessment for ${assessment.application.person.name}`),
+        html: allocationLink(assessment, 'Reallocate'),
       },
     ])
   })
@@ -185,7 +185,7 @@ const unallocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> =
         html: getStatus(assessment),
       },
       {
-        html: assessmentLink(assessment, 'Allocate', `assessment for ${assessment.application.person.name}`),
+        html: allocationLink(assessment, 'Allocate'),
       },
     ])
   })
@@ -281,6 +281,18 @@ const requestedFurtherInformationTableRows = (assessments: Array<Assessment>): A
   })
 
   return rows
+}
+
+const allocationLink = (assessment: Assessment, action: 'Allocate' | 'Reallocate'): string => {
+  return linkTo(
+    paths.allocations.show,
+    { id: assessment.application.id },
+    {
+      text: action,
+      hiddenText: `assessment for ${assessment.application.person.name}`,
+      attributes: { 'data-cy-assessmentId': assessment.id },
+    },
+  )
 }
 
 const assessmentLink = (assessment: Assessment, linkText = '', hiddenText = ''): string => {
@@ -522,6 +534,7 @@ export {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
   allocatedTableRows,
+  allocationLink,
   allocationSummary,
   applicationAccepted,
   arriveDateAsTimestamp,

@@ -30,6 +30,7 @@ import {
   unallocatedTableRows,
   arriveDateAsTimestamp,
   allocationSummary,
+  allocationLink,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
@@ -269,7 +270,7 @@ describe('utils', () => {
           { text: assessment.allocatedToStaffMember.name },
           { text: getApplicationType(assessment) },
           { html: getStatus(assessment) },
-          { html: assessmentLink(assessment, 'Reallocate', `assessment for ${assessment.application.person.name}`) },
+          { html: allocationLink(assessment, 'Reallocate') },
         ],
       ])
     })
@@ -300,7 +301,7 @@ describe('utils', () => {
           },
           { text: getApplicationType(assessment) },
           { html: getStatus(assessment) },
-          { html: assessmentLink(assessment, 'Allocate', `assessment for ${assessment.application.person.name}`) },
+          { html: allocationLink(assessment, 'Allocate') },
         ],
       ])
     })
@@ -445,6 +446,20 @@ describe('utils', () => {
         <a href="${paths.assessments.show({
           id: '123',
         })}" data-cy-assessmentId="123">My Text <span class="govuk-visually-hidden">and some hidden text</span></a>
+      `)
+    })
+  })
+
+  describe('allocationLink', () => {
+    const assessment = assessmentFactory.build({ application: { id: '123', person: { name: 'John Wayne' } } })
+
+    it('returns a link to an allocation', () => {
+      expect(allocationLink(assessment, 'Allocate')).toMatchStringIgnoringWhitespace(`
+        <a href="${paths.allocations.show({
+          id: '123',
+        })}" data-cy-assessmentId="${
+        assessment.id
+      }">Allocate <span class="govuk-visually-hidden">assessment for John Wayne</span></a>
       `)
     })
   })
