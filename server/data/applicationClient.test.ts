@@ -3,6 +3,7 @@ import nock from 'nock'
 import ApplicationClient from './applicationClient'
 import config from '../config'
 import applicationFactory from '../testutils/factories/application'
+import assessmentFactory from '../testutils/factories/assessment'
 import activeOffenceFactory from '../testutils/factories/activeOffence'
 import documentFactory from '../testutils/factories/document'
 import paths from '../paths/api'
@@ -153,6 +154,23 @@ describe('ApplicationClient', () => {
       const result = await applicationClient.documents(application)
 
       expect(result).toEqual(documents)
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
+
+  describe('assessment', () => {
+    it('should return an assessment for an application', async () => {
+      const applicationId = 'some-uuid'
+      const assessment = assessmentFactory.build()
+
+      fakeApprovedPremisesApi
+        .get(paths.applications.assessment({ id: applicationId }))
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, assessment)
+
+      const result = await applicationClient.assessment(applicationId)
+
+      expect(result).toEqual(assessment)
       expect(nock.isDone()).toBeTruthy()
     })
   })

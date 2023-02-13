@@ -1,6 +1,11 @@
 import type { Request } from 'express'
 import type { DataServices, GroupedApplications } from '@approved-premises/ui'
-import type { ActiveOffence, ApprovedPremisesApplication, Document } from '@approved-premises/api'
+import type {
+  ActiveOffence,
+  ApprovedPremisesApplication,
+  ApprovedPremisesAssessment as Assessment,
+  Document,
+} from '@approved-premises/api'
 
 import { isUnapplicable } from '../utils/applicationUtils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
@@ -119,6 +124,13 @@ export default class ApplicationService {
       return application
     }
     return this.findApplication(request.user.token, request.params.id)
+  }
+
+  async getAssessment(token: string, assessmentId: string): Promise<Assessment> {
+    const client = this.applicationClientFactory(token)
+    const assessment = await client.assessment(assessmentId)
+
+    return assessment
   }
 
   private async saveToSession(application: ApprovedPremisesApplication, page: TasklistPage, request: Request) {

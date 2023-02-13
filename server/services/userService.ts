@@ -1,4 +1,4 @@
-import { User } from '@approved-premises/api'
+import { User, UserQualification, UserRole } from '@approved-premises/api'
 import { UserDetails } from '@approved-premises/ui'
 import { RestClientBuilder, UserClient } from '../data'
 import { convertToTitleCase } from '../utils/utils'
@@ -21,5 +21,15 @@ export default class UserService {
     const client = this.userClientFactory(token)
 
     return client.getActingUser(id)
+  }
+
+  async getUsers(
+    token: string,
+    roles: Array<UserRole> = [],
+    qualifications: Array<UserQualification> = [],
+  ): Promise<Array<User>> {
+    const client = this.userClientFactory(token)
+
+    return client.getUsers(roles, qualifications)
   }
 }

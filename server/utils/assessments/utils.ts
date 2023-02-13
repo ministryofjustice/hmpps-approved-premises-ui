@@ -22,7 +22,7 @@ import { UnknownPageError } from '../errors'
 import { embeddedSummaryListItem } from '../checkYourAnswersUtils'
 import reviewSections from '../reviewUtils'
 import Apply from '../../form-pages/apply'
-import { kebabCase } from '../utils'
+import { kebabCase, linkTo } from '../utils'
 import { documentsFromApplication } from './documentUtils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
@@ -78,6 +78,48 @@ const getApplicationType = (assessment: Assessment): ApplicationType => {
   return 'Standard'
 }
 
+const allocationSummary = (assessment: Assessment): Array<SummaryListItem> => {
+  const summary = [
+    {
+      key: {
+        text: 'CRN',
+      },
+      value: {
+        text: assessment.application.person.crn,
+      },
+    },
+    {
+      key: {
+        text: 'Arrival date',
+      },
+      value: {
+        text: formattedArrivalDate(assessment),
+      },
+    },
+    {
+      key: {
+        text: 'Application Type',
+      },
+      value: {
+        text: getApplicationType(assessment),
+      },
+    },
+  ]
+
+  if (assessment.allocatedToStaffMember) {
+    summary.push({
+      key: {
+        text: 'Allocated To',
+      },
+      value: {
+        text: assessment.allocatedToStaffMember.name,
+      },
+    })
+  }
+
+  return summary
+}
+
 const allocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
@@ -108,7 +150,7 @@ const allocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> => 
         html: getStatus(assessment),
       },
       {
-        html: assessmentLink(assessment, 'Reallocate', `assessment for ${assessment.application.person.name}`),
+        html: allocationLink(assessment, 'Reallocate'),
       },
     ])
   })
@@ -143,7 +185,7 @@ const unallocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> =
         html: getStatus(assessment),
       },
       {
-        html: assessmentLink(assessment, 'Allocate', `assessment for ${assessment.application.person.name}`),
+        html: allocationLink(assessment, 'Allocate'),
       },
     ])
   })
@@ -241,15 +283,28 @@ const requestedFurtherInformationTableRows = (assessments: Array<Assessment>): A
   return rows
 }
 
-const assessmentLink = (assessment: Assessment, linkText = '', hiddenText = ''): string => {
-  let linkBody = linkText || assessment.application.person.name
+const allocationLink = (assessment: Assessment, action: 'Allocate' | 'Reallocate'): string => {
+  return linkTo(
+    paths.allocations.show,
+    { id: assessment.application.id },
+    {
+      text: action,
+      hiddenText: `assessment for ${assessment.application.person.name}`,
+      attributes: { 'data-cy-assessmentId': assessment.id },
+    },
+  )
+}
 
-  if (hiddenText) {
-    linkBody = `${linkBody} <span class="govuk-visually-hidden">${hiddenText}</span>`
-  }
-  return `<a href="${paths.assessments.show({ id: assessment.id })}" data-cy-assessmentId="${
-    assessment.id
-  }">${linkBody}</a>`
+const assessmentLink = (assessment: Assessment, linkText = '', hiddenText = ''): string => {
+  return linkTo(
+    paths.assessments.show,
+    { id: assessment.id },
+    {
+      text: linkText || assessment.application.person.name,
+      hiddenText,
+      attributes: { 'data-cy-assessmentId': assessment.id },
+    },
+  )
 }
 
 const formattedArrivalDate = (assessment: Assessment): string => {
@@ -479,12 +534,14 @@ export {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
   allocatedTableRows,
+  allocationLink,
+  allocationSummary,
   applicationAccepted,
   arriveDateAsTimestamp,
   assessmentLink,
-  assessmentSections,
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
+  assessmentSections,
   awaitingAssessmentTableRows,
   caseNotesFromAssessment,
   completedTableRows,

@@ -14,7 +14,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        url: paths.assessments.index,
+        url: paths.assessments.index({}),
       },
       response: {
         status: 200,

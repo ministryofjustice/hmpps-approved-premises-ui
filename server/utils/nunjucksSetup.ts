@@ -6,7 +6,14 @@ import express from 'express'
 import * as pathModule from 'path'
 
 import type { ErrorMessages, PersonStatus } from '@approved-premises/ui'
-import { initialiseName, removeBlankSummaryListItems, sentenceCase, mapApiPersonRisksForUi, kebabCase } from './utils'
+import {
+  initialiseName,
+  removeBlankSummaryListItems,
+  sentenceCase,
+  mapApiPersonRisksForUi,
+  kebabCase,
+  linkTo,
+} from './utils'
 import {
   dateFieldValues,
   convertObjectsToRadioItems,
@@ -131,6 +138,8 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   )
 
   njkEnv.addGlobal('paths', { ...managePaths, ...applyPaths, ...assessPaths })
+
+  njkEnv.addGlobal('linkTo', linkTo)
 
   njkEnv.addGlobal('statusTag', (status: PersonStatus) => markAsSafe(statusTag(status)))
 
