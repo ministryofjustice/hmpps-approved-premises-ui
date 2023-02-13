@@ -6,7 +6,7 @@ import ApplyPage from './applyPage'
 export default class PreviousPlacementsPage extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
     super(
-      'Previous placements',
+      'Previous Approved Premises (AP) placements',
       application,
       'further-considerations',
       'previous-placements',
