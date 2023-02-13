@@ -174,4 +174,22 @@ describe('ApplicationClient', () => {
       expect(nock.isDone()).toBeTruthy()
     })
   })
+
+  describe('allocate', () => {
+    it('should allocate an assessment', async () => {
+      const assessment = assessmentFactory.build()
+      const applicationId = 'some-application-id'
+      const userId = 'some-user-id'
+
+      fakeApprovedPremisesApi
+        .post(paths.applications.allocation.create({ id: applicationId }), { userId })
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(201, assessment)
+
+      const result = await applicationClient.allocate(applicationId, userId)
+
+      expect(result).toEqual(assessment)
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
 })

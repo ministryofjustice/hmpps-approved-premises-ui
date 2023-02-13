@@ -59,4 +59,11 @@ export default class ApplicationClient {
       path: paths.applications.assessment({ id: applicationId }),
     })) as Assessment
   }
+
+  async allocate(applicationId: string, userId: string): Promise<Assessment> {
+    return (await this.restClient.post({
+      path: paths.applications.allocation.create({ id: applicationId }),
+      data: { userId },
+    })) as Assessment
+  }
 }
