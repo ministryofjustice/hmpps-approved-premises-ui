@@ -475,9 +475,6 @@ const caseNotesFromAssessment = (assessment: Assessment) =>
 const acctAlertsFromAssessment = (assessment: Assessment) =>
   assessment.application?.data?.['prison-information']?.['case-notes']?.acctAlerts || []
 
-const oasysInformationFromAssessment = (assessment: Assessment): OASysSections =>
-  assessment.application?.data?.['oasys-import'] || {}
-
 export {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
@@ -485,9 +482,9 @@ export {
   applicationAccepted,
   arriveDateAsTimestamp,
   assessmentLink,
+  assessmentSections,
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
-  assessmentSections,
   awaitingAssessmentTableRows,
   caseNotesFromAssessment,
   completedTableRows,
@@ -507,7 +504,6 @@ export {
   getStatus,
   getTaskResponsesAsSummaryListItems,
   groupAssessmements,
-  oasysInformationFromAssessment,
   requestedFurtherInformationTableRows,
   unallocatedTableRows,
 }

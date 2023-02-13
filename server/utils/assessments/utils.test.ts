@@ -26,7 +26,6 @@ import {
   adjudicationsFromAssessment,
   caseNotesFromAssessment,
   acctAlertsFromAssessment,
-  oasysInformationFromAssessment,
   groupAssessmements,
   unallocatedTableRows,
   arriveDateAsTimestamp,
@@ -49,7 +48,6 @@ import acctAlertFactory from '../../testutils/factories/acctAlert'
 import userFactory from '../../testutils/factories/user'
 import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from './documentUtils'
-import oasysSectionsFactory from '../../testutils/factories/oasysSections'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -696,23 +694,6 @@ describe('utils', () => {
       assessment.application.data['prison-information'] = {}
 
       expect(acctAlertsFromAssessment(assessment)).toEqual([])
-    })
-  })
-
-  describe('oasysInformationFromAssessment', () => {
-    it('returns the oasys information from the assessment', () => {
-      const oasysInformation = oasysSectionsFactory.build()
-      const assessment = assessmentFactory.build()
-      assessment.application.data['oasys-import'] = oasysInformation
-
-      expect(oasysInformationFromAssessment(assessment)).toEqual(oasysInformation)
-    })
-
-    it('returns an empty string if the case notes are empty', () => {
-      const assessment = assessmentFactory.build()
-      assessment.application.data['oasys-information'] = {}
-
-      expect(oasysInformationFromAssessment(assessment)).toEqual({})
     })
   })
 })
