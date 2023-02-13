@@ -15,11 +15,12 @@ import isAssessment from './assessments/isAssessment'
 const dashboardTableRows = (applications: Array<Application>): Array<TableRow> => {
   return applications.map(application => {
     const arrivalDate = getArrivalDate(application, false)
+    const tier = application.risks?.tier?.value?.level
 
     return [
       createNameAnchorElement(application.person.name, application.id),
       textValue(application.person.crn),
-      htmlValue(tierBadge(application.risks.tier.value?.level || '')),
+      htmlValue(tier == null ? '' : tierBadge(tier)),
       textValue(arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'),
       htmlValue(getStatus(application)),
     ]

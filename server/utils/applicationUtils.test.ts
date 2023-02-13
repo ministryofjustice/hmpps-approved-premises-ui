@@ -169,13 +169,85 @@ describe('applicationUtils', () => {
             text: applicationB.person.crn,
           },
           {
-            html: 'TIER_BADGE',
+            html: '',
           },
           {
             text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
           },
           {
             html: getStatus(applicationB),
+          },
+        ],
+      ])
+    })
+  })
+
+  describe('dashboardTableRows when tier is undefined', () => {
+    it('returns a blank tier badge', async () => {
+      ;(tierBadge as jest.Mock).mockClear()
+      const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
+
+      const application = applicationFactory.withReleaseDate(arrivalDate).build({
+        person: { name: 'My Name' },
+        risks: { tier: undefined },
+      })
+
+      const result = dashboardTableRows([application])
+
+      expect(tierBadge).not.toHaveBeenCalled()
+
+      expect(result).toEqual([
+        [
+          {
+            html: `<a href=${paths.applications.show({ id: application.id })}>My Name</a>`,
+          },
+          {
+            text: application.person.crn,
+          },
+          {
+            html: '',
+          },
+          {
+            text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
+          },
+          {
+            html: getStatus(application),
+          },
+        ],
+      ])
+    })
+  })
+
+  describe('dashboardTableRows when risks is undefined', () => {
+    it('returns a blank tier badge', async () => {
+      ;(tierBadge as jest.Mock).mockClear()
+      const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
+
+      const application = applicationFactory.withReleaseDate(arrivalDate).build({
+        person: { name: 'My Name' },
+        risks: undefined,
+      })
+
+      const result = dashboardTableRows([application])
+
+      expect(tierBadge).not.toHaveBeenCalled()
+
+      expect(result).toEqual([
+        [
+          {
+            html: `<a href=${paths.applications.show({ id: application.id })}>My Name</a>`,
+          },
+          {
+            text: application.person.crn,
+          },
+          {
+            html: '',
+          },
+          {
+            text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
+          },
+          {
+            html: getStatus(application),
           },
         ],
       ])
