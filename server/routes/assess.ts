@@ -16,6 +16,7 @@ export default function routes(controllers: Controllers, router: Router): Router
     assessmentsController,
     assessmentPagesController,
     clarificationNotesController,
+    allocationsController,
     supportingInformationController,
   } = controllers
 
@@ -27,6 +28,8 @@ export default function routes(controllers: Controllers, router: Router): Router
   get(paths.assessments.supportingInformationPath.pattern, supportingInformationController.show())
 
   post(paths.assessments.submission.pattern, assessmentsController.submit())
+
+  get(paths.allocations.show.pattern, allocationsController.show())
 
   Object.keys(pages).forEach((taskKey: string) => {
     Object.keys(pages[taskKey]).forEach((pageKey: string) => {

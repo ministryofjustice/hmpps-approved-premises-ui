@@ -1,4 +1,5 @@
 import { path } from 'static-path'
+import applyPaths from './apply'
 
 const assessmentsPath = path('/assessments')
 
@@ -23,6 +24,9 @@ const paths = {
       confirm: assessmentPath.path('clarification-notes/confirmation'),
     },
     submission,
+  },
+  allocations: {
+    show: applyPaths.applications.show.path('/allocation'),
   },
 }
 
