@@ -10,6 +10,7 @@ import { getBody, getPageName, getTaskName } from '../form-pages/utils'
 
 import Apply from '../form-pages/apply'
 import applicationFactory from '../testutils/factories/application'
+import assessmentFactory from '../testutils/factories/assessment'
 import activeOffenceFactory from '../testutils/factories/activeOffence'
 import documentFactory from '../testutils/factories/document'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
@@ -347,6 +348,23 @@ describe('ApplicationService', () => {
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.submit).toHaveBeenCalledWith(application)
+    })
+  })
+
+  describe('getAssessment', () => {
+    const token = 'some-token'
+    const id = 'some-uuid'
+    const assessment = assessmentFactory.build()
+
+    it('saves data to the session', async () => {
+      applicationClient.assessment.mockResolvedValue(assessment)
+
+      const result = await service.getAssessment(token, id)
+
+      expect(result).toEqual(assessment)
+
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.assessment).toHaveBeenCalledWith(id)
     })
   })
 })
