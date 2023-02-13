@@ -20,6 +20,7 @@ import { statusTag } from './personUtils'
 import { DateFormats } from './dateUtils'
 
 import * as AssessmentUtils from './assessments/utils'
+import * as OASysUtils from './assessments/oasysUtils'
 import * as OffenceUtils from './offenceUtils'
 import * as AttachDocumentsUtils from './attachDocumentsUtils'
 import * as OasysImportUtils from './oasysImportUtils'
@@ -153,6 +154,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('dashboardTableRows', dashboardTableRows)
 
   njkEnv.addGlobal('AssessmentUtils', AssessmentUtils)
+  njkEnv.addGlobal('OASysUtils', OASysUtils)
   njkEnv.addGlobal('OffenceUtils', OffenceUtils)
   njkEnv.addGlobal('AttachDocumentsUtils', AttachDocumentsUtils)
   njkEnv.addGlobal('OasysImportUtils', OasysImportUtils)

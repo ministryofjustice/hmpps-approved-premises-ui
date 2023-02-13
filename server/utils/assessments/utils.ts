@@ -416,12 +416,12 @@ const getSectionSuffix = (task: Task, assessmentId: string) => {
   if (task.id !== 'oasys-import' && task.id !== 'prison-information') return ''
 
   if (task.id === 'oasys-import') {
-    link = 'oasys-link'
+    link = paths.assessments.supportingInformationPath({ id: assessmentId, category: 'risk-information' })
     copy = 'View detailed risk information'
   }
 
   if (task.id === 'prison-information') {
-    link = paths.assessments.pages.prisonInformationPath({ id: assessmentId })
+    link = paths.assessments.supportingInformationPath({ id: assessmentId, category: 'prison-information' })
     copy = 'View additional prison information'
   }
 
@@ -435,13 +435,10 @@ const applicationAccepted = (assessment: Assessment) => {
   switch (decisionFromAssessment(assessment)) {
     case 'releaseDate':
       return true
-      break
     case 'hold':
       return true
-      break
     default:
       return false
-      break
   }
 }
 
@@ -450,16 +447,13 @@ const confirmationPageMessage = (assessment: Assessment) => {
     case 'releaseDate':
       return `<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
       <p>The assessment can now be used to match Robert Brown to a bed in an Approved Premises.</p>`
-      break
     case 'hold':
       return `<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
       <p>This case is now paused until the oral hearing outcome has been provided by the Probation Practitioner and a release date is confirmed.</p>
       <p>It will be added to the matching queue if the oral hearing is successful.</p>`
-      break
     default:
       return `<p>We've sent you a confirmation email.</p>
       <p>We've notified the Probation Practitioner that this application has been rejected as unsuitable for an Approved Premises.</p>`
-      break
   }
 }
 
@@ -467,10 +461,8 @@ const confirmationPageResult = (assessment: Assessment) => {
   switch (applicationAccepted(assessment)) {
     case true:
       return 'You have marked this application as suitable.'
-      break
     default:
       return 'You have marked this application as unsuitable.'
-      break
   }
 }
 
@@ -486,32 +478,32 @@ const acctAlertsFromAssessment = (assessment: Assessment) =>
 export {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
+  allocatedTableRows,
   applicationAccepted,
-  assessmentSections,
+  arriveDateAsTimestamp,
   assessmentLink,
-  awaitingAssessmentTableRows,
-  caseNotesFromAssessment,
-  confirmationPageMessage,
-  confirmationPageResult,
-  daysSinceReceived,
-  decisionFromAssessment,
-  formattedArrivalDate,
-  getStatus,
-  getPage,
-  getTaskResponsesAsSummaryListItems,
-  getReviewNavigationItems,
-  getSectionSuffix,
-  requestedFurtherInformationTableRows,
-  daysSinceInfoRequest,
-  formatDays,
-  daysUntilDue,
-  completedTableRows,
+  assessmentSections,
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
+  awaitingAssessmentTableRows,
+  caseNotesFromAssessment,
+  completedTableRows,
+  confirmationPageMessage,
+  confirmationPageResult,
+  daysSinceInfoRequest,
+  daysSinceReceived,
+  daysUntilDue,
+  decisionFromAssessment,
+  formatDays,
   formatDaysUntilDueWithWarning,
-  groupAssessmements,
-  allocatedTableRows,
-  unallocatedTableRows,
+  formattedArrivalDate,
   getApplicationType,
-  arriveDateAsTimestamp,
+  getPage,
+  getReviewNavigationItems,
+  getSectionSuffix,
+  getStatus,
+  getTaskResponsesAsSummaryListItems,
+  groupAssessmements,
+  requestedFurtherInformationTableRows,
+  unallocatedTableRows,
 }

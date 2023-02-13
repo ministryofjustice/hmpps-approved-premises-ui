@@ -1,11 +1,19 @@
-import type { Person, PrisonCaseNote, Document, ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import type {
+  Person,
+  PrisonCaseNote,
+  Document,
+  ApprovedPremisesAssessment as Assessment,
+  PersonRisks,
+} from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import { Adjudication, PersonAcctAlert } from '../../../server/@types/shared'
-import { sentenceCase } from '../../../server/utils/utils'
+import { mapApiPersonRisksForUi, sentenceCase } from '../../../server/utils/utils'
 import AssessPage from './assessPage'
 
 import Review from '../../../server/form-pages/assess/reviewApplication/reviewApplicationAndDocuments/review'
+import RiskInformationPage from './riskInformationPage'
+import { OasysSummariesSection } from '../../../server/@types/ui'
 
 export default class ReviewPage extends AssessPage {
   constructor(assessment: Assessment) {
@@ -85,13 +93,35 @@ export default class ReviewPage extends AssessPage {
     })
   }
 
+  riskInformationPage(oasysSections: Record<string, OasysSummariesSection>, risks: PersonRisks) {
+    const {
+      'offence-details': offenceDetails,
+      'rosh-summary': roshSummary,
+      'supporting-information': supportingInformation,
+      'risk-to-self': riskToSelf,
+      'risk-management-plan': riskManagementPlan,
+    } = oasysSections
+
+    cy.get('a').contains('View detailed risk information').click()
+
+    const riskInformationPage = new RiskInformationPage()
+    riskInformationPage.showsRiskInformation({
+      offenceDetails,
+      roshSummary,
+      supportingInformation,
+      riskToSelf,
+      riskManagementPlan,
+    })
+    riskInformationPage.shouldShowRiskWidgets(mapApiPersonRisksForUi(risks))
+    riskInformationPage.clickBack()
+  }
+
   prisonInformationPage(
     adjudications: Array<Adjudication>,
     prisonCaseNotes: Array<PrisonCaseNote>,
     acctAlerts: Array<PersonAcctAlert>,
   ) {
     cy.get('a').contains('View additional prison information').click()
-
     this.shouldDisplayPrisonCaseNotes(prisonCaseNotes)
     this.shouldDisplayAdjudications(adjudications)
     this.shouldDisplayAcctAlerts(acctAlerts)
@@ -108,6 +138,7 @@ export default class ReviewPage extends AssessPage {
 
     this.shouldShowCaseNotes(assessment.application.data?.['prison-information']['case-notes'].selectedCaseNotes)
     this.shouldShowAdjudications(assessment.application.data?.['prison-information']['case-notes'].adjudications)
+    this.riskInformationPage(assessment.application.data?.['oasys-import'], assessment.application.risks)
     this.prisonInformationPage(
       assessment.application.data?.['prison-information']['case-notes'].adjudications,
       assessment.application.data?.['prison-information']['case-notes'].selectedCaseNotes,

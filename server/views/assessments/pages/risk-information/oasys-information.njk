@@ -1,0 +1,95 @@
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "../../../partials/prisonInformationTable.njk" import prisonInformationTable %}
+{% from "../../../components/riskWidgets/macro.njk" import widgets %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set columnClasses = "govuk-grid-column-full" %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block content %}
+
+    {{ govukBackLink({
+		text: "Back",
+		href: paths.assessments.pages.show({ task: 'review-application', page: 'review', id: assessmentId })
+
+	}) }}
+    <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div>
+                <p>Imported from OASys: <strong>{{dateOfImport}}</strong>
+                </p>
+
+            </div>
+
+            {{ mojSubNavigation({
+                label: 'Sub navigation',
+                attributes: {
+                'role': 'tablist'
+                },
+                items: [{
+                    text: 'RoSH summary',
+                    href: '#roshSummary',
+                    attributes: {
+                        'aria-controls': 'roshSummary',
+                        'id': 'roshSummaryTab',
+                        role: 'tab', 
+                        'aria-selected': true
+                        }
+                }, 
+                {
+                    text: 'Offence details',
+                    href: '#offenceDetails',
+                    attributes: {
+                        'aria-controls': 'offenceDetails',
+                        'id': 'offenceDetailsTab',
+                        role: 'tab'
+                        }
+                },
+                {
+                    text: 'Supporting information',
+                    href: '#supportingInformation',
+                    attributes: {
+                        'aria-controls': 'supportingInformation',
+                        'id': 'supportingInformationTab',
+                        role: 'tab'
+                        }
+                },
+                {
+                    text: 'Risk management plan',
+                    href: '#riskManagementPlan',
+                    attributes: {
+                        'aria-controls': 'riskManagementPlan',
+                        'id': 'riskManagementPlanTab',
+                        role: 'tab'
+                        }
+                },
+                {
+                    text: 'Risk to self',
+                    href: '#riskToSelf',
+                    attributes: {
+                        'aria-controls': 'riskToSelf',
+                        'id': 'riskToSelfTab',
+                        role: 'tab'
+                        }
+                }
+                ]
+            }) }}
+
+            {{OASysUtils.oasysTableTabs(oasysSections) | safe}}
+
+        </div>
+        <div class="govuk-grid-column-one-third">
+            {{ widgets(risks | mapApiPersonRisksForUi) }}
+        </div>
+    </div>
+
+    <a href="{{paths.assessments.pages.show({ task: 'review-application', page: 'review', id: assessmentId })}}" class="govuk-link"> Back to application</a>
+{% endblock %}
+
+{% block extraScripts %}
+    <script type="text/javascript" nonce="{{ cspNonce }}" src="../../../../../assets/tabPanelTableScript.js"></script>
+{% endblock %}

@@ -540,13 +540,19 @@ describe('utils', () => {
 
     it('returns the correct html if supplied a task with an ID of oasys-import', () => {
       expect(getSectionSuffix({ id: 'oasys-import', title: '', pages: {} }, id)).toBe(
-        '<p><a href="oasys-link">View detailed risk information</a></p>',
+        `<p><a href="${paths.assessments.supportingInformationPath({
+          id,
+          category: 'risk-information',
+        })}">View detailed risk information</a></p>`,
       )
     })
 
     it('returns the correct html if supplied a task with an ID of prison-information', () => {
       expect(getSectionSuffix({ id: 'prison-information', title: '', pages: {} }, id)).toBe(
-        '<p><a href="/assessments/id/prison-information">View additional prison information</a></p>',
+        `<p><a href="${paths.assessments.supportingInformationPath({
+          id,
+          category: 'prison-information',
+        })}">View additional prison information</a></p>`,
       )
     })
   })

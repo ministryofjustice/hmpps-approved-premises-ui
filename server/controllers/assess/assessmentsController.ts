@@ -5,17 +5,10 @@ import { AssessmentGroupingCategory } from '@approved-premises/ui'
 import TasklistService from '../../services/tasklistService'
 import { AssessmentService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
-import {
-  acctAlertsFromAssessment,
-  adjudicationsFromAssessment,
-  caseNotesFromAssessment,
-  groupAssessmements,
-} from '../../utils/assessments/utils'
+import { groupAssessmements } from '../../utils/assessments/utils'
 
 import getSections from '../../utils/assessments/getSections'
-
 import paths from '../../paths/assess'
-import { DateFormats } from '../../utils/dateUtils'
 import { hasRole } from '../../utils/userUtils'
 
 export const tasklistPageHeading = 'Assess an Approved Premises (AP) application'
@@ -98,21 +91,6 @@ export default class AssessmentsController {
       return res.render('assessments/confirm', {
         pageHeading: 'Assessment submission confirmed',
         assessment,
-      })
-    }
-  }
-
-  prisonInformation(): RequestHandler {
-    return async (req: Request, res: Response) => {
-      const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
-
-      res.render('assessments/pages/risk-information/prison-information', {
-        adjudications: adjudicationsFromAssessment(assessment),
-        caseNotes: caseNotesFromAssessment(assessment),
-        acctAlerts: acctAlertsFromAssessment(assessment),
-        pageHeading: 'Prison information',
-        dateOfImport: DateFormats.isoDateToUIDate(assessment.application.submittedAt),
-        assessmentId: assessment.id,
       })
     }
   }
