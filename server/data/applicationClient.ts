@@ -1,4 +1,9 @@
-import type { ActiveOffence, ApprovedPremisesApplication as Application, Document } from '@approved-premises/api'
+import type {
+  ActiveOffence,
+  ApprovedPremisesApplication as Application,
+  ApprovedPremisesAssessment as Assessment,
+  Document,
+} from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -47,5 +52,11 @@ export default class ApplicationClient {
     return (await this.restClient.get({
       path: paths.applications.documents({ id: application.id }),
     })) as Array<Document>
+  }
+
+  async assessment(applicationId: string): Promise<Assessment> {
+    return (await this.restClient.get({
+      path: paths.applications.assessment({ id: applicationId }),
+    })) as Assessment
   }
 }

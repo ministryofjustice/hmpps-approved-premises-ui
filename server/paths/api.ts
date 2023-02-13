@@ -64,6 +64,7 @@ export default {
     new: applyPaths.applications.create,
     submission: applyPaths.applications.submission,
     documents: applyPaths.applications.show.path('documents'),
+    assessment: applyPaths.applications.show.path('assessment'),
   },
   assessments: {
     index: assessPaths.assessments,
