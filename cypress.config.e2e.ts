@@ -1,9 +1,6 @@
 import { defineConfig } from 'cypress'
-import createBundler from '@bahmutov/cypress-esbuild-preprocessor'
 import { addCucumberPreprocessorPlugin } from '@badeball/cypress-cucumber-preprocessor'
-import createEsbuildPlugin from '@badeball/cypress-cucumber-preprocessor/esbuild'
-import NodeGlobalsPolyfillPlugin from '@esbuild-plugins/node-globals-polyfill'
-import NodeModulesPolyfillPlugin from '@esbuild-plugins/node-modules-polyfill'
+import browserify from '@badeball/cypress-cucumber-preprocessor/browserify.js'
 
 async function setupNodeEvents(
   on: Cypress.PluginEvents,
@@ -14,8 +11,8 @@ async function setupNodeEvents(
 
   on(
     'file:preprocessor',
-    createBundler({
-      plugins: [NodeGlobalsPolyfillPlugin({ process: true }), NodeModulesPolyfillPlugin(), createEsbuildPlugin(config)],
+    browserify(config, {
+      typescript: require.resolve('typescript'),
     }),
   )
 
