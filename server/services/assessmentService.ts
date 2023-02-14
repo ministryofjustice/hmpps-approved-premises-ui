@@ -1,4 +1,4 @@
-import type { Request } from 'express'
+import { Request } from 'express'
 import {
   ApprovedPremisesAssessment as Assessment,
   NewClarificationNote,
@@ -11,7 +11,7 @@ import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getBody, updateAssessmentData } from '../form-pages/utils'
 import { ValidationError } from '../utils/errors'
 import { getResponses } from '../utils/applicationUtils'
-import { applicationAccepted } from '../utils/assessments/utils'
+import { applicationAccepted, rejectionRationaleFromAssessmentResponses } from '../utils/assessments/utils'
 
 export default class AssessmentService {
   constructor(private readonly assessmentClientFactory: RestClientBuilder<AssessmentClient>) {}
@@ -73,7 +73,7 @@ export default class AssessmentService {
     const responses = getResponses(assessment)
 
     if (!applicationAccepted(assessment)) {
-      return client.rejection(assessment.id, responses, assessment.rejectionRationale)
+      return client.rejection(assessment.id, responses, rejectionRationaleFromAssessmentResponses(assessment))
     }
 
     return client.acceptance(assessment.id, responses)
