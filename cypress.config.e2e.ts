@@ -39,4 +39,6 @@ export default defineConfig({
     setupNodeEvents,
     supportFile: false,
   },
+  viewportHeight: 3000,
+  viewportWidth: 660,
 })
