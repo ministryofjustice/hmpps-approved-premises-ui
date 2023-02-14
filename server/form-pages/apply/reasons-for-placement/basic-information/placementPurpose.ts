@@ -24,11 +24,7 @@ export default class PlacementPurpose implements TasklistPage {
 
   purposes = placementPurposes
 
-  constructor(
-    private _body: PlacementPurposeBody,
-    private readonly _application: ApprovedPremisesApplication,
-    private readonly previousPage: string,
-  ) {
+  constructor(private _body: PlacementPurposeBody, private readonly _application: ApprovedPremisesApplication) {
     this._body.placementPurposes = _body?.placementPurposes
       ? ([_body.placementPurposes].flat() as Array<PlacementPurposeT>)
       : []
@@ -51,7 +47,7 @@ export default class PlacementPurpose implements TasklistPage {
   }
 
   previous() {
-    return this.previousPage
+    return 'placement-date'
   }
 
   errors() {

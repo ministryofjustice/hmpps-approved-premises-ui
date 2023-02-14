@@ -7,7 +7,7 @@ import PagesController from './pagesController'
 import { ApplicationService } from '../../../services'
 import TasklistPage from '../../../form-pages/tasklistPage'
 import Apply from '../../../form-pages/apply'
-import { getPage } from '../../../utils/applicationUtils'
+import { getPage } from '../../../utils/applications/utils'
 
 import {
   fetchErrorsAndUserInput,
@@ -20,7 +20,7 @@ import { viewPath } from '../../../form-pages/utils'
 
 jest.mock('../../../utils/validation')
 jest.mock('../../../form-pages/utils')
-jest.mock('../../../utils/applicationUtils')
+jest.mock('../../../utils/applications/utils')
 jest.mock('../../../form-pages/apply', () => {
   return {
     pages: { 'my-task': {} },

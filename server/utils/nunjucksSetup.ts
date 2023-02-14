@@ -20,7 +20,7 @@ import {
   convertObjectsToSelectOptions,
   convertKeyValuePairToRadioItems,
 } from './formUtils'
-import { dashboardTableRows } from './applicationUtils'
+import { dashboardTableRows } from './applications/utils'
 import { checkYourAnswersSections } from './checkYourAnswersUtils'
 
 import { statusTag } from './personUtils'

@@ -1,5 +1,12 @@
 {% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
 {% extends "../layout.njk" %}
+
+{{ govukBackLink({
+		text: "Back",
+		href: paths.applications.people.selectOffence({ crn: page.application.person.crn })
+	}) }}
 
 {% block questions %}
 

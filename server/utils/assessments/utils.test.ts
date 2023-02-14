@@ -37,7 +37,7 @@ import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
 
 import * as personUtils from '../personUtils'
-import * as applicationUtils from '../applicationUtils'
+import * as applicationUtils from '../applications/utils'
 
 import Assess from '../../form-pages/assess'
 import { UnknownPageError } from '../errors'
@@ -55,7 +55,7 @@ import { documentsFromApplication } from './documentUtils'
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
 
-jest.mock('../applicationUtils')
+jest.mock('../applications/utils')
 jest.mock('../checkYourAnswersUtils')
 jest.mock('../personUtils')
 jest.mock('../reviewUtils')

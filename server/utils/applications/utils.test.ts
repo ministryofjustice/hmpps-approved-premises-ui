@@ -1,10 +1,10 @@
-import applicationFactory from '../testutils/factories/application'
-import { tierEnvelopeFactory } from '../testutils/factories/risks'
-import paths from '../paths/apply'
-import Apply from '../form-pages/apply'
-import Assess from '../form-pages/assess'
-import { DateFormats } from './dateUtils'
-import { tierBadge, isApplicableTier } from './personUtils'
+import applicationFactory from '../../testutils/factories/application'
+import { tierEnvelopeFactory } from '../../testutils/factories/risks'
+import paths from '../../paths/apply'
+import Apply from '../../form-pages/apply'
+import Assess from '../../form-pages/assess'
+import { DateFormats } from '../dateUtils'
+import { tierBadge, isApplicableTier } from '../personUtils'
 
 import {
   getResponses,
@@ -14,26 +14,27 @@ import {
   firstPageOfApplicationJourney,
   isUnapplicable,
   getStatus,
-} from './applicationUtils'
-import { SessionDataError, UnknownPageError } from './errors'
+} from './utils'
+import { SessionDataError, UnknownPageError } from '../errors'
 
 const FirstApplyPage = jest.fn()
 const SecondApplyPage = jest.fn()
 const AssessPage = jest.fn()
 
-jest.mock('../form-pages/apply', () => {
+jest.mock('../../form-pages/apply', () => {
   return {
     pages: { 'basic-information': {}, 'type-of-ap': {} },
+    sections: { 'reasons-for-placement': {} },
   }
 })
 
-jest.mock('../form-pages/assess', () => {
+jest.mock('../../form-pages/assess', () => {
   return {
     pages: { 'assess-page': {} },
   }
 })
 
-jest.mock('./personUtils')
+jest.mock('../personUtils')
 
 Apply.pages['basic-information'] = {
   first: FirstApplyPage,
@@ -44,7 +45,7 @@ Assess.pages['assess-page'] = {
   first: AssessPage,
 }
 
-describe('applicationUtils', () => {
+describe('utils', () => {
   describe('getResponses', () => {
     it('returns the responses from all answered questions', () => {
       FirstApplyPage.mockReturnValue({

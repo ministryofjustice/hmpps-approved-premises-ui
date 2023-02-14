@@ -33,6 +33,16 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
       },
     })
   }
+
+  withPageResponse({ section, task, key, value }: { section: string; task: string; key: string; value: unknown }) {
+    return this.params({
+      data: {
+        [section]: {
+          [task]: { [key]: value },
+        },
+      },
+    })
+  }
 }
 
 export default ApplicationFactory.define(() => ({

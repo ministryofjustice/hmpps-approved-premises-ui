@@ -3,7 +3,7 @@ import { HtmlItem, SummaryListItem, Task, TextItem } from '@approved-premises/ui
 
 import paths from '../paths/apply'
 
-import { getResponseForPage } from './applicationUtils'
+import { getResponseForPage } from './applications/utils'
 import reviewSections from './reviewUtils'
 
 const checkYourAnswersSections = (application: ApprovedPremisesApplication) =>
