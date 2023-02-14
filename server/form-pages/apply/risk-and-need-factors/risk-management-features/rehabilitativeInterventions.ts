@@ -1,8 +1,8 @@
 import type { TaskListErrors } from '@approved-premises/ui'
 import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
+import { convictedOffenceResponseFromApplication } from '../../../../utils/applications/convictedOffenceResponseFromApplication'
 import { Page } from '../../../utils/decorators'
-
 import TasklistPage from '../../../tasklistPage'
 
 export const interventionsTranslations = {
@@ -30,8 +30,7 @@ export default class RehabilitativeInterventions implements TasklistPage {
 
   constructor(
     private _body: RawRehabilitativeInterventionsBody,
-    private readonly _application: ApprovedPremisesApplication,
-    private readonly previousPage: string,
+    private readonly application: ApprovedPremisesApplication,
   ) {}
 
   public get body(): RehabilitativeInterventionsBody {
@@ -54,7 +53,9 @@ export default class RehabilitativeInterventions implements TasklistPage {
   }
 
   previous() {
-    return this.previousPage
+    return convictedOffenceResponseFromApplication(this.application) === 'yes'
+      ? 'convicted-offences'
+      : 'date-of-offence'
   }
 
   next() {
