@@ -2,7 +2,7 @@ import type { Request, Response, RequestHandler, NextFunction } from 'express'
 import createError from 'http-errors'
 
 import type { DataServices } from '@approved-premises/ui'
-import { getPage } from '../../../utils/applicationUtils'
+import { getPage } from '../../../utils/applications/utils'
 import { ApplicationService } from '../../../services'
 
 import {

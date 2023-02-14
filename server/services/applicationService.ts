@@ -7,7 +7,7 @@ import type {
   Document,
 } from '@approved-premises/api'
 
-import { isUnapplicable } from '../utils/applicationUtils'
+import { isUnapplicable } from '../utils/applications/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import type { RestClientBuilder, ApplicationClient } from '../data'
 import { ValidationError } from '../utils/errors'

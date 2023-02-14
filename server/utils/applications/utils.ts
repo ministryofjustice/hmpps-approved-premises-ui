@@ -3,14 +3,14 @@ import type {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
 } from '@approved-premises/api'
-import paths from '../paths/apply'
-import Apply from '../form-pages/apply'
-import { SessionDataError, UnknownPageError } from './errors'
-import { isApplicableTier, tierBadge } from './personUtils'
-import { DateFormats } from './dateUtils'
-import { TasklistPageInterface } from '../form-pages/tasklistPage'
-import Assess from '../form-pages/assess'
-import isAssessment from './assessments/isAssessment'
+import paths from '../../paths/apply'
+import Apply from '../../form-pages/apply'
+import { SessionDataError, UnknownPageError } from '../errors'
+import { isApplicableTier, tierBadge } from '../personUtils'
+import { DateFormats } from '../dateUtils'
+import { TasklistPageInterface } from '../../form-pages/tasklistPage'
+import Assess from '../../form-pages/assess'
+import isAssessment from '../assessments/isAssessment'
 
 const dashboardTableRows = (applications: Array<Application>): Array<TableRow> => {
   return applications.map(application => {
@@ -158,12 +158,12 @@ const firstPageOfApplicationJourney = (application: Application) => {
 }
 
 export {
-  getResponses,
-  getResponseForPage,
-  getPage,
-  getArrivalDate,
   dashboardTableRows,
   firstPageOfApplicationJourney,
-  isUnapplicable,
+  getArrivalDate,
+  getPage,
+  getResponseForPage,
+  getResponses,
   getStatus,
+  isUnapplicable,
 }

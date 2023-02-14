@@ -1,5 +1,5 @@
 import applicationFactory from '../testutils/factories/application'
-import { getResponseForPage } from './applicationUtils'
+import { getResponseForPage } from './applications/utils'
 
 import {
   checkYourAnswersSections,
@@ -9,7 +9,7 @@ import {
 import reviewSections from './reviewUtils'
 
 jest.mock('./reviewUtils')
-jest.mock('./applicationUtils')
+jest.mock('./applications/utils')
 
 describe('checkYourAnswersUtils', () => {
   describe('embeddedSummaryListItem', () => {

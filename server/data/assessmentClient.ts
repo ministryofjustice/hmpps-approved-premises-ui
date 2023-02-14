@@ -7,7 +7,7 @@ import type {
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
-import { ApplicationOrAssessmentResponse } from '../utils/applicationUtils'
+import { ApplicationOrAssessmentResponse } from '../utils/applications/utils'
 
 export default class AssessmentClient {
   restClient: RestClient

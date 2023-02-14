@@ -14,7 +14,7 @@ import assessmentFactory from '../testutils/factories/assessment'
 import activeOffenceFactory from '../testutils/factories/activeOffence'
 import documentFactory from '../testutils/factories/document'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
-import { isUnapplicable } from '../utils/applicationUtils'
+import { isUnapplicable } from '../utils/applications/utils'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -32,9 +32,8 @@ Apply.pages['my-task'] = {
 
 jest.mock('../data/applicationClient.ts')
 jest.mock('../data/personClient.ts')
-jest.mock('../utils/applicationUtils')
+jest.mock('../utils/applications/utils')
 jest.mock('../form-pages/utils')
-jest.mock('../utils/applicationUtils')
 
 describe('ApplicationService', () => {
   const applicationClient = new ApplicationClient(null) as jest.Mocked<ApplicationClient>

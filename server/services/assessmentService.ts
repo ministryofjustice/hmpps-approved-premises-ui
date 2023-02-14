@@ -10,7 +10,7 @@ import type { RestClientBuilder, AssessmentClient } from '../data'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getBody, updateAssessmentData } from '../form-pages/utils'
 import { ValidationError } from '../utils/errors'
-import { getResponses } from '../utils/applicationUtils'
+import { getResponses } from '../utils/applications/utils'
 import { applicationAccepted, rejectionRationaleFromAssessmentResponses } from '../utils/assessments/utils'
 
 export default class AssessmentService {

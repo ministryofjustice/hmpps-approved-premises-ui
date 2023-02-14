@@ -7,7 +7,7 @@ import { fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import Apply from '../../form-pages/apply'
-import { firstPageOfApplicationJourney, getResponses, isUnapplicable } from '../../utils/applicationUtils'
+import { firstPageOfApplicationJourney, getResponses, isUnapplicable } from '../../utils/applications/utils'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
