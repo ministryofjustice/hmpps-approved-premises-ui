@@ -307,6 +307,15 @@ describe('applicationUtils', () => {
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' }),
       )
     })
+
+    it('returns the is exceptional case page for an application for a person without a tier', () => {
+      const application = applicationFactory.build()
+      application.risks = undefined
+
+      expect(firstPageOfApplicationJourney(application)).toEqual(
+        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' }),
+      )
+    })
   })
 
   describe('isUnapplicable', () => {
