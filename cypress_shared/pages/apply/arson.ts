@@ -12,7 +12,7 @@ export default class ArsonPage extends ApplyPage {
       'arson',
       paths.applications.pages.show({ id: application.id, task: 'further-considerations', page: 'catering' }),
     )
-    cy.get('.govuk-form-group').contains(`Does ${application.person.name} need a specialist arson room?`)
+    cy.get('.govuk-form-group').contains(`Does ${application.person.name} pose an arson risk?`)
   }
 
   completeForm(): void {

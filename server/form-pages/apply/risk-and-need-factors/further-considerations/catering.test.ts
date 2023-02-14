@@ -19,7 +19,7 @@ describe('Catering', () => {
       const page = new Catering(body, application)
 
       expect(page.questions).toEqual({
-        catering: 'Do you have any concerns about John Wayne catering for themselves?',
+        catering: 'Can John Wayne be placed in a self-catered Approved Premises?',
       })
     })
   })
@@ -40,7 +40,7 @@ describe('Catering', () => {
       const page = new Catering({}, application)
 
       expect(page.errors()).toEqual({
-        catering: 'You must specify if you have any concerns about John Wayne catering for themselves',
+        catering: 'You must specify if John Wayne can be placed in a self-catered Approved Premises',
       })
     })
 
@@ -48,8 +48,7 @@ describe('Catering', () => {
       const page = new Catering({ ...body, cateringDetail: '' }, application)
 
       expect(page.errors()).toEqual({
-        cateringDetail:
-          'You must specify details about if you have any concerns about John Wayne catering for themselves',
+        cateringDetail: 'You must specify details if you have any concerns about John Wayne catering for themselves',
       })
     })
   })
@@ -59,7 +58,7 @@ describe('Catering', () => {
       const page = new Catering(body, application)
 
       expect(page.response()).toEqual({
-        'Do you have any concerns about John Wayne catering for themselves?': 'Yes - Catering detail',
+        'Can John Wayne be placed in a self-catered Approved Premises?': 'Yes - Catering detail',
       })
     })
 
@@ -67,7 +66,7 @@ describe('Catering', () => {
       const page = new Catering({ ...body, catering: 'no' }, application)
 
       expect(page.response()).toEqual({
-        'Do you have any concerns about John Wayne catering for themselves?': 'No',
+        'Can John Wayne be placed in a self-catered Approved Premises?': 'No',
       })
     })
   })

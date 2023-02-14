@@ -7,6 +7,7 @@
 {% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% from "../../components/formFields/form-page-radios/macro.njk" import formPageRadios %}
 {% from "../../components/formFields/form-page-date-input/macro.njk" import formPageDateInput %}
@@ -19,9 +20,9 @@
 {% set pageTitle = applicationName + " - " + page.title %}
 {% set mainClasses = "app-container govuk-body" %}
 
-{% block content %}
+{% block beforeContent %}
 
-  {% if page.previous() === 'dashboard' %}
+ {% if page.previous() === 'dashboard' %}
     {{ govukBackLink({
       text: "Back",
       href: paths.applications.show({ id: applicationId })
@@ -33,6 +34,9 @@
     }) }}
   {% endif %}
 
+{% endblock %}
+
+{% block content %}
   <div class="govuk-grid-row">
     <div class="{{ columnClasses | default("govuk-grid-column-two-thirds") }}">
       <form action="{{ paths.applications.pages.update({ id: applicationId, task: task, page: page.name }) }}?_method=PUT" method="post">
@@ -43,7 +47,7 @@
         {% block questions %}{% endblock %}
 
         {{ govukButton({
-            text: "Submit"
+            text: "Save and continue"
         }) }}
       </form>
     </div>

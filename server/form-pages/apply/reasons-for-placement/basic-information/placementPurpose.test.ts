@@ -114,7 +114,7 @@ describe('PlacementPurpose', () => {
 
       expect(page.response()).toEqual({
         [page.title]:
-          'Public protection, Prevent contact, Help individual readjust to life outside custody, Provide drug or alcohol monitoring, Prevent self harm or suicide',
+          'Public protection, Prevent contact with known individuals or victims, Help individual readjust to life outside of custody, Provide drug or alcohol monitoring, Increased monitoring of risk factors',
       })
     })
 
@@ -129,7 +129,7 @@ describe('PlacementPurpose', () => {
       )
 
       expect(page.response()).toEqual({
-        [page.title]: 'Provide drug or alcohol monitoring, Other (please specify)',
+        [page.title]: 'Provide drug or alcohol monitoring, Other',
         'Other purpose for AP Placement': 'Another reason',
       })
     })
@@ -142,15 +142,15 @@ describe('PlacementPurpose', () => {
 
       expect(items).toEqual([
         { checked: false, text: 'Public protection', value: 'publicProtection' },
-        { checked: false, text: 'Prevent contact', value: 'preventContact' },
-        { checked: false, text: 'Help individual readjust to life outside custody', value: 'readjust' },
+        { checked: false, text: 'Prevent contact with known individuals or victims', value: 'preventContact' },
+        { checked: false, text: 'Help individual readjust to life outside of custody', value: 'readjust' },
         { checked: false, text: 'Provide drug or alcohol monitoring', value: 'drugAlcoholMonitoring' },
-        { checked: false, text: 'Prevent self harm or suicide', value: 'preventSelfHarm' },
+        { checked: false, text: 'Increased monitoring of risk factors', value: 'preventSelfHarm' },
         { divider: 'or' },
         {
           checked: false,
           conditional: { html: '<strong>Some HTML</strong>' },
-          text: 'Other (please specify)',
+          text: 'Other',
           value: 'otherReason',
         },
       ])

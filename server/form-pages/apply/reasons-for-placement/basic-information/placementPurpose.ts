@@ -7,11 +7,11 @@ import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 
 export const placementPurposes = {
   publicProtection: 'Public protection',
-  preventContact: 'Prevent contact',
-  readjust: 'Help individual readjust to life outside custody',
+  preventContact: 'Prevent contact with known individuals or victims',
+  readjust: 'Help individual readjust to life outside of custody',
   drugAlcoholMonitoring: 'Provide drug or alcohol monitoring',
-  preventSelfHarm: 'Prevent self harm or suicide',
-  otherReason: 'Other (please specify)',
+  preventSelfHarm: 'Increased monitoring of risk factors',
+  otherReason: 'Other',
 } as const
 
 type PlacementPurposeT = keyof typeof placementPurposes

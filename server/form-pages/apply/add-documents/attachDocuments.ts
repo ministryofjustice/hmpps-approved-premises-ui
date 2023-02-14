@@ -16,7 +16,7 @@ type AttachDocumentsResponse = {
 
 @Page({ name: 'attach-documents', bodyProperties: ['selectedDocuments'] })
 export default class AttachDocuments implements TasklistPage {
-  title = 'Select associated documents'
+  title = 'Select any additional documents that are required to support your application'
 
   documents: Array<Document> | undefined
 

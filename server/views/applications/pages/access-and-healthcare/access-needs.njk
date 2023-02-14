@@ -1,3 +1,5 @@
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
 {% extends "../layout.njk" %}
 
 {% block questions %}
@@ -60,6 +62,18 @@
       },fetchContext()) }}
   {% endset -%}
 
+  {% set bannerHTML %}
+  {% set html %}
+  <p>
+       If a Care Act assessment has been completed, you must upload it in the ‘attach required documents’ screen.
+      </p>
+  {% endset %}
+
+  {{ govukNotificationBanner({
+        html: html
+    }) }}
+  {% endset -%}
+
   {{ formPageRadios({
         fieldName: "needsInterpreter",
         fieldset: {
@@ -94,7 +108,10 @@
         items: [
           {
             value: "yes",
-            text: "Yes"
+            text: "Yes",
+            conditional: {
+              html: bannerHTML
+            }
           },
           {
             value: "no",

@@ -11,7 +11,7 @@
         fieldName: "releaseDate",
         fieldset: {
           legend: {
-            text: "Expected release date"
+            text: "Expected date of release"
           }
         },
         hint: {
@@ -56,8 +56,11 @@
             }
           },
           {
-            text: "No",
-            value: "no"
+            text: "No, the release date is to be determined by the parole board or other hearing",
+            value: "no", 
+            conditional: {
+              html: bannerHtml
+            }
           }
         ]
       },

@@ -13,7 +13,7 @@ type QuestionKeys = (typeof questionKeys)[number]
 export default class PreviousPlacements implements TasklistPage {
   name = 'previous-placements'
 
-  title = 'Previous placements'
+  title = 'Previous Approved Premises (AP) placements'
 
   questionPredicates = {
     previousPlacement: `stayed or been offered a placement in an AP before`,

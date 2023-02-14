@@ -23,8 +23,8 @@ export default class Covid implements TasklistPage {
       hint: `A person is considered fully vaccinated if they have had two doses and a booster of a COVID-19 vaccine.`,
     },
     highRisk: {
-      question: `Is ${this.application.person.name} at a higher risk from COVID-19?`,
-      hint: `This includes autoimmune diseases and those eligible for nMAB treatment.`,
+      question: `Is ${this.application.person.name} at a higher risk from COVID-19 based on the NHS guidance?`,
+      hint: `This includes people with autoimmune diseases and those eligible for nMAB treatment.`,
     },
     additionalCovidInfo: 'Other considerations and comments on COVID-19',
   }
@@ -62,7 +62,7 @@ export default class Covid implements TasklistPage {
     }
 
     if (!this.body.highRisk) {
-      errors.highRisk = `You must confirm if ${this.application.person.name} is at a higher risk from COVID-19`
+      errors.highRisk = `You must confirm if ${this.application.person.name} is at a higher risk from COVID-19 based on the NHS guidance`
     }
 
     return errors

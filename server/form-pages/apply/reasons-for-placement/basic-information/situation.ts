@@ -10,8 +10,8 @@ import { SentenceTypesT } from './sentenceType'
 const situations = {
   riskManagement: 'Referral for risk management',
   residencyManagement: 'Residency management',
-  bailAssessment: 'Bail assessment for community penalty',
-  bailSentence: 'Bail sentence',
+  bailAssessment: 'Bail assessment for residency requirement as part of a community based Order',
+  bailSentence: 'Bail placement',
 } as const
 
 type CommunityOrderSituations = Pick<typeof situations, 'riskManagement' | 'residencyManagement'>

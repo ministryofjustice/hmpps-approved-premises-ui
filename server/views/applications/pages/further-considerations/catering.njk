@@ -7,7 +7,11 @@
      {{ page.title }}
   </h1>
 
-  <p>This information is used to match a person with a suitable room in a suitable premises.</p>
+    {{ govukDetails({
+      summaryText: "View guidance",
+      html: '<p>Approved Premises (AP) placements are usually self-catered unless there are specific circumstances where a person requires a catered placement. </p>
+            <p>For example, foreign national offenders (FNO) without access to funds cannot be placed in a self-catered AP.</p>'
+    }) }}
 
   {% for key, value in page.questions %}
     {% include "./../../partials/_yes-no-with-detail.njk" %}

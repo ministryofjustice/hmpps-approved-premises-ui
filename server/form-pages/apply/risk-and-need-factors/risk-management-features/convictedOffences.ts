@@ -17,7 +17,7 @@ export default class ConvictedOffences implements TasklistPage {
 
   furtherDetails = `This includes any spent or unspent convictions over their lifetime.`
 
-  offences = ['Arson offences', 'Sexual offences', 'Hate crimes', 'Non-sexual offences against children']
+  offences = ['Arson offences', 'Sexual offences', 'Hate crimes', 'Offences against children']
 
   constructor(public body: { response?: YesOrNo }, private readonly application: ApprovedPremisesApplication) {}
 

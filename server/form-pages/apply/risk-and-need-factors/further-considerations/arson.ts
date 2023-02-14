@@ -14,11 +14,11 @@ export default class Arson implements TasklistPage {
   title = 'Arson'
 
   questionPredicates = {
-    arson: 'a specialist arson room',
+    arson: 'pose an arson risk',
   }
 
   questions = {
-    arson: `Does ${this.application.person.name} need ${this.questionPredicates.arson}?`,
+    arson: `Does ${this.application.person.name} ${this.questionPredicates.arson}?`,
   }
 
   hints = {
@@ -27,10 +27,10 @@ export default class Arson implements TasklistPage {
       <p class="govuk-body">Consider whether the person poses an ongoing risk of setting fires based on:</p>
 
       <ul class="govuk-list govuk-list--bullet">
-        <li>their current and previous offences,</li>
-        <li>factors outside of the offences they were charged for,</li>
-        <li>their behaviour in custody,</li>
-        <li>and your expectations for how they'll behave in an AP setting.</li>
+        <li>their current and previous offences</li>
+        <li>factors outside of the offences they were charged for</li>
+        <li>their behaviour in custody</li>
+        <li>your expectations for how they'll behave in an AP setting</li>
       </ul>
     `,
     },
@@ -59,11 +59,11 @@ export default class Arson implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.arson) {
-      errors.arson = `You must specify if ${this.application.person.name} needs ${this.questionPredicates.arson}`
+      errors.arson = `You must specify if ${this.application.person.name} poses an arson risk`
     }
 
     if (this.body.arson === 'yes' && !this.body.arsonDetail) {
-      errors.arsonDetail = `You must specify details about if ${this.application.person.name} needs ${this.questionPredicates.arson}`
+      errors.arsonDetail = `You must specify details if ${this.application.person.name} poses an arson risk`
     }
 
     return errors
