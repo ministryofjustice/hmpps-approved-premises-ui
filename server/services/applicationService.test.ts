@@ -367,4 +367,17 @@ describe('ApplicationService', () => {
       expect(applicationClient.assessment).toHaveBeenCalledWith(id)
     })
   })
+
+  describe('allocate', () => {
+    it('calls the client with the expected arguments', async () => {
+      const token = 'token'
+      const applicationId = 'some-application-id'
+      const userId = 'some-user-id'
+
+      await service.allocate(token, applicationId, userId)
+
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.allocate).toHaveBeenCalledWith(applicationId, userId)
+    })
+  })
 })

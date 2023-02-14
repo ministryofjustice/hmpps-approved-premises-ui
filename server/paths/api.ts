@@ -65,6 +65,9 @@ export default {
     submission: applyPaths.applications.submission,
     documents: applyPaths.applications.show.path('documents'),
     assessment: applyPaths.applications.show.path('assessment'),
+    allocation: {
+      create: applyPaths.applications.show.path('allocations'),
+    },
   },
   assessments: {
     index: assessPaths.assessments,

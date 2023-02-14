@@ -133,6 +133,13 @@ export default class ApplicationService {
     return assessment
   }
 
+  async allocate(token: string, assessmentId: string, userId: string): Promise<Assessment> {
+    const client = this.applicationClientFactory(token)
+    const assessment = await client.allocate(assessmentId, userId)
+
+    return assessment
+  }
+
   private async saveToSession(application: ApprovedPremisesApplication, page: TasklistPage, request: Request) {
     request.session.application = application
     request.session.previousPage = request.params.page
