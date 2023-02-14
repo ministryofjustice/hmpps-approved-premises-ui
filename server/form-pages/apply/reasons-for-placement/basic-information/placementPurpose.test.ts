@@ -14,7 +14,6 @@ describe('PlacementPurpose', () => {
           placementPurposes: ['publicProtection', 'readjust'],
         },
         application,
-        'previousPage',
       )
 
       expect(page.body).toEqual({
@@ -29,7 +28,6 @@ describe('PlacementPurpose', () => {
           otherReason: 'Another reason',
         },
         application,
-        'previousPage',
       )
 
       expect(pageWithOtherReason.body).toEqual({
@@ -43,7 +41,6 @@ describe('PlacementPurpose', () => {
           otherReason: 'Another reason',
         },
         application,
-        'previousPage',
       )
 
       expect(pageWithoutOtherReason.body).toEqual({
@@ -58,7 +55,6 @@ describe('PlacementPurpose', () => {
           otherReason: 'Another reason',
         },
         application,
-        'previousPage',
       )
 
       expect(page.body).toEqual({
@@ -68,31 +64,24 @@ describe('PlacementPurpose', () => {
     })
   })
 
-  describe('when knowReleaseDate is set to yes', () => {
-    itShouldHaveNextValue(
-      new PlacementPurpose({ placementPurposes: ['publicProtection'] }, application, 'somePage'),
-      '',
-    )
-  })
+  itShouldHaveNextValue(new PlacementPurpose({ placementPurposes: ['publicProtection'] }, application), '')
 
-  describe("previous returns the value passed into the previousPage parameter of the object's constructor", () => {
-    itShouldHavePreviousValue(new PlacementPurpose({}, application, 'previousPage'), 'previousPage')
-  })
+  itShouldHavePreviousValue(new PlacementPurpose({}, application), 'placement-date')
 
   describe('errors', () => {
     it('should return an empty object if the placement purpose is specified as a reason other than "Other reason"', () => {
-      const page = new PlacementPurpose({ placementPurposes: ['publicProtection'] }, application, 'somePage')
+      const page = new PlacementPurpose({ placementPurposes: ['publicProtection'] }, application)
       expect(page.errors()).toEqual({})
     })
 
     it('should return an error if the placementPurpose is "Other reason" and the reason is note given', () => {
-      const page = new PlacementPurpose({ placementPurposes: ['otherReason'] }, application, 'somePage')
+      const page = new PlacementPurpose({ placementPurposes: ['otherReason'] }, application)
       expect(page.errors()).toEqual({ otherReason: 'You must explain the reason' })
     })
   })
 
   it('should return an error if the reason is not populated', () => {
-    const page = new PlacementPurpose({}, application, 'somePage')
+    const page = new PlacementPurpose({}, application)
     expect(page.errors()).toEqual({ placementPurposes: 'You must choose at least one placement purpose' })
   })
 
@@ -109,7 +98,6 @@ describe('PlacementPurpose', () => {
           ],
         },
         application,
-        'somePage',
       )
 
       expect(page.response()).toEqual({
@@ -125,7 +113,6 @@ describe('PlacementPurpose', () => {
           otherReason: 'Another reason',
         },
         application,
-        'somePage',
       )
 
       expect(page.response()).toEqual({
@@ -137,7 +124,7 @@ describe('PlacementPurpose', () => {
 
   describe('items', () => {
     it('it returns radio buttons with a divider and conditional HTML for the `other` option', () => {
-      const page = new PlacementPurpose({}, application, 'somePage')
+      const page = new PlacementPurpose({}, application)
       const items = page.items('<strong>Some HTML</strong>')
 
       expect(items).toEqual([
