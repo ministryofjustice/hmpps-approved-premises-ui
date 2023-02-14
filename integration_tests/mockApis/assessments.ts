@@ -1,6 +1,7 @@
 import { SuperAgentRequest } from 'superagent'
 
 import type {
+  ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
   NewClarificationNote,
   UpdatedClarificationNote,
@@ -8,6 +9,7 @@ import type {
 
 import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
+import { errorStub } from '../../wiremock/utils'
 
 export default {
   stubAssessments: (assessments: Array<Assessment>): SuperAgentRequest =>
@@ -46,6 +48,27 @@ export default {
         jsonBody: assessment,
       },
     }),
+  stubAllocationCreate: (args: { application: Application; assessment: Assessment }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: paths.applications.allocation.create({ id: args.application.id }),
+      },
+      response: {
+        status: 201,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.assessment,
+      },
+    }),
+  verifyAllocationCreate: async (application: Application) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.applications.allocation.create({ id: application.id }),
+      })
+    ).body.requests,
+  stubAllocationErrors: (application: Application) =>
+    stubFor(errorStub(['userId'], paths.applications.allocation.create({ id: application.id }))),
   stubAssessmentRejection: (assessment: Assessment): SuperAgentRequest =>
     stubFor({
       request: {

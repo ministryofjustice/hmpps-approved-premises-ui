@@ -26,10 +26,14 @@ export default class AllocationsPage extends Page {
   }
 
   shouldShowUsers(users: Array<User>) {
-    cy.get('select#staffMember option').should('have.length', users.length + 1)
+    cy.get('select#userId option').should('have.length', users.length + 1)
 
     users.forEach(u => {
-      cy.get('select#staffMember option').contains(u.name).should('be.visible')
+      cy.get('select#userId option').contains(u.name).should('be.visible')
     })
+  }
+
+  selectUser(user: User) {
+    this.getSelectInputByIdAndSelectAnEntry('userId', user.id)
   }
 }

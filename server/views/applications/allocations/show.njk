@@ -21,27 +21,28 @@
 
       {{ showErrorSummary(errorSummary) }}
 
-      <form action="#" method="post">
+      <form action="{{ paths.allocations.create({ id: assessment.application.id }) }}" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
         {{
-        govukSelect({
-          label: {
-            html: '<h2 class="govuk-heading-m">Reallocate Assessment</h2>'
-          },
-          hint: {
-            text: 'Select a staff member to allocate the assessment to'
-          },
-          id: "staffMember",
-          name: "staffMember",
-          items: convertObjectsToSelectOptions(users, 'Please select', 'name', 'id', 'staffMember'),
-          errorMessage: errors.staffMember
-        })
-      }}
+          govukSelect({
+            label: {
+              html: '<h2 class="govuk-heading-m">Reallocate Assessment</h2>'
+            },
+            hint: {
+              text: 'Select a staff member to allocate the assessment to'
+            },
+            id: "userId",
+            name: "userId",
+            items: convertObjectsToSelectOptions(users, 'Please select', 'name', 'id', 'userId'),
+            errorMessage: errors.userId
+          })
+        }}
 
         {{
-        govukButton({
-        text: "Submit"
-        })
-      }}
+          govukButton({
+          text: "Submit"
+          })
+        }}
       </form>
     </div>
 
