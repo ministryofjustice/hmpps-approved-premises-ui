@@ -6,7 +6,7 @@ import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController, { tasklistPageHeading } from './applicationsController'
 import { ApplicationService, PersonService } from '../../services'
-import { fetchErrorsAndUserInput } from '../../utils/validation'
+import { catchAPIErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 import personFactory from '../../testutils/factories/person'
 import applicationFactory from '../../testutils/factories/application'
 import activeOffenceFactory from '../../testutils/factories/activeOffence'
@@ -15,6 +15,7 @@ import Apply from '../../form-pages/apply'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import { firstPageOfApplicationJourney, getResponses, isUnapplicable } from '../../utils/applications/utils'
+import { TasklistAPIError } from '../../utils/errors'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applications/utils')
@@ -36,6 +37,7 @@ describe('applicationsController', () => {
     applicationsController = new ApplicationsController(applicationService, personService)
     request = createMock<Request>({ user: { token } })
     response = createMock<Response>({})
+    jest.clearAllMocks()
   })
 
   describe('index', () => {
@@ -279,6 +281,21 @@ describe('applicationsController', () => {
       await requestHandler(request, response, next)
 
       expect(request.session.application).toEqual(application)
+    })
+
+    it('renders the CRN lookup page with errors if the API returns a 403', async () => {
+      applicationService.createApplication.mockRejectedValue({ status: 403 })
+
+      const requestHandler = applicationsController.create()
+
+      await requestHandler(request, response, next)
+
+      expect(firstPageOfApplicationJourney).not.toHaveBeenCalled()
+      expect(catchAPIErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new TasklistAPIError(`This CRN is not in your caseload`, 'crn'),
+      )
     })
   })
 
