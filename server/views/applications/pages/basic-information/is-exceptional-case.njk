@@ -3,10 +3,14 @@
 
 {% extends "../layout.njk" %}
 
-{{ govukBackLink({
+{% block beforeContent %}
+
+  {{ govukBackLink({
 		text: "Back",
 		href: paths.applications.people.selectOffence({ crn: page.application.person.crn })
 	}) }}
+
+{% endblock %}
 
 {% block questions %}
 
