@@ -546,18 +546,33 @@
             "roshSummaries": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "label": {
-                    "type": "string"
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "questionNumber": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "string"
+                      }
+                    }
                   },
-                  "questionNumber": {
-                    "type": "string"
-                  },
-                  "answer": {
-                    "type": "string"
+                  {
+                    "type": "object",
+                    "properties": {
+                      "answer": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
                   }
-                }
+                ]
               }
             }
           }
@@ -581,18 +596,33 @@
             "offenceDetailsSummaries": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "label": {
-                    "type": "string"
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "questionNumber": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "string"
+                      }
+                    }
                   },
-                  "questionNumber": {
-                    "type": "string"
-                  },
-                  "answer": {
-                    "type": "string"
+                  {
+                    "type": "object",
+                    "properties": {
+                      "answer": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
                   }
-                }
+                ]
               }
             }
           }
@@ -614,30 +644,37 @@
               ]
             },
             "supportingInformationSummaries": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "label": {
-                    "type": "string"
-                  },
-                  "sectionNumber": {
-                    "type": "number"
-                  },
-                  "questionNumber": {
-                    "type": "string"
-                  },
-                  "linkedToHarm": {
-                    "type": "boolean"
-                  },
-                  "linkedToReOffending": {
-                    "type": "boolean"
-                  },
-                  "answer": {
-                    "type": "string"
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "sectionNumber": {
+                        "type": "number"
+                      },
+                      "questionNumber": {
+                        "type": "string"
+                      },
+                      "linkedToHarm": {
+                        "type": "boolean"
+                      },
+                      "linkedToReOffending": {
+                        "type": "boolean"
+                      },
+                      "answer": {
+                        "type": "string"
+                      }
+                    }
                   }
+                },
+                {
+                  "type": "null"
                 }
-              }
+              ]
             }
           }
         },
@@ -660,18 +697,33 @@
             "riskManagementSummaries": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "label": {
-                    "type": "string"
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "questionNumber": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "string"
+                      }
+                    }
                   },
-                  "questionNumber": {
-                    "type": "string"
-                  },
-                  "answer": {
-                    "type": "string"
+                  {
+                    "type": "object",
+                    "properties": {
+                      "answer": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
                   }
-                }
+                ]
               }
             }
           }
@@ -695,18 +747,33 @@
             "riskToSelfSummaries": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "label": {
-                    "type": "string"
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "label": {
+                        "type": "string"
+                      },
+                      "questionNumber": {
+                        "type": "string"
+                      },
+                      "answer": {
+                        "type": "string"
+                      }
+                    }
                   },
-                  "questionNumber": {
-                    "type": "string"
-                  },
-                  "answer": {
-                    "type": "string"
+                  {
+                    "type": "object",
+                    "properties": {
+                      "answer": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
                   }
-                }
+                ]
               }
             }
           }

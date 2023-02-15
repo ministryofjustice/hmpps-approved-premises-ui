@@ -1,4 +1,4 @@
-import { OasysImportArrays } from '../@types/ui'
+import { OASysSectionUIArray, OasysImportArrays } from '../@types/ui'
 import { ApprovedPremisesApplication as Application, OASysQuestion, OASysSection } from '../@types/shared'
 import { SessionDataError } from './errors'
 import { escape } from './formUtils'
@@ -58,7 +58,9 @@ export const fetchOptionalOasysSections = (application: Application): Array<numb
   }
 }
 
-export const sortOasysImportSummaries = (summaries: Array<OASysQuestion>): Array<OASysQuestion> => {
+export const sortOasysImportSummaries = (
+  summaries: OASysSectionUIArray | Array<OASysQuestion>,
+): OASysSectionUIArray | Array<OASysQuestion> => {
   return summaries.sort((a, b) => Number(a.questionNumber) - Number(b.questionNumber))
 }
 

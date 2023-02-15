@@ -1,11 +1,7 @@
 /* eslint-disable no-underscore-dangle */
-import type { DataServices, PersonRisksUI } from '@approved-premises/ui'
+import type { DataServices, PersonRisksUI, OASysSectionUIArray } from '@approved-premises/ui'
 
-import type {
-  ApprovedPremisesApplication,
-  ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
-  OASysSections,
-} from '@approved-premises/api'
+import type { ApprovedPremisesApplication, OASysSections } from '@approved-premises/api'
 
 import TasklistPage from '../../../tasklistPage'
 
@@ -14,8 +10,8 @@ import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type RoshSummaryBody = {
-  roshAnswers: Array<string> | Record<string, string>
-  roshSummaries: ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
+  roshAnswers: Array<string> | Record<string, string> | null
+  roshSummaries: OASysSectionUIArray
 }
 
 @Page({
@@ -50,7 +46,7 @@ export default class RoshSummary implements TasklistPage {
     body.roshSummaries = roshSummaries
 
     const page = new RoshSummary(body)
-    page.roshSummary = roshSummaries
+    page.roshSummary = roshSummaries as OASysSectionUIArray
     page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
     page.risks = mapApiPersonRisksForUi(application.risks)
 

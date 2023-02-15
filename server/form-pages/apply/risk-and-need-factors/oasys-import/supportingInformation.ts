@@ -1,10 +1,6 @@
-import type { DataServices, PersonRisksUI } from '@approved-premises/ui'
+import type { DataServices, OASysSectionUIArray, PersonRisksUI } from '@approved-premises/ui'
 
-import type {
-  ApprovedPremisesApplication,
-  ArrayOfOASysSupportingInformationQuestions,
-  OASysSections,
-} from '@approved-premises/api'
+import type { ApprovedPremisesApplication, OASysSections } from '@approved-premises/api'
 
 import TasklistPage from '../../../tasklistPage'
 
@@ -17,8 +13,8 @@ import {
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type SupportingInformationBody = {
-  supportingInformationAnswers: Array<string> | Record<string, string>
-  supportingInformationSummaries: ArrayOfOASysSupportingInformationQuestions
+  supportingInformationAnswers: Array<string> | Record<string, string> | null
+  supportingInformationSummaries: OASysSectionUIArray
 }
 
 @Page({
@@ -55,7 +51,7 @@ export default class SupportingInformation implements TasklistPage {
     body.supportingInformationSummaries = supportingInformation
 
     const page = new SupportingInformation(body)
-    page.supportingInformationSummaries = supportingInformation
+    page.supportingInformationSummaries = supportingInformation as OASysSectionUIArray
     page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
     page.risks = mapApiPersonRisksForUi(application.risks)
 

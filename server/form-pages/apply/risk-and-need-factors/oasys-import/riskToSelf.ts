@@ -1,10 +1,6 @@
-import type { DataServices, PersonRisksUI } from '@approved-premises/ui'
+import type { DataServices, PersonRisksUI, OASysSectionUIArray } from '@approved-premises/ui'
 
-import type {
-  ApprovedPremisesApplication,
-  ArrayOfOASysRiskToSelfQuestions,
-  OASysSections,
-} from '@approved-premises/api'
+import type { ApprovedPremisesApplication, OASysSections } from '@approved-premises/api'
 
 import TasklistPage from '../../../tasklistPage'
 
@@ -13,10 +9,9 @@ import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type RiskToSelfBody = {
-  riskToSelfAnswers: Array<string> | Record<string, string>
-  riskToSelfSummaries: ArrayOfOASysRiskToSelfQuestions
+  riskToSelfAnswers: Array<string> | Record<string, string> | null
+  riskToSelfSummaries: OASysSectionUIArray
 }
-
 @Page({
   name: 'risk-to-self',
   bodyProperties: ['riskToSelfAnswers', 'riskToSelfSummaries'],
@@ -50,7 +45,7 @@ export default class RiskToSelf implements TasklistPage {
     body.riskToSelfSummaries = riskToSelf
 
     const page = new RiskToSelf(body)
-    page.riskToSelfSummaries = riskToSelf
+    page.riskToSelfSummaries = riskToSelf as OASysSectionUIArray
     page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
     page.risks = mapApiPersonRisksForUi(application.risks)
 

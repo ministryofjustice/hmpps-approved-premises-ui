@@ -7,6 +7,7 @@ import {
   ApprovedPremisesAssessment as Assessment,
   Person,
   OASysSection,
+  OASysQuestion,
   Document,
   ArrayOfOASysOffenceDetailsQuestions,
   ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
@@ -17,6 +18,7 @@ import {
   Application,
   PersonAcctAlert,
   UserRole,
+  OASysSections,
 } from '@approved-premises/api'
 
 interface TasklistPage {
@@ -208,7 +210,11 @@ export type DataServices = Partial<{
     getAdjudications: (token: string, crn: string) => Promise<Array<Adjudication>>
     getAcctAlerts: (token: string, crn: string) => Promise<Array<PersonAcctAlert>>
     getOasysSelections: (token: string, crn: string) => Promise<Array<OASysSection>>
-    getOasysSections: (token: string, crn: string, selectedSections?: Array<number>) => Promise<OASysSections>
+    getOasysSections: (
+      token: string,
+      crn: string,
+      selectedSections?: Array<number>,
+    ) => Promise<OASysSectionsUI | OASysSections>
     getPersonRisks: (token: string, crn: string) => Promise<PersonRisksUI>
   }
   applicationService: {
@@ -251,13 +257,27 @@ export interface PersonWithRisks extends Person {
   risks: PersonRisks
 }
 
+type OASysQuestionUI = OASysQuestion & {
+  /** @nullable */
+  answer: string | null
+}
+
+export type OASysSectionUIArray = Array<OASysQuestionUI>
+
+export type OASysSectionsUI = OASysSections & {
+  offenceDetails: OASysSectionUIArray
+  roshSummary: OASysSectionUIArray
+  supportingInformation: OASysSectionUIArray
+  riskToSelf: OASysSectionUIArray
+  riskManagementPlan: OASysSectionUIArray
+}
+
 export type OasysImportArrays =
   | ArrayOfOASysOffenceDetailsQuestions
   | ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
   | ArrayOfOASysSupportingInformationQuestions
   | ArrayOfOASysRiskToSelfQuestions
   | ArrayOfOASysRiskManagementPlanQuestions
-
 export type OasysSummariesSection = { [index: string]: OasysImportArrays }
 
 export type JourneyType = 'applications' | 'assessments'

@@ -1,10 +1,6 @@
-import type { DataServices, PersonRisksUI } from '@approved-premises/ui'
+import type { DataServices, OASysSectionUIArray, PersonRisksUI } from '@approved-premises/ui'
 
-import type {
-  ApprovedPremisesApplication,
-  ArrayOfOASysOffenceDetailsQuestions,
-  OASysSections,
-} from '@approved-premises/api'
+import type { ApprovedPremisesApplication } from '@approved-premises/api'
 
 import TasklistPage from '../../../tasklistPage'
 
@@ -13,8 +9,8 @@ import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type OffenceDetailsBody = {
-  offenceDetailsAnswers: Array<string> | Record<string, string>
-  offenceDetailsSummaries: ArrayOfOASysOffenceDetailsQuestions
+  offenceDetailsAnswers: Array<string> | Record<string, string> | null
+  offenceDetailsSummaries: OASysSectionUIArray
 }
 
 @Page({
@@ -40,17 +36,14 @@ export default class OffenceDetails implements TasklistPage {
     token: string,
     dataServices: DataServices,
   ) {
-    const oasysSections: OASysSections = await dataServices.personService.getOasysSections(
-      token,
-      application.person.crn,
-    )
+    const oasysSections = await dataServices.personService.getOasysSections(token, application.person.crn)
 
     const offenceDetails = sortOasysImportSummaries(oasysSections.offenceDetails)
 
     body.offenceDetailsSummaries = offenceDetails
 
     const page = new OffenceDetails(body)
-    page.offenceDetailsSummaries = offenceDetails
+    page.offenceDetailsSummaries = offenceDetails as OASysSectionUIArray
     page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
     page.risks = mapApiPersonRisksForUi(application.risks)
 
