@@ -4,6 +4,7 @@ import type { ObjectWithDateParts } from '@approved-premises/ui'
 import formatISO from 'date-fns/formatISO'
 import parseISO from 'date-fns/parseISO'
 import format from 'date-fns/format'
+import isPast from 'date-fns/isPast'
 
 export class DateFormats {
   /**
@@ -114,6 +115,11 @@ export const dateAndTimeInputsAreValidDates = <K extends string | number>(
 export const dateIsBlank = <T = ObjectWithDateParts<string | number>>(body: T): boolean => {
   const fields = Object.keys(body).filter(key => key.match(/-[year|month|day]/))
   return fields.every(field => !body[field])
+}
+
+export const dateIsInThePast = (dateString: string): boolean => {
+  const date = DateFormats.isoToDateObj(dateString)
+  return isPast(date)
 }
 
 export class InvalidDateStringError extends Error {}
