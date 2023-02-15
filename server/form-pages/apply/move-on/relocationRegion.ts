@@ -14,7 +14,7 @@ export default class RelocationRegion implements TasklistPage {
   question = `Where is ${this.application.person.name} most likely to live when they move on from the AP?`
 
   hint =
-    'Please provide the postcode area only. To get the postcode from the full postcode remove the last 3 characters. For example, the postcode area for SW1A 0AA is SW1A.'
+    'Please provide the postcode area only. To get the postcode from the full postcode remove the last 3 characters. For example, the postcode area for SW11 4NJ is SW11.'
 
   constructor(
     public body: {
