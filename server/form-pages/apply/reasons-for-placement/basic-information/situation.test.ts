@@ -42,8 +42,16 @@ describe('Situation', () => {
         ).items()
 
         expect(items.length).toEqual(2)
-        expect(items[0]).toEqual({ text: 'Referral for risk management', value: 'riskManagement', checked: true })
-        expect(items[1]).toEqual({ text: 'Residency management', value: 'residencyManagement', checked: false })
+        expect(items[0]).toEqual({
+          text: 'Referral for risk management/public protection',
+          value: 'riskManagement',
+          checked: true,
+        })
+        expect(items[1]).toEqual({
+          text: 'Specified residency requirement as part of a community based Order',
+          value: 'residencyManagement',
+          checked: false,
+        })
       })
 
       it('if the sentence type is "bailPlacement" then the items should be correct', () => {
@@ -87,7 +95,7 @@ describe('Situation', () => {
       const page = new Situation({ situation: 'riskManagement' }, application)
 
       expect(page.response()).toEqual({
-        [page.title]: 'Referral for risk management',
+        [page.title]: 'Referral for risk management/public protection',
       })
     })
   })

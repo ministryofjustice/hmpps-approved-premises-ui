@@ -8,8 +8,8 @@ import TasklistPage from '../../../tasklistPage'
 import { SentenceTypesT } from './sentenceType'
 
 const situations = {
-  riskManagement: 'Referral for risk management',
-  residencyManagement: 'Residency management',
+  riskManagement: 'Referral for risk management/public protection',
+  residencyManagement: 'Specified residency requirement as part of a community based Order',
   bailAssessment: 'Bail assessment for residency requirement as part of a community based Order',
   bailSentence: 'Bail placement',
 } as const
