@@ -1,8 +1,11 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 
 import applicationFactory from '../../../../testutils/factories/application'
 
 import PlacementPurpose from './placementPurpose'
+
+jest.mock('../../../../utils/applications/noticeTypeFromApplication')
 
 describe('PlacementPurpose', () => {
   const application = applicationFactory.build()
@@ -66,7 +69,29 @@ describe('PlacementPurpose', () => {
 
   itShouldHaveNextValue(new PlacementPurpose({ placementPurposes: ['publicProtection'] }, application), '')
 
-  itShouldHavePreviousValue(new PlacementPurpose({}, application), 'placement-date')
+  describe('when the notice type is standard', () => {
+    beforeEach(() => {
+      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('standard')
+    })
+
+    itShouldHavePreviousValue(new PlacementPurpose({}, application), 'placement-purpose')
+  })
+
+  describe('when the notice type is emergency', () => {
+    beforeEach(() => {
+      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('emergency')
+    })
+
+    itShouldHavePreviousValue(new PlacementPurpose({}, application), 'reason-for-short-notice')
+  })
+
+  describe('when the notice type is short_notice', () => {
+    beforeEach(() => {
+      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
+    })
+
+    itShouldHavePreviousValue(new PlacementPurpose({}, application), 'reason-for-short-notice')
+  })
 
   describe('errors', () => {
     it('should return an empty object if the placement purpose is specified as a reason other than "Other reason"', () => {
