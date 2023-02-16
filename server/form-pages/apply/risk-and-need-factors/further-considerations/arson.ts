@@ -28,9 +28,9 @@ export default class Arson implements TasklistPage {
 
       <ul class="govuk-list govuk-list--bullet">
         <li>their current and previous offences</li>
-        <li>factors outside of the offences they were charged for</li>
+        <li>previous fire setting behaviour which has not resulted in a conviction</li>
         <li>their behaviour in custody</li>
-        <li>your expectations for how they'll behave in an AP setting</li>
+        <li>whether any additional measures are required to manage the arson risk in an AP setting</li>
       </ul>
     `,
     },
