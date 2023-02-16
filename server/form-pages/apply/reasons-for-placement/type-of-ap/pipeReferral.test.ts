@@ -12,7 +12,7 @@ describe('PipeReferral', () => {
     it('shold add the name of the person', () => {
       const page = new PipeReferral({}, application)
 
-      expect(page.title).toEqual('Has John Wayne been screened into the OPD pathway?')
+      expect(page.title).toEqual('Has John Wayne been screened into the Offender Personality Disorder Pathway (OPD)?')
     })
   })
 

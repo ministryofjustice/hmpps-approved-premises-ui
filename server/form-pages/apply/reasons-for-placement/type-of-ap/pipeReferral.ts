@@ -15,7 +15,7 @@ type PipeReferralBody = ObjectWithDateParts<'opdPathwayDate'> & { opdPathway: Ye
 export default class PipeReferral implements TasklistPage {
   name = 'pipe-referral'
 
-  title = `Has ${this.application.person.name} been screened into the OPD pathway?`
+  title = `Has ${this.application.person.name} been screened into the Offender Personality Disorder Pathway (OPD)?`
 
   questions = {
     opdPathway: this.title,
