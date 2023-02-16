@@ -171,7 +171,7 @@ context('Apply', () => {
     crnPage.clickSubmit()
 
     // Then I should see an error message
-    crnPage.shouldShowErrorMessage(person)
+    crnPage.shouldShowPersonNotFoundErrorMessage(person)
   })
 
   it('allows completion of the form', function test() {
