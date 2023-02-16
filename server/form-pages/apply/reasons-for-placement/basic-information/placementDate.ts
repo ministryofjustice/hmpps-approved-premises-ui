@@ -3,7 +3,7 @@ import type { ApprovedPremisesApplication } from '@approved-premises/api'
 
 import TasklistPage from '../../../tasklistPage'
 import { retrieveQuestionResponseFromApplication, convertToTitleCase } from '../../../../utils/utils'
-import { dateIsBlank, dateAndTimeInputsAreValidDates, DateFormats } from '../../../../utils/dateUtils'
+import { dateIsBlank, dateAndTimeInputsAreValidDates, DateFormats, dateIsInThePast } from '../../../../utils/dateUtils'
 import { Page } from '../../../utils/decorators'
 
 type PlacementDateBody = ObjectWithDateParts<'startDate'> & {
@@ -77,6 +77,8 @@ export default class PlacementDate implements TasklistPage {
         errors.startDate = 'You must enter a start date'
       } else if (!dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'startDate'>, 'startDate')) {
         errors.startDate = 'The start date is an invalid date'
+      } else if (dateIsInThePast(this.body.startDate)) {
+        errors.startDate = 'The start date must not be in the past'
       }
     }
 

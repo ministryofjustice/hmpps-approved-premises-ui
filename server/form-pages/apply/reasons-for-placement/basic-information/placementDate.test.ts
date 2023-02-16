@@ -1,3 +1,4 @@
+import { add, sub } from 'date-fns'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import PlacementDate from './placementDate'
@@ -50,12 +51,11 @@ describe('PlacementDate', () => {
 
     describe('if the start date is not the same as the release date', () => {
       it('should return an empty object if the date is specified', () => {
+        const placementDate = add(new Date(), { days: 5 })
         const page = new PlacementDate(
           {
             startDateSameAsReleaseDate: 'no',
-            'startDate-year': '2020',
-            'startDate-month': '12',
-            'startDate-day': '1',
+            ...DateFormats.dateObjectToDateInputs(placementDate, 'startDate'),
           },
           application,
         )
@@ -83,6 +83,18 @@ describe('PlacementDate', () => {
           application,
         )
         expect(page.errors()).toEqual({ startDate: 'The start date is an invalid date' })
+      })
+
+      it('should return an error if the date is in the past', () => {
+        const placementDate = sub(new Date(), { months: 5 })
+        const page = new PlacementDate(
+          {
+            startDateSameAsReleaseDate: 'no',
+            ...DateFormats.dateObjectToDateInputs(placementDate, 'startDate'),
+          },
+          application,
+        )
+        expect(page.errors()).toEqual({ startDate: 'The start date must not be in the past' })
       })
     })
 
