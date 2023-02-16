@@ -3,7 +3,7 @@ import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-import { dateAndTimeInputsAreValidDates, dateIsBlank, DateFormats } from '../../../../utils/dateUtils'
+import { dateAndTimeInputsAreValidDates, dateIsBlank, DateFormats, dateIsInThePast } from '../../../../utils/dateUtils'
 import { convertToTitleCase } from '../../../../utils/utils'
 
 type ReleaseDateType = ObjectWithDateParts<'releaseDate'> & {
@@ -77,6 +77,8 @@ export default class ReleaseDate implements TasklistPage {
         errors.releaseDate = 'You must specify the release date'
       } else if (!dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'releaseDate'>, 'releaseDate')) {
         errors.releaseDate = 'The release date is an invalid date'
+      } else if (dateIsInThePast(this.body.releaseDate)) {
+        errors.releaseDate = 'The release date must not be in the past'
       }
     }
 

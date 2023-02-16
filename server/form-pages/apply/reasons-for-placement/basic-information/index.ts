@@ -9,6 +9,7 @@ import ReleaseDate from './releaseDate'
 import OralHearing from './oralHearing'
 import PlacementDate from './placementDate'
 import PlacementPurpose from './placementPurpose'
+import ReasonForShortNotice from './reasonForShortNotice'
 import { Task } from '../../../utils/decorators'
 
 @Task({
@@ -24,6 +25,7 @@ import { Task } from '../../../utils/decorators'
     OralHearing,
     PlacementDate,
     PlacementPurpose,
+    ReasonForShortNotice,
   ],
 })
 export default class BasicInformation {}

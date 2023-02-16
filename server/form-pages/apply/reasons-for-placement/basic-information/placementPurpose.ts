@@ -4,6 +4,7 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
+import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 
 export const placementPurposes = {
   publicProtection: 'Public protection',
@@ -24,7 +25,7 @@ export default class PlacementPurpose implements TasklistPage {
 
   purposes = placementPurposes
 
-  constructor(private _body: PlacementPurposeBody, private readonly _application: ApprovedPremisesApplication) {
+  constructor(private _body: PlacementPurposeBody, private readonly application: ApprovedPremisesApplication) {
     this._body.placementPurposes = _body?.placementPurposes
       ? ([_body.placementPurposes].flat() as Array<PlacementPurposeT>)
       : []
@@ -47,7 +48,11 @@ export default class PlacementPurpose implements TasklistPage {
   }
 
   previous() {
-    return 'placement-date'
+    if (noticeTypeFromApplication(this.application) === 'standard') {
+      return 'placement-purpose'
+    }
+
+    return 'reason-for-short-notice'
   }
 
   errors() {

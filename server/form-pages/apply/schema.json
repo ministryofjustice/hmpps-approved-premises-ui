@@ -303,6 +303,27 @@
               "type": "string"
             }
           }
+        },
+        "reason-for-short-notice": {
+          "type": "object",
+          "properties": {
+            "reason": {
+              "enum": [
+                "alternativeToRecall",
+                "furtherOffence",
+                "onBail",
+                "other",
+                "paroleBoardOrPPCS",
+                "planBrokenDown",
+                "riskEscalated",
+                "shortSentence"
+              ],
+              "type": "string"
+            },
+            "other": {
+              "type": "string"
+            }
+          }
         }
       }
     },

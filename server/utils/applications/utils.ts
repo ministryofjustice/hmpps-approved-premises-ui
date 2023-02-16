@@ -5,16 +5,17 @@ import type {
 } from '@approved-premises/api'
 import paths from '../../paths/apply'
 import Apply from '../../form-pages/apply'
-import { SessionDataError, UnknownPageError } from '../errors'
+import { UnknownPageError } from '../errors'
 import { isApplicableTier, tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
 import isAssessment from '../assessments/isAssessment'
+import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 
 const dashboardTableRows = (applications: Array<Application>): Array<TableRow> => {
   return applications.map(application => {
-    const arrivalDate = getArrivalDate(application, false)
+    const arrivalDate = arrivalDateFromApplication(application, false)
     const tier = application.risks?.tier?.value?.level
 
     return [
@@ -96,52 +97,6 @@ const getPage = (taskName: string, pageName: string, isAnAssessment?: boolean): 
   return Page as TasklistPageInterface
 }
 
-const getArrivalDate = (application: Application, raiseOnMissing = true): string | null => {
-  const throwOrReturnNull = (message: string): null => {
-    if (raiseOnMissing) {
-      throw new SessionDataError(message)
-    }
-
-    return null
-  }
-
-  const basicInformation = application.data?.['basic-information']
-
-  if (!basicInformation) return throwOrReturnNull('No basic information')
-
-  const {
-    knowReleaseDate = '',
-    startDateSameAsReleaseDate = '',
-    releaseDate = '',
-    startDate = '',
-  } = {
-    ...basicInformation['release-date'],
-    ...basicInformation['placement-date'],
-  }
-
-  if (!knowReleaseDate || knowReleaseDate === 'no') {
-    return throwOrReturnNull('No known release date')
-  }
-
-  if (knowReleaseDate === 'yes' && startDateSameAsReleaseDate === 'yes') {
-    if (!releaseDate) {
-      return throwOrReturnNull('No release date')
-    }
-
-    return releaseDate
-  }
-
-  if (startDateSameAsReleaseDate === 'no') {
-    if (!startDate) {
-      return throwOrReturnNull('No start date')
-    }
-
-    return startDate
-  }
-
-  return null
-}
-
 const isUnapplicable = (application: Application): boolean => {
   const basicInformation = application.data?.['basic-information']
   const isExceptionalCase = basicInformation?.['is-exceptional-case']?.isExceptionalCase
@@ -160,7 +115,7 @@ const firstPageOfApplicationJourney = (application: Application) => {
 export {
   dashboardTableRows,
   firstPageOfApplicationJourney,
-  getArrivalDate,
+  arrivalDateFromApplication,
   getPage,
   getResponseForPage,
   getResponses,

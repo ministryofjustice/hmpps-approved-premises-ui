@@ -7,9 +7,10 @@ import personFactory from '../../../server/testutils/factories/person'
 
 import personData from '../../../cypress_shared/fixtures/person.json'
 import applicationData from '../../../cypress_shared/fixtures/applicationData.json'
+import { updateApplicationReleaseDate } from '../../../cypress_shared/helpers/index'
 
 const person = personFactory.build(personData)
-const application = applicationFactory.build({ person, data: applicationData })
+const application = applicationFactory.build({ person, data: updateApplicationReleaseDate(applicationData) })
 
 Given('I start a new application', () => {
   const apply = new ApplyHelper(application, person, [], 'e2e')

@@ -9,13 +9,12 @@ import { tierBadge, isApplicableTier } from '../personUtils'
 import {
   getResponses,
   getPage,
-  getArrivalDate,
   dashboardTableRows,
   firstPageOfApplicationJourney,
   isUnapplicable,
   getStatus,
 } from './utils'
-import { SessionDataError, UnknownPageError } from '../errors'
+import { UnknownPageError } from '../errors'
 
 const FirstApplyPage = jest.fn()
 const SecondApplyPage = jest.fn()
@@ -102,46 +101,6 @@ describe('utils', () => {
       application.data = { 'basic-information': { first: '', second: '' } }
 
       expect(getResponses(application)).toEqual({ 'basic-information': [{ foo: 'bar' }, { bar: 'foo' }] })
-    })
-  })
-
-  describe('getArrivalDate', () => {
-    it('returns the arrival date when the release date is known and is the same as the start date', () => {
-      const application = applicationFactory.build({
-        data: {
-          'basic-information': {
-            'release-date': { knowReleaseDate: 'yes', releaseDate: '2022-11-14' },
-            'placement-date': { startDateSameAsReleaseDate: 'yes' },
-          },
-        },
-      })
-      expect(getArrivalDate(application)).toEqual('2022-11-14')
-    })
-
-    it('returns the arrival date when the release date is known but there is a different start date', () => {
-      const application = applicationFactory.build({
-        data: {
-          'basic-information': {
-            'release-date': { knowReleaseDate: 'yes', releaseDate: '2022-11-14' },
-            'placement-date': { startDateSameAsReleaseDate: 'no', startDate: '2023-10-13' },
-          },
-        },
-      })
-
-      expect(getArrivalDate(application)).toEqual('2023-10-13')
-    })
-
-    it('throws an error or returns null when the release date is not known', () => {
-      const application = applicationFactory.build({
-        data: {
-          'basic-information': {
-            'release-date': { knowReleaseDate: 'no' },
-          },
-        },
-      })
-
-      expect(() => getArrivalDate(application)).toThrow(new SessionDataError('No known release date'))
-      expect(getArrivalDate(application, false)).toEqual(null)
     })
   })
 

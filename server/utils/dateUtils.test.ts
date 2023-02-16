@@ -1,5 +1,14 @@
 import type { ObjectWithDateParts } from '@approved-premises/ui'
-import { DateFormats, InvalidDateStringError, dateAndTimeInputsAreValidDates, dateIsBlank } from './dateUtils'
+import isPast from 'date-fns/isPast'
+import {
+  DateFormats,
+  InvalidDateStringError,
+  dateAndTimeInputsAreValidDates,
+  dateIsBlank,
+  dateIsInThePast,
+} from './dateUtils'
+
+jest.mock('date-fns/isPast')
 
 describe('DateFormats', () => {
   describe('convertIsoToDateObj', () => {
@@ -181,5 +190,19 @@ describe('dateIsBlank', () => {
     }
 
     expect(dateIsBlank(date)).toEqual(true)
+  })
+})
+
+describe('dateIsInThePast', () => {
+  it('returns true if the date is in the past', () => {
+    ;(isPast as jest.Mock).mockReturnValue(true)
+
+    expect(dateIsInThePast('2020-01-01')).toEqual(true)
+  })
+
+  it('returns false if the date is not in the past', () => {
+    ;(isPast as jest.Mock).mockReturnValue(false)
+
+    expect(dateIsInThePast('2020-01-01')).toEqual(false)
   })
 })

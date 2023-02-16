@@ -14,7 +14,8 @@ import { format, differenceInDays, add, getUnixTime } from 'date-fns'
 import { ApprovedPremisesAssessment as Assessment, ApprovedPremisesApplication } from '@approved-premises/api'
 import { tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
-import { getArrivalDate, getResponseForPage } from '../applications/utils'
+import { getResponseForPage } from '../applications/utils'
+import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import paths from '../../paths/assess'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
@@ -308,12 +309,12 @@ const assessmentLink = (assessment: Assessment, linkText = '', hiddenText = ''):
 }
 
 const formattedArrivalDate = (assessment: Assessment): string => {
-  const arrivalDate = getArrivalDate(assessment.application as ApprovedPremisesApplication)
+  const arrivalDate = arrivalDateFromApplication(assessment.application as ApprovedPremisesApplication)
   return format(DateFormats.isoToDateObj(arrivalDate), 'd MMM yyyy')
 }
 
 const arriveDateAsTimestamp = (assessment: Assessment): number => {
-  const arrivalDate = getArrivalDate(assessment.application as ApprovedPremisesApplication)
+  const arrivalDate = arrivalDateFromApplication(assessment.application as ApprovedPremisesApplication)
   return getUnixTime(DateFormats.isoToDateObj(arrivalDate))
 }
 
