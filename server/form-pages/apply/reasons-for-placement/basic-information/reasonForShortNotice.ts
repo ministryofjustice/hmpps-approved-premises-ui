@@ -38,11 +38,11 @@ export default class ReasonForShortNotice implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'placement-purpose'
   }
 
   previous() {
-    return ''
+    return 'placement-date'
   }
 
   response() {

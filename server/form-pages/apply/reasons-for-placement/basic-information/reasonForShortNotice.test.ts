@@ -45,8 +45,8 @@ describe('ReasonForShortNotice', () => {
     })
   })
 
-  itShouldHaveNextValue(new ReasonForShortNotice({}, application), '')
-  itShouldHavePreviousValue(new ReasonForShortNotice({}, application), '')
+  itShouldHaveNextValue(new ReasonForShortNotice({}, application), 'placement-purpose')
+  itShouldHavePreviousValue(new ReasonForShortNotice({}, application), 'placement-date')
 
   describe('errors', () => {
     it('should return an empty object if all the fields are complete', () => {
