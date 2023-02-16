@@ -1,6 +1,6 @@
 import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
 import { differenceInDays, differenceInCalendarMonths } from 'date-fns'
-import { getArrivalDate } from './utils'
+import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { DateFormats } from '../dateUtils'
 
 type ApplicationType = 'emergency' | 'short_notice' | 'standard'

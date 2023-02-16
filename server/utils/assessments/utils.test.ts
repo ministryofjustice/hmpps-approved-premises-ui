@@ -51,6 +51,7 @@ import acctAlertFactory from '../../testutils/factories/acctAlert'
 import userFactory from '../../testutils/factories/user'
 import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from './documentUtils'
+import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -60,6 +61,7 @@ jest.mock('../checkYourAnswersUtils')
 jest.mock('../personUtils')
 jest.mock('../reviewUtils')
 jest.mock('./documentUtils')
+jest.mock('../applications/arrivalDateFromApplication')
 
 jest.mock('../../form-pages/assess', () => {
   return {
@@ -210,20 +212,20 @@ describe('utils', () => {
   describe('formattedArrivalDate', () => {
     it('returns the formatted arrival date from the application', () => {
       const assessment = assessmentFactory.build()
-      const getDateSpy = jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       expect(formattedArrivalDate(assessment)).toEqual('1 Jan 2022')
-      expect(getDateSpy).toHaveBeenCalledWith(assessment.application)
+      expect(arrivalDateFromApplication).toHaveBeenCalledWith(assessment.application)
     })
   })
 
   describe('arriveDateAsTimestamp', () => {
     it('returns the arrival date from the application as a unix timestamp', () => {
       const assessment = assessmentFactory.build()
-      const getDateSpy = jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       expect(arriveDateAsTimestamp(assessment)).toEqual(1640995200)
-      expect(getDateSpy).toHaveBeenCalledWith(assessment.application)
+      expect(arrivalDateFromApplication).toHaveBeenCalledWith(assessment.application)
     })
   })
 
@@ -251,7 +253,7 @@ describe('utils', () => {
       const assessment = assessmentFactory.build({
         allocatedToStaffMember: staffMember,
       })
-      jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       expect(allocatedTableRows([assessment])).toEqual([
         [
@@ -283,7 +285,7 @@ describe('utils', () => {
       const assessment = assessmentFactory.build({
         allocatedToStaffMember: staffMember,
       })
-      jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       expect(unallocatedTableRows([assessment])).toEqual([
         [
@@ -312,7 +314,7 @@ describe('utils', () => {
     it('returns table rows for the assessments', () => {
       const assessment = assessmentFactory.build()
 
-      jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       const tierBadgeSpy = jest.spyOn(personUtils, 'tierBadge').mockReturnValue('TIER_BADGE')
 
@@ -336,7 +338,7 @@ describe('utils', () => {
     it('returns table rows for the assessments', () => {
       const assessment = assessmentFactory.build({ clarificationNotes: clarificationNoteFactory.buildList(2) })
 
-      jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       const tierBadgeSpy = jest.spyOn(personUtils, 'tierBadge').mockReturnValue('TIER_BADGE')
 
@@ -360,7 +362,7 @@ describe('utils', () => {
     it('returns table rows for the assessments', () => {
       const assessment = assessmentFactory.build()
 
-      jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       const tierBadgeSpy = jest.spyOn(personUtils, 'tierBadge').mockReturnValue('TIER_BADGE')
 
@@ -722,7 +724,7 @@ describe('utils', () => {
 
   describe('allocationSummary', () => {
     beforeEach(() => {
-      jest.spyOn(applicationUtils, 'getArrivalDate').mockReturnValue('2022-01-01')
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
     })
 
     it('returns the summary list when the assessment has a staff member allocated', () => {

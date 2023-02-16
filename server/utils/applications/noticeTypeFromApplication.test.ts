@@ -1,12 +1,12 @@
 import { add } from 'date-fns'
 
 import { DateFormats } from '../dateUtils'
-import { getArrivalDate } from './utils'
+import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { noticeTypeFromApplication } from './noticeTypeFromApplication'
 
 import applicationFactory from '../../testutils/factories/application'
 
-jest.mock('./utils')
+jest.mock('./arrivalDateFromApplication')
 
 describe('noticeTypeFromApplication', () => {
   const application = applicationFactory.build({})
