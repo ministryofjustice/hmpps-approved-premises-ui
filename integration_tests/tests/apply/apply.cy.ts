@@ -17,6 +17,7 @@ import risksFactory, { tierEnvelopeFactory } from '../../../server/testutils/fac
 import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
 import IsExceptionalCasePage from '../../../cypress_shared/pages/apply/isExceptionalCase'
 import NotEligiblePage from '../../../cypress_shared/pages/apply/notEligiblePage'
+import { updateApplicationReleaseDate } from '../../../cypress_shared/helpers'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -37,13 +38,13 @@ context('Apply', () => {
         tier: tierEnvelopeFactory.build({ value: { level: 'A3' } }),
       })
       const offences = activeOffenceFactory.buildList(1)
-      application.data = applicationData
+      application.data = updateApplicationReleaseDate(applicationData)
       application.risks = risks
 
       cy.wrap(person).as('person')
       cy.wrap(offences).as('offences')
       cy.wrap(application).as('application')
-      cy.wrap(applicationData).as('applicationData')
+      cy.wrap(application.data).as('applicationData')
     })
   })
 

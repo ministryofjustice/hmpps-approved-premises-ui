@@ -1,3 +1,5 @@
+import { add, sub } from 'date-fns'
+import { DateFormats } from '../../../../utils/dateUtils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import ReleaseDate from './releaseDate'
@@ -54,12 +56,11 @@ describe('ReleaseDate', () => {
   describe('errors', () => {
     describe('if the user knows the release date', () => {
       it('should return an empty object if the date is specified', () => {
+        const releaseDate = add(new Date(), { days: 5 })
         const page = new ReleaseDate(
           {
             knowReleaseDate: 'yes',
-            'releaseDate-year': '2022',
-            'releaseDate-month': '3',
-            'releaseDate-day': '3',
+            ...DateFormats.dateObjectToDateInputs(releaseDate, 'releaseDate'),
           },
           application,
           'somePage',
@@ -90,6 +91,19 @@ describe('ReleaseDate', () => {
           'somePage',
         )
         expect(page.errors()).toEqual({ releaseDate: 'The release date is an invalid date' })
+      })
+
+      it('should return an error if the date is in the past', () => {
+        const releaseDate = sub(new Date(), { days: 5 })
+        const page = new ReleaseDate(
+          {
+            knowReleaseDate: 'yes',
+            ...DateFormats.dateObjectToDateInputs(releaseDate, 'releaseDate'),
+          },
+          application,
+          'somePage',
+        )
+        expect(page.errors()).toEqual({ releaseDate: 'The release date must not be in the past' })
       })
     })
 

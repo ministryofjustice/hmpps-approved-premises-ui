@@ -1,4 +1,5 @@
 import {
+  AnyValue,
   ApprovedPremisesApplication,
   ArrayOfOASysOffenceDetailsQuestions,
   ArrayOfOASysRiskManagementPlanQuestions,
@@ -7,6 +8,9 @@ import {
   ArrayOfOASysSupportingInformationQuestions,
 } from '@approved-premises/api'
 import { TableRow } from '@approved-premises/ui'
+import { add } from 'date-fns'
+
+import { DateFormats } from '../../server/utils/dateUtils'
 
 const roshSummariesFromApplication = (
   application: ApprovedPremisesApplication,
@@ -61,6 +65,22 @@ const shouldShowTableRows = <T>(items: Array<T>, tableRowFunction: (items: Array
   })
 }
 
+const updateApplicationReleaseDate = (data: AnyValue) => {
+  const releaseDate = add(new Date(), { months: 6 })
+
+  return {
+    ...data,
+    'basic-information': {
+      ...data['basic-information'],
+      'release-date': {
+        ...DateFormats.dateObjectToDateInputs(releaseDate, 'releaseDate'),
+        knowReleaseDate: 'yes',
+      },
+      'placement-date': { startDateSameAsReleaseDate: 'yes' },
+    },
+  }
+}
+
 export {
   roshSummariesFromApplication,
   offenceDetailSummariesFromApplication,
@@ -68,5 +88,6 @@ export {
   riskManagementPlanFromApplication,
   riskToSelfSummariesFromApplication,
   tableRowsToArrays,
+  updateApplicationReleaseDate,
   shouldShowTableRows,
 }

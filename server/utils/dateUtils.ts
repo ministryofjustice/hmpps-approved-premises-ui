@@ -93,6 +93,15 @@ export class DateFormats {
 
     return dateInputObj
   }
+
+  static dateObjectToDateInputs<K extends string>(date: Date, key: K): ObjectWithDateParts<K> {
+    return {
+      [`${key}-year`]: String(date.getFullYear()),
+      [`${key}-month`]: String(date.getMonth() + 1),
+      [`${key}-day`]: String(date.getDate()),
+      [`${key}`]: DateFormats.dateObjToIsoDate(date),
+    } as ObjectWithDateParts<K>
+  }
 }
 
 export const dateAndTimeInputsAreValidDates = <K extends string | number>(
