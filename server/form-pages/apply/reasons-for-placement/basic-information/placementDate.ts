@@ -5,6 +5,7 @@ import TasklistPage from '../../../tasklistPage'
 import { retrieveQuestionResponseFromApplication, convertToTitleCase } from '../../../../utils/utils'
 import { dateIsBlank, dateAndTimeInputsAreValidDates, DateFormats, dateIsInThePast } from '../../../../utils/dateUtils'
 import { Page } from '../../../utils/decorators'
+import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 
 type PlacementDateBody = ObjectWithDateParts<'startDate'> & {
   startDateSameAsReleaseDate: YesOrNo
@@ -17,7 +18,7 @@ type PlacementDateBody = ObjectWithDateParts<'startDate'> & {
 export default class PlacementDate implements TasklistPage {
   title: string
 
-  constructor(private _body: Partial<PlacementDateBody>, application: ApprovedPremisesApplication) {
+  constructor(private _body: Partial<PlacementDateBody>, public application: ApprovedPremisesApplication) {
     const formattedReleaseDate = DateFormats.isoDateToUIDate(
       retrieveQuestionResponseFromApplication(application, 'basic-information', 'releaseDate'),
     )
@@ -46,7 +47,11 @@ export default class PlacementDate implements TasklistPage {
   }
 
   next() {
-    return 'placement-purpose'
+    if (noticeTypeFromApplication(this.application) === 'standard') {
+      return 'placement-purpose'
+    }
+
+    return 'reason-for-short-notice'
   }
 
   previous() {

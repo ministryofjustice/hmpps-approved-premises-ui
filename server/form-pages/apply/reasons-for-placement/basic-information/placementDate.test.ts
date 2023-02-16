@@ -1,9 +1,12 @@
 import { add, sub } from 'date-fns'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 
 import PlacementDate from './placementDate'
 import { DateFormats } from '../../../../utils/dateUtils'
 import applicationFactory from '../../../../testutils/factories/application'
+
+jest.mock('../../../../utils/applications/noticeTypeFromApplication')
 
 describe('PlacementDate', () => {
   const releaseDate = new Date().toISOString()
@@ -35,7 +38,30 @@ describe('PlacementDate', () => {
     })
   })
 
-  itShouldHaveNextValue(new PlacementDate({}, application), 'placement-purpose')
+  describe('when the notice type is standard', () => {
+    beforeEach(() => {
+      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('standard')
+    })
+
+    itShouldHaveNextValue(new PlacementDate({}, application), 'placement-purpose')
+  })
+
+  describe('when the notice type is emergency', () => {
+    beforeEach(() => {
+      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('emergency')
+    })
+
+    itShouldHaveNextValue(new PlacementDate({}, application), 'reason-for-short-notice')
+  })
+
+  describe('when the notice type is short_notice', () => {
+    beforeEach(() => {
+      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
+    })
+
+    itShouldHaveNextValue(new PlacementDate({}, application), 'reason-for-short-notice')
+  })
+
   itShouldHavePreviousValue(new PlacementDate({}, application), 'release-date')
 
   describe('errors', () => {
