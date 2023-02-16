@@ -129,13 +129,14 @@ describe('ApplicationClient', () => {
   describe('submit', () => {
     it('should submit the application', async () => {
       const application = applicationFactory.build()
+      const data = { translatedDocument: application.document }
 
       fakeApprovedPremisesApi
         .post(paths.applications.submission({ id: application.id }))
         .matchHeader('authorization', `Bearer ${token}`)
         .reply(201)
 
-      await applicationClient.submit(application)
+      await applicationClient.submit(application.id, data)
 
       expect(nock.isDone()).toBeTruthy()
     })

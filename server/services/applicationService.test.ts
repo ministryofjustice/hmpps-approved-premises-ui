@@ -346,7 +346,9 @@ describe('ApplicationService', () => {
       await service.submit(request.user.token, application)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.submit).toHaveBeenCalledWith(application)
+      expect(applicationClient.submit).toHaveBeenCalledWith(application.id, {
+        translatedDocument: application.document,
+      })
     })
   })
 

@@ -3,6 +3,7 @@ import type {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
   Document,
+  SubmitApplication,
 } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
@@ -41,10 +42,10 @@ export default class ApplicationClient {
     return (await this.restClient.get({ path: paths.applications.index.pattern })) as Array<Application>
   }
 
-  async submit(application: Application): Promise<void> {
+  async submit(applicationId: string, submissionData: SubmitApplication): Promise<void> {
     await this.restClient.post({
-      path: paths.applications.submission({ id: application.id }),
-      data: { translatedDocument: application.document },
+      path: paths.applications.submission({ id: applicationId }),
+      data: { translatedDocument: submissionData },
     })
   }
 

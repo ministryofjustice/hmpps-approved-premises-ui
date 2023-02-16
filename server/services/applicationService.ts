@@ -114,7 +114,7 @@ export default class ApplicationService {
   async submit(token: string, application: ApprovedPremisesApplication) {
     const client = this.applicationClientFactory(token)
 
-    await client.submit(application)
+    await client.submit(application.id, { translatedDocument: application.document })
   }
 
   async getApplicationFromSessionOrAPI(request: Request): Promise<ApprovedPremisesApplication> {
