@@ -19,7 +19,11 @@
   </h1>
 
   <h2 class="govuk-heading-m">
-    This person is managed at <strong>Tier {{ page.tier }}</strong>
+    {% if page.tier %}
+      This person is managed at <strong>Tier {{ page.tier }}</strong>
+    {% else %}
+      This person does not have a tier
+    {% endif %}
   </h2>
 
   <p>People in prison or people on probation who are managed at the following Tiers would be eligible to apply for an Approved Premises (AP) placement.</p>
