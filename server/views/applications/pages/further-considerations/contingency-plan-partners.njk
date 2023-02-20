@@ -1,0 +1,86 @@
+{% from "../../../components/formFields/form-page-input/macro.njk" import formPageInput %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set hiddenInputs %}
+
+{% for partnerAgency in page.partnerAgencyDetails%}
+  {% set iteration = loop.index0 %}
+  {% for id, value in partnerAgency %}
+    {% set fieldName = "partnerAgencyDetails[" + iteration + "][" + id + "]"%}
+    <input type="hidden" name="{{fieldName}}" value="{{value}}"/>
+  {%endfor %}
+{%endfor %}
+
+{% endset %}
+
+{% set pageTitle = applicationName + " - " + page.title %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+      text: "Back",
+      href: paths.applications.pages.show({ id: applicationId, task: task, page: page.previous() })
+    }) }}
+{% endblock %}
+
+{% block content %}
+  <form action="{{ paths.applications.pages.update({ id: applicationId, task: task, page: page.name }) }}?_method=PUT" method="post">
+    <h1 class="govuk-heading-l">{{page.title}}</h1>
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+    {{ hiddenInputs | safe }}
+
+    {% for id, label in page.fields %}
+      {% set type = "text" %}
+      {% set inputMode = 'text'%}
+
+      {% if id == "phoneNumber" %}
+        {% set type = "number" %}
+        {% set inputMode = 'numeric'%}
+      {% endif %}
+      {{ formPageInput({
+        label: {
+          text: label
+        },
+        type: type,
+        inputMode: inputMode,
+        fieldName: id,
+        classes: "govuk-input--width-20"
+      }) }}
+    {% endfor %}
+
+    {{ govukButton({
+      text: "Add another agency",
+      classes: "govuk-button--secondary"
+    }) }}
+  </form>
+
+  <form action="{{ paths.applications.pages.update({ id: applicationId, task: task, page: page.name }) }}?_method=PUT" method="post">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+    <input type="hidden" name="saveAndContinue" value="1"/>
+
+    {{ hiddenInputs | safe }}
+
+    {% if page.partnerAgencyDetails.length >= 1 %}
+      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+      <h2 class="govuk-heading-m">List of partner agencies</h2>
+      {% for partnerAgency in page.partnerAgencyDetails%}
+        {{ govukSummaryList({
+        rows: FormUtils.convertKeyValuePairsToSummaryListItems(partnerAgency, page.fields)
+      })}}
+
+      {%endfor %}
+    {% endif %}
+
+    {{ govukButton({
+      text: "Save and continue"
+    }) }}
+
+  </form>
+
+{% endblock %}

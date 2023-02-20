@@ -13,7 +13,7 @@ import {
   PersonAcctAlert,
   PrisonCaseNote,
 } from '@approved-premises/api'
-import { PersonRisksUI } from '@approved-premises/ui'
+import { PersonRisksUI, PartnerAgencyDetails } from '@approved-premises/ui'
 
 import {
   AccessNeedsMobilityPage,
@@ -55,6 +55,7 @@ import {
   TypeOfApPage,
   TypeOfConvictedOffence,
   VulnerabilityPage,
+  ContingencyPlanPartnersPage,
 } from '../pages/apply'
 
 import Page from '../pages'
@@ -65,6 +66,7 @@ import documentFactory from '../../server/testutils/factories/document'
 import oasysSectionsFactory from '../../server/testutils/factories/oasysSections'
 import oasysSelectionFactory from '../../server/testutils/factories/oasysSelection'
 import prisonCaseNotesFactory from '../../server/testutils/factories/prisonCaseNotes'
+import contingencyPlanPartnerFactory from '../../server/testutils/factories/contingencyPlanPartner'
 
 import {
   offenceDetailSummariesFromApplication,
@@ -87,6 +89,7 @@ export default class ApplyHelper {
     locationFactors: [] as Array<ApplyPage>,
     accessAndHealthcare: [] as Array<ApplyPage>,
     furtherConsiderations: [] as Array<ApplyPage>,
+    contingencyPlanPartners: [] as Array<ApplyPage>,
     moveOn: [] as Array<ApplyPage>,
   }
 
@@ -118,6 +121,8 @@ export default class ApplyHelper {
 
   selectedDocuments: Array<Document> = []
 
+  contingencyPlanPartners: Array<PartnerAgencyDetails> = []
+
   constructor(
     private readonly application: Application,
     private readonly person: Person,
@@ -140,6 +145,7 @@ export default class ApplyHelper {
     this.stubAcctAlertsEndpoint()
     this.stubDocumentEndpoints()
     this.stubOffences()
+    this.addContingencyPlanPartners()
   }
 
   startApplication() {
@@ -187,6 +193,10 @@ export default class ApplyHelper {
       ...this.pages.locationFactors,
       ...this.pages.accessAndHealthcare,
       ...this.pages.furtherConsiderations,
+      // we submit the contingency plan partners page 3x (2x adding partners, 1x submitting)
+      ...this.pages.contingencyPlanPartners,
+      ...this.pages.contingencyPlanPartners,
+      ...this.pages.contingencyPlanPartners,
       ...this.pages.moveOn,
       ...this.selectedDocuments,
     ].length
@@ -367,6 +377,23 @@ export default class ApplyHelper {
 
     // And the application exists in the database
     cy.task('stubApplicationSubmit', { application: this.application })
+  }
+
+  private addContingencyPlanPartners() {
+    this.contingencyPlanPartners = [
+      contingencyPlanPartnerFactory.build({
+        partnerAgencyName: 'Test agency 1',
+        namedContact: 'Test contact 1',
+        phoneNumber: '01234567891',
+        roleInPlan: 'Test role 1',
+      }),
+      contingencyPlanPartnerFactory.build({
+        partnerAgencyName: 'Test agency 2',
+        namedContact: 'Test contact 2',
+        phoneNumber: '01234567892',
+        roleInPlan: 'Test role 2',
+      }),
+    ]
   }
 
   completeExceptionalCase() {
@@ -632,6 +659,12 @@ export default class ApplyHelper {
     arsonPage.completeForm()
     arsonPage.clickSubmit()
 
+    // And I complete the Contingency Plan Partners page
+    const contingencyPlanPartnersPage = new ContingencyPlanPartnersPage(this.application, this.contingencyPlanPartners)
+    contingencyPlanPartnersPage.completeForm()
+    contingencyPlanPartnersPage.clickSubmit()
+
+    this.pages.contingencyPlanPartners = [contingencyPlanPartnersPage]
     this.pages.furtherConsiderations = [
       roomSharingPage,
       vulnerabilityPage,
@@ -726,6 +759,7 @@ export default class ApplyHelper {
     checkYourAnswersPage.shouldShowLocationFactorsAnswers(this.pages.locationFactors)
     checkYourAnswersPage.shouldShowAccessAndHealthcareAnswers(this.pages.accessAndHealthcare)
     checkYourAnswersPage.shouldShowFurtherConsiderationsAnswers(this.pages.furtherConsiderations)
+    checkYourAnswersPage.shouldShowContingencyPlanPartners(this.contingencyPlanPartners)
     checkYourAnswersPage.shouldShowMoveOnAnswers(this.pages.moveOn)
     checkYourAnswersPage.shouldShowDocuments(this.selectedDocuments)
 
