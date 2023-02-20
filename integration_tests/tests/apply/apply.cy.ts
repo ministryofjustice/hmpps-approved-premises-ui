@@ -171,13 +171,25 @@ context('Apply', () => {
     crnPage.clickSubmit()
 
     // Then I should see an error message
-    crnPage.shouldShowErrorMessage(person)
+    crnPage.shouldShowPersonNotFoundErrorMessage(person)
+  })
+
+  it('shows an error message if the person is not in the users caseload', function test() {
+    // And the person I am about to search for is not in my caseload
+    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    apply.setupApplicationStubs()
+    cy.task('stubApplicationForUserNotInCaseload', { application: this.application })
+
+    apply.startApplication()
+    // Then I should see an error message
+    new EnterCRNPage().shouldShowPersonNotInCaseLoadErrorMessage(this.person)
   })
 
   it('allows completion of the form', function test() {
     // And I complete the application
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
     const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+
     apply.setupApplicationStubs(uiRisks)
     apply.startApplication()
     apply.completeApplication()

@@ -29,6 +29,18 @@ export default {
         jsonBody: { ...args.application, data: null },
       },
     }),
+  stubApplicationForUserNotInCaseload: (args: { application: ApprovedPremisesApplication }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: `/applications?createWithRisks=true`,
+      },
+      response: {
+        status: 403,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { ...args.application, data: null },
+      },
+    }),
   stubApplicationUpdate: (args: { application: ApprovedPremisesApplication }): SuperAgentRequest =>
     stubFor({
       request: {
