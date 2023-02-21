@@ -31,15 +31,14 @@
   }}
 
   {{
-    formPageTextarea(
-      {
-        fieldName: "pipeReferralMoreDetail",
+    formPageTextarea({
         label: {
-          text: page.questions.pipeReferralMoreDetail
-        }
+         html: '<h2 class="govuk-heading-s">Provide any additional detail about why the person needs a PIPE placement.</h2>'
       },
-      fetchContext()
-    )
+      hint: {
+        text: 'Please ensure a copy of the consultation or formulation notes are attached when uploading documents as part of your application.'
+      }
+    })
   }}
 
 {% endblock %}
