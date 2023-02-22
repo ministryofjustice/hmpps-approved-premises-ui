@@ -13,6 +13,8 @@ import CovidPage from './covid'
 import DateOfOffence from './dateOfOffence'
 import DescribeLocationFactors from './describeLocationFactors'
 import EnterCRNPage from './enterCrn'
+import IsExceptionalCasePage from './isExceptionalCase'
+import ExceptionDetailsPage from './ExceptionDetails'
 import ForeignNationalPage from './foreignNational'
 import ListPage from './list'
 import OffenceDetailsPage from './offenceDetails'
@@ -58,7 +60,9 @@ export {
   DateOfOffence,
   DescribeLocationFactors,
   EnterCRNPage,
+  ExceptionDetailsPage,
   ForeignNationalPage,
+  IsExceptionalCasePage,
   ListPage,
   OffenceDetailsPage,
   OptionalOasysSectionsPage,
