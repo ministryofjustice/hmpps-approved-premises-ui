@@ -12,12 +12,20 @@ const fields: PartnerAgencyDetails = {
 } as const
 
 export type Body = PartnerAgencyDetails & {
+  saveAndContinue?: string
   partnerAgencyDetails: Array<PartnerAgencyDetails>
 }
 
 @Page({
   name: 'contingency-plan-partners',
-  bodyProperties: ['partnerAgencyDetails', 'namedContact', 'phoneNumber', 'roleInPlan', 'partnerAgencyName'],
+  bodyProperties: [
+    'partnerAgencyName',
+    'namedContact',
+    'phoneNumber',
+    'roleInPlan',
+    'partnerAgencyDetails',
+    'saveAndContinue',
+  ],
 })
 export default class ContingencyPlanPartners implements TasklistPage {
   title = 'Contingency plans'
@@ -25,6 +33,8 @@ export default class ContingencyPlanPartners implements TasklistPage {
   fields: Record<string, string> = fields
 
   partnerAgencyDetails: Array<PartnerAgencyDetails> = []
+
+  saveAndContinue: string | undefined
 
   constructor(public body: Body) {
     const { namedContact, partnerAgencyName, phoneNumber, roleInPlan } = this.body
@@ -34,6 +44,7 @@ export default class ContingencyPlanPartners implements TasklistPage {
     if (this.isValid(newPartner)) {
       this.partnerAgencyDetails.push({ namedContact, partnerAgencyName, phoneNumber, roleInPlan })
     }
+    this.saveAndContinue = body.saveAndContinue
   }
 
   previous() {
@@ -41,7 +52,7 @@ export default class ContingencyPlanPartners implements TasklistPage {
   }
 
   next() {
-    return 'contingency-plan-partners'
+    return this.saveAndContinue ? '' : 'contingency-plan-partners'
   }
 
   private hasNeccessaryInputs() {
@@ -77,6 +88,12 @@ export default class ContingencyPlanPartners implements TasklistPage {
 
   errors() {
     const errors: TaskListErrors<this> = {}
+
+    if (this.saveAndContinue) {
+      if (this.partnerAgencyDetails.length) return errors
+      errors.partnerAgencyDetails = 'You must add at least one partner agency'
+      return errors
+    }
 
     Object.keys(fields).forEach(property => {
       if (!this.body[property]) {

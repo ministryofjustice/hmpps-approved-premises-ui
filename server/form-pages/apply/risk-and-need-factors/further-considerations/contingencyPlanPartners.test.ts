@@ -27,12 +27,18 @@ describe('ContingencyPlanPartners', () => {
     })
   })
 
-  itShouldHaveNextValue(new ContingencyPlanPartners(body), '')
+  describe('if saveAndContinue is falsy ', () => {
+    itShouldHaveNextValue(new ContingencyPlanPartners(body), 'contingency-plan-partners')
+  })
+
+  describe('if saveAndContinue is truthy ', () => {
+    itShouldHaveNextValue(new ContingencyPlanPartners({ saveAndContinue: '1', ...body }), '')
+  })
 
   itShouldHavePreviousValue(new ContingencyPlanPartners(body), 'arson')
 
   describe('errors', () => {
-    it('should return errors when responses are blank', () => {
+    it('should return errors when responses are blank if saveAndContinue is falsy', () => {
       const page = new ContingencyPlanPartners({} as Body)
 
       expect(page.errors()).toEqual({
@@ -41,6 +47,23 @@ describe('ContingencyPlanPartners', () => {
         phoneNumber: 'You must specify a phone number',
         roleInPlan: 'You must specify a role in plan',
       })
+    })
+
+    it('should return an error when there are no partner agencies added and saveAndContinue is truthy', () => {
+      const page = new ContingencyPlanPartners({ saveAndContinue: '1' } as Body)
+
+      expect(page.errors()).toEqual({
+        partnerAgencyDetails: 'You must add at least one partner agency',
+      })
+    })
+
+    it('shouldnt return an error if partnerAgencyDetails are added and saveAndContinue is truthy', () => {
+      const page = new ContingencyPlanPartners({
+        saveAndContinue: '1',
+        partnerAgencyDetails: contingencyPlanPartnersFactory.buildList(1),
+      } as Body)
+
+      expect(page.errors()).toEqual({})
     })
   })
 
