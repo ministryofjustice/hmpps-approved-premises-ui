@@ -1,4 +1,4 @@
-import { Document, ApprovedPremisesApplication } from '@approved-premises/api'
+import { ApprovedPremisesApplication, Document } from '@approved-premises/api'
 import { ErrorMessages, TableRow } from '@approved-premises/ui'
 
 import { DateFormats } from './dateUtils'

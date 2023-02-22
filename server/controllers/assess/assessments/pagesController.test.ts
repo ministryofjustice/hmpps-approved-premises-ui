@@ -1,5 +1,5 @@
-import type { Request, Response, NextFunction } from 'express'
-import { createMock, DeepMocked } from '@golevelup/ts-jest'
+import type { NextFunction, Request, Response } from 'express'
+import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import createError from 'http-errors'
 
 import type { DataServices, FormPages } from '@approved-premises/ui'
@@ -9,9 +9,9 @@ import TasklistPage from '../../../form-pages/tasklistPage'
 import Assess from '../../../form-pages/assess'
 
 import {
-  fetchErrorsAndUserInput,
-  catchValidationErrorOrPropogate,
   catchAPIErrorOrPropogate,
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
 } from '../../../utils/validation'
 import { UnknownPageError } from '../../../utils/errors'
 import paths from '../../../paths/assess'

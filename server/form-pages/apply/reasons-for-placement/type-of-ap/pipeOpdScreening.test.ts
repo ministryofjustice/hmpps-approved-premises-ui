@@ -1,4 +1,4 @@
-import { itShouldHavePreviousValue, itShouldHaveNextValue } from '../../../shared-examples'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import PipeOpdScreening from './pipeOpdScreening'
 import applicationFactory from '../../../../testutils/factories/application'

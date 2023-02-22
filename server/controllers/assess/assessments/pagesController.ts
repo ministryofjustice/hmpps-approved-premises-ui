@@ -1,4 +1,4 @@
-import type { Request, Response, RequestHandler, NextFunction } from 'express'
+import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import createError from 'http-errors'
 
 import {
@@ -10,8 +10,8 @@ import { getPage } from '../../../utils/assessments/utils'
 import { AssessmentService } from '../../../services'
 
 import {
-  catchValidationErrorOrPropogate,
   catchAPIErrorOrPropogate,
+  catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
 } from '../../../utils/validation'
 import paths from '../../../paths/assess'

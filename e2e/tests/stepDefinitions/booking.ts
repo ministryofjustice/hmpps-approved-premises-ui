@@ -3,9 +3,9 @@ import { Given, Then } from '@badeball/cypress-cucumber-preprocessor'
 import throwMissingCypressEnvError from './utils'
 
 import {
-  BookingNewPage,
   BookingConfirmationPage,
   BookingFindPage,
+  BookingNewPage,
   PremisesShowPage,
 } from '../../../cypress_shared/pages/manage'
 

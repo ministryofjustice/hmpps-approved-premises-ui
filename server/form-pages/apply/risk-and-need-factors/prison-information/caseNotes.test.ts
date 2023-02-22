@@ -1,4 +1,4 @@
-import { createMock, DeepMocked } from '@golevelup/ts-jest'
+import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { ApplicationService, PersonService } from '../../../../services'
 
 import prisonCaseNotesFactory from '../../../../testutils/factories/prisonCaseNotes'
@@ -9,7 +9,7 @@ import adjudicationsFactory from '../../../../testutils/factories/adjudication'
 
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
-import CaseNotes, { caseNoteResponse, adjudicationResponse, caseNoteCheckbox } from './caseNotes'
+import CaseNotes, { adjudicationResponse, caseNoteCheckbox, caseNoteResponse } from './caseNotes'
 
 jest.mock('../../../../services/personService.ts')
 

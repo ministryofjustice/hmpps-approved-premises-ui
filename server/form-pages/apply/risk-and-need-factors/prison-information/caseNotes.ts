@@ -1,6 +1,6 @@
 import type { DataServices, PageResponse } from '@approved-premises/ui'
 
-import type { ApprovedPremisesApplication, PrisonCaseNote, Adjudication, PersonAcctAlert } from '@approved-premises/api'
+import type { Adjudication, ApprovedPremisesApplication, PersonAcctAlert, PrisonCaseNote } from '@approved-premises/api'
 
 import { sentenceCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'

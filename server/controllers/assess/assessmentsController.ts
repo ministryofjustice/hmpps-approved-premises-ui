@@ -1,4 +1,4 @@
-import type { Request, Response, RequestHandler } from 'express'
+import type { Request, RequestHandler, Response } from 'express'
 
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { AssessmentGroupingCategory } from '@approved-premises/ui'

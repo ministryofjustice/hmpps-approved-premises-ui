@@ -4,18 +4,18 @@ import path from 'path'
 import qs from 'qs'
 
 import type {
-  Person,
-  PersonRisks,
-  PrisonCaseNote,
-  Adjudication,
   ActiveOffence,
+  Adjudication,
+  Document,
   OASysSection,
   OASysSections,
-  Document,
+  Person,
   PersonAcctAlert,
+  PersonRisks,
+  PrisonCaseNote,
 } from '@approved-premises/api'
 
-import { stubFor, getMatchingRequests } from '../../wiremock'
+import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
 
 export default {

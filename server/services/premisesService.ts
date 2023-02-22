@@ -1,6 +1,6 @@
-import type { TableRow, SummaryList } from '@approved-premises/ui'
+import type { SummaryList, TableRow } from '@approved-premises/ui'
 import type { ApprovedPremises, StaffMember } from '@approved-premises/api'
-import type { RestClientBuilder, PremisesClient } from '../data'
+import type { PremisesClient, RestClientBuilder } from '../data'
 import paths from '../paths/manage'
 
 import { DateFormats } from '../utils/dateUtils'

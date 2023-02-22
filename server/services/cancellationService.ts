@@ -1,6 +1,6 @@
 import type { ReferenceData } from '@approved-premises/ui'
 import type { Cancellation, NewCancellation } from '@approved-premises/api'
-import type { BookingClient, RestClientBuilder, ReferenceDataClient } from '../data'
+import type { BookingClient, ReferenceDataClient, RestClientBuilder } from '../data'
 
 export default class CancellationService {
   constructor(

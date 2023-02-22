@@ -1,7 +1,7 @@
-import type { Request, Response, NextFunction } from 'express'
-import { createMock, DeepMocked } from '@golevelup/ts-jest'
+import type { NextFunction, Request, Response } from 'express'
+import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import type { SummaryListItem, GroupedListofBookings } from '@approved-premises/ui'
+import type { GroupedListofBookings, SummaryListItem } from '@approved-premises/ui'
 import { Booking } from '@approved-premises/api'
 import PremisesService from '../../services/premisesService'
 import BookingService from '../../services/bookingService'

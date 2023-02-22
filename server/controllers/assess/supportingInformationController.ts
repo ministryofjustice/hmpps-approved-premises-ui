@@ -1,12 +1,12 @@
-import { Request, Response, RequestHandler } from 'express'
+import { Request, RequestHandler, Response } from 'express'
 
 import { AssessmentService } from '../../services'
 import { DateFormats } from '../../utils/dateUtils'
 
 import {
+  acctAlertsFromAssessment,
   adjudicationsFromAssessment,
   caseNotesFromAssessment,
-  acctAlertsFromAssessment,
 } from '../../utils/assessments/utils'
 import { oasysInformationFromAssessment } from '../../utils/assessments/oasysUtils'
 

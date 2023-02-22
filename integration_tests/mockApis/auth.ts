@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import { Response } from 'superagent'
 import { UserRole } from '../../server/@types/shared/models/UserRole'
 
-import { stubFor, getMatchingRequests } from '../../wiremock'
+import { getMatchingRequests, stubFor } from '../../wiremock'
 import tokenVerification from './tokenVerification'
 
 const createToken = () => {

@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import { Task, Section } from '../../utils/decorators'
+import { Section, Task } from '../../utils/decorators'
 
 import RelocationRegion from './relocationRegion'
 import PlacementDuration from './placementDuration'

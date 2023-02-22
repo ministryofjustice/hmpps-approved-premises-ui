@@ -3,9 +3,9 @@ import { createMock } from '@golevelup/ts-jest'
 
 import type { ErrorMessages, ErrorSummary } from '@approved-premises/ui'
 import { SanitisedError } from '../sanitisedError'
-import { catchValidationErrorOrPropogate, catchAPIErrorOrPropogate, fetchErrorsAndUserInput } from './validation'
+import { catchAPIErrorOrPropogate, catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from './validation'
 import errorLookups from '../i18n/en/errors.json'
-import { ValidationError, TasklistAPIError } from './errors'
+import { TasklistAPIError, ValidationError } from './errors'
 import type TaskListPage from '../form-pages/tasklistPage'
 
 jest.mock('../i18n/en/errors.json', () => {

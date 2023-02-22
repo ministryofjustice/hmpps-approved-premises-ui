@@ -8,17 +8,17 @@ import * as pathModule from 'path'
 import type { ErrorMessages, PersonStatus } from '@approved-premises/ui'
 import {
   initialiseName,
-  removeBlankSummaryListItems,
-  sentenceCase,
-  mapApiPersonRisksForUi,
   kebabCase,
   linkTo,
+  mapApiPersonRisksForUi,
+  removeBlankSummaryListItems,
+  sentenceCase,
 } from './utils'
 import {
-  dateFieldValues,
+  convertKeyValuePairToRadioItems,
   convertObjectsToRadioItems,
   convertObjectsToSelectOptions,
-  convertKeyValuePairToRadioItems,
+  dateFieldValues,
 } from './formUtils'
 import { dashboardTableRows } from './applications/utils'
 import { checkYourAnswersSections } from './checkYourAnswersUtils'

@@ -1,6 +1,6 @@
-import { isSameDay, isWithinInterval, addDays } from 'date-fns'
+import { addDays, isSameDay, isWithinInterval } from 'date-fns'
 
-import type { Booking, NewBooking, Extension, NewExtension } from '@approved-premises/api'
+import type { Booking, Extension, NewBooking, NewExtension } from '@approved-premises/api'
 import type { GroupedListofBookings } from '@approved-premises/ui'
 
 import type { RestClientBuilder } from '../data'

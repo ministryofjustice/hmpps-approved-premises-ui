@@ -1,10 +1,10 @@
 import { Given, Then } from '@badeball/cypress-cucumber-preprocessor'
 
 import {
-  BookingShowPage,
   BookingConfirmationPage,
-  BookingExtensionCreatePage,
   BookingExtensionConfirmationPage,
+  BookingExtensionCreatePage,
+  BookingShowPage,
 } from '../../../cypress_shared/pages/manage'
 
 import { DateFormats } from '../../../server/utils/dateUtils'

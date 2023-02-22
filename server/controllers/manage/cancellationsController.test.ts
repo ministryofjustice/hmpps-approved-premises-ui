@@ -1,12 +1,12 @@
-import type { Request, Response, NextFunction } from 'express'
-import { createMock, DeepMocked } from '@golevelup/ts-jest'
+import type { NextFunction, Request, Response } from 'express'
+import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 
 import CancellationService from '../../services/cancellationService'
 import BookingService from '../../services/bookingService'
 import CancellationsController from './cancellationsController'
-import { fetchErrorsAndUserInput, catchValidationErrorOrPropogate } from '../../utils/validation'
+import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 
 import bookingFactory from '../../testutils/factories/booking'
 import cancellationFactory from '../../testutils/factories/cancellation'

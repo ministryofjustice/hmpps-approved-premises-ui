@@ -1,4 +1,4 @@
-import type { Response, Request, RequestHandler } from 'express'
+import type { Request, RequestHandler, Response } from 'express'
 import type { NewDeparture } from '@approved-premises/api'
 
 import { DateFormats } from '../../utils/dateUtils'

@@ -1,8 +1,8 @@
-import type { ObjectWithDateParts, YesOrNo, TaskListErrors } from '@approved-premises/ui'
+import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
 
 import TasklistPage from '../../../tasklistPage'
-import { dateAndTimeInputsAreValidDates, dateIsBlank, DateFormats } from '../../../../utils/dateUtils'
+import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 

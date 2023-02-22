@@ -1,6 +1,6 @@
 import type { TaskListErrors } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
-import { sentenceCase, lowerCase } from '../../../../utils/utils'
+import { lowerCase, sentenceCase } from '../../../../utils/utils'
 
 import TasklistPage from '../../../tasklistPage'
 

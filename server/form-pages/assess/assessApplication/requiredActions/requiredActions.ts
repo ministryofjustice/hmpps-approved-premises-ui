@@ -4,7 +4,7 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
-import { dateIsBlank, DateFormats, dateAndTimeInputsAreValidDates } from '../../../../utils/dateUtils'
+import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
 
 export type RequiredActionsSections = {
   additionalActions: string

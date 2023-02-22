@@ -1,5 +1,5 @@
 import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
-import { differenceInDays, differenceInCalendarMonths } from 'date-fns'
+import { differenceInCalendarMonths, differenceInDays } from 'date-fns'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { DateFormats } from '../dateUtils'
 

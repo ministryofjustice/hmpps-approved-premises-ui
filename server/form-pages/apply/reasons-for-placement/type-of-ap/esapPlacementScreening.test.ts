@@ -1,7 +1,7 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 
-import EsapPlacementScreening, { esapReasons, esapFactors } from './esapPlacementScreening'
+import EsapPlacementScreening, { esapFactors, esapReasons } from './esapPlacementScreening'
 import applicationFactory from '../../../../testutils/factories/application'
 import personFactory from '../../../../testutils/factories/person'
 

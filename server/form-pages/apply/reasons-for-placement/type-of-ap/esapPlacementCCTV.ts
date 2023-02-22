@@ -1,4 +1,4 @@
-import type { YesOrNo, TaskListErrors } from '@approved-premises/ui'
+import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 

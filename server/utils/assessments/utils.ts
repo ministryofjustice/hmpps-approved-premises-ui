@@ -9,9 +9,9 @@ import {
   Task,
   TextItem,
 } from '@approved-premises/ui'
-import { format, differenceInDays, add, getUnixTime } from 'date-fns'
+import { add, differenceInDays, format, getUnixTime } from 'date-fns'
 
-import { ApprovedPremisesAssessment as Assessment, ApprovedPremisesApplication } from '@approved-premises/api'
+import { ApprovedPremisesApplication, ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { getResponseForPage } from '../applications/utils'

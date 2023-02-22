@@ -1,7 +1,7 @@
 import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
-import { dateAndTimeInputsAreValidDates, DateFormats } from '../../../../utils/dateUtils'
+import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../../utils/dateUtils'
 
 import TasklistPage from '../../../tasklistPage'
 

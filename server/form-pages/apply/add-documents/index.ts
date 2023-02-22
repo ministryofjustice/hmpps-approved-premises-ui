@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
 import AttachDocuments from './attachDocuments'
-import { Task, Section } from '../../utils/decorators'
+import { Section, Task } from '../../utils/decorators'
 
 @Task({
   name: 'Attach required documents',
