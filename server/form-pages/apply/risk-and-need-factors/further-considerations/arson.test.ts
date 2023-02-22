@@ -32,7 +32,7 @@ describe('Arson', () => {
     })
   })
 
-  itShouldHaveNextValue(new Arson(body, application), '')
+  itShouldHaveNextValue(new Arson(body, application), 'contingency-plan-partners')
   itShouldHavePreviousValue(new Arson(body, application), 'catering')
 
   describe('errors', () => {
