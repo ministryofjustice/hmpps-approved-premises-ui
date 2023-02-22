@@ -26,6 +26,7 @@ export const placementRequirements = [
   'adaptedForVisualImpairments' as const,
   'adaptedForRestrictedMobility' as const,
   'cateringRequired' as const,
+  'arsonRoom' as const,
 ]
 
 export const offenceAndRiskInformationKeys = [
@@ -95,6 +96,7 @@ export default class MatchingInformation implements TasklistPage {
       adaptedForVisualImpairments: PlacementRequirementPreference
       adaptedForRestrictedMobility: PlacementRequirementPreference
       cateringRequired: PlacementRequirementPreference
+      arsonRoom: PlacementRequirementPreference
       contactSexualOffencesAgainstAnAdultAdults: OffenceAndRiskInformationRelevance
       nonContactSexualOffencesAgainstAnAdultAdults: OffenceAndRiskInformationRelevance
       contactSexualOffencesAgainstChildren: OffenceAndRiskInformationRelevance
