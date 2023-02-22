@@ -13,49 +13,9 @@ import {
   PersonAcctAlert,
   PrisonCaseNote,
 } from '@approved-premises/api'
-import { PersonRisksUI } from '@approved-premises/ui'
+import { PersonRisksUI, PartnerAgencyDetails } from '@approved-premises/ui'
 
-import {
-  AccessNeedsMobilityPage,
-  AccessNeedsPage,
-  ArsonPage,
-  AttachDocumentsPage,
-  CaseNotesPage,
-  CateringPage,
-  CheckYourAnswersPage,
-  ComplexCaseBoard,
-  ConfirmDetailsPage,
-  ConvictedOffences,
-  CovidPage,
-  DateOfOffence,
-  DescribeLocationFactors,
-  EnterCRNPage,
-  ForeignNationalPage,
-  OffenceDetailsPage,
-  OptionalOasysSectionsPage,
-  PlacementDurationPage,
-  PlacementPurposePage,
-  PlacementStartPage,
-  PlansInPlacePage,
-  PreviousPlacements,
-  RehabilitativeInterventions,
-  ReleaseDatePage,
-  RelocationRegionPage,
-  RiskManagementFeatures,
-  RiskManagementPlanPage,
-  RiskToSelfPage,
-  RoomSharingPage,
-  RoshSummaryPage,
-  SentenceTypePage,
-  SituationPage,
-  StartPage,
-  SupportingInformationPage,
-  TaskListPage,
-  TypeOfAccommodationPage,
-  TypeOfApPage,
-  TypeOfConvictedOffence,
-  VulnerabilityPage,
-} from '../pages/apply'
+import * as ApplyPages from '../pages/apply'
 
 import Page from '../pages'
 
@@ -65,6 +25,7 @@ import documentFactory from '../../server/testutils/factories/document'
 import oasysSectionsFactory from '../../server/testutils/factories/oasysSections'
 import oasysSelectionFactory from '../../server/testutils/factories/oasysSelection'
 import prisonCaseNotesFactory from '../../server/testutils/factories/prisonCaseNotes'
+import contingencyPlanPartnerFactory from '../../server/testutils/factories/contingencyPlanPartner'
 
 import {
   offenceDetailSummariesFromApplication,
@@ -75,8 +36,6 @@ import {
 } from './index'
 import ApplyPage from '../pages/apply/applyPage'
 import { documentsFromApplication } from '../../server/utils/assessments/documentUtils'
-import IsExceptionalCasePage from '../pages/apply/isExceptionalCase'
-import ExceptionDetailsPage from '../pages/apply/ExceptionDetails'
 
 export default class ApplyHelper {
   pages = {
@@ -87,6 +46,7 @@ export default class ApplyHelper {
     locationFactors: [] as Array<ApplyPage>,
     accessAndHealthcare: [] as Array<ApplyPage>,
     furtherConsiderations: [] as Array<ApplyPage>,
+    contingencyPlanPartners: [] as Array<ApplyPage>,
     moveOn: [] as Array<ApplyPage>,
   }
 
@@ -118,6 +78,8 @@ export default class ApplyHelper {
 
   selectedDocuments: Array<Document> = []
 
+  contingencyPlanPartners: Array<PartnerAgencyDetails> = []
+
   constructor(
     private readonly application: Application,
     private readonly person: Person,
@@ -140,20 +102,21 @@ export default class ApplyHelper {
     this.stubAcctAlertsEndpoint()
     this.stubDocumentEndpoints()
     this.stubOffences()
+    this.addContingencyPlanPartners()
   }
 
   startApplication() {
     // Given I visit the start page
-    const startPage = StartPage.visit()
+    const startPage = ApplyPages.StartPage.visit()
     startPage.startApplication()
 
     // And I complete the first step
-    const crnPage = new EnterCRNPage()
+    const crnPage = new ApplyPages.EnterCRNPage()
     crnPage.enterCrn(this.person.crn)
     crnPage.clickSubmit()
 
     // And I see the person on the confirmation page
-    const confirmDetailsPage = new ConfirmDetailsPage(this.person)
+    const confirmDetailsPage = new ApplyPages.ConfirmDetailsPage(this.person)
     confirmDetailsPage.verifyPersonIsVisible()
 
     // And I confirm the person is who I expect to see
@@ -187,6 +150,10 @@ export default class ApplyHelper {
       ...this.pages.locationFactors,
       ...this.pages.accessAndHealthcare,
       ...this.pages.furtherConsiderations,
+      // we submit the contingency plan partners page 3x (2x adding partners, 1x submitting)
+      ...this.pages.contingencyPlanPartners,
+      ...this.pages.contingencyPlanPartners,
+      ...this.pages.contingencyPlanPartners,
       ...this.pages.moveOn,
       ...this.selectedDocuments,
     ].length
@@ -369,43 +336,60 @@ export default class ApplyHelper {
     cy.task('stubApplicationSubmit', { application: this.application })
   }
 
+  private addContingencyPlanPartners() {
+    this.contingencyPlanPartners = [
+      contingencyPlanPartnerFactory.build({
+        partnerAgencyName: 'Test agency 1',
+        namedContact: 'Test contact 1',
+        phoneNumber: '01234567891',
+        roleInPlan: 'Test role 1',
+      }),
+      contingencyPlanPartnerFactory.build({
+        partnerAgencyName: 'Test agency 2',
+        namedContact: 'Test contact 2',
+        phoneNumber: '01234567892',
+        roleInPlan: 'Test role 2',
+      }),
+    ]
+  }
+
   completeExceptionalCase() {
-    const isExceptionalCasePage = new IsExceptionalCasePage()
+    const isExceptionalCasePage = new ApplyPages.IsExceptionalCasePage()
 
     isExceptionalCasePage.completeForm('yes')
     isExceptionalCasePage.clickSubmit()
 
-    const exceptionDetailsPage = new ExceptionDetailsPage()
+    const exceptionDetailsPage = new ApplyPages.ExceptionDetailsPage()
 
     exceptionDetailsPage.completeForm()
     exceptionDetailsPage.clickSubmit()
   }
 
   completeBasicInformation() {
-    const sentenceTypePage = new SentenceTypePage(this.application)
+    const sentenceTypePage = new ApplyPages.SentenceTypePage(this.application)
     sentenceTypePage.completeForm()
     sentenceTypePage.clickSubmit()
 
-    const situationPage = new SituationPage(this.application)
+    const situationPage = new ApplyPages.SituationPage(this.application)
     situationPage.completeForm()
     situationPage.clickSubmit()
 
-    const releaseDatePage = new ReleaseDatePage(this.application)
+    const releaseDatePage = new ApplyPages.ReleaseDatePage(this.application)
     releaseDatePage.completeForm()
     releaseDatePage.clickSubmit()
 
-    const placementStartPage = new PlacementStartPage(this.application)
+    const placementStartPage = new ApplyPages.PlacementStartPage(this.application)
     placementStartPage.completeForm()
     placementStartPage.clickSubmit()
 
-    const placementPurposePage = new PlacementPurposePage(this.application)
+    const placementPurposePage = new ApplyPages.PlacementPurposePage(this.application)
     placementPurposePage.completeForm()
     placementPurposePage.clickSubmit()
 
     this.pages.basicInformation = [sentenceTypePage, releaseDatePage, placementStartPage, placementPurposePage]
 
     // Then I should be redirected to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
     // And the task should be marked as completed
     tasklistPage.shouldShowTaskStatus('basic-information', 'Completed')
@@ -422,10 +406,10 @@ export default class ApplyHelper {
   private completeTypeOfApSection() {
     // And I should be able to start the next task
     cy.get('[data-cy-task-name="type-of-ap"]').click()
-    Page.verifyOnPage(TypeOfApPage, this.application)
+    Page.verifyOnPage(ApplyPages.TypeOfApPage, this.application)
 
     // Given I am on the Type of AP Page
-    const typeOfApPage = new TypeOfApPage(this.application)
+    const typeOfApPage = new ApplyPages.TypeOfApPage(this.application)
 
     // When I complete the form and click submit
     typeOfApPage.completeForm()
@@ -434,7 +418,7 @@ export default class ApplyHelper {
     this.pages.typeOfAp = [typeOfApPage]
 
     // Then I should be redirected to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
     // Then the Type of AP task should show as completed
     tasklistPage.shouldShowTaskStatus('type-of-ap', 'Completed')
@@ -446,13 +430,13 @@ export default class ApplyHelper {
   private completeOasysSection() {
     // Given I click the 'Import Oasys' task
     cy.get('[data-cy-task-name="oasys-import"]').click()
-    const optionalOasysImportPage = new OptionalOasysSectionsPage(this.application)
+    const optionalOasysImportPage = new ApplyPages.OptionalOasysSectionsPage(this.application)
 
     // When I complete the form
     optionalOasysImportPage.completeForm(this.oasysSectionsLinkedToReoffending, this.otherOasysSections)
     optionalOasysImportPage.clickSubmit()
 
-    const roshSummaryPage = new RoshSummaryPage(this.application, this.roshSummaries)
+    const roshSummaryPage = new ApplyPages.RoshSummaryPage(this.application, this.roshSummaries)
 
     if (this.uiRisks) {
       roshSummaryPage.shouldShowRiskWidgets(this.uiRisks)
@@ -462,7 +446,7 @@ export default class ApplyHelper {
 
     roshSummaryPage.clickSubmit()
 
-    const offenceDetailsPage = new OffenceDetailsPage(this.application, this.offenceDetailSummaries)
+    const offenceDetailsPage = new ApplyPages.OffenceDetailsPage(this.application, this.offenceDetailSummaries)
 
     if (this.uiRisks) {
       offenceDetailsPage.shouldShowRiskWidgets(this.uiRisks)
@@ -471,18 +455,21 @@ export default class ApplyHelper {
     offenceDetailsPage.completeForm()
     offenceDetailsPage.clickSubmit()
 
-    const supportingInformationPage = new SupportingInformationPage(
+    const supportingInformationPage = new ApplyPages.SupportingInformationPage(
       this.application,
       this.supportingInformationSummaries,
     )
     supportingInformationPage.completeForm()
     supportingInformationPage.clickSubmit()
 
-    const riskManagementPlanPage = new RiskManagementPlanPage(this.application, this.riskManagementPlanSummaries)
+    const riskManagementPlanPage = new ApplyPages.RiskManagementPlanPage(
+      this.application,
+      this.riskManagementPlanSummaries,
+    )
     riskManagementPlanPage.completeForm()
     riskManagementPlanPage.clickSubmit()
 
-    const riskToSelfPage = new RiskToSelfPage(this.application, this.riskToSelfSummaries)
+    const riskToSelfPage = new ApplyPages.RiskToSelfPage(this.application, this.riskToSelfSummaries)
     riskToSelfPage.completeForm()
     riskToSelfPage.clickSubmit()
 
@@ -496,7 +483,7 @@ export default class ApplyHelper {
     ]
 
     // Then I should be redirected to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
     // Then I should be taken back to the tasklist
     tasklistPage.shouldShowTaskStatus('oasys-import', 'Completed')
@@ -510,23 +497,23 @@ export default class ApplyHelper {
     cy.get('[data-cy-task-name="risk-management-features"]').click()
 
     // When I complete the form
-    const riskManagementFeaturesPage = new RiskManagementFeatures(this.application)
+    const riskManagementFeaturesPage = new ApplyPages.RiskManagementFeatures(this.application)
     riskManagementFeaturesPage.completeForm()
     riskManagementFeaturesPage.clickSubmit()
 
-    const convictedOffencesPage = new ConvictedOffences(this.application)
+    const convictedOffencesPage = new ApplyPages.ConvictedOffences(this.application)
     convictedOffencesPage.completeForm()
     convictedOffencesPage.clickSubmit()
 
-    const typeOfConvictedOffencePage = new TypeOfConvictedOffence(this.application)
+    const typeOfConvictedOffencePage = new ApplyPages.TypeOfConvictedOffence(this.application)
     typeOfConvictedOffencePage.completeForm()
     typeOfConvictedOffencePage.clickSubmit()
 
-    const dateOfOffencePage = new DateOfOffence(this.application)
+    const dateOfOffencePage = new ApplyPages.DateOfOffence(this.application)
     dateOfOffencePage.completeForm()
     dateOfOffencePage.clickSubmit()
 
-    const rehabilitativeInterventionsPage = new RehabilitativeInterventions(this.application)
+    const rehabilitativeInterventionsPage = new ApplyPages.RehabilitativeInterventions(this.application)
     rehabilitativeInterventionsPage.completeForm()
     rehabilitativeInterventionsPage.clickSubmit()
 
@@ -539,7 +526,7 @@ export default class ApplyHelper {
     ]
 
     // Then I should be redirected to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
     // And the risk management task should show a completed status
     tasklistPage.shouldShowTaskStatus('risk-management-features', 'Completed')
@@ -549,7 +536,7 @@ export default class ApplyHelper {
     // And I click the 'Review prison information' task
     cy.get('[data-cy-task-name="prison-information"]').click()
 
-    const caseNotesPage = new CaseNotesPage(this.application, this.selectedPrisonCaseNotes)
+    const caseNotesPage = new ApplyPages.CaseNotesPage(this.application, this.selectedPrisonCaseNotes)
     caseNotesPage.shouldDisplayAdjudications(this.adjudications)
     caseNotesPage.shouldDisplayAcctAlerts(this.acctAlerts)
     caseNotesPage.completeForm(this.moreDetail)
@@ -559,14 +546,14 @@ export default class ApplyHelper {
     cy.get('[data-cy-task-name="location-factors"]').click()
 
     // When I complete the form
-    const describeLocationFactorsPage = new DescribeLocationFactors(this.application)
+    const describeLocationFactorsPage = new ApplyPages.DescribeLocationFactors(this.application)
     describeLocationFactorsPage.completeForm()
     describeLocationFactorsPage.clickSubmit()
 
     this.pages.locationFactors = [describeLocationFactorsPage]
 
     // Then I should be taken back to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
     // And the location factors task should show a completed status
     tasklistPage.shouldShowTaskStatus('location-factors', 'Completed')
@@ -577,22 +564,22 @@ export default class ApplyHelper {
     cy.get('[data-cy-task-name="access-and-healthcare"]').click()
 
     // When I complete the form
-    const accessNeedsPage = new AccessNeedsPage(this.application)
+    const accessNeedsPage = new ApplyPages.AccessNeedsPage(this.application)
     accessNeedsPage.completeForm()
     accessNeedsPage.clickSubmit()
 
-    const accessNeedsMobilityPage = new AccessNeedsMobilityPage(this.application)
+    const accessNeedsMobilityPage = new ApplyPages.AccessNeedsMobilityPage(this.application)
     accessNeedsMobilityPage.completeForm()
     accessNeedsMobilityPage.clickSubmit()
 
-    const covidPage = new CovidPage(this.application)
+    const covidPage = new ApplyPages.CovidPage(this.application)
     covidPage.completeForm()
     covidPage.clickSubmit()
 
     this.pages.accessAndHealthcare = [accessNeedsPage, accessNeedsMobilityPage, covidPage]
 
     // Then I should be taken back to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
     // And the access and healthcare task should show a completed status
     tasklistPage.shouldShowTaskStatus('access-and-healthcare', 'Completed')
@@ -603,35 +590,44 @@ export default class ApplyHelper {
     cy.get('[data-cy-task-name="further-considerations"]').click()
 
     // And I complete the Room Sharing page
-    const roomSharingPage = new RoomSharingPage(this.application)
+    const roomSharingPage = new ApplyPages.RoomSharingPage(this.application)
     roomSharingPage.completeForm()
     roomSharingPage.clickSubmit()
 
     // And I complete the Vulnerability page
-    const vulnerabilityPage = new VulnerabilityPage(this.application)
+    const vulnerabilityPage = new ApplyPages.VulnerabilityPage(this.application)
     vulnerabilityPage.completeForm()
     vulnerabilityPage.clickSubmit()
 
     // And I complete the Previous Placements page
-    const previousPlacementsPage = new PreviousPlacements(this.application)
+    const previousPlacementsPage = new ApplyPages.PreviousPlacements(this.application)
     previousPlacementsPage.completeForm()
     previousPlacementsPage.clickSubmit()
 
     // And I complete the Complex Case Board page
-    const complexCaseBoardPage = new ComplexCaseBoard(this.application)
+    const complexCaseBoardPage = new ApplyPages.ComplexCaseBoard(this.application)
     complexCaseBoardPage.completeForm()
     complexCaseBoardPage.clickSubmit()
 
     // And I complete the Catering page
-    const cateringPage = new CateringPage(this.application)
+    const cateringPage = new ApplyPages.CateringPage(this.application)
     cateringPage.completeForm()
     cateringPage.clickSubmit()
 
     // And I complete the Arson page
-    const arsonPage = new ArsonPage(this.application)
+    const arsonPage = new ApplyPages.ArsonPage(this.application)
     arsonPage.completeForm()
     arsonPage.clickSubmit()
 
+    // And I complete the Contingency Plan Partners page
+    const contingencyPlanPartnersPage = new ApplyPages.ContingencyPlanPartnersPage(
+      this.application,
+      this.contingencyPlanPartners,
+    )
+    contingencyPlanPartnersPage.completeForm()
+    contingencyPlanPartnersPage.clickSubmit()
+
+    this.pages.contingencyPlanPartners = [contingencyPlanPartnersPage]
     this.pages.furtherConsiderations = [
       roomSharingPage,
       vulnerabilityPage,
@@ -642,7 +638,7 @@ export default class ApplyHelper {
     ]
 
     // Then I should be taken back to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
     // And the further considerations task should show a completed status
     tasklistPage.shouldShowTaskStatus('further-considerations', 'Completed')
@@ -653,26 +649,26 @@ export default class ApplyHelper {
     cy.get('[data-cy-task-name="move-on"]').click()
 
     // And I complete the Placement Duration page
-    const placementDurationPage = new PlacementDurationPage(this.application)
+    const placementDurationPage = new ApplyPages.PlacementDurationPage(this.application)
     placementDurationPage.completeForm()
     placementDurationPage.clickSubmit()
 
     // And I complete the relocation region page
-    const relocationRegion = new RelocationRegionPage(this.application)
+    const relocationRegion = new ApplyPages.RelocationRegionPage(this.application)
     relocationRegion.completeForm()
     relocationRegion.clickSubmit()
 
     // And I complete the plans in place page
-    const plansInPlacePage = new PlansInPlacePage(this.application)
+    const plansInPlacePage = new ApplyPages.PlansInPlacePage(this.application)
     plansInPlacePage.completeForm()
     plansInPlacePage.clickSubmit()
 
     // And I complete the type of accommodation page
-    const typeOfAccommodationPage = new TypeOfAccommodationPage(this.application)
+    const typeOfAccommodationPage = new ApplyPages.TypeOfAccommodationPage(this.application)
     typeOfAccommodationPage.completeForm()
     typeOfAccommodationPage.clickSubmit()
 
-    const foreignNationalPage = new ForeignNationalPage(this.application)
+    const foreignNationalPage = new ApplyPages.ForeignNationalPage(this.application)
     foreignNationalPage.completeForm()
     foreignNationalPage.clickSubmit()
 
@@ -685,7 +681,7 @@ export default class ApplyHelper {
     ]
 
     // Then I should be taken back to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
     // And the move on information task should show a completed status
     tasklistPage.shouldShowTaskStatus('move-on', 'Completed')
@@ -694,7 +690,11 @@ export default class ApplyHelper {
   private completeDocumentsSection() {
     // Given I click on the Attach Documents task
     cy.get('[data-cy-task-name="attach-required-documents"]').click()
-    const attachDocumentsPage = new AttachDocumentsPage(this.documents, this.selectedDocuments, this.application)
+    const attachDocumentsPage = new ApplyPages.AttachDocumentsPage(
+      this.documents,
+      this.selectedDocuments,
+      this.application,
+    )
 
     // Then I should be able to download the documents
     attachDocumentsPage.shouldBeAbleToDownloadDocuments(this.documents)
@@ -705,7 +705,7 @@ export default class ApplyHelper {
     attachDocumentsPage.clickSubmit()
 
     // Then I should be taken back to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
     // And the Attach Documents task should show a completed status
     tasklistPage.shouldShowTaskStatus('attach-required-documents', 'Completed')
@@ -716,7 +716,7 @@ export default class ApplyHelper {
     cy.get('[data-cy-task-name="check-your-answers"]').click()
 
     // Then I should be on the check your answers page
-    const checkYourAnswersPage = new CheckYourAnswersPage(this.application)
+    const checkYourAnswersPage = new ApplyPages.CheckYourAnswersPage(this.application)
 
     // And the page should be populated with my answers
     checkYourAnswersPage.shouldShowPersonInformation(this.person)
@@ -726,6 +726,7 @@ export default class ApplyHelper {
     checkYourAnswersPage.shouldShowLocationFactorsAnswers(this.pages.locationFactors)
     checkYourAnswersPage.shouldShowAccessAndHealthcareAnswers(this.pages.accessAndHealthcare)
     checkYourAnswersPage.shouldShowFurtherConsiderationsAnswers(this.pages.furtherConsiderations)
+    checkYourAnswersPage.shouldShowContingencyPlanPartners(this.contingencyPlanPartners)
     checkYourAnswersPage.shouldShowMoveOnAnswers(this.pages.moveOn)
     checkYourAnswersPage.shouldShowDocuments(this.selectedDocuments)
 
@@ -740,14 +741,14 @@ export default class ApplyHelper {
     checkYourAnswersPage.clickSubmit()
 
     // Then I should be taken back to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
 
     // And the check your answers task should show a completed status
     tasklistPage.shouldShowTaskStatus('check-your-answers', 'Completed')
   }
 
   private submitApplication() {
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
     tasklistPage.checkCheckboxByLabel('submit')
 
     tasklistPage.clickSubmit()

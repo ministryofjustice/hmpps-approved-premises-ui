@@ -335,6 +335,23 @@
     "arson": {
       "arson": "yes",
       "arsonDetail": "Some details here"
+    },
+    "contingency-plan-partners": {
+      "partnerAgencyDetails": [
+        {
+          "partnerAgencyName": "Test agency 1",
+          "namedContact": "Test contact 1",
+          "phoneNumber": "01234567891",
+          "roleInPlan": "Test role 1"
+        },
+        {
+          "partnerAgencyName": "Test agency 2",
+          "namedContact": "Test contact 2",
+          "phoneNumber": "01234567892",
+          "roleInPlan": "Test role 2"
+        }
+      ],
+      "saveAndContinue": "1"
     }
   },
   "move-on": {

@@ -12,6 +12,7 @@ import {
   isStringOrArrayOfStrings,
   escape,
   convertArrayToRadioItems,
+  convertKeyValuePairsToSummaryListItems,
 } from './formUtils'
 
 describe('formUtils', () => {
@@ -373,6 +374,21 @@ describe('formUtils', () => {
       expect(convertArrayToRadioItems(['one', 'two'], 'two')).toEqual([
         { text: 'One', value: 'one', checked: false },
         { text: 'Two', value: 'two', checked: true },
+      ])
+    })
+  })
+
+  describe('convertKeyValuePairsToSummaryListItems', () => {
+    it('returns the key value pairs as summary list items', () => {
+      expect(convertKeyValuePairsToSummaryListItems({ itemOne: 'someValue' }, { itemOne: 'First title' })).toEqual([
+        {
+          key: {
+            text: 'First title',
+          },
+          value: {
+            text: 'someValue',
+          },
+        },
       ])
     })
   })

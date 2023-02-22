@@ -8,10 +8,13 @@ import CheckYourAnswersPage from './checkYourAnswersPage'
 import ComplexCaseBoard from './complexCaseBoard'
 import ConfirmDetailsPage from './confirmDetails'
 import ConvictedOffences from './convictedOffences'
+import ContingencyPlanPartnersPage from './contingencyPlanPartners'
 import CovidPage from './covid'
 import DateOfOffence from './dateOfOffence'
 import DescribeLocationFactors from './describeLocationFactors'
 import EnterCRNPage from './enterCrn'
+import IsExceptionalCasePage from './isExceptionalCase'
+import ExceptionDetailsPage from './ExceptionDetails'
 import ForeignNationalPage from './foreignNational'
 import ListPage from './list'
 import OffenceDetailsPage from './offenceDetails'
@@ -51,12 +54,15 @@ export {
   CheckYourAnswersPage,
   ComplexCaseBoard,
   ConfirmDetailsPage,
+  ContingencyPlanPartnersPage,
   ConvictedOffences,
   CovidPage,
   DateOfOffence,
   DescribeLocationFactors,
   EnterCRNPage,
+  ExceptionDetailsPage,
   ForeignNationalPage,
+  IsExceptionalCasePage,
   ListPage,
   OffenceDetailsPage,
   OptionalOasysSectionsPage,

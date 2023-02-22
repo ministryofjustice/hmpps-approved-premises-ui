@@ -1,4 +1,5 @@
 import type { Person, PrisonCaseNote, Document, ApprovedPremisesApplication } from '@approved-premises/api'
+import { PartnerAgencyDetails } from '../../../server/@types/ui'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import ApplyPage from './applyPage'
 
@@ -65,6 +66,27 @@ export default class CheckYourAnswersPage extends ApplyPage {
   shouldShowFurtherConsiderationsAnswers(pages: Array<ApplyPage>) {
     this.shouldShowCheckYourAnswersTitle('further-considerations', 'Detail further considerations for placement')
     this.shouldShowAnswersForTask('further-considerations', pages)
+  }
+
+  shouldShowContingencyPlanPartners(contingencyPlanPartners: Array<PartnerAgencyDetails>) {
+    cy.get(`[data-cy-check-your-answers-section="further-considerations"]`).within(() => {
+      cy.get('dt')
+        .contains('Contingency plan partners')
+        .parent()
+        .within(() => {
+          cy.get('dl.govuk-summary-list--embedded').then($items => {
+            cy.wrap($items).should('have.length', contingencyPlanPartners.length)
+            contingencyPlanPartners.forEach((partner, i) => {
+              cy.wrap($items[i]).within(() => {
+                this.assertDefinition('Named contact', partner.namedContact)
+                this.assertDefinition('Partner agency name', partner.partnerAgencyName)
+                this.assertDefinition('Phone number', partner.phoneNumber)
+                this.assertDefinition('Role in plan', partner.roleInPlan)
+              })
+            })
+          })
+        })
+    })
   }
 
   shouldShowMoveOnAnswers(pages: Array<ApplyPage>) {

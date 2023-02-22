@@ -1,5 +1,5 @@
 import * as nunjucks from 'nunjucks'
-import type { ErrorMessages, RadioItem, CheckBoxItem, SelectOption } from '@approved-premises/ui'
+import type { ErrorMessages, RadioItem, CheckBoxItem, SelectOption, SummaryListItem } from '@approved-premises/ui'
 import { sentenceCase } from './utils'
 import postcodeAreas from '../etc/postcodeAreas.json'
 
@@ -96,6 +96,22 @@ export function convertArrayToRadioItems(array: Array<string>, checkedItem: stri
       value: key,
       text: sentenceCase(key),
       checked: checkedItem === key,
+    }
+  })
+}
+
+export function convertKeyValuePairsToSummaryListItems<T>(
+  values: T,
+  titles: Record<string, string>,
+): Array<SummaryListItem> {
+  return Object.keys(values).map(key => {
+    return {
+      key: {
+        text: titles[key],
+      },
+      value: {
+        text: values[key],
+      },
     }
   })
 }

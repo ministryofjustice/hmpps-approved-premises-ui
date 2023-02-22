@@ -268,3 +268,10 @@ export type UserDetails = {
   displayName: string
   roles: Array<UserRole>
 }
+
+export type PartnerAgencyDetails = {
+  partnerAgencyName: string
+  namedContact: string
+  phoneNumber: string
+  roleInPlan: string
+}

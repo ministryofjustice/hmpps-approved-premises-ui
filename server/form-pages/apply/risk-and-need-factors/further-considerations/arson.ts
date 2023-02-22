@@ -46,7 +46,7 @@ export default class Arson implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'contingency-plan-partners'
   }
 
   response() {
