@@ -12,6 +12,7 @@ const defaultArguments = {
   adaptedForVisualImpairments: 'essential',
   adaptedForRestrictedMobility: 'essential',
   cateringRequired: 'essential',
+  recoveryFocused: 'essential',
   arsonRoom: 'essential',
   contactSexualOffencesAgainstAnAdultAdults: 'relevant',
   nonContactSexualOffencesAgainstAnAdultAdults: 'relevant',
@@ -53,6 +54,7 @@ describe('MatchingInformation', () => {
         apType: 'You must select the type of AP required',
         arsonOffences: 'You must specify if arson offences is relevant',
         cateringRequired: 'You must specify a preference for catering required',
+        recoveryFocused: 'You must specify a preference for recovery focused',
         arsonRoom: 'You must specify a preference for arson room',
         contactSexualOffencesAgainstAnAdultAdults:
           'You must specify if contact sexual offences against an adult adults is relevant',
