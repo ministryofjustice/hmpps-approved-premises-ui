@@ -4,12 +4,12 @@ import qs from 'qs'
 import type {
   ActiveOffence,
   Adjudication,
-  Person,
-  PersonRisks,
-  PrisonCaseNote,
   OASysSection,
   OASysSections,
+  Person,
   PersonAcctAlert,
+  PersonRisks,
+  PrisonCaseNote,
 } from '@approved-premises/api'
 
 import RestClient from './restClient'

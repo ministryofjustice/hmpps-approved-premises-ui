@@ -1,4 +1,4 @@
-import type { Response, Request, RequestHandler } from 'express'
+import type { Request, RequestHandler, Response } from 'express'
 
 import type { NewLostBed } from '@approved-premises/api'
 import LostBedService from '../../services/lostBedService'

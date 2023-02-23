@@ -7,18 +7,18 @@ import {
 } from '@approved-premises/api'
 import { YesOrNo } from '@approved-premises/ui'
 import {
+  CheckYourAnswersPage,
   ClarificationNoteConfirmPage,
+  InformationReceivedPage,
   ListPage,
+  MakeADecisionPage,
+  MatchingInformationPage,
   RequiredActionsPage,
   ReviewPage,
+  SubmissionConfirmation,
   SufficientInformationPage,
   SuitabilityAssessmentPage,
   TaskListPage,
-  MakeADecisionPage,
-  InformationReceivedPage,
-  MatchingInformationPage,
-  CheckYourAnswersPage,
-  SubmissionConfirmation,
 } from '../pages/assess'
 import Page from '../pages/page'
 import { updateAssessmentData } from '../../server/form-pages/utils'

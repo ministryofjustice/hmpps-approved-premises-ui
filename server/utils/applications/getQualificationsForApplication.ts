@@ -1,4 +1,4 @@
-import { UserQualification, ApprovedPremisesApplication as Application } from '@approved-premises/api'
+import { ApprovedPremisesApplication as Application, UserQualification } from '@approved-premises/api'
 
 export const getQualificationsForApplication = (application: Application): Array<UserQualification> => {
   const qualifications: Array<UserQualification> = []

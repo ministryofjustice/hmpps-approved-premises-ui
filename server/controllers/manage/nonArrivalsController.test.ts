@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express'
-import { createMock, DeepMocked } from '@golevelup/ts-jest'
+import { NextFunction, Request, Response } from 'express'
+import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 
 import NonArrivalService from '../../services/nonArrivalService'

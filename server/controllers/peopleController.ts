@@ -1,4 +1,4 @@
-import type { Request, Response, RequestHandler } from 'express'
+import type { Request, RequestHandler, Response } from 'express'
 
 import PersonService from '../services/personService'
 import { errorMessage, errorSummary } from '../utils/validation'

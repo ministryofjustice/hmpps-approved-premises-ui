@@ -1,4 +1,4 @@
-import { createMock, DeepMocked } from '@golevelup/ts-jest'
+import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { ApplicationService, PersonService } from '../../../../services'
 import applicationFactory from '../../../../testutils/factories/application'
 import oasysSelectionFactory from '../../../../testutils/factories/oasysSelection'

@@ -3,13 +3,13 @@ import type { PersonRisksUI } from '@approved-premises/ui'
 import type {
   ActiveOffence,
   Adjudication,
-  Person,
-  PrisonCaseNote,
   OASysSection,
   OASysSections,
+  Person,
   PersonAcctAlert,
+  PrisonCaseNote,
 } from '@approved-premises/api'
-import type { RestClientBuilder, PersonClient } from '../data'
+import type { PersonClient, RestClientBuilder } from '../data'
 
 import { mapApiPersonRisksForUi } from '../utils/utils'
 

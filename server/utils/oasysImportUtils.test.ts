@@ -5,9 +5,9 @@ import { sentenceCase } from './utils'
 import {
   fetchOptionalOasysSections,
   oasysImportReponse,
-  textareas,
-  sortOasysImportSummaries,
   sectionCheckBoxes,
+  sortOasysImportSummaries,
+  textareas,
 } from './oasysImportUtils'
 
 describe('OASysImportUtils', () => {

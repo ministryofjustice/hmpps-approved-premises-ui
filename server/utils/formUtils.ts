@@ -1,5 +1,5 @@
 import * as nunjucks from 'nunjucks'
-import type { ErrorMessages, RadioItem, CheckBoxItem, SelectOption, SummaryListItem } from '@approved-premises/ui'
+import type { CheckBoxItem, ErrorMessages, RadioItem, SelectOption, SummaryListItem } from '@approved-premises/ui'
 import { sentenceCase } from './utils'
 import postcodeAreas from '../etc/postcodeAreas.json'
 

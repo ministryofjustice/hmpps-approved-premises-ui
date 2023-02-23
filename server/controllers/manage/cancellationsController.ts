@@ -1,9 +1,9 @@
-import type { Response, Request, RequestHandler } from 'express'
+import type { Request, RequestHandler, Response } from 'express'
 
 import type { NewCancellation } from '@approved-premises/api'
 
-import { CancellationService, BookingService } from '../../services'
-import { fetchErrorsAndUserInput, catchValidationErrorOrPropogate } from '../../utils/validation'
+import { BookingService, CancellationService } from '../../services'
+import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 import { DateFormats } from '../../utils/dateUtils'
 
 import paths from '../../paths/manage'

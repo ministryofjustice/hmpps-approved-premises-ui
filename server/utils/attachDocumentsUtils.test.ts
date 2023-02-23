@@ -1,5 +1,5 @@
 import { ErrorMessages } from '@approved-premises/ui'
-import { tableRows, documentCheckbox, documentWithDescription, descriptionTextArea } from './attachDocumentsUtils'
+import { descriptionTextArea, documentCheckbox, documentWithDescription, tableRows } from './attachDocumentsUtils'
 
 import documentFactory from '../testutils/factories/document'
 import applicationFactory from '../testutils/factories/application'

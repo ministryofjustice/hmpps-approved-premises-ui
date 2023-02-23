@@ -6,7 +6,7 @@ import {
 } from '@approved-premises/api'
 import type { DataServices } from '@approved-premises/ui'
 
-import type { RestClientBuilder, AssessmentClient } from '../data'
+import type { AssessmentClient, RestClientBuilder } from '../data'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getBody, updateAssessmentData } from '../form-pages/utils'
 import { ValidationError } from '../utils/errors'

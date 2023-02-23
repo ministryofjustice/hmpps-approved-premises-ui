@@ -1,4 +1,4 @@
-import type { Response, Request, RequestHandler } from 'express'
+import type { Request, RequestHandler, Response } from 'express'
 import paths from '../paths/manage'
 
 export default class ApplicationController {

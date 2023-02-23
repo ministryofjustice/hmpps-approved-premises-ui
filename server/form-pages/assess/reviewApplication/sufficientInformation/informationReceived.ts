@@ -1,9 +1,9 @@
-import type { TaskListErrors, YesOrNo, ObjectWithDateParts } from '@approved-premises/ui'
+import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import type { User } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
 import { sentenceCase } from '../../../../utils/utils'
-import { dateAndTimeInputsAreValidDates, dateIsBlank, DateFormats } from '../../../../utils/dateUtils'
+import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
 
 import TasklistPage from '../../../tasklistPage'
 

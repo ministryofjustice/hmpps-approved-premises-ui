@@ -1,4 +1,4 @@
-import type { Person, PrisonCaseNote, Document, ApprovedPremisesApplication } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, Document, Person, PrisonCaseNote } from '@approved-premises/api'
 import { PartnerAgencyDetails } from '../../../server/@types/ui'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import ApplyPage from './applyPage'

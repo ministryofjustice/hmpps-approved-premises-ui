@@ -4,14 +4,14 @@ import { PersonRisks } from '@approved-premises/api'
 import { SessionDataError } from './errors'
 import applicationFactory from '../testutils/factories/application'
 import {
+  camelCase,
   convertToTitleCase,
   initialiseName,
-  retrieveQuestionResponseFromApplication,
-  removeBlankSummaryListItems,
+  linkTo,
   mapApiPersonRisksForUi,
   pascalCase,
-  camelCase,
-  linkTo,
+  removeBlankSummaryListItems,
+  retrieveQuestionResponseFromApplication,
 } from './utils'
 import risksFactory from '../testutils/factories/risks'
 import { DateFormats } from './dateUtils'

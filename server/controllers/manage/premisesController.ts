@@ -1,4 +1,4 @@
-import type { Request, Response, RequestHandler } from 'express'
+import type { Request, RequestHandler, Response } from 'express'
 
 import PremisesService from '../../services/premisesService'
 import BookingService from '../../services/bookingService'

@@ -2,17 +2,17 @@ import { createMock } from '@golevelup/ts-jest'
 
 import type { ErrorMessages } from '@approved-premises/ui'
 import {
-  dateFieldValues,
-  convertObjectsToRadioItems,
-  convertKeyValuePairToRadioItems,
-  convertObjectsToSelectOptions,
+  convertArrayToRadioItems,
   convertKeyValuePairToCheckBoxItems,
-  validPostcodeArea,
+  convertKeyValuePairToRadioItems,
+  convertKeyValuePairsToSummaryListItems,
+  convertObjectsToRadioItems,
+  convertObjectsToSelectOptions,
+  dateFieldValues,
+  escape,
   flattenCheckboxInput,
   isStringOrArrayOfStrings,
-  escape,
-  convertArrayToRadioItems,
-  convertKeyValuePairsToSummaryListItems,
+  validPostcodeArea,
 } from './formUtils'
 
 describe('formUtils', () => {

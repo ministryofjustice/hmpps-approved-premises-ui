@@ -1,4 +1,4 @@
-import { Response, Request, RequestHandler } from 'express'
+import { Request, RequestHandler, Response } from 'express'
 
 import type { NewNonarrival } from '@approved-premises/api'
 

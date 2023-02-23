@@ -33,6 +33,12 @@
         "plugin:prettier/recommended"
       ],
       "rules": {
+        "sort-imports": [
+          "error",
+          {
+            "ignoreDeclarationSort": true
+          }
+        ],
         "@typescript-eslint/no-use-before-define": 0,
         "import/prefer-default-export": 0,
         "no-shadow": "off",

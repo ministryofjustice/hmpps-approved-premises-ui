@@ -13,7 +13,7 @@ import {
   PersonAcctAlert,
   PrisonCaseNote,
 } from '@approved-premises/api'
-import { PersonRisksUI, PartnerAgencyDetails } from '@approved-premises/ui'
+import { PartnerAgencyDetails, PersonRisksUI } from '@approved-premises/ui'
 
 import * as ApplyPages from '../pages/apply'
 

@@ -1,4 +1,4 @@
-import { cell, row, radioMatrixTable, heading } from './radioMatrixTable'
+import { cell, heading, radioMatrixTable, row } from './radioMatrixTable'
 
 describe('radioMatrixTable', () => {
   describe('cell', () => {

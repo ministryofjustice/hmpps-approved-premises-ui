@@ -1,4 +1,4 @@
-import type { Departure, Booking } from '@approved-premises/api'
+import type { Booking, Departure } from '@approved-premises/api'
 
 import Page from '../page'
 import paths from '../../../server/paths/manage'
