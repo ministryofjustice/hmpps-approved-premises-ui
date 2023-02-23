@@ -9,6 +9,7 @@ import ComplexCaseBoard from './complexCaseBoard'
 import ConfirmDetailsPage from './confirmDetails'
 import ConvictedOffences from './convictedOffences'
 import ContingencyPlanPartnersPage from './contingencyPlanPartners'
+import ContingencyPlanQuestionsPage from './contingencyPlanQuestions'
 import CovidPage from './covid'
 import DateOfOffence from './dateOfOffence'
 import DescribeLocationFactors from './describeLocationFactors'
@@ -55,6 +56,7 @@ export {
   ComplexCaseBoard,
   ConfirmDetailsPage,
   ContingencyPlanPartnersPage,
+  ContingencyPlanQuestionsPage,
   ConvictedOffences,
   CovidPage,
   DateOfOffence,

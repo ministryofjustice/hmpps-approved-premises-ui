@@ -1,0 +1,33 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+    <h1 class="govuk-heading-l">
+        {{ page.title }}
+    </h1>
+
+    {% for questionId, question in page.questions %}
+        {% if question.hint %}
+            {{formPageTextarea({
+                fieldName: questionId,
+                label:{
+                    text:  question.question,
+                    classes: 'govuk-label--m'
+                },
+                hint: {
+                    text: question.hint
+                }
+            }, fetchContext())
+            }}
+        {% else %}
+            {{formPageTextarea({
+                fieldName: questionId,
+                label:{
+                    text:  question.question,
+                    classes: 'govuk-label--m'
+                }
+            }, fetchContext())
+            }}
+        {%endif%}
+        {% endfor %}
+    {% endblock %}

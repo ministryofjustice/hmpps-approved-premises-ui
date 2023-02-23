@@ -13,7 +13,7 @@ import {
   PersonAcctAlert,
   PrisonCaseNote,
 } from '@approved-premises/api'
-import { PartnerAgencyDetails, PersonRisksUI } from '@approved-premises/ui'
+import { ContingencyPlanQuestionsBody, PartnerAgencyDetails, PersonRisksUI } from '@approved-premises/ui'
 
 import * as ApplyPages from '../pages/apply'
 
@@ -26,6 +26,7 @@ import oasysSectionsFactory from '../../server/testutils/factories/oasysSections
 import oasysSelectionFactory from '../../server/testutils/factories/oasysSelection'
 import prisonCaseNotesFactory from '../../server/testutils/factories/prisonCaseNotes'
 import contingencyPlanPartnerFactory from '../../server/testutils/factories/contingencyPlanPartner'
+import contingencyPlanQuestionsFactory from '../../server/testutils/factories/contingencyPlanQuestionsBody'
 
 import {
   offenceDetailSummariesFromApplication,
@@ -80,6 +81,8 @@ export default class ApplyHelper {
 
   contingencyPlanPartners: Array<PartnerAgencyDetails> = []
 
+  contingencyPlanQuestions: ContingencyPlanQuestionsBody
+
   constructor(
     private readonly application: Application,
     private readonly person: Person,
@@ -102,7 +105,7 @@ export default class ApplyHelper {
     this.stubAcctAlertsEndpoint()
     this.stubDocumentEndpoints()
     this.stubOffences()
-    this.addContingencyPlanPartners()
+    this.addContingencyPlanDetails()
   }
 
   startApplication() {
@@ -336,7 +339,7 @@ export default class ApplyHelper {
     cy.task('stubApplicationSubmit', { application: this.application })
   }
 
-  private addContingencyPlanPartners() {
+  private addContingencyPlanDetails() {
     this.contingencyPlanPartners = [
       contingencyPlanPartnerFactory.build({
         partnerAgencyName: 'Test agency 1',
@@ -351,6 +354,15 @@ export default class ApplyHelper {
         roleInPlan: 'Test role 2',
       }),
     ]
+    this.contingencyPlanQuestions = contingencyPlanQuestionsFactory.build({
+      noReturn: 'Action to be taken',
+      placementWithdrawn: 'Further action to be taken',
+      victimConsiderations: 'Considerations for victim',
+      unsuitableAddresses: 'An unsuitable address',
+      suitableAddresses: 'Some suitable addresses',
+      breachInformation: 'Breach information to assist decision making',
+      otherConsiderations: 'Some other considerations',
+    })
   }
 
   completeExceptionalCase() {
@@ -419,7 +431,6 @@ export default class ApplyHelper {
 
     // Then I should be redirected to the task list
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
-
     // Then the Type of AP task should show as completed
     tasklistPage.shouldShowTaskStatus('type-of-ap', 'Completed')
 
@@ -628,6 +639,15 @@ export default class ApplyHelper {
     contingencyPlanPartnersPage.clickSubmit()
 
     this.pages.contingencyPlanPartners = [contingencyPlanPartnersPage]
+
+    // And I complete the Contingency Plan Questions page
+    const contingencyPlanQuestionsPage = new ApplyPages.ContingencyPlanQuestionsPage(
+      this.application,
+      this.contingencyPlanQuestions,
+    )
+    contingencyPlanQuestionsPage.completeForm()
+    contingencyPlanQuestionsPage.clickSubmit()
+
     this.pages.furtherConsiderations = [
       roomSharingPage,
       vulnerabilityPage,
@@ -635,6 +655,7 @@ export default class ApplyHelper {
       complexCaseBoardPage,
       cateringPage,
       arsonPage,
+      contingencyPlanQuestionsPage,
     ]
 
     // Then I should be taken back to the task list
