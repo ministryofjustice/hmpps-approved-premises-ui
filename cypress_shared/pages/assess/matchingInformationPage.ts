@@ -16,6 +16,7 @@ export default class MatchingInformationPage extends AssessPage {
     adaptedForVisualImpairments: 'desirable',
     adaptedForRestrictedMobility: 'essential',
     cateringRequired: 'desirable',
+    recoveryFocused: 'essential',
     arsonRoom: 'desirable',
     contactSexualOffencesAgainstAnAdultAdults: 'relevant',
     nonContactSexualOffencesAgainstAnAdultAdults: 'notRelevant',

@@ -88,6 +88,8 @@ describe('MatchingInformation', () => {
         'Adapted for restricted mobility': 'Essential',
         'Adapted for visual impairments': 'Essential',
         'Catering required': 'Essential',
+        'Recovery focused': 'Essential',
+        'Arson room': 'Essential',
         'Arson offences': 'Relevant',
         'Contact sexual offences against an adult adults': 'Relevant',
         'Contact sexual offences against children': 'Relevant',

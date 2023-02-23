@@ -44,7 +44,7 @@ export default class PipeOpdReferral implements TasklistPage {
 
     if (!this.body.pipeReferral) {
       errors.pipeReferral =
-        'You must specify if  a referral for PIPE placement has been recommended in the OPD pathway plan'
+        'You must specify if an application for PIPE placement has been recommended in the OPD pathway plan'
     }
 
     return errors
