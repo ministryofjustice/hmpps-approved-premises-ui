@@ -52,7 +52,7 @@ export default class ContingencyPlanPartners implements TasklistPage {
   }
 
   next() {
-    return this.saveAndContinue ? '' : 'contingency-plan-partners'
+    return this.saveAndContinue ? 'contingency-plan-questions' : 'contingency-plan-partners'
   }
 
   private hasNeccessaryInputs() {
