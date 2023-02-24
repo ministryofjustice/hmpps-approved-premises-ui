@@ -15,6 +15,7 @@ const allReleaseTypes = {
 } as const
 
 type AllReleaseTypes = typeof allReleaseTypes
+export type ReleaseTypeID = keyof AllReleaseTypes
 type ReducedReleaseTypes = Pick<AllReleaseTypes, 'rotl' | 'licence'>
 type SentenceType = Extract<
   SentenceTypesT,
@@ -30,7 +31,7 @@ export default class ReleaseType implements TasklistPage {
   releaseTypes: AllReleaseTypes | ReducedReleaseTypes
 
   constructor(
-    readonly body: { releaseType?: keyof AllReleaseTypes | keyof ReducedReleaseTypes },
+    readonly body: { releaseType?: ReleaseTypeID | keyof ReducedReleaseTypes },
     readonly application: ApprovedPremisesApplication,
   ) {
     const sessionSentenceType = retrieveQuestionResponseFromApplication<SentenceType>(
@@ -42,7 +43,7 @@ export default class ReleaseType implements TasklistPage {
     this.releaseTypes = this.getReleaseTypes(sessionSentenceType)
 
     this.body = {
-      releaseType: body.releaseType as keyof (AllReleaseTypes | ReducedReleaseTypes),
+      releaseType: body.releaseType as ReleaseTypeID | keyof ReducedReleaseTypes,
     }
   }
 
