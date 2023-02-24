@@ -1,9 +1,12 @@
 import { YesOrNo } from '@approved-premises/ui'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import Arson from './arson'
 import applicationFactory from '../../../../testutils/factories/application'
 import personFactory from '../../../../testutils/factories/person'
+import { shouldShowContingencyPlanPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
+
+jest.mock('../../../../utils/applications/shouldShowContingencyPlanPages')
 
 describe('Arson', () => {
   const person = personFactory.build({ name: 'John Wayne' })
@@ -32,7 +35,16 @@ describe('Arson', () => {
     })
   })
 
-  itShouldHaveNextValue(new Arson(body, application), 'contingency-plan-partners')
+  describe('if the contingency-plan-partners page should be shown', () => {
+    ;(shouldShowContingencyPlanPages as jest.Mock).mockReturnValue(true)
+    expect(new Arson(body, application).next()).toBe('contingency-plan-partners')
+  })
+
+  describe('if the contingency-plan-partners page should not be shown', () => {
+    ;(shouldShowContingencyPlanPages as jest.Mock).mockReturnValue(false)
+    expect(new Arson(body, application).next()).toBe('')
+  })
+
   itShouldHavePreviousValue(new Arson(body, application), 'catering')
 
   describe('errors', () => {
