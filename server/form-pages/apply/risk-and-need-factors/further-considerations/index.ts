@@ -8,6 +8,7 @@ import Catering from './catering'
 import Arson from './arson'
 import ContingencyPlanPartners from './contingencyPlanPartners'
 import ContingencyPlanQuestions from './contingencyPlanQuestions'
+import TriggerPlan from './triggerPlan'
 
 import { Task } from '../../../utils/decorators'
 
@@ -23,6 +24,7 @@ import { Task } from '../../../utils/decorators'
     Arson,
     ContingencyPlanPartners,
     ContingencyPlanQuestions,
+    TriggerPlan,
   ],
 })
 export default class FurtherConsiderations {}
