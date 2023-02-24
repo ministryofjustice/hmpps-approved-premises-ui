@@ -4,7 +4,7 @@ import jsonpath from 'jsonpath'
 import type { ErrorMessage, ErrorMessages, ErrorSummary, ErrorsAndUserInput } from '@approved-premises/ui'
 import { SanitisedError } from '../sanitisedError'
 import errorLookup from '../i18n/en/errors.json'
-import { TasklistAPIError } from './errors'
+import { TasklistAPIError, ValidationError } from './errors'
 
 interface InvalidParams {
   propertyName: string
@@ -17,22 +17,16 @@ export const catchValidationErrorOrPropogate = (
   error: SanitisedError | Error,
   redirectPath: string,
 ): void => {
-  if ('data' in error) {
-    const errors = error.data['invalid-params']
-      ? generateErrors(error.data['invalid-params'])
-      : (error.data as Record<string, string>)
+  const errors = extractValidationErrors(error)
 
-    const errorMessages = generateErrorMessages(errors)
-    const errorSummary = generateErrorSummary(errors)
+  const errorMessages = generateErrorMessages(errors)
+  const errorSummary = generateErrorSummary(errors)
 
-    request.flash('errors', errorMessages)
-    request.flash('errorSummary', errorSummary)
-    request.flash('userInput', request.body)
+  request.flash('errors', errorMessages)
+  request.flash('errorSummary', errorSummary)
+  request.flash('userInput', request.body)
 
-    response.redirect(redirectPath)
-  } else {
-    throw error
-  }
+  response.redirect(redirectPath)
 }
 
 export const catchAPIErrorOrPropogate = (request: Request, response: Response, error: SanitisedError | Error): void => {
@@ -70,6 +64,19 @@ export const errorMessage = (field: string, text: string): ErrorMessage => {
       [`data-cy-error-${field}`]: true,
     },
   }
+}
+
+const extractValidationErrors = (error: SanitisedError | Error) => {
+  if ('data' in error) {
+    if (error.data['invalid-params']) {
+      return generateErrors(error.data['invalid-params'])
+    }
+    if (error instanceof ValidationError) {
+      return error.data as Record<string, string>
+    }
+  }
+
+  throw error
 }
 
 const generateErrors = (params: Array<InvalidParams>): Record<string, string> => {
