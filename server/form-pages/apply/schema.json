@@ -1347,6 +1347,32 @@
               }
             }
           ]
+        },
+        "contingency-plan-questions": {
+          "type": "object",
+          "properties": {
+            "noReturn": {
+              "type": "string"
+            },
+            "placementWithdrawn": {
+              "type": "string"
+            },
+            "victimConsiderations": {
+              "type": "string"
+            },
+            "unsuitableAddresses": {
+              "type": "string"
+            },
+            "suitableAddresses": {
+              "type": "string"
+            },
+            "breachInformation": {
+              "type": "string"
+            },
+            "otherConsiderations": {
+              "type": "string"
+            }
+          }
         }
       }
     },
