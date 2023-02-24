@@ -62,7 +62,7 @@ describe('PipeOpdScreening', () => {
 
       expect(page.response()).toEqual({
         [page.title]: 'Yes',
-        [`Additional detail about why ${application.person.name} needs a PIPE placement.`]: 'Some Text',
+        [`Provide any additional detail about why ${application.person.name} needs a PIPE placement.`]: 'Some Text',
       })
     })
   })

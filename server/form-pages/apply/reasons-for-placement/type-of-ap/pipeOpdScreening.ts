@@ -7,11 +7,11 @@ import { convertToTitleCase } from '../../../../utils/utils'
 
 @Page({ name: 'pipe-opd-screening', bodyProperties: ['pipeReferral', 'pipeReferralMoreDetail'] })
 export default class PipeOpdReferral implements TasklistPage {
-  title = 'Has a referral for PIPE placement been recommended in the OPD pathway plan?'
+  title = 'Has an application for PIPE placement been recommended in the OPD pathway plan?'
 
   questions = {
     pipeReferral: this.title,
-    pipeReferralMoreDetail: `Additional detail about why ${this.application.person.name} needs a PIPE placement.`,
+    pipeReferralMoreDetail: `Provide any additional detail about why ${this.application.person.name} needs a PIPE placement.`,
   }
 
   constructor(

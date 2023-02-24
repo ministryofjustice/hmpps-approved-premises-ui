@@ -18,7 +18,7 @@ export type SentenceTypesT = keyof typeof sentenceTypes
 
 @Page({ name: 'sentence-type', bodyProperties: ['sentenceType'] })
 export default class SentenceType implements TasklistPage {
-  title = 'Which of the following best describes the sentence type?'
+  title = 'Which of the following best describes the sentence type the person is on?'
 
   constructor(readonly body: { sentenceType?: SentenceTypesT }, readonly application: Application) {}
 
