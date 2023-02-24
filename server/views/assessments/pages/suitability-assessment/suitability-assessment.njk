@@ -6,14 +6,23 @@
 
     {% for sectionName, question in page.sections %}
 
+    <label class="govuk-fieldset__legend--s" for="{{sectionName}}">{{question}}</label>
+
+
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                        View guidance notes
+                    </span>
+        </summary>
+
+        <div class="govuk-details__text">
+            {% include './partials/' + sectionName + '.njk' %}
+        </div>
+    </details>
+        
         {{ formPageRadios({
                 fieldName: sectionName,
-                fieldset: {
-                    legend: {
-                        text: question,
-                        classes: "govuk-fieldset__legend--s"
-                    }
-                },
                 items: [
                     {
                         value: "yes",
@@ -26,17 +35,6 @@
                 ]
             }, fetchContext()) }}
 
-        <details class="govuk-details" data-module="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                          View guidance notes
-                        </span>
-            </summary>
-
-            <div class="govuk-details__text">
-                {% include './partials/' + sectionName + '.njk' %}
-            </div>
-        </details>
 
         {{ formPageTextarea({
                     fieldName: sectionName + "Comments",
