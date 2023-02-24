@@ -151,8 +151,8 @@ context('Apply', () => {
       const firstRequestData = JSON.parse(requests[0].body).data
       const secondRequestData = JSON.parse(requests[1].body).data
 
-      expect(firstRequestData['basic-information']['sentence-type'].sentenceType).equal('bailPlacement')
-      expect(secondRequestData['basic-information'].situation.situation).equal('bailSentence')
+      expect(firstRequestData['basic-information']['sentence-type'].sentenceType).equal('communityOrder')
+      expect(secondRequestData['basic-information'].situation.situation).equal('riskManagement')
     })
   })
 
