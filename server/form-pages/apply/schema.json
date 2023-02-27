@@ -1373,6 +1373,42 @@
               "type": "string"
             }
           }
+        },
+        "trigger-plan": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "planInPlace": {
+                  "enum": [
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "additionalConditions": {
+                  "enum": [
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "additionalConditionsDetail": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
         }
       }
     },
