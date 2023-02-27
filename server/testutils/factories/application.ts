@@ -9,6 +9,7 @@ import type { ApTypes } from '../../form-pages/apply/reasons-for-placement/type-
 import personFactory from './person'
 import risksFactory from './risks'
 import { DateFormats } from '../../utils/dateUtils'
+import { PartnerAgencyDetails } from '../../@types/ui'
 
 class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
   withReleaseDate(releaseDate = DateFormats.dateObjToIsoDate(faker.date.soon())) {
@@ -69,6 +70,15 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
       page: 'release-type',
       key: 'releaseType',
       value: releaseType,
+    })
+  }
+
+  withContingencyPlanPartners(contingencyPlanPartners: Array<PartnerAgencyDetails>) {
+    return this.withPageResponse({
+      task: 'further-considerations',
+      page: 'contingency-plan-partners',
+      key: 'partnerAgencyDetails',
+      value: contingencyPlanPartners,
     })
   }
 

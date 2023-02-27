@@ -1,5 +1,6 @@
 import { ContingencyPlanQuestionsBody } from '../../../../@types/ui'
 import applicationFactory from '../../../../testutils/factories/application'
+import contingencyPlanPartner from '../../../../testutils/factories/contingencyPlanPartner'
 import contingencyPlanQuestionsBodyFactory from '../../../../testutils/factories/contingencyPlanQuestionsBody'
 import { shouldShowTriggerPlanPages } from '../../../../utils/applications/shouldShowTriggerPlanPage'
 import { itShouldHavePreviousValue } from '../../../shared-examples'
@@ -9,7 +10,8 @@ jest.mock('../../../../utils/applications/shouldShowTriggerPlanPage')
 
 describe('ContingencyPlanQuestions', () => {
   const body = contingencyPlanQuestionsBodyFactory.build()
-  const application = applicationFactory.build()
+  const contingencyPlanPartners = contingencyPlanPartner.buildList(2)
+  const application = applicationFactory.withContingencyPlanPartners(contingencyPlanPartners).build()
 
   describe('title', () => {
     it('should set the title', () => {
@@ -20,9 +22,20 @@ describe('ContingencyPlanQuestions', () => {
   })
 
   describe('body', () => {
-    const page = new ContingencyPlanQuestions(body, application)
+    it('should set the body', () => {
+      const page = new ContingencyPlanQuestions(body, application)
 
-    expect(page.body).toEqual(body)
+      expect(page.body).toEqual(body)
+    })
+
+    it('should add the contingency plan partners name to the body', () => {
+      const page = new ContingencyPlanQuestions(body, application)
+
+      expect(page.contingencyPlanPartnerNames).toEqual([
+        contingencyPlanPartners[0].partnerAgencyName,
+        contingencyPlanPartners[1].partnerAgencyName,
+      ])
+    })
   })
 
   describe('if shouldShowTriggerPlanPages returns true', () => {

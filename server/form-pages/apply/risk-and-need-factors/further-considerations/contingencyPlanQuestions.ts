@@ -1,7 +1,8 @@
-import type {
+import {
   ContingencyPlanQuestionId,
   ContingencyPlanQuestionsBody,
   ContingencyPlanQuestionsRecord,
+  PartnerAgencyDetails,
   TaskListErrors,
 } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
@@ -9,6 +10,7 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { shouldShowTriggerPlanPages } from '../../../../utils/applications/shouldShowTriggerPlanPage'
 import { ApprovedPremisesApplication as Application } from '../../../../@types/shared'
+import { retrieveOptionalQuestionResponseFromApplication } from '../../../../utils/utils'
 
 const questions: ContingencyPlanQuestionsRecord = {
   noReturn: {
@@ -61,7 +63,23 @@ export default class ContingencyPlanQuestions implements TasklistPage {
 
   questions: ContingencyPlanQuestionsRecord = questions
 
-  constructor(public body: ContingencyPlanQuestionsBody, private readonly application: Application) {}
+  contingencyPlanPartnerNames: Array<string>
+
+  constructor(public body: ContingencyPlanQuestionsBody, private readonly application: Application) {
+    const contingencyPlanPartners =
+      retrieveOptionalQuestionResponseFromApplication<Array<PartnerAgencyDetails>>(
+        application,
+        'further-considerations',
+        'contingency-plan-partners',
+        'partnerAgencyDetails',
+      ) || []
+
+    const contingencyPlanPartnersNames = contingencyPlanPartners.map(
+      (partner: { partnerAgencyName: string }) => partner.partnerAgencyName,
+    )
+
+    this.contingencyPlanPartnerNames = contingencyPlanPartnersNames
+  }
 
   previous() {
     return 'contingency-plan-partners'
