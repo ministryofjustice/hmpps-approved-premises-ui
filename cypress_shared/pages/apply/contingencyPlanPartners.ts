@@ -2,9 +2,10 @@ import { ApprovedPremisesApplication } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
+import { PartnerAgencyDetails } from '../../../server/@types/ui'
 
 export default class ContingencyPlanPartnersPage extends ApplyPage {
-  contigencyPlanPartners = []
+  contigencyPlanPartners: Array<PartnerAgencyDetails>
 
   constructor(application: ApprovedPremisesApplication, contigencyPlanPartners) {
     super(

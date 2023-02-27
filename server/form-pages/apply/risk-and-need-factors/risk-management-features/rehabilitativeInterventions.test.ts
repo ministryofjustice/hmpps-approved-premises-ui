@@ -27,8 +27,8 @@ describe('RehabilitativeInterventions', () => {
   describe('if the user answered "yes" to convictedOffences', () => {
     application = applicationFactory
       .withPageResponse({
-        section: 'risk-management-features',
-        task: 'convicted-offences',
+        task: 'risk-management-features',
+        page: 'convicted-offences',
         key: 'response',
         value: 'yes',
       })
@@ -40,8 +40,8 @@ describe('RehabilitativeInterventions', () => {
   describe('if the user didnt answer "yes" to convictedOffences', () => {
     application = applicationFactory
       .withPageResponse({
-        section: 'risk-management-features',
-        task: 'convicted-offences',
+        task: 'risk-management-features',
+        page: 'convicted-offences',
         key: 'response',
         value: 'no',
       })

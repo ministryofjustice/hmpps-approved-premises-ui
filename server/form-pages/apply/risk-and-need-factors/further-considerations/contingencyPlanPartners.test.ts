@@ -32,7 +32,7 @@ describe('ContingencyPlanPartners', () => {
   })
 
   describe('if saveAndContinue is truthy ', () => {
-    itShouldHaveNextValue(new ContingencyPlanPartners({ saveAndContinue: '1', ...body }), '')
+    itShouldHaveNextValue(new ContingencyPlanPartners({ saveAndContinue: '1', ...body }), 'contingency-plan-questions')
   })
 
   itShouldHavePreviousValue(new ContingencyPlanPartners(body), 'arson')

@@ -1,9 +1,10 @@
 import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { ApprovedPremisesApplication as Application } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { yesOrNoResponseWithDetail } from '../../../utils'
+import { shouldShowContingencyPlanPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
 
 export const questionKeys = ['arson'] as const
 
@@ -36,17 +37,14 @@ export default class Arson implements TasklistPage {
     },
   }
 
-  constructor(
-    public body: Partial<YesOrNoWithDetail<'arson'>>,
-    private readonly application: ApprovedPremisesApplication,
-  ) {}
+  constructor(public body: Partial<YesOrNoWithDetail<'arson'>>, private readonly application: Application) {}
 
   previous() {
     return 'catering'
   }
 
   next() {
-    return 'contingency-plan-partners'
+    return shouldShowContingencyPlanPages(this.application) ? 'contingency-plan-partners' : ''
   }
 
   response() {

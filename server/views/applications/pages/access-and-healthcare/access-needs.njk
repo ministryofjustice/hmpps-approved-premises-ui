@@ -57,7 +57,7 @@
   {{ formPageInput({
         fieldName: "interpreterLanguage",
         label: {
-          text: "Which language?"
+          text: page.questions.interpreter.language
         }
       },fetchContext()) }}
   {% endset -%}
@@ -78,7 +78,7 @@
         fieldName: "needsInterpreter",
         fieldset: {
           legend: {
-            text: page.questions.interpreter.language,
+            text: page.questions.interpreter.question,
             classes: "govuk-fieldset__legend--m"
           }
         },

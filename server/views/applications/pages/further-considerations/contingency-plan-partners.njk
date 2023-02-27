@@ -3,6 +3,7 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -34,6 +35,7 @@
     <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
     {{ hiddenInputs | safe }}
+    {{ showErrorSummary(errorSummary) }}
 
     {% for id, label in page.fields %}
       {% set type = "text" %}

@@ -1,10 +1,10 @@
 {
   "basic-information": {
     "sentence-type": {
-      "sentenceType": "bailPlacement"
+      "sentenceType": "communityOrder"
     },
     "situation": {
-      "situation": "bailSentence"
+      "situation": "riskManagement"
     },
     "release-date": {
       "releaseDate-year": "2022",
@@ -352,6 +352,15 @@
         }
       ],
       "saveAndContinue": "1"
+    },
+    "contingency-plan-questions": {
+      "noReturn": "Action to be taken",
+      "placementWithdrawn": "Further action to be taken",
+      "victimConsiderations": "Considerations for victim",
+      "unsuitableAddresses": "An unsuitable address",
+      "suitableAddresses": "Some suitable addresses",
+      "breachInformation": "Breach information to assist decision making",
+      "otherConsiderations": "Some other considerations"
     }
   },
   "move-on": {

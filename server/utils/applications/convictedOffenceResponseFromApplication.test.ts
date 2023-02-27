@@ -6,8 +6,8 @@ describe('convictedOffenceResponseFromApplication', () => {
   it('should return the correct response', () => {
     const application = applicationFactory
       .withPageResponse({
-        section: 'risk-management-features',
-        task: 'convicted-offences',
+        task: 'risk-management-features',
+        page: 'convicted-offences',
         key: 'response',
         value: 'yes',
       })

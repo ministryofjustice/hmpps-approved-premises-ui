@@ -275,3 +275,22 @@ export type PartnerAgencyDetails = {
   phoneNumber: string
   roleInPlan: string
 }
+
+export type ContingencyPlanQuestionId =
+  | 'noReturn'
+  | 'placementWithdrawn'
+  | 'victimConsiderations'
+  | 'unsuitableAddresses'
+  | 'suitableAddresses'
+  | 'breachInformation'
+  | 'otherConsiderations'
+
+export type ContingencyPlanQuestionsBody = Record<ContingencyPlanQuestionId, string>
+
+type ContingencyPlanQuestion = {
+  question: string
+  hint?: string
+  error: string
+}
+
+export type ContingencyPlanQuestionsRecord = Record<ContingencyPlanQuestionId, ContingencyPlanQuestion>
