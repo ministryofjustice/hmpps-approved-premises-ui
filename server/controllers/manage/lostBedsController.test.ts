@@ -91,7 +91,6 @@ describe('LostBedsController', () => {
         notes: lostBed.notes,
         reason: lostBed.reason,
         referenceNumber: lostBed.referenceNumber,
-        numberOfBeds: lostBed.numberOfBeds,
       }
 
       await requestHandler(request, response, next)

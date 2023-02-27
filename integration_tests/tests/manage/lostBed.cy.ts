@@ -49,7 +49,6 @@ context('LostBed', () => {
       expect(requestBody.endDate).equal(lostBed.endDate)
       expect(requestBody.notes).equal(lostBed.notes)
       expect(requestBody.reason).equal(lostBed.reason.id)
-      expect(requestBody.numberOfBeds).equal(lostBed.numberOfBeds.toString())
       expect(requestBody.referenceNumber).equal(lostBed.referenceNumber)
     })
 
