@@ -129,10 +129,16 @@ describe('ApplicationClient', () => {
   describe('submit', () => {
     it('should submit the application', async () => {
       const application = applicationFactory.build()
-      const data = { translatedDocument: application.document }
+      const data = {
+        translatedDocument: application.document,
+        isPipeApplication: true,
+        isWomensApplication: false,
+        targetLocation: 'ABC123',
+        releaseType: 'licence' as const,
+      }
 
       fakeApprovedPremisesApi
-        .post(paths.applications.submission({ id: application.id }))
+        .post(paths.applications.submission({ id: application.id }), data)
         .matchHeader('authorization', `Bearer ${token}`)
         .reply(201)
 

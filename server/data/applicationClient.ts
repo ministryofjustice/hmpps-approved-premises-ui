@@ -45,7 +45,7 @@ export default class ApplicationClient {
   async submit(applicationId: string, submissionData: SubmitApplication): Promise<void> {
     await this.restClient.post({
       path: paths.applications.submission({ id: applicationId }),
-      data: { translatedDocument: submissionData },
+      data: submissionData,
     })
   }
 
