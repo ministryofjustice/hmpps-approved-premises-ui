@@ -11,7 +11,7 @@ const apTypes = {
   esap: 'Enhanced Security AP (ESAP)',
 } as const
 
-type ApTypes = typeof apTypes
+export type ApTypes = typeof apTypes
 
 @Page({ name: 'ap-type', bodyProperties: ['type'] })
 export default class ApType implements TasklistPage {
