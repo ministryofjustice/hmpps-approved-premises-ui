@@ -7,6 +7,8 @@ import type {
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
+import { shouldShowTriggerPlanPages } from '../../../../utils/applications/shouldShowTriggerPlanPage'
+import { ApprovedPremisesApplication as Application } from '../../../../@types/shared'
 
 const questions: ContingencyPlanQuestionsRecord = {
   noReturn: {
@@ -59,14 +61,14 @@ export default class ContingencyPlanQuestions implements TasklistPage {
 
   questions: ContingencyPlanQuestionsRecord = questions
 
-  constructor(public body: ContingencyPlanQuestionsBody) {}
+  constructor(public body: ContingencyPlanQuestionsBody, private readonly application: Application) {}
 
   previous() {
     return 'contingency-plan-partners'
   }
 
   next() {
-    return ''
+    return shouldShowTriggerPlanPages(this.application) ? 'trigger-plan' : ''
   }
 
   response() {
