@@ -1,5 +1,6 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
+import { addDays } from 'date-fns'
 
 import type { ApprovedPremisesApplication, OASysSection } from '@approved-premises/api'
 
@@ -20,6 +21,14 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
         },
       },
     })
+  }
+
+  emergencyApplication() {
+    return this.withReleaseDate(DateFormats.dateObjToIsoDate(addDays(new Date(), 1)))
+  }
+
+  nonemergencyApplication() {
+    return this.withReleaseDate(DateFormats.dateObjToIsoDate(addDays(new Date(), 200)))
   }
 
   withOptionalOasysSectionsSelected(needsLinkedToReoffending: Array<OASysSection>, otherNeeds: Array<OASysSection>) {
