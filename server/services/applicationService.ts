@@ -7,6 +7,7 @@ import type {
   Document,
 } from '@approved-premises/api'
 
+import { applicationSubmissionData } from '../utils/applications/applicationSubmissionData'
 import { isUnapplicable } from '../utils/applications/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import type { ApplicationClient, RestClientBuilder } from '../data'
@@ -114,7 +115,7 @@ export default class ApplicationService {
   async submit(token: string, application: ApprovedPremisesApplication) {
     const client = this.applicationClientFactory(token)
 
-    await client.submit(application.id, { translatedDocument: application.document })
+    await client.submit(application.id, applicationSubmissionData(application))
   }
 
   async getApplicationFromSessionOrAPI(request: Request): Promise<ApprovedPremisesApplication> {
