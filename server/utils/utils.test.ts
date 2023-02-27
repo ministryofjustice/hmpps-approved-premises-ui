@@ -11,6 +11,7 @@ import {
   mapApiPersonRisksForUi,
   pascalCase,
   removeBlankSummaryListItems,
+  retrieveOptionalQuestionResponseFromApplication,
   retrieveQuestionResponseFromApplication,
 } from './utils'
 import risksFactory from '../testutils/factories/risks'
@@ -90,6 +91,25 @@ describe('retrieveQuestionResponseFromApplication', () => {
       'questionResponse',
     )
     expect(questionResponse).toBe('no')
+  })
+})
+
+describe('retrieveOptionalQuestionResponseFromApplication', () => {
+  it("returns undefined if the property doesn't exist", () => {
+    const application = applicationFactory.build()
+    expect(retrieveOptionalQuestionResponseFromApplication(application, 'basic-information', '')).toEqual(undefined)
+  })
+
+  it('returns the property if it does exist', () => {
+    const application = applicationFactory.build({
+      data: {
+        'basic-information': { 'my-page': { myPage: 'no' } },
+      },
+    })
+
+    expect(retrieveOptionalQuestionResponseFromApplication(application, 'basic-information', 'myPage')).toEqual(
+      retrieveQuestionResponseFromApplication(application, 'basic-information', 'myPage'),
+    )
   })
 })
 
