@@ -21,6 +21,7 @@ export default class NonarrivalCreatePage extends Page {
     cy.get('input[name="nonArrivalDate-year"]').type(String(date.getFullYear()))
 
     cy.get('input[type="radio"]').last().check()
+    this.checkRadioByNameAndValue('nonArrival[reason]', nonArrival.reason.id)
 
     cy.get('[name="nonArrival[notes]"]').type(nonArrival.notes)
 

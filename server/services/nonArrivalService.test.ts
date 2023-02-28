@@ -1,21 +1,26 @@
 import NonarrivalService from './nonArrivalService'
-import BookingClient from '../data/bookingClient'
 import nonArrivalFactory from '../testutils/factories/nonArrival'
 import newNonarrivalFactory from '../testutils/factories/newNonArrival'
+import referenceDataFactory from '../testutils/factories/referenceData'
+import { BookingClient, ReferenceDataClient } from '../data'
 
-jest.mock('../data/bookingClient.ts')
+jest.mock('../data')
 
 describe('NonarrivalService', () => {
   const bookingClient = new BookingClient(null) as jest.Mocked<BookingClient>
-  const bookingClientFactory = jest.fn()
+  const referenceDataClient = new ReferenceDataClient(null) as jest.Mocked<ReferenceDataClient>
 
-  const service = new NonarrivalService(bookingClientFactory)
+  const bookingClientFactory = jest.fn()
+  const referenceDataClientFactory = jest.fn()
+
+  const service = new NonarrivalService(bookingClientFactory, referenceDataClientFactory)
 
   const token = 'SOME_TOKEN'
 
   beforeEach(() => {
     jest.resetAllMocks()
     bookingClientFactory.mockReturnValue(bookingClient)
+    referenceDataClientFactory.mockReturnValue(referenceDataClient)
   })
 
   describe('createNonarrival', () => {
@@ -31,6 +36,20 @@ describe('NonarrivalService', () => {
 
       expect(bookingClientFactory).toHaveBeenCalledWith(token)
       expect(bookingClient.markNonArrival).toHaveBeenCalledWith('premisesID', 'bookingId', payload)
+    })
+  })
+
+  describe('getReasons', () => {
+    it('returns an array of reasons', async () => {
+      const reasons = referenceDataFactory.buildList(5)
+      referenceDataClient.getReferenceData.mockResolvedValue(reasons)
+
+      const result = await service.getReasons(token)
+
+      expect(result).toEqual(reasons)
+
+      expect(referenceDataClientFactory).toHaveBeenCalledWith(token)
+      expect(referenceDataClient.getReferenceData).toHaveBeenCalledWith('non-arrival-reasons')
     })
   })
 })

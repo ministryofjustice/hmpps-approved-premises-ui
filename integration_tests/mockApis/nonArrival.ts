@@ -2,6 +2,7 @@ import { SuperAgentRequest } from 'superagent'
 
 import type { Nonarrival } from '@approved-premises/api'
 
+import { ReferenceData } from '@approved-premises/ui'
 import { getMatchingRequests, stubFor } from '../../wiremock'
 import { errorStub } from '../../wiremock/utils'
 
@@ -27,4 +28,16 @@ export default {
         url: `/premises/${args.premisesId}/bookings/${args.bookingId}/non-arrivals`,
       })
     ).body.requests,
+  stubNonArrivalReasons: (referenceData: Array<ReferenceData>): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/reference-data/non-arrival-reasons`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: referenceData,
+      },
+    }),
 }

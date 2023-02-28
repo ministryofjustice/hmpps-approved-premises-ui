@@ -50,16 +50,7 @@
                         }
                     },
                     errorMessage: errors.reason,
-                    items: [
-                        {
-                        value: "absconded",
-                        text: "Absconded"
-                        },
-                        {
-                        value: "recalled",
-                        text: "Recalled"
-                        }
-                    ]
+                    items: convertObjectsToRadioItems(nonArrivalReasons, 'name', 'id', 'nonArrival[reason]')
                     }) }}
 
                 {{ govukTextarea({
