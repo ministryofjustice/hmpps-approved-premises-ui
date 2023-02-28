@@ -3,6 +3,8 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { ApprovedPremisesApplication, OASysSection } from '@approved-premises/api'
 
+import type { ReleaseTypeID } from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
+import type { ApTypes } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import personFactory from './person'
 import risksFactory from './risks'
 import { DateFormats } from '../../utils/dateUtils'
@@ -31,6 +33,33 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
           },
         },
       },
+    })
+  }
+
+  withApType(apType: keyof ApTypes) {
+    return this.withPageResponse({
+      task: 'type-of-ap',
+      page: 'ap-type',
+      key: 'type',
+      value: apType,
+    })
+  }
+
+  withPostcodeArea(postcodeArea: string) {
+    return this.withPageResponse({
+      task: 'location-factors',
+      page: 'describe-location-factors',
+      key: 'postcodeArea',
+      value: postcodeArea,
+    })
+  }
+
+  withReleaseType(releaseType: ReleaseTypeID) {
+    return this.withPageResponse({
+      task: 'basic-information',
+      page: 'release-type',
+      key: 'releaseType',
+      value: releaseType,
     })
   }
 

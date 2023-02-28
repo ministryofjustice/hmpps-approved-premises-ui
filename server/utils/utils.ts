@@ -88,6 +88,23 @@ export const retrieveQuestionResponseFromApplication = <T>(
   }
 }
 
+export const retrieveOptionalQuestionResponseFromApplication = <T>(
+  application: ApprovedPremisesApplication,
+  task: string,
+  page: string,
+  question?: string,
+) => {
+  let response: T
+
+  try {
+    response = retrieveQuestionResponseFromApplication<T>(application, task, page, question)
+  } catch (e) {
+    response = undefined
+  }
+
+  return response
+}
+
 /**
  * Removes any items in an array of summary list items that are blank or undefined
  * @param items an array of summary list items

@@ -1,6 +1,7 @@
 import type { Request } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { DataServices, TaskListErrors } from '@approved-premises/ui'
+import type { SubmitApplication } from '@approved-premises/api'
 
 import type TasklistPage from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
@@ -15,6 +16,7 @@ import activeOffenceFactory from '../testutils/factories/activeOffence'
 import documentFactory from '../testutils/factories/document'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { isUnapplicable } from '../utils/applications/utils'
+import { applicationSubmissionData } from '../utils/applications/applicationSubmissionData'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -34,6 +36,7 @@ jest.mock('../data/applicationClient.ts')
 jest.mock('../data/personClient.ts')
 jest.mock('../utils/applications/utils')
 jest.mock('../form-pages/utils')
+jest.mock('../utils/applications/applicationSubmissionData')
 
 describe('ApplicationService', () => {
   const applicationClient = new ApplicationClient(null) as jest.Mocked<ApplicationClient>
@@ -341,14 +344,16 @@ describe('ApplicationService', () => {
       user: { token },
     })
     const application = applicationFactory.build()
+    const applicationData = createMock<SubmitApplication>()
 
     it('saves data to the session', async () => {
+      ;(applicationSubmissionData as jest.Mock).mockReturnValue(applicationData)
       await service.submit(request.user.token, application)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.submit).toHaveBeenCalledWith(application.id, {
-        translatedDocument: application.document,
-      })
+      expect(applicationClient.submit).toHaveBeenCalledWith(application.id, applicationData)
+
+      expect(applicationSubmissionData).toHaveBeenCalledWith(application)
     })
   })
 
