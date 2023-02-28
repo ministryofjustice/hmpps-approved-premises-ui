@@ -1,9 +1,8 @@
-import { ApprovedPremisesApplication as Application } from '../../@types/shared'
-import { ReleaseTypeID } from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
+import { ApprovedPremisesApplication as Application, ReleaseTypeOption } from '../../@types/shared'
 import { retrieveQuestionResponseFromApplication } from '../utils'
 
 export const shouldShowContingencyPlanPages = (application: Application) => {
-  let releaseType: ReleaseTypeID
+  let releaseType: ReleaseTypeOption
   const sentenceType = retrieveQuestionResponseFromApplication(
     application,
     'basic-information',

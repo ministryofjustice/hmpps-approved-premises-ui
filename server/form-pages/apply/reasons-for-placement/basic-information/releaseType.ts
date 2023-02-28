@@ -1,4 +1,4 @@
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, ReleaseTypeOption } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 
 import { SessionDataError } from '../../../../utils/errors'
@@ -7,16 +7,19 @@ import TasklistPage from '../../../tasklistPage'
 import { SentenceTypesT } from './sentenceType'
 import { Page } from '../../../utils/decorators'
 
-const allReleaseTypes = {
+type SelectableReleaseTypes = Exclude<ReleaseTypeOption, 'in_community'>
+type ReleaseTypeOptions = Record<SelectableReleaseTypes, string>
+
+const allReleaseTypes: ReleaseTypeOptions = {
   licence: 'Licence',
   rotl: 'Release on Temporary Licence (ROTL)',
   hdc: 'Home detention curfew (HDC)',
   pss: 'Post Sentence Supervision (PSS)',
 } as const
 
-type AllReleaseTypes = typeof allReleaseTypes
-export type ReleaseTypeID = keyof AllReleaseTypes
-type ReducedReleaseTypes = Pick<AllReleaseTypes, 'rotl' | 'licence'>
+type ReducedReleaseTypeOptions = Pick<ReleaseTypeOptions, 'rotl' | 'licence'>
+type ReducedReleaseTypes = keyof ReducedReleaseTypeOptions
+
 type SentenceType = Extract<
   SentenceTypesT,
   'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life' | 'nonStatutory'
@@ -28,10 +31,10 @@ export default class ReleaseType implements TasklistPage {
 
   title = 'What type of release will the application support?'
 
-  releaseTypes: AllReleaseTypes | ReducedReleaseTypes
+  releaseTypes: ReleaseTypeOptions | ReducedReleaseTypeOptions
 
   constructor(
-    readonly body: { releaseType?: ReleaseTypeID | keyof ReducedReleaseTypes },
+    readonly body: { releaseType?: SelectableReleaseTypes | ReducedReleaseTypes },
     readonly application: ApprovedPremisesApplication,
   ) {
     const sessionSentenceType = retrieveQuestionResponseFromApplication<SentenceType>(
@@ -43,7 +46,7 @@ export default class ReleaseType implements TasklistPage {
     this.releaseTypes = this.getReleaseTypes(sessionSentenceType)
 
     this.body = {
-      releaseType: body.releaseType as ReleaseTypeID | keyof ReducedReleaseTypes,
+      releaseType: body.releaseType as SelectableReleaseTypes | ReducedReleaseTypes,
     }
   }
 
@@ -79,7 +82,7 @@ export default class ReleaseType implements TasklistPage {
     })
   }
 
-  getReleaseTypes(sessionReleaseType: SentenceType): AllReleaseTypes | ReducedReleaseTypes {
+  getReleaseTypes(sessionReleaseType: SentenceType): ReleaseTypeOptions | ReducedReleaseTypeOptions {
     if (sessionReleaseType === 'standardDeterminate' || sessionReleaseType === 'nonStatutory') {
       return allReleaseTypes
     }

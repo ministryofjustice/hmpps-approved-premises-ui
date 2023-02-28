@@ -1,5 +1,8 @@
-import type { ApprovedPremisesApplication as Application, SubmitApplication } from '@approved-premises/api'
-import type { ReleaseTypeID } from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
+import type {
+  ApprovedPremisesApplication as Application,
+  ReleaseTypeOption,
+  SubmitApplication,
+} from '@approved-premises/api'
 import type { ApTypes } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 
 import { retrieveOptionalQuestionResponseFromApplication, retrieveQuestionResponseFromApplication } from '../utils'
@@ -12,7 +15,7 @@ export const applicationSubmissionData = (application: Application): SubmitAppli
     'describe-location-factors',
     'postcodeArea',
   )
-  const releaseType = retrieveOptionalQuestionResponseFromApplication<ReleaseTypeID>(
+  const releaseType = retrieveOptionalQuestionResponseFromApplication<ReleaseTypeOption>(
     application,
     'basic-information',
     'release-type',

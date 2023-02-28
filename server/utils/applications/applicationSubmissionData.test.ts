@@ -1,11 +1,10 @@
-import type { ReleaseTypeID } from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
-
+import { ReleaseTypeOption } from '@approved-premises/api'
 import applicationFactory from '../../testutils/factories/application'
 import { applicationSubmissionData } from './applicationSubmissionData'
 
 describe('applicationSubmissionData', () => {
   const postcodeArea = 'ABC 123'
-  const releaseType = 'license' as ReleaseTypeID
+  const releaseType = 'license' as ReleaseTypeOption
 
   it('returns the correct data for a pipe application', () => {
     const application = applicationFactory
