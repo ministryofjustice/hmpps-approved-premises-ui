@@ -1,6 +1,6 @@
 import * as nunjucks from 'nunjucks'
 import type { CheckBoxItem, ErrorMessages, RadioItem, SelectOption, SummaryListItem } from '@approved-premises/ui'
-import { sentenceCase } from './utils'
+import { resolvePath, sentenceCase } from './utils'
 import postcodeAreas from '../etc/postcodeAreas.json'
 
 export const dateFieldValues = (fieldName: string, context: Record<string, unknown>, errors: ErrorMessages = {}) => {
@@ -35,7 +35,7 @@ export const convertObjectsToRadioItems = (
     return {
       text: item[textKey],
       value: item[valueKey],
-      checked: context[fieldName] === item[valueKey],
+      checked: resolvePath(context, fieldName) === item[valueKey],
     }
   })
 }
