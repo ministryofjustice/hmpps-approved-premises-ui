@@ -6,6 +6,7 @@ import NonArrivalService from '../../services/nonArrivalService'
 import NonArrivalsController from './nonArrivalsController'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/manage'
+import referenceDataFactory from '../../testutils/factories/referenceData'
 
 jest.mock('../../utils/validation')
 
@@ -18,6 +19,12 @@ describe('NonArrivalsController', () => {
 
   const nonArrivalService = createMock<NonArrivalService>({})
   const nonarrivalsController = new NonArrivalsController(nonArrivalService)
+
+  const nonArrivalReasons = referenceDataFactory.buildList(5)
+
+  beforeEach(() => {
+    nonArrivalService.getReasons.mockResolvedValue(nonArrivalReasons)
+  })
 
   describe('new', () => {
     it('renders the form', async () => {
@@ -37,6 +44,7 @@ describe('NonArrivalsController', () => {
         pageHeading: 'Record a non-arrival',
         errors: {},
         errorSummary: [],
+        nonArrivalReasons,
       })
     })
 
@@ -60,6 +68,7 @@ describe('NonArrivalsController', () => {
         pageHeading: 'Record a non-arrival',
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
+        nonArrivalReasons,
         ...errorsAndUserInput.userInput,
       })
     })

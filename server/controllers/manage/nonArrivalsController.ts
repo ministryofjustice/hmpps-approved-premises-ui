@@ -15,11 +15,14 @@ export default class NonArrivalsController {
       const { premisesId, bookingId } = req.params
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
+      const nonArrivalReasons = await this.nonArrivalService.getReasons(req.user.token)
+
       res.render('nonarrivals/new', {
         premisesId,
         bookingId,
         errors,
         errorSummary,
+        nonArrivalReasons,
         pageHeading: 'Record a non-arrival',
         ...userInput,
       })
