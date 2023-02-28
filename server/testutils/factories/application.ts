@@ -4,6 +4,7 @@ import { addDays } from 'date-fns'
 
 import type { ApprovedPremisesApplication, OASysSection, ReleaseTypeOption } from '@approved-premises/api'
 
+import { SentenceTypesT } from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
 import type { ApTypes } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import personFactory from './person'
 import risksFactory from './risks'
@@ -60,6 +61,15 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
       page: 'describe-location-factors',
       key: 'postcodeArea',
       value: postcodeArea,
+    })
+  }
+
+  withSentenceType(sentenceType: SentenceTypesT) {
+    return this.withPageResponse({
+      task: 'basic-information',
+      page: 'sentence-type',
+      key: 'sentenceType',
+      value: sentenceType,
     })
   }
 
