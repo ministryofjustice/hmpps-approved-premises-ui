@@ -4,6 +4,7 @@ import nonArrivalFactory from '../../../server/testutils/factories/nonArrival'
 import { PremisesShowPage } from '../../../cypress_shared/pages/manage'
 import dateCapacityFactory from '../../../server/testutils/factories/dateCapacity'
 import NonarrivalCreatePage from '../../../cypress_shared/pages/manage/nonarrivalCreate'
+import referenceDataFactory from '../../../server/testutils/factories/referenceData'
 
 context('Nonarrivals', () => {
   it('creates a non-arrival', () => {
@@ -11,10 +12,12 @@ context('Nonarrivals', () => {
     cy.signIn()
 
     // And I have a booking for a premises
+    const nonArrivalReasons = referenceDataFactory.buildList(5)
     const premises = premisesFactory.build()
     const bookingId = 'some-uuid'
     const nonArrival = nonArrivalFactory.build({
       date: '2021-11-01',
+      reason: nonArrivalReasons[1],
     })
 
     cy.task('stubSinglePremises', premises)
@@ -23,6 +26,7 @@ context('Nonarrivals', () => {
       premisesId: premises.id,
       dateCapacities: dateCapacityFactory.buildList(5),
     })
+    cy.task('stubNonArrivalReasons', nonArrivalReasons)
 
     // When I mark the booking as having not arrived
     const page = NonarrivalCreatePage.visit(premises.id, bookingId)
@@ -35,7 +39,7 @@ context('Nonarrivals', () => {
 
       expect(requestBody.notes).equal(nonArrival.notes)
       expect(requestBody.date).equal(nonArrival.date)
-      expect(requestBody.reason).equal('recalled')
+      expect(requestBody.reason).equal(nonArrival.reason.id)
     })
 
     // And I should be redirected to the premises page
