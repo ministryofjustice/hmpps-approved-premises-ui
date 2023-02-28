@@ -11,6 +11,7 @@ import {
   mapApiPersonRisksForUi,
   pascalCase,
   removeBlankSummaryListItems,
+  resolvePath,
   retrieveOptionalQuestionResponseFromApplication,
   retrieveQuestionResponseFromApplication,
 } from './utils'
@@ -341,5 +342,19 @@ describe('linkTo', () => {
     expect(
       linkTo(path('/foo/:id'), { id: '123' }, { text: 'Hello', attributes: { class: 'some-class' } }),
     ).toMatchStringIgnoringWhitespace('<a href="/foo/123" class="some-class">Hello</a>')
+  })
+})
+
+describe('resolvePath', () => {
+  it('returns a property when passed an object and a path', () => {
+    const object = { foo: { bar: 'baz' } }
+    expect(resolvePath(object, 'foo.bar')).toEqual('baz')
+    expect(resolvePath(object, 'foo[bar]')).toEqual('baz')
+  })
+
+  it('returns undefined when passed an object and a path and the property isnt found', () => {
+    const object = { foo: { bar: 'baz' } }
+
+    expect(resolvePath(object, 'foo.baz')).toEqual(undefined)
   })
 })
