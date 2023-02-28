@@ -85,6 +85,7 @@ export type { ProbationRegion } from './models/ProbationRegion';
 export type { Problem } from './models/Problem';
 export type { PropertyStatus } from './models/PropertyStatus';
 export type { Reallocation } from './models/Reallocation';
+export type { ReleaseTypeOption } from './models/ReleaseTypeOption';
 export type { RiskEnvelopeStatus } from './models/RiskEnvelopeStatus';
 export type { RiskTier } from './models/RiskTier';
 export type { RiskTierEnvelope } from './models/RiskTierEnvelope';
