@@ -39,7 +39,19 @@ describe('PersonService', () => {
       expect(postedPerson).toEqual(person)
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
-      expect(personClient.search).toHaveBeenCalledWith('crn')
+      expect(personClient.search).toHaveBeenCalledWith('crn', false)
+    })
+
+    it('sends the checkCaseload boolean to the client method if set', async () => {
+      const person: Person = PersonFactory.build()
+      personClient.search.mockResolvedValue(person)
+
+      const postedPerson = await service.findByCrn(token, 'crn', true)
+
+      expect(postedPerson).toEqual(person)
+
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.search).toHaveBeenCalledWith('crn', true)
     })
   })
 
