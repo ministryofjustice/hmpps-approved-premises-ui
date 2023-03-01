@@ -3,12 +3,13 @@
 /* eslint-disable */
 
 import type { AnyValue } from './AnyValue';
+import type { ReleaseTypeOption } from './ReleaseTypeOption';
 
 export type SubmitApplication = {
     translatedDocument: AnyValue;
-    isPipeApplication?: boolean;
-    isWomensApplication?: boolean;
-    targetLocation?: string;
-    releaseType?: 'licence' | 'rotl' | 'hdc' | 'pss';
+    isPipeApplication: boolean;
+    isWomensApplication: boolean;
+    targetLocation: string;
+    releaseType: ReleaseTypeOption;
 };
 
