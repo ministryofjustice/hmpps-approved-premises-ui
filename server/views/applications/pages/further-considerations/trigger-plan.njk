@@ -1,0 +1,36 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+    <h1 class="govuk-heading-l">
+        {{ page.title }}
+    </h1>
+
+    {{ formPageRadios({
+      fieldName: "planInPlace",
+      fieldset: {
+        legend: {
+          text: page.questions.planInPlace.question,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        text: page.questions.planInPlace.hint
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }, fetchContext()) }}
+
+    {% set key = 'additionalConditions' %}
+    {% set value = page.questions.additionalConditions.question %}
+    {% include "./../../partials/_yes-no-with-detail.njk" %}
+
+{% endblock %}

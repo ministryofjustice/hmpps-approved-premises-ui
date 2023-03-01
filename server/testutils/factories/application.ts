@@ -1,5 +1,6 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
+import { addDays } from 'date-fns'
 
 import type { ApprovedPremisesApplication, OASysSection } from '@approved-premises/api'
 
@@ -8,6 +9,7 @@ import type { ApTypes } from '../../form-pages/apply/reasons-for-placement/type-
 import personFactory from './person'
 import risksFactory from './risks'
 import { DateFormats } from '../../utils/dateUtils'
+import { PartnerAgencyDetails } from '../../@types/ui'
 
 class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
   withReleaseDate(releaseDate = DateFormats.dateObjToIsoDate(faker.date.soon())) {
@@ -20,6 +22,14 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
         },
       },
     })
+  }
+
+  emergencyApplication() {
+    return this.withReleaseDate(DateFormats.dateObjToIsoDate(addDays(new Date(), 1)))
+  }
+
+  nonemergencyApplication() {
+    return this.withReleaseDate(DateFormats.dateObjToIsoDate(addDays(new Date(), 200)))
   }
 
   withOptionalOasysSectionsSelected(needsLinkedToReoffending: Array<OASysSection>, otherNeeds: Array<OASysSection>) {
@@ -60,6 +70,15 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
       page: 'release-type',
       key: 'releaseType',
       value: releaseType,
+    })
+  }
+
+  withContingencyPlanPartners(contingencyPlanPartners: Array<PartnerAgencyDetails>) {
+    return this.withPageResponse({
+      task: 'further-considerations',
+      page: 'contingency-plan-partners',
+      key: 'partnerAgencyDetails',
+      value: contingencyPlanPartners,
     })
   }
 

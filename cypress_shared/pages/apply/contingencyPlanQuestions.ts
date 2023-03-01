@@ -1,5 +1,5 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
-import { ContingencyPlanQuestionsBody } from '../../../server/@types/ui'
+import { ContingencyPlanQuestionsBody, PartnerAgencyDetails } from '../../../server/@types/ui'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
@@ -16,6 +16,15 @@ export default class ContingencyPlanQuestionsPage extends ApplyPage {
       paths.applications.show({ id: application.id }),
     )
     this.contingencyPlanQuestions = contingencyPlanQuestionsBody
+  }
+
+  shouldShowPartnerAgencyNames(partnerAgencies: Array<PartnerAgencyDetails>) {
+    cy.get('h3').contains('Partner agencies added to application').should('be.visible')
+    cy.get('dl').within(() => {
+      partnerAgencies.forEach(partnerAgency => {
+        this.assertDefinition('Partner agency', partnerAgency.partnerAgencyName)
+      })
+    })
   }
 
   completeForm() {

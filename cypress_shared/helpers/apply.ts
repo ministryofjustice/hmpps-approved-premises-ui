@@ -645,6 +645,8 @@ export default class ApplyHelper {
       this.application,
       this.contingencyPlanQuestions,
     )
+
+    contingencyPlanQuestionsPage.shouldShowPartnerAgencyNames(this.contingencyPlanPartners)
     contingencyPlanQuestionsPage.completeForm()
     contingencyPlanQuestionsPage.clickSubmit()
 
