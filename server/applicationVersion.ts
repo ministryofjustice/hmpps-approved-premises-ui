@@ -2,16 +2,20 @@
 /* istanbul ignore file */
 
 import fs from 'fs'
-import path from 'path'
 
-const buildInfoPath = path.resolve(__dirname, '../build-info.json')
+function getBuild() {
+  try {
+    // eslint-disable-next-line import/no-unresolved,global-require
+    return require('../build-info.json')
+  } catch (ex) {
+    return null
+  }
+}
 
 const packageData = JSON.parse(fs.readFileSync('./package.json').toString())
-const { buildNumber, gitRef } = fs.existsSync(buildInfoPath)
-  ? JSON.parse(fs.readFileSync('../build-info.json').toString())
-  : {
-      buildNumber: packageData.version,
-      gitRef: 'unknown',
-    }
+const { buildNumber, gitRef } = getBuild() || {
+  buildNumber: packageData.version,
+  gitRef: 'unknown',
+}
 
 export default { buildNumber, gitRef, packageData }
