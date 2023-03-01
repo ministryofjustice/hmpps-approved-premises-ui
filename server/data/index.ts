@@ -26,7 +26,7 @@ import AssessmentClient from './assessmentClient'
 type RestClientBuilder<T> = (token: string) => T
 
 export const dataAccess = () => ({
-  hmppsAuthClient: new HmppsAuthClient(new TokenStore(createRedisClient({ legacyMode: false }))),
+  hmppsAuthClient: new HmppsAuthClient(new TokenStore(createRedisClient())),
   approvedPremisesClientBuilder: ((token: string) => new PremisesClient(token)) as RestClientBuilder<PremisesClient>,
   bookingClientBuilder: ((token: string) => new BookingClient(token)) as RestClientBuilder<BookingClient>,
   referenceDataClientBuilder: ((token: string) =>
