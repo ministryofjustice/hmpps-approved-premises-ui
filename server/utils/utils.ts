@@ -169,3 +169,16 @@ export const linkTo = <Pattern extends `/${string}`>(
 
   return `<a href="${path(params)}" ${attrBody}>${linkBody}</a>`
 }
+
+/**
+ * Returns a value from an object when given a path, the path can be in dot notation or array notation
+ * @param object object to find property in
+ * @param path path to property
+ * @param defaultValue value to return if property is not found
+ * @returns the property value or the default value
+ */
+export const resolvePath = (object: Record<string, unknown>, path: string) =>
+  path
+    .split(/[.[\]'"]/)
+    .filter(p => Boolean(p))
+    .reduce((acc, curr) => (acc ? acc[curr] : undefined), object)
