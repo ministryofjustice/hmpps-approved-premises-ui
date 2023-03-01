@@ -47,7 +47,21 @@ describe('PersonClient', () => {
         .matchHeader('authorization', `Bearer ${token}`)
         .reply(201, person)
 
-      const result = await personClient.search('crn')
+      const result = await personClient.search('crn', false)
+
+      expect(result).toEqual(person)
+      expect(nock.isDone()).toBeTruthy()
+    })
+
+    it('should return append checkCaseload if checkCaseload is true', async () => {
+      const person = personFactory.build()
+
+      fakeApprovedPremisesApi
+        .get(`/people/search?crn=crn&checkCaseload=true`)
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(201, person)
+
+      const result = await personClient.search('crn', true)
 
       expect(result).toEqual(person)
       expect(nock.isDone()).toBeTruthy()

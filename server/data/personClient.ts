@@ -25,9 +25,17 @@ export default class PersonClient {
     this.restClient = new RestClient('personClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async search(crn: string): Promise<Person> {
+  async search(crn: string, checkCaseload: boolean): Promise<Person> {
+    let query = { crn } as Record<string, string | boolean>
+
+    if (checkCaseload) {
+      query = { ...query, checkCaseload: true }
+    }
+    const queryString: string = qs.stringify(query, { encode: false, indices: false })
+
+    const path = `${paths.people.search({})}?${queryString}`
     const response = await this.restClient.get({
-      path: `${paths.people.search({})}?crn=${crn}`,
+      path,
     })
 
     return response as Person
