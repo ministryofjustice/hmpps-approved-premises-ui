@@ -210,6 +210,15 @@ context('Apply', () => {
       expect(requests).to.have.length(1)
 
       expect(requests[0].url).to.equal(`/applications/${this.application.id}/submission`)
+
+      const body = JSON.parse(requests[0].body)
+      expect(body).to.have.keys(
+        'translatedDocument',
+        'isPipeApplication',
+        'isWomensApplication',
+        'targetLocation',
+        'releaseType',
+      )
     })
 
     // And I should be taken to the confirmation page
