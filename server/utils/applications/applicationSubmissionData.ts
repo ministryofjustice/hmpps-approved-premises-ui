@@ -1,5 +1,9 @@
-import type { ApprovedPremisesApplication as Application, SubmitApplication } from '@approved-premises/api'
-import type { ReleaseTypeID } from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
+import type {
+  ApprovedPremisesApplication as Application,
+  ReleaseTypeOption,
+  SubmitApplication,
+} from '@approved-premises/api'
+import { SentenceTypesT } from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
 import type { ApTypes } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 
 import { retrieveOptionalQuestionResponseFromApplication, retrieveQuestionResponseFromApplication } from '../utils'
@@ -12,12 +16,7 @@ export const applicationSubmissionData = (application: Application): SubmitAppli
     'describe-location-factors',
     'postcodeArea',
   )
-  const releaseType = retrieveOptionalQuestionResponseFromApplication<ReleaseTypeID>(
-    application,
-    'basic-information',
-    'release-type',
-    'releaseType',
-  )
+  const releaseType = getReleaseType(application)
 
   return {
     translatedDocument: application.document,
@@ -26,4 +25,24 @@ export const applicationSubmissionData = (application: Application): SubmitAppli
     targetLocation,
     releaseType,
   }
+}
+
+const getReleaseType = (application: Application): ReleaseTypeOption => {
+  const sentenceType = retrieveQuestionResponseFromApplication<SentenceTypesT>(
+    application,
+    'basic-information',
+    'sentence-type',
+    'sentenceType',
+  )
+
+  if (sentenceType === 'communityOrder' || sentenceType === 'bailPlacement') {
+    return 'in_community'
+  }
+
+  return retrieveOptionalQuestionResponseFromApplication<ReleaseTypeOption>(
+    application,
+    'basic-information',
+    'release-type',
+    'releaseType',
+  )
 }

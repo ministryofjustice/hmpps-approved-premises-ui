@@ -2,9 +2,9 @@ import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import { addDays } from 'date-fns'
 
-import type { ApprovedPremisesApplication, OASysSection } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, OASysSection, ReleaseTypeOption } from '@approved-premises/api'
 
-import type { ReleaseTypeID } from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
+import { SentenceTypesT } from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
 import type { ApTypes } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import personFactory from './person'
 import risksFactory from './risks'
@@ -64,7 +64,16 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
     })
   }
 
-  withReleaseType(releaseType: ReleaseTypeID) {
+  withSentenceType(sentenceType: SentenceTypesT) {
+    return this.withPageResponse({
+      task: 'basic-information',
+      page: 'sentence-type',
+      key: 'sentenceType',
+      value: sentenceType,
+    })
+  }
+
+  withReleaseType(releaseType: ReleaseTypeOption) {
     return this.withPageResponse({
       task: 'basic-information',
       page: 'release-type',
