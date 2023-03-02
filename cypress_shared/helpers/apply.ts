@@ -14,20 +14,7 @@ import {
   PrisonCaseNote,
 } from '@approved-premises/api'
 import { ContingencyPlanQuestionsBody, PartnerAgencyDetails, PersonRisksUI } from '@approved-premises/ui'
-
 import * as ApplyPages from '../pages/apply'
-
-import Page from '../pages'
-
-import adjudicationsFactory from '../../server/testutils/factories/adjudication'
-import acctAlertFactory from '../../server/testutils/factories/acctAlert'
-import documentFactory from '../../server/testutils/factories/document'
-import oasysSectionsFactory from '../../server/testutils/factories/oasysSections'
-import oasysSelectionFactory from '../../server/testutils/factories/oasysSelection'
-import prisonCaseNotesFactory from '../../server/testutils/factories/prisonCaseNotes'
-import contingencyPlanPartnerFactory from '../../server/testutils/factories/contingencyPlanPartner'
-import contingencyPlanQuestionsFactory from '../../server/testutils/factories/contingencyPlanQuestionsBody'
-
 import {
   offenceDetailSummariesFromApplication,
   riskManagementPlanFromApplication,
@@ -35,8 +22,18 @@ import {
   roshSummariesFromApplication,
   supportInformationFromApplication,
 } from './index'
+
 import ApplyPage from '../pages/apply/applyPage'
+import Page from '../pages'
+import acctAlertFactory from '../../server/testutils/factories/acctAlert'
+import adjudicationsFactory from '../../server/testutils/factories/adjudication'
+import contingencyPlanPartnerFactory from '../../server/testutils/factories/contingencyPlanPartner'
+import contingencyPlanQuestionsFactory from '../../server/testutils/factories/contingencyPlanQuestionsBody'
+import documentFactory from '../../server/testutils/factories/document'
 import { documentsFromApplication } from '../../server/utils/assessments/documentUtils'
+import oasysSectionsFactory from '../../server/testutils/factories/oasysSections'
+import oasysSelectionFactory from '../../server/testutils/factories/oasysSelection'
+import prisonCaseNotesFactory from '../../server/testutils/factories/prisonCaseNotes'
 
 export default class ApplyHelper {
   pages = {
@@ -130,17 +127,27 @@ export default class ApplyHelper {
     if (isExceptionalCase) {
       this.completeExceptionalCase()
     }
-    this.completeBasicInformation()
+    this.completeBasicInformation({ isEmergencyApplication: false })
     this.completeTypeOfApSection()
     this.completeOasysSection()
     this.completeRiskManagementSection()
     this.completePrisonInformationSection()
     this.completeAccessAndHealthcareSection()
-    this.completeFurtherConsiderationsSection()
+    this.completeFurtherConsiderationsSection({ isEmergencyApplication: false })
     this.completeMoveOnSection()
     this.completeDocumentsSection()
     this.completeCheckYourAnswersSection()
     this.submitApplication()
+  }
+
+  completeEmergencyApplication() {
+    this.completeBasicInformation({ isEmergencyApplication: true })
+    this.completeTypeOfApSection()
+    this.completeOasysSection()
+    this.completeRiskManagementSection()
+    this.completePrisonInformationSection()
+    this.completeAccessAndHealthcareSection()
+    this.completeFurtherConsiderationsSection({ isEmergencyApplication: true })
   }
 
   numberOfPages() {
@@ -378,7 +385,7 @@ export default class ApplyHelper {
     exceptionDetailsPage.clickSubmit()
   }
 
-  completeBasicInformation() {
+  completeBasicInformation(options: { isEmergencyApplication?: boolean } = {}) {
     const sentenceTypePage = new ApplyPages.SentenceTypePage(this.application)
     sentenceTypePage.completeForm()
     sentenceTypePage.clickSubmit()
@@ -394,6 +401,13 @@ export default class ApplyHelper {
     const placementStartPage = new ApplyPages.PlacementStartPage(this.application)
     placementStartPage.completeForm()
     placementStartPage.clickSubmit()
+
+    if (options?.isEmergencyApplication) {
+      const shortNoticePlacementPage = new ApplyPages.ReasonForShortNoticePage(this.application)
+      shortNoticePlacementPage.completeForm()
+      shortNoticePlacementPage.clickSubmit()
+      this.pages.basicInformation.push(shortNoticePlacementPage)
+    }
 
     const placementPurposePage = new ApplyPages.PlacementPurposePage(this.application)
     placementPurposePage.completeForm()
@@ -597,7 +611,7 @@ export default class ApplyHelper {
     tasklistPage.shouldShowTaskStatus('access-and-healthcare', 'Completed')
   }
 
-  private completeFurtherConsiderationsSection() {
+  private completeFurtherConsiderationsSection({ isEmergencyApplication = false }) {
     // Given I click the 'Detail further considerations for placement' task
     cy.get('[data-cy-task-name="further-considerations"]').click()
 
@@ -650,6 +664,12 @@ export default class ApplyHelper {
     contingencyPlanQuestionsPage.shouldShowPartnerAgencyNames(this.contingencyPlanPartners)
     contingencyPlanQuestionsPage.completeForm()
     contingencyPlanQuestionsPage.clickSubmit()
+
+    if (isEmergencyApplication) {
+      const triggerPlanPage = new ApplyPages.TriggerPlanPage(this.application)
+      triggerPlanPage.completeForm()
+      triggerPlanPage.clickSubmit()
+    }
 
     this.pages.furtherConsiderations = [
       roomSharingPage,

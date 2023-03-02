@@ -1,3 +1,4 @@
+import { addDays } from 'date-fns'
 import {
   EnterCRNPage,
   ListPage,
@@ -5,18 +6,19 @@ import {
   SentenceTypePage,
   StartPage,
 } from '../../../cypress_shared/pages/apply'
-
-import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
-
-import activeOffenceFactory from '../../../server/testutils/factories/activeOffence'
-import applicationFactory from '../../../server/testutils/factories/application'
-import ApplyHelper from '../../../cypress_shared/helpers/apply'
-import Page from '../../../cypress_shared/pages/page'
-import personFactory from '../../../server/testutils/factories/person'
+import { addResponseToApplication, addResponsesToApplication } from '../../../server/testutils/addToApplication'
 import risksFactory, { tierEnvelopeFactory } from '../../../server/testutils/factories/risks'
-import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
+
+import ApplyHelper from '../../../cypress_shared/helpers/apply'
+import { DateFormats } from '../../../server/utils/dateUtils'
 import IsExceptionalCasePage from '../../../cypress_shared/pages/apply/isExceptionalCase'
 import NotEligiblePage from '../../../cypress_shared/pages/apply/notEligiblePage'
+import Page from '../../../cypress_shared/pages/page'
+import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
+import activeOffenceFactory from '../../../server/testutils/factories/activeOffence'
+import applicationFactory from '../../../server/testutils/factories/application'
+import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
+import personFactory from '../../../server/testutils/factories/person'
 import { updateApplicationReleaseDate } from '../../../cypress_shared/helpers'
 
 context('Apply', () => {
@@ -189,6 +191,44 @@ context('Apply', () => {
 
     // Then I should see an error message
     new EnterCRNPage().shouldShowPersonNotInCaseLoadErrorMessage(this.person)
+  })
+
+  it('allows completion of application emergency flow', function test() {
+    // And I complete the application
+    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
+    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    const tomorrow = addDays(new Date(), 1)
+
+    this.application = addResponsesToApplication(this.application, {
+      section: 'basic-information',
+      page: 'release-date',
+      keyValuePairs: {
+        ...DateFormats.dateObjectToDateInputs(tomorrow, 'releaseDate'),
+        releaseDate: DateFormats.dateObjToIsoDate(tomorrow),
+        knowReleaseDate: 'yes',
+      },
+    })
+
+    this.application = addResponseToApplication(this.application, {
+      section: 'basic-information',
+      page: 'reason-for-short-notice',
+      key: 'reason',
+      value: 'riskEscalated',
+    })
+
+    this.application = addResponsesToApplication(this.application, {
+      section: 'further-considerations',
+      page: 'trigger-plan',
+      keyValuePairs: {
+        planInPlace: 'yes',
+        additionalConditions: 'yes',
+        additionalConditionsDetail: 'some details',
+      },
+    })
+
+    apply.setupApplicationStubs(uiRisks)
+    apply.startApplication()
+    apply.completeEmergencyApplication()
   })
 
   it('allows completion of the form', function test() {

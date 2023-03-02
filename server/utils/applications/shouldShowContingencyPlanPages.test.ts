@@ -1,5 +1,5 @@
 import { ApprovedPremisesApplication as Application } from '../../@types/shared'
-import { addResponseToApplication } from '../../testutils/addResponseToApplication'
+import { addResponseToApplication } from '../../testutils/addToApplication'
 import applicationFactory from '../../testutils/factories/application'
 import { shouldShowContingencyPlanPages } from './shouldShowContingencyPlanPages'
 
