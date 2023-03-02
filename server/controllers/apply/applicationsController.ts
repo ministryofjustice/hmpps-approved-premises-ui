@@ -3,13 +3,11 @@ import type { Request, RequestHandler, Response } from 'express'
 import TasklistService from '../../services/tasklistService'
 import ApplicationService from '../../services/applicationService'
 import { PersonService } from '../../services'
-import { catchAPIErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
+import { fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import Apply from '../../form-pages/apply'
 import { firstPageOfApplicationJourney, getResponses, isUnapplicable } from '../../utils/applications/utils'
-import { ApprovedPremisesApplication as Application } from '../../@types/shared'
-import { TasklistAPIError } from '../../utils/errors'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
@@ -89,20 +87,8 @@ export default class ApplicationsController {
 
       const offences = await this.personService.getOffences(req.user.token, crn)
       const indexOffence = offences.find(o => o.offenceId === offenceId)
-      let application: Application
+      const application = await this.applicationService.createApplication(req.user.token, crn, indexOffence)
 
-      try {
-        application = await this.applicationService.createApplication(req.user.token, crn, indexOffence)
-      } catch (error) {
-        if (error.status === 403) {
-          return catchAPIErrorOrPropogate(
-            req,
-            res,
-            new TasklistAPIError(`${error?.data?.person?.crn || 'This CRN'} is not in your caseload`, 'crn'),
-          )
-        }
-        throw error
-      }
       req.session.application = application
 
       return res.redirect(firstPageOfApplicationJourney(application))
