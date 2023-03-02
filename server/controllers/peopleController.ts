@@ -17,6 +17,8 @@ export default class PeopleController {
         } catch (err) {
           if ('data' in err && err.status === 404) {
             this.addErrorMessagesToFlash(req, `No person with an CRN of '${crn}' was found`)
+          } else if (checkCaseload && err.status === 403) {
+            this.addErrorMessagesToFlash(req, `The CRN '${crn}' is not in your caseload`)
           } else {
             throw err
           }

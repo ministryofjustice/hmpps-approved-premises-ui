@@ -62,6 +62,28 @@ describe('PeopleController', () => {
       expect(personService.findByCrn).toHaveBeenCalledWith(token, person.crn, true)
     })
 
+    it('send an error to the flash if the error is a 403 and checkCaseload is set', async () => {
+      const err = { status: 403 }
+
+      personService.findByCrn.mockImplementation(() => {
+        throw err
+      })
+
+      const requestHandler = peopleController.find()
+
+      request.body.crn = 'CRN123'
+      request.body.checkCaseload = '1'
+
+      await requestHandler(request, response, next)
+
+      expect(flashSpy).toHaveBeenCalledWith('errors', {
+        crn: errorMessage('crn', "The CRN 'CRN123' is not in your caseload"),
+      })
+      expect(flashSpy).toHaveBeenCalledWith('errorSummary', [
+        errorSummary('crn', "The CRN 'CRN123' is not in your caseload"),
+      ])
+    })
+
     it('sends an error to the flash if a crn has not been provided', async () => {
       request.body = {}
 
@@ -110,6 +132,20 @@ describe('PeopleController', () => {
       request.body.crn = 'SOME_CRN'
 
       expect(async () => requestHandler(request, response, next)).rejects.toThrow(err)
+    })
+
+    it('throws the error if the error is a 403 and checkCaseload is not set', async () => {
+      const requestHandler = peopleController.find()
+
+      const err = { status: 403 }
+
+      personService.findByCrn.mockImplementation(() => {
+        throw err
+      })
+
+      request.body.crn = 'SOME_CRN'
+
+      expect(async () => requestHandler(request, response, next)).rejects.toMatchObject(err)
     })
   })
 })
