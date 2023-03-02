@@ -1,9 +1,22 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 import ApplyPage from './applyPage'
+import { DateFormats } from '../../../server/utils/dateUtils'
+import { retrieveQuestionResponseFromApplication } from '../../../server/utils/utils'
 
 export default class PlacementStartPage extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
-    super(`the date you want the placement to start?`, application, 'basic-information', 'placement-date')
+    const releaseDate = retrieveQuestionResponseFromApplication(
+      application,
+      'basic-information',
+      'releaseDate',
+    ) as string
+
+    super(
+      `Is ${DateFormats.isoDateToUIDate(releaseDate)} the date you want the placement to start?`,
+      application,
+      'basic-information',
+      'placement-date',
+    )
   }
 
   completeForm() {
