@@ -8,11 +8,11 @@ export default class PeopleController {
 
   find(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { crn } = req.body
+      const { crn, checkCaseload } = req.body
 
       if (crn) {
         try {
-          const person = await this.personService.findByCrn(req.user.token, crn)
+          const person = await this.personService.findByCrn(req.user.token, crn, !!checkCaseload)
           req.flash('crn', person.crn)
         } catch (err) {
           if ('data' in err && err.status === 404) {

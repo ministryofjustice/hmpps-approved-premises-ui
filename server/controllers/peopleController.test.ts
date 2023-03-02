@@ -44,8 +44,22 @@ describe('PeopleController', () => {
       await requestHandler(request, response, next)
 
       expect(response.redirect).toHaveBeenCalledWith('some-referrer/')
-      expect(personService.findByCrn).toHaveBeenCalledWith(token, person.crn)
+      expect(personService.findByCrn).toHaveBeenCalledWith(token, person.crn, false)
       expect(flashSpy).toHaveBeenCalledWith('crn', person.crn)
+    })
+
+    it('should send checkCaseload to the service if it is set', async () => {
+      const person = personFactory.build()
+      personService.findByCrn.mockResolvedValue(person)
+
+      const requestHandler = peopleController.find()
+
+      request.body.crn = person.crn
+      request.body.checkCaseload = '1'
+
+      await requestHandler(request, response, next)
+
+      expect(personService.findByCrn).toHaveBeenCalledWith(token, person.crn, true)
     })
 
     it('sends an error to the flash if a crn has not been provided', async () => {
