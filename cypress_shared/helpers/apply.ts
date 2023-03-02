@@ -165,6 +165,7 @@ export default class ApplyHelper {
   private stubPersonEndpoints() {
     cy.task('stubPersonRisks', { person: this.person, risks: this.application.risks })
     cy.task('stubFindPerson', { person: this.person })
+    cy.task('stubFindPersonAndCheckCaseload', { person: this.person })
   }
 
   private stubOffences() {
