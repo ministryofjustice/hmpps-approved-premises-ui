@@ -7,6 +7,9 @@
 {% set pageTitle = applicationName + " - " + page.title %}
 {% set mainClasses = "app-container govuk-body" %}
 
+{% set nomsNumber = page.application.person.nomsNumber if page.application.person.nomsNumber else 
+  "" %}
+
 {% block content %}
   {{ govukBackLink({
       text: "Back",
@@ -55,7 +58,7 @@
                 text: "NOMS Number"
               },
               value: {
-                text: page.application.person.nomsNumber
+                text: nomsNumber
               }
             },
             {
