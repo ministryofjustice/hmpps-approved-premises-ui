@@ -7,16 +7,16 @@ import CateringPage from './catering'
 import CheckYourAnswersPage from './checkYourAnswersPage'
 import ComplexCaseBoard from './complexCaseBoard'
 import ConfirmDetailsPage from './confirmDetails'
-import ConvictedOffences from './convictedOffences'
 import ContingencyPlanPartnersPage from './contingencyPlanPartners'
 import ContingencyPlanQuestionsPage from './contingencyPlanQuestions'
+import ConvictedOffences from './convictedOffences'
 import CovidPage from './covid'
 import DateOfOffence from './dateOfOffence'
 import DescribeLocationFactors from './describeLocationFactors'
 import EnterCRNPage from './enterCrn'
-import IsExceptionalCasePage from './isExceptionalCase'
 import ExceptionDetailsPage from './ExceptionDetails'
 import ForeignNationalPage from './foreignNational'
+import IsExceptionalCasePage from './isExceptionalCase'
 import ListPage from './list'
 import OffenceDetailsPage from './offenceDetails'
 import OptionalOasysSectionsPage from './optionalOasysSections'
@@ -25,6 +25,7 @@ import PlacementPurposePage from './placementPurpose'
 import PlacementStartPage from './placementStart'
 import PlansInPlacePage from './plansInPlace'
 import PreviousPlacements from './previousPlacements'
+import ReasonForShortNoticePage from './reasonForShortNoticePage'
 import RehabilitativeInterventions from './rehabilitativeInterventions'
 import ReleaseDatePage from './releaseDate'
 import RelocationRegionPage from './relocationRegion'
@@ -40,6 +41,7 @@ import StartPage from './startPage'
 import SubmissionConfirmation from './submissionConfirmation'
 import SupportingInformationPage from './supportingInformation'
 import TaskListPage from './taskListPage'
+import TriggerPlanPage from './triggerPlanPage'
 import TypeOfAccommodationPage from './typeOfAccommodation'
 import TypeOfApPage from './typeOfAp'
 import TypeOfConvictedOffence from './typeOfConvictedOffence'
@@ -73,6 +75,7 @@ export {
   PlacementStartPage,
   PlansInPlacePage,
   PreviousPlacements,
+  ReasonForShortNoticePage,
   RehabilitativeInterventions,
   ReleaseDatePage,
   RelocationRegionPage,
@@ -88,6 +91,7 @@ export {
   SubmissionConfirmation,
   SupportingInformationPage,
   TaskListPage,
+  TriggerPlanPage,
   TypeOfAccommodationPage,
   TypeOfApPage,
   TypeOfConvictedOffence,
