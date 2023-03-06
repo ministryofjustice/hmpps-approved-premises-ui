@@ -31,6 +31,28 @@ export default {
         jsonBody: args.person,
       },
     }),
+  stubFindPersonAndCheckCaseload: (args: { person: Person }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/people/search?crn=${args.person.crn}&checkCaseload=true`,
+      },
+      response: {
+        status: 201,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.person,
+      },
+    }),
+  stubFindPersonNotInCaseload: (args: { person: Person }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/people/search?crn=${args.person.crn}&checkCaseload=true`,
+      },
+      response: {
+        status: 403,
+      },
+    }),
   stubPersonNotFound: (args: { person: Person }): SuperAgentRequest =>
     stubFor({
       request: {

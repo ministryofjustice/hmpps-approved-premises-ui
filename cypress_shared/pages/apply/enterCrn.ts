@@ -17,7 +17,7 @@ export default class EnterCRNPage extends Page {
   }
 
   public shouldShowPersonNotInCaseLoadErrorMessage(person: Person): void {
-    cy.get('.govuk-error-summary').should('contain', `${person.crn} is not in your caseload`)
-    cy.get(`[data-cy-error-crn]`).should('contain', `${person.crn} is not in your caseload`)
+    cy.get('.govuk-error-summary').should('contain', `The CRN '${person.crn}' is not in your caseload`)
+    cy.get(`[data-cy-error-crn]`).should('contain', `The CRN '${person.crn}' is not in your caseload`)
   }
 }

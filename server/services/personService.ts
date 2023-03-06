@@ -16,10 +16,10 @@ import { mapApiPersonRisksForUi } from '../utils/utils'
 export default class PersonService {
   constructor(private readonly personClientFactory: RestClientBuilder<PersonClient>) {}
 
-  async findByCrn(token: string, crn: string): Promise<Person> {
+  async findByCrn(token: string, crn: string, checkCaseload = false): Promise<Person> {
     const personClient = this.personClientFactory(token)
 
-    const person = await personClient.search(crn)
+    const person = await personClient.search(crn, checkCaseload)
     return person
   }
 

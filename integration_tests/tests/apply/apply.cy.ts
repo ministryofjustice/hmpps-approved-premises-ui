@@ -176,11 +176,17 @@ context('Apply', () => {
 
   it('shows an error message if the person is not in the users caseload', function test() {
     // And the person I am about to search for is not in my caseload
-    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
-    apply.setupApplicationStubs()
-    cy.task('stubApplicationForUserNotInCaseload', { application: this.application })
+    cy.task('stubFindPersonNotInCaseload', { person: this.person })
 
-    apply.startApplication()
+    // And I have started an application
+    const startPage = StartPage.visit()
+    startPage.startApplication()
+
+    // When I enter a CRN
+    const crnPage = new EnterCRNPage()
+    crnPage.enterCrn(this.person.crn)
+    crnPage.clickSubmit()
+
     // Then I should see an error message
     new EnterCRNPage().shouldShowPersonNotInCaseLoadErrorMessage(this.person)
   })
