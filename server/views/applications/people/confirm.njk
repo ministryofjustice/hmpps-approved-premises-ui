@@ -6,6 +6,7 @@
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
+{% set nomsNumber = nomsNumber if nomsNumber else "" %}
 
 {% block content %}
   {{ govukBackLink({

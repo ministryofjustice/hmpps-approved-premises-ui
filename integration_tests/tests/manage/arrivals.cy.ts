@@ -1,8 +1,8 @@
-import premisesFactory from '../../../server/testutils/factories/premises'
-import arrivalFactory from '../../../server/testutils/factories/arrival'
-
 import { ArrivalCreatePage, PremisesShowPage } from '../../../cypress_shared/pages/manage'
+
+import arrivalFactory from '../../../server/testutils/factories/arrival'
 import dateCapacityFactory from '../../../server/testutils/factories/dateCapacity'
+import premisesFactory from '../../../server/testutils/factories/premises'
 import staffMemberFactory from '../../../server/testutils/factories/staffMember'
 
 const staff = staffMemberFactory.buildList(5, { keyWorker: true })
@@ -74,11 +74,11 @@ context('Arrivals', () => {
     cy.task('stubArrivalErrors', {
       premisesId: premises.id,
       bookingId,
-      params: ['date', 'expectedDepartureDate', 'keyWorkerStaffCode'],
+      params: ['arrivalDate', 'expectedDepartureDate', 'keyWorkerStaffCode'],
     })
     page.submitArrivalFormWithoutFields()
 
     // Then I should see error messages relating to that field
-    page.shouldShowErrorMessagesForFields(['date', 'expectedDepartureDate'])
+    page.shouldShowErrorMessagesForFields(['arrivalDate', 'expectedDepartureDate'])
   })
 })
