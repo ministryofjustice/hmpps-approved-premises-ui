@@ -5,6 +5,8 @@
 {% extends "../layout.njk" %}
 
 {% set columnClasses= "govuk-grid-column-full" %}
+{% set nomsNumber = page.document.application.person.nomsNumber if page.document.application.person.nomsNumber else 
+  "" %}
 
 {% block questions %}
 
@@ -56,7 +58,7 @@
                 text: "NOMS Number"
               },
               value: {
-                text: page.document.application.person.nomsNumber
+                text: nomsNumber
               }
             },
             {
