@@ -13,4 +13,6 @@ export default Factory.define<LostBed>(() => ({
   numberOfBeds: faker.datatype.number({ min: 1, max: 10 }),
   referenceNumber: faker.datatype.uuid(),
   reason: referenceDataFactory.lostBedReasons().build(),
+  status: 'active',
+  cancellation: null,
 }))
