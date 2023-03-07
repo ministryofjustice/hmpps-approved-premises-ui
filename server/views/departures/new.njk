@@ -72,7 +72,7 @@
                 <input type="time" id="dateTime-time" name="dateTime-time" class="govuk-input govuk-input--width-5 govuk-!-margin-bottom-4">
 
                 {{ govukRadios({
-                    name: "departure[reason]",
+                    name: "departure[reasonId]",
                     id: "reason",
                     fieldset: {
                         legend: {
@@ -80,12 +80,12 @@
                         classes: "govuk-fieldset__legend--m"
                         }
                     },
-                    errorMessage: errors.reason,
+                    errorMessage: errors.reasonId,
                     items: convertObjectsToRadioItems(referenceData.departureReasons, 'name', 'id', 'departure[reason]')
                     }) }}
 
                 {{ govukRadios({
-                    name: "departure[moveOnCategory]",
+                    name: "departure[moveOnCategoryId]",
                     id: "moveOnCategory",
                     fieldset: {
                         legend: {
@@ -93,20 +93,20 @@
                         classes: "govuk-fieldset__legend--m"
                         }
                     },
-                    errorMessage: errors.moveOnCategory,
+                    errorMessage: errors.moveOnCategoryId,
                     items: convertObjectsToRadioItems(referenceData.moveOnCategories, 'name', 'id', 'departure[moveOnCategory]')
                     }) }}
 
                 {{ govukRadios({
-                    name: "departure[destinationProvider]",
-                    id: "destinationProvider",
+                    name: "departure[destinationProviderId]",
+                    id: "destinationProviderId",
                     fieldset: {
                         legend: {
                         text: "Destination provider",
                         classes: "govuk-fieldset__legend--m"
                         }
                     },
-                    errorMessage: errors.destinationProvider,
+                    errorMessage: errors.destinationProviderId,
                     items: convertObjectsToRadioItems(referenceData.destinationProviders, 'name', 'id', 'departure[destinationProvider]')
                     }) }}
 
