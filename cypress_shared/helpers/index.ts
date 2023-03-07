@@ -6,6 +6,7 @@ import {
   ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
   ArrayOfOASysRiskToSelfQuestions,
   ArrayOfOASysSupportingInformationQuestions,
+  UserRole,
 } from '@approved-premises/api'
 import { TableRow } from '@approved-premises/ui'
 import { add } from 'date-fns'
@@ -81,6 +82,11 @@ const updateApplicationReleaseDate = (data: AnyValue) => {
   }
 }
 
+const signInWithRoles = (roles: Array<UserRole>) => {
+  cy.task('stubAuthUser', { roles })
+  cy.signIn()
+}
+
 export {
   roshSummariesFromApplication,
   offenceDetailSummariesFromApplication,
@@ -90,4 +96,5 @@ export {
   tableRowsToArrays,
   updateApplicationReleaseDate,
   shouldShowTableRows,
+  signInWithRoles,
 }
