@@ -12,11 +12,11 @@ import assessRoutes from './assess'
 export default function routes(controllers: Controllers): Router {
   const router = Router()
 
-  const { applicationController } = controllers
+  const { dashboardController } = controllers
 
   const { get } = actions(router)
 
-  get('/', applicationController.index())
+  get('/', dashboardController.index())
 
   manageRoutes(controllers, router)
   applyRoutes(controllers, router)
