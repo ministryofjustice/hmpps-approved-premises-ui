@@ -46,9 +46,9 @@ context('Departures', () => {
       const requestBody = JSON.parse(requests[0].body)
 
       expect(requestBody.dateTime).equal(departure.dateTime)
-      expect(requestBody.reason).equal(departure.reason.id)
-      expect(requestBody.destinationProvider).equal(departure.destinationProvider.id)
-      expect(requestBody.moveOnCategory).equal(departure.moveOnCategory.id)
+      expect(requestBody.reasonId).equal(departure.reason.id)
+      expect(requestBody.destinationProviderId).equal(departure.destinationProvider.id)
+      expect(requestBody.moveOnCategoryId).equal(departure.moveOnCategory.id)
       expect(requestBody.notes).equal(departure.notes)
     })
 
@@ -82,12 +82,12 @@ context('Departures', () => {
     cy.task('stubDepartureErrors', {
       premisesId: premises[0].id,
       bookingId: booking.id,
-      params: ['dateTime', 'destinationProvider', 'moveOnCategory', 'reason'],
+      params: ['dateTime', 'destinationProviderId', 'moveOnCategoryId', 'reasonId'],
     })
 
     page.clickSubmit()
 
     // Then I should see error messages relating to that field
-    page.shouldShowErrorMessagesForFields(['dateTime', 'reason', 'moveOnCategory', 'destinationProvider'])
+    page.shouldShowErrorMessagesForFields(['dateTime', 'reasonId', 'moveOnCategoryId', 'destinationProviderId'])
   })
 })
