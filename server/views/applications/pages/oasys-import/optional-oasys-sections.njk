@@ -23,7 +23,8 @@
 
     <h2 class="govuk-heading-s">Needs linked to risk of serious harm are automatically imported</h2>
 
-    {{
+    {% if page.allNeedsLinkedToReoffending.length %}
+        {{
         govukCheckboxes({
             idPrefix: "needsLinkedToReoffending",
             name: "needsLinkedToReoffending",
@@ -37,8 +38,10 @@
             items: OasysImportUtils.sectionCheckBoxes(page.allNeedsLinkedToReoffending, page.body.needsLinkedToReoffending)
         })
     }}
+    {% endif %}
 
-    {{
+    {% if page.allOtherNeeds.length %}
+        {{
         govukCheckboxes({
             idPrefix: "otherNeeds",
             name: "otherNeeds",
@@ -52,5 +55,7 @@
             items: OasysImportUtils.sectionCheckBoxes(page.allOtherNeeds, page.body.otherNeeds)
         })
     }}
+
+    {% endif %}
 
 {% endblock %}
