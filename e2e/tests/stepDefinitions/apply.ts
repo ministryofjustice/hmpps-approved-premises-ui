@@ -23,6 +23,7 @@ Given('I fill in and complete an application', () => {
     application.id = id
 
     const apply = new ApplyHelper(application, person, [], 'e2e')
+    apply.initializeE2e()
 
     apply.completeApplication(true)
   })
