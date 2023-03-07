@@ -91,12 +91,14 @@ describe('LostBedsController', () => {
         notes: lostBed.notes,
         reason: lostBed.reason,
         referenceNumber: lostBed.referenceNumber,
+        numberOfBeds: lostBed.numberOfBeds,
       }
 
       await requestHandler(request, response, next)
 
       expect(lostBedService.createLostBed).toHaveBeenCalledWith(token, request.params.premisesId, {
         ...request.body.lostBed,
+        numberOfBeds: Number(lostBed.numberOfBeds),
         startDate: '2022-08-22',
         endDate: '2022-09-22',
       })
