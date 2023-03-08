@@ -17,6 +17,8 @@ export default class LostBedCreatePage extends Page {
     const startDate = new Date(Date.parse(lostBed.startDate))
     const endDate = new Date(Date.parse(lostBed.endDate))
 
+    cy.get('input[name="lostBed[numberOfBeds]"]').type(String(lostBed.numberOfBeds))
+
     cy.get('input[name="startDate-day"]').type(String(startDate.getDate()))
     cy.get('input[name="startDate-month"]').type(String(startDate.getMonth() + 1))
     cy.get('input[name="startDate-year"]').type(String(startDate.getFullYear()))

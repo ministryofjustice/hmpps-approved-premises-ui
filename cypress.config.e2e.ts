@@ -37,5 +37,5 @@ export default defineConfig({
     supportFile: false,
   },
   viewportHeight: 3000,
-  viewportWidth: 660,
+  viewportWidth: 1000,
 })

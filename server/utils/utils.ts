@@ -68,7 +68,7 @@ export const sentenceCase = (string: string) => Case.sentence(string)
 export const lowerCase = (string: string) => Case.lower(string)
 
 /**
- * Retrieves response for a given question from the application object.
+ * Retrieves response for a given question from the application object or throws an error if it does not exist.
  * @param application the application to fetch the response from.
  * @param task the task to retrieve the response for.
  * @param page the page that we need the response for in camelCase.
@@ -88,6 +88,14 @@ export const retrieveQuestionResponseFromApplication = <T>(
   }
 }
 
+/**
+ * Retrieves response for a given question from the application object or returns undefined if it does not exist.
+ * @param application the application to fetch the response from.
+ * @param task the task to retrieve the response for.
+ * @param page the page that we need the response for in camelCase.
+ * @param {string} question [question=page] the page that we need the response for. Defaults to the value of `page`.
+ * @returns the response for the given task/page/question.
+ */
 export const retrieveOptionalQuestionResponseFromApplication = <T>(
   application: ApprovedPremisesApplication,
   task: string,

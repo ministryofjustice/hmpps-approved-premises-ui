@@ -14,6 +14,7 @@ import {
   PrisonCaseNote,
 } from '@approved-premises/api'
 import { ContingencyPlanQuestionsBody, PartnerAgencyDetails, PersonRisksUI } from '@approved-premises/ui'
+
 import * as ApplyPages from '../pages/apply'
 import {
   offenceDetailSummariesFromApplication,
@@ -87,9 +88,8 @@ export default class ApplyHelper {
     private readonly type: 'e2e' | 'integration',
   ) {}
 
-  initializeE2e(oasysSectionsLinkedToReoffending: Array<OASysSection>, otherOasysSections: Array<OASysSection>) {
-    this.oasysSectionsLinkedToReoffending = oasysSectionsLinkedToReoffending
-    this.otherOasysSections = otherOasysSections
+  initializeE2e() {
+    this.addContingencyPlanDetails()
   }
 
   setupApplicationStubs(uiRisks?: PersonRisksUI) {
@@ -160,9 +160,7 @@ export default class ApplyHelper {
       ...this.pages.locationFactors,
       ...this.pages.accessAndHealthcare,
       ...this.pages.furtherConsiderations,
-      // we submit the contingency plan partners page 3x (2x adding partners, 1x submitting)
-      ...this.pages.contingencyPlanPartners,
-      ...this.pages.contingencyPlanPartners,
+      ...this.contingencyPlanPartners,
       ...this.pages.contingencyPlanPartners,
       ...this.pages.moveOn,
       ...this.selectedDocuments,
@@ -362,6 +360,7 @@ export default class ApplyHelper {
         roleInPlan: 'Test role 2',
       }),
     ]
+
     this.contingencyPlanQuestions = contingencyPlanQuestionsFactory.build({
       noReturn: 'Action to be taken',
       placementWithdrawn: 'Further action to be taken',
