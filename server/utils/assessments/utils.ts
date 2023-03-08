@@ -334,7 +334,8 @@ const daysUntilDue = (assessment: Assessment): number => {
 
 const getStatus = (assessment: Assessment): string => {
   if (assessment.status === 'completed') {
-    return `<strong class="govuk-tag govuk-tag">Completed</strong>`
+    if (assessment.decision === 'accepted') return `<strong class="govuk-tag govuk-tag--green">Suitable</strong>`
+    if (assessment.decision === 'rejected') return `<strong class="govuk-tag govuk-tag--red">Rejected</strong>`
   }
 
   if (assessment.data) {

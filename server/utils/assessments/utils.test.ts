@@ -194,10 +194,18 @@ describe('utils', () => {
       expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--blue">In progress</strong>')
     })
 
-    it('returns Completed for a completed assessment', () => {
-      const assessment = assessmentFactory.build({ status: 'completed' })
+    describe('completed assessments', () => {
+      it('returns "suitable" for an approved assessment assessment', () => {
+        const assessment = assessmentFactory.build({ status: 'completed', decision: 'accepted' })
 
-      expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag">Completed</strong>')
+        expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--green">Suitable</strong>')
+      })
+
+      it('returns "rejected" for an approved assessment assessment', () => {
+        const assessment = assessmentFactory.build({ status: 'completed', decision: 'rejected' })
+
+        expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--red">Rejected</strong>')
+      })
     })
   })
 
