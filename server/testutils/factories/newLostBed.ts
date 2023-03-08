@@ -19,7 +19,7 @@ export default Factory.define<NewLostBed>(() => {
     'endDate-day': endDate.getDate().toString(),
     'endDate-month': endDate.getMonth().toString(),
     'endDate-year': endDate.getFullYear().toString(),
-    numberOfBeds: faker.datatype.number({ max: 10 }),
+    numberOfBeds: faker.datatype.number({ max: 10 }).toString(),
     referenceNumber: faker.datatype.uuid(),
     reason: referenceDataFactory.lostBedReasons().build().id,
     serviceName: 'approved-premises',

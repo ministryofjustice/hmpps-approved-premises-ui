@@ -32,9 +32,14 @@ export default class LostBedsController {
 
       const { startDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'startDate')
       const { endDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'endDate')
-      const numberOfBeds = Number(req.body.numberOfBeds)
 
-      const lostBed: NewLostBed = { ...req.body.lostBed, startDate, endDate, numberOfBeds }
+      const lostBed: NewLostBed = {
+        ...req.body.lostBed,
+        startDate,
+        endDate,
+        numberOfBeds: req.body.numberOfBeds ? Number(req.body.numberOfBeds) : undefined,
+        serviceName: 'approved-premises',
+      }
 
       try {
         await this.lostBedService.createLostBed(req.user.token, premisesId, lostBed)
