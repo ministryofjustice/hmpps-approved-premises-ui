@@ -38,6 +38,7 @@ export default class LostBedsController {
         startDate,
         endDate,
         numberOfBeds: req.body.numberOfBeds ? Number(req.body.numberOfBeds) : undefined,
+        serviceName: 'approved-premises',
       }
 
       try {
