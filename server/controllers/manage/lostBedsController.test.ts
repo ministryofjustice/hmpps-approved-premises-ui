@@ -101,6 +101,7 @@ describe('LostBedsController', () => {
         numberOfBeds: Number(lostBed.numberOfBeds),
         startDate: '2022-08-22',
         endDate: '2022-09-22',
+        serviceName: 'approved-premises',
       })
       expect(request.flash).toHaveBeenCalledWith('success', 'Lost bed logged')
       expect(response.redirect).toHaveBeenCalledWith(paths.premises.show({ premisesId: request.params.premisesId }))
