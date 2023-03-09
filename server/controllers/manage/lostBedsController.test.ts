@@ -88,10 +88,7 @@ describe('LostBedsController', () => {
         'endDate-year': 2022,
         'endDate-month': 9,
         'endDate-day': 22,
-        notes: lostBed.notes,
-        reason: lostBed.reason,
-        referenceNumber: lostBed.referenceNumber,
-        numberOfBeds: lostBed.numberOfBeds,
+        lostBed,
       }
 
       await requestHandler(request, response, next)
