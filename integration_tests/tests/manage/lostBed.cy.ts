@@ -50,6 +50,7 @@ context('LostBed', () => {
       expect(requestBody.notes).equal(lostBed.notes)
       expect(requestBody.reason).equal(lostBed.reason.id)
       expect(requestBody.referenceNumber).equal(lostBed.referenceNumber)
+      expect(requestBody.numberOfBeds).equal(lostBed.numberOfBeds)
     })
 
     // And I should be navigated to the premises detail page and see the confirmation message
