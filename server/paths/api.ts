@@ -24,6 +24,8 @@ const oasysPath = personPath.path('oasys')
 
 const usersPath = path('/users')
 
+const tasksPath = path('/tasks')
+
 const applyPaths = {
   applications: {
     show: singleApplicationPath,
@@ -79,6 +81,9 @@ export default {
       create: clarificationNotePaths.notes,
       update: clarificationNotePaths.notes.path(':clarificationNoteId'),
     },
+  },
+  tasks: {
+    index: tasksPath,
   },
   people: {
     risks: {

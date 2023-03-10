@@ -22,6 +22,7 @@ import TokenStore from './tokenStore'
 import LostBedClient from './lostBedClient'
 import ApplicationClient from './applicationClient'
 import AssessmentClient from './assessmentClient'
+import TaskClient from './taskClient'
 
 type RestClientBuilder<T> = (token: string) => T
 
@@ -36,6 +37,7 @@ export const dataAccess = () => ({
   applicationClientBuilder: ((token: string) => new ApplicationClient(token)) as RestClientBuilder<ApplicationClient>,
   assessmentClientBuilder: ((token: string) => new AssessmentClient(token)) as RestClientBuilder<AssessmentClient>,
   userClientBuilder: ((token: string) => new UserClient(token)) as RestClientBuilder<UserClient>,
+  taskClientBuilder: ((token: string) => new TaskClient(token)) as RestClientBuilder<TaskClient>,
 })
 
 export type DataAccess = ReturnType<typeof dataAccess>
@@ -51,4 +53,5 @@ export {
   ApplicationClient,
   AssessmentClient,
   UserClient,
+  TaskClient,
 }

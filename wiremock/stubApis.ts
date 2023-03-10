@@ -18,6 +18,7 @@ import lostBedStubs from './lostBedStubs'
 import personStubs from './personStubs'
 import applicationStubs from './applicationStubs'
 import assessmentStubs from './assessmentStubs'
+import taskStubs from './taskStubs'
 import userStubs from './userStubs'
 
 import * as referenceDataStubs from './referenceDataStubs'
@@ -139,6 +140,7 @@ stubs.push(
   ...personStubs,
   ...applicationStubs,
   ...assessmentStubs,
+  ...taskStubs,
   ...userStubs,
   ...Object.values(referenceDataStubs),
 )
