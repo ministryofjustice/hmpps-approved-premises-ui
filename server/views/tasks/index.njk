@@ -1,0 +1,110 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+
+{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set mainClasses = "app-container govuk-body assessments--index" %}
+
+{% set allocatedHtml %}
+{{
+    govukTable({
+        attributes: {
+        'data-module': 'moj-sortable-table'
+        },
+        caption: "Allocated Tasks",
+        captionClasses: "govuk-table__caption--m",
+        firstCellIsHeader: true,
+        head: [
+        {
+            text: "Person"
+        },
+        {
+            text: "Days until due date",
+            attributes: {
+            "aria-sort": "none"
+            }
+        },
+        {
+            text: "Allocated to"
+        },
+        {
+            text: "Status"
+        },
+        {
+            text: "Task type"
+        }
+        ],
+        rows: TaskUtils.allocatedTableRows(tasks.allocated)
+    })
+    }}
+{% endset -%}
+
+{% set unallocatedHtml %}
+{{
+  govukTable({
+    attributes: {
+      'data-module': 'moj-sortable-table'
+    },
+    caption: "Unallocated Tasks",
+    captionClasses: "govuk-table__caption--m",
+    firstCellIsHeader: true,
+    head: [
+        {
+          text: "Person"
+        },
+        {
+          text: "Days until due date",
+          attributes: {
+            "aria-sort": "none"
+          }
+        },
+        {
+          text: "Status"
+        },
+        {
+          text: "Task type"
+        }
+      ],
+    rows: TaskUtils.unallocatedTableRows(tasks.unallocated)
+  })
+}}
+{% endset -%}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+            {{ govukTabs({
+                items: [
+                    {
+                    label: "Allocated",
+                    id: "allocated",
+                    panel: {
+                        html: allocatedHtml
+                    }
+                    },
+                    {
+                    label: "Unallocated",
+                    id: "unallocated",
+                    panel: {
+                        html: unallocatedHtml
+                    }
+                    }
+                ]
+            }) }}
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block extraScripts %}
+    <script type="text/javascript" nonce="{{ cspNonce }}">
+        window
+            .MOJFrontend
+            .initAll()
+    </script>
+{% endblock %}
