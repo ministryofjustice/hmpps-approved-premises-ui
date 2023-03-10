@@ -13,6 +13,7 @@ import CancellationService from './cancellationService'
 import LostBedService from './lostBedService'
 import ApplicationService from './applicationService'
 import AssessmentService from './assessmentService'
+import TaskService from './taskService'
 
 export const services = () => {
   const {
@@ -25,6 +26,7 @@ export const services = () => {
     applicationClientBuilder,
     assessmentClientBuilder,
     userClientBuilder,
+    taskClientBuilder,
   } = dataAccess()
 
   const userService = new UserService(hmppsAuthClient, userClientBuilder)
@@ -38,6 +40,7 @@ export const services = () => {
   const lostBedService = new LostBedService(lostBedClientBuilder, referenceDataClientBuilder)
   const applicationService = new ApplicationService(applicationClientBuilder)
   const assessmentService = new AssessmentService(assessmentClientBuilder)
+  const taskService = new TaskService(taskClientBuilder)
 
   return {
     userService,
@@ -51,6 +54,7 @@ export const services = () => {
     lostBedService,
     applicationService,
     assessmentService,
+    taskService,
   }
 }
 
@@ -68,4 +72,5 @@ export {
   LostBedService,
   ApplicationService,
   AssessmentService,
+  TaskService,
 }
