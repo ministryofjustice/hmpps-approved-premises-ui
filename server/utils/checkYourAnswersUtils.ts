@@ -1,5 +1,5 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
-import { HtmlItem, SummaryListItem, Task, TextItem } from '@approved-premises/ui'
+import { HtmlItem, SummaryListItem, TextItem, UiTask } from '@approved-premises/ui'
 
 import paths from '../paths/apply'
 
@@ -10,7 +10,7 @@ const checkYourAnswersSections = (application: ApprovedPremisesApplication) =>
   reviewSections(application, getTaskResponsesAsSummaryListItems)
 
 export const getTaskResponsesAsSummaryListItems = (
-  task: Task,
+  task: UiTask,
   application: ApprovedPremisesApplication,
 ): Array<SummaryListItem> => {
   const items: Array<SummaryListItem> = []
@@ -63,7 +63,7 @@ const embeddedSummaryListItem = (answers: Array<Record<string, unknown>>): strin
 const summaryListItemForResponse = (
   key: string,
   value: TextItem | HtmlItem,
-  task: Task,
+  task: UiTask,
   pageName: string,
   application: ApprovedPremisesApplication,
 ) => {

@@ -6,8 +6,8 @@ import {
   PageResponse,
   SummaryListItem,
   TableRow,
-  Task,
   TextItem,
+  UiTask,
 } from '@approved-premises/ui'
 import { add, differenceInDays, format, getUnixTime } from 'date-fns'
 
@@ -401,7 +401,7 @@ const assessmentSections = (application: ApprovedPremisesApplication) => {
 }
 
 const getTaskResponsesAsSummaryListItems = (
-  task: Task,
+  task: UiTask,
   application: ApprovedPremisesApplication,
 ): Array<SummaryListItem> => {
   if (!application.data[task.id]) {
@@ -466,7 +466,7 @@ const getReviewNavigationItems = () => {
   })
 }
 
-const getSectionSuffix = (task: Task, assessmentId: string) => {
+const getSectionSuffix = (task: UiTask, assessmentId: string) => {
   let link: string
   let copy: string
 

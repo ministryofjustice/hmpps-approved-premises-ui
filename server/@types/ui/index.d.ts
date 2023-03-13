@@ -58,7 +58,7 @@ export type YesNoOrIDKWithDetail<T extends string> = {
   [K in `${T}Detail`]: string
 }
 
-export type Task = {
+export type UiTask = {
   id: string
   title: string
   pages: Record<string, unknown>
@@ -66,12 +66,12 @@ export type Task = {
 
 export type TaskStatus = 'not_started' | 'in_progress' | 'complete' | 'cannot_start'
 
-export type TaskWithStatus = Task & { status: TaskStatus }
+export type TaskWithStatus = UiTask & { status: TaskStatus }
 
 export type FormSection = {
   title: string
   name: string
-  tasks: Array<Task>
+  tasks: Array<UiTask>
 }
 
 export type FormSections = Array<FormSection>
