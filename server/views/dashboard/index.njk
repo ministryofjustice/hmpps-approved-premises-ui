@@ -11,6 +11,14 @@
   <h1>{{ pageHeading }}</h1>
 
   <div class="card-container">
+    <div class="card" data-cy-card-service="apply">
+      <div class="card-body">
+        <h2 class="govuk-heading-s">
+          <a class="govuk-link" href="{{ paths.applications.index({}) }}">Apply for an Approved Premises placement</a>
+        </h2>
+        <p class="govuk-body">Apply for a placement in an Approved Premises on behalf of a person on probation/in custody.</p>
+      </div>
+    </div>
 
     {% if 'assessor' in user.roles %}
       <div class="card" data-cy-card-service="assess">
@@ -19,17 +27,6 @@
             <a class="govuk-link" href="{{ paths.assessments.index({}) }}">Assess Approved Premises applications</a>
           </h2>
           <p class="govuk-body">Assess applications for placements in an Approved Premises</p>
-        </div>
-      </div>
-    {% endif %}
-
-    {% if 'applicant' in user.roles %}
-      <div class="card" data-cy-card-service="apply">
-        <div class="card-body">
-          <h2 class="govuk-heading-s">
-            <a class="govuk-link" href="{{ paths.applications.index({}) }}">Apply for an Approved Premises placement</a>
-          </h2>
-          <p class="govuk-body">Apply for a placement in an Approved Premises on behalf of a person on probation/in custody.</p>
         </div>
       </div>
     {% endif %}

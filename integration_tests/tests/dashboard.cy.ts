@@ -8,7 +8,7 @@ context('Dashboard', () => {
   })
 
   it('displays all services when a user has all roles', () => {
-    signInWithRoles(['assessor', 'applicant', 'manager'])
+    signInWithRoles(['assessor', 'manager'])
 
     const dashboardPage = DashboardPage.visit()
 
@@ -17,19 +17,19 @@ context('Dashboard', () => {
     dashboardPage.shouldShowCard('manage')
   })
 
-  it('only displays the assess service to assessors', () => {
+  it('only displays the apply and assess services to assessors', () => {
     signInWithRoles(['assessor'])
 
     const dashboardPage = DashboardPage.visit()
 
+    dashboardPage.shouldShowCard('apply')
     dashboardPage.shouldShowCard('assess')
 
-    dashboardPage.shouldNotShowCard('apply')
     dashboardPage.shouldNotShowCard('manage')
   })
 
-  it('only displays the apply service to applicants', () => {
-    signInWithRoles(['applicant'])
+  it('only displays the apply service when someone has no roles', () => {
+    signInWithRoles([])
 
     const dashboardPage = DashboardPage.visit()
 
@@ -39,14 +39,14 @@ context('Dashboard', () => {
     dashboardPage.shouldNotShowCard('manage')
   })
 
-  it('only displays the manage service to managers', () => {
+  it('only displays the apply and manage services to managers', () => {
     signInWithRoles(['manager'])
 
     const dashboardPage = DashboardPage.visit()
 
     dashboardPage.shouldShowCard('manage')
+    dashboardPage.shouldShowCard('apply')
 
-    dashboardPage.shouldNotShowCard('apply')
     dashboardPage.shouldNotShowCard('assess')
   })
 })
