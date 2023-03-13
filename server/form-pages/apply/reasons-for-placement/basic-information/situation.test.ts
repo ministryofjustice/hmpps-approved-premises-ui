@@ -96,7 +96,7 @@ describe('Situation', () => {
       const page = new Situation({ situation: 'riskManagement' }, application)
 
       expect(page.response()).toEqual({
-        [page.title]: 'Referral for risk management/public protection',
+        [page.title]: 'Application for risk management/public protection',
       })
     })
   })
