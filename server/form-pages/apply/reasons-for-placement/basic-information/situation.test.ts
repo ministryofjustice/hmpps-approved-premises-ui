@@ -63,7 +63,7 @@ describe('Situation', () => {
 
         expect(items.length).toEqual(2)
         expect(items[0]).toEqual({
-          text: 'Bail assessment for residency requirement as part of a community based Order',
+          text: 'Bail assessment for residency requirement as part of a community order or suspended sentence order',
           value: 'bailAssessment',
           checked: true,
         })
