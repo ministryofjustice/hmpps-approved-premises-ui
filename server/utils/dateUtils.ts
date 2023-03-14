@@ -5,6 +5,7 @@ import formatISO from 'date-fns/formatISO'
 import parseISO from 'date-fns/parseISO'
 import format from 'date-fns/format'
 import isPast from 'date-fns/isPast'
+import { getUnixTime } from 'date-fns'
 
 export class DateFormats {
   /**
@@ -101,6 +102,14 @@ export class DateFormats {
       [`${key}-day`]: String(date.getDate()),
       [`${key}`]: DateFormats.dateObjToIsoDate(date),
     } as ObjectWithDateParts<K>
+  }
+
+  /**
+   * @param dateString an ISO date string.
+   * @returns the date as a timestamp, useful when sorting.
+   */
+  static isoToTimestamp(dateString: string) {
+    return getUnixTime(DateFormats.isoToDateObj(dateString))
   }
 }
 

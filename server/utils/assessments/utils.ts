@@ -9,7 +9,7 @@ import {
   TextItem,
   UiTask,
 } from '@approved-premises/ui'
-import { add, differenceInDays, format, getUnixTime } from 'date-fns'
+import { add, differenceInDays, format } from 'date-fns'
 
 import { ApprovedPremisesApplication, ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { tierBadge } from '../personUtils'
@@ -315,7 +315,7 @@ const formattedArrivalDate = (assessment: Assessment): string => {
 
 const arriveDateAsTimestamp = (assessment: Assessment): number => {
   const arrivalDate = arrivalDateFromApplication(assessment.application as ApprovedPremisesApplication)
-  return getUnixTime(DateFormats.isoToDateObj(arrivalDate))
+  return DateFormats.isoToTimestamp(arrivalDate)
 }
 
 const formatDays = (days: number): string => {
