@@ -1,12 +1,9 @@
 /* eslint-disable */
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 
-import formatISO from 'date-fns/formatISO'
-import parseISO from 'date-fns/parseISO'
-import format from 'date-fns/format'
-import isPast from 'date-fns/isPast'
-import { getUnixTime } from 'date-fns'
+import { differenceInDays, formatDistanceStrict, getUnixTime, formatISO, parseISO, format, isPast } from 'date-fns'
 
+type DifferenceInDays = { ui: string; number: number }
 export class DateFormats {
   /**
    * @param date JS Date object.
@@ -110,6 +107,15 @@ export class DateFormats {
    */
   static isoToTimestamp(dateString: string) {
     return getUnixTime(DateFormats.isoToDateObj(dateString))
+  }
+
+  /**
+   * @param date1 first day to compare.
+   * @param date2 second day to compare.
+   * @returns {DifferenceInDays} an object with the difference in days as a string for UI purposes (EG '2 Days') and as a number.
+   */
+  static differenceInDays(date1: Date, date2: Date): { ui: string; number: number } {
+    return { ui: formatDistanceStrict(date1, date2, { unit: 'day' }), number: differenceInDays(date1, date2) }
   }
 }
 
