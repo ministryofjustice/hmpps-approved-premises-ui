@@ -81,7 +81,7 @@ export type FormPages = { [key in TaskNames]: Record<string, unknown> }
 export type PageResponse = Record<string, string | Array<string> | Array<Record<string, unknown>>>
 
 export interface HtmlAttributes {
-  [key: string]: string
+  [key: string]: string | number
 }
 
 export interface TextItem {
@@ -93,9 +93,8 @@ export interface HtmlItem {
 }
 
 export type TableCell = { text: string; attributes?: HtmlAttributes; classes?: string } | { html: string }
-export interface TableRow {
-  [index: number]: TableCell
-}
+
+export type TableRow = Array<TableCell>
 
 export interface RadioItem {
   text: string

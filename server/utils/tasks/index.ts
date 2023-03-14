@@ -1,5 +1,7 @@
+/* istanbul ignore file */
+
 import { Task } from '../../@types/shared'
-import * as tableUtils from './table'
+import { allocatedTableRows, unallocatedTableRows } from './table'
 
 type GroupedTasks = {
   allocated: Array<Task>
@@ -19,5 +21,4 @@ const groupByAllocation = (tasks: Array<Task>) => {
 
   return result
 }
-
-export { groupByAllocation, tableUtils }
+export { groupByAllocation, allocatedTableRows, unallocatedTableRows }
