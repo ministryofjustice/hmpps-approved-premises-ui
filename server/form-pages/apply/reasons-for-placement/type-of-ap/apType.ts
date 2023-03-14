@@ -14,7 +14,7 @@ const apTypes = {
 export type ApTypes = typeof apTypes
 
 @Page({ name: 'ap-type', bodyProperties: ['type'] })
-export default class ApType implements TasklistPage {
+export default class SelectApType implements TasklistPage {
   title = `Which type of AP does ${this.application.person.name} require?`
 
   constructor(public body: { type?: keyof ApTypes }, private readonly application: ApprovedPremisesApplication) {}
