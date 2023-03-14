@@ -1,11 +1,13 @@
 import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
 
+import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 import TasklistPage from '../../../tasklistPage'
-import { convertToTitleCase, retrieveQuestionResponseFromApplication } from '../../../../utils/utils'
+import { convertToTitleCase } from '../../../../utils/utils'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank, dateIsInThePast } from '../../../../utils/dateUtils'
 import { Page } from '../../../utils/decorators'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
+import ReleaseDate from './releaseDate'
 
 type PlacementDateBody = ObjectWithDateParts<'startDate'> & {
   startDateSameAsReleaseDate: YesOrNo
@@ -20,7 +22,7 @@ export default class PlacementDate implements TasklistPage {
 
   constructor(private _body: Partial<PlacementDateBody>, public application: ApprovedPremisesApplication) {
     const formattedReleaseDate = DateFormats.isoDateToUIDate(
-      retrieveQuestionResponseFromApplication(application, 'basic-information', 'releaseDate'),
+      retrieveQuestionResponseFromApplicationOrAssessment(application, ReleaseDate),
     )
 
     this.title = `Is ${formattedReleaseDate} the date you want the placement to start?`
