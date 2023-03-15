@@ -1,77 +1,37 @@
-import { ApprovedPremisesApplication as Application } from '../../@types/shared'
-import { addResponseToApplication } from '../../testutils/addToApplication'
 import applicationFactory from '../../testutils/factories/application'
 import { shouldShowContingencyPlanPages } from './shouldShowContingencyPlanPages'
+import mockQuestionResponse from '../../testutils/mockQuestionResponse'
+
+jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
 
 describe('shouldShowContingencyPlanPages', () => {
-  let defaultApplication: Application
-  beforeEach(() => {
-    defaultApplication = applicationFactory
-      .withPageResponse({
-        task: 'basic-information',
-        page: 'sentence-type',
-        key: 'sentenceType',
-        value: 'ipp',
-      })
-      .withPageResponse({
-        task: 'basic-information',
-        page: 'release-type',
-        key: 'releaseType',
-        value: 'other',
-      })
-      .withPageResponse({
-        task: 'type-of-ap',
-        page: 'ap-type',
-        key: 'apType',
-        value: 'other',
-      })
-      .build()
+  const application = applicationFactory.build()
+
+  it('returns false if none of the conditions are met', () => {
+    mockQuestionResponse({ sentenceType: 'ipp', type: 'other' })
+    expect(shouldShowContingencyPlanPages(application)).toEqual(false)
   })
 
-  it('returns an empty string if none of the conditions are met', () => {
-    expect(shouldShowContingencyPlanPages(defaultApplication)).toEqual(false)
-  })
-
-  it('returns "contingency-plan-partners" if the application has a sentence type of "Community Order/SSO"', () => {
-    const application = addResponseToApplication(defaultApplication, {
-      section: 'basic-information',
-      page: 'sentence-type',
-      key: 'sentenceType',
-      value: 'communityOrder',
-    })
+  it('returns true if the application has a sentence type of "Community Order/SSO"', () => {
+    mockQuestionResponse({ sentenceType: 'communityOrder' })
 
     expect(shouldShowContingencyPlanPages(application)).toEqual(true)
   })
 
-  it('returns "contingency-plan-partners" if the application has a sentence type of "Non-statutory, MAPPA case"', () => {
-    const application = addResponseToApplication(defaultApplication, {
-      section: 'basic-information',
-      page: 'sentence-type',
-      key: 'sentenceType',
-      value: 'nonStatutory',
-    })
+  it('returns true if the application has a sentence type of "Non-statutory, MAPPA case"', () => {
+    mockQuestionResponse({ sentenceType: 'nonStatutory' })
 
     expect(shouldShowContingencyPlanPages(application)).toEqual(true)
   })
 
-  it('returns "contingency-plan-partners" if the application has a release type of "Post Sentence Supervision (PSS)"', () => {
-    const application = addResponseToApplication(defaultApplication, {
-      section: 'basic-information',
-      page: 'release-type',
-      key: 'releaseType',
-      value: 'pss',
-    })
+  it('returns true if the application has a release type of "Post Sentence Supervision (PSS)"', () => {
+    mockQuestionResponse({ sentenceType: 'ipp', releaseType: 'pss' })
 
     expect(shouldShowContingencyPlanPages(application)).toEqual(true)
   })
 
-  it('returns "contingency-plan-partners" if the application has a AP type of "ESAP"', () => {
-    const application = addResponseToApplication(defaultApplication, {
-      section: 'type-of-ap',
-      page: 'ap-type',
-      key: 'apType',
-      value: 'esap',
-    })
+  it('returns false if the application has a AP type of "ESAP"', () => {
+    mockQuestionResponse({ type: 'esap' })
 
     expect(shouldShowContingencyPlanPages(application)).toEqual(true)
   })

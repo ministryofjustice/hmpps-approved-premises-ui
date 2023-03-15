@@ -5,10 +5,12 @@ const mockQuestionResponse = ({
   postcodeArea = 'ABC 123',
   type = 'standard',
   sentenceType = 'standardDeterminate',
+  releaseType = 'other',
 }: {
   postcodeArea?: string
   type?: string
   sentenceType?: string
+  releaseType?: string
 }) => {
   ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockImplementation(
     // eslint-disable-next-line consistent-return
@@ -23,6 +25,10 @@ const mockQuestionResponse = ({
 
       if (question === 'sentenceType') {
         return sentenceType
+      }
+
+      if (question === 'releaseType') {
+        return releaseType
       }
     },
   )
