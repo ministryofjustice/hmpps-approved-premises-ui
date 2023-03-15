@@ -2,7 +2,7 @@ import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
 } from '@approved-premises/api'
-import { FormSections, Task, TaskStatus, TaskWithStatus } from '@approved-premises/ui'
+import { FormSections, TaskStatus, TaskWithStatus, UiTask } from '@approved-premises/ui'
 import getSections from '../utils/assessments/getSections'
 import Apply from '../form-pages/apply'
 import isAssessment from '../utils/assessments/isAssessment'
@@ -53,7 +53,7 @@ export default class TasklistService {
     return completeTasks.length === Object.keys(this.taskStatuses).length ? 'complete' : 'incomplete'
   }
 
-  addStatusToTask(task: Task): TaskWithStatus {
+  addStatusToTask(task: UiTask): TaskWithStatus {
     return { ...task, status: this.taskStatuses[task.id] }
   }
 }

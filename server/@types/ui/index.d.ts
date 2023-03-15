@@ -58,7 +58,7 @@ export type YesNoOrIDKWithDetail<T extends string> = {
   [K in `${T}Detail`]: string
 }
 
-export type Task = {
+export type UiTask = {
   id: string
   title: string
   pages: Record<string, unknown>
@@ -66,12 +66,12 @@ export type Task = {
 
 export type TaskStatus = 'not_started' | 'in_progress' | 'complete' | 'cannot_start'
 
-export type TaskWithStatus = Task & { status: TaskStatus }
+export type TaskWithStatus = UiTask & { status: TaskStatus }
 
 export type FormSection = {
   title: string
   name: string
-  tasks: Array<Task>
+  tasks: Array<UiTask>
 }
 
 export type FormSections = Array<FormSection>
@@ -81,7 +81,7 @@ export type FormPages = { [key in TaskNames]: Record<string, unknown> }
 export type PageResponse = Record<string, string | Array<string> | Array<Record<string, unknown>>>
 
 export interface HtmlAttributes {
-  [key: string]: string
+  [key: string]: string | number
 }
 
 export interface TextItem {
@@ -93,9 +93,8 @@ export interface HtmlItem {
 }
 
 export type TableCell = { text: string; attributes?: HtmlAttributes; classes?: string } | { html: string }
-export interface TableRow {
-  [index: number]: TableCell
-}
+
+export type TableRow = Array<TableCell>
 
 export interface RadioItem {
   text: string

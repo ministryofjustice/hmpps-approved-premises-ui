@@ -8,6 +8,7 @@ import actions from './utils'
 import applyRoutes from './apply'
 import manageRoutes from './manage'
 import assessRoutes from './assess'
+import tasksRoutes from './tasks'
 
 export default function routes(controllers: Controllers): Router {
   const router = Router()
@@ -21,6 +22,7 @@ export default function routes(controllers: Controllers): Router {
   manageRoutes(controllers, router)
   applyRoutes(controllers, router)
   assessRoutes(controllers, router)
+  tasksRoutes(controllers, router)
 
   return router
 }

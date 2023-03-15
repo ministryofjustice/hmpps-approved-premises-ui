@@ -8,15 +8,15 @@ describe('DashboardController', () => {
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
-  let applicationController: DashboardController
+  let dashboardController: DashboardController
 
   beforeEach(() => {
-    applicationController = new DashboardController()
+    dashboardController = new DashboardController()
   })
 
   describe('index', () => {
     it('should render the dashboard template', () => {
-      const requestHandler = applicationController.index()
+      const requestHandler = dashboardController.index()
 
       requestHandler(request, response, next)
 

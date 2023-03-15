@@ -14,6 +14,7 @@ import person from './integration_tests/mockApis/person'
 import applications from './integration_tests/mockApis/applications'
 import assessments from './integration_tests/mockApis/assessments'
 import users from './integration_tests/mockApis/users'
+import tasks from './integration_tests/mockApis/tasks'
 
 import schemaValidator from './integration_tests/tasks/schemaValidator'
 
@@ -49,6 +50,7 @@ export default defineConfig({
         ...schemaValidator,
         ...assessments,
         ...users,
+        ...tasks,
       })
     },
     baseUrl: 'http://localhost:3007',

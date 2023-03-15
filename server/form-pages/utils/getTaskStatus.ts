@@ -1,4 +1,5 @@
-import type { Task, TaskStatus } from '@approved-premises/ui'
+import type { TaskStatus, UiTask } from '@approved-premises/ui'
+
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
@@ -9,7 +10,7 @@ const getPageData = (applicationOrAssessment: Application | Assessment, taskName
   return applicationOrAssessment.data?.[taskName]?.[pageName]
 }
 
-const getTaskStatus = (task: Task, applicationOrAssessment: Application | Assessment): TaskStatus => {
+const getTaskStatus = (task: UiTask, applicationOrAssessment: Application | Assessment): TaskStatus => {
   // Find the first page that has an answer
   let pageId = Object.keys(task.pages).find(
     (pageName: string) => !!getPageData(applicationOrAssessment, task.id, pageName),

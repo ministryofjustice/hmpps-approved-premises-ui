@@ -1,4 +1,4 @@
-import type { JourneyType, Task, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
+import type { JourneyType, UiTask, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
 import type { Request } from 'express'
 import TasklistPage, { TasklistPageInterface } from '../tasklistPage'
 import { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '../../@types/shared'
@@ -38,7 +38,7 @@ export const getTask = <T>(task: T) => {
 }
 
 export const getSection = <T>(section: T) => {
-  const tasks: Array<Task> = []
+  const tasks: Array<UiTask> = []
   const title = Reflect.getMetadata('section:title', section)
   const name = Reflect.getMetadata('section:name', section)
   const taskClasses = Reflect.getMetadata('section:tasks', section)

@@ -1,5 +1,11 @@
+/* eslint-disable import/no-duplicates */
+
 import type { ObjectWithDateParts } from '@approved-premises/ui'
+
 import isPast from 'date-fns/isPast'
+import differenceInDays from 'date-fns/differenceInDays'
+import formatDistanceStrict from 'date-fns/formatDistanceStrict'
+
 import {
   DateFormats,
   InvalidDateStringError,
@@ -9,6 +15,8 @@ import {
 } from './dateUtils'
 
 jest.mock('date-fns/isPast')
+jest.mock('date-fns/formatDistanceStrict')
+jest.mock('date-fns/differenceInDays')
 
 describe('DateFormats', () => {
   describe('convertIsoToDateObj', () => {
@@ -141,6 +149,22 @@ describe('DateFormats', () => {
       const result = DateFormats.dateAndTimeInputsToIsoString(obj, 'date')
 
       expect(result.date.toString()).toEqual('twothousandtwentytwo-20-oo')
+    })
+  })
+
+  describe('differenceInDays', () => {
+    it('calls the date-fns functions and returns the results as an object', () => {
+      const date1 = new Date(2023, 3, 12)
+      const date2 = new Date(2023, 3, 11)
+      ;(formatDistanceStrict as jest.Mock).mockReturnValue('1 day')
+      ;(differenceInDays as jest.Mock).mockReturnValue(1)
+
+      expect(DateFormats.differenceInDays(date1, date2)).toEqual({
+        ui: '1 day',
+        number: 1,
+      })
+      expect(formatDistanceStrict).toHaveBeenCalledWith(date1, date2, { unit: 'day' })
+      expect(differenceInDays).toHaveBeenCalledWith(date1, date2)
     })
   })
 })

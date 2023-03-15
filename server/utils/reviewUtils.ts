@@ -1,12 +1,12 @@
 import { ApprovedPremisesApplication as Application, ApprovedPremisesAssessment as Assessment } from '../@types/shared'
-import { SummaryListItem, Task } from '../@types/ui'
+import { SummaryListItem, UiTask } from '../@types/ui'
 import Apply from '../form-pages/apply'
 import getSections from './assessments/getSections'
 import isAssessment from './assessments/isAssessment'
 
 const reviewSections = (
   applicationOrAssessment: Application | Assessment,
-  rowFunction: (task: Task, document: Application | Assessment) => Array<SummaryListItem>,
+  rowFunction: (task: UiTask, document: Application | Assessment) => Array<SummaryListItem>,
 ) => {
   const nonCheckYourAnswersSections = isAssessment(applicationOrAssessment)
     ? getSections(applicationOrAssessment).slice(0, -1)

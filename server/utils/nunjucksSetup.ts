@@ -35,6 +35,7 @@ import * as BookingUtils from './bookingUtils'
 import * as TasklistUtils from './taskListUtils'
 import * as FormUtils from './formUtils'
 import * as UserUtils from './userUtils'
+import * as TaskUtils from './tasks'
 
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
@@ -171,4 +172,5 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('TasklistUtils', TasklistUtils)
   njkEnv.addGlobal('FormUtils', FormUtils)
   njkEnv.addGlobal('UserUtils', UserUtils)
+  njkEnv.addGlobal('TaskUtils', TaskUtils)
 }
