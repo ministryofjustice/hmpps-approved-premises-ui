@@ -1,8 +1,6 @@
 import { path } from 'static-path'
 import type { SummaryListItem } from '@approved-premises/ui'
 import { PersonRisks } from '@approved-premises/api'
-import { SessionDataError } from './errors'
-import applicationFactory from '../testutils/factories/application'
 import {
   camelCase,
   convertToTitleCase,
@@ -12,8 +10,6 @@ import {
   pascalCase,
   removeBlankSummaryListItems,
   resolvePath,
-  retrieveOptionalQuestionResponseFromApplication,
-  retrieveQuestionResponseFromApplication,
 } from './utils'
 import risksFactory from '../testutils/factories/risks'
 import { DateFormats } from './dateUtils'
@@ -56,61 +52,6 @@ describe('initialise name', () => {
     ['Double barrelled', 'Robert-John Smith-Jones-Wilson', 'R. Smith-Jones-Wilson'],
   ])('%s initialiseName(%s, %s)', (_: string, a: string, expected: string) => {
     expect(initialiseName(a)).toEqual(expected)
-  })
-})
-
-describe('retrieveQuestionResponseFromApplication', () => {
-  it("throws a SessionDataError if the property doesn't exist", () => {
-    const application = applicationFactory.build()
-    expect(() => retrieveQuestionResponseFromApplication(application, 'basic-information', '')).toThrow(
-      SessionDataError,
-    )
-  })
-
-  it('returns the property if it does exist and a question is not provided', () => {
-    const application = applicationFactory.build({
-      data: {
-        'basic-information': { 'my-page': { myPage: 'no' } },
-      },
-    })
-
-    const questionResponse = retrieveQuestionResponseFromApplication(application, 'basic-information', 'myPage')
-    expect(questionResponse).toBe('no')
-  })
-
-  it('returns the property if it does exist and a question is provided', () => {
-    const application = applicationFactory.build({
-      data: {
-        'basic-information': { 'my-page': { questionResponse: 'no' } },
-      },
-    })
-
-    const questionResponse = retrieveQuestionResponseFromApplication(
-      application,
-      'basic-information',
-      'myPage',
-      'questionResponse',
-    )
-    expect(questionResponse).toBe('no')
-  })
-})
-
-describe('retrieveOptionalQuestionResponseFromApplication', () => {
-  it("returns undefined if the property doesn't exist", () => {
-    const application = applicationFactory.build()
-    expect(retrieveOptionalQuestionResponseFromApplication(application, 'basic-information', '')).toEqual(undefined)
-  })
-
-  it('returns the property if it does exist', () => {
-    const application = applicationFactory.build({
-      data: {
-        'basic-information': { 'my-page': { myPage: 'no' } },
-      },
-    })
-
-    expect(retrieveOptionalQuestionResponseFromApplication(application, 'basic-information', 'myPage')).toEqual(
-      retrieveQuestionResponseFromApplication(application, 'basic-information', 'myPage'),
-    )
   })
 })
 
