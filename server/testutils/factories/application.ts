@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import { addDays } from 'date-fns'
