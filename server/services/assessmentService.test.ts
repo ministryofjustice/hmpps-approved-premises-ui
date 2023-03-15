@@ -1,5 +1,6 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { Request } from 'express'
+import { PlacementRequest } from '@approved-premises/api'
 
 import { AssessmentClient } from '../data'
 import AssessmentService from './assessmentService'
@@ -7,6 +8,7 @@ import assessmentFactory from '../testutils/factories/assessment'
 import clarificationNoteFactory from '../testutils/factories/clarificationNote'
 import userFactory from '../testutils/factories/user'
 
+import { placementRequestData } from '../utils/assessments/placementRequestData'
 import { getBody, updateAssessmentData } from '../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { DataServices, TaskListErrors } from '../@types/ui'
@@ -17,6 +19,7 @@ jest.mock('../data/assessmentClient.ts')
 jest.mock('../data/personClient.ts')
 jest.mock('../form-pages/utils')
 jest.mock('../utils/applications/utils')
+jest.mock('../utils/assessments/placementRequestData')
 
 describe('AssessmentService', () => {
   const assessmentClient = new AssessmentClient(null) as jest.Mocked<AssessmentClient>
@@ -174,15 +177,17 @@ describe('AssessmentService', () => {
   describe('submit', () => {
     const token = 'some-token'
     let document = { foo: [{ bar: 'baz' }] } as ApplicationOrAssessmentResponse
+    const requirements = createMock<PlacementRequest>()
 
     it('if the assessment is accepted the accept client method is called', async () => {
       const assessment = assessmentFactory.acceptedAssessment().build()
       ;(getResponses as jest.Mock).mockReturnValue(document)
+      ;(placementRequestData as jest.Mock).mockReturnValue(requirements)
 
       await service.submit(token, assessment)
 
       expect(assessmentClientFactory).toHaveBeenCalledWith(token)
-      expect(assessmentClient.acceptance).toHaveBeenCalledWith(assessment.id, document)
+      expect(assessmentClient.acceptance).toHaveBeenCalledWith(assessment.id, { document, requirements })
     })
 
     it('if the assessment is rejected the rejection client method is called with the rejectionRationale', async () => {

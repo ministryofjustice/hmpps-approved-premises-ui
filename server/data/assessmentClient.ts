@@ -1,5 +1,6 @@
 import type {
   ApprovedPremisesAssessment as Assessment,
+  AssessmentAcceptance,
   ClarificationNote,
   NewClarificationNote,
   UpdatedClarificationNote,
@@ -31,10 +32,10 @@ export default class AssessmentClient {
     })) as Assessment
   }
 
-  async acceptance(assessmentId: string, document: ApplicationOrAssessmentResponse): Promise<void> {
+  async acceptance(assessmentId: string, data: AssessmentAcceptance): Promise<void> {
     await this.restClient.post({
       path: paths.assessments.acceptance({ id: assessmentId }),
-      data: { document },
+      data,
     })
   }
 
