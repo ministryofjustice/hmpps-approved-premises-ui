@@ -26,4 +26,8 @@ export default class ListPage extends Page {
     cy.get('a').contains('Unallocated').click()
     shouldShowTableRows(this.unallocatedTasks, unallocatedTableRows)
   }
+
+  clickTask(task: Task) {
+    cy.get(`a[data-cy-taskId="${task.applicationId}"]`).click()
+  }
 }

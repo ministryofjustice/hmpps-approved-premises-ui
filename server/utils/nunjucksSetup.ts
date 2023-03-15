@@ -40,6 +40,7 @@ import * as TaskUtils from './tasks'
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
+import tasksPaths from '../paths/tasks'
 import { radioMatrixTable } from './radioMatrixTable'
 
 import config from '../config'
@@ -138,7 +139,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     },
   )
 
-  njkEnv.addGlobal('paths', { ...managePaths, ...applyPaths, ...assessPaths })
+  njkEnv.addGlobal('paths', { ...managePaths, ...applyPaths, ...assessPaths, ...tasksPaths })
 
   njkEnv.addGlobal('linkTo', linkTo)
 
