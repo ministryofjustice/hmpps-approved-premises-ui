@@ -3,9 +3,11 @@ import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
-import { convertToTitleCase, retrieveQuestionResponseFromApplication } from '../../../../utils/utils'
+import { convertToTitleCase } from '../../../../utils/utils'
+import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { EsapReasons } from './esapPlacementScreening'
+import ApType from './apType'
 
 export const secretingHistory = {
   radicalisationLiterature: 'Literature and materials supporting radicalisation ideals',
@@ -49,10 +51,9 @@ export default class EsapPlacementSecreting implements TasklistPage {
   }
 
   next() {
-    const esapReasons = retrieveQuestionResponseFromApplication(
+    const esapReasons = retrieveQuestionResponseFromApplicationOrAssessment(
       this.application,
-      'type-of-ap',
-      'esap-placement-screening',
+      ApType,
       'esapReasons',
     ) as Array<keyof EsapReasons>
 
