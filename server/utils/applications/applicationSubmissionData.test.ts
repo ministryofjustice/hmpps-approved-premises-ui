@@ -2,6 +2,7 @@ import { ReleaseTypeOption } from '@approved-premises/api'
 import applicationFactory from '../../testutils/factories/application'
 import { applicationSubmissionData } from './applicationSubmissionData'
 import mockQuestionResponse from '../../testutils/mockQuestionResponse'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
 
 jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
 
@@ -9,10 +10,14 @@ describe('applicationSubmissionData', () => {
   const releaseType = 'license' as ReleaseTypeOption
   const targetLocation = 'ABC 123'
 
+  beforeEach(() => {
+    ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(releaseType)
+  })
+
   it('returns the correct data for a pipe application', () => {
     mockQuestionResponse({ type: 'pipe', postcodeArea: targetLocation })
 
-    const application = applicationFactory.withReleaseType(releaseType).build()
+    const application = applicationFactory.build()
 
     expect(applicationSubmissionData(application)).toEqual({
       translatedDocument: application.document,
@@ -26,7 +31,7 @@ describe('applicationSubmissionData', () => {
   it('returns the correct data for a non-pipe application', () => {
     mockQuestionResponse({ type: 'standard', postcodeArea: targetLocation })
 
-    const application = applicationFactory.withReleaseType(releaseType).build()
+    const application = applicationFactory.build()
 
     expect(applicationSubmissionData(application)).toEqual({
       translatedDocument: application.document,
@@ -38,6 +43,8 @@ describe('applicationSubmissionData', () => {
   })
 
   it('handles when a release type is missing', () => {
+    ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(undefined)
+
     mockQuestionResponse({ postcodeArea: targetLocation })
 
     const application = applicationFactory.build()

@@ -3,12 +3,15 @@ import type {
   ReleaseTypeOption,
   SubmitApplication,
 } from '@approved-premises/api'
-import LocationFactors from '../../form-pages/apply/risk-and-need-factors/location-factors'
+import ReleaseType from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
+import DescribeLocationFactors from '../../form-pages/apply/risk-and-need-factors/location-factors/describeLocationFactors'
 import ApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import SentenceType from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
 
-import { retrieveOptionalQuestionResponseFromApplication } from '../utils'
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
+import {
+  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
+  retrieveQuestionResponseFromApplicationOrAssessment,
+} from '../retrieveQuestionResponseFromApplicationOrAssessment'
 
 export const applicationSubmissionData = (application: Application): SubmitApplication => {
   const apType = retrieveQuestionResponseFromApplicationOrAssessment(application, ApType, 'type')
@@ -35,10 +38,5 @@ const getReleaseType = (application: Application): ReleaseTypeOption => {
     return 'in_community'
   }
 
-  return retrieveOptionalQuestionResponseFromApplication<ReleaseTypeOption>(
-    application,
-    'basic-information',
-    'release-type',
-    'releaseType',
-  )
+  return retrieveOptionalQuestionResponseFromApplicationOrAssessment(application, ReleaseType, 'releaseType')
 }
