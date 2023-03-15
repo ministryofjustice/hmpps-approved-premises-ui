@@ -107,10 +107,10 @@ export function getBody(
   if (Object.keys(request.body).length) {
     return request.body
   }
-  return getPageDataFromApplication(Page, application)
+  return pageDataFromApplicationOrAssessment(Page, application)
 }
 
-export function getPageDataFromApplication(
+export function pageDataFromApplicationOrAssessment(
   Page: TasklistPageInterface,
   application: ApprovedPremisesApplication | ApprovedPremisesAssessment,
 ) {

@@ -1,7 +1,12 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import applicationFactory from '../../../../testutils/factories/application'
+import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 
 import ReleaseType from './releaseType'
+
+jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment', () => {
+  return { retrieveQuestionResponseFromApplicationOrAssessment: jest.fn(() => 'standardDeterminate') }
+})
 
 describe('ReleaseType', () => {
   const application = applicationFactory.build({
@@ -34,12 +39,9 @@ describe('ReleaseType', () => {
   describe('items', () => {
     describe('releaseType', () => {
       it('if the sentence type is "standardDeterminate" then all the items should be shown', () => {
-        const items = new ReleaseType(
-          {},
-          applicationFactory.build({
-            data: { 'basic-information': { 'sentence-type': { sentenceType: 'standardDeterminate' } } },
-          }),
-        ).items()
+        ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('standardDeterminate')
+
+        const items = new ReleaseType({}, application).items()
 
         expect(items.length).toEqual(4)
         expect(items[0].value).toEqual('licence')
@@ -49,12 +51,9 @@ describe('ReleaseType', () => {
       })
 
       it('if the sentence type is "extendedDeterminate" then the reduced list of items should be shown', () => {
-        const items = new ReleaseType(
-          {},
-          applicationFactory.build({
-            data: { 'basic-information': { 'sentence-type': { sentenceType: 'extendedDeterminate' } } },
-          }),
-        ).items()
+        ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('extendedDeterminate')
+
+        const items = new ReleaseType({}, application).items()
 
         expect(items.length).toEqual(2)
         expect(items[0].value).toEqual('rotl')
@@ -62,10 +61,9 @@ describe('ReleaseType', () => {
       })
 
       it('if the sentence type is "ipp" then the reduced list of items should be shown', () => {
-        const items = new ReleaseType(
-          {},
-          applicationFactory.build({ data: { 'basic-information': { 'sentence-type': { sentenceType: 'ipp' } } } }),
-        ).items()
+        ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('ipp')
+
+        const items = new ReleaseType({}, application).items()
 
         expect(items.length).toEqual(2)
         expect(items[0].value).toEqual('rotl')
@@ -73,10 +71,9 @@ describe('ReleaseType', () => {
       })
 
       it('if the sentence type is "life" then the reduced list of items should be shown', () => {
-        const items = new ReleaseType(
-          {},
-          applicationFactory.build({ data: { 'basic-information': { 'sentence-type': { sentenceType: 'life' } } } }),
-        ).items()
+        ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('life')
+
+        const items = new ReleaseType({}, application).items()
 
         expect(items.length).toEqual(2)
         expect(items[0].value).toEqual('rotl')

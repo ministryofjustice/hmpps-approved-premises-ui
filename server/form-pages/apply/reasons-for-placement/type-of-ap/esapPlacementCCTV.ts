@@ -3,9 +3,11 @@ import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-import { convertToTitleCase, retrieveQuestionResponseFromApplication } from '../../../../utils/utils'
+import { convertToTitleCase } from '../../../../utils/utils'
+import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { EsapReasons } from './esapPlacementScreening'
+import ApType from './apType'
 
 export const cctvHistory = {
   appearance: 'Changed their appearance or clothing to offend',
@@ -44,10 +46,9 @@ export default class EsapPlacementCCTV implements TasklistPage {
   ) {}
 
   previous() {
-    const esapReasons = retrieveQuestionResponseFromApplication(
+    const esapReasons = retrieveQuestionResponseFromApplicationOrAssessment(
       this.application,
-      'type-of-ap',
-      'esap-placement-screening',
+      ApType,
       'esapReasons',
     ) as Array<keyof EsapReasons>
 

@@ -1,90 +1,88 @@
 import { ReleaseTypeOption } from '@approved-premises/api'
 import applicationFactory from '../../testutils/factories/application'
 import { applicationSubmissionData } from './applicationSubmissionData'
+import mockQuestionResponse from '../../testutils/mockQuestionResponse'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
+
+jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
 
 describe('applicationSubmissionData', () => {
-  const postcodeArea = 'ABC 123'
   const releaseType = 'license' as ReleaseTypeOption
+  const targetLocation = 'ABC 123'
+
+  beforeEach(() => {
+    ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(releaseType)
+  })
 
   it('returns the correct data for a pipe application', () => {
-    const application = applicationFactory
-      .withApType('pipe')
-      .withPostcodeArea(postcodeArea)
-      .withSentenceType('standardDeterminate')
-      .withReleaseType(releaseType)
-      .build()
+    mockQuestionResponse({ type: 'pipe', postcodeArea: targetLocation })
+
+    const application = applicationFactory.build()
 
     expect(applicationSubmissionData(application)).toEqual({
       translatedDocument: application.document,
       isPipeApplication: true,
       isWomensApplication: false,
       releaseType,
-      targetLocation: postcodeArea,
+      targetLocation,
     })
   })
 
   it('returns the correct data for a non-pipe application', () => {
-    const application = applicationFactory
-      .withApType('standard')
-      .withPostcodeArea(postcodeArea)
-      .withSentenceType('standardDeterminate')
-      .withReleaseType(releaseType)
-      .build()
+    mockQuestionResponse({ type: 'standard', postcodeArea: targetLocation })
+
+    const application = applicationFactory.build()
 
     expect(applicationSubmissionData(application)).toEqual({
       translatedDocument: application.document,
       isPipeApplication: false,
       isWomensApplication: false,
       releaseType,
-      targetLocation: postcodeArea,
+      targetLocation,
     })
   })
 
   it('handles when a release type is missing', () => {
-    const application = applicationFactory
-      .withApType('standard')
-      .withSentenceType('standardDeterminate')
-      .withPostcodeArea(postcodeArea)
-      .build()
+    ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(undefined)
+
+    mockQuestionResponse({ postcodeArea: targetLocation })
+
+    const application = applicationFactory.build()
 
     expect(applicationSubmissionData(application)).toEqual({
       translatedDocument: application.document,
       isPipeApplication: false,
       isWomensApplication: false,
       releaseType: undefined,
-      targetLocation: postcodeArea,
+      targetLocation: 'ABC 123',
     })
   })
 
   it('returns in_community for a community order application', () => {
-    const application = applicationFactory
-      .withApType('standard')
-      .withPostcodeArea(postcodeArea)
-      .withSentenceType('communityOrder')
-      .build()
+    mockQuestionResponse({ sentenceType: 'communityOrder', postcodeArea: targetLocation })
+
+    const application = applicationFactory.build()
 
     expect(applicationSubmissionData(application)).toEqual({
       translatedDocument: application.document,
       isPipeApplication: false,
       isWomensApplication: false,
       releaseType: 'in_community',
-      targetLocation: postcodeArea,
+      targetLocation,
     })
   })
 
   it('returns in_community for a bail placement application', () => {
-    const application = applicationFactory
-      .withApType('standard')
-      .withPostcodeArea(postcodeArea)
-      .withSentenceType('bailPlacement')
-      .build()
+    mockQuestionResponse({ sentenceType: 'bailPlacement', postcodeArea: targetLocation })
+
+    const application = applicationFactory.build()
 
     expect(applicationSubmissionData(application)).toEqual({
       translatedDocument: application.document,
       isPipeApplication: false,
       isWomensApplication: false,
       releaseType: 'in_community',
-      targetLocation: postcodeArea,
+      targetLocation,
     })
   })
 })

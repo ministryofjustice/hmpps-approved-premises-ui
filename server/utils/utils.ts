@@ -2,9 +2,8 @@ import Case from 'case'
 import { Params, Path } from 'static-path'
 
 import type { PersonRisksUI, SummaryListItem } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication, PersonRisks } from '@approved-premises/api'
+import type { PersonRisks } from '@approved-premises/api'
 
-import { SessionDataError } from './errors'
 import { DateFormats } from './dateUtils'
 
 /* istanbul ignore next */
@@ -66,52 +65,6 @@ export const pascalCase = (string: string) => camelCase(string).replace(/\w/, s 
 export const sentenceCase = (string: string) => Case.sentence(string)
 
 export const lowerCase = (string: string) => Case.lower(string)
-
-/**
- * Retrieves response for a given question from the application object or throws an error if it does not exist.
- * @param application the application to fetch the response from.
- * @param task the task to retrieve the response for.
- * @param page the page that we need the response for in camelCase.
- * @param {string} question [question=page] the page that we need the response for. Defaults to the value of `page`.
- * @returns the response for the given task/page/question.
- */
-export const retrieveQuestionResponseFromApplication = <T>(
-  application: ApprovedPremisesApplication,
-  task: string,
-  page: string,
-  question?: string,
-) => {
-  try {
-    return application.data[task][kebabCase(page)][question || page] as T
-  } catch (e) {
-    throw new SessionDataError(`Question ${question} was not found in the session`)
-  }
-}
-
-/**
- * Retrieves response for a given question from the application object or returns undefined if it does not exist.
- * @param application the application to fetch the response from.
- * @param task the task to retrieve the response for.
- * @param page the page that we need the response for in camelCase.
- * @param {string} question [question=page] the page that we need the response for. Defaults to the value of `page`.
- * @returns the response for the given task/page/question.
- */
-export const retrieveOptionalQuestionResponseFromApplication = <T>(
-  application: ApprovedPremisesApplication,
-  task: string,
-  page: string,
-  question?: string,
-) => {
-  let response: T
-
-  try {
-    response = retrieveQuestionResponseFromApplication<T>(application, task, page, question)
-  } catch (e) {
-    response = undefined
-  }
-
-  return response
-}
 
 /**
  * Removes any items in an array of summary list items that are blank or undefined

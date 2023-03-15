@@ -1,0 +1,60 @@
+import {
+  ApprovedPremisesApplication as Application,
+  ApprovedPremisesAssessment as Assessment,
+} from '@approved-premises/api'
+import { TasklistPageInterface } from '../form-pages/tasklistPage'
+import { getPageName, pageDataFromApplicationOrAssessment } from '../form-pages/utils'
+import { SessionDataError } from './errors'
+import { camelCase } from './utils'
+
+/**
+ * Retrieves response for a given question from the application object or throws an error if it does not exist.
+ * @param applicationOrAssessment the application or assessment to fetch the response from.
+ * @param Page the page to retrieve the response from.
+ * @param {string} question the question that we need the response for. Defaults to the camel-cased name of the `Page`.
+ * @returns the response for the given Page/question.
+ */
+export const retrieveQuestionResponseFromApplicationOrAssessment = (
+  applicationOrAssessment: Application | Assessment,
+  Page: unknown,
+  question?: string,
+) => {
+  const pageData = pageDataFromApplicationOrAssessment(Page as TasklistPageInterface, applicationOrAssessment)
+  const pageName = getPageName(Page)
+  const q = question || camelCase(pageName)
+
+  if (!pageData) {
+    throw new SessionDataError(`Question ${q} was not found in the session`)
+  }
+
+  const response = pageData[q]
+
+  if (!response) {
+    throw new SessionDataError(`Question ${q} was not found in the session`)
+  }
+
+  return response
+}
+
+/**
+ * Retrieves response for a given question from the application object or returns undefined if it does not exist.
+ * @param applicationOrAssessment the application or assessment to fetch the response from.
+ * @param Page the page to retrieve the response from.
+ * @param {string} question the question that we need the response for. Defaults to the camel-cased name of the `Page`.
+ * @returns the response for the given page/question.
+ */
+export const retrieveOptionalQuestionResponseFromApplicationOrAssessment = (
+  applicationOrAssessment: Application | Assessment,
+  Page: TasklistPageInterface,
+  question?: string,
+) => {
+  let response
+
+  try {
+    response = retrieveQuestionResponseFromApplicationOrAssessment(applicationOrAssessment, Page, question)
+  } catch (e) {
+    response = undefined
+  }
+
+  return response
+}

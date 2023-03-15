@@ -6,11 +6,15 @@ import PlacementDate from './placementDate'
 import { DateFormats } from '../../../../utils/dateUtils'
 import applicationFactory from '../../../../testutils/factories/application'
 
+const releaseDate = new Date().toISOString()
+
 jest.mock('../../../../utils/applications/noticeTypeFromApplication')
+jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment', () => {
+  return { retrieveQuestionResponseFromApplicationOrAssessment: jest.fn(() => releaseDate) }
+})
 
 describe('PlacementDate', () => {
-  const releaseDate = new Date().toISOString()
-  const application = applicationFactory.withReleaseDate(releaseDate).build()
+  const application = applicationFactory.build()
 
   describe('title', () => {
     it('set the title and body correctly', () => {

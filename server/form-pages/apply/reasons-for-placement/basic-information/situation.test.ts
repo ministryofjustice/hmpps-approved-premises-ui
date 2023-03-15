@@ -1,7 +1,12 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import applicationFactory from '../../../../testutils/factories/application'
+import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 
 import Situation from './situation'
+
+jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment', () => {
+  return { retrieveQuestionResponseFromApplicationOrAssessment: jest.fn(() => 'communityOrder') }
+})
 
 describe('Situation', () => {
   const application = applicationFactory.build({
@@ -34,12 +39,9 @@ describe('Situation', () => {
   describe('items', () => {
     describe('sentenceType', () => {
       it('if the sentence type is "communityOrder" then the items should be correct', () => {
-        const items = new Situation(
-          { situation: 'riskManagement' },
-          applicationFactory.build({
-            data: { 'basic-information': { 'sentence-type': { sentenceType: 'communityOrder' } } },
-          }),
-        ).items()
+        ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('communityOrder')
+
+        const items = new Situation({ situation: 'riskManagement' }, application).items()
 
         expect(items.length).toEqual(2)
         expect(items[0]).toEqual({
@@ -55,12 +57,9 @@ describe('Situation', () => {
       })
 
       it('if the sentence type is "bailPlacement" then the items should be correct', () => {
-        const items = new Situation(
-          { situation: 'bailAssessment' },
-          applicationFactory.build({
-            data: { 'basic-information': { 'sentence-type': { sentenceType: 'bailPlacement' } } },
-          }),
-        ).items()
+        ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('bailPlacement')
+
+        const items = new Situation({ situation: 'bailAssessment' }, application).items()
 
         expect(items.length).toEqual(2)
         expect(items[0]).toEqual({
@@ -73,6 +72,8 @@ describe('Situation', () => {
     })
 
     it('marks an option as selected when the releaseType is set', () => {
+      ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('communityOrder')
+
       const page = new Situation({ situation: 'riskManagement' }, application)
 
       const selectedOptions = page.items().filter(item => item.checked)

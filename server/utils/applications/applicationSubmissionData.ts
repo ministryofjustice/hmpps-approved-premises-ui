@@ -3,17 +3,21 @@ import type {
   ReleaseTypeOption,
   SubmitApplication,
 } from '@approved-premises/api'
-import { SentenceTypesT } from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
-import type { ApTypes } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
+import ReleaseType from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
+import DescribeLocationFactors from '../../form-pages/apply/risk-and-need-factors/location-factors/describeLocationFactors'
+import ApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
+import SentenceType from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
 
-import { retrieveOptionalQuestionResponseFromApplication, retrieveQuestionResponseFromApplication } from '../utils'
+import {
+  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
+  retrieveQuestionResponseFromApplicationOrAssessment,
+} from '../retrieveQuestionResponseFromApplicationOrAssessment'
 
 export const applicationSubmissionData = (application: Application): SubmitApplication => {
-  const apType = retrieveQuestionResponseFromApplication<keyof ApTypes>(application, 'type-of-ap', 'ap-type', 'type')
-  const targetLocation = retrieveQuestionResponseFromApplication<string>(
+  const apType = retrieveQuestionResponseFromApplicationOrAssessment(application, ApType, 'type')
+  const targetLocation = retrieveQuestionResponseFromApplicationOrAssessment(
     application,
-    'location-factors',
-    'describe-location-factors',
+    DescribeLocationFactors,
     'postcodeArea',
   )
   const releaseType = getReleaseType(application)
@@ -28,21 +32,11 @@ export const applicationSubmissionData = (application: Application): SubmitAppli
 }
 
 const getReleaseType = (application: Application): ReleaseTypeOption => {
-  const sentenceType = retrieveQuestionResponseFromApplication<SentenceTypesT>(
-    application,
-    'basic-information',
-    'sentence-type',
-    'sentenceType',
-  )
+  const sentenceType = retrieveQuestionResponseFromApplicationOrAssessment(application, SentenceType, 'sentenceType')
 
   if (sentenceType === 'communityOrder' || sentenceType === 'bailPlacement') {
     return 'in_community'
   }
 
-  return retrieveOptionalQuestionResponseFromApplication<ReleaseTypeOption>(
-    application,
-    'basic-information',
-    'release-type',
-    'releaseType',
-  )
+  return retrieveOptionalQuestionResponseFromApplicationOrAssessment(application, ReleaseType, 'releaseType')
 }

@@ -3,9 +3,9 @@ import type { TaskListErrors } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
 
 import { SessionDataError } from '../../../../utils/errors'
-import { retrieveQuestionResponseFromApplication } from '../../../../utils/utils'
+import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 import TasklistPage from '../../../tasklistPage'
-import { SentenceTypesT } from './sentenceType'
+import SentenceType, { SentenceTypesT } from './sentenceType'
 
 const situations = {
   riskManagement: 'Referral for risk management/public protection',
@@ -16,7 +16,7 @@ const situations = {
 
 type CommunityOrderSituations = Pick<typeof situations, 'riskManagement' | 'residencyManagement'>
 type BailPlacementSituations = Pick<typeof situations, 'bailAssessment' | 'bailSentence'>
-type SentenceType = Extract<SentenceTypesT, 'communityOrder' | 'bailPlacement'>
+type SentenceTypeResponse = Extract<SentenceTypesT, 'communityOrder' | 'bailPlacement'>
 
 @Page({ name: 'situation', bodyProperties: ['situation'] })
 export default class Situation implements TasklistPage {
@@ -28,11 +28,7 @@ export default class Situation implements TasklistPage {
     readonly body: { situation?: keyof CommunityOrderSituations | keyof BailPlacementSituations },
     readonly application: ApprovedPremisesApplication,
   ) {
-    const sessionSentenceType = retrieveQuestionResponseFromApplication<SentenceType>(
-      application,
-      'basic-information',
-      'sentenceType',
-    )
+    const sessionSentenceType = retrieveQuestionResponseFromApplicationOrAssessment(application, SentenceType)
 
     this.situations = this.getSituationsForSentenceType(sessionSentenceType)
   }
@@ -69,7 +65,9 @@ export default class Situation implements TasklistPage {
     })
   }
 
-  getSituationsForSentenceType(sessionSentenceType: SentenceType): CommunityOrderSituations | BailPlacementSituations {
+  getSituationsForSentenceType(
+    sessionSentenceType: SentenceTypeResponse,
+  ): CommunityOrderSituations | BailPlacementSituations {
     if (sessionSentenceType === 'communityOrder') {
       return { riskManagement: situations.riskManagement, residencyManagement: situations.residencyManagement }
     }

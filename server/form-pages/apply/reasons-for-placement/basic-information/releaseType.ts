@@ -2,9 +2,9 @@ import type { ApprovedPremisesApplication, ReleaseTypeOption } from '@approved-p
 import type { TaskListErrors } from '@approved-premises/ui'
 
 import { SessionDataError } from '../../../../utils/errors'
-import { retrieveQuestionResponseFromApplication } from '../../../../utils/utils'
+import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 import TasklistPage from '../../../tasklistPage'
-import { SentenceTypesT } from './sentenceType'
+import SentenceType, { SentenceTypesT } from './sentenceType'
 import { Page } from '../../../utils/decorators'
 
 type SelectableReleaseTypes = Exclude<ReleaseTypeOption, 'in_community'>
@@ -20,7 +20,7 @@ const allReleaseTypes: ReleaseTypeOptions = {
 type ReducedReleaseTypeOptions = Pick<ReleaseTypeOptions, 'rotl' | 'licence'>
 type ReducedReleaseTypes = keyof ReducedReleaseTypeOptions
 
-type SentenceType = Extract<
+type SentenceTypeResponse = Extract<
   SentenceTypesT,
   'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life' | 'nonStatutory'
 >
@@ -37,11 +37,7 @@ export default class ReleaseType implements TasklistPage {
     readonly body: { releaseType?: SelectableReleaseTypes | ReducedReleaseTypes },
     readonly application: ApprovedPremisesApplication,
   ) {
-    const sessionSentenceType = retrieveQuestionResponseFromApplication<SentenceType>(
-      application,
-      'basic-information',
-      'sentenceType',
-    )
+    const sessionSentenceType = retrieveQuestionResponseFromApplicationOrAssessment(application, SentenceType)
 
     this.releaseTypes = this.getReleaseTypes(sessionSentenceType)
 
@@ -82,7 +78,7 @@ export default class ReleaseType implements TasklistPage {
     })
   }
 
-  getReleaseTypes(sessionReleaseType: SentenceType): ReleaseTypeOptions | ReducedReleaseTypeOptions {
+  getReleaseTypes(sessionReleaseType: SentenceTypeResponse): ReleaseTypeOptions | ReducedReleaseTypeOptions {
     if (sessionReleaseType === 'standardDeterminate' || sessionReleaseType === 'nonStatutory') {
       return allReleaseTypes
     }

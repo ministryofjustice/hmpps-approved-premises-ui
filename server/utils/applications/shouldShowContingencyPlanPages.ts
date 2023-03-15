@@ -1,14 +1,12 @@
+import ApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
+import ReleaseType from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
+import SentenceType from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
 import { ApprovedPremisesApplication as Application, ReleaseTypeOption } from '../../@types/shared'
-import { retrieveQuestionResponseFromApplication } from '../utils'
+import { retrieveQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
 
 export const shouldShowContingencyPlanPages = (application: Application) => {
   let releaseType: ReleaseTypeOption
-  const sentenceType = retrieveQuestionResponseFromApplication(
-    application,
-    'basic-information',
-    'sentence-type',
-    'sentenceType',
-  )
+  const sentenceType = retrieveQuestionResponseFromApplicationOrAssessment(application, SentenceType, 'sentenceType')
 
   if (
     sentenceType === 'standardDeterminate' ||
@@ -16,15 +14,10 @@ export const shouldShowContingencyPlanPages = (application: Application) => {
     sentenceType === 'ipp' ||
     sentenceType === 'life'
   ) {
-    releaseType = retrieveQuestionResponseFromApplication(
-      application,
-      'basic-information',
-      'release-type',
-      'releaseType',
-    )
+    releaseType = retrieveQuestionResponseFromApplicationOrAssessment(application, ReleaseType, 'releaseType')
   }
 
-  const apType = retrieveQuestionResponseFromApplication(application, 'type-of-ap', 'ap-type', 'apType')
+  const apType = retrieveQuestionResponseFromApplicationOrAssessment(application, ApType, 'type')
 
   if (
     sentenceType === 'communityOrder' ||

@@ -4,8 +4,12 @@ import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import EsapPlacementCCTV, { cctvHistory } from './esapPlacementCCTV'
 import applicationFactory from '../../../../testutils/factories/application'
 import personFactory from '../../../../testutils/factories/person'
+import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 
 jest.mock('../../../../utils/formUtils')
+jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment', () => {
+  return { retrieveQuestionResponseFromApplicationOrAssessment: jest.fn(() => []) }
+})
 
 describe('EsapPlacementCCTV', () => {
   const application = applicationFactory.build()
@@ -15,13 +19,7 @@ describe('EsapPlacementCCTV', () => {
   describe('previous', () => {
     describe('when the application has a previous response that includes `secreting`', () => {
       beforeEach(() => {
-        application.data = {
-          'type-of-ap': {
-            'esap-placement-screening': {
-              esapReasons: ['cctv', 'secreting'],
-            },
-          },
-        }
+        ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['cctv', 'secreting'])
       })
 
       itShouldHavePreviousValue(new EsapPlacementCCTV({}, application), 'esap-placement-secreting')
@@ -29,13 +27,7 @@ describe('EsapPlacementCCTV', () => {
 
     describe('when the application has a previous response does not include `secreting`', () => {
       beforeEach(() => {
-        application.data = {
-          'type-of-ap': {
-            'esap-placement-screening': {
-              esapReasons: ['cctv'],
-            },
-          },
-        }
+        ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['cctv'])
       })
 
       itShouldHavePreviousValue(new EsapPlacementCCTV({}, application), 'esap-placement-screening')

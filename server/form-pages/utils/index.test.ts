@@ -176,7 +176,9 @@ describe('utils', () => {
       jest.spyOn(utils, 'getPageName').mockImplementation(() => 'page')
       jest.spyOn(utils, 'getTaskName').mockImplementation(() => 'task')
 
-      jest.spyOn(utils, 'getPageDataFromApplication').mockImplementation((_, applicationInput) => applicationInput.data)
+      jest
+        .spyOn(utils, 'pageDataFromApplicationOrAssessment')
+        .mockImplementation((_, applicationInput) => applicationInput.data)
 
       expect(utils.getBody(page, application, { body: {} } as Request, {})).toBe('returnMe')
     })
