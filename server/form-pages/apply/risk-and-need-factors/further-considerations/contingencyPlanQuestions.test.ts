@@ -4,14 +4,21 @@ import contingencyPlanPartner from '../../../../testutils/factories/contingencyP
 import contingencyPlanQuestionsBodyFactory from '../../../../testutils/factories/contingencyPlanQuestionsBody'
 import { shouldShowTriggerPlanPages } from '../../../../utils/applications/shouldShowTriggerPlanPage'
 import { itShouldHavePreviousValue } from '../../../shared-examples'
+
 import ContingencyPlanQuestions from './contingencyPlanQuestions'
 
+const contingencyPlanPartners = contingencyPlanPartner.buildList(2)
+
 jest.mock('../../../../utils/applications/shouldShowTriggerPlanPage')
+jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment', () => {
+  return {
+    retrieveOptionalQuestionResponseFromApplicationOrAssessment: jest.fn(() => contingencyPlanPartners),
+  }
+})
 
 describe('ContingencyPlanQuestions', () => {
   const body = contingencyPlanQuestionsBodyFactory.build()
-  const contingencyPlanPartners = contingencyPlanPartner.buildList(2)
-  const application = applicationFactory.withContingencyPlanPartners(contingencyPlanPartners).build()
+  const application = applicationFactory.build()
 
   describe('title', () => {
     it('should set the title', () => {

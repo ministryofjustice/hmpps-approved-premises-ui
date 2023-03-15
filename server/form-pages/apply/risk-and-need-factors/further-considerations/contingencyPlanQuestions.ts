@@ -2,7 +2,6 @@ import {
   ContingencyPlanQuestionId,
   ContingencyPlanQuestionsBody,
   ContingencyPlanQuestionsRecord,
-  PartnerAgencyDetails,
   TaskListErrors,
 } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
@@ -10,7 +9,8 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { shouldShowTriggerPlanPages } from '../../../../utils/applications/shouldShowTriggerPlanPage'
 import { ApprovedPremisesApplication as Application } from '../../../../@types/shared'
-import { retrieveOptionalQuestionResponseFromApplication } from '../../../../utils/utils'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import ContingencyPlanPartners from './contingencyPlanPartners'
 
 const questions: ContingencyPlanQuestionsRecord = {
   noReturn: {
@@ -67,10 +67,9 @@ export default class ContingencyPlanQuestions implements TasklistPage {
 
   constructor(public body: ContingencyPlanQuestionsBody, private readonly application: Application) {
     const contingencyPlanPartners =
-      retrieveOptionalQuestionResponseFromApplication<Array<PartnerAgencyDetails>>(
+      retrieveOptionalQuestionResponseFromApplicationOrAssessment(
         application,
-        'further-considerations',
-        'contingency-plan-partners',
+        ContingencyPlanPartners,
         'partnerAgencyDetails',
       ) || []
 
