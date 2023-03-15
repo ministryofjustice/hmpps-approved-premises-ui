@@ -48,6 +48,14 @@ context('Assess', () => {
 
     // And I complete an assessment
     this.assessHelper.completeAssessment()
+
+    // Then the API should have received the correct data
+    cy.task('verifyAssessmentAcceptance', this.assessment).then(requests => {
+      expect(requests).to.have.length(1)
+
+      const body = JSON.parse(requests[0].body)
+      expect(body).to.have.keys('document', 'requirements')
+    })
   })
 
   it('allows me to create and update a clarification note', function test() {

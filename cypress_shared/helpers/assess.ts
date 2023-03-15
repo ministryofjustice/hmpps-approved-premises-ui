@@ -60,6 +60,7 @@ export default class AseessHelper {
       cy.task('stubPersonDocument', { person: this.assessment.application.person, document })
     })
     cy.task('stubAssessmentRejection', this.assessment)
+    cy.task('stubAssessmentAcceptance', this.assessment)
   }
 
   updateAssessmentStatus(status: AssessmentStatus) {
