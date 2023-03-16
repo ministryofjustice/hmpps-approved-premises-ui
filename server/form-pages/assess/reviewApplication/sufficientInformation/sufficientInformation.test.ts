@@ -49,7 +49,7 @@ describe('SufficientInformation', () => {
   })
 
   describe('when sufficientInformation is no', () => {
-    itShouldHaveNextValue(new SufficientInformation({ sufficientInformation: 'no' }), 'request-information')
+    itShouldHaveNextValue(new SufficientInformation({ sufficientInformation: 'no' }), 'information-received')
   })
 
   itShouldHavePreviousValue(new SufficientInformation({}), 'dashboard')
