@@ -97,4 +97,52 @@ describe('TasksController', () => {
       })
     })
   })
+
+  describe('create', () => {
+    beforeEach(() => {
+      request.params.id = 'some-uuid'
+      request.body.userId = 'some-other-uuid'
+      request.user.token = token
+    })
+
+    it('should set a flash message and redirect when the API returns correctly', async () => {
+      const requestHandler = tasksController.create()
+
+      const assessment = assessmentFactory.build()
+      applicationService.allocate.mockResolvedValue(assessment)
+
+      await requestHandler(request, response, next)
+
+      expect(applicationService.allocate).toHaveBeenCalledWith(
+        request.user.token,
+        request.params.id,
+        request.body.userId,
+      )
+
+      expect(request.flash).toHaveBeenCalledWith(
+        'success',
+        `Case has been allocated to ${assessment.allocatedToStaffMember.name}`,
+      )
+      expect(response.redirect).toHaveBeenCalledWith(paths.index({}))
+    })
+
+    it('should redirect with errors if the API returns an error', async () => {
+      const requestHandler = tasksController.create()
+
+      const err = new Error()
+
+      applicationService.allocate.mockImplementation(() => {
+        throw err
+      })
+
+      await requestHandler(request, response, next)
+
+      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        err,
+        paths.allocations.show({ id: request.params.id }),
+      )
+    })
+  })
 })

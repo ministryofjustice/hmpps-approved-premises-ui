@@ -11,5 +11,6 @@ export default {
   index: tasksPath,
   allocations: {
     show: allocationPath,
+    create: allocationPath,
   },
 }

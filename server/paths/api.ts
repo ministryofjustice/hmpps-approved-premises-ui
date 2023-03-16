@@ -26,6 +26,13 @@ const usersPath = path('/users')
 
 const tasksPath = path('/tasks')
 
+const tasksPaths = {
+  index: tasksPath,
+  allocations: {
+    create: tasksPath.path('/:applicationId/allocations'),
+  },
+}
+
 const applyPaths = {
   applications: {
     show: singleApplicationPath,
@@ -83,7 +90,10 @@ export default {
     },
   },
   tasks: {
-    index: tasksPath,
+    index: tasksPaths.index,
+    allocations: {
+      create: tasksPaths.allocations.create,
+    },
   },
   people: {
     risks: {
