@@ -1,0 +1,25 @@
+name: Build project
+description: Specific steps to setup the repo
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v3.6.0
+      with:
+        node-version-file: '.node-version'
+
+    - uses: actions/setup-node@v3
+      with:
+        cache: 'npm'
+
+    - name: Installing dependencies
+      run: npm install
+      shell: bash
+
+    - name: Generate Types
+      run: npm run generate-types
+      shell: bash
+
+    - name: Typechecking the code
+      run: npm run typecheck
+      shell: bash
