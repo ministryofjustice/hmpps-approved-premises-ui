@@ -150,4 +150,13 @@ export default {
         }),
       })
     ).body.requests,
+  verifyAssessmentRejection: async (assessment: Assessment) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.assessments.rejection({
+          id: assessment.id,
+        }),
+      })
+    ).body.requests,
 }

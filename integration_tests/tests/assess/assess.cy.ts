@@ -140,8 +140,26 @@ context('Assess', () => {
         // And I should not see the AssessApplication section
         tasklistPage.shouldNotShowSection('Assess application')
 
-        // And I should be able to start the make a decision task
-        tasklistPage.shouldShowTaskStatus('make-a-decision', 'Not started')
+        // When I make a decision
+        this.assessHelper.completeMakeADecisionPage('otherReasons')
+
+        // Then I should not see the MatchingInformation section
+        tasklistPage.shouldNotShowSection('Information for matching')
+
+        // When I check my answers
+        this.assessHelper.completeCheckYourAnswersPage()
+
+        // And I submit the application
+        this.assessHelper.submitAssessment(false)
+      })
+      .then(() => {
+        // Then the API should have received the correct data
+        cy.task('verifyAssessmentRejection', this.assessment).then(requests => {
+          expect(requests).to.have.length(1)
+
+          const body = JSON.parse(requests[0].body)
+          expect(body).to.have.keys('document', 'rejectionRationale')
+        })
       })
   })
 })
