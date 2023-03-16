@@ -12,7 +12,8 @@ import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getBody, updateAssessmentData } from '../form-pages/utils'
 import { ValidationError } from '../utils/errors'
 import { getResponses } from '../utils/applications/utils'
-import { applicationAccepted, rejectionRationaleFromAssessmentResponses } from '../utils/assessments/utils'
+import { rejectionRationaleFromAssessmentResponses } from '../utils/assessments/utils'
+import { applicationAccepted } from '../utils/assessments/decisionUtils'
 
 export default class AssessmentService {
   constructor(private readonly assessmentClientFactory: RestClientBuilder<AssessmentClient>) {}
