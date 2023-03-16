@@ -4,7 +4,6 @@ import {
   allocatedTableRows,
   allocationLink,
   allocationSummary,
-  applicationAccepted,
   arriveDateAsTimestamp,
   assessmentLink,
   assessmentSections,
@@ -18,7 +17,6 @@ import {
   daysSinceInfoRequest,
   daysSinceReceived,
   daysUntilDue,
-  decisionFromAssessment,
   formatDays,
   formatDaysUntilDueWithWarning,
   formattedArrivalDate,
@@ -52,6 +50,7 @@ import userFactory from '../../testutils/factories/user'
 import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from './documentUtils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
+import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -62,6 +61,7 @@ jest.mock('../personUtils')
 jest.mock('../reviewUtils')
 jest.mock('./documentUtils')
 jest.mock('../applications/arrivalDateFromApplication')
+jest.mock('./decisionUtils')
 
 jest.mock('../../form-pages/assess', () => {
   return {
@@ -584,62 +584,20 @@ describe('utils', () => {
     })
   })
 
-  describe('decisionFromAssessment', () => {
-    it('returns the decision from the assessment if it exists', () => {
-      const assessment = assessmentFactory.build({
-        data: { 'make-a-decision': { 'make-a-decision': { decision: 'the decision' } } },
-      })
-      expect(decisionFromAssessment(assessment)).toEqual('the decision')
-    })
-
-    it('returns an empty string of the decision doesnt exist', () => {
-      const assessment = assessmentFactory.build({ data: {} })
-      expect(decisionFromAssessment(assessment)).toEqual('')
-    })
-  })
-
-  describe('applicationAccepted', () => {
-    it('returns true if the assessment has either of the two decisions which accept an applicaiton', () => {
-      const acceptedAssessment1 = assessmentFactory.build({
-        data: { 'make-a-decision': { 'make-a-decision': { decision: 'releaseDate' } } },
-      })
-      const acceptedAssessment2 = assessmentFactory.build({
-        data: { 'make-a-decision': { 'make-a-decision': { decision: 'releaseDate' } } },
-      })
-
-      expect(applicationAccepted(acceptedAssessment1)).toBe(true)
-      expect(applicationAccepted(acceptedAssessment2)).toBe(true)
-    })
-
-    it('returns false if the assessment has any other decision', () => {
-      const rejectedAssessment = assessmentFactory.build({
-        data: { 'make-a-decision': { 'make-a-decision': { decision: 'reject' } } },
-      })
-
-      expect(applicationAccepted(rejectedAssessment)).toBe(false)
-    })
-
-    it('returns false if the assessment has no decision', () => {
-      const rejectedAssessment = assessmentFactory.build()
-
-      expect(applicationAccepted(rejectedAssessment)).toBe(false)
-    })
-  })
-
   describe('confirmationPageMessage', () => {
+    const assessment = assessmentFactory.build()
+
     it('returns the release date copy if the decision is "releaseDate"', () => {
-      const assessment = assessmentFactory.build({
-        data: { 'make-a-decision': { 'make-a-decision': { decision: 'releaseDate' } } },
-      })
+      ;(decisionFromAssessment as jest.Mock).mockReturnValue('releaseDate')
+
       expect(confirmationPageMessage(assessment))
         .toMatchStringIgnoringWhitespace(`<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
       <p>The assessment can now be used to match Robert Brown to a bed in an Approved Premises.</p>`)
     })
 
     it('returns the hold copy if the decision is "hold"', () => {
-      const assessment = assessmentFactory.build({
-        data: { 'make-a-decision': { 'make-a-decision': { decision: 'hold' } } },
-      })
+      ;(decisionFromAssessment as jest.Mock).mockReturnValue('hold')
+
       expect(confirmationPageMessage(assessment))
         .toMatchStringIgnoringWhitespace(`<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
         <p>This case is now paused until the oral hearing outcome has been provided by the Probation Practitioner and a release date is confirmed.</p>
@@ -647,9 +605,8 @@ describe('utils', () => {
     })
 
     it('returns the rejection copy if the decision isnt "hold" or "releaseDate" ', () => {
-      const assessment = assessmentFactory.build({
-        data: { 'make-a-decision': { 'make-a-decision': { decision: '' } } },
-      })
+      ;(decisionFromAssessment as jest.Mock).mockReturnValue('')
+
       expect(confirmationPageMessage(assessment))
         .toMatchStringIgnoringWhitespace(`<p>We've sent you a confirmation email.</p>
         <p>We've notified the Probation Practitioner that this application has been rejected as unsuitable for an Approved Premises.</p>`)
@@ -657,24 +614,17 @@ describe('utils', () => {
   })
 
   describe('confirmationPageResult', () => {
-    it('returns the release date copy if the decision is "releaseDate"', () => {
-      const assessment = assessmentFactory.build({
-        data: { 'make-a-decision': { 'make-a-decision': { decision: 'releaseDate' } } },
-      })
+    const assessment = assessmentFactory.build()
+
+    it('returns suitable copy if the application has been accepted"', () => {
+      ;(applicationAccepted as jest.Mock).mockReturnValue(true)
+
       expect(confirmationPageResult(assessment)).toBe('You have marked this application as suitable.')
     })
 
-    it('returns the hold copy if the decision is "hold"', () => {
-      const assessment = assessmentFactory.build({
-        data: { 'make-a-decision': { 'make-a-decision': { decision: 'hold' } } },
-      })
-      expect(confirmationPageResult(assessment)).toBe('You have marked this application as suitable.')
-    })
+    it('returns suitable copy if the application has not been accepted"', () => {
+      ;(applicationAccepted as jest.Mock).mockReturnValue(false)
 
-    it('returns the rejection copy if the decision isnt "hold" or "releaseDate" ', () => {
-      const assessment = assessmentFactory.build({
-        data: { 'make-a-decision': { 'make-a-decision': { decision: '' } } },
-      })
       expect(confirmationPageResult(assessment)).toBe('You have marked this application as unsuitable.')
     })
   })

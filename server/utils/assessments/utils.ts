@@ -25,6 +25,7 @@ import reviewSections from '../reviewUtils'
 import Apply from '../../form-pages/apply'
 import { kebabCase, linkTo } from '../utils'
 import { documentsFromApplication } from './documentUtils'
+import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
@@ -485,20 +486,6 @@ const getSectionSuffix = (task: UiTask, assessmentId: string) => {
   return `<p><a href="${link}">${copy}</a></p>`
 }
 
-const decisionFromAssessment = (assessment: Assessment) =>
-  assessment?.data?.['make-a-decision']?.['make-a-decision']?.decision || ''
-
-const applicationAccepted = (assessment: Assessment) => {
-  switch (decisionFromAssessment(assessment)) {
-    case 'releaseDate':
-      return true
-    case 'hold':
-      return true
-    default:
-      return false
-  }
-}
-
 const confirmationPageMessage = (assessment: Assessment) => {
   switch (decisionFromAssessment(assessment)) {
     case 'releaseDate':
@@ -546,7 +533,6 @@ export {
   allocatedTableRows,
   allocationLink,
   allocationSummary,
-  applicationAccepted,
   arriveDateAsTimestamp,
   assessmentLink,
   assessmentsApproachingDue,
@@ -560,7 +546,6 @@ export {
   daysSinceInfoRequest,
   daysSinceReceived,
   daysUntilDue,
-  decisionFromAssessment,
   formatDays,
   formatDaysUntilDueWithWarning,
   formattedArrivalDate,

@@ -14,12 +14,14 @@ import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { DataServices, TaskListErrors } from '../@types/ui'
 import { ValidationError } from '../utils/errors'
 import { ApplicationOrAssessmentResponse, getResponseForPage, getResponses } from '../utils/applications/utils'
+import { applicationAccepted } from '../utils/assessments/decisionUtils'
 
 jest.mock('../data/assessmentClient.ts')
 jest.mock('../data/personClient.ts')
 jest.mock('../form-pages/utils')
 jest.mock('../utils/applications/utils')
 jest.mock('../utils/assessments/placementRequestData')
+jest.mock('../utils/assessments/decisionUtils')
 
 describe('AssessmentService', () => {
   const assessmentClient = new AssessmentClient(null) as jest.Mocked<AssessmentClient>
@@ -178,9 +180,10 @@ describe('AssessmentService', () => {
     const token = 'some-token'
     let document = { foo: [{ bar: 'baz' }] } as ApplicationOrAssessmentResponse
     const requirements = createMock<PlacementRequest>()
+    const assessment = assessmentFactory.build()
 
     it('if the assessment is accepted the accept client method is called', async () => {
-      const assessment = assessmentFactory.acceptedAssessment().build()
+      ;(applicationAccepted as jest.Mock).mockReturnValue(true)
       ;(getResponses as jest.Mock).mockReturnValue(document)
       ;(placementRequestData as jest.Mock).mockReturnValue(requirements)
 
@@ -191,24 +194,21 @@ describe('AssessmentService', () => {
     })
 
     it('if the assessment is rejected the rejection client method is called with the rejectionRationale', async () => {
-      const assessment = assessmentFactory.build()
+      const response = {
+        Decision: 'Reject, risk too high (must be approved by an AP Area Manager (APAM)',
+      }
       document = {
         ...document,
-        'make-a-decision': [{ Decision: 'Reject, risk too high (must be approved by an AP Area Manager (APAM)' }],
+        'make-a-decision': [response],
       }
+      ;(applicationAccepted as jest.Mock).mockReturnValue(false)
       ;(getResponses as jest.Mock).mockReturnValue(document)
-      ;(getResponseForPage as jest.Mock).mockReturnValue({
-        Decision: 'Reject, risk too high (must be approved by an AP Area Manager (APAM)',
-      })
+      ;(getResponseForPage as jest.Mock).mockReturnValue(response)
 
       await service.submit(token, assessment)
 
       expect(assessmentClientFactory).toHaveBeenCalledWith(token)
-      expect(assessmentClient.rejection).toHaveBeenCalledWith(
-        assessment.id,
-        document,
-        'Reject, risk too high (must be approved by an AP Area Manager (APAM)',
-      )
+      expect(assessmentClient.rejection).toHaveBeenCalledWith(assessment.id, document, response.Decision)
     })
   })
 

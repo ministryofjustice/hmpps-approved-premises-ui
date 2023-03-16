@@ -223,12 +223,12 @@ export default class AseessHelper {
     tasklistPage.shouldShowTaskStatus('required-actions', 'Completed')
   }
 
-  private completeMakeADecisionPage() {
+  completeMakeADecisionPage(decision?: string) {
     // When I click on the 'make-a-decision' link
     cy.get('[data-cy-task-name="make-a-decision"]').click()
 
     // Then I should be taken to the make a decision page
-    const page = new MakeADecisionPage(this.assessment)
+    const page = new MakeADecisionPage(this.assessment, decision)
     page.completeForm()
     page.clickSubmit()
     this.updateAssessmentAndStub(page)
@@ -259,7 +259,7 @@ export default class AseessHelper {
     tasklistPage.shouldShowTaskStatus('matching-information', 'Completed')
   }
 
-  private completeCheckYourAnswersPage() {
+  completeCheckYourAnswersPage() {
     // When I click on the 'check-your-answers' link
     cy.get('[data-cy-task-name="check-your-answers"]').click()
 
@@ -267,10 +267,20 @@ export default class AseessHelper {
     const page = new CheckYourAnswersPage(this.assessment)
     page.shouldShowReviewAnswer(this.pages.reviewApplication)
     page.shouldShowSufficientInformationAnswer(this.pages.sufficientInformation)
-    page.shouldShowAssessSuitabilityAnswers(this.pages.assessSuitability)
-    page.shouldShowRequirementsAnswers(this.pages.requiredActions)
+
+    if (this.pages.assessSuitability.length) {
+      page.shouldShowAssessSuitabilityAnswers(this.pages.assessSuitability)
+    }
+
+    if (this.pages.requiredActions.length) {
+      page.shouldShowRequirementsAnswers(this.pages.requiredActions)
+    }
+
     page.shouldShowDecision(this.pages.makeADecision)
-    page.shouldShowMatchingInformation(this.pages.matchingInformation)
+
+    if (this.pages.matchingInformation.length) {
+      page.shouldShowMatchingInformation(this.pages.matchingInformation)
+    }
 
     page.clickSubmit()
     this.updateAssessmentAndStub(page)
@@ -282,12 +292,12 @@ export default class AseessHelper {
     tasklistPage.shouldShowTaskStatus('check-your-answers', 'Completed')
   }
 
-  submitAssessment() {
+  submitAssessment(isSuitable = true) {
     const tasklistPage = Page.verifyOnPage(TaskListPage)
 
     tasklistPage.checkCheckboxByLabel('confirmed')
     tasklistPage.clickSubmit()
-    Page.verifyOnPage(SubmissionConfirmation)
+    Page.verifyOnPage(SubmissionConfirmation, isSuitable)
   }
 
   updateAssessmentAndStub(pageObject: AssessPage) {
