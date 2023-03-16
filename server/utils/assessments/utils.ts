@@ -14,7 +14,6 @@ import { add, differenceInDays, format } from 'date-fns'
 import { ApprovedPremisesApplication, ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
-import { getResponseForPage } from '../applications/utils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import paths from '../../paths/assess'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
@@ -24,6 +23,7 @@ import { embeddedSummaryListItem } from '../checkYourAnswersUtils'
 import reviewSections from '../reviewUtils'
 import Apply from '../../form-pages/apply'
 import { kebabCase, linkTo } from '../utils'
+import { getApplicationType as getApplicationTypeFromApplication, getResponseForPage } from '../applications/utils'
 import { documentsFromApplication } from './documentUtils'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 
@@ -74,10 +74,7 @@ const groupAssessmements = <T extends AssessmentGroupingCategory>(
 }
 
 const getApplicationType = (assessment: Assessment): ApplicationType => {
-  if (assessment.application.isPipeApplication) {
-    return 'PIPE'
-  }
-  return 'Standard'
+  return getApplicationTypeFromApplication(assessment.application)
 }
 
 const allocationSummary = (assessment: Assessment): Array<SummaryListItem> => {

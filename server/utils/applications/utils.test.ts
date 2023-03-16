@@ -9,6 +9,7 @@ import { isApplicableTier, tierBadge } from '../personUtils'
 import {
   dashboardTableRows,
   firstPageOfApplicationJourney,
+  getApplicationType,
   getPage,
   getResponses,
   getStatus,
@@ -307,6 +308,24 @@ describe('utils', () => {
 
     it('should return false if the applicant has not answered the isExceptionalCase question', () => {
       expect(isUnapplicable(application)).toEqual(false)
+    })
+  })
+
+  describe('getApplicationType', () => {
+    it('returns standard when the application is not PIPE', () => {
+      const application = applicationFactory.build({
+        isPipeApplication: false,
+      })
+
+      expect(getApplicationType(application)).toEqual('Standard')
+    })
+
+    it('returns PIPE when the application is PIPE', () => {
+      const application = applicationFactory.build({
+        isPipeApplication: true,
+      })
+
+      expect(getApplicationType(application)).toEqual('PIPE')
     })
   })
 })

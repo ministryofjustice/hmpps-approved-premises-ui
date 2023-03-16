@@ -239,6 +239,7 @@ describe('utils', () => {
 
   describe('getApplicationType', () => {
     it('returns standard when the application is not PIPE', () => {
+      ;(applicationUtils.getApplicationType as jest.Mock).mockReturnValue('Standard')
       const assessment = assessmentFactory.build({
         application: applicationFactory.build({ isPipeApplication: false }),
       })
@@ -247,6 +248,8 @@ describe('utils', () => {
     })
 
     it('returns PIPE when the application is PIPE', () => {
+      ;(applicationUtils.getApplicationType as jest.Mock).mockReturnValue('PIPE')
+
       const assessment = assessmentFactory.build({
         application: applicationFactory.build({ isPipeApplication: true }),
       })
