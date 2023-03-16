@@ -28,17 +28,19 @@ describe('taskClient', () => {
     nock.cleanAll()
   })
 
-  it('makes a get request to the tasks endpoint', async () => {
-    const tasks = taskFactory.buildList(2)
+  describe('all', () => {
+    it('makes a get request to the tasks endpoint', async () => {
+      const tasks = taskFactory.buildList(2)
 
-    fakeApprovedPremisesApi
-      .get(paths.tasks.index.pattern)
-      .matchHeader('authorization', `Bearer ${token}`)
-      .reply(200, tasks)
+      fakeApprovedPremisesApi
+        .get(paths.tasks.index.pattern)
+        .matchHeader('authorization', `Bearer ${token}`)
+        .reply(200, tasks)
 
-    const result = await taskClient.all()
+      const result = await taskClient.all()
 
-    expect(result).toEqual(tasks)
-    expect(nock.isDone()).toBeTruthy()
+      expect(result).toEqual(tasks)
+      expect(nock.isDone()).toBeTruthy()
+    })
   })
 })
