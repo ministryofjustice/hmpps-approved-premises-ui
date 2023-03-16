@@ -3,6 +3,7 @@ import taskFactory from '../../testutils/factories/task'
 import {
   allocatedTableRows,
   allocationCell,
+  allocationLinkCell,
   daysUntilDue,
   daysUntilDueCell,
   formatDaysUntilDueWithWarning,
@@ -42,6 +43,8 @@ describe('table', () => {
             {
               html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
             },
+
+            allocationLinkCell(task, 'Reallocate'),
           ],
         ])
       })
@@ -75,6 +78,7 @@ describe('table', () => {
             {
               html: '',
             },
+            allocationLinkCell(task, 'Reallocate'),
           ],
         ])
       })
@@ -103,6 +107,7 @@ describe('table', () => {
             {
               html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
             },
+            allocationLinkCell(task, 'Allocate'),
           ],
         ])
       })
@@ -134,6 +139,7 @@ describe('table', () => {
             {
               html: '',
             },
+            allocationLinkCell(task, 'Allocate'),
           ],
         ])
       })

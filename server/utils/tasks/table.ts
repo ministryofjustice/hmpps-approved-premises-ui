@@ -1,7 +1,8 @@
 import { Task } from '../../@types/shared'
 import { TableCell, TableRow } from '../../@types/ui'
+import paths from '../../paths/tasks'
 import { DateFormats } from '../dateUtils'
-import { sentenceCase } from '../utils'
+import { linkTo, sentenceCase } from '../utils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
@@ -9,7 +10,14 @@ const allocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   const rows: Array<TableRow> = []
 
   tasks.forEach(task => {
-    rows.push([nameCell(task), daysUntilDueCell(task), allocationCell(task), statusCell(task), taskTypeCell(task)])
+    rows.push([
+      nameCell(task),
+      daysUntilDueCell(task),
+      allocationCell(task),
+      statusCell(task),
+      taskTypeCell(task),
+      allocationLinkCell(task, 'Reallocate'),
+    ])
   })
 
   return rows
@@ -19,7 +27,13 @@ const unallocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   tasks.forEach(task => {
-    rows.push([nameCell(task), daysUntilDueCell(task), statusCell(task), taskTypeCell(task)])
+    rows.push([
+      nameCell(task),
+      daysUntilDueCell(task),
+      statusCell(task),
+      taskTypeCell(task),
+      allocationLinkCell(task, 'Allocate'),
+    ])
   })
 
   return rows
@@ -46,6 +60,18 @@ const taskTypeCell = (task: Task): TableCell => ({
 
 const allocationCell = (task: Task): TableCell => ({
   text: task.allocatedToStaffMember?.name || '',
+})
+
+const allocationLinkCell = (task: Task, action: 'Allocate' | 'Reallocate'): TableCell => ({
+  html: linkTo(
+    paths.allocations.show,
+    { id: task.applicationId },
+    {
+      text: action,
+      hiddenText: `task for ${task?.person?.name || ''}`,
+      attributes: { 'data-cy-taskId': task.applicationId },
+    },
+  ),
 })
 
 const statusBadge = (task: Task): string => {
@@ -84,6 +110,7 @@ const daysUntilDue = (task: Task): number => {
 
 export {
   allocatedTableRows,
+  allocationLinkCell,
   daysUntilDue,
   formatDaysUntilDueWithWarning,
   nameCell,
