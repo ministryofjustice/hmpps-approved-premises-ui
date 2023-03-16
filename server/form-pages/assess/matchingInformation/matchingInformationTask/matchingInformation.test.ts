@@ -3,8 +3,8 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 import MatchingInformation from './matchingInformation'
 
 const defaultArguments = {
-  apGender: 'female',
-  apType: 'esap',
+  apGender: 'female' as const,
+  apType: 'esap' as const,
   wheelchairAccessible: 'essential',
   mentalHealthSupport: '1',
   singleRoom: 'essential',

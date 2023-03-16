@@ -1,5 +1,7 @@
 import nock from 'nock'
 
+import { createMock } from '@golevelup/ts-jest'
+import { AssessmentAcceptance } from '@approved-premises/api'
 import AssessmentClient from './assessmentClient'
 import config from '../config'
 import assessmentFactory from '../testutils/factories/assessment'
@@ -78,14 +80,14 @@ describe('AssessmentClient', () => {
   describe('acceptance', () => {
     it('should call the acceptance endpoint with the assessment', async () => {
       const assessmentId = 'some-id'
-      const document = { section: [{ task: 'response' }] }
+      const data = createMock<AssessmentAcceptance>()
 
       fakeApprovedPremisesApi
-        .post(paths.assessments.acceptance({ id: assessmentId }), { document })
+        .post(paths.assessments.acceptance({ id: assessmentId }), data)
         .matchHeader('authorization', `Bearer ${token}`)
         .reply(201)
 
-      await assessmentClient.acceptance(assessmentId, document)
+      await assessmentClient.acceptance(assessmentId, data)
 
       expect(nock.isDone()).toBeTruthy()
     })

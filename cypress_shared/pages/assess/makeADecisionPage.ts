@@ -3,13 +3,13 @@ import MakeADecision from '../../../server/form-pages/assess/makeADecision/makeA
 import AssessPage from './assessPage'
 
 export default class MakeADecisionPage extends AssessPage {
-  pageClass = new MakeADecision({ decision: 'riskTooLow' })
+  pageClass = new MakeADecision({ decision: 'releaseDate' })
 
   constructor(assessment: Assessment) {
     super(assessment, 'Make a decision')
   }
 
   completeForm() {
-    this.checkRadioByNameAndValue('decision', 'insufficientMoveOnPlan')
+    this.checkRadioByNameAndValue('decision', 'releaseDate')
   }
 }

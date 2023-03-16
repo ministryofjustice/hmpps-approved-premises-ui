@@ -1,3 +1,4 @@
+import type { ApType, Gender } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
@@ -5,16 +6,14 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { lowerCase, sentenceCase } from '../../../../utils/utils'
 
-const apTypes = {
-  standard: 'Standard AP',
+const apTypes: Record<ApType, string> = {
+  normal: 'Standard AP',
   pipe: 'Psychologically Informed Planned Environment (PIPE)',
   esap: 'Enhanced Security AP (ESAP)',
   rfap: 'Recovery Focused Approved Premises (RFAP)',
 } as const
-type ApTypes = keyof typeof apTypes
 
-const apGenders = ['male' as const, 'female' as const]
-type ApGenders = typeof apGenders
+const apGenders: Array<Gender> = ['male', 'female']
 
 const placementRequirementPreferences = ['essential' as const, 'desirable' as const, 'notRelevant' as const]
 type PlacementRequirementPreference = (typeof placementRequirementPreferences)[number]
@@ -41,6 +40,26 @@ export const offenceAndRiskInformationKeys = [
 
 const offenceAndRiskInformationRelevance = ['relevant', 'notRelevant']
 type OffenceAndRiskInformationRelevance = (typeof offenceAndRiskInformationRelevance)[number]
+
+export type MatchingInformationBody = {
+  apType: ApType
+  apGender: Gender
+  mentalHealthSupport?: '1' | '' | undefined
+  wheelchairAccessible: PlacementRequirementPreference
+  singleRoom: PlacementRequirementPreference
+  adaptedForHearingImpairments: PlacementRequirementPreference
+  adaptedForVisualImpairments: PlacementRequirementPreference
+  adaptedForRestrictedMobility: PlacementRequirementPreference
+  cateringRequired: PlacementRequirementPreference
+  contactSexualOffencesAgainstAnAdultAdults: OffenceAndRiskInformationRelevance
+  nonContactSexualOffencesAgainstAnAdultAdults: OffenceAndRiskInformationRelevance
+  contactSexualOffencesAgainstChildren: OffenceAndRiskInformationRelevance
+  nonContactSexualOffencesAgainstChildren: OffenceAndRiskInformationRelevance
+  nonSexualOffencesAgainstChildren: OffenceAndRiskInformationRelevance
+  arsonOffences: OffenceAndRiskInformationRelevance
+  hateBasedOffences: OffenceAndRiskInformationRelevance
+  vulnerableToExploitation: OffenceAndRiskInformationRelevance
+}
 
 @Page({
   name: 'matching-information',
@@ -84,27 +103,7 @@ export default class MatchingInformation implements TasklistPage {
     value: '',
   }
 
-  constructor(
-    public body: {
-      apType: ApTypes
-      apGender: ApGenders[number]
-      mentalHealthSupport?: '1' | '' | undefined
-      wheelchairAccessible: PlacementRequirementPreference
-      singleRoom: PlacementRequirementPreference
-      adaptedForHearingImpairments: PlacementRequirementPreference
-      adaptedForVisualImpairments: PlacementRequirementPreference
-      adaptedForRestrictedMobility: PlacementRequirementPreference
-      cateringRequired: PlacementRequirementPreference
-      contactSexualOffencesAgainstAnAdultAdults: OffenceAndRiskInformationRelevance
-      nonContactSexualOffencesAgainstAnAdultAdults: OffenceAndRiskInformationRelevance
-      contactSexualOffencesAgainstChildren: OffenceAndRiskInformationRelevance
-      nonContactSexualOffencesAgainstChildren: OffenceAndRiskInformationRelevance
-      nonSexualOffencesAgainstChildren: OffenceAndRiskInformationRelevance
-      arsonOffences: OffenceAndRiskInformationRelevance
-      hateBasedOffences: OffenceAndRiskInformationRelevance
-      vulnerableToExploitation: OffenceAndRiskInformationRelevance
-    },
-  ) {
+  constructor(public body: MatchingInformationBody) {
     this.mentalHealthSupport.value = body.mentalHealthSupport
   }
 

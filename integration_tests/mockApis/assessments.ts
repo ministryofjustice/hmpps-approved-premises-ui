@@ -80,6 +80,17 @@ export default {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       },
     }),
+  stubAssessmentAcceptance: (assessment: Assessment): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: paths.assessments.acceptance({ id: assessment.id }),
+      },
+      response: {
+        status: 201,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      },
+    }),
   stubClarificationNoteCreate: (args: { assessment: Assessment; note: NewClarificationNote }): SuperAgentRequest =>
     stubFor({
       request: {
@@ -127,6 +138,15 @@ export default {
         url: paths.assessments.clarificationNotes.update({
           id: assessment.id,
           clarificationNoteId: assessment.clarificationNotes[0].id,
+        }),
+      })
+    ).body.requests,
+  verifyAssessmentAcceptance: async (assessment: Assessment) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.assessments.acceptance({
+          id: assessment.id,
         }),
       })
     ).body.requests,
