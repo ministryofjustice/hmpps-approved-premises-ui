@@ -1,7 +1,9 @@
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
+import MakeADecisionPage from '../../form-pages/assess/makeADecision/makeADecisionTask/makeADecision'
 
 export const decisionFromAssessment = (assessment: Assessment) =>
-  assessment?.data?.['make-a-decision']?.['make-a-decision']?.decision || ''
+  retrieveOptionalQuestionResponseFromApplicationOrAssessment(assessment, MakeADecisionPage, 'decision') || ''
 
 export const applicationAccepted = (assessment: Assessment) => {
   switch (decisionFromAssessment(assessment)) {
