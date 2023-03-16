@@ -1,4 +1,4 @@
-name: CI
+name: Integration Tests
 
 on:
   pull_request:
@@ -21,21 +21,15 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3.6.0
-        with:
-          node-version-file: '.node-version'
-
-      - uses: actions/setup-node@v3
-        with:
-          cache: 'npm'
-
-      - name: Installing dependencies
-        run: npm install
+      - uses: ./.github/shared/setup
 
       - name: Building source
         run: npm run build
 
-      - name: Run tests
-        id: test
-        run: script/test
+      - name: Starting the backing services in Docker
+        run: |
+          script/utils/launch-docker.sh
+          docker-compose -f docker-compose-test.yml up -d
+
+      - name: Running integration tests
+        run: npm run test:integration
