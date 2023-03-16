@@ -30,7 +30,7 @@ const nameCell = (task: Task): TableCell => ({
 })
 
 const daysUntilDueCell = (task: Task): TableCell => ({
-  text: formatDaysUntilDueWithWarning(task),
+  html: formatDaysUntilDueWithWarning(task),
   attributes: {
     'data-sort-value': daysUntilDue(task),
   },

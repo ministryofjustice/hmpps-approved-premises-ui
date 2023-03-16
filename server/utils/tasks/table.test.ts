@@ -28,7 +28,7 @@ describe('table', () => {
               text: task.person.name,
             },
             {
-              text: formatDaysUntilDueWithWarning(task),
+              html: formatDaysUntilDueWithWarning(task),
               attributes: {
                 'data-sort-value': daysUntilDue(task),
               },
@@ -63,7 +63,7 @@ describe('table', () => {
               text: '',
             },
             {
-              text: '',
+              html: '',
               attributes: {
                 'data-sort-value': 0,
               },
@@ -92,7 +92,7 @@ describe('table', () => {
               text: task.person.name,
             },
             {
-              text: formatDaysUntilDueWithWarning(task),
+              html: formatDaysUntilDueWithWarning(task),
               attributes: {
                 'data-sort-value': daysUntilDue(task),
               },
@@ -123,7 +123,7 @@ describe('table', () => {
               text: '',
             },
             {
-              text: '',
+              html: '',
               attributes: {
                 'data-sort-value': 0,
               },
@@ -159,7 +159,7 @@ describe('table', () => {
     it('returns the days until due formatted for the UI as a TableCell object', () => {
       const task = taskFactory.build()
       expect(daysUntilDueCell(task)).toEqual({
-        text: formatDaysUntilDueWithWarning(task),
+        html: formatDaysUntilDueWithWarning(task),
         attributes: {
           'data-sort-value': daysUntilDue(task),
         },
