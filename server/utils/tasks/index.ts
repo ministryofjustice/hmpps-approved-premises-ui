@@ -1,6 +1,10 @@
 /* istanbul ignore file */
 
-import { Task } from '../../@types/shared'
+import { ApprovedPremisesApplication as Application, Task } from '../../@types/shared'
+import { SummaryListItem } from '../../@types/ui'
+import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
+import { getApplicationType } from '../applications/utils'
+import { DateFormats } from '../dateUtils'
 import { allocatedTableRows, unallocatedTableRows } from './table'
 
 type GroupedTasks = {
@@ -21,4 +25,36 @@ const groupByAllocation = (tasks: Array<Task>) => {
 
   return result
 }
-export { groupByAllocation, allocatedTableRows, unallocatedTableRows }
+
+const applicationSummary = (application: Application): Array<SummaryListItem> => {
+  const summary = [
+    {
+      key: {
+        text: 'CRN',
+      },
+      value: {
+        text: application.person.crn,
+      },
+    },
+    {
+      key: {
+        text: 'Arrival date',
+      },
+      value: {
+        text: DateFormats.isoDateToUIDate(arrivalDateFromApplication(application)),
+      },
+    },
+    {
+      key: {
+        text: 'Application Type',
+      },
+      value: {
+        text: getApplicationType(application),
+      },
+    },
+  ]
+
+  return summary
+}
+
+export { applicationSummary, allocatedTableRows, groupByAllocation, unallocatedTableRows }
