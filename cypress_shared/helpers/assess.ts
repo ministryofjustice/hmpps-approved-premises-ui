@@ -71,7 +71,7 @@ export default class AseessHelper {
 
   startAssessment() {
     // When I visit the assessments dashboard
-    const listPage = ListPage.visit([this.assessment])
+    const listPage = ListPage.visit()
 
     // And I click on the assessment
     listPage.clickAssessment(this.assessment)
