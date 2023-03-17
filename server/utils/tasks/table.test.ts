@@ -50,7 +50,6 @@ describe('table', () => {
     describe('when all the optional task properties are not defined', () => {
       it('returns an array of table rows with empty strings for the undefined values', () => {
         const task = taskFactory.build({
-          applicationId: undefined,
           person: undefined,
           dueDate: undefined,
           allocatedToStaffMember: undefined,
@@ -111,7 +110,6 @@ describe('table', () => {
     describe('when all the optional task properties are not defined', () => {
       it('returns an array of table rows with empty strings for the undefined values', () => {
         const task = taskFactory.build({
-          applicationId: undefined,
           person: undefined,
           dueDate: undefined,
           allocatedToStaffMember: undefined,
