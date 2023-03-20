@@ -380,10 +380,10 @@ describe('ApplicationService', () => {
       const applicationId = 'some-application-id'
       const userId = 'some-user-id'
 
-      await service.allocate(token, applicationId, userId)
+      await service.allocate(token, applicationId, userId, 'Assessment')
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.allocate).toHaveBeenCalledWith(applicationId, userId)
+      expect(applicationClient.allocate).toHaveBeenCalledWith(applicationId, userId, 'Assessment')
     })
   })
 })

@@ -5,6 +5,7 @@ import type {
   ApprovedPremisesApplication,
   ApprovedPremisesAssessment as Assessment,
   Document,
+  TaskType,
 } from '@approved-premises/api'
 
 import { applicationSubmissionData } from '../utils/applications/applicationSubmissionData'
@@ -134,9 +135,9 @@ export default class ApplicationService {
     return assessment
   }
 
-  async allocate(token: string, assessmentId: string, userId: string): Promise<Assessment> {
+  async allocate(token: string, applicationId: string, userId: string, taskType: TaskType): Promise<Assessment> {
     const client = this.applicationClientFactory(token)
-    const assessment = await client.allocate(assessmentId, userId)
+    const assessment = await client.allocate(applicationId, userId, taskType)
 
     return assessment
   }
