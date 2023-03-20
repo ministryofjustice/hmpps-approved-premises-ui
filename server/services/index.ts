@@ -14,6 +14,7 @@ import LostBedService from './lostBedService'
 import ApplicationService from './applicationService'
 import AssessmentService from './assessmentService'
 import TaskService from './taskService'
+import PlacementRequestService from './placementRequestService'
 
 export const services = () => {
   const {
@@ -27,6 +28,7 @@ export const services = () => {
     assessmentClientBuilder,
     userClientBuilder,
     taskClientBuilder,
+    placementRequestClientBuilder,
   } = dataAccess()
 
   const userService = new UserService(hmppsAuthClient, userClientBuilder)
@@ -41,6 +43,7 @@ export const services = () => {
   const applicationService = new ApplicationService(applicationClientBuilder)
   const assessmentService = new AssessmentService(assessmentClientBuilder)
   const taskService = new TaskService(taskClientBuilder)
+  const placementRequestService = new PlacementRequestService(placementRequestClientBuilder)
 
   return {
     userService,
@@ -55,6 +58,7 @@ export const services = () => {
     applicationService,
     assessmentService,
     taskService,
+    placementRequestService,
   }
 }
 
@@ -73,4 +77,5 @@ export {
   ApplicationService,
   AssessmentService,
   TaskService,
+  PlacementRequestService,
 }
