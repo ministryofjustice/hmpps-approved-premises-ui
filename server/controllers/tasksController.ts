@@ -44,7 +44,12 @@ export default class TasksController {
   create(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       try {
-        const assessment = await this.applicationService.allocate(req.user.token, req.params.id, req.body.userId)
+        const assessment = await this.applicationService.allocate(
+          req.user.token,
+          req.params.id,
+          req.body.userId,
+          'Assessment',
+        )
 
         req.flash('success', `Case has been allocated to ${assessment.allocatedToStaffMember.name}`)
         res.redirect(paths.index({}))
