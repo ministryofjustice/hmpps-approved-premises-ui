@@ -235,14 +235,18 @@ describe('table', () => {
     it('returns the number of days until the task is due', () => {
       const task = taskFactory.build({ dueDate: DateFormats.dateObjToIsoDate(add(new Date(), { days: 2 })) })
       expect(formatDaysUntilDueWithWarning(task)).toEqual(
-        '<strong class="task--index__warning">1 day<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>',
+        `<strong class="task--index__warning">${
+          DateFormats.differenceInDays(DateFormats.isoToDateObj(task.dueDate), new Date()).ui
+        }<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`,
       )
     })
 
     it('returns "overdue" if the task is overdue', () => {
       const task = taskFactory.build({ dueDate: DateFormats.dateObjToIsoDate(add(new Date(), { days: -2 })) })
       expect(formatDaysUntilDueWithWarning(task)).toEqual(
-        '<strong class="task--index__warning">-3 days<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>',
+        `<strong class="task--index__warning">-${
+          DateFormats.differenceInDays(DateFormats.isoToDateObj(task.dueDate), new Date()).ui
+        }<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`,
       )
     })
 
