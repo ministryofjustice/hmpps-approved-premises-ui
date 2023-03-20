@@ -26,6 +26,8 @@ const usersPath = path('/users')
 
 const tasksPath = path('/tasks')
 
+const placementRequestsPath = path('/placement-requests')
+
 const tasksPaths = {
   index: tasksPath,
   allocations: {
@@ -94,6 +96,9 @@ export default {
     allocations: {
       create: tasksPaths.allocations.create,
     },
+  },
+  placementRequests: {
+    index: placementRequestsPath,
   },
   people: {
     risks: {
