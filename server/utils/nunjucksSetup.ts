@@ -36,7 +36,7 @@ import * as TasklistUtils from './taskListUtils'
 import * as FormUtils from './formUtils'
 import * as UserUtils from './userUtils'
 import * as TaskUtils from './tasks'
-import * as PlacementRequestUtils from './placementRequestUtils'
+import * as PlacementRequestUtils from './placementRequests'
 
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
