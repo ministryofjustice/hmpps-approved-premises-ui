@@ -14,22 +14,22 @@
       </h1>
 
       {{
-      govukSummaryList({
-        rows: AssessmentUtils.allocationSummary(assessment)
-      })
-    }}
+        govukSummaryList({
+            rows: TaskUtils.applicationSummary(application)
+        })
+      }}
 
       {{ showErrorSummary(errorSummary) }}
 
-      <form action="{{ paths.allocations.create({ id: assessment.application.id }) }}" method="post">
+      <form action="{{ paths.allocations.show({ id: application.id }) }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
         {{
           govukSelect({
             label: {
-              html: '<h2 class="govuk-heading-m">Reallocate Assessment</h2>'
+              html: '<h2 class="govuk-heading-m">Reallocate task</h2>'
             },
             hint: {
-              text: 'Select a staff member to allocate the assessment to'
+              text: 'Select a staff member to allocate the task to'
             },
             id: "userId",
             name: "userId",

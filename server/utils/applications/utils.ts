@@ -1,4 +1,4 @@
-import type { PageResponse, TableRow } from '@approved-premises/ui'
+import type { ApplicationType, PageResponse, TableRow } from '@approved-premises/ui'
 import type {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
@@ -112,10 +112,18 @@ const firstPageOfApplicationJourney = (application: Application) => {
   return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' })
 }
 
+const getApplicationType = (application: Application): ApplicationType => {
+  if (application.isPipeApplication) {
+    return 'PIPE'
+  }
+  return 'Standard'
+}
+
 export {
   dashboardTableRows,
   firstPageOfApplicationJourney,
   arrivalDateFromApplication,
+  getApplicationType,
   getPage,
   getResponseForPage,
   getResponses,

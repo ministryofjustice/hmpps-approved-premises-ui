@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express'
-import type { GroupedAssessments } from '@approved-premises/ui'
+
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import TasklistService from '../../services/tasklistService'
@@ -11,8 +11,9 @@ import assessmentFactory from '../../testutils/factories/assessment'
 import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 import getSections from '../../utils/assessments/getSections'
-import { groupAssessmements } from '../../utils/assessments/utils'
 import { hasRole } from '../../utils/userUtils'
+import { GroupedAssessments } from '../../@types/ui'
+import { groupAssessmements } from '../../utils/assessments/utils'
 
 jest.mock('../../utils/assessments/utils')
 jest.mock('../../utils/userUtils')

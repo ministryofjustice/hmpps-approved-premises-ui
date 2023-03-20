@@ -1,5 +1,16 @@
 /* istanbul ignore file */
 
 import { path } from 'static-path'
+import applyPaths from './apply'
 
-export default { index: path('/tasks') }
+const tasksPath = path('/tasks')
+
+const allocationPath = applyPaths.applications.show.path('allocation')
+
+export default {
+  index: tasksPath,
+  allocations: {
+    show: allocationPath,
+    create: allocationPath,
+  },
+}

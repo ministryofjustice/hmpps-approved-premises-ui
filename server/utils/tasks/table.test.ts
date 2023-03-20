@@ -3,6 +3,7 @@ import taskFactory from '../../testutils/factories/task'
 import {
   allocatedTableRows,
   allocationCell,
+  allocationLinkCell,
   daysUntilDue,
   daysUntilDueCell,
   formatDaysUntilDueWithWarning,
@@ -28,7 +29,7 @@ describe('table', () => {
               text: task.person.name,
             },
             {
-              text: formatDaysUntilDueWithWarning(task),
+              html: formatDaysUntilDueWithWarning(task),
               attributes: {
                 'data-sort-value': daysUntilDue(task),
               },
@@ -42,6 +43,8 @@ describe('table', () => {
             {
               html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
             },
+
+            allocationLinkCell(task, 'Reallocate'),
           ],
         ])
       })
@@ -50,7 +53,6 @@ describe('table', () => {
     describe('when all the optional task properties are not defined', () => {
       it('returns an array of table rows with empty strings for the undefined values', () => {
         const task = taskFactory.build({
-          applicationId: undefined,
           person: undefined,
           dueDate: undefined,
           allocatedToStaffMember: undefined,
@@ -64,7 +66,7 @@ describe('table', () => {
               text: '',
             },
             {
-              text: '',
+              html: '',
               attributes: {
                 'data-sort-value': 0,
               },
@@ -76,6 +78,7 @@ describe('table', () => {
             {
               html: '',
             },
+            allocationLinkCell(task, 'Reallocate'),
           ],
         ])
       })
@@ -93,7 +96,7 @@ describe('table', () => {
               text: task.person.name,
             },
             {
-              text: formatDaysUntilDueWithWarning(task),
+              html: formatDaysUntilDueWithWarning(task),
               attributes: {
                 'data-sort-value': daysUntilDue(task),
               },
@@ -104,6 +107,7 @@ describe('table', () => {
             {
               html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
             },
+            allocationLinkCell(task, 'Allocate'),
           ],
         ])
       })
@@ -111,7 +115,6 @@ describe('table', () => {
     describe('when all the optional task properties are not defined', () => {
       it('returns an array of table rows with empty strings for the undefined values', () => {
         const task = taskFactory.build({
-          applicationId: undefined,
           person: undefined,
           dueDate: undefined,
           allocatedToStaffMember: undefined,
@@ -125,7 +128,7 @@ describe('table', () => {
               text: '',
             },
             {
-              text: '',
+              html: '',
               attributes: {
                 'data-sort-value': 0,
               },
@@ -136,6 +139,7 @@ describe('table', () => {
             {
               html: '',
             },
+            allocationLinkCell(task, 'Allocate'),
           ],
         ])
       })
@@ -161,7 +165,7 @@ describe('table', () => {
     it('returns the days until due formatted for the UI as a TableCell object', () => {
       const task = taskFactory.build()
       expect(daysUntilDueCell(task)).toEqual({
-        text: formatDaysUntilDueWithWarning(task),
+        html: formatDaysUntilDueWithWarning(task),
         attributes: {
           'data-sort-value': daysUntilDue(task),
         },
@@ -237,14 +241,18 @@ describe('table', () => {
     it('returns the number of days until the task is due', () => {
       const task = taskFactory.build({ dueDate: DateFormats.dateObjToIsoDate(add(new Date(), { days: 2 })) })
       expect(formatDaysUntilDueWithWarning(task)).toEqual(
-        '<strong class="task--index__warning">1 day<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>',
+        `<strong class="task--index__warning">${
+          DateFormats.differenceInDays(DateFormats.isoToDateObj(task.dueDate), new Date()).ui
+        }<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`,
       )
     })
 
     it('returns "overdue" if the task is overdue', () => {
       const task = taskFactory.build({ dueDate: DateFormats.dateObjToIsoDate(add(new Date(), { days: -2 })) })
       expect(formatDaysUntilDueWithWarning(task)).toEqual(
-        '<strong class="task--index__warning">-3 days<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>',
+        `<strong class="task--index__warning">-${
+          DateFormats.differenceInDays(DateFormats.isoToDateObj(task.dueDate), new Date()).ui
+        }<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`,
       )
     })
 

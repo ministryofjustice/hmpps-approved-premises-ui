@@ -1,22 +1,22 @@
-import type { ApprovedPremisesAssessment as Assessment, ApprovedPremisesUser as User } from '@approved-premises/api'
+import type { ApprovedPremisesApplication as Application, ApprovedPremisesUser as User } from '@approved-premises/api'
 
 import Page from '../page'
-import paths from '../../../server/paths/assess'
+import paths from '../../../server/paths/tasks'
 
-import { allocationSummary } from '../../../server/utils/assessments/utils'
+import { applicationSummary } from '../../../server/utils/tasks'
 
 export default class AllocationsPage extends Page {
-  constructor(private readonly assessment: Assessment) {
-    super(`Assessment for ${assessment.application.person.name}`)
+  constructor(private readonly application: Application) {
+    super(`Task for allocation`)
   }
 
-  static visit(assessment: Assessment): AllocationsPage {
-    cy.visit(paths.allocations.show({ id: assessment.application.id }))
-    return new AllocationsPage(assessment)
+  static visit(application: Application): AllocationsPage {
+    cy.visit(paths.allocations.show({ id: application.id }))
+    return new AllocationsPage(application)
   }
 
-  shouldShowInformationAboutAssessment() {
-    const summaryListItems = allocationSummary(this.assessment)
+  shouldShowInformationAboutTask() {
+    const summaryListItems = applicationSummary(this.application)
 
     summaryListItems.forEach(item => {
       const key = 'text' in item.key ? item.key.text : item.key.html

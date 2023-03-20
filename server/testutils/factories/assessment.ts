@@ -6,6 +6,7 @@ import type { ApprovedPremisesAssessment } from '@approved-premises/api'
 
 import { DateFormats } from '../../utils/dateUtils'
 import applicationFactory from './application'
+import userFactory from './user'
 
 class AssessmentFactory extends Factory<ApprovedPremisesAssessment> {
   createdXDaysAgo(days: number) {
@@ -26,6 +27,7 @@ export default AssessmentFactory.define(() => ({
   id: faker.datatype.uuid(),
   application: applicationFactory.withReleaseDate().build(),
   allocatedToStaffMemberId: faker.datatype.uuid(),
+  allocatedToStaffMember: userFactory.build(),
   schemaVersion: faker.datatype.uuid(),
   outdatedSchema: false,
   createdAt: DateFormats.dateObjToIsoDate(faker.date.past()),

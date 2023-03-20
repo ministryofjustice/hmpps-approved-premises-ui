@@ -33,6 +33,9 @@
         },
         {
             text: "Task type"
+        },
+        {
+           html: '<span class="govuk-visually-hidden">Actions</span>'
         }
         ],
         rows: TaskUtils.allocatedTableRows(tasks.allocated)
@@ -64,6 +67,9 @@
         },
         {
           text: "Task type"
+        },
+        {
+           html: '<span class="govuk-visually-hidden">Actions</span>'
         }
       ],
     rows: TaskUtils.unallocatedTableRows(tasks.unallocated)
@@ -73,12 +79,13 @@
 
 {% block content %}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
 
-            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+      {% include "../_messages.njk" %}
 
-            {{ govukTabs({
+      {{ govukTabs({
                 items: [
                     {
                     label: "Allocated",
@@ -97,14 +104,14 @@
                 ]
             }) }}
 
-        </div>
     </div>
+  </div>
 {% endblock %}
 
 {% block extraScripts %}
-    <script type="text/javascript" nonce="{{ cspNonce }}">
-        window
-            .MOJFrontend
-            .initAll()
-    </script>
+  <script type="text/javascript" nonce="{{ cspNonce }}">
+    window
+      .MOJFrontend
+      .initAll()
+  </script>
 {% endblock %}
