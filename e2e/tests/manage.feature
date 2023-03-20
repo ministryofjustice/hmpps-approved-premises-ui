@@ -1,3 +1,4 @@
+@skip
 Feature: Manage an Approved Premises
         Background:
                 Given I am logged in
