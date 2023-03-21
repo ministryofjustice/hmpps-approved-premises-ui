@@ -51,7 +51,6 @@ const paths = {
     departures: {
       new: departuresPath.path('new'),
       create: departuresPath,
-      confirm: departuresPath.path(':departureId/confirmation'),
     },
   },
   people: {

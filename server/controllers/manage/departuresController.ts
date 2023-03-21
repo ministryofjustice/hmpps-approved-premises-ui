@@ -42,14 +42,10 @@ export default class DeparturesController {
       } as NewDeparture
 
       try {
-        const { id } = await this.departureService.createDeparture(req.user.token, premisesId, bookingId, departure)
-        res.redirect(
-          paths.bookings.departures.confirm({
-            premisesId,
-            bookingId,
-            departureId: id,
-          }),
-        )
+        await this.departureService.createDeparture(req.user.token, premisesId, bookingId, departure)
+
+        req.flash('success', 'Departure recorded')
+        res.redirect(paths.bookings.show({ premisesId, bookingId }))
       } catch (err) {
         catchValidationErrorOrPropogate(
           req,
@@ -61,24 +57,6 @@ export default class DeparturesController {
           }),
         )
       }
-    }
-  }
-
-  confirm(): RequestHandler {
-    return async (req: Request, res: Response) => {
-      const { premisesId, bookingId, departureId } = req.params
-
-      const booking = await this.bookingService.find(req.user.token, premisesId, bookingId)
-      const departure = await this.departureService.getDeparture(req.user.token, premisesId, bookingId, departureId)
-
-      return res.render(`departures/confirm`, {
-        ...departure,
-        premisesId,
-        bookingId,
-        pageHeading: 'Departure confirmed',
-        name: booking.person.name,
-        crn: booking.person.crn,
-      })
     }
   }
 }
