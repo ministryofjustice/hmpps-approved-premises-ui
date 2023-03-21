@@ -5,6 +5,7 @@ import Page from '../../../cypress_shared/pages/page'
 import taskFactory from '../../../server/testutils/factories/task'
 import userFactory from '../../../server/testutils/factories/user'
 import applicationFactory from '../../../server/testutils/factories/application'
+import reallocationFactory from '../../../server/testutils/factories/reallocation'
 
 context('Tasks', () => {
   beforeEach(() => {
@@ -41,6 +42,7 @@ context('Tasks', () => {
     cy.task('stubTaskAllocationCreate', {
       application: this.application,
       task: { ...this.task, allocatedToStaffMember: this.selectedUser },
+      reallocation: reallocationFactory.build(),
     })
 
     // When I visit the task list page
@@ -66,7 +68,7 @@ context('Tasks', () => {
     Page.verifyOnPage(TaskListPage, [], [])
 
     // And I should see a confirmation message
-    taskListPage.shouldShowBanner(`Case has been allocated to ${this.selectedUser.name}`)
+    taskListPage.shouldShowBanner(`Case has been allocated`)
 
     // And the API should have received the correct data
     cy.task('verifyAllocationCreate', this.application).then(requests => {

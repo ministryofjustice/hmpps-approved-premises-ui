@@ -8,7 +8,7 @@ import { ApplicationService, TaskService, UserService } from '../services'
 import { getQualificationsForApplication } from '../utils/applications/getQualificationsForApplication'
 import userFactory from '../testutils/factories/user'
 import applicationFactory from '../testutils/factories/application'
-import assessmentFactory from '../testutils/factories/assessment'
+import reallocationFactory from '../testutils/factories/reallocation'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../utils/validation'
 import { ErrorsAndUserInput } from '../@types/ui'
 import paths from '../paths/tasks'
@@ -108,8 +108,8 @@ describe('TasksController', () => {
     it('should set a flash message and redirect when the API returns correctly', async () => {
       const requestHandler = tasksController.create()
 
-      const assessment = assessmentFactory.build()
-      applicationService.allocate.mockResolvedValue(assessment)
+      const reallocation = reallocationFactory.build()
+      applicationService.allocate.mockResolvedValue(reallocation)
 
       await requestHandler(request, response, next)
 
@@ -120,10 +120,7 @@ describe('TasksController', () => {
         'Assessment',
       )
 
-      expect(request.flash).toHaveBeenCalledWith(
-        'success',
-        `Case has been allocated to ${assessment.allocatedToStaffMember.name}`,
-      )
+      expect(request.flash).toHaveBeenCalledWith('success', `Case has been allocated`)
       expect(response.redirect).toHaveBeenCalledWith(paths.index({}))
     })
 
