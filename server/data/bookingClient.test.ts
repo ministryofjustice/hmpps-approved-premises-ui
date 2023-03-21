@@ -154,22 +154,6 @@ describe('BookingClient', () => {
     })
   })
 
-  describe('findCancellation', () => {
-    it('given a cancellation ID should return a cancellation', async () => {
-      const cancellation = cancellationFactory.build()
-
-      fakeApprovedPremisesApi
-        .get(`/premises/premisesId/bookings/bookingId/cancellations/${cancellation.id}`)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, cancellation)
-
-      const result = await bookingClient.findCancellation('premisesId', 'bookingId', cancellation.id)
-
-      expect(result).toEqual(cancellation)
-      expect(nock.isDone()).toBeTruthy()
-    })
-  })
-
   describe('markDeparture', () => {
     it('should create a departure', async () => {
       const departure = newDepartureFactory.build()
