@@ -1,8 +1,9 @@
 /* istanbul ignore file */
 
-import { controllers as manageControllers } from './manage'
 import { controllers as applyControllers } from './apply'
 import { controllers as assessControllers } from './assess'
+import { controllers as matchControllers } from './match'
+import { controllers as manageControllers } from './manage'
 import TasksController from './tasksController'
 
 import type { Services } from '../services'
@@ -14,9 +15,10 @@ export const controllers = (services: Services) => {
   return {
     dashboardController,
     tasksController,
-    ...manageControllers(services),
     ...applyControllers(services),
     ...assessControllers(services),
+    ...matchControllers(services),
+    ...manageControllers(services),
   }
 }
 
