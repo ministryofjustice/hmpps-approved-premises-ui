@@ -8,7 +8,7 @@ export default Factory.define<Document>(() => ({
   id: faker.datatype.uuid(),
   level: faker.helpers.arrayElement(['Offender', 'Conviction']),
   fileName: faker.system.commonFileName('pdf'),
-  createdAt: DateFormats.dateObjToIsoDate(faker.date.past()),
+  createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   typeCode: faker.word.verb(),
   typeDescription: faker.word.noun(),
   description: faker.lorem.sentence(),

@@ -1,5 +1,3 @@
-import nock from 'nock'
-
 import ApplicationClient from './applicationClient'
 import config from '../config'
 import applicationFactory from '../testutils/factories/application'
@@ -7,27 +5,16 @@ import assessmentFactory from '../testutils/factories/assessment'
 import activeOffenceFactory from '../testutils/factories/activeOffence'
 import documentFactory from '../testutils/factories/document'
 import paths from '../paths/api'
+import describeClient from '../testutils/describeClient'
 
-describe('ApplicationClient', () => {
-  let fakeApprovedPremisesApi: nock.Scope
+describeClient('ApplicationClient', provider => {
   let applicationClient: ApplicationClient
 
   const token = 'token-1'
 
   beforeEach(() => {
-    config.apis.approvedPremises.url = 'http://localhost:8080'
     config.flags.oasysDisabled = false
-    fakeApprovedPremisesApi = nock(config.apis.approvedPremises.url)
     applicationClient = new ApplicationClient(token)
-  })
-
-  afterEach(() => {
-    if (!nock.isDone()) {
-      nock.cleanAll()
-      throw new Error('Not all nock interceptors were used!')
-    }
-    nock.abortPendingRequests()
-    nock.cleanAll()
   })
 
   describe('create', () => {
@@ -35,20 +22,34 @@ describe('ApplicationClient', () => {
       const application = applicationFactory.build()
       const offence = activeOffenceFactory.build()
 
-      fakeApprovedPremisesApi
-        .post(`${paths.applications.new.pattern}?createWithRisks=true`, {
-          crn: application.person.crn,
-          convictionId: offence.convictionId,
-          deliusEventNumber: offence.deliusEventNumber,
-          offenceId: offence.offenceId,
-        })
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, application)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to create an Application with risks',
+        withRequest: {
+          method: 'POST',
+          path: paths.applications.new.pattern,
+          query: {
+            createWithRisks: 'true',
+          },
+          body: {
+            crn: application.person.crn,
+            convictionId: offence.convictionId,
+            deliusEventNumber: offence.deliusEventNumber,
+            offenceId: offence.offenceId,
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 201,
+          body: application,
+        },
+      })
 
       const result = await applicationClient.create(application.person.crn, offence)
 
       expect(result).toEqual(application)
-      expect(nock.isDone()).toBeTruthy()
     })
 
     describe('when oasys integration is disabled', () => {
@@ -60,20 +61,34 @@ describe('ApplicationClient', () => {
         const application = applicationFactory.build()
         const offence = activeOffenceFactory.build()
 
-        fakeApprovedPremisesApi
-          .post(`${paths.applications.new.pattern}?createWithRisks=false`, {
-            crn: application.person.crn,
-            convictionId: offence.convictionId,
-            deliusEventNumber: offence.deliusEventNumber,
-            offenceId: offence.offenceId,
-          })
-          .matchHeader('authorization', `Bearer ${token}`)
-          .reply(201, application)
+        provider.addInteraction({
+          state: 'Server is healthy',
+          uponReceiving: 'A request to create an Application without risks',
+          withRequest: {
+            method: 'POST',
+            path: paths.applications.new.pattern,
+            query: {
+              createWithRisks: 'false',
+            },
+            body: {
+              crn: application.person.crn,
+              convictionId: offence.convictionId,
+              deliusEventNumber: offence.deliusEventNumber,
+              offenceId: offence.offenceId,
+            },
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          },
+          willRespondWith: {
+            status: 201,
+            body: application,
+          },
+        })
 
         const result = await applicationClient.create(application.person.crn, offence)
 
         expect(result).toEqual(application)
-        expect(nock.isDone()).toBeTruthy()
       })
     })
   })
@@ -82,15 +97,25 @@ describe('ApplicationClient', () => {
     it('should return an application', async () => {
       const application = applicationFactory.build()
 
-      fakeApprovedPremisesApi
-        .get(paths.applications.show({ id: application.id }))
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, application)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for an application',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.show({ id: application.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: application,
+        },
+      })
 
       const result = await applicationClient.find(application.id)
 
       expect(result).toEqual(application)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -98,31 +123,52 @@ describe('ApplicationClient', () => {
     it('should return an application when a PUT request is made', async () => {
       const application = applicationFactory.build()
 
-      fakeApprovedPremisesApi
-        .put(paths.applications.update({ id: application.id }), JSON.stringify({ data: application.data }))
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, application)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'Request to update an application',
+        withRequest: {
+          method: 'PUT',
+          path: paths.applications.update({ id: application.id }),
+          body: JSON.stringify({ data: application.data }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: application,
+        },
+      })
 
       const result = await applicationClient.update(application)
 
       expect(result).toEqual(application)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
   describe('all', () => {
     it('should get all previous applications', async () => {
-      const previousApplications = applicationFactory.build()
+      const previousApplications = applicationFactory.buildList(5)
 
-      fakeApprovedPremisesApi
-        .get(paths.applications.index.pattern)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, previousApplications)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for all applications',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.index.pattern,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: previousApplications,
+        },
+      })
 
       const result = await applicationClient.all()
 
       expect(result).toEqual(previousApplications)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -137,14 +183,23 @@ describe('ApplicationClient', () => {
         releaseType: 'licence' as const,
       }
 
-      fakeApprovedPremisesApi
-        .post(paths.applications.submission({ id: application.id }), data)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to submit an application',
+        withRequest: {
+          method: 'POST',
+          path: paths.applications.submission({ id: application.id }),
+          body: data,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
 
       await applicationClient.submit(application.id, data)
-
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -153,15 +208,25 @@ describe('ApplicationClient', () => {
       const application = applicationFactory.build()
       const documents = documentFactory.buildList(5)
 
-      fakeApprovedPremisesApi
-        .get(paths.applications.documents({ id: application.id }))
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, documents)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for all documents for an application',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.documents({ id: application.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: documents,
+        },
+      })
 
       const result = await applicationClient.documents(application)
 
       expect(result).toEqual(documents)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -170,15 +235,25 @@ describe('ApplicationClient', () => {
       const applicationId = 'some-uuid'
       const assessment = assessmentFactory.build()
 
-      fakeApprovedPremisesApi
-        .get(paths.applications.assessment({ id: applicationId }))
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, assessment)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for all an assessment for an application',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.assessment({ id: applicationId }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: assessment,
+        },
+      })
 
       const result = await applicationClient.assessment(applicationId)
 
       expect(result).toEqual(assessment)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -189,15 +264,26 @@ describe('ApplicationClient', () => {
       const userId = 'some-user-id'
       const taskType = 'Assessment'
 
-      fakeApprovedPremisesApi
-        .post(paths.applications.allocation.create({ id: applicationId }), { userId, taskType })
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, assessment)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for to allocate an assessement',
+        withRequest: {
+          method: 'POST',
+          path: paths.applications.allocation.create({ id: applicationId }),
+          body: { userId, taskType: 'Assessment' },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 201,
+          body: assessment,
+        },
+      })
 
       const result = await applicationClient.allocate(applicationId, userId, taskType)
 
       expect(result).toEqual(assessment)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 })
