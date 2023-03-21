@@ -1,5 +1,4 @@
 import ArrivalCreatePage from './arrivalCreate'
-import CancellationConfirmPage from './cancellationConfirmation'
 import CancellationCreatePage from './cancellationCreate'
 import DepartureConfirmationPage from './departureConfirmation'
 import DepartureCreatePage from './departureCreate'
@@ -16,7 +15,6 @@ import BookingExtensionCreatePage from './booking/extension/create'
 
 export {
   ArrivalCreatePage,
-  CancellationConfirmPage,
   CancellationCreatePage,
   DepartureConfirmationPage,
   DepartureCreatePage,

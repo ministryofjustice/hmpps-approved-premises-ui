@@ -46,19 +46,10 @@ export default class CancellationsController {
       } as NewCancellation
 
       try {
-        const { id } = await this.cancellationService.createCancellation(
-          req.user.token,
-          premisesId,
-          bookingId,
-          cancellation,
-        )
-        res.redirect(
-          paths.bookings.cancellations.confirm({
-            bookingId,
-            premisesId,
-            id,
-          }),
-        )
+        await this.cancellationService.createCancellation(req.user.token, premisesId, bookingId, cancellation)
+
+        req.flash('success', 'Booking cancelled')
+        res.redirect(paths.bookings.show({ premisesId, bookingId }))
       } catch (err) {
         catchValidationErrorOrPropogate(
           req,
@@ -70,21 +61,6 @@ export default class CancellationsController {
           }),
         )
       }
-    }
-  }
-
-  confirm(): RequestHandler {
-    return async (req: Request, res: Response) => {
-      const { premisesId, bookingId, id } = req.params
-      const booking = await this.bookingService.find(req.user.token, premisesId, bookingId)
-      const cancellation = await this.cancellationService.getCancellation(req.user.token, premisesId, bookingId, id)
-
-      return res.render('cancellations/confirm', {
-        cancellation,
-        booking,
-        premisesId,
-        pageHeading: 'Cancellation complete',
-      })
     }
   }
 }

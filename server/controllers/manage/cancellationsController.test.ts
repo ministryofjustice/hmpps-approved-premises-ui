@@ -121,12 +121,10 @@ describe('cancellationsController', () => {
         expectedCancellation,
       )
 
+      expect(request.flash).toHaveBeenCalledWith('success', 'Booking cancelled')
+
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.bookings.cancellations.confirm({
-          bookingId: request.params.bookingId,
-          premisesId: request.params.premisesId,
-          id: cancellation.id,
-        }),
+        paths.bookings.show({ premisesId: request.params.premisesId, bookingId: request.params.bookingId }),
       )
     })
 
@@ -155,39 +153,6 @@ describe('cancellationsController', () => {
           premisesId: request.params.premisesId,
         }),
       )
-    })
-  })
-
-  describe('confirm', () => {
-    it('renders the confirmation page with the details from the cancellation that is requested', async () => {
-      const cancellation = cancellationFactory.build()
-
-      cancellationService.getCancellation.mockResolvedValue(cancellation)
-
-      const requestHandler = cancellationsController.confirm()
-
-      await requestHandler(
-        {
-          ...request,
-          params: {
-            premisesId,
-            bookingId,
-            id: cancellation.id,
-          },
-        },
-        response,
-        next,
-      )
-
-      expect(cancellationService.getCancellation).toHaveBeenCalledWith(token, premisesId, bookingId, cancellation.id)
-      expect(bookingService.find).toHaveBeenCalledWith(token, premisesId, bookingId)
-
-      expect(response.render).toHaveBeenCalledWith('cancellations/confirm', {
-        cancellation,
-        booking,
-        premisesId,
-        pageHeading: 'Cancellation complete',
-      })
     })
   })
 })
