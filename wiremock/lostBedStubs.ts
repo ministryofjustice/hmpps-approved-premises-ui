@@ -18,7 +18,7 @@ lostBeds.push({
     jsonBody: JSON.stringify(lostBedFactory.build()),
   },
 })
-const requiredFields = getCombinations(['startDate', 'endDate', 'numberOfBeds', 'reason', 'referenceNumber'])
+const requiredFields = getCombinations(['startDate', 'endDate', 'reason', 'referenceNumber'])
 
 requiredFields.forEach((fields: Array<string>) => {
   lostBeds.push(errorStub(fields, `/premises/${guidRegex}/lost-beds`))

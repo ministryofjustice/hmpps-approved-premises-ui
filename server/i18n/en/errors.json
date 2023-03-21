@@ -61,7 +61,6 @@
     "invalid": "The end date is an invalid date",
     "beforeStartDate": "The end date must be before the start date"
   },
-  "numberOfBeds": { "empty": "You must enter the number of beds lost", "isZero": "Number of beds lost cannot be zero" },
   "referenceNumber": { "empty": "You must enter a reference number" },
   "query": { "empty": "You must enter a query" },
   "userId": { "empty": "You must choose a user to allocate the application to" }

@@ -21,5 +21,6 @@ export default Factory.define<NewBooking>(() => {
     'departureDate-month': departureDate.getMonth().toString(),
     'departureDate-year': departureDate.getFullYear().toString(),
     serviceName: 'approved-premises',
+    bedId: faker.datatype.uuid(),
   }
 })

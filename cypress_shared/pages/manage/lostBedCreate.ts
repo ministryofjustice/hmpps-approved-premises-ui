@@ -1,4 +1,4 @@
-import type { ApprovedPremisesLostBed as LostBed } from '@approved-premises/api'
+import type { LostBed } from '@approved-premises/api'
 import paths from '../../../server/paths/manage'
 
 import Page from '../page'
@@ -16,8 +16,6 @@ export default class LostBedCreatePage extends Page {
   public completeForm(lostBed: LostBed): void {
     const startDate = new Date(Date.parse(lostBed.startDate))
     const endDate = new Date(Date.parse(lostBed.endDate))
-
-    cy.get('input[name="lostBed[numberOfBeds]"]').type(String(lostBed.numberOfBeds))
 
     cy.get('input[name="startDate-day"]').type(String(startDate.getDate()))
     cy.get('input[name="startDate-month"]').type(String(startDate.getMonth() + 1))
