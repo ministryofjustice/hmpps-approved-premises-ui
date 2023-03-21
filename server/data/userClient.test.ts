@@ -1,29 +1,15 @@
-import nock from 'nock'
-
 import UserClient from './userClient'
 import userFactory from '../testutils/factories/user'
-import config from '../config'
 import paths from '../paths/api'
+import describeClient from '../testutils/describeClient'
 
-describe('UserClient', () => {
-  let fakeApprovedPremisesApi: nock.Scope
+describeClient('UserClient', provider => {
   let userClient: UserClient
 
   const token = 'token-1'
 
   beforeEach(() => {
-    config.apis.approvedPremises.url = 'http://localhost:8080'
-    fakeApprovedPremisesApi = nock(config.apis.approvedPremises.url)
     userClient = new UserClient(token)
-  })
-
-  afterEach(() => {
-    if (!nock.isDone()) {
-      nock.cleanAll()
-      throw new Error('Not all nock interceptors were used!')
-    }
-    nock.abortPendingRequests()
-    nock.cleanAll()
   })
 
   describe('getUser', () => {
@@ -31,10 +17,22 @@ describe('UserClient', () => {
     const id = 'SOME_ID'
 
     it('should return a user', async () => {
-      fakeApprovedPremisesApi
-        .get(paths.users.show({ id }))
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, user)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a user',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.show({ id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: user,
+        },
+      })
 
       const output = await userClient.getActingUser(id)
       expect(output).toEqual(user)
@@ -45,10 +43,22 @@ describe('UserClient', () => {
     const user = userFactory.build()
 
     it('should return a user', async () => {
-      fakeApprovedPremisesApi
-        .get(paths.users.profile({}))
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, user)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a user profile',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.profile({}),
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: user,
+        },
+      })
 
       const output = await userClient.getUserProfile()
       expect(output).toEqual(user)
@@ -59,40 +69,98 @@ describe('UserClient', () => {
     const users = userFactory.buildList(4)
 
     it('should return all users when no queries are specified', async () => {
-      fakeApprovedPremisesApi
-        .get(paths.users.index({}))
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, users)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of users',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.index({}),
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+        },
+      })
 
       const output = await userClient.getUsers()
       expect(output).toEqual(users)
     })
 
     it('should query by role', async () => {
-      fakeApprovedPremisesApi
-        .get(`${paths.users.index({})}?roles=assessor,matcher`)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, users)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of users with roles',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.index({}),
+          query: {
+            roles: 'assessor,matcher',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+        },
+      })
 
       const output = await userClient.getUsers(['assessor', 'matcher'])
       expect(output).toEqual(users)
     })
 
     it('should query by qualifications', async () => {
-      fakeApprovedPremisesApi
-        .get(`${paths.users.index({})}?qualifications=pipe,womens`)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, users)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of users with qualifications',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.index({}),
+          query: {
+            qualifications: 'pipe,womens',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+        },
+      })
 
       const output = await userClient.getUsers([], ['pipe', 'womens'])
       expect(output).toEqual(users)
     })
 
     it('should query by qualifications and roles', async () => {
-      fakeApprovedPremisesApi
-        .get(`${paths.users.index({})}?roles=assessor,matcher&qualifications=pipe,womens`)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, users)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of users with roles and qualifications',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.index({}),
+          query: {
+            roles: 'assessor,matcher',
+            qualifications: 'pipe,womens',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+        },
+      })
 
       const output = await userClient.getUsers(['assessor', 'matcher'], ['pipe', 'womens'])
       expect(output).toEqual(users)
