@@ -101,6 +101,6 @@ export default BookingFactory.define(() => {
     departure: departureFactory.build(),
     extensions: [],
     serviceName: 'approved-premises' as const,
-    createdAt: DateFormats.dateObjToIsoDate(faker.date.past()),
+    createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   }
 })
