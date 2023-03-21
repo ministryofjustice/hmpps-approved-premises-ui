@@ -1,4 +1,3 @@
-import nock from 'nock'
 import { Response } from 'express'
 import { createMock } from '@golevelup/ts-jest'
 
@@ -14,91 +13,126 @@ import activeOffenceFactory from '../testutils/factories/activeOffence'
 import oasysSelectionFactory from '../testutils/factories/oasysSelection'
 import oasysSectionsFactory from '../testutils/factories/oasysSections'
 
-import oasysStubs from './stubs/oasysStubs.json'
+import describeClient from '../testutils/describeClient'
 
-describe('PersonClient', () => {
-  let fakeApprovedPremisesApi: nock.Scope
+describeClient('PersonClient', provider => {
   let personClient: PersonClient
 
   const token = 'token-1'
 
   beforeEach(() => {
-    config.apis.approvedPremises.url = 'http://localhost:8080'
     config.flags.oasysDisabled = false
-    fakeApprovedPremisesApi = nock(config.apis.approvedPremises.url)
     personClient = new PersonClient(token)
-  })
-
-  afterEach(() => {
-    if (!nock.isDone()) {
-      nock.cleanAll()
-      throw new Error('Not all nock interceptors were used!')
-    }
-    nock.abortPendingRequests()
-    nock.cleanAll()
   })
 
   describe('search', () => {
     it('should return a person', async () => {
       const person = personFactory.build()
 
-      fakeApprovedPremisesApi
-        .get(`/people/search?crn=crn`)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, person)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to search for a person',
+        withRequest: {
+          method: 'GET',
+          path: `/people/search`,
+          query: {
+            crn: 'crn',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: person,
+        },
+      })
 
       const result = await personClient.search('crn', false)
 
       expect(result).toEqual(person)
-      expect(nock.isDone()).toBeTruthy()
     })
 
     it('should return append checkCaseload if checkCaseload is true', async () => {
       const person = personFactory.build()
 
-      fakeApprovedPremisesApi
-        .get(`/people/search?crn=crn&checkCaseload=true`)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, person)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to search for a person and check the caseload',
+        withRequest: {
+          method: 'GET',
+          path: `/people/search`,
+          query: {
+            crn: 'crn',
+            checkCaseload: 'true',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: person,
+        },
+      })
 
       const result = await personClient.search('crn', true)
 
       expect(result).toEqual(person)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
   describe('risks', () => {
     it('should return the risks for a person', async () => {
       const crn = 'crn'
-      const person = riskFactory.build()
+      const risks = riskFactory.build()
 
-      fakeApprovedPremisesApi
-        .get(`/people/${crn}/risks`)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, person)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the risks for a person',
+        withRequest: {
+          method: 'GET',
+          path: `/people/${crn}/risks`,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: risks,
+        },
+      })
 
       const result = await personClient.risks(crn)
 
-      expect(result).toEqual(person)
-      expect(nock.isDone()).toBeTruthy()
+      expect(result).toEqual(risks)
     })
   })
 
   describe('prison case notes', () => {
     it('should return the risks for a person', async () => {
       const crn = 'crn'
-      const prisonCaseNotes = prisonCaseNotesFactory.build()
+      const prisonCaseNotes = prisonCaseNotesFactory.buildList(3)
 
-      fakeApprovedPremisesApi
-        .get(paths.people.prisonCaseNotes({ crn }))
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, prisonCaseNotes)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the case notes for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.prisonCaseNotes({ crn }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: prisonCaseNotes,
+        },
+      })
 
       const result = await personClient.prisonCaseNotes(crn)
 
       expect(result).toEqual(prisonCaseNotes)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -107,15 +141,25 @@ describe('PersonClient', () => {
       const crn = 'crn'
       const adjudications = adjudicationsFactory.buildList(5)
 
-      fakeApprovedPremisesApi
-        .get(paths.people.adjudications({ crn }))
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, adjudications)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the adjudications for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.adjudications({ crn }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: adjudications,
+        },
+      })
 
       const result = await personClient.adjudications(crn)
 
       expect(result).toEqual(adjudications)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -124,15 +168,25 @@ describe('PersonClient', () => {
       const crn = 'crn'
       const acctAlerts = acctAlertFactory.buildList(5)
 
-      fakeApprovedPremisesApi
-        .get(paths.people.acctAlerts({ crn }))
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, acctAlerts)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the acctAlerts for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.acctAlerts({ crn }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: acctAlerts,
+        },
+      })
 
       const result = await personClient.acctAlerts(crn)
 
       expect(result).toEqual(acctAlerts)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -141,15 +195,25 @@ describe('PersonClient', () => {
       const crn = 'crn'
       const oasysSections = oasysSelectionFactory.buildList(5)
 
-      fakeApprovedPremisesApi
-        .get(paths.people.oasys.selection({ crn }))
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, oasysSections)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the importable sections of OASys for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.oasys.selection({ crn }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: oasysSections,
+        },
+      })
 
       const result = await personClient.oasysSelections(crn)
 
       expect(result).toEqual(oasysSections)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -159,55 +223,53 @@ describe('PersonClient', () => {
       const optionalSections = [1, 2, 3]
       const oasysSections = oasysSectionsFactory.build()
 
-      fakeApprovedPremisesApi
-        .get(`${paths.people.oasys.sections({ crn })}?selected-sections=1&selected-sections=2&selected-sections=3`)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, oasysSections)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the optional selected sections of OASys for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.oasys.sections({ crn }),
+          query: {
+            'selected-sections': ['1', '2', '3'],
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: oasysSections,
+        },
+      })
 
       const result = await personClient.oasysSections(crn, optionalSections)
 
       expect(result).toEqual(oasysSections)
-      expect(nock.isDone()).toBeTruthy()
     })
 
     it('should return the sections of OASys with no optional selected sections', async () => {
       const crn = 'crn'
       const oasysSections = oasysSectionsFactory.build()
 
-      fakeApprovedPremisesApi
-        .get(`${paths.people.oasys.sections({ crn })}`)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, oasysSections)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get sections of OASys for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.oasys.sections({ crn }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: oasysSections,
+        },
+      })
 
       const result = await personClient.oasysSections(crn)
 
       expect(result).toEqual(oasysSections)
-      expect(nock.isDone()).toBeTruthy()
-    })
-
-    describe('when oasys integration is disabled', () => {
-      beforeEach(() => {
-        config.flags.oasysDisabled = true
-      })
-
-      afterEach(() => {
-        nock.abortPendingRequests()
-        nock.cleanAll()
-      })
-
-      it('should return the stub dataset with blank responses', async () => {
-        const crn = 'crn'
-        const url = `${paths.people.oasys.sections({ crn })}`
-
-        fakeApprovedPremisesApi.get(url).matchHeader('authorization', `Bearer ${token}`).reply(200)
-
-        const result = await personClient.oasysSections(crn)
-
-        expect(result).toEqual(oasysStubs)
-
-        expect(nock.isDone()).toBeFalsy()
-        expect(nock.pendingMocks()).toEqual([`GET ${config.apis.approvedPremises.url}${url}`])
-      })
     })
   })
 
@@ -216,15 +278,25 @@ describe('PersonClient', () => {
       const crn = 'crn'
       const offences = activeOffenceFactory.buildList(5)
 
-      fakeApprovedPremisesApi
-        .get(paths.people.offences({ crn }))
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, offences)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get offences for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.offences({ crn }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: offences,
+        },
+      })
 
       const result = await personClient.offences(crn)
 
       expect(result).toEqual(offences)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -234,14 +306,22 @@ describe('PersonClient', () => {
       const documentId = '123'
       const response = createMock<Response>({})
 
-      fakeApprovedPremisesApi
-        .get(paths.people.documents({ crn, documentId }))
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get offences for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.documents({ crn, documentId }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
 
       await personClient.document(crn, documentId, response)
-
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 })

@@ -7,7 +7,7 @@ import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<Adjudication>(() => ({
   id: faker.datatype.number(),
-  reportedAt: DateFormats.dateObjToIsoDate(faker.date.past()),
+  reportedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   establishment: faker.address.cityName(),
   offenceDescription: faker.lorem.sentence(),
   hearingHeld: faker.datatype.boolean(),
