@@ -4,6 +4,7 @@ import type {
   ApprovedPremisesAssessment as Assessment,
   Document,
   SubmitApplication,
+  TaskType,
 } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
@@ -61,10 +62,10 @@ export default class ApplicationClient {
     })) as Assessment
   }
 
-  async allocate(applicationId: string, userId: string): Promise<Assessment> {
+  async allocate(applicationId: string, userId: string, taskType: TaskType): Promise<Assessment> {
     return (await this.restClient.post({
       path: paths.applications.allocation.create({ id: applicationId }),
-      data: { userId },
+      data: { userId, taskType },
     })) as Assessment
   }
 }

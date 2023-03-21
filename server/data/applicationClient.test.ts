@@ -187,13 +187,14 @@ describe('ApplicationClient', () => {
       const assessment = assessmentFactory.build()
       const applicationId = 'some-application-id'
       const userId = 'some-user-id'
+      const taskType = 'Assessment'
 
       fakeApprovedPremisesApi
-        .post(paths.applications.allocation.create({ id: applicationId }), { userId })
+        .post(paths.applications.allocation.create({ id: applicationId }), { userId, taskType })
         .matchHeader('authorization', `Bearer ${token}`)
         .reply(201, assessment)
 
-      const result = await applicationClient.allocate(applicationId, userId)
+      const result = await applicationClient.allocate(applicationId, userId, taskType)
 
       expect(result).toEqual(assessment)
       expect(nock.isDone()).toBeTruthy()

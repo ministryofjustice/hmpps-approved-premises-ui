@@ -117,6 +117,7 @@ describe('TasksController', () => {
         request.user.token,
         request.params.id,
         request.body.userId,
+        'Assessment',
       )
 
       expect(request.flash).toHaveBeenCalledWith(
