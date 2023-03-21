@@ -47,12 +47,10 @@ const paths = {
     cancellations: {
       new: cancellationsPath.path('new'),
       create: cancellationsPath,
-      confirm: cancellationsPath.path(':id/confirmation'),
     },
     departures: {
       new: departuresPath.path('new'),
       create: departuresPath,
-      confirm: departuresPath.path(':departureId/confirmation'),
     },
   },
   people: {

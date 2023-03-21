@@ -2,7 +2,8 @@ import premisesFactory from '../../../server/testutils/factories/premises'
 import bookingFactory from '../../../server/testutils/factories/booking'
 import cancellationFactory from '../../../server/testutils/factories/cancellation'
 
-import { CancellationConfirmPage, CancellationCreatePage } from '../../../cypress_shared/pages/manage'
+import { BookingShowPage, CancellationCreatePage } from '../../../cypress_shared/pages/manage'
+import Page from '../../../cypress_shared/pages/page'
 
 context('Cancellation', () => {
   beforeEach(() => {
@@ -24,7 +25,6 @@ context('Cancellation', () => {
     // When I navigate to the booking's cancellation page
     const cancellation = cancellationFactory.build({ date: '2022-06-01' })
     cy.task('stubCancellationCreate', { premisesId: premises.id, bookingId: booking.id, cancellation })
-    cy.task('stubCancellationGet', { premisesId: premises.id, bookingId: booking.id, cancellation })
 
     const page = CancellationCreatePage.visit(premises.id, booking.id)
 
@@ -45,9 +45,9 @@ context('Cancellation', () => {
       expect(requestBody.reason).equal(cancellation.reason.id)
     })
 
-    // And I should see a confirmation screen for that cancellation
-    const cancellationConfirmationPage = new CancellationConfirmPage()
-    cancellationConfirmationPage.verifyConfirmedCancellationIsVisible(cancellation, booking)
+    // And I should see a confirmation message
+    const bookingPage = Page.verifyOnPage(BookingShowPage, [premises.id, booking])
+    bookingPage.shouldShowBanner('Booking cancelled')
   })
 
   it('should show errors', () => {
@@ -62,7 +62,6 @@ context('Cancellation', () => {
     // When I navigate to the booking's cancellation page
     const cancellation = cancellationFactory.build({ date: new Date(Date.UTC(2022, 5, 1, 0, 0, 0)).toISOString() })
     cy.task('stubCancellationCreate', { premisesId: premises.id, bookingId: booking.id, cancellation })
-    cy.task('stubCancellationGet', { premisesId: premises.id, bookingId: booking.id, cancellation })
 
     const page = CancellationCreatePage.visit(premises.id, booking.id)
 

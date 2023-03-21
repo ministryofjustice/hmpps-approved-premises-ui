@@ -9,6 +9,7 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block content %}
+  {% include "../_messages.njk" %}
 
   {{ govukBackLink({
     text: "Back",

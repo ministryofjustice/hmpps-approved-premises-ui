@@ -132,12 +132,10 @@ describe('DeparturesController', () => {
         expectedDeparture,
       )
 
+      expect(request.flash).toHaveBeenCalledWith('success', 'Departure recorded')
+
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.bookings.departures.confirm({
-          premisesId: request.params.premisesId,
-          bookingId: request.params.bookingId,
-          departureId: departure.id,
-        }),
+        paths.bookings.show({ premisesId: request.params.premisesId, bookingId: request.params.bookingId }),
       )
     })
 
@@ -168,35 +166,6 @@ describe('DeparturesController', () => {
           bookingId: request.params.bookingId,
         }),
       )
-    })
-  })
-
-  describe('confirm', () => {
-    it('renders the confirmation page', async () => {
-      const booking = bookingFactory.build()
-      bookingService.find.mockResolvedValue(booking)
-
-      const departure = departureFactory.build()
-      departureService.getDeparture.mockResolvedValue(departure)
-
-      const premisesId = 'premisesId'
-      const bookingId = 'bookingId'
-
-      const requestHandler = departuresController.confirm()
-
-      await requestHandler({ ...request, params: { premisesId, bookingId, departureId: departure.id } }, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('departures/confirm', {
-        ...departure,
-        premisesId,
-        bookingId,
-        pageHeading: 'Departure confirmed',
-        name: booking.person.name,
-        crn: booking.person.crn,
-      })
-
-      expect(departureService.getDeparture).toHaveBeenCalledWith(token, premisesId, bookingId, departure.id)
-      expect(bookingService.find).toHaveBeenCalledWith(token, premisesId, bookingId)
     })
   })
 })
