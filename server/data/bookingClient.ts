@@ -68,14 +68,6 @@ export default class BookingClient {
     return response as Departure
   }
 
-  async findDeparture(premisesId: string, bookingId: string, departureId: string): Promise<Departure> {
-    const response = await this.restClient.get({
-      path: `${this.bookingPath(premisesId, bookingId)}/departures/${departureId}`,
-    })
-
-    return response as Departure
-  }
-
   async markNonArrival(premisesId: string, bookingId: string, nonArrival: NewNonarrival): Promise<Nonarrival> {
     const response = await this.restClient.post({
       path: `${this.bookingPath(premisesId, bookingId)}/non-arrivals`,

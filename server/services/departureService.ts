@@ -1,7 +1,6 @@
 import type { ReferenceData } from '@approved-premises/ui'
 import type { Departure, NewDeparture } from '@approved-premises/api'
 import type { BookingClient, ReferenceDataClient, RestClientBuilder } from '../data'
-import { DateFormats } from '../utils/dateUtils'
 
 export type DepartureReferenceData = {
   departureReasons: Array<ReferenceData>
@@ -26,14 +25,6 @@ export default class DepartureService {
     const confirmedDeparture = await bookingClient.markDeparture(premisesId, bookingId, departure)
 
     return confirmedDeparture
-  }
-
-  async getDeparture(token: string, premisesId: string, bookingId: string, departureId: string): Promise<Departure> {
-    const departureClient = this.bookingClientFactory(token)
-
-    const departure = await departureClient.findDeparture(premisesId, bookingId, departureId)
-
-    return { ...departure, dateTime: DateFormats.isoDateToUIDate(departure.dateTime) }
   }
 
   async getReferenceData(token: string): Promise<DepartureReferenceData> {
