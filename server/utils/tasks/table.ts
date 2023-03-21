@@ -2,6 +2,7 @@ import { Task } from '../../@types/shared'
 import { TableCell, TableRow } from '../../@types/ui'
 import paths from '../../paths/tasks'
 import { DateFormats } from '../dateUtils'
+import { nameCell } from '../tableUtils'
 import { linkTo, sentenceCase } from '../utils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
@@ -39,10 +40,6 @@ const unallocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   return rows
 }
 
-const nameCell = (task: Task): TableCell => ({
-  text: task?.person?.name || '',
-})
-
 const daysUntilDueCell = (task: Task): TableCell => ({
   html: formatDaysUntilDueWithWarning(task),
   attributes: {
@@ -62,17 +59,21 @@ const allocationCell = (task: Task): TableCell => ({
   text: task.allocatedToStaffMember?.name || '',
 })
 
-const allocationLinkCell = (task: Task, action: 'Allocate' | 'Reallocate'): TableCell => ({
-  html: linkTo(
-    paths.allocations.show,
-    { id: task.applicationId },
-    {
-      text: action,
-      hiddenText: task?.person ? `task for ${task?.person?.name}` : '',
-      attributes: { 'data-cy-taskId': task.applicationId },
-    },
-  ),
-})
+const allocationLinkCell = (task: Task, action: 'Allocate' | 'Reallocate'): TableCell => {
+  const hiddenText = task.person ? `task for ${task.person.name}` : ''
+
+  return {
+    html: linkTo(
+      paths.allocations.show,
+      { id: task.applicationId },
+      {
+        text: action,
+        hiddenText,
+        attributes: { 'data-cy-taskId': task.applicationId },
+      },
+    ),
+  }
+}
 
 const statusBadge = (task: Task): string => {
   const status = task?.status || ''
@@ -113,7 +114,6 @@ export {
   allocationLinkCell,
   daysUntilDue,
   formatDaysUntilDueWithWarning,
-  nameCell,
   daysUntilDueCell,
   statusCell,
   taskTypeCell,
