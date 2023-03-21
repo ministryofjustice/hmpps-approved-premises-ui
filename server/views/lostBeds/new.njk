@@ -29,17 +29,6 @@
         <h1 class="govuk-!-margin-bottom-0">Mark a bed as out of service</h1>
         <p> Provide details of beds that are out of service within your AP estate</p>
 
-        {{ govukInput({
-        label: {
-          text: "Number of beds out of service"
-        },
-        classes: "govuk-input--width-2",
-        id: "numberOfBeds",
-        name: "lostBed[numberOfBeds]",
-        errorMessage: errors.numberOfBeds
-      }) }}
-
-
         {{ govukDateInput({
         id: "startDate",
         namePrefix: "startDate",

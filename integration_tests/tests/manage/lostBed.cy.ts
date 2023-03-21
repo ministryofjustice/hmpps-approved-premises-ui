@@ -50,7 +50,6 @@ context('LostBed', () => {
       expect(requestBody.notes).equal(lostBed.notes)
       expect(requestBody.reason).equal(lostBed.reason.id)
       expect(requestBody.referenceNumber).equal(lostBed.referenceNumber)
-      expect(requestBody.numberOfBeds).equal(lostBed.numberOfBeds)
     })
 
     // And I should be navigated to the premises detail page and see the confirmation message
@@ -70,12 +69,12 @@ context('LostBed', () => {
     // And I miss required fields
     cy.task('stubLostBedErrors', {
       premisesId: premises.id,
-      params: ['numberOfBeds', 'startDate', 'endDate', 'reason', 'referenceNumber'],
+      params: ['startDate', 'endDate', 'reason', 'referenceNumber'],
     })
 
     page.clickSubmit()
 
     // Then I should see error messages relating to that field
-    page.shouldShowErrorMessagesForFields(['numberOfBeds', 'startDate', 'endDate', 'reason', 'referenceNumber'])
+    page.shouldShowErrorMessagesForFields(['startDate', 'endDate', 'reason', 'referenceNumber'])
   })
 })

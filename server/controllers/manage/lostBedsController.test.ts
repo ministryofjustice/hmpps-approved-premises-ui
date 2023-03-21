@@ -95,7 +95,6 @@ describe('LostBedsController', () => {
 
       expect(lostBedService.createLostBed).toHaveBeenCalledWith(token, request.params.premisesId, {
         ...request.body.lostBed,
-        numberOfBeds: Number(lostBed.numberOfBeds),
         startDate: '2022-08-22',
         endDate: '2022-09-22',
         serviceName: 'approved-premises',

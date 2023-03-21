@@ -43,6 +43,6 @@ Then('I should see a notification that the lost bed has been created', () => {
 
 Then('I should see a list of the problems encountered creating the lost bed', () => {
   cy.get('@lostBedCreatePage').then((lostBedCreatePage: LostBedCreatePage) => {
-    lostBedCreatePage.shouldShowErrorMessagesForFields(['startDate', 'endDate', 'numberOfBeds', 'reason'])
+    lostBedCreatePage.shouldShowErrorMessagesForFields(['startDate', 'endDate', 'reason'])
   })
 })
