@@ -17,7 +17,9 @@ jest.mock('../utils/applications/getQualificationsForApplication')
 jest.mock('../utils/validation')
 
 describe('TasksController', () => {
-  const request: DeepMocked<Request> = createMock<Request>({})
+  const token = 'SOME_TOKEN'
+
+  const request: DeepMocked<Request> = createMock<Request>({ user: { token } })
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
@@ -26,8 +28,6 @@ describe('TasksController', () => {
   const userService = createMock<UserService>({})
 
   let tasksController: TasksController
-
-  const token = 'SOME_TOKEN'
 
   beforeEach(() => {
     jest.resetAllMocks()
@@ -47,6 +47,7 @@ describe('TasksController', () => {
         pageHeading: 'Tasks',
         tasks: groupByAllocation(tasks),
       })
+      expect(taskService.getAll).toHaveBeenCalledWith(token)
     })
   })
 
