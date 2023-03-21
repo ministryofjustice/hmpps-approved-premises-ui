@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { ApprovedPremisesApplication as Application, Task } from '@approved-premises/api'
+import type { ApprovedPremisesApplication as Application, Reallocation, Task } from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
 import { errorStub } from '../../wiremock/utils'
@@ -21,7 +21,7 @@ export default {
       },
     }),
 
-  stubTaskAllocationCreate: (args: { task: Task }): SuperAgentRequest =>
+  stubTaskAllocationCreate: (args: { task: Task; reallocation: Reallocation }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',
