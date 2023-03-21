@@ -1,41 +1,56 @@
-import nock from 'nock'
+import {
+  CancellationReason,
+  DepartureReason,
+  DestinationProvider,
+  LostBedReason,
+  MoveOnCategory,
+  NonArrivalReason,
+} from '@approved-premises/api'
 
 import ReferenceDataClient from './referenceDataClient'
 import referenceDataFactory from '../testutils/factories/referenceData'
-import config from '../config'
+import describeClient from '../testutils/describeClient'
 
-describe('PremisesClient', () => {
-  let fakeApprovedPremisesApi: nock.Scope
+describeClient('ReferenceDataClient', provider => {
   let referenceDataClient: ReferenceDataClient
 
   const token = 'token-1'
 
   beforeEach(() => {
-    config.apis.approvedPremises.url = 'http://localhost:8080'
-    fakeApprovedPremisesApi = nock(config.apis.approvedPremises.url)
     referenceDataClient = new ReferenceDataClient(token)
   })
 
-  afterEach(() => {
-    if (!nock.isDone()) {
-      nock.cleanAll()
-      throw new Error('Not all nock interceptors were used!')
-    }
-    nock.abortPendingRequests()
-    nock.cleanAll()
-  })
-
   describe('getReferenceData', () => {
-    const referenceData = referenceDataFactory.buildList(5)
+    const data = {
+      'departure-reasons': referenceDataFactory.departureReasons().buildList(5) as Array<DepartureReason>,
+      'move-on-categories': referenceDataFactory.moveOnCategories().buildList(5) as Array<MoveOnCategory>,
+      'destination-providers': referenceDataFactory.destinationProviders().buildList(5) as Array<DestinationProvider>,
+      'cancellation-reasons': referenceDataFactory.cancellationReasons().buildList(5) as Array<CancellationReason>,
+      'lost-bed-reasons': referenceDataFactory.lostBedReasons().buildList(5) as Array<LostBedReason>,
+      'non-arrival-reasons': referenceDataFactory.nonArrivalReason().buildList(5) as Array<NonArrivalReason>,
+    }
 
-    it('should return an array of reference data', async () => {
-      fakeApprovedPremisesApi
-        .get('/reference-data/some-reference-data')
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, referenceData)
+    Object.keys(data).forEach(key => {
+      it(`should return an array of ${key}`, async () => {
+        provider.addInteraction({
+          state: 'Server is healthy',
+          uponReceiving: `A request to get ${key}`,
+          withRequest: {
+            method: 'GET',
+            path: `/reference-data/${key}`,
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          },
+          willRespondWith: {
+            status: 200,
+            body: data[key],
+          },
+        })
 
-      const output = await referenceDataClient.getReferenceData('some-reference-data')
-      expect(output).toEqual(referenceData)
+        const output = await referenceDataClient.getReferenceData(key)
+        expect(output).toEqual(data[key])
+      })
     })
   })
 })
