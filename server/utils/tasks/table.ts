@@ -68,7 +68,7 @@ const allocationLinkCell = (task: Task, action: 'Allocate' | 'Reallocate'): Tabl
     { id: task.applicationId },
     {
       text: action,
-      hiddenText: `task for ${task?.person?.name || ''}`,
+      hiddenText: task?.person ? `task for ${task?.person?.name}` : '',
       attributes: { 'data-cy-taskId': task.applicationId },
     },
   ),

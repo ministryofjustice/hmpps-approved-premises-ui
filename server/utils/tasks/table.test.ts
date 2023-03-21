@@ -261,4 +261,19 @@ describe('table', () => {
       expect(formatDaysUntilDueWithWarning(task)).toEqual('')
     })
   })
+
+  describe('allocationLinkCell', () => {
+    it('returns the cell when there is a person present in the task', () => {
+      const task = taskFactory.build()
+      expect(allocationLinkCell(task, 'Allocate')).toEqual({
+        html: `<a href="/applications/${task.applicationId}/allocation" data-cy-taskId="${task.applicationId}">Allocate <span class="govuk-visually-hidden">task for ${task.person.name}</span></a>`,
+      })
+    })
+    it('returns the cell when there is not a person present in the task', () => {
+      const task = taskFactory.build({ person: undefined })
+      expect(allocationLinkCell(task, 'Allocate')).toEqual({
+        html: `<a href="/applications/${task.applicationId}/allocation" data-cy-taskId="${task.applicationId}">Allocate</a>`,
+      })
+    })
+  })
 })
