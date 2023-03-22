@@ -100,6 +100,9 @@ export default {
       update: clarificationNotePaths.notes.path(':clarificationNoteId'),
     },
   },
+  match: {
+    findBeds: path('/beds/search'),
+  },
   tasks: {
     index: tasksPaths.index,
   },
