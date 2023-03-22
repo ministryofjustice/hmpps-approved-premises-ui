@@ -1,7 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 import { readFileSync } from 'fs'
 import path from 'path'
-import qs from 'qs'
 
 import type {
   ActiveOffence,
@@ -17,6 +16,7 @@ import type {
 
 import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
+import { createQueryString } from '../../server/utils/utils'
 
 export default {
   stubFindPerson: (args: { person: Person }): SuperAgentRequest =>
@@ -169,10 +169,9 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        url: `/people/${args.person.crn}/oasys/sections?${qs.stringify(
-          { 'selected-sections': args.selectedSections },
-          { encode: false, indices: false },
-        )}`,
+        url: `/people/${args.person.crn}/oasys/sections?${createQueryString({
+          'selected-sections': args.selectedSections,
+        })}`,
       },
       response: {
         status: 200,
