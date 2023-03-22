@@ -29,10 +29,7 @@ To run the application there are two options.
 
 ### 1. Using AP Tools
 
-In order to spin up a full stack of a working API and other [dependant
-services](./docker-compose.yml) we recommend using the [AP
-tahb marked this conversation as resolved.
-Tools](https://github.com/ministryofjustice/hmpps-approved-premises-tools).
+In order to spin up a full stack of a working API and other [dependent services](./docker-compose.yml) we recommend using [AP Tools](https://github.com/ministryofjustice/hmpps-approved-premises-tools).
 
 NB. The approach AP Tools takes solves a critical limitation for working in
 development. Due to how the frontend and API authenticate requests they both
@@ -57,7 +54,6 @@ tools](https://github.com/ministryofjustice/hmpps-approved-premises-tools#start-
 
 ### 2. Manually
 
-tahb marked this conversation as resolved.
 This option has the benefit of a quicker initial startup and enables us to
 develop features that aren't yet supported by the API through the use of
 Wiremock.
