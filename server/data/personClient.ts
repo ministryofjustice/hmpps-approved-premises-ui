@@ -1,5 +1,4 @@
 import type { Response } from 'express'
-import qs from 'qs'
 
 import type {
   ActiveOffence,
@@ -15,6 +14,7 @@ import type {
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
+import { createQueryString } from '../utils/utils'
 
 import oasysStubs from './stubs/oasysStubs.json'
 
@@ -31,9 +31,8 @@ export default class PersonClient {
     if (checkCaseload) {
       query = { ...query, checkCaseload: true }
     }
-    const queryString: string = qs.stringify(query, { encode: false, indices: false })
 
-    const path = `${paths.people.search({})}?${queryString}`
+    const path = `${paths.people.search({})}?${createQueryString(query)}`
     const response = await this.restClient.get({
       path,
     })
@@ -85,10 +84,7 @@ export default class PersonClient {
     if (config.flags.oasysDisabled) {
       response = oasysStubs as OASysSections
     } else {
-      const queryString: string = qs.stringify(
-        { 'selected-sections': selectedSections },
-        { encode: false, indices: false },
-      )
+      const queryString: string = createQueryString({ 'selected-sections': selectedSections })
 
       const path = `${paths.people.oasys.sections({ crn })}${queryString ? `?${queryString}` : ''}`
 
