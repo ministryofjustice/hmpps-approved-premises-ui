@@ -17,8 +17,10 @@ class ClarificationNoteFactory extends Factory<ClarificationNote> {
 
 export default ClarificationNoteFactory.define(() => ({
   id: faker.datatype.uuid(),
-  createdAt: DateFormats.dateObjToIsoDate(faker.date.past()),
+  createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   createdByStaffMemberId: faker.datatype.uuid(),
   text: faker.lorem.paragraph(),
   query: faker.lorem.sentence(),
+  response: faker.lorem.sentence(),
+  responseReceivedOn: DateFormats.dateObjToIsoDate(faker.date.past()),
 }))

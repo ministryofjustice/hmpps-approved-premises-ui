@@ -1,5 +1,7 @@
 import nock from 'nock'
 
+import departureFactory from '../testutils/factories/departure'
+import describeClient from '../testutils/describeClient'
 import BookingClient from './bookingClient'
 
 import arrivalFactory from '../testutils/factories/arrival'
@@ -11,28 +13,15 @@ import newDepartureFactory from '../testutils/factories/newDeparture'
 import nonArrivalFactory from '../testutils/factories/nonArrival'
 import newArrivalFactory from '../testutils/factories/newArrival'
 import newNonArrivalFactory from '../testutils/factories/newNonArrival'
+import { DateFormats } from '../utils/dateUtils'
 
-import config from '../config'
-
-describe('BookingClient', () => {
-  let fakeApprovedPremisesApi: nock.Scope
+describeClient('BookingClient', provider => {
   let bookingClient: BookingClient
 
   const token = 'token-1'
 
   beforeEach(() => {
-    config.apis.approvedPremises.url = 'http://localhost:8080'
-    fakeApprovedPremisesApi = nock(config.apis.approvedPremises.url)
     bookingClient = new BookingClient(token)
-  })
-
-  afterEach(() => {
-    if (!nock.isDone()) {
-      nock.cleanAll()
-      throw new Error('Not all nock interceptors were used!')
-    }
-    nock.abortPendingRequests()
-    nock.cleanAll()
   })
 
   describe('create', () => {
@@ -44,15 +33,26 @@ describe('BookingClient', () => {
         crn: booking.person.crn,
       })
 
-      fakeApprovedPremisesApi
-        .post(`/premises/some-uuid/bookings`)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, booking)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to create a booking',
+        withRequest: {
+          method: 'POST',
+          path: `/premises/some-uuid/bookings`,
+          body: payload,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: booking,
+        },
+      })
 
       const result = await bookingClient.create('some-uuid', payload)
 
       expect(result).toEqual(booking)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -60,15 +60,25 @@ describe('BookingClient', () => {
     it('should return the booking that has been requested', async () => {
       const booking = bookingFactory.build()
 
-      fakeApprovedPremisesApi
-        .get(`/premises/premisesId/bookings/bookingId`)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, booking)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to find a booking',
+        withRequest: {
+          method: 'GET',
+          path: `/premises/premisesId/bookings/bookingId`,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: booking,
+        },
+      })
 
       const result = await bookingClient.find('premisesId', 'bookingId')
 
       expect(result).toEqual(booking)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -76,15 +86,25 @@ describe('BookingClient', () => {
     it('should return all bookings for a given premises ID', async () => {
       const bookings = bookingFactory.buildList(5)
 
-      fakeApprovedPremisesApi
-        .get(`/premises/some-uuid/bookings`)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, bookings)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get all bookings for a premises',
+        withRequest: {
+          method: 'GET',
+          path: `/premises/some-uuid/bookings`,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: bookings,
+        },
+      })
 
       const result = await bookingClient.allBookingsForPremisesId('some-uuid')
 
       expect(result).toEqual(bookings)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -92,22 +112,33 @@ describe('BookingClient', () => {
     it('should return the booking that has been extended', async () => {
       const booking = bookingFactory.build()
       const payload = {
-        newDepartureDate: new Date(2042, 13, 11).toISOString(),
+        newDepartureDate: DateFormats.dateObjToIsoDate(new Date(2042, 13, 11)),
         'newDepartureDate-year': '2042',
         'newDepartureDate-month': '12',
         'newDepartureDate-day': '11',
         notes: 'Some notes',
       }
 
-      fakeApprovedPremisesApi
-        .post(`/premises/premisesId/bookings/${booking.id}/extensions`)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, booking)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to extend a booking',
+        withRequest: {
+          method: 'POST',
+          body: payload,
+          path: `/premises/premisesId/bookings/${booking.id}/extensions`,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: booking,
+        },
+      })
 
       const result = await bookingClient.extendBooking('premisesId', booking.id, payload)
 
       expect(result).toEqual(booking)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -120,10 +151,22 @@ describe('BookingClient', () => {
         notes: arrival.notes,
       })
 
-      fakeApprovedPremisesApi
-        .post(`/premises/premisesId/bookings/bookingId/arrivals`, payload)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, arrival)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to mark a booking as arrived',
+        withRequest: {
+          method: 'POST',
+          path: `/premises/premisesId/bookings/bookingId/arrivals`,
+          body: payload,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: arrival,
+        },
+      })
 
       const result = await bookingClient.markAsArrived('premisesId', 'bookingId', payload)
 
@@ -132,7 +175,6 @@ describe('BookingClient', () => {
         arrivalDate: arrival.arrivalDate,
         expectedDepartureDate: arrival.expectedDepartureDate,
       })
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -141,28 +183,52 @@ describe('BookingClient', () => {
       const newCancellation = newCancellationFactory.build()
       const cancellation = cancellationFactory.build()
 
-      fakeApprovedPremisesApi
-        .post(`/premises/premisesId/bookings/bookingId/cancellations`, newCancellation)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, cancellation)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to cancel a booking',
+        withRequest: {
+          method: 'POST',
+          path: `/premises/premisesId/bookings/bookingId/cancellations`,
+          body: newCancellation,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: cancellation,
+        },
+      })
 
       const result = await bookingClient.cancel('premisesId', 'bookingId', newCancellation)
 
       expect(result).toEqual(cancellation)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
   describe('markDeparture', () => {
     it('should create a departure', async () => {
-      const departure = newDepartureFactory.build()
+      const payload = newDepartureFactory.build()
+      const departure = departureFactory.build()
 
-      fakeApprovedPremisesApi
-        .post(`/premises/premisesId/bookings/bookingId/departures`, departure)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, departure)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to mark a booking as not arrived',
+        withRequest: {
+          method: 'POST',
+          path: `/premises/premisesId/bookings/bookingId/departures`,
+          body: payload,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 201,
+          body: departure,
+        },
+      })
 
-      const result = await bookingClient.markDeparture('premisesId', 'bookingId', departure)
+      const result = await bookingClient.markDeparture('premisesId', 'bookingId', payload)
 
       expect(result).toEqual(departure)
       expect(nock.isDone()).toBeTruthy()
@@ -178,10 +244,22 @@ describe('BookingClient', () => {
         reason: nonArrival.reason.id,
       })
 
-      fakeApprovedPremisesApi
-        .post(`/premises/premisesId/bookings/bookingId/non-arrivals`, payload)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, nonArrival)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to mark a booking as not arrived',
+        withRequest: {
+          method: 'POST',
+          path: `/premises/premisesId/bookings/bookingId/non-arrivals`,
+          body: payload,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: nonArrival,
+        },
+      })
 
       const result = await bookingClient.markNonArrival('premisesId', 'bookingId', payload)
 

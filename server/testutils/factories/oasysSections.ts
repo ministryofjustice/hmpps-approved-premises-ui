@@ -8,8 +8,8 @@ import oasysSelectionFactory from './oasysSelection'
 export default Factory.define<OASysSections>(() => ({
   assessmentId: faker.datatype.number(),
   assessmentState: faker.helpers.arrayElement(['Completed', 'Incomplete']),
-  dateStarted: DateFormats.dateObjToIsoDate(faker.date.past()),
-  dateCompleted: DateFormats.dateObjToIsoDate(faker.date.recent()),
+  dateStarted: DateFormats.dateObjToIsoDateTime(faker.date.past()),
+  dateCompleted: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
   offenceDetails: offenceDetailsFactory.buildList(5),
   roshSummary: roshSummaryFactory.buildList(5),
   supportingInformation: supportingInformationFactory.buildList(5),

@@ -1,47 +1,42 @@
-import nock from 'nock'
-
-import { createMock } from '@golevelup/ts-jest'
-import { AssessmentAcceptance } from '@approved-premises/api'
 import AssessmentClient from './assessmentClient'
-import config from '../config'
 import assessmentFactory from '../testutils/factories/assessment'
+import placementRequest from '../testutils/factories/placementRequest'
 import clarificationNoteFactory from '../testutils/factories/clarificationNote'
 import paths from '../paths/api'
+import describeClient from '../testutils/describeClient'
 
-describe('AssessmentClient', () => {
-  let fakeApprovedPremisesApi: nock.Scope
+describeClient('AssessmentClient', provider => {
   let assessmentClient: AssessmentClient
 
   const token = 'token-1'
 
   beforeEach(() => {
-    config.apis.approvedPremises.url = 'http://localhost:8080'
-    fakeApprovedPremisesApi = nock(config.apis.approvedPremises.url)
     assessmentClient = new AssessmentClient(token)
-  })
-
-  afterEach(() => {
-    if (!nock.isDone()) {
-      nock.cleanAll()
-      throw new Error('Not all nock interceptors were used!')
-    }
-    nock.abortPendingRequests()
-    nock.cleanAll()
   })
 
   describe('all', () => {
     it('should get all assessments', async () => {
       const assessments = assessmentFactory.buildList(3)
 
-      fakeApprovedPremisesApi
-        .get(paths.assessments.index.pattern)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, assessments)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get all assessments',
+        withRequest: {
+          method: 'GET',
+          path: paths.assessments.index.pattern,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: assessments,
+        },
+      })
 
       const result = await assessmentClient.all()
 
       expect(result).toEqual(assessments)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -49,15 +44,25 @@ describe('AssessmentClient', () => {
     it('should get an assessment', async () => {
       const assessment = assessmentFactory.build()
 
-      fakeApprovedPremisesApi
-        .get(paths.assessments.show({ id: assessment.id }))
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(200, assessment)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get an assessment',
+        withRequest: {
+          method: 'GET',
+          path: paths.assessments.show({ id: assessment.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: assessment,
+        },
+      })
 
       const result = await assessmentClient.find(assessment.id)
 
       expect(result).toEqual(assessment)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -65,31 +70,54 @@ describe('AssessmentClient', () => {
     it('should return an assessment when a PUT request is made', async () => {
       const assessment = assessmentFactory.build()
 
-      fakeApprovedPremisesApi
-        .put(paths.assessments.update({ id: assessment.id }), { data: assessment.data })
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, assessment)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to update an assessment',
+        withRequest: {
+          method: 'PUT',
+          path: paths.assessments.update({ id: assessment.id }),
+          body: { data: assessment.data },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: assessment,
+        },
+      })
 
       const result = await assessmentClient.update(assessment)
 
       expect(result).toEqual(assessment)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
   describe('acceptance', () => {
     it('should call the acceptance endpoint with the assessment', async () => {
       const assessmentId = 'some-id'
-      const data = createMock<AssessmentAcceptance>()
+      const data = {
+        document: {},
+        requirements: placementRequest.build(),
+      }
 
-      fakeApprovedPremisesApi
-        .post(paths.assessments.acceptance({ id: assessmentId }), data)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to accept an assessment',
+        withRequest: {
+          method: 'POST',
+          path: paths.assessments.acceptance({ id: assessmentId }),
+          body: data,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
 
       await assessmentClient.acceptance(assessmentId, data)
-
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -98,17 +126,26 @@ describe('AssessmentClient', () => {
       const assessment = assessmentFactory.build()
       const response = { section: [{ task: 'response' }] }
 
-      fakeApprovedPremisesApi
-        .post(paths.assessments.rejection({ id: assessment.id }), {
-          document: response,
-          rejectionRationale: assessment.rejectionRationale,
-        })
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to reject an assessment',
+        withRequest: {
+          method: 'POST',
+          path: paths.assessments.rejection({ id: assessment.id }),
+          body: {
+            document: response,
+            rejectionRationale: assessment.rejectionRationale,
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
 
       await assessmentClient.rejection(assessment.id, response, assessment.rejectionRationale)
-
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -116,16 +153,30 @@ describe('AssessmentClient', () => {
     it('should return a note when a POST request is made', async () => {
       const assessmentId = 'some-id'
       const note = clarificationNoteFactory.build()
+      const newNote = {
+        query: note.query,
+      }
 
-      fakeApprovedPremisesApi
-        .post(paths.assessments.clarificationNotes.create({ id: assessmentId }), note)
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, note)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to create a clarification note',
+        withRequest: {
+          method: 'POST',
+          path: paths.assessments.clarificationNotes.create({ id: assessmentId }),
+          body: newNote,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 201,
+          body: note,
+        },
+      })
 
-      const result = await assessmentClient.createClarificationNote(assessmentId, note)
+      const result = await assessmentClient.createClarificationNote(assessmentId, newNote)
 
       expect(result).toEqual(note)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 
@@ -138,18 +189,26 @@ describe('AssessmentClient', () => {
         responseReceivedOn: note.responseReceivedOn,
       }
 
-      fakeApprovedPremisesApi
-        .put(
-          paths.assessments.clarificationNotes.update({ id: assessmentId, clarificationNoteId: note.id }),
-          updatedNote,
-        )
-        .matchHeader('authorization', `Bearer ${token}`)
-        .reply(201, note)
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to update a clarification note',
+        withRequest: {
+          method: 'PUT',
+          path: paths.assessments.clarificationNotes.update({ id: assessmentId, clarificationNoteId: note.id }),
+          body: updatedNote,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 201,
+          body: note,
+        },
+      })
 
       const result = await assessmentClient.updateClarificationNote(assessmentId, note.id, updatedNote)
 
       expect(result).toEqual(note)
-      expect(nock.isDone()).toBeTruthy()
     })
   })
 })
