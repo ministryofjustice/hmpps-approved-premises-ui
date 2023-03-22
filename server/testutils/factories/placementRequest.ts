@@ -6,6 +6,7 @@ import personFactory from './person'
 import risksFactory from './risks'
 
 export default Factory.define<PlacementRequest>(() => ({
+  id: faker.datatype.uuid(),
   gender: faker.helpers.arrayElement(['male', 'female']),
   type: faker.helpers.arrayElement(['normal', 'pipe', 'esap', 'rfap']),
   expectedArrival: DateFormats.dateObjToIsoDate(faker.date.soon()),
