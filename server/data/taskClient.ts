@@ -7,7 +7,7 @@ export default class TaskClient {
   restClient: RestClient
 
   constructor(token: string) {
-    this.restClient = new RestClient('applicationClient', config.apis.approvedPremises as ApiConfig, token)
+    this.restClient = new RestClient('taskClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
   async all(): Promise<Array<Task>> {

@@ -1,0 +1,66 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+
+{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set mainClasses = "app-container govuk-body assessments--index" %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            {% include "../_messages.njk" %}
+
+            {{
+                govukTable({
+                    attributes: {
+                        'data-module': 'moj-sortable-table'
+                    },
+                    firstCellIsHeader: true,
+                    head: [
+                    {
+                        text: "Name"
+                    },
+                    {
+                        text: "CRN"
+                    },
+                    {
+                        text: "Days until due date",
+                        attributes: {
+                        "aria-sort": "none"
+                        }
+                    },
+                    {
+                        text: "Expect arrival date",
+                        attributes: {
+                        "aria-sort": "none"
+                        }
+                    },
+                    {
+                        text: "Location"
+                    },
+                    {
+                        text: "Essential placement needs"
+                    },
+                    {
+                        text: "Desirable placement needs"
+                    }
+                    ],
+                    rows: PlacementRequestUtils.tableUtils. tableRows(placementRequests)
+                })
+            }}
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block extraScripts %}
+    <script type="text/javascript" nonce="{{ cspNonce }}">
+        window
+            .MOJFrontend
+            .initAll()
+    </script>
+{% endblock %}

@@ -7,7 +7,6 @@ import {
   daysUntilDue,
   daysUntilDueCell,
   formatDaysUntilDueWithWarning,
-  nameCell,
   statusBadge,
   statusCell,
   taskTypeCell,
@@ -146,21 +145,6 @@ describe('table', () => {
     })
   })
 
-  describe('nameCell', () => {
-    it('returns the name of the person the task is assigned to as a TableCell object', () => {
-      const task = taskFactory.build()
-      expect(nameCell(task)).toEqual({ text: task.person.name })
-    })
-
-    it('returns an empty string as a TableCell object if the task doesnt have a person', () => {
-      const taskWithNoPersonName = taskFactory.build({ person: { name: undefined } })
-      const taskWithNoPerson = taskFactory.build({ person: undefined })
-
-      expect(nameCell(taskWithNoPersonName)).toEqual({ text: '' })
-      expect(nameCell(taskWithNoPerson)).toEqual({ text: '' })
-    })
-  })
-
   describe('daysUntilDueCell', () => {
     it('returns the days until due formatted for the UI as a TableCell object', () => {
       const task = taskFactory.build()
@@ -259,6 +243,22 @@ describe('table', () => {
     it('returns "no due date" if the task has no due date', () => {
       const task = taskFactory.build({ dueDate: undefined })
       expect(formatDaysUntilDueWithWarning(task)).toEqual('')
+    })
+  })
+
+  describe('allocationLinkCell', () => {
+    it('returns the cell when there is a person present in the task', () => {
+      const task = taskFactory.build()
+      expect(allocationLinkCell(task, 'Allocate')).toEqual({
+        html: `<a href="/applications/${task.applicationId}/allocation" data-cy-taskId="${task.applicationId}">Allocate <span class="govuk-visually-hidden">task for ${task.person.name}</span></a>`,
+      })
+    })
+
+    it('returns the cell when there is not a person present in the task', () => {
+      const task = taskFactory.build({ person: undefined })
+      expect(allocationLinkCell(task, 'Allocate')).toEqual({
+        html: `<a href="/applications/${task.applicationId}/allocation" data-cy-taskId="${task.applicationId}">Allocate</a>`,
+      })
     })
   })
 })
