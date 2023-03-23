@@ -1,0 +1,25 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% extends "../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block content %}
+
+	<h1 class="govuk-heading-xl">Find a bed</h1>
+
+	<h2 class="govuk-heading-m">Matching rooms: {{bedSearchResults.resultsRoomCount}}</h2>
+	<h2 class="govuk-heading-m">Matching premises: {{bedSearchResults.resultsPremisesCount}}</h2>
+	<h2 class="govuk-heading-m">Matching beds: {{bedSearchResults.resultsBedCount}}</h2>
+
+	{% for bedSearchResult in bedSearchResults.results %}
+		{{ govukSummaryList({
+			card: {
+				title: {
+					text: bedSearchResult.premises.name
+				}
+			},
+			rows: MatchUtils.summaryCardRows(bedSearchResult)
+        }) }}
+	{% endfor %}
+
+{% endblock %}

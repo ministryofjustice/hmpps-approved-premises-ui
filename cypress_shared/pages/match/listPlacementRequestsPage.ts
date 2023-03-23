@@ -20,4 +20,8 @@ export default class ListPage extends Page {
   shouldShowPlacementRequests(): void {
     shouldShowTableRows(this.placementRequests, tableUtils.tableRows)
   }
+
+  clickFindBed(placementRequest: PlacementRequest): void {
+    cy.get(`[data-cy-placementRequestId="${placementRequest.id}"]`).click()
+  }
 }

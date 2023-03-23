@@ -16,6 +16,7 @@ import assessments from './integration_tests/mockApis/assessments'
 import users from './integration_tests/mockApis/users'
 import tasks from './integration_tests/mockApis/tasks'
 import placementRequests from './integration_tests/mockApis/placementRequests'
+import bedSearch from './integration_tests/mockApis/beds'
 
 import schemaValidator from './integration_tests/tasks/schemaValidator'
 
@@ -53,6 +54,7 @@ export default defineConfig({
         ...users,
         ...tasks,
         ...placementRequests,
+        ...bedSearch,
       })
     },
     baseUrl: 'http://localhost:3007',

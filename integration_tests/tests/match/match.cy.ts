@@ -17,8 +17,12 @@ context('Placement Requests', () => {
     // Given I am logged in
     cy.signIn()
 
-    const placementRequests = placementRequestFactory.buildList(5)
-
+    // And there are beds and placement requests in the database
+    const bedSearchResults = bedSearchResultFactory.build()
+    cy.task('stubBedSearch', { bedSearchResults })
+    const person = personFactory.build()
+    cy.task('stubFindPerson', { person })
+    const placementRequests = placementRequestFactory.buildList(1, { person })
     cy.task('stubPlacementRequests', placementRequests)
 
     // When I visit the placementRequests dashboard
@@ -27,9 +31,13 @@ context('Placement Requests', () => {
     // Then I should see the placement requests that are allocated to me
     listPage.shouldShowPlacementRequests()
 
-    // And I should be able to click 'Find bed' on a placement request
+    // When I click on a placement request
     listPage.clickFindBed(placementRequests[0])
 
-    Page.verifyOnPage(SearchPage)
+    // Then I should be taken to the search page
+    const searchPage = Page.verifyOnPage(SearchPage)
+
+    // And I should see the search results
+    searchPage.shouldDisplaySearchResults(bedSearchResults)
   })
 })
