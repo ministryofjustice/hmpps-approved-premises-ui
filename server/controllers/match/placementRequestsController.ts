@@ -8,7 +8,7 @@ export default class PlacementRequestsController {
     return async (req: Request, res: Response) => {
       const placementRequests = await this.placementRequestService.getAll(req.user.token)
 
-      res.render('placementRequests/index', {
+      res.render('match/placementRequests/index', {
         pageHeading: 'Placement requests',
         placementRequests,
       })

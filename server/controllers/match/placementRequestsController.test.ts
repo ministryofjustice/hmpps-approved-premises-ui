@@ -31,7 +31,7 @@ describe('PlacementRequestsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('placementRequests/index', {
+      expect(response.render).toHaveBeenCalledWith('match/placementRequests/index', {
         pageHeading: 'Placement requests',
         placementRequests,
       })
