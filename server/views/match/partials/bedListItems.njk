@@ -1,0 +1,15 @@
+{% for bedSearchResult in results.results %}
+    {% set premises = bedSearchResult.premises%}
+    {% set room = bedSearchResult.room%}
+    {% set bed = bedSearchResult.bed%}
+
+    <hr/>
+    <h3 class="govuk-heading-m">{{premises.name}}</h3>
+
+    <ul class="govuk-list">
+        {%for characteristic in premises.characteristics %}
+            <li>{{MatchUtils.mapApiCharacteristicForUi(characteristic)}}</li>
+            {%endfor%}
+        </ul>
+
+    {% endfor %}

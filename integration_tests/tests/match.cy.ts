@@ -1,4 +1,5 @@
 import ListPage from '../../cypress_shared/pages/match/listPlacementRequestsPage'
+import SearchPage from '../../cypress_shared/pages/match/searchPage'
 
 import placementRequestFactory from '../../server/testutils/factories/placementRequest'
 
@@ -22,5 +23,10 @@ context('Placement Requests', () => {
 
     // Then I should see the placement requests that are allocated to me
     listPage.shouldShowPlacementRequests()
+
+    // And I should be able to click 'Find bed' on a placement request
+    listPage.clickFindBed(placementRequests[0])
+
+    SearchPage.visit()
   })
 })

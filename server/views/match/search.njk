@@ -1,0 +1,14 @@
+{% extends "../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block content %}
+
+	<h1 class="govuk-heading-xl">Find a bed</h1>
+
+	<h2 class="govuk-heading-m">Matching rooms: {{results.resultsRoomCount}}</h2>
+	<h2 class="govuk-heading-m">Matching premises: {{results.resultsPremisesCount}}</h2>
+	<h2 class="govuk-heading-m">Matching beds: {{results.resultsBedCount}}</h2>
+	{% include './partials/bedListItems.njk' %}
+
+{% endblock %}
