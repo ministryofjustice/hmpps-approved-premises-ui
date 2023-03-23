@@ -1,9 +1,10 @@
 import { add } from 'date-fns'
 import { PlacementCriteria, PlacementRequest } from '../../@types/shared'
 import { TableCell, TableRow } from '../../@types/ui'
+import paths from '../../paths/match'
 import { DateFormats } from '../dateUtils'
 import { nameCell } from '../tableUtils'
-import { sentenceCase } from '../utils'
+import { createQueryString, sentenceCase } from '../utils'
 
 export const DIFFERENCE_IN_DAYS_BETWEEN_DUE_DATE_AND_ARRIVAL_DATE = 7
 
@@ -17,6 +18,7 @@ export const tableRows = (placementRequests: Array<PlacementRequest>): Array<Tab
       locationCell(placementRequest),
       essentialPlacementCriteriaCell(placementRequest),
       desirablePlacementCriteriaCell(placementRequest),
+      linkCell(placementRequest),
     ]
   })
 }
@@ -58,4 +60,31 @@ export const locationCell = (placementRequest: PlacementRequest): TableCell => (
 
 export const mentalHealthSupportCell = (placementRequest: PlacementRequest): TableCell => ({
   text: placementRequest.mentalHealthSupport ? 'Yes' : 'No',
+})
+
+export const linkCell = ({
+  gender,
+  desirableCriteria,
+  duration,
+  essentialCriteria,
+  expectedArrival,
+  location,
+  mentalHealthSupport,
+  radius,
+  type,
+  id,
+  person,
+}: PlacementRequest): TableCell => ({
+  html: `<a data-cy-placementRequestId="${id}" href="${paths.beds.search({})}?${createQueryString({
+    gender,
+    desirableCriteria,
+    duration,
+    essentialCriteria,
+    expectedArrival,
+    location,
+    mentalHealthSupport,
+    radius,
+    type,
+    crn: person.crn,
+  })}">Find bed</a>`,
 })
