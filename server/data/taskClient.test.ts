@@ -38,4 +38,35 @@ describeClient('taskClient', provider => {
       expect(result).toEqual(tasks)
     })
   })
+
+  describe('createAllocation', () => {
+    it('should allocate a task', async () => {
+      const task = taskFactory.build()
+
+      const applicationId = 'some-application-id'
+      const userId = 'some-user-id'
+      const taskType = 'placement-request'
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to allocate a task',
+        withRequest: {
+          method: 'POST',
+          path: paths.applications.tasks.allocations.create({ id: applicationId, taskType }),
+          body: { userId },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 201,
+          body: task,
+        },
+      })
+
+      const result = await taskClient.createAllocation(applicationId, userId, taskType)
+
+      expect(result).toEqual(task)
+    })
+  })
 })

@@ -45,6 +45,12 @@ const applyPaths = {
   },
 }
 
+const taskPaths = {
+  tasks: {
+    show: singleApplicationPath.path('tasks/:taskType'),
+  },
+}
+
 const assessPaths = {
   assessments: path('/assessments'),
   singleAssessment: path('/assessments/:id'),
@@ -76,8 +82,11 @@ export default {
     submission: applyPaths.applications.submission,
     documents: applyPaths.applications.show.path('documents'),
     assessment: applyPaths.applications.show.path('assessment'),
-    allocation: {
-      create: applyPaths.applications.show.path('allocations'),
+    tasks: {
+      show: taskPaths.tasks.show,
+      allocations: {
+        create: taskPaths.tasks.show.path('allocations'),
+      },
     },
   },
   assessments: {
@@ -93,9 +102,6 @@ export default {
   },
   tasks: {
     index: tasksPaths.index,
-    allocations: {
-      create: tasksPaths.allocations.create,
-    },
   },
   placementRequests: {
     index: placementRequestsPath,

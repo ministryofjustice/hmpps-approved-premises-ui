@@ -31,4 +31,16 @@ describe('taskService', () => {
       expect(taskClient.all).toHaveBeenCalled()
     })
   })
+
+  describe('createAllocation', () => {
+    it('calls the client with the expected arguments', async () => {
+      const applicationId = 'some-application-id'
+      const userId = 'some-user-id'
+
+      await service.createAllocation(token, applicationId, userId, 'assessment')
+
+      expect(taskClientFactory).toHaveBeenCalledWith(token)
+      expect(taskClient.createAllocation).toHaveBeenCalledWith(applicationId, userId, 'assessment')
+    })
+  })
 })

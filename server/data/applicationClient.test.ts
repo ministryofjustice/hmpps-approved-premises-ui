@@ -256,34 +256,4 @@ describeClient('ApplicationClient', provider => {
       expect(result).toEqual(assessment)
     })
   })
-
-  describe('allocate', () => {
-    it('should allocate an assessment', async () => {
-      const assessment = assessmentFactory.build()
-      const applicationId = 'some-application-id'
-      const userId = 'some-user-id'
-      const taskType = 'Assessment'
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: 'A request for to allocate an assessement',
-        withRequest: {
-          method: 'POST',
-          path: paths.applications.allocation.create({ id: applicationId }),
-          body: { userId, taskType: 'Assessment' },
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        },
-        willRespondWith: {
-          status: 201,
-          body: assessment,
-        },
-      })
-
-      const result = await applicationClient.allocate(applicationId, userId, taskType)
-
-      expect(result).toEqual(assessment)
-    })
-  })
 })
