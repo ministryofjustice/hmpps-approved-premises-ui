@@ -5,8 +5,6 @@ import type {
   ApprovedPremisesApplication,
   ApprovedPremisesAssessment as Assessment,
   Document,
-  Reallocation,
-  TaskType,
 } from '@approved-premises/api'
 
 import { applicationSubmissionData } from '../utils/applications/applicationSubmissionData'
@@ -134,13 +132,6 @@ export default class ApplicationService {
     const assessment = await client.assessment(assessmentId)
 
     return assessment
-  }
-
-  async allocate(token: string, applicationId: string, userId: string, taskType: TaskType): Promise<Reallocation> {
-    const client = this.applicationClientFactory(token)
-    const reallocation = await client.allocate(applicationId, userId, taskType)
-
-    return reallocation
   }
 
   private async saveToSession(application: ApprovedPremisesApplication, page: TasklistPage, request: Request) {

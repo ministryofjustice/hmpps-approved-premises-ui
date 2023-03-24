@@ -1,9 +1,9 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import paths from '../paths/tasks'
+import { convertToTitleCase, sentenceCase } from '../utils/utils'
 import { ApplicationService, TaskService, UserService } from '../services'
 import { getQualificationsForApplication } from '../utils/applications/getQualificationsForApplication'
 import { groupByAllocation } from '../utils/tasks'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../utils/validation'
+import { fetchErrorsAndUserInput } from '../utils/validation'
 
 export default class TasksController {
   constructor(
@@ -22,6 +22,7 @@ export default class TasksController {
 
   show(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
+      const task = await this.taskService.find(req.user.token, req.params.id, req.params.taskType)
       const application = await this.applicationService.findApplication(req.user.token, req.params.id)
       const users = await this.userService.getUsers(
         req.user.token,
@@ -30,27 +31,15 @@ export default class TasksController {
       )
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      res.render('tasks/allocations/show', {
-        pageHeading: `Task for allocation`,
+      res.render('tasks/show', {
+        pageHeading: `Reallocate ${convertToTitleCase(sentenceCase(task.taskType))}`,
         application,
+        task,
         users,
         errors,
         errorSummary,
         ...userInput,
       })
-    }
-  }
-
-  create(): TypedRequestHandler<Request, Response> {
-    return async (req: Request, res: Response) => {
-      try {
-        await this.applicationService.allocate(req.user.token, req.params.id, req.body.userId, 'Assessment')
-
-        req.flash('success', `Case has been allocated`)
-        res.redirect(paths.index({}))
-      } catch (err) {
-        catchValidationErrorOrPropogate(req, res, err, paths.allocations.show({ id: req.params.id }))
-      }
     }
   }
 }

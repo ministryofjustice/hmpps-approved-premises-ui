@@ -14,7 +14,6 @@ import {
 } from './table'
 import { sentenceCase } from '../utils'
 import { DateFormats } from '../dateUtils'
-import { Task } from '../../@types/shared'
 
 describe('table', () => {
   describe('allocatedTableRows', () => {
@@ -48,40 +47,6 @@ describe('table', () => {
         ])
       })
     })
-
-    describe('when all the optional task properties are not defined', () => {
-      it('returns an array of table rows with empty strings for the undefined values', () => {
-        const task = taskFactory.build({
-          person: undefined,
-          dueDate: undefined,
-          allocatedToStaffMember: undefined,
-          status: undefined,
-          taskType: undefined,
-        })
-
-        expect(allocatedTableRows([task])).toEqual([
-          [
-            {
-              text: '',
-            },
-            {
-              html: '',
-              attributes: {
-                'data-sort-value': 0,
-              },
-            },
-            { text: '' },
-            {
-              html: '',
-            },
-            {
-              html: '',
-            },
-            allocationLinkCell(task, 'Reallocate'),
-          ],
-        ])
-      })
-    })
   })
 
   describe('unallocatedTableRows', () => {
@@ -105,38 +70,6 @@ describe('table', () => {
             },
             {
               html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
-            },
-            allocationLinkCell(task, 'Allocate'),
-          ],
-        ])
-      })
-    })
-    describe('when all the optional task properties are not defined', () => {
-      it('returns an array of table rows with empty strings for the undefined values', () => {
-        const task = taskFactory.build({
-          person: undefined,
-          dueDate: undefined,
-          allocatedToStaffMember: undefined,
-          status: undefined,
-          taskType: undefined,
-        })
-
-        expect(unallocatedTableRows([task])).toEqual([
-          [
-            {
-              text: '',
-            },
-            {
-              html: '',
-              attributes: {
-                'data-sort-value': 0,
-              },
-            },
-            {
-              html: '',
-            },
-            {
-              html: '',
             },
             allocationLinkCell(task, 'Allocate'),
           ],
@@ -197,13 +130,6 @@ describe('table', () => {
       const inProgressTask = taskFactory.build({ status: 'in_progress' })
       expect(statusBadge(inProgressTask)).toEqual('<strong class="govuk-tag govuk-tag--grey">In progress</strong>')
     })
-
-    it('returns an empty string for an unknown status', () => {
-      const unknownStatusTask = taskFactory.build({ status: undefined })
-      const unknownStatusTask2 = undefined as unknown as Task
-      expect(statusBadge(unknownStatusTask)).toEqual('')
-      expect(statusBadge(unknownStatusTask2)).toEqual('')
-    })
   })
 
   describe('daysUntilDue', () => {
@@ -213,10 +139,6 @@ describe('table', () => {
     })
     it('returns 0 if the task is due', () => {
       const task = taskFactory.build({ dueDate: DateFormats.dateObjToIsoDate(new Date()) })
-      expect(daysUntilDue(task)).toEqual(0)
-    })
-    it('returns 0 if the task has no due date', () => {
-      const task = taskFactory.build({ dueDate: undefined })
       expect(daysUntilDue(task)).toEqual(0)
     })
   })
@@ -239,25 +161,15 @@ describe('table', () => {
         }<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`,
       )
     })
-
-    it('returns "no due date" if the task has no due date', () => {
-      const task = taskFactory.build({ dueDate: undefined })
-      expect(formatDaysUntilDueWithWarning(task)).toEqual('')
-    })
   })
 
   describe('allocationLinkCell', () => {
     it('returns the cell when there is a person present in the task', () => {
-      const task = taskFactory.build()
-      expect(allocationLinkCell(task, 'Allocate')).toEqual({
-        html: `<a href="/applications/${task.applicationId}/allocation" data-cy-taskId="${task.applicationId}">Allocate <span class="govuk-visually-hidden">task for ${task.person.name}</span></a>`,
+      const task = taskFactory.build({
+        taskType: 'Assessment',
       })
-    })
-
-    it('returns the cell when there is not a person present in the task', () => {
-      const task = taskFactory.build({ person: undefined })
       expect(allocationLinkCell(task, 'Allocate')).toEqual({
-        html: `<a href="/applications/${task.applicationId}/allocation" data-cy-taskId="${task.applicationId}">Allocate</a>`,
+        html: `<a href="/applications/${task.applicationId}/tasks/assessment" data-cy-taskId="${task.applicationId}">Allocate <span class="govuk-visually-hidden">task for ${task.person.name}</span></a>`,
       })
     })
   })

@@ -8,10 +8,8 @@ import { ApplicationService, TaskService, UserService } from '../services'
 import { getQualificationsForApplication } from '../utils/applications/getQualificationsForApplication'
 import userFactory from '../testutils/factories/user'
 import applicationFactory from '../testutils/factories/application'
-import reallocationFactory from '../testutils/factories/reallocation'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../utils/validation'
+import { fetchErrorsAndUserInput } from '../utils/validation'
 import { ErrorsAndUserInput } from '../@types/ui'
-import paths from '../paths/tasks'
 
 jest.mock('../utils/applications/getQualificationsForApplication')
 jest.mock('../utils/validation')
@@ -52,11 +50,13 @@ describe('TasksController', () => {
   })
 
   describe('show', () => {
+    const task = taskFactory.build({ taskType: 'PlacementRequest' })
     const application = applicationFactory.build()
     const users = userFactory.buildList(3)
     const qualifications = ['foo', 'bar']
 
     beforeEach(() => {
+      taskService.find.mockResolvedValue(task)
       applicationService.findApplication.mockResolvedValue(application)
       userService.getUsers.mockResolvedValue(users)
       ;(getQualificationsForApplication as jest.Mock).mockReturnValue(qualifications)
@@ -66,17 +66,20 @@ describe('TasksController', () => {
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: {}, errorSummary: [], userInput: {} })
 
       const requestHandler = tasksController.show()
+      request.params.taskType = 'placement-request'
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('tasks/allocations/show', {
-        pageHeading: `Task for allocation`,
+      expect(response.render).toHaveBeenCalledWith('tasks/show', {
+        pageHeading: `Reallocate Placement Request`,
         application,
+        task,
         users,
         errors: {},
         errorSummary: [],
       })
 
+      expect(taskService.find).toHaveBeenCalledWith(request.user.token, request.params.id, request.params.taskType)
       expect(applicationService.findApplication).toHaveBeenCalledWith(request.user.token, request.params.id)
       expect(userService.getUsers).toHaveBeenCalledWith(request.user.token, ['assessor'], qualifications)
     })
@@ -88,60 +91,15 @@ describe('TasksController', () => {
       const requestHandler = tasksController.show()
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('tasks/allocations/show', {
-        pageHeading: `Task for allocation`,
+      expect(response.render).toHaveBeenCalledWith('tasks/show', {
+        pageHeading: `Reallocate Placement Request`,
         application,
+        task,
         users,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,
       })
-    })
-  })
-
-  describe('create', () => {
-    beforeEach(() => {
-      request.params.id = 'some-uuid'
-      request.body.userId = 'some-other-uuid'
-      request.user.token = token
-    })
-
-    it('should set a flash message and redirect when the API returns correctly', async () => {
-      const requestHandler = tasksController.create()
-
-      const reallocation = reallocationFactory.build()
-      applicationService.allocate.mockResolvedValue(reallocation)
-
-      await requestHandler(request, response, next)
-
-      expect(applicationService.allocate).toHaveBeenCalledWith(
-        request.user.token,
-        request.params.id,
-        request.body.userId,
-        'Assessment',
-      )
-
-      expect(request.flash).toHaveBeenCalledWith('success', `Case has been allocated`)
-      expect(response.redirect).toHaveBeenCalledWith(paths.index({}))
-    })
-
-    it('should redirect with errors if the API returns an error', async () => {
-      const requestHandler = tasksController.create()
-
-      const err = new Error()
-
-      applicationService.allocate.mockImplementation(() => {
-        throw err
-      })
-
-      await requestHandler(request, response, next)
-
-      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
-        response,
-        err,
-        paths.allocations.show({ id: request.params.id }),
-      )
     })
   })
 })

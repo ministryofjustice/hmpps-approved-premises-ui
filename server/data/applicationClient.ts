@@ -3,9 +3,7 @@ import type {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
   Document,
-  Reallocation,
   SubmitApplication,
-  TaskType,
 } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
@@ -61,12 +59,5 @@ export default class ApplicationClient {
     return (await this.restClient.get({
       path: paths.applications.assessment({ id: applicationId }),
     })) as Assessment
-  }
-
-  async allocate(applicationId: string, userId: string, taskType: TaskType): Promise<Reallocation> {
-    return (await this.restClient.post({
-      path: paths.applications.allocation.create({ id: applicationId }),
-      data: { userId, taskType },
-    })) as Reallocation
   }
 }

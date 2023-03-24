@@ -3,7 +3,7 @@ import { TableCell, TableRow } from '../../@types/ui'
 import paths from '../../paths/tasks'
 import { DateFormats } from '../dateUtils'
 import { nameCell } from '../tableUtils'
-import { linkTo, sentenceCase } from '../utils'
+import { kebabCase, linkTo, sentenceCase } from '../utils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
@@ -52,20 +52,20 @@ const statusCell = (task: Task): TableCell => ({
 })
 
 const taskTypeCell = (task: Task): TableCell => ({
-  html: task.taskType ? `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>` : '',
+  html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
 })
 
 const allocationCell = (task: Task): TableCell => ({
-  text: task.allocatedToStaffMember?.name || '',
+  text: task.allocatedToStaffMember?.name,
 })
 
 const allocationLinkCell = (task: Task, action: 'Allocate' | 'Reallocate'): TableCell => {
-  const hiddenText = task.person ? `task for ${task.person.name}` : ''
+  const hiddenText = `task for ${task.person.name}`
 
   return {
     html: linkTo(
-      paths.allocations.show,
-      { id: task.applicationId },
+      paths.show,
+      { id: task.applicationId, taskType: kebabCase(task.taskType) },
       {
         text: action,
         hiddenText,
@@ -76,22 +76,19 @@ const allocationLinkCell = (task: Task, action: 'Allocate' | 'Reallocate'): Tabl
 }
 
 const statusBadge = (task: Task): string => {
-  const status = task?.status || ''
-  switch (status) {
+  switch (task.status) {
     case 'complete':
-      return `<strong class="govuk-tag">${sentenceCase(status)}</strong>`
+      return `<strong class="govuk-tag">${sentenceCase(task.status)}</strong>`
     case 'not_started':
-      return `<strong class="govuk-tag govuk-tag--yellow">${sentenceCase(status)}</strong>`
+      return `<strong class="govuk-tag govuk-tag--yellow">${sentenceCase(task.status)}</strong>`
     case 'in_progress':
-      return `<strong class="govuk-tag govuk-tag--grey">${sentenceCase(status)}</strong>`
+      return `<strong class="govuk-tag govuk-tag--grey">${sentenceCase(task.status)}</strong>`
     default:
       return ''
   }
 }
 
 const formatDaysUntilDueWithWarning = (task: Task): string => {
-  if (!task.dueDate) return ''
-
   const differenceInDays = DateFormats.differenceInDays(DateFormats.isoToDateObj(task.dueDate), new Date())
 
   if (differenceInDays.number < DUE_DATE_APPROACHING_DAYS_WINDOW) {
@@ -104,8 +101,6 @@ const formatDaysUntilDueWithWarning = (task: Task): string => {
 }
 
 const daysUntilDue = (task: Task): number => {
-  if (!task.dueDate) return 0
-
   return DateFormats.differenceInDays(DateFormats.isoToDateObj(task.dueDate), new Date()).number
 }
 

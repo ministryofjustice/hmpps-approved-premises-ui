@@ -1,18 +1,23 @@
-import type { ApprovedPremisesApplication as Application, ApprovedPremisesUser as User } from '@approved-premises/api'
+import type {
+  ApprovedPremisesApplication as Application,
+  Task,
+  ApprovedPremisesUser as User,
+} from '@approved-premises/api'
 
 import Page from '../page'
 import paths from '../../../server/paths/tasks'
 
 import { applicationSummary } from '../../../server/utils/tasks'
+import { kebabCase } from '../../../server/utils/utils'
 
 export default class AllocationsPage extends Page {
-  constructor(private readonly application: Application) {
-    super(`Task for allocation`)
+  constructor(private readonly application: Application, private readonly task: Task) {
+    super(`Reallocate`)
   }
 
-  static visit(application: Application): AllocationsPage {
-    cy.visit(paths.allocations.show({ id: application.id }))
-    return new AllocationsPage(application)
+  static visit(application: Application, task: Task): AllocationsPage {
+    cy.visit(paths.show({ id: application.id, taskType: kebabCase(task.taskType) }))
+    return new AllocationsPage(application, task)
   }
 
   shouldShowInformationAboutTask() {
