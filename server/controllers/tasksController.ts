@@ -3,7 +3,7 @@ import { convertToTitleCase, sentenceCase } from '../utils/utils'
 import { ApplicationService, TaskService, UserService } from '../services'
 import { getQualificationsForApplication } from '../utils/applications/getQualificationsForApplication'
 import { groupByAllocation } from '../utils/tasks'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../utils/validation'
+import { fetchErrorsAndUserInput } from '../utils/validation'
 
 export default class TasksController {
   constructor(
@@ -40,19 +40,6 @@ export default class TasksController {
         errorSummary,
         ...userInput,
       })
-    }
-  }
-
-  create(): TypedRequestHandler<Request, Response> {
-    return async (req: Request, res: Response) => {
-      try {
-        await this.applicationService.allocate(req.user.token, req.params.id, req.body.userId, 'Assessment')
-
-        req.flash('success', `Case has been allocated`)
-        res.redirect(paths.index({}))
-      } catch (err) {
-        catchValidationErrorOrPropogate(req, res, err, paths.allocations.show({ id: req.params.id }))
-      }
     }
   }
 }
