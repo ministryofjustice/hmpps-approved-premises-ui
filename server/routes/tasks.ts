@@ -8,8 +8,8 @@ export default function routes(controllers: Controllers, router: Router): Router
   const { tasksController } = controllers
 
   router.get(paths.index.pattern, tasksController.index())
-  router.get(paths.allocations.show.pattern, tasksController.show())
-  router.post(paths.allocations.show.pattern, tasksController.create())
+  router.get(paths.show.pattern, tasksController.show())
+  router.post(paths.allocations.create.pattern, tasksController.create())
 
   return router
 }

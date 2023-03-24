@@ -52,11 +52,13 @@ describe('TasksController', () => {
   })
 
   describe('show', () => {
+    const task = taskFactory.build({ taskType: 'PlacementRequest' })
     const application = applicationFactory.build()
     const users = userFactory.buildList(3)
     const qualifications = ['foo', 'bar']
 
     beforeEach(() => {
+      taskService.find.mockResolvedValue(task)
       applicationService.findApplication.mockResolvedValue(application)
       userService.getUsers.mockResolvedValue(users)
       ;(getQualificationsForApplication as jest.Mock).mockReturnValue(qualifications)
@@ -66,17 +68,20 @@ describe('TasksController', () => {
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: {}, errorSummary: [], userInput: {} })
 
       const requestHandler = tasksController.show()
+      request.params.taskType = 'placement-request'
 
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('tasks/allocations/show', {
-        pageHeading: `Task for allocation`,
+        pageHeading: `Reallocate Placement Request`,
         application,
+        task,
         users,
         errors: {},
         errorSummary: [],
       })
 
+      expect(taskService.find).toHaveBeenCalledWith(request.user.token, request.params.id, request.params.taskType)
       expect(applicationService.findApplication).toHaveBeenCalledWith(request.user.token, request.params.id)
       expect(userService.getUsers).toHaveBeenCalledWith(request.user.token, ['assessor'], qualifications)
     })
@@ -89,8 +94,9 @@ describe('TasksController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('tasks/allocations/show', {
-        pageHeading: `Task for allocation`,
+        pageHeading: `Reallocate Placement Request`,
         application,
+        task,
         users,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
