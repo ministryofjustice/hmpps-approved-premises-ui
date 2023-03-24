@@ -22,9 +22,14 @@ context('Tasks', () => {
     const application = applicationFactory
       .withReleaseDate()
       .build({ isPipeApplication: true, isWomensApplication: false })
-    const task = taskFactory.build({ allocatedToStaffMember: userFactory.build(), applicationId: application.id })
+    const task = taskFactory.build({
+      allocatedToStaffMember: userFactory.build(),
+      applicationId: application.id,
+      taskType: 'Assessment',
+    })
 
     cy.task('stubTasks', [task])
+    cy.task('stubTaskGet', { application, task })
     cy.task('stubApplicationGet', { application })
 
     // And I am logged in as a workflow manager
@@ -40,9 +45,8 @@ context('Tasks', () => {
 
   it('allows me to allocate a task', function test() {
     cy.task('stubTaskAllocationCreate', {
-      application: this.application,
-      task: { ...this.task, allocatedToStaffMember: this.selectedUser },
-      reallocation: reallocationFactory.build(),
+      task: { ...this.task, applicationId: this.application.id, allocatedToStaffMember: this.selectedUser },
+      reallocation: reallocationFactory.build({ taskType: this.task.taskType, user: this.selectedUser }),
     })
 
     // When I visit the task list page
@@ -52,7 +56,7 @@ context('Tasks', () => {
     taskListPage.clickTask(this.task)
 
     // Then I should be on the Allocations page for that task
-    const allocationsPage = Page.verifyOnPage(AllocationsPage, this.application)
+    const allocationsPage = Page.verifyOnPage(AllocationsPage, this.application, this.task)
 
     // And I should see some information about that task
     allocationsPage.shouldShowInformationAboutTask()
@@ -68,10 +72,10 @@ context('Tasks', () => {
     Page.verifyOnPage(TaskListPage, [], [])
 
     // And I should see a confirmation message
-    taskListPage.shouldShowBanner(`Case has been allocated`)
+    taskListPage.shouldShowBanner(`Assessment has been allocated to ${this.selectedUser.name}`)
 
     // And the API should have received the correct data
-    cy.task('verifyAllocationCreate', this.application).then(requests => {
+    cy.task('verifyAllocationCreate', { application: this.application, task: this.task }).then(requests => {
       // Then the API should have had a clarification note added
       expect(requests).to.have.length(1)
       const body = JSON.parse(requests[0].body)
@@ -81,10 +85,10 @@ context('Tasks', () => {
   })
 
   it('shows an error when I do not select a user', function test() {
-    cy.task('stubAllocationErrors', this.application)
+    cy.task('stubAllocationErrors', { application: this.application, task: this.task })
 
     // Given I am on the allocations page
-    const allocationsPage = AllocationsPage.visit(this.application)
+    const allocationsPage = AllocationsPage.visit(this.application, this.task)
 
     // And I click submit without selecting a user
     allocationsPage.clickSubmit()

@@ -2,9 +2,9 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 
-{% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "../partials/showErrorSummary.njk" import showErrorSummary %}
 
-{% extends "../../partials/layout.njk" %}
+{% extends "../partials/layout.njk" %}
 
 {% block content %}
   <div class="govuk-grid-row">
@@ -21,7 +21,7 @@
 
       {{ showErrorSummary(errorSummary) }}
 
-      <form action="{{ paths.allocations.show({ id: application.id }) }}" method="post">
+      <form action="{{ paths.allocations.create({ id: application.id, taskType: (task.taskType | kebabCase) }) }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
         {{
           govukSelect({

@@ -70,7 +70,7 @@ describe('TasksController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('tasks/allocations/show', {
+      expect(response.render).toHaveBeenCalledWith('tasks/show', {
         pageHeading: `Reallocate Placement Request`,
         application,
         task,
@@ -91,7 +91,7 @@ describe('TasksController', () => {
       const requestHandler = tasksController.show()
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('tasks/allocations/show', {
+      expect(response.render).toHaveBeenCalledWith('tasks/show', {
         pageHeading: `Reallocate Placement Request`,
         application,
         task,

@@ -31,7 +31,7 @@ export default class TasksController {
       )
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      res.render('tasks/allocations/show', {
+      res.render('tasks/show', {
         pageHeading: `Reallocate ${convertToTitleCase(sentenceCase(task.taskType))}`,
         application,
         task,
