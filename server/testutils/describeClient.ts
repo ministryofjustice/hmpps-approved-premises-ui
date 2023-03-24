@@ -1,11 +1,12 @@
 import { pactWith } from 'jest-pact'
 import { Pact } from '@pact-foundation/pact'
+import path from 'path'
 
 import config from '../config'
 
 const describeClient = (consumer: string, fn: (provider: Pact) => void) => {
   const provider = 'API'
-  const dir = '/tmp/pacts'
+  const dir = path.join(__dirname, '..', '..', 'tmp', 'pacts')
 
   describe(consumer, () => {
     pactWith({ consumer, provider, dir }, pact => {

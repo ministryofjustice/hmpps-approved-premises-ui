@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { execSync } from 'child_process'
+import path from 'path'
 
 export {}
 
@@ -27,13 +28,15 @@ expect.extend({
     const openAPIUrl =
       'https://raw.githubusercontent.com/ministryofjustice/hmpps-approved-premises-api/main/src/main/resources/static/api.yml'
 
+    const openAPIPath = path.join(__dirname, '..', '..', 'tmp', 'api.yml')
+
     try {
       execSync(`
-        if [ ! -f /tmp/api.yml ]; then
-          curl -s "${openAPIUrl}" > /tmp/api.yml
+        if [ ! -f ${openAPIPath} ]; then
+          curl -s "${openAPIUrl}" > ${openAPIPath}
         fi
       `)
-      execSync(`npx swagger-mock-validator /tmp/api.yml ${pactPath}`)
+      execSync(`npx swagger-mock-validator ${openAPIPath} ${pactPath}`)
       return {
         message: () => `Swagger mock validator for ${pactPath} did not fail`,
         pass: true,
