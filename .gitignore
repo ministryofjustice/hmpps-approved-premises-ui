@@ -132,3 +132,4 @@ integration_tests/screenshots/
 /e2e.env
 .DS_Store
 /integration_tests/downloads
+/tmp
