@@ -1,9 +1,10 @@
 import { faker } from '@faker-js/faker'
 import { Factory } from 'fishery'
 import { ApprovedPremisesBedSearchParameters as BedSearchParameters } from '../../@types/shared'
+import { BedSearchParametersUi } from '../../@types/ui'
 import { DateFormats } from '../../utils/dateUtils'
 
-export default Factory.define<BedSearchParameters>(() => ({
+export default Factory.define<BedSearchParameters, unknown, BedSearchParametersUi>(() => ({
   durationDays: faker.datatype.number({ min: 1, max: 90 }),
   startDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
   maxDistanceMiles: faker.datatype.number({ min: 1, max: 100 }),
