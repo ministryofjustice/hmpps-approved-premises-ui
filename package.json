@@ -43,6 +43,7 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "globalSetup": "./server/testutils/setup.ts",
     "collectCoverage": true,
     "collectCoverageFrom": [
       "server/**/*.{ts,js,jsx,mjs}",
