@@ -39,6 +39,35 @@ describeClient('taskClient', provider => {
     })
   })
 
+  describe('find', () => {
+    it('should get a task', async () => {
+      const task = taskFactory.build()
+
+      const applicationId = 'some-application-id'
+      const taskType = 'placement-request'
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a task',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.tasks.show({ id: applicationId, taskType }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: task,
+        },
+      })
+
+      const result = await taskClient.find(applicationId, taskType)
+
+      expect(result).toEqual(task)
+    })
+  })
+
   describe('createAllocation', () => {
     it('should allocate a task', async () => {
       const task = taskFactory.build()

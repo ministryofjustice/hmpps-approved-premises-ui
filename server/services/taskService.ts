@@ -1,4 +1,4 @@
-import { Reallocation, TaskType } from '@approved-premises/api'
+import { Reallocation, Task } from '@approved-premises/api'
 import { RestClientBuilder } from '../data'
 import TaskClient from '../data/taskClient'
 
@@ -10,6 +10,14 @@ export default class TaskService {
 
     const tasks = await taskClient.all()
     return tasks
+  }
+
+  async find(token: string, premisesId: string, taskType: string): Promise<Task> {
+    const taskClient = this.taskClientFactory(token)
+
+    const task = await taskClient.find(premisesId, taskType)
+
+    return task
   }
 
   async createAllocation(

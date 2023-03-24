@@ -32,6 +32,22 @@ describe('taskService', () => {
     })
   })
 
+  describe('find', () => {
+    it('calls the find method on the task client', async () => {
+      const applicationId = 'some-application-id'
+
+      const task = taskFactory.build()
+      taskClient.find.mockResolvedValue(task)
+
+      const result = await service.find(token, applicationId, 'assessment')
+
+      expect(result).toEqual(task)
+
+      expect(taskClientFactory).toHaveBeenCalledWith(token)
+      expect(taskClient.find).toHaveBeenCalledWith(applicationId, 'assessment')
+    })
+  })
+
   describe('createAllocation', () => {
     it('calls the client with the expected arguments', async () => {
       const applicationId = 'some-application-id'
