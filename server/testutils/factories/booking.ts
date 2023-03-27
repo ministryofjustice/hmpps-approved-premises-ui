@@ -7,6 +7,7 @@ import arrivalFactory from './arrival'
 import departureFactory from './departure'
 import personFactory from './person'
 import { DateFormats } from '../../utils/dateUtils'
+import cancellationFactory from './cancellation'
 
 const today = DateFormats.dateObjToIsoDate(startOfToday())
 const soon = () =>
@@ -102,5 +103,7 @@ export default BookingFactory.define(() => {
     extensions: [],
     serviceName: 'approved-premises' as const,
     createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
+    cancellations: cancellationFactory.buildList(2),
+    departures: departureFactory.buildList(2),
   }
 })
