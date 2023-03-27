@@ -64,7 +64,7 @@ const allocationLinkCell = (task: Task, action: 'Allocate' | 'Reallocate'): Tabl
 
   return {
     html: linkTo(
-      paths.show,
+      paths.tasks.show,
       { id: task.applicationId, taskType: kebabCase(task.taskType) },
       {
         text: action,

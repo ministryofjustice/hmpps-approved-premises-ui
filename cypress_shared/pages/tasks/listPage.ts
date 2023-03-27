@@ -14,7 +14,7 @@ export default class ListPage extends Page {
   }
 
   static visit(allocatedTasks: Array<Task>, unallocatedTasks: Array<Task>): ListPage {
-    cy.visit(paths.index({}))
+    cy.visit(paths.tasks.index({}))
     return new ListPage(allocatedTasks, unallocatedTasks)
   }
 
