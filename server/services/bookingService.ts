@@ -30,8 +30,8 @@ export default class BookingService {
 
   async listOfBookingsForPremisesId(token: string, premisesId: string): Promise<Array<Booking>> {
     const bookingClient = this.bookingClientFactory(token)
-
-    return bookingClient.allBookingsForPremisesId(premisesId)
+    const allBookings = await bookingClient.allBookingsForPremisesId(premisesId)
+    return allBookings
   }
 
   async groupedListOfBookingsForPremisesId(token: string, premisesId: string): Promise<GroupedListofBookings> {

@@ -103,7 +103,7 @@ export default BookingFactory.define(() => {
     extensions: [],
     serviceName: 'approved-premises' as const,
     createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
-    cancellations: cancellationFactory.buildList(2),
-    departures: departureFactory.buildList(2),
+    cancellations: cancellationFactory.buildList(1),
+    departures: departureFactory.buildList(1),
   }
 })

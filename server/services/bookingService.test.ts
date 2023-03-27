@@ -4,6 +4,7 @@ import BookingClient from '../data/bookingClient'
 import newBookingFactory from '../testutils/factories/newBooking'
 import bookingExtensionFactory from '../testutils/factories/bookingExtension'
 import bookingFactory from '../testutils/factories/booking'
+import { Booking } from '../@types/shared'
 
 jest.mock('../data/bookingClient.ts')
 jest.mock('../data/referenceDataClient.ts')
@@ -56,10 +57,14 @@ describe('BookingService', () => {
   })
 
   describe('listOfBookingsForPremisesId', () => {
+    let bookings: Array<Booking>
+
+    beforeAll(() => {
+      bookings = bookingFactory.buildList(1)
+    })
+
     it('should return table rows of bookings', async () => {
       const premisesId = 'some-uuid'
-      const bookings = bookingFactory.buildList(3)
-
       bookingClient.allBookingsForPremisesId.mockResolvedValue(bookings)
 
       const results = await service.listOfBookingsForPremisesId(token, premisesId)
