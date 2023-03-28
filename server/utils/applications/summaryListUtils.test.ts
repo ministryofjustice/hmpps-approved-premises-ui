@@ -64,7 +64,15 @@ describe('summaryListUtils', () => {
 
       summaryListSections(application)
 
-      expect(reviewSections).toHaveBeenCalledWith(application, getTaskResponsesAsSummaryListItems)
+      expect(reviewSections).toHaveBeenCalledWith(application, getTaskResponsesAsSummaryListItems, true)
+    })
+
+    it('calls reviewSections with showActions if added', () => {
+      const application = applicationFactory.build()
+
+      summaryListSections(application, false)
+
+      expect(reviewSections).toHaveBeenCalledWith(application, getTaskResponsesAsSummaryListItems, false)
     })
   })
 
@@ -72,7 +80,7 @@ describe('summaryListUtils', () => {
     it('returns an empty array if there isnt any responses for the task', () => {
       const application = applicationFactory.build()
 
-      expect(getTaskResponsesAsSummaryListItems({ id: '42', title: '42', pages: {} }, application)).toEqual([])
+      expect(getTaskResponsesAsSummaryListItems({ id: '42', title: '42', pages: {} }, application, true)).toEqual([])
     })
 
     it('returns the task responses as Summary List items and adds the actions object', () => {
@@ -82,7 +90,7 @@ describe('summaryListUtils', () => {
         title: 'response',
       }))
 
-      expect(getTaskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application)).toEqual([
+      expect(getTaskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application, true)).toEqual([
         {
           actions: {
             items: [
@@ -93,6 +101,25 @@ describe('summaryListUtils', () => {
               },
             ],
           },
+          key: {
+            text: 'title',
+          },
+          value: {
+            text: 'response',
+          },
+        },
+      ])
+    })
+
+    it('returns the task responses as Summary List items without the actions object if showActions is false', () => {
+      const application = applicationFactory.build()
+      application.data = { foo: ['bar'] }
+      ;(getResponseForPage as jest.Mock).mockImplementation(() => ({
+        title: 'response',
+      }))
+
+      expect(getTaskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application, false)).toEqual([
+        {
           key: {
             text: 'title',
           },

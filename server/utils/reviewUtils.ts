@@ -6,7 +6,8 @@ import isAssessment from './assessments/isAssessment'
 
 const reviewSections = (
   applicationOrAssessment: Application | Assessment,
-  rowFunction: (task: UiTask, document: Application | Assessment) => Array<SummaryListItem>,
+  rowFunction: (task: UiTask, document: Application | Assessment, showActions?: boolean) => Array<SummaryListItem>,
+  showActions = true,
 ) => {
   const nonCheckYourAnswersSections = isAssessment(applicationOrAssessment)
     ? getSections(applicationOrAssessment).slice(0, -1)
@@ -19,7 +20,7 @@ const reviewSections = (
         return {
           id: task.id,
           title: task.title,
-          rows: rowFunction(task, applicationOrAssessment),
+          rows: rowFunction(task, applicationOrAssessment, showActions),
         }
       }),
     }

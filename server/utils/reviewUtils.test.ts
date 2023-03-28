@@ -109,6 +109,27 @@ describe('reviewSections', () => {
         pages: { 'basic-information': {}, 'type-of-ap': {} },
       },
       application,
+      true,
+    )
+  })
+
+  it('calls the rowFunction for each task with the task, application and showActions if specified', () => {
+    const application = applicationFactory.build()
+    const rowFunctionSpy = jest.fn()
+    ;(isAssessment as unknown as jest.Mock).mockReturnValue(false)
+
+    reviewSections(application, rowFunctionSpy, false)
+
+    expect(isAssessment).toHaveBeenCalledWith(application)
+    expect(rowFunctionSpy).toHaveBeenCalledTimes(1)
+    expect(rowFunctionSpy).toHaveBeenCalledWith(
+      {
+        id: 'basic-information',
+        title: 'Basic Information',
+        pages: { 'basic-information': {}, 'type-of-ap': {} },
+      },
+      application,
+      false,
     )
   })
 })
