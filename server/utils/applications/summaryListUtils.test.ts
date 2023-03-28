@@ -1,17 +1,13 @@
-import applicationFactory from '../testutils/factories/application'
-import { getResponseForPage } from './applications/utils'
+import applicationFactory from '../../testutils/factories/application'
+import { getResponseForPage } from './utils'
 
-import {
-  checkYourAnswersSections,
-  embeddedSummaryListItem,
-  getTaskResponsesAsSummaryListItems,
-} from './checkYourAnswersUtils'
-import reviewSections from './reviewUtils'
+import { embeddedSummaryListItem, getTaskResponsesAsSummaryListItems, summaryListSections } from './summaryListUtils'
+import reviewSections from '../reviewUtils'
 
-jest.mock('./reviewUtils')
-jest.mock('./applications/utils')
+jest.mock('../reviewUtils')
+jest.mock('./utils')
 
-describe('checkYourAnswersUtils', () => {
+describe('summaryListUtils', () => {
   describe('embeddedSummaryListItem', () => {
     it('returns a summary list for an array of records', () => {
       const result = embeddedSummaryListItem([
@@ -62,11 +58,11 @@ describe('checkYourAnswersUtils', () => {
     })
   })
 
-  describe('checkYourAnswersSections', () => {
+  describe('summaryListSections', () => {
     it('calls reviewSections with the correct arguments', () => {
       const application = applicationFactory.build()
 
-      checkYourAnswersSections(application)
+      summaryListSections(application)
 
       expect(reviewSections).toHaveBeenCalledWith(application, getTaskResponsesAsSummaryListItems)
     })

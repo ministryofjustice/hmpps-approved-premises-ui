@@ -56,7 +56,7 @@ const FirstPage = jest.fn()
 const SecondPage = jest.fn()
 
 jest.mock('../applications/utils')
-jest.mock('../checkYourAnswersUtils')
+jest.mock('../applications/summaryListUtils')
 jest.mock('../personUtils')
 jest.mock('../reviewUtils')
 jest.mock('./documentUtils')

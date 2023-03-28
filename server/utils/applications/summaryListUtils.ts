@@ -1,12 +1,12 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { HtmlItem, SummaryListItem, TextItem, UiTask } from '@approved-premises/ui'
 
-import paths from '../paths/apply'
+import paths from '../../paths/apply'
 
-import { getResponseForPage } from './applications/utils'
-import reviewSections from './reviewUtils'
+import { getResponseForPage } from './utils'
+import reviewSections from '../reviewUtils'
 
-const checkYourAnswersSections = (application: ApprovedPremisesApplication) =>
+const summaryListSections = (application: ApprovedPremisesApplication) =>
   reviewSections(application, getTaskResponsesAsSummaryListItems)
 
 export const getTaskResponsesAsSummaryListItems = (
@@ -84,4 +84,4 @@ const summaryListItemForResponse = (
   }
 }
 
-export { checkYourAnswersSections, embeddedSummaryListItem }
+export { summaryListSections, embeddedSummaryListItem }

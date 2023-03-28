@@ -21,7 +21,7 @@ import {
   dateFieldValues,
 } from './formUtils'
 import { dashboardTableRows } from './applications/utils'
-import { checkYourAnswersSections } from './checkYourAnswersUtils'
+import { summaryListSections } from './applications/summaryListUtils'
 
 import { statusTag } from './personUtils'
 import { DateFormats } from './dateUtils'
@@ -163,7 +163,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addFilter('sentenceCase', sentenceCase)
   njkEnv.addFilter('kebabCase', kebabCase)
 
-  njkEnv.addGlobal('checkYourAnswersSections', checkYourAnswersSections)
+  njkEnv.addGlobal('summaryListSections', summaryListSections)
   njkEnv.addGlobal('dashboardTableRows', dashboardTableRows)
 
   njkEnv.addGlobal('AssessmentUtils', AssessmentUtils)

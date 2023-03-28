@@ -114,7 +114,7 @@
         </div>
       </div>
 
-      {% for section in checkYourAnswersSections(page.application) %}
+      {% for section in summaryListSections(page.application) %}
         <h2 class="govuk-heading-l">{{ section.title }}</h2>
         {% for task in section.tasks %}
           <div class="main-box" data-cy-check-your-answers-section="{{ task.id }}">
