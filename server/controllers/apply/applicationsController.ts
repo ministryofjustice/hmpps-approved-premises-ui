@@ -37,6 +37,8 @@ export default class ApplicationsController {
 
       if (isUnapplicable(application)) {
         res.render('applications/notEligible')
+      } else if (application.status === 'submitted') {
+        res.render('applications/show', { application })
       } else {
         res.render('applications/tasklist', { application, taskList })
       }

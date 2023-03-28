@@ -2,7 +2,6 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput, GroupedApplications } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController, { tasklistPageHeading } from './applicationsController'
 import { ApplicationService, PersonService } from '../../services'
@@ -70,7 +69,7 @@ describe('applicationsController', () => {
   })
 
   describe('show', () => {
-    const application = createMock<ApprovedPremisesApplication>({ person: { crn: 'some-crn' } })
+    const application = applicationFactory.build({ person: { crn: 'some-crn' }, status: 'inProgress' })
 
     beforeEach(() => {
       request = createMock<Request>({
@@ -81,7 +80,7 @@ describe('applicationsController', () => {
       })
     })
 
-    it('fetches the application from session or the API and renders the task list', async () => {
+    it('fetches the application from session or the API and renders the task list if the application is in progress', async () => {
       const requestHandler = applicationsController.show()
       const stubTaskList = jest.fn()
 
@@ -95,6 +94,24 @@ describe('applicationsController', () => {
       expect(response.render).toHaveBeenCalledWith('applications/tasklist', {
         application,
         taskList: stubTaskList,
+      })
+
+      expect(applicationService.findApplication).not.toHaveBeenCalledWith(token, application.id)
+    })
+
+    it('fetches the application from session or the API and renders the read only view if the application is submitted', async () => {
+      const requestHandler = applicationsController.show()
+      const stubTaskList = jest.fn()
+
+      application.status = 'submitted'
+      ;(TasklistService as jest.Mock).mockImplementation(() => {
+        return stubTaskList
+      })
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/show', {
+        application,
       })
 
       expect(applicationService.findApplication).not.toHaveBeenCalledWith(token, application.id)
