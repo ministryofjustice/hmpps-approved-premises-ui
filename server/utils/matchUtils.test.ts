@@ -1,7 +1,17 @@
 import { BedSearchParametersUi } from '../@types/ui'
 import bedSearchParameters from '../testutils/factories/bedSearchParameters'
-import { apCharacteristicPairFactory } from '../testutils/factories/bedSearchResult'
-import { mapApiCharacteristicForUi, mapApiParamsForUi, mapUiParamsForApi } from './matchUtils'
+import bedSearchResultFactory, { apCharacteristicPairFactory } from '../testutils/factories/bedSearchResult'
+import {
+  addressRow,
+  bedCountRow,
+  mapApiCharacteristicForUi,
+  mapApiParamsForUi,
+  mapUiParamsForApi,
+  premisesCharacteristicsRow,
+  roomCharacteristicsRow,
+  summaryCardRows,
+  townRow,
+} from './matchUtils'
 
 describe('matchUtils', () => {
   describe('mapUiParamsForApi', () => {
@@ -35,6 +45,19 @@ describe('matchUtils', () => {
       expect(mapApiCharacteristicForUi(esap)).toBe('<li>ESAP</li>')
       expect(mapApiCharacteristicForUi(iap)).toBe('<li>IAP</li>')
       expect(mapApiCharacteristicForUi(pipe)).toBe('<li>PIPE</li>')
+    })
+  })
+
+  describe('summaryCardsRow', () => {
+    it('calls the correct row functions', () => {
+      const bedSearchResult = bedSearchResultFactory.build()
+      expect(summaryCardRows(bedSearchResult.results[0])).toEqual([
+        townRow(bedSearchResult.results[0]),
+        addressRow(bedSearchResult.results[0]),
+        premisesCharacteristicsRow(bedSearchResult.results[0]),
+        roomCharacteristicsRow(bedSearchResult.results[0]),
+        bedCountRow(bedSearchResult.results[0]),
+      ])
     })
   })
 })
