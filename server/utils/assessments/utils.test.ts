@@ -23,12 +23,12 @@ import {
   getApplicationType,
   getPage,
   getReviewNavigationItems,
-  getSectionSuffix,
   getStatus,
   getTaskResponsesAsSummaryListItems,
   groupAssessmements,
   rejectionRationaleFromAssessmentResponses,
   requestedFurtherInformationTableRows,
+  reviewApplicationSections,
   unallocatedTableRows,
 } from './utils'
 import { DateFormats } from '../dateUtils'
@@ -51,17 +51,18 @@ import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from './documentUtils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
+import { getActionsForTaskId } from './getActionsForTaskId'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
 
 jest.mock('../applications/utils')
-jest.mock('../applications/summaryListUtils')
 jest.mock('../personUtils')
 jest.mock('../reviewUtils')
 jest.mock('./documentUtils')
 jest.mock('../applications/arrivalDateFromApplication')
 jest.mock('./decisionUtils')
+jest.mock('./getActionsForTaskId')
 
 jest.mock('../../form-pages/assess', () => {
   return {
@@ -491,6 +492,21 @@ describe('utils', () => {
     })
   })
 
+  describe('reviewApplicationSections', () => {
+    it('sends a cardActionFunction to reviewSections, which passes the correct assessment ID on to `getActionsForTaskId`', () => {
+      const application = applicationFactory.build()
+
+      reviewApplicationSections(application, 'assessmentId')
+
+      const { mock } = reviewSections as jest.Mock
+      const cardActionFunction = mock.calls[0][3]
+
+      cardActionFunction('task')
+
+      expect(getActionsForTaskId).toHaveBeenCalledWith('task', 'assessmentId')
+    })
+  })
+
   describe('assessmentSections', () => {
     it('calls reviewSections with the supplied arguments', () => {
       const application = applicationFactory.build()
@@ -559,31 +575,6 @@ describe('utils', () => {
   describe('getReviewNavigationItems', () => {
     it('returns an array of objects with the link and human readable text for each of the Apply pages', () => {
       expect(getReviewNavigationItems()).toEqual([{ href: '#first', text: 'First' }])
-    })
-  })
-
-  describe('getSectionSuffix', () => {
-    const id = 'id'
-    it('returns an empty string if the task id isnt oasys-import or prison-information', () => {
-      expect(getSectionSuffix({ id: 'foo', title: '', pages: {} }, id)).toBe('')
-    })
-
-    it('returns the correct html if supplied a task with an ID of oasys-import', () => {
-      expect(getSectionSuffix({ id: 'oasys-import', title: '', pages: {} }, id)).toBe(
-        `<p><a href="${paths.assessments.supportingInformationPath({
-          id,
-          category: 'risk-information',
-        })}">View detailed risk information</a></p>`,
-      )
-    })
-
-    it('returns the correct html if supplied a task with an ID of prison-information', () => {
-      expect(getSectionSuffix({ id: 'prison-information', title: '', pages: {} }, id)).toBe(
-        `<p><a href="${paths.assessments.supportingInformationPath({
-          id,
-          category: 'prison-information',
-        })}">View additional prison information</a></p>`,
-      )
     })
   })
 
