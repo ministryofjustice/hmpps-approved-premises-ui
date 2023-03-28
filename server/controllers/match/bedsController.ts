@@ -8,32 +8,36 @@ export default class BedController {
 
   search(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const {
-        durationDays,
-        maxDistanceMiles,
-        postcodeDistrict,
-        requiredPremisesCharacteristics,
-        requiredRoomCharacteristics,
-        startDate,
-        crn,
-      } = req.query
+      const query = Object.keys(req.query).length ? req.query : undefined
 
-      const bedSearchResults = await this.bedService.search(req.user.token, {
-        durationDays,
-        maxDistanceMiles,
-        postcodeDistrict,
-        requiredPremisesCharacteristics,
-        requiredRoomCharacteristics,
-        startDate,
-      } as BedSearchParametersUi)
+      if (query) {
+        const {
+          durationDays,
+          maxDistanceMiles,
+          postcodeDistrict,
+          requiredPremisesCharacteristics,
+          requiredRoomCharacteristics,
+          startDate,
+          crn,
+        } = query
 
-      const person = await this.personService.findByCrn(req.user.token, crn as string)
+        const bedSearchResults = await this.bedService.search(req.user.token, {
+          durationDays,
+          maxDistanceMiles,
+          postcodeDistrict,
+          requiredPremisesCharacteristics,
+          requiredRoomCharacteristics,
+          startDate,
+        } as BedSearchParametersUi)
 
-      res.render('match/search', {
-        pageHeading: 'Find a bed',
-        bedSearchResults,
-        person,
-      })
+        const person = await this.personService.findByCrn(req.user.token, crn as string)
+
+        res.render('match/search', {
+          pageHeading: 'Find a bed',
+          bedSearchResults,
+          person,
+        })
+      }
     }
   }
 }

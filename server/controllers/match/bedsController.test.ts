@@ -18,7 +18,6 @@ describe('bedsController', () => {
 
   const request: DeepMocked<Request> = createMock<Request>({
     user: { token },
-    query: bedSearchParameters as unknown as ParsedQs,
   })
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
@@ -34,26 +33,45 @@ describe('bedsController', () => {
   })
 
   describe('search', () => {
-    it('should render the beds template', async () => {
-      const bedSearchResult = bedSearchResultFactory.build()
-      bedService.search.mockResolvedValue(bedSearchResult)
+    describe('if query params are present', () => {
+      it('should render the beds template', async () => {
+        const bedSearchResults = bedSearchResultFactory.build()
+        bedService.search.mockResolvedValue(bedSearchResults)
 
-      const person = personFactory.build()
-      personService.findByCrn.mockResolvedValue(person)
+        const person = personFactory.build()
+        personService.findByCrn.mockResolvedValue(person)
 
-      const requestHandler = bedsController.search()
+        const requestHandler = bedsController.search()
 
-      const query = { crn: person.crn, ...(bedSearchParameters as unknown as BedSearchParametersUi) }
+        const query = { crn: person.crn, ...bedSearchParameters }
 
-      await requestHandler({ ...request, query }, response, next)
+        await requestHandler({ ...request, query }, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('match/search', {
-        pageHeading: 'Find a bed',
-        results: bedSearchResult,
-        person,
+        expect(response.render).toHaveBeenCalledWith('match/search', {
+          pageHeading: 'Find a bed',
+          bedSearchResults,
+          person,
+        })
+        expect(bedService.search).toHaveBeenCalledWith(token, bedSearchParameters)
+        expect(personService.findByCrn).toHaveBeenCalledWith(token, person.crn)
       })
-      expect(bedService.search).toHaveBeenCalledWith(token, bedSearchParameters)
-      expect(personService.findByCrn).toHaveBeenCalledWith(token, person.crn)
+    })
+
+    describe('if there are no query params', () => {
+      it('should render the beds template', async () => {
+        const bedSearchResult = bedSearchResultFactory.build()
+        bedService.search.mockResolvedValue(bedSearchResult)
+
+        const person = personFactory.build()
+        personService.findByCrn.mockResolvedValue(person)
+
+        const requestHandler = bedsController.search()
+
+        await requestHandler({ ...request, query: {} }, response, next)
+
+        expect(response.render).not.toHaveBeenCalled()
+        expect(bedService.search).not.toHaveBeenCalled()
+      })
     })
   })
 })
