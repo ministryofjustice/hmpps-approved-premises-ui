@@ -1,3 +1,5 @@
+import { SummaryListActions } from '@approved-premises/ui'
+import { createMock } from '@golevelup/ts-jest'
 import Apply from '../form-pages/apply'
 import applicationFactory from '../testutils/factories/application'
 import assessmentFactory from '../testutils/factories/assessment'
@@ -152,5 +154,18 @@ describe('reviewSections', () => {
       application,
       false,
     )
+  })
+
+  it('calls the cardActionFunction if specified', () => {
+    const application = applicationFactory.build()
+    const cardActions = createMock<SummaryListActions>()
+    const cardActionFunction = jest.fn(() => cardActions)
+
+    ;(isAssessment as unknown as jest.Mock).mockReturnValue(false)
+
+    const result = reviewSections(application, jest.fn(), false, cardActionFunction)
+
+    expect(result[0].tasks[0].card.actions).toEqual(cardActions)
+    expect(cardActionFunction).toHaveBeenCalledWith('basic-information')
   })
 })

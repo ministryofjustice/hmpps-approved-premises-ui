@@ -131,10 +131,14 @@ export interface SummaryListActionItem {
   visuallyHiddenText?: string
 }
 
+export interface SummaryListActions {
+  items: Array<SummaryListActionItem>
+}
+
 export interface SummaryListItem {
   key: TextItem | HtmlItem
   value: TextItem | HtmlItem
-  actions?: { items: Array<SummaryListActionItem> }
+  actions?: SummaryListActions
 }
 
 export interface IdentityBarMenu {
