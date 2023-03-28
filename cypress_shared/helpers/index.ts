@@ -8,7 +8,7 @@ import {
   ArrayOfOASysSupportingInformationQuestions,
   UserRole,
 } from '@approved-premises/api'
-import { TableRow } from '@approved-premises/ui'
+import { TableCell, TableRow } from '@approved-premises/ui'
 import { add } from 'date-fns'
 
 import { DateFormats } from '../../server/utils/dateUtils'
@@ -47,7 +47,19 @@ const riskToSelfSummariesFromApplication = (
 }
 
 const tableRowsToArrays = (tableRows: Array<TableRow>): Array<Array<string>> => {
-  return tableRows.map(row => Object.keys(row).map(i => (row[i].html ? Cypress.$(row[i].html).text() : row[i].text)))
+  return tableRows.map(row => Object.keys(row).map(i => uiObjectValue(row[i])))
+}
+
+const uiObjectValue = (tableCell: TableCell) => {
+  if ('html' in tableCell) {
+    return Cypress.$(tableCell.html).text()
+  }
+
+  if ('text' in tableCell) {
+    return tableCell.text
+  }
+
+  return ''
 }
 
 const shouldShowTableRows = <T>(items: Array<T>, tableRowFunction: (items: Array<T>) => Array<TableRow>): void => {
@@ -96,5 +108,6 @@ export {
   tableRowsToArrays,
   updateApplicationReleaseDate,
   shouldShowTableRows,
+  uiObjectValue,
   signInWithRoles,
 }
