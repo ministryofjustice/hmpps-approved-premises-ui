@@ -395,8 +395,8 @@ const getPage = (taskName: string, pageName: string): TasklistPageInterface => {
   return Page as TasklistPageInterface
 }
 
-const assessmentSections = (application: ApprovedPremisesApplication) => {
-  return reviewSections(application, getTaskResponsesAsSummaryListItems)
+const assessmentSections = (assessment: Assessment) => {
+  return reviewSections(assessment, getTaskResponsesAsSummaryListItems)
 }
 
 const reviewApplicationSections = (application: ApprovedPremisesApplication, assessmentId: string) => {

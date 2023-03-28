@@ -509,11 +509,11 @@ describe('utils', () => {
 
   describe('assessmentSections', () => {
     it('calls reviewSections with the supplied arguments', () => {
-      const application = applicationFactory.build()
+      const assessment = assessmentFactory.build()
 
-      assessmentSections(application)
+      assessmentSections(assessment)
 
-      expect(reviewSections).toHaveBeenCalledWith(application, getTaskResponsesAsSummaryListItems)
+      expect(reviewSections).toHaveBeenCalledWith(assessment, getTaskResponsesAsSummaryListItems)
     })
   })
 
