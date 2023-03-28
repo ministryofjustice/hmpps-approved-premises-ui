@@ -36,6 +36,7 @@ import RoomSharingPage from './roomSharing'
 import RoshSummaryPage from './roshSummary'
 import SelectOffencePage from './selectOffence'
 import SentenceTypePage from './sentenceType'
+import ShowPage from './showPage'
 import SituationPage from './situationPage'
 import StartPage from './startPage'
 import SubmissionConfirmation from './submissionConfirmation'
@@ -86,6 +87,7 @@ export {
   RoshSummaryPage,
   SelectOffencePage,
   SentenceTypePage,
+  ShowPage,
   SituationPage,
   StartPage,
   SubmissionConfirmation,

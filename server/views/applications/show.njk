@@ -1,0 +1,130 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% extends "../partials/layout.njk" %}
+
+{% set pageHeading = "View Application" %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-width-container">
+      <h1 class="govuk-heading-xl">
+        {{ pageHeading }}
+      </h1>
+
+      <div class="main-box">
+        <h3 class="box-title govuk-heading-m">
+          Person Details
+        </h3>
+        <div class="box-content" data-cy-check-your-answers-section="person-details">
+          {{ govukSummaryList({
+          rows: ([
+            {
+              key: {
+                text: "Name"
+              },
+              value: {
+                text: application.person.name
+              }
+            },
+            {
+              key: {
+                text: "CRN"
+              },
+              value: {
+                text: application.person.crn
+              }
+            },
+            {
+              key: {
+                text: "Date of Birth"
+              },
+              value: {
+                text: formatDate(application.person.dateOfBirth, { format: 'short' })
+              }
+            },
+            {
+              key: {
+                text: "NOMS Number"
+              },
+              value: {
+                text: application.person.nomsNumber
+              }
+            },
+            {
+              key: {
+                text: "Nationality"
+              },
+              value: {
+                text: application.person.nationality
+              }
+            },
+            {
+              key: {
+                text: "Religion or Belief"
+              },
+              value: {
+                text: application.person.religionOrBelief
+              }
+            },
+            {
+              key: {
+                text: "Sex"
+              },
+              value: {
+                text: application.person.sex
+              }
+            },
+            {
+              key: {
+                text: "Gender Identity"
+              },
+              value: {
+                text: application.person.genderIdentity
+              }
+            },
+            {
+              key: {
+                text: "Status"
+              },
+              value: {
+                html: statusTag(application.person.status)
+              }
+            },
+            {
+              key: {
+                text: "Prison"
+              },
+              value: {
+                text: application.person.prisonName
+              }
+            }
+          ])
+        }) }}
+        </div>
+      </div>
+
+      {% for section in summaryListSections(application, false) %}
+        <h2 class="govuk-heading-l">{{ section.title }}</h2>
+        {% for task in section.tasks %}
+          <div class="main-box" data-cy-check-your-answers-section="{{ task.id }}">
+            <h3 class="box-title govuk-heading-m">
+              {{ task.title }}
+            </h3>
+            <div class="box-content">
+              {{
+                govukSummaryList({
+                  rows: task.rows
+                })
+              }}
+            </div>
+          </div>
+        {% endfor %}
+      {% endfor %}
+
+    </div>
+  </div>
+{% endblock %}
