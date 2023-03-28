@@ -11,7 +11,7 @@ export default class ShowPage extends Page {
   }
 
   shouldShowPersonInformation() {
-    cy.get('[data-cy-check-your-answers-section="person-details"]').within(() => {
+    cy.get('[data-cy-section="person-details"]').within(() => {
       this.assertDefinition('Name', this.application.person.name)
       this.assertDefinition('CRN', this.application.person.crn)
       this.assertDefinition(
@@ -34,25 +34,27 @@ export default class ShowPage extends Page {
     sections.forEach(section => {
       cy.get('h2.govuk-heading-l').contains(section.title).should('exist')
       section.tasks.forEach(task => {
-        cy.get('.box-title').contains(task.title).should('exist')
-        task.rows.forEach(item => {
-          const key = 'text' in item.key ? item.key.text : item.key.html
-          const value = 'text' in item.value ? item.value.text : item.value.html
-          if ('text' in item.value) {
-            this.assertDefinition(key, value)
-          } else {
-            cy.get('dt')
-              .contains(key)
-              .siblings('dd')
-              .then($dd => {
-                // Get rid of all whitespace in both the actual and expected text,
-                // so we don't have to worry about small differences in whitespace
-                const actual = $dd.text().replace(/\s+/g, '')
-                const expected = Cypress.$(value).text().replace(/\s+/g, '')
+        cy.get(`[data-cy-section="${task.card.attributes['data-cy-section']}"]`).within(() => {
+          cy.get('.govuk-summary-card__title').contains(task.card.title.text).should('exist')
+          task.rows.forEach(item => {
+            const key = 'text' in item.key ? item.key.text : item.key.html
+            const value = 'text' in item.value ? item.value.text : item.value.html
+            if ('text' in item.value) {
+              this.assertDefinition(key, value)
+            } else {
+              cy.get('dt')
+                .contains(key)
+                .siblings('dd')
+                .then($dd => {
+                  // Get rid of all whitespace in both the actual and expected text,
+                  // so we don't have to worry about small differences in whitespace
+                  const actual = $dd.text().replace(/\s+/g, '')
+                  const expected = Cypress.$(value).text().replace(/\s+/g, '')
 
-                expect(actual).to.equal(expected)
-              })
-          }
+                  expect(actual).to.equal(expected)
+                })
+            }
+          })
         })
       })
     })

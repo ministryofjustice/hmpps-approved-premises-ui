@@ -22,18 +22,7 @@
 
             {% for section in AssessmentUtils.assessmentSections(page.assessment) %}
                 {% for task in section.tasks %}
-                    <div class="main-box" data-cy-check-your-answers-section="{{ task.id }}">
-                        <h3 class="box-title govuk-heading-m">
-                            {{ task.title }}
-                        </h3>
-                        <div class="box-content">
-                            {{
-                                govukSummaryList({
-                                rows: task.rows
-                                })
-                            }}
-                        </div>
-                    </div>
+                    {{ govukSummaryList(task) }}
                 {% endfor %}
             {% endfor %}
 

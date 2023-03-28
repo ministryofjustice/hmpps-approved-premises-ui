@@ -128,7 +128,7 @@ export interface SummaryList {
 export interface SummaryListActionItem {
   href: string
   text: string
-  visuallyHiddenText: string
+  visuallyHiddenText?: string
 }
 
 export interface SummaryListItem {

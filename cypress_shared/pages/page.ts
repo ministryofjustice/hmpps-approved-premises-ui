@@ -161,8 +161,8 @@ export default abstract class Page {
   }
 
   shouldShowCheckYourAnswersTitle(taskName: string, taskTitle: string) {
-    cy.get(`[data-cy-check-your-answers-section="${taskName}"]`).within(() => {
-      cy.get('.box-title').should('contain', taskTitle)
+    cy.get(`[data-cy-section="${taskName}"]`).within(() => {
+      cy.get('.govuk-summary-card__title').should('contain', taskTitle)
     })
   }
 

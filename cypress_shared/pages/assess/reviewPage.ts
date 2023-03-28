@@ -22,7 +22,7 @@ export default class ReviewPage extends AssessPage {
   }
 
   shouldShowPersonInformation(person: Person) {
-    cy.get('[data-cy-review-section="person-details"]').within(() => {
+    cy.get('[data-cy-section="person-details"]').within(() => {
       this.assertDefinition('Name', person.name)
       this.assertDefinition('CRN', person.crn)
       this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
@@ -37,7 +37,7 @@ export default class ReviewPage extends AssessPage {
   }
 
   shouldShowDocuments(selectedDocuments: Array<Document>) {
-    cy.get(`[data-cy-review-section="attach-required-documents"]`).within(() => {
+    cy.get(`[data-cy-section="attach-required-documents"]`).within(() => {
       selectedDocuments.forEach(d => {
         this.assertDefinition(d.fileName, d.description)
       })
@@ -45,7 +45,7 @@ export default class ReviewPage extends AssessPage {
   }
 
   shouldShowCaseNotes(caseNotes: Array<PrisonCaseNote>) {
-    cy.get(`[data-cy-review-section="prison-information"]`).within(() => {
+    cy.get(`[data-cy-section="prison-information"]`).within(() => {
       cy.get('dt')
         .contains('Selected prison case notes that support this application')
         .parent()
@@ -69,7 +69,7 @@ export default class ReviewPage extends AssessPage {
   }
 
   shouldShowAdjudications(adjudications: Array<Adjudication>) {
-    cy.get(`[data-cy-review-section="prison-information"]`).within(() => {
+    cy.get(`[data-cy-section="prison-information"]`).within(() => {
       cy.get('dt')
         .contains('Adjudications')
         .parent()

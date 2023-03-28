@@ -19,7 +19,7 @@ export default class CheckYourAnswersPage extends ApplyPage {
   }
 
   shouldShowPersonInformation(person: Person) {
-    cy.get('[data-cy-check-your-answers-section="person-details"]').within(() => {
+    cy.get('[data-cy-section="person-details"]').within(() => {
       this.assertDefinition('Name', person.name)
       this.assertDefinition('CRN', person.crn)
       this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
@@ -69,7 +69,7 @@ export default class CheckYourAnswersPage extends ApplyPage {
   }
 
   shouldShowContingencyPlanPartners(contingencyPlanPartners: Array<PartnerAgencyDetails>) {
-    cy.get(`[data-cy-check-your-answers-section="further-considerations"]`).within(() => {
+    cy.get(`[data-cy-section="further-considerations"]`).within(() => {
       cy.get('dt')
         .contains('Contingency plan partners')
         .parent()
@@ -96,7 +96,7 @@ export default class CheckYourAnswersPage extends ApplyPage {
 
   shouldShowDocuments(selectedDocuments: Array<Document>) {
     this.shouldShowCheckYourAnswersTitle('attach-required-documents', 'Attach required documents')
-    cy.get(`[data-cy-check-your-answers-section="attach-required-documents"]`).within(() => {
+    cy.get(`[data-cy-section="attach-required-documents"]`).within(() => {
       selectedDocuments.forEach(d => {
         this.assertDefinition(d.fileName, d.description)
       })
@@ -105,7 +105,7 @@ export default class CheckYourAnswersPage extends ApplyPage {
 
   shouldShowCaseNotes(caseNotes: Array<PrisonCaseNote>) {
     this.shouldShowCheckYourAnswersTitle('prison-information', 'Review prison information')
-    cy.get(`[data-cy-check-your-answers-section="prison-information"]`).within(() => {
+    cy.get(`[data-cy-section="prison-information"]`).within(() => {
       cy.get('dt')
         .contains('Selected prison case notes that support this application')
         .parent()
@@ -129,7 +129,7 @@ export default class CheckYourAnswersPage extends ApplyPage {
   }
 
   shouldShowAdjudications(adjudications: Array<Adjudication>) {
-    cy.get(`[data-cy-check-your-answers-section="prison-information"]`).within(() => {
+    cy.get(`[data-cy-section="prison-information"]`).within(() => {
       cy.get('dt')
         .contains('Adjudications')
         .parent()
@@ -154,7 +154,7 @@ export default class CheckYourAnswersPage extends ApplyPage {
   }
 
   private shouldShowAnswersForTask(taskName: string, pages: Array<ApplyPage>) {
-    cy.get(`[data-cy-check-your-answers-section="${taskName}"]`).within(() => {
+    cy.get(`[data-cy-section="${taskName}"]`).within(() => {
       pages.forEach(page => {
         const responses = page.tasklistPage.response()
         Object.keys(responses).forEach(key => {

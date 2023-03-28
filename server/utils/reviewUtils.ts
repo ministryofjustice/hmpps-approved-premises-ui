@@ -18,8 +18,12 @@ const reviewSections = (
       title: section.title,
       tasks: section.tasks.map(task => {
         return {
-          id: task.id,
-          title: task.title,
+          card: {
+            title: { text: task.title, headingLevel: 3 },
+            attributes: {
+              'data-cy-section': task.id,
+            },
+          },
           rows: rowFunction(task, applicationOrAssessment, showActions),
         }
       }),

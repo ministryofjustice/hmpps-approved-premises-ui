@@ -22,114 +22,106 @@
         items: AssessmentUtils.getReviewNavigationItems()
       }) }}
 
-  <div class="main-box">
-    <h3 class="box-title govuk-heading-m">
-          Person Details
-        </h3>
-    <div class="box-content" data-cy-review-section="person-details" >
-      {{ govukSummaryList({
-          rows: ([
-            {
-              key: {
-                text: "Names"
-              },
-              value: {
-                text: page.document.application.person.name
-              }
+  {{
+    govukSummaryList({
+      card: {
+          title: {
+            text: "Person Details",
+            headingLevel: "3"
+          },
+          attributes: {
+            'data-cy-section': "person-details"
+          }
+        },
+        rows: ([
+          {
+            key: {
+              text: "Names"
             },
-            {
-              key: {
-                text: "CRN"
-              },
-              value: {
-                text: page.document.application.person.crn
-              }
-            },
-            {
-              key: {
-                text: "Date of Birth"
-              },
-              value: {
-                text: formatDate(page.document.application.person.dateOfBirth, { format: 'short' })
-              }
-            },
-            {
-              key: {
-                text: "NOMS Number"
-              },
-              value: {
-                text: nomsNumber
-              }
-            },
-            {
-              key: {
-                text: "Nationality"
-              },
-              value: {
-                text: page.document.application.person.nationality
-              }
-            },
-            {
-              key: {
-                text: "Religion or Belief"
-              },
-              value: {
-                text: page.document.application.person.religionOrBelief
-              }
-            },
-            {
-              key: {
-                text: "Sex"
-              },
-              value: {
-                text: page.document.application.person.sex
-              }
-            },
-            {
-              key: {
-                text: "Gender Identity"
-              },
-              value: {
-                text: page.document.application.person.genderIdentity
-              }
-            },
-            {
-              key: {
-                text: "Status"
-              },
-              value: {
-                html: statusTag(page.document.application.person.status)
-              }
-            },
-            {
-              key: {
-                text: "Prison"
-              },
-              value: {
-                text: page.document.application.person.prisonName
-              }
+            value: {
+              text: page.document.application.person.name
             }
-          ])
-        }) }}
-    </div>
-  </div>
+          },
+          {
+            key: {
+              text: "CRN"
+            },
+            value: {
+              text: page.document.application.person.crn
+            }
+          },
+          {
+            key: {
+              text: "Date of Birth"
+            },
+            value: {
+              text: formatDate(page.document.application.person.dateOfBirth, { format: 'short' })
+            }
+          },
+          {
+            key: {
+              text: "NOMS Number"
+            },
+            value: {
+              text: nomsNumber
+            }
+          },
+          {
+            key: {
+              text: "Nationality"
+            },
+            value: {
+              text: page.document.application.person.nationality
+            }
+          },
+          {
+            key: {
+              text: "Religion or Belief"
+            },
+            value: {
+              text: page.document.application.person.religionOrBelief
+            }
+          },
+          {
+            key: {
+              text: "Sex"
+            },
+            value: {
+              text: page.document.application.person.sex
+            }
+          },
+          {
+            key: {
+              text: "Gender Identity"
+            },
+            value: {
+              text: page.document.application.person.genderIdentity
+            }
+          },
+          {
+            key: {
+              text: "Status"
+            },
+            value: {
+              html: statusTag(page.document.application.person.status)
+            }
+          },
+          {
+            key: {
+              text: "Prison"
+            },
+            value: {
+              text: page.document.application.person.prisonName
+            }
+          }
+        ])
+    })
+  }}
 
   {% for section in AssessmentUtils.assessmentSections(page.document.application) %}
     <h2 class="govuk-heading-l" id={{section.title | kebabCase }}>{{ section.title }}</h2>
     {% for task in section.tasks %}
-      <div class="main-box">
-        <h3 class="box-title govuk-heading-m">
-          {{ task.title }}
-        </h3>
-        <div class="box-content" data-cy-review-section="{{ task.id }}">
-          {{
-                govukSummaryList({
-                  rows: task.rows
-                })
-              }}
-          {{AssessmentUtils.getSectionSuffix(task, assessmentId) | safe}}
-        </div>
-      </div>
+      {{ govukSummaryList(task) }}
     {% endfor %}
   {% endfor %}
 

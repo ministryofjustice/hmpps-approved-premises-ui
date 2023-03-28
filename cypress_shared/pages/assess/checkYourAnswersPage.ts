@@ -44,7 +44,7 @@ export default class CheckYourAnswersPage extends AssessPage {
   }
 
   private shouldShowAnswersForTask(taskName: string, pages: Array<AssessPage>) {
-    cy.get(`[data-cy-check-your-answers-section="${taskName}"]`).within(() => {
+    cy.get(`[data-cy-section="${taskName}"]`).within(() => {
       pages.forEach(page => {
         const responses = page.pageClass.response()
         Object.keys(responses).forEach(key => {
