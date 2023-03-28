@@ -92,7 +92,7 @@ describe('applicationsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('applications/show', {
+      expect(response.render).toHaveBeenCalledWith('applications/tasklist', {
         application,
         taskList: stubTaskList,
       })
@@ -315,7 +315,7 @@ describe('applicationsController', () => {
       await requestHandler(request, response, next)
 
       expect(applicationService.findApplication).toHaveBeenCalledWith(token, request)
-      expect(response.render).toHaveBeenCalledWith('applications/show', {
+      expect(response.render).toHaveBeenCalledWith('applications/tasklist', {
         application,
         errorObject: {
           text: 'You must confirm the information provided is complete, accurate and up to date.',
