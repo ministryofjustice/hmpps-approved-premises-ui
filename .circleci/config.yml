@@ -55,7 +55,7 @@ jobs:
       - checkout
       - run:
           name: install
-          command: apt-get install xz-utils
+          command: apt-get install xz-utils make
       - run:
           name: Update npm
           command: 'npm install -g npm@latest'
