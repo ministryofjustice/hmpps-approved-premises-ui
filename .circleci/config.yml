@@ -55,7 +55,7 @@ jobs:
       - checkout
       - run:
           name: install
-          command: apt-get install xz-utils make g++
+          command: apt-get install -y xz-utils make g++
       - run:
           name: Update npm
           command: 'npm install -g npm@latest'
