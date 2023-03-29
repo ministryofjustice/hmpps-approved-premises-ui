@@ -1,4 +1,4 @@
-# 10. Use Beds insteand of Spaces for matching
+# 10. Use Beds instead of Spaces for matching
 
 Date: 2023-03-29
 
