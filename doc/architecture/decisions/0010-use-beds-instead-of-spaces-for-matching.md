@@ -18,6 +18,6 @@ a bed. This is to make sure people are booked into the correct place and reduce 
 
 ## Consequences
 
-Some AP Manager's have raised concerns during research about loosing control of their AP's. They will intentionally be loosing control of the booking process but will retain the ability to move people around.
+Some AP Managers have raised concerns during research about losing control of their AP's. They will intentionally be losing control of the booking process but will retain the ability to move people around.
 
 There were also concerns around additonal appeals being made and therefore more work. The appeals process on bookings may increase but this is expected. It should be mitigated by the streamlined approach to bookings. Appeals should primarily be made if there is an issue with the people within an AP.
