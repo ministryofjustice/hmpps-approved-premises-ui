@@ -37,8 +37,10 @@ export default class ApplicationsController {
 
       if (isUnapplicable(application)) {
         res.render('applications/notEligible')
+      } else if (application.status === 'submitted') {
+        res.render('applications/show', { application })
       } else {
-        res.render('applications/show', { application, taskList })
+        res.render('applications/tasklist', { application, taskList })
       }
     }
   }
@@ -104,7 +106,7 @@ export default class ApplicationsController {
         const errorMessage = 'You must confirm the information provided is complete, accurate and up to date.'
         const errorObject = { text: errorMessage }
 
-        return res.render('applications/show', {
+        return res.render('applications/tasklist', {
           application,
           errorSummary: [
             {

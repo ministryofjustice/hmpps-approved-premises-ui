@@ -16,8 +16,7 @@ export default abstract class Page {
   }
 
   assertDefinition(term: string, value: string): void {
-    cy.get('dt').should('contain', term)
-    cy.get('dd').should('contain', value)
+    cy.get('dt').contains(term).parents('.govuk-summary-list__row').get('dd').should('contain', value)
   }
 
   checkOnPage(): void {
@@ -161,8 +160,8 @@ export default abstract class Page {
   }
 
   shouldShowCheckYourAnswersTitle(taskName: string, taskTitle: string) {
-    cy.get(`[data-cy-check-your-answers-section="${taskName}"]`).within(() => {
-      cy.get('.box-title').should('contain', taskTitle)
+    cy.get(`[data-cy-section="${taskName}"]`).within(() => {
+      cy.get('.govuk-summary-card__title').should('contain', taskTitle)
     })
   }
 

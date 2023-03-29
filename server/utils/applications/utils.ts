@@ -48,7 +48,9 @@ const htmlValue = (value: string) => {
 }
 
 const createNameAnchorElement = (name: string, applicationId: string) => {
-  return htmlValue(`<a href=${paths.applications.show({ id: applicationId })}>${name}</a>`)
+  return htmlValue(
+    `<a href=${paths.applications.show({ id: applicationId })} data-cy-id="${applicationId}">${name}</a>`,
+  )
 }
 
 export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>

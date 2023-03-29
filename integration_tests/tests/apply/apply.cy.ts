@@ -4,6 +4,7 @@ import {
   ListPage,
   SelectOffencePage,
   SentenceTypePage,
+  ShowPage,
   StartPage,
 } from '../../../cypress_shared/pages/apply'
 import { addResponseToApplication, addResponsesToApplication } from '../../../server/testutils/addToApplication'
@@ -34,7 +35,7 @@ context('Apply', () => {
 
     cy.fixture('applicationData.json').then(applicationData => {
       const person = personFactory.build()
-      const application = applicationFactory.build({ person })
+      const application = applicationFactory.build({ person, status: 'inProgress' })
       const risks = risksFactory.build({
         crn: person.crn,
         tier: tierEnvelopeFactory.build({ value: { level: 'A3' } }),
@@ -285,5 +286,30 @@ context('Apply', () => {
 
     // Then I am taken back to the dashboard
     Page.verifyOnPage(ListPage)
+  })
+
+  it('shows a read-only version the application', function test() {
+    // Given I have completed an application
+    const updatedApplication = { ...this.application, status: 'submitted' }
+    cy.task('stubApplicationGet', { application: updatedApplication })
+    cy.task('stubApplications', [updatedApplication])
+
+    // And I visit the list page
+    const listPage = ListPage.visit([], [updatedApplication], [])
+
+    // When I click on the Submitted tab
+    listPage.clickSubmittedTab()
+
+    // Then I should see my application
+    listPage.shouldShowInProgressApplications()
+
+    // When I click on my application
+    listPage.clickApplication(this.application)
+
+    // Then I should see a read-only version of the application
+    const showPage = Page.verifyOnPage(ShowPage, updatedApplication)
+
+    showPage.shouldShowPersonInformation()
+    showPage.shouldShowResponses()
   })
 })

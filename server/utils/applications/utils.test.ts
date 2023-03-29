@@ -128,7 +128,9 @@ describe('utils', () => {
       expect(result).toEqual([
         [
           {
-            html: `<a href=${paths.applications.show({ id: applicationA.id })}>${applicationA.person.name}</a>`,
+            html: `<a href=${paths.applications.show({ id: applicationA.id })} data-cy-id="${applicationA.id}">${
+              applicationA.person.name
+            }</a>`,
           },
           {
             text: applicationA.person.crn,
@@ -145,7 +147,9 @@ describe('utils', () => {
         ],
         [
           {
-            html: `<a href=${paths.applications.show({ id: applicationB.id })}>${applicationB.person.name}</a>`,
+            html: `<a href=${paths.applications.show({ id: applicationB.id })} data-cy-id="${applicationB.id}">${
+              applicationB.person.name
+            }</a>`,
           },
           {
             text: applicationB.person.crn,
@@ -181,7 +185,9 @@ describe('utils', () => {
       expect(result).toEqual([
         [
           {
-            html: `<a href=${paths.applications.show({ id: application.id })}>My Name</a>`,
+            html: `<a href=${paths.applications.show({ id: application.id })} data-cy-id="${
+              application.id
+            }">My Name</a>`,
           },
           {
             text: application.person.crn,
@@ -217,7 +223,9 @@ describe('utils', () => {
       expect(result).toEqual([
         [
           {
-            html: `<a href=${paths.applications.show({ id: application.id })}>My Name</a>`,
+            html: `<a href=${paths.applications.show({ id: application.id })} data-cy-id="${
+              application.id
+            }">My Name</a>`,
           },
           {
             text: application.person.crn,

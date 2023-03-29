@@ -46,6 +46,10 @@ export default class ListPage extends Page {
     cy.get('a').contains('Submitted').click()
   }
 
+  clickApplication(application: Application) {
+    cy.get(`a[data-cy-id="${application.id}"]`).click()
+  }
+
   private shouldShowApplications(applications: Array<Application>, status: string): void {
     applications.forEach(application => {
       cy.contains(application.person.name)

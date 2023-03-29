@@ -128,13 +128,17 @@ export interface SummaryList {
 export interface SummaryListActionItem {
   href: string
   text: string
-  visuallyHiddenText: string
+  visuallyHiddenText?: string
+}
+
+export interface SummaryListActions {
+  items: Array<SummaryListActionItem>
 }
 
 export interface SummaryListItem {
   key: TextItem | HtmlItem
   value: TextItem | HtmlItem
-  actions?: { items: Array<SummaryListActionItem> }
+  actions?: SummaryListActions
 }
 
 export interface IdentityBarMenu {

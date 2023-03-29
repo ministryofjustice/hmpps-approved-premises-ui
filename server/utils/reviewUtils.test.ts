@@ -1,3 +1,5 @@
+import { SummaryListActions } from '@approved-premises/ui'
+import { createMock } from '@golevelup/ts-jest'
 import Apply from '../form-pages/apply'
 import applicationFactory from '../testutils/factories/application'
 import assessmentFactory from '../testutils/factories/assessment'
@@ -75,7 +77,17 @@ describe('reviewSections', () => {
 
     expect(isAssessment).toHaveBeenCalledWith(application)
     expect(result).toEqual([
-      { tasks: [{ id: 'basic-information', rows: undefined, title: 'Basic Information' }], title: 'First' },
+      {
+        title: 'First',
+        tasks: [
+          {
+            card: {
+              title: { text: 'Basic Information', headingLevel: 3 },
+              attributes: { 'data-cy-section': 'basic-information' },
+            },
+          },
+        ],
+      },
     ])
   })
 
@@ -88,8 +100,19 @@ describe('reviewSections', () => {
     const result = reviewSections(assessment, spy)
 
     expect(isAssessment).toHaveBeenCalledWith(assessment)
+
     expect(result).toEqual([
-      { tasks: [{ id: 'assess-page-1', rows: undefined, title: 'Assess page one' }], title: 'First' },
+      {
+        title: 'First',
+        tasks: [
+          {
+            card: {
+              title: { text: 'Assess page one', headingLevel: 3 },
+              attributes: { 'data-cy-section': 'assess-page-1' },
+            },
+          },
+        ],
+      },
     ])
   })
 
@@ -109,6 +132,40 @@ describe('reviewSections', () => {
         pages: { 'basic-information': {}, 'type-of-ap': {} },
       },
       application,
+      true,
     )
+  })
+
+  it('calls the rowFunction for each task with the task, application and showActions if specified', () => {
+    const application = applicationFactory.build()
+    const rowFunctionSpy = jest.fn()
+    ;(isAssessment as unknown as jest.Mock).mockReturnValue(false)
+
+    reviewSections(application, rowFunctionSpy, false)
+
+    expect(isAssessment).toHaveBeenCalledWith(application)
+    expect(rowFunctionSpy).toHaveBeenCalledTimes(1)
+    expect(rowFunctionSpy).toHaveBeenCalledWith(
+      {
+        id: 'basic-information',
+        title: 'Basic Information',
+        pages: { 'basic-information': {}, 'type-of-ap': {} },
+      },
+      application,
+      false,
+    )
+  })
+
+  it('calls the cardActionFunction if specified', () => {
+    const application = applicationFactory.build()
+    const cardActions = createMock<SummaryListActions>()
+    const cardActionFunction = jest.fn(() => cardActions)
+
+    ;(isAssessment as unknown as jest.Mock).mockReturnValue(false)
+
+    const result = reviewSections(application, jest.fn(), false, cardActionFunction)
+
+    expect(result[0].tasks[0].card.actions).toEqual(cardActions)
+    expect(cardActionFunction).toHaveBeenCalledWith('basic-information')
   })
 })

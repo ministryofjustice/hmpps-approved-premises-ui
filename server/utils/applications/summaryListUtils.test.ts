@@ -1,17 +1,13 @@
-import applicationFactory from '../testutils/factories/application'
-import { getResponseForPage } from './applications/utils'
+import applicationFactory from '../../testutils/factories/application'
+import { getResponseForPage } from './utils'
 
-import {
-  checkYourAnswersSections,
-  embeddedSummaryListItem,
-  getTaskResponsesAsSummaryListItems,
-} from './checkYourAnswersUtils'
-import reviewSections from './reviewUtils'
+import { embeddedSummaryListItem, getTaskResponsesAsSummaryListItems, summaryListSections } from './summaryListUtils'
+import reviewSections from '../reviewUtils'
 
-jest.mock('./reviewUtils')
-jest.mock('./applications/utils')
+jest.mock('../reviewUtils')
+jest.mock('./utils')
 
-describe('checkYourAnswersUtils', () => {
+describe('summaryListUtils', () => {
   describe('embeddedSummaryListItem', () => {
     it('returns a summary list for an array of records', () => {
       const result = embeddedSummaryListItem([
@@ -62,13 +58,21 @@ describe('checkYourAnswersUtils', () => {
     })
   })
 
-  describe('checkYourAnswersSections', () => {
+  describe('summaryListSections', () => {
     it('calls reviewSections with the correct arguments', () => {
       const application = applicationFactory.build()
 
-      checkYourAnswersSections(application)
+      summaryListSections(application)
 
-      expect(reviewSections).toHaveBeenCalledWith(application, getTaskResponsesAsSummaryListItems)
+      expect(reviewSections).toHaveBeenCalledWith(application, getTaskResponsesAsSummaryListItems, true)
+    })
+
+    it('calls reviewSections with showActions if added', () => {
+      const application = applicationFactory.build()
+
+      summaryListSections(application, false)
+
+      expect(reviewSections).toHaveBeenCalledWith(application, getTaskResponsesAsSummaryListItems, false)
     })
   })
 
@@ -76,7 +80,7 @@ describe('checkYourAnswersUtils', () => {
     it('returns an empty array if there isnt any responses for the task', () => {
       const application = applicationFactory.build()
 
-      expect(getTaskResponsesAsSummaryListItems({ id: '42', title: '42', pages: {} }, application)).toEqual([])
+      expect(getTaskResponsesAsSummaryListItems({ id: '42', title: '42', pages: {} }, application, true)).toEqual([])
     })
 
     it('returns the task responses as Summary List items and adds the actions object', () => {
@@ -86,7 +90,7 @@ describe('checkYourAnswersUtils', () => {
         title: 'response',
       }))
 
-      expect(getTaskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application)).toEqual([
+      expect(getTaskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application, true)).toEqual([
         {
           actions: {
             items: [
@@ -97,6 +101,25 @@ describe('checkYourAnswersUtils', () => {
               },
             ],
           },
+          key: {
+            text: 'title',
+          },
+          value: {
+            text: 'response',
+          },
+        },
+      ])
+    })
+
+    it('returns the task responses as Summary List items without the actions object if showActions is false', () => {
+      const application = applicationFactory.build()
+      application.data = { foo: ['bar'] }
+      ;(getResponseForPage as jest.Mock).mockImplementation(() => ({
+        title: 'response',
+      }))
+
+      expect(getTaskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application, false)).toEqual([
+        {
           key: {
             text: 'title',
           },

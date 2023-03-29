@@ -19,13 +19,14 @@ import paths from '../../paths/assess'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
 import { UnknownPageError } from '../errors'
-import { embeddedSummaryListItem } from '../checkYourAnswersUtils'
+import { embeddedSummaryListItem } from '../applications/summaryListUtils'
 import reviewSections from '../reviewUtils'
 import Apply from '../../form-pages/apply'
 import { kebabCase, linkTo } from '../utils'
 import { getApplicationType as getApplicationTypeFromApplication, getResponseForPage } from '../applications/utils'
 import { documentsFromApplication } from './documentUtils'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
+import { getActionsForTaskId } from './getActionsForTaskId'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
@@ -394,8 +395,14 @@ const getPage = (taskName: string, pageName: string): TasklistPageInterface => {
   return Page as TasklistPageInterface
 }
 
-const assessmentSections = (application: ApprovedPremisesApplication) => {
-  return reviewSections(application, getTaskResponsesAsSummaryListItems)
+const assessmentSections = (assessment: Assessment) => {
+  return reviewSections(assessment, getTaskResponsesAsSummaryListItems)
+}
+
+const reviewApplicationSections = (application: ApprovedPremisesApplication, assessmentId: string) => {
+  const cardActionFunction = (taskId: string) => getActionsForTaskId(taskId, assessmentId)
+
+  return reviewSections(application, getTaskResponsesAsSummaryListItems, false, cardActionFunction)
 }
 
 const getTaskResponsesAsSummaryListItems = (
@@ -464,25 +471,6 @@ const getReviewNavigationItems = () => {
   })
 }
 
-const getSectionSuffix = (task: UiTask, assessmentId: string) => {
-  let link: string
-  let copy: string
-
-  if (task.id !== 'oasys-import' && task.id !== 'prison-information') return ''
-
-  if (task.id === 'oasys-import') {
-    link = paths.assessments.supportingInformationPath({ id: assessmentId, category: 'risk-information' })
-    copy = 'View detailed risk information'
-  }
-
-  if (task.id === 'prison-information') {
-    link = paths.assessments.supportingInformationPath({ id: assessmentId, category: 'prison-information' })
-    copy = 'View additional prison information'
-  }
-
-  return `<p><a href="${link}">${copy}</a></p>`
-}
-
 const confirmationPageMessage = (assessment: Assessment) => {
   switch (decisionFromAssessment(assessment)) {
     case 'releaseDate':
@@ -549,11 +537,11 @@ export {
   getApplicationType,
   getPage,
   getReviewNavigationItems,
-  getSectionSuffix,
   getStatus,
   getTaskResponsesAsSummaryListItems,
   groupAssessmements,
   requestedFurtherInformationTableRows,
   unallocatedTableRows,
   rejectionRationaleFromAssessmentResponses,
+  reviewApplicationSections,
 }

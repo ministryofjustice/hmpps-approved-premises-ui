@@ -1,17 +1,18 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { HtmlItem, SummaryListItem, TextItem, UiTask } from '@approved-premises/ui'
 
-import paths from '../paths/apply'
+import paths from '../../paths/apply'
 
-import { getResponseForPage } from './applications/utils'
-import reviewSections from './reviewUtils'
+import { getResponseForPage } from './utils'
+import reviewSections from '../reviewUtils'
 
-const checkYourAnswersSections = (application: ApprovedPremisesApplication) =>
-  reviewSections(application, getTaskResponsesAsSummaryListItems)
+const summaryListSections = (application: ApprovedPremisesApplication, showActions = true) =>
+  reviewSections(application, getTaskResponsesAsSummaryListItems, showActions)
 
 export const getTaskResponsesAsSummaryListItems = (
   task: UiTask,
   application: ApprovedPremisesApplication,
+  showActions: boolean,
 ): Array<SummaryListItem> => {
   const items: Array<SummaryListItem> = []
 
@@ -30,7 +31,7 @@ export const getTaskResponsesAsSummaryListItems = (
           ? ({ text: response[key] } as TextItem)
           : ({ html: embeddedSummaryListItem(response[key] as Array<Record<string, unknown>>) } as HtmlItem)
 
-      items.push(summaryListItemForResponse(key, value, task, pageName, application))
+      items.push(summaryListItemForResponse(key, value, task, pageName, application, showActions))
     })
   })
 
@@ -66,13 +67,17 @@ const summaryListItemForResponse = (
   task: UiTask,
   pageName: string,
   application: ApprovedPremisesApplication,
-) => {
-  return {
+  showActions: boolean,
+): SummaryListItem => {
+  const item = {
     key: {
       text: key,
     },
     value,
-    actions: {
+  } as SummaryListItem
+
+  if (showActions) {
+    item.actions = {
       items: [
         {
           href: paths.applications.pages.show({ task: task.id, page: pageName, id: application.id }),
@@ -80,8 +85,10 @@ const summaryListItemForResponse = (
           visuallyHiddenText: key,
         },
       ],
-    },
+    }
   }
+
+  return item
 }
 
-export { checkYourAnswersSections, embeddedSummaryListItem }
+export { summaryListSections, embeddedSummaryListItem }

@@ -22,12 +22,17 @@
         {{ page.title }}
       </h1>
 
-      <div class="main-box">
-        <h3 class="box-title govuk-heading-m">
-          Person Details
-        </h3>
-        <div class="box-content" data-cy-check-your-answers-section="person-details">
-          {{ govukSummaryList({
+      {{
+        govukSummaryList({
+          card: {
+            title: {
+              text: "Person Details",
+              headingLevel: "3"
+            },
+            attributes: {
+              'data-cy-section': "person-details"
+            }
+          },
           rows: ([
             {
               key: {
@@ -110,25 +115,15 @@
               }
             }
           ])
-        }) }}
-        </div>
-      </div>
+        })
+      }}
 
-      {% for section in checkYourAnswersSections(page.application) %}
+      {% for section in summaryListSections(page.application) %}
         <h2 class="govuk-heading-l">{{ section.title }}</h2>
         {% for task in section.tasks %}
-          <div class="main-box" data-cy-check-your-answers-section="{{ task.id }}">
-            <h3 class="box-title govuk-heading-m">
-              {{ task.title }}
-            </h3>
-            <div class="box-content">
-              {{
-                govukSummaryList({
-                  rows: task.rows
-                })
-              }}
-            </div>
-          </div>
+          {{
+            govukSummaryList(task)
+          }}
         {% endfor %}
       {% endfor %}
 
