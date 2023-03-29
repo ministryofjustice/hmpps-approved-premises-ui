@@ -3,7 +3,7 @@ import { BedSearchParametersUi } from '../../@types/ui'
 import { PersonService } from '../../services'
 import BedService from '../../services/bedService'
 
-export default class BedController {
+export default class BedSearchController {
   constructor(private readonly bedService: BedService, private readonly personService: PersonService) {}
 
   search(): RequestHandler {

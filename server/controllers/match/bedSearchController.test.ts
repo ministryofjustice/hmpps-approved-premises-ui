@@ -8,7 +8,7 @@ import { BedService, PersonService } from '../../services'
 import { mapApiParamsForUi } from '../../utils/matchUtils'
 import { BedSearchParametersUi } from '../../@types/ui'
 
-describe('bedsController', () => {
+describe('bedSearchController', () => {
   const token = 'SOME_TOKEN'
   const bedSearchParameters = bedSearchParametersFactory
     .onCreate(mapApiParamsForUi)
