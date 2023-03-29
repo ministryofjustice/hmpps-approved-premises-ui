@@ -7,6 +7,7 @@ import {
   ArrayOfOASysRiskToSelfQuestions,
   ArrayOfOASysSupportingInformationQuestions,
   ApprovedPremisesAssessment as Assessment,
+  ApprovedPremisesBedSearchParameters as BedSearchParameters,
   Booking,
   Document,
   FlagsEnvelope,
@@ -293,3 +294,8 @@ type ContingencyPlanQuestion = {
 }
 
 export type ContingencyPlanQuestionsRecord = Record<ContingencyPlanQuestionId, ContingencyPlanQuestion>
+
+export interface BedSearchParametersUi extends BedSearchParameters {
+  durationDays: string
+  maxDistanceMiles: string
+}

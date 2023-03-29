@@ -1,7 +1,7 @@
 import { add } from 'date-fns'
 import placementRequestFactory from '../../testutils/factories/placementRequest'
 import { DateFormats } from '../dateUtils'
-import { mentalHealthSupportCell, placementCriteriaClasses, tableRows } from './table'
+import { linkCell, mentalHealthSupportCell, placementCriteriaClasses, tableRows } from './table'
 import { sentenceCase } from '../utils'
 
 describe('placementRequestUtils', () => {
@@ -31,6 +31,7 @@ describe('placementRequestUtils', () => {
               .map(placementNeed => `<li>${sentenceCase(placementNeed)}</li>`)
               .join('')}</ul>`,
           },
+          linkCell(placementRequests[0]),
         ],
       ])
     })

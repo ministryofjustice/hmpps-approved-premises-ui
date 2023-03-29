@@ -1,5 +1,6 @@
 import Case from 'case'
 import { Params, Path } from 'static-path'
+import qs, { IStringifyOptions } from 'qs'
 
 import type { PersonRisksUI, SummaryListItem } from '@approved-premises/ui'
 import type { PersonRisks } from '@approved-premises/api'
@@ -143,3 +144,10 @@ export const resolvePath = (object: Record<string, unknown>, path: string) =>
     .split(/[.[\]'"]/)
     .filter(p => Boolean(p))
     .reduce((acc, curr) => (acc ? acc[curr] : undefined), object)
+
+export const createQueryString = (
+  params: Record<string, unknown> | string,
+  options: IStringifyOptions = { encode: false, indices: false },
+): string => {
+  return qs.stringify(params, options)
+}

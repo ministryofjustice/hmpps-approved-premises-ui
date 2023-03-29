@@ -1,5 +1,8 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
+import applyPaths from '../paths/apply'
+import assessPaths from '../paths/assess'
+import managePaths from '../paths/manage'
 
 import DashboardController from './dashboardController'
 
@@ -20,7 +23,12 @@ describe('DashboardController', () => {
 
       requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('dashboard/index', { pageHeading: 'Approved Premises' })
+      expect(response.render).toHaveBeenCalledWith('dashboard/index', {
+        pageHeading: 'Approved Premises',
+        applyPath: applyPaths.applications.index.pattern,
+        assessPath: assessPaths.assessments.index.pattern,
+        managePath: managePaths.premises.index.pattern,
+      })
     })
   })
 })

@@ -16,7 +16,7 @@ export default class AllocationsPage extends Page {
   }
 
   static visit(application: Application, task: Task): AllocationsPage {
-    cy.visit(paths.show({ id: application.id, taskType: kebabCase(task.taskType) }))
+    cy.visit(paths.tasks.show({ id: application.id, taskType: kebabCase(task.taskType) }))
     return new AllocationsPage(application, task)
   }
 

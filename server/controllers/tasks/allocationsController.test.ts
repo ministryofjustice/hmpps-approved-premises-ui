@@ -53,7 +53,7 @@ describe('AllocationsController', () => {
       )
 
       expect(request.flash).toHaveBeenCalledWith('success', `Assessment has been allocated to Some User`)
-      expect(response.redirect).toHaveBeenCalledWith(paths.index({}))
+      expect(response.redirect).toHaveBeenCalledWith(paths.tasks.index({}))
     })
 
     it('should redirect with errors if the API returns an error', async () => {
@@ -73,7 +73,7 @@ describe('AllocationsController', () => {
         request,
         response,
         err,
-        paths.show({ id: request.params.id, taskType: 'assessment' }),
+        paths.tasks.show({ id: request.params.id, taskType: 'assessment' }),
       )
     })
   })
