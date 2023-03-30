@@ -1,6 +1,6 @@
 import { Task } from '../@types/shared'
 import TaskClient from '../data/taskClient'
-import { taskFactory } from '../testutils/factories'
+import { taskFactory, taskWrapperFactory } from '../testutils/factories'
 import TaskService from './taskService'
 
 jest.mock('../data/taskClient.ts')
@@ -36,12 +36,12 @@ describe('taskService', () => {
     it('calls the find method on the task client', async () => {
       const applicationId = 'some-application-id'
 
-      const task = taskFactory.build()
-      taskClient.find.mockResolvedValue(task)
+      const taskWrapper = taskWrapperFactory.build()
+      taskClient.find.mockResolvedValue(taskWrapper)
 
       const result = await service.find(token, applicationId, 'assessment')
 
-      expect(result).toEqual(task)
+      expect(result).toEqual(taskWrapper)
 
       expect(taskClientFactory).toHaveBeenCalledWith(token)
       expect(taskClient.find).toHaveBeenCalledWith(applicationId, 'assessment')

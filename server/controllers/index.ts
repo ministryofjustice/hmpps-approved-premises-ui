@@ -12,7 +12,7 @@ import DashboardController from './dashboardController'
 
 export const controllers = (services: Services) => {
   const dashboardController = new DashboardController()
-  const tasksController = new TasksController(services.taskService, services.applicationService, services.userService)
+  const tasksController = new TasksController(services.taskService, services.applicationService)
   const allocationsController = new AllocationsController(services.taskService)
   return {
     dashboardController,

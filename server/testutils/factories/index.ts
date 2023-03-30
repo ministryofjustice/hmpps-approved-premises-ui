@@ -34,6 +34,7 @@ import referenceDataFactory from './referenceData'
 import risksFactory, { tierEnvelopeFactory } from './risks'
 import staffMemberFactory from './staffMember'
 import taskFactory from './task'
+import taskWrapperFactory from './taskWrapperFactory'
 import userFactory from './user'
 import userDetailsFactory from './userDetails'
 
@@ -76,6 +77,7 @@ export {
   roshSummaryFactory,
   staffMemberFactory,
   taskFactory,
+  taskWrapperFactory,
   tierEnvelopeFactory,
   userFactory,
   userDetailsFactory,

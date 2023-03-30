@@ -2,14 +2,12 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import TasksController from './tasksController'
-import { applicationFactory, taskFactory, userFactory } from '../testutils/factories'
+import { applicationFactory, taskFactory, taskWrapperFactory } from '../testutils/factories'
 import { groupByAllocation } from '../utils/tasks'
-import { ApplicationService, TaskService, UserService } from '../services'
-import { getQualificationsForApplication } from '../utils/applications/getQualificationsForApplication'
+import { ApplicationService, TaskService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 import { ErrorsAndUserInput } from '../@types/ui'
 
-jest.mock('../utils/applications/getQualificationsForApplication')
 jest.mock('../utils/validation')
 
 describe('TasksController', () => {
@@ -21,13 +19,12 @@ describe('TasksController', () => {
 
   const applicationService = createMock<ApplicationService>({})
   const taskService = createMock<TaskService>({})
-  const userService = createMock<UserService>({})
 
   let tasksController: TasksController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    tasksController = new TasksController(taskService, applicationService, userService)
+    tasksController = new TasksController(taskService, applicationService)
   })
 
   describe('index', () => {
@@ -49,15 +46,12 @@ describe('TasksController', () => {
 
   describe('show', () => {
     const task = taskFactory.build({ taskType: 'PlacementRequest' })
+    const taskWrapper = taskWrapperFactory.build({ task })
     const application = applicationFactory.build()
-    const users = userFactory.buildList(3)
-    const qualifications = ['foo', 'bar']
 
     beforeEach(() => {
-      taskService.find.mockResolvedValue(task)
+      taskService.find.mockResolvedValue(taskWrapper)
       applicationService.findApplication.mockResolvedValue(application)
-      userService.getUsers.mockResolvedValue(users)
-      ;(getQualificationsForApplication as jest.Mock).mockReturnValue(qualifications)
     })
 
     it('fetches the application and a list of qualified users', async () => {
@@ -71,15 +65,14 @@ describe('TasksController', () => {
       expect(response.render).toHaveBeenCalledWith('tasks/show', {
         pageHeading: `Reallocate Placement Request`,
         application,
-        task,
-        users,
+        task: taskWrapper.task,
+        users: taskWrapper.users,
         errors: {},
         errorSummary: [],
       })
 
       expect(taskService.find).toHaveBeenCalledWith(request.user.token, request.params.id, request.params.taskType)
       expect(applicationService.findApplication).toHaveBeenCalledWith(request.user.token, request.params.id)
-      expect(userService.getUsers).toHaveBeenCalledWith(request.user.token, ['assessor'], qualifications)
     })
 
     it('renders the form with errors and user input if an error has been sent to the flash', async () => {
@@ -92,8 +85,8 @@ describe('TasksController', () => {
       expect(response.render).toHaveBeenCalledWith('tasks/show', {
         pageHeading: `Reallocate Placement Request`,
         application,
-        task,
-        users,
+        task: taskWrapper.task,
+        users: taskWrapper.users,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,

@@ -13,8 +13,6 @@ context('Tasks', () => {
     const users = userFactory.buildList(3)
     const selectedUser = users[0]
 
-    cy.task('stubUsers', { users, roles: ['assessor'], qualifications: ['pipe'] })
-
     // And there is an allocated task
     const application = applicationFactory
       .withReleaseDate()
@@ -26,7 +24,7 @@ context('Tasks', () => {
     })
 
     cy.task('stubTasks', [task])
-    cy.task('stubTaskGet', { application, task })
+    cy.task('stubTaskGet', { application, task, users })
     cy.task('stubApplicationGet', { application })
 
     // And I am logged in as a workflow manager
