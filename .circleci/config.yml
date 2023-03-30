@@ -44,34 +44,25 @@ jobs:
           template: basic_fail_1
 
   e2e_environment_test:
-    circleci_ip_ranges: true # opt-in to jobs running on a restricted set of IPs
     docker:
-      - image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
-    parameters:
-      environment:
-        type: string
-        default: dev
+      - image: mcr.microsoft.com/playwright:v1.32.1-focal
+    circleci_ip_ranges: true # opt-in to jobs running on a restricted set of IPs
     steps:
-      - checkout
       - run:
-          name: install
-          command: apt-get install -y xz-utils make g++
+          name: Clone E2E repo
+          command: |
+            git clone https://github.com/ministryofjustice/hmpps-approved-premises-e2e.git .
       - run:
           name: Update npm
           command: 'npm install -g npm@latest'
       - node/install-packages
       - run:
-          name: E2E Check - << parameters.environment >>
+          name: E2E Check
           command: |
-            npm run test:e2e --\
-              --env "username=${CYPRESS_USERNAME_<< parameters.environment >>},password=${CYPRESS_PASSWORD_<< parameters.environment >>},offender_crn=${OFFENDER_CRN_<< parameters.environment >>},offender_name=${OFFENDER_NAME_<< parameters.environment >>},keyworker_name=${KEYWORKER_NAME_<< parameters.environment >>},lost_bed_reason_id=${LOST_BED_REASON_ID_<< parameters.environment >>}"  \
-              --config baseUrl=https://approved-premises-<< parameters.environment >>.hmpps.service.justice.gov.uk
+            npx playwright test
       - store_artifacts:
-          path: e2e/screenshots
-          destination: screenshots
-      - store_artifacts:
-          path: e2e/videos
-          destination: videos
+          path: test-results
+          destination: test-results
 workflows:
   version: 2
   build-test-and-deploy:
@@ -97,7 +88,6 @@ workflows:
             - helm_lint
             - build_docker
       - e2e_environment_test:
-          environment: 'dev'
           context: hmpps-common-vars
           filters:
             branches:
