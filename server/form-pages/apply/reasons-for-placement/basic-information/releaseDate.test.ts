@@ -3,8 +3,7 @@ import { DateFormats } from '../../../../utils/dateUtils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import ReleaseDate from './releaseDate'
-import applicationFactory from '../../../../testutils/factories/application'
-import personFactory from '../../../../testutils/factories/person'
+import { applicationFactory, personFactory } from '../../../../testutils/factories'
 
 describe('ReleaseDate', () => {
   const person = personFactory.build({ name: 'John Wayne' })

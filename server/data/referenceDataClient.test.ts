@@ -8,7 +8,7 @@ import {
 } from '@approved-premises/api'
 
 import ReferenceDataClient from './referenceDataClient'
-import referenceDataFactory from '../testutils/factories/referenceData'
+import { referenceDataFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 
 describeClient('ReferenceDataClient', provider => {

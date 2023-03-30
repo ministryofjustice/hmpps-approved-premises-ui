@@ -1,5 +1,5 @@
 import paths from '../server/paths/api'
-import userFactory from '../server/testutils/factories/user'
+import { userFactory } from '../server/testutils/factories'
 
 export default [
   {

@@ -1,7 +1,7 @@
 import TaskClient from './taskClient'
 import paths from '../paths/api'
 
-import taskFactory from '../testutils/factories/task'
+import { taskFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 
 describeClient('taskClient', provider => {

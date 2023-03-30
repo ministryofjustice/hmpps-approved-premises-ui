@@ -2,9 +2,7 @@ import CancellationService from './cancellationService'
 import BookingClient from '../data/bookingClient'
 import ReferenceDataClient from '../data/referenceDataClient'
 
-import newCancellationFactory from '../testutils/factories/newCancellation'
-import cancellationFactory from '../testutils/factories/cancellation'
-import referenceDataFactory from '../testutils/factories/referenceData'
+import { cancellationFactory, newCancellationFactory, referenceDataFactory } from '../testutils/factories'
 
 jest.mock('../data/bookingClient.ts')
 jest.mock('../data/referenceDataClient.ts')

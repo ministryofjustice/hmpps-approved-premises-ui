@@ -1,6 +1,5 @@
 import isAssessment from './isAssessment'
-import assessmentFactory from '../../testutils/factories/assessment'
-import applicationFactory from '../../testutils/factories/application'
+import { applicationFactory, assessmentFactory } from '../../testutils/factories'
 
 describe('isAssessment', () => {
   it('returns true if the document is an assessment', () => {

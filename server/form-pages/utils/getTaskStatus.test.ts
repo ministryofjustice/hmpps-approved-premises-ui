@@ -1,5 +1,5 @@
 import { createMock } from '@golevelup/ts-jest'
-import applicationFactory from '../../testutils/factories/application'
+import { applicationFactory } from '../../testutils/factories'
 import getTaskStatus from './getTaskStatus'
 import TasklistPage from '../tasklistPage'
 

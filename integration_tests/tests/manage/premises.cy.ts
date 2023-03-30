@@ -1,6 +1,4 @@
-import premisesFactory from '../../../server/testutils/factories/premises'
-import bookingsFactory from '../../../server/testutils/factories/booking'
-import dateCapacityFactory from '../../../server/testutils/factories/dateCapacity'
+import { bookingFactory, dateCapacityFactory, premisesFactory } from '../../../server/testutils/factories'
 
 import { PremisesListPage, PremisesShowPage } from '../../../cypress_shared/pages/manage'
 
@@ -29,10 +27,10 @@ context('Premises', () => {
   it('should show a single premises', () => {
     // Given there is a premises in the database
     const premises = premisesFactory.build()
-    const bookingsArrivingToday = bookingsFactory.arrivingToday().buildList(2)
-    const bookingsLeavingToday = bookingsFactory.departingToday().buildList(2)
-    const bookingsArrivingSoon = bookingsFactory.arrivingSoon().buildList(5)
-    const bookingsDepartingSoon = bookingsFactory.departingSoon().buildList(5)
+    const bookingsArrivingToday = bookingFactory.arrivingToday().buildList(2)
+    const bookingsLeavingToday = bookingFactory.departingToday().buildList(2)
+    const bookingsArrivingSoon = bookingFactory.arrivingSoon().buildList(5)
+    const bookingsDepartingSoon = bookingFactory.departingSoon().buildList(5)
     const bookings = [
       ...bookingsArrivingToday,
       ...bookingsLeavingToday,

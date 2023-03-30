@@ -1,6 +1,6 @@
 import { guidRegex } from './index'
 
-import applicationFactory from '../server/testutils/factories/application'
+import { applicationFactory } from '../server/testutils/factories'
 
 export default [
   {

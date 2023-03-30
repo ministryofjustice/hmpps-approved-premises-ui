@@ -1,9 +1,7 @@
 import ListPage from '../../../cypress_shared/pages/match/listPlacementRequestsPage'
 import SearchPage from '../../../cypress_shared/pages/match/searchPage'
 
-import placementRequestFactory from '../../../server/testutils/factories/placementRequest'
-import bedSearchResultFactory from '../../../server/testutils/factories/bedSearchResult'
-import personFactory from '../../../server/testutils/factories/person'
+import { bedSearchResultFactory, personFactory, placementRequestFactory } from '../../../server/testutils/factories'
 import Page from '../../../cypress_shared/pages/page'
 
 context('Placement Requests', () => {

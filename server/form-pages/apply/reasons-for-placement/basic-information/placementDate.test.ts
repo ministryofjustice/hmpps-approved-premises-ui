@@ -4,7 +4,7 @@ import { noticeTypeFromApplication } from '../../../../utils/applications/notice
 
 import PlacementDate from './placementDate'
 import { DateFormats } from '../../../../utils/dateUtils'
-import applicationFactory from '../../../../testutils/factories/application'
+import { applicationFactory } from '../../../../testutils/factories'
 
 const releaseDate = new Date().toISOString()
 

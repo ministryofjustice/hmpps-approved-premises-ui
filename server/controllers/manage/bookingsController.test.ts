@@ -7,9 +7,7 @@ import { BookingService, PersonService, PremisesService } from '../../services'
 import BookingsController from './bookingsController'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 
-import bookingFactory from '../../testutils/factories/booking'
-import newBookingFactory from '../../testutils/factories/newBooking'
-import personFactory from '../../testutils/factories/person'
+import { bookingFactory, newBookingFactory, personFactory } from '../../testutils/factories'
 import paths from '../../paths/manage'
 
 jest.mock('../../utils/validation')

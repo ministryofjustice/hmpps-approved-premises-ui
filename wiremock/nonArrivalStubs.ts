@@ -1,5 +1,5 @@
 import { guidRegex } from './index'
-import nonArrivalFactory from '../server/testutils/factories/nonArrival'
+import { nonArrivalFactory } from '../server/testutils/factories'
 import { errorStub, getCombinations } from './utils'
 
 const nonArrivalStubs: Array<Record<string, unknown>> = []

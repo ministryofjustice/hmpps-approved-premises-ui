@@ -1,6 +1,6 @@
 import ListPage from '../../../cypress_shared/pages/tasks/listPage'
 
-import taskFactory from '../../../server/testutils/factories/task'
+import { taskFactory } from '../../../server/testutils/factories'
 
 context('Tasks', () => {
   beforeEach(() => {

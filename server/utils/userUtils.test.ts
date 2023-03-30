@@ -1,4 +1,4 @@
-import userDetailsFactory from '../testutils/factories/userDetails'
+import { userDetailsFactory } from '../testutils/factories'
 import { hasRole } from './userUtils'
 
 describe('userUtils', () => {

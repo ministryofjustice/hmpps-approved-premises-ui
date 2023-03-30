@@ -1,6 +1,6 @@
 import { ListPage, StartPage } from '../../../cypress_shared/pages/apply'
 
-import applicationFactory from '../../../server/testutils/factories/application'
+import { applicationFactory } from '../../../server/testutils/factories'
 import Page from '../../../cypress_shared/pages/page'
 
 context('Applications dashboard', () => {

@@ -9,8 +9,7 @@ import {
   PremisesShowPage,
 } from '../../../cypress_shared/pages/manage'
 
-import bookingFactory from '../../../server/testutils/factories/booking'
-import personFactory from '../../../server/testutils/factories/person'
+import { bookingFactory, personFactory } from '../../../server/testutils/factories'
 
 const offenderName = Cypress.env('offender_name') || throwMissingCypressEnvError('offender_name')
 const offenderCrn = Cypress.env('offender_crn') || throwMissingCypressEnvError('offender_crn')

@@ -1,6 +1,5 @@
 import LostBedClient from './lostBedClient'
-import lostBedFactory from '../testutils/factories/lostBed'
-import newLostBedFactory from '../testutils/factories/newLostBed'
+import { lostBedFactory, newLostBedFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 
 describeClient('LostBedClient', provider => {

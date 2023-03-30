@@ -1,5 +1,5 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-import applicationFactory from '../../../../testutils/factories/application'
+import { applicationFactory } from '../../../../testutils/factories'
 
 import IsExceptionalCase from './isExceptionalCase'
 

@@ -1,18 +1,20 @@
 import nock from 'nock'
 
-import departureFactory from '../testutils/factories/departure'
+import {
+  arrivalFactory,
+  bookingFactory,
+  cancellationFactory,
+  departureFactory,
+  newArrivalFactory,
+  newBookingFactory,
+  newCancellationFactory,
+  newDepartureFactory,
+  newNonArrivalFactory,
+  nonArrivalFactory,
+} from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 import BookingClient from './bookingClient'
 
-import arrivalFactory from '../testutils/factories/arrival'
-import newBookingFactory from '../testutils/factories/newBooking'
-import bookingFactory from '../testutils/factories/booking'
-import cancellationFactory from '../testutils/factories/cancellation'
-import newCancellationFactory from '../testutils/factories/newCancellation'
-import newDepartureFactory from '../testutils/factories/newDeparture'
-import nonArrivalFactory from '../testutils/factories/nonArrival'
-import newArrivalFactory from '../testutils/factories/newArrival'
-import newNonArrivalFactory from '../testutils/factories/newNonArrival'
 import { DateFormats } from '../utils/dateUtils'
 
 describeClient('BookingClient', provider => {

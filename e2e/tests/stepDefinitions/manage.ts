@@ -1,6 +1,6 @@
 import { Given } from '@badeball/cypress-cucumber-preprocessor'
 import throwMissingCypressEnvError from './utils'
-import premisesFactory from '../../../server/testutils/factories/premises'
+import { premisesFactory } from '../../../server/testutils/factories'
 import { PremisesShowPage } from '../../../cypress_shared/pages/manage'
 
 Given('I am logged in', () => {

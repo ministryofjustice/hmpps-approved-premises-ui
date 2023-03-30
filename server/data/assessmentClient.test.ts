@@ -1,7 +1,5 @@
 import AssessmentClient from './assessmentClient'
-import assessmentFactory from '../testutils/factories/assessment'
-import placementRequest from '../testutils/factories/placementRequest'
-import clarificationNoteFactory from '../testutils/factories/clarificationNote'
+import { assessmentFactory, clarificationNoteFactory, placementRequestFactory } from '../testutils/factories'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
 
@@ -98,7 +96,7 @@ describeClient('AssessmentClient', provider => {
       const assessmentId = 'some-id'
       const data = {
         document: {},
-        requirements: placementRequest.build(),
+        requirements: placementRequestFactory.build(),
       }
 
       provider.addInteraction({

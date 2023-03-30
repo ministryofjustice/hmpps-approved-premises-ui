@@ -1,7 +1,7 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 
-import applicationFactory from '../../../../testutils/factories/application'
+import { applicationFactory } from '../../../../testutils/factories'
 
 import PlacementPurpose from './placementPurpose'
 

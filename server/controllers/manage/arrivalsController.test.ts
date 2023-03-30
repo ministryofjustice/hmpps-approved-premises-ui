@@ -7,7 +7,7 @@ import PremisesService from '../../services/premisesService'
 import ArrivalsController from './arrivalsController'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/manage'
-import staffMemberFactory from '../../testutils/factories/staffMember'
+import { staffMemberFactory } from '../../testutils/factories'
 
 jest.mock('../../utils/validation')
 

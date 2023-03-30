@@ -1,7 +1,6 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
-import applicationFactory from '../../../../testutils/factories/application'
-import personFactory from '../../../../testutils/factories/person'
+import { applicationFactory, personFactory } from '../../../../testutils/factories'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import RehabilitativeInterventions, { interventionsTranslations } from './rehabilitativeInterventions'
 import { ApprovedPremisesApplication as Application } from '../../../../@types/shared'

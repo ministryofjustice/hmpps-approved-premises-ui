@@ -2,12 +2,10 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import TasksController from './tasksController'
-import taskFactory from '../testutils/factories/task'
+import { applicationFactory, taskFactory, userFactory } from '../testutils/factories'
 import { groupByAllocation } from '../utils/tasks'
 import { ApplicationService, TaskService, UserService } from '../services'
 import { getQualificationsForApplication } from '../utils/applications/getQualificationsForApplication'
-import userFactory from '../testutils/factories/user'
-import applicationFactory from '../testutils/factories/application'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 import { ErrorsAndUserInput } from '../@types/ui'
 

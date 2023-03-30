@@ -1,4 +1,4 @@
-import taskFactory from '../testutils/factories/task'
+import { taskFactory } from '../testutils/factories'
 import { nameCell } from './tableUtils'
 
 describe('nameCell', () => {

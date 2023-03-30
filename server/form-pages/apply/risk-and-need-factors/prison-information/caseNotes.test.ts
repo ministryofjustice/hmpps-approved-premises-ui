@@ -1,11 +1,13 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { ApplicationService, PersonService } from '../../../../services'
 
-import prisonCaseNotesFactory from '../../../../testutils/factories/prisonCaseNotes'
+import {
+  adjudicationFactory,
+  applicationFactory,
+  personFactory,
+  prisonCaseNotesFactory,
+} from '../../../../testutils/factories'
 import { DateFormats } from '../../../../utils/dateUtils'
-import applicationFactory from '../../../../testutils/factories/application'
-import personFactory from '../../../../testutils/factories/person'
-import adjudicationsFactory from '../../../../testutils/factories/adjudication'
 
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
@@ -40,7 +42,7 @@ describe('caseNoteResponse', () => {
 
 describe('adjudicationResponse', () => {
   it('returns a response for an adjudication', () => {
-    const adjudication = adjudicationsFactory.build({
+    const adjudication = adjudicationFactory.build({
       id: 123,
       reportedAt: '2022-01-01T10:00:00Z',
       establishment: 'Some establishment',
@@ -102,7 +104,7 @@ describe('CaseNotes', () => {
   let personService: DeepMocked<PersonService>
   const applicationService = createMock<ApplicationService>({})
 
-  const adjudications = adjudicationsFactory.buildList(5)
+  const adjudications = adjudicationFactory.buildList(5)
   const caseNotes = prisonCaseNotesFactory.buildList(3)
 
   describe('title', () => {

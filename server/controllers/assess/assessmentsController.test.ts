@@ -6,7 +6,7 @@ import TasklistService from '../../services/tasklistService'
 import AssessmentsController, { tasklistPageHeading } from './assessmentsController'
 import { AssessmentService } from '../../services'
 
-import assessmentFactory from '../../testutils/factories/assessment'
+import { assessmentFactory } from '../../testutils/factories'
 
 import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'

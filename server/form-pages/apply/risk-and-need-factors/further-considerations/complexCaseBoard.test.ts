@@ -2,8 +2,7 @@ import { YesOrNo } from '@approved-premises/ui'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import ComplexCaseBoard from './complexCaseBoard'
-import applicationFactory from '../../../../testutils/factories/application'
-import personFactory from '../../../../testutils/factories/person'
+import { applicationFactory, personFactory } from '../../../../testutils/factories'
 
 describe('ComplexCaseBoard', () => {
   const person = personFactory.build({ name: 'John Wayne' })

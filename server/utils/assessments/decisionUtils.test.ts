@@ -1,6 +1,6 @@
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
-import assessmentFactory from '../../testutils/factories/assessment'
+import { assessmentFactory } from '../../testutils/factories'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
 
 jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')

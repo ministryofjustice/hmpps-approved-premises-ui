@@ -1,8 +1,6 @@
-import premisesFactory from '../testutils/factories/premises'
+import { dateCapacityFactory, premisesFactory, staffMemberFactory } from '../testutils/factories'
 import PremisesClient from './premisesClient'
 import paths from '../paths/api'
-import dateCapacityFactory from '../testutils/factories/dateCapacity'
-import staffMemberFactory from '../testutils/factories/staffMember'
 import describeClient from '../testutils/describeClient'
 
 describeClient('PremisesClient', provider => {

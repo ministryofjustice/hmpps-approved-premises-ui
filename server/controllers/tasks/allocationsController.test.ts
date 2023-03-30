@@ -3,8 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import AllocationsController from './allocationsController'
 import { TaskService } from '../../services'
-import userFactory from '../../testutils/factories/user'
-import reallocationFactory from '../../testutils/factories/reallocation'
+import { reallocationFactory, userFactory } from '../../testutils/factories'
 import { catchValidationErrorOrPropogate } from '../../utils/validation'
 import paths from '../../paths/tasks'
 

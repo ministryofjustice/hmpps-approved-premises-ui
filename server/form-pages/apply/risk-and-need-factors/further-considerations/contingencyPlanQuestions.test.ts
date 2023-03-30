@@ -1,18 +1,20 @@
 import { ContingencyPlanQuestionsBody } from '../../../../@types/ui'
-import applicationFactory from '../../../../testutils/factories/application'
-import contingencyPlanPartner from '../../../../testutils/factories/contingencyPlanPartner'
-import contingencyPlanQuestionsBodyFactory from '../../../../testutils/factories/contingencyPlanQuestionsBody'
+import {
+  applicationFactory,
+  contingencyPlanPartnerFactory,
+  contingencyPlanQuestionsBodyFactory,
+} from '../../../../testutils/factories'
 import { shouldShowTriggerPlanPages } from '../../../../utils/applications/shouldShowTriggerPlanPage'
 import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import ContingencyPlanQuestions from './contingencyPlanQuestions'
 
-const contingencyPlanPartners = contingencyPlanPartner.buildList(2)
+const contingencyPlanPartnerFactorys = contingencyPlanPartnerFactory.buildList(2)
 
 jest.mock('../../../../utils/applications/shouldShowTriggerPlanPage')
 jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment', () => {
   return {
-    retrieveOptionalQuestionResponseFromApplicationOrAssessment: jest.fn(() => contingencyPlanPartners),
+    retrieveOptionalQuestionResponseFromApplicationOrAssessment: jest.fn(() => contingencyPlanPartnerFactorys),
   }
 })
 
@@ -39,8 +41,8 @@ describe('ContingencyPlanQuestions', () => {
       const page = new ContingencyPlanQuestions(body, application)
 
       expect(page.contingencyPlanPartnerNames).toEqual([
-        contingencyPlanPartners[0].partnerAgencyName,
-        contingencyPlanPartners[1].partnerAgencyName,
+        contingencyPlanPartnerFactorys[0].partnerAgencyName,
+        contingencyPlanPartnerFactorys[1].partnerAgencyName,
       ])
     })
   })

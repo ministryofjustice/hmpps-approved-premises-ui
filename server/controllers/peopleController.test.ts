@@ -3,7 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PeopleController from './peopleController'
 import PersonService from '../services/personService'
-import personFactory from '../testutils/factories/person'
+import { personFactory } from '../testutils/factories'
 import { errorMessage, errorSummary } from '../utils/validation'
 
 describe('PeopleController', () => {

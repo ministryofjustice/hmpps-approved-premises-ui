@@ -1,7 +1,6 @@
 import ArrivalService from './arrivalService'
 import BookingClient from '../data/bookingClient'
-import arrivalFactory from '../testutils/factories/arrival'
-import newArrivalFactory from '../testutils/factories/newArrival'
+import { arrivalFactory, newArrivalFactory } from '../testutils/factories'
 
 jest.mock('../data/bookingClient.ts')
 

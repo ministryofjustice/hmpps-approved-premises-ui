@@ -1,6 +1,5 @@
 import { BedSearchParametersUi } from '../@types/ui'
-import bedSearchParameters from '../testutils/factories/bedSearchParameters'
-import bedSearchResultFactory, { apCharacteristicPairFactory } from '../testutils/factories/bedSearchResult'
+import { apCharacteristicPairFactory, bedSearchParametersFactory, bedSearchResultFactory } from '../testutils/factories'
 import {
   addressRow,
   bedCountRow,
@@ -16,7 +15,9 @@ import {
 describe('matchUtils', () => {
   describe('mapUiParamsForApi', () => {
     it('converts string properties to numbers', () => {
-      const uiParams = bedSearchParameters.onCreate(mapApiParamsForUi).build() as unknown as BedSearchParametersUi
+      const uiParams = bedSearchParametersFactory
+        .onCreate(mapApiParamsForUi)
+        .build() as unknown as BedSearchParametersUi
 
       expect(mapUiParamsForApi(uiParams)).toEqual({
         ...uiParams,
@@ -27,7 +28,7 @@ describe('matchUtils', () => {
   })
 
   describe('mapApiParamsForUi', () => {
-    const apiParams = bedSearchParameters.build()
+    const apiParams = bedSearchParametersFactory.build()
 
     expect(mapApiParamsForUi(apiParams)).toEqual({
       ...apiParams,

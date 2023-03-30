@@ -3,7 +3,7 @@ import { noticeTypeFromApplication } from '../../../../utils/applications/notice
 
 import ReasonForShortNotice, { shortNoticeReasons } from './reasonForShortNotice'
 
-import applicationFactory from '../../../../testutils/factories/application'
+import { applicationFactory } from '../../../../testutils/factories'
 
 jest.mock('../../../../utils/applications/noticeTypeFromApplication')
 

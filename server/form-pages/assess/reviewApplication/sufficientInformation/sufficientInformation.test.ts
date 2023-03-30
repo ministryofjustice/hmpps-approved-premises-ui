@@ -5,8 +5,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 
 import SufficientInformation from './sufficientInformation'
 
-import assessmentFactory from '../../../../testutils/factories/assessment'
-import userFactory from '../../../../testutils/factories/user'
+import { assessmentFactory, userFactory } from '../../../../testutils/factories'
 
 describe('SufficientInformation', () => {
   const user = userFactory.build()

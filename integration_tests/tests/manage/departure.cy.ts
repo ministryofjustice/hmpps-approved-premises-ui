@@ -1,7 +1,9 @@
-import premisesFactory from '../../../server/testutils/factories/premises'
-import departureFactory from '../../../server/testutils/factories/departure'
-import bookingFactory from '../../../server/testutils/factories/booking'
-import referenceDataFactory from '../../../server/testutils/factories/referenceData'
+import {
+  bookingFactory,
+  departureFactory,
+  premisesFactory,
+  referenceDataFactory,
+} from '../../../server/testutils/factories'
 
 import { BookingShowPage, DepartureCreatePage } from '../../../cypress_shared/pages/manage'
 import Page from '../../../cypress_shared/pages/page'

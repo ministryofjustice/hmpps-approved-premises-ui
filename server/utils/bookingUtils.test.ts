@@ -1,6 +1,5 @@
 import { bookingActions, bookingsToTableRows, manageBookingLink } from './bookingUtils'
-import bookingFactory from '../testutils/factories/booking'
-import personFactory from '../testutils/factories/person'
+import { bookingFactory, personFactory } from '../testutils/factories'
 import paths from '../paths/manage'
 import { DateFormats } from './dateUtils'
 

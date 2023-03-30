@@ -2,8 +2,7 @@ import { YesOrNo } from '@approved-premises/ui'
 import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import Arson from './arson'
-import applicationFactory from '../../../../testutils/factories/application'
-import personFactory from '../../../../testutils/factories/person'
+import { applicationFactory, personFactory } from '../../../../testutils/factories'
 import { shouldShowContingencyPlanPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
 
 jest.mock('../../../../utils/applications/shouldShowContingencyPlanPages')

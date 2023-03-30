@@ -1,5 +1,5 @@
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
-import applicationFactory from '../../testutils/factories/application'
+import { applicationFactory } from '../../testutils/factories'
 import { SessionDataError } from '../errors'
 
 describe('arrivalDateFromApplication', () => {

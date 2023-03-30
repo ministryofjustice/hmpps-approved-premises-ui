@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PlacementRequestsController from './placementRequestsController'
-import placementRequestFactory from '../../testutils/factories/placementRequest'
+import { placementRequestFactory } from '../../testutils/factories'
 
 import { PlacementRequestService } from '../../services'
 

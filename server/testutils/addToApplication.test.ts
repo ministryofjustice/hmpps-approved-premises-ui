@@ -1,6 +1,6 @@
 import { addResponseToApplication, addResponsesToApplication } from './addToApplication'
 
-import applicationFactory from './factories/application'
+import { applicationFactory } from './factories'
 
 describe('addResponseToApplication', () => {
   it('adds a key and value to the application', () => {

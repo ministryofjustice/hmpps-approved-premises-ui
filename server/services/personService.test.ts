@@ -4,15 +4,17 @@ import { createMock } from '@golevelup/ts-jest'
 
 import PersonService from './personService'
 import PersonClient from '../data/personClient'
-import PersonFactory from '../testutils/factories/person'
-import risksFactory from '../testutils/factories/risks'
+import {
+  acctAlertFactory,
+  activeOffenceFactory,
+  adjudicationFactory,
+  oasysSectionsFactory,
+  oasysSelectionFactory,
+  personFactory,
+  prisonCaseNotesFactory,
+  risksFactory,
+} from '../testutils/factories'
 import { mapApiPersonRisksForUi } from '../utils/utils'
-import prisonCaseNotesFactory from '../testutils/factories/prisonCaseNotes'
-import adjudicationsFactory from '../testutils/factories/adjudication'
-import activeOffenceFactory from '../testutils/factories/activeOffence'
-import oasysSelectionFactory from '../testutils/factories/oasysSelection'
-import oasysSectionsFactory from '../testutils/factories/oasysSections'
-import acctAlertFactory from '../testutils/factories/acctAlert'
 
 jest.mock('../data/personClient.ts')
 
@@ -31,7 +33,7 @@ describe('PersonService', () => {
 
   describe('findByCrn', () => {
     it('on success returns the person given their CRN', async () => {
-      const person: Person = PersonFactory.build()
+      const person: Person = personFactory.build()
       personClient.search.mockResolvedValue(person)
 
       const postedPerson = await service.findByCrn(token, 'crn')
@@ -43,7 +45,7 @@ describe('PersonService', () => {
     })
 
     it('sends the checkCaseload boolean to the client method if set', async () => {
-      const person: Person = PersonFactory.build()
+      const person: Person = personFactory.build()
       personClient.search.mockResolvedValue(person)
 
       const postedPerson = await service.findByCrn(token, 'crn', true)
@@ -101,7 +103,7 @@ describe('PersonService', () => {
 
   describe('getAdjudications', () => {
     it("on success returns the person's adjudications notes given their CRN", async () => {
-      const adjudications = adjudicationsFactory.buildList(3)
+      const adjudications = adjudicationFactory.buildList(3)
 
       personClient.adjudications.mockResolvedValue(adjudications)
 

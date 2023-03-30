@@ -1,8 +1,7 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import PipeReferral from './pipeReferral'
-import applicationFactory from '../../../../testutils/factories/application'
-import personFactory from '../../../../testutils/factories/person'
+import { applicationFactory, personFactory } from '../../../../testutils/factories'
 
 describe('PipeReferral', () => {
   const person = personFactory.build({ name: 'John Wayne' })

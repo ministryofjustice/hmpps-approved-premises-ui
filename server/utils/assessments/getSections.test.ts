@@ -1,5 +1,5 @@
 import Assess from '../../form-pages/assess'
-import assessmentFactory from '../../testutils/factories/assessment'
+import { assessmentFactory } from '../../testutils/factories'
 import getSections from './getSections'
 import informationSetAsNotReceived from './informationSetAsNotReceived'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'

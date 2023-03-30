@@ -1,7 +1,5 @@
 import { applicationSummary, groupByAllocation } from '.'
-import applicationFactory from '../../testutils/factories/application'
-import taskFactory from '../../testutils/factories/task'
-import userFactory from '../../testutils/factories/user'
+import { applicationFactory, taskFactory, userFactory } from '../../testutils/factories'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { getApplicationType } from '../applications/utils'
 import { DateFormats } from '../dateUtils'

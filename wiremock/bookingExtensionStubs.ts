@@ -1,5 +1,5 @@
 import { guidRegex } from './index'
-import newBookingFactory from '../server/testutils/factories/newBooking'
+import { newBookingFactory } from '../server/testutils/factories'
 import { errorStub } from './utils'
 
 export default [

@@ -1,9 +1,8 @@
 import BedClient from './bedClient'
 import paths from '../paths/api'
 
-import bedSearchResultFactory from '../testutils/factories/bedSearchResult'
+import { bedSearchParametersFactory, bedSearchResultFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
-import bedSearchParametersFactory from '../testutils/factories/bedSearchParameters'
 
 describeClient('BedClient', provider => {
   let bedClient: BedClient

@@ -4,7 +4,7 @@ import { DateFormats } from '../dateUtils'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { noticeTypeFromApplication } from './noticeTypeFromApplication'
 
-import applicationFactory from '../../testutils/factories/application'
+import { applicationFactory } from '../../testutils/factories'
 
 jest.mock('./arrivalDateFromApplication')
 

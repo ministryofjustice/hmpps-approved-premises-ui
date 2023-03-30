@@ -1,9 +1,7 @@
 import BookingService from './bookingService'
 import BookingClient from '../data/bookingClient'
 
-import newBookingFactory from '../testutils/factories/newBooking'
-import bookingExtensionFactory from '../testutils/factories/bookingExtension'
-import bookingFactory from '../testutils/factories/booking'
+import { bookingExtensionFactory, bookingFactory, newBookingFactory } from '../testutils/factories'
 import { Booking } from '../@types/shared'
 
 jest.mock('../data/bookingClient.ts')

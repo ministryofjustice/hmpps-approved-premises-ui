@@ -3,8 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import OffencesController from './offencesController'
 import PersonService from '../../../services/personService'
-import personFactory from '../../../testutils/factories/person'
-import activeOffenceFactory from '../../../testutils/factories/activeOffence'
+import { activeOffenceFactory, personFactory } from '../../../testutils/factories'
 
 describe('OffencesController', () => {
   const token = 'SOME_TOKEN'

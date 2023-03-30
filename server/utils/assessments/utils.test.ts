@@ -39,14 +39,16 @@ import * as applicationUtils from '../applications/utils'
 
 import Assess from '../../form-pages/assess'
 import { UnknownPageError } from '../errors'
-import assessmentFactory from '../../testutils/factories/assessment'
-import applicationFactory from '../../testutils/factories/application'
-import clarificationNoteFactory from '../../testutils/factories/clarificationNote'
-import documentFactory from '../../testutils/factories/document'
-import adjudicationFactory from '../../testutils/factories/adjudication'
-import prisonCaseNotesFactory from '../../testutils/factories/prisonCaseNotes'
-import acctAlertFactory from '../../testutils/factories/acctAlert'
-import userFactory from '../../testutils/factories/user'
+import {
+  acctAlertFactory,
+  adjudicationFactory,
+  applicationFactory,
+  assessmentFactory,
+  clarificationNoteFactory,
+  documentFactory,
+  prisonCaseNotesFactory,
+  userFactory,
+} from '../../testutils/factories'
 import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from './documentUtils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'

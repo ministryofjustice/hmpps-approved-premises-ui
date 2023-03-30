@@ -1,9 +1,6 @@
 import ApplicationClient from './applicationClient'
 import config from '../config'
-import applicationFactory from '../testutils/factories/application'
-import assessmentFactory from '../testutils/factories/assessment'
-import activeOffenceFactory from '../testutils/factories/activeOffence'
-import documentFactory from '../testutils/factories/document'
+import { activeOffenceFactory, applicationFactory, assessmentFactory, documentFactory } from '../testutils/factories'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
 

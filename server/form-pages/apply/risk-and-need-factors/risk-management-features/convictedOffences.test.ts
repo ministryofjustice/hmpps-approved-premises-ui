@@ -1,7 +1,6 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
-import applicationFactory from '../../../../testutils/factories/application'
-import personFactory from '../../../../testutils/factories/person'
+import { applicationFactory, personFactory } from '../../../../testutils/factories'
 import ConvictedOffences, { responses } from './convictedOffences'
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
 

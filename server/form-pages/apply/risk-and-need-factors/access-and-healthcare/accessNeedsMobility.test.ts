@@ -2,8 +2,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 
 import AccessNeedsMobility from './accessNeedsMobility'
 
-import applicationFactory from '../../../../testutils/factories/application'
-import personFactory from '../../../../testutils/factories/person'
+import { applicationFactory, personFactory } from '../../../../testutils/factories'
 
 describe('AccessNeedsMobility', () => {
   const person = personFactory.build({ name: 'John Wayne' })

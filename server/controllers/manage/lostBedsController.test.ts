@@ -5,7 +5,7 @@ import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import LostBedService, { LostBedReferenceData } from '../../services/lostBedService'
 import LostBedsController from './lostBedsController'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
-import lostBedFactory from '../../testutils/factories/lostBed'
+import { lostBedFactory } from '../../testutils/factories'
 import paths from '../../paths/manage'
 
 jest.mock('../../utils/validation')

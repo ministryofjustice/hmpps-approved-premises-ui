@@ -1,7 +1,6 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { ApplicationService, PersonService } from '../../../services'
-import applicationFactory from '../../../testutils/factories/application'
-import documentFactory from '../../../testutils/factories/document'
+import { applicationFactory, documentFactory } from '../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import AttachDocuments from './attachDocuments'

@@ -4,9 +4,7 @@ import { PlacementRequest } from '@approved-premises/api'
 
 import { AssessmentClient } from '../data'
 import AssessmentService from './assessmentService'
-import assessmentFactory from '../testutils/factories/assessment'
-import clarificationNoteFactory from '../testutils/factories/clarificationNote'
-import userFactory from '../testutils/factories/user'
+import { assessmentFactory, clarificationNoteFactory, userFactory } from '../testutils/factories'
 
 import { placementRequestData } from '../utils/assessments/placementRequestData'
 import { getBody, updateAssessmentData } from '../form-pages/utils'

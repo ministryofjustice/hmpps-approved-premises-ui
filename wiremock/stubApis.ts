@@ -5,8 +5,7 @@ import type { ApprovedPremises } from '@approved-premises/api'
 import { bulkStub } from './index'
 
 import premisesJson from './stubs/premises.json'
-import bookingFactory from '../server/testutils/factories/booking'
-import premisesFactory from '../server/testutils/factories/premises'
+import { bookingFactory, dateCapacityFactory, premisesFactory, staffMemberFactory } from '../server/testutils/factories'
 
 import bookingStubs from './bookingStubs'
 import boookingExtensionStubs from './bookingExtensionStubs'
@@ -22,8 +21,6 @@ import taskStubs from './taskStubs'
 import userStubs from './userStubs'
 
 import * as referenceDataStubs from './referenceDataStubs'
-import dateCapacityFactory from '../server/testutils/factories/dateCapacity'
-import staffMemberFactory from '../server/testutils/factories/staffMember'
 
 const stubs = []
 

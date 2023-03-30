@@ -6,7 +6,7 @@ import NonArrivalService from '../../services/nonArrivalService'
 import NonArrivalsController from './nonArrivalsController'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/manage'
-import referenceDataFactory from '../../testutils/factories/referenceData'
+import { referenceDataFactory } from '../../testutils/factories'
 
 jest.mock('../../utils/validation')
 

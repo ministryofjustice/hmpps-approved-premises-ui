@@ -1,9 +1,6 @@
-import premisesFactory from '../../../server/testutils/factories/premises'
-import lostBedFactory from '../../../server/testutils/factories/lostBed'
+import { dateCapacityFactory, lostBedFactory, premisesFactory } from '../../../server/testutils/factories'
 
 import { LostBedCreatePage } from '../../../cypress_shared/pages/manage'
-
-import premisesCapacityItemFactory from '../../../server/testutils/factories/dateCapacity'
 
 context('LostBed', () => {
   beforeEach(() => {
@@ -28,7 +25,7 @@ context('LostBed', () => {
     cy.task('stubLostBedCreate', { premisesId: premises.id, lostBed })
     cy.task('stubPremisesCapacity', {
       premisesId: premises.id,
-      dateCapacities: premisesCapacityItemFactory.buildList(5),
+      dateCapacities: dateCapacityFactory.buildList(5),
     })
 
     const page = LostBedCreatePage.visit(premises.id)
