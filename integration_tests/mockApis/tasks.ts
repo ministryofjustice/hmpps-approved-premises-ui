@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { ApprovedPremisesApplication as Application, Reallocation, Task } from '@approved-premises/api'
+import type { ApprovedPremisesApplication as Application, Reallocation, Task, User } from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
 import { errorStub } from '../../wiremock/utils'
@@ -21,7 +21,7 @@ export default {
         jsonBody: tasks,
       },
     }),
-  stubTaskGet: (args: { application: Application; task: Task }): SuperAgentRequest =>
+  stubTaskGet: (args: { application: Application; task: Task; users: Array<User> }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
@@ -32,7 +32,7 @@ export default {
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        jsonBody: args.task,
+        jsonBody: { task: args.task, users: args.users },
       },
     }),
   stubTaskAllocationCreate: (args: { task: Task; reallocation: Reallocation }): SuperAgentRequest =>
