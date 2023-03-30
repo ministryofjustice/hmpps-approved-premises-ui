@@ -3,7 +3,8 @@ import {
   BedSearchResult,
   CharacteristicPair,
 } from '../@types/shared'
-import { BedSearchParametersUi } from '../@types/ui'
+import { BedSearchParametersUi, ObjectWithDateParts } from '../@types/ui'
+import { DateFormats } from './dateUtils'
 import { sentenceCase } from './utils'
 
 export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParameters => ({
@@ -85,3 +86,11 @@ export const bedCountRow = (bedSearchResult: BedSearchResult) => ({
     text: bedSearchResult.premises.bedCount.toString(),
   },
 })
+
+export const startDateFromParams = (params: { startDate: string } | ObjectWithDateParts<'startDate'>) => {
+  if ('startDate-day' in params && 'startDate-month' in params && 'startDate-year' in params) {
+    return DateFormats.dateAndTimeInputsToIsoString(params, 'startDate').startDate
+  }
+  if ('startDate' in params) return params.startDate
+  return undefined
+}
