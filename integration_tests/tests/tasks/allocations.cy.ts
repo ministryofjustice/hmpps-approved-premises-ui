@@ -2,10 +2,7 @@ import TaskListPage from '../../../cypress_shared/pages/tasks/listPage'
 import AllocationsPage from '../../../cypress_shared/pages/tasks/allocationPage'
 import Page from '../../../cypress_shared/pages/page'
 
-import taskFactory from '../../../server/testutils/factories/task'
-import userFactory from '../../../server/testutils/factories/user'
-import applicationFactory from '../../../server/testutils/factories/application'
-import reallocationFactory from '../../../server/testutils/factories/reallocation'
+import { applicationFactory, reallocationFactory, taskFactory, userFactory } from '../../../server/testutils/factories'
 
 context('Tasks', () => {
   beforeEach(() => {

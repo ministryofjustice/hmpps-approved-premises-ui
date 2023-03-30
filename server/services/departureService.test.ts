@@ -2,9 +2,7 @@ import DepartureService from './departureService'
 import BookingClient from '../data/bookingClient'
 import ReferenceDataClient from '../data/referenceDataClient'
 
-import departureFactory from '../testutils/factories/departure'
-import referenceDataFactory from '../testutils/factories/referenceData'
-import newDepartureFactory from '../testutils/factories/newDeparture'
+import { departureFactory, newDepartureFactory, referenceDataFactory } from '../testutils/factories'
 
 jest.mock('../data/bookingClient.ts')
 jest.mock('../data/referenceDataClient.ts')

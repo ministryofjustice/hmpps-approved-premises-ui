@@ -1,8 +1,6 @@
 import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
-import premisesFactory from '../testutils/factories/premises'
-import dateCapacityFactory from '../testutils/factories/dateCapacity'
-import staffMemberFactory from '../testutils/factories/staffMember'
+import { dateCapacityFactory, premisesFactory, staffMemberFactory } from '../testutils/factories'
 import getDateRangesWithNegativeBeds from '../utils/premisesUtils'
 import paths from '../paths/manage'
 

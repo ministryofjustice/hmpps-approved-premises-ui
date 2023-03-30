@@ -1,7 +1,7 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import Review from './checkYourAnswers'
-import assessmentFactory from '../../../../testutils/factories/assessment'
+import { assessmentFactory } from '../../../../testutils/factories'
 
 describe('Review', () => {
   const assessment = assessmentFactory.build({})

@@ -5,8 +5,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import ClarificationNotesController from './clarificationNotesController'
 import { AssessmentService, UserService } from '../../../services'
 
-import assessmentFactory from '../../../testutils/factories/assessment'
-import userFactory from '../../../testutils/factories/user'
+import { assessmentFactory, userFactory } from '../../../testutils/factories'
 
 describe('clarificationNotesController', () => {
   const token = 'SOME_TOKEN'

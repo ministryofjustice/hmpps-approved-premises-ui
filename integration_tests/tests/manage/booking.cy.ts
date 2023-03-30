@@ -1,12 +1,14 @@
-import premisesFactory from '../../../server/testutils/factories/premises'
-import bookingFactory from '../../../server/testutils/factories/booking'
-import dateCapacityFactory from '../../../server/testutils/factories/dateCapacity'
+import {
+  bookingFactory,
+  dateCapacityFactory,
+  personFactory,
+  premisesFactory,
+} from '../../../server/testutils/factories'
 
 import { BookingFindPage, BookingNewPage, BookingShowPage } from '../../../cypress_shared/pages/manage'
 import Page from '../../../cypress_shared/pages/page'
 
 import BookingConfirmation from '../../../cypress_shared/pages/manage/booking/confirmation'
-import personFactory from '../../../server/testutils/factories/person'
 
 context('Booking', () => {
   beforeEach(() => {

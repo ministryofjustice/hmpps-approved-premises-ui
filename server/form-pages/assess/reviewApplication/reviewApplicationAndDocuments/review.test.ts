@@ -1,10 +1,9 @@
 import { createMock } from '@golevelup/ts-jest'
-import assessmentFactory from '../../../../testutils/factories/assessment'
+import { assessmentFactory, documentFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import Review from './review'
 import { ApplicationService } from '../../../../services'
-import documentFactory from '../../../../testutils/factories/document'
 import { documentsFromApplication, overwriteApplicationDocuments } from '../../../../utils/assessments/documentUtils'
 import { Document } from '../../../../@types/shared'
 

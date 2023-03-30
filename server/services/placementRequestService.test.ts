@@ -1,6 +1,6 @@
 import { PlacementRequest } from '../@types/shared'
 import PlacementRequestClient from '../data/placementRequestClient'
-import placementRequestFactory from '../testutils/factories/placementRequest'
+import { placementRequestFactory } from '../testutils/factories'
 import PlacementRequestService from './placementRequestService'
 
 jest.mock('../data/placementRequestClient.ts')

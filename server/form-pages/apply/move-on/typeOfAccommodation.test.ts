@@ -3,8 +3,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-e
 
 import TypeOfAccommodation, { accommodationType } from './typeOfAccommodation'
 
-import applicationFactory from '../../../testutils/factories/application'
-import personFactory from '../../../testutils/factories/person'
+import { applicationFactory, personFactory } from '../../../testutils/factories'
 
 jest.mock('../../../utils/formUtils', () => ({
   convertKeyValuePairToRadioItems: jest

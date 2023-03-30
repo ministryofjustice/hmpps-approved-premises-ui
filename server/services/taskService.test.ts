@@ -1,6 +1,6 @@
 import { Task } from '../@types/shared'
 import TaskClient from '../data/taskClient'
-import taskFactory from '../testutils/factories/task'
+import { taskFactory } from '../testutils/factories'
 import TaskService from './taskService'
 
 jest.mock('../data/taskClient.ts')

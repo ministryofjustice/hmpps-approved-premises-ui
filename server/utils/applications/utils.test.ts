@@ -1,5 +1,4 @@
-import applicationFactory from '../../testutils/factories/application'
-import { tierEnvelopeFactory } from '../../testutils/factories/risks'
+import { applicationFactory, tierEnvelopeFactory } from '../../testutils/factories'
 import paths from '../../paths/apply'
 import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'

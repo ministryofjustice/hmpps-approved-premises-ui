@@ -1,7 +1,9 @@
-import assessmentFactory from '../../../server/testutils/factories/assessment'
-import documentFactory from '../../../server/testutils/factories/document'
-import clarificationNoteFactory from '../../../server/testutils/factories/clarificationNote'
-import userFactory from '../../../server/testutils/factories/user'
+import {
+  assessmentFactory,
+  clarificationNoteFactory,
+  documentFactory,
+  userFactory,
+} from '../../../server/testutils/factories'
 
 import { overwriteApplicationDocuments } from '../../../server/utils/assessments/documentUtils'
 

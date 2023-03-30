@@ -2,8 +2,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 
 import EsapPlacementSecreting, { secretingHistory } from './esapPlacementSecreting'
-import applicationFactory from '../../../../testutils/factories/application'
-import personFactory from '../../../../testutils/factories/person'
+import { applicationFactory, personFactory } from '../../../../testutils/factories'
 import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 
 jest.mock('../../../../utils/formUtils')

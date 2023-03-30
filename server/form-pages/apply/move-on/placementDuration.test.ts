@@ -3,7 +3,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-e
 import { SessionDataError } from '../../../utils/errors'
 
 import PlacementDuration from './placementDuration'
-import applicationFactory from '../../../testutils/factories/application'
+import { applicationFactory } from '../../../testutils/factories'
 
 describe('PlacementDuration', () => {
   let data: Record<string, unknown>

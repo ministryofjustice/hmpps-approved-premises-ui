@@ -1,4 +1,4 @@
-import applicationFactory from '../testutils/factories/application'
+import { applicationFactory } from '../testutils/factories'
 import TasklistService from './tasklistService'
 import getTaskStatus from '../form-pages/utils/getTaskStatus'
 

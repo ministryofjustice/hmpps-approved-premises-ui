@@ -1,5 +1,5 @@
 import { guidRegex } from '.'
-import prisonCaseNotesFactory from '../server/testutils/factories/prisonCaseNotes'
+import { prisonCaseNotesFactory } from '../server/testutils/factories'
 
 export default [
   {

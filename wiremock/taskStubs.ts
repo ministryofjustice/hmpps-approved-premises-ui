@@ -1,5 +1,5 @@
 import paths from '../server/paths/api'
-import tasksFactory from '../server/testutils/factories/task'
+import { taskFactory } from '../server/testutils/factories'
 
 export default [
   {
@@ -13,7 +13,7 @@ export default [
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      jsonBody: tasksFactory.buildList(5),
+      jsonBody: taskFactory.buildList(5),
     },
   },
 ]

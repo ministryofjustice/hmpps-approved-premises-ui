@@ -4,15 +4,17 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { OasysSummariesSection } from '../../@types/ui'
 import { ApprovedPremisesAssessment as Assessment } from '../../@types/shared'
 
-import assessmentFactory from '../../testutils/factories/assessment'
-import oasysSectionsFactory from '../../testutils/factories/oasysSections'
+import {
+  acctAlertFactory,
+  adjudicationFactory,
+  assessmentFactory,
+  oasysSectionsFactory,
+  prisonCaseNotesFactory,
+} from '../../testutils/factories'
 
 import SupportingInformationController from './supportingInformationController'
 import { AssessmentService } from '../../services'
 import { DateFormats } from '../../utils/dateUtils'
-import adjudicationFactory from '../../testutils/factories/adjudication'
-import prisonCaseNotesFactory from '../../testutils/factories/prisonCaseNotes'
-import acctAlertFactory from '../../testutils/factories/acctAlert'
 
 describe('supportingInformationController', () => {
   const token = 'SOME_TOKEN'

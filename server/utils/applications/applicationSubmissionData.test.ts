@@ -1,5 +1,5 @@
 import { ReleaseTypeOption } from '@approved-premises/api'
-import applicationFactory from '../../testutils/factories/application'
+import { applicationFactory } from '../../testutils/factories'
 import { applicationSubmissionData } from './applicationSubmissionData'
 import mockQuestionResponse from '../../testutils/mockQuestionResponse'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'

@@ -1,10 +1,12 @@
-import premisesFactory from '../../../server/testutils/factories/premises'
-import nonArrivalFactory from '../../../server/testutils/factories/nonArrival'
+import {
+  dateCapacityFactory,
+  nonArrivalFactory,
+  premisesFactory,
+  referenceDataFactory,
+} from '../../../server/testutils/factories'
 
 import { PremisesShowPage } from '../../../cypress_shared/pages/manage'
-import dateCapacityFactory from '../../../server/testutils/factories/dateCapacity'
 import NonarrivalCreatePage from '../../../cypress_shared/pages/manage/nonarrivalCreate'
-import referenceDataFactory from '../../../server/testutils/factories/referenceData'
 
 context('Nonarrivals', () => {
   it('creates a non-arrival', () => {

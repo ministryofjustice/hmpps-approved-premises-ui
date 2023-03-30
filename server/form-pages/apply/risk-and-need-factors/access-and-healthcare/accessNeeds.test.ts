@@ -3,8 +3,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 
 import AccessNeeds, { additionalNeeds } from './accessNeeds'
 
-import applicationFactory from '../../../../testutils/factories/application'
-import personFactory from '../../../../testutils/factories/person'
+import { applicationFactory, personFactory } from '../../../../testutils/factories'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 
 describe('AccessNeeds', () => {

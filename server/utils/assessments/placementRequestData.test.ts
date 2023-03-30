@@ -2,7 +2,7 @@ import { createMock } from '@golevelup/ts-jest'
 import mockQuestionResponse from '../../testutils/mockQuestionResponse'
 import { MatchingInformationBody } from '../../form-pages/assess/matchingInformation/matchingInformationTask/matchingInformation'
 import { criteriaFromMatchingInformation, placementRequestData } from './placementRequestData'
-import assessmentFactory from '../../testutils/factories/assessment'
+import { assessmentFactory } from '../../testutils/factories'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 

@@ -1,4 +1,4 @@
-import applicationFactory from '../../testutils/factories/application'
+import { applicationFactory } from '../../testutils/factories'
 import { getQualificationsForApplication } from './getQualificationsForApplication'
 
 describe('getQualificationsForAssessment', () => {

@@ -1,7 +1,6 @@
 import { BedSearchParametersUi } from '../@types/ui'
 import BedClient from '../data/bedClient'
-import bedSearchParametersFactory from '../testutils/factories/bedSearchParameters'
-import bedSearchResultFactory from '../testutils/factories/bedSearchResult'
+import { bedSearchParametersFactory, bedSearchResultFactory } from '../testutils/factories'
 import { mapApiParamsForUi } from '../utils/matchUtils'
 import BedService from './bedService'
 

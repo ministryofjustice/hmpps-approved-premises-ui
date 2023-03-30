@@ -1,5 +1,4 @@
-import premisesFactory from '../../../server/testutils/factories/premises'
-import bookingFactory from '../../../server/testutils/factories/booking'
+import { bookingFactory, premisesFactory } from '../../../server/testutils/factories'
 
 import { BookingExtensionConfirmationPage, BookingExtensionCreatePage } from '../../../cypress_shared/pages/manage'
 

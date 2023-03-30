@@ -7,8 +7,7 @@ import * as utils from './index'
 import TasklistPage, { TasklistPageInterface } from '../tasklistPage'
 import { ApprovedPremisesApplication } from '../../@types/shared'
 
-import applicationFactory from '../../testutils/factories/application'
-import assessmentFactory from '../../testutils/factories/assessment'
+import { applicationFactory, assessmentFactory } from '../../testutils/factories'
 
 describe('utils', () => {
   describe('applyYesOrNo', () => {

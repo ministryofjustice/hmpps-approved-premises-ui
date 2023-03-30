@@ -2,8 +2,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
 
 import ApType from './apType'
-import applicationFactory from '../../../../testutils/factories/application'
-import personFactory from '../../../../testutils/factories/person'
+import { applicationFactory, personFactory } from '../../../../testutils/factories'
 
 jest.mock('../../../../utils/formUtils')
 

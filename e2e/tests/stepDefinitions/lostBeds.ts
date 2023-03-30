@@ -1,8 +1,7 @@
 import { Given, Then } from '@badeball/cypress-cucumber-preprocessor'
 
 import { LostBedCreatePage, PremisesShowPage } from '../../../cypress_shared/pages/manage'
-import lostBedFactory from '../../../server/testutils/factories/lostBed'
-import referenceDataFactory from '../../../server/testutils/factories/referenceData'
+import { lostBedFactory, referenceDataFactory } from '../../../server/testutils/factories'
 import throwMissingCypressEnvError from './utils'
 
 Given('I create a lost bed', () => {

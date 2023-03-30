@@ -4,9 +4,7 @@ import LostBedService from './lostBedService'
 import LostBedClient from '../data/lostBedClient'
 import ReferenceDataClient from '../data/referenceDataClient'
 
-import lostBedFactory from '../testutils/factories/lostBed'
-import newLostBedFactory from '../testutils/factories/newLostBed'
-import referenceDataFactory from '../testutils/factories/referenceData'
+import { lostBedFactory, newLostBedFactory, referenceDataFactory } from '../testutils/factories'
 
 jest.mock('../data/lostBedClient.ts')
 jest.mock('../data/referenceDataClient.ts')

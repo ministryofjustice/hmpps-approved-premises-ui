@@ -11,7 +11,7 @@ import {
   removeBlankSummaryListItems,
   resolvePath,
 } from './utils'
-import risksFactory from '../testutils/factories/risks'
+import { risksFactory } from '../testutils/factories'
 import { DateFormats } from './dateUtils'
 
 describe('convert to title case', () => {

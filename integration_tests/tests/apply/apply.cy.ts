@@ -8,7 +8,13 @@ import {
   StartPage,
 } from '../../../cypress_shared/pages/apply'
 import { addResponseToApplication, addResponsesToApplication } from '../../../server/testutils/addToApplication'
-import risksFactory, { tierEnvelopeFactory } from '../../../server/testutils/factories/risks'
+import {
+  activeOffenceFactory,
+  applicationFactory,
+  personFactory,
+  risksFactory,
+  tierEnvelopeFactory,
+} from '../../../server/testutils/factories'
 
 import ApplyHelper from '../../../cypress_shared/helpers/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
@@ -16,10 +22,7 @@ import IsExceptionalCasePage from '../../../cypress_shared/pages/apply/isExcepti
 import NotEligiblePage from '../../../cypress_shared/pages/apply/notEligiblePage'
 import Page from '../../../cypress_shared/pages/page'
 import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
-import activeOffenceFactory from '../../../server/testutils/factories/activeOffence'
-import applicationFactory from '../../../server/testutils/factories/application'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
-import personFactory from '../../../server/testutils/factories/person'
 import { updateApplicationReleaseDate } from '../../../cypress_shared/helpers'
 
 context('Apply', () => {

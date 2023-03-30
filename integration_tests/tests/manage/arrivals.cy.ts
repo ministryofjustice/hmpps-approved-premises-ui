@@ -1,9 +1,11 @@
 import { ArrivalCreatePage, PremisesShowPage } from '../../../cypress_shared/pages/manage'
 
-import arrivalFactory from '../../../server/testutils/factories/arrival'
-import dateCapacityFactory from '../../../server/testutils/factories/dateCapacity'
-import premisesFactory from '../../../server/testutils/factories/premises'
-import staffMemberFactory from '../../../server/testutils/factories/staffMember'
+import {
+  arrivalFactory,
+  dateCapacityFactory,
+  premisesFactory,
+  staffMemberFactory,
+} from '../../../server/testutils/factories'
 
 const staff = staffMemberFactory.buildList(5, { keyWorker: true })
 

@@ -1,4 +1,4 @@
-import applicationFactory from '../../testutils/factories/application'
+import { applicationFactory } from '../../testutils/factories'
 import { shouldShowContingencyPlanPages } from './shouldShowContingencyPlanPages'
 import mockQuestionResponse from '../../testutils/mockQuestionResponse'
 

@@ -2,8 +2,7 @@ import { Given, Then } from '@badeball/cypress-cucumber-preprocessor'
 
 import ApplyHelper from '../../../cypress_shared/helpers/apply'
 
-import applicationFactory from '../../../server/testutils/factories/application'
-import personFactory from '../../../server/testutils/factories/person'
+import { applicationFactory, personFactory } from '../../../server/testutils/factories'
 
 import personData from '../../../cypress_shared/fixtures/person.json'
 import applicationData from '../../../cypress_shared/fixtures/applicationData.json'

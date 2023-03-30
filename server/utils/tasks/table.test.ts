@@ -1,5 +1,5 @@
 import { add } from 'date-fns'
-import taskFactory from '../../testutils/factories/task'
+import { taskFactory } from '../../testutils/factories'
 import {
   allocatedTableRows,
   allocationCell,

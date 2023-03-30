@@ -4,7 +4,7 @@ import {
   retrieveOptionalQuestionResponseFromApplicationOrAssessment,
   retrieveQuestionResponseFromApplicationOrAssessment,
 } from './retrieveQuestionResponseFromApplicationOrAssessment'
-import applicationFactory from '../testutils/factories/application'
+import { applicationFactory } from '../testutils/factories'
 import { SessionDataError } from './errors'
 import * as utils from '../form-pages/utils'
 

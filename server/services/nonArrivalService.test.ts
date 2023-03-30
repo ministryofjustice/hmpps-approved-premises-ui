@@ -1,7 +1,5 @@
 import NonarrivalService from './nonArrivalService'
-import nonArrivalFactory from '../testutils/factories/nonArrival'
-import newNonarrivalFactory from '../testutils/factories/newNonArrival'
-import referenceDataFactory from '../testutils/factories/referenceData'
+import { newNonArrivalFactory, nonArrivalFactory, referenceDataFactory } from '../testutils/factories'
 import { BookingClient, ReferenceDataClient } from '../data'
 
 jest.mock('../data')
@@ -26,7 +24,7 @@ describe('NonarrivalService', () => {
   describe('createNonarrival', () => {
     it('on success returns the arrival that has been posted', async () => {
       const nonArrival = nonArrivalFactory.build()
-      const payload = newNonarrivalFactory.build()
+      const payload = newNonArrivalFactory.build()
 
       bookingClient.markNonArrival.mockResolvedValue(nonArrival)
 

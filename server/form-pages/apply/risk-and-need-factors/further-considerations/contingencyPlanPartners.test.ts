@@ -1,10 +1,10 @@
-import contingencyPlanPartnersFactory from '../../../../testutils/factories/contingencyPlanPartner'
+import { contingencyPlanPartnerFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import ContingencyPlanPartners, { Body } from './contingencyPlanPartners'
 
 describe('ContingencyPlanPartners', () => {
-  const contigencyPlanPartner1 = contingencyPlanPartnersFactory.build()
-  const contigencyPlanPartner2 = contingencyPlanPartnersFactory.build()
+  const contigencyPlanPartner1 = contingencyPlanPartnerFactory.build()
+  const contigencyPlanPartner2 = contingencyPlanPartnerFactory.build()
 
   const body = {
     ...contigencyPlanPartner1,
@@ -60,7 +60,7 @@ describe('ContingencyPlanPartners', () => {
     it('shouldnt return an error if partnerAgencyDetails are added and saveAndContinue is truthy', () => {
       const page = new ContingencyPlanPartners({
         saveAndContinue: '1',
-        partnerAgencyDetails: contingencyPlanPartnersFactory.buildList(1),
+        partnerAgencyDetails: contingencyPlanPartnerFactory.buildList(1),
       } as Body)
 
       expect(page.errors()).toEqual({})

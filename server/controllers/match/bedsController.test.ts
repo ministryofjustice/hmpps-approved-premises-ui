@@ -2,11 +2,9 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import BedsController from './bedsController'
-import bedSearchResultFactory from '../../testutils/factories/bedSearchResult'
-import personFactory from '../../testutils/factories/person'
+import { bedSearchParametersFactory, bedSearchResultFactory, personFactory } from '../../testutils/factories'
 
 import { BedService, PersonService } from '../../services'
-import bedSearchParametersFactory from '../../testutils/factories/bedSearchParameters'
 import { mapApiParamsForUi } from '../../utils/matchUtils'
 import { BedSearchParametersUi } from '../../@types/ui'
 

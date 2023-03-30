@@ -4,7 +4,7 @@ import PlacementRequestClient from './placementRequestClient'
 import config from '../config'
 import paths from '../paths/api'
 
-import placementRequestFactory from '../testutils/factories/placementRequest'
+import { placementRequestFactory } from '../testutils/factories'
 
 describe('placementRequestClient', () => {
   let fakeApprovedPremisesApi: nock.Scope

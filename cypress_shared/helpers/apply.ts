@@ -26,15 +26,17 @@ import {
 
 import ApplyPage from '../pages/apply/applyPage'
 import Page from '../pages'
-import acctAlertFactory from '../../server/testutils/factories/acctAlert'
-import adjudicationsFactory from '../../server/testutils/factories/adjudication'
-import contingencyPlanPartnerFactory from '../../server/testutils/factories/contingencyPlanPartner'
-import contingencyPlanQuestionsFactory from '../../server/testutils/factories/contingencyPlanQuestionsBody'
-import documentFactory from '../../server/testutils/factories/document'
+import {
+  acctAlertFactory,
+  adjudicationFactory,
+  contingencyPlanPartnerFactory,
+  contingencyPlanQuestionsBodyFactory,
+  documentFactory,
+  oasysSectionsFactory,
+  oasysSelectionFactory,
+  prisonCaseNotesFactory,
+} from '../../server/testutils/factories'
 import { documentsFromApplication } from '../../server/utils/assessments/documentUtils'
-import oasysSectionsFactory from '../../server/testutils/factories/oasysSections'
-import oasysSelectionFactory from '../../server/testutils/factories/oasysSelection'
-import prisonCaseNotesFactory from '../../server/testutils/factories/prisonCaseNotes'
 
 export default class ApplyHelper {
   pages = {
@@ -277,7 +279,7 @@ export default class ApplyHelper {
   }
 
   private stubAdjudicationEndpoints() {
-    const adjudication1 = adjudicationsFactory.build({
+    const adjudication1 = adjudicationFactory.build({
       id: 69927,
       reportedAt: '2022-10-09',
       establishment: 'Hawthorne',
@@ -285,7 +287,7 @@ export default class ApplyHelper {
       hearingHeld: false,
       finding: 'NOT_PROVED',
     })
-    const adjudication2 = adjudicationsFactory.build({
+    const adjudication2 = adjudicationFactory.build({
       id: 39963,
       reportedAt: '2022-07-10',
       establishment: 'Oklahoma City',
@@ -293,7 +295,7 @@ export default class ApplyHelper {
       hearingHeld: true,
       finding: 'PROVED',
     })
-    const adjudication3 = adjudicationsFactory.build({
+    const adjudication3 = adjudicationFactory.build({
       id: 77431,
       reportedAt: '2022-05-30',
       establishment: 'Jurupa Valley',
@@ -361,7 +363,7 @@ export default class ApplyHelper {
       }),
     ]
 
-    this.contingencyPlanQuestions = contingencyPlanQuestionsFactory.build({
+    this.contingencyPlanQuestions = contingencyPlanQuestionsBodyFactory.build({
       noReturn: 'Action to be taken',
       placementWithdrawn: 'Further action to be taken',
       victimConsiderations: 'Considerations for victim',

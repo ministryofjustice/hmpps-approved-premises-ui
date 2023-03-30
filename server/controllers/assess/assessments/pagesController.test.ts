@@ -17,8 +17,7 @@ import { UnknownPageError } from '../../../utils/errors'
 import paths from '../../../paths/assess'
 import { viewPath } from '../../../form-pages/utils'
 
-import clarificationNoteFactory from '../../../testutils/factories/clarificationNote'
-import assessmentFactory from '../../../testutils/factories/assessment'
+import { assessmentFactory, clarificationNoteFactory } from '../../../testutils/factories'
 
 const PageConstructor = jest.fn()
 

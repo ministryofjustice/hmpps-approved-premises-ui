@@ -1,5 +1,5 @@
 import { guidRegex } from './index'
-import lostBedFactory from '../server/testutils/factories/lostBed'
+import { lostBedFactory } from '../server/testutils/factories'
 import { errorStub, getCombinations } from './utils'
 
 const lostBeds: Array<Record<string, unknown>> = []

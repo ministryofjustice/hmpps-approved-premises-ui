@@ -1,5 +1,4 @@
-import oasysSectionsFactory, { roshSummaryFactory } from '../../testutils/factories/oasysSections'
-import assessmentFactory from '../../testutils/factories/assessment'
+import { assessmentFactory, oasysSectionsFactory, roshSummaryFactory } from '../../testutils/factories'
 import { oasysInformationFromAssessment, oasysQuestions, oasysTableTabs } from './oasysUtils'
 
 describe('oasysInformationFromAssessment', () => {

@@ -1,7 +1,7 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import PipeOpdScreening from './pipeOpdScreening'
-import applicationFactory from '../../../../testutils/factories/application'
+import { applicationFactory } from '../../../../testutils/factories'
 
 describe('PipeOpdScreening', () => {
   const application = applicationFactory.build()

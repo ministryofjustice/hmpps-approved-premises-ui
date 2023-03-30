@@ -3,15 +3,17 @@ import { createMock } from '@golevelup/ts-jest'
 
 import PersonClient from './personClient'
 import config from '../config'
-import riskFactory from '../testutils/factories/risks'
-import personFactory from '../testutils/factories/person'
-import prisonCaseNotesFactory from '../testutils/factories/prisonCaseNotes'
+import {
+  acctAlertFactory,
+  activeOffenceFactory,
+  adjudicationFactory,
+  oasysSectionsFactory,
+  oasysSelectionFactory,
+  personFactory,
+  prisonCaseNotesFactory,
+  risksFactory,
+} from '../testutils/factories'
 import paths from '../paths/api'
-import adjudicationsFactory from '../testutils/factories/adjudication'
-import acctAlertFactory from '../testutils/factories/acctAlert'
-import activeOffenceFactory from '../testutils/factories/activeOffence'
-import oasysSelectionFactory from '../testutils/factories/oasysSelection'
-import oasysSectionsFactory from '../testutils/factories/oasysSections'
 
 import describeClient from '../testutils/describeClient'
 
@@ -85,7 +87,7 @@ describeClient('PersonClient', provider => {
   describe('risks', () => {
     it('should return the risks for a person', async () => {
       const crn = 'crn'
-      const risks = riskFactory.build()
+      const risks = risksFactory.build()
 
       provider.addInteraction({
         state: 'Server is healthy',
@@ -139,7 +141,7 @@ describeClient('PersonClient', provider => {
   describe('adjudications', () => {
     it('should return the adjudications for a person', async () => {
       const crn = 'crn'
-      const adjudications = adjudicationsFactory.buildList(5)
+      const adjudications = adjudicationFactory.buildList(5)
 
       provider.addInteraction({
         state: 'Server is healthy',

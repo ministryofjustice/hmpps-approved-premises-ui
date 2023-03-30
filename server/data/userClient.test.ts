@@ -1,5 +1,5 @@
 import UserClient from './userClient'
-import userFactory from '../testutils/factories/user'
+import { userFactory } from '../testutils/factories'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
 
