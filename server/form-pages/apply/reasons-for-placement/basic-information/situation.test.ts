@@ -45,7 +45,7 @@ describe('Situation', () => {
 
         expect(items.length).toEqual(2)
         expect(items[0]).toEqual({
-          text: 'Referral for risk management/public protection',
+          text: 'Application for risk management/public protection',
           value: 'riskManagement',
           checked: true,
         })
