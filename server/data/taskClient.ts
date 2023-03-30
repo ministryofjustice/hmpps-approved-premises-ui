@@ -1,7 +1,7 @@
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
-import { Reallocation, Task } from '../@types/shared'
+import { Reallocation, Task, TaskWrapper } from '../@types/shared'
 
 export default class TaskClient {
   restClient: RestClient
@@ -14,10 +14,10 @@ export default class TaskClient {
     return (await this.restClient.get({ path: paths.tasks.index.pattern })) as Promise<Array<Task>>
   }
 
-  async find(applicationId: string, taskType: string): Promise<Task> {
+  async find(applicationId: string, taskType: string): Promise<TaskWrapper> {
     return (await this.restClient.get({
       path: paths.applications.tasks.show({ id: applicationId, taskType }),
-    })) as Promise<Task>
+    })) as Promise<TaskWrapper>
   }
 
   async createAllocation(applicationId: string, userId: string, taskType: string): Promise<Reallocation> {

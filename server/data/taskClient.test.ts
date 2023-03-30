@@ -1,7 +1,7 @@
 import TaskClient from './taskClient'
 import paths from '../paths/api'
 
-import { taskFactory } from '../testutils/factories'
+import { taskFactory, taskWrapperFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 
 describeClient('taskClient', provider => {
@@ -41,7 +41,7 @@ describeClient('taskClient', provider => {
 
   describe('find', () => {
     it('should get a task', async () => {
-      const task = taskFactory.build()
+      const taskWrapper = taskWrapperFactory.build()
 
       const applicationId = 'some-application-id'
       const taskType = 'placement-request'
@@ -58,13 +58,13 @@ describeClient('taskClient', provider => {
         },
         willRespondWith: {
           status: 200,
-          body: task,
+          body: taskWrapper,
         },
       })
 
       const result = await taskClient.find(applicationId, taskType)
 
-      expect(result).toEqual(task)
+      expect(result).toEqual(taskWrapper)
     })
   })
 
