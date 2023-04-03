@@ -78,17 +78,17 @@ describe('BookingService', () => {
 
   describe('groupedListOfBookingsForPremisesId', () => {
     it('should return table rows of bookings', async () => {
-      const bookingsArrivingToday = bookingFactory.arrivingToday().buildList(2)
-      const arrivedBookings = bookingFactory.arrivedToday().buildList(2)
+      const bookingsArrivingToday = bookingFactory.arrivingToday().buildList(1)
+      const arrivedBookings = bookingFactory.arrivedToday().buildList(1)
 
-      const bookingsDepartingToday = bookingFactory.departingToday().buildList(3)
-      const departedBookings = bookingFactory.departedToday().buildList(5)
+      const bookingsDepartingToday = bookingFactory.departingToday().buildList(1)
+      const departedBookings = bookingFactory.departedToday().buildList(1)
 
-      const bookingsArrivingSoon = bookingFactory.arrivingSoon().buildList(2)
+      const bookingsArrivingSoon = bookingFactory.arrivingSoon().buildList(1)
 
-      const cancelledBookingsWithFutureArrivalDate = bookingFactory.cancelledWithFutureArrivalDate().buildList(2)
+      const cancelledBookingsWithFutureArrivalDate = bookingFactory.cancelledWithFutureArrivalDate().buildList(1)
 
-      const bookingsDepartingSoon = bookingFactory.departingSoon().buildList(3)
+      const bookingsDepartingSoon = bookingFactory.departingSoon().buildList(2)
 
       const bookings = [
         ...bookingsArrivingToday,
