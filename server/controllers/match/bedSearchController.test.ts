@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import BedsController from './bedSearchController'
+import BedsController, { placementCriteria } from './bedSearchController'
 import { bedSearchParametersFactory, bedSearchResultFactory, personFactory } from '../../testutils/factories'
 
 import { BedService, PersonService } from '../../services'
@@ -72,6 +72,7 @@ describe('bedSearchController', () => {
           formPath,
           applicationPath: applyPaths.applications.show({ id: applicationId }),
           assessmentPath: assessPaths.assessments.show({ id: assessmentId }),
+          placementCriteria,
           ...query,
           ...body,
         })
@@ -106,6 +107,7 @@ describe('bedSearchController', () => {
           formPath,
           applicationPath: applyPaths.applications.show({ id: applicationId }),
           assessmentPath: assessPaths.assessments.show({ id: assessmentId }),
+          placementCriteria,
           ...query,
         })
         expect(bedService.search).toHaveBeenCalledWith(token, query)
@@ -129,6 +131,7 @@ describe('bedSearchController', () => {
             crn: person.crn,
             applicationId,
             assessmentId,
+            placementCriteria,
             ...(bedSearchParametersFactory.onCreate(mapApiParamsForUi).build() as unknown as BedSearchParametersUi),
           },
         }
@@ -144,6 +147,7 @@ describe('bedSearchController', () => {
           applicationPath: applyPaths.applications.show({ id: applicationId }),
           assessmentPath: assessPaths.assessments.show({ id: assessmentId }),
           crn: params.body.crn,
+          placementCriteria,
           ...params.body,
         })
         expect(bedService.search).toHaveBeenCalledWith(token, { ...params.body, crn: params.body.crn })

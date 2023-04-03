@@ -9,6 +9,29 @@ import BedService from '../../services/bedService'
 
 import { startDateFromParams } from '../../utils/matchUtils'
 
+export const placementCriteria = [
+  'isIAP',
+  'isPIPE',
+  'isESAP',
+  'isSemiSpecialistMentalHealth',
+  'isRecoveryFocussed',
+  'isSuitableForVulnerable',
+  'acceptsSexOffenders',
+  'acceptsChildSexOffenders',
+  'acceptsNonSexualChildOffenders',
+  'acceptsHateCrimeOffenders',
+  'isCatered',
+  'hasWideStepFreeAccess',
+  'hasWideAccessToCommunalAreas',
+  'hasStepFreeAccessToCommunalAreas',
+  'hasWheelChairAccessibleBathrooms',
+  'hasLift',
+  'hasTactileFlooring',
+  'hasBrailleSignage',
+  'hasHearingLoop',
+  'additionalRestrictions',
+]
+
 export default class BedSearchController {
   constructor(private readonly bedService: BedService, private readonly personService: PersonService) {}
 
@@ -24,7 +47,10 @@ export default class BedSearchController {
 
       params.startDate = startDateFromParams(params)
 
-      const bedSearchResults = await this.bedService.search(req.user.token, params as BedSearchParametersUi)
+      const bedSearchResults = await this.bedService.search(req.user.token, {
+        ...params,
+        requiredCharacteristics: params.selectedRequiredCharacteristics || params.requiredCharacteristics,
+      } as BedSearchParametersUi)
       const person = await this.personService.findByCrn(req.user.token, params.crn as string)
 
       res.render('match/search', {
@@ -35,6 +61,8 @@ export default class BedSearchController {
         assessmentPath: assessPaths.assessments.show({ id: params.assessmentId }),
         applicationPath: applyPaths.applications.show({ id: params.applicationId }),
         ...params,
+        requiredCharacteristics: [...(params.selectedRequiredCharacteristics = []), ...params.requiredCharacteristics],
+        placementCriteria,
       })
     }
   }
