@@ -552,17 +552,7 @@
           "type": "object",
           "properties": {
             "roshAnswers": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "object"
-                }
-              ]
+              "type": "object"
             },
             "roshSummaries": {
               "type": "array",
@@ -587,17 +577,7 @@
           "type": "object",
           "properties": {
             "offenceDetailsAnswers": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "object"
-                }
-              ]
+              "type": "object"
             },
             "offenceDetailsSummaries": {
               "type": "array",
@@ -622,17 +602,7 @@
           "type": "object",
           "properties": {
             "supportingInformationAnswers": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "object"
-                }
-              ]
+              "type": "object"
             },
             "supportingInformationSummaries": {
               "type": "array",
@@ -666,17 +636,7 @@
           "type": "object",
           "properties": {
             "riskManagementAnswers": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "object"
-                }
-              ]
+              "type": "object"
             },
             "riskManagementSummaries": {
               "type": "array",
@@ -701,17 +661,7 @@
           "type": "object",
           "properties": {
             "riskToSelfAnswers": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "object"
-                }
-              ]
+              "type": "object"
             },
             "riskToSelfSummaries": {
               "type": "array",

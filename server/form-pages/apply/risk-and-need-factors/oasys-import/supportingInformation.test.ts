@@ -75,7 +75,7 @@ describe('SupportingInformation', () => {
 
     describe('response', () => {
       it('calls oasysImportReponse with the correct arguments', () => {
-        const answers = ['answer 1']
+        const answers = { '1': 'answer 1' }
         const summaries = [
           {
             questionNumber: '1',

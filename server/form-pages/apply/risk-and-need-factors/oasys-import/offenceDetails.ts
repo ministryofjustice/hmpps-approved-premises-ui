@@ -13,7 +13,7 @@ import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type OffenceDetailsBody = {
-  offenceDetailsAnswers: Array<string> | Record<string, string>
+  offenceDetailsAnswers: Record<string, string>
   offenceDetailsSummaries: ArrayOfOASysOffenceDetailsQuestions
 }
 

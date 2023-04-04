@@ -22,22 +22,17 @@ export const textareas = (questions: OasysImportArrays, key: 'roshAnswers' | 'of
     .join('')
 }
 
-export const oasysImportReponse = (
-  answers: Array<string> | Record<string, string>,
-  summaries: Array<OASysQuestion>,
-) => {
-  if (Array.isArray(answers)) {
-    return (answers as Array<string>).reduce((prev, question, i) => {
-      return {
-        ...prev,
-        [`${summaries[i].questionNumber}. ${summaries[i].label}`]: question,
-      }
-    }, {}) as Record<string, string>
-  }
-  if (!answers) {
-    return {}
-  }
-  return answers
+export const oasysImportReponse = (answers: Record<string, string>, summaries: Array<OASysQuestion>) => {
+  return Object.keys(answers).reduce((prev, k) => {
+    return {
+      ...prev,
+      [`${k}: ${findSummary(k, summaries).label}`]: answers[k],
+    }
+  }, {}) as Record<string, string>
+}
+
+const findSummary = (questionNumber: string, summaries: Array<OASysQuestion>) => {
+  return summaries.find(i => i.questionNumber === questionNumber)
 }
 
 export const fetchOptionalOasysSections = (application: Application): Array<number> => {
