@@ -2,146 +2,174 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
 {% extends "../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
 {% block content %}
+	<div class="govuk-grid-row">
+		<div class="govuk-width-container">
+			<div class="govuk-grid-column-full">
+				<h1 class="govuk-heading-m">{{person.name}}</h1>
+				<dl class="search-identity-table govuk-body">
+					<div class="search-identity-table__column">
+						<div class="search-identity-table__table-cell">
+							<dt>
+								<strong>Tier</strong>
+							</dt>
+							<dd>A1</dd>
+						</div>
+						<div class="search-identity-table__table-cell">
+							<dt>
+								<strong>CRN</strong>
+							</dt>
+							<dd>{{person.crn}}</dd>
+						</div>
+						<div class="search-identity-table__table-cell">
+							<dt>
+								<strong>DOB</strong>
+							</dt>
+							<dd>{{person.dateOfBirth}}</dd>
+						</div>
+						<div class="search-identity-table__table-cell">
+							<dt>
+								<strong>Expected arrival date</strong>
+							</dt>
+							<dd>{{formatDate(startDate)}}</dd>
+						</div>
+					</div>
+					<div class="search-identity-table__column search-identity-table__table-cell__last-col">
+						<div class="search-identity-table__table-cell">
+							<dt>
+								<strong>Assessment</strong>
 
-	<h1 class="govuk-heading-m">{{person.name}}</h1>
-	<dl class="search-identity-table govuk-body">
+							</dt>
+							<dd>
+								<a href="{{assessmentPath}}">View <span class="govuk-visually-hidden">assessment</span></a>
+							</dd>
+						</div>
+						<div class="search-identity-table__table-cell">
+							<dt>
+								<strong>Application</strong>
+							</dt>
+							<dd>
+								<a href="{{applicationPath}}">View <span class="govuk-visually-hidden">Application</span></a>
+							</dd>
+						</div>
+					</div>
+				</dl>
+			</div>
+			<hr/>
+		</div>
+	</div>
+	<div class="govuk-grid-row">
+		<div class="govuk-width-container">
 
-		<div class="search-identity-table__column">
-			<div class="search-identity-table__table-cell">
-				<dt>
-					<strong>Tier</strong>
-				</dt>
-				<dd>A1</dd>
-			</div>
-			<div class="search-identity-table__table-cell">
-				<dt>
-					<strong>CRN
-				</strong>
-				</dt>
-				<dd>{{person.crn}}</dd>
-			</div>
-			<div class="search-identity-table__table-cell">
-				<dt>
-					<strong>DOB
-				</strong>
-				</dt>
-				<dd>{{person.dateOfBirth}}</dd>
-			</div>
-			<div class="search-identity-table__table-cell">
-				<dt>
-					<strong>Expected arrival date</strong>
-				</dt>
-				<dd>{{formatDate(startDate)}}</dd>
+			<form action="{{formPath}}" method="post">
+				<h2 class="govuk-heading-m">{{bedSearchResults.resultsBedCount}} matching beds in {{bedSearchResults.resultsRoomCount}} rooms in {{bedSearchResults.resultsPremisesCount}} premises</h2>
+
+				<input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+				<input type="hidden" name="crn" value="{{crn}}"/>
+				<input type="hidden" name="startDate" value="{{startDate}}"/>
+				<input type="hidden" name="applicationId" value="{{applicationId}}"/>
+				<input type="hidden" name="assessmentId" value="{{assessmentId}}"/>
+				{% for requiredCharacteristic in requiredCharacteristics %}
+					<input type="hidden" name="requiredCharacteristics[]" value="{{requiredCharacteristic}}"/>
+					{%endfor%}
+
+					<div class="govuk-grid-column-one-third">
+						{{govukCheckboxes({
+							name: 'selectedRequiredCharacteristics',
+							classes: "govuk-checkboxes--small",
+							fieldset: {
+								legend: {
+									text: 'Required characteristics',
+									isPageHeading: false,
+									classes: 'govuk-fieldset__legend--s'
+								}
+							},
+						items: MatchUtils.searchFilter(placementCriteria, requiredCharacteristics)
+					})}}
+					</div>
+
+					<div class="govuk-grid-column-two-thirds">
+
+						<div class="bed-search-inputs">
+
+							{{ govukDateInput({
+								id: "startDate",
+								namePrefix: "startDate",
+								fieldset: {
+								legend: {
+									text: "Expected arrival",
+									classes: "govuk-fieldset__legend--s"
+									}
+								},
+								items: dateFieldValues('startDate', errors),
+								errorMessage: errors.startDate
+							}) }}
+
+							{{
+								govukInput({
+								id: "durationDays",
+								name: "durationDays",
+								value: durationDays,
+								type: "number",
+								label: {
+								text: "Length of stay"
+								},
+								classes: "govuk-input--width-2",
+								suffix: {
+									text: "weeks"
+								}
+								})
+							}}
+
+							{{ govukInput({
+								id: "postcodeDistrict",
+								name: "postcodeDistrict",
+								value: postcodeDistrict,
+								label: {
+								text: "Preferred location"
+								},
+								classes: "govuk-input--width-3"
+							}) }}
+
+							{{ govukInput({
+								id: "maxDistanceMiles",
+								name: "maxDistanceMiles",
+								value: maxDistanceMiles,
+								label: {
+								text: "Radius"
+								},
+								classes: "govuk-input--width-3", 
+								suffix: {
+									text: "miles"
+								}
+							}) }}
+
+							<div class="button">
+								{{ govukButton({
+									text: "Update"
+								}) }}
+							</div>
+						</div>
+					</form>
+
+					{% for bedSearchResult in bedSearchResults.results %}
+						{{ govukSummaryList({
+					card: {
+						title: {
+							text: bedSearchResult.premises.name
+						}
+					},
+					rows: MatchUtils.summaryCardRows(bedSearchResult)
+				}) }}
+					{% endfor %}
+				</div>
 			</div>
 		</div>
-		<div class="search-identity-table__column search-identity-table__table-cell__last-col">
-			<div class="search-identity-table__table-cell">
-				<dt>
-					<strong>Assessment</strong>
 
-				</dt>
-				<dd>
-					<a href="{{assessmentPath}}">View <span class="govuk-visually-hidden">assessment</span></a>
-				</dd>
-			</div>
-			<div class="search-identity-table__table-cell">
-				<dt>
-					<strong>Application</strong>
-				</dt>
-				<dd>
-					<a href="{{applicationPath}}">View <span class="govuk-visually-hidden">application</span></a>
-				</dd>
-			</div>
-
-		</div>
-	</dl>
-	<hr/>
-
-	<h2 class="govuk-heading-m">{{bedSearchResults.resultsBedCount}} matching beds in {{bedSearchResults.resultsRoomCount}} rooms in {{bedSearchResults.resultsPremisesCount}} premises</h2>
-	<form action="{{formPath}}" method="post">
-		<div class="bed-search-inputs">
-			<input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-			<input type="hidden" name="crn" value="{{crn}}"/>
-			<input type="hidden" name="startDate" value="{{startDate}}"/>
-			<input type="hidden" name="applicationId" value="{{applicationId}}"/>
-			<input type="hidden" name="assessmentId" value="{{assessmentId}}"/>
-
-			{{
-				govukInput({
-				id: "durationDays",
-				name: "durationDays",
-				value: durationDays,
-				type: "number",
-				label: {
-				text: "Length of stay"
-				},
-				classes: "govuk-input--width-2",
-				suffix: {
-					text: "weeks"
-				}
-				})
-			}}
-
-			{{ govukDateInput({
-				id: "startDate",
-				namePrefix: "startDate",
-				fieldset: {
-				legend: {
-					text: "Expected arrival",
-					classes: "govuk-fieldset__legend--s"
-					}
-				},
-				items: dateFieldValues('startDate', errors),
-				errorMessage: errors.startDate
-			}) }}
-
-			{{ govukInput({
-				id: "postcodeDistrict",
-				name: "postcodeDistrict",
-				value: postcodeDistrict,
-				label: {
-				text: "Preferred location"
-				},
-				classes: "govuk-input--width-3"
-     		}) }}
-
-			{{ govukInput({
-				id: "maxDistanceMiles",
-				name: "maxDistanceMiles",
-				value: maxDistanceMiles,
-				label: {
-				text: "Radius"
-				},
-				classes: "govuk-input--width-3", 
-				suffix: {
-					text: "miles"
-				}
-        	}) }}
-
-			<div class="button">
-				{{ govukButton({
-          		text: "Update"
-        	}) }}
-			</div>
-		</div>
-
-	</form>
-
-	{% for bedSearchResult in bedSearchResults.results %}
-		{{ govukSummaryList({
-			card: {
-				title: {
-					text: bedSearchResult.premises.name
-				}
-			},
-			rows: MatchUtils.summaryCardRows(bedSearchResult)
-        }) }}
-	{% endfor %}
-
-{% endblock %}
+	{% endblock %}

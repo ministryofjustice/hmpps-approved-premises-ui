@@ -52,6 +52,10 @@ context('Placement Requests', () => {
     searchPage.clickSubmit()
     numberOfSearches += 1
 
+    // Then I should see the search results
+    Page.verifyOnPage(SearchPage, person.name)
+
+    // And the parameters should be submitted to the API
     cy.task('verifySearchSubmit').then(requests => {
       expect(requests).to.have.length(numberOfSearches)
 
@@ -65,12 +69,18 @@ context('Placement Requests', () => {
         maxDistanceMiles: placementRequests[0].radius,
       })
 
+      expect(initialSearchRequestBody.requiredCharacteristics).to.have.members(placementRequests[0].essentialCriteria)
+
       expect(secondSearchRequestBody).to.contain({
         durationDays: newSearchParameters.durationDays,
         startDate: newSearchParameters.startDate,
         postcodeDistrict: newSearchParameters.postcodeDistrict,
         maxDistanceMiles: newSearchParameters.maxDistanceMiles,
       })
+
+      expect(secondSearchRequestBody.requiredCharacteristics).to.have.members(
+        newSearchParameters.requiredCharacteristics,
+      )
     })
   })
 })

@@ -47,5 +47,10 @@ export default class SearchPage extends Page {
     this.getTextInputByIdAndEnterDetails('postcodeDistrict', newSearchParameters.postcodeDistrict)
     this.getTextInputByIdAndClear('maxDistanceMiles')
     this.getTextInputByIdAndEnterDetails('maxDistanceMiles', newSearchParameters.maxDistanceMiles.toString())
+    cy.get('[type="checkbox"]').uncheck()
+
+    newSearchParameters.requiredCharacteristics.forEach(characteristic => {
+      this.checkCheckboxByNameAndValue('selectedRequiredCharacteristics', characteristic)
+    })
   }
 }
