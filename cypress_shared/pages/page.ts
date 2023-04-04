@@ -212,4 +212,14 @@ export default abstract class Page {
         })
     })
   }
+
+  clearDateInputs(prefix: string): void {
+    cy.get(`#${prefix}-day`).clear()
+    cy.get(`#${prefix}-month`).clear()
+    cy.get(`#${prefix}-year`).clear()
+  }
+
+  getTextInputByIdAndClear(id: string): void {
+    cy.get(`#${id}`).clear()
+  }
 }
