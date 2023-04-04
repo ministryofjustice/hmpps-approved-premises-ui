@@ -18,6 +18,8 @@ export default Factory.define<PlacementRequest>(() => ({
   mentalHealthSupport: faker.datatype.boolean(),
   person: personFactory.build(),
   risks: risksFactory.build(),
+  applicationId: faker.datatype.uuid(),
+  assessmentId: faker.datatype.uuid(),
 }))
 
 const placementCriteria = [
