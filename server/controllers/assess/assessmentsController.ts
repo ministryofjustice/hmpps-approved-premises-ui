@@ -55,7 +55,7 @@ export default class AssessmentsController {
           }),
         )
       } else {
-        res.render('assessments/show', {
+        res.render('assessments/tasklist', {
           assessment,
           pageHeading: tasklistPageHeading,
           taskList,

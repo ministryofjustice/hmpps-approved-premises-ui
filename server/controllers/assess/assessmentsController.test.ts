@@ -136,7 +136,7 @@ describe('assessmentsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('assessments/show', {
+      expect(response.render).toHaveBeenCalledWith('assessments/tasklist', {
         assessment,
         pageHeading: 'Assess an Approved Premises (AP) application',
         taskList: stubTaskList,
@@ -172,7 +172,7 @@ describe('assessmentsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('assessments/show', {
+      expect(response.render).toHaveBeenCalledWith('assessments/tasklist', {
         assessment,
         pageHeading: 'Assess an Approved Premises (AP) application',
         taskList: stubTaskList,
