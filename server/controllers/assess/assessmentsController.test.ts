@@ -145,6 +145,21 @@ describe('assessmentsController', () => {
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
     })
 
+    it('fetches the assessment and renders the show page if the assessment is completed', async () => {
+      const completedAssessment = { ...assessment, status: 'completed' as const }
+      assessmentService.findAssessment.mockResolvedValue(completedAssessment)
+
+      const requestHandler = assessmentsController.show()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('assessments/show', {
+        assessment: completedAssessment,
+      })
+
+      expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
+    })
+
     it('redirects if the assessment is in a pending state and informationSetAsNotReceived is false', async () => {
       ;(informationSetAsNotReceived as jest.Mock).mockReturnValue(false)
       assessment.status = 'pending'

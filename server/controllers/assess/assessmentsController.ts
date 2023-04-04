@@ -44,9 +44,12 @@ export default class AssessmentsController {
     return async (req: Request, res: Response) => {
       const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
       const noteAwaitingResponse = assessment.status === 'pending' && !informationSetAsNotReceived(assessment)
-      const taskList = new TasklistService(assessment)
 
-      if (noteAwaitingResponse) {
+      if (assessment.status === 'completed') {
+        res.render('assessments/show', {
+          assessment,
+        })
+      } else if (noteAwaitingResponse) {
         res.redirect(
           paths.assessments.pages.show({
             id: assessment.id,
@@ -55,6 +58,8 @@ export default class AssessmentsController {
           }),
         )
       } else {
+        const taskList = new TasklistService(assessment)
+
         res.render('assessments/tasklist', {
           assessment,
           pageHeading: tasklistPageHeading,
