@@ -13,7 +13,7 @@ import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type RiskManagementBody = {
-  riskManagementAnswers: Array<string> | Record<string, string>
+  riskManagementAnswers: Record<string, string>
   riskManagementSummaries: ArrayOfOASysRiskManagementQuestions
 }
 

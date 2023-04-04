@@ -17,7 +17,7 @@ import {
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type SupportingInformationBody = {
-  supportingInformationAnswers: Array<string> | Record<string, string>
+  supportingInformationAnswers: Record<string, string>
   supportingInformationSummaries: ArrayOfOASysSupportingInformationQuestions
 }
 
