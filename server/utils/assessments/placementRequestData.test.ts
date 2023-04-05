@@ -5,6 +5,7 @@ import { criteriaFromMatchingInformation, placementRequestData } from './placeme
 import { assessmentFactory } from '../../testutils/factories'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
 
 jest.mock('../../form-pages/utils')
 jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
@@ -24,7 +25,8 @@ describe('placementRequestData', () => {
   ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2020-01-01')
 
   it('converts matching data into a placement request', () => {
-    mockQuestionResponse({ postcodeArea: 'ABC123', type: 'normal', duration: '12', alternativeRadius: '100' })
+    mockQuestionResponse({ postcodeArea: 'ABC123', type: 'normal', duration: '12' })
+    ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('100')
 
     expect(placementRequestData(assessment)).toEqual({
       gender: matchingInformation.apGender,
@@ -40,7 +42,7 @@ describe('placementRequestData', () => {
   })
 
   it('returns a default radius if one is not present', () => {
-    mockQuestionResponse({ alternativeRadius: undefined })
+    ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(undefined)
 
     const result = placementRequestData(assessment)
 

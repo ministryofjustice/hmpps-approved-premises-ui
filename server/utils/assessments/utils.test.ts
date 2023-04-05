@@ -510,12 +510,20 @@ describe('utils', () => {
   })
 
   describe('assessmentSections', () => {
-    it('calls reviewSections with the supplied arguments', () => {
+    it('calls reviewSections with showActions set to true as the default', () => {
       const assessment = assessmentFactory.build()
 
       assessmentSections(assessment)
 
-      expect(reviewSections).toHaveBeenCalledWith(assessment, getTaskResponsesAsSummaryListItems)
+      expect(reviewSections).toHaveBeenCalledWith(assessment, getTaskResponsesAsSummaryListItems, true)
+    })
+
+    it('allows showActions to be set to false', () => {
+      const assessment = assessmentFactory.build()
+
+      assessmentSections(assessment, false)
+
+      expect(reviewSections).toHaveBeenCalledWith(assessment, getTaskResponsesAsSummaryListItems, false)
     })
   })
 

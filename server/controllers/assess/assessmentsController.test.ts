@@ -136,10 +136,25 @@ describe('assessmentsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('assessments/show', {
+      expect(response.render).toHaveBeenCalledWith('assessments/tasklist', {
         assessment,
         pageHeading: 'Assess an Approved Premises (AP) application',
         taskList: stubTaskList,
+      })
+
+      expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
+    })
+
+    it('fetches the assessment and renders the show page if the assessment is completed', async () => {
+      const completedAssessment = { ...assessment, status: 'completed' as const }
+      assessmentService.findAssessment.mockResolvedValue(completedAssessment)
+
+      const requestHandler = assessmentsController.show()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('assessments/show', {
+        assessment: completedAssessment,
       })
 
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
@@ -172,7 +187,7 @@ describe('assessmentsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('assessments/show', {
+      expect(response.render).toHaveBeenCalledWith('assessments/tasklist', {
         assessment,
         pageHeading: 'Assess an Approved Premises (AP) application',
         taskList: stubTaskList,

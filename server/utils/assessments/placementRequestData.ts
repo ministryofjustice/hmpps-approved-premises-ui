@@ -1,6 +1,9 @@
 import { ApprovedPremisesAssessment as Assessment, PlacementCriteria, PlacementRequest } from '@approved-premises/api'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
+import {
+  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
+  retrieveQuestionResponseFromApplicationOrAssessment,
+} from '../retrieveQuestionResponseFromApplicationOrAssessment'
 
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import MatchingInformation, {
@@ -25,7 +28,7 @@ export const placementRequestData = (assessment: Assessment): PlacementRequest =
     LocationFactors,
     'postcodeArea',
   )
-  const alternativeRadius = retrieveQuestionResponseFromApplicationOrAssessment(
+  const alternativeRadius = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
     assessment.application,
     LocationFactors,
     'alternativeRadius',

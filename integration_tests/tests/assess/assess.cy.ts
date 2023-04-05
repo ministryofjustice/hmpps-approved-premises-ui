@@ -8,7 +8,7 @@ import {
 import { overwriteApplicationDocuments } from '../../../server/utils/assessments/documentUtils'
 
 import AssessHelper from '../../../cypress_shared/helpers/assess'
-import { ListPage, TaskListPage } from '../../../cypress_shared/pages/assess'
+import { ListPage, ShowPage, TaskListPage } from '../../../cypress_shared/pages/assess'
 import Page from '../../../cypress_shared/pages/page'
 
 context('Assess', () => {
@@ -163,5 +163,27 @@ context('Assess', () => {
           expect(body).to.have.keys('document', 'rejectionRationale')
         })
       })
+  })
+
+  it('shows a read-only version of the assessment', function test() {
+    // Given I have completed an assessment
+    const updatedAssessment = { ...this.assessment, status: 'completed' }
+    cy.task('stubAssessment', updatedAssessment)
+    cy.task('stubAssessments', [updatedAssessment])
+
+    // And I visit the list page
+    const listPage = ListPage.visit()
+
+    // When I click on the Completed tab
+    listPage.clickCompleted()
+
+    // And I click on my assessment
+    listPage.clickAssessment(this.assessment)
+
+    // Then I should see a read-only version of the assessment
+    const showPage = Page.verifyOnPage(ShowPage, this.assessment)
+
+    showPage.shouldShowPersonInformation()
+    showPage.shouldShowResponses()
   })
 })
