@@ -7,39 +7,6 @@ import { kebabCase, linkTo, sentenceCase } from '../utils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
-const allocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
-  const rows: Array<TableRow> = []
-
-  tasks.forEach(task => {
-    rows.push([
-      nameCell(task),
-      daysUntilDueCell(task),
-      allocationCell(task),
-      statusCell(task),
-      taskTypeCell(task),
-      allocationLinkCell(task, 'Reallocate'),
-    ])
-  })
-
-  return rows
-}
-
-const unallocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
-  const rows = [] as Array<TableRow>
-
-  tasks.forEach(task => {
-    rows.push([
-      nameCell(task),
-      daysUntilDueCell(task),
-      statusCell(task),
-      taskTypeCell(task),
-      allocationLinkCell(task, 'Allocate'),
-    ])
-  })
-
-  return rows
-}
-
 const daysUntilDueCell = (task: Task): TableCell => ({
   html: formatDaysUntilDueWithWarning(task),
   attributes: {
@@ -102,6 +69,39 @@ const formatDaysUntilDueWithWarning = (task: Task): string => {
 
 const daysUntilDue = (task: Task): number => {
   return DateFormats.differenceInDays(DateFormats.isoToDateObj(task.dueDate), new Date()).number
+}
+
+const allocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
+  const rows: Array<TableRow> = []
+
+  tasks.forEach(task => {
+    rows.push([
+      nameCell(task),
+      daysUntilDueCell(task),
+      allocationCell(task),
+      statusCell(task),
+      taskTypeCell(task),
+      allocationLinkCell(task, 'Reallocate'),
+    ])
+  })
+
+  return rows
+}
+
+const unallocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
+  const rows = [] as Array<TableRow>
+
+  tasks.forEach(task => {
+    rows.push([
+      nameCell(task),
+      daysUntilDueCell(task),
+      statusCell(task),
+      taskTypeCell(task),
+      allocationLinkCell(task, 'Allocate'),
+    ])
+  })
+
+  return rows
 }
 
 export {

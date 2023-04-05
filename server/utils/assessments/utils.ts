@@ -4,30 +4,24 @@ import {
   HtmlItem,
   PageResponse,
   SummaryListItem,
-  TableRow,
   TextItem,
   UiTask,
 } from '@approved-premises/ui'
-import { add, differenceInDays, format } from 'date-fns'
 
 import { ApprovedPremisesApplication, ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
-import { tierBadge } from '../personUtils'
-import { DateFormats } from '../dateUtils'
-import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
-import paths from '../../paths/assess'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
 import { UnknownPageError } from '../errors'
 import { embeddedSummaryListItem } from '../applications/summaryListUtils'
 import reviewSections from '../reviewUtils'
 import Apply from '../../form-pages/apply'
-import { kebabCase, linkTo } from '../utils'
+import { kebabCase } from '../utils'
 import { getApplicationType as getApplicationTypeFromApplication, getResponseForPage } from '../applications/utils'
 import { documentsFromApplication } from './documentUtils'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { getActionsForTaskId } from './getActionsForTaskId'
-
-const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
+import { assessmentsApproachingDue, formattedArrivalDate } from './dateUtils'
+import { awaitingAssessmentTableRows, completedTableRows, requestedFurtherInformationTableRows } from './tableUtils'
 
 const groupAssessmements = (assessments: Array<Assessment>): GroupedAssessments => {
   const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments
@@ -95,186 +89,6 @@ const allocationSummary = (assessment: Assessment): Array<SummaryListItem> => {
   return summary
 }
 
-const crnCell = (assessment: Assessment) => {
-  return {
-    html: assessment.application.person.crn,
-  }
-}
-
-const arrivalDateCell = (assessment: Assessment) => {
-  return {
-    text: formattedArrivalDate(assessment),
-  }
-}
-
-const daysUntilDueCell = (assessment: Assessment) => {
-  return {
-    html: formatDaysUntilDueWithWarning(assessment),
-  }
-}
-
-const statusCell = (assessment: Assessment) => {
-  return {
-    html: getStatus(assessment),
-  }
-}
-
-const linkCell = (assessment: Assessment) => {
-  return {
-    html: assessmentLink(assessment),
-  }
-}
-
-const tierCell = (assessment: Assessment) => {
-  return {
-    html: tierBadge(assessment.application.risks.tier.value.level),
-  }
-}
-
-const prisonCell = (assessment: Assessment) => {
-  return {
-    text: assessment.application.person.prisonName,
-  }
-}
-
-const daysSinceReceivedCell = (assessment: Assessment) => {
-  return {
-    text: formatDays(daysSinceReceived(assessment)),
-  }
-}
-
-const daysSinceInfoRequestCell = (assessment: Assessment) => {
-  return {
-    text: formatDays(daysSinceInfoRequest(assessment)),
-  }
-}
-
-const awaitingAssessmentTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
-  const rows = [] as Array<TableRow>
-
-  assessments.forEach(assessment => {
-    rows.push([
-      linkCell(assessment),
-      crnCell(assessment),
-      tierCell(assessment),
-      arrivalDateCell(assessment),
-      prisonCell(assessment),
-      daysUntilDueCell(assessment),
-      statusCell(assessment),
-    ])
-  })
-
-  return rows
-}
-
-const completedTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
-  const rows = [] as Array<TableRow>
-
-  assessments.forEach(assessment => {
-    rows.push([
-      linkCell(assessment),
-      crnCell(assessment),
-      tierCell(assessment),
-      arrivalDateCell(assessment),
-      statusCell(assessment),
-    ])
-  })
-
-  return rows
-}
-
-const requestedFurtherInformationTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
-  const rows = [] as Array<TableRow>
-
-  const infoRequestStatusCell = {
-    html: `<strong class="govuk-tag govuk-tag--yellow">Info Request</strong>`,
-  }
-
-  assessments.forEach(assessment => {
-    rows.push([
-      linkCell(assessment),
-      crnCell(assessment),
-      tierCell(assessment),
-      arrivalDateCell(assessment),
-      daysSinceReceivedCell(assessment),
-      daysSinceInfoRequestCell(assessment),
-      infoRequestStatusCell,
-    ])
-  })
-
-  return rows
-}
-
-const assessmentLink = (assessment: Assessment, linkText = '', hiddenText = ''): string => {
-  return linkTo(
-    paths.assessments.show,
-    { id: assessment.id },
-    {
-      text: linkText || assessment.application.person.name,
-      hiddenText,
-      attributes: { 'data-cy-assessmentId': assessment.id },
-    },
-  )
-}
-
-const formattedArrivalDate = (assessment: Assessment): string => {
-  const arrivalDate = arrivalDateFromApplication(assessment.application as ApprovedPremisesApplication)
-  return format(DateFormats.isoToDateObj(arrivalDate), 'd MMM yyyy')
-}
-
-const formatDays = (days: number): string => {
-  if (days === undefined) {
-    return 'N/A'
-  }
-  return `${days} Day${days > 1 ? 's' : ''}`
-}
-
-const daysUntilDue = (assessment: Assessment): number => {
-  const receivedDate = DateFormats.isoToDateObj(assessment.createdAt)
-  const dueDate = add(receivedDate, { days: 10 })
-
-  return differenceInDays(dueDate, new Date())
-}
-
-const getStatus = (assessment: Assessment): string => {
-  if (assessment.status === 'completed') {
-    if (assessment.decision === 'accepted') return `<strong class="govuk-tag govuk-tag--green">Suitable</strong>`
-    if (assessment.decision === 'rejected') return `<strong class="govuk-tag govuk-tag--red">Rejected</strong>`
-  }
-
-  if (assessment.data) {
-    return `<strong class="govuk-tag govuk-tag--blue">In progress</strong>`
-  }
-
-  return `<strong class="govuk-tag govuk-tag--grey">Not started</strong>`
-}
-
-const daysSinceReceived = (assessment: Assessment): number => {
-  const receivedDate = DateFormats.isoToDateObj(assessment.createdAt)
-
-  return differenceInDays(new Date(), receivedDate)
-}
-
-const formatDaysUntilDueWithWarning = (assessment: Assessment): string => {
-  const days = daysUntilDue(assessment)
-  if (days < DUE_DATE_APPROACHING_DAYS_WINDOW) {
-    return `<strong class="assessments--index__warning">${formatDays(
-      days,
-    )}<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`
-  }
-  return formatDays(days)
-}
-
-const daysSinceInfoRequest = (assessment: Assessment): number => {
-  const lastInfoRequest = assessment.clarificationNotes[assessment.clarificationNotes.length - 1]
-  if (!lastInfoRequest) {
-    return undefined
-  }
-  const infoRequestDate = DateFormats.isoToDateObj(lastInfoRequest.createdAt)
-
-  return differenceInDays(new Date(), infoRequestDate)
-}
-
 const assessmentsApproachingDueBadge = (assessments: Array<Assessment>): string => {
   const dueCount = assessmentsApproachingDue(assessments)
 
@@ -282,10 +96,6 @@ const assessmentsApproachingDueBadge = (assessments: Array<Assessment>): string 
     return ''
   }
   return `<span id="notifications" class="moj-notification-badge">${dueCount}<span class="govuk-visually-hidden"> assessments approaching due date</span></span>`
-}
-
-const assessmentsApproachingDue = (assessments: Array<Assessment>): number => {
-  return assessments.filter(a => daysUntilDue(a) < DUE_DATE_APPROACHING_DAYS_WINDOW).length
 }
 
 const getPage = (taskName: string, pageName: string): TasklistPageInterface => {
@@ -421,28 +231,21 @@ export {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
   allocationSummary,
-  assessmentLink,
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
   assessmentSections,
-  awaitingAssessmentTableRows,
   caseNotesFromAssessment,
-  completedTableRows,
   confirmationPageMessage,
   confirmationPageResult,
-  daysSinceInfoRequest,
-  daysSinceReceived,
-  daysUntilDue,
-  formatDays,
-  formatDaysUntilDueWithWarning,
   formattedArrivalDate,
   getApplicationType,
   getPage,
   getReviewNavigationItems,
-  getStatus,
   getTaskResponsesAsSummaryListItems,
   groupAssessmements,
-  requestedFurtherInformationTableRows,
   rejectionRationaleFromAssessmentResponses,
   reviewApplicationSections,
+  awaitingAssessmentTableRows,
+  completedTableRows,
+  requestedFurtherInformationTableRows,
 }
