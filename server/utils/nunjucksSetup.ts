@@ -68,6 +68,11 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     })
   }
 
+  app.use((req, res, next) => {
+    res.locals.currentUrl = req.originalUrl
+    return next()
+  })
+
   const njkEnv = nunjucks.configure(
     [
       path.join(__dirname, '../../server/views'),
