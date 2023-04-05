@@ -1,10 +1,11 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
-import applyPaths from '../paths/apply'
-import assessPaths from '../paths/assess'
-import managePaths from '../paths/manage'
+import { ServiceSection } from '@approved-premises/ui'
+import { sectionsForUser } from '../utils/userUtils'
 
 import DashboardController from './dashboardController'
+
+jest.mock('../utils/userUtils')
 
 describe('DashboardController', () => {
   const request: DeepMocked<Request> = createMock<Request>({})
@@ -19,15 +20,16 @@ describe('DashboardController', () => {
 
   describe('index', () => {
     it('should render the dashboard template', () => {
+      const sections = createMock<Array<ServiceSection>>()
+      ;(sectionsForUser as jest.Mock).mockReturnValue(sections)
+
       const requestHandler = dashboardController.index()
 
       requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('dashboard/index', {
         pageHeading: 'Approved Premises',
-        applyPath: applyPaths.applications.index.pattern,
-        assessPath: assessPaths.assessments.index.pattern,
-        managePath: managePaths.premises.index.pattern,
+        sections,
       })
     })
   })
