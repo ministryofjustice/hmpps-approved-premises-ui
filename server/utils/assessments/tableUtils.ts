@@ -68,7 +68,7 @@ const linkCell = (assessment: Assessment) => {
 
 const tierCell = (assessment: Assessment) => {
   return {
-    html: tierBadge(assessment.application.risks.tier.value.level),
+    html: tierBadge(assessment.application.risks.tier?.value?.level),
   }
 }
 
