@@ -14,8 +14,8 @@ export default class BedSearchController {
 
   search(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const query = Object.keys(req.query).length ? req.query : undefined
-      const body = Object.keys(req.body).length ? req.body : undefined
+      const query = (Object.keys(req.query).length ? req.query : undefined) as unknown as BedSearchParametersUi
+      const body = (Object.keys(req.body).length ? req.body : undefined) as unknown as BedSearchParametersUi
 
       const params = {
         ...query,
