@@ -102,14 +102,6 @@ export class DateFormats {
   }
 
   /**
-   * @param dateString an ISO date string.
-   * @returns the date as a timestamp, useful when sorting.
-   */
-  static isoToTimestamp(dateString: string) {
-    return getUnixTime(DateFormats.isoToDateObj(dateString))
-  }
-
-  /**
    * @param date1 first day to compare.
    * @param date2 second day to compare.
    * @returns {DifferenceInDays} an object with the difference in days as a string for UI purposes (EG '2 Days') and as a number.

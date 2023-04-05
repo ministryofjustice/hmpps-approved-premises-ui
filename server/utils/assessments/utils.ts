@@ -4,30 +4,24 @@ import {
   HtmlItem,
   PageResponse,
   SummaryListItem,
-  TableRow,
   TextItem,
   UiTask,
 } from '@approved-premises/ui'
-import { add, differenceInDays, format } from 'date-fns'
 
 import { ApprovedPremisesApplication, ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
-import { tierBadge } from '../personUtils'
-import { DateFormats } from '../dateUtils'
-import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
-import paths from '../../paths/assess'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
 import { UnknownPageError } from '../errors'
 import { embeddedSummaryListItem } from '../applications/summaryListUtils'
 import reviewSections from '../reviewUtils'
 import Apply from '../../form-pages/apply'
-import { kebabCase, linkTo } from '../utils'
+import { kebabCase } from '../utils'
 import { getApplicationType as getApplicationTypeFromApplication, getResponseForPage } from '../applications/utils'
 import { documentsFromApplication } from './documentUtils'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { getActionsForTaskId } from './getActionsForTaskId'
-
-const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
+import { assessmentsApproachingDue, formattedArrivalDate } from './dateUtils'
+import { awaitingAssessmentTableRows, completedTableRows, requestedFurtherInformationTableRows } from './tableUtils'
 
 const groupAssessmements = (assessments: Array<Assessment>): GroupedAssessments => {
   const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments
@@ -95,256 +89,6 @@ const allocationSummary = (assessment: Assessment): Array<SummaryListItem> => {
   return summary
 }
 
-const allocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
-  const rows = [] as Array<TableRow>
-
-  assessments.forEach(assessment => {
-    rows.push([
-      {
-        text: assessment.application.person.name,
-      },
-      {
-        text: formattedArrivalDate(assessment),
-        attributes: {
-          'data-sort-value': `${arriveDateAsTimestamp(assessment)}`,
-        },
-      },
-      {
-        html: formatDaysUntilDueWithWarning(assessment),
-        attributes: {
-          'data-sort-value': `${daysUntilDue(assessment)}`,
-        },
-      },
-      {
-        text: assessment.allocatedToStaffMember.name,
-      },
-      {
-        text: getApplicationType(assessment),
-      },
-      {
-        html: getStatus(assessment),
-      },
-      {
-        html: allocationLink(assessment, 'Reallocate'),
-      },
-    ])
-  })
-
-  return rows
-}
-
-const unallocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
-  const rows = [] as Array<TableRow>
-
-  assessments.forEach(assessment => {
-    rows.push([
-      {
-        text: assessment.application.person.name,
-      },
-      {
-        text: formattedArrivalDate(assessment),
-        attributes: {
-          'data-sort-value': `${arriveDateAsTimestamp(assessment)}`,
-        },
-      },
-      {
-        html: formatDaysUntilDueWithWarning(assessment),
-        attributes: {
-          'data-sort-value': `${daysUntilDue(assessment)}`,
-        },
-      },
-      {
-        text: getApplicationType(assessment),
-      },
-      {
-        html: getStatus(assessment),
-      },
-      {
-        html: allocationLink(assessment, 'Allocate'),
-      },
-    ])
-  })
-
-  return rows
-}
-
-const awaitingAssessmentTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
-  const rows = [] as Array<TableRow>
-
-  assessments.forEach(assessment => {
-    rows.push([
-      {
-        html: assessmentLink(assessment),
-      },
-      {
-        html: assessment.application.person.crn,
-      },
-      {
-        html: tierBadge(assessment.application.risks.tier.value.level),
-      },
-      {
-        text: formattedArrivalDate(assessment),
-      },
-      {
-        text: assessment.application.person.prisonName,
-      },
-      {
-        html: formatDaysUntilDueWithWarning(assessment),
-      },
-      {
-        html: getStatus(assessment),
-      },
-    ])
-  })
-
-  return rows
-}
-
-const completedTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
-  const rows = [] as Array<TableRow>
-
-  assessments.forEach(assessment => {
-    rows.push([
-      {
-        html: assessmentLink(assessment),
-      },
-      {
-        html: assessment.application.person.crn,
-      },
-      {
-        html: tierBadge(assessment.application.risks.tier.value.level),
-      },
-      {
-        text: formattedArrivalDate(assessment),
-      },
-      {
-        html: getStatus(assessment),
-      },
-    ])
-  })
-
-  return rows
-}
-
-const requestedFurtherInformationTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
-  const rows = [] as Array<TableRow>
-
-  assessments.forEach(assessment => {
-    rows.push([
-      {
-        html: assessmentLink(assessment),
-      },
-      {
-        html: assessment.application.person.crn,
-      },
-      {
-        html: tierBadge(assessment.application.risks.tier.value.level),
-      },
-      {
-        text: formattedArrivalDate(assessment),
-      },
-      {
-        text: formatDays(daysSinceReceived(assessment)),
-      },
-      {
-        text: formatDays(daysSinceInfoRequest(assessment)),
-      },
-      {
-        html: `<strong class="govuk-tag govuk-tag--yellow">Info Request</strong>`,
-      },
-    ])
-  })
-
-  return rows
-}
-
-const allocationLink = (assessment: Assessment, action: 'Allocate' | 'Reallocate'): string => {
-  return linkTo(
-    paths.allocations.show,
-    { id: assessment.application.id },
-    {
-      text: action,
-      hiddenText: `assessment for ${assessment.application.person.name}`,
-      attributes: { 'data-cy-assessmentId': assessment.id },
-    },
-  )
-}
-
-const assessmentLink = (assessment: Assessment, linkText = '', hiddenText = ''): string => {
-  return linkTo(
-    paths.assessments.show,
-    { id: assessment.id },
-    {
-      text: linkText || assessment.application.person.name,
-      hiddenText,
-      attributes: { 'data-cy-assessmentId': assessment.id },
-    },
-  )
-}
-
-const formattedArrivalDate = (assessment: Assessment): string => {
-  const arrivalDate = arrivalDateFromApplication(assessment.application as ApprovedPremisesApplication)
-  return format(DateFormats.isoToDateObj(arrivalDate), 'd MMM yyyy')
-}
-
-const arriveDateAsTimestamp = (assessment: Assessment): number => {
-  const arrivalDate = arrivalDateFromApplication(assessment.application as ApprovedPremisesApplication)
-  return DateFormats.isoToTimestamp(arrivalDate)
-}
-
-const formatDays = (days: number): string => {
-  if (days === undefined) {
-    return 'N/A'
-  }
-  return `${days} Day${days > 1 ? 's' : ''}`
-}
-
-const daysUntilDue = (assessment: Assessment): number => {
-  const receivedDate = DateFormats.isoToDateObj(assessment.createdAt)
-  const dueDate = add(receivedDate, { days: 10 })
-
-  return differenceInDays(dueDate, new Date())
-}
-
-const getStatus = (assessment: Assessment): string => {
-  if (assessment.status === 'completed') {
-    if (assessment.decision === 'accepted') return `<strong class="govuk-tag govuk-tag--green">Suitable</strong>`
-    if (assessment.decision === 'rejected') return `<strong class="govuk-tag govuk-tag--red">Rejected</strong>`
-  }
-
-  if (assessment.data) {
-    return `<strong class="govuk-tag govuk-tag--blue">In progress</strong>`
-  }
-
-  return `<strong class="govuk-tag govuk-tag--grey">Not started</strong>`
-}
-
-const daysSinceReceived = (assessment: Assessment): number => {
-  const receivedDate = DateFormats.isoToDateObj(assessment.createdAt)
-
-  return differenceInDays(new Date(), receivedDate)
-}
-
-const formatDaysUntilDueWithWarning = (assessment: Assessment): string => {
-  const days = daysUntilDue(assessment)
-  if (days < DUE_DATE_APPROACHING_DAYS_WINDOW) {
-    return `<strong class="assessments--index__warning">${formatDays(
-      days,
-    )}<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`
-  }
-  return formatDays(days)
-}
-
-const daysSinceInfoRequest = (assessment: Assessment): number => {
-  const lastInfoRequest = assessment.clarificationNotes[assessment.clarificationNotes.length - 1]
-  if (!lastInfoRequest) {
-    return undefined
-  }
-  const infoRequestDate = DateFormats.isoToDateObj(lastInfoRequest.createdAt)
-
-  return differenceInDays(new Date(), infoRequestDate)
-}
-
 const assessmentsApproachingDueBadge = (assessments: Array<Assessment>): string => {
   const dueCount = assessmentsApproachingDue(assessments)
 
@@ -352,10 +96,6 @@ const assessmentsApproachingDueBadge = (assessments: Array<Assessment>): string 
     return ''
   }
   return `<span id="notifications" class="moj-notification-badge">${dueCount}<span class="govuk-visually-hidden"> assessments approaching due date</span></span>`
-}
-
-const assessmentsApproachingDue = (assessments: Array<Assessment>): number => {
-  return assessments.filter(a => daysUntilDue(a) < DUE_DATE_APPROACHING_DAYS_WINDOW).length
 }
 
 const getPage = (taskName: string, pageName: string): TasklistPageInterface => {
@@ -490,33 +230,22 @@ const rejectionRationaleFromAssessmentResponses = (assessment: Assessment): stri
 export {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
-  allocatedTableRows,
-  allocationLink,
   allocationSummary,
-  arriveDateAsTimestamp,
-  assessmentLink,
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
   assessmentSections,
-  awaitingAssessmentTableRows,
   caseNotesFromAssessment,
-  completedTableRows,
   confirmationPageMessage,
   confirmationPageResult,
-  daysSinceInfoRequest,
-  daysSinceReceived,
-  daysUntilDue,
-  formatDays,
-  formatDaysUntilDueWithWarning,
   formattedArrivalDate,
   getApplicationType,
   getPage,
   getReviewNavigationItems,
-  getStatus,
   getTaskResponsesAsSummaryListItems,
   groupAssessmements,
-  requestedFurtherInformationTableRows,
-  unallocatedTableRows,
   rejectionRationaleFromAssessmentResponses,
   reviewApplicationSections,
+  awaitingAssessmentTableRows,
+  completedTableRows,
+  requestedFurtherInformationTableRows,
 }
