@@ -22,6 +22,7 @@ import {
 } from './formUtils'
 import { dashboardTableRows } from './applications/utils'
 import { summaryListSections } from './applications/summaryListUtils'
+import { navigationItems } from './navigationItems'
 
 import { statusTag } from './personUtils'
 import { DateFormats } from './dateUtils'
@@ -165,6 +166,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   njkEnv.addGlobal('summaryListSections', summaryListSections)
   njkEnv.addGlobal('dashboardTableRows', dashboardTableRows)
+  njkEnv.addGlobal('navigationItems', navigationItems)
 
   njkEnv.addGlobal('AssessmentUtils', AssessmentUtils)
   njkEnv.addGlobal('OASysUtils', OASysUtils)
