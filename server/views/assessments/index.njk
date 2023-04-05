@@ -14,29 +14,7 @@
 
       <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-      {% if UserUtils.hasRole(user, 'workflow_manager') %}
-        {{ mojSubNavigation({
-          label: 'Sub navigation',
-          items: [{
-            text: 'All Assessments',
-            href: paths.assessments.index({}),
-            active: (type !== 'myAssessments')
-          },
-          {
-            text: 'My Assessments',
-            href: paths.assessments.index({}) + '?type=myAssessments',
-            active: (type === 'myAssessments')
-          }]
-        }) }}
-
-        {% if type === 'myAssessments' %}
-          {% include './_assessmentsForUser.njk' %}
-        {% else %}
-          {% include './_assessmentAllocationList.njk' %}
-        {% endif %}
-      {% else %}
-        {% include './_assessmentsForUser.njk' %}
-      {% endif %}
+      {% include './_assessmentsForUser.njk' %}
     </div>
   </div>
 {% endblock %}
