@@ -1,0 +1,23 @@
+.search-identity-table {
+  dt {
+    width: 50%;
+  }
+  dd {
+    width: 50%;
+  }
+  display: flex;
+
+  &__column {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+  }
+
+  &__last-col {
+    margin-left: auto;
+  }
+
+  &__table-cell {
+    display: flex;
+  }
+}

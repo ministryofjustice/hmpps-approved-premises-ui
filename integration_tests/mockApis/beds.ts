@@ -2,7 +2,7 @@ import { SuperAgentRequest } from 'superagent'
 
 import type { BedSearchResult } from '@approved-premises/api'
 
-import { stubFor } from '../../wiremock'
+import { getMatchingRequests, stubFor } from '../../wiremock'
 
 import paths from '../../server/paths/match'
 
@@ -19,4 +19,12 @@ export default {
         jsonBody: args.bedSearchResults,
       },
     }),
+
+  verifySearchSubmit: async () =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.beds.search.pattern,
+      })
+    ).body.requests,
 }

@@ -2,22 +2,25 @@ import Page from '../page'
 import paths from '../../../server/paths/match'
 import { uiObjectValue } from '../../helpers'
 import { summaryCardRows } from '../../../server/utils/matchUtils'
-import { BedSearchResults } from '../../../server/@types/shared'
+import {
+  ApprovedPremisesBedSearchParameters as BedSearchParameters,
+  BedSearchResults,
+} from '../../../server/@types/shared'
 
 export default class SearchPage extends Page {
-  constructor() {
-    super('Find a bed')
+  constructor(name: string) {
+    super(name)
   }
 
-  static visit(): SearchPage {
+  static visit(name: string): SearchPage {
     cy.visit(paths.beds.search({}))
-    return new SearchPage()
+    return new SearchPage(name)
   }
 
   shouldDisplaySearchResults(bedSearchResult: BedSearchResults): void {
-    cy.get('h2').contains(`Matching rooms: ${bedSearchResult.resultsRoomCount}`)
-    cy.get('h2').contains(`Matching premises: ${bedSearchResult.resultsPremisesCount}`)
-    cy.get('h2').contains(`Matching beds: ${bedSearchResult.resultsBedCount}`)
+    cy.get('h2').contains(
+      `${bedSearchResult.resultsBedCount} matching beds in ${bedSearchResult.resultsRoomCount} rooms in ${bedSearchResult.resultsPremisesCount} premises`,
+    )
 
     bedSearchResult.results.forEach(result => {
       cy.contains('div', result.premises.name)
@@ -33,5 +36,16 @@ export default class SearchPage extends Page {
           })
         })
     })
+  }
+
+  changeSearchParameters(newSearchParameters: BedSearchParameters): void {
+    this.getTextInputByIdAndClear('durationDays')
+    this.getTextInputByIdAndEnterDetails('durationDays', newSearchParameters.durationDays.toString())
+    this.clearDateInputs('startDate')
+    this.completeDateInputs('startDate', newSearchParameters.startDate)
+    this.getTextInputByIdAndClear('postcodeDistrict')
+    this.getTextInputByIdAndEnterDetails('postcodeDistrict', newSearchParameters.postcodeDistrict)
+    this.getTextInputByIdAndClear('maxDistanceMiles')
+    this.getTextInputByIdAndEnterDetails('maxDistanceMiles', newSearchParameters.maxDistanceMiles.toString())
   }
 }

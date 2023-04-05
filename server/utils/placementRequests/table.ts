@@ -1,6 +1,6 @@
 import { add } from 'date-fns'
 import { PlacementCriteria, PlacementRequest } from '../../@types/shared'
-import { TableCell, TableRow } from '../../@types/ui'
+import { BedSearchParametersUi, TableCell, TableRow } from '../../@types/ui'
 import paths from '../../paths/match'
 import { DateFormats } from '../dateUtils'
 import { nameCell } from '../tableUtils'
@@ -62,29 +62,36 @@ export const mentalHealthSupportCell = (placementRequest: PlacementRequest): Tab
   text: placementRequest.mentalHealthSupport ? 'Yes' : 'No',
 })
 
-export const linkCell = ({
-  gender,
-  desirableCriteria,
+export const linkCell = (placementRequest: PlacementRequest): TableCell => {
+  return {
+    html: `<a data-cy-placementRequestId="${placementRequest.id}" href="${paths.beds.search({})}?${createQueryString(
+      mapPlacementRequestToBedSearchParams(placementRequest),
+    )}">Find bed</a>`,
+  }
+}
+
+const mapPlacementRequestToBedSearchParams = ({
   duration,
   essentialCriteria,
   expectedArrival,
   location,
-  mentalHealthSupport,
   radius,
-  type,
-  id,
   person,
-}: PlacementRequest): TableCell => ({
-  html: `<a data-cy-placementRequestId="${id}" href="${paths.beds.search({})}?${createQueryString({
-    gender,
-    desirableCriteria,
-    duration,
-    essentialCriteria,
-    expectedArrival,
-    location,
-    mentalHealthSupport,
-    radius,
-    type,
-    crn: person.crn,
-  })}">Find bed</a>`,
+  applicationId,
+  assessmentId,
+}: PlacementRequest): BedSearchParametersUi & {
+  [key: string]: unknown
+  crn: string
+  applicationId: string
+  assessmentId: string
+} => ({
+  durationDays: duration.toString(),
+  startDate: expectedArrival,
+  postcodeDistrict: location,
+  maxDistanceMiles: radius.toString(),
+  crn: person.crn,
+  applicationId,
+  assessmentId,
+  requiredPremisesCharacteristics: essentialCriteria,
+  requiredRoomCharacteristics: essentialCriteria,
 })
