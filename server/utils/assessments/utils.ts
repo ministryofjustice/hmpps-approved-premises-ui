@@ -95,12 +95,58 @@ const allocationSummary = (assessment: Assessment): Array<SummaryListItem> => {
   return summary
 }
 
-
-
+const crnCell = (assessment: Assessment) => {
+  return {
+    html: assessment.application.person.crn,
+  }
 }
 
+const arrivalDateCell = (assessment: Assessment) => {
+  return {
+    text: formattedArrivalDate(assessment),
+  }
+}
 
+const daysUntilDueCell = (assessment: Assessment) => {
+  return {
+    html: formatDaysUntilDueWithWarning(assessment),
+  }
+}
 
+const statusCell = (assessment: Assessment) => {
+  return {
+    html: getStatus(assessment),
+  }
+}
+
+const linkCell = (assessment: Assessment) => {
+  return {
+    html: assessmentLink(assessment),
+  }
+}
+
+const tierCell = (assessment: Assessment) => {
+  return {
+    html: tierBadge(assessment.application.risks.tier.value.level),
+  }
+}
+
+const prisonCell = (assessment: Assessment) => {
+  return {
+    text: assessment.application.person.prisonName,
+  }
+}
+
+const daysSinceReceivedCell = (assessment: Assessment) => {
+  return {
+    text: formatDays(daysSinceReceived(assessment)),
+  }
+}
+
+const daysSinceInfoRequestCell = (assessment: Assessment) => {
+  return {
+    text: formatDays(daysSinceInfoRequest(assessment)),
+  }
 }
 
 const awaitingAssessmentTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
@@ -108,27 +154,13 @@ const awaitingAssessmentTableRows = (assessments: Array<Assessment>): Array<Tabl
 
   assessments.forEach(assessment => {
     rows.push([
-      {
-        html: assessmentLink(assessment),
-      },
-      {
-        html: assessment.application.person.crn,
-      },
-      {
-        html: tierBadge(assessment.application.risks.tier.value.level),
-      },
-      {
-        text: formattedArrivalDate(assessment),
-      },
-      {
-        text: assessment.application.person.prisonName,
-      },
-      {
-        html: formatDaysUntilDueWithWarning(assessment),
-      },
-      {
-        html: getStatus(assessment),
-      },
+      linkCell(assessment),
+      crnCell(assessment),
+      tierCell(assessment),
+      arrivalDateCell(assessment),
+      prisonCell(assessment),
+      daysUntilDueCell(assessment),
+      statusCell(assessment),
     ])
   })
 
@@ -140,21 +172,11 @@ const completedTableRows = (assessments: Array<Assessment>): Array<TableRow> => 
 
   assessments.forEach(assessment => {
     rows.push([
-      {
-        html: assessmentLink(assessment),
-      },
-      {
-        html: assessment.application.person.crn,
-      },
-      {
-        html: tierBadge(assessment.application.risks.tier.value.level),
-      },
-      {
-        text: formattedArrivalDate(assessment),
-      },
-      {
-        html: getStatus(assessment),
-      },
+      linkCell(assessment),
+      crnCell(assessment),
+      tierCell(assessment),
+      arrivalDateCell(assessment),
+      statusCell(assessment),
     ])
   })
 
@@ -164,29 +186,19 @@ const completedTableRows = (assessments: Array<Assessment>): Array<TableRow> => 
 const requestedFurtherInformationTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
+  const infoRequestStatusCell = {
+    html: `<strong class="govuk-tag govuk-tag--yellow">Info Request</strong>`,
+  }
+
   assessments.forEach(assessment => {
     rows.push([
-      {
-        html: assessmentLink(assessment),
-      },
-      {
-        html: assessment.application.person.crn,
-      },
-      {
-        html: tierBadge(assessment.application.risks.tier.value.level),
-      },
-      {
-        text: formattedArrivalDate(assessment),
-      },
-      {
-        text: formatDays(daysSinceReceived(assessment)),
-      },
-      {
-        text: formatDays(daysSinceInfoRequest(assessment)),
-      },
-      {
-        html: `<strong class="govuk-tag govuk-tag--yellow">Info Request</strong>`,
-      },
+      linkCell(assessment),
+      crnCell(assessment),
+      tierCell(assessment),
+      arrivalDateCell(assessment),
+      daysSinceReceivedCell(assessment),
+      daysSinceInfoRequestCell(assessment),
+      infoRequestStatusCell,
     ])
   })
 
