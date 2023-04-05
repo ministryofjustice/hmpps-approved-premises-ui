@@ -1,3 +1,5 @@
+{%- from "moj/components/primary-navigation/macro.njk" import mojPrimaryNavigation -%}
+
 <header class="hmpps-header" role="banner">
   <div class="hmpps-header__container">
     <div class="hmpps-header__title">
@@ -31,3 +33,12 @@
     </nav>
   </div>
 </header>
+
+{% if not hideNav %}
+  {{
+  mojPrimaryNavigation({
+    label: 'Primary navigation',
+    items: navigationItems(user, currentUrl)
+  })
+}}
+{% endif %}

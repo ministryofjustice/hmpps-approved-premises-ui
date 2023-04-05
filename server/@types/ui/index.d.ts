@@ -261,6 +261,14 @@ export type OasysSummariesSection = { [index: string]: OasysImportArrays }
 
 export type JourneyType = 'applications' | 'assessments'
 
+export type ServiceSection = {
+  id: string
+  title: string
+  description: string
+  shortTitle: string
+  href: string
+}
+
 export type UserDetails = {
   id: string
   name: string
