@@ -29,6 +29,7 @@ describe('DashboardController', () => {
 
       expect(response.render).toHaveBeenCalledWith('dashboard/index', {
         pageHeading: 'Approved Premises',
+        hideNav: true,
         sections,
       })
     })
