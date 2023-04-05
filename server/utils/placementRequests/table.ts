@@ -92,6 +92,5 @@ const mapPlacementRequestToBedSearchParams = ({
   crn: person.crn,
   applicationId,
   assessmentId,
-  requiredPremisesCharacteristics: essentialCriteria,
-  requiredRoomCharacteristics: essentialCriteria,
+  requiredCharacteristics: essentialCriteria,
 })
