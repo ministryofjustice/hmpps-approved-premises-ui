@@ -70,7 +70,15 @@ describe('dateUtils', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       expect(formattedArrivalDate(assessment)).toEqual('1 Jan 2022')
-      expect(arrivalDateFromApplication).toHaveBeenCalledWith(assessment.application)
+      expect(arrivalDateFromApplication).toHaveBeenCalledWith(assessment.application, false)
+    })
+
+    it('returns N/A if there is no arrival date for the application', () => {
+      const assessment = assessmentFactory.build()
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(null)
+
+      expect(formattedArrivalDate(assessment)).toEqual('N/A')
+      expect(arrivalDateFromApplication).toHaveBeenCalledWith(assessment.application, false)
     })
   })
 

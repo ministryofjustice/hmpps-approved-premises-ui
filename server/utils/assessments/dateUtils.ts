@@ -53,7 +53,10 @@ const assessmentsApproachingDue = (assessments: Array<Assessment>): number => {
 }
 
 const formattedArrivalDate = (assessment: Assessment): string => {
-  const arrivalDate = arrivalDateFromApplication(assessment.application as Application)
+  const arrivalDate = arrivalDateFromApplication(assessment.application as Application, false)
+  if (!arrivalDate) {
+    return 'N/A'
+  }
   return format(DateFormats.isoToDateObj(arrivalDate), 'd MMM yyyy')
 }
 
