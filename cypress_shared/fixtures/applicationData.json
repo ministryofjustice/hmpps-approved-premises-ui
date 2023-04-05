@@ -273,7 +273,7 @@
   },
   "location-factors": {
     "describe-location-factors": {
-      "postcodeArea": "SW1",
+      "postcodeArea": "SW11",
       "positiveFactors": "Some positive factors",
       "restrictions": "yes",
       "restrictionDetail": "Restrictions go here",
@@ -369,7 +369,7 @@
       "durationDetail": "Some more information"
     },
     "relocation-region": {
-      "postcodeArea": "SW1"
+      "postcodeArea": "SW11"
     },
     "plans-in-place": {
       "arePlansInPlace": "yes"

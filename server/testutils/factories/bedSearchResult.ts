@@ -27,7 +27,7 @@ const premisesSummaryFactory = Factory.define<BedSearchResult['premises']>(() =>
   town: faker.address.city(),
   id: faker.datatype.uuid(),
   name: faker.company.name(),
-  postcode: 'SW1',
+  postcode: 'SW11',
   characteristics: apCharacteristicPairFactory.buildList(3),
   bedCount: faker.datatype.number({ min: 0, max: 10 }),
 }))
