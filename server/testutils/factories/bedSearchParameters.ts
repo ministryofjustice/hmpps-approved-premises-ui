@@ -8,7 +8,7 @@ export default Factory.define<BedSearchParameters, unknown, BedSearchParametersU
   durationDays: faker.datatype.number({ min: 1, max: 90 }),
   startDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
   maxDistanceMiles: faker.datatype.number({ min: 1, max: 100 }),
-  postcodeDistrict: 'SW1',
+  postcodeDistrict: 'SW11',
   requiredCharacteristics: faker.helpers.arrayElements([
     'isIAP',
     'isPIPE',
