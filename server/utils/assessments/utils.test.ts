@@ -1,10 +1,7 @@
 import {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
-  allocatedTableRows,
-  allocationLink,
   allocationSummary,
-  arriveDateAsTimestamp,
   assessmentLink,
   assessmentSections,
   assessmentsApproachingDue,
@@ -29,7 +26,6 @@ import {
   rejectionRationaleFromAssessmentResponses,
   requestedFurtherInformationTableRows,
   reviewApplicationSections,
-  unallocatedTableRows,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 import paths from '../../paths/assess'
@@ -218,16 +214,6 @@ describe('utils', () => {
     })
   })
 
-  describe('arriveDateAsTimestamp', () => {
-    it('returns the arrival date from the application as a unix timestamp', () => {
-      const assessment = assessmentFactory.build()
-      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
-
-      expect(arriveDateAsTimestamp(assessment)).toEqual(1640995200)
-      expect(arrivalDateFromApplication).toHaveBeenCalledWith(assessment.application)
-    })
-  })
-
   describe('getApplicationType', () => {
     it('returns standard when the application is not PIPE', () => {
       ;(applicationUtils.getApplicationType as jest.Mock).mockReturnValue('Standard')
@@ -246,69 +232,6 @@ describe('utils', () => {
       })
 
       expect(getApplicationType(assessment)).toEqual('PIPE')
-    })
-  })
-
-  describe('allocatedTableRows', () => {
-    it('returns table rows for the assessments', () => {
-      const staffMember = userFactory.build()
-      const assessment = assessmentFactory.build({
-        allocatedToStaffMember: staffMember,
-      })
-      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
-
-      expect(allocatedTableRows([assessment])).toEqual([
-        [
-          { text: assessment.application.person.name },
-          {
-            text: formattedArrivalDate(assessment),
-            attributes: {
-              'data-sort-value': `${arriveDateAsTimestamp(assessment)}`,
-            },
-          },
-          {
-            html: formatDaysUntilDueWithWarning(assessment),
-            attributes: {
-              'data-sort-value': `${daysUntilDue(assessment)}`,
-            },
-          },
-          { text: assessment.allocatedToStaffMember.name },
-          { text: getApplicationType(assessment) },
-          { html: getStatus(assessment) },
-          { html: allocationLink(assessment, 'Reallocate') },
-        ],
-      ])
-    })
-  })
-
-  describe('unallocatedTableRows', () => {
-    it('returns table rows for the assessments', () => {
-      const staffMember = userFactory.build()
-      const assessment = assessmentFactory.build({
-        allocatedToStaffMember: staffMember,
-      })
-      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
-
-      expect(unallocatedTableRows([assessment])).toEqual([
-        [
-          { text: assessment.application.person.name },
-          {
-            text: formattedArrivalDate(assessment),
-            attributes: {
-              'data-sort-value': `${arriveDateAsTimestamp(assessment)}`,
-            },
-          },
-          {
-            html: formatDaysUntilDueWithWarning(assessment),
-            attributes: {
-              'data-sort-value': `${daysUntilDue(assessment)}`,
-            },
-          },
-          { text: getApplicationType(assessment) },
-          { html: getStatus(assessment) },
-          { html: allocationLink(assessment, 'Allocate') },
-        ],
-      ])
     })
   })
 
@@ -451,20 +374,6 @@ describe('utils', () => {
         <a href="${paths.assessments.show({
           id: '123',
         })}" data-cy-assessmentId="123">My Text <span class="govuk-visually-hidden">and some hidden text</span></a>
-      `)
-    })
-  })
-
-  describe('allocationLink', () => {
-    const assessment = assessmentFactory.build({ application: { id: '123', person: { name: 'John Wayne' } } })
-
-    it('returns a link to an allocation', () => {
-      expect(allocationLink(assessment, 'Allocate')).toMatchStringIgnoringWhitespace(`
-        <a href="${paths.allocations.show({
-          id: '123',
-        })}" data-cy-assessmentId="${
-        assessment.id
-      }">Allocate <span class="govuk-visually-hidden">assessment for John Wayne</span></a>
       `)
     })
   })

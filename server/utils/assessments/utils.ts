@@ -95,77 +95,12 @@ const allocationSummary = (assessment: Assessment): Array<SummaryListItem> => {
   return summary
 }
 
-const allocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
-  const rows = [] as Array<TableRow>
 
-  assessments.forEach(assessment => {
-    rows.push([
-      {
-        text: assessment.application.person.name,
-      },
-      {
-        text: formattedArrivalDate(assessment),
-        attributes: {
-          'data-sort-value': `${arriveDateAsTimestamp(assessment)}`,
-        },
-      },
-      {
-        html: formatDaysUntilDueWithWarning(assessment),
-        attributes: {
-          'data-sort-value': `${daysUntilDue(assessment)}`,
-        },
-      },
-      {
-        text: assessment.allocatedToStaffMember.name,
-      },
-      {
-        text: getApplicationType(assessment),
-      },
-      {
-        html: getStatus(assessment),
-      },
-      {
-        html: allocationLink(assessment, 'Reallocate'),
-      },
-    ])
-  })
 
-  return rows
 }
 
-const unallocatedTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
-  const rows = [] as Array<TableRow>
 
-  assessments.forEach(assessment => {
-    rows.push([
-      {
-        text: assessment.application.person.name,
-      },
-      {
-        text: formattedArrivalDate(assessment),
-        attributes: {
-          'data-sort-value': `${arriveDateAsTimestamp(assessment)}`,
-        },
-      },
-      {
-        html: formatDaysUntilDueWithWarning(assessment),
-        attributes: {
-          'data-sort-value': `${daysUntilDue(assessment)}`,
-        },
-      },
-      {
-        text: getApplicationType(assessment),
-      },
-      {
-        html: getStatus(assessment),
-      },
-      {
-        html: allocationLink(assessment, 'Allocate'),
-      },
-    ])
-  })
 
-  return rows
 }
 
 const awaitingAssessmentTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
@@ -258,18 +193,6 @@ const requestedFurtherInformationTableRows = (assessments: Array<Assessment>): A
   return rows
 }
 
-const allocationLink = (assessment: Assessment, action: 'Allocate' | 'Reallocate'): string => {
-  return linkTo(
-    paths.allocations.show,
-    { id: assessment.application.id },
-    {
-      text: action,
-      hiddenText: `assessment for ${assessment.application.person.name}`,
-      attributes: { 'data-cy-assessmentId': assessment.id },
-    },
-  )
-}
-
 const assessmentLink = (assessment: Assessment, linkText = '', hiddenText = ''): string => {
   return linkTo(
     paths.assessments.show,
@@ -285,11 +208,6 @@ const assessmentLink = (assessment: Assessment, linkText = '', hiddenText = ''):
 const formattedArrivalDate = (assessment: Assessment): string => {
   const arrivalDate = arrivalDateFromApplication(assessment.application as ApprovedPremisesApplication)
   return format(DateFormats.isoToDateObj(arrivalDate), 'd MMM yyyy')
-}
-
-const arriveDateAsTimestamp = (assessment: Assessment): number => {
-  const arrivalDate = arrivalDateFromApplication(assessment.application as ApprovedPremisesApplication)
-  return DateFormats.isoToTimestamp(arrivalDate)
 }
 
 const formatDays = (days: number): string => {
@@ -490,10 +408,7 @@ const rejectionRationaleFromAssessmentResponses = (assessment: Assessment): stri
 export {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
-  allocatedTableRows,
-  allocationLink,
   allocationSummary,
-  arriveDateAsTimestamp,
   assessmentLink,
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
@@ -516,7 +431,6 @@ export {
   getTaskResponsesAsSummaryListItems,
   groupAssessmements,
   requestedFurtherInformationTableRows,
-  unallocatedTableRows,
   rejectionRationaleFromAssessmentResponses,
   reviewApplicationSections,
 }
