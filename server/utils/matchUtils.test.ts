@@ -82,18 +82,32 @@ describe('matchUtils', () => {
 
   describe('startDateFromParams', () => {
     describe('when passed input from date input', () => {
-      it(' it returns the date in ISO format', () => {
+      it('it returns the date in ISO format', () => {
         const date = new Date()
         const dateInput = DateFormats.dateObjectToDateInputs(date, 'startDate')
 
         expect(startDateFromParams({ ...dateInput })).toEqual(DateFormats.dateObjToIsoDate(date))
       })
     })
+
     describe('when passed input as startDate from params', () => {
       it('it returns the date in ISO format', () => {
         const dateInput = DateFormats.dateObjToIsoDate(new Date())
 
         expect(startDateFromParams({ startDate: dateInput })).toEqual(dateInput)
+      })
+    })
+
+    describe('when passed an empty strings from date inputs and a startDate', () => {
+      it('it returns the startDate ', () => {
+        expect(
+          startDateFromParams({
+            startDate: 'startDate',
+            'startDate-day': '',
+            'startDate-month': '',
+            'startDate-year': '',
+          }),
+        ).toEqual('startDate')
       })
     })
   })

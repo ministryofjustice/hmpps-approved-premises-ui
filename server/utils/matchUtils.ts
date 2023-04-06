@@ -94,9 +94,10 @@ export const bedCountRow = (bedSearchResult: BedSearchResult) => ({
 })
 
 export const startDateFromParams = (params: { startDate: string } | ObjectWithDateParts<'startDate'>) => {
-  if ('startDate-day' in params && 'startDate-month' in params && 'startDate-year' in params) {
-    return DateFormats.dateAndTimeInputsToIsoString(params, 'startDate').startDate
+  if (params['startDate-day'] && params['startDate-month'] && params['startDate-year']) {
+    return DateFormats.dateAndTimeInputsToIsoString(params as ObjectWithDateParts<'startDate'>, 'startDate').startDate
   }
+
   return params.startDate
 }
 
