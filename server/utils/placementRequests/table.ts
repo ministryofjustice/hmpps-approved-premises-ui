@@ -79,12 +79,7 @@ const mapPlacementRequestToBedSearchParams = ({
   person,
   applicationId,
   assessmentId,
-}: PlacementRequest): BedSearchParametersUi & {
-  [key: string]: unknown
-  crn: string
-  applicationId: string
-  assessmentId: string
-} => ({
+}: PlacementRequest): BedSearchParametersUi => ({
   durationDays: duration.toString(),
   startDate: expectedArrival,
   postcodeDistrict: location,

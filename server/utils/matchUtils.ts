@@ -13,21 +13,27 @@ export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParame
   maxDistanceMiles: Number(query.maxDistanceMiles),
 })
 
-export const mapApiParamsForUi = (apiParams: BedSearchParameters): BedSearchParametersUi => ({
+export const mapApiParamsForUi = (apiParams: BedSearchParameters): Partial<BedSearchParametersUi> => ({
   ...apiParams,
   durationDays: apiParams.durationDays.toString(),
   maxDistanceMiles: apiParams.maxDistanceMiles.toString(),
 })
 
-export const mapApiCharacteristicForUi = (characteristic: CharacteristicPair) => {
-  const result = characteristic.name.startsWith('is') ? characteristic.name.slice(2) : characteristic.name
-
-  if (result.toLocaleUpperCase() === result) return `<li>${result}</li>`
-  return `<li>${sentenceCase(result)}</li>`
+export const translateApiCharacteristicForUi = (characteristic: string) => {
+  const result = characteristic.startsWith('is') ? characteristic.slice(2) : characteristic
+  if (['esap', 'pipe', 'iap'].includes(result)) return `${characteristic.toUpperCase()}`
+  if (result.toLocaleUpperCase() === result) return `${result}`
+  return `${sentenceCase(result)}`
 }
 
-export const mapApiCharacteristicsForUi = (characteristics: Array<CharacteristicPair>) => {
-  return `<ul class="govuk-list">${characteristics.map(mapApiCharacteristicForUi).join('')}</ul>`
+export const mapSearchResultCharacteristicsForUi = (characteristics: Array<CharacteristicPair>) => {
+  return mapSearchParamCharacteristicsForUi(characteristics.map(characteristicPair => characteristicPair.name))
+}
+
+export const mapSearchParamCharacteristicsForUi = (characteristics: Array<string>) => {
+  return `<ul class="govuk-list">${characteristics
+    .map(characteristicPair => `<li>${translateApiCharacteristicForUi(characteristicPair)}</li>`)
+    .join('')}</ul>`
 }
 
 export const summaryCardRows = (
@@ -65,7 +71,7 @@ export const premisesCharacteristicsRow = (bedSearchResult: BedSearchResult) => 
     text: 'Premises characteristics',
   },
   value: {
-    html: mapApiCharacteristicsForUi(bedSearchResult.premises.characteristics),
+    html: mapSearchResultCharacteristicsForUi(bedSearchResult.premises.characteristics),
   },
 })
 
@@ -74,7 +80,7 @@ export const roomCharacteristicsRow = (bedSearchResult: BedSearchResult) => ({
     text: 'Room characteristics',
   },
   value: {
-    html: mapApiCharacteristicsForUi(bedSearchResult.room.characteristics),
+    html: mapSearchResultCharacteristicsForUi(bedSearchResult.room.characteristics),
   },
 })
 
@@ -91,6 +97,12 @@ export const startDateFromParams = (params: { startDate: string } | ObjectWithDa
   if ('startDate-day' in params && 'startDate-month' in params && 'startDate-year' in params) {
     return DateFormats.dateAndTimeInputsToIsoString(params, 'startDate').startDate
   }
-  if ('startDate' in params) return params.startDate
-  return undefined
+  return params.startDate
 }
+
+export const searchFilter = (placementCriteria: Array<string>, selectedValues: Array<string>) =>
+  placementCriteria.map(criterion => ({
+    text: translateApiCharacteristicForUi(criterion),
+    value: criterion,
+    checked: selectedValues.includes(criterion),
+  }))

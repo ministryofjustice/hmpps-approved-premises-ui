@@ -1,17 +1,21 @@
 import { BedSearchParametersUi } from '../@types/ui'
-import { apCharacteristicPairFactory, bedSearchParametersFactory, bedSearchResultFactory } from '../testutils/factories'
+
+import { bedSearchParametersFactory, bedSearchResultFactory } from '../testutils/factories'
 import { DateFormats } from './dateUtils'
 import {
   addressRow,
   bedCountRow,
-  mapApiCharacteristicForUi,
   mapApiParamsForUi,
+  mapSearchParamCharacteristicsForUi,
+  mapSearchResultCharacteristicsForUi,
   mapUiParamsForApi,
   premisesCharacteristicsRow,
   roomCharacteristicsRow,
+  searchFilter,
   startDateFromParams,
   summaryCardRows,
   townRow,
+  translateApiCharacteristicForUi,
 } from './matchUtils'
 
 describe('matchUtils', () => {
@@ -39,15 +43,27 @@ describe('matchUtils', () => {
     })
   })
 
+  describe('translateApiCharacteristicForUi', () => {
+    it('it returns the search results characteristics names in a list', () => {
+      expect(mapSearchResultCharacteristicsForUi([{ name: 'some characteristic' }])).toEqual(
+        `<ul class="govuk-list"><li>Some characteristic</li></ul>`,
+      )
+    })
+  })
+
+  describe('mapSearchResultCharacteristicsForUi', () => {
+    it('it returns the search results characteristics names in a list', () => {
+      expect(mapSearchParamCharacteristicsForUi(['some characteristic'])).toEqual(
+        '<ul class="govuk-list"><li>Some characteristic</li></ul>',
+      )
+    })
+  })
+
   describe('mapApiCharacteristicForUi', () => {
     it('if the characteristic name is defined it is returned in a human readable format', () => {
-      const esap = apCharacteristicPairFactory.build({ name: 'isESAP' })
-      const iap = apCharacteristicPairFactory.build({ name: 'isIAP' })
-      const pipe = apCharacteristicPairFactory.build({ name: 'isPIPE' })
-
-      expect(mapApiCharacteristicForUi(esap)).toBe('<li>ESAP</li>')
-      expect(mapApiCharacteristicForUi(iap)).toBe('<li>IAP</li>')
-      expect(mapApiCharacteristicForUi(pipe)).toBe('<li>PIPE</li>')
+      expect(translateApiCharacteristicForUi('isESAP')).toBe('ESAP')
+      expect(translateApiCharacteristicForUi('isIAP')).toBe('IAP')
+      expect(translateApiCharacteristicForUi('isPIPE')).toBe('PIPE')
     })
   })
 
@@ -79,6 +95,24 @@ describe('matchUtils', () => {
 
         expect(startDateFromParams({ startDate: dateInput })).toEqual(dateInput)
       })
+    })
+  })
+
+  describe('searchFilter', () => {
+    it('maps the placementCriteria array and selectedValues array into the array of objects for checkbox inputs', () => {
+      expect(searchFilter(['isESAP', 'isIAP', 'isSemiSpecialistMentalHealth'], ['isESAP', 'isIAP'])).toEqual([
+        {
+          checked: true,
+          text: 'ESAP',
+          value: 'isESAP',
+        },
+        { text: 'IAP', value: 'isIAP', checked: true },
+        {
+          checked: false,
+          text: 'Semi specialist mental health',
+          value: 'isSemiSpecialistMentalHealth',
+        },
+      ])
     })
   })
 })
