@@ -305,4 +305,9 @@ export type ContingencyPlanQuestionsRecord = Record<ContingencyPlanQuestionId, C
 export interface BedSearchParametersUi extends BedSearchParameters {
   durationDays: string
   maxDistanceMiles: string
+  crn: string
+  applicationId: string
+  assessmentId: string
+  [index: string]: unknown
+  selectedRequiredCharacteristics?: Array<string>
 }

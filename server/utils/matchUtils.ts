@@ -13,7 +13,7 @@ export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParame
   maxDistanceMiles: Number(query.maxDistanceMiles),
 })
 
-export const mapApiParamsForUi = (apiParams: BedSearchParameters): BedSearchParametersUi => ({
+export const mapApiParamsForUi = (apiParams: BedSearchParameters): Partial<BedSearchParametersUi> => ({
   ...apiParams,
   durationDays: apiParams.durationDays.toString(),
   maxDistanceMiles: apiParams.maxDistanceMiles.toString(),
@@ -97,8 +97,7 @@ export const startDateFromParams = (params: { startDate: string } | ObjectWithDa
   if ('startDate-day' in params && 'startDate-month' in params && 'startDate-year' in params) {
     return DateFormats.dateAndTimeInputsToIsoString(params, 'startDate').startDate
   }
-  if ('startDate' in params) return params.startDate
-  return undefined
+  return params.startDate
 }
 
 export const searchFilter = (placementCriteria: Array<string>, selectedValues: Array<string>) =>
