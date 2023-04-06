@@ -100,3 +100,10 @@ export const startDateFromParams = (params: { startDate: string } | ObjectWithDa
   if ('startDate' in params) return params.startDate
   return undefined
 }
+
+export const searchFilter = (placementCriteria: Array<string>, selectedValues: Array<string>) =>
+  placementCriteria.map(criterion => ({
+    text: translateApiCharacteristicForUi(criterion),
+    value: criterion,
+    checked: selectedValues.includes(criterion),
+  }))

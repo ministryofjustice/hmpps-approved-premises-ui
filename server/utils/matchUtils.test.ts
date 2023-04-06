@@ -11,6 +11,7 @@ import {
   mapUiParamsForApi,
   premisesCharacteristicsRow,
   roomCharacteristicsRow,
+  searchFilter,
   startDateFromParams,
   summaryCardRows,
   townRow,
@@ -94,6 +95,24 @@ describe('matchUtils', () => {
 
         expect(startDateFromParams({ startDate: dateInput })).toEqual(dateInput)
       })
+    })
+  })
+
+  describe('searchFilter', () => {
+    it('maps the placementCriteria array and selectedValues array into the array of objects for checkbox inputs', () => {
+      expect(searchFilter(['isESAP', 'isIAP', 'isSemiSpecialistMentalHealth'], ['isESAP', 'isIAP'])).toEqual([
+        {
+          checked: true,
+          text: 'ESAP',
+          value: 'isESAP',
+        },
+        { text: 'IAP', value: 'isIAP', checked: true },
+        {
+          checked: false,
+          text: 'Semi specialist mental health',
+          value: 'isSemiSpecialistMentalHealth',
+        },
+      ])
     })
   })
 })
