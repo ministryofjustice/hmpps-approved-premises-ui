@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import acctAlertFactory from './acctAlert'
 import activeOffenceFactory from './activeOffence'
 import adjudicationFactory from './adjudication'
