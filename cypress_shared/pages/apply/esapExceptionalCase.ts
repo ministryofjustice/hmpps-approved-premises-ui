@@ -1,3 +1,4 @@
+import { YesOrNo } from '../../../server/@types/ui'
 import Page from '../page'
 
 export default class EsapExceptionalCase extends Page {
@@ -7,10 +8,12 @@ export default class EsapExceptionalCase extends Page {
     )
   }
 
-  completeForm() {
-    this.checkRadioByNameAndValue('agreedCaseWithCommunityHopp', 'yes')
-    this.getTextInputByIdAndEnterDetails('communityHoppName', 'Some Manager')
-    this.completeDateInputs('agreementDate', '2023-07-01')
-    this.completeTextArea('agreementSummary', 'Some Summary Text')
+  completeForm(response: YesOrNo = 'yes') {
+    this.checkRadioByNameAndValue('agreedCaseWithCommunityHopp', response)
+    if (response === 'yes') {
+      this.getTextInputByIdAndEnterDetails('communityHoppName', 'Some Manager')
+      this.completeDateInputs('agreementDate', '2023-07-01')
+      this.completeTextArea('agreementSummary', 'Some Summary Text')
+    }
   }
 }

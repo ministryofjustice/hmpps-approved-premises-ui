@@ -30,7 +30,13 @@ describe('EsapExceptionalCase', () => {
 
   itShouldHavePreviousValue(new EsapExceptionalCase({}), 'managed-by-national-security-division')
 
-  itShouldHaveNextValue(new EsapExceptionalCase(body), 'esap-placement-screening')
+  describe('when agreedCaseWithCommunityHopp is yes', () => {
+    itShouldHaveNextValue(new EsapExceptionalCase(body), 'esap-placement-screening')
+  })
+
+  describe('when agreedCaseWithCommunityHopp is no', () => {
+    itShouldHaveNextValue(new EsapExceptionalCase({ ...body, agreedCaseWithCommunityHopp: 'no' }), 'not-esap-eligible')
+  })
 
   describe('errors', () => {
     it('should return an empty object if the body is provided correctly', () => {

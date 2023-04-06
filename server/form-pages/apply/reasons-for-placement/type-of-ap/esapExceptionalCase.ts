@@ -70,6 +70,9 @@ export default class EsapExceptionalCase implements TasklistPage {
   }
 
   next() {
+    if (this.body.agreedCaseWithCommunityHopp === 'no') {
+      return 'not-esap-eligible'
+    }
     return 'esap-placement-screening'
   }
 

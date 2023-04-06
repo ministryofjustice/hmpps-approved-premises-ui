@@ -474,14 +474,33 @@ export default class ApplyHelper {
     isManagedByNationalSecurityDivision.clickSubmit()
 
     // Then I should be asked if there has been an agreement with the Community Head of Public Protection
-    const exceptionalCase = Page.verifyOnPage(ApplyPages.EsapExceptionalCase, this.application)
+    let exceptionalCase = Page.verifyOnPage(ApplyPages.EsapExceptionalCase, this.application)
 
     // When I click yes
     exceptionalCase.completeForm()
     exceptionalCase.clickSubmit()
 
     // Then I should be taken to the rest of the Esap flow
-    Page.verifyOnPage(ApplyPages.EsapPlacementScreening, this.application)
+    const screeningPage = Page.verifyOnPage(ApplyPages.EsapPlacementScreening, this.application)
+
+    // When I click back
+    screeningPage.clickBack()
+
+    // Then I should be back on the exceptional case page
+    exceptionalCase = Page.verifyOnPage(ApplyPages.EsapExceptionalCase, this.application)
+
+    // When I choose No
+    exceptionalCase.completeForm('no')
+    exceptionalCase.clickSubmit()
+
+    // Then I should be told that my ESAP application is not valid
+    const notEligiblePage = Page.verifyOnPage(ApplyPages.EsapNotEligible, this.application)
+
+    // When I click the continue button
+    notEligiblePage.clickSubmit()
+
+    // Then I should be able to choose a different type of AP
+    Page.verifyOnPage(ApplyPages.TypeOfApPage, this.application)
   }
 
   private completeOasysSection() {
