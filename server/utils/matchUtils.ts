@@ -19,15 +19,21 @@ export const mapApiParamsForUi = (apiParams: BedSearchParameters): BedSearchPara
   maxDistanceMiles: apiParams.maxDistanceMiles.toString(),
 })
 
-export const mapApiCharacteristicForUi = (characteristic: CharacteristicPair) => {
-  const result = characteristic.name.startsWith('is') ? characteristic.name.slice(2) : characteristic.name
-
-  if (result.toLocaleUpperCase() === result) return `<li>${result}</li>`
-  return `<li>${sentenceCase(result)}</li>`
+export const translateApiCharacteristicForUi = (characteristic: string) => {
+  const result = characteristic.startsWith('is') ? characteristic.slice(2) : characteristic
+  if (['esap', 'pipe', 'iap'].includes(result)) return `${characteristic.toUpperCase()}`
+  if (result.toLocaleUpperCase() === result) return `${result}`
+  return `${sentenceCase(result)}`
 }
 
-export const mapApiCharacteristicsForUi = (characteristics: Array<CharacteristicPair>) => {
-  return `<ul class="govuk-list">${characteristics.map(mapApiCharacteristicForUi).join('')}</ul>`
+export const mapSearchResultCharacteristicsForUi = (characteristics: Array<CharacteristicPair>) => {
+  return mapSearchParamCharacteristicsForUi(characteristics.map(characteristicPair => characteristicPair.name))
+}
+
+export const mapSearchParamCharacteristicsForUi = (characteristics: Array<string>) => {
+  return `<ul class="govuk-list">${characteristics
+    .map(characteristicPair => `<li>${translateApiCharacteristicForUi(characteristicPair)}</li>`)
+    .join('')}</ul>`
 }
 
 export const summaryCardRows = (
@@ -65,7 +71,7 @@ export const premisesCharacteristicsRow = (bedSearchResult: BedSearchResult) => 
     text: 'Premises characteristics',
   },
   value: {
-    html: mapApiCharacteristicsForUi(bedSearchResult.premises.characteristics),
+    html: mapSearchResultCharacteristicsForUi(bedSearchResult.premises.characteristics),
   },
 })
 
@@ -74,7 +80,7 @@ export const roomCharacteristicsRow = (bedSearchResult: BedSearchResult) => ({
     text: 'Room characteristics',
   },
   value: {
-    html: mapApiCharacteristicsForUi(bedSearchResult.room.characteristics),
+    html: mapSearchResultCharacteristicsForUi(bedSearchResult.room.characteristics),
   },
 })
 
