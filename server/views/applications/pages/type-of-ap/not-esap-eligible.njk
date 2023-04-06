@@ -1,0 +1,47 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + page.title %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+
+  {{ govukBackLink({
+      text: "Back",
+      href: paths.applications.pages.show({ id: applicationId, task: task, page: page.previous() })
+    }) }}
+
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="{{ columnClasses | default("govuk-grid-column-two-thirds") }}">
+      <form action="{{ paths.applications.pages.update({ id: applicationId, task: task, page: page.name }) }}?_method=PUT" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+        <h1 class="govuk-heading-l">{{ page.title }}</h1>
+
+        <p>You can continue with an application for a standard AP placement. Or you can withdraw your application by returning to the dashboard.</p>
+
+        <div class="govuk-button-group">
+          {{
+            govukButton({
+              text: "Continue with application"
+            })
+          }}
+          {{
+            linkTo(
+              paths.applications.index,
+              {},
+              {
+                text: 'Back to dashboard'
+              }
+            ) | safe
+          }}
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

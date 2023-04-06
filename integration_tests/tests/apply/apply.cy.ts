@@ -235,6 +235,30 @@ context('Apply', () => {
     apply.completeEmergencyApplication()
   })
 
+  it('allows completion of the ESAP flow', function test() {
+    // Given I have completed the basic information of a form
+    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
+    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+
+    this.application = addResponseToApplication(this.application, {
+      section: 'type-of-ap',
+      page: 'ap-type',
+      key: 'type',
+      value: 'esap',
+    })
+
+    apply.setupApplicationStubs(uiRisks)
+
+    // And I start the application
+    apply.startApplication()
+    apply.completeBasicInformation()
+
+    // And I complete the Esap flow
+    apply.completeEsapFlow()
+
+    // Then I should be asked if the person is managed by the National Security division
+  })
+
   it('allows completion of the form', function test() {
     // And I complete the application
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)

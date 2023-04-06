@@ -25,7 +25,7 @@ describe('ApType', () => {
   })
 
   describe('when type is set to esap', () => {
-    itShouldHaveNextValue(new ApType({ type: 'esap' }, application), 'esap-placement-screening')
+    itShouldHaveNextValue(new ApType({ type: 'esap' }, application), 'managed-by-national-security-division')
   })
 
   describe('when type is set to standard', () => {

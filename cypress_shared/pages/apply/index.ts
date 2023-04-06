@@ -15,9 +15,13 @@ import DateOfOffence from './dateOfOffence'
 import DescribeLocationFactors from './describeLocationFactors'
 import EnterCRNPage from './enterCrn'
 import ExceptionDetailsPage from './ExceptionDetails'
+import EsapExceptionalCase from './esapExceptionalCase'
+import EsapPlacementScreening from './esapPlacementScreening'
+import EsapNotEligible from './esapNotEligible'
 import ForeignNationalPage from './foreignNational'
 import IsExceptionalCasePage from './isExceptionalCase'
 import ListPage from './list'
+import NationalSecurityDivision from './nationalSecurityDivision'
 import OffenceDetailsPage from './offenceDetails'
 import OptionalOasysSectionsPage from './optionalOasysSections'
 import PlacementDurationPage from './placementDuration'
@@ -66,9 +70,13 @@ export {
   DescribeLocationFactors,
   EnterCRNPage,
   ExceptionDetailsPage,
+  EsapExceptionalCase,
+  EsapPlacementScreening,
+  EsapNotEligible,
   ForeignNationalPage,
   IsExceptionalCasePage,
   ListPage,
+  NationalSecurityDivision,
   OffenceDetailsPage,
   OptionalOasysSectionsPage,
   PlacementDurationPage,
