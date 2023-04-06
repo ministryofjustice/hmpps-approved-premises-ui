@@ -5,7 +5,7 @@ import BedsController, { placementCriteria } from './bedSearchController'
 import { bedSearchParametersFactory, bedSearchResultFactory, personFactory } from '../../testutils/factories'
 
 import { BedService, PersonService } from '../../services'
-import { mapApiParamsForUi, startDateFromParams } from '../../utils/matchUtils'
+import { mapApiParamsForUi, startDateObjFromParams } from '../../utils/matchUtils'
 import { BedSearchParametersUi } from '../../@types/ui'
 import matchPaths from '../../paths/match'
 import assessPaths from '../../paths/assess'
@@ -55,7 +55,7 @@ describe('bedSearchController', () => {
           ...request.query,
           ...bedSearchParameters,
         }
-        ;(startDateFromParams as jest.Mock).mockReturnValue(query.startDate)
+        ;(startDateObjFromParams as jest.Mock).mockReturnValue({ startDate: query.startDate })
 
         const body = { durationDays: '2' }
 
@@ -94,7 +94,7 @@ describe('bedSearchController', () => {
           ...request.query,
           ...(bedSearchParametersFactory.onCreate(mapApiParamsForUi).build() as unknown as BedSearchParametersUi),
         }
-        ;(startDateFromParams as jest.Mock).mockReturnValue(query.startDate)
+        ;(startDateObjFromParams as jest.Mock).mockReturnValue({ startDate: query.startDate })
 
         const requestHandler = bedsController.search()
 
@@ -135,7 +135,7 @@ describe('bedSearchController', () => {
             ...(bedSearchParametersFactory.onCreate(mapApiParamsForUi).build() as unknown as BedSearchParametersUi),
           },
         }
-        ;(startDateFromParams as jest.Mock).mockReturnValue(params.body.startDate)
+        ;(startDateObjFromParams as jest.Mock).mockReturnValue({ startDate: params.body.startDate })
 
         await requestHandler({ ...request, ...params }, response, next)
 

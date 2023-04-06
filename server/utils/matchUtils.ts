@@ -93,12 +93,14 @@ export const bedCountRow = (bedSearchResult: BedSearchResult) => ({
   },
 })
 
-export const startDateFromParams = (params: { startDate: string } | ObjectWithDateParts<'startDate'>) => {
+export const startDateObjFromParams = (params: { startDate: string } | ObjectWithDateParts<'startDate'>) => {
   if (params['startDate-day'] && params['startDate-month'] && params['startDate-year']) {
-    return DateFormats.dateAndTimeInputsToIsoString(params as ObjectWithDateParts<'startDate'>, 'startDate').startDate
+    return {
+      ...DateFormats.dateAndTimeInputsToIsoString(params as ObjectWithDateParts<'startDate'>, 'startDate'),
+    }
   }
 
-  return params.startDate
+  return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
 }
 
 export const searchFilter = (placementCriteria: Array<string>, selectedValues: Array<string>) =>

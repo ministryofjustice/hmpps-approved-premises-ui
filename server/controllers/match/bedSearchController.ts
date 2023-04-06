@@ -7,7 +7,7 @@ import applyPaths from '../../paths/apply'
 import { PersonService } from '../../services'
 import BedService from '../../services/bedService'
 
-import { startDateFromParams } from '../../utils/matchUtils'
+import { startDateObjFromParams } from '../../utils/matchUtils'
 import { objectIfNotEmpty } from '../../utils/utils'
 
 export const placementCriteria = [
@@ -46,7 +46,7 @@ export default class BedSearchController {
         ...body,
       }
 
-      params.startDate = startDateFromParams(params)
+      params.startDate = startDateObjFromParams(params).startDate
       params.requiredCharacteristics = [...(params.selectedRequiredCharacteristics || params.requiredCharacteristics)]
 
       const bedSearchResults = await this.bedService.search(req.user.token, params as BedSearchParametersUi)
@@ -60,6 +60,7 @@ export default class BedSearchController {
         assessmentPath: assessPaths.assessments.show({ id: params.assessmentId }),
         applicationPath: applyPaths.applications.show({ id: params.applicationId }),
         ...params,
+        ...startDateObjFromParams(params),
         placementCriteria,
       })
     }
