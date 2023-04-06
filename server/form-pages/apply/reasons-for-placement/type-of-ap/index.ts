@@ -8,6 +8,7 @@ import EsapPlacementScreening from './esapPlacementScreening'
 import EsapPlacementSecreting from './esapPlacementSecreting'
 import EsapPlacementCCTV from './esapPlacementCCTV'
 import EsapNationalSecurityDivision from './esapNationalSecurityDivision'
+import EsapExceptionalCase from './esapExceptionalCase'
 
 @Task({
   slug: 'type-of-ap',
@@ -15,6 +16,7 @@ import EsapNationalSecurityDivision from './esapNationalSecurityDivision'
   pages: [
     ApType,
     EsapNationalSecurityDivision,
+    EsapExceptionalCase,
     PipeReferral,
     PipeOpdScreening,
     EsapPlacementScreening,

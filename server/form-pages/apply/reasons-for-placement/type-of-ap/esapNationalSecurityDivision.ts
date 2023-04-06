@@ -30,7 +30,10 @@ export default class EsapNationalSecurityDivision implements TasklistPage {
   }
 
   next() {
-    return 'esap-placement-screening'
+    if (this.body.managedByNationalSecurityDivision === 'yes') {
+      return 'esap-placement-screening'
+    }
+    return 'esap-exceptional-case'
   }
 
   errors() {

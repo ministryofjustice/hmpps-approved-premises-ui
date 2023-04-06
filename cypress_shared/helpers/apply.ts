@@ -468,6 +468,20 @@ export default class ApplyHelper {
 
     // Then I should be asked if the person is managed by the national security division
     const isManagedByNationalSecurityDivision = Page.verifyOnPage(ApplyPages.NationalSecurityDivision, this.application)
+
+    // When I answer no to the isManagedByNationalSecurityDivision question
+    isManagedByNationalSecurityDivision.completeForm('no')
+    isManagedByNationalSecurityDivision.clickSubmit()
+
+    // Then I should be asked if there has been an agreement with the Community Head of Public Protection
+    const exceptionalCase = Page.verifyOnPage(ApplyPages.EsapExceptionalCase, this.application)
+
+    // When I click yes
+    exceptionalCase.completeForm()
+    exceptionalCase.clickSubmit()
+
+    // Then I should be taken to the rest of the Esap flow
+    Page.verifyOnPage(ApplyPages.EsapPlacementScreening, this.application)
   }
 
   private completeOasysSection() {

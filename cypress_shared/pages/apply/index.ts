@@ -15,6 +15,8 @@ import DateOfOffence from './dateOfOffence'
 import DescribeLocationFactors from './describeLocationFactors'
 import EnterCRNPage from './enterCrn'
 import ExceptionDetailsPage from './ExceptionDetails'
+import EsapExceptionalCase from './esapExceptionalCase'
+import EsapPlacementScreening from './esapPlacementScreening'
 import ForeignNationalPage from './foreignNational'
 import IsExceptionalCasePage from './isExceptionalCase'
 import ListPage from './list'
@@ -67,6 +69,8 @@ export {
   DescribeLocationFactors,
   EnterCRNPage,
   ExceptionDetailsPage,
+  EsapExceptionalCase,
+  EsapPlacementScreening,
   ForeignNationalPage,
   IsExceptionalCasePage,
   ListPage,

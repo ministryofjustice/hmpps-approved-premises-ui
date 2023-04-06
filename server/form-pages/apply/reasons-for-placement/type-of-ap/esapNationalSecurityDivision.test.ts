@@ -25,10 +25,19 @@ describe('EsapNationalSecurityDivisionBody', () => {
 
   itShouldHavePreviousValue(new EsapNationalSecurityDivisionBody({}, application), 'ap-type')
 
-  itShouldHaveNextValue(
-    new EsapNationalSecurityDivisionBody({ managedByNationalSecurityDivision: 'yes' }, application),
-    'esap-placement-screening',
-  )
+  describe('when the person is managed by the national security division', () => {
+    itShouldHaveNextValue(
+      new EsapNationalSecurityDivisionBody({ managedByNationalSecurityDivision: 'yes' }, application),
+      'esap-placement-screening',
+    )
+  })
+
+  describe('when the person is not managed by the national security division', () => {
+    itShouldHaveNextValue(
+      new EsapNationalSecurityDivisionBody({ managedByNationalSecurityDivision: 'no' }, application),
+      'esap-exceptional-case',
+    )
+  })
 
   describe('errors', () => {
     it('should return an empty object if isExceptionalCase is populated', () => {
