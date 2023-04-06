@@ -4,6 +4,8 @@ import type { TaskListErrors } from '@approved-premises/ui'
 import TasklistPage from '../../../tasklistPage'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { Page } from '../../../utils/decorators'
+import EsapExceptionalCase from './esapExceptionalCase'
+import { pageDataFromApplicationOrAssessment } from '../../../utils'
 
 export const esapReasons = {
   secreting:
@@ -42,6 +44,9 @@ export default class EsapPlacementScreening implements TasklistPage {
   ) {}
 
   previous() {
+    if (Object.keys(pageDataFromApplicationOrAssessment(EsapExceptionalCase, this.application)).length) {
+      return 'esap-exceptional-case'
+    }
     return 'ap-type'
   }
 
