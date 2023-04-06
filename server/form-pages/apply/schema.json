@@ -343,6 +343,73 @@
             }
           }
         },
+        "managed-by-national-security-division": {
+          "type": "object",
+          "properties": {
+            "managedByNationalSecurityDivision": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "esap-exceptional-case": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "agreementDate-year": {
+                  "type": "string"
+                },
+                "agreementDate-month": {
+                  "type": "string"
+                },
+                "agreementDate-day": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "agreementDate-time": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "agreementDate": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "agreedCaseWithCommunityHopp": {
+                  "enum": [
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                },
+                "communityHoppName": {
+                  "type": "string"
+                },
+                "agreementSummary": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "not-esap-eligible": {
+          "type": "object"
+        },
         "pipe-referral": {
           "allOf": [
             {
