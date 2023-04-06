@@ -13,7 +13,7 @@ export default class BedClient {
   async search(params: BedSearchParameters): Promise<BedSearchResults> {
     return (await this.restClient.post({
       path: `${paths.match.findBeds.pattern}`,
-      data: { ...params },
+      data: { ...params, serviceName: 'approved-premises' },
     })) as Promise<BedSearchResults>
   }
 }
