@@ -454,6 +454,22 @@ export default class ApplyHelper {
     tasklistPage.shouldShowTaskStatus('oasys-import', 'Not started')
   }
 
+  completeEsapFlow() {
+    // And I should be able to start the next task
+    cy.get('[data-cy-task-name="type-of-ap"]').click()
+    Page.verifyOnPage(ApplyPages.TypeOfApPage, this.application)
+
+    // Given I am on the Type of AP Page
+    const typeOfApPage = new ApplyPages.TypeOfApPage(this.application)
+
+    // When I complete the form and click submit
+    typeOfApPage.completeForm()
+    typeOfApPage.clickSubmit()
+
+    // Then I should be asked if the person is managed by the national security division
+    const isManagedByNationalSecurityDivision = Page.verifyOnPage(ApplyPages.NationalSecurityDivision, this.application)
+  }
+
   private completeOasysSection() {
     // Given I click the 'Import Oasys' task
     cy.get('[data-cy-task-name="oasys-import"]').click()

@@ -18,6 +18,7 @@ import ExceptionDetailsPage from './ExceptionDetails'
 import ForeignNationalPage from './foreignNational'
 import IsExceptionalCasePage from './isExceptionalCase'
 import ListPage from './list'
+import NationalSecurityDivision from './nationalSecurityDivision'
 import OffenceDetailsPage from './offenceDetails'
 import OptionalOasysSectionsPage from './optionalOasysSections'
 import PlacementDurationPage from './placementDuration'
@@ -69,6 +70,7 @@ export {
   ForeignNationalPage,
   IsExceptionalCasePage,
   ListPage,
+  NationalSecurityDivision,
   OffenceDetailsPage,
   OptionalOasysSectionsPage,
   PlacementDurationPage,
