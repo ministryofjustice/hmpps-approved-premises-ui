@@ -29,10 +29,8 @@
     "assets/**/*.js",
     "integration_tests",
     "cypress_shared",
-    "e2e",
     "dist",
     "cypress.config.ts",
-    "cypress.config.e2e.ts",
     "coverage/**"
   ],
   "include": ["**/*.js", "**/*.ts"]

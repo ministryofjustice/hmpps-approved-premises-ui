@@ -58,7 +58,7 @@ context('Apply', () => {
     // And that person has more than one offence listed under their CRN
     const offences = activeOffenceFactory.buildList(4)
 
-    const apply = new ApplyHelper(this.application, this.person, offences, 'integration')
+    const apply = new ApplyHelper(this.application, this.person, offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
@@ -97,7 +97,7 @@ context('Apply', () => {
     })
     this.application.risks = risks
 
-    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
@@ -116,7 +116,7 @@ context('Apply', () => {
     })
     this.application.risks = risks
 
-    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
@@ -132,7 +132,7 @@ context('Apply', () => {
   })
 
   it("creates and updates an application given a person's CRN", function test() {
-    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
@@ -200,7 +200,7 @@ context('Apply', () => {
   it('allows completion of application emergency flow', function test() {
     // And I complete the application
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
     const tomorrow = addDays(new Date(), 1)
 
     this.application = addResponsesToApplication(this.application, {
@@ -238,7 +238,7 @@ context('Apply', () => {
   it('allows completion of the ESAP flow', function test() {
     // Given I have completed the basic information of a form
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
 
     this.application = addResponseToApplication(this.application, {
       section: 'type-of-ap',
@@ -262,7 +262,7 @@ context('Apply', () => {
   it('allows completion of the form', function test() {
     // And I complete the application
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
 
     apply.setupApplicationStubs(uiRisks)
     apply.startApplication()

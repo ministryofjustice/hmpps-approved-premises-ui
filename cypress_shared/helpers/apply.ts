@@ -87,12 +87,7 @@ export default class ApplyHelper {
     private readonly application: Application,
     private readonly person: Person,
     private readonly offences: Array<ActiveOffence>,
-    private readonly type: 'e2e' | 'integration',
   ) {}
-
-  initializeE2e() {
-    this.addContingencyPlanDetails()
-  }
 
   setupApplicationStubs(uiRisks?: PersonRisksUI) {
     this.uiRisks = uiRisks
@@ -824,12 +819,9 @@ export default class ApplyHelper {
     checkYourAnswersPage.shouldShowMoveOnAnswers(this.pages.moveOn)
     checkYourAnswersPage.shouldShowDocuments(this.selectedDocuments)
 
-    // Skip the external system checks for e2e and setup is too complex and brittle
-    if (this.type === 'integration') {
-      checkYourAnswersPage.shouldShowOptionalOasysSectionsAnswers(this.pages.oasys)
-      checkYourAnswersPage.shouldShowCaseNotes(this.selectedPrisonCaseNotes)
-      checkYourAnswersPage.shouldShowAdjudications(this.adjudications)
-    }
+    checkYourAnswersPage.shouldShowOptionalOasysSectionsAnswers(this.pages.oasys)
+    checkYourAnswersPage.shouldShowCaseNotes(this.selectedPrisonCaseNotes)
+    checkYourAnswersPage.shouldShowAdjudications(this.adjudications)
 
     // When I have checked my answers
     checkYourAnswersPage.clickSubmit()
