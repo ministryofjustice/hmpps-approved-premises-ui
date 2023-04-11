@@ -16,5 +16,5 @@
       "@approved-premises/api": ["../server/@types/shared/index.d.ts"]
     }
   },
-  "include": ["**/*.ts", "../cypress_shared/**/*.ts"]
+  "include": ["**/*.ts"]
 }

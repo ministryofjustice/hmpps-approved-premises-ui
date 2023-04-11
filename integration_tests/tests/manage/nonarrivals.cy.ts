@@ -5,8 +5,8 @@ import {
   referenceDataFactory,
 } from '../../../server/testutils/factories'
 
-import { PremisesShowPage } from '../../../cypress_shared/pages/manage'
-import NonarrivalCreatePage from '../../../cypress_shared/pages/manage/nonarrivalCreate'
+import { PremisesShowPage } from '../../pages/manage'
+import NonarrivalCreatePage from '../../pages/manage/nonarrivalCreate'
 
 context('Nonarrivals', () => {
   it('creates a non-arrival', () => {

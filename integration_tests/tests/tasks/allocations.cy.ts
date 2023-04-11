@@ -1,6 +1,6 @@
-import TaskListPage from '../../../cypress_shared/pages/tasks/listPage'
-import AllocationsPage from '../../../cypress_shared/pages/tasks/allocationPage'
-import Page from '../../../cypress_shared/pages/page'
+import TaskListPage from '../../pages/tasks/listPage'
+import AllocationsPage from '../../pages/tasks/allocationPage'
+import Page from '../../pages/page'
 
 import { applicationFactory, reallocationFactory, taskFactory, userFactory } from '../../../server/testutils/factories'
 

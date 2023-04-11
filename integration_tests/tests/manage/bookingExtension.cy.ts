@@ -1,6 +1,6 @@
 import { bookingFactory, premisesFactory } from '../../../server/testutils/factories'
 
-import { BookingExtensionConfirmationPage, BookingExtensionCreatePage } from '../../../cypress_shared/pages/manage'
+import { BookingExtensionConfirmationPage, BookingExtensionCreatePage } from '../../pages/manage'
 
 context('BookingExtension', () => {
   beforeEach(() => {

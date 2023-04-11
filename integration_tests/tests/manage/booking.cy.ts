@@ -5,10 +5,10 @@ import {
   premisesFactory,
 } from '../../../server/testutils/factories'
 
-import { BookingFindPage, BookingNewPage, BookingShowPage } from '../../../cypress_shared/pages/manage'
-import Page from '../../../cypress_shared/pages/page'
+import { BookingFindPage, BookingNewPage, BookingShowPage } from '../../pages/manage'
+import Page from '../../pages/page'
 
-import BookingConfirmation from '../../../cypress_shared/pages/manage/booking/confirmation'
+import BookingConfirmation from '../../pages/manage/booking/confirmation'
 
 context('Booking', () => {
   beforeEach(() => {

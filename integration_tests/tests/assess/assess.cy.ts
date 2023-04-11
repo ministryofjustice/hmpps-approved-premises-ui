@@ -7,9 +7,9 @@ import {
 
 import { overwriteApplicationDocuments } from '../../../server/utils/assessments/documentUtils'
 
-import AssessHelper from '../../../cypress_shared/helpers/assess'
-import { ListPage, ShowPage, TaskListPage } from '../../../cypress_shared/pages/assess'
-import Page from '../../../cypress_shared/pages/page'
+import AssessHelper from '../../helpers/assess'
+import { ListPage, ShowPage, TaskListPage } from '../../pages/assess'
+import Page from '../../pages/page'
 
 context('Assess', () => {
   beforeEach(() => {

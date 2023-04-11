@@ -1,6 +1,6 @@
 import { dateCapacityFactory, lostBedFactory, premisesFactory } from '../../../server/testutils/factories'
 
-import { LostBedCreatePage } from '../../../cypress_shared/pages/manage'
+import { LostBedCreatePage } from '../../pages/manage'
 
 context('LostBed', () => {
   beforeEach(() => {

@@ -1,12 +1,5 @@
 import { addDays } from 'date-fns'
-import {
-  EnterCRNPage,
-  ListPage,
-  SelectOffencePage,
-  SentenceTypePage,
-  ShowPage,
-  StartPage,
-} from '../../../cypress_shared/pages/apply'
+import { EnterCRNPage, ListPage, SelectOffencePage, SentenceTypePage, ShowPage, StartPage } from '../../pages/apply'
 import { addResponseToApplication, addResponsesToApplication } from '../../../server/testutils/addToApplication'
 import {
   activeOffenceFactory,
@@ -16,14 +9,14 @@ import {
   tierEnvelopeFactory,
 } from '../../../server/testutils/factories'
 
-import ApplyHelper from '../../../cypress_shared/helpers/apply'
+import ApplyHelper from '../../helpers/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import IsExceptionalCasePage from '../../../cypress_shared/pages/apply/isExceptionalCase'
-import NotEligiblePage from '../../../cypress_shared/pages/apply/notEligiblePage'
-import Page from '../../../cypress_shared/pages/page'
-import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
+import IsExceptionalCasePage from '../../pages/apply/isExceptionalCase'
+import NotEligiblePage from '../../pages/apply/notEligiblePage'
+import Page from '../../pages/page'
+import SubmissionConfirmation from '../../pages/apply/submissionConfirmation'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
-import { updateApplicationReleaseDate } from '../../../cypress_shared/helpers'
+import { updateApplicationReleaseDate } from '../../helpers'
 
 context('Apply', () => {
   beforeEach(() => {

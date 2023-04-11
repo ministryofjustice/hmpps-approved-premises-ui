@@ -113,7 +113,7 @@ fs.writeFileSync(viewPath, viewTemplate(), {
 })
 
 // Create Page Object file
-const pageObjectPath = path.resolve(__dirname, `../../../cypress_shared/pages/${formName}/${camelCase(pageName)}.ts`)
+const pageObjectPath = path.resolve(__dirname, `../../pages/${formName}/${camelCase(pageName)}.ts`)
 
 fs.writeFileSync(pageObjectPath, pageObjectTemplate(pascalCase(pageName)), {
   flag: 'w+',

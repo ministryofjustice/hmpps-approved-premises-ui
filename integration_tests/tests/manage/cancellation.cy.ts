@@ -1,7 +1,7 @@
 import { bookingFactory, cancellationFactory, premisesFactory } from '../../../server/testutils/factories'
 
-import { BookingShowPage, CancellationCreatePage } from '../../../cypress_shared/pages/manage'
-import Page from '../../../cypress_shared/pages/page'
+import { BookingShowPage, CancellationCreatePage } from '../../pages/manage'
+import Page from '../../pages/page'
 
 context('Cancellation', () => {
   beforeEach(() => {
