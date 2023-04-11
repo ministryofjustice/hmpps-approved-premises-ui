@@ -1,5 +1,5 @@
-import ListPage from '../../../cypress_shared/pages/match/listPlacementRequestsPage'
-import SearchPage from '../../../cypress_shared/pages/match/searchPage'
+import ListPage from '../../pages/match/listPlacementRequestsPage'
+import SearchPage from '../../pages/match/searchPage'
 
 import {
   bedSearchParametersFactory,
@@ -7,7 +7,7 @@ import {
   personFactory,
   placementRequestFactory,
 } from '../../../server/testutils/factories'
-import Page from '../../../cypress_shared/pages/page'
+import Page from '../../pages/page'
 
 context('Placement Requests', () => {
   beforeEach(() => {

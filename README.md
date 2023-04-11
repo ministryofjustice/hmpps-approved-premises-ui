@@ -60,21 +60,9 @@ Wiremock.
 
 To run the server against a fake API go to the root directory and run:
 
-### End to end tests
-
-As well as unit and integration tests, there are also a [smaller suite of
-end-to-end tests](https://github.com/ministryofjustice/hmpps-approved-premises-ui/tree/main/e2e/tests)
-that run in [Circle CI](https://circleci.com/) post-deploy to the `dev`
-environment.
-
-If you want to run these tests against a local version of the full stack, then
-you can run the End to End tests against Docker containers running the full stack with:
-
 ```bash
-script/local_e2e
+script/server
 ```
-
-Note: This requires `ap-tools` to be installed (<https://github.com/ministryofjustice/hmpps-approved-premises-tools>)
 
 ## Release process
 

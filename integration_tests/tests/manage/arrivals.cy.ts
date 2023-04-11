@@ -1,4 +1,4 @@
-import { ArrivalCreatePage, PremisesShowPage } from '../../../cypress_shared/pages/manage'
+import { ArrivalCreatePage, PremisesShowPage } from '../../pages/manage'
 
 import {
   arrivalFactory,

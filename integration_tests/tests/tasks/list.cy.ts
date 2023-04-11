@@ -1,4 +1,4 @@
-import ListPage from '../../../cypress_shared/pages/tasks/listPage'
+import ListPage from '../../pages/tasks/listPage'
 
 import { taskFactory } from '../../../server/testutils/factories'
 
