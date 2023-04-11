@@ -46,11 +46,9 @@ export default class BedSearchController {
       }
 
       params.startDate = startDateFromParams(params)
+      params.requiredCharacteristics = [...(params.selectedRequiredCharacteristics || params.requiredCharacteristics)]
 
-      const bedSearchResults = await this.bedService.search(req.user.token, {
-        ...params,
-        requiredCharacteristics: params.selectedRequiredCharacteristics || params.requiredCharacteristics,
-      } as BedSearchParametersUi)
+      const bedSearchResults = await this.bedService.search(req.user.token, params as BedSearchParametersUi)
       const person = await this.personService.findByCrn(req.user.token, params.crn as string)
 
       res.render('match/search', {
@@ -61,7 +59,6 @@ export default class BedSearchController {
         assessmentPath: assessPaths.assessments.show({ id: params.assessmentId }),
         applicationPath: applyPaths.applications.show({ id: params.applicationId }),
         ...params,
-        requiredCharacteristics: [...(params.selectedRequiredCharacteristics = []), ...params.requiredCharacteristics],
         placementCriteria,
       })
     }
