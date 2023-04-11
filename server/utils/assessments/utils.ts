@@ -31,7 +31,7 @@ const groupAssessmements = (assessments: Array<Assessment>): GroupedAssessments 
       case 'completed':
         result.completed.push(assessment)
         break
-      case 'pending':
+      case 'awaiting_response':
         result.requestedFurtherInformation.push(assessment)
         break
       default:

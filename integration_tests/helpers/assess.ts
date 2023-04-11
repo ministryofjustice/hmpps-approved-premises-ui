@@ -127,7 +127,7 @@ export default class AseessHelper {
   }
 
   updateClarificationNote(informationReceived: YesOrNo, response?: string, responseReceivedOn?: string) {
-    const assessmentStatus = informationReceived === 'yes' ? 'active' : 'pending'
+    const assessmentStatus = informationReceived === 'yes' ? 'active' : 'awaiting_response'
     this.updateAssessmentStatus(assessmentStatus).then(() => {
       const informationReceivedPage = Page.verifyOnPage(InformationReceivedPage, this.assessment, {
         informationReceived,

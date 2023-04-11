@@ -8,7 +8,7 @@ jest.mock('./informationSetAsNotReceived')
 jest.mock('./decisionUtils')
 
 describe('getSections', () => {
-  const assessment = assessmentFactory.build({ status: 'pending' })
+  const assessment = assessmentFactory.build({ status: 'awaiting_response' })
 
   it('returns all sections if informationSetAsNotReceived is false', () => {
     ;(informationSetAsNotReceived as jest.Mock).mockReturnValue(false)

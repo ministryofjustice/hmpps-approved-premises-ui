@@ -79,8 +79,8 @@ context('Assess', () => {
         expect(body.query).equal(note)
       })
       .then(() => {
-        // Given my assessment is put into a pending state
-        this.assessHelper.updateAssessmentStatus('pending')
+        // Given my assessment is put into an awaiting response state
+        this.assessHelper.updateAssessmentStatus('awaiting_response')
       })
       .then(() => {
         // When I am redirected to the dashboard
@@ -121,8 +121,8 @@ context('Assess', () => {
     this.assessHelper
       .addClarificationNote('Note goes here')
       .then(() => {
-        // And my assessment is put into a pending state
-        this.assessHelper.updateAssessmentStatus('pending')
+        // And my assessment is put into an awaiting response state
+        this.assessHelper.updateAssessmentStatus('awaiting_response')
       })
       .then(() => {
         const listPage = Page.verifyOnPage(ListPage)

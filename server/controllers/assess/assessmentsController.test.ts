@@ -105,9 +105,9 @@ describe('assessmentsController', () => {
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
     })
 
-    it('redirects if the assessment is in a pending state and informationSetAsNotReceived is false', async () => {
+    it('redirects if the assessment is in a awaiting response state and informationSetAsNotReceived is false', async () => {
       ;(informationSetAsNotReceived as jest.Mock).mockReturnValue(false)
-      assessment.status = 'pending'
+      assessment.status = 'awaiting_response'
 
       const requestHandler = assessmentsController.show()
 
@@ -124,9 +124,9 @@ describe('assessmentsController', () => {
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
     })
 
-    it('fetches the assessment and renders the task list  if the assessment is in a pending state and informationSetAsNotReceived is true', async () => {
+    it('fetches the assessment and renders the task list  if the assessment is in an awaiting response state and informationSetAsNotReceived is true', async () => {
       ;(informationSetAsNotReceived as jest.Mock).mockReturnValue(true)
-      assessment.status = 'pending'
+      assessment.status = 'awaiting_response'
 
       const requestHandler = assessmentsController.show()
 
