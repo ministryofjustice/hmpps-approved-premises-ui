@@ -24,7 +24,7 @@ export default Factory.define<PlacementRequest>(() => ({
   releaseType: faker.helpers.arrayElement(['licence', 'rotl', 'hdc', 'pss', 'in_community']),
   status: faker.helpers.arrayElement(['notMatched', 'unableToMatch', 'matched']),
   assessmentDecision: faker.helpers.arrayElement(['accepted' as const, 'rejected' as const, undefined]),
-  assessmentDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
+  assessmentDate: DateFormats.dateObjToIsoDateTime(faker.date.soon()),
   assessor: userFactory.build(),
 }))
 

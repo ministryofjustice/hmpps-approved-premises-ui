@@ -1,3 +1,4 @@
+import { PlacementRequest } from '@approved-premises/api'
 import PlacementRequestClient from '../data/placementRequestClient'
 import { placementRequestFactory } from '../testutils/factories'
 import PlacementRequestService from './placementRequestService'
@@ -37,6 +38,20 @@ describe('placementRequestService', () => {
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
       expect(placementRequestClient.all).toHaveBeenCalled()
+    })
+  })
+
+  describe('getPlacementRequest', () => {
+    it('calls the find method on the placementRequest client', async () => {
+      const placementRequest: PlacementRequest = placementRequestFactory.build()
+      placementRequestClient.find.mockResolvedValue(placementRequest)
+
+      const result = await service.getPlacementRequest(token, placementRequest.id)
+
+      expect(result).toEqual(placementRequest)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.find).toHaveBeenCalledWith(placementRequest.id)
     })
   })
 })
