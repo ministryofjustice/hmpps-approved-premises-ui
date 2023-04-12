@@ -33,12 +33,48 @@ const premisesSummaryFactory = Factory.define<BedSearchResult['premises']>(() =>
 }))
 
 export const apCharacteristicPairFactory = Factory.define<CharacteristicPair>(() => ({
-  name: faker.helpers.arrayElement(['isIAP', 'isPIPE', 'isESAP']),
+  name: faker.helpers.arrayElement([
+    'isIAP',
+    'isPIPE',
+    'isESAP',
+    'isSemiSpecialistMentalHealth',
+    'isRecoveryFocussed',
+    'isSuitableForVulnerable',
+    'acceptsSexOffenders',
+    'acceptsChildSexOffenders',
+    'acceptsNonSexualChildOffenders',
+    'acceptsHateCrimeOffenders',
+    'isCatered',
+    'hasWideStepFreeAccess',
+    'hasWideAccessToCommunalAreas',
+    'hasStepFreeAccessToCommunalAreas',
+    'hasWheelChairAccessibleBathrooms',
+    'hasLift',
+    'hasTactileFlooring',
+    'hasBrailleSignage',
+    'hasHearingLoop',
+    'additionalRestrictions',
+  ]),
   premises: faker.company.name(),
 }))
 
 const roomCharacteristicFactory = Factory.define<CharacteristicPair>(() => ({
-  name: faker.helpers.arrayElement(['isGroundFloor', 'isArsonDesignated', 'isWheelchairDesignated']),
+  name: faker.helpers.arrayElement([
+    'acceptsSexOffenders',
+    'acceptsChildSexOffenders',
+    'acceptsNonSexualChildOffenders',
+    'acceptsHateCrimeOffenders',
+    'isCatered',
+    'hasWideStepFreeAccess',
+    'hasWideAccessToCommunalAreas',
+    'hasStepFreeAccessToCommunalAreas',
+    'hasWheelChairAccessibleBathrooms',
+    'hasLift',
+    'hasTactileFlooring',
+    'hasBrailleSignage',
+    'hasHearingLoop',
+    'additionalRestrictions',
+  ]),
   premises: faker.company.name(),
 }))
 

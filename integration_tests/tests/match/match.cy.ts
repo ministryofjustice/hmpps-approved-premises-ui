@@ -34,8 +34,10 @@ context('Placement Requests', () => {
       ...unableToMatchPlacementRequests,
       ...matchedPlacementRequests,
     ])
-
     const activePlacementRequest = activePlacementRequests[0]
+    const firstBedSearchParameters = bedSearchParametersFactory.build({
+      requiredCharacteristics: activePlacementRequest.essentialCriteria,
+    })
 
     // When I visit the placementRequests dashboard
     const listPage = ListPage.visit()
@@ -66,7 +68,7 @@ context('Placement Requests', () => {
 
     // And I should see the search results
     let numberOfSearches = 0
-    searchPage.shouldDisplaySearchResults(bedSearchResults)
+    searchPage.shouldDisplaySearchResults(bedSearchResults, firstBedSearchParameters)
     numberOfSearches += 1
 
     const newSearchParameters = bedSearchParametersFactory.build()
