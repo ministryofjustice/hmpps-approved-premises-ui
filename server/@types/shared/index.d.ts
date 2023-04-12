@@ -49,7 +49,7 @@ export type { BookingSearchResultPremisesSummary } from './models/BookingSearchR
 export type { BookingSearchResultRoomSummary } from './models/BookingSearchResultRoomSummary';
 export type { BookingSearchResults } from './models/BookingSearchResults';
 export type { BookingSearchSortField } from './models/BookingSearchSortField';
-export type { BookingSearchStatus } from './models/BookingSearchStatus';
+export type { BookingStatus } from './models/BookingStatus';
 export type { Cancellation } from './models/Cancellation';
 export type { CancellationReason } from './models/CancellationReason';
 export type { Characteristic } from './models/Characteristic';
