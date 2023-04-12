@@ -25,17 +25,41 @@ context('Placement Requests', () => {
     cy.task('stubBedSearch', { bedSearchResults })
     const person = personFactory.build()
     cy.task('stubFindPerson', { person })
-    const placementRequests = placementRequestFactory.buildList(1, { person })
-    cy.task('stubPlacementRequests', placementRequests)
+    const activePlacementRequests = placementRequestFactory.buildList(1, { person, status: 'not_matched' })
+    const unableToMatchPlacementRequests = placementRequestFactory.buildList(3, { status: 'unable_to_match' })
+    const matchedPlacementRequests = placementRequestFactory.buildList(5, { status: 'matched' })
+
+    cy.task('stubPlacementRequests', [
+      ...activePlacementRequests,
+      ...unableToMatchPlacementRequests,
+      ...matchedPlacementRequests,
+    ])
+
+    const activePlacementRequest = activePlacementRequests[0]
 
     // When I visit the placementRequests dashboard
-    const listPage = ListPage.visit(placementRequests)
+    const listPage = ListPage.visit()
 
     // Then I should see the placement requests that are allocated to me
-    listPage.shouldShowPlacementRequests()
+    listPage.shouldShowPlacementRequests(activePlacementRequests)
 
-    // When I click on a placement request
-    listPage.clickFindBed(placementRequests[0])
+    // When I click on the unable to match tab
+    listPage.clickUnableToMatch()
+
+    // Then I should see the unable to match placement requests
+    listPage.shouldShowPlacementRequests(unableToMatchPlacementRequests)
+
+    // When I click on the completed tab
+    listPage.clickCompleted()
+
+    // Then I should see the completed placement requests
+    listPage.shouldShowPlacementRequests(matchedPlacementRequests)
+
+    // When I click on the active cases tab
+    listPage.clickActive()
+
+    // And I click on a placement request
+    listPage.clickFindBed(activePlacementRequest)
 
     // Then I should be taken to the search page
     const searchPage = Page.verifyOnPage(SearchPage, person.name)
@@ -63,13 +87,13 @@ context('Placement Requests', () => {
       const secondSearchRequestBody = JSON.parse(requests[1].body)
 
       expect(initialSearchRequestBody).to.contain({
-        durationDays: placementRequests[0].duration,
-        startDate: placementRequests[0].expectedArrival,
-        postcodeDistrict: placementRequests[0].location,
-        maxDistanceMiles: placementRequests[0].radius,
+        durationDays: activePlacementRequest.duration,
+        startDate: activePlacementRequest.expectedArrival,
+        postcodeDistrict: activePlacementRequest.location,
+        maxDistanceMiles: activePlacementRequest.radius,
       })
 
-      expect(initialSearchRequestBody.requiredCharacteristics).to.have.members(placementRequests[0].essentialCriteria)
+      expect(initialSearchRequestBody.requiredCharacteristics).to.have.members(activePlacementRequest.essentialCriteria)
 
       expect(secondSearchRequestBody).to.contain({
         durationDays: newSearchParameters.durationDays,

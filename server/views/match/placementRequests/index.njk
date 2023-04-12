@@ -2,6 +2,7 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+{% from "./_table.njk" import placementRequestTable %}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
@@ -14,41 +15,31 @@
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
             {% include "../../_messages.njk" %}
 
-            {{
-                govukTable({
-                    attributes: {
-                        'data-module': 'moj-sortable-table'
-                    },
-                    firstCellIsHeader: true,
-                    head: [
-                        {
-                            text: "Name"
-                        },
-                        {
-                            text: "CRN"
-                        },
-                        {
-                            text: "Tier"
-                        },
-                        {
-                            text: "Expected arrival date",
-                            attributes: {
-                            "aria-sort": "none"
-                            }
-                        },
-                        {
-                            text: "Days until due date",
-                            attributes: {
-                            "aria-sort": "none"
-                            }
-                        },
-                        {
-                            text: "Type of release"
+            {{ govukTabs({
+                items: [
+                    {
+                        label: "Active cases",
+                        id: "active-cases",
+                        panel: {
+                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(placementRequests.not_matched))
                         }
-                    ],
-                    rows: PlacementRequestUtils.tableUtils. tableRows(placementRequests)
-                })
-            }}
+                    },
+                    {
+                        label: "Unable to match",
+                        id: "unable-to-match",
+                        panel: {
+                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(placementRequests.unable_to_match))
+                        }
+                    },
+                    {
+                        label: "Completed",
+                        id: "completed",
+                        panel: {
+                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(placementRequests.matched))
+                        }
+                    }
+                ]
+            }) }}
 
         </div>
     </div>
