@@ -46,6 +46,7 @@ import StartPage from './startPage'
 import SubmissionConfirmation from './submissionConfirmation'
 import SupportingInformationPage from './supportingInformation'
 import TaskListPage from './taskListPage'
+import TransgenderPage from './isPersonTransgender'
 import TriggerPlanPage from './triggerPlanPage'
 import TypeOfAccommodationPage from './typeOfAccommodation'
 import TypeOfApPage from './typeOfAp'
@@ -101,6 +102,7 @@ export {
   SubmissionConfirmation,
   SupportingInformationPage,
   TaskListPage,
+  TransgenderPage,
   TriggerPlanPage,
   TypeOfAccommodationPage,
   TypeOfApPage,

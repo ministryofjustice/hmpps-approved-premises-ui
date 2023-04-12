@@ -1,5 +1,8 @@
 {
   "basic-information": {
+    "transgender": {
+      "transgenderOrHasTransgenderHistory": "yes"
+    },
     "sentence-type": {
       "sentenceType": "communityOrder"
     },

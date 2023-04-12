@@ -382,6 +382,10 @@ export default class ApplyHelper {
   }
 
   completeBasicInformation(options: { isEmergencyApplication?: boolean } = {}) {
+    const transgenderPage = new ApplyPages.TransgenderPage(this.application)
+    transgenderPage.completeForm()
+    transgenderPage.clickSubmit()
+
     const sentenceTypePage = new ApplyPages.SentenceTypePage(this.application)
     sentenceTypePage.completeForm()
     sentenceTypePage.clickSubmit()
@@ -409,7 +413,13 @@ export default class ApplyHelper {
     placementPurposePage.completeForm()
     placementPurposePage.clickSubmit()
 
-    this.pages.basicInformation = [sentenceTypePage, releaseDatePage, placementStartPage, placementPurposePage]
+    this.pages.basicInformation = [
+      transgenderPage,
+      sentenceTypePage,
+      releaseDatePage,
+      placementStartPage,
+      placementPurposePage,
+    ]
 
     // Then I should be redirected to the task list
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
