@@ -20,6 +20,7 @@ export default Factory.define<PlacementRequest>(() => ({
   risks: risksFactory.build(),
   applicationId: faker.datatype.uuid(),
   assessmentId: faker.datatype.uuid(),
+  releaseType: faker.helpers.arrayElement(['licence', 'rotl', 'hdc', 'pss', 'in_community']),
 }))
 
 const placementCriteria = [
