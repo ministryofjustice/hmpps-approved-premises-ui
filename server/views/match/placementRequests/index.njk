@@ -9,26 +9,26 @@
 
 {% block content %}
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
 
-            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-            {% include "../../_messages.njk" %}
+      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+      {% include "../../_messages.njk" %}
 
-            {{ govukTabs({
+      {{ govukTabs({
                 items: [
                     {
                         label: "Active cases",
                         id: "active-cases",
                         panel: {
-                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(placementRequests.not_matched))
+                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(placementRequests.notMatched))
                         }
                     },
                     {
                         label: "Unable to match",
                         id: "unable-to-match",
                         panel: {
-                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(placementRequests.unable_to_match))
+                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(placementRequests.unableToMatch))
                         }
                     },
                     {
@@ -41,14 +41,14 @@
                 ]
             }) }}
 
-        </div>
     </div>
+  </div>
 {% endblock %}
 
 {% block extraScripts %}
-    <script type="text/javascript" nonce="{{ cspNonce }}">
-        window
-            .MOJFrontend
-            .initAll()
-    </script>
+  <script type="text/javascript" nonce="{{ cspNonce }}">
+    window
+      .MOJFrontend
+      .initAll()
+  </script>
 {% endblock %}

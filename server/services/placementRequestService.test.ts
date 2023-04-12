@@ -19,8 +19,8 @@ describe('placementRequestService', () => {
 
   describe('getAll', () => {
     it('returns grouped placement requests', async () => {
-      const unmatchedPlacementRequests = placementRequestFactory.buildList(4, { status: 'not_matched' })
-      const unableToMatchPlacementRequests = placementRequestFactory.buildList(3, { status: 'unable_to_match' })
+      const unmatchedPlacementRequests = placementRequestFactory.buildList(4, { status: 'notMatched' })
+      const unableToMatchPlacementRequests = placementRequestFactory.buildList(3, { status: 'unableToMatch' })
       const matchedPlacementRequests = placementRequestFactory.buildList(2, { status: 'matched' })
 
       placementRequestClient.all.mockResolvedValue([
@@ -32,8 +32,8 @@ describe('placementRequestService', () => {
       const result = await service.getAll(token)
 
       expect(result.matched).toEqual(matchedPlacementRequests)
-      expect(result.unable_to_match).toEqual(unableToMatchPlacementRequests)
-      expect(result.not_matched).toEqual(unmatchedPlacementRequests)
+      expect(result.unableToMatch).toEqual(unableToMatchPlacementRequests)
+      expect(result.notMatched).toEqual(unmatchedPlacementRequests)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
       expect(placementRequestClient.all).toHaveBeenCalled()
