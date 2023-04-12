@@ -28,7 +28,7 @@ export default class AssessmentsController {
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
       const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
-      const noteAwaitingResponse = assessment.status === 'pending' && !informationSetAsNotReceived(assessment)
+      const noteAwaitingResponse = assessment.status === 'awaiting_response' && !informationSetAsNotReceived(assessment)
 
       if (assessment.status === 'completed') {
         res.render('assessments/show', {

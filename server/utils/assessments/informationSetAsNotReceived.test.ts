@@ -2,7 +2,7 @@ import { assessmentFactory } from '../../testutils/factories'
 import informationSetAsNotReceived from './informationSetAsNotReceived'
 
 describe('informationSetAsNotReceived', () => {
-  const assessment = assessmentFactory.build({ status: 'pending' })
+  const assessment = assessmentFactory.build({ status: 'awaiting_response' })
 
   it('returns false when there is no data', () => {
     assessment.data = {}
