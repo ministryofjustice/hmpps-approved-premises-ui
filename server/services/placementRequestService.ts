@@ -1,3 +1,4 @@
+import { GroupedPlacementRequests } from '@approved-premises/ui'
 import { RestClientBuilder } from '../data'
 import PlacementRequestClient from '../data/placementRequestClient'
 
@@ -7,7 +8,18 @@ export default class TaskService {
   async getAll(token: string) {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
-    const tasks = await placementRequestClient.all()
-    return tasks
+    const results = {
+      not_matched: [],
+      unable_to_match: [],
+      matched: [],
+    } as GroupedPlacementRequests
+
+    const placementRequests = await placementRequestClient.all()
+
+    placementRequests.forEach(placementRequest => {
+      results[placementRequest.status].push(placementRequest)
+    })
+
+    return results
   }
 }

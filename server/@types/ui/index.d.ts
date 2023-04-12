@@ -15,6 +15,9 @@ import {
   OASysSection,
   Person,
   PersonAcctAlert,
+  PlacementRequest,
+  PlacementRequestStatus,
+  ReleaseTypeOption,
   RiskTier,
   RoshRisks,
   UserRole,
@@ -242,6 +245,8 @@ export interface GroupedApplications {
   submitted: Array<Application>
 }
 
+export type GroupedPlacementRequests = Record<PlacementRequestStatus, Array<PlacementRequest>>
+
 export interface ApplicationWithRisks extends Application {
   person: PersonWithRisks
 }
@@ -311,3 +316,5 @@ export interface BedSearchParametersUi extends BedSearchParameters {
   [index: string]: unknown
   selectedRequiredCharacteristics?: Array<string>
 }
+
+export type ReleaseTypeOptions = Record<ReleaseTypeOption, string>

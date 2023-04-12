@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
+import { GroupedPlacementRequests } from '@approved-premises/ui'
 import PlacementRequestsController from './placementRequestsController'
-import { placementRequestFactory } from '../../testutils/factories'
 
 import { PlacementRequestService } from '../../services'
 
@@ -24,7 +24,8 @@ describe('PlacementRequestsController', () => {
 
   describe('index', () => {
     it('should render the placement requests template', async () => {
-      const placementRequests = placementRequestFactory.buildList(1)
+      const placementRequests = createMock<GroupedPlacementRequests>()
+
       placementRequestService.getAll.mockResolvedValue(placementRequests)
 
       const requestHandler = placementRequestsController.index()
@@ -32,7 +33,7 @@ describe('PlacementRequestsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/index', {
-        pageHeading: 'Placement requests',
+        pageHeading: 'My Cases',
         placementRequests,
       })
       expect(placementRequestService.getAll).toHaveBeenCalledWith(token)

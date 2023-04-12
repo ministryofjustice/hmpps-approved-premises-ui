@@ -7,18 +7,29 @@ import { PlacementRequest } from '../../../server/@types/shared'
 import { shouldShowTableRows } from '../../helpers'
 
 export default class ListPage extends Page {
-  constructor(private readonly placementRequests: Array<PlacementRequest>) {
-    super('Placement requests')
-    this.placementRequests = placementRequests
+  constructor() {
+    super('My Cases')
   }
 
-  static visit(placementRequests: Array<PlacementRequest>): ListPage {
+  static visit(): ListPage {
     cy.visit(paths.placementRequests.index({}))
-    return new ListPage(placementRequests)
+    return new ListPage()
   }
 
-  shouldShowPlacementRequests(): void {
-    shouldShowTableRows(this.placementRequests, tableUtils.tableRows)
+  shouldShowPlacementRequests(placementRequests: Array<PlacementRequest>): void {
+    shouldShowTableRows(placementRequests, tableUtils.tableRows)
+  }
+
+  clickUnableToMatch(): void {
+    cy.get('a').contains('Unable to match').click()
+  }
+
+  clickCompleted(): void {
+    cy.get('a').contains('Completed').click()
+  }
+
+  clickActive(): void {
+    cy.get('a').contains('Active cases').click()
   }
 
   clickFindBed(placementRequest: PlacementRequest): void {
