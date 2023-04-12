@@ -151,3 +151,10 @@ export const createQueryString = (
 ): string => {
   return qs.stringify(params, options)
 }
+
+export const objectIfNotEmpty = <T>(object: Record<string, unknown> | undefined): T | undefined => {
+  if (Object.keys(object).length) {
+    return object as T
+  }
+  return undefined
+}

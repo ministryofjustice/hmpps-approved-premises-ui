@@ -7,6 +7,7 @@ import {
   initialiseName,
   linkTo,
   mapApiPersonRisksForUi,
+  objectIfNotEmpty,
   pascalCase,
   removeBlankSummaryListItems,
   resolvePath,
@@ -297,5 +298,15 @@ describe('resolvePath', () => {
     const object = { foo: { bar: 'baz' } }
 
     expect(resolvePath(object, 'foo.baz')).toEqual(undefined)
+  })
+
+  describe('objectIfNotEmpty', () => {
+    it('returns undefined if the object does not have keys', () => {
+      expect(objectIfNotEmpty({})).toBeUndefined()
+    })
+
+    it('returns the object if it does have keys', () => {
+      expect(objectIfNotEmpty({ key: 'value' })).toEqual({ key: 'value' })
+    })
   })
 })

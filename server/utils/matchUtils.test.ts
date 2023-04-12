@@ -12,7 +12,7 @@ import {
   premisesCharacteristicsRow,
   roomCharacteristicsRow,
   searchFilter,
-  startDateFromParams,
+  startDateObjFromParams,
   summaryCardRows,
   townRow,
   translateApiCharacteristicForUi,
@@ -82,18 +82,40 @@ describe('matchUtils', () => {
 
   describe('startDateFromParams', () => {
     describe('when passed input from date input', () => {
-      it(' it returns the date in ISO format', () => {
+      it('it returns an object with the date in ISO format', () => {
         const date = new Date()
         const dateInput = DateFormats.dateObjectToDateInputs(date, 'startDate')
 
-        expect(startDateFromParams({ ...dateInput })).toEqual(DateFormats.dateObjToIsoDate(date))
+        expect(startDateObjFromParams({ ...dateInput })).toEqual({
+          startDate: DateFormats.dateObjToIsoDate(date),
+          ...dateInput,
+        })
       })
     })
-    describe('when passed input as startDate from params', () => {
-      it('it returns the date in ISO format', () => {
-        const dateInput = DateFormats.dateObjToIsoDate(new Date())
 
-        expect(startDateFromParams({ startDate: dateInput })).toEqual(dateInput)
+    describe('when passed input as startDate from params', () => {
+      it('it returns an object the date in ISO format and the date parts for a date input', () => {
+        const dateInput = DateFormats.dateObjToIsoDate(new Date(2023, 0, 1))
+
+        expect(startDateObjFromParams({ startDate: dateInput })).toEqual({
+          startDate: dateInput,
+          'startDate-day': '1',
+          'startDate-month': '1',
+          'startDate-year': '2023',
+        })
+      })
+    })
+
+    describe('when passed an empty strings from date inputs and a startDate', () => {
+      it('it returns the startDate ', () => {
+        expect(
+          startDateObjFromParams({
+            startDate: '2023-04-11',
+            'startDate-day': '',
+            'startDate-month': '',
+            'startDate-year': '',
+          }),
+        ).toEqual({ startDate: '2023-04-11', 'startDate-day': '11', 'startDate-month': '4', 'startDate-year': '2023' })
       })
     })
   })
