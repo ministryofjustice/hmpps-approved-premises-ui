@@ -4,6 +4,7 @@ import { PlacementRequest } from '../../@types/shared'
 import { DateFormats } from '../../utils/dateUtils'
 import personFactory from './person'
 import risksFactory from './risks'
+import userFactory from './user'
 
 export default Factory.define<PlacementRequest>(() => ({
   id: faker.datatype.uuid(),
@@ -22,6 +23,9 @@ export default Factory.define<PlacementRequest>(() => ({
   assessmentId: faker.datatype.uuid(),
   releaseType: faker.helpers.arrayElement(['licence', 'rotl', 'hdc', 'pss', 'in_community']),
   status: faker.helpers.arrayElement(['notMatched', 'unableToMatch', 'matched']),
+  assessmentDecision: faker.helpers.arrayElement(['accepted' as const, 'rejected' as const, undefined]),
+  assessmentDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
+  assessor: userFactory.build(),
 }))
 
 const placementCriteria = [
