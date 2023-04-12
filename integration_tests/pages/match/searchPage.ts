@@ -17,7 +17,7 @@ export default class SearchPage extends Page {
     return new SearchPage(name)
   }
 
-  shouldDisplaySearchResults(bedSearchResult: BedSearchResults): void {
+  shouldDisplaySearchResults(bedSearchResult: BedSearchResults, searchParams: BedSearchParameters): void {
     cy.get('h2').contains(
       `${bedSearchResult.resultsBedCount} matching beds in ${bedSearchResult.resultsRoomCount} rooms in ${bedSearchResult.resultsPremisesCount} premises`,
     )
@@ -26,7 +26,7 @@ export default class SearchPage extends Page {
       cy.contains('div', result.premises.name)
         .parent('div')
         .within(() => {
-          const tableRows = summaryCardRows(result)
+          const tableRows = summaryCardRows(result, searchParams.requiredCharacteristics)
           tableRows.forEach(row => {
             cy.contains('dt', row.key.text)
               .parent('div')

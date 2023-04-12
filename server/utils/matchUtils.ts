@@ -36,14 +36,31 @@ export const mapSearchParamCharacteristicsForUi = (characteristics: Array<string
     .join('')}</ul>`
 }
 
+export const matchedCharacteristics = (bedSearchResult: BedSearchResult, requiredCharacteristics: Array<string>) => {
+  const characteristics = requiredCharacteristics.filter(characteristic =>
+    bedSearchResult.premises.characteristics.map(c => c.name).includes(characteristic),
+  )
+
+  return mapSearchParamCharacteristicsForUi(characteristics)
+}
+
+export const unmatchedCharacteristics = (bedSearchResult: BedSearchResult, requiredCharacteristics: Array<string>) => {
+  const characteristics = requiredCharacteristics.filter(
+    characteristic => !bedSearchResult.premises.characteristics.map(c => c.name).includes(characteristic),
+  )
+
+  return mapSearchParamCharacteristicsForUi(characteristics)
+}
+
 export const summaryCardRows = (
   bedSearchResult: BedSearchResult,
+  requiredCharacteristics: Array<string>,
 ): Array<{ key: { text: string }; value: { html: string } | { text: string } }> => {
   return [
     townRow(bedSearchResult),
     addressRow(bedSearchResult),
-    premisesCharacteristicsRow(bedSearchResult),
-    roomCharacteristicsRow(bedSearchResult),
+    matchedCharacteristicsRow(bedSearchResult, requiredCharacteristics),
+    additionalCharacteristicsRow(bedSearchResult, requiredCharacteristics),
     bedCountRow(bedSearchResult),
   ]
 }
@@ -66,21 +83,27 @@ export const addressRow = (bedSearchResult: BedSearchResult) => ({
   },
 })
 
-export const premisesCharacteristicsRow = (bedSearchResult: BedSearchResult) => ({
+export const matchedCharacteristicsRow = (
+  bedSearchResult: BedSearchResult,
+  requiredCharacteristics: Array<string> = [],
+) => ({
   key: {
-    text: 'Premises characteristics',
+    text: 'Matched characteristics',
   },
   value: {
-    html: mapSearchResultCharacteristicsForUi(bedSearchResult.premises.characteristics),
+    html: matchedCharacteristics(bedSearchResult, requiredCharacteristics),
   },
 })
 
-export const roomCharacteristicsRow = (bedSearchResult: BedSearchResult) => ({
+export const additionalCharacteristicsRow = (
+  bedSearchResult: BedSearchResult,
+  requiredCharacteristics: Array<string> = [],
+) => ({
   key: {
-    text: 'Room characteristics',
+    text: 'Additional characteristics',
   },
   value: {
-    html: mapSearchResultCharacteristicsForUi(bedSearchResult.room.characteristics),
+    html: unmatchedCharacteristics(bedSearchResult, requiredCharacteristics),
   },
 })
 

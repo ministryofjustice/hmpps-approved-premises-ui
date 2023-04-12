@@ -3,14 +3,14 @@ import { BedSearchParametersUi } from '../@types/ui'
 import { bedSearchParametersFactory, bedSearchResultFactory } from '../testutils/factories'
 import { DateFormats } from './dateUtils'
 import {
+  additionalCharacteristicsRow,
   addressRow,
   bedCountRow,
   mapApiParamsForUi,
   mapSearchParamCharacteristicsForUi,
   mapSearchResultCharacteristicsForUi,
   mapUiParamsForApi,
-  premisesCharacteristicsRow,
-  roomCharacteristicsRow,
+  matchedCharacteristicsRow,
   searchFilter,
   startDateObjFromParams,
   summaryCardRows,
@@ -70,11 +70,12 @@ describe('matchUtils', () => {
   describe('summaryCardsRow', () => {
     it('calls the correct row functions', () => {
       const bedSearchResult = bedSearchResultFactory.build()
-      expect(summaryCardRows(bedSearchResult.results[0])).toEqual([
+      const searchParams = bedSearchParametersFactory.build()
+      expect(summaryCardRows(bedSearchResult.results[0], searchParams.requiredCharacteristics)).toEqual([
         townRow(bedSearchResult.results[0]),
         addressRow(bedSearchResult.results[0]),
-        premisesCharacteristicsRow(bedSearchResult.results[0]),
-        roomCharacteristicsRow(bedSearchResult.results[0]),
+        matchedCharacteristicsRow(bedSearchResult.results[0], searchParams.requiredCharacteristics),
+        additionalCharacteristicsRow(bedSearchResult.results[0], searchParams.requiredCharacteristics),
         bedCountRow(bedSearchResult.results[0]),
       ])
     })
