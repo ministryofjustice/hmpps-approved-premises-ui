@@ -4,6 +4,7 @@
 
 import type { Person } from './Person';
 import type { PersonRisks } from './PersonRisks';
+import type { PlacementRequestStatus } from './PlacementRequestStatus';
 import type { PlacementRequirements } from './PlacementRequirements';
 import type { ReleaseTypeOption } from './ReleaseTypeOption';
 
@@ -14,6 +15,7 @@ export type PlacementRequest = (PlacementRequirements & {
     applicationId?: string;
     assessmentId?: string;
     releaseType?: ReleaseTypeOption;
+    status?: PlacementRequestStatus;
 } & {
     id: string;
     person: Person;
