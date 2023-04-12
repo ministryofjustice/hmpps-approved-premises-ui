@@ -15,6 +15,8 @@ import {
   OASysSection,
   Person,
   PersonAcctAlert,
+  PlacementRequest,
+  PlacementRequestStatus,
   ReleaseTypeOption,
   RiskTier,
   RoshRisks,
@@ -242,6 +244,8 @@ export interface GroupedApplications {
   requestedFurtherInformation: Array<Application>
   submitted: Array<Application>
 }
+
+export type GroupedPlacementRequests = Record<PlacementRequestStatus, Array<PlacementRequest>>
 
 export interface ApplicationWithRisks extends Application {
   person: PersonWithRisks

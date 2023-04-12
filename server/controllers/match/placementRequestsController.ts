@@ -9,7 +9,7 @@ export default class PlacementRequestsController {
       const placementRequests = await this.placementRequestService.getAll(req.user.token)
 
       res.render('match/placementRequests/index', {
-        pageHeading: 'Placement requests',
+        pageHeading: 'My Cases',
         placementRequests,
       })
     }

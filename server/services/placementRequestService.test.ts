@@ -1,4 +1,3 @@
-import { PlacementRequest } from '../@types/shared'
 import PlacementRequestClient from '../data/placementRequestClient'
 import { placementRequestFactory } from '../testutils/factories'
 import PlacementRequestService from './placementRequestService'
@@ -19,13 +18,22 @@ describe('placementRequestService', () => {
   })
 
   describe('getAll', () => {
-    it('calls the all method on the placementRequest client', async () => {
-      const placementRequests: Array<PlacementRequest> = placementRequestFactory.buildList(2)
-      placementRequestClient.all.mockResolvedValue(placementRequests)
+    it('returns grouped placement requests', async () => {
+      const unmatchedPlacementRequests = placementRequestFactory.buildList(4, { status: 'not_matched' })
+      const unableToMatchPlacementRequests = placementRequestFactory.buildList(3, { status: 'unable_to_match' })
+      const matchedPlacementRequests = placementRequestFactory.buildList(2, { status: 'matched' })
+
+      placementRequestClient.all.mockResolvedValue([
+        ...unmatchedPlacementRequests,
+        ...unableToMatchPlacementRequests,
+        ...matchedPlacementRequests,
+      ])
 
       const result = await service.getAll(token)
 
-      expect(result).toEqual(placementRequests)
+      expect(result.matched).toEqual(matchedPlacementRequests)
+      expect(result.unable_to_match).toEqual(unableToMatchPlacementRequests)
+      expect(result.not_matched).toEqual(unmatchedPlacementRequests)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
       expect(placementRequestClient.all).toHaveBeenCalled()
