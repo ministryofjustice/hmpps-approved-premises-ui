@@ -1,10 +1,11 @@
 import { add } from 'date-fns'
-import { PlacementCriteria, PlacementRequest } from '../../@types/shared'
+import { PlacementRequest } from '../../@types/shared'
 import { BedSearchParametersUi, TableCell, TableRow } from '../../@types/ui'
 import paths from '../../paths/match'
 import { DateFormats } from '../dateUtils'
-import { nameCell } from '../tableUtils'
-import { createQueryString, sentenceCase } from '../utils'
+import { createQueryString } from '../utils'
+import { tierBadge } from '../personUtils'
+import { allReleaseTypes } from '../applications/releaseTypeUtils'
 
 export const DIFFERENCE_IN_DAYS_BETWEEN_DUE_DATE_AND_ARRIVAL_DATE = 7
 
@@ -13,17 +14,15 @@ export const tableRows = (placementRequests: Array<PlacementRequest>): Array<Tab
     return [
       nameCell(placementRequest),
       crnCell(placementRequest),
-      dueDateCell(placementRequest, DIFFERENCE_IN_DAYS_BETWEEN_DUE_DATE_AND_ARRIVAL_DATE),
+      tierCell(placementRequest),
       expectedArrivalDateCell(placementRequest),
-      locationCell(placementRequest),
-      essentialPlacementCriteriaCell(placementRequest),
-      desirablePlacementCriteriaCell(placementRequest),
-      linkCell(placementRequest),
+      dueDateCell(placementRequest, DIFFERENCE_IN_DAYS_BETWEEN_DUE_DATE_AND_ARRIVAL_DATE),
+      releaseTypeCell(placementRequest),
     ]
   })
 }
 
-const crnCell = (placementRequest: PlacementRequest): TableCell => ({ text: placementRequest.person.crn })
+export const crnCell = (placementRequest: PlacementRequest): TableCell => ({ text: placementRequest.person.crn })
 
 export const dueDateCell = (
   placementRequest: PlacementRequest,
@@ -43,34 +42,27 @@ export const expectedArrivalDateCell = (placementRequest: PlacementRequest): Tab
   text: DateFormats.isoDateToUIDate(placementRequest.expectedArrival),
 })
 
-export const placementCriteriaClasses = `"govuk-!-padding-top-0 govuk-!-margin-top-0 govuk-body-s"`
-
-export const essentialPlacementCriteriaCell = (placementRequest: PlacementRequest): TableCell => ({
-  html: `<ul class=${placementCriteriaClasses}>${placementNeedsListItems(placementRequest.essentialCriteria)}</ul>`,
-})
-
-export const desirablePlacementCriteriaCell = (placementRequest: PlacementRequest): TableCell => ({
-  html: `<ul class=${placementCriteriaClasses}>${placementNeedsListItems(placementRequest.desirableCriteria)}</ul>`,
-})
-
-export const placementNeedsListItems = (placementNeeds: Array<PlacementCriteria>): string =>
-  placementNeeds.map(placementNeed => `<li>${sentenceCase(placementNeed)}</li>`).join('')
-
-export const locationCell = (placementRequest: PlacementRequest): TableCell => ({ text: placementRequest.location })
-
-export const mentalHealthSupportCell = (placementRequest: PlacementRequest): TableCell => ({
-  text: placementRequest.mentalHealthSupport ? 'Yes' : 'No',
-})
-
-export const linkCell = (placementRequest: PlacementRequest): TableCell => {
+export const nameCell = (placementRequest: PlacementRequest): TableCell => {
   return {
     html: `<a data-cy-placementRequestId="${placementRequest.id}" href="${paths.beds.search({})}?${createQueryString(
       mapPlacementRequestToBedSearchParams(placementRequest),
-    )}">Find bed</a>`,
+    )}">${placementRequest.person.name}</a>`,
   }
 }
 
-const mapPlacementRequestToBedSearchParams = ({
+export const tierCell = (placementRequest: PlacementRequest) => {
+  return {
+    html: tierBadge(placementRequest.risks.tier?.value?.level),
+  }
+}
+
+export const releaseTypeCell = (placementRequest: PlacementRequest) => {
+  return {
+    text: allReleaseTypes[placementRequest.releaseType],
+  }
+}
+
+export const mapPlacementRequestToBedSearchParams = ({
   duration,
   essentialCriteria,
   expectedArrival,
