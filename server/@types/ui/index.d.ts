@@ -15,6 +15,7 @@ import {
   OASysSection,
   Person,
   PersonAcctAlert,
+  ReleaseTypeOption,
   RiskTier,
   RoshRisks,
   UserRole,
@@ -311,3 +312,5 @@ export interface BedSearchParametersUi extends BedSearchParameters {
   [index: string]: unknown
   selectedRequiredCharacteristics?: Array<string>
 }
+
+export type ReleaseTypeOptions = Record<ReleaseTypeOption, string>
