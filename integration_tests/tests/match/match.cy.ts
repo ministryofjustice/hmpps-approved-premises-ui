@@ -25,8 +25,8 @@ context('Placement Requests', () => {
     cy.task('stubBedSearch', { bedSearchResults })
     const person = personFactory.build()
     cy.task('stubFindPerson', { person })
-    const activePlacementRequests = placementRequestFactory.buildList(1, { person, status: 'not_matched' })
-    const unableToMatchPlacementRequests = placementRequestFactory.buildList(3, { status: 'unable_to_match' })
+    const activePlacementRequests = placementRequestFactory.buildList(1, { person, status: 'notMatched' })
+    const unableToMatchPlacementRequests = placementRequestFactory.buildList(3, { status: 'unableToMatch' })
     const matchedPlacementRequests = placementRequestFactory.buildList(5, { status: 'matched' })
 
     cy.task('stubPlacementRequests', [

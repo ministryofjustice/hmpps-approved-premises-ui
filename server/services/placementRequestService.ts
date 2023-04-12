@@ -9,8 +9,8 @@ export default class TaskService {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     const results = {
-      not_matched: [],
-      unable_to_match: [],
+      notMatched: [],
+      unableToMatch: [],
       matched: [],
     } as GroupedPlacementRequests
 
