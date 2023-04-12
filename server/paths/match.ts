@@ -6,6 +6,7 @@ const bedsPath = path('/beds')
 export default {
   placementRequests: {
     index: placementRequestsPath,
+    show: placementRequestsPath.path(':id'),
   },
   beds: {
     search: bedsPath.path('search'),
