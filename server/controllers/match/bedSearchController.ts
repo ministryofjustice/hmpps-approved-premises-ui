@@ -8,6 +8,7 @@ import { PersonService } from '../../services'
 import BedService from '../../services/bedService'
 
 import { startDateFromParams } from '../../utils/matchUtils'
+import { objectIfNotEmpty } from '../../utils/utils'
 
 export const placementCriteria = [
   'isIAP',
@@ -37,8 +38,8 @@ export default class BedSearchController {
 
   search(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const query = (Object.keys(req.query).length ? req.query : undefined) as unknown as BedSearchParametersUi
-      const body = (Object.keys(req.body).length ? req.body : undefined) as unknown as BedSearchParametersUi
+      const query = objectIfNotEmpty<BedSearchParametersUi>(req.query)
+      const body = objectIfNotEmpty<BedSearchParametersUi>(req.body)
 
       const params = {
         ...query,
