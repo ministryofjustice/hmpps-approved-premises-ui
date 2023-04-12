@@ -21,6 +21,7 @@ export default Factory.define<PlacementRequest>(() => ({
   applicationId: faker.datatype.uuid(),
   assessmentId: faker.datatype.uuid(),
   releaseType: faker.helpers.arrayElement(['licence', 'rotl', 'hdc', 'pss', 'in_community']),
+  status: faker.helpers.arrayElement(['not_matched', 'unable_to_match', 'matched']),
 }))
 
 const placementCriteria = [

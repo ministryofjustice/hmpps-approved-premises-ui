@@ -106,6 +106,7 @@ export type { PersonAcctAlert } from './models/PersonAcctAlert';
 export type { PersonRisks } from './models/PersonRisks';
 export type { PlacementCriteria } from './models/PlacementCriteria';
 export type { PlacementRequest } from './models/PlacementRequest';
+export type { PlacementRequestStatus } from './models/PlacementRequestStatus';
 export type { PlacementRequirements } from './models/PlacementRequirements';
 export type { Premises } from './models/Premises';
 export type { PremisesSummary } from './models/PremisesSummary';
