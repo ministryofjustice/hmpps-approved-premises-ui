@@ -3,6 +3,9 @@
     "transgender": {
       "transgenderOrHasTransgenderHistory": "yes"
     },
+    "complex-case-board": {
+      "reviewRequired": "yes"
+    },
     "sentence-type": {
       "sentenceType": "communityOrder"
     },
@@ -327,10 +330,7 @@
       "previousPlacement": "yes",
       "previousPlacementDetail": "Some details here"
     },
-    "complex-case-board": {
-      "complexCaseBoard": "yes",
-      "complexCaseBoardDetail": "Some details here"
-    },
+
     "catering": {
       "catering": "yes",
       "cateringDetail": "Some details here"

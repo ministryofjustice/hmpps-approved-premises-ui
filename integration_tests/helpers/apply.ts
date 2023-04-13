@@ -386,6 +386,10 @@ export default class ApplyHelper {
     transgenderPage.completeForm()
     transgenderPage.clickSubmit()
 
+    const complexCaseBoardPage = new ApplyPages.ComplexCaseBoard(this.application)
+    complexCaseBoardPage.completeForm()
+    complexCaseBoardPage.clickSubmit()
+
     const sentenceTypePage = new ApplyPages.SentenceTypePage(this.application)
     sentenceTypePage.completeForm()
     sentenceTypePage.clickSubmit()
@@ -415,6 +419,7 @@ export default class ApplyHelper {
 
     this.pages.basicInformation = [
       transgenderPage,
+      complexCaseBoardPage,
       sentenceTypePage,
       releaseDatePage,
       placementStartPage,
@@ -685,11 +690,6 @@ export default class ApplyHelper {
     previousPlacementsPage.completeForm()
     previousPlacementsPage.clickSubmit()
 
-    // And I complete the Complex Case Board page
-    const complexCaseBoardPage = new ApplyPages.ComplexCaseBoard(this.application)
-    complexCaseBoardPage.completeForm()
-    complexCaseBoardPage.clickSubmit()
-
     // And I complete the Catering page
     const cateringPage = new ApplyPages.CateringPage(this.application)
     cateringPage.completeForm()
@@ -730,7 +730,6 @@ export default class ApplyHelper {
       roomSharingPage,
       vulnerabilityPage,
       previousPlacementsPage,
-      complexCaseBoardPage,
       cateringPage,
       arsonPage,
       contingencyPlanQuestionsPage,

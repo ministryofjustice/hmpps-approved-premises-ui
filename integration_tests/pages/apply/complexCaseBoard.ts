@@ -6,23 +6,19 @@ import ApplyPage from './applyPage'
 export default class ComplexCaseBoardPage extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
     super(
-      'Complex case board',
+      `Does ${application.person.name}'s gender identity require a complex case board to review their application?`,
       application,
-      'further-considerations',
+      'basic-information',
       'complex-case-board',
       paths.applications.pages.show({
         id: application.id,
-        task: 'further-considerations',
-        page: 'previous-placements',
+        task: 'basic-information',
+        page: 'transgender',
       }),
-    )
-    cy.get('.govuk-form-group').contains(
-      `Does ${application.person.name}'s gender identity require a complex case board to review their application? `,
     )
   }
 
   completeForm(): void {
-    this.checkRadioButtonFromPageBody('complexCaseBoard')
-    this.completeTextInputFromPageBody('complexCaseBoardDetail')
+    this.checkRadioButtonFromPageBody('reviewRequired')
   }
 }

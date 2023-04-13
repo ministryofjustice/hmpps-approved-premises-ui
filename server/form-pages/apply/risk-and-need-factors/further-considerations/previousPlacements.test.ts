@@ -31,7 +31,7 @@ describe('PreviousPlacements', () => {
     })
   })
 
-  itShouldHaveNextValue(new PreviousPlacements(body, application), 'complex-case-board')
+  itShouldHaveNextValue(new PreviousPlacements(body, application), 'catering')
   itShouldHavePreviousValue(new PreviousPlacements(body, application), 'vulnerability')
 
   describe('errors', () => {
