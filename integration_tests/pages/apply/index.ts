@@ -2,6 +2,7 @@ import AccessNeedsMobilityPage from './accessNeedsMobility'
 import AccessNeedsPage from './accessNeeds'
 import ArsonPage from './arson'
 import AttachDocumentsPage from './attachDocumentsPage'
+import BoardTakenPlacePage from './boardTakenPlace'
 import CaseNotesPage from './caseNotes'
 import CateringPage from './catering'
 import CheckYourAnswersPage from './checkYourAnswersPage'
@@ -58,6 +59,7 @@ export {
   AccessNeedsPage,
   ArsonPage,
   AttachDocumentsPage,
+  BoardTakenPlacePage,
   CaseNotesPage,
   CateringPage,
   CheckYourAnswersPage,

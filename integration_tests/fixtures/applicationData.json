@@ -6,6 +6,9 @@
     "complex-case-board": {
       "reviewRequired": "yes"
     },
+    "board-taken-place": {
+      "hasBoardTakenPlace": "yes"
+    },
     "sentence-type": {
       "sentenceType": "communityOrder"
     },

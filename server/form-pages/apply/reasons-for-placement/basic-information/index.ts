@@ -12,6 +12,7 @@ import PlacementPurpose from './placementPurpose'
 import ReasonForShortNotice from './reasonForShortNotice'
 import IsPersonTransgender from './isPersonTransgender'
 import ComplexCaseBoard from './complexCaseBoard'
+import BoardTakenPlace from './boardTakenPlace'
 import { Task } from '../../../utils/decorators'
 
 @Task({
@@ -21,6 +22,7 @@ import { Task } from '../../../utils/decorators'
     IsExceptionalCase,
     IsPersonTransgender,
     ComplexCaseBoard,
+    BoardTakenPlace,
     ExceptionDetails,
     SentenceType,
     ReleaseType,
