@@ -17,7 +17,7 @@ export default class BoardTakenPlace implements TasklistPage {
   }
 
   next() {
-    return this.body.hasBoardTakenPlace === 'yes' ? 'male-ap' : ''
+    return this.body.hasBoardTakenPlace === 'yes' ? 'male-ap' : 'pause-application'
   }
 
   response() {

@@ -14,6 +14,7 @@ import IsPersonTransgender from './isPersonTransgender'
 import ComplexCaseBoard from './complexCaseBoard'
 import BoardTakenPlace from './boardTakenPlace'
 import MaleAp from './maleAp'
+import PauseApplication from './pauseApplication'
 import { Task } from '../../../utils/decorators'
 
 @Task({
@@ -25,6 +26,7 @@ import { Task } from '../../../utils/decorators'
     ComplexCaseBoard,
     BoardTakenPlace,
     MaleAp,
+    PauseApplication,
     ExceptionDetails,
     SentenceType,
     ReleaseType,
