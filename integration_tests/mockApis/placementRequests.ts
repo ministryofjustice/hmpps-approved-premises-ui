@@ -19,4 +19,18 @@ export default {
         jsonBody: placementRequests,
       },
     }),
+  stubPlacementRequest: (placementRequest: PlacementRequest): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: paths.placementRequests.show({ id: placementRequest.id }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: placementRequest,
+      },
+    }),
 }
