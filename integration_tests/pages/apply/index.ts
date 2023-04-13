@@ -22,6 +22,7 @@ import EsapNotEligible from './esapNotEligible'
 import ForeignNationalPage from './foreignNational'
 import IsExceptionalCasePage from './isExceptionalCase'
 import ListPage from './list'
+import MaleApPage from './maleAp'
 import NationalSecurityDivision from './nationalSecurityDivision'
 import OffenceDetailsPage from './offenceDetails'
 import OptionalOasysSectionsPage from './optionalOasysSections'
@@ -79,6 +80,7 @@ export {
   ForeignNationalPage,
   IsExceptionalCasePage,
   ListPage,
+  MaleApPage,
   NationalSecurityDivision,
   OffenceDetailsPage,
   OptionalOasysSectionsPage,

@@ -13,6 +13,7 @@ import ReasonForShortNotice from './reasonForShortNotice'
 import IsPersonTransgender from './isPersonTransgender'
 import ComplexCaseBoard from './complexCaseBoard'
 import BoardTakenPlace from './boardTakenPlace'
+import MaleAp from './maleAp'
 import { Task } from '../../../utils/decorators'
 
 @Task({
@@ -23,6 +24,7 @@ import { Task } from '../../../utils/decorators'
     IsPersonTransgender,
     ComplexCaseBoard,
     BoardTakenPlace,
+    MaleAp,
     ExceptionDetails,
     SentenceType,
     ReleaseType,

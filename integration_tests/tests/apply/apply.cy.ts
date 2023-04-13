@@ -159,7 +159,7 @@ context('Apply', () => {
       const secondRequestData = JSON.parse(requests[1].body).data
 
       expect(firstRequestData['basic-information'].transgender.transgenderOrHasTransgenderHistory).equal('yes')
-      expect(secondRequestData['basic-information']['sentence-type'].sentenceType).equal('communityOrder')
+      expect(secondRequestData['basic-information']['complex-case-board'].reviewRequired).equal('yes')
     })
   })
 

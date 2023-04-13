@@ -394,6 +394,10 @@ export default class ApplyHelper {
     boardTakenPlacePage.completeForm()
     boardTakenPlacePage.clickSubmit()
 
+    const maleApPage = new ApplyPages.MaleApPage(this.application)
+    maleApPage.completeForm()
+    maleApPage.clickSubmit()
+
     const sentenceTypePage = new ApplyPages.SentenceTypePage(this.application)
     sentenceTypePage.completeForm()
     sentenceTypePage.clickSubmit()
@@ -425,6 +429,7 @@ export default class ApplyHelper {
       transgenderPage,
       complexCaseBoardPage,
       boardTakenPlacePage,
+      maleApPage,
       sentenceTypePage,
       releaseDatePage,
       placementStartPage,

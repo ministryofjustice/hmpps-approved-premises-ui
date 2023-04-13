@@ -9,6 +9,9 @@
     "board-taken-place": {
       "hasBoardTakenPlace": "yes"
     },
+    "male-ap": {
+      "shouldPersonBePlacedInMaleAp": "yes"
+    },
     "sentence-type": {
       "sentenceType": "communityOrder"
     },
