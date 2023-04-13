@@ -128,6 +128,8 @@ export interface SummaryList {
   rows: Array<SummaryListItem>
 }
 
+export type SummaryListWithCard = SummaryList & { card: { title: { text: string } } }
+
 export interface SummaryListActionItem {
   href: string
   text: string
