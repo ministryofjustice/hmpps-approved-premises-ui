@@ -17,7 +17,7 @@ export default class MaleAp implements TasklistPage {
   }
 
   next() {
-    return this.body.shouldPersonBePlacedInMaleAp === 'yes' ? 'sentence-type' : ''
+    return this.body.shouldPersonBePlacedInMaleAp === 'yes' ? 'sentence-type' : 'refer-to-delius'
   }
 
   response() {

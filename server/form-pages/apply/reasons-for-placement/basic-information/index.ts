@@ -15,6 +15,7 @@ import ComplexCaseBoard from './complexCaseBoard'
 import BoardTakenPlace from './boardTakenPlace'
 import MaleAp from './maleAp'
 import PauseApplication from './pauseApplication'
+import ReferToDelius from './referToDelius'
 import { Task } from '../../../utils/decorators'
 
 @Task({
@@ -27,6 +28,7 @@ import { Task } from '../../../utils/decorators'
     BoardTakenPlace,
     MaleAp,
     PauseApplication,
+    ReferToDelius,
     ExceptionDetails,
     SentenceType,
     ReleaseType,
