@@ -1,0 +1,102 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-width-container">
+      <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l">{{placementRequest.person.name}}</h1>
+        <dl class="search-identity-table govuk-body">
+          <div class="search-identity-table__column">
+            <div class="search-identity-table__table-cell">
+              <dt>
+                <strong>Tier</strong>
+              </dt>
+              <dd>{{ placementRequest.risks.tier.value.level }}</dd>
+            </div>
+            <div class="search-identity-table__table-cell">
+              <dt>
+                <strong>CRN</strong>
+              </dt>
+              <dd>{{ placementRequest.person.crn }}</dd>
+            </div>
+            <div class="search-identity-table__table-cell">
+              <dt>
+                <strong>Release Type</strong>
+              </dt>
+              <dd>{{ PlacementRequestUtils.formatReleaseType(placementRequest) }}</dd>
+            </div>
+          </div>
+          <div class="search-identity-table__column search-identity-table__table-cell__last-col">
+            <div class="search-identity-table__table-cell">
+              <dt>
+                <strong>Date assessed as suitable</strong>
+              </dt>
+              <dd>{{ formatDate(placementRequest.assessmentDate) }}</dd>
+            </div>
+            <div class="search-identity-table__table-cell">
+              <dt>
+                <strong>Expected arrival date</strong>
+              </dt>
+              <dd>{{ formatDate(placementRequest.expectedArrival) }}</dd>
+            </div>
+          </div>
+        </dl>
+      </div>
+      <hr/>
+    </div>
+    <div class="govuk-grid-row">
+      <div class="govuk-width-container">
+        <div class="govuk-grid-column-two-thirds">
+          {{ govukBackLink({
+            text: "Back",
+            href: paths.placementRequests.index()
+          }) }}
+
+          <h2 class="govuk-heading-m govuk-!-margin-top-4">Matching information</h2>
+
+          <p>The information below has been provided by the assessor. The results will be filtered automatically using the placement requirements and offence and risk information shown below. </p>
+        </div>
+      </div>
+    </div>
+    <div class="govuk-grid-row">
+      <div class="govuk-width-container">
+        <div class="govuk-grid-column-full">
+          {{
+            govukSummaryList(PlacementRequestUtils.assessmentSummary(placementRequest))
+          }}
+
+          {{
+            govukSummaryList(PlacementRequestUtils.matchingInformationSummary(placementRequest))
+          }}
+
+          {{
+            govukSummaryList(PlacementRequestUtils.documentSummary(placementRequest))
+          }}
+        </div>
+      </div>
+    </div>
+    <div class="govuk-grid-row">
+      <div class="govuk-width-container">
+        <div class="govuk-grid-column-two-thirds">
+          <h3 class="govuk-heading-m">Search for a bed</h3>
+
+          <p>Search for a suitable bed in an Approved Premises. Results will be filtered to include essential room attributes.</p>
+
+          {{
+            PlacementRequestUtils.searchButton(placementRequest) | safe
+          }}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -38,7 +38,8 @@ export default class ApplicationsController {
       if (isUnapplicable(application)) {
         res.render('applications/notEligible')
       } else if (application.status === 'submitted') {
-        res.render('applications/show', { application })
+        const referrer = req.headers.referer
+        res.render('applications/show', { application, referrer })
       } else {
         res.render('applications/tasklist', { application, taskList })
       }

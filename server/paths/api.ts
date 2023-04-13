@@ -108,6 +108,7 @@ export default {
   },
   placementRequests: {
     index: placementRequestsPath,
+    show: placementRequestsPath.path(':id'),
   },
   people: {
     risks: {

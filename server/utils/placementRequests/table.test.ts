@@ -1,54 +1,17 @@
 import { add } from 'date-fns'
-import { personFactory, placementRequestFactory, tierEnvelopeFactory } from '../../testutils/factories'
-import {
-  crnCell,
-  dueDateCell,
-  expectedArrivalDateCell,
-  mapPlacementRequestToBedSearchParams,
-  nameCell,
-  releaseTypeCell,
-  tableRows,
-  tierCell,
-} from './table'
-import { createQueryString } from '../utils'
-import paths from '../../paths/match'
+import { placementRequestFactory, tierEnvelopeFactory } from '../../testutils/factories'
+import { crnCell, dueDateCell, expectedArrivalDateCell, nameCell, releaseTypeCell, tableRows, tierCell } from './table'
 import { tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 
 describe('tableUtils', () => {
-  describe('mapPlacementRequestToBedSearchParams', () => {
-    it('transforms a placement request into bed search params', () => {
-      const person = personFactory.build()
-      const placementRequest = placementRequestFactory.build({
-        duration: 12,
-        radius: 100,
-        person,
-      })
-
-      expect(mapPlacementRequestToBedSearchParams(placementRequest)).toEqual({
-        durationDays: '12',
-        startDate: placementRequest.expectedArrival,
-        postcodeDistrict: placementRequest.location,
-        maxDistanceMiles: '100',
-        crn: person.crn,
-        applicationId: placementRequest.applicationId,
-        assessmentId: placementRequest.assessmentId,
-        requiredCharacteristics: placementRequest.essentialCriteria,
-      })
-    })
-  })
-
   describe('nameCell', () => {
     it('returns the name of the service user and a link', () => {
       const placementRequest = placementRequestFactory.build()
 
       expect(nameCell(placementRequest)).toEqual({
-        html: `<a data-cy-placementRequestId="${placementRequest.id}" href="${paths.beds.search(
-          {},
-        )}?${createQueryString(mapPlacementRequestToBedSearchParams(placementRequest))}">${
-          placementRequest.person.name
-        }</a>`,
+        html: `<a href="/placement-requests/${placementRequest.id}" data-cy-placementRequestId="${placementRequest.id}">${placementRequest.person.name}</a>`,
       })
     })
   })

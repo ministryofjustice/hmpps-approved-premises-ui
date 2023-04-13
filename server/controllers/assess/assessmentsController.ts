@@ -31,8 +31,11 @@ export default class AssessmentsController {
       const noteAwaitingResponse = assessment.status === 'awaiting_response' && !informationSetAsNotReceived(assessment)
 
       if (assessment.status === 'completed') {
+        const referrer = req.headers.referer
+
         res.render('assessments/show', {
           assessment,
+          referrer,
         })
       } else if (noteAwaitingResponse) {
         res.redirect(

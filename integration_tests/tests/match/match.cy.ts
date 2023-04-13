@@ -1,3 +1,4 @@
+import PlacementRequestPage from '../../pages/match/placementRequestPage'
 import ListPage from '../../pages/match/listPlacementRequestsPage'
 import SearchPage from '../../pages/match/searchPage'
 
@@ -39,6 +40,8 @@ context('Placement Requests', () => {
       requiredCharacteristics: activePlacementRequest.essentialCriteria,
     })
 
+    cy.task('stubPlacementRequest', activePlacementRequest)
+
     // When I visit the placementRequests dashboard
     const listPage = ListPage.visit()
 
@@ -62,6 +65,17 @@ context('Placement Requests', () => {
 
     // And I click on a placement request
     listPage.clickFindBed(activePlacementRequest)
+
+    // Then I should be taken to the placement request's page
+    const showPage = Page.verifyOnPage(PlacementRequestPage, activePlacementRequest)
+
+    // And I should see the placement request information
+    showPage.shouldShowAssessmentDetails()
+    showPage.shouldShowMatchingInformationSummary()
+    showPage.shouldShowDocuments()
+
+    // When I click on the search button
+    showPage.clickSearch()
 
     // Then I should be taken to the search page
     const searchPage = Page.verifyOnPage(SearchPage, person.name)

@@ -1,9 +1,11 @@
 .search-identity-table {
   dt {
     width: 50%;
+    @include govuk-responsive-padding(2, 'bottom');
   }
   dd {
     width: 50%;
+    @include govuk-responsive-padding(2, 'bottom');
   }
   display: flex;
 

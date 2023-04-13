@@ -15,4 +15,8 @@ export default class PlacementRequestClient {
       Array<PlacementRequest>
     >
   }
+
+  async find(id: string): Promise<PlacementRequest> {
+    return (await this.restClient.get({ path: paths.placementRequests.show({ id }) })) as Promise<PlacementRequest>
+  }
 }

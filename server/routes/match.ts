@@ -13,6 +13,7 @@ export default function routes(controllers: Controllers, router: Router): Router
   const { placementRequestController, bedController } = controllers
 
   get(paths.placementRequests.index.pattern, placementRequestController.index())
+  get(paths.placementRequests.show.pattern, placementRequestController.show())
   get(paths.beds.search.pattern, bedController.search())
   post(paths.beds.search.pattern, bedController.search())
 

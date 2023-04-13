@@ -1,9 +1,9 @@
 import { add } from 'date-fns'
 import { PlacementRequest } from '../../@types/shared'
-import { BedSearchParametersUi, TableCell, TableRow } from '../../@types/ui'
+import { TableCell, TableRow } from '../../@types/ui'
 import paths from '../../paths/match'
 import { DateFormats } from '../dateUtils'
-import { createQueryString } from '../utils'
+import { linkTo } from '../utils'
 import { tierBadge } from '../personUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 
@@ -44,9 +44,11 @@ export const expectedArrivalDateCell = (placementRequest: PlacementRequest): Tab
 
 export const nameCell = (placementRequest: PlacementRequest): TableCell => {
   return {
-    html: `<a data-cy-placementRequestId="${placementRequest.id}" href="${paths.beds.search({})}?${createQueryString(
-      mapPlacementRequestToBedSearchParams(placementRequest),
-    )}">${placementRequest.person.name}</a>`,
+    html: linkTo(
+      paths.placementRequests.show,
+      { id: placementRequest.id },
+      { text: placementRequest.person.name, attributes: { 'data-cy-placementRequestId': placementRequest.id } },
+    ),
   }
 }
 
@@ -61,23 +63,3 @@ export const releaseTypeCell = (placementRequest: PlacementRequest) => {
     text: allReleaseTypes[placementRequest.releaseType],
   }
 }
-
-export const mapPlacementRequestToBedSearchParams = ({
-  duration,
-  essentialCriteria,
-  expectedArrival,
-  location,
-  radius,
-  person,
-  applicationId,
-  assessmentId,
-}: PlacementRequest): BedSearchParametersUi => ({
-  durationDays: duration.toString(),
-  startDate: expectedArrival,
-  postcodeDistrict: location,
-  maxDistanceMiles: radius.toString(),
-  crn: person.crn,
-  applicationId,
-  assessmentId,
-  requiredCharacteristics: essentialCriteria,
-})

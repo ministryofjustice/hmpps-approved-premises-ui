@@ -1,5 +1,5 @@
 import { Adjudication, Document, PersonAcctAlert, PrisonCaseNote } from '../../server/@types/shared'
-import { PersonRisksUI } from '../../server/@types/ui'
+import { PersonRisksUI, SummaryListItem } from '../../server/@types/ui'
 import errorLookups from '../../server/i18n/en/errors.json'
 import { DateFormats } from '../../server/utils/dateUtils'
 import { sentenceCase } from '../../server/utils/utils'
@@ -17,6 +17,31 @@ export default abstract class Page {
 
   assertDefinition(term: string, value: string): void {
     cy.get('dt').contains(term).parents('.govuk-summary-list__row').get('dd').should('contain', value)
+  }
+
+  shouldContainSummaryListItems(items: Array<SummaryListItem>): void {
+    items.forEach(item => {
+      const key = 'text' in item.key ? item.key.text : item.key.html
+      const value = 'text' in item.value ? item.value.text : item.value.html
+      if ('text' in item.value) {
+        this.assertDefinition(key, value)
+      } else {
+        cy.get('dt')
+          .contains(key)
+          .siblings('dd')
+          .then($dd => {
+            // Get rid of all whitespace in both the actual and expected text,
+            // so we don't have to worry about small differences in whitespace
+            const parser = new DOMParser()
+            const doc = parser.parseFromString(value, 'text/html')
+
+            const actual = $dd.text().replace(/\s+/g, '')
+            const expected = doc.body.innerText.replace(/\s+/g, '')
+
+            expect(actual).to.equal(expected)
+          })
+      }
+    })
   }
 
   checkOnPage(): void {
