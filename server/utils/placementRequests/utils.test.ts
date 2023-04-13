@@ -1,7 +1,6 @@
-import { placementRequestFactory } from '../../testutils/factories'
+import { personFactory, placementRequestFactory } from '../../testutils/factories'
 import { createQueryString } from '../utils'
-import { mapPlacementRequestToBedSearchParams } from './table'
-import { formatReleaseType, searchButton } from './utils'
+import { formatReleaseType, mapPlacementRequestToBedSearchParams, searchButton } from './utils'
 import paths from '../../paths/match'
 
 describe('utils', () => {
@@ -21,6 +20,28 @@ describe('utils', () => {
           mapPlacementRequestToBedSearchParams(placementRequest),
         )}">Search</a>`,
       )
+    })
+  })
+
+  describe('mapPlacementRequestToBedSearchParams', () => {
+    it('transforms a placement request into bed search params', () => {
+      const person = personFactory.build()
+      const placementRequest = placementRequestFactory.build({
+        duration: 12,
+        radius: 100,
+        person,
+      })
+
+      expect(mapPlacementRequestToBedSearchParams(placementRequest)).toEqual({
+        durationDays: '12',
+        startDate: placementRequest.expectedArrival,
+        postcodeDistrict: placementRequest.location,
+        maxDistanceMiles: '100',
+        crn: person.crn,
+        applicationId: placementRequest.applicationId,
+        assessmentId: placementRequest.assessmentId,
+        requiredCharacteristics: placementRequest.essentialCriteria,
+      })
     })
   })
 })
