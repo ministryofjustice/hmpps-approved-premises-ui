@@ -5,7 +5,7 @@ import TasklistPage from '../../../tasklistPage'
 
 @Page({ name: 'not-esap-eligible', bodyProperties: [] })
 export default class EsapNotEligible implements TasklistPage {
-  title = `${this.application.person.name} is not eligible for an ESAP placement`
+  title = `${this.application.person.name} is not eligible for an Enhanced Security Approved Premises (ESAP) placement.`
 
   constructor(readonly body: Record<string, never>, readonly application: Application) {}
 
