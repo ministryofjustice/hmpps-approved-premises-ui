@@ -68,12 +68,16 @@ describe('applicationsController', () => {
 
   describe('show', () => {
     const application = applicationFactory.build({ person: { crn: 'some-crn' }, status: 'inProgress' })
+    const referrer = 'http://localhost/foo/bar'
 
     beforeEach(() => {
       request = createMock<Request>({
         params: { id: application.id },
         user: {
           token,
+        },
+        headers: {
+          referer: referrer,
         },
       })
     })
@@ -110,6 +114,7 @@ describe('applicationsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('applications/show', {
         application,
+        referrer,
       })
 
       expect(applicationService.findApplication).not.toHaveBeenCalledWith(token, application.id)

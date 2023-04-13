@@ -66,9 +66,11 @@ describe('assessmentsController', () => {
   describe('show', () => {
     const assessment = assessmentFactory.build()
     const stubTaskList = jest.fn()
+    const referrer = 'http://localhost/foo/bar'
 
     beforeEach(() => {
       request.params.id = assessment.id
+      request.headers.referer = referrer
 
       assessmentService.findAssessment.mockResolvedValue(assessment)
       ;(TasklistService as jest.Mock).mockImplementation(() => {
@@ -100,6 +102,7 @@ describe('assessmentsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('assessments/show', {
         assessment: completedAssessment,
+        referrer,
       })
 
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
