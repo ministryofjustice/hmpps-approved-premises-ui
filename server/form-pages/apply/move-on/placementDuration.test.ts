@@ -1,3 +1,4 @@
+import { addDays } from 'date-fns'
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { SessionDataError } from '../../../utils/errors'
 
@@ -22,7 +23,7 @@ describe('PlacementDuration', () => {
 
   describe('body', () => {
     it('should set the body', () => {
-      const body = { duration: '4', durationDetail: 'Some detail' }
+      const body = { differentDuration: 'yes' as const, duration: '4', reason: 'Some reason' }
       const page = new PlacementDuration(body, application)
 
       expect(page.body).toEqual(body)
@@ -158,27 +159,42 @@ describe('PlacementDuration', () => {
   })
 
   describe('errors', () => {
-    it('returns an error if the duration is blank', () => {
+    it('returns an error if the different duration response is not defined', () => {
       const page = new PlacementDuration({}, application)
 
-      expect(page.errors()).toEqual({ duration: 'You must specify the duration of the placement' })
+      expect(page.errors()).toEqual({
+        differentDuration: 'You must specify if this application requires a different placement length',
+      })
+    })
+
+    it('returns an error if the different duration response is yes but the reason and duration arent defined', () => {
+      const page = new PlacementDuration({ differentDuration: 'yes' }, application)
+
+      expect(page.errors()).toEqual({
+        duration: 'You must specify the duration of the placement',
+        reason: 'You must specify the reason for the different placement duration',
+      })
     })
   })
 
   describe('response', () => {
     it('should return a translated version of the response', () => {
-      const page = new PlacementDuration({ duration: '4', durationDetail: 'Some detail' }, application)
+      const page = new PlacementDuration(
+        { differentDuration: 'yes' as const, duration: '4', reason: 'Some reason' },
+        application,
+      )
 
       expect(page.response()).toEqual({
-        'What duration of placement do you recommend?': '4 weeks',
-        'Provide any additional information': 'Some detail',
+        'Does this application require a different placement duration?': 'Yes',
+        'How many weeks will the person stay at the AP?': '4 weeks',
+        'Why does this person require a different placement duration?': 'Some reason',
       })
     })
 
     it("should not include the detail if it's blank", () => {
-      const page = new PlacementDuration({ duration: '4', durationDetail: '' }, application)
+      const page = new PlacementDuration({ differentDuration: 'no' as const, duration: '' }, application)
 
-      expect(page.response()).toEqual({ 'What duration of placement do you recommend?': '4 weeks' })
+      expect(page.response()).toEqual({ 'Does this application require a different placement duration?': 'No' })
     })
   })
 })

@@ -1,4 +1,5 @@
-import type { TaskListErrors } from '@approved-premises/ui'
+import { addDays } from 'date-fns'
+import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { SessionDataError } from '../../../utils/errors'
 import { DateFormats } from '../../../utils/dateUtils'
@@ -7,13 +8,15 @@ import { Page } from '../../utils/decorators'
 import TasklistPage from '../../tasklistPage'
 import SelectApType, { ApType } from '../reasons-for-placement/type-of-ap/apType'
 import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import { sentenceCase } from '../../../utils/utils'
 
 type PlacementDurationBody = {
-  duration: string
-  durationDetail: string
+  differentDuration: YesOrNo
+  duration?: string
+  reason?: string
 }
 
-@Page({ name: 'placement-duration', bodyProperties: ['duration', 'durationDetail'] })
+@Page({ name: 'placement-duration', bodyProperties: ['differentDuration', 'duration', 'reason'] })
 export default class PlacementDuration implements TasklistPage {
   title = 'Placement duration and move on'
 
@@ -22,8 +25,9 @@ export default class PlacementDuration implements TasklistPage {
   departureDate: Date | null = this.fetchDepartureDate()
 
   questions = {
-    duration: 'What duration of placement do you recommend?',
-    durationDetail: 'Provide any additional information',
+    differentDuration: 'Does this application require a different placement duration?',
+    duration: 'How many weeks will the person stay at the AP?',
+    reason: 'Why does this person require a different placement duration?',
   }
 
   constructor(public body: Partial<PlacementDurationBody>, private readonly application: ApprovedPremisesApplication) {}
@@ -37,12 +41,13 @@ export default class PlacementDuration implements TasklistPage {
   }
 
   response() {
-    const response = {
-      [this.questions.duration]: `${this.body.duration} weeks`,
-    }
+    const response = {}
 
-    if (this.body.durationDetail) {
-      response[this.questions.durationDetail] = this.body.durationDetail
+    response[this.questions.differentDuration] = sentenceCase(this.body.differentDuration)
+
+    if (this.body.differentDuration === 'yes') {
+      response[this.questions.duration] = `${this.body.duration} weeks`
+      response[this.questions.reason] = this.body.reason
     }
 
     return response
@@ -51,8 +56,17 @@ export default class PlacementDuration implements TasklistPage {
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    if (!this.body.duration) {
-      errors.duration = 'You must specify the duration of the placement'
+    if (!this.body.differentDuration) {
+      errors.differentDuration = 'You must specify if this application requires a different placement length'
+    }
+
+    if (this.body.differentDuration === 'yes') {
+      if (!this.body.duration) {
+        errors.duration = 'You must specify the duration of the placement'
+      }
+      if (!this.body.reason) {
+        errors.reason = 'You must specify the reason for the different placement duration'
+      }
     }
 
     return errors
