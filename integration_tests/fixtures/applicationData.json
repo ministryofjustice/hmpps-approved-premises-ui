@@ -374,8 +374,9 @@
   },
   "move-on": {
     "placement-duration": {
-      "duration": "10",
-      "durationDetail": "Some more information"
+      "differentDuration": "yes",
+      "duration": "6",
+      "reason": "some reason"
     },
     "relocation-region": {
       "postcodeArea": "SW11"

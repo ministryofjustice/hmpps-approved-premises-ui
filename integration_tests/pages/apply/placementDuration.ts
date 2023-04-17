@@ -18,7 +18,8 @@ export default class PlacementDurationPage extends ApplyPage {
   }
 
   completeForm() {
+    this.checkRadioButtonFromPageBody('differentDuration')
     this.completeTextInputFromPageBody('duration')
-    this.completeTextInputFromPageBody('durationDetail')
+    this.completeTextInputFromPageBody('reason')
   }
 }
