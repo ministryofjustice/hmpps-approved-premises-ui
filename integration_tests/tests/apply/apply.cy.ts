@@ -1,13 +1,5 @@
 import { addDays } from 'date-fns'
-import {
-  EnterCRNPage,
-  ListPage,
-  SelectOffencePage,
-  SentenceTypePage,
-  ShowPage,
-  StartPage,
-  TransgenderPage,
-} from '../../pages/apply'
+import { EnterCRNPage, ListPage, SelectOffencePage, ShowPage, StartPage, TransgenderPage } from '../../pages/apply'
 import { addResponseToApplication, addResponsesToApplication } from '../../../server/testutils/addToApplication'
 import {
   activeOffenceFactory,
@@ -106,7 +98,7 @@ context('Apply', () => {
     apply.completeExceptionalCase()
 
     // And I should be on the Sentence Type page
-    Page.verifyOnPage(SentenceTypePage, this.application)
+    Page.verifyOnPage(TransgenderPage, this.application)
   })
 
   it('tells the user that their application is not applicable if the tier is not eligible and it is not an exceptional case', function test() {
