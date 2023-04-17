@@ -279,7 +279,7 @@ describe('utils', () => {
 
       expect(confirmationPageMessage(assessment))
         .toMatchStringIgnoringWhitespace(`<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
-      <p>The assessment can now be used to match Robert Brown to a bed in an Approved Premises.</p>`)
+      <p>The assessment can now be used to match ${assessment.application.person.name} to a bed in an Approved Premises.</p>`)
     })
 
     it('returns the hold copy if the decision is "hold"', () => {

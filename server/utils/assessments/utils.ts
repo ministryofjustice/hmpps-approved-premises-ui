@@ -190,7 +190,9 @@ const confirmationPageMessage = (assessment: Assessment) => {
   switch (decisionFromAssessment(assessment)) {
     case 'releaseDate':
       return `<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
-      <p>The assessment can now be used to match Robert Brown to a bed in an Approved Premises.</p>`
+      <p>The assessment can now be used to match ${
+        assessment?.application?.person?.name || 'the person'
+      } to a bed in an Approved Premises.</p>`
     case 'hold':
       return `<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
       <p>This case is now paused until the oral hearing outcome has been provided by the Probation Practitioner and a release date is confirmed.</p>
