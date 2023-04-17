@@ -3,22 +3,22 @@ import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
 
-export default class ComplexCaseBoardPage extends ApplyPage {
+export default class MaleAp extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
     super(
-      `Does ${application.person.name}'s gender identity require a complex case board to review their application?`,
+      'Has the Complex Case Board determined that the person should be placed in a male AP?',
       application,
       'basic-information',
-      'complex-case-board',
+      'male-ap',
       paths.applications.pages.show({
         id: application.id,
         task: 'basic-information',
-        page: 'transgender',
+        page: 'board-taken-place',
       }),
     )
   }
 
   completeForm(): void {
-    this.checkRadioButtonFromPageBody('reviewRequired')
+    this.checkRadioButtonFromPageBody('shouldPersonBePlacedInMaleAp')
   }
 }

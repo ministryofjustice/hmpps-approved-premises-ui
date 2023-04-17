@@ -1,5 +1,13 @@
 import { addDays } from 'date-fns'
-import { EnterCRNPage, ListPage, SelectOffencePage, SentenceTypePage, ShowPage, StartPage } from '../../pages/apply'
+import {
+  EnterCRNPage,
+  ListPage,
+  SelectOffencePage,
+  SentenceTypePage,
+  ShowPage,
+  StartPage,
+  TransgenderPage,
+} from '../../pages/apply'
 import { addResponseToApplication, addResponsesToApplication } from '../../../server/testutils/addToApplication'
 import {
   activeOffenceFactory,
@@ -79,7 +87,7 @@ context('Apply', () => {
     })
 
     // Then I should be on the Sentence Type page
-    Page.verifyOnPage(SentenceTypePage, this.application)
+    Page.verifyOnPage(TransgenderPage, this.application)
   })
 
   it(`allows the user to specify if the case is exceptional if the offender's tier is not eligible`, function test() {
@@ -150,8 +158,8 @@ context('Apply', () => {
       const firstRequestData = JSON.parse(requests[0].body).data
       const secondRequestData = JSON.parse(requests[1].body).data
 
-      expect(firstRequestData['basic-information']['sentence-type'].sentenceType).equal('communityOrder')
-      expect(secondRequestData['basic-information'].situation.situation).equal('riskManagement')
+      expect(firstRequestData['basic-information'].transgender.transgenderOrHasTransgenderHistory).equal('yes')
+      expect(secondRequestData['basic-information']['complex-case-board'].reviewRequired).equal('yes')
     })
   })
 

@@ -32,6 +32,60 @@
             }
           }
         },
+        "transgender": {
+          "type": "object",
+          "properties": {
+            "transgenderOrHasTransgenderHistory": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "complex-case-board": {
+          "type": "object",
+          "properties": {
+            "reviewRequired": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "board-taken-place": {
+          "type": "object",
+          "properties": {
+            "hasBoardTakenPlace": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "male-ap": {
+          "type": "object",
+          "properties": {
+            "shouldPersonBePlacedInMaleAp": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "pause-application": {
+          "type": "object"
+        },
+        "refer-to-delius": {
+          "type": "object"
+        },
         "exception-details": {
           "allOf": [
             {
@@ -1267,21 +1321,6 @@
               "type": "string"
             },
             "previousPlacementDetail": {
-              "type": "string"
-            }
-          }
-        },
-        "complex-case-board": {
-          "type": "object",
-          "properties": {
-            "complexCaseBoard": {
-              "enum": [
-                "no",
-                "yes"
-              ],
-              "type": "string"
-            },
-            "complexCaseBoardDetail": {
               "type": "string"
             }
           }

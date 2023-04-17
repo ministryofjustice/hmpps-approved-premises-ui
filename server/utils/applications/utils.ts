@@ -108,7 +108,7 @@ const isUnapplicable = (application: Application): boolean => {
 
 const firstPageOfApplicationJourney = (application: Application) => {
   if (isApplicableTier(application.person.sex, application.risks?.tier?.value?.level)) {
-    return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' })
+    return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'transgender' })
   }
 
   return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' })

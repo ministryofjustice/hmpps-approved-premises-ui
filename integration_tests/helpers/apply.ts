@@ -382,6 +382,22 @@ export default class ApplyHelper {
   }
 
   completeBasicInformation(options: { isEmergencyApplication?: boolean } = {}) {
+    const transgenderPage = new ApplyPages.TransgenderPage(this.application)
+    transgenderPage.completeForm()
+    transgenderPage.clickSubmit()
+
+    const complexCaseBoardPage = new ApplyPages.ComplexCaseBoard(this.application)
+    complexCaseBoardPage.completeForm()
+    complexCaseBoardPage.clickSubmit()
+
+    const boardTakenPlacePage = new ApplyPages.BoardTakenPlacePage(this.application)
+    boardTakenPlacePage.completeForm()
+    boardTakenPlacePage.clickSubmit()
+
+    const maleApPage = new ApplyPages.MaleApPage(this.application)
+    maleApPage.completeForm()
+    maleApPage.clickSubmit()
+
     const sentenceTypePage = new ApplyPages.SentenceTypePage(this.application)
     sentenceTypePage.completeForm()
     sentenceTypePage.clickSubmit()
@@ -409,7 +425,16 @@ export default class ApplyHelper {
     placementPurposePage.completeForm()
     placementPurposePage.clickSubmit()
 
-    this.pages.basicInformation = [sentenceTypePage, releaseDatePage, placementStartPage, placementPurposePage]
+    this.pages.basicInformation = [
+      transgenderPage,
+      complexCaseBoardPage,
+      boardTakenPlacePage,
+      maleApPage,
+      sentenceTypePage,
+      releaseDatePage,
+      placementStartPage,
+      placementPurposePage,
+    ]
 
     // Then I should be redirected to the task list
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
@@ -675,11 +700,6 @@ export default class ApplyHelper {
     previousPlacementsPage.completeForm()
     previousPlacementsPage.clickSubmit()
 
-    // And I complete the Complex Case Board page
-    const complexCaseBoardPage = new ApplyPages.ComplexCaseBoard(this.application)
-    complexCaseBoardPage.completeForm()
-    complexCaseBoardPage.clickSubmit()
-
     // And I complete the Catering page
     const cateringPage = new ApplyPages.CateringPage(this.application)
     cateringPage.completeForm()
@@ -720,7 +740,6 @@ export default class ApplyHelper {
       roomSharingPage,
       vulnerabilityPage,
       previousPlacementsPage,
-      complexCaseBoardPage,
       cateringPage,
       arsonPage,
       contingencyPlanQuestionsPage,

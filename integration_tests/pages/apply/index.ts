@@ -2,6 +2,7 @@ import AccessNeedsMobilityPage from './accessNeedsMobility'
 import AccessNeedsPage from './accessNeeds'
 import ArsonPage from './arson'
 import AttachDocumentsPage from './attachDocumentsPage'
+import BoardTakenPlacePage from './boardTakenPlace'
 import CaseNotesPage from './caseNotes'
 import CateringPage from './catering'
 import CheckYourAnswersPage from './checkYourAnswersPage'
@@ -21,6 +22,7 @@ import EsapNotEligible from './esapNotEligible'
 import ForeignNationalPage from './foreignNational'
 import IsExceptionalCasePage from './isExceptionalCase'
 import ListPage from './list'
+import MaleApPage from './maleAp'
 import NationalSecurityDivision from './nationalSecurityDivision'
 import OffenceDetailsPage from './offenceDetails'
 import OptionalOasysSectionsPage from './optionalOasysSections'
@@ -46,6 +48,7 @@ import StartPage from './startPage'
 import SubmissionConfirmation from './submissionConfirmation'
 import SupportingInformationPage from './supportingInformation'
 import TaskListPage from './taskListPage'
+import TransgenderPage from './isPersonTransgender'
 import TriggerPlanPage from './triggerPlanPage'
 import TypeOfAccommodationPage from './typeOfAccommodation'
 import TypeOfApPage from './typeOfAp'
@@ -57,6 +60,7 @@ export {
   AccessNeedsPage,
   ArsonPage,
   AttachDocumentsPage,
+  BoardTakenPlacePage,
   CaseNotesPage,
   CateringPage,
   CheckYourAnswersPage,
@@ -76,6 +80,7 @@ export {
   ForeignNationalPage,
   IsExceptionalCasePage,
   ListPage,
+  MaleApPage,
   NationalSecurityDivision,
   OffenceDetailsPage,
   OptionalOasysSectionsPage,
@@ -101,6 +106,7 @@ export {
   SubmissionConfirmation,
   SupportingInformationPage,
   TaskListPage,
+  TransgenderPage,
   TriggerPlanPage,
   TypeOfAccommodationPage,
   TypeOfApPage,

@@ -111,6 +111,7 @@
     "@ministryofjustice/frontend": "^1.6.5",
     "@sentry/node": "^7.14.1",
     "@sentry/tracing": "^7.14.1",
+    "@total-typescript/shoehorn": "^0.1.0",
     "agentkeepalive": "^4.2.1",
     "applicationinsights": "^2.3.5",
     "body-parser": "^1.20.0",
@@ -205,7 +206,7 @@
     "start-server-and-test": "^2.0.0",
     "supertest": "^6.3.0",
     "swagger-mock-validator": "^10.1.4",
-    "ts-jest": "^29.0.0",
+    "ts-jest": "^29.1.0",
     "typescript": "^5.0.0"
   }
 }
