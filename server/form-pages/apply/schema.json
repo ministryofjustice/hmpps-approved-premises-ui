@@ -1474,10 +1474,17 @@
         "placement-duration": {
           "type": "object",
           "properties": {
+            "differentDuration": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            },
             "duration": {
               "type": "string"
             },
-            "durationDetail": {
+            "reason": {
               "type": "string"
             }
           }
