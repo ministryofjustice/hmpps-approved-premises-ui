@@ -5,6 +5,8 @@ import { DateFormats } from '../../../utils/dateUtils'
 import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
+import SelectApType, { ApType } from '../reasons-for-placement/type-of-ap/apType'
+import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 
 type PlacementDurationBody = {
   duration: string
@@ -16,6 +18,8 @@ export default class PlacementDuration implements TasklistPage {
   title = 'Placement duration and move on'
 
   arrivalDate: Date = this.fetchArrivalDate()
+
+  departureDate: Date | null = this.fetchDepartureDate()
 
   questions = {
     duration: 'What duration of placement do you recommend?',
@@ -76,5 +80,14 @@ export default class PlacementDuration implements TasklistPage {
     } catch (e) {
       throw new SessionDataError(`Move on information placement duration error: ${e}`)
     }
+  }
+
+  private fetchDepartureDate(): Date | null {
+    const apType = retrieveQuestionResponseFromApplicationOrAssessment(this.application, SelectApType, 'type') as ApType
+
+    if (apType === 'standard') return addDays(this.arrivalDate, 7 * 12)
+    if (apType === 'pipe') return addDays(this.arrivalDate, 7 * 26)
+    if (apType === 'esap') return addDays(this.arrivalDate, 7 * 56)
+    return null
   }
 }

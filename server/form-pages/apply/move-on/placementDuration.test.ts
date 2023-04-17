@@ -1,16 +1,23 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 import { SessionDataError } from '../../../utils/errors'
 
 import PlacementDuration from './placementDuration'
 import { applicationFactory } from '../../../testutils/factories'
+import { DateFormats } from '../../../utils/dateUtils'
+import { addResponseToApplication, addResponsesToApplication } from '../../../testutils/addToApplication'
+import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+
+jest.mock('../../../utils/retrieveQuestionResponseFromApplicationOrAssessment.ts')
 
 describe('PlacementDuration', () => {
   let data: Record<string, unknown>
   let application: ApprovedPremisesApplication
 
   beforeEach(() => {
-    application = applicationFactory.withReleaseDate().build()
+    application = applicationFactory
+      .withReleaseDate()
+      .withPageResponse({ task: 'type-of-ap', page: 'ap-type', key: 'type', value: 'standard' })
+      .build()
   })
 
   describe('body', () => {
@@ -90,19 +97,64 @@ describe('PlacementDuration', () => {
     })
   })
 
-  describe('the previous and next page are correct', () => {
-    data = {
-      'basic-information': {
-        'placement-date': {
-          startDateSameAsReleaseDate: 'no',
-          startDate: '2022-11-11',
-        },
-      },
-    }
-    application = applicationFactory.build({ data })
+  describe('departureDate', () => {
+    const releaseDate = new Date(2023, 1, 1)
 
-    itShouldHaveNextValue(new PlacementDuration({}, application), 'relocation-region')
-    itShouldHavePreviousValue(new PlacementDuration({}, application), 'dashboard')
+    it('returns the arrival date plus 12 weeks if the ap type is standard', () => {
+      ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValueOnce('standard')
+
+      application = applicationFactory
+        .withReleaseDate(DateFormats.dateObjToIsoDate(releaseDate))
+        .withPageResponse({ task: 'type-of-ap', page: 'ap-type', key: 'type', value: 'standard' })
+        .build()
+
+      expect(new PlacementDuration({}, application).departureDate).toEqual(addDays(releaseDate, 7 * 12))
+    })
+
+    it('returns the arrival date plus 26 weeks if the ap type is PIPE', () => {
+      ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValueOnce('pipe')
+
+      application = applicationFactory.withReleaseDate(DateFormats.dateObjToIsoDate(releaseDate)).build()
+      application = addResponseToApplication(application, {
+        section: 'type-of-ap',
+        page: 'ap-type',
+        key: 'type',
+        value: 'pipe',
+      })
+
+      expect(new PlacementDuration({}, application).departureDate).toEqual(addDays(releaseDate, 7 * 26))
+    })
+
+    it('returns the arrival date plus 56 weeks if the ap type is ESAP', () => {
+      ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValueOnce('esap')
+
+      application = applicationFactory.withReleaseDate(DateFormats.dateObjToIsoDate(releaseDate)).build()
+      application = addResponseToApplication(application, {
+        section: 'type-of-ap',
+        page: 'ap-type',
+        key: 'type',
+        value: 'esap',
+      })
+
+      expect(new PlacementDuration({}, application).departureDate).toEqual(addDays(releaseDate, 7 * 56))
+    })
+  })
+
+  describe('the previous and next page are correct', () => {
+    beforeEach(() => {
+      application = addResponsesToApplication(application, {
+        section: 'basic-information',
+        page: 'placement-date',
+        keyValuePairs: { startDateSameAsReleaseDate: 'no', startDate: '2022-11-11' },
+      })
+    })
+
+    it('next', () => {
+      expect(new PlacementDuration({}, application).next()).toBe('relocation-region')
+    })
+    it('previous', () => {
+      expect(new PlacementDuration({}, application).previous()).toBe('dashboard')
+    })
   })
 
   describe('errors', () => {
