@@ -50,6 +50,7 @@ export default class DescribeLocationFactors implements TasklistPage {
       delete body.alternativeRadius
       this.body = body as DescribeLocationFactorsBody
     }
+    this.body.postcodeArea = body?.postcodeArea?.toUpperCase()
   }
 
   previous() {

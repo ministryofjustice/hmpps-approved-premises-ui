@@ -12,9 +12,9 @@ describe('RelocationRegion', () => {
   })
 
   describe('body', () => {
-    it('should set the body', () => {
+    it('should uppercase and set the body', () => {
       const page = new RelocationRegion({ postcodeArea: 'some code' }, application)
-      expect(page.body).toEqual({ postcodeArea: 'some code' })
+      expect(page.body).toEqual({ postcodeArea: 'SOME CODE' })
     })
   })
 
