@@ -1,3 +1,4 @@
+import { TextItem } from '@approved-premises/ui'
 import Page from '../page'
 import { uiObjectValue } from '../../helpers'
 import { summaryCardRows } from '../../../server/utils/matchUtils'
@@ -22,7 +23,7 @@ export default class SearchPage extends Page {
         .within(() => {
           const tableRows = summaryCardRows(result, searchParams.requiredCharacteristics)
           tableRows.forEach(row => {
-            cy.contains('dt', row.key.text)
+            cy.contains('dt', (row.key as TextItem).text)
               .parent('div')
               .within(() => {
                 cy.get('dd').should('contain', uiObjectValue(row.value))

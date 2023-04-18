@@ -4,10 +4,12 @@ import {
   BedSearchResult,
   CharacteristicPair,
 } from '../@types/shared'
-import { BedSearchParametersUi, ObjectWithDateParts } from '../@types/ui'
+import { BedSearchParametersUi, ObjectWithDateParts, SummaryListItem } from '../@types/ui'
 import { DateFormats } from './dateUtils'
 import { linkTo, sentenceCase } from './utils'
 import matchPaths from '../paths/match'
+
+type PlacementDates = Record<'placementLength' | 'startDate' | 'endDate', string>
 
 export class InvalidBedSearchDataException extends Error {}
 
@@ -77,10 +79,7 @@ export const placementLength = (lengthInDays: number): string => {
   return formatDuration({ weeks: daysToWeeks(lengthInDays) }, { format: ['weeks'] })
 }
 
-export const placementDates = (
-  startDateString: string,
-  lengthInDays: number,
-): Record<'placementLength' | 'startDate' | 'endDate', string> => {
+export const placementDates = (startDateString: string, lengthInDays: number): PlacementDates => {
   const startDate = DateFormats.isoToDateObj(startDateString)
   const endDate = addDays(startDate, lengthInDays)
 
@@ -113,10 +112,68 @@ export const summaryCardHeader = (
   )
 }
 
+export const confirmationSummaryCardRows = (
+  bedSearchResult: BedSearchResult,
+  dates: PlacementDates,
+): Array<SummaryListItem> => {
+  return [
+    premisesNameRow(bedSearchResult),
+    bedNameRow(bedSearchResult),
+    arrivalDateRow(dates.startDate),
+    departureDateRow(dates.endDate),
+    placementLengthRow(dates.placementLength),
+  ]
+}
+
+export const premisesNameRow = (bedSearchResult: BedSearchResult) => ({
+  key: {
+    text: 'Approved Premises',
+  },
+  value: {
+    text: bedSearchResult.premises.name,
+  },
+})
+
+export const bedNameRow = (bedSearchResult: BedSearchResult) => ({
+  key: {
+    text: 'Bed',
+  },
+  value: {
+    text: bedSearchResult.bed.name,
+  },
+})
+
+export const arrivalDateRow = (arrivalDate: string) => ({
+  key: {
+    text: 'Expected arrival date',
+  },
+  value: {
+    text: arrivalDate,
+  },
+})
+
+export const departureDateRow = (departureDate: string) => ({
+  key: {
+    text: 'Expected departure date',
+  },
+  value: {
+    text: departureDate,
+  },
+})
+
+export const placementLengthRow = (length: string) => ({
+  key: {
+    text: 'Placement length',
+  },
+  value: {
+    text: length,
+  },
+})
+
 export const summaryCardRows = (
   bedSearchResult: BedSearchResult,
   requiredCharacteristics: Array<string>,
-): Array<{ key: { text: string }; value: { html: string } | { text: string } }> => {
+): Array<SummaryListItem> => {
   return [
     townRow(bedSearchResult),
     addressRow(bedSearchResult),

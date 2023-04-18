@@ -6,8 +6,12 @@ import {
   InvalidBedSearchDataException,
   additionalCharacteristicsRow,
   addressRow,
+  arrivalDateRow,
   bedCountRow,
+  bedNameRow,
+  confirmationSummaryCardRows,
   decodeBedSearchResult,
+  departureDateRow,
   encodeBedSearchResult,
   mapApiParamsForUi,
   mapSearchParamCharacteristicsForUi,
@@ -16,6 +20,8 @@ import {
   matchedCharacteristicsRow,
   placementDates,
   placementLength,
+  placementLengthRow,
+  premisesNameRow,
   searchFilter,
   startDateObjFromParams,
   summaryCardHeader,
@@ -203,6 +209,25 @@ describe('matchUtils', () => {
           bedSearchResult.bed.name
         })</a>`,
       )
+    })
+  })
+
+  describe('confirmationSummaryCardRows', () => {
+    it('should call the correct row functions', () => {
+      const bedSearchResult = bedSearchResultFactory.build()
+      const dates = {
+        startDate: 'Saturday 1 January 2022',
+        endDate: 'Saturday 15 January 2022',
+        placementLength: '2 weeks',
+      }
+
+      expect(confirmationSummaryCardRows(bedSearchResult, dates)).toEqual([
+        premisesNameRow(bedSearchResult),
+        bedNameRow(bedSearchResult),
+        arrivalDateRow(dates.startDate),
+        departureDateRow(dates.endDate),
+        placementLengthRow(dates.placementLength),
+      ])
     })
   })
 })
