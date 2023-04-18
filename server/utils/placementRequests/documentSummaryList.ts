@@ -1,8 +1,7 @@
 import { PlacementRequest } from '@approved-premises/api'
 import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
-import assessPaths from '../../paths/assess'
-import applyPaths from '../../paths/apply'
-import { linkTo, sentenceCase } from '../utils'
+import { sentenceCase } from '../utils'
+import { applicationLink, assessmentLink } from './utils'
 
 export const documentSummary = (placementRequest: PlacementRequest): SummaryListWithCard => {
   return {
@@ -23,8 +22,8 @@ export const documentSummaryRow = (
   const hiddenText = `(${type})`
   const link =
     type === 'application'
-      ? linkTo(applyPaths.applications.show, { id: placementRequest.applicationId }, { text: linkText, hiddenText })
-      : linkTo(assessPaths.assessments.show, { id: placementRequest.assessmentId }, { text: linkText, hiddenText })
+      ? applicationLink(placementRequest, linkText, hiddenText)
+      : assessmentLink(placementRequest, linkText, hiddenText)
 
   return {
     key: {

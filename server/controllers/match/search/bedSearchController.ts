@@ -3,8 +3,6 @@ import type { Request, RequestHandler, Response } from 'express'
 import { mapPlacementRequestToBedSearchParams } from '../../../utils/placementRequests/utils'
 import { BedSearchParametersUi } from '../../../@types/ui'
 import matchPaths from '../../../paths/match'
-import assessPaths from '../../../paths/assess'
-import applyPaths from '../../../paths/apply'
 import { PlacementRequestService } from '../../../services'
 import BedService from '../../../services/bedService'
 
@@ -65,8 +63,6 @@ export default class BedSearchController {
         placementRequest,
         tier,
         formPath: matchPaths.placementRequests.beds.search({ id: placementRequest.id }),
-        assessmentPath: assessPaths.assessments.show({ id: placementRequest.assessmentId }),
-        applicationPath: applyPaths.applications.show({ id: placementRequest.applicationId }),
         ...params,
         ...startDateObjFromParams(params),
         placementCriteria,

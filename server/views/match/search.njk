@@ -44,10 +44,9 @@
 						<div class="search-identity-table__table-cell">
 							<dt>
 								<strong>Assessment</strong>
-
 							</dt>
 							<dd>
-								<a href="{{assessmentPath}}">View <span class="govuk-visually-hidden">assessment</span></a>
+								{{ PlacementRequestUtils.assessmentLink(placementRequest, 'View', 'Assessment') | safe }}
 							</dd>
 						</div>
 						<div class="search-identity-table__table-cell">
@@ -55,7 +54,7 @@
 								<strong>Application</strong>
 							</dt>
 							<dd>
-								<a href="{{applicationPath}}">View <span class="govuk-visually-hidden">Application</span></a>
+								{{ PlacementRequestUtils.applicationLink(placementRequest, 'View', 'Application') | safe }}
 							</dd>
 						</div>
 					</div>

@@ -9,8 +9,6 @@ import { startDateObjFromParams } from '../../../utils/matchUtils'
 import { mapPlacementRequestToBedSearchParams } from '../../../utils/placementRequests/utils'
 
 import matchPaths from '../../../paths/match'
-import assessPaths from '../../../paths/assess'
-import applyPaths from '../../../paths/apply'
 
 jest.mock('../../../utils/matchUtils')
 
@@ -59,8 +57,6 @@ describe('bedSearchController', () => {
           placementRequest,
           tier: placementRequest.risks.tier.value.level,
           formPath,
-          applicationPath: applyPaths.applications.show({ id: placementRequest.applicationId }),
-          assessmentPath: assessPaths.assessments.show({ id: placementRequest.assessmentId }),
           placementCriteria,
           ...query,
           ...body,
@@ -83,8 +79,6 @@ describe('bedSearchController', () => {
           placementRequest,
           tier: placementRequest.risks.tier.value.level,
           formPath,
-          applicationPath: applyPaths.applications.show({ id: placementRequest.applicationId }),
-          assessmentPath: assessPaths.assessments.show({ id: placementRequest.assessmentId }),
           placementCriteria,
           ...query,
         })
