@@ -5,7 +5,7 @@ import type {
 } from '@approved-premises/api'
 import ReleaseType from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
 import DescribeLocationFactors from '../../form-pages/apply/risk-and-need-factors/location-factors/describeLocationFactors'
-import ApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
+import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import SentenceType from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
 
 import {
@@ -14,7 +14,7 @@ import {
 } from '../retrieveQuestionResponseFromApplicationOrAssessment'
 
 export const applicationSubmissionData = (application: Application): SubmitApplication => {
-  const apType = retrieveQuestionResponseFromApplicationOrAssessment(application, ApType, 'type')
+  const apType = retrieveQuestionResponseFromApplicationOrAssessment(application, SelectApType, 'type')
   const targetLocation = retrieveQuestionResponseFromApplicationOrAssessment(
     application,
     DescribeLocationFactors,
