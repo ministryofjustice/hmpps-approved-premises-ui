@@ -14,6 +14,7 @@ export const interventionsTranslations = {
   financeBenefitsAndDebt: 'Finance, benefits and debt',
   attitudesAndBehaviour: 'Attitudes, thinking and behaviour',
   abuse: 'Abuse',
+  sexWorking: 'Sex working',
   other: 'Other',
 } as const
 
