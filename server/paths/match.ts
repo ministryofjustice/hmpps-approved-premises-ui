@@ -7,6 +7,9 @@ export default {
   placementRequests: {
     index: placementRequestsPath,
     show: placementRequestPath,
+    bookings: {
+      confirm: placementRequestPath.path('/bookings/confirm'),
+    },
     beds: {
       search: placementRequestPath.path('beds/search'),
     },
