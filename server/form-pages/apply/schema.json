@@ -938,29 +938,79 @@
           }
         },
         "rehabilitative-interventions": {
-          "type": "object",
-          "properties": {
-            "rehabilitativeInterventions": {
-              "type": "array",
-              "items": {
-                "enum": [
-                  "abuse",
-                  "accommodation",
-                  "attitudesAndBehaviour",
-                  "childrenAndFamilies",
-                  "drugsAndAlcohol",
-                  "educationTrainingAndEmployment",
-                  "financeBenefitsAndDebt",
-                  "health",
-                  "other"
-                ],
-                "type": "string"
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "rehabilitativeInterventions": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "abuse",
+                          "accommodation",
+                          "attitudesAndBehaviour",
+                          "childrenAndFamilies",
+                          "drugsAndAlcohol",
+                          "educationTrainingAndEmployment",
+                          "financeBenefitsAndDebt",
+                          "health",
+                          "other",
+                          "sexWorking"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "enum": [
+                        "abuse",
+                        "accommodation",
+                        "attitudesAndBehaviour",
+                        "childrenAndFamilies",
+                        "drugsAndAlcohol",
+                        "educationTrainingAndEmployment",
+                        "financeBenefitsAndDebt",
+                        "health",
+                        "other",
+                        "sexWorking"
+                      ],
+                      "type": "string"
+                    }
+                  ]
+                },
+                "otherIntervention": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                }
               }
             },
-            "otherIntervention": {
-              "type": "string"
+            {
+              "type": "object",
+              "properties": {
+                "rehabilitativeInterventions": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "abuse",
+                      "accommodation",
+                      "attitudesAndBehaviour",
+                      "childrenAndFamilies",
+                      "drugsAndAlcohol",
+                      "educationTrainingAndEmployment",
+                      "financeBenefitsAndDebt",
+                      "health",
+                      "other",
+                      "sexWorking"
+                    ],
+                    "type": "string"
+                  }
+                }
+              }
             }
-          }
+          ]
         }
       }
     },
