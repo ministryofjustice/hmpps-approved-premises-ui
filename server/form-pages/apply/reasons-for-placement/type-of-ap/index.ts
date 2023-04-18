@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 import { Task } from '../../../utils/decorators'
 
-import ApType from './apType'
+import SelectApType from './apType'
 import PipeReferral from './pipeReferral'
 import PipeOpdScreening from './pipeOpdScreening'
 import EsapPlacementScreening from './esapPlacementScreening'
@@ -15,7 +15,7 @@ import EsapNotEligible from './esapNotEligible'
   slug: 'type-of-ap',
   name: 'Type of AP required',
   pages: [
-    ApType,
+    SelectApType,
     EsapNationalSecurityDivision,
     EsapExceptionalCase,
     EsapNotEligible,

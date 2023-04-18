@@ -1,6 +1,7 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
 
+// eslint-disable-next-line import/no-named-as-default
 import ApType from './apType'
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
 

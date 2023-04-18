@@ -1,4 +1,4 @@
-import ApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
+import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import ReleaseType from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
 import SentenceType from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
 import { ApprovedPremisesApplication as Application, ReleaseTypeOption } from '../../@types/shared'
@@ -17,7 +17,7 @@ export const shouldShowContingencyPlanPages = (application: Application) => {
     releaseType = retrieveQuestionResponseFromApplicationOrAssessment(application, ReleaseType, 'releaseType')
   }
 
-  const apType = retrieveQuestionResponseFromApplicationOrAssessment(application, ApType, 'type')
+  const apType = retrieveQuestionResponseFromApplicationOrAssessment(application, SelectApType, 'type')
 
   if (
     sentenceType === 'communityOrder' ||

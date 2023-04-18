@@ -100,7 +100,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     DateFormats.isoDateToUIDate(date, options),
   )
   njkEnv.addGlobal('formatDateTime', (date: string) => DateFormats.isoDateTimeToUIDateTime(date))
-
+  njkEnv.addGlobal('dateObjToUIDate', (date: Date) => DateFormats.dateObjtoUIDate(date))
   njkEnv.addGlobal('dateFieldValues', function sendContextToDateFieldValues(fieldName: string, errors: ErrorMessages) {
     return dateFieldValues(fieldName, this.ctx, errors)
   })
