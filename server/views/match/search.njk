@@ -161,7 +161,7 @@
 						{{ govukSummaryList({
 					card: {
 						title: {
-							text: bedSearchResult.premises.name
+							html: MatchUtils.summaryCardHeader(bedSearchResult, placementRequest.id, startDate, durationDays)
 						}
 					},
 					rows: MatchUtils.summaryCardRows(bedSearchResult, requiredCharacteristics)

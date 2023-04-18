@@ -1,6 +1,5 @@
 import { addDays, daysToWeeks, formatDuration } from 'date-fns'
 import {
-  ApprovedPremises,
   ApprovedPremisesBedSearchParameters as BedSearchParameters,
   BedSearchResult,
   CharacteristicPair,
@@ -90,6 +89,28 @@ export const placementDates = (
     startDate: DateFormats.dateObjtoUIDate(startDate),
     endDate: DateFormats.dateObjtoUIDate(endDate),
   }
+}
+
+export const summaryCardHeader = (
+  bedSearchResult: BedSearchResult,
+  placementRequestId: string,
+  startDate: string,
+  durationDays: string,
+): string => {
+  return linkTo(
+    matchPaths.placementRequests.bookings.confirm,
+    {
+      id: placementRequestId,
+    },
+    {
+      text: `${bedSearchResult.premises.name} (Bed ${bedSearchResult.bed.name})`,
+      query: {
+        bedSearchResult: encodeBedSearchResult(bedSearchResult),
+        startDate,
+        durationDays,
+      },
+    },
+  )
 }
 
 export const summaryCardRows = (

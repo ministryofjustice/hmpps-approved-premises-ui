@@ -18,6 +18,7 @@ import {
   placementLength,
   searchFilter,
   startDateObjFromParams,
+  summaryCardHeader,
   summaryCardRows,
   townRow,
   translateApiCharacteristicForUi,
@@ -185,6 +186,23 @@ describe('matchUtils', () => {
         endDate: 'Saturday 15 January 2022',
         placementLength: '2 weeks',
       })
+    })
+  })
+
+  describe('summaryCardHeader', () => {
+    it('returns a link to the confirm page with the premises name and bed', () => {
+      const bedSearchResult = bedSearchResultFactory.build()
+      const placementRequestId = '123'
+      const startDate = '2022-01-01'
+      const durationDays = '4'
+
+      expect(summaryCardHeader(bedSearchResult, placementRequestId, startDate, durationDays)).toEqual(
+        `<a href="/placement-requests/${placementRequestId}/bookings/confirm?bedSearchResult=${encodeURIComponent(
+          encodeBedSearchResult(bedSearchResult),
+        )}&startDate=${startDate}&durationDays=${durationDays}" >${bedSearchResult.premises.name} (Bed ${
+          bedSearchResult.bed.name
+        })</a>`,
+      )
     })
   })
 })
