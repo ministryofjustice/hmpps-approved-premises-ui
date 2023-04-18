@@ -7,6 +7,8 @@ import { BedSearchParametersUi, ObjectWithDateParts } from '../@types/ui'
 import { DateFormats } from './dateUtils'
 import { sentenceCase } from './utils'
 
+export class InvalidBedSearchDataException extends Error {}
+
 export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParameters => ({
   ...query,
   durationDays: Number(query.durationDays),
@@ -52,6 +54,22 @@ export const unmatchedCharacteristics = (bedSearchResult: BedSearchResult, requi
   return mapSearchParamCharacteristicsForUi(characteristics)
 }
 
+export const encodeBedSearchResult = (bedSearchResult: BedSearchResult): string => {
+  const json = JSON.stringify(bedSearchResult)
+
+  return Buffer.from(json).toString('base64')
+}
+
+export const decodeBedSearchResult = (string: string): BedSearchResult => {
+  const json = Buffer.from(string, 'base64').toString('utf-8')
+  const obj = JSON.parse(json)
+
+  if ('premises' in obj && 'room' in obj && 'bed' in obj) {
+    return obj as BedSearchResult
+  }
+
+  throw new InvalidBedSearchDataException()
+}
 export const summaryCardRows = (
   bedSearchResult: BedSearchResult,
   requiredCharacteristics: Array<string>,

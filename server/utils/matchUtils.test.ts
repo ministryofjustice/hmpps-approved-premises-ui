@@ -3,9 +3,12 @@ import { BedSearchParametersUi } from '../@types/ui'
 import { bedSearchParametersFactory, bedSearchResultFactory } from '../testutils/factories'
 import { DateFormats } from './dateUtils'
 import {
+  InvalidBedSearchDataException,
   additionalCharacteristicsRow,
   addressRow,
   bedCountRow,
+  decodeBedSearchResult,
+  encodeBedSearchResult,
   mapApiParamsForUi,
   mapSearchParamCharacteristicsForUi,
   mapSearchResultCharacteristicsForUi,
@@ -136,6 +139,31 @@ describe('matchUtils', () => {
           value: 'isSemiSpecialistMentalHealth',
         },
       ])
+    })
+  })
+
+  describe('encodeBedSearchResult', () => {
+    it('encodes a bed search result to Base64', () => {
+      const bedSearchResult = bedSearchResultFactory.build()
+
+      expect(encodeBedSearchResult(bedSearchResult)).toEqual(
+        Buffer.from(JSON.stringify(bedSearchResult)).toString('base64'),
+      )
+    })
+  })
+
+  describe('decodeBedSearchResult', () => {
+    it('decodes a Base64 encoded bed search result', () => {
+      const bedSearchResult = bedSearchResultFactory.build()
+      const encodedResult = encodeBedSearchResult(bedSearchResult)
+
+      expect(decodeBedSearchResult(encodedResult)).toEqual(bedSearchResult)
+    })
+
+    it('throws an error if the object is not a bed search result', () => {
+      const obj = Buffer.from('{"foo":"bar"}').toString('base64')
+
+      expect(() => decodeBedSearchResult(obj)).toThrowError(InvalidBedSearchDataException)
     })
   })
 })
