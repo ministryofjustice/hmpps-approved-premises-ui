@@ -47,7 +47,7 @@ describe('SentenceType', () => {
   })
 
   describe('when the exception-details step was not completed', () => {
-    itShouldHavePreviousValue(new SentenceType({}, application), '')
+    itShouldHavePreviousValue(new SentenceType({}, application), 'transgender')
   })
 
   describe('when the exception-details step was completed', () => {
