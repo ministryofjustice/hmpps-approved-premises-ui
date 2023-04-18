@@ -1,5 +1,6 @@
 import { placementRequestFactory } from '../../testutils/factories'
 import { documentSummary, documentSummaryRow } from './documentSummaryList'
+import { applicationLink, assessmentLink } from './utils'
 
 describe('documentSummaryList', () => {
   describe('documentSummary', () => {
@@ -26,7 +27,7 @@ describe('documentSummaryList', () => {
           text: 'Assessment',
         },
         value: {
-          html: `<a href="/assessments/${placementRequest.assessmentId}" >View document <span class="govuk-visually-hidden">(assessment)</span></a>`,
+          html: assessmentLink(placementRequest, 'View document', '(assessment)'),
         },
       })
     })
@@ -39,7 +40,7 @@ describe('documentSummaryList', () => {
           text: 'Application',
         },
         value: {
-          html: `<a href="/applications/${placementRequest.applicationId}" >View document <span class="govuk-visually-hidden">(application)</span></a>`,
+          html: applicationLink(placementRequest, 'View document', '(application)'),
         },
       })
     })

@@ -1,7 +1,7 @@
 import BedClient from './bedClient'
 import paths from '../paths/api'
 
-import { bedSearchParametersFactory, bedSearchResultFactory } from '../testutils/factories'
+import { bedSearchParametersFactory, bedSearchResultsFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 
 describeClient('BedClient', provider => {
@@ -15,7 +15,7 @@ describeClient('BedClient', provider => {
 
   describe('search', () => {
     it('makes a post request to the beds search endpoint', async () => {
-      const bedSearchResult = bedSearchResultFactory.build()
+      const bedSearchResult = bedSearchResultsFactory.build()
       const payload = bedSearchParametersFactory.build()
 
       provider.addInteraction({

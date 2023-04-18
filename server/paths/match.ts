@@ -1,14 +1,17 @@
 import { path } from 'static-path'
 
 const placementRequestsPath = path('/placement-requests')
-const bedsPath = path('/beds')
+const placementRequestPath = placementRequestsPath.path(':id')
 
 export default {
   placementRequests: {
     index: placementRequestsPath,
-    show: placementRequestsPath.path(':id'),
-  },
-  beds: {
-    search: bedsPath.path('search'),
+    show: placementRequestPath,
+    bookings: {
+      confirm: placementRequestPath.path('/bookings/confirm'),
+    },
+    beds: {
+      search: placementRequestPath.path('beds/search'),
+    },
   },
 }

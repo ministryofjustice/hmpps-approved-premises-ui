@@ -7,14 +7,14 @@ import {
   CharacteristicPair,
 } from '../../@types/shared'
 
-export default Factory.define<BedSearchResults>(() => ({
+export const bedSearchResultsFactory = Factory.define<BedSearchResults>(() => ({
   results: bedSearchResultFactory.buildList(3),
   resultsBedCount: faker.datatype.number({ min: 0, max: 50 }),
   resultsPremisesCount: faker.datatype.number({ min: 0, max: 20 }),
   resultsRoomCount: faker.datatype.number({ min: 0, max: 30 }),
 }))
 
-const bedSearchResultFactory = Factory.define<BedSearchResult>(() => ({
+export const bedSearchResultFactory = Factory.define<BedSearchResult>(() => ({
   premises: premisesSummaryFactory.build(),
   room: roomSummaryFactory.build(),
   bed: bedSummaryFactory.build(),

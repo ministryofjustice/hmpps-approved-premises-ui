@@ -4,14 +4,14 @@ import type { BedSearchResult } from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from '../../wiremock'
 
-import paths from '../../server/paths/match'
+import paths from '../../server/paths/api'
 
 export default {
   stubBedSearch: (args: { bedSearchResults: BedSearchResult }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'POST',
-        url: paths.beds.search.pattern,
+        url: paths.match.findBeds.pattern,
       },
       response: {
         status: 200,
@@ -24,7 +24,7 @@ export default {
     (
       await getMatchingRequests({
         method: 'POST',
-        url: paths.beds.search.pattern,
+        url: paths.match.findBeds.pattern,
       })
     ).body.requests,
 }

@@ -3,16 +3,28 @@ import { BedSearchParametersUi } from '../@types/ui'
 import { bedSearchParametersFactory, bedSearchResultFactory } from '../testutils/factories'
 import { DateFormats } from './dateUtils'
 import {
+  InvalidBedSearchDataException,
   additionalCharacteristicsRow,
   addressRow,
+  arrivalDateRow,
   bedCountRow,
+  bedNameRow,
+  confirmationSummaryCardRows,
+  decodeBedSearchResult,
+  departureDateRow,
+  encodeBedSearchResult,
   mapApiParamsForUi,
   mapSearchParamCharacteristicsForUi,
   mapSearchResultCharacteristicsForUi,
   mapUiParamsForApi,
   matchedCharacteristicsRow,
+  placementDates,
+  placementLength,
+  placementLengthRow,
+  premisesNameRow,
   searchFilter,
   startDateObjFromParams,
+  summaryCardHeader,
   summaryCardRows,
   townRow,
   translateApiCharacteristicForUi,
@@ -71,12 +83,12 @@ describe('matchUtils', () => {
     it('calls the correct row functions', () => {
       const bedSearchResult = bedSearchResultFactory.build()
       const searchParams = bedSearchParametersFactory.build()
-      expect(summaryCardRows(bedSearchResult.results[0], searchParams.requiredCharacteristics)).toEqual([
-        townRow(bedSearchResult.results[0]),
-        addressRow(bedSearchResult.results[0]),
-        matchedCharacteristicsRow(bedSearchResult.results[0], searchParams.requiredCharacteristics),
-        additionalCharacteristicsRow(bedSearchResult.results[0], searchParams.requiredCharacteristics),
-        bedCountRow(bedSearchResult.results[0]),
+      expect(summaryCardRows(bedSearchResult, searchParams.requiredCharacteristics)).toEqual([
+        townRow(bedSearchResult),
+        addressRow(bedSearchResult),
+        matchedCharacteristicsRow(bedSearchResult, searchParams.requiredCharacteristics),
+        additionalCharacteristicsRow(bedSearchResult, searchParams.requiredCharacteristics),
+        bedCountRow(bedSearchResult),
       ])
     })
   })
@@ -135,6 +147,86 @@ describe('matchUtils', () => {
           text: 'Semi specialist mental health',
           value: 'isSemiSpecialistMentalHealth',
         },
+      ])
+    })
+  })
+
+  describe('encodeBedSearchResult', () => {
+    it('encodes a bed search result to Base64', () => {
+      const bedSearchResult = bedSearchResultFactory.build()
+
+      expect(encodeBedSearchResult(bedSearchResult)).toEqual(
+        Buffer.from(JSON.stringify(bedSearchResult)).toString('base64'),
+      )
+    })
+  })
+
+  describe('decodeBedSearchResult', () => {
+    it('decodes a Base64 encoded bed search result', () => {
+      const bedSearchResult = bedSearchResultFactory.build()
+      const encodedResult = encodeBedSearchResult(bedSearchResult)
+
+      expect(decodeBedSearchResult(encodedResult)).toEqual(bedSearchResult)
+    })
+
+    it('throws an error if the object is not a bed search result', () => {
+      const obj = Buffer.from('{"foo":"bar"}').toString('base64')
+
+      expect(() => decodeBedSearchResult(obj)).toThrowError(InvalidBedSearchDataException)
+    })
+  })
+
+  describe('placementLength', () => {
+    it('formats the number of days as weeks', () => {
+      expect(placementLength(14)).toEqual('2 weeks')
+    })
+  })
+
+  describe('placementDates', () => {
+    it('returns formatted versions of the placement dates and durations', () => {
+      const startDate = '2022-01-01'
+      const lengthInDays = 14
+
+      expect(placementDates(startDate, lengthInDays)).toEqual({
+        startDate: 'Saturday 1 January 2022',
+        endDate: 'Saturday 15 January 2022',
+        placementLength: '2 weeks',
+      })
+    })
+  })
+
+  describe('summaryCardHeader', () => {
+    it('returns a link to the confirm page with the premises name and bed', () => {
+      const bedSearchResult = bedSearchResultFactory.build()
+      const placementRequestId = '123'
+      const startDate = '2022-01-01'
+      const durationDays = '4'
+
+      expect(summaryCardHeader(bedSearchResult, placementRequestId, startDate, durationDays)).toEqual(
+        `<a href="/placement-requests/${placementRequestId}/bookings/confirm?bedSearchResult=${encodeURIComponent(
+          encodeBedSearchResult(bedSearchResult),
+        )}&startDate=${startDate}&durationDays=${durationDays}" >${bedSearchResult.premises.name} (Bed ${
+          bedSearchResult.bed.name
+        })</a>`,
+      )
+    })
+  })
+
+  describe('confirmationSummaryCardRows', () => {
+    it('should call the correct row functions', () => {
+      const bedSearchResult = bedSearchResultFactory.build()
+      const dates = {
+        startDate: 'Saturday 1 January 2022',
+        endDate: 'Saturday 15 January 2022',
+        placementLength: '2 weeks',
+      }
+
+      expect(confirmationSummaryCardRows(bedSearchResult, dates)).toEqual([
+        premisesNameRow(bedSearchResult),
+        bedNameRow(bedSearchResult),
+        arrivalDateRow(dates.startDate),
+        departureDateRow(dates.endDate),
+        placementLengthRow(dates.placementLength),
       ])
     })
   })

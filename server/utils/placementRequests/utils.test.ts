@@ -1,7 +1,11 @@
 import { personFactory, placementRequestFactory } from '../../testutils/factories'
-import { createQueryString } from '../utils'
-import { formatReleaseType, mapPlacementRequestToBedSearchParams, searchButton } from './utils'
-import paths from '../../paths/match'
+import {
+  applicationLink,
+  assessmentLink,
+  formatReleaseType,
+  mapPlacementRequestToBedSearchParams,
+  searchButton,
+} from './utils'
 
 describe('utils', () => {
   describe('formatReleaseType', () => {
@@ -16,9 +20,7 @@ describe('utils', () => {
       const placementRequest = placementRequestFactory.build()
 
       expect(searchButton(placementRequest)).toEqual(
-        `<a class="govuk-button" href="${paths.beds.search({})}?${createQueryString(
-          mapPlacementRequestToBedSearchParams(placementRequest),
-        )}">Search</a>`,
+        `<a href="/placement-requests/${placementRequest.id}/beds/search" class="govuk-button">Search</a>`,
       )
     })
   })
@@ -42,6 +44,26 @@ describe('utils', () => {
         assessmentId: placementRequest.assessmentId,
         requiredCharacteristics: placementRequest.essentialCriteria,
       })
+    })
+  })
+
+  describe('applicationLink', () => {
+    it('returns a link to the application', () => {
+      const placementRequest = placementRequestFactory.build()
+
+      expect(applicationLink(placementRequest, 'link text', 'hidden text')).toEqual(
+        `<a href="/applications/${placementRequest.applicationId}" >link text <span class="govuk-visually-hidden">hidden text</span></a>`,
+      )
+    })
+  })
+
+  describe('assessmentLink', () => {
+    it('returns a link to the assessment', () => {
+      const placementRequest = placementRequestFactory.build()
+
+      expect(assessmentLink(placementRequest, 'link text', 'hidden text')).toEqual(
+        `<a href="/assessments/${placementRequest.assessmentId}" >link text <span class="govuk-visually-hidden">hidden text</span></a>`,
+      )
     })
   })
 })
