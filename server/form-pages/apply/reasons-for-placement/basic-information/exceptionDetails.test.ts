@@ -30,7 +30,7 @@ describe('ExceptionDetails', () => {
 
   itShouldHavePreviousValue(new ExceptionDetails({}), 'is-exceptional-case')
 
-  itShouldHaveNextValue(new ExceptionDetails(body), 'sentence-type')
+  itShouldHaveNextValue(new ExceptionDetails(body), 'transgender')
 
   describe('errors', () => {
     it('should return an empty object if the body is provided correctly', () => {

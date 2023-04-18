@@ -70,7 +70,7 @@ export default class ExceptionDetails implements TasklistPage {
   }
 
   next() {
-    return 'sentence-type'
+    return 'transgender'
   }
 
   errors() {
