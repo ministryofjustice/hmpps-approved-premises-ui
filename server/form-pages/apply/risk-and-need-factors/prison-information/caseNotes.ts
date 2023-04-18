@@ -15,7 +15,6 @@ type CaseNotesAdjudication = Omit<Adjudication, 'finding'> & {
 type CaseNotesBody = {
   caseNoteIds: Array<string>
   selectedCaseNotes: Array<PrisonCaseNote>
-  moreDetail: string
   adjudications: Array<Adjudication>
   acctAlerts: Array<PersonAcctAlert>
 }
@@ -61,14 +60,13 @@ export const caseNoteCheckbox = (caseNote: PrisonCaseNote, checked: boolean) => 
 
 @Page({
   name: 'case-notes',
-  bodyProperties: ['caseNoteIds', 'selectedCaseNotes', 'moreDetail', 'adjudications', 'acctAlerts'],
+  bodyProperties: ['caseNoteIds', 'selectedCaseNotes', 'adjudications', 'acctAlerts'],
 })
 export default class CaseNotes implements TasklistPage {
   title = 'Prison information'
 
   questions = {
     caseNotesSelectionQuestion: 'Selected prison case notes that support this application',
-    moreDetailsQuestion: `Are there additional circumstances that have helped ${this.application.person.name} do well in the past?`,
   }
 
   caseNotes: Array<PrisonCaseNote> | undefined
@@ -86,7 +84,6 @@ export default class CaseNotes implements TasklistPage {
     this._body = {
       caseNoteIds: caseNoteIds as Array<string>,
       selectedCaseNotes,
-      moreDetail: value.moreDetail as string,
       adjudications: (value.adjudications || []) as Array<CaseNotesAdjudication>,
       acctAlerts: (value.acctAlerts || []) as Array<PersonAcctAlert>,
     }
@@ -133,10 +130,6 @@ export default class CaseNotes implements TasklistPage {
 
     if (this.body.selectedCaseNotes) {
       response.Adjudications = this.body.adjudications.map(adjudicationResponse)
-    }
-
-    if (this.body.moreDetail) {
-      response[this.questions.moreDetailsQuestion] = this.body.moreDetail
     }
 
     return response

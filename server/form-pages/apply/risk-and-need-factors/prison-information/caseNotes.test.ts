@@ -116,7 +116,6 @@ describe('CaseNotes', () => {
       const page = new CaseNotes(
         {
           selectedCaseNotes: [caseNotes[0], caseNotes[1]],
-          moreDetail: 'some detail',
           adjudications,
         },
         application,
@@ -125,7 +124,6 @@ describe('CaseNotes', () => {
       expect(page.body).toEqual({
         selectedCaseNotes: [caseNotes[0], caseNotes[1]],
         acctAlerts: [],
-        moreDetail: 'some detail',
         caseNoteIds: [caseNotes[0].id, caseNotes[1].id],
         adjudications,
       })
@@ -200,7 +198,7 @@ describe('CaseNotes', () => {
   itShouldHavePreviousValue(new CaseNotes({}, application), 'dashboard')
 
   describe('response', () => {
-    const page = new CaseNotes({ selectedCaseNotes: caseNotes, moreDetail: 'some detail', adjudications }, application)
+    const page = new CaseNotes({ selectedCaseNotes: caseNotes, adjudications }, application)
 
     expect(page.response()).toEqual({
       'Selected prison case notes that support this application': [
@@ -215,15 +213,11 @@ describe('CaseNotes', () => {
         adjudicationResponse(adjudications[3]),
         adjudicationResponse(adjudications[4]),
       ],
-      'Are there additional circumstances that have helped John Wayne do well in the past?': 'some detail',
     })
   })
 
   describe('checkBoxForCaseNoteId', () => {
-    const page = new CaseNotes(
-      { selectedCaseNotes: [caseNotes[0], caseNotes[1]], moreDetail: 'some detail' },
-      application,
-    )
+    const page = new CaseNotes({ selectedCaseNotes: [caseNotes[0], caseNotes[1]] }, application)
 
     beforeEach(() => {
       page.caseNotes = caseNotes
