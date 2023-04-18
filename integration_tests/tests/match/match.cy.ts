@@ -1,3 +1,4 @@
+import ConfirmationPage from '../../pages/match/confirmationPage'
 import PlacementRequestPage from '../../pages/match/placementRequestPage'
 import ListPage from '../../pages/match/listPlacementRequestsPage'
 import SearchPage from '../../pages/match/searchPage'
@@ -122,5 +123,14 @@ context('Placement Requests', () => {
         newSearchParameters.requiredCharacteristics,
       )
     })
+
+    // When I click on a booking
+    searchPage.clickSearchResult(bedSearchResults.results[0])
+
+    // Then I should be shown the confirmation page
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage)
+
+    // And the confirmation page should contain the details of my booking
+    confirmationPage.shouldShowConfirmationDetails(bedSearchResults.results[0], newSearchParameters)
   })
 })
