@@ -285,6 +285,12 @@ describe('linkTo', () => {
       linkTo(path('/foo/:id'), { id: '123' }, { text: 'Hello', attributes: { class: 'some-class' } }),
     ).toMatchStringIgnoringWhitespace('<a href="/foo/123" class="some-class">Hello</a>')
   })
+
+  it('allows a query to be passed', () => {
+    expect(linkTo(path('/foo'), {}, { text: 'Hello', query: { foo: 'bar' } })).toMatchStringIgnoringWhitespace(
+      '<a href="/foo?foo=bar">Hello</a>',
+    )
+  })
 })
 
 describe('resolvePath', () => {
