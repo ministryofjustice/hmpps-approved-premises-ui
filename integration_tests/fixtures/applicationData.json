@@ -347,6 +347,10 @@
       "arson": "yes",
       "arsonDetail": "Some details here"
     },
+    "additional-circumstances": {
+      "additionalCircumstances": "yes",
+      "additionalCircumstancesDetail": "Some details here"
+    },
     "contingency-plan-partners": {
       "partnerAgencyDetails": [
         {

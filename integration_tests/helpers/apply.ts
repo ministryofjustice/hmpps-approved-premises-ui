@@ -710,6 +710,11 @@ export default class ApplyHelper {
     arsonPage.completeForm()
     arsonPage.clickSubmit()
 
+    // And I complete the Additional Circumstances page
+    const additionalCircumstancesPage = new ApplyPages.AdditionalCircumstancesPage(this.application)
+    additionalCircumstancesPage.completeForm()
+    additionalCircumstancesPage.clickSubmit()
+
     // And I complete the Contingency Plan Partners page
     const contingencyPlanPartnersPage = new ApplyPages.ContingencyPlanPartnersPage(
       this.application,
@@ -742,6 +747,7 @@ export default class ApplyHelper {
       previousPlacementsPage,
       cateringPage,
       arsonPage,
+      additionalCircumstancesPage,
       contingencyPlanQuestionsPage,
     ]
 
