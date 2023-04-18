@@ -56,7 +56,8 @@ describe('bedSearchController', () => {
         expect(response.render).toHaveBeenCalledWith('match/search', {
           pageHeading: 'Find a bed',
           bedSearchResults,
-          person: placementRequest.person,
+          placementRequest,
+          tier: placementRequest.risks.tier.value.level,
           formPath,
           applicationPath: applyPaths.applications.show({ id: placementRequest.applicationId }),
           assessmentPath: assessPaths.assessments.show({ id: placementRequest.assessmentId }),
@@ -79,7 +80,8 @@ describe('bedSearchController', () => {
         expect(response.render).toHaveBeenCalledWith('match/search', {
           pageHeading: 'Find a bed',
           bedSearchResults,
-          person: placementRequest.person,
+          placementRequest,
+          tier: placementRequest.risks.tier.value.level,
           formPath,
           applicationPath: applyPaths.applications.show({ id: placementRequest.applicationId }),
           assessmentPath: assessPaths.assessments.show({ id: placementRequest.assessmentId }),

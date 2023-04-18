@@ -57,11 +57,13 @@ export default class BedSearchController {
       params.requiredCharacteristics = [...(params.selectedRequiredCharacteristics || params.requiredCharacteristics)]
 
       const bedSearchResults = await this.bedService.search(req.user.token, params as BedSearchParametersUi)
+      const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'
 
       res.render('match/search', {
         pageHeading: 'Find a bed',
         bedSearchResults,
-        person: placementRequest.person,
+        placementRequest,
+        tier,
         formPath: matchPaths.placementRequests.beds.search({ id: placementRequest.id }),
         assessmentPath: assessPaths.assessments.show({ id: placementRequest.assessmentId }),
         applicationPath: applyPaths.applications.show({ id: placementRequest.applicationId }),

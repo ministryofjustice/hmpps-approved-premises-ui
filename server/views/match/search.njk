@@ -12,26 +12,26 @@
 	<div class="govuk-grid-row">
 		<div class="govuk-width-container">
 			<div class="govuk-grid-column-full">
-				<h1 class="govuk-heading-m">{{person.name}}</h1>
+				<h1 class="govuk-heading-m">{{placementRequest.person.name}}</h1>
 				<dl class="search-identity-table govuk-body">
 					<div class="search-identity-table__column">
 						<div class="search-identity-table__table-cell">
 							<dt>
 								<strong>Tier</strong>
 							</dt>
-							<dd>{{ placementRequest.risks.tier.value.level }}</dd>
+							<dd>{{ tier }}</dd>
 						</div>
 						<div class="search-identity-table__table-cell">
 							<dt>
 								<strong>CRN</strong>
 							</dt>
-							<dd>{{person.crn}}</dd>
+							<dd>{{placementRequest.person.crn}}</dd>
 						</div>
 						<div class="search-identity-table__table-cell">
 							<dt>
 								<strong>DOB</strong>
 							</dt>
-							<dd>{{person.dateOfBirth}}</dd>
+							<dd>{{placementRequest.person.dateOfBirth}}</dd>
 						</div>
 						<div class="search-identity-table__table-cell">
 							<dt>
@@ -144,7 +144,7 @@
 								label: {
 								text: "Radius"
 								},
-								classes: "govuk-input--width-3", 
+								classes: "govuk-input--width-3",
 								suffix: {
 									text: "miles"
 								}
