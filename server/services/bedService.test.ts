@@ -1,6 +1,6 @@
 import { BedSearchParametersUi } from '../@types/ui'
 import BedClient from '../data/bedClient'
-import { bedSearchParametersFactory, bedSearchResultFactory } from '../testutils/factories'
+import { bedSearchParametersFactory, bedSearchResultsFactory } from '../testutils/factories'
 import { mapApiParamsForUi } from '../utils/matchUtils'
 import BedService from './bedService'
 
@@ -21,7 +21,7 @@ describe('bedService', () => {
 
   describe('search', () => {
     it('calls the all method on the bed client', async () => {
-      const bedSearchResults = bedSearchResultFactory.build()
+      const bedSearchResults = bedSearchResultsFactory.build()
       const params = bedSearchParametersFactory.onCreate(mapApiParamsForUi).build() as unknown as BedSearchParametersUi
       bedClient.search.mockResolvedValue(bedSearchResults)
 

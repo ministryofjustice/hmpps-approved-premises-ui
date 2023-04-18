@@ -71,12 +71,12 @@ describe('matchUtils', () => {
     it('calls the correct row functions', () => {
       const bedSearchResult = bedSearchResultFactory.build()
       const searchParams = bedSearchParametersFactory.build()
-      expect(summaryCardRows(bedSearchResult.results[0], searchParams.requiredCharacteristics)).toEqual([
-        townRow(bedSearchResult.results[0]),
-        addressRow(bedSearchResult.results[0]),
-        matchedCharacteristicsRow(bedSearchResult.results[0], searchParams.requiredCharacteristics),
-        additionalCharacteristicsRow(bedSearchResult.results[0], searchParams.requiredCharacteristics),
-        bedCountRow(bedSearchResult.results[0]),
+      expect(summaryCardRows(bedSearchResult, searchParams.requiredCharacteristics)).toEqual([
+        townRow(bedSearchResult),
+        addressRow(bedSearchResult),
+        matchedCharacteristicsRow(bedSearchResult, searchParams.requiredCharacteristics),
+        additionalCharacteristicsRow(bedSearchResult, searchParams.requiredCharacteristics),
+        bedCountRow(bedSearchResult),
       ])
     })
   })

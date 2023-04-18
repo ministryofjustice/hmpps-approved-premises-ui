@@ -4,7 +4,7 @@ import SearchPage from '../../pages/match/searchPage'
 
 import {
   bedSearchParametersFactory,
-  bedSearchResultFactory,
+  bedSearchResultsFactory,
   personFactory,
   placementRequestFactory,
 } from '../../../server/testutils/factories'
@@ -22,7 +22,7 @@ context('Placement Requests', () => {
     cy.signIn()
 
     // And there are beds and placement requests in the database
-    const bedSearchResults = bedSearchResultFactory.build()
+    const bedSearchResults = bedSearchResultsFactory.build()
     cy.task('stubBedSearch', { bedSearchResults })
     const person = personFactory.build()
     cy.task('stubFindPerson', { person })

@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import BedsController, { placementCriteria } from './bedSearchController'
-import { bedSearchResultFactory, placementRequestFactory } from '../../../testutils/factories'
+import { bedSearchResultsFactory, placementRequestFactory } from '../../../testutils/factories'
 
 import { BedService, PlacementRequestService } from '../../../services'
 import { startDateObjFromParams } from '../../../utils/matchUtils'
@@ -17,7 +17,7 @@ jest.mock('../../../utils/matchUtils')
 describe('bedSearchController', () => {
   const token = 'SOME_TOKEN'
   const placementRequest = placementRequestFactory.build()
-  const bedSearchResults = bedSearchResultFactory.build()
+  const bedSearchResults = bedSearchResultsFactory.build()
 
   const request: DeepMocked<Request> = createMock<Request>({
     params: { id: placementRequest.id },
