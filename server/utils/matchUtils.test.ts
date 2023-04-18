@@ -14,6 +14,8 @@ import {
   mapSearchResultCharacteristicsForUi,
   mapUiParamsForApi,
   matchedCharacteristicsRow,
+  placementDates,
+  placementLength,
   searchFilter,
   startDateObjFromParams,
   summaryCardRows,
@@ -164,6 +166,25 @@ describe('matchUtils', () => {
       const obj = Buffer.from('{"foo":"bar"}').toString('base64')
 
       expect(() => decodeBedSearchResult(obj)).toThrowError(InvalidBedSearchDataException)
+    })
+  })
+
+  describe('placementLength', () => {
+    it('formats the number of days as weeks', () => {
+      expect(placementLength(14)).toEqual('2 weeks')
+    })
+  })
+
+  describe('placementDates', () => {
+    it('returns formatted versions of the placement dates and durations', () => {
+      const startDate = '2022-01-01'
+      const lengthInDays = 14
+
+      expect(placementDates(startDate, lengthInDays)).toEqual({
+        startDate: 'Saturday 1 January 2022',
+        endDate: 'Saturday 15 January 2022',
+        placementLength: '2 weeks',
+      })
     })
   })
 })

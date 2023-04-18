@@ -1,11 +1,14 @@
+import { addDays, daysToWeeks, formatDuration } from 'date-fns'
 import {
+  ApprovedPremises,
   ApprovedPremisesBedSearchParameters as BedSearchParameters,
   BedSearchResult,
   CharacteristicPair,
 } from '../@types/shared'
 import { BedSearchParametersUi, ObjectWithDateParts } from '../@types/ui'
 import { DateFormats } from './dateUtils'
-import { sentenceCase } from './utils'
+import { linkTo, sentenceCase } from './utils'
+import matchPaths from '../paths/match'
 
 export class InvalidBedSearchDataException extends Error {}
 
@@ -70,6 +73,25 @@ export const decodeBedSearchResult = (string: string): BedSearchResult => {
 
   throw new InvalidBedSearchDataException()
 }
+
+export const placementLength = (lengthInDays: number): string => {
+  return formatDuration({ weeks: daysToWeeks(lengthInDays) }, { format: ['weeks'] })
+}
+
+export const placementDates = (
+  startDateString: string,
+  lengthInDays: number,
+): Record<'placementLength' | 'startDate' | 'endDate', string> => {
+  const startDate = DateFormats.isoToDateObj(startDateString)
+  const endDate = addDays(startDate, lengthInDays)
+
+  return {
+    placementLength: placementLength(lengthInDays),
+    startDate: DateFormats.dateObjtoUIDate(startDate),
+    endDate: DateFormats.dateObjtoUIDate(endDate),
+  }
+}
+
 export const summaryCardRows = (
   bedSearchResult: BedSearchResult,
   requiredCharacteristics: Array<string>,
