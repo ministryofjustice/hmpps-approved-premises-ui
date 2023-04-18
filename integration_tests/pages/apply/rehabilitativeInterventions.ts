@@ -15,5 +15,6 @@ export default class RehabilitativeInterventions extends ApplyPage {
   completeForm(): void {
     this.checkCheckboxesFromPageBody('rehabilitativeInterventions')
     this.completeTextInputFromPageBody('otherIntervention')
+    this.completeTextInputFromPageBody('summary')
   }
 }

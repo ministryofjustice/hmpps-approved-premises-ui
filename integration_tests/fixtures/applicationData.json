@@ -208,7 +208,8 @@
         "abuse",
         "other"
       ],
-      "otherIntervention": "Another"
+      "otherIntervention": "Another",
+      "summary": "A summary of how these interventions will assist the person rehabilitation"
     }
   },
   "prison-information": {
