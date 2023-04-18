@@ -1,7 +1,7 @@
 import { PlacementRequest } from '@approved-premises/api'
 import { BedSearchParametersUi } from '@approved-premises/ui'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
-import { createQueryString } from '../utils'
+import { linkTo } from '../utils'
 import paths from '../../paths/match'
 
 export const mapPlacementRequestToBedSearchParams = ({
@@ -27,6 +27,8 @@ export const mapPlacementRequestToBedSearchParams = ({
 export const formatReleaseType = (placementRequest: PlacementRequest) => allReleaseTypes[placementRequest.releaseType]
 
 export const searchButton = (placementRequest: PlacementRequest) =>
-  `<a class="govuk-button" href="${paths.beds.search({})}?${createQueryString(
-    mapPlacementRequestToBedSearchParams(placementRequest),
-  )}">Search</a>`
+  linkTo(
+    paths.placementRequests.beds.search,
+    { id: placementRequest.id },
+    { text: 'Search', attributes: { class: 'govuk-button' } },
+  )

@@ -1,5 +1,4 @@
 import Page from '../page'
-import paths from '../../../server/paths/match'
 import { uiObjectValue } from '../../helpers'
 import { summaryCardRows } from '../../../server/utils/matchUtils'
 import {
@@ -10,11 +9,6 @@ import {
 export default class SearchPage extends Page {
   constructor(name: string) {
     super(name)
-  }
-
-  static visit(name: string): SearchPage {
-    cy.visit(paths.beds.search({}))
-    return new SearchPage(name)
   }
 
   shouldDisplaySearchResults(bedSearchResult: BedSearchResults, searchParams: BedSearchParameters): void {
