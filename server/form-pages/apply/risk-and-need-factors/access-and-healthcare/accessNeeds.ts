@@ -12,6 +12,8 @@ export const additionalNeeds = {
   learningDisability: 'Learning disability',
   hearingImpairment: 'Hearing impairment',
   neurodivergentConditions: 'Neurodivergent conditions',
+  healthcare: 'Healthcare',
+  pregnancy: 'Pregnancy',
   other: 'Other',
   none: 'None of the above',
 }
