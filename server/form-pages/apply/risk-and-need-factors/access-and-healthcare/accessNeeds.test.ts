@@ -23,7 +23,9 @@ describe('AccessNeeds', () => {
           interpreterLanguage: 'french',
           needsInterpreter: 'no',
           religiousOrCulturalNeeds: 'Yes' as YesOrNo,
-          religiousOrCulturalNeedsDetails: 'Some details',
+          religiousOrCulturalNeedsDetail: 'Some details',
+          careAndSupportNeeds: 'yes',
+          careAndSupportNeedsDetail: 'Some more details',
         },
         application,
       )
@@ -33,7 +35,9 @@ describe('AccessNeeds', () => {
         interpreterLanguage: 'french',
         needsInterpreter: 'no',
         religiousOrCulturalNeeds: 'Yes',
-        religiousOrCulturalNeedsDetails: 'Some details',
+        religiousOrCulturalNeedsDetail: 'Some details',
+        careAndSupportNeeds: 'yes',
+        careAndSupportNeedsDetail: 'Some more details',
       })
     })
   })
@@ -68,7 +72,7 @@ describe('AccessNeeds', () => {
           interpreterLanguage: 'french',
           needsInterpreter: 'no',
           religiousOrCulturalNeeds: 'Yes' as YesOrNo,
-          religiousOrCulturalNeedsDetails: 'Some details',
+          religiousOrCulturalNeedsDetail: 'Some details',
         },
         application,
       )
@@ -87,7 +91,7 @@ describe('AccessNeeds', () => {
           needsInterpreter: 'yes',
           interpreterLanguage: 'French',
           religiousOrCulturalNeeds: 'yes',
-          religiousOrCulturalNeedsDetails: 'Some details',
+          religiousOrCulturalNeedsDetail: 'Some details',
           careActAssessmentCompleted: 'yes',
           careAndSupportNeeds: 'yes',
           careAndSupportNeedsDetail: 'some details',
@@ -99,8 +103,7 @@ describe('AccessNeeds', () => {
         'Does John Wayne have any of the following needs?': 'Mobility needs, visual impairment',
         'Does John Wayne need an interpreter?': 'Yes',
         'Which language is an interpreter needed for?': 'French',
-        'Does John Wayne have any religious or cultural needs?': 'Yes',
-        'Details of religious or cultural needs': 'Some details',
+        'Does John Wayne have any religious or cultural needs?': 'Yes - Some details',
         'Does this person have care and support needs?': 'Yes - some details',
         'Has a care act assessment been completed?': 'Yes',
       })

@@ -298,7 +298,7 @@
     "access-needs": {
       "additionalNeeds": ["mobility", "learningDisability", "neurodivergentConditions"],
       "religiousOrCulturalNeeds": "yes",
-      "religiousOrCulturalNeedsDetails": "sunt at minus",
+      "religiousOrCulturalNeedsDetail": "sunt at minus",
       "needsInterpreter": "yes",
       "careAndSupportNeeds": "yes",
       "careAndSupportNeedsDetail": "some detail",

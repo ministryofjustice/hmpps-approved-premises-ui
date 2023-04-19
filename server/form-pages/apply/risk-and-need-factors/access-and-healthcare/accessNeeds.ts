@@ -23,19 +23,18 @@ type AdditionalNeed = keyof typeof additionalNeeds
 
 type AccessNeedsBody = {
   additionalNeeds: Array<AdditionalNeed> | AdditionalNeed
-  religiousOrCulturalNeeds: YesOrNo
-  religiousOrCulturalNeedsDetails: string
   careActAssessmentCompleted: YesNoOrIDK
   needsInterpreter: YesOrNo
   interpreterLanguage: string
-} & YesOrNoWithDetail<'careAndSupportNeeds'>
+} & YesOrNoWithDetail<'careAndSupportNeeds'> &
+  YesOrNoWithDetail<'religiousOrCulturalNeeds'>
 
 @Page({
   name: 'access-needs',
   bodyProperties: [
     'additionalNeeds',
     'religiousOrCulturalNeeds',
-    'religiousOrCulturalNeedsDetails',
+    'religiousOrCulturalNeedsDetail',
     'careAndSupportNeeds',
     'careAndSupportNeedsDetail',
     'careActAssessmentCompleted',
@@ -81,8 +80,10 @@ export default class AccessNeeds implements TasklistPage {
       [this.questions.needs.question]: (this.body.additionalNeeds as Array<AdditionalNeed>)
         .map((need, i) => (i < 1 ? additionalNeeds[need] : additionalNeeds[need].toLowerCase()))
         .join(', '),
-      [this.questions.religiousOrCulturalNeeds.question]: sentenceCase(this.body.religiousOrCulturalNeeds),
-      [this.questions.religiousOrCulturalNeeds.furtherDetails]: this.body.religiousOrCulturalNeedsDetails,
+      [this.questions.religiousOrCulturalNeeds.question]: yesOrNoResponseWithDetail(
+        'religiousOrCulturalNeeds',
+        this.body,
+      ),
       [this.questions.careAndSupportNeeds.question]: yesOrNoResponseWithDetail('careAndSupportNeeds', this.body),
       [this.questions.interpreter.question]: sentenceCase(this.body.needsInterpreter),
       [this.questions.careActAssessmentCompleted]:
@@ -94,12 +95,6 @@ export default class AccessNeeds implements TasklistPage {
       return {
         ...response,
         [this.questions.interpreter.language]: this.body.interpreterLanguage,
-      }
-    }
-    if (this.body.religiousOrCulturalNeeds === 'yes') {
-      return {
-        ...response,
-        religiousOrCulturalNeedsDetails: this.body.religiousOrCulturalNeedsDetails,
       }
     }
 
