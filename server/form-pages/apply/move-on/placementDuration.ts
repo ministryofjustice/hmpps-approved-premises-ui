@@ -6,9 +6,8 @@ import { DateFormats } from '../../../utils/dateUtils'
 import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
-import SelectApType, { ApType } from '../reasons-for-placement/type-of-ap/apType'
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 import { sentenceCase } from '../../../utils/utils'
+import { getDefaultPlacementDurationInWeeks } from '../../../utils/applications/getDefaultPlacementDurationInWeeks'
 
 type PlacementDurationBody = {
   differentDuration: YesOrNo
@@ -96,12 +95,9 @@ export default class PlacementDuration implements TasklistPage {
     }
   }
 
-  private fetchDepartureDate(): Date | null {
-    const apType = retrieveQuestionResponseFromApplicationOrAssessment(this.application, SelectApType, 'type') as ApType
+  private fetchDepartureDate(): Date {
+    const standardPlacementDuration = getDefaultPlacementDurationInWeeks(this.application)
 
-    if (apType === 'standard') return addDays(this.arrivalDate, 7 * 12)
-    if (apType === 'pipe') return addDays(this.arrivalDate, 7 * 26)
-    if (apType === 'esap') return addDays(this.arrivalDate, 7 * 56)
-    return null
+    return addDays(this.arrivalDate, 7 * standardPlacementDuration)
   }
 }
