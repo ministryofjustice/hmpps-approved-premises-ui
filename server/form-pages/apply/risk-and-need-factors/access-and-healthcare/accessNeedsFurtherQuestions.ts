@@ -14,7 +14,7 @@ export type AccessNeedsFurtherQuestionsBody = {
   visualImpairment: string
   isPersonPregnant?: YesOrNo
   otherPregnancyConsiderations: string
-  childRemoved?: YesOrNo | 'pending'
+  childRemoved?: YesOrNo | 'decisionPending'
 } & ObjectWithDateParts<'expectedDeliveryDate'>
 
 @Page({

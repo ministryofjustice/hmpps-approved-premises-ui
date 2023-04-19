@@ -71,7 +71,10 @@ export default class AccessNeeds implements TasklistPage {
   }
 
   next() {
-    if (this.body.additionalNeeds.includes('mobility')) return 'access-needs-further-questions'
+    if (this.furtherQuestionsNeeded()) {
+      return 'access-needs-further-questions'
+    }
+
     return 'covid'
   }
 
@@ -128,5 +131,11 @@ export default class AccessNeeds implements TasklistPage {
 
   needsCheckboxes() {
     return convertKeyValuePairToCheckBoxItems(additionalNeeds, this.body.additionalNeeds as Array<AdditionalNeed>)
+  }
+
+  private furtherQuestionsNeeded() {
+    return (this.body.additionalNeeds as Array<AdditionalNeed>).some(need => {
+      return ['mobility', 'pregnancy', 'visualImpairment'].includes(need)
+    })
   }
 }

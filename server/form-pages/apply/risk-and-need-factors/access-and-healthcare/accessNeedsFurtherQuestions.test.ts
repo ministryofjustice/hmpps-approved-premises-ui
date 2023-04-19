@@ -60,7 +60,8 @@ describe('AccessNeedsFurtherQuestions', () => {
         isPersonPregnant: 'You must confirm if the person is pregnant',
       })
     })
-    it('if isPersonIsPregnant is yes, should return errors if there are no responses to expectedDeliveryDate or childRemoved questions', () => {
+
+    it('should return errors if there are no responses to expectedDeliveryDate or childRemoved question and isPersonPregnant is yes', () => {
       const page = new AccessNeedsFurtherQuestions({ isPersonPregnant: 'yes' }, application)
       expect(page.errors()).toEqual({
         needsWheelchair: 'You must confirm the need for a wheelchair',

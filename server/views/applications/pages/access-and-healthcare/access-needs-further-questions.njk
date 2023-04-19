@@ -49,6 +49,30 @@
           }
     }, fetchContext()) }}
 
+  {% set additionalPregnancyQuestions %}
+  {{
+    formPageDateInput(
+        {
+          fieldName: "expectedDeliveryDate",
+          fieldset: {
+            legend: {
+              text: page.questions.deliveryDate
+            }
+          },
+          items: dateFieldValues('expectedDeliveryDate', errors)
+        },
+        fetchContext()
+      )
+  }}
+  {{ formPageTextarea({
+        fieldName: "otherPregnancyConsiderations",
+        label: {
+        text: page.questions.otherPregnancyConsiderations,
+          classes: "govuk-label--s"
+        }
+    }, fetchContext()) }}
+  {% endset -%}
+
   {% if page.yesToPregnancyHealthcareQuestion %}
     {{ formPageRadios({
       fieldName: "isPersonPregnant",
@@ -61,7 +85,10 @@
       items: [
         {
           value: "yes",
-          text: "Yes"
+          text: "Yes",
+          conditional: {
+            html: additionalPregnancyQuestions
+          }
         },
         {
           value: "no",
@@ -69,6 +96,31 @@
         }
       ]
     }, fetchContext()) }}
+
+    {{ formPageRadios({
+      fieldName: "childRemoved",
+      fieldset: {
+        legend: {
+          text: page.questions.childRemoved,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No"
+        },
+        {
+          value: "decisionPending",
+          text: "Decision pending"
+        }
+      ]
+    }, fetchContext()) }}
+
   {% endif %}
 
 {% endblock %}

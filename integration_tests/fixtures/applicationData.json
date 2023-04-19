@@ -296,7 +296,7 @@
   },
   "access-and-healthcare": {
     "access-needs": {
-      "additionalNeeds": ["mobility", "learningDisability", "neurodivergentConditions"],
+      "additionalNeeds": ["mobility", "learningDisability", "neurodivergentConditions", "pregnancy"],
       "religiousOrCulturalNeeds": "yes",
       "religiousOrCulturalNeedsDetail": "sunt at minus",
       "needsInterpreter": "yes",
@@ -308,7 +308,14 @@
     "access-needs-further-questions": {
       "needsWheelchair": "yes",
       "mobilityNeeds": "laboriosam",
-      "visualImpairment": "exercitationem"
+      "visualImpairment": "exercitationem",
+      "isPersonPregnant": "yes",
+      "expectedDeliveryDate": "2023-12-31",
+      "expectedDeliveryDate-year": "2023",
+      "expectedDeliveryDate-month": "12",
+      "expectedDeliveryDate-day": "31",
+      "otherPregnancyConsiderations": "some considerations",
+      "childRemoved": "decisionPending"
     },
     "covid": {
       "fullyVaccinated": "yes",

@@ -19,5 +19,9 @@ export default class AccessNeedsFurtherQuestionsPage extends ApplyPage {
     this.checkRadioButtonFromPageBody('needsWheelchair')
     this.completeTextInputFromPageBody('mobilityNeeds')
     this.completeTextInputFromPageBody('visualImpairment')
+    this.checkRadioButtonFromPageBody('isPersonPregnant')
+    this.completeDateInputsFromPageBody('expectedDeliveryDate')
+    this.completeTextInputFromPageBody('otherPregnancyConsiderations')
+    this.checkRadioButtonFromPageBody('childRemoved')
   }
 }
