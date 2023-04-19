@@ -1,7 +1,10 @@
 import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import {
+  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
+  retrieveQuestionResponseFromApplicationOrAssessment,
+} from '../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 
-const mockQuestionResponse = ({
+export const mockQuestionResponse = ({
   postcodeArea = 'ABC 123',
   type = 'standard',
   sentenceType = 'standardDeterminate',
@@ -46,4 +49,29 @@ const mockQuestionResponse = ({
   )
 }
 
-export default mockQuestionResponse
+export const mockOptionalQuestionResponse = ({
+  releaseType = 'other',
+  alternativeRadius,
+  duration,
+}: {
+  releaseType?: string
+  duration?: string
+  alternativeRadius?: string
+}) => {
+  ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockImplementation(
+    // eslint-disable-next-line consistent-return
+    (_application: Application, _Page: unknown, question: string) => {
+      if (question === 'alternativeRadius') {
+        return alternativeRadius
+      }
+
+      if (question === 'duration') {
+        return duration
+      }
+
+      if (question === 'releaseType') {
+        return releaseType
+      }
+    },
+  )
+}

@@ -1,6 +1,6 @@
 import { applicationFactory } from '../../testutils/factories'
 import { shouldShowContingencyPlanPages } from './shouldShowContingencyPlanPages'
-import mockQuestionResponse from '../../testutils/mockQuestionResponse'
+import { mockQuestionResponse } from '../../testutils/mockQuestionResponse'
 
 jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
 
