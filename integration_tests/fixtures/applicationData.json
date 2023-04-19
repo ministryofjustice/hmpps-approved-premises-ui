@@ -300,6 +300,8 @@
       "religiousOrCulturalNeeds": "yes",
       "religiousOrCulturalNeedsDetails": "sunt at minus",
       "needsInterpreter": "yes",
+      "careAndSupportNeeds": "yes",
+      "careAndSupportNeedsDetail": "some detail",
       "interpreterLanguage": "beatae eligendi explicabo",
       "careActAssessmentCompleted": "yes"
     },

@@ -49,13 +49,33 @@ describe('AccessNeeds', () => {
   itShouldHavePreviousValue(new AccessNeeds({}, application), 'dashboard')
 
   describe('errors', () => {
-    const page = new AccessNeeds({}, application)
+    it('returns the correct errors when responses are missing', () => {
+      const page = new AccessNeeds({}, application)
 
-    expect(page.errors()).toEqual({
-      careActAssessmentCompleted: 'You must confirm whether a care act assessment has been completed',
-      needsInterpreter: 'You must confirm the need for an interpreter',
-      religiousOrCulturalNeeds: 'You must confirm whether John Wayne has any religious or cultural needs',
-      additionalNeeds: 'You must confirm whether John Wayne has any additional needs',
+      expect(page.errors()).toEqual({
+        careActAssessmentCompleted: 'You must confirm whether a care act assessment has been completed',
+        needsInterpreter: 'You must confirm the need for an interpreter',
+        religiousOrCulturalNeeds: 'You must confirm whether John Wayne has any religious or cultural needs',
+        additionalNeeds: 'You must confirm whether John Wayne has any additional needs',
+        careAndSupportNeeds: 'You must confirm whether John Wayne has care and support needs',
+      })
+    })
+    it('if careAndSupportNeeds answer is yes then additional details must be given', () => {
+      const page = new AccessNeeds(
+        {
+          additionalNeeds: 'mobility',
+          careActAssessmentCompleted: 'yes',
+          interpreterLanguage: 'french',
+          needsInterpreter: 'no',
+          religiousOrCulturalNeeds: 'Yes' as YesOrNo,
+          religiousOrCulturalNeedsDetails: 'Some details',
+        },
+        application,
+      )
+
+      expect(page.errors()).toEqual({
+        careAndSupportNeeds: 'You must confirm whether John Wayne has care and support needs',
+      })
     })
   })
 
@@ -69,6 +89,8 @@ describe('AccessNeeds', () => {
           religiousOrCulturalNeeds: 'yes',
           religiousOrCulturalNeedsDetails: 'Some details',
           careActAssessmentCompleted: 'yes',
+          careAndSupportNeeds: 'yes',
+          careAndSupportNeedsDetail: 'some details',
         },
         application,
       )
@@ -79,6 +101,7 @@ describe('AccessNeeds', () => {
         'Which language is an interpreter needed for?': 'French',
         'Does John Wayne have any religious or cultural needs?': 'Yes',
         'Details of religious or cultural needs': 'Some details',
+        'Does this person have care and support needs?': 'Yes - some details',
         'Has a care act assessment been completed?': 'Yes',
       })
     })

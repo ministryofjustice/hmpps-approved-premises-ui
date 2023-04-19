@@ -33,6 +33,11 @@ export default class AccessNeedsPage extends ApplyPage {
     this.completeTextInputFromPageBody('religiousOrCulturalNeedsDetails')
   }
 
+  completeCareAndSupportNeedsSection() {
+    this.checkRadioButtonFromPageBody('careAndSupportNeeds')
+    this.completeTextInputFromPageBody('careAndSupportNeedsDetail')
+  }
+
   completeNeedsInterpreterSection() {
     this.checkRadioByNameAndValue('needsInterpreter', 'yes')
     this.completeTextInputFromPageBody('interpreterLanguage')
@@ -43,6 +48,7 @@ export default class AccessNeedsPage extends ApplyPage {
     this.checkAdditionalNeedsBoxes()
     this.completeReligiousOrCulturalNeedsSection()
     this.completeNeedsInterpreterSection()
+    this.completeCareAndSupportNeedsSection()
     this.checkRadioByNameAndValue('careActAssessmentCompleted', 'yes')
   }
 }

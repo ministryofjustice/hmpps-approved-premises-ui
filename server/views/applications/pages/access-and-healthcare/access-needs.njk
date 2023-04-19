@@ -62,6 +62,38 @@
       },fetchContext()) }}
   {% endset -%}
 
+  {% set careAndSupportNeeds %}
+  {{ formPageTextarea({
+      fieldName: 'careAndSupportNeedsDetail',
+      label: {
+        text: page.questions.careAndSupportNeeds.hint
+      }
+      },fetchContext()) }}
+  {% endset %}
+
+  {{ formPageRadios({
+      fieldName: "careAndSupportNeeds",
+      fieldset: {
+        legend: {
+          text: page.questions.careAndSupportNeeds.question,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          conditional: {
+            html: careAndSupportNeeds
+          }
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    },fetchContext()) }}
+
   {% set bannerHTML %}
   {% set html %}
   <p>

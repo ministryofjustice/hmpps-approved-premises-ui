@@ -1,10 +1,11 @@
-import type { TaskListErrors, YesNoOrIDK, YesOrNo } from '@approved-premises/ui'
+import type { TaskListErrors, YesNoOrIDK, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
 import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { convertKeyValuePairToCheckBoxItems, flattenCheckboxInput } from '../../../../utils/formUtils'
 import { pascalCase, sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
+import { yesOrNoResponseWithDetail } from '../../../utils'
 
 export const additionalNeeds = {
   mobility: 'Mobility needs',
@@ -27,7 +28,7 @@ type AccessNeedsBody = {
   careActAssessmentCompleted: YesNoOrIDK
   needsInterpreter: YesOrNo
   interpreterLanguage: string
-}
+} & YesOrNoWithDetail<'careAndSupportNeeds'>
 
 @Page({
   name: 'access-needs',
@@ -35,6 +36,8 @@ type AccessNeedsBody = {
     'additionalNeeds',
     'religiousOrCulturalNeeds',
     'religiousOrCulturalNeedsDetails',
+    'careAndSupportNeeds',
+    'careAndSupportNeedsDetail',
     'careActAssessmentCompleted',
     'needsInterpreter',
     'interpreterLanguage',
@@ -56,6 +59,7 @@ export default class AccessNeeds implements TasklistPage {
       question: `Does ${this.application.person.name} need an interpreter?`,
       language: 'Which language is an interpreter needed for?',
     },
+    careAndSupportNeeds: { question: 'Does this person have care and support needs?', hint: 'Provide details' },
     careActAssessmentCompleted: 'Has a care act assessment been completed?',
   }
 
@@ -79,6 +83,7 @@ export default class AccessNeeds implements TasklistPage {
         .join(', '),
       [this.questions.religiousOrCulturalNeeds.question]: sentenceCase(this.body.religiousOrCulturalNeeds),
       [this.questions.religiousOrCulturalNeeds.furtherDetails]: this.body.religiousOrCulturalNeedsDetails,
+      [this.questions.careAndSupportNeeds.question]: yesOrNoResponseWithDetail('careAndSupportNeeds', this.body),
       [this.questions.interpreter.question]: sentenceCase(this.body.needsInterpreter),
       [this.questions.careActAssessmentCompleted]:
         this.body.careActAssessmentCompleted === 'yes' || this.body.careActAssessmentCompleted === 'no'
@@ -109,6 +114,12 @@ export default class AccessNeeds implements TasklistPage {
     }
     if (!this.body.religiousOrCulturalNeeds) {
       errors.religiousOrCulturalNeeds = `You must confirm whether ${this.application.person.name} has any religious or cultural needs`
+    }
+    if (!this.body.careAndSupportNeeds) {
+      errors.careAndSupportNeeds = `You must confirm whether ${this.application.person.name} has care and support needs`
+    }
+    if (this.body.careAndSupportNeeds === 'yes' && !this.body.careAndSupportNeedsDetail) {
+      errors.careAndSupportNeedsDetail = `You must provide details of ${this.application.person.name}'s care and support needs`
     }
     if (!this.body.needsInterpreter) {
       errors.needsInterpreter = 'You must confirm the need for an interpreter'
