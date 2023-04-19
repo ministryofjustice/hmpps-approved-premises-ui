@@ -4,7 +4,6 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { yesOrNoResponseWithDetail } from '../../../utils'
-import { shouldShowContingencyPlanPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
 
 export const questionKeys = ['arson'] as const
 
@@ -44,7 +43,7 @@ export default class Arson implements TasklistPage {
   }
 
   next() {
-    return shouldShowContingencyPlanPages(this.application) ? 'contingency-plan-partners' : ''
+    return 'additional-circumstances'
   }
 
   response() {

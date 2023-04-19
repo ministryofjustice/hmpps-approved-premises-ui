@@ -48,7 +48,7 @@ export default class ContingencyPlanPartners implements TasklistPage {
   }
 
   previous() {
-    return 'arson'
+    return 'additional-circumstances'
   }
 
   next() {

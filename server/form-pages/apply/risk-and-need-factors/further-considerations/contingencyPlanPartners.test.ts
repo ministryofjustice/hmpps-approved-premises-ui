@@ -35,7 +35,7 @@ describe('ContingencyPlanPartners', () => {
     itShouldHaveNextValue(new ContingencyPlanPartners({ saveAndContinue: '1', ...body }), 'contingency-plan-questions')
   })
 
-  itShouldHavePreviousValue(new ContingencyPlanPartners(body), 'arson')
+  itShouldHavePreviousValue(new ContingencyPlanPartners(body), 'additional-circumstances')
 
   describe('errors', () => {
     it('should return errors when responses are blank if saveAndContinue is falsy', () => {
