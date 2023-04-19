@@ -1,14 +1,15 @@
 import { createMock } from '@golevelup/ts-jest'
-import mockQuestionResponse from '../../testutils/mockQuestionResponse'
+import { mockOptionalQuestionResponse, mockQuestionResponse } from '../../testutils/mockQuestionResponse'
 import { MatchingInformationBody } from '../../form-pages/assess/matchingInformation/matchingInformationTask/matchingInformation'
 import { criteriaFromMatchingInformation, placementRequestData } from './placementRequestData'
 import { assessmentFactory } from '../../testutils/factories'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
+import { getDefaultPlacementDurationInWeeks } from '../applications/getDefaultPlacementDurationInWeeks'
 
 jest.mock('../../form-pages/utils')
 jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
+jest.mock('../applications/getDefaultPlacementDurationInWeeks')
 jest.mock('../applications/arrivalDateFromApplication')
 
 describe('placementRequestData', () => {
@@ -26,7 +27,7 @@ describe('placementRequestData', () => {
 
   it('converts matching data into a placement request', () => {
     mockQuestionResponse({ postcodeArea: 'ABC123', type: 'normal', duration: '12' })
-    ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('100')
+    mockOptionalQuestionResponse({ duration: '12', alternativeRadius: '100' })
 
     expect(placementRequestData(assessment)).toEqual({
       gender: matchingInformation.apGender,
@@ -42,11 +43,20 @@ describe('placementRequestData', () => {
   })
 
   it('returns a default radius if one is not present', () => {
-    ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(undefined)
+    mockOptionalQuestionResponse({ duration: '12', alternativeRadius: undefined })
 
     const result = placementRequestData(assessment)
 
     expect(result.radius).toEqual(50)
+  })
+
+  it('returns the default placement duration if one is not present', () => {
+    ;(getDefaultPlacementDurationInWeeks as jest.Mock).mockReturnValueOnce(52)
+    mockOptionalQuestionResponse({ duration: undefined, alternativeRadius: '100' })
+
+    const result = placementRequestData(assessment)
+
+    expect(result.duration).toEqual(52)
   })
 
   it('returns a false mentalHealthSupport requirement if the mentalHealthSupport matching information is blank', () => {

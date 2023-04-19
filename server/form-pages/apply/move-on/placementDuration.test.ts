@@ -1,14 +1,14 @@
 import { addDays } from 'date-fns'
 import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { DateFormats } from '../../../utils/dateUtils'
+import { getDefaultPlacementDurationInWeeks } from '../../../utils/applications/getDefaultPlacementDurationInWeeks'
 import { SessionDataError } from '../../../utils/errors'
 
 import PlacementDuration from './placementDuration'
 import { applicationFactory } from '../../../testutils/factories'
-import { DateFormats } from '../../../utils/dateUtils'
-import { addResponseToApplication, addResponsesToApplication } from '../../../testutils/addToApplication'
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import { addResponsesToApplication } from '../../../testutils/addToApplication'
 
-jest.mock('../../../utils/retrieveQuestionResponseFromApplicationOrAssessment.ts')
+jest.mock('../../../utils/applications/getDefaultPlacementDurationInWeeks')
 
 describe('PlacementDuration', () => {
   let data: Record<string, unknown>
@@ -101,43 +101,12 @@ describe('PlacementDuration', () => {
   describe('departureDate', () => {
     const releaseDate = new Date(2023, 1, 1)
 
-    it('returns the arrival date plus 12 weeks if the ap type is standard', () => {
-      ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValueOnce('standard')
+    it('returns the arrival date plus the default placement duration', () => {
+      ;(getDefaultPlacementDurationInWeeks as jest.Mock).mockReturnValueOnce(12)
 
-      application = applicationFactory
-        .withReleaseDate(DateFormats.dateObjToIsoDate(releaseDate))
-        .withPageResponse({ task: 'type-of-ap', page: 'ap-type', key: 'type', value: 'standard' })
-        .build()
+      application = applicationFactory.withReleaseDate(DateFormats.dateObjToIsoDate(releaseDate)).build()
 
       expect(new PlacementDuration({}, application).departureDate).toEqual(addDays(releaseDate, 7 * 12))
-    })
-
-    it('returns the arrival date plus 26 weeks if the ap type is PIPE', () => {
-      ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValueOnce('pipe')
-
-      application = applicationFactory.withReleaseDate(DateFormats.dateObjToIsoDate(releaseDate)).build()
-      application = addResponseToApplication(application, {
-        section: 'type-of-ap',
-        page: 'ap-type',
-        key: 'type',
-        value: 'pipe',
-      })
-
-      expect(new PlacementDuration({}, application).departureDate).toEqual(addDays(releaseDate, 7 * 26))
-    })
-
-    it('returns the arrival date plus 56 weeks if the ap type is ESAP', () => {
-      ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValueOnce('esap')
-
-      application = applicationFactory.withReleaseDate(DateFormats.dateObjToIsoDate(releaseDate)).build()
-      application = addResponseToApplication(application, {
-        section: 'type-of-ap',
-        page: 'ap-type',
-        key: 'type',
-        value: 'esap',
-      })
-
-      expect(new PlacementDuration({}, application).departureDate).toEqual(addDays(releaseDate, 7 * 56))
     })
   })
 
