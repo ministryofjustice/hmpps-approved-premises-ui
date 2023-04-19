@@ -49,4 +49,26 @@
           }
     }, fetchContext()) }}
 
+  {% if page.yesToPregnancyHealthcareQuestion %}
+    {{ formPageRadios({
+      fieldName: "isPersonPregnant",
+      fieldset: {
+        legend: {
+          text: page.questions.isPersonPregnant,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }, fetchContext()) }}
+  {% endif %}
+
 {% endblock %}

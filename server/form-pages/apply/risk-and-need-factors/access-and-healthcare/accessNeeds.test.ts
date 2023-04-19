@@ -43,7 +43,10 @@ describe('AccessNeeds', () => {
   })
 
   describe('when the reponse contains "mobility"', () => {
-    itShouldHaveNextValue(new AccessNeeds({ additionalNeeds: ['mobility'] }, application), 'access-needs-mobility')
+    itShouldHaveNextValue(
+      new AccessNeeds({ additionalNeeds: ['mobility'] }, application),
+      'access-needs-further-questions',
+    )
   })
 
   describe('when the response contains an answer other than "none"', () => {
