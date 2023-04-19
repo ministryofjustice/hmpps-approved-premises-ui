@@ -13,6 +13,7 @@ import MatchingInformation, {
 } from '../../form-pages/assess/matchingInformation/matchingInformationTask/matchingInformation'
 import LocationFactors from '../../form-pages/apply/risk-and-need-factors/location-factors/describeLocationFactors'
 import PlacementDuration from '../../form-pages/apply/move-on/placementDuration'
+import { getDefaultPlacementDurationInWeeks } from '../applications/getDefaultPlacementDurationInWeeks'
 
 type Requirement = (typeof placementRequirements)[number]
 type RiskInformationKey = (typeof offenceAndRiskInformationKeys)[number]
@@ -33,11 +34,12 @@ export const placementRequestData = (assessment: Assessment): PlacementRequest =
     LocationFactors,
     'alternativeRadius',
   )
-  const placementDuration = retrieveQuestionResponseFromApplicationOrAssessment(
-    assessment.application,
-    PlacementDuration,
-    'duration',
-  )
+  const placementDuration =
+    retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+      assessment.application,
+      PlacementDuration,
+      'duration',
+    ) || getDefaultPlacementDurationInWeeks(assessment.application)
 
   const criteria = criteriaFromMatchingInformation(matchingInformation)
 
