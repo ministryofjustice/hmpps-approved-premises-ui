@@ -24,6 +24,10 @@ import newCancellationFactory from './newCancellation'
 import newDepartureFactory from './newDeparture'
 import newLostBedFactory from './newLostBed'
 import newNonArrivalFactory from './newNonArrival'
+import {
+  newPlacementRequestBookingConfirmationFactory,
+  newPlacementRequestBookingFactory,
+} from './newPlacementRequestBooking'
 import nonArrivalFactory from './nonArrival'
 import oasysSectionsFactory, { roshSummaryFactory } from './oasysSections'
 import oasysSelectionFactory from './oasysSelection'
@@ -64,6 +68,8 @@ export {
   lostBedFactory,
   newArrivalFactory,
   newBookingFactory,
+  newPlacementRequestBookingFactory,
+  newPlacementRequestBookingConfirmationFactory,
   newCancellationFactory,
   newDepartureFactory,
   newLostBedFactory,

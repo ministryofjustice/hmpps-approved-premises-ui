@@ -27,6 +27,7 @@ const usersPath = path('/users')
 const tasksPath = path('/tasks')
 
 const placementRequestsPath = path('/placement-requests')
+const placementRequestPath = placementRequestsPath.path(':id')
 
 const tasksPaths = {
   index: tasksPath,
@@ -108,7 +109,8 @@ export default {
   },
   placementRequests: {
     index: placementRequestsPath,
-    show: placementRequestsPath.path(':id'),
+    show: placementRequestPath,
+    booking: placementRequestPath.path('booking'),
   },
   people: {
     risks: {

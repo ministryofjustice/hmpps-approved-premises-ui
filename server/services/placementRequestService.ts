@@ -1,5 +1,9 @@
 import { GroupedPlacementRequests } from '@approved-premises/ui'
-import { PlacementRequest } from '@approved-premises/api'
+import {
+  NewPlacementRequestBooking,
+  NewPlacementRequestBookingConfirmation,
+  PlacementRequest,
+} from '@approved-premises/api'
 import { RestClientBuilder } from '../data'
 import PlacementRequestClient from '../data/placementRequestClient'
 
@@ -28,5 +32,15 @@ export default class PlacementRequestService {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.find(id)
+  }
+
+  async createBooking(
+    token: string,
+    id: string,
+    newBooking: NewPlacementRequestBooking,
+  ): Promise<NewPlacementRequestBookingConfirmation> {
+    const placementRequestClient = this.placementRequestClientFactory(token)
+
+    return placementRequestClient.createBooking(id, newBooking)
   }
 }

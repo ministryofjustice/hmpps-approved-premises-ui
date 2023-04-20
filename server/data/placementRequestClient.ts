@@ -1,7 +1,11 @@
+import {
+  NewPlacementRequestBooking,
+  NewPlacementRequestBookingConfirmation,
+  PlacementRequest,
+} from '@approved-premises/api'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
-import { PlacementRequest } from '../@types/shared'
 
 export default class PlacementRequestClient {
   restClient: RestClient
@@ -18,5 +22,15 @@ export default class PlacementRequestClient {
 
   async find(id: string): Promise<PlacementRequest> {
     return (await this.restClient.get({ path: paths.placementRequests.show({ id }) })) as Promise<PlacementRequest>
+  }
+
+  async createBooking(
+    id: string,
+    newPlacementRequestBooking: NewPlacementRequestBooking,
+  ): Promise<NewPlacementRequestBookingConfirmation> {
+    return (await this.restClient.post({
+      path: paths.placementRequests.booking({ id }),
+      data: newPlacementRequestBooking,
+    })) as Promise<NewPlacementRequestBookingConfirmation>
   }
 }

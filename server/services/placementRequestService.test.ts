@@ -1,6 +1,6 @@
 import { PlacementRequest } from '@approved-premises/api'
 import PlacementRequestClient from '../data/placementRequestClient'
-import { placementRequestFactory } from '../testutils/factories'
+import { newPlacementRequestBookingConfirmationFactory, placementRequestFactory } from '../testutils/factories'
 import PlacementRequestService from './placementRequestService'
 
 jest.mock('../data/placementRequestClient.ts')
@@ -52,6 +52,27 @@ describe('placementRequestService', () => {
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
       expect(placementRequestClient.find).toHaveBeenCalledWith(placementRequest.id)
+    })
+  })
+
+  describe('createBooking', () => {
+    it('should transform and create a booking', async () => {
+      const bookingConfirmation = newPlacementRequestBookingConfirmationFactory.build()
+      placementRequestClient.createBooking.mockResolvedValue(bookingConfirmation)
+
+      const id = 'some-uuid'
+      const newBooking = {
+        bedId: 'some-other-uuid',
+        arrivalDate: '2022-01-01',
+        departureDate: '2022-01-29',
+      }
+
+      const result = await service.createBooking(token, id, newBooking)
+
+      expect(result).toEqual(bookingConfirmation)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.createBooking).toHaveBeenCalledWith(id, newBooking)
     })
   })
 })
