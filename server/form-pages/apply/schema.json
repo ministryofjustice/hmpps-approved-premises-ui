@@ -1058,9 +1058,6 @@
                 }
               }
             },
-            "moreDetail": {
-              "type": "string"
-            },
             "adjudications": {
               "type": "array",
               "items": {
@@ -1177,12 +1174,14 @@
                   "type": "array",
                   "items": {
                     "enum": [
+                      "healthcare",
                       "hearingImpairment",
                       "learningDisability",
                       "mobility",
                       "neurodivergentConditions",
                       "none",
                       "other",
+                      "pregnancy",
                       "visualImpairment"
                     ],
                     "type": "string"
@@ -1190,27 +1189,19 @@
                 },
                 {
                   "enum": [
+                    "healthcare",
                     "hearingImpairment",
                     "learningDisability",
                     "mobility",
                     "neurodivergentConditions",
                     "none",
                     "other",
+                    "pregnancy",
                     "visualImpairment"
                   ],
                   "type": "string"
                 }
               ]
-            },
-            "religiousOrCulturalNeeds": {
-              "enum": [
-                "no",
-                "yes"
-              ],
-              "type": "string"
-            },
-            "religiousOrCulturalNeedsDetails": {
-              "type": "string"
             },
             "careActAssessmentCompleted": {
               "enum": [
@@ -1229,26 +1220,98 @@
             },
             "interpreterLanguage": {
               "type": "string"
-            }
-          }
-        },
-        "access-needs-mobility": {
-          "type": "object",
-          "properties": {
-            "needsWheelchair": {
+            },
+            "careAndSupportNeeds": {
               "enum": [
                 "no",
                 "yes"
               ],
               "type": "string"
             },
-            "mobilityNeeds": {
+            "careAndSupportNeedsDetail": {
               "type": "string"
             },
-            "visualImpairment": {
+            "religiousOrCulturalNeeds": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            },
+            "religiousOrCulturalNeedsDetail": {
               "type": "string"
             }
           }
+        },
+        "access-needs-further-questions": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "needsWheelchair": {
+                  "enum": [
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                },
+                "mobilityNeeds": {
+                  "type": "string"
+                },
+                "visualImpairment": {
+                  "type": "string"
+                },
+                "isPersonPregnant": {
+                  "enum": [
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                },
+                "otherPregnancyConsiderations": {
+                  "type": "string"
+                },
+                "childRemoved": {
+                  "enum": [
+                    "decisionPending",
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "expectedDeliveryDate-year": {
+                  "type": "string"
+                },
+                "expectedDeliveryDate-month": {
+                  "type": "string"
+                },
+                "expectedDeliveryDate-day": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "expectedDeliveryDate-time": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "expectedDeliveryDate": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
         },
         "covid": {
           "type": "object",
@@ -1401,6 +1464,21 @@
               "type": "string"
             },
             "arsonDetail": {
+              "type": "string"
+            }
+          }
+        },
+        "additional-circumstances": {
+          "type": "object",
+          "properties": {
+            "additionalCircumstances": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            },
+            "additionalCircumstancesDetail": {
               "type": "string"
             }
           }
