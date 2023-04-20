@@ -188,9 +188,9 @@ describe('matchUtils', () => {
       const lengthInWeeks = '2'
 
       expect(placementDates(startDate, lengthInWeeks)).toEqual({
-        startDate: 'Saturday 1 January 2022',
-        endDate: 'Saturday 15 January 2022',
-        placementLength: '2 weeks',
+        startDate: '2022-01-01',
+        endDate: '2022-01-15',
+        placementLength: 2,
       })
     })
   })
@@ -216,9 +216,9 @@ describe('matchUtils', () => {
     it('should call the correct row functions', () => {
       const bedSearchResult = bedSearchResultFactory.build()
       const dates = {
-        startDate: 'Saturday 1 January 2022',
-        endDate: 'Saturday 15 January 2022',
-        placementLength: '2 weeks',
+        startDate: '2022-01-01',
+        endDate: '2022-01-15',
+        placementLength: 2,
       }
 
       expect(confirmationSummaryCardRows(bedSearchResult, dates)).toEqual([

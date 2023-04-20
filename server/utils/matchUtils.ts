@@ -9,7 +9,11 @@ import { DateFormats } from './dateUtils'
 import { linkTo, sentenceCase } from './utils'
 import matchPaths from '../paths/match'
 
-type PlacementDates = Record<'placementLength' | 'startDate' | 'endDate', string>
+type PlacementDates = {
+  placementLength: number
+  startDate: string
+  endDate: string
+}
 
 export class InvalidBedSearchDataException extends Error {}
 
@@ -85,9 +89,9 @@ export const placementDates = (startDateString: string, lengthInWeeks: string): 
   const endDate = addWeeks(startDate, weeks)
 
   return {
-    placementLength: placementLength(weeks),
-    startDate: DateFormats.dateObjtoUIDate(startDate),
-    endDate: DateFormats.dateObjtoUIDate(endDate),
+    placementLength: Number(lengthInWeeks),
+    startDate: DateFormats.dateObjToIsoDate(startDate),
+    endDate: DateFormats.dateObjToIsoDate(endDate),
   }
 }
 
@@ -149,7 +153,7 @@ export const arrivalDateRow = (arrivalDate: string) => ({
     text: 'Expected arrival date',
   },
   value: {
-    text: arrivalDate,
+    text: DateFormats.isoDateToUIDate(arrivalDate),
   },
 })
 
@@ -158,16 +162,16 @@ export const departureDateRow = (departureDate: string) => ({
     text: 'Expected departure date',
   },
   value: {
-    text: departureDate,
+    text: DateFormats.isoDateToUIDate(departureDate),
   },
 })
 
-export const placementLengthRow = (length: string) => ({
+export const placementLengthRow = (length: number) => ({
   key: {
     text: 'Placement length',
   },
   value: {
-    text: length,
+    text: placementLength(length),
   },
 })
 
