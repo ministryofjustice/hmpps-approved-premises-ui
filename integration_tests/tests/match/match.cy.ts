@@ -4,7 +4,7 @@ import ListPage from '../../pages/match/listPlacementRequestsPage'
 import SearchPage from '../../pages/match/searchPage'
 
 import {
-  bedSearchParametersFactory,
+  bedSearchParametersUiFactory,
   bedSearchResultsFactory,
   personFactory,
   placementRequestFactory,
@@ -37,7 +37,7 @@ context('Placement Requests', () => {
       ...matchedPlacementRequests,
     ])
     const activePlacementRequest = activePlacementRequests[0]
-    const firstBedSearchParameters = bedSearchParametersFactory.build({
+    const firstBedSearchParameters = bedSearchParametersUiFactory.build({
       requiredCharacteristics: activePlacementRequest.essentialCriteria,
     })
 
@@ -86,7 +86,7 @@ context('Placement Requests', () => {
     searchPage.shouldDisplaySearchResults(bedSearchResults, firstBedSearchParameters)
     numberOfSearches += 1
 
-    const newSearchParameters = bedSearchParametersFactory.build()
+    const newSearchParameters = bedSearchParametersUiFactory.build()
 
     // When I enter details on the search page
     searchPage.changeSearchParameters(newSearchParameters)
@@ -104,7 +104,7 @@ context('Placement Requests', () => {
       const secondSearchRequestBody = JSON.parse(requests[1].body)
 
       expect(initialSearchRequestBody).to.contain({
-        durationDays: activePlacementRequest.duration,
+        durationDays: activePlacementRequest.duration * 7,
         startDate: activePlacementRequest.expectedArrival,
         postcodeDistrict: activePlacementRequest.location,
         maxDistanceMiles: activePlacementRequest.radius,
@@ -112,11 +112,13 @@ context('Placement Requests', () => {
 
       expect(initialSearchRequestBody.requiredCharacteristics).to.have.members(activePlacementRequest.essentialCriteria)
 
+      const durationDays = Number(newSearchParameters.durationWeeks) * 7
+
       expect(secondSearchRequestBody).to.contain({
-        durationDays: newSearchParameters.durationDays,
+        durationDays,
         startDate: newSearchParameters.startDate,
         postcodeDistrict: newSearchParameters.postcodeDistrict,
-        maxDistanceMiles: newSearchParameters.maxDistanceMiles,
+        maxDistanceMiles: Number(newSearchParameters.maxDistanceMiles),
       })
 
       expect(secondSearchRequestBody.requiredCharacteristics).to.have.members(

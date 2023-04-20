@@ -1,4 +1,4 @@
-import { addDays, daysToWeeks, formatDuration } from 'date-fns'
+import { addWeeks, daysToWeeks, formatDuration, weeksToDays } from 'date-fns'
 import {
   ApprovedPremisesBedSearchParameters as BedSearchParameters,
   BedSearchResult,
@@ -15,13 +15,13 @@ export class InvalidBedSearchDataException extends Error {}
 
 export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParameters => ({
   ...query,
-  durationDays: Number(query.durationDays),
+  durationDays: weeksToDays(Number(query.durationWeeks)),
   maxDistanceMiles: Number(query.maxDistanceMiles),
 })
 
 export const mapApiParamsForUi = (apiParams: BedSearchParameters): Partial<BedSearchParametersUi> => ({
   ...apiParams,
-  durationDays: apiParams.durationDays.toString(),
+  durationWeeks: daysToWeeks(apiParams.durationDays).toString(),
   maxDistanceMiles: apiParams.maxDistanceMiles.toString(),
 })
 
@@ -75,16 +75,17 @@ export const decodeBedSearchResult = (string: string): BedSearchResult => {
   throw new InvalidBedSearchDataException()
 }
 
-export const placementLength = (lengthInDays: number): string => {
-  return formatDuration({ weeks: daysToWeeks(lengthInDays) }, { format: ['weeks'] })
+export const placementLength = (lengthInWeeks: number): string => {
+  return formatDuration({ weeks: lengthInWeeks }, { format: ['weeks'] })
 }
 
-export const placementDates = (startDateString: string, lengthInDays: number): PlacementDates => {
+export const placementDates = (startDateString: string, lengthInWeeks: string): PlacementDates => {
+  const weeks = Number(lengthInWeeks)
   const startDate = DateFormats.isoToDateObj(startDateString)
-  const endDate = addDays(startDate, lengthInDays)
+  const endDate = addWeeks(startDate, weeks)
 
   return {
-    placementLength: placementLength(lengthInDays),
+    placementLength: placementLength(weeks),
     startDate: DateFormats.dateObjtoUIDate(startDate),
     endDate: DateFormats.dateObjtoUIDate(endDate),
   }
@@ -94,7 +95,7 @@ export const summaryCardHeader = (
   bedSearchResult: BedSearchResult,
   placementRequestId: string,
   startDate: string,
-  durationDays: string,
+  durationWeeks: string,
 ): string => {
   return linkTo(
     matchPaths.placementRequests.bookings.confirm,
@@ -106,7 +107,7 @@ export const summaryCardHeader = (
       query: {
         bedSearchResult: encodeBedSearchResult(bedSearchResult),
         startDate,
-        durationDays,
+        durationWeeks,
       },
     },
   )
