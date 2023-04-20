@@ -34,9 +34,9 @@ export default class SearchPage extends Page {
     cy.get('a').contains(bedSearchResult.bed.name).click()
   }
 
-    this.getTextInputByIdAndClear('durationDays')
-    this.getTextInputByIdAndEnterDetails('durationDays', newSearchParameters.durationDays.toString())
   changeSearchParameters(newSearchParameters: BedSearchParametersUi): void {
+    this.getTextInputByIdAndClear('durationWeeks')
+    this.getTextInputByIdAndEnterDetails('durationWeeks', newSearchParameters.durationWeeks.toString())
     this.clearDateInputs('startDate')
     this.completeDateInputs('startDate', newSearchParameters.startDate)
     this.getTextInputByIdAndClear('postcodeDistrict')

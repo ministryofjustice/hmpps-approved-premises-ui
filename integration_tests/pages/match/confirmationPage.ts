@@ -8,8 +8,8 @@ export default class ConfirmationPage extends Page {
     super('Confirm booking')
   }
 
-    const dates = placementDates(searchParameters.startDate, searchParameters.durationDays)
   shouldShowConfirmationDetails(bedSearchResult: BedSearchResult, searchParameters: BedSearchParametersUi) {
+    const dates = placementDates(searchParameters.startDate, searchParameters.durationWeeks)
     this.shouldContainSummaryListItems(confirmationSummaryCardRows(bedSearchResult, dates))
   }
 }

@@ -112,9 +112,9 @@
 
 							{{
 								govukInput({
-								id: "durationDays",
-								name: "durationDays",
-								value: durationDays,
+								id: "durationWeeks",
+								name: "durationWeeks",
+								value: durationWeeks,
 								type: "number",
 								label: {
 								text: "Length of stay"
@@ -161,7 +161,7 @@
 						{{ govukSummaryList({
 					card: {
 						title: {
-							html: MatchUtils.summaryCardHeader(bedSearchResult, placementRequest.id, startDate, durationDays)
+							html: MatchUtils.summaryCardHeader(bedSearchResult, placementRequest.id, startDate, durationWeeks)
 						}
 					},
 					rows: MatchUtils.summaryCardRows(bedSearchResult, requiredCharacteristics)

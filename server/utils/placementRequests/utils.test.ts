@@ -35,7 +35,7 @@ describe('utils', () => {
       })
 
       expect(mapPlacementRequestToBedSearchParams(placementRequest)).toEqual({
-        durationDays: '12',
+        durationWeeks: '12',
         startDate: placementRequest.expectedArrival,
         postcodeDistrict: placementRequest.location,
         maxDistanceMiles: '100',

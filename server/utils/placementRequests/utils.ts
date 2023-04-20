@@ -17,7 +17,7 @@ export const mapPlacementRequestToBedSearchParams = ({
   applicationId,
   assessmentId,
 }: PlacementRequest): BedSearchParametersUi => ({
-  durationDays: duration.toString(),
+  durationWeeks: duration.toString(),
   startDate: expectedArrival,
   postcodeDistrict: location,
   maxDistanceMiles: radius.toString(),

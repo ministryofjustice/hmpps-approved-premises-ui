@@ -34,7 +34,7 @@ describe('BookingsController', () => {
       const query = {
         bedSearchResult: encodeBedSearchResult(bedSearchResult),
         startDate: '2022-01-01',
-        durationDays: '2',
+        durationWeeks: '2',
       }
 
       const params = { id: placementRequest.id }
@@ -47,7 +47,7 @@ describe('BookingsController', () => {
         pageHeading: 'Confirm booking',
         person,
         bedSearchResult,
-        dates: placementDates(query.startDate, Number(query.durationDays)),
+        dates: placementDates(query.startDate, query.durationWeeks),
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
     })

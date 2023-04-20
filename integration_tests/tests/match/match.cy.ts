@@ -104,7 +104,7 @@ context('Placement Requests', () => {
       const secondSearchRequestBody = JSON.parse(requests[1].body)
 
       expect(initialSearchRequestBody).to.contain({
-        durationDays: activePlacementRequest.duration,
+        durationDays: activePlacementRequest.duration * 7,
         startDate: activePlacementRequest.expectedArrival,
         postcodeDistrict: activePlacementRequest.location,
         maxDistanceMiles: activePlacementRequest.radius,
@@ -112,11 +112,13 @@ context('Placement Requests', () => {
 
       expect(initialSearchRequestBody.requiredCharacteristics).to.have.members(activePlacementRequest.essentialCriteria)
 
+      const durationDays = Number(newSearchParameters.durationWeeks) * 7
+
       expect(secondSearchRequestBody).to.contain({
-        durationDays: newSearchParameters.durationDays,
+        durationDays,
         startDate: newSearchParameters.startDate,
         postcodeDistrict: newSearchParameters.postcodeDistrict,
-        maxDistanceMiles: newSearchParameters.maxDistanceMiles,
+        maxDistanceMiles: Number(newSearchParameters.maxDistanceMiles),
       })
 
       expect(secondSearchRequestBody.requiredCharacteristics).to.have.members(

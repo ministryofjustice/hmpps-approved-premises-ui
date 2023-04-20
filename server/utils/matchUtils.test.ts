@@ -35,24 +35,22 @@ import {
 describe('matchUtils', () => {
   describe('mapUiParamsForApi', () => {
     it('converts string properties to numbers', () => {
-      const uiParams = bedSearchParametersFactory
-        .onCreate(mapApiParamsForUi)
-        .build() as unknown as BedSearchParametersUi
+      const uiParams = bedSearchParametersUiFactory.build({ durationWeeks: '2' })
 
       expect(mapUiParamsForApi(uiParams)).toEqual({
         ...uiParams,
-        durationDays: Number(uiParams.durationDays),
+        durationDays: 14,
         maxDistanceMiles: Number(uiParams.maxDistanceMiles),
       })
     })
   })
 
   describe('mapApiParamsForUi', () => {
-    const apiParams = bedSearchParametersFactory.build()
+    const apiParams = bedSearchParametersFactory.build({ durationDays: 14 })
 
     expect(mapApiParamsForUi(apiParams)).toEqual({
       ...apiParams,
-      durationDays: apiParams.durationDays.toString(),
+      durationWeeks: '2',
       maxDistanceMiles: apiParams.maxDistanceMiles.toString(),
     })
   })
@@ -180,16 +178,16 @@ describe('matchUtils', () => {
 
   describe('placementLength', () => {
     it('formats the number of days as weeks', () => {
-      expect(placementLength(14)).toEqual('2 weeks')
+      expect(placementLength(2)).toEqual('2 weeks')
     })
   })
 
   describe('placementDates', () => {
     it('returns formatted versions of the placement dates and durations', () => {
       const startDate = '2022-01-01'
-      const lengthInDays = 14
+      const lengthInWeeks = '2'
 
-      expect(placementDates(startDate, lengthInDays)).toEqual({
+      expect(placementDates(startDate, lengthInWeeks)).toEqual({
         startDate: 'Saturday 1 January 2022',
         endDate: 'Saturday 15 January 2022',
         placementLength: '2 weeks',
@@ -202,12 +200,12 @@ describe('matchUtils', () => {
       const bedSearchResult = bedSearchResultFactory.build()
       const placementRequestId = '123'
       const startDate = '2022-01-01'
-      const durationDays = '4'
+      const durationWeeks = '4'
 
-      expect(summaryCardHeader(bedSearchResult, placementRequestId, startDate, durationDays)).toEqual(
+      expect(summaryCardHeader(bedSearchResult, placementRequestId, startDate, durationWeeks)).toEqual(
         `<a href="/placement-requests/${placementRequestId}/bookings/confirm?bedSearchResult=${encodeURIComponent(
           encodeBedSearchResult(bedSearchResult),
-        )}&startDate=${startDate}&durationDays=${durationDays}" >${bedSearchResult.premises.name} (Bed ${
+        )}&startDate=${startDate}&durationWeeks=${durationWeeks}" >${bedSearchResult.premises.name} (Bed ${
           bedSearchResult.bed.name
         })</a>`,
       )

@@ -45,7 +45,7 @@ describe('bedSearchController', () => {
     describe('body params are sent', () => {
       it('it should render the search template with body params taking precedence over the placement request params', async () => {
         const query = mapPlacementRequestToBedSearchParams(placementRequest)
-        const body = { durationDays: '2' }
+        const body = { durationWeeks: '2' }
 
         const requestHandler = bedsController.search()
 

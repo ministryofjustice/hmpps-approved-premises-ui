@@ -4,7 +4,7 @@ import { PlacementRequestService } from '../../../services'
 
 interface ConfirmRequest extends Request {
   params: { id: string }
-  query: { startDate: string; durationDays: string; bedSearchResult: string }
+  query: { startDate: string; durationWeeks: string; bedSearchResult: string }
 }
 
 export default class BookingsController {
@@ -19,7 +19,7 @@ export default class BookingsController {
         pageHeading: 'Confirm booking',
         person: placementRequest.person,
         bedSearchResult,
-        dates: placementDates(req.query.startDate, Number(req.query.durationDays)),
+        dates: placementDates(req.query.startDate, req.query.durationWeeks),
       })
     }
   }
