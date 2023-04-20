@@ -22,7 +22,7 @@ export default class BookingsController {
 
       res.render('match/placementRequests/bookings/confirm', {
         pageHeading: 'Confirm booking',
-        person: placementRequest.person,
+        placementRequest,
         bedSearchResult,
         dates: placementDates(req.query.startDate, req.query.durationWeeks),
       })

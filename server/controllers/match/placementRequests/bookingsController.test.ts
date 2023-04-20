@@ -50,7 +50,7 @@ describe('BookingsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/bookings/confirm', {
         pageHeading: 'Confirm booking',
-        person,
+        placementRequest,
         bedSearchResult,
         dates: placementDates(query.startDate, query.durationWeeks),
       })
