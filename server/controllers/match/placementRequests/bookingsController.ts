@@ -7,6 +7,11 @@ interface ConfirmRequest extends Request {
   query: { startDate: string; durationWeeks: string; bedSearchResult: string }
 }
 
+interface CreateRequest extends Request {
+  params: { id: string }
+  body: { arrivalDate: string; departureDate: string; bedId: string }
+}
+
 export default class BookingsController {
   constructor(private readonly placementRequestService: PlacementRequestService) {}
 
@@ -20,6 +25,27 @@ export default class BookingsController {
         person: placementRequest.person,
         bedSearchResult,
         dates: placementDates(req.query.startDate, req.query.durationWeeks),
+      })
+    }
+  }
+
+  create(): TypedRequestHandler<Request, Response> {
+    return async (req: CreateRequest, res: Response) => {
+      const newPlacementRequestBooking = {
+        arrivalDate: req.body.arrivalDate,
+        departureDate: req.body.departureDate,
+        bedId: req.body.bedId,
+      }
+
+      const bookingConfirmation = await this.placementRequestService.createBooking(
+        req.user.token,
+        req.params.id,
+        newPlacementRequestBooking,
+      )
+
+      res.render('match/placementRequests/bookings/success', {
+        pageHeading: 'Your booking is complete',
+        bookingConfirmation,
       })
     }
   }

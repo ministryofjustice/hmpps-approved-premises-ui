@@ -4,7 +4,12 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import BookingsController from './bookingsController'
 
 import { PlacementRequestService } from '../../../services'
-import { bedSearchResultFactory, personFactory, placementRequestFactory } from '../../../testutils/factories'
+import {
+  bedSearchResultFactory,
+  newPlacementRequestBookingConfirmationFactory,
+  personFactory,
+  placementRequestFactory,
+} from '../../../testutils/factories'
 import { encodeBedSearchResult, placementDates } from '../../../utils/matchUtils'
 
 describe('BookingsController', () => {
@@ -50,6 +55,32 @@ describe('BookingsController', () => {
         dates: placementDates(query.startDate, query.durationWeeks),
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
+    })
+  })
+
+  describe('create', () => {
+    it('should create a booking and render a success page', async () => {
+      const bookingConfirmation = newPlacementRequestBookingConfirmationFactory.build()
+
+      placementRequestService.createBooking.mockResolvedValue(bookingConfirmation)
+
+      const body = {
+        arrivalDate: '2022-01-01',
+        departureDate: '2022-03-01',
+        bedId: 'some-other-uuid',
+      }
+
+      const params = { id: 'some-uuid' }
+
+      const requestHandler = bookingsController.create()
+
+      await requestHandler({ ...request, params, body }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('match/placementRequests/bookings/success', {
+        pageHeading: 'Your booking is complete',
+        bookingConfirmation,
+      })
+      expect(placementRequestService.createBooking).toHaveBeenCalledWith(token, 'some-uuid', body)
     })
   })
 })
