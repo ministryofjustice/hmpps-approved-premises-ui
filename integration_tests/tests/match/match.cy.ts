@@ -1,3 +1,5 @@
+import { addWeeks } from 'date-fns'
+import SuccessPage from '../../pages/match/successPage'
 import ConfirmationPage from '../../pages/match/confirmationPage'
 import PlacementRequestPage from '../../pages/match/placementRequestPage'
 import ListPage from '../../pages/match/listPlacementRequestsPage'
@@ -10,6 +12,7 @@ import {
   placementRequestFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
+import { DateFormats } from '../../../server/utils/dateUtils'
 
 context('Placement Requests', () => {
   beforeEach(() => {
@@ -42,6 +45,7 @@ context('Placement Requests', () => {
     })
 
     cy.task('stubPlacementRequest', activePlacementRequest)
+    cy.task('stubBookingFromPlacementRequest', activePlacementRequest)
 
     // When I visit the placementRequests dashboard
     const listPage = ListPage.visit()
@@ -134,5 +138,26 @@ context('Placement Requests', () => {
 
     // And the confirmation page should contain the details of my booking
     confirmationPage.shouldShowConfirmationDetails(bedSearchResults.results[0], newSearchParameters)
+
+    // When I click on the confirm button
+    confirmationPage.clickConfirm()
+
+    // Then I should see a success message
+    Page.verifyOnPage(SuccessPage)
+
+    // And the booking details should have been sent to the API
+    cy.task('verifyBookingFromPlacementRequest', activePlacementRequest).then(requests => {
+      expect(requests).to.have.length(1)
+
+      const body = JSON.parse(requests[0].body)
+
+      expect(body).to.contain({
+        bedId: bedSearchResults.results[0].bed.id,
+        arrivalDate: newSearchParameters.startDate,
+        departureDate: DateFormats.dateObjToIsoDate(
+          addWeeks(DateFormats.isoToDateObj(newSearchParameters.startDate), Number(newSearchParameters.durationWeeks)),
+        ),
+      })
+    })
   })
 })

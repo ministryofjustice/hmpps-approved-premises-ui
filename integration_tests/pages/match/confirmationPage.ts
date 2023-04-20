@@ -12,4 +12,8 @@ export default class ConfirmationPage extends Page {
     const dates = placementDates(searchParameters.startDate, searchParameters.durationWeeks)
     this.shouldContainSummaryListItems(confirmationSummaryCardRows(bedSearchResult, dates))
   }
+
+  clickConfirm() {
+    cy.get('button').contains('Confirm and submit').click()
+  }
 }

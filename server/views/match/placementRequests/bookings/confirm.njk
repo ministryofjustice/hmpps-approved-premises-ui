@@ -1,4 +1,5 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -18,6 +19,20 @@
 					  rows: MatchUtils.confirmationSummaryCardRows(bedSearchResult, dates)
 				  })
         }}
+
+        <p>This booking will be sent to {{ bedSearchResult.premises.name }} Approved Premises for confirmation.</p>
+
+        <form action="{{ paths.placementRequests.bookings.create({ id: placementRequest.id }) }}" method="post">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+          <input type="hidden" name="arrivalDate" value="{{ dates.startDate }}"/>
+          <input type="hidden" name="departureDate" value="{{ dates.endDate }}"/>
+          <input type="hidden" name="bedId" value="{{ bedSearchResult.bed.id }}"/>
+
+          {{ govukButton({
+            text: "Confirm and submit"
+          }) }}
+        </form>
       </div>
     </div>
   </div>
