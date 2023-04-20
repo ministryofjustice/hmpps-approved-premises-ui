@@ -17,7 +17,7 @@ export default class IsPersonTransgender implements TasklistPage {
   ) {}
 
   previous() {
-    return ''
+    return 'exception-details'
   }
 
   next() {
