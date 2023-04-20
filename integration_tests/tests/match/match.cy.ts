@@ -4,7 +4,7 @@ import ListPage from '../../pages/match/listPlacementRequestsPage'
 import SearchPage from '../../pages/match/searchPage'
 
 import {
-  bedSearchParametersFactory,
+  bedSearchParametersUiFactory,
   bedSearchResultsFactory,
   personFactory,
   placementRequestFactory,
@@ -37,7 +37,7 @@ context('Placement Requests', () => {
       ...matchedPlacementRequests,
     ])
     const activePlacementRequest = activePlacementRequests[0]
-    const firstBedSearchParameters = bedSearchParametersFactory.build({
+    const firstBedSearchParameters = bedSearchParametersUiFactory.build({
       requiredCharacteristics: activePlacementRequest.essentialCriteria,
     })
 
@@ -86,7 +86,7 @@ context('Placement Requests', () => {
     searchPage.shouldDisplaySearchResults(bedSearchResults, firstBedSearchParameters)
     numberOfSearches += 1
 
-    const newSearchParameters = bedSearchParametersFactory.build()
+    const newSearchParameters = bedSearchParametersUiFactory.build()
 
     // When I enter details on the search page
     searchPage.changeSearchParameters(newSearchParameters)

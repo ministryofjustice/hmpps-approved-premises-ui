@@ -6,7 +6,7 @@ import adjudicationFactory from './adjudication'
 import applicationFactory from './application'
 import arrivalFactory from './arrival'
 import assessmentFactory from './assessment'
-import bedSearchParametersFactory from './bedSearchParameters'
+import { bedSearchParametersFactory, bedSearchParametersUiFactory } from './bedSearchParameters'
 import { apCharacteristicPairFactory, bedSearchResultFactory, bedSearchResultsFactory } from './bedSearchResult'
 import bookingFactory from './booking'
 import bookingExtensionFactory from './bookingExtension'
@@ -49,6 +49,7 @@ export {
   arrivalFactory,
   assessmentFactory,
   bedSearchParametersFactory,
+  bedSearchParametersUiFactory,
   bedSearchResultFactory,
   bedSearchResultsFactory,
   bookingFactory,

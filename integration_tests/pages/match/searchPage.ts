@@ -1,19 +1,15 @@
-import { TextItem } from '@approved-premises/ui'
+import { BedSearchParametersUi, TextItem } from '@approved-premises/ui'
+import { BedSearchResult, BedSearchResults } from '@approved-premises/api'
 import Page from '../page'
 import { uiObjectValue } from '../../helpers'
 import { summaryCardRows } from '../../../server/utils/matchUtils'
-import {
-  ApprovedPremisesBedSearchParameters as BedSearchParameters,
-  BedSearchResult,
-  BedSearchResults,
-} from '../../../server/@types/shared'
 
 export default class SearchPage extends Page {
   constructor(name: string) {
     super(name)
   }
 
-  shouldDisplaySearchResults(bedSearchResults: BedSearchResults, searchParams: BedSearchParameters): void {
+  shouldDisplaySearchResults(bedSearchResults: BedSearchResults, searchParams: BedSearchParametersUi): void {
     cy.get('h2').contains(
       `${bedSearchResults.resultsBedCount} matching beds in ${bedSearchResults.resultsRoomCount} rooms in ${bedSearchResults.resultsPremisesCount} premises`,
     )
@@ -38,9 +34,9 @@ export default class SearchPage extends Page {
     cy.get('a').contains(bedSearchResult.bed.name).click()
   }
 
-  changeSearchParameters(newSearchParameters: BedSearchParameters): void {
     this.getTextInputByIdAndClear('durationDays')
     this.getTextInputByIdAndEnterDetails('durationDays', newSearchParameters.durationDays.toString())
+  changeSearchParameters(newSearchParameters: BedSearchParametersUi): void {
     this.clearDateInputs('startDate')
     this.completeDateInputs('startDate', newSearchParameters.startDate)
     this.getTextInputByIdAndClear('postcodeDistrict')

@@ -1,6 +1,8 @@
-import { BedSearchParametersUi } from '../@types/ui'
-
-import { bedSearchParametersFactory, bedSearchResultFactory } from '../testutils/factories'
+import {
+  bedSearchParametersFactory,
+  bedSearchParametersUiFactory,
+  bedSearchResultFactory,
+} from '../testutils/factories'
 import { DateFormats } from './dateUtils'
 import {
   InvalidBedSearchDataException,
