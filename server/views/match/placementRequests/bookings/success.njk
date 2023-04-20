@@ -1,0 +1,26 @@
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-width-container">
+      <div class="govuk-grid-column-two-thirds">
+        {{ govukPanel({
+          titleText: pageHeading
+        }) }}
+      </form>
+
+      <p>We have notified {{ bookingConfirmation.premisesName }} Approved Premises of this booking.</p>
+
+      {{ govukButton({
+        text: "Return to dashboard",
+        href: paths.placementRequests.index({})
+      }) }}
+    </div>
+  </div>
+</div>
+{% endblock %}

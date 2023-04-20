@@ -18,6 +18,7 @@ export default function routes(controllers: Controllers, router: Router): Router
   post(paths.placementRequests.beds.search.pattern, bedController.search())
 
   get(paths.placementRequests.bookings.confirm.pattern, placementRequestBookingsController.confirm())
+  post(paths.placementRequests.bookings.create.pattern, placementRequestBookingsController.create())
 
   return router
 }
