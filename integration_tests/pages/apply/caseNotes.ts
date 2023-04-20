@@ -17,13 +17,10 @@ export default class CaseNotesPage extends ApplyPage {
       paths.applications.show({ id: application.id }),
     )
 
-    cy.get('label').contains(
-      `Are there additional circumstances that have helped ${application.person.name} do well in the past?`,
-    )
     this.prisonCaseNotes = prisonCaseNotes
   }
 
-  completeForm(moreDetail: string) {
+  completeForm() {
     cy.get('a').contains('Prison case notes').click()
 
     this.prisonCaseNotes.forEach(note => {
@@ -31,7 +28,5 @@ export default class CaseNotesPage extends ApplyPage {
         .siblings('input')
         .check()
     })
-
-    this.getTextInputByIdAndEnterDetails('moreDetail', moreDetail)
   }
 }

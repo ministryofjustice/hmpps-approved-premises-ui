@@ -1,5 +1,6 @@
 import AccessNeedsMobilityPage from './accessNeedsMobility'
 import AccessNeedsPage from './accessNeeds'
+import AdditionalCircumstancesPage from './additionalCircumstances'
 import ArsonPage from './arson'
 import AttachDocumentsPage from './attachDocumentsPage'
 import BoardTakenPlacePage from './boardTakenPlace'
@@ -58,6 +59,7 @@ import VulnerabilityPage from './vulnerability'
 export {
   AccessNeedsMobilityPage,
   AccessNeedsPage,
+  AdditionalCircumstancesPage,
   ArsonPage,
   AttachDocumentsPage,
   BoardTakenPlacePage,

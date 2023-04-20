@@ -238,7 +238,6 @@
           "note": "Note 2"
         }
       ],
-      "moreDetail": "some details",
       "adjudications": [
         {
           "id": 69927,
@@ -346,6 +345,10 @@
     "arson": {
       "arson": "yes",
       "arsonDetail": "Some details here"
+    },
+    "additional-circumstances": {
+      "additionalCircumstances": "yes",
+      "additionalCircumstancesDetail": "Some details here"
     },
     "contingency-plan-partners": {
       "partnerAgencyDetails": [
