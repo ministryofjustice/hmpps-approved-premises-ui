@@ -13,7 +13,7 @@ import Apply from '../form-pages/apply'
 import { activeOffenceFactory, applicationFactory, assessmentFactory, documentFactory } from '../testutils/factories'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { isUnapplicable } from '../utils/applications/utils'
-import { applicationSubmissionData } from '../utils/applications/applicationSubmissionData'
+import { getApplicationSubmissionData } from '../utils/applications/getApplicationData'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -33,7 +33,7 @@ jest.mock('../data/applicationClient.ts')
 jest.mock('../data/personClient.ts')
 jest.mock('../utils/applications/utils')
 jest.mock('../form-pages/utils')
-jest.mock('../utils/applications/applicationSubmissionData')
+jest.mock('../utils/applications/getApplicationData')
 
 describe('ApplicationService', () => {
   const applicationClient = new ApplicationClient(null) as jest.Mocked<ApplicationClient>
@@ -344,13 +344,13 @@ describe('ApplicationService', () => {
     const applicationData = createMock<SubmitApplication>()
 
     it('saves data to the session', async () => {
-      ;(applicationSubmissionData as jest.Mock).mockReturnValue(applicationData)
+      ;(getApplicationSubmissionData as jest.Mock).mockReturnValue(applicationData)
       await service.submit(request.user.token, application)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.submit).toHaveBeenCalledWith(application.id, applicationData)
 
-      expect(applicationSubmissionData).toHaveBeenCalledWith(application)
+      expect(getApplicationSubmissionData).toHaveBeenCalledWith(application)
     })
   })
 

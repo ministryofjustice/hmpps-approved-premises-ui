@@ -50,13 +50,19 @@ export const mockQuestionResponse = ({
 }
 
 export const mockOptionalQuestionResponse = ({
-  releaseType = 'other',
+  releaseType,
   alternativeRadius,
   duration,
+  type,
+  postcodeArea,
+  sentenceType,
 }: {
   releaseType?: string
   duration?: string
   alternativeRadius?: string
+  type?: string
+  postcodeArea?: string
+  sentenceType?: string
 }) => {
   ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockImplementation(
     // eslint-disable-next-line consistent-return
@@ -71,6 +77,18 @@ export const mockOptionalQuestionResponse = ({
 
       if (question === 'releaseType') {
         return releaseType
+      }
+
+      if (question === 'type') {
+        return type
+      }
+
+      if (question === 'postcodeArea') {
+        return postcodeArea
+      }
+
+      if (question === 'sentenceType') {
+        return sentenceType
       }
     },
   )
