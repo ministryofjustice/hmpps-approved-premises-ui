@@ -1,6 +1,12 @@
 import ApplicationClient from './applicationClient'
 import config from '../config'
-import { activeOffenceFactory, applicationFactory, assessmentFactory, documentFactory } from '../testutils/factories'
+import {
+  activeOffenceFactory,
+  applicationFactory,
+  applicationSummaryFactory,
+  assessmentFactory,
+  documentFactory,
+} from '../testutils/factories'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
 
@@ -153,7 +159,7 @@ describeClient('ApplicationClient', provider => {
 
   describe('all', () => {
     it('should get all previous applications', async () => {
-      const previousApplications = applicationFactory.buildList(5)
+      const previousApplications = applicationSummaryFactory.buildList(5)
 
       provider.addInteraction({
         state: 'Server is healthy',

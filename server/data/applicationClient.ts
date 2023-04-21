@@ -1,6 +1,7 @@
 import type {
   ActiveOffence,
   ApprovedPremisesApplication as Application,
+  ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
   Document,
   SubmitApplication,
@@ -39,8 +40,10 @@ export default class ApplicationClient {
     })) as Application
   }
 
-  async all(): Promise<Array<Application>> {
-    return (await this.restClient.get({ path: paths.applications.index.pattern })) as Array<Application>
+  async all(): Promise<Array<ApplicationSummary>> {
+    return (await this.restClient.get({
+      path: paths.applications.index.pattern,
+    })) as Array<ApplicationSummary>
   }
 
   async submit(applicationId: string, submissionData: SubmitApplication): Promise<void> {

@@ -1,5 +1,6 @@
 import {
   Application,
+  ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplication,
   ArrayOfOASysOffenceDetailsQuestions,
   ArrayOfOASysRiskManagementPlanQuestions,
@@ -241,9 +242,9 @@ export interface AllocatedAndUnallocatedAssessments {
 }
 
 export interface GroupedApplications {
-  inProgress: Array<Application>
-  requestedFurtherInformation: Array<Application>
-  submitted: Array<Application>
+  inProgress: Array<ApplicationSummary>
+  requestedFurtherInformation: Array<ApplicationSummary>
+  submitted: Array<ApplicationSummary>
 }
 
 export type GroupedPlacementRequests = Record<PlacementRequestStatus, Array<PlacementRequest>>

@@ -4,6 +4,7 @@ import acctAlertFactory from './acctAlert'
 import activeOffenceFactory from './activeOffence'
 import adjudicationFactory from './adjudication'
 import applicationFactory from './application'
+import applicationSummaryFactory from './applicationSummary'
 import arrivalFactory from './arrival'
 import assessmentFactory from './assessment'
 import { bedSearchParametersFactory, bedSearchParametersUiFactory } from './bedSearchParameters'
@@ -50,6 +51,7 @@ export {
   adjudicationFactory,
   apCharacteristicPairFactory,
   applicationFactory,
+  applicationSummaryFactory,
   arrivalFactory,
   assessmentFactory,
   bedSearchParametersFactory,

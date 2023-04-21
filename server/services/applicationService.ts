@@ -8,7 +8,6 @@ import type {
 } from '@approved-premises/api'
 
 import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
-import { isUnapplicable } from '../utils/applications/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import type { ApplicationClient, RestClientBuilder } from '../data'
 import { ValidationError } from '../utils/errors'
@@ -47,10 +46,11 @@ export default class ApplicationService {
       submitted: [],
     } as GroupedApplications
 
-    const applications = allApplications.filter(application => !isUnapplicable(application))
+    // TODO: We can no longer filter like this, because we don't have the data object for applications
+    // const applications = allApplications.filter(application => !isUnapplicable(application))
 
     await Promise.all(
-      applications.map(async application => {
+      allApplications.map(async application => {
         switch (application.status) {
           case 'submitted':
             result.submitted.push(application)

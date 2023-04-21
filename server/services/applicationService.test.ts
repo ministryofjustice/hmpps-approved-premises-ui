@@ -10,7 +10,13 @@ import ApplicationClient from '../data/applicationClient'
 import { getBody, getPageName, getTaskName } from '../form-pages/utils'
 
 import Apply from '../form-pages/apply'
-import { activeOffenceFactory, applicationFactory, assessmentFactory, documentFactory } from '../testutils/factories'
+import {
+  activeOffenceFactory,
+  applicationFactory,
+  applicationSummaryFactory,
+  assessmentFactory,
+  documentFactory,
+} from '../testutils/factories'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { isUnapplicable } from '../utils/applications/utils'
 import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
@@ -48,9 +54,9 @@ describe('ApplicationService', () => {
 
   describe('getAllForLoggedInUser', () => {
     const token = 'SOME_TOKEN'
-    const submittedApplications = applicationFactory.buildList(5, { status: 'submitted' })
-    const inProgressApplications = applicationFactory.buildList(2, { status: 'inProgress' })
-    const requestedFurtherInformationApplications = applicationFactory.buildList(1, {
+    const submittedApplications = applicationSummaryFactory.buildList(5, { status: 'submitted' })
+    const inProgressApplications = applicationSummaryFactory.buildList(2, { status: 'inProgress' })
+    const requestedFurtherInformationApplications = applicationSummaryFactory.buildList(1, {
       status: 'requestedFurtherInformation',
     })
 
@@ -71,7 +77,8 @@ describe('ApplicationService', () => {
       expect(applicationClient.all).toHaveBeenCalled()
     })
 
-    it('should filter out unapplicable applications', async () => {
+    // TODO: We can't do this at the moment, as we don't have access to the full data object
+    it.skip('should filter out unapplicable applications', async () => {
       const unapplicableApplication = applicationFactory.build()
       ;(isUnapplicable as jest.Mock).mockImplementation(application => application === unapplicableApplication)
 
