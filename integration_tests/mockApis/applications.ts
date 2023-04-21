@@ -1,11 +1,15 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '@approved-premises/api'
+import type {
+  ApprovedPremisesApplication,
+  ApprovedPremisesApplicationSummary,
+  ApprovedPremisesAssessment,
+} from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from '../../wiremock'
 
 export default {
-  stubApplications: (applications: ApprovedPremisesApplication): SuperAgentRequest =>
+  stubApplications: (applications: Array<ApprovedPremisesApplicationSummary>): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',

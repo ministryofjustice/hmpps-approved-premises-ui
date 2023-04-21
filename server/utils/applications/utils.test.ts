@@ -1,4 +1,4 @@
-import { applicationFactory, tierEnvelopeFactory } from '../../testutils/factories'
+import { applicationFactory, applicationSummaryFactory, tierEnvelopeFactory } from '../../testutils/factories'
 import paths from '../../paths/apply'
 import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
@@ -109,13 +109,14 @@ describe('utils', () => {
       ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')
       const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
 
-      const applicationA = applicationFactory.build({
+      const applicationA = applicationSummaryFactory.build({
+        arrivalDate: undefined,
         person: { name: 'A' },
-        data: {},
         submittedAt: null,
         risks: { tier: tierEnvelopeFactory.build({ value: { level: 'A1' } }) },
       })
-      const applicationB = applicationFactory.withReleaseDate(arrivalDate).build({
+      const applicationB = applicationSummaryFactory.build({
+        arrivalDate,
         person: { name: 'A' },
         risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
       })
@@ -172,7 +173,8 @@ describe('utils', () => {
       ;(tierBadge as jest.Mock).mockClear()
       const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
 
-      const application = applicationFactory.withReleaseDate(arrivalDate).build({
+      const application = applicationSummaryFactory.build({
+        arrivalDate,
         person: { name: 'My Name' },
         risks: { tier: undefined },
       })
@@ -210,7 +212,8 @@ describe('utils', () => {
       ;(tierBadge as jest.Mock).mockClear()
       const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
 
-      const application = applicationFactory.withReleaseDate(arrivalDate).build({
+      const application = applicationSummaryFactory.build({
+        arrivalDate,
         person: { name: 'My Name' },
         risks: undefined,
       })
