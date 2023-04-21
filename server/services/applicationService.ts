@@ -7,7 +7,7 @@ import type {
   Document,
 } from '@approved-premises/api'
 
-import { getApplicationSubmissionData } from '../utils/applications/getApplicationData'
+import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
 import { isUnapplicable } from '../utils/applications/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import type { ApplicationClient, RestClientBuilder } from '../data'
@@ -142,6 +142,6 @@ export default class ApplicationService {
   private async saveToApi(application: ApprovedPremisesApplication, request: Request) {
     const client = this.applicationClientFactory(request.user.token)
 
-    await client.update(application)
+    await client.update(application.id, getApplicationUpdateData(application))
   }
 }

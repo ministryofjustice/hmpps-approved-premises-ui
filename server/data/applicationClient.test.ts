@@ -119,6 +119,14 @@ describeClient('ApplicationClient', provider => {
   describe('update', () => {
     it('should return an application when a PUT request is made', async () => {
       const application = applicationFactory.build()
+      const data = {
+        data: application.data,
+        isPipeApplication: true,
+        isWomensApplication: false,
+        targetLocation: 'ABC123',
+        releaseType: 'licence' as const,
+        type: 'CAS1',
+      }
 
       provider.addInteraction({
         state: 'Server is healthy',
@@ -126,7 +134,7 @@ describeClient('ApplicationClient', provider => {
         withRequest: {
           method: 'PUT',
           path: paths.applications.update({ id: application.id }),
-          body: JSON.stringify({ data: application.data }),
+          body: JSON.stringify(data),
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -137,7 +145,7 @@ describeClient('ApplicationClient', provider => {
         },
       })
 
-      const result = await applicationClient.update(application)
+      const result = await applicationClient.update(application.id, data)
 
       expect(result).toEqual(application)
     })

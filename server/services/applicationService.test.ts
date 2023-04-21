@@ -1,7 +1,7 @@
 import type { Request } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { DataServices, TaskListErrors } from '@approved-premises/ui'
-import type { SubmitApplication } from '@approved-premises/api'
+import type { SubmitApplication, UpdateApprovedPremisesApplication } from '@approved-premises/api'
 
 import type TasklistPage from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
@@ -13,7 +13,7 @@ import Apply from '../form-pages/apply'
 import { activeOffenceFactory, applicationFactory, assessmentFactory, documentFactory } from '../testutils/factories'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { isUnapplicable } from '../utils/applications/utils'
-import { getApplicationSubmissionData } from '../utils/applications/getApplicationData'
+import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -271,6 +271,11 @@ describe('ApplicationService', () => {
       session: { application },
       user: { token },
     })
+    const applicationData = createMock<UpdateApprovedPremisesApplication>()
+
+    beforeEach(() => {
+      ;(getApplicationUpdateData as jest.Mock).mockReturnValue(applicationData)
+    })
 
     describe('when there are no validation errors', () => {
       let page: DeepMocked<TasklistPage>
@@ -303,7 +308,7 @@ describe('ApplicationService', () => {
         await service.save(page, request)
 
         expect(applicationClientFactory).toHaveBeenCalledWith(token)
-        expect(applicationClient.update).toHaveBeenCalledWith(application)
+        expect(applicationClient.update).toHaveBeenCalledWith(application.id, applicationData)
       })
 
       it('updates an in-progress application', async () => {
