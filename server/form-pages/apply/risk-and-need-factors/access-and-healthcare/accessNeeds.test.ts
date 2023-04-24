@@ -49,8 +49,22 @@ describe('AccessNeeds', () => {
     )
   })
 
+  describe('when the reponse contains "pregnancy"', () => {
+    itShouldHaveNextValue(
+      new AccessNeeds({ additionalNeeds: ['pregnancy'] }, application),
+      'access-needs-further-questions',
+    )
+  })
+
+  describe('when the reponse contains "visualImpairment"', () => {
+    itShouldHaveNextValue(
+      new AccessNeeds({ additionalNeeds: ['visualImpairment'] }, application),
+      'access-needs-further-questions',
+    )
+  })
+
   describe('when the response contains an answer other than "none"', () => {
-    itShouldHaveNextValue(new AccessNeeds({ additionalNeeds: ['visualImpairment'] }, application), 'covid')
+    itShouldHaveNextValue(new AccessNeeds({ additionalNeeds: ['healthcare'] }, application), 'covid')
   })
 
   itShouldHavePreviousValue(new AccessNeeds({}, application), 'dashboard')
