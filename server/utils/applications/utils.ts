@@ -4,6 +4,7 @@ import type {
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
 } from '@approved-premises/api'
+import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
 import Apply from '../../form-pages/apply'
 import { UnknownPageError } from '../errors'
@@ -13,6 +14,7 @@ import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
 import isAssessment from '../assessments/isAssessment'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
 
 const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => {
@@ -102,8 +104,11 @@ const getPage = (taskName: string, pageName: string, isAnAssessment?: boolean): 
 }
 
 const isInapplicable = (application: Application): boolean => {
-  const basicInformation = application.data?.['basic-information']
-  const isExceptionalCase = basicInformation?.['is-exceptional-case']?.isExceptionalCase
+  const isExceptionalCase = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+    application,
+    IsExceptionalCase,
+    'isExceptionalCase',
+  )
 
   return isExceptionalCase === 'no'
 }
