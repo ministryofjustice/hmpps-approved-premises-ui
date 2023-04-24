@@ -3,9 +3,11 @@ import { applicationFactory } from '../../testutils/factories'
 import { getApplicationSubmissionData, getApplicationUpdateData } from './getApplicationData'
 import { mockOptionalQuestionResponse, mockQuestionResponse } from '../../testutils/mockQuestionResponse'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
+import { isInapplicable } from './utils'
 
 jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
 jest.mock('./arrivalDateFromApplication')
+jest.mock('./utils')
 
 describe('getApplicationData', () => {
   describe('getApplicationSubmissionData', () => {
@@ -98,12 +100,14 @@ describe('getApplicationData', () => {
   describe('getApplicationUpdateData', () => {
     it('returns empty attributes for a new application', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(undefined)
+      ;(isInapplicable as jest.Mock).mockReturnValue(false)
       mockOptionalQuestionResponse({})
 
       const application = applicationFactory.build()
 
       expect(getApplicationUpdateData(application)).toEqual({
         data: application.data,
+        isInapplicable: false,
         isPipeApplication: undefined,
         isWomensApplication: false,
         releaseType: undefined,
@@ -114,12 +118,14 @@ describe('getApplicationData', () => {
 
     it('returns all the defined attributes', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2023-01-01')
+      ;(isInapplicable as jest.Mock).mockReturnValue(false)
       mockOptionalQuestionResponse({ type: 'normal', releaseType: 'license', postcodeArea: 'ABC' })
 
       const application = applicationFactory.build()
 
       expect(getApplicationUpdateData(application)).toEqual({
         data: application.data,
+        isInapplicable: false,
         isPipeApplication: false,
         isWomensApplication: false,
         releaseType: 'license',
@@ -156,6 +162,17 @@ describe('getApplicationData', () => {
       const result = getApplicationUpdateData(application)
 
       expect(result.releaseType).toEqual('in_community')
+    })
+
+    it('returns the return value of `isInapplicable`', () => {
+      ;(isInapplicable as jest.Mock).mockReturnValue(true)
+
+      const application = applicationFactory.build()
+
+      const result = getApplicationUpdateData(application)
+
+      expect(result.isInapplicable).toEqual(true)
+      expect(isInapplicable).toHaveBeenCalledWith(application)
     })
   })
 })

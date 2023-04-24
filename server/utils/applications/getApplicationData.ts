@@ -16,6 +16,7 @@ import {
 } from '../retrieveQuestionResponseFromApplicationOrAssessment'
 import DescribeLocationFactors from '../../form-pages/apply/risk-and-need-factors/location-factors/describeLocationFactors'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
+import { isInapplicable } from './utils'
 
 type FirstClassFields<T> = T extends UpdateApprovedPremisesApplication
   ? Omit<UpdateApprovedPremisesApplication, 'data'>
@@ -32,6 +33,7 @@ type QuestionResponseFunction = (
 export const getApplicationUpdateData = (application: Application): UpdateApprovedPremisesApplication => {
   return {
     data: application.data,
+    isInapplicable: isInapplicable(application),
     ...getUpdateFirstClassFields(application),
   }
 }
