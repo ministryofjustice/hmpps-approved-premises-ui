@@ -292,13 +292,6 @@ describe('ApplicationService', () => {
         }).not.toThrow(ValidationError)
       })
 
-      it('saves data to the session', async () => {
-        await service.save(page, request)
-
-        expect(request.session.application).toEqual(application)
-        expect(request.session.application.data).toEqual({ 'some-task': { 'some-page': { foo: 'bar' } } })
-      })
-
       it('saves data to the api', async () => {
         await service.save(page, request)
 
@@ -311,9 +304,14 @@ describe('ApplicationService', () => {
 
         await service.save(page, request)
 
-        expect(request.session.application).toEqual(application)
-        expect(request.session.application.data).toEqual({
-          'some-task': { 'other-page': { question: 'answer' }, 'some-page': { foo: 'bar' } },
+        expect(getApplicationUpdateData).toHaveBeenCalledWith({
+          ...application,
+          data: {
+            'some-task': {
+              'other-page': { question: 'answer' },
+              'some-page': { foo: 'bar' },
+            },
+          },
         })
       })
     })
