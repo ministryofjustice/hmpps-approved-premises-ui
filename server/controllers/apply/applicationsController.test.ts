@@ -82,11 +82,11 @@ describe('applicationsController', () => {
       })
     })
 
-    it('fetches the application from session or the API and renders the task list if the application is in progress', async () => {
+    it('fetches the application from the API and renders the task list if the application is in progress', async () => {
       const requestHandler = applicationsController.show()
       const stubTaskList = jest.fn()
 
-      applicationService.getApplicationFromSessionOrAPI.mockResolvedValue(application)
+      applicationService.findApplication.mockResolvedValue(application)
       ;(TasklistService as jest.Mock).mockImplementation(() => {
         return stubTaskList
       })
@@ -98,10 +98,10 @@ describe('applicationsController', () => {
         taskList: stubTaskList,
       })
 
-      expect(applicationService.findApplication).not.toHaveBeenCalledWith(token, application.id)
+      expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
     })
 
-    it('fetches the application from session or the API and renders the read only view if the application is submitted', async () => {
+    it('fetches the application from the API and renders the read only view if the application is submitted', async () => {
       const requestHandler = applicationsController.show()
       const stubTaskList = jest.fn()
 
@@ -117,7 +117,7 @@ describe('applicationsController', () => {
         referrer,
       })
 
-      expect(applicationService.findApplication).not.toHaveBeenCalledWith(token, application.id)
+      expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
     })
   })
 
