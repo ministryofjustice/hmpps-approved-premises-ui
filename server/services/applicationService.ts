@@ -46,9 +46,6 @@ export default class ApplicationService {
       submitted: [],
     } as GroupedApplications
 
-    // TODO: We can no longer filter like this, because we don't have the data object for applications
-    // const applications = allApplications.filter(application => !isInapplicable(application))
-
     await Promise.all(
       allApplications.map(async application => {
         switch (application.status) {

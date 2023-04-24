@@ -18,7 +18,6 @@ import {
   documentFactory,
 } from '../testutils/factories'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
-import { isInapplicable } from '../utils/applications/utils'
 import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
 
 const FirstPage = jest.fn()
@@ -75,22 +74,6 @@ describe('ApplicationService', () => {
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.all).toHaveBeenCalled()
-    })
-
-    // TODO: We can't do this at the moment, as we don't have access to the full data object
-    it.skip('should filter out unapplicable applications', async () => {
-      const unapplicableApplication = applicationFactory.build()
-      ;(isInapplicable as jest.Mock).mockImplementation(application => application === unapplicableApplication)
-
-      applicationClient.all.mockResolvedValue([applications, unapplicableApplication].flat())
-
-      const result = await service.getAllForLoggedInUser(token)
-
-      expect(result).toEqual({
-        inProgress: inProgressApplications,
-        requestedFurtherInformation: requestedFurtherInformationApplications,
-        submitted: submittedApplications,
-      })
     })
   })
 
