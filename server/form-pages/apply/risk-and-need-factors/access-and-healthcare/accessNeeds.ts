@@ -1,10 +1,11 @@
-import type { TaskListErrors, YesNoOrIDK, YesOrNo } from '@approved-premises/ui'
+import type { TaskListErrors, YesNoOrIDK, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
 import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { convertKeyValuePairToCheckBoxItems, flattenCheckboxInput } from '../../../../utils/formUtils'
 import { pascalCase, sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
+import { yesOrNoResponseWithDetail } from '../../../utils'
 
 export const additionalNeeds = {
   mobility: 'Mobility needs',
@@ -12,6 +13,8 @@ export const additionalNeeds = {
   learningDisability: 'Learning disability',
   hearingImpairment: 'Hearing impairment',
   neurodivergentConditions: 'Neurodivergent conditions',
+  healthcare: 'Healthcare',
+  pregnancy: 'Pregnancy',
   other: 'Other',
   none: 'None of the above',
 }
@@ -20,19 +23,20 @@ type AdditionalNeed = keyof typeof additionalNeeds
 
 type AccessNeedsBody = {
   additionalNeeds: Array<AdditionalNeed> | AdditionalNeed
-  religiousOrCulturalNeeds: YesOrNo
-  religiousOrCulturalNeedsDetails: string
   careActAssessmentCompleted: YesNoOrIDK
   needsInterpreter: YesOrNo
   interpreterLanguage: string
-}
+} & YesOrNoWithDetail<'careAndSupportNeeds'> &
+  YesOrNoWithDetail<'religiousOrCulturalNeeds'>
 
 @Page({
   name: 'access-needs',
   bodyProperties: [
     'additionalNeeds',
     'religiousOrCulturalNeeds',
-    'religiousOrCulturalNeedsDetails',
+    'religiousOrCulturalNeedsDetail',
+    'careAndSupportNeeds',
+    'careAndSupportNeedsDetail',
     'careActAssessmentCompleted',
     'needsInterpreter',
     'interpreterLanguage',
@@ -54,6 +58,7 @@ export default class AccessNeeds implements TasklistPage {
       question: `Does ${this.application.person.name} need an interpreter?`,
       language: 'Which language is an interpreter needed for?',
     },
+    careAndSupportNeeds: { question: 'Does this person have care and support needs?', hint: 'Provide details' },
     careActAssessmentCompleted: 'Has a care act assessment been completed?',
   }
 
@@ -66,7 +71,10 @@ export default class AccessNeeds implements TasklistPage {
   }
 
   next() {
-    if (this.body.additionalNeeds.includes('mobility')) return 'access-needs-mobility'
+    if (this.furtherQuestionsNeeded()) {
+      return 'access-needs-further-questions'
+    }
+
     return 'covid'
   }
 
@@ -75,8 +83,11 @@ export default class AccessNeeds implements TasklistPage {
       [this.questions.needs.question]: (this.body.additionalNeeds as Array<AdditionalNeed>)
         .map((need, i) => (i < 1 ? additionalNeeds[need] : additionalNeeds[need].toLowerCase()))
         .join(', '),
-      [this.questions.religiousOrCulturalNeeds.question]: sentenceCase(this.body.religiousOrCulturalNeeds),
-      [this.questions.religiousOrCulturalNeeds.furtherDetails]: this.body.religiousOrCulturalNeedsDetails,
+      [this.questions.religiousOrCulturalNeeds.question]: yesOrNoResponseWithDetail(
+        'religiousOrCulturalNeeds',
+        this.body,
+      ),
+      [this.questions.careAndSupportNeeds.question]: yesOrNoResponseWithDetail('careAndSupportNeeds', this.body),
       [this.questions.interpreter.question]: sentenceCase(this.body.needsInterpreter),
       [this.questions.careActAssessmentCompleted]:
         this.body.careActAssessmentCompleted === 'yes' || this.body.careActAssessmentCompleted === 'no'
@@ -87,12 +98,6 @@ export default class AccessNeeds implements TasklistPage {
       return {
         ...response,
         [this.questions.interpreter.language]: this.body.interpreterLanguage,
-      }
-    }
-    if (this.body.religiousOrCulturalNeeds === 'yes') {
-      return {
-        ...response,
-        religiousOrCulturalNeedsDetails: this.body.religiousOrCulturalNeedsDetails,
       }
     }
 
@@ -108,6 +113,12 @@ export default class AccessNeeds implements TasklistPage {
     if (!this.body.religiousOrCulturalNeeds) {
       errors.religiousOrCulturalNeeds = `You must confirm whether ${this.application.person.name} has any religious or cultural needs`
     }
+    if (!this.body.careAndSupportNeeds) {
+      errors.careAndSupportNeeds = `You must confirm whether ${this.application.person.name} has care and support needs`
+    }
+    if (this.body.careAndSupportNeeds === 'yes' && !this.body.careAndSupportNeedsDetail) {
+      errors.careAndSupportNeedsDetail = `You must provide details of ${this.application.person.name}'s care and support needs`
+    }
     if (!this.body.needsInterpreter) {
       errors.needsInterpreter = 'You must confirm the need for an interpreter'
     }
@@ -120,5 +131,11 @@ export default class AccessNeeds implements TasklistPage {
 
   needsCheckboxes() {
     return convertKeyValuePairToCheckBoxItems(additionalNeeds, this.body.additionalNeeds as Array<AdditionalNeed>)
+  }
+
+  private furtherQuestionsNeeded() {
+    return (this.body.additionalNeeds as Array<AdditionalNeed>).some(need => {
+      return ['mobility', 'pregnancy', 'visualImpairment'].includes(need)
+    })
   }
 }

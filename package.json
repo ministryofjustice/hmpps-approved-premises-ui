@@ -153,7 +153,6 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@cypress/browserify-preprocessor": "^3.0.2",
     "@golevelup/ts-jest": "^0.3.3",
     "@pact-foundation/pact": "^11.0.0",
     "@types/bunyan": "^1.8.8",
@@ -181,7 +180,7 @@
     "audit-ci": "^6.3.0",
     "concurrently": "^8.0.0",
     "cookie-session": "^2.0.0",
-    "cypress": "^12.0.0",
+    "cypress": "^12.10.0",
     "cypress-multi-reporters": "^1.6.1",
     "eslint": "^8.24.0",
     "eslint-config-airbnb-base": "^15.0.0",

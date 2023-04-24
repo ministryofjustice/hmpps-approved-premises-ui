@@ -1,0 +1,126 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+  <h1 class="govuk-heading-l">Access, cultural and healthcare needs</h1>
+  <p class="govuk-body">Specify any additional details and the adjustments required</p>
+
+  {{ formPageRadios({
+      fieldName: "needsWheelchair",
+      fieldset: {
+        legend: {
+          text: page.questions.wheelchair,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        html: '<p>If the person requires use of a wheelchair around the Approved Premises select yes. <a href="">What wheelchair accessibility means within an AP.</a></p>'
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }, fetchContext()) }}
+
+  {{ formPageTextarea({
+      fieldName: 'mobilityNeeds',
+      label: {
+        text: page.questions.mobilityNeeds,
+        classes: "govuk-label--s"
+        },
+        hint: {
+          text: "For example, if step-free access for reduced mobility is required"
+        }
+    }, fetchContext()) }}
+
+  {{ formPageTextarea({
+        fieldName: "visualImpairment",
+        label: {
+        text: page.questions.visualImpairment,
+          classes: "govuk-label--s"
+        },
+        hint: {
+            text: "For example, if braille or tactile flooring is required"
+          }
+    }, fetchContext()) }}
+
+  {% set additionalPregnancyQuestions %}
+  {{
+    formPageDateInput(
+        {
+          fieldName: "expectedDeliveryDate",
+          fieldset: {
+            legend: {
+              text: page.questions.deliveryDate
+            }
+          },
+          items: dateFieldValues('expectedDeliveryDate', errors)
+        },
+        fetchContext()
+      )
+  }}
+  {{ formPageTextarea({
+        fieldName: "otherPregnancyConsiderations",
+        label: {
+        text: page.questions.otherPregnancyConsiderations,
+          classes: "govuk-label--s"
+        }
+    }, fetchContext()) }}
+  {% endset -%}
+
+  {% if page.yesToPregnancyHealthcareQuestion %}
+    {{ formPageRadios({
+      fieldName: "isPersonPregnant",
+      fieldset: {
+        legend: {
+          text: page.questions.isPersonPregnant,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          conditional: {
+            html: additionalPregnancyQuestions
+          }
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }, fetchContext()) }}
+
+    {{ formPageRadios({
+      fieldName: "childRemoved",
+      fieldset: {
+        legend: {
+          text: page.questions.childRemoved,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No"
+        },
+        {
+          value: "decisionPending",
+          text: "Decision pending"
+        }
+      ]
+    }, fetchContext()) }}
+
+  {% endif %}
+
+{% endblock %}

@@ -1,4 +1,4 @@
-import AccessNeedsMobilityPage from './accessNeedsMobility'
+import AccessNeedsFurtherQuestionsPage from './accessNeedsFurtherQuestions'
 import AccessNeedsPage from './accessNeeds'
 import AdditionalCircumstancesPage from './additionalCircumstances'
 import ArsonPage from './arson'
@@ -57,7 +57,7 @@ import TypeOfConvictedOffence from './typeOfConvictedOffence'
 import VulnerabilityPage from './vulnerability'
 
 export {
-  AccessNeedsMobilityPage,
+  AccessNeedsFurtherQuestionsPage,
   AccessNeedsPage,
   AdditionalCircumstancesPage,
   ArsonPage,

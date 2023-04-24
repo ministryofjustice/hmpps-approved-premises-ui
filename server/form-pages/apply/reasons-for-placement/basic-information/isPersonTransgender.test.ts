@@ -39,7 +39,7 @@ describe('IsPersonTransgender', () => {
     )
   })
 
-  itShouldHavePreviousValue(new IsPersonTransgender(body, application), '')
+  itShouldHavePreviousValue(new IsPersonTransgender(body, application), 'exception-details')
 
   describe('errors', () => {
     it('should return errors when yes/no questions are blank', () => {
