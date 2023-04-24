@@ -12,7 +12,7 @@ import {
   getPage,
   getResponses,
   getStatus,
-  isUnapplicable,
+  isInapplicable,
 } from './utils'
 import { UnknownPageError } from '../errors'
 
@@ -289,7 +289,7 @@ describe('utils', () => {
     })
   })
 
-  describe('isUnapplicable', () => {
+  describe('isInapplicable', () => {
     const application = applicationFactory.build()
 
     it('should return true if the applicant has answered no to the isExceptionalCase question', () => {
@@ -301,7 +301,7 @@ describe('utils', () => {
         },
       }
 
-      expect(isUnapplicable(application)).toEqual(true)
+      expect(isInapplicable(application)).toEqual(true)
     })
 
     it('should return false if the applicant has answered yes to the isExceptionalCase question', () => {
@@ -313,11 +313,11 @@ describe('utils', () => {
         },
       }
 
-      expect(isUnapplicable(application)).toEqual(false)
+      expect(isInapplicable(application)).toEqual(false)
     })
 
     it('should return false if the applicant has not answered the isExceptionalCase question', () => {
-      expect(isUnapplicable(application)).toEqual(false)
+      expect(isInapplicable(application)).toEqual(false)
     })
   })
 

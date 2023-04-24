@@ -101,7 +101,7 @@ const getPage = (taskName: string, pageName: string, isAnAssessment?: boolean): 
   return Page as TasklistPageInterface
 }
 
-const isUnapplicable = (application: Application): boolean => {
+const isInapplicable = (application: Application): boolean => {
   const basicInformation = application.data?.['basic-information']
   const isExceptionalCase = basicInformation?.['is-exceptional-case']?.isExceptionalCase
 
@@ -132,5 +132,5 @@ export {
   getResponseForPage,
   getResponses,
   getStatus,
-  isUnapplicable,
+  isInapplicable,
 }

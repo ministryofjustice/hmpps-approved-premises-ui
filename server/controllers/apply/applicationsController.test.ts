@@ -11,7 +11,7 @@ import Apply from '../../form-pages/apply'
 
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import { firstPageOfApplicationJourney, getResponses, isUnapplicable } from '../../utils/applications/utils'
+import { firstPageOfApplicationJourney, getResponses, isInapplicable } from '../../utils/applications/utils'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applications/utils')
@@ -122,7 +122,7 @@ describe('applicationsController', () => {
 
     it('renders the not applicable page if the application is not applicable', async () => {
       const requestHandler = applicationsController.show()
-      ;(isUnapplicable as jest.Mock).mockReturnValue(true)
+      ;(isInapplicable as jest.Mock).mockReturnValue(true)
 
       await requestHandler(request, response, next)
 

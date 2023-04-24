@@ -7,7 +7,7 @@ import { fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import Apply from '../../form-pages/apply'
-import { firstPageOfApplicationJourney, getResponses, isUnapplicable } from '../../utils/applications/utils'
+import { firstPageOfApplicationJourney, getResponses, isInapplicable } from '../../utils/applications/utils'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
@@ -35,7 +35,7 @@ export default class ApplicationsController {
       const application = await this.applicationService.getApplicationFromSessionOrAPI(req)
       const taskList = new TasklistService(application)
 
-      if (isUnapplicable(application)) {
+      if (isInapplicable(application)) {
         res.render('applications/notEligible')
       } else if (application.status === 'submitted') {
         const referrer = req.headers.referer
