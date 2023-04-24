@@ -1,9 +1,11 @@
 import type {
   ActiveOffence,
   ApprovedPremisesApplication as Application,
+  ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
   Document,
   SubmitApplication,
+  UpdateApprovedPremisesApplication,
 } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
@@ -31,15 +33,17 @@ export default class ApplicationClient {
     })) as Application
   }
 
-  async update(application: Application): Promise<Application> {
+  async update(applicationId: string, updateData: UpdateApprovedPremisesApplication): Promise<Application> {
     return (await this.restClient.put({
-      path: paths.applications.update({ id: application.id }),
-      data: { data: application.data },
+      path: paths.applications.update({ id: applicationId }),
+      data: { ...updateData, type: 'CAS1' },
     })) as Application
   }
 
-  async all(): Promise<Array<Application>> {
-    return (await this.restClient.get({ path: paths.applications.index.pattern })) as Array<Application>
+  async all(): Promise<Array<ApplicationSummary>> {
+    return (await this.restClient.get({
+      path: paths.applications.index.pattern,
+    })) as Array<ApplicationSummary>
   }
 
   async submit(applicationId: string, submissionData: SubmitApplication): Promise<void> {

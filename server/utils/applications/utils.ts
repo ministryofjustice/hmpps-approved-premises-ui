@@ -1,6 +1,7 @@
 import type { ApplicationType, PageResponse, TableRow } from '@approved-premises/ui'
 import type {
   ApprovedPremisesApplication as Application,
+  ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
 } from '@approved-premises/api'
 import paths from '../../paths/apply'
@@ -13,22 +14,23 @@ import Assess from '../../form-pages/assess'
 import isAssessment from '../assessments/isAssessment'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 
-const dashboardTableRows = (applications: Array<Application>): Array<TableRow> => {
+const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => {
-    const arrivalDate = arrivalDateFromApplication(application, false)
     const tier = application.risks?.tier?.value?.level
 
     return [
       createNameAnchorElement(application.person.name, application.id),
       textValue(application.person.crn),
       htmlValue(tier == null ? '' : tierBadge(tier)),
-      textValue(arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'),
+      textValue(
+        application.arrivalDate ? DateFormats.isoDateToUIDate(application.arrivalDate, { format: 'short' }) : 'N/A',
+      ),
       htmlValue(getStatus(application)),
     ]
   })
 }
 
-const getStatus = (application: Application): string => {
+const getStatus = (application: ApplicationSummary): string => {
   switch (application.status) {
     case 'submitted':
       return `<strong class="govuk-tag">Submitted</strong>`

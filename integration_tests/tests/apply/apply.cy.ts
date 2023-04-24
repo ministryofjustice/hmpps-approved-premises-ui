@@ -264,11 +264,20 @@ context('Apply', () => {
     // Then the application should be submitted to the API
     cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
       expect(requests).to.have.length(apply.numberOfPages())
-      const requestBody = JSON.parse(requests[requests.length - 1].body)
+      const body = JSON.parse(requests[requests.length - 1].body)
 
-      expect(requestBody.data).to.deep.equal(this.applicationData)
+      expect(body).to.have.keys(
+        'data',
+        'arrivalDate',
+        'isPipeApplication',
+        'isWomensApplication',
+        'targetLocation',
+        'releaseType',
+        'type',
+      )
+      expect(body.data).to.deep.equal(this.applicationData)
 
-      cy.task('validateBodyAgainstApplySchema', requestBody.data).then(result => {
+      cy.task('validateBodyAgainstApplySchema', body.data).then(result => {
         expect(result).to.equal(true)
       })
     })
@@ -280,6 +289,7 @@ context('Apply', () => {
 
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
+        'arrivalDate',
         'translatedDocument',
         'isPipeApplication',
         'isWomensApplication',

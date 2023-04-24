@@ -1,21 +1,24 @@
 import Page from '../page'
 import paths from '../../../server/paths/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
+import {
+  ApprovedPremisesApplication as Application,
+  ApprovedPremisesApplicationSummary,
+} from '../../../server/@types/shared'
 
 export default class ListPage extends Page {
   constructor(
-    private readonly inProgressApplications: Array<Application>,
-    private readonly submittedApplications: Array<Application>,
-    private readonly requestedFurtherInformationApplications: Array<Application>,
+    private readonly inProgressApplications: Array<ApprovedPremisesApplicationSummary>,
+    private readonly submittedApplications: Array<ApprovedPremisesApplicationSummary>,
+    private readonly requestedFurtherInformationApplications: Array<ApprovedPremisesApplicationSummary>,
   ) {
     super('Approved Premises applications')
   }
 
   static visit(
-    inProgressApplications: Array<Application>,
-    submittedApplications: Array<Application>,
-    requestedFurtherInformationApplications: Array<Application>,
+    inProgressApplications: Array<ApprovedPremisesApplicationSummary>,
+    submittedApplications: Array<ApprovedPremisesApplicationSummary>,
+    requestedFurtherInformationApplications: Array<ApprovedPremisesApplicationSummary>,
   ): ListPage {
     cy.visit(paths.applications.index.pattern)
 
@@ -50,7 +53,7 @@ export default class ListPage extends Page {
     cy.get(`a[data-cy-id="${application.id}"]`).click()
   }
 
-  private shouldShowApplications(applications: Array<Application>, status: string): void {
+  private shouldShowApplications(applications: Array<ApprovedPremisesApplicationSummary>, status: string): void {
     applications.forEach(application => {
       cy.contains(application.person.name)
         .should('have.attr', 'href', paths.applications.show({ id: application.id }))
@@ -63,7 +66,7 @@ export default class ListPage extends Page {
           cy.get('td')
             .eq(2)
             .contains(
-              DateFormats.isoDateToUIDate(application.data['basic-information']['release-date'].releaseDate, {
+              DateFormats.isoDateToUIDate(application.arrivalDate, {
                 format: 'short',
               }),
             )

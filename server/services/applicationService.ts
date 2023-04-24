@@ -7,8 +7,7 @@ import type {
   Document,
 } from '@approved-premises/api'
 
-import { applicationSubmissionData } from '../utils/applications/applicationSubmissionData'
-import { isUnapplicable } from '../utils/applications/utils'
+import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import type { ApplicationClient, RestClientBuilder } from '../data'
 import { ValidationError } from '../utils/errors'
@@ -47,10 +46,11 @@ export default class ApplicationService {
       submitted: [],
     } as GroupedApplications
 
-    const applications = allApplications.filter(application => !isUnapplicable(application))
+    // TODO: We can no longer filter like this, because we don't have the data object for applications
+    // const applications = allApplications.filter(application => !isUnapplicable(application))
 
     await Promise.all(
-      applications.map(async application => {
+      allApplications.map(async application => {
         switch (application.status) {
           case 'submitted':
             result.submitted.push(application)
@@ -115,7 +115,7 @@ export default class ApplicationService {
   async submit(token: string, application: ApprovedPremisesApplication) {
     const client = this.applicationClientFactory(token)
 
-    await client.submit(application.id, applicationSubmissionData(application))
+    await client.submit(application.id, getApplicationSubmissionData(application))
   }
 
   async getApplicationFromSessionOrAPI(request: Request): Promise<ApprovedPremisesApplication> {
@@ -142,6 +142,6 @@ export default class ApplicationService {
   private async saveToApi(application: ApprovedPremisesApplication, request: Request) {
     const client = this.applicationClientFactory(request.user.token)
 
-    await client.update(application)
+    await client.update(application.id, getApplicationUpdateData(application))
   }
 }
