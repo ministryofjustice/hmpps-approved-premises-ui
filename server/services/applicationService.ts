@@ -79,7 +79,7 @@ export default class ApplicationService {
     dataServices: DataServices,
     userInput?: Record<string, unknown>,
   ): Promise<TasklistPage> {
-    const application = await this.getApplicationFromSessionOrAPI(request)
+    const application = await this.findApplication(request.user.token, request.params.id)
     const body = getBody(Page, application, request, userInput)
 
     const page = Page.initialize

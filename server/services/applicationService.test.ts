@@ -181,16 +181,16 @@ describe('ApplicationService', () => {
     const Page = jest.fn()
 
     beforeEach(() => {
+      applicationClient.find.mockResolvedValue(application)
+
       request = createMock<Request>({
         params: { id: application.id, task: 'my-task', page: 'first' },
-        session: { application, previousPage: '' },
+        session: { previousPage: '' },
         user: { token: 'some-token' },
       })
     })
 
     it('should fetch the application from the API if it is not in the session', async () => {
-      request.session.application = undefined
-      applicationClient.find.mockResolvedValue(application)
       ;(getBody as jest.Mock).mockReturnValue(request.body)
 
       const result = await service.initializePage(Page, request, dataServices)
@@ -222,16 +222,21 @@ describe('ApplicationService', () => {
       expect(Page).toHaveBeenCalledWith(userInput, application, '')
     })
 
-    it('should load from the session if the body and userInput are blank', async () => {
+    it('should load from the application if the body and userInput are blank', async () => {
+      const data = { 'my-task': { first: { foo: 'bar' } } }
+      const applicationWithData = {
+        ...application,
+        data,
+      }
       request.body = {}
-      request.session.application.data = { 'my-task': { first: { foo: 'bar' } } }
-      ;(getBody as jest.Mock).mockReturnValue(request.session.application.data['my-task'].first)
+      applicationClient.find.mockResolvedValue(applicationWithData)
+      ;(getBody as jest.Mock).mockReturnValue(data['my-task'].first)
 
       const result = await service.initializePage(Page, request, dataServices)
 
       expect(result).toBeInstanceOf(Page)
 
-      expect(Page).toHaveBeenCalledWith({ foo: 'bar' }, application, '')
+      expect(Page).toHaveBeenCalledWith({ foo: 'bar' }, applicationWithData, '')
     })
 
     it("should call a service's initialize method if it exists", async () => {
