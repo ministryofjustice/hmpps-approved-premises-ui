@@ -263,12 +263,12 @@ describe('ApplicationService', () => {
     const token = 'some-token'
     const request = createMock<Request>({
       params: { id: application.id, task: 'some-task', page: 'some-page' },
-      session: { application },
       user: { token },
     })
     const applicationData = createMock<UpdateApprovedPremisesApplication>()
 
     beforeEach(() => {
+      applicationClient.find.mockResolvedValue(application)
       ;(getApplicationUpdateData as jest.Mock).mockReturnValue(applicationData)
     })
 

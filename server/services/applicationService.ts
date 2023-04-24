@@ -95,7 +95,7 @@ export default class ApplicationService {
     if (Object.keys(errors).length) {
       throw new ValidationError<typeof page>(errors)
     } else {
-      const application = await this.getApplicationFromSessionOrAPI(request)
+      const application = await this.findApplication(request.user.token, request.params.id)
 
       const pageName = getPageName(page.constructor)
       const taskName = getTaskName(page.constructor)
