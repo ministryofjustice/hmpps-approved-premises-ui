@@ -25,7 +25,7 @@ export default class IsExceptionalCase implements TasklistPage {
     if (this.body.isExceptionalCase === 'yes') {
       return 'exception-details'
     }
-    return ''
+    return 'not-eligible'
   }
 
   errors() {
