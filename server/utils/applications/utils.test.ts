@@ -311,6 +311,24 @@ describe('utils', () => {
 
       expect(isInapplicable(application)).toEqual(false)
     })
+
+    it('should return true if the applicant has answered no to the shouldPersonBePlacedInMaleAp question', () => {
+      mockOptionalQuestionResponse({ shouldPersonBePlacedInMaleAp: 'no' })
+
+      expect(isInapplicable(application)).toEqual(true)
+    })
+
+    it('should return false if the applicant has answered yes to the shouldPersonBePlacedInMaleAp question', () => {
+      mockOptionalQuestionResponse({ shouldPersonBePlacedInMaleAp: 'yes' })
+
+      expect(isInapplicable(application)).toEqual(false)
+    })
+
+    it('should return false if the applicant has not answered the isExceptionalCase question', () => {
+      mockOptionalQuestionResponse({})
+
+      expect(isInapplicable(application)).toEqual(false)
+    })
   })
 
   describe('getApplicationType', () => {

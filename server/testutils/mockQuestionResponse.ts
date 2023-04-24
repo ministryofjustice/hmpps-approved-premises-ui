@@ -57,6 +57,7 @@ export const mockOptionalQuestionResponse = ({
   postcodeArea,
   sentenceType,
   isExceptionalCase,
+  shouldPersonBePlacedInMaleAp,
 }: {
   releaseType?: string
   duration?: string
@@ -65,6 +66,7 @@ export const mockOptionalQuestionResponse = ({
   postcodeArea?: string
   sentenceType?: string
   isExceptionalCase?: string
+  shouldPersonBePlacedInMaleAp?: string
 }) => {
   ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockImplementation(
     // eslint-disable-next-line consistent-return
@@ -92,8 +94,13 @@ export const mockOptionalQuestionResponse = ({
       if (question === 'sentenceType') {
         return sentenceType
       }
+
       if (question === 'isExceptionalCase') {
         return isExceptionalCase
+      }
+
+      if (question === 'shouldPersonBePlacedInMaleAp') {
+        return shouldPersonBePlacedInMaleAp
       }
     },
   )

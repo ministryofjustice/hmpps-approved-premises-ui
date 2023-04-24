@@ -4,6 +4,7 @@ import type {
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
 } from '@approved-premises/api'
+import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-information/maleAp'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
 import Apply from '../../form-pages/apply'
@@ -110,7 +111,21 @@ const isInapplicable = (application: Application): boolean => {
     'isExceptionalCase',
   )
 
-  return isExceptionalCase === 'no'
+  const shouldPersonBePlacedInMaleAp = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+    application,
+    MaleAp,
+    'shouldPersonBePlacedInMaleAp',
+  )
+
+  if (isExceptionalCase === 'no') {
+    return true
+  }
+
+  if (shouldPersonBePlacedInMaleAp === 'no') {
+    return true
+  }
+
+  return false
 }
 
 const firstPageOfApplicationJourney = (application: Application) => {
