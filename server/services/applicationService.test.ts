@@ -341,7 +341,7 @@ describe('ApplicationService', () => {
     const application = applicationFactory.build()
     const applicationData = createMock<SubmitApplication>()
 
-    it('saves data to the session', async () => {
+    it('calls the submit client method', async () => {
       ;(getApplicationSubmissionData as jest.Mock).mockReturnValue(applicationData)
       await service.submit(request.user.token, application)
 
@@ -357,7 +357,7 @@ describe('ApplicationService', () => {
     const id = 'some-uuid'
     const assessment = assessmentFactory.build()
 
-    it('saves data to the session', async () => {
+    it('calls the assessment client method', async () => {
       applicationClient.assessment.mockResolvedValue(assessment)
 
       const result = await service.getAssessment(token, id)
