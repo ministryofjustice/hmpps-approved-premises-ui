@@ -1,3 +1,4 @@
+import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
 import { applicationFactory, applicationSummaryFactory, tierEnvelopeFactory } from '../../testutils/factories'
 import paths from '../../paths/apply'
 import Apply from '../../form-pages/apply'
@@ -12,7 +13,7 @@ import {
   getPage,
   getResponses,
   getStatus,
-  isUnapplicable,
+  isInapplicable,
 } from './utils'
 import { UnknownPageError } from '../errors'
 
@@ -34,6 +35,7 @@ jest.mock('../../form-pages/assess', () => {
 })
 
 jest.mock('../personUtils')
+jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
 
 Apply.pages['basic-information'] = {
   first: FirstApplyPage,
@@ -289,35 +291,43 @@ describe('utils', () => {
     })
   })
 
-  describe('isUnapplicable', () => {
+  describe('isInapplicable', () => {
     const application = applicationFactory.build()
 
     it('should return true if the applicant has answered no to the isExceptionalCase question', () => {
-      application.data = {
-        'basic-information': {
-          'is-exceptional-case': {
-            isExceptionalCase: 'no',
-          },
-        },
-      }
+      mockOptionalQuestionResponse({ isExceptionalCase: 'no' })
 
-      expect(isUnapplicable(application)).toEqual(true)
+      expect(isInapplicable(application)).toEqual(true)
     })
 
     it('should return false if the applicant has answered yes to the isExceptionalCase question', () => {
-      application.data = {
-        'basic-information': {
-          'is-exceptional-case': {
-            isExceptionalCase: 'yes',
-          },
-        },
-      }
+      mockOptionalQuestionResponse({ isExceptionalCase: 'yes' })
 
-      expect(isUnapplicable(application)).toEqual(false)
+      expect(isInapplicable(application)).toEqual(false)
     })
 
     it('should return false if the applicant has not answered the isExceptionalCase question', () => {
-      expect(isUnapplicable(application)).toEqual(false)
+      mockOptionalQuestionResponse({})
+
+      expect(isInapplicable(application)).toEqual(false)
+    })
+
+    it('should return true if the applicant has answered no to the shouldPersonBePlacedInMaleAp question', () => {
+      mockOptionalQuestionResponse({ shouldPersonBePlacedInMaleAp: 'no' })
+
+      expect(isInapplicable(application)).toEqual(true)
+    })
+
+    it('should return false if the applicant has answered yes to the shouldPersonBePlacedInMaleAp question', () => {
+      mockOptionalQuestionResponse({ shouldPersonBePlacedInMaleAp: 'yes' })
+
+      expect(isInapplicable(application)).toEqual(false)
+    })
+
+    it('should return false if the applicant has not answered the isExceptionalCase question', () => {
+      mockOptionalQuestionResponse({})
+
+      expect(isInapplicable(application)).toEqual(false)
     })
   })
 

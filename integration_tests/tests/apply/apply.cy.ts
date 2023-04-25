@@ -274,6 +274,7 @@ context('Apply', () => {
         'targetLocation',
         'releaseType',
         'type',
+        'isInapplicable',
       )
       expect(body.data).to.deep.equal(this.applicationData)
 

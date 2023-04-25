@@ -80,6 +80,9 @@
             }
           }
         },
+        "not-eligible": {
+          "type": "object"
+        },
         "pause-application": {
           "type": "object"
         },
