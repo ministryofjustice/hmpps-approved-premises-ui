@@ -13,6 +13,8 @@ export default abstract class Page {
 
   constructor(private readonly title: string) {
     this.checkOnPage()
+    cy.injectAxe()
+    cy.checkA11y()
   }
 
   assertDefinition(term: string, value: string): void {
