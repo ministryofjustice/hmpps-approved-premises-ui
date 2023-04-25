@@ -20,9 +20,9 @@
 {% set pageTitle = applicationName + " - " + page.title %}
 {% set mainClasses = "app-container govuk-body" %}
 
-{% block beforeContent %}
+{% block content %}
 
- {% if page.previous() === 'dashboard' %}
+  {% if page.previous() === 'dashboard' %}
     {{ govukBackLink({
       text: "Back",
       href: paths.applications.show({ id: applicationId })
@@ -34,9 +34,6 @@
     }) }}
   {% endif %}
 
-{% endblock %}
-
-{% block content %}
   <div class="govuk-grid-row">
     <div class="{{ columnClasses | default("govuk-grid-column-two-thirds") }}">
       <form action="{{ paths.applications.pages.update({ id: applicationId, task: task, page: page.name }) }}?_method=PUT" method="post">
