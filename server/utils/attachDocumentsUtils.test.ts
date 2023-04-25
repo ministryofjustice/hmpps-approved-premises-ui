@@ -137,7 +137,8 @@ describe('attachDocumentsUtils', () => {
       const document = documentFactory.build({ id: '123', fileName: 'file.pdf', description: 'Description goes here' })
 
       expect(descriptionTextArea(document, {})).toMatchStringIgnoringWhitespace(
-        `<textarea class="govuk-textarea" id="document_123_description" name="documentDescriptions[123]" rows="3" aria-describedby="selectedDocuments_123_error">
+        `<label class="govuk-visually-hidden" for="document_123_description">Description of file.pdf</label>
+        <textarea class="govuk-textarea" id="document_123_description" name="documentDescriptions[123]" rows="3" aria-describedby="selectedDocuments_123_error">
           Description goes here
         </textarea>`,
       )
@@ -153,7 +154,8 @@ describe('attachDocumentsUtils', () => {
       } as ErrorMessages
 
       expect(descriptionTextArea(document, errors)).toMatchStringIgnoringWhitespace(
-        `<textarea class="govuk-textarea govuk-input--error" id="document_123_description" name="documentDescriptions[123]" rows="3" aria-describedby="selectedDocuments_123_error">Description goes here</textarea>
+        ` <label class="govuk-visually-hidden" for="document_123_description">Description of file.pdf</label>
+        <textarea class="govuk-textarea govuk-input--error" id="document_123_description" name="documentDescriptions[123]" rows="3" aria-describedby="selectedDocuments_123_error">Description goes here</textarea>
         <p id="selectedDocuments_123_error" class="govuk-error-message govuk-!-font-size-16">
           <span class="govuk-visually-hidden">Error:</span> You must enter a description
         </p>`,
