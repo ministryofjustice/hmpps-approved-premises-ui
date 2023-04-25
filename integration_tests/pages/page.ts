@@ -14,6 +14,8 @@ export default abstract class Page {
   constructor(private readonly title: string) {
     this.checkOnPage()
     cy.injectAxe()
+    // Temporary rule whilst this issue is resolved https://github.com/w3c/aria/issues/1404
+    cy.configureAxe({ rules: [{ id: 'aria-allowed-attr', reviewOnFail: true }] })
     cy.checkA11y()
   }
 
