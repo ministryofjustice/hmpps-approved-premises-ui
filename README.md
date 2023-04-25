@@ -75,3 +75,7 @@ The steps are also available in the
 
 This application is hosted on the MoJ Cloud Platform. For further details
 head over to [our infrastructure documentation](/doc/how-to/manage-infrastructure.md).
+
+## E2E tests
+
+End to end tests for this project can be found [in a seperate repo](https://github.com/ministryofjustice/hmpps-approved-premises-e2e).
