@@ -12,6 +12,7 @@ import cancellation from './integration_tests/mockApis/cancellation'
 import lostBed from './integration_tests/mockApis/lostBed'
 import person from './integration_tests/mockApis/person'
 import applications from './integration_tests/mockApis/applications'
+import { stubApplicationJourney } from './integration_tests/mockApis/stubApplicationJourney'
 import assessments from './integration_tests/mockApis/assessments'
 import users from './integration_tests/mockApis/users'
 import tasks from './integration_tests/mockApis/tasks'
@@ -55,6 +56,7 @@ export default defineConfig({
         ...tasks,
         ...placementRequests,
         ...bedSearch,
+        stubApplicationJourney,
       })
     },
     baseUrl: 'http://localhost:3007',

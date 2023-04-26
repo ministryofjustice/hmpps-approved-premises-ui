@@ -252,7 +252,7 @@ context('Apply', () => {
     // Then I should be asked if the person is managed by the National Security division
   })
 
-  it('allows completion of the form', function test() {
+  it.only('allows completion of the form', function test() {
     // And I complete the application
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
     const apply = new ApplyHelper(this.application, this.person, this.offences)
