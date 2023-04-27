@@ -45,7 +45,7 @@ describe('Situation', () => {
 
         expect(items.length).toEqual(2)
         expect(items[0]).toEqual({
-          text: 'Referral for risk management/public protection',
+          text: 'Application for risk management/public protection',
           value: 'riskManagement',
           checked: true,
         })
@@ -63,7 +63,7 @@ describe('Situation', () => {
 
         expect(items.length).toEqual(2)
         expect(items[0]).toEqual({
-          text: 'Bail assessment for residency requirement as part of a community based Order',
+          text: 'Bail assessment for residency requirement as part of a community order or suspended sentence order',
           value: 'bailAssessment',
           checked: true,
         })
@@ -96,7 +96,7 @@ describe('Situation', () => {
       const page = new Situation({ situation: 'riskManagement' }, application)
 
       expect(page.response()).toEqual({
-        [page.title]: 'Referral for risk management/public protection',
+        [page.title]: 'Application for risk management/public protection',
       })
     })
   })
