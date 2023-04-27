@@ -32,7 +32,7 @@ export default class ApplicationsController {
 
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const application = await this.applicationService.getApplicationFromSessionOrAPI(req)
+      const application = await this.applicationService.findApplication(req.user.token, req.params.id)
       const taskList = new TasklistService(application)
 
       if (application.status === 'submitted') {

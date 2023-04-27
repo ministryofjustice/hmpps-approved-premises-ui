@@ -79,7 +79,7 @@ export default class ApplicationService {
     dataServices: DataServices,
     userInput?: Record<string, unknown>,
   ): Promise<TasklistPage> {
-    const application = await this.getApplicationFromSessionOrAPI(request)
+    const application = await this.findApplication(request.user.token, request.params.id)
     const body = getBody(Page, application, request, userInput)
 
     const page = Page.initialize
@@ -95,7 +95,8 @@ export default class ApplicationService {
     if (Object.keys(errors).length) {
       throw new ValidationError<typeof page>(errors)
     } else {
-      const application = await this.getApplicationFromSessionOrAPI(request)
+      const application = await this.findApplication(request.user.token, request.params.id)
+      const client = this.applicationClientFactory(request.user.token)
 
       const pageName = getPageName(page.constructor)
       const taskName = getTaskName(page.constructor)
@@ -104,8 +105,7 @@ export default class ApplicationService {
       application.data[taskName] = application.data[taskName] || {}
       application.data[taskName][pageName] = page.body
 
-      this.saveToSession(application, page, request)
-      await this.saveToApi(application, request)
+      await client.update(application.id, getApplicationUpdateData(application))
     }
   }
 
@@ -129,16 +129,5 @@ export default class ApplicationService {
     const assessment = await client.assessment(assessmentId)
 
     return assessment
-  }
-
-  private async saveToSession(application: ApprovedPremisesApplication, page: TasklistPage, request: Request) {
-    request.session.application = application
-    request.session.previousPage = request.params.page
-  }
-
-  private async saveToApi(application: ApprovedPremisesApplication, request: Request) {
-    const client = this.applicationClientFactory(request.user.token)
-
-    await client.update(application.id, getApplicationUpdateData(application))
   }
 }

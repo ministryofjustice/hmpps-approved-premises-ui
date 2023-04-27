@@ -49,7 +49,7 @@ export default class PlacementDate implements TasklistPage {
   }
 
   next() {
-    if (noticeTypeFromApplication(this.application) === 'standard') {
+    if (this.getNoticeType() === 'standard') {
       return 'placement-purpose'
     }
 
@@ -90,5 +90,17 @@ export default class PlacementDate implements TasklistPage {
     }
 
     return errors
+  }
+
+  private getNoticeType() {
+    return noticeTypeFromApplication({
+      ...this.application,
+      data: {
+        'basic-information': {
+          ...this.application.data['basic-information'],
+          'placement-date': this.body,
+        },
+      },
+    })
   }
 }
