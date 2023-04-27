@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace */
+/* eslint-disable-next-line import/no-extraneous-dependencies */
+import { diffStringsUnified } from 'jest-diff'
 import { execSync } from 'child_process'
 import path from 'path'
 
@@ -20,8 +22,8 @@ expect.extend({
     return {
       pass,
       message: pass
-        ? () => `expected ${received} not to match ${expected}`
-        : () => `expected ${received} to match ${expected}`,
+        ? () => `expected received not to match expected ${diffStringsUnified(expected, received)}`
+        : () => `expected received to match expected ${diffStringsUnified(expected, received)}`,
     }
   },
   toMatchOpenAPISpec(pactPath) {
