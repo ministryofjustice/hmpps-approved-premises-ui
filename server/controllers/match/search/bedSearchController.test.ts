@@ -64,6 +64,31 @@ describe('bedSearchController', () => {
         expect(bedService.search).toHaveBeenCalledWith(token, { ...query, ...body })
         expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
       })
+
+      it('should handle when a single selectedRequiredCharacteristic is sent', async () => {
+        const query = mapPlacementRequestToBedSearchParams(placementRequest)
+        const body = { requiredCharacteristics: 'someRequiredCharacteristic' }
+
+        const requestHandler = bedsController.search()
+
+        await requestHandler({ ...request, body }, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('match/search', {
+          pageHeading: 'Find a bed',
+          bedSearchResults,
+          placementRequest,
+          tier: placementRequest.risks.tier.value.level,
+          formPath,
+          placementCriteria,
+          ...query,
+          requiredCharacteristics: ['someRequiredCharacteristic'],
+        })
+        expect(bedService.search).toHaveBeenCalledWith(token, {
+          ...query,
+          ...{ requiredCharacteristics: ['someRequiredCharacteristic'] },
+        })
+        expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
+      })
     })
 
     describe('no body params are sent', () => {

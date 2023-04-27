@@ -52,7 +52,7 @@ export default class BedSearchController {
       }
 
       params.startDate = startDateObjFromParams(params).startDate
-      params.requiredCharacteristics = [...(params.selectedRequiredCharacteristics || params.requiredCharacteristics)]
+      params.requiredCharacteristics = [params.selectedRequiredCharacteristics || params.requiredCharacteristics].flat()
 
       const bedSearchResults = await this.bedService.search(req.user.token, params as BedSearchParametersUi)
       const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'
