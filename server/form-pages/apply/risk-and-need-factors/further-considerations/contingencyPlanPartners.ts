@@ -11,40 +11,35 @@ const fields: PartnerAgencyDetails = {
   roleInPlan: 'Role in contingency plan',
 } as const
 
-export type Body = PartnerAgencyDetails & {
-  saveAndContinue?: string
+export type Body = {
   partnerAgencyDetails: Array<PartnerAgencyDetails>
+}
+
+type PartialBody = {
+  partnerAgencyDetails: Array<Partial<PartnerAgencyDetails>>
 }
 
 @Page({
   name: 'contingency-plan-partners',
-  bodyProperties: [
-    'partnerAgencyName',
-    'namedContact',
-    'phoneNumber',
-    'roleInPlan',
-    'partnerAgencyDetails',
-    'saveAndContinue',
-  ],
+  bodyProperties: ['partnerAgencyDetails'],
 })
 export default class ContingencyPlanPartners implements TasklistPage {
   title = 'Contingency plans'
 
   fields: Record<string, string> = fields
 
-  partnerAgencyDetails: Array<PartnerAgencyDetails> = []
+  constructor(private _body: PartialBody) {}
 
-  saveAndContinue: string | undefined
+  public set body(value: PartialBody) {
+    this._body = {
+      partnerAgencyDetails: (value.partnerAgencyDetails || []).filter(
+        agency => Object.values(agency).filter(i => i.length > 0).length > 0,
+      ),
+    } as Body
+  }
 
-  constructor(public body: Body) {
-    const { namedContact, partnerAgencyName, phoneNumber, roleInPlan } = this.body
-    const newPartner: PartnerAgencyDetails = { namedContact, partnerAgencyName, phoneNumber, roleInPlan }
-    this.partnerAgencyDetails = this.body.partnerAgencyDetails || []
-
-    if (this.isValid(newPartner)) {
-      this.partnerAgencyDetails.push({ namedContact, partnerAgencyName, phoneNumber, roleInPlan })
-    }
-    this.saveAndContinue = body.saveAndContinue
+  public get body(): Body {
+    return this._body as Body
   }
 
   previous() {
@@ -52,26 +47,12 @@ export default class ContingencyPlanPartners implements TasklistPage {
   }
 
   next() {
-    return this.saveAndContinue ? 'contingency-plan-questions' : 'contingency-plan-partners'
-  }
-
-  private hasNeccessaryInputs() {
-    return Object.keys(this.errors()).length === 0
-  }
-
-  private isDuplicate(record: Record<string, string>) {
-    return this.partnerAgencyDetails.some(partner =>
-      Object.entries(record).every(([key, value]) => partner[key] === value),
-    )
-  }
-
-  private isValid(newPartner: PartnerAgencyDetails) {
-    return this.hasNeccessaryInputs() && !this.isDuplicate(newPartner)
+    return 'contingency-plan-questions'
   }
 
   response() {
     return {
-      'Contingency plan partners': this.partnerAgencyDetails.map(partner => {
+      'Contingency plan partners': this.body.partnerAgencyDetails.map(partner => {
         return this.responseForPartner(partner)
       }),
     }
@@ -89,16 +70,17 @@ export default class ContingencyPlanPartners implements TasklistPage {
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    if (this.saveAndContinue) {
-      if (this.partnerAgencyDetails.length) return errors
+    if (this.body.partnerAgencyDetails.length === 0) {
       errors.partnerAgencyDetails = 'You must add at least one partner agency'
       return errors
     }
 
-    Object.keys(fields).forEach(property => {
-      if (!this.body[property]) {
-        errors[property] = `You must specify a ${lowerCase(property)}`
-      }
+    this.body.partnerAgencyDetails.forEach((detail, i) => {
+      Object.keys(fields).forEach(property => {
+        if (!detail?.[property]) {
+          errors[`partnerAgencyDetails_${i}_${property}`] = `You must specify a ${lowerCase(property)}`
+        }
+      })
     })
 
     return errors
