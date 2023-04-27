@@ -1,13 +1,17 @@
-import { YesOrNo } from '@approved-premises/ui'
 import { ApprovedPremisesApplication } from '../../../server/@types/shared/models/ApprovedPremisesApplication'
-import Page from '../page'
+import ApplyPage from './applyPage'
 
-export default class NationalSecurityDivision extends Page {
+export default class NationalSecurityDivision extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
-    super(`Is ${application.person.name} managed by the National Security Division?`)
+    super(
+      `Is ${application.person.name} managed by the National Security Division?`,
+      application,
+      'type-of-ap',
+      'managed-by-national-security-division',
+    )
   }
 
-  completeForm(answer: YesOrNo) {
-    this.checkRadioByNameAndValue('managedByNationalSecurityDivision', answer)
+  completeForm() {
+    this.checkRadioButtonFromPageBody('managedByNationalSecurityDivision')
   }
 }

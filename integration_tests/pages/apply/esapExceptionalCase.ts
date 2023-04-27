@@ -1,19 +1,22 @@
-import { YesOrNo } from '../../../server/@types/ui'
-import Page from '../page'
+import { ApprovedPremisesApplication } from '../../../server/@types/shared/models/ApprovedPremisesApplication'
+import ApplyPage from './applyPage'
 
-export default class EsapExceptionalCase extends Page {
-  constructor() {
+export default class EsapExceptionalCase extends ApplyPage {
+  constructor(application: ApprovedPremisesApplication) {
     super(
       'Has there been agreement with the Community Head of Public Protection that an application should be made as an exceptional case?',
+      application,
+      'type-of-ap',
+      'esap-exceptional-case',
     )
   }
 
-  completeForm(response: YesOrNo = 'yes') {
-    this.checkRadioByNameAndValue('agreedCaseWithCommunityHopp', response)
-    if (response === 'yes') {
-      this.getTextInputByIdAndEnterDetails('communityHoppName', 'Some Manager')
-      this.completeDateInputs('agreementDate', '2023-07-01')
-      this.completeTextArea('agreementSummary', 'Some Summary Text')
+  completeForm() {
+    this.checkRadioButtonFromPageBody('agreedCaseWithCommunityHopp')
+    if (this.tasklistPage.body.agreedCaseWithCommunityHopp === 'yes') {
+      this.completeTextInputFromPageBody('communityHoppName')
+      this.completeDateInputsFromPageBody('agreementDate')
+      this.completeTextInputFromPageBody('agreementSummary')
     }
   }
 }
