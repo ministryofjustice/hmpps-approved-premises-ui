@@ -1487,53 +1487,29 @@
           }
         },
         "contingency-plan-partners": {
-          "allOf": [
-            {
-              "type": "object",
-              "properties": {
-                "partnerAgencyName": {
-                  "type": "string"
-                },
-                "namedContact": {
-                  "type": "string"
-                },
-                "phoneNumber": {
-                  "type": "string"
-                },
-                "roleInPlan": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "saveAndContinue": {
-                  "type": "string"
-                },
-                "partnerAgencyDetails": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "partnerAgencyName": {
-                        "type": "string"
-                      },
-                      "namedContact": {
-                        "type": "string"
-                      },
-                      "phoneNumber": {
-                        "type": "string"
-                      },
-                      "roleInPlan": {
-                        "type": "string"
-                      }
-                    }
+          "type": "object",
+          "properties": {
+            "partnerAgencyDetails": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "partnerAgencyName": {
+                    "type": "string"
+                  },
+                  "namedContact": {
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "type": "string"
+                  },
+                  "roleInPlan": {
+                    "type": "string"
                   }
                 }
               }
             }
-          ]
+          }
         },
         "contingency-plan-questions": {
           "type": "object",

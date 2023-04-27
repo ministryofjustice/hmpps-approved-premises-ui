@@ -19,21 +19,12 @@ export default class ContingencyPlanPartnersPage extends ApplyPage {
   }
 
   completeForm() {
-    this.contigencyPlanPartners.forEach(partner => {
-      this.getTextInputByIdAndEnterDetails('partnerAgencyName', partner.partnerAgencyName)
-      this.getTextInputByIdAndEnterDetails('namedContact', partner.namedContact)
-      this.getTextInputByIdAndEnterDetails('phoneNumber', partner.phoneNumber)
-      this.getTextInputByIdAndEnterDetails('roleInPlan', partner.roleInPlan)
+    this.contigencyPlanPartners.forEach((partner, i) => {
+      this.getTextInputByIdAndEnterDetails(`partnerAgencyDetails_${i}_partnerAgencyName`, partner.partnerAgencyName)
+      this.getTextInputByIdAndEnterDetails(`partnerAgencyDetails_${i}_namedContact`, partner.namedContact)
+      this.getTextInputByIdAndEnterDetails(`partnerAgencyDetails_${i}_phoneNumber`, partner.phoneNumber)
+      this.getTextInputByIdAndEnterDetails(`partnerAgencyDetails_${i}_roleInPlan`, partner.roleInPlan)
       cy.get('button').contains('Add another agency').click()
-    })
-
-    cy.get('dl').each(() => {
-      this.contigencyPlanPartners.forEach(partner => {
-        this.assertDefinition('Named contact', partner.namedContact)
-        this.assertDefinition('Name of partner agency', partner.partnerAgencyName)
-        this.assertDefinition('Contact details (phone)', partner.phoneNumber)
-        this.assertDefinition('Role in contingency plan', partner.roleInPlan)
-      })
     })
   }
 

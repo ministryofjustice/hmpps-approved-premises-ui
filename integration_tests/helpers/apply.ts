@@ -155,7 +155,6 @@ export default class ApplyHelper {
       ...this.pages.locationFactors,
       ...this.pages.accessAndHealthcare,
       ...this.pages.furtherConsiderations,
-      ...this.contingencyPlanPartners,
       ...this.pages.contingencyPlanPartners,
       ...this.pages.moveOn,
       ...this.selectedDocuments,
