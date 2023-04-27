@@ -16,6 +16,10 @@ jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment
 describe('PlacementDate', () => {
   const application = applicationFactory.build()
 
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   describe('title', () => {
     it('set the title and body correctly', () => {
       const page = new PlacementDate(
@@ -64,6 +68,26 @@ describe('PlacementDate', () => {
     })
 
     itShouldHaveNextValue(new PlacementDate({}, application), 'reason-for-short-notice')
+  })
+
+  describe('next', () => {
+    it('should call noticeTypeFromApplication with the page body included in the application data', () => {
+      const page = new PlacementDate(
+        {
+          startDateSameAsReleaseDate: 'no',
+          'startDate-year': '2020',
+          'startDate-month': '12',
+          'startDate-day': '1',
+        },
+        application,
+      )
+      page.next()
+
+      const { mock } = noticeTypeFromApplication as jest.Mock
+      const applicationData = mock.calls[0][0].data
+
+      expect(applicationData['basic-information']['placement-date']).toEqual(page.body)
+    })
   })
 
   itShouldHavePreviousValue(new PlacementDate({}, application), 'release-date')
