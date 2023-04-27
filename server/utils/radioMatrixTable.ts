@@ -8,7 +8,9 @@ export const cell = (requirement: string, preference: string, checked?: boolean)
             <input class="govuk-radios__input" id="${id}" name="${requirement}" type="radio" value="${preference}" ${
     checked ? 'checked' : ''
   }>
-            <label class="govuk-label govuk-radios__label" for="${id}"></label>
+            <label class="govuk-label govuk-radios__label govuk-visually-hidden" for="${id}">${sentenceCase(
+    requirement,
+  )} ${preference}</label>
           </div>
         </td>`
 }
