@@ -373,8 +373,7 @@
           "phoneNumber": "01234567892",
           "roleInPlan": "Test role 2"
         }
-      ],
-      "saveAndContinue": "1"
+      ]
     },
     "contingency-plan-questions": {
       "noReturn": "Action to be taken",
