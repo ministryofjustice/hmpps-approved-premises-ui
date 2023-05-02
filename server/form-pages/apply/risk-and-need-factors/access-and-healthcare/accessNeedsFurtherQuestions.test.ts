@@ -1,3 +1,4 @@
+import { fromPartial } from '@total-typescript/shoehorn'
 import AccessNeedsFurtherQuestions, { AccessNeedsFurtherQuestionsBody } from './accessNeedsFurtherQuestions'
 
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
@@ -106,6 +107,19 @@ describe('AccessNeedsFurtherQuestions', () => {
         'Is this person pregnant?': 'Yes',
         'What is their expected date of delivery?': 'Sunday 19 February 2023',
         'Will the child be removed at birth?': 'No',
+      })
+    })
+
+    it('returns the correct plain english responses when the user responds that the person is not pregnant', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['pregnancy'])
+
+      const page = new AccessNeedsFurtherQuestions(fromPartial({ ...body, isPersonPregnant: 'no' }), application)
+
+      expect(page.response()).toEqual({
+        'Visual Impairment': 'visual impairment',
+        'Does John Wayne require a wheelchair accessible room?': 'Yes',
+        'Mobility needs': 'mobility needs',
+        'Is this person pregnant?': 'No',
       })
     })
   })
