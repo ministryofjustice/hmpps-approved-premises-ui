@@ -15,15 +15,13 @@ export default class PremisesShowPage extends Page {
   }
 
   clickLostBedsOption() {
-    cy.get('.moj-button-menu__toggle-button')
-      .click()
-      .then(() => cy.get('a').contains('Mark bed as out of service').click())
+    cy.get('.moj-button-menu__toggle-button').click()
+    cy.get('a').contains('Mark bed as out of service').click()
   }
 
   clickCreateBookingOption() {
     cy.get('.moj-button-menu__toggle-button')
-      .click()
-      .then(() => cy.get('a').contains('Create a placement').click())
+    cy.get('a').contains('Create a placement').click()
   }
 
   shouldShowPremisesDetail(): void {
@@ -54,33 +52,17 @@ export default class PremisesShowPage extends Page {
     bookingsArrivingSoon: Array<Booking>,
     bookingsLeavingSoon: Array<Booking>,
   ): void {
-    cy.get('a')
-      .contains('Arriving Today')
-      .click()
-      .then(() => {
-        this.tableShouldContainBookings(bookingsArrivingToday, 'arrival')
-      })
+    cy.get('a').contains('Arriving Today').click()
+    this.tableShouldContainBookings(bookingsArrivingToday, 'arrival')
 
-    cy.get('a')
-      .contains('Departing Today')
-      .click()
-      .then(() => {
-        this.tableShouldContainBookings(bookingsLeavingToday, 'departure')
-      })
+    cy.get('a').contains('Departing Today').click()
+    this.tableShouldContainBookings(bookingsLeavingToday, 'departure')
 
-    cy.get('a')
-      .contains('Upcoming Arrivals')
-      .click()
-      .then(() => {
-        this.tableShouldContainBookings(bookingsArrivingSoon, 'arrival')
-      })
+    cy.get('a').contains('Upcoming Arrivals').click()
+    this.tableShouldContainBookings(bookingsArrivingSoon, 'arrival')
 
-    cy.get('a')
-      .contains('Upcoming Departures')
-      .click()
-      .then(() => {
-        this.tableShouldContainBookings(bookingsLeavingSoon, 'departure')
-      })
+    cy.get('a').contains('Upcoming Departures').click()
+    this.tableShouldContainBookings(bookingsLeavingSoon, 'departure')
   }
 
   private tableShouldContainBookings(bookings: Array<Booking>, type: 'arrival' | 'departure') {

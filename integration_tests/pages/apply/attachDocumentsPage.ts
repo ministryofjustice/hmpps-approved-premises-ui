@@ -42,8 +42,11 @@ export default class AttachDocumentsPage extends ApplyPage {
 
   completeForm() {
     this.selectedDocuments.forEach(d => {
+      const textareaSelector = `textarea[name="documentDescriptions[${d.id}]"]`
+
       cy.get('label').contains(d.fileName).click()
-      cy.get(`textarea[name="documentDescriptions[${d.id}]"]`).clear().type(d.description)
+      cy.get(textareaSelector).clear()
+      cy.get(textareaSelector).type(d.description)
     })
   }
 }
