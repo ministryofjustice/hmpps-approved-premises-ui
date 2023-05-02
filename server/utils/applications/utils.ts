@@ -16,6 +16,7 @@ import Assess from '../../form-pages/assess'
 import isAssessment from '../assessments/isAssessment'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
+import ExceptionDetails from '../../form-pages/apply/reasons-for-placement/basic-information/exceptionDetails'
 
 const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => {
@@ -111,6 +112,12 @@ const isInapplicable = (application: Application): boolean => {
     'isExceptionalCase',
   )
 
+  const agreedCaseWithManager = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+    application,
+    ExceptionDetails,
+    'agreedCaseWithManager',
+  )
+
   const shouldPersonBePlacedInMaleAp = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
     application,
     MaleAp,
@@ -118,6 +125,10 @@ const isInapplicable = (application: Application): boolean => {
   )
 
   if (isExceptionalCase === 'no') {
+    return true
+  }
+
+  if (isExceptionalCase === 'yes' && agreedCaseWithManager === 'no') {
     return true
   }
 

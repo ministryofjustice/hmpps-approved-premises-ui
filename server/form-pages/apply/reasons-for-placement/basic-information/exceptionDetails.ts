@@ -70,6 +70,10 @@ export default class ExceptionDetails implements TasklistPage {
   }
 
   next() {
+    if (this.body.agreedCaseWithManager === 'no') {
+      return 'not-eligible'
+    }
+
     return 'transgender'
   }
 

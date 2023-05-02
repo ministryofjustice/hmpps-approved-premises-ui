@@ -306,6 +306,18 @@ describe('utils', () => {
       expect(isInapplicable(application)).toEqual(false)
     })
 
+    it('should return true if the applicant has answered yes to the isExceptionalCase question and no to the agreedCaseWithManager question', () => {
+      mockOptionalQuestionResponse({ isExceptionalCase: 'yes', agreedCaseWithManager: 'no' })
+
+      expect(isInapplicable(application)).toEqual(true)
+    })
+
+    it('should return false if the applicant has answered yes to the isExceptionalCase question and yes to the agreedCaseWithManager question', () => {
+      mockOptionalQuestionResponse({ isExceptionalCase: 'yes', agreedCaseWithManager: 'yes' })
+
+      expect(isInapplicable(application)).toEqual(false)
+    })
+
     it('should return false if the applicant has not answered the isExceptionalCase question', () => {
       mockOptionalQuestionResponse({})
 

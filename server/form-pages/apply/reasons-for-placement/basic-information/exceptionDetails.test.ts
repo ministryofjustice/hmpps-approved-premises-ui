@@ -30,7 +30,13 @@ describe('ExceptionDetails', () => {
 
   itShouldHavePreviousValue(new ExceptionDetails({}), 'is-exceptional-case')
 
-  itShouldHaveNextValue(new ExceptionDetails(body), 'transgender')
+  describe('when agreedCaseWithManager is yes', () => {
+    itShouldHaveNextValue(new ExceptionDetails({ agreedCaseWithManager: 'yes' }), 'transgender')
+  })
+
+  describe('when agreedCaseWithManager is no', () => {
+    itShouldHaveNextValue(new ExceptionDetails({ agreedCaseWithManager: 'no' }), 'not-eligible')
+  })
 
   describe('errors', () => {
     it('should return an empty object if the body is provided correctly', () => {
