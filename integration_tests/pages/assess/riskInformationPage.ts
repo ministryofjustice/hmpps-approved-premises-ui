@@ -51,7 +51,7 @@ export default class RiskInformationPage extends Page {
   }
 
   private shouldShowRiskInformationSummaries(summary: OASysQuestion) {
-    cy.get('h3').contains(`${summary.questionNumber}. ${summary.label}`)
+    cy.get('h2').contains(`${summary.questionNumber}. ${summary.label}`)
   }
 
   clickBackToDashboard() {

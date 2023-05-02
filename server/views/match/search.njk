@@ -13,73 +13,64 @@
 		<div class="govuk-width-container">
 			<div class="govuk-grid-column-full">
 				<h1 class="govuk-heading-m">{{placementRequest.person.name}}</h1>
-				<dl class="search-identity-table govuk-body">
-					<div class="search-identity-table__column">
-						<div class="search-identity-table__table-cell">
-							<dt>
-								<strong>Tier</strong>
-							</dt>
-							<dd>{{ tier }}</dd>
-						</div>
-						<div class="search-identity-table__table-cell">
-							<dt>
-								<strong>CRN</strong>
-							</dt>
-							<dd>{{placementRequest.person.crn}}</dd>
-						</div>
-						<div class="search-identity-table__table-cell">
-							<dt>
-								<strong>DOB</strong>
-							</dt>
-							<dd>{{placementRequest.person.dateOfBirth}}</dd>
-						</div>
-						<div class="search-identity-table__table-cell">
-							<dt>
-								<strong>Expected arrival date</strong>
-							</dt>
-							<dd>{{formatDate(startDate)}}</dd>
-						</div>
-					</div>
-					<div class="search-identity-table__column search-identity-table__table-cell__last-col">
-						<div class="search-identity-table__table-cell">
-							<dt>
-								<strong>Assessment</strong>
-							</dt>
-							<dd>
-								{{ PlacementRequestUtils.assessmentLink(placementRequest, 'View', 'Assessment') | safe }}
-							</dd>
-						</div>
-						<div class="search-identity-table__table-cell">
-							<dt>
-								<strong>Application</strong>
-							</dt>
-							<dd>
-								{{ PlacementRequestUtils.applicationLink(placementRequest, 'View', 'Application') | safe }}
-							</dd>
-						</div>
-					</div>
-				</dl>
+				<div class="search-identity-table govuk-body">
+					<dl class="search-identity-table__column">
+						<dt>
+							<strong>Tier</strong>
+						</dt>
+						<dd>{{ tier }}</dd>
+
+						<dt>
+							<strong>CRN</strong>
+						</dt>
+						<dd>{{placementRequest.person.crn}}</dd>
+
+						<dt>
+							<strong>DOB</strong>
+						</dt>
+						<dd>{{placementRequest.person.dateOfBirth}}</dd>
+
+						<dt>
+							<strong>Expected arrival date</strong>
+						</dt>
+						<dd>{{formatDate(startDate)}}</dd>
+					</dl>
+
+					<dl class="search-identity-table__column">
+						<dt>
+							<strong>Assessment</strong>
+						</dt>
+						<dd>
+							{{ PlacementRequestUtils.assessmentLink(placementRequest, 'View', 'Assessment') | safe }}
+						</dd>
+						<dt>
+							<strong>Application</strong>
+						</dt>
+						<dd>
+							{{ PlacementRequestUtils.applicationLink(placementRequest, 'View', 'Application') | safe }}
+						</dd>
+					</dl>
+				</div>
+				<hr/>
 			</div>
-			<hr/>
 		</div>
-	</div>
-	<div class="govuk-grid-row">
-		<div class="govuk-width-container">
+		<div class="govuk-grid-row">
+			<div class="govuk-width-container">
 
-			<form action="{{formPath}}" method="post">
-				<h2 class="govuk-heading-m">{{bedSearchResults.resultsBedCount}} matching beds in {{bedSearchResults.resultsRoomCount}} rooms in {{bedSearchResults.resultsPremisesCount}} premises</h2>
+				<form action="{{formPath}}" method="post">
+					<h2 class="govuk-heading-m">{{bedSearchResults.resultsBedCount}} matching beds in {{bedSearchResults.resultsRoomCount}} rooms in {{bedSearchResults.resultsPremisesCount}} premises</h2>
 
-				<input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-				<input type="hidden" name="crn" value="{{crn}}"/>
-				<input type="hidden" name="startDate" value="{{startDate}}"/>
-				<input type="hidden" name="applicationId" value="{{applicationId}}"/>
-				<input type="hidden" name="assessmentId" value="{{assessmentId}}"/>
-				{% for requiredCharacteristic in requiredCharacteristics %}
-					<input type="hidden" name="requiredCharacteristics[]" value="{{requiredCharacteristic}}"/>
-					{%endfor%}
+					<input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+					<input type="hidden" name="crn" value="{{crn}}"/>
+					<input type="hidden" name="startDate" value="{{startDate}}"/>
+					<input type="hidden" name="applicationId" value="{{applicationId}}"/>
+					<input type="hidden" name="assessmentId" value="{{assessmentId}}"/>
+					{% for requiredCharacteristic in requiredCharacteristics %}
+						<input type="hidden" name="requiredCharacteristics[]" value="{{requiredCharacteristic}}"/>
+						{%endfor%}
 
-					<div class="govuk-grid-column-one-third">
-						{{govukCheckboxes({
+						<div class="govuk-grid-column-one-third">
+							{{govukCheckboxes({
 							name: 'selectedRequiredCharacteristics',
 							classes: "govuk-checkboxes--small",
 							fieldset: {
@@ -91,13 +82,13 @@
 							},
 						items: MatchUtils.searchFilter(placementCriteria, requiredCharacteristics)
 					})}}
-					</div>
+						</div>
 
-					<div class="govuk-grid-column-two-thirds">
+						<div class="govuk-grid-column-two-thirds">
 
-						<div class="bed-search-inputs">
+							<div class="bed-search-inputs">
 
-							{{ govukDateInput({
+								{{ govukDateInput({
 								id: "startDate",
 								namePrefix: "startDate",
 								fieldset: {
@@ -110,7 +101,7 @@
 								errorMessage: errors.startDate
 							}) }}
 
-							{{
+								{{
 								govukInput({
 								id: "durationWeeks",
 								name: "durationWeeks",
@@ -126,7 +117,7 @@
 								})
 							}}
 
-							{{ govukInput({
+								{{ govukInput({
 								id: "postcodeDistrict",
 								name: "postcodeDistrict",
 								value: postcodeDistrict,
@@ -136,7 +127,7 @@
 								classes: "govuk-input--width-3"
 							}) }}
 
-							{{ govukInput({
+								{{ govukInput({
 								id: "maxDistanceMiles",
 								name: "maxDistanceMiles",
 								value: maxDistanceMiles,
@@ -149,16 +140,16 @@
 								}
 							}) }}
 
-							<div class="button">
-								{{ govukButton({
+								<div class="button">
+									{{ govukButton({
 									text: "Update"
 								}) }}
+								</div>
 							</div>
-						</div>
-					</form>
+						</form>
 
-					{% for bedSearchResult in bedSearchResults.results %}
-						{{ govukSummaryList({
+						{% for bedSearchResult in bedSearchResults.results %}
+							{{ govukSummaryList({
 					card: {
 						title: {
 							html: MatchUtils.summaryCardHeader(bedSearchResult, placementRequest.id, startDate, durationWeeks)
@@ -166,9 +157,9 @@
 					},
 					rows: MatchUtils.summaryCardRows(bedSearchResult, requiredCharacteristics)
 				}) }}
-					{% endfor %}
+						{% endfor %}
+					</div>
 				</div>
 			</div>
-		</div>
 
-	{% endblock %}
+		{% endblock %}

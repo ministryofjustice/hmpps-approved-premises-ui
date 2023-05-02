@@ -8,11 +8,11 @@ export const textareas = (questions: OasysImportArrays, key: 'roshAnswers' | 'of
   return questions
     .map(question => {
       return `<div class="govuk-form-group">
-                <h3 class="govuk-label-wrapper">
+                <h2 class="govuk-label-wrapper">
                     <label class="govuk-label govuk-label--m" for=${key}[${question.questionNumber}]>
                         ${question.label}
                     </label>
-                </h3>
+                </h2>
                 <textarea class="govuk-textarea" id=${key}[${question.questionNumber}] name=${key}[${
         question.questionNumber
       }] rows="8">${escape(question?.answer)}</textarea>

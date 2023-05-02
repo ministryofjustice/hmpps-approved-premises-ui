@@ -27,16 +27,12 @@
 
             {{ mojSubNavigation({
                 label: 'Sub navigation',
-                attributes: {
-                'role': 'tablist'
-                },
                 items: [{
                     text: 'RoSH summary',
                     href: '#roshSummary',
                     attributes: {
                         'aria-controls': 'roshSummary',
                         'id': 'roshSummaryTab',
-                        role: 'tab', 
                         'aria-selected': true
                         }
                 }, 
@@ -45,8 +41,7 @@
                     href: '#offenceDetails',
                     attributes: {
                         'aria-controls': 'offenceDetails',
-                        'id': 'offenceDetailsTab',
-                        role: 'tab'
+                        'id': 'offenceDetailsTab'
                         }
                 },
                 {
@@ -54,8 +49,7 @@
                     href: '#supportingInformation',
                     attributes: {
                         'aria-controls': 'supportingInformation',
-                        'id': 'supportingInformationTab',
-                        role: 'tab'
+                        'id': 'supportingInformationTab'
                         }
                 },
                 {
@@ -63,8 +57,7 @@
                     href: '#riskManagementPlan',
                     attributes: {
                         'aria-controls': 'riskManagementPlan',
-                        'id': 'riskManagementPlanTab',
-                        role: 'tab'
+                        'id': 'riskManagementPlanTab'
                         }
                 },
                 {
@@ -72,8 +65,7 @@
                     href: '#riskToSelf',
                     attributes: {
                         'aria-controls': 'riskToSelf',
-                        'id': 'riskToSelfTab',
-                        role: 'tab'
+                        'id': 'riskToSelfTab'
                         }
                 }
                 ]

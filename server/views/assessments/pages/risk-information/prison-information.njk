@@ -20,8 +20,8 @@
     <tbody class="govuk-table__body">
         {% for caseNote in caseNotes %}
             <tr class="govuk-table__row">
-                <td scope="row" class="govuk-table__cell">{{ formatDate(caseNote.createdAt) }}</td>
-                <td scope="row" class="govuk-table__cell">
+                <td class="govuk-table__cell">{{ formatDate(caseNote.createdAt) }}</td>
+                <td class="govuk-table__cell">
                     <p>
                         <strong>Type: {{caseNote.type}}: {{caseNote.subType}}</strong>
                     </p>

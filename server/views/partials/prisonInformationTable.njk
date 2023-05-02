@@ -4,16 +4,12 @@
 
     {{ mojSubNavigation({
                 label: 'Sub navigation',
-                attributes: {
-                'role': 'tablist'
-                },
                 items: [{
                     text: 'Prison case notes',
                     href: '#caseNotes',
                     attributes: {
                         'aria-controls': 'caseNotes',
                         'id': 'caseNotesTab',
-                        role: 'tab',
                         'aria-selected': true
                     }
                 },
@@ -22,8 +18,7 @@
                     href: '#adjudications',
                     attributes: {
                         'aria-controls': 'adjudications',
-                        'id': 'adjudicationsTab',
-                        role: 'tab'
+                        'id': 'adjudicationsTab'
                     }
                 },
                 {
@@ -31,8 +26,7 @@
                     href: '#acct',
                     attributes: {
                         'aria-controls': 'acct',
-                        'id': 'acctTab',
-                        role: 'tab'
+                        'id': 'acctTab'
                     }
                 }]
             }) }}
@@ -58,11 +52,11 @@
             <tbody class="govuk-table__body">
                 {% for adjudication in adjudications %}
                     <tr class="govuk-table__row">
-                        <td scope="row" class="govuk-table__cell">{{ adjudication.id }}</td>
-                        <td scope="row" class="govuk-table__cell">{{ formatDateTime(adjudication.reportedAt) }}</td>
-                        <td scope="row" class="govuk-table__cell">{{ adjudication.establishment }}</td>
-                        <td scope="row" class="govuk-table__cell">{{ adjudication.offenceDescription }}</td>
-                        <td scope="row" class="govuk-table__cell">{{ adjudication.finding | sentenceCase }}</td>
+                        <td class="govuk-table__cell">{{ adjudication.id }}</td>
+                        <td class="govuk-table__cell">{{ formatDateTime(adjudication.reportedAt) }}</td>
+                        <td class="govuk-table__cell">{{ adjudication.establishment }}</td>
+                        <td class="govuk-table__cell">{{ adjudication.offenceDescription }}</td>
+                        <td class="govuk-table__cell">{{ adjudication.finding | sentenceCase }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -84,10 +78,10 @@
             <tbody class="govuk-table__body">
                 {% for alert in acctAlerts %}
                     <tr class="govuk-table__row">
-                        <td scope="row" class="govuk-table__cell">{{ alert.alertId }}</td>
-                        <td scope="row" class="govuk-table__cell">{{ alert.comment }}</td>
-                        <td scope="row" class="govuk-table__cell">{{ formatDate(alert.dateCreated) }}</td>
-                        <td scope="row" class="govuk-table__cell">{{ formatDate(alert.dateExpires) }}</td>
+                        <td class="govuk-table__cell">{{ alert.alertId }}</td>
+                        <td class="govuk-table__cell">{{ alert.comment }}</td>
+                        <td class="govuk-table__cell">{{ formatDate(alert.dateCreated) }}</td>
+                        <td class="govuk-table__cell">{{ formatDate(alert.dateExpires) }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

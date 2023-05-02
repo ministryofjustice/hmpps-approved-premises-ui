@@ -20,7 +20,7 @@ const reviewSections = (
       tasks: section.tasks.map(task => {
         return {
           card: {
-            title: { text: task.title, headingLevel: 3 },
+            title: { text: task.title, headingLevel: 2 },
             actions: cardActionFunction ? cardActionFunction(task.id) : undefined,
             attributes: {
               'data-cy-section': task.id,

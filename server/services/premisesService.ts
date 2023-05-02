@@ -59,13 +59,13 @@ export default class PremisesService {
   private generateOvercapacityMessage(overcapacityDateRanges: Array<NegativeDateRange>) {
     if (overcapacityDateRanges.length === 1) {
       if (!overcapacityDateRanges[0].end) {
-        return `<h4 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity on ${DateFormats.isoDateToUIDate(
+        return `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity on ${DateFormats.isoDateToUIDate(
           overcapacityDateRanges[0].start,
-        )}</h4>`
+        )}</h3>`
       }
-      return `<h4 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the period ${DateFormats.isoDateToUIDate(
+      return `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the period ${DateFormats.isoDateToUIDate(
         overcapacityDateRanges[0].start,
-      )} to ${DateFormats.isoDateToUIDate(overcapacityDateRanges[0].end)}</h4>`
+      )} to ${DateFormats.isoDateToUIDate(overcapacityDateRanges[0].end)}</h3>`
     }
 
     if (overcapacityDateRanges.length > 1) {
@@ -78,7 +78,7 @@ export default class PremisesService {
               )}</li>`,
         )
         .join('')
-      return `<h4 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the periods:</h4>
+      return `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the periods:</h3>
         <ul class="govuk-list govuk-list--bullet">${dateRanges}</ul>`
     }
     return ''

@@ -15,42 +15,37 @@
     <div class="govuk-width-container">
       <div class="govuk-grid-column-full">
         <h1 class="govuk-heading-l">{{placementRequest.person.name}}</h1>
-        <dl class="search-identity-table govuk-body">
-          <div class="search-identity-table__column">
-            <div class="search-identity-table__table-cell">
-              <dt>
-                <strong>Tier</strong>
-              </dt>
-              <dd>{{ placementRequest.risks.tier.value.level }}</dd>
-            </div>
-            <div class="search-identity-table__table-cell">
-              <dt>
-                <strong>CRN</strong>
-              </dt>
-              <dd>{{ placementRequest.person.crn }}</dd>
-            </div>
-            <div class="search-identity-table__table-cell">
-              <dt>
-                <strong>Release Type</strong>
-              </dt>
-              <dd>{{ PlacementRequestUtils.formatReleaseType(placementRequest) }}</dd>
-            </div>
-          </div>
-          <div class="search-identity-table__column search-identity-table__table-cell__last-col">
-            <div class="search-identity-table__table-cell">
-              <dt>
-                <strong>Date assessed as suitable</strong>
-              </dt>
-              <dd>{{ formatDate(placementRequest.assessmentDate) }}</dd>
-            </div>
-            <div class="search-identity-table__table-cell">
-              <dt>
-                <strong>Expected arrival date</strong>
-              </dt>
-              <dd>{{ formatDate(placementRequest.expectedArrival) }}</dd>
-            </div>
-          </div>
-        </dl>
+        <div class="search-identity-table govuk-body">
+
+          <dl class="search-identity-table__column">
+            <dt>
+              <strong>Tier</strong>
+            </dt>
+            <dd>{{ placementRequest.risks.tier.value.level }}</dd>
+
+            <dt>
+              <strong>CRN</strong>
+            </dt>
+            <dd>{{ placementRequest.person.crn }}</dd>
+
+            <dt>
+              <strong>Release Type</strong>
+            </dt>
+            <dd>{{ PlacementRequestUtils.formatReleaseType(placementRequest) }}</dd>
+          </dl>
+
+          <dl class="search-identity-table__column">
+            <dt>
+              <strong>Date assessed as suitable</strong>
+            </dt>
+            <dd>{{ formatDate(placementRequest.assessmentDate) }}</dd>
+            <dt>
+              <strong>Expected arrival date</strong>
+            </dt>
+            <dd>{{ formatDate(placementRequest.expectedArrival) }}</dd>
+          </dl>
+
+        </div>
       </div>
       <hr/>
     </div>
