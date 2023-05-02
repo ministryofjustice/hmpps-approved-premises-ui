@@ -3,12 +3,13 @@
 
 {% block questions %}
 
-  <h1 class="govuk-heading-l">{{page.title}}</h1>
   <div class="govuk-form-group">
 
     {% call govukFieldset({
       legend: {
-        text: "Make a decision"
+        text: "Make a decision",
+        classes: "govuk-fieldset__legend--l",
+        isPageHeading: true
       }
     }) %}
     <div class="govuk-radios" data-module="govuk-radios">
