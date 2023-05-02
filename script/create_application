@@ -1,15 +1,31 @@
 #!/bin/sh
 
-# script/create_application: Create an application and associated assessment in the local dev database
+# script/create_application: Create an application in the local dev database
 
-application_data=$(curl -s https://raw.githubusercontent.com/ministryofjustice/hmpps-community-accommodation-wiremock/main/data/applicationData.json | jq -c)
-application_document=$(curl -s https://raw.githubusercontent.com/ministryofjustice/hmpps-community-accommodation-wiremock/main/data/applicationDocument.json | jq -c | tr -d '\\r\\n')
+cd "$(dirname "$0")/.." || exit
+
+release_date=$(date -v +4m -I)
+
+additional_information=$(jq -c < "./script/additionalData.json")
+release_date_data=$(jq -n """
+{
+  \"releaseDate-year\": \"$(date -v +4m "+%Y")\",
+  \"releaseDate-month\": \"$(date -v +4m "+%m")\",
+  \"releaseDate-day\": \"$(date -v +4m "+%d")\",
+  \"releaseDate\": \"$release_date\",
+  \"knowReleaseDate\": \"yes\"
+}
+""")
+
+application_data=$(jq -c < "./integration_tests/fixtures/applicationData.json" | \
+  jq --arg additional_information "$additional_information" '."basic-information" += ($additional_information|fromjson)' |
+  jq --arg release_date "$release_date_data" '."basic-information"."release-date" = ($release_date|fromjson)' \
+)
 
 sql="""
 DO \$$
 DECLARE
    applicationData json := '$application_data';
-   applicationDocument json := '$application_document';
    applicationId uuid := '$(uuidgen)';
    assessmentId uuid := '$(uuidgen)';
 BEGIN
@@ -19,10 +35,8 @@ BEGIN
     \"created_by_user_id\",
     \"crn\",
     \"data\",
-    \"document\",
     \"schema_version\",
-    \"service\",
-    \"submitted_at\"
+    \"service\"
   )
   values
     (
@@ -31,7 +45,6 @@ BEGIN
       ( SELECT id FROM users WHERE delius_username='JIMSNOWLDAP' ),
       'X320741',
       applicationData,
-      applicationDocument,
       (
         SELECT
           id
@@ -39,10 +52,11 @@ BEGIN
           json_schemas
         WHERE
           type = 'APPROVED_PREMISES_APPLICATION'
+        ORDER BY
+          added_at DESC
         LIMIT 1
       ),
-      'approved-premises',
-      CURRENT_DATE + 16
+      'approved-premises'
     );
 
 
@@ -53,7 +67,8 @@ BEGIN
       \"is_pipe_application\",
       \"is_womens_application\",
       \"offence_id\",
-      \"risk_ratings\"
+      \"risk_ratings\",
+      \"arrival_date\"
     )
   values
     (
@@ -63,35 +78,8 @@ BEGIN
       false,
       false,
       'M2500295343',
-      '{\"roshRisks\":{\"status\":\"Error\",\"value\":null},\"mappa\":{\"status\":\"Retrieved\",\"value\":{\"level\":\"CAT M2/LEVEL M2\",\"lastUpdated\":[2021,2,1]}},\"tier\":{\"status\":\"Retrieved\",\"value\":{\"level\":\"D2\",\"lastUpdated\":[2022,9,5]}},\"flags\":{\"status\":\"Retrieved\",\"value\":[\"Risk to Known Adult\"]}}'
-    );
-
-
-  INSERT into
-  assessments (
-    \"id\",
-    \"application_id\",
-    \"allocated_to_user_id\",
-    \"created_at\",
-    \"allocated_at\",
-    \"schema_version\"
-  )
-  VALUES
-    (
-      assessmentId,
-      applicationId,
-      ( SELECT id FROM users WHERE delius_username='JIMSNOWLDAP' ),
-      CURRENT_DATE,
-      CURRENT_DATE,
-      (
-        SELECT
-          id
-        FROM
-          json_schemas
-        WHERE
-          type = 'APPROVED_PREMISES_ASSESSMENT'
-        LIMIT 1
-      )
+      '{\"roshRisks\":{\"status\":\"Error\",\"value\":null},\"mappa\":{\"status\":\"Retrieved\",\"value\":{\"level\":\"CAT M2/LEVEL M2\",\"lastUpdated\":[2021,2,1]}},\"tier\":{\"status\":\"Retrieved\",\"value\":{\"level\":\"D2\",\"lastUpdated\":[2022,9,5]}},\"flags\":{\"status\":\"Retrieved\",\"value\":[\"Risk to Known Adult\"]}}',
+      '$release_date'
     );
 
 END \$$;
