@@ -1,4 +1,5 @@
-import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type { ObjectWithDateParts, TaskListErrors, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
+import { yesOrNoResponseWithDetail } from '../../../utils'
 import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
@@ -10,19 +11,18 @@ import AccessNeeds from './accessNeeds'
 
 export type AccessNeedsFurtherQuestionsBody = {
   needsWheelchair: YesOrNo
-  mobilityNeeds: string
-  visualImpairment: string
   isPersonPregnant?: YesOrNo
   otherPregnancyConsiderations: string
   childRemoved?: YesOrNo | 'decisionPending'
-} & ObjectWithDateParts<'expectedDeliveryDate'>
+} & ObjectWithDateParts<'expectedDeliveryDate'> &
+  YesOrNoWithDetail<'healthConditions'>
 
 @Page({
   name: 'access-needs-further-questions',
   bodyProperties: [
     'needsWheelchair',
-    'mobilityNeeds',
-    'visualImpairment',
+    'healthConditions',
+    'healthConditionsDetail',
     'isPersonPregnant',
     'childRemoved',
     'expectedDeliveryDate',
@@ -37,9 +37,9 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
 
   questions = {
     wheelchair: `Does ${this.application.person.name} require the use of a wheelchair?`,
-    mobilityNeeds: 'Mobility needs',
-    visualImpairment: 'Visual Impairment',
-    isPersonPregnant: 'Is this person pregnant?',
+    healthConditions: `Does ${this.application.person.name} have any known health conditions?`,
+    healthConditionsDetail: 'Provide details',
+    isPersonPregnant: `Is ${this.application.person.name} pregnant?`,
     expectedDeliveryDate: 'What is their expected date of delivery?',
     otherPregnancyConsiderations: 'Are there any other considerations',
     childRemoved: 'Will the child be removed at birth?',
@@ -90,8 +90,7 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
   response() {
     const response = {
       [this.questions.wheelchair]: sentenceCase(this.body.needsWheelchair),
-      [this.questions.mobilityNeeds]: this.body.mobilityNeeds,
-      [this.questions.visualImpairment]: this.body.visualImpairment,
+      [this.questions.healthConditions]: yesOrNoResponseWithDetail('healthConditions', this.body),
     }
 
     if (this.answeredYesToPregnancyHealthcareQuestion()) {
@@ -114,9 +113,17 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
       errors.needsWheelchair = 'You must confirm the need for a wheelchair'
     }
 
+    if (!this.body.healthConditions) {
+      errors.healthConditions = `You must specify if ${this.application.person.name} has any known health conditions`
+    }
+
+    if (this.body.healthConditions === 'yes' && !this.body.healthConditionsDetail) {
+      errors.healthConditionsDetail = `You must provide details of ${this.application.person.name}'s health conditions`
+    }
+
     if (this.answeredYesToPregnancyHealthcareQuestion()) {
       if (!this.body.isPersonPregnant) {
-        errors.isPersonPregnant = 'You must confirm if the person is pregnant'
+        errors.isPersonPregnant = `You must confirm if ${this.application.person.name} is pregnant`
       }
 
       if (this.body.isPersonPregnant === 'yes') {

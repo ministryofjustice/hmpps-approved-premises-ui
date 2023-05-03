@@ -27,26 +27,36 @@
       ]
     }, fetchContext()) }}
 
+  {% set healthConditionsDetail %}
   {{ formPageTextarea({
-      fieldName: 'mobilityNeeds',
-      label: {
-        text: page.questions.mobilityNeeds,
-        classes: "govuk-label--s"
-        },
-        hint: {
-          text: "For example, if step-free access for reduced mobility is required"
+        fieldName: "healthConditionsDetail",
+        label: {
+          text: page.questions.healthConditionsDetail
         }
     }, fetchContext()) }}
+  {% endset -%}
 
-  {{ formPageTextarea({
-        fieldName: "visualImpairment",
-        label: {
-        text: page.questions.visualImpairment,
-          classes: "govuk-label--s"
-        },
-        hint: {
-            text: "For example, if braille or tactile flooring is required"
+  {{ formPageRadios({
+      fieldName: "healthConditions",
+      fieldset: {
+        legend: {
+          text: page.questions.healthConditions,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          conditional: {
+            html: healthConditionsDetail
           }
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
     }, fetchContext()) }}
 
   {% set additionalPregnancyQuestions %}
