@@ -117,7 +117,7 @@ describe('AccessNeeds', () => {
       )
 
       expect(page.response()).toEqual({
-        'Does John Wayne have any of the following needs?': 'Mobility needs, visual impairment',
+        'Does John Wayne have any of the following needs?': 'Mobility, visual impairment',
         'Does John Wayne need an interpreter?': 'Yes',
         'Which language is an interpreter needed for?': 'French',
         'Does John Wayne have any religious or cultural needs?': 'Yes - Some details',

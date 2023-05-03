@@ -6,19 +6,20 @@ import type {
   YesOrNoWithDetail,
 } from '@approved-premises/ui'
 import { ApprovedPremisesApplication } from '../../../../@types/shared'
-import { sentenceCase } from '../../../../utils/utils'
+import { lowerCase, sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 import { yesNoOrDontKnowResponseWithDetail, yesOrNoResponseWithDetail } from '../../../utils'
 
 import TasklistPage from '../../../tasklistPage'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
-import AccessNeeds from './accessNeeds'
+import AccessNeeds, { AdditionalNeed, additionalNeeds } from './accessNeeds'
 
 export type AccessNeedsFurtherQuestionsBody = {
   needsWheelchair: YesOrNo
   isPersonPregnant?: YesOrNo
   childRemoved?: YesOrNo | 'decisionPending'
+  additionalAdjustments: string
 } & ObjectWithDateParts<'expectedDeliveryDate'> &
   YesOrNoWithDetail<'healthConditions'> &
   YesNoOrIDKWithDetail<'prescribedMedication'> &
@@ -40,6 +41,7 @@ export type AccessNeedsFurtherQuestionsBody = {
     'expectedDeliveryDate-day',
     'otherPregnancyConsiderations',
     'otherPregnancyConsiderationsDetail',
+    'additionalAdjustments',
   ],
 })
 export default class AccessNeedsFurtherQuestions implements TasklistPage {
@@ -56,6 +58,7 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
     otherPregnancyConsiderationsDetail: 'Provide details',
     otherPregnancyConsiderations: 'Are there any pregnancy related issues relevant to placement?',
     childRemoved: `Will the child be removed from ${this.application.person.name}'s care at birth?`,
+    additionalAdjustments: `Specify any additional details and adjustments required for ${this.application.person.name}'s ${this.listOfNeeds}`,
   }
 
   yesToPregnancyHealthcareQuestion: boolean = this.answeredYesToPregnancyHealthcareQuestion()
@@ -92,12 +95,28 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
     return 'covid'
   }
 
+  public get additionalNeeds(): Array<AdditionalNeed> {
+    return retrieveOptionalQuestionResponseFromApplicationOrAssessment(this.application, AccessNeeds, 'additionalNeeds')
+  }
+
+  public get listOfNeeds(): string {
+    const needs = this.additionalNeeds.map(need => additionalNeeds[need])
+
+    if (needs.length > 0) {
+      if (needs.length === 1) {
+        return lowerCase(`${needs[0]} needs`)
+      }
+
+      const lastNeed = needs.splice(-1)
+
+      return lowerCase(`${needs.join(', ')} or ${lastNeed} needs`)
+    }
+
+    return null
+  }
+
   answeredYesToPregnancyHealthcareQuestion() {
-    return retrieveOptionalQuestionResponseFromApplicationOrAssessment(
-      this.application,
-      AccessNeeds,
-      'additionalNeeds',
-    ).includes('pregnancy')
+    return this.additionalNeeds.includes('pregnancy')
   }
 
   response() {
@@ -120,6 +139,8 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
         this.body,
       )
     }
+
+    response[this.questions.additionalAdjustments] = this.body.additionalAdjustments
 
     return response
   }

@@ -24,6 +24,7 @@ describe('AccessNeedsFurtherQuestions', () => {
     otherPregnancyConsiderationsDetail: 'Some detail',
     childRemoved: 'no',
     isPersonPregnant: 'yes',
+    additionalAdjustments: 'Adjustments',
   }
 
   beforeEach(() => {
@@ -53,6 +54,7 @@ describe('AccessNeedsFurtherQuestions', () => {
         otherPregnancyConsiderations: 'yes',
         otherPregnancyConsiderationsDetail: 'Some detail',
         childRemoved: 'no',
+        additionalAdjustments: 'Adjustments',
       })
     })
   })
@@ -132,6 +134,36 @@ describe('AccessNeedsFurtherQuestions', () => {
     })
   })
 
+  describe('listOfNeeds', () => {
+    it('should return null when no needs are selected', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue([])
+
+      const page = new AccessNeedsFurtherQuestions(body, application)
+
+      expect(page.listOfNeeds).toEqual(null)
+    })
+
+    it('should return a single need when one is selected', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['mobility'])
+
+      const page = new AccessNeedsFurtherQuestions(body, application)
+
+      expect(page.listOfNeeds).toEqual('mobility needs')
+    })
+
+    it('should return a list of needs', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue([
+        'learningDisability',
+        'neurodivergentConditions',
+        'healthcare',
+      ])
+
+      const page = new AccessNeedsFurtherQuestions(body, application)
+
+      expect(page.listOfNeeds).toEqual('learning disability, neurodivergent conditions or healthcare needs')
+    })
+  })
+
   describe('response', () => {
     it('returns the correct plain english responses for the questions', () => {
       ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['pregnancy'])
@@ -146,11 +178,12 @@ describe('AccessNeedsFurtherQuestions', () => {
         'What is their expected date of delivery?': 'Sunday 19 February 2023',
         "Will the child be removed from John Wayne's care at birth?": 'No',
         'Are there any pregnancy related issues relevant to placement?': 'Yes - Some detail',
+        "Specify any additional details and adjustments required for John Wayne's pregnancy needs": 'Adjustments',
       })
     })
 
     it('returns the correct plain english responses when the user responds that the person is not pregnant', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue([])
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['mobility'])
 
       const page = new AccessNeedsFurtherQuestions(fromPartial({ ...body, isPersonPregnant: 'no' }), application)
 
@@ -158,6 +191,7 @@ describe('AccessNeedsFurtherQuestions', () => {
         'Does John Wayne require the use of a wheelchair?': 'Yes',
         'Does John Wayne have any known health conditions?': 'Yes - Some detail',
         'Does John Wayne have any prescribed medication?': 'Yes - Some detail',
+        "Specify any additional details and adjustments required for John Wayne's mobility needs": 'Adjustments',
       })
     })
   })
