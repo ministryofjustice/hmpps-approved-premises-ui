@@ -8,7 +8,7 @@ import TasklistPage from '../../../tasklistPage'
 import { yesOrNoResponseWithDetail } from '../../../utils'
 
 export const additionalNeeds = {
-  mobility: 'Mobility needs',
+  mobility: 'Mobility',
   visualImpairment: 'Visual impairment',
   learningDisability: 'Learning disability',
   hearingImpairment: 'Hearing impairment',
@@ -19,7 +19,7 @@ export const additionalNeeds = {
   none: 'None of the above',
 }
 
-type AdditionalNeed = keyof typeof additionalNeeds
+export type AdditionalNeed = keyof typeof additionalNeeds
 
 type AccessNeedsBody = {
   additionalNeeds: Array<AdditionalNeed> | AdditionalNeed

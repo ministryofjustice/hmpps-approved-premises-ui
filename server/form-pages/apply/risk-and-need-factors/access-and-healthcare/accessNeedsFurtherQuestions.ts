@@ -1,28 +1,38 @@
-import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type {
+  ObjectWithDateParts,
+  TaskListErrors,
+  YesNoOrIDKWithDetail,
+  YesOrNo,
+  YesOrNoWithDetail,
+} from '@approved-premises/ui'
 import { ApprovedPremisesApplication } from '../../../../@types/shared'
-import { sentenceCase } from '../../../../utils/utils'
+import { lowerCase, sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
+import { yesNoOrDontKnowResponseWithDetail, yesOrNoResponseWithDetail } from '../../../utils'
 
 import TasklistPage from '../../../tasklistPage'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
-import AccessNeeds from './accessNeeds'
+import AccessNeeds, { AdditionalNeed, additionalNeeds } from './accessNeeds'
 
 export type AccessNeedsFurtherQuestionsBody = {
   needsWheelchair: YesOrNo
-  mobilityNeeds: string
-  visualImpairment: string
   isPersonPregnant?: YesOrNo
-  otherPregnancyConsiderations: string
   childRemoved?: YesOrNo | 'decisionPending'
-} & ObjectWithDateParts<'expectedDeliveryDate'>
+  additionalAdjustments: string
+} & ObjectWithDateParts<'expectedDeliveryDate'> &
+  YesOrNoWithDetail<'healthConditions'> &
+  YesNoOrIDKWithDetail<'prescribedMedication'> &
+  YesOrNoWithDetail<'otherPregnancyConsiderations'>
 
 @Page({
   name: 'access-needs-further-questions',
   bodyProperties: [
     'needsWheelchair',
-    'mobilityNeeds',
-    'visualImpairment',
+    'healthConditions',
+    'healthConditionsDetail',
+    'prescribedMedication',
+    'prescribedMedicationDetail',
     'isPersonPregnant',
     'childRemoved',
     'expectedDeliveryDate',
@@ -30,19 +40,25 @@ export type AccessNeedsFurtherQuestionsBody = {
     'expectedDeliveryDate-month',
     'expectedDeliveryDate-day',
     'otherPregnancyConsiderations',
+    'otherPregnancyConsiderationsDetail',
+    'additionalAdjustments',
   ],
 })
 export default class AccessNeedsFurtherQuestions implements TasklistPage {
   title = 'Access, cultural and healthcare needs'
 
   questions = {
-    wheelchair: `Does ${this.application.person.name} require a wheelchair accessible room?`,
-    mobilityNeeds: 'Mobility needs',
-    visualImpairment: 'Visual Impairment',
-    isPersonPregnant: 'Is this person pregnant?',
+    wheelchair: `Does ${this.application.person.name} require the use of a wheelchair?`,
+    healthConditions: `Does ${this.application.person.name} have any known health conditions?`,
+    healthConditionsDetail: 'Provide details',
+    prescribedMedication: `Does ${this.application.person.name} have any prescribed medication?`,
+    prescribedMedicationDetail: 'Provide details',
+    isPersonPregnant: `Is ${this.application.person.name} pregnant?`,
     expectedDeliveryDate: 'What is their expected date of delivery?',
-    otherPregnancyConsiderations: 'Are there any other considerations',
-    childRemoved: 'Will the child be removed at birth?',
+    otherPregnancyConsiderationsDetail: 'Provide details',
+    otherPregnancyConsiderations: 'Are there any pregnancy related issues relevant to placement?',
+    childRemoved: `Will the child be removed from ${this.application.person.name}'s care at birth?`,
+    additionalAdjustments: `Specify any additional details and adjustments required for ${this.application.person.name}'s ${this.listOfNeeds}`,
   }
 
   yesToPregnancyHealthcareQuestion: boolean = this.answeredYesToPregnancyHealthcareQuestion()
@@ -79,19 +95,35 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
     return 'covid'
   }
 
+  public get additionalNeeds(): Array<AdditionalNeed> {
+    return retrieveOptionalQuestionResponseFromApplicationOrAssessment(this.application, AccessNeeds, 'additionalNeeds')
+  }
+
+  public get listOfNeeds(): string {
+    const needs = this.additionalNeeds.map(need => additionalNeeds[need])
+
+    if (needs.length > 0) {
+      if (needs.length === 1) {
+        return lowerCase(`${needs[0]} needs`)
+      }
+
+      const lastNeed = needs.splice(-1)
+
+      return lowerCase(`${needs.join(', ')} or ${lastNeed} needs`)
+    }
+
+    return null
+  }
+
   answeredYesToPregnancyHealthcareQuestion() {
-    return retrieveOptionalQuestionResponseFromApplicationOrAssessment(
-      this.application,
-      AccessNeeds,
-      'additionalNeeds',
-    ).includes('pregnancy')
+    return this.additionalNeeds.includes('pregnancy')
   }
 
   response() {
     const response = {
       [this.questions.wheelchair]: sentenceCase(this.body.needsWheelchair),
-      [this.questions.mobilityNeeds]: this.body.mobilityNeeds,
-      [this.questions.visualImpairment]: this.body.visualImpairment,
+      [this.questions.healthConditions]: yesOrNoResponseWithDetail('healthConditions', this.body),
+      [this.questions.prescribedMedication]: yesNoOrDontKnowResponseWithDetail('prescribedMedication', this.body),
     }
 
     if (this.answeredYesToPregnancyHealthcareQuestion()) {
@@ -99,10 +131,16 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
 
       if (this.body.isPersonPregnant === 'yes') {
         response[this.questions.expectedDeliveryDate] = DateFormats.isoDateToUIDate(this.body.expectedDeliveryDate)
-        response[this.questions.otherPregnancyConsiderations] = this.body.otherPregnancyConsiderations
         response[this.questions.childRemoved] = sentenceCase(this.body.childRemoved)
       }
+
+      response[this.questions.otherPregnancyConsiderations] = yesOrNoResponseWithDetail(
+        'otherPregnancyConsiderations',
+        this.body,
+      )
     }
+
+    response[this.questions.additionalAdjustments] = this.body.additionalAdjustments
 
     return response
   }
@@ -114,9 +152,25 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
       errors.needsWheelchair = 'You must confirm the need for a wheelchair'
     }
 
+    if (!this.body.healthConditions) {
+      errors.healthConditions = `You must specify if ${this.application.person.name} has any known health conditions`
+    }
+
+    if (this.body.healthConditions === 'yes' && !this.body.healthConditionsDetail) {
+      errors.healthConditionsDetail = `You must provide details of ${this.application.person.name}'s health conditions`
+    }
+
+    if (!this.body.prescribedMedication) {
+      errors.prescribedMedication = `You must specify if ${this.application.person.name} has any prescribed medication`
+    }
+
+    if (this.body.prescribedMedication === 'yes' && !this.body.prescribedMedicationDetail) {
+      errors.prescribedMedicationDetail = `You must provide details of ${this.application.person.name}'s prescribed medication`
+    }
+
     if (this.answeredYesToPregnancyHealthcareQuestion()) {
       if (!this.body.isPersonPregnant) {
-        errors.isPersonPregnant = 'You must confirm if the person is pregnant'
+        errors.isPersonPregnant = `You must confirm if ${this.application.person.name} is pregnant`
       }
 
       if (this.body.isPersonPregnant === 'yes') {
@@ -126,6 +180,11 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
         if (!this.body.childRemoved) {
           errors.childRemoved = 'You must confirm if the child will be removed at birth'
         }
+      }
+
+      if (this.body.otherPregnancyConsiderations === 'yes' && !this.body.otherPregnancyConsiderationsDetail) {
+        errors.otherPregnancyConsiderationsDetail =
+          'You must provide details of any pregnancy related issues relevant to the placement'
       }
     }
 

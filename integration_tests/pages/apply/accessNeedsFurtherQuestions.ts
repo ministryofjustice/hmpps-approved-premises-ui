@@ -12,16 +12,20 @@ export default class AccessNeedsFurtherQuestionsPage extends ApplyPage {
       'access-needs-further-questions',
       paths.applications.pages.show({ id: application.id, task: 'access-and-healthcare', page: 'access-needs' }),
     )
-    cy.get('.govuk-form-group').contains(`Does ${application.person.name} require a wheelchair accessible room?`)
+    cy.get('.govuk-form-group').contains(`Does ${application.person.name} require the use of a wheelchair?`)
   }
 
   completeForm() {
     this.checkRadioButtonFromPageBody('needsWheelchair')
-    this.completeTextInputFromPageBody('mobilityNeeds')
-    this.completeTextInputFromPageBody('visualImpairment')
+    this.checkRadioButtonFromPageBody('healthConditions')
+    this.completeTextInputFromPageBody('healthConditionsDetail')
+    this.checkRadioButtonFromPageBody('prescribedMedication')
+    this.completeTextInputFromPageBody('prescribedMedicationDetail')
     this.checkRadioButtonFromPageBody('isPersonPregnant')
     this.completeDateInputsFromPageBody('expectedDeliveryDate')
-    this.completeTextInputFromPageBody('otherPregnancyConsiderations')
+    this.checkRadioButtonFromPageBody('otherPregnancyConsiderations')
+    this.completeTextInputFromPageBody('otherPregnancyConsiderationsDetail')
     this.checkRadioButtonFromPageBody('childRemoved')
+    this.completeTextInputFromPageBody('additionalAdjustments')
   }
 }
