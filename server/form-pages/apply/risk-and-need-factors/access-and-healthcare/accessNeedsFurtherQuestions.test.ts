@@ -102,9 +102,9 @@ describe('AccessNeedsFurtherQuestions', () => {
       expect(page.response()).toEqual({
         'Visual Impairment': 'visual impairment',
         'Are there any other considerations': 'none',
-        'Does John Wayne require a wheelchair accessible room?': 'Yes',
         'Mobility needs': 'mobility needs',
         'Is this person pregnant?': 'Yes',
+        'Does John Wayne require the use of a wheelchair?': 'Yes',
         'What is their expected date of delivery?': 'Sunday 19 February 2023',
         'Will the child be removed at birth?': 'No',
       })
@@ -117,7 +117,7 @@ describe('AccessNeedsFurtherQuestions', () => {
 
       expect(page.response()).toEqual({
         'Visual Impairment': 'visual impairment',
-        'Does John Wayne require a wheelchair accessible room?': 'Yes',
+        'Does John Wayne require the use of a wheelchair?': 'Yes',
         'Mobility needs': 'mobility needs',
         'Is this person pregnant?': 'No',
       })

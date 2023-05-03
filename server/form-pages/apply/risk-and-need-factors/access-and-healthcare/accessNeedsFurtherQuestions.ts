@@ -36,7 +36,7 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
   title = 'Access, cultural and healthcare needs'
 
   questions = {
-    wheelchair: `Does ${this.application.person.name} require a wheelchair accessible room?`,
+    wheelchair: `Does ${this.application.person.name} require the use of a wheelchair?`,
     mobilityNeeds: 'Mobility needs',
     visualImpairment: 'Visual Impairment',
     isPersonPregnant: 'Is this person pregnant?',

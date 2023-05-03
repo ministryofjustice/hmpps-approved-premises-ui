@@ -12,7 +12,7 @@ export default class AccessNeedsFurtherQuestionsPage extends ApplyPage {
       'access-needs-further-questions',
       paths.applications.pages.show({ id: application.id, task: 'access-and-healthcare', page: 'access-needs' }),
     )
-    cy.get('.govuk-form-group').contains(`Does ${application.person.name} require a wheelchair accessible room?`)
+    cy.get('.govuk-form-group').contains(`Does ${application.person.name} require the use of a wheelchair?`)
   }
 
   completeForm() {
