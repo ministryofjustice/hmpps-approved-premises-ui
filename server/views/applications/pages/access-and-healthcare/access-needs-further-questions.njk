@@ -59,6 +59,38 @@
       ]
     }, fetchContext()) }}
 
+  {% set prescribedMedicationDetail %}
+  {{ formPageTextarea({
+        fieldName: "prescribedMedicationDetail",
+        label: {
+          text: page.questions.prescribedMedicationDetail
+        }
+    }, fetchContext()) }}
+  {% endset -%}
+
+  {{ formPageRadios({
+      fieldName: "prescribedMedication",
+      fieldset: {
+        legend: {
+          text: page.questions.prescribedMedication,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          conditional: {
+            html: prescribedMedicationDetail
+          }
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }, fetchContext()) }}
+
   {% set additionalPregnancyQuestions %}
   {{
     formPageDateInput(

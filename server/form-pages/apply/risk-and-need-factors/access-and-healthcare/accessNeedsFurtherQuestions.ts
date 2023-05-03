@@ -1,8 +1,14 @@
-import type { ObjectWithDateParts, TaskListErrors, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
-import { yesOrNoResponseWithDetail } from '../../../utils'
+import type {
+  ObjectWithDateParts,
+  TaskListErrors,
+  YesNoOrIDKWithDetail,
+  YesOrNo,
+  YesOrNoWithDetail,
+} from '@approved-premises/ui'
 import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
+import { yesNoOrDontKnowResponseWithDetail, yesOrNoResponseWithDetail } from '../../../utils'
 
 import TasklistPage from '../../../tasklistPage'
 import { DateFormats } from '../../../../utils/dateUtils'
@@ -15,7 +21,8 @@ export type AccessNeedsFurtherQuestionsBody = {
   otherPregnancyConsiderations: string
   childRemoved?: YesOrNo | 'decisionPending'
 } & ObjectWithDateParts<'expectedDeliveryDate'> &
-  YesOrNoWithDetail<'healthConditions'>
+  YesOrNoWithDetail<'healthConditions'> &
+  YesNoOrIDKWithDetail<'prescribedMedication'>
 
 @Page({
   name: 'access-needs-further-questions',
@@ -23,6 +30,8 @@ export type AccessNeedsFurtherQuestionsBody = {
     'needsWheelchair',
     'healthConditions',
     'healthConditionsDetail',
+    'prescribedMedication',
+    'prescribedMedicationDetail',
     'isPersonPregnant',
     'childRemoved',
     'expectedDeliveryDate',
@@ -39,6 +48,8 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
     wheelchair: `Does ${this.application.person.name} require the use of a wheelchair?`,
     healthConditions: `Does ${this.application.person.name} have any known health conditions?`,
     healthConditionsDetail: 'Provide details',
+    prescribedMedication: `Does ${this.application.person.name} have any prescribed medication?`,
+    prescribedMedicationDetail: 'Provide details',
     isPersonPregnant: `Is ${this.application.person.name} pregnant?`,
     expectedDeliveryDate: 'What is their expected date of delivery?',
     otherPregnancyConsiderations: 'Are there any other considerations',
@@ -91,6 +102,7 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
     const response = {
       [this.questions.wheelchair]: sentenceCase(this.body.needsWheelchair),
       [this.questions.healthConditions]: yesOrNoResponseWithDetail('healthConditions', this.body),
+      [this.questions.prescribedMedication]: yesNoOrDontKnowResponseWithDetail('prescribedMedication', this.body),
     }
 
     if (this.answeredYesToPregnancyHealthcareQuestion()) {
@@ -119,6 +131,14 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
 
     if (this.body.healthConditions === 'yes' && !this.body.healthConditionsDetail) {
       errors.healthConditionsDetail = `You must provide details of ${this.application.person.name}'s health conditions`
+    }
+
+    if (!this.body.prescribedMedication) {
+      errors.prescribedMedication = `You must specify if ${this.application.person.name} has any prescribed medication`
+    }
+
+    if (this.body.prescribedMedication === 'yes' && !this.body.prescribedMedicationDetail) {
+      errors.prescribedMedicationDetail = `You must provide details of ${this.application.person.name}'s prescribed medication`
     }
 
     if (this.answeredYesToPregnancyHealthcareQuestion()) {
