@@ -1,7 +1,7 @@
 import type { ApprovedPremisesAssessment } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
-import { assessmentSections } from '../../../server/utils/applications/summaryListUtils'
+import { summaryListSections } from '../../../server/utils/applications/summaryListUtils'
 
 import Page from '../page'
 
@@ -31,7 +31,7 @@ export default class ShowPage extends Page {
   }
 
   shouldShowResponses() {
-    const sections = assessmentSections(this.asssessment, false)
+    const sections = summaryListSections(this.asssessment, false)
 
     sections.forEach(section => {
       cy.get('h2.govuk-heading-l').contains(section.title).should('exist')

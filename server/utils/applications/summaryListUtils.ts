@@ -13,8 +13,8 @@ import isAssessment from '../assessments/isAssessment'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
 
-const summaryListSections = (application: Application, showActions = true) =>
-  reviewSections(application, taskResponsesAsSummaryListItems, showActions)
+const summaryListSections = (applicationOrAssessment: Application | Assessment, showActions = true) =>
+  reviewSections(applicationOrAssessment, taskResponsesAsSummaryListItems, showActions)
 
 const taskResponsesAsSummaryListItems = (
   task: UiTask,
@@ -83,10 +83,6 @@ const attachDocumentsSummaryListItems = (
   return items
 }
 
-const assessmentSections = (assessment: Assessment, showActions = true) => {
-  return reviewSections(assessment, taskResponsesAsSummaryListItems, showActions)
-}
-
 const reviewApplicationSections = (application: Application, assessmentId: string) => {
   const cardActionFunction = (taskId: string) => getActionsForTaskId(taskId, assessmentId)
 
@@ -148,10 +144,4 @@ const summaryListItemForResponse = (
   return item
 }
 
-export {
-  assessmentSections,
-  summaryListSections,
-  embeddedSummaryListItem,
-  taskResponsesAsSummaryListItems,
-  reviewApplicationSections,
-}
+export { summaryListSections, embeddedSummaryListItem, taskResponsesAsSummaryListItems, reviewApplicationSections }

@@ -2,7 +2,6 @@ import { applicationFactory, assessmentFactory, documentFactory } from '../../te
 import { getResponseForPage } from './utils'
 
 import {
-  assessmentSections,
   embeddedSummaryListItem,
   reviewApplicationSections,
   summaryListSections,
@@ -122,10 +121,6 @@ describe('summaryListUtils', () => {
         ])
       })
     })
-          },
-        },
-      ])
-    })
 
     describe('when the document is an assessment', () => {
       it('returns the task responses as Summary List items and adds the actions object with a link to the application', () => {
@@ -194,7 +189,7 @@ describe('summaryListUtils', () => {
         ).toEqual([
           {
             key: {
-              html: `<a href="/applications/people/${application.person.crn}/documents/${documents[0].id}" data-cy-document-id="${documents[0].id}">${documents[0].fileName}</a>`,
+              html: `<a href="/applications/people/${application.person.crn}/documents/${documents[0].id}" data-cy-documentId="${documents[0].id}">${documents[0].fileName}</a>`,
             },
             value: {
               text: documents[0].description,
@@ -227,24 +222,6 @@ describe('summaryListUtils', () => {
       cardActionFunction('task')
 
       expect(getActionsForTaskId).toHaveBeenCalledWith('task', 'assessmentId')
-    })
-  })
-
-  describe('assessmentSections', () => {
-    it('calls reviewSections with showActions set to true as the default', () => {
-      const assessment = assessmentFactory.build()
-
-      assessmentSections(assessment)
-
-      expect(reviewSections).toHaveBeenCalledWith(assessment, taskResponsesAsSummaryListItems, true)
-    })
-
-    it('allows showActions to be set to false', () => {
-      const assessment = assessmentFactory.build()
-
-      assessmentSections(assessment, false)
-
-      expect(reviewSections).toHaveBeenCalledWith(assessment, taskResponsesAsSummaryListItems, false)
     })
   })
 })
