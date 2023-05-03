@@ -7,7 +7,7 @@ describe('radioMatrixTable', () => {
         <div class="govuk-radios" data-module="govuk-radios">
             <div class="govuk-radios__item">
               <input class="govuk-radios__input" id="name-preference" name="name" type="radio" value="preference" >
-              <label class="govuk-label govuk-radios__label govuk-visually-hidden" for="name-preference">Name preference</label>
+              <label class="govuk-label govuk-radios__label" for="name-preference"><span class="govuk-visually-hidden">Name preference</span></label>
             </div>
           </td>`)
     })
@@ -17,7 +17,7 @@ describe('radioMatrixTable', () => {
         <div class="govuk-radios" data-module="govuk-radios">
             <div class="govuk-radios__item">
               <input class="govuk-radios__input" id="name-preference" name="name" type="radio" value="preference" checked >
-              <label class="govuk-label govuk-radios__label govuk-visually-hidden" for="name-preference">Name preference</label>
+              <label class="govuk-label govuk-radios__label" for="name-preference"><span class="govuk-visually-hidden">Name preference</span></label>
             </div>
           </td>`)
     })

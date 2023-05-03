@@ -96,9 +96,12 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
 
     if (this.answeredYesToPregnancyHealthcareQuestion()) {
       response[this.questions.isPersonPregnant] = sentenceCase(this.body.isPersonPregnant)
-      response[this.questions.expectedDeliveryDate] = DateFormats.isoDateToUIDate(this.body.expectedDeliveryDate)
-      response[this.questions.otherPregnancyConsiderations] = this.body.otherPregnancyConsiderations
-      response[this.questions.childRemoved] = sentenceCase(this.body.childRemoved)
+
+      if (this.body.isPersonPregnant === 'yes') {
+        response[this.questions.expectedDeliveryDate] = DateFormats.isoDateToUIDate(this.body.expectedDeliveryDate)
+        response[this.questions.otherPregnancyConsiderations] = this.body.otherPregnancyConsiderations
+        response[this.questions.childRemoved] = sentenceCase(this.body.childRemoved)
+      }
     }
 
     return response
@@ -111,16 +114,18 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
       errors.needsWheelchair = 'You must confirm the need for a wheelchair'
     }
 
-    if (!this.body.isPersonPregnant) {
-      errors.isPersonPregnant = 'You must confirm if the person is pregnant'
-    }
-
-    if (this.body.isPersonPregnant === 'yes') {
-      if (!this.body.expectedDeliveryDate) {
-        errors.expectedDeliveryDate = 'You must enter the expected delivery date'
+    if (this.answeredYesToPregnancyHealthcareQuestion()) {
+      if (!this.body.isPersonPregnant) {
+        errors.isPersonPregnant = 'You must confirm if the person is pregnant'
       }
-      if (!this.body.childRemoved) {
-        errors.childRemoved = 'You must confirm if the child will be removed at birth'
+
+      if (this.body.isPersonPregnant === 'yes') {
+        if (!this.body.expectedDeliveryDate) {
+          errors.expectedDeliveryDate = 'You must enter the expected delivery date'
+        }
+        if (!this.body.childRemoved) {
+          errors.childRemoved = 'You must confirm if the child will be removed at birth'
+        }
       }
     }
 

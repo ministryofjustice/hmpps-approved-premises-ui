@@ -1,15 +1,11 @@
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-
+import { fromPartial } from '@total-typescript/shoehorn'
 import AccessNeedsFurtherQuestions, { AccessNeedsFurtherQuestionsBody } from './accessNeedsFurtherQuestions'
 
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
 import { DateFormats } from '../../../../utils/dateUtils'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 
-jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment', () => {
-  return {
-    retrieveOptionalQuestionResponseFromApplicationOrAssessment: jest.fn(() => ['pregnancy']),
-  }
-})
+jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment')
 
 describe('AccessNeedsFurtherQuestions', () => {
   const person = personFactory.build({ name: 'John Wayne' })
@@ -26,9 +22,14 @@ describe('AccessNeedsFurtherQuestions', () => {
     childRemoved: 'no',
     isPersonPregnant: 'yes',
   }
+  beforeEach(() => {
+    ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue([''])
+  })
 
   describe('title', () => {
-    expect(new AccessNeedsFurtherQuestions({}, application).title).toBe('Access, cultural and healthcare needs')
+    it('should return the title', () => {
+      expect(new AccessNeedsFurtherQuestions({}, application).title).toBe('Access, cultural and healthcare needs')
+    })
   })
 
   describe('body', () => {
@@ -49,19 +50,40 @@ describe('AccessNeedsFurtherQuestions', () => {
     })
   })
 
-  itShouldHaveNextValue(new AccessNeedsFurtherQuestions({}, application), 'covid')
-  itShouldHavePreviousValue(new AccessNeedsFurtherQuestions({}, application), 'access-needs')
+  describe('next', () => {
+    it('returns the correct next page', () => {
+      expect(new AccessNeedsFurtherQuestions({}, application).next()).toBe('covid')
+    })
+  })
+
+  describe('previous', () => {
+    it('returns the correct previous page', () => {
+      expect(new AccessNeedsFurtherQuestions({}, application).previous()).toBe('access-needs')
+    })
+  })
 
   describe('errors', () => {
-    it('should return errors if there are no responses to needsWheelchair or isPersonPregnant questions', () => {
+    it('should return errors if there are no responses to needsWheelchair question', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue([])
       const page = new AccessNeedsFurtherQuestions({}, application)
+
       expect(page.errors()).toEqual({
         needsWheelchair: 'You must confirm the need for a wheelchair',
+      })
+    })
+
+    it('should return errors if the person answered "yes" to pregancy healthcare questions but doesnt respond to pregnacny question', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['pregnancy'])
+
+      const page = new AccessNeedsFurtherQuestions({ needsWheelchair: 'no' }, application)
+      expect(page.errors()).toEqual({
         isPersonPregnant: 'You must confirm if the person is pregnant',
       })
     })
 
     it('should return errors if there are no responses to expectedDeliveryDate or childRemoved question and isPersonPregnant is yes', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['pregnancy'])
+
       const page = new AccessNeedsFurtherQuestions({ isPersonPregnant: 'yes' }, application)
       expect(page.errors()).toEqual({
         needsWheelchair: 'You must confirm the need for a wheelchair',
@@ -73,6 +95,8 @@ describe('AccessNeedsFurtherQuestions', () => {
 
   describe('response', () => {
     it('returns the correct plain english responses for the questions', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['pregnancy'])
+
       const page = new AccessNeedsFurtherQuestions(body, application)
 
       expect(page.response()).toEqual({
@@ -83,6 +107,19 @@ describe('AccessNeedsFurtherQuestions', () => {
         'Is this person pregnant?': 'Yes',
         'What is their expected date of delivery?': 'Sunday 19 February 2023',
         'Will the child be removed at birth?': 'No',
+      })
+    })
+
+    it('returns the correct plain english responses when the user responds that the person is not pregnant', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['pregnancy'])
+
+      const page = new AccessNeedsFurtherQuestions(fromPartial({ ...body, isPersonPregnant: 'no' }), application)
+
+      expect(page.response()).toEqual({
+        'Visual Impairment': 'visual impairment',
+        'Does John Wayne require a wheelchair accessible room?': 'Yes',
+        'Mobility needs': 'mobility needs',
+        'Is this person pregnant?': 'No',
       })
     })
   })
