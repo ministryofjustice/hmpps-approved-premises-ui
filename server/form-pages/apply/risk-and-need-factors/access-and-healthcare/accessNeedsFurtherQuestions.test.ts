@@ -20,7 +20,8 @@ describe('AccessNeedsFurtherQuestions', () => {
     prescribedMedicationDetail: 'Some detail',
     expectedDeliveryDate: DateFormats.dateObjToIsoDate(expectedDeliveryDate),
     ...DateFormats.dateObjectToDateInputs(expectedDeliveryDate, 'expectedDeliveryDate'),
-    otherPregnancyConsiderations: 'none',
+    otherPregnancyConsiderations: 'yes',
+    otherPregnancyConsiderationsDetail: 'Some detail',
     childRemoved: 'no',
     isPersonPregnant: 'yes',
   }
@@ -49,7 +50,8 @@ describe('AccessNeedsFurtherQuestions', () => {
         'expectedDeliveryDate-year': '2023',
         'expectedDeliveryDate-month': '2',
         'expectedDeliveryDate-day': '19',
-        otherPregnancyConsiderations: 'none',
+        otherPregnancyConsiderations: 'yes',
+        otherPregnancyConsiderationsDetail: 'Some detail',
         childRemoved: 'no',
       })
     })
@@ -137,18 +139,18 @@ describe('AccessNeedsFurtherQuestions', () => {
       const page = new AccessNeedsFurtherQuestions(body, application)
 
       expect(page.response()).toEqual({
-        'Are there any other considerations': 'none',
         'Does John Wayne require the use of a wheelchair?': 'Yes',
         'Does John Wayne have any known health conditions?': 'Yes - Some detail',
         'Does John Wayne have any prescribed medication?': 'Yes - Some detail',
         'Is John Wayne pregnant?': 'Yes',
         'What is their expected date of delivery?': 'Sunday 19 February 2023',
         "Will the child be removed from John Wayne's care at birth?": 'No',
+        'Are there any pregnancy related issues relevant to placement?': 'Yes - Some detail',
       })
     })
 
     it('returns the correct plain english responses when the user responds that the person is not pregnant', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['pregnancy'])
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue([])
 
       const page = new AccessNeedsFurtherQuestions(fromPartial({ ...body, isPersonPregnant: 'no' }), application)
 
@@ -156,7 +158,6 @@ describe('AccessNeedsFurtherQuestions', () => {
         'Does John Wayne require the use of a wheelchair?': 'Yes',
         'Does John Wayne have any known health conditions?': 'Yes - Some detail',
         'Does John Wayne have any prescribed medication?': 'Yes - Some detail',
-        'Is John Wayne pregnant?': 'No',
       })
     })
   })

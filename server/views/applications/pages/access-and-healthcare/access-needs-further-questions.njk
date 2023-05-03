@@ -98,7 +98,7 @@
           fieldName: "expectedDeliveryDate",
           fieldset: {
             legend: {
-              text: page.questions.deliveryDate
+              text: page.questions.expectedDeliveryDate
             }
           },
           items: dateFieldValues('expectedDeliveryDate', errors)
@@ -106,13 +106,6 @@
         fetchContext()
       )
   }}
-  {{ formPageTextarea({
-        fieldName: "otherPregnancyConsiderations",
-        label: {
-        text: page.questions.otherPregnancyConsiderations,
-          classes: "govuk-label--s"
-        }
-    }, fetchContext()) }}
   {% endset -%}
 
   {% if page.yesToPregnancyHealthcareQuestion %}
@@ -162,6 +155,38 @@
         {
           value: "decisionPending",
           text: "Decision pending"
+        }
+      ]
+    }, fetchContext()) }}
+
+    {% set otherPregnancyConsiderationsDetail %}
+    {{ formPageTextarea({
+        fieldName: "otherPregnancyConsiderationsDetail",
+        label: {
+          text: page.questions.otherPregnancyConsiderationsDetail
+        }
+    }, fetchContext()) }}
+    {% endset -%}
+
+    {{ formPageRadios({
+      fieldName: "otherPregnancyConsiderations",
+      fieldset: {
+        legend: {
+          text: page.questions.otherPregnancyConsiderations,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          conditional: {
+            html: otherPregnancyConsiderationsDetail
+          }
+        },
+        {
+          value: "no",
+          text: "No"
         }
       ]
     }, fetchContext()) }}

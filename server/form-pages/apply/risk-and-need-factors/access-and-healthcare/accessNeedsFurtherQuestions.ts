@@ -18,11 +18,11 @@ import AccessNeeds from './accessNeeds'
 export type AccessNeedsFurtherQuestionsBody = {
   needsWheelchair: YesOrNo
   isPersonPregnant?: YesOrNo
-  otherPregnancyConsiderations: string
   childRemoved?: YesOrNo | 'decisionPending'
 } & ObjectWithDateParts<'expectedDeliveryDate'> &
   YesOrNoWithDetail<'healthConditions'> &
-  YesNoOrIDKWithDetail<'prescribedMedication'>
+  YesNoOrIDKWithDetail<'prescribedMedication'> &
+  YesOrNoWithDetail<'otherPregnancyConsiderations'>
 
 @Page({
   name: 'access-needs-further-questions',
@@ -39,6 +39,7 @@ export type AccessNeedsFurtherQuestionsBody = {
     'expectedDeliveryDate-month',
     'expectedDeliveryDate-day',
     'otherPregnancyConsiderations',
+    'otherPregnancyConsiderationsDetail',
   ],
 })
 export default class AccessNeedsFurtherQuestions implements TasklistPage {
@@ -52,7 +53,8 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
     prescribedMedicationDetail: 'Provide details',
     isPersonPregnant: `Is ${this.application.person.name} pregnant?`,
     expectedDeliveryDate: 'What is their expected date of delivery?',
-    otherPregnancyConsiderations: 'Are there any other considerations',
+    otherPregnancyConsiderationsDetail: 'Provide details',
+    otherPregnancyConsiderations: 'Are there any pregnancy related issues relevant to placement?',
     childRemoved: `Will the child be removed from ${this.application.person.name}'s care at birth?`,
   }
 
@@ -110,9 +112,13 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
 
       if (this.body.isPersonPregnant === 'yes') {
         response[this.questions.expectedDeliveryDate] = DateFormats.isoDateToUIDate(this.body.expectedDeliveryDate)
-        response[this.questions.otherPregnancyConsiderations] = this.body.otherPregnancyConsiderations
         response[this.questions.childRemoved] = sentenceCase(this.body.childRemoved)
       }
+
+      response[this.questions.otherPregnancyConsiderations] = yesOrNoResponseWithDetail(
+        'otherPregnancyConsiderations',
+        this.body,
+      )
     }
 
     return response
@@ -153,6 +159,11 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
         if (!this.body.childRemoved) {
           errors.childRemoved = 'You must confirm if the child will be removed at birth'
         }
+      }
+
+      if (this.body.otherPregnancyConsiderations === 'yes' && !this.body.otherPregnancyConsiderationsDetail) {
+        errors.otherPregnancyConsiderationsDetail =
+          'You must provide details of any pregnancy related issues relevant to the placement'
       }
     }
 
