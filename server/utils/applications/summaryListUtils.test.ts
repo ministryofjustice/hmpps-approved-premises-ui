@@ -1,4 +1,4 @@
-import { applicationFactory } from '../../testutils/factories'
+import { applicationFactory, assessmentFactory } from '../../testutils/factories'
 import { getResponseForPage } from './utils'
 
 import { embeddedSummaryListItem, getTaskResponsesAsSummaryListItems, summaryListSections } from './summaryListUtils'
@@ -109,6 +109,36 @@ describe('summaryListUtils', () => {
           },
         },
       ])
+    })
+
+    describe('when the document is an assessment', () => {
+      it('returns the task responses as Summary List items and adds the actions object with a link to the application', () => {
+        const assessment = assessmentFactory.build()
+        assessment.data = { foo: ['bar'] }
+        ;(getResponseForPage as jest.Mock).mockImplementation(() => ({
+          title: 'response',
+        }))
+
+        expect(taskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, assessment, true)).toEqual([
+          {
+            actions: {
+              items: [
+                {
+                  href: `/assessments/${assessment.id}/tasks/foo/pages/0`,
+                  text: 'Change',
+                  visuallyHiddenText: 'title',
+                },
+              ],
+            },
+            key: {
+              text: 'title',
+            },
+            value: {
+              text: 'response',
+            },
+          },
+        ])
+      })
     })
 
     it('returns the task responses as Summary List items without the actions object if showActions is false', () => {

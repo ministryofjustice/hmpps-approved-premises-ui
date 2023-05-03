@@ -1,10 +1,12 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { HtmlItem, SummaryListItem, TextItem, UiTask } from '@approved-premises/ui'
 
-import paths from '../../paths/apply'
+import applyPaths from '../../paths/apply'
+import assessPaths from '../../paths/assess'
 
 import { getResponseForPage } from './utils'
 import reviewSections from '../reviewUtils'
+import isAssessment from '../assessments/isAssessment'
 
 const summaryListSections = (application: ApprovedPremisesApplication, showActions = true) =>
   reviewSections(application, getTaskResponsesAsSummaryListItems, showActions)
@@ -66,7 +68,7 @@ const summaryListItemForResponse = (
   value: TextItem | HtmlItem,
   task: UiTask,
   pageName: string,
-  application: ApprovedPremisesApplication,
+  applicationOrAssessment: Application | Assessment,
   showActions: boolean,
 ): SummaryListItem => {
   const item = {
@@ -80,7 +82,9 @@ const summaryListItemForResponse = (
     item.actions = {
       items: [
         {
-          href: paths.applications.pages.show({ task: task.id, page: pageName, id: application.id }),
+          href: isAssessment(applicationOrAssessment)
+            ? assessPaths.assessments.pages.show({ task: task.id, page: pageName, id: applicationOrAssessment.id })
+            : applyPaths.applications.pages.show({ task: task.id, page: pageName, id: applicationOrAssessment.id }),
           text: 'Change',
           visuallyHiddenText: key,
         },
