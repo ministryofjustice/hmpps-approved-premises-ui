@@ -143,7 +143,7 @@ describe('AccessNeedsFurtherQuestions', () => {
         'Does John Wayne have any prescribed medication?': 'Yes - Some detail',
         'Is John Wayne pregnant?': 'Yes',
         'What is their expected date of delivery?': 'Sunday 19 February 2023',
-        'Will the child be removed at birth?': 'No',
+        "Will the child be removed from John Wayne's care at birth?": 'No',
       })
     })
 

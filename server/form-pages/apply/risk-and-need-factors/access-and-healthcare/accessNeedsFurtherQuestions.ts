@@ -53,7 +53,7 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
     isPersonPregnant: `Is ${this.application.person.name} pregnant?`,
     expectedDeliveryDate: 'What is their expected date of delivery?',
     otherPregnancyConsiderations: 'Are there any other considerations',
-    childRemoved: 'Will the child be removed at birth?',
+    childRemoved: `Will the child be removed from ${this.application.person.name}'s care at birth?`,
   }
 
   yesToPregnancyHealthcareQuestion: boolean = this.answeredYesToPregnancyHealthcareQuestion()
