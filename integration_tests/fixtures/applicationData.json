@@ -307,15 +307,19 @@
     },
     "access-needs-further-questions": {
       "needsWheelchair": "yes",
-      "mobilityNeeds": "laboriosam",
-      "visualImpairment": "exercitationem",
+      "healthConditions": "yes",
+      "healthConditionsDetail": "Some detail",
+      "prescribedMedication": "yes",
+      "prescribedMedicationDetail": "Some detail",
       "isPersonPregnant": "yes",
       "expectedDeliveryDate": "2023-12-31",
       "expectedDeliveryDate-year": "2023",
       "expectedDeliveryDate-month": "12",
       "expectedDeliveryDate-day": "31",
-      "otherPregnancyConsiderations": "some considerations",
-      "childRemoved": "decisionPending"
+      "otherPregnancyConsiderations": "yes",
+      "otherPregnancyConsiderationsDetail": "some considerations",
+      "childRemoved": "decisionPending",
+      "additionalAdjustments": "Some detail"
     },
     "covid": {
       "fullyVaccinated": "yes",

@@ -17,11 +17,15 @@ export default class AccessNeedsFurtherQuestionsPage extends ApplyPage {
 
   completeForm() {
     this.checkRadioButtonFromPageBody('needsWheelchair')
-    this.completeTextInputFromPageBody('mobilityNeeds')
-    this.completeTextInputFromPageBody('visualImpairment')
+    this.checkRadioButtonFromPageBody('healthConditions')
+    this.completeTextInputFromPageBody('healthConditionsDetail')
+    this.checkRadioButtonFromPageBody('prescribedMedication')
+    this.completeTextInputFromPageBody('prescribedMedicationDetail')
     this.checkRadioButtonFromPageBody('isPersonPregnant')
     this.completeDateInputsFromPageBody('expectedDeliveryDate')
-    this.completeTextInputFromPageBody('otherPregnancyConsiderations')
+    this.checkRadioButtonFromPageBody('otherPregnancyConsiderations')
+    this.completeTextInputFromPageBody('otherPregnancyConsiderationsDetail')
     this.checkRadioButtonFromPageBody('childRemoved')
+    this.completeTextInputFromPageBody('additionalAdjustments')
   }
 }
