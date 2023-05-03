@@ -1,11 +1,21 @@
-import { applicationFactory, assessmentFactory } from '../../testutils/factories'
+import { applicationFactory, assessmentFactory, documentFactory } from '../../testutils/factories'
 import { getResponseForPage } from './utils'
 
-import { embeddedSummaryListItem, getTaskResponsesAsSummaryListItems, summaryListSections } from './summaryListUtils'
+import {
+  assessmentSections,
+  embeddedSummaryListItem,
+  reviewApplicationSections,
+  summaryListSections,
+  taskResponsesAsSummaryListItems,
+} from './summaryListUtils'
 import reviewSections from '../reviewUtils'
+import { documentsFromApplication } from '../assessments/documentUtils'
+import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
 
 jest.mock('../reviewUtils')
 jest.mock('./utils')
+jest.mock('../assessments/documentUtils')
+jest.mock('../assessments/getActionsForTaskId')
 
 describe('summaryListUtils', () => {
   describe('embeddedSummaryListItem', () => {
@@ -58,13 +68,13 @@ describe('summaryListUtils', () => {
     })
   })
 
-  describe('summaryListSections', () => {
+  describe('taskResponsesAsSummaryListItems', () => {
     it('calls reviewSections with the correct arguments', () => {
       const application = applicationFactory.build()
 
       summaryListSections(application)
 
-      expect(reviewSections).toHaveBeenCalledWith(application, getTaskResponsesAsSummaryListItems, true)
+      expect(reviewSections).toHaveBeenCalledWith(application, taskResponsesAsSummaryListItems, true)
     })
 
     it('calls reviewSections with showActions if added', () => {
@@ -72,40 +82,46 @@ describe('summaryListUtils', () => {
 
       summaryListSections(application, false)
 
-      expect(reviewSections).toHaveBeenCalledWith(application, getTaskResponsesAsSummaryListItems, false)
+      expect(reviewSections).toHaveBeenCalledWith(application, taskResponsesAsSummaryListItems, false)
     })
   })
 
-  describe('getTaskResponsesAsSummaryListItems', () => {
+  describe('taskResponsesAsSummaryListItems', () => {
     it('returns an empty array if there isnt any responses for the task', () => {
       const application = applicationFactory.build()
 
-      expect(getTaskResponsesAsSummaryListItems({ id: '42', title: '42', pages: {} }, application, true)).toEqual([])
+      expect(taskResponsesAsSummaryListItems({ id: '42', title: '42', pages: {} }, application, true)).toEqual([])
     })
 
-    it('returns the task responses as Summary List items and adds the actions object', () => {
-      const application = applicationFactory.build()
-      application.data = { foo: ['bar'] }
-      ;(getResponseForPage as jest.Mock).mockImplementation(() => ({
-        title: 'response',
-      }))
+    describe('when the document is an application', () => {
+      it('returns the task responses as Summary List items and adds the actions object with a link to the application', () => {
+        const application = applicationFactory.build()
+        application.data = { foo: ['bar'] }
+        ;(getResponseForPage as jest.Mock).mockImplementation(() => ({
+          title: 'response',
+        }))
 
-      expect(getTaskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application, true)).toEqual([
-        {
-          actions: {
-            items: [
-              {
-                href: `/applications/${application.id}/tasks/foo/pages/0`,
-                text: 'Change',
-                visuallyHiddenText: 'title',
-              },
-            ],
+        expect(taskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application, true)).toEqual([
+          {
+            actions: {
+              items: [
+                {
+                  href: `/applications/${application.id}/tasks/foo/pages/0`,
+                  text: 'Change',
+                  visuallyHiddenText: 'title',
+                },
+              ],
+            },
+            key: {
+              text: 'title',
+            },
+            value: {
+              text: 'response',
+            },
           },
-          key: {
-            text: 'title',
-          },
-          value: {
-            text: 'response',
+        ])
+      })
+    })
           },
         },
       ])
@@ -148,7 +164,7 @@ describe('summaryListUtils', () => {
         title: 'response',
       }))
 
-      expect(getTaskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application, false)).toEqual([
+      expect(taskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application, false)).toEqual([
         {
           key: {
             text: 'title',
@@ -158,6 +174,77 @@ describe('summaryListUtils', () => {
           },
         },
       ])
+    })
+
+    describe('if the page name includes "attach-documents"', () => {
+      it('then the correct array is returned', () => {
+        const application = applicationFactory.build()
+        const documents = documentFactory.buildList(1)
+
+        ;(documentsFromApplication as jest.Mock).mockReturnValue(documents)
+
+        application.data['attach-required-documents'] = {
+          'attach-documents': {
+            selectedDocuments: documents,
+          },
+        }
+
+        expect(
+          taskResponsesAsSummaryListItems({ id: 'attach-required-documents', title: 'bar', pages: {} }, application),
+        ).toEqual([
+          {
+            key: {
+              html: `<a href="/applications/people/${application.person.crn}/documents/${documents[0].id}" data-cy-document-id="${documents[0].id}">${documents[0].fileName}</a>`,
+            },
+            value: {
+              text: documents[0].description,
+            },
+
+            actions: {
+              items: [
+                {
+                  href: `/applications/${application.id}/tasks/attach-required-documents/pages/attach-documents`,
+                  text: 'Change',
+                  visuallyHiddenText: documents[0].fileName,
+                },
+              ],
+            },
+          },
+        ])
+      })
+    })
+  })
+
+  describe('reviewApplicationSections', () => {
+    it('sends a cardActionFunction to reviewSections, which passes the correct assessment ID on to `getActionsForTaskId`', () => {
+      const application = applicationFactory.build()
+
+      reviewApplicationSections(application, 'assessmentId')
+
+      const { mock } = reviewSections as jest.Mock
+      const cardActionFunction = mock.calls[2][3]
+
+      cardActionFunction('task')
+
+      expect(getActionsForTaskId).toHaveBeenCalledWith('task', 'assessmentId')
+    })
+  })
+
+  describe('assessmentSections', () => {
+    it('calls reviewSections with showActions set to true as the default', () => {
+      const assessment = assessmentFactory.build()
+
+      assessmentSections(assessment)
+
+      expect(reviewSections).toHaveBeenCalledWith(assessment, taskResponsesAsSummaryListItems, true)
+    })
+
+    it('allows showActions to be set to false', () => {
+      const assessment = assessmentFactory.build()
+
+      assessmentSections(assessment, false)
+
+      expect(reviewSections).toHaveBeenCalledWith(assessment, taskResponsesAsSummaryListItems, false)
     })
   })
 })

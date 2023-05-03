@@ -21,7 +21,6 @@ import {
   dateFieldValues,
 } from './formUtils'
 import { dashboardTableRows } from './applications/utils'
-import { summaryListSections } from './applications/summaryListUtils'
 import { navigationItems } from './navigationItems'
 
 import { statusTag } from './personUtils'
@@ -39,6 +38,7 @@ import * as UserUtils from './userUtils'
 import * as TaskUtils from './tasks'
 import * as PlacementRequestUtils from './placementRequests'
 import * as MatchUtils from './matchUtils'
+import * as SummaryListUtils from './applications/summaryListUtils'
 
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
@@ -170,7 +170,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addFilter('sentenceCase', sentenceCase)
   njkEnv.addFilter('kebabCase', kebabCase)
 
-  njkEnv.addGlobal('summaryListSections', summaryListSections)
   njkEnv.addGlobal('dashboardTableRows', dashboardTableRows)
   njkEnv.addGlobal('navigationItems', navigationItems)
 
@@ -186,4 +185,5 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('TaskUtils', TaskUtils)
   njkEnv.addGlobal('PlacementRequestUtils', PlacementRequestUtils)
   njkEnv.addGlobal('MatchUtils', MatchUtils)
+  njkEnv.addGlobal('SummaryListUtils', SummaryListUtils)
 }

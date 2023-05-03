@@ -1,4 +1,7 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import {
+  ApprovedPremisesApplication as Application,
+  ApprovedPremisesAssessment as Assessment,
+} from '@approved-premises/api'
 import { HtmlItem, SummaryListItem, TextItem, UiTask } from '@approved-premises/ui'
 
 import applyPaths from '../../paths/apply'
@@ -7,25 +10,33 @@ import assessPaths from '../../paths/assess'
 import { getResponseForPage } from './utils'
 import reviewSections from '../reviewUtils'
 import isAssessment from '../assessments/isAssessment'
+import { documentsFromApplication } from '../assessments/documentUtils'
+import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
 
-const summaryListSections = (application: ApprovedPremisesApplication, showActions = true) =>
-  reviewSections(application, getTaskResponsesAsSummaryListItems, showActions)
+const summaryListSections = (application: Application, showActions = true) =>
+  reviewSections(application, taskResponsesAsSummaryListItems, showActions)
 
-export const getTaskResponsesAsSummaryListItems = (
+const taskResponsesAsSummaryListItems = (
   task: UiTask,
-  application: ApprovedPremisesApplication,
-  showActions: boolean,
+  applicationOrAssessment: Application | Assessment,
+  showActions = true,
 ): Array<SummaryListItem> => {
   const items: Array<SummaryListItem> = []
 
-  if (!application.data[task.id]) {
+  if (!applicationOrAssessment.data[task.id]) {
     return items
   }
 
-  const pageNames = Object.keys(application.data[task.id])
+  const pageNames = Object.keys(applicationOrAssessment.data[task.id])
 
   pageNames.forEach(pageName => {
-    const response = getResponseForPage(application, task.id, pageName)
+    if (pageName === 'attach-documents') {
+      items.push(
+        ...attachDocumentsSummaryListItems(applicationOrAssessment as Application, task, pageName, showActions),
+      )
+      return
+    }
+    const response = getResponseForPage(applicationOrAssessment, task.id, pageName)
 
     Object.keys(response).forEach(key => {
       const value =
@@ -33,11 +44,53 @@ export const getTaskResponsesAsSummaryListItems = (
           ? ({ text: response[key] } as TextItem)
           : ({ html: embeddedSummaryListItem(response[key] as Array<Record<string, unknown>>) } as HtmlItem)
 
-      items.push(summaryListItemForResponse(key, value, task, pageName, application, showActions))
+      items.push(summaryListItemForResponse(key, value, task, pageName, applicationOrAssessment, showActions))
     })
   })
 
   return items
+}
+
+const attachDocumentsSummaryListItems = (
+  application: Application,
+  task: UiTask,
+  pageName: string,
+  showActions: boolean,
+) => {
+  const items: Array<SummaryListItem> = []
+
+  documentsFromApplication(application).forEach(document => {
+    const item: SummaryListItem = {
+      key: {
+        html: `<a href="/applications/people/${application.person.crn}/documents/${document.id}" data-cy-documentId="${document.id}">${document.fileName}</a>`,
+      },
+      value: { text: document?.description || '' },
+    }
+    if (showActions) {
+      item.actions = {
+        items: [
+          {
+            href: applyPaths.applications.pages.show({ task: task.id, page: pageName, id: application.id }),
+            text: 'Change',
+            visuallyHiddenText: document.fileName,
+          },
+        ],
+      }
+    }
+    items.push(item)
+  })
+
+  return items
+}
+
+const assessmentSections = (assessment: Assessment, showActions = true) => {
+  return reviewSections(assessment, taskResponsesAsSummaryListItems, showActions)
+}
+
+const reviewApplicationSections = (application: Application, assessmentId: string) => {
+  const cardActionFunction = (taskId: string) => getActionsForTaskId(taskId, assessmentId)
+
+  return reviewSections(application, taskResponsesAsSummaryListItems, false, cardActionFunction)
 }
 
 const embeddedSummaryListItem = (answers: Array<Record<string, unknown>>): string => {
@@ -95,4 +148,10 @@ const summaryListItemForResponse = (
   return item
 }
 
-export { summaryListSections, embeddedSummaryListItem }
+export {
+  assessmentSections,
+  summaryListSections,
+  embeddedSummaryListItem,
+  taskResponsesAsSummaryListItems,
+  reviewApplicationSections,
+}

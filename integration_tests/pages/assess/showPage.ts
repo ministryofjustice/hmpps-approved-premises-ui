@@ -1,7 +1,7 @@
 import type { ApprovedPremisesAssessment } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
-import { assessmentSections } from '../../../server/utils/assessments/utils'
+import { assessmentSections } from '../../../server/utils/applications/summaryListUtils'
 
 import Page from '../page'
 
