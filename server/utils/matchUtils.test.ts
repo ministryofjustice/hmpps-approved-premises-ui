@@ -1,4 +1,5 @@
 import {
+  apCharacteristicPairFactory,
   bedSearchParametersFactory,
   bedSearchParametersUiFactory,
   bedSearchResultFactory,
@@ -19,6 +20,7 @@ import {
   mapSearchParamCharacteristicsForUi,
   mapSearchResultCharacteristicsForUi,
   mapUiParamsForApi,
+  matchedCharacteristics,
   matchedCharacteristicsRow,
   placementDates,
   placementLength,
@@ -30,9 +32,40 @@ import {
   summaryCardRows,
   townRow,
   translateApiCharacteristicForUi,
+  unmatchedCharacteristics,
 } from './matchUtils'
 
 describe('matchUtils', () => {
+  describe('matchedCharacteristics', () => {
+    it('returns a list of the matched characteristics', () => {
+      const actualCharacteristics = [
+        apCharacteristicPairFactory.build({ propertyName: 'isSemiSpecialistMentalHealth' }),
+        apCharacteristicPairFactory.build({ propertyName: 'isPIPE' }),
+        apCharacteristicPairFactory.build({ propertyName: 'isCatered' }),
+      ]
+      const requiredCharacteristics = ['isPIPE', 'isCatered']
+
+      expect(matchedCharacteristics(actualCharacteristics, requiredCharacteristics)).toEqual(
+        mapSearchParamCharacteristicsForUi(['isPIPE', 'isCatered']),
+      )
+    })
+  })
+
+  describe('unmatchedCharacteristics', () => {
+    it('returns a list of the unmatched characteristics', () => {
+      const actualCharacteristics = [
+        apCharacteristicPairFactory.build({ propertyName: 'isSemiSpecialistMentalHealth' }),
+        apCharacteristicPairFactory.build({ propertyName: 'isPIPE' }),
+        apCharacteristicPairFactory.build({ propertyName: 'isCatered' }),
+      ]
+      const requiredCharacteristics = ['isPIPE']
+
+      expect(unmatchedCharacteristics(actualCharacteristics, requiredCharacteristics)).toEqual(
+        mapSearchParamCharacteristicsForUi(['isSemiSpecialistMentalHealth', 'isCatered']),
+      )
+    })
+  })
+
   describe('mapUiParamsForApi', () => {
     it('converts string properties to numbers', () => {
       const uiParams = bedSearchParametersUiFactory.build({ durationWeeks: '2' })
