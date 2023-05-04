@@ -46,18 +46,24 @@ export const mapSearchParamCharacteristicsForUi = (characteristics: Array<string
     .join('')}</ul>`
 }
 
-export const matchedCharacteristics = (bedSearchResult: BedSearchResult, requiredCharacteristics: Array<string>) => {
+export const matchedCharacteristics = (
+  actualCharacteristics: Array<CharacteristicPair>,
+  requiredCharacteristics: Array<string>,
+) => {
   const characteristics = requiredCharacteristics.filter(characteristic =>
-    bedSearchResult.premises.characteristics.map(c => c.name).includes(characteristic),
+    actualCharacteristics.map(c => c.propertyName).includes(characteristic),
   )
 
   return mapSearchParamCharacteristicsForUi(characteristics)
 }
 
-export const unmatchedCharacteristics = (bedSearchResult: BedSearchResult, requiredCharacteristics: Array<string>) => {
-  const characteristics = requiredCharacteristics.filter(
-    characteristic => !bedSearchResult.premises.characteristics.map(c => c.name).includes(characteristic),
-  )
+export const unmatchedCharacteristics = (
+  actualCharacteristics: Array<CharacteristicPair>,
+  requiredCharacteristics: Array<string>,
+) => {
+  const characteristics = actualCharacteristics
+    .map(c => c.propertyName)
+    .filter(characteristic => !requiredCharacteristics.includes(characteristic))
 
   return mapSearchParamCharacteristicsForUi(characteristics)
 }
@@ -214,7 +220,7 @@ export const matchedCharacteristicsRow = (
     text: 'Matched characteristics',
   },
   value: {
-    html: matchedCharacteristics(bedSearchResult, requiredCharacteristics),
+    html: matchedCharacteristics(bedSearchResult.premises.characteristics, requiredCharacteristics),
   },
 })
 
@@ -226,7 +232,7 @@ export const additionalCharacteristicsRow = (
     text: 'Additional characteristics',
   },
   value: {
-    html: unmatchedCharacteristics(bedSearchResult, requiredCharacteristics),
+    html: unmatchedCharacteristics(bedSearchResult.premises.characteristics, requiredCharacteristics),
   },
 })
 

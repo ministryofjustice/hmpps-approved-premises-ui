@@ -33,7 +33,8 @@ const premisesSummaryFactory = Factory.define<BedSearchResult['premises']>(() =>
 }))
 
 export const apCharacteristicPairFactory = Factory.define<CharacteristicPair>(() => ({
-  name: faker.helpers.arrayElement([
+  name: faker.lorem.sentence(),
+  propertyName: faker.helpers.arrayElement([
     'isIAP',
     'isPIPE',
     'isESAP',
