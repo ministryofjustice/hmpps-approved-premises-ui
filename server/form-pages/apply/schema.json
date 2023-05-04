@@ -1258,20 +1258,11 @@
                   ],
                   "type": "string"
                 },
-                "mobilityNeeds": {
-                  "type": "string"
-                },
-                "visualImpairment": {
-                  "type": "string"
-                },
                 "isPersonPregnant": {
                   "enum": [
                     "no",
                     "yes"
                   ],
-                  "type": "string"
-                },
-                "otherPregnancyConsiderations": {
                   "type": "string"
                 },
                 "childRemoved": {
@@ -1280,6 +1271,9 @@
                     "no",
                     "yes"
                   ],
+                  "type": "string"
+                },
+                "additionalAdjustments": {
                   "type": "string"
                 }
               }
@@ -1310,6 +1304,67 @@
               "type": "object",
               "properties": {
                 "expectedDeliveryDate": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "healthConditions": {
+                  "enum": [
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "healthConditionsDetail": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "prescribedMedication": {
+                  "enum": [
+                    "iDontKnow",
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "prescribedMedicationDetail": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "otherPregnancyConsiderations": {
+                  "enum": [
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "otherPregnancyConsiderationsDetail": {
                   "type": "string"
                 }
               }
