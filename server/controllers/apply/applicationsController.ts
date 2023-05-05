@@ -59,7 +59,7 @@ export default class ApplicationsController {
 
         return res.render(`applications/people/confirm`, {
           pageHeading: `Confirm ${person.name}'s details`,
-          ...person,
+          person,
           date: DateFormats.dateObjtoUIDate(new Date()),
           dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
           offenceId,

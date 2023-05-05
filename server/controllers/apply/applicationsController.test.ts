@@ -149,7 +149,7 @@ describe('applicationsController', () => {
 
           expect(response.render).toHaveBeenCalledWith('applications/people/confirm', {
             pageHeading: `Confirm ${person.name}'s details`,
-            ...person,
+            person,
             date: DateFormats.dateObjtoUIDate(new Date()),
             dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
             offenceId: offence.offenceId,
@@ -169,7 +169,7 @@ describe('applicationsController', () => {
 
           expect(response.render).toHaveBeenCalledWith('applications/people/confirm', {
             pageHeading: `Confirm ${person.name}'s details`,
-            ...person,
+            person,
             date: DateFormats.dateObjtoUIDate(new Date()),
             dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
             offenceId: null,
@@ -190,7 +190,7 @@ describe('applicationsController', () => {
 
         expect(response.render).toHaveBeenCalledWith('applications/people/confirm', {
           pageHeading: `Confirm ${person.name}'s details`,
-          ...person,
+          person,
           date: DateFormats.dateObjtoUIDate(new Date()),
           dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
           offenceId: offence.offenceId,

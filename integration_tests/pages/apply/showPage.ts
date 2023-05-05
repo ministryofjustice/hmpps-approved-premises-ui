@@ -20,7 +20,7 @@ export default class ShowPage extends Page {
       )
       this.assertDefinition('NOMS Number', this.application.person.nomsNumber)
       this.assertDefinition('Nationality', this.application.person.nationality)
-      this.assertDefinition('Religion or Belief', this.application.person.religionOrBelief)
+      this.assertDefinition('Religion or belief', this.application.person.religionOrBelief)
       this.assertDefinition('Sex', this.application.person.sex)
 
       cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', this.application.person.status)
