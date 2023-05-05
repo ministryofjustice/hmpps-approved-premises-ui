@@ -6,6 +6,15 @@ import { sentenceCase } from '../../server/utils/utils'
 
 export type PageElement = Cypress.Chainable<JQuery>
 
+const parseHtml = (actual: JQuery<HTMLElement>, expected: string) => {
+  // Get rid of all whitespace in both the actual and expected text,
+  // so we don't have to worry about small differences in whitespace
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(expected, 'text/html')
+
+  return { actual: actual.text().replace(/\s+/g, ''), expected: doc.body.innerText.replace(/\s+/g, '') }
+}
+
 export default abstract class Page {
   static verifyOnPage<T>(constructor: new (...args: Array<unknown>) => T, ...args: Array<unknown>): T {
     return new constructor(...args)
@@ -27,21 +36,23 @@ export default abstract class Page {
     items.forEach(item => {
       const key = 'text' in item.key ? item.key.text : item.key.html
       const value = 'text' in item.value ? item.value.text : item.value.html
-      if ('text' in item.value) {
+      if ('text' in item.key && 'text' in item.value) {
         this.assertDefinition(key, value)
-      } else {
+      } else if ('text' in item.key && 'html' in item.value) {
         cy.get('dt')
           .contains(key)
           .siblings('dd')
           .then($dd => {
-            // Get rid of all whitespace in both the actual and expected text,
-            // so we don't have to worry about small differences in whitespace
-            const parser = new DOMParser()
-            const doc = parser.parseFromString(value, 'text/html')
+            const { actual, expected } = parseHtml($dd, value)
 
-            const actual = $dd.text().replace(/\s+/g, '')
-            const expected = doc.body.innerText.replace(/\s+/g, '')
-
+            expect(actual).to.equal(expected)
+          })
+      } else {
+        cy.get('dd')
+          .contains(value)
+          .siblings('dt')
+          .then($dt => {
+            const { actual, expected } = parseHtml($dt, key)
             expect(actual).to.equal(expected)
           })
       }
