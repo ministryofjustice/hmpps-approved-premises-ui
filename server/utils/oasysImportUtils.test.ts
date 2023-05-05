@@ -115,6 +115,15 @@ describe('OASysImportUtils', () => {
       const result = sortOasysImportSummaries([oasysSummary3, oasysSummary2, oasysSummary1])
       expect(result).toEqual([oasysSummary1, oasysSummary2, oasysSummary3])
     })
+
+    it('removes non-numeric ', () => {
+      const oasysSummary1 = roshSummaryFactory.build({ questionNumber: 'AB1' })
+      const oasysSummary2 = roshSummaryFactory.build({ questionNumber: 'AB2' })
+      const oasysSummary3 = roshSummaryFactory.build({ questionNumber: 'AB3' })
+
+      const result = sortOasysImportSummaries([oasysSummary3, oasysSummary2, oasysSummary1])
+      expect(result).toEqual([oasysSummary1, oasysSummary2, oasysSummary3])
+    })
   })
 
   describe('sectionCheckBoxes', () => {

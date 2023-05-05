@@ -54,7 +54,7 @@ export const fetchOptionalOasysSections = (application: Application): Array<numb
 }
 
 export const sortOasysImportSummaries = (summaries: Array<OASysQuestion>): Array<OASysQuestion> => {
-  return summaries.sort((a, b) => Number(a.questionNumber) - Number(b.questionNumber))
+  return summaries.sort((a, b) => a.questionNumber.localeCompare(b.questionNumber, 'en', { numeric: true }))
 }
 
 export const sectionCheckBoxes = (fullList: Array<OASysSection>, selectedList: Array<OASysSection>) => {
