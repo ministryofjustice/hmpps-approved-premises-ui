@@ -3,7 +3,6 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 import MatchingInformation from './matchingInformation'
 
 const defaultArguments = {
-  apGender: 'female' as const,
   apType: 'esap' as const,
   wheelchairAccessible: 'essential',
   mentalHealthSupport: '1',
@@ -48,7 +47,6 @@ describe('MatchingInformation', () => {
         adaptedForHearingImpairments: 'You must specify a preference for adapted for hearing impairments',
         adaptedForRestrictedMobility: 'You must specify a preference for adapted for restricted mobility',
         adaptedForVisualImpairments: 'You must specify a preference for adapted for visual impairments',
-        apGender: 'You must select the gender of AP required',
         apType: 'You must select the type of AP required',
         arsonOffences: 'You must specify if arson offences is relevant',
         cateringRequired: 'You must specify a preference for catering required',
@@ -75,7 +73,6 @@ describe('MatchingInformation', () => {
 
       expect(page.response()).toEqual({
         'What type of AP is required?': 'Enhanced Security AP (ESAP)',
-        'Which gender AP is required?': 'Female',
         'If this person requires specialist mental health support, select the box below':
           'Semi-specialist mental health selected',
         'Wheelchair accessible': 'Essential',

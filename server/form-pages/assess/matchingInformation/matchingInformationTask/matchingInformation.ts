@@ -1,4 +1,4 @@
-import type { ApType, Gender } from '@approved-premises/api'
+import type { ApType } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
@@ -12,8 +12,6 @@ const apTypes: Record<ApType, string> = {
   esap: 'Enhanced Security AP (ESAP)',
   rfap: 'Recovery Focused Approved Premises (RFAP)',
 } as const
-
-const apGenders: Array<Gender> = ['male', 'female']
 
 const placementRequirementPreferences = ['essential' as const, 'desirable' as const, 'notRelevant' as const]
 type PlacementRequirementPreference = (typeof placementRequirementPreferences)[number]
@@ -43,7 +41,6 @@ type OffenceAndRiskInformationRelevance = (typeof offenceAndRiskInformationRelev
 
 export type MatchingInformationBody = {
   apType: ApType
-  apGender: Gender
   mentalHealthSupport?: '1' | '' | undefined
   wheelchairAccessible: PlacementRequirementPreference
   singleRoom: PlacementRequirementPreference
@@ -63,13 +60,7 @@ export type MatchingInformationBody = {
 
 @Page({
   name: 'matching-information',
-  bodyProperties: [
-    'apType',
-    'apGender',
-    'mentalHealthSupport',
-    ...placementRequirements,
-    ...offenceAndRiskInformationKeys,
-  ],
+  bodyProperties: ['apType', 'mentalHealthSupport', ...placementRequirements, ...offenceAndRiskInformationKeys],
 })
 export default class MatchingInformation implements TasklistPage {
   name = 'matching-information'
@@ -79,10 +70,6 @@ export default class MatchingInformation implements TasklistPage {
   apTypeQuestion = 'What type of AP is required?'
 
   apTypes = apTypes
-
-  apGenderQuestion = 'Which gender AP is required?'
-
-  apGenders = apGenders
 
   placementRequirementTableHeadings = ['Placement requirements', 'Essential', 'Desirable', 'Not relevant']
 
@@ -118,7 +105,6 @@ export default class MatchingInformation implements TasklistPage {
   response() {
     const response = {
       [this.apTypeQuestion]: this.apTypes[this.body.apType],
-      [this.apGenderQuestion]: sentenceCase(this.apGenders[this.body.apGender === 'male' ? 0 : 1]),
       [this.mentalHealthSupport.question]:
         this.body.mentalHealthSupport === '1' ? `${this.mentalHealthSupport.label} selected` : 'Unselected',
     }
@@ -138,7 +124,6 @@ export default class MatchingInformation implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.apType) errors.apType = 'You must select the type of AP required'
-    if (!this.body.apType) errors.apGender = 'You must select the gender of AP required'
 
     this.placementRequirements.forEach(placementRequirement => {
       if (!this.body[placementRequirement]) {

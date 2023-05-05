@@ -7,7 +7,6 @@ import AssessPage from './assessPage'
 
 export default class MatchingInformationPage extends AssessPage {
   pageClass = new MatchingInformation({
-    apGender: 'female',
     apType: 'esap',
     mentalHealthSupport: '1',
     wheelchairAccessible: 'essential',
@@ -32,7 +31,6 @@ export default class MatchingInformationPage extends AssessPage {
 
   completeForm() {
     this.checkRadioByNameAndValue('apType', this.pageClass.body.apType)
-    this.checkRadioByNameAndValue('apGender', this.pageClass.body.apGender)
     this.checkCheckboxByNameAndValue('mentalHealthSupport', '1')
 
     placementRequirements.forEach(requirement => {

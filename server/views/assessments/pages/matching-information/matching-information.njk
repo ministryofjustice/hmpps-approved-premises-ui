@@ -15,16 +15,6 @@
       items: convertKeyValuePairToRadioItems(page.apTypes, page.apType)
     },fetchContext()) }}
 
-  {{ formPageRadios({
-      fieldName: "apGender",
-      fieldset: {
-        legend: {
-          text: page.apGenderQuestion
-        }
-      },
-      items: FormUtils.convertArrayToRadioItems(page.apGenders, page.apGender)
-    },fetchContext()) }}
-
   {{
     formPageCheckboxes(
       {
