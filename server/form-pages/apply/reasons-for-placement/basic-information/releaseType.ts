@@ -12,10 +12,7 @@ type SelectableReleaseType = Exclude<ReleaseTypeOption, 'in_community'>
 type ReducedReleaseTypeOptions = Pick<ReleaseTypeOptions, 'rotl' | 'licence'>
 type ReducedReleaseTypes = keyof ReducedReleaseTypeOptions
 
-type SentenceTypeResponse = Extract<
-  SentenceTypesT,
-  'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life' | 'nonStatutory'
->
+type SentenceTypeResponse = Extract<SentenceTypesT, 'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life'>
 
 const { in_community: _, ...releaseTypes } = allReleaseTypes
 
@@ -73,7 +70,7 @@ export default class ReleaseType implements TasklistPage {
   }
 
   getReleaseTypes(sessionReleaseType: SentenceTypeResponse): ReleaseTypeOptions | ReducedReleaseTypeOptions {
-    if (sessionReleaseType === 'standardDeterminate' || sessionReleaseType === 'nonStatutory') {
+    if (sessionReleaseType === 'standardDeterminate') {
       return releaseTypes
     }
     if (sessionReleaseType === 'extendedDeterminate' || sessionReleaseType === 'ipp' || sessionReleaseType === 'life') {
