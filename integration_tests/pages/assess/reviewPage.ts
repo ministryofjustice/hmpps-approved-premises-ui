@@ -28,7 +28,7 @@ export default class ReviewPage extends AssessPage {
       this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
       this.assertDefinition('NOMS Number', person.nomsNumber)
       this.assertDefinition('Nationality', person.nationality)
-      this.assertDefinition('Religion or Belief', person.religionOrBelief)
+      this.assertDefinition('Religion or belief', person.religionOrBelief)
       this.assertDefinition('Sex', person.sex)
 
       cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', person.status)

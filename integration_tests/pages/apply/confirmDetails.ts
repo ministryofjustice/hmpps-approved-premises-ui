@@ -17,9 +17,6 @@ export default class ConfirmDetailsPage extends Page {
       this.assertDefinition('Nationality', this.person.nationality)
       this.assertDefinition('Religion or belief', this.person.religionOrBelief)
       this.assertDefinition('Sex', this.person.sex)
-    })
-
-    cy.get('dl[data-cy-prison-info]').within(() => {
       cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', this.person.status)
       this.assertDefinition('Prison', this.person.prisonName)
     })
