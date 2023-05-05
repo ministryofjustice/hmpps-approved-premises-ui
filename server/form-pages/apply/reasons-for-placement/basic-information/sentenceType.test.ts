@@ -44,6 +44,11 @@ describe('SentenceType', () => {
       const page = new SentenceType({ sentenceType: 'life' }, application)
       expect(page.next()).toEqual('release-type')
     })
+
+    it('should return release-date for a non-statutory / MAPPA sentence', () => {
+      const page = new SentenceType({ sentenceType: 'nonStatutory' }, application)
+      expect(page.next()).toEqual('release-date')
+    })
   })
 
   describe('when the exception-details step was not completed', () => {
