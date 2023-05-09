@@ -2,7 +2,6 @@ import {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
   allocationSummary,
-  assessmentSections,
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
   caseNotesFromAssessment,
@@ -12,10 +11,8 @@ import {
   getApplicationType,
   getPage,
   getReviewNavigationItems,
-  getTaskResponsesAsSummaryListItems,
   groupAssessmements,
   rejectionRationaleFromAssessmentResponses,
-  reviewApplicationSections,
 } from './utils'
 import { DateFormats } from '../dateUtils'
 
@@ -28,15 +25,12 @@ import {
   adjudicationFactory,
   applicationFactory,
   assessmentFactory,
-  documentFactory,
   prisonCaseNotesFactory,
   userFactory,
 } from '../../testutils/factories'
-import reviewSections from '../reviewUtils'
-import { documentsFromApplication } from './documentUtils'
+
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
-import { getActionsForTaskId } from './getActionsForTaskId'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -174,94 +168,6 @@ describe('utils', () => {
       expect(() => {
         getPage('review-application', 'bar')
       }).toThrow(UnknownPageError)
-    })
-  })
-
-  describe('reviewApplicationSections', () => {
-    it('sends a cardActionFunction to reviewSections, which passes the correct assessment ID on to `getActionsForTaskId`', () => {
-      const application = applicationFactory.build()
-
-      reviewApplicationSections(application, 'assessmentId')
-
-      const { mock } = reviewSections as jest.Mock
-      const cardActionFunction = mock.calls[0][3]
-
-      cardActionFunction('task')
-
-      expect(getActionsForTaskId).toHaveBeenCalledWith('task', 'assessmentId')
-    })
-  })
-
-  describe('assessmentSections', () => {
-    it('calls reviewSections with showActions set to true as the default', () => {
-      const assessment = assessmentFactory.build()
-
-      assessmentSections(assessment)
-
-      expect(reviewSections).toHaveBeenCalledWith(assessment, getTaskResponsesAsSummaryListItems, true)
-    })
-
-    it('allows showActions to be set to false', () => {
-      const assessment = assessmentFactory.build()
-
-      assessmentSections(assessment, false)
-
-      expect(reviewSections).toHaveBeenCalledWith(assessment, getTaskResponsesAsSummaryListItems, false)
-    })
-  })
-
-  describe('getTaskResponsesAsSummaryListItems', () => {
-    it('returns an empty array if there isnt any responses for the task', () => {
-      const application = applicationFactory.build()
-
-      expect(getTaskResponsesAsSummaryListItems({ id: '42', title: '42', pages: {} }, application)).toEqual([])
-    })
-
-    it('returns the task responses as Summary List items', () => {
-      const application = applicationFactory.build()
-      application.data = { foo: ['bar'] }
-      ;(applicationUtils.getResponseForPage as jest.Mock).mockImplementation(() => ({
-        title: 'response',
-      }))
-
-      expect(getTaskResponsesAsSummaryListItems({ id: 'foo', title: 'bar', pages: {} }, application)).toEqual([
-        {
-          key: {
-            text: 'title',
-          },
-          value: {
-            text: 'response',
-          },
-        },
-      ])
-    })
-
-    describe('if the page name includes "attach-documents"', () => {
-      it('then the correct array is returned', () => {
-        const application = applicationFactory.build()
-        const documents = documentFactory.buildList(1)
-
-        ;(documentsFromApplication as jest.Mock).mockReturnValue(documents)
-
-        application.data['attach-required-documents'] = {
-          'attach-documents': {
-            selectedDocuments: documents,
-          },
-        }
-
-        expect(
-          getTaskResponsesAsSummaryListItems({ id: 'attach-required-documents', title: 'bar', pages: {} }, application),
-        ).toEqual([
-          {
-            key: {
-              html: `<a href="/applications/people/${application.person.crn}/documents/${documents[0].id}" data-cy-documentId="${documents[0].id}" />${documents[0].fileName}</a>`,
-            },
-            value: {
-              text: documents[0].description,
-            },
-          },
-        ])
-      })
     })
   })
 

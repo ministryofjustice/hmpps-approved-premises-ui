@@ -25,7 +25,7 @@
 
       {{ personDetails(page.application.person) }}
 
-      {% for section in summaryListSections(page.application) %}
+      {% for section in SummaryListUtils.summaryListSections(page.application) %}
         <h2 class="govuk-heading-l">{{ section.title }}</h2>
         {% for task in section.tasks %}
           {{

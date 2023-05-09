@@ -24,7 +24,7 @@
 
       {{ personDetails(assessment.application.person) }}
 
-      {% for section in AssessmentUtils.assessmentSections(assessment, false) %}
+      {% for section in SummaryListUtils.summaryListSections(assessment, false) %}
         <h2 class="govuk-heading-l">{{ section.title }}</h3>
         {% for task in section.tasks %}
           {{

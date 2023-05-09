@@ -115,7 +115,7 @@
     })
   }}
 
-  {% for section in AssessmentUtils.reviewApplicationSections(page.document.application, assessmentId) %}
+  {% for section in SummaryListUtils.reviewApplicationSections(page.document.application, assessmentId) %}
     <h2 class="govuk-heading-l" id={{section.title | kebabCase }}>{{ section.title }}</h2>
     {% for task in section.tasks %}
       {{ govukSummaryList(task) }}

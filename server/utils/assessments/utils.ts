@@ -1,25 +1,13 @@
-import {
-  ApplicationType,
-  GroupedAssessments,
-  HtmlItem,
-  PageResponse,
-  SummaryListItem,
-  TextItem,
-  UiTask,
-} from '@approved-premises/ui'
+import { ApplicationType, GroupedAssessments, SummaryListItem } from '@approved-premises/ui'
 
-import { ApprovedPremisesApplication, ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
 import { UnknownPageError } from '../errors'
-import { embeddedSummaryListItem } from '../applications/summaryListUtils'
-import reviewSections from '../reviewUtils'
 import Apply from '../../form-pages/apply'
 import { kebabCase } from '../utils'
 import { getApplicationType as getApplicationTypeFromApplication, getResponseForPage } from '../applications/utils'
-import { documentsFromApplication } from './documentUtils'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
-import { getActionsForTaskId } from './getActionsForTaskId'
 import { assessmentsApproachingDue, formattedArrivalDate } from './dateUtils'
 import { awaitingAssessmentTableRows, completedTableRows, requestedFurtherInformationTableRows } from './tableUtils'
 
@@ -110,72 +98,6 @@ const getPage = (taskName: string, pageName: string): TasklistPageInterface => {
   return Page as TasklistPageInterface
 }
 
-const assessmentSections = (assessment: Assessment, showActions = true) => {
-  return reviewSections(assessment, getTaskResponsesAsSummaryListItems, showActions)
-}
-
-const reviewApplicationSections = (application: ApprovedPremisesApplication, assessmentId: string) => {
-  const cardActionFunction = (taskId: string) => getActionsForTaskId(taskId, assessmentId)
-
-  return reviewSections(application, getTaskResponsesAsSummaryListItems, false, cardActionFunction)
-}
-
-const getTaskResponsesAsSummaryListItems = (
-  task: UiTask,
-  application: ApprovedPremisesApplication,
-): Array<SummaryListItem> => {
-  if (!application.data[task.id]) {
-    return []
-  }
-
-  const pageNames = Object.keys(application.data[task.id])
-
-  return pageNames.reduce((prev, pageName) => {
-    const response = getResponseForPage(application, task.id, pageName)
-    const summaryListItems =
-      pageName === 'attach-documents'
-        ? getAttatchDocumentsSummaryListItems(application)
-        : getGenericSummaryListItems(response)
-
-    return [...prev, ...summaryListItems]
-  }, [])
-}
-
-const getGenericSummaryListItems = (response: PageResponse) => {
-  const items: Array<SummaryListItem> = []
-
-  Object.keys(response).forEach(key => {
-    const value =
-      typeof response[key] === 'string' || response[key] instanceof String
-        ? ({ text: response[key] } as TextItem)
-        : ({ html: embeddedSummaryListItem(response[key] as Array<Record<string, unknown>>) } as HtmlItem)
-
-    items.push({
-      key: {
-        text: key,
-      },
-      value,
-    })
-  })
-
-  return items
-}
-
-const getAttatchDocumentsSummaryListItems = (application: ApprovedPremisesApplication) => {
-  const items: Array<SummaryListItem> = []
-
-  documentsFromApplication(application).forEach(document => {
-    items.push({
-      key: {
-        html: `<a href="/applications/people/${application.person.crn}/documents/${document.id}" data-cy-documentId="${document.id}" />${document.fileName}</a>`,
-      },
-      value: { text: document?.description || '' },
-    })
-  })
-
-  return items
-}
-
 const getReviewNavigationItems = () => {
   const applySections = Apply.sections.slice(0, -1)
   return applySections.map(applicationSection => {
@@ -235,7 +157,6 @@ export {
   allocationSummary,
   assessmentsApproachingDue,
   assessmentsApproachingDueBadge,
-  assessmentSections,
   caseNotesFromAssessment,
   confirmationPageMessage,
   confirmationPageResult,
@@ -243,10 +164,8 @@ export {
   getApplicationType,
   getPage,
   getReviewNavigationItems,
-  getTaskResponsesAsSummaryListItems,
   groupAssessmements,
   rejectionRationaleFromAssessmentResponses,
-  reviewApplicationSections,
   awaitingAssessmentTableRows,
   completedTableRows,
   requestedFurtherInformationTableRows,
