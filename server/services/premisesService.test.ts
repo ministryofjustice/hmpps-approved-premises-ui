@@ -1,6 +1,6 @@
 import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
-import { dateCapacityFactory, premisesFactory, staffMemberFactory } from '../testutils/factories'
+import { dateCapacityFactory, premisesFactory, roomFactory, staffMemberFactory } from '../testutils/factories'
 import getDateRangesWithNegativeBeds from '../utils/premisesUtils'
 import paths from '../paths/manage'
 
@@ -32,6 +32,20 @@ describe('PremisesService', () => {
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.getStaffMembers).toHaveBeenCalledWith(premisesId)
+    })
+  })
+
+  describe('getRooms', () => {
+    it('on success returns the rooms given a premises ID', async () => {
+      const rooms = roomFactory.buildList(1)
+      premisesClient.getRooms.mockResolvedValue(rooms)
+
+      const result = await service.getRooms(token, premisesId)
+
+      expect(result).toEqual(rooms)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getRooms).toHaveBeenCalledWith(premisesId)
     })
   })
 

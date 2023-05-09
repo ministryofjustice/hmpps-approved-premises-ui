@@ -1,5 +1,5 @@
 import type { SummaryList, TableRow } from '@approved-premises/ui'
-import type { ApprovedPremises, StaffMember } from '@approved-premises/api'
+import type { ApprovedPremises, Room, StaffMember } from '@approved-premises/api'
 import type { PremisesClient, RestClientBuilder } from '../data'
 import paths from '../paths/manage'
 
@@ -15,6 +15,14 @@ export default class PremisesService {
     const staffMembers = await premisesClient.getStaffMembers(premisesId)
 
     return staffMembers
+  }
+
+  async getRooms(token: string, premisesId: string): Promise<Array<Room>> {
+    const premisesClient = this.premisesClientFactory(token)
+
+    const rooms = await premisesClient.getRooms(premisesId)
+
+    return rooms
   }
 
   async tableRows(token: string): Promise<Array<TableRow>> {
