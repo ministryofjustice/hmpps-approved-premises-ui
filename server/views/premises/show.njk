@@ -32,13 +32,9 @@
           classes: "govuk-button--secondary",
           href: paths.bookings.new({premisesId: premisesId})
         }, {
-          text: "Mark bed as out of service",
+          text: "Manage rooms",
           classes: "govuk-button--secondary",
-          href: paths.lostBeds.new({premisesId: premisesId})
-        },
-        {
-          text: "Manage out of service beds",
-          classes: "govuk-button--secondary"
+          href: paths.premises.rooms({premisesId: premisesId})
         }]
       }]
     }) }}
