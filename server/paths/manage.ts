@@ -28,6 +28,7 @@ const paths = {
     show: singlePremisesPath,
     capacity: singlePremisesPath.path('capacity'),
     rooms: roomsPath,
+    room: roomsPath.path(':roomId'),
   },
   bookings: {
     new: bookingsPath.path('new'),
