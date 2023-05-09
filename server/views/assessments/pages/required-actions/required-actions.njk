@@ -1,3 +1,5 @@
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+
 {% extends "../layout.njk" %}
 
 {% block questions %}
@@ -5,7 +7,34 @@
     <h1 class="govuk-heading-l">{{page.title}}</h1>
 
     {% for sectionName, question in page.sections %}
+        {%
+            call govukFieldset({
+                legend: {
+                    text: question,
+                    classes: "govuk-fieldset__legend--m"
+                }
+            })
+        %}
+
+        {% set hintHtml %}
+        <details class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                View guidance notes
+                </span>
+            </summary>
+
+            <div class="govuk-details__text">
+                {% include './partials/' + sectionName + '.njk' %}
+            </div>
+        </details>
+        {% endset %}
+
         {% if sectionName === 'concernsOfUnmanagableRisk' %}
+
+            <div class="govuk-hint">
+                If yes, the application must be discussed with the Approved Premises Area Manager (APAM) to identify additional support that may be required
+            </div>
 
             {% set unmanageableRisks %}
 
@@ -44,14 +73,8 @@
 
             {{ formPageRadios({
                 fieldName: sectionName,
-                fieldset: {
-                    legend: {
-                        text: question,
-                        classes: "govuk-fieldset__legend--s"
-                    }
-                },
                 hint: {
-                    text: "If yes, the application must be discussed with the Approved Premises Area Manager (APAM) to identify additional support that may be required"
+                    html: hintHtml
                 },
                 items: [
                     {
@@ -71,11 +94,8 @@
         {% else %}
             {{ formPageRadios({
                 fieldName: sectionName,
-                fieldset: {
-                    legend: {
-                        text: question,
-                        classes: "govuk-fieldset__legend--s"
-                    }
+                hint: {
+                    html: hintHtml
                 },
                 items: [
                     {
@@ -91,18 +111,6 @@
 
         {% endif %}
 
-        <details class="govuk-details" data-module="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                          View guidance notes
-                        </span>
-            </summary>
-
-            <div class="govuk-details__text">
-                {% include './partials/' + sectionName + '.njk' %}
-            </div>
-        </details>
-
         {{ formPageTextarea({
                     fieldName: sectionName + "Comments",
                     label: {
@@ -110,7 +118,7 @@
                         classes: "govuk-label--s"
                     }
                 }, fetchContext()) }}
-
-    {%endfor %}
+        {% endcall %}
+    {% endfor %}
 
 {% endblock %}
