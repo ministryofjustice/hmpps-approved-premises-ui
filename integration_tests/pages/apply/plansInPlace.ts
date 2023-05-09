@@ -16,5 +16,6 @@ export default class PlansInPlacePage extends ApplyPage {
 
   completeForm() {
     this.checkRadioButtonFromPageBody('arePlansInPlace')
+    this.completeTextInputFromPageBody('plansInPlaceDetail')
   }
 }

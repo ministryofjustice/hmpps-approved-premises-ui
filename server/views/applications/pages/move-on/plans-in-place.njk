@@ -5,22 +5,60 @@
   <h1 class="govuk-heading-l">{{page.title}}
   </h1>
 
+  {% set yesDetails %}
+  {{
+      formPageTextarea(
+        {
+          fieldName: "plansInPlaceDetail",
+          type: "textarea",
+          spellcheck: false,
+          label: {
+            text: page.questions.plansInPlaceDetail
+          }
+        },
+        fetchContext()
+      )
+    }}
+  {% endset -%}
+
+  {% set noDetails %}
+  {{
+      formPageTextarea(
+        {
+          fieldName: "plansNotInPlaceDetail",
+          type: "textarea",
+          spellcheck: false,
+          label: {
+            text: page.questions.plansNotInPlaceDetail
+          }
+        },
+        fetchContext()
+      )
+    }}
+  {% endset -%}
+
   {{ formPageRadios({
         fieldName: "arePlansInPlace",
         fieldset: {
           legend: {
-            text: page.question,
+            text: page.questions.arePlansInPlace,
             classes: "govuk-fieldset__legend--m"
           }
         },
         items: [
           {
             value: "yes",
-            text: "Yes"
+            text: "Yes",
+            conditional: {
+              html: yesDetails
+            }
           },
           {
             value: "no",
-            text: "No"
+            text: "No",
+            conditional: {
+              html: noDetails
+            }
           }
         ]
     },fetchContext()) }}

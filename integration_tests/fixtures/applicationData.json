@@ -399,7 +399,8 @@
       "postcodeArea": "SW11"
     },
     "plans-in-place": {
-      "arePlansInPlace": "yes"
+      "arePlansInPlace": "yes",
+      "plansInPlaceDetail": "Some detail"
     },
     "type-of-accommodation": {
       "accommodationType": "foreignNational",
