@@ -5,6 +5,8 @@ import LostBedCreatePage from './lostBedCreate'
 import PremisesListPage from './premisesList'
 import PremisesShowPage from './premisesShow'
 
+import RoomsListPage from './roomsList'
+
 import BookingConfirmationPage from './booking/confirmation'
 import BookingFindPage from './booking/find'
 import BookingNewPage from './booking/new'
@@ -25,4 +27,5 @@ export {
   BookingShowPage,
   BookingExtensionConfirmationPage,
   BookingExtensionCreatePage,
+  RoomsListPage,
 }

@@ -18,6 +18,7 @@ import users from './integration_tests/mockApis/users'
 import tasks from './integration_tests/mockApis/tasks'
 import placementRequests from './integration_tests/mockApis/placementRequests'
 import bedSearch from './integration_tests/mockApis/beds'
+import rooms from './integration_tests/mockApis/rooms'
 
 import schemaValidator from './integration_tests/tasks/schemaValidator'
 
@@ -56,6 +57,7 @@ export default defineConfig({
         ...tasks,
         ...placementRequests,
         ...bedSearch,
+        ...rooms,
         stubApplicationJourney,
       })
     },
