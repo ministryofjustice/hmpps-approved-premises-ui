@@ -44,6 +44,7 @@ export const placementRequestData = (assessment: Assessment): PlacementRequest =
   const criteria = criteriaFromMatchingInformation(matchingInformation)
 
   return {
+    gender: 'male', // Hardcoded for now as we only support Male APs
     type: matchingInformation.apType,
     expectedArrival: arrivalDateFromApplication(assessment.application),
     duration: placementDuration,

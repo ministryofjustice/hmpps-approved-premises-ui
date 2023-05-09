@@ -29,6 +29,7 @@ describe('placementRequestData', () => {
     mockOptionalQuestionResponse({ duration: '12', alternativeRadius: '100' })
 
     expect(placementRequestData(assessment)).toEqual({
+      gender: 'male',
       type: matchingInformation.apType,
       expectedArrival,
       duration: '12',
