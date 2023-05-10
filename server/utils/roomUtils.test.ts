@@ -1,7 +1,9 @@
+import paths from '../paths/manage'
 import { roomFactory } from '../testutils/factories'
 import { bedTableRows, roomCharacteristicList, roomsTableRows } from './roomUtils'
 
 describe('roomUtils', () => {
+  const premisesId = 'premisesId'
   describe('roomsTableRows', () => {
     it('returns the table rows given the rooms', () => {
       const rooms = roomFactory.buildList(1)
@@ -26,10 +28,16 @@ describe('roomUtils', () => {
     it('returns the table rows given the room', () => {
       const room = roomFactory.build({ beds: [{ name: 'bedName', id: 'id' }] })
 
-      expect(bedTableRows(room)).toEqual([
+      expect(bedTableRows(room, premisesId)).toEqual([
         [
           {
             text: room.beds[0].name,
+          },
+          {
+            html: `<a href="${paths.bookings.new({
+              premisesId,
+              bedId: room.beds[0].id,
+            })}" data-cy-bedId="${room.beds[0].id}">Book bed <span class="govuk-visually-hidden">Book bed</span></a>`,
           },
         ],
       ])

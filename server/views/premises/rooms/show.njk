@@ -19,9 +19,12 @@
         head: [
           {
             text: "Bed name"
+          }, 
+          {
+            text: "Action"
           }
         ],
-        rows: RoomUtils.bedTableRows(room)
+        rows: RoomUtils.bedTableRows(room, premisesId)
       })
     }}
 

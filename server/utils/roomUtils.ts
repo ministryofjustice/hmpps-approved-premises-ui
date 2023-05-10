@@ -1,4 +1,4 @@
-import { Room } from '../@types/shared'
+import { Bed, Room } from '../@types/shared'
 import { TableCell } from '../@types/ui'
 import paths from '../paths/manage'
 import { linkTo, sentenceCase } from './utils'
@@ -27,10 +27,25 @@ const roomLink = (room: Room, premisesId: string): string =>
     },
   )
 
-export const bedTableRows = (room: Room) => {
-  const mappedBeds = room.beds.map(bed => [nameCell(bed)])
+export const bedTableRows = (room: Room, premisesId: string) => {
+  const mappedBeds = room.beds.map(bed => [nameCell(bed), bookCell(bed, premisesId)])
   return mappedBeds
 }
+
+const bookCell = (bed: Bed, premisesId: string): TableCell => ({
+  html: bookingLink(bed, premisesId),
+})
+
+const bookingLink = (bed: Bed, premisesId: string): string =>
+  linkTo(
+    paths.bookings.new,
+    { bedId: bed.id, premisesId },
+    {
+      text: 'Book bed',
+      hiddenText: 'Book bed',
+      attributes: { 'data-cy-bedId': bed.id },
+    },
+  )
 
 export const roomCharacteristicList = (room: Room) =>
   `<ul class="govuk-list govuk-list--bullet">
