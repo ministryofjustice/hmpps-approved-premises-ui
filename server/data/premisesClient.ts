@@ -31,4 +31,8 @@ export default class PremisesClient {
   async getRooms(premisesId: string): Promise<Array<Room>> {
     return (await this.restClient.get({ path: paths.premises.rooms({ premisesId }) })) as Array<Room>
   }
+
+  async getRoom(premisesId: string, roomId: string): Promise<Room> {
+    return (await this.restClient.get({ path: paths.premises.room({ premisesId, roomId }) })) as Room
+  }
 }
