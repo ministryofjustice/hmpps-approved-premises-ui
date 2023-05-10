@@ -9,7 +9,7 @@ export default Factory.define<Room>(() => ({
   beds: bedFactory.buildList(faker.datatype.number({ min: 1, max: 2 })),
   code: faker.lorem.words(1).toLocaleUpperCase(),
   notes: faker.lorem.sentence(),
-  characteristics: roomCharacteristicFactory.buildList(faker.datatype.number({ min: 1, max: 1 })),
+  characteristics: roomCharacteristicFactory.buildList(faker.datatype.number({ min: 1, max: 3 })),
 }))
 
 export const roomCharacteristicPairFactory = Factory.define<CharacteristicPair>(() => ({

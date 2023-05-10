@@ -26,4 +26,8 @@ export default class RoomsListPage extends Page {
         })
     })
   }
+
+  clickRoom(room: Room): void {
+    cy.contains(room.name).click()
+  }
 }
