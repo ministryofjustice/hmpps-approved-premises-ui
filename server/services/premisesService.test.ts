@@ -49,6 +49,20 @@ describe('PremisesService', () => {
     })
   })
 
+  describe('getRoom', () => {
+    it('on success returns the room given a premises ID and room ID', async () => {
+      const room = roomFactory.build()
+      premisesClient.getRoom.mockResolvedValue(room)
+
+      const result = await service.getRoom(token, premisesId, room.id)
+
+      expect(result).toEqual(room)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getRoom).toHaveBeenCalledWith(premisesId, room.id)
+    })
+  })
+
   describe('tableRows', () => {
     it('returns a table view of the premises', async () => {
       const premises1 = premisesFactory.build({ name: 'XYZ' })

@@ -25,6 +25,14 @@ export default class PremisesService {
     return rooms
   }
 
+  async getRoom(token: string, premisesId: string, roomId: string): Promise<Room> {
+    const premisesClient = this.premisesClientFactory(token)
+
+    const room = await premisesClient.getRoom(premisesId, roomId)
+
+    return room
+  }
+
   async tableRows(token: string): Promise<Array<TableRow>> {
     const premisesClient = this.premisesClientFactory(token)
     const premises = await premisesClient.all()

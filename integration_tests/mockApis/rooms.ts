@@ -20,4 +20,18 @@ export default {
         jsonBody: args.rooms,
       },
     }),
+  stubRoom: (args: { premisesId: string; room: Room }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: paths.premises.room({ premisesId: args.premisesId, roomId: args.room.id }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: args.room,
+      },
+    }),
 }

@@ -139,4 +139,30 @@ describeClient('PremisesClient', provider => {
       expect(output).toEqual(rooms)
     })
   })
+
+  describe('getRoom', () => {
+    it('should return a single room for a given premises', async () => {
+      const premises = premisesFactory.build()
+      const room = roomFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a room for a premises',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.room({ premisesId: premises.id, roomId: room.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: room,
+        },
+      })
+
+      const output = await premisesClient.getRoom(premises.id, room.id)
+      expect(output).toEqual(room)
+    })
+  })
 })
