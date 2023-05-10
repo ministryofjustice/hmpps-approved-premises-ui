@@ -26,7 +26,7 @@ export default class BookingsController {
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { premisesId } = req.params
+      const { premisesId, bedId } = req.params
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
       const crnArr = req.flash('crn')
@@ -37,6 +37,7 @@ export default class BookingsController {
         return res.render(`bookings/new`, {
           pageHeading: 'Create a placement',
           premisesId,
+          bedId,
           ...person,
           errors,
           errorSummary,
@@ -56,17 +57,18 @@ export default class BookingsController {
 
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { premisesId } = req.params
+      const { premisesId, bedId } = req.params
 
       const booking: NewBooking = {
         serviceName: 'approved-premises',
+        bedId,
         ...req.body,
         ...DateFormats.dateAndTimeInputsToIsoString(req.body, 'arrivalDate'),
         ...DateFormats.dateAndTimeInputsToIsoString(req.body, 'departureDate'),
       }
 
       try {
-        const confirmedBooking = await this.bookingService.create(req.user.token, premisesId as string, booking)
+        const confirmedBooking = await this.bookingService.create(req.user.token, premisesId, booking)
 
         res.redirect(
           paths.bookings.confirm({
@@ -76,7 +78,8 @@ export default class BookingsController {
         )
       } catch (err) {
         req.flash('crn', booking.crn)
-        catchValidationErrorOrPropogate(req, res, err, paths.bookings.new({ premisesId }))
+
+        catchValidationErrorOrPropogate(req, res, err, paths.bookings.new({ premisesId, bedId }))
       }
     }
   }
