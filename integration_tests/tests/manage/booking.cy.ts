@@ -9,6 +9,7 @@ import { BookingFindPage, BookingNewPage, BookingShowPage } from '../../pages/ma
 import Page from '../../pages/page'
 
 import BookingConfirmation from '../../pages/manage/booking/confirmation'
+import { bedFactory } from '../../../server/testutils/factories/room'
 
 context('Booking', () => {
   beforeEach(() => {
@@ -65,7 +66,7 @@ context('Booking', () => {
     cy.signIn()
 
     // When I visit the first new booking page
-    const bookingNewPage = BookingFindPage.visit(premises.id)
+    const bookingNewPage = BookingFindPage.visit(premises.id, booking.bed.id)
 
     // And I enter the CRN to the form
     bookingNewPage.enterCrn(person.crn)
@@ -108,14 +109,14 @@ context('Booking', () => {
   it('should show errors for the find page and the new booking page', () => {
     const premises = premisesFactory.build()
     const person = personFactory.build()
-
+    const bedId = bedFactory.build().id
     cy.task('stubSinglePremises', premises)
 
     // Given I am signed in
     cy.signIn()
 
     // When I visit the find page
-    const page = BookingFindPage.visit(premises.id)
+    const page = BookingFindPage.visit(premises.id, bedId)
 
     // And I miss a required field
     cy.task('stubPersonNotFound', {

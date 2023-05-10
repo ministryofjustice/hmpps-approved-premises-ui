@@ -7,8 +7,8 @@ export default class BookingNewPage extends Page {
     super('Create a placement')
   }
 
-  static visit(premisesId: string): BookingNewPage {
-    cy.visit(paths.bookings.new({ premisesId }))
+  static visit(premisesId: string, bedId: string): BookingNewPage {
+    cy.visit(paths.bookings.new({ premisesId, bedId }))
 
     return new BookingNewPage()
   }
