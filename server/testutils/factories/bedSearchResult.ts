@@ -6,6 +6,7 @@ import {
   BedSearchResults,
   CharacteristicPair,
 } from '../../@types/shared'
+import { roomCharacteristicPairFactory } from './room'
 
 export const bedSearchResultsFactory = Factory.define<BedSearchResults>(() => ({
   results: bedSearchResultFactory.buildList(3),
@@ -59,28 +60,8 @@ export const apCharacteristicPairFactory = Factory.define<CharacteristicPair>(()
   premises: faker.company.name(),
 }))
 
-const roomCharacteristicFactory = Factory.define<CharacteristicPair>(() => ({
-  name: faker.helpers.arrayElement([
-    'acceptsSexOffenders',
-    'acceptsChildSexOffenders',
-    'acceptsNonSexualChildOffenders',
-    'acceptsHateCrimeOffenders',
-    'isCatered',
-    'hasWideStepFreeAccess',
-    'hasWideAccessToCommunalAreas',
-    'hasStepFreeAccessToCommunalAreas',
-    'hasWheelChairAccessibleBathrooms',
-    'hasLift',
-    'hasTactileFlooring',
-    'hasBrailleSignage',
-    'hasHearingLoop',
-    'additionalRestrictions',
-  ]),
-  premises: faker.company.name(),
-}))
-
 const roomSummaryFactory = Factory.define<BedSearchResult['room']>(() => ({
-  characteristics: roomCharacteristicFactory.buildList(3),
+  characteristics: roomCharacteristicPairFactory.buildList(3),
   id: faker.datatype.uuid(),
   name: faker.company.name(),
 }))
