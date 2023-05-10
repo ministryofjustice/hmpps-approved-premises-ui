@@ -35,4 +35,27 @@ describe('RoomsController', () => {
       expect(premisesService.getRooms).toHaveBeenCalledWith(token, premisesId)
     })
   })
+
+  describe('show', () => {
+    it('should return the room to the template', async () => {
+      const room = roomFactory.build()
+      const premisesId = 'premisesId'
+      request.params.premisesId = premisesId
+      const roomId = 'roomId'
+      request.params.roomId = roomId
+
+      premisesService.getRoom.mockResolvedValue(room)
+
+      const requestHandler = roomsController.show()
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('premises/rooms/show', {
+        room,
+        premisesId,
+        pageHeading: 'Manage room',
+      })
+
+      expect(premisesService.getRoom).toHaveBeenCalledWith(token, premisesId, roomId)
+    })
+  })
 })

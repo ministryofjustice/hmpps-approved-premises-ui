@@ -16,4 +16,16 @@ export default class RoomsController {
       })
     }
   }
+
+  show(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const room = await this.premisesService.getRoom(req.user.token, req.params.premisesId, req.params.roomId)
+
+      return res.render('premises/rooms/show', {
+        room,
+        premisesId: req.params.premisesId,
+        pageHeading: 'Manage room',
+      })
+    }
+  }
 }
