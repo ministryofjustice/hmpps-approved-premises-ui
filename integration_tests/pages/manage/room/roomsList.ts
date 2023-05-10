@@ -1,7 +1,7 @@
-import { Room } from '../../../server/@types/shared'
+import { Room } from '../../../../server/@types/shared'
 
-import Page from '../page'
-import paths from '../../../server/paths/manage'
+import Page from '../../page'
+import paths from '../../../../server/paths/manage'
 
 export default class RoomsListPage extends Page {
   constructor() {

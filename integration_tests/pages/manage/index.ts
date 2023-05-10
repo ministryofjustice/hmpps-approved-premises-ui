@@ -5,7 +5,7 @@ import LostBedCreatePage from './lostBedCreate'
 import PremisesListPage from './premisesList'
 import PremisesShowPage from './premisesShow'
 
-import RoomsListPage from './roomsList'
+import RoomsListPage from './room/roomsList'
 
 import BookingConfirmationPage from './booking/confirmation'
 import BookingFindPage from './booking/find'
