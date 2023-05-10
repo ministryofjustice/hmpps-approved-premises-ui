@@ -3,8 +3,8 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { GroupedListofBookings, SummaryListItem } from '@approved-premises/ui'
 import { Booking } from '@approved-premises/api'
-import PremisesService from '../../services/premisesService'
-import BookingService from '../../services/bookingService'
+import PremisesService from '../../../services/premisesService'
+import BookingService from '../../../services/bookingService'
 import PremisesController from './premisesController'
 
 describe('PremisesController', () => {

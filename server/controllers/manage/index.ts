@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import PremisesController from './premisesController'
+import PremisesController from './premises/premisesController'
 import BookingsController from './bookingsController'
 import BookingExtensionsController from './bookingExtensionsController'
 import ArrivalsController from './arrivalsController'
