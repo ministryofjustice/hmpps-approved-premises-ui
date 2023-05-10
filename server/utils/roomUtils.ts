@@ -3,7 +3,7 @@ import { TableCell } from '../@types/ui'
 import paths from '../paths/manage'
 import { linkTo } from './utils'
 
-export const tableRows = (rooms: Array<Room>, premisesId: string) => {
+export const roomsTableRows = (rooms: Array<Room>, premisesId: string) => {
   const mappedRooms = rooms.map(room => [nameCell(room), numberOfBedsCell(room), actionCell(room, premisesId)])
   return mappedRooms
 }

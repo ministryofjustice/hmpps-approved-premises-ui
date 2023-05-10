@@ -1,12 +1,12 @@
 import { roomFactory } from '../testutils/factories'
-import { tableRows } from './roomUtils'
+import { roomsTableRows } from './roomUtils'
 
 describe('roomUtils', () => {
-  describe('tableRows', () => {
+  describe('roomsTableRows', () => {
     it('returns the table rows given the rooms', () => {
       const rooms = roomFactory.buildList(1)
 
-      expect(tableRows(rooms, 'premisesId')).toEqual([
+      expect(roomsTableRows(rooms, 'premisesId')).toEqual([
         [
           {
             text: rooms[0].name,
