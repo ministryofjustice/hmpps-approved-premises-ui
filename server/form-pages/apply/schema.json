@@ -1660,16 +1660,36 @@
           }
         },
         "plans-in-place": {
-          "type": "object",
-          "properties": {
-            "arePlansInPlace": {
-              "enum": [
-                "no",
-                "yes"
-              ],
-              "type": "string"
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "arePlansInPlace": {
+                  "type": "string",
+                  "enum": [
+                    "yes"
+                  ]
+                },
+                "plansInPlaceDetail": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "arePlansInPlace": {
+                  "type": "string",
+                  "enum": [
+                    "no"
+                  ]
+                },
+                "plansNotInPlaceDetail": {
+                  "type": "string"
+                }
+              }
             }
-          }
+          ]
         },
         "type-of-accommodation": {
           "type": "object",

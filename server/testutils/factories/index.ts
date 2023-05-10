@@ -39,6 +39,7 @@ import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
 import referenceDataFactory from './referenceData'
 import risksFactory, { tierEnvelopeFactory } from './risks'
+import roomFactory from './room'
 import staffMemberFactory from './staffMember'
 import taskFactory from './task'
 import taskWrapperFactory from './taskWrapperFactory'
@@ -86,6 +87,7 @@ export {
   reallocationFactory,
   referenceDataFactory,
   risksFactory,
+  roomFactory,
   roshSummaryFactory,
   staffMemberFactory,
   taskFactory,

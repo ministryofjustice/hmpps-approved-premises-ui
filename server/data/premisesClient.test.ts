@@ -1,4 +1,4 @@
-import { dateCapacityFactory, premisesFactory, staffMemberFactory } from '../testutils/factories'
+import { dateCapacityFactory, premisesFactory, roomFactory, staffMemberFactory } from '../testutils/factories'
 import PremisesClient from './premisesClient'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
@@ -111,6 +111,32 @@ describeClient('PremisesClient', provider => {
 
       const output = await premisesClient.getStaffMembers(premises.id)
       expect(output).toEqual(staffMembers)
+    })
+  })
+
+  describe('getRooms', () => {
+    it('should return a list of rooms for a given premises', async () => {
+      const premises = premisesFactory.build()
+      const rooms = roomFactory.buildList(1)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get rooms for a premises',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.rooms({ premisesId: premises.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: rooms,
+        },
+      })
+
+      const output = await premisesClient.getRooms(premises.id)
+      expect(output).toEqual(rooms)
     })
   })
 })
