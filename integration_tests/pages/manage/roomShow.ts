@@ -24,4 +24,8 @@ export default class RoomsShowPage extends Page {
       cy.get('li').contains(sentenceCase(item.name))
     })
   }
+
+  clickBedLink(bedName: string): void {
+    cy.contains(bedName).siblings().contains('Book bed').click()
+  }
 }

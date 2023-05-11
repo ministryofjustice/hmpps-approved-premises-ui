@@ -8,6 +8,7 @@ import departureFactory from './departure'
 import personFactory from './person'
 import { DateFormats } from '../../utils/dateUtils'
 import cancellationFactory from './cancellation'
+import { bedFactory } from './room'
 
 const today = DateFormats.dateObjToIsoDate(startOfToday())
 const soon = () =>
@@ -105,5 +106,6 @@ export default BookingFactory.define(() => {
     createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
     cancellations: cancellationFactory.buildList(1),
     departures: departureFactory.buildList(1),
+    bed: bedFactory.build(),
   }
 })

@@ -1,6 +1,6 @@
 import { roomFactory } from '../../../server/testutils/factories'
 
-import { RoomsListPage } from '../../pages/manage'
+import { BookingFindPage, RoomsListPage } from '../../pages/manage'
 import RoomsShowPage from '../../pages/manage/roomShow'
 import Page from '../../pages/page'
 
@@ -42,5 +42,11 @@ context('Rooms', () => {
     // Then I should see the room details
     roomPage.shouldShowBeds(room.beds)
     roomPage.shouldShowCharacteristics(room.characteristics)
+
+    // And I should be able to click on a bed
+    roomPage.clickBedLink(room.beds[0].name)
+
+    // Then I should be taken to the bed page
+    Page.verifyOnPage(BookingFindPage)
   })
 })

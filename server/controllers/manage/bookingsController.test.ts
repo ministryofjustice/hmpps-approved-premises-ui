@@ -15,6 +15,7 @@ jest.mock('../../utils/validation')
 describe('bookingsController', () => {
   const token = 'SOME_TOKEN'
   const premisesId = 'premisesId'
+  const bedId = 'bedId'
 
   let request: DeepMocked<Request> = createMock<Request>({ user: { token } })
   const response: DeepMocked<Response> = createMock<Response>({})
@@ -156,7 +157,7 @@ describe('bookingsController', () => {
 
       request = {
         ...request,
-        params: { premisesId },
+        params: { premisesId, bedId },
         body: newBooking,
       }
 
@@ -181,7 +182,7 @@ describe('bookingsController', () => {
 
       request = {
         ...request,
-        params: { premisesId },
+        params: { premisesId, bedId },
         flash: flashSpy,
       }
 
@@ -199,6 +200,7 @@ describe('bookingsController', () => {
         err,
         paths.bookings.new({
           premisesId,
+          bedId,
         }),
       )
     })

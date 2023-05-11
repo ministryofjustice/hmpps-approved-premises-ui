@@ -27,11 +27,7 @@
         html: "<h1>" + premises.name + "</h1>"
       },
       menus: [{
-        items: [{
-          text: "Create a placement",
-          classes: "govuk-button--secondary",
-          href: paths.bookings.new({premisesId: premisesId})
-        }, {
+        items: [ {
           text: "Manage rooms",
           classes: "govuk-button--secondary",
           href: paths.premises.rooms({premisesId: premisesId})
