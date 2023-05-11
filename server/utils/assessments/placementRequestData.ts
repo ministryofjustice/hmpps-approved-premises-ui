@@ -106,22 +106,7 @@ export const riskInformationToCriteria = (riskKey: RiskInformationKey): Array<Pl
 export const requirementToCriteria = (requirement: Requirement): Array<PlacementCriteria> => {
   switch (requirement) {
     case 'wheelchairAccessible':
-      return [
-        'hasWideStepFreeAccess',
-        'hasWideAccessToCommunalAreas',
-        'hasStepFreeAccessToCommunalAreas',
-        'hasWheelChairAccessibleBathrooms',
-        'hasLift',
-        'hasWheelChairAccessibleBathrooms',
-      ]
-    case 'singleRoom':
-      return []
-    case 'adaptedForHearingImpairments':
-      return ['hasHearingLoop']
-    case 'adaptedForVisualImpairments':
-      return ['hasTactileFlooring', 'hasBrailleSignage']
-    case 'adaptedForRestrictedMobility':
-      return ['hasWideStepFreeAccess', 'hasStepFreeAccessToCommunalAreas', 'hasLift']
+      return ['isStepFreeDesignated', 'isWheelchairDesignated']
     case 'cateringRequired':
       return ['isCatered']
     default:
