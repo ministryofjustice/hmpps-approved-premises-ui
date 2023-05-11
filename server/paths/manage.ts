@@ -19,7 +19,7 @@ const cancellationsPath = bookingPath.path('cancellations')
 
 const departuresPath = bookingPath.path('departures')
 
-const lostBedsPath = singlePremisesPath.path('lost-beds')
+const lostBedsPath = singlePremisesPath.path('beds/:bedId/lost-beds')
 
 const roomsPath = singlePremisesPath.path('rooms')
 
