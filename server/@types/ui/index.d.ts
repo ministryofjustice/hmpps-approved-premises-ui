@@ -15,6 +15,7 @@ import {
   OASysSection,
   Person,
   PersonAcctAlert,
+  PlacementCriteria,
   PlacementRequest,
   PlacementRequestStatus,
   ReleaseTypeOption,
@@ -314,8 +315,8 @@ export interface BedSearchParametersUi {
   maxDistanceMiles: string
   startDate: string
   postcodeDistrict: string
-  requiredCharacteristics: Array<string>
-  selectedRequiredCharacteristics?: Array<string>
+  requiredCharacteristics: Array<PlacementCriteria>
+  selectedRequiredCharacteristics?: Array<PlacementCriteria>
   crn: string
   applicationId: string
   assessmentId: string
