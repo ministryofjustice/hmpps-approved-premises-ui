@@ -25,7 +25,11 @@ export default class RoomsShowPage extends Page {
     })
   }
 
-  clickBedLink(bedName: string): void {
+  clickBookBedLink(bedName: string): void {
     cy.contains(bedName).siblings().contains('Book bed').click()
+  }
+
+  clickMarkBedOutOfServiceLink(bedName: string): void {
+    cy.contains(bedName).siblings().contains('Mark bed as out of service').click()
   }
 }

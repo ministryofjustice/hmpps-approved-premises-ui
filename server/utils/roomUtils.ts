@@ -28,7 +28,7 @@ const roomLink = (room: Room, premisesId: string): string =>
   )
 
 export const bedTableRows = (room: Room, premisesId: string) => {
-  const mappedBeds = room.beds.map(bed => [nameCell(bed), bookCell(bed, premisesId)])
+  const mappedBeds = room.beds.map(bed => [nameCell(bed), bookCell(bed, premisesId), lostCell(bed, premisesId)])
   return mappedBeds
 }
 
@@ -43,6 +43,21 @@ const bookingLink = (bed: Bed, premisesId: string): string =>
     {
       text: 'Book bed',
       hiddenText: 'Book bed',
+      attributes: { 'data-cy-bedId': bed.id },
+    },
+  )
+
+const lostCell = (bed: Bed, premisesId: string): TableCell => ({
+  html: lostLink(bed, premisesId),
+})
+
+const lostLink = (bed: Bed, premisesId: string): string =>
+  linkTo(
+    paths.lostBeds.new,
+    { bedId: bed.id, premisesId },
+    {
+      text: 'Mark bed as out of service',
+      hiddenText: 'Mark bed as out of service',
       attributes: { 'data-cy-bedId': bed.id },
     },
   )
