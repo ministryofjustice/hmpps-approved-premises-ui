@@ -15,7 +15,7 @@ export default class RequiredActionsPage extends AssessPage {
     concernsOfUnmanagableRiskComments: '',
     additionalRecommendations: 'yes',
     additionalRecommendationsComments: '',
-    nameOfAreaManager: faker.name.fullName(),
+    nameOfAreaManager: faker.person.fullName(),
     'dateOfDiscussion-day': '1',
     'dateOfDiscussion-month': '2',
     'dateOfDiscussion-year': '2022',

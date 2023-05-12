@@ -12,7 +12,7 @@ export const newPlacementRequestBookingFactory = Factory.define<NewPlacementRequ
   return {
     arrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
     departureDate: DateFormats.dateObjToIsoDate(departureDate),
-    bedId: faker.datatype.uuid(),
+    bedId: faker.string.uuid(),
   }
 })
 

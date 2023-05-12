@@ -4,8 +4,8 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 import type { UserDetails } from '@approved-premises/ui'
 
 export default Factory.define<UserDetails>(() => ({
-  id: faker.datatype.uuid(),
+  id: faker.string.uuid(),
   name: faker.internet.userName(),
-  displayName: faker.name.fullName(),
+  displayName: faker.person.fullName(),
   roles: [],
 }))

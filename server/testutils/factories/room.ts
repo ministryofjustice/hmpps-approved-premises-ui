@@ -4,12 +4,12 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 import type { Bed, Characteristic, CharacteristicPair, Room } from '@approved-premises/api'
 
 export default Factory.define<Room>(() => ({
-  id: faker.datatype.uuid(),
+  id: faker.string.uuid(),
   name: faker.lorem.words(3),
-  beds: bedFactory.buildList(faker.datatype.number({ min: 1, max: 2 })),
+  beds: bedFactory.buildList(faker.number.int({ min: 1, max: 2 })),
   code: faker.lorem.words(1).toLocaleUpperCase(),
   notes: faker.lorem.sentence(),
-  characteristics: roomCharacteristicFactory.buildList(faker.datatype.number({ min: 1, max: 3 })),
+  characteristics: roomCharacteristicFactory.buildList(faker.number.int({ min: 1, max: 3 })),
 }))
 
 export const roomCharacteristicPairFactory = Factory.define<CharacteristicPair>(() => ({
@@ -33,15 +33,15 @@ export const roomCharacteristicPairFactory = Factory.define<CharacteristicPair>(
 }))
 
 export const bedFactory = Factory.define<Bed>(() => ({
-  id: faker.datatype.uuid(),
+  id: faker.string.uuid(),
   name: faker.lorem.words(3),
   code: faker.lorem.words(1).toLocaleUpperCase(),
   notes: faker.lorem.sentence(),
-  characteristics: roomCharacteristicFactory.buildList(faker.datatype.number({ min: 1, max: 1 })),
+  characteristics: roomCharacteristicFactory.buildList(faker.number.int({ min: 1, max: 1 })),
 }))
 
 const roomCharacteristicFactory = Factory.define<Characteristic>(() => ({
-  id: faker.datatype.uuid(),
+  id: faker.string.uuid(),
   name: faker.helpers.arrayElement([
     'acceptsSexOffenders',
     'acceptsChildSexOffenders',

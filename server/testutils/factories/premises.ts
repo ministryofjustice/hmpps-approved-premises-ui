@@ -4,33 +4,33 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 import type { ApArea, ApprovedPremises, LocalAuthorityArea, ProbationRegion } from '@approved-premises/api'
 
 export default Factory.define<ApprovedPremises>(() => ({
-  id: faker.datatype.uuid(),
+  id: faker.string.uuid(),
   name: `${faker.word.adjective()} ${faker.word.adverb()} ${faker.word.noun()}`,
   status: faker.helpers.arrayElement(['pending', 'active', 'archived']),
-  apCode: faker.random.alphaNumeric(5, { casing: 'upper' }),
-  postcode: faker.address.zipCode(),
+  apCode: faker.string.alphanumeric(5),
+  postcode: faker.location.zipCode(),
   bedCount: 50,
-  availableBedsForToday: faker.datatype.number({ min: 0, max: 50 }),
-  apAreaId: faker.random.alphaNumeric(2, { casing: 'upper' }),
+  availableBedsForToday: faker.number.int({ min: 0, max: 50 }),
+  apAreaId: faker.string.alphanumeric(2),
   probationRegion: probationRegionFactory.build(),
   apArea: apAreaFactory.build(),
   localAuthorityArea: localAuthorityAreaFactory.build(),
-  addressLine1: faker.address.streetAddress(),
+  addressLine1: faker.location.streetAddress(),
 }))
 
 const probationRegionFactory = Factory.define<ProbationRegion>(() => ({
-  id: faker.datatype.uuid(),
-  name: faker.address.cityName(),
+  id: faker.string.uuid(),
+  name: faker.location.city(),
 }))
 
 const apAreaFactory = Factory.define<ApArea>(() => ({
-  id: faker.datatype.uuid(),
-  name: faker.address.cityName(),
-  identifier: faker.random.alphaNumeric(),
+  id: faker.string.uuid(),
+  name: faker.location.city(),
+  identifier: faker.string.alphanumeric(),
 }))
 
 const localAuthorityAreaFactory = Factory.define<LocalAuthorityArea>(() => ({
-  id: faker.datatype.uuid(),
-  name: faker.address.county(),
-  identifier: faker.random.alphaNumeric(),
+  id: faker.string.uuid(),
+  name: faker.location.county(),
+  identifier: faker.string.alphanumeric(),
 }))
