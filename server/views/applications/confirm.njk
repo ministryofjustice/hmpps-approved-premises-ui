@@ -14,27 +14,21 @@
             {{ govukPanel({
                 titleText: "Application confirmation"
             }) }}
-            <p>
-          We’ve sent you a confirmation email.
-        </p>
-            <p>
-                <a href="">Download a copy of this application (PDF, 708 KB) </a>
-            </p>
 
             <h2 class="govuk-heading-m">What happens next</h2>
 
-            <p>Your application has been sent to the [North East] Central Referral Unit (CRU) for Approved Premises (AP).</p>
+            <p>We’ve sent your application to the Central Referral Unit (CRU) for Approved Premises (AP) in your region.</p>
             <p>The CRU will assess your application within 10 working days.</p>
             <p>If further information is required to assess your application you will receive an email notification.</a>
-            </p>
-            <p>You can check the status of your application on you AP applications dashboard.</p>
-            <p>
-                <a href="https://www.gov.uk/service-manual/user-centred-design/resources/patterns/feedback-pages.html">What did you think of this service?</a> (takes 30 seconds)</p>
+        </p>
+        <p>You can check the status of your application on you AP applications dashboard.</p>
+        <p>
+            <a href="https://www.gov.uk/service-manual/user-centred-design/resources/patterns/feedback-pages.html">What did you think of this service?</a> (takes 30 seconds)</p>
 
-        </div>
     </div>
+</div>
 
-    {{ govukButton({
+{{ govukButton({
           text: "Back to dashboard",
           href: paths.applications.index()
         }) }}
