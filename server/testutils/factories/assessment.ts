@@ -34,7 +34,7 @@ export default AssessmentFactory.define(() => ({
   allocatedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   submittedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   decision: faker.helpers.arrayElement(['accepted' as const, 'rejected' as const, undefined]),
-  data: JSON.parse(faker.datatype.json()),
+  data: {},
   clarificationNotes: [],
   rejectionRationale: faker.lorem.sentence(),
 }))
