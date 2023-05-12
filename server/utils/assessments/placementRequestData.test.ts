@@ -90,18 +90,8 @@ describe('placementRequestData', () => {
       expect(criteriaFromMatchingInformation(matchingInformation)).toEqual({
         desirableCriteria: [],
         essentialCriteria: [
-          'hasWideStepFreeAccess',
-          'hasWideAccessToCommunalAreas',
-          'hasStepFreeAccessToCommunalAreas',
-          'hasWheelChairAccessibleBathrooms',
-          'hasLift',
-          'hasWheelChairAccessibleBathrooms',
-          'hasHearingLoop',
-          'hasTactileFlooring',
-          'hasBrailleSignage',
-          'hasWideStepFreeAccess',
-          'hasStepFreeAccessToCommunalAreas',
-          'hasLift',
+          'isStepFreeDesignated',
+          'isWheelchairDesignated',
           'isCatered',
           'acceptsSexOffenders',
           'acceptsSexOffenders',
@@ -124,21 +114,7 @@ describe('placementRequestData', () => {
       })
 
       expect(criteriaFromMatchingInformation(matchingInformation)).toEqual({
-        desirableCriteria: [
-          'hasWideStepFreeAccess',
-          'hasWideAccessToCommunalAreas',
-          'hasStepFreeAccessToCommunalAreas',
-          'hasWheelChairAccessibleBathrooms',
-          'hasLift',
-          'hasWheelChairAccessibleBathrooms',
-          'hasHearingLoop',
-          'hasTactileFlooring',
-          'hasBrailleSignage',
-          'hasWideStepFreeAccess',
-          'hasStepFreeAccessToCommunalAreas',
-          'hasLift',
-          'isCatered',
-        ],
+        desirableCriteria: ['isStepFreeDesignated', 'isWheelchairDesignated', 'isCatered'],
         essentialCriteria: [],
       })
     })

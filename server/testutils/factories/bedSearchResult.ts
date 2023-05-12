@@ -7,6 +7,7 @@ import {
   CharacteristicPair,
 } from '../../@types/shared'
 import { roomCharacteristicPairFactory } from './room'
+import { placementCriteria } from './placementRequest'
 
 export const bedSearchResultsFactory = Factory.define<BedSearchResults>(() => ({
   results: bedSearchResultFactory.buildList(3),
@@ -35,28 +36,7 @@ const premisesSummaryFactory = Factory.define<BedSearchResult['premises']>(() =>
 
 export const apCharacteristicPairFactory = Factory.define<CharacteristicPair>(() => ({
   name: faker.lorem.sentence(),
-  propertyName: faker.helpers.arrayElement([
-    'isIAP',
-    'isPIPE',
-    'isESAP',
-    'isSemiSpecialistMentalHealth',
-    'isRecoveryFocussed',
-    'isSuitableForVulnerable',
-    'acceptsSexOffenders',
-    'acceptsChildSexOffenders',
-    'acceptsNonSexualChildOffenders',
-    'acceptsHateCrimeOffenders',
-    'isCatered',
-    'hasWideStepFreeAccess',
-    'hasWideAccessToCommunalAreas',
-    'hasStepFreeAccessToCommunalAreas',
-    'hasWheelChairAccessibleBathrooms',
-    'hasLift',
-    'hasTactileFlooring',
-    'hasBrailleSignage',
-    'hasHearingLoop',
-    'additionalRestrictions',
-  ]),
+  propertyName: faker.helpers.arrayElement(placementCriteria),
   premises: faker.company.name(),
 }))
 

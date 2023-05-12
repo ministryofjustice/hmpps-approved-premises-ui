@@ -28,7 +28,9 @@ export default Factory.define<PlacementRequest>(() => ({
   assessor: userFactory.build(),
 }))
 
-const placementCriteria = [
+export const placementCriteria = [
+  'isPipe',
+  'isEsap',
   'isSemiSpecialistMentalHealth',
   'isRecoveryFocussed',
   'isSuitableForVulnerable',
@@ -36,13 +38,12 @@ const placementCriteria = [
   'acceptsChildSexOffenders',
   'acceptsNonSexualChildOffenders',
   'acceptsHateCrimeOffenders',
+  'isWheelchairDesignated',
+  'isSingleRoom',
+  'isStepFreeDesignated',
   'isCatered',
-  'hasWideStepFreeAccess',
-  'hasWideAccessToCommunalAreas',
-  'hasStepFreeAccessToCommunalAreas',
-  'hasWheelChairAccessibleBathrooms',
-  'hasLift',
-  'hasTactileFlooring',
-  'hasBrailleSignage',
-  'hasHearingLoop',
+  'isGroundFloor',
+  'hasEnSuite',
+  'isSuitedForSexOffenders',
+  'isArsonSuitable',
 ] as const

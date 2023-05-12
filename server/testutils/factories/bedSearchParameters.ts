@@ -3,29 +3,7 @@ import { Factory } from 'fishery'
 import { ApprovedPremisesBedSearchParameters as BedSearchParameters } from '../../@types/shared'
 import { BedSearchParametersUi } from '../../@types/ui'
 import { DateFormats } from '../../utils/dateUtils'
-
-const characteristics = [
-  'isIAP',
-  'isPIPE',
-  'isESAP',
-  'isSemiSpecialistMentalHealth',
-  'isRecoveryFocussed',
-  'isSuitableForVulnerable',
-  'acceptsSexOffenders',
-  'acceptsChildSexOffenders',
-  'acceptsNonSexualChildOffenders',
-  'acceptsHateCrimeOffenders',
-  'isCatered',
-  'hasWideStepFreeAccess',
-  'hasWideAccessToCommunalAreas',
-  'hasStepFreeAccessToCommunalAreas',
-  'hasWheelChairAccessibleBathrooms',
-  'hasLift',
-  'hasTactileFlooring',
-  'hasBrailleSignage',
-  'hasHearingLoop',
-  'additionalRestrictions',
-]
+import { placementCriteria } from './placementRequest'
 
 export const bedSearchParametersFactory = Factory.define<BedSearchParameters>(() => ({
   serviceName: 'approved-premises',
@@ -33,7 +11,7 @@ export const bedSearchParametersFactory = Factory.define<BedSearchParameters>(()
   startDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
   maxDistanceMiles: faker.datatype.number({ min: 1, max: 100 }),
   postcodeDistrict: 'SW11',
-  requiredCharacteristics: faker.helpers.arrayElements(characteristics),
+  requiredCharacteristics: faker.helpers.arrayElements(placementCriteria),
 }))
 
 export const bedSearchParametersUiFactory = Factory.define<BedSearchParametersUi>(() => ({
@@ -41,8 +19,8 @@ export const bedSearchParametersUiFactory = Factory.define<BedSearchParametersUi
   maxDistanceMiles: faker.datatype.number({ min: 1, max: 100 }).toString(),
   startDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
   postcodeDistrict: 'SW11',
-  requiredCharacteristics: faker.helpers.arrayElements(characteristics),
-  selectedRequiredCharacteristics: faker.helpers.arrayElements(characteristics),
+  requiredCharacteristics: faker.helpers.arrayElements(placementCriteria),
+  selectedRequiredCharacteristics: faker.helpers.arrayElements(placementCriteria),
   crn: 'ABC123',
   applicationId: faker.datatype.uuid(),
   assessmentId: faker.datatype.uuid(),

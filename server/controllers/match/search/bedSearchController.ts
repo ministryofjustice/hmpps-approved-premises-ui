@@ -10,9 +10,8 @@ import { startDateObjFromParams } from '../../../utils/matchUtils'
 import { objectIfNotEmpty } from '../../../utils/utils'
 
 export const placementCriteria = [
-  'isIAP',
-  'isPIPE',
-  'isESAP',
+  'isPipe',
+  'isEsap',
   'isSemiSpecialistMentalHealth',
   'isRecoveryFocussed',
   'isSuitableForVulnerable',
@@ -20,16 +19,14 @@ export const placementCriteria = [
   'acceptsChildSexOffenders',
   'acceptsNonSexualChildOffenders',
   'acceptsHateCrimeOffenders',
+  'isWheelchairDesignated',
+  'isSingleRoom',
+  'isStepFreeDesignated',
   'isCatered',
-  'hasWideStepFreeAccess',
-  'hasWideAccessToCommunalAreas',
-  'hasStepFreeAccessToCommunalAreas',
-  'hasWheelChairAccessibleBathrooms',
-  'hasLift',
-  'hasTactileFlooring',
-  'hasBrailleSignage',
-  'hasHearingLoop',
-  'additionalRestrictions',
+  'isGroundFloor',
+  'hasEnSuite',
+  'isSuitedForSexOffenders',
+  'isArsonSuitable',
 ]
 
 export default class BedSearchController {
