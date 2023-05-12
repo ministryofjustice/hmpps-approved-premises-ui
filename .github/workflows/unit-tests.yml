@@ -24,4 +24,4 @@ jobs:
       - uses: ./.github/shared/setup
 
       - name: Running unit tests
-        run: npm test
+        run: npm run test:ci
