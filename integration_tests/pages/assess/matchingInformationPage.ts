@@ -1,28 +1,24 @@
 import { ApprovedPremisesAssessment as Assessment } from '../../../server/@types/shared'
-import MatchingInformation, {
-  offenceAndRiskInformationKeys,
-  placementRequirements,
-} from '../../../server/form-pages/assess/matchingInformation/matchingInformationTask/matchingInformation'
+import MatchingInformation from '../../../server/form-pages/assess/matchingInformation/matchingInformationTask/matchingInformation'
 import AssessPage from './assessPage'
+import { offenceAndRiskOptions, placementRequirementOptions } from '../../../server/utils/placementCriteriaUtils'
 
 export default class MatchingInformationPage extends AssessPage {
   pageClass = new MatchingInformation({
-    apType: 'esap',
+    apType: 'isEsap',
     mentalHealthSupport: '1',
-    wheelchairAccessible: 'essential',
-    singleRoom: 'desirable',
-    adaptedForHearingImpairments: 'notRelevant',
-    adaptedForVisualImpairments: 'desirable',
-    adaptedForRestrictedMobility: 'essential',
-    cateringRequired: 'desirable',
-    contactSexualOffencesAgainstAnAdultAdults: 'relevant',
-    nonContactSexualOffencesAgainstAnAdultAdults: 'notRelevant',
-    contactSexualOffencesAgainstChildren: 'relevant',
-    nonContactSexualOffencesAgainstChildren: 'notRelevant',
-    nonSexualOffencesAgainstChildren: 'relevant',
-    arsonOffences: 'notRelevant',
-    hateBasedOffences: 'relevant',
-    vulnerableToExploitation: 'notRelevant',
+    isWheelchairDesignated: 'essential',
+    isSingleRoom: 'desirable',
+    isStepFreeDesignated: 'essential',
+    isCatered: 'desirable',
+    isGroundFloor: 'desirable',
+    acceptsSexOffenders: 'relevant',
+    acceptsNonSexualChildOffenders: 'notRelevant',
+    acceptsChildSexOffenders: 'relevant',
+    isArsonSuitable: 'notRelevant',
+    acceptsHateCrimeOffenders: 'relevant',
+    isSuitableForVulnerable: 'notRelevant',
+    hasEnSuite: 'notRelevant',
   })
 
   constructor(assessment: Assessment) {
@@ -33,11 +29,11 @@ export default class MatchingInformationPage extends AssessPage {
     this.checkRadioByNameAndValue('apType', this.pageClass.body.apType)
     this.checkCheckboxByNameAndValue('mentalHealthSupport', '1')
 
-    placementRequirements.forEach(requirement => {
+    Object.keys(placementRequirementOptions).forEach(requirement => {
       this.checkRadioByNameAndValue(requirement, this.pageClass.body[requirement])
     })
 
-    offenceAndRiskInformationKeys.forEach(offenceAndRiskInformationKey => {
+    Object.keys(offenceAndRiskOptions).forEach(offenceAndRiskInformationKey => {
       this.checkRadioByNameAndValue(offenceAndRiskInformationKey, this.pageClass.body[offenceAndRiskInformationKey])
     })
   }
