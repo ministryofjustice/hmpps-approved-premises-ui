@@ -17,7 +17,7 @@ describe('placementRequestData', () => {
   const expectedArrival = '2020-01-01'
 
   let matchingInformation = createMock<MatchingInformationBody>({
-    apType: 'normal',
+    apType: 'isEsap',
     mentalHealthSupport: '1',
   })
 
@@ -30,7 +30,7 @@ describe('placementRequestData', () => {
 
     expect(placementRequestData(assessment)).toEqual({
       gender: 'male',
-      type: matchingInformation.apType,
+      type: 'esap',
       expectedArrival,
       duration: '12',
       location: 'ABC123',
@@ -72,68 +72,70 @@ describe('placementRequestData', () => {
   describe('criteriaFromMatchingInformation', () => {
     it('returns all essential criteria for essential and relevant matching information', () => {
       matchingInformation = createMock<MatchingInformationBody>({
-        wheelchairAccessible: 'essential',
-        adaptedForHearingImpairments: 'essential',
-        adaptedForVisualImpairments: 'essential',
-        adaptedForRestrictedMobility: 'essential',
-        cateringRequired: 'essential',
-        contactSexualOffencesAgainstAnAdultAdults: 'relevant',
-        nonContactSexualOffencesAgainstAnAdultAdults: 'relevant',
-        contactSexualOffencesAgainstChildren: 'relevant',
-        nonContactSexualOffencesAgainstChildren: 'relevant',
-        nonSexualOffencesAgainstChildren: 'relevant',
-        arsonOffences: 'relevant',
-        hateBasedOffences: 'relevant',
-        vulnerableToExploitation: 'relevant',
+        apType: 'isEsap',
+        mentalHealthSupport: '1',
+        isWheelchairDesignated: 'essential',
+        isStepFreeDesignated: 'essential',
+        isCatered: 'essential',
+        acceptsSexOffenders: 'relevant',
+        acceptsChildSexOffenders: 'relevant',
+        acceptsNonSexualChildOffenders: 'relevant',
+        isArsonSuitable: 'relevant',
+        acceptsHateCrimeOffenders: 'relevant',
+        isSuitableForVulnerable: 'relevant',
       })
 
-      expect(criteriaFromMatchingInformation(matchingInformation)).toEqual({
-        desirableCriteria: [],
-        essentialCriteria: [
-          'isStepFreeDesignated',
+      const result = criteriaFromMatchingInformation(matchingInformation)
+
+      expect(result.desirableCriteria).toEqual([])
+      expect(result.essentialCriteria.sort()).toEqual(
+        [
+          'isEsap',
           'isWheelchairDesignated',
+          'isStepFreeDesignated',
           'isCatered',
           'acceptsSexOffenders',
-          'acceptsSexOffenders',
-          'acceptsChildSexOffenders',
           'acceptsChildSexOffenders',
           'acceptsNonSexualChildOffenders',
+          'isArsonSuitable',
           'acceptsHateCrimeOffenders',
           'isSuitableForVulnerable',
-        ],
-      })
+          'isSuitedForSexOffenders',
+          'isSemiSpecialistMentalHealth',
+        ].sort(),
+      )
     })
 
     it('returns all desirable criteria for desirable matching information', () => {
       matchingInformation = createMock<MatchingInformationBody>({
-        wheelchairAccessible: 'desirable',
-        adaptedForHearingImpairments: 'desirable',
-        adaptedForVisualImpairments: 'desirable',
-        adaptedForRestrictedMobility: 'desirable',
-        cateringRequired: 'desirable',
+        mentalHealthSupport: undefined,
+        apType: 'normal',
+        isWheelchairDesignated: 'desirable',
+        isStepFreeDesignated: 'desirable',
+        isCatered: 'desirable',
       })
 
-      expect(criteriaFromMatchingInformation(matchingInformation)).toEqual({
-        desirableCriteria: ['isStepFreeDesignated', 'isWheelchairDesignated', 'isCatered'],
-        essentialCriteria: [],
-      })
+      const result = criteriaFromMatchingInformation(matchingInformation)
+
+      expect(result.desirableCriteria.sort()).toEqual(
+        ['isStepFreeDesignated', 'isWheelchairDesignated', 'isCatered'].sort(),
+      )
+      expect(result.essentialCriteria).toEqual([])
     })
 
     it('returns empty objects for not relevant matching information', () => {
       matchingInformation = createMock<MatchingInformationBody>({
-        wheelchairAccessible: 'notRelevant',
-        adaptedForHearingImpairments: 'notRelevant',
-        adaptedForVisualImpairments: 'notRelevant',
-        adaptedForRestrictedMobility: 'notRelevant',
-        cateringRequired: 'notRelevant',
-        contactSexualOffencesAgainstAnAdultAdults: 'notRelevant',
-        nonContactSexualOffencesAgainstAnAdultAdults: 'notRelevant',
-        contactSexualOffencesAgainstChildren: 'notRelevant',
-        nonContactSexualOffencesAgainstChildren: 'notRelevant',
-        nonSexualOffencesAgainstChildren: 'notRelevant',
-        arsonOffences: 'notRelevant',
-        hateBasedOffences: 'notRelevant',
-        vulnerableToExploitation: 'notRelevant',
+        apType: 'normal',
+        mentalHealthSupport: '',
+        isWheelchairDesignated: 'notRelevant',
+        isStepFreeDesignated: 'notRelevant',
+        isCatered: 'notRelevant',
+        acceptsSexOffenders: 'notRelevant',
+        acceptsChildSexOffenders: 'notRelevant',
+        acceptsNonSexualChildOffenders: 'notRelevant',
+        isArsonSuitable: 'notRelevant',
+        acceptsHateCrimeOffenders: 'notRelevant',
+        isSuitableForVulnerable: 'notRelevant',
       })
 
       expect(criteriaFromMatchingInformation(matchingInformation)).toEqual({
