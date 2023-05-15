@@ -33,6 +33,7 @@ export type { AssessmentAcceptance } from './models/AssessmentAcceptance';
 export type { AssessmentDecision } from './models/AssessmentDecision';
 export type { AssessmentRejection } from './models/AssessmentRejection';
 export type { AssessmentStatus } from './models/AssessmentStatus';
+export type { AssessmentSummary } from './models/AssessmentSummary';
 export type { Bed } from './models/Bed';
 export type { BedSearchParameters } from './models/BedSearchParameters';
 export type { BedSearchResult } from './models/BedSearchResult';
@@ -52,7 +53,6 @@ export type { BookingSearchResultRoomSummary } from './models/BookingSearchResul
 export type { BookingSearchResults } from './models/BookingSearchResults';
 export type { BookingSearchSortField } from './models/BookingSearchSortField';
 export type { BookingStatus } from './models/BookingStatus';
-export type { CacheType } from './models/CacheType';
 export type { Cancellation } from './models/Cancellation';
 export type { CancellationReason } from './models/CancellationReason';
 export type { Characteristic } from './models/Characteristic';
