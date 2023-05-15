@@ -35,6 +35,16 @@ import {
   unmatchedCharacteristics,
 } from './matchUtils'
 
+jest.mock('./placementCriteriaUtils', () => {
+  return {
+    placementCriteria: {
+      isESAP: 'ESAP',
+      isIAP: 'IAP',
+      isSemiSpecialistMentalHealth: 'Semi specialist mental health',
+    },
+  }
+})
+
 describe('matchUtils', () => {
   describe('matchedCharacteristics', () => {
     it('returns a list of the matched characteristics', () => {
@@ -167,8 +177,10 @@ describe('matchUtils', () => {
   })
 
   describe('searchFilter', () => {
-    it('maps the placementCriteria array and selectedValues array into the array of objects for checkbox inputs', () => {
-      expect(searchFilter(['isESAP', 'isIAP', 'isSemiSpecialistMentalHealth'], ['isESAP', 'isIAP'])).toEqual([
+    it('returns an array of checkboxes with the selectedValues selected and any empty values removed', () => {
+      const result = searchFilter(['isESAP', 'isIAP'])
+
+      expect(result).toEqual([
         {
           checked: true,
           text: 'ESAP',

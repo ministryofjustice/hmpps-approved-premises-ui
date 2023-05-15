@@ -207,6 +207,7 @@ describe('AssessmentService', () => {
 
       expect(assessmentClientFactory).toHaveBeenCalledWith(token)
       expect(assessmentClient.rejection).toHaveBeenCalledWith(assessment.id, document, response.Decision)
+      expect(placementRequestData).not.toHaveBeenCalled()
     })
   })
 

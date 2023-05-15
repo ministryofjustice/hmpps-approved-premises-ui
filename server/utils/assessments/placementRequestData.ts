@@ -1,4 +1,9 @@
-import { ApprovedPremisesAssessment as Assessment, PlacementCriteria, PlacementRequest } from '@approved-premises/api'
+import {
+  ApType,
+  ApprovedPremisesAssessment as Assessment,
+  PlacementCriteria,
+  PlacementRequirements,
+} from '@approved-premises/api'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import {
   retrieveOptionalQuestionResponseFromApplicationOrAssessment,
@@ -8,17 +13,19 @@ import {
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import MatchingInformation, {
   MatchingInformationBody,
-  offenceAndRiskInformationKeys,
-  placementRequirements,
 } from '../../form-pages/assess/matchingInformation/matchingInformationTask/matchingInformation'
 import LocationFactors from '../../form-pages/apply/risk-and-need-factors/location-factors/describeLocationFactors'
 import PlacementDuration from '../../form-pages/apply/move-on/placementDuration'
 import { getDefaultPlacementDurationInWeeks } from '../applications/getDefaultPlacementDurationInWeeks'
+import {
+  ApTypeCriteria,
+  OffenceAndRiskCriteria,
+  PlacementRequirementCriteria,
+  offenceAndRiskOptions,
+  placementRequirementOptions,
+} from '../placementCriteriaUtils'
 
-type Requirement = (typeof placementRequirements)[number]
-type RiskInformationKey = (typeof offenceAndRiskInformationKeys)[number]
-
-export const placementRequestData = (assessment: Assessment): PlacementRequest => {
+export const placementRequestData = (assessment: Assessment): PlacementRequirements => {
   const matchingInformation = pageDataFromApplicationOrAssessment(
     MatchingInformation,
     assessment,
@@ -45,14 +52,27 @@ export const placementRequestData = (assessment: Assessment): PlacementRequest =
 
   return {
     gender: 'male', // Hardcoded for now as we only support Male APs
-    type: matchingInformation.apType,
+    type: apType(matchingInformation.apType),
     expectedArrival: arrivalDateFromApplication(assessment.application),
     duration: placementDuration,
     location,
     radius: alternativeRadius || 50,
     mentalHealthSupport: !!matchingInformation.mentalHealthSupport,
     ...criteria,
-  } as PlacementRequest
+  } as PlacementRequirements
+}
+
+export const apType = (type: ApTypeCriteria | 'normal'): ApType => {
+  switch (type) {
+    case 'isPipe':
+      return 'pipe'
+    case 'isEsap':
+      return 'esap'
+    case 'isRecoveryFocussed':
+      return 'rfap'
+    default:
+      return 'normal'
+  }
 }
 
 export const criteriaFromMatchingInformation = (
@@ -61,55 +81,33 @@ export const criteriaFromMatchingInformation = (
   const essentialCriteria = [] as Array<PlacementCriteria>
   const desirableCriteria = [] as Array<PlacementCriteria>
 
-  placementRequirements.forEach(requirement => {
+  if (matchingInformation.apType !== 'normal') {
+    essentialCriteria.push(matchingInformation.apType)
+  }
+
+  if (matchingInformation.mentalHealthSupport) {
+    essentialCriteria.push('isSemiSpecialistMentalHealth')
+  }
+
+  Object.keys(placementRequirementOptions).forEach((requirement: PlacementRequirementCriteria) => {
     if (matchingInformation[requirement] === 'essential') {
-      essentialCriteria.push(...requirementToCriteria(requirement))
+      essentialCriteria.push(requirement)
     }
 
     if (matchingInformation[requirement] === 'desirable') {
-      desirableCriteria.push(...requirementToCriteria(requirement))
+      desirableCriteria.push(requirement)
     }
   })
 
-  offenceAndRiskInformationKeys.forEach(key => {
-    if (matchingInformation[key] === 'relevant') {
-      essentialCriteria.push(...riskInformationToCriteria(key))
+  Object.keys(offenceAndRiskOptions).forEach((requirement: OffenceAndRiskCriteria) => {
+    if (matchingInformation[requirement] === 'relevant') {
+      essentialCriteria.push(requirement)
     }
   })
+
+  if (essentialCriteria.includes('acceptsSexOffenders') || essentialCriteria.includes('acceptsChildSexOffenders')) {
+    essentialCriteria.push('isSuitedForSexOffenders')
+  }
 
   return { essentialCriteria, desirableCriteria }
-}
-
-export const riskInformationToCriteria = (riskKey: RiskInformationKey): Array<PlacementCriteria> => {
-  switch (riskKey) {
-    case 'contactSexualOffencesAgainstAnAdultAdults':
-      return ['acceptsSexOffenders']
-    case 'nonContactSexualOffencesAgainstAnAdultAdults':
-      return ['acceptsSexOffenders']
-    case 'contactSexualOffencesAgainstChildren':
-      return ['acceptsChildSexOffenders']
-    case 'nonContactSexualOffencesAgainstChildren':
-      return ['acceptsChildSexOffenders']
-    case 'nonSexualOffencesAgainstChildren':
-      return ['acceptsNonSexualChildOffenders']
-    case 'arsonOffences':
-      return []
-    case 'hateBasedOffences':
-      return ['acceptsHateCrimeOffenders']
-    case 'vulnerableToExploitation':
-      return ['isSuitableForVulnerable']
-    default:
-      return []
-  }
-}
-
-export const requirementToCriteria = (requirement: Requirement): Array<PlacementCriteria> => {
-  switch (requirement) {
-    case 'wheelchairAccessible':
-      return ['isStepFreeDesignated', 'isWheelchairDesignated']
-    case 'cateringRequired':
-      return ['isCatered']
-    default:
-      return []
-  }
 }

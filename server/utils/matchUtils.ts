@@ -8,6 +8,7 @@ import { BedSearchParametersUi, ObjectWithDateParts, SummaryListItem } from '../
 import { DateFormats } from './dateUtils'
 import { linkTo, sentenceCase } from './utils'
 import matchPaths from '../paths/match'
+import { placementCriteria } from './placementCriteriaUtils'
 
 type PlacementDates = {
   placementLength: number
@@ -255,9 +256,11 @@ export const startDateObjFromParams = (params: { startDate: string } | ObjectWit
   return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
 }
 
-export const searchFilter = (placementCriteria: Array<string>, selectedValues: Array<string>) =>
-  placementCriteria.map(criterion => ({
-    text: translateApiCharacteristicForUi(criterion),
-    value: criterion,
-    checked: selectedValues.includes(criterion),
-  }))
+export const searchFilter = (selectedValues: Array<string>) =>
+  Object.keys(placementCriteria)
+    .map(criterion => ({
+      text: placementCriteria[criterion],
+      value: criterion,
+      checked: selectedValues.includes(criterion),
+    }))
+    .filter(item => item.text.length > 0)

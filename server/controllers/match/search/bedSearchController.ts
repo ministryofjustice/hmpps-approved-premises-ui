@@ -9,26 +9,6 @@ import BedService from '../../../services/bedService'
 import { startDateObjFromParams } from '../../../utils/matchUtils'
 import { objectIfNotEmpty } from '../../../utils/utils'
 
-export const placementCriteria = [
-  'isPipe',
-  'isEsap',
-  'isSemiSpecialistMentalHealth',
-  'isRecoveryFocussed',
-  'isSuitableForVulnerable',
-  'acceptsSexOffenders',
-  'acceptsChildSexOffenders',
-  'acceptsNonSexualChildOffenders',
-  'acceptsHateCrimeOffenders',
-  'isWheelchairDesignated',
-  'isSingleRoom',
-  'isStepFreeDesignated',
-  'isCatered',
-  'isGroundFloor',
-  'hasEnSuite',
-  'isSuitedForSexOffenders',
-  'isArsonSuitable',
-]
-
 export default class BedSearchController {
   constructor(
     private readonly bedService: BedService,
@@ -62,7 +42,6 @@ export default class BedSearchController {
         formPath: matchPaths.placementRequests.beds.search({ id: placementRequest.id }),
         ...params,
         ...startDateObjFromParams(params),
-        placementCriteria,
       })
     }
   }
