@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import BedsController, { placementCriteria } from './bedSearchController'
+import BedsController from './bedSearchController'
 import { bedSearchResultsFactory, placementRequestFactory } from '../../../testutils/factories'
 
 import { BedService, PlacementRequestService } from '../../../services'
@@ -57,7 +57,6 @@ describe('bedSearchController', () => {
           placementRequest,
           tier: placementRequest.risks.tier.value.level,
           formPath,
-          placementCriteria,
           ...query,
           ...body,
         })
@@ -79,7 +78,6 @@ describe('bedSearchController', () => {
           placementRequest,
           tier: placementRequest.risks.tier.value.level,
           formPath,
-          placementCriteria,
           ...query,
           requiredCharacteristics: ['someRequiredCharacteristic'],
         })
@@ -104,7 +102,6 @@ describe('bedSearchController', () => {
           placementRequest,
           tier: placementRequest.risks.tier.value.level,
           formPath,
-          placementCriteria,
           ...query,
         })
         expect(bedService.search).toHaveBeenCalledWith(token, query)
