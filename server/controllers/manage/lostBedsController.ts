@@ -51,4 +51,17 @@ export default class LostBedsController {
       }
     }
   }
+
+  show(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { premisesId, id } = req.params
+
+      const lostBed = await this.lostBedService.getLostBed(req.user.token, premisesId, id)
+
+      res.render('lostBeds/show', {
+        premisesId,
+        lostBed,
+      })
+    }
+  }
 }

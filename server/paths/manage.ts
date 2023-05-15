@@ -64,6 +64,7 @@ const paths = {
   lostBeds: {
     new: lostBedsPath.path('new'),
     create: lostBedsPath,
+    show: lostBedsPath.path(':id'),
   },
 }
 

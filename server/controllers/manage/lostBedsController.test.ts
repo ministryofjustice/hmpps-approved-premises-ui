@@ -133,4 +133,21 @@ describe('LostBedsController', () => {
       )
     })
   })
+
+  describe('show', () => {
+    it('shows the lost bed', async () => {
+      const lostBed = lostBedFactory.build()
+      lostBedService.getLostBed.mockResolvedValue(lostBed)
+
+      const requestHandler = lostBedController.show()
+
+      await requestHandler({ ...request, params: { premisesId, id: lostBed.id } }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('lostBeds/show', {
+        premisesId,
+        lostBed,
+      })
+      expect(lostBedService.getLostBed).toHaveBeenCalledWith(token, premisesId, lostBed.id)
+    })
+  })
 })
