@@ -1,6 +1,6 @@
 import { dateCapacityFactory, lostBedFactory, premisesFactory } from '../../../server/testutils/factories'
 
-import { LostBedCreatePage } from '../../pages/manage'
+import { LostBedCreatePage, LostBedShowPage } from '../../pages/manage'
 
 context('LostBed', () => {
   beforeEach(() => {
@@ -74,5 +74,22 @@ context('LostBed', () => {
 
     // Then I should see error messages relating to that field
     page.shouldShowErrorMessagesForFields(['startDate', 'endDate', 'reason', 'referenceNumber'])
+  })
+
+  it('should show a lost bed', () => {
+    // Given I am signed in
+    cy.signIn()
+
+    // And I have created a lost bed
+    const premises = premisesFactory.build()
+    const lostBed = lostBedFactory.build()
+
+    cy.task('stubLostBed', { premisesId: premises.id, lostBed })
+
+    // And I visit that lost bed's show page
+    const page = LostBedShowPage.visit(premises.id, lostBed)
+
+    // Then I should see the details of that lost bed
+    page.shouldShowLostBedDetail()
   })
 })

@@ -1,0 +1,58 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+
+{% extends "../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+  {% include "../_messages.njk" %}
+
+  {{ govukBackLink({
+    text: "Back",
+    href: paths.premises.show({premisesId: premisesId})
+  }) }}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+      <h1>Lost bed details</h1>
+
+      {{
+        govukSummaryList({
+          classes: 'govuk-summary-list',
+          rows: [
+            {
+              key: {
+                text: "Start date"
+              },
+              value: {
+                text: formatDate(lostBed.startDate, {format: 'short'})
+              }
+            },
+            {
+              key: {
+                text: "End date"
+              },
+              value: {
+                text: formatDate(lostBed.endDate, {format: 'short'})
+              }
+            },
+            {
+              key: {
+                text: "Reason"
+              },
+              value: {
+                text: lostBed.reason.name
+              }
+            }
+          ]
+        })
+      }}
+
+    </div>
+  </div>
+{% endblock %}

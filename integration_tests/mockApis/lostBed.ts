@@ -20,6 +20,19 @@ export default {
       },
     }),
 
+  stubLostBed: (args: { premisesId: string; lostBed: LostBed }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/premises/${args.premisesId}/lost-beds/${args.lostBed.id}`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.lostBed,
+      },
+    }),
+
   stubLostBedErrors: (args: { premisesId: string; params: Array<string> }): SuperAgentRequest =>
     stubFor(errorStub(args.params, `/premises/${args.premisesId}/lost-beds`)),
 
