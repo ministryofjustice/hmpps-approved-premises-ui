@@ -1,4 +1,3 @@
-import paths from '../paths/manage'
 import { roomFactory } from '../testutils/factories'
 import { bedTableRows, roomCharacteristicList, roomsTableRows } from './roomUtils'
 
@@ -34,10 +33,10 @@ describe('roomUtils', () => {
             text: room.beds[0].name,
           },
           {
-            html: `<a href="${paths.bookings.new({
-              premisesId,
-              bedId: room.beds[0].id,
-            })}" data-cy-bedId="${room.beds[0].id}">Book bed <span class="govuk-visually-hidden">Book bed</span></a>`,
+            html: '<a href="/premises/premisesId/beds/id/bookings/new" data-cy-bedId="id">Book bed <span class="govuk-visually-hidden">Book bed</span></a>',
+          },
+          {
+            html: '<a href="/premises/premisesId/beds/id/lost-beds/new" data-cy-bedId="id">Mark bed as out of service <span class="govuk-visually-hidden">Mark bed as out of service</span></a>',
           },
         ],
       ])

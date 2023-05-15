@@ -8,8 +8,8 @@ export default class LostBedCreatePage extends Page {
     super('Mark a bed as out of service')
   }
 
-  static visit(premisesId: string): LostBedCreatePage {
-    cy.visit(paths.lostBeds.new({ premisesId }))
+  static visit(premisesId: string, bedId: string): LostBedCreatePage {
+    cy.visit(paths.lostBeds.new({ premisesId, bedId }))
     return new LostBedCreatePage()
   }
 

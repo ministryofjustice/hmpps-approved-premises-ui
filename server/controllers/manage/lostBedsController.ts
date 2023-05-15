@@ -11,13 +11,14 @@ export default class LostBedsController {
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { premisesId } = req.params
+      const { premisesId, bedId } = req.params
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
       const lostBedReasons = await this.lostBedService.getReferenceData(req.user.token)
 
       res.render('lostBeds/new', {
         premisesId,
+        bedId,
         lostBedReasons,
         errors,
         errorSummary,
@@ -28,7 +29,7 @@ export default class LostBedsController {
 
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { premisesId } = req.params
+      const { premisesId, bedId } = req.params
 
       const { startDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'startDate')
       const { endDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'endDate')
@@ -46,7 +47,7 @@ export default class LostBedsController {
         req.flash('success', 'Lost bed logged')
         res.redirect(paths.premises.show({ premisesId }))
       } catch (err) {
-        catchValidationErrorOrPropogate(req, res, err, paths.lostBeds.new({ premisesId }))
+        catchValidationErrorOrPropogate(req, res, err, paths.lostBeds.new({ premisesId, bedId }))
       }
     }
   }

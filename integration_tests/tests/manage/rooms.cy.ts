@@ -1,6 +1,6 @@
 import { roomFactory } from '../../../server/testutils/factories'
 
-import { BookingFindPage, RoomsListPage } from '../../pages/manage'
+import { BookingFindPage, LostBedCreatePage, RoomsListPage } from '../../pages/manage'
 import RoomsShowPage from '../../pages/manage/roomShow'
 import Page from '../../pages/page'
 
@@ -9,6 +9,7 @@ context('Rooms', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubAuthUser')
+    cy.task('stubLostBedReferenceData')
   })
 
   it('should allow me to visit a room from the room list page', () => {
@@ -44,9 +45,18 @@ context('Rooms', () => {
     roomPage.shouldShowCharacteristics(room.characteristics)
 
     // And I should be able to click on a bed
-    roomPage.clickBedLink(room.beds[0].name)
+    roomPage.clickBookBedLink(room.beds[0].name)
 
     // Then I should be taken to the bed page
     Page.verifyOnPage(BookingFindPage)
+
+    // Given I go back
+    cy.go('back')
+
+    // When I click on the link to mark the bed out of service
+    roomPage.clickMarkBedOutOfServiceLink(room.beds[0].name)
+
+    // Then I am taken to the mark bed out of service page
+    Page.verifyOnPage(LostBedCreatePage)
   })
 })

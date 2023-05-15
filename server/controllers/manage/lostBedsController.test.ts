@@ -21,6 +21,7 @@ describe('LostBedsController', () => {
 
   const lostBedController = new LostBedsController(lostBedService)
   const premisesId = 'premisesId'
+  const bedId = 'bedId'
 
   describe('new', () => {
     it('renders the form', async () => {
@@ -32,12 +33,14 @@ describe('LostBedsController', () => {
 
       request.params = {
         premisesId,
+        bedId,
       }
 
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('lostBeds/new', {
         premisesId,
+        bedId,
         lostBedReasons,
         errors: {},
         errorSummary: [],
@@ -56,12 +59,14 @@ describe('LostBedsController', () => {
 
       request.params = {
         premisesId,
+        bedId,
       }
 
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('lostBeds/new', {
-        premisesId,
+        premisesId: request.params.premisesId,
+        bedId: request.params.bedId,
         lostBedReasons,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
@@ -79,6 +84,7 @@ describe('LostBedsController', () => {
 
       request.params = {
         premisesId,
+        bedId: lostBed.bedId,
       }
 
       request.body = {
@@ -108,6 +114,7 @@ describe('LostBedsController', () => {
 
       request.params = {
         premisesId,
+        bedId,
       }
 
       const err = new Error()
@@ -122,7 +129,7 @@ describe('LostBedsController', () => {
         request,
         response,
         err,
-        paths.lostBeds.new({ premisesId: request.params.premisesId }),
+        paths.lostBeds.new({ premisesId: request.params.premisesId, bedId: request.params.bedId }),
       )
     })
   })

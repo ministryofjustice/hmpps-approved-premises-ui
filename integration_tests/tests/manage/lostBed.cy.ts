@@ -18,6 +18,7 @@ context('LostBed', () => {
     cy.task('stubSinglePremises', premises)
 
     // When I navigate to the lost bed form
+
     const lostBed = lostBedFactory.build({
       startDate: '2022-02-11',
       endDate: '2022-03-11',
@@ -28,7 +29,7 @@ context('LostBed', () => {
       dateCapacities: dateCapacityFactory.buildList(5),
     })
 
-    const page = LostBedCreatePage.visit(premises.id)
+    const page = LostBedCreatePage.visit(premises.id, lostBed.bedId)
 
     // And I fill out the form
     page.completeForm(lostBed)
@@ -61,7 +62,7 @@ context('LostBed', () => {
     const premises = premisesFactory.build()
 
     // When I navigate to the lost bed form
-    const page = LostBedCreatePage.visit(premises.id)
+    const page = LostBedCreatePage.visit(premises.id, 'bedId')
 
     // And I miss required fields
     cy.task('stubLostBedErrors', {
