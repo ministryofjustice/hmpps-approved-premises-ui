@@ -73,11 +73,12 @@ export default class AssessmentService {
     const client = this.assessmentClientFactory(token)
 
     const document = getResponses(assessment)
-    const requirements = placementRequestData(assessment)
 
     if (!applicationAccepted(assessment)) {
       return client.rejection(assessment.id, document, rejectionRationaleFromAssessmentResponses(assessment))
     }
+
+    const requirements = placementRequestData(assessment)
 
     return client.acceptance(assessment.id, { document, requirements })
   }
