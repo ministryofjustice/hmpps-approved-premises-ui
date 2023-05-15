@@ -8,7 +8,7 @@ import risksFactory from './risks'
 import personFactory from './person'
 
 export default Factory.define<ApplicationSummary>(() => ({
-  id: faker.datatype.uuid(),
+  id: faker.string.uuid(),
   person: personFactory.build(),
   createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   submittedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
@@ -16,6 +16,6 @@ export default Factory.define<ApplicationSummary>(() => ({
   isPipeApplication: false,
   arrivalDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
   risks: risksFactory.build(),
-  createdByUserId: faker.datatype.uuid(),
+  createdByUserId: faker.string.uuid(),
   status: 'inProgress',
 }))

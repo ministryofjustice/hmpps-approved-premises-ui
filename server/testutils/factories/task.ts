@@ -9,7 +9,7 @@ import PersonFactory from './person'
 
 export default Factory.define<Task>(() => ({
   allocatedToStaffMember: UserFactory.build(),
-  applicationId: faker.datatype.uuid(),
+  applicationId: faker.string.uuid(),
   dueDate: DateFormats.dateObjToIsoDate(faker.date.future()),
   status: faker.helpers.arrayElement(['not_started', 'in_progress', 'complete']),
   taskType: faker.helpers.arrayElement(['Assessment', 'PlacementRequest', 'PlacementRequestReview', 'BookingAppeal']),

@@ -6,12 +6,12 @@ import referenceDataFactory from './referenceData'
 import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<LostBed>(() => ({
-  id: faker.datatype.uuid(),
-  bedId: faker.datatype.uuid(),
+  id: faker.string.uuid(),
+  bedId: faker.string.uuid(),
   notes: faker.lorem.sentence(),
   startDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
   endDate: DateFormats.dateObjToIsoDate(faker.date.future()),
-  referenceNumber: faker.datatype.uuid(),
+  referenceNumber: faker.string.uuid(),
   reason: referenceDataFactory.lostBedReasons().build(),
   status: 'active',
   cancellation: null,
