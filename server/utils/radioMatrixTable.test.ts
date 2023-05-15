@@ -1,5 +1,13 @@
 import { cell, heading, radioMatrixTable, row } from './radioMatrixTable'
 
+jest.mock('./placementCriteriaUtils', () => {
+  return {
+    placementCriteria: {
+      test: 'Test',
+    },
+  }
+})
+
 describe('radioMatrixTable', () => {
   describe('cell', () => {
     it('returns the markup given the name and preference', () => {

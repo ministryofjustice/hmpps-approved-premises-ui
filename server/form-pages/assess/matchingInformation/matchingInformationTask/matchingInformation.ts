@@ -1,61 +1,36 @@
-import type { ApType } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { lowerCase, sentenceCase } from '../../../../utils/utils'
+import {
+  ApTypeCriteria,
+  OffenceAndRiskCriteria,
+  PlacementRequirementCriteria,
+  apTypeOptions,
+  offenceAndRiskOptions,
+  placementCriteria,
+  placementRequirementOptions,
+} from '../../../../utils/placementCriteriaUtils'
 
-const apTypes: Record<ApType, string> = {
-  normal: 'Standard AP',
-  pipe: 'Psychologically Informed Planned Environment (PIPE)',
-  esap: 'Enhanced Security AP (ESAP)',
-  rfap: 'Recovery Focused Approved Premises (RFAP)',
-} as const
-
+const placementRequirements = Object.keys(placementRequirementOptions)
 const placementRequirementPreferences = ['essential' as const, 'desirable' as const, 'notRelevant' as const]
 type PlacementRequirementPreference = (typeof placementRequirementPreferences)[number]
 
-export const placementRequirements = [
-  'wheelchairAccessible' as const,
-  'singleRoom' as const,
-  'adaptedForHearingImpairments' as const,
-  'adaptedForVisualImpairments' as const,
-  'adaptedForRestrictedMobility' as const,
-  'cateringRequired' as const,
-]
-
-export const offenceAndRiskInformationKeys = [
-  'contactSexualOffencesAgainstAnAdultAdults',
-  'nonContactSexualOffencesAgainstAnAdultAdults',
-  'contactSexualOffencesAgainstChildren',
-  'nonContactSexualOffencesAgainstChildren',
-  'nonSexualOffencesAgainstChildren',
-  'arsonOffences',
-  'hateBasedOffences',
-  'vulnerableToExploitation',
-]
-
+const offenceAndRiskInformationKeys = Object.keys(offenceAndRiskOptions)
 const offenceAndRiskInformationRelevance = ['relevant', 'notRelevant']
 type OffenceAndRiskInformationRelevance = (typeof offenceAndRiskInformationRelevance)[number]
 
 export type MatchingInformationBody = {
-  apType: ApType
-  mentalHealthSupport?: '1' | '' | undefined
-  wheelchairAccessible: PlacementRequirementPreference
-  singleRoom: PlacementRequirementPreference
-  adaptedForHearingImpairments: PlacementRequirementPreference
-  adaptedForVisualImpairments: PlacementRequirementPreference
-  adaptedForRestrictedMobility: PlacementRequirementPreference
-  cateringRequired: PlacementRequirementPreference
-  contactSexualOffencesAgainstAnAdultAdults: OffenceAndRiskInformationRelevance
-  nonContactSexualOffencesAgainstAnAdultAdults: OffenceAndRiskInformationRelevance
-  contactSexualOffencesAgainstChildren: OffenceAndRiskInformationRelevance
-  nonContactSexualOffencesAgainstChildren: OffenceAndRiskInformationRelevance
-  nonSexualOffencesAgainstChildren: OffenceAndRiskInformationRelevance
-  arsonOffences: OffenceAndRiskInformationRelevance
-  hateBasedOffences: OffenceAndRiskInformationRelevance
-  vulnerableToExploitation: OffenceAndRiskInformationRelevance
+  [Key in OffenceAndRiskCriteria | PlacementRequirementCriteria]: Key extends OffenceAndRiskCriteria
+    ? OffenceAndRiskInformationRelevance
+    : Key extends PlacementRequirementCriteria
+    ? PlacementRequirementPreference
+    : never
+} & {
+  apType: ApTypeCriteria | 'normal'
+  mentalHealthSupport: '1' | '' | undefined
 }
 
 @Page({
@@ -69,7 +44,7 @@ export default class MatchingInformation implements TasklistPage {
 
   apTypeQuestion = 'What type of AP is required?'
 
-  apTypes = apTypes
+  apTypes = apTypeOptions
 
   placementRequirementTableHeadings = ['Placement requirements', 'Essential', 'Desirable', 'Not relevant']
 
@@ -90,7 +65,7 @@ export default class MatchingInformation implements TasklistPage {
     value: '',
   }
 
-  constructor(public body: MatchingInformationBody) {
+  constructor(public body: Partial<MatchingInformationBody>) {
     this.mentalHealthSupport.value = body.mentalHealthSupport
   }
 
@@ -127,13 +102,17 @@ export default class MatchingInformation implements TasklistPage {
 
     this.placementRequirements.forEach(placementRequirement => {
       if (!this.body[placementRequirement]) {
-        errors[placementRequirement] = `You must specify a preference for ${lowerCase(placementRequirement)}`
+        errors[placementRequirement] = `You must specify a preference for ${lowerCase(
+          placementCriteria[placementRequirement],
+        )}`
       }
     })
 
     this.offenceAndRiskInformationKeys.forEach(offenceOrRiskInformation => {
       if (!this.body[offenceOrRiskInformation]) {
-        errors[offenceOrRiskInformation] = `You must specify if ${lowerCase(offenceOrRiskInformation)} is relevant`
+        errors[offenceOrRiskInformation] = `You must specify if ${lowerCase(
+          placementCriteria[offenceOrRiskInformation],
+        )} is relevant`
       }
     })
 

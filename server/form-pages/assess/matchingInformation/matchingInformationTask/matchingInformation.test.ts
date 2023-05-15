@@ -1,25 +1,23 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
-import MatchingInformation from './matchingInformation'
+import MatchingInformation, { MatchingInformationBody } from './matchingInformation'
 
 const defaultArguments = {
-  apType: 'esap' as const,
-  wheelchairAccessible: 'essential',
+  apType: 'isEsap' as const,
   mentalHealthSupport: '1',
-  singleRoom: 'essential',
-  adaptedForHearingImpairments: 'essential',
-  adaptedForVisualImpairments: 'essential',
-  adaptedForRestrictedMobility: 'essential',
-  cateringRequired: 'essential',
-  contactSexualOffencesAgainstAnAdultAdults: 'relevant',
-  nonContactSexualOffencesAgainstAnAdultAdults: 'relevant',
-  contactSexualOffencesAgainstChildren: 'relevant',
-  nonContactSexualOffencesAgainstChildren: 'relevant',
-  nonSexualOffencesAgainstChildren: 'relevant',
-  arsonOffences: 'relevant',
-  hateBasedOffences: 'relevant',
-  vulnerableToExploitation: 'relevant',
-} as const
+  isWheelchairDesignated: 'essential',
+  isSingleRoom: 'desirable',
+  isStepFreeDesignated: 'desirable',
+  isCatered: 'notRelevant',
+  isGroundFloor: 'notRelevant',
+  hasEnSuite: 'notRelevant',
+  isSuitableForVulnerable: 'relevant',
+  acceptsSexOffenders: 'relevant',
+  acceptsChildSexOffenders: 'relevant',
+  acceptsNonSexualChildOffenders: 'relevant',
+  acceptsHateCrimeOffenders: 'relevant',
+  isArsonSuitable: 'relevant',
+} as MatchingInformationBody
 
 describe('MatchingInformation', () => {
   describe('title', () => {
@@ -40,29 +38,22 @@ describe('MatchingInformation', () => {
 
   describe('errors', () => {
     it('should have an error if there is no answers', () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const page = new MatchingInformation({} as any)
+      const page = new MatchingInformation({})
 
       expect(page.errors()).toEqual({
-        adaptedForHearingImpairments: 'You must specify a preference for adapted for hearing impairments',
-        adaptedForRestrictedMobility: 'You must specify a preference for adapted for restricted mobility',
-        adaptedForVisualImpairments: 'You must specify a preference for adapted for visual impairments',
         apType: 'You must select the type of AP required',
-        arsonOffences: 'You must specify if arson offences is relevant',
-        cateringRequired: 'You must specify a preference for catering required',
-        contactSexualOffencesAgainstAnAdultAdults:
-          'You must specify if contact sexual offences against an adult adults is relevant',
-        contactSexualOffencesAgainstChildren:
-          'You must specify if contact sexual offences against children is relevant',
-        hateBasedOffences: 'You must specify if hate based offences is relevant',
-        nonContactSexualOffencesAgainstAnAdultAdults:
-          'You must specify if non contact sexual offences against an adult adults is relevant',
-        nonContactSexualOffencesAgainstChildren:
-          'You must specify if non contact sexual offences against children is relevant',
-        nonSexualOffencesAgainstChildren: 'You must specify if non sexual offences against children is relevant',
-        singleRoom: 'You must specify a preference for single room',
-        vulnerableToExploitation: 'You must specify if vulnerable to exploitation is relevant',
-        wheelchairAccessible: 'You must specify a preference for wheelchair accessible',
+        isWheelchairDesignated: 'You must specify a preference for wheelchair accessible',
+        isSingleRoom: 'You must specify a preference for single room',
+        isStepFreeDesignated: 'You must specify a preference for has step-free access',
+        isCatered: 'You must specify a preference for catering required',
+        isGroundFloor: 'You must specify a preference for ground floor room',
+        hasEnSuite: 'You must specify a preference for en suite',
+        isSuitableForVulnerable: 'You must specify if vulnerable to exploitation is relevant',
+        acceptsSexOffenders: 'You must specify if sexual offences against an adult is relevant',
+        acceptsChildSexOffenders: 'You must specify if sexual offences against children is relevant',
+        acceptsNonSexualChildOffenders: 'You must specify if non sexual offences against children is relevant',
+        acceptsHateCrimeOffenders: 'You must specify if hate based offences is relevant',
+        isArsonSuitable: 'You must specify if arson offences is relevant',
       })
     })
   })
@@ -75,20 +66,18 @@ describe('MatchingInformation', () => {
         'What type of AP is required?': 'Enhanced Security AP (ESAP)',
         'If this person requires specialist mental health support, select the box below':
           'Semi-specialist mental health selected',
-        'Wheelchair accessible': 'Essential',
-        'Single room': 'Essential',
-        'Adapted for hearing impairments': 'Essential',
-        'Adapted for restricted mobility': 'Essential',
-        'Adapted for visual impairments': 'Essential',
-        'Catering required': 'Essential',
-        'Arson offences': 'Relevant',
-        'Contact sexual offences against an adult adults': 'Relevant',
-        'Contact sexual offences against children': 'Relevant',
-        'Hate based offences': 'Relevant',
-        'Non contact sexual offences against an adult adults': 'Relevant',
-        'Non contact sexual offences against children': 'Relevant',
-        'Non sexual offences against children': 'Relevant',
-        'Vulnerable to exploitation': 'Relevant',
+        'Is wheelchair designated': 'Essential',
+        'Is single room': 'Desirable',
+        'Is step free designated': 'Desirable',
+        'Is catered': 'Not relevant',
+        'Is ground floor': 'Not relevant',
+        'Has en suite': 'Not relevant',
+        'Is suitable for vulnerable': 'Relevant',
+        'Accepts sex offenders': 'Relevant',
+        'Accepts child sex offenders': 'Relevant',
+        'Accepts non sexual child offenders': 'Relevant',
+        'Accepts hate crime offenders': 'Relevant',
+        'Is arson suitable': 'Relevant',
       })
     })
   })
