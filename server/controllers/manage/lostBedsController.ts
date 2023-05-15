@@ -36,6 +36,7 @@ export default class LostBedsController {
 
       const lostBed: NewLostBed = {
         ...req.body.lostBed,
+        bedId,
         startDate,
         endDate,
         serviceName: 'approved-premises',
