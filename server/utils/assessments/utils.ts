@@ -1,6 +1,6 @@
 import { ApplicationType, GroupedAssessments, SummaryListItem } from '@approved-premises/ui'
 
-import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { ApprovedPremisesAssessment as Assessment, AssessmentSummary } from '@approved-premises/api'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
 import { UnknownPageError } from '../errors'
@@ -11,7 +11,7 @@ import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { assessmentsApproachingDue, formattedArrivalDate } from './dateUtils'
 import { awaitingAssessmentTableRows, completedTableRows, requestedFurtherInformationTableRows } from './tableUtils'
 
-const groupAssessmements = (assessments: Array<Assessment>): GroupedAssessments => {
+const groupAssessmements = (assessments: Array<AssessmentSummary>): GroupedAssessments => {
   const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments
 
   assessments.forEach(assessment => {

@@ -239,9 +239,9 @@ export type DataServices = Partial<{
 export type AssessmentGroupingCategory = 'status' | 'allocation'
 
 export type GroupedAssessments = {
-  completed: Array<Assessment>
-  requestedFurtherInformation: Array<Assessment>
-  awaiting: Array<Assessment>
+  completed: Array<AssessmentSummary>
+  requestedFurtherInformation: Array<AssessmentSummary>
+  awaiting: Array<AssessmentSummary>
 }
 
 export interface AllocatedAndUnallocatedAssessments {
