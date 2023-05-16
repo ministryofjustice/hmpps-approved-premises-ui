@@ -1,7 +1,13 @@
 import type { Request, Response } from 'express'
 import jsonpath from 'jsonpath'
 
-import type { ErrorMessage, ErrorMessages, ErrorSummary, ErrorsAndUserInput } from '@approved-premises/ui'
+import type {
+  ErrorMessage,
+  ErrorMessages,
+  ErrorSummary,
+  ErrorsAndUserInput,
+  ErrorsTitleAndUserInput,
+} from '@approved-premises/ui'
 import { SanitisedError } from '../sanitisedError'
 import errorLookup from '../i18n/en/errors.json'
 import { TasklistAPIError, ValidationError } from './errors'
@@ -46,8 +52,9 @@ export const fetchErrorsAndUserInput = (request: Request): ErrorsAndUserInput =>
   const errors = firstFlashItem(request, 'errors') || {}
   const errorSummary = request.flash('errorSummary') || []
   const userInput = firstFlashItem(request, 'userInput') || {}
+  const errorTitle = firstFlashItem(request, 'errorTitle')
 
-  return { errors, errorSummary, userInput }
+  return { errors, errorTitle, errorSummary, userInput }
 }
 
 export const errorSummary = (field: string, text: string): ErrorSummary => {
