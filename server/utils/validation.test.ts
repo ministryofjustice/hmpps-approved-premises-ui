@@ -1,12 +1,18 @@
 import { Request, Response } from 'express'
 import { createMock } from '@golevelup/ts-jest'
 
-import type { ErrorMessages, ErrorSummary } from '@approved-premises/ui'
+import type { BespokeError, ErrorMessages, ErrorSummary } from '@approved-premises/ui'
 import { SanitisedError } from '../sanitisedError'
-import { catchAPIErrorOrPropogate, catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from './validation'
+import {
+  catchAPIErrorOrPropogate,
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+  generateConflictErrorAndRedirect,
+} from './validation'
 import errorLookups from '../i18n/en/errors.json'
 import { TasklistAPIError, ValidationError } from './errors'
 import type TaskListPage from '../form-pages/tasklistPage'
+import { generateConflictBespokeError } from './bookingUtils'
 
 jest.mock('../i18n/en/errors.json', () => {
   return {
@@ -15,9 +21,14 @@ jest.mock('../i18n/en/errors.json', () => {
     },
     arrivalDate: {
       empty: 'You must enter a valid arrival date',
+      conflict: 'This bedspace is not available for these dates',
+    },
+    departureDate: {
+      conflict: 'This bedspace is not available for these dates',
     },
   }
 })
+jest.mock('./bookingUtils')
 
 describe('catchValidationErrorOrPropogate', () => {
   const request = createMock<Request>({})
@@ -121,6 +132,44 @@ describe('catchValidationErrorOrPropogate', () => {
     expect(() => catchValidationErrorOrPropogate(request, response, error, 'some/url')).toThrowError(
       'Cannot find a translation for an error at the path $.crn with the type invalid',
     )
+  })
+})
+
+describe('generateConflictErrorAndRedirect', () => {
+  it('should add the errors to the flash and redirect', () => {
+    const request = createMock<Request>({ headers: { referer: 'foo/bar' } })
+    const response = createMock<Response>()
+    const premisesId = 'premisesId'
+    const bedId = 'bedId'
+    const err = createMock<SanitisedError>()
+
+    const conflictError = createMock<BespokeError>()
+    ;(generateConflictBespokeError as jest.Mock).mockReturnValue(conflictError)
+
+    generateConflictErrorAndRedirect(
+      request,
+      response,
+      premisesId,
+      bedId,
+      ['arrivalDate', 'departureDate'],
+      err,
+      '/foo/bar',
+    )
+
+    const expectedErrors = {
+      arrivalDate: { text: errorLookups.arrivalDate.conflict, attributes: { 'data-cy-error-arrivalDate': true } },
+      departureDate: {
+        text: errorLookups.departureDate.conflict,
+        attributes: { 'data-cy-error-departureDate': true },
+      },
+    }
+
+    expect(request.flash).toHaveBeenCalledWith('errors', expectedErrors)
+    expect(request.flash).toHaveBeenCalledWith('errorTitle', conflictError.errorTitle)
+    expect(request.flash).toHaveBeenCalledWith('errorSummary', conflictError.errorSummary)
+    expect(request.flash).toHaveBeenCalledWith('userInput', request.body)
+
+    expect(response.redirect).toHaveBeenCalledWith('/foo/bar')
   })
 })
 

@@ -1,20 +1,39 @@
 import type { Request, Response } from 'express'
 import jsonpath from 'jsonpath'
 
-import type {
-  ErrorMessage,
-  ErrorMessages,
-  ErrorSummary,
-  ErrorsAndUserInput,
-  ErrorsTitleAndUserInput,
-} from '@approved-premises/ui'
+import type { ErrorMessage, ErrorMessages, ErrorSummary, ErrorsAndUserInput } from '@approved-premises/ui'
 import { SanitisedError } from '../sanitisedError'
 import errorLookup from '../i18n/en/errors.json'
 import { TasklistAPIError, ValidationError } from './errors'
+import { generateConflictBespokeError } from './bookingUtils'
 
 interface InvalidParams {
   propertyName: string
   errorType: string
+}
+
+export const generateConflictErrorAndRedirect = (
+  request: Request,
+  response: Response,
+  premisesId: string,
+  bedId: string,
+  fields: Array<string>,
+  error: SanitisedError,
+  redirectPath: string,
+) => {
+  const errorDetails = generateConflictBespokeError(error, premisesId, bedId, 'plural')
+  const errors = {} as ErrorMessages
+
+  fields.forEach(f => {
+    errors[f] = errorMessage(f, errorLookup[f].conflict)
+  })
+
+  request.flash('errorTitle', errorDetails.errorTitle)
+  request.flash('errorSummary', errorDetails.errorSummary)
+  request.flash('errors', errors)
+  request.flash('userInput', request.body)
+
+  return response.redirect(redirectPath)
 }
 
 export const catchValidationErrorOrPropogate = (
