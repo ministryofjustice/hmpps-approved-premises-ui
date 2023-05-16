@@ -1,6 +1,7 @@
 import { Request } from 'express'
 import {
   ApprovedPremisesAssessment as Assessment,
+  AssessmentSummary,
   NewClarificationNote,
   UpdatedClarificationNote,
 } from '@approved-premises/api'
@@ -18,17 +19,10 @@ import { applicationAccepted } from '../utils/assessments/decisionUtils'
 export default class AssessmentService {
   constructor(private readonly assessmentClientFactory: RestClientBuilder<AssessmentClient>) {}
 
-  async getAll(token: string): Promise<Array<Assessment>> {
+  async getAll(token: string): Promise<Array<AssessmentSummary>> {
     const client = this.assessmentClientFactory(token)
 
     return client.all()
-  }
-
-  async getAllForUser(token: string, userId: string): Promise<Array<Assessment>> {
-    const client = this.assessmentClientFactory(token)
-    const assessments = await client.all()
-
-    return assessments.filter(a => a.allocatedToStaffMember?.id === userId)
   }
 
   async findAssessment(token: string, id: string): Promise<Assessment> {

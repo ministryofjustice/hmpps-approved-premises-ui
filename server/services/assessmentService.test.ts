@@ -4,7 +4,7 @@ import { PlacementRequest } from '@approved-premises/api'
 
 import { AssessmentClient } from '../data'
 import AssessmentService from './assessmentService'
-import { assessmentFactory, clarificationNoteFactory, userFactory } from '../testutils/factories'
+import { assessmentFactory, assessmentSummaryFactory, clarificationNoteFactory } from '../testutils/factories'
 
 import { placementRequestData } from '../utils/assessments/placementRequestData'
 import { getBody, updateAssessmentData } from '../form-pages/utils'
@@ -33,40 +33,13 @@ describe('AssessmentService', () => {
     assessmentClientFactory.mockReturnValue(assessmentClient)
   })
 
-  describe('getting all assessments', () => {
-    const user = userFactory.build({ id: 'some-uuid' })
-    const otherUser = userFactory.build({ id: 'some-other-uuid' })
+  describe('getAll', () => {
+    it('should return all assessments', async () => {
+      const assessments = assessmentSummaryFactory.buildList(5)
+      assessmentClient.all.mockResolvedValue(assessments)
+      const result = await service.getAll('token')
 
-    const assessmentsForUser = assessmentFactory.buildList(2, {
-      allocatedToStaffMember: user,
-    })
-    const assessmentsForDifferentUser = assessmentFactory.buildList(2, {
-      status: 'completed',
-      allocatedToStaffMember: otherUser,
-    })
-    const unallocatedAssessments = assessmentFactory.buildList(2, {
-      allocatedToStaffMember: null,
-    })
-
-    beforeEach(() => {
-      assessmentClient.all.mockResolvedValue(
-        [assessmentsForUser, assessmentsForDifferentUser, unallocatedAssessments].flat(),
-      )
-    })
-
-    describe('getAll', () => {
-      it('should return all assessments', async () => {
-        const result = await service.getAll('token')
-
-        expect(result).toEqual([assessmentsForUser, assessmentsForDifferentUser, unallocatedAssessments].flat())
-      })
-    })
-
-    describe('getAllForUser', () => {
-      it('should return all assessments for that user', async () => {
-        const result = await service.getAllForUser('token', user.id)
-        expect(result).toEqual(assessmentsForUser)
-      })
+      expect(result).toEqual(assessments)
     })
   })
 
