@@ -3,8 +3,9 @@ import { Response, SuperAgentRequest } from 'superagent'
 import type { LostBed } from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from '../../wiremock'
-import { errorStub } from '../../wiremock/utils'
+import { bedspaceConflictResponseBody, errorStub } from '../../wiremock/utils'
 import { lostBedReasons } from '../../wiremock/referenceDataStubs'
+import paths from '../../server/paths/api'
 
 export default {
   stubLostBedCreate: (args: { premisesId: string; lostBed: LostBed }): SuperAgentRequest =>
@@ -33,6 +34,24 @@ export default {
       },
     }),
 
+  stubLostBedConflictError: (args: {
+    premisesId: string
+    conflictingEntityId: string
+    conflictingEntityType: 'booking' | 'lost-bed'
+  }) =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: paths.premises.lostBeds.create({ premisesId: args.premisesId }),
+      },
+      response: {
+        status: 409,
+        headers: {
+          'Content-Type': 'application/problem+json;charset=UTF-8',
+        },
+        jsonBody: bedspaceConflictResponseBody(args.conflictingEntityId, args.conflictingEntityType),
+      },
+    }),
   stubLostBedErrors: (args: { premisesId: string; params: Array<string> }): SuperAgentRequest =>
     stubFor(errorStub(args.params, `/premises/${args.premisesId}/lost-beds`)),
 
