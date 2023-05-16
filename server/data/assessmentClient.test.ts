@@ -1,5 +1,10 @@
 import AssessmentClient from './assessmentClient'
-import { assessmentFactory, clarificationNoteFactory, placementRequestFactory } from '../testutils/factories'
+import {
+  assessmentFactory,
+  assessmentSummaryFactory,
+  clarificationNoteFactory,
+  placementRequestFactory,
+} from '../testutils/factories'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
 
@@ -14,7 +19,7 @@ describeClient('AssessmentClient', provider => {
 
   describe('all', () => {
     it('should get all assessments', async () => {
-      const assessments = assessmentFactory.buildList(3)
+      const assessments = assessmentSummaryFactory.buildList(3)
 
       provider.addInteraction({
         state: 'Server is healthy',
