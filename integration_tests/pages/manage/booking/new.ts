@@ -1,16 +1,21 @@
-import type { Booking, Person } from '@approved-premises/api'
+import type { Booking, LostBed, Person } from '@approved-premises/api'
+import BedspaceConflictErrorComponent from '../../../components/bedspaceConflictErrorComponent'
 import Page, { PageElement } from '../../page'
 import paths from '../../../../server/paths/manage'
 
 export default class BookingNewPage extends Page {
-  constructor() {
+  private readonly bedspaceConflictErrorComponent: BedspaceConflictErrorComponent
+
+  constructor(premisesId: string) {
     super('Create a placement')
+
+    this.bedspaceConflictErrorComponent = new BedspaceConflictErrorComponent(premisesId, 'booking')
   }
 
   static visit(premisesId: string, bedId: string): BookingNewPage {
     cy.visit(paths.bookings.new({ premisesId, bedId }))
 
-    return new BookingNewPage()
+    return new BookingNewPage(premisesId)
   }
 
   verifyPersonIsVisible(person: Person): void {
@@ -60,5 +65,16 @@ export default class BookingNewPage extends Page {
     this.expectedDepartureDay().type(departureDate.getDate().toString())
     this.expectedDepartureMonth().type(`${departureDate.getMonth() + 1}`)
     this.expectedDepartureYear().type(departureDate.getFullYear().toString())
+  }
+
+  shouldShowDateConflictErrorMessages(
+    conflictingEntity: Booking | LostBed,
+    conflictingEntityType: 'booking' | 'lost-bed',
+  ): void {
+    this.bedspaceConflictErrorComponent.shouldShowDateConflictErrorMessages(
+      ['arrivalDate', 'departureDate'],
+      conflictingEntity,
+      conflictingEntityType,
+    )
   }
 }

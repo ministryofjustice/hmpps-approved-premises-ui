@@ -177,14 +177,21 @@ export interface ErrorMessages {
 }
 
 export interface ErrorSummary {
-  text: string
-  href: string
+  text?: string
+  html?: string
+  href?: string
 }
 
 export interface ErrorsAndUserInput {
+  errorTitle?: string
   errors: ErrorMessages
   errorSummary: Array<string>
   userInput: Record<string, unknown>
+}
+
+export interface BespokeError {
+  errorTitle: string
+  errorSummary: Array<ErrorSummary>
 }
 
 export type TaskListErrors<K extends TasklistPage> = Partial<Record<keyof K['body'], unknown>>

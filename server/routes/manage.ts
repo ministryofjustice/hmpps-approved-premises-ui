@@ -54,6 +54,7 @@ export default function routes(controllers: Controllers, router: Router): Router
 
   get(paths.lostBeds.new.pattern, lostBedsController.new())
   post(paths.lostBeds.create.pattern, lostBedsController.create())
+  get(paths.lostBeds.show.pattern, lostBedsController.show())
 
   return router
 }

@@ -1,16 +1,21 @@
-import type { LostBed } from '@approved-premises/api'
+import type { Booking, LostBed } from '@approved-premises/api'
 import paths from '../../../server/paths/manage'
 
 import Page from '../page'
+import BedspaceConflictErrorComponent from '../../components/bedspaceConflictErrorComponent'
 
 export default class LostBedCreatePage extends Page {
-  constructor() {
+  private readonly bedspaceConflictErrorComponent: BedspaceConflictErrorComponent
+
+  constructor(premisesId: string) {
     super('Mark a bed as out of service')
+
+    this.bedspaceConflictErrorComponent = new BedspaceConflictErrorComponent(premisesId, 'lost-bed')
   }
 
   static visit(premisesId: string, bedId: string): LostBedCreatePage {
     cy.visit(paths.lostBeds.new({ premisesId, bedId }))
-    return new LostBedCreatePage()
+    return new LostBedCreatePage(premisesId)
   }
 
   public completeForm(lostBed: LostBed): void {
@@ -34,5 +39,16 @@ export default class LostBedCreatePage extends Page {
 
   public clickSubmit(): void {
     cy.get('[name="lostBed[submit]"]').click()
+  }
+
+  shouldShowDateConflictErrorMessages(
+    conflictingEntity: Booking | LostBed,
+    conflictingEntityType: 'booking' | 'lost-bed',
+  ): void {
+    this.bedspaceConflictErrorComponent.shouldShowDateConflictErrorMessages(
+      ['startDate', 'endDate'],
+      conflictingEntity,
+      conflictingEntityType,
+    )
   }
 }

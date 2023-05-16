@@ -17,6 +17,14 @@ export default class LostBedService {
     return confirmedLostBed
   }
 
+  async getLostBed(token: string, premisesId: string, id: string): Promise<LostBed> {
+    const lostBedClient = this.lostBedClientFactory(token)
+
+    const lostBed = await lostBedClient.find(premisesId, id)
+
+    return lostBed
+  }
+
   async getReferenceData(token: string): Promise<LostBedReferenceData> {
     const referenceDataClient = this.referenceDataClientFactory(token)
 

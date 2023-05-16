@@ -12,6 +12,7 @@ const managePaths = {
   },
   lostBeds: {
     create: lostBedsPath,
+    show: lostBedsPath.path(':id'),
   },
   rooms: singlePremisesPath.path('rooms'),
   room: singlePremisesPath.path('rooms/:roomId'),
@@ -72,6 +73,7 @@ export default {
     capacity: managePaths.premises.show.path('capacity'),
     lostBeds: {
       create: managePaths.lostBeds.create,
+      show: managePaths.lostBeds.show,
     },
     staffMembers: {
       index: managePaths.premises.show.path('staff'),

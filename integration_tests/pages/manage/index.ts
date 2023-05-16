@@ -2,6 +2,7 @@ import ArrivalCreatePage from './arrivalCreate'
 import CancellationCreatePage from './cancellationCreate'
 import DepartureCreatePage from './departureCreate'
 import LostBedCreatePage from './lostBedCreate'
+import LostBedShowPage from './lostBedShow'
 import PremisesListPage from './premisesList'
 import PremisesShowPage from './premisesShow'
 
@@ -19,6 +20,7 @@ export {
   CancellationCreatePage,
   DepartureCreatePage,
   LostBedCreatePage,
+  LostBedShowPage,
   PremisesListPage,
   PremisesShowPage,
   BookingConfirmationPage,

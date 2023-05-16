@@ -1,6 +1,7 @@
 import {
   bookingFactory,
   dateCapacityFactory,
+  lostBedFactory,
   personFactory,
   premisesFactory,
 } from '../../../server/testutils/factories'
@@ -74,7 +75,7 @@ context('Booking', () => {
 
     // Then I should be redirected to the second new booking page
     Page.verifyOnPage(BookingNewPage)
-    const bookingCreatePage = new BookingNewPage()
+    const bookingCreatePage = new BookingNewPage(premises.id)
     bookingCreatePage.verifyPersonIsVisible(person)
 
     cy.task('verifyFindPerson', { person }).then(requests => {
@@ -132,7 +133,7 @@ context('Booking', () => {
 
     // Given I am signed in and I have found someone to create a placement for by CRN
     // When I visit the new booking page
-    const bookingCreatePage = new BookingNewPage()
+    const bookingCreatePage = new BookingNewPage(premises.id)
 
     // And I miss the required fields
     cy.task('stubBookingErrors', {
@@ -143,6 +144,45 @@ context('Booking', () => {
 
     // Then I should see error messages relating to those fields
     page.shouldShowErrorMessagesForFields(['arrivalDate', 'departureDate'])
+  })
+
+  it('should show errors when there is a booking conflict', () => {
+    const premises = premisesFactory.build()
+    const person = personFactory.build()
+    const bedId = bedFactory.build().id
+    const conflictingLostBed = lostBedFactory.build()
+
+    cy.task('stubSinglePremises', premises)
+    cy.task('stubFindPerson', { person })
+    cy.task('stubBookingCreateConflictError', {
+      premisesId: premises.id,
+      conflictingEntityId: conflictingLostBed.id,
+      conflictingEntityType: 'lost-bed',
+    })
+    cy.task('stubLostBed', { premisesId: premises.id, lostBed: conflictingLostBed })
+
+    const booking = bookingFactory.build({
+      person,
+      arrivalDate: '2022-06-01',
+      departureDate: '2022-06-01',
+    })
+
+    // Given I am signed in
+    cy.signIn()
+
+    // When I visit the find page
+    const page = BookingFindPage.visit(premises.id, bedId)
+
+    // And I enter the CRN to the form
+    page.completeForm(person.crn)
+
+    // And I fill in the booking form
+    const bookingNewPage = new BookingNewPage(premises.id)
+    bookingNewPage.completeForm(booking)
+    bookingNewPage.clickSubmit()
+
+    // Then I should see an error message
+    bookingNewPage.shouldShowDateConflictErrorMessages(conflictingLostBed, 'lost-bed')
   })
 
   it('should allow me to see a booking', () => {
