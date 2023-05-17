@@ -77,7 +77,7 @@ const allocationSummary = (assessment: Assessment): Array<SummaryListItem> => {
   return summary
 }
 
-const assessmentsApproachingDueBadge = (assessments: Array<Assessment>): string => {
+const assessmentsApproachingDueBadge = (assessments: Array<AssessmentSummary>): string => {
   const dueCount = assessmentsApproachingDue(assessments)
 
   if (dueCount === 0) {
