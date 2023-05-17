@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { AssessmentDecision } from './AssessmentDecision';
 import type { AssessmentStatus } from './AssessmentStatus';
 import type { Person } from './Person';
 import type { PersonRisks } from './PersonRisks';
@@ -14,6 +15,7 @@ export type AssessmentSummary = {
     createdAt: string;
     dateOfInfoRequest?: string;
     status: AssessmentStatus;
+    decision?: AssessmentDecision;
     risks?: PersonRisks;
     person: Person;
 };
