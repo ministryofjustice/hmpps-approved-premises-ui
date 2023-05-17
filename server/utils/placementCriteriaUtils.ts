@@ -1,7 +1,8 @@
 import { PlacementCriteria } from '@approved-premises/api'
 
-const apTypes = ['isPipe', 'isEsap', 'isRecoveryFocussed']
-const mentalHealthTypes = ['isSemiSpecialistMentalHealth']
+const apTypes = ['isPipe', 'isEsap']
+const specialistSupportCriteria = ['isSemiSpecialistMentalHealth', 'isRecoveryFocussed']
+const accessibilityCriteria = ['hasBrailleSignage', 'hasTactileFlooring', 'hasHearingLoop']
 const offenceAndRiskCriteria = [
   'isSuitableForVulnerable',
   'acceptsSexOffenders',
@@ -12,26 +13,27 @@ const offenceAndRiskCriteria = [
 ]
 const placementRequirementCriteria = [
   'isWheelchairDesignated',
+  'isArsonDesignated',
   'isSingleRoom',
   'isStepFreeDesignated',
   'isCatered',
   'isGroundFloor',
   'hasEnSuite',
+  'isSuitedForSexOffenders',
 ]
-const additionalCriteria = ['isSuitedForSexOffenders']
 
 export type ApTypeCriteria = Extract<PlacementCriteria, (typeof apTypes)[number]>
-export type MentalHealthCriteria = Extract<PlacementCriteria, (typeof mentalHealthTypes)[number]>
+export type SpecialistSupportCriteria = Extract<PlacementCriteria, (typeof specialistSupportCriteria)[number]>
 export type OffenceAndRiskCriteria = Extract<PlacementCriteria, (typeof offenceAndRiskCriteria)[number]>
+export type AccessibilityCriteria = Extract<PlacementCriteria, (typeof accessibilityCriteria)[number]>
 export type PlacementRequirementCriteria = Extract<PlacementCriteria, (typeof placementRequirementCriteria)[number]>
-export type AdditionalCriteria = Extract<PlacementCriteria, (typeof additionalCriteria)[number]>
 
 type PlacementCriteriaCategory =
   | ApTypeCriteria
-  | MentalHealthCriteria
+  | SpecialistSupportCriteria
   | OffenceAndRiskCriteria
   | PlacementRequirementCriteria
-  | AdditionalCriteria
+  | AccessibilityCriteria
 
 export const placementCriteria: Record<PlacementCriteria, string> = {
   isPipe: 'Psychologically Informed Planned Environment (PIPE)',
@@ -51,6 +53,10 @@ export const placementCriteria: Record<PlacementCriteria, string> = {
   hasEnSuite: 'En-suite',
   isSuitedForSexOffenders: 'Is suited for sex offenders',
   isArsonSuitable: 'Arson offences',
+  hasBrailleSignage: 'Braille signage',
+  hasTactileFlooring: 'Tactile Flooring',
+  hasHearingLoop: 'Hearing loop',
+  isArsonDesignated: 'Designated arson room',
 }
 
 const filterByType = <T extends PlacementCriteriaCategory>(keys: Array<string>): Record<T, string> => {
@@ -63,6 +69,7 @@ export const apTypeOptions = {
   normal: 'Standard AP',
   ...filterByType<ApTypeCriteria>(apTypes),
 } as Record<ApTypeCriteria & 'normal', string>
-export const mentalHealthOptions = filterByType<MentalHealthCriteria>(mentalHealthTypes)
+export const specialistSupportOptions = filterByType<SpecialistSupportCriteria>(specialistSupportCriteria)
+export const accessibilityOptions = filterByType<AccessibilityCriteria>(accessibilityCriteria)
 export const offenceAndRiskOptions = filterByType<OffenceAndRiskCriteria>(offenceAndRiskCriteria)
 export const placementRequirementOptions = filterByType<PlacementRequirementCriteria>(placementRequirementCriteria)
