@@ -7,16 +7,15 @@ import {
   formattedArrivalDate,
 } from './dateUtils'
 import { DateFormats } from '../dateUtils'
+import { assessmentFactory, assessmentSummaryFactory } from '../../testutils/factories'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
-
-import { assessmentFactory, clarificationNoteFactory } from '../../testutils/factories'
 
 jest.mock('../applications/arrivalDateFromApplication')
 
 describe('dateUtils', () => {
   describe('daysSinceReceived', () => {
     it('returns the difference in days since the assessment has been received', () => {
-      const assessment = assessmentFactory.createdXDaysAgo(10).build()
+      const assessment = assessmentSummaryFactory.createdXDaysAgo(10).build()
 
       expect(daysSinceReceived(assessment)).toEqual(10)
     })
@@ -27,16 +26,15 @@ describe('dateUtils', () => {
       const today = new Date()
 
       const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 4)
-      const infoRequest = clarificationNoteFactory.build({ createdAt: DateFormats.dateObjToIsoDate(date) })
-      const assessment = assessmentFactory.build({
-        clarificationNotes: [clarificationNoteFactory.build(), infoRequest],
+      const assessment = assessmentSummaryFactory.build({
+        dateOfInfoRequest: DateFormats.dateObjToIsoDate(date),
       })
 
       expect(daysSinceInfoRequest(assessment)).toEqual(4)
     })
 
     it('returns undefined if there are no info requests', () => {
-      const assessment = assessmentFactory.build({ clarificationNotes: [] })
+      const assessment = assessmentSummaryFactory.build({ dateOfInfoRequest: undefined })
 
       expect(daysSinceInfoRequest(assessment)).toEqual(undefined)
     })
@@ -58,33 +56,49 @@ describe('dateUtils', () => {
 
   describe('daysUntilDue', () => {
     it('returns the days until the assessment is due', () => {
-      const assessment = assessmentFactory.createdXDaysAgo(2).build()
+      const assessment = assessmentSummaryFactory.createdXDaysAgo(2).build()
 
       expect(daysUntilDue(assessment)).toEqual(7)
     })
   })
 
   describe('formattedArrivalDate', () => {
-    it('returns the formatted arrival date from the application', () => {
-      const assessment = assessmentFactory.build()
-      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
+    describe('with assessment summaries', () => {
+      it('returns the formatted arrival date from the application', () => {
+        const assessment = assessmentSummaryFactory.build({ arrivalDate: '2022-01-01' })
 
-      expect(formattedArrivalDate(assessment)).toEqual('1 Jan 2022')
-      expect(arrivalDateFromApplication).toHaveBeenCalledWith(assessment.application, false)
+        expect(formattedArrivalDate(assessment)).toEqual('1 Jan 2022')
+      })
+
+      it('returns N/A if there is no arrival date for the application', () => {
+        const assessment = assessmentSummaryFactory.build({ arrivalDate: undefined })
+
+        expect(formattedArrivalDate(assessment)).toEqual('N/A')
+      })
     })
 
-    it('returns N/A if there is no arrival date for the application', () => {
-      const assessment = assessmentFactory.build()
-      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(null)
+    describe('with assessments', () => {
+      it('returns the formatted arrival date from the application', () => {
+        const assessment = assessmentFactory.build()
+        ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
-      expect(formattedArrivalDate(assessment)).toEqual('N/A')
-      expect(arrivalDateFromApplication).toHaveBeenCalledWith(assessment.application, false)
+        expect(formattedArrivalDate(assessment)).toEqual('1 Jan 2022')
+        expect(arrivalDateFromApplication).toHaveBeenCalledWith(assessment.application, false)
+      })
+
+      it('returns N/A if there is no arrival date for the application', () => {
+        const assessment = assessmentFactory.build()
+        ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(null)
+
+        expect(formattedArrivalDate(assessment)).toEqual('N/A')
+        expect(arrivalDateFromApplication).toHaveBeenCalledWith(assessment.application, false)
+      })
     })
   })
 
   describe('formatDaysUntilDueWithWarning', () => {
     it('returns the number of days without a warning if the due date is not soon', () => {
-      const assessment = assessmentFactory.build({
+      const assessment = assessmentSummaryFactory.build({
         createdAt: DateFormats.dateObjToIsoDate(new Date()),
       })
 
@@ -92,7 +106,7 @@ describe('dateUtils', () => {
     })
 
     it('returns the number of days with a warning if the due date is soon', () => {
-      const assessment = assessmentFactory.createdXDaysAgo(8).build()
+      const assessment = assessmentSummaryFactory.createdXDaysAgo(8).build()
 
       expect(formatDaysUntilDueWithWarning(assessment)).toEqual(
         '<strong class="assessments--index__warning">1 Day<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>',
