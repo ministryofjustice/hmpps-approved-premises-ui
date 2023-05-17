@@ -3,6 +3,7 @@ import { SuperAgentRequest } from 'superagent'
 import type {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
+  AssessmentSummary,
   NewClarificationNote,
   UpdatedClarificationNote,
 } from '@approved-premises/api'
@@ -11,7 +12,7 @@ import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
 
 export default {
-  stubAssessments: (assessments: Array<Assessment>): SuperAgentRequest =>
+  stubAssessments: (assessments: Array<AssessmentSummary>): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
