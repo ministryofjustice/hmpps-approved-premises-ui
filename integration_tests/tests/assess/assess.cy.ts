@@ -1,5 +1,6 @@
 import {
   assessmentFactory,
+  assessmentSummaryFactory,
   clarificationNoteFactory,
   documentFactory,
   userFactory,
@@ -168,8 +169,9 @@ context('Assess', () => {
   it('shows a read-only version of the assessment', function test() {
     // Given I have completed an assessment
     const updatedAssessment = { ...this.assessment, status: 'completed' }
+    const updatedAssessmentSummary = assessmentSummaryFactory.build({ id: this.assessment.id, status: 'completed' })
     cy.task('stubAssessment', updatedAssessment)
-    cy.task('stubAssessments', [updatedAssessment])
+    cy.task('stubAssessments', [updatedAssessmentSummary])
 
     // And I visit the list page
     const listPage = ListPage.visit()

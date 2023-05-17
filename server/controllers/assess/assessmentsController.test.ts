@@ -6,7 +6,7 @@ import TasklistService from '../../services/tasklistService'
 import AssessmentsController, { tasklistPageHeading } from './assessmentsController'
 import { AssessmentService } from '../../services'
 
-import { assessmentFactory } from '../../testutils/factories'
+import { assessmentFactory, assessmentSummaryFactory } from '../../testutils/factories'
 
 import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
@@ -39,7 +39,7 @@ describe('assessmentsController', () => {
 
   describe('index', () => {
     it('should list all the assessments', async () => {
-      const assesments = assessmentFactory.buildList(3)
+      const assesments = assessmentSummaryFactory.buildList(3)
       const groupedAssessments = {
         completed: [],
         requestedFurtherInformation: [],

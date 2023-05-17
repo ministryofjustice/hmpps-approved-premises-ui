@@ -1,6 +1,7 @@
 import {
   ApprovedPremisesAssessment as Assessment,
   AssessmentStatus,
+  AssessmentSummary,
   ClarificationNote,
   Document,
   ApprovedPremisesUser as User,
@@ -23,8 +24,11 @@ import {
 import Page from '../pages/page'
 import { updateAssessmentData } from '../../server/form-pages/utils'
 import AssessPage from '../pages/assess/assessPage'
+import { assessmentSummaryFactory } from '../../server/testutils/factories'
 
 export default class AseessHelper {
+  assessmentSummary: AssessmentSummary
+
   pages = {
     reviewApplication: [] as Array<AssessPage>,
     sufficientInformation: [] as Array<AssessPage>,
@@ -39,10 +43,12 @@ export default class AseessHelper {
     private readonly documents: Array<Document>,
     private readonly user: User,
     private readonly clarificationNote?: ClarificationNote,
-  ) {}
+  ) {
+    this.assessmentSummary = assessmentSummaryFactory.build({ id: this.assessment.id })
+  }
 
   setupStubs() {
-    cy.task('stubAssessments', [this.assessment])
+    cy.task('stubAssessments', [this.assessmentSummary])
     cy.task('stubAssessment', this.assessment)
     cy.task('stubFindUser', { user: this.user, id: this.assessment.application.createdByUserId })
     cy.task('stubAssessmentUpdate', this.assessment)
@@ -64,8 +70,9 @@ export default class AseessHelper {
   }
 
   updateAssessmentStatus(status: AssessmentStatus) {
+    this.assessmentSummary.status = status
     this.assessment.status = status
-    cy.task('stubAssessments', [this.assessment])
+    cy.task('stubAssessments', [this.assessmentSummary])
     return cy.task('stubAssessment', this.assessment)
   }
 

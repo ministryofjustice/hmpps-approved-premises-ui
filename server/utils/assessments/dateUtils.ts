@@ -1,25 +1,25 @@
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
+  AssessmentSummary,
 } from '@approved-premises/api'
 import { add, differenceInDays, format } from 'date-fns'
-import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { DateFormats } from '../dateUtils'
+import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
-const daysSinceReceived = (assessment: Assessment): number => {
+const daysSinceReceived = (assessment: AssessmentSummary): number => {
   const receivedDate = DateFormats.isoToDateObj(assessment.createdAt)
 
   return differenceInDays(new Date(), receivedDate)
 }
 
-const daysSinceInfoRequest = (assessment: Assessment): number => {
-  const lastInfoRequest = assessment.clarificationNotes[assessment.clarificationNotes.length - 1]
-  if (!lastInfoRequest) {
+const daysSinceInfoRequest = (assessment: AssessmentSummary): number => {
+  if (!assessment.dateOfInfoRequest) {
     return undefined
   }
-  const infoRequestDate = DateFormats.isoToDateObj(lastInfoRequest.createdAt)
+  const infoRequestDate = DateFormats.isoToDateObj(assessment.dateOfInfoRequest)
 
   return differenceInDays(new Date(), infoRequestDate)
 }
@@ -31,14 +31,14 @@ const formatDays = (days: number): string => {
   return `${days} Day${days > 1 ? 's' : ''}`
 }
 
-const daysUntilDue = (assessment: Assessment): number => {
+const daysUntilDue = (assessment: AssessmentSummary): number => {
   const receivedDate = DateFormats.isoToDateObj(assessment.createdAt)
   const dueDate = add(receivedDate, { days: 10 })
 
   return differenceInDays(dueDate, new Date())
 }
 
-const formatDaysUntilDueWithWarning = (assessment: Assessment): string => {
+const formatDaysUntilDueWithWarning = (assessment: AssessmentSummary): string => {
   const days = daysUntilDue(assessment)
   if (days < DUE_DATE_APPROACHING_DAYS_WINDOW) {
     return `<strong class="assessments--index__warning">${formatDays(
@@ -48,12 +48,19 @@ const formatDaysUntilDueWithWarning = (assessment: Assessment): string => {
   return formatDays(days)
 }
 
-const assessmentsApproachingDue = (assessments: Array<Assessment>): number => {
+const assessmentsApproachingDue = (assessments: Array<AssessmentSummary>): number => {
   return assessments.filter(a => daysUntilDue(a) < DUE_DATE_APPROACHING_DAYS_WINDOW).length
 }
 
-const formattedArrivalDate = (assessment: Assessment): string => {
-  const arrivalDate = arrivalDateFromApplication(assessment.application as Application, false)
+const formattedArrivalDate = (assessment: AssessmentSummary | Assessment): string => {
+  let arrivalDate: string
+
+  if ('arrivalDate' in assessment) {
+    arrivalDate = assessment.arrivalDate
+  } else if ('application' in assessment) {
+    arrivalDate = arrivalDateFromApplication(assessment.application as Application, false)
+  }
+
   if (!arrivalDate) {
     return 'N/A'
   }
