@@ -5,13 +5,17 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { lowerCase, sentenceCase } from '../../../../utils/utils'
 import {
+  AccessibilityCriteria,
   ApTypeCriteria,
   OffenceAndRiskCriteria,
   PlacementRequirementCriteria,
+  SpecialistSupportCriteria,
+  accessibilityOptions,
   apTypeOptions,
   offenceAndRiskOptions,
   placementCriteria,
   placementRequirementOptions,
+  specialistSupportOptions,
 } from '../../../../utils/placementCriteriaUtils'
 
 const placementRequirements = Object.keys(placementRequirementOptions)
@@ -30,12 +34,19 @@ export type MatchingInformationBody = {
     : never
 } & {
   apType: ApTypeCriteria | 'normal'
-  mentalHealthSupport: '1' | '' | undefined
+  accessibilityCriteria: Array<AccessibilityCriteria>
+  specialistSupportCriteria: Array<SpecialistSupportCriteria>
 }
 
 @Page({
   name: 'matching-information',
-  bodyProperties: ['apType', 'mentalHealthSupport', ...placementRequirements, ...offenceAndRiskInformationKeys],
+  bodyProperties: [
+    'apType',
+    'accessibilityCriteria',
+    'specialistSupportCriteria',
+    ...placementRequirements,
+    ...offenceAndRiskInformationKeys,
+  ],
 })
 export default class MatchingInformation implements TasklistPage {
   name = 'matching-information'
@@ -58,16 +69,11 @@ export default class MatchingInformation implements TasklistPage {
 
   offenceAndRiskInformationRelevance = offenceAndRiskInformationRelevance
 
-  mentalHealthSupport = {
-    question: 'If this person requires specialist mental health support, select the box below',
-    hint: 'There are only two AP nationally with a semi-specialism in mental health. Placement in one of these AP is not guaranteed.',
-    label: 'Semi-specialist mental health',
-    value: '',
-  }
+  accessibilityOptions = accessibilityOptions
 
-  constructor(public body: Partial<MatchingInformationBody>) {
-    this.mentalHealthSupport.value = body.mentalHealthSupport
-  }
+  specialistSupportOptions = specialistSupportOptions
+
+  constructor(public body: Partial<MatchingInformationBody>) {}
 
   previous() {
     return 'dashboard'
@@ -80,9 +86,10 @@ export default class MatchingInformation implements TasklistPage {
   response() {
     const response = {
       [this.apTypeQuestion]: this.apTypes[this.body.apType],
-      [this.mentalHealthSupport.question]:
-        this.body.mentalHealthSupport === '1' ? `${this.mentalHealthSupport.label} selected` : 'Unselected',
     }
+
+    response['Specialist support needs'] = this.selectedOptions('specialistSupport')
+    response['Accessibility needs'] = this.selectedOptions('accessibility')
 
     this.placementRequirements.forEach(placementRequirement => {
       response[`${sentenceCase(placementRequirement)}`] = `${sentenceCase(this.body[placementRequirement])}`
@@ -117,5 +124,11 @@ export default class MatchingInformation implements TasklistPage {
     })
 
     return errors
+  }
+
+  private selectedOptions(key: 'specialistSupport' | 'accessibility') {
+    const selectedOptions = this.body[`${key}Criteria`] || []
+
+    return selectedOptions.length ? selectedOptions.map((k: string) => this[`${key}Options`][k]).join(', ') : 'None'
   }
 }

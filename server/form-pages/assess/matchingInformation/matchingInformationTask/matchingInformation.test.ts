@@ -4,7 +4,9 @@ import MatchingInformation, { MatchingInformationBody } from './matchingInformat
 
 const defaultArguments = {
   apType: 'isEsap' as const,
-  mentalHealthSupport: '1',
+  accessibilityCriteria: ['hasHearingLoop'],
+  specialistSupportCriteria: ['isSemiSpecialistMentalHealth', 'isRecoveryFocussed'],
+  isArsonDesignated: 'essential',
   isWheelchairDesignated: 'essential',
   isSingleRoom: 'desirable',
   isStepFreeDesignated: 'desirable',
@@ -17,6 +19,7 @@ const defaultArguments = {
   acceptsNonSexualChildOffenders: 'relevant',
   acceptsHateCrimeOffenders: 'relevant',
   isArsonSuitable: 'relevant',
+  isSuitedForSexOffenders: 'relevant',
 } as MatchingInformationBody
 
 describe('MatchingInformation', () => {
@@ -44,6 +47,7 @@ describe('MatchingInformation', () => {
         apType: 'You must select the type of AP required',
         isWheelchairDesignated: 'You must specify a preference for wheelchair accessible',
         isSingleRoom: 'You must specify a preference for single room',
+        isArsonDesignated: 'You must specify a preference for designated arson room',
         isStepFreeDesignated: 'You must specify a preference for has step-free access',
         isCatered: 'You must specify a preference for catering required',
         isGroundFloor: 'You must specify a preference for ground floor room',
@@ -53,6 +57,7 @@ describe('MatchingInformation', () => {
         acceptsChildSexOffenders: 'You must specify if sexual offences against children is relevant',
         acceptsNonSexualChildOffenders: 'You must specify if non sexual offences against children is relevant',
         acceptsHateCrimeOffenders: 'You must specify if hate based offences is relevant',
+        isSuitedForSexOffenders: 'You must specify a preference for is suited for sex offenders',
         isArsonSuitable: 'You must specify if arson offences is relevant',
       })
     })
@@ -64,8 +69,9 @@ describe('MatchingInformation', () => {
 
       expect(page.response()).toEqual({
         'What type of AP is required?': 'Enhanced Security AP (ESAP)',
-        'If this person requires specialist mental health support, select the box below':
-          'Semi-specialist mental health selected',
+        'Accessibility needs': 'Hearing loop',
+        'Is arson designated': 'Essential',
+        'Is suited for sex offenders': 'Relevant',
         'Is wheelchair designated': 'Essential',
         'Is single room': 'Desirable',
         'Is step free designated': 'Desirable',
@@ -78,7 +84,21 @@ describe('MatchingInformation', () => {
         'Accepts non sexual child offenders': 'Relevant',
         'Accepts hate crime offenders': 'Relevant',
         'Is arson suitable': 'Relevant',
+        'Specialist support needs': 'Semi-specialist mental health, Recovery Focused Approved Premises (RAP)',
       })
+    })
+
+    it('returns none if accessiblity or specialist support needs are not selected', () => {
+      const page = new MatchingInformation({
+        ...defaultArguments,
+        accessibilityCriteria: [],
+        specialistSupportCriteria: [],
+      })
+
+      const response = page.response()
+
+      expect(response['Accessibility needs']).toEqual('None')
+      expect(response['Specialist support needs']).toEqual('None')
     })
   })
 })
