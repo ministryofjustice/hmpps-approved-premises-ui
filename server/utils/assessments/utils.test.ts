@@ -94,7 +94,7 @@ describe('utils', () => {
     it('groups assessments by their status', () => {
       const completedAssessments = assessmentFactory.buildList(2, { status: 'completed' })
       const pendingAssessments = assessmentFactory.buildList(3, { status: 'awaiting_response' })
-      const activeAssessments = assessmentFactory.buildList(5, { status: 'active' })
+      const activeAssessments = assessmentFactory.buildList(5, { status: 'not_started' })
 
       const assessments = [completedAssessments, pendingAssessments, activeAssessments].flat()
 

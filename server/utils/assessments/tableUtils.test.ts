@@ -24,13 +24,13 @@ jest.mock('../personUtils')
 describe('tableUtils', () => {
   describe('getStatus', () => {
     it('returns Not started for an active assessment without data', () => {
-      const assessment = assessmentFactory.build({ status: 'active', data: undefined })
+      const assessment = assessmentFactory.build({ status: 'not_started', data: undefined })
 
       expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--grey">Not started</strong>')
     })
 
     it('returns In Progress for an an active assessment with data', () => {
-      const assessment = assessmentFactory.build({ status: 'active' })
+      const assessment = assessmentFactory.build({ status: 'in_progress' })
 
       expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--blue">In progress</strong>')
     })
