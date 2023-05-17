@@ -1,7 +1,7 @@
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 
 import * as personUtils from '../personUtils'
-import { assessmentFactory, clarificationNoteFactory } from '../../testutils/factories'
+import { assessmentSummaryFactory } from '../../testutils/factories'
 import {
   daysSinceInfoRequest,
   daysSinceReceived,
@@ -23,27 +23,27 @@ jest.mock('../personUtils')
 
 describe('tableUtils', () => {
   describe('getStatus', () => {
-    it('returns Not started for an active assessment without data', () => {
-      const assessment = assessmentFactory.build({ status: 'not_started', data: undefined })
+    it('returns Not started for an assessment that has not been started', () => {
+      const assessment = assessmentSummaryFactory.build({ status: 'not_started' })
 
       expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--grey">Not started</strong>')
     })
 
-    it('returns In Progress for an an active assessment with data', () => {
-      const assessment = assessmentFactory.build({ status: 'in_progress' })
+    it('returns In Progress for an an in progress assessment', () => {
+      const assessment = assessmentSummaryFactory.build({ status: 'in_progress' })
 
       expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--blue">In progress</strong>')
     })
 
     describe('completed assessments', () => {
       it('returns "suitable" for an approved assessment assessment', () => {
-        const assessment = assessmentFactory.build({ status: 'completed', decision: 'accepted' })
+        const assessment = assessmentSummaryFactory.build({ status: 'completed', decision: 'accepted' })
 
         expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--green">Suitable</strong>')
       })
 
       it('returns "rejected" for an approved assessment assessment', () => {
-        const assessment = assessmentFactory.build({ status: 'completed', decision: 'rejected' })
+        const assessment = assessmentSummaryFactory.build({ status: 'completed', decision: 'rejected' })
 
         expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--red">Rejected</strong>')
       })
@@ -51,7 +51,7 @@ describe('tableUtils', () => {
   })
 
   describe('assessmentLink', () => {
-    const assessment = assessmentFactory.build({ id: '123', application: { person: { name: 'John Wayne' } } })
+    const assessment = assessmentSummaryFactory.build({ id: '123', person: { name: 'John Wayne' } })
 
     it('returns a link to an assessment', () => {
       expect(assessmentLink(assessment)).toMatchStringIgnoringWhitespace(`
@@ -76,7 +76,7 @@ describe('tableUtils', () => {
 
   describe('awaitingAssessmentTableRows', () => {
     it('returns table rows for the assessments', () => {
-      const assessment = assessmentFactory.build()
+      const assessment = assessmentSummaryFactory.build()
 
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
@@ -85,22 +85,22 @@ describe('tableUtils', () => {
       expect(awaitingAssessmentTableRows([assessment])).toEqual([
         [
           { html: assessmentLink(assessment) },
-          { html: assessment.application.person.crn },
+          { html: assessment.person.crn },
           { html: 'TIER_BADGE' },
           { text: formattedArrivalDate(assessment) },
-          { text: assessment.application.person.prisonName },
+          { text: assessment.person.prisonName },
           { html: formatDaysUntilDueWithWarning(assessment) },
           { html: getStatus(assessment) },
         ],
       ])
 
-      expect(tierBadgeSpy).toHaveBeenCalledWith(assessment.application.risks.tier.value.level)
+      expect(tierBadgeSpy).toHaveBeenCalledWith(assessment.risks.tier.value.level)
     })
   })
 
   describe('requestedInformationTableRows', () => {
     it('returns table rows for the assessments', () => {
-      const assessment = assessmentFactory.build({ clarificationNotes: clarificationNoteFactory.buildList(2) })
+      const assessment = assessmentSummaryFactory.build({ status: 'awaiting_response' })
 
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
@@ -109,7 +109,7 @@ describe('tableUtils', () => {
       expect(requestedFurtherInformationTableRows([assessment])).toEqual([
         [
           { html: assessmentLink(assessment) },
-          { html: assessment.application.person.crn },
+          { html: assessment.person.crn },
           { html: 'TIER_BADGE' },
           { text: formattedArrivalDate(assessment) },
           { text: formatDays(daysSinceReceived(assessment)) },
@@ -118,13 +118,13 @@ describe('tableUtils', () => {
         ],
       ])
 
-      expect(tierBadgeSpy).toHaveBeenCalledWith(assessment.application.risks.tier.value.level)
+      expect(tierBadgeSpy).toHaveBeenCalledWith(assessment.risks.tier.value.level)
     })
   })
 
   describe('completedTableRows', () => {
     it('returns table rows for the assessments', () => {
-      const assessment = assessmentFactory.build()
+      const assessment = assessmentSummaryFactory.build()
 
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
@@ -133,14 +133,14 @@ describe('tableUtils', () => {
       expect(completedTableRows([assessment])).toEqual([
         [
           { html: assessmentLink(assessment) },
-          { html: assessment.application.person.crn },
+          { html: assessment.person.crn },
           { html: 'TIER_BADGE' },
           { text: formattedArrivalDate(assessment) },
           { html: getStatus(assessment) },
         ],
       ])
 
-      expect(tierBadgeSpy).toHaveBeenCalledWith(assessment.application.risks.tier.value.level)
+      expect(tierBadgeSpy).toHaveBeenCalledWith(assessment.risks.tier.value.level)
     })
   })
 })

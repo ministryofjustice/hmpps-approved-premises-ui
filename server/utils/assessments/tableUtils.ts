@@ -1,96 +1,92 @@
-import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { AssessmentSummary } from '@approved-premises/api'
 import { TableRow } from '@approved-premises/ui'
+import { format } from 'date-fns'
 import { linkTo } from '../utils'
-import {
-  daysSinceInfoRequest,
-  daysSinceReceived,
-  formatDays,
-  formatDaysUntilDueWithWarning,
-  formattedArrivalDate,
-} from './dateUtils'
+import { daysSinceInfoRequest, daysSinceReceived, formatDays, formatDaysUntilDueWithWarning } from './dateUtils'
 import { tierBadge } from '../personUtils'
 import paths from '../../paths/assess'
+import { DateFormats } from '../dateUtils'
 
-const getStatus = (assessment: Assessment): string => {
+const getStatus = (assessment: AssessmentSummary): string => {
   if (assessment.status === 'completed') {
     if (assessment.decision === 'accepted') return `<strong class="govuk-tag govuk-tag--green">Suitable</strong>`
     if (assessment.decision === 'rejected') return `<strong class="govuk-tag govuk-tag--red">Rejected</strong>`
   }
 
-  if (assessment.data) {
+  if (assessment.status === 'in_progress') {
     return `<strong class="govuk-tag govuk-tag--blue">In progress</strong>`
   }
 
   return `<strong class="govuk-tag govuk-tag--grey">Not started</strong>`
 }
 
-const assessmentLink = (assessment: Assessment, linkText = '', hiddenText = ''): string => {
+const assessmentLink = (assessment: AssessmentSummary, linkText = '', hiddenText = ''): string => {
   return linkTo(
     paths.assessments.show,
     { id: assessment.id },
     {
-      text: linkText || assessment.application.person.name,
+      text: linkText || assessment.person.name,
       hiddenText,
       attributes: { 'data-cy-assessmentId': assessment.id },
     },
   )
 }
 
-const crnCell = (assessment: Assessment) => {
+const crnCell = (assessment: AssessmentSummary) => {
   return {
-    html: assessment.application.person.crn,
+    html: assessment.person.crn,
   }
 }
 
-const arrivalDateCell = (assessment: Assessment) => {
+const arrivalDateCell = (assessment: AssessmentSummary) => {
   return {
-    text: formattedArrivalDate(assessment),
+    text: format(DateFormats.isoToDateObj(assessment.arrivalDate), 'd MMM yyyy'),
   }
 }
 
-const daysUntilDueCell = (assessment: Assessment) => {
+const daysUntilDueCell = (assessment: AssessmentSummary) => {
   return {
     html: formatDaysUntilDueWithWarning(assessment),
   }
 }
 
-const statusCell = (assessment: Assessment) => {
+const statusCell = (assessment: AssessmentSummary) => {
   return {
     html: getStatus(assessment),
   }
 }
 
-const linkCell = (assessment: Assessment) => {
+const linkCell = (assessment: AssessmentSummary) => {
   return {
     html: assessmentLink(assessment),
   }
 }
 
-const tierCell = (assessment: Assessment) => {
+const tierCell = (assessment: AssessmentSummary) => {
   return {
-    html: tierBadge(assessment.application.risks.tier?.value?.level),
+    html: tierBadge(assessment.risks.tier?.value?.level),
   }
 }
 
-const prisonCell = (assessment: Assessment) => {
+const prisonCell = (assessment: AssessmentSummary) => {
   return {
-    text: assessment.application.person.prisonName,
+    text: assessment.person.prisonName,
   }
 }
 
-const daysSinceReceivedCell = (assessment: Assessment) => {
+const daysSinceReceivedCell = (assessment: AssessmentSummary) => {
   return {
     text: formatDays(daysSinceReceived(assessment)),
   }
 }
 
-const daysSinceInfoRequestCell = (assessment: Assessment) => {
+const daysSinceInfoRequestCell = (assessment: AssessmentSummary) => {
   return {
     text: formatDays(daysSinceInfoRequest(assessment)),
   }
 }
 
-const awaitingAssessmentTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
+const awaitingAssessmentTableRows = (assessments: Array<AssessmentSummary>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   assessments.forEach(assessment => {
@@ -108,7 +104,7 @@ const awaitingAssessmentTableRows = (assessments: Array<Assessment>): Array<Tabl
   return rows
 }
 
-const completedTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
+const completedTableRows = (assessments: Array<AssessmentSummary>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   assessments.forEach(assessment => {
@@ -124,7 +120,7 @@ const completedTableRows = (assessments: Array<Assessment>): Array<TableRow> => 
   return rows
 }
 
-const requestedFurtherInformationTableRows = (assessments: Array<Assessment>): Array<TableRow> => {
+const requestedFurtherInformationTableRows = (assessments: Array<AssessmentSummary>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   const infoRequestStatusCell = {
