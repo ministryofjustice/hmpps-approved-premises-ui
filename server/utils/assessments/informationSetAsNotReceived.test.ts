@@ -23,7 +23,7 @@ describe('informationSetAsNotReceived', () => {
   })
 
   it('returns false when the application is not pending', () => {
-    assessment.status = 'active'
+    assessment.status = 'in_progress'
 
     expect(informationSetAsNotReceived(assessment)).toEqual(false)
   })
