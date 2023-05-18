@@ -27,7 +27,11 @@ describe('placementRequestData', () => {
 
   it('converts matching data into a placement request', () => {
     mockQuestionResponse({ postcodeArea: 'ABC123', type: 'normal', duration: '12' })
-    mockOptionalQuestionResponse({ lengthOfStayAgreedDetail: '12', alternativeRadius: '100' })
+    mockOptionalQuestionResponse({
+      lengthOfStayAgreedDetail: '12',
+      alternativeRadius: '100',
+      cruInformation: 'Some notes',
+    })
 
     expect(placementRequestData(assessment)).toEqual({
       gender: 'male',
@@ -38,6 +42,7 @@ describe('placementRequestData', () => {
       radius: '100',
       essentialCriteria: criteriaFromMatchingInformation(matchingInformation).essentialCriteria,
       desirableCriteria: criteriaFromMatchingInformation(matchingInformation).desirableCriteria,
+      notes: 'Some notes',
     })
   })
 
