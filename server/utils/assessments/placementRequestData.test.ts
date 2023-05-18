@@ -18,7 +18,8 @@ describe('placementRequestData', () => {
 
   let matchingInformation = createMock<MatchingInformationBody>({
     apType: 'isEsap',
-    mentalHealthSupport: '1',
+    specialistSupportCriteria: [],
+    accessibilityCriteria: [],
   })
 
   ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue(matchingInformation)
@@ -35,7 +36,6 @@ describe('placementRequestData', () => {
       duration: '12',
       location: 'ABC123',
       radius: '100',
-      mentalHealthSupport: true,
       essentialCriteria: criteriaFromMatchingInformation(matchingInformation).essentialCriteria,
       desirableCriteria: criteriaFromMatchingInformation(matchingInformation).desirableCriteria,
     })
@@ -58,22 +58,12 @@ describe('placementRequestData', () => {
     expect(result.duration).toEqual(52)
   })
 
-  it('returns a false mentalHealthSupport requirement if the mentalHealthSupport matching information is blank', () => {
-    matchingInformation = createMock<MatchingInformationBody>({
-      mentalHealthSupport: '',
-    })
-    ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue(matchingInformation)
-
-    const result = placementRequestData(assessment)
-
-    expect(result.mentalHealthSupport).toEqual(false)
-  })
-
   describe('criteriaFromMatchingInformation', () => {
     it('returns all essential criteria for essential and relevant matching information', () => {
       matchingInformation = createMock<MatchingInformationBody>({
         apType: 'isEsap',
-        mentalHealthSupport: '1',
+        specialistSupportCriteria: ['isSemiSpecialistMentalHealth'],
+        accessibilityCriteria: ['hasHearingLoop', 'hasTactileFlooring'],
         isWheelchairDesignated: 'essential',
         isStepFreeDesignated: 'essential',
         isCatered: 'essential',
@@ -94,6 +84,9 @@ describe('placementRequestData', () => {
           'isWheelchairDesignated',
           'isStepFreeDesignated',
           'isCatered',
+          'isSemiSpecialistMentalHealth',
+          'hasHearingLoop',
+          'hasTactileFlooring',
           'acceptsSexOffenders',
           'acceptsChildSexOffenders',
           'acceptsNonSexualChildOffenders',
@@ -101,18 +94,18 @@ describe('placementRequestData', () => {
           'acceptsHateCrimeOffenders',
           'isSuitableForVulnerable',
           'isSuitedForSexOffenders',
-          'isSemiSpecialistMentalHealth',
         ].sort(),
       )
     })
 
     it('returns all desirable criteria for desirable matching information', () => {
       matchingInformation = createMock<MatchingInformationBody>({
-        mentalHealthSupport: undefined,
         apType: 'normal',
         isWheelchairDesignated: 'desirable',
         isStepFreeDesignated: 'desirable',
         isCatered: 'desirable',
+        specialistSupportCriteria: [],
+        accessibilityCriteria: [],
       })
 
       const result = criteriaFromMatchingInformation(matchingInformation)
@@ -126,7 +119,6 @@ describe('placementRequestData', () => {
     it('returns empty objects for not relevant matching information', () => {
       matchingInformation = createMock<MatchingInformationBody>({
         apType: 'normal',
-        mentalHealthSupport: '',
         isWheelchairDesignated: 'notRelevant',
         isStepFreeDesignated: 'notRelevant',
         isCatered: 'notRelevant',
@@ -136,6 +128,8 @@ describe('placementRequestData', () => {
         isArsonSuitable: 'notRelevant',
         acceptsHateCrimeOffenders: 'notRelevant',
         isSuitableForVulnerable: 'notRelevant',
+        specialistSupportCriteria: [],
+        accessibilityCriteria: [],
       })
 
       expect(criteriaFromMatchingInformation(matchingInformation)).toEqual({

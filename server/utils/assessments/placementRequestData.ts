@@ -57,7 +57,6 @@ export const placementRequestData = (assessment: Assessment): PlacementRequireme
     duration: placementDuration,
     location,
     radius: alternativeRadius || 50,
-    mentalHealthSupport: !!matchingInformation.mentalHealthSupport,
     ...criteria,
   } as PlacementRequirements
 }
@@ -85,9 +84,8 @@ export const criteriaFromMatchingInformation = (
     essentialCriteria.push(matchingInformation.apType)
   }
 
-  if (matchingInformation.mentalHealthSupport) {
-    essentialCriteria.push('isSemiSpecialistMentalHealth')
-  }
+  essentialCriteria.push(...matchingInformation.specialistSupportCriteria)
+  essentialCriteria.push(...matchingInformation.accessibilityCriteria)
 
   Object.keys(placementRequirementOptions).forEach((requirement: PlacementRequirementCriteria) => {
     if (matchingInformation[requirement] === 'essential') {
