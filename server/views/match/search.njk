@@ -67,28 +67,32 @@
 					<input type="hidden" name="assessmentId" value="{{assessmentId}}"/>
 					{% for requiredCharacteristic in requiredCharacteristics %}
 						<input type="hidden" name="requiredCharacteristics[]" value="{{requiredCharacteristic}}"/>
-						{%endfor%}
+					{% endfor %}
 
-						<div class="govuk-grid-column-one-third">
-							{{govukCheckboxes({
-							name: 'selectedRequiredCharacteristics',
-							classes: "govuk-checkboxes--small",
-							fieldset: {
-								legend: {
-									text: 'Required characteristics',
-									isPageHeading: false,
-									classes: 'govuk-fieldset__legend--s'
-								}
-							},
-						items: MatchUtils.searchFilter(requiredCharacteristics)
-					})}}
-						</div>
+					<div class="govuk-grid-column-one-third">
+						{% for title, items in MatchUtils.groupedCheckboxes(placementRequest.desirableCriteria) %}
+							{{
+								govukCheckboxes({
+									name: 'selectedRequiredCharacteristics',
+									classes: "govuk-checkboxes--small",
+									fieldset: {
+										legend: {
+											text: title,
+											isPageHeading: false,
+											classes: 'govuk-fieldset__legend--s'
+										}
+									},
+									items: items
+								})
+							}}
+						{% endfor %}
+					</div>
 
-						<div class="govuk-grid-column-two-thirds">
+					<div class="govuk-grid-column-two-thirds">
 
-							<div class="bed-search-inputs">
+						<div class="bed-search-inputs">
 
-								{{ govukDateInput({
+							{{ govukDateInput({
 								id: "startDate",
 								namePrefix: "startDate",
 								fieldset: {
@@ -101,7 +105,7 @@
 								errorMessage: errors.startDate
 							}) }}
 
-								{{
+							{{
 								govukInput({
 								id: "durationWeeks",
 								name: "durationWeeks",
@@ -117,7 +121,7 @@
 								})
 							}}
 
-								{{ govukInput({
+							{{ govukInput({
 								id: "postcodeDistrict",
 								name: "postcodeDistrict",
 								value: postcodeDistrict,
@@ -127,7 +131,7 @@
 								classes: "govuk-input--width-3"
 							}) }}
 
-								{{ govukInput({
+							{{ govukInput({
 								id: "maxDistanceMiles",
 								name: "maxDistanceMiles",
 								value: maxDistanceMiles,
@@ -140,16 +144,16 @@
 								}
 							}) }}
 
-								<div class="button">
-									{{ govukButton({
+							<div class="button">
+								{{ govukButton({
 									text: "Update"
 								}) }}
-								</div>
 							</div>
-						</form>
+						</div>
+					</form>
 
-						{% for bedSearchResult in bedSearchResults.results %}
-							{{ govukSummaryList({
+					{% for bedSearchResult in bedSearchResults.results %}
+						{{ govukSummaryList({
 					card: {
 						title: {
 							html: MatchUtils.summaryCardHeader(bedSearchResult, placementRequest.id, startDate, durationWeeks)
@@ -157,9 +161,9 @@
 					},
 					rows: MatchUtils.summaryCardRows(bedSearchResult, requiredCharacteristics)
 				}) }}
-						{% endfor %}
-					</div>
+					{% endfor %}
 				</div>
 			</div>
+		</div>
 
-		{% endblock %}
+	{% endblock %}

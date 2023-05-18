@@ -12,10 +12,12 @@ import {
   arrivalDateRow,
   bedCountRow,
   bedNameRow,
+  checkBoxesForCriteria,
   confirmationSummaryCardRows,
   decodeBedSearchResult,
   departureDateRow,
   encodeBedSearchResult,
+  groupedCheckboxes,
   mapApiParamsForUi,
   mapSearchParamCharacteristicsForUi,
   mapSearchResultCharacteristicsForUi,
@@ -26,7 +28,6 @@ import {
   placementLength,
   placementLengthRow,
   premisesNameRow,
-  searchFilter,
   startDateObjFromParams,
   summaryCardHeader,
   summaryCardRows,
@@ -34,18 +35,19 @@ import {
   translateApiCharacteristicForUi,
   unmatchedCharacteristics,
 } from './matchUtils'
-
-jest.mock('./placementCriteriaUtils', () => {
-  return {
-    placementCriteria: {
-      isESAP: 'ESAP',
-      isIAP: 'IAP',
-      isSemiSpecialistMentalHealth: 'Semi specialist mental health',
-    },
-  }
-})
+import {
+  accessibilityOptions,
+  apTypeOptions,
+  offenceAndRiskOptions,
+  placementRequirementOptions,
+  specialistSupportOptions,
+} from './placementCriteriaUtils'
 
 describe('matchUtils', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   describe('matchedCharacteristics', () => {
     it('returns a list of the matched characteristics', () => {
       const actualCharacteristics = [
@@ -176,23 +178,42 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('searchFilter', () => {
+  describe('checkBoxesForCriteria', () => {
     it('returns an array of checkboxes with the selectedValues selected and any empty values removed', () => {
-      const result = searchFilter(['isESAP', 'isIAP'])
+      const options = {
+        isESAP: 'ESAP',
+        isIAP: 'IAP',
+        isSemiSpecialistMentalHealth: 'Semi specialist mental health',
+      }
+      const result = checkBoxesForCriteria(options, ['isESAP', 'isIAP'])
 
       expect(result).toEqual([
         {
           checked: true,
+          id: 'isESAP',
           text: 'ESAP',
           value: 'isESAP',
         },
-        { text: 'IAP', value: 'isIAP', checked: true },
+        { text: 'IAP', value: 'isIAP', id: 'isIAP', checked: true },
         {
           checked: false,
+          id: 'isSemiSpecialistMentalHealth',
           text: 'Semi specialist mental health',
           value: 'isSemiSpecialistMentalHealth',
         },
       ])
+    })
+  })
+
+  describe('groupedCheckboxes', () => {
+    it('returns checkboxes grouped by category', () => {
+      expect(groupedCheckboxes([])).toEqual({
+        'Type of AP': checkBoxesForCriteria(apTypeOptions, []),
+        'Specialist AP': checkBoxesForCriteria(specialistSupportOptions, []),
+        'Placement Requirements': checkBoxesForCriteria(placementRequirementOptions, []),
+        'Risks and offences to consider': checkBoxesForCriteria(offenceAndRiskOptions, []),
+        'Would benefit from': checkBoxesForCriteria(accessibilityOptions, []),
+      })
     })
   })
 
