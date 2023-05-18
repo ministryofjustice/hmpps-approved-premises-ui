@@ -20,6 +20,8 @@ const defaultArguments = {
   acceptsHateCrimeOffenders: 'relevant',
   isArsonSuitable: 'relevant',
   isSuitedForSexOffenders: 'relevant',
+  lengthOfStayAgreed: 'yes',
+  cruInformation: 'Some info',
 } as MatchingInformationBody
 
 describe('MatchingInformation', () => {
@@ -59,6 +61,15 @@ describe('MatchingInformation', () => {
         acceptsHateCrimeOffenders: 'You must specify if hate based offences is relevant',
         isSuitedForSexOffenders: 'You must specify a preference for is suited for sex offenders',
         isArsonSuitable: 'You must specify if arson offences is relevant',
+        lengthOfStayAgreed: 'You must state if you agree with the length of the stay',
+      })
+    })
+
+    it('should add an error if lengthOfStayAgreed is no and the details are not provided', () => {
+      const page = new MatchingInformation({ ...defaultArguments, lengthOfStayAgreed: 'no' })
+
+      expect(page.errors()).toEqual({
+        lengthOfStayAgreedDetail: 'You must provide a recommended length of stay',
       })
     })
   })
@@ -85,6 +96,8 @@ describe('MatchingInformation', () => {
         'Accepts hate crime offenders': 'Relevant',
         'Is arson suitable': 'Relevant',
         'Specialist support needs': 'Semi-specialist mental health, Recovery Focused Approved Premises (RAP)',
+        'Do you agree with the suggested length of stay?': 'Yes',
+        'Information for Central Referral Unit (CRU) manager': 'Some info',
       })
     })
 
@@ -99,6 +112,19 @@ describe('MatchingInformation', () => {
 
       expect(response['Accessibility needs']).toEqual('None')
       expect(response['Specialist support needs']).toEqual('None')
+    })
+
+    it('adds the recommended length of stay if lengthOfStayAgreed is no', () => {
+      const page = new MatchingInformation({
+        ...defaultArguments,
+        lengthOfStayAgreed: 'no',
+        lengthOfStayAgreedDetail: '12',
+      })
+
+      const response = page.response()
+
+      expect(response['Do you agree with the suggested length of stay?']).toEqual('No')
+      expect(response['Recommended length of stay']).toEqual('12 weeks')
     })
   })
 

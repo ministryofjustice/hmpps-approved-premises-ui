@@ -1,4 +1,4 @@
-import type { TaskListErrors } from '@approved-premises/ui'
+import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
 
@@ -36,7 +36,8 @@ export type MatchingInformationBody = {
   apType: ApTypeCriteria | 'normal'
   accessibilityCriteria: Array<AccessibilityCriteria>
   specialistSupportCriteria: Array<SpecialistSupportCriteria>
-}
+  cruInformation: string
+} & YesOrNoWithDetail<'lengthOfStayAgreed'>
 
 @Page({
   name: 'matching-information',
@@ -44,6 +45,9 @@ export type MatchingInformationBody = {
     'apType',
     'accessibilityCriteria',
     'specialistSupportCriteria',
+    'lengthOfStayAgreed',
+    'lengthOfStayAgreedDetail',
+    'cruInformation',
     ...placementRequirements,
     ...offenceAndRiskInformationKeys,
   ],
@@ -99,6 +103,16 @@ export default class MatchingInformation implements TasklistPage {
       response[`${sentenceCase(offenceOrRiskInformation)}`] = `${sentenceCase(this.body[offenceOrRiskInformation])}`
     })
 
+    response['Do you agree with the suggested length of stay?'] = sentenceCase(this.body.lengthOfStayAgreed)
+
+    if (this.body.lengthOfStayAgreedDetail) {
+      response['Recommended length of stay'] = `${this.body.lengthOfStayAgreedDetail} weeks`
+    }
+
+    if (this.body.cruInformation) {
+      response['Information for Central Referral Unit (CRU) manager'] = this.body.cruInformation
+    }
+
     return response
   }
 
@@ -122,6 +136,14 @@ export default class MatchingInformation implements TasklistPage {
         )} is relevant`
       }
     })
+
+    if (!this.body.lengthOfStayAgreed) {
+      errors.lengthOfStayAgreed = 'You must state if you agree with the length of the stay'
+    }
+
+    if (this.body.lengthOfStayAgreed === 'no' && !this.body.lengthOfStayAgreedDetail) {
+      errors.lengthOfStayAgreedDetail = 'You must provide a recommended length of stay'
+    }
 
     return errors
   }
