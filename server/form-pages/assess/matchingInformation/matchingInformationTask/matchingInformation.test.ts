@@ -41,6 +41,34 @@ describe('MatchingInformation', () => {
 
       expect(page.body).toEqual(defaultArguments)
     })
+
+    it('should return accessibilityCriteria and specialistSupportCriteria as arrays if strings are provided', () => {
+      const page = new MatchingInformation(
+        {
+          ...defaultArguments,
+          accessibilityCriteria: 'hasHearingLoop',
+          specialistSupportCriteria: 'isSemiSpecialistMentalHealth',
+        } as unknown as MatchingInformationBody,
+        assessment,
+      )
+
+      expect(page.body.accessibilityCriteria).toEqual(['hasHearingLoop'])
+      expect(page.body.specialistSupportCriteria).toEqual(['isSemiSpecialistMentalHealth'])
+    })
+
+    it('should return empty arrays for accessibilityCriteria and specialistSupportCriteria as arrays if no data is provided', () => {
+      const page = new MatchingInformation(
+        {
+          ...defaultArguments,
+          accessibilityCriteria: undefined,
+          specialistSupportCriteria: undefined,
+        } as unknown as MatchingInformationBody,
+        assessment,
+      )
+
+      expect(page.body.accessibilityCriteria).toEqual([])
+      expect(page.body.specialistSupportCriteria).toEqual([])
+    })
   })
 
   itShouldHaveNextValue(new MatchingInformation(defaultArguments, assessment), '')

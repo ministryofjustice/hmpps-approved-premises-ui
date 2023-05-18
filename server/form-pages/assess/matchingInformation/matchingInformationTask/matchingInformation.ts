@@ -79,7 +79,21 @@ export default class MatchingInformation implements TasklistPage {
 
   specialistSupportOptions = specialistSupportOptions
 
-  constructor(public body: Partial<MatchingInformationBody>, public assessment: Assessment) {}
+  constructor(private _body: Partial<MatchingInformationBody>, public assessment: Assessment) {}
+
+  set body(value: MatchingInformationBody) {
+    this._body = value
+  }
+
+  get body(): MatchingInformationBody {
+    return {
+      ...this._body,
+      accessibilityCriteria: this._body.accessibilityCriteria ? [this._body.accessibilityCriteria].flat() : [],
+      specialistSupportCriteria: this._body.specialistSupportCriteria
+        ? [this._body.specialistSupportCriteria].flat()
+        : [],
+    } as MatchingInformationBody
+  }
 
   previous() {
     return 'dashboard'
