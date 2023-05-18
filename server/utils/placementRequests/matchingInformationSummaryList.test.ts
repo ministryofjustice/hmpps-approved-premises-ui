@@ -19,6 +19,30 @@ describe('matchingInformationSummaryList', () => {
         ],
       })
     })
+
+    it('should add notes if provided', () => {
+      const placementRequest = placementRequestFactory.build({ notes: 'Some notes' })
+
+      expect(matchingInformationSummary(placementRequest)).toEqual({
+        card: {
+          title: {
+            text: 'Information for Matching',
+          },
+        },
+        rows: [
+          placementRequirementsRow(placementRequest, 'essential'),
+          placementRequirementsRow(placementRequest, 'desirable'),
+          {
+            key: {
+              text: 'Observations from assessor',
+            },
+            value: {
+              text: placementRequest.notes,
+            },
+          },
+        ],
+      })
+    })
   })
 
   describe('placementRequirementsRow', () => {
