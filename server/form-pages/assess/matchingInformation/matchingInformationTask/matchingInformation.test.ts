@@ -101,4 +101,43 @@ describe('MatchingInformation', () => {
       expect(response['Specialist support needs']).toEqual('None')
     })
   })
+
+  describe('specialistSupportCheckboxes', () => {
+    it('returns an array of checkboxes with chosen options selected', () => {
+      const page = new MatchingInformation({ ...defaultArguments, specialistSupportCriteria: ['isRecoveryFocussed'] })
+
+      expect(page.specialistSupportCheckboxes).toEqual([
+        {
+          value: 'isRecoveryFocussed',
+          text: 'Recovery Focused Approved Premises (RAP)',
+          checked: true,
+        },
+        {
+          value: 'isSemiSpecialistMentalHealth',
+          text: 'Semi-specialist mental health',
+          checked: false,
+        },
+      ])
+    })
+  })
+
+  describe('accessibilityCheckBoxes', () => {
+    it('returns an array of checkboxes with chosen options selected', () => {
+      const page = new MatchingInformation({ ...defaultArguments, accessibilityCriteria: ['hasBrailleSignage'] })
+
+      expect(page.accessibilityCheckBoxes).toEqual([
+        {
+          value: 'hasBrailleSignage',
+          text: 'Braille signage',
+          checked: true,
+        },
+        {
+          value: 'hasTactileFlooring',
+          text: 'Tactile Flooring',
+          checked: false,
+        },
+        { value: 'hasHearingLoop', text: 'Hearing loop', checked: false },
+      ])
+    })
+  })
 })

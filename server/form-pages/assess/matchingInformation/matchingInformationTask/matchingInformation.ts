@@ -126,6 +126,26 @@ export default class MatchingInformation implements TasklistPage {
     return errors
   }
 
+  get specialistSupportCheckboxes() {
+    return Object.keys(specialistSupportOptions).map((k: SpecialistSupportCriteria) => {
+      return {
+        value: k,
+        text: specialistSupportOptions[k],
+        checked: (this.body.specialistSupportCriteria || []).includes(k),
+      }
+    })
+  }
+
+  get accessibilityCheckBoxes() {
+    return Object.keys(accessibilityOptions).map((k: AccessibilityCriteria) => {
+      return {
+        value: k,
+        text: accessibilityOptions[k],
+        checked: (this.body.accessibilityCriteria || []).includes(k),
+      }
+    })
+  }
+
   private selectedOptions(key: 'specialistSupport' | 'accessibility') {
     const selectedOptions = this.body[`${key}Criteria`] || []
 
