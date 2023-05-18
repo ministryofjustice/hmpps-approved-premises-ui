@@ -1,6 +1,12 @@
+import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
+import { assessmentFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import MatchingInformation, { MatchingInformationBody } from './matchingInformation'
+
+jest.mock('../../../../utils/assessments/placementDurationFromApplication')
+
+const assessment = assessmentFactory.build()
 
 const defaultArguments = {
   apType: 'isEsap' as const,
@@ -26,24 +32,24 @@ const defaultArguments = {
 
 describe('MatchingInformation', () => {
   describe('title', () => {
-    expect(new MatchingInformation(defaultArguments).title).toBe('Matching information')
+    expect(new MatchingInformation(defaultArguments, assessment).title).toBe('Matching information')
   })
 
   describe('body', () => {
     it('should set the body', () => {
-      const page = new MatchingInformation(defaultArguments)
+      const page = new MatchingInformation(defaultArguments, assessment)
 
       expect(page.body).toEqual(defaultArguments)
     })
   })
 
-  itShouldHaveNextValue(new MatchingInformation(defaultArguments), '')
+  itShouldHaveNextValue(new MatchingInformation(defaultArguments, assessment), '')
 
-  itShouldHavePreviousValue(new MatchingInformation(defaultArguments), 'dashboard')
+  itShouldHavePreviousValue(new MatchingInformation(defaultArguments, assessment), 'dashboard')
 
   describe('errors', () => {
     it('should have an error if there is no answers', () => {
-      const page = new MatchingInformation({})
+      const page = new MatchingInformation({}, assessment)
 
       expect(page.errors()).toEqual({
         apType: 'You must select the type of AP required',
@@ -66,7 +72,7 @@ describe('MatchingInformation', () => {
     })
 
     it('should add an error if lengthOfStayAgreed is no and the details are not provided', () => {
-      const page = new MatchingInformation({ ...defaultArguments, lengthOfStayAgreed: 'no' })
+      const page = new MatchingInformation({ ...defaultArguments, lengthOfStayAgreed: 'no' }, assessment)
 
       expect(page.errors()).toEqual({
         lengthOfStayAgreedDetail: 'You must provide a recommended length of stay',
@@ -76,7 +82,7 @@ describe('MatchingInformation', () => {
 
   describe('response', () => {
     it('returns the response', () => {
-      const page = new MatchingInformation({ ...defaultArguments })
+      const page = new MatchingInformation({ ...defaultArguments }, assessment)
 
       expect(page.response()).toEqual({
         'What type of AP is required?': 'Enhanced Security AP (ESAP)',
@@ -102,11 +108,14 @@ describe('MatchingInformation', () => {
     })
 
     it('returns none if accessiblity or specialist support needs are not selected', () => {
-      const page = new MatchingInformation({
-        ...defaultArguments,
-        accessibilityCriteria: [],
-        specialistSupportCriteria: [],
-      })
+      const page = new MatchingInformation(
+        {
+          ...defaultArguments,
+          accessibilityCriteria: [],
+          specialistSupportCriteria: [],
+        },
+        assessment,
+      )
 
       const response = page.response()
 
@@ -115,11 +124,14 @@ describe('MatchingInformation', () => {
     })
 
     it('adds the recommended length of stay if lengthOfStayAgreed is no', () => {
-      const page = new MatchingInformation({
-        ...defaultArguments,
-        lengthOfStayAgreed: 'no',
-        lengthOfStayAgreedDetail: '12',
-      })
+      const page = new MatchingInformation(
+        {
+          ...defaultArguments,
+          lengthOfStayAgreed: 'no',
+          lengthOfStayAgreedDetail: '12',
+        },
+        assessment,
+      )
 
       const response = page.response()
 
@@ -130,7 +142,10 @@ describe('MatchingInformation', () => {
 
   describe('specialistSupportCheckboxes', () => {
     it('returns an array of checkboxes with chosen options selected', () => {
-      const page = new MatchingInformation({ ...defaultArguments, specialistSupportCriteria: ['isRecoveryFocussed'] })
+      const page = new MatchingInformation(
+        { ...defaultArguments, specialistSupportCriteria: ['isRecoveryFocussed'] },
+        assessment,
+      )
 
       expect(page.specialistSupportCheckboxes).toEqual([
         {
@@ -149,7 +164,10 @@ describe('MatchingInformation', () => {
 
   describe('accessibilityCheckBoxes', () => {
     it('returns an array of checkboxes with chosen options selected', () => {
-      const page = new MatchingInformation({ ...defaultArguments, accessibilityCriteria: ['hasBrailleSignage'] })
+      const page = new MatchingInformation(
+        { ...defaultArguments, accessibilityCriteria: ['hasBrailleSignage'] },
+        assessment,
+      )
 
       expect(page.accessibilityCheckBoxes).toEqual([
         {
@@ -164,6 +182,18 @@ describe('MatchingInformation', () => {
         },
         { value: 'hasHearingLoop', text: 'Hearing loop', checked: false },
       ])
+    })
+  })
+
+  describe('suggestedLengthOfStay', () => {
+    it('returns the suggested length of stay from the application', () => {
+      const page = new MatchingInformation(defaultArguments, assessment)
+
+      ;(placementDurationFromApplication as jest.Mock).mockReturnValueOnce(12)
+
+      expect(page.suggestedLengthOfStay).toEqual(12)
+
+      expect(placementDurationFromApplication).toHaveBeenCalledWith(assessment.application)
     })
   })
 })

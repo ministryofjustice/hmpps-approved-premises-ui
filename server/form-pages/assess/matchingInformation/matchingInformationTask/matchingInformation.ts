@@ -1,5 +1,7 @@
 import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 
+import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -77,7 +79,7 @@ export default class MatchingInformation implements TasklistPage {
 
   specialistSupportOptions = specialistSupportOptions
 
-  constructor(public body: Partial<MatchingInformationBody>) {}
+  constructor(public body: Partial<MatchingInformationBody>, public assessment: Assessment) {}
 
   previous() {
     return 'dashboard'
@@ -146,6 +148,10 @@ export default class MatchingInformation implements TasklistPage {
     }
 
     return errors
+  }
+
+  get suggestedLengthOfStay() {
+    return placementDurationFromApplication(this.assessment.application)
   }
 
   get specialistSupportCheckboxes() {
