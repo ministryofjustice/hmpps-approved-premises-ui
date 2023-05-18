@@ -5,12 +5,12 @@ import { criteriaFromMatchingInformation, placementRequestData } from './placeme
 import { assessmentFactory } from '../../testutils/factories'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
-import { getDefaultPlacementDurationInWeeks } from '../applications/getDefaultPlacementDurationInWeeks'
+import { placementDurationFromApplication } from './placementDurationFromApplication'
 
 jest.mock('../../form-pages/utils')
 jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
-jest.mock('../applications/getDefaultPlacementDurationInWeeks')
 jest.mock('../applications/arrivalDateFromApplication')
+jest.mock('./placementDurationFromApplication')
 
 describe('placementRequestData', () => {
   const assessment = assessmentFactory.build()
@@ -27,7 +27,7 @@ describe('placementRequestData', () => {
 
   it('converts matching data into a placement request', () => {
     mockQuestionResponse({ postcodeArea: 'ABC123', type: 'normal', duration: '12' })
-    mockOptionalQuestionResponse({ duration: '12', alternativeRadius: '100' })
+    mockOptionalQuestionResponse({ lengthOfStayAgreedDetail: '12', alternativeRadius: '100' })
 
     expect(placementRequestData(assessment)).toEqual({
       gender: 'male',
@@ -42,7 +42,7 @@ describe('placementRequestData', () => {
   })
 
   it('returns a default radius if one is not present', () => {
-    mockOptionalQuestionResponse({ duration: '12', alternativeRadius: undefined })
+    mockOptionalQuestionResponse({ lengthOfStayAgreedDetail: '12', alternativeRadius: undefined })
 
     const result = placementRequestData(assessment)
 
@@ -50,7 +50,7 @@ describe('placementRequestData', () => {
   })
 
   it('returns the default placement duration if one is not present', () => {
-    ;(getDefaultPlacementDurationInWeeks as jest.Mock).mockReturnValueOnce(52)
+    ;(placementDurationFromApplication as jest.Mock).mockReturnValueOnce(52)
     mockOptionalQuestionResponse({ duration: undefined, alternativeRadius: '100' })
 
     const result = placementRequestData(assessment)
