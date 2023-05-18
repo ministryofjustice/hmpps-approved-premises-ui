@@ -56,4 +56,72 @@
 
   {{placementRequirementsTable(page.relevantInformationTableHeadings, page.offenceAndRiskInformationKeys, page.offenceAndRiskInformationRelevance, page.body) | safe}}
 
+  {% set noDetails %}
+  {{
+    formPageInput(
+      {
+        fieldName: "lengthOfStayAgreedDetail",
+        spellcheck: false,
+        inputmode: "numeric",
+        label: {
+          text: "Provide recommended length of stay"
+        },
+        suffix: {
+          text: "weeks"
+        },
+        classes: "govuk-input--width-2"
+      },
+      fetchContext()
+    )
+  }}
+  {% endset -%}
+
+  {{
+    formPageRadios({
+      fieldName: "lengthOfStayAgreed",
+      fieldset: {
+        legend: {
+          text: "Do you agree with the recommended length of stay?",
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        text: "Recommended length of stay: " + page.suggestedLengthOfStay + " weeks"
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No",
+          conditional: {
+            html: noDetails
+          }
+        }
+      ]
+    },
+    fetchContext()
+    )
+  }}
+
+  {{
+    formPageTextarea(
+      {
+        fieldName: "cruInformation",
+        type: "textarea",
+        spellcheck: false,
+        label: {
+          text: "Information for Central Referral Unit (CRU) manager (optional)",
+          classes: "govuk-label--m"
+        },
+        hint: {
+          text: "Record any observations you think would benefit the CRU manager. They will use this information to match the person to a suitable AP."
+        }
+      },
+      fetchContext()
+    )
+  }}
+
 {% endblock %}
