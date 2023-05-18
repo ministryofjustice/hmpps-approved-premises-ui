@@ -6,19 +6,22 @@ import { offenceAndRiskOptions, placementRequirementOptions } from '../../../ser
 export default class MatchingInformationPage extends AssessPage {
   pageClass = new MatchingInformation({
     apType: 'isEsap',
-    mentalHealthSupport: '1',
+    accessibilityCriteria: ['hasBrailleSignage'],
+    specialistSupportCriteria: ['isSemiSpecialistMentalHealth'],
+    isArsonDesignated: 'essential',
     isWheelchairDesignated: 'essential',
     isSingleRoom: 'desirable',
-    isStepFreeDesignated: 'essential',
-    isCatered: 'desirable',
-    isGroundFloor: 'desirable',
-    acceptsSexOffenders: 'relevant',
-    acceptsNonSexualChildOffenders: 'notRelevant',
-    acceptsChildSexOffenders: 'relevant',
-    isArsonSuitable: 'notRelevant',
-    acceptsHateCrimeOffenders: 'relevant',
-    isSuitableForVulnerable: 'notRelevant',
+    isStepFreeDesignated: 'desirable',
+    isCatered: 'notRelevant',
+    isGroundFloor: 'notRelevant',
     hasEnSuite: 'notRelevant',
+    isSuitableForVulnerable: 'relevant',
+    acceptsSexOffenders: 'relevant',
+    acceptsChildSexOffenders: 'relevant',
+    acceptsNonSexualChildOffenders: 'relevant',
+    acceptsHateCrimeOffenders: 'relevant',
+    isArsonSuitable: 'relevant',
+    isSuitedForSexOffenders: 'essential',
   })
 
   constructor(assessment: Assessment) {
@@ -27,7 +30,14 @@ export default class MatchingInformationPage extends AssessPage {
 
   completeForm() {
     this.checkRadioByNameAndValue('apType', this.pageClass.body.apType)
-    this.checkCheckboxByNameAndValue('mentalHealthSupport', '1')
+
+    this.pageClass.body.accessibilityCriteria.forEach(requirement => {
+      this.checkCheckboxByLabel(requirement)
+    })
+
+    this.pageClass.body.specialistSupportCriteria.forEach(requirement => {
+      this.checkCheckboxByLabel(requirement)
+    })
 
     Object.keys(placementRequirementOptions).forEach(requirement => {
       this.checkRadioByNameAndValue(requirement, this.pageClass.body[requirement])

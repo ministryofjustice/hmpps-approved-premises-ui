@@ -57,13 +57,13 @@ export default class MatchingInformation implements TasklistPage {
 
   apTypes = apTypeOptions
 
-  placementRequirementTableHeadings = ['Placement requirements', 'Essential', 'Desirable', 'Not relevant']
+  placementRequirementTableHeadings = ['Specify placement requirements', 'Essential', 'Desirable', 'Not relevant']
 
   placementRequirements = placementRequirements
 
   placementRequirementPreferences = placementRequirementPreferences
 
-  relevantInformationTableHeadings = ['Offence and risk information', 'Relevant', 'Not relevant']
+  relevantInformationTableHeadings = ['Risks and offences to consider', 'Relevant', 'Not relevant']
 
   offenceAndRiskInformationKeys = offenceAndRiskInformationKeys
 

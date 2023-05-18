@@ -18,32 +18,41 @@
   {{
     formPageCheckboxes(
       {
-        fieldName: "mentalHealthSupport",
+        fieldName: "specialistSupportCriteria",
         fieldset: {
           legend: {
-            text: page.mentalHealthSupport.question,
+            text: "If this person would benefit from specialist support, select the relevant option below",
             classes: "govuk-fieldset__legend--m"
           }
         },
         hint: {
-          text: page.mentalHealthSupport.hint
+          html: "<p>There are only two AP with a semi-specialism in mental health nationally. Placement in one of these AP is not guaranteed.</p><p>Recovery Focused AP's are currently being piloted nationally. Placement is not guaranteed.</p>"
         },
-      items: [
-      {
-        value: "1",
-        text: page.mentalHealthSupport.label,
-        checked: page.mentalHealthSupport.value === '1'
-      }]
-      }, 
+      items: page.specialistSupportCheckboxes
+      },
       fetchContext()
     )
   }}
 
-  <h2 class="govuk-heading-m">Specify placement requirements</h2>
+  {{
+    formPageCheckboxes(
+      {
+        fieldName: "accessibilityCriteria",
+        fieldset: {
+          legend: {
+            text: "Would the person benefit from any of the following?",
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+      items: page.accessibilityCheckBoxes
+      },
+      fetchContext()
+    )
+  }}
+
+  <h2 class="govuk-heading-m">Placement requirements</h2>
 
   {{placementRequirementsTable(page.placementRequirementTableHeadings, page.placementRequirements, page.placementRequirementPreferences, page.body) | safe}}
-
-  <h2 class="govuk-heading-m">Provide relevant offence and risk information</h2>
 
   {{placementRequirementsTable(page.relevantInformationTableHeadings, page.offenceAndRiskInformationKeys, page.offenceAndRiskInformationRelevance, page.body) | safe}}
 
