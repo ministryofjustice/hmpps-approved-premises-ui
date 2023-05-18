@@ -1,20 +1,20 @@
 import {
   apTypeOptions,
-  mentalHealthOptions,
   offenceAndRiskOptions,
   placementRequirementOptions,
+  specialistSupportOptions,
 } from './placementCriteriaUtils'
 
 describe('placementCriteriaUtils', () => {
   describe('apTypeOptions', () => {
     it('should return all the AP Type options', () => {
-      expect(Object.keys(apTypeOptions)).toEqual(['normal', 'isPipe', 'isEsap', 'isRecoveryFocussed'])
+      expect(Object.keys(apTypeOptions)).toEqual(['normal', 'isPipe', 'isEsap'])
     })
   })
 
-  describe('mentalHealthOptions', () => {
+  describe('specialistSupportOptions', () => {
     it('should return all the mental health options', () => {
-      expect(Object.keys(mentalHealthOptions)).toEqual(['isSemiSpecialistMentalHealth'])
+      expect(Object.keys(specialistSupportOptions)).toEqual(['isRecoveryFocussed', 'isSemiSpecialistMentalHealth'])
     })
   })
 
@@ -40,6 +40,8 @@ describe('placementCriteriaUtils', () => {
         'isCatered',
         'isGroundFloor',
         'hasEnSuite',
+        'isSuitedForSexOffenders',
+        'isArsonDesignated',
       ])
     })
   })

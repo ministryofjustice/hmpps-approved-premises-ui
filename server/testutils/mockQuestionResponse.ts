@@ -59,6 +59,7 @@ export const mockOptionalQuestionResponse = ({
   isExceptionalCase,
   shouldPersonBePlacedInMaleAp,
   agreedCaseWithManager,
+  lengthOfStayAgreedDetail,
 }: {
   releaseType?: string
   duration?: string
@@ -69,6 +70,7 @@ export const mockOptionalQuestionResponse = ({
   isExceptionalCase?: string
   shouldPersonBePlacedInMaleAp?: string
   agreedCaseWithManager?: string
+  lengthOfStayAgreedDetail?: string
 }) => {
   ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockImplementation(
     // eslint-disable-next-line consistent-return
@@ -107,6 +109,10 @@ export const mockOptionalQuestionResponse = ({
 
       if (question === 'agreedCaseWithManager') {
         return agreedCaseWithManager
+      }
+
+      if (question === 'lengthOfStayAgreedDetail') {
+        return lengthOfStayAgreedDetail
       }
     },
   )
