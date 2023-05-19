@@ -56,10 +56,15 @@
 		</div>
 		<div class="govuk-grid-row">
 			<div class="govuk-width-container">
+				<div class="govuk-grid-column-full">
+					<h2 class="govuk-heading-m">{{bedSearchResults.resultsBedCount}} matching beds in {{bedSearchResults.resultsRoomCount}} rooms in {{bedSearchResults.resultsPremisesCount}} premises</h2>
+				</div>
+			</div>
+		</div>
+		<div class="govuk-grid-row">
+			<div class="govuk-width-container">
 
 				<form action="{{formPath}}" method="post">
-					<h2 class="govuk-heading-m">{{bedSearchResults.resultsBedCount}} matching beds in {{bedSearchResults.resultsRoomCount}} rooms in {{bedSearchResults.resultsPremisesCount}} premises</h2>
-
 					<input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 					<input type="hidden" name="crn" value="{{crn}}"/>
 					<input type="hidden" name="startDate" value="{{startDate}}"/>
