@@ -97,7 +97,7 @@
 							</div>
 						</div>
 
-						{% for title, items in MatchUtils.groupedCheckboxes(placementRequest.desirableCriteria) %}
+						{% for title, items in MatchUtils.groupedCheckboxes(selectedDesirableCriteria) %}
 							{{
 								govukCheckboxes({
 									name: 'requiredCharacteristics',

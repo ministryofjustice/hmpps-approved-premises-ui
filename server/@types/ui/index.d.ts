@@ -323,7 +323,6 @@ export interface BedSearchParametersUi {
   startDate: string
   postcodeDistrict: string
   requiredCharacteristics: Array<PlacementCriteria>
-  selectedRequiredCharacteristics?: Array<PlacementCriteria>
   crn: string
   applicationId: string
   assessmentId: string

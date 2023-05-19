@@ -29,16 +29,20 @@ export default class BedSearchController {
       }
 
       params.startDate = startDateObjFromParams(params).startDate
-      params.requiredCharacteristics = [params.selectedRequiredCharacteristics || params.requiredCharacteristics].flat()
+      params.requiredCharacteristics = [params.requiredCharacteristics].flat()
 
       const bedSearchResults = await this.bedService.search(req.user.token, params as BedSearchParametersUi)
       const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'
+      const selectedDesirableCriteria = placementRequest.desirableCriteria.filter(x =>
+        params.requiredCharacteristics.includes(x),
+      )
 
       res.render('match/search', {
         pageHeading: 'Find a bed',
         bedSearchResults,
         placementRequest,
         tier,
+        selectedDesirableCriteria,
         formPath: matchPaths.placementRequests.beds.search({ id: placementRequest.id }),
         ...params,
         ...startDateObjFromParams(params),
