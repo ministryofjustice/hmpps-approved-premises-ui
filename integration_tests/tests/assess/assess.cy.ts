@@ -7,6 +7,7 @@ import {
 } from '../../../server/testutils/factories'
 
 import { overwriteApplicationDocuments } from '../../../server/utils/assessments/documentUtils'
+import { placementRequestData } from '../../../server/utils/assessments/placementRequestData'
 
 import AssessHelper from '../../helpers/assess'
 import { ListPage, ShowPage, TaskListPage } from '../../pages/assess'
@@ -58,6 +59,7 @@ context('Assess', () => {
 
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys('document', 'requirements')
+      expect(body.requirements).to.deep.equal(placementRequestData(this.assessHelper.assessment))
     })
   })
 

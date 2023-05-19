@@ -49,6 +49,12 @@ export const placementRequestData = (assessment: Assessment): PlacementRequireme
 
   const criteria = criteriaFromMatchingInformation(matchingInformation)
 
+  const notes = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+    assessment,
+    MatchingInformation,
+    'cruInformation',
+  )
+
   return {
     gender: 'male', // Hardcoded for now as we only support Male APs
     type: apType(matchingInformation.apType),
@@ -56,6 +62,7 @@ export const placementRequestData = (assessment: Assessment): PlacementRequireme
     duration: placementDuration,
     location,
     radius: alternativeRadius || 50,
+    notes,
     ...criteria,
   } as PlacementRequirements
 }

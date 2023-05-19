@@ -4,16 +4,29 @@ import { sentenceCase } from '../utils'
 import { mapSearchParamCharacteristicsForUi } from '../matchUtils'
 
 export const matchingInformationSummary = (placementRequest: PlacementRequest): SummaryListWithCard => {
+  const rows = [
+    placementRequirementsRow(placementRequest, 'essential'),
+    placementRequirementsRow(placementRequest, 'desirable'),
+  ]
+
+  if (placementRequest.notes) {
+    rows.push({
+      key: {
+        text: 'Observations from assessor',
+      },
+      value: {
+        text: placementRequest.notes,
+      },
+    })
+  }
+
   return {
     card: {
       title: {
         text: 'Information for Matching',
       },
     },
-    rows: [
-      placementRequirementsRow(placementRequest, 'essential'),
-      placementRequirementsRow(placementRequest, 'desirable'),
-    ],
+    rows,
   }
 }
 
