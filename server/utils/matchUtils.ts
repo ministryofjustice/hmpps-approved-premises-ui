@@ -277,6 +277,23 @@ export const startDateObjFromParams = (params: { startDate: string } | ObjectWit
   return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
 }
 
+export const groupedEssentialCriteria = (essentialCriteria: Array<string>) => {
+  return Object.keys(groupedCriteria).reduce((obj, k: SearchFilterCategories) => {
+    const selectedCriteria = selectedEssentialCriteria(groupedCriteria[k].options, essentialCriteria)
+    if (selectedCriteria.length) {
+      return {
+        ...obj,
+        [`${groupedCriteria[k].title}`]: selectedCriteria,
+      }
+    }
+    return obj
+  }, {})
+}
+
+export const selectedEssentialCriteria = (criteria: Record<string, string>, selectedCriteria: Array<string>) => {
+  return selectedCriteria.filter(key => key in criteria).map(key => criteria[key])
+}
+
 export const groupedCheckboxes = (selectedValues: Array<string>) => {
   return Object.keys(groupedCriteria).reduce((obj, k: SearchFilterCategories) => {
     return {

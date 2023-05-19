@@ -18,6 +18,7 @@ import {
   departureDateRow,
   encodeBedSearchResult,
   groupedCheckboxes,
+  groupedEssentialCriteria,
   mapApiParamsForUi,
   mapSearchParamCharacteristicsForUi,
   mapSearchResultCharacteristicsForUi,
@@ -28,6 +29,7 @@ import {
   placementLength,
   placementLengthRow,
   premisesNameRow,
+  selectedEssentialCriteria,
   startDateObjFromParams,
   summaryCardHeader,
   summaryCardRows,
@@ -39,6 +41,7 @@ import {
   accessibilityOptions,
   apTypeOptions,
   offenceAndRiskOptions,
+  placementCriteria,
   placementRequirementOptions,
   specialistSupportOptions,
 } from './placementCriteriaUtils'
@@ -213,6 +216,34 @@ describe('matchUtils', () => {
         'Placement Requirements': checkBoxesForCriteria(placementRequirementOptions, []),
         'Risks and offences to consider': checkBoxesForCriteria(offenceAndRiskOptions, []),
         'Would benefit from': checkBoxesForCriteria(accessibilityOptions, []),
+      })
+    })
+  })
+
+  describe('selectedEssentialCriteria', () => {
+    it('returns the translated selected essential criteria as an array', () => {
+      const criteria = {
+        foo: 'Foo',
+        bar: 'Bar',
+        baz: 'Baz',
+      }
+      expect(selectedEssentialCriteria(criteria, ['foo', 'fizz', 'buzz', 'bar'])).toEqual(['Foo', 'Bar'])
+    })
+  })
+
+  describe('groupedEssentialCriteria', () => {
+    it('groups criteria by their category, removing any empty criteria', () => {
+      const essentialCriteria = [
+        'isPipe',
+        'isSemiSpecialistMentalHealth',
+        'isRecoveryFocussed',
+        'isSuitableForVulnerable',
+      ]
+
+      expect(groupedEssentialCriteria(essentialCriteria)).toEqual({
+        'Type of AP': [placementCriteria.isPipe],
+        'Specialist AP': [placementCriteria.isSemiSpecialistMentalHealth, placementCriteria.isRecoveryFocussed],
+        'Risks and offences to consider': [placementCriteria.isSuitableForVulnerable],
       })
     })
   })
