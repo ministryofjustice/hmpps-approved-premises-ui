@@ -1,12 +1,27 @@
 import { BedSearchParametersUi, TextItem } from '@approved-premises/ui'
-import { BedSearchResult, BedSearchResults } from '@approved-premises/api'
+import { BedSearchResult, BedSearchResults, PlacementCriteria } from '@approved-premises/api'
 import Page from '../page'
 import { uiObjectValue } from '../../helpers'
 import { summaryCardRows } from '../../../server/utils/matchUtils'
+import { placementCriteria } from '../../../server/utils/placementCriteriaUtils'
 
 export default class SearchPage extends Page {
   constructor(name: string) {
     super(name)
+  }
+
+  shouldShowEssentialCriteria(criteria: Array<PlacementCriteria>) {
+    criteria.forEach(c => {
+      cy.get('span.moj-filter__tag').should('contain', placementCriteria[c])
+    })
+  }
+
+  shouldHaveCriteriaSelected(criteria: Array<PlacementCriteria>) {
+    cy.get('input:checked[type="checkbox"][name="requiredCharacteristics"]').should('have.length', criteria.length)
+
+    criteria.forEach(c => {
+      cy.get(`input[name="requiredCharacteristics"][value="${c}"]`).should('be.checked')
+    })
   }
 
   shouldDisplaySearchResults(bedSearchResults: BedSearchResults, searchParams: BedSearchParametersUi): void {
@@ -46,7 +61,7 @@ export default class SearchPage extends Page {
     cy.get('[type="checkbox"]').uncheck()
 
     newSearchParameters.requiredCharacteristics.forEach(characteristic => {
-      this.checkCheckboxByNameAndValue('selectedRequiredCharacteristics', characteristic)
+      this.checkCheckboxByNameAndValue('requiredCharacteristics', characteristic)
     })
   }
 }
