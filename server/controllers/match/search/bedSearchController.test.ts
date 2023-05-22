@@ -45,7 +45,7 @@ describe('bedSearchController', () => {
     describe('body params are sent', () => {
       it('it should render the search template with body params taking precedence over the placement request params', async () => {
         const query = mapPlacementRequestToBedSearchParams(placementRequest)
-        const body = { durationWeeks: '2' }
+        const body = { durationWeeks: '2', requiredCharacteristics: [] as Array<string> }
 
         const requestHandler = bedsController.search()
 
@@ -55,6 +55,7 @@ describe('bedSearchController', () => {
           pageHeading: 'Find a bed',
           bedSearchResults,
           placementRequest,
+          selectedDesirableCriteria: [],
           tier: placementRequest.risks.tier.value.level,
           formPath,
           ...query,
@@ -66,7 +67,7 @@ describe('bedSearchController', () => {
 
       it('should handle when a single selectedRequiredCharacteristic is sent', async () => {
         const query = mapPlacementRequestToBedSearchParams(placementRequest)
-        const body = { requiredCharacteristics: 'someRequiredCharacteristic' }
+        const body = { requiredCharacteristics: placementRequest.desirableCriteria[0] }
 
         const requestHandler = bedsController.search()
 
@@ -76,14 +77,17 @@ describe('bedSearchController', () => {
           pageHeading: 'Find a bed',
           bedSearchResults,
           placementRequest,
+          selectedDesirableCriteria: [placementRequest.desirableCriteria[0]],
           tier: placementRequest.risks.tier.value.level,
           formPath,
           ...query,
-          requiredCharacteristics: ['someRequiredCharacteristic'],
+          requiredCharacteristics: [placementRequest.desirableCriteria[0]],
         })
         expect(bedService.search).toHaveBeenCalledWith(token, {
           ...query,
-          ...{ requiredCharacteristics: ['someRequiredCharacteristic'] },
+          ...{
+            requiredCharacteristics: [placementRequest.desirableCriteria[0]],
+          },
         })
         expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
       })
@@ -100,6 +104,7 @@ describe('bedSearchController', () => {
           pageHeading: 'Find a bed',
           bedSearchResults,
           placementRequest,
+          selectedDesirableCriteria: placementRequest.desirableCriteria,
           tier: placementRequest.risks.tier.value.level,
           formPath,
           ...query,

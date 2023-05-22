@@ -90,8 +90,8 @@ export const criteriaFromMatchingInformation = (
     essentialCriteria.push(matchingInformation.apType)
   }
 
-  essentialCriteria.push(...matchingInformation.specialistSupportCriteria)
-  essentialCriteria.push(...matchingInformation.accessibilityCriteria)
+  desirableCriteria.push(...matchingInformation.specialistSupportCriteria)
+  desirableCriteria.push(...matchingInformation.accessibilityCriteria)
 
   Object.keys(placementRequirementOptions).forEach((requirement: PlacementRequirementCriteria) => {
     if (matchingInformation[requirement] === 'essential') {

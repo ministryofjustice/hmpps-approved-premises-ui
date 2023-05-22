@@ -1,0 +1,19 @@
+.moj-filter {
+  margin-bottom: govuk-spacing(6);
+
+  .moj-filter-tags {
+    span {
+      &.moj-filter__tag {
+        &::after {
+          background-image: none;
+          content: none;
+        }
+
+        &:hover {
+          background-color: govuk-colour('white');
+          color:govuk-colour('black');
+        }
+      }
+    }
+  }
+}

@@ -10,6 +10,7 @@ import applyPaths from '../../paths/apply'
 export const mapPlacementRequestToBedSearchParams = ({
   duration,
   essentialCriteria,
+  desirableCriteria,
   expectedArrival,
   location,
   radius,
@@ -24,7 +25,7 @@ export const mapPlacementRequestToBedSearchParams = ({
   crn: person.crn,
   applicationId,
   assessmentId,
-  requiredCharacteristics: essentialCriteria,
+  requiredCharacteristics: [...essentialCriteria, ...desirableCriteria],
 })
 
 export const formatReleaseType = (placementRequest: PlacementRequest) => allReleaseTypes[placementRequest.releaseType]

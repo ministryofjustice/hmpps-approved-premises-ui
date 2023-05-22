@@ -67,8 +67,8 @@ describe('placementRequestData', () => {
     it('returns all essential criteria for essential and relevant matching information', () => {
       matchingInformation = createMock<MatchingInformationBody>({
         apType: 'isEsap',
-        specialistSupportCriteria: ['isSemiSpecialistMentalHealth'],
-        accessibilityCriteria: ['hasHearingLoop', 'hasTactileFlooring'],
+        specialistSupportCriteria: [],
+        accessibilityCriteria: [],
         isWheelchairDesignated: 'essential',
         isStepFreeDesignated: 'essential',
         isCatered: 'essential',
@@ -89,9 +89,6 @@ describe('placementRequestData', () => {
           'isWheelchairDesignated',
           'isStepFreeDesignated',
           'isCatered',
-          'isSemiSpecialistMentalHealth',
-          'hasHearingLoop',
-          'hasTactileFlooring',
           'acceptsSexOffenders',
           'acceptsChildSexOffenders',
           'acceptsNonSexualChildOffenders',
@@ -109,14 +106,21 @@ describe('placementRequestData', () => {
         isWheelchairDesignated: 'desirable',
         isStepFreeDesignated: 'desirable',
         isCatered: 'desirable',
-        specialistSupportCriteria: [],
-        accessibilityCriteria: [],
+        specialistSupportCriteria: ['isSemiSpecialistMentalHealth'],
+        accessibilityCriteria: ['hasHearingLoop', 'hasTactileFlooring'],
       })
 
       const result = criteriaFromMatchingInformation(matchingInformation)
 
       expect(result.desirableCriteria.sort()).toEqual(
-        ['isStepFreeDesignated', 'isWheelchairDesignated', 'isCatered'].sort(),
+        [
+          'isStepFreeDesignated',
+          'isWheelchairDesignated',
+          'isCatered',
+          'isSemiSpecialistMentalHealth',
+          'hasHearingLoop',
+          'hasTactileFlooring',
+        ].sort(),
       )
       expect(result.essentialCriteria).toEqual([])
     })

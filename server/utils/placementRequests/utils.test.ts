@@ -42,7 +42,7 @@ describe('utils', () => {
         crn: person.crn,
         applicationId: placementRequest.applicationId,
         assessmentId: placementRequest.assessmentId,
-        requiredCharacteristics: placementRequest.essentialCriteria,
+        requiredCharacteristics: [...placementRequest.essentialCriteria, ...placementRequest.desirableCriteria],
       })
     })
   })

@@ -20,7 +20,6 @@ export const bedSearchParametersUiFactory = Factory.define<BedSearchParametersUi
   startDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
   postcodeDistrict: 'SW11',
   requiredCharacteristics: faker.helpers.arrayElements(placementCriteria),
-  selectedRequiredCharacteristics: faker.helpers.arrayElements(placementCriteria),
   crn: 'ABC123',
   applicationId: faker.string.uuid(),
   assessmentId: faker.string.uuid(),
