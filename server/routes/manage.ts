@@ -31,6 +31,7 @@ export default function routes(controllers: Controllers, router: Router): Router
   get(paths.premises.room.pattern, roomsController.show())
 
   get(paths.premises.beds.index.pattern, bedsController.index())
+  get(paths.premises.beds.show.pattern, bedsController.show())
 
   get(paths.bookings.new.pattern, bookingsController.new())
   get(paths.bookings.show.pattern, bookingsController.show())

@@ -16,4 +16,16 @@ export default class BedsController {
       })
     }
   }
+
+  show(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const bed = await this.premisesService.getBed(req.user.token, req.params.premisesId, req.params.bedId)
+
+      return res.render('premises/beds/show', {
+        bed,
+        premisesId: req.params.premisesId,
+        pageHeading: 'Manage beds',
+      })
+    }
+  }
 }

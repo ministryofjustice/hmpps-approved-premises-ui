@@ -3,7 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PremisesService from '../../../services/premisesService'
 import BedsController from './bedsController'
-import { bedSummaryFactory } from '../../../testutils/factories'
+import { bedDetailFactory, bedSummaryFactory } from '../../../testutils/factories'
 
 describe('BedsController', () => {
   const token = 'SOME_TOKEN'
@@ -33,6 +33,29 @@ describe('BedsController', () => {
       })
 
       expect(premisesService.getBeds).toHaveBeenCalledWith(token, premisesId)
+    })
+  })
+
+  describe('show', () => {
+    it('should return the bed to the template', async () => {
+      const bed = bedDetailFactory.build()
+      const premisesId = 'premisesId'
+      request.params.premisesId = premisesId
+      const bedId = 'bedId'
+      request.params.bedId = bedId
+
+      premisesService.getBed.mockResolvedValue(bed)
+
+      const requestHandler = bedsController.show()
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('premises/beds/show', {
+        bed,
+        premisesId,
+        pageHeading: 'Manage beds',
+      })
+
+      expect(premisesService.getBed).toHaveBeenCalledWith(token, premisesId, bedId)
     })
   })
 })
