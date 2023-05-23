@@ -67,7 +67,7 @@ context('Placement Requests', () => {
     // Given there is a placement request waiting for me to match
     const person = personFactory.build()
 
-    const essentialCriteria = ['isPipe', 'acceptsHateCrimeOffenders', 'isGroundFloor'] as Array<PlacementCriteria>
+    const essentialCriteria = ['isPIPE', 'acceptsHateCrimeOffenders', 'isGroundFloor'] as Array<PlacementCriteria>
     const desirableCriteria = ['isCatered', 'isGroundFloor', 'hasEnSuite'] as Array<PlacementCriteria>
 
     const placementRequest = placementRequestFactory.build({

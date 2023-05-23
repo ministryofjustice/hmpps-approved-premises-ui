@@ -29,8 +29,8 @@ export default Factory.define<PlacementRequest>(() => ({
 }))
 
 export const placementCriteria = [
-  'isPipe',
-  'isEsap',
+  'isPIPE',
+  'isESAP',
   'isSemiSpecialistMentalHealth',
   'isRecoveryFocussed',
   'isSuitableForVulnerable',

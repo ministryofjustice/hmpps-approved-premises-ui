@@ -234,14 +234,14 @@ describe('matchUtils', () => {
   describe('groupedEssentialCriteria', () => {
     it('groups criteria by their category, removing any empty criteria', () => {
       const essentialCriteria = [
-        'isPipe',
+        'isPIPE',
         'isSemiSpecialistMentalHealth',
         'isRecoveryFocussed',
         'isSuitableForVulnerable',
       ]
 
       expect(groupedEssentialCriteria(essentialCriteria)).toEqual({
-        'Type of AP': [placementCriteria.isPipe],
+        'Type of AP': [placementCriteria.isPIPE],
         'Specialist AP': [placementCriteria.isSemiSpecialistMentalHealth, placementCriteria.isRecoveryFocussed],
         'Risks and offences to consider': [placementCriteria.isSuitableForVulnerable],
       })

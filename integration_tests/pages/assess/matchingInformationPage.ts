@@ -6,7 +6,7 @@ import { offenceAndRiskOptions, placementRequirementOptions } from '../../../ser
 export default class MatchingInformationPage extends AssessPage {
   pageClass = new MatchingInformation(
     {
-      apType: 'isEsap',
+      apType: 'isESAP',
       accessibilityCriteria: ['hasBrailleSignage'],
       specialistSupportCriteria: ['isSemiSpecialistMentalHealth'],
       isArsonDesignated: 'essential',
