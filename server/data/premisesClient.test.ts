@@ -1,4 +1,5 @@
 import {
+  bedDetailFactory,
   bedSummaryFactory,
   dateCapacityFactory,
   premisesFactory,
@@ -182,7 +183,7 @@ describeClient('PremisesClient', provider => {
         uponReceiving: 'A request to get a list of beds for a premises',
         withRequest: {
           method: 'GET',
-          path: paths.premises.beds({ premisesId: premises.id }),
+          path: paths.premises.beds.index({ premisesId: premises.id }),
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -195,6 +196,32 @@ describeClient('PremisesClient', provider => {
 
       const output = await premisesClient.getBeds(premises.id)
       expect(output).toEqual(beds)
+    })
+  })
+
+  describe('getBed', () => {
+    it('should return a bed for a given premises', async () => {
+      const premises = premisesFactory.build()
+      const bed = bedDetailFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a bed for a premises',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.beds.show({ premisesId: premises.id, bedId: bed.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: bed,
+        },
+      })
+
+      const output = await premisesClient.getBed(premises.id, bed.id)
+      expect(output).toEqual(bed)
     })
   })
 })

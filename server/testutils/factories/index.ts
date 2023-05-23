@@ -10,6 +10,7 @@ import assessmentFactory from './assessment'
 import assessmentSummaryFactory from './assessmentSummary'
 import { bedSearchParametersFactory, bedSearchParametersUiFactory } from './bedSearchParameters'
 import bedSummaryFactory from './bedSummary'
+import bedDetailFactory from './bedDetail'
 import { apCharacteristicPairFactory, bedSearchResultFactory, bedSearchResultsFactory } from './bedSearchResult'
 import bookingFactory from './booking'
 import bookingExtensionFactory from './bookingExtension'
@@ -59,6 +60,7 @@ export {
   assessmentFactory,
   assessmentSummaryFactory,
   bedSummaryFactory,
+  bedDetailFactory,
   bedSearchParametersFactory,
   bedSearchParametersUiFactory,
   bedSearchResultFactory,
