@@ -34,6 +34,7 @@ const paths = {
     room: roomsPath.path(':roomId'),
     beds: {
       index: bedsPath,
+      show: bedsPath.path(':bedId'),
     },
   },
   bookings: {
