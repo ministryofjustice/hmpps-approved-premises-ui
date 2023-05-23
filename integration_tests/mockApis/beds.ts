@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { BedSearchResult } from '@approved-premises/api'
+import type { BedDetail, BedSearchResult, BedSummary } from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from '../../wiremock'
 
@@ -27,4 +27,33 @@ export default {
         url: paths.match.findBeds.pattern,
       })
     ).body.requests,
+
+  stubBeds: (args: { premisesId: string; bedSummaries: Array<BedSummary> }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: paths.premises.beds.index({ premisesId: args.premisesId }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: args.bedSummaries,
+      },
+    }),
+  stubBed: (args: { premisesId: string; bedDetail: BedDetail }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: paths.premises.beds.show({ premisesId: args.premisesId, bedId: args.bedDetail.id }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: args.bedDetail,
+      },
+    }),
 }
