@@ -9,7 +9,7 @@ jest.mock('../../../../utils/assessments/placementDurationFromApplication')
 const assessment = assessmentFactory.build()
 
 const defaultArguments = {
-  apType: 'isEsap' as const,
+  apType: 'isESAP' as const,
   accessibilityCriteria: ['hasHearingLoop'],
   specialistSupportCriteria: ['isSemiSpecialistMentalHealth', 'isRecoveryFocussed'],
   isArsonDesignated: 'essential',

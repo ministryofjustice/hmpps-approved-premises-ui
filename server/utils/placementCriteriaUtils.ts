@@ -1,6 +1,6 @@
 import { PlacementCriteria } from '@approved-premises/api'
 
-const apTypes = ['isPipe', 'isEsap']
+const apTypes = ['isPIPE', 'isESAP']
 const specialistSupportCriteria = ['isSemiSpecialistMentalHealth', 'isRecoveryFocussed']
 const accessibilityCriteria = ['hasBrailleSignage', 'hasTactileFlooring', 'hasHearingLoop']
 const offenceAndRiskCriteria = [
@@ -36,8 +36,8 @@ type PlacementCriteriaCategory =
   | AccessibilityCriteria
 
 export const placementCriteria: Record<PlacementCriteria, string> = {
-  isPipe: 'Psychologically Informed Planned Environment (PIPE)',
-  isEsap: 'Enhanced Security AP (ESAP)',
+  isPIPE: 'Psychologically Informed Planned Environment (PIPE)',
+  isESAP: 'Enhanced Security AP (ESAP)',
   isRecoveryFocussed: 'Recovery Focused Approved Premises (RAP)',
   isSemiSpecialistMentalHealth: 'Semi-specialist mental health',
   isSuitableForVulnerable: 'Vulnerable to exploitation',

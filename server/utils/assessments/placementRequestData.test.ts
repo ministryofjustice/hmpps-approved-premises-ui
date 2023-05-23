@@ -17,7 +17,7 @@ describe('placementRequestData', () => {
   const expectedArrival = '2020-01-01'
 
   let matchingInformation = createMock<MatchingInformationBody>({
-    apType: 'isEsap',
+    apType: 'isESAP',
     specialistSupportCriteria: [],
     accessibilityCriteria: [],
   })
@@ -66,7 +66,7 @@ describe('placementRequestData', () => {
   describe('criteriaFromMatchingInformation', () => {
     it('returns all essential criteria for essential and relevant matching information', () => {
       matchingInformation = createMock<MatchingInformationBody>({
-        apType: 'isEsap',
+        apType: 'isESAP',
         specialistSupportCriteria: [],
         accessibilityCriteria: [],
         isWheelchairDesignated: 'essential',
@@ -85,7 +85,7 @@ describe('placementRequestData', () => {
       expect(result.desirableCriteria).toEqual([])
       expect(result.essentialCriteria.sort()).toEqual(
         [
-          'isEsap',
+          'isESAP',
           'isWheelchairDesignated',
           'isStepFreeDesignated',
           'isCatered',

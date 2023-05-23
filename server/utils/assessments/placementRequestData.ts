@@ -69,9 +69,9 @@ export const placementRequestData = (assessment: Assessment): PlacementRequireme
 
 export const apType = (type: ApTypeCriteria | 'normal'): ApType => {
   switch (type) {
-    case 'isPipe':
+    case 'isPIPE':
       return 'pipe'
-    case 'isEsap':
+    case 'isESAP':
       return 'esap'
     case 'isRecoveryFocussed':
       return 'rfap'

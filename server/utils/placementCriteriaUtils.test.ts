@@ -8,7 +8,7 @@ import {
 describe('placementCriteriaUtils', () => {
   describe('apTypeOptions', () => {
     it('should return all the AP Type options', () => {
-      expect(Object.keys(apTypeOptions)).toEqual(['normal', 'isPipe', 'isEsap'])
+      expect(Object.keys(apTypeOptions)).toEqual(['normal', 'isPIPE', 'isESAP'])
     })
   })
 
