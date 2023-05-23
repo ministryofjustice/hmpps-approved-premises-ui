@@ -1,4 +1,4 @@
-import type { ApprovedPremises, DateCapacity, Room, StaffMember } from '@approved-premises/api'
+import type { ApprovedPremises, BedSummary, DateCapacity, Room, StaffMember } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -26,6 +26,10 @@ export default class PremisesClient {
     return (await this.restClient.get({
       path: paths.premises.staffMembers.index({ premisesId }),
     })) as Array<StaffMember>
+  }
+
+  async getBeds(premisesId: string): Promise<Array<BedSummary>> {
+    return (await this.restClient.get({ path: paths.premises.beds({ premisesId }) })) as Array<BedSummary>
   }
 
   async getRooms(premisesId: string): Promise<Array<Room>> {
