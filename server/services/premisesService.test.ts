@@ -1,6 +1,7 @@
 import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
 import {
+  bedDetailFactory,
   bedSummaryFactory,
   dateCapacityFactory,
   premisesFactory,
@@ -66,6 +67,20 @@ describe('PremisesService', () => {
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.getBeds).toHaveBeenCalledWith(premisesId)
+    })
+  })
+
+  describe('getBed', () => {
+    it('on success returns a bed given a premises ID and bed ID', async () => {
+      const bed = bedDetailFactory.build()
+      premisesClient.getBed.mockResolvedValue(bed)
+
+      const result = await service.getBed(token, premisesId, bed.id)
+
+      expect(result).toEqual(bed)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getBed).toHaveBeenCalledWith(premisesId, bed.id)
     })
   })
 
