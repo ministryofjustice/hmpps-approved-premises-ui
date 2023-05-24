@@ -13,91 +13,102 @@
 {% set pageTitle = applicationName + " - " + premises.name %}
 {% set mainClasses = "app-container govuk-body" %}
 
-{% block content %}
-
+{% block beforeContent %}
   {{ govukBackLink({
 		text: "Back",
 		href: paths.premises.index()
 	}) }}
+{% endblock %}
 
-  {% include "../_messages.njk" %}
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full-width">
+      {% include "../_messages.njk" %}
 
-  {{ mojIdentityBar({
-      title: {
-        html: "<h1>" + premises.name + "</h1>"
-      },
-      menus: [{
-        items: [ {
-          text: "Manage beds",
-          classes: "govuk-button--secondary",
-          href: paths.premises.beds.index({premisesId: premisesId})
+      {{
+        mojIdentityBar({
+          title: {
+            html: "<h1>" + premises.name + "</h1>"
+          },
+        menus: [{
+          items: [ {
+            text: "Manage beds",
+            classes: "govuk-button--secondary",
+            href: paths.premises.beds.index({premisesId: premisesId})
+          }]
         }]
-      }]
-    }) }}
+        })
+      }}
+    </div>
+    <div class="govuk-grid-column-full-width">
+      {{
+		    govukSummaryList(premises.summaryList)
+	    }}
 
-  {{
-		govukSummaryList(premises.summaryList)
-	}}
+      <h2>Arrivals and Departures</h2>
 
-  <h2>Arrivals and Departures</h2>
+      {{
+        govukTabs({
+          items: [
+            {
+              label: "Arriving Today",
+              id: "arriving-today",
+              panel: {
+                html: bookingTable("Arriving Today", "Arrival", BookingUtils.bookingsToTableRows(bookings.arrivingToday, premisesId, 'arrival'))
+              }
+            },
+            {
+              label: "Departing Today",
+              id: "departing-today",
+              panel: {
+                html: bookingTable("Departing Today", "Departure", BookingUtils.bookingsToTableRows(bookings.departingToday, premisesId, 'departure'))
+              }
+            },
+            {
+              label: "Upcoming Arrivals",
+              id: "upcoming-arrivals",
+              panel: {
+                html: bookingTable("Upcoming Arrivals", "Arrival", BookingUtils.bookingsToTableRows(bookings.upcomingArrivals, premisesId, 'arrival'))
+              }
+            },
+            {
+              label: "Upcoming Departures",
+              id: "upcoming-departures",
+              panel: {
+                html: bookingTable("Upcoming Departures", "Departure", BookingUtils.bookingsToTableRows(bookings.upcomingDepartures, premisesId, 'departure'))
+              }
+            }
+          ]
+        })
+      }}
 
-  {{ govukTabs({
-  items: [
-    {
-      label: "Arriving Today",
-      id: "arriving-today",
-      panel: {
-        html: bookingTable("Arriving Today", "Arrival", BookingUtils.bookingsToTableRows(bookings.arrivingToday, premisesId, 'arrival'))
-      }
-    },
-    {
-      label: "Departing Today",
-      id: "departing-today",
-      panel: {
-        html: bookingTable("Departing Today", "Departure", BookingUtils.bookingsToTableRows(bookings.departingToday, premisesId, 'departure'))
-      }
-    },
-    {
-      label: "Upcoming Arrivals",
-      id: "upcoming-arrivals",
-      panel: {
-        html: bookingTable("Upcoming Arrivals", "Arrival", BookingUtils.bookingsToTableRows(bookings.upcomingArrivals, premisesId, 'arrival'))
-      }
-    },
-    {
-      label: "Upcoming Departures",
-      id: "upcoming-departures",
-      panel: {
-        html: bookingTable("Upcoming Departures", "Departure", BookingUtils.bookingsToTableRows(bookings.upcomingDepartures, premisesId, 'departure'))
-      }
-    }
-  ]
-}) }}
+      <h2>Current residents</h2>
 
-  <h2>Current residents</h2>
-
-  {{ govukTable({
-    id:"current-residents",
-    caption: "Current residents",
-    captionClasses: "govuk-visually-hidden",
-    firstCellIsHeader: true,
-    head: [
-      {
-        text: "Resident Name"
-      },
-      {
-        text: "CRN"
-      },
-      {
-        text: "Expected Departure Date"
-      },
-      {
-        text: "Actions"
-      }
-    ],
-    rows: BookingUtils.bookingsToTableRows(currentResidents, premisesId, 'departure')
-  }) }}
-
+      {{
+        govukTable({
+          id:"current-residents",
+          caption: "Current residents",
+          captionClasses: "govuk-visually-hidden",
+          firstCellIsHeader: true,
+          head: [
+            {
+              text: "Resident Name"
+            },
+            {
+              text: "CRN"
+            },
+            {
+              text: "Expected Departure Date"
+            },
+            {
+              text: "Actions"
+            }
+          ],
+          rows: BookingUtils.bookingsToTableRows(currentResidents, premisesId, 'departure')
+        })
+      }}
+    </div>
+  </div>
 {% endblock %}
 
 {% block extraScripts %}

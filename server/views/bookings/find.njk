@@ -1,11 +1,19 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
 {% extends "../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href: paths.premises.beds.show({ premisesId: premisesId, bedId: bedId })
+    }) }}
+{% endblock %}
 
 {% block content %}
 

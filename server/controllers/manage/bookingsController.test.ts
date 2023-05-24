@@ -115,7 +115,7 @@ describe('bookingsController', () => {
         request = createMock<Request>({
           user: { token },
           flash: jest.fn().mockReturnValue([]),
-          params: { premisesId },
+          params: { premisesId, bedId },
         })
       })
 
@@ -130,6 +130,7 @@ describe('bookingsController', () => {
 
         expect(response.render).toHaveBeenCalledWith('bookings/find', {
           premisesId,
+          bedId,
           pageHeading: 'Create a placement - find someone by CRN',
           errors: {},
           errorSummary: [],
@@ -147,6 +148,7 @@ describe('bookingsController', () => {
 
         expect(response.render).toHaveBeenCalledWith('bookings/find', {
           premisesId,
+          bedId,
           pageHeading: 'Create a placement - find someone by CRN',
           errors: errorsAndUserInput.errors,
           errorSummary: errorsAndUserInput.errorSummary,

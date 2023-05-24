@@ -52,6 +52,7 @@ export default class BookingsController {
 
       return res.render(`bookings/find`, {
         pageHeading: 'Create a placement - find someone by CRN',
+        bedId,
         premisesId,
         errors,
         errorSummary,

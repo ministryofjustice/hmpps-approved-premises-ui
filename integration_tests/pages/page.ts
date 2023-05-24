@@ -23,8 +23,14 @@ export default abstract class Page {
   constructor(private readonly title: string) {
     this.checkOnPage()
     cy.injectAxe()
-    // Temporary rule whilst this issue is resolved https://github.com/w3c/aria/issues/1404
-    cy.configureAxe({ rules: [{ id: 'aria-allowed-attr', reviewOnFail: true }] })
+    cy.configureAxe({
+      rules: [
+        // Temporary rule whilst this issue is resolved https://github.com/w3c/aria/issues/1404
+        { id: 'aria-allowed-attr', reviewOnFail: true },
+        // Ignore the "All page content should be contained by landmarks", which conflicts with GOV.UK guidance (https://design-system.service.gov.uk/components/back-link/#how-it-works)
+        { id: 'region', reviewOnFail: true, selector: '.govuk-back-link' },
+      ],
+    })
     cy.checkA11y()
   }
 

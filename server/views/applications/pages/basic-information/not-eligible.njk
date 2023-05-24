@@ -6,18 +6,24 @@
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body" %}
 
+{% block beforeContent %}
+  {{
+    govukBackLink({
+      text: "Back",
+      href:  paths.applications.pages.show({
+              id: applicationId,
+              task: 'basic-information',
+              page: 'is-exceptional-case'
+          })
+    })
+  }}
+{% endblock %}
+
 {% block content %}
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      {{ govukBackLink({
-		        text: "Back",
-		        href:  paths.applications.pages.show({
-                    id: applicationId,
-                    task: 'basic-information',
-                    page: 'is-exceptional-case'
-                })
-	        }) }}
+
       <h1 class="govuk-heading-l">{{page.title}}</h1>
       <p>
         From the information you've provided this person is not eligible for an Approved Premises (AP) placement.
