@@ -4,11 +4,13 @@
 {% set pageTitle = applicationName + " - Home" %}
 
 {% block content %}
-  {% include "../_messages.njk" %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full-width">
+      {% include "../_messages.njk" %}
 
-  <h1 class="govuk-heading-l">List of Approved Premises</h1>
+      <h1 class="govuk-heading-l">List of Approved Premises</h1>
 
-  {{
+      {{
       govukTable({
         captionClasses: "govuk-table__caption--m",
         firstCellIsHeader: true,
@@ -30,4 +32,6 @@
       })
     }}
 
+    </div>
+  </div>
 {% endblock %}

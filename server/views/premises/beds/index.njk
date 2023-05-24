@@ -4,28 +4,31 @@
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
 {% block content %}
-  <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full-width">
+      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-  {{
-      govukTable({
-        captionClasses: "govuk-table__caption--m",
-        firstCellIsHeader: true,
-        head: [
-          {
-            text: "Room Name"
-          },
-          {
-            text: "Bed Name"
-          },
-          {
-            text: "Status"
-          },
-          {
-            text: 'Action'
-          }
-        ],
-        rows: BedUtils.bedTableRows(beds, premisesId)
-      })
-    }}
-
+      {{
+        govukTable({
+          captionClasses: "govuk-table__caption--m",
+          firstCellIsHeader: true,
+          head: [
+            {
+              text: "Room Name"
+            },
+            {
+              text: "Bed Name"
+            },
+            {
+              text: "Status"
+            },
+            {
+              text: 'Action'
+            }
+          ],
+          rows: BedUtils.bedTableRows(beds, premisesId)
+        })
+      }}
+    </div>
+  </div>
 {% endblock %}
