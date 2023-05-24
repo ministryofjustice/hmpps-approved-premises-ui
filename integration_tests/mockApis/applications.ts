@@ -30,7 +30,7 @@ export default {
       response: {
         status: 201,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: { ...args.application, data: null },
+        jsonBody: { ...args.application, data: null, type: 'CAS1' },
       },
     }),
   stubApplicationUpdate: (args: { application: ApprovedPremisesApplication }): SuperAgentRequest =>

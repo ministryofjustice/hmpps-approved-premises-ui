@@ -4,7 +4,7 @@ import type {
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
   Document,
-  SubmitApplication,
+  SubmitApprovedPremisesApplication,
   UpdateApprovedPremisesApplication,
 } from '@approved-premises/api'
 import RestClient from './restClient'
@@ -29,7 +29,7 @@ export default class ApplicationClient {
 
     return (await this.restClient.post({
       path: `${paths.applications.new.pattern}?createWithRisks=${!config.flags.oasysDisabled}`,
-      data: { crn, convictionId, deliusEventNumber, offenceId },
+      data: { crn, convictionId, deliusEventNumber, offenceId, type: 'CAS1' },
     })) as Application
   }
 
@@ -46,10 +46,10 @@ export default class ApplicationClient {
     })) as Array<ApplicationSummary>
   }
 
-  async submit(applicationId: string, submissionData: SubmitApplication): Promise<void> {
+  async submit(applicationId: string, submissionData: SubmitApprovedPremisesApplication): Promise<void> {
     await this.restClient.post({
       path: paths.applications.submission({ id: applicationId }),
-      data: submissionData,
+      data: { ...submissionData, type: 'CAS1' },
     })
   }
 

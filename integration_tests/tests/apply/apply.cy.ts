@@ -353,6 +353,7 @@ context('Apply', () => {
         'isWomensApplication',
         'targetLocation',
         'releaseType',
+        'type',
       )
     })
 

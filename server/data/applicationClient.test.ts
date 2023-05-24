@@ -39,6 +39,7 @@ describeClient('ApplicationClient', provider => {
             convictionId: offence.convictionId,
             deliusEventNumber: offence.deliusEventNumber,
             offenceId: offence.offenceId,
+            type: 'CAS1',
           },
           headers: {
             authorization: `Bearer ${token}`,
@@ -78,6 +79,7 @@ describeClient('ApplicationClient', provider => {
               convictionId: offence.convictionId,
               deliusEventNumber: offence.deliusEventNumber,
               offenceId: offence.offenceId,
+              type: 'CAS1',
             },
             headers: {
               authorization: `Bearer ${token}`,
@@ -192,6 +194,7 @@ describeClient('ApplicationClient', provider => {
         isWomensApplication: false,
         targetLocation: 'ABC123',
         releaseType: 'licence' as const,
+        type: 'CAS1',
       }
 
       provider.addInteraction({
