@@ -52,7 +52,7 @@ const firstClassFields = <T>(
   const apType = retrieveQuestionResponse(application, SelectApType, 'type') as ApType
   const targetLocation = retrieveQuestionResponse(application, DescribeLocationFactors, 'postcodeArea')
   const releaseType = getReleaseType(application, retrieveQuestionResponse)
-  const arrivalDate = arrivalDateFromApplication(application, false)
+  const arrivalDate = arrivalDateFromApplication(application)
 
   return {
     isWomensApplication: false,
