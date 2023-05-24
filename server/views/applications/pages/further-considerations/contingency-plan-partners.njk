@@ -70,11 +70,14 @@
 {% set pageTitle = applicationName + " - " + page.title %}
 {% set mainClasses = "app-container govuk-body" %}
 
-{% block content %}
+{% block beforeContent %}
   {{ govukBackLink({
       text: "Back",
       href: paths.applications.pages.show({ id: applicationId, task: task, page: page.previous() })
     }) }}
+{% endblock %}
+
+{% block content %}
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">

@@ -7,10 +7,13 @@
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body" %}
 
-{{ govukBackLink({
+{% block beforeContent %}
+  {{ govukBackLink({
 		text: "Back",
 		href: paths.applications.new({ crn: person.crn })
 	}) }}
+
+{% endblock %}
 
 {% block content %}
 

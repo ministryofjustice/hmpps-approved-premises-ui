@@ -3,12 +3,14 @@
 
 {% extends "../layout.njk" %}
 
-{% block questions %}
-
+{% block beforeContent %}
   {{ govukBackLink({
 		text: "Back",
 		href: paths.applications.people.selectOffence({ crn: page.application.person.crn })
 	}) }}
+{% endblock %}
+
+{% block questions %}
 
   <h1 class="govuk-heading-l">
     This application is not eligible

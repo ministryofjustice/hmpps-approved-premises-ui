@@ -6,18 +6,22 @@
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body" %}
 
+{% block beforeContent %}
+    {{ govukBackLink({
+        text: "Back",
+        href:  paths.applications.pages.show({
+            id: applicationId,
+            task: 'basic-information',
+            page: 'board-taken-place'
+        })
+    }) }}
+{% endblock %}
+
 {% block content %}
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            {{ govukBackLink({
-		        text: "Back",
-		        href:  paths.applications.pages.show({
-                    id: applicationId,
-                    task: 'basic-information',
-                    page: 'board-taken-place'
-                })
-	        }) }}
+
             <h1 class="govuk-heading-l">{{page.title}}</h1>
             <p class="govuk-body">From the information you’ve provided the person requires a complex case board needs to take place before you can apply for an Approved Premises (AP) placement.</p>
             <p class="govuk-body">A complex case board will determine whether the person should be placed in a male or female AP. You will need to return to this application once it has taken place.</p>
