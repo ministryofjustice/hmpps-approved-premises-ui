@@ -34,6 +34,32 @@ export const characteristicsRow = (bed: BedDetail): SummaryListItem => ({
   },
 })
 
+export const title = (bed: BedDetail, pageTitle: string): string => {
+  return `
+  <h1 class="govuk-heading-l">
+    <span class="govuk-caption-l">${bed.name}</span>
+    ${pageTitle}
+  </h1>
+  `
+}
+
+export const bedActions = (bed: BedDetail, premisesId: string) => {
+  return {
+    items: [
+      {
+        text: 'Create a placement',
+        classes: 'govuk-button--secondary',
+        href: paths.bookings.new({ premisesId, bedId: bed.id }),
+      },
+      {
+        text: 'Mark this bed as out of service',
+        classes: 'govuk-button--secondary',
+        href: paths.lostBeds.new({ premisesId, bedId: bed.id }),
+      },
+    ],
+  }
+}
+
 const bedLink = (bed: BedSummary, premisesId: string): string =>
   linkTo(
     paths.premises.beds.show,

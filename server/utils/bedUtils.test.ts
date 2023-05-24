@@ -1,6 +1,8 @@
+import paths from '../paths/manage'
 import { apCharacteristicPairFactory, bedDetailFactory, bedSummaryFactory } from '../testutils/factories'
 import {
   actionCell,
+  bedActions,
   bedDetails,
   bedNameCell,
   bedTableRows,
@@ -8,6 +10,7 @@ import {
   roomNameCell,
   statusCell,
   statusRow,
+  title,
 } from './bedUtils'
 
 describe('bedUtils', () => {
@@ -115,6 +118,35 @@ describe('bedUtils', () => {
   describe('bedDetails', () => {
     it('returns details for a bed', () => {
       expect(bedDetails(bedDetail)).toEqual([statusRow(bedDetail), characteristicsRow(bedDetail)])
+    })
+  })
+
+  describe('title', () => {
+    it('returns the title for the bed manage page', () => {
+      bedDetail.name = 'Bed name'
+
+      expect(title(bedDetail, 'Page title')).toMatchStringIgnoringWhitespace(
+        '<h1 class="govuk-heading-l"><span class="govuk-caption-l">Bed name</span>Page title</h1>',
+      )
+    })
+  })
+
+  describe('bedActions', () => {
+    it('returns the actions for the bed manage page', () => {
+      expect(bedActions(bedDetail, premisesId)).toEqual({
+        items: [
+          {
+            text: 'Create a placement',
+            classes: 'govuk-button--secondary',
+            href: paths.bookings.new({ premisesId, bedId: bedDetail.id }),
+          },
+          {
+            text: 'Mark this bed as out of service',
+            classes: 'govuk-button--secondary',
+            href: paths.lostBeds.new({ premisesId, bedId: bedDetail.id }),
+          },
+        ],
+      })
     })
   })
 })
