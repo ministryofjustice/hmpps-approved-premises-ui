@@ -2,7 +2,7 @@ import {
   ApprovedPremisesApplication as Application,
   Assessment,
   ReleaseTypeOption,
-  SubmitApplication,
+  SubmitApprovedPremisesApplication,
   UpdateApprovedPremisesApplication,
 } from '@approved-premises/api'
 
@@ -20,8 +20,8 @@ import { isInapplicable } from './utils'
 
 type FirstClassFields<T> = T extends UpdateApprovedPremisesApplication
   ? Omit<UpdateApprovedPremisesApplication, 'data'>
-  : T extends SubmitApplication
-  ? Omit<SubmitApplication, 'translatedDocument'>
+  : T extends SubmitApprovedPremisesApplication
+  ? Omit<SubmitApprovedPremisesApplication, 'translatedDocument'>
   : never
 
 type QuestionResponseFunction = (
@@ -38,7 +38,7 @@ export const getApplicationUpdateData = (application: Application): UpdateApprov
   }
 }
 
-export const getApplicationSubmissionData = (application: Application): SubmitApplication => {
+export const getApplicationSubmissionData = (application: Application): SubmitApprovedPremisesApplication => {
   return {
     translatedDocument: application.document,
     ...getSubmitFirstClassFields(application),
@@ -67,7 +67,7 @@ const getUpdateFirstClassFields = (application: Application): FirstClassFields<U
   return firstClassFields(application, retrieveOptionalQuestionResponseFromApplicationOrAssessment)
 }
 
-const getSubmitFirstClassFields = (application: Application): FirstClassFields<SubmitApplication> => {
+const getSubmitFirstClassFields = (application: Application): FirstClassFields<SubmitApprovedPremisesApplication> => {
   return firstClassFields(application, retrieveQuestionResponseFromApplicationOrAssessment)
 }
 
