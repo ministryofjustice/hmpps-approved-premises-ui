@@ -38,8 +38,8 @@ import * as UserUtils from './userUtils'
 import * as TaskUtils from './tasks'
 import * as PlacementRequestUtils from './placementRequests'
 import * as MatchUtils from './matchUtils'
-import * as RoomUtils from './roomUtils'
 import * as SummaryListUtils from './applications/summaryListUtils'
+import * as BedUtils from './bedUtils'
 
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
@@ -187,5 +187,5 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('PlacementRequestUtils', PlacementRequestUtils)
   njkEnv.addGlobal('MatchUtils', MatchUtils)
   njkEnv.addGlobal('SummaryListUtils', SummaryListUtils)
-  njkEnv.addGlobal('RoomUtils', RoomUtils)
+  njkEnv.addGlobal('BedUtils', BedUtils)
 }

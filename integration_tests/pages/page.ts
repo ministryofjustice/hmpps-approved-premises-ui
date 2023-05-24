@@ -1,5 +1,5 @@
 import { Adjudication, Document, PersonAcctAlert, PrisonCaseNote } from '../../server/@types/shared'
-import { PersonRisksUI, SummaryListItem } from '../../server/@types/ui'
+import { PersonRisksUI, SummaryListItem, TableCell } from '../../server/@types/ui'
 import errorLookups from '../../server/i18n/en/errors.json'
 import { DateFormats } from '../../server/utils/dateUtils'
 import { sentenceCase } from '../../server/utils/utils'
@@ -261,5 +261,37 @@ export default abstract class Page {
 
   getTextInputByIdAndClear(id: string): void {
     cy.get(`#${id}`).clear()
+  }
+
+  shouldContainTableRows(rows: Array<Array<TableCell>>): void {
+    cy.get('tbody tr').should('have.length', rows.length)
+
+    rows.forEach(row => {
+      cy.contains(this.textOrHtmlFromTableCell(row[0]))
+        .parent()
+        .within(() => {
+          const cols = row.slice(1)
+          cols.forEach((column, i) => {
+            if ('text' in column) {
+              cy.get('td').eq(i).contains(column.text)
+            } else if ('html' in column) {
+              cy.get('td')
+                .eq(i)
+                .then($td => {
+                  const { actual, expected } = parseHtml($td, column.html)
+                  expect(actual).to.equal(expected)
+                })
+            }
+          })
+        })
+    })
+  }
+
+  textOrHtmlFromTableCell(tableCell: TableCell): string {
+    if ('text' in tableCell) {
+      return tableCell.text
+    }
+
+    return tableCell.html
   }
 }

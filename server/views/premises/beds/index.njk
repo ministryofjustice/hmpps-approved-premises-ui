@@ -12,16 +12,19 @@
         firstCellIsHeader: true,
         head: [
           {
-            text: "Name"
+            text: "Room Name"
           },
           {
-            text: "Number of beds"
+            text: "Bed Name"
           },
           {
-            html: 'Action'
+            text: "Status"
+          },
+          {
+            text: 'Action'
           }
         ],
-        rows: RoomUtils.roomsTableRows(rooms, premisesId)
+        rows: BedUtils.bedTableRows(beds, premisesId)
       })
     }}
 

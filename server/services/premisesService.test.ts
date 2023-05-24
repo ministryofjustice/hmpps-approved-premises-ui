@@ -1,6 +1,13 @@
 import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
-import { dateCapacityFactory, premisesFactory, roomFactory, staffMemberFactory } from '../testutils/factories'
+import {
+  bedDetailFactory,
+  bedSummaryFactory,
+  dateCapacityFactory,
+  premisesFactory,
+  roomFactory,
+  staffMemberFactory,
+} from '../testutils/factories'
 import getDateRangesWithNegativeBeds from '../utils/premisesUtils'
 import paths from '../paths/manage'
 
@@ -46,6 +53,34 @@ describe('PremisesService', () => {
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.getRooms).toHaveBeenCalledWith(premisesId)
+    })
+  })
+
+  describe('getBeds', () => {
+    it('on success returns the beds given a premises ID', async () => {
+      const beds = bedSummaryFactory.buildList(1)
+      premisesClient.getBeds.mockResolvedValue(beds)
+
+      const result = await service.getBeds(token, premisesId)
+
+      expect(result).toEqual(beds)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getBeds).toHaveBeenCalledWith(premisesId)
+    })
+  })
+
+  describe('getBed', () => {
+    it('on success returns a bed given a premises ID and bed ID', async () => {
+      const bed = bedDetailFactory.build()
+      premisesClient.getBed.mockResolvedValue(bed)
+
+      const result = await service.getBed(token, premisesId, bed.id)
+
+      expect(result).toEqual(bed)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getBed).toHaveBeenCalledWith(premisesId, bed.id)
     })
   })
 

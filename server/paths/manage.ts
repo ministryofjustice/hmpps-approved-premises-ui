@@ -21,15 +21,17 @@ const departuresPath = bookingPath.path('departures')
 
 const lostBedsPath = singlePremisesPath.path('beds/:bedId/lost-beds')
 
-const roomsPath = singlePremisesPath.path('rooms')
+const bedsPath = singlePremisesPath.path('beds')
 
 const paths = {
   premises: {
     index: premisesPath,
     show: singlePremisesPath,
     capacity: singlePremisesPath.path('capacity'),
-    rooms: roomsPath,
-    room: roomsPath.path(':roomId'),
+    beds: {
+      index: bedsPath,
+      show: bedsPath.path(':bedId'),
+    },
   },
   bookings: {
     new: newBookingPath,

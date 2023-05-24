@@ -1,5 +1,5 @@
 import type { SummaryList, TableRow } from '@approved-premises/ui'
-import type { ApprovedPremises, Room, StaffMember } from '@approved-premises/api'
+import type { ApprovedPremises, BedDetail, BedSummary, Room, StaffMember } from '@approved-premises/api'
 import type { PremisesClient, RestClientBuilder } from '../data'
 import paths from '../paths/manage'
 
@@ -23,6 +23,18 @@ export default class PremisesService {
     const rooms = await premisesClient.getRooms(premisesId)
 
     return rooms
+  }
+
+  async getBeds(token: string, premisesId: string): Promise<Array<BedSummary>> {
+    const premisesClient = this.premisesClientFactory(token)
+
+    return premisesClient.getBeds(premisesId)
+  }
+
+  async getBed(token: string, premisesId: string, bedId: string): Promise<BedDetail> {
+    const premisesClient = this.premisesClientFactory(token)
+
+    return premisesClient.getBed(premisesId, bedId)
   }
 
   async getRoom(token: string, premisesId: string, roomId: string): Promise<Room> {
