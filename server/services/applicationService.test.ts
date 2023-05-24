@@ -1,7 +1,7 @@
 import type { Request } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { DataServices, TaskListErrors } from '@approved-premises/ui'
-import type { SubmitApplication, UpdateApprovedPremisesApplication } from '@approved-premises/api'
+import type { SubmitApprovedPremisesApplication, UpdateApprovedPremisesApplication } from '@approved-premises/api'
 
 import type TasklistPage from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
@@ -339,7 +339,7 @@ describe('ApplicationService', () => {
       user: { token },
     })
     const application = applicationFactory.build()
-    const applicationData = createMock<SubmitApplication>()
+    const applicationData = createMock<SubmitApprovedPremisesApplication>()
 
     it('calls the submit client method', async () => {
       ;(getApplicationSubmissionData as jest.Mock).mockReturnValue(applicationData)
