@@ -138,6 +138,8 @@ export type { ServiceName } from './models/ServiceName';
 export type { SortOrder } from './models/SortOrder';
 export type { StaffMember } from './models/StaffMember';
 export type { SubmitApplication } from './models/SubmitApplication';
+export type { SubmitApprovedPremisesApplication } from './models/SubmitApprovedPremisesApplication';
+export type { SubmitTemporaryAccommodationApplication } from './models/SubmitTemporaryAccommodationApplication';
 export type { SupervisingOfficer } from './models/SupervisingOfficer';
 export type { SupervisingProvider } from './models/SupervisingProvider';
 export type { SupervisingTeam } from './models/SupervisingTeam';
