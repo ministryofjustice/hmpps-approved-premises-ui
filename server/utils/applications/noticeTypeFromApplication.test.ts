@@ -37,4 +37,10 @@ describe('noticeTypeFromApplication', () => {
 
     expect(noticeTypeFromApplication(application)).toEqual('standard')
   })
+
+  it('returns standard if there isnt an arrival date for the application', () => {
+    ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(null)
+
+    expect(noticeTypeFromApplication(application)).toEqual('standard')
+  })
 })
