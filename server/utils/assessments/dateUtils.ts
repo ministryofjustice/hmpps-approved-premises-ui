@@ -58,7 +58,7 @@ const formattedArrivalDate = (assessment: AssessmentSummary | Assessment): strin
   if ('arrivalDate' in assessment) {
     arrivalDate = assessment.arrivalDate
   } else if ('application' in assessment) {
-    arrivalDate = arrivalDateFromApplication(assessment.application as Application, false)
+    arrivalDate = arrivalDateFromApplication(assessment.application as Application)
   }
 
   if (!arrivalDate) {

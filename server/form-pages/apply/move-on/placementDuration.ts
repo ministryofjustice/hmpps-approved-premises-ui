@@ -19,7 +19,7 @@ type PlacementDurationBody = {
 export default class PlacementDuration implements TasklistPage {
   title = 'Placement duration and move on'
 
-  arrivalDate: Date = this.fetchArrivalDate()
+  arrivalDate: Date | null = this.fetchArrivalDate()
 
   departureDate: Date | null = this.fetchDepartureDate()
 
@@ -71,7 +71,7 @@ export default class PlacementDuration implements TasklistPage {
     return errors
   }
 
-  private fetchArrivalDate(): Date {
+  private fetchArrivalDate(): Date | null {
     try {
       const basicInformation = this.application.data['basic-information']
 
@@ -79,17 +79,17 @@ export default class PlacementDuration implements TasklistPage {
 
       const placementDate = basicInformation['placement-date']
 
-      if (!placementDate) return undefined
+      if (!placementDate) return null
 
       if (placementDate && placementDate.startDateSameAsReleaseDate === 'yes') {
         const releaseDate = basicInformation['release-date']
 
-        if (!releaseDate) throw new SessionDataError('No release date')
+        if (!releaseDate) return null
 
         return DateFormats.isoToDateObj(releaseDate.releaseDate)
       }
 
-      return DateFormats.isoToDateObj(placementDate.startDate)
+      return placementDate?.startDate ? DateFormats.isoToDateObj(placementDate.startDate) : null
     } catch (e) {
       throw new SessionDataError(`Move on information placement duration error: ${e}`)
     }

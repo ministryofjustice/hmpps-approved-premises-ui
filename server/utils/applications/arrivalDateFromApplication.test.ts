@@ -1,6 +1,5 @@
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { applicationFactory } from '../../testutils/factories'
-import { SessionDataError } from '../errors'
 
 describe('arrivalDateFromApplication', () => {
   it('returns the arrival date when the release date is known and is the same as the start date', () => {
@@ -28,7 +27,7 @@ describe('arrivalDateFromApplication', () => {
     expect(arrivalDateFromApplication(application)).toEqual('2023-10-13')
   })
 
-  it('throws an error or returns null when the release date is not known', () => {
+  it('returns null when the release date is not known', () => {
     const application = applicationFactory.build({
       data: {
         'basic-information': {
@@ -37,7 +36,6 @@ describe('arrivalDateFromApplication', () => {
       },
     })
 
-    expect(() => arrivalDateFromApplication(application)).toThrow(new SessionDataError('No known release date'))
-    expect(arrivalDateFromApplication(application, false)).toEqual(null)
+    expect(arrivalDateFromApplication(application)).toEqual(null)
   })
 })

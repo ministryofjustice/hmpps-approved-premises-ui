@@ -73,15 +73,15 @@ describe('PlacementDuration', () => {
       )
     })
 
-    it('returns undefined if the "placement-date" object is not present', () => {
+    it('returns null if the "placement-date" object is not present', () => {
       application = applicationFactory.build({ data: { 'basic-information': {} } })
 
       const page = new PlacementDuration({}, application)
 
-      expect(page.arrivalDate).toBeUndefined()
+      expect(page.arrivalDate).toBeNull()
     })
 
-    it('throws an error if the start date is the same as the release date and the "release-date" object is not present', () => {
+    it('returns null if the start date is the same as the release date and the "release-date" object is not present', () => {
       application = applicationFactory.build({
         data: {
           'basic-information': {
@@ -92,9 +92,9 @@ describe('PlacementDuration', () => {
         },
       })
 
-      expect(() => new PlacementDuration({}, application)).toThrow(
-        new SessionDataError('Move on information placement duration error: Error: No release date'),
-      )
+      const page = new PlacementDuration({}, application)
+
+      expect(page.arrivalDate).toBeNull()
     })
   })
 
