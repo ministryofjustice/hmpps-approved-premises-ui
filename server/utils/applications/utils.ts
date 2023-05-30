@@ -80,15 +80,11 @@ const getResponsesForTask = (
   return responsesForPages
 }
 
-const getResponseForPage = (
-  applicationOrAssessment: Application | Assessment,
-  taskName: string,
-  pageName: string,
-): PageResponse => {
-  const Page = getPage(taskName, pageName, isAssessment(applicationOrAssessment))
+const getResponseForPage = (formArtifact: FormArtifact, taskName: string, pageName: string): PageResponse => {
+  const Page = getPage(taskName, pageName, journeyTypeFromArtifact(formArtifact))
 
-  const body = applicationOrAssessment?.data?.[taskName]?.[pageName]
-  const page = new Page(body, applicationOrAssessment)
+  const body = formArtifact?.data?.[taskName]?.[pageName]
+  const page = new Page(body, formArtifact)
 
   return page.response()
 }

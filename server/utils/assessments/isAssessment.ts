@@ -1,7 +1,5 @@
-import {
-  ApprovedPremisesApplication as Application,
-  ApprovedPremisesAssessment as Assessment,
-} from '../../@types/shared'
+import { ApprovedPremisesAssessment as Assessment } from '../../@types/shared'
+import { FormArtifact } from '../../@types/ui'
 
-export default (applicationOrAssessment: Application | Assessment): applicationOrAssessment is Assessment =>
-  (applicationOrAssessment as Assessment)?.allocatedAt !== undefined
+export default (formArtifact: FormArtifact): formArtifact is Assessment =>
+  (formArtifact as Assessment)?.allocatedAt !== undefined
