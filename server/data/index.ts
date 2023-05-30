@@ -24,6 +24,7 @@ import ApplicationClient from './applicationClient'
 import AssessmentClient from './assessmentClient'
 import TaskClient from './taskClient'
 import PlacementRequestClient from './placementRequestClient'
+import PlacementApplicationClient from './placementApplicationClient'
 import BedClient from './bedClient'
 
 type RestClientBuilder<T> = (token: string) => T
@@ -42,6 +43,8 @@ export const dataAccess = () => ({
   taskClientBuilder: ((token: string) => new TaskClient(token)) as RestClientBuilder<TaskClient>,
   placementRequestClientBuilder: ((token: string) =>
     new PlacementRequestClient(token)) as RestClientBuilder<PlacementRequestClient>,
+  placementApplicationClientBuilder: ((token: string) =>
+    new PlacementApplicationClient(token)) as RestClientBuilder<PlacementApplicationClient>,
   bedClientBuilder: ((token: string) => new BedClient(token)) as RestClientBuilder<BedClient>,
 })
 
