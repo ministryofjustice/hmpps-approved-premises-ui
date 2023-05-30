@@ -1,7 +1,9 @@
 import {
   ApType,
   ApprovedPremisesAssessment as Assessment,
+  AssessmentAcceptance,
   PlacementCriteria,
+  PlacementDates,
   PlacementRequirements,
 } from '@approved-premises/api'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
@@ -23,6 +25,42 @@ import {
   placementRequirementOptions,
 } from '../placementCriteriaUtils'
 import { placementDurationFromApplication } from './placementDurationFromApplication'
+import { getResponses } from '../applications/utils'
+
+export const acceptanceData = (assessment: Assessment): AssessmentAcceptance => {
+  const notes = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+    assessment,
+    MatchingInformation,
+    'cruInformation',
+  )
+
+  return {
+    document: getResponses(assessment),
+    requirements: placementRequestData(assessment),
+    placementDates: placementDates(assessment),
+    notes,
+  }
+}
+
+export const placementDates = (assessment: Assessment): PlacementDates | null => {
+  const arrivalDate = arrivalDateFromApplication(assessment.application)
+
+  if (!arrivalDate) {
+    return null
+  }
+
+  const placementDuration =
+    retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+      assessment,
+      MatchingInformation,
+      'lengthOfStayAgreedDetail',
+    ) || placementDurationFromApplication(assessment.application)
+
+  return {
+    expectedArrival: arrivalDate,
+    duration: Number(placementDuration),
+  }
+}
 
 export const placementRequestData = (assessment: Assessment): PlacementRequirements => {
   const matchingInformation = pageDataFromApplicationOrAssessment(
@@ -40,31 +78,16 @@ export const placementRequestData = (assessment: Assessment): PlacementRequireme
     LocationFactors,
     'alternativeRadius',
   )
-  const placementDuration =
-    retrieveOptionalQuestionResponseFromApplicationOrAssessment(
-      assessment,
-      MatchingInformation,
-      'lengthOfStayAgreedDetail',
-    ) || placementDurationFromApplication(assessment.application)
 
   const criteria = criteriaFromMatchingInformation(matchingInformation)
-
-  const notes = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
-    assessment,
-    MatchingInformation,
-    'cruInformation',
-  )
 
   return {
     gender: 'male', // Hardcoded for now as we only support Male APs
     type: apType(matchingInformation.apType),
-    expectedArrival: arrivalDateFromApplication(assessment.application),
-    duration: placementDuration,
     location,
     radius: alternativeRadius || 50,
-    notes,
     ...criteria,
-  } as PlacementRequirements
+  }
 }
 
 export const apType = (type: ApTypeCriteria | 'normal'): ApType => {

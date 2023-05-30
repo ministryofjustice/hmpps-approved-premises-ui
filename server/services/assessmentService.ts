@@ -7,7 +7,7 @@ import {
 } from '@approved-premises/api'
 import type { DataServices } from '@approved-premises/ui'
 
-import { placementRequestData } from '../utils/assessments/placementRequestData'
+import { acceptanceData } from '../utils/assessments/acceptanceData'
 import type { AssessmentClient, RestClientBuilder } from '../data'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getBody, updateAssessmentData } from '../form-pages/utils'
@@ -66,15 +66,12 @@ export default class AssessmentService {
   async submit(token: string, assessment: Assessment) {
     const client = this.assessmentClientFactory(token)
 
-    const document = getResponses(assessment)
-
     if (!applicationAccepted(assessment)) {
+      const document = getResponses(assessment)
       return client.rejection(assessment.id, document, rejectionRationaleFromAssessmentResponses(assessment))
     }
 
-    const requirements = placementRequestData(assessment)
-
-    return client.acceptance(assessment.id, { document, requirements })
+    return client.acceptance(assessment.id, acceptanceData(assessment))
   }
 
   async createClarificationNote(token: string, assessmentId: string, clarificationNote: NewClarificationNote) {

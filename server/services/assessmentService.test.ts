@@ -1,12 +1,12 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { Request } from 'express'
-import { PlacementRequest } from '@approved-premises/api'
+import { AssessmentAcceptance } from '@approved-premises/api'
 
 import { AssessmentClient } from '../data'
 import AssessmentService from './assessmentService'
 import { assessmentFactory, assessmentSummaryFactory, clarificationNoteFactory } from '../testutils/factories'
 
-import { placementRequestData } from '../utils/assessments/placementRequestData'
+import { acceptanceData, placementRequestData } from '../utils/assessments/acceptanceData'
 import { getBody, updateAssessmentData } from '../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { DataServices, TaskListErrors } from '../@types/ui'
@@ -18,7 +18,7 @@ jest.mock('../data/assessmentClient.ts')
 jest.mock('../data/personClient.ts')
 jest.mock('../form-pages/utils')
 jest.mock('../utils/applications/utils')
-jest.mock('../utils/assessments/placementRequestData')
+jest.mock('../utils/assessments/acceptanceData')
 jest.mock('../utils/assessments/decisionUtils')
 
 describe('AssessmentService', () => {
@@ -150,18 +150,17 @@ describe('AssessmentService', () => {
   describe('submit', () => {
     const token = 'some-token'
     let document = { foo: [{ bar: 'baz' }] } as ApplicationOrAssessmentResponse
-    const requirements = createMock<PlacementRequest>()
+    const assessmentAcceptance = createMock<AssessmentAcceptance>()
     const assessment = assessmentFactory.build()
 
     it('if the assessment is accepted the accept client method is called', async () => {
       ;(applicationAccepted as jest.Mock).mockReturnValue(true)
-      ;(getResponses as jest.Mock).mockReturnValue(document)
-      ;(placementRequestData as jest.Mock).mockReturnValue(requirements)
+      ;(acceptanceData as jest.Mock).mockReturnValue(assessmentAcceptance)
 
       await service.submit(token, assessment)
 
       expect(assessmentClientFactory).toHaveBeenCalledWith(token)
-      expect(assessmentClient.acceptance).toHaveBeenCalledWith(assessment.id, { document, requirements })
+      expect(assessmentClient.acceptance).toHaveBeenCalledWith(assessment.id, assessmentAcceptance)
     })
 
     it('if the assessment is rejected the rejection client method is called with the rejectionRationale', async () => {
