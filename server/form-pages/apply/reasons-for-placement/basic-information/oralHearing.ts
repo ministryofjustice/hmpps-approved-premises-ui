@@ -48,7 +48,7 @@ export default class OralHearing implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'placement-purpose'
   }
 
   previous() {

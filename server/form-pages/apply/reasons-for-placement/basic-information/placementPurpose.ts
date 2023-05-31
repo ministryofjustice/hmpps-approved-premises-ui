@@ -5,6 +5,8 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
+import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import ReleaseDate from './releaseDate'
 
 export const placementPurposes = {
   publicProtection: 'Public protection',
@@ -49,7 +51,17 @@ export default class PlacementPurpose implements TasklistPage {
 
   previous() {
     if (noticeTypeFromApplication(this.application) === 'standard') {
-      return 'placement-purpose'
+      const knowReleaseDate = retrieveQuestionResponseFromApplicationOrAssessment(
+        this.application,
+        ReleaseDate,
+        'knowReleaseDate',
+      )
+
+      if (knowReleaseDate === 'no') {
+        return 'oral-hearing'
+      }
+
+      return 'placement-date'
     }
 
     return 'reason-for-short-notice'
