@@ -17,6 +17,8 @@ import isAssessment from '../assessments/isAssessment'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
 import ExceptionDetails from '../../form-pages/apply/reasons-for-placement/basic-information/exceptionDetails'
+import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
+import PlacementRequest from '../../form-pages/placement-application'
 
 const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => {
@@ -99,6 +101,19 @@ const getPage = (taskName: string, pageName: string, isAnAssessment?: boolean): 
   }
 
   return Page as TasklistPageInterface
+}
+
+const journeyPages = (journeyType: JourneyType): FormPages => {
+  switch (journeyType) {
+    case 'applications':
+      return Apply.pages
+    case 'assessments':
+      return Assess.pages
+    case 'placement-applications':
+      return PlacementRequest.pages
+    default:
+      throw new Error(`Unknown journey type: ${journeyType}`)
+  }
 }
 
 const isInapplicable = (application: Application): boolean => {
