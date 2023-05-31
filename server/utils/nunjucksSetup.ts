@@ -46,6 +46,7 @@ import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import tasksPaths from '../paths/tasks'
 import matchPaths from '../paths/match'
+import placementApplicationsPaths from '../paths/placementApplications'
 import { radioMatrixTable } from './radioMatrixTable'
 
 import config from '../config'
@@ -149,7 +150,14 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     },
   )
 
-  njkEnv.addGlobal('paths', { ...managePaths, ...applyPaths, ...assessPaths, ...tasksPaths, ...matchPaths })
+  njkEnv.addGlobal('paths', {
+    ...managePaths,
+    ...applyPaths,
+    ...assessPaths,
+    ...tasksPaths,
+    ...matchPaths,
+    ...placementApplicationsPaths,
+  })
 
   njkEnv.addGlobal('linkTo', linkTo)
 

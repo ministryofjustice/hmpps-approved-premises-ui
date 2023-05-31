@@ -10,6 +10,11 @@ export default class ShowPage extends Page {
     super('View Application')
   }
 
+  static visit(application: ApprovedPremisesApplication) {
+    cy.visit(`/applications/${application.id}`)
+    return new ShowPage(application)
+  }
+
   shouldShowPersonInformation() {
     cy.get('[data-cy-section="person-details"]').within(() => {
       this.assertDefinition('Name', this.application.person.name)
