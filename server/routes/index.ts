@@ -10,6 +10,7 @@ import assessRoutes from './assess'
 import matchRoutes from './match'
 import manageRoutes from './manage'
 import tasksRoutes from './tasks'
+import placementApplicationRoutes from './placementApplications'
 
 export default function routes(controllers: Controllers): Router {
   const router = Router()
@@ -25,6 +26,7 @@ export default function routes(controllers: Controllers): Router {
   matchRoutes(controllers, router)
   manageRoutes(controllers, router)
   tasksRoutes(controllers, router)
+  placementApplicationRoutes(controllers, router)
 
   return router
 }
