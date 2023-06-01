@@ -6,15 +6,17 @@
 
   <h1 class="govuk-heading-l">{{ page.title }}</h2>
 
-  <h2 class="govuk-heading-m"> Expected dates of stay in Approved Premises:</h2>
+  {% if page.arrivalDate %}
+    <h2 class="govuk-heading-m"> Expected dates of stay in Approved Premises:</h2>
 
-  <p class="govuk-body">
-    <strong>Arrival date:</strong>
-    {{dateObjToUIDate(page.arrivalDate)}}</p>
+    <p class="govuk-body">
+      <strong>Arrival date:</strong>
+      {{dateObjToUIDate(page.arrivalDate)}}</p>
 
-  <p class="govuk-body">
-    <strong>Departure date:</strong>
-    {{dateObjToUIDate(page.departureDate)}}</p>
+    <p class="govuk-body">
+      <strong>Departure date:</strong>
+      {{dateObjToUIDate(page.departureDate)}}</p>
+  {% endif %}
 
   {{ govukDetails({
       summaryText: "View guidance on AP placement duration",
