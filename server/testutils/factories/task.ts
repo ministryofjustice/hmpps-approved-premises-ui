@@ -12,6 +12,6 @@ export default Factory.define<Task>(() => ({
   applicationId: faker.string.uuid(),
   dueDate: DateFormats.dateObjToIsoDate(faker.date.future()),
   status: faker.helpers.arrayElement(['not_started', 'in_progress', 'complete']),
-  taskType: faker.helpers.arrayElement(['Assessment', 'PlacementRequest', 'PlacementRequestReview', 'BookingAppeal']),
+  taskType: faker.helpers.arrayElement(['Assessment', 'PlacementRequest', 'BookingAppeal']),
   person: PersonFactory.build(),
 }))
