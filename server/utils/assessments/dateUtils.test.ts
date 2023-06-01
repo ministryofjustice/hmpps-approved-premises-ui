@@ -70,10 +70,10 @@ describe('dateUtils', () => {
         expect(formattedArrivalDate(assessment)).toEqual('1 Jan 2022')
       })
 
-      it('returns N/A if there is no arrival date for the application', () => {
+      it('returns "Not provided" if there is no arrival date for the application', () => {
         const assessment = assessmentSummaryFactory.build({ arrivalDate: undefined })
 
-        expect(formattedArrivalDate(assessment)).toEqual('N/A')
+        expect(formattedArrivalDate(assessment)).toEqual('Not provided')
       })
     })
 
@@ -86,11 +86,11 @@ describe('dateUtils', () => {
         expect(arrivalDateFromApplication).toHaveBeenCalledWith(assessment.application)
       })
 
-      it('returns N/A if there is no arrival date for the application', () => {
+      it('returns "Not provided" if there is no arrival date for the application', () => {
         const assessment = assessmentFactory.build()
         ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(null)
 
-        expect(formattedArrivalDate(assessment)).toEqual('N/A')
+        expect(formattedArrivalDate(assessment)).toEqual('Not provided')
         expect(arrivalDateFromApplication).toHaveBeenCalledWith(assessment.application)
       })
     })

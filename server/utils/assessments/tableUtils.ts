@@ -1,11 +1,15 @@
 import { AssessmentSummary } from '@approved-premises/api'
 import { TableRow } from '@approved-premises/ui'
-import { format } from 'date-fns'
 import { linkTo } from '../utils'
-import { daysSinceInfoRequest, daysSinceReceived, formatDays, formatDaysUntilDueWithWarning } from './dateUtils'
+import {
+  daysSinceInfoRequest,
+  daysSinceReceived,
+  formatDays,
+  formatDaysUntilDueWithWarning,
+  formattedArrivalDate,
+} from './dateUtils'
 import { tierBadge } from '../personUtils'
 import paths from '../../paths/assess'
-import { DateFormats } from '../dateUtils'
 
 const getStatus = (assessment: AssessmentSummary): string => {
   if (assessment.status === 'completed') {
@@ -40,7 +44,7 @@ const crnCell = (assessment: AssessmentSummary) => {
 
 const arrivalDateCell = (assessment: AssessmentSummary) => {
   return {
-    text: format(DateFormats.isoToDateObj(assessment.arrivalDate), 'd MMM yyyy'),
+    text: formattedArrivalDate(assessment),
   }
 }
 
