@@ -1,42 +1,217 @@
+import { addWeeks, daysToWeeks, formatDuration, weeksToDays } from 'date-fns'
 import {
   ApprovedPremisesBedSearchParameters as BedSearchParameters,
   BedSearchResult,
   CharacteristicPair,
 } from '../@types/shared'
-import { BedSearchParametersUi } from '../@types/ui'
-import { sentenceCase } from './utils'
+import { BedSearchParametersUi, ObjectWithDateParts, SummaryListItem } from '../@types/ui'
+import { DateFormats } from './dateUtils'
+import { linkTo, sentenceCase } from './utils'
+import matchPaths from '../paths/match'
+import {
+  accessibilityOptions,
+  apTypeOptions,
+  offenceAndRiskOptions,
+  placementRequirementOptions,
+  specialistSupportOptions,
+} from './placementCriteriaUtils'
+
+type PlacementDates = {
+  placementLength: number
+  startDate: string
+  endDate: string
+}
+
+export class InvalidBedSearchDataException extends Error {}
+
+export type SearchFilterCategories =
+  | 'accessibility'
+  | 'apType'
+  | 'offenceAndRisk'
+  | 'placementRequirements'
+  | 'specialistSupport'
+
+const groupedCriteria = {
+  apType: { title: 'Type of AP', options: apTypeOptions },
+  specialistSupport: { title: 'Specialist AP', options: specialistSupportOptions },
+  placementRequirements: { title: 'Placement Requirements', options: placementRequirementOptions },
+  offenceAndRisk: { title: 'Risks and offences to consider', options: offenceAndRiskOptions },
+  accessibility: { title: 'Would benefit from', options: accessibilityOptions },
+}
 
 export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParameters => ({
   ...query,
-  durationDays: Number(query.durationDays),
+  durationDays: weeksToDays(Number(query.durationWeeks)),
   maxDistanceMiles: Number(query.maxDistanceMiles),
 })
 
-export const mapApiParamsForUi = (apiParams: BedSearchParameters): BedSearchParametersUi => ({
+export const mapApiParamsForUi = (apiParams: BedSearchParameters): Partial<BedSearchParametersUi> => ({
   ...apiParams,
-  durationDays: apiParams.durationDays.toString(),
+  durationWeeks: daysToWeeks(apiParams.durationDays).toString(),
   maxDistanceMiles: apiParams.maxDistanceMiles.toString(),
 })
 
-export const mapApiCharacteristicForUi = (characteristic: CharacteristicPair) => {
-  const result = characteristic.name.startsWith('is') ? characteristic.name.slice(2) : characteristic.name
-
-  if (result.toLocaleUpperCase() === result) return `<li>${result}</li>`
-  return `<li>${sentenceCase(result)}</li>`
+export const translateApiCharacteristicForUi = (characteristic: string) => {
+  const result = characteristic.startsWith('is') ? characteristic.slice(2) : characteristic
+  if (['esap', 'pipe', 'iap'].includes(result)) return `${characteristic.toUpperCase()}`
+  if (result.toLocaleUpperCase() === result) return `${result}`
+  return `${sentenceCase(result)}`
 }
 
-export const mapApiCharacteristicsForUi = (characteristics: Array<CharacteristicPair>) => {
-  return `<ul class="govuk-list">${characteristics.map(mapApiCharacteristicForUi).join('')}</ul>`
+export const mapSearchResultCharacteristicsForUi = (characteristics: Array<CharacteristicPair>) => {
+  return mapSearchParamCharacteristicsForUi(characteristics.map(characteristicPair => characteristicPair.name))
 }
+
+export const mapSearchParamCharacteristicsForUi = (characteristics: Array<string>) => {
+  return `<ul class="govuk-list">${characteristics
+    .map(characteristicPair => `<li>${translateApiCharacteristicForUi(characteristicPair)}</li>`)
+    .join('')}</ul>`
+}
+
+export const matchedCharacteristics = (
+  actualCharacteristics: Array<CharacteristicPair>,
+  requiredCharacteristics: Array<string>,
+) => {
+  const characteristics = requiredCharacteristics.filter(characteristic =>
+    actualCharacteristics.map(c => c.propertyName).includes(characteristic),
+  )
+
+  return mapSearchParamCharacteristicsForUi(characteristics)
+}
+
+export const unmatchedCharacteristics = (
+  actualCharacteristics: Array<CharacteristicPair>,
+  requiredCharacteristics: Array<string>,
+) => {
+  const characteristics = actualCharacteristics
+    .map(c => c.propertyName)
+    .filter(characteristic => !requiredCharacteristics.includes(characteristic))
+
+  return mapSearchParamCharacteristicsForUi(characteristics)
+}
+
+export const encodeBedSearchResult = (bedSearchResult: BedSearchResult): string => {
+  const json = JSON.stringify(bedSearchResult)
+
+  return Buffer.from(json).toString('base64')
+}
+
+export const decodeBedSearchResult = (string: string): BedSearchResult => {
+  const json = Buffer.from(string, 'base64').toString('utf-8')
+  const obj = JSON.parse(json)
+
+  if ('premises' in obj && 'room' in obj && 'bed' in obj) {
+    return obj as BedSearchResult
+  }
+
+  throw new InvalidBedSearchDataException()
+}
+
+export const placementLength = (lengthInWeeks: number): string => {
+  return formatDuration({ weeks: lengthInWeeks }, { format: ['weeks'] })
+}
+
+export const placementDates = (startDateString: string, lengthInWeeks: string): PlacementDates => {
+  const weeks = Number(lengthInWeeks)
+  const startDate = DateFormats.isoToDateObj(startDateString)
+  const endDate = addWeeks(startDate, weeks)
+
+  return {
+    placementLength: Number(lengthInWeeks),
+    startDate: DateFormats.dateObjToIsoDate(startDate),
+    endDate: DateFormats.dateObjToIsoDate(endDate),
+  }
+}
+
+export const summaryCardHeader = (
+  bedSearchResult: BedSearchResult,
+  placementRequestId: string,
+  startDate: string,
+  durationWeeks: string,
+): string => {
+  return linkTo(
+    matchPaths.placementRequests.bookings.confirm,
+    {
+      id: placementRequestId,
+    },
+    {
+      text: `${bedSearchResult.premises.name} (Bed ${bedSearchResult.bed.name})`,
+      query: {
+        bedSearchResult: encodeBedSearchResult(bedSearchResult),
+        startDate,
+        durationWeeks,
+      },
+    },
+  )
+}
+
+export const confirmationSummaryCardRows = (
+  bedSearchResult: BedSearchResult,
+  dates: PlacementDates,
+): Array<SummaryListItem> => {
+  return [
+    premisesNameRow(bedSearchResult),
+    bedNameRow(bedSearchResult),
+    arrivalDateRow(dates.startDate),
+    departureDateRow(dates.endDate),
+    placementLengthRow(dates.placementLength),
+  ]
+}
+
+export const premisesNameRow = (bedSearchResult: BedSearchResult) => ({
+  key: {
+    text: 'Approved Premises',
+  },
+  value: {
+    text: bedSearchResult.premises.name,
+  },
+})
+
+export const bedNameRow = (bedSearchResult: BedSearchResult) => ({
+  key: {
+    text: 'Bed',
+  },
+  value: {
+    text: bedSearchResult.bed.name,
+  },
+})
+
+export const arrivalDateRow = (arrivalDate: string) => ({
+  key: {
+    text: 'Expected arrival date',
+  },
+  value: {
+    text: DateFormats.isoDateToUIDate(arrivalDate),
+  },
+})
+
+export const departureDateRow = (departureDate: string) => ({
+  key: {
+    text: 'Expected departure date',
+  },
+  value: {
+    text: DateFormats.isoDateToUIDate(departureDate),
+  },
+})
+
+export const placementLengthRow = (length: number) => ({
+  key: {
+    text: 'Placement length',
+  },
+  value: {
+    text: placementLength(length),
+  },
+})
 
 export const summaryCardRows = (
   bedSearchResult: BedSearchResult,
-): Array<{ key: { text: string }; value: { html: string } | { text: string } }> => {
+  requiredCharacteristics: Array<string>,
+): Array<SummaryListItem> => {
   return [
     townRow(bedSearchResult),
     addressRow(bedSearchResult),
-    premisesCharacteristicsRow(bedSearchResult),
-    roomCharacteristicsRow(bedSearchResult),
+    matchedCharacteristicsRow(bedSearchResult, requiredCharacteristics),
+    additionalCharacteristicsRow(bedSearchResult, requiredCharacteristics),
     bedCountRow(bedSearchResult),
   ]
 }
@@ -59,21 +234,27 @@ export const addressRow = (bedSearchResult: BedSearchResult) => ({
   },
 })
 
-export const premisesCharacteristicsRow = (bedSearchResult: BedSearchResult) => ({
+export const matchedCharacteristicsRow = (
+  bedSearchResult: BedSearchResult,
+  requiredCharacteristics: Array<string> = [],
+) => ({
   key: {
-    text: 'Premises characteristics',
+    text: 'Matched characteristics',
   },
   value: {
-    html: mapApiCharacteristicsForUi(bedSearchResult.premises.characteristics),
+    html: matchedCharacteristics(bedSearchResult.premises.characteristics, requiredCharacteristics),
   },
 })
 
-export const roomCharacteristicsRow = (bedSearchResult: BedSearchResult) => ({
+export const additionalCharacteristicsRow = (
+  bedSearchResult: BedSearchResult,
+  requiredCharacteristics: Array<string> = [],
+) => ({
   key: {
-    text: 'Room characteristics',
+    text: 'Additional characteristics',
   },
   value: {
-    html: mapApiCharacteristicsForUi(bedSearchResult.room.characteristics),
+    html: unmatchedCharacteristics(bedSearchResult.premises.characteristics, requiredCharacteristics),
   },
 })
 
@@ -85,3 +266,50 @@ export const bedCountRow = (bedSearchResult: BedSearchResult) => ({
     text: bedSearchResult.premises.bedCount.toString(),
   },
 })
+
+export const startDateObjFromParams = (params: { startDate: string } | ObjectWithDateParts<'startDate'>) => {
+  if (params['startDate-day'] && params['startDate-month'] && params['startDate-year']) {
+    return {
+      ...DateFormats.dateAndTimeInputsToIsoString(params as ObjectWithDateParts<'startDate'>, 'startDate'),
+    }
+  }
+
+  return { startDate: params.startDate, ...DateFormats.isoDateToDateInputs(params.startDate, 'startDate') }
+}
+
+export const groupedEssentialCriteria = (essentialCriteria: Array<string>) => {
+  return Object.keys(groupedCriteria).reduce((obj, k: SearchFilterCategories) => {
+    const selectedCriteria = selectedEssentialCriteria(groupedCriteria[k].options, essentialCriteria)
+    if (selectedCriteria.length) {
+      return {
+        ...obj,
+        [`${groupedCriteria[k].title}`]: selectedCriteria,
+      }
+    }
+    return obj
+  }, {})
+}
+
+export const selectedEssentialCriteria = (criteria: Record<string, string>, selectedCriteria: Array<string>) => {
+  return selectedCriteria.filter(key => key in criteria).map(key => criteria[key])
+}
+
+export const groupedCheckboxes = (selectedValues: Array<string>) => {
+  return Object.keys(groupedCriteria).reduce((obj, k: SearchFilterCategories) => {
+    return {
+      ...obj,
+      [`${groupedCriteria[k].title}`]: checkBoxesForCriteria(groupedCriteria[k].options, selectedValues),
+    }
+  }, {})
+}
+
+export const checkBoxesForCriteria = (criteria: Record<string, string>, selectedValues: Array<string>) => {
+  return Object.keys(criteria)
+    .map(criterion => ({
+      id: criterion,
+      text: criteria[criterion],
+      value: criterion,
+      checked: selectedValues.includes(criterion),
+    }))
+    .filter(item => item.text.length > 0)
+}

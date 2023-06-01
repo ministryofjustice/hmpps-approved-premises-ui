@@ -12,21 +12,22 @@
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
 
-{% block content %}
-
+{% block beforeContent %}
     {{ govukBackLink({
       text: "Back",
-      href: paths.premises.show({premisesId: premisesId})
+      href: paths.premises.beds.show({ premisesId: premisesId, bedId: bedId })
     }) }}
+{% endblock %}
 
-    <h1>{{pageHeading}}</h1>
+{% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <form action="{{ paths.bookings.create({ premisesId: premisesId }) }}" method="post">
+            {{ showErrorSummary(errorSummary, errorTitle) }}
+
+            <h1>{{pageHeading}}</h1>
+            <form action="{{ paths.bookings.create({ premisesId: premisesId, bedId: bedId }) }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                 <input type="hidden" name="crn" value="{{ crn }}"/>
-
-                {{ showErrorSummary(errorSummary) }}
 
                 {{ govukSummaryList({
                 rows: [

@@ -7,20 +7,21 @@
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body" %}
 
-{% block content %}
-
+{% block beforeContent %}
   {{ govukBackLink({
 		text: "Back",
 		href: paths.applications.index()
 	}) }}
+{% endblock %}
 
+{% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <form action="{{ paths.applications.new() }}" method="get">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
         <h1>{{ pageHeading }}</h1>
 
-        <p class="govuk-body">Use this service to apply for a placement in an Approved Premises (AP) on behalf of a person on probation/in custody.</p>
+        <p class="govuk-body">Use this service to apply for a placement in an Approved Premises (AP) on behalf of a person on probation.</p>
 
         <p class="govuk-body">If a person is leaving prison, you should aim to complete your application 6 months before they are released.</p>
 
@@ -47,9 +48,9 @@
             <a href="">eligibility requirements</a> - you'll need to demonstrate why an AP is necessary over other interventions and accommodation options</li>
           <li>factors impacting which location, type of AP, and type of room will be suitable</li>
           <li>how you'll prepare for move on after the AP</li>
-          <ul></ul>
+        </ul>
 
-        </form>
-      </div>
+      </form>
     </div>
-  {% endblock %}
+  </div>
+{% endblock %}

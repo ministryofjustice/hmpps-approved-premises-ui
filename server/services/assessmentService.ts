@@ -1,12 +1,13 @@
 import { Request } from 'express'
 import {
   ApprovedPremisesAssessment as Assessment,
+  AssessmentSummary,
   NewClarificationNote,
   UpdatedClarificationNote,
 } from '@approved-premises/api'
 import type { DataServices } from '@approved-premises/ui'
 
-import { placementRequestData } from '../utils/assessments/placementRequestData'
+import { acceptanceData } from '../utils/assessments/acceptanceData'
 import type { AssessmentClient, RestClientBuilder } from '../data'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getBody, updateAssessmentData } from '../form-pages/utils'
@@ -18,17 +19,10 @@ import { applicationAccepted } from '../utils/assessments/decisionUtils'
 export default class AssessmentService {
   constructor(private readonly assessmentClientFactory: RestClientBuilder<AssessmentClient>) {}
 
-  async getAll(token: string): Promise<Array<Assessment>> {
+  async getAll(token: string): Promise<Array<AssessmentSummary>> {
     const client = this.assessmentClientFactory(token)
 
     return client.all()
-  }
-
-  async getAllForUser(token: string, userId: string): Promise<Array<Assessment>> {
-    const client = this.assessmentClientFactory(token)
-    const assessments = await client.all()
-
-    return assessments.filter(a => a.allocatedToStaffMember?.id === userId)
   }
 
   async findAssessment(token: string, id: string): Promise<Assessment> {
@@ -72,14 +66,12 @@ export default class AssessmentService {
   async submit(token: string, assessment: Assessment) {
     const client = this.assessmentClientFactory(token)
 
-    const document = getResponses(assessment)
-    const requirements = placementRequestData(assessment)
-
     if (!applicationAccepted(assessment)) {
+      const document = getResponses(assessment)
       return client.rejection(assessment.id, document, rejectionRationaleFromAssessmentResponses(assessment))
     }
 
-    return client.acceptance(assessment.id, { document, requirements })
+    return client.acceptance(assessment.id, acceptanceData(assessment))
   }
 
   async createClarificationNote(token: string, assessmentId: string, clarificationNote: NewClarificationNote) {

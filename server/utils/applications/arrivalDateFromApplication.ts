@@ -1,18 +1,9 @@
 import type { ApprovedPremisesApplication as Application } from '@approved-premises/api'
-import { SessionDataError } from '../errors'
 
-export const arrivalDateFromApplication = (application: Application, raiseOnMissing = true): string | null => {
-  const throwOrReturnNull = (message: string): null => {
-    if (raiseOnMissing) {
-      throw new SessionDataError(message)
-    }
-
-    return null
-  }
-
+export const arrivalDateFromApplication = (application: Application): string | null => {
   const basicInformation = application.data?.['basic-information']
 
-  if (!basicInformation) return throwOrReturnNull('No basic information')
+  if (!basicInformation) return null
 
   const {
     knowReleaseDate = '',
@@ -25,12 +16,12 @@ export const arrivalDateFromApplication = (application: Application, raiseOnMiss
   }
 
   if (!knowReleaseDate || knowReleaseDate === 'no') {
-    return throwOrReturnNull('No known release date')
+    return null
   }
 
   if (knowReleaseDate === 'yes' && startDateSameAsReleaseDate === 'yes') {
     if (!releaseDate) {
-      return throwOrReturnNull('No release date')
+      return null
     }
 
     return releaseDate
@@ -38,7 +29,7 @@ export const arrivalDateFromApplication = (application: Application, raiseOnMiss
 
   if (startDateSameAsReleaseDate === 'no') {
     if (!startDate) {
-      return throwOrReturnNull('No start date')
+      return null
     }
 
     return startDate

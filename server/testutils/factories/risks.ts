@@ -9,7 +9,7 @@ const riskLevels: Array<RiskLevel> = ['Low', 'Medium', 'High', 'Very High']
 const riskEnvelopeStatuses: Array<RiskEnvelopeStatus> = ['retrieved', 'not_found', 'error']
 
 export default Factory.define<PersonRisks>(() => ({
-  crn: `C${faker.datatype.number({ min: 100000, max: 999999 })}`,
+  crn: `C${faker.number.int({ min: 100000, max: 999999 })}`,
   roshRisks: roshRisksFactory.build(),
   mappa: mappaFactory.build(),
   flags: flagsFactory.build(),

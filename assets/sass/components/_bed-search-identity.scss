@@ -1,0 +1,20 @@
+.search-identity-table {
+  display: flex;
+
+  dt {
+    @include govuk-responsive-padding(2, 'bottom');
+    @include govuk-responsive-padding(2, 'left');
+    display: inline-block;
+    width: 40%;
+  }
+  dd {
+    @include govuk-responsive-padding(2, 'bottom');
+    display: inline-block;
+    width: 40%;
+  }
+
+  .search-identity-table__column {
+    width: 50%;
+    flex-wrap: wrap;
+  }
+}

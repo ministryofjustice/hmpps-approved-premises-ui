@@ -5,12 +5,15 @@ import request from 'supertest'
 import path from 'path'
 import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
+import { userDetailsFactory } from './testutils/factories'
 
 const setupApp = (production: boolean): Express => {
   const app = express()
+  const user = userDetailsFactory.build()
   app.set('view engine', 'njk')
 
   nunjucksSetup(app, path)
+  app.locals.user = user
 
   app.get('/known', (_req, res, _next) => {
     res.send('known')

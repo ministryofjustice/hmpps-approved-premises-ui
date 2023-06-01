@@ -24,17 +24,17 @@ class AssessmentFactory extends Factory<ApprovedPremisesAssessment> {
 }
 
 export default AssessmentFactory.define(() => ({
-  id: faker.datatype.uuid(),
+  id: faker.string.uuid(),
   application: applicationFactory.withReleaseDate().build(),
-  allocatedToStaffMemberId: faker.datatype.uuid(),
+  allocatedToStaffMemberId: faker.string.uuid(),
   allocatedToStaffMember: userFactory.build(),
-  schemaVersion: faker.datatype.uuid(),
+  schemaVersion: faker.string.uuid(),
   outdatedSchema: false,
   createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   allocatedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   submittedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   decision: faker.helpers.arrayElement(['accepted' as const, 'rejected' as const, undefined]),
-  data: JSON.parse(faker.datatype.json()),
+  data: {},
   clarificationNotes: [],
   rejectionRationale: faker.lorem.sentence(),
 }))

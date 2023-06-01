@@ -1,6 +1,7 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
 
+// eslint-disable-next-line import/no-named-as-default
 import ApType from './apType'
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
 
@@ -25,7 +26,7 @@ describe('ApType', () => {
   })
 
   describe('when type is set to esap', () => {
-    itShouldHaveNextValue(new ApType({ type: 'esap' }, application), 'esap-placement-screening')
+    itShouldHaveNextValue(new ApType({ type: 'esap' }, application), 'managed-by-national-security-division')
   })
 
   describe('when type is set to standard', () => {

@@ -1,13 +1,21 @@
 import { cell, heading, radioMatrixTable, row } from './radioMatrixTable'
 
+jest.mock('./placementCriteriaUtils', () => {
+  return {
+    placementCriteria: {
+      test: 'Test',
+    },
+  }
+})
+
 describe('radioMatrixTable', () => {
   describe('cell', () => {
     it('returns the markup given the name and preference', () => {
       expect(cell('name', 'preference')).toMatchStringIgnoringWhitespace(`<td class="govuk-table__cell">
         <div class="govuk-radios" data-module="govuk-radios">
             <div class="govuk-radios__item">
-              <input class="govuk-radios__input" id="name-preference" name="name" type="radio" value="preference">
-              <label class="govuk-label govuk-radios__label" for="name-preference"></label>
+              <input class="govuk-radios__input" id="name-preference" name="name" type="radio" value="preference" >
+              <label class="govuk-label govuk-radios__label" for="name-preference"><span class="govuk-visually-hidden">Name preference</span></label>
             </div>
           </td>`)
     })
@@ -17,7 +25,7 @@ describe('radioMatrixTable', () => {
         <div class="govuk-radios" data-module="govuk-radios">
             <div class="govuk-radios__item">
               <input class="govuk-radios__input" id="name-preference" name="name" type="radio" value="preference" checked >
-              <label class="govuk-label govuk-radios__label" for="name-preference"></label>
+              <label class="govuk-label govuk-radios__label" for="name-preference"><span class="govuk-visually-hidden">Name preference</span></label>
             </div>
           </td>`)
     })

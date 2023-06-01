@@ -11,7 +11,7 @@ export const applyYesOrNo = <K extends string>(key: K, body: Record<string, unkn
   } as YesOrNoWithDetail<K>
 }
 
-export const yesOrNoResponseWithDetail = <K extends string>(key: K, body: Record<string, string>) => {
+export const yesOrNoResponseWithDetail = <K extends string>(key: K, body: Record<string, unknown>) => {
   return body[key] === 'yes' ? `Yes - ${body[`${key}Detail`]}` : 'No'
 }
 

@@ -1,11 +1,17 @@
+/* istanbul ignore file */
+
 import acctAlertFactory from './acctAlert'
 import activeOffenceFactory from './activeOffence'
 import adjudicationFactory from './adjudication'
 import applicationFactory from './application'
+import applicationSummaryFactory from './applicationSummary'
 import arrivalFactory from './arrival'
 import assessmentFactory from './assessment'
-import bedSearchParametersFactory from './bedSearchParameters'
-import bedSearchResultFactory, { apCharacteristicPairFactory } from './bedSearchResult'
+import assessmentSummaryFactory from './assessmentSummary'
+import { bedSearchParametersFactory, bedSearchParametersUiFactory } from './bedSearchParameters'
+import bedSummaryFactory from './bedSummary'
+import bedDetailFactory from './bedDetail'
+import { apCharacteristicPairFactory, bedSearchResultFactory, bedSearchResultsFactory } from './bedSearchResult'
 import bookingFactory from './booking'
 import bookingExtensionFactory from './bookingExtension'
 import cancellationFactory from './cancellation'
@@ -22,6 +28,10 @@ import newCancellationFactory from './newCancellation'
 import newDepartureFactory from './newDeparture'
 import newLostBedFactory from './newLostBed'
 import newNonArrivalFactory from './newNonArrival'
+import {
+  newPlacementRequestBookingConfirmationFactory,
+  newPlacementRequestBookingFactory,
+} from './newPlacementRequestBooking'
 import nonArrivalFactory from './nonArrival'
 import oasysSectionsFactory, { roshSummaryFactory } from './oasysSections'
 import oasysSelectionFactory from './oasysSelection'
@@ -32,6 +42,7 @@ import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
 import referenceDataFactory from './referenceData'
 import risksFactory, { tierEnvelopeFactory } from './risks'
+import roomFactory from './room'
 import staffMemberFactory from './staffMember'
 import taskFactory from './task'
 import taskWrapperFactory from './taskWrapperFactory'
@@ -44,10 +55,16 @@ export {
   adjudicationFactory,
   apCharacteristicPairFactory,
   applicationFactory,
+  applicationSummaryFactory,
   arrivalFactory,
   assessmentFactory,
+  assessmentSummaryFactory,
+  bedSummaryFactory,
+  bedDetailFactory,
   bedSearchParametersFactory,
+  bedSearchParametersUiFactory,
   bedSearchResultFactory,
+  bedSearchResultsFactory,
   bookingFactory,
   bookingExtensionFactory,
   cancellationFactory,
@@ -60,6 +77,8 @@ export {
   lostBedFactory,
   newArrivalFactory,
   newBookingFactory,
+  newPlacementRequestBookingFactory,
+  newPlacementRequestBookingConfirmationFactory,
   newCancellationFactory,
   newDepartureFactory,
   newLostBedFactory,
@@ -74,6 +93,7 @@ export {
   reallocationFactory,
   referenceDataFactory,
   risksFactory,
+  roomFactory,
   roshSummaryFactory,
   staffMemberFactory,
   taskFactory,

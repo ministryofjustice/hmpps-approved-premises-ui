@@ -6,9 +6,9 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<Adjudication>(() => ({
-  id: faker.datatype.number(),
+  id: faker.number.int(),
   reportedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
-  establishment: faker.address.cityName(),
+  establishment: faker.location.city(),
   offenceDescription: faker.lorem.sentence(),
   hearingHeld: faker.datatype.boolean(),
   finding: faker.helpers.arrayElement(['PROVED', 'NOT_PROVED']),

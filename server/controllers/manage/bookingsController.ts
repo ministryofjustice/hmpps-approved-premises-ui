@@ -2,7 +2,11 @@ import type { NewBooking } from '@approved-premises/api'
 import type { Request, RequestHandler, Response } from 'express'
 
 import { BookingService, PersonService, PremisesService } from '../../services'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
+import {
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+  generateConflictErrorAndRedirect,
+} from '../../utils/validation'
 import { DateFormats } from '../../utils/dateUtils'
 
 import paths from '../../paths/manage'
@@ -26,8 +30,8 @@ export default class BookingsController {
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { premisesId } = req.params
-      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+      const { premisesId, bedId } = req.params
+      const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
 
       const crnArr = req.flash('crn')
 
@@ -37,7 +41,9 @@ export default class BookingsController {
         return res.render(`bookings/new`, {
           pageHeading: 'Create a placement',
           premisesId,
+          bedId,
           ...person,
+          errorTitle,
           errors,
           errorSummary,
           ...userInput,
@@ -46,9 +52,11 @@ export default class BookingsController {
 
       return res.render(`bookings/find`, {
         pageHeading: 'Create a placement - find someone by CRN',
+        bedId,
         premisesId,
         errors,
         errorSummary,
+        errorTitle,
         ...userInput,
       })
     }
@@ -56,19 +64,20 @@ export default class BookingsController {
 
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { premisesId } = req.params
+      const { premisesId, bedId } = req.params
 
       const booking: NewBooking = {
         serviceName: 'approved-premises',
+        bedId,
         ...req.body,
         ...DateFormats.dateAndTimeInputsToIsoString(req.body, 'arrivalDate'),
         ...DateFormats.dateAndTimeInputsToIsoString(req.body, 'departureDate'),
       }
 
       try {
-        const confirmedBooking = await this.bookingService.create(req.user.token, premisesId as string, booking)
+        const confirmedBooking = await this.bookingService.create(req.user.token, premisesId, booking)
 
-        res.redirect(
+        return res.redirect(
           paths.bookings.confirm({
             premisesId,
             bookingId: confirmedBooking.id,
@@ -76,7 +85,22 @@ export default class BookingsController {
         )
       } catch (err) {
         req.flash('crn', booking.crn)
-        catchValidationErrorOrPropogate(req, res, err, paths.bookings.new({ premisesId }))
+
+        const redirectPath = paths.bookings.new({ premisesId, bedId })
+
+        if (err.status === 409 && 'data' in err) {
+          return generateConflictErrorAndRedirect(
+            req,
+            res,
+            premisesId,
+            bedId,
+            ['arrivalDate', 'departureDate'],
+            err,
+            redirectPath,
+          )
+        }
+
+        return catchValidationErrorOrPropogate(req, res, err, redirectPath)
       }
     }
   }

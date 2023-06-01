@@ -1,9 +1,9 @@
 /* istanbul ignore file */
 
+import AdditionalCircumstances from './additionalCircumstances'
 import RoomSharing from './roomSharing'
 import Vulnerability from './vulnerability'
 import PreviousPlacements from './previousPlacements'
-import ComplexCaseBoard from './complexCaseBoard'
 import Catering from './catering'
 import Arson from './arson'
 import ContingencyPlanPartners from './contingencyPlanPartners'
@@ -19,9 +19,9 @@ import { Task } from '../../../utils/decorators'
     RoomSharing,
     Vulnerability,
     PreviousPlacements,
-    ComplexCaseBoard,
     Catering,
     Arson,
+    AdditionalCircumstances,
     ContingencyPlanPartners,
     ContingencyPlanQuestions,
     TriggerPlan,

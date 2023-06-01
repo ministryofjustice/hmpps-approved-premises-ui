@@ -1,7 +1,10 @@
 import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import {
+  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
+  retrieveQuestionResponseFromApplicationOrAssessment,
+} from '../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 
-const mockQuestionResponse = ({
+export const mockQuestionResponse = ({
   postcodeArea = 'ABC 123',
   type = 'standard',
   sentenceType = 'standardDeterminate',
@@ -46,4 +49,77 @@ const mockQuestionResponse = ({
   )
 }
 
-export default mockQuestionResponse
+export const mockOptionalQuestionResponse = ({
+  releaseType,
+  alternativeRadius,
+  duration,
+  type,
+  postcodeArea,
+  sentenceType,
+  isExceptionalCase,
+  shouldPersonBePlacedInMaleAp,
+  agreedCaseWithManager,
+  lengthOfStayAgreedDetail,
+  cruInformation,
+}: {
+  releaseType?: string
+  duration?: string
+  alternativeRadius?: string
+  type?: string
+  postcodeArea?: string
+  sentenceType?: string
+  isExceptionalCase?: string
+  shouldPersonBePlacedInMaleAp?: string
+  agreedCaseWithManager?: string
+  lengthOfStayAgreedDetail?: string
+  cruInformation?: string
+}) => {
+  ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockImplementation(
+    // eslint-disable-next-line consistent-return
+    (_application: Application, _Page: unknown, question: string) => {
+      if (question === 'alternativeRadius') {
+        return alternativeRadius
+      }
+
+      if (question === 'duration') {
+        return duration
+      }
+
+      if (question === 'releaseType') {
+        return releaseType
+      }
+
+      if (question === 'type') {
+        return type
+      }
+
+      if (question === 'postcodeArea') {
+        return postcodeArea
+      }
+
+      if (question === 'sentenceType') {
+        return sentenceType
+      }
+
+      if (question === 'isExceptionalCase') {
+        return isExceptionalCase
+      }
+
+      if (question === 'shouldPersonBePlacedInMaleAp') {
+        return shouldPersonBePlacedInMaleAp
+      }
+
+      if (question === 'agreedCaseWithManager') {
+        return agreedCaseWithManager
+      }
+
+      if (question === 'lengthOfStayAgreedDetail') {
+        return lengthOfStayAgreedDetail
+      }
+
+      if (question === 'cruInformation') {
+        return cruInformation
+      }
+    },
+  )
+}

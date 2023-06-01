@@ -2,7 +2,8 @@
   "crn": {
     "empty": "You must enter a CRN",
     "doesNotExist": "This CRN does not exist",
-    "userPermission": "You do not have permission to access this CRN"
+    "userPermission": "You do not have permission to access this CRN",
+    "doesNotHaveApplication": "This CRN does not have an application"
   },
   "data": {
     "invalid": "This data does not conform to the newest application schema"
@@ -15,7 +16,8 @@
   },
   "arrivalDate": {
     "empty": "You must enter an arrival date",
-    "invalid": "The arrival date is an invalid date"
+    "invalid": "The arrival date is an invalid date",
+    "conflict": "This bedspace is not available for these dates"
   },
   "date": {
     "empty": "You must enter a valid departure date",
@@ -30,7 +32,8 @@
   },
   "departureDate": {
     "empty": "You must enter a departure date",
-    "invalid": "The departure date is an invalid date"
+    "invalid": "The departure date is an invalid date",
+    "conflict": "This bedspace is not available for these dates"
   },
   "expectedDepartureDate": {
     "empty": "You must enter an expected departure date",
@@ -55,11 +58,16 @@
     "invalid": "The departure date is an invalid date",
     "beforeExistingDepartureDate": "The new departure date must be after the Booking's current departure date"
   },
-  "startDate": { "empty": "You must enter a start date", "invalid": "The start date is an invalid date" },
+  "startDate": {
+    "empty": "You must enter a start date",
+    "invalid": "The start date is an invalid date",
+    "conflict": "This bedspace is not available for these dates"
+  },
   "endDate": {
     "empty": "You must enter a end date",
     "invalid": "The end date is an invalid date",
-    "beforeStartDate": "The end date must be before the start date"
+    "beforeStartDate": "The end date must be before the start date",
+    "conflict": "This bedspace is not available for these dates"
   },
   "referenceNumber": { "empty": "You must enter a reference number" },
   "query": { "empty": "You must enter a query" },

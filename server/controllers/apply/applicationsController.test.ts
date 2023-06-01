@@ -11,7 +11,7 @@ import Apply from '../../form-pages/apply'
 
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import { firstPageOfApplicationJourney, getResponses, isUnapplicable } from '../../utils/applications/utils'
+import { firstPageOfApplicationJourney, getResponses } from '../../utils/applications/utils'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applications/utils')
@@ -68,6 +68,7 @@ describe('applicationsController', () => {
 
   describe('show', () => {
     const application = applicationFactory.build({ person: { crn: 'some-crn' }, status: 'inProgress' })
+    const referrer = 'http://localhost/foo/bar'
 
     beforeEach(() => {
       request = createMock<Request>({
@@ -75,14 +76,17 @@ describe('applicationsController', () => {
         user: {
           token,
         },
+        headers: {
+          referer: referrer,
+        },
       })
     })
 
-    it('fetches the application from session or the API and renders the task list if the application is in progress', async () => {
+    it('fetches the application from the API and renders the task list if the application is in progress', async () => {
       const requestHandler = applicationsController.show()
       const stubTaskList = jest.fn()
 
-      applicationService.getApplicationFromSessionOrAPI.mockResolvedValue(application)
+      applicationService.findApplication.mockResolvedValue(application)
       ;(TasklistService as jest.Mock).mockImplementation(() => {
         return stubTaskList
       })
@@ -94,10 +98,10 @@ describe('applicationsController', () => {
         taskList: stubTaskList,
       })
 
-      expect(applicationService.findApplication).not.toHaveBeenCalledWith(token, application.id)
+      expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
     })
 
-    it('fetches the application from session or the API and renders the read only view if the application is submitted', async () => {
+    it('fetches the application from the API and renders the read only view if the application is submitted', async () => {
       const requestHandler = applicationsController.show()
       const stubTaskList = jest.fn()
 
@@ -110,18 +114,10 @@ describe('applicationsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('applications/show', {
         application,
+        referrer,
       })
 
-      expect(applicationService.findApplication).not.toHaveBeenCalledWith(token, application.id)
-    })
-
-    it('renders the not applicable page if the application is not applicable', async () => {
-      const requestHandler = applicationsController.show()
-      ;(isUnapplicable as jest.Mock).mockReturnValue(true)
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('applications/notEligible')
+      expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
     })
   })
 
@@ -153,7 +149,7 @@ describe('applicationsController', () => {
 
           expect(response.render).toHaveBeenCalledWith('applications/people/confirm', {
             pageHeading: `Confirm ${person.name}'s details`,
-            ...person,
+            person,
             date: DateFormats.dateObjtoUIDate(new Date()),
             dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
             offenceId: offence.offenceId,
@@ -173,7 +169,7 @@ describe('applicationsController', () => {
 
           expect(response.render).toHaveBeenCalledWith('applications/people/confirm', {
             pageHeading: `Confirm ${person.name}'s details`,
-            ...person,
+            person,
             date: DateFormats.dateObjtoUIDate(new Date()),
             dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
             offenceId: null,
@@ -194,7 +190,7 @@ describe('applicationsController', () => {
 
         expect(response.render).toHaveBeenCalledWith('applications/people/confirm', {
           pageHeading: `Confirm ${person.name}'s details`,
-          ...person,
+          person,
           date: DateFormats.dateObjtoUIDate(new Date()),
           dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
           offenceId: offence.offenceId,

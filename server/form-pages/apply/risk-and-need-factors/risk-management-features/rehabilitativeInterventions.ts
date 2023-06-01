@@ -14,19 +14,31 @@ export const interventionsTranslations = {
   financeBenefitsAndDebt: 'Finance, benefits and debt',
   attitudesAndBehaviour: 'Attitudes, thinking and behaviour',
   abuse: 'Abuse',
+  sexWorking: 'Sex working',
   other: 'Other',
 } as const
 
 type Interventions = Array<keyof typeof interventionsTranslations>
 type RawInterventions = Interventions | keyof typeof interventionsTranslations
 
-type RawRehabilitativeInterventionsBody = { rehabilitativeInterventions?: RawInterventions; otherIntervention?: string }
-type RehabilitativeInterventionsBody = { rehabilitativeInterventions: Interventions; otherIntervention?: string }
+type RawRehabilitativeInterventionsBody = {
+  rehabilitativeInterventions?: RawInterventions
+  otherIntervention?: string
+  summary: string
+}
+type RehabilitativeInterventionsBody = RawRehabilitativeInterventionsBody & {
+  rehabilitativeInterventions: Interventions
+}
 
-@Page({ name: 'rehabilitative-interventions', bodyProperties: ['rehabilitativeInterventions', 'otherIntervention'] })
+@Page({
+  name: 'rehabilitative-interventions',
+  bodyProperties: ['rehabilitativeInterventions', 'otherIntervention', 'summary'],
+})
 export default class RehabilitativeInterventions implements TasklistPage {
   title =
     "Which of the rehabilitative activities will assist the person's rehabilitation in the Approved Premises (AP)?"
+
+  summaryQuestion = 'Provide a summary of how these interventions will assist the persons rehabilitation in the AP.'
 
   constructor(
     private _body: RawRehabilitativeInterventionsBody,
@@ -42,10 +54,11 @@ export default class RehabilitativeInterventions implements TasklistPage {
       ? [value.rehabilitativeInterventions].flat()
       : []
 
-    this._body = { rehabilitativeInterventions }
+    this._body = { ...value, rehabilitativeInterventions }
 
     if (this.responseContainsOther(rehabilitativeInterventions)) {
       this._body = {
+        ...value,
         rehabilitativeInterventions,
         otherIntervention: value.otherIntervention as string,
       }
@@ -67,6 +80,7 @@ export default class RehabilitativeInterventions implements TasklistPage {
       [this.title]: this.body.rehabilitativeInterventions
         .map(intervention => interventionsTranslations[intervention])
         .join(', '),
+      [this.summaryQuestion]: this.body.summary,
     }
 
     if (!this.responseContainsOther(this.body.rehabilitativeInterventions)) {
@@ -87,6 +101,10 @@ export default class RehabilitativeInterventions implements TasklistPage {
       errors.otherIntervention = 'You must specify the other intervention'
     }
 
+    if (!this.body?.summary) {
+      errors.summary =
+        'You must provide a summary of how these interventions will assist the persons rehabilitation in the AP'
+    }
     return errors
   }
 

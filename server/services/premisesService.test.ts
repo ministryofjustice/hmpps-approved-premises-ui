@@ -1,6 +1,13 @@
 import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
-import { dateCapacityFactory, premisesFactory, staffMemberFactory } from '../testutils/factories'
+import {
+  bedDetailFactory,
+  bedSummaryFactory,
+  dateCapacityFactory,
+  premisesFactory,
+  roomFactory,
+  staffMemberFactory,
+} from '../testutils/factories'
 import getDateRangesWithNegativeBeds from '../utils/premisesUtils'
 import paths from '../paths/manage'
 
@@ -32,6 +39,62 @@ describe('PremisesService', () => {
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.getStaffMembers).toHaveBeenCalledWith(premisesId)
+    })
+  })
+
+  describe('getRooms', () => {
+    it('on success returns the rooms given a premises ID', async () => {
+      const rooms = roomFactory.buildList(1)
+      premisesClient.getRooms.mockResolvedValue(rooms)
+
+      const result = await service.getRooms(token, premisesId)
+
+      expect(result).toEqual(rooms)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getRooms).toHaveBeenCalledWith(premisesId)
+    })
+  })
+
+  describe('getBeds', () => {
+    it('on success returns the beds given a premises ID', async () => {
+      const beds = bedSummaryFactory.buildList(1)
+      premisesClient.getBeds.mockResolvedValue(beds)
+
+      const result = await service.getBeds(token, premisesId)
+
+      expect(result).toEqual(beds)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getBeds).toHaveBeenCalledWith(premisesId)
+    })
+  })
+
+  describe('getBed', () => {
+    it('on success returns a bed given a premises ID and bed ID', async () => {
+      const bed = bedDetailFactory.build()
+      premisesClient.getBed.mockResolvedValue(bed)
+
+      const result = await service.getBed(token, premisesId, bed.id)
+
+      expect(result).toEqual(bed)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getBed).toHaveBeenCalledWith(premisesId, bed.id)
+    })
+  })
+
+  describe('getRoom', () => {
+    it('on success returns the room given a premises ID and room ID', async () => {
+      const room = roomFactory.build()
+      premisesClient.getRoom.mockResolvedValue(room)
+
+      const result = await service.getRoom(token, premisesId, room.id)
+
+      expect(result).toEqual(room)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.getRoom).toHaveBeenCalledWith(premisesId, room.id)
     })
   })
 
@@ -203,7 +266,7 @@ describe('PremisesService', () => {
       const result = await service.getOvercapacityMessage(token, premisesId)
 
       expect(result).toEqual([
-        '<h4 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity on Saturday 1 January 2022</h4>',
+        '<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity on Saturday 1 January 2022</h3>',
       ])
     })
 
@@ -229,7 +292,7 @@ describe('PremisesService', () => {
       const result = await service.getOvercapacityMessage(token, premisesId)
 
       expect(result).toEqual([
-        '<h4 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the period Saturday 1 January 2022 to Tuesday 1 February 2022</h4>',
+        '<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the period Saturday 1 January 2022 to Tuesday 1 February 2022</h3>',
       ])
     })
 
@@ -256,7 +319,7 @@ describe('PremisesService', () => {
       const result = await service.getOvercapacityMessage(token, premisesId)
 
       expect(result).toEqual([
-        `<h4 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the periods:</h4>
+        `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the periods:</h3>
         <ul class="govuk-list govuk-list--bullet"><li>Sunday 1 January 2023 to Wednesday 1 February 2023</li><li>Thursday 2 March 2023 to Sunday 2 April 2023</li></ul>`,
       ])
     })
@@ -281,7 +344,7 @@ describe('PremisesService', () => {
       const result = await service.getOvercapacityMessage(token, premisesId)
 
       expect(result).toEqual([
-        `<h4 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the periods:</h4>
+        `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the periods:</h3>
         <ul class="govuk-list govuk-list--bullet"><li>Sunday 1 January 2023</li><li>Thursday 2 March 2023 to Sunday 2 April 2023</li></ul>`,
       ])
     })

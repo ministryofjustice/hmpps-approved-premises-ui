@@ -8,5 +8,5 @@ export default Factory.define<NewArrival>(() => ({
   arrivalDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
   expectedDepartureDate: DateFormats.dateObjToIsoDate(faker.date.future()),
   notes: faker.lorem.sentence(),
-  keyWorkerStaffCode: faker.datatype.uuid(),
+  keyWorkerStaffCode: faker.string.uuid(),
 }))

@@ -1,0 +1,11 @@
+.bed-search-inputs {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  .govuk-form-group {
+    margin-top: auto;
+  }
+  .button {
+    margin-top: auto;
+  }
+}

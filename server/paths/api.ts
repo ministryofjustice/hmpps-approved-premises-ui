@@ -5,6 +5,8 @@ const singlePremisesPath = premisesPath.path(':premisesId')
 
 const lostBedsPath = singlePremisesPath.path('lost-beds')
 
+const bedsPath = singlePremisesPath.path('beds')
+
 const managePaths = {
   premises: {
     index: premisesPath,
@@ -12,7 +14,14 @@ const managePaths = {
   },
   lostBeds: {
     create: lostBedsPath,
+    show: lostBedsPath.path(':id'),
   },
+  beds: {
+    index: bedsPath,
+    show: bedsPath.path(':bedId'),
+  },
+  rooms: singlePremisesPath.path('rooms'),
+  room: singlePremisesPath.path('rooms/:roomId'),
 }
 
 const applicationsPath = path('/applications')
@@ -27,6 +36,7 @@ const usersPath = path('/users')
 const tasksPath = path('/tasks')
 
 const placementRequestsPath = path('/placement-requests')
+const placementRequestPath = placementRequestsPath.path(':id')
 
 const tasksPaths = {
   index: tasksPath,
@@ -69,10 +79,17 @@ export default {
     capacity: managePaths.premises.show.path('capacity'),
     lostBeds: {
       create: managePaths.lostBeds.create,
+      show: managePaths.lostBeds.show,
     },
     staffMembers: {
       index: managePaths.premises.show.path('staff'),
     },
+    beds: {
+      index: managePaths.beds.index,
+      show: managePaths.beds.show,
+    },
+    rooms: managePaths.rooms,
+    room: managePaths.room,
   },
   applications: {
     show: applyPaths.applications.show,
@@ -108,6 +125,8 @@ export default {
   },
   placementRequests: {
     index: placementRequestsPath,
+    show: placementRequestPath,
+    booking: placementRequestPath.path('booking'),
   },
   people: {
     risks: {

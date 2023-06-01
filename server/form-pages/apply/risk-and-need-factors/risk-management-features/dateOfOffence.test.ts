@@ -83,15 +83,15 @@ describe('DateOfOffence', () => {
         {
           html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
+                <label class="govuk-label govuk-checkboxes__label govuk-visually-hidden" for="arsonOffence-current">Arson offence: current</label>
                 <input class="govuk-checkboxes__input" id="arsonOffence-current" name="arsonOffence" type="checkbox" value="current" >
-                <label class="govuk-label govuk-checkboxes__label" for="arsonOffence-current"></label>
             </div>`,
         },
         {
           html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
+                <label class="govuk-label govuk-checkboxes__label govuk-visually-hidden" for="arsonOffence-previous">Arson offence: previous</label>
                 <input class="govuk-checkboxes__input" id="arsonOffence-previous" name="arsonOffence" type="checkbox" value="previous" checked>
-                <label class="govuk-label govuk-checkboxes__label" for="arsonOffence-previous"></label>
             </div>`,
         },
       ])
@@ -102,82 +102,10 @@ describe('DateOfOffence', () => {
     it('returns the table body', () => {
       const result = new DateOfOffence({}).renderTableBody()
       expect(result).toEqual([
-        [
-          {
-            text: 'Arson offence',
-          },
-          {
-            html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="arsonOffence-current" name="arsonOffence" type="checkbox" value="current" >
-                <label class="govuk-label govuk-checkboxes__label" for="arsonOffence-current"></label>
-            </div>`,
-          },
-          {
-            html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="arsonOffence-previous" name="arsonOffence" type="checkbox" value="previous" >
-                <label class="govuk-label govuk-checkboxes__label" for="arsonOffence-previous"></label>
-            </div>`,
-          },
-        ],
-        [
-          {
-            text: 'Hate crime',
-          },
-          {
-            html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="hateCrime-current" name="hateCrime" type="checkbox" value="current" >
-                <label class="govuk-label govuk-checkboxes__label" for="hateCrime-current"></label>
-            </div>`,
-          },
-          {
-            html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="hateCrime-previous" name="hateCrime" type="checkbox" value="previous" >
-                <label class="govuk-label govuk-checkboxes__label" for="hateCrime-previous"></label>
-            </div>`,
-          },
-        ],
-        [
-          {
-            text: 'In person sexual offence',
-          },
-          {
-            html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="inPersonSexualOffence-current" name="inPersonSexualOffence" type="checkbox" value="current" >
-                <label class="govuk-label govuk-checkboxes__label" for="inPersonSexualOffence-current"></label>
-            </div>`,
-          },
-          {
-            html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="inPersonSexualOffence-previous" name="inPersonSexualOffence" type="checkbox" value="previous" >
-                <label class="govuk-label govuk-checkboxes__label" for="inPersonSexualOffence-previous"></label>
-            </div>`,
-          },
-        ],
-        [
-          {
-            text: 'Online sexual offence',
-          },
-          {
-            html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="onlineSexualOffence-current" name="onlineSexualOffence" type="checkbox" value="current" >
-                <label class="govuk-label govuk-checkboxes__label" for="onlineSexualOffence-current"></label>
-            </div>`,
-          },
-          {
-            html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="onlineSexualOffence-previous" name="onlineSexualOffence" type="checkbox" value="previous" >
-                <label class="govuk-label govuk-checkboxes__label" for="onlineSexualOffence-previous"></label>
-            </div>`,
-          },
-        ],
+        new DateOfOffence({}).renderTableRow('arsonOffence'),
+        new DateOfOffence({}).renderTableRow('hateCrime'),
+        new DateOfOffence({}).renderTableRow('inPersonSexualOffence'),
+        new DateOfOffence({}).renderTableRow('onlineSexualOffence'),
       ])
     })
   })

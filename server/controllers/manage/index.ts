@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import PremisesController from './premisesController'
+import PremisesController from './premises/premisesController'
 import BookingsController from './bookingsController'
 import BookingExtensionsController from './bookingExtensionsController'
 import ArrivalsController from './arrivalsController'
@@ -9,6 +9,7 @@ import DeparturesController from './departuresController'
 import CancellationsController from './cancellationsController'
 import LostBedsController from './lostBedsController'
 import PeopleController from '../peopleController'
+import BedsController from './premises/bedsController'
 
 import type { Services } from '../../services'
 
@@ -26,6 +27,7 @@ export const controllers = (services: Services) => {
   const cancellationsController = new CancellationsController(services.cancellationService, services.bookingService)
   const lostBedsController = new LostBedsController(services.lostBedService)
   const peopleController = new PeopleController(services.personService)
+  const bedsController = new BedsController(services.premisesService)
 
   return {
     premisesController,
@@ -37,6 +39,7 @@ export const controllers = (services: Services) => {
     cancellationsController,
     lostBedsController,
     peopleController,
+    bedsController,
   }
 }
 

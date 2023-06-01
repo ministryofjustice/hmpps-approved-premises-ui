@@ -1,5 +1,5 @@
 import type { SummaryList, TableRow } from '@approved-premises/ui'
-import type { ApprovedPremises, StaffMember } from '@approved-premises/api'
+import type { ApprovedPremises, BedDetail, BedSummary, Room, StaffMember } from '@approved-premises/api'
 import type { PremisesClient, RestClientBuilder } from '../data'
 import paths from '../paths/manage'
 
@@ -15,6 +15,34 @@ export default class PremisesService {
     const staffMembers = await premisesClient.getStaffMembers(premisesId)
 
     return staffMembers
+  }
+
+  async getRooms(token: string, premisesId: string): Promise<Array<Room>> {
+    const premisesClient = this.premisesClientFactory(token)
+
+    const rooms = await premisesClient.getRooms(premisesId)
+
+    return rooms
+  }
+
+  async getBeds(token: string, premisesId: string): Promise<Array<BedSummary>> {
+    const premisesClient = this.premisesClientFactory(token)
+
+    return premisesClient.getBeds(premisesId)
+  }
+
+  async getBed(token: string, premisesId: string, bedId: string): Promise<BedDetail> {
+    const premisesClient = this.premisesClientFactory(token)
+
+    return premisesClient.getBed(premisesId, bedId)
+  }
+
+  async getRoom(token: string, premisesId: string, roomId: string): Promise<Room> {
+    const premisesClient = this.premisesClientFactory(token)
+
+    const room = await premisesClient.getRoom(premisesId, roomId)
+
+    return room
   }
 
   async tableRows(token: string): Promise<Array<TableRow>> {
@@ -59,13 +87,13 @@ export default class PremisesService {
   private generateOvercapacityMessage(overcapacityDateRanges: Array<NegativeDateRange>) {
     if (overcapacityDateRanges.length === 1) {
       if (!overcapacityDateRanges[0].end) {
-        return `<h4 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity on ${DateFormats.isoDateToUIDate(
+        return `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity on ${DateFormats.isoDateToUIDate(
           overcapacityDateRanges[0].start,
-        )}</h4>`
+        )}</h3>`
       }
-      return `<h4 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the period ${DateFormats.isoDateToUIDate(
+      return `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the period ${DateFormats.isoDateToUIDate(
         overcapacityDateRanges[0].start,
-      )} to ${DateFormats.isoDateToUIDate(overcapacityDateRanges[0].end)}</h4>`
+      )} to ${DateFormats.isoDateToUIDate(overcapacityDateRanges[0].end)}</h3>`
     }
 
     if (overcapacityDateRanges.length > 1) {
@@ -78,7 +106,7 @@ export default class PremisesService {
               )}</li>`,
         )
         .join('')
-      return `<h4 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the periods:</h4>
+      return `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the periods:</h3>
         <ul class="govuk-list govuk-list--bullet">${dateRanges}</ul>`
     }
     return ''

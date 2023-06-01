@@ -6,7 +6,7 @@ import { DateFormats } from '../../utils/dateUtils'
 import oasysSelectionFactory from './oasysSelection'
 
 export default Factory.define<OASysSections>(() => ({
-  assessmentId: faker.datatype.number(),
+  assessmentId: faker.number.int(),
   assessmentState: faker.helpers.arrayElement(['Completed', 'Incomplete']),
   dateStarted: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   dateCompleted: DateFormats.dateObjToIsoDateTime(faker.date.recent()),

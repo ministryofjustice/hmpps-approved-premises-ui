@@ -1,4 +1,5 @@
-import { applicationFactory, tierEnvelopeFactory } from '../../testutils/factories'
+import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
+import { applicationFactory, applicationSummaryFactory, tierEnvelopeFactory } from '../../testutils/factories'
 import paths from '../../paths/apply'
 import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
@@ -12,7 +13,7 @@ import {
   getPage,
   getResponses,
   getStatus,
-  isUnapplicable,
+  isInapplicable,
 } from './utils'
 import { UnknownPageError } from '../errors'
 
@@ -34,6 +35,7 @@ jest.mock('../../form-pages/assess', () => {
 })
 
 jest.mock('../personUtils')
+jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
 
 Apply.pages['basic-information'] = {
   first: FirstApplyPage,
@@ -109,13 +111,14 @@ describe('utils', () => {
       ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')
       const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
 
-      const applicationA = applicationFactory.build({
+      const applicationA = applicationSummaryFactory.build({
+        arrivalDate: undefined,
         person: { name: 'A' },
-        data: {},
         submittedAt: null,
         risks: { tier: tierEnvelopeFactory.build({ value: { level: 'A1' } }) },
       })
-      const applicationB = applicationFactory.withReleaseDate(arrivalDate).build({
+      const applicationB = applicationSummaryFactory.build({
+        arrivalDate,
         person: { name: 'A' },
         risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
       })
@@ -172,7 +175,8 @@ describe('utils', () => {
       ;(tierBadge as jest.Mock).mockClear()
       const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
 
-      const application = applicationFactory.withReleaseDate(arrivalDate).build({
+      const application = applicationSummaryFactory.build({
+        arrivalDate,
         person: { name: 'My Name' },
         risks: { tier: undefined },
       })
@@ -210,7 +214,8 @@ describe('utils', () => {
       ;(tierBadge as jest.Mock).mockClear()
       const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
 
-      const application = applicationFactory.withReleaseDate(arrivalDate).build({
+      const application = applicationSummaryFactory.build({
+        arrivalDate,
         person: { name: 'My Name' },
         risks: undefined,
       })
@@ -263,7 +268,7 @@ describe('utils', () => {
       const application = applicationFactory.build()
 
       expect(firstPageOfApplicationJourney(application)).toEqual(
-        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'sentence-type' }),
+        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'transgender' }),
       )
     })
 
@@ -286,35 +291,55 @@ describe('utils', () => {
     })
   })
 
-  describe('isUnapplicable', () => {
+  describe('isInapplicable', () => {
     const application = applicationFactory.build()
 
     it('should return true if the applicant has answered no to the isExceptionalCase question', () => {
-      application.data = {
-        'basic-information': {
-          'is-exceptional-case': {
-            isExceptionalCase: 'no',
-          },
-        },
-      }
+      mockOptionalQuestionResponse({ isExceptionalCase: 'no' })
 
-      expect(isUnapplicable(application)).toEqual(true)
+      expect(isInapplicable(application)).toEqual(true)
     })
 
     it('should return false if the applicant has answered yes to the isExceptionalCase question', () => {
-      application.data = {
-        'basic-information': {
-          'is-exceptional-case': {
-            isExceptionalCase: 'yes',
-          },
-        },
-      }
+      mockOptionalQuestionResponse({ isExceptionalCase: 'yes' })
 
-      expect(isUnapplicable(application)).toEqual(false)
+      expect(isInapplicable(application)).toEqual(false)
+    })
+
+    it('should return true if the applicant has answered yes to the isExceptionalCase question and no to the agreedCaseWithManager question', () => {
+      mockOptionalQuestionResponse({ isExceptionalCase: 'yes', agreedCaseWithManager: 'no' })
+
+      expect(isInapplicable(application)).toEqual(true)
+    })
+
+    it('should return false if the applicant has answered yes to the isExceptionalCase question and yes to the agreedCaseWithManager question', () => {
+      mockOptionalQuestionResponse({ isExceptionalCase: 'yes', agreedCaseWithManager: 'yes' })
+
+      expect(isInapplicable(application)).toEqual(false)
     })
 
     it('should return false if the applicant has not answered the isExceptionalCase question', () => {
-      expect(isUnapplicable(application)).toEqual(false)
+      mockOptionalQuestionResponse({})
+
+      expect(isInapplicable(application)).toEqual(false)
+    })
+
+    it('should return true if the applicant has answered no to the shouldPersonBePlacedInMaleAp question', () => {
+      mockOptionalQuestionResponse({ shouldPersonBePlacedInMaleAp: 'no' })
+
+      expect(isInapplicable(application)).toEqual(true)
+    })
+
+    it('should return false if the applicant has answered yes to the shouldPersonBePlacedInMaleAp question', () => {
+      mockOptionalQuestionResponse({ shouldPersonBePlacedInMaleAp: 'yes' })
+
+      expect(isInapplicable(application)).toEqual(false)
+    })
+
+    it('should return false if the applicant has not answered the isExceptionalCase question', () => {
+      mockOptionalQuestionResponse({})
+
+      expect(isInapplicable(application)).toEqual(false)
     })
   })
 

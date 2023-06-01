@@ -11,20 +11,21 @@
 {% set pageTitle = applicationName + " - Mark a bed as out of service" %}
 {% set mainClasses = "app-container govuk-body" %}
 
+{% block beforeContent %}
+  {{ govukBackLink({
+    text: "Back",
+    href: paths.premises.beds.show({ premisesId: premisesId, bedId: bedId })
+  }) }}
+{% endblock %}
+
 {% block content %}
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-
-      {{ govukBackLink({
-        text: "Back",
-        href: paths.premises.show({premisesId: premisesId})
-      }) }}
-
-      <form action="{{ paths.lostBeds.create({ premisesId: premisesId }) }}" method="post">
+      <form action="{{ paths.lostBeds.create({ premisesId: premisesId, bedId: bedId }) }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
-        {{ showErrorSummary(errorSummary) }}
+        {{ showErrorSummary(errorSummary, errorTitle) }}
 
         <h1 class="govuk-!-margin-bottom-0">Mark a bed as out of service</h1>
         <p> Provide details of beds that are out of service within your AP estate</p>
@@ -37,7 +38,6 @@
         fieldset: {
           legend: {
             text: "Out of service from",
-            isPageHeading: true,
             classes: "govuk-fieldset__legend--s"
           }
         }
@@ -51,7 +51,6 @@
         fieldset: {
           legend: {
             text: "End date",
-            isPageHeading: true,
             classes: "govuk-fieldset__legend--s"
           }
         }

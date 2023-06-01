@@ -1,5 +1,5 @@
-import { signInWithRoles } from '../../cypress_shared/helpers'
-import DashboardPage from '../../cypress_shared/pages/dashboard'
+import { signInWithRoles } from '../helpers'
+import DashboardPage from '../pages/dashboard'
 
 context('Dashboard', () => {
   beforeEach(() => {

@@ -21,8 +21,7 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-
- {% if page.previous() === 'dashboard' %}
+  {% if page.previous() === 'dashboard' %}
     {{ govukBackLink({
       text: "Back",
       href: paths.applications.show({ id: applicationId })
@@ -33,7 +32,6 @@
       href: paths.applications.pages.show({ id: applicationId, task: task, page: page.previous() })
     }) }}
   {% endif %}
-
 {% endblock %}
 
 {% block content %}

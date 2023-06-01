@@ -1,7 +1,13 @@
-import type { IdentityBarMenu, TableRow } from '@approved-premises/ui'
+import type { BespokeError, IdentityBarMenu, TableRow } from '@approved-premises/ui'
 import type { Booking } from '@approved-premises/api'
 import paths from '../paths/manage'
 import { DateFormats } from './dateUtils'
+import { SanitisedError } from '../sanitisedError'
+
+type ParsedConflictError = {
+  conflictingEntityId: string
+  conflictingEntityType: 'booking' | 'lost-bed'
+}
 
 export const manageBookingLink = (premisesId: string, booking: Booking): string => {
   return `<a href="${paths.bookings.show({ premisesId, bookingId: booking.id })}">
@@ -86,4 +92,43 @@ export const bookingActions = (booking: Booking, premisesId: string): Array<Iden
   }
 
   return null
+}
+
+export const generateConflictBespokeError = (
+  err: SanitisedError,
+  premisesId: string,
+  bedId: string,
+  datesGrammaticalNumber: 'plural' | 'singular',
+): BespokeError => {
+  const { detail } = err.data as { detail: string }
+  const { conflictingEntityId, conflictingEntityType } = parseConflictError(detail)
+
+  const title =
+    datesGrammaticalNumber === 'plural'
+      ? 'This bedspace is not available for the dates entered'
+      : 'This bedspace is not available for the date entered'
+
+  const link =
+    conflictingEntityType === 'lost-bed'
+      ? `<a href="${paths.lostBeds.show({
+          premisesId,
+          bedId,
+          id: conflictingEntityId,
+        })}">existing lost bed</a>`
+      : `<a href="${paths.bookings.show({
+          premisesId,
+          bookingId: conflictingEntityId,
+        })}">existing booking</a>`
+
+  const message = datesGrammaticalNumber === 'plural' ? `They conflict with an ${link}` : `It conflicts with an ${link}`
+
+  return { errorTitle: title, errorSummary: [{ html: message }] }
+}
+
+const parseConflictError = (detail: string): ParsedConflictError => {
+  const detailWords = detail.split(' ')
+  const conflictingEntityId = detailWords[detailWords.length - 1]
+  const conflictingEntityType = detail.includes('Lost Bed') ? 'lost-bed' : 'booking'
+
+  return { conflictingEntityId, conflictingEntityType }
 }

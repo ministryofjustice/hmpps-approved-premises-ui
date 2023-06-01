@@ -6,7 +6,7 @@ import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<Arrival>(() => ({
   arrivalDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
-  bookingId: faker.datatype.uuid(),
+  bookingId: faker.string.uuid(),
   expectedDepartureDate: DateFormats.dateObjToIsoDate(faker.date.future()),
   notes: faker.lorem.sentence(),
   createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),

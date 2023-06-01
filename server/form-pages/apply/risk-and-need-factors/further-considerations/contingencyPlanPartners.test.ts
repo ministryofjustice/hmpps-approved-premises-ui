@@ -1,14 +1,14 @@
+import { PartnerAgencyDetails } from '@approved-premises/ui'
 import { contingencyPlanPartnerFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-import ContingencyPlanPartners, { Body } from './contingencyPlanPartners'
+import ContingencyPlanPartners from './contingencyPlanPartners'
 
 describe('ContingencyPlanPartners', () => {
   const contigencyPlanPartner1 = contingencyPlanPartnerFactory.build()
   const contigencyPlanPartner2 = contingencyPlanPartnerFactory.build()
 
   const body = {
-    ...contigencyPlanPartner1,
-    partnerAgencyDetails: [contigencyPlanPartner2],
+    partnerAgencyDetails: [contigencyPlanPartner1, contigencyPlanPartner2, [] as Partial<PartnerAgencyDetails>],
   }
 
   describe('title', () => {
@@ -20,50 +20,40 @@ describe('ContingencyPlanPartners', () => {
   })
 
   describe('body', () => {
-    it('should push the form fields into a new item in the partnerAgencyDetails array', () => {
+    it('should set the body correctly', () => {
       const page = new ContingencyPlanPartners(body)
 
-      expect(page.partnerAgencyDetails).toEqual([contigencyPlanPartner2, contigencyPlanPartner1])
+      expect(page.body.partnerAgencyDetails).toEqual([contigencyPlanPartner1, contigencyPlanPartner2])
     })
   })
 
-  describe('if saveAndContinue is falsy ', () => {
-    itShouldHaveNextValue(new ContingencyPlanPartners(body), 'contingency-plan-partners')
-  })
+  itShouldHaveNextValue(new ContingencyPlanPartners(body), 'contingency-plan-questions')
 
-  describe('if saveAndContinue is truthy ', () => {
-    itShouldHaveNextValue(new ContingencyPlanPartners({ saveAndContinue: '1', ...body }), 'contingency-plan-questions')
-  })
-
-  itShouldHavePreviousValue(new ContingencyPlanPartners(body), 'arson')
+  itShouldHavePreviousValue(new ContingencyPlanPartners(body), 'additional-circumstances')
 
   describe('errors', () => {
-    it('should return errors when responses are blank if saveAndContinue is falsy', () => {
-      const page = new ContingencyPlanPartners({} as Body)
+    it('should return errors when responses are blank', () => {
+      const page = new ContingencyPlanPartners({
+        partnerAgencyDetails: [
+          { namedContact: 'Someone' },
+          { partnerAgencyName: 'Agency name', phoneNumber: '123', roleInPlan: 'Role' },
+        ],
+      })
 
       expect(page.errors()).toEqual({
-        namedContact: 'You must specify a named contact',
-        partnerAgencyName: 'You must specify a partner agency name',
-        phoneNumber: 'You must specify a phone number',
-        roleInPlan: 'You must specify a role in plan',
+        partnerAgencyDetails_0_partnerAgencyName: 'You must specify a partner agency name',
+        partnerAgencyDetails_0_phoneNumber: 'You must specify a phone number',
+        partnerAgencyDetails_0_roleInPlan: 'You must specify a role in plan',
+        partnerAgencyDetails_1_namedContact: 'You must specify a named contact',
       })
     })
 
-    it('should return an error when there are no partner agencies added and saveAndContinue is truthy', () => {
-      const page = new ContingencyPlanPartners({ saveAndContinue: '1' } as Body)
+    it('should return an error when there are no partner agencies are specified', () => {
+      const page = new ContingencyPlanPartners({ partnerAgencyDetails: [] })
 
       expect(page.errors()).toEqual({
         partnerAgencyDetails: 'You must add at least one partner agency',
       })
-    })
-
-    it('shouldnt return an error if partnerAgencyDetails are added and saveAndContinue is truthy', () => {
-      const page = new ContingencyPlanPartners({
-        saveAndContinue: '1',
-        partnerAgencyDetails: contingencyPlanPartnerFactory.buildList(1),
-      } as Body)
-
-      expect(page.errors()).toEqual({})
     })
   })
 
@@ -74,16 +64,16 @@ describe('ContingencyPlanPartners', () => {
       expect(page.response()).toEqual({
         'Contingency plan partners': [
           {
-            'Named contact': contigencyPlanPartner2.namedContact,
-            'Partner agency name': contigencyPlanPartner2.partnerAgencyName,
-            'Phone number': contigencyPlanPartner2.phoneNumber,
-            'Role in plan': contigencyPlanPartner2.roleInPlan,
-          },
-          {
             'Named contact': contigencyPlanPartner1.namedContact,
             'Partner agency name': contigencyPlanPartner1.partnerAgencyName,
             'Phone number': contigencyPlanPartner1.phoneNumber,
             'Role in plan': contigencyPlanPartner1.roleInPlan,
+          },
+          {
+            'Named contact': contigencyPlanPartner2.namedContact,
+            'Partner agency name': contigencyPlanPartner2.partnerAgencyName,
+            'Phone number': contigencyPlanPartner2.phoneNumber,
+            'Role in plan': contigencyPlanPartner2.roleInPlan,
           },
         ],
       })

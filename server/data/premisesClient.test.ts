@@ -1,4 +1,11 @@
-import { dateCapacityFactory, premisesFactory, staffMemberFactory } from '../testutils/factories'
+import {
+  bedDetailFactory,
+  bedSummaryFactory,
+  dateCapacityFactory,
+  premisesFactory,
+  roomFactory,
+  staffMemberFactory,
+} from '../testutils/factories'
 import PremisesClient from './premisesClient'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
@@ -111,6 +118,110 @@ describeClient('PremisesClient', provider => {
 
       const output = await premisesClient.getStaffMembers(premises.id)
       expect(output).toEqual(staffMembers)
+    })
+  })
+
+  describe('getRooms', () => {
+    it('should return a list of rooms for a given premises', async () => {
+      const premises = premisesFactory.build()
+      const rooms = roomFactory.buildList(1)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get rooms for a premises',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.rooms({ premisesId: premises.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: rooms,
+        },
+      })
+
+      const output = await premisesClient.getRooms(premises.id)
+      expect(output).toEqual(rooms)
+    })
+  })
+
+  describe('getRoom', () => {
+    it('should return a single room for a given premises', async () => {
+      const premises = premisesFactory.build()
+      const room = roomFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a room for a premises',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.room({ premisesId: premises.id, roomId: room.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: room,
+        },
+      })
+
+      const output = await premisesClient.getRoom(premises.id, room.id)
+      expect(output).toEqual(room)
+    })
+  })
+
+  describe('getBeds', () => {
+    it('should return a list of beds for a given premises', async () => {
+      const premises = premisesFactory.build()
+      const beds = bedSummaryFactory.buildList(5)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of beds for a premises',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.beds.index({ premisesId: premises.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: beds,
+        },
+      })
+
+      const output = await premisesClient.getBeds(premises.id)
+      expect(output).toEqual(beds)
+    })
+  })
+
+  describe('getBed', () => {
+    it('should return a bed for a given premises', async () => {
+      const premises = premisesFactory.build()
+      const bed = bedDetailFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a bed for a premises',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.beds.show({ premisesId: premises.id, bedId: bed.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: bed,
+        },
+      })
+
+      const output = await premisesClient.getBed(premises.id, bed.id)
+      expect(output).toEqual(bed)
     })
   })
 })

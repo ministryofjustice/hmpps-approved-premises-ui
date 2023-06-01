@@ -1,7 +1,7 @@
-import { ListPage, StartPage } from '../../../cypress_shared/pages/apply'
+import { ListPage, StartPage } from '../../pages/apply'
 
-import { applicationFactory } from '../../../server/testutils/factories'
-import Page from '../../../cypress_shared/pages/page'
+import { applicationSummaryFactory } from '../../../server/testutils/factories'
+import Page from '../../pages/page'
 
 context('Applications dashboard', () => {
   beforeEach(() => {
@@ -15,11 +15,11 @@ context('Applications dashboard', () => {
     cy.signIn()
 
     // And there are applications in the database
-    const inProgressApplications = applicationFactory.withReleaseDate().buildList(5, { status: 'inProgress' })
-    const submittedApplications = applicationFactory.withReleaseDate().buildList(5, { status: 'submitted' })
-    const requestedFurtherInformationApplications = applicationFactory
-      .withReleaseDate()
-      .buildList(5, { status: 'requestedFurtherInformation' })
+    const inProgressApplications = applicationSummaryFactory.buildList(5, { status: 'inProgress' })
+    const submittedApplications = applicationSummaryFactory.buildList(5, { status: 'submitted' })
+    const requestedFurtherInformationApplications = applicationSummaryFactory.buildList(5, {
+      status: 'requestedFurtherInformation',
+    })
 
     cy.task(
       'stubApplications',

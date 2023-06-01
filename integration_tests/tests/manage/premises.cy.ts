@@ -1,6 +1,6 @@
 import { bookingFactory, dateCapacityFactory, premisesFactory } from '../../../server/testutils/factories'
 
-import { PremisesListPage, PremisesShowPage } from '../../../cypress_shared/pages/manage'
+import { PremisesListPage, PremisesShowPage } from '../../pages/manage'
 
 context('Premises', () => {
   beforeEach(() => {

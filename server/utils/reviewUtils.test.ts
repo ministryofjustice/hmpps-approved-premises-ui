@@ -81,7 +81,7 @@ describe('reviewSections', () => {
         tasks: [
           {
             card: {
-              title: { text: 'Basic Information', headingLevel: 3 },
+              title: { text: 'Basic Information', headingLevel: 2 },
               attributes: { 'data-cy-section': 'basic-information' },
             },
           },
@@ -106,7 +106,7 @@ describe('reviewSections', () => {
         tasks: [
           {
             card: {
-              title: { text: 'Assess page one', headingLevel: 3 },
+              title: { text: 'Assess page one', headingLevel: 2 },
               attributes: { 'data-cy-section': 'assess-page-1' },
             },
           },

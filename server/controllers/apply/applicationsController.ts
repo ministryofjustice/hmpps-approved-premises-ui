@@ -7,7 +7,7 @@ import { fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import Apply from '../../form-pages/apply'
-import { firstPageOfApplicationJourney, getResponses, isUnapplicable } from '../../utils/applications/utils'
+import { firstPageOfApplicationJourney, getResponses } from '../../utils/applications/utils'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
@@ -32,13 +32,12 @@ export default class ApplicationsController {
 
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const application = await this.applicationService.getApplicationFromSessionOrAPI(req)
+      const application = await this.applicationService.findApplication(req.user.token, req.params.id)
       const taskList = new TasklistService(application)
 
-      if (isUnapplicable(application)) {
-        res.render('applications/notEligible')
-      } else if (application.status === 'submitted') {
-        res.render('applications/show', { application })
+      if (application.status === 'submitted') {
+        const referrer = req.headers.referer
+        res.render('applications/show', { application, referrer })
       } else {
         res.render('applications/tasklist', { application, taskList })
       }
@@ -60,7 +59,7 @@ export default class ApplicationsController {
 
         return res.render(`applications/people/confirm`, {
           pageHeading: `Confirm ${person.name}'s details`,
-          ...person,
+          person,
           date: DateFormats.dateObjtoUIDate(new Date()),
           dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
           offenceId,

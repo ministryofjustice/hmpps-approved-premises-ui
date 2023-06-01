@@ -1,0 +1,14 @@
+{
+  "is-exceptional-case": {
+    "isExceptionalCase": "yes"
+  },
+  "exception-details": {
+    "agreedCaseWithManager": "yes",
+    "managerName": "Manager Name",
+    "agreementDate": "2022-01-01",
+    "agreementDate-year": "2022",
+    "agreementDate-month": "1",
+    "agreementDate-day": "1",
+    "agreementSummary": "Summary goes here"
+  }
+}

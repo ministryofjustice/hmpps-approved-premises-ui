@@ -21,7 +21,7 @@ describe('IsExceptionalCase', () => {
   })
 
   describe('when isExceptionalCase is no', () => {
-    itShouldHaveNextValue(new IsExceptionalCase({ isExceptionalCase: 'no' }, application), '')
+    itShouldHaveNextValue(new IsExceptionalCase({ isExceptionalCase: 'no' }, application), 'not-eligible')
   })
 
   describe('errors', () => {

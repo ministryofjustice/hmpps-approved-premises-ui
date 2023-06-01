@@ -6,9 +6,9 @@ import referenceDataFactory from './referenceData'
 import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<Cancellation>(() => ({
-  id: faker.datatype.uuid(),
+  id: faker.string.uuid(),
   date: DateFormats.dateObjToIsoDate(faker.date.soon()),
-  bookingId: faker.datatype.uuid(),
+  bookingId: faker.string.uuid(),
   reason: referenceDataFactory.cancellationReasons().build(),
   notes: faker.lorem.sentence(),
   createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),

@@ -1,0 +1,34 @@
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+  {{
+    formPageRadios(
+      {
+        fieldName: "managedByNationalSecurityDivision",
+        fieldset: {
+          legend: {
+            text: page.title,
+            classes: "govuk-fieldset__legend--l",
+            isPageHeading: true
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes"
+          },
+          {
+            text: "No",
+            value: "no"
+          }
+        ]
+      },
+      fetchContext()
+    )
+  }}
+
+{% endblock %}

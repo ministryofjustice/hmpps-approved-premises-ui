@@ -6,7 +6,7 @@ import TasklistService from '../../services/tasklistService'
 import AssessmentsController, { tasklistPageHeading } from './assessmentsController'
 import { AssessmentService } from '../../services'
 
-import { assessmentFactory } from '../../testutils/factories'
+import { assessmentFactory, assessmentSummaryFactory } from '../../testutils/factories'
 
 import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
@@ -38,13 +38,13 @@ describe('assessmentsController', () => {
   })
 
   describe('index', () => {
-    it('should list all the assessments when the user is not a workflow manager', async () => {
-      const assesments = assessmentFactory.buildList(3)
+    it('should list all the assessments', async () => {
+      const assesments = assessmentSummaryFactory.buildList(3)
       const groupedAssessments = {
         completed: [],
         requestedFurtherInformation: [],
         awaiting: [],
-      } as GroupedAssessments<'status'>
+      } as GroupedAssessments
 
       assessmentService.getAll.mockResolvedValue(assesments)
       ;(groupAssessmements as jest.Mock).mockReturnValue(groupedAssessments)
@@ -58,72 +58,19 @@ describe('assessmentsController', () => {
         pageHeading: 'Approved Premises applications',
         assessments: groupedAssessments,
       })
-      expect(groupAssessmements).toHaveBeenCalledWith(assesments, 'status')
+      expect(groupAssessmements).toHaveBeenCalledWith(assesments)
       expect(assessmentService.getAll).toHaveBeenCalled()
-    })
-
-    describe('when the user is a workflow manager', () => {
-      const user = { id: 'some-id ' }
-      const assesments = assessmentFactory.buildList(3)
-
-      beforeEach(() => {
-        ;(hasRole as jest.Mock).mockReturnValue(true)
-        response = createMock<Response>({ locals: { user } })
-      })
-
-      it('should list all the assessments for a given user when `myAssessments` is set', async () => {
-        const groupedAssessments = {
-          completed: [],
-          requestedFurtherInformation: [],
-          awaiting: [],
-        } as GroupedAssessments<'status'>
-
-        assessmentService.getAllForUser.mockResolvedValue(assesments)
-        ;(groupAssessmements as jest.Mock).mockReturnValue(groupedAssessments)
-
-        const requestHandler = assessmentsController.index()
-        request.query = { type: 'myAssessments' }
-
-        await requestHandler(request, response, next)
-
-        expect(response.render).toHaveBeenCalledWith('assessments/index', {
-          pageHeading: 'Approved Premises applications',
-          assessments: groupedAssessments,
-          type: 'myAssessments',
-        })
-        expect(groupAssessmements).toHaveBeenCalledWith(assesments, 'status')
-        expect(assessmentService.getAllForUser).toHaveBeenCalledWith(token, user.id)
-      })
-
-      it('should list all allocated and unallocated assessments when `user` is not set', async () => {
-        const groupedAssessments = {
-          allocated: [],
-          unallocated: [],
-        } as GroupedAssessments<'allocation'>
-
-        assessmentService.getAll.mockResolvedValue(assesments)
-        ;(groupAssessmements as jest.Mock).mockReturnValue(groupedAssessments)
-
-        const requestHandler = assessmentsController.index()
-
-        await requestHandler(request, response, next)
-
-        expect(response.render).toHaveBeenCalledWith('assessments/index', {
-          pageHeading: 'Approved Premises applications',
-          assessments: groupedAssessments,
-        })
-        expect(groupAssessmements).toHaveBeenCalledWith(assesments, 'allocation')
-        expect(assessmentService.getAll).toHaveBeenCalledWith(token)
-      })
     })
   })
 
   describe('show', () => {
     const assessment = assessmentFactory.build()
     const stubTaskList = jest.fn()
+    const referrer = 'http://localhost/foo/bar'
 
     beforeEach(() => {
       request.params.id = assessment.id
+      request.headers.referer = referrer
 
       assessmentService.findAssessment.mockResolvedValue(assessment)
       ;(TasklistService as jest.Mock).mockImplementation(() => {
@@ -136,7 +83,7 @@ describe('assessmentsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('assessments/show', {
+      expect(response.render).toHaveBeenCalledWith('assessments/tasklist', {
         assessment,
         pageHeading: 'Assess an Approved Premises (AP) application',
         taskList: stubTaskList,
@@ -145,9 +92,25 @@ describe('assessmentsController', () => {
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
     })
 
-    it('redirects if the assessment is in a pending state and informationSetAsNotReceived is false', async () => {
+    it('fetches the assessment and renders the show page if the assessment is completed', async () => {
+      const completedAssessment = { ...assessment, status: 'completed' as const }
+      assessmentService.findAssessment.mockResolvedValue(completedAssessment)
+
+      const requestHandler = assessmentsController.show()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('assessments/show', {
+        assessment: completedAssessment,
+        referrer,
+      })
+
+      expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
+    })
+
+    it('redirects if the assessment is in a awaiting response state and informationSetAsNotReceived is false', async () => {
       ;(informationSetAsNotReceived as jest.Mock).mockReturnValue(false)
-      assessment.status = 'pending'
+      assessment.status = 'awaiting_response'
 
       const requestHandler = assessmentsController.show()
 
@@ -164,15 +127,15 @@ describe('assessmentsController', () => {
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
     })
 
-    it('fetches the assessment and renders the task list  if the assessment is in a pending state and informationSetAsNotReceived is true', async () => {
+    it('fetches the assessment and renders the task list  if the assessment is in an awaiting response state and informationSetAsNotReceived is true', async () => {
       ;(informationSetAsNotReceived as jest.Mock).mockReturnValue(true)
-      assessment.status = 'pending'
+      assessment.status = 'awaiting_response'
 
       const requestHandler = assessmentsController.show()
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('assessments/show', {
+      expect(response.render).toHaveBeenCalledWith('assessments/tasklist', {
         assessment,
         pageHeading: 'Assess an Approved Premises (AP) application',
         taskList: stubTaskList,

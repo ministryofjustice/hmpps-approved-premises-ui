@@ -5,6 +5,7 @@ const singlePremisesPath = premisesPath.path(':premisesId')
 
 const bookingsPath = singlePremisesPath.path('bookings')
 const bookingPath = bookingsPath.path(':bookingId')
+const newBookingPath = singlePremisesPath.path('beds/:bedId/bookings/new')
 
 const peoplePath = bookingsPath.path('people')
 
@@ -18,18 +19,24 @@ const cancellationsPath = bookingPath.path('cancellations')
 
 const departuresPath = bookingPath.path('departures')
 
-const lostBedsPath = singlePremisesPath.path('lost-beds')
+const lostBedsPath = singlePremisesPath.path('beds/:bedId/lost-beds')
+
+const bedsPath = singlePremisesPath.path('beds')
 
 const paths = {
   premises: {
     index: premisesPath,
     show: singlePremisesPath,
     capacity: singlePremisesPath.path('capacity'),
+    beds: {
+      index: bedsPath,
+      show: bedsPath.path(':bedId'),
+    },
   },
   bookings: {
-    new: bookingsPath.path('new'),
+    new: newBookingPath,
     show: bookingPath,
-    create: bookingsPath,
+    create: newBookingPath,
     confirm: bookingPath.path('confirmation'),
     extensions: {
       new: extensionsPath.path('new'),
@@ -59,6 +66,7 @@ const paths = {
   lostBeds: {
     new: lostBedsPath.path('new'),
     create: lostBedsPath,
+    show: lostBedsPath.path(':id'),
   },
 }
 

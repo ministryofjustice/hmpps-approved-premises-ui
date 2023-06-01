@@ -100,13 +100,16 @@ export default class DateOfOffence implements TasklistPage {
   }
 
   private checkbox(offence: string, date: 'current' | 'previous', checked: boolean) {
+    const id = `${offence}-${date}`
     return this.htmlValue(
       `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="${offence}-${date}" name="${offence}" type="checkbox" value="${date}" ${
+                <label class="govuk-label govuk-checkboxes__label govuk-visually-hidden" for="${id}">${sentenceCase(
+        offence,
+      )}: ${date}</label>
+                <input class="govuk-checkboxes__input" id="${id}" name="${offence}" type="checkbox" value="${date}" ${
         checked ? 'checked' : ''
       }>
-                <label class="govuk-label govuk-checkboxes__label" for="${offence.concat(`-${date}`)}"></label>
             </div>`,
     )
   }

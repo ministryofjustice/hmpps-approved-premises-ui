@@ -32,6 +32,63 @@
             }
           }
         },
+        "transgender": {
+          "type": "object",
+          "properties": {
+            "transgenderOrHasTransgenderHistory": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "complex-case-board": {
+          "type": "object",
+          "properties": {
+            "reviewRequired": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "board-taken-place": {
+          "type": "object",
+          "properties": {
+            "hasBoardTakenPlace": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "male-ap": {
+          "type": "object",
+          "properties": {
+            "shouldPersonBePlacedInMaleAp": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "not-eligible": {
+          "type": "object"
+        },
+        "pause-application": {
+          "type": "object"
+        },
+        "refer-to-delius": {
+          "type": "object"
+        },
         "exception-details": {
           "allOf": [
             {
@@ -343,6 +400,73 @@
             }
           }
         },
+        "managed-by-national-security-division": {
+          "type": "object",
+          "properties": {
+            "managedByNationalSecurityDivision": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            }
+          }
+        },
+        "esap-exceptional-case": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "agreementDate-year": {
+                  "type": "string"
+                },
+                "agreementDate-month": {
+                  "type": "string"
+                },
+                "agreementDate-day": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "agreementDate-time": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "agreementDate": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "agreedCaseWithCommunityHopp": {
+                  "enum": [
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                },
+                "communityHoppName": {
+                  "type": "string"
+                },
+                "agreementSummary": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "not-esap-eligible": {
+          "type": "object"
+        },
         "pipe-referral": {
           "allOf": [
             {
@@ -552,17 +676,7 @@
           "type": "object",
           "properties": {
             "roshAnswers": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "object"
-                }
-              ]
+              "type": "object"
             },
             "roshSummaries": {
               "type": "array",
@@ -587,17 +701,7 @@
           "type": "object",
           "properties": {
             "offenceDetailsAnswers": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "object"
-                }
-              ]
+              "type": "object"
             },
             "offenceDetailsSummaries": {
               "type": "array",
@@ -622,17 +726,7 @@
           "type": "object",
           "properties": {
             "supportingInformationAnswers": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "object"
-                }
-              ]
+              "type": "object"
             },
             "supportingInformationSummaries": {
               "type": "array",
@@ -666,17 +760,7 @@
           "type": "object",
           "properties": {
             "riskManagementAnswers": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "object"
-                }
-              ]
+              "type": "object"
             },
             "riskManagementSummaries": {
               "type": "array",
@@ -701,17 +785,7 @@
           "type": "object",
           "properties": {
             "riskToSelfAnswers": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                {
-                  "type": "object"
-                }
-              ]
+              "type": "object"
             },
             "riskToSelfSummaries": {
               "type": "array",
@@ -867,29 +941,79 @@
           }
         },
         "rehabilitative-interventions": {
-          "type": "object",
-          "properties": {
-            "rehabilitativeInterventions": {
-              "type": "array",
-              "items": {
-                "enum": [
-                  "abuse",
-                  "accommodation",
-                  "attitudesAndBehaviour",
-                  "childrenAndFamilies",
-                  "drugsAndAlcohol",
-                  "educationTrainingAndEmployment",
-                  "financeBenefitsAndDebt",
-                  "health",
-                  "other"
-                ],
-                "type": "string"
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "rehabilitativeInterventions": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "abuse",
+                          "accommodation",
+                          "attitudesAndBehaviour",
+                          "childrenAndFamilies",
+                          "drugsAndAlcohol",
+                          "educationTrainingAndEmployment",
+                          "financeBenefitsAndDebt",
+                          "health",
+                          "other",
+                          "sexWorking"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "enum": [
+                        "abuse",
+                        "accommodation",
+                        "attitudesAndBehaviour",
+                        "childrenAndFamilies",
+                        "drugsAndAlcohol",
+                        "educationTrainingAndEmployment",
+                        "financeBenefitsAndDebt",
+                        "health",
+                        "other",
+                        "sexWorking"
+                      ],
+                      "type": "string"
+                    }
+                  ]
+                },
+                "otherIntervention": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                }
               }
             },
-            "otherIntervention": {
-              "type": "string"
+            {
+              "type": "object",
+              "properties": {
+                "rehabilitativeInterventions": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "abuse",
+                      "accommodation",
+                      "attitudesAndBehaviour",
+                      "childrenAndFamilies",
+                      "drugsAndAlcohol",
+                      "educationTrainingAndEmployment",
+                      "financeBenefitsAndDebt",
+                      "health",
+                      "other",
+                      "sexWorking"
+                    ],
+                    "type": "string"
+                  }
+                }
+              }
             }
-          }
+          ]
         }
       }
     },
@@ -936,9 +1060,6 @@
                   }
                 }
               }
-            },
-            "moreDetail": {
-              "type": "string"
             },
             "adjudications": {
               "type": "array",
@@ -1056,12 +1177,14 @@
                   "type": "array",
                   "items": {
                     "enum": [
+                      "healthcare",
                       "hearingImpairment",
                       "learningDisability",
                       "mobility",
                       "neurodivergentConditions",
                       "none",
                       "other",
+                      "pregnancy",
                       "visualImpairment"
                     ],
                     "type": "string"
@@ -1069,27 +1192,19 @@
                 },
                 {
                   "enum": [
+                    "healthcare",
                     "hearingImpairment",
                     "learningDisability",
                     "mobility",
                     "neurodivergentConditions",
                     "none",
                     "other",
+                    "pregnancy",
                     "visualImpairment"
                   ],
                   "type": "string"
                 }
               ]
-            },
-            "religiousOrCulturalNeeds": {
-              "enum": [
-                "no",
-                "yes"
-              ],
-              "type": "string"
-            },
-            "religiousOrCulturalNeedsDetails": {
-              "type": "string"
             },
             "careActAssessmentCompleted": {
               "enum": [
@@ -1108,26 +1223,153 @@
             },
             "interpreterLanguage": {
               "type": "string"
-            }
-          }
-        },
-        "access-needs-mobility": {
-          "type": "object",
-          "properties": {
-            "needsWheelchair": {
+            },
+            "careAndSupportNeeds": {
               "enum": [
                 "no",
                 "yes"
               ],
               "type": "string"
             },
-            "mobilityNeeds": {
+            "careAndSupportNeedsDetail": {
               "type": "string"
             },
-            "visualImpairment": {
+            "religiousOrCulturalNeeds": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            },
+            "religiousOrCulturalNeedsDetail": {
               "type": "string"
             }
           }
+        },
+        "access-needs-further-questions": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "needsWheelchair": {
+                  "enum": [
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                },
+                "isPersonPregnant": {
+                  "enum": [
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                },
+                "childRemoved": {
+                  "enum": [
+                    "decisionPending",
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                },
+                "additionalAdjustments": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "expectedDeliveryDate-year": {
+                  "type": "string"
+                },
+                "expectedDeliveryDate-month": {
+                  "type": "string"
+                },
+                "expectedDeliveryDate-day": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "expectedDeliveryDate-time": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "expectedDeliveryDate": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "healthConditions": {
+                  "enum": [
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "healthConditionsDetail": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "prescribedMedication": {
+                  "enum": [
+                    "iDontKnow",
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "prescribedMedicationDetail": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "otherPregnancyConsiderations": {
+                  "enum": [
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "otherPregnancyConsiderationsDetail": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
         },
         "covid": {
           "type": "object",
@@ -1254,21 +1496,6 @@
             }
           }
         },
-        "complex-case-board": {
-          "type": "object",
-          "properties": {
-            "complexCaseBoard": {
-              "enum": [
-                "no",
-                "yes"
-              ],
-              "type": "string"
-            },
-            "complexCaseBoardDetail": {
-              "type": "string"
-            }
-          }
-        },
         "catering": {
           "type": "object",
           "properties": {
@@ -1299,54 +1526,45 @@
             }
           }
         },
-        "contingency-plan-partners": {
-          "allOf": [
-            {
-              "type": "object",
-              "properties": {
-                "partnerAgencyName": {
-                  "type": "string"
-                },
-                "namedContact": {
-                  "type": "string"
-                },
-                "phoneNumber": {
-                  "type": "string"
-                },
-                "roleInPlan": {
-                  "type": "string"
-                }
-              }
+        "additional-circumstances": {
+          "type": "object",
+          "properties": {
+            "additionalCircumstances": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
             },
-            {
-              "type": "object",
-              "properties": {
-                "saveAndContinue": {
-                  "type": "string"
-                },
-                "partnerAgencyDetails": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "partnerAgencyName": {
-                        "type": "string"
-                      },
-                      "namedContact": {
-                        "type": "string"
-                      },
-                      "phoneNumber": {
-                        "type": "string"
-                      },
-                      "roleInPlan": {
-                        "type": "string"
-                      }
-                    }
+            "additionalCircumstancesDetail": {
+              "type": "string"
+            }
+          }
+        },
+        "contingency-plan-partners": {
+          "type": "object",
+          "properties": {
+            "partnerAgencyDetails": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "partnerAgencyName": {
+                    "type": "string"
+                  },
+                  "namedContact": {
+                    "type": "string"
+                  },
+                  "phoneNumber": {
+                    "type": "string"
+                  },
+                  "roleInPlan": {
+                    "type": "string"
                   }
                 }
               }
             }
-          ]
+          }
         },
         "contingency-plan-questions": {
           "type": "object",
@@ -1418,10 +1636,17 @@
         "placement-duration": {
           "type": "object",
           "properties": {
+            "differentDuration": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            },
             "duration": {
               "type": "string"
             },
-            "durationDetail": {
+            "reason": {
               "type": "string"
             }
           }
@@ -1435,16 +1660,36 @@
           }
         },
         "plans-in-place": {
-          "type": "object",
-          "properties": {
-            "arePlansInPlace": {
-              "enum": [
-                "no",
-                "yes"
-              ],
-              "type": "string"
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "arePlansInPlace": {
+                  "type": "string",
+                  "enum": [
+                    "yes"
+                  ]
+                },
+                "plansInPlaceDetail": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "arePlansInPlace": {
+                  "type": "string",
+                  "enum": [
+                    "no"
+                  ]
+                },
+                "plansNotInPlaceDetail": {
+                  "type": "string"
+                }
+              }
             }
-          }
+          ]
         },
         "type-of-accommodation": {
           "type": "object",

@@ -6,19 +6,36 @@
 
   <h1 class="govuk-heading-l">{{ page.title }}</h2>
 
-  <h3 class="govuk-heading-m">{{ page.questions.duration }}</h3>
-  <p>We'll use this to calculate the date the person will be expected to leave the AP, if they're accepted. </p>
+  {% if page.arrivalDate %}
+    <h2 class="govuk-heading-m"> Expected dates of stay in Approved Premises:</h2>
+
+    <p class="govuk-body">
+      <strong>Arrival date:</strong>
+      {{dateObjToUIDate(page.arrivalDate)}}</p>
+
+    <p class="govuk-body">
+      <strong>Departure date:</strong>
+      {{dateObjToUIDate(page.departureDate)}}</p>
+  {% endif %}
 
   {{ govukDetails({
-      summaryText: "How to decide the duration of an AP placement",
-      text: "Standard AP placements usually last up to 12 weeks but can sometimes be longer. PIPE placements usually last up to 26 weeks. Consider the level of support and risk management you expect the AP to provide and how long it will take to be effective. When is the person most likely to resettle successfully in the community?"
+      summaryText: "View guidance on AP placement duration",
+      html: "<p>The typical placement duration for each type of AP is as follows: </p>
+   <ul>
+    <li>Standard AP, 12 weeks</li>
+    <li>Psychologically Informed Planned Environment (PIPE), 26 weeks</li>
+    <li>Enhanced Security AP, 56 weeks</li>
+   </ul>
+   <p>Placements can be longer or shorter in exceptional circumstances when required for risk management purposes.</p>
+   <p>Consider the level of support and risk management you expect the AP to provide and how long it will take to be effective.</p>"
     }) }}
 
+  {% set yesDetails %}
   {{
     formPageInput(
       {
         label: {
-          text: "Duration in weeks"
+          text: page.questions.duration
         },
         classes: "govuk-input--width-2",
         fieldName: "duration"
@@ -27,69 +44,45 @@
     )
   }}
 
-  {% if page.arrivalDate %}
-
-    <div
-      id="durationWrapper"
-      class="govuk-visually-hidden"
-      data-expected-dates
-      data-arrivalDate="{{ page.arrivalDate.toISOString() }}"
-      aria-live="polite"
-      aria-atomic="true"
-    >
-      <h3 class="govuk-heading-m">Expected dates of stay in Approved Premises:</h3>
-      <p>
-        <b>Arrival date:</b>
-        {{ formatDate(page.arrivalDate.toISOString()) }}</p>
-      <p>
-        <b>Departure date:</b>
-        <span data-departure-date></span></p>
-    </div>
-
-    <br>
-
-  {% endif %}
-
   {{
     formPageTextarea(
       {
-        fieldName: "durationDetail",
+        fieldName: "reason",
         label: {
-          text: page.questions.durationDetail,
-          classes: "govuk-label--m"
-        },
-        hint: {
-          text: "If the duration of placement is not a standard length (12 weeks) provide reason as to why it is not."
+        text: page.questions.reason
         }
       },
       fetchContext()
     )
   }}
 
-{% endblock %}
+  {% endset -%}
 
-{% block extraScripts %}
-  <script type="text/javascript" nonce="{{ cspNonce }}">
-    var duration = document.querySelector('#duration')
-    var expectedDatesContainer = document.querySelector('div[data-expected-dates]')
+  {{
+  formPageRadios({
+    fieldName: 'differentDuration',
+    fieldset: {
+      legend: {
+        text: page.questions.differentDuration,
+        classes: "govuk-fieldset__legend--m"
+      }
+    },
+    items: [
+      {
+        value: "yes",
+        text: "Yes",
+        conditional: {
+          html: yesDetails
+        }
+      },
+      {
+        value: "no",
+        text: "No"
+      }
+    ]
+  },
+  fetchContext()
+  )
+}}
 
-    duration.addEventListener('input', function (e) {
-      var numWeeks = duration.value
-      var arrivalDate = new Date(expectedDatesContainer.dataset.arrivaldate)
-      var departureDate = arrivalDate.setDate(arrivalDate.getDate() + numWeeks * 7)
-      var departureDateContainer = document.querySelector('[data-departure-date]')
-
-      departureDateContainer.innerHTML = new Date(departureDate)
-        .toLocaleString('en-GB', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        })
-        .replace(',', '')
-      expectedDatesContainer.setAttribute('class', '')
-
-      e.preventDefault()
-    })
-  </script>
 {% endblock %}

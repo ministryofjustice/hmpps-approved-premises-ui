@@ -110,11 +110,12 @@ export const linkTo = <Pattern extends `/${string}`>(
   params: Params<Pattern>,
   {
     text,
+    query = {},
     attributes = {},
     hiddenText = '',
   }: {
     text: string
-    params?: Params<Pattern>
+    query?: Record<string, string>
     attributes?: Record<string, string>
     hiddenText?: string
   },
@@ -129,7 +130,7 @@ export const linkTo = <Pattern extends `/${string}`>(
     .map(a => `${a}="${attributes[a]}"`)
     .join(' ')
 
-  return `<a href="${path(params)}" ${attrBody}>${linkBody}</a>`
+  return `<a href="${path(params)}${createQueryString(query, { addQueryPrefix: true })}" ${attrBody}>${linkBody}</a>`
 }
 
 /**
@@ -150,4 +151,11 @@ export const createQueryString = (
   options: IStringifyOptions = { encode: false, indices: false },
 ): string => {
   return qs.stringify(params, options)
+}
+
+export const objectIfNotEmpty = <T>(object: Record<string, unknown> | T | undefined): T | undefined => {
+  if (Object.keys(object).length) {
+    return object as T
+  }
+  return undefined
 }

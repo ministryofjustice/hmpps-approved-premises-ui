@@ -1,7 +1,5 @@
-import { BedSearchParametersUi } from '../@types/ui'
 import BedClient from '../data/bedClient'
-import { bedSearchParametersFactory, bedSearchResultFactory } from '../testutils/factories'
-import { mapApiParamsForUi } from '../utils/matchUtils'
+import { bedSearchParametersUiFactory, bedSearchResultsFactory } from '../testutils/factories'
 import BedService from './bedService'
 
 jest.mock('../data/bedClient.ts')
@@ -21,8 +19,8 @@ describe('bedService', () => {
 
   describe('search', () => {
     it('calls the all method on the bed client', async () => {
-      const bedSearchResults = bedSearchResultFactory.build()
-      const params = bedSearchParametersFactory.onCreate(mapApiParamsForUi).build() as unknown as BedSearchParametersUi
+      const bedSearchResults = bedSearchResultsFactory.build()
+      const params = bedSearchParametersUiFactory.build()
       bedClient.search.mockResolvedValue(bedSearchResults)
 
       const result = await service.search(token, params)

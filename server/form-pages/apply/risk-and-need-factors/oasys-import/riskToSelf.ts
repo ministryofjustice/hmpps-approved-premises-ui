@@ -13,7 +13,7 @@ import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type RiskToSelfBody = {
-  riskToSelfAnswers: Array<string> | Record<string, string>
+  riskToSelfAnswers: Record<string, string>
   riskToSelfSummaries: ArrayOfOASysRiskToSelfQuestions
 }
 

@@ -1,30 +1,34 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "../../partials/personDetails.njk" import personDetails %}
 
 {% extends "../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
-{% set nomsNumber = nomsNumber if nomsNumber else "" %}
+{% set nomsNumber = nomsNumber if nomsNumber else 
+  "" %}
 
-{% block content %}
+{% block beforeContent %}
   {{ govukBackLink({
     text: "Back",
     href: paths.applications.new()
   }) }}
+{% endblock %}
 
+{% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <form action="{{ paths.applications.create() }}" method="post">
 
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-        <input type="hidden" name="name" value="{{ name }}"/>
-        <input type="hidden" name="crn" value="{{ crn }}"/>
-        <input type="hidden" name="dateOfBirth" value="{{ dateOfBirth }}"/>
-        <input type="hidden" name="sex" value="{{ sex }}"/>
-        <input type="hidden" name="nationality" value="{{ nationality }}"/>
-        <input type="hidden" name="religion" value="{{ religion }}"/>
+        <input type="hidden" name="name" value="{{ person.name }}"/>
+        <input type="hidden" name="crn" value="{{ person.crn }}"/>
+        <input type="hidden" name="dateOfBirth" value="{{ person.dateOfBirth }}"/>
+        <input type="hidden" name="sex" value="{{ person.sex }}"/>
+        <input type="hidden" name="nationality" value="{{ person.nationality }}"/>
+        <input type="hidden" name="religion" value="{{ person.religion }}"/>
         <input type="hidden" name="offenceId" value="{{ offenceId }}"/>
 
         <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
@@ -33,101 +37,7 @@
           Taken from NDelius, <strong>{{ date }}</strong>
         </p>
 
-        {{ govukSummaryList({
-          attributes: {
-            'data-cy-person-info': true
-          },
-          rows: ([
-            {
-              key: {
-                text: "Name"
-              },
-              value: {
-                text: name
-              }
-            },
-            {
-              key: {
-                text: "CRN"
-              },
-              value: {
-                text: crn
-              }
-            },
-            {
-              key: {
-                text: "Date of Birth"
-              },
-              value: {
-                text: dateOfBirth
-              }
-            },
-            {
-              key: {
-                text: "NOMS Number"
-              },
-              value: {
-                text: nomsNumber
-              }
-            },
-            {
-              key: {
-                text: "Nationality"
-              },
-              value: {
-                text: nationality
-              }
-            },
-            {
-              key: {
-                text: "Religion or belief"
-              },
-              value: {
-                text: religionOrBelief
-              }
-            },
-            {
-              key: {
-                text: "Sex"
-              },
-              value: {
-                text: sex
-              }
-            },
-            {
-              key: {
-                text: "Gender Identity"
-              },
-              value: {
-                text: genderIdentity
-              }
-            }
-          ] | removeBlankSummaryListItems)
-        }) }}
-
-        {{ govukSummaryList({
-          attributes: {
-            'data-cy-prison-info': true
-          },
-          rows: [
-            {
-              key: {
-                text: "Status"
-              },
-              value: {
-                html: statusTag(status)
-              }
-            },
-            {
-              key: {
-                text: "Prison"
-              },
-              value: {
-                text: prisonName
-              }
-            }
-          ]
-        }) }}
+        {{ personDetails(person, false) }}
 
         <p>If these details are wrong, update this case in NDelius before you start.</p>
         <p>If you've entered the wrong CRN, go back to the CRN screen.</p>

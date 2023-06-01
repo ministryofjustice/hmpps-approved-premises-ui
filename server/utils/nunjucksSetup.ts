@@ -21,7 +21,7 @@ import {
   dateFieldValues,
 } from './formUtils'
 import { dashboardTableRows } from './applications/utils'
-import { summaryListSections } from './applications/summaryListUtils'
+import { navigationItems } from './navigationItems'
 
 import { statusTag } from './personUtils'
 import { DateFormats } from './dateUtils'
@@ -38,11 +38,14 @@ import * as UserUtils from './userUtils'
 import * as TaskUtils from './tasks'
 import * as PlacementRequestUtils from './placementRequests'
 import * as MatchUtils from './matchUtils'
+import * as SummaryListUtils from './applications/summaryListUtils'
+import * as BedUtils from './bedUtils'
 
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import tasksPaths from '../paths/tasks'
+import matchPaths from '../paths/match'
 import { radioMatrixTable } from './radioMatrixTable'
 
 import config from '../config'
@@ -66,6 +69,11 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
       return next()
     })
   }
+
+  app.use((req, res, next) => {
+    res.locals.currentUrl = req.originalUrl
+    return next()
+  })
 
   const njkEnv = nunjucks.configure(
     [
@@ -93,7 +101,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     DateFormats.isoDateToUIDate(date, options),
   )
   njkEnv.addGlobal('formatDateTime', (date: string) => DateFormats.isoDateTimeToUIDateTime(date))
-
+  njkEnv.addGlobal('dateObjToUIDate', (date: Date) => DateFormats.dateObjtoUIDate(date))
   njkEnv.addGlobal('dateFieldValues', function sendContextToDateFieldValues(fieldName: string, errors: ErrorMessages) {
     return dateFieldValues(fieldName, this.ctx, errors)
   })
@@ -141,7 +149,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     },
   )
 
-  njkEnv.addGlobal('paths', { ...managePaths, ...applyPaths, ...assessPaths, ...tasksPaths })
+  njkEnv.addGlobal('paths', { ...managePaths, ...applyPaths, ...assessPaths, ...tasksPaths, ...matchPaths })
 
   njkEnv.addGlobal('linkTo', linkTo)
 
@@ -163,8 +171,8 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addFilter('sentenceCase', sentenceCase)
   njkEnv.addFilter('kebabCase', kebabCase)
 
-  njkEnv.addGlobal('summaryListSections', summaryListSections)
   njkEnv.addGlobal('dashboardTableRows', dashboardTableRows)
+  njkEnv.addGlobal('navigationItems', navigationItems)
 
   njkEnv.addGlobal('AssessmentUtils', AssessmentUtils)
   njkEnv.addGlobal('OASysUtils', OASysUtils)
@@ -178,4 +186,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('TaskUtils', TaskUtils)
   njkEnv.addGlobal('PlacementRequestUtils', PlacementRequestUtils)
   njkEnv.addGlobal('MatchUtils', MatchUtils)
+  njkEnv.addGlobal('SummaryListUtils', SummaryListUtils)
+  njkEnv.addGlobal('BedUtils', BedUtils)
 }

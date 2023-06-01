@@ -1,12 +1,12 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { Request } from 'express'
-import { PlacementRequest } from '@approved-premises/api'
+import { AssessmentAcceptance } from '@approved-premises/api'
 
 import { AssessmentClient } from '../data'
 import AssessmentService from './assessmentService'
-import { assessmentFactory, clarificationNoteFactory, userFactory } from '../testutils/factories'
+import { assessmentFactory, assessmentSummaryFactory, clarificationNoteFactory } from '../testutils/factories'
 
-import { placementRequestData } from '../utils/assessments/placementRequestData'
+import { acceptanceData, placementRequestData } from '../utils/assessments/acceptanceData'
 import { getBody, updateAssessmentData } from '../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { DataServices, TaskListErrors } from '../@types/ui'
@@ -18,7 +18,7 @@ jest.mock('../data/assessmentClient.ts')
 jest.mock('../data/personClient.ts')
 jest.mock('../form-pages/utils')
 jest.mock('../utils/applications/utils')
-jest.mock('../utils/assessments/placementRequestData')
+jest.mock('../utils/assessments/acceptanceData')
 jest.mock('../utils/assessments/decisionUtils')
 
 describe('AssessmentService', () => {
@@ -33,40 +33,13 @@ describe('AssessmentService', () => {
     assessmentClientFactory.mockReturnValue(assessmentClient)
   })
 
-  describe('getting all assessments', () => {
-    const user = userFactory.build({ id: 'some-uuid' })
-    const otherUser = userFactory.build({ id: 'some-other-uuid' })
+  describe('getAll', () => {
+    it('should return all assessments', async () => {
+      const assessments = assessmentSummaryFactory.buildList(5)
+      assessmentClient.all.mockResolvedValue(assessments)
+      const result = await service.getAll('token')
 
-    const assessmentsForUser = assessmentFactory.buildList(2, {
-      allocatedToStaffMember: user,
-    })
-    const assessmentsForDifferentUser = assessmentFactory.buildList(2, {
-      status: 'completed',
-      allocatedToStaffMember: otherUser,
-    })
-    const unallocatedAssessments = assessmentFactory.buildList(2, {
-      allocatedToStaffMember: null,
-    })
-
-    beforeEach(() => {
-      assessmentClient.all.mockResolvedValue(
-        [assessmentsForUser, assessmentsForDifferentUser, unallocatedAssessments].flat(),
-      )
-    })
-
-    describe('getAll', () => {
-      it('should return all assessments', async () => {
-        const result = await service.getAll('token')
-
-        expect(result).toEqual([assessmentsForUser, assessmentsForDifferentUser, unallocatedAssessments].flat())
-      })
-    })
-
-    describe('getAllForUser', () => {
-      it('should return all assessments for that user', async () => {
-        const result = await service.getAllForUser('token', user.id)
-        expect(result).toEqual(assessmentsForUser)
-      })
+      expect(result).toEqual(assessments)
     })
   })
 
@@ -177,18 +150,17 @@ describe('AssessmentService', () => {
   describe('submit', () => {
     const token = 'some-token'
     let document = { foo: [{ bar: 'baz' }] } as ApplicationOrAssessmentResponse
-    const requirements = createMock<PlacementRequest>()
+    const assessmentAcceptance = createMock<AssessmentAcceptance>()
     const assessment = assessmentFactory.build()
 
     it('if the assessment is accepted the accept client method is called', async () => {
       ;(applicationAccepted as jest.Mock).mockReturnValue(true)
-      ;(getResponses as jest.Mock).mockReturnValue(document)
-      ;(placementRequestData as jest.Mock).mockReturnValue(requirements)
+      ;(acceptanceData as jest.Mock).mockReturnValue(assessmentAcceptance)
 
       await service.submit(token, assessment)
 
       expect(assessmentClientFactory).toHaveBeenCalledWith(token)
-      expect(assessmentClient.acceptance).toHaveBeenCalledWith(assessment.id, { document, requirements })
+      expect(assessmentClient.acceptance).toHaveBeenCalledWith(assessment.id, assessmentAcceptance)
     })
 
     it('if the assessment is rejected the rejection client method is called with the rejectionRationale', async () => {
@@ -207,6 +179,7 @@ describe('AssessmentService', () => {
 
       expect(assessmentClientFactory).toHaveBeenCalledWith(token)
       expect(assessmentClient.rejection).toHaveBeenCalledWith(assessment.id, document, response.Decision)
+      expect(placementRequestData).not.toHaveBeenCalled()
     })
   })
 

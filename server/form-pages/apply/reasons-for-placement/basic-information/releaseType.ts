@@ -1,29 +1,20 @@
 import type { ApprovedPremisesApplication, ReleaseTypeOption } from '@approved-premises/api'
-import type { TaskListErrors } from '@approved-premises/ui'
+import type { ReleaseTypeOptions, TaskListErrors } from '@approved-premises/ui'
 
 import { SessionDataError } from '../../../../utils/errors'
 import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 import TasklistPage from '../../../tasklistPage'
 import SentenceType, { SentenceTypesT } from './sentenceType'
 import { Page } from '../../../utils/decorators'
+import { allReleaseTypes } from '../../../../utils/applications/releaseTypeUtils'
 
-type SelectableReleaseTypes = Exclude<ReleaseTypeOption, 'in_community'>
-type ReleaseTypeOptions = Record<SelectableReleaseTypes, string>
-
-const allReleaseTypes: ReleaseTypeOptions = {
-  licence: 'Licence',
-  rotl: 'Release on Temporary Licence (ROTL)',
-  hdc: 'Home detention curfew (HDC)',
-  pss: 'Post Sentence Supervision (PSS)',
-} as const
-
+type SelectableReleaseType = Exclude<ReleaseTypeOption, 'in_community'>
 type ReducedReleaseTypeOptions = Pick<ReleaseTypeOptions, 'rotl' | 'licence'>
 type ReducedReleaseTypes = keyof ReducedReleaseTypeOptions
 
-type SentenceTypeResponse = Extract<
-  SentenceTypesT,
-  'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life' | 'nonStatutory'
->
+type SentenceTypeResponse = Extract<SentenceTypesT, 'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life'>
+
+const { in_community: _, ...releaseTypes } = allReleaseTypes
 
 @Page({ name: 'release-type', bodyProperties: ['releaseType'] })
 export default class ReleaseType implements TasklistPage {
@@ -34,7 +25,7 @@ export default class ReleaseType implements TasklistPage {
   releaseTypes: ReleaseTypeOptions | ReducedReleaseTypeOptions
 
   constructor(
-    readonly body: { releaseType?: SelectableReleaseTypes | ReducedReleaseTypes },
+    readonly body: { releaseType?: SelectableReleaseType | ReducedReleaseTypes },
     readonly application: ApprovedPremisesApplication,
   ) {
     const sessionSentenceType = retrieveQuestionResponseFromApplicationOrAssessment(application, SentenceType)
@@ -42,7 +33,7 @@ export default class ReleaseType implements TasklistPage {
     this.releaseTypes = this.getReleaseTypes(sessionSentenceType)
 
     this.body = {
-      releaseType: body.releaseType as SelectableReleaseTypes | ReducedReleaseTypes,
+      releaseType: body.releaseType as SelectableReleaseType | ReducedReleaseTypes,
     }
   }
 
@@ -55,7 +46,7 @@ export default class ReleaseType implements TasklistPage {
   }
 
   response() {
-    return { [this.title]: allReleaseTypes[this.body.releaseType] }
+    return { [this.title]: releaseTypes[this.body.releaseType] }
   }
 
   errors() {
@@ -79,8 +70,8 @@ export default class ReleaseType implements TasklistPage {
   }
 
   getReleaseTypes(sessionReleaseType: SentenceTypeResponse): ReleaseTypeOptions | ReducedReleaseTypeOptions {
-    if (sessionReleaseType === 'standardDeterminate' || sessionReleaseType === 'nonStatutory') {
-      return allReleaseTypes
+    if (sessionReleaseType === 'standardDeterminate') {
+      return releaseTypes
     }
     if (sessionReleaseType === 'extendedDeterminate' || sessionReleaseType === 'ipp' || sessionReleaseType === 'life') {
       return {

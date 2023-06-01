@@ -9,8 +9,19 @@ export default class PlacementRequestsController {
       const placementRequests = await this.placementRequestService.getAll(req.user.token)
 
       res.render('match/placementRequests/index', {
-        pageHeading: 'Placement requests',
+        pageHeading: 'My Cases',
         placementRequests,
+      })
+    }
+  }
+
+  show(): TypedRequestHandler<Request, Response> {
+    return async (req: Request, res: Response) => {
+      const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
+
+      res.render('match/placementRequests/show', {
+        pageHeading: `Matching information for ${placementRequest.person.name}`,
+        placementRequest,
       })
     }
   }

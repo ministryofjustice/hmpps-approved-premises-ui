@@ -5,8 +5,8 @@ import {
   referenceDataFactory,
 } from '../../../server/testutils/factories'
 
-import { BookingShowPage, DepartureCreatePage } from '../../../cypress_shared/pages/manage'
-import Page from '../../../cypress_shared/pages/page'
+import { BookingShowPage, DepartureCreatePage } from '../../pages/manage'
+import Page from '../../pages/page'
 
 context('Departures', () => {
   beforeEach(() => {

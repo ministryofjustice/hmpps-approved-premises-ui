@@ -1,20 +1,41 @@
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+
 {% extends "../layout.njk" %}
 
 {% block questions %}
-
     <h1 class="govuk-heading-l">Suitability assessment</h1>
 
     {% for sectionName, question in page.sections %}
+        {%
+            call govukFieldset({
+                legend: {
+                    text: question,
+                    classes: "govuk-fieldset__legend--m"
+                }
+            })
+        %}
 
-        {{ formPageRadios({
-                fieldName: sectionName,
-                fieldset: {
-                    legend: {
-                        text: question,
-                        classes: "govuk-fieldset__legend--s"
-                    }
+        {% set hintHtml %}
+        <details class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                View guidance notes
+                </span>
+            </summary>
+
+            <div class="govuk-details__text">
+                {% include './partials/' + sectionName + '.njk' %}
+            </div>
+        </details>
+        {% endset %}
+
+        {{
+            formPageRadios({
+                hint: {
+                    html: hintHtml
                 },
-                items: [
+                    fieldName: sectionName,
+                    items: [
                     {
                         value: "yes",
                         text: "Yes"
@@ -23,29 +44,21 @@
                         value: "no",
                         text: "No"
                     }
-                ]
-            }, fetchContext()) }}
+                    ]
+                }, fetchContext()
+            )
+        }}
 
-        <details class="govuk-details" data-module="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text">
-                          View guidance notes
-                        </span>
-            </summary>
+        {{
+            formPageTextarea({
+                fieldName: sectionName + "Comments",
+                label: {
+                    text: "Additional comments",
+                    classes: "govuk-label--s"
+                }
+            }, fetchContext())
+        }}
 
-            <div class="govuk-details__text">
-                {% include './partials/' + sectionName + '.njk' %}
-            </div>
-        </details>
-
-        {{ formPageTextarea({
-                    fieldName: sectionName + "Comments",
-                    label: {
-                        text: "Additional comments",
-                        classes: "govuk-label--s"
-                    }
-                }, fetchContext()) }}
-
-    {%endfor %}
-
+        {% endcall %}
+    {% endfor %}
 {% endblock %}

@@ -1,0 +1,32 @@
+import { applicationFactory, personFactory } from '../../../../testutils/factories'
+import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+
+import EsapNotEligible from './esapNotEligible'
+
+describe('EsapNotEligible', () => {
+  const person = personFactory.build()
+  const application = applicationFactory.build({ person })
+  const page = new EsapNotEligible({}, application)
+
+  describe('body', () => {
+    it('should set the body', () => {
+      expect(page.body).toEqual({})
+    })
+  })
+
+  itShouldHavePreviousValue(page, 'esap-exceptional-case')
+
+  itShouldHaveNextValue(page, 'ap-type')
+
+  describe('errors', () => {
+    it('should return an empty object', () => {
+      expect(page.errors()).toEqual({})
+    })
+  })
+
+  describe('response', () => {
+    it('should return an empty object', () => {
+      expect(page.response()).toEqual({})
+    })
+  })
+})

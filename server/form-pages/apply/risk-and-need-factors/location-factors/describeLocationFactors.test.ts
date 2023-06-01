@@ -5,8 +5,8 @@ import DescribeLocationFactors from './describeLocationFactors'
 
 describe('ConvictedOffences', () => {
   describe('body', () => {
-    it('should set the body', () => {
-      const page = new DescribeLocationFactors({ postcodeArea: 'E17' })
+    it('should set the body and uppercase the postcode', () => {
+      const page = new DescribeLocationFactors({ postcodeArea: 'e17' })
 
       expect(page.body).toEqual({ postcodeArea: 'E17' })
     })

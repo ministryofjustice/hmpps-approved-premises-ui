@@ -1,5 +1,6 @@
 import {
   Application,
+  ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplication,
   ArrayOfOASysOffenceDetailsQuestions,
   ArrayOfOASysRiskManagementPlanQuestions,
@@ -7,7 +8,6 @@ import {
   ArrayOfOASysRiskToSelfQuestions,
   ArrayOfOASysSupportingInformationQuestions,
   ApprovedPremisesAssessment as Assessment,
-  ApprovedPremisesBedSearchParameters as BedSearchParameters,
   Booking,
   Document,
   FlagsEnvelope,
@@ -15,6 +15,10 @@ import {
   OASysSection,
   Person,
   PersonAcctAlert,
+  PlacementCriteria,
+  PlacementRequest,
+  PlacementRequestStatus,
+  ReleaseTypeOption,
   RiskTier,
   RoshRisks,
   UserRole,
@@ -125,6 +129,8 @@ export interface SummaryList {
   rows: Array<SummaryListItem>
 }
 
+export type SummaryListWithCard = SummaryList & { card: { title: { text: string } } }
+
 export interface SummaryListActionItem {
   href: string
   text: string
@@ -171,14 +177,21 @@ export interface ErrorMessages {
 }
 
 export interface ErrorSummary {
-  text: string
-  href: string
+  text?: string
+  html?: string
+  href?: string
 }
 
 export interface ErrorsAndUserInput {
+  errorTitle?: string
   errors: ErrorMessages
   errorSummary: Array<string>
   userInput: Record<string, unknown>
+}
+
+export interface BespokeError {
+  errorTitle: string
+  errorSummary: Array<ErrorSummary>
 }
 
 export type TaskListErrors<K extends TasklistPage> = Partial<Record<keyof K['body'], unknown>>
@@ -225,16 +238,11 @@ export type DataServices = Partial<{
 
 export type AssessmentGroupingCategory = 'status' | 'allocation'
 
-export type GroupedAssessments<T extends AssessmentGroupingCategory> = T extends 'status'
-  ? {
-      completed: Array<Assessment>
-      requestedFurtherInformation: Array<Assessment>
-      awaiting: Array<Assessment>
-    }
-  : {
-      allocated: Array<Assessment>
-      unallocated: Array<Assessment>
-    }
+export type GroupedAssessments = {
+  completed: Array<AssessmentSummary>
+  requestedFurtherInformation: Array<AssessmentSummary>
+  awaiting: Array<AssessmentSummary>
+}
 
 export interface AllocatedAndUnallocatedAssessments {
   allocated: Array<Assessment>
@@ -242,10 +250,12 @@ export interface AllocatedAndUnallocatedAssessments {
 }
 
 export interface GroupedApplications {
-  inProgress: Array<Application>
-  requestedFurtherInformation: Array<Application>
-  submitted: Array<Application>
+  inProgress: Array<ApplicationSummary>
+  requestedFurtherInformation: Array<ApplicationSummary>
+  submitted: Array<ApplicationSummary>
 }
+
+export type GroupedPlacementRequests = Record<PlacementRequestStatus, Array<PlacementRequest>>
 
 export interface ApplicationWithRisks extends Application {
   person: PersonWithRisks
@@ -265,6 +275,14 @@ export type OasysImportArrays =
 export type OasysSummariesSection = { [index: string]: OasysImportArrays }
 
 export type JourneyType = 'applications' | 'assessments'
+
+export type ServiceSection = {
+  id: string
+  title: string
+  description: string
+  shortTitle: string
+  href: string
+}
 
 export type UserDetails = {
   id: string
@@ -299,7 +317,15 @@ type ContingencyPlanQuestion = {
 
 export type ContingencyPlanQuestionsRecord = Record<ContingencyPlanQuestionId, ContingencyPlanQuestion>
 
-export interface BedSearchParametersUi extends BedSearchParameters {
-  durationDays: string
+export interface BedSearchParametersUi {
+  durationWeeks: string
   maxDistanceMiles: string
+  startDate: string
+  postcodeDistrict: string
+  requiredCharacteristics: Array<PlacementCriteria>
+  crn: string
+  applicationId: string
+  assessmentId: string
 }
+
+export type ReleaseTypeOptions = Record<ReleaseTypeOption, string>

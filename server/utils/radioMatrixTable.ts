@@ -1,3 +1,4 @@
+import { placementCriteria } from './placementCriteriaUtils'
 import { sentenceCase } from './utils'
 
 export const cell = (requirement: string, preference: string, checked?: boolean) => {
@@ -8,14 +9,16 @@ export const cell = (requirement: string, preference: string, checked?: boolean)
             <input class="govuk-radios__input" id="${id}" name="${requirement}" type="radio" value="${preference}" ${
     checked ? 'checked' : ''
   }>
-            <label class="govuk-label govuk-radios__label" for="${id}"></label>
+            <label class="govuk-label govuk-radios__label" for="${id}"><span class="govuk-visually-hidden">${sentenceCase(
+    requirement,
+  )} ${preference}</span></label>
           </div>
         </td>`
 }
 
 export const row = (rowName: string, option: Array<string>, value: string) => {
   return `<tr>
-  <th class="govuk-table__cell" scope="row">${sentenceCase(rowName)}</td>
+  <th class="govuk-table__cell" scope="row">${placementCriteria[rowName]}</td>
     ${option.map(preference => cell(rowName, preference, value === preference)).join('')}
 </tr>`
 }

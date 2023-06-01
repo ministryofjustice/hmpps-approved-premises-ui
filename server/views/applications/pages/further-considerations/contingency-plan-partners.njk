@@ -4,20 +4,68 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% extends "../../../partials/layout.njk" %}
 
-{% set hiddenInputs %}
+{% macro fieldset(index, includeButton = false) %}
+  {%
+    call govukFieldset({
+      classes: "govuk-fieldset moj-add-another__item",
+      legend: {
+        text: "Partner Agency " + (
+        index + 1),
+        classes: "govuk-fieldset__legend moj-add-another__title govuk-fieldset__legend--m"
+      }
+    })
+  %}
+  {% for id, label in page.fields %}
+    {% set type = "text" %}
+    {% set inputMode = 'text' %}
+    {% set value = page.body[index] %}
+    {% set fieldName = "partnerAgencyDetails[" + index + "][" + id + "]" %}
+    {% set fieldId = "partnerAgencyDetails_" + index + "_" + id %}
+    {% set context = fetchContext() %}
 
-{% for partnerAgency in page.partnerAgencyDetails%}
-  {% set iteration = loop.index0 %}
-  {% for id, value in partnerAgency %}
-    {% set fieldName = "partnerAgencyDetails[" + iteration + "][" + id + "]"%}
-    <input type="hidden" name="{{fieldName}}" value="{{value}}"/>
-  {%endfor %}
-{%endfor %}
+    {% if id == "phoneNumber" %}
+      {% set type = "number" %}
+      {% set inputMode = 'numeric'%}
+    {% endif %}
 
-{% endset %}
+    {{
+      govukInput({
+        label: {
+          text: label
+        },
+        id: fieldId,
+        name: fieldName,
+        type: type,
+        inputMode: inputMode,
+        errorMessage: errors[fieldId],
+        value: context.partnerAgencyDetails[index][id]
+      })
+    }}
+  {% endfor %}
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+  {% if includeButton %}
+    {{ addButton() }}
+  {% endif %}
+  {% endcall %}
+{% endmacro %}
+
+{% macro addButton() %}
+  {{
+    govukButton({
+      text: "Remove",
+      attributes: {
+        "data-remove-agency": "true"
+      },
+      classes: "govuk-button govuk-button--secondary moj-add-another__remove-button"
+    })
+  }}
+{% endmacro %}
 
 {% set pageTitle = applicationName + " - " + page.title %}
 {% set mainClasses = "app-container govuk-body" %}
@@ -30,59 +78,119 @@
 {% endblock %}
 
 {% block content %}
-  <form action="{{ paths.applications.pages.update({ id: applicationId, task: task, page: page.name }) }}?_method=PUT" method="post">
-    <h1 class="govuk-heading-l">{{page.title}}</h1>
-    <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
-    {{ hiddenInputs | safe }}
-    {{ showErrorSummary(errorSummary) }}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form action="{{ paths.applications.pages.update({ id: applicationId, task: task, page: page.name }) }}?_method=PUT" method="post">
+        {% if errorSummary | length %}
+          {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errorSummary
+          }) }}
+        {% endif %}
 
-    {% for id, label in page.fields %}
-      {% set type = "text" %}
-      {% set inputMode = 'text'%}
+        <h1 class="govuk-heading-l">{{page.title}}</h1>
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
-      {% if id == "phoneNumber" %}
-        {% set type = "number" %}
-        {% set inputMode = 'numeric'%}
-      {% endif %}
-      {{ formPageInput({
-        label: {
-          text: label
-        },
-        type: type,
-        inputMode: inputMode,
-        fieldName: id,
-        classes: "govuk-input--width-20"
-      }) }}
-    {% endfor %}
+        <div id="fieldset-wrapper">
+          {% for i in range(0, 5) -%}
+            {{ fieldset(i) }}
+          {% endfor %}
+        </div>
 
-    {{ govukButton({
-      text: "Add another agency",
-      classes: "govuk-button--secondary"
-    }) }}
-  </form>
+        {{
+          govukButton({
+            text: "Add another agency",
+            attributes: {
+              "data-add-agency": "true"
+            },
+            classes: "govuk-button--secondary"
+          })
+        }}
 
-  <form action="{{ paths.applications.pages.update({ id: applicationId, task: task, page: page.name }) }}?_method=PUT" method="post">
-    <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-    <input type="hidden" name="saveAndContinue" value="1"/>
+        {{
+          govukButton({
+            text: "Save and continue"
+          })
+        }}
+      </form>
+    </div>
+  </div>
+{% endblock %}
 
-    {{ hiddenInputs | safe }}
+{% block extraScripts %}
+  <script type="text/javascript" nonce="{{ cspNonce }}">
+    function initializeAddButton() {
+      var addButton = document.querySelector('button[data-add-agency]');
 
-    {% if page.partnerAgencyDetails.length >= 1 %}
-      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-      <h2 class="govuk-heading-m">List of partner agencies</h2>
-      {% for partnerAgency in page.partnerAgencyDetails%}
-        {{ govukSummaryList({
-        rows: FormUtils.convertKeyValuePairsToSummaryListItems(partnerAgency, page.fields)
-      })}}
+      addButton.addEventListener("click", (event) => {
+        var fieldsets = document.querySelectorAll('fieldset')
+        var hiddenFieldsets = document.querySelectorAll('fieldset[class*="govuk-visually-hidden"]');
 
-      {%endfor %}
-    {% endif %}
+        if (hiddenFieldsets.length) {
+          hiddenFieldsets[0]
+            .classList
+            .remove("govuk-visually-hidden");
+        } else {
+          var fieldsetWrapper = document.querySelector('#fieldset-wrapper')
+          var newFieldset = `{{ fieldset("INDEX", true) }}`
+            .replace('INDEX1', fieldsets.length)
+            .replaceAll('INDEX', fieldsets.length - 1)
+          fieldsetWrapper.innerHTML += newFieldset;
 
-    {{ govukButton({
-      text: "Save and continue"
-    }) }}
+          var removeButtons = fieldsetWrapper.querySelectorAll('button[data-remove-agency]');
+          initializeRemoveButtons(removeButtons);
+        }
 
-  </form>
+        event.preventDefault();
+      })
+    }
 
+    function initializeRemoveButtons(buttons) {
+      for (let i = 0; i < buttons.length; i++) {
+        console.log(buttons[i])
+        buttons[i].addEventListener("click", (event) => {
+          var fieldset = event.target.parentElement;
+          var inputs = fieldset.querySelectorAll('input');
+
+          fieldset
+            .classList
+            .add('govuk-visually-hidden');
+
+          for (var i = 0; i < inputs.length; i++) {
+            inputs[i].value = '';
+          }
+
+          event.preventDefault();
+        })
+      }
+    }
+
+    function initializeFieldsets() {
+      var fieldsets = document.querySelectorAll('fieldset')
+
+      for (let i = 1; i < fieldsets.length; i++) {
+        var complete = false;
+        {% for id, label in page.fields %}
+          var {{ id }} = fieldsets[i].querySelector('input[name="partnerAgencyDetails[' + i + '][{{ id }}]"]');
+          if ({{ id }}.value.length > 0) {
+            complete = true;
+          }
+        {% endfor %}
+        if (complete === false) {
+          fieldsets[i]
+            .classList
+            .add('govuk-visually-hidden');
+        }
+        fieldsets[i].innerHTML += `{{ addButton() }}`
+      }
+
+      var removeButtons = document.querySelectorAll('button[data-remove-agency]');
+
+      initializeAddButton();
+      initializeRemoveButtons(removeButtons);
+    }
+
+    initializeFieldsets();
+  </script>
 {% endblock %}

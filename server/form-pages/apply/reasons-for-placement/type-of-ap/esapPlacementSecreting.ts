@@ -7,7 +7,7 @@ import { convertToTitleCase } from '../../../../utils/utils'
 import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { EsapReasons } from './esapPlacementScreening'
-import ApType from './apType'
+import SelectApType from './apType'
 
 export const secretingHistory = {
   radicalisationLiterature: 'Literature and materials supporting radicalisation ideals',
@@ -53,7 +53,7 @@ export default class EsapPlacementSecreting implements TasklistPage {
   next() {
     const esapReasons = retrieveQuestionResponseFromApplicationOrAssessment(
       this.application,
-      ApType,
+      SelectApType,
       'esapReasons',
     ) as Array<keyof EsapReasons>
 

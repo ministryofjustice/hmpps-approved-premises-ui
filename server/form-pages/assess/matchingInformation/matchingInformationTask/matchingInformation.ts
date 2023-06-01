@@ -1,72 +1,55 @@
-import type { ApType, Gender } from '@approved-premises/api'
-import type { TaskListErrors } from '@approved-premises/ui'
+import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 
+import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { lowerCase, sentenceCase } from '../../../../utils/utils'
+import {
+  AccessibilityCriteria,
+  ApTypeCriteria,
+  OffenceAndRiskCriteria,
+  PlacementRequirementCriteria,
+  SpecialistSupportCriteria,
+  accessibilityOptions,
+  apTypeOptions,
+  offenceAndRiskOptions,
+  placementCriteria,
+  placementRequirementOptions,
+  specialistSupportOptions,
+} from '../../../../utils/placementCriteriaUtils'
 
-const apTypes: Record<ApType, string> = {
-  normal: 'Standard AP',
-  pipe: 'Psychologically Informed Planned Environment (PIPE)',
-  esap: 'Enhanced Security AP (ESAP)',
-  rfap: 'Recovery Focused Approved Premises (RFAP)',
-} as const
-
-const apGenders: Array<Gender> = ['male', 'female']
-
+const placementRequirements = Object.keys(placementRequirementOptions)
 const placementRequirementPreferences = ['essential' as const, 'desirable' as const, 'notRelevant' as const]
 type PlacementRequirementPreference = (typeof placementRequirementPreferences)[number]
 
-export const placementRequirements = [
-  'wheelchairAccessible' as const,
-  'singleRoom' as const,
-  'adaptedForHearingImpairments' as const,
-  'adaptedForVisualImpairments' as const,
-  'adaptedForRestrictedMobility' as const,
-  'cateringRequired' as const,
-]
-
-export const offenceAndRiskInformationKeys = [
-  'contactSexualOffencesAgainstAnAdultAdults',
-  'nonContactSexualOffencesAgainstAnAdultAdults',
-  'contactSexualOffencesAgainstChildren',
-  'nonContactSexualOffencesAgainstChildren',
-  'nonSexualOffencesAgainstChildren',
-  'arsonOffences',
-  'hateBasedOffences',
-  'vulnerableToExploitation',
-]
-
+const offenceAndRiskInformationKeys = Object.keys(offenceAndRiskOptions)
 const offenceAndRiskInformationRelevance = ['relevant', 'notRelevant']
 type OffenceAndRiskInformationRelevance = (typeof offenceAndRiskInformationRelevance)[number]
 
 export type MatchingInformationBody = {
-  apType: ApType
-  apGender: Gender
-  mentalHealthSupport?: '1' | '' | undefined
-  wheelchairAccessible: PlacementRequirementPreference
-  singleRoom: PlacementRequirementPreference
-  adaptedForHearingImpairments: PlacementRequirementPreference
-  adaptedForVisualImpairments: PlacementRequirementPreference
-  adaptedForRestrictedMobility: PlacementRequirementPreference
-  cateringRequired: PlacementRequirementPreference
-  contactSexualOffencesAgainstAnAdultAdults: OffenceAndRiskInformationRelevance
-  nonContactSexualOffencesAgainstAnAdultAdults: OffenceAndRiskInformationRelevance
-  contactSexualOffencesAgainstChildren: OffenceAndRiskInformationRelevance
-  nonContactSexualOffencesAgainstChildren: OffenceAndRiskInformationRelevance
-  nonSexualOffencesAgainstChildren: OffenceAndRiskInformationRelevance
-  arsonOffences: OffenceAndRiskInformationRelevance
-  hateBasedOffences: OffenceAndRiskInformationRelevance
-  vulnerableToExploitation: OffenceAndRiskInformationRelevance
-}
+  [Key in OffenceAndRiskCriteria | PlacementRequirementCriteria]: Key extends OffenceAndRiskCriteria
+    ? OffenceAndRiskInformationRelevance
+    : Key extends PlacementRequirementCriteria
+    ? PlacementRequirementPreference
+    : never
+} & {
+  apType: ApTypeCriteria | 'normal'
+  accessibilityCriteria: Array<AccessibilityCriteria>
+  specialistSupportCriteria: Array<SpecialistSupportCriteria>
+  cruInformation: string
+} & YesOrNoWithDetail<'lengthOfStayAgreed'>
 
 @Page({
   name: 'matching-information',
   bodyProperties: [
     'apType',
-    'apGender',
-    'mentalHealthSupport',
+    'accessibilityCriteria',
+    'specialistSupportCriteria',
+    'lengthOfStayAgreed',
+    'lengthOfStayAgreedDetail',
+    'cruInformation',
     ...placementRequirements,
     ...offenceAndRiskInformationKeys,
   ],
@@ -78,33 +61,38 @@ export default class MatchingInformation implements TasklistPage {
 
   apTypeQuestion = 'What type of AP is required?'
 
-  apTypes = apTypes
+  apTypes = apTypeOptions
 
-  apGenderQuestion = 'Which gender AP is required?'
-
-  apGenders = apGenders
-
-  placementRequirementTableHeadings = ['Placement requirements', 'Essential', 'Desirable', 'Not relevant']
+  placementRequirementTableHeadings = ['Specify placement requirements', 'Essential', 'Desirable', 'Not relevant']
 
   placementRequirements = placementRequirements
 
   placementRequirementPreferences = placementRequirementPreferences
 
-  relevantInformationTableHeadings = ['Offence and risk information', 'Relevant', 'Not relevant']
+  relevantInformationTableHeadings = ['Risks and offences to consider', 'Relevant', 'Not relevant']
 
   offenceAndRiskInformationKeys = offenceAndRiskInformationKeys
 
   offenceAndRiskInformationRelevance = offenceAndRiskInformationRelevance
 
-  mentalHealthSupport = {
-    question: 'If this person requires specialist mental health support, select the box below',
-    hint: 'There are only two AP nationally with a semi-specialism in mental health. Placement in one of these AP is not guaranteed.',
-    label: 'Semi-specialist mental health',
-    value: '',
+  accessibilityOptions = accessibilityOptions
+
+  specialistSupportOptions = specialistSupportOptions
+
+  constructor(private _body: Partial<MatchingInformationBody>, public assessment: Assessment) {}
+
+  set body(value: MatchingInformationBody) {
+    this._body = value
   }
 
-  constructor(public body: MatchingInformationBody) {
-    this.mentalHealthSupport.value = body.mentalHealthSupport
+  get body(): MatchingInformationBody {
+    return {
+      ...this._body,
+      accessibilityCriteria: this._body.accessibilityCriteria ? [this._body.accessibilityCriteria].flat() : [],
+      specialistSupportCriteria: this._body.specialistSupportCriteria
+        ? [this._body.specialistSupportCriteria].flat()
+        : [],
+    } as MatchingInformationBody
   }
 
   previous() {
@@ -118,10 +106,10 @@ export default class MatchingInformation implements TasklistPage {
   response() {
     const response = {
       [this.apTypeQuestion]: this.apTypes[this.body.apType],
-      [this.apGenderQuestion]: sentenceCase(this.apGenders[this.body.apGender === 'male' ? 0 : 1]),
-      [this.mentalHealthSupport.question]:
-        this.body.mentalHealthSupport === '1' ? `${this.mentalHealthSupport.label} selected` : 'Unselected',
     }
+
+    response['Specialist support needs'] = this.selectedOptions('specialistSupport')
+    response['Accessibility needs'] = this.selectedOptions('accessibility')
 
     this.placementRequirements.forEach(placementRequirement => {
       response[`${sentenceCase(placementRequirement)}`] = `${sentenceCase(this.body[placementRequirement])}`
@@ -131,6 +119,16 @@ export default class MatchingInformation implements TasklistPage {
       response[`${sentenceCase(offenceOrRiskInformation)}`] = `${sentenceCase(this.body[offenceOrRiskInformation])}`
     })
 
+    response['Do you agree with the suggested length of stay?'] = sentenceCase(this.body.lengthOfStayAgreed)
+
+    if (this.body.lengthOfStayAgreedDetail) {
+      response['Recommended length of stay'] = `${this.body.lengthOfStayAgreedDetail} weeks`
+    }
+
+    if (this.body.cruInformation) {
+      response['Information for Central Referral Unit (CRU) manager'] = this.body.cruInformation
+    }
+
     return response
   }
 
@@ -138,20 +136,61 @@ export default class MatchingInformation implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.apType) errors.apType = 'You must select the type of AP required'
-    if (!this.body.apType) errors.apGender = 'You must select the gender of AP required'
 
     this.placementRequirements.forEach(placementRequirement => {
       if (!this.body[placementRequirement]) {
-        errors[placementRequirement] = `You must specify a preference for ${lowerCase(placementRequirement)}`
+        errors[placementRequirement] = `You must specify a preference for ${lowerCase(
+          placementCriteria[placementRequirement],
+        )}`
       }
     })
 
     this.offenceAndRiskInformationKeys.forEach(offenceOrRiskInformation => {
       if (!this.body[offenceOrRiskInformation]) {
-        errors[offenceOrRiskInformation] = `You must specify if ${lowerCase(offenceOrRiskInformation)} is relevant`
+        errors[offenceOrRiskInformation] = `You must specify if ${lowerCase(
+          placementCriteria[offenceOrRiskInformation],
+        )} is relevant`
       }
     })
 
+    if (!this.body.lengthOfStayAgreed) {
+      errors.lengthOfStayAgreed = 'You must state if you agree with the length of the stay'
+    }
+
+    if (this.body.lengthOfStayAgreed === 'no' && !this.body.lengthOfStayAgreedDetail) {
+      errors.lengthOfStayAgreedDetail = 'You must provide a recommended length of stay'
+    }
+
     return errors
+  }
+
+  get suggestedLengthOfStay() {
+    return placementDurationFromApplication(this.assessment.application)
+  }
+
+  get specialistSupportCheckboxes() {
+    return Object.keys(specialistSupportOptions).map((k: SpecialistSupportCriteria) => {
+      return {
+        value: k,
+        text: specialistSupportOptions[k],
+        checked: (this.body.specialistSupportCriteria || []).includes(k),
+      }
+    })
+  }
+
+  get accessibilityCheckBoxes() {
+    return Object.keys(accessibilityOptions).map((k: AccessibilityCriteria) => {
+      return {
+        value: k,
+        text: accessibilityOptions[k],
+        checked: (this.body.accessibilityCriteria || []).includes(k),
+      }
+    })
+  }
+
+  private selectedOptions(key: 'specialistSupport' | 'accessibility') {
+    const selectedOptions = this.body[`${key}Criteria`] || []
+
+    return selectedOptions.length ? selectedOptions.map((k: string) => this[`${key}Options`][k]).join(', ') : 'None'
   }
 }

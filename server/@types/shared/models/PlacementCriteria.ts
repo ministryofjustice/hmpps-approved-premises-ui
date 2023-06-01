@@ -2,4 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type PlacementCriteria = 'isSemiSpecialistMentalHealth' | 'isRecoveryFocussed' | 'isSuitableForVulnerable' | 'acceptsSexOffenders' | 'acceptsChildSexOffenders' | 'acceptsNonSexualChildOffenders' | 'acceptsHateCrimeOffenders' | 'isCatered' | 'hasWideStepFreeAccess' | 'hasWideAccessToCommunalAreas' | 'hasStepFreeAccessToCommunalAreas' | 'hasWheelChairAccessibleBathrooms' | 'hasLift' | 'hasTactileFlooring' | 'hasBrailleSignage' | 'hasHearingLoop';
+export type PlacementCriteria = 'isPIPE' | 'isESAP' | 'isSemiSpecialistMentalHealth' | 'isRecoveryFocussed' | 'hasBrailleSignage' | 'hasTactileFlooring' | 'hasHearingLoop' | 'isStepFreeDesignated' | 'isArsonDesignated' | 'isWheelchairDesignated' | 'isSingleRoom' | 'isCatered' | 'isSuitedForSexOffenders' | 'isSuitableForVulnerable' | 'acceptsSexOffenders' | 'acceptsHateCrimeOffenders' | 'acceptsChildSexOffenders' | 'acceptsNonSexualChildOffenders' | 'isArsonSuitable' | 'isGroundFloor' | 'hasEnSuite';

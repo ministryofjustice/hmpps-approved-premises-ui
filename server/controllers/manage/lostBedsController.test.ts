@@ -2,13 +2,19 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
+import { SanitisedError } from '../../sanitisedError'
 import LostBedService, { LostBedReferenceData } from '../../services/lostBedService'
 import LostBedsController from './lostBedsController'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
+import {
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+  generateConflictErrorAndRedirect,
+} from '../../utils/validation'
 import { lostBedFactory } from '../../testutils/factories'
 import paths from '../../paths/manage'
 
 jest.mock('../../utils/validation')
+jest.mock('../../utils/bookingUtils')
 
 describe('LostBedsController', () => {
   const token = 'SOME_TOKEN'
@@ -21,6 +27,11 @@ describe('LostBedsController', () => {
 
   const lostBedController = new LostBedsController(lostBedService)
   const premisesId = 'premisesId'
+  const bedId = 'bedId'
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
 
   describe('new', () => {
     it('renders the form', async () => {
@@ -32,15 +43,18 @@ describe('LostBedsController', () => {
 
       request.params = {
         premisesId,
+        bedId,
       }
 
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('lostBeds/new', {
         premisesId,
+        bedId,
         lostBedReasons,
         errors: {},
         errorSummary: [],
+        errorTitle: undefined,
       })
       expect(lostBedService.getReferenceData).toHaveBeenCalledWith(token)
     })
@@ -56,15 +70,18 @@ describe('LostBedsController', () => {
 
       request.params = {
         premisesId,
+        bedId,
       }
 
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('lostBeds/new', {
-        premisesId,
+        premisesId: request.params.premisesId,
+        bedId: request.params.bedId,
         lostBedReasons,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
+        errorTitle: errorsAndUserInput.errorTitle,
         ...errorsAndUserInput.userInput,
       })
     })
@@ -79,6 +96,7 @@ describe('LostBedsController', () => {
 
       request.params = {
         premisesId,
+        bedId: lostBed.bedId,
       }
 
       request.body = {
@@ -94,7 +112,8 @@ describe('LostBedsController', () => {
       await requestHandler(request, response, next)
 
       expect(lostBedService.createLostBed).toHaveBeenCalledWith(token, request.params.premisesId, {
-        ...request.body.lostBed,
+        ...lostBed,
+        bedId: request.params.bedId,
         startDate: '2022-08-22',
         endDate: '2022-09-22',
         serviceName: 'approved-premises',
@@ -103,27 +122,67 @@ describe('LostBedsController', () => {
       expect(response.redirect).toHaveBeenCalledWith(paths.premises.show({ premisesId: request.params.premisesId }))
     })
 
-    it('renders with errors if the API returns an error', async () => {
-      const requestHandler = lostBedController.create()
-
+    describe('when errors are raised', () => {
       request.params = {
         premisesId,
+        bedId,
       }
 
-      const err = new Error()
+      const requestHandler = lostBedController.create()
 
-      lostBedService.createLostBed.mockImplementation(() => {
-        throw err
+      it('should call catchValidationErrorOrPropogate with a standard error', async () => {
+        const err = new Error()
+
+        lostBedService.createLostBed.mockImplementation(() => {
+          throw err
+        })
+
+        await requestHandler(request, response, next)
+
+        expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          err,
+          paths.lostBeds.new({ premisesId, bedId }),
+        )
       })
 
-      await requestHandler(request, response, next)
+      it('should call generateConflictErrorAndRedirect if the error is a 409', async () => {
+        const err = createMock<SanitisedError>({ status: 409, data: 'some data' })
 
-      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
-        response,
-        err,
-        paths.lostBeds.new({ premisesId: request.params.premisesId }),
-      )
+        lostBedService.createLostBed.mockImplementation(() => {
+          throw err
+        })
+
+        await requestHandler(request, response, next)
+
+        expect(generateConflictErrorAndRedirect).toHaveBeenCalledWith(
+          request,
+          response,
+          premisesId,
+          bedId,
+          ['startDate', 'endDate'],
+          err,
+          paths.lostBeds.new({ premisesId, bedId }),
+        )
+      })
+    })
+  })
+
+  describe('show', () => {
+    it('shows the lost bed', async () => {
+      const lostBed = lostBedFactory.build()
+      lostBedService.getLostBed.mockResolvedValue(lostBed)
+
+      const requestHandler = lostBedController.show()
+
+      await requestHandler({ ...request, params: { premisesId, id: lostBed.id } }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('lostBeds/show', {
+        premisesId,
+        lostBed,
+      })
+      expect(lostBedService.getLostBed).toHaveBeenCalledWith(token, premisesId, lostBed.id)
     })
   })
 })

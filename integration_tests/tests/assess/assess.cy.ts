@@ -1,15 +1,17 @@
 import {
   assessmentFactory,
+  assessmentSummaryFactory,
   clarificationNoteFactory,
   documentFactory,
   userFactory,
 } from '../../../server/testutils/factories'
 
 import { overwriteApplicationDocuments } from '../../../server/utils/assessments/documentUtils'
+import { acceptanceData } from '../../../server/utils/assessments/acceptanceData'
 
-import AssessHelper from '../../../cypress_shared/helpers/assess'
-import { ListPage, TaskListPage } from '../../../cypress_shared/pages/assess'
-import Page from '../../../cypress_shared/pages/page'
+import AssessHelper from '../../helpers/assess'
+import { ListPage, ShowPage, TaskListPage } from '../../pages/assess'
+import Page from '../../pages/page'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -56,7 +58,7 @@ context('Assess', () => {
       expect(requests).to.have.length(1)
 
       const body = JSON.parse(requests[0].body)
-      expect(body).to.have.keys('document', 'requirements')
+      expect(body).to.deep.equal(acceptanceData(this.assessHelper.assessment))
     })
   })
 
@@ -79,8 +81,8 @@ context('Assess', () => {
         expect(body.query).equal(note)
       })
       .then(() => {
-        // Given my assessment is put into a pending state
-        this.assessHelper.updateAssessmentStatus('pending')
+        // Given my assessment is put into an awaiting response state
+        this.assessHelper.updateAssessmentStatus('awaiting_response')
       })
       .then(() => {
         // When I am redirected to the dashboard
@@ -121,8 +123,8 @@ context('Assess', () => {
     this.assessHelper
       .addClarificationNote('Note goes here')
       .then(() => {
-        // And my assessment is put into a pending state
-        this.assessHelper.updateAssessmentStatus('pending')
+        // And my assessment is put into an awaiting response state
+        this.assessHelper.updateAssessmentStatus('awaiting_response')
       })
       .then(() => {
         const listPage = Page.verifyOnPage(ListPage)
@@ -163,5 +165,28 @@ context('Assess', () => {
           expect(body).to.have.keys('document', 'rejectionRationale')
         })
       })
+  })
+
+  it('shows a read-only version of the assessment', function test() {
+    // Given I have completed an assessment
+    const updatedAssessment = { ...this.assessment, status: 'completed' }
+    const updatedAssessmentSummary = assessmentSummaryFactory.build({ id: this.assessment.id, status: 'completed' })
+    cy.task('stubAssessment', updatedAssessment)
+    cy.task('stubAssessments', [updatedAssessmentSummary])
+
+    // And I visit the list page
+    const listPage = ListPage.visit()
+
+    // When I click on the Completed tab
+    listPage.clickCompleted()
+
+    // And I click on my assessment
+    listPage.clickAssessment(this.assessment)
+
+    // Then I should see a read-only version of the assessment
+    const showPage = Page.verifyOnPage(ShowPage, this.assessment)
+
+    showPage.shouldShowPersonInformation()
+    showPage.shouldShowResponses()
   })
 })

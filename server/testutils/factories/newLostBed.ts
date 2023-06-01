@@ -9,8 +9,8 @@ export default Factory.define<NewLostBed>(() => {
   const startDate = faker.date.soon()
   const endDate = faker.date.future()
   return {
-    id: faker.datatype.uuid(),
-    bedId: faker.datatype.uuid(),
+    id: faker.string.uuid(),
+    bedId: faker.string.uuid(),
     notes: faker.lorem.sentence(),
     startDate: DateFormats.dateObjToIsoDate(startDate),
     'startDate-day': startDate.getDate().toString(),
@@ -20,7 +20,7 @@ export default Factory.define<NewLostBed>(() => {
     'endDate-day': endDate.getDate().toString(),
     'endDate-month': endDate.getMonth().toString(),
     'endDate-year': endDate.getFullYear().toString(),
-    referenceNumber: faker.datatype.uuid(),
+    referenceNumber: faker.string.uuid(),
     reason: referenceDataFactory.lostBedReasons().build().id,
     serviceName: 'approved-premises',
   }

@@ -8,10 +8,13 @@ import departureFactory from './departure'
 import personFactory from './person'
 import { DateFormats } from '../../utils/dateUtils'
 import cancellationFactory from './cancellation'
+import { bedFactory } from './room'
 
 const today = DateFormats.dateObjToIsoDate(startOfToday())
 const soon = () =>
-  DateFormats.dateObjToIsoDate(faker.date.soon(5, addDays(new Date(new Date().setHours(0, 0, 0, 0)), 1)))
+  DateFormats.dateObjToIsoDate(
+    faker.date.soon({ days: 5, refDate: addDays(new Date(new Date().setHours(0, 0, 0, 0)), 1) }),
+  )
 const past = () => DateFormats.dateObjToIsoDate(faker.date.past())
 const future = () => DateFormats.dateObjToIsoDate(faker.date.future())
 class BookingFactory extends Factory<Booking> {
@@ -95,8 +98,8 @@ export default BookingFactory.define(() => {
     originalArrivalDate: arrivalDate,
     departureDate,
     originalDepartureDate: departureDate,
-    name: `${faker.name.firstName()} ${faker.name.lastName()}`,
-    id: faker.datatype.uuid(),
+    name: `${faker.person.firstName()} ${faker.person.lastName()}`,
+    id: faker.string.uuid(),
     status: 'awaiting-arrival' as const,
     arrival: arrivalFactory.build(),
     departure: departureFactory.build(),
@@ -105,5 +108,6 @@ export default BookingFactory.define(() => {
     createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
     cancellations: cancellationFactory.buildList(1),
     departures: departureFactory.buildList(1),
+    bed: bedFactory.build(),
   }
 })

@@ -1,5 +1,5 @@
 import AccessNeeds from './accessNeeds'
-import AccessNeedsMobility from './accessNeedsMobility'
+import AccessNeedsFurtherQuestions from './accessNeedsFurtherQuestions'
 import Covid from './covid'
 
 import { Task } from '../../../utils/decorators'
@@ -7,6 +7,6 @@ import { Task } from '../../../utils/decorators'
 @Task({
   name: 'Add access, cultural and healthcare needs',
   slug: 'access-and-healthcare',
-  pages: [AccessNeeds, AccessNeedsMobility, Covid],
+  pages: [AccessNeeds, AccessNeedsFurtherQuestions, Covid],
 })
 export default class AccessAndHealthcare {}

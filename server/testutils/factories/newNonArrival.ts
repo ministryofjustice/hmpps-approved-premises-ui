@@ -6,6 +6,6 @@ import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<NewNonarrival>(() => ({
   notes: faker.lorem.sentence(),
-  reason: faker.datatype.uuid(),
+  reason: faker.string.uuid(),
   date: DateFormats.dateObjToIsoDate(faker.date.soon()),
 }))

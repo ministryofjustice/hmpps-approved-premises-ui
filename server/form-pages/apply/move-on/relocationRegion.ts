@@ -21,7 +21,9 @@ export default class RelocationRegion implements TasklistPage {
       postcodeArea?: string
     },
     private readonly application: ApprovedPremisesApplication,
-  ) {}
+  ) {
+    this.body.postcodeArea = body?.postcodeArea?.toUpperCase()
+  }
 
   previous() {
     return 'placement-duration'

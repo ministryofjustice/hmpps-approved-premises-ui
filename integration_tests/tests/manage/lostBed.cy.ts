@@ -1,6 +1,11 @@
-import { dateCapacityFactory, lostBedFactory, premisesFactory } from '../../../server/testutils/factories'
+import {
+  bookingFactory,
+  dateCapacityFactory,
+  lostBedFactory,
+  premisesFactory,
+} from '../../../server/testutils/factories'
 
-import { LostBedCreatePage } from '../../../cypress_shared/pages/manage'
+import { LostBedCreatePage, LostBedShowPage } from '../../pages/manage'
 
 context('LostBed', () => {
   beforeEach(() => {
@@ -18,6 +23,7 @@ context('LostBed', () => {
     cy.task('stubSinglePremises', premises)
 
     // When I navigate to the lost bed form
+
     const lostBed = lostBedFactory.build({
       startDate: '2022-02-11',
       endDate: '2022-03-11',
@@ -28,7 +34,7 @@ context('LostBed', () => {
       dateCapacities: dateCapacityFactory.buildList(5),
     })
 
-    const page = LostBedCreatePage.visit(premises.id)
+    const page = LostBedCreatePage.visit(premises.id, lostBed.bedId)
 
     // And I fill out the form
     page.completeForm(lostBed)
@@ -61,7 +67,7 @@ context('LostBed', () => {
     const premises = premisesFactory.build()
 
     // When I navigate to the lost bed form
-    const page = LostBedCreatePage.visit(premises.id)
+    const page = LostBedCreatePage.visit(premises.id, 'bedId')
 
     // And I miss required fields
     cy.task('stubLostBedErrors', {
@@ -73,5 +79,57 @@ context('LostBed', () => {
 
     // Then I should see error messages relating to that field
     page.shouldShowErrorMessagesForFields(['startDate', 'endDate', 'reason', 'referenceNumber'])
+  })
+
+  it('should show an error when there are booking conflicts', () => {
+    // Given I am signed in
+    cy.signIn()
+
+    const premises = premisesFactory.build()
+    const conflictingBooking = bookingFactory.build()
+    cy.task('stubSinglePremises', premises)
+    cy.task('stubBookingGet', { premisesId: premises.id, booking: conflictingBooking })
+
+    // When I navigate to the lost bed form
+
+    const lostBed = lostBedFactory.build({
+      startDate: '2022-02-11',
+      endDate: '2022-03-11',
+    })
+    cy.task('stubLostBedConflictError', {
+      premisesId: premises.id,
+      conflictingEntityId: conflictingBooking.id,
+      conflictingEntityType: 'booking',
+    })
+    cy.task('stubPremisesCapacity', {
+      premisesId: premises.id,
+      dateCapacities: dateCapacityFactory.buildList(5),
+    })
+
+    const page = LostBedCreatePage.visit(premises.id, lostBed.bedId)
+
+    // And I fill out the form
+    page.completeForm(lostBed)
+    page.clickSubmit()
+
+    // Then I should see an error message
+    page.shouldShowDateConflictErrorMessages(conflictingBooking, 'booking')
+  })
+
+  it('should show a lost bed', () => {
+    // Given I am signed in
+    cy.signIn()
+
+    // And I have created a lost bed
+    const premises = premisesFactory.build()
+    const lostBed = lostBedFactory.build()
+
+    cy.task('stubLostBed', { premisesId: premises.id, lostBed })
+
+    // And I visit that lost bed's show page
+    const page = LostBedShowPage.visit(premises.id, lostBed)
+
+    // Then I should see the details of that lost bed
+    page.shouldShowLostBedDetail()
   })
 })

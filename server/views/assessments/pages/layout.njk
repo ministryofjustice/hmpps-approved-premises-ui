@@ -19,8 +19,7 @@
 {% set pageTitle = applicationName + " - " + page.title %}
 {% set mainClasses = "app-container govuk-body" %}
 
-{% block content %}
-
+{% block beforeContent %}
   {% if page.previous() === 'dashboard' %}
     {{ govukBackLink({
       text: "Back",
@@ -32,6 +31,9 @@
       href: paths.assessments.pages.show({ id: assessmentId, task: task, page: page.previous() })
     }) }}
   {% endif %}
+{% endblock %}
+
+{% block content %}
 
   <div class="govuk-grid-row">
     <div class="{{ columnClasses | default("govuk-grid-column-two-thirds") }}">

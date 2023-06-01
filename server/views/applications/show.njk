@@ -1,12 +1,22 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "../partials/personDetails.njk" import personDetails %}
 
 {% extends "../partials/layout.njk" %}
 
 {% set pageHeading = "View Application" %}
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+  {% if referrer %}
+    {{ govukBackLink({
+      text: "Back",
+      href: referrer
+    }) }}
+  {% endif %}
+{% endblock %}
 
 {% block content %}
   <div class="govuk-grid-row">
@@ -15,101 +25,9 @@
         {{ pageHeading }}
       </h1>
 
-      {{ govukSummaryList({
-          card: {
-            title: {
-              text: "Person Details",
-              headingLevel: "3"
-            },
-            attributes: {
-              'data-cy-section': "person-details"
-            }
-          },
-          rows: ([
-            {
-              key: {
-                text: "Name"
-              },
-              value: {
-                text: application.person.name
-              }
-            },
-            {
-              key: {
-                text: "CRN"
-              },
-              value: {
-                text: application.person.crn
-              }
-            },
-            {
-              key: {
-                text: "Date of Birth"
-              },
-              value: {
-                text: formatDate(application.person.dateOfBirth, { format: 'short' })
-              }
-            },
-            {
-              key: {
-                text: "NOMS Number"
-              },
-              value: {
-                text: application.person.nomsNumber
-              }
-            },
-            {
-              key: {
-                text: "Nationality"
-              },
-              value: {
-                text: application.person.nationality
-              }
-            },
-            {
-              key: {
-                text: "Religion or Belief"
-              },
-              value: {
-                text: application.person.religionOrBelief
-              }
-            },
-            {
-              key: {
-                text: "Sex"
-              },
-              value: {
-                text: application.person.sex
-              }
-            },
-            {
-              key: {
-                text: "Gender Identity"
-              },
-              value: {
-                text: application.person.genderIdentity
-              }
-            },
-            {
-              key: {
-                text: "Status"
-              },
-              value: {
-                html: statusTag(application.person.status)
-              }
-            },
-            {
-              key: {
-                text: "Prison"
-              },
-              value: {
-                text: application.person.prisonName
-              }
-            }
-          ])
-        }) }}
+      {{ personDetails(application.person) }}
 
-      {% for section in summaryListSections(application, false) %}
+      {% for section in SummaryListUtils.summaryListSections(application, false) %}
         <h2 class="govuk-heading-l">{{ section.title }}</h2>
         {% for task in section.tasks %}
           {{

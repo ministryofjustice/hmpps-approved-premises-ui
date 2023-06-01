@@ -17,7 +17,6 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
   withReleaseDate(releaseDate = DateFormats.dateObjToIsoDate(faker.date.soon())) {
     return this.params({
       data: {
-        ...JSON.parse(faker.datatype.json()),
         'basic-information': {
           'release-date': { releaseDate, knowReleaseDate: 'yes' },
           'placement-date': { startDateSameAsReleaseDate: 'yes' },
@@ -37,7 +36,6 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
   withOptionalOasysSectionsSelected(needsLinkedToReoffending: Array<OASysSection>, otherNeeds: Array<OASysSection>) {
     return this.params({
       data: {
-        ...JSON.parse(faker.datatype.json()),
         'oasys-import': {
           'optional-oasys-sections': {
             needsLinkedToReoffending,
@@ -105,14 +103,14 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
 }
 
 export default ApplicationFactory.define(() => ({
-  id: faker.datatype.uuid(),
+  id: faker.string.uuid(),
   person: personFactory.build(),
-  createdByUserId: faker.datatype.uuid(),
-  schemaVersion: faker.datatype.uuid(),
+  createdByUserId: faker.string.uuid(),
+  schemaVersion: faker.string.uuid(),
   createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   submittedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
-  data: JSON.parse(faker.datatype.json()),
-  document: JSON.parse(faker.datatype.json()),
+  data: {},
+  document: {},
   outdatedSchema: faker.datatype.boolean(),
   isWomensApplication: faker.datatype.boolean(),
   isPipeApplication: faker.datatype.boolean(),

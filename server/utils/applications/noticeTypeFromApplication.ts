@@ -6,12 +6,16 @@ import { DateFormats } from '../dateUtils'
 type ApplicationType = 'emergency' | 'short_notice' | 'standard'
 
 export const noticeTypeFromApplication = (application: Application): ApplicationType => {
-  const arrivalDate = DateFormats.isoToDateObj(arrivalDateFromApplication(application))
+  const arrivalDateString = arrivalDateFromApplication(application)
+
+  if (!arrivalDateString) return 'standard'
+
+  const arrivalDateObj = DateFormats.isoToDateObj(arrivalDateString)
 
   switch (true) {
-    case differenceInDays(arrivalDate, new Date()) < 7:
+    case differenceInDays(arrivalDateObj, new Date()) < 7:
       return 'emergency'
-    case differenceInCalendarMonths(arrivalDate, new Date()) < 4:
+    case differenceInCalendarMonths(arrivalDateObj, new Date()) < 4:
       return 'short_notice'
     default:
       return 'standard'

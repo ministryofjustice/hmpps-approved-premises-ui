@@ -1,25 +1,201 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+
 {% extends "../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
 {% block content %}
+	<div class="govuk-grid-row">
+		<div class="govuk-width-container">
+			<div class="govuk-grid-column-full">
+				<h1 class="govuk-heading-m">{{placementRequest.person.name}}</h1>
+				<div class="search-identity-table govuk-body">
+					<dl class="search-identity-table__column">
+						<dt>
+							<strong>Tier</strong>
+						</dt>
+						<dd>{{ tier }}</dd>
 
-	<h1 class="govuk-heading-xl">Find a bed</h1>
+						<dt>
+							<strong>CRN</strong>
+						</dt>
+						<dd>{{placementRequest.person.crn}}</dd>
 
-	<h2 class="govuk-heading-m">Matching rooms: {{bedSearchResults.resultsRoomCount}}</h2>
-	<h2 class="govuk-heading-m">Matching premises: {{bedSearchResults.resultsPremisesCount}}</h2>
-	<h2 class="govuk-heading-m">Matching beds: {{bedSearchResults.resultsBedCount}}</h2>
+						<dt>
+							<strong>DOB</strong>
+						</dt>
+						<dd>{{placementRequest.person.dateOfBirth}}</dd>
 
-	{% for bedSearchResult in bedSearchResults.results %}
-		{{ govukSummaryList({
-			card: {
-				title: {
-					text: bedSearchResult.premises.name
-				}
-			},
-			rows: MatchUtils.summaryCardRows(bedSearchResult)
-        }) }}
-	{% endfor %}
+						<dt>
+							<strong>Expected arrival date</strong>
+						</dt>
+						<dd>{{formatDate(startDate)}}</dd>
+					</dl>
 
-{% endblock %}
+					<dl class="search-identity-table__column">
+						<dt>
+							<strong>Assessment</strong>
+						</dt>
+						<dd>
+							{{ PlacementRequestUtils.assessmentLink(placementRequest, 'View', 'Assessment') | safe }}
+						</dd>
+						<dt>
+							<strong>Application</strong>
+						</dt>
+						<dd>
+							{{ PlacementRequestUtils.applicationLink(placementRequest, 'View', 'Application') | safe }}
+						</dd>
+					</dl>
+				</div>
+				<hr/>
+			</div>
+		</div>
+		<div class="govuk-grid-row">
+			<div class="govuk-width-container">
+				<div class="govuk-grid-column-full">
+					<h2 class="govuk-heading-m">{{bedSearchResults.resultsBedCount}} matching beds in {{bedSearchResults.resultsRoomCount}} rooms in {{bedSearchResults.resultsPremisesCount}} premises</h2>
+				</div>
+			</div>
+		</div>
+		<div class="govuk-grid-row">
+			<div class="govuk-width-container">
+
+				<form action="{{formPath}}" method="post">
+					<input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+					<input type="hidden" name="crn" value="{{crn}}"/>
+					<input type="hidden" name="startDate" value="{{startDate}}"/>
+					<input type="hidden" name="applicationId" value="{{applicationId}}"/>
+					<input type="hidden" name="assessmentId" value="{{assessmentId}}"/>
+					{% for requiredCharacteristic in placementRequest.essentialCriteria %}
+						<input type="hidden" name="requiredCharacteristics[]" value="{{requiredCharacteristic}}"/>
+					{% endfor %}
+
+					<div class="govuk-grid-column-one-third">
+						<div class="moj-filter">
+							<div class="moj-filter__header">
+								<h2 class="govuk-heading-m">Filters</h2>
+							</div>
+							<div class="moj-filter__content">
+								<div class="moj-filter__selected">
+									<div class="moj-filter__selected-heading">
+										<div class="moj-filter__heading-title">
+											<h2 class="govuk-heading-m">Selected Filters</h2>
+										</div>
+									</div>
+									{% for title, items in MatchUtils.groupedEssentialCriteria(placementRequest.essentialCriteria) %}
+										<h3 class="govuk-heading-s govuk-!-margin-bottom-0">{{ title }}</h3>
+
+										<ul class="moj-filter-tags">
+											{% for item in items %}
+												<li>
+													<span class="moj-filter__tag">{{item}}</span>
+												</li>
+											{% endfor %}
+										</ul>
+									{% endfor %}
+
+								</div>
+							</div>
+						</div>
+
+						{% for title, items in MatchUtils.groupedCheckboxes(selectedDesirableCriteria) %}
+							{{
+								govukCheckboxes({
+									name: 'requiredCharacteristics',
+									classes: "govuk-checkboxes--small",
+									fieldset: {
+										legend: {
+											text: title,
+											isPageHeading: false,
+											classes: 'govuk-fieldset__legend--s'
+										}
+									},
+									items: items
+								})
+							}}
+						{% endfor %}
+					</div>
+
+					<div class="govuk-grid-column-two-thirds">
+
+						<div class="bed-search-inputs">
+
+							{{ govukDateInput({
+								id: "startDate",
+								namePrefix: "startDate",
+								fieldset: {
+								legend: {
+									text: "Expected arrival",
+									classes: "govuk-fieldset__legend--s"
+									}
+								},
+								items: dateFieldValues('startDate', errors),
+								errorMessage: errors.startDate
+							}) }}
+
+							{{
+								govukInput({
+								id: "durationWeeks",
+								name: "durationWeeks",
+								value: durationWeeks,
+								type: "number",
+								label: {
+								text: "Length of stay"
+								},
+								classes: "govuk-input--width-2",
+								suffix: {
+									text: "weeks"
+								}
+								})
+							}}
+
+							{{ govukInput({
+								id: "postcodeDistrict",
+								name: "postcodeDistrict",
+								value: postcodeDistrict,
+								label: {
+								text: "Preferred location"
+								},
+								classes: "govuk-input--width-3"
+							}) }}
+
+							{{ govukInput({
+								id: "maxDistanceMiles",
+								name: "maxDistanceMiles",
+								value: maxDistanceMiles,
+								label: {
+								text: "Radius"
+								},
+								classes: "govuk-input--width-3",
+								suffix: {
+									text: "miles"
+								}
+							}) }}
+
+							<div class="button">
+								{{ govukButton({
+									text: "Update"
+								}) }}
+							</div>
+						</div>
+					</form>
+
+					{% for bedSearchResult in bedSearchResults.results %}
+						{{ govukSummaryList({
+					card: {
+						title: {
+							html: MatchUtils.summaryCardHeader(bedSearchResult, placementRequest.id, startDate, durationWeeks)
+						}
+					},
+					rows: MatchUtils.summaryCardRows(bedSearchResult, requiredCharacteristics)
+				}) }}
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+
+	{% endblock %}

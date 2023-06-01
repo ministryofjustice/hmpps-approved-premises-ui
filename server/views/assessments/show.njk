@@ -1,10 +1,22 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/tag/macro.njk" import govukTag %}
-{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
-{% from "../partials/showErrorSummary.njk" import showErrorSummary %}
-{% from "../components/riskWidgets/macro.njk" import widgets %}
+{% from "../partials/personDetails.njk" import personDetails %}
 
 {% extends "../partials/layout.njk" %}
+
+{% set pageHeading = "View Assessment" %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+  {% if referrer %}
+    {{ govukBackLink({
+      text: "Back",
+      href: referrer
+    }) }}
+  {% endif %}
+{% endblock %}
 
 {% block content %}
   <div class="govuk-grid-row">
@@ -13,62 +25,17 @@
         {{ pageHeading }}
       </h1>
 
-      <h2 class="govuk-heading-s govuk-!-margin-bottom-2" data-cy-status>Assessment {{ taskList.status }}</h2>
-      <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ taskList.completeSectionCount }} of {{ (taskList.sections | length) }} sections.</p>
-    </div>
+      {{ personDetails(assessment.application.person) }}
 
-    {{ showErrorSummary(errorSummary) }}
-
-    <form action="{{ paths.assessments.submission({id: assessment.id}) }}" method="post">
-
-      <div class="govuk-grid-column-two-thirds">
-        <ol class="app-task-list">
-          {% set applicationOrAssessment = assessment %}
-          {% include '../partials/taskListItems.njk' %}
-
-          <li>
-            <h2 class="app-task-list__section">
-              <span class="app-task-list__section-number">
-                {{ (taskList.sections | length) + 1 }}.
-            </span>
-            Submit your assessment
-          </h2>
-
-            {{ govukCheckboxes({
-            idPrefix: "confirmation",
-            name: "confirmation",
-            errorMessage: errorObject,
-            items: [
-              {
-                value: "confirmed",
-                text: "I confirm the information provided is complete, accurate and up to date."
-              }
-            ]
-          }) }}
-          </li>
-        </ol>
-
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-
-        {{ govukButton({
-          text: "Submit application"
-          }) }}
-      </form>
-
-      {{ govukButton({
-        text: "Save and come back later",
-        classes: "govuk-button--secondary",
-        href: "#"
-      }) }}
+      {% for section in SummaryListUtils.summaryListSections(assessment, false) %}
+        <h2 class="govuk-heading-l">{{ section.title }}</h3>
+        {% for task in section.tasks %}
+          {{
+            govukSummaryList(task)
+          }}
+        {% endfor %}
+      {% endfor %}
 
     </div>
-
-    {% if not oasysDisabled %}
-      <div class="govuk-grid-column-one-third">
-        {{ widgets(assessment.application.risks | mapApiPersonRisksForUi) }}
-      </div>
-    {% endif %}
-
   </div>
-
 {% endblock %}

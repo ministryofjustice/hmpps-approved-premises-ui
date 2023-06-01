@@ -8,11 +8,11 @@ export const textareas = (questions: OasysImportArrays, key: 'roshAnswers' | 'of
   return questions
     .map(question => {
       return `<div class="govuk-form-group">
-                <h3 class="govuk-label-wrapper">
+                <h2 class="govuk-label-wrapper">
                     <label class="govuk-label govuk-label--m" for=${key}[${question.questionNumber}]>
                         ${question.label}
                     </label>
-                </h3>
+                </h2>
                 <textarea class="govuk-textarea" id=${key}[${question.questionNumber}] name=${key}[${
         question.questionNumber
       }] rows="8">${escape(question?.answer)}</textarea>
@@ -22,22 +22,17 @@ export const textareas = (questions: OasysImportArrays, key: 'roshAnswers' | 'of
     .join('')
 }
 
-export const oasysImportReponse = (
-  answers: Array<string> | Record<string, string>,
-  summaries: Array<OASysQuestion>,
-) => {
-  if (Array.isArray(answers)) {
-    return (answers as Array<string>).reduce((prev, question, i) => {
-      return {
-        ...prev,
-        [`${summaries[i].questionNumber}. ${summaries[i].label}`]: question,
-      }
-    }, {}) as Record<string, string>
-  }
-  if (!answers) {
-    return {}
-  }
-  return answers
+export const oasysImportReponse = (answers: Record<string, string>, summaries: Array<OASysQuestion>) => {
+  return Object.keys(answers).reduce((prev, k) => {
+    return {
+      ...prev,
+      [`${k}: ${findSummary(k, summaries).label}`]: answers[k],
+    }
+  }, {}) as Record<string, string>
+}
+
+const findSummary = (questionNumber: string, summaries: Array<OASysQuestion>) => {
+  return summaries.find(i => i.questionNumber === questionNumber)
 }
 
 export const fetchOptionalOasysSections = (application: Application): Array<number> => {
@@ -59,7 +54,7 @@ export const fetchOptionalOasysSections = (application: Application): Array<numb
 }
 
 export const sortOasysImportSummaries = (summaries: Array<OASysQuestion>): Array<OASysQuestion> => {
-  return summaries.sort((a, b) => Number(a.questionNumber) - Number(b.questionNumber))
+  return summaries.sort((a, b) => a.questionNumber.localeCompare(b.questionNumber, 'en', { numeric: true }))
 }
 
 export const sectionCheckBoxes = (fullList: Array<OASysSection>, selectedList: Array<OASysSection>) => {

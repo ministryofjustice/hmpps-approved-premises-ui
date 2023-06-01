@@ -1,12 +1,5 @@
 import { addDays } from 'date-fns'
-import {
-  EnterCRNPage,
-  ListPage,
-  SelectOffencePage,
-  SentenceTypePage,
-  ShowPage,
-  StartPage,
-} from '../../../cypress_shared/pages/apply'
+import { EnterCRNPage, ListPage, SelectOffencePage, ShowPage, StartPage, TransgenderPage } from '../../pages/apply'
 import { addResponseToApplication, addResponsesToApplication } from '../../../server/testutils/addToApplication'
 import {
   activeOffenceFactory,
@@ -16,14 +9,14 @@ import {
   tierEnvelopeFactory,
 } from '../../../server/testutils/factories'
 
-import ApplyHelper from '../../../cypress_shared/helpers/apply'
+import ApplyHelper from '../../helpers/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import IsExceptionalCasePage from '../../../cypress_shared/pages/apply/isExceptionalCase'
-import NotEligiblePage from '../../../cypress_shared/pages/apply/notEligiblePage'
-import Page from '../../../cypress_shared/pages/page'
-import SubmissionConfirmation from '../../../cypress_shared/pages/apply/submissionConfirmation'
+import IsExceptionalCasePage from '../../pages/apply/isExceptionalCase'
+import NotEligiblePage from '../../pages/apply/notEligiblePage'
+import Page from '../../pages/page'
+import SubmissionConfirmation from '../../pages/apply/submissionConfirmation'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
-import { updateApplicationReleaseDate } from '../../../cypress_shared/helpers'
+import { updateApplicationReleaseDate } from '../../helpers'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -58,7 +51,7 @@ context('Apply', () => {
     // And that person has more than one offence listed under their CRN
     const offences = activeOffenceFactory.buildList(4)
 
-    const apply = new ApplyHelper(this.application, this.person, offences, 'integration')
+    const apply = new ApplyHelper(this.application, this.person, offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
@@ -86,7 +79,7 @@ context('Apply', () => {
     })
 
     // Then I should be on the Sentence Type page
-    Page.verifyOnPage(SentenceTypePage, this.application)
+    Page.verifyOnPage(TransgenderPage, this.application)
   })
 
   it(`allows the user to specify if the case is exceptional if the offender's tier is not eligible`, function test() {
@@ -97,7 +90,7 @@ context('Apply', () => {
     })
     this.application.risks = risks
 
-    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
@@ -105,7 +98,7 @@ context('Apply', () => {
     apply.completeExceptionalCase()
 
     // And I should be on the Sentence Type page
-    Page.verifyOnPage(SentenceTypePage, this.application)
+    Page.verifyOnPage(TransgenderPage, this.application)
   })
 
   it('tells the user that their application is not applicable if the tier is not eligible and it is not an exceptional case', function test() {
@@ -116,7 +109,7 @@ context('Apply', () => {
     })
     this.application.risks = risks
 
-    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
@@ -132,7 +125,7 @@ context('Apply', () => {
   })
 
   it("creates and updates an application given a person's CRN", function test() {
-    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
     apply.setupApplicationStubs()
     apply.startApplication()
 
@@ -157,8 +150,8 @@ context('Apply', () => {
       const firstRequestData = JSON.parse(requests[0].body).data
       const secondRequestData = JSON.parse(requests[1].body).data
 
-      expect(firstRequestData['basic-information']['sentence-type'].sentenceType).equal('communityOrder')
-      expect(secondRequestData['basic-information'].situation.situation).equal('riskManagement')
+      expect(firstRequestData['basic-information'].transgender.transgenderOrHasTransgenderHistory).equal('yes')
+      expect(secondRequestData['basic-information']['complex-case-board'].reviewRequired).equal('yes')
     })
   })
 
@@ -200,7 +193,7 @@ context('Apply', () => {
   it('allows completion of application emergency flow', function test() {
     // And I complete the application
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
     const tomorrow = addDays(new Date(), 1)
 
     this.application = addResponsesToApplication(this.application, {
@@ -235,10 +228,91 @@ context('Apply', () => {
     apply.completeEmergencyApplication()
   })
 
+  it('allows completion of the ESAP flow', function test() {
+    // Given I have completed the basic information of a form
+    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
+
+    this.application = addResponseToApplication(this.application, {
+      section: 'type-of-ap',
+      page: 'ap-type',
+      key: 'type',
+      value: 'esap',
+    })
+
+    this.application = addResponseToApplication(this.application, {
+      section: 'type-of-ap',
+      page: 'managed-by-national-security-division',
+      key: 'managedByNationalSecurityDivision',
+      value: 'no',
+    })
+
+    this.application = addResponsesToApplication(this.application, {
+      section: 'type-of-ap',
+      page: 'esap-exceptional-case',
+      keyValuePairs: {
+        ...DateFormats.isoDateToDateInputs('2023-07-01', 'agreementDate'),
+        agreedCaseWithCommunityHopp: 'yes',
+        communityHoppName: 'Some Manager',
+        agreementSummary: 'Some Summary Text',
+      },
+    })
+
+    apply.setupApplicationStubs(uiRisks)
+
+    // And I start the application
+    apply.startApplication()
+    apply.completeBasicInformation()
+
+    // And I complete the Esap flow
+    apply.completeEsapFlow()
+
+    // Then I should be asked if the person is managed by the National Security division
+  })
+
+  it('Tells me I am ineligible for ESAP', function test() {
+    // Given I have completed the basic information of a form
+    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
+
+    this.application = addResponseToApplication(this.application, {
+      section: 'type-of-ap',
+      page: 'ap-type',
+      key: 'type',
+      value: 'esap',
+    })
+
+    this.application = addResponseToApplication(this.application, {
+      section: 'type-of-ap',
+      page: 'managed-by-national-security-division',
+      key: 'managedByNationalSecurityDivision',
+      value: 'no',
+    })
+
+    this.application = addResponsesToApplication(this.application, {
+      section: 'type-of-ap',
+      page: 'esap-exceptional-case',
+      keyValuePairs: {
+        agreedCaseWithCommunityHopp: 'no',
+      },
+    })
+
+    apply.setupApplicationStubs(uiRisks)
+
+    // And I start the application
+    apply.startApplication()
+    apply.completeBasicInformation()
+
+    // And I complete the Esap flow
+    apply.completeIneligibleEsapFlow()
+
+    // Then I should be told I am ineligible for an ESAP placement
+  })
+
   it('allows completion of the form', function test() {
     // And I complete the application
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-    const apply = new ApplyHelper(this.application, this.person, this.offences, 'integration')
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
 
     apply.setupApplicationStubs(uiRisks)
     apply.startApplication()
@@ -247,11 +321,21 @@ context('Apply', () => {
     // Then the application should be submitted to the API
     cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
       expect(requests).to.have.length(apply.numberOfPages())
-      const requestBody = JSON.parse(requests[requests.length - 1].body)
+      const body = JSON.parse(requests[requests.length - 1].body)
 
-      expect(requestBody.data).to.deep.equal(this.applicationData)
+      expect(body).to.have.keys(
+        'data',
+        'arrivalDate',
+        'isPipeApplication',
+        'isWomensApplication',
+        'targetLocation',
+        'releaseType',
+        'type',
+        'isInapplicable',
+      )
+      expect(body.data).to.deep.equal(this.applicationData)
 
-      cy.task('validateBodyAgainstApplySchema', requestBody.data).then(result => {
+      cy.task('validateBodyAgainstApplySchema', body.data).then(result => {
         expect(result).to.equal(true)
       })
     })
@@ -263,11 +347,13 @@ context('Apply', () => {
 
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys(
+        'arrivalDate',
         'translatedDocument',
         'isPipeApplication',
         'isWomensApplication',
         'targetLocation',
         'releaseType',
+        'type',
       )
     })
 

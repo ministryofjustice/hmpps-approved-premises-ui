@@ -11,36 +11,17 @@
   <h1>{{ pageHeading }}</h1>
 
   <div class="card-container">
-    <div class="card" data-cy-card-service="apply">
-      <div class="card-body">
-        <h2 class="govuk-heading-s">
-          <a class="govuk-link" href="{{ applyPath }}">Apply for an Approved Premises placement</a>
-        </h2>
-        <p class="govuk-body">Apply for a placement in an Approved Premises on behalf of a person on probation/in custody.</p>
-      </div>
-    </div>
 
-    {% if 'assessor' in user.roles %}
-      <div class="card" data-cy-card-service="assess">
+    {% for section in sections %}
+      <div class="card" data-cy-card-service="{{ section.id }}">
         <div class="card-body">
           <h2 class="govuk-heading-s">
-            <a class="govuk-link" href="{{ assessPath }}">Assess Approved Premises applications</a>
+            <a class="govuk-link" href="{{ section.href }}">{{ section.title }}</a>
           </h2>
-          <p class="govuk-body">Assess applications for placements in an Approved Premises</p>
+          <p class="govuk-body">{{ section.description }}</p>
         </div>
       </div>
-    {% endif %}
-
-    {% if 'manager' in user.roles %}
-      <div class="card" data-cy-card-service="manage">
-        <div class="card-body">
-          <h2 class="govuk-heading-s">
-            <a class="govuk-link" href="{{ managePath }}">Manage an Approved Premises</a>
-          </h2>
-          <p class="govuk-body">Manage occupancy at an Approved Premises</p>
-        </div>
-      </div>
-    {% endif %}
+    {% endfor %}
 
   </div>
 

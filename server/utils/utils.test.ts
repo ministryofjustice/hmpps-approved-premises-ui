@@ -7,6 +7,7 @@ import {
   initialiseName,
   linkTo,
   mapApiPersonRisksForUi,
+  objectIfNotEmpty,
   pascalCase,
   removeBlankSummaryListItems,
   resolvePath,
@@ -284,6 +285,12 @@ describe('linkTo', () => {
       linkTo(path('/foo/:id'), { id: '123' }, { text: 'Hello', attributes: { class: 'some-class' } }),
     ).toMatchStringIgnoringWhitespace('<a href="/foo/123" class="some-class">Hello</a>')
   })
+
+  it('allows a query to be passed', () => {
+    expect(linkTo(path('/foo'), {}, { text: 'Hello', query: { foo: 'bar' } })).toMatchStringIgnoringWhitespace(
+      '<a href="/foo?foo=bar">Hello</a>',
+    )
+  })
 })
 
 describe('resolvePath', () => {
@@ -297,5 +304,15 @@ describe('resolvePath', () => {
     const object = { foo: { bar: 'baz' } }
 
     expect(resolvePath(object, 'foo.baz')).toEqual(undefined)
+  })
+
+  describe('objectIfNotEmpty', () => {
+    it('returns undefined if the object does not have keys', () => {
+      expect(objectIfNotEmpty({})).toBeUndefined()
+    })
+
+    it('returns the object if it does have keys', () => {
+      expect(objectIfNotEmpty({ key: 'value' })).toEqual({ key: 'value' })
+    })
   })
 })

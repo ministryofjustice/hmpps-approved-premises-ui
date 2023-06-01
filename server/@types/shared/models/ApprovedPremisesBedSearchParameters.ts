@@ -3,6 +3,7 @@
 /* eslint-disable */
 
 import type { BedSearchParameters } from './BedSearchParameters';
+import type { PlacementCriteria } from './PlacementCriteria';
 
 export type ApprovedPremisesBedSearchParameters = (BedSearchParameters & {
     /**
@@ -13,7 +14,6 @@ export type ApprovedPremisesBedSearchParameters = (BedSearchParameters & {
      * Maximum number of miles from the postcode district to search, only required if more than 50 miles which is the default
      */
     maxDistanceMiles: number;
-    requiredPremisesCharacteristics: Array<string>;
-    requiredRoomCharacteristics: Array<string>;
+    requiredCharacteristics: Array<PlacementCriteria>;
 });
 

@@ -14,7 +14,7 @@ import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 
 type RoshSummaryBody = {
-  roshAnswers: Array<string> | Record<string, string>
+  roshAnswers: Record<string, string>
   roshSummaries: ArrayOfOASysRiskOfSeriousHarmSummaryQuestions
 }
 

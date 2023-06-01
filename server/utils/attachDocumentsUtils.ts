@@ -57,7 +57,9 @@ const documentCheckbox = (document: Document, selectedDocumentIds: Array<string>
 }
 
 const descriptionTextArea = (document: Document, errors: ErrorMessages): string => {
-  let input = `<textarea class="govuk-textarea ${
+  let input = `<label class="govuk-visually-hidden" for="document_${document.id}_description">Description of ${
+    document.fileName
+  }</label><textarea class="govuk-textarea ${
     errors[`selectedDocuments_${document.id}`] ? 'govuk-input--error' : ''
   }" id="document_${document.id}_description" name="documentDescriptions[${
     document.id

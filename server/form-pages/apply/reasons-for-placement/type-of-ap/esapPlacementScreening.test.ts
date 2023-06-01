@@ -3,8 +3,10 @@ import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 
 import EsapPlacementScreening, { esapFactors, esapReasons } from './esapPlacementScreening'
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
+import { pageDataFromApplicationOrAssessment } from '../../../utils'
 
 jest.mock('../../../../utils/formUtils')
+jest.mock('../../../utils')
 
 describe('EsapPlacementScreening', () => {
   const person = personFactory.build({ name: 'John Wayne' })
@@ -18,7 +20,21 @@ describe('EsapPlacementScreening', () => {
     })
   })
 
-  itShouldHavePreviousValue(new EsapPlacementScreening({}, application), 'ap-type')
+  describe('when the user has answered the exceptional case question', () => {
+    beforeEach(() => {
+      ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({ agreedCaseWithCommunityHopp: 'yes' })
+    })
+
+    itShouldHavePreviousValue(new EsapPlacementScreening({}, application), 'esap-exceptional-case')
+  })
+
+  describe('when the user has not answered the exceptional case question', () => {
+    beforeEach(() => {
+      ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({})
+    })
+
+    itShouldHavePreviousValue(new EsapPlacementScreening({}, application), 'ap-type')
+  })
 
   describe('next', () => {
     describe('when esapReasons includes `secreting`', () => {

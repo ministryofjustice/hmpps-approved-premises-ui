@@ -1,22 +1,37 @@
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
 {% extends "../layout.njk" %}
 
 {% block questions %}
 
-  <h1 class="govuk-heading-l">{{page.title}}</h1>
+  <div class="govuk-form-group">
 
-  {% for sectionName, subsection in page.responses %}
+    {% call govukFieldset({
+      legend: {
+        text: "Make a decision",
+        classes: "govuk-fieldset__legend--l",
+        isPageHeading: true
+      }
+    }) %}
+    <div class="govuk-radios" data-module="govuk-radios">
 
-    {{ formPageRadios({
-            fieldName: "decision",
-             fieldset: {
-            legend: {
-            text: sectionName,
-              classes: "govuk-fieldset__legend--s"
-            }
-        },
-        items: convertKeyValuePairToRadioItems(subsection, page.decision)
-      },fetchContext()) }}
+      {% for sectionName, subsection in page.responses %}
+        <h2>{{sectionName}}</h2>
 
-    {%endfor%}
+        {% for questionId, fullQuestion in subsection %}
 
+          <div class="govuk-radios__item">
+            <input class="govuk-radios__input" id="{{ questionId }}" name="decision" type="radio" value="{{ questionId }}">
+
+            <label class="govuk-label govuk-radios__label" for="{{ questionId }}">
+              {{ fullQuestion }}
+            </label>
+          </div>
+
+        {% endfor %}
+
+        {%endfor%}
+      </div>
+
+      {%endcall%}
+    </div>
   {% endblock %}

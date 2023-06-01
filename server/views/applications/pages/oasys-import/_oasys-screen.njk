@@ -18,9 +18,6 @@
 
     {{ mojSubNavigation({
         label: 'Sub navigation',
-        attributes: {
-          'role': 'tablist'
-        },
         items: [{
           text: 'RoSH summary',
           active: (pageName === "roshSummary"),
@@ -52,10 +49,13 @@
   <div class="govuk-grid-row">
     {% if oasysDisabled %}
       <div class="govuk-grid-column-full" id="{{ pageName }}">
-        {{OasysImportUtils.textareas(questions, key) | safe}}
+         <p> {{ guidance }} </p>
+         {{OasysImportUtils.textareas(questions, key) | safe}}
       </div>
     {% else %}
       <div class="govuk-grid-column-two-thirds" id="{{ pageName }}">
+         <h2 class="govuk-heading-m"> {{ heading }} </h2>
+         <p> {{ guidance }} </p>
         {{OasysImportUtils.textareas(questions, key) | safe}}
       </div>
 

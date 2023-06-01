@@ -3,18 +3,25 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 
+import { SanitisedError } from '../../sanitisedError'
 import { BookingService, PersonService, PremisesService } from '../../services'
 import BookingsController from './bookingsController'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
+import {
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+  generateConflictErrorAndRedirect,
+} from '../../utils/validation'
 
 import { bookingFactory, newBookingFactory, personFactory } from '../../testutils/factories'
 import paths from '../../paths/manage'
 
 jest.mock('../../utils/validation')
+jest.mock('../../utils/bookingUtils')
 
 describe('bookingsController', () => {
   const token = 'SOME_TOKEN'
   const premisesId = 'premisesId'
+  const bedId = 'bedId'
 
   let request: DeepMocked<Request> = createMock<Request>({ user: { token } })
   const response: DeepMocked<Response> = createMock<Response>({})
@@ -26,7 +33,7 @@ describe('bookingsController', () => {
   const bookingController = new BookingsController(bookingService, premisesService, personService)
 
   beforeEach(() => {
-    jest.resetAllMocks()
+    jest.clearAllMocks()
   })
 
   describe('show', () => {
@@ -64,7 +71,7 @@ describe('bookingsController', () => {
 
       it('it should render the new booking form', async () => {
         ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
-          return { errors: {}, errorSummary: [], userInput: {} }
+          return { errors: {}, errorSummary: [], userInput: {}, errorTitle: '' }
         })
 
         const requestHandler = bookingController.new()
@@ -77,6 +84,7 @@ describe('bookingsController', () => {
           ...person,
           errors: {},
           errorSummary: [],
+          errorTitle: '',
         })
         expect(personService.findByCrn).toHaveBeenCalledWith(token, person.crn)
         expect(request.flash).toHaveBeenCalledWith('crn')
@@ -96,6 +104,7 @@ describe('bookingsController', () => {
           ...person,
           errors: errorsAndUserInput.errors,
           errorSummary: errorsAndUserInput.errorSummary,
+          errorTitle: errorsAndUserInput.errorTitle,
           ...errorsAndUserInput.userInput,
         })
       })
@@ -106,13 +115,13 @@ describe('bookingsController', () => {
         request = createMock<Request>({
           user: { token },
           flash: jest.fn().mockReturnValue([]),
-          params: { premisesId },
+          params: { premisesId, bedId },
         })
       })
 
       it('it should render the new booking form', async () => {
         ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
-          return { errors: {}, errorSummary: [], userInput: {} }
+          return { errors: {}, errorSummary: [], userInput: {}, errorTitle: '' }
         })
 
         const requestHandler = bookingController.new()
@@ -121,9 +130,11 @@ describe('bookingsController', () => {
 
         expect(response.render).toHaveBeenCalledWith('bookings/find', {
           premisesId,
+          bedId,
           pageHeading: 'Create a placement - find someone by CRN',
           errors: {},
           errorSummary: [],
+          errorTitle: '',
         })
       })
 
@@ -137,9 +148,11 @@ describe('bookingsController', () => {
 
         expect(response.render).toHaveBeenCalledWith('bookings/find', {
           premisesId,
+          bedId,
           pageHeading: 'Create a placement - find someone by CRN',
           errors: errorsAndUserInput.errors,
           errorSummary: errorsAndUserInput.errorSummary,
+          errorTitle: errorsAndUserInput.errorTitle,
           ...errorsAndUserInput.userInput,
         })
       })
@@ -156,7 +169,7 @@ describe('bookingsController', () => {
 
       request = {
         ...request,
-        params: { premisesId },
+        params: { premisesId, bedId },
         body: newBooking,
       }
 
@@ -172,35 +185,56 @@ describe('bookingsController', () => {
       )
     })
 
-    it('should render the page with errors when the API returns an error', async () => {
-      const booking = bookingFactory.build()
-      bookingService.create.mockResolvedValue(booking)
+    describe('when errors are raised', () => {
       const flashSpy = jest.fn().mockImplementation(() => ['some-crn'])
-
-      const requestHandler = bookingController.create()
 
       request = {
         ...request,
-        params: { premisesId },
+        params: { premisesId, bedId },
         flash: flashSpy,
       }
 
-      const err = new Error()
+      const requestHandler = bookingController.create()
 
-      bookingService.create.mockImplementation(() => {
-        throw err
+      it('should call catchValidationErrorOrPropogate with a standard error', async () => {
+        const err = new Error()
+
+        bookingService.create.mockImplementation(() => {
+          throw err
+        })
+
+        await requestHandler(request, response, next)
+
+        expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          err,
+          paths.bookings.new({
+            premisesId,
+            bedId,
+          }),
+        )
       })
 
-      await requestHandler(request, response, next)
+      it('should call generateConflictErrorAndRedirect if the error is a 409', async () => {
+        const err = createMock<SanitisedError>({ status: 409, data: 'some data' })
 
-      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
-        response,
-        err,
-        paths.bookings.new({
+        bookingService.create.mockImplementation(() => {
+          throw err
+        })
+
+        await requestHandler(request, response, next)
+
+        expect(generateConflictErrorAndRedirect).toHaveBeenCalledWith(
+          request,
+          response,
           premisesId,
-        }),
-      )
+          bedId,
+          ['arrivalDate', 'departureDate'],
+          err,
+          paths.bookings.new({ premisesId, bedId }),
+        )
+      })
     })
   })
 

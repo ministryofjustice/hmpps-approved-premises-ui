@@ -1,0 +1,228 @@
+{% extends "../layout.njk" %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% block questions %}
+  <h1 class="govuk-heading-l">Access, cultural and healthcare needs</h1>
+  <p class="govuk-body">Specify any additional details and the adjustments required</p>
+
+  {{ formPageRadios({
+      fieldName: "needsWheelchair",
+      fieldset: {
+        legend: {
+          text: page.questions.wheelchair,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        html: '<p>If the person requires use of a wheelchair around the Approved Premises select yes. <a href="">What wheelchair accessibility means within an AP.</a></p>'
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }, fetchContext()) }}
+
+  {% set healthConditionsDetail %}
+  {{ formPageTextarea({
+        fieldName: "healthConditionsDetail",
+        label: {
+          text: page.questions.healthConditionsDetail
+        }
+    }, fetchContext()) }}
+  {% endset -%}
+
+  {{ formPageRadios({
+      fieldName: "healthConditions",
+      fieldset: {
+        legend: {
+          text: page.questions.healthConditions,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          conditional: {
+            html: healthConditionsDetail
+          }
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }, fetchContext()) }}
+
+  {% set prescribedMedicationDetail %}
+  {{ formPageTextarea({
+        fieldName: "prescribedMedicationDetail",
+        label: {
+          text: page.questions.prescribedMedicationDetail
+        }
+    }, fetchContext()) }}
+  {% endset -%}
+
+  {{ formPageRadios({
+      fieldName: "prescribedMedication",
+      fieldset: {
+        legend: {
+          text: page.questions.prescribedMedication,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          conditional: {
+            html: prescribedMedicationDetail
+          }
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }, fetchContext()) }}
+
+  {% set additionalPregnancyQuestions %}
+  {{
+    formPageDateInput(
+        {
+          fieldName: "expectedDeliveryDate",
+          fieldset: {
+            legend: {
+              text: page.questions.expectedDeliveryDate
+            }
+          },
+          items: dateFieldValues('expectedDeliveryDate', errors)
+        },
+        fetchContext()
+      )
+  }}
+  {% endset -%}
+
+  {% if page.yesToPregnancyHealthcareQuestion %}
+    {{ formPageRadios({
+      fieldName: "isPersonPregnant",
+      fieldset: {
+        legend: {
+          text: page.questions.isPersonPregnant,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          conditional: {
+            html: additionalPregnancyQuestions
+          }
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }, fetchContext()) }}
+
+    {{ formPageRadios({
+      fieldName: "childRemoved",
+      fieldset: {
+        legend: {
+          text: page.questions.childRemoved,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        text: "This will help determine a person's move on plan. Someone cannot stay at an Approved Premises with a child."
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes"
+        },
+        {
+          value: "no",
+          text: "No"
+        },
+        {
+          value: "decisionPending",
+          text: "Decision pending"
+        }
+      ]
+    }, fetchContext()) }}
+
+    {% set otherPregnancyConsiderationsDetail %}
+    {{ formPageTextarea({
+        fieldName: "otherPregnancyConsiderationsDetail",
+        label: {
+          text: page.questions.otherPregnancyConsiderationsDetail
+        }
+    }, fetchContext()) }}
+    {% endset -%}
+
+    {{ formPageRadios({
+      fieldName: "otherPregnancyConsiderations",
+      fieldset: {
+        legend: {
+          text: page.questions.otherPregnancyConsiderations,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          conditional: {
+            html: otherPregnancyConsiderationsDetail
+          }
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }, fetchContext()) }}
+
+  {% endif %}
+
+  {% set hintHtml %}
+  <details class="govuk-details" data-module="govuk-details">
+    <summary class="govuk-details__summary">
+      <span class="govuk-details__summary-text">
+                What adjustments can be made?
+              </span>
+    </summary>
+    <div class="govuk-details__text">
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Step-free access for reduced mobility</li>
+        <li>Wheelchair accessibility</li>
+        <li>Ground floor bedroom</li>
+        <li>En-suite bedroom</li>
+        <li>Signs in braille, tactile and directional flooring</li>
+        <li>Hearing loop</li>
+      </ul>
+    </div>
+  </details>
+  {% endset %}
+
+  {{ formPageTextarea({
+        fieldName: "additionalAdjustments",
+        label: {
+          text: page.questions.additionalAdjustments,
+          classes: "govuk-label--m"
+        },
+        hint: {
+          html: hintHtml
+        }
+    }, fetchContext()) }}
+
+{% endblock %}

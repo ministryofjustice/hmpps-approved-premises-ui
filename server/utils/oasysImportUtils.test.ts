@@ -17,20 +17,20 @@ describe('OASysImportUtils', () => {
 
       expect(result).toMatchStringIgnoringWhitespace(`
               <div class="govuk-form-group">
-              <h3 class="govuk-label-wrapper">
+              <h2 class="govuk-label-wrapper">
                   <label class="govuk-label govuk-label--m" for=${sectionName}[${roshSummaries[0].questionNumber}]>
                       ${roshSummaries[0].label}
                   </label>
-              </h3>
+              </h2>
               <textarea class="govuk-textarea" id=${sectionName}[${roshSummaries[0].questionNumber}] name=${sectionName}[${roshSummaries[0].questionNumber}] rows="8">${roshSummaries[0].answer}</textarea>
           </div>
           <hr>
           <div class="govuk-form-group">
-          <h3 class="govuk-label-wrapper">
+          <h2 class="govuk-label-wrapper">
               <label class="govuk-label govuk-label--m" for=${sectionName}[${roshSummaries[1].questionNumber}]>
                   ${roshSummaries[1].label}
               </label>
-          </h3>
+          </h2>
           <textarea class="govuk-textarea" id=${sectionName}[${roshSummaries[1].questionNumber}] name=${sectionName}[${roshSummaries[1].questionNumber}] rows="8">${roshSummaries[1].answer}</textarea>
       </div>
       <hr>`)
@@ -39,20 +39,20 @@ describe('OASysImportUtils', () => {
 
   describe('oasysImportReponse', () => {
     it('returns a human readable response for reach question', () => {
-      const answers = ['answer 1', 'answer 2', 'answer 3']
+      const answers = { Q1: 'answer 1', Q2: 'answer 2', Q3: 'answer 3' }
       const summaries = [
         {
-          questionNumber: '1',
+          questionNumber: 'Q1',
           label: 'The first question',
           answer: 'Some answer for the first question',
         },
         {
-          questionNumber: '2',
+          questionNumber: 'Q2',
           label: 'The second question',
           answer: 'Some answer for the second question',
         },
         {
-          questionNumber: '3',
+          questionNumber: 'Q3',
           label: 'The third question',
           answer: 'Some answer for the third question',
         },
@@ -60,14 +60,14 @@ describe('OASysImportUtils', () => {
       const result = oasysImportReponse(answers, summaries)
 
       expect(result).toEqual({
-        [`${summaries[0].questionNumber}. ${summaries[0].label}`]: `${answers[0]}`,
-        [`${summaries[1].questionNumber}. ${summaries[1].label}`]: `${answers[1]}`,
-        [`${summaries[2].questionNumber}. ${summaries[2].label}`]: `${answers[2]}`,
+        [`Q1: The first question`]: `answer 1`,
+        [`Q2: The second question`]: `answer 2`,
+        [`Q3: The third question`]: `answer 3`,
       })
     })
 
     it('returns no response when there arent any questions', () => {
-      const result = oasysImportReponse([], [])
+      const result = oasysImportReponse({}, [])
 
       expect(result).toEqual({})
     })
@@ -111,6 +111,15 @@ describe('OASysImportUtils', () => {
       const oasysSummary1 = roshSummaryFactory.build({ questionNumber: '1' })
       const oasysSummary2 = roshSummaryFactory.build({ questionNumber: '2' })
       const oasysSummary3 = roshSummaryFactory.build({ questionNumber: '3' })
+
+      const result = sortOasysImportSummaries([oasysSummary3, oasysSummary2, oasysSummary1])
+      expect(result).toEqual([oasysSummary1, oasysSummary2, oasysSummary3])
+    })
+
+    it('removes non-numeric ', () => {
+      const oasysSummary1 = roshSummaryFactory.build({ questionNumber: 'AB1' })
+      const oasysSummary2 = roshSummaryFactory.build({ questionNumber: 'AB2' })
+      const oasysSummary3 = roshSummaryFactory.build({ questionNumber: 'AB3' })
 
       const result = sortOasysImportSummaries([oasysSummary3, oasysSummary2, oasysSummary1])
       expect(result).toEqual([oasysSummary1, oasysSummary2, oasysSummary3])

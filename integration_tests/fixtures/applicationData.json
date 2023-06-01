@@ -1,0 +1,446 @@
+{
+  "basic-information": {
+    "transgender": {
+      "transgenderOrHasTransgenderHistory": "yes"
+    },
+    "complex-case-board": {
+      "reviewRequired": "yes"
+    },
+    "board-taken-place": {
+      "hasBoardTakenPlace": "yes"
+    },
+    "male-ap": {
+      "shouldPersonBePlacedInMaleAp": "yes"
+    },
+    "sentence-type": {
+      "sentenceType": "communityOrder"
+    },
+    "situation": {
+      "situation": "riskManagement"
+    },
+    "release-date": {
+      "releaseDate-year": "2022",
+      "releaseDate-month": "11",
+      "releaseDate-day": "14",
+      "releaseDate": "2022-11-14",
+      "knowReleaseDate": "yes"
+    },
+    "placement-date": {
+      "startDateSameAsReleaseDate": "yes"
+    },
+    "placement-purpose": {
+      "placementPurposes": ["drugAlcoholMonitoring", "otherReason"],
+      "otherReason": "Reason"
+    }
+  },
+  "type-of-ap": {
+    "ap-type": {
+      "type": "standard"
+    }
+  },
+  "oasys-import": {
+    "optional-oasys-sections": {
+      "needsLinkedToReoffending": [
+        { "section": 1, "name": "accommodation", "linkedToHarm": false, "linkedToReOffending": true },
+        { "section": 2, "name": "relationships", "linkedToHarm": false, "linkedToReOffending": true }
+      ],
+      "otherNeeds": [
+        {
+          "section": 3,
+          "name": "emotional",
+          "linkedToHarm": false,
+          "linkedToReOffending": false
+        },
+        {
+          "section": 4,
+          "name": "thinking",
+          "linkedToHarm": false,
+          "linkedToReOffending": false
+        }
+      ]
+    },
+    "rosh-summary": {
+      "roshAnswers": {
+        "Q1": "Some answer for the first RoSH question. With an extra comment Q1",
+        "Q2": "Some answer for the second RoSH question. With an extra comment Q2",
+        "Q3": "Some answer for the third RoSH question. With an extra comment Q3"
+      },
+      "roshSummaries": [
+        {
+          "questionNumber": "Q1",
+          "label": "The first RoSH question",
+          "answer": "Some answer for the first RoSH question"
+        },
+        {
+          "questionNumber": "Q2",
+          "label": "The second RoSH question",
+          "answer": "Some answer for the second RoSH question"
+        },
+        {
+          "questionNumber": "Q3",
+          "label": "The third RoSH question",
+          "answer": "Some answer for the third RoSH question"
+        }
+      ]
+    },
+    "offence-details": {
+      "offenceDetailsAnswers": {
+        "Q1": "Some answer for the first offence details question. With an extra comment Q1",
+        "Q2": "Some answer for the second offence details question. With an extra comment Q2",
+        "Q3": "Some answer for the third offence details question. With an extra comment Q3"
+      },
+      "offenceDetailsSummaries": [
+        {
+          "questionNumber": "Q1",
+          "label": "The first offence details question",
+          "answer": "Some answer for the first offence details question"
+        },
+        {
+          "questionNumber": "Q2",
+          "label": "The second offence details question",
+          "answer": "Some answer for the second offence details question"
+        },
+        {
+          "questionNumber": "Q3",
+          "label": "The third offence details question",
+          "answer": "Some answer for the third offence details question"
+        }
+      ]
+    },
+    "supporting-information": {
+      "supportingInformationAnswers": {
+        "Q1": "Some answer for the first supporting information question. With an extra comment Q1",
+        "Q2": "Some answer for the second supporting information question. With an extra comment Q2",
+        "Q3": "Some answer for the third supporting information question. With an extra comment Q3"
+      },
+      "supportingInformationSummaries": [
+        {
+          "questionNumber": "Q1",
+          "label": "The first supporting information question",
+          "answer": "Some answer for the first supporting information question"
+        },
+        {
+          "questionNumber": "Q2",
+          "label": "The second supporting information question",
+          "answer": "Some answer for the second supporting information question"
+        },
+        {
+          "questionNumber": "Q3",
+          "label": "The third supporting information question",
+          "answer": "Some answer for the third supporting information question"
+        }
+      ]
+    },
+    "risk-management-plan": {
+      "riskManagementAnswers": {
+        "Q1": "Some answer for the first risk management question. With an extra comment Q1",
+        "Q2": "Some answer for the second risk management question. With an extra comment Q2",
+        "Q3": "Some answer for the third risk management question. With an extra comment Q3"
+      },
+      "riskManagementSummaries": [
+        {
+          "questionNumber": "Q1",
+          "label": "The first risk management question",
+          "answer": "Some answer for the first risk management question"
+        },
+        {
+          "questionNumber": "Q2",
+          "label": "The second risk management question",
+          "answer": "Some answer for the second risk management question"
+        },
+        {
+          "questionNumber": "Q3",
+          "label": "The third risk management question",
+          "answer": "Some answer for the third risk management question"
+        }
+      ]
+    },
+    "risk-to-self": {
+      "riskToSelfAnswers": {
+        "Q1": "Some answer for the first risk to self question. With an extra comment Q1",
+        "Q2": "Some answer for the second risk to self question. With an extra comment Q2",
+        "Q3": "Some answer for the third risk to self question. With an extra comment Q3"
+      },
+      "riskToSelfSummaries": [
+        {
+          "questionNumber": "Q1",
+          "label": "The first risk to self question",
+          "answer": "Some answer for the first risk to self question"
+        },
+        {
+          "questionNumber": "Q2",
+          "label": "The second risk to self question",
+          "answer": "Some answer for the second risk to self question"
+        },
+        {
+          "questionNumber": "Q3",
+          "label": "The third risk to self question",
+          "answer": "Some answer for the third risk to self question"
+        }
+      ]
+    }
+  },
+  "risk-management-features": {
+    "risk-management-features": {
+      "manageRiskDetails": "est vero nesciunt",
+      "additionalFeaturesDetails": "deleniti enim necessitatibus"
+    },
+    "convicted-offences": {
+      "response": "yes"
+    },
+    "type-of-convicted-offence": {
+      "offenceConvictions": ["arson", "sexualOffence", "hateCrimes", "childNonSexualOffence"]
+    },
+    "date-of-offence": {
+      "arsonOffence": ["current"],
+      "hateCrime": ["previous"],
+      "inPersonSexualOffence": ["current", "previous"]
+    },
+    "rehabilitative-interventions": {
+      "rehabilitativeInterventions": [
+        "accommodation",
+        "drugsAndAlcohol",
+        "childrenAndFamilies",
+        "health",
+        "educationTrainingAndEmployment",
+        "financeBenefitsAndDebt",
+        "attitudesAndBehaviour",
+        "abuse",
+        "sexWorking",
+        "other"
+      ],
+      "otherIntervention": "Another",
+      "summary": "A summary of how these interventions will assist the person rehabilitation"
+    }
+  },
+  "prison-information": {
+    "case-notes": {
+      "caseNoteIds": ["a30173ca-061f-42c9-a1a2-28c70b282d3f", "4a477187-b77f-4fcc-a919-43a6633ee868"],
+      "selectedCaseNotes": [
+        {
+          "authorName": "Denise Collins",
+          "id": "a30173ca-061f-42c9-a1a2-28c70b282d3f",
+          "createdAt": "2022-11-10",
+          "occurredAt": "2022-10-19",
+          "sensitive": false,
+          "subType": "Ressettlement",
+          "type": "Social Care",
+          "note": "Note 1"
+        },
+        {
+          "authorName": "Leticia Mann",
+          "id": "4a477187-b77f-4fcc-a919-43a6633ee868",
+          "createdAt": "2022-07-24",
+          "occurredAt": "2022-09-22",
+          "sensitive": true,
+          "subType": "Quality Work",
+          "type": "General",
+          "note": "Note 2"
+        }
+      ],
+      "adjudications": [
+        {
+          "id": 69927,
+          "reportedAt": "2022-10-09",
+          "establishment": "Hawthorne",
+          "offenceDescription": "Nam vel nisi fugiat veniam possimus omnis.",
+          "hearingHeld": false,
+          "finding": "NOT_PROVED"
+        },
+        {
+          "id": 39963,
+          "reportedAt": "2022-07-10",
+          "establishment": "Oklahoma City",
+          "offenceDescription": "Illum maxime enim explicabo soluta sequi voluptas.",
+          "hearingHeld": true,
+          "finding": "PROVED"
+        },
+        {
+          "id": 77431,
+          "reportedAt": "2022-05-30",
+          "establishment": "Jurupa Valley",
+          "offenceDescription": "Quis porro nemo voluptates doloribus atque quis provident iure.",
+          "hearingHeld": false,
+          "finding": "PROVED"
+        }
+      ],
+      "acctAlerts": [
+        {
+          "alertId": 47419,
+          "dateCreated": "2022-12-05",
+          "dateExpires": "2023-05-29",
+          "comment": "Soluta harum harum hic maxime reprehenderit quis harum necessitatibus.",
+          "expired": false,
+          "active": true
+        },
+        {
+          "alertId": 429,
+          "dateCreated": "2022-05-21",
+          "dateExpires": "2023-12-16",
+          "comment": "Quia ex nisi deserunt voluptatibus sit ipsa.",
+          "expired": false,
+          "active": true
+        }
+      ]
+    }
+  },
+  "location-factors": {
+    "describe-location-factors": {
+      "postcodeArea": "SW11",
+      "positiveFactors": "Some positive factors",
+      "restrictions": "yes",
+      "restrictionDetail": "Restrictions go here",
+      "alternativeRadiusAccepted": "yes",
+      "alternativeRadius": "70"
+    }
+  },
+  "access-and-healthcare": {
+    "access-needs": {
+      "additionalNeeds": ["mobility", "learningDisability", "neurodivergentConditions", "pregnancy"],
+      "religiousOrCulturalNeeds": "yes",
+      "religiousOrCulturalNeedsDetail": "sunt at minus",
+      "needsInterpreter": "yes",
+      "careAndSupportNeeds": "yes",
+      "careAndSupportNeedsDetail": "some detail",
+      "interpreterLanguage": "beatae eligendi explicabo",
+      "careActAssessmentCompleted": "yes"
+    },
+    "access-needs-further-questions": {
+      "needsWheelchair": "yes",
+      "healthConditions": "yes",
+      "healthConditionsDetail": "Some detail",
+      "prescribedMedication": "yes",
+      "prescribedMedicationDetail": "Some detail",
+      "isPersonPregnant": "yes",
+      "expectedDeliveryDate": "2023-12-31",
+      "expectedDeliveryDate-year": "2023",
+      "expectedDeliveryDate-month": "12",
+      "expectedDeliveryDate-day": "31",
+      "otherPregnancyConsiderations": "yes",
+      "otherPregnancyConsiderationsDetail": "some considerations",
+      "childRemoved": "decisionPending",
+      "additionalAdjustments": "Some detail"
+    },
+    "covid": {
+      "fullyVaccinated": "yes",
+      "highRisk": "yes",
+      "additionalCovidInfo": "additional info"
+    }
+  },
+  "further-considerations": {
+    "room-sharing": {
+      "riskToStaff": "no",
+      "riskToStaffDetail": "",
+      "riskToOthers": "no",
+      "riskToOthersDetail": "",
+      "sharingConcerns": "yes",
+      "sharingConcernsDetail": "Some details here",
+      "traumaConcerns": "no",
+      "traumaConcernsDetail": "",
+      "sharingBenefits": "no",
+      "sharingBenefitsDetail": ""
+    },
+    "vulnerability": {
+      "exploitable": "no",
+      "exploitableDetail": "",
+      "exploitOthers": "yes",
+      "exploitOthersDetail": "Some details here"
+    },
+    "previous-placements": {
+      "previousPlacement": "yes",
+      "previousPlacementDetail": "Some details here"
+    },
+
+    "catering": {
+      "catering": "yes",
+      "cateringDetail": "Some details here"
+    },
+    "arson": {
+      "arson": "yes",
+      "arsonDetail": "Some details here"
+    },
+    "additional-circumstances": {
+      "additionalCircumstances": "yes",
+      "additionalCircumstancesDetail": "Some details here"
+    },
+    "contingency-plan-partners": {
+      "partnerAgencyDetails": [
+        {
+          "partnerAgencyName": "Test agency 1",
+          "namedContact": "Test contact 1",
+          "phoneNumber": "01234567891",
+          "roleInPlan": "Test role 1"
+        },
+        {
+          "partnerAgencyName": "Test agency 2",
+          "namedContact": "Test contact 2",
+          "phoneNumber": "01234567892",
+          "roleInPlan": "Test role 2"
+        }
+      ]
+    },
+    "contingency-plan-questions": {
+      "noReturn": "Action to be taken",
+      "placementWithdrawn": "Further action to be taken",
+      "victimConsiderations": "Considerations for victim",
+      "unsuitableAddresses": "An unsuitable address",
+      "suitableAddresses": "Some suitable addresses",
+      "breachInformation": "Breach information to assist decision making",
+      "otherConsiderations": "Some other considerations"
+    }
+  },
+  "move-on": {
+    "placement-duration": {
+      "differentDuration": "yes",
+      "duration": "6",
+      "reason": "some reason"
+    },
+    "relocation-region": {
+      "postcodeArea": "SW11"
+    },
+    "plans-in-place": {
+      "arePlansInPlace": "yes",
+      "plansInPlaceDetail": "Some detail"
+    },
+    "type-of-accommodation": {
+      "accommodationType": "foreignNational",
+      "otherAccommodationType": ""
+    },
+    "foreign-national": {
+      "response": "yes",
+      "date-year": "2015",
+      "date-month": "1",
+      "date-day": "1",
+      "date": "2015-01-01"
+    }
+  },
+  "attach-required-documents": {
+    "attach-documents": {
+      "selectedDocuments": [
+        {
+          "id": "aeb43e06-a4a1-460f-9acf-e2495de84604",
+          "level": "Offender",
+          "fileName": "Random offender document1.pdf",
+          "createdAt": "2019-09-10T00:00:00Z",
+          "typeCode": "OFFENDER_DOCUMENT",
+          "typeDescription": "Offender related",
+          "description": "Some Description 1"
+        },
+        {
+          "id": "5f8a2288-0a17-4e45-afd5-5e57794a7b53",
+          "level": "Conviction",
+          "fileName": "national.asm",
+          "createdAt": "2022-09-13",
+          "typeCode": "serenade",
+          "typeDescription": "porter",
+          "description": "Some Description 2"
+        }
+      ]
+    }
+  },
+  "check-your-answers": {
+    "review": {
+      "reviewed": "1"
+    }
+  }
+}

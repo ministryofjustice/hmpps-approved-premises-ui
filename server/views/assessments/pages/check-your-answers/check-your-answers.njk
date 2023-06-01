@@ -7,12 +7,14 @@
 {% set pageTitle = applicationName + " - " + page.title %}
 {% set mainClasses = "app-container govuk-body" %}
 
-{% block content %}
-
+{% block beforeContent %}
     {{ govukBackLink({
       text: "Back",
       href: paths.assessments.show({ id: page.assessment.id })
     }) }}
+{% endblock %}
+
+{% block content %}
 
     <div class="govuk-grid-row">
         <div class="govuk-width-container">
@@ -20,7 +22,7 @@
                 {{ page.title }}
             </h1>
 
-            {% for section in AssessmentUtils.assessmentSections(page.assessment) %}
+            {% for section in SummaryListUtils.summaryListSections(page.assessment) %}
                 {% for task in section.tasks %}
                     {{ govukSummaryList(task) }}
                 {% endfor %}

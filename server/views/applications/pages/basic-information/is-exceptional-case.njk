@@ -4,12 +4,10 @@
 {% extends "../layout.njk" %}
 
 {% block beforeContent %}
-
   {{ govukBackLink({
 		text: "Back",
 		href: paths.applications.people.selectOffence({ crn: page.application.person.crn })
 	}) }}
-
 {% endblock %}
 
 {% block questions %}
@@ -31,7 +29,6 @@
   <ul class="govuk-list govuk-list--bullet">
     <li>A3</li>
     <li>A2</li>
-    <li>B1</li>
     <li>B3</li>
     <li>B2</li>
     <li>B1</li>

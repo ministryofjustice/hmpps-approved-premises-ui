@@ -1,7 +1,7 @@
 import type { Request } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { DataServices, TaskListErrors } from '@approved-premises/ui'
-import type { SubmitApplication } from '@approved-premises/api'
+import type { SubmitApprovedPremisesApplication, UpdateApprovedPremisesApplication } from '@approved-premises/api'
 
 import type TasklistPage from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
@@ -10,10 +10,15 @@ import ApplicationClient from '../data/applicationClient'
 import { getBody, getPageName, getTaskName } from '../form-pages/utils'
 
 import Apply from '../form-pages/apply'
-import { activeOffenceFactory, applicationFactory, assessmentFactory, documentFactory } from '../testutils/factories'
+import {
+  activeOffenceFactory,
+  applicationFactory,
+  applicationSummaryFactory,
+  assessmentFactory,
+  documentFactory,
+} from '../testutils/factories'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
-import { isUnapplicable } from '../utils/applications/utils'
-import { applicationSubmissionData } from '../utils/applications/applicationSubmissionData'
+import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -33,7 +38,7 @@ jest.mock('../data/applicationClient.ts')
 jest.mock('../data/personClient.ts')
 jest.mock('../utils/applications/utils')
 jest.mock('../form-pages/utils')
-jest.mock('../utils/applications/applicationSubmissionData')
+jest.mock('../utils/applications/getApplicationData')
 
 describe('ApplicationService', () => {
   const applicationClient = new ApplicationClient(null) as jest.Mocked<ApplicationClient>
@@ -48,9 +53,9 @@ describe('ApplicationService', () => {
 
   describe('getAllForLoggedInUser', () => {
     const token = 'SOME_TOKEN'
-    const submittedApplications = applicationFactory.buildList(5, { status: 'submitted' })
-    const inProgressApplications = applicationFactory.buildList(2, { status: 'inProgress' })
-    const requestedFurtherInformationApplications = applicationFactory.buildList(1, {
+    const submittedApplications = applicationSummaryFactory.buildList(5, { status: 'submitted' })
+    const inProgressApplications = applicationSummaryFactory.buildList(2, { status: 'inProgress' })
+    const requestedFurtherInformationApplications = applicationSummaryFactory.buildList(1, {
       status: 'requestedFurtherInformation',
     })
 
@@ -69,21 +74,6 @@ describe('ApplicationService', () => {
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.all).toHaveBeenCalled()
-    })
-
-    it('should filter out unapplicable applications', async () => {
-      const unapplicableApplication = applicationFactory.build()
-      ;(isUnapplicable as jest.Mock).mockImplementation(application => application === unapplicableApplication)
-
-      applicationClient.all.mockResolvedValue([applications, unapplicableApplication].flat())
-
-      const result = await service.getAllForLoggedInUser(token)
-
-      expect(result).toEqual({
-        inProgress: inProgressApplications,
-        requestedFurtherInformation: requestedFurtherInformationApplications,
-        submitted: submittedApplications,
-      })
     })
   })
 
@@ -191,16 +181,16 @@ describe('ApplicationService', () => {
     const Page = jest.fn()
 
     beforeEach(() => {
+      applicationClient.find.mockResolvedValue(application)
+
       request = createMock<Request>({
         params: { id: application.id, task: 'my-task', page: 'first' },
-        session: { application, previousPage: '' },
+        session: { previousPage: '' },
         user: { token: 'some-token' },
       })
     })
 
     it('should fetch the application from the API if it is not in the session', async () => {
-      request.session.application = undefined
-      applicationClient.find.mockResolvedValue(application)
       ;(getBody as jest.Mock).mockReturnValue(request.body)
 
       const result = await service.initializePage(Page, request, dataServices)
@@ -232,16 +222,21 @@ describe('ApplicationService', () => {
       expect(Page).toHaveBeenCalledWith(userInput, application, '')
     })
 
-    it('should load from the session if the body and userInput are blank', async () => {
+    it('should load from the application if the body and userInput are blank', async () => {
+      const data = { 'my-task': { first: { foo: 'bar' } } }
+      const applicationWithData = {
+        ...application,
+        data,
+      }
       request.body = {}
-      request.session.application.data = { 'my-task': { first: { foo: 'bar' } } }
-      ;(getBody as jest.Mock).mockReturnValue(request.session.application.data['my-task'].first)
+      applicationClient.find.mockResolvedValue(applicationWithData)
+      ;(getBody as jest.Mock).mockReturnValue(data['my-task'].first)
 
       const result = await service.initializePage(Page, request, dataServices)
 
       expect(result).toBeInstanceOf(Page)
 
-      expect(Page).toHaveBeenCalledWith({ foo: 'bar' }, application, '')
+      expect(Page).toHaveBeenCalledWith({ foo: 'bar' }, applicationWithData, '')
     })
 
     it("should call a service's initialize method if it exists", async () => {
@@ -268,8 +263,13 @@ describe('ApplicationService', () => {
     const token = 'some-token'
     const request = createMock<Request>({
       params: { id: application.id, task: 'some-task', page: 'some-page' },
-      session: { application },
       user: { token },
+    })
+    const applicationData = createMock<UpdateApprovedPremisesApplication>()
+
+    beforeEach(() => {
+      applicationClient.find.mockResolvedValue(application)
+      ;(getApplicationUpdateData as jest.Mock).mockReturnValue(applicationData)
     })
 
     describe('when there are no validation errors', () => {
@@ -292,18 +292,11 @@ describe('ApplicationService', () => {
         }).not.toThrow(ValidationError)
       })
 
-      it('saves data to the session', async () => {
-        await service.save(page, request)
-
-        expect(request.session.application).toEqual(application)
-        expect(request.session.application.data).toEqual({ 'some-task': { 'some-page': { foo: 'bar' } } })
-      })
-
       it('saves data to the api', async () => {
         await service.save(page, request)
 
         expect(applicationClientFactory).toHaveBeenCalledWith(token)
-        expect(applicationClient.update).toHaveBeenCalledWith(application)
+        expect(applicationClient.update).toHaveBeenCalledWith(application.id, applicationData)
       })
 
       it('updates an in-progress application', async () => {
@@ -311,9 +304,14 @@ describe('ApplicationService', () => {
 
         await service.save(page, request)
 
-        expect(request.session.application).toEqual(application)
-        expect(request.session.application.data).toEqual({
-          'some-task': { 'other-page': { question: 'answer' }, 'some-page': { foo: 'bar' } },
+        expect(getApplicationUpdateData).toHaveBeenCalledWith({
+          ...application,
+          data: {
+            'some-task': {
+              'other-page': { question: 'answer' },
+              'some-page': { foo: 'bar' },
+            },
+          },
         })
       })
     })
@@ -341,16 +339,16 @@ describe('ApplicationService', () => {
       user: { token },
     })
     const application = applicationFactory.build()
-    const applicationData = createMock<SubmitApplication>()
+    const applicationData = createMock<SubmitApprovedPremisesApplication>()
 
-    it('saves data to the session', async () => {
-      ;(applicationSubmissionData as jest.Mock).mockReturnValue(applicationData)
+    it('calls the submit client method', async () => {
+      ;(getApplicationSubmissionData as jest.Mock).mockReturnValue(applicationData)
       await service.submit(request.user.token, application)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.submit).toHaveBeenCalledWith(application.id, applicationData)
 
-      expect(applicationSubmissionData).toHaveBeenCalledWith(application)
+      expect(getApplicationSubmissionData).toHaveBeenCalledWith(application)
     })
   })
 
@@ -359,7 +357,7 @@ describe('ApplicationService', () => {
     const id = 'some-uuid'
     const assessment = assessmentFactory.build()
 
-    it('saves data to the session', async () => {
+    it('calls the assessment client method', async () => {
       applicationClient.assessment.mockResolvedValue(assessment)
 
       const result = await service.getAssessment(token, id)

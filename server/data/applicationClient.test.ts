@@ -1,6 +1,12 @@
 import ApplicationClient from './applicationClient'
 import config from '../config'
-import { activeOffenceFactory, applicationFactory, assessmentFactory, documentFactory } from '../testutils/factories'
+import {
+  activeOffenceFactory,
+  applicationFactory,
+  applicationSummaryFactory,
+  assessmentFactory,
+  documentFactory,
+} from '../testutils/factories'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
 
@@ -33,6 +39,7 @@ describeClient('ApplicationClient', provider => {
             convictionId: offence.convictionId,
             deliusEventNumber: offence.deliusEventNumber,
             offenceId: offence.offenceId,
+            type: 'CAS1',
           },
           headers: {
             authorization: `Bearer ${token}`,
@@ -72,6 +79,7 @@ describeClient('ApplicationClient', provider => {
               convictionId: offence.convictionId,
               deliusEventNumber: offence.deliusEventNumber,
               offenceId: offence.offenceId,
+              type: 'CAS1',
             },
             headers: {
               authorization: `Bearer ${token}`,
@@ -119,6 +127,14 @@ describeClient('ApplicationClient', provider => {
   describe('update', () => {
     it('should return an application when a PUT request is made', async () => {
       const application = applicationFactory.build()
+      const data = {
+        data: application.data,
+        isPipeApplication: true,
+        isWomensApplication: false,
+        targetLocation: 'ABC123',
+        releaseType: 'licence' as const,
+        type: 'CAS1',
+      }
 
       provider.addInteraction({
         state: 'Server is healthy',
@@ -126,7 +142,7 @@ describeClient('ApplicationClient', provider => {
         withRequest: {
           method: 'PUT',
           path: paths.applications.update({ id: application.id }),
-          body: JSON.stringify({ data: application.data }),
+          body: JSON.stringify(data),
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -137,7 +153,7 @@ describeClient('ApplicationClient', provider => {
         },
       })
 
-      const result = await applicationClient.update(application)
+      const result = await applicationClient.update(application.id, data)
 
       expect(result).toEqual(application)
     })
@@ -145,7 +161,7 @@ describeClient('ApplicationClient', provider => {
 
   describe('all', () => {
     it('should get all previous applications', async () => {
-      const previousApplications = applicationFactory.buildList(5)
+      const previousApplications = applicationSummaryFactory.buildList(5)
 
       provider.addInteraction({
         state: 'Server is healthy',
@@ -178,6 +194,7 @@ describeClient('ApplicationClient', provider => {
         isWomensApplication: false,
         targetLocation: 'ABC123',
         releaseType: 'licence' as const,
+        type: 'CAS1',
       }
 
       provider.addInteraction({
