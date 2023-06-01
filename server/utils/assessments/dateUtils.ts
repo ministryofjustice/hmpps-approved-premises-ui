@@ -57,13 +57,14 @@ const formattedArrivalDate = (assessment: AssessmentSummary | Assessment): strin
 
   if ('arrivalDate' in assessment) {
     arrivalDate = assessment.arrivalDate
-  } else if ('application' in assessment) {
+  } else if ('application' in assessment && arrivalDateFromApplication(assessment.application as Application)) {
     arrivalDate = arrivalDateFromApplication(assessment.application as Application)
   }
 
   if (!arrivalDate) {
-    return 'N/A'
+    return 'Not provided'
   }
+
   return format(DateFormats.isoToDateObj(arrivalDate), 'd MMM yyyy')
 }
 
