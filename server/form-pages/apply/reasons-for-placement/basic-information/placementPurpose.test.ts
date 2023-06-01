@@ -4,8 +4,10 @@ import { noticeTypeFromApplication } from '../../../../utils/applications/notice
 import { applicationFactory } from '../../../../testutils/factories'
 
 import PlacementPurpose from './placementPurpose'
+import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
 
 jest.mock('../../../../utils/applications/noticeTypeFromApplication')
+jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment')
 
 describe('PlacementPurpose', () => {
   const application = applicationFactory.build()
@@ -70,11 +72,19 @@ describe('PlacementPurpose', () => {
   itShouldHaveNextValue(new PlacementPurpose({ placementPurposes: ['publicProtection'] }, application), '')
 
   describe('when the notice type is standard', () => {
-    beforeEach(() => {
+    describe('when the applicant knows the release date', () => {
       ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('standard')
+      ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('yes')
+
+      expect(new PlacementPurpose({}, application).previous()).toBe('placement-date')
     })
 
-    itShouldHavePreviousValue(new PlacementPurpose({}, application), 'placement-purpose')
+    describe('when the applicant doesnt know the release date', () => {
+      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('standard')
+      ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('no')
+
+      expect(new PlacementPurpose({}, application).previous()).toBe('oral-hearing')
+    })
   })
 
   describe('when the notice type is emergency', () => {

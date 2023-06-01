@@ -27,6 +27,8 @@ const groupByAllocation = (tasks: Array<Task>) => {
 }
 
 const applicationSummary = (application: Application): Array<SummaryListItem> => {
+  const arrivalDate = arrivalDateFromApplication(application)
+
   const summary = [
     {
       key: {
@@ -41,7 +43,7 @@ const applicationSummary = (application: Application): Array<SummaryListItem> =>
         text: 'Arrival date',
       },
       value: {
-        text: DateFormats.isoDateToUIDate(arrivalDateFromApplication(application)),
+        text: arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate) : 'Not provided',
       },
     },
     {

@@ -21,39 +21,77 @@ describe('index', () => {
   })
 
   describe('applicationSummary', () => {
-    beforeEach(() => {
-      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
+    describe('when the application contains an arrival date', () => {
+      beforeEach(() => {
+        ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
+      })
+
+      it('returns the summary list when the assessment has a staff member allocated', () => {
+        const application = applicationFactory.build()
+
+        expect(applicationSummary(application)).toEqual([
+          {
+            key: {
+              text: 'CRN',
+            },
+            value: {
+              text: application.person.crn,
+            },
+          },
+          {
+            key: {
+              text: 'Arrival date',
+            },
+            value: {
+              text: DateFormats.isoDateToUIDate(arrivalDateFromApplication(application)),
+            },
+          },
+          {
+            key: {
+              text: 'Application Type',
+            },
+            value: {
+              text: getApplicationType(application),
+            },
+          },
+        ])
+      })
     })
+    describe('when the application doesnt have an arrival date', () => {
+      beforeEach(() => {
+        ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(null)
+      })
 
-    it('returns the summary list when the assessment has a staff member allocated', () => {
-      const application = applicationFactory.build()
+      it('returns the summary list when the assessment has a staff member allocated', () => {
+        const application = applicationFactory.build()
 
-      expect(applicationSummary(application)).toEqual([
-        {
-          key: {
-            text: 'CRN',
+        expect(applicationSummary(application)).toEqual([
+          {
+            key: {
+              text: 'CRN',
+            },
+            value: {
+              text: application.person.crn,
+            },
           },
-          value: {
-            text: application.person.crn,
+          {
+            key: {
+              text: 'Arrival date',
+            },
+            value: {
+              text: 'Not provided',
+            },
           },
-        },
-        {
-          key: {
-            text: 'Arrival date',
+          {
+            key: {
+              text: 'Application Type',
+            },
+            value: {
+              text: getApplicationType(application),
+            },
           },
-          value: {
-            text: DateFormats.isoDateToUIDate(arrivalDateFromApplication(application)),
-          },
-        },
-        {
-          key: {
-            text: 'Application Type',
-          },
-          value: {
-            text: getApplicationType(application),
-          },
-        },
-      ])
+        ])
+      })
     })
   })
 })
