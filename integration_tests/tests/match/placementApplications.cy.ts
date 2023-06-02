@@ -1,5 +1,6 @@
 import { applicationFactory, placementApplicationFactory } from '../../../server/testutils/factories'
 import { ShowPage } from '../../pages/apply'
+import DateOfPlacement from '../../pages/match/placementRequestForm/datesOfPlacement'
 import PreviousRotlPlacement from '../../pages/match/placementRequestForm/previousRotlPlacement'
 import ReasonForPlacementPage from '../../pages/match/placementRequestForm/reasonForPlacement'
 import SameAp from '../../pages/match/placementRequestForm/sameAp'
@@ -48,5 +49,9 @@ context('Placement Applications', () => {
     const sameApPage = new SameAp()
     sameApPage.completeForm()
     sameApPage.clickSubmit()
+
+    const datesOfPlacementPage = new DateOfPlacement()
+    datesOfPlacementPage.completeForm()
+    datesOfPlacementPage.clickSubmit()
   })
 })
