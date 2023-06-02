@@ -19,18 +19,18 @@ export default {
         jsonBody: placementApplication,
       },
     }),
-  stubPlacementApplicationUpdate: (args: { placementApplication: PlacementApplication }): SuperAgentRequest =>
+  stubPlacementApplicationUpdate: (placementApplication: PlacementApplication): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'PUT',
         url: paths.placementApplications.update({
-          id: args.placementApplication.id,
+          id: placementApplication.id,
         }),
       },
       response: {
         status: 201,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: args.placementApplication,
+        jsonBody: placementApplication,
       },
     }),
   stubCreatePlacementApplication: (placementApplication: PlacementApplication): SuperAgentRequest =>
