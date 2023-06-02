@@ -18,7 +18,7 @@ describe('ReasonForPlacement', () => {
     })
   })
 
-  itShouldHaveNextValue(new ReasonForPlacement({}), '')
+  itShouldHaveNextValue(new ReasonForPlacement({}), 'previous-rotl-placement')
   itShouldHavePreviousValue(new ReasonForPlacement({}), '')
 
   describe('errors', () => {
