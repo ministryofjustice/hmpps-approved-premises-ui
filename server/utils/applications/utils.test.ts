@@ -3,6 +3,7 @@ import { applicationFactory, applicationSummaryFactory, tierEnvelopeFactory } fr
 import paths from '../../paths/apply'
 import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
+import PlacementRequest from '../../form-pages/placement-application'
 import { DateFormats } from '../dateUtils'
 import { isApplicableTier, tierBadge } from '../personUtils'
 
@@ -17,9 +18,13 @@ import {
 } from './utils'
 import { UnknownPageError } from '../errors'
 
+jest.mock('../personUtils')
+jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
+
 const FirstApplyPage = jest.fn()
 const SecondApplyPage = jest.fn()
 const AssessPage = jest.fn()
+const PlacementRequestPage = jest.fn()
 
 jest.mock('../../form-pages/apply', () => {
   return {
@@ -34,8 +39,11 @@ jest.mock('../../form-pages/assess', () => {
   }
 })
 
-jest.mock('../personUtils')
-jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
+jest.mock('../../form-pages/placement-application', () => {
+  return {
+    pages: { 'placement-request-page': {} },
+  }
+})
 
 Apply.pages['basic-information'] = {
   first: FirstApplyPage,
@@ -44,6 +52,10 @@ Apply.pages['basic-information'] = {
 
 Assess.pages['assess-page'] = {
   first: AssessPage,
+}
+
+PlacementRequest.pages['placement-request-page'] = {
+  first: PlacementRequestPage,
 }
 
 describe('utils', () => {
@@ -70,17 +82,21 @@ describe('utils', () => {
 
   describe('getPage', () => {
     it('should return a page from Apply if it exists', () => {
-      expect(getPage('basic-information', 'first')).toEqual(FirstApplyPage)
-      expect(getPage('basic-information', 'second')).toEqual(SecondApplyPage)
+      expect(getPage('basic-information', 'first', 'applications')).toEqual(FirstApplyPage)
+      expect(getPage('basic-information', 'second', 'applications')).toEqual(SecondApplyPage)
     })
 
-    it('should return a page from assess if passed the option', () => {
-      expect(getPage('assess-page', 'first', true)).toEqual(AssessPage)
+    it('should return a page from assess if passed the an assessment', () => {
+      expect(getPage('assess-page', 'first', 'assessments')).toEqual(AssessPage)
+    })
+
+    it('should return a page from the placement request journey if passed the placement requests', () => {
+      expect(getPage('placement-request-page', 'first', 'placement-applications')).toEqual(PlacementRequestPage)
     })
 
     it('should raise an error if the page is not found', async () => {
       expect(() => {
-        getPage('basic-information', 'bar')
+        getPage('basic-information', 'bar', 'applications')
       }).toThrow(UnknownPageError)
     })
   })

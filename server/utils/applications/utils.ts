@@ -1,4 +1,11 @@
-import type { ApplicationType, PageResponse, TableRow } from '@approved-premises/ui'
+import type {
+  ApplicationType,
+  FormArtifact,
+  FormPages,
+  JourneyType,
+  PageResponse,
+  TableRow,
+} from '@approved-premises/ui'
 import type {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
@@ -13,7 +20,6 @@ import { isApplicableTier, tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
-import isAssessment from '../assessments/isAssessment'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
 import ExceptionDetails from '../../form-pages/apply/reasons-for-placement/basic-information/exceptionDetails'
@@ -91,8 +97,8 @@ const getResponseForPage = (formArtifact: FormArtifact, taskName: string, pageNa
   return page.response()
 }
 
-const getPage = (taskName: string, pageName: string, isAnAssessment?: boolean): TasklistPageInterface => {
-  const pageList = isAnAssessment ? Assess.pages[taskName] : Apply.pages[taskName]
+const getPage = (taskName: string, pageName: string, journeyType: JourneyType): TasklistPageInterface => {
+  const pageList = journeyPages(journeyType)[taskName]
 
   const Page = pageList[pageName]
 

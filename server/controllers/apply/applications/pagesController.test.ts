@@ -65,7 +65,7 @@ describe('pagesController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(getPage).toHaveBeenCalledWith('some-task', 'some-page')
+      expect(getPage).toHaveBeenCalledWith('some-task', 'some-page', 'applications')
       expect(applicationService.initializePage).toHaveBeenCalledWith(PageConstructor, request, dataServices, {})
 
       expect(response.render).toHaveBeenCalledWith('applications/pages/some/view', {
