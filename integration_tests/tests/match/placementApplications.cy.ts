@@ -1,5 +1,6 @@
 import { applicationFactory, placementApplicationFactory } from '../../../server/testutils/factories'
 import { ShowPage } from '../../pages/apply'
+import PreviousRotlPlacement from '../../pages/match/placementRequestForm/previousRotlPlacement'
 import ReasonForPlacementPage from '../../pages/match/placementRequestForm/reasonForPlacement'
 
 context('Placement Applications', () => {
@@ -23,6 +24,7 @@ context('Placement Applications', () => {
     const placementApplicationId = '123'
     const placementApplication = placementApplicationFactory.build({ id: placementApplicationId })
     cy.task('stubCreatePlacementApplication', placementApplication)
+    cy.task('stubPlacementApplicationUpdate', placementApplication)
     cy.task('stubPlacementApplication', placementApplication)
 
     // When I visit the readonly application view
@@ -36,8 +38,10 @@ context('Placement Applications', () => {
 
     // Then I can complete the form
     placementReasonPage.completeForm()
-
-    // And submit it
     placementReasonPage.clickSubmit()
+
+    const previousRotlPlacementPage = new PreviousRotlPlacement()
+    previousRotlPlacementPage.completeForm()
+    previousRotlPlacementPage.clickSubmit()
   })
 })

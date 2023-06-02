@@ -1,0 +1,70 @@
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% extends "../../layout.njk" %}
+
+{% block questions %}
+
+  <h1 class="govuk-heading-l">
+    Request for placement
+  </h1>
+
+  {% set conditionalHTML %}
+
+  {{
+    formPageDateInput(
+      {
+        fieldName: "lastPlacementDate",
+        fieldset: {
+          legend: {
+            text: page.questions.lastPlacementDate
+          }
+        },
+        items: dateFieldValues('lastPlacementDate', errors)
+      },
+      fetchContext()
+    )
+  }}
+
+  {{ formPageInput({
+        fieldName: "lastAp",
+        label: {
+          text: page.questions.lastAp
+        }
+      },fetchContext()) }}
+
+  {{ formPageTextarea({
+      fieldName: 'details',
+      label: {
+        text: page.questions.details
+        }
+    }, fetchContext()) }}
+
+  {% endset -%}
+
+  {{ formPageRadios(
+      {
+        fieldset: {
+          legend: {
+            text: page.questions.previousRotlPlacement,
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes",
+            conditional: {
+              html: conditionalHTML
+            }
+          },
+          {
+            text: "No",
+            value: "no"
+          }
+        ],
+        fieldName: "previousRotlPlacement"
+      },
+      fetchContext()
+    )
+  }}
+
+{% endblock %}
