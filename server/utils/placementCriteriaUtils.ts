@@ -65,9 +65,10 @@ const filterByType = <T extends PlacementCriteriaCategory>(keys: Array<string>):
     .reduce((criteria, key) => ({ ...criteria, [key]: placementCriteria[key] }), {}) as Record<T, string>
 }
 
+export const specialistApTypeOptions = filterByType<ApTypeCriteria>(apTypes)
 export const apTypeOptions = {
   normal: 'Standard AP',
-  ...filterByType<ApTypeCriteria>(apTypes),
+  ...specialistApTypeOptions,
 } as Record<ApTypeCriteria & 'normal', string>
 export const specialistSupportOptions = filterByType<SpecialistSupportCriteria>(specialistSupportCriteria)
 export const accessibilityOptions = filterByType<AccessibilityCriteria>(accessibilityCriteria)

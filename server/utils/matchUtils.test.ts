@@ -39,10 +39,10 @@ import {
 } from './matchUtils'
 import {
   accessibilityOptions,
-  apTypeOptions,
   offenceAndRiskOptions,
   placementCriteria,
   placementRequirementOptions,
+  specialistApTypeOptions,
   specialistSupportOptions,
 } from './placementCriteriaUtils'
 
@@ -211,7 +211,7 @@ describe('matchUtils', () => {
   describe('groupedCheckboxes', () => {
     it('returns checkboxes grouped by category', () => {
       expect(groupedCheckboxes([])).toEqual({
-        'Type of AP': checkBoxesForCriteria(apTypeOptions, []),
+        'Type of AP': checkBoxesForCriteria(specialistApTypeOptions, []),
         'Specialist AP': checkBoxesForCriteria(specialistSupportOptions, []),
         'Placement Requirements': checkBoxesForCriteria(placementRequirementOptions, []),
         'Risks and offences to consider': checkBoxesForCriteria(offenceAndRiskOptions, []),

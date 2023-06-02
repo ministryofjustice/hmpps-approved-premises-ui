@@ -10,9 +10,9 @@ import { linkTo, sentenceCase } from './utils'
 import matchPaths from '../paths/match'
 import {
   accessibilityOptions,
-  apTypeOptions,
   offenceAndRiskOptions,
   placementRequirementOptions,
+  specialistApTypeOptions,
   specialistSupportOptions,
 } from './placementCriteriaUtils'
 
@@ -32,7 +32,7 @@ export type SearchFilterCategories =
   | 'specialistSupport'
 
 const groupedCriteria = {
-  apType: { title: 'Type of AP', options: apTypeOptions },
+  apType: { title: 'Type of AP', options: specialistApTypeOptions },
   specialistSupport: { title: 'Specialist AP', options: specialistSupportOptions },
   placementRequirements: { title: 'Placement Requirements', options: placementRequirementOptions },
   offenceAndRisk: { title: 'Risks and offences to consider', options: offenceAndRiskOptions },
