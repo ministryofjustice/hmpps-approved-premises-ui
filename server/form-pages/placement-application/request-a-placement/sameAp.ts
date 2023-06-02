@@ -19,7 +19,7 @@ export default class SameAp implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'dates-of-placement'
   }
 
   response() {

@@ -18,7 +18,7 @@ describe('SameAp', () => {
     })
   })
 
-  itShouldHaveNextValue(new SameAp({}), '')
+  itShouldHaveNextValue(new SameAp({}), 'dates-of-placement')
   itShouldHavePreviousValue(new SameAp({}), 'previous-rotl-placement')
 
   describe('errors', () => {
