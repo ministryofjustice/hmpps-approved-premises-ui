@@ -23,7 +23,7 @@
     {% if page.previous() %}
         {{ govukBackLink({
       text: "Back",
-      href: paths.placementRequests.pages.show({ id: placementRequestId, task: task, page: page.previous() })
+      href: paths.placementApplications.pages.show({ id: placementRequestId, task: task, page: page.previous() })
     }) }}
     {% endif %}
 {% endblock %}
