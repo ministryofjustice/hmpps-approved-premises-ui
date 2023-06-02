@@ -121,6 +121,7 @@ export type { PlacementDates } from './models/PlacementDates';
 export type { PlacementRequest } from './models/PlacementRequest';
 export type { PlacementRequestStatus } from './models/PlacementRequestStatus';
 export type { PlacementRequirements } from './models/PlacementRequirements';
+export type { PlacementType } from './models/PlacementType';
 export type { Premises } from './models/Premises';
 export type { PremisesSummary } from './models/PremisesSummary';
 export type { PrisonCaseNote } from './models/PrisonCaseNote';
