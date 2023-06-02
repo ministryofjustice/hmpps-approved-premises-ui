@@ -31,7 +31,7 @@ describe('PreviousRotlPlacement', () => {
 
   itShouldHavePreviousValue(new PreviousRotlPlacement(body), 'reason-for-placement')
 
-  itShouldHaveNextValue(new PreviousRotlPlacement(body), '')
+  itShouldHaveNextValue(new PreviousRotlPlacement(body), 'same-ap')
 
   describe('errors', () => {
     it('should return an empty object if the body is provided correctly', () => {
