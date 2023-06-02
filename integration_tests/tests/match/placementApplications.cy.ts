@@ -4,6 +4,7 @@ import DateOfPlacement from '../../pages/match/placementRequestForm/datesOfPlace
 import PreviousRotlPlacement from '../../pages/match/placementRequestForm/previousRotlPlacement'
 import ReasonForPlacementPage from '../../pages/match/placementRequestForm/reasonForPlacement'
 import SameAp from '../../pages/match/placementRequestForm/sameAp'
+import UpdatesToApplication from '../../pages/match/placementRequestForm/updatesToApplication'
 
 context('Placement Applications', () => {
   beforeEach(() => {
@@ -53,5 +54,9 @@ context('Placement Applications', () => {
     const datesOfPlacementPage = new DateOfPlacement()
     datesOfPlacementPage.completeForm()
     datesOfPlacementPage.clickSubmit()
+
+    const updatesToApplication = new UpdatesToApplication()
+    updatesToApplication.completeForm()
+    updatesToApplication.clickSubmit()
   })
 })

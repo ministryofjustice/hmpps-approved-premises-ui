@@ -11,7 +11,7 @@ import CheckYourAnswers from './checkYourAnswers'
 @Task({
   name: 'Request a placement',
   slug: 'request-a-placement',
-  pages: [ReasonsForPlacement, PreviousRotlPlacement, SameAp, DatesOfPlacement],
+  pages: [ReasonsForPlacement, PreviousRotlPlacement, SameAp, DatesOfPlacement, UpdatesToApplication],
 })
 @Section({
   title: 'Request a Placement',
