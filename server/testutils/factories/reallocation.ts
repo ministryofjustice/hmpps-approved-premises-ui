@@ -6,6 +6,6 @@ import type { Reallocation } from '@approved-premises/api'
 import userFactory from './user'
 
 export default Factory.define<Reallocation>(() => ({
-  taskType: faker.helpers.arrayElement(['Assessment', 'PlacementRequest', 'PlacementRequestReview', 'BookingAppeal']),
+  taskType: faker.helpers.arrayElement(['Assessment', 'PlacementRequest', 'BookingAppeal']),
   user: userFactory.build(),
 }))
