@@ -4,37 +4,37 @@ import createError from 'http-errors'
 
 import type { DataServices, ErrorsAndUserInput, FormPages } from '@approved-premises/ui'
 import PagesController from './pagesController'
-import { ApplicationService } from '../../../services'
-import TasklistPage from '../../../form-pages/tasklistPage'
-import Apply from '../../../form-pages/apply'
-import { getPage } from '../../../utils/applications/utils'
+import { PlacementApplicationService } from '../../services'
+import TasklistPage from '../../form-pages/tasklistPage'
+import PlacementRequest from '../../form-pages/placement-application'
+import { getPage } from '../../utils/applications/utils'
 
 import {
   catchAPIErrorOrPropogate,
   catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
-} from '../../../utils/validation'
-import { UnknownPageError } from '../../../utils/errors'
-import paths from '../../../paths/apply'
-import { viewPath } from '../../../form-pages/utils'
+} from '../../utils/validation'
+import { UnknownPageError } from '../../utils/errors'
+import paths from '../../paths/placementApplications'
+import { viewPath } from '../../form-pages/utils'
 
-jest.mock('../../../utils/validation')
-jest.mock('../../../form-pages/utils')
-jest.mock('../../../utils/applications/utils')
-jest.mock('../../../form-pages/apply', () => {
+jest.mock('../../utils/validation')
+jest.mock('../../form-pages/utils')
+jest.mock('../../utils/applications/utils')
+jest.mock('../../form-pages/placement-application', () => {
   return {
     pages: { 'my-task': {} },
   }
 })
 
-Apply.pages = {} as FormPages
+PlacementRequest.pages = {} as FormPages
 
 describe('pagesController', () => {
   const request: DeepMocked<Request> = createMock<Request>({})
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = jest.fn()
 
-  const applicationService = createMock<ApplicationService>({})
+  const placementApplicationService = createMock<PlacementApplicationService>({})
   const dataServices = createMock<DataServices>({}) as DataServices
 
   const PageConstructor = jest.fn()
@@ -43,8 +43,8 @@ describe('pagesController', () => {
   let pagesController: PagesController
 
   beforeEach(() => {
-    pagesController = new PagesController(applicationService, dataServices)
-    applicationService.initializePage.mockResolvedValue(page)
+    pagesController = new PagesController(placementApplicationService)
+    placementApplicationService.initializePage.mockResolvedValue(page)
     ;(getPage as jest.Mock).mockReturnValue(PageConstructor)
   })
 
@@ -53,7 +53,7 @@ describe('pagesController', () => {
       request.params = {
         id: 'some-uuid',
       }
-      ;(viewPath as jest.Mock).mockReturnValue('applications/pages/some/view')
+      ;(viewPath as jest.Mock).mockReturnValue('placement-application/pages/some/view')
     })
 
     it('renders a page', async () => {
@@ -65,11 +65,16 @@ describe('pagesController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(getPage).toHaveBeenCalledWith('some-task', 'some-page', 'applications')
-      expect(applicationService.initializePage).toHaveBeenCalledWith(PageConstructor, request, dataServices, {})
+      expect(getPage).toHaveBeenCalledWith('some-task', 'some-page', 'placement-applications')
+      expect(placementApplicationService.initializePage).toHaveBeenCalledWith(
+        PageConstructor,
+        request,
+        dataServices,
+        {},
+      )
 
-      expect(response.render).toHaveBeenCalledWith('applications/pages/some/view', {
-        applicationId: request.params.id,
+      expect(response.render).toHaveBeenCalledWith('placement-application/pages/some/view', {
+        placementRequestId: request.params.id,
         task: 'some-task',
         page,
         errors: {},
@@ -86,15 +91,15 @@ describe('pagesController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(applicationService.initializePage).toHaveBeenCalledWith(
+      expect(placementApplicationService.initializePage).toHaveBeenCalledWith(
         PageConstructor,
         request,
         dataServices,
         errorsAndUserInput.userInput,
       )
 
-      expect(response.render).toHaveBeenCalledWith('applications/pages/some/view', {
-        applicationId: request.params.id,
+      expect(response.render).toHaveBeenCalledWith('placement-application/pages/some/view', {
+        placementRequestId: request.params.id,
         task: 'some-task',
         page,
         errors: errorsAndUserInput.errors,
@@ -104,7 +109,7 @@ describe('pagesController', () => {
     })
 
     it('returns a 404 when the page cannot be found', async () => {
-      applicationService.initializePage.mockImplementation(() => {
+      placementApplicationService.initializePage.mockImplementation(() => {
         throw new UnknownPageError('some-page')
       })
 
@@ -118,7 +123,7 @@ describe('pagesController', () => {
     it('calls catchAPIErrorOrPropogate if the error is not an unknown page error', async () => {
       const genericError = new Error()
 
-      applicationService.initializePage.mockImplementation(() => {
+      placementApplicationService.initializePage.mockImplementation(() => {
         throw genericError
       })
 
@@ -136,40 +141,28 @@ describe('pagesController', () => {
         id: 'some-uuid',
       }
 
-      applicationService.initializePage.mockResolvedValue(page)
+      placementApplicationService.initializePage.mockResolvedValue(page)
     })
 
-    it('updates an application and redirects to the next page', async () => {
+    it('updates an placement request and redirects to the next page', async () => {
       page.next.mockReturnValue('next-page')
 
-      applicationService.save.mockResolvedValue()
+      placementApplicationService.save.mockResolvedValue()
 
       const requestHandler = pagesController.update('some-task', 'page-name')
 
       await requestHandler({ ...request }, response)
 
-      expect(applicationService.save).toHaveBeenCalledWith(page, request)
+      expect(placementApplicationService.save).toHaveBeenCalledWith(page, request)
 
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.applications.pages.show({ id: request.params.id, task: 'some-task', page: 'next-page' }),
+        paths.placementApplications.pages.show({ id: request.params.id, task: 'some-task', page: 'next-page' }),
       )
-    })
-
-    it('redirects to the tasklist if there is no next page', async () => {
-      page.next.mockReturnValue(undefined)
-
-      const requestHandler = pagesController.update('some-task', 'page-name')
-
-      await requestHandler(request, response)
-
-      expect(applicationService.save).toHaveBeenCalledWith(page, request)
-
-      expect(response.redirect).toHaveBeenCalledWith(paths.applications.show({ id: request.params.id }))
     })
 
     it('sets a flash and redirects if there are errors', async () => {
       const err = new Error()
-      applicationService.save.mockImplementation(() => {
+      placementApplicationService.save.mockImplementation(() => {
         throw err
       })
 
@@ -177,13 +170,13 @@ describe('pagesController', () => {
 
       await requestHandler(request, response)
 
-      expect(applicationService.save).toHaveBeenCalledWith(page, request)
+      expect(placementApplicationService.save).toHaveBeenCalledWith(page, request)
 
       expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
         request,
         response,
         err,
-        paths.applications.pages.show({ id: request.params.id, task: 'some-task', page: 'page-name' }),
+        paths.placementApplications.pages.show({ id: request.params.id, task: 'some-task', page: 'page-name' }),
       )
     })
   })

@@ -1,7 +1,7 @@
-import type { JourneyType, UiTask, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
+import type { FormArtifact, JourneyType, UiTask, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
 import type { Request } from 'express'
 import TasklistPage, { TasklistPageInterface } from '../tasklistPage'
-import { ApprovedPremisesApplication, ApprovedPremisesAssessment } from '../../@types/shared'
+import { ApprovedPremisesAssessment } from '../../@types/shared'
 import { sentenceCase } from '../../utils/utils'
 
 export const applyYesOrNo = <K extends string>(key: K, body: Record<string, unknown>): YesOrNoWithDetail<K> => {
@@ -97,7 +97,7 @@ export const updateAssessmentData = (
 
 export function getBody(
   Page: TasklistPageInterface,
-  application: ApprovedPremisesApplication | ApprovedPremisesAssessment,
+  application: FormArtifact,
   request: Request,
   userInput: Record<string, unknown>,
 ) {
@@ -110,10 +110,7 @@ export function getBody(
   return pageDataFromApplicationOrAssessment(Page, application)
 }
 
-export function pageDataFromApplicationOrAssessment(
-  Page: TasklistPageInterface,
-  application: ApprovedPremisesApplication | ApprovedPremisesAssessment,
-) {
+export function pageDataFromApplicationOrAssessment(Page: TasklistPageInterface, application: FormArtifact) {
   const pageName = getPageName(Page)
   const taskName = getTaskName(Page)
 

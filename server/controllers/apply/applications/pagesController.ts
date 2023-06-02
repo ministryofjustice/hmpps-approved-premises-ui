@@ -20,7 +20,7 @@ export default class PagesController {
   show(taskName: string, pageName: string): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const Page = getPage(taskName, pageName)
+        const Page = getPage(taskName, pageName, 'applications')
 
         const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
         const page = await this.applicationService.initializePage(Page, req, this.dataServices, userInput)
@@ -45,7 +45,7 @@ export default class PagesController {
 
   update(taskName: string, pageName: string) {
     return async (req: Request, res: Response) => {
-      const Page = getPage(taskName, pageName)
+      const Page = getPage(taskName, pageName, 'applications')
       const page = await this.applicationService.initializePage(Page, req, this.dataServices)
 
       try {

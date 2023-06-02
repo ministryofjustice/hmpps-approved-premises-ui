@@ -1,0 +1,181 @@
+import { Request } from 'express'
+import { DeepMocked, createMock } from '@golevelup/ts-jest'
+
+import PlacementApplicationClient from '../data/placementApplicationClient'
+import { placementApplicationFactory } from '../testutils/factories'
+import PlacementApplicationService from './placementApplicationService'
+import { DataServices, TaskListErrors } from '../@types/ui'
+import { getBody } from '../form-pages/utils'
+import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
+import { ValidationError } from '../utils/errors'
+
+jest.mock('../data/placementApplicationClient.ts')
+jest.mock('../form-pages/utils')
+
+describe('placementApplicationService', () => {
+  const placementApplicationClient = new PlacementApplicationClient(null) as jest.Mocked<PlacementApplicationClient>
+  const placementApplicationClientFactory = jest.fn()
+
+  const service = new PlacementApplicationService(placementApplicationClientFactory)
+
+  const token = 'SOME_TOKEN'
+
+  beforeEach(() => {
+    jest.resetAllMocks()
+    placementApplicationClientFactory.mockReturnValue(placementApplicationClient)
+  })
+
+  describe('createPlacementApplication', () => {
+    it('calls the client method and returns the resulting placement request', () => {
+      const applicationId = 'some-id'
+      const placementApplication = placementApplicationFactory.build()
+      placementApplicationClient.create.mockResolvedValue(placementApplication)
+
+      const result = service.create(token, applicationId)
+
+      expect(result).resolves.toEqual(placementApplication)
+    })
+  })
+
+  describe('initializePage', () => {
+    let request: DeepMocked<Request>
+
+    const dataServices = createMock<DataServices>({}) as DataServices
+    const placementApplication = placementApplicationFactory.build()
+    const Page = jest.fn()
+
+    beforeEach(() => {
+      placementApplicationClient.find.mockResolvedValue(placementApplication)
+
+      request = createMock<Request>({
+        params: { id: placementApplication.id, task: 'my-task', page: 'first' },
+        session: { previousPage: '' },
+        user: { token: 'some-token' },
+      })
+    })
+
+    it('should fetch the application from the API if it is not in the session', async () => {
+      ;(getBody as jest.Mock).mockReturnValue(request.body)
+
+      const result = await service.initializePage(Page, request, dataServices)
+
+      expect(result).toBeInstanceOf(Page)
+
+      expect(Page).toHaveBeenCalledWith(request.body, placementApplication, '')
+      expect(placementApplicationClient.find).toHaveBeenCalledWith(request.params.id)
+    })
+
+    it('should return the session and a page from a page list', async () => {
+      ;(getBody as jest.Mock).mockReturnValue(request.body)
+
+      const result = await service.initializePage(Page, request, dataServices)
+
+      expect(result).toBeInstanceOf(Page)
+
+      expect(Page).toHaveBeenCalledWith(request.body, placementApplication, '')
+    })
+
+    it('should initialize the page with the session and the userInput if specified', async () => {
+      const userInput = { foo: 'bar' }
+      ;(getBody as jest.Mock).mockReturnValue(userInput)
+
+      const result = await service.initializePage(Page, request, dataServices, userInput)
+
+      expect(result).toBeInstanceOf(Page)
+
+      expect(Page).toHaveBeenCalledWith(userInput, placementApplication, '')
+    })
+
+    it('should load from the application if the body and userInput are blank', async () => {
+      const data = { 'my-task': { first: { foo: 'bar' } } }
+      const applicationWithData = {
+        ...placementApplication,
+        data,
+      }
+      request.body = {}
+      placementApplicationClient.find.mockResolvedValue(applicationWithData)
+      ;(getBody as jest.Mock).mockReturnValue(data['my-task'].first)
+
+      const result = await service.initializePage(Page, request, dataServices)
+
+      expect(result).toBeInstanceOf(Page)
+
+      expect(Page).toHaveBeenCalledWith({ foo: 'bar' }, applicationWithData, '')
+    })
+
+    it("should call a service's initialize method if it exists", async () => {
+      const OtherPage = { initialize: jest.fn() } as unknown as TasklistPageInterface
+      ;(getBody as jest.Mock).mockReturnValue(request.body)
+
+      await service.initializePage(OtherPage, request, dataServices)
+
+      expect(OtherPage.initialize).toHaveBeenCalledWith(
+        request.body,
+        placementApplication,
+        request.user.token,
+        dataServices,
+      )
+    })
+
+    it("retrieve the 'previousPage' value from the session and call the Page object's constructor with that value", async () => {
+      ;(getBody as jest.Mock).mockReturnValue(request.body)
+
+      request.session.previousPage = 'previous-page-name'
+      await service.initializePage(Page, request, dataServices)
+
+      expect(Page).toHaveBeenCalledWith(request.body, placementApplication, 'previous-page-name')
+    })
+  })
+
+  describe('save', () => {
+    const placementApplication = placementApplicationFactory.build()
+    const request = createMock<Request>({
+      params: { id: placementApplication.id, task: 'some-task', page: 'some-page' },
+      user: { token },
+    })
+
+    describe('when there are no validation errors', () => {
+      let page: DeepMocked<TasklistPage>
+
+      beforeEach(() => {
+        page = createMock<TasklistPage>({
+          errors: () => {
+            return {} as TaskListErrors<TasklistPage>
+          },
+          body: { foo: 'bar' },
+        })
+
+        placementApplicationClient.find.mockResolvedValue(placementApplication)
+      })
+
+      it('does not throw an error', () => {
+        expect(async () => {
+          await service.save(page, request)
+        }).not.toThrow(ValidationError)
+      })
+
+      it('saves data to the api', async () => {
+        await service.save(page, request)
+
+        expect(placementApplicationClientFactory).toHaveBeenCalledWith(token)
+        expect(placementApplicationClient.update).toHaveBeenCalledWith(placementApplication)
+      })
+    })
+
+    describe('When there are validation errors', () => {
+      it('throws an error if there is a validation error', async () => {
+        const errors = createMock<TaskListErrors<TasklistPage>>({ knowOralHearingDate: 'error' })
+        const page = createMock<TasklistPage>({
+          errors: () => errors,
+        })
+
+        expect.assertions(1)
+        try {
+          await service.save(page, request)
+        } catch (e) {
+          expect(e).toEqual(new ValidationError(errors))
+        }
+      })
+    })
+  })
+})

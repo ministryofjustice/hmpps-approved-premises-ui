@@ -38,6 +38,9 @@ const tasksPath = path('/tasks')
 const placementRequestsPath = path('/placement-requests')
 const placementRequestPath = placementRequestsPath.path(':id')
 
+const placementApplicationsPath = path('/placement-applications')
+const placementApplicationPath = placementApplicationsPath.path(':id')
+
 const tasksPaths = {
   index: tasksPath,
   allocations: {
@@ -127,6 +130,11 @@ export default {
     index: placementRequestsPath,
     show: placementRequestPath,
     booking: placementRequestPath.path('booking'),
+  },
+  placementApplications: {
+    update: placementApplicationPath,
+    create: placementApplicationsPath,
+    show: placementApplicationPath,
   },
   people: {
     risks: {

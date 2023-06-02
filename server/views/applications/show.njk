@@ -36,6 +36,13 @@
         {% endfor %}
       {% endfor %}
 
+      <form action="{{paths.placementApplications.create({}) }}" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+        <input type="hidden" name="applicationId" value="{{ application.id }}"/>
+        {{ govukButton({
+          text: "Create placement request"
+        }) }}
+      </form>
     </div>
   </div>
 {% endblock %}

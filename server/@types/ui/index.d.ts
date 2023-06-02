@@ -2,6 +2,7 @@ import {
   Application,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplication,
+  ApprovedPremisesAssessment,
   ArrayOfOASysOffenceDetailsQuestions,
   ArrayOfOASysRiskManagementPlanQuestions,
   ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
@@ -15,6 +16,7 @@ import {
   OASysSection,
   Person,
   PersonAcctAlert,
+  PlacementApplication,
   PlacementCriteria,
   PlacementRequest,
   PlacementRequestStatus,
@@ -274,7 +276,7 @@ export type OasysImportArrays =
 
 export type OasysSummariesSection = { [index: string]: OasysImportArrays }
 
-export type JourneyType = 'applications' | 'assessments'
+export type JourneyType = 'applications' | 'assessments' | 'placement-applications'
 
 export type ServiceSection = {
   id: string
@@ -329,3 +331,5 @@ export interface BedSearchParametersUi {
 }
 
 export type ReleaseTypeOptions = Record<ReleaseTypeOption, string>
+
+export type FormArtifact = ApprovedPremisesApplication | ApprovedPremisesAssessment | PlacementApplication

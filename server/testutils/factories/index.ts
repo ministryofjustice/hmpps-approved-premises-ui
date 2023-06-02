@@ -36,6 +36,7 @@ import nonArrivalFactory from './nonArrival'
 import oasysSectionsFactory, { roshSummaryFactory } from './oasysSections'
 import oasysSelectionFactory from './oasysSelection'
 import personFactory from './person'
+import placementApplicationFactory from './placementApplication'
 import placementRequestFactory from './placementRequest'
 import premisesFactory from './premises'
 import prisonCaseNotesFactory from './prisonCaseNotes'
@@ -87,6 +88,7 @@ export {
   oasysSectionsFactory,
   oasysSelectionFactory,
   personFactory,
+  placementApplicationFactory,
   placementRequestFactory,
   premisesFactory,
   prisonCaseNotesFactory,

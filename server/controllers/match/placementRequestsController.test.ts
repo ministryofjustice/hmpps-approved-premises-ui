@@ -4,8 +4,9 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { GroupedPlacementRequests } from '@approved-premises/ui'
 import PlacementRequestsController from './placementRequestsController'
 
-import { PlacementRequestService } from '../../services'
-import { personFactory, placementRequestFactory } from '../../testutils/factories'
+import { PlacementApplicationService, PlacementRequestService } from '../../services'
+import { personFactory, placementApplicationFactory, placementRequestFactory } from '../../testutils/factories'
+import paths from '../../paths/placementApplications'
 
 describe('PlacementRequestsController', () => {
   const token = 'SOME_TOKEN'
@@ -15,12 +16,13 @@ describe('PlacementRequestsController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
+  const placementApplicationService = createMock<PlacementApplicationService>({})
 
   let placementRequestsController: PlacementRequestsController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    placementRequestsController = new PlacementRequestsController(placementRequestService)
+    placementRequestsController = new PlacementRequestsController(placementRequestService, placementApplicationService)
   })
 
   describe('index', () => {
@@ -57,6 +59,27 @@ describe('PlacementRequestsController', () => {
         placementRequest,
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
+    })
+  })
+
+  describe('create', () => {
+    it('should POST to the client and redirect to the first page of the form flow', async () => {
+      const applicationId = '123'
+      const placementApplication = placementApplicationFactory.build()
+      placementApplicationService.create.mockResolvedValue(placementApplication)
+
+      const requestHandler = placementRequestsController.create()
+
+      await requestHandler({ ...request, body: { applicationId } }, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.placementApplications.pages.show({
+          id: placementApplication.id,
+          task: 'request-a-placement',
+          page: 'reason-for-placement',
+        }),
+      )
+      expect(placementApplicationService.create).toHaveBeenCalledWith(token, applicationId)
     })
   })
 })

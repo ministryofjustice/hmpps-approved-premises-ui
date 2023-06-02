@@ -1,4 +1,11 @@
-import type { ApplicationType, PageResponse, TableRow } from '@approved-premises/ui'
+import type {
+  ApplicationType,
+  FormArtifact,
+  FormPages,
+  JourneyType,
+  PageResponse,
+  TableRow,
+} from '@approved-premises/ui'
 import type {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
@@ -13,10 +20,11 @@ import { isApplicableTier, tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
-import isAssessment from '../assessments/isAssessment'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
 import ExceptionDetails from '../../form-pages/apply/reasons-for-placement/basic-information/exceptionDetails'
+import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
+import PlacementRequest from '../../form-pages/placement-application'
 
 const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => {
@@ -80,21 +88,17 @@ const getResponsesForTask = (
   return responsesForPages
 }
 
-const getResponseForPage = (
-  applicationOrAssessment: Application | Assessment,
-  taskName: string,
-  pageName: string,
-): PageResponse => {
-  const Page = getPage(taskName, pageName, isAssessment(applicationOrAssessment))
+const getResponseForPage = (formArtifact: FormArtifact, taskName: string, pageName: string): PageResponse => {
+  const Page = getPage(taskName, pageName, journeyTypeFromArtifact(formArtifact))
 
-  const body = applicationOrAssessment?.data?.[taskName]?.[pageName]
-  const page = new Page(body, applicationOrAssessment)
+  const body = formArtifact?.data?.[taskName]?.[pageName]
+  const page = new Page(body, formArtifact)
 
   return page.response()
 }
 
-const getPage = (taskName: string, pageName: string, isAnAssessment?: boolean): TasklistPageInterface => {
-  const pageList = isAnAssessment ? Assess.pages[taskName] : Apply.pages[taskName]
+const getPage = (taskName: string, pageName: string, journeyType: JourneyType): TasklistPageInterface => {
+  const pageList = journeyPages(journeyType)[taskName]
 
   const Page = pageList[pageName]
 
@@ -103,6 +107,19 @@ const getPage = (taskName: string, pageName: string, isAnAssessment?: boolean): 
   }
 
   return Page as TasklistPageInterface
+}
+
+const journeyPages = (journeyType: JourneyType): FormPages => {
+  switch (journeyType) {
+    case 'applications':
+      return Apply.pages
+    case 'assessments':
+      return Assess.pages
+    case 'placement-applications':
+      return PlacementRequest.pages
+    default:
+      throw new Error(`Unknown journey type: ${journeyType}`)
+  }
 }
 
 const isInapplicable = (application: Application): boolean => {

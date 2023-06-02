@@ -1,8 +1,12 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { PlacementRequestService } from '../../services'
+import { PlacementApplicationService, PlacementRequestService } from '../../services'
+import paths from '../../paths/placementApplications'
 
 export default class PlacementRequestsController {
-  constructor(private readonly placementRequestService: PlacementRequestService) {}
+  constructor(
+    private readonly placementRequestService: PlacementRequestService,
+    private readonly placementApplicationService: PlacementApplicationService,
+  ) {}
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
@@ -23,6 +27,20 @@ export default class PlacementRequestsController {
         pageHeading: `Matching information for ${placementRequest.person.name}`,
         placementRequest,
       })
+    }
+  }
+
+  create(): TypedRequestHandler<Request, Response> {
+    return async (req: Request, res: Response) => {
+      const application = await this.placementApplicationService.create(req.user.token, req.body.applicationId)
+
+      return res.redirect(
+        paths.placementApplications.pages.show({
+          id: application.id,
+          task: 'request-a-placement',
+          page: 'reason-for-placement',
+        }),
+      )
     }
   }
 }
