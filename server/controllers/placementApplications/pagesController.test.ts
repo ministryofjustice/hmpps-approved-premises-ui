@@ -74,7 +74,7 @@ describe('pagesController', () => {
       )
 
       expect(response.render).toHaveBeenCalledWith('placement-application/pages/some/view', {
-        placementRequestId: request.params.id,
+        placementApplicationId: request.params.id,
         task: 'some-task',
         page,
         errors: {},
@@ -99,7 +99,7 @@ describe('pagesController', () => {
       )
 
       expect(response.render).toHaveBeenCalledWith('placement-application/pages/some/view', {
-        placementRequestId: request.params.id,
+        placementApplicationId: request.params.id,
         task: 'some-task',
         page,
         errors: errorsAndUserInput.errors,
