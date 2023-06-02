@@ -39,7 +39,7 @@ export default class DatesOfPlacement implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'updates-to-application'
   }
 
   response() {

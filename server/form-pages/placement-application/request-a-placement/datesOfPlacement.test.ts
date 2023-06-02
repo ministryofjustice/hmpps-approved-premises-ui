@@ -27,7 +27,7 @@ describe('DateOfPlacement', () => {
 
   itShouldHavePreviousValue(new DateOfPlacement(body), 'same-ap')
 
-  itShouldHaveNextValue(new DateOfPlacement(body), '')
+  itShouldHaveNextValue(new DateOfPlacement(body), 'updates-to-application')
 
   describe('errors', () => {
     it('should return an empty object if the body is provided correctly', () => {
