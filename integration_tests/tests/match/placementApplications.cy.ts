@@ -2,6 +2,7 @@ import { applicationFactory, placementApplicationFactory } from '../../../server
 import { ShowPage } from '../../pages/apply'
 import PreviousRotlPlacement from '../../pages/match/placementRequestForm/previousRotlPlacement'
 import ReasonForPlacementPage from '../../pages/match/placementRequestForm/reasonForPlacement'
+import SameAp from '../../pages/match/placementRequestForm/sameAp'
 
 context('Placement Applications', () => {
   beforeEach(() => {
@@ -43,5 +44,9 @@ context('Placement Applications', () => {
     const previousRotlPlacementPage = new PreviousRotlPlacement()
     previousRotlPlacementPage.completeForm()
     previousRotlPlacementPage.clickSubmit()
+
+    const sameApPage = new SameAp()
+    sameApPage.completeForm()
+    sameApPage.clickSubmit()
   })
 })
