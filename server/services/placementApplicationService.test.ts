@@ -9,8 +9,11 @@ import { getBody } from '../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
 
+import { placementApplicationSubmissionData } from '../utils/placementRequests/placementApplicationSubmissionData'
+
 jest.mock('../data/placementApplicationClient.ts')
 jest.mock('../form-pages/utils')
+jest.mock('../utils/placementRequests/placementApplicationSubmissionData')
 
 describe('placementApplicationService', () => {
   const placementApplicationClient = new PlacementApplicationClient(null) as jest.Mocked<PlacementApplicationClient>
@@ -176,6 +179,19 @@ describe('placementApplicationService', () => {
           expect(e).toEqual(new ValidationError(errors))
         }
       })
+    })
+  })
+
+  describe('submit', () => {
+    it('calls the client method and returns the resulting placement application', () => {
+      const placementApplication = placementApplicationFactory.build()
+      ;(placementApplicationSubmissionData as jest.Mock).mockReturnValue({})
+
+      placementApplicationClient.submission.mockResolvedValue(placementApplication)
+
+      const result = service.submit(token, placementApplication)
+
+      expect(result).resolves.toEqual(placementApplication)
     })
   })
 })

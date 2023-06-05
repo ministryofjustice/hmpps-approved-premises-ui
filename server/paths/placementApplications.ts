@@ -8,6 +8,8 @@ export default {
   placementApplications: {
     create: placementApplicationsPath,
     show: placementApplicationPath,
+    confirm: placementApplicationsPath.path('confirm'),
+    submit: placementApplicationPath.path('submit'),
     pages: {
       show: pagesPath,
       update: pagesPath,

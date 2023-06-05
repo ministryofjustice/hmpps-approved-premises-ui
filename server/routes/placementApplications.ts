@@ -15,6 +15,7 @@ export default function routes(controllers: Controllers, router: Router): Router
   const { placementApplicationPagesController, placementRequestController } = controllers
 
   post(paths.placementApplications.create.pattern, placementRequestController.create())
+  post(paths.placementApplications.submit.pattern, placementRequestController.submit())
 
   Object.keys(pages).forEach((taskKey: string) => {
     Object.keys(pages[taskKey]).forEach((pageKey: string) => {
