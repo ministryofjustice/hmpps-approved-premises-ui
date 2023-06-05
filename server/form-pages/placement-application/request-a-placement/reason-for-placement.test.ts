@@ -4,7 +4,7 @@ import ReasonForPlacement from './reason-for-placement'
 
 describe('ReasonForPlacement', () => {
   describe('title', () => {
-    expect(new ReasonForPlacement({}).title).toBe('Request a placement')
+    expect(new ReasonForPlacement({}).title).toBe('Reason for placement')
   })
 
   describe('body', () => {
