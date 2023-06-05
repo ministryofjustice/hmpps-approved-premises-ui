@@ -1,7 +1,7 @@
 import { SuperAgentRequest } from 'superagent'
 
 import type { PlacementApplication } from '@approved-premises/api'
-import { stubFor } from '../../wiremock'
+import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
 
 export default {
@@ -47,4 +47,25 @@ export default {
         jsonBody: placementApplication,
       },
     }),
+  stubSubmitPlacementApplication: (placementApplication: PlacementApplication): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: paths.placementApplications.submit({ id: placementApplication.id }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: placementApplication,
+      },
+    }),
+  verifyPlacementApplicationSubmit: async (applicationId: string) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.placementApplications.submit({ id: applicationId }),
+      })
+    ).body.requests,
 }

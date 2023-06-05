@@ -70,5 +70,18 @@ context('Placement Applications', () => {
       const checkYourAnswersPage = new CheckYourAnswers()
       checkYourAnswersPage.completeForm()
       checkYourAnswersPage.clickSubmit()
+
+      // Then I should be taken to the confirmation page
+      Page.verifyOnPage(ConfirmationPage)
+      cy.task('verifyPlacementApplicationSubmit', placementApplication.id).then(requests => {
+        expect(requests).to.have.length(1)
+
+        expect(requests[0].url).to.equal(paths.placementApplications.submit({ id: placementApplication.id }))
+
+        const body = JSON.parse(requests[0].body)
+
+        expect(body).to.have.keys('placementDates', 'placementType', 'translatedDocument')
+      })
+    })
   })
 })
