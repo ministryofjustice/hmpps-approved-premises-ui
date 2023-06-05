@@ -1,6 +1,7 @@
 import { placementRequestFactory } from '../../testutils/factories'
+import { applicationLink } from './applicationLink'
 import { documentSummary, documentSummaryRow } from './documentSummaryList'
-import { applicationLink, assessmentLink } from './utils'
+import { assessmentLink } from './utils'
 
 describe('documentSummaryList', () => {
   describe('documentSummary', () => {
