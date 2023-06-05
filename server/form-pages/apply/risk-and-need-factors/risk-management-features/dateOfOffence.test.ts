@@ -83,14 +83,16 @@ describe('DateOfOffence', () => {
         {
           html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
-                <label class="govuk-label govuk-checkboxes__label govuk-visually-hidden" for="arsonOffence-current">Arson offence: current</label>
+                <label class="govuk-label govuk-checkboxes__label" for="arsonOffence-current">
+                  <span class="govuk-visually-hidden">Arson offence: current</span></label>
                 <input class="govuk-checkboxes__input" id="arsonOffence-current" name="arsonOffence" type="checkbox" value="current" >
             </div>`,
         },
         {
           html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
-                <label class="govuk-label govuk-checkboxes__label govuk-visually-hidden" for="arsonOffence-previous">Arson offence: previous</label>
+                <label class="govuk-label govuk-checkboxes__label" for="arsonOffence-previous">
+                  <span class="govuk-visually-hidden">Arson offence: previous</span></label>
                 <input class="govuk-checkboxes__input" id="arsonOffence-previous" name="arsonOffence" type="checkbox" value="previous" checked>
             </div>`,
         },

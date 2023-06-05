@@ -104,9 +104,8 @@ export default class DateOfOffence implements TasklistPage {
     return this.htmlValue(
       `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
-                <label class="govuk-label govuk-checkboxes__label govuk-visually-hidden" for="${id}">${sentenceCase(
-        offence,
-      )}: ${date}</label>
+                <label class="govuk-label govuk-checkboxes__label" for="${id}">
+                  <span class="govuk-visually-hidden">${sentenceCase(offence)}: ${date}</span></label>
                 <input class="govuk-checkboxes__input" id="${id}" name="${offence}" type="checkbox" value="${date}" ${
         checked ? 'checked' : ''
       }>
