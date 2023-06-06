@@ -6,7 +6,7 @@ import { SessionDataError } from '../../../utils/errors'
 
 import PlacementDuration from './placementDuration'
 import { applicationFactory } from '../../../testutils/factories'
-import { addResponsesToApplication } from '../../../testutils/addToApplication'
+import { addResponsesToFormArtifact } from '../../../testutils/addToApplication'
 
 jest.mock('../../../utils/applications/getDefaultPlacementDurationInWeeks')
 
@@ -112,7 +112,7 @@ describe('PlacementDuration', () => {
 
   describe('the previous and next page are correct', () => {
     beforeEach(() => {
-      application = addResponsesToApplication(application, {
+      application = addResponsesToFormArtifact(application, {
         section: 'basic-information',
         page: 'placement-date',
         keyValuePairs: { startDateSameAsReleaseDate: 'no', startDate: '2022-11-11' },

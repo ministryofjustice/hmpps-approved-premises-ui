@@ -1,6 +1,6 @@
 import { PlacementApplication } from '../../@types/shared'
 import paths from '../../paths/placementApplications'
-import { addResponseToApplication } from '../../testutils/addToApplication'
+import { addResponseToFormArtifact } from '../../testutils/addToApplication'
 import { placementApplicationFactory } from '../../testutils/factories'
 import {
   getPageTitle,
@@ -11,7 +11,7 @@ import {
 
 describe('checkYourAnswersUtils', () => {
   let placementApplication = placementApplicationFactory.build()
-  placementApplication = addResponseToApplication(placementApplication, {
+  placementApplication = addResponseToFormArtifact(placementApplication, {
     section: 'request-a-placement',
     page: 'same-ap',
     key: 'sameAp',

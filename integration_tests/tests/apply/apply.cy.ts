@@ -1,6 +1,6 @@
 import { addDays } from 'date-fns'
 import { EnterCRNPage, ListPage, SelectOffencePage, ShowPage, StartPage, TransgenderPage } from '../../pages/apply'
-import { addResponseToApplication, addResponsesToApplication } from '../../../server/testutils/addToApplication'
+import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import {
   activeOffenceFactory,
   applicationFactory,
@@ -196,7 +196,7 @@ context('Apply', () => {
     const apply = new ApplyHelper(this.application, this.person, this.offences)
     const tomorrow = addDays(new Date(), 1)
 
-    this.application = addResponsesToApplication(this.application, {
+    this.application = addResponsesToFormArtifact(this.application, {
       section: 'basic-information',
       page: 'release-date',
       keyValuePairs: {
@@ -206,14 +206,14 @@ context('Apply', () => {
       },
     })
 
-    this.application = addResponseToApplication(this.application, {
+    this.application = addResponseToFormArtifact(this.application, {
       section: 'basic-information',
       page: 'reason-for-short-notice',
       key: 'reason',
       value: 'riskEscalated',
     })
 
-    this.application = addResponsesToApplication(this.application, {
+    this.application = addResponsesToFormArtifact(this.application, {
       section: 'further-considerations',
       page: 'trigger-plan',
       keyValuePairs: {
@@ -233,21 +233,21 @@ context('Apply', () => {
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
     const apply = new ApplyHelper(this.application, this.person, this.offences)
 
-    this.application = addResponseToApplication(this.application, {
+    this.application = addResponseToFormArtifact(this.application, {
       section: 'type-of-ap',
       page: 'ap-type',
       key: 'type',
       value: 'esap',
     })
 
-    this.application = addResponseToApplication(this.application, {
+    this.application = addResponseToFormArtifact(this.application, {
       section: 'type-of-ap',
       page: 'managed-by-national-security-division',
       key: 'managedByNationalSecurityDivision',
       value: 'no',
     })
 
-    this.application = addResponsesToApplication(this.application, {
+    this.application = addResponsesToFormArtifact(this.application, {
       section: 'type-of-ap',
       page: 'esap-exceptional-case',
       keyValuePairs: {
@@ -275,21 +275,21 @@ context('Apply', () => {
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
     const apply = new ApplyHelper(this.application, this.person, this.offences)
 
-    this.application = addResponseToApplication(this.application, {
+    this.application = addResponseToFormArtifact(this.application, {
       section: 'type-of-ap',
       page: 'ap-type',
       key: 'type',
       value: 'esap',
     })
 
-    this.application = addResponseToApplication(this.application, {
+    this.application = addResponseToFormArtifact(this.application, {
       section: 'type-of-ap',
       page: 'managed-by-national-security-division',
       key: 'managedByNationalSecurityDivision',
       value: 'no',
     })
 
-    this.application = addResponsesToApplication(this.application, {
+    this.application = addResponsesToFormArtifact(this.application, {
       section: 'type-of-ap',
       page: 'esap-exceptional-case',
       keyValuePairs: {
