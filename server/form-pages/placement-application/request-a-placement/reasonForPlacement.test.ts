@@ -1,6 +1,6 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
-import ReasonForPlacement from './reason-for-placement'
+import ReasonForPlacement from './reasonForPlacement'
 
 describe('ReasonForPlacement', () => {
   describe('title', () => {

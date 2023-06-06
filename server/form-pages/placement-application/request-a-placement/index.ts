@@ -1,6 +1,8 @@
 /* istanbul ignore file */
 
-import ReasonsForPlacement from './reason-for-placement'
+import { Section, Task } from '../../utils/decorators'
+import ReasonsForPlacement from './reasonForPlacement'
+import PreviousRotlPlacement from './previous-rotl-placement'
 import { Section, Task } from '../../utils/decorators'
 
 @Task({
