@@ -3,9 +3,9 @@ import AccessNeedsFurtherQuestions, { AccessNeedsFurtherQuestionsBody } from './
 
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
 import { DateFormats } from '../../../../utils/dateUtils'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
-jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment')
+jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
 
 describe('AccessNeedsFurtherQuestions', () => {
   const person = personFactory.build({ name: 'John Wayne' })

@@ -116,7 +116,7 @@ describe('PlacementDuration', () => {
         section: 'basic-information',
         page: 'placement-date',
         keyValuePairs: { startDateSameAsReleaseDate: 'no', startDate: '2022-11-11' },
-      })
+      }) as ApprovedPremisesApplication
     })
 
     it('next', () => {

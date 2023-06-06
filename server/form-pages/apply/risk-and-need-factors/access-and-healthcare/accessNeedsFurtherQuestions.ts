@@ -12,7 +12,7 @@ import { yesNoOrDontKnowResponseWithDetail, yesOrNoResponseWithDetail } from '..
 
 import TasklistPage from '../../../tasklistPage'
 import { DateFormats } from '../../../../utils/dateUtils'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import AccessNeeds, { AdditionalNeed, additionalNeeds } from './accessNeeds'
 
 export type AccessNeedsFurtherQuestionsBody = {

@@ -1,7 +1,7 @@
 import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
 
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import TasklistPage from '../../../tasklistPage'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank, dateIsInThePast } from '../../../../utils/dateUtils'
@@ -22,7 +22,7 @@ export default class PlacementDate implements TasklistPage {
 
   constructor(private _body: Partial<PlacementDateBody>, public application: ApprovedPremisesApplication) {
     const formattedReleaseDate = DateFormats.isoDateToUIDate(
-      retrieveQuestionResponseFromApplicationOrAssessment(application, ReleaseDate),
+      retrieveQuestionResponseFromFormArtifact(application, ReleaseDate),
     )
 
     this.title = `Is ${formattedReleaseDate} the date you want the placement to start?`

@@ -9,8 +9,8 @@ import {
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import {
   retrieveOptionalQuestionResponseFromApplicationOrAssessment,
-  retrieveQuestionResponseFromApplicationOrAssessment,
-} from '../retrieveQuestionResponseFromApplicationOrAssessment'
+  retrieveQuestionResponseFromFormArtifact,
+} from '../retrieveQuestionResponseFromFormArtifact'
 
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import MatchingInformation, {
@@ -68,11 +68,7 @@ export const placementRequestData = (assessment: Assessment): PlacementRequireme
     assessment,
   ) as MatchingInformationBody
 
-  const location = retrieveQuestionResponseFromApplicationOrAssessment(
-    assessment.application,
-    LocationFactors,
-    'postcodeArea',
-  )
+  const location = retrieveQuestionResponseFromFormArtifact(assessment.application, LocationFactors, 'postcodeArea')
   const alternativeRadius = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
     assessment.application,
     LocationFactors,

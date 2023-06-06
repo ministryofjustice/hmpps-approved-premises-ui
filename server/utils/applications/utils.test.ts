@@ -19,7 +19,7 @@ import {
 import { UnknownPageError } from '../errors'
 
 jest.mock('../personUtils')
-jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
+jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
 const FirstApplyPage = jest.fn()
 const SecondApplyPage = jest.fn()

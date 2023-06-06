@@ -1,9 +1,9 @@
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { assessmentFactory } from '../../testutils/factories'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
 
-jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
+jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
 describe('decisionUtils', () => {
   describe('decisionFromAssessment', () => {

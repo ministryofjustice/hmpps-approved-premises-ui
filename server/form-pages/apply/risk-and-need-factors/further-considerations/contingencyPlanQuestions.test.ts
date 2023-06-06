@@ -12,7 +12,7 @@ import ContingencyPlanQuestions from './contingencyPlanQuestions'
 const contingencyPlanPartnerFactorys = contingencyPlanPartnerFactory.buildList(2)
 
 jest.mock('../../../../utils/applications/shouldShowTriggerPlanPage')
-jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment', () => {
+jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact.ts', () => {
   return {
     retrieveOptionalQuestionResponseFromApplicationOrAssessment: jest.fn(() => contingencyPlanPartnerFactorys),
   }

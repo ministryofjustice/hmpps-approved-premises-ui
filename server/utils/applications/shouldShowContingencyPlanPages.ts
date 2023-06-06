@@ -2,11 +2,11 @@ import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-a
 import ReleaseType from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
 import SentenceType from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
 import { ApprovedPremisesApplication as Application, ReleaseTypeOption } from '../../@types/shared'
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
+import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 
 export const shouldShowContingencyPlanPages = (application: Application) => {
   let releaseType: ReleaseTypeOption
-  const sentenceType = retrieveQuestionResponseFromApplicationOrAssessment(application, SentenceType, 'sentenceType')
+  const sentenceType = retrieveQuestionResponseFromFormArtifact(application, SentenceType, 'sentenceType')
 
   if (
     sentenceType === 'standardDeterminate' ||
@@ -14,10 +14,10 @@ export const shouldShowContingencyPlanPages = (application: Application) => {
     sentenceType === 'ipp' ||
     sentenceType === 'life'
   ) {
-    releaseType = retrieveQuestionResponseFromApplicationOrAssessment(application, ReleaseType, 'releaseType')
+    releaseType = retrieveQuestionResponseFromFormArtifact(application, ReleaseType, 'releaseType')
   }
 
-  const apType = retrieveQuestionResponseFromApplicationOrAssessment(application, SelectApType, 'type')
+  const apType = retrieveQuestionResponseFromFormArtifact(application, SelectApType, 'type')
 
   if (
     sentenceType === 'communityOrder' ||

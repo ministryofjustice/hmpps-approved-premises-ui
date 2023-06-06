@@ -1,11 +1,11 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import { applicationFactory } from '../../../../testutils/factories'
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 import Situation from './situation'
 
-jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment', () => {
-  return { retrieveQuestionResponseFromApplicationOrAssessment: jest.fn(() => 'communityOrder') }
+jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact', () => {
+  return { retrieveQuestionResponseFromFormArtifact: jest.fn(() => 'communityOrder') }
 })
 
 describe('Situation', () => {
@@ -39,7 +39,7 @@ describe('Situation', () => {
   describe('items', () => {
     describe('sentenceType', () => {
       it('if the sentence type is "communityOrder" then the items should be correct', () => {
-        ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('communityOrder')
+        ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('communityOrder')
 
         const items = new Situation({ situation: 'riskManagement' }, application).items()
 
@@ -57,7 +57,7 @@ describe('Situation', () => {
       })
 
       it('if the sentence type is "bailPlacement" then the items should be correct', () => {
-        ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('bailPlacement')
+        ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('bailPlacement')
 
         const items = new Situation({ situation: 'bailAssessment' }, application).items()
 
@@ -72,7 +72,7 @@ describe('Situation', () => {
     })
 
     it('marks an option as selected when the releaseType is set', () => {
-      ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('communityOrder')
+      ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('communityOrder')
 
       const page = new Situation({ situation: 'riskManagement' }, application)
 

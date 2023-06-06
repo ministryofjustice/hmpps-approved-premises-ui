@@ -1,8 +1,8 @@
 import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
 import {
   retrieveOptionalQuestionResponseFromApplicationOrAssessment,
-  retrieveQuestionResponseFromApplicationOrAssessment,
-} from '../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+  retrieveQuestionResponseFromFormArtifact,
+} from '../utils/retrieveQuestionResponseFromFormArtifact'
 
 export const mockQuestionResponse = ({
   postcodeArea = 'ABC 123',
@@ -19,7 +19,7 @@ export const mockQuestionResponse = ({
   duration?: string
   alternativeRadius?: string
 }) => {
-  ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockImplementation(
+  ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockImplementation(
     // eslint-disable-next-line consistent-return
     (_application: Application, _Page: unknown, question: string) => {
       if (question === 'postcodeArea') {

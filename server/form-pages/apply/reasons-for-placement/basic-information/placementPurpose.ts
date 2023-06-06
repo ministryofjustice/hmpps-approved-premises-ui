@@ -5,7 +5,7 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import ReleaseDate from './releaseDate'
 
 export const placementPurposes = {
@@ -51,11 +51,7 @@ export default class PlacementPurpose implements TasklistPage {
 
   previous() {
     if (noticeTypeFromApplication(this.application) === 'standard') {
-      const knowReleaseDate = retrieveQuestionResponseFromApplicationOrAssessment(
-        this.application,
-        ReleaseDate,
-        'knowReleaseDate',
-      )
+      const knowReleaseDate = retrieveQuestionResponseFromFormArtifact(this.application, ReleaseDate, 'knowReleaseDate')
 
       if (knowReleaseDate === 'no') {
         return 'oral-hearing'

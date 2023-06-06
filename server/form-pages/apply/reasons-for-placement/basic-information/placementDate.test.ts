@@ -9,8 +9,8 @@ import { applicationFactory } from '../../../../testutils/factories'
 const releaseDate = new Date().toISOString()
 
 jest.mock('../../../../utils/applications/noticeTypeFromApplication')
-jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment', () => {
-  return { retrieveQuestionResponseFromApplicationOrAssessment: jest.fn(() => releaseDate) }
+jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact', () => {
+  return { retrieveQuestionResponseFromFormArtifact: jest.fn(() => releaseDate) }
 })
 
 describe('PlacementDate', () => {
