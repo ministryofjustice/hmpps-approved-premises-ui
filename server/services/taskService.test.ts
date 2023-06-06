@@ -18,17 +18,17 @@ describe('taskService', () => {
     taskClientFactory.mockReturnValue(taskClient)
   })
 
-  describe('getAll', () => {
+  describe('getAllReallocatable', () => {
     it('calls the all method on the task client', async () => {
       const tasks: Array<Task> = taskFactory.buildList(2)
-      taskClient.all.mockResolvedValue(tasks)
+      taskClient.allReallocatable.mockResolvedValue(tasks)
 
-      const result = await service.getAll(token)
+      const result = await service.getAllReallocatable(token)
 
       expect(result).toEqual(tasks)
 
       expect(taskClientFactory).toHaveBeenCalledWith(token)
-      expect(taskClient.all).toHaveBeenCalled()
+      expect(taskClient.allReallocatable).toHaveBeenCalled()
     })
   })
 

@@ -13,8 +13,8 @@ describeClient('taskClient', provider => {
     taskClient = new TaskClient(token)
   })
 
-  describe('all', () => {
-    it('makes a get request to the tasks endpoint', async () => {
+  describe('allReallocatable', () => {
+    it('makes a get request to the reallocatable tasks endpoint', async () => {
       const tasks = taskFactory.buildList(2)
 
       provider.addInteraction({
@@ -22,7 +22,7 @@ describeClient('taskClient', provider => {
         uponReceiving: `A request to get a list of tasks`,
         withRequest: {
           method: 'GET',
-          path: paths.tasks.index.pattern,
+          path: paths.tasks.reallocatable.index.pattern,
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -33,7 +33,7 @@ describeClient('taskClient', provider => {
         },
       })
 
-      const result = await taskClient.all()
+      const result = await taskClient.allReallocatable()
 
       expect(result).toEqual(tasks)
     })

@@ -11,7 +11,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPattern: paths.tasks.index.pattern,
+        urlPattern: paths.tasks.reallocatable.index.pattern,
       },
       response: {
         status: 200,

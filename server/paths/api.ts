@@ -125,6 +125,9 @@ export default {
   },
   tasks: {
     index: tasksPaths.index,
+    reallocatable: {
+      index: tasksPaths.index.path('reallocatable'),
+    },
   },
   placementRequests: {
     index: placementRequestsPath,
