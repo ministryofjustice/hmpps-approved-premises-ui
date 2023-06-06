@@ -2,16 +2,17 @@ import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
 } from '@approved-premises/api'
-import { HtmlItem, SummaryListItem, TextItem, UiTask } from '@approved-premises/ui'
+import { FormArtifact, HtmlItem, SummaryListItem, TextItem, UiTask } from '@approved-premises/ui'
 
 import applyPaths from '../../paths/apply'
 import assessPaths from '../../paths/assess'
+import placementApplicationsPaths from '../../paths/placementApplications'
 
 import { getResponseForPage } from './utils'
 import reviewSections from '../reviewUtils'
-import isAssessment from '../assessments/isAssessment'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
+import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 
 const summaryListSections = (applicationOrAssessment: Application | Assessment, showActions = true) =>
   reviewSections(applicationOrAssessment, taskResponsesAsSummaryListItems, showActions)
@@ -44,7 +45,7 @@ const taskResponsesAsSummaryListItems = (
           ? ({ text: response[key] } as TextItem)
           : ({ html: embeddedSummaryListItem(response[key] as Array<Record<string, unknown>>) } as HtmlItem)
 
-      items.push(summaryListItemForResponse(key, value, task, pageName, applicationOrAssessment, showActions))
+      items.push(summaryListItemForResponse(key, value, task.id, pageName, applicationOrAssessment, showActions))
     })
   })
 
@@ -112,12 +113,12 @@ const embeddedSummaryListItem = (answers: Array<Record<string, unknown>>): strin
   return response
 }
 
-const summaryListItemForResponse = (
+export const summaryListItemForResponse = (
   key: string,
   value: TextItem | HtmlItem,
-  task: UiTask,
+  taskName: string,
   pageName: string,
-  applicationOrAssessment: Application | Assessment,
+  formArtifact: FormArtifact,
   showActions: boolean,
 ): SummaryListItem => {
   const item = {
@@ -131,9 +132,7 @@ const summaryListItemForResponse = (
     item.actions = {
       items: [
         {
-          href: isAssessment(applicationOrAssessment)
-            ? assessPaths.assessments.pages.show({ task: task.id, page: pageName, id: applicationOrAssessment.id })
-            : applyPaths.applications.pages.show({ task: task.id, page: pageName, id: applicationOrAssessment.id }),
+          href: linkToPage(pageName, taskName, formArtifact),
           text: 'Change',
           visuallyHiddenText: key,
         },
@@ -142,6 +141,22 @@ const summaryListItemForResponse = (
   }
 
   return item
+}
+const linkToPage = (pageName: string, taskName: string, formArtifact: FormArtifact) => {
+  switch (journeyTypeFromArtifact(formArtifact)) {
+    case 'assessments':
+      return assessPaths.assessments.pages.show({ task: taskName, page: pageName, id: formArtifact.id })
+    case 'applications':
+      return applyPaths.applications.pages.show({ task: taskName, page: pageName, id: formArtifact.id })
+    case 'placement-applications':
+      return placementApplicationsPaths.placementApplications.pages.show({
+        task: taskName,
+        page: pageName,
+        id: formArtifact.id,
+      })
+    default:
+      throw Error('Unknown journey type')
+  }
 }
 
 export { summaryListSections, embeddedSummaryListItem, taskResponsesAsSummaryListItems, reviewApplicationSections }
