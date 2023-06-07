@@ -9,7 +9,7 @@ export default class TasksController {
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const tasks = await this.taskService.getAll(req.user.token)
+      const tasks = await this.taskService.getAllReallocatable(req.user.token)
 
       res.render('tasks/index', { pageHeading: 'Tasks', tasks: groupByAllocation(tasks) })
     }

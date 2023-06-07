@@ -10,8 +10,8 @@ export default class TaskClient {
     this.restClient = new RestClient('taskClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async all(): Promise<Array<Task>> {
-    return (await this.restClient.get({ path: paths.tasks.index.pattern })) as Promise<Array<Task>>
+  async allReallocatable(): Promise<Array<Task>> {
+    return (await this.restClient.get({ path: paths.tasks.reallocatable.index.pattern })) as Promise<Array<Task>>
   }
 
   async find(applicationId: string, taskType: string): Promise<TaskWrapper> {

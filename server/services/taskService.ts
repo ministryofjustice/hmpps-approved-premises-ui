@@ -5,10 +5,10 @@ import TaskClient from '../data/taskClient'
 export default class TaskService {
   constructor(private readonly taskClientFactory: RestClientBuilder<TaskClient>) {}
 
-  async getAll(token: string): Promise<Array<Task>> {
+  async getAllReallocatable(token: string): Promise<Array<Task>> {
     const taskClient = this.taskClientFactory(token)
 
-    const tasks = await taskClient.all()
+    const tasks = await taskClient.allReallocatable()
     return tasks
   }
 

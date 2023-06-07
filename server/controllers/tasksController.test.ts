@@ -30,7 +30,7 @@ describe('TasksController', () => {
   describe('index', () => {
     it('should render the tasks template', async () => {
       const tasks = taskFactory.buildList(1)
-      taskService.getAll.mockResolvedValue(tasks)
+      taskService.getAllReallocatable.mockResolvedValue(tasks)
 
       const requestHandler = tasksController.index()
 
@@ -40,7 +40,7 @@ describe('TasksController', () => {
         pageHeading: 'Tasks',
         tasks: groupByAllocation(tasks),
       })
-      expect(taskService.getAll).toHaveBeenCalledWith(token)
+      expect(taskService.getAllReallocatable).toHaveBeenCalledWith(token)
     })
   })
 
