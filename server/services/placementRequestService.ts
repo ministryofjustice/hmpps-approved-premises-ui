@@ -1,5 +1,6 @@
 import { GroupedPlacementRequests } from '@approved-premises/ui'
 import {
+  NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
   PlacementRequest,
@@ -42,5 +43,11 @@ export default class PlacementRequestService {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.createBooking(id, newBooking)
+  }
+
+  async bookingNotMade(token: string, id: string, body: NewBookingNotMade) {
+    const placementRequestClient = this.placementRequestClientFactory(token)
+
+    return placementRequestClient.bookingNotMade(id, body)
   }
 }

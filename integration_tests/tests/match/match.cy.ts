@@ -4,6 +4,7 @@ import ConfirmationPage from '../../pages/match/confirmationPage'
 import PlacementRequestPage from '../../pages/match/placementRequestPage'
 import ListPage from '../../pages/match/listPlacementRequestsPage'
 import SearchPage from '../../pages/match/searchPage'
+import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
 import {
   bedSearchParametersUiFactory,
@@ -226,5 +227,40 @@ context('Placement Requests', () => {
         ),
       })
     })
+  })
+
+  it('allows me to mark a placement request as unable to match', () => {
+    // Given there is a placement request waiting for me to match
+    const placementRequest = placementRequestFactory.build({ status: 'notMatched' })
+    const bedSearchResults = bedSearchResultsFactory.build()
+
+    cy.task('stubPlacementRequests', [placementRequest])
+    cy.task('stubBedSearch', { bedSearchResults })
+    cy.task('stubPlacementRequest', placementRequest)
+    cy.task('stubBookingFromPlacementRequest', placementRequest)
+    cy.task('stubUnableToMatchPlacementRequest', placementRequest)
+
+    // When I visit the placementRequests dashboard
+    const listPage = ListPage.visit()
+
+    // And I click on a placement request
+    listPage.clickFindBed(placementRequest)
+
+    // And I click on the search button
+    const showPage = new PlacementRequestPage(placementRequest)
+    showPage.clickSearch()
+
+    // Given I am unable to match the placement request to a bed
+    const searchPage = new SearchPage(placementRequest.person.name)
+    searchPage.clickUnableToMatch()
+
+    // When I complete the form and click submit
+    const unableToMatchPage = new UnableToMatchPage()
+    unableToMatchPage.completeForm()
+    unableToMatchPage.clickSubmit()
+
+    // Then I should see a success message on the list page
+    Page.verifyOnPage(ListPage)
+    listPage.shouldShowBanner('Placement request marked unable to match')
   })
 })

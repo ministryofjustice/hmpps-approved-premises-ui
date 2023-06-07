@@ -64,4 +64,8 @@ export default class SearchPage extends Page {
       this.checkCheckboxByNameAndValue('requiredCharacteristics', characteristic)
     })
   }
+
+  clickUnableToMatch(): void {
+    cy.get('.govuk-button').contains('Unable to match').click()
+  }
 }

@@ -11,6 +11,9 @@ import {
   placementRequestFactory,
 } from '../../../testutils/factories'
 import { encodeBedSearchResult, placementDates } from '../../../utils/matchUtils'
+import { NewBookingNotMade } from '../../../@types/shared'
+
+import matchPaths from '../../../paths/match'
 
 describe('BookingsController', () => {
   const token = 'SOME_TOKEN'
@@ -81,6 +84,36 @@ describe('BookingsController', () => {
         bookingConfirmation,
       })
       expect(placementRequestService.createBooking).toHaveBeenCalledWith(token, 'some-uuid', body)
+    })
+  })
+
+  describe('bookingNotMade', () => {
+    it('should render the booking not made confirmation template', async () => {
+      const placementRequestId = '123'
+      const requestHandler = bookingsController.bookingNotMade()
+      await requestHandler({ ...request, params: { id: placementRequestId } }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('match/placementRequests/bookings/unable-to-match', {
+        pageHeading: 'Unable to match',
+        confirmPath: matchPaths.placementRequests.bookingNotMade.create({ id: placementRequestId }),
+      })
+    })
+  })
+
+  describe('createBookingNotMade', () => {
+    it('should call the service and redirect to the index page', async () => {
+      const placementRequestId = '123'
+      const body: NewBookingNotMade = {
+        notes: 'Some notes',
+      }
+      const flash = jest.fn()
+
+      const requestHandler = bookingsController.createBookingNotMade()
+      await requestHandler({ ...request, params: { id: placementRequestId }, body, flash }, response, next)
+
+      expect(flash).toHaveBeenCalledWith('success', 'Placement request marked unable to match')
+      expect(response.redirect).toHaveBeenCalledWith(`${matchPaths.placementRequests.index.pattern}#unable-to-match`)
+      expect(placementRequestService.bookingNotMade).toHaveBeenCalledWith(token, placementRequestId, body)
     })
   })
 })

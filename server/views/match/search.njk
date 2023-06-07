@@ -194,6 +194,13 @@
 					rows: MatchUtils.summaryCardRows(bedSearchResult, requiredCharacteristics)
 				}) }}
 					{% endfor %}
+
+					<h3 class="govuk-heading-m">Mark this case as unable to match</h3>
+					<p>If there are no suitable results for your search, mark this case as unable to match.</p>
+					{{ govukButton({
+						text: "Unable to match",
+						href: paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id})
+					}) }}
 				</div>
 			</div>
 		</div>

@@ -133,6 +133,7 @@ export default {
     index: placementRequestsPath,
     show: placementRequestPath,
     booking: placementRequestPath.path('booking'),
+    bookingNotMade: placementRequestPath.path('booking-not-made'),
   },
   placementApplications: {
     update: placementApplicationPath,
