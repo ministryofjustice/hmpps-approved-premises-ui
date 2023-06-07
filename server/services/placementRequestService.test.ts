@@ -1,6 +1,10 @@
 import { PlacementRequest } from '@approved-premises/api'
 import PlacementRequestClient from '../data/placementRequestClient'
-import { newPlacementRequestBookingConfirmationFactory, placementRequestFactory } from '../testutils/factories'
+import {
+  bookingNotMadeFactory,
+  newPlacementRequestBookingConfirmationFactory,
+  placementRequestFactory,
+} from '../testutils/factories'
 import PlacementRequestService from './placementRequestService'
 
 jest.mock('../data/placementRequestClient.ts')
@@ -73,6 +77,25 @@ describe('placementRequestService', () => {
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
       expect(placementRequestClient.createBooking).toHaveBeenCalledWith(id, newBooking)
+    })
+  })
+
+  describe('bookingNotMade', () => {
+    it('it should call the service and return the booking not made object', async () => {
+      const bookingNotMade = bookingNotMadeFactory.build()
+      placementRequestClient.bookingNotMade.mockResolvedValue(bookingNotMade)
+
+      const id = 'some-uuid'
+      const body = {
+        notes: 'some notes',
+      }
+
+      const result = await service.bookingNotMade(token, id, body)
+
+      expect(result).toEqual(bookingNotMade)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.bookingNotMade).toHaveBeenCalledWith(id, body)
     })
   })
 })
