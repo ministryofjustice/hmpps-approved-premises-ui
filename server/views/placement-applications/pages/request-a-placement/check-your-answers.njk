@@ -25,7 +25,7 @@
             </h1>
             {{ showErrorSummary(errorSummary) }}
 
-            {% for pageForReview in PlacementRequestUtils.pagesForReview() %}
+            {% for pageForReview in PlacementRequestUtils.pagesForReview(page.placementApplication) %}
                 {{ govukSummaryList(PlacementRequestUtils.mapPageForSummaryList(page.placementApplication, pageForReview)) }}
             {% endfor %}
 

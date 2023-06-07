@@ -29,13 +29,13 @@ describe('checkYourAnswersUtils', () => {
     })
     describe('pagesForReview', () => {
       it('should return all of the pages except the check-your-answers page', () => {
-        expect(pagesForReview()).toEqual([
-          'reason-for-placement',
-          'previous-rotl-placement',
-          'same-ap',
-          'dates-of-placement',
-          'updates-to-application',
-        ])
+        placementApplication = addResponseToFormArtifact(placementApplication, {
+          section: 'request-a-placement',
+          page: 'check-your-answers',
+          key: 'reviwed',
+          value: '1',
+        }) as PlacementApplication
+        expect(pagesForReview(placementApplication)).toEqual(['same-ap'])
       })
     })
 

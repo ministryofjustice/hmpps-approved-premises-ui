@@ -1,6 +1,5 @@
 import { PlacementApplication } from '../../@types/shared'
 import { HtmlItem, TextItem } from '../../@types/ui'
-import PlacementRequest from '../../form-pages/placement-application'
 import { embeddedSummaryListItem, summaryListItemForResponse } from '../applications/summaryListUtils'
 
 import { getPage, getResponseForPage } from '../applications/utils'
@@ -19,9 +18,10 @@ export const getPageTitle = (placementApplication: PlacementApplication, pageNam
   return new Page(placementApplication.data?.['request-a-placement'][pageName], placementApplication).title
 }
 
-export const pagesForReview = () => {
-  const task = PlacementRequest.sections.map(section => section.tasks).flat()[0]
-  return Object.keys(task.pages).filter(page => page !== 'check-your-answers')
+export const pagesForReview = (placementApplication: PlacementApplication) => {
+  const pageNames = Object.keys(placementApplication.data['request-a-placement'])
+
+  return pageNames.filter(page => page !== 'check-your-answers')
 }
 
 export const pageResponsesAsSummaryListItems = (placementApplication: PlacementApplication, pageName: string) => {
