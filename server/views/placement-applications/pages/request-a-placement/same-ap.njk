@@ -1,0 +1,34 @@
+{% extends "../../layout.njk" %}
+
+{% block questions %}
+  <h1 class="govuk-heading-l">Request for placement</h1>
+
+  {{
+    formPageRadios(
+      {
+        fieldName: "sameAp",
+        fieldset: {
+          legend: {
+            text: page.question,
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        hint: {
+          html: page.hint
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes"
+          },
+          {
+            text: "No",
+            value: "no"
+          }
+        ]
+      },
+      fetchContext()
+    )
+  }}
+
+{% endblock %}

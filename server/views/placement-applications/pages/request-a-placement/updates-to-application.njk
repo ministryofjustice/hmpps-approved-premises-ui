@@ -1,0 +1,17 @@
+{% extends "../../layout.njk" %}
+
+{% block questions %}
+  <h1 class="govuk-heading-l">{{page.title}}</h1>
+
+  <p class="govuk-body">Provide details of things that might have changed since the application was assessed.</p>
+  <p class="govuk-body">This could include a significant event, such as a further offence. The person’s risk factors, access or healthcare needs. Or the preferred location for placement.</p>
+  <p class="govuk-body">This information will be assessed by a central referral unit manager. They will make a decision on whether this application is still suitable for placement.</p>
+  <p class="govuk-body">
+    {{page.applicationLink | safe}}
+  </p>
+
+  {% for key, value in page.questions %}
+    {% include "../../../applications/partials/_yes-no-with-detail.njk" %}
+  {% endfor %}
+
+{% endblock %}

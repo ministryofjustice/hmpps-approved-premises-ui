@@ -4,7 +4,7 @@ import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { convertToTitleCase } from '../../../../utils/utils'
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import { EsapReasons } from './esapPlacementScreening'
 import SelectApType from './apType'
@@ -51,7 +51,7 @@ export default class EsapPlacementSecreting implements TasklistPage {
   }
 
   next() {
-    const esapReasons = retrieveQuestionResponseFromApplicationOrAssessment(
+    const esapReasons = retrieveQuestionResponseFromFormArtifact(
       this.application,
       SelectApType,
       'esapReasons',

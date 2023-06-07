@@ -2,8 +2,8 @@ import { createMock } from '@golevelup/ts-jest'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import {
   retrieveOptionalQuestionResponseFromApplicationOrAssessment,
-  retrieveQuestionResponseFromApplicationOrAssessment,
-} from './retrieveQuestionResponseFromApplicationOrAssessment'
+  retrieveQuestionResponseFromFormArtifact,
+} from './retrieveQuestionResponseFromFormArtifact'
 import { applicationFactory } from '../testutils/factories'
 import { SessionDataError } from './errors'
 import * as utils from '../form-pages/utils'
@@ -11,13 +11,13 @@ import * as utils from '../form-pages/utils'
 jest.spyOn(utils, 'getTaskName').mockImplementation(() => 'my-task')
 jest.spyOn(utils, 'getPageName').mockImplementation(() => 'my-page')
 
-describe('retrieveQuestionResponseFromApplicationOrAssessment', () => {
+describe('retrieveQuestionResponseFromFormArtifact', () => {
   it("throws a SessionDataError if the property doesn't exist", () => {
     const application = applicationFactory.build()
 
-    expect(() =>
-      retrieveQuestionResponseFromApplicationOrAssessment(application, createMock<TasklistPageInterface>()),
-    ).toThrow(SessionDataError)
+    expect(() => retrieveQuestionResponseFromFormArtifact(application, createMock<TasklistPageInterface>())).toThrow(
+      SessionDataError,
+    )
   })
 
   it('returns the property if it does exist and a question is not provided', () => {
@@ -27,10 +27,7 @@ describe('retrieveQuestionResponseFromApplicationOrAssessment', () => {
       },
     })
 
-    const questionResponse = retrieveQuestionResponseFromApplicationOrAssessment(
-      application,
-      createMock<TasklistPageInterface>(),
-    )
+    const questionResponse = retrieveQuestionResponseFromFormArtifact(application, createMock<TasklistPageInterface>())
     expect(questionResponse).toBe('no')
   })
 
@@ -41,7 +38,7 @@ describe('retrieveQuestionResponseFromApplicationOrAssessment', () => {
       },
     })
 
-    const questionResponse = retrieveQuestionResponseFromApplicationOrAssessment(
+    const questionResponse = retrieveQuestionResponseFromFormArtifact(
       application,
       createMock<TasklistPageInterface>(),
       'questionResponse',
@@ -67,6 +64,6 @@ describe('retrieveOptionalQuestionResponseFromApplicationOrAssessment', () => {
 
     expect(
       retrieveOptionalQuestionResponseFromApplicationOrAssessment(application, createMock<TasklistPageInterface>()),
-    ).toEqual(retrieveQuestionResponseFromApplicationOrAssessment(application, createMock<TasklistPageInterface>()))
+    ).toEqual(retrieveQuestionResponseFromFormArtifact(application, createMock<TasklistPageInterface>()))
   })
 })

@@ -9,7 +9,7 @@ import { placementDurationFromApplication } from './placementDurationFromApplica
 import { getResponses } from '../applications/utils'
 
 jest.mock('../../form-pages/utils')
-jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
+jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/arrivalDateFromApplication')
 jest.mock('./placementDurationFromApplication')
 

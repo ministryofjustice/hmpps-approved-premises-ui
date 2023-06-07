@@ -1,6 +1,5 @@
 import {
   ApprovedPremisesApplication as Application,
-  Assessment,
   ReleaseTypeOption,
   SubmitApprovedPremisesApplication,
   UpdateApprovedPremisesApplication,
@@ -12,11 +11,12 @@ import SelectApType, { ApType } from '../../form-pages/apply/reasons-for-placeme
 
 import {
   retrieveOptionalQuestionResponseFromApplicationOrAssessment,
-  retrieveQuestionResponseFromApplicationOrAssessment,
-} from '../retrieveQuestionResponseFromApplicationOrAssessment'
+  retrieveQuestionResponseFromFormArtifact,
+} from '../retrieveQuestionResponseFromFormArtifact'
 import DescribeLocationFactors from '../../form-pages/apply/risk-and-need-factors/location-factors/describeLocationFactors'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { isInapplicable } from './utils'
+import { FormArtifact } from '../../@types/ui'
 
 type FirstClassFields<T> = T extends UpdateApprovedPremisesApplication
   ? Omit<UpdateApprovedPremisesApplication, 'data'>
@@ -24,11 +24,7 @@ type FirstClassFields<T> = T extends UpdateApprovedPremisesApplication
   ? Omit<SubmitApprovedPremisesApplication, 'translatedDocument'>
   : never
 
-type QuestionResponseFunction = (
-  applicationOrAssessment: Application | Assessment,
-  Page: unknown,
-  question?: string,
-) => unknown
+type QuestionResponseFunction = (formArtifact: FormArtifact, Page: unknown, question?: string) => unknown
 
 export const getApplicationUpdateData = (application: Application): UpdateApprovedPremisesApplication => {
   return {
@@ -68,7 +64,7 @@ const getUpdateFirstClassFields = (application: Application): FirstClassFields<U
 }
 
 const getSubmitFirstClassFields = (application: Application): FirstClassFields<SubmitApprovedPremisesApplication> => {
-  return firstClassFields(application, retrieveQuestionResponseFromApplicationOrAssessment)
+  return firstClassFields(application, retrieveQuestionResponseFromFormArtifact)
 }
 
 const getReleaseType = (

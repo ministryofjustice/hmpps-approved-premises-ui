@@ -138,6 +138,7 @@ export default {
     update: placementApplicationPath,
     create: placementApplicationsPath,
     show: placementApplicationPath,
+    submit: placementApplicationPath.path('submission'),
   },
   people: {
     risks: {

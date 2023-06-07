@@ -3,6 +3,7 @@ import paths from '../paths/api'
 
 import { placementApplicationFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
+import { SubmitPlacementApplication } from '../@types/shared'
 
 describeClient('placementApplicationClient', provider => {
   let placementApplicationClient: PlacementApplicationClient
@@ -89,6 +90,37 @@ describeClient('placementApplicationClient', provider => {
       })
 
       const result = await placementApplicationClient.update(placementApplication)
+
+      expect(result).toEqual(placementApplication)
+    })
+  })
+
+  describe('submission', () => {
+    it('submits a placement application', async () => {
+      const placementApplication = placementApplicationFactory.build()
+      const body: SubmitPlacementApplication = {
+        placementDates: [{ expectedArrival: '2021-01-01', duration: 1 }],
+        placementType: 'rotl',
+        translatedDocument: {},
+      }
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to submit a placement application',
+        withRequest: {
+          method: 'POST',
+          path: paths.placementApplications.submit({ id: placementApplication.id }),
+          body,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placementApplication,
+        },
+      })
+
+      const result = await placementApplicationClient.submission(placementApplication.id, body)
 
       expect(result).toEqual(placementApplication)
     })

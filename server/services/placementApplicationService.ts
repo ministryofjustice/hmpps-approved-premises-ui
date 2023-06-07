@@ -6,6 +6,7 @@ import PlacementApplicationClient from '../data/placementApplicationClient'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getBody, getPageName, getTaskName } from '../form-pages/utils'
 import { ValidationError } from '../utils/errors'
+import { placementApplicationSubmissionData } from '../utils/placementRequests/placementApplicationSubmissionData'
 
 export default class PlacementApplicationService {
   constructor(private readonly placementApplicationClientFactory: RestClientBuilder<PlacementApplicationClient>) {}
@@ -59,5 +60,14 @@ export default class PlacementApplicationService {
 
       await client.update(placementApplication)
     }
+  }
+
+  async submit(token: string, placementApplication: PlacementApplication) {
+    const placementApplicationClient = this.placementApplicationClientFactory(token)
+
+    return placementApplicationClient.submission(
+      placementApplication.id,
+      placementApplicationSubmissionData(placementApplication),
+    )
   }
 }

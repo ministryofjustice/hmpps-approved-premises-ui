@@ -1,6 +1,8 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { PlacementApplicationService, PlacementRequestService } from '../../services'
 import paths from '../../paths/placementApplications'
+import { addErrorMessageToFlash } from '../../utils/validation'
+import { getResponses } from '../../utils/applications/utils'
 
 export default class PlacementRequestsController {
   constructor(
@@ -41,6 +43,33 @@ export default class PlacementRequestsController {
           page: 'reason-for-placement',
         }),
       )
+    }
+  }
+
+  submit(): TypedRequestHandler<Request, Response> {
+    return async (req: Request, res: Response) => {
+      const { id } = req.params
+      const { confirmation } = req.body
+
+      if (confirmation !== '1') {
+        addErrorMessageToFlash(
+          req,
+          'You must confirm that the information you have provided is correct',
+          'confirmation',
+        )
+        return res.redirect(
+          paths.placementApplications.pages.show({ id, task: 'request-a-placement', page: 'check-your-answers' }),
+        )
+      }
+
+      const placementApplication = await this.placementApplicationService.getPlacementApplication(req.user.token, id)
+      placementApplication.document = getResponses(placementApplication)
+
+      await this.placementApplicationService.submit(req.user.token, placementApplication)
+
+      return res.render('placement-applications/confirm', {
+        pageHeading: 'Request for placement confirmed',
+      })
     }
   }
 }

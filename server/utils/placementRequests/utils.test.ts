@@ -1,11 +1,5 @@
 import { personFactory, placementRequestFactory } from '../../testutils/factories'
-import {
-  applicationLink,
-  assessmentLink,
-  formatReleaseType,
-  mapPlacementRequestToBedSearchParams,
-  searchButton,
-} from './utils'
+import { assessmentLink, formatReleaseType, mapPlacementRequestToBedSearchParams, searchButton } from './utils'
 
 describe('utils', () => {
   describe('formatReleaseType', () => {
@@ -44,16 +38,6 @@ describe('utils', () => {
         assessmentId: placementRequest.assessmentId,
         requiredCharacteristics: [...placementRequest.essentialCriteria, ...placementRequest.desirableCriteria],
       })
-    })
-  })
-
-  describe('applicationLink', () => {
-    it('returns a link to the application', () => {
-      const placementRequest = placementRequestFactory.build()
-
-      expect(applicationLink(placementRequest, 'link text', 'hidden text')).toEqual(
-        `<a href="/applications/${placementRequest.applicationId}" >link text <span class="govuk-visually-hidden">hidden text</span></a>`,
-      )
     })
   })
 

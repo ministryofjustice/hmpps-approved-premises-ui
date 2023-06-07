@@ -1,7 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import PersonService from '../services/personService'
-import { errorMessage, errorSummary } from '../utils/validation'
+import { addErrorMessageToFlash } from '../utils/validation'
 
 export default class PeopleController {
   constructor(private readonly personService: PersonService) {}
@@ -16,25 +16,17 @@ export default class PeopleController {
           req.flash('crn', person.crn)
         } catch (err) {
           if ('data' in err && err.status === 404) {
-            this.addErrorMessagesToFlash(req, `No person with an CRN of '${crn}' was found`)
+            addErrorMessageToFlash(req, `No person with an CRN of '${crn}' was found`, 'crn')
           } else if (checkCaseload && err.status === 403) {
-            this.addErrorMessagesToFlash(req, `The CRN '${crn}' is not in your caseload`)
+            addErrorMessageToFlash(req, `The CRN '${crn}' is not in your caseload`, 'crn')
           } else {
             throw err
           }
         }
       } else {
-        this.addErrorMessagesToFlash(req, 'You must enter a CRN')
+        addErrorMessageToFlash(req, 'You must enter a CRN', 'crn')
       }
       res.redirect(req.headers.referer)
     }
-  }
-
-  addErrorMessagesToFlash(request: Request, message: string) {
-    request.flash('errors', {
-      crn: errorMessage('crn', message),
-    })
-    request.flash('errorSummary', [errorSummary('crn', message)])
-    request.flash('userInput', request.body)
   }
 }

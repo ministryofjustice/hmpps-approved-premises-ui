@@ -1,7 +1,8 @@
 import { PlacementRequest } from '@approved-premises/api'
 import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
 import { sentenceCase } from '../utils'
-import { applicationLink, assessmentLink } from './utils'
+import { assessmentLink } from './utils'
+import { applicationLink } from './applicationLink'
 
 export const documentSummary = (placementRequest: PlacementRequest): SummaryListWithCard => {
   return {

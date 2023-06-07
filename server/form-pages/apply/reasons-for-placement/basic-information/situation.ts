@@ -3,7 +3,7 @@ import type { TaskListErrors } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
 
 import { SessionDataError } from '../../../../utils/errors'
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import TasklistPage from '../../../tasklistPage'
 import SentenceType, { SentenceTypesT } from './sentenceType'
 
@@ -28,7 +28,7 @@ export default class Situation implements TasklistPage {
     readonly body: { situation?: keyof CommunityOrderSituations | keyof BailPlacementSituations },
     readonly application: ApprovedPremisesApplication,
   ) {
-    const sessionSentenceType = retrieveQuestionResponseFromApplicationOrAssessment(application, SentenceType)
+    const sessionSentenceType = retrieveQuestionResponseFromFormArtifact(application, SentenceType)
 
     this.situations = this.getSituationsForSentenceType(sessionSentenceType)
   }

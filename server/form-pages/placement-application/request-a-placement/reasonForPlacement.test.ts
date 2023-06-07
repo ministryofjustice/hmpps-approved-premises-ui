@@ -1,10 +1,10 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
-import ReasonForPlacement from './reason-for-placement'
+import ReasonForPlacement from './reasonForPlacement'
 
 describe('ReasonForPlacement', () => {
   describe('title', () => {
-    expect(new ReasonForPlacement({}).title).toBe('Request a placement')
+    expect(new ReasonForPlacement({}).title).toBe('Reason for placement')
   })
 
   describe('body', () => {
@@ -18,7 +18,7 @@ describe('ReasonForPlacement', () => {
     })
   })
 
-  itShouldHaveNextValue(new ReasonForPlacement({}), '')
+  itShouldHaveNextValue(new ReasonForPlacement({}), 'previous-rotl-placement')
   itShouldHavePreviousValue(new ReasonForPlacement({}), '')
 
   describe('errors', () => {

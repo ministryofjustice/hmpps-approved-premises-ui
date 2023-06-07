@@ -7,6 +7,9 @@ import PlacementRequestsController from './placementRequestsController'
 import { PlacementApplicationService, PlacementRequestService } from '../../services'
 import { personFactory, placementApplicationFactory, placementRequestFactory } from '../../testutils/factories'
 import paths from '../../paths/placementApplications'
+import { getResponses } from '../../utils/applications/utils'
+
+jest.mock('../../utils/applications/utils')
 
 describe('PlacementRequestsController', () => {
   const token = 'SOME_TOKEN'
@@ -80,6 +83,54 @@ describe('PlacementRequestsController', () => {
         }),
       )
       expect(placementApplicationService.create).toHaveBeenCalledWith(token, applicationId)
+    })
+  })
+
+  describe('submit', () => {
+    describe('when confirmation is "1"', () => {
+      it('should POST to the service and redirect to the confirmation page', async () => {
+        const placementApplication = placementApplicationFactory.build()
+        placementApplicationService.submit.mockResolvedValue(placementApplication)
+
+        const requestHandler = placementRequestsController.submit()
+
+        await requestHandler(
+          { ...request, body: { confirmation: '1' }, params: { id: placementApplication.id } },
+          response,
+          next,
+        )
+
+        expect(getResponses).toHaveBeenCalledWith(placementApplication)
+        expect(response.render).toHaveBeenCalledWith('placement-applications/confirm', {
+          pageHeading: 'Request for placement confirmed',
+        })
+        expect(placementApplicationService.submit).toHaveBeenCalledWith(token, placementApplication.id)
+      })
+    })
+
+    describe('when confirmation is not "1"', () => {
+      it('should POST to the service and redirect to the confirmation page', async () => {
+        const placementApplication = placementApplicationFactory.build()
+        placementApplicationService.submit.mockResolvedValue(placementApplication)
+        const flash = jest.fn()
+        const requestHandler = placementRequestsController.submit()
+
+        await requestHandler({ ...request, body: {}, params: { id: placementApplication.id }, flash }, response, next)
+
+        expect(response.redirect).toHaveBeenCalledWith(
+          paths.placementApplications.pages.show({
+            id: placementApplication.id,
+            task: 'request-a-placement',
+            page: 'check-your-answers',
+          }),
+        )
+        expect(flash).toHaveBeenCalledWith('errors', {
+          confirmation: {
+            attributes: { 'data-cy-error-confirmation': true },
+            text: 'You must confirm that the information you have provided is correct',
+          },
+        })
+      })
     })
   })
 })

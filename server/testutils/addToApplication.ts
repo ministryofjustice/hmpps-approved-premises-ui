@@ -1,31 +1,31 @@
-import { ApprovedPremisesApplication as Application } from '../@types/shared'
+import { FormArtifact } from '../@types/ui'
 
-export const addResponseToApplication = (
-  application: Application,
+export const addResponseToFormArtifact = (
+  formArtifact: FormArtifact,
   { section, page, key, value }: { section: string; page: string; key?: string; value?: unknown },
 ) => {
-  application.data = {
-    ...application.data,
+  formArtifact.data = {
+    ...formArtifact.data,
     [section]: {
-      ...application.data[section],
+      ...formArtifact.data[section],
       [page]: key && { [key]: value },
     },
   }
 
-  return application
+  return formArtifact
 }
 
-export const addResponsesToApplication = (
-  application: Application,
+export const addResponsesToFormArtifact = (
+  formArtifact: FormArtifact,
   { section, page, keyValuePairs }: { section: string; page: string; keyValuePairs?: Record<string, unknown> },
 ) => {
-  application.data = {
-    ...application.data,
+  formArtifact.data = {
+    ...formArtifact.data,
     [section]: {
-      ...application.data[section],
-      [page]: { ...application.data[section][page], ...keyValuePairs },
+      ...formArtifact.data[section],
+      [page]: { ...formArtifact.data[section][page], ...keyValuePairs },
     },
   }
 
-  return application
+  return formArtifact
 }

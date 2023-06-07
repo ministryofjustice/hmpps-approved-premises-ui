@@ -1,11 +1,11 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import { applicationFactory } from '../../../../testutils/factories'
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 import ReleaseType from './releaseType'
 
-jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment', () => {
-  return { retrieveQuestionResponseFromApplicationOrAssessment: jest.fn(() => 'standardDeterminate') }
+jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact', () => {
+  return { retrieveQuestionResponseFromFormArtifact: jest.fn(() => 'standardDeterminate') }
 })
 
 describe('ReleaseType', () => {
@@ -39,7 +39,7 @@ describe('ReleaseType', () => {
   describe('items', () => {
     describe('releaseType', () => {
       it('if the sentence type is "standardDeterminate" then all the items should be shown', () => {
-        ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('standardDeterminate')
+        ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('standardDeterminate')
 
         const items = new ReleaseType({}, application).items()
 
@@ -51,7 +51,7 @@ describe('ReleaseType', () => {
       })
 
       it('if the sentence type is "extendedDeterminate" then the reduced list of items should be shown', () => {
-        ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('extendedDeterminate')
+        ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('extendedDeterminate')
 
         const items = new ReleaseType({}, application).items()
 
@@ -61,7 +61,7 @@ describe('ReleaseType', () => {
       })
 
       it('if the sentence type is "ipp" then the reduced list of items should be shown', () => {
-        ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('ipp')
+        ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('ipp')
 
         const items = new ReleaseType({}, application).items()
 
@@ -71,7 +71,7 @@ describe('ReleaseType', () => {
       })
 
       it('if the sentence type is "life" then the reduced list of items should be shown', () => {
-        ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('life')
+        ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('life')
 
         const items = new ReleaseType({}, application).items()
 

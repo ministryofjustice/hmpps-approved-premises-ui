@@ -4,10 +4,10 @@ import { noticeTypeFromApplication } from '../../../../utils/applications/notice
 import { applicationFactory } from '../../../../testutils/factories'
 
 import PlacementPurpose from './placementPurpose'
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 jest.mock('../../../../utils/applications/noticeTypeFromApplication')
-jest.mock('../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment')
+jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
 
 describe('PlacementPurpose', () => {
   const application = applicationFactory.build()
@@ -74,14 +74,14 @@ describe('PlacementPurpose', () => {
   describe('when the notice type is standard', () => {
     describe('when the applicant knows the release date', () => {
       ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('standard')
-      ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('yes')
+      ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('yes')
 
       expect(new PlacementPurpose({}, application).previous()).toBe('placement-date')
     })
 
     describe('when the applicant doesnt know the release date', () => {
       ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('standard')
-      ;(retrieveQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('no')
+      ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('no')
 
       expect(new PlacementPurpose({}, application).previous()).toBe('oral-hearing')
     })

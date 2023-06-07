@@ -4,7 +4,7 @@ import Page from '../../page'
 
 export default class ReasonForPlacementPage extends Page {
   constructor() {
-    super('Request a placement')
+    super('Reason for placement')
   }
 
   static visit(placementRequestId: string): ReasonForPlacementPage {

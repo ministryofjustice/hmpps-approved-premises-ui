@@ -1,12 +1,17 @@
 /* istanbul ignore file */
 
-import ReasonsForPlacement from './reason-for-placement'
 import { Section, Task } from '../../utils/decorators'
+import ReasonsForPlacement from './reasonForPlacement'
+import PreviousRotlPlacement from './previousRotlPlacement'
+import SameAp from './sameAp'
+import DatesOfPlacement from './datesOfPlacement'
+import UpdatesToApplication from './updatesToApplication'
+import CheckYourAnswers from './checkYourAnswers'
 
 @Task({
   name: 'Request a placement',
   slug: 'request-a-placement',
-  pages: [ReasonsForPlacement],
+  pages: [ReasonsForPlacement, PreviousRotlPlacement, SameAp, DatesOfPlacement, UpdatesToApplication, CheckYourAnswers],
 })
 @Section({
   title: 'Request a Placement',

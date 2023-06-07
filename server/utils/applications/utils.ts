@@ -9,7 +9,6 @@ import type {
 import type {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
-  ApprovedPremisesAssessment as Assessment,
 } from '@approved-premises/api'
 import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-information/maleAp'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
@@ -21,7 +20,7 @@ import { DateFormats } from '../dateUtils'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
 import ExceptionDetails from '../../form-pages/apply/reasons-for-placement/basic-information/exceptionDetails'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import PlacementRequest from '../../form-pages/placement-application'
@@ -69,22 +68,19 @@ const createNameAnchorElement = (name: string, applicationId: string) => {
 
 export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>
 
-const getResponses = (applicationOrAssessment: Application | Assessment): ApplicationOrAssessmentResponse => {
+const getResponses = (formArtifact: FormArtifact): ApplicationOrAssessmentResponse => {
   const responses = {}
 
-  Object.keys(applicationOrAssessment.data).forEach(taskName => {
-    responses[taskName] = getResponsesForTask(applicationOrAssessment, taskName)
+  Object.keys(formArtifact.data).forEach(taskName => {
+    responses[taskName] = getResponsesForTask(formArtifact, taskName)
   })
 
   return responses
 }
 
-const getResponsesForTask = (
-  applicationOrAssessment: Application | Assessment,
-  taskName: string,
-): Array<PageResponse> => {
-  const pageNames = Object.keys(applicationOrAssessment.data[taskName])
-  const responsesForPages = pageNames.map(pageName => getResponseForPage(applicationOrAssessment, taskName, pageName))
+const getResponsesForTask = (formArtifact: FormArtifact, taskName: string): Array<PageResponse> => {
+  const pageNames = Object.keys(formArtifact.data[taskName])
+  const responsesForPages = pageNames.map(pageName => getResponseForPage(formArtifact, taskName, pageName))
   return responsesForPages
 }
 

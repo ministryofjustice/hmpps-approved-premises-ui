@@ -150,3 +150,11 @@ const errorText = (error: InvalidParams): ErrorSummary => {
 const throwUndefinedError = (message: string) => {
   throw new Error(message)
 }
+
+export const addErrorMessageToFlash = (request: Request, message: string, field: string) => {
+  request.flash('errors', {
+    [field]: errorMessage(field, message),
+  })
+  request.flash('errorSummary', [errorSummary('crn', message)])
+  request.flash('userInput', request.body)
+}

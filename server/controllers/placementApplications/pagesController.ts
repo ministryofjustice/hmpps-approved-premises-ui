@@ -25,7 +25,7 @@ export default class PagesController {
         const page = await this.placementApplicationService.initializePage(Page, req, {}, userInput)
 
         res.render(viewPath(page, 'placement-applications'), {
-          placementRequestId: req.params.id,
+          placementApplicationId: req.params.id,
           errors,
           errorSummary,
           task: taskName,

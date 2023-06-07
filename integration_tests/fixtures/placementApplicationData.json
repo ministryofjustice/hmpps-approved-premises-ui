@@ -1,0 +1,38 @@
+{
+  "request-a-placement": {
+    "reason-for-placement": {
+      "reason": "paroleBoard"
+    },
+    "previous-rotl-placement": {
+      "previousRotlPlacement": "yes",
+      "lastPlacementDate": "2023-07-01",
+      "lastPlacementDate-year": "2023",
+      "lastPlacementDate-month": "07",
+      "lastPlacementDate-day": "01",
+      "lastAp": "Manchester",
+      "details": "Some details"
+    },
+    "same-ap": {
+      "sameAp": "yes"
+    },
+    "dates-of-placement": {
+      "arrivalDate": "2023-08-01",
+      "arrivalDate-day": "01",
+      "arrivalDate-month": "8",
+      "arrivalDate-year": "2023",
+      "duration": "28"
+    },
+    "updates-to-application": {
+      "significantEvents": "yes",
+      "significantEventsDetail": "Some details",
+      "changedCirumstances": "yes",
+      "changedCirumstancesDetail": "Some details",
+      "riskFactors": "yes",
+      "riskFactorsDetail": "Some details",
+      "accessOrHealthcareNeeds": "yes",
+      "accessOrHealthcareNeedsDetail": "Some details",
+      "locationFactors": "yes",
+      "locationFactorsDetail": "Some details"
+    }
+  }
+}

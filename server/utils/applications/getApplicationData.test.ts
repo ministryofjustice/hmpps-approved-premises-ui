@@ -5,7 +5,7 @@ import { mockOptionalQuestionResponse, mockQuestionResponse } from '../../testut
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { isInapplicable } from './utils'
 
-jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
+jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('./arrivalDateFromApplication')
 jest.mock('./utils')
 

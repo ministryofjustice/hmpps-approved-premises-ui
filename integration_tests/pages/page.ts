@@ -265,8 +265,18 @@ export default abstract class Page {
     cy.get(`#${prefix}-year`).clear()
   }
 
+  clearAndCompleteDateInputs(prefix: string, date: string): void {
+    this.clearDateInputs(prefix)
+    this.completeDateInputs(prefix, date)
+  }
+
   getTextInputByIdAndClear(id: string): void {
     cy.get(`#${id}`).clear()
+  }
+
+  clearAndCompleteTextInputById(id: string, text: string): void {
+    this.getTextInputByIdAndClear(id)
+    this.getTextInputByIdAndEnterDetails(id, text)
   }
 
   shouldContainTableRows(rows: Array<Array<TableCell>>): void {

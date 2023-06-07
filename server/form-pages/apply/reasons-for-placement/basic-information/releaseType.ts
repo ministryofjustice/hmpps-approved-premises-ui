@@ -2,7 +2,7 @@ import type { ApprovedPremisesApplication, ReleaseTypeOption } from '@approved-p
 import type { ReleaseTypeOptions, TaskListErrors } from '@approved-premises/ui'
 
 import { SessionDataError } from '../../../../utils/errors'
-import { retrieveQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromApplicationOrAssessment'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import TasklistPage from '../../../tasklistPage'
 import SentenceType, { SentenceTypesT } from './sentenceType'
 import { Page } from '../../../utils/decorators'
@@ -28,7 +28,7 @@ export default class ReleaseType implements TasklistPage {
     readonly body: { releaseType?: SelectableReleaseType | ReducedReleaseTypes },
     readonly application: ApprovedPremisesApplication,
   ) {
-    const sessionSentenceType = retrieveQuestionResponseFromApplicationOrAssessment(application, SentenceType)
+    const sessionSentenceType = retrieveQuestionResponseFromFormArtifact(application, SentenceType)
 
     this.releaseTypes = this.getReleaseTypes(sessionSentenceType)
 

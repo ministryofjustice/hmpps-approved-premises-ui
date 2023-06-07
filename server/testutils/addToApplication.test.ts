@@ -1,4 +1,4 @@
-import { addResponseToApplication, addResponsesToApplication } from './addToApplication'
+import { addResponseToFormArtifact, addResponsesToFormArtifact } from './addToApplication'
 
 import { applicationFactory } from './factories'
 
@@ -7,7 +7,7 @@ describe('addResponseToApplication', () => {
     const application = applicationFactory.build()
     const response = { section: 'section', page: 'page', key: 'key', value: 'value' }
 
-    const updatedApplication = addResponseToApplication(application, response)
+    const updatedApplication = addResponseToFormArtifact(application, response)
 
     expect(updatedApplication.data).toEqual({
       ...application.data,
@@ -25,7 +25,7 @@ describe('addResponsesToApplication', () => {
     const application = applicationFactory.build({ data: { section: { page: {} } } })
     const response = { section: 'section', page: 'page', keyValuePairs: { key: 'value' } }
 
-    const updatedApplication = addResponsesToApplication(application, response)
+    const updatedApplication = addResponsesToFormArtifact(application, response)
 
     expect(updatedApplication.data).toEqual({
       ...application.data,

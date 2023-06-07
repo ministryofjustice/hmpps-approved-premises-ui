@@ -2,9 +2,9 @@ import { applicationFactory } from '../../testutils/factories'
 import PlacementDuration from '../../form-pages/apply/move-on/placementDuration'
 import { getDefaultPlacementDurationInWeeks } from '../applications/getDefaultPlacementDurationInWeeks'
 import { placementDurationFromApplication } from './placementDurationFromApplication'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromApplicationOrAssessment'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
 
-jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
+jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/getDefaultPlacementDurationInWeeks')
 
 describe('placementDurationFromApplication', () => {

@@ -1,0 +1,54 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + page.title %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+      text: "Back",
+      href: paths.placementApplications.pages.show({ id: placementApplicationId, task: 'request-a-placement', page: 'updates-to-application' })
+    }) }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-width-container">
+            <h1 class="govuk-heading-xl">
+                {{ page.title }}
+            </h1>
+            {{ showErrorSummary(errorSummary) }}
+
+            {% for pageForReview in PlacementRequestUtils.pagesForReview() %}
+                {{ govukSummaryList(PlacementRequestUtils.mapPageForSummaryList(page.placementApplication, pageForReview)) }}
+            {% endfor %}
+
+            <form action="{{paths.placementApplications.submit({id: placementApplicationId })}}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                <input type="hidden" name="reviewed" value="1"/>
+                <h2 class="govuk-heading-m"> Submit placement request</h2>
+
+                {{ govukCheckboxes({
+                    name: "confirmation",
+                    items: [
+                        {
+                        value: "1",
+                        text: "I confirm the information provided is complete, accurate and up to date."
+                        }
+                    ]
+                    }) }}
+
+                {{ govukButton({
+                    text: "Submit"
+                }) }}
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

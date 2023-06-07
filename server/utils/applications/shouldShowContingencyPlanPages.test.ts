@@ -2,7 +2,7 @@ import { applicationFactory } from '../../testutils/factories'
 import { shouldShowContingencyPlanPages } from './shouldShowContingencyPlanPages'
 import { mockQuestionResponse } from '../../testutils/mockQuestionResponse'
 
-jest.mock('../retrieveQuestionResponseFromApplicationOrAssessment')
+jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
 describe('shouldShowContingencyPlanPages', () => {
   const application = applicationFactory.build()
