@@ -61,4 +61,13 @@ export default class BookingsController {
       })
     }
   }
+
+  createBookingNotMade(): TypedRequestHandler<Request, Response> {
+    return async (req: Request, res: Response) => {
+      await this.placementRequestService.bookingNotMade(req.user.token, req.params.id, { notes: req.body.notes })
+      req.flash('success', 'Placement request marked unable to match')
+
+      return res.redirect(`${paths.placementRequests.index({})}#unable-to-match`)
+    }
+  }
 }

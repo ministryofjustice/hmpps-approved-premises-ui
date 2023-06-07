@@ -4,6 +4,7 @@ import ConfirmationPage from '../../pages/match/confirmationPage'
 import PlacementRequestPage from '../../pages/match/placementRequestPage'
 import ListPage from '../../pages/match/listPlacementRequestsPage'
 import SearchPage from '../../pages/match/searchPage'
+import UnableToMatchPage from '../../pages/match/unableToMatchPage'
 
 import {
   bedSearchParametersUiFactory,
@@ -252,5 +253,14 @@ context('Placement Requests', () => {
     // Given I am unable to match the placement request to a bed
     const searchPage = new SearchPage(placementRequest.person.name)
     searchPage.clickUnableToMatch()
+
+    // When I complete the form and click submit
+    const unableToMatchPage = new UnableToMatchPage()
+    unableToMatchPage.completeForm()
+    unableToMatchPage.clickSubmit()
+
+    // Then I should see a success message on the list page
+    Page.verifyOnPage(ListPage)
+    listPage.shouldShowBanner('Placement request marked unable to match')
   })
 })

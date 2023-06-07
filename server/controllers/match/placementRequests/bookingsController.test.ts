@@ -99,4 +99,21 @@ describe('BookingsController', () => {
       })
     })
   })
+
+  describe('createBookingNotMade', () => {
+    it('should call the service and redirect to the index page', async () => {
+      const placementRequestId = '123'
+      const body: NewBookingNotMade = {
+        notes: 'Some notes',
+      }
+      const flash = jest.fn()
+
+      const requestHandler = bookingsController.createBookingNotMade()
+      await requestHandler({ ...request, params: { id: placementRequestId }, body, flash }, response, next)
+
+      expect(flash).toHaveBeenCalledWith('success', 'Placement request marked unable to match')
+      expect(response.redirect).toHaveBeenCalledWith(`${matchPaths.placementRequests.index.pattern}#unable-to-match`)
+      expect(placementRequestService.bookingNotMade).toHaveBeenCalledWith(token, placementRequestId, body)
+    })
+  })
 })
