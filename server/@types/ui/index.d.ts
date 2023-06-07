@@ -266,6 +266,10 @@ export type GroupedPlacementRequests = Record<PlacementRequestStatus, Array<Plac
 
 export type CategorisedTask = AssessmentTask | BookingAppealTask | PlacementApplicationTask | PlacementRequestTask
 
+export type GroupedMatchTasks = Record<PlacementRequestStatus, Array<PlacementRequestTask>> & {
+  placementApplications: Array<PlacementApplicationTask>
+}
+
 export interface ApplicationWithRisks extends Application {
   person: PersonWithRisks
 }
