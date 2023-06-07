@@ -26,7 +26,7 @@ export default class ReasonForPlacement implements TasklistPage {
   }
 
   next() {
-    return 'previous-rotl-placement'
+    return this.body.reason === 'rotl' ? 'previous-rotl-placement' : 'additional-placement-details'
   }
 
   response() {
