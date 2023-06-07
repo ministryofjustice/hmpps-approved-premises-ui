@@ -21,21 +21,21 @@
                         label: "Active cases",
                         id: "active-cases",
                         panel: {
-                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(placementRequests.notMatched))
+                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(tasks.notMatched))
                         }
                     },
                     {
                         label: "Unable to match",
                         id: "unable-to-match",
                         panel: {
-                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(placementRequests.unableToMatch))
+                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(tasks.unableToMatch))
                         }
                     },
                     {
                         label: "Completed",
                         id: "completed",
                         panel: {
-                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(placementRequests.matched))
+                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(tasks.matched))
                         }
                     }
                 ]

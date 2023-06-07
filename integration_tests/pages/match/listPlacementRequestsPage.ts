@@ -3,7 +3,7 @@ import paths from '../../../server/paths/match'
 
 import { tableUtils } from '../../../server/utils/placementRequests'
 
-import { PlacementRequest } from '../../../server/@types/shared'
+import { PlacementRequest, PlacementRequestTask } from '../../../server/@types/shared'
 import { shouldShowTableRows } from '../../helpers'
 
 export default class ListPage extends Page {
@@ -16,7 +16,7 @@ export default class ListPage extends Page {
     return new ListPage()
   }
 
-  shouldShowPlacementRequests(placementRequests: Array<PlacementRequest>): void {
+  shouldShowTasks(placementRequests: Array<PlacementRequestTask>): void {
     shouldShowTableRows(placementRequests, tableUtils.tableRows)
   }
 

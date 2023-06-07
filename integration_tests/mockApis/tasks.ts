@@ -7,11 +7,25 @@ import { errorStub } from '../../wiremock/utils'
 import { kebabCase } from '../../server/utils/utils'
 
 export default {
-  stubTasks: (tasks: Array<Task>): SuperAgentRequest =>
+  stubReallocatableTasks: (tasks: Array<Task>): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
         urlPattern: paths.tasks.reallocatable.index.pattern,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: tasks,
+      },
+    }),
+  stubTasks: (tasks: Array<Task>): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: paths.tasks.index.pattern,
       },
       response: {
         status: 200,
