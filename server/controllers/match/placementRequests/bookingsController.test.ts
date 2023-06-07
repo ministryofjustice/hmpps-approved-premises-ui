@@ -11,6 +11,9 @@ import {
   placementRequestFactory,
 } from '../../../testutils/factories'
 import { encodeBedSearchResult, placementDates } from '../../../utils/matchUtils'
+import { NewBookingNotMade } from '../../../@types/shared'
+
+import matchPaths from '../../../paths/match'
 
 describe('BookingsController', () => {
   const token = 'SOME_TOKEN'
@@ -81,6 +84,19 @@ describe('BookingsController', () => {
         bookingConfirmation,
       })
       expect(placementRequestService.createBooking).toHaveBeenCalledWith(token, 'some-uuid', body)
+    })
+  })
+
+  describe('bookingNotMade', () => {
+    it('should render the booking not made confirmation template', async () => {
+      const placementRequestId = '123'
+      const requestHandler = bookingsController.bookingNotMade()
+      await requestHandler({ ...request, params: { id: placementRequestId } }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('match/placementRequests/bookings/unable-to-match', {
+        pageHeading: 'Unable to match',
+        confirmPath: matchPaths.placementRequests.bookingNotMade.create({ id: placementRequestId }),
+      })
     })
   })
 })

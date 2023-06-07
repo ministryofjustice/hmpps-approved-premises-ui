@@ -227,4 +227,30 @@ context('Placement Requests', () => {
       })
     })
   })
+
+  it('allows me to mark a placement request as unable to match', () => {
+    // Given there is a placement request waiting for me to match
+    const placementRequest = placementRequestFactory.build({ status: 'notMatched' })
+    const bedSearchResults = bedSearchResultsFactory.build()
+
+    cy.task('stubPlacementRequests', [placementRequest])
+    cy.task('stubBedSearch', { bedSearchResults })
+    cy.task('stubPlacementRequest', placementRequest)
+    cy.task('stubBookingFromPlacementRequest', placementRequest)
+    cy.task('stubUnableToMatchPlacementRequest', placementRequest)
+
+    // When I visit the placementRequests dashboard
+    const listPage = ListPage.visit()
+
+    // And I click on a placement request
+    listPage.clickFindBed(placementRequest)
+
+    // And I click on the search button
+    const showPage = new PlacementRequestPage(placementRequest)
+    showPage.clickSearch()
+
+    // Given I am unable to match the placement request to a bed
+    const searchPage = new SearchPage(placementRequest.person.name)
+    searchPage.clickUnableToMatch()
+  })
 })

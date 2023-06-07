@@ -1,6 +1,7 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { decodeBedSearchResult, placementDates } from '../../../utils/matchUtils'
 import { PlacementRequestService } from '../../../services'
+import paths from '../../../paths/match'
 
 interface ConfirmRequest extends Request {
   params: { id: string }
@@ -46,6 +47,17 @@ export default class BookingsController {
       res.render('match/placementRequests/bookings/success', {
         pageHeading: 'Your booking is complete',
         bookingConfirmation,
+      })
+    }
+  }
+
+  bookingNotMade(): TypedRequestHandler<Request, Response> {
+    return async (req: Request, res: Response) => {
+      const confirmPath = paths.placementRequests.bookingNotMade.create({ id: req.params.id })
+
+      return res.render('match/placementRequests/bookings/unable-to-match', {
+        pageHeading: 'Unable to match',
+        confirmPath,
       })
     }
   }
