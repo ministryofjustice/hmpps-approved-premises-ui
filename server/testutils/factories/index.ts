@@ -6,12 +6,14 @@ import adjudicationFactory from './adjudication'
 import applicationFactory from './application'
 import applicationSummaryFactory from './applicationSummary'
 import arrivalFactory from './arrival'
+import assessmentTaskFactory from './assessmentTask'
 import assessmentFactory from './assessment'
 import assessmentSummaryFactory from './assessmentSummary'
 import { bedSearchParametersFactory, bedSearchParametersUiFactory } from './bedSearchParameters'
 import bedSummaryFactory from './bedSummary'
 import bedDetailFactory from './bedDetail'
 import { apCharacteristicPairFactory, bedSearchResultFactory, bedSearchResultsFactory } from './bedSearchResult'
+import bookingAppealTask from './bookingAppealTask'
 import bookingFactory from './booking'
 import bookingExtensionFactory from './bookingExtension'
 import bookingNotMadeFactory from './bookingNotMade'
@@ -38,7 +40,10 @@ import oasysSectionsFactory, { roshSummaryFactory } from './oasysSections'
 import oasysSelectionFactory from './oasysSelection'
 import personFactory from './person'
 import placementApplicationFactory from './placementApplication'
+import placementApplicationTaskFactory from './placementApplicationTask'
+import placementDatesFactory from './placementDates'
 import placementRequestFactory from './placementRequest'
+import placementRequestTaskFactory from './placementRequestTask'
 import premisesFactory from './premises'
 import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
@@ -59,6 +64,7 @@ export {
   applicationFactory,
   applicationSummaryFactory,
   arrivalFactory,
+  assessmentTaskFactory,
   assessmentFactory,
   assessmentSummaryFactory,
   bedSummaryFactory,
@@ -67,6 +73,7 @@ export {
   bedSearchParametersUiFactory,
   bedSearchResultFactory,
   bedSearchResultsFactory,
+  bookingAppealTask,
   bookingFactory,
   bookingExtensionFactory,
   bookingNotMadeFactory,
@@ -91,7 +98,10 @@ export {
   oasysSelectionFactory,
   personFactory,
   placementApplicationFactory,
+  placementApplicationTaskFactory,
+  placementDatesFactory,
   placementRequestFactory,
+  placementRequestTaskFactory,
   premisesFactory,
   prisonCaseNotesFactory,
   reallocationFactory,

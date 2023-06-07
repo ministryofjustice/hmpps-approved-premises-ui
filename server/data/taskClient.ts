@@ -1,3 +1,4 @@
+import { CategorisedTask } from '@approved-premises/ui'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
@@ -12,6 +13,10 @@ export default class TaskClient {
 
   async allReallocatable(): Promise<Array<Task>> {
     return (await this.restClient.get({ path: paths.tasks.reallocatable.index.pattern })) as Promise<Array<Task>>
+  }
+
+  async allForUser(): Promise<Array<CategorisedTask>> {
+    return (await this.restClient.get({ path: paths.tasks.index.pattern })) as Promise<Array<CategorisedTask>>
   }
 
   async find(applicationId: string, taskType: string): Promise<TaskWrapper> {

@@ -9,7 +9,9 @@ import {
   ArrayOfOASysRiskToSelfQuestions,
   ArrayOfOASysSupportingInformationQuestions,
   ApprovedPremisesAssessment as Assessment,
+  AssessmentTask,
   Booking,
+  BookingAppealTask,
   Document,
   FlagsEnvelope,
   Mappa,
@@ -17,9 +19,12 @@ import {
   Person,
   PersonAcctAlert,
   PlacementApplication,
+  PlacementApplicationTask,
+  PlacementApplicationTask,
   PlacementCriteria,
   PlacementRequest,
   PlacementRequestStatus,
+  PlacementRequestTask,
   ReleaseTypeOption,
   RiskTier,
   RoshRisks,
@@ -258,6 +263,8 @@ export interface GroupedApplications {
 }
 
 export type GroupedPlacementRequests = Record<PlacementRequestStatus, Array<PlacementRequest>>
+
+export type CategorisedTask = AssessmentTask | BookingAppealTask | PlacementApplicationTask | PlacementRequestTask
 
 export interface ApplicationWithRisks extends Application {
   person: PersonWithRisks

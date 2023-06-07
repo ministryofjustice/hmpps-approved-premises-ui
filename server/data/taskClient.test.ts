@@ -1,7 +1,14 @@
 import TaskClient from './taskClient'
 import paths from '../paths/api'
 
-import { taskFactory, taskWrapperFactory } from '../testutils/factories'
+import {
+  assessmentTaskFactory,
+  bookingAppealTask,
+  placementApplicationTaskFactory,
+  placementRequestTaskFactory,
+  taskFactory,
+  taskWrapperFactory,
+} from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 
 describeClient('taskClient', provider => {
@@ -34,6 +41,37 @@ describeClient('taskClient', provider => {
       })
 
       const result = await taskClient.allReallocatable()
+
+      expect(result).toEqual(tasks)
+    })
+  })
+
+  describe('allForUser', () => {
+    it('makes a get request to the tasks endpoint', async () => {
+      const tasks = [
+        placementApplicationTaskFactory.buildList(1),
+        placementRequestTaskFactory.buildList(1),
+        assessmentTaskFactory.buildList(1),
+        bookingAppealTask.buildList(1),
+      ].flat()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: `A request to get a list of tasks`,
+        withRequest: {
+          method: 'GET',
+          path: paths.tasks.index.pattern,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: tasks,
+        },
+      })
+
+      const result = await taskClient.allForUser()
 
       expect(result).toEqual(tasks)
     })
