@@ -14,5 +14,8 @@ export default {
       show: pagesPath,
       update: pagesPath,
     },
+    review: {
+      show: placementApplicationPath.path('review'),
+    },
   },
 }

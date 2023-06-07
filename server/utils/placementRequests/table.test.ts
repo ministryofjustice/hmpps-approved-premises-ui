@@ -1,9 +1,9 @@
 import { add } from 'date-fns'
-import { placementRequestTaskFactory, tierEnvelopeFactory } from '../../testutils/factories'
-import { crnCell, dueDateCell, expectedArrivalDateCell, nameCell, releaseTypeCell, tableRows, tierCell } from './table'
-import { tierBadge } from '../personUtils'
+import { placementRequestTaskFactory } from '../../testutils/factories'
+import { dueDateCell, expectedArrivalDateCell, nameCell, releaseTypeCell, tableRows } from './table'
 import { DateFormats } from '../dateUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
+import { crnCell, tierCell } from '../tableUtils'
 
 describe('tableUtils', () => {
   describe('nameCell', () => {
@@ -13,23 +13,6 @@ describe('tableUtils', () => {
       expect(nameCell(task)).toEqual({
         html: `<a href="/placement-requests/${task.id}" data-cy-placementRequestId="${task.id}">${task.person.name}</a>`,
       })
-    })
-  })
-
-  describe('crnCell', () => {
-    it('returns the CRN of the service user associated with the placement request', () => {
-      const task = placementRequestTaskFactory.build()
-
-      expect(crnCell(task)).toEqual({ text: task.person.crn })
-    })
-  })
-
-  describe('tierCell', () => {
-    it('returns the tier badge for the service user associated with the placement request', () => {
-      const tier = tierEnvelopeFactory.build({ value: { level: 'A1' } })
-      const task = placementRequestTaskFactory.build({ risks: { tier } })
-
-      expect(tierCell(task)).toEqual({ html: tierBadge('A1') })
     })
   })
 
