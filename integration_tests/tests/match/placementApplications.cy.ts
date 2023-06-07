@@ -20,8 +20,8 @@ context('Placement Applications', () => {
   beforeEach(() => {
     cy.signIn()
   })
-  it('allows me to complete form', () => {
-    cy.fixture('placementApplicationData.json').then(placementApplicationData => {
+  it('allows me to complete form if the reason for placement is ROTL', () => {
+    cy.fixture('rotlPlacementApplicationData.json').then(placementApplicationData => {
       // Given I have completed an application I am viewing a completed application
       const completedApplication = applicationFactory.build({ status: 'submitted', id: '123' })
       cy.task('stubApplicationGet', { application: completedApplication })
@@ -84,4 +84,5 @@ context('Placement Applications', () => {
       })
     })
   })
+
 })
