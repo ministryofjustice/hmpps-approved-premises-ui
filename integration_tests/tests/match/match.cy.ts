@@ -10,6 +10,7 @@ import {
   bedSearchParametersUiFactory,
   bedSearchResultsFactory,
   personFactory,
+  placementApplicationTaskFactory,
   placementRequestFactory,
   placementRequestTaskFactory,
 } from '../../../server/testutils/factories'
@@ -28,19 +29,26 @@ context('Placement Requests', () => {
     cy.signIn()
   })
 
-  it('shows a list of placementRequests', () => {
+  it('shows a list of matcher tasks', () => {
     // Given there placement request tasks in the database
     const notMatchedTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'notMatched' })
     const unableToMatchTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'unableToMatch' })
-    const matchedTasks = placementRequestTaskFactory.buildList(3, { placementRequestStatus: 'matched' })
+    const matchedTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'matched' })
+    const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
 
-    cy.task('stubTasks', [...notMatchedTasks, ...unableToMatchTasks, ...matchedTasks])
+    cy.task('stubTasks', [...notMatchedTasks, ...unableToMatchTasks, ...matchedTasks, ...placementApplicationTasks])
 
     // When I visit the placementRequests dashboard
     const listPage = ListPage.visit()
 
     // Then I should see the placement requests that are allocated to me
     listPage.shouldShowTasks(notMatchedTasks)
+
+    // When I click on the Placement Applications Tab
+    listPage.clickPlacementApplications()
+
+    // Then I should see the placement applications
+    listPage.shouldShowPlacementApplicationTasks(placementApplicationTasks)
 
     // When I click on the unable to match tab
     listPage.clickUnableToMatch()
