@@ -14,6 +14,7 @@ import bedDetailFactory from './bedDetail'
 import { apCharacteristicPairFactory, bedSearchResultFactory, bedSearchResultsFactory } from './bedSearchResult'
 import bookingFactory from './booking'
 import bookingExtensionFactory from './bookingExtension'
+import bookingNotMadeFactory from './bookingNotMade'
 import cancellationFactory from './cancellation'
 import clarificationNoteFactory from './clarificationNote'
 import contingencyPlanPartnerFactory from './contingencyPlanPartner'
@@ -68,6 +69,7 @@ export {
   bedSearchResultsFactory,
   bookingFactory,
   bookingExtensionFactory,
+  bookingNotMadeFactory,
   cancellationFactory,
   clarificationNoteFactory,
   contingencyPlanPartnerFactory,

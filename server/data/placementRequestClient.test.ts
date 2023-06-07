@@ -2,6 +2,7 @@ import PlacementRequestClient from './placementRequestClient'
 import paths from '../paths/api'
 
 import {
+  bookingNotMadeFactory,
   newPlacementRequestBookingConfirmationFactory,
   newPlacementRequestBookingFactory,
   placementRequestFactory,
@@ -95,6 +96,37 @@ describeClient('placementRequestClient', provider => {
       const result = await placementRequestClient.createBooking(placementRequest.id, newPlacementRequestBooking)
 
       expect(result).toEqual(bookingConfirmation)
+    })
+  })
+
+  describe('bookingNotMade', () => {
+    it('makes a POST request to the booking not made endpoint', async () => {
+      const placementRequestId = 'placement-request-id'
+      const body = {
+        notes: 'some notes',
+      }
+      const bookingNotMade = bookingNotMadeFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to mark a placement request as not booked',
+        withRequest: {
+          method: 'POST',
+          path: paths.placementRequests.bookingNotMade({ id: placementRequestId }),
+          body,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: bookingNotMade,
+        },
+      })
+
+      const result = await placementRequestClient.bookingNotMade(placementRequestId, body)
+
+      expect(result).toEqual(bookingNotMade)
     })
   })
 })

@@ -1,4 +1,6 @@
 import {
+  BookingNotMade,
+  NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
   PlacementRequest,
@@ -32,5 +34,12 @@ export default class PlacementRequestClient {
       path: paths.placementRequests.booking({ id }),
       data: newPlacementRequestBooking,
     })) as Promise<NewPlacementRequestBookingConfirmation>
+  }
+
+  async bookingNotMade(id: string, data: NewBookingNotMade): Promise<BookingNotMade> {
+    return (await this.restClient.post({
+      path: paths.placementRequests.bookingNotMade({ id }),
+      data,
+    })) as Promise<BookingNotMade>
   }
 }
