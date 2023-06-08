@@ -8,8 +8,8 @@ import {
   formatDaysUntilDueWithWarning,
   formattedArrivalDate,
 } from './dateUtils'
-import { tierBadge } from '../personUtils'
 import paths from '../../paths/assess'
+import { crnCell, tierCell } from '../tableUtils'
 
 const getStatus = (assessment: AssessmentSummary): string => {
   if (assessment.status === 'completed') {
@@ -36,12 +36,6 @@ const assessmentLink = (assessment: AssessmentSummary, linkText = '', hiddenText
   )
 }
 
-const crnCell = (assessment: AssessmentSummary) => {
-  return {
-    html: assessment.person.crn,
-  }
-}
-
 const arrivalDateCell = (assessment: AssessmentSummary) => {
   return {
     text: formattedArrivalDate(assessment),
@@ -63,12 +57,6 @@ const statusCell = (assessment: AssessmentSummary) => {
 const linkCell = (assessment: AssessmentSummary) => {
   return {
     html: assessmentLink(assessment),
-  }
-}
-
-const tierCell = (assessment: AssessmentSummary) => {
-  return {
-    html: tierBadge(assessment.risks.tier?.value?.level),
   }
 }
 

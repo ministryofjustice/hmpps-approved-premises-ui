@@ -1,5 +1,5 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { PlacementApplicationService, PlacementRequestService } from '../../services'
+import { PlacementApplicationService, PlacementRequestService, TaskService } from '../../services'
 import paths from '../../paths/placementApplications'
 import { addErrorMessageToFlash } from '../../utils/validation'
 import { getResponses } from '../../utils/applications/utils'
@@ -8,15 +8,16 @@ export default class PlacementRequestsController {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly placementApplicationService: PlacementApplicationService,
+    private readonly taskService: TaskService,
   ) {}
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const placementRequests = await this.placementRequestService.getAll(req.user.token)
+      const tasks = await this.taskService.getMatchTasks(req.user.token)
 
       res.render('match/placementRequests/index', {
         pageHeading: 'My Cases',
-        placementRequests,
+        tasks,
       })
     }
   }

@@ -1,6 +1,5 @@
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 
-import * as personUtils from '../personUtils'
 import { assessmentSummaryFactory } from '../../testutils/factories'
 import {
   daysSinceInfoRequest,
@@ -17,9 +16,9 @@ import {
   requestedFurtherInformationTableRows,
 } from './tableUtils'
 import paths from '../../paths/assess'
+import { crnCell, tierCell } from '../tableUtils'
 
 jest.mock('../applications/arrivalDateFromApplication')
-jest.mock('../personUtils')
 
 describe('tableUtils', () => {
   describe('getStatus', () => {
@@ -80,21 +79,17 @@ describe('tableUtils', () => {
 
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
-      const tierBadgeSpy = jest.spyOn(personUtils, 'tierBadge').mockReturnValue('TIER_BADGE')
-
       expect(awaitingAssessmentTableRows([assessment])).toEqual([
         [
           { html: assessmentLink(assessment) },
-          { html: assessment.person.crn },
-          { html: 'TIER_BADGE' },
+          crnCell(assessment),
+          tierCell(assessment),
           { text: formattedArrivalDate(assessment) },
           { text: assessment.person.prisonName },
           { html: formatDaysUntilDueWithWarning(assessment) },
           { html: getStatus(assessment) },
         ],
       ])
-
-      expect(tierBadgeSpy).toHaveBeenCalledWith(assessment.risks.tier.value.level)
     })
   })
 
@@ -104,21 +99,17 @@ describe('tableUtils', () => {
 
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
-      const tierBadgeSpy = jest.spyOn(personUtils, 'tierBadge').mockReturnValue('TIER_BADGE')
-
       expect(requestedFurtherInformationTableRows([assessment])).toEqual([
         [
           { html: assessmentLink(assessment) },
-          { html: assessment.person.crn },
-          { html: 'TIER_BADGE' },
+          crnCell(assessment),
+          tierCell(assessment),
           { text: formattedArrivalDate(assessment) },
           { text: formatDays(daysSinceReceived(assessment)) },
           { text: formatDays(daysSinceInfoRequest(assessment)) },
           { html: `<strong class="govuk-tag govuk-tag--yellow">Info Request</strong>` },
         ],
       ])
-
-      expect(tierBadgeSpy).toHaveBeenCalledWith(assessment.risks.tier.value.level)
     })
   })
 
@@ -128,19 +119,15 @@ describe('tableUtils', () => {
 
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
-      const tierBadgeSpy = jest.spyOn(personUtils, 'tierBadge').mockReturnValue('TIER_BADGE')
-
       expect(completedTableRows([assessment])).toEqual([
         [
           { html: assessmentLink(assessment) },
-          { html: assessment.person.crn },
-          { html: 'TIER_BADGE' },
+          crnCell(assessment),
+          tierCell(assessment),
           { text: formattedArrivalDate(assessment) },
           { html: getStatus(assessment) },
         ],
       ])
-
-      expect(tierBadgeSpy).toHaveBeenCalledWith(assessment.risks.tier.value.level)
     })
   })
 })

@@ -1,6 +1,12 @@
+import { CategorisedTask } from '@approved-premises/ui'
 import { Task } from '../@types/shared'
 import TaskClient from '../data/taskClient'
-import { taskFactory, taskWrapperFactory } from '../testutils/factories'
+import {
+  placementApplicationTaskFactory,
+  placementRequestTaskFactory,
+  taskFactory,
+  taskWrapperFactory,
+} from '../testutils/factories'
 import TaskService from './taskService'
 
 jest.mock('../data/taskClient.ts')
@@ -29,6 +35,31 @@ describe('taskService', () => {
 
       expect(taskClientFactory).toHaveBeenCalledWith(token)
       expect(taskClient.allReallocatable).toHaveBeenCalled()
+    })
+  })
+
+  describe('getMatchTasks', () => {
+    it('calls the all method on the task client', async () => {
+      const applicationTasks = placementApplicationTaskFactory.buildList(1)
+      const notMatchedTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'notMatched' })
+      const unableToMatchTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'unableToMatch' })
+      const matchedTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'matched' })
+
+      const tasks: Array<CategorisedTask> = [applicationTasks, notMatchedTasks, unableToMatchTasks, matchedTasks].flat()
+
+      taskClient.allForUser.mockResolvedValue(tasks)
+
+      const result = await service.getMatchTasks(token)
+
+      expect(result).toEqual({
+        notMatched: notMatchedTasks,
+        unableToMatch: unableToMatchTasks,
+        matched: matchedTasks,
+        placementApplications: applicationTasks,
+      })
+
+      expect(taskClientFactory).toHaveBeenCalledWith(token)
+      expect(taskClient.allForUser).toHaveBeenCalled()
     })
   })
 

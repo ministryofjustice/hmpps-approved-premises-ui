@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { GroupedPlacementRequests } from '@approved-premises/ui'
+import { GroupedMatchTasks } from '@approved-premises/ui'
 import PlacementRequestsController from './placementRequestsController'
 
-import { PlacementApplicationService, PlacementRequestService } from '../../services'
+import { PlacementApplicationService, PlacementRequestService, TaskService } from '../../services'
 import { personFactory, placementApplicationFactory, placementRequestFactory } from '../../testutils/factories'
 import paths from '../../paths/placementApplications'
 import { getResponses } from '../../utils/applications/utils'
@@ -20,19 +20,24 @@ describe('PlacementRequestsController', () => {
 
   const placementRequestService = createMock<PlacementRequestService>({})
   const placementApplicationService = createMock<PlacementApplicationService>({})
+  const taskService = createMock<TaskService>({})
 
   let placementRequestsController: PlacementRequestsController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    placementRequestsController = new PlacementRequestsController(placementRequestService, placementApplicationService)
+    placementRequestsController = new PlacementRequestsController(
+      placementRequestService,
+      placementApplicationService,
+      taskService,
+    )
   })
 
   describe('index', () => {
     it('should render the placement requests template', async () => {
-      const placementRequests = createMock<GroupedPlacementRequests>()
+      const tasks = createMock<GroupedMatchTasks>()
 
-      placementRequestService.getAll.mockResolvedValue(placementRequests)
+      taskService.getMatchTasks.mockResolvedValue(tasks)
 
       const requestHandler = placementRequestsController.index()
 
@@ -40,9 +45,9 @@ describe('PlacementRequestsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/index', {
         pageHeading: 'My Cases',
-        placementRequests,
+        tasks,
       })
-      expect(placementRequestService.getAll).toHaveBeenCalledWith(token)
+      expect(taskService.getMatchTasks).toHaveBeenCalledWith(token)
     })
   })
 

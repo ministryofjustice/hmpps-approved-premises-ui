@@ -10,7 +10,9 @@ import {
   bedSearchParametersUiFactory,
   bedSearchResultsFactory,
   personFactory,
+  placementApplicationTaskFactory,
   placementRequestFactory,
+  placementRequestTaskFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import { DateFormats } from '../../../server/utils/dateUtils'
@@ -27,41 +29,44 @@ context('Placement Requests', () => {
     cy.signIn()
   })
 
-  it('shows a list of placementRequests', () => {
-    // Given there placement requests in the database
-    const activePlacementRequests = placementRequestFactory.buildList(1, { status: 'notMatched' })
-    const unableToMatchPlacementRequests = placementRequestFactory.buildList(3, { status: 'unableToMatch' })
-    const matchedPlacementRequests = placementRequestFactory.buildList(5, { status: 'matched' })
+  it('shows a list of matcher tasks', () => {
+    // Given there placement request tasks in the database
+    const notMatchedTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'notMatched' })
+    const unableToMatchTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'unableToMatch' })
+    const matchedTasks = placementRequestTaskFactory.buildList(1, { placementRequestStatus: 'matched' })
+    const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
 
-    cy.task('stubPlacementRequests', [
-      ...activePlacementRequests,
-      ...unableToMatchPlacementRequests,
-      ...matchedPlacementRequests,
-    ])
+    cy.task('stubTasks', [...notMatchedTasks, ...unableToMatchTasks, ...matchedTasks, ...placementApplicationTasks])
 
     // When I visit the placementRequests dashboard
     const listPage = ListPage.visit()
 
     // Then I should see the placement requests that are allocated to me
-    listPage.shouldShowPlacementRequests(activePlacementRequests)
+    listPage.shouldShowTasks(notMatchedTasks)
+
+    // When I click on the Placement Applications Tab
+    listPage.clickPlacementApplications()
+
+    // Then I should see the placement applications
+    listPage.shouldShowPlacementApplicationTasks(placementApplicationTasks)
 
     // When I click on the unable to match tab
     listPage.clickUnableToMatch()
 
     // Then I should see the unable to match placement requests
-    listPage.shouldShowPlacementRequests(unableToMatchPlacementRequests)
+    listPage.shouldShowTasks(unableToMatchTasks)
 
     // When I click on the completed tab
     listPage.clickCompleted()
 
     // Then I should see the completed placement requests
-    listPage.shouldShowPlacementRequests(matchedPlacementRequests)
+    listPage.shouldShowTasks(matchedTasks)
 
     // When I click on the active cases tab
     listPage.clickActive()
 
     // Then I should see the placement requests that are allocated to me
-    listPage.shouldShowPlacementRequests(activePlacementRequests)
+    listPage.shouldShowTasks(notMatchedTasks)
   })
 
   it('allows me to search for available rooms', () => {
@@ -78,13 +83,18 @@ context('Placement Requests', () => {
       desirableCriteria,
     })
 
+    const placementRequestTask = placementRequestTaskFactory.build({
+      id: placementRequest.id,
+      placementRequestStatus: placementRequest.status,
+    })
+
     const firstBedSearchParameters = bedSearchParametersUiFactory.build({
       requiredCharacteristics: [...essentialCriteria, ...desirableCriteria],
     })
 
     const bedSearchResults = bedSearchResultsFactory.build()
 
-    cy.task('stubPlacementRequests', [placementRequest])
+    cy.task('stubTasks', [placementRequestTask])
     cy.task('stubBedSearch', { bedSearchResults })
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubBookingFromPlacementRequest', placementRequest)
@@ -178,11 +188,15 @@ context('Placement Requests', () => {
   it('allows me to make a booking', () => {
     // Given there is a placement request waiting for me to match
     const placementRequest = placementRequestFactory.build({ status: 'notMatched' })
+    const placementRequestTask = placementRequestTaskFactory.build({
+      id: placementRequest.id,
+      placementRequestStatus: placementRequest.status,
+    })
     const bedSearchResults = bedSearchResultsFactory.build()
 
     const bedSearchParameters = mapPlacementRequestToBedSearchParams(placementRequest)
 
-    cy.task('stubPlacementRequests', [placementRequest])
+    cy.task('stubTasks', [placementRequestTask])
     cy.task('stubBedSearch', { bedSearchResults })
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubBookingFromPlacementRequest', placementRequest)
@@ -232,9 +246,13 @@ context('Placement Requests', () => {
   it('allows me to mark a placement request as unable to match', () => {
     // Given there is a placement request waiting for me to match
     const placementRequest = placementRequestFactory.build({ status: 'notMatched' })
+    const placementRequestTask = placementRequestTaskFactory.build({
+      id: placementRequest.id,
+      placementRequestStatus: placementRequest.status,
+    })
     const bedSearchResults = bedSearchResultsFactory.build()
 
-    cy.task('stubPlacementRequests', [placementRequest])
+    cy.task('stubTasks', [placementRequestTask])
     cy.task('stubBedSearch', { bedSearchResults })
     cy.task('stubPlacementRequest', placementRequest)
     cy.task('stubBookingFromPlacementRequest', placementRequest)

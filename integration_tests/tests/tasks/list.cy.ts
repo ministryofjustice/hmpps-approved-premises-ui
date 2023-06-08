@@ -17,7 +17,7 @@ context('Tasks', () => {
     const allocatedTasks = taskFactory.buildList(5)
     const unallocatedTasks = taskFactory.buildList(5, { allocatedToStaffMember: undefined })
 
-    cy.task('stubTasks', [...allocatedTasks, ...unallocatedTasks])
+    cy.task('stubReallocatableTasks', [...allocatedTasks, ...unallocatedTasks])
 
     // When I visit the tasks dashboard
     const listPage = ListPage.visit(allocatedTasks, unallocatedTasks)
