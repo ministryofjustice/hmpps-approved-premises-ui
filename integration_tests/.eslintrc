@@ -1,12 +1,11 @@
 {
-  "plugins": ["cypress", "no-only-tests"],
+  "plugins": ["cypress"],
   "env": {
     "cypress/globals": true
   },
   "extends": ["plugin:cypress/recommended"],
   "rules": {
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
-    "no-only-tests/no-only-tests": "error"
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
   },
   "settings": {
     "import/resolver": {

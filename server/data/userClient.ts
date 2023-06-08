@@ -1,4 +1,8 @@
-import type { ApprovedPremisesUser as User, UserQualification, UserRole } from '@approved-premises/api'
+import type {
+  ApprovedPremisesUser as User,
+  UserQualification,
+  ApprovedPremisesUserRole as UserRole,
+} from '@approved-premises/api'
 
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'

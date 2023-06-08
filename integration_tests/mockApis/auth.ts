@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { Response } from 'superagent'
-import { UserRole } from '../../server/@types/shared/models/UserRole'
+import { ApprovedPremisesUserRole as UserRole } from '../../server/@types/shared'
 
 import { getMatchingRequests, stubFor } from '../../wiremock'
 import tokenVerification from './tokenVerification'
