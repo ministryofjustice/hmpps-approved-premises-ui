@@ -3,17 +3,17 @@
 
 {% block questions %}
 
-    <h1 class="govuk-heading-l">
-        {{ page.title }}
-    </h1>
+  <h1 class="govuk-heading-l">
+    {{ page.title }}
+  </h1>
 
-    {{
+  {{
     formPageDateInput(
       {
         fieldName: "arrivalDate",
         fieldset: {
           legend: {
-            class: "govuk-fieldset__legend--m",
+            classes: "govuk-fieldset__legend--m",
             text: page.questions.arrivalDate
           }
         },
@@ -23,12 +23,12 @@
     )
   }}
 
-    {{
+  {{
     formPageInput(
       {
         label: {
           text: page.questions.duration,
-          class: "govuk-fieldset__legend--m"
+          classes: "govuk-fieldset__legend--m"
         },
         classes: "govuk-input--width-2",
         fieldName: "duration"
@@ -37,7 +37,7 @@
     )
   }}
 
-    {{ formPageTextarea({
+  {{ formPageTextarea({
         fieldName: "reason",
         label: {
           text: page.questions.reason
