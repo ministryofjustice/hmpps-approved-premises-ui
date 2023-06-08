@@ -1,7 +1,7 @@
 {
   "request-a-placement": {
     "reason-for-placement": {
-      "reason": "existingApplication"
+      "reason": "additional_placement"
     },
     "additional-placement-details": {
       "arrivalDate": "2023-08-01",

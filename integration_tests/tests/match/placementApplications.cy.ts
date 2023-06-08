@@ -114,7 +114,7 @@ context('Placement Applications', () => {
       const placementReasonPage = ReasonForPlacementPage.visit(placementApplicationId)
 
       // When I complete the form
-      placementReasonPage.completeForm('existingApplication')
+      placementReasonPage.completeForm('additional_placement')
       placementReasonPage.clickSubmit()
 
       const additionalPlacementDetailsPage = new AdditionalPlacementDetailsPage()
