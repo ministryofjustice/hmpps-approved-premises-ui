@@ -1,7 +1,12 @@
 import type { Request } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { DataServices, TaskListErrors } from '@approved-premises/ui'
-import type { SubmitApprovedPremisesApplication, UpdateApprovedPremisesApplication } from '@approved-premises/api'
+import type {
+  ApplicationStatus,
+  ApprovedPremisesApplicationSummary,
+  SubmitApprovedPremisesApplication,
+  UpdateApprovedPremisesApplication,
+} from '@approved-premises/api'
 
 import type TasklistPage from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
@@ -53,23 +58,34 @@ describe('ApplicationService', () => {
 
   describe('getAllForLoggedInUser', () => {
     const token = 'SOME_TOKEN'
-    const submittedApplications = applicationSummaryFactory.buildList(5, { status: 'submitted' })
-    const inProgressApplications = applicationSummaryFactory.buildList(2, { status: 'inProgress' })
-    const requestedFurtherInformationApplications = applicationSummaryFactory.buildList(1, {
-      status: 'requestedFurtherInformation',
-    })
 
-    const applications = [submittedApplications, inProgressApplications, requestedFurtherInformationApplications].flat()
+    const applications: Record<ApplicationStatus, Array<ApprovedPremisesApplicationSummary>> = {
+      inProgress: applicationSummaryFactory.buildList(1, { status: 'inProgress' }),
+      requestedFurtherInformation: applicationSummaryFactory.buildList(1, { status: 'requestedFurtherInformation' }),
+      submitted: applicationSummaryFactory.buildList(1, { status: 'submitted' }),
+      pending: applicationSummaryFactory.buildList(1, { status: 'pending' }),
+      rejected: applicationSummaryFactory.buildList(1, { status: 'rejected' }),
+      awaitingPlacement: applicationSummaryFactory.buildList(1, { status: 'awaitingPlacement' }),
+      placed: applicationSummaryFactory.buildList(1, { status: 'placed' }),
+      inapplicable: applicationSummaryFactory.buildList(1, { status: 'inapplicable' }),
+    }
 
     it('fetches all applications', async () => {
-      applicationClient.all.mockResolvedValue(applications)
+      applicationClient.all.mockResolvedValue(Object.values(applications).flat())
 
       const result = await service.getAllForLoggedInUser(token)
 
       expect(result).toEqual({
-        inProgress: inProgressApplications,
-        requestedFurtherInformation: requestedFurtherInformationApplications,
-        submitted: submittedApplications,
+        inProgress: applications.inProgress,
+        requestedFurtherInformation: applications.requestedFurtherInformation,
+        submitted: [
+          ...applications.submitted,
+          ...applications.pending,
+          ...applications.rejected,
+          ...applications.awaitingPlacement,
+          ...applications.placed,
+          ...applications.inapplicable,
+        ],
       })
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)

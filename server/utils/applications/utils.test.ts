@@ -1,3 +1,4 @@
+import { ApplicationStatus } from '@approved-premises/api'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
 import { applicationFactory, applicationSummaryFactory, tierEnvelopeFactory } from '../../testutils/factories'
 import paths from '../../paths/apply'
@@ -15,6 +16,7 @@ import {
   getResponses,
   getStatus,
   isInapplicable,
+  statusTags,
 } from './utils'
 import { UnknownPageError } from '../errors'
 
@@ -265,16 +267,13 @@ describe('utils', () => {
   })
 
   describe('getStatus', () => {
-    it('returns the correct tag for each status', () => {
-      const inProgressApplication = applicationFactory.build({ status: 'inProgress' })
-      const submittedApplication = applicationFactory.build({ status: 'submitted' })
-      const informationRequestedApplication = applicationFactory.build({ status: 'requestedFurtherInformation' })
+    const statuses = Object.keys(statusTags) as Array<ApplicationStatus>
 
-      expect(getStatus(inProgressApplication)).toEqual('<strong class="govuk-tag govuk-tag--blue">In Progress</strong>')
-      expect(getStatus(submittedApplication)).toEqual('<strong class="govuk-tag">Submitted</strong>')
-      expect(getStatus(informationRequestedApplication)).toEqual(
-        '<strong class="govuk-tag govuk-tag--yellow">Info Request</strong>',
-      )
+    statuses.forEach(status => {
+      it(`returns the correct tag for each an application with a status of ${status}`, () => {
+        const application = applicationFactory.build({ status })
+        expect(getStatus(application)).toEqual(statusTags[status])
+      })
     })
   })
 
