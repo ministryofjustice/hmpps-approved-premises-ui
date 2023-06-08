@@ -1,7 +1,5 @@
-import { PlacementApplication, SubmitPlacementApplication } from '../../@types/shared'
-import ReasonForPlacement, {
-  Reason,
-} from '../../form-pages/placement-application/request-a-placement/reasonForPlacement'
+import { PlacementApplication, PlacementType, SubmitPlacementApplication } from '../../@types/shared'
+import ReasonForPlacement from '../../form-pages/placement-application/request-a-placement/reasonForPlacement'
 import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import DatesOfPlacement from '../../form-pages/placement-application/request-a-placement/datesOfPlacement'
 import AdditionalPlacementDetails from '../../form-pages/placement-application/request-a-placement/additionalPlacementDetails'
@@ -24,7 +22,7 @@ export const placementApplicationSubmissionData = (
 
 export const mapPlacementDateForSubmission = (
   placementApplication: PlacementApplication,
-  reasonForPlacement: Reason,
+  reasonForPlacement: PlacementType,
 ) => {
   switch (reasonForPlacement) {
     case 'rotl':
@@ -36,7 +34,7 @@ export const mapPlacementDateForSubmission = (
         ),
         duration: Number(retrieveQuestionResponseFromFormArtifact(placementApplication, DatesOfPlacement, 'duration')),
       }
-    case 'existingApplication':
+    case 'additional_placement':
       return {
         expectedArrival: retrieveQuestionResponseFromFormArtifact(
           placementApplication,

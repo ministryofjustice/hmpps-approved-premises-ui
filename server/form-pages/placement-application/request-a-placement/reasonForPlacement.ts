@@ -1,15 +1,14 @@
 import type { TaskListErrors } from '@approved-premises/ui'
+import type { PlacementType } from '@approved-premises/api'
 
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
 
-const reasons = {
-  paroleBoard: 'Release directed following parole board or other hearing/decision',
+const reasons: Record<PlacementType, string> = {
+  release_following_decision: 'Release directed following parole board or other hearing/decision',
   rotl: 'Release on Temporary Licence (ROTL)',
-  existingApplication: 'An additional placement on an existing application',
-} as const
-
-export type Reason = keyof typeof reasons
+  additional_placement: 'An additional placement on an existing application',
+}
 
 @Page({ name: 'reason-for-placement', bodyProperties: ['reason'] })
 export default class ReasonForPlacement implements TasklistPage {
@@ -19,7 +18,7 @@ export default class ReasonForPlacement implements TasklistPage {
 
   reasons = reasons
 
-  constructor(public body: { reason?: Reason }) {}
+  constructor(public body: { reason?: PlacementType }) {}
 
   previous() {
     return ''

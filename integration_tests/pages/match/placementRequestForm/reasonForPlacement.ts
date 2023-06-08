@@ -1,4 +1,4 @@
-import { Reason } from '../../../../server/form-pages/placement-application/request-a-placement/reasonForPlacement'
+import type { PlacementType } from '@approved-premises/api'
 import paths from '../../../../server/paths/placementApplications'
 
 import Page from '../../page'
@@ -19,7 +19,7 @@ export default class ReasonForPlacementPage extends Page {
     return new ReasonForPlacementPage()
   }
 
-  completeForm(reason: Reason) {
+  completeForm(reason: PlacementType) {
     this.checkRadioByNameAndValue('reason', reason)
   }
 }

@@ -69,7 +69,7 @@ describe('mapPlacementDateForSubmission', () => {
     expect(pageDataFromApplicationOrAssessment).toHaveBeenCalledWith(DatesOfPlacement, placementApplication)
   })
 
-  it('returns the arrivalDate and duration from the additional-placement-details page if the "reason" is "existingApplication"', () => {
+  it('returns the arrivalDate and duration from the additional-placement-details page if the "reason" is "additional_placement"', () => {
     const placementApplication = placementApplicationFactory.build({
       data: { 'request-a-placement': { 'reason-for-placement': { reason: 'rotl' } } },
     })
@@ -79,7 +79,7 @@ describe('mapPlacementDateForSubmission', () => {
       duration: '1',
     })
 
-    expect(mapPlacementDateForSubmission(placementApplication, 'existingApplication')).toEqual({
+    expect(mapPlacementDateForSubmission(placementApplication, 'additional_placement')).toEqual({
       expectedArrival: '2023-01-01',
       duration: 1,
     })
