@@ -17,6 +17,7 @@ export type { ApprovedPremisesBedSearchParameters } from './models/ApprovedPremi
 export type { ApprovedPremisesBedSearchResult } from './models/ApprovedPremisesBedSearchResult';
 export type { ApprovedPremisesSummary } from './models/ApprovedPremisesSummary';
 export type { ApprovedPremisesUser } from './models/ApprovedPremisesUser';
+export type { ApprovedPremisesUserRole } from './models/ApprovedPremisesUserRole';
 export type { ApType } from './models/ApType';
 export type { ArrayOfOASysOffenceDetailsQuestions } from './models/ArrayOfOASysOffenceDetailsQuestions';
 export type { ArrayOfOASysRiskContributorsQuestions } from './models/ArrayOfOASysRiskContributorsQuestions';
@@ -169,6 +170,7 @@ export type { TemporaryAccommodationBedSearchResult } from './models/TemporaryAc
 export type { TemporaryAccommodationPremises } from './models/TemporaryAccommodationPremises';
 export type { TemporaryAccommodationPremisesSummary } from './models/TemporaryAccommodationPremisesSummary';
 export type { TemporaryAccommodationUser } from './models/TemporaryAccommodationUser';
+export type { TemporaryAccommodationUserRole } from './models/TemporaryAccommodationUserRole';
 export type { Turnaround } from './models/Turnaround';
 export type { UpdateApplication } from './models/UpdateApplication';
 export type { UpdateApprovedPremisesApplication } from './models/UpdateApprovedPremisesApplication';
@@ -181,5 +183,4 @@ export type { UpdateRoom } from './models/UpdateRoom';
 export type { UpdateTemporaryAccommodationApplication } from './models/UpdateTemporaryAccommodationApplication';
 export type { User } from './models/User';
 export type { UserQualification } from './models/UserQualification';
-export type { UserRole } from './models/UserRole';
 export type { ValidationError } from './models/ValidationError';

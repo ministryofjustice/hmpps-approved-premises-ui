@@ -28,7 +28,7 @@ import {
   ReleaseTypeOption,
   RiskTier,
   RoshRisks,
-  UserRole,
+  ApprovedPremisesUserRole as UserRole,
 } from '@approved-premises/api'
 
 interface TasklistPage {

@@ -1,4 +1,4 @@
-import { UserRole } from '@approved-premises/api'
+import { ApprovedPremisesUserRole as UserRole } from '@approved-premises/api'
 import { ServiceSection, UserDetails } from '@approved-premises/ui'
 
 import assessPaths from '../paths/assess'

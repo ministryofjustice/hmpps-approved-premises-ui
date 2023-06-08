@@ -1,4 +1,4 @@
-import { User, UserQualification, UserRole } from '@approved-premises/api'
+import { User, UserQualification, ApprovedPremisesUserRole as UserRole } from '@approved-premises/api'
 import { UserDetails } from '@approved-premises/ui'
 import { RestClientBuilder, UserClient } from '../data'
 import { convertToTitleCase } from '../utils/utils'
