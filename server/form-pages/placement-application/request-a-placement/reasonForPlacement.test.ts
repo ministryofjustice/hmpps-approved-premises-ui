@@ -22,8 +22,8 @@ describe('ReasonForPlacement', () => {
     itShouldHaveNextValue(new ReasonForPlacement({ reason: 'rotl' }), 'previous-rotl-placement')
   })
 
-  describe('if the reason is existingApplication', () => {
-    itShouldHaveNextValue(new ReasonForPlacement({ reason: 'existingApplication' }), 'additional-placement-details')
+  describe('if the reason is additional_placement', () => {
+    itShouldHaveNextValue(new ReasonForPlacement({ reason: 'additional_placement' }), 'additional-placement-details')
   })
 
   itShouldHavePreviousValue(new ReasonForPlacement({}), '')
