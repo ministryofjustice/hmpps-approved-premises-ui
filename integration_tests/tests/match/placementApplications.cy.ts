@@ -10,6 +10,7 @@ import ConfirmationPage from '../../pages/match/placementRequestForm/confirmatio
 import AdditionalPlacementDetailsPage from '../../pages/match/placementRequestForm/additionalPlacementDetails'
 import Page from '../../pages/page'
 import paths from '../../../server/paths/api'
+import DecisionToRelease from '../../pages/match/placementRequestForm/decisionToRelease'
 
 context('Placement Applications', () => {
   beforeEach(() => {
@@ -140,6 +141,43 @@ context('Placement Applications', () => {
 
         expect(body).to.have.keys('placementDates', 'placementType', 'translatedDocument')
       })
+    })
+  })
+
+  it('allows me to complete form if the reason for placement is parole board', () => {
+    cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
+      // Given I have completed an application I am viewing a completed application
+      const completedApplication = applicationFactory.build({ status: 'submitted', id: '123' })
+      cy.task('stubApplicationGet', { application: completedApplication })
+      cy.task('stubApplications', [completedApplication])
+
+      // And there is a placement application in the DB
+      const placementApplicationId = '123'
+      const placementApplication = placementApplicationFactory.build({
+        id: placementApplicationId,
+        data: placementApplicationData,
+      })
+      cy.task('stubCreatePlacementApplication', placementApplication)
+      cy.task('stubPlacementApplicationUpdate', placementApplication)
+      cy.task('stubSubmitPlacementApplication', placementApplication)
+      cy.task('stubPlacementApplication', placementApplication)
+
+      // When I visit the readonly application view
+      const showPage = ShowPage.visit(completedApplication)
+
+      // Then I should be able to click submit
+      showPage.clickSubmit()
+
+      // Given I am on the placement application form and start and application
+      const placementReasonPage = ReasonForPlacementPage.visit(placementApplicationId)
+
+      // When I complete the form
+      placementReasonPage.completeForm('paroleBoard')
+      placementReasonPage.clickSubmit()
+
+      const decisionToReleasePage = new DecisionToRelease()
+      decisionToReleasePage.completeForm()
+      decisionToReleasePage.clickSubmit()
     })
   })
 })

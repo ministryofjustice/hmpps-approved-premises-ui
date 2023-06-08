@@ -1,0 +1,48 @@
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% extends "../../layout.njk" %}
+
+{% block questions %}
+
+  <h1 class="govuk-heading-l">
+    {{ page.title }}
+  </h1>
+
+  {{
+    formPageDateInput(
+      {
+        fieldName: "decisionToReleaseDate",
+        fieldset: {
+          legend: {
+            classes: "govuk-fieldset__legend--m",
+            text: page.questions.decisionToReleaseDate
+          }
+        },
+        items: dateFieldValues('decisionToReleaseDate', errors)
+      },
+      fetchContext()
+    )
+  }}
+  <p class="govuk-body">The central referral unit will aim to place the person in a suitable Approved Premises (AP) within 6 weeks of this date.</p>
+  {{
+    formPageTextarea(
+      {
+        label: {
+          text: page.questions.informationFromDirectionToRelease,
+          classes: "govuk-label--m"
+        },
+        hint: {
+            html: 
+            'This should include:
+            <ul class="govuk-list govuk-list--bullet govuk-hint">
+                <li>the type of AP placement</li>
+                <li>the placement location</li>
+                <li>any factors that may affect the release date</li>
+            </ul>'
+        },
+        fieldName: "informationFromDirectionToRelease"
+      },
+      fetchContext()
+    )
+  }}
+
+{% endblock %}
