@@ -1,3 +1,4 @@
+import { Reason } from '../../../../server/form-pages/placement-application/request-a-placement/reasonForPlacement'
 import paths from '../../../../server/paths/placementApplications'
 
 import Page from '../../page'
@@ -18,7 +19,7 @@ export default class ReasonForPlacementPage extends Page {
     return new ReasonForPlacementPage()
   }
 
-  completeForm() {
-    this.checkRadioByNameAndValue('reason', 'paroleBoard')
+  completeForm(reason: Reason) {
+    this.checkRadioByNameAndValue('reason', reason)
   }
 }

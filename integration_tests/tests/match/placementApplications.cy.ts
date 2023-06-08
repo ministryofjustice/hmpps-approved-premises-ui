@@ -48,7 +48,7 @@ context('Placement Applications', () => {
       const placementReasonPage = ReasonForPlacementPage.visit(placementApplicationId)
 
       // When I complete the form
-      placementReasonPage.completeForm()
+      placementReasonPage.completeForm('rotl')
       placementReasonPage.clickSubmit()
 
       const previousRotlPlacementPage = new PreviousRotlPlacement()

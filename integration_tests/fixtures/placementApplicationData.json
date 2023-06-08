@@ -1,7 +1,7 @@
 {
   "request-a-placement": {
     "reason-for-placement": {
-      "reason": "paroleBoard"
+      "reason": "rotl"
     },
     "previous-rotl-placement": {
       "previousRotlPlacement": "yes",
