@@ -1,3 +1,4 @@
+import { PlacementType } from '../../../@types/shared'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import ReasonForPlacement from './reasonForPlacement'
@@ -24,6 +25,14 @@ describe('ReasonForPlacement', () => {
 
   describe('if the reason is additional_placement', () => {
     itShouldHaveNextValue(new ReasonForPlacement({ reason: 'additional_placement' }), 'additional-placement-details')
+  })
+
+  describe('if the reason is release_following_decision', () => {
+    itShouldHaveNextValue(new ReasonForPlacement({ reason: 'release_following_decision' }), 'decision-to-release')
+  })
+
+  describe('if the reason is not one of the prescribed reasons', () => {
+    expect(() => new ReasonForPlacement({ reason: 'a made up reason' as PlacementType }).next()).toThrowError()
   })
 
   itShouldHavePreviousValue(new ReasonForPlacement({}), '')

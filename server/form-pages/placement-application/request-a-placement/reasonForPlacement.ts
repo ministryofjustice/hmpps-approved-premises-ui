@@ -25,7 +25,17 @@ export default class ReasonForPlacement implements TasklistPage {
   }
 
   next() {
-    return this.body.reason === 'rotl' ? 'previous-rotl-placement' : 'additional-placement-details'
+    if (this.body.reason === 'rotl') {
+      return 'previous-rotl-placement'
+    }
+    if (this.body.reason === 'additional_placement') {
+      return 'additional-placement-details'
+    }
+    if (this.body.reason === 'release_following_decision') {
+      return 'decision-to-release'
+    }
+
+    throw new Error('Unknown reason for placement')
   }
 
   response() {
