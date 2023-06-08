@@ -15,7 +15,10 @@ export const controllers = (services: Services) => {
   const dashboardController = new DashboardController()
   const tasksController = new TasksController(services.taskService, services.applicationService)
   const allocationsController = new AllocationsController(services.taskService)
-  const placementApplicationPagesController = new PagesController(services.placementApplicationService)
+  const placementApplicationPagesController = new PagesController(
+    services.placementApplicationService,
+    services.applicationService,
+  )
 
   return {
     dashboardController,
