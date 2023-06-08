@@ -120,6 +120,8 @@ export type { Person } from './models/Person';
 export type { PersonAcctAlert } from './models/PersonAcctAlert';
 export type { PersonRisks } from './models/PersonRisks';
 export type { PlacementApplication } from './models/PlacementApplication';
+export type { PlacementApplicationDecision } from './models/PlacementApplicationDecision';
+export type { PlacementApplicationDecisionEnvelope } from './models/PlacementApplicationDecisionEnvelope';
 export type { PlacementApplicationTask } from './models/PlacementApplicationTask';
 export type { PlacementCriteria } from './models/PlacementCriteria';
 export type { PlacementDates } from './models/PlacementDates';
