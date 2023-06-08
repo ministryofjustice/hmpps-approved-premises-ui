@@ -8,6 +8,7 @@ import type {
 } from '@approved-premises/ui'
 import type {
   ApprovedPremisesApplication as Application,
+  ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
 } from '@approved-premises/api'
 import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-information/maleAp'
@@ -41,15 +42,19 @@ const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<Tabl
   })
 }
 
+const statusTags: Record<ApplicationStatus, string> = {
+  inProgress: `<strong class="govuk-tag govuk-tag--blue">In Progress</strong>`,
+  requestedFurtherInformation: `<strong class="govuk-tag govuk-tag--yellow">Info Request</strong>`,
+  submitted: `<strong class="govuk-tag">Submitted</strong>`,
+  pending: `<strong class="govuk-tag govuk-tag--blue">Pending</strong>`,
+  rejected: `<strong class="govuk-tag govuk-tag--red">Rejected</strong>`,
+  awaitingPlacement: `<strong class="govuk-tag govuk-tag--blue">Awaiting Placement</strong>`,
+  placed: `<strong class="govuk-tag govuk-tag--pink">Placed</strong>`,
+  inapplicable: `<strong class="govuk-tag govuk-tag--red">Inapplicable</strong>`,
+}
+
 const getStatus = (application: ApplicationSummary): string => {
-  switch (application.status) {
-    case 'submitted':
-      return `<strong class="govuk-tag">Submitted</strong>`
-    case 'requestedFurtherInformation':
-      return `<strong class="govuk-tag govuk-tag--yellow">Info Request</strong>`
-    default:
-      return `<strong class="govuk-tag govuk-tag--blue">In Progress</strong>`
-  }
+  return statusTags[application.status]
 }
 
 const textValue = (value: string) => {
@@ -177,4 +182,5 @@ export {
   getResponses,
   getStatus,
   isInapplicable,
+  statusTags,
 }
