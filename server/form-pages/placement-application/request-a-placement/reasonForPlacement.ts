@@ -9,7 +9,7 @@ const reasons = {
   existingApplication: 'An additional placement on an existing application',
 } as const
 
-type Reason = keyof typeof reasons
+export type Reason = keyof typeof reasons
 
 @Page({ name: 'reason-for-placement', bodyProperties: ['reason'] })
 export default class ReasonForPlacement implements TasklistPage {
@@ -26,7 +26,7 @@ export default class ReasonForPlacement implements TasklistPage {
   }
 
   next() {
-    return 'previous-rotl-placement'
+    return this.body.reason === 'rotl' ? 'previous-rotl-placement' : 'additional-placement-details'
   }
 
   response() {

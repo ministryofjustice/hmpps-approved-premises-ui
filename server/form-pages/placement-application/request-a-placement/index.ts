@@ -7,11 +7,20 @@ import SameAp from './sameAp'
 import DatesOfPlacement from './datesOfPlacement'
 import UpdatesToApplication from './updatesToApplication'
 import CheckYourAnswers from './checkYourAnswers'
+import AdditionalPlacementDetails from './additionalPlacementDetails'
 
 @Task({
   name: 'Request a placement',
   slug: 'request-a-placement',
-  pages: [ReasonsForPlacement, PreviousRotlPlacement, SameAp, DatesOfPlacement, UpdatesToApplication, CheckYourAnswers],
+  pages: [
+    ReasonsForPlacement,
+    PreviousRotlPlacement,
+    AdditionalPlacementDetails,
+    SameAp,
+    DatesOfPlacement,
+    UpdatesToApplication,
+    CheckYourAnswers,
+  ],
 })
 @Section({
   title: 'Request a Placement',
