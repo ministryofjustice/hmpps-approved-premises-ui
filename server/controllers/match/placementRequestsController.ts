@@ -1,5 +1,5 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { PlacementApplicationService, PlacementRequestService, TaskService } from '../../services'
+import { ApplicationService, PlacementApplicationService, PlacementRequestService, TaskService } from '../../services'
 import paths from '../../paths/placementApplications'
 import { addErrorMessageToFlash } from '../../utils/validation'
 import { getResponses } from '../../utils/applications/utils'
@@ -9,6 +9,7 @@ export default class PlacementRequestsController {
     private readonly placementRequestService: PlacementRequestService,
     private readonly placementApplicationService: PlacementApplicationService,
     private readonly taskService: TaskService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   index(): TypedRequestHandler<Request, Response> {
@@ -65,8 +66,11 @@ export default class PlacementRequestsController {
 
       const placementApplication = await this.placementApplicationService.getPlacementApplication(req.user.token, id)
       placementApplication.document = getResponses(placementApplication)
-
-      await this.placementApplicationService.submit(req.user.token, placementApplication)
+      const application = await this.applicationService.findApplication(
+        req.user.token,
+        placementApplication.applicationId,
+      )
+      await this.placementApplicationService.submit(req.user.token, placementApplication, application)
 
       return res.render('placement-applications/confirm', {
         pageHeading: 'Request for placement confirmed',
