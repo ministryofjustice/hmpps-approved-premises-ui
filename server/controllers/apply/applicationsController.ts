@@ -35,7 +35,7 @@ export default class ApplicationsController {
       const application = await this.applicationService.findApplication(req.user.token, req.params.id)
       const taskList = new TasklistService(application)
 
-      if (application.status === 'submitted') {
+      if (application.status !== 'inProgress') {
         const referrer = req.headers.referer
         res.render('applications/show', { application, referrer })
       } else {
