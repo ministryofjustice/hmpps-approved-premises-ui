@@ -1,7 +1,7 @@
 import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 
 import { Page } from '../../utils/decorators'
-import { yesOrNoResponseWithDetail } from '../../utils'
+import { yesOrNoResponseWithDetailForYes } from '../../utils'
 
 import TasklistPage from '../../tasklistPage'
 import { PlacementApplication } from '../../../@types/shared'
@@ -63,11 +63,14 @@ export default class UpdatesToApplication implements TasklistPage {
   response() {
     const response = {}
 
-    response[this.questions.significantEvents] = yesOrNoResponseWithDetail('significantEvents', this.body)
-    response[this.questions.changedCirumstances] = yesOrNoResponseWithDetail('changedCirumstances', this.body)
-    response[this.questions.riskFactors] = yesOrNoResponseWithDetail('riskFactors', this.body)
-    response[this.questions.accessOrHealthcareNeeds] = yesOrNoResponseWithDetail('accessOrHealthcareNeeds', this.body)
-    response[this.questions.locationFactors] = yesOrNoResponseWithDetail('locationFactors', this.body)
+    response[this.questions.significantEvents] = yesOrNoResponseWithDetailForYes('significantEvents', this.body)
+    response[this.questions.changedCirumstances] = yesOrNoResponseWithDetailForYes('changedCirumstances', this.body)
+    response[this.questions.riskFactors] = yesOrNoResponseWithDetailForYes('riskFactors', this.body)
+    response[this.questions.accessOrHealthcareNeeds] = yesOrNoResponseWithDetailForYes(
+      'accessOrHealthcareNeeds',
+      this.body,
+    )
+    response[this.questions.locationFactors] = yesOrNoResponseWithDetailForYes('locationFactors', this.body)
 
     return response
   }

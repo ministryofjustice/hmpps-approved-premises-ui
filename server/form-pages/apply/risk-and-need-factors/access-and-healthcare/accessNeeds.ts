@@ -5,7 +5,7 @@ import { pascalCase, sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-import { yesOrNoResponseWithDetail } from '../../../utils'
+import { yesOrNoResponseWithDetailForYes } from '../../../utils'
 
 export const additionalNeeds = {
   mobility: 'Mobility',
@@ -83,11 +83,11 @@ export default class AccessNeeds implements TasklistPage {
       [this.questions.needs.question]: (this.body.additionalNeeds as Array<AdditionalNeed>)
         .map((need, i) => (i < 1 ? additionalNeeds[need] : additionalNeeds[need].toLowerCase()))
         .join(', '),
-      [this.questions.religiousOrCulturalNeeds.question]: yesOrNoResponseWithDetail(
+      [this.questions.religiousOrCulturalNeeds.question]: yesOrNoResponseWithDetailForYes(
         'religiousOrCulturalNeeds',
         this.body,
       ),
-      [this.questions.careAndSupportNeeds.question]: yesOrNoResponseWithDetail('careAndSupportNeeds', this.body),
+      [this.questions.careAndSupportNeeds.question]: yesOrNoResponseWithDetailForYes('careAndSupportNeeds', this.body),
       [this.questions.interpreter.question]: sentenceCase(this.body.needsInterpreter),
       [this.questions.careActAssessmentCompleted]:
         this.body.careActAssessmentCompleted === 'yes' || this.body.careActAssessmentCompleted === 'no'
