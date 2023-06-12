@@ -6,12 +6,5 @@ export const decisionFromAssessment = (assessment: Assessment) =>
   retrieveOptionalQuestionResponseFromApplicationOrAssessment(assessment, MakeADecisionPage, 'decision') || ''
 
 export const applicationAccepted = (assessment: Assessment) => {
-  switch (decisionFromAssessment(assessment)) {
-    case 'releaseDate':
-      return true
-    case 'hold':
-      return true
-    default:
-      return false
-  }
+  return decisionFromAssessment(assessment) === 'accept'
 }

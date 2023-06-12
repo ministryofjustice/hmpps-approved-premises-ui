@@ -5,7 +5,7 @@ import AssessPage from './assessPage'
 export default class MakeADecisionPage extends AssessPage {
   pageClass = new MakeADecision({ decision: this.decision })
 
-  constructor(assessment: Assessment, private readonly decision: string = 'releaseDate') {
+  constructor(assessment: Assessment, private readonly decision: string = 'accept') {
     super(assessment, 'Make a decision')
   }
 
