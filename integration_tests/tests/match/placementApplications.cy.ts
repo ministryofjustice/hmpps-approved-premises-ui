@@ -1,4 +1,10 @@
-import { applicationFactory, placementApplicationFactory } from '../../../server/testutils/factories'
+import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
+import {
+  applicationFactory,
+  documentFactory,
+  personFactory,
+  placementApplicationFactory,
+} from '../../../server/testutils/factories'
 import { ShowPage } from '../../pages/apply'
 import DateOfPlacement from '../../pages/match/placementRequestForm/datesOfPlacement'
 import PreviousRotlPlacement from '../../pages/match/placementRequestForm/previousRotlPlacement'
@@ -8,9 +14,11 @@ import UpdatesToApplication from '../../pages/match/placementRequestForm/updates
 import CheckYourAnswers from '../../pages/match/placementRequestForm/checkYourAnswers'
 import ConfirmationPage from '../../pages/match/placementRequestForm/confirmationPage'
 import AdditionalPlacementDetailsPage from '../../pages/match/placementRequestForm/additionalPlacementDetails'
+import DecisionToRelease from '../../pages/match/placementRequestForm/decisionToRelease'
+import AdditionalDocuments from '../../pages/match/placementRequestForm/additionalDocuments'
 import Page from '../../pages/page'
 import paths from '../../../server/paths/api'
-import DecisionToRelease from '../../pages/match/placementRequestForm/decisionToRelease'
+import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
 
 context('Placement Applications', () => {
   beforeEach(() => {
@@ -34,6 +42,7 @@ context('Placement Applications', () => {
       const placementApplication = placementApplicationFactory.build({
         id: placementApplicationId,
         data: placementApplicationData,
+        applicationId: completedApplication.id,
       })
       cy.task('stubCreatePlacementApplication', placementApplication)
       cy.task('stubPlacementApplicationUpdate', placementApplication)
@@ -99,6 +108,7 @@ context('Placement Applications', () => {
       const placementApplication = placementApplicationFactory.build({
         id: placementApplicationId,
         data: placementApplicationData,
+        applicationId: completedApplication.id,
       })
       cy.task('stubCreatePlacementApplication', placementApplication)
       cy.task('stubPlacementApplicationUpdate', placementApplication)
@@ -147,7 +157,15 @@ context('Placement Applications', () => {
   it('allows me to complete form if the reason for placement is parole board', () => {
     cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
       // Given I have completed an application I am viewing a completed application
-      const completedApplication = applicationFactory.build({ status: 'submitted', id: '123' })
+      const person = personFactory.build()
+      let completedApplication = applicationFactory.build({ status: 'submitted', id: '123', person })
+      completedApplication = addResponseToFormArtifact(completedApplication, {
+        section: 'type-of-ap',
+        page: 'ap-type',
+        key: 'type',
+        value: 'standard',
+      }) as Application
+
       cy.task('stubApplicationGet', { application: completedApplication })
       cy.task('stubApplications', [completedApplication])
 
@@ -156,11 +174,17 @@ context('Placement Applications', () => {
       const placementApplication = placementApplicationFactory.build({
         id: placementApplicationId,
         data: placementApplicationData,
+        applicationId: completedApplication.id,
+      })
+      const documents = documentFactory.buildList(4)
+      documents.forEach(document => {
+        cy.task('stubPersonDocument', { person: personFactory, document })
       })
       cy.task('stubCreatePlacementApplication', placementApplication)
       cy.task('stubPlacementApplicationUpdate', placementApplication)
       cy.task('stubSubmitPlacementApplication', placementApplication)
       cy.task('stubPlacementApplication', placementApplication)
+      cy.task('stubApplicationDocuments', { application: completedApplication, documents })
 
       // When I visit the readonly application view
       const showPage = ShowPage.visit(completedApplication)
@@ -172,12 +196,26 @@ context('Placement Applications', () => {
       const placementReasonPage = ReasonForPlacementPage.visit(placementApplicationId)
 
       // When I complete the form
-      placementReasonPage.completeForm('paroleBoard')
+      placementReasonPage.completeForm('release_following_decision')
       placementReasonPage.clickSubmit()
 
       const decisionToReleasePage = new DecisionToRelease()
       decisionToReleasePage.completeForm()
       decisionToReleasePage.clickSubmit()
+
+      const additionalDocumentsPage = new AdditionalDocuments(documents, documents.slice(0, 2))
+      additionalDocumentsPage.shouldDisplayDocuments()
+      additionalDocumentsPage.completeForm()
+      additionalDocumentsPage.clickSubmit()
+
+      const updatesToApplication = new UpdatesToApplication()
+      updatesToApplication.completeForm()
+      updatesToApplication.clickSubmit()
+
+      const checkYourAnswersPage = new CheckYourAnswers()
+
+      checkYourAnswersPage.completeForm()
+      checkYourAnswersPage.clickSubmit()
     })
   })
 })

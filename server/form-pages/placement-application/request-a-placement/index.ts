@@ -9,6 +9,7 @@ import UpdatesToApplication from './updatesToApplication'
 import CheckYourAnswers from './checkYourAnswers'
 import AdditionalPlacementDetails from './additionalPlacementDetails'
 import DecisionToRelease from './decisionToRelease'
+import AdditionalDocuments from './additionalDocuments'
 
 @Task({
   name: 'Request a placement',
@@ -22,6 +23,7 @@ import DecisionToRelease from './decisionToRelease'
     UpdatesToApplication,
     CheckYourAnswers,
     DecisionToRelease,
+    AdditionalDocuments,
   ],
 })
 @Section({
