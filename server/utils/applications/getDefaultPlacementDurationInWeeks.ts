@@ -7,6 +7,6 @@ export const getDefaultPlacementDurationInWeeks = (application: Application) => 
 
   if (apType === 'standard') return 12
   if (apType === 'pipe') return 26
-  if (apType === 'esap') return 56
+  if (apType === 'esap') return 52
   return null
 }
