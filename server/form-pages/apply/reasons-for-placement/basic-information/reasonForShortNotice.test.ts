@@ -25,9 +25,7 @@ describe('ReasonForShortNotice', () => {
     const page = new ReasonForShortNotice({}, application)
 
     expect(page.title).toEqual('Short notice application')
-    expect(page.question).toEqual(
-      'What is the reason for submitting this application less than 4 months before the AP is needed?',
-    )
+    expect(page.question).toEqual('Why is this application being submitted outside of National Standards timescales?')
   })
 
   it('should set the body', () => {

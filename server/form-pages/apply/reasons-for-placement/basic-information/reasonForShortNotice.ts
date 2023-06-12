@@ -33,7 +33,7 @@ export default class ReasonForShortNotice implements TasklistPage {
       this.question = 'What is the reason for submitting this application less than 7 days before the AP is needed?'
     } else {
       this.title = 'Short notice application'
-      this.question = 'What is the reason for submitting this application less than 4 months before the AP is needed?'
+      this.question = 'Why is this application being submitted outside of National Standards timescales?'
     }
   }
 
