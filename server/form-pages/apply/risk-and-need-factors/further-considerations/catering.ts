@@ -3,7 +3,7 @@ import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-import { yesOrNoResponseWithDetail } from '../../../utils'
+import { yesOrNoResponseWithDetailForNo } from '../../../utils'
 
 export const questionKeys = ['catering'] as const
 
@@ -13,7 +13,7 @@ export default class Catering implements TasklistPage {
   title = 'Catering requirements'
 
   questionPredicates = {
-    catering: 'be placed in a self-catered Approved Premises',
+    catering: 'be placed in a self-catered Approved Premises (AP)',
   }
 
   questions = {
@@ -35,7 +35,7 @@ export default class Catering implements TasklistPage {
 
   response() {
     return {
-      [this.questions.catering]: yesOrNoResponseWithDetail<QuestionKeys>('catering', this.body),
+      [this.questions.catering]: yesOrNoResponseWithDetailForNo<QuestionKeys>('catering', this.body),
     }
   }
 
@@ -46,7 +46,7 @@ export default class Catering implements TasklistPage {
       errors.catering = `You must specify if ${this.application.person.name} can ${this.questionPredicates.catering}`
     }
 
-    if (this.body.catering === 'yes' && !this.body.cateringDetail) {
+    if (this.body.catering === 'no' && !this.body.cateringDetail) {
       errors.cateringDetail = `You must specify details if you have any concerns about ${this.application.person.name} catering for themselves`
     }
 

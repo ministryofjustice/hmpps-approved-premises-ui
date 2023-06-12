@@ -1,4 +1,3 @@
-import { YesOrNo } from '@approved-premises/ui'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import Catering from './catering'
@@ -9,7 +8,7 @@ describe('Catering', () => {
   const application = applicationFactory.build({ person })
 
   const body = {
-    catering: 'yes' as YesOrNo,
+    catering: 'no' as const,
     cateringDetail: 'Catering detail',
   }
 
@@ -18,7 +17,7 @@ describe('Catering', () => {
       const page = new Catering(body, application)
 
       expect(page.questions).toEqual({
-        catering: 'Can John Wayne be placed in a self-catered Approved Premises?',
+        catering: 'Can John Wayne be placed in a self-catered Approved Premises (AP)?',
       })
     })
   })
@@ -39,11 +38,11 @@ describe('Catering', () => {
       const page = new Catering({}, application)
 
       expect(page.errors()).toEqual({
-        catering: 'You must specify if John Wayne can be placed in a self-catered Approved Premises',
+        catering: 'You must specify if John Wayne can be placed in a self-catered Approved Premises (AP)',
       })
     })
 
-    it('shows errors when a question has a yes response, but the details are left out', () => {
+    it('shows errors when a question has a no response, but the details are left out', () => {
       const page = new Catering({ ...body, cateringDetail: '' }, application)
 
       expect(page.errors()).toEqual({
@@ -53,19 +52,19 @@ describe('Catering', () => {
   })
 
   describe('response', () => {
-    it('Adds detail to an answer when the answer is yes', () => {
+    it('Adds detail to an answer when the answer is no', () => {
       const page = new Catering(body, application)
 
       expect(page.response()).toEqual({
-        'Can John Wayne be placed in a self-catered Approved Premises?': 'Yes - Catering detail',
+        'Can John Wayne be placed in a self-catered Approved Premises (AP)?': 'No - Catering detail',
       })
     })
 
-    it('does not add detail to questions with a no answer', () => {
-      const page = new Catering({ ...body, catering: 'no' }, application)
+    it('does not add detail to questions with a yes answer', () => {
+      const page = new Catering({ ...body, catering: 'yes' }, application)
 
       expect(page.response()).toEqual({
-        'Can John Wayne be placed in a self-catered Approved Premises?': 'No',
+        'Can John Wayne be placed in a self-catered Approved Premises (AP)?': 'Yes',
       })
     })
   })
