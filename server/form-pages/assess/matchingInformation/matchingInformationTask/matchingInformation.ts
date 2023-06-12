@@ -1,6 +1,8 @@
 import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { formatDuration } from 'date-fns'
+import { daysToWeeksAndDays } from '../../../../utils/assessments/dateUtils'
 import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
 import { Page } from '../../../utils/decorators'
 
@@ -167,7 +169,10 @@ export default class MatchingInformation implements TasklistPage {
   }
 
   get suggestedLengthOfStay() {
-    return placementDurationFromApplication(this.assessment.application)
+    return formatDuration(daysToWeeksAndDays(placementDurationFromApplication(this.assessment.application)), {
+      format: ['weeks', 'days'],
+      delimiter: ', ',
+    })
   }
 
   get specialistSupportCheckboxes() {

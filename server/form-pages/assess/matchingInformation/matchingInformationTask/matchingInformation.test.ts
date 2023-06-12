@@ -219,7 +219,7 @@ describe('MatchingInformation', () => {
 
       ;(placementDurationFromApplication as jest.Mock).mockReturnValueOnce(12)
 
-      expect(page.suggestedLengthOfStay).toEqual(12)
+      expect(page.suggestedLengthOfStay).toEqual('1 week, 5 days')
 
       expect(placementDurationFromApplication).toHaveBeenCalledWith(assessment.application)
     })
