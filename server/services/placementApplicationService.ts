@@ -1,6 +1,6 @@
 import { DataServices } from '@approved-premises/ui'
 import type { Request } from 'express'
-import { PlacementApplication } from '@approved-premises/api'
+import { ApprovedPremisesApplication as Application, PlacementApplication } from '@approved-premises/api'
 import { RestClientBuilder } from '../data'
 import PlacementApplicationClient from '../data/placementApplicationClient'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
@@ -62,12 +62,12 @@ export default class PlacementApplicationService {
     }
   }
 
-  async submit(token: string, placementApplication: PlacementApplication) {
+  async submit(token: string, placementApplication: PlacementApplication, application: Application) {
     const placementApplicationClient = this.placementApplicationClientFactory(token)
 
     return placementApplicationClient.submission(
       placementApplication.id,
-      placementApplicationSubmissionData(placementApplication),
+      placementApplicationSubmissionData(placementApplication, application),
     )
   }
 }

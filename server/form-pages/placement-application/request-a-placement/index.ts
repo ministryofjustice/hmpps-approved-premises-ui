@@ -8,6 +8,8 @@ import DatesOfPlacement from './datesOfPlacement'
 import UpdatesToApplication from './updatesToApplication'
 import CheckYourAnswers from './checkYourAnswers'
 import AdditionalPlacementDetails from './additionalPlacementDetails'
+import DecisionToRelease from './decisionToRelease'
+import AdditionalDocuments from './additionalDocuments'
 
 @Task({
   name: 'Request a placement',
@@ -20,6 +22,8 @@ import AdditionalPlacementDetails from './additionalPlacementDetails'
     DatesOfPlacement,
     UpdatesToApplication,
     CheckYourAnswers,
+    DecisionToRelease,
+    AdditionalDocuments,
   ],
 })
 @Section({

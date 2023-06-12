@@ -2,7 +2,7 @@ import { Request } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PlacementApplicationClient from '../data/placementApplicationClient'
-import { placementApplicationFactory } from '../testutils/factories'
+import { applicationFactory, placementApplicationFactory } from '../testutils/factories'
 import PlacementApplicationService from './placementApplicationService'
 import { DataServices, TaskListErrors } from '../@types/ui'
 import { getBody } from '../form-pages/utils'
@@ -185,11 +185,12 @@ describe('placementApplicationService', () => {
   describe('submit', () => {
     it('calls the client method and returns the resulting placement application', () => {
       const placementApplication = placementApplicationFactory.build()
+      const application = applicationFactory.build()
       ;(placementApplicationSubmissionData as jest.Mock).mockReturnValue({})
 
       placementApplicationClient.submission.mockResolvedValue(placementApplication)
 
-      const result = service.submit(token, placementApplication)
+      const result = service.submit(token, placementApplication, application)
 
       expect(result).resolves.toEqual(placementApplication)
     })

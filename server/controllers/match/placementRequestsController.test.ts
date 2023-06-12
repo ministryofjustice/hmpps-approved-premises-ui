@@ -4,8 +4,13 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { GroupedMatchTasks } from '@approved-premises/ui'
 import PlacementRequestsController from './placementRequestsController'
 
-import { PlacementApplicationService, PlacementRequestService, TaskService } from '../../services'
-import { personFactory, placementApplicationFactory, placementRequestFactory } from '../../testutils/factories'
+import { ApplicationService, PlacementApplicationService, PlacementRequestService, TaskService } from '../../services'
+import {
+  applicationFactory,
+  personFactory,
+  placementApplicationFactory,
+  placementRequestFactory,
+} from '../../testutils/factories'
 import paths from '../../paths/placementApplications'
 import { getResponses } from '../../utils/applications/utils'
 
@@ -21,6 +26,7 @@ describe('PlacementRequestsController', () => {
   const placementRequestService = createMock<PlacementRequestService>({})
   const placementApplicationService = createMock<PlacementApplicationService>({})
   const taskService = createMock<TaskService>({})
+  const applicationService = createMock<ApplicationService>({})
 
   let placementRequestsController: PlacementRequestsController
 
@@ -30,6 +36,7 @@ describe('PlacementRequestsController', () => {
       placementRequestService,
       placementApplicationService,
       taskService,
+      applicationService,
     )
   })
 
@@ -95,7 +102,9 @@ describe('PlacementRequestsController', () => {
     describe('when confirmation is "1"', () => {
       it('should POST to the service and redirect to the confirmation page', async () => {
         const placementApplication = placementApplicationFactory.build()
+        const application = applicationFactory.build()
         placementApplicationService.submit.mockResolvedValue(placementApplication)
+        applicationService.findApplication.mockResolvedValue(application)
 
         const requestHandler = placementRequestsController.submit()
 
@@ -109,7 +118,7 @@ describe('PlacementRequestsController', () => {
         expect(response.render).toHaveBeenCalledWith('placement-applications/confirm', {
           pageHeading: 'Request for placement confirmed',
         })
-        expect(placementApplicationService.submit).toHaveBeenCalledWith(token, placementApplication.id)
+        expect(placementApplicationService.submit).toHaveBeenCalledWith(token, placementApplication.id, application)
       })
     })
 

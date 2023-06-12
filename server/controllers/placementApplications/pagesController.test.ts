@@ -4,7 +4,7 @@ import createError from 'http-errors'
 
 import type { DataServices, ErrorsAndUserInput, FormPages } from '@approved-premises/ui'
 import PagesController from './pagesController'
-import { PlacementApplicationService } from '../../services'
+import { ApplicationService, PlacementApplicationService } from '../../services'
 import TasklistPage from '../../form-pages/tasklistPage'
 import PlacementRequest from '../../form-pages/placement-application'
 import { getPage } from '../../utils/applications/utils'
@@ -35,6 +35,7 @@ describe('pagesController', () => {
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const placementApplicationService = createMock<PlacementApplicationService>({})
+  const applicationService = createMock<ApplicationService>({})
   const dataServices = createMock<DataServices>({}) as DataServices
 
   const PageConstructor = jest.fn()
@@ -43,7 +44,7 @@ describe('pagesController', () => {
   let pagesController: PagesController
 
   beforeEach(() => {
-    pagesController = new PagesController(placementApplicationService)
+    pagesController = new PagesController(placementApplicationService, applicationService)
     placementApplicationService.initializePage.mockResolvedValue(page)
     ;(getPage as jest.Mock).mockReturnValue(PageConstructor)
   })

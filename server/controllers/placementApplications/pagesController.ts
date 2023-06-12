@@ -2,7 +2,7 @@ import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import createError from 'http-errors'
 
 import { getPage } from '../../utils/applications/utils'
-import { PlacementApplicationService } from '../../services'
+import { ApplicationService, PlacementApplicationService } from '../../services'
 
 import {
   catchAPIErrorOrPropogate,
@@ -14,7 +14,10 @@ import { UnknownPageError } from '../../utils/errors'
 import { viewPath } from '../../form-pages/utils'
 
 export default class PagesController {
-  constructor(private readonly placementApplicationService: PlacementApplicationService) {}
+  constructor(
+    private readonly placementApplicationService: PlacementApplicationService,
+    private readonly applicationService: ApplicationService,
+  ) {}
 
   show(taskName: string, pageName: string): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {
@@ -22,7 +25,14 @@ export default class PagesController {
         const Page = getPage(taskName, pageName, 'placement-applications')
 
         const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
-        const page = await this.placementApplicationService.initializePage(Page, req, {}, userInput)
+        const page = await this.placementApplicationService.initializePage(
+          Page,
+          req,
+          {
+            applicationService: this.applicationService,
+          },
+          userInput,
+        )
 
         res.render(viewPath(page, 'placement-applications'), {
           placementApplicationId: req.params.id,
@@ -45,7 +55,9 @@ export default class PagesController {
   update(taskName: string, pageName: string) {
     return async (req: Request, res: Response) => {
       const Page = getPage(taskName, pageName, 'placement-applications')
-      const page = await this.placementApplicationService.initializePage(Page, req, {})
+      const page = await this.placementApplicationService.initializePage(Page, req, {
+        applicationService: this.applicationService,
+      })
 
       try {
         await this.placementApplicationService.save(page, req)
