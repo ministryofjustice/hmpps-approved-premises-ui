@@ -22,10 +22,28 @@ describe('PlacementDuration', () => {
   })
 
   describe('body', () => {
-    it('should set the body', () => {
-      const body = { differentDuration: 'yes' as const, duration: '4', reason: 'Some reason' }
+    it('should set the body and duration', () => {
+      const body = { differentDuration: 'yes' as const, durationDays: '4', durationWeeks: '7', reason: 'Some reason' }
       const page = new PlacementDuration(body, application)
 
+      expect(page.body).toEqual({ ...body, duration: '53' })
+    })
+
+    it('should not set the duration if differentDuration is not yes', () => {
+      const body = { differentDuration: 'no' as const }
+      const page = new PlacementDuration(body, application)
+      expect(page.body).toEqual(body)
+    })
+
+    it('should not set the duration if durationDays is not set', () => {
+      const body = { differentDuration: 'yes' as const, durationWeeks: '4' }
+      const page = new PlacementDuration(body, application)
+      expect(page.body).toEqual(body)
+    })
+
+    it('should not set the duration if durationWeeks is not set', () => {
+      const body = { differentDuration: 'yes' as const, durationDays: '4' }
+      const page = new PlacementDuration(body, application)
       expect(page.body).toEqual(body)
     })
   })
@@ -144,18 +162,35 @@ describe('PlacementDuration', () => {
         reason: 'You must specify the reason for the different placement duration',
       })
     })
+
+    it('returns an error if the different duration response is yes but both durations are not set', () => {
+      let page = new PlacementDuration(
+        { differentDuration: 'yes', durationWeeks: '1', reason: 'Some reason' },
+        application,
+      )
+
+      expect(page.errors()).toEqual({
+        duration: 'You must specify the duration of the placement',
+      })
+
+      page = new PlacementDuration({ differentDuration: 'yes', durationDays: '1', reason: 'Some reason' }, application)
+
+      expect(page.errors()).toEqual({
+        duration: 'You must specify the duration of the placement',
+      })
+    })
   })
 
   describe('response', () => {
     it('should return a translated version of the response', () => {
       const page = new PlacementDuration(
-        { differentDuration: 'yes' as const, duration: '4', reason: 'Some reason' },
+        { differentDuration: 'yes' as const, durationDays: '4', durationWeeks: '1', reason: 'Some reason' },
         application,
       )
 
       expect(page.response()).toEqual({
         'Does this application require a different placement duration?': 'Yes',
-        'How many weeks will the person stay at the AP?': '4 weeks',
+        'How many weeks will the person stay at the AP?': '1 week, 4 days',
         'Why does this person require a different placement duration?': 'Some reason',
       })
     })

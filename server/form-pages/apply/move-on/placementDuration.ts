@@ -1,4 +1,4 @@
-import { addDays } from 'date-fns'
+import { addDays, formatDuration, weeksToDays } from 'date-fns'
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { SessionDataError } from '../../../utils/errors'
@@ -11,11 +11,16 @@ import { getDefaultPlacementDurationInWeeks } from '../../../utils/applications/
 
 type PlacementDurationBody = {
   differentDuration: YesOrNo
+  durationDays?: string
+  durationWeeks?: string
   duration?: string
   reason?: string
 }
 
-@Page({ name: 'placement-duration', bodyProperties: ['differentDuration', 'duration', 'reason'] })
+@Page({
+  name: 'placement-duration',
+  bodyProperties: ['differentDuration', 'duration', 'durationDays', 'durationWeeks', 'reason'],
+})
 export default class PlacementDuration implements TasklistPage {
   title = 'Placement duration and move on'
 
@@ -29,7 +34,9 @@ export default class PlacementDuration implements TasklistPage {
     reason: 'Why does this person require a different placement duration?',
   }
 
-  constructor(public body: Partial<PlacementDurationBody>, private readonly application: ApprovedPremisesApplication) {}
+  constructor(public body: Partial<PlacementDurationBody>, private readonly application: ApprovedPremisesApplication) {
+    this.body.duration = String(this.lengthInDays())
+  }
 
   previous() {
     return 'dashboard'
@@ -45,7 +52,12 @@ export default class PlacementDuration implements TasklistPage {
     response[this.questions.differentDuration] = sentenceCase(this.body.differentDuration)
 
     if (this.body.differentDuration === 'yes') {
-      response[this.questions.duration] = `${this.body.duration} weeks`
+      response[this.questions.duration] = sentenceCase(
+        `${formatDuration(
+          { weeks: Number(this.body.durationWeeks), days: Number(this.body.durationDays) },
+          { delimiter: ', ' },
+        )}`,
+      )
       response[this.questions.reason] = this.body.reason
     }
 
@@ -60,15 +72,32 @@ export default class PlacementDuration implements TasklistPage {
     }
 
     if (this.body.differentDuration === 'yes') {
-      if (!this.body.duration) {
+      if (!this.body.durationDays) {
         errors.duration = 'You must specify the duration of the placement'
       }
+
+      if (!this.body.durationWeeks) {
+        errors.duration = 'You must specify the duration of the placement'
+      }
+
       if (!this.body.reason) {
         errors.reason = 'You must specify the reason for the different placement duration'
       }
     }
 
     return errors
+  }
+
+  private lengthInDays(): number | null {
+    if (this.body.differentDuration === 'yes') {
+      if (this.body.durationDays && this.body.durationWeeks) {
+        return weeksToDays(Number(this.body.durationWeeks)) + Number(this.body.durationDays)
+      }
+
+      return null
+    }
+
+    return null
   }
 
   private fetchArrivalDate(): Date | null {
