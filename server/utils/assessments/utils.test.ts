@@ -184,17 +184,17 @@ describe('utils', () => {
     it('returns the release date copy if the decision is "releaseDate"', () => {
       ;(decisionFromAssessment as jest.Mock).mockReturnValue('releaseDate')
 
-      expect(confirmationPageMessage(assessment))
-        .toMatchStringIgnoringWhitespace(`<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
-      <p>The assessment can now be used to match ${assessment.application.person.name} to a bed in an Approved Premises.</p>`)
+      expect(confirmationPageMessage(assessment)).toMatchStringIgnoringWhitespace(
+        "<p>We've notified the Probation practitioner that this application has been assessed as suitable.</p>",
+      )
     })
 
     it('returns the hold copy if the decision is "hold"', () => {
       ;(decisionFromAssessment as jest.Mock).mockReturnValue('hold')
 
       expect(confirmationPageMessage(assessment))
-        .toMatchStringIgnoringWhitespace(`<p>We've notified the Probation Practitioner that this application has been assessed as suitable.</p>
-        <p>This case is now paused until the oral hearing outcome has been provided by the Probation Practitioner and a release date is confirmed.</p>
+        .toMatchStringIgnoringWhitespace(`<p>We've notified the Probation practitioner that this application has been assessed as suitable.</p>
+        <p>This case is now paused until the oral hearing outcome has been provided by the Probation practitioner and a release date is confirmed.</p>
         <p>It will be added to the matching queue if the oral hearing is successful.</p>`)
     })
 
@@ -203,7 +203,7 @@ describe('utils', () => {
 
       expect(confirmationPageMessage(assessment))
         .toMatchStringIgnoringWhitespace(`<p>We've sent you a confirmation email.</p>
-        <p>We've notified the Probation Practitioner that this application has been rejected as unsuitable for an Approved Premises.</p>`)
+        <p>We've notified the Probation practitioner that this application has been rejected as unsuitable for an Approved Premises.</p>`)
     })
   })
 
