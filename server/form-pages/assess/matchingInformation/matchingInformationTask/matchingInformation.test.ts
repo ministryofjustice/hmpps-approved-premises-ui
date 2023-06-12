@@ -84,16 +84,16 @@ describe('MatchingInformation', () => {
         isWheelchairDesignated: 'You must specify a preference for wheelchair accessible',
         isSingleRoom: 'You must specify a preference for single room',
         isArsonDesignated: 'You must specify a preference for designated arson room',
-        isStepFreeDesignated: 'You must specify a preference for has step-free access',
+        isStepFreeDesignated: 'You must specify a preference for step-free access',
         isCatered: 'You must specify a preference for catering required',
         isGroundFloor: 'You must specify a preference for ground floor room',
-        hasEnSuite: 'You must specify a preference for en suite',
+        hasEnSuite: 'You must specify a preference for en-suite bathroom',
         isSuitableForVulnerable: 'You must specify if vulnerable to exploitation is relevant',
         acceptsSexOffenders: 'You must specify if sexual offences against an adult is relevant',
         acceptsChildSexOffenders: 'You must specify if sexual offences against children is relevant',
         acceptsNonSexualChildOffenders: 'You must specify if non sexual offences against children is relevant',
         acceptsHateCrimeOffenders: 'You must specify if hate based offences is relevant',
-        isSuitedForSexOffenders: 'You must specify a preference for is suited for sex offenders',
+        isSuitedForSexOffenders: 'You must specify a preference for room suitable for a person with sexual offences',
         isArsonSuitable: 'You must specify if arson offences is relevant',
         lengthOfStayAgreed: 'You must state if you agree with the length of the stay',
       })
@@ -129,7 +129,7 @@ describe('MatchingInformation', () => {
         'Accepts non sexual child offenders': 'Relevant',
         'Accepts hate crime offenders': 'Relevant',
         'Is arson suitable': 'Relevant',
-        'Specialist support needs': 'Semi-specialist mental health, Recovery Focused Approved Premises (RAP)',
+        'Specialist support needs': 'Semi-specialist mental health, Recovery Focused Approved Premises (RFAP)',
         'Do you agree with the suggested length of stay?': 'Yes',
         'Information for Central Referral Unit (CRU) manager': 'Some info',
       })
@@ -178,7 +178,7 @@ describe('MatchingInformation', () => {
       expect(page.specialistSupportCheckboxes).toEqual([
         {
           value: 'isRecoveryFocussed',
-          text: 'Recovery Focused Approved Premises (RAP)',
+          text: 'Recovery Focused Approved Premises (RFAP)',
           checked: true,
         },
         {
@@ -205,7 +205,7 @@ describe('MatchingInformation', () => {
         },
         {
           value: 'hasTactileFlooring',
-          text: 'Tactile Flooring',
+          text: 'Tactile flooring',
           checked: false,
         },
         { value: 'hasHearingLoop', text: 'Hearing loop', checked: false },
