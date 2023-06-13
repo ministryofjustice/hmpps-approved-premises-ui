@@ -105,6 +105,7 @@ export default {
     bookings: {
       move: managePaths.bookings.move,
     },
+    calendar: managePaths.premises.show.path('calendar'),
   },
   applications: {
     show: applyPaths.applications.show,

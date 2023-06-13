@@ -12,6 +12,7 @@ import assessmentSummaryFactory from './assessmentSummary'
 import { bedSearchParametersFactory, bedSearchParametersUiFactory } from './bedSearchParameters'
 import bedSummaryFactory from './bedSummary'
 import bedDetailFactory from './bedDetail'
+import { bedOccupancyEntryFactory, bedOccupancyRangeFactory, bedOccupancyRangeFactoryUi } from './bedOccupancyRange'
 import { apCharacteristicPairFactory, bedSearchResultFactory, bedSearchResultsFactory } from './bedSearchResult'
 import bookingAppealTask from './bookingAppealTask'
 import bookingFactory from './booking'
@@ -70,6 +71,9 @@ export {
   assessmentSummaryFactory,
   bedSummaryFactory,
   bedDetailFactory,
+  bedOccupancyEntryFactory,
+  bedOccupancyRangeFactory,
+  bedOccupancyRangeFactoryUi,
   bedSearchParametersFactory,
   bedSearchParametersUiFactory,
   bedSearchResultFactory,
