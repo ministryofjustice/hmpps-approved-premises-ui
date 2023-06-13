@@ -1,7 +1,9 @@
 import type { Request, RequestHandler, Response } from 'express'
+import { addDays } from 'date-fns'
 
 import PremisesService from '../../../services/premisesService'
 import BookingService from '../../../services/bookingService'
+import { DateFormats } from '../../../utils/dateUtils'
 
 export default class PremisesController {
   constructor(private readonly premisesService: PremisesService, private readonly bookingService: BookingService) {}
@@ -34,6 +36,19 @@ export default class PremisesController {
         currentResidents,
         infoMessages: overcapacityMessage,
       })
+    }
+  }
+
+  calendar(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const bedOccupancyRangeList = await this.premisesService.getOccupancy(
+        req.user.token,
+        req.params.premisesId,
+        DateFormats.dateObjToIsoDate(new Date()),
+        DateFormats.dateObjToIsoDate(addDays(new Date(), 30)),
+      )
+
+      return res.render('premises/calendar', { bedOccupancyRangeList, premisesId: req.params.premisesId })
     }
   }
 }

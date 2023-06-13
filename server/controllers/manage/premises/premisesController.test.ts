@@ -1,3 +1,4 @@
+import { addDays } from 'date-fns'
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
@@ -6,6 +7,9 @@ import { Booking } from '@approved-premises/api'
 import PremisesService from '../../../services/premisesService'
 import BookingService from '../../../services/bookingService'
 import PremisesController from './premisesController'
+
+import { bedOccupancyRangeFactoryUi } from '../../../testutils/factories'
+import { DateFormats } from '../../../utils/dateUtils'
 
 describe('PremisesController', () => {
   const token = 'SOME_TOKEN'
@@ -58,6 +62,28 @@ describe('PremisesController', () => {
       expect(premisesService.getPremisesDetails).toHaveBeenCalledWith(token, 'some-uuid')
       expect(bookingService.groupedListOfBookingsForPremisesId).toHaveBeenCalledWith(token, 'some-uuid')
       expect(bookingService.currentResidents).toHaveBeenCalledWith(token, 'some-uuid')
+    })
+  })
+
+  describe('calendar', () => {
+    it('renders the calendar view', async () => {
+      const occupancy = bedOccupancyRangeFactoryUi.buildList(2)
+
+      premisesService.getOccupancy.mockResolvedValue(occupancy)
+
+      const requestHandler = premisesController.calendar()
+      await requestHandler(request, response, next)
+
+      expect(premisesService.getOccupancy).toHaveBeenCalledWith(
+        token,
+        'some-uuid',
+        DateFormats.dateObjToIsoDate(new Date()),
+        DateFormats.dateObjToIsoDate(addDays(new Date(), 30)),
+      )
+      expect(response.render).toHaveBeenCalledWith('premises/calendar', {
+        bedOccupancyRangeList: occupancy,
+        premisesId: request.params.premisesId,
+      })
     })
   })
 })
