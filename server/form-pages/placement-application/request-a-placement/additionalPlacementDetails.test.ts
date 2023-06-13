@@ -5,7 +5,8 @@ import AdditionalPlacementDetails, { Body } from './additionalPlacementDetails'
 
 describe('AdditionalPlacementDetails', () => {
   const body = {
-    duration: '12',
+    durationDays: '5',
+    durationWeeks: '1',
     'arrivalDate-year': '2023',
     'arrivalDate-month': '12',
     'arrivalDate-day': '1',
@@ -18,6 +19,8 @@ describe('AdditionalPlacementDetails', () => {
 
       expect(page.body).toEqual({
         duration: '12',
+        durationDays: '5',
+        durationWeeks: '1',
         'arrivalDate-year': '2023',
         'arrivalDate-month': '12',
         'arrivalDate-day': '1',
@@ -64,7 +67,7 @@ describe('AdditionalPlacementDetails', () => {
       const page = new AdditionalPlacementDetails(body)
 
       expect(page.response()).toEqual({
-        'How long should the Approved Premises placement last? (in weeks)': '12 weeks',
+        'How long should the Approved Premises placement last?': '5 weeks, 1 day',
         'When will the person arrive?': 'Friday 1 December 2023',
         'Why are you requesting this placement?': 'Some reason',
       })
