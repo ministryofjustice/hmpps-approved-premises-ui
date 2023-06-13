@@ -42,6 +42,18 @@ describe('MatchingInformation', () => {
       expect(page.body).toEqual(defaultArguments)
     })
 
+    it('should set lengthOfStay if lengthOfStayAgreed is no and the days and weeks are set', () => {
+      const body = {
+        ...defaultArguments,
+        lengthOfStayAgreed: 'no' as const,
+        lengthOfStayDays: '1',
+        lengthOfStayWeeks: '4',
+      }
+      const page = new MatchingInformation(body, assessment)
+
+      expect(page.body).toEqual({ ...body, lengthOfStay: '29' })
+    })
+
     it('should return accessibilityCriteria and specialistSupportCriteria as arrays if strings are provided', () => {
       const page = new MatchingInformation(
         {
@@ -100,10 +112,13 @@ describe('MatchingInformation', () => {
     })
 
     it('should add an error if lengthOfStayAgreed is no and the details are not provided', () => {
-      const page = new MatchingInformation({ ...defaultArguments, lengthOfStayAgreed: 'no' }, assessment)
+      const page = new MatchingInformation(
+        { ...defaultArguments, lengthOfStayAgreed: 'no', lengthOfStayWeeks: null, lengthOfStayDays: null },
+        assessment,
+      )
 
       expect(page.errors()).toEqual({
-        lengthOfStayAgreedDetail: 'You must provide a recommended length of stay',
+        lengthOfStay: 'You must provide a recommended length of stay',
       })
     })
   })
@@ -156,7 +171,8 @@ describe('MatchingInformation', () => {
         {
           ...defaultArguments,
           lengthOfStayAgreed: 'no',
-          lengthOfStayAgreedDetail: '12',
+          lengthOfStayDays: '5',
+          lengthOfStayWeeks: '5',
         },
         assessment,
       )
@@ -164,7 +180,7 @@ describe('MatchingInformation', () => {
       const response = page.response()
 
       expect(response['Do you agree with the suggested length of stay?']).toEqual('No')
-      expect(response['Recommended length of stay']).toEqual('12 weeks')
+      expect(response['Recommended length of stay']).toEqual('5 weeks, 5 days')
     })
   })
 

@@ -1,7 +1,7 @@
-import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
+import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
-import { formatDuration } from 'date-fns'
+import { formatDuration, weeksToDays } from 'date-fns'
 import { daysToWeeksAndDays } from '../../../../utils/assessments/dateUtils'
 import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
 import { Page } from '../../../utils/decorators'
@@ -41,7 +41,11 @@ export type MatchingInformationBody = {
   accessibilityCriteria: Array<AccessibilityCriteria>
   specialistSupportCriteria: Array<SpecialistSupportCriteria>
   cruInformation: string
-} & YesOrNoWithDetail<'lengthOfStayAgreed'>
+  lengthOfStayAgreed: YesOrNo
+  lengthOfStayWeeks: string
+  lengthOfStayDays: string
+  lengthOfStay: string
+}
 
 @Page({
   name: 'matching-information',
@@ -50,7 +54,9 @@ export type MatchingInformationBody = {
     'accessibilityCriteria',
     'specialistSupportCriteria',
     'lengthOfStayAgreed',
-    'lengthOfStayAgreedDetail',
+    'lengthOfStayWeeks',
+    'lengthOfStayDays',
+    'lengthOfStay',
     'cruInformation',
     ...placementRequirements,
     ...offenceAndRiskInformationKeys,
@@ -84,7 +90,7 @@ export default class MatchingInformation implements TasklistPage {
   constructor(private _body: Partial<MatchingInformationBody>, public assessment: Assessment) {}
 
   set body(value: MatchingInformationBody) {
-    this._body = value
+    this._body = { ...value, lengthOfStay: this.lengthInDays() }
   }
 
   get body(): MatchingInformationBody {
@@ -125,8 +131,17 @@ export default class MatchingInformation implements TasklistPage {
 
     response['Do you agree with the suggested length of stay?'] = sentenceCase(this.body.lengthOfStayAgreed)
 
-    if (this.body.lengthOfStayAgreedDetail) {
-      response['Recommended length of stay'] = `${this.body.lengthOfStayAgreedDetail} weeks`
+    if (this.body.lengthOfStayAgreed === 'no') {
+      response['Recommended length of stay'] = formatDuration(
+        {
+          weeks: Number(this.body.lengthOfStayWeeks),
+          days: Number(this.body.lengthOfStayDays),
+        },
+        {
+          format: ['weeks', 'days'],
+          delimiter: ', ',
+        },
+      )
     }
 
     if (this.body.cruInformation) {
@@ -161,8 +176,8 @@ export default class MatchingInformation implements TasklistPage {
       errors.lengthOfStayAgreed = 'You must state if you agree with the length of the stay'
     }
 
-    if (this.body.lengthOfStayAgreed === 'no' && !this.body.lengthOfStayAgreedDetail) {
-      errors.lengthOfStayAgreedDetail = 'You must provide a recommended length of stay'
+    if (this.body.lengthOfStayAgreed === 'no' && !this.body.lengthOfStayWeeks && !this.body.lengthOfStayDays) {
+      errors.lengthOfStay = 'You must provide a recommended length of stay'
     }
 
     return errors
@@ -199,5 +214,18 @@ export default class MatchingInformation implements TasklistPage {
     const selectedOptions = this.body[`${key}Criteria`] || []
 
     return selectedOptions.length ? selectedOptions.map((k: string) => this[`${key}Options`][k]).join(', ') : 'None'
+  }
+
+  private lengthInDays(): string {
+    if (this.body.lengthOfStayAgreed === 'no') {
+      if (this.body.lengthOfStayDays && this.body.lengthOfStayWeeks) {
+        const lengthOfStayWeeksInDays = weeksToDays(Number(this.body.lengthOfStayWeeks))
+        const totalLengthInDays = lengthOfStayWeeksInDays + Number(this.body.lengthOfStayDays)
+
+        return String(totalLengthInDays)
+      }
+    }
+
+    return undefined
   }
 }
