@@ -8,7 +8,9 @@
       "arrivalDate-day": "01",
       "arrivalDate-month": "8",
       "arrivalDate-year": "2023",
-      "duration": "28",
+      "durationDays": "5",
+      "durationWeeks": "12",
+      "duration": "24",
       "reason": "Some reason"
     },
     "updates-to-application": {
