@@ -23,7 +23,10 @@ export default class MatchingInformationPage extends AssessPage {
       acceptsHateCrimeOffenders: 'relevant',
       isArsonSuitable: 'relevant',
       isSuitedForSexOffenders: 'essential',
-      lengthOfStayAgreed: 'yes',
+      lengthOfStayAgreed: 'no',
+      lengthOfStayDays: '5',
+      lengthOfStayWeeks: '1',
+      lengthOfStay: '12',
       cruInformation: 'Some info',
     },
     this.assessment,
@@ -53,6 +56,9 @@ export default class MatchingInformationPage extends AssessPage {
     })
 
     this.checkRadioByNameAndValue('lengthOfStayAgreed', this.pageClass.body.lengthOfStayAgreed)
+
+    this.getTextInputByIdAndEnterDetails('lengthOfStayDays', this.pageClass.body.lengthOfStayDays)
+    this.getTextInputByIdAndEnterDetails('lengthOfStayWeeks', this.pageClass.body.lengthOfStayWeeks)
 
     this.completeTextArea('cruInformation', this.pageClass.body.cruInformation)
   }

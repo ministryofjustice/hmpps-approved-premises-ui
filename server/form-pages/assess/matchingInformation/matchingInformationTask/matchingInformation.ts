@@ -67,9 +67,16 @@ export default class MatchingInformation implements TasklistPage {
 
   title = 'Matching information'
 
-  apTypeQuestion = 'What type of AP is required?'
-
   apTypes = apTypeOptions
+
+  questions = {
+    apType: 'What type of AP is required?',
+    specialistSupportCriteria: 'If this person would benefit from specialist support, select the relevant option below',
+    accessibilityCriteria: 'Would the person benefit from any of the following?',
+    lengthOfStayAgreed: 'Do you agree with the suggested length of stay?',
+    lengthOfStay: 'Provide recommended length of stay',
+    cruInformation: 'Information for Central Referral Unit (CRU) manager (optional)',
+  }
 
   placementRequirementTableHeadings = ['Specify placement requirements', 'Essential', 'Desirable', 'Not required']
 
@@ -113,7 +120,7 @@ export default class MatchingInformation implements TasklistPage {
 
   response() {
     const response = {
-      [this.apTypeQuestion]: this.apTypes[this.body.apType],
+      [this.questions.apType]: this.apTypes[this.body.apType],
     }
 
     response['Specialist support needs'] = this.selectedOptions('specialistSupport')
