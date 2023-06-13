@@ -1,4 +1,4 @@
-{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "../../../components/formFields/form-page-day-weeks-input/macro.njk" import formPageDaysAndWeeksInput %}
 
 {% extends "../layout.njk" %}
 
@@ -31,17 +31,9 @@
     }) }}
 
   {% set yesDetails %}
+
   {{
-    formPageInput(
-      {
-        label: {
-          text: page.questions.duration
-        },
-        classes: "govuk-input--width-2",
-        fieldName: "duration"
-      },
-      fetchContext()
-    )
+    formPageDaysAndWeeksInput("duration", "govuk-label", fetchContext())
   }}
 
   {{
