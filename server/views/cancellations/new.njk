@@ -5,6 +5,8 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "../partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% extends "../partials/layout.njk" %}
 
@@ -85,6 +87,33 @@
             items: dateFieldValues('date', errors)
         }) }}
 
+        {% set appealHtml %}
+
+        {% set appealBody %}
+        <p class="govuk-body">You must receive approval from your APAM to appeal a placement before cancelling it.</p>
+
+        <p class="govuk-body">Reasons for appealing a placement may include:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>an overlap with a person who is co-accused</li>
+          <li>gang / rival members in the AP</li>
+          <li>an unmanageable mix of offence and behaviour types in the AP</li>
+          <li>staff conflict of interest</li>
+        </ul>
+
+        <p class="govuk-body">You will need to provide the name of the APAM, their contact details, an outline of the discussion and when it took place.</p>
+
+        <p class="govuk-body">Appealed placements will be returned to the central referral unit to be matched to another AP.</p>
+        {% endset %}
+
+        {{
+          govukNotificationBanner({
+            html: appealBody
+          })
+        }}
+
+        {% endset %}
+
         {{ govukRadios({
           name: "cancellation[reason]",
           id: "reason",
@@ -95,7 +124,7 @@
               }
           },
           errorMessage: errors.reason,
-          items: convertObjectsToRadioItems(cancellationReasons, 'name', 'id', 'cancellation[reason]')
+          items: cancellationReasonRadioItems(cancellationReasons, appealHtml)
           }) }}
 
         {{ govukTextarea({

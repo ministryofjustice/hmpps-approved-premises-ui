@@ -112,6 +112,9 @@ export interface RadioItem {
   text: string
   value: string
   checked?: boolean
+  conditional?: {
+    html?: string
+  }
 }
 
 export type CheckBoxItem =
