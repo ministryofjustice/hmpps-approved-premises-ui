@@ -1,5 +1,7 @@
+import { createMock } from '@golevelup/ts-jest'
+import { ApplicationService } from '../../../services'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
-import { placementApplicationFactory } from '../../../testutils/factories'
+import { applicationFactory, placementApplicationFactory } from '../../../testutils/factories'
 
 import CheckYourAnswers from './checkYourAnswers'
 
@@ -8,6 +10,26 @@ describe('CheckYourAnswers', () => {
     reviewed: '1',
   }
   const placementApplication = placementApplicationFactory.build()
+
+  describe('initialize', () => {
+    it('fetches the application and attaches it to the object', async () => {
+      const application = applicationFactory.build()
+      const findApplicationMock = jest.fn()
+
+      const applicationService = createMock<ApplicationService>({
+        findApplication: findApplicationMock,
+      })
+
+      findApplicationMock.mockResolvedValue(application)
+
+      const page = await CheckYourAnswers.initialize(body, placementApplication, 'some-token', { applicationService })
+
+      expect(page).toBeInstanceOf(CheckYourAnswers)
+      expect(page.application).toEqual(application)
+
+      expect(applicationService.findApplication).toHaveBeenCalledWith('some-token', placementApplication.applicationId)
+    })
+  })
 
   describe('body', () => {
     it('should set the body', () => {
