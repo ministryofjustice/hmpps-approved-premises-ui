@@ -14,7 +14,7 @@ const defaultArguments = {
   specialistSupportCriteria: ['isSemiSpecialistMentalHealth', 'isRecoveryFocussed'],
   isArsonDesignated: 'essential',
   isWheelchairDesignated: 'essential',
-  isSingleRoom: 'desirable',
+  isSingle: 'desirable',
   isStepFreeDesignated: 'desirable',
   isCatered: 'notRelevant',
   isGroundFloor: 'notRelevant',
@@ -82,7 +82,7 @@ describe('MatchingInformation', () => {
       expect(page.errors()).toEqual({
         apType: 'You must select the type of AP required',
         isWheelchairDesignated: 'You must specify a preference for wheelchair accessible',
-        isSingleRoom: 'You must specify a preference for single room',
+        isSingle: 'You must specify a preference for single room',
         isArsonDesignated: 'You must specify a preference for designated arson room',
         isStepFreeDesignated: 'You must specify a preference for step-free access',
         isCatered: 'You must specify a preference for catering required',

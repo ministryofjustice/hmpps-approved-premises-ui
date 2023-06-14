@@ -42,7 +42,7 @@ describe('placementCriteriaUtils', () => {
     it('should return all the placement requirement options', () => {
       expect(Object.keys(placementRequirementOptions)).toEqual([
         'isWheelchairDesignated',
-        'isSingleRoom',
+        'isSingle',
         'isStepFreeDesignated',
         'isCatered',
         'isGroundFloor',

@@ -39,7 +39,7 @@ export const placementCriteria = [
   'acceptsNonSexualChildOffenders',
   'acceptsHateCrimeOffenders',
   'isWheelchairDesignated',
-  'isSingleRoom',
+  'isSingle',
   'isStepFreeDesignated',
   'isCatered',
   'isGroundFloor',
