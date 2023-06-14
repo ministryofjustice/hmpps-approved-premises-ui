@@ -5,7 +5,10 @@ import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<PlacementApplication>(() => ({
   id: faker.string.uuid(),
+  assessmentId: faker.string.uuid(),
   applicationId: faker.string.uuid(),
+  applicationCompletedAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
+  assessmentCompletedAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
   createdByUserId: faker.string.uuid(),
   schemaVersion: faker.string.uuid(),
   outdatedSchema: false,
