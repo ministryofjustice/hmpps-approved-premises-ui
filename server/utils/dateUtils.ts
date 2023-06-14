@@ -44,6 +44,14 @@ export class DateFormats {
   }
 
   /**
+   * @param date JS Date object.
+   * @returns the date in the to be shown in the heading row of the calendar: "20 ".
+   */
+  static calendarDate(date: Date) {
+    return format(date, 'd')
+  }
+
+  /**
    * Converts an ISO8601 datetime string into a Javascript Date object.
    * @param date An ISO8601 datetime string
    * @returns A Date object

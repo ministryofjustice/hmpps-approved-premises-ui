@@ -44,6 +44,7 @@ import * as BedUtils from './bedUtils'
 import * as LostBedUtils from './lostBedUtils'
 import * as PhaseBannerUtils from './phaseBannerUtils'
 import * as PlacementApplicationUtils from './placementApplications'
+import * as CalendarUtils from './calendarUtils'
 
 import managePaths from '../paths/manage'
 import applyPaths from '../paths/apply'
@@ -210,4 +211,5 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('LostBedUtils', LostBedUtils)
   njkEnv.addGlobal('PhaseBannerUtils', PhaseBannerUtils)
   njkEnv.addGlobal('PlacementApplicationUtils', PlacementApplicationUtils)
+  njkEnv.addGlobal('CalendarUtils', CalendarUtils)
 }
