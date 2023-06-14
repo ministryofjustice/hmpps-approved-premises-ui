@@ -35,7 +35,13 @@
             text: "Manage beds",
             classes: "govuk-button--secondary",
             href: paths.premises.beds.index({premisesId: premisesId})
-          }]
+          },
+           {
+            text: "View calendar",
+            classes: "govuk-button--secondary",
+            href: paths.premises.calendar({premisesId: premisesId})
+          }
+          ]
         }]
         })
       }}

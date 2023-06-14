@@ -1,9 +1,11 @@
 import type { Response, SuperAgentRequest } from 'superagent'
 
-import type { Booking, DateCapacity, Premises, StaffMember } from '@approved-premises/api'
+import type { BedOccupancyRange, Booking, DateCapacity, Premises, StaffMember } from '@approved-premises/api'
 
 import { stubFor } from '../../wiremock'
 import bookingStubs from './booking'
+import paths from '../../server/paths/api'
+import { createQueryString } from '../../server/utils/utils'
 
 const stubPremises = (premises: Array<Premises>) =>
   stubFor({
@@ -73,6 +75,26 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: args.staff,
+      },
+    }),
+  stubPremisesOccupancy: (args: {
+    premisesId: string
+    startDate: string
+    endDate: string
+    premisesOccupancy: Array<BedOccupancyRange>
+  }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `${paths.premises.calendar({ premisesId: args.premisesId })}?${createQueryString({
+          startDate: args.startDate,
+          endDate: args.endDate,
+        })}`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.premisesOccupancy,
       },
     }),
 }

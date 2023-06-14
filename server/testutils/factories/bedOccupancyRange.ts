@@ -20,7 +20,7 @@ import {
 
 import { DateFormats } from '../../utils/dateUtils'
 
-export default Factory.define<BedOccupancyRange>(generator => ({
+export const bedOccupancyRangeFactory = Factory.define<BedOccupancyRange>(generator => ({
   bedId: faker.string.uuid(),
   bedName: `bed ${generator.sequence}`,
   schedule: faker.helpers.arrayElements(
@@ -52,20 +52,20 @@ export const bedOccupancyEntryFactory = Factory.define<BedOccupancyEntry>(() => 
   }
 })
 
-const bedOccupancyEntryBookingFactory = Factory.define<BedOccupancyBookingEntryUi>(() => ({
+const bedOccupancyEntryBookingFactory = Factory.define<BedOccupancyBookingEntry>(() => ({
   ...bedOccupancyEntryFactory.build(),
   type: 'booking',
   personName: faker.person.firstName(),
   bookingId: faker.string.uuid(),
 }))
 
-const bedOccupancyEntryLostBedFactory = Factory.define<BedOccupancyLostBedEntryUi>(() => ({
+const bedOccupancyEntryLostBedFactory = Factory.define<BedOccupancyLostBedEntry>(() => ({
   ...bedOccupancyEntryFactory.build(),
   type: 'lost_bed',
   lostBedId: faker.string.uuid(),
 }))
 
-const bedOccupancyEntryOpenFactory = Factory.define<BedOccupancyOpenEntryUi>(() => ({
+const bedOccupancyEntryOpenFactory = Factory.define<BedOccupancyOpenEntry>(() => ({
   ...bedOccupancyEntryFactory.build(),
   type: 'open',
 }))

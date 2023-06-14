@@ -1,5 +1,10 @@
 import { addDays } from 'date-fns'
-import { bookingFactory, dateCapacityFactory, premisesFactory } from '../../../server/testutils/factories'
+import {
+  bedOccupancyRangeFactory,
+  bookingFactory,
+  dateCapacityFactory,
+  premisesFactory,
+} from '../../../server/testutils/factories'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import { PremisesListPage, PremisesShowPage } from '../../pages/manage'
@@ -67,5 +72,29 @@ context('Premises', () => {
 
     // And I should see the overcapacity banner showing the dates that the AP is overcapacity
     page.shouldShowOvercapacityMessage(overcapacityStartDate.date, overcapacityEndDate.date)
+  })
+
+  it('should show the premises calendar', () => {
+    // Given there is a premises in the database
+    const premises = premisesFactory.build()
+
+    const premisesOccupancy = bedOccupancyRangeFactory.buildList(10)
+    cy.task('stubSinglePremises', premises)
+    cy.task('stubPremisesCapacity', {
+      premisesId: premises.id,
+      dateCapacities: [],
+    })
+    cy.task('stubPremisesOccupancy', {
+      premisesId: premises.id,
+      startDate: DateFormats.dateObjToIsoDate(new Date()),
+      endDate: DateFormats.dateObjToIsoDate(addDays(new Date(), 30)),
+      premisesOccupancy,
+    })
+
+    // When I visit the premises page
+    const page = PremisesShowPage.visit(premises)
+
+    // Then I should be able to click to view the calendar
+    page.clickViewCalendar()
   })
 })

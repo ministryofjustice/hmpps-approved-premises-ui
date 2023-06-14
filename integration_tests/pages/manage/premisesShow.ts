@@ -14,6 +14,11 @@ export default class PremisesShowPage extends Page {
     return new PremisesShowPage(premises)
   }
 
+  clickViewCalendar() {
+    cy.get('.moj-button-menu__toggle-button').click()
+    cy.get('a').contains('View calendar').click()
+  }
+
   shouldShowPremisesDetail(): void {
     cy.get('.govuk-summary-list__key')
       .contains('Code')
