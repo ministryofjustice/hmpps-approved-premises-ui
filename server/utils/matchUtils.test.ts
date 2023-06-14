@@ -19,7 +19,6 @@ import {
   encodeBedSearchResult,
   groupedCheckboxes,
   groupedEssentialCriteria,
-  mapApiParamsForUi,
   mapSearchParamCharacteristicsForUi,
   mapSearchResultCharacteristicsForUi,
   mapUiParamsForApi,
@@ -83,23 +82,13 @@ describe('matchUtils', () => {
 
   describe('mapUiParamsForApi', () => {
     it('converts string properties to numbers', () => {
-      const uiParams = bedSearchParametersUiFactory.build({ durationWeeks: '2' })
+      const uiParams = bedSearchParametersUiFactory.build({ durationWeeks: '2', durationDays: '1' })
 
       expect(mapUiParamsForApi(uiParams)).toEqual({
         ...uiParams,
-        durationDays: 14,
+        durationDays: 15,
         maxDistanceMiles: Number(uiParams.maxDistanceMiles),
       })
-    })
-  })
-
-  describe('mapApiParamsForUi', () => {
-    const apiParams = bedSearchParametersFactory.build({ durationDays: 14 })
-
-    expect(mapApiParamsForUi(apiParams)).toEqual({
-      ...apiParams,
-      durationWeeks: '2',
-      maxDistanceMiles: apiParams.maxDistanceMiles.toString(),
     })
   })
 

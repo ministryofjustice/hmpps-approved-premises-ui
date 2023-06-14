@@ -16,6 +16,7 @@ export const bedSearchParametersFactory = Factory.define<BedSearchParameters>(()
 
 export const bedSearchParametersUiFactory = Factory.define<BedSearchParametersUi>(() => ({
   durationWeeks: faker.number.int({ min: 12, max: 52 }).toString(),
+  durationDays: faker.number.int({ min: 0, max: 6 }).toString(),
   maxDistanceMiles: faker.number.int({ min: 1, max: 100 }).toString(),
   startDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
   postcodeDistrict: 'SW11',

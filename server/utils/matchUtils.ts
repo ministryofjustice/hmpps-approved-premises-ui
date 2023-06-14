@@ -1,4 +1,4 @@
-import { addWeeks, daysToWeeks, formatDuration, weeksToDays } from 'date-fns'
+import { addWeeks, formatDuration, weeksToDays } from 'date-fns'
 import {
   ApprovedPremisesBedSearchParameters as BedSearchParameters,
   BedSearchResult,
@@ -39,17 +39,14 @@ const groupedCriteria = {
   accessibility: { title: 'Would benefit from', options: accessibilityOptions },
 }
 
-export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParameters => ({
-  ...query,
-  durationDays: weeksToDays(Number(query.durationWeeks)),
-  maxDistanceMiles: Number(query.maxDistanceMiles),
-})
-
-export const mapApiParamsForUi = (apiParams: BedSearchParameters): Partial<BedSearchParametersUi> => ({
-  ...apiParams,
-  durationWeeks: daysToWeeks(apiParams.durationDays).toString(),
-  maxDistanceMiles: apiParams.maxDistanceMiles.toString(),
-})
+export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParameters => {
+  const durationDays = weeksToDays(Number(query.durationWeeks)) + Number(query.durationDays)
+  return {
+    ...query,
+    durationDays,
+    maxDistanceMiles: Number(query.maxDistanceMiles),
+  }
+}
 
 export const translateApiCharacteristicForUi = (characteristic: string) => {
   const result = characteristic.startsWith('is') ? characteristic.slice(2) : characteristic

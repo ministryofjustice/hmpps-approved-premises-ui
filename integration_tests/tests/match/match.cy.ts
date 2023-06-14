@@ -1,4 +1,4 @@
-import { addWeeks } from 'date-fns'
+import { addWeeks, weeksToDays } from 'date-fns'
 import SuccessPage from '../../pages/match/successPage'
 import ConfirmationPage from '../../pages/match/confirmationPage'
 import PlacementRequestPage from '../../pages/match/placementRequestPage'
@@ -79,6 +79,7 @@ context('Placement Requests', () => {
     const placementRequest = placementRequestFactory.build({
       person,
       status: 'notMatched',
+      duration: 15,
       essentialCriteria,
       desirableCriteria,
     })
@@ -157,7 +158,7 @@ context('Placement Requests', () => {
 
       // And the first request to the API should contain the criteria from the placement request
       expect(initialSearchRequestBody).to.contain({
-        durationDays: placementRequest.duration * 7,
+        durationDays: placementRequest.duration,
         startDate: placementRequest.expectedArrival,
         postcodeDistrict: placementRequest.location,
         maxDistanceMiles: placementRequest.radius,
@@ -169,7 +170,8 @@ context('Placement Requests', () => {
       ])
 
       // And the second request to the API should contain the new criteria I submitted
-      const durationDays = Number(newSearchParameters.durationWeeks) * 7
+      const durationDays =
+        weeksToDays(Number(newSearchParameters.durationWeeks)) + Number(newSearchParameters.durationDays)
 
       expect(secondSearchRequestBody).to.contain({
         durationDays,

@@ -23,13 +23,14 @@ describe('utils', () => {
     it('transforms a placement request into bed search params', () => {
       const person = personFactory.build()
       const placementRequest = placementRequestFactory.build({
-        duration: 12,
+        duration: 15,
         radius: 100,
         person,
       })
 
       expect(mapPlacementRequestToBedSearchParams(placementRequest)).toEqual({
-        durationWeeks: '12',
+        durationWeeks: '2',
+        durationDays: '1',
         startDate: placementRequest.expectedArrival,
         postcodeDistrict: placementRequest.location,
         maxDistanceMiles: '100',

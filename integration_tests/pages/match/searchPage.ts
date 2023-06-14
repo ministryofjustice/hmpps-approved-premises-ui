@@ -50,10 +50,14 @@ export default class SearchPage extends Page {
   }
 
   changeSearchParameters(newSearchParameters: BedSearchParametersUi): void {
-    this.getTextInputByIdAndClear('durationWeeks')
-    this.getTextInputByIdAndEnterDetails('durationWeeks', newSearchParameters.durationWeeks.toString())
     this.clearDateInputs('startDate')
     this.completeDateInputs('startDate', newSearchParameters.startDate)
+
+    this.getTextInputByIdAndClear('durationDays')
+    this.getTextInputByIdAndEnterDetails('durationDays', newSearchParameters.durationDays.toString())
+    this.getTextInputByIdAndClear('durationWeeks')
+    this.getTextInputByIdAndEnterDetails('durationWeeks', newSearchParameters.durationWeeks.toString())
+
     this.getTextInputByIdAndClear('postcodeDistrict')
     this.getTextInputByIdAndEnterDetails('postcodeDistrict', newSearchParameters.postcodeDistrict)
     this.getTextInputByIdAndClear('maxDistanceMiles')
