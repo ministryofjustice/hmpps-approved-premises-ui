@@ -10,6 +10,7 @@ declare module 'express-session' {
     nowInMinutes: number
     application: ApprovedPremisesApplication
     previousPage: string
+    user: UserDetails
   }
 }
 
