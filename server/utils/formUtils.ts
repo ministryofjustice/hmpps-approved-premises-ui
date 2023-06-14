@@ -40,6 +40,25 @@ export const convertObjectsToRadioItems = (
   })
 }
 
+export const cancellationReasonRadioItems = (
+  cancellationReasons: Array<Record<string, string>>,
+  appealHtml: string,
+  context: Record<string, unknown>,
+): Array<RadioItem> => {
+  const items = convertObjectsToRadioItems(cancellationReasons, 'name', 'id', 'cancellation[reason]', context)
+
+  return items.map(item => {
+    if (item.text === 'Booking successfully appealed') {
+      item.text = 'Appealed placement approved by AP area manager (APAM)'
+      item.conditional = {
+        html: appealHtml,
+      }
+    }
+
+    return item
+  })
+}
+
 export const convertObjectsToSelectOptions = (
   items: Array<Record<string, string>>,
   prompt: string,

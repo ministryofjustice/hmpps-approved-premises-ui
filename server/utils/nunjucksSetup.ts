@@ -15,6 +15,7 @@ import {
   sentenceCase,
 } from './utils'
 import {
+  cancellationReasonRadioItems,
   convertKeyValuePairToRadioItems,
   convertObjectsToRadioItems,
   convertObjectsToSelectOptions,
@@ -117,6 +118,13 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
       fieldName: string,
     ) {
       return convertObjectsToRadioItems(items, textKey, valueKey, fieldName, this.ctx)
+    },
+  )
+
+  njkEnv.addGlobal(
+    'cancellationReasonRadioItems',
+    function sendContextToCancellationReasonRadioItems(items: Array<Record<string, string>>, appealHtml: string) {
+      return cancellationReasonRadioItems(items, appealHtml, this.ctx)
     },
   )
 
