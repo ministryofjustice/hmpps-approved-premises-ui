@@ -4,17 +4,59 @@
 
   <h1 class="govuk-heading-l">
     <span class="govuk-caption-l">Further placement considerations</span>
-     {{ page.title }}
+    {{ page.title }}
   </h1>
 
-    {{ govukDetails({
+  {{ govukDetails({
       summaryText: "View guidance",
-      html: '<p>Approved Premises (AP) placements are usually self-catered unless there are specific circumstances where a person requires a catered placement. </p>
-            <p>For example, foreign national offenders (FNO) without access to funds cannot be placed in a self-catered AP.</p>'
+      html: '<p>People may be placed in either a catered or self catering AP. Unless there are specific circumstances which mean they must be placed in a catered AP.</p>
+            <p>For example, if a person has care and support needs. Or if they are a foreign national offender (FNO) without access to funds, they must be placed in a catered AP.</p>'
     }) }}
 
   {% for key, value in page.questions %}
-    {% include "./../../partials/_yes-no-with-detail.njk" %}
+    {% set noDetails %}
+    {{
+      formPageTextarea(
+        {
+          fieldName: (key + "Detail"),
+          type: "textarea",
+          spellcheck: false,
+          label: {
+            text: "Provide details"
+          }
+        },
+        fetchContext()
+      )
+    }}
+    {% endset -%}
+
+    {{
+      formPageRadios({
+        fieldName: key,
+        fieldset: {
+          legend: {
+            text: value,
+            classes: "govuk-fieldset__legend--m"
+          }
+        },
+        hint: page.hints[key],
+        items: [
+          {
+            value: "yes",
+            text: "Yes"
+          },
+          {
+            value: "no",
+            text: "No",
+            conditional: {
+              html: noDetails
+            }
+          }
+        ]
+      },
+      fetchContext()
+      )
+    }}
   {% endfor %}
 
 {% endblock %}

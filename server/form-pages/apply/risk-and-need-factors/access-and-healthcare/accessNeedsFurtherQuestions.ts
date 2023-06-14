@@ -8,7 +8,7 @@ import type {
 import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { lowerCase, sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
-import { yesNoOrDontKnowResponseWithDetail, yesOrNoResponseWithDetail } from '../../../utils'
+import { yesNoOrDontKnowResponseWithDetail, yesOrNoResponseWithDetailForYes } from '../../../utils'
 
 import TasklistPage from '../../../tasklistPage'
 import { DateFormats } from '../../../../utils/dateUtils'
@@ -122,7 +122,7 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
   response() {
     const response = {
       [this.questions.wheelchair]: sentenceCase(this.body.needsWheelchair),
-      [this.questions.healthConditions]: yesOrNoResponseWithDetail('healthConditions', this.body),
+      [this.questions.healthConditions]: yesOrNoResponseWithDetailForYes('healthConditions', this.body),
       [this.questions.prescribedMedication]: yesNoOrDontKnowResponseWithDetail('prescribedMedication', this.body),
     }
 
@@ -134,7 +134,7 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
         response[this.questions.childRemoved] = sentenceCase(this.body.childRemoved)
       }
 
-      response[this.questions.otherPregnancyConsiderations] = yesOrNoResponseWithDetail(
+      response[this.questions.otherPregnancyConsiderations] = yesOrNoResponseWithDetailForYes(
         'otherPregnancyConsiderations',
         this.body,
       )

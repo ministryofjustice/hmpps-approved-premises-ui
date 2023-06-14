@@ -9,7 +9,8 @@
       fieldName: "apType",
       fieldset: {
         legend: {
-          text: page.apTypeQuestion
+          text: page.apTypeQuestion,
+          classes: "govuk-fieldset__legend--m"
         }
       },
       items: convertKeyValuePairToRadioItems(page.apTypes, page.apType)
@@ -26,7 +27,7 @@
           }
         },
         hint: {
-          html: "<p>There are only two AP with a semi-specialism in mental health nationally. Placement in one of these AP is not guaranteed.</p><p>Recovery Focused AP's are currently being piloted nationally. Placement is not guaranteed.</p>"
+          html: "<p>There are only two AP with a semi-specialism in mental health nationally. Placement in one of these AP is not guaranteed.</p><p>Recovery Focused AP are currently being piloted nationally. Placement is not guaranteed.</p>"
         },
       items: page.specialistSupportCheckboxes
       },
@@ -81,7 +82,7 @@
       fieldName: "lengthOfStayAgreed",
       fieldset: {
         legend: {
-          text: "Do you agree with the recommended length of stay?",
+          text: "Do you agree with the suggested length of stay?",
           classes: "govuk-fieldset__legend--m"
         }
       },

@@ -22,6 +22,6 @@ describe('getDefaultPlacementDurationInWeeks', () => {
   it('returns 56 weeks if the ap type is standard', () => {
     ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce('esap')
 
-    expect(getDefaultPlacementDurationInWeeks(application)).toEqual(56)
+    expect(getDefaultPlacementDurationInWeeks(application)).toEqual(52)
   })
 })

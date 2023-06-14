@@ -352,7 +352,7 @@
     },
 
     "catering": {
-      "catering": "yes",
+      "catering": "no",
       "cateringDetail": "Some details here"
     },
     "arson": {

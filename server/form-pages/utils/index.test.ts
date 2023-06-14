@@ -28,13 +28,13 @@ describe('utils', () => {
     it('returns a response with detail if the answer is yes', () => {
       const body = { foo: 'yes', fooDetail: 'Some Detail' }
 
-      expect(utils.yesOrNoResponseWithDetail('foo', body)).toEqual('Yes - Some Detail')
+      expect(utils.yesOrNoResponseWithDetailForYes('foo', body)).toEqual('Yes - Some Detail')
     })
 
     it('returns no detail if the answer is no', () => {
       const body = { foo: 'no' }
 
-      expect(utils.yesOrNoResponseWithDetail('foo', body)).toEqual('No')
+      expect(utils.yesOrNoResponseWithDetailForYes('foo', body)).toEqual('No')
     })
   })
 

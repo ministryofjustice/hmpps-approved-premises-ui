@@ -3,7 +3,7 @@ import type { ApprovedPremisesApplication as Application } from '@approved-premi
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-import { yesOrNoResponseWithDetail } from '../../../utils'
+import { yesOrNoResponseWithDetailForYes } from '../../../utils'
 import { shouldShowContingencyPlanPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
 
 export const questionKeys = ['additionalCircumstances'] as const
@@ -40,7 +40,7 @@ export default class AdditionalCircumstances implements TasklistPage {
 
   response() {
     return {
-      [this.questions.additionalCircumstances]: yesOrNoResponseWithDetail<QuestionKeys>(
+      [this.questions.additionalCircumstances]: yesOrNoResponseWithDetailForYes<QuestionKeys>(
         'additionalCircumstances',
         this.body,
       ),

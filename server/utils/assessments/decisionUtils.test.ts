@@ -23,20 +23,15 @@ describe('decisionUtils', () => {
   })
 
   describe('applicationAccepted', () => {
-    const acceptedAssessment1 = assessmentFactory.build()
-    const acceptedAssessment2 = assessmentFactory.build()
+    const acceptedAssessment = assessmentFactory.build()
     const rejectedAssessment = assessmentFactory.build()
     const assessmentWithNoDecision = assessmentFactory.build()
 
     beforeEach(() => {
       ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockImplementation(
         (assessment: Assessment) => {
-          if (assessment === acceptedAssessment1) {
-            return 'releaseDate'
-          }
-
-          if (assessment === acceptedAssessment2) {
-            return 'hold'
+          if (assessment === acceptedAssessment) {
+            return 'accept'
           }
 
           if (assessment === rejectedAssessment) {
@@ -48,9 +43,8 @@ describe('decisionUtils', () => {
       )
     })
 
-    it('returns true if the assessment has either of the two decisions which accept an applicaiton', () => {
-      expect(applicationAccepted(acceptedAssessment1)).toBe(true)
-      expect(applicationAccepted(acceptedAssessment2)).toBe(true)
+    it('returns true if the assessment has the response "accept"', () => {
+      expect(applicationAccepted(acceptedAssessment)).toBe(true)
     })
 
     it('returns false if the assessment has any other decision', () => {

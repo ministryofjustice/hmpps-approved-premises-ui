@@ -3,7 +3,7 @@ import type { ApprovedPremisesApplication as Application } from '@approved-premi
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-import { yesOrNoResponseWithDetail } from '../../../utils'
+import { yesOrNoResponseWithDetailForYes } from '../../../utils'
 
 export const questionKeys = ['arson'] as const
 
@@ -48,7 +48,7 @@ export default class Arson implements TasklistPage {
 
   response() {
     return {
-      [this.questions.arson]: yesOrNoResponseWithDetail<QuestionKeys>('arson', this.body),
+      [this.questions.arson]: yesOrNoResponseWithDetailForYes<QuestionKeys>('arson', this.body),
     }
   }
 

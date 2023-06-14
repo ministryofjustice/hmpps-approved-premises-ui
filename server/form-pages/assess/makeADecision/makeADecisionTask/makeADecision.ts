@@ -16,8 +16,7 @@ export default class MakeADecision implements TasklistPage {
 
   responses: Record<string, Record<string, string>> = {
     'Accept as suitable for an AP': {
-      releaseDate: 'Release date has been provided, proceed to matching',
-      hold: 'Hold pending release decision',
+      accept: 'Accept',
     },
     'Reject, not suitable for an AP': {
       accommodationNeedOnly: 'Accommodation need only',

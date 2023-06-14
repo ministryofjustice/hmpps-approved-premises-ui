@@ -11,12 +11,16 @@ export const applyYesOrNo = <K extends string>(key: K, body: Record<string, unkn
   } as YesOrNoWithDetail<K>
 }
 
-export const yesOrNoResponseWithDetail = <K extends string>(key: K, body: Record<string, unknown>) => {
+export const yesOrNoResponseWithDetailForYes = <K extends string>(key: K, body: Record<string, unknown>) => {
   return body[key] === 'yes' ? `Yes - ${body[`${key}Detail`]}` : 'No'
 }
 
+export const yesOrNoResponseWithDetailForNo = <K extends string>(key: K, body: Record<string, unknown>) => {
+  return body[key] === 'no' ? `No - ${body[`${key}Detail`]}` : 'Yes'
+}
+
 export const yesNoOrDontKnowResponseWithDetail = <K extends string>(key: K, body: Record<string, string>) => {
-  return body[key] === 'iDontKnow' ? "Don't know" : yesOrNoResponseWithDetail<K>(key, body)
+  return body[key] === 'iDontKnow' ? "Don't know" : yesOrNoResponseWithDetailForYes<K>(key, body)
 }
 
 export const getTask = <T>(task: T) => {
