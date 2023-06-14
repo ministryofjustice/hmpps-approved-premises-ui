@@ -182,23 +182,14 @@ describe('utils', () => {
     const assessment = assessmentFactory.build()
 
     it('returns the release date copy if the decision is "releaseDate"', () => {
-      ;(decisionFromAssessment as jest.Mock).mockReturnValue('releaseDate')
+      ;(decisionFromAssessment as jest.Mock).mockReturnValue('accept')
 
       expect(confirmationPageMessage(assessment)).toMatchStringIgnoringWhitespace(
         "<p>We've notified the Probation practitioner that this application has been assessed as suitable.</p>",
       )
     })
 
-    it('returns the hold copy if the decision is "hold"', () => {
-      ;(decisionFromAssessment as jest.Mock).mockReturnValue('hold')
-
-      expect(confirmationPageMessage(assessment))
-        .toMatchStringIgnoringWhitespace(`<p>We've notified the Probation practitioner that this application has been assessed as suitable.</p>
-        <p>This case is now paused until the oral hearing outcome has been provided by the Probation practitioner and a release date is confirmed.</p>
-        <p>It will be added to the matching queue if the oral hearing is successful.</p>`)
-    })
-
-    it('returns the rejection copy if the decision isnt "hold" or "releaseDate" ', () => {
+    it('returns the rejection copy if the decision isnt "accept"', () => {
       ;(decisionFromAssessment as jest.Mock).mockReturnValue('')
 
       expect(confirmationPageMessage(assessment))
