@@ -11,7 +11,7 @@ export default class MatchingInformationPage extends AssessPage {
       specialistSupportCriteria: ['isSemiSpecialistMentalHealth'],
       isArsonDesignated: 'essential',
       isWheelchairDesignated: 'essential',
-      isSingleRoom: 'desirable',
+      isSingle: 'desirable',
       isStepFreeDesignated: 'desirable',
       isCatered: 'notRelevant',
       isGroundFloor: 'notRelevant',

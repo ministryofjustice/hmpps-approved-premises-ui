@@ -14,7 +14,7 @@ const offenceAndRiskCriteria = [
 const placementRequirementCriteria = [
   'isWheelchairDesignated',
   'isArsonDesignated',
-  'isSingleRoom',
+  'isSingle',
   'isStepFreeDesignated',
   'isCatered',
   'isGroundFloor',
@@ -46,7 +46,7 @@ export const placementCriteria: Record<PlacementCriteria, string> = {
   acceptsNonSexualChildOffenders: 'Non sexual offences against children',
   acceptsHateCrimeOffenders: 'Hate based offences',
   isWheelchairDesignated: 'Wheelchair accessible',
-  isSingleRoom: 'Single room',
+  isSingle: 'Single room',
   isStepFreeDesignated: 'Step-free access',
   isCatered: 'Catering required',
   isGroundFloor: 'Ground floor room',
