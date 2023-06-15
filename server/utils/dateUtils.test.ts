@@ -167,6 +167,12 @@ describe('DateFormats', () => {
       expect(differenceInDays).toHaveBeenCalledWith(date1, date2)
     })
   })
+
+  describe('formatDuration', () => {
+    it('formats a duration with the given unit', () => {
+      expect(DateFormats.formatDuration({ days: '4', weeks: '7' })).toEqual('7 weeks, 4 days')
+    })
+  })
 })
 
 describe('dateAndTimeInputsAreValidDates', () => {

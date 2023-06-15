@@ -7,6 +7,7 @@ export default class DatesOfPlacement extends Page {
 
   completeForm() {
     this.clearAndCompleteDateInputs('arrivalDate', '2023-08-01')
-    this.clearAndCompleteTextInputById('duration', '14')
+    this.clearAndCompleteTextInputById('durationWeeks', '12')
+    this.clearAndCompleteTextInputById('durationDays', '5')
   }
 }

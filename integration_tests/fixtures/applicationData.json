@@ -392,7 +392,8 @@
   "move-on": {
     "placement-duration": {
       "differentDuration": "yes",
-      "duration": "6",
+      "durationDays": "0",
+      "durationWeeks": "6",
       "reason": "some reason"
     },
     "relocation-region": {

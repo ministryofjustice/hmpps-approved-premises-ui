@@ -38,6 +38,16 @@ const daysUntilDue = (assessment: AssessmentSummary): number => {
   return differenceInDays(dueDate, new Date())
 }
 
+const daysToWeeksAndDays = (days: string | number): { days: number; weeks: number } => {
+  const daysAsNumber = Number(days)
+  const durationWeeks = Math.floor(daysAsNumber / 7)
+
+  return {
+    days: daysAsNumber - durationWeeks * 7,
+    weeks: durationWeeks,
+  }
+}
+
 const formatDaysUntilDueWithWarning = (assessment: AssessmentSummary): string => {
   const days = daysUntilDue(assessment)
   if (days < DUE_DATE_APPROACHING_DAYS_WINDOW) {
@@ -76,4 +86,5 @@ export {
   assessmentsApproachingDue,
   formattedArrivalDate,
   daysUntilDue,
+  daysToWeeksAndDays,
 }

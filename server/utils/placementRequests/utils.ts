@@ -5,6 +5,7 @@ import { linkTo } from '../utils'
 
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
+import { daysToWeeksAndDays } from '../assessments/dateUtils'
 
 export const mapPlacementRequestToBedSearchParams = ({
   duration,
@@ -16,16 +17,20 @@ export const mapPlacementRequestToBedSearchParams = ({
   person,
   applicationId,
   assessmentId,
-}: PlacementRequest): BedSearchParametersUi => ({
-  durationWeeks: duration.toString(),
-  startDate: expectedArrival,
-  postcodeDistrict: location,
-  maxDistanceMiles: radius.toString(),
-  crn: person.crn,
-  applicationId,
-  assessmentId,
-  requiredCharacteristics: [...essentialCriteria, ...desirableCriteria],
-})
+}: PlacementRequest): BedSearchParametersUi => {
+  const daysAndWeeks = daysToWeeksAndDays(duration)
+  return {
+    durationDays: String(daysAndWeeks.days),
+    durationWeeks: String(daysAndWeeks.weeks),
+    startDate: expectedArrival,
+    postcodeDistrict: location,
+    maxDistanceMiles: radius.toString(),
+    crn: person.crn,
+    applicationId,
+    assessmentId,
+    requiredCharacteristics: [...essentialCriteria, ...desirableCriteria],
+  }
+}
 
 export const formatReleaseType = (placementRequest: PlacementRequest) => allReleaseTypes[placementRequest.releaseType]
 

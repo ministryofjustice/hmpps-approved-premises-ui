@@ -1,37 +1,55 @@
 import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 
+import { weeksToDays } from 'date-fns'
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
-import { sentenceCase } from '../../../utils/utils'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
 
 export type Body = {
   duration: string
+  durationDays: string
+  durationWeeks: string
 } & ObjectWithDateParts<'arrivalDate'>
 
 @Page({
   name: 'dates-of-placement',
-  bodyProperties: ['arrivalDate', 'arrivalDate-day', 'arrivalDate-month', 'arrivalDate-year', 'duration'],
+  bodyProperties: [
+    'arrivalDate',
+    'arrivalDate-day',
+    'arrivalDate-month',
+    'arrivalDate-year',
+    'duration',
+    'durationDays',
+    'durationWeeks',
+  ],
 })
 export default class DatesOfPlacement implements TasklistPage {
   title = 'Dates of placement'
 
   questions = {
     arrivalDate: 'When will the person arrive?',
-    duration: 'How long should the Approved Premises placement last? (in weeks)',
+    duration: 'How long should the Approved Premises placement last?',
   }
 
-  body: Body
+  constructor(private _body: Body) {}
 
-  constructor(_body: Body) {
-    this.body = {
-      'arrivalDate-year': _body['arrivalDate-year'],
-      'arrivalDate-month': _body['arrivalDate-month'],
-      'arrivalDate-day': _body['arrivalDate-day'],
-      arrivalDate: DateFormats.dateAndTimeInputsToIsoString(_body as ObjectWithDateParts<'arrivalDate'>, 'arrivalDate')
-        .arrivalDate,
-      duration: _body.duration,
+  get body() {
+    return {
+      'arrivalDate-year': this._body['arrivalDate-year'],
+      'arrivalDate-month': this._body['arrivalDate-month'],
+      'arrivalDate-day': this._body['arrivalDate-day'],
+      arrivalDate: DateFormats.dateAndTimeInputsToIsoString(
+        this._body as ObjectWithDateParts<'arrivalDate'>,
+        'arrivalDate',
+      ).arrivalDate,
+      durationDays: this._body.durationDays,
+      durationWeeks: this._body.durationWeeks,
+      duration: this.lengthInDays(),
     }
+  }
+
+  set body(value: Body) {
+    this._body = value
   }
 
   previous() {
@@ -45,7 +63,10 @@ export default class DatesOfPlacement implements TasklistPage {
   response() {
     return {
       [this.questions.arrivalDate]: DateFormats.isoDateToUIDate(this.body.arrivalDate),
-      [this.questions.duration]: `${sentenceCase(this.body.duration)} weeks`,
+      [this.questions.duration]: DateFormats.formatDuration({
+        weeks: this.body.durationDays,
+        days: this.body.durationWeeks,
+      }),
     }
   }
 
@@ -61,5 +82,16 @@ export default class DatesOfPlacement implements TasklistPage {
     if (!this.body.duration) errors.duration = 'You must state the duration of the placement'
 
     return errors
+  }
+
+  private lengthInDays(): string {
+    if (this._body.durationWeeks && this._body.durationDays) {
+      const lengthOfStayWeeksInDays = weeksToDays(Number(this._body.durationWeeks))
+      const totalLengthInDays = lengthOfStayWeeksInDays + Number(this._body.durationDays)
+
+      return String(totalLengthInDays)
+    }
+
+    return undefined
   }
 }

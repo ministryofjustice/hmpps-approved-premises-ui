@@ -1643,6 +1643,12 @@
               ],
               "type": "string"
             },
+            "durationDays": {
+              "type": "string"
+            },
+            "durationWeeks": {
+              "type": "string"
+            },
             "duration": {
               "type": "string"
             },
@@ -1666,9 +1672,7 @@
               "properties": {
                 "arePlansInPlace": {
                   "type": "string",
-                  "enum": [
-                    "yes"
-                  ]
+                  "const": "yes"
                 },
                 "plansInPlaceDetail": {
                   "type": "string"
@@ -1680,9 +1684,7 @@
               "properties": {
                 "arePlansInPlace": {
                   "type": "string",
-                  "enum": [
-                    "no"
-                  ]
+                  "const": "no"
                 },
                 "plansNotInPlaceDetail": {
                   "type": "string"
@@ -1723,9 +1725,7 @@
                   "properties": {
                     "response": {
                       "type": "string",
-                      "enum": [
-                        "yes"
-                      ]
+                      "const": "yes"
                     }
                   }
                 },
@@ -1766,9 +1766,7 @@
               "properties": {
                 "response": {
                   "type": "string",
-                  "enum": [
-                    "no"
-                  ]
+                  "const": "no"
                 }
               }
             }

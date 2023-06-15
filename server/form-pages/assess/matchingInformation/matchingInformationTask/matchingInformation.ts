@@ -1,6 +1,9 @@
-import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
+import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { weeksToDays } from 'date-fns'
+import { DateFormats } from '../../../../utils/dateUtils'
+import { daysToWeeksAndDays } from '../../../../utils/assessments/dateUtils'
 import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
 import { Page } from '../../../utils/decorators'
 
@@ -39,7 +42,11 @@ export type MatchingInformationBody = {
   accessibilityCriteria: Array<AccessibilityCriteria>
   specialistSupportCriteria: Array<SpecialistSupportCriteria>
   cruInformation: string
-} & YesOrNoWithDetail<'lengthOfStayAgreed'>
+  lengthOfStayAgreed: YesOrNo
+  lengthOfStayWeeks: string
+  lengthOfStayDays: string
+  lengthOfStay: string
+}
 
 @Page({
   name: 'matching-information',
@@ -48,7 +55,9 @@ export type MatchingInformationBody = {
     'accessibilityCriteria',
     'specialistSupportCriteria',
     'lengthOfStayAgreed',
-    'lengthOfStayAgreedDetail',
+    'lengthOfStayWeeks',
+    'lengthOfStayDays',
+    'lengthOfStay',
     'cruInformation',
     ...placementRequirements,
     ...offenceAndRiskInformationKeys,
@@ -59,9 +68,16 @@ export default class MatchingInformation implements TasklistPage {
 
   title = 'Matching information'
 
-  apTypeQuestion = 'What type of AP is required?'
-
   apTypes = apTypeOptions
+
+  questions = {
+    apType: 'What type of AP is required?',
+    specialistSupportCriteria: 'If this person would benefit from specialist support, select the relevant option below',
+    accessibilityCriteria: 'Would the person benefit from any of the following?',
+    lengthOfStayAgreed: 'Do you agree with the suggested length of stay?',
+    lengthOfStay: 'Provide recommended length of stay',
+    cruInformation: 'Information for Central Referral Unit (CRU) manager (optional)',
+  }
 
   placementRequirementTableHeadings = ['Specify placement requirements', 'Essential', 'Desirable', 'Not required']
 
@@ -82,7 +98,7 @@ export default class MatchingInformation implements TasklistPage {
   constructor(private _body: Partial<MatchingInformationBody>, public assessment: Assessment) {}
 
   set body(value: MatchingInformationBody) {
-    this._body = value
+    this._body = { ...value, lengthOfStay: this.lengthInDays() }
   }
 
   get body(): MatchingInformationBody {
@@ -105,7 +121,7 @@ export default class MatchingInformation implements TasklistPage {
 
   response() {
     const response = {
-      [this.apTypeQuestion]: this.apTypes[this.body.apType],
+      [this.questions.apType]: this.apTypes[this.body.apType],
     }
 
     response['Specialist support needs'] = this.selectedOptions('specialistSupport')
@@ -123,8 +139,11 @@ export default class MatchingInformation implements TasklistPage {
 
     response['Do you agree with the suggested length of stay?'] = sentenceCase(this.body.lengthOfStayAgreed)
 
-    if (this.body.lengthOfStayAgreedDetail) {
-      response['Recommended length of stay'] = `${this.body.lengthOfStayAgreedDetail} weeks`
+    if (this.body.lengthOfStayAgreed === 'no') {
+      response['Recommended length of stay'] = DateFormats.formatDuration({
+        weeks: this.body.lengthOfStayWeeks,
+        days: this.body.lengthOfStayDays,
+      })
     }
 
     if (this.body.cruInformation) {
@@ -159,15 +178,15 @@ export default class MatchingInformation implements TasklistPage {
       errors.lengthOfStayAgreed = 'You must state if you agree with the length of the stay'
     }
 
-    if (this.body.lengthOfStayAgreed === 'no' && !this.body.lengthOfStayAgreedDetail) {
-      errors.lengthOfStayAgreedDetail = 'You must provide a recommended length of stay'
+    if (this.body.lengthOfStayAgreed === 'no' && !this.body.lengthOfStayWeeks && !this.body.lengthOfStayDays) {
+      errors.lengthOfStay = 'You must provide a recommended length of stay'
     }
 
     return errors
   }
 
   get suggestedLengthOfStay() {
-    return placementDurationFromApplication(this.assessment.application)
+    return DateFormats.formatDuration(daysToWeeksAndDays(placementDurationFromApplication(this.assessment.application)))
   }
 
   get specialistSupportCheckboxes() {
@@ -194,5 +213,18 @@ export default class MatchingInformation implements TasklistPage {
     const selectedOptions = this.body[`${key}Criteria`] || []
 
     return selectedOptions.length ? selectedOptions.map((k: string) => this[`${key}Options`][k]).join(', ') : 'None'
+  }
+
+  private lengthInDays(): string {
+    if (this.body.lengthOfStayAgreed === 'no') {
+      if (this.body.lengthOfStayDays && this.body.lengthOfStayWeeks) {
+        const lengthOfStayWeeksInDays = weeksToDays(Number(this.body.lengthOfStayWeeks))
+        const totalLengthInDays = lengthOfStayWeeksInDays + Number(this.body.lengthOfStayDays)
+
+        return String(totalLengthInDays)
+      }
+    }
+
+    return undefined
   }
 }

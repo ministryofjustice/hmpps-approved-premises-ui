@@ -1,4 +1,6 @@
 {% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "../../../components/formFields/form-page-day-weeks-input/macro.njk" import formPageDaysAndWeeksInput %}
+
 {% extends "../../layout.njk" %}
 
 {% block questions %}
@@ -23,18 +25,6 @@
     )
   }}
 
-  {{
-    formPageInput(
-      {
-        label: {
-          text: page.questions.duration,
-          classes: "govuk-fieldset__legend--m"
-        },
-        classes: "govuk-input--width-2",
-        fieldName: "duration"
-      },
-      fetchContext()
-    )
-  }}
+  {{ formPageDaysAndWeeksInput("duration", "govuk-fieldset__legend--m", fetchContext()) }}
 
 {% endblock %}

@@ -1,4 +1,5 @@
 {% extends "../layout.njk" %}
+{% from "../../../components/formFields/form-page-day-weeks-input/macro.njk" import formPageDaysAndWeeksInput %}
 
 {% block questions %}
 
@@ -9,7 +10,7 @@
       fieldName: "apType",
       fieldset: {
         legend: {
-          text: page.apTypeQuestion,
+          text: page.questions.apType,
           classes: "govuk-fieldset__legend--m"
         }
       },
@@ -22,7 +23,7 @@
         fieldName: "specialistSupportCriteria",
         fieldset: {
           legend: {
-            text: "If this person would benefit from specialist support, select the relevant option below",
+            text: page.questions.specialistSupportCriteria,
             classes: "govuk-fieldset__legend--m"
           }
         },
@@ -41,7 +42,7 @@
         fieldName: "accessibilityCriteria",
         fieldset: {
           legend: {
-            text: "Would the person benefit from any of the following?",
+            text: page.questions.accessibilityCriteria,
             classes: "govuk-fieldset__legend--m"
           }
         },
@@ -55,39 +56,19 @@
 
   {{placementRequirementsTable(page.placementRequirementTableHeadings, page.placementRequirements, page.placementRequirementPreferences, page.body) | safe}}
 
-  {{placementRequirementsTable(page.relevantInformationTableHeadings, page.offenceAndRiskInformationKeys, page.offenceAndRiskInformationRelevance, page.body) | safe}}
-
-  {% set noDetails %}
-  {{
-    formPageInput(
-      {
-        fieldName: "lengthOfStayAgreedDetail",
-        spellcheck: false,
-        inputmode: "numeric",
-        label: {
-          text: "Provide recommended length of stay"
-        },
-        suffix: {
-          text: "weeks"
-        },
-        classes: "govuk-input--width-2"
-      },
-      fetchContext()
-    )
-  }}
-  {% endset -%}
+  {{ placementRequirementsTable(page.relevantInformationTableHeadings, page.offenceAndRiskInformationKeys, page.offenceAndRiskInformationRelevance, page.body) | safe }}
 
   {{
     formPageRadios({
       fieldName: "lengthOfStayAgreed",
       fieldset: {
         legend: {
-          text: "Do you agree with the suggested length of stay?",
+          text: page.questions.lengthOfStayAgreed,
           classes: "govuk-fieldset__legend--m"
         }
       },
       hint: {
-        text: "Recommended length of stay: " + page.suggestedLengthOfStay + " weeks"
+        text: "Recommended length of stay: " + page.suggestedLengthOfStay
       },
       items: [
         {
@@ -98,7 +79,7 @@
           value: "no",
           text: "No",
           conditional: {
-            html: noDetails
+            html: formPageDaysAndWeeksInput("lengthOfStay", "govuk-label--s", fetchContext())
           }
         }
       ]
@@ -114,7 +95,7 @@
         type: "textarea",
         spellcheck: false,
         label: {
-          text: "Information for Central Referral Unit (CRU) manager (optional)",
+          text: page.questions.cruInformation,
           classes: "govuk-label--m"
         },
         hint: {

@@ -1,0 +1,66 @@
+{% from "../form-page-input/macro.njk" import formPageInput %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+
+{% macro formPageDaysAndWeeksInput(fieldName, legendClasses, context) %}
+  {% if context.errors[fieldName] %}
+    {% set wrapperClasses = "govuk-form-group govuk-form-group--error" %}
+    {% set inputClasses = "govuk-input--width-2 govuk-input--error" %}
+  {% else %}
+    {% set wrapperClasses = "govuk-form-group" %}
+    {% set inputClasses = "govuk-input--width-2" %}
+  {% endif %}
+
+  <div class="{{ wrapperClasses }}" id="{{ fieldName }}">
+    {% call govukFieldset({
+      legend: {
+        text: context
+          .page
+          .questions[fieldName],
+        classes: legendClasses
+      }
+    })
+ %}
+
+    {% if context.errors[fieldName] %}
+      <p id="{{ fieldname }}-error" class="govuk-error-message" data-cy-error-{{ fieldname }}="true">
+        <span class="govuk-visually-hidden">Error:</span>
+        {{ context.errors[fieldname].text }}
+      </p>
+    {% endif %}
+
+    {{
+      formPageInput(
+        {
+          classes: inputClasses,
+          fieldName: fieldName + "Weeks",
+          formGroup: {
+            classes: "govuk-form-group--inline"
+          },
+          label: {
+            text: "Weeks"
+          }
+        },
+        context
+      )
+    }}
+
+    {{
+      formPageInput(
+        {
+          classes: inputClasses,
+          fieldName: fieldName + "Days",
+          formGroup: {
+            classes: "govuk-form-group--inline"
+          },
+          label: {
+            text: "Days"
+          }
+        },
+        context
+      )
+    }}
+
+    {% endcall %}
+  </div>
+
+{% endmacro %}

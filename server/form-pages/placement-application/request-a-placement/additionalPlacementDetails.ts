@@ -1,39 +1,59 @@
 import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 
+import { weeksToDays } from 'date-fns'
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
 
 export type Body = {
   duration: string
+  durationDays: string
+  durationWeeks: string
   reason: string
 } & ObjectWithDateParts<'arrivalDate'>
 
 @Page({
   name: 'additional-placement-details',
-  bodyProperties: ['arrivalDate', 'arrivalDate-day', 'arrivalDate-month', 'arrivalDate-year', 'duration', 'reason'],
+  bodyProperties: [
+    'arrivalDate',
+    'arrivalDate-day',
+    'arrivalDate-month',
+    'arrivalDate-year',
+    'duration',
+    'durationDays',
+    'durationWeeks',
+    'reason',
+  ],
 })
 export default class AdditionalPlacementDetails implements TasklistPage {
   title = 'Placement details'
 
-  body: Body
-
   questions = {
     arrivalDate: 'When will the person arrive?',
-    duration: 'How long should the Approved Premises placement last? (in weeks)',
+    duration: 'How long should the Approved Premises placement last?',
     reason: 'Why are you requesting this placement?',
   }
 
-  constructor(_body: Body) {
-    this.body = {
-      'arrivalDate-year': _body['arrivalDate-year'],
-      'arrivalDate-month': _body['arrivalDate-month'],
-      'arrivalDate-day': _body['arrivalDate-day'],
-      arrivalDate: DateFormats.dateAndTimeInputsToIsoString(_body as ObjectWithDateParts<'arrivalDate'>, 'arrivalDate')
-        .arrivalDate,
-      duration: _body.duration,
-      reason: _body.reason,
+  constructor(private _body: Body) {}
+
+  get body() {
+    return {
+      'arrivalDate-year': this._body['arrivalDate-year'],
+      'arrivalDate-month': this._body['arrivalDate-month'],
+      'arrivalDate-day': this._body['arrivalDate-day'],
+      arrivalDate: DateFormats.dateAndTimeInputsToIsoString(
+        this._body as ObjectWithDateParts<'arrivalDate'>,
+        'arrivalDate',
+      ).arrivalDate,
+      durationDays: this._body.durationDays,
+      durationWeeks: this._body.durationWeeks,
+      duration: this.lengthInDays(),
+      reason: this._body.reason,
     }
+  }
+
+  set body(value: Body) {
+    this._body = value
   }
 
   previous() {
@@ -47,7 +67,10 @@ export default class AdditionalPlacementDetails implements TasklistPage {
   response() {
     return {
       [this.questions.arrivalDate]: DateFormats.isoDateToUIDate(this.body.arrivalDate),
-      [this.questions.duration]: `${this.body.duration} weeks`,
+      [this.questions.duration]: DateFormats.formatDuration({
+        weeks: this.body.durationDays,
+        days: this.body.durationWeeks,
+      }),
       [this.questions.reason]: this.body.reason,
     }
   }
@@ -70,5 +93,16 @@ export default class AdditionalPlacementDetails implements TasklistPage {
     }
 
     return errors
+  }
+
+  private lengthInDays(): string {
+    if (this._body.durationWeeks && this._body.durationDays) {
+      const lengthOfStayWeeksInDays = weeksToDays(Number(this._body.durationWeeks))
+      const totalLengthInDays = lengthOfStayWeeksInDays + Number(this._body.durationDays)
+
+      return String(totalLengthInDays)
+    }
+
+    return undefined
   }
 }
