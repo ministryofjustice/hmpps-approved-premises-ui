@@ -24,9 +24,9 @@ type PlacementDurationBody = {
 export default class PlacementDuration implements TasklistPage {
   title = 'Placement duration and move on'
 
-  arrivalDate: Date | null = this.fetchArrivalDate()
+  arrivalDate: Date = this.fetchArrivalDate()
 
-  departureDate: Date | null = this.fetchDepartureDate()
+  departureDate: Date = this.fetchDepartureDate()
 
   questions = {
     differentDuration: 'Does this application require a different placement duration?',
@@ -35,7 +35,7 @@ export default class PlacementDuration implements TasklistPage {
   }
 
   constructor(public body: Partial<PlacementDurationBody>, private readonly application: ApprovedPremisesApplication) {
-    this.body.duration = String(this.lengthInDays())
+    this.body.duration = this.lengthInDays()
   }
 
   previous() {
@@ -85,19 +85,15 @@ export default class PlacementDuration implements TasklistPage {
     return errors
   }
 
-  private lengthInDays(): number | null {
-    if (this.body.differentDuration === 'yes') {
-      if (this.body.durationDays && this.body.durationWeeks) {
-        return weeksToDays(Number(this.body.durationWeeks)) + Number(this.body.durationDays)
-      }
-
-      return null
+  private lengthInDays(): string {
+    if (this.body.differentDuration === 'yes' && this.body.durationDays && this.body.durationWeeks) {
+      return String(weeksToDays(Number(this.body.durationWeeks)) + Number(this.body.durationDays))
     }
 
-    return null
+    return undefined
   }
 
-  private fetchArrivalDate(): Date | null {
+  private fetchArrivalDate(): Date {
     try {
       const basicInformation = this.application.data['basic-information']
 
@@ -105,17 +101,17 @@ export default class PlacementDuration implements TasklistPage {
 
       const placementDate = basicInformation['placement-date']
 
-      if (!placementDate) return null
+      if (!placementDate) return undefined
 
       if (placementDate && placementDate.startDateSameAsReleaseDate === 'yes') {
         const releaseDate = basicInformation['release-date']
 
-        if (!releaseDate) return null
+        if (!releaseDate) return undefined
 
         return DateFormats.isoToDateObj(releaseDate.releaseDate)
       }
 
-      return placementDate?.startDate ? DateFormats.isoToDateObj(placementDate.startDate) : null
+      return placementDate?.startDate ? DateFormats.isoToDateObj(placementDate.startDate) : undefined
     } catch (e) {
       throw new SessionDataError(`Move on information placement duration error: ${e}`)
     }
