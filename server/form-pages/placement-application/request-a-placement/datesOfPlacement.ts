@@ -1,6 +1,6 @@
 import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 
-import { formatDuration, weeksToDays } from 'date-fns'
+import { weeksToDays } from 'date-fns'
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
@@ -63,16 +63,10 @@ export default class DatesOfPlacement implements TasklistPage {
   response() {
     return {
       [this.questions.arrivalDate]: DateFormats.isoDateToUIDate(this.body.arrivalDate),
-      [this.questions.duration]: formatDuration(
-        {
-          weeks: Number(this.body.durationDays),
-          days: Number(this.body.durationWeeks),
-        },
-        {
-          format: ['weeks', 'days'],
-          delimiter: ', ',
-        },
-      ),
+      [this.questions.duration]: DateFormats.formatDuration({
+        weeks: this.body.durationDays,
+        days: this.body.durationWeeks,
+      }),
     }
   }
 

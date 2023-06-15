@@ -1,9 +1,19 @@
 /* eslint-disable */
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 
-import { differenceInDays, formatDistanceStrict, getUnixTime, formatISO, parseISO, format, isPast } from 'date-fns'
+import { differenceInDays, formatDistanceStrict, formatISO, parseISO, format, isPast, formatDuration } from 'date-fns'
 
 type DifferenceInDays = { ui: string; number: number }
+
+type DurationWithNumberOrString = {
+  years?: number | string
+  months?: number | string
+  weeks?: number | string
+  days?: number | string
+  hours?: number | string
+  minutes?: number | string
+  seconds?: number | string
+}
 export class DateFormats {
   /**
    * @param date JS Date object.
@@ -112,6 +122,16 @@ export class DateFormats {
 
   static isoDateToDateInputs<K extends string>(isoDate: string, key: string): ObjectWithDateParts<K> {
     return DateFormats.dateObjectToDateInputs(DateFormats.isoToDateObj(isoDate), key)
+  }
+
+  static formatDuration(duration: DurationWithNumberOrString, format: Array<string> = ['weeks', 'days']): string {
+    const formattedDuration = {} as Duration
+    Object.keys(duration).forEach(k => (formattedDuration[k] = Number(duration[k])))
+
+    return formatDuration(formattedDuration, {
+      format,
+      delimiter: ', ',
+    })
   }
 }
 

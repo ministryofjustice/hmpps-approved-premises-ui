@@ -1,4 +1,4 @@
-import { addDays, formatDuration, weeksToDays } from 'date-fns'
+import { addDays, weeksToDays } from 'date-fns'
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { SessionDataError } from '../../../utils/errors'
@@ -53,10 +53,7 @@ export default class PlacementDuration implements TasklistPage {
 
     if (this.body.differentDuration === 'yes') {
       response[this.questions.duration] = sentenceCase(
-        `${formatDuration(
-          { weeks: Number(this.body.durationWeeks), days: Number(this.body.durationDays) },
-          { delimiter: ', ' },
-        )}`,
+        `${DateFormats.formatDuration({ weeks: this.body.durationWeeks, days: this.body.durationDays })}`,
       )
       response[this.questions.reason] = this.body.reason
     }

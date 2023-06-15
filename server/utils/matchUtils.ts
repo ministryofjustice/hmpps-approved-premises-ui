@@ -1,4 +1,4 @@
-import { addWeeks, formatDuration, weeksToDays } from 'date-fns'
+import { addWeeks, weeksToDays } from 'date-fns'
 import {
   ApprovedPremisesBedSearchParameters as BedSearchParameters,
   BedSearchResult,
@@ -105,7 +105,7 @@ export const decodeBedSearchResult = (string: string): BedSearchResult => {
 }
 
 export const placementLength = (lengthInWeeks: number): string => {
-  return formatDuration({ weeks: lengthInWeeks }, { format: ['weeks'] })
+  return DateFormats.formatDuration({ weeks: lengthInWeeks }, ['weeks'])
 }
 
 export const placementDates = (startDateString: string, lengthInWeeks: string): PlacementDates => {

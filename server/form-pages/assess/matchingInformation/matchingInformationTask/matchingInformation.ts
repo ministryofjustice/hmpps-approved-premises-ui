@@ -1,7 +1,8 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
-import { formatDuration, weeksToDays } from 'date-fns'
+import { weeksToDays } from 'date-fns'
+import { DateFormats } from '../../../../utils/dateUtils'
 import { daysToWeeksAndDays } from '../../../../utils/assessments/dateUtils'
 import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
 import { Page } from '../../../utils/decorators'
@@ -139,16 +140,10 @@ export default class MatchingInformation implements TasklistPage {
     response['Do you agree with the suggested length of stay?'] = sentenceCase(this.body.lengthOfStayAgreed)
 
     if (this.body.lengthOfStayAgreed === 'no') {
-      response['Recommended length of stay'] = formatDuration(
-        {
-          weeks: Number(this.body.lengthOfStayWeeks),
-          days: Number(this.body.lengthOfStayDays),
-        },
-        {
-          format: ['weeks', 'days'],
-          delimiter: ', ',
-        },
-      )
+      response['Recommended length of stay'] = DateFormats.formatDuration({
+        weeks: this.body.lengthOfStayWeeks,
+        days: this.body.lengthOfStayDays,
+      })
     }
 
     if (this.body.cruInformation) {
@@ -191,10 +186,7 @@ export default class MatchingInformation implements TasklistPage {
   }
 
   get suggestedLengthOfStay() {
-    return formatDuration(daysToWeeksAndDays(placementDurationFromApplication(this.assessment.application)), {
-      format: ['weeks', 'days'],
-      delimiter: ', ',
-    })
+    return DateFormats.formatDuration(daysToWeeksAndDays(placementDurationFromApplication(this.assessment.application)))
   }
 
   get specialistSupportCheckboxes() {
