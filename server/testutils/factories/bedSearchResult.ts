@@ -17,6 +17,7 @@ export const bedSearchResultsFactory = Factory.define<BedSearchResults>(() => ({
 }))
 
 export const bedSearchResultFactory = Factory.define<BedSearchResult>(() => ({
+  serviceName: 'approved-premises',
   premises: premisesSummaryFactory.build(),
   room: roomSummaryFactory.build(),
   bed: bedSummaryFactory.build(),

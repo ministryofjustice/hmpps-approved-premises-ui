@@ -5,6 +5,7 @@ import type { ApArea, ApprovedPremises, LocalAuthorityArea, ProbationRegion } fr
 
 export default Factory.define<ApprovedPremises>(() => ({
   id: faker.string.uuid(),
+  service: 'approved-premises',
   name: `${faker.word.adjective()} ${faker.word.adverb()} ${faker.word.noun()}`,
   status: faker.helpers.arrayElement(['pending', 'active', 'archived']),
   apCode: faker.string.alphanumeric(5),

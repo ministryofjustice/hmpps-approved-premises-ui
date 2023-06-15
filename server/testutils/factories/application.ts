@@ -103,6 +103,7 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
 }
 
 export default ApplicationFactory.define(() => ({
+  type: 'CAS1',
   id: faker.string.uuid(),
   person: personFactory.build(),
   createdByUserId: faker.string.uuid(),

@@ -88,6 +88,7 @@ describe('matchUtils', () => {
         ...uiParams,
         durationDays: 15,
         maxDistanceMiles: Number(uiParams.maxDistanceMiles),
+        serviceName: 'approved-premises',
       })
     })
   })

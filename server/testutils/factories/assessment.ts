@@ -25,6 +25,7 @@ class AssessmentFactory extends Factory<ApprovedPremisesAssessment> {
 
 export default AssessmentFactory.define(() => ({
   id: faker.string.uuid(),
+  service: 'approved-premises',
   application: applicationFactory.withReleaseDate().build(),
   allocatedToStaffMemberId: faker.string.uuid(),
   allocatedToStaffMember: userFactory.build(),

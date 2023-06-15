@@ -9,6 +9,7 @@ import personFactory from './person'
 
 export default Factory.define<ApplicationSummary>(() => ({
   id: faker.string.uuid(),
+  type: 'CAS1',
   person: personFactory.build(),
   createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   submittedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),

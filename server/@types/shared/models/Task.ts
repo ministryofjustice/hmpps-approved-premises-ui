@@ -8,11 +8,11 @@ import type { TaskStatus } from './TaskStatus';
 import type { TaskType } from './TaskType';
 
 export type Task = {
+    taskType: TaskType;
     applicationId: string;
     person: Person;
     dueDate: string;
     allocatedToStaffMember: ApprovedPremisesUser;
     status: TaskStatus;
-    taskType: TaskType;
 };
 
