@@ -35,7 +35,7 @@ describe('acceptanceData', () => {
     it('should return the placement dates if an arrival date is provided', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(expectedArrival)
 
-      mockOptionalQuestionResponse({ lengthOfStayAgreedDetail: '12' })
+      mockOptionalQuestionResponse({ lengthOfStay: '12' })
 
       const result = placementDates(assessment)
 
@@ -47,7 +47,7 @@ describe('acceptanceData', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(expectedArrival)
       ;(placementDurationFromApplication as jest.Mock).mockReturnValueOnce('52')
 
-      mockOptionalQuestionResponse({ lengthOfStayAgreedDetail: undefined })
+      mockOptionalQuestionResponse({ lengthOfStay: undefined })
 
       const result = placementDates(assessment)
 
@@ -76,7 +76,7 @@ describe('acceptanceData', () => {
     it('converts matching data into a placement request', () => {
       mockQuestionResponse({ postcodeArea: 'ABC123', type: 'normal', duration: '12' })
       mockOptionalQuestionResponse({
-        lengthOfStayAgreedDetail: '12',
+        lengthOfStay: '12',
         alternativeRadius: '100',
       })
 
@@ -91,7 +91,7 @@ describe('acceptanceData', () => {
     })
 
     it('returns a default radius if one is not present', () => {
-      mockOptionalQuestionResponse({ lengthOfStayAgreedDetail: '12', alternativeRadius: undefined })
+      mockOptionalQuestionResponse({ lengthOfStay: '12', alternativeRadius: undefined })
 
       const result = placementRequestData(assessment)
 

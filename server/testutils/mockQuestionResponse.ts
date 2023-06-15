@@ -59,7 +59,7 @@ export const mockOptionalQuestionResponse = ({
   isExceptionalCase,
   shouldPersonBePlacedInMaleAp,
   agreedCaseWithManager,
-  lengthOfStayAgreedDetail,
+  lengthOfStay,
   cruInformation,
 }: {
   releaseType?: string
@@ -71,7 +71,7 @@ export const mockOptionalQuestionResponse = ({
   isExceptionalCase?: string
   shouldPersonBePlacedInMaleAp?: string
   agreedCaseWithManager?: string
-  lengthOfStayAgreedDetail?: string
+  lengthOfStay?: string
   cruInformation?: string
 }) => {
   ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockImplementation(
@@ -113,8 +113,8 @@ export const mockOptionalQuestionResponse = ({
         return agreedCaseWithManager
       }
 
-      if (question === 'lengthOfStayAgreedDetail') {
-        return lengthOfStayAgreedDetail
+      if (question === 'lengthOfStay') {
+        return lengthOfStay
       }
 
       if (question === 'cruInformation') {

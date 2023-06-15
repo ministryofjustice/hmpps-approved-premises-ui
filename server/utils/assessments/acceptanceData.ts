@@ -50,11 +50,8 @@ export const placementDates = (assessment: Assessment): PlacementDates | null =>
   }
 
   const placementDuration =
-    retrieveOptionalQuestionResponseFromApplicationOrAssessment(
-      assessment,
-      MatchingInformation,
-      'lengthOfStayAgreedDetail',
-    ) || placementDurationFromApplication(assessment.application)
+    retrieveOptionalQuestionResponseFromApplicationOrAssessment(assessment, MatchingInformation, 'lengthOfStay') ||
+    placementDurationFromApplication(assessment.application)
 
   return {
     expectedArrival: arrivalDate,
