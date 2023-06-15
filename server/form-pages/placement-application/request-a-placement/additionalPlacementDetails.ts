@@ -95,7 +95,7 @@ export default class AdditionalPlacementDetails implements TasklistPage {
     return errors
   }
 
-  private lengthInDays(): string {
+  private lengthInDays(): string | undefined {
     if (this._body.durationWeeks && this._body.durationDays) {
       const lengthOfStayWeeksInDays = weeksToDays(Number(this._body.durationWeeks))
       const totalLengthInDays = lengthOfStayWeeksInDays + Number(this._body.durationDays)

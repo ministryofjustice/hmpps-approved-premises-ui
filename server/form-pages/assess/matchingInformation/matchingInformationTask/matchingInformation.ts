@@ -215,7 +215,7 @@ export default class MatchingInformation implements TasklistPage {
     return selectedOptions.length ? selectedOptions.map((k: string) => this[`${key}Options`][k]).join(', ') : 'None'
   }
 
-  private lengthInDays(): string {
+  private lengthInDays(): string | undefined {
     if (this.body.lengthOfStayAgreed === 'no') {
       if (this.body.lengthOfStayDays && this.body.lengthOfStayWeeks) {
         const lengthOfStayWeeksInDays = weeksToDays(Number(this.body.lengthOfStayWeeks))

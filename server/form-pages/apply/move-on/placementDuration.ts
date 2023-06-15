@@ -85,7 +85,7 @@ export default class PlacementDuration implements TasklistPage {
     return errors
   }
 
-  private lengthInDays(): string {
+  private lengthInDays(): string | undefined {
     if (this.body.differentDuration === 'yes' && this.body.durationDays && this.body.durationWeeks) {
       return String(weeksToDays(Number(this.body.durationWeeks)) + Number(this.body.durationDays))
     }
@@ -93,7 +93,7 @@ export default class PlacementDuration implements TasklistPage {
     return undefined
   }
 
-  private fetchArrivalDate(): Date {
+  private fetchArrivalDate(): Date | undefined {
     try {
       const basicInformation = this.application.data['basic-information']
 
@@ -117,9 +117,9 @@ export default class PlacementDuration implements TasklistPage {
     }
   }
 
-  private fetchDepartureDate(): Date | null {
+  private fetchDepartureDate(): Date | undefined {
     const standardPlacementDuration = getDefaultPlacementDurationInWeeks(this.application)
 
-    return this.arrivalDate ? addDays(this.arrivalDate, 7 * standardPlacementDuration) : null
+    return this.arrivalDate ? addDays(this.arrivalDate, 7 * standardPlacementDuration) : undefined
   }
 }
