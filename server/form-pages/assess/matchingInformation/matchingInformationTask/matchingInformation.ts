@@ -112,11 +112,13 @@ export default class MatchingInformation implements TasklistPage {
     response['Accessibility needs'] = this.selectedOptions('accessibility')
 
     this.placementRequirements.forEach(placementRequirement => {
-      response[`${sentenceCase(placementRequirement)}`] = `${sentenceCase(this.body[placementRequirement])}`
+      response[`${placementCriteria[placementRequirement]}`] = `${sentenceCase(this.body[placementRequirement])}`
     })
 
     this.offenceAndRiskInformationKeys.forEach(offenceOrRiskInformation => {
-      response[`${sentenceCase(offenceOrRiskInformation)}`] = `${sentenceCase(this.body[offenceOrRiskInformation])}`
+      response[`${placementCriteria[offenceOrRiskInformation]}`] = `${sentenceCase(
+        this.body[offenceOrRiskInformation],
+      )}`
     })
 
     response['Do you agree with the suggested length of stay?'] = sentenceCase(this.body.lengthOfStayAgreed)
