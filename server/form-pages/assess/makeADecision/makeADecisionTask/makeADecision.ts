@@ -28,6 +28,7 @@ export default class MakeADecision implements TasklistPage {
     'Reject, insufficient information': {
       insufficientMoveOnPlan: 'Insufficient move on plan',
       insufficientContingencyPlan: 'Insufficient contingency plan',
+      informationNotProvided: 'Requested information not provided by probation practitioner',
     },
     'Requested information not provided by probation practitioner': {
       riskTooHigh: 'Reject, risk too high (must be approved by an AP Area Manager (APAM)',
