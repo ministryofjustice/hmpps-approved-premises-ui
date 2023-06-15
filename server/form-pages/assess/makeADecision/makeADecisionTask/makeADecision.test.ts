@@ -49,12 +49,11 @@ describe('MakeADecision', () => {
   describe('response', () => {
     it('returns the response', () => {
       const page = new MakeADecision({
-        decision: 'riskTooHigh',
+        decision: 'informationNotProvided',
       })
 
       expect(page.response()).toEqual({
-        Decision:
-          'Requested information not provided by probation practitioner: Reject, risk too high (must be approved by an AP Area Manager (APAM)',
+        Decision: 'Reject, insufficient information: Requested information not provided by probation practitioner',
       })
     })
   })
