@@ -45,6 +45,7 @@ export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParame
     ...query,
     durationDays,
     maxDistanceMiles: Number(query.maxDistanceMiles),
+    serviceName: 'approved-premises',
   }
 }
 
