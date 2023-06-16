@@ -1,8 +1,22 @@
 import { addDays, differenceInDays } from 'date-fns'
-import type { BedOccupancyEntry, BedOccupancyRange } from '@approved-premises/api'
 
-import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
+import { Factory } from 'fishery'
+
+import type {
+  BedOccupancyBookingEntry,
+  BedOccupancyEntry,
+  BedOccupancyLostBedEntry,
+  BedOccupancyOpenEntry,
+  BedOccupancyRange,
+} from '@approved-premises/api'
+import {
+  BedOccupancyBookingEntryUi,
+  BedOccupancyEntryUi,
+  BedOccupancyLostBedEntryUi,
+  BedOccupancyOpenEntryUi,
+  BedOccupancyRangeUi,
+} from '../../@types/ui'
 
 import { DateFormats } from '../../utils/dateUtils'
 
@@ -55,3 +69,53 @@ const bedOccupancyEntryOpenFactory = Factory.define<BedOccupancyOpenEntryUi>(() 
   ...bedOccupancyEntryFactory.build(),
   type: 'open',
 }))
+
+export const bedOccupancyRangeFactoryUi = Factory.define<BedOccupancyRangeUi>(generator => ({
+  bedId: faker.string.uuid(),
+  bedName: `bed ${generator.sequence}`,
+  schedule: faker.helpers.arrayElements(
+    [
+      bedOccupancyEntryBookingUiFactory.build(),
+      bedOccupancyEntryLostBedUiFactory.build(),
+      bedOccupancyEntryOpenUiFactory.build(),
+    ],
+    10,
+  ),
+}))
+
+export const bedOccupancyEntryUiFactory = Factory.define<BedOccupancyEntryUi>(() => {
+  const { startDate, endDate, length } = generateStay()
+  return {
+    startDate,
+    endDate,
+    length,
+    type: 'booking',
+  } as BedOccupancyEntryUi
+})
+
+export const bedOccupancyEntryBookingUiFactory = Factory.define<BedOccupancyBookingEntryUi>(
+  () =>
+    ({
+      ...bedOccupancyEntryUiFactory.build(),
+      type: 'booking',
+      personName: faker.person.firstName(),
+      bookingId: faker.string.uuid(),
+    } as BedOccupancyBookingEntryUi),
+)
+
+export const bedOccupancyEntryLostBedUiFactory = Factory.define<BedOccupancyLostBedEntryUi>(
+  () =>
+    ({
+      ...bedOccupancyEntryUiFactory.build(),
+      type: 'lost_bed',
+      lostBedId: faker.string.uuid(),
+    } as BedOccupancyLostBedEntryUi),
+)
+
+export const bedOccupancyEntryOpenUiFactory = Factory.define<BedOccupancyOpenEntryUi>(
+  () =>
+    ({
+      ...bedOccupancyEntryUiFactory.build(),
+      type: 'open',
+    } as BedOccupancyOpenEntryUi),
+)
