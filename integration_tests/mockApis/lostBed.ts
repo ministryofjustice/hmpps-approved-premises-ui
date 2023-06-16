@@ -21,6 +21,55 @@ export default {
       },
     }),
 
+  stubLostBedUpdate: (args: { lostBed: LostBed; premisesId: string }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PUT',
+        url: `/premises/${args.premisesId}/lost-beds/${args.lostBed.id}`,
+      },
+      response: {
+        status: 201,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.lostBed,
+      },
+    }),
+
+  stubLostBedUpdateErrors: (args: { lostBed: LostBed; premisesId: string; params: Array<string> }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'PUT',
+        url: `/premises/${args.premisesId}/lost-beds/${args.lostBed.id}`,
+      },
+      response: {
+        status: 400,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: {
+          type: 'https://example.net/validation-error',
+          title: 'Invalid request parameters',
+          code: 400,
+          'invalid-params': [
+            {
+              propertyName: `$.endDate`,
+              errorType: 'empty',
+            },
+          ],
+        },
+      },
+    }),
+
+  stubLostBedsList: (args: { premisesId: string; lostBeds: Array<LostBed> }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/premises/${args.premisesId}/lost-beds`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.lostBeds,
+      },
+    }),
+
   stubLostBed: (args: { premisesId: string; lostBed: LostBed }): SuperAgentRequest =>
     stubFor({
       request: {
@@ -62,6 +111,14 @@ export default {
       await getMatchingRequests({
         method: 'POST',
         url: `/premises/${args.premisesId}/lost-beds`,
+      })
+    ).body.requests,
+
+  verifyLostBedUpdate: async (args: { premisesId: string; lostBed: LostBed }) =>
+    (
+      await getMatchingRequests({
+        method: 'PUT',
+        url: `/premises/${args.premisesId}/lost-beds/${args.lostBed.id}`,
       })
     ).body.requests,
 }
