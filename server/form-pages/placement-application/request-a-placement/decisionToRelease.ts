@@ -22,7 +22,7 @@ export default class DecisionToRelease implements TasklistPage {
   title = 'Release details'
 
   questions = {
-    decisionToReleaseDate: 'When will the person arrive?',
+    decisionToReleaseDate: 'Enter the date of decision',
     informationFromDirectionToRelease:
       'Provide relevant information from the direction to release that will impact the placement',
   }
