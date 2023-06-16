@@ -10,6 +10,10 @@ import {
   ArrayOfOASysSupportingInformationQuestions,
   ApprovedPremisesAssessment as Assessment,
   AssessmentTask,
+  BedOccupancyBookingEntry,
+  BedOccupancyLostBedEntry,
+  BedOccupancyOpenEntry,
+  BedOccupancyRange,
   Booking,
   BookingAppealTask,
   Document,
@@ -349,3 +353,28 @@ export interface BedSearchParametersUi {
 export type ReleaseTypeOptions = Record<ReleaseTypeOption, string>
 
 export type FormArtifact = ApprovedPremisesApplication | ApprovedPremisesAssessment | PlacementApplication
+
+type RemoveStartAndEndDates<T> = Omit<T, 'startDate' | 'endDate'>
+
+interface StartAndEndDates {
+  startDate: Date
+  endDate: Date
+}
+
+export interface BedOccupancyBookingEntryUi extends RemoveStartAndEndDates<BedOccupancyBookingEntry>, StartAndEndDates {
+  type: 'booking'
+}
+
+export interface BedOccupancyLostBedEntryUi extends RemoveStartAndEndDates<BedOccupancyLostBedEntry>, StartAndEndDates {
+  type: 'lost_bed'
+}
+
+export interface BedOccupancyOpenEntryUi extends RemoveStartAndEndDates<BedOccupancyOpenEntry>, StartAndEndDates {
+  type: 'open'
+}
+
+export type BedOccupancyEntryTypes = BedOccupancyBookingEntryUi | BedOccupancyLostBedEntryUi | BedOccupancyOpenEntryUi
+
+export type BedOccupancyEntryUi = BedOccupancyEntryTypes & { type: 'open' | 'lost_bed' | 'booking' }
+
+export type BedOccupancyRangeUi = Omit<BedOccupancyRange, 'schedule'> & { schedule: Array<BedOccupancyEntryUi> }
