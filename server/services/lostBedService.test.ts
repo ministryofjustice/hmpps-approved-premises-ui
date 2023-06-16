@@ -18,6 +18,8 @@ describe('LostBedService', () => {
 
   const service = new LostBedService(LostBedClientFactory, ReferenceDataClientFactory)
 
+  const premisesId = 'premisesId'
+
   beforeEach(() => {
     jest.resetAllMocks()
     LostBedClientFactory.mockReturnValue(lostBedClient)
@@ -32,11 +34,11 @@ describe('LostBedService', () => {
       const token = 'SOME_TOKEN'
       lostBedClient.create.mockResolvedValue(lostBed)
 
-      const postedLostBed = await service.createLostBed(token, 'premisesID', newLostBed)
+      const postedLostBed = await service.createLostBed(token, premisesId, newLostBed)
 
       expect(postedLostBed).toEqual(lostBed)
       expect(LostBedClientFactory).toHaveBeenCalledWith(token)
-      expect(lostBedClient.create).toHaveBeenCalledWith('premisesID', newLostBed)
+      expect(lostBedClient.create).toHaveBeenCalledWith(premisesId, newLostBed)
     })
   })
 
@@ -47,11 +49,26 @@ describe('LostBedService', () => {
       const token = 'SOME_TOKEN'
       lostBedClient.find.mockResolvedValue(lostBed)
 
-      const postedLostBed = await service.getLostBed(token, 'premisesID', 'id')
+      const postedLostBed = await service.getLostBed(token, premisesId, 'id')
 
       expect(postedLostBed).toEqual(lostBed)
       expect(LostBedClientFactory).toHaveBeenCalledWith(token)
-      expect(lostBedClient.find).toHaveBeenCalledWith('premisesID', 'id')
+      expect(lostBedClient.find).toHaveBeenCalledWith(premisesId, 'id')
+    })
+  })
+
+  describe('getLostBeds', () => {
+    it('on success returns the lostBeds for a premises', async () => {
+      const expectedLostBeds: Array<LostBed> = lostBedFactory.buildList(2)
+
+      const token = 'SOME_TOKEN'
+      lostBedClient.get.mockResolvedValue(expectedLostBeds)
+
+      const lostBeds = await service.getLostBeds(token, premisesId)
+
+      expect(lostBeds).toEqual(expectedLostBeds)
+      expect(LostBedClientFactory).toHaveBeenCalledWith(token)
+      expect(lostBedClient.get).toHaveBeenCalledWith(premisesId)
     })
   })
 
@@ -73,6 +90,31 @@ describe('LostBedService', () => {
       expect(result).toEqual(lostBedReasons)
       expect(ReferenceDataClientFactory).toHaveBeenCalledWith(token)
       expect(referenceDataClient.getReferenceData).toHaveBeenCalledWith('lost-bed-reasons')
+    })
+  })
+
+  describe('updateLostBed', () => {
+    it('updates and returns the specified lost bed', async () => {
+      const lostBed: LostBed = lostBedFactory.build()
+      const endDate = '2022-09-22'
+      const notes = 'note'
+
+      const token = 'SOME_TOKEN'
+      lostBedClient.update.mockResolvedValue(lostBed)
+
+      const lostBedUpdateData = {
+        startDate: lostBed.startDate,
+        endDate,
+        reason: lostBed.reason.id,
+        referenceNumber: lostBed.referenceNumber,
+        notes,
+      }
+
+      const updatedLostBed = await service.updateLostBed(token, lostBed.id, premisesId, lostBedUpdateData)
+
+      expect(updatedLostBed).toEqual(lostBed)
+      expect(LostBedClientFactory).toHaveBeenCalledWith(token)
+      expect(lostBedClient.update).toHaveBeenCalledWith(lostBed.id, lostBedUpdateData, premisesId)
     })
   })
 })
