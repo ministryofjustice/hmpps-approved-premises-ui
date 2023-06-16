@@ -15,6 +15,10 @@ export default class ShowPage extends Page {
     return new ShowPage(application)
   }
 
+  shouldNotShowCreatePlacementButton() {
+    cy.get('Create placement request').should('not.exist')
+  }
+
   shouldShowPersonInformation() {
     cy.get('[data-cy-section="person-details"]').within(() => {
       this.assertDefinition('Name', this.application.person.name)
