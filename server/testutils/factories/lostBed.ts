@@ -8,6 +8,8 @@ import { DateFormats } from '../../utils/dateUtils'
 export default Factory.define<LostBed>(() => ({
   id: faker.string.uuid(),
   bedId: faker.string.uuid(),
+  bedName: faker.lorem.words(3),
+  roomName: faker.lorem.words(3),
   notes: faker.lorem.sentence(),
   startDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
   endDate: DateFormats.dateObjToIsoDate(faker.date.future()),
