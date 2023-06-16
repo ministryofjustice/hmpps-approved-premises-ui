@@ -193,7 +193,7 @@ jobs:
       - run:
           name: E2E Check
           command: |
-            npx playwright test
+            npm run test
       - store_artifacts:
           path: test-results
           destination: test-results
