@@ -62,7 +62,7 @@ describe('DecisionToRelease', () => {
       const page = new DecisionToRelease(body)
 
       expect(page.response()).toEqual({
-        'When will the person arrive?': 'Friday 1 December 2023',
+        'Enter the date of decision': 'Friday 1 December 2023',
         'Provide relevant information from the direction to release that will impact the placement': 'Some information',
       })
     })
