@@ -39,6 +39,7 @@ context('Placement Applications', () => {
         status: 'submitted',
         id: '123',
         createdByUserId: userId,
+        assessmentDecision: 'accepted',
       })
       cy.task('stubApplicationGet', { application: completedApplication })
       cy.task('stubApplications', [completedApplication])
@@ -105,7 +106,12 @@ context('Placement Applications', () => {
   it('allows me to complete form if the reason for placement is an additional placement on an existing application', () => {
     cy.fixture('existingApplicationPlacementApplication.json').then(placementApplicationData => {
       // Given I have completed an application I am viewing a completed application
-      const completedApplication = applicationFactory.build({ status: 'submitted', id: '123', createdByUserId: userId })
+      const completedApplication = applicationFactory.build({
+        status: 'submitted',
+        id: '123',
+        createdByUserId: userId,
+        assessmentDecision: 'accepted',
+      })
       cy.task('stubApplicationGet', { application: completedApplication })
       cy.task('stubApplications', [completedApplication])
 
@@ -169,6 +175,7 @@ context('Placement Applications', () => {
         id: '123',
         person,
         createdByUserId: userId,
+        assessmentDecision: 'accepted',
       })
       completedApplication = addResponseToFormArtifact(completedApplication, {
         section: 'type-of-ap',
@@ -230,11 +237,46 @@ context('Placement Applications', () => {
     })
   })
 
-  it('does not allow me to create an application if I did not create the application', () => {
-    // Given there is an application that I did not create
+  it('does not allow me to create a placement application if I did not create the application', () => {
+    // Given there is an accepted application that I did not create
     const application = applicationFactory.build({
       status: 'submitted',
       id: '123',
+      assessmentDecision: 'accepted',
+    })
+    cy.task('stubApplicationGet', { application })
+
+    // When I visit the readonly application view
+    const showPage = ShowPage.visit(application)
+
+    // Then I should not be able to click submit
+    showPage.shouldNotShowCreatePlacementButton()
+  })
+
+  it('does not allow me to create a placement application if the assessment was rejected', () => {
+    // Given there is an rejected application that I created
+    const application = applicationFactory.build({
+      status: 'submitted',
+      id: '123',
+      createdByUserId: userId,
+      assessmentDecision: 'rejected',
+    })
+    cy.task('stubApplicationGet', { application })
+
+    // When I visit the readonly application view
+    const showPage = ShowPage.visit(application)
+
+    // Then I should not be able to click submit
+    showPage.shouldNotShowCreatePlacementButton()
+  })
+
+  it('does not allow me to create a placement application if the assessment is not yet assessed', () => {
+    // Given there is an unassesed application that I created
+    const application = applicationFactory.build({
+      status: 'submitted',
+      id: '123',
+      createdByUserId: userId,
+      assessmentDecision: undefined,
     })
     cy.task('stubApplicationGet', { application })
 
