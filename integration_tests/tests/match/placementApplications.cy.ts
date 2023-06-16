@@ -21,10 +21,12 @@ import paths from '../../../server/paths/api'
 import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
 
 context('Placement Applications', () => {
+  const userId = 'some-user-id'
+
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubAuthUser')
+    cy.task('stubAuthUser', { userId })
   })
 
   beforeEach(() => {
@@ -33,7 +35,11 @@ context('Placement Applications', () => {
   it('allows me to complete form if the reason for placement is ROTL', () => {
     cy.fixture('rotlPlacementApplicationData.json').then(placementApplicationData => {
       // Given I have completed an application I am viewing a completed application
-      const completedApplication = applicationFactory.build({ status: 'submitted', id: '123' })
+      const completedApplication = applicationFactory.build({
+        status: 'submitted',
+        id: '123',
+        createdByUserId: userId,
+      })
       cy.task('stubApplicationGet', { application: completedApplication })
       cy.task('stubApplications', [completedApplication])
 
@@ -99,7 +105,7 @@ context('Placement Applications', () => {
   it('allows me to complete form if the reason for placement is an additional placement on an existing application', () => {
     cy.fixture('existingApplicationPlacementApplication.json').then(placementApplicationData => {
       // Given I have completed an application I am viewing a completed application
-      const completedApplication = applicationFactory.build({ status: 'submitted', id: '123' })
+      const completedApplication = applicationFactory.build({ status: 'submitted', id: '123', createdByUserId: userId })
       cy.task('stubApplicationGet', { application: completedApplication })
       cy.task('stubApplications', [completedApplication])
 
@@ -158,7 +164,12 @@ context('Placement Applications', () => {
     cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
       // Given I have completed an application I am viewing a completed application
       const person = personFactory.build()
-      let completedApplication = applicationFactory.build({ status: 'submitted', id: '123', person })
+      let completedApplication = applicationFactory.build({
+        status: 'submitted',
+        id: '123',
+        person,
+        createdByUserId: userId,
+      })
       completedApplication = addResponseToFormArtifact(completedApplication, {
         section: 'type-of-ap',
         page: 'ap-type',
@@ -217,5 +228,20 @@ context('Placement Applications', () => {
       checkYourAnswersPage.completeForm()
       checkYourAnswersPage.clickSubmit()
     })
+  })
+
+  it('does not allow me to create an application if I did not create the application', () => {
+    // Given there is an application that I did not create
+    const application = applicationFactory.build({
+      status: 'submitted',
+      id: '123',
+    })
+    cy.task('stubApplicationGet', { application })
+
+    // When I visit the readonly application view
+    const showPage = ShowPage.visit(application)
+
+    // Then I should not be able to click submit
+    showPage.shouldNotShowCreatePlacementButton()
   })
 })
