@@ -1,11 +1,14 @@
 import LostBedClient from './lostBedClient'
 import { lostBedFactory, newLostBedFactory } from '../testutils/factories'
+import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
 
 describeClient('LostBedClient', provider => {
   let lostBedClient: LostBedClient
 
   const token = 'token-1'
+
+  const premisesId = 'premisesId'
 
   beforeEach(() => {
     lostBedClient = new LostBedClient(token)
@@ -23,7 +26,7 @@ describeClient('LostBedClient', provider => {
         uponReceiving: 'A request to create a lost bed',
         withRequest: {
           method: 'POST',
-          path: `/premises/premisesId/lost-beds`,
+          path: paths.premises.lostBeds.create({ premisesId }),
           body: newLostBed,
           headers: {
             authorization: `Bearer ${token}`,
@@ -35,7 +38,7 @@ describeClient('LostBedClient', provider => {
         },
       })
 
-      const result = await lostBedClient.create('premisesId', newLostBed)
+      const result = await lostBedClient.create(premisesId, newLostBed)
 
       expect(result).toEqual(lostBed)
     })
@@ -52,7 +55,7 @@ describeClient('LostBedClient', provider => {
         uponReceiving: 'A request to find a lost bed',
         withRequest: {
           method: 'GET',
-          path: `/premises/premisesId/lost-beds/lostBedId`,
+          path: paths.premises.lostBeds.show({ premisesId, id: lostBed.id }),
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -63,7 +66,70 @@ describeClient('LostBedClient', provider => {
         },
       })
 
-      const result = await lostBedClient.find('premisesId', 'lostBedId')
+      const result = await lostBedClient.find('premisesId', lostBed.id)
+
+      expect(result).toEqual(lostBed)
+    })
+  })
+
+  describe('get', () => {
+    it('should get all lostBeds for a premises', async () => {
+      const lostBeds = lostBedFactory.buildList(2)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get lost beds',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.lostBeds.index({ premisesId }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: lostBeds,
+        },
+      })
+
+      const result = await lostBedClient.get('premisesId')
+
+      expect(result).toEqual(lostBeds)
+    })
+  })
+
+  describe('update', () => {
+    it('updates a lost bed', async () => {
+      const lostBed = lostBedFactory.build()
+      const endDate = '2022-09-22'
+      const notes = 'note'
+
+      const lostBedUpdateData = {
+        startDate: lostBed.startDate,
+        endDate,
+        reason: lostBed.reason.id,
+        referenceNumber: lostBed.referenceNumber,
+        notes,
+      }
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to update a lost bed',
+        withRequest: {
+          method: 'PUT',
+          path: paths.premises.lostBeds.update({ premisesId, id: lostBed.id }),
+          body: lostBedUpdateData,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: lostBed,
+        },
+      })
+
+      const result = await lostBedClient.update(lostBed.id, lostBedUpdateData, 'premisesId')
 
       expect(result).toEqual(lostBed)
     })

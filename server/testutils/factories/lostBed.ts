@@ -16,5 +16,5 @@ export default Factory.define<LostBed>(() => ({
   referenceNumber: faker.string.uuid(),
   reason: referenceDataFactory.lostBedReasons().build(),
   status: 'active',
-  cancellation: null,
+  cancellation: { id: faker.string.uuid(), createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()) },
 }))

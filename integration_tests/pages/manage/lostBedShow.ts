@@ -6,7 +6,7 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 
 export default class LostBedShowPage extends Page {
   constructor(private readonly lostBed: LostBed) {
-    super('Lost bed details')
+    super('Manage out of service bed')
   }
 
   static visit(premisesId: string, lostBed: LostBed): LostBedShowPage {
@@ -15,8 +15,17 @@ export default class LostBedShowPage extends Page {
   }
 
   shouldShowLostBedDetail(): void {
-    this.assertDefinition('Start date', DateFormats.isoDateToUIDate(this.lostBed.startDate, { format: 'short' }))
-    this.assertDefinition('End date', DateFormats.isoDateToUIDate(this.lostBed.startDate, { format: 'short' }))
-    this.assertDefinition('Reason', this.lostBed.reason.name)
+    this.assertDefinition('Room number', this.lostBed.roomName)
+    this.assertDefinition('Bed number', this.lostBed.bedName)
+    this.assertDefinition('Start date', DateFormats.isoDateToUIDate(this.lostBed.startDate, { format: 'long' }))
+    this.assertDefinition('End date', DateFormats.isoDateToUIDate(this.lostBed.startDate, { format: 'long' }))
+    this.assertDefinition('Reason for bed being marked as lost', this.lostBed.reason.name)
+    this.assertDefinition('Reference number', this.lostBed.referenceNumber)
+  }
+
+  public completeForm(endDateString: string, notes: string): void {
+    super.completeDateInputs('endDate', endDateString)
+
+    cy.get('textarea[name="notes"]').type(String(notes))
   }
 }

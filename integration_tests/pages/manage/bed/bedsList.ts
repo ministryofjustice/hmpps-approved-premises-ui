@@ -23,4 +23,9 @@ export default class BedsListPage extends Page {
   clickBed(bed: BedDetail): void {
     cy.get(`a[data-cy-bedid="${bed.id}"]`).click()
   }
+
+  clickManageLostBeds(): void {
+    cy.get('.moj-button-menu__toggle-button').click()
+    cy.get('a').contains('Manage out of service beds').click()
+  }
 }

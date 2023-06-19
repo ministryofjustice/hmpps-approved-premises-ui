@@ -1,6 +1,6 @@
-import { bedDetailFactory, bedSummaryFactory } from '../../../server/testutils/factories'
+import { bedDetailFactory, bedSummaryFactory, lostBedFactory } from '../../../server/testutils/factories'
 
-import { BedShowPage, BedsListPage, BookingFindPage, LostBedCreatePage } from '../../pages/manage'
+import { BedShowPage, BedsListPage, BookingFindPage, LostBedCreatePage, LostBedListPage } from '../../pages/manage'
 import Page from '../../pages/page'
 
 context('Beds', () => {
@@ -9,13 +9,13 @@ context('Beds', () => {
     cy.task('stubSignIn')
     cy.task('stubAuthUser')
     cy.task('stubLostBedReferenceData')
+
+    // Given I am signed in
+    cy.signIn()
   })
 
   it('should allow me to visit a bed from the bed list page', () => {
     const premisesId = 'premisesId'
-
-    // Given I am signed in
-    cy.signIn()
 
     // And there are bed in the database
     const bedSummaries = bedSummaryFactory.buildList(5)
@@ -55,5 +55,29 @@ context('Beds', () => {
 
     // Then I am taken to the mark bed out of service page
     Page.verifyOnPage(LostBedCreatePage)
+  })
+
+  it('should allow me to manage out of service beds from the bed list page', () => {
+    const premisesId = 'premisesId'
+
+    // And there are beds and a lost bed in the database
+    const bedSummaries = bedSummaryFactory.buildList(5)
+    const bedDetail = bedDetailFactory.build({ ...bedSummaries[0] })
+    cy.task('stubBeds', { premisesId, bedSummaries })
+    cy.task('stubBed', { premisesId, bedDetail })
+
+    const lostBed = lostBedFactory.build()
+    cy.task('stubLostBed', { premisesId, lostBed })
+    cy.task('stubLostBedsList', { premisesId, lostBeds: [lostBed] })
+    cy.task('stubLostBedUpdate', { premisesId, lostBed })
+
+    // When I visit the rooms page
+    const bedsPage = BedsListPage.visit(premisesId)
+
+    // And I click on manage out of service beds
+    bedsPage.clickManageLostBeds()
+
+    // Then I should see the list of out of service beds
+    Page.verifyOnPage(LostBedListPage)
   })
 })
