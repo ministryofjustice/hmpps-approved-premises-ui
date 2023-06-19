@@ -1,4 +1,10 @@
-import type { ApprovedPremisesApplication, Document, Person, PrisonCaseNote } from '@approved-premises/api'
+import type {
+  ApprovedPremisesApplication,
+  Document,
+  Person,
+  PersonAcctAlert,
+  PrisonCaseNote,
+} from '@approved-premises/api'
 import { PartnerAgencyDetails } from '../../../server/@types/ui'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import ApplyPage from './applyPage'
@@ -146,6 +152,27 @@ export default class CheckYourAnswersPage extends ApplyPage {
                 this.assertDefinition('Establishment', adjudication.establishment)
                 this.assertDefinition('Offence description', adjudication.offenceDescription)
                 this.assertDefinition('Finding', sentenceCase(String(adjudication.finding)))
+              })
+            })
+          })
+        })
+    })
+  }
+
+  shouldShowAcctAlerts(acctAlerts: Array<PersonAcctAlert>) {
+    cy.get(`[data-cy-section="prison-information"]`).within(() => {
+      cy.get('dt')
+        .contains('ACCT Alerts')
+        .parent()
+        .within(() => {
+          cy.get('dl.govuk-summary-list--embedded').then($items => {
+            cy.wrap($items).should('have.length', acctAlerts.length)
+            acctAlerts.forEach((acctAlert, i) => {
+              cy.wrap($items[i]).within(() => {
+                this.assertDefinition('Alert type', String(acctAlert.alertId))
+                this.assertDefinition('ACCT description', acctAlert.comment)
+                this.assertDefinition('Date created', DateFormats.isoDateToUIDate(acctAlert.dateCreated))
+                this.assertDefinition('Expiry date', DateFormats.isoDateToUIDate(acctAlert.dateExpires))
               })
             })
           })

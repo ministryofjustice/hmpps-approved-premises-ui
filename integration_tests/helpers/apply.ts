@@ -858,6 +858,7 @@ export default class ApplyHelper {
     checkYourAnswersPage.shouldShowOptionalOasysSectionsAnswers(this.pages.oasys)
     checkYourAnswersPage.shouldShowCaseNotes(this.selectedPrisonCaseNotes)
     checkYourAnswersPage.shouldShowAdjudications(this.adjudications)
+    checkYourAnswersPage.shouldShowAcctAlerts(this.acctAlerts)
 
     // When I have checked my answers
     checkYourAnswersPage.clickSubmit()
