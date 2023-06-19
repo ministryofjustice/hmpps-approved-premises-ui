@@ -12,4 +12,5 @@ export default Factory.define<Cancellation>(() => ({
   reason: referenceDataFactory.cancellationReasons().build(),
   notes: faker.lorem.sentence(),
   createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
+  premisesName: faker.company.name(),
 }))
