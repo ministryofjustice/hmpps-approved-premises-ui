@@ -1,4 +1,6 @@
+import { addDays } from 'date-fns'
 import { bookingFactory, dateCapacityFactory, premisesFactory } from '../../../server/testutils/factories'
+import { DateFormats } from '../../../server/utils/dateUtils'
 
 import { PremisesListPage, PremisesShowPage } from '../../pages/manage'
 
@@ -7,13 +9,11 @@ context('Premises', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubAuthUser')
+    cy.signIn()
   })
 
   it('should list all premises', () => {
-    // Given I am signed in
-    cy.signIn()
-
-    // And there are premises in the database
+    // Given there are premises in the database
     const premises = premisesFactory.buildList(5)
     cy.task('stubPremises', premises)
 
@@ -52,9 +52,6 @@ context('Premises', () => {
       premisesId: premises.id,
       dateCapacities: [overcapacityStartDate, overcapacityEndDate],
     })
-
-    // And I am signed in
-    cy.signIn()
 
     // When I visit the premises page
     const page = PremisesShowPage.visit(premises)
