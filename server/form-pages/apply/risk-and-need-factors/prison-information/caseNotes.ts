@@ -41,6 +41,15 @@ export const adjudicationResponse = (adjudication: Adjudication) => {
   }
 }
 
+export const acctAlertResponse = (acctAlert: PersonAcctAlert) => {
+  return {
+    'Alert type': acctAlert.alertId,
+    'ACCT description': acctAlert.comment,
+    'Date created': DateFormats.isoDateToUIDate(acctAlert.dateCreated),
+    'Expiry date': DateFormats.isoDateToUIDate(acctAlert.dateExpires),
+  }
+}
+
 export const caseNoteCheckbox = (caseNote: PrisonCaseNote, checked: boolean) => {
   return `
   <div class="govuk-checkboxes" data-module="govuk-checkboxes">
@@ -124,12 +133,16 @@ export default class CaseNotes implements TasklistPage {
   response() {
     const response: PageResponse = {}
 
-    if (this.body.selectedCaseNotes) {
+    if (this.body.selectedCaseNotes.length) {
       response[this.questions.caseNotesSelectionQuestion] = this.body.selectedCaseNotes.map(caseNoteResponse)
     }
 
-    if (this.body.selectedCaseNotes) {
+    if (this.body.adjudications.length) {
       response.Adjudications = this.body.adjudications.map(adjudicationResponse)
+    }
+
+    if (this.body.acctAlerts.length) {
+      response['ACCT Alerts'] = this.body.acctAlerts.map(acctAlertResponse)
     }
 
     return response

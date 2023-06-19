@@ -2,6 +2,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { ApplicationService, PersonService } from '../../../../services'
 
 import {
+  acctAlertFactory,
   adjudicationFactory,
   applicationFactory,
   personFactory,
@@ -11,7 +12,7 @@ import { DateFormats } from '../../../../utils/dateUtils'
 
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
-import CaseNotes, { adjudicationResponse, caseNoteCheckbox, caseNoteResponse } from './caseNotes'
+import CaseNotes, { acctAlertResponse, adjudicationResponse, caseNoteCheckbox, caseNoteResponse } from './caseNotes'
 
 jest.mock('../../../../services/personService.ts')
 
@@ -56,6 +57,24 @@ describe('adjudicationResponse', () => {
       Finding: 'Not proved',
       'Offence description': 'Description',
       'Report date and time': '1 Jan 2022, 10:00',
+    })
+  })
+})
+
+describe('acctAlertResponse', () => {
+  it('returns a response for an ACCT Alert', () => {
+    const acctAlert = acctAlertFactory.build({
+      alertId: 123,
+      comment: 'Some description',
+      dateCreated: '2022-01-01T10:00:00Z',
+      dateExpires: '2022-01-09T10:00:00Z',
+    })
+
+    expect(acctAlertResponse(acctAlert)).toEqual({
+      'Alert type': 123,
+      'ACCT description': 'Some description',
+      'Date created': 'Saturday 1 January 2022',
+      'Expiry date': 'Sunday 9 January 2022',
     })
   })
 })
@@ -106,6 +125,7 @@ describe('CaseNotes', () => {
 
   const adjudications = adjudicationFactory.buildList(5)
   const caseNotes = prisonCaseNotesFactory.buildList(3)
+  const acctAlerts = acctAlertFactory.buildList(2)
 
   describe('title', () => {
     expect(new CaseNotes({}, application).title).toBe('Prison information')
@@ -198,21 +218,30 @@ describe('CaseNotes', () => {
   itShouldHavePreviousValue(new CaseNotes({}, application), 'dashboard')
 
   describe('response', () => {
-    const page = new CaseNotes({ selectedCaseNotes: caseNotes, adjudications }, application)
+    it('returns the selected case notes, adjucications and ACCT alerts', () => {
+      const page = new CaseNotes({ selectedCaseNotes: caseNotes, adjudications, acctAlerts }, application)
 
-    expect(page.response()).toEqual({
-      'Selected prison case notes that support this application': [
-        caseNoteResponse(caseNotes[0]),
-        caseNoteResponse(caseNotes[1]),
-        caseNoteResponse(caseNotes[2]),
-      ],
-      Adjudications: [
-        adjudicationResponse(adjudications[0]),
-        adjudicationResponse(adjudications[1]),
-        adjudicationResponse(adjudications[2]),
-        adjudicationResponse(adjudications[3]),
-        adjudicationResponse(adjudications[4]),
-      ],
+      expect(page.response()).toEqual({
+        'Selected prison case notes that support this application': [
+          caseNoteResponse(caseNotes[0]),
+          caseNoteResponse(caseNotes[1]),
+          caseNoteResponse(caseNotes[2]),
+        ],
+        Adjudications: [
+          adjudicationResponse(adjudications[0]),
+          adjudicationResponse(adjudications[1]),
+          adjudicationResponse(adjudications[2]),
+          adjudicationResponse(adjudications[3]),
+          adjudicationResponse(adjudications[4]),
+        ],
+        'ACCT Alerts': [acctAlertResponse(acctAlerts[0]), acctAlertResponse(acctAlerts[1])],
+      })
+    })
+
+    it('skips any empty responses', () => {
+      const page = new CaseNotes({ selectedCaseNotes: [], adjudications: [], acctAlerts: [] }, application)
+
+      expect(page.response()).toEqual({})
     })
   })
 
