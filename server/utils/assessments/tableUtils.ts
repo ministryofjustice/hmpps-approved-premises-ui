@@ -31,7 +31,7 @@ const assessmentLink = (assessment: AssessmentSummary, linkText = '', hiddenText
     {
       text: linkText || assessment.person.name,
       hiddenText,
-      attributes: { 'data-cy-assessmentId': assessment.id },
+      attributes: { 'data-cy-assessmentId': assessment.id, 'data-cy-applicationId': assessment.applicationId },
     },
   )
 }

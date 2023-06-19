@@ -50,17 +50,25 @@ describe('tableUtils', () => {
   })
 
   describe('assessmentLink', () => {
-    const assessment = assessmentSummaryFactory.build({ id: '123', person: { name: 'John Wayne' } })
+    const assessment = assessmentSummaryFactory.build({
+      id: '123',
+      applicationId: '345',
+      person: { name: 'John Wayne' },
+    })
 
     it('returns a link to an assessment', () => {
       expect(assessmentLink(assessment)).toMatchStringIgnoringWhitespace(`
-        <a href="${paths.assessments.show({ id: '123' })}" data-cy-assessmentId="123">John Wayne</a>
+        <a href="${paths.assessments.show({
+          id: '123',
+        })}" data-cy-assessmentId="123" data-cy-applicationId="345">John Wayne</a>
       `)
     })
 
     it('allows custom text to be specified', () => {
       expect(assessmentLink(assessment, 'My Text')).toMatchStringIgnoringWhitespace(`
-        <a href="${paths.assessments.show({ id: '123' })}" data-cy-assessmentId="123">My Text</a>
+        <a href="${paths.assessments.show({
+          id: '123',
+        })}" data-cy-assessmentId="123" data-cy-applicationId="345">My Text</a>
       `)
     })
 
@@ -68,7 +76,7 @@ describe('tableUtils', () => {
       expect(assessmentLink(assessment, 'My Text', 'and some hidden text')).toMatchStringIgnoringWhitespace(`
         <a href="${paths.assessments.show({
           id: '123',
-        })}" data-cy-assessmentId="123">My Text <span class="govuk-visually-hidden">and some hidden text</span></a>
+        })}" data-cy-assessmentId="123" data-cy-applicationId="345">My Text <span class="govuk-visually-hidden">and some hidden text</span></a>
       `)
     })
   })
