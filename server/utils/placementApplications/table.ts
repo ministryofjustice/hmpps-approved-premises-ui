@@ -21,7 +21,10 @@ export const nameCell = (task: PlacementApplicationTask): TableCell => {
     html: linkTo(
       paths.placementApplications.review.show,
       { id: task.id },
-      { text: task.person.name, attributes: { 'data-cy-placementApplicationId': task.id } },
+      {
+        text: task.person.name,
+        attributes: { 'data-cy-placementApplicationId': task.id, 'data-cy-applicationId': task.applicationId },
+      },
     ),
   }
 }
