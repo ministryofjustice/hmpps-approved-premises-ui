@@ -1,22 +1,34 @@
 import { addDays, format, formatDistanceStrict, isSameDay, isSameMonth } from 'date-fns'
 import { DateFormats } from './dateUtils'
 
-import { BedOccupancyEntryUi, BedOccupancyRangeUi } from '../@types/ui'
+import { BedOccupancyEntryUi, BedOccupancyEntryUiType, BedOccupancyRangeUi } from '../@types/ui'
 
-export const calendar = (bedOccupancyRangeList: Array<BedOccupancyRangeUi>, startDate: Date) => `<table cellspacing="0">
-  <thead>${dateRow()}</thead>
-  <tr>${monthRow(startDate)}</tr>
-  <tbody>${bedRows(bedOccupancyRangeList)}</tbody>
+export const tableClass = 'govuk-table'
+export const calendarTableClass = `${tableClass} ${tableClass}--calendar`
+export const headClass = `${tableClass}__head ${tableClass}__head--calendar`
+export const bodyClass = `${tableClass}__body ${tableClass}__body--calendar`
+export const headerClass = `${tableClass}__header ${tableClass}__header--calendar`
+export const roomHeaderClass = `${headerClass} ${tableClass}__header--calendar-room-header`
+export const rowClass = `${tableClass}__row ${tableClass}__row--calendar`
+export const cellClass = `${tableClass}__cell ${tableClass}__cell--calendar`
+
+export const calendar = (
+  bedOccupancyRangeList: Array<BedOccupancyRangeUi>,
+  startDate: Date,
+) => `<table class="${calendarTableClass}" cellspacing="0">
+  <thead class="${headClass}">${dateRow()}</thead>
+  <tr class="${rowClass}">${monthRow(startDate)}</tr>
+  <tbody class="${bodyClass}">${bedRows(bedOccupancyRangeList)}</tbody>
 </table>`
 
 export const dateRow = () => `
-<th>Room/Bed</th>
+<th class="${roomHeaderClass}">Room/Bed</th>
 ${formatDaysForDateRow(new Date())}
 `
 
 export const formatDaysForDateRow = (date: Date) => {
   const days = generateDays(date)
-  return days.map(day => `<th>${DateFormats.calendarDate(day)}</th>`).join('')
+  return days.map(day => `<th class="${headerClass}">${DateFormats.calendarDate(day)}</th>`).join('')
 }
 
 export const generateDays = (date: Date) => {
@@ -30,7 +42,7 @@ export const generateDays = (date: Date) => {
 }
 
 export const monthRow = (startDate: Date) => {
-  const monthRowArr = [`<td></td>`]
+  const monthRowArr = [`<td class="${cellClass}"></td>`]
   const days = generateDays(startDate)
 
   for (let i = 0; i < days.length; i += 1) {
@@ -39,7 +51,7 @@ export const monthRow = (startDate: Date) => {
 
       const colspan = days.slice(i).filter(d => isSameMonth(d, days[i])).length
 
-      monthRowArr.push(`<th colspan="${colspan}">${month}</th>`)
+      monthRowArr.push(`<th colspan="${colspan}" class="${cellClass} ${tableClass}__cell--month">${month}</th>`)
     }
   }
 
@@ -51,8 +63,8 @@ export const bedRows = (bedOccupancyRangeList: Array<BedOccupancyRangeUi>) => {
 }
 
 export const bedRow = (bedOccupancyRange: BedOccupancyRangeUi) => {
-  return `<tr>
-    <th scope="row">${bedOccupancyRange.bedName}</th>
+  return `<tr class="${rowClass}">
+    <th scope="row" class="${headerClass}">${bedOccupancyRange.bedName}</th>
     ${generateRowCells(bedOccupancyRange)}</tr>`
 }
 
@@ -94,7 +106,7 @@ export const cell = (cellDate: Date, bedOccupancyEntry: BedOccupancyEntryUi) => 
       cellContent = bookingCellContent(bedOccupancyEntry)
       break
     case 'open':
-      cellContent = 'open'
+      cellContent = '<span class="govuk-visually-hidden">open</span>'
       break
     case 'lost_bed':
       cellContent = 'lost'
@@ -103,8 +115,11 @@ export const cell = (cellDate: Date, bedOccupancyEntry: BedOccupancyEntryUi) => 
       cellContent = ''
   }
 
-  return wrapCellContentInTableCellMarkup(bedOccupancyEntry.length, cellContent)
+  return wrapCellContentInTableCellMarkup(bedOccupancyEntry.length, cellContent, bedOccupancyEntry.type)
 }
 
-export const wrapCellContentInTableCellMarkup = (lengthOfOccupancy: number, cellText: string) =>
-  `<td colspan="${lengthOfOccupancy}">${cellText}</td>`
+export const wrapCellContentInTableCellMarkup = (
+  lengthOfOccupancy: number,
+  cellText: string,
+  type: BedOccupancyEntryUiType,
+) => `<td class="${cellClass} ${tableClass}__cell--${type}" colspan="${lengthOfOccupancy}">${cellText}</td>`

@@ -8,15 +8,23 @@ import {
 import {
   bedRow,
   bedRows,
+  bodyClass,
   bookingCellContent,
   calendar,
+  calendarTableClass,
   cell,
   dateRow,
   formatDaysForDateRow,
   generateDays,
   generateRowCells,
+  headClass,
+  headerClass,
   monthRow,
   occupierName,
+  roomHeaderClass,
+  rowClass,
+  scheduleForCalendar,
+  tableClass,
   wrapCellContentInTableCellMarkup,
 } from './calendarUtils'
 import {} from '../testutils/factories/bedOccupancyRange'
@@ -28,10 +36,10 @@ describe('calendarUtils', () => {
       const startDate = new Date()
 
       expect(calendar(bedOccupancyRangeList, startDate)).toMatchStringIgnoringWhitespace(
-        `<table cellspacing="0">
-        <thead>${dateRow()}</thead>
-        <tr>${monthRow(startDate)}</tr>
-        <tbody>${bedRows(bedOccupancyRangeList)}</tbody>
+        `<table class="${calendarTableClass}" cellspacing="0">
+        <thead class="${headClass}">${dateRow()}</thead>
+        <tr class="${rowClass}">${monthRow(startDate)}</tr>
+        <tbody class="${bodyClass}">${bedRows(bedOccupancyRangeList)}</tbody>
       </table>`,
       )
     })
@@ -39,7 +47,7 @@ describe('calendarUtils', () => {
 
   describe('dateRow', () => {
     it('should return dateRow', () => {
-      expect(dateRow()).toMatchStringIgnoringWhitespace(`<th>Room/Bed</th>
+      expect(dateRow()).toMatchStringIgnoringWhitespace(`<th class="${roomHeaderClass}">Room/Bed</th>
       ${formatDaysForDateRow(new Date())}`)
     })
   })
@@ -48,7 +56,9 @@ describe('calendarUtils', () => {
     it('should return cells for each month in the date range that span all the dates of that month prefixed by an empty cell', () => {
       const startDate = new Date(2023, 5, 1)
       const colspan = getDaysInMonth(startDate)
-      expect(monthRow(startDate)).toBe(`<td></td><th colspan="${colspan}">June</th>`)
+      expect(monthRow(startDate)).toBe(
+        `<td class="${cellClass}"></td><th colspan="${colspan}" class="${cellClass} ${tableClass}__cell--month">June</th>`,
+      )
     })
   })
 
@@ -104,8 +114,8 @@ describe('calendarUtils', () => {
     it('returns the markup for a row and calls generateRowCells', () => {
       const bedOccupancyRange = bedOccupancyRangeFactoryUi.build()
       expect(bedRow(bedOccupancyRange)).toMatchStringIgnoringWhitespace(
-        `<tr>
-        <th scope="row">${bedOccupancyRange.bedName}</th>
+        `<tr class="${rowClass}">
+        <th scope="row" class="${headerClass}">${bedOccupancyRange.bedName}</th>
         ${generateRowCells(bedOccupancyRange)}</tr>`,
       )
     })
@@ -134,7 +144,11 @@ describe('calendarUtils', () => {
       const openBedOccupancyEntry = bedOccupancyEntryUiFactory.build({ type: 'open', startDate: new Date() })
 
       expect(cell(new Date(), openBedOccupancyEntry)).toMatchStringIgnoringWhitespace(
-        wrapCellContentInTableCellMarkup(openBedOccupancyEntry.length, 'open'),
+        wrapCellContentInTableCellMarkup(
+          openBedOccupancyEntry.length,
+          '<span class="govuk-visually-hidden">open</span>',
+          'open',
+        ),
       )
     })
 
@@ -142,7 +156,7 @@ describe('calendarUtils', () => {
       const lostBedOccupancyEntry = bedOccupancyEntryUiFactory.build({ type: 'lost_bed', startDate: new Date() })
 
       expect(cell(new Date(), lostBedOccupancyEntry)).toMatchStringIgnoringWhitespace(
-        wrapCellContentInTableCellMarkup(lostBedOccupancyEntry.length, 'lost'),
+        wrapCellContentInTableCellMarkup(lostBedOccupancyEntry.length, 'lost', 'lost_bed'),
       )
     })
 
@@ -154,7 +168,11 @@ describe('calendarUtils', () => {
       })
 
       expect(cell(new Date(), bookingBedOccupancyEntry)).toEqual(
-        wrapCellContentInTableCellMarkup(bookingBedOccupancyEntry.length, occupierName(bookingBedOccupancyEntry)),
+        wrapCellContentInTableCellMarkup(
+          bookingBedOccupancyEntry.length,
+          occupierName(bookingBedOccupancyEntry),
+          'booking',
+        ),
       )
     })
   })

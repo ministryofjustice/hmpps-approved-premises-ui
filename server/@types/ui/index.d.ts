@@ -375,6 +375,8 @@ export interface BedOccupancyOpenEntryUi extends RemoveStartAndEndDates<BedOccup
 
 export type BedOccupancyEntryTypes = BedOccupancyBookingEntryUi | BedOccupancyLostBedEntryUi | BedOccupancyOpenEntryUi
 
-export type BedOccupancyEntryUi = BedOccupancyEntryTypes & { type: 'open' | 'lost_bed' | 'booking' }
+export type BedOccupancyEntryUiType = 'open' | 'lost_bed' | 'booking'
+
+export type BedOccupancyEntryUi = BedOccupancyEntryTypes & { type: BedOccupancyEntryUiType }
 
 export type BedOccupancyRangeUi = Omit<BedOccupancyRange, 'schedule'> & { schedule: Array<BedOccupancyEntryUi> }
