@@ -97,14 +97,13 @@ describe('bedSearchController', () => {
       it('it should render the search template by searching with the placement request variables ', async () => {
         const query = mapPlacementRequestToBedSearchParams(placementRequestDetail)
         const requestHandler = bedsController.search()
-
         await requestHandler(request, response, next)
 
         expect(response.render).toHaveBeenCalledWith('match/search', {
           pageHeading: 'Find a bed',
           bedSearchResults,
           placementRequest: placementRequestDetail,
-          selectedDesirableCriteria: placementRequestDetail.desirableCriteria,
+          selectedDesirableCriteria: placementRequestDetail.essentialCriteria,
           tier: placementRequestDetail.risks.tier.value.level,
           formPath,
           ...query,

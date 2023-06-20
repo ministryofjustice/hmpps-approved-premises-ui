@@ -33,9 +33,7 @@ export default class BedSearchController {
 
       const bedSearchResults = await this.bedService.search(req.user.token, params as BedSearchParametersUi)
       const tier = placementRequest?.risks?.tier?.value?.level || 'N/A'
-      const selectedDesirableCriteria = placementRequest.desirableCriteria.filter(x =>
-        params.requiredCharacteristics.includes(x),
-      )
+      const selectedDesirableCriteria = [...placementRequest.desirableCriteria, ...params.requiredCharacteristics]
 
       res.render('match/search', {
         pageHeading: 'Find a bed',
