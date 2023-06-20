@@ -1,4 +1,6 @@
 import {
+  bedDetailFactory,
+  bedSummaryFactory,
   bookingFactory,
   dateCapacityFactory,
   lostBedFactory,
@@ -6,11 +8,12 @@ import {
   premisesFactory,
 } from '../../../server/testutils/factories'
 
-import { BookingFindPage, BookingNewPage, BookingShowPage } from '../../pages/manage'
+import { BookingFindPage, BookingNewPage, BookingShowPage, PremisesShowPage } from '../../pages/manage'
 import Page from '../../pages/page'
 
 import BookingConfirmation from '../../pages/manage/booking/confirmation'
 import { bedFactory } from '../../../server/testutils/factories/room'
+import MoveBedPage from '../../pages/manage/bed/moveBed'
 
 context('Booking', () => {
   beforeEach(() => {
@@ -188,5 +191,39 @@ context('Booking', () => {
 
     // Then I should see the details for that booking
     page.shouldShowBookingDetails(booking)
+  })
+
+  it('should allow me to move a booking', () => {
+    // Given a booking is in the DB
+    const premises = premisesFactory.build()
+    const booking = bookingFactory.build()
+    cy.task('stubBookingGet', { premisesId: premises.id, booking })
+    cy.task('stubSinglePremises', premises)
+    cy.task('stubPremisesCapacity', {
+      premisesId: premises.id,
+      dateCapacities: dateCapacityFactory.buildList(5),
+    })
+    const bedId = 'bedId'
+    const bedSummaries = bedSummaryFactory.buildList(5)
+    bedSummaries[0].id = bedId
+    cy.task('stubBeds', { premisesId: premises.id, bedSummaries })
+
+    const bookingPage = BookingShowPage.visit(premises.id, booking)
+
+    // When I click the move button
+    bookingPage.clickMoveBooking()
+
+    // Then I should see the move booking page
+    const bed = bedDetailFactory.build({ id: bedId })
+    const moveBedPage = MoveBedPage.visit(premises.id, booking.id)
+
+    // And be able to complete the form
+    cy.task('stubMoveBooking', { premisesId: premises.id, bookingId: booking.id, bedMove: { notes: 'note', bedId } })
+    moveBedPage.completeForm(bed)
+    moveBedPage.clickSubmit()
+
+    // Then I should see the Premises details page with a success message
+    const premisesPage = Page.verifyOnPage(PremisesShowPage, premises)
+    premisesPage.shouldShowMoveConfirmation()
   })
 })

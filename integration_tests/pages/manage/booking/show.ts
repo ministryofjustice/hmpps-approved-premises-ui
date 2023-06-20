@@ -19,6 +19,11 @@ export default class BookingShowPage extends Page {
     cy.get('a').contains('Extend placement').click()
   }
 
+  clickMoveBooking() {
+    cy.get('.moj-button-menu__toggle-button').click()
+    cy.get('a').contains('Move person to a new bed').click()
+  }
+
   shouldShowBookingDetails(booking: Booking): void {
     cy.get('dl[data-cy-crn]').within(() => {
       this.assertDefinition('CRN', booking.person.crn)

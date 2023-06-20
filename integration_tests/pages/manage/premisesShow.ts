@@ -104,4 +104,8 @@ export default class PremisesShowPage extends Page {
       )} to ${DateFormats.isoDateToUIDate(overcapacityEndDate)}`,
     )
   }
+
+  shouldShowMoveConfirmation() {
+    this.shouldShowBanner('Bed move logged')
+  }
 }
