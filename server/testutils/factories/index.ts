@@ -14,6 +14,7 @@ import bedSummaryFactory from './bedSummary'
 import bedDetailFactory from './bedDetail'
 import {
   bedOccupancyEntryBookingUiFactory,
+  bedOccupancyEntryCalendarFactory,
   bedOccupancyEntryFactory,
   bedOccupancyEntryUiFactory,
   bedOccupancyRangeFactory,
@@ -77,6 +78,7 @@ export {
   assessmentSummaryFactory,
   bedSummaryFactory,
   bedDetailFactory,
+  bedOccupancyEntryCalendarFactory,
   bedOccupancyEntryFactory,
   bedOccupancyEntryBookingUiFactory,
   bedOccupancyEntryUiFactory,

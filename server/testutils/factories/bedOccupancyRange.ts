@@ -12,6 +12,7 @@ import type {
 } from '@approved-premises/api'
 import {
   BedOccupancyBookingEntryUi,
+  BedOccupancyEntryCalendar,
   BedOccupancyEntryUi,
   BedOccupancyLostBedEntryUi,
   BedOccupancyOpenEntryUi,
@@ -91,6 +92,17 @@ export const bedOccupancyEntryUiFactory = Factory.define<BedOccupancyEntryUi>(()
     length,
     type: 'booking',
   } as BedOccupancyEntryUi
+})
+
+export const bedOccupancyEntryCalendarFactory = Factory.define<BedOccupancyEntryCalendar>(() => {
+  const { startDate, endDate, length } = generateStay()
+  return {
+    startDate,
+    endDate,
+    length,
+    type: 'booking',
+    label: 'Some text goes here',
+  } as BedOccupancyEntryCalendar
 })
 
 export const bedOccupancyEntryBookingUiFactory = Factory.define<BedOccupancyBookingEntryUi>(

@@ -379,4 +379,6 @@ export type BedOccupancyEntryUiType = 'open' | 'lost_bed' | 'booking'
 
 export type BedOccupancyEntryUi = BedOccupancyEntryTypes & { type: BedOccupancyEntryUiType }
 
+export type BedOccupancyEntryCalendar = BedOccupancyEntryUi & { label: string }
+
 export type BedOccupancyRangeUi = Omit<BedOccupancyRange, 'schedule'> & { schedule: Array<BedOccupancyEntryUi> }

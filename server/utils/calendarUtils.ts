@@ -1,7 +1,12 @@
-import { addDays, format, formatDistanceStrict, isSameDay, isSameMonth } from 'date-fns'
+import { addDays, format, formatDistanceStrict, isBefore, isSameDay, isSameMonth } from 'date-fns'
 import { DateFormats } from './dateUtils'
 
-import { BedOccupancyEntryUi, BedOccupancyEntryUiType, BedOccupancyRangeUi } from '../@types/ui'
+import {
+  BedOccupancyEntryCalendar,
+  BedOccupancyEntryUi,
+  BedOccupancyEntryUiType,
+  BedOccupancyRangeUi,
+} from '../@types/ui'
 
 export const tableClass = 'govuk-table'
 export const calendarTableClass = `${tableClass} ${tableClass}--calendar`
@@ -18,7 +23,7 @@ export const calendar = (
 ) => `<table class="${calendarTableClass}" cellspacing="0">
   <thead class="${headClass}">${dateRow()}</thead>
   <tr class="${rowClass}">${monthRow(startDate)}</tr>
-  <tbody class="${bodyClass}">${bedRows(bedOccupancyRangeList)}</tbody>
+  <tbody class="${bodyClass}">${bedRows(bedOccupancyRangeList, startDate)}</tbody>
 </table>`
 
 export const dateRow = () => `
@@ -58,19 +63,49 @@ export const monthRow = (startDate: Date) => {
   return monthRowArr.join('')
 }
 
-export const bedRows = (bedOccupancyRangeList: Array<BedOccupancyRangeUi>) => {
-  return bedOccupancyRangeList.map(range => bedRow(range)).join('')
+export const bedRows = (bedOccupancyRangeList: Array<BedOccupancyRangeUi>, startDate: Date) => {
+  return bedOccupancyRangeList.map(range => bedRow(range, startDate)).join('')
 }
 
-export const bedRow = (bedOccupancyRange: BedOccupancyRangeUi) => {
+export const bedRow = (bedOccupancyRange: BedOccupancyRangeUi, startDate: Date) => {
   return `<tr class="${rowClass}">
     <th scope="row" class="${headerClass}">${bedOccupancyRange.bedName}</th>
-    ${generateRowCells(bedOccupancyRange)}</tr>`
+    ${generateRowCells(bedOccupancyRange, startDate)}</tr>`
 }
 
-export const generateRowCells = (bedOccupancyRange: BedOccupancyRangeUi) => {
+export const labelForScheduleItem = (bedOccupancyEntry: BedOccupancyEntryUi): string => {
+  switch (bedOccupancyEntry.type) {
+    case 'booking':
+      return bookingCellContent(bedOccupancyEntry)
+    case 'open':
+      return '<span class="govuk-visually-hidden">open</span>'
+    case 'lost_bed':
+      return 'lost'
+    default:
+      return ''
+  }
+}
+
+export const scheduleForCalendar = (
+  schedule: Array<BedOccupancyEntryUi>,
+  startDate: Date,
+): Array<BedOccupancyEntryCalendar> => {
+  return schedule.map(bedOccupancyEntry => {
+    return {
+      ...bedOccupancyEntry,
+      label: labelForScheduleItem(bedOccupancyEntry),
+      startDate: isBefore(bedOccupancyEntry.startDate, startDate) ? startDate : bedOccupancyEntry.startDate,
+    }
+  })
+}
+
+export const generateRowCells = (bedOccupancyRange: BedOccupancyRangeUi, startDate: Date) => {
   return generateDays(new Date())
-    .map(day => bedOccupancyRange.schedule.map(entry => cell(day, entry)).join(''))
+    .map(day =>
+      scheduleForCalendar(bedOccupancyRange.schedule, startDate)
+        .map(entry => cell(day, entry))
+        .join(''),
+    )
     .join('')
 }
 
@@ -96,26 +131,10 @@ export const bookingCellContent = (bedOccupancyEntry: BedOccupancyEntryUi) => {
   return ''
 }
 
-export const cell = (cellDate: Date, bedOccupancyEntry: BedOccupancyEntryUi) => {
+export const cell = (cellDate: Date, bedOccupancyEntry: BedOccupancyEntryCalendar) => {
   if (!isSameDay(bedOccupancyEntry.startDate, cellDate)) return ''
 
-  let cellContent: string
-
-  switch (bedOccupancyEntry.type) {
-    case 'booking':
-      cellContent = bookingCellContent(bedOccupancyEntry)
-      break
-    case 'open':
-      cellContent = '<span class="govuk-visually-hidden">open</span>'
-      break
-    case 'lost_bed':
-      cellContent = 'lost'
-      break
-    default:
-      cellContent = ''
-  }
-
-  return wrapCellContentInTableCellMarkup(bedOccupancyEntry.length, cellContent, bedOccupancyEntry.type)
+  return wrapCellContentInTableCellMarkup(bedOccupancyEntry.length, bedOccupancyEntry.label, bedOccupancyEntry.type)
 }
 
 export const wrapCellContentInTableCellMarkup = (
