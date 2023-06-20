@@ -24,6 +24,8 @@ export default class ApplyPage extends Page {
     if (backLink) {
       this.checkForBackButton(backLink)
     }
+
+    this.checkPhaseBanner('Give us your feedback')
   }
 
   checkRadioButtonFromPageBody(fieldName: string) {

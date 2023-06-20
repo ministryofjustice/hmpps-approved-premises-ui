@@ -310,4 +310,8 @@ export default abstract class Page {
 
     return tableCell.html
   }
+
+  checkPhaseBanner(copy: string): void {
+    cy.get('[data-cy-phase-banner="phase-banner"]').contains(copy)
+  }
 }

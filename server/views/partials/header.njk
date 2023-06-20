@@ -1,4 +1,5 @@
 {%- from "moj/components/primary-navigation/macro.njk" import mojPrimaryNavigation -%}
+{% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
 
 <header class="hmpps-header" role="banner">
   <div class="hmpps-header__container">
@@ -42,3 +43,14 @@
   })
 }}
 {% endif %}
+
+{% block phaseBanner %}
+  {{ govukPhaseBanner({
+    attributes: { "data-cy-phase-banner": "phase-banner" },
+    classes: "hmpps-header__container",
+    tag: {
+      text: "Beta"
+    },
+    html: PhaseBannerUtils.getContent(currentUrl)
+  }) }}
+{% endblock %}
