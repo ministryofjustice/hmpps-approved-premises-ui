@@ -1,10 +1,11 @@
-import { addDays, formatDistanceStrict, isSameDay } from 'date-fns'
+import { addDays, format, formatDistanceStrict, isSameDay, isSameMonth } from 'date-fns'
 import { DateFormats } from './dateUtils'
 
 import { BedOccupancyEntryUi, BedOccupancyRangeUi } from '../@types/ui'
 
-export const calendar = (bedOccupancyRangeList: Array<BedOccupancyRangeUi>) => `<table cellspacing="0">
+export const calendar = (bedOccupancyRangeList: Array<BedOccupancyRangeUi>, startDate: Date) => `<table cellspacing="0">
   <thead>${dateRow()}</thead>
+  <tr>${monthRow(startDate)}</tr>
   <tbody>${bedRows(bedOccupancyRangeList)}</tbody>
 </table>`
 
@@ -26,6 +27,23 @@ export const generateDays = (date: Date) => {
     days.push(newDate)
   }
   return days
+}
+
+export const monthRow = (startDate: Date) => {
+  const monthRowArr = [`<td></td>`]
+  const days = generateDays(startDate)
+
+  for (let i = 0; i < days.length; i += 1) {
+    if (!isSameMonth(days[i], days[i - 1]) || i === 0) {
+      const month = format(days[i], 'MMMM')
+
+      const colspan = days.slice(i).filter(d => isSameMonth(d, days[i])).length
+
+      monthRowArr.push(`<th colspan="${colspan}">${month}</th>`)
+    }
+  }
+
+  return monthRowArr.join('')
 }
 
 export const bedRows = (bedOccupancyRangeList: Array<BedOccupancyRangeUi>) => {

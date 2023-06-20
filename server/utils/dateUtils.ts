@@ -45,7 +45,7 @@ export class DateFormats {
 
   /**
    * @param date JS Date object.
-   * @returns the date in the to be shown in the heading row of the calendar: "20 ".
+   * @returns the date in the to be shown in the heading row of the calendar: "20".
    */
   static calendarDate(date: Date) {
     return format(date, 'd')

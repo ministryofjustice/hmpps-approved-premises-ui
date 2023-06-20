@@ -1,4 +1,4 @@
-import { addDays } from 'date-fns'
+import { addDays, getDaysInMonth } from 'date-fns'
 import {
   bedOccupancyEntryBookingUiFactory,
   bedOccupancyEntryUiFactory,
@@ -15,6 +15,7 @@ import {
   formatDaysForDateRow,
   generateDays,
   generateRowCells,
+  monthRow,
   occupierName,
   wrapCellContentInTableCellMarkup,
 } from './calendarUtils'
@@ -24,9 +25,12 @@ describe('calendarUtils', () => {
   describe('calendar', () => {
     it('should return calendar', () => {
       const bedOccupancyRangeList = bedOccupancyRangeFactoryUi.buildList(1)
-      expect(calendar(bedOccupancyRangeList)).toMatchStringIgnoringWhitespace(
+      const startDate = new Date()
+
+      expect(calendar(bedOccupancyRangeList, startDate)).toMatchStringIgnoringWhitespace(
         `<table cellspacing="0">
         <thead>${dateRow()}</thead>
+        <tr>${monthRow(startDate)}</tr>
         <tbody>${bedRows(bedOccupancyRangeList)}</tbody>
       </table>`,
       )
@@ -37,6 +41,14 @@ describe('calendarUtils', () => {
     it('should return dateRow', () => {
       expect(dateRow()).toMatchStringIgnoringWhitespace(`<th>Room/Bed</th>
       ${formatDaysForDateRow(new Date())}`)
+    })
+  })
+
+  describe('monthRow', () => {
+    it('should return cells for each month in the date range that span all the dates of that month prefixed by an empty cell', () => {
+      const startDate = new Date(2023, 5, 1)
+      const colspan = getDaysInMonth(startDate)
+      expect(monthRow(startDate)).toBe(`<td></td><th colspan="${colspan}">June</th>`)
     })
   })
 
@@ -184,7 +196,7 @@ describe('calendarUtils', () => {
       })
 
       expect(bookingCellContent(bookingBedOccupancyEntry)).toBe(
-        `${bookingBedOccupancyEntry.personName} (10 days 21/06/2023 - 01/07/2023)`,
+        `${bookingBedOccupancyEntry.personName} (11 days 21/06/2023 - 01/07/2023)`,
       )
     })
   })
