@@ -41,14 +41,17 @@ export default class PremisesController {
 
   calendar(): RequestHandler {
     return async (req: Request, res: Response) => {
+      const startDate = new Date()
+      const endDate = addDays(new Date(), 30)
+
       const bedOccupancyRangeList = await this.premisesService.getOccupancy(
         req.user.token,
         req.params.premisesId,
-        DateFormats.dateObjToIsoDate(new Date()),
-        DateFormats.dateObjToIsoDate(addDays(new Date(), 30)),
+        DateFormats.dateObjToIsoDate(startDate),
+        DateFormats.dateObjToIsoDate(endDate),
       )
 
-      return res.render('premises/calendar', { bedOccupancyRangeList, premisesId: req.params.premisesId })
+      return res.render('premises/calendar', { bedOccupancyRangeList, premisesId: req.params.premisesId, startDate })
     }
   }
 }

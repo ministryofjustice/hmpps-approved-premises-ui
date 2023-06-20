@@ -83,6 +83,7 @@ describe('PremisesController', () => {
       expect(response.render).toHaveBeenCalledWith('premises/calendar', {
         bedOccupancyRangeList: occupancy,
         premisesId: request.params.premisesId,
+        startDate: new Date(),
       })
     })
   })
