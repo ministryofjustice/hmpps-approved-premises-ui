@@ -21,14 +21,17 @@ export const calendar = (
   bedOccupancyRangeList: Array<BedOccupancyRangeUi>,
   startDate: Date,
 ) => `<table class="${calendarTableClass}" cellspacing="0">
-  <thead class="${headClass}">${dateRow()}</thead>
-  <tr class="${rowClass}">${monthRow(startDate)}</tr>
+  <thead class="${headClass}">
+    <tr class="${rowClass} ${tableClass}__row--months">${monthRow(startDate)}</tr>
+    ${dateRow()}
+  </thead>
   <tbody class="${bodyClass}">${bedRows(bedOccupancyRangeList, startDate)}</tbody>
 </table>`
 
 export const dateRow = () => `
-<th class="${roomHeaderClass}">Room/Bed</th>
-${formatDaysForDateRow(new Date())}
+<tr class="${rowClass}">
+  ${formatDaysForDateRow(new Date())}
+</tr>
 `
 
 export const formatDaysForDateRow = (date: Date) => {
@@ -47,7 +50,7 @@ export const generateDays = (date: Date) => {
 }
 
 export const monthRow = (startDate: Date) => {
-  const monthRowArr = [`<td class="${cellClass}"></td>`]
+  const monthRowArr = [`<th class="${roomHeaderClass}" rowspan="2">Room/Bed</th>`]
   const days = generateDays(startDate)
 
   for (let i = 0; i < days.length; i += 1) {
@@ -56,7 +59,7 @@ export const monthRow = (startDate: Date) => {
 
       const colspan = days.slice(i).filter(d => isSameMonth(d, days[i])).length
 
-      monthRowArr.push(`<th colspan="${colspan}" class="${cellClass} ${tableClass}__cell--month">${month}</th>`)
+      monthRowArr.push(`<th colspan="${colspan}" class="${headerClass} ${tableClass}__head--month">${month}</th>`)
     }
   }
 

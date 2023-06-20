@@ -37,19 +37,25 @@ describe('calendarUtils', () => {
       const startDate = new Date()
 
       expect(calendar(bedOccupancyRangeList, startDate)).toMatchStringIgnoringWhitespace(
-        `<table class="${calendarTableClass}" cellspacing="0">
-        <thead class="${headClass}">${dateRow()}</thead>
-        <tr class="${rowClass}">${monthRow(startDate)}</tr>
-        <tbody class="${bodyClass}">${bedRows(bedOccupancyRangeList, startDate)}</tbody>
-      </table>`,
+        `
+        <table class="${calendarTableClass}" cellspacing="0">
+          <thead class="${headClass}">
+            <tr class="${rowClass} ${tableClass}__row--months">${monthRow(startDate)}</tr>
+            ${dateRow()}
+          </thead>
+          <tbody class="${bodyClass}">${bedRows(bedOccupancyRangeList, startDate)}</tbody>
+        </table>
+      `,
       )
     })
   })
 
   describe('dateRow', () => {
     it('should return dateRow', () => {
-      expect(dateRow()).toMatchStringIgnoringWhitespace(`<th class="${roomHeaderClass}">Room/Bed</th>
-      ${formatDaysForDateRow(new Date())}`)
+      expect(dateRow()).toMatchStringIgnoringWhitespace(`
+          <tr class="${rowClass}">
+            ${formatDaysForDateRow(new Date())}
+          </tr>`)
     })
   })
 
@@ -58,7 +64,7 @@ describe('calendarUtils', () => {
       const startDate = new Date(2023, 5, 1)
       const colspan = getDaysInMonth(startDate)
       expect(monthRow(startDate)).toBe(
-        `<td class="${cellClass}"></td><th colspan="${colspan}" class="${cellClass} ${tableClass}__cell--month">June</th>`,
+        `<th class="${roomHeaderClass}" rowspan="2">Room/Bed</th><th colspan="${colspan}" class="${headerClass} ${tableClass}__head--month">June</th>`,
       )
     })
   })
