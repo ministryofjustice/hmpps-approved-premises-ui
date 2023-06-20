@@ -4,6 +4,7 @@ import {
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
   PlacementRequest,
+  PlacementRequestDetail,
 } from '@approved-premises/api'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
@@ -22,8 +23,10 @@ export default class PlacementRequestClient {
     >
   }
 
-  async find(id: string): Promise<PlacementRequest> {
-    return (await this.restClient.get({ path: paths.placementRequests.show({ id }) })) as Promise<PlacementRequest>
+  async find(id: string): Promise<PlacementRequestDetail> {
+    return (await this.restClient.get({
+      path: paths.placementRequests.show({ id }),
+    })) as Promise<PlacementRequestDetail>
   }
 
   async createBooking(

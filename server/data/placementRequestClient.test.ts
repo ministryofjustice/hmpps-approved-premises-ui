@@ -5,6 +5,7 @@ import {
   bookingNotMadeFactory,
   newPlacementRequestBookingConfirmationFactory,
   newPlacementRequestBookingFactory,
+  placementRequestDetailFactory,
   placementRequestFactory,
 } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
@@ -46,27 +47,27 @@ describeClient('placementRequestClient', provider => {
 
   describe('find', () => {
     it('makes a get request to the placementRequest endpoint', async () => {
-      const placementRequest = placementRequestFactory.build()
+      const placementRequestDetail = placementRequestDetailFactory.build()
 
       provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get a placement request',
         withRequest: {
           method: 'GET',
-          path: paths.placementRequests.show({ id: placementRequest.id }),
+          path: paths.placementRequests.show({ id: placementRequestDetail.id }),
           headers: {
             authorization: `Bearer ${token}`,
           },
         },
         willRespondWith: {
           status: 200,
-          body: placementRequest,
+          body: placementRequestDetail,
         },
       })
 
-      const result = await placementRequestClient.find(placementRequest.id)
+      const result = await placementRequestClient.find(placementRequestDetail.id)
 
-      expect(result).toEqual(placementRequest)
+      expect(result).toEqual(placementRequestDetail)
     })
   })
 
