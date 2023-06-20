@@ -17,6 +17,7 @@ context('Booking', () => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubAuthUser')
+    cy.signIn()
   })
 
   it('should show the CRN form followed by the booking form', () => {
@@ -63,13 +64,10 @@ context('Booking', () => {
     })
     cy.task('stubFindPerson', { person })
 
-    // Given I am signed in
-    cy.signIn()
-
-    // When I visit the first new booking page
+    // Given I visit the first new booking page
     const bookingNewPage = BookingFindPage.visit(premises.id, booking.bed.id)
 
-    // And I enter the CRN to the form
+    // When I enter the CRN to the form
     bookingNewPage.enterCrn(person.crn)
     bookingNewPage.clickSubmit()
 
@@ -113,13 +111,10 @@ context('Booking', () => {
     const bedId = bedFactory.build().id
     cy.task('stubSinglePremises', premises)
 
-    // Given I am signed in
-    cy.signIn()
-
-    // When I visit the find page
+    // Given I visit the find page
     const page = BookingFindPage.visit(premises.id, bedId)
 
-    // And I miss a required field
+    // When I miss a required field
     cy.task('stubPersonNotFound', {
       person,
     })
@@ -167,13 +162,10 @@ context('Booking', () => {
       departureDate: '2022-06-01',
     })
 
-    // Given I am signed in
-    cy.signIn()
-
-    // When I visit the find page
+    // Given I visit the find page
     const page = BookingFindPage.visit(premises.id, bedId)
 
-    // And I enter the CRN to the form
+    // When I enter the CRN to the form
     page.completeForm(person.crn)
 
     // And I fill in the booking form
@@ -186,10 +178,7 @@ context('Booking', () => {
   })
 
   it('should allow me to see a booking', () => {
-    // Given I am signed in
-    cy.signIn()
-
-    // And a booking is available
+    // Given a booking is available
     const premises = premisesFactory.build()
     const booking = bookingFactory.build()
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
