@@ -41,7 +41,13 @@ export const bookingsToTableRows = (
 
 export const bookingActions = (booking: Booking, premisesId: string): Array<IdentityBarMenu> => {
   if (booking.status === 'awaiting-arrival' || booking.status === 'arrived') {
-    const items = []
+    const items = [
+      {
+        text: 'Move person to a new bed',
+        classes: 'govuk-button--secondary',
+        href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
+      },
+    ]
 
     if (booking.status === 'awaiting-arrival') {
       items.push({

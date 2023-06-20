@@ -122,6 +122,11 @@ describe('bookingUtils', () => {
         {
           items: [
             {
+              text: 'Move person to a new bed',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.moves.new({ premisesId: 'premisesId', bookingId: booking.id }),
+            },
+            {
               text: 'Mark as arrived',
               classes: 'govuk-button--secondary',
               href: paths.bookings.arrivals.new({ premisesId: 'premisesId', bookingId: booking.id }),
@@ -152,6 +157,11 @@ describe('bookingUtils', () => {
       expect(bookingActions(booking, 'premisesId')).toEqual([
         {
           items: [
+            {
+              text: 'Move person to a new bed',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.moves.new({ premisesId: 'premisesId', bookingId: booking.id }),
+            },
             {
               text: 'Log departure',
               classes: 'govuk-button--secondary',
