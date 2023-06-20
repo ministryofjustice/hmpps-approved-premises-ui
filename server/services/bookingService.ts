@@ -9,7 +9,7 @@ import BookingClient from '../data/bookingClient'
 import { DateFormats } from '../utils/dateUtils'
 
 export default class BookingService {
-  UPCOMING_WINDOW_IN_DAYS = 40
+  UPCOMING_WINDOW_IN_DAYS = 365 * 10
 
   constructor(private readonly bookingClientFactory: RestClientBuilder<BookingClient>) {}
 
