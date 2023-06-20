@@ -157,7 +157,7 @@ describe('calendarUtils', () => {
     it('if the bedOccupancyEntry.type is lost it returns the markup for a lost bed cell', () => {
       const lostBedOccupancyEntry = bedOccupancyEntryUiFactory.build({ type: 'lost_bed' })
 
-      expect(labelForScheduleItem(lostBedOccupancyEntry)).toEqual('lost')
+      expect(labelForScheduleItem(lostBedOccupancyEntry)).toEqual('Out of Service')
     })
 
     it('if the bedOccupancyEntry.type is booking it returns the markup for a booking cell', () => {
