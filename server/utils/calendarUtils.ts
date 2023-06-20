@@ -1,4 +1,13 @@
-import { addDays, format, formatDistanceStrict, isBefore, isSameDay, isSameMonth } from 'date-fns'
+import {
+  addDays,
+  differenceInDays,
+  format,
+  formatDistanceStrict,
+  isAfter,
+  isBefore,
+  isSameDay,
+  isSameMonth,
+} from 'date-fns'
 import { DateFormats } from './dateUtils'
 
 import {
@@ -94,10 +103,15 @@ export const scheduleForCalendar = (
   startDate: Date,
 ): Array<BedOccupancyEntryCalendar> => {
   return schedule.map(bedOccupancyEntry => {
+    const endDate = addDays(startDate, 30)
+    const scheduleStartDate = isBefore(bedOccupancyEntry.startDate, startDate) ? startDate : bedOccupancyEntry.startDate
+    const scheduleEndDate = isAfter(bedOccupancyEntry.endDate, endDate) ? endDate : bedOccupancyEntry.endDate
     return {
       ...bedOccupancyEntry,
       label: labelForScheduleItem(bedOccupancyEntry),
-      startDate: isBefore(bedOccupancyEntry.startDate, startDate) ? startDate : bedOccupancyEntry.startDate,
+      startDate: scheduleStartDate,
+      endDate: scheduleEndDate,
+      length: differenceInDays(scheduleEndDate, scheduleStartDate) + 1,
     }
   })
 }

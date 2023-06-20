@@ -1,4 +1,4 @@
-import { addDays, getDaysInMonth, subDays } from 'date-fns'
+import { addDays, differenceInDays, getDaysInMonth, subDays } from 'date-fns'
 import {
   bedOccupancyEntryBookingUiFactory,
   bedOccupancyEntryUiFactory,
@@ -180,21 +180,21 @@ describe('calendarUtils', () => {
         {
           startDate: scheduleItems[0].startDate,
           endDate: scheduleItems[0].endDate,
-          length: scheduleItems[0].length,
+          length: scheduleItems[0].length + 1,
           label: labelForScheduleItem(scheduleItems[0]),
           type: scheduleItems[0].type,
         },
         {
           startDate: scheduleItems[1].startDate,
           endDate: scheduleItems[1].endDate,
-          length: scheduleItems[1].length,
+          length: scheduleItems[1].length + 1,
           label: labelForScheduleItem(scheduleItems[1]),
           type: scheduleItems[1].type,
         },
         {
           startDate: scheduleItems[2].startDate,
           endDate: scheduleItems[2].endDate,
-          length: scheduleItems[2].length,
+          length: scheduleItems[2].length + 1,
           label: labelForScheduleItem(scheduleItems[2]),
           type: scheduleItems[2].type,
         },
@@ -203,13 +203,33 @@ describe('calendarUtils', () => {
 
     it('changes the start dates to today if any start dates are before the start date', () => {
       const startDate = new Date()
-      const scheduleItems = [bedOccupancyEntryUiFactory.build({ startDate: subDays(startDate, 2) })]
+      const scheduleItems = [
+        bedOccupancyEntryUiFactory.build({ startDate: subDays(startDate, 2), endDate: addDays(startDate, 5) }),
+      ]
 
       expect(scheduleForCalendar(scheduleItems, startDate)).toEqual([
         {
           startDate,
           endDate: scheduleItems[0].endDate,
-          length: scheduleItems[0].length,
+          length: 6,
+          label: labelForScheduleItem(scheduleItems[0]),
+          type: scheduleItems[0].type,
+        },
+      ])
+    })
+
+    it('changes the end dates to the end of the calendar if any end dates are after 30 days after the start date', () => {
+      const startDate = new Date()
+      const endDate = addDays(startDate, 30)
+      const scheduleItems = [
+        bedOccupancyEntryUiFactory.build({ startDate: addDays(startDate, 10), endDate: addDays(endDate, 2) }),
+      ]
+
+      expect(scheduleForCalendar(scheduleItems, startDate)).toEqual([
+        {
+          startDate: scheduleItems[0].startDate,
+          endDate: addDays(startDate, 30),
+          length: differenceInDays(endDate, scheduleItems[0].startDate) + 1,
           label: labelForScheduleItem(scheduleItems[0]),
           type: scheduleItems[0].type,
         },
