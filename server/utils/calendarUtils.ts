@@ -1,4 +1,4 @@
-import { addDays, isSameDay } from 'date-fns'
+import { addDays, formatDistanceStrict, isSameDay } from 'date-fns'
 import { DateFormats } from './dateUtils'
 
 import { BedOccupancyEntryUi, BedOccupancyRangeUi } from '../@types/ui'
@@ -49,6 +49,23 @@ export const occupierName = (bedOccupancyEntry: BedOccupancyEntryUi) => {
   return ''
 }
 
+export const bookingCellContent = (bedOccupancyEntry: BedOccupancyEntryUi) => {
+  const name = occupierName(bedOccupancyEntry)
+  const lengthOfStay = bedOccupancyEntry.length
+  const lengthOfStayInWords = formatDistanceStrict(bedOccupancyEntry.startDate, bedOccupancyEntry.endDate)
+  const startAndEndDates = `${DateFormats.dateObjtoUIDate(bedOccupancyEntry.startDate, {
+    format: 'short',
+  })} - ${DateFormats.dateObjtoUIDate(bedOccupancyEntry.endDate, { format: 'short' })}`
+
+  if (lengthOfStay < 5) return name
+
+  if (lengthOfStay >= 5 && lengthOfStay < 10) return `${name} (${lengthOfStayInWords})`
+
+  if (lengthOfStay >= 10) return `${name} (${lengthOfStayInWords} ${startAndEndDates})`
+
+  return ''
+}
+
 export const cell = (cellDate: Date, bedOccupancyEntry: BedOccupancyEntryUi) => {
   if (!isSameDay(bedOccupancyEntry.startDate, cellDate)) return ''
 
@@ -56,7 +73,7 @@ export const cell = (cellDate: Date, bedOccupancyEntry: BedOccupancyEntryUi) => 
 
   switch (bedOccupancyEntry.type) {
     case 'booking':
-      cellContent = occupierName(bedOccupancyEntry)
+      cellContent = bookingCellContent(bedOccupancyEntry)
       break
     case 'open':
       cellContent = 'open'

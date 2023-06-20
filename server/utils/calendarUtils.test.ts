@@ -8,6 +8,7 @@ import {
 import {
   bedRow,
   bedRows,
+  bookingCellContent,
   calendar,
   cell,
   dateRow,
@@ -151,6 +152,40 @@ describe('calendarUtils', () => {
       const bookedBedOccupancyEntry = bedOccupancyEntryBookingUiFactory.build()
 
       expect(occupierName(bookedBedOccupancyEntry)).toBe(bookedBedOccupancyEntry.personName)
+    })
+  })
+
+  describe('bookingCellContent', () => {
+    it('returns the occupiers name if the booking length is less than 5 days', () => {
+      const bookingBedOccupancyEntry = bedOccupancyEntryBookingUiFactory.build({
+        length: 4,
+        startDate: new Date(),
+        endDate: addDays(new Date(), 4),
+      })
+
+      expect(bookingCellContent(bookingBedOccupancyEntry)).toBe(bookingBedOccupancyEntry.personName)
+    })
+
+    it('returns the occupiers name and length of stay in words if the booking length is 5 or more days and less than 10 days', () => {
+      const bookingBedOccupancyEntry = bedOccupancyEntryBookingUiFactory.build({
+        length: 5,
+        startDate: new Date(),
+        endDate: addDays(new Date(), 5),
+      })
+
+      expect(bookingCellContent(bookingBedOccupancyEntry)).toBe(`${bookingBedOccupancyEntry.personName} (5 days)`)
+    })
+
+    it('returns the occupiers name, length of stay in words and the start and end date if the booking length is more than 10 days', () => {
+      const bookingBedOccupancyEntry = bedOccupancyEntryBookingUiFactory.build({
+        length: 10,
+        startDate: new Date(2023, 5, 21),
+        endDate: addDays(new Date(), 11),
+      })
+
+      expect(bookingCellContent(bookingBedOccupancyEntry)).toBe(
+        `${bookingBedOccupancyEntry.personName} (10 days 21/06/2023 - 01/07/2023)`,
+      )
     })
   })
 })
