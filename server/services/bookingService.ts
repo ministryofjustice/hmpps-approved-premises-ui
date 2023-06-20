@@ -1,7 +1,7 @@
 /* istanbul ignore file: The tests for this are flaky and likely to be removed soon */
 import { addDays, isSameDay, isWithinInterval } from 'date-fns'
 
-import type { Booking, Extension, NewBooking, NewExtension } from '@approved-premises/api'
+import type { Booking, Extension, NewBedMove, NewBooking, NewExtension } from '@approved-premises/api'
 import type { GroupedListofBookings } from '@approved-premises/ui'
 
 import type { RestClientBuilder } from '../data'
@@ -68,6 +68,12 @@ export default class BookingService {
     const bookings = await bookingClient.allBookingsForPremisesId(premisesId)
 
     return this.arrivedBookings(bookings)
+  }
+
+  async moveBooking(token: string, premisesId: string, bookingId: string, move: NewBedMove): Promise<void> {
+    const bookingClient = this.bookingClientFactory(token)
+
+    await bookingClient.moveBooking(premisesId, bookingId, move)
   }
 
   private bookingsArrivingToday(bookings: Array<Booking>, today: Date): Array<Booking> {

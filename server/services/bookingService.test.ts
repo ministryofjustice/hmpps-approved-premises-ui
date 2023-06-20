@@ -2,7 +2,7 @@ import BookingService from './bookingService'
 import BookingClient from '../data/bookingClient'
 
 import { bookingExtensionFactory, bookingFactory, newBookingFactory } from '../testutils/factories'
-import { Booking } from '../@types/shared'
+import { Booking, NewBedMove } from '../@types/shared'
 
 jest.mock('../data/bookingClient.ts')
 jest.mock('../data/referenceDataClient.ts')
@@ -153,6 +153,20 @@ describe('BookingService', () => {
 
       expect(bookingClientFactory).toHaveBeenCalledWith(token)
       expect(bookingClient.allBookingsForPremisesId).toHaveBeenCalledWith(premisesId)
+    })
+  })
+
+  describe('createMoveBooking', () => {
+    it('on success returns the arrival that has been posted', async () => {
+      const payload: NewBedMove = {
+        bedId: 'bedId',
+        notes: 'notes',
+      }
+
+      await service.moveBooking(token, 'premisesID', 'bookingId', payload)
+
+      expect(bookingClientFactory).toHaveBeenCalledWith(token)
+      expect(bookingClient.moveBooking).toHaveBeenCalledWith('premisesID', 'bookingId', payload)
     })
   })
 })
