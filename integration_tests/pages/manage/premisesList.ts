@@ -6,6 +6,7 @@ import paths from '../../../server/paths/manage'
 export default class PremisesListPage extends Page {
   constructor() {
     super('Premises')
+    this.checkPhaseBanner('Give us your feedback')
   }
 
   static visit(): PremisesListPage {

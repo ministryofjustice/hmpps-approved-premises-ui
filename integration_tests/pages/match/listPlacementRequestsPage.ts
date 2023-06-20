@@ -10,6 +10,7 @@ import { shouldShowTableRows } from '../../helpers'
 export default class ListPage extends Page {
   constructor() {
     super('My Cases')
+    this.checkPhaseBanner('Give us your feedback')
   }
 
   static visit(): ListPage {

@@ -13,5 +13,6 @@ export default class AssessPage extends Page {
 
   constructor(public readonly assessment: Assessment, title: string) {
     super(title)
+    this.checkPhaseBanner('Give us your feedback')
   }
 }
