@@ -2,7 +2,11 @@ import { Request } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PlacementApplicationClient from '../data/placementApplicationClient'
-import { applicationFactory, placementApplicationFactory } from '../testutils/factories'
+import {
+  applicationFactory,
+  placementApplicationDecisionEnvelopeFactory,
+  placementApplicationFactory,
+} from '../testutils/factories'
 import PlacementApplicationService from './placementApplicationService'
 import { DataServices, TaskListErrors } from '../@types/ui'
 import { getBody } from '../form-pages/utils'
@@ -191,6 +195,19 @@ describe('placementApplicationService', () => {
       placementApplicationClient.submission.mockResolvedValue(placementApplication)
 
       const result = service.submit(token, placementApplication, application)
+
+      expect(result).resolves.toEqual(placementApplication)
+    })
+  })
+
+  describe('submitDecision', () => {
+    it('calls the client method and returns the a placement application', () => {
+      const decisionEnvelope = placementApplicationDecisionEnvelopeFactory.build()
+      const placementApplication = placementApplicationFactory.build()
+
+      placementApplicationClient.decisionSubmission.mockResolvedValue(placementApplication)
+
+      const result = service.submitDecision(token, placementApplication.id, decisionEnvelope)
 
       expect(result).resolves.toEqual(placementApplication)
     })
