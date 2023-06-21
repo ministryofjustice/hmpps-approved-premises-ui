@@ -88,7 +88,11 @@ export const bedRow = (bedOccupancyRange: BedOccupancyRangeUi, startDate: Date, 
     ${generateRowCells(bedOccupancyRange, startDate, premisesId)}</tr>`
 }
 
-export const labelForScheduleItem = (bedOccupancyEntry: BedOccupancyEntryUi, premisesId: string): string => {
+export const labelForScheduleItem = (
+  bedOccupancyEntry: BedOccupancyEntryUi,
+  premisesId: string,
+  bedId: string,
+): string => {
   switch (bedOccupancyEntry.type) {
     case 'booking':
       return bookingCellContent(bedOccupancyEntry, premisesId)
@@ -97,7 +101,7 @@ export const labelForScheduleItem = (bedOccupancyEntry: BedOccupancyEntryUi, pre
     case 'lost_bed':
       return 'Out of Service'
     case 'overbooking':
-      return 'Overbooked'
+      return overbookedCellContent(premisesId, bedId)
     default:
       return ''
   }
@@ -107,6 +111,7 @@ export const scheduleForCalendar = (
   schedule: Array<BedOccupancyEntryUi>,
   startDate: Date,
   premisesId: string,
+  bedId: string,
 ): Array<BedOccupancyEntryCalendar> => {
   return schedule.map(bedOccupancyEntry => {
     const endDate = addDays(startDate, 30)
@@ -114,7 +119,7 @@ export const scheduleForCalendar = (
     const scheduleEndDate = isAfter(bedOccupancyEntry.endDate, endDate) ? endDate : bedOccupancyEntry.endDate
     return {
       ...bedOccupancyEntry,
-      label: labelForScheduleItem(bedOccupancyEntry, premisesId),
+      label: labelForScheduleItem(bedOccupancyEntry, premisesId, bedId),
       startDate: scheduleStartDate,
       endDate: scheduleEndDate,
       length: differenceInDays(scheduleEndDate, scheduleStartDate) + 1,
@@ -125,11 +130,22 @@ export const scheduleForCalendar = (
 export const generateRowCells = (bedOccupancyRange: BedOccupancyRangeUi, startDate: Date, premisesId: string) => {
   return generateDays(new Date())
     .map(day =>
-      scheduleForCalendar(bedOccupancyRange.schedule, startDate, premisesId)
+      scheduleForCalendar(bedOccupancyRange.schedule, startDate, premisesId, bedOccupancyRange.bedId)
         .map(entry => cell(day, entry))
         .join(''),
     )
     .join('')
+}
+
+export const overbookedCellContent = (premisesId: string, bedId: string) => {
+  return linkTo(
+    paths.premises.beds.show,
+    { bedId, premisesId },
+    {
+      text: 'Overbooked',
+      attributes: { 'data-cy-bedId': bedId, class: 'govuk-link govuk-link--overbooking' },
+    },
+  )
 }
 
 export const occupierName = (bedOccupancyEntry: BedOccupancyEntryUi, premisesId: string) => {
