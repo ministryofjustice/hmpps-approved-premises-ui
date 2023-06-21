@@ -60,6 +60,7 @@ export default function routes(controllers: Controllers, router: Router): Router
   post(paths.lostBeds.update.pattern, lostBedsController.update())
 
   get(paths.bookings.moves.new.pattern, moveBedsController.new())
+  post(paths.bookings.moves.create.pattern, moveBedsController.create())
 
   return router
 }

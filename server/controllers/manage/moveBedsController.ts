@@ -1,8 +1,10 @@
 import { Request, RequestHandler, Response } from 'express'
 
-import { fetchErrorsAndUserInput } from '../../utils/validation'
+import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 
 import { BookingService, PremisesService } from '../../services'
+import { NewBedMove } from '../../@types/shared'
+import paths from '../../paths/manage'
 
 export default class MoveBedsController {
   constructor(private readonly bookingService: BookingService, private readonly premisesService: PremisesService) {}
@@ -24,6 +26,26 @@ export default class MoveBedsController {
         pageHeading: 'Move person to a new bed',
         ...userInput,
       })
+    }
+  }
+
+  create(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { premisesId, bookingId } = req.params
+
+      const newMove: NewBedMove = {
+        notes: req.body.notes,
+        bedId: req.body.bedId,
+      }
+
+      try {
+        await this.bookingService.moveBooking(req.user.token, premisesId, bookingId, newMove)
+
+        req.flash('success', 'Bed move logged')
+        res.redirect(paths.premises.show({ premisesId }))
+      } catch (err) {
+        catchValidationErrorOrPropogate(req, res, err, paths.bookings.moves.new({ premisesId, bookingId }))
+      }
     }
   }
 }

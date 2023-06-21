@@ -87,4 +87,65 @@ describe('MoveBedsController', () => {
       })
     })
   })
+
+  describe('create', () => {
+    const bedId = 'bedId'
+
+    it('creates a move and redirects to the premises page', async () => {
+      const requestHandler = moveBedsController.create()
+
+      const move: NewBedMove = {
+        notes: 'Some notes',
+        bedId,
+      }
+
+      request.params = {
+        bookingId,
+        premisesId,
+      }
+
+      request.body = {
+        ...move,
+      }
+
+      await requestHandler(request, response, next)
+
+      expect(bookingService.moveBooking).toHaveBeenCalledWith(
+        token,
+        request.params.premisesId,
+        request.params.bookingId,
+        move,
+      )
+
+      expect(request.flash).toHaveBeenCalledWith('success', 'Bed move logged')
+      expect(response.redirect).toHaveBeenCalledWith(paths.premises.show({ premisesId: request.params.premisesId }))
+    })
+
+    it('renders with errors if the API returns an error', async () => {
+      const requestHandler = moveBedsController.create()
+
+      request.params = {
+        bookingId,
+        premisesId,
+      }
+
+      const err = new Error()
+
+      bookingService.moveBooking.mockImplementation(() => {
+        throw err
+      })
+
+      await requestHandler(request, response, next)
+
+      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        err,
+        paths.bookings.moves.new({
+          premisesId: request.params.premisesId,
+          bookingId: request.params.bookingId,
+        }),
+      )
+    })
+  })
 })
