@@ -11,7 +11,7 @@ import {
   bedSearchResultsFactory,
   personFactory,
   placementApplicationTaskFactory,
-  placementRequestFactory,
+  placementRequestDetailFactory,
   placementRequestTaskFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
@@ -76,7 +76,7 @@ context('Placement Requests', () => {
     const essentialCriteria = ['isPIPE', 'acceptsHateCrimeOffenders', 'isGroundFloor'] as Array<PlacementCriteria>
     const desirableCriteria = ['isCatered', 'isGroundFloor', 'hasEnSuite'] as Array<PlacementCriteria>
 
-    const placementRequest = placementRequestFactory.build({
+    const placementRequest = placementRequestDetailFactory.build({
       person,
       status: 'notMatched',
       duration: 15,
@@ -113,6 +113,7 @@ context('Placement Requests', () => {
     showPage.shouldShowAssessmentDetails()
     showPage.shouldShowMatchingInformationSummary()
     showPage.shouldShowDocuments()
+    showPage.shouldShowPreviousCancellations()
 
     // When I click on the search button
     showPage.clickSearch()
@@ -189,7 +190,7 @@ context('Placement Requests', () => {
 
   it('allows me to make a booking', () => {
     // Given there is a placement request waiting for me to match
-    const placementRequest = placementRequestFactory.build({ status: 'notMatched' })
+    const placementRequest = placementRequestDetailFactory.build({ status: 'notMatched' })
     const placementRequestTask = placementRequestTaskFactory.build({
       id: placementRequest.id,
       placementRequestStatus: placementRequest.status,
@@ -247,7 +248,7 @@ context('Placement Requests', () => {
 
   it('allows me to mark a placement request as unable to match', () => {
     // Given there is a placement request waiting for me to match
-    const placementRequest = placementRequestFactory.build({ status: 'notMatched' })
+    const placementRequest = placementRequestDetailFactory.build({ status: 'notMatched' })
     const placementRequestTask = placementRequestTaskFactory.build({
       id: placementRequest.id,
       placementRequestStatus: placementRequest.status,
