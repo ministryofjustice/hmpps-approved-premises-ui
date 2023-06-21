@@ -1,4 +1,8 @@
-import { PlacementApplication, SubmitPlacementApplication } from '@approved-premises/api'
+import {
+  PlacementApplication,
+  PlacementApplicationDecisionEnvelope,
+  SubmitPlacementApplication,
+} from '@approved-premises/api'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
@@ -37,6 +41,16 @@ export default class PlacementApplicationClient {
     return (await this.restClient.post({
       path: paths.placementApplications.submit({ id: placementApplicationId }),
       data: submitPlacementApplication,
+    })) as Promise<PlacementApplication>
+  }
+
+  async decisionSubmission(
+    placementApplicationId: string,
+    decision: PlacementApplicationDecisionEnvelope,
+  ): Promise<PlacementApplication> {
+    return (await this.restClient.post({
+      path: paths.placementApplications.submitDecision({ id: placementApplicationId }),
+      data: decision,
     })) as Promise<PlacementApplication>
   }
 }

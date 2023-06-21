@@ -65,6 +65,7 @@ import taskFactory from './task'
 import taskWrapperFactory from './taskWrapperFactory'
 import userFactory from './user'
 import userDetailsFactory from './userDetails'
+import placementApplicationDecisionEnvelopeFactory from './placementApplicationDecisionEnvelope'
 
 export {
   acctAlertFactory,
@@ -116,6 +117,7 @@ export {
   personFactory,
   placementApplicationFactory,
   placementApplicationTaskFactory,
+  placementApplicationDecisionEnvelopeFactory,
   placementDatesFactory,
   placementRequestFactory,
   placementRequestDetailFactory,
