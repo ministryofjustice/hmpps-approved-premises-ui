@@ -1,6 +1,12 @@
 import { SanitisedError } from '../sanitisedError'
-import { bookingActions, bookingsToTableRows, generateConflictBespokeError, manageBookingLink } from './bookingUtils'
-import { bookingFactory, personFactory } from '../testutils/factories'
+import {
+  bedsAsSelectItems,
+  bookingActions,
+  bookingsToTableRows,
+  generateConflictBespokeError,
+  manageBookingLink,
+} from './bookingUtils'
+import { bedSummaryFactory, bookingFactory, personFactory } from '../testutils/factories'
 import paths from '../paths/manage'
 import { DateFormats } from './dateUtils'
 
@@ -118,33 +124,33 @@ describe('bookingUtils', () => {
     it('should return arrival, non-arrival and cancellation actions if a booking is awaiting arrival', () => {
       const booking = bookingFactory.arrivingToday().build()
 
-      expect(bookingActions(booking, 'premisesId')).toEqual([
+      expect(bookingActions(booking, premisesId)).toEqual([
         {
           items: [
             {
               text: 'Move person to a new bed',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.moves.new({ premisesId: 'premisesId', bookingId: booking.id }),
+              href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
             },
             {
               text: 'Mark as arrived',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.arrivals.new({ premisesId: 'premisesId', bookingId: booking.id }),
+              href: paths.bookings.arrivals.new({ premisesId, bookingId: booking.id }),
             },
             {
               text: 'Mark as not arrived',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.nonArrivals.new({ premisesId: 'premisesId', bookingId: booking.id }),
+              href: paths.bookings.nonArrivals.new({ premisesId, bookingId: booking.id }),
             },
             {
               text: 'Extend placement',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.extensions.new({ premisesId: 'premisesId', bookingId: booking.id }),
+              href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
             },
             {
               text: 'Cancel placement',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.cancellations.new({ premisesId: 'premisesId', bookingId: booking.id }),
+              href: paths.bookings.cancellations.new({ premisesId, bookingId: booking.id }),
             },
           ],
         },
@@ -154,28 +160,28 @@ describe('bookingUtils', () => {
     it('should return a departure action if a booking is arrived', () => {
       const booking = bookingFactory.arrived().build()
 
-      expect(bookingActions(booking, 'premisesId')).toEqual([
+      expect(bookingActions(booking, premisesId)).toEqual([
         {
           items: [
             {
               text: 'Move person to a new bed',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.moves.new({ premisesId: 'premisesId', bookingId: booking.id }),
+              href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
             },
             {
               text: 'Log departure',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.departures.new({ premisesId: 'premisesId', bookingId: booking.id }),
+              href: paths.bookings.departures.new({ premisesId, bookingId: booking.id }),
             },
             {
               text: 'Extend placement',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.extensions.new({ premisesId: 'premisesId', bookingId: booking.id }),
+              href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
             },
             {
               text: 'Cancel placement',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.cancellations.new({ premisesId: 'premisesId', bookingId: booking.id }),
+              href: paths.bookings.cancellations.new({ premisesId, bookingId: booking.id }),
             },
           ],
         },
@@ -247,6 +253,17 @@ describe('bookingUtils', () => {
           },
         ],
       })
+    })
+  })
+
+  describe('bedsAsSelectItems', () => {
+    it('should return an array of select items', () => {
+      const beds = bedSummaryFactory.buildList(2)
+
+      expect(bedsAsSelectItems(beds, beds[0].id)).toEqual([
+        { text: `Bed name: ${beds[0].name}, room name: ${beds[0].roomName}`, value: beds[0].id, selected: true },
+        { text: `Bed name: ${beds[1].name}, room name: ${beds[1].roomName}`, value: beds[1].id, selected: false },
+      ])
     })
   })
 })

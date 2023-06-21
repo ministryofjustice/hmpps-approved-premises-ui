@@ -1,5 +1,5 @@
-import type { BespokeError, IdentityBarMenu, TableRow } from '@approved-premises/ui'
-import type { Booking } from '@approved-premises/api'
+import type { BespokeError, IdentityBarMenu, SelectOption, TableRow } from '@approved-premises/ui'
+import type { BedSummary, Booking } from '@approved-premises/api'
 import paths from '../paths/manage'
 import { DateFormats } from './dateUtils'
 import { SanitisedError } from '../sanitisedError'
@@ -137,4 +137,12 @@ const parseConflictError = (detail: string): ParsedConflictError => {
   const conflictingEntityType = detail.includes('Lost Bed') ? 'lost-bed' : 'booking'
 
   return { conflictingEntityId, conflictingEntityType }
+}
+
+export const bedsAsSelectItems = (beds: Array<BedSummary>, selectedId: string): Array<SelectOption> => {
+  return beds.map(bed => ({
+    text: `Bed name: ${bed.name}, room name: ${bed.roomName}`,
+    value: bed.id,
+    selected: selectedId === bed.id,
+  }))
 }
