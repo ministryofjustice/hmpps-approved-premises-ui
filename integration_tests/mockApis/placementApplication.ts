@@ -61,6 +61,20 @@ export default {
         jsonBody: placementApplication,
       },
     }),
+  stubSubmitPlacementApplicationDecision: (placementApplication: PlacementApplication): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: paths.placementApplications.submitDecision({ id: placementApplication.id }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: placementApplication,
+      },
+    }),
   verifyPlacementApplicationSubmit: async (applicationId: string) =>
     (
       await getMatchingRequests({

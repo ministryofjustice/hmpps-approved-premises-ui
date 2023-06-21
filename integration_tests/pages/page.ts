@@ -75,10 +75,12 @@ export default abstract class Page {
 
   headerUserName = (): PageElement => cy.get('[data-qa=header-user-name]')
 
-  shouldShowErrorMessagesForFields(fields: Array<string>): void {
+  shouldShowErrorMessagesForFields(fields: Array<string>, clientSideErrorMessages?: Record<string, string>): void {
     fields.forEach(field => {
-      cy.get('.govuk-error-summary').should('contain', errorLookups[field]?.empty)
-      cy.get(`[data-cy-error-${field}]`).should('contain', errorLookups[field]?.empty)
+      const errorMessagesLookup = clientSideErrorMessages?.[field] ?? errorLookups[field].empty
+
+      cy.get('.govuk-error-summary').should('contain', errorMessagesLookup)
+      cy.get(`[data-cy-error-${field}]`).should('contain', errorMessagesLookup)
     })
   }
 

@@ -45,4 +45,8 @@ export default class ListPage extends Page {
   clickFindBed(placementRequest: PlacementRequest): void {
     cy.get(`[data-cy-placementRequestId="${placementRequest.id}"]`).click()
   }
+
+  clickPersonName(name: string): void {
+    cy.get('a').contains(name).click()
+  }
 }

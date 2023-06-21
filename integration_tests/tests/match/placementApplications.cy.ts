@@ -4,7 +4,11 @@ import {
   documentFactory,
   personFactory,
   placementApplicationFactory,
+  placementApplicationTaskFactory,
 } from '../../../server/testutils/factories'
+import ListPage from '../../pages/match/listPlacementRequestsPage'
+import ReviewApplicationPage from '../../pages/match/reviewApplicationForm/reviewApplicationPage'
+import ReviewApplicationDecisionPage from '../../pages/match/reviewApplicationForm/decisionPage'
 import { ShowPage } from '../../pages/apply'
 import DateOfPlacement from '../../pages/match/placementRequestForm/datesOfPlacement'
 import PreviousRotlPlacement from '../../pages/match/placementRequestForm/previousRotlPlacement'
@@ -19,6 +23,7 @@ import AdditionalDocuments from '../../pages/match/placementRequestForm/addition
 import Page from '../../pages/page'
 import paths from '../../../server/paths/api'
 import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
+import ReviewApplicationConfirmPage from '../../pages/match/reviewApplicationForm/confirmPage'
 
 context('Placement Applications', () => {
   const userId = 'some-user-id'
@@ -234,6 +239,119 @@ context('Placement Applications', () => {
 
       checkYourAnswersPage.completeForm()
       checkYourAnswersPage.clickSubmit()
+    })
+  })
+
+  it('allows me to review an application', () => {
+    // Given there is a placement request task and placement application in the database
+    const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
+
+    const document = {
+      'request-a-placement': [{ 'test question 1': 'test answer 1' }, { 'test question 2': 'test answer 2' }],
+    }
+    const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
+    cy.task('stubPlacementApplication', placementApplication)
+
+    cy.task('stubTasks', placementApplicationTasks)
+
+    // When I visit the placementRequests dashboard
+    const listPage = ListPage.visit()
+    listPage.clickPlacementApplications()
+
+    // And I click on the first name
+    listPage.clickPersonName(placementApplicationTasks[0].person.name)
+
+    // Then I should be taken to the review applications page
+    const page = Page.verifyOnPage(ReviewApplicationPage)
+    page.checkPageContents(placementApplication)
+
+    // And when I complete the form
+    page.completeForm()
+    page.clickSubmit()
+
+    // Then I should be taken to the decision page
+
+    const decisionPage = Page.verifyOnPage(ReviewApplicationDecisionPage)
+
+    // And when I complete the form
+
+    cy.task('stubSubmitPlacementApplicationDecision', placementApplication)
+
+    decisionPage.checkRadioByNameAndValue('decision', 'accepted')
+    decisionPage.getTextInputByIdAndEnterDetails('decisionSummary', 'some summary notes')
+    decisionPage.clickSubmit()
+
+    // Then I should be taken to the confirm submission page
+
+    Page.verifyOnPage(ReviewApplicationConfirmPage)
+  })
+
+  it('renders with errors if I do not complete the summary of changes in the review', () => {
+    // Given there is a placement request task and placement application in the database
+    const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
+
+    const document = {
+      'request-a-placement': [{ 'test question 1': 'test answer 1' }, { 'test question 2': 'test answer 2' }],
+    }
+    const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
+    cy.task('stubPlacementApplication', placementApplication)
+
+    cy.task('stubTasks', placementApplicationTasks)
+
+    // When I visit the placementRequests dashboard
+    const listPage = ListPage.visit()
+    listPage.clickPlacementApplications()
+
+    // And I click on the first name
+    listPage.clickPersonName(placementApplicationTasks[0].person.name)
+
+    // Then I should be taken to the review applications page
+    const page = Page.verifyOnPage(ReviewApplicationPage)
+
+    // And when I click submit without entering text
+    page.clickSubmit()
+
+    // Then the page should render with errors
+    page.shouldShowErrorMessagesForFields(['summaryOfChanges'], {
+      summaryOfChanges: 'You must provide a summary of the changes',
+    })
+  })
+
+  it('renders with errors if I do not complete the decision summary in the review', () => {
+    // Given there is a placement request task and placement application in the database
+    const placementApplicationTasks = placementApplicationTaskFactory.buildList(1)
+
+    const document = {
+      'request-a-placement': [{ 'test question 1': 'test answer 1' }, { 'test question 2': 'test answer 2' }],
+    }
+    const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
+    cy.task('stubPlacementApplication', placementApplication)
+
+    cy.task('stubTasks', placementApplicationTasks)
+
+    // When I visit the placementRequests dashboard
+    const listPage = ListPage.visit()
+    listPage.clickPlacementApplications()
+
+    // And I click on the first name
+    listPage.clickPersonName(placementApplicationTasks[0].person.name)
+
+    // Then I should be taken to the review applications page
+    const page = Page.verifyOnPage(ReviewApplicationPage)
+
+    // And when I complete the form
+    page.completeForm()
+
+    // Then I should be taken to the decision page
+    const decisionPage = Page.verifyOnPage(ReviewApplicationDecisionPage)
+
+    // And when I click submit
+    decisionPage.clickSubmit()
+
+    // Then the page should render with errors
+    decisionPage.shouldShowErrorMessagesForFields(['decision', 'decisionSummary'], {
+      decision: 'You must provide a decision',
+      decisionSummary: 'You must provide a decision summary',
     })
   })
 
