@@ -14,5 +14,5 @@
 {% endblock %}
 
 {% block content %}
-	{{CalendarUtils.calendar(bedOccupancyRangeList, startDate) | safe}}
+	{{CalendarUtils.calendar(bedOccupancyRangeList, startDate, premisesId) | safe}}
 {% endblock %}

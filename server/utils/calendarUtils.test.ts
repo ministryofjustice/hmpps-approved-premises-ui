@@ -31,19 +31,21 @@ import {
 import { bedOccupancyEntryCalendarFactory } from '../testutils/factories/bedOccupancyRange'
 
 describe('calendarUtils', () => {
+  const premisesId = 'some-uuid'
+
   describe('calendar', () => {
     it('should return calendar', () => {
       const bedOccupancyRangeList = bedOccupancyRangeFactoryUi.buildList(1)
       const startDate = new Date()
 
-      expect(calendar(bedOccupancyRangeList, startDate)).toMatchStringIgnoringWhitespace(
+      expect(calendar(bedOccupancyRangeList, startDate, premisesId)).toMatchStringIgnoringWhitespace(
         `
         <table class="${calendarTableClass}" cellspacing="0">
           <thead class="${headClass}">
             <tr class="${rowClass} ${tableClass}__row--months">${monthRow(startDate)}</tr>
             ${dateRow()}
           </thead>
-          <tbody class="${bodyClass}">${bedRows(bedOccupancyRangeList, startDate)}</tbody>
+          <tbody class="${bodyClass}">${bedRows(bedOccupancyRangeList, startDate, premisesId)}</tbody>
         </table>
       `,
       )
@@ -113,8 +115,12 @@ describe('calendarUtils', () => {
       const startDate = new Date()
       const bedOccupancyRangeList = bedOccupancyRangeFactoryUi.buildList(2)
 
-      expect(bedRows(bedOccupancyRangeList, startDate)).toMatchStringIgnoringWhitespace(
-        `${bedRow(bedOccupancyRangeList[0], startDate)}${bedRow(bedOccupancyRangeList[1], startDate)}`,
+      expect(bedRows(bedOccupancyRangeList, startDate, premisesId)).toMatchStringIgnoringWhitespace(
+        `${bedRow(bedOccupancyRangeList[0], startDate, premisesId)}${bedRow(
+          bedOccupancyRangeList[1],
+          startDate,
+          premisesId,
+        )}`,
       )
     })
   })
@@ -124,10 +130,10 @@ describe('calendarUtils', () => {
       const startDate = new Date()
       const bedOccupancyRange = bedOccupancyRangeFactoryUi.build()
 
-      expect(bedRow(bedOccupancyRange, startDate)).toMatchStringIgnoringWhitespace(
+      expect(bedRow(bedOccupancyRange, startDate, premisesId)).toMatchStringIgnoringWhitespace(
         `<tr class="${rowClass}">
         <th scope="row" class="${headerClass}">${bedOccupancyRange.bedName}</th>
-        ${generateRowCells(bedOccupancyRange, startDate)}</tr>`,
+        ${generateRowCells(bedOccupancyRange, startDate, premisesId)}</tr>`,
       )
     })
   })
@@ -137,9 +143,9 @@ describe('calendarUtils', () => {
       const startDate = new Date()
       const bedOccupancyRange = bedOccupancyRangeFactoryUi.build()
 
-      const schedule = scheduleForCalendar(bedOccupancyRange.schedule, startDate)
+      const schedule = scheduleForCalendar(bedOccupancyRange.schedule, startDate, premisesId)
 
-      expect(generateRowCells(bedOccupancyRange, startDate)).toMatchStringIgnoringWhitespace(
+      expect(generateRowCells(bedOccupancyRange, startDate, premisesId)).toMatchStringIgnoringWhitespace(
         `${generateDays(new Date())
           .map(day => schedule.map(entry => cell(day, entry)).join(''))
           .join('')}`,
@@ -151,25 +157,29 @@ describe('calendarUtils', () => {
     it('if the bedOccupancyEntry.type is open it returns the markup for an open cell', () => {
       const openBedOccupancyEntry = bedOccupancyEntryUiFactory.build({ type: 'open' })
 
-      expect(labelForScheduleItem(openBedOccupancyEntry)).toEqual('<span class="govuk-visually-hidden">open</span>')
+      expect(labelForScheduleItem(openBedOccupancyEntry, premisesId)).toEqual(
+        '<span class="govuk-visually-hidden">open</span>',
+      )
     })
 
     it('if the bedOccupancyEntry.type is lost it returns the markup for a lost bed cell', () => {
       const lostBedOccupancyEntry = bedOccupancyEntryUiFactory.build({ type: 'lost_bed' })
 
-      expect(labelForScheduleItem(lostBedOccupancyEntry)).toEqual('Out of Service')
+      expect(labelForScheduleItem(lostBedOccupancyEntry, premisesId)).toEqual('Out of Service')
     })
 
     it('if the bedOccupancyEntry.type is booking it returns the markup for a booking cell', () => {
-      const bedOccupancyEntry = bedOccupancyEntryUiFactory.build({ type: 'booking' })
+      const bedOccupancyEntry = bedOccupancyEntryUiFactory.build({ type: 'booking', bookingId: '123' })
 
-      expect(labelForScheduleItem(bedOccupancyEntry)).toEqual(bookingCellContent(bedOccupancyEntry))
+      expect(labelForScheduleItem(bedOccupancyEntry, premisesId)).toEqual(
+        bookingCellContent(bedOccupancyEntry, premisesId),
+      )
     })
 
     it('if the bedOccupancyEntry.type is booking it returns the markup for an overbooked cell', () => {
       const bedOccupancyEntry = bedOccupancyEntryUiFactory.build({ type: 'overbooking' })
 
-      expect(labelForScheduleItem(bedOccupancyEntry)).toEqual('Overbooked')
+      expect(labelForScheduleItem(bedOccupancyEntry, premisesId)).toEqual('Overbooked')
     })
   })
 
@@ -179,29 +189,30 @@ describe('calendarUtils', () => {
       const scheduleItems = [
         bedOccupancyEntryUiFactory.build({ type: 'open' }),
         bedOccupancyEntryUiFactory.build({ type: 'lost_bed' }),
-        bedOccupancyEntryUiFactory.build({ type: 'booking' }),
+        bedOccupancyEntryUiFactory.build({ type: 'booking', bookingId: '123' }),
       ]
 
-      expect(scheduleForCalendar(scheduleItems, startDate)).toEqual([
+      expect(scheduleForCalendar(scheduleItems, startDate, premisesId)).toEqual([
         {
           startDate: scheduleItems[0].startDate,
           endDate: scheduleItems[0].endDate,
           length: scheduleItems[0].length + 1,
-          label: labelForScheduleItem(scheduleItems[0]),
+          label: labelForScheduleItem(scheduleItems[0], premisesId),
           type: scheduleItems[0].type,
         },
         {
           startDate: scheduleItems[1].startDate,
           endDate: scheduleItems[1].endDate,
           length: scheduleItems[1].length + 1,
-          label: labelForScheduleItem(scheduleItems[1]),
+          label: labelForScheduleItem(scheduleItems[1], premisesId),
           type: scheduleItems[1].type,
         },
         {
           startDate: scheduleItems[2].startDate,
           endDate: scheduleItems[2].endDate,
           length: scheduleItems[2].length + 1,
-          label: labelForScheduleItem(scheduleItems[2]),
+          label: labelForScheduleItem(scheduleItems[2], premisesId),
+          bookingId: '123',
           type: scheduleItems[2].type,
         },
       ])
@@ -210,16 +221,22 @@ describe('calendarUtils', () => {
     it('changes the start dates to today if any start dates are before the start date', () => {
       const startDate = new Date()
       const scheduleItems = [
-        bedOccupancyEntryUiFactory.build({ startDate: subDays(startDate, 2), endDate: addDays(startDate, 5) }),
+        bedOccupancyEntryUiFactory.build({
+          startDate: subDays(startDate, 2),
+          endDate: addDays(startDate, 5),
+          type: 'booking',
+          bookingId: '123',
+        }),
       ]
 
-      expect(scheduleForCalendar(scheduleItems, startDate)).toEqual([
+      expect(scheduleForCalendar(scheduleItems, startDate, premisesId)).toEqual([
         {
           startDate,
           endDate: scheduleItems[0].endDate,
           length: 6,
-          label: labelForScheduleItem(scheduleItems[0]),
+          label: labelForScheduleItem(scheduleItems[0], premisesId),
           type: scheduleItems[0].type,
+          bookingId: '123',
         },
       ])
     })
@@ -228,16 +245,22 @@ describe('calendarUtils', () => {
       const startDate = new Date()
       const endDate = addDays(startDate, 30)
       const scheduleItems = [
-        bedOccupancyEntryUiFactory.build({ startDate: addDays(startDate, 10), endDate: addDays(endDate, 2) }),
+        bedOccupancyEntryUiFactory.build({
+          startDate: addDays(startDate, 10),
+          endDate: addDays(endDate, 2),
+          type: 'booking',
+          bookingId: '123',
+        }),
       ]
 
-      expect(scheduleForCalendar(scheduleItems, startDate)).toEqual([
+      expect(scheduleForCalendar(scheduleItems, startDate, premisesId)).toEqual([
         {
           startDate: scheduleItems[0].startDate,
           endDate: addDays(startDate, 30),
           length: differenceInDays(endDate, scheduleItems[0].startDate) + 1,
-          label: labelForScheduleItem(scheduleItems[0]),
+          label: labelForScheduleItem(scheduleItems[0], premisesId),
           type: scheduleItems[0].type,
+          bookingId: '123',
         },
       ])
     })
@@ -261,9 +284,11 @@ describe('calendarUtils', () => {
 
   describe('occupierName', () => {
     it('returns the markup for a booked bed cell', () => {
-      const bookedBedOccupancyEntry = bedOccupancyEntryBookingUiFactory.build()
+      const bookedBedOccupancyEntry = bedOccupancyEntryBookingUiFactory.build({ bookingId: '123' })
 
-      expect(occupierName(bookedBedOccupancyEntry)).toBe(bookedBedOccupancyEntry.personName)
+      expect(occupierName(bookedBedOccupancyEntry, premisesId)).toBe(
+        `<a href="/premises/some-uuid/bookings/123" data-cy-bookingId="123" class="govuk-link govuk-link--booking">${bookedBedOccupancyEntry.personName}</a>`,
+      )
     })
   })
 
@@ -275,7 +300,9 @@ describe('calendarUtils', () => {
         endDate: addDays(new Date(), 4),
       })
 
-      expect(bookingCellContent(bookingBedOccupancyEntry)).toBe(bookingBedOccupancyEntry.personName)
+      expect(bookingCellContent(bookingBedOccupancyEntry, premisesId)).toBe(
+        `<a href="/premises/some-uuid/bookings/${bookingBedOccupancyEntry.bookingId}" data-cy-bookingId="${bookingBedOccupancyEntry.bookingId}" class="govuk-link govuk-link--booking">${bookingBedOccupancyEntry.personName}</a>`,
+      )
     })
 
     it('returns the occupiers name and length of stay in words if the booking length is 5 or more days and less than 10 days', () => {
@@ -285,7 +312,9 @@ describe('calendarUtils', () => {
         endDate: addDays(new Date(), 5),
       })
 
-      expect(bookingCellContent(bookingBedOccupancyEntry)).toBe(`${bookingBedOccupancyEntry.personName} (5 days)`)
+      expect(bookingCellContent(bookingBedOccupancyEntry, premisesId)).toBe(
+        `<a href="/premises/some-uuid/bookings/${bookingBedOccupancyEntry.bookingId}" data-cy-bookingId="${bookingBedOccupancyEntry.bookingId}" class="govuk-link govuk-link--booking">${bookingBedOccupancyEntry.personName}</a> (5 days)`,
+      )
     })
 
     it('returns the occupiers name, length of stay in words and the start and end date if the booking length is more than 10 days', () => {
@@ -295,8 +324,8 @@ describe('calendarUtils', () => {
         endDate: addDays(new Date(), 11),
       })
 
-      expect(bookingCellContent(bookingBedOccupancyEntry)).toBe(
-        `${bookingBedOccupancyEntry.personName} (11 days 21/06/2023 - 01/07/2023)`,
+      expect(bookingCellContent(bookingBedOccupancyEntry, premisesId)).toBe(
+        `<a href="/premises/some-uuid/bookings/${bookingBedOccupancyEntry.bookingId}" data-cy-bookingId="${bookingBedOccupancyEntry.bookingId}" class="govuk-link govuk-link--booking">${bookingBedOccupancyEntry.personName}</a> (12 days 21/06/2023 - 02/07/2023)`,
       )
     })
   })

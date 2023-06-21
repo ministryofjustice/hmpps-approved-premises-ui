@@ -8,6 +8,7 @@ import {
   isSameDay,
   isSameMonth,
 } from 'date-fns'
+import paths from '../paths/manage'
 import { DateFormats } from './dateUtils'
 
 import {
@@ -16,6 +17,7 @@ import {
   BedOccupancyEntryUiType,
   BedOccupancyRangeUi,
 } from '../@types/ui'
+import { linkTo } from './utils'
 
 export const tableClass = 'govuk-table'
 export const calendarTableClass = `${tableClass} ${tableClass}--calendar`
@@ -29,12 +31,13 @@ export const cellClass = `${tableClass}__cell ${tableClass}__cell--calendar`
 export const calendar = (
   bedOccupancyRangeList: Array<BedOccupancyRangeUi>,
   startDate: Date,
+  premisesId: string,
 ) => `<table class="${calendarTableClass}" cellspacing="0">
   <thead class="${headClass}">
     <tr class="${rowClass} ${tableClass}__row--months">${monthRow(startDate)}</tr>
     ${dateRow()}
   </thead>
-  <tbody class="${bodyClass}">${bedRows(bedOccupancyRangeList, startDate)}</tbody>
+  <tbody class="${bodyClass}">${bedRows(bedOccupancyRangeList, startDate, premisesId)}</tbody>
 </table>`
 
 export const dateRow = () => `
@@ -75,20 +78,20 @@ export const monthRow = (startDate: Date) => {
   return monthRowArr.join('')
 }
 
-export const bedRows = (bedOccupancyRangeList: Array<BedOccupancyRangeUi>, startDate: Date) => {
-  return bedOccupancyRangeList.map(range => bedRow(range, startDate)).join('')
+export const bedRows = (bedOccupancyRangeList: Array<BedOccupancyRangeUi>, startDate: Date, premisesId: string) => {
+  return bedOccupancyRangeList.map(range => bedRow(range, startDate, premisesId)).join('')
 }
 
-export const bedRow = (bedOccupancyRange: BedOccupancyRangeUi, startDate: Date) => {
+export const bedRow = (bedOccupancyRange: BedOccupancyRangeUi, startDate: Date, premisesId: string) => {
   return `<tr class="${rowClass}">
     <th scope="row" class="${headerClass}">${bedOccupancyRange.bedName}</th>
-    ${generateRowCells(bedOccupancyRange, startDate)}</tr>`
+    ${generateRowCells(bedOccupancyRange, startDate, premisesId)}</tr>`
 }
 
-export const labelForScheduleItem = (bedOccupancyEntry: BedOccupancyEntryUi): string => {
+export const labelForScheduleItem = (bedOccupancyEntry: BedOccupancyEntryUi, premisesId: string): string => {
   switch (bedOccupancyEntry.type) {
     case 'booking':
-      return bookingCellContent(bedOccupancyEntry)
+      return bookingCellContent(bedOccupancyEntry, premisesId)
     case 'open':
       return '<span class="govuk-visually-hidden">open</span>'
     case 'lost_bed':
@@ -103,6 +106,7 @@ export const labelForScheduleItem = (bedOccupancyEntry: BedOccupancyEntryUi): st
 export const scheduleForCalendar = (
   schedule: Array<BedOccupancyEntryUi>,
   startDate: Date,
+  premisesId: string,
 ): Array<BedOccupancyEntryCalendar> => {
   return schedule.map(bedOccupancyEntry => {
     const endDate = addDays(startDate, 30)
@@ -110,7 +114,7 @@ export const scheduleForCalendar = (
     const scheduleEndDate = isAfter(bedOccupancyEntry.endDate, endDate) ? endDate : bedOccupancyEntry.endDate
     return {
       ...bedOccupancyEntry,
-      label: labelForScheduleItem(bedOccupancyEntry),
+      label: labelForScheduleItem(bedOccupancyEntry, premisesId),
       startDate: scheduleStartDate,
       endDate: scheduleEndDate,
       length: differenceInDays(scheduleEndDate, scheduleStartDate) + 1,
@@ -118,23 +122,31 @@ export const scheduleForCalendar = (
   })
 }
 
-export const generateRowCells = (bedOccupancyRange: BedOccupancyRangeUi, startDate: Date) => {
+export const generateRowCells = (bedOccupancyRange: BedOccupancyRangeUi, startDate: Date, premisesId: string) => {
   return generateDays(new Date())
     .map(day =>
-      scheduleForCalendar(bedOccupancyRange.schedule, startDate)
+      scheduleForCalendar(bedOccupancyRange.schedule, startDate, premisesId)
         .map(entry => cell(day, entry))
         .join(''),
     )
     .join('')
 }
 
-export const occupierName = (bedOccupancyEntry: BedOccupancyEntryUi) => {
-  if (bedOccupancyEntry.type === 'booking') return bedOccupancyEntry.personName
+export const occupierName = (bedOccupancyEntry: BedOccupancyEntryUi, premisesId: string) => {
+  if (bedOccupancyEntry.type === 'booking')
+    return linkTo(
+      paths.bookings.show,
+      { bookingId: bedOccupancyEntry.bookingId, premisesId },
+      {
+        text: bedOccupancyEntry.personName,
+        attributes: { 'data-cy-bookingId': bedOccupancyEntry.bookingId, class: 'govuk-link govuk-link--booking' },
+      },
+    )
   return ''
 }
 
-export const bookingCellContent = (bedOccupancyEntry: BedOccupancyEntryUi) => {
-  const name = occupierName(bedOccupancyEntry)
+export const bookingCellContent = (bedOccupancyEntry: BedOccupancyEntryUi, premisesId: string) => {
+  const name = occupierName(bedOccupancyEntry, premisesId)
   const lengthOfStay = bedOccupancyEntry.length
   const lengthOfStayInWords = formatDistanceStrict(bedOccupancyEntry.startDate, bedOccupancyEntry.endDate)
   const startAndEndDates = `${DateFormats.dateObjtoUIDate(bedOccupancyEntry.startDate, {
