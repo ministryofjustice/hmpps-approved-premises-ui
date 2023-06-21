@@ -1,6 +1,7 @@
 import type { BedOccupancyRange, DateCapacity } from '@approved-premises/api'
+import { BedOccupancyRangeUi } from '@approved-premises/ui'
 import { DateFormats } from './dateUtils'
-import { BedOccupancyRangeUi } from '../@types/ui'
+import { addOverbookingsToSchedule } from './addOverbookingsToSchedule'
 
 export type NegativeDateRange = { start?: string; end?: string }
 
@@ -33,7 +34,12 @@ export async function mapApiOccupancyToUiOccupancy(bedOccupancyRangeList: Array<
     }),
   )
 
-  return mappedOccupancyList
+  const occupancyListWithOverBookings = mappedOccupancyList.map(item => ({
+    ...item,
+    schedule: addOverbookingsToSchedule(item.schedule),
+  }))
+
+  return occupancyListWithOverBookings
 }
 
 export async function mapApiOccupancyEntryToUiOccupancyEntry(

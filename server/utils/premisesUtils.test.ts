@@ -1,8 +1,12 @@
+import { BedOccupancyEntryUi } from '@approved-premises/ui'
 import { bedOccupancyEntryFactory, bedOccupancyRangeFactory } from '../testutils/factories'
 import getDateRangesWithNegativeBeds, {
   mapApiOccupancyEntryToUiOccupancyEntry,
   mapApiOccupancyToUiOccupancy,
 } from './premisesUtils'
+import { addOverbookingsToSchedule } from './addOverbookingsToSchedule'
+
+jest.mock('./addOverbookingsToSchedule')
 
 describe('premisesUtils', () => {
   describe('getDateRangeWithNegativeBeds', () => {
@@ -90,12 +94,16 @@ describe('premisesUtils', () => {
   })
 
   describe('mapApiOccupancyToUiOccupancy', () => {
-    it('converts dates from strings to dates objects', async () => {
+    it('converts dates from strings to dates objects and adds overbookings', async () => {
+      ;(addOverbookingsToSchedule as jest.Mock).mockImplementation((schedule: Array<BedOccupancyEntryUi>) => {
+        return schedule
+      })
       const bedOccupancyEntry = bedOccupancyEntryFactory.build({ startDate: '2023-01-02', endDate: '2023-01-03' })
       const bedOccupancyRange = bedOccupancyRangeFactory.build({
         schedule: [bedOccupancyEntry],
       })
-      expect(await mapApiOccupancyToUiOccupancy([bedOccupancyRange])).toEqual([
+
+      const uiOccupancy = [
         {
           bedId: bedOccupancyRange.bedId,
           bedName: bedOccupancyRange.bedName,
@@ -108,7 +116,11 @@ describe('premisesUtils', () => {
             },
           ],
         },
-      ])
+      ]
+
+      expect(await mapApiOccupancyToUiOccupancy([bedOccupancyRange])).toEqual(uiOccupancy)
+
+      expect(addOverbookingsToSchedule).toHaveBeenCalledWith(uiOccupancy[0].schedule)
     })
   })
 
