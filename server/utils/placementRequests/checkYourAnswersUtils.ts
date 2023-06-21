@@ -30,6 +30,33 @@ export const pagesForReview = (placementApplication: PlacementApplication) => {
   return pageNames.filter(page => page !== 'check-your-answers')
 }
 
+export const placementApplicationQuestionsForReview = (placementApplication: PlacementApplication) => {
+  return {
+    card: {
+      title: { text: 'Placement application information' },
+    },
+    rows: placementApplicationResponsesAsSummaryListItems(placementApplication),
+  }
+}
+
+const placementApplicationResponsesAsSummaryListItems = (placementApplication: PlacementApplication) => {
+  const listItems: Array<SummaryListItem> = []
+  ;(placementApplication.document['request-a-placement'] as Array<Record<string, string>>).forEach(questions => {
+    const keys = Object.keys(questions)
+    keys.forEach(key => {
+      listItems.push({
+        key: {
+          text: key,
+        },
+        value: {
+          text: questions[key],
+        },
+      })
+    })
+  })
+  return listItems
+}
+
 export const pageResponsesAsSummaryListItems = (
   placementApplication: PlacementApplication,
   pageName: string,

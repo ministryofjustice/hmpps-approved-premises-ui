@@ -1,5 +1,5 @@
 import type { ErrorMessages } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, PlacementApplicationDecisionEnvelope } from '@approved-premises/api'
 
 export default {}
 
@@ -11,6 +11,7 @@ declare module 'express-session' {
     application: ApprovedPremisesApplication
     previousPage: string
     user: UserDetails
+    placementApplicationDecisions: Record<string, Partial<PlacementApplicationDecisionEnvelope>>
   }
 }
 
