@@ -74,7 +74,7 @@ context('Placement Requests', () => {
     const person = personFactory.build()
 
     const essentialCriteria = ['isPIPE', 'acceptsHateCrimeOffenders', 'isGroundFloor'] as Array<PlacementCriteria>
-    const desirableCriteria = ['isCatered', 'isGroundFloor', 'hasEnSuite'] as Array<PlacementCriteria>
+    const desirableCriteria = ['isCatered', 'hasEnSuite'] as Array<PlacementCriteria>
 
     const placementRequest = placementRequestDetailFactory.build({
       person,
@@ -125,7 +125,10 @@ context('Placement Requests', () => {
     searchPage.shouldShowEssentialCriteria(placementRequest.essentialCriteria)
 
     // And the desirable criteria should be selected
-    searchPage.shouldHaveCriteriaSelected(placementRequest.desirableCriteria)
+    searchPage.shouldHaveCriteriaSelected([
+      ...placementRequest.essentialCriteria,
+      ...placementRequest.desirableCriteria,
+    ])
 
     // And I should see the search results
     let numberOfSearches = 0
@@ -148,7 +151,10 @@ context('Placement Requests', () => {
     searchPage.shouldShowEssentialCriteria(placementRequest.essentialCriteria)
 
     // And the new desirable criteria should be selected
-    searchPage.shouldHaveCriteriaSelected(newSearchParameters.requiredCharacteristics)
+    searchPage.shouldHaveCriteriaSelected([
+      ...placementRequest.essentialCriteria,
+      ...newSearchParameters.requiredCharacteristics,
+    ])
 
     // And the parameters should be submitted to the API
     cy.task('verifySearchSubmit').then(requests => {
