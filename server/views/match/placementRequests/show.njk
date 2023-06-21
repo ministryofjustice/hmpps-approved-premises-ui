@@ -77,6 +77,19 @@
           {{
             govukSummaryList(PlacementRequestUtils.documentSummary(placementRequest))
           }}
+
+          {% if placementRequest.cancellations|length > 0  %}
+
+            <h2 class="govuk-heading-m govuk-!-margin-top-4">Appealed bookings</h2>
+
+            {% for cancellation in placementRequest.cancellations %}
+              {{
+                govukSummaryList(PlacementRequestUtils.cancellationSummary(cancellation))
+              }}
+            {% endfor %}
+
+          {% endif %}
+
         </div>
       </div>
     </div>

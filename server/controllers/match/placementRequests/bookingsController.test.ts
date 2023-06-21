@@ -8,7 +8,7 @@ import {
   bedSearchResultFactory,
   newPlacementRequestBookingConfirmationFactory,
   personFactory,
-  placementRequestFactory,
+  placementRequestDetailFactory,
 } from '../../../testutils/factories'
 import { encodeBedSearchResult, placementDates } from '../../../utils/matchUtils'
 import { NewBookingNotMade } from '../../../@types/shared'
@@ -34,10 +34,10 @@ describe('BookingsController', () => {
   describe('confirm', () => {
     it('should render the confirmation template', async () => {
       const person = personFactory.build({ name: 'John Wayne' })
-      const placementRequest = placementRequestFactory.build({ person })
+      const placementRequestDetail = placementRequestDetailFactory.build({ person })
       const bedSearchResult = bedSearchResultFactory.build()
 
-      placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
+      placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
 
       const query = {
         bedSearchResult: encodeBedSearchResult(bedSearchResult),
@@ -45,7 +45,7 @@ describe('BookingsController', () => {
         durationWeeks: '2',
       }
 
-      const params = { id: placementRequest.id }
+      const params = { id: placementRequestDetail.id }
 
       const requestHandler = bookingsController.confirm()
 
@@ -53,11 +53,11 @@ describe('BookingsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/bookings/confirm', {
         pageHeading: 'Confirm booking',
-        placementRequest,
+        placementRequest: placementRequestDetail,
         bedSearchResult,
         dates: placementDates(query.startDate, query.durationWeeks),
       })
-      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
+      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })
   })
 

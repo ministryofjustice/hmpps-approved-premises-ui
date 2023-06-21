@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { PlacementRequest } from '@approved-premises/api'
+import type { PlacementRequest, PlacementRequestDetail } from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
 import { bookingNotMadeFactory, newPlacementRequestBookingConfirmationFactory } from '../../server/testutils/factories'
@@ -20,18 +20,18 @@ export default {
         jsonBody: placementRequests,
       },
     }),
-  stubPlacementRequest: (placementRequest: PlacementRequest): SuperAgentRequest =>
+  stubPlacementRequest: (placementRequestDetail: PlacementRequestDetail): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        urlPattern: paths.placementRequests.show({ id: placementRequest.id }),
+        urlPattern: paths.placementRequests.show({ id: placementRequestDetail.id }),
       },
       response: {
         status: 200,
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        jsonBody: placementRequest,
+        jsonBody: placementRequestDetail,
       },
     }),
   stubBookingFromPlacementRequest: (placementRequest: PlacementRequest): SuperAgentRequest =>

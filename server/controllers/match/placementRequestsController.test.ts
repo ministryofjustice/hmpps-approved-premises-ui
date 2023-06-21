@@ -9,7 +9,7 @@ import {
   applicationFactory,
   personFactory,
   placementApplicationFactory,
-  placementRequestFactory,
+  placementRequestDetailFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/placementApplications'
 import { getResponses } from '../../utils/applications/utils'
@@ -61,19 +61,19 @@ describe('PlacementRequestsController', () => {
   describe('show', () => {
     it('should render the show template', async () => {
       const person = personFactory.build({ name: 'John Wayne' })
-      const placementRequest = placementRequestFactory.build({ person })
+      const placementRequestDetail = placementRequestDetailFactory.build({ person })
 
-      placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
+      placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
 
       const requestHandler = placementRequestsController.show()
 
-      await requestHandler({ ...request, params: { id: placementRequest.id } }, response, next)
+      await requestHandler({ ...request, params: { id: placementRequestDetail.id } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/show', {
         pageHeading: 'Matching information for John Wayne',
-        placementRequest,
+        placementRequest: placementRequestDetail,
       })
-      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
+      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)
     })
   })
 

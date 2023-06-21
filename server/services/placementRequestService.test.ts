@@ -1,8 +1,9 @@
-import { PlacementRequest } from '@approved-premises/api'
+import { PlacementRequestDetail } from '@approved-premises/api'
 import PlacementRequestClient from '../data/placementRequestClient'
 import {
   bookingNotMadeFactory,
   newPlacementRequestBookingConfirmationFactory,
+  placementRequestDetailFactory,
   placementRequestFactory,
 } from '../testutils/factories'
 import PlacementRequestService from './placementRequestService'
@@ -47,15 +48,15 @@ describe('placementRequestService', () => {
 
   describe('getPlacementRequest', () => {
     it('calls the find method on the placementRequest client', async () => {
-      const placementRequest: PlacementRequest = placementRequestFactory.build()
-      placementRequestClient.find.mockResolvedValue(placementRequest)
+      const placementRequestDetail: PlacementRequestDetail = placementRequestDetailFactory.build()
+      placementRequestClient.find.mockResolvedValue(placementRequestDetail)
 
-      const result = await service.getPlacementRequest(token, placementRequest.id)
+      const result = await service.getPlacementRequest(token, placementRequestDetail.id)
 
-      expect(result).toEqual(placementRequest)
+      expect(result).toEqual(placementRequestDetail)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
-      expect(placementRequestClient.find).toHaveBeenCalledWith(placementRequest.id)
+      expect(placementRequestClient.find).toHaveBeenCalledWith(placementRequestDetail.id)
     })
   })
 

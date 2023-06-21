@@ -3,7 +3,7 @@ import {
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
-  PlacementRequest,
+  PlacementRequestDetail,
 } from '@approved-premises/api'
 import { RestClientBuilder } from '../data'
 import PlacementRequestClient from '../data/placementRequestClient'
@@ -29,7 +29,7 @@ export default class PlacementRequestService {
     return results
   }
 
-  async getPlacementRequest(token: string, id: string): Promise<PlacementRequest> {
+  async getPlacementRequest(token: string, id: string): Promise<PlacementRequestDetail> {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.find(id)
