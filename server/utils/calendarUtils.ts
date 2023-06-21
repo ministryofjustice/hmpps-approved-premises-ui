@@ -93,6 +93,8 @@ export const labelForScheduleItem = (bedOccupancyEntry: BedOccupancyEntryUi): st
       return '<span class="govuk-visually-hidden">open</span>'
     case 'lost_bed':
       return 'Out of Service'
+    case 'overbooking':
+      return 'Overbooked'
     default:
       return ''
   }

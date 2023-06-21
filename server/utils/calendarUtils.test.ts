@@ -165,6 +165,12 @@ describe('calendarUtils', () => {
 
       expect(labelForScheduleItem(bedOccupancyEntry)).toEqual(bookingCellContent(bedOccupancyEntry))
     })
+
+    it('if the bedOccupancyEntry.type is booking it returns the markup for an overbooked cell', () => {
+      const bedOccupancyEntry = bedOccupancyEntryUiFactory.build({ type: 'overbooking' })
+
+      expect(labelForScheduleItem(bedOccupancyEntry)).toEqual('Overbooked')
+    })
   })
 
   describe('scheduleForCalendar', () => {
