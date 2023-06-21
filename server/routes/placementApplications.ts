@@ -12,7 +12,8 @@ export default function routes(controllers: Controllers, router: Router): Router
   const { get, put, post } = actions(router)
   const { pages } = Match
 
-  const { placementApplicationPagesController, placementRequestController } = controllers
+  const { placementApplicationPagesController, placementRequestController, placementApplicationReviewController } =
+    controllers
 
   post(paths.placementApplications.create.pattern, placementRequestController.create())
   post(paths.placementApplications.submit.pattern, placementRequestController.submit())
@@ -24,6 +25,12 @@ export default function routes(controllers: Controllers, router: Router): Router
       put(pattern, placementApplicationPagesController.update(taskKey, pageKey))
     })
   })
+
+  get(paths.placementApplications.review.show.pattern, placementApplicationReviewController.show('review'))
+  post(paths.placementApplications.review.update.pattern, placementApplicationReviewController.update())
+  get(paths.placementApplications.review.decision.pattern, placementApplicationReviewController.show('decision'))
+  post(paths.placementApplications.review.submission.pattern, placementApplicationReviewController.submit())
+  get(paths.placementApplications.review.confirm.pattern, placementApplicationReviewController.confirm())
 
   return router
 }
