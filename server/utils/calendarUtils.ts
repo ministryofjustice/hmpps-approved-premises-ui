@@ -11,12 +11,7 @@ import {
 import paths from '../paths/manage'
 import { DateFormats } from './dateUtils'
 
-import {
-  BedOccupancyEntryCalendar,
-  BedOccupancyEntryUi,
-  BedOccupancyEntryUiType,
-  BedOccupancyRangeUi,
-} from '../@types/ui'
+import { BedOccupancyEntryCalendar, BedOccupancyEntryUi, BedOccupancyRangeUi } from '../@types/ui'
 import { linkTo } from './utils'
 
 export const tableClass = 'govuk-table'
@@ -83,7 +78,7 @@ export const bedRows = (bedOccupancyRangeList: Array<BedOccupancyRangeUi>, start
 }
 
 export const bedRow = (bedOccupancyRange: BedOccupancyRangeUi, startDate: Date, premisesId: string) => {
-  return `<tr class="${rowClass}">
+  return `<tr class="${rowClass}" data-cy-bedId="${bedOccupancyRange.bedId}">
     <th scope="row" class="${headerClass}">${bedOccupancyRange.bedName}</th>
     ${generateRowCells(bedOccupancyRange, startDate, premisesId)}</tr>`
 }
@@ -181,11 +176,22 @@ export const bookingCellContent = (bedOccupancyEntry: BedOccupancyEntryUi, premi
 export const cell = (cellDate: Date, bedOccupancyEntry: BedOccupancyEntryCalendar) => {
   if (!isSameDay(bedOccupancyEntry.startDate, cellDate)) return ''
 
-  return wrapCellContentInTableCellMarkup(bedOccupancyEntry.length, bedOccupancyEntry.label, bedOccupancyEntry.type)
+  return wrapCellContentInTableCellMarkup(bedOccupancyEntry)
 }
 
-export const wrapCellContentInTableCellMarkup = (
-  lengthOfOccupancy: number,
-  cellText: string,
-  type: BedOccupancyEntryUiType,
-) => `<td class="${cellClass} ${tableClass}__cell--${type}" colspan="${lengthOfOccupancy}">${cellText}</td>`
+export const wrapCellContentInTableCellMarkup = (bedOccupancyEntry: BedOccupancyEntryCalendar) =>
+  `<td class="${cellClass} ${tableClass}__cell--${bedOccupancyEntry.type}" colspan="${
+    bedOccupancyEntry.length
+  }" data-cy-startdate="${DateFormats.dateObjToIsoDate(bedOccupancyEntry.startDate)}" data-cy-id="${entryId(
+    bedOccupancyEntry,
+  )}">${bedOccupancyEntry.label}</td>`
+
+const entryId = (bedOccupancyEntry: BedOccupancyEntryCalendar) => {
+  if ('bookingId' in bedOccupancyEntry) {
+    return bedOccupancyEntry.bookingId
+  }
+  if ('lostBedId' in bedOccupancyEntry) {
+    return bedOccupancyEntry.lostBedId
+  }
+  return ''
+}

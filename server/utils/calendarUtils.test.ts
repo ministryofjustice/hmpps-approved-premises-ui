@@ -30,6 +30,7 @@ import {
   wrapCellContentInTableCellMarkup,
 } from './calendarUtils'
 import { bedOccupancyEntryCalendarFactory } from '../testutils/factories/bedOccupancyRange'
+import { DateFormats } from './dateUtils'
 
 describe('calendarUtils', () => {
   const premisesId = 'some-uuid'
@@ -134,7 +135,7 @@ describe('calendarUtils', () => {
       const bedOccupancyRange = bedOccupancyRangeFactoryUi.build()
 
       expect(bedRow(bedOccupancyRange, startDate, premisesId)).toMatchStringIgnoringWhitespace(
-        `<tr class="${rowClass}">
+        `<tr class="${rowClass}" data-cy-bedId="${bedOccupancyRange.bedId}">
         <th scope="row" class="${headerClass}">${bedOccupancyRange.bedName}</th>
         ${generateRowCells(bedOccupancyRange, startDate, premisesId)}</tr>`,
       )
@@ -295,7 +296,59 @@ describe('calendarUtils', () => {
       const bedOccupancyEntry = bedOccupancyEntryCalendarFactory.build({ startDate: new Date() })
 
       expect(cell(new Date(), bedOccupancyEntry)).toMatchStringIgnoringWhitespace(
-        wrapCellContentInTableCellMarkup(bedOccupancyEntry.length, bedOccupancyEntry.label, bedOccupancyEntry.type),
+        wrapCellContentInTableCellMarkup(bedOccupancyEntry),
+      )
+    })
+  })
+
+  describe('wrapCellContentInTableCellMarkup', () => {
+    it('should return the cell content for a booking', () => {
+      const bedOccupancyEntry = bedOccupancyEntryCalendarFactory.build({
+        startDate: DateFormats.isoToDateObj('2023-06-22'),
+        type: 'booking',
+        length: 4,
+        bookingId: '123',
+      })
+
+      expect(wrapCellContentInTableCellMarkup(bedOccupancyEntry)).toMatchStringIgnoringWhitespace(
+        `<td class="govuk-table__cell govuk-table__cell--calendar govuk-table__cell--booking" colspan="4" data-cy-startdate="2023-06-22" data-cy-id="123">Some text goes here</td>`,
+      )
+    })
+
+    it('should return the cell content for a lost bed', () => {
+      const bedOccupancyEntry = bedOccupancyEntryCalendarFactory.build({
+        startDate: DateFormats.isoToDateObj('2023-06-22'),
+        type: 'lost_bed',
+        length: 4,
+        lostBedId: '123',
+      })
+
+      expect(wrapCellContentInTableCellMarkup(bedOccupancyEntry)).toMatchStringIgnoringWhitespace(
+        `<td class="govuk-table__cell govuk-table__cell--calendar govuk-table__cell--lost_bed" colspan="4" data-cy-startdate="2023-06-22" data-cy-id="123">Some text goes here</td>`,
+      )
+    })
+
+    it('should return the cell content for an open entry', () => {
+      const bedOccupancyEntry = bedOccupancyEntryCalendarFactory.build({
+        startDate: DateFormats.isoToDateObj('2023-06-22'),
+        type: 'open',
+        length: 4,
+      })
+
+      expect(wrapCellContentInTableCellMarkup(bedOccupancyEntry)).toMatchStringIgnoringWhitespace(
+        `<td class="govuk-table__cell govuk-table__cell--calendar govuk-table__cell--open" colspan="4" data-cy-startdate="2023-06-22" data-cy-id="">Some text goes here</td>`,
+      )
+    })
+
+    it('should return the cell content for an overbooked entry', () => {
+      const bedOccupancyEntry = bedOccupancyEntryCalendarFactory.build({
+        startDate: DateFormats.isoToDateObj('2023-06-22'),
+        type: 'overbooking',
+        length: 4,
+      })
+
+      expect(wrapCellContentInTableCellMarkup(bedOccupancyEntry)).toMatchStringIgnoringWhitespace(
+        `<td class="govuk-table__cell govuk-table__cell--calendar govuk-table__cell--overbooking" colspan="4" data-cy-startdate="2023-06-22" data-cy-id="">Some text goes here</td>`,
       )
     })
   })
