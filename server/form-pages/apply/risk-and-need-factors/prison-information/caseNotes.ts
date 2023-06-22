@@ -44,7 +44,7 @@ export const adjudicationResponse = (adjudication: Adjudication) => {
 export const acctAlertResponse = (acctAlert: PersonAcctAlert) => {
   return {
     'Alert type': acctAlert.alertId,
-    'ACCT description': acctAlert.comment,
+    'ACCT description': acctAlert.comment ?? '',
     'Date created': DateFormats.isoDateToUIDate(acctAlert.dateCreated),
     'Expiry date': DateFormats.isoDateToUIDate(acctAlert.dateExpires),
   }
