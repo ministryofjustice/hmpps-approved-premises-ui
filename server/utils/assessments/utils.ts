@@ -1,6 +1,6 @@
 import { ApplicationType, GroupedAssessments, SummaryListItem } from '@approved-premises/ui'
 
-import { ApprovedPremisesAssessment as Assessment, AssessmentSummary } from '@approved-premises/api'
+import { ApprovedPremisesAssessment as Assessment, AssessmentSummary, PersonAcctAlert } from '@approved-premises/api'
 import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
 import { UnknownPageError } from '../errors'
@@ -134,7 +134,9 @@ const caseNotesFromAssessment = (assessment: Assessment) =>
   assessment.application?.data?.['prison-information']?.['case-notes']?.selectedCaseNotes || []
 
 const acctAlertsFromAssessment = (assessment: Assessment) =>
-  assessment.application?.data?.['prison-information']?.['case-notes']?.acctAlerts || []
+  assessment.application?.data?.['prison-information']?.['case-notes']?.acctAlerts.map((acctAlert: PersonAcctAlert) => {
+    return { ...acctAlert, comment: acctAlert.comment ?? '' }
+  }) || []
 
 const rejectionRationaleFromAssessmentResponses = (assessment: Assessment): string => {
   const response = getResponseForPage(assessment, 'make-a-decision', 'make-a-decision')?.Decision || ''

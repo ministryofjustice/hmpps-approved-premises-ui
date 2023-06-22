@@ -77,6 +77,22 @@ describe('acctAlertResponse', () => {
       'Expiry date': 'Sunday 9 January 2022',
     })
   })
+
+  it('returns an empty string for the comment if it is undefined', () => {
+    const acctAlert = acctAlertFactory.build({
+      alertId: 123,
+      comment: undefined,
+      dateCreated: '2022-01-01T10:00:00Z',
+      dateExpires: '2022-01-09T10:00:00Z',
+    })
+
+    expect(acctAlertResponse(acctAlert)).toEqual({
+      'Alert type': 123,
+      'Date created': 'Saturday 1 January 2022',
+      'Expiry date': 'Sunday 9 January 2022',
+      'ACCT description': '',
+    })
+  })
 })
 
 describe('caseNoteCheckbox', () => {

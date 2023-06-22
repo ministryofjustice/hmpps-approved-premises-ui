@@ -257,6 +257,16 @@ describe('utils', () => {
       expect(acctAlertsFromAssessment(assessment)).toEqual(acctAlerts)
     })
 
+    it('if the comments property of an ACCT alert is undefined it returns an empty string', () => {
+      const acctAlert1 = acctAlertFactory.build()
+      const acctAlert2 = acctAlertFactory.build({ comment: undefined })
+
+      const assessment = assessmentFactory.build()
+      assessment.application.data['prison-information'] = { 'case-notes': { acctAlerts: [acctAlert1, acctAlert2] } }
+
+      expect(acctAlertsFromAssessment(assessment)).toEqual([acctAlert1, { ...acctAlert2, comment: '' }])
+    })
+
     it('returns an empty string if the case notes are empty', () => {
       const assessment = assessmentFactory.build()
       assessment.application.data['prison-information'] = {}
