@@ -19,6 +19,8 @@ const cancellationsPath = bookingPath.path('cancellations')
 
 const departuresPath = bookingPath.path('departures')
 
+const movesPath = bookingPath.path('moves')
+
 const lostBedsPath = singlePremisesPath.path('beds/:bedId/lost-beds')
 
 const bedsPath = singlePremisesPath.path('beds')
@@ -58,6 +60,10 @@ const paths = {
     departures: {
       new: departuresPath.path('new'),
       create: departuresPath,
+    },
+    moves: {
+      new: movesPath.path('new'),
+      create: movesPath,
     },
   },
   people: {

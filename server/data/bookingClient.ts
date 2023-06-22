@@ -5,6 +5,7 @@ import type {
   Departure,
   Extension,
   NewArrival,
+  NewBedMove,
   NewBooking,
   NewCancellation,
   NewDeparture,
@@ -14,6 +15,7 @@ import type {
 } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
+import paths from '../paths/api'
 
 export default class BookingClient {
   restClient: RestClient
@@ -75,6 +77,13 @@ export default class BookingClient {
     })
 
     return response as Nonarrival
+  }
+
+  async moveBooking(premisesId: string, bookingId: string, move: NewBedMove): Promise<void> {
+    await this.restClient.post({
+      path: paths.premises.bookings.move({ premisesId, bookingId }),
+      data: move,
+    })
   }
 
   private bookingsPath(premisesId: string): string {

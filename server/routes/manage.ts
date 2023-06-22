@@ -21,6 +21,7 @@ export default function routes(controllers: Controllers, router: Router): Router
     lostBedsController,
     peopleController,
     bedsController,
+    moveBedsController,
   } = controllers
 
   get(paths.premises.index.pattern, premisesController.index())
@@ -57,6 +58,9 @@ export default function routes(controllers: Controllers, router: Router): Router
   get(paths.lostBeds.index.pattern, lostBedsController.index())
   get(paths.lostBeds.show.pattern, lostBedsController.show())
   post(paths.lostBeds.update.pattern, lostBedsController.update())
+
+  get(paths.bookings.moves.new.pattern, moveBedsController.new())
+  post(paths.bookings.moves.create.pattern, moveBedsController.create())
 
   return router
 }

@@ -16,6 +16,7 @@ import describeClient from '../testutils/describeClient'
 import BookingClient from './bookingClient'
 
 import { DateFormats } from '../utils/dateUtils'
+import paths from '../paths/api'
 
 describeClient('BookingClient', provider => {
   let bookingClient: BookingClient
@@ -267,6 +268,33 @@ describeClient('BookingClient', provider => {
 
       expect(result).toEqual(nonArrival)
       expect(nock.isDone()).toBeTruthy()
+    })
+  })
+
+  describe('moveBooking', () => {
+    it('should move a booking', async () => {
+      const payload = {
+        bedId: 'bedId',
+        notes: 'Some notes',
+      }
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to move a booking',
+        withRequest: {
+          method: 'POST',
+          path: paths.premises.bookings.move({ premisesId: 'premisesId', bookingId: 'bookingId' }),
+          body: payload,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      await bookingClient.moveBooking('premisesId', 'bookingId', payload)
     })
   })
 })

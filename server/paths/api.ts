@@ -7,6 +7,8 @@ const lostBedsPath = singlePremisesPath.path('lost-beds')
 
 const bedsPath = singlePremisesPath.path('beds')
 
+const bookingPath = singlePremisesPath.path('bookings/:bookingId')
+
 const managePaths = {
   premises: {
     index: premisesPath,
@@ -24,6 +26,9 @@ const managePaths = {
   },
   rooms: singlePremisesPath.path('rooms'),
   room: singlePremisesPath.path('rooms/:roomId'),
+  bookings: {
+    move: bookingPath.path('moves'),
+  },
 }
 
 const applicationsPath = path('/applications')
@@ -97,6 +102,9 @@ export default {
     },
     rooms: managePaths.rooms,
     room: managePaths.room,
+    bookings: {
+      move: managePaths.bookings.move,
+    },
   },
   applications: {
     show: applyPaths.applications.show,
