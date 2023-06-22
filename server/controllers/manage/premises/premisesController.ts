@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express'
-import { addDays } from 'date-fns'
+import { addDays, subDays } from 'date-fns'
 
 import PremisesService from '../../../services/premisesService'
 import BookingService from '../../../services/bookingService'
@@ -43,8 +43,11 @@ export default class PremisesController {
     return async (req: Request, res: Response) => {
       const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
 
-      const startDate = new Date()
-      const endDate = addDays(new Date(), 30)
+      const startDate = req.query.startDate ? DateFormats.isoToDateObj(req.query.startDate as string) : new Date()
+      const endDate = addDays(startDate, 30)
+
+      const nextDate = DateFormats.dateObjToIsoDate(addDays(startDate, 14))
+      const previousDate = DateFormats.dateObjToIsoDate(subDays(startDate, 14))
 
       const bedOccupancyRangeList = await this.premisesService.getOccupancy(
         req.user.token,
@@ -58,6 +61,8 @@ export default class PremisesController {
         premisesId: req.params.premisesId,
         startDate,
         premises,
+        nextDate,
+        previousDate,
       })
     }
   }
