@@ -21,11 +21,31 @@ $calendarWidth: $roomHeaderWidth + (30 * ($colWidth + ($colPadding * 2)));
   }
 }
 
+.govuk-pagination {
+  &--calendar {
+    padding-bottom: govuk-spacing(6);
+
+    .govuk-pagination__prev {
+      float: left;
+    }
+
+    .govuk-pagination__next {
+      float: right;
+      border-top: none;
+    }
+
+    .govuk-pagination__prev + .govuk-pagination__next {
+      border-top: none;
+    }
+  }
+}
+
 .govuk-table {
   &--calendar {
     font-size: 0.9em;
     width: $calendarWidth;
     table-layout: fixed;
+    margin: 0 auto;
 
     @for $i from 1 through 31 {
       th[colspan="#{$i}"], td[colspan="#{$i}"] {
