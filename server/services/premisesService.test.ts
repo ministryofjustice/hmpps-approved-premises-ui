@@ -186,6 +186,16 @@ describe('PremisesService', () => {
     })
   })
 
+  describe('find', () => {
+    it('fetches the premises from the client', async () => {
+      const premises = premisesFactory.build()
+      premisesClient.find.mockResolvedValue(premises)
+
+      const result = await service.find(token, premises.id)
+      expect(result).toEqual(premises)
+    })
+  })
+
   describe('getPremisesDetails', () => {
     it('returns a title and a summary list for a given Premises ID', async () => {
       const premises = premisesFactory.build({
