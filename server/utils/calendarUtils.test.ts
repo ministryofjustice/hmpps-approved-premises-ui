@@ -44,7 +44,7 @@ describe('calendarUtils', () => {
         <table class="${calendarTableClass}" cellspacing="0">
           <thead class="${headClass}">
             <tr class="${rowClass} ${tableClass}__row--months">${monthRow(startDate)}</tr>
-            ${dateRow()}
+            ${dateRow(startDate)}
           </thead>
           <tbody class="${bodyClass}">${bedRows(bedOccupancyRangeList, startDate, premisesId)}</tbody>
         </table>
@@ -55,9 +55,11 @@ describe('calendarUtils', () => {
 
   describe('dateRow', () => {
     it('should return dateRow', () => {
-      expect(dateRow()).toMatchStringIgnoringWhitespace(`
+      const startDate = new Date()
+
+      expect(dateRow(startDate)).toMatchStringIgnoringWhitespace(`
           <tr class="${rowClass}">
-            ${formatDaysForDateRow(new Date())}
+            ${formatDaysForDateRow(startDate)}
           </tr>`)
     })
   })

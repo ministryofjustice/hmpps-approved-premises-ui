@@ -35,14 +35,14 @@ export const calendar = (
 ) => `<table class="${calendarTableClass}" cellspacing="0">
   <thead class="${headClass}">
     <tr class="${rowClass} ${tableClass}__row--months">${monthRow(startDate)}</tr>
-    ${dateRow()}
+    ${dateRow(startDate)}
   </thead>
   <tbody class="${bodyClass}">${bedRows(bedOccupancyRangeList, startDate, premisesId)}</tbody>
 </table>`
 
-export const dateRow = () => `
+export const dateRow = (startDate: Date) => `
 <tr class="${rowClass}">
-  ${formatDaysForDateRow(new Date())}
+  ${formatDaysForDateRow(startDate)}
 </tr>
 `
 
@@ -128,7 +128,7 @@ export const scheduleForCalendar = (
 }
 
 export const generateRowCells = (bedOccupancyRange: BedOccupancyRangeUi, startDate: Date, premisesId: string) => {
-  return generateDays(new Date())
+  return generateDays(startDate)
     .map(day =>
       scheduleForCalendar(bedOccupancyRange.schedule, startDate, premisesId, bedOccupancyRange.bedId)
         .map(entry => cell(day, entry))
