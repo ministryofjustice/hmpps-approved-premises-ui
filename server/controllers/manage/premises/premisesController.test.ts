@@ -8,7 +8,7 @@ import PremisesService from '../../../services/premisesService'
 import BookingService from '../../../services/bookingService'
 import PremisesController from './premisesController'
 
-import { bedOccupancyRangeFactoryUi } from '../../../testutils/factories'
+import { bedOccupancyRangeFactoryUi, premisesFactory } from '../../../testutils/factories'
 import { DateFormats } from '../../../utils/dateUtils'
 
 describe('PremisesController', () => {
@@ -68,8 +68,10 @@ describe('PremisesController', () => {
   describe('calendar', () => {
     it('renders the calendar view', async () => {
       const occupancy = bedOccupancyRangeFactoryUi.buildList(2)
+      const premises = premisesFactory.build()
 
       premisesService.getOccupancy.mockResolvedValue(occupancy)
+      premisesService.find.mockResolvedValue(premises)
 
       const requestHandler = premisesController.calendar()
       await requestHandler(request, response, next)
@@ -83,6 +85,7 @@ describe('PremisesController', () => {
       expect(response.render).toHaveBeenCalledWith('premises/calendar', {
         bedOccupancyRangeList: occupancy,
         premisesId: request.params.premisesId,
+        premises,
         startDate: new Date(),
       })
     })
