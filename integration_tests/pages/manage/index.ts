@@ -17,6 +17,8 @@ import BookingShowPage from './booking/show'
 import BookingExtensionConfirmationPage from './booking/extension/confirmation'
 import BookingExtensionCreatePage from './booking/extension/create'
 
+import CalendarPage from './calendar'
+
 export {
   ArrivalCreatePage,
   CancellationCreatePage,
@@ -34,4 +36,5 @@ export {
   BookingExtensionCreatePage,
   BedsListPage,
   BedShowPage,
+  CalendarPage,
 }
