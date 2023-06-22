@@ -391,12 +391,12 @@ describe('calendarUtils', () => {
     it('returns the occupiers name, length of stay in words and the start and end date if the booking length is more than 10 days', () => {
       const bookingBedOccupancyEntry = bedOccupancyEntryBookingUiFactory.build({
         length: 10,
-        startDate: new Date(2023, 5, 21),
-        endDate: addDays(new Date(), 11),
+        startDate: DateFormats.isoToDateObj('2023-01-01'),
+        endDate: addDays(DateFormats.isoToDateObj('2023-01-01'), 12),
       })
 
       expect(bookingCellContent(bookingBedOccupancyEntry, premisesId)).toBe(
-        `<a href="/premises/some-uuid/bookings/${bookingBedOccupancyEntry.bookingId}" data-cy-bookingId="${bookingBedOccupancyEntry.bookingId}" class="govuk-link govuk-link--booking">${bookingBedOccupancyEntry.personName}</a> (12 days 21/06/2023 - 02/07/2023)`,
+        `<a href="/premises/some-uuid/bookings/${bookingBedOccupancyEntry.bookingId}" data-cy-bookingId="${bookingBedOccupancyEntry.bookingId}" class="govuk-link govuk-link--booking">${bookingBedOccupancyEntry.personName}</a> (12 days 01/01/2023 - 13/01/2023)`,
       )
     })
   })
