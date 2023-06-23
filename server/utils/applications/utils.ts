@@ -2,6 +2,7 @@ import type {
   ApplicationType,
   FormArtifact,
   FormPages,
+  FormSections,
   JourneyType,
   PageResponse,
   TableRow,
@@ -25,6 +26,8 @@ import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../
 import ExceptionDetails from '../../form-pages/apply/reasons-for-placement/basic-information/exceptionDetails'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import PlacementRequest from '../../form-pages/placement-application'
+import isAssessment from '../assessments/isAssessment'
+import getAssessmentSections from '../assessments/getSections'
 
 const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => {
@@ -87,6 +90,20 @@ const getResponsesForTask = (formArtifact: FormArtifact, taskName: string): Arra
   const pageNames = Object.keys(formArtifact.data[taskName])
   const responsesForPages = pageNames.map(pageName => getResponseForPage(formArtifact, taskName, pageName))
   return responsesForPages
+export const getSections = (formArtifact: FormArtifact): FormSections => {
+  const journeyType = journeyTypeFromArtifact(formArtifact)
+
+  switch (journeyType) {
+    case 'applications':
+      return Apply.sections.slice(0, -1)
+    case 'assessments':
+      if (!isAssessment(formArtifact)) throw new Error('Form artifact is not an assessment')
+      return getAssessmentSections(formArtifact)
+    case 'placement-applications':
+      return PlacementRequest.sections.slice(0, -1)
+    default:
+      throw new Error(`Unknown journey type: ${journeyType}`)
+  }
 }
 
 const getResponseForPage = (formArtifact: FormArtifact, taskName: string, pageName: string): PageResponse => {

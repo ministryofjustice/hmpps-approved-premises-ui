@@ -1,6 +1,12 @@
 import { ApplicationStatus } from '@approved-premises/api'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
-import { applicationFactory, applicationSummaryFactory, tierEnvelopeFactory } from '../../testutils/factories'
+import {
+  applicationFactory,
+  applicationSummaryFactory,
+  assessmentFactory,
+  placementApplicationFactory,
+  tierEnvelopeFactory,
+} from '../../testutils/factories'
 import paths from '../../paths/apply'
 import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
@@ -274,6 +280,38 @@ describe('utils', () => {
         const application = applicationFactory.build({ status })
         expect(getStatus(application)).toEqual(statusTags[status])
       })
+    })
+  })
+
+  describe('getSections', () => {
+    it('returns Apply sections when given an application', () => {
+      ;(journeyTypeFromArtifact as jest.MockedFunction<typeof journeyTypeFromArtifact>).mockReturnValue('applications')
+
+      const application = applicationFactory.build()
+      const sections = getSections(application)
+
+      expect(sections).toEqual(Apply.sections.slice(0, -1))
+    })
+
+    it('returns Assess sections when given an assessment', () => {
+      ;(journeyTypeFromArtifact as jest.MockedFunction<typeof journeyTypeFromArtifact>).mockReturnValue('assessments')
+
+      const assessment = assessmentFactory.build()
+      const sections = getSections(assessment)
+
+      expect(sections).toEqual(Assess.sections)
+    })
+
+    it('returns PlacementApplication sections when given a placement application', () => {
+      ;(journeyTypeFromArtifact as jest.MockedFunction<typeof journeyTypeFromArtifact>).mockReturnValue(
+        'placement-applications',
+      )
+
+      const placementApplication = placementApplicationFactory.build()
+
+      const sections = getSections(placementApplication)
+
+      expect(sections).toEqual(PlacementRequest.sections.slice(0, -1))
     })
   })
 
