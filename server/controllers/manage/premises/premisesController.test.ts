@@ -25,6 +25,7 @@ describe('PremisesController', () => {
 
   beforeEach(() => {
     request = createMock<Request>({ user: { token }, params: { premisesId } })
+    jest.useFakeTimers()
   })
 
   describe('index', () => {
