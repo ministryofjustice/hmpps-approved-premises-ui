@@ -6,7 +6,6 @@ import {
   getPageTitle,
   mapPageForSummaryList,
   pageResponsesAsSummaryListItems,
-  pagesForReview,
   placementApplicationQuestionsForReview,
 } from './checkYourAnswersUtils'
 
@@ -30,18 +29,6 @@ describe('checkYourAnswersUtils', () => {
         },
         rows: pageResponsesAsSummaryListItems(placementApplication, 'same-ap', application),
       })
-    })
-  })
-
-  describe('pagesForReview', () => {
-    it('should return all of the pages except the check-your-answers page', () => {
-      placementApplication = addResponseToFormArtifact(placementApplication, {
-        section: 'request-a-placement',
-        page: 'check-your-answers',
-        key: 'reviwed',
-        value: '1',
-      }) as PlacementApplication
-      expect(pagesForReview(placementApplication)).toEqual(['same-ap'])
     })
   })
 

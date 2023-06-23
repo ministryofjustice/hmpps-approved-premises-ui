@@ -25,12 +25,6 @@ export const getPageTitle = (placementApplication: PlacementApplication, pageNam
   return new Page(placementApplication.data?.['request-a-placement'][pageName], placementApplication).title
 }
 
-export const pagesForReview = (placementApplication: PlacementApplication) => {
-  const pageNames = Object.keys(placementApplication.data['request-a-placement'])
-
-  return pageNames.filter(page => page !== 'check-your-answers')
-}
-
 export const placementApplicationQuestionsForReview = (placementApplication: PlacementApplication) => {
   return {
     card: {
