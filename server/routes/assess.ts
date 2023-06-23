@@ -3,15 +3,17 @@
 import type { Router } from 'express'
 
 import type { Controllers } from '../controllers'
+import type { Services } from '../services'
+
 import Assess from '../form-pages/assess'
 import paths from '../paths/assess'
 
 import actions from './utils'
 import { getPage } from '../utils/assessments/utils'
 
-export default function routes(controllers: Controllers, router: Router): Router {
+export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
   const { pages } = Assess
-  const { get, put, post } = actions(router)
+  const { get, put, post } = actions(router, services.auditService)
   const {
     assessmentsController,
     assessmentPagesController,

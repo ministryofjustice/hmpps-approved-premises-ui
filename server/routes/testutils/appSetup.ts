@@ -10,6 +10,7 @@ import nunjucksSetup from '../../utils/nunjucksSetup'
 import errorHandler from '../../errorHandler'
 import * as auth from '../../authentication/auth'
 import { Controllers } from '../../controllers'
+import { Services } from '../../services'
 
 export const user = {
   firstName: 'first',
@@ -24,7 +25,12 @@ export const user = {
 
 export const flashProvider = jest.fn()
 
-function appSetup(controllers: Controllers, production: boolean, userSupplier: () => Express.User): Express {
+function appSetup(
+  controllers: Controllers,
+  services: Partial<Services>,
+  production: boolean,
+  userSupplier: () => Express.User,
+): Express {
   const app = express()
 
   app.set('view engine', 'njk')
@@ -40,7 +46,7 @@ function appSetup(controllers: Controllers, production: boolean, userSupplier: (
   })
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
-  app.use(routes(controllers))
+  app.use(routes(controllers, services))
   app.use((req, res, next) => next(createError(404, 'Not found')))
   app.use(errorHandler(production))
 
@@ -50,12 +56,14 @@ function appSetup(controllers: Controllers, production: boolean, userSupplier: (
 export function appWithAllRoutes({
   production = false,
   controllers = {},
+  services = {},
   userSupplier = () => user,
 }: {
   production?: boolean
   controllers?: Partial<Controllers>
+  services?: Partial<Services>
   userSupplier?: () => Express.User
 }): Express {
   auth.default.authenticationMiddleware = () => (req, res, next) => next()
-  return appSetup(controllers as Controllers, production, userSupplier)
+  return appSetup(controllers as Controllers, services, production, userSupplier)
 }

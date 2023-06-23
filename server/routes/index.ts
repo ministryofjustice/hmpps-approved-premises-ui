@@ -3,8 +3,9 @@
 import { Router } from 'express'
 
 import type { Controllers } from '../controllers'
-import actions from './utils'
+import type { Services } from '../services'
 
+import actions from './utils'
 import applyRoutes from './apply'
 import assessRoutes from './assess'
 import matchRoutes from './match'
@@ -12,21 +13,21 @@ import manageRoutes from './manage'
 import tasksRoutes from './tasks'
 import placementApplicationRoutes from './placementApplications'
 
-export default function routes(controllers: Controllers): Router {
+export default function routes(controllers: Controllers, services: Partial<Services>): Router {
   const router = Router()
 
   const { dashboardController } = controllers
 
-  const { get } = actions(router)
+  const { get } = actions(router, services.auditService)
 
   get('/', dashboardController.index())
 
-  applyRoutes(controllers, router)
-  assessRoutes(controllers, router)
-  matchRoutes(controllers, router)
-  manageRoutes(controllers, router)
-  tasksRoutes(controllers, router)
-  placementApplicationRoutes(controllers, router)
+  applyRoutes(controllers, router, services)
+  assessRoutes(controllers, router, services)
+  matchRoutes(controllers, router, services)
+  manageRoutes(controllers, router, services)
+  tasksRoutes(controllers, router, services)
+  placementApplicationRoutes(controllers, router, services)
 
   return router
 }
