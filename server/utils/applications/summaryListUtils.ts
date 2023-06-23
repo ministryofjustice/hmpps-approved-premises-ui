@@ -13,6 +13,7 @@ import { documentsFromApplication } from '../assessments/documentUtils'
 import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { getResponseForPage } from './getResponseForPage'
+import { forPagesInTask } from './forPagesInTask'
 
 const summaryListSections = (applicationOrAssessment: Application | Assessment, showActions = true) =>
   reviewSections(applicationOrAssessment, taskResponsesAsSummaryListItems, showActions)
@@ -24,13 +25,7 @@ const taskResponsesAsSummaryListItems = (
 ): Array<SummaryListItem> => {
   const items: Array<SummaryListItem> = []
 
-  if (!applicationOrAssessment.data[task.id]) {
-    return items
-  }
-
-  const pageNames = Object.keys(applicationOrAssessment.data[task.id])
-
-  pageNames.forEach(pageName => {
+  forPagesInTask(applicationOrAssessment, task, (_, pageName) => {
     if (pageName === 'attach-documents') {
       items.push(
         ...attachDocumentsSummaryListItems(applicationOrAssessment as Application, task, pageName, showActions),

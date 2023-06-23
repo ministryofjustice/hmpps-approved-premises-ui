@@ -1,4 +1,6 @@
+import { createMock } from '@golevelup/ts-jest'
 import { applicationFactory, assessmentFactory, documentFactory } from '../../testutils/factories'
+import { forPagesInTask } from './forPagesInTask'
 import {
   embeddedSummaryListItem,
   reviewApplicationSections,
@@ -9,6 +11,7 @@ import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
 import { getResponseForPage } from './getResponseForPage'
+import TasklistPage from '../../form-pages/tasklistPage'
 
 jest.mock('../reviewUtils')
 jest.mock('./utils')
@@ -84,9 +87,7 @@ describe('summaryListUtils', () => {
 
       expect(reviewSections).toHaveBeenCalledWith(application, taskResponsesAsSummaryListItems, false)
     })
-  })
 
-  describe('taskResponsesAsSummaryListItems', () => {
     it('returns an empty array if there isnt any responses for the task', () => {
       const application = applicationFactory.build()
 
@@ -96,6 +97,15 @@ describe('summaryListUtils', () => {
     describe('when the document is an application', () => {
       it('returns the task responses as Summary List items and adds the actions object with a link to the application', () => {
         const application = applicationFactory.build()
+        ;(forPagesInTask as jest.MockedFunction<typeof forPagesInTask>).mockImplementation((_1, _2, callback) => {
+          const page = createMock<TasklistPage>()
+
+          page.response.mockReturnValue({
+            'A question': 'An answer',
+          })
+
+          callback(page, 'some-page')
+        })
         application.data = { foo: ['bar'] }
         ;(getResponseForPage as jest.Mock).mockImplementation(() => ({
           title: 'response',
@@ -106,7 +116,7 @@ describe('summaryListUtils', () => {
             actions: {
               items: [
                 {
-                  href: `/applications/${application.id}/tasks/foo/pages/0`,
+                  href: `/applications/${application.id}/tasks/foo/pages/some-page`,
                   text: 'Change',
                   visuallyHiddenText: 'title',
                 },
@@ -127,6 +137,15 @@ describe('summaryListUtils', () => {
       it('returns the task responses as Summary List items and adds the actions object with a link to the application', () => {
         const assessment = assessmentFactory.build()
         assessment.data = { foo: ['bar'] }
+        ;(forPagesInTask as jest.MockedFunction<typeof forPagesInTask>).mockImplementation((_1, _2, callback) => {
+          const page = createMock<TasklistPage>()
+
+          page.response.mockReturnValue({
+            'A question': 'An answer',
+          })
+
+          callback(page, 'some-page')
+        })
         ;(getResponseForPage as jest.Mock).mockImplementation(() => ({
           title: 'response',
         }))
@@ -136,7 +155,7 @@ describe('summaryListUtils', () => {
             actions: {
               items: [
                 {
-                  href: `/assessments/${assessment.id}/tasks/foo/pages/0`,
+                  href: `/assessments/${assessment.id}/tasks/foo/pages/some-page`,
                   text: 'Change',
                   visuallyHiddenText: 'title',
                 },
@@ -177,6 +196,15 @@ describe('summaryListUtils', () => {
         const application = applicationFactory.build()
         const documents = documentFactory.buildList(1)
 
+        ;(forPagesInTask as jest.MockedFunction<typeof forPagesInTask>).mockImplementation((_1, _2, callback) => {
+          const page = createMock<TasklistPage>()
+
+          page.response.mockReturnValue({
+            'A question': 'An answer',
+          })
+
+          callback(page, 'attach-documents')
+        })
         ;(documentsFromApplication as jest.Mock).mockReturnValue(documents)
 
         application.data['attach-required-documents'] = {
