@@ -59,3 +59,22 @@
 
 	{{CalendarUtils.calendar(bedOccupancyRangeList, startDate, premisesId) | safe}}
 {% endblock %}
+
+{% block extraScripts %}
+	<script type="text/javascript" nonce="{{ cspNonce }}">
+		window.addEventListener("load", (event) => {
+			var tooltips = document.querySelectorAll('span.tooltip')
+
+			// Remove tooltips when the text does not overflow
+			for (var i = 0; i < tooltips.length; i++) {
+				var tooltip = tooltips[i]
+				if (tooltip.offsetWidth >= tooltip.scrollWidth) {
+					tooltip.removeAttribute('title')
+					tooltip
+						.classList
+						.remove('tooltip');
+				}
+			}
+		})
+	</script>
+{% endblock %}

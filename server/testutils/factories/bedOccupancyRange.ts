@@ -16,6 +16,7 @@ import {
   BedOccupancyEntryUi,
   BedOccupancyLostBedEntryUi,
   BedOccupancyOpenEntryUi,
+  BedOccupancyOverbookingEntryUi,
   BedOccupancyRangeUi,
 } from '../../@types/ui'
 
@@ -113,6 +114,14 @@ export const bedOccupancyEntryBookingUiFactory = Factory.define<BedOccupancyBook
       personName: faker.person.firstName(),
       bookingId: faker.string.uuid(),
     } as BedOccupancyBookingEntryUi),
+)
+
+export const bedOccupancyEntryOverbookingUiFactory = Factory.define<BedOccupancyOverbookingEntryUi>(
+  () =>
+    ({
+      ...bedOccupancyEntryUiFactory.build(),
+      type: 'overbooking',
+    } as BedOccupancyOverbookingEntryUi),
 )
 
 export const bedOccupancyEntryLostBedUiFactory = Factory.define<BedOccupancyLostBedEntryUi>(

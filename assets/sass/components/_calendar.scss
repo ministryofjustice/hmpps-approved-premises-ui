@@ -71,13 +71,35 @@ $calendarWidth: $roomHeaderWidth + (30 * ($colWidth + ($colPadding * 2)));
 
 
   &__cell {
-    white-space: nowrap;
-    overflow:hidden;
-    text-overflow: ellipsis;
+    border: 1px solid $govuk-border-colour;
+    padding: $colPadding;
 
     &--calendar {
-      border: 1px solid $govuk-border-colour;
-      padding: $colPadding;
+      position: relative;
+
+      span {
+        white-space: nowrap;
+        overflow:hidden;
+        text-overflow: ellipsis;
+        display: block;
+
+        &.tooltip {
+          &:hover::before {
+            position: absolute;
+            bottom: -120%;
+            left: 10px;
+            z-index: 999;
+            content: attr(title);
+            opacity: 0.75;
+            background-color: govuk-colour("black");
+            color: govuk-colour("white");
+            padding: $colPadding;
+            border-radius: 3px;
+            display: block;
+            font-weight: normal;
+          }
+        }
+      }
     }
 
     &--booking {
