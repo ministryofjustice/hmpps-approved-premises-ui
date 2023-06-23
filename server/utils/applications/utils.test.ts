@@ -19,16 +19,16 @@ import {
   firstPageOfApplicationJourney,
   getApplicationType,
   getPage,
-  getResponses,
+  getSections,
   getStatus,
   isInapplicable,
   statusTags,
 } from './utils'
 import { UnknownPageError } from '../errors'
+import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 
-jest.mock('../personUtils')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
-
+jest.mock('../journeyTypeFromArtifact')
 const FirstApplyPage = jest.fn()
 const SecondApplyPage = jest.fn()
 const AssessPage = jest.fn()
@@ -37,7 +37,6 @@ const PlacementRequestPage = jest.fn()
 jest.mock('../../form-pages/apply', () => {
   return {
     pages: { 'basic-information': {}, 'type-of-ap': {} },
-    sections: { 'reasons-for-placement': {} },
   }
 })
 
@@ -47,16 +46,97 @@ jest.mock('../../form-pages/assess', () => {
   }
 })
 
-jest.mock('../../form-pages/placement-application', () => {
-  return {
-    pages: { 'placement-request-page': {} },
-  }
-})
+jest.mock('../personUtils')
 
-Apply.pages['basic-information'] = {
+const applySection1Task1 = {
+  id: 'first-apply-section-task-1',
+  title: 'First Apply section, task 1',
+  actionText: '',
+  pages: {
+    first: FirstApplyPage,
+    second: SecondApplyPage,
+  },
+}
+const applySection1Task2 = {
+  id: 'first-apply-section-task-2',
+  title: 'First Apply section, task 2',
+  actionText: '',
+  pages: {},
+}
+
+const applySection2Task1 = {
+  id: 'second-apply-section-task-1',
+  title: 'Second Apply section, task 1',
+  actionText: '',
+  pages: {},
+}
+
+const applySection2Task2 = {
+  id: 'second-apply-section-task-2',
+  title: 'Second Apply section, task 2',
+  actionText: '',
+  pages: {},
+}
+
+const applySection1 = {
+  name: 'first-apply-section',
+  title: 'First Apply section',
+  tasks: [applySection1Task1, applySection1Task2],
+}
+
+const applySection2 = {
+  name: 'second-apply-section',
+  title: 'Second Apply section',
+  tasks: [applySection2Task1, applySection2Task2],
+}
+
+Apply.sections = [applySection1, applySection2]
+
+Apply.pages['first-apply-section-task-1'] = {
   first: FirstApplyPage,
   second: SecondApplyPage,
 }
+
+const assessSection1Task1 = {
+  id: 'first-assess-section-task-1',
+  title: 'First Apply section, task 1',
+  actionText: '',
+  pages: {},
+}
+const assessSection1Task2 = {
+  id: 'first-assess-section-task-2',
+  title: 'First Assess section, task 2',
+  actionText: '',
+  pages: {},
+}
+
+const assessSection2Task1 = {
+  id: 'second-assess-section-task-1',
+  title: 'Second Assess section, task 1',
+  actionText: '',
+  pages: {},
+}
+
+const assessSection2Task2 = {
+  id: 'second-assess-section-task-2',
+  title: 'Second Assess section, task 2',
+  actionText: '',
+  pages: {},
+}
+
+const assessSection1 = {
+  name: 'first-assess-section',
+  title: 'First Assess section',
+  tasks: [assessSection1Task1, assessSection1Task2],
+}
+
+const assessSection2 = {
+  name: 'second-assess-section',
+  title: 'Second Assess section',
+  tasks: [assessSection2Task1, assessSection2Task2],
+}
+
+Assess.sections = [assessSection1, assessSection2]
 
 Assess.pages['assess-page'] = {
   first: AssessPage,
@@ -67,31 +147,10 @@ PlacementRequest.pages['placement-request-page'] = {
 }
 
 describe('utils', () => {
-  describe('getResponses', () => {
-    it('returns the responses from all answered questions', () => {
-      FirstApplyPage.mockReturnValue({
-        response: () => {
-          return { foo: 'bar' }
-        },
-      })
-
-      SecondApplyPage.mockReturnValue({
-        response: () => {
-          return { bar: 'foo' }
-        },
-      })
-
-      const application = applicationFactory.build()
-      application.data = { 'basic-information': { first: '', second: '' } }
-
-      expect(getResponses(application)).toEqual({ 'basic-information': [{ foo: 'bar' }, { bar: 'foo' }] })
-    })
-  })
-
   describe('getPage', () => {
     it('should return a page from Apply if it exists', () => {
-      expect(getPage('basic-information', 'first', 'applications')).toEqual(FirstApplyPage)
-      expect(getPage('basic-information', 'second', 'applications')).toEqual(SecondApplyPage)
+      expect(getPage('first-apply-section-task-1', 'first', 'applications')).toEqual(FirstApplyPage)
+      expect(getPage('first-apply-section-task-1', 'second', 'applications')).toEqual(SecondApplyPage)
     })
 
     it('should return a page from assess if passed the an assessment', () => {
@@ -106,27 +165,6 @@ describe('utils', () => {
       expect(() => {
         getPage('basic-information', 'bar', 'applications')
       }).toThrow(UnknownPageError)
-    })
-  })
-
-  describe('getResponseForPage', () => {
-    it('returns the response for a given page', () => {
-      FirstApplyPage.mockReturnValue({
-        response: () => {
-          return { foo: 'bar' }
-        },
-      })
-
-      SecondApplyPage.mockReturnValue({
-        response: () => {
-          return { bar: 'foo' }
-        },
-      })
-
-      const application = applicationFactory.build()
-      application.data = { 'basic-information': { first: '', second: '' } }
-
-      expect(getResponses(application)).toEqual({ 'basic-information': [{ foo: 'bar' }, { bar: 'foo' }] })
     })
   })
 

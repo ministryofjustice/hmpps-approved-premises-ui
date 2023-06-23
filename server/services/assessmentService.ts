@@ -12,9 +12,9 @@ import type { AssessmentClient, RestClientBuilder } from '../data'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getBody, updateAssessmentData } from '../form-pages/utils'
 import { ValidationError } from '../utils/errors'
-import { getResponses } from '../utils/applications/utils'
 import { rejectionRationaleFromAssessmentResponses } from '../utils/assessments/utils'
 import { applicationAccepted } from '../utils/assessments/decisionUtils'
+import { getResponses } from '../utils/applications/getResponses'
 
 export default class AssessmentService {
   constructor(private readonly assessmentClientFactory: RestClientBuilder<AssessmentClient>) {}

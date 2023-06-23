@@ -76,20 +76,6 @@ const createNameAnchorElement = (name: string, applicationId: string) => {
 
 export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>
 
-const getResponses = (formArtifact: FormArtifact): ApplicationOrAssessmentResponse => {
-  const responses = {}
-
-  Object.keys(formArtifact.data).forEach(taskName => {
-    responses[taskName] = getResponsesForTask(formArtifact, taskName)
-  })
-
-  return responses
-}
-
-const getResponsesForTask = (formArtifact: FormArtifact, taskName: string): Array<PageResponse> => {
-  const pageNames = Object.keys(formArtifact.data[taskName])
-  const responsesForPages = pageNames.map(pageName => getResponseForPage(formArtifact, taskName, pageName))
-  return responsesForPages
 export const getSections = (formArtifact: FormArtifact): FormSections => {
   const journeyType = journeyTypeFromArtifact(formArtifact)
 
@@ -196,7 +182,6 @@ export {
   getApplicationType,
   getPage,
   getResponseForPage,
-  getResponses,
   getStatus,
   isInapplicable,
   statusTags,

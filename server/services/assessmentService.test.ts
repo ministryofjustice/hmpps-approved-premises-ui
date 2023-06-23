@@ -11,13 +11,15 @@ import { getBody, updateAssessmentData } from '../form-pages/utils'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { DataServices, TaskListErrors } from '../@types/ui'
 import { ValidationError } from '../utils/errors'
-import { ApplicationOrAssessmentResponse, getResponseForPage, getResponses } from '../utils/applications/utils'
+import { ApplicationOrAssessmentResponse, getResponseForPage } from '../utils/applications/utils'
 import { applicationAccepted } from '../utils/assessments/decisionUtils'
+import { getResponses } from '../utils/applications/getResponses'
 
 jest.mock('../data/assessmentClient.ts')
 jest.mock('../data/personClient.ts')
 jest.mock('../form-pages/utils')
 jest.mock('../utils/applications/utils')
+jest.mock('../utils/applications/getResponses')
 jest.mock('../utils/assessments/acceptanceData')
 jest.mock('../utils/assessments/decisionUtils')
 

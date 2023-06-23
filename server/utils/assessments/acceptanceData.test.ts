@@ -6,12 +6,13 @@ import { assessmentFactory } from '../../testutils/factories'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { placementDurationFromApplication } from './placementDurationFromApplication'
-import { getResponses } from '../applications/utils'
+import { getResponses } from '../applications/getResponses'
 
 jest.mock('../../form-pages/utils')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/arrivalDateFromApplication')
 jest.mock('./placementDurationFromApplication')
+jest.mock('../applications/getResponses')
 
 describe('acceptanceData', () => {
   const assessment = assessmentFactory.build()
