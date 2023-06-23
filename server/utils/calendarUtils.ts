@@ -12,7 +12,6 @@ import paths from '../paths/manage'
 import { DateFormats } from './dateUtils'
 
 import { BedOccupancyEntryCalendar, BedOccupancyEntryUi, BedOccupancyRangeUi } from '../@types/ui'
-import { linkTo } from './utils'
 
 export const tableClass = 'govuk-table'
 export const calendarTableClass = `${tableClass} ${tableClass}--calendar`
@@ -88,18 +87,42 @@ export const labelForScheduleItem = (
   premisesId: string,
   bedId: string,
 ): string => {
+  if (bedOccupancyEntry.type === 'open') {
+    return '<span class="govuk-visually-hidden">open</span>'
+  }
+
+  let label: string
+  let link: string
+
   switch (bedOccupancyEntry.type) {
     case 'booking':
-      return bookingCellContent(bedOccupancyEntry, premisesId)
-    case 'open':
-      return '<span class="govuk-visually-hidden">open</span>'
+      label = bedOccupancyEntry.personName
+      link = paths.bookings.show({ premisesId, bookingId: bedOccupancyEntry.bookingId })
+      break
     case 'lost_bed':
-      return 'Out of Service'
+      label = 'Out of Service'
+      link = paths.lostBeds.show({ bedId, premisesId, id: bedOccupancyEntry.lostBedId })
+      break
     case 'overbooking':
-      return overbookedCellContent(premisesId, bedId)
+      label = 'Overbooked'
+      link = paths.premises.beds.show({ bedId, premisesId })
+      break
     default:
-      return ''
+      throw new Error(`Unknown entry type: ${(bedOccupancyEntry as BedOccupancyEntryUi).type}`)
   }
+
+  const entryLengthInWords = formatDistanceStrict(bedOccupancyEntry.startDate, bedOccupancyEntry.endDate)
+  const startAndEndDates = `${DateFormats.dateObjtoUIDate(bedOccupancyEntry.startDate, {
+    format: 'short',
+  })} - ${DateFormats.dateObjtoUIDate(bedOccupancyEntry.endDate, { format: 'short' })}`
+
+  label += ` (${entryLengthInWords} ${startAndEndDates})`
+
+  return `
+    <span title="${label}" class="tooltip">
+      <a href="${link}" class="govuk-link govuk-link--${bedOccupancyEntry.type}">${label}</a>
+    </span>
+  `
 }
 
 export const scheduleForCalendar = (
@@ -130,47 +153,6 @@ export const generateRowCells = (bedOccupancyRange: BedOccupancyRangeUi, startDa
         .join(''),
     )
     .join('')
-}
-
-export const overbookedCellContent = (premisesId: string, bedId: string) => {
-  return linkTo(
-    paths.premises.beds.show,
-    { bedId, premisesId },
-    {
-      text: 'Overbooked',
-      attributes: { 'data-cy-bedId': bedId, class: 'govuk-link govuk-link--overbooking' },
-    },
-  )
-}
-
-export const occupierName = (bedOccupancyEntry: BedOccupancyEntryUi, premisesId: string) => {
-  if (bedOccupancyEntry.type === 'booking')
-    return linkTo(
-      paths.bookings.show,
-      { bookingId: bedOccupancyEntry.bookingId, premisesId },
-      {
-        text: bedOccupancyEntry.personName,
-        attributes: { 'data-cy-bookingId': bedOccupancyEntry.bookingId, class: 'govuk-link govuk-link--booking' },
-      },
-    )
-  return ''
-}
-
-export const bookingCellContent = (bedOccupancyEntry: BedOccupancyEntryUi, premisesId: string) => {
-  const name = occupierName(bedOccupancyEntry, premisesId)
-  const lengthOfStay = bedOccupancyEntry.length
-  const lengthOfStayInWords = formatDistanceStrict(bedOccupancyEntry.startDate, bedOccupancyEntry.endDate)
-  const startAndEndDates = `${DateFormats.dateObjtoUIDate(bedOccupancyEntry.startDate, {
-    format: 'short',
-  })} - ${DateFormats.dateObjtoUIDate(bedOccupancyEntry.endDate, { format: 'short' })}`
-
-  if (lengthOfStay < 5) return name
-
-  if (lengthOfStay >= 5 && lengthOfStay < 10) return `${name} (${lengthOfStayInWords})`
-
-  if (lengthOfStay >= 10) return `${name} (${lengthOfStayInWords} ${startAndEndDates})`
-
-  return ''
 }
 
 export const cell = (cellDate: Date, bedOccupancyEntry: BedOccupancyEntryCalendar) => {
