@@ -20,13 +20,16 @@ describe('acceptanceData', () => {
   describe('acceptanceData', () => {
     it('should return the acceptance data for the assessment', () => {
       mockOptionalQuestionResponse({ cruInformation: 'Some notes' })
+      const responses = { some: 'responses' }
+      ;(getResponses as jest.Mock).mockReturnValue(responses)
 
       expect(acceptanceData(assessment)).toEqual({
-        document: getResponses(assessment),
+        document: responses,
         requirements: placementRequestData(assessment),
         placementDates: placementDates(assessment),
         notes: 'Some notes',
       })
+      expect(getResponses).toHaveBeenCalledWith(assessment)
     })
   })
 
