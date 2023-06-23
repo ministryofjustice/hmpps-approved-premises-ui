@@ -7,6 +7,14 @@ import {
   ArrayOfOASysSupportingInformationQuestions,
   Document,
 } from '@approved-premises/api'
+import { BedOccupancyEntryUiType } from '@approved-premises/ui'
+import { differenceInDays } from 'date-fns'
+import { bedOccupancyEntryBookingUiFactory } from '../../server/testutils/factories'
+import {
+  bedOccupancyEntryLostBedUiFactory,
+  bedOccupancyEntryOpenUiFactory,
+} from '../../server/testutils/factories/bedOccupancyRange'
+import { DateFormats } from '../../server/utils/dateUtils'
 
 const documentsFromApplication = (application: ApprovedPremisesApplication): Array<Document> => {
   return application.data['attach-required-documents']['attach-documents'].selectedDocuments as Array<Document>
@@ -45,6 +53,21 @@ const riskToSelfSummariesFromApplication = (
   return application.data['oasys-import']['risk-to-self'].riskToSelfSummaries as ArrayOfOASysRiskToSelfQuestions
 }
 
+const createOccupancyEntry = (startDate: Date, endDate: Date, type: BedOccupancyEntryUiType) => {
+  const factory = {
+    booking: bedOccupancyEntryBookingUiFactory,
+    lost_bed: bedOccupancyEntryLostBedUiFactory,
+    open: bedOccupancyEntryOpenUiFactory,
+  }[type]
+
+  return factory.build({
+    type,
+    startDate: DateFormats.dateObjToIsoDate(startDate),
+    endDate: DateFormats.dateObjToIsoDate(endDate),
+    length: differenceInDays(endDate, startDate) + 1,
+  })
+}
+
 export {
   documentsFromApplication,
   roshSummariesFromApplication,
@@ -52,4 +75,5 @@ export {
   supportInformationFromApplication,
   riskManagementPlanFromApplication,
   riskToSelfSummariesFromApplication,
+  createOccupancyEntry,
 }

@@ -2,13 +2,14 @@ import PremisesService from './premisesService'
 import PremisesClient from '../data/premisesClient'
 import {
   bedDetailFactory,
+  bedOccupancyRangeFactory,
   bedSummaryFactory,
   dateCapacityFactory,
   premisesFactory,
   roomFactory,
   staffMemberFactory,
 } from '../testutils/factories'
-import getDateRangesWithNegativeBeds from '../utils/premisesUtils'
+import getDateRangesWithNegativeBeds, { mapApiOccupancyToUiOccupancy } from '../utils/premisesUtils'
 import paths from '../paths/manage'
 
 jest.mock('../data/premisesClient')
@@ -185,6 +186,16 @@ describe('PremisesService', () => {
     })
   })
 
+  describe('find', () => {
+    it('fetches the premises from the client', async () => {
+      const premises = premisesFactory.build()
+      premisesClient.find.mockResolvedValue(premises)
+
+      const result = await service.find(token, premises.id)
+      expect(result).toEqual(premises)
+    })
+  })
+
   describe('getPremisesDetails', () => {
     it('returns a title and a summary list for a given Premises ID', async () => {
       const premises = premisesFactory.build({
@@ -347,6 +358,24 @@ describe('PremisesService', () => {
         `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the periods:</h3>
         <ul class="govuk-list govuk-list--bullet"><li>Sunday 1 January 2023</li><li>Thursday 2 March 2023 to Sunday 2 April 2023</li></ul>`,
       ])
+    })
+  })
+
+  describe('getOccupancy', () => {
+    it('returns the premises occupancy from the client', async () => {
+      const occupancy = bedOccupancyRangeFactory.buildList(1)
+      const startDate = '2020-01-01'
+      const endDate = '2020-01-31'
+
+      premisesClient.calendar.mockResolvedValue(occupancy)
+      ;(mapApiOccupancyToUiOccupancy as jest.Mock).mockReturnValue(occupancy)
+
+      const result = await service.getOccupancy(token, premisesId, startDate, endDate)
+
+      expect(result).toEqual(occupancy)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.calendar).toHaveBeenCalledWith(premisesId, startDate, endDate)
     })
   })
 })

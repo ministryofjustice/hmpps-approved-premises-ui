@@ -1,0 +1,102 @@
+$colWidth: 22px;
+$colPadding: 2px;
+
+$roomHeaderWidth: 100px;
+
+$calendarWidth: $roomHeaderWidth + (30 * ($colWidth + ($colPadding * 2)));
+
+.govuk-link {
+  &--booking {
+    &:link, &:visited {
+      color: govuk-colour("black");
+      font-weight: bold;
+    }
+  }
+
+  &--overbooking {
+    &:link, &:visited {
+      color: govuk-colour("white");
+      font-weight: bold;
+    }
+  }
+}
+
+.govuk-pagination {
+  &--calendar {
+    padding-bottom: govuk-spacing(6);
+
+    .govuk-pagination__prev {
+      float: left;
+    }
+
+    .govuk-pagination__next {
+      float: right;
+      border-top: none;
+    }
+
+    .govuk-pagination__prev + .govuk-pagination__next {
+      border-top: none;
+    }
+  }
+}
+
+.govuk-table {
+  &--calendar {
+    font-size: 0.9em;
+    width: $calendarWidth;
+    table-layout: fixed;
+    margin: 0 auto;
+
+    @for $i from 1 through 31 {
+      th[colspan="#{$i}"], td[colspan="#{$i}"] {
+        width: ($i * ($colWidth + ($colPadding * 2)));
+      }
+    }
+  }
+
+  &__header {
+    &--calendar {
+      border: 1px solid $govuk-border-colour;
+      text-align: center;
+      width: $colWidth;
+      padding: $colPadding;
+    }
+
+    &--calendar-room-header {
+      text-align: center;
+      width: 100px;
+      vertical-align: middle;
+    }
+  }
+
+
+  &__cell {
+    white-space: nowrap;
+    overflow:hidden;
+    text-overflow: ellipsis;
+
+    &--calendar {
+      border: 1px solid $govuk-border-colour;
+      padding: $colPadding;
+    }
+
+    &--booking {
+      background-color: govuk-colour("light-blue");
+    }
+
+    &--lost_bed {
+      background-color: govuk-colour("light-grey");
+      font-weight: bold;
+    }
+
+    &--month {
+      text-align: center;
+    }
+
+    &--overbooking {
+      background-color: govuk-colour("black");
+      color: govuk-colour("white");
+      font-weight: bold;
+    }
+  }
+}

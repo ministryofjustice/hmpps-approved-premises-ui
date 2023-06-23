@@ -14,14 +14,9 @@ export default class PremisesShowPage extends Page {
     return new PremisesShowPage(premises)
   }
 
-  clickLostBedsOption() {
+  clickViewCalendar() {
     cy.get('.moj-button-menu__toggle-button').click()
-    cy.get('a').contains('Mark bed as out of service').click()
-  }
-
-  clickCreateBookingOption() {
-    cy.get('.moj-button-menu__toggle-button')
-    cy.get('a').contains('Create a placement').click()
+    cy.get('a').contains('View calendar').click()
   }
 
   shouldShowPremisesDetail(): void {

@@ -1,5 +1,6 @@
 import {
   bedDetailFactory,
+  bedOccupancyRangeFactory,
   bedSummaryFactory,
   dateCapacityFactory,
   premisesFactory,
@@ -222,6 +223,36 @@ describeClient('PremisesClient', provider => {
 
       const output = await premisesClient.getBed(premises.id, bed.id)
       expect(output).toEqual(bed)
+    })
+  })
+
+  describe('calendar', () => {
+    it('should return the occupancy of the premises for a given date range', async () => {
+      const premises = premisesFactory.build()
+      const startDate = '2020-01-01'
+      const endDate = '2020-01-31'
+
+      const result = bedOccupancyRangeFactory.buildList(1)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a calendar for a premises',
+        withRequest: {
+          method: 'GET',
+          path: paths.premises.calendar({ premisesId: premises.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          query: { endDate, startDate },
+        },
+        willRespondWith: {
+          status: 200,
+          body: result,
+        },
+      })
+
+      const output = await premisesClient.calendar(premises.id, startDate, endDate)
+      expect(output).toEqual(result)
     })
   })
 })

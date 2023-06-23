@@ -30,6 +30,7 @@ const paths = {
     index: premisesPath,
     show: singlePremisesPath,
     capacity: singlePremisesPath.path('capacity'),
+    calendar: singlePremisesPath.path('calendar'),
     beds: {
       index: bedsPath,
       show: bedsPath.path(':bedId'),
