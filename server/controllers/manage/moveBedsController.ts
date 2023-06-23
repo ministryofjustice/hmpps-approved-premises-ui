@@ -35,7 +35,7 @@ export default class MoveBedsController {
 
       const newMove: NewBedMove = {
         notes: req.body.notes,
-        bedId: req.body.bedId,
+        bedId: req.body.bed,
       }
 
       try {

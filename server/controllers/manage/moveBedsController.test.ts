@@ -94,9 +94,14 @@ describe('MoveBedsController', () => {
     it('creates a move and redirects to the premises page', async () => {
       const requestHandler = moveBedsController.create()
 
-      const move: NewBedMove = {
+      const payload = {
         notes: 'Some notes',
-        bedId,
+        bed: bedId,
+      }
+
+      const move: NewBedMove = {
+        notes: payload.notes,
+        bedId: payload.bed,
       }
 
       request.params = {
@@ -105,7 +110,7 @@ describe('MoveBedsController', () => {
       }
 
       request.body = {
-        ...move,
+        ...payload,
       }
 
       await requestHandler(request, response, next)
