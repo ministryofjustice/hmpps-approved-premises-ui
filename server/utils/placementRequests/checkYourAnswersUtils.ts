@@ -5,6 +5,7 @@ import paths from '../../paths/placementApplications'
 import { embeddedSummaryListItem, summaryListItemForResponse } from '../applications/summaryListUtils'
 import { getPage } from '../applications/getPage'
 import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
+import { getResponseForPage } from '../applications/getResponseForPage'
 
 export const mapPageForSummaryList = (
   placementApplication: PlacementApplication,

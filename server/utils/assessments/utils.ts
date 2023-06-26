@@ -6,10 +6,11 @@ import Assess from '../../form-pages/assess'
 import { UnknownPageError } from '../errors'
 import Apply from '../../form-pages/apply'
 import { kebabCase } from '../utils'
-import { getApplicationType as getApplicationTypeFromApplication, getResponseForPage } from '../applications/utils'
+import { getApplicationType as getApplicationTypeFromApplication } from '../applications/utils'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { assessmentsApproachingDue, formattedArrivalDate } from './dateUtils'
 import { awaitingAssessmentTableRows, completedTableRows, requestedFurtherInformationTableRows } from './tableUtils'
+import { getResponseForPage } from '../applications/getResponseForPage'
 
 const groupAssessmements = (assessments: Array<AssessmentSummary>): GroupedAssessments => {
   const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments

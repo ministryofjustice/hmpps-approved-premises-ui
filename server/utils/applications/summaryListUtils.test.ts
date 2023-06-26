@@ -1,6 +1,4 @@
 import { applicationFactory, assessmentFactory, documentFactory } from '../../testutils/factories'
-import { getResponseForPage } from './utils'
-
 import {
   embeddedSummaryListItem,
   reviewApplicationSections,
@@ -10,9 +8,12 @@ import {
 import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
+import { getResponseForPage } from './getResponseForPage'
 
 jest.mock('../reviewUtils')
 jest.mock('./utils')
+jest.mock('./getResponseForPage')
+jest.mock('./forPagesInTask')
 jest.mock('../assessments/documentUtils')
 jest.mock('../assessments/getActionsForTaskId')
 

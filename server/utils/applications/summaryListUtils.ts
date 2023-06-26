@@ -8,11 +8,11 @@ import applyPaths from '../../paths/apply'
 import assessPaths from '../../paths/assess'
 import placementApplicationsPaths from '../../paths/placementApplications'
 
-import { getResponseForPage } from './utils'
 import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
+import { getResponseForPage } from './getResponseForPage'
 
 const summaryListSections = (applicationOrAssessment: Application | Assessment, showActions = true) =>
   reviewSections(applicationOrAssessment, taskResponsesAsSummaryListItems, showActions)

@@ -90,15 +90,6 @@ export const getSections = (formArtifact: FormArtifact): FormSections => {
   }
 }
 
-const getResponseForPage = (formArtifact: FormArtifact, taskName: string, pageName: string): PageResponse => {
-  const Page = getPage(taskName, pageName, journeyTypeFromArtifact(formArtifact))
-
-  const body = formArtifact?.data?.[taskName]?.[pageName]
-  const page = new Page(body, formArtifact)
-
-  return page.response()
-}
-
 export const journeyPages = (journeyType: JourneyType): FormPages => {
   switch (journeyType) {
     case 'applications':
@@ -166,7 +157,6 @@ export {
   firstPageOfApplicationJourney,
   arrivalDateFromApplication,
   getApplicationType,
-  getResponseForPage,
   getStatus,
   isInapplicable,
   statusTags,
