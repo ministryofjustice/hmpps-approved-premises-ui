@@ -120,6 +120,34 @@ describe('auditMiddleware', () => {
       bodyParam1: 'body-value-1',
     })
   })
+
+  it('includes additional metadata if provided', async () => {
+    const handler = jest.fn()
+    const response = createMock<Response>({ locals: { user: { name: username } } })
+    const request = createMock<Request>({
+      params: requestParams,
+      body: { bodyParam1: 'body-value-1', bodyParam2: '' },
+    })
+    const next = jest.fn()
+
+    const auditService = createMock<AuditService>()
+
+    const auditedhandler = auditMiddleware(handler, auditService, {
+      auditEvent,
+      auditBodyParams: ['bodyParam1', 'bodyParam2'],
+      additionalMetadata: { foo: 'bar' },
+    })
+
+    await auditedhandler(request, response, next)
+
+    expect(handler).toHaveBeenCalled()
+    expect(auditService.sendAuditMessage).toHaveBeenCalledWith(auditEvent, username, {
+      ...requestParams,
+      bodyParam1: 'body-value-1',
+      foo: 'bar',
+    })
+  })
+
   it('returns an audited request handler, that sends an audit message based on the redirect destination of the given request handler', async () => {
     const somePath = path('/').path('premises').path(':premisesId').path('room').path(':roomId')
 
@@ -166,6 +194,7 @@ describe('auditMiddleware', () => {
     const auditService = createMock<AuditService>()
 
     const auditedhandler = auditMiddleware(handler, auditService, {
+      auditEvent: 'DEFAULT_AUDIT_EVENT',
       redirectAuditEventSpecs: [
         { auditEvent: 'NON_MATCHING_PATH_AUDIT_EVENT', path: nonMatchingPath.pattern },
         { auditEvent: 'MATCHING_PATH_1_AUDIT_EVENT', path: matchingPath1.pattern },
@@ -175,7 +204,7 @@ describe('auditMiddleware', () => {
 
     await auditedhandler(request, response, next)
 
-    expect(handler).toHaveBeenCalled()
+    expect(handler).toHaveBeenCalledTimes(1)
     expect(auditService.sendAuditMessage).toHaveBeenCalledWith('MATCHING_PATH_1_AUDIT_EVENT', username, {
       premisesId: 'some-premises',
     })

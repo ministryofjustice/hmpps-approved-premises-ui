@@ -7,6 +7,7 @@ export type AuditEventSpec = {
   auditEvent?: string
   auditBodyParams?: Array<string>
   redirectAuditEventSpecs?: Array<RedirectAuditEventSpec>
+  additionalMetadata?: Record<string, string>
 }
 
 type RedirectAuditEventSpec = { path: string; auditEvent: string }
@@ -30,6 +31,7 @@ export const auditMiddleware = (
       auditService,
       auditEventSpec?.auditEvent,
       auditEventSpec?.auditBodyParams,
+      auditEventSpec?.additionalMetadata,
       redirectMatchers,
     )
   }
@@ -42,6 +44,7 @@ const wrapHandler =
     auditService: AuditService,
     auditEvent: string | undefined,
     auditBodyParams: Array<string> | undefined,
+    additionalMetadata: Record<string, string> | undefined,
     redirectMatchers: Array<RedirectAuditMatcher> | undefined,
   ) =>
   async (req: Request, res: Response, next: NextFunction) => {
@@ -72,11 +75,14 @@ const wrapHandler =
     }
 
     if (auditEvent) {
-      await auditService.sendAuditMessage(auditEvent, username, auditDetails(req, auditBodyParams))
+      await auditService.sendAuditMessage(auditEvent, username, {
+        ...auditDetails(req, auditBodyParams),
+        ...additionalMetadata,
+      })
     }
 
     if (redirectAuditEvent) {
-      await auditService.sendAuditMessage(redirectAuditEvent, username, redirectParams)
+      await auditService.sendAuditMessage(redirectAuditEvent, username, { ...redirectParams, ...additionalMetadata })
     }
   }
 
