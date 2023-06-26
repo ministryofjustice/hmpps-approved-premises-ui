@@ -121,12 +121,20 @@ export const placementDates = (startDateString: string, lengthInWeeks: string): 
   }
 }
 
-export const summaryCardHeader = (
-  bedSearchResult: BedSearchResult,
-  placementRequestId: string,
-  startDate: string,
-  durationWeeks: string,
-): string => {
+export const summaryCardHeader = ({
+  bedSearchResult,
+  placementRequestId,
+  startDate,
+  durationWeeks,
+  durationDays,
+}: {
+  bedSearchResult: BedSearchResult
+  placementRequestId: string
+  startDate: string
+  durationDays: string
+  durationWeeks: string
+}): string => {
+  const duration = String(Number(durationWeeks) * 7 + Number(durationDays))
   return linkTo(
     matchPaths.placementRequests.bookings.confirm,
     {
@@ -137,7 +145,7 @@ export const summaryCardHeader = (
       query: {
         bedSearchResult: encodeBedSearchResult(bedSearchResult),
         startDate,
-        durationWeeks,
+        duration,
       },
     },
   )

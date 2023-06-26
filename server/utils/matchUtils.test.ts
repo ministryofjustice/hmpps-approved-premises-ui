@@ -288,13 +288,14 @@ describe('matchUtils', () => {
       const placementRequestId = '123'
       const startDate = '2022-01-01'
       const durationWeeks = '4'
+      const durationDays = '1'
 
-      expect(summaryCardHeader(bedSearchResult, placementRequestId, startDate, durationWeeks)).toEqual(
+      expect(
+        summaryCardHeader({ bedSearchResult, placementRequestId, startDate, durationDays, durationWeeks }),
+      ).toEqual(
         `<a href="/placement-requests/${placementRequestId}/bookings/confirm?bedSearchResult=${encodeURIComponent(
           encodeBedSearchResult(bedSearchResult),
-        )}&startDate=${startDate}&durationWeeks=${durationWeeks}" >${bedSearchResult.premises.name} (Bed ${
-          bedSearchResult.bed.name
-        })</a>`,
+        )}&startDate=${startDate}&duration=29" >${bedSearchResult.premises.name} (Bed ${bedSearchResult.bed.name})</a>`,
       )
     })
   })

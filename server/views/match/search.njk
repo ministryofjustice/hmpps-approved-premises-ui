@@ -218,7 +218,7 @@
 						{{ govukSummaryList({
 					card: {
 						title: {
-							html: MatchUtils.summaryCardHeader(bedSearchResult, placementRequest.id, startDate, durationWeeks)
+							html: MatchUtils.summaryCardHeader({bedSearchResult: bedSearchResult, placementRequestId: placementRequest.id, startDate: startDate, durationDays: durationDays, durationWeeks: durationWeeks})
 						}
 					},
 					rows: MatchUtils.summaryCardRows(bedSearchResult, requiredCharacteristics)
