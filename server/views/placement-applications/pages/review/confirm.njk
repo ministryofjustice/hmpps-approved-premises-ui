@@ -1,0 +1,27 @@
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {{ govukPanel({
+                titleText: pageHeading
+            }) }}
+
+            <h2 class="govuk-heading-m">What happens next</h2>
+
+            <p class="govuk-body">
+                This assessment has been moved to the matching stage.
+            </p>
+
+            <p class="govuk-body">
+                <a href="{{ paths.applications.index({}) }}">Back to dashboard</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}

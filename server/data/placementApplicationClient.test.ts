@@ -1,7 +1,7 @@
 import PlacementApplicationClient from './placementApplicationClient'
 import paths from '../paths/api'
 
-import { placementApplicationFactory } from '../testutils/factories'
+import { placementApplicationDecisionEnvelopeFactory, placementApplicationFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 import { SubmitPlacementApplication } from '../@types/shared'
 
@@ -121,6 +121,34 @@ describeClient('placementApplicationClient', provider => {
       })
 
       const result = await placementApplicationClient.submission(placementApplication.id, body)
+
+      expect(result).toEqual(placementApplication)
+    })
+  })
+
+  describe('decisionSubmission', () => {
+    it('submits a placement application decision', async () => {
+      const decisionEnvelope = placementApplicationDecisionEnvelopeFactory.build()
+      const placementApplication = placementApplicationFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to submit a placement application decision',
+        withRequest: {
+          method: 'POST',
+          path: paths.placementApplications.submitDecision({ id: placementApplication.id }),
+          body: decisionEnvelope,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placementApplication,
+        },
+      })
+
+      const result = await placementApplicationClient.decisionSubmission(placementApplication.id, decisionEnvelope)
 
       expect(result).toEqual(placementApplication)
     })

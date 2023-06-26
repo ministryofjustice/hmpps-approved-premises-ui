@@ -16,6 +16,10 @@ export default {
     },
     review: {
       show: placementApplicationPath.path('review'),
+      update: placementApplicationPath.path('update'),
+      decision: placementApplicationPath.path('decision'),
+      submission: placementApplicationPath.path('submission'),
+      confirm: placementApplicationPath.path('confirm'),
     },
   },
 }

@@ -7,6 +7,7 @@ import {
   mapPageForSummaryList,
   pageResponsesAsSummaryListItems,
   pagesForReview,
+  placementApplicationQuestionsForReview,
 } from './checkYourAnswersUtils'
 
 describe('checkYourAnswersUtils', () => {
@@ -95,5 +96,27 @@ describe('checkYourAnswersUtils', () => {
         },
       },
     ])
+  })
+
+  describe('placementApplicationQuestionsForReview', () => {
+    it('should return the responses in the correct format', () => {
+      const placementApp = placementApplicationFactory.build({
+        document: { 'request-a-placement': [{ 'question 1': 'answer 1', 'question 2': 'answer 2' }] },
+      })
+
+      const expected = {
+        card: {
+          title: {
+            text: 'Placement application information',
+          },
+        },
+        rows: [
+          { key: { text: 'question 1' }, value: { text: 'answer 1' } },
+          { key: { text: 'question 2' }, value: { text: 'answer 2' } },
+        ],
+      }
+
+      expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
+    })
   })
 })
