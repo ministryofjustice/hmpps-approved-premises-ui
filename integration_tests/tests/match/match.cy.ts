@@ -1,4 +1,4 @@
-import { addWeeks, weeksToDays } from 'date-fns'
+import { addDays, weeksToDays } from 'date-fns'
 import SuccessPage from '../../pages/match/successPage'
 import ConfirmationPage from '../../pages/match/confirmationPage'
 import PlacementRequestPage from '../../pages/match/placementRequestPage'
@@ -204,6 +204,7 @@ context('Placement Requests', () => {
     const bedSearchResults = bedSearchResultsFactory.build()
 
     const bedSearchParameters = mapPlacementRequestToBedSearchParams(placementRequest)
+    const duration = Number(bedSearchParameters.durationWeeks) * 7 + Number(bedSearchParameters.durationDays)
 
     cy.task('stubTasks', [placementRequestTask])
     cy.task('stubBedSearch', { bedSearchResults })
@@ -228,7 +229,7 @@ context('Placement Requests', () => {
     const confirmationPage = Page.verifyOnPage(ConfirmationPage)
 
     // And the confirmation page should contain the details of my booking
-    confirmationPage.shouldShowConfirmationDetails(bedSearchResults.results[0], bedSearchParameters)
+    confirmationPage.shouldShowConfirmationDetails(bedSearchResults.results[0], bedSearchParameters.startDate, duration)
 
     // When I click on the confirm button
     confirmationPage.clickConfirm()
@@ -246,7 +247,7 @@ context('Placement Requests', () => {
         bedId: bedSearchResults.results[0].bed.id,
         arrivalDate: bedSearchParameters.startDate,
         departureDate: DateFormats.dateObjToIsoDate(
-          addWeeks(DateFormats.isoToDateObj(bedSearchParameters.startDate), Number(bedSearchParameters.durationWeeks)),
+          addDays(DateFormats.isoToDateObj(bedSearchParameters.startDate), duration),
         ),
       })
     })

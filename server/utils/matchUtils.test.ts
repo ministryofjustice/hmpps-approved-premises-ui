@@ -265,7 +265,7 @@ describe('matchUtils', () => {
 
   describe('placementLength', () => {
     it('formats the number of days as weeks', () => {
-      expect(placementLength(2)).toEqual('2 weeks')
+      expect(placementLength(16)).toEqual('2 weeks, 2 days')
     })
   })
 

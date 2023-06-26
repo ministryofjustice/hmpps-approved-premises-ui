@@ -1,4 +1,4 @@
-import { addDays, addWeeks, weeksToDays } from 'date-fns'
+import { addDays, weeksToDays } from 'date-fns'
 import {
   ApprovedPremisesBedSearchParameters as BedSearchParameters,
   BedSearchResult,
@@ -15,6 +15,7 @@ import {
   specialistApTypeOptions,
   specialistSupportOptions,
 } from './placementCriteriaUtils'
+import { daysToWeeksAndDays } from './assessments/dateUtils'
 
 type PlacementDates = {
   placementLength: number
@@ -105,8 +106,8 @@ export const decodeBedSearchResult = (string: string): BedSearchResult => {
   throw new InvalidBedSearchDataException()
 }
 
-export const placementLength = (lengthInWeeks: number): string => {
-  return DateFormats.formatDuration({ weeks: lengthInWeeks }, ['weeks'])
+export const placementLength = (lengthInDays: number): string => {
+  return DateFormats.formatDuration(daysToWeeksAndDays(lengthInDays), ['weeks', 'days'])
 }
 
 export const placementDates = (startDateString: string, lengthInDays: string): PlacementDates => {
