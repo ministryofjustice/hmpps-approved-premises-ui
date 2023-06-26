@@ -16,10 +16,8 @@ import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-informati
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
 import Apply from '../../form-pages/apply'
-import { UnknownPageError } from '../errors'
 import { isApplicableTier, tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
-import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
@@ -101,19 +99,7 @@ const getResponseForPage = (formArtifact: FormArtifact, taskName: string, pageNa
   return page.response()
 }
 
-const getPage = (taskName: string, pageName: string, journeyType: JourneyType): TasklistPageInterface => {
-  const pageList = journeyPages(journeyType)[taskName]
-
-  const Page = pageList[pageName]
-
-  if (!Page) {
-    throw new UnknownPageError(pageName)
-  }
-
-  return Page as TasklistPageInterface
-}
-
-const journeyPages = (journeyType: JourneyType): FormPages => {
+export const journeyPages = (journeyType: JourneyType): FormPages => {
   switch (journeyType) {
     case 'applications':
       return Apply.pages
@@ -180,7 +166,6 @@ export {
   firstPageOfApplicationJourney,
   arrivalDateFromApplication,
   getApplicationType,
-  getPage,
   getResponseForPage,
   getStatus,
   isInapplicable,

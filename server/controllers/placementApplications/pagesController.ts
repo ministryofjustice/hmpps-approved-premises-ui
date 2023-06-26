@@ -1,7 +1,6 @@
 import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import createError from 'http-errors'
 
-import { getPage } from '../../utils/applications/utils'
 import { ApplicationService, PlacementApplicationService } from '../../services'
 
 import {
@@ -12,6 +11,7 @@ import {
 import paths from '../../paths/placementApplications'
 import { UnknownPageError } from '../../utils/errors'
 import { viewPath } from '../../form-pages/utils'
+import { getPage } from '../../utils/applications/getPage'
 
 export default class PagesController {
   constructor(

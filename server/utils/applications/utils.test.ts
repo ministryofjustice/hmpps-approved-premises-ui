@@ -18,13 +18,11 @@ import {
   dashboardTableRows,
   firstPageOfApplicationJourney,
   getApplicationType,
-  getPage,
   getSections,
   getStatus,
   isInapplicable,
   statusTags,
 } from './utils'
-import { UnknownPageError } from '../errors'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -147,27 +145,6 @@ PlacementRequest.pages['placement-request-page'] = {
 }
 
 describe('utils', () => {
-  describe('getPage', () => {
-    it('should return a page from Apply if it exists', () => {
-      expect(getPage('first-apply-section-task-1', 'first', 'applications')).toEqual(FirstApplyPage)
-      expect(getPage('first-apply-section-task-1', 'second', 'applications')).toEqual(SecondApplyPage)
-    })
-
-    it('should return a page from assess if passed the an assessment', () => {
-      expect(getPage('assess-page', 'first', 'assessments')).toEqual(AssessPage)
-    })
-
-    it('should return a page from the placement request journey if passed the placement requests', () => {
-      expect(getPage('placement-request-page', 'first', 'placement-applications')).toEqual(PlacementRequestPage)
-    })
-
-    it('should raise an error if the page is not found', async () => {
-      expect(() => {
-        getPage('basic-information', 'bar', 'applications')
-      }).toThrow(UnknownPageError)
-    })
-  })
-
   describe('dashboardTableRows', () => {
     it('returns an array of applications as table rows', async () => {
       ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')

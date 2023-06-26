@@ -3,7 +3,7 @@ import { HtmlItem, SummaryListItem, TextItem } from '../../@types/ui'
 import AdditionalDocuments from '../../form-pages/placement-application/request-a-placement/additionalDocuments'
 import paths from '../../paths/placementApplications'
 import { embeddedSummaryListItem, summaryListItemForResponse } from '../applications/summaryListUtils'
-import { getPage, getResponseForPage } from '../applications/utils'
+import { getPage } from '../applications/getPage'
 import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 
 export const mapPageForSummaryList = (
