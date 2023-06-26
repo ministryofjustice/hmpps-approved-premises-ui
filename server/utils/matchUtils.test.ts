@@ -272,12 +272,12 @@ describe('matchUtils', () => {
   describe('placementDates', () => {
     it('returns formatted versions of the placement dates and durations', () => {
       const startDate = '2022-01-01'
-      const lengthInWeeks = '2'
+      const lengthInDays = '4'
 
-      expect(placementDates(startDate, lengthInWeeks)).toEqual({
+      expect(placementDates(startDate, lengthInDays)).toEqual({
         startDate: '2022-01-01',
-        endDate: '2022-01-15',
-        placementLength: 2,
+        endDate: '2022-01-05',
+        placementLength: 4,
       })
     })
   })
