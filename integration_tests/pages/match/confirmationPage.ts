@@ -1,5 +1,4 @@
 import { BedSearchResult } from '@approved-premises/api'
-import { BedSearchParametersUi } from '@approved-premises/ui'
 import Page from '../page'
 import { confirmationSummaryCardRows, placementDates } from '../../../server/utils/matchUtils'
 
@@ -8,8 +7,8 @@ export default class ConfirmationPage extends Page {
     super('Confirm booking')
   }
 
-  shouldShowConfirmationDetails(bedSearchResult: BedSearchResult, searchParameters: BedSearchParametersUi) {
-    const dates = placementDates(searchParameters.startDate, searchParameters.durationWeeks)
+  shouldShowConfirmationDetails(bedSearchResult: BedSearchResult, startDate: string, duration: number) {
+    const dates = placementDates(startDate, String(duration))
     this.shouldContainSummaryListItems(confirmationSummaryCardRows(bedSearchResult, dates))
   }
 

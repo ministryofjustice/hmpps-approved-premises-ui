@@ -1,11 +1,11 @@
 import { applicationFactory } from '../../testutils/factories'
 import PlacementDuration from '../../form-pages/apply/move-on/placementDuration'
-import { getDefaultPlacementDurationInWeeks } from '../applications/getDefaultPlacementDurationInWeeks'
+import { getDefaultPlacementDurationInDays } from '../applications/getDefaultPlacementDurationInDays'
 import { placementDurationFromApplication } from './placementDurationFromApplication'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
-jest.mock('../applications/getDefaultPlacementDurationInWeeks')
+jest.mock('../applications/getDefaultPlacementDurationInDays')
 
 describe('placementDurationFromApplication', () => {
   const application = applicationFactory.build()
@@ -24,12 +24,12 @@ describe('placementDurationFromApplication', () => {
       PlacementDuration,
       'duration',
     )
-    expect(getDefaultPlacementDurationInWeeks).not.toHaveBeenCalled()
+    expect(getDefaultPlacementDurationInDays).not.toHaveBeenCalled()
   })
 
   it('should return the default duration an alternative duration is not provided', () => {
     ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValueOnce(undefined)
-    ;(getDefaultPlacementDurationInWeeks as jest.Mock).mockReturnValueOnce(12)
+    ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValueOnce(12)
 
     expect(placementDurationFromApplication(application)).toEqual(12)
 
@@ -38,6 +38,6 @@ describe('placementDurationFromApplication', () => {
       PlacementDuration,
       'duration',
     )
-    expect(getDefaultPlacementDurationInWeeks).toHaveBeenCalledWith(application)
+    expect(getDefaultPlacementDurationInDays).toHaveBeenCalledWith(application)
   })
 })

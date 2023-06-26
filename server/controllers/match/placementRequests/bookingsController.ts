@@ -5,7 +5,7 @@ import paths from '../../../paths/match'
 
 interface ConfirmRequest extends Request {
   params: { id: string }
-  query: { startDate: string; durationWeeks: string; bedSearchResult: string }
+  query: { startDate: string; duration: string; bedSearchResult: string }
 }
 
 interface CreateRequest extends Request {
@@ -25,7 +25,7 @@ export default class BookingsController {
         pageHeading: 'Confirm booking',
         placementRequest,
         bedSearchResult,
-        dates: placementDates(req.query.startDate, req.query.durationWeeks),
+        dates: placementDates(req.query.startDate, req.query.duration),
       })
     }
   }

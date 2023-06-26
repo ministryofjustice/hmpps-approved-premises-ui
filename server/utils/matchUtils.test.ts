@@ -265,19 +265,19 @@ describe('matchUtils', () => {
 
   describe('placementLength', () => {
     it('formats the number of days as weeks', () => {
-      expect(placementLength(2)).toEqual('2 weeks')
+      expect(placementLength(16)).toEqual('2 weeks, 2 days')
     })
   })
 
   describe('placementDates', () => {
     it('returns formatted versions of the placement dates and durations', () => {
       const startDate = '2022-01-01'
-      const lengthInWeeks = '2'
+      const lengthInDays = '4'
 
-      expect(placementDates(startDate, lengthInWeeks)).toEqual({
+      expect(placementDates(startDate, lengthInDays)).toEqual({
         startDate: '2022-01-01',
-        endDate: '2022-01-15',
-        placementLength: 2,
+        endDate: '2022-01-05',
+        placementLength: 4,
       })
     })
   })
@@ -288,13 +288,14 @@ describe('matchUtils', () => {
       const placementRequestId = '123'
       const startDate = '2022-01-01'
       const durationWeeks = '4'
+      const durationDays = '1'
 
-      expect(summaryCardHeader(bedSearchResult, placementRequestId, startDate, durationWeeks)).toEqual(
+      expect(
+        summaryCardHeader({ bedSearchResult, placementRequestId, startDate, durationDays, durationWeeks }),
+      ).toEqual(
         `<a href="/placement-requests/${placementRequestId}/bookings/confirm?bedSearchResult=${encodeURIComponent(
           encodeBedSearchResult(bedSearchResult),
-        )}&startDate=${startDate}&durationWeeks=${durationWeeks}" >${bedSearchResult.premises.name} (Bed ${
-          bedSearchResult.bed.name
-        })</a>`,
+        )}&startDate=${startDate}&duration=29" >${bedSearchResult.premises.name} (Bed ${bedSearchResult.bed.name})</a>`,
       )
     })
   })

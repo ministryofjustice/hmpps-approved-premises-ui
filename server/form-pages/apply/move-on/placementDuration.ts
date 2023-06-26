@@ -7,7 +7,7 @@ import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 import { sentenceCase } from '../../../utils/utils'
-import { getDefaultPlacementDurationInWeeks } from '../../../utils/applications/getDefaultPlacementDurationInWeeks'
+import { getDefaultPlacementDurationInDays } from '../../../utils/applications/getDefaultPlacementDurationInDays'
 
 type PlacementDurationBody = {
   differentDuration: YesOrNo
@@ -118,7 +118,7 @@ export default class PlacementDuration implements TasklistPage {
   }
 
   private fetchDepartureDate(): Date | undefined {
-    const standardPlacementDuration = getDefaultPlacementDurationInWeeks(this.application)
+    const standardPlacementDuration = getDefaultPlacementDurationInDays(this.application)
 
     return this.arrivalDate ? addDays(this.arrivalDate, 7 * standardPlacementDuration) : undefined
   }
