@@ -55,7 +55,7 @@ export default function createApp(controllers: Controllers, services: Services):
     res.app.locals.successMessages = req.flash('success')
     return next()
   })
-  app.use(routes(controllers))
+  app.use(routes(controllers, services))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))
   setUpSentryErrorHandler(app)

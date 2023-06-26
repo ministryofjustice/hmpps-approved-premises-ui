@@ -2,6 +2,7 @@
 
 import { dataAccess } from '../data'
 
+import AuditService from './auditService'
 import UserService from './userService'
 import PremisesService from './premisesService'
 import PersonService from './personService'
@@ -17,6 +18,7 @@ import TaskService from './taskService'
 import PlacementRequestService from './placementRequestService'
 import PlacementApplicationService from './placementApplicationService'
 import BedService from './bedService'
+import config, { AuditConfig } from '../config'
 
 export const services = () => {
   const {
@@ -36,6 +38,7 @@ export const services = () => {
   } = dataAccess()
 
   const userService = new UserService(hmppsAuthClient, userClientBuilder)
+  const auditService = new AuditService(config.apis.audit as AuditConfig)
   const premisesService = new PremisesService(approvedPremisesClientBuilder)
   const personService = new PersonService(personClient)
   const bookingService = new BookingService(bookingClientBuilder)
@@ -53,6 +56,7 @@ export const services = () => {
 
   return {
     userService,
+    auditService,
     premisesService,
     personService,
     bookingService,
