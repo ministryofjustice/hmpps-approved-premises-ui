@@ -1,14 +1,14 @@
 import { addDays } from 'date-fns'
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { DateFormats } from '../../../utils/dateUtils'
-import { getDefaultPlacementDurationInWeeks } from '../../../utils/applications/getDefaultPlacementDurationInWeeks'
+import { getDefaultPlacementDurationInDays } from '../../../utils/applications/getDefaultPlacementDurationInDays'
 import { SessionDataError } from '../../../utils/errors'
 
 import PlacementDuration from './placementDuration'
 import { applicationFactory } from '../../../testutils/factories'
 import { addResponsesToFormArtifact } from '../../../testutils/addToApplication'
 
-jest.mock('../../../utils/applications/getDefaultPlacementDurationInWeeks')
+jest.mock('../../../utils/applications/getDefaultPlacementDurationInDays')
 
 describe('PlacementDuration', () => {
   let data: Record<string, unknown>
@@ -120,7 +120,7 @@ describe('PlacementDuration', () => {
     const releaseDate = new Date(2023, 1, 1)
 
     it('returns the arrival date plus the default placement duration', () => {
-      ;(getDefaultPlacementDurationInWeeks as jest.Mock).mockReturnValueOnce(12)
+      ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValueOnce(12)
 
       application = applicationFactory.withReleaseDate(DateFormats.dateObjToIsoDate(releaseDate)).build()
 
