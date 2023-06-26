@@ -10,6 +10,8 @@ import {
   placementApplicationQuestionsForReview,
 } from './checkYourAnswersUtils'
 
+jest.mock('../applications/forPagesInTask')
+
 describe('checkYourAnswersUtils', () => {
   const application = applicationFactory.build()
   let placementApplication = placementApplicationFactory.build()
