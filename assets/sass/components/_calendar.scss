@@ -71,11 +71,10 @@ $calendarWidth: $roomHeaderWidth + (30 * ($colWidth + ($colPadding * 2)));
 
 
   &__cell {
-    border: 1px solid $govuk-border-colour;
-    padding: $colPadding;
-
     &--calendar {
       position: relative;
+      border: 1px solid $govuk-border-colour;
+      padding: $colPadding;
 
       span {
         white-space: nowrap;
