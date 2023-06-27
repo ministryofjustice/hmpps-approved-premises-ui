@@ -53,6 +53,37 @@ export default {
         status: 403,
       },
     }),
+  stubFindPersonNoNomsNumber: (crn: string): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/people/search?crn=${crn}&checkCaseload=true`,
+      },
+      response: {
+        status: 500,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+
+        jsonBody: {
+          detail: 'No nomsNumber present for CRN',
+        },
+      },
+    }),
+
+  stubFindPersonNoOasysRecord: (crn: string): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/people/search?crn=${crn}&checkCaseload=true`,
+      },
+      response: {
+        status: 500,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+
+        jsonBody: {
+          detail: 'No OASys present for CRN',
+        },
+      },
+    }),
   stubPersonNotFound: (args: { person: Person }): SuperAgentRequest =>
     stubFor({
       request: {

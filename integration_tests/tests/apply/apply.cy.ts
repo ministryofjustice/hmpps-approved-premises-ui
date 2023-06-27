@@ -190,6 +190,40 @@ context('Apply', () => {
     new EnterCRNPage().shouldShowPersonNotInCaseLoadErrorMessage(this.person)
   })
 
+  it('shows an error message if the person does not have a NOMS number', function test() {
+    // And the person I am about to search does not have NOMS number
+    cy.task('stubFindPersonNoNomsNumber', this.person.crn)
+
+    // And I have started an application
+    const startPage = StartPage.visit()
+    startPage.startApplication()
+
+    // When I enter a CRN
+    const crnPage = new EnterCRNPage()
+    crnPage.enterCrn(this.person.crn)
+    crnPage.clickSubmit()
+
+    // Then I should see an error message
+    new EnterCRNPage().shouldShowNoNomsRecordForPersonErrorMessage(this.person)
+  })
+
+  it('shows an error message if the person does not have a OASYS record', function test() {
+    // And the person I am about to search for does not have an OASYS record
+    cy.task('stubFindPersonNoOasysRecord', this.person.crn)
+
+    // And I have started an application
+    const startPage = StartPage.visit()
+    startPage.startApplication()
+
+    // When I enter a CRN
+    const crnPage = new EnterCRNPage()
+    crnPage.enterCrn(this.person.crn)
+    crnPage.clickSubmit()
+
+    // Then I should see an error message
+    new EnterCRNPage().shouldShowNoOasysForPersonErrorMessage(this.person)
+  })
+
   it('allows completion of application emergency flow', function test() {
     // And I complete the application
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
