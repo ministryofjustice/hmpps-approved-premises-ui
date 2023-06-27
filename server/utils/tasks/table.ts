@@ -27,7 +27,7 @@ const allocationCell = (task: Task): TableCell => ({
 })
 
 const allocationLinkCell = (task: Task, action: 'Allocate' | 'Reallocate'): TableCell => {
-  const hiddenText = `task for ${task.person.name}`
+  const hiddenText = `task for ${task.personName}`
 
   return {
     html: linkTo(

@@ -11,7 +11,7 @@ describe('tableUtils', () => {
       const task = placementRequestTaskFactory.build()
 
       expect(nameCell(task)).toEqual({
-        html: `<a href="/placement-requests/${task.id}" data-cy-placementRequestId="${task.id}">${task.person.name}</a>`,
+        html: `<a href="/placement-requests/${task.id}" data-cy-placementRequestId="${task.id}">${task.personName}</a>`,
       })
     })
   })

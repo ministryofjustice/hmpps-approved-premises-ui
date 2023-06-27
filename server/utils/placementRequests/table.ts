@@ -42,7 +42,7 @@ export const nameCell = (task: PlacementRequestTask): TableCell => {
     html: linkTo(
       paths.placementRequests.show,
       { id: task.id },
-      { text: task.person.name, attributes: { 'data-cy-placementRequestId': task.id } },
+      { text: task.personName, attributes: { 'data-cy-placementRequestId': task.id } },
     ),
   }
 }

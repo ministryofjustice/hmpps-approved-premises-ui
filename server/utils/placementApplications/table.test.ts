@@ -8,7 +8,7 @@ describe('table', () => {
       const task = placementApplicationTaskFactory.build()
 
       expect(nameCell(task)).toEqual({
-        html: `<a href="/placement-applications/${task.id}/review" data-cy-placementApplicationId="${task.id}" data-cy-applicationId="${task.applicationId}">${task.person.name}</a>`,
+        html: `<a href="/placement-applications/${task.id}/review" data-cy-placementApplicationId="${task.id}" data-cy-applicationId="${task.applicationId}">${task.personName}</a>`,
       })
     })
   })

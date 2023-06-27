@@ -259,7 +259,7 @@ context('Placement Applications', () => {
     listPage.clickPlacementApplications()
 
     // And I click on the first name
-    listPage.clickPersonName(placementApplicationTasks[0].person.name)
+    listPage.clickPersonName(placementApplicationTasks[0].personName)
 
     // Then I should be taken to the review applications page
     const page = Page.verifyOnPage(ReviewApplicationPage)
@@ -303,7 +303,7 @@ context('Placement Applications', () => {
     listPage.clickPlacementApplications()
 
     // And I click on the first name
-    listPage.clickPersonName(placementApplicationTasks[0].person.name)
+    listPage.clickPersonName(placementApplicationTasks[0].personName)
 
     // Then I should be taken to the review applications page
     const page = Page.verifyOnPage(ReviewApplicationPage)
@@ -334,7 +334,7 @@ context('Placement Applications', () => {
     listPage.clickPlacementApplications()
 
     // And I click on the first name
-    listPage.clickPersonName(placementApplicationTasks[0].person.name)
+    listPage.clickPersonName(placementApplicationTasks[0].personName)
 
     // Then I should be taken to the review applications page
     const page = Page.verifyOnPage(ReviewApplicationPage)
