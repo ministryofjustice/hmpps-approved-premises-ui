@@ -1,12 +1,12 @@
 function hidePanels() {
   for (var i = 0; i < panels.length; i++) {
-    panels[i].setAttribute('hidden', 'true')
+    panels[i].classList.add('govuk-visually-hidden')
   }
 }
 
 function showPanel(panel) {
   hidePanels()
-  panel.removeAttribute('hidden')
+  panel.classList.remove('govuk-visually-hidden')
 }
 
 function setCurrent(current) {
@@ -17,7 +17,7 @@ function setCurrent(current) {
   current.setAttribute('aria-selected', 'true')
 }
 
-var navLinks = document.querySelectorAll('[role="tab"]')
+var navLinks = document.querySelectorAll('.moj-sub-navigation__item a')
 var panels = document.querySelectorAll('[role="tabpanel"]')
 
 showPanel(panels[0])

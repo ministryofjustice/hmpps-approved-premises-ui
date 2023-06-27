@@ -15,7 +15,7 @@ const oasysQuestions = (section: Array<OASysQuestion>) =>
 const oasysTableTabs = (oasysSections: { [index: string]: OasysImportArrays }) =>
   Object.entries(oasysSections)
     .map(([sectionName, oasysSection]) => {
-      return `<div class="govuk-grid-column-full" role="tabpanel" id="${sectionName}" aria-labelledby="${sectionName}Tab" hidden>
+      return `<div class="govuk-grid-column-full" role="tabpanel" id="${sectionName}" aria-labelledby="${sectionName}Tab" class="govuk-visually-hidden">
       ${oasysQuestions(oasysSection)}
       </div>`
     })

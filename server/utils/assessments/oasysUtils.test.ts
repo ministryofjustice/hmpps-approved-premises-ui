@@ -33,7 +33,7 @@ describe('oasysTableTabs', () => {
     const roshSummaries = roshSummaryFactory.buildList(2)
 
     expect(oasysTableTabs({ roshSummaries })).toMatchStringIgnoringWhitespace(
-      `<div class="govuk-grid-column-full" role="tabpanel" id="roshSummaries" aria-labelledby="roshSummariesTab" hidden>
+      `<div class="govuk-grid-column-full" role="tabpanel" id="roshSummaries" aria-labelledby="roshSummariesTab" class="govuk-visually-hidden">
               ${oasysQuestions(roshSummaries)}
               </div>`,
     )
