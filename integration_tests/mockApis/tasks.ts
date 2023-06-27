@@ -39,7 +39,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPattern: paths.applications.tasks.show({ id: args.application.id, taskType: kebabCase(args.task.taskType) }),
+        urlPattern: paths.tasks.show({ id: args.application.id, taskType: kebabCase(args.task.taskType) }),
       },
       response: {
         status: 200,
@@ -53,7 +53,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        url: paths.applications.tasks.allocations.create({
+        url: paths.tasks.allocations.create({
           id: args.task.applicationId,
           taskType: kebabCase(args.task.taskType),
         }),
@@ -68,7 +68,7 @@ export default {
     (
       await getMatchingRequests({
         method: 'POST',
-        url: paths.applications.tasks.allocations.create({
+        url: paths.tasks.allocations.create({
           id: args.application.id,
           taskType: kebabCase(args.task.taskType),
         }),
@@ -78,7 +78,7 @@ export default {
     stubFor(
       errorStub(
         ['userId'],
-        paths.applications.tasks.allocations.create({
+        paths.tasks.allocations.create({
           id: args.application.id,
           taskType: kebabCase(args.task.taskType),
         }),
