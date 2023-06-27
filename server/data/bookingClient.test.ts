@@ -149,7 +149,7 @@ describeClient('BookingClient', provider => {
     it('should create an arrival', async () => {
       const arrival = arrivalFactory.build()
       const payload = newArrivalFactory.build({
-        arrivalDate: arrival.arrivalDate.toString(),
+        arrivalDateTime: `${arrival.arrivalDate}T${arrival.arrivalTime}`,
         expectedDepartureDate: arrival.expectedDepartureDate.toString(),
         notes: arrival.notes,
       })
@@ -173,11 +173,7 @@ describeClient('BookingClient', provider => {
 
       const result = await bookingClient.markAsArrived('premisesId', 'bookingId', payload)
 
-      expect(result).toEqual({
-        ...arrival,
-        arrivalDate: arrival.arrivalDate,
-        expectedDepartureDate: arrival.expectedDepartureDate,
-      })
+      expect(result).toEqual(arrival)
     })
   })
 

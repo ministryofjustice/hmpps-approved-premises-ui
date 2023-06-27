@@ -96,15 +96,18 @@ describe('ArrivalsController', () => {
       }
 
       request.body = {
-        'arrivalDate-year': 2022,
-        'arrivalDate-month': 12,
-        'arrivalDate-day': 11,
+        'arrivalDateTime-year': 2022,
+        'arrivalDateTime-month': 12,
+        'arrivalDateTime-day': 11,
+        'arrivalDateTime-time': '12:35',
         'expectedDepartureDate-year': 2022,
         'expectedDepartureDate-month': 11,
         'expectedDepartureDate-day': 12,
+
         arrival: {
           notes: 'Some notes',
           keyWorkerStaffCode: 'some-staff-id',
+          type: 'cas1',
         },
       }
 
@@ -113,8 +116,9 @@ describe('ArrivalsController', () => {
       const expectedArrival = {
         notes: request.body.arrival.notes,
         keyWorkerStaffCode: request.body.arrival.keyWorkerStaffCode,
-        arrivalDate: '2022-12-11',
+        arrivalDateTime: new Date(2022, 11, 11, 12, 35).toISOString(),
         expectedDepartureDate: '2022-11-12',
+        type: 'cas1',
       }
 
       expect(arrivalService.createArrival).toHaveBeenCalledWith(

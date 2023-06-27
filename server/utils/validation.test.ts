@@ -19,7 +19,7 @@ jest.mock('../i18n/en/errors.json', () => {
     crn: {
       empty: 'You must enter a CRN',
     },
-    arrivalDate: {
+    arrivalDateTime: {
       empty: 'You must enter a valid arrival date',
       conflict: 'This bedspace is not available for these dates',
     },
@@ -36,15 +36,15 @@ describe('catchValidationErrorOrPropogate', () => {
 
   const expectedErrors = {
     crn: { text: errorLookups.crn.empty, attributes: { 'data-cy-error-crn': true } },
-    arrivalDate: {
-      text: errorLookups.arrivalDate.empty,
-      attributes: { 'data-cy-error-arrivalDate': true },
+    arrivalDateTime: {
+      text: errorLookups.arrivalDateTime.empty,
+      attributes: { 'data-cy-error-arrivalDateTime': true },
     },
   }
 
   const expectedErrorSummary = [
     { text: errorLookups.crn.empty, href: '#crn' },
-    { text: errorLookups.arrivalDate.empty, href: '#arrivalDate' },
+    { text: errorLookups.arrivalDateTime.empty, href: '#arrivalDateTime' },
   ]
 
   beforeEach(() => {
@@ -62,7 +62,7 @@ describe('catchValidationErrorOrPropogate', () => {
             errorType: 'empty',
           },
           {
-            propertyName: '$.arrivalDate',
+            propertyName: '$.arrivalDateTime',
             errorType: 'empty',
           },
         ],
@@ -151,13 +151,16 @@ describe('generateConflictErrorAndRedirect', () => {
       response,
       premisesId,
       bedId,
-      ['arrivalDate', 'departureDate'],
+      ['arrivalDateTime', 'departureDate'],
       err,
       '/foo/bar',
     )
 
     const expectedErrors = {
-      arrivalDate: { text: errorLookups.arrivalDate.conflict, attributes: { 'data-cy-error-arrivalDate': true } },
+      arrivalDateTime: {
+        text: errorLookups.arrivalDateTime.conflict,
+        attributes: { 'data-cy-error-arrivalDateTime': true },
+      },
       departureDate: {
         text: errorLookups.departureDate.conflict,
         attributes: { 'data-cy-error-departureDate': true },
