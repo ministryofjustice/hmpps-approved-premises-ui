@@ -8,6 +8,7 @@ import type { TaskType } from './TaskType';
 
 export type Task = {
     taskType: TaskType;
+    id: string;
     applicationId: string;
     personName: string;
     crn: string;
