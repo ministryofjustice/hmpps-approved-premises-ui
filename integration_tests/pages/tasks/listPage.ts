@@ -28,6 +28,6 @@ export default class ListPage extends Page {
   }
 
   clickTask(task: Task) {
-    cy.get(`a[data-cy-taskId="${task.applicationId}"]`).click()
+    cy.get(`a[data-cy-taskId="${task.id}"]`).click()
   }
 }

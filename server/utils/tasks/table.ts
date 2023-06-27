@@ -32,11 +32,11 @@ const allocationLinkCell = (task: Task, action: 'Allocate' | 'Reallocate'): Tabl
   return {
     html: linkTo(
       paths.tasks.show,
-      { id: task.applicationId, taskType: kebabCase(task.taskType) },
+      { id: task.id, taskType: kebabCase(task.taskType) },
       {
         text: action,
         hiddenText,
-        attributes: { 'data-cy-taskId': task.applicationId },
+        attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
       },
     ),
   }

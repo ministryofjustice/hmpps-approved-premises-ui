@@ -169,7 +169,7 @@ describe('table', () => {
         taskType: 'Assessment',
       })
       expect(allocationLinkCell(task, 'Allocate')).toEqual({
-        html: `<a href="/applications/${task.applicationId}/tasks/assessment" data-cy-taskId="${task.applicationId}">Allocate <span class="govuk-visually-hidden">task for ${task.personName}</span></a>`,
+        html: `<a href="/tasks/assessment/${task.id}" data-cy-taskId="${task.id}" data-cy-applicationId="${task.applicationId}">Allocate <span class="govuk-visually-hidden">task for ${task.personName}</span></a>`,
       })
     })
   })
