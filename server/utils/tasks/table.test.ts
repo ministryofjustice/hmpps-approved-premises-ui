@@ -24,7 +24,7 @@ describe('table', () => {
         expect(allocatedTableRows([task])).toEqual([
           [
             {
-              text: task.person.name,
+              text: task.personName,
             },
             {
               html: formatDaysUntilDueWithWarning(task),
@@ -57,7 +57,7 @@ describe('table', () => {
         expect(unallocatedTableRows([task])).toEqual([
           [
             {
-              text: task.person.name,
+              text: task.personName,
             },
             {
               html: formatDaysUntilDueWithWarning(task),
@@ -169,7 +169,7 @@ describe('table', () => {
         taskType: 'Assessment',
       })
       expect(allocationLinkCell(task, 'Allocate')).toEqual({
-        html: `<a href="/applications/${task.applicationId}/tasks/assessment" data-cy-taskId="${task.applicationId}">Allocate <span class="govuk-visually-hidden">task for ${task.person.name}</span></a>`,
+        html: `<a href="/applications/${task.applicationId}/tasks/assessment" data-cy-taskId="${task.applicationId}">Allocate <span class="govuk-visually-hidden">task for ${task.personName}</span></a>`,
       })
     })
   })

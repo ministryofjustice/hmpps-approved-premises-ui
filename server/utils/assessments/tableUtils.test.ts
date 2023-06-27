@@ -90,8 +90,8 @@ describe('tableUtils', () => {
       expect(awaitingAssessmentTableRows([assessment])).toEqual([
         [
           { html: assessmentLink(assessment) },
-          crnCell(assessment),
-          tierCell(assessment),
+          crnCell({ crn: assessment.person.crn }),
+          tierCell({ tier: assessment.risks.tier }),
           { text: formattedArrivalDate(assessment) },
           { text: assessment.person.prisonName },
           { html: formatDaysUntilDueWithWarning(assessment) },
@@ -110,8 +110,8 @@ describe('tableUtils', () => {
       expect(requestedFurtherInformationTableRows([assessment])).toEqual([
         [
           { html: assessmentLink(assessment) },
-          crnCell(assessment),
-          tierCell(assessment),
+          crnCell({ crn: assessment.person.crn }),
+          tierCell({ tier: assessment.risks.tier }),
           { text: formattedArrivalDate(assessment) },
           { text: formatDays(daysSinceReceived(assessment)) },
           { text: formatDays(daysSinceInfoRequest(assessment)) },
@@ -130,8 +130,8 @@ describe('tableUtils', () => {
       expect(completedTableRows([assessment])).toEqual([
         [
           { html: assessmentLink(assessment) },
-          crnCell(assessment),
-          tierCell(assessment),
+          crnCell({ crn: assessment.person.crn }),
+          tierCell({ tier: assessment.risks.tier }),
           { text: formattedArrivalDate(assessment) },
           { html: getStatus(assessment) },
         ],

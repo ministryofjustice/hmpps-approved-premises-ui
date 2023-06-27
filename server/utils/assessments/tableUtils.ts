@@ -84,8 +84,8 @@ const awaitingAssessmentTableRows = (assessments: Array<AssessmentSummary>): Arr
   assessments.forEach(assessment => {
     rows.push([
       linkCell(assessment),
-      crnCell(assessment),
-      tierCell(assessment),
+      crnCell({ crn: assessment.person.crn }),
+      tierCell({ tier: assessment.risks.tier }),
       arrivalDateCell(assessment),
       prisonCell(assessment),
       daysUntilDueCell(assessment),
@@ -102,8 +102,8 @@ const completedTableRows = (assessments: Array<AssessmentSummary>): Array<TableR
   assessments.forEach(assessment => {
     rows.push([
       linkCell(assessment),
-      crnCell(assessment),
-      tierCell(assessment),
+      crnCell({ crn: assessment.person.crn }),
+      tierCell({ tier: assessment.risks.tier }),
       arrivalDateCell(assessment),
       statusCell(assessment),
     ])
@@ -122,8 +122,8 @@ const requestedFurtherInformationTableRows = (assessments: Array<AssessmentSumma
   assessments.forEach(assessment => {
     rows.push([
       linkCell(assessment),
-      crnCell(assessment),
-      tierCell(assessment),
+      crnCell({ crn: assessment.person.crn }),
+      tierCell({ tier: assessment.risks.tier }),
       arrivalDateCell(assessment),
       daysSinceReceivedCell(assessment),
       daysSinceInfoRequestCell(assessment),

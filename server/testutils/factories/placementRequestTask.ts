@@ -5,13 +5,13 @@ import type { PlacementRequestTask } from '@approved-premises/api'
 
 import { DateFormats } from '../../utils/dateUtils'
 import taskFactory from './task'
-import risksFactory from './risks'
+import { tierEnvelopeFactory } from './risks'
 
 export default Factory.define<PlacementRequestTask>(() => ({
   ...taskFactory.build(),
   taskType: 'PlacementRequest',
   id: faker.string.uuid(),
-  risks: risksFactory.build(),
+  tier: tierEnvelopeFactory.build(),
   releaseType: 'rotl',
   expectedArrival: DateFormats.dateObjToIsoDate(faker.date.soon()),
   duration: faker.number.int({ min: 1, max: 12 }),

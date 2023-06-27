@@ -22,7 +22,7 @@ export const nameCell = (task: PlacementApplicationTask): TableCell => {
       paths.placementApplications.review.show,
       { id: task.id },
       {
-        text: task.person.name,
+        text: task.personName,
         attributes: { 'data-cy-placementApplicationId': task.id, 'data-cy-applicationId': task.applicationId },
       },
     ),
