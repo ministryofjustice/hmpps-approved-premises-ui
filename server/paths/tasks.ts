@@ -1,11 +1,10 @@
 /* istanbul ignore file */
 
 import { path } from 'static-path'
-import applyPaths from './apply'
 
 const tasksPath = path('/tasks')
 
-const taskPath = applyPaths.applications.show.path('tasks/:taskType')
+const taskPath = tasksPath.path(':taskType/:id')
 
 export default {
   tasks: {
