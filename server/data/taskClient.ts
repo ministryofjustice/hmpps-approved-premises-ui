@@ -21,13 +21,13 @@ export default class TaskClient {
 
   async find(applicationId: string, taskType: string): Promise<TaskWrapper> {
     return (await this.restClient.get({
-      path: paths.applications.tasks.show({ id: applicationId, taskType }),
+      path: paths.tasks.show({ id: applicationId, taskType }),
     })) as Promise<TaskWrapper>
   }
 
   async createAllocation(applicationId: string, userId: string, taskType: string): Promise<Reallocation> {
     return (await this.restClient.post({
-      path: paths.applications.tasks.allocations.create({ id: applicationId, taskType }),
+      path: paths.tasks.allocations.create({ id: applicationId, taskType }),
       data: { userId },
     })) as Reallocation
   }

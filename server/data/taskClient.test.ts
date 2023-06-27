@@ -89,7 +89,7 @@ describeClient('taskClient', provider => {
         uponReceiving: 'A request to get a task',
         withRequest: {
           method: 'GET',
-          path: paths.applications.tasks.show({ id: applicationId, taskType }),
+          path: paths.tasks.show({ id: applicationId, taskType }),
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -119,7 +119,7 @@ describeClient('taskClient', provider => {
         uponReceiving: 'A request to allocate a task',
         withRequest: {
           method: 'POST',
-          path: paths.applications.tasks.allocations.create({ id: applicationId, taskType }),
+          path: paths.tasks.allocations.create({ id: applicationId, taskType }),
           body: { userId },
           headers: {
             authorization: `Bearer ${token}`,

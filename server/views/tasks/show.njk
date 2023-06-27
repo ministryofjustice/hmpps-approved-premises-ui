@@ -21,7 +21,7 @@
 
       {{ showErrorSummary(errorSummary) }}
 
-      <form action="{{ paths.tasks.allocations.create({ id: application.id, taskType: (task.taskType | kebabCase) }) }}" method="post">
+      <form action="{{ paths.tasks.allocations.create({ id: task.id, taskType: (task.taskType | kebabCase) }) }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
         {{
           govukSelect({

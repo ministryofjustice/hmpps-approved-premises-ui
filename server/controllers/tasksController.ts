@@ -18,7 +18,7 @@ export default class TasksController {
   show(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       const { task, users } = await this.taskService.find(req.user.token, req.params.id, req.params.taskType)
-      const application = await this.applicationService.findApplication(req.user.token, req.params.id)
+      const application = await this.applicationService.findApplication(req.user.token, task.applicationId)
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
       res.render('tasks/show', {

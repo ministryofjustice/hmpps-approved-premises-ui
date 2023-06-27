@@ -41,6 +41,7 @@ const oasysPath = personPath.path('oasys')
 const usersPath = path('/users')
 
 const tasksPath = path('/tasks')
+const taskPath = tasksPath.path(':taskType/:id')
 
 const placementRequestsPath = path('/placement-requests')
 const placementRequestPath = placementRequestsPath.path(':id')
@@ -50,8 +51,9 @@ const placementApplicationPath = placementApplicationsPath.path(':id')
 
 const tasksPaths = {
   index: tasksPath,
+  show: taskPath,
   allocations: {
-    create: tasksPath.path('/:applicationId/allocations'),
+    create: taskPath.path('allocations'),
   },
 }
 
@@ -62,12 +64,6 @@ const applyPaths = {
     index: applicationsPath,
     update: singleApplicationPath,
     submission: singleApplicationPath.path('submission'),
-  },
-}
-
-const taskPaths = {
-  tasks: {
-    show: singleApplicationPath.path('tasks/:taskType'),
   },
 }
 
@@ -115,12 +111,6 @@ export default {
     submission: applyPaths.applications.submission,
     documents: applyPaths.applications.show.path('documents'),
     assessment: applyPaths.applications.show.path('assessment'),
-    tasks: {
-      show: taskPaths.tasks.show,
-      allocations: {
-        create: taskPaths.tasks.show.path('allocations'),
-      },
-    },
   },
   assessments: {
     index: assessPaths.assessments,
@@ -140,6 +130,10 @@ export default {
     index: tasksPaths.index,
     reallocatable: {
       index: tasksPaths.index.path('reallocatable'),
+    },
+    show: tasksPaths.show,
+    allocations: {
+      create: tasksPaths.allocations.create,
     },
   },
   placementRequests: {

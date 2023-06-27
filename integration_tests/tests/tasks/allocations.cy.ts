@@ -70,7 +70,7 @@ context('Tasks', () => {
     taskListPage.shouldShowBanner(`Assessment has been allocated to ${this.selectedUser.name}`)
 
     // And the API should have received the correct data
-    cy.task('verifyAllocationCreate', { application: this.application, task: this.task }).then(requests => {
+    cy.task('verifyAllocationCreate', this.task).then(requests => {
       // Then the API should have had a clarification note added
       expect(requests).to.have.length(1)
       const body = JSON.parse(requests[0].body)
@@ -80,7 +80,7 @@ context('Tasks', () => {
   })
 
   it('shows an error when I do not select a user', function test() {
-    cy.task('stubAllocationErrors', { application: this.application, task: this.task })
+    cy.task('stubAllocationErrors', this.task)
 
     // Given I am on the allocations page
     const allocationsPage = AllocationsPage.visit(this.application, this.task)

@@ -7,6 +7,7 @@ import { DateFormats } from '../../utils/dateUtils'
 import UserFactory from './user'
 
 export default Factory.define<Task>(() => ({
+  id: faker.string.uuid(),
   allocatedToStaffMember: UserFactory.build(),
   applicationId: faker.string.uuid(),
   dueDate: DateFormats.dateObjToIsoDate(faker.date.future()),

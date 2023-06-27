@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { ApprovedPremisesApplication as Application, Reallocation, Task, User } from '@approved-premises/api'
+import type { Reallocation, Task, User } from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
 import { errorStub } from '../../wiremock/utils'
@@ -35,11 +35,11 @@ export default {
         jsonBody: tasks,
       },
     }),
-  stubTaskGet: (args: { application: Application; task: Task; users: Array<User> }): SuperAgentRequest =>
+  stubTaskGet: (args: { task: Task; users: Array<User> }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        urlPattern: paths.applications.tasks.show({ id: args.application.id, taskType: kebabCase(args.task.taskType) }),
+        urlPattern: paths.tasks.show({ id: args.task.id, taskType: kebabCase(args.task.taskType) }),
       },
       response: {
         status: 200,
@@ -53,8 +53,8 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        url: paths.applications.tasks.allocations.create({
-          id: args.task.applicationId,
+        url: paths.tasks.allocations.create({
+          id: args.task.id,
           taskType: kebabCase(args.task.taskType),
         }),
       },
@@ -64,23 +64,23 @@ export default {
         jsonBody: args.reallocation,
       },
     }),
-  verifyAllocationCreate: async (args: { application: Application; task: Task }) =>
+  verifyAllocationCreate: async (task: Task) =>
     (
       await getMatchingRequests({
         method: 'POST',
-        url: paths.applications.tasks.allocations.create({
-          id: args.application.id,
-          taskType: kebabCase(args.task.taskType),
+        url: paths.tasks.allocations.create({
+          id: task.id,
+          taskType: kebabCase(task.taskType),
         }),
       })
     ).body.requests,
-  stubAllocationErrors: (args: { application: Application; task: Task }) =>
+  stubAllocationErrors: (task: Task) =>
     stubFor(
       errorStub(
         ['userId'],
-        paths.applications.tasks.allocations.create({
-          id: args.application.id,
-          taskType: kebabCase(args.task.taskType),
+        paths.tasks.allocations.create({
+          id: task.id,
+          taskType: kebabCase(task.taskType),
         }),
       ),
     ),
