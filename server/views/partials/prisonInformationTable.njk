@@ -31,11 +31,11 @@
                 }]
             }) }}
 
-    <div class="govuk-column-full-width" id="caseNotes" role="tabpanel" aria-labelledby="caseNotesTab" hidden>
+    <div class="govuk-column-full-width" id="caseNotes" role="tabpanel" aria-labelledby="caseNotesTab" class="govuk-visually-hidden">
         {{caseNotes | safe}}
     </div>
 
-    <div class="govuk-column-full-width" id="adjudications" role="tabpanel" aria-labelledby="adjudicationsTab" hidden>
+    <div class="govuk-column-full-width" id="adjudications" role="tabpanel" aria-labelledby="adjudicationsTab" class="govuk-visually-hidden">
         <table class="govuk-table">
             <caption class="govuk-table__caption govuk-table__caption--m">Adjudications</caption>
 
@@ -63,7 +63,7 @@
         </table>
     </div>
 
-    <div class="govuk-column-full-width" id="acct" role="tabpanel" aria-labelledby="acctTab" hidden>
+    <div class="govuk-column-full-width" id="acct" role="tabpanel" aria-labelledby="acctTab" class="govuk-visually-hidden">
         <table class="govuk-table">
             <caption class="govuk-table__caption govuk-table__caption--m">ACCT</caption>
             <thead class="govuk-table__head">
