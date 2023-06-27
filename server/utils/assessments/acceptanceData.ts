@@ -25,7 +25,7 @@ import {
   placementRequirementOptions,
 } from '../placementCriteriaUtils'
 import { placementDurationFromApplication } from './placementDurationFromApplication'
-import { getResponses } from '../applications/utils'
+import { getResponses } from '../applications/getResponses'
 
 export const acceptanceData = (assessment: Assessment): AssessmentAcceptance => {
   const notes = retrieveOptionalQuestionResponseFromApplicationOrAssessment(

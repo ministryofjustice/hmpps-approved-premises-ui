@@ -32,11 +32,13 @@ import {
 
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
+import { getResponseForPage } from '../applications/getResponseForPage'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
 
 jest.mock('../applications/utils')
+jest.mock('../applications/getResponseForPage')
 jest.mock('../reviewUtils')
 jest.mock('./documentUtils')
 jest.mock('../applications/arrivalDateFromApplication')
@@ -360,13 +362,15 @@ describe('utils', () => {
     it('returns the rejectionRationale from the assessment when it exists', () => {
       const assessment = assessmentFactory.build()
 
-      ;(applicationUtils.getResponseForPage as jest.Mock).mockImplementation(() => ({ Decision: 'some rationale' }))
+      ;(getResponseForPage as jest.Mock).mockImplementation(() => ({ Decision: 'some rationale' }))
 
       expect(rejectionRationaleFromAssessmentResponses(assessment)).toEqual('some rationale')
     })
 
     it('returns an empty string when the rationale doesnt exists', () => {
       const assessment = assessmentFactory.build()
+
+      ;(getResponseForPage as jest.Mock).mockImplementation(() => [])
 
       expect(rejectionRationaleFromAssessmentResponses(assessment)).toEqual('')
     })

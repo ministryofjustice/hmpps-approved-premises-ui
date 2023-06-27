@@ -2,6 +2,7 @@ import type {
   ApplicationType,
   FormArtifact,
   FormPages,
+  FormSections,
   JourneyType,
   PageResponse,
   TableRow,
@@ -15,16 +16,16 @@ import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-informati
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
 import Apply from '../../form-pages/apply'
-import { UnknownPageError } from '../errors'
 import { isApplicableTier, tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
-import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
 import ExceptionDetails from '../../form-pages/apply/reasons-for-placement/basic-information/exceptionDetails'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import PlacementRequest from '../../form-pages/placement-application'
+import isAssessment from '../assessments/isAssessment'
+import getAssessmentSections from '../assessments/getSections'
 
 const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => {
@@ -73,44 +74,23 @@ const createNameAnchorElement = (name: string, applicationId: string) => {
 
 export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>
 
-const getResponses = (formArtifact: FormArtifact): ApplicationOrAssessmentResponse => {
-  const responses = {}
+export const getSections = (formArtifact: FormArtifact): FormSections => {
+  const journeyType = journeyTypeFromArtifact(formArtifact)
 
-  Object.keys(formArtifact.data).forEach(taskName => {
-    responses[taskName] = getResponsesForTask(formArtifact, taskName)
-  })
-
-  return responses
-}
-
-const getResponsesForTask = (formArtifact: FormArtifact, taskName: string): Array<PageResponse> => {
-  const pageNames = Object.keys(formArtifact.data[taskName])
-  const responsesForPages = pageNames.map(pageName => getResponseForPage(formArtifact, taskName, pageName))
-  return responsesForPages
-}
-
-const getResponseForPage = (formArtifact: FormArtifact, taskName: string, pageName: string): PageResponse => {
-  const Page = getPage(taskName, pageName, journeyTypeFromArtifact(formArtifact))
-
-  const body = formArtifact?.data?.[taskName]?.[pageName]
-  const page = new Page(body, formArtifact)
-
-  return page.response()
-}
-
-const getPage = (taskName: string, pageName: string, journeyType: JourneyType): TasklistPageInterface => {
-  const pageList = journeyPages(journeyType)[taskName]
-
-  const Page = pageList[pageName]
-
-  if (!Page) {
-    throw new UnknownPageError(pageName)
+  switch (journeyType) {
+    case 'applications':
+      return Apply.sections.slice(0, -1)
+    case 'assessments':
+      if (!isAssessment(formArtifact)) throw new Error('Form artifact is not an assessment')
+      return getAssessmentSections(formArtifact)
+    case 'placement-applications':
+      return PlacementRequest.sections.slice(0, -1)
+    default:
+      throw new Error(`Unknown journey type: ${journeyType}`)
   }
-
-  return Page as TasklistPageInterface
 }
 
-const journeyPages = (journeyType: JourneyType): FormPages => {
+export const journeyPages = (journeyType: JourneyType): FormPages => {
   switch (journeyType) {
     case 'applications':
       return Apply.pages
@@ -177,9 +157,6 @@ export {
   firstPageOfApplicationJourney,
   arrivalDateFromApplication,
   getApplicationType,
-  getPage,
-  getResponseForPage,
-  getResponses,
   getStatus,
   isInapplicable,
   statusTags,

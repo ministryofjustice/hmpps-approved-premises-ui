@@ -6,12 +6,13 @@ import { assessmentFactory } from '../../testutils/factories'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { placementDurationFromApplication } from './placementDurationFromApplication'
-import { getResponses } from '../applications/utils'
+import { getResponses } from '../applications/getResponses'
 
 jest.mock('../../form-pages/utils')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/arrivalDateFromApplication')
 jest.mock('./placementDurationFromApplication')
+jest.mock('../applications/getResponses')
 
 describe('acceptanceData', () => {
   const assessment = assessmentFactory.build()
@@ -19,13 +20,16 @@ describe('acceptanceData', () => {
   describe('acceptanceData', () => {
     it('should return the acceptance data for the assessment', () => {
       mockOptionalQuestionResponse({ cruInformation: 'Some notes' })
+      const responses = { some: 'responses' }
+      ;(getResponses as jest.Mock).mockReturnValue(responses)
 
       expect(acceptanceData(assessment)).toEqual({
-        document: getResponses(assessment),
+        document: responses,
         requirements: placementRequestData(assessment),
         placementDates: placementDates(assessment),
         notes: 'Some notes',
       })
+      expect(getResponses).toHaveBeenCalledWith(assessment)
     })
   })
 

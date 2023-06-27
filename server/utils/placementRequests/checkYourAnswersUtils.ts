@@ -3,8 +3,9 @@ import { HtmlItem, SummaryListItem, TextItem } from '../../@types/ui'
 import AdditionalDocuments from '../../form-pages/placement-application/request-a-placement/additionalDocuments'
 import paths from '../../paths/placementApplications'
 import { embeddedSummaryListItem, summaryListItemForResponse } from '../applications/summaryListUtils'
-import { getPage, getResponseForPage } from '../applications/utils'
+import { getPage } from '../applications/getPage'
 import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
+import { getResponseForPage } from '../applications/getResponseForPage'
 
 export const mapPageForSummaryList = (
   placementApplication: PlacementApplication,
@@ -22,12 +23,6 @@ export const mapPageForSummaryList = (
 export const getPageTitle = (placementApplication: PlacementApplication, pageName: string) => {
   const Page = getPage('request-a-placement', pageName, 'placement-applications')
   return new Page(placementApplication.data?.['request-a-placement'][pageName], placementApplication).title
-}
-
-export const pagesForReview = (placementApplication: PlacementApplication) => {
-  const pageNames = Object.keys(placementApplication.data['request-a-placement'])
-
-  return pageNames.filter(page => page !== 'check-your-answers')
 }
 
 export const placementApplicationQuestionsForReview = (placementApplication: PlacementApplication) => {

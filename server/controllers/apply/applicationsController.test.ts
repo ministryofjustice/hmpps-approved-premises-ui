@@ -11,10 +11,12 @@ import Apply from '../../form-pages/apply'
 
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import { firstPageOfApplicationJourney, getResponses } from '../../utils/applications/utils'
+import { firstPageOfApplicationJourney } from '../../utils/applications/utils'
+import { getResponses } from '../../utils/applications/getResponses'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applications/utils')
+jest.mock('../../utils/applications/getResponses')
 jest.mock('../../services/tasklistService')
 
 describe('applicationsController', () => {

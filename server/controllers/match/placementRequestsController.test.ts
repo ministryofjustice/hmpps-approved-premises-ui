@@ -12,9 +12,10 @@ import {
   placementRequestDetailFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/placementApplications'
-import { getResponses } from '../../utils/applications/utils'
+import { getResponses } from '../../utils/applications/getResponses'
 
 jest.mock('../../utils/applications/utils')
+jest.mock('../../utils/applications/getResponses')
 
 describe('PlacementRequestsController', () => {
   const token = 'SOME_TOKEN'

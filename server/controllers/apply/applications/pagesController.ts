@@ -2,7 +2,6 @@ import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import createError from 'http-errors'
 
 import type { DataServices } from '@approved-premises/ui'
-import { getPage } from '../../../utils/applications/utils'
 import { ApplicationService } from '../../../services'
 
 import {
@@ -13,6 +12,7 @@ import {
 import paths from '../../../paths/apply'
 import { UnknownPageError } from '../../../utils/errors'
 import { viewPath } from '../../../form-pages/utils'
+import { getPage } from '../../../utils/applications/getPage'
 
 export default class PagesController {
   constructor(private readonly applicationService: ApplicationService, private readonly dataServices: DataServices) {}
