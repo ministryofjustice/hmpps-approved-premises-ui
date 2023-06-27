@@ -72,7 +72,7 @@ describe('TasksController', () => {
       })
 
       expect(taskService.find).toHaveBeenCalledWith(request.user.token, request.params.id, request.params.taskType)
-      expect(applicationService.findApplication).toHaveBeenCalledWith(request.user.token, request.params.id)
+      expect(applicationService.findApplication).toHaveBeenCalledWith(request.user.token, task.applicationId)
     })
 
     it('renders the form with errors and user input if an error has been sent to the flash', async () => {
