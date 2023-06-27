@@ -1,63 +1,58 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
-import { applicationFactory, personFactory } from '../../../../testutils/factories'
-
 import Covid from './covid'
 
 describe('Covid', () => {
-  const person = personFactory.build({ name: 'John Wayne' })
-  const application = applicationFactory.build({ person })
   const previousPage = 'previousPage'
 
   describe('title', () => {
-    expect(new Covid({}, application, '').title).toBe('COVID information')
+    expect(new Covid({}, '').title).toBe('COVID information')
   })
 
   describe('body', () => {
     it('should set the body', () => {
       const page = new Covid(
         {
-          fullyVaccinated: 'yes',
-          highRisk: 'yes',
-          additionalCovidInfo: 'some info',
+          boosterEligibility: 'yes',
+          boosterEligibilityDetail: 'some detail',
+          immunosuppressed: 'yes',
         },
-        application,
         previousPage,
       )
       expect(page.body).toEqual({
-        fullyVaccinated: 'yes',
-        highRisk: 'yes',
-        additionalCovidInfo: 'some info',
+        boosterEligibility: 'yes',
+        boosterEligibilityDetail: 'some detail',
+        immunosuppressed: 'yes',
       })
     })
   })
 
-  itShouldHaveNextValue(new Covid({}, application, previousPage), '')
-  itShouldHavePreviousValue(new Covid({}, application, previousPage), 'previousPage')
+  itShouldHaveNextValue(new Covid({}, previousPage), '')
+  itShouldHavePreviousValue(new Covid({}, previousPage), 'previousPage')
 
   describe('errors', () => {
-    const page = new Covid({}, application, '')
+    const page = new Covid({}, '')
     expect(page.errors()).toEqual({
-      fullyVaccinated: 'You must confirm if John Wayne has been fully vaccinated',
-      highRisk: 'You must confirm if John Wayne is at a higher risk from COVID-19 based on the NHS guidance',
+      boosterEligibility: 'You must confirm if the person is eligible for a COVID-19 booster',
+      immunosuppressed:
+        'You must confirm if the person is immunosuppressed, eligible for nMAB treatment or higher risk',
     })
   })
 
   describe('response', () => {
     const page = new Covid(
       {
-        fullyVaccinated: 'yes',
-        highRisk: 'yes',
-        additionalCovidInfo: 'Some info',
+        boosterEligibility: 'yes',
+        boosterEligibilityDetail: 'some detail',
+        immunosuppressed: 'yes',
       },
-      application,
       '',
     )
 
     expect(page.response()).toEqual({
-      'Has John Wayne been fully vaccinated for COVID-19?': 'Yes',
-      'Is John Wayne at a higher risk from COVID-19 based on the NHS guidance?': 'Yes',
-      'Other considerations and comments on COVID-19': 'Some info',
+      'Is the person eligible for COVID-19 vaccination boosters?': 'Yes - some detail',
+      'Is the person immunosuppressed, eligible for nMAB treatment or higher risk as per the definitions in the COVID-19 guidance?':
+        'Yes',
     })
   })
 })

@@ -8,8 +8,8 @@ export default class CovidPage extends ApplyPage {
   }
 
   completeForm() {
-    this.checkRadioButtonFromPageBody('fullyVaccinated')
-    this.checkRadioButtonFromPageBody('highRisk')
-    this.completeTextInputFromPageBody('additionalCovidInfo')
+    this.checkRadioButtonFromPageBody('boosterEligibility')
+    this.completeTextInputFromPageBody('boosterEligibilityDetail')
+    this.checkRadioButtonFromPageBody('immunosuppressed')
   }
 }

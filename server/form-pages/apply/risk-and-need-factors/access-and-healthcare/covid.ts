@@ -1,39 +1,37 @@
-import type { TaskListErrors, YesNoOrIDK } from '@approved-premises/ui'
-import { ApprovedPremisesApplication } from '../../../../@types/shared'
+import type { TaskListErrors, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
 import { sentenceCase } from '../../../../utils/utils'
+import { yesOrNoResponseWithDetailForYes } from '../../../utils'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 
 type CovidBody = {
-  fullyVaccinated: YesNoOrIDK
-  highRisk: YesNoOrIDK
-  additionalCovidInfo: string
-}
+  immunosuppressed: YesOrNo
+} & YesOrNoWithDetail<'boosterEligibility'>
 
-@Page({ name: 'covid', bodyProperties: ['fullyVaccinated', 'highRisk', 'additionalCovidInfo'] })
+@Page({ name: 'covid', bodyProperties: ['boosterEligibility', 'boosterEligibilityDetail', 'immunosuppressed'] })
 export default class Covid implements TasklistPage {
   name = 'covid'
 
   title = 'COVID information'
 
   questions = {
-    fullyVaccinated: {
-      question: `Has ${this.application.person.name} been fully vaccinated for COVID-19?`,
-      hint: `A person is considered fully vaccinated if they have had two doses and a booster of a COVID-19 vaccine.`,
+    boosterEligibility: {
+      question: 'Is the person eligible for COVID-19 vaccination boosters?',
+      hint: `The person may be eligible for a booster because of their age, or if they have an underlying health condition`,
     },
-    highRisk: {
-      question: `Is ${this.application.person.name} at a higher risk from COVID-19 based on the NHS guidance?`,
-      hint: `This includes people with autoimmune diseases and those eligible for nMAB treatment.`,
+    boosterEligibilityDetail: 'Why is the person eligible for a COVID-19 booster?',
+    immunosuppressed: {
+      question: `Is the person immunosuppressed, eligible for nMAB treatment or higher risk as per the definitions in the COVID-19 guidance?`,
+      info: `This person will require a single room in an Approved Premises.`,
+      guidance: {
+        text: `View the government's guidance on COVID-19`,
+        href: `https://www.gov.uk/government/publications/covid-19-guidance-for-people-whose-immune-system-means-they-are-at-higher-risk/covid-19-guidance-for-people-whose-immune-system-means-they-are-at-higher-risk`,
+      },
     },
-    additionalCovidInfo: 'Other considerations and comments on COVID-19',
   }
 
-  constructor(
-    public body: Partial<CovidBody>,
-    private readonly application: ApprovedPremisesApplication,
-    private readonly previousPage: string,
-  ) {}
+  constructor(public body: Partial<CovidBody>, private readonly previousPage: string) {}
 
   previous() {
     return this.previousPage
@@ -45,24 +43,29 @@ export default class Covid implements TasklistPage {
 
   response() {
     const response = {
-      [this.questions.fullyVaccinated.question]: sentenceCase(this.body.fullyVaccinated),
-      [this.questions.highRisk.question]: sentenceCase(this.body.highRisk),
+      [this.questions.boosterEligibility.question]: yesOrNoResponseWithDetailForYes<'boosterEligibility'>(
+        'boosterEligibility',
+        this.body,
+      ),
+      [this.questions.immunosuppressed.question]: sentenceCase(this.body.immunosuppressed),
     }
-    if (this.body.additionalCovidInfo) {
-      return { ...response, [this.questions.additionalCovidInfo]: this.body.additionalCovidInfo }
-    }
+
     return response
   }
 
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    if (!this.body.fullyVaccinated) {
-      errors.fullyVaccinated = `You must confirm if ${this.application.person.name} has been fully vaccinated`
+    if (!this.body.boosterEligibility) {
+      errors.boosterEligibility = `You must confirm if the person is eligible for a COVID-19 booster`
     }
 
-    if (!this.body.highRisk) {
-      errors.highRisk = `You must confirm if ${this.application.person.name} is at a higher risk from COVID-19 based on the NHS guidance`
+    if (this.body.boosterEligibility === 'yes' && !this.body.boosterEligibilityDetail) {
+      errors.boosterEligibilityDetail = `You must specify why the person is eligible for a COVID-19 booster`
+    }
+
+    if (!this.body.immunosuppressed) {
+      errors.immunosuppressed = `You must confirm if the person is immunosuppressed, eligible for nMAB treatment or higher risk`
     }
 
     return errors
