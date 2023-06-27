@@ -52,7 +52,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        url: paths.applications.tasks.allocations.create({ id: args.application.id, taskType: 'assessment' }),
+        url: paths.tasks.allocations.create({ id: args.application.id, taskType: 'assessment' }),
       },
       response: {
         status: 201,
