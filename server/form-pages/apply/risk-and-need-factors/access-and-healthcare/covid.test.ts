@@ -1,12 +1,18 @@
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { applicationFactory } from '../../../../testutils/factories'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { itShouldHaveNextValue } from '../../../shared-examples'
+import { furtherAccessNeedsQuestionsNeeded } from './accessNeeds'
 
 import Covid from './covid'
 
+jest.mock('./accessNeeds')
+jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
+
 describe('Covid', () => {
-  const previousPage = 'previousPage'
+  const application = applicationFactory.build()
 
   describe('title', () => {
-    expect(new Covid({}, '').title).toBe('COVID information')
+    expect(new Covid({}, application).title).toBe('COVID information')
   })
 
   describe('body', () => {
@@ -17,7 +23,7 @@ describe('Covid', () => {
           boosterEligibilityDetail: 'some detail',
           immunosuppressed: 'yes',
         },
-        previousPage,
+        application,
       )
       expect(page.body).toEqual({
         boosterEligibility: 'yes',
@@ -27,11 +33,44 @@ describe('Covid', () => {
     })
   })
 
-  itShouldHaveNextValue(new Covid({}, previousPage), '')
-  itShouldHavePreviousValue(new Covid({}, previousPage), 'previousPage')
+  itShouldHaveNextValue(new Covid({}, application), '')
+
+  describe('previous', () => {
+    it('returns access-needs-further-questions if furtherAccessNeedsQuestionsNeeded returns true', () => {
+      ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('')
+      ;(furtherAccessNeedsQuestionsNeeded as jest.Mock).mockReturnValue(true)
+
+      const page = new Covid(
+        {
+          boosterEligibility: 'yes',
+          boosterEligibilityDetail: 'some detail',
+          immunosuppressed: 'yes',
+        },
+        application,
+      )
+
+      expect(page.previous()).toBe('access-needs-further-questions')
+    })
+
+    it('returns access-needs if furtherAccessNeedsQuestionsNeeded returns false', () => {
+      ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('')
+      ;(furtherAccessNeedsQuestionsNeeded as jest.Mock).mockReturnValue(false)
+
+      const page = new Covid(
+        {
+          boosterEligibility: 'yes',
+          boosterEligibilityDetail: 'some detail',
+          immunosuppressed: 'yes',
+        },
+        application,
+      )
+
+      expect(page.previous()).toBe('access-needs')
+    })
+  })
 
   describe('errors', () => {
-    const page = new Covid({}, '')
+    const page = new Covid({}, application)
     expect(page.errors()).toEqual({
       boosterEligibility: 'You must confirm if the person is eligible for a COVID-19 booster',
       immunosuppressed:
@@ -46,7 +85,7 @@ describe('Covid', () => {
         boosterEligibilityDetail: 'some detail',
         immunosuppressed: 'yes',
       },
-      '',
+      application,
     )
 
     expect(page.response()).toEqual({

@@ -1,7 +1,10 @@
 import type { TaskListErrors, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
+import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
 import { sentenceCase } from '../../../../utils/utils'
 import { yesOrNoResponseWithDetailForYes } from '../../../utils'
 import { Page } from '../../../utils/decorators'
+import AccessNeeds, { furtherAccessNeedsQuestionsNeeded } from './accessNeeds'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 import TasklistPage from '../../../tasklistPage'
 
@@ -31,10 +34,15 @@ export default class Covid implements TasklistPage {
     },
   }
 
-  constructor(public body: Partial<CovidBody>, private readonly previousPage: string) {}
+  constructor(public body: Partial<CovidBody>, private readonly application: Application) {}
 
   previous() {
-    return this.previousPage
+    const additionalNeeds = retrieveQuestionResponseFromFormArtifact(this.application, AccessNeeds, 'additionalNeeds')
+
+    if (furtherAccessNeedsQuestionsNeeded(additionalNeeds)) {
+      return 'access-needs-further-questions'
+    }
+    return 'access-needs'
   }
 
   next() {

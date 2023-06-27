@@ -1,7 +1,7 @@
 import { YesOrNo } from '@approved-premises/ui'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
-import AccessNeeds, { additionalNeeds } from './accessNeeds'
+import AccessNeeds, { AdditionalNeed, additionalNeeds, furtherAccessNeedsQuestionsNeeded } from './accessNeeds'
 
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
@@ -18,7 +18,7 @@ describe('AccessNeeds', () => {
     it('should set the body', () => {
       const page = new AccessNeeds(
         {
-          additionalNeeds: 'mobility',
+          additionalNeeds: 'mobility' as unknown as Array<AdditionalNeed>,
           careActAssessmentCompleted: 'yes',
           interpreterLanguage: 'french',
           needsInterpreter: 'no',
@@ -84,7 +84,7 @@ describe('AccessNeeds', () => {
     it('if careAndSupportNeeds answer is yes then additional details must be given', () => {
       const page = new AccessNeeds(
         {
-          additionalNeeds: 'mobility',
+          additionalNeeds: ['mobility'],
           careActAssessmentCompleted: 'yes',
           interpreterLanguage: 'french',
           needsInterpreter: 'no',
@@ -135,5 +135,15 @@ describe('AccessNeeds', () => {
         convertKeyValuePairToCheckBoxItems(additionalNeeds, ['mobility', 'neurodivergentConditions']),
       )
     })
+  })
+})
+
+describe('furtherAccessNeedsQuestionsNeeded', () => {
+  it('returns true if array contains specified string', () => {
+    expect(furtherAccessNeedsQuestionsNeeded(['pregnancy'])).toBe(true)
+  })
+
+  it('returns false if array does not contain specified string', () => {
+    expect(furtherAccessNeedsQuestionsNeeded(['healthcare'])).toBe(false)
   })
 })

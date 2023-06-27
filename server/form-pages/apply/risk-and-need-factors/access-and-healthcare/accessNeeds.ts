@@ -22,7 +22,7 @@ export const additionalNeeds = {
 export type AdditionalNeed = keyof typeof additionalNeeds
 
 type AccessNeedsBody = {
-  additionalNeeds: Array<AdditionalNeed> | AdditionalNeed
+  additionalNeeds: Array<AdditionalNeed>
   careActAssessmentCompleted: YesNoOrIDK
   needsInterpreter: YesOrNo
   interpreterLanguage: string
@@ -71,7 +71,7 @@ export default class AccessNeeds implements TasklistPage {
   }
 
   next() {
-    if (this.furtherQuestionsNeeded()) {
+    if (furtherAccessNeedsQuestionsNeeded(this.body.additionalNeeds)) {
       return 'access-needs-further-questions'
     }
 
@@ -132,10 +132,10 @@ export default class AccessNeeds implements TasklistPage {
   needsCheckboxes() {
     return convertKeyValuePairToCheckBoxItems(additionalNeeds, this.body.additionalNeeds as Array<AdditionalNeed>)
   }
+}
 
-  private furtherQuestionsNeeded() {
-    return (this.body.additionalNeeds as Array<AdditionalNeed>).some(need => {
-      return ['mobility', 'pregnancy', 'visualImpairment'].includes(need)
-    })
-  }
+export function furtherAccessNeedsQuestionsNeeded(additionalNeedsArray: Array<AdditionalNeed>) {
+  return additionalNeedsArray.some(need => {
+    return ['mobility', 'pregnancy', 'visualImpairment'].includes(need)
+  })
 }
