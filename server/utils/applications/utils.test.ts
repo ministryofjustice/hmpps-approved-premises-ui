@@ -326,7 +326,7 @@ describe('utils', () => {
 
       const sections = getSections(placementApplication)
 
-      expect(sections).toEqual(PlacementRequest.sections.slice(0, -1))
+      expect(sections).toEqual(PlacementRequest.sections)
     })
   })
 

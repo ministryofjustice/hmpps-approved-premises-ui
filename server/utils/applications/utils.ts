@@ -84,7 +84,7 @@ export const getSections = (formArtifact: FormArtifact): FormSections => {
       if (!isAssessment(formArtifact)) throw new Error('Form artifact is not an assessment')
       return getAssessmentSections(formArtifact)
     case 'placement-applications':
-      return PlacementRequest.sections.slice(0, -1)
+      return PlacementRequest.sections
     default:
       throw new Error(`Unknown journey type: ${journeyType}`)
   }
