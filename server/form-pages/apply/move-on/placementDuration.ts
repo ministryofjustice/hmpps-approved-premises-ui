@@ -120,6 +120,6 @@ export default class PlacementDuration implements TasklistPage {
   private fetchDepartureDate(): Date | undefined {
     const standardPlacementDuration = getDefaultPlacementDurationInDays(this.application)
 
-    return this.arrivalDate ? addDays(this.arrivalDate, 7 * standardPlacementDuration) : undefined
+    return this.arrivalDate ? addDays(this.arrivalDate, standardPlacementDuration) : undefined
   }
 }
