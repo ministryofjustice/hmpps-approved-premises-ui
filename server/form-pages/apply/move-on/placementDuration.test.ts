@@ -124,7 +124,7 @@ describe('PlacementDuration', () => {
 
       application = applicationFactory.withReleaseDate(DateFormats.dateObjToIsoDate(releaseDate)).build()
 
-      expect(new PlacementDuration({}, application).departureDate).toEqual(addDays(releaseDate, 7 * 12))
+      expect(new PlacementDuration({}, application).departureDate).toEqual(addDays(releaseDate, 12))
     })
   })
 
