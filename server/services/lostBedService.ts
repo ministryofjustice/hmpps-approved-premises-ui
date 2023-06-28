@@ -1,5 +1,5 @@
 import type { ReferenceData } from '@approved-premises/ui'
-import type { LostBed, NewLostBed, UpdateLostBed } from '@approved-premises/api'
+import type { LostBed, NewLostBed, NewLostBedCancellation, UpdateLostBed } from '@approved-premises/api'
 import type { LostBedClient, ReferenceDataClient, RestClientBuilder } from '../data'
 
 export type LostBedReferenceData = Array<ReferenceData>
@@ -46,5 +46,18 @@ export default class LostBedService {
     const reasons = await referenceDataClient.getReferenceData('lost-bed-reasons')
 
     return reasons
+  }
+
+  async cancelLostBed(
+    token: string,
+    premisesId: string,
+    lostBedId: string,
+    data: NewLostBedCancellation,
+  ): Promise<NewLostBedCancellation> {
+    const lostBedService = this.lostBedClientFactory(token)
+
+    const cancellation = await lostBedService.cancel(premisesId, lostBedId, data)
+
+    return cancellation
   }
 }
