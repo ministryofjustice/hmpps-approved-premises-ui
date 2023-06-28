@@ -87,7 +87,7 @@ jobs:
           command: |
             mv ./coverage/coverage-final.json ./coverage/coverage_${CIRCLE_NODE_INDEX}.json
       - store_test_results:
-          path: test_results
+          path: test_results/jest
       - store_artifacts:
           path: test_results/unit-test-reports.html
       - persist_to_workspace:
@@ -149,7 +149,7 @@ jobs:
             TESTS=$(circleci tests glob "integration_tests/tests/**/*.cy.ts" | circleci tests split --split-by=timings | paste -sd ',')
             npm run int-test -- --spec $TESTS
       - store_test_results:
-          path: test_results
+          path: test_results/cypress
       - store_artifacts:
           path: integration_tests/videos
       - store_artifacts:
@@ -278,7 +278,7 @@ workflows:
             - deploy_preprod
       - hmpps/deploy_env:
           name: deploy_prod
-          env: "prod"
+          env: 'prod'
           slack_notification: true
           slack_channel_name: << pipeline.parameters.releases-slack-channel >>
           context:
