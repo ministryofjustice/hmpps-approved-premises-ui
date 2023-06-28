@@ -76,6 +76,7 @@ const paths = {
     index: singlePremisesPath.path('lost-beds'),
     show: lostBedsPath.path(':id'),
     update: singlePremisesPath.path('lost-beds').path(':id'),
+    cancel: singlePremisesPath.path('lost-beds').path(':id').path('cancellations'),
   },
 }
 
