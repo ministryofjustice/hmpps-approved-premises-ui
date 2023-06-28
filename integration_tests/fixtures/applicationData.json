@@ -322,9 +322,9 @@
       "additionalAdjustments": "Some detail"
     },
     "covid": {
-      "fullyVaccinated": "yes",
-      "highRisk": "yes",
-      "additionalCovidInfo": "additional info"
+      "boosterEligibility": "yes",
+      "boosterEligibilityDetail": "some details",
+      "immunosuppressed": "yes"
     }
   },
   "further-considerations": {

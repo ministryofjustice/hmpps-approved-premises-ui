@@ -7,66 +7,69 @@
   </h1>
   <p>This information will be used to help decide whether the person can room share.</p>
 
-  {{ formPageRadios({
-      fieldName: "fullyVaccinated",
-      fieldset: {
-        legend: {
-          text: page.questions.fullyVaccinated.question,
-          classes: "govuk-fieldset__legend--m"
-        }
-      },
-      hint: {
-        text: page.questions.fullyVaccinated.hint
-      },
-      items: [
-        {
-          value: "yes",
-          text: "Yes"
-        },
-        {
-          value: "no",
-          text: "No"
-        },
-        {
-          value: "dontKnow",
-          text: "I don't know"
-        }
-      ]
-    }, fetchContext()) }}
-
-  {{ formPageRadios({
-      fieldName: "highRisk",
-      fieldset: {
-        legend: {
-          text: page.questions.highRisk.question,
-          classes: "govuk-fieldset__legend--m"
-        }
-      },
-      hint: {
-        text: page.questions.highRisk.hint
-      },
-      items: [
-        {
-          value: "yes",
-          text: "Yes"
-        },
-        {
-          value: "no",
-          text: "No"
-        },
-        {
-          value: "iDontKnow",
-          text: "I don't know"
-        }
-      ]
-    }, fetchContext()) }}
-
+  {% set boosterEligibilityDetail %}
   {{ formPageTextarea({
-      fieldName: "additionalCovidInfo",
-      label: {
-        text: page.questions.additionalCovidInfo,
-        classes: "govuk-label--s"
+        fieldName: "boosterEligibilityDetail",
+        label: {
+          text: page.questions.boosterEligibilityDetail
         }
+    }, fetchContext()) }}
+  {% endset -%}
+
+  {{ formPageRadios({
+      fieldName: "boosterEligibility",
+      fieldset: {
+        legend: {
+          text: page.questions.boosterEligibility.question,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        text: page.questions.boosterEligibility.hint
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          conditional: {
+            html: boosterEligibilityDetail
+          }
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }, fetchContext()) }}
+
+  {% set immunosuppressedConditional %}
+    <p>{{page.questions.immunosuppressed.info}}</p>
+  {% endset -%}
+
+  {{ formPageRadios({
+      fieldName: "immunosuppressed",
+      fieldset: {
+        legend: {
+          text: page.questions.immunosuppressed.question,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      hint: {
+        html: '<a href="' + page.questions.immunosuppressed.guidance.href + '" class="govuk-link">' + page.questions.immunosuppressed.guidance.text + '</a>'
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          conditional: {
+            html: immunosuppressedConditional
+          }
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
     }, fetchContext()) }}
 
 {% endblock %}
