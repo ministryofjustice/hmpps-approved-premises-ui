@@ -25,7 +25,7 @@ import { dashboardTableRows } from './applications/utils'
 import { navigationItems } from './navigationItems'
 
 import { statusTag } from './personUtils'
-import { DateFormats } from './dateUtils'
+import { DateFormats, uiDateOrDateEmptyMessage } from './dateUtils'
 
 import * as AssessmentUtils from './assessments/utils'
 import * as OASysUtils from './assessments/oasysUtils'
@@ -111,6 +111,11 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('dateFieldValues', function sendContextToDateFieldValues(fieldName: string, errors: ErrorMessages) {
     return dateFieldValues(fieldName, this.ctx, errors)
   })
+  njkEnv.addGlobal(
+    'uiDateOrDateEmptyMessage',
+    (object: Record<string, string>, propertyName: string, dateFormFunc: (date: string) => string) =>
+      uiDateOrDateEmptyMessage(object, propertyName, dateFormFunc),
+  )
 
   njkEnv.addGlobal(
     'convertObjectsToRadioItems',

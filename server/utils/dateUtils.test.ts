@@ -12,6 +12,7 @@ import {
   dateAndTimeInputsAreValidDates,
   dateIsBlank,
   dateIsInThePast,
+  uiDateOrDateEmptyMessage,
 } from './dateUtils'
 
 jest.mock('date-fns/isPast')
@@ -172,6 +173,26 @@ describe('DateFormats', () => {
     it('formats a duration with the given unit', () => {
       expect(DateFormats.formatDuration({ days: '4', weeks: '7' })).toEqual('7 weeks, 4 days')
     })
+  })
+})
+
+describe('uiDateOrDateEmptyMessage', () => {
+  it('if the date is undefined it returns the message', () => {
+    const object: Record<string, undefined> = {
+      shouldBeADate: undefined,
+    }
+
+    expect(uiDateOrDateEmptyMessage(object, 'shouldBeADate', () => 'string')).toEqual('No date supplied')
+  })
+
+  it('if the date is defined it returns the date formatted using the format function', () => {
+    const object: Record<string, string> = {
+      aDate: DateFormats.dateObjToIsoDate(new Date(2023, 3, 12)),
+    }
+
+    expect(uiDateOrDateEmptyMessage(object, 'aDate', DateFormats.isoDateToUIDate)).toEqual(
+      DateFormats.dateObjtoUIDate(new Date(2023, 3, 12)),
+    )
   })
 })
 
