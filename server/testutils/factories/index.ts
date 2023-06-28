@@ -34,6 +34,7 @@ import dateCapacityFactory from './dateCapacity'
 import departureFactory from './departure'
 import documentFactory from './document'
 import lostBedFactory from './lostBed'
+import lostBedCancellationFactory from './lostBedCancellation'
 import newArrivalFactory from './newArrival'
 import newBookingFactory from './newBooking'
 import newCancellationFactory from './newCancellation'
@@ -103,6 +104,7 @@ export {
   departureFactory,
   documentFactory,
   lostBedFactory,
+  lostBedCancellationFactory,
   newArrivalFactory,
   newBookingFactory,
   newPlacementRequestBookingFactory,

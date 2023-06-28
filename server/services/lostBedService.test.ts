@@ -1,10 +1,15 @@
-import type { LostBed, NewLostBed } from '@approved-premises/api'
+import type { LostBed, NewLostBed, NewLostBedCancellation } from '@approved-premises/api'
 
 import LostBedService from './lostBedService'
 import LostBedClient from '../data/lostBedClient'
 import ReferenceDataClient from '../data/referenceDataClient'
 
-import { lostBedFactory, newLostBedFactory, referenceDataFactory } from '../testutils/factories'
+import {
+  lostBedCancellationFactory,
+  lostBedFactory,
+  newLostBedFactory,
+  referenceDataFactory,
+} from '../testutils/factories'
 
 jest.mock('../data/lostBedClient.ts')
 jest.mock('../data/referenceDataClient.ts')
@@ -115,6 +120,25 @@ describe('LostBedService', () => {
       expect(updatedLostBed).toEqual(lostBed)
       expect(LostBedClientFactory).toHaveBeenCalledWith(token)
       expect(lostBedClient.update).toHaveBeenCalledWith(lostBed.id, lostBedUpdateData, premisesId)
+    })
+  })
+
+  describe('cancelLostBed', () => {
+    it('cancels and returns the cancelled lost bed', async () => {
+      const lostBedId = 'lostBedId'
+      const newLostBedCancellation: NewLostBedCancellation = {
+        notes: 'some notes',
+      }
+      const lostBedCancellation = lostBedCancellationFactory.build()
+      const token = 'SOME_TOKEN'
+
+      lostBedClient.cancel.mockResolvedValue(lostBedCancellation)
+
+      const cancelledLostBed = await service.cancelLostBed(token, lostBedId, premisesId, newLostBedCancellation)
+
+      expect(cancelledLostBed).toEqual(lostBedCancellation)
+      expect(LostBedClientFactory).toHaveBeenCalledWith(token)
+      expect(lostBedClient.cancel).toHaveBeenCalledWith(lostBedId, premisesId, newLostBedCancellation)
     })
   })
 })

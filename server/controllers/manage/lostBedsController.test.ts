@@ -10,7 +10,7 @@ import {
   fetchErrorsAndUserInput,
   generateConflictErrorAndRedirect,
 } from '../../utils/validation'
-import { lostBedFactory } from '../../testutils/factories'
+import { lostBedCancellationFactory, lostBedFactory } from '../../testutils/factories'
 import paths from '../../paths/manage'
 
 jest.mock('../../utils/validation')
@@ -263,6 +263,35 @@ describe('LostBedsController', () => {
         await requestHandler(request, response, next)
 
         expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(request, response, err, referrer)
+      })
+    })
+    describe('if "cancel" is "1" ', () => {
+      it('updates a lost bed and redirects to the lost beds index page', async () => {
+        const cancellation = lostBedCancellationFactory.build()
+        lostBedService.cancelLostBed.mockResolvedValue(cancellation)
+
+        const requestHandler = lostBedController.cancel()
+
+        const notes = 'a note'
+
+        request.params = {
+          premisesId,
+          id: cancellation.id,
+          bedId: 'bedId',
+        }
+
+        request.body = {
+          notes,
+          cancel: '1',
+        }
+
+        await requestHandler(request, response, next)
+
+        expect(lostBedService.cancelLostBed).toHaveBeenCalledWith(token, cancellation.id, request.params.premisesId, {
+          notes,
+        })
+        expect(request.flash).toHaveBeenCalledWith('success', 'Bed cancelled')
+        expect(response.redirect).toHaveBeenCalledWith(paths.lostBeds.index({ premisesId: request.params.premisesId }))
       })
     })
   })

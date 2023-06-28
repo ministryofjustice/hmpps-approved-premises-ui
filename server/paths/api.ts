@@ -19,6 +19,7 @@ const managePaths = {
     index: lostBedsPath,
     show: lostBedsPath.path(':id'),
     update: lostBedsPath.path(':id'),
+    cancel: lostBedsPath.path(':id/cancellations'),
   },
   beds: {
     index: bedsPath,
@@ -88,6 +89,7 @@ export default {
       index: managePaths.lostBeds.index,
       update: managePaths.lostBeds.update,
       show: managePaths.lostBeds.show,
+      cancel: managePaths.lostBeds.cancel,
     },
     staffMembers: {
       index: managePaths.premises.show.path('staff'),

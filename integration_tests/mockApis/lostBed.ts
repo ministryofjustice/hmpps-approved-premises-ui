@@ -101,12 +101,25 @@ export default {
         jsonBody: bedspaceConflictResponseBody(args.conflictingEntityId, args.conflictingEntityType),
       },
     }),
+
+  stubCancelLostBed: (args: { lostBedId: string; premisesId: string; lostBedCancellation }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: paths.premises.lostBeds.cancel({ premisesId: args.premisesId, id: args.lostBedId }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.lostBedCancellation,
+      },
+    }),
   stubLostBedErrors: (args: { premisesId: string; params: Array<string> }): SuperAgentRequest =>
     stubFor(errorStub(args.params, `/premises/${args.premisesId}/lost-beds`)),
 
   stubLostBedReferenceData: (): Promise<Response> => stubFor(lostBedReasons),
 
-  verifyLostBedCreate: async (args: { premisesId: string; bookingId: string }) =>
+  verifyLostBedCreate: async (args: { premisesId: string }) =>
     (
       await getMatchingRequests({
         method: 'POST',
@@ -119,6 +132,14 @@ export default {
       await getMatchingRequests({
         method: 'PUT',
         url: `/premises/${args.premisesId}/lost-beds/${args.lostBed.id}`,
+      })
+    ).body.requests,
+
+  verifyLostBedCancel: async (args: { premisesId: string; lostBedId: string }) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.premises.lostBeds.cancel({ premisesId: args.premisesId, id: args.lostBedId }),
       })
     ).body.requests,
 }

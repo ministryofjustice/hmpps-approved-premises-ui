@@ -1,4 +1,10 @@
-import type { LostBed, NewLostBed, UpdateLostBed } from '@approved-premises/api'
+import type {
+  LostBed,
+  LostBedCancellation,
+  NewLostBed,
+  NewLostBedCancellation,
+  UpdateLostBed,
+} from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -34,5 +40,14 @@ export default class LostBedClient {
     })
 
     return response as LostBed
+  }
+
+  async cancel(id: string, premisesId: string, lostBedData: NewLostBedCancellation): Promise<LostBedCancellation> {
+    const response = await this.restClient.post({
+      path: paths.premises.lostBeds.cancel({ id, premisesId }),
+      data: { ...lostBedData },
+    })
+
+    return response as LostBedCancellation
   }
 }

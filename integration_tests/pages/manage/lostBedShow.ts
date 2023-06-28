@@ -28,4 +28,12 @@ export default class LostBedShowPage extends Page {
 
     cy.get('textarea[name="notes"]').type(String(notes))
   }
+
+  clickSubmit(): void {
+    cy.get('button[name="submit"]').click()
+  }
+
+  clickCancel(): void {
+    cy.get('button').contains('Cancel lost bed').click()
+  }
 }

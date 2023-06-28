@@ -1,7 +1,8 @@
 import LostBedClient from './lostBedClient'
-import { lostBedFactory, newLostBedFactory } from '../testutils/factories'
+import { lostBedCancellationFactory, lostBedFactory, newLostBedFactory } from '../testutils/factories'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
+import { NewLostBedCancellation } from '../@types/shared'
 
 describeClient('LostBedClient', provider => {
   let lostBedClient: LostBedClient
@@ -132,6 +133,38 @@ describeClient('LostBedClient', provider => {
       const result = await lostBedClient.update(lostBed.id, lostBedUpdateData, 'premisesId')
 
       expect(result).toEqual(lostBed)
+    })
+  })
+
+  describe('cancel', () => {
+    it('cancels a lost bed', async () => {
+      const lostBedCancellation = lostBedCancellationFactory.build()
+      const notes = 'note'
+
+      const lostBedCancellationData: NewLostBedCancellation = {
+        notes,
+      }
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to cancel a lost bed',
+        withRequest: {
+          method: 'POST',
+          path: paths.premises.lostBeds.cancel({ premisesId, id: lostBedCancellation.id }),
+          body: lostBedCancellationData,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: lostBedCancellation,
+        },
+      })
+
+      const result = await lostBedClient.cancel(lostBedCancellation.id, 'premisesId', lostBedCancellationData)
+
+      expect(result).toEqual(lostBedCancellation)
     })
   })
 })

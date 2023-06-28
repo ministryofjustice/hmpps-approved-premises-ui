@@ -123,6 +123,7 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.lostBeds.show.pattern, lostBedsController.show(), { auditEvent: 'SHOW_LOST_BED' })
   post(paths.lostBeds.update.pattern, lostBedsController.update(), {
     auditEvent: 'UPDATE_LOST_BED_SUCCESS',
+    auditBodyParams: ['cancel'],
     redirectAuditEventSpecs: [
       {
         path: paths.lostBeds.show.pattern,

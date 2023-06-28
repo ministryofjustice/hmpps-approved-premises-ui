@@ -115,6 +115,14 @@ export default class LostBedsController {
       req.body.endDate = endDate
 
       try {
+        if (req.body.cancel === '1') {
+          await this.lostBedService.cancelLostBed(req.user.token, id, premisesId, { notes: req.body.notes })
+
+          req.flash('success', 'Bed cancelled')
+
+          return res.redirect(paths.lostBeds.index({ premisesId }))
+        }
+
         await this.lostBedService.updateLostBed(req.user.token, id, premisesId, req.body as UpdateLostBed)
 
         req.flash('success', 'Bed updated')
@@ -124,6 +132,23 @@ export default class LostBedsController {
         const redirectPath = req.headers.referer
 
         return catchValidationErrorOrPropogate(req, res, err, redirectPath)
+      }
+    }
+  }
+
+  cancel(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { premisesId, bedId, id } = req.params
+      const { notes = '' } = req.body
+
+      try {
+        await this.lostBedService.cancelLostBed(req.user.token, id, premisesId, { notes })
+
+        req.flash('success', 'Bed cancelled')
+
+        return res.redirect(paths.lostBeds.index({ premisesId }))
+      } catch (err) {
+        return catchValidationErrorOrPropogate(req, res, err, paths.lostBeds.show({ premisesId, bedId, id }))
       }
     }
   }
