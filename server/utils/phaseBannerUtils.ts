@@ -3,6 +3,8 @@ import applyPaths from '../paths/apply'
 import managePaths from '../paths/manage'
 import matchPaths from '../paths/match'
 
+export const supportEmail = 'APServiceSupport@digital.justice.gov.uk'
+
 export const APPLY_FEEDBACK_LINK =
   'https://forms.office.com/Pages/ResponsePage.aspx?id=KEeHxuZx_kGp4S6MNndq2H0aht4jI_tEtV4d1X0VL3lUOEw5WlFaUVFEWTQwRUtSWURGRUtFNzRDTi4u'
 export const ASSESS_FEEDBACK_LINK =
@@ -16,8 +18,8 @@ export const getContent = (currentUrl: string) => {
   const feedbackLink = getFeedbackLink(currentUrl)
 
   return feedbackLink
-    ? `This is a new service. <a class="govuk-link" href="${feedbackLink}">Give us your feedback</a> or <a class="govuk-link" href="mailto:APServiceSupport@digital.justice.gov.uk">email us</a> to report a bug`
-    : 'This is a new service. <a class="govuk-link" href="mailto:APServiceSupport@digital.justice.gov.uk">Email us</a> to report a bug'
+    ? `This is a new service. <a class="govuk-link" href="${feedbackLink}">Give us your feedback</a> or <a class="govuk-link" href="mailto:${supportEmail}">email us</a> to report a bug`
+    : `This is a new service. <a class="govuk-link" href="mailto:${supportEmail}">Email us</a> to report a bug`
 }
 
 const getFeedbackLink = (currentUrl: string) => {

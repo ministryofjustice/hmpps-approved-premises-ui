@@ -15,6 +15,8 @@
       <form action="{{ paths.applications.people.find() }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
         <input type="hidden" name="checkCaseload" value="true"/>
+        <input type="hidden" name="checkOasys" value="true"/>
+        <input type="hidden" name="checkNoms" value="true"/>
 
         {{ showErrorSummary(errorSummary) }}
 

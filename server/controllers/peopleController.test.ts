@@ -84,6 +84,62 @@ describe('PeopleController', () => {
       ])
     })
 
+    it('send an error to the flash if the error is a 500 and checkOasys is set', async () => {
+      const err = { status: 500, data: { detail: 'No OASys present for CRN' } }
+
+      personService.findByCrn.mockImplementation(() => {
+        throw err
+      })
+
+      const requestHandler = peopleController.find()
+
+      request.body.crn = 'CRN123'
+      request.body.checkOasys = '1'
+
+      await requestHandler(request, response, next)
+
+      expect(flashSpy).toHaveBeenCalledWith('errors', {
+        crn: errorMessage(
+          'crn',
+          "The CRN 'CRN123' does not have an OASys record. Email AP Service Support (APServiceSupport@digital.justice.gov.uk) with the person's name and CRN for help starting an AP application.",
+        ),
+      })
+      expect(flashSpy).toHaveBeenCalledWith('errorSummary', [
+        errorSummary(
+          'crn',
+          "The CRN 'CRN123' does not have an OASys record. Email AP Service Support (APServiceSupport@digital.justice.gov.uk) with the person's name and CRN for help starting an AP application.",
+        ),
+      ])
+    })
+
+    it('send an error to the flash if the error is a 500 and checkNoms is set', async () => {
+      const err = { status: 500, data: { detail: 'No nomsNumber present for CRN' } }
+
+      personService.findByCrn.mockImplementation(() => {
+        throw err
+      })
+
+      const requestHandler = peopleController.find()
+
+      request.body.crn = 'CRN123'
+      request.body.checkNoms = '1'
+
+      await requestHandler(request, response, next)
+
+      expect(flashSpy).toHaveBeenCalledWith('errors', {
+        crn: errorMessage(
+          'crn',
+          "The CRN 'CRN123' does not have a NOMS number. Email AP Service Support (APServiceSupport@digital.justice.gov.uk) with the person's name and CRN for help starting an AP application.",
+        ),
+      })
+      expect(flashSpy).toHaveBeenCalledWith('errorSummary', [
+        errorSummary(
+          'crn',
+          "The CRN 'CRN123' does not have a NOMS number. Email AP Service Support (APServiceSupport@digital.justice.gov.uk) with the person's name and CRN for help starting an AP application.",
+        ),
+      ])
+    })
+
     it('sends an error to the flash if a crn has not been provided', async () => {
       request.body = {}
 
