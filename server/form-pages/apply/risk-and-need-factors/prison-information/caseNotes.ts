@@ -4,7 +4,7 @@ import type { Adjudication, ApprovedPremisesApplication, PersonAcctAlert, Prison
 
 import { sentenceCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
-import { DateFormats } from '../../../../utils/dateUtils'
+import { DateFormats, uiDateOrDateEmptyMessage } from '../../../../utils/dateUtils'
 import { Page } from '../../../utils/decorators'
 
 type CaseNotesAdjudication = Omit<Adjudication, 'finding'> & {
@@ -21,8 +21,8 @@ type CaseNotesBody = {
 
 export const caseNoteResponse = (caseNote: PrisonCaseNote) => {
   return {
-    'Date created': DateFormats.isoDateToUIDate(caseNote.createdAt),
-    'Date occurred': DateFormats.isoDateToUIDate(caseNote.occurredAt),
+    'Date created': uiDateOrDateEmptyMessage(caseNote, 'createdAt', DateFormats.isoDateToUIDate),
+    'Date occurred': uiDateOrDateEmptyMessage(caseNote, 'occurredAt', DateFormats.isoDateToUIDate),
     'Is the case note sensitive?': caseNote.sensitive ? 'Yes' : 'No',
     'Name of author': caseNote.authorName,
     Type: caseNote.type,
@@ -34,7 +34,7 @@ export const caseNoteResponse = (caseNote: PrisonCaseNote) => {
 export const adjudicationResponse = (adjudication: Adjudication) => {
   return {
     'Adjudication number': adjudication.id,
-    'Report date and time': DateFormats.isoDateTimeToUIDateTime(adjudication.reportedAt),
+    'Report date and time': uiDateOrDateEmptyMessage(adjudication, 'reportedAt', DateFormats.isoDateTimeToUIDateTime),
     Establishment: adjudication.establishment,
     'Offence description': adjudication.offenceDescription,
     Finding: sentenceCase(adjudication.finding),
@@ -45,8 +45,8 @@ export const acctAlertResponse = (acctAlert: PersonAcctAlert) => {
   return {
     'Alert type': acctAlert.alertId,
     'ACCT description': acctAlert.comment ?? '',
-    'Date created': DateFormats.isoDateToUIDate(acctAlert.dateCreated),
-    'Expiry date': DateFormats.isoDateToUIDate(acctAlert.dateExpires),
+    'Date created': uiDateOrDateEmptyMessage(acctAlert, 'dateCreated', DateFormats.isoDateToUIDate),
+    'Expiry date': uiDateOrDateEmptyMessage(acctAlert, 'dateExpires', DateFormats.isoDateToUIDate),
   }
 }
 
@@ -58,8 +58,10 @@ export const caseNoteCheckbox = (caseNote: PrisonCaseNote, checked: boolean) => 
     caseNote.id
   }" ${checked ? 'checked' : ''}>
       <label class="govuk-label govuk-checkboxes__label" for="${caseNote.id}">
-        <span class="govuk-visually-hidden">Select case note from ${DateFormats.isoDateToUIDate(
-          caseNote.createdAt,
+        <span class="govuk-visually-hidden">Select case note from ${uiDateOrDateEmptyMessage(
+          caseNote,
+          'createdAt',
+          DateFormats.isoDateToUIDate,
         )}</span>
       </label>
     </div>
