@@ -82,4 +82,12 @@ export default {
         url: paths.placementApplications.submit({ id: applicationId }),
       })
     ).body.requests,
+
+  verifyPlacementApplicationReviewSubmit: async (applicationId: string) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.placementApplications.submitDecision({ id: applicationId }),
+      })
+    ).body.requests,
 }

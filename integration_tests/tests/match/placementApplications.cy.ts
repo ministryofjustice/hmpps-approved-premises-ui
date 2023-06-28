@@ -282,6 +282,14 @@ context('Placement Applications', () => {
     decisionPage.clickSubmit()
 
     // Then I should be taken to the confirm submission page
+    cy.task('verifyPlacementApplicationReviewSubmit', placementApplication.id).then(requests => {
+      expect(requests).to.have.length(1)
+      expect(requests[0].url).to.equal(paths.placementApplications.submitDecision({ id: placementApplication.id }))
+
+      const body = JSON.parse(requests[0].body)
+
+      expect(body).to.contain.keys('decision', 'decisionSummary', 'summaryOfChanges')
+    })
 
     Page.verifyOnPage(ReviewApplicationConfirmPage)
   })
