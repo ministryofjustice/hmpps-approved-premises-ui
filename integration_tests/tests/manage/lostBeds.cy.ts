@@ -1,6 +1,7 @@
 import {
   bookingFactory,
   dateCapacityFactory,
+  lostBedCancellationFactory,
   lostBedFactory,
   premisesFactory,
 } from '../../../server/testutils/factories'
@@ -201,6 +202,34 @@ context('LostBed', () => {
 
       // Then I should see an error message
       lostBedShowPage.shouldShowErrorMessagesForFields(['endDate'])
+    })
+
+    it('should allow me to cancel a lost bed', () => {
+      const premisesId = 'premisesId'
+
+      // And there is a lost bed in the database
+      const lostBed = lostBedFactory.build()
+      const lostBedCancellation = lostBedCancellationFactory.build()
+      cy.task('stubLostBed', { premisesId, lostBed })
+      cy.task('stubLostBedsList', { premisesId, lostBeds: [lostBed] })
+      cy.task('stubCancelLostBed', { premisesId, lostBedId: lostBed.id, lostBedCancellation })
+
+      // Given I visit the Lost Bed show page
+      const lostBedShowPage = LostBedShowPage.visit(premisesId, lostBed)
+
+      // When I try to submit
+      lostBedShowPage.clickCancel()
+
+      cy.task('verifyLostBedCancel', {
+        premisesId,
+        lostBedId: lostBed.id,
+      }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
+
+      // Then I am redirected to the Lost Bed list page and see the confirmation message
+      const listPage = Page.verifyOnPage(LostBedListPage)
+      listPage.shouldShowBanner('Bed cancelled')
     })
   })
 })
