@@ -143,6 +143,16 @@ export class DateFormats {
   }
 }
 
+export const uiDateOrDateEmptyMessage = (
+  object: Record<string, unknown>,
+  key: string,
+  dateFormFunc: (date: string) => string,
+) => {
+  if (typeof object?.[key] === 'string') return dateFormFunc(object?.[key] as string)
+
+  return 'No date supplied'
+}
+
 export const dateAndTimeInputsAreValidDates = <K extends string | number>(
   dateInputObj: ObjectWithDateParts<K>,
   key: K,
