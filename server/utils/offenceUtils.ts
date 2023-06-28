@@ -6,6 +6,10 @@ const offenceTableRows = (offences: Array<ActiveOffence>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   offences.forEach(offence => {
+    const offenceDate = offence?.offenceDate
+      ? DateFormats.isoDateToUIDate(offence.offenceDate)
+      : 'No offence date available'
+
     rows.push([
       {
         html: offenceRadioButton(offence),
@@ -17,7 +21,7 @@ const offenceTableRows = (offences: Array<ActiveOffence>): Array<TableRow> => {
         text: offence.offenceDescription,
       },
       {
-        text: DateFormats.isoDateToUIDate(offence.offenceDate),
+        text: offenceDate,
       },
       {
         text: String(offence.convictionId),

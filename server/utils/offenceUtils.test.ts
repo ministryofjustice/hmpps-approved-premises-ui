@@ -63,5 +63,29 @@ describe('offenceUtils', () => {
         ],
       ])
     })
+
+    it('returns table rows for the index offences when the offenceDate is missing', () => {
+      const offence = activeOffenceFactory.build({ offenceDate: undefined })
+
+      expect(offenceTableRows([offence])).toEqual([
+        [
+          {
+            html: offenceRadioButton(offence),
+          },
+          {
+            text: offence.offenceId,
+          },
+          {
+            text: offence.offenceDescription,
+          },
+          {
+            text: 'No offence date available',
+          },
+          {
+            text: String(offence.convictionId),
+          },
+        ],
+      ])
+    })
   })
 })
