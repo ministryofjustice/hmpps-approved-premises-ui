@@ -44,7 +44,7 @@ export default class ArrivalsController {
         notes: body.arrival.notes,
         arrivalDateTime,
         expectedDepartureDate,
-        type: 'cas1',
+        type: 'CAS1',
       }
 
       try {

@@ -118,7 +118,7 @@ describe('ArrivalsController', () => {
         keyWorkerStaffCode: request.body.arrival.keyWorkerStaffCode,
         arrivalDateTime: new Date(2022, 11, 11, 12, 35).toISOString(),
         expectedDepartureDate: '2022-11-12',
-        type: 'cas1',
+        type: 'CAS1',
       }
 
       expect(arrivalService.createArrival).toHaveBeenCalledWith(
