@@ -68,7 +68,7 @@ export class DateFormats {
   }
 
   /**
-   * @param isoDate an ISO date string.
+   * @param isoDate an ISO8601 date string.
    * @returns the date in the to be shown in the UI: "Thursday, 20 December 2012".
    */
   static isoDateToUIDate(isoDate: string, options: { format: 'short' | 'long' } = { format: 'long' }) {
@@ -76,7 +76,7 @@ export class DateFormats {
   }
 
   /**
-   * @param isoDate an ISO date string.
+   * @param isoDate an ISO8601 date string.
    * @returns the date in the to be shown in the UI: "Thursday, 20 December 2012".
    */
   static isoDateTimeToUIDateTime(isoDate: string) {
@@ -140,6 +140,10 @@ export class DateFormats {
       format,
       delimiter: ', ',
     })
+  }
+
+  static timeFromDate(date: Date): string {
+    return format(date, 'HH:mm')
   }
 }
 
