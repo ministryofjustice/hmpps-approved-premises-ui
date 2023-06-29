@@ -101,6 +101,8 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     return safeFilter(html)
   }
 
+  njkEnv.addGlobal('checkCaseloadForApplications', !process.env.DISABLE_CASELOAD_CHECK)
+
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addGlobal('dateFieldValues', dateFieldValues)
   njkEnv.addGlobal('formatDate', (date: string, options: { format: 'short' | 'long' } = { format: 'long' }) =>

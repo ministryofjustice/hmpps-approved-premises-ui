@@ -17,6 +17,7 @@ generic-service:
     HMPPS_AUTH_URL: 'https://sign-in-dev.hmpps.service.justice.gov.uk/auth'
     TOKEN_VERIFICATION_API_URL: 'https://token-verification-api-dev.prison.service.justice.gov.uk'
     COMMUNITY_ACCOMMODATION_API_SERVICE_NAME: approved-premises
+    DISABLE_CASELOAD_CHECK: 1
 
   namespace_secrets:
     sqs-hmpps-audit-secret:
