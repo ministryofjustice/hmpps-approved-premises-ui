@@ -17,6 +17,7 @@ import DescribeLocationFactors from '../../form-pages/apply/risk-and-need-factor
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { isInapplicable } from './utils'
 import { FormArtifact } from '../../@types/ui'
+import { noticeTypeFromApplication } from './noticeTypeFromApplication'
 
 type FirstClassFields<T> = T extends UpdateApprovedPremisesApplication
   ? Omit<UpdateApprovedPremisesApplication, 'data'>
@@ -49,13 +50,16 @@ const firstClassFields = <T>(
   const targetLocation = retrieveQuestionResponse(application, DescribeLocationFactors, 'postcodeArea')
   const releaseType = getReleaseType(application, retrieveQuestionResponse)
   const arrivalDate = arrivalDateFromApplication(application)
+  const isEmergencyApplication = noticeTypeFromApplication(application) === 'emergency'
 
   return {
     isWomensApplication: false,
     isPipeApplication: isPipeApplication(apType),
+    isEsapApplication: isEsapApplication(apType),
     targetLocation,
     releaseType,
     arrivalDate,
+    isEmergencyApplication,
   } as FirstClassFields<T>
 }
 
@@ -86,4 +90,12 @@ const isPipeApplication = (apType?: ApType): boolean | undefined => {
   }
 
   return apType === 'pipe'
+}
+
+const isEsapApplication = (apType?: ApType): boolean | undefined => {
+  if (apType === undefined) {
+    return undefined
+  }
+
+  return apType === 'esap'
 }

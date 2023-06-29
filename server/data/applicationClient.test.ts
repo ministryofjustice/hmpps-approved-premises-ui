@@ -192,6 +192,8 @@ describeClient('ApplicationClient', provider => {
         translatedDocument: application.document,
         isPipeApplication: true,
         isWomensApplication: false,
+        isEsapApplication: false,
+        isEmergencyApplication: false,
         targetLocation: 'ABC123',
         releaseType: 'licence' as const,
         type: 'CAS1',

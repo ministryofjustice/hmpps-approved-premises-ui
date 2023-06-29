@@ -366,6 +366,8 @@ context('Apply', () => {
         'releaseType',
         'type',
         'isInapplicable',
+        'isEsapApplication',
+        'isEmergencyApplication',
       )
       expect(body.data).to.deep.equal(this.applicationData)
 
@@ -384,6 +386,8 @@ context('Apply', () => {
         'arrivalDate',
         'translatedDocument',
         'isPipeApplication',
+        'isEsapApplication',
+        'isEmergencyApplication',
         'isWomensApplication',
         'targetLocation',
         'releaseType',
