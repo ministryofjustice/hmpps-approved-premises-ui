@@ -106,7 +106,7 @@ export default class PlacementDuration implements TasklistPage {
       if (placementDate && placementDate.startDateSameAsReleaseDate === 'yes') {
         const releaseDate = basicInformation['release-date']
 
-        if (!releaseDate) return undefined
+        if (!releaseDate || !releaseDate?.releaseDate) return undefined
 
         return DateFormats.isoToDateObj(releaseDate.releaseDate)
       }
