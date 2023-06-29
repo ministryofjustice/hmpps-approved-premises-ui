@@ -83,6 +83,24 @@ describe('PlacementDuration', () => {
       expect(page.arrivalDate).toEqual(new Date(2022, 11, 11))
     })
 
+    it('returns undefined if the release date is undefined', () => {
+      data = {
+        'basic-information': {
+          'placement-date': {
+            startDateSameAsReleaseDate: 'yes',
+          },
+          'release-date': {
+            releaseDate: undefined,
+          },
+        },
+      }
+      application = applicationFactory.build({ data })
+
+      const page = new PlacementDuration({}, application)
+
+      expect(page.arrivalDate).toEqual(undefined)
+    })
+
     it('throws an error if the "basic-information" object is not present', () => {
       application = applicationFactory.build({ data: {} })
 
