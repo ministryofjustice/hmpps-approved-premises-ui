@@ -27,10 +27,7 @@ export default class SentenceType implements TasklistPage {
   }
 
   previous() {
-    if (this.application.data?.['basic-information']?.['exception-details']) {
-      return 'exception-details'
-    }
-    return 'transgender'
+    return 'end-dates'
   }
 
   next() {

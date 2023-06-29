@@ -51,19 +51,7 @@ describe('SentenceType', () => {
     })
   })
 
-  describe('when the exception-details step was not completed', () => {
-    itShouldHavePreviousValue(new SentenceType({}, application), 'transgender')
-  })
-
-  describe('when the exception-details step was completed', () => {
-    itShouldHavePreviousValue(
-      new SentenceType(
-        {},
-        { ...application, data: { 'basic-information': { 'exception-details': { agreedCaseWithManager: 'yes' } } } },
-      ),
-      'exception-details',
-    )
-  })
+  itShouldHavePreviousValue(new SentenceType({}, application), 'end-dates')
 
   describe('errors', () => {
     it('should return an empty object if the sentence type is populated', () => {
