@@ -32,6 +32,8 @@ describe('getApplicationData', () => {
         releaseType,
         targetLocation,
         arrivalDate,
+        isEmergencyApplication: true,
+        isEsapApplication: false,
       })
     })
 
@@ -47,6 +49,8 @@ describe('getApplicationData', () => {
         releaseType,
         targetLocation,
         arrivalDate,
+        isEmergencyApplication: true,
+        isEsapApplication: false,
       })
     })
 
@@ -63,6 +67,8 @@ describe('getApplicationData', () => {
         releaseType: undefined,
         targetLocation: 'ABC 123',
         arrivalDate,
+        isEmergencyApplication: true,
+        isEsapApplication: false,
       })
     })
 
@@ -78,6 +84,8 @@ describe('getApplicationData', () => {
         releaseType: 'in_community',
         targetLocation,
         arrivalDate,
+        isEmergencyApplication: true,
+        isEsapApplication: false,
       })
     })
 
@@ -93,6 +101,8 @@ describe('getApplicationData', () => {
         releaseType: 'in_community',
         targetLocation,
         arrivalDate,
+        isEmergencyApplication: true,
+        isEsapApplication: false,
       })
     })
   })
@@ -113,6 +123,8 @@ describe('getApplicationData', () => {
         releaseType: undefined,
         targetLocation: undefined,
         arrivalDate: undefined,
+        isEmergencyApplication: false,
+        isEsapApplication: undefined,
       })
     })
 
@@ -131,6 +143,8 @@ describe('getApplicationData', () => {
         releaseType: 'license',
         targetLocation: 'ABC',
         arrivalDate: '2023-01-01',
+        isEmergencyApplication: true,
+        isEsapApplication: false,
       })
     })
 
