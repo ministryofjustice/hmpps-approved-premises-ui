@@ -17,9 +17,10 @@ export default class ArrivalCreatePage extends Page {
     const arrivalDate = new Date(Date.parse(arrival.arrivalDate))
     const expectedDeparture = new Date(Date.parse(arrival.expectedDepartureDate))
 
-    cy.get('input[name="arrivalDate-day"]').type(String(arrivalDate.getDate()))
-    cy.get('input[name="arrivalDate-month"]').type(String(arrivalDate.getMonth() + 1))
-    cy.get('input[name="arrivalDate-year"]').type(String(arrivalDate.getFullYear()))
+    cy.get('input[name="arrivalDateTime-day"]').type(String(arrivalDate.getDate()))
+    cy.get('input[name="arrivalDateTime-month"]').type(String(arrivalDate.getMonth() + 1))
+    cy.get('input[name="arrivalDateTime-year"]').type(String(arrivalDate.getFullYear()))
+    cy.get('input[name="arrivalDateTime-time"]').type(arrival.arrivalTime)
 
     cy.get('input[name="expectedDepartureDate-day"]').type(String(expectedDeparture.getDate()))
     cy.get('input[name="expectedDepartureDate-month"]').type(String(expectedDeparture.getMonth() + 1))
@@ -29,7 +30,6 @@ export default class ArrivalCreatePage extends Page {
     this.getSelectInputByIdAndSelectAnEntry('keyWorkerStaffCode', staffMemberCode)
 
     cy.get('[name="arrival[notes]"]').type(arrival.notes)
-
     cy.get('[name="arrival[submit]"]').click()
   }
 

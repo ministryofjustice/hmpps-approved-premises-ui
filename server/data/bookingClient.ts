@@ -4,7 +4,7 @@ import type {
   Cancellation,
   Departure,
   Extension,
-  NewArrival,
+  NewCas1Arrival as NewArrival,
   NewBedMove,
   NewBooking,
   NewCancellation,

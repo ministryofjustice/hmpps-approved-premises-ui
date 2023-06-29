@@ -1172,39 +1172,21 @@
           "type": "object",
           "properties": {
             "additionalNeeds": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "enum": [
-                      "healthcare",
-                      "hearingImpairment",
-                      "learningDisability",
-                      "mobility",
-                      "neurodivergentConditions",
-                      "none",
-                      "other",
-                      "pregnancy",
-                      "visualImpairment"
-                    ],
-                    "type": "string"
-                  }
-                },
-                {
-                  "enum": [
-                    "healthcare",
-                    "hearingImpairment",
-                    "learningDisability",
-                    "mobility",
-                    "neurodivergentConditions",
-                    "none",
-                    "other",
-                    "pregnancy",
-                    "visualImpairment"
-                  ],
-                  "type": "string"
-                }
-              ]
+              "type": "array",
+              "items": {
+                "enum": [
+                  "healthcare",
+                  "hearingImpairment",
+                  "learningDisability",
+                  "mobility",
+                  "neurodivergentConditions",
+                  "none",
+                  "other",
+                  "pregnancy",
+                  "visualImpairment"
+                ],
+                "type": "string"
+              }
             },
             "careActAssessmentCompleted": {
               "enum": [
@@ -1374,23 +1356,21 @@
         "covid": {
           "type": "object",
           "properties": {
-            "fullyVaccinated": {
+            "immunosuppressed": {
               "enum": [
-                "iDontKnow",
                 "no",
                 "yes"
               ],
               "type": "string"
             },
-            "highRisk": {
+            "boosterEligibility": {
               "enum": [
-                "iDontKnow",
                 "no",
                 "yes"
               ],
               "type": "string"
             },
-            "additionalCovidInfo": {
+            "boosterEligibilityDetail": {
               "type": "string"
             }
           }

@@ -14,6 +14,11 @@
   "name": {
     "empty": "You must enter a name"
   },
+  "arrivalDateTime": {
+    "empty": "You must enter an arrival date and time",
+    "invalid": "The arrival date or time is invalid",
+    "conflict": "This bedspace is not available for these dates"
+  },
   "arrivalDate": {
     "empty": "You must enter an arrival date",
     "invalid": "The arrival date is an invalid date",

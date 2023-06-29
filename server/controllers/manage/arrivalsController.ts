@@ -1,6 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import type { NewArrival } from '@approved-premises/api'
+import type { NewCas1Arrival as NewArrival } from '@approved-premises/api'
 
 import { DateFormats } from '../../utils/dateUtils'
 import ArrivalService from '../../services/arrivalService'
@@ -36,14 +36,15 @@ export default class ArrivalsController {
       const { premisesId, bookingId } = req.params
       const { body } = req
 
-      const { arrivalDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'arrivalDate')
+      const { arrivalDateTime } = DateFormats.dateAndTimeInputsToIsoString(body, 'arrivalDateTime')
       const { expectedDepartureDate } = DateFormats.dateAndTimeInputsToIsoString(body, 'expectedDepartureDate')
 
       const arrival: NewArrival = {
         keyWorkerStaffCode: body.arrival.keyWorkerStaffCode,
         notes: body.arrival.notes,
-        arrivalDate,
+        arrivalDateTime,
         expectedDepartureDate,
+        type: 'cas1',
       }
 
       try {

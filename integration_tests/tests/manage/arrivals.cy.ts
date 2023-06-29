@@ -6,6 +6,7 @@ import {
   premisesFactory,
   staffMemberFactory,
 } from '../../../server/testutils/factories'
+import { DateFormats } from '../../../server/utils/dateUtils'
 
 const staff = staffMemberFactory.buildList(5, { keyWorker: true })
 
@@ -23,8 +24,10 @@ context('Arrivals', () => {
     // And I have a booking for a premises
     const premises = premisesFactory.build()
     const bookingId = 'some-uuid'
+    const arrivalDateObj = new Date(2022, 1, 11, 12, 35)
     const arrival = arrivalFactory.build({
-      arrivalDate: '2022-11-11',
+      arrivalDate: DateFormats.dateObjToIsoDate(arrivalDateObj),
+      arrivalTime: DateFormats.timeFromDate(arrivalDateObj),
       expectedDepartureDate: '2022-12-11',
     })
 
@@ -45,10 +48,11 @@ context('Arrivals', () => {
       expect(requests).to.have.length(1)
       const requestBody = JSON.parse(requests[0].body)
 
-      const { arrivalDate, expectedDepartureDate } = arrival
+      const { arrivalDate, arrivalTime, expectedDepartureDate } = arrival
+      const arrivalDateTime = `${arrivalDate}T${arrivalTime}:00.000Z`
 
       expect(requestBody.notes).equal(arrival.notes)
-      expect(requestBody.arrivalDate).equal(arrivalDate)
+      expect(requestBody.arrivalDateTime).equal(arrivalDateTime)
       expect(requestBody.keyWorkerStaffCode).equal(staff[0].code)
       expect(requestBody.expectedDepartureDate).equal(expectedDepartureDate)
     })
@@ -76,11 +80,11 @@ context('Arrivals', () => {
     cy.task('stubArrivalErrors', {
       premisesId: premises.id,
       bookingId,
-      params: ['arrivalDate', 'expectedDepartureDate', 'keyWorkerStaffCode'],
+      params: ['arrivalDateTime', 'expectedDepartureDate', 'keyWorkerStaffCode'],
     })
     page.submitArrivalFormWithoutFields()
 
     // Then I should see error messages relating to that field
-    page.shouldShowErrorMessagesForFields(['arrivalDate', 'expectedDepartureDate'])
+    page.shouldShowErrorMessagesForFields(['arrivalDateTime', 'expectedDepartureDate'])
   })
 })

@@ -1,4 +1,4 @@
-import type { Arrival, NewArrival } from '@approved-premises/api'
+import type { Arrival, NewCas1Arrival as NewArrival } from '@approved-premises/api'
 import type { BookingClient, RestClientBuilder } from '../data'
 
 export default class ArrivalService {
