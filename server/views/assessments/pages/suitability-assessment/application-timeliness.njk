@@ -1,0 +1,56 @@
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+
+{% extends "../layout.njk" %}
+
+{% block questions %}
+    <h1 class="govuk-heading-l">Application timeliness</h1>
+
+    <div class="govuk-inset-text">
+        <h2 class="govuk-heading-m">Application information</h2>
+
+        <p><span class="govuk-!-font-weight-bold">Application date: </span>{{ page.applicationDetails.applicationDate }}</p>
+        <p><span class="govuk-!-font-weight-bold">Reason for late application: </span>{{ page.applicationDetails.lateApplicationReason }}</p>
+    </div>
+
+
+        {%
+            call govukFieldset({
+                legend: {
+                    text: page.question,
+                    classes: "govuk-fieldset__legend--m"
+                }
+            })
+        %}
+
+        {{
+            formPageRadios({
+                hint: {
+                    text: "This question does not impact decision making on assessment"
+                },
+                    fieldName: "agreeWithShortNoticeReason",
+                    items: [
+                    {
+                        value: "yes",
+                        text: "Yes"
+                    },
+                    {
+                        value: "no",
+                        text: "No"
+                    }
+                    ]
+                }, fetchContext()
+            )
+        }}
+
+        {{
+            formPageTextarea({
+                fieldName: "agreeWithShortNoticeReasonComments",
+                label: {
+                    text: "Provide details to support the decision",
+                    classes: "govuk-label--s"
+                }
+            }, fetchContext())
+        }}
+
+        {% endcall %}
+{% endblock %}
