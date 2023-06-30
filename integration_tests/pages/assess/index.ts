@@ -11,6 +11,7 @@ import MatchingInformationPage from './matchingInformationPage'
 import CheckYourAnswersPage from './checkYourAnswersPage'
 import SubmissionConfirmation from './submissionConfirmation'
 import ShowPage from './showPage'
+import ApplicationTimelinessPage from './applicationTimelinessPage'
 
 export {
   ClarificationNoteConfirmPage,
@@ -26,4 +27,5 @@ export {
   CheckYourAnswersPage,
   SubmissionConfirmation,
   ShowPage,
+  ApplicationTimelinessPage,
 }
