@@ -8,6 +8,7 @@ import {
 } from '@approved-premises/api'
 import { YesOrNo } from '@approved-premises/ui'
 import {
+  ApplicationTimelinessPage,
   CheckYourAnswersPage,
   ClarificationNoteConfirmPage,
   InformationReceivedPage,
@@ -87,10 +88,10 @@ export default class AseessHelper {
     Page.verifyOnPage(TaskListPage)
   }
 
-  completeAssessment() {
+  completeAssessment(options: { isShortNoticeApplication?: boolean } = {}) {
     this.completeReviewApplicationSection()
     this.completeSufficientInformationQuestion()
-    this.completeSuitabilityOfAssessmentQuestion()
+    this.completeSuitabilityOfAssessmentQuestion({ isShortNoticeApplication: options.isShortNoticeApplication })
     this.completeRequiredActionsQuestion()
     this.completeMakeADecisionPage()
     this.completeMatchingInformationPage()
@@ -194,7 +195,7 @@ export default class AseessHelper {
     tasklistPage.shouldShowTaskStatus('sufficient-information', 'Completed')
   }
 
-  private completeSuitabilityOfAssessmentQuestion() {
+  private completeSuitabilityOfAssessmentQuestion(options: { isShortNoticeApplication?: boolean } = {}) {
     // When I click on the 'suitability-assessment' link
     cy.get('[data-cy-task-name="suitability-assessment"]').click()
 
@@ -204,6 +205,15 @@ export default class AseessHelper {
     page.clickSubmit()
     this.updateAssessmentAndStub(page)
     this.pages.assessSuitability = [page]
+
+    if (options.isShortNoticeApplication) {
+      // Then I should be taken to the application timeliness page
+      const applicationTimelinessPage = new ApplicationTimelinessPage(this.assessment)
+      applicationTimelinessPage.completeForm()
+      applicationTimelinessPage.clickSubmit()
+      this.updateAssessmentAndStub(applicationTimelinessPage)
+      this.pages.assessSuitability = [...this.pages.assessSuitability, applicationTimelinessPage]
+    }
 
     // Then I should be taken to the task list
     const tasklistPage = Page.verifyOnPage(TaskListPage)

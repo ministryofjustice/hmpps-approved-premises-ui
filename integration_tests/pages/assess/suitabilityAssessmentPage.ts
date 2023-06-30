@@ -5,16 +5,19 @@ import AssessPage from './assessPage'
 import SuitabilityAssessment from '../../../server/form-pages/assess/assessApplication/suitablityAssessment/suitabilityAssessment'
 
 export default class SuitabilityAssessmentPage extends AssessPage {
-  pageClass = new SuitabilityAssessment({
-    riskFactors: 'yes',
-    riskFactorsComments: '',
-    riskManagement: 'no',
-    riskManagementComments: '',
-    locationOfPlacement: 'no',
-    locationOfPlacementComments: '',
-    moveOnPlan: 'yes',
-    moveOnPlanComments: '',
-  })
+  pageClass = new SuitabilityAssessment(
+    {
+      riskFactors: 'yes',
+      riskFactorsComments: '',
+      riskManagement: 'no',
+      riskManagementComments: '',
+      locationOfPlacement: 'no',
+      locationOfPlacementComments: '',
+      moveOnPlan: 'yes',
+      moveOnPlanComments: '',
+    },
+    this.assessment,
+  )
 
   constructor(assessment: Assessment) {
     super(assessment, 'Suitability assessment')
