@@ -146,6 +146,17 @@
 
       {% endif %}
 
+      <h2>Documents</h2>
+
+      {{
+        govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          attributes: {
+            'data-cy-documents': true
+          },
+          rows: BookingUtils.bookingShowDocumentRows(booking)
+        })
+      }}
     </div>
   </div>
 {% endblock %}

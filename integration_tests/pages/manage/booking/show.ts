@@ -41,5 +41,10 @@ export default class BookingShowPage extends Page {
       this.assertDefinition('Reason', booking.departure.reason.name)
       this.assertDefinition('Notes', booking.departure.notes)
     })
+
+    cy.get('dl[data-cy-documents]').within(() => {
+      this.assertDefinition('Application', 'View document')
+      this.assertDefinition('Assessment', 'View document')
+    })
   }
 }

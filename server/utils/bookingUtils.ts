@@ -1,8 +1,11 @@
-import type { BespokeError, IdentityBarMenu, SelectOption, TableRow } from '@approved-premises/ui'
+import type { BespokeError, IdentityBarMenu, SelectOption, SummaryListItem, TableRow } from '@approved-premises/ui'
 import type { BedSummary, Booking } from '@approved-premises/api'
 import paths from '../paths/manage'
+import applyPaths from '../paths/apply'
+import assessPaths from '../paths/assess'
 import { DateFormats } from './dateUtils'
 import { SanitisedError } from '../sanitisedError'
+import { linkTo } from './utils'
 
 type ParsedConflictError = {
   conflictingEntityId: string
@@ -145,4 +148,58 @@ export const bedsAsSelectItems = (beds: Array<BedSummary>, selectedId: string): 
     value: bed.id,
     selected: selectedId === bed.id,
   }))
+}
+
+export const bookingShowDocumentRows = (booking: Booking): Array<SummaryListItem> => {
+  const rows = []
+
+  if (booking?.applicationId) {
+    rows.push({
+      key: {
+        text: 'Application',
+      },
+      value: {
+        html: linkTo(
+          applyPaths.applications.show,
+          { id: booking.applicationId },
+          { text: 'View document', hiddenText: 'View application' },
+        ),
+      },
+    })
+  } else {
+    rows.push({
+      key: {
+        text: 'Application',
+      },
+      value: {
+        text: 'No application attached to booking',
+      },
+    })
+  }
+
+  if (booking?.assessmentId) {
+    rows.push({
+      key: {
+        text: 'Assessment',
+      },
+      value: {
+        html: linkTo(
+          assessPaths.assessments.show,
+          { id: booking.assessmentId },
+          { text: 'View document', hiddenText: 'View assessment' },
+        ),
+      },
+    })
+  } else {
+    rows.push({
+      key: {
+        text: 'Assessment',
+      },
+      value: {
+        text: 'No assessment attached to booking',
+      },
+    })
+  }
+
+  return rows
 }

@@ -109,5 +109,7 @@ export default BookingFactory.define(() => {
     cancellations: cancellationFactory.buildList(1),
     departures: departureFactory.buildList(1),
     bed: bedFactory.build(),
+    applicationId: faker.string.uuid(),
+    assessmentId: faker.string.uuid(),
   }
 })

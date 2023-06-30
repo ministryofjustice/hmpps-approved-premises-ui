@@ -2,13 +2,17 @@ import { SanitisedError } from '../sanitisedError'
 import {
   bedsAsSelectItems,
   bookingActions,
+  bookingShowDocumentRows,
   bookingsToTableRows,
   generateConflictBespokeError,
   manageBookingLink,
 } from './bookingUtils'
 import { bedSummaryFactory, bookingFactory, personFactory } from '../testutils/factories'
 import paths from '../paths/manage'
+import assessPaths from '../paths/assess'
+import applyPaths from '../paths/apply'
 import { DateFormats } from './dateUtils'
+import { linkTo } from './utils'
 
 describe('bookingUtils', () => {
   const premisesId = 'e8f29a4a-dd4d-40a2-aa58-f3f60245c8fc'
@@ -263,6 +267,62 @@ describe('bookingUtils', () => {
       expect(bedsAsSelectItems(beds, beds[0].id)).toEqual([
         { text: `Bed name: ${beds[0].name}, room name: ${beds[0].roomName}`, value: beds[0].id, selected: true },
         { text: `Bed name: ${beds[1].name}, room name: ${beds[1].roomName}`, value: beds[1].id, selected: false },
+      ])
+    })
+  })
+
+  describe('bookingShowDocumentRows', () => {
+    it('should return an array of document rows when the application and assessment are defined', () => {
+      const booking = bookingFactory.build()
+
+      expect(bookingShowDocumentRows(booking)).toEqual([
+        {
+          key: {
+            text: 'Application',
+          },
+          value: {
+            html: linkTo(
+              applyPaths.applications.show,
+              { id: booking.applicationId },
+              { text: 'View document', hiddenText: 'View application' },
+            ),
+          },
+        },
+        {
+          key: {
+            text: 'Assessment',
+          },
+          value: {
+            html: linkTo(
+              assessPaths.assessments.show,
+              { id: booking.assessmentId },
+              { text: 'View document', hiddenText: 'View assessment' },
+            ),
+          },
+        },
+      ])
+    })
+
+    it('should return an empty array if there arent documents attached to the booking', () => {
+      const booking = bookingFactory.build({ applicationId: undefined, assessmentId: undefined })
+
+      expect(bookingShowDocumentRows(booking)).toEqual([
+        {
+          key: {
+            text: 'Application',
+          },
+          value: {
+            text: 'No application attached to booking',
+          },
+        },
+        {
+          key: {
+            text: 'Assessment',
+          },
+          value: {
+            text: 'No assessment attached to booking',
+          },
+        },
       ])
     })
   })

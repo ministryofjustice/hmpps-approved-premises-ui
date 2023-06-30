@@ -1,4 +1,6 @@
 import {
+  applicationFactory,
+  assessmentFactory,
   bedDetailFactory,
   bedSummaryFactory,
   bookingFactory,
@@ -183,7 +185,19 @@ context('Booking', () => {
   it('should allow me to see a booking', () => {
     // Given a booking is available
     const premises = premisesFactory.build()
-    const booking = bookingFactory.build()
+    const application = applicationFactory.build({
+      status: 'submitted',
+    })
+    const assessment = assessmentFactory.build({
+      status: 'completed',
+    })
+    const booking = bookingFactory.build({
+      applicationId: application.id,
+      assessmentId: assessment.id,
+    })
+    cy.task('stubBookingGet', { premisesId: premises.id, booking })
+    cy.task('stubApplicationGet', { application })
+    cy.task('stubAssessment', assessment)
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
 
     // When I navigate to the booking's manage page
