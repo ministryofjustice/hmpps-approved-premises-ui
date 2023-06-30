@@ -1,9 +1,11 @@
 import { assessmentFactory } from '../../../../testutils/factories'
+import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 import { YesOrNo } from '../../../../@types/ui'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import SuitabilityAssessment from './suitabilityAssessment'
 
+jest.mock('../../../../utils/applications/noticeTypeFromApplication')
 
 describe('SuitabilityAssessment', () => {
   const assessment = assessmentFactory.build()
@@ -118,6 +120,24 @@ describe('SuitabilityAssessment', () => {
         'Is the move on plan sufficient?': 'Yes',
         'Is the move on plan sufficient? Additional comments': 'Move on plan comments',
       })
+    })
+  })
+
+  describe('next', () => {
+    it('returns application-timeliness for a short notice application', () => {
+      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
+
+      const page = new SuitabilityAssessment(
+        {
+          riskFactors: 'yes',
+          riskManagement: 'yes',
+          locationOfPlacement: 'yes',
+          moveOnPlan: 'yes',
+        },
+        assessment,
+      )
+
+      expect(page.next()).toBe('application-timeliness')
     })
   })
 })

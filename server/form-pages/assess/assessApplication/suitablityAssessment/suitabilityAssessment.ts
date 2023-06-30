@@ -1,4 +1,5 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
 
 import { Page } from '../../../utils/decorators'
@@ -57,6 +58,10 @@ export default class SuitabilityAssessment implements TasklistPage {
   }
 
   next() {
+    if (noticeTypeFromApplication(this.assessment.application) === 'short_notice') {
+      return 'application-timeliness'
+    }
+
     return ''
   }
 
