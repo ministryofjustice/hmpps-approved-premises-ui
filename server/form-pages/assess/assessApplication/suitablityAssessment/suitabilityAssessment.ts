@@ -1,4 +1,5 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
 
 import { Page } from '../../../utils/decorators'
 
@@ -48,6 +49,7 @@ export default class SuitabilityAssessment implements TasklistPage {
       moveOnPlan: YesOrNo
       moveOnPlanComments?: string
     },
+    private readonly assessment: Assessment,
   ) {}
 
   previous() {
