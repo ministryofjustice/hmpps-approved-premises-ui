@@ -56,8 +56,8 @@ jobs:
           name: Linter check
           command: npm run lint
       - run:
-          name: Link shell scripts
-          command: node_modules/.bin/shellcheck ./script/**/*[^utils] ./script/utils/**
+          name: Lint shell scripts
+          command: npm run shellcheck
       - persist_to_workspace:
           root: .
           paths:
