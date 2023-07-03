@@ -350,7 +350,9 @@
       "previousPlacement": "yes",
       "previousPlacementDetail": "Some details here"
     },
-
+    "rfap": {
+      "needARfap": "yes"
+    },
     "catering": {
       "catering": "no",
       "cateringDetail": "Some details here"

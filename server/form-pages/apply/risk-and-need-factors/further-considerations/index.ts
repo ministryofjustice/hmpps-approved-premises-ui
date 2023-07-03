@@ -9,6 +9,7 @@ import Arson from './arson'
 import ContingencyPlanPartners from './contingencyPlanPartners'
 import ContingencyPlanQuestions from './contingencyPlanQuestions'
 import TriggerPlan from './triggerPlan'
+import Rfap from './rfap'
 
 import { Task } from '../../../utils/decorators'
 
@@ -19,6 +20,7 @@ import { Task } from '../../../utils/decorators'
     RoomSharing,
     Vulnerability,
     PreviousPlacements,
+    Rfap,
     Catering,
     Arson,
     AdditionalCircumstances,

@@ -711,6 +711,11 @@ export default class ApplyHelper {
     previousPlacementsPage.completeForm()
     previousPlacementsPage.clickSubmit()
 
+    // And I complete the RFAP pages
+    const rfapPage = new ApplyPages.RfapPage(this.application)
+    rfapPage.completeForm()
+    rfapPage.clickSubmit()
+
     // And I complete the Catering page
     const cateringPage = new ApplyPages.CateringPage(this.application)
     cateringPage.completeForm()
