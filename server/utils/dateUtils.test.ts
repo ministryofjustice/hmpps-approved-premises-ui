@@ -185,6 +185,14 @@ describe('uiDateOrDateEmptyMessage', () => {
     expect(uiDateOrDateEmptyMessage(object, 'shouldBeADate', () => 'string')).toEqual('No date supplied')
   })
 
+  it('if the date is null it returns the message', () => {
+    const object: Record<string, undefined> = {
+      shouldBeADate: null,
+    }
+
+    expect(uiDateOrDateEmptyMessage(object, 'shouldBeADate', () => 'string')).toEqual('No date supplied')
+  })
+
   it('if the date is defined it returns the date formatted using the format function', () => {
     const object: Record<string, string> = {
       aDate: DateFormats.dateObjToIsoDate(new Date(2023, 3, 12)),
