@@ -10,7 +10,7 @@ export default class CateringPage extends ApplyPage {
       application,
       'further-considerations',
       'catering',
-      paths.applications.pages.show({ id: application.id, task: 'further-considerations', page: 'complex-case-board' }),
+      paths.applications.pages.show({ id: application.id, task: 'further-considerations', page: 'rfap-details' }),
     )
     cy.get('.govuk-form-group').contains(
       `Can ${application.person.name} be placed in a self-catered Approved Premises (AP)?`,

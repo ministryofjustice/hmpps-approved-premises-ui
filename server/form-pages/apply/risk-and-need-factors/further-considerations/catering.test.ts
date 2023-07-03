@@ -1,7 +1,10 @@
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue } from '../../../shared-examples'
 
 import Catering from './catering'
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+
+jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
 
 describe('Catering', () => {
   const person = personFactory.build({ name: 'John Wayne' })
@@ -31,7 +34,20 @@ describe('Catering', () => {
   })
 
   itShouldHaveNextValue(new Catering(body, application), 'arson')
-  itShouldHavePreviousValue(new Catering(body, application), 'complex-case-board')
+
+  describe('previous', () => {
+    it('returns rfap if the answer to the rfap question is no', () => {
+      ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce('no')
+
+      expect(new Catering(body, application).previous()).toEqual('rfap')
+    })
+
+    it('returns rfap-details if the answer to the rfap question is yes', () => {
+      ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce('yes')
+
+      expect(new Catering(body, application).previous()).toEqual('rfap-details')
+    })
+  })
 
   describe('errors', () => {
     it('should return errors when yes/no questions are blank', () => {
