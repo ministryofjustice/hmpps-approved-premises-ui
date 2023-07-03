@@ -12,9 +12,24 @@
     "male-ap": {
       "shouldPersonBePlacedInMaleAp": "yes"
     },
+    "end-dates": {
+      "ledDate-year": "2022",
+      "ledDate-month": "11",
+      "ledDate-day": "14",
+      "ledDate": "2022-11-14",
+      "sedDate-year": "2022",
+      "sedDate-month": "11",
+      "sedDate-day": "14",
+      "sedDate": "2022-11-14",
+      "pssDate-year": "2022",
+      "pssDate-month": "11",
+      "pssDate-day": "14",
+      "pssDate": "2022-11-14"
+    },
     "sentence-type": {
       "sentenceType": "communityOrder"
     },
+
     "situation": {
       "situation": "riskManagement"
     },

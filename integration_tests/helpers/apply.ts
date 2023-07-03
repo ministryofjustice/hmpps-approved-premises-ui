@@ -392,6 +392,10 @@ export default class ApplyHelper {
     maleApPage.completeForm()
     maleApPage.clickSubmit()
 
+    const endDatesPage = new ApplyPages.EndDatesPage(this.application)
+    endDatesPage.completeForm()
+    endDatesPage.clickSubmit()
+
     const sentenceTypePage = new ApplyPages.SentenceTypePage(this.application)
     sentenceTypePage.completeForm()
     sentenceTypePage.clickSubmit()
@@ -424,6 +428,7 @@ export default class ApplyHelper {
       complexCaseBoardPage,
       boardTakenPlacePage,
       maleApPage,
+      endDatesPage,
       sentenceTypePage,
       releaseDatePage,
       placementStartPage,

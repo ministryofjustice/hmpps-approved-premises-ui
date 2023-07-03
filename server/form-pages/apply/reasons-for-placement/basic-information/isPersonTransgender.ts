@@ -21,7 +21,7 @@ export default class IsPersonTransgender implements TasklistPage {
   }
 
   next() {
-    return this.body.transgenderOrHasTransgenderHistory === 'yes' ? 'complex-case-board' : 'sentence-type'
+    return this.body.transgenderOrHasTransgenderHistory === 'yes' ? 'complex-case-board' : 'end-dates'
   }
 
   response() {

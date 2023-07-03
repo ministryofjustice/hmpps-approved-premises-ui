@@ -35,7 +35,7 @@ describe('IsPersonTransgender', () => {
   describe('if the answer is no', () => {
     itShouldHaveNextValue(
       new IsPersonTransgender({ transgenderOrHasTransgenderHistory: 'no' }, application),
-      'sentence-type',
+      'end-dates',
     )
   })
 

@@ -26,7 +26,7 @@ describe('MaleAp', () => {
     })
   })
 
-  itShouldHaveNextValue(new MaleAp(body), 'sentence-type')
+  itShouldHaveNextValue(new MaleAp(body), 'end-dates')
   itShouldHavePreviousValue(new MaleAp(body), 'board-taken-place')
 
   describe('errors', () => {
