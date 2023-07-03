@@ -4,6 +4,8 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { yesOrNoResponseWithDetailForNo } from '../../../utils'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import Rfap from './rfap'
 
 export const questionKeys = ['catering'] as const
 
@@ -26,7 +28,11 @@ export default class Catering implements TasklistPage {
   ) {}
 
   previous() {
-    return 'complex-case-board'
+    const rfapResponse = retrieveQuestionResponseFromFormArtifact(this.application, Rfap, 'needARfap')
+    if (rfapResponse === 'no') {
+      return 'rfap'
+    }
+    return 'rfap-details'
   }
 
   next() {

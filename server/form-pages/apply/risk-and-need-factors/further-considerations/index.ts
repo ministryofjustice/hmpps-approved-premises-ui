@@ -9,8 +9,10 @@ import Arson from './arson'
 import ContingencyPlanPartners from './contingencyPlanPartners'
 import ContingencyPlanQuestions from './contingencyPlanQuestions'
 import TriggerPlan from './triggerPlan'
+import Rfap from './rfap'
 
 import { Task } from '../../../utils/decorators'
+import RfapDetails from './rfapDetails'
 
 @Task({
   name: 'Detail further considerations for placement',
@@ -19,6 +21,8 @@ import { Task } from '../../../utils/decorators'
     RoomSharing,
     Vulnerability,
     PreviousPlacements,
+    Rfap,
+    RfapDetails,
     Catering,
     Arson,
     AdditionalCircumstances,

@@ -31,7 +31,7 @@ describe('PreviousPlacements', () => {
     })
   })
 
-  itShouldHaveNextValue(new PreviousPlacements(body, application), 'catering')
+  itShouldHaveNextValue(new PreviousPlacements(body, application), 'rfap')
   itShouldHavePreviousValue(new PreviousPlacements(body, application), 'vulnerability')
 
   describe('errors', () => {

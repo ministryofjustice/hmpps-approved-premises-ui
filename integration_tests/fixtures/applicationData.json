@@ -350,7 +350,15 @@
       "previousPlacement": "yes",
       "previousPlacementDetail": "Some details here"
     },
-
+    "rfap": {
+      "needARfap": "yes"
+    },
+    "rfap-details": {
+      "motivation": "Some motivation",
+      "continuedRecovery": "Some work",
+      "receivingTreatment": "yes",
+      "receivingTreatmentDetail": "Some details here"
+    },
     "catering": {
       "catering": "no",
       "cateringDetail": "Some details here"
