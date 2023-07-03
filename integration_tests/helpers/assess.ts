@@ -26,6 +26,7 @@ import Page from '../pages/page'
 import { updateAssessmentData } from '../../server/form-pages/utils'
 import AssessPage from '../pages/assess/assessPage'
 import { assessmentSummaryFactory } from '../../server/testutils/factories'
+import RfapSuitabilityPage from '../pages/assess/rfapSuitability'
 
 export default class AseessHelper {
   assessmentSummary: AssessmentSummary
@@ -200,11 +201,18 @@ export default class AseessHelper {
     cy.get('[data-cy-task-name="suitability-assessment"]').click()
 
     // Then I should be taken to the suitability assessment page
-    const page = new SuitabilityAssessmentPage(this.assessment)
-    page.completeForm()
-    page.clickSubmit()
-    this.updateAssessmentAndStub(page)
-    this.pages.assessSuitability = [page]
+    const suitabilityAssessmentPage = new SuitabilityAssessmentPage(this.assessment)
+    suitabilityAssessmentPage.completeForm()
+    suitabilityAssessmentPage.clickSubmit()
+    this.updateAssessmentAndStub(suitabilityAssessmentPage)
+
+    const rfapSuitabilityPage = new RfapSuitabilityPage(this.assessment)
+    rfapSuitabilityPage.completeForm()
+    rfapSuitabilityPage.clickSubmit()
+
+    this.updateAssessmentAndStub(rfapSuitabilityPage)
+
+    this.pages.assessSuitability = [suitabilityAssessmentPage, rfapSuitabilityPage]
 
     if (options.isShortNoticeApplication) {
       // Then I should be taken to the application timeliness page
