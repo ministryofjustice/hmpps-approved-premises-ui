@@ -716,6 +716,10 @@ export default class ApplyHelper {
     rfapPage.completeForm()
     rfapPage.clickSubmit()
 
+    const rfapDetailsPage = new ApplyPages.RfapDetailsPage(this.application)
+    rfapDetailsPage.completeForm()
+    rfapDetailsPage.clickSubmit()
+
     // And I complete the Catering page
     const cateringPage = new ApplyPages.CateringPage(this.application)
     cateringPage.completeForm()
@@ -761,6 +765,8 @@ export default class ApplyHelper {
       roomSharingPage,
       vulnerabilityPage,
       previousPlacementsPage,
+      rfapPage,
+      rfapDetailsPage,
       cateringPage,
       arsonPage,
       additionalCircumstancesPage,

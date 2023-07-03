@@ -37,6 +37,7 @@ import RehabilitativeInterventions from './rehabilitativeInterventions'
 import ReleaseDatePage from './releaseDate'
 import RelocationRegionPage from './relocationRegion'
 import RfapPage from './rfap'
+import RfapDetailsPage from './rfapDetails'
 import RiskManagementFeatures from './riskManagementFeatures'
 import RiskManagementPlanPage from './riskManagementPlan'
 import RiskToSelfPage from './riskToSelf'
@@ -97,6 +98,7 @@ export {
   ReleaseDatePage,
   RelocationRegionPage,
   RfapPage,
+  RfapDetailsPage,
   RiskManagementFeatures,
   RiskManagementPlanPage,
   RiskToSelfPage,

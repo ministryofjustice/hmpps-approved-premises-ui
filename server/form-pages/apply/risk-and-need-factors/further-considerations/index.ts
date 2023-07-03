@@ -12,6 +12,7 @@ import TriggerPlan from './triggerPlan'
 import Rfap from './rfap'
 
 import { Task } from '../../../utils/decorators'
+import RfapDetails from './rfapDetails'
 
 @Task({
   name: 'Detail further considerations for placement',
@@ -21,6 +22,7 @@ import { Task } from '../../../utils/decorators'
     Vulnerability,
     PreviousPlacements,
     Rfap,
+    RfapDetails,
     Catering,
     Arson,
     AdditionalCircumstances,
