@@ -53,7 +53,7 @@
                 {% for adjudication in adjudications %}
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell">{{ adjudication.id }}</td>
-                        <td class="govuk-table__cell">{{ formatDateTime(adjudication.reportedAt) }}</td>
+                        <td class="govuk-table__cell">{{ uiDateOrDateEmptyMessage(adjudication, 'reportedAt', formatDateTime) }}</td>
                         <td class="govuk-table__cell">{{ adjudication.establishment }}</td>
                         <td class="govuk-table__cell">{{ adjudication.offenceDescription }}</td>
                         <td class="govuk-table__cell">{{ adjudication.finding | sentenceCase }}</td>
@@ -80,8 +80,8 @@
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell">{{ alert.alertId }}</td>
                         <td class="govuk-table__cell">{{ alert.comment }}</td>
-                        <td class="govuk-table__cell">{{ formatDate(alert.dateCreated) }}</td>
-                        <td class="govuk-table__cell">{{ formatDate(alert.dateExpires) }}</td>
+                        <td class="govuk-table__cell">{{ uiDateOrDateEmptyMessage(alert, 'dateCreated', formatDate) }}</td>
+                        <td class="govuk-table__cell">{{ uiDateOrDateEmptyMessage(alert, 'dateExpires', formatDate) }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
