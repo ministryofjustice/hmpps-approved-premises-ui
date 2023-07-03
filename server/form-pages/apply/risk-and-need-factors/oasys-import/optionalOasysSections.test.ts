@@ -1,4 +1,5 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
+import { OasysNotFoundError } from '../../../../services/personService'
 import { ApplicationService, PersonService } from '../../../../services'
 import { applicationFactory, oasysSelectionFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
@@ -95,6 +96,21 @@ describe('OptionalOasysSections', () => {
 
       expect(page.body.needsLinkedToReoffending).toEqual([needsLinkedToReoffending[0]])
       expect(page.body.otherNeeds).toEqual([otherNeeds[0], otherNeeds[1]])
+    })
+
+    it('sets oasysSuccess to false if an OasysNotFoundError is thrown', async () => {
+      getOasysSelectionsMock.mockImplementation(() => {
+        throw new OasysNotFoundError('')
+      })
+
+      const page = await OptionalOasysSections.initialize({}, application, 'some-token', {
+        personService,
+        applicationService,
+      })
+
+      expect(page.oasysSuccess).toEqual(false)
+      expect(page.body.needsLinkedToReoffending).toEqual([])
+      expect(page.body.otherNeeds).toEqual([])
     })
   })
 

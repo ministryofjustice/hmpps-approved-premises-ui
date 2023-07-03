@@ -1,3 +1,4 @@
+import { OasysNotFoundError } from '../../../../services/personService'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -31,6 +32,8 @@ export default class OptionalOasysSections implements TasklistPage {
 
   allOtherNeeds: Array<OASysSection>
 
+  oasysSuccess: boolean
+
   constructor(public body: Partial<Body>) {}
 
   static async initialize(
@@ -39,23 +42,34 @@ export default class OptionalOasysSections implements TasklistPage {
     token: string,
     dataServices: DataServices,
   ) {
-    const oasysSelections = await dataServices.personService.getOasysSelections(token, application.person.crn)
-
-    const allNeedsLinkedToReoffending = oasysSelections.filter(
-      section => !section.linkedToHarm && section.linkedToReOffending,
-    )
-    const allOtherNeeds = oasysSelections.filter(section => !section.linkedToHarm && !section.linkedToReOffending)
-
-    body.needsLinkedToReoffending = OptionalOasysSections.getSelectedNeeds(
-      body.needsLinkedToReoffending,
-      allNeedsLinkedToReoffending,
-    )
-    body.otherNeeds = OptionalOasysSections.getSelectedNeeds(body.otherNeeds, allOtherNeeds)
-
     const page = new OptionalOasysSections(body as Body)
 
-    page.allNeedsLinkedToReoffending = allNeedsLinkedToReoffending
-    page.allOtherNeeds = allOtherNeeds
+    try {
+      const oasysSelections = await dataServices.personService.getOasysSelections(token, application.person.crn)
+
+      const allNeedsLinkedToReoffending = oasysSelections.filter(
+        section => !section.linkedToHarm && section.linkedToReOffending,
+      )
+      const allOtherNeeds = oasysSelections.filter(section => !section.linkedToHarm && !section.linkedToReOffending)
+
+      page.body.needsLinkedToReoffending = OptionalOasysSections.getSelectedNeeds(
+        body.needsLinkedToReoffending,
+        allNeedsLinkedToReoffending,
+      )
+      page.body.otherNeeds = OptionalOasysSections.getSelectedNeeds(body.otherNeeds, allOtherNeeds)
+
+      page.allNeedsLinkedToReoffending = allNeedsLinkedToReoffending
+      page.allOtherNeeds = allOtherNeeds
+      page.oasysSuccess = true
+    } catch (e) {
+      if (e instanceof OasysNotFoundError) {
+        page.oasysSuccess = false
+        page.body.needsLinkedToReoffending = []
+        page.body.otherNeeds = []
+      } else {
+        throw e
+      }
+    }
 
     return page
   }
