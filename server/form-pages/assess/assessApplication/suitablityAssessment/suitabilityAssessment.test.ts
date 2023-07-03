@@ -1,7 +1,7 @@
 import { assessmentFactory } from '../../../../testutils/factories'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 import { YesOrNo } from '../../../../@types/ui'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import SuitabilityAssessment from './suitabilityAssessment'
 
@@ -43,18 +43,52 @@ describe('SuitabilityAssessment', () => {
     })
   })
 
-  itShouldHaveNextValue(
-    new SuitabilityAssessment(
-      {
-        riskFactors: 'yes',
-        riskManagement: 'yes',
-        locationOfPlacement: 'yes',
-        moveOnPlan: 'yes',
-      },
-      assessment,
-    ),
-    '',
-  )
+  describe('next', () => {
+    it('returns application-timeliness if the notice type is short_notice', () => {
+      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
+      expect(
+        new SuitabilityAssessment(
+          {
+            riskFactors: 'yes',
+            riskManagement: 'yes',
+            locationOfPlacement: 'yes',
+            moveOnPlan: 'yes',
+          },
+          assessment,
+        ).next(),
+      ).toEqual('application-timeliness')
+    })
+
+    it('returns application-timeliness if the notice type is emergency', () => {
+      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('emergency')
+      expect(
+        new SuitabilityAssessment(
+          {
+            riskFactors: 'yes',
+            riskManagement: 'yes',
+            locationOfPlacement: 'yes',
+            moveOnPlan: 'yes',
+          },
+          assessment,
+        ).next(),
+      ).toEqual('application-timeliness')
+    })
+
+    it('returns an empty string if the notice type is standard', () => {
+      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('standard')
+      expect(
+        new SuitabilityAssessment(
+          {
+            riskFactors: 'yes',
+            riskManagement: 'yes',
+            locationOfPlacement: 'yes',
+            moveOnPlan: 'yes',
+          },
+          assessment,
+        ).next(),
+      ).toEqual('')
+    })
+  })
 
   itShouldHavePreviousValue(
     new SuitabilityAssessment(

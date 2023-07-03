@@ -6,6 +6,8 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import Rfap from '../../../apply/risk-and-need-factors/further-considerations/rfap'
 
 export type SuitabilityAssessmentSection = {
   riskFactors: string
@@ -58,7 +60,20 @@ export default class SuitabilityAssessment implements TasklistPage {
   }
 
   next() {
-    if (noticeTypeFromApplication(this.assessment.application) === 'short_notice') {
+    const needsRfap = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+      this.assessment.application,
+      Rfap,
+      'needARfap',
+    )
+
+    if (needsRfap === 'yes') {
+      return 'rfap-suitability'
+    }
+
+    if (
+      noticeTypeFromApplication(this.assessment.application) === 'short_notice' ||
+      noticeTypeFromApplication(this.assessment.application) === 'emergency'
+    ) {
       return 'application-timeliness'
     }
 
