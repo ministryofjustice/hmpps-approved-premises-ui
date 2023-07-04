@@ -172,6 +172,100 @@
             }
           }
         },
+        "end-dates": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "sedDate-year": {
+                  "type": "string"
+                },
+                "sedDate-month": {
+                  "type": "string"
+                },
+                "sedDate-day": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "sedDate-time": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "sedDate": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "ledDate-year": {
+                  "type": "string"
+                },
+                "ledDate-month": {
+                  "type": "string"
+                },
+                "ledDate-day": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "ledDate-time": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "ledDate": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "pssDate-year": {
+                  "type": "string"
+                },
+                "pssDate-month": {
+                  "type": "string"
+                },
+                "pssDate-day": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "pssDate-time": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "pssDate": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
         "situation": {
           "type": "object",
           "properties": {
