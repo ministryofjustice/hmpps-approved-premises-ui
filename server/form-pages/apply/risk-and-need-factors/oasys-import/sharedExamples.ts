@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { Constructor } from '../../../../utils/oasysImportUtils'
 import type TasklistPage from '../../../tasklistPage'
 

@@ -4,7 +4,7 @@ import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/
 import type { ApprovedPremisesApplication, ArrayOfOASysRiskOfSeriousHarmSummaryQuestions } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
-import { getOasysSections, oasysImportReponse, validateOasysEntries } from '../../../../utils/oasysImportUtils'
+import { getOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
 
 type RoshSummaryBody = {
   roshAnswers: Record<string, string>
@@ -56,6 +56,6 @@ export default class RoshSummary implements OasysPage {
   }
 
   errors() {
-    return validateOasysEntries<RoshSummaryBody>(this.body, 'roshSummaries', 'roshAnswers')
+    return {}
   }
 }
