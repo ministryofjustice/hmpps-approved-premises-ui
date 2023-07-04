@@ -12,6 +12,8 @@ import paths from '../paths/manage'
 import { DateFormats } from './dateUtils'
 
 import { BedOccupancyEntryCalendar, BedOccupancyEntryUi, BedOccupancyRangeUi } from '../@types/ui'
+import { encodeOverbooking } from './bedUtils'
+import { createQueryString } from './utils'
 
 export const tableClass = 'govuk-table'
 export const calendarTableClass = `${tableClass} ${tableClass}--calendar`
@@ -105,7 +107,9 @@ export const labelForScheduleItem = (
       break
     case 'overbooking':
       label = 'Overbooked'
-      link = paths.premises.beds.show({ bedId, premisesId })
+      link = `${paths.premises.beds.overbookings.show({ bedId, premisesId })}?${createQueryString({
+        overbooking: encodeOverbooking(bedOccupancyEntry),
+      })}`
       break
     default:
       throw new Error(`Unknown entry type: ${(bedOccupancyEntry as BedOccupancyEntryUi).type}`)

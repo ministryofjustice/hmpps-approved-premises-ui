@@ -29,6 +29,7 @@ import {
   bedOccupancyEntryOverbookingUiFactory,
 } from '../testutils/factories/bedOccupancyRange'
 import { DateFormats } from './dateUtils'
+import { encodeOverbooking } from './bedUtils'
 
 describe('calendarUtils', () => {
   const premisesId = 'some-uuid'
@@ -214,7 +215,9 @@ describe('calendarUtils', () => {
 
       expect(labelForScheduleItem(bedOccupancyEntry, premisesId, bedId)).toMatchStringIgnoringWhitespace(
         `<span title="${expectedText}" class="tooltip">
-          <a href="/premises/${premisesId}/beds/${bedId}" class="govuk-link govuk-link--overbooking">${expectedText}</a>
+          <a href="/premises/${premisesId}/beds/${bedId}/overbookings?overbooking=${encodeOverbooking(
+          bedOccupancyEntry,
+        )}" class="govuk-link govuk-link--overbooking">${expectedText}</a>
         </span>`,
       )
     })
