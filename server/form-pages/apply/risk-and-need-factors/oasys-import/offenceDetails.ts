@@ -3,7 +3,7 @@ import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/
 import type { ApprovedPremisesApplication, ArrayOfOASysOffenceDetailsQuestions } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
-import { getOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
+import { getOasysSections, oasysImportReponse, validateOasysEntries } from '../../../../utils/oasysImportUtils'
 
 type OffenceDetailsBody = {
   offenceDetailsAnswers: Record<string, string>
@@ -55,6 +55,6 @@ export default class OffenceDetails implements OasysPage {
   }
 
   errors() {
-    return {}
+    return validateOasysEntries<OffenceDetailsBody>(this.body, 'offenceDetailsSummaries', 'offenceDetailsAnswers')
   }
 }

@@ -5,6 +5,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
 import RiskManagementPlan from './riskManagementPlan'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
+import { itShouldHandleErrors } from './sharedExamples'
 
 jest.mock('../../../../services/personService.ts')
 
@@ -53,11 +54,9 @@ describe('RiskManagement', () => {
 
     itShouldHavePreviousValue(new RiskManagementPlan({}), 'supporting-information')
 
-    describe('errors', () => {
-      it('should return an empty object', () => {
-        const page = new RiskManagementPlan({})
-        expect(page.errors()).toEqual({})
-      })
+    itShouldHandleErrors(RiskManagementPlan, {
+      answerKey: 'riskManagementAnswers',
+      summaryKey: 'riskManagementSummaries',
     })
 
     describe('response', () => {

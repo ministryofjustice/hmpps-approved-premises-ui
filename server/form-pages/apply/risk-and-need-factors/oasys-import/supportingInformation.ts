@@ -3,7 +3,12 @@ import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/
 import type { ApprovedPremisesApplication, ArrayOfOASysSupportingInformationQuestions } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
-import { fetchOptionalOasysSections, getOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
+import {
+  fetchOptionalOasysSections,
+  getOasysSections,
+  oasysImportReponse,
+  validateOasysEntries,
+} from '../../../../utils/oasysImportUtils'
 
 type SupportingInformationBody = {
   supportingInformationAnswers: Record<string, string>
@@ -56,6 +61,10 @@ export default class SupportingInformation implements OasysPage {
   }
 
   errors() {
-    return {}
+    return validateOasysEntries<SupportingInformationBody>(
+      this.body,
+      'supportingInformationSummaries',
+      'supportingInformationAnswers',
+    )
   }
 }

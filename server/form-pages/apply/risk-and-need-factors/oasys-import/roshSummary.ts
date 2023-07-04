@@ -56,6 +56,6 @@ export default class RoshSummary implements OasysPage {
   }
 
   errors() {
-    return {}
+    return validateOasysEntries<RoshSummaryBody>(this.body, 'roshSummaries', 'roshAnswers')
   }
 }

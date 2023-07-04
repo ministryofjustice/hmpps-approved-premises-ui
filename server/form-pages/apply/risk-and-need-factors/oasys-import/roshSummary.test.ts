@@ -5,6 +5,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
 import RoshSummary from './roshSummary'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
+import { itShouldHandleErrors } from './sharedExamples'
 
 jest.mock('../../../../services/personService.ts')
 
@@ -54,12 +55,7 @@ describe('RoshSummary', () => {
 
     itShouldHavePreviousValue(new RoshSummary({}), 'optional-oasys-sections')
 
-    describe('errors', () => {
-      it('should return an empty object', () => {
-        const page = new RoshSummary({})
-        expect(page.errors()).toEqual({})
-      })
-    })
+    itShouldHandleErrors(RoshSummary, { answerKey: 'roshAnswers', summaryKey: 'roshSummaries' })
 
     describe('response', () => {
       it('calls oasysImportReponse with the correct arguments', () => {
