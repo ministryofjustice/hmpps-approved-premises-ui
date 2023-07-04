@@ -208,14 +208,14 @@ context('Assess', () => {
 
         application.data = applicationData
 
-        const nextWeek = addDays(new Date(), 8)
+        const tomorrow = addDays(new Date(), 1)
 
         application = addResponsesToFormArtifact(application, {
           section: 'basic-information',
           page: 'release-date',
           keyValuePairs: {
-            ...DateFormats.dateObjectToDateInputs(nextWeek, 'releaseDate'),
-            releaseDate: DateFormats.dateObjToIsoDate(nextWeek),
+            ...DateFormats.dateObjectToDateInputs(tomorrow, 'releaseDate'),
+            releaseDate: DateFormats.dateObjToIsoDate(tomorrow),
             knowReleaseDate: 'yes',
           },
         }) as Application
@@ -238,7 +238,7 @@ context('Assess', () => {
         assessment.application.submittedAt = application.submittedAt
 
         assessment.data = {}
-        const documents = documentFactory.buildList(4)
+        const documents = documentFactory.buildList(1)
         assessment.application = overwriteApplicationDocuments(assessment.application, documents)
         const user = userFactory.build()
 
@@ -252,6 +252,7 @@ context('Assess', () => {
     it('allows me to assess a short notice application', function test() {
       // Given there is a short notice application awaiting assessment
       this.assessHelper.setupStubs()
+
       // And I start an assessment
       this.assessHelper.startAssessment()
 
