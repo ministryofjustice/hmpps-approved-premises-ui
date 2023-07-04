@@ -6,7 +6,6 @@ import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import RiskToSelf from './riskToSelf'
-import { itShouldHandleErrors } from './sharedExamples'
 
 jest.mock('../../../../services/personService.ts')
 
@@ -51,9 +50,11 @@ describe('RiskToSelf', () => {
 
     itShouldHavePreviousValue(new RiskToSelf({}), 'risk-management-plan')
 
-    itShouldHandleErrors(RiskToSelf, {
-      answerKey: 'riskToSelfAnswers',
-      summaryKey: 'riskToSelfSummaries',
+    describe('errors', () => {
+      it('should return an empty object', () => {
+        const page = new RiskToSelf({})
+        expect(page.errors()).toEqual({})
+      })
     })
 
     describe('response', () => {

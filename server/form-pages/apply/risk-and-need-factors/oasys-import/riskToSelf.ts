@@ -3,7 +3,7 @@ import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/
 import type { ApprovedPremisesApplication, ArrayOfOASysRiskToSelfQuestions } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
-import { getOasysSections, oasysImportReponse, validateOasysEntries } from '../../../../utils/oasysImportUtils'
+import { getOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
 
 type RiskToSelfBody = {
   riskToSelfAnswers: Record<string, string>
@@ -55,6 +55,6 @@ export default class RiskToSelf implements OasysPage {
   }
 
   errors() {
-    return validateOasysEntries<RiskToSelfBody>(this.body, 'riskToSelfSummaries', 'riskToSelfAnswers')
+    return {}
   }
 }

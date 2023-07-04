@@ -3,7 +3,7 @@ import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/
 import type { ApprovedPremisesApplication, ArrayOfOASysRiskManagementQuestions } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
-import { getOasysSections, oasysImportReponse, validateOasysEntries } from '../../../../utils/oasysImportUtils'
+import { getOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
 
 type RiskManagementBody = {
   riskManagementAnswers: Record<string, string>
@@ -57,6 +57,6 @@ export default class RiskManagementPlan implements OasysPage {
   }
 
   errors() {
-    return validateOasysEntries<RiskManagementBody>(this.body, 'riskManagementSummaries', 'riskManagementAnswers')
+    return {}
   }
 }
