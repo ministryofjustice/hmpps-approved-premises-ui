@@ -1,61 +1,92 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% extends "../layout.njk" %}
 
 {% block questions %}
 
-    <h1 class="govuk-heading-l">{{page.title}}</h1>
+    {% if page.oasysSuccess %}
+        <h1 class="govuk-heading-l">{{page.title}}</h1>
 
-    <p class="govuk-body">We'll automatically import:</p>
+        <p class="govuk-body">We'll automatically import:</p>
 
-    <ul class="govuk-list govuk-list--bullet">
-        <li>offence details</li>
-        <li>RoSH summary</li>
-        <li>any MAPPA or hate-based information</li>
-        <li>sections linked to RoSH</li>
-        <li>Risk Management Plan</li>
-        <li>Section 8 - Drug misuse</li>
-        <li>Section 9 - Alcohol misuse</li>
-    </ul>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>offence details</li>
+            <li>RoSH summary</li>
+            <li>any MAPPA or hate-based information</li>
+            <li>sections linked to RoSH</li>
+            <li>Risk Management Plan</li>
+            <li>Section 8 - Drug misuse</li>
+            <li>Section 9 - Alcohol misuse</li>
+        </ul>
 
-    <p>Select any sections that include information that's relevant to the risk an Approved Premises (AP) will help manage or the needs an AP can support.</p>
-    <p>You will be able to edit the information that is pulled in from OASys. Any new information that you provide as part of this application should be added to OASys.</p>
+        <p>Select any sections that include information that's relevant to the risk an Approved Premises (AP) will help manage or the needs an AP can support.</p>
+        <p>You will be able to edit the information that is pulled in from OASys. Any new information that you provide as part of this application should be added to OASys.</p>
 
-    <h2 class="govuk-heading-s">Needs linked to risk of serious harm are automatically imported</h2>
+        <h2 class="govuk-heading-s">Needs linked to risk of serious harm are automatically imported</h2>
 
-    {% if page.allNeedsLinkedToReoffending.length %}
+        {% if page.allNeedsLinkedToReoffending.length %}
+            {{
+            govukCheckboxes({
+                idPrefix: "needsLinkedToReoffending",
+                name: "needsLinkedToReoffending",
+                errorMessage: errors.needsLinkedToReoffending,
+                fieldset: {
+                    legend: {
+                        text: "Optional - Needs linked to reoffending",
+                        classes: "govuk-fieldset__legend--m"
+                    }
+                },
+                items: OasysImportUtils.sectionCheckBoxes(page.allNeedsLinkedToReoffending, page.body.needsLinkedToReoffending)
+            })
+        }}
+        {% endif %}
+
+        {% if page.allOtherNeeds.length %}
+            {{
+            govukCheckboxes({
+                idPrefix: "otherNeeds",
+                name: "otherNeeds",
+                errorMessage: errors.otherNeeds,
+                fieldset: {
+                    legend: {
+                        text: "Optional - Needs not linked to risk of serious harm or reoffending",
+                        classes: "govuk-fieldset__legend--m"
+                    }
+                },
+                items: OasysImportUtils.sectionCheckBoxes(page.allOtherNeeds, page.body.otherNeeds)
+            })
+        }}
+
+        {% endif %}
+    {% else %}
+        <h1 class="govuk-heading-l">Oasys Information</h1>
+
+        {% set html %}
+        <p class="govuk-body">
+            We are unable to import information from OASys as the person does not have a OASys record.
+        </p>
+        {% endset %}
+
         {{
-        govukCheckboxes({
-            idPrefix: "needsLinkedToReoffending",
-            name: "needsLinkedToReoffending",
-            errorMessage: errors.needsLinkedToReoffending,
-            fieldset: {
-                legend: {
-                    text: "Optional - Needs linked to reoffending",
-                    classes: "govuk-fieldset__legend--m"
-                }
-            },
-            items: OasysImportUtils.sectionCheckBoxes(page.allNeedsLinkedToReoffending, page.body.needsLinkedToReoffending)
-        })
-    }}
-    {% endif %}
+            govukNotificationBanner({
+                html: html
+            })
+        }}
 
-    {% if page.allOtherNeeds.length %}
-        {{
-        govukCheckboxes({
-            idPrefix: "otherNeeds",
-            name: "otherNeeds",
-            errorMessage: errors.otherNeeds,
-            fieldset: {
-                legend: {
-                    text: "Optional - Needs not linked to risk of serious harm or reoffending",
-                    classes: "govuk-fieldset__legend--m"
-                }
-            },
-            items: OasysImportUtils.sectionCheckBoxes(page.allOtherNeeds, page.body.otherNeeds)
-        })
-    }}
+        <p class="govuk-body">You will be asked to provide relevant information from OASys, including: </p>
 
+        <ul class="govuk-list govuk-list--bullet">
+            <li>offence details</li>
+            <li>RoSH summary</li>
+            <li>any MAPPA or hate-based information</li>
+            <li>sections linked to RoSH</li>
+            <li>issues contributing to risks of offending and harm  (Section 2 - 13)</li>
+            <li>Risk Management Plan</li>
+            <li>Risk to self</li>
+        </ul>
+
+        <p class="govuk-body">Any information that you provide as part of this application will not be written back to OASys.</p>
     {% endif %}
 
 {% endblock %}

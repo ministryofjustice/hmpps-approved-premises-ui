@@ -7,9 +7,12 @@ export default class RiskManagementPlan extends ApplyPage {
   constructor(
     application: ApprovedPremisesApplication,
     private readonly riskRiskManagementPlanSummaries: ArrayOfOASysRiskManagementPlanQuestions,
+    private readonly oasysMissing: boolean,
   ) {
+    const title = oasysMissing ? 'Provide risk information' : 'Edit risk information'
+
     super(
-      'Edit risk information',
+      title,
       application,
       'oasys-import',
       'offence-details',
@@ -18,6 +21,6 @@ export default class RiskManagementPlan extends ApplyPage {
   }
 
   completeForm() {
-    this.completeOasysImportQuestions(this.riskRiskManagementPlanSummaries, 'riskManagementAnswers')
+    this.completeOasysImportQuestions(this.riskRiskManagementPlanSummaries, 'riskManagementAnswers', this.oasysMissing)
   }
 }

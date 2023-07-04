@@ -5,6 +5,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
 import RoshSummary from './roshSummary'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
+import { itShouldHandleErrors } from './sharedExamples'
 
 jest.mock('../../../../services/personService.ts')
 
@@ -32,13 +33,13 @@ describe('RoshSummary', () => {
     it('calls the getOasysSections method on the client with a token and the persons CRN', async () => {
       await RoshSummary.initialize({}, application, 'some-token', { personService })
 
-      expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn)
+      expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn, [])
     })
 
     it('adds the roshSummary and personRisks to the page object', async () => {
       const page = await RoshSummary.initialize({}, application, 'some-token', { personService })
 
-      expect(page.roshSummary).toEqual(oasysSections.roshSummary)
+      expect(page.roshSummaries).toEqual(oasysSections.roshSummary)
       expect(page.risks).toEqual(mapApiPersonRisksForUi(personRisks))
       expect(page.oasysCompleted).toEqual(oasysSections.dateCompleted)
     })
@@ -54,12 +55,7 @@ describe('RoshSummary', () => {
 
     itShouldHavePreviousValue(new RoshSummary({}), 'optional-oasys-sections')
 
-    describe('errors', () => {
-      it('should return an empty object', () => {
-        const page = new RoshSummary({})
-        expect(page.errors()).toEqual({})
-      })
-    })
+    itShouldHandleErrors(RoshSummary, { answerKey: 'roshAnswers', summaryKey: 'roshSummaries' })
 
     describe('response', () => {
       it('calls oasysImportReponse with the correct arguments', () => {

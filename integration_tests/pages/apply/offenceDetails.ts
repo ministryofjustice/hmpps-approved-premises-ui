@@ -7,9 +7,11 @@ export default class OffenceDetails extends ApplyPage {
   constructor(
     application: ApprovedPremisesApplication,
     private readonly offenceDetailSummaries: ArrayOfOASysOffenceDetailsQuestions,
+    private readonly oasysMissing: boolean,
   ) {
+    const title = oasysMissing ? 'Provide risk information' : 'Edit risk information'
     super(
-      'Edit risk information',
+      title,
       application,
       'oasys-import',
       'offence-details',
@@ -18,6 +20,6 @@ export default class OffenceDetails extends ApplyPage {
   }
 
   completeForm() {
-    this.completeOasysImportQuestions(this.offenceDetailSummaries, 'offenceDetailsAnswers')
+    this.completeOasysImportQuestions(this.offenceDetailSummaries, 'offenceDetailsAnswers', this.oasysMissing)
   }
 }

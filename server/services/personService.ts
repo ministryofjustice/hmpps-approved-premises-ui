@@ -13,6 +13,8 @@ import type { PersonClient, RestClientBuilder } from '../data'
 
 import { mapApiPersonRisksForUi } from '../utils/utils'
 
+export class OasysNotFoundError extends Error {}
+
 export default class PersonService {
   constructor(private readonly personClientFactory: RestClientBuilder<PersonClient>) {}
 
@@ -65,17 +67,31 @@ export default class PersonService {
   async getOasysSelections(token: string, crn: string): Promise<Array<OASysSection>> {
     const personClient = this.personClientFactory(token)
 
-    const oasysSections = await personClient.oasysSelections(crn)
+    try {
+      const oasysSections = await personClient.oasysSelections(crn)
 
-    return oasysSections
+      return oasysSections
+    } catch (e) {
+      if (e?.data?.status === 404) {
+        throw new OasysNotFoundError(`Oasys record not found for CRN: ${crn}`)
+      }
+      throw e
+    }
   }
 
   async getOasysSections(token: string, crn: string, selectedSections: Array<number> = []): Promise<OASysSections> {
     const personClient = this.personClientFactory(token)
 
-    const oasysSections = await personClient.oasysSections(crn, selectedSections)
+    try {
+      const oasysSections = await personClient.oasysSections(crn, selectedSections)
 
-    return oasysSections
+      return oasysSections
+    } catch (e) {
+      if (e?.data?.status === 404) {
+        throw new OasysNotFoundError(`Oasys record not found for CRN: ${crn}`)
+      }
+      throw e
+    }
   }
 
   async getDocument(token: string, crn: string, documentId: string, response: Response): Promise<void> {

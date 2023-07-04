@@ -139,6 +139,19 @@ export default {
       },
     }),
 
+  stubPrisonCaseNotes404: (args: { person: Person }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/people/${args.person.crn}/prison-case-notes`,
+      },
+      response: {
+        status: 404,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { status: 404 },
+      },
+    }),
+
   stubAdjudications: (args: { person: Person; adjudications: Array<Adjudication> }) =>
     stubFor({
       request: {
@@ -165,6 +178,19 @@ export default {
       },
     }),
 
+  stubOasysSelection404: (args: { person: Person }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/people/${args.person.crn}/oasys/selection`,
+      },
+      response: {
+        status: 404,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { status: 404 },
+      },
+    }),
+
   stubOasysSelection: (args: { person: Person; oasysSelection: Array<OASysSection> }) =>
     stubFor({
       request: {
@@ -176,6 +202,19 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: args.oasysSelection,
+      },
+    }),
+
+  stubOasysSection404: (args: { person: Person }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPath: `/people/${args.person.crn}/oasys/sections`,
+      },
+      response: {
+        status: 404,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { status: 404 },
       },
     }),
 

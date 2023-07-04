@@ -5,6 +5,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
 import RiskManagementPlan from './riskManagementPlan'
 import { mapApiPersonRisksForUi } from '../../../../utils/utils'
+import { itShouldHandleErrors } from './sharedExamples'
 
 jest.mock('../../../../services/personService.ts')
 
@@ -31,7 +32,7 @@ describe('RiskManagement', () => {
     it('calls the getOasysSections and getPersonRisks method on the client with a token and the persons CRN', async () => {
       await RiskManagementPlan.initialize({}, application, 'some-token', { personService })
 
-      expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn)
+      expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn, [])
     })
 
     it('adds the riskManagementSummaries and personRisks to the page object', async () => {
@@ -53,11 +54,9 @@ describe('RiskManagement', () => {
 
     itShouldHavePreviousValue(new RiskManagementPlan({}), 'supporting-information')
 
-    describe('errors', () => {
-      it('should return an empty object', () => {
-        const page = new RiskManagementPlan({})
-        expect(page.errors()).toEqual({})
-      })
+    itShouldHandleErrors(RiskManagementPlan, {
+      answerKey: 'riskManagementAnswers',
+      summaryKey: 'riskManagementSummaries',
     })
 
     describe('response', () => {

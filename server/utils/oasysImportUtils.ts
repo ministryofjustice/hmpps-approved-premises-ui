@@ -1,8 +1,87 @@
-import { OasysImportArrays } from '../@types/ui'
-import { ApprovedPremisesApplication as Application, OASysQuestion, OASysSection } from '../@types/shared'
+import { DataServices, OasysImportArrays, OasysPage } from '../@types/ui'
+import {
+  ApprovedPremisesApplication as Application,
+  ApprovedPremisesApplication,
+  OASysQuestion,
+  OASysSection,
+  OASysSections,
+} from '../@types/shared'
 import { SessionDataError } from './errors'
 import { escape } from './formUtils'
-import { sentenceCase } from './utils'
+import { mapApiPersonRisksForUi, sentenceCase } from './utils'
+import { OasysNotFoundError } from '../services/personService'
+import oasysStubs from '../data/stubs/oasysStubs.json'
+
+export type Constructor<T> = new (body: unknown) => T
+
+export const getOasysSections = async <T extends OasysPage>(
+  body: Record<string, unknown>,
+  application: ApprovedPremisesApplication,
+  token: string,
+  dataServices: DataServices,
+  constructor: Constructor<T>,
+  {
+    sectionName,
+    summaryKey,
+    answerKey,
+    selectedSections = [],
+  }: {
+    sectionName: string
+    summaryKey: string
+    answerKey: string
+    selectedSections?: Array<number>
+  },
+): Promise<T> => {
+  let oasysSections: OASysSections
+  let oasysSuccess: boolean
+
+  try {
+    oasysSections = await dataServices.personService.getOasysSections(token, application.person.crn, selectedSections)
+    oasysSuccess = true
+  } catch (e) {
+    if (e instanceof OasysNotFoundError) {
+      oasysSections = oasysStubs
+      oasysSuccess = false
+    } else {
+      throw e
+    }
+  }
+
+  const summaries = sortOasysImportSummaries(oasysSections[sectionName]).map(question => {
+    const answer = body[answerKey]?.[question.questionNumber] || question.answer
+    return {
+      ...question,
+      answer,
+    }
+  })
+
+  const page = new constructor(body)
+
+  page.body[summaryKey] = summaries
+  page[summaryKey] = summaries
+  page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
+  page.oasysSuccess = oasysSuccess
+  page.risks = mapApiPersonRisksForUi(application.risks)
+
+  return page
+}
+
+export const validateOasysEntries = <T>(body: Partial<T>, questionKey: string, answerKey: string) => {
+  const errors = {}
+  const questions = body[questionKey]
+  const answers = body[answerKey]
+
+  Object.keys(questions).forEach(key => {
+    const question = questions[key]
+    if (!answers[question.questionNumber]) {
+      errors[
+        `${answerKey}[${question.questionNumber}]`
+      ] = `You must enter a response for the '${question.label}' question`
+    }
+  })
+
+  return errors
+}
 
 export const textareas = (questions: OasysImportArrays, key: 'roshAnswers' | 'offenceDetails') => {
   return questions

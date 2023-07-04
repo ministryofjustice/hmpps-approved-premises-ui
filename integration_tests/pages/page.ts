@@ -177,12 +177,18 @@ export default abstract class Page {
     this.shouldShowDeliusRiskFlags(risks.flags)
   }
 
-  completeOasysImportQuestions(section, sectionName: string): void {
+  completeOasysImportQuestions(section, sectionName: string, oasysMissing: boolean): void {
     section.forEach(summary => {
       cy.get('.govuk-label').contains(summary.label)
-      cy.get(`textarea[name="${sectionName}[${summary.questionNumber}]"]`)
-        .should('contain', summary.answer)
-        .type(`. With an extra comment ${summary.questionNumber}`)
+      if (oasysMissing) {
+        cy.get(`textarea[name="${sectionName}[${summary.questionNumber}]"]`).type(
+          `${summary.questionNumber} content goes here`,
+        )
+      } else {
+        cy.get(`textarea[name="${sectionName}[${summary.questionNumber}]"]`)
+          .should('contain', summary.answer)
+          .type(`. With an extra comment ${summary.questionNumber}`)
+      }
     })
   }
 

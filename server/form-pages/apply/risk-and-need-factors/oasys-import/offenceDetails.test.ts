@@ -6,6 +6,7 @@ import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import OffenceDetails from './offenceDetails'
+import { itShouldHandleErrors } from './sharedExamples'
 
 jest.mock('../../../../services/personService.ts')
 
@@ -33,7 +34,7 @@ describe('OffenceDetails', () => {
     it('calls the getOasysSections  method on the client with a token and the persons CRN', async () => {
       await OffenceDetails.initialize({}, application, 'some-token', { personService })
 
-      expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn)
+      expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn, [])
     })
 
     it('adds the offenceDetailsSummaries and personRisks to the page object', async () => {
@@ -55,12 +56,7 @@ describe('OffenceDetails', () => {
 
     itShouldHavePreviousValue(new OffenceDetails({}), 'rosh-summary')
 
-    describe('errors', () => {
-      it('should return an empty object', () => {
-        const page = new OffenceDetails({})
-        expect(page.errors()).toEqual({})
-      })
-    })
+    itShouldHandleErrors(OffenceDetails, { answerKey: 'offenceDetailsAnswers', summaryKey: 'offenceDetailsSummaries' })
 
     describe('response', () => {
       it('calls oasysImportReponse with the correct arguments', () => {

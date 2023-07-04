@@ -1,4 +1,5 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
+import { SanitisedError } from '../../../../sanitisedError'
 import { ApplicationService, PersonService } from '../../../../services'
 
 import {
@@ -228,6 +229,28 @@ describe('CaseNotes', () => {
         adjudications,
       })
     })
+
+    it('sets nomisFailed to true when there is a 404', async () => {
+      const err = <SanitisedError>{ data: { status: 404 } }
+      personService.getPrisonCaseNotes.mockImplementation(() => {
+        throw err
+      })
+
+      const page = await CaseNotes.initialize({}, application, 'some-token', { personService, applicationService })
+
+      expect(page.nomisFailed).toEqual(true)
+    })
+
+    it('throws the error upstream with any other error', async () => {
+      const genericError = new Error()
+      personService.getPrisonCaseNotes.mockImplementation(() => {
+        throw genericError
+      })
+
+      await expect(() =>
+        CaseNotes.initialize({}, application, 'some-token', { personService, applicationService }),
+      ).rejects.toThrowError(genericError)
+    })
   })
 
   itShouldHaveNextValue(new CaseNotes({}, application), '')
@@ -259,6 +282,18 @@ describe('CaseNotes', () => {
 
       expect(page.response()).toEqual({})
     })
+
+    it('returns the information from prison fields if provided', () => {
+      const page = new CaseNotes(
+        { informationFromPrison: 'yes', informationFromPrisonDetail: 'Some detail' },
+        application,
+      )
+
+      expect(page.response()).toEqual({
+        "Do you have any information from prison that will help with the person's risk management?":
+          'Yes - Some detail',
+      })
+    })
   })
 
   describe('checkBoxForCaseNoteId', () => {
@@ -282,6 +317,24 @@ describe('CaseNotes', () => {
   })
 
   describe('errors', () => {
-    expect(new CaseNotes({}, application).errors()).toEqual({})
+    it('returns an empty object if nomisFailed is false', () => {
+      const page = new CaseNotes({}, application)
+      page.nomisFailed = false
+      expect(page.errors()).toEqual({})
+    })
+
+    it('returns errors if nomisFailed is true and the informationFromPrison detail is invalid', () => {
+      const page = new CaseNotes({}, application)
+      page.nomisFailed = true
+      expect(page.errors()).toEqual({
+        informationFromPrison: 'You must state if you have any information from prison',
+      })
+
+      page.body.informationFromPrison = 'yes'
+
+      expect(page.errors()).toEqual({
+        informationFromPrisonDetail: 'You must provide detail of the information you have from prison',
+      })
+    })
   })
 })
