@@ -1,4 +1,5 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
+import { SanitisedError } from '../../../../sanitisedError'
 import { ApplicationService, PersonService } from '../../../../services'
 
 import {
@@ -227,6 +228,28 @@ describe('CaseNotes', () => {
         selectedCaseNotes: [],
         adjudications,
       })
+    })
+
+    it('sets nomisFailed to true when there is a 404', async () => {
+      const err = <SanitisedError>{ data: { status: 404 } }
+      personService.getPrisonCaseNotes.mockImplementation(() => {
+        throw err
+      })
+
+      const page = await CaseNotes.initialize({}, application, 'some-token', { personService, applicationService })
+
+      expect(page.nomisFailed).toEqual(true)
+    })
+
+    it('throws the error upstream with any other error', async () => {
+      const genericError = new Error()
+      personService.getPrisonCaseNotes.mockImplementation(() => {
+        throw genericError
+      })
+
+      await expect(() =>
+        CaseNotes.initialize({}, application, 'some-token', { personService, applicationService }),
+      ).rejects.toThrowError(genericError)
     })
   })
 

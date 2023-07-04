@@ -82,6 +82,8 @@ export default class CaseNotes implements TasklistPage {
 
   caseNotes: Array<PrisonCaseNote> | undefined
 
+  nomisFailed: boolean
+
   constructor(private _body: Partial<CaseNotesBody>, private readonly application: ApprovedPremisesApplication) {}
 
   public get body(): CaseNotesBody {
@@ -106,20 +108,30 @@ export default class CaseNotes implements TasklistPage {
     token: string,
     dataServices: DataServices,
   ) {
-    const caseNotes = await dataServices.personService.getPrisonCaseNotes(token, application.person.crn)
-    const adjudications = await dataServices.personService.getAdjudications(token, application.person.crn)
-    const acctAlerts = await dataServices.personService.getAcctAlerts(token, application.person.crn)
-
-    body.caseNoteIds = body.caseNoteIds ? [body.caseNoteIds].flat() : []
-    body.adjudications = adjudications
-    body.acctAlerts = acctAlerts
-
-    body.selectedCaseNotes = ((body.caseNoteIds || []) as Array<string>).map((noteId: string) => {
-      return caseNotes.find(caseNote => caseNote.id === noteId)
-    })
-
     const page = new CaseNotes(body, application)
-    page.caseNotes = caseNotes
+
+    try {
+      const caseNotes = await dataServices.personService.getPrisonCaseNotes(token, application.person.crn)
+      const adjudications = await dataServices.personService.getAdjudications(token, application.person.crn)
+      const acctAlerts = await dataServices.personService.getAcctAlerts(token, application.person.crn)
+
+      page.body.caseNoteIds = (body.caseNoteIds ? [body.caseNoteIds].flat() : []) as Array<string>
+      page.body.adjudications = adjudications
+      page.body.acctAlerts = acctAlerts
+
+      page.body.selectedCaseNotes = page.body.caseNoteIds.map((noteId: string) => {
+        return caseNotes.find(caseNote => caseNote.id === noteId)
+      })
+
+      page.caseNotes = caseNotes
+      page.nomisFailed = false
+    } catch (e) {
+      if (e?.data?.status === 404) {
+        page.nomisFailed = true
+      } else {
+        throw e
+      }
+    }
 
     return page
   }
