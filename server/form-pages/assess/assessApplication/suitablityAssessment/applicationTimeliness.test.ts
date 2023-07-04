@@ -1,8 +1,11 @@
 import { DateFormats } from '../../../../utils/dateUtils'
 import { assessmentFactory } from '../../../../testutils/factories'
 import { YesOrNo } from '../../../../@types/ui'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { itShouldHaveNextValue } from '../../../shared-examples'
+import {
+  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
+  retrieveQuestionResponseFromFormArtifact,
+} from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 import ApplicationTimeliness from './applicationTimeliness'
 
@@ -50,16 +53,35 @@ describe('ApplicationTimeliness', () => {
     '',
   )
 
-  itShouldHavePreviousValue(
-    new ApplicationTimeliness(
-      {
-        agreeWithShortNoticeReason: 'yes',
-        agreeWithShortNoticeReasonComments: 'some reasons',
-      },
-      assessment,
-    ),
-    'suitability-assessment',
-  )
+  describe('previous', () => {
+    it('returns rfap-suitability if the applicant requires an RFAP', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('yes')
+
+      expect(
+        new ApplicationTimeliness(
+          {
+            agreeWithShortNoticeReason: 'yes',
+            agreeWithShortNoticeReasonComments: 'some reasons',
+          },
+          assessment,
+        ).previous(),
+      ).toEqual('rfap-suitability')
+    })
+
+    it('returns suitability-assessment if the applicant doesnt require an RFAP', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(undefined)
+
+      expect(
+        new ApplicationTimeliness(
+          {
+            agreeWithShortNoticeReason: 'yes',
+            agreeWithShortNoticeReasonComments: 'some reasons',
+          },
+          assessment,
+        ).previous(),
+      ).toEqual('suitability-assessment')
+    })
+  })
 
   describe('errors', () => {
     it('should have an error if there are no answers', () => {

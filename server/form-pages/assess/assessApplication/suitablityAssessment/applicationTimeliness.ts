@@ -9,7 +9,11 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
-import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import {
+  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
+  retrieveQuestionResponseFromFormArtifact,
+} from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import Rfap from '../../../apply/risk-and-need-factors/further-considerations/rfap'
 
 export type ApplicationTimelinessSection = {
   agreeWithShortNoticeReason: string
@@ -51,6 +55,16 @@ export default class ApplicationTimeliness implements TasklistPage {
   }
 
   previous() {
+    const needsRfap = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+      this.assessment.application,
+      Rfap,
+      'needARfap',
+    )
+
+    if (needsRfap === 'yes') {
+      return 'rfap-suitability'
+    }
+
     return 'suitability-assessment'
   }
 
