@@ -27,6 +27,7 @@ import { updateAssessmentData } from '../../server/form-pages/utils'
 import AssessPage from '../pages/assess/assessPage'
 import { assessmentSummaryFactory } from '../../server/testutils/factories'
 import RfapSuitabilityPage from '../pages/assess/rfapSuitability'
+import ContingencyPlanSuitabilityPage from '../pages/assess/contingencyPlanSuitability'
 
 export default class AseessHelper {
   assessmentSummary: AssessmentSummary
@@ -220,7 +221,17 @@ export default class AseessHelper {
       applicationTimelinessPage.completeForm()
       applicationTimelinessPage.clickSubmit()
       this.updateAssessmentAndStub(applicationTimelinessPage)
-      this.pages.assessSuitability = [...this.pages.assessSuitability, applicationTimelinessPage]
+
+      const contingencyPlanSuitabilityPage = new ContingencyPlanSuitabilityPage(this.assessment)
+      contingencyPlanSuitabilityPage.completeForm()
+      contingencyPlanSuitabilityPage.clickSubmit()
+      this.updateAssessmentAndStub(contingencyPlanSuitabilityPage)
+
+      this.pages.assessSuitability = [
+        ...this.pages.assessSuitability,
+        applicationTimelinessPage,
+        contingencyPlanSuitabilityPage,
+      ]
     }
 
     // Then I should be taken to the task list
