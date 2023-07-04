@@ -31,6 +31,7 @@ export default function routes(controllers: Controllers, router: Router, service
 
   get(paths.premises.beds.index.pattern, bedsController.index(), { auditEvent: 'LIST_BEDS' })
   get(paths.premises.beds.show.pattern, bedsController.show(), { auditEvent: 'SHOW_BED' })
+  get(paths.premises.beds.overbookings.show.pattern, bedsController.overbookings(), { auditEvent: 'SHOW_OVERBOOKINGS' })
 
   get(paths.bookings.new.pattern, bookingsController.new(), { auditEvent: 'START_AD_HOC_BOOKING' })
   get(paths.bookings.show.pattern, bookingsController.show(), { auditEvent: 'SHOW_BOOKING' })

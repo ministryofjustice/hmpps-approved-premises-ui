@@ -34,6 +34,9 @@ const paths = {
     beds: {
       index: bedsPath,
       show: bedsPath.path(':bedId'),
+      overbookings: {
+        show: bedsPath.path(':bedId').path('overbookings'),
+      },
     },
   },
   bookings: {
