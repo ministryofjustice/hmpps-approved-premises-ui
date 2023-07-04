@@ -7,9 +7,12 @@ export default class RiskToSelf extends ApplyPage {
   constructor(
     application: ApprovedPremisesApplication,
     private readonly riskToSelfummaries: ArrayOfOASysRiskToSelfQuestions,
+    private readonly oasysMissing: boolean,
   ) {
+    const title = oasysMissing ? 'Provide risk information' : 'Edit risk information'
+
     super(
-      'Edit risk information',
+      title,
       application,
       'oasys-import',
       'offence-details',
@@ -18,6 +21,6 @@ export default class RiskToSelf extends ApplyPage {
   }
 
   completeForm() {
-    this.completeOasysImportQuestions(this.riskToSelfummaries, 'riskToSelfAnswers')
+    this.completeOasysImportQuestions(this.riskToSelfummaries, 'riskToSelfAnswers', this.oasysMissing)
   }
 }

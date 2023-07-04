@@ -37,6 +37,7 @@ import {
   prisonCaseNotesFactory,
 } from '../../server/testutils/factories'
 import { documentsFromApplication } from '../../server/utils/assessments/documentUtils'
+import oasysStubs from '../../server/data/stubs/oasysStubs.json'
 
 export default class ApplyHelper {
   pages = {
@@ -87,11 +88,15 @@ export default class ApplyHelper {
     private readonly offences: Array<ActiveOffence>,
   ) {}
 
-  setupApplicationStubs(uiRisks?: PersonRisksUI) {
+  setupApplicationStubs(uiRisks?: PersonRisksUI, oasysMissing = false) {
     this.uiRisks = uiRisks
     this.stubPersonEndpoints()
     this.stubApplicationEndpoints()
-    this.stubOasysEndpoints()
+    if (oasysMissing) {
+      this.stubOasys404()
+    } else {
+      this.stubOasysEndpoints()
+    }
     this.stubPrisonCaseNoteEndpoints()
     this.stubAdjudicationEndpoints()
     this.stubAcctAlertsEndpoint()
@@ -174,6 +179,17 @@ export default class ApplyHelper {
   private stubApplicationEndpoints() {
     // Given I can create an application
     cy.task('stubApplicationJourney', this.application)
+  }
+
+  private stubOasys404() {
+    cy.task('stubOasysSelection404', { person: this.person })
+    cy.task('stubOasysSection404', { person: this.person })
+
+    this.roshSummaries = oasysStubs.roshSummary
+    this.offenceDetailSummaries = oasysStubs.offenceDetails
+    this.supportingInformationSummaries = oasysStubs.supportingInformation
+    this.riskManagementPlanSummaries = oasysStubs.riskManagementPlan
+    this.riskToSelfSummaries = oasysStubs.riskToSelf
   }
 
   private stubOasysEndpoints() {
@@ -450,7 +466,7 @@ export default class ApplyHelper {
     }
   }
 
-  private completeTypeOfApSection() {
+  completeTypeOfApSection() {
     // And I should be able to start the next task
     cy.get('[data-cy-task-name="type-of-ap"]').click()
     Page.verifyOnPage(ApplyPages.TypeOfApPage, this.application)
@@ -539,16 +555,18 @@ export default class ApplyHelper {
     Page.verifyOnPage(ApplyPages.TypeOfApPage, this.application)
   }
 
-  private completeOasysSection() {
+  completeOasysSection(oasysMissing = false) {
     // Given I click the 'Import Oasys' task
     cy.get('[data-cy-task-name="oasys-import"]').click()
-    const optionalOasysImportPage = new ApplyPages.OptionalOasysSectionsPage(this.application)
+    const optionalOasysImportPage = new ApplyPages.OptionalOasysSectionsPage(this.application, oasysMissing)
 
     // When I complete the form
-    optionalOasysImportPage.completeForm(this.oasysSectionsLinkedToReoffending, this.otherOasysSections)
+    if (!oasysMissing) {
+      optionalOasysImportPage.completeForm(this.oasysSectionsLinkedToReoffending, this.otherOasysSections)
+    }
     optionalOasysImportPage.clickSubmit()
 
-    const roshSummaryPage = new ApplyPages.RoshSummaryPage(this.application, this.roshSummaries)
+    const roshSummaryPage = new ApplyPages.RoshSummaryPage(this.application, this.roshSummaries, oasysMissing)
 
     if (this.uiRisks) {
       roshSummaryPage.shouldShowRiskWidgets(this.uiRisks)
@@ -558,7 +576,11 @@ export default class ApplyHelper {
 
     roshSummaryPage.clickSubmit()
 
-    const offenceDetailsPage = new ApplyPages.OffenceDetailsPage(this.application, this.offenceDetailSummaries)
+    const offenceDetailsPage = new ApplyPages.OffenceDetailsPage(
+      this.application,
+      this.offenceDetailSummaries,
+      oasysMissing,
+    )
 
     if (this.uiRisks) {
       offenceDetailsPage.shouldShowRiskWidgets(this.uiRisks)
@@ -570,6 +592,7 @@ export default class ApplyHelper {
     const supportingInformationPage = new ApplyPages.SupportingInformationPage(
       this.application,
       this.supportingInformationSummaries,
+      oasysMissing,
     )
     supportingInformationPage.completeForm()
     supportingInformationPage.clickSubmit()
@@ -577,11 +600,12 @@ export default class ApplyHelper {
     const riskManagementPlanPage = new ApplyPages.RiskManagementPlanPage(
       this.application,
       this.riskManagementPlanSummaries,
+      oasysMissing,
     )
     riskManagementPlanPage.completeForm()
     riskManagementPlanPage.clickSubmit()
 
-    const riskToSelfPage = new ApplyPages.RiskToSelfPage(this.application, this.riskToSelfSummaries)
+    const riskToSelfPage = new ApplyPages.RiskToSelfPage(this.application, this.riskToSelfSummaries, oasysMissing)
     riskToSelfPage.completeForm()
     riskToSelfPage.clickSubmit()
 

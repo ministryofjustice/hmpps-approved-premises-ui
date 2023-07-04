@@ -4,9 +4,10 @@ import paths from '../../../server/paths/apply'
 import ApplyPage from './applyPage'
 
 export default class OptionalOasysSectionsPage extends ApplyPage {
-  constructor(application: ApprovedPremisesApplication) {
+  constructor(application: ApprovedPremisesApplication, oasysMissing = false) {
+    const title = oasysMissing ? 'Oasys Information' : 'Which of the following sections of OASys do you want to import?'
     super(
-      'Which of the following sections of OASys do you want to import?',
+      title,
       application,
       'oasys-import',
       'optional-oasys-sections',

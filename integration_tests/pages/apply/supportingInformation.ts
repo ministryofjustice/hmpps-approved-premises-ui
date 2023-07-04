@@ -7,9 +7,12 @@ export default class SupportingInformation extends ApplyPage {
   constructor(
     application: ApprovedPremisesApplication,
     private readonly supportingInformationSummaries: ArrayOfOASysSupportingInformationQuestions,
+    private readonly oasysMissing: boolean,
   ) {
+    const title = oasysMissing ? 'Provide risk information' : 'Edit risk information'
+
     super(
-      'Edit risk information',
+      title,
       application,
       'oasys-import',
       'offence-details',
@@ -18,6 +21,10 @@ export default class SupportingInformation extends ApplyPage {
   }
 
   completeForm() {
-    this.completeOasysImportQuestions(this.supportingInformationSummaries, 'supportingInformationAnswers')
+    this.completeOasysImportQuestions(
+      this.supportingInformationSummaries,
+      'supportingInformationAnswers',
+      this.oasysMissing,
+    )
   }
 }

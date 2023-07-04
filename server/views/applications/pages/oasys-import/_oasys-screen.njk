@@ -8,11 +8,15 @@
 {% block questions %}
   <div class="govuk-grid-row">
     <div>
-      {% if oasysDisabled %}
-        <h1 class="govuk-heading-l">Input risk information</h1>
+      {% if oasysDisabled or page.oasysSuccess == false %}
+        <h1 class="govuk-heading-l">Provide risk information</h1>
       {% else %}
         <h1 class="govuk-heading-l">{{page.title}}</h1>
         <p>OASys last updated: {{formatDate(page.oasysCompleted)}}</p>
+      {% endif %}
+
+      {% if page.oasysSuccess == false %}
+        <p class="govuk-body">This information will be used to help Approved Premises (AP) managers understand factors that may help with the person’s risk management in an AP.</p>
       {% endif %}
     </div>
 
@@ -49,13 +53,21 @@
   <div class="govuk-grid-row">
     {% if oasysDisabled %}
       <div class="govuk-grid-column-full" id="{{ pageName }}">
-         <p> {{ guidance }} </p>
-         {{OasysImportUtils.textareas(questions, key) | safe}}
+        <p>
+          {{ guidance }}
+        </p>
+        {{OasysImportUtils.textareas(questions, key) | safe}}
       </div>
     {% else %}
       <div class="govuk-grid-column-two-thirds" id="{{ pageName }}">
-         <h2 class="govuk-heading-m"> {{ heading }} </h2>
-         <p> {{ guidance }} </p>
+        {% if page.oasysSuccess == true %}
+          <h2 class="govuk-heading-m">
+            {{ heading }}
+          </h2>
+          <p>
+            {{ guidance }}
+          </p>
+        {% endif %}
         {{OasysImportUtils.textareas(questions, key) | safe}}
       </div>
 

@@ -7,9 +7,12 @@ export default class RoshSummary extends ApplyPage {
   constructor(
     application: ApprovedPremisesApplication,
     private readonly roshSummary: ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
+    private readonly oasysMissing: boolean,
   ) {
+    const title = oasysMissing ? 'Provide risk information' : 'Edit risk information'
+
     super(
-      'Edit risk information',
+      title,
       application,
       'oasys-import',
       'rosh-summary',
@@ -18,6 +21,6 @@ export default class RoshSummary extends ApplyPage {
   }
 
   completeForm() {
-    this.completeOasysImportQuestions(this.roshSummary, 'roshAnswers')
+    this.completeOasysImportQuestions(this.roshSummary, 'roshAnswers', this.oasysMissing)
   }
 }

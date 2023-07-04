@@ -343,6 +343,18 @@ context('Apply', () => {
     // Then I should be told I am ineligible for an ESAP placement
   })
 
+  it('handles missing Oasys information', function test() {
+    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
+    const oasysMissing = true
+
+    apply.setupApplicationStubs(uiRisks, oasysMissing)
+    apply.startApplication()
+    apply.completeBasicInformation({ isEmergencyApplication: false })
+    apply.completeTypeOfApSection()
+    apply.completeOasysSection(oasysMissing)
+  })
+
   it('allows completion of the form', function test() {
     // And I complete the application
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
