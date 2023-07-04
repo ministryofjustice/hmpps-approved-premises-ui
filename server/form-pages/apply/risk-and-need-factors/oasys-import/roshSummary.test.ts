@@ -32,13 +32,13 @@ describe('RoshSummary', () => {
     it('calls the getOasysSections method on the client with a token and the persons CRN', async () => {
       await RoshSummary.initialize({}, application, 'some-token', { personService })
 
-      expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn)
+      expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn, [])
     })
 
     it('adds the roshSummary and personRisks to the page object', async () => {
       const page = await RoshSummary.initialize({}, application, 'some-token', { personService })
 
-      expect(page.roshSummary).toEqual(oasysSections.roshSummary)
+      expect(page.roshSummaries).toEqual(oasysSections.roshSummary)
       expect(page.risks).toEqual(mapApiPersonRisksForUi(personRisks))
       expect(page.oasysCompleted).toEqual(oasysSections.dateCompleted)
     })

@@ -1,16 +1,9 @@
-import type { DataServices, PersonRisksUI } from '@approved-premises/ui'
+import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/ui'
 
-import type {
-  ApprovedPremisesApplication,
-  ArrayOfOASysOffenceDetailsQuestions,
-  OASysSections,
-} from '@approved-premises/api'
-
-import TasklistPage from '../../../tasklistPage'
+import type { ApprovedPremisesApplication, ArrayOfOASysOffenceDetailsQuestions } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
-import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/oasysImportUtils'
-import { mapApiPersonRisksForUi } from '../../../../utils/utils'
+import { getOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
 
 type OffenceDetailsBody = {
   offenceDetailsAnswers: Record<string, string>
@@ -21,16 +14,18 @@ type OffenceDetailsBody = {
   name: 'offence-details',
   bodyProperties: ['offenceDetailsAnswers', 'offenceDetailsSummaries'],
 })
-export default class OffenceDetails implements TasklistPage {
+export default class OffenceDetails implements OasysPage {
   title = 'Edit risk information'
 
   offenceDetailsSummaries: OffenceDetailsBody['offenceDetailsSummaries']
 
   offenceDetailsAnswers: OffenceDetailsBody['offenceDetailsAnswers']
 
+  oasysCompleted: string
+
   risks: PersonRisksUI
 
-  oasysCompleted: string
+  oasysSuccess: boolean
 
   constructor(public body: Partial<OffenceDetailsBody>) {}
 
@@ -40,21 +35,11 @@ export default class OffenceDetails implements TasklistPage {
     token: string,
     dataServices: DataServices,
   ) {
-    const oasysSections: OASysSections = await dataServices.personService.getOasysSections(
-      token,
-      application.person.crn,
-    )
-
-    const offenceDetails = sortOasysImportSummaries(oasysSections.offenceDetails)
-
-    body.offenceDetailsSummaries = offenceDetails
-
-    const page = new OffenceDetails(body)
-    page.offenceDetailsSummaries = offenceDetails
-    page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
-    page.risks = mapApiPersonRisksForUi(application.risks)
-
-    return page
+    return getOasysSections(body, application, token, dataServices, OffenceDetails, {
+      sectionName: 'offenceDetails',
+      summaryKey: 'offenceDetailsSummaries',
+      answerKey: 'offenceDetailsAnswers',
+    })
   }
 
   previous() {

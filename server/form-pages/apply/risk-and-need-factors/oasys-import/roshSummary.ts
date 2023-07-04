@@ -1,17 +1,10 @@
 /* eslint-disable no-underscore-dangle */
-import type { DataServices, PersonRisksUI } from '@approved-premises/ui'
+import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/ui'
 
-import type {
-  ApprovedPremisesApplication,
-  ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
-  OASysSections,
-} from '@approved-premises/api'
-
-import TasklistPage from '../../../tasklistPage'
+import type { ApprovedPremisesApplication, ArrayOfOASysRiskOfSeriousHarmSummaryQuestions } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
-import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/oasysImportUtils'
-import { mapApiPersonRisksForUi } from '../../../../utils/utils'
+import { getOasysSections, oasysImportReponse, validateOasysEntries } from '../../../../utils/oasysImportUtils'
 
 type RoshSummaryBody = {
   roshAnswers: Record<string, string>
@@ -22,16 +15,18 @@ type RoshSummaryBody = {
   name: 'rosh-summary',
   bodyProperties: ['roshAnswers', 'roshSummaries'],
 })
-export default class RoshSummary implements TasklistPage {
+export default class RoshSummary implements OasysPage {
   title = 'Edit risk information'
 
-  roshSummary: RoshSummaryBody['roshSummaries']
+  roshSummaries: RoshSummaryBody['roshSummaries']
 
   risks: PersonRisksUI
 
   roshAnswers: RoshSummaryBody['roshAnswers']
 
   oasysCompleted: string
+
+  oasysSuccess: boolean
 
   constructor(public body: Partial<RoshSummaryBody>) {}
 
@@ -41,20 +36,11 @@ export default class RoshSummary implements TasklistPage {
     token: string,
     dataServices: DataServices,
   ) {
-    const oasysSections: OASysSections = await dataServices.personService.getOasysSections(
-      token,
-      application.person.crn,
-    )
-
-    const roshSummaries = sortOasysImportSummaries(oasysSections.roshSummary)
-    body.roshSummaries = roshSummaries
-
-    const page = new RoshSummary(body)
-    page.roshSummary = roshSummaries
-    page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
-    page.risks = mapApiPersonRisksForUi(application.risks)
-
-    return page
+    return getOasysSections(body, application, token, dataServices, RoshSummary, {
+      sectionName: 'roshSummary',
+      summaryKey: 'roshSummaries',
+      answerKey: 'roshAnswers',
+    })
   }
 
   previous() {

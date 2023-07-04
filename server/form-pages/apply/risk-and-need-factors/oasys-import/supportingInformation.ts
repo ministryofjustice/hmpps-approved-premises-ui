@@ -1,20 +1,9 @@
-import type { DataServices, PersonRisksUI } from '@approved-premises/ui'
+import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/ui'
 
-import type {
-  ApprovedPremisesApplication,
-  ArrayOfOASysSupportingInformationQuestions,
-  OASysSections,
-} from '@approved-premises/api'
-
-import TasklistPage from '../../../tasklistPage'
+import type { ApprovedPremisesApplication, ArrayOfOASysSupportingInformationQuestions } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
-import {
-  fetchOptionalOasysSections,
-  oasysImportReponse,
-  sortOasysImportSummaries,
-} from '../../../../utils/oasysImportUtils'
-import { mapApiPersonRisksForUi } from '../../../../utils/utils'
+import { fetchOptionalOasysSections, getOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
 
 type SupportingInformationBody = {
   supportingInformationAnswers: Record<string, string>
@@ -25,7 +14,7 @@ type SupportingInformationBody = {
   name: 'supporting-information',
   bodyProperties: ['supportingInformationAnswers', 'supportingInformationSummaries'],
 })
-export default class SupportingInformation implements TasklistPage {
+export default class SupportingInformation implements OasysPage {
   title = 'Edit risk information'
 
   supportingInformationSummaries: SupportingInformationBody['supportingInformationSummaries']
@@ -36,6 +25,8 @@ export default class SupportingInformation implements TasklistPage {
 
   risks: PersonRisksUI
 
+  oasysSuccess: boolean
+
   constructor(public body: Partial<SupportingInformationBody>) {}
 
   static async initialize(
@@ -44,22 +35,12 @@ export default class SupportingInformation implements TasklistPage {
     token: string,
     dataServices: DataServices,
   ) {
-    const oasysSections: OASysSections = await dataServices.personService.getOasysSections(
-      token,
-      application.person.crn,
-      fetchOptionalOasysSections(application),
-    )
-
-    const supportingInformation = sortOasysImportSummaries(oasysSections.supportingInformation)
-
-    body.supportingInformationSummaries = supportingInformation
-
-    const page = new SupportingInformation(body)
-    page.supportingInformationSummaries = supportingInformation
-    page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
-    page.risks = mapApiPersonRisksForUi(application.risks)
-
-    return page
+    return getOasysSections(body, application, token, dataServices, SupportingInformation, {
+      sectionName: 'supportingInformation',
+      summaryKey: 'supportingInformationSummaries',
+      answerKey: 'supportingInformationAnswers',
+      selectedSections: fetchOptionalOasysSections(application),
+    })
   }
 
   previous() {

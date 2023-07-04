@@ -33,7 +33,7 @@ describe('OffenceDetails', () => {
     it('calls the getOasysSections  method on the client with a token and the persons CRN', async () => {
       await OffenceDetails.initialize({}, application, 'some-token', { personService })
 
-      expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn)
+      expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn, [])
     })
 
     it('adds the offenceDetailsSummaries and personRisks to the page object', async () => {

@@ -1,16 +1,9 @@
-import type { DataServices, PersonRisksUI } from '@approved-premises/ui'
+import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/ui'
 
-import type {
-  ApprovedPremisesApplication,
-  ArrayOfOASysRiskToSelfQuestions,
-  OASysSections,
-} from '@approved-premises/api'
-
-import TasklistPage from '../../../tasklistPage'
+import type { ApprovedPremisesApplication, ArrayOfOASysRiskToSelfQuestions } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
-import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/oasysImportUtils'
-import { mapApiPersonRisksForUi } from '../../../../utils/utils'
+import { getOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
 
 type RiskToSelfBody = {
   riskToSelfAnswers: Record<string, string>
@@ -21,7 +14,7 @@ type RiskToSelfBody = {
   name: 'risk-to-self',
   bodyProperties: ['riskToSelfAnswers', 'riskToSelfSummaries'],
 })
-export default class RiskToSelf implements TasklistPage {
+export default class RiskToSelf implements OasysPage {
   title = 'Edit risk information'
 
   riskToSelfSummaries: RiskToSelfBody['riskToSelfSummaries']
@@ -32,6 +25,8 @@ export default class RiskToSelf implements TasklistPage {
 
   risks: PersonRisksUI
 
+  oasysSuccess: boolean
+
   constructor(public body: Partial<RiskToSelfBody>) {}
 
   static async initialize(
@@ -40,21 +35,11 @@ export default class RiskToSelf implements TasklistPage {
     token: string,
     dataServices: DataServices,
   ) {
-    const oasysSections: OASysSections = await dataServices.personService.getOasysSections(
-      token,
-      application.person.crn,
-    )
-
-    const riskToSelf = sortOasysImportSummaries(oasysSections.riskToSelf)
-
-    body.riskToSelfSummaries = riskToSelf
-
-    const page = new RiskToSelf(body)
-    page.riskToSelfSummaries = riskToSelf
-    page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
-    page.risks = mapApiPersonRisksForUi(application.risks)
-
-    return page
+    return getOasysSections(body, application, token, dataServices, RiskToSelf, {
+      sectionName: 'riskToSelf',
+      summaryKey: 'riskToSelfSummaries',
+      answerKey: 'riskToSelfAnswers',
+    })
   }
 
   previous() {

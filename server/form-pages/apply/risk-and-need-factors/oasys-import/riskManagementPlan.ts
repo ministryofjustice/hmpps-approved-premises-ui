@@ -1,16 +1,9 @@
-import type { DataServices, PersonRisksUI } from '@approved-premises/ui'
+import type { DataServices, OasysPage, PersonRisksUI } from '@approved-premises/ui'
 
-import type {
-  ApprovedPremisesApplication,
-  ArrayOfOASysRiskManagementQuestions,
-  OASysSections,
-} from '@approved-premises/api'
-
-import TasklistPage from '../../../tasklistPage'
+import type { ApprovedPremisesApplication, ArrayOfOASysRiskManagementQuestions } from '@approved-premises/api'
 
 import { Page } from '../../../utils/decorators'
-import { oasysImportReponse, sortOasysImportSummaries } from '../../../../utils/oasysImportUtils'
-import { mapApiPersonRisksForUi } from '../../../../utils/utils'
+import { getOasysSections, oasysImportReponse } from '../../../../utils/oasysImportUtils'
 
 type RiskManagementBody = {
   riskManagementAnswers: Record<string, string>
@@ -21,7 +14,7 @@ type RiskManagementBody = {
   name: 'risk-management-plan',
   bodyProperties: ['riskManagementAnswers', 'riskManagementSummaries'],
 })
-export default class RiskManagementPlan implements TasklistPage {
+export default class RiskManagementPlan implements OasysPage {
   title = 'Edit risk information'
 
   riskManagementSummaries: RiskManagementBody['riskManagementSummaries']
@@ -32,6 +25,10 @@ export default class RiskManagementPlan implements TasklistPage {
 
   risks: PersonRisksUI
 
+  oasysSuccess: boolean
+
+  static sectionName = 'riskManagement'
+
   constructor(public body: Partial<RiskManagementBody>) {}
 
   static async initialize(
@@ -40,21 +37,11 @@ export default class RiskManagementPlan implements TasklistPage {
     token: string,
     dataServices: DataServices,
   ) {
-    const oasysSections: OASysSections = await dataServices.personService.getOasysSections(
-      token,
-      application.person.crn,
-    )
-
-    const riskManagement = sortOasysImportSummaries(oasysSections.riskManagementPlan)
-
-    body.riskManagementSummaries = riskManagement
-
-    const page = new RiskManagementPlan(body)
-    page.riskManagementSummaries = riskManagement
-    page.oasysCompleted = oasysSections?.dateCompleted || oasysSections?.dateStarted
-    page.risks = mapApiPersonRisksForUi(application.risks)
-
-    return page
+    return getOasysSections(body, application, token, dataServices, RiskManagementPlan, {
+      sectionName: 'riskManagementPlan',
+      summaryKey: 'riskManagementSummaries',
+      answerKey: 'riskManagementAnswers',
+    })
   }
 
   previous() {

@@ -391,3 +391,9 @@ export type BedOccupancyEntryUi = BedOccupancyEntryTypes & { type: BedOccupancyE
 export type BedOccupancyEntryCalendar = BedOccupancyEntryUi & { label: string }
 
 export type BedOccupancyRangeUi = Omit<BedOccupancyRange, 'schedule'> & { schedule: Array<BedOccupancyEntryUi> }
+
+export interface OasysPage extends TasklistPage {
+  oasysCompleted: string
+  risks: PersonRisksUI
+  oasysSuccess: boolean
+}
