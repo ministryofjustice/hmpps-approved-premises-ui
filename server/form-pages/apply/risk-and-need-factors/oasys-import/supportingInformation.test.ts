@@ -11,7 +11,6 @@ import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import SupportingInformation from './supportingInformation'
-import { itShouldHandleErrors } from './sharedExamples'
 
 jest.mock('../../../../services/personService.ts')
 
@@ -67,9 +66,11 @@ describe('SupportingInformation', () => {
 
     itShouldHavePreviousValue(new SupportingInformation({}), 'offence-details')
 
-    itShouldHandleErrors(SupportingInformation, {
-      answerKey: 'supportingInformationAnswers',
-      summaryKey: 'supportingInformationSummaries',
+    describe('errors', () => {
+      it('should return an empty object', () => {
+        const page = new SupportingInformation({})
+        expect(page.errors()).toEqual({})
+      })
     })
 
     describe('response', () => {
