@@ -88,7 +88,7 @@ export default class ApplyHelper {
     private readonly offences: Array<ActiveOffence>,
   ) {}
 
-  setupApplicationStubs(uiRisks?: PersonRisksUI, oasysMissing = false) {
+  setupApplicationStubs(uiRisks?: PersonRisksUI, oasysMissing = false, nomisMissing = false) {
     this.uiRisks = uiRisks
     this.stubPersonEndpoints()
     this.stubApplicationEndpoints()
@@ -97,9 +97,14 @@ export default class ApplyHelper {
     } else {
       this.stubOasysEndpoints()
     }
-    this.stubPrisonCaseNoteEndpoints()
-    this.stubAdjudicationEndpoints()
-    this.stubAcctAlertsEndpoint()
+
+    if (nomisMissing) {
+      this.stubPrisonCaseNotes404()
+    } else {
+      this.stubPrisonCaseNoteEndpoints()
+      this.stubAdjudicationEndpoints()
+      this.stubAcctAlertsEndpoint()
+    }
     this.stubDocumentEndpoints()
     this.stubOffences()
     this.addContingencyPlanDetails()
@@ -190,6 +195,10 @@ export default class ApplyHelper {
     this.supportingInformationSummaries = oasysStubs.supportingInformation
     this.riskManagementPlanSummaries = oasysStubs.riskManagementPlan
     this.riskToSelfSummaries = oasysStubs.riskToSelf
+  }
+
+  private stubPrisonCaseNotes404() {
+    cy.task('stubPrisonCaseNotes404', { person: this.person })
   }
 
   private stubOasysEndpoints() {
@@ -628,7 +637,7 @@ export default class ApplyHelper {
     tasklistPage.shouldShowTaskStatus('risk-management-features', 'Not started')
   }
 
-  private completeRiskManagementSection() {
+  completeRiskManagementSection() {
     // Given I click the 'Add detail about managing risks and needs' task
     cy.get('[data-cy-task-name="risk-management-features"]').click()
 
@@ -668,14 +677,16 @@ export default class ApplyHelper {
     tasklistPage.shouldShowTaskStatus('risk-management-features', 'Completed')
   }
 
-  private completePrisonInformationSection() {
+  completePrisonInformationSection(nomisMissing = false) {
     // And I click the 'Review prison information' task
     cy.get('[data-cy-task-name="prison-information"]').click()
 
     const caseNotesPage = new ApplyPages.CaseNotesPage(this.application, this.selectedPrisonCaseNotes)
-    caseNotesPage.shouldDisplayAdjudications(this.adjudications)
-    caseNotesPage.shouldDisplayAcctAlerts(this.acctAlerts)
-    caseNotesPage.completeForm()
+    if (!nomisMissing) {
+      caseNotesPage.shouldDisplayAdjudications(this.adjudications)
+      caseNotesPage.shouldDisplayAcctAlerts(this.acctAlerts)
+    }
+    caseNotesPage.completeForm(nomisMissing)
     caseNotesPage.clickSubmit()
 
     // Given I click the 'Describe location factors' task

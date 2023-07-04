@@ -139,6 +139,19 @@ export default {
       },
     }),
 
+  stubPrisonCaseNotes404: (args: { person: Person }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `/people/${args.person.crn}/prison-case-notes`,
+      },
+      response: {
+        status: 404,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: { status: 404 },
+      },
+    }),
+
   stubAdjudications: (args: { person: Person; adjudications: Array<Adjudication> }) =>
     stubFor({
       request: {

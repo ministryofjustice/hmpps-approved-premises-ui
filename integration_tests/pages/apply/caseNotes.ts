@@ -20,13 +20,18 @@ export default class CaseNotesPage extends ApplyPage {
     this.prisonCaseNotes = prisonCaseNotes
   }
 
-  completeForm() {
-    cy.get('a').contains('Prison case notes').click()
+  completeForm(nomisMissing = false) {
+    if (nomisMissing) {
+      this.checkRadioButtonFromPageBody('informationFromPrison')
+      this.completeTextInputFromPageBody('informationFromPrisonDetail')
+    } else {
+      cy.get('a').contains('Prison case notes').click()
 
-    this.prisonCaseNotes.forEach(note => {
-      cy.contains('label', `Select case note from ${DateFormats.isoDateToUIDate(note.createdAt)}`)
-        .siblings('input')
-        .check()
-    })
+      this.prisonCaseNotes.forEach(note => {
+        cy.contains('label', `Select case note from ${DateFormats.isoDateToUIDate(note.createdAt)}`)
+          .siblings('input')
+          .check()
+      })
+    }
   }
 }
