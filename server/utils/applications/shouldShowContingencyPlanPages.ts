@@ -2,7 +2,11 @@ import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-a
 import ReleaseType from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
 import SentenceType from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
 import { ApprovedPremisesApplication as Application, ReleaseTypeOption } from '../../@types/shared'
-import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
+import {
+  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
+  retrieveQuestionResponseFromFormArtifact,
+} from '../retrieveQuestionResponseFromFormArtifact'
+import EndDates from '../../form-pages/apply/reasons-for-placement/basic-information/endDates'
 
 export const shouldShowContingencyPlanPages = (application: Application) => {
   let releaseType: ReleaseTypeOption
@@ -26,6 +30,10 @@ export const shouldShowContingencyPlanPages = (application: Application) => {
     apType === 'esap'
   )
     return true
+
+  const pssEndDate = retrieveOptionalQuestionResponseFromApplicationOrAssessment(application, EndDates, 'pssDate')
+
+  if (pssEndDate) return true
 
   return false
 }
