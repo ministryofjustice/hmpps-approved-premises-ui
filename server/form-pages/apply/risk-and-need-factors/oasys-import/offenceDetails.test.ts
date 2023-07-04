@@ -6,7 +6,6 @@ import { mapApiPersonRisksForUi } from '../../../../utils/utils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import OffenceDetails from './offenceDetails'
-import { itShouldHandleErrors } from './sharedExamples'
 
 jest.mock('../../../../services/personService.ts')
 
@@ -56,7 +55,12 @@ describe('OffenceDetails', () => {
 
     itShouldHavePreviousValue(new OffenceDetails({}), 'rosh-summary')
 
-    itShouldHandleErrors(OffenceDetails, { answerKey: 'offenceDetailsAnswers', summaryKey: 'offenceDetailsSummaries' })
+    describe('errors', () => {
+      it('should return an empty object', () => {
+        const page = new OffenceDetails({})
+        expect(page.errors()).toEqual({})
+      })
+    })
 
     describe('response', () => {
       it('calls oasysImportReponse with the correct arguments', () => {
