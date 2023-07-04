@@ -1,7 +1,8 @@
-import type { DataServices, PageResponse } from '@approved-premises/ui'
+import type { DataServices, PageResponse, TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
 
 import type { Adjudication, ApprovedPremisesApplication, PersonAcctAlert, PrisonCaseNote } from '@approved-premises/api'
 
+import { yesOrNoResponseWithDetailForYes } from '../../../utils'
 import { sentenceCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
 import { DateFormats, uiDateOrDateEmptyMessage } from '../../../../utils/dateUtils'
@@ -17,7 +18,7 @@ type CaseNotesBody = {
   selectedCaseNotes: Array<PrisonCaseNote>
   adjudications: Array<Adjudication>
   acctAlerts: Array<PersonAcctAlert>
-}
+} & YesOrNoWithDetail<'informationFromPrison'>
 
 export const caseNoteResponse = (caseNote: PrisonCaseNote) => {
   return {
@@ -71,7 +72,14 @@ export const caseNoteCheckbox = (caseNote: PrisonCaseNote, checked: boolean) => 
 
 @Page({
   name: 'case-notes',
-  bodyProperties: ['caseNoteIds', 'selectedCaseNotes', 'adjudications', 'acctAlerts'],
+  bodyProperties: [
+    'caseNoteIds',
+    'selectedCaseNotes',
+    'adjudications',
+    'acctAlerts',
+    'informationFromPrison',
+    'informationFromPrisonDetail',
+  ],
 })
 export default class CaseNotes implements TasklistPage {
   title = 'Prison information'
@@ -99,6 +107,8 @@ export default class CaseNotes implements TasklistPage {
       selectedCaseNotes,
       adjudications: (value.adjudications || []) as Array<CaseNotesAdjudication>,
       acctAlerts: (value.acctAlerts || []) as Array<PersonAcctAlert>,
+      informationFromPrison: value.informationFromPrison,
+      informationFromPrisonDetail: value.informationFromPrisonDetail,
     }
   }
 
@@ -159,11 +169,26 @@ export default class CaseNotes implements TasklistPage {
       response['ACCT Alerts'] = this.body.acctAlerts.map(acctAlertResponse)
     }
 
+    if (this.body.informationFromPrison) {
+      response["Do you have any information from prison that will help with the person's risk management?"] =
+        yesOrNoResponseWithDetailForYes('informationFromPrison', this.body)
+    }
+
     return response
   }
 
   errors() {
-    const errors = {}
+    const errors: TaskListErrors<this> = {}
+
+    if (this.nomisFailed) {
+      if (!this.body.informationFromPrison) {
+        errors.informationFromPrison = 'You must state if you have any information from prison'
+      }
+
+      if (this.body.informationFromPrison === 'yes' && !this.body.informationFromPrisonDetail) {
+        errors.informationFromPrisonDetail = 'You must provide detail of the information you have from prison'
+      }
+    }
 
     return errors
   }

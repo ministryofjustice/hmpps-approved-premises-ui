@@ -282,6 +282,18 @@ describe('CaseNotes', () => {
 
       expect(page.response()).toEqual({})
     })
+
+    it('returns the information from prison fields if provided', () => {
+      const page = new CaseNotes(
+        { informationFromPrison: 'yes', informationFromPrisonDetail: 'Some detail' },
+        application,
+      )
+
+      expect(page.response()).toEqual({
+        "Do you have any information from prison that will help with the person's risk management?":
+          'Yes - Some detail',
+      })
+    })
   })
 
   describe('checkBoxForCaseNoteId', () => {
@@ -305,6 +317,24 @@ describe('CaseNotes', () => {
   })
 
   describe('errors', () => {
-    expect(new CaseNotes({}, application).errors()).toEqual({})
+    it('returns an empty object if nomisFailed is false', () => {
+      const page = new CaseNotes({}, application)
+      page.nomisFailed = false
+      expect(page.errors()).toEqual({})
+    })
+
+    it('returns errors if nomisFailed is true and the informationFromPrison detail is invalid', () => {
+      const page = new CaseNotes({}, application)
+      page.nomisFailed = true
+      expect(page.errors()).toEqual({
+        informationFromPrison: 'You must state if you have any information from prison',
+      })
+
+      page.body.informationFromPrison = 'yes'
+
+      expect(page.errors()).toEqual({
+        informationFromPrisonDetail: 'You must provide detail of the information you have from prison',
+      })
+    })
   })
 })
