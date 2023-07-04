@@ -9,10 +9,7 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
-import {
-  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
-  retrieveQuestionResponseFromFormArtifact,
-} from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import Rfap from '../../../apply/risk-and-need-factors/further-considerations/rfap'
 
 export type ApplicationTimelinessSection = {
@@ -44,12 +41,15 @@ export default class ApplicationTimeliness implements TasklistPage {
 
   retrieveShortNoticeApplicationDetails() {
     const applicationDate = DateFormats.isoDateToUIDate(this.assessment.application.submittedAt, { format: 'short' })
-    const lateApplicationReasonId = retrieveQuestionResponseFromFormArtifact(
+    const lateApplicationReasonId = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
       this.assessment.application,
       ReasonForShortNotice,
       'reason',
     )
-    const lateApplicationReason = shortNoticeReasons[lateApplicationReasonId]
+
+    const lateApplicationReason = lateApplicationReasonId
+      ? shortNoticeReasons[lateApplicationReasonId]
+      : 'None supplied'
 
     return { applicationDate, lateApplicationReason }
   }

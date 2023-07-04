@@ -2,10 +2,7 @@ import { DateFormats } from '../../../../utils/dateUtils'
 import { assessmentFactory } from '../../../../testutils/factories'
 import { YesOrNo } from '../../../../@types/ui'
 import { itShouldHaveNextValue } from '../../../shared-examples'
-import {
-  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
-  retrieveQuestionResponseFromFormArtifact,
-} from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 import ApplicationTimeliness from './applicationTimeliness'
 
@@ -134,7 +131,7 @@ describe('ApplicationTimeliness', () => {
   describe('retrieveShortNoticeApplicationDetails', () => {
     const applicationDate = '30/06/2023'
     ;(DateFormats.isoDateToUIDate as jest.Mock).mockReturnValue(applicationDate)
-    ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('onBail')
+    ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('onBail')
 
     const page = new ApplicationTimeliness(
       {
