@@ -24,11 +24,23 @@ describe('addOverbookingsToSchedule', () => {
     const result = addOverbookingsToSchedule([entry1, entry2, entry3, entry4, entry5])
 
     expect(result[0]).toEqual(createOccupancyEntry('2023-04-01', '2023-04-20', 'booking'))
-    expect(result[1]).toEqual(createOccupancyEntry('2023-04-21', '2023-06-01', 'overbooking'))
+    expect(result[1]).toEqual({
+      ...createOccupancyEntry('2023-04-21', '2023-06-01', 'overbooking'),
+      items: [
+        createOccupancyEntry('2023-04-01', '2023-06-01', 'booking'),
+        createOccupancyEntry('2023-04-21', '2023-07-01', 'booking'),
+      ],
+    })
     expect(result[2]).toEqual(createOccupancyEntry('2023-06-02', '2023-07-01', 'booking'))
     expect(result[3]).toEqual(createOccupancyEntry('2023-08-01', '2023-08-12', 'open'))
     expect(result[4]).toEqual(createOccupancyEntry('2023-08-13', '2023-09-09', 'lost_bed'))
-    expect(result[5]).toEqual(createOccupancyEntry('2023-09-10', '2023-09-23', 'overbooking'))
+    expect(result[5]).toEqual({
+      ...createOccupancyEntry('2023-09-10', '2023-09-23', 'overbooking'),
+      items: [
+        createOccupancyEntry('2023-08-13', '2023-09-23', 'lost_bed'),
+        createOccupancyEntry('2023-09-10', '2023-09-25', 'booking'),
+      ],
+    })
     expect(result[6]).toEqual(createOccupancyEntry('2023-09-24', '2023-09-25', 'booking'))
   })
 })

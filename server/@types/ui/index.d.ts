@@ -376,6 +376,7 @@ export interface BedOccupancyOpenEntryUi extends RemoveStartAndEndDates<BedOccup
 export interface BedOccupancyOverbookingEntryUi extends StartAndEndDates {
   length: number
   type: 'overbooking'
+  items: Array<BedOccupancyEntryUi>
 }
 
 export type BedOccupancyEntryTypes =

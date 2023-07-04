@@ -17,6 +17,8 @@ export const addOverbookingsToSchedule = (schedule: Array<BedOccupancyEntryUi>):
         // If it is, we have an overbooking
         const overlapStartDate = nextItem.startDate
         const overlapEndDate = item.endDate
+        // Add the items that caused the overlap to an array
+        const items = [{ ...orderedSchedule[index] }, { ...orderedSchedule[index + 1] }]
         // Change our end date to the day before overbooking's start date
         item.endDate = subDays(overlapStartDate, 1)
         item.length = differenceInDays(item.endDate, item.startDate) + 1
@@ -29,6 +31,7 @@ export const addOverbookingsToSchedule = (schedule: Array<BedOccupancyEntryUi>):
           endDate: overlapEndDate,
           type: 'overbooking',
           length: differenceInDays(overlapEndDate, overlapStartDate) + 1,
+          items,
         })
       }
     }
