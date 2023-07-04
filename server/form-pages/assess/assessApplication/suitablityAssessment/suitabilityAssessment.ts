@@ -8,6 +8,7 @@ import TasklistPage from '../../../tasklistPage'
 import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import Rfap from '../../../apply/risk-and-need-factors/further-considerations/rfap'
+import { shouldShowContingencyPlanPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
 
 export type SuitabilityAssessmentSection = {
   riskFactors: string
@@ -75,6 +76,10 @@ export default class SuitabilityAssessment implements TasklistPage {
       noticeTypeFromApplication(this.assessment.application) === 'emergency'
     ) {
       return 'application-timeliness'
+    }
+
+    if (shouldShowContingencyPlanPages(this.assessment.application)) {
+      return 'contingency-plan-suitability'
     }
 
     return ''
