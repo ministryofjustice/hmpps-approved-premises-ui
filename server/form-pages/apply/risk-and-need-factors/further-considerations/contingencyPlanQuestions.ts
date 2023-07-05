@@ -7,7 +7,6 @@ import {
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-import { shouldShowTriggerPlanPages } from '../../../../utils/applications/shouldShowTriggerPlanPage'
 import { ApprovedPremisesApplication as Application } from '../../../../@types/shared'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import ContingencyPlanPartners from './contingencyPlanPartners'
@@ -85,7 +84,7 @@ export default class ContingencyPlanQuestions implements TasklistPage {
   }
 
   next() {
-    return shouldShowTriggerPlanPages(this.application) ? 'trigger-plan' : ''
+    return 'trigger-plan'
   }
 
   response() {
