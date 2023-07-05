@@ -8,7 +8,7 @@ import {
 } from '../retrieveQuestionResponseFromFormArtifact'
 import EndDates from '../../form-pages/apply/reasons-for-placement/basic-information/endDates'
 
-export const shouldShowContingencyPlanPages = (application: Application) => {
+export const shouldShowContingencyPlanPartnersPages = (application: Application) => {
   let releaseType: ReleaseTypeOption
   const sentenceType = retrieveQuestionResponseFromFormArtifact(application, SentenceType, 'sentenceType')
 
