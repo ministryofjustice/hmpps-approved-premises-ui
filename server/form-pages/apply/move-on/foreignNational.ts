@@ -4,6 +4,7 @@ import { sentenceCase } from '../../../utils/utils'
 import TasklistPage from '../../tasklistPage'
 import { DateFormats, dateIsBlank } from '../../../utils/dateUtils'
 import { Page } from '../../utils/decorators'
+import { dateBodyProperties } from '../../utils/dateBodyProperties'
 
 type ForeignNationalBody =
   | ({
@@ -11,7 +12,7 @@ type ForeignNationalBody =
     } & ObjectWithDateParts<'date'>)
   | { response: 'no' }
 
-@Page({ name: 'foreign-national', bodyProperties: ['response', 'date-year', 'date-month', 'date-day', 'date'] })
+@Page({ name: 'foreign-national', bodyProperties: ['response', ...dateBodyProperties('date')] })
 export default class ForeignNational implements TasklistPage {
   name = 'foreign-national'
 

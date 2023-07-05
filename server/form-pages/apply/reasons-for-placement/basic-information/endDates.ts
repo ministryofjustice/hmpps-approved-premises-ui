@@ -5,6 +5,7 @@ import { DateFormats, uiDateOrDateEmptyMessage } from '../../../../utils/dateUti
 
 import TasklistPage from '../../../tasklistPage'
 import { ApprovedPremisesApplication } from '../../../../@types/shared'
+import { dateBodyProperties } from '../../../utils'
 
 export type EndDatesBody = ObjectWithDateParts<'sedDate'> &
   ObjectWithDateParts<'ledDate'> &
@@ -13,18 +14,9 @@ export type EndDatesBody = ObjectWithDateParts<'sedDate'> &
 @Page({
   name: 'end-dates',
   bodyProperties: [
-    'sedDate',
-    'sedDate-year',
-    'sedDate-month',
-    'sedDate-day',
-    'ledDate',
-    'ledDate-year',
-    'ledDate-month',
-    'ledDate-day',
-    'pssDate',
-    'pssDate-year',
-    'pssDate-month',
-    'pssDate-day',
+    ...dateBodyProperties('sedDate'),
+    ...dateBodyProperties('ledDate'),
+    ...dateBodyProperties('pssDate'),
   ],
 })
 export default class EndDates implements TasklistPage {

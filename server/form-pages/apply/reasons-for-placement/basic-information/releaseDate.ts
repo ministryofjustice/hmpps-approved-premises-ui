@@ -5,7 +5,7 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank, dateIsInThePast } from '../../../../utils/dateUtils'
 import { convertToTitleCase } from '../../../../utils/utils'
-import { dateBodyProperties } from '../../../utils'
+import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 type ReleaseDateType = ObjectWithDateParts<'releaseDate'> & {
   knowReleaseDate: YesOrNo

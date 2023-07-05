@@ -6,6 +6,7 @@ import { sentenceCase } from '../../../../utils/utils'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
 
 import TasklistPage from '../../../tasklistPage'
+import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 type InformationReceivedBody = ObjectWithDateParts<'responseReceivedOn'> & {
   informationReceived?: YesOrNo
@@ -14,14 +15,7 @@ type InformationReceivedBody = ObjectWithDateParts<'responseReceivedOn'> & {
 
 @Page({
   name: 'information-received',
-  bodyProperties: [
-    'informationReceived',
-    'response',
-    'responseReceivedOn',
-    'responseReceivedOn-year',
-    'responseReceivedOn-month',
-    'responseReceivedOn-day',
-  ],
+  bodyProperties: ['informationReceived', 'response', ...dateBodyProperties('responseReceivedOn')],
   controllerActions: { update: 'updateInformationRecieved' },
 })
 export default class InformationReceived implements TasklistPage {

@@ -8,6 +8,7 @@ import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank, dateIsInThePa
 import { Page } from '../../../utils/decorators'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 import ReleaseDate from './releaseDate'
+import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 type PlacementDateBody = ObjectWithDateParts<'startDate'> & {
   startDateSameAsReleaseDate: YesOrNo
@@ -15,7 +16,7 @@ type PlacementDateBody = ObjectWithDateParts<'startDate'> & {
 
 @Page({
   name: 'placement-date',
-  bodyProperties: ['startDate', 'startDate-day', 'startDate-month', 'startDate-year', 'startDateSameAsReleaseDate'],
+  bodyProperties: [...dateBodyProperties('startDate'), 'startDateSameAsReleaseDate'],
 })
 export default class PlacementDate implements TasklistPage {
   title: string
