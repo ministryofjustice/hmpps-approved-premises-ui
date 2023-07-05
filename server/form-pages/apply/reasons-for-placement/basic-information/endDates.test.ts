@@ -77,8 +77,29 @@ describe('EndDates', () => {
       const page = new EndDates(body, application)
       expect(page.errors()).toEqual({})
     })
-  })
 
+    it('should return an error if an invalid date is entered', () => {
+      const page = new EndDates(
+        {
+          'pssDate-day': '32',
+          'pssDate-month': '13',
+          'pssDate-year': '2023',
+          'sedDate-day': '32',
+          'sedDate-month': '13',
+          'sedDate-year': '2023',
+          'ledDate-day': '32',
+          'ledDate-month': '13',
+          'ledDate-year': '2023',
+        },
+        application,
+      )
+      expect(page.errors()).toEqual({
+        ledDate: 'Licence end date (LED) must be a valid date',
+        pssDate: 'Post-sentence supervision (PSS) must be a valid date',
+        sedDate: 'Sentence end date (SED) must be a valid date',
+      })
+    })
+  })
   describe('response', () => {
     it('should return a translated version of the response', () => {
       const page = new EndDates(body, application)

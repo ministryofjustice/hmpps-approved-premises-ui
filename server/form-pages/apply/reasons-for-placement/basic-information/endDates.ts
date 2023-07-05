@@ -1,11 +1,16 @@
 import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
-import { DateFormats, uiDateOrDateEmptyMessage } from '../../../../utils/dateUtils'
+import {
+  DateFormats,
+  dateAndTimeInputsAreValidDates,
+  dateIsBlank,
+  uiDateOrDateEmptyMessage,
+} from '../../../../utils/dateUtils'
 
 import TasklistPage from '../../../tasklistPage'
 import { ApprovedPremisesApplication } from '../../../../@types/shared'
-import { dateBodyProperties } from '../../../utils'
+import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 export type EndDatesBody = ObjectWithDateParts<'sedDate'> &
   ObjectWithDateParts<'ledDate'> &
@@ -53,6 +58,14 @@ export default class EndDates implements TasklistPage {
 
   errors() {
     const errors: TaskListErrors<this> = {}
+
+    ;['sedDate', 'ledDate', 'pssDate'].forEach(date => {
+      if (!dateIsBlank(this.body, date)) {
+        if (!dateAndTimeInputsAreValidDates(this.body, date)) {
+          errors[date] = `${this.questions[date]} must be a valid date`
+        }
+      }
+    })
 
     return errors
   }
