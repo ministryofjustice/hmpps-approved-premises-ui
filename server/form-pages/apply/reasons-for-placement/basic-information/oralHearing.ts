@@ -75,7 +75,7 @@ export default class OralHearing implements TasklistPage {
     }
 
     if (this.body.knowOralHearingDate === 'yes') {
-      if (dateIsBlank(this.body)) {
+      if (dateIsBlank(this.body, 'oralHearingDate')) {
         errors.oralHearingDate = 'You must specify the oral hearing date'
       } else if (
         !dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'oralHearingDate'>, 'oralHearingDate')

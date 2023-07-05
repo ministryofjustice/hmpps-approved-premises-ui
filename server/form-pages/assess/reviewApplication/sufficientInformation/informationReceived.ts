@@ -80,7 +80,7 @@ export default class InformationReceived implements TasklistPage {
     }
 
     if (this.body.informationReceived === 'yes') {
-      if (dateIsBlank(this.body)) {
+      if (dateIsBlank(this.body, 'responseReceivedOn')) {
         errors.responseReceivedOn = 'You must specify when you received the information'
       } else if (
         !dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'responseReceivedOn'>, 'responseReceivedOn')

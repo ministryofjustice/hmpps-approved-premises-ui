@@ -71,7 +71,7 @@ export default class ForeignNational implements TasklistPage {
       errors.response =
         'You must confirm whether you have informed the Home Office that accommodation will be required after placement'
 
-    if (this.body.response === 'yes' && dateIsBlank(this.body))
+    if (this.body.response === 'yes' && dateIsBlank(this.body, 'date'))
       errors.date = 'You must confirm the date of notification'
 
     return errors

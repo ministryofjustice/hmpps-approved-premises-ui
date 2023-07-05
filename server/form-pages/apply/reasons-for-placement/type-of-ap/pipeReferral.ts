@@ -74,7 +74,7 @@ export default class PipeReferral implements TasklistPage {
     }
 
     if (this.body.opdPathway === 'yes') {
-      if (dateIsBlank(this.body)) {
+      if (dateIsBlank(this.body, 'opdPathwayDate')) {
         errors.opdPathwayDate = 'You must enter an OPD Pathway date'
       } else if (
         !dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'opdPathwayDate'>, 'opdPathwayDate')

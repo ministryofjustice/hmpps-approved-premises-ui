@@ -112,7 +112,7 @@ export default class RequiredActions implements TasklistPage {
         errors.additionalActionsComments =
           'You must state the additional recommendations due to there being concerns that the person poses a potentially unmanageable risk to staff and others'
 
-      if (dateIsBlank(this.body)) errors.dateOfDiscussion = 'You must state the date of discussion'
+      if (dateIsBlank(this.body, 'dateOfDiscussion')) errors.dateOfDiscussion = 'You must state the date of discussion'
       else if (
         !dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'dateOfDiscussion'>, 'dateOfDiscussion')
       ) {

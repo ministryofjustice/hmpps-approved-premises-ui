@@ -80,7 +80,7 @@ export default class PlacementDate implements TasklistPage {
     }
 
     if (this.body.startDateSameAsReleaseDate === 'no') {
-      if (dateIsBlank(this.body)) {
+      if (dateIsBlank(this.body, 'startDate')) {
         errors.startDate = 'You must enter a start date'
       } else if (!dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'startDate'>, 'startDate')) {
         errors.startDate = 'The start date is an invalid date'

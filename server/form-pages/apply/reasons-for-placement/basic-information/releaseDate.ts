@@ -5,6 +5,7 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank, dateIsInThePast } from '../../../../utils/dateUtils'
 import { convertToTitleCase } from '../../../../utils/utils'
+import { dateBodyProperties } from '../../../utils'
 
 type ReleaseDateType = ObjectWithDateParts<'releaseDate'> & {
   knowReleaseDate: YesOrNo
@@ -12,7 +13,7 @@ type ReleaseDateType = ObjectWithDateParts<'releaseDate'> & {
 
 @Page({
   name: 'release-date',
-  bodyProperties: ['releaseDate', 'releaseDate-year', 'releaseDate-month', 'releaseDate-day', 'knowReleaseDate'],
+  bodyProperties: [...dateBodyProperties('releaseDate'), 'knowReleaseDate'],
 })
 export default class ReleaseDate implements TasklistPage {
   title = `Do you know ${this.application.person.name}’s release date?`
@@ -73,7 +74,7 @@ export default class ReleaseDate implements TasklistPage {
     }
 
     if (this.body.knowReleaseDate === 'yes') {
-      if (dateIsBlank(this.body)) {
+      if (dateIsBlank(this.body, 'releaseDate')) {
         errors.releaseDate = 'You must specify the release date'
       } else if (!dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'releaseDate'>, 'releaseDate')) {
         errors.releaseDate = 'The release date is an invalid date'
