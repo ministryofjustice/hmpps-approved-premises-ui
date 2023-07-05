@@ -143,7 +143,13 @@ export interface SummaryList {
   rows: Array<SummaryListItem>
 }
 
-export type SummaryListWithCard = SummaryList & { card: { title: { text: string } } }
+export type SummaryListWithCard = SummaryList & {
+  card: {
+    title: { text: string }
+    actions?: SummaryListActions
+    attributes?: HtmlAttributes
+  }
+}
 
 export interface SummaryListActionItem {
   href: string
