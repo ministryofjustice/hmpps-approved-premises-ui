@@ -1,3 +1,4 @@
+import { differenceInDays } from 'date-fns'
 import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import ReleaseType from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
 import SentenceType from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
@@ -7,6 +8,8 @@ import {
   retrieveQuestionResponseFromFormArtifact,
 } from '../retrieveQuestionResponseFromFormArtifact'
 import EndDates from '../../form-pages/apply/reasons-for-placement/basic-information/endDates'
+import { DateFormats } from '../dateUtils'
+import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 
 export const shouldShowContingencyPlanPartnersPages = (application: Application) => {
   let releaseType: ReleaseTypeOption
@@ -34,6 +37,18 @@ export const shouldShowContingencyPlanPartnersPages = (application: Application)
   const pssEndDate = retrieveOptionalQuestionResponseFromApplicationOrAssessment(application, EndDates, 'pssDate')
 
   if (pssEndDate) return true
+
+  return false
+}
+
+export const shouldShowContingencyPlanQuestionsPage = (application: Application) => {
+  const arrivalDateString = arrivalDateFromApplication(application)
+
+  if (!arrivalDateString) return false
+
+  const arrivalDateObj = DateFormats.isoToDateObj(arrivalDateString)
+
+  if (differenceInDays(arrivalDateObj, new Date()) <= 28) return true
 
   return false
 }
