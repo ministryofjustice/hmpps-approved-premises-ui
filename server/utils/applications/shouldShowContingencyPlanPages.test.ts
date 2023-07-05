@@ -30,13 +30,13 @@ describe('shouldShowContingencyPlanPages', () => {
     expect(shouldShowContingencyPlanPages(application)).toEqual(true)
   })
 
-  it('returns true if the application has a release type of "Post Sentence Supervision (PSS)"', () => {
+  it('returns true if the application has an end date for "Post Sentence Supervision (PSS)"', () => {
     mockOptionalQuestionResponse({ pssDate: '20/02/2023' })
 
     expect(shouldShowContingencyPlanPages(application)).toEqual(true)
   })
 
-  it('returns false if the application has a AP type of "ESAP"', () => {
+  it('returns true if the application has a AP type of "ESAP"', () => {
     mockQuestionResponse({ type: 'esap' })
 
     expect(shouldShowContingencyPlanPages(application)).toEqual(true)
