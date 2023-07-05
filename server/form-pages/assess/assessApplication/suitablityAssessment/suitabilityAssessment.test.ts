@@ -4,7 +4,7 @@ import { YesOrNo } from '../../../../@types/ui'
 import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import SuitabilityAssessment from './suitabilityAssessment'
-import { shouldShowContingencyPlanPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
+import { shouldShowContingencyPlanPartnersPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
 
 jest.mock('../../../../utils/applications/noticeTypeFromApplication')
 jest.mock('../../../../utils/applications/shouldShowContingencyPlanPages')
@@ -81,8 +81,8 @@ describe('SuitabilityAssessment', () => {
       ).toEqual('application-timeliness')
     })
 
-    it('returns contingency-plan-suitability if shouldShowContingencyPlanPages returns true', () => {
-      ;(shouldShowContingencyPlanPages as jest.Mock).mockReturnValue(true)
+    it('returns contingency-plan-suitability if shouldShowContingencyPlanPartnerPages returns true', () => {
+      ;(shouldShowContingencyPlanPartnersPages as jest.Mock).mockReturnValue(true)
       expect(
         new SuitabilityAssessment(
           {
