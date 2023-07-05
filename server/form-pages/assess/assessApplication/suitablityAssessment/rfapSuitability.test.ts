@@ -52,7 +52,7 @@ describe('RfapSuitability', () => {
 
       expect(page.errors()).toEqual({
         rfapIdentifiedAsSuitable:
-          'You must confirm if a Recovery Focused Approved Premises (RAP) been identified as a suitable placement',
+          'You must confirm if a Recovery Focused Approved Premises (RFAP) been identified as a suitable placement',
       })
     })
   })
@@ -62,7 +62,7 @@ describe('RfapSuitability', () => {
       const page = new RfapSuitability(body, assessment)
 
       expect(page.response()).toEqual({
-        'Has a Recovery Focused Approved Premises (RAP) been identified as a suitable placement?': 'yes',
+        'Has a Recovery Focused Approved Premises (RFAP) been identified as a suitable placement?': 'yes',
         'If the person is unsuitable for a RFAP placement yet suitable for a standard placement, summarise the rationale for the decision':
           'some reasons',
       })

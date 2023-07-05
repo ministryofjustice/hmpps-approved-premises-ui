@@ -11,6 +11,7 @@ import TasklistPage from '../../../tasklistPage'
 import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import Rfap from '../../../apply/risk-and-need-factors/further-considerations/rfap'
+import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 
 export type ApplicationTimelinessSection = {
   agreeWithShortNoticeReason: string
@@ -69,7 +70,7 @@ export default class ApplicationTimeliness implements TasklistPage {
   }
 
   next() {
-    return ''
+    return noticeTypeFromApplication(this.assessment.application) === 'emergency' ? 'contingency-plan-suitability' : ''
   }
 
   response() {

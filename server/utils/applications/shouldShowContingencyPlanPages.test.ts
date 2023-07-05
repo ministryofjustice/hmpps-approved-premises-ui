@@ -1,6 +1,6 @@
 import { applicationFactory } from '../../testutils/factories'
 import { shouldShowContingencyPlanPages } from './shouldShowContingencyPlanPages'
-import { mockQuestionResponse } from '../../testutils/mockQuestionResponse'
+import { mockOptionalQuestionResponse, mockQuestionResponse } from '../../testutils/mockQuestionResponse'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
@@ -26,6 +26,12 @@ describe('shouldShowContingencyPlanPages', () => {
 
   it('returns true if the application has a release type of "Post Sentence Supervision (PSS)"', () => {
     mockQuestionResponse({ sentenceType: 'ipp', releaseType: 'pss' })
+
+    expect(shouldShowContingencyPlanPages(application)).toEqual(true)
+  })
+
+  it('returns true if the application has a release type of "Post Sentence Supervision (PSS)"', () => {
+    mockOptionalQuestionResponse({ pssDate: '20/02/2023' })
 
     expect(shouldShowContingencyPlanPages(application)).toEqual(true)
   })

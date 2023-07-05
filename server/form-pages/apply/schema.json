@@ -1115,99 +1115,123 @@
       "type": "object",
       "properties": {
         "case-notes": {
-          "type": "object",
-          "properties": {
-            "caseNoteIds": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "selectedCaseNotes": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "caseNoteIds": {
+                  "type": "array",
+                  "items": {
                     "type": "string"
-                  },
-                  "sensitive": {
-                    "type": "boolean"
-                  },
-                  "createdAt": {
-                    "type": "string"
-                  },
-                  "occurredAt": {
-                    "type": "string"
-                  },
-                  "authorName": {
-                    "type": "string"
-                  },
-                  "type": {
-                    "type": "string"
-                  },
-                  "subType": {
-                    "type": "string"
-                  },
-                  "note": {
-                    "type": "string"
+                  }
+                },
+                "selectedCaseNotes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "sensitive": {
+                        "type": "boolean"
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "occurredAt": {
+                        "type": "string"
+                      },
+                      "authorName": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "subType": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "adjudications": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number"
+                      },
+                      "reportedAt": {
+                        "type": "string"
+                      },
+                      "establishment": {
+                        "type": "string"
+                      },
+                      "offenceDescription": {
+                        "type": "string"
+                      },
+                      "hearingHeld": {
+                        "type": "boolean"
+                      },
+                      "finding": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "acctAlerts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "alertId": {
+                        "type": "number"
+                      },
+                      "comment": {
+                        "type": "string"
+                      },
+                      "dateCreated": {
+                        "type": "string"
+                      },
+                      "dateExpires": {
+                        "type": "string"
+                      },
+                      "expired": {
+                        "type": "boolean"
+                      },
+                      "active": {
+                        "type": "boolean"
+                      }
+                    }
                   }
                 }
               }
             },
-            "adjudications": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "number"
-                  },
-                  "reportedAt": {
-                    "type": "string"
-                  },
-                  "establishment": {
-                    "type": "string"
-                  },
-                  "offenceDescription": {
-                    "type": "string"
-                  },
-                  "hearingHeld": {
-                    "type": "boolean"
-                  },
-                  "finding": {
-                    "type": "string"
-                  }
+            {
+              "type": "object",
+              "properties": {
+                "informationFromPrison": {
+                  "enum": [
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
                 }
               }
             },
-            "acctAlerts": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "alertId": {
-                    "type": "number"
-                  },
-                  "comment": {
-                    "type": "string"
-                  },
-                  "dateCreated": {
-                    "type": "string"
-                  },
-                  "dateExpires": {
-                    "type": "string"
-                  },
-                  "expired": {
-                    "type": "boolean"
-                  },
-                  "active": {
-                    "type": "boolean"
-                  }
+            {
+              "type": "object",
+              "properties": {
+                "informationFromPrisonDetail": {
+                  "type": "string"
                 }
               }
             }
-          }
+          ]
         }
       }
     },

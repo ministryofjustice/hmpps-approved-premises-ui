@@ -1,0 +1,74 @@
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+
+{% extends "../layout.njk" %}
+
+{% block questions %}
+    <h1 class="govuk-heading-l">{{page.title}}</h1>
+
+    {{
+            formPageRadios({
+                fieldName: "contingencyPlanSufficient",
+                fieldset: {
+                    legend: {
+                    text: page.questions.contingencyPlanSufficient,
+                    classes: "govuk-fieldset__legend--m"
+                    }
+                },
+                hint: {
+                    html: '<details class="govuk-details" data-module="govuk-details">
+                                <summary class="govuk-details__summary">
+                                    <span class="govuk-details__summary-text">
+                                    View guidance notes
+                                    </span>
+                                </summary>
+                                <div class="govuk-details__text">
+                                    <b><strong>Contingency plan requirements</strong></b>
+                                    <p>Contingency plans are required for people who are due to arrive within 28 days of application and/or are: </p>
+                                    <ul class="govuk-list govuk-list--bullet">
+                                    <li>on Post-Sentence Supervision</li>
+                                    <li>on Non-Statutory Supervision</li>
+                                    <li>on a community sentence where residence at an Approved Premises (AP) is not a requirement of the Order</li>
+                                    <li>in need of an Enhanced Security AP placement</li>
+                                    </ul>
+                                    <p>Probation practitioners should give assessors an indication of the type of actions that should be completed by AP staff and out of hours managers in the event of behavioural issues or a failure to return to the AP.</p>
+                                    <p>Asking AP staff to contact out of hours managers is not sufficient.</p>
+                                </div>
+
+                                <div class="govuk-details__text">
+                                <b><strong>Multi-agency questions</strong></b>
+                                    <p>The specific multi-agency questions are only mandatory for people who are: </p>
+                                    <ul class="govuk-list govuk-list--bullet">
+                                    <li>on Post-Sentence Supervision</li>
+                                    <li>on Non-Statutory Supervision</li>
+                                    <li>on a community sentence where residence at an AP is not a requirement of the Order</li>
+                                    <li>in need of an Enhanced Security AP placement</li>
+                                    </ul>
+                                    <p> This information should detail key partners, contact details and their role in managing situations out of hours.</p>
+                                </div>
+                            </details>'
+                },
+                    items: [
+                    {
+                        value: "yes",
+                        text: "Yes"
+                    },
+                    {
+                        value: "no",
+                        text: "No"
+                    }
+                    ]
+                }, fetchContext()
+            )
+        }}
+
+    {{
+            formPageTextarea({
+                fieldName: "additionalComments",
+                label: {
+                    text:page.questions.additionalComments,
+                    classes: "govuk-label--s"
+                }
+            }, fetchContext())
+        }}
+
+{% endblock %}

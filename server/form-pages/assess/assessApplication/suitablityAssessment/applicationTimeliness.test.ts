@@ -1,12 +1,13 @@
 import { DateFormats } from '../../../../utils/dateUtils'
 import { assessmentFactory } from '../../../../testutils/factories'
 import { YesOrNo } from '../../../../@types/ui'
-import { itShouldHaveNextValue } from '../../../shared-examples'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 import ApplicationTimeliness from './applicationTimeliness'
+import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
+jest.mock('../../../../utils/applications/noticeTypeFromApplication')
 jest.mock('../../../../utils/dateUtils')
 
 describe('ApplicationTimeliness', () => {
@@ -39,16 +40,32 @@ describe('ApplicationTimeliness', () => {
     })
   })
 
-  itShouldHaveNextValue(
-    new ApplicationTimeliness(
-      {
-        agreeWithShortNoticeReason: 'yes',
-        agreeWithShortNoticeReasonComments: 'some reasons',
-      },
-      assessment,
-    ),
-    '',
-  )
+  describe('next', () => {
+    it('returns an empty string if the application has a notice type other than emergency', () => {
+      expect(
+        new ApplicationTimeliness(
+          {
+            agreeWithShortNoticeReason: 'yes',
+            agreeWithShortNoticeReasonComments: 'some reasons',
+          },
+          assessment,
+        ).next(),
+      ).toEqual('')
+    })
+
+    it('returns contingency-plan-suitability if the application ahs a notice type of emergency', () => {
+      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('emergency')
+      expect(
+        new ApplicationTimeliness(
+          {
+            agreeWithShortNoticeReason: 'yes',
+            agreeWithShortNoticeReasonComments: 'some reasons',
+          },
+          assessment,
+        ).next(),
+      ).toEqual('contingency-plan-suitability')
+    })
+  })
 
   describe('previous', () => {
     it('returns rfap-suitability if the applicant requires an RFAP', () => {

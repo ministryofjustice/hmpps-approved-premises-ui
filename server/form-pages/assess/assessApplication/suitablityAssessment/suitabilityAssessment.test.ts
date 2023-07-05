@@ -4,11 +4,18 @@ import { YesOrNo } from '../../../../@types/ui'
 import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import SuitabilityAssessment from './suitabilityAssessment'
+import { shouldShowContingencyPlanPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
 
 jest.mock('../../../../utils/applications/noticeTypeFromApplication')
+jest.mock('../../../../utils/applications/shouldShowContingencyPlanPages')
 
 describe('SuitabilityAssessment', () => {
   const assessment = assessmentFactory.build()
+
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
+
   describe('title', () => {
     expect(
       new SuitabilityAssessment(
@@ -74,8 +81,24 @@ describe('SuitabilityAssessment', () => {
       ).toEqual('application-timeliness')
     })
 
+    it('returns contingency-plan-suitability if shouldShowContingencyPlanPages returns true', () => {
+      ;(shouldShowContingencyPlanPages as jest.Mock).mockReturnValue(true)
+      expect(
+        new SuitabilityAssessment(
+          {
+            riskFactors: 'yes',
+            riskManagement: 'yes',
+            locationOfPlacement: 'yes',
+            moveOnPlan: 'yes',
+          },
+          assessment,
+        ).next(),
+      ).toEqual('contingency-plan-suitability')
+    })
+
     it('returns an empty string if the notice type is standard', () => {
       ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('standard')
+
       expect(
         new SuitabilityAssessment(
           {

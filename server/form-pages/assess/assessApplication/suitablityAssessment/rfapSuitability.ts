@@ -19,7 +19,8 @@ export default class RfapSuitability implements TasklistPage {
   title = 'Suitability assessment'
 
   questions = {
-    rfapIdentifiedAsSuitable: 'Has a Recovery Focused Approved Premises (RAP) been identified as a suitable placement?',
+    rfapIdentifiedAsSuitable:
+      'Has a Recovery Focused Approved Premises (RFAP) been identified as a suitable placement?',
     unsuitabilityForRfapRationale:
       'If the person is unsuitable for a RFAP placement yet suitable for a standard placement, summarise the rationale for the decision',
   }
@@ -55,7 +56,7 @@ export default class RfapSuitability implements TasklistPage {
 
     if (!this.body.rfapIdentifiedAsSuitable)
       errors.rfapIdentifiedAsSuitable =
-        'You must confirm if a Recovery Focused Approved Premises (RAP) been identified as a suitable placement'
+        'You must confirm if a Recovery Focused Approved Premises (RFAP) been identified as a suitable placement'
 
     return errors
   }
