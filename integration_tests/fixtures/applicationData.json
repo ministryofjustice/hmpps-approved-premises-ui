@@ -410,6 +410,11 @@
       "suitableAddresses": "Some suitable addresses",
       "breachInformation": "Breach information to assist decision making",
       "otherConsiderations": "Some other considerations"
+    },
+    "trigger-plan": {
+      "planInPlace": "yes",
+      "additionalConditions": "yes",
+      "additionalConditionsDetail": "Some details here"
     }
   },
   "move-on": {

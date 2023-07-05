@@ -4,14 +4,13 @@ import {
   contingencyPlanPartnerFactory,
   contingencyPlanQuestionsBodyFactory,
 } from '../../../../testutils/factories'
-import { shouldShowTriggerPlanPages } from '../../../../utils/applications/shouldShowTriggerPlanPage'
+
 import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import ContingencyPlanQuestions from './contingencyPlanQuestions'
 
 const contingencyPlanPartnerFactorys = contingencyPlanPartnerFactory.buildList(2)
 
-jest.mock('../../../../utils/applications/shouldShowTriggerPlanPage')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact.ts', () => {
   return {
     retrieveOptionalQuestionResponseFromApplicationOrAssessment: jest.fn(() => contingencyPlanPartnerFactorys),
@@ -47,16 +46,10 @@ describe('ContingencyPlanQuestions', () => {
     })
   })
 
-  describe('if shouldShowTriggerPlanPages returns true', () => {
-    ;(shouldShowTriggerPlanPages as jest.Mock).mockReturnValue(true)
-
-    expect(new ContingencyPlanQuestions(body, application).next()).toBe('trigger-plan')
-  })
-
-  describe('if shouldShowTriggerPlanPages returns false', () => {
-    ;(shouldShowTriggerPlanPages as jest.Mock).mockReturnValue(false)
-
-    expect(new ContingencyPlanQuestions(body, application).next()).toBe('')
+  describe('next', () => {
+    it('should return trigger-plan', () => {
+      expect(new ContingencyPlanQuestions(body, application).next()).toBe('trigger-plan')
+    })
   })
 
   itShouldHavePreviousValue(new ContingencyPlanQuestions(body, application), 'contingency-plan-partners')

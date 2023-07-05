@@ -138,7 +138,7 @@ export default class ApplyHelper {
     this.completeRiskManagementSection()
     this.completePrisonInformationSection()
     this.completeAccessAndHealthcareSection()
-    this.completeFurtherConsiderationsSection({ isEmergencyApplication: false })
+    this.completeFurtherConsiderationsSection()
     this.completeMoveOnSection()
     this.completeDocumentsSection()
     this.completeCheckYourAnswersSection()
@@ -152,7 +152,7 @@ export default class ApplyHelper {
     this.completeRiskManagementSection()
     this.completePrisonInformationSection()
     this.completeAccessAndHealthcareSection()
-    this.completeFurtherConsiderationsSection({ isEmergencyApplication: true })
+    this.completeFurtherConsiderationsSection()
   }
 
   numberOfPages() {
@@ -732,7 +732,7 @@ export default class ApplyHelper {
     tasklistPage.shouldShowTaskStatus('access-and-healthcare', 'Completed')
   }
 
-  private completeFurtherConsiderationsSection({ isEmergencyApplication = false }) {
+  private completeFurtherConsiderationsSection() {
     // Given I click the 'Detail further considerations for placement' task
     cy.get('[data-cy-task-name="further-considerations"]').click()
 
@@ -795,11 +795,9 @@ export default class ApplyHelper {
     contingencyPlanQuestionsPage.completeForm()
     contingencyPlanQuestionsPage.clickSubmit()
 
-    if (isEmergencyApplication) {
-      const triggerPlanPage = new ApplyPages.TriggerPlanPage(this.application)
-      triggerPlanPage.completeForm()
-      triggerPlanPage.clickSubmit()
-    }
+    const triggerPlanPage = new ApplyPages.TriggerPlanPage(this.application)
+    triggerPlanPage.completeForm()
+    triggerPlanPage.clickSubmit()
 
     this.pages.furtherConsiderations = [
       roomSharingPage,
@@ -811,6 +809,7 @@ export default class ApplyHelper {
       arsonPage,
       additionalCircumstancesPage,
       contingencyPlanQuestionsPage,
+      triggerPlanPage,
     ]
 
     // Then I should be taken back to the task list
