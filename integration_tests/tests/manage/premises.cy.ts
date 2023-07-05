@@ -1,9 +1,15 @@
 import { addDays } from 'date-fns'
 import { createOccupancyEntry } from '../../support/helpers'
-import { bookingFactory, dateCapacityFactory, premisesFactory } from '../../../server/testutils/factories'
+import {
+  bedDetailFactory,
+  bookingFactory,
+  dateCapacityFactory,
+  premisesFactory,
+} from '../../../server/testutils/factories'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import { CalendarPage, PremisesListPage, PremisesShowPage } from '../../pages/manage'
+import OverbookingPage from '../../pages/manage/overbooking'
 
 context('Premises', () => {
   beforeEach(() => {
@@ -137,6 +143,7 @@ context('Premises', () => {
   it('should show overbookings', () => {
     // Given there is a premises in the database
     const premises = premisesFactory.build()
+    const bedDetail = bedDetailFactory.build()
 
     cy.task('stubSinglePremises', premises)
     cy.task('stubPremisesCapacity', {
@@ -154,7 +161,7 @@ context('Premises', () => {
 
     const premisesOccupancy = [
       {
-        bedId: '1',
+        bedId: bedDetail.id,
         bedName: 'Bed 1',
         schedule: [firstEntry, secondEntry, thirdEntry, fourthEntry],
       },
@@ -166,6 +173,8 @@ context('Premises', () => {
       endDate: DateFormats.dateObjToIsoDate(addDays(startDate, 30)),
       premisesOccupancy,
     })
+
+    cy.task('stubBed', { premisesId: premises.id, bedDetail })
 
     // When I visit the premises page
     const page = PremisesShowPage.visit(premises)
@@ -192,5 +201,24 @@ context('Premises', () => {
       addDays(DateFormats.isoToDateObj(thirdEntry.endDate), 1),
       '5',
     )
+
+    // When I click on the first overbooking
+    calendar.clickOverbookingLink(0)
+
+    // Then I should see details of the first overbooking
+    const overbookingPage = new OverbookingPage()
+
+    overbookingPage.shouldShowDetailOfBooking(firstEntry)
+    overbookingPage.shouldShowDetailOfBooking(secondEntry)
+
+    // When I click back
+    overbookingPage.clickBack()
+
+    // And I click on the second overbooking
+    calendar.clickOverbookingLink(1)
+
+    // Then I should see details of the first overbooking
+    overbookingPage.shouldShowDetailOfLostBed(thirdEntry)
+    overbookingPage.shouldShowDetailOfBooking(fourthEntry)
   })
 })
