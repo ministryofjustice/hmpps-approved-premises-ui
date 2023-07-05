@@ -3,7 +3,10 @@ import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import AdditionalCircumstances from './additionalCircumstances'
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
-import { shouldShowContingencyPlanPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
+import {
+  shouldShowContingencyPlanPartnersPages,
+  shouldShowContingencyPlanQuestionsPage,
+} from '../../../../utils/applications/shouldShowContingencyPlanPages'
 
 jest.mock('../../../../utils/applications/shouldShowContingencyPlanPages')
 
@@ -15,6 +18,10 @@ describe('AdditionalCircumstances', () => {
     additionalCircumstances: 'yes' as YesOrNo,
     additionalCircumstancesDetail: 'Additional circumstances detail',
   }
+
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
 
   describe('title', () => {
     it("adds the person's name to the question titles", () => {
@@ -37,12 +44,22 @@ describe('AdditionalCircumstances', () => {
 
   describe('next', () => {
     describe('if the contingency-plan-partners page should be shown', () => {
-      ;(shouldShowContingencyPlanPages as jest.Mock).mockReturnValue(true)
+      ;(shouldShowContingencyPlanPartnersPages as jest.Mock).mockReturnValue(true)
+
       expect(new AdditionalCircumstances(body, application).next()).toBe('contingency-plan-partners')
     })
 
+    describe('if the contingency-plan-questions page should be shown', () => {
+      ;(shouldShowContingencyPlanPartnersPages as jest.Mock).mockReturnValue(false)
+      ;(shouldShowContingencyPlanQuestionsPage as jest.Mock).mockReturnValue(true)
+
+      expect(new AdditionalCircumstances(body, application).next()).toBe('contingency-plan-questions')
+    })
+
     describe('if the contingency-plan-partners page should not be shown', () => {
-      ;(shouldShowContingencyPlanPages as jest.Mock).mockReturnValue(false)
+      ;(shouldShowContingencyPlanPartnersPages as jest.Mock).mockReturnValue(false)
+      ;(shouldShowContingencyPlanQuestionsPage as jest.Mock).mockReturnValue(false)
+
       expect(new AdditionalCircumstances(body, application).next()).toBe('')
     })
   })

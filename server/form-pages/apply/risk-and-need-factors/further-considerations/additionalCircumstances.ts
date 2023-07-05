@@ -4,7 +4,10 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { yesOrNoResponseWithDetailForYes } from '../../../utils'
-import { shouldShowContingencyPlanPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
+import {
+  shouldShowContingencyPlanPartnersPages,
+  shouldShowContingencyPlanQuestionsPage,
+} from '../../../../utils/applications/shouldShowContingencyPlanPages'
 
 export const questionKeys = ['additionalCircumstances'] as const
 
@@ -35,7 +38,10 @@ export default class AdditionalCircumstances implements TasklistPage {
   }
 
   next() {
-    return shouldShowContingencyPlanPages(this.application) ? 'contingency-plan-partners' : ''
+    if (shouldShowContingencyPlanPartnersPages(this.application)) return 'contingency-plan-partners'
+    if (shouldShowContingencyPlanQuestionsPage(this.application)) return 'contingency-plan-questions'
+
+    return ''
   }
 
   response() {
