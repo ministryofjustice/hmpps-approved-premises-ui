@@ -38,4 +38,8 @@ export default class Calendar extends Page {
       .should('have.attr', 'colspan')
       .and('contain', length)
   }
+
+  clickOverbookingLink(index: number) {
+    cy.get('a.govuk-link--overbooking').eq(index).click({ force: true })
+  }
 }

@@ -1,9 +1,14 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
+import { encodeOverbooking } from '../../../utils/bedUtils'
 import PremisesService from '../../../services/premisesService'
 import BedsController from './bedsController'
-import { bedDetailFactory, bedSummaryFactory } from '../../../testutils/factories'
+import {
+  bedDetailFactory,
+  bedOccupancyEntryOverbookingUiFactory,
+  bedSummaryFactory,
+} from '../../../testutils/factories'
 
 describe('BedsController', () => {
   const token = 'SOME_TOKEN'
@@ -53,6 +58,32 @@ describe('BedsController', () => {
         bed,
         premisesId,
         pageHeading: 'Manage beds',
+      })
+
+      expect(premisesService.getBed).toHaveBeenCalledWith(token, premisesId, bedId)
+    })
+  })
+
+  describe('overbookings', () => {
+    it('should return the bed and the overbookings to the template', async () => {
+      const bed = bedDetailFactory.build()
+      const overbooking = bedOccupancyEntryOverbookingUiFactory.build()
+      const premisesId = 'premisesId'
+      request.params.premisesId = premisesId
+      const bedId = 'bedId'
+      request.params.bedId = bedId
+      request.query.overbooking = encodeOverbooking(overbooking)
+
+      premisesService.getBed.mockResolvedValue(bed)
+
+      const requestHandler = bedsController.overbookings()
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('premises/beds/overbookings/show', {
+        bed,
+        premisesId,
+        overbooking,
+        pageHeading: 'Manage Overbookings',
       })
 
       expect(premisesService.getBed).toHaveBeenCalledWith(token, premisesId, bedId)

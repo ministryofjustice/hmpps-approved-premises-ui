@@ -143,7 +143,13 @@ export interface SummaryList {
   rows: Array<SummaryListItem>
 }
 
-export type SummaryListWithCard = SummaryList & { card: { title: { text: string } } }
+export type SummaryListWithCard = SummaryList & {
+  card: {
+    title: { text: string }
+    actions?: SummaryListActions
+    attributes?: HtmlAttributes
+  }
+}
 
 export interface SummaryListActionItem {
   href: string
@@ -376,6 +382,7 @@ export interface BedOccupancyOpenEntryUi extends RemoveStartAndEndDates<BedOccup
 export interface BedOccupancyOverbookingEntryUi extends StartAndEndDates {
   length: number
   type: 'overbooking'
+  items: Array<BedOccupancyEntryUi>
 }
 
 export type BedOccupancyEntryTypes =

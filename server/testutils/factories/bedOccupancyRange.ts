@@ -121,6 +121,7 @@ export const bedOccupancyEntryOverbookingUiFactory = Factory.define<BedOccupancy
     ({
       ...bedOccupancyEntryUiFactory.build(),
       type: 'overbooking',
+      items: [bedOccupancyEntryBookingUiFactory.build(), bedOccupancyEntryBookingUiFactory.build()],
     } as BedOccupancyOverbookingEntryUi),
 )
 
