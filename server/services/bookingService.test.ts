@@ -76,9 +76,49 @@ describe('BookingService', () => {
     })
   })
 
-  // TODO: Revisit this when we return to look at Manage
-  describe.skip('groupedListOfBookingsForPremisesId', () => {
+  describe('bookingsArrivingTodayOrLater', () => {
+    it('should return bookings arriving after today', async () => {
+      const bookingsArrivingToday = bookingFactory.arrivingToday().buildList(1)
+      const arrivedBookings = bookingFactory.arrivedToday().buildList(1)
+      const bookingsArrivingSoon = bookingFactory.arrivingSoon().buildList(1)
+      const cancelledBookingsWithFutureArrivalDate = bookingFactory.cancelledWithFutureArrivalDate().buildList(1)
+      const today = new Date(new Date().setHours(0, 0, 0, 0))
+
+      const results = service.bookingsArrivingTodayOrLater(
+        [
+          ...bookingsArrivingToday,
+          ...arrivedBookings,
+          ...bookingsArrivingSoon,
+          ...cancelledBookingsWithFutureArrivalDate,
+        ],
+        today,
+      )
+
+      expect(results).toEqual([...bookingsArrivingToday, ...bookingsArrivingSoon])
+    })
+  })
+
+  describe('bookingsDepartingTodayOrLater', () => {
+    it('should return bookings departing today or later', async () => {
+      const bookingsDepartingToday = bookingFactory.departingToday().buildList(1)
+      const departedBookings = bookingFactory.departedToday().buildList(1)
+      const bookingsDepartingSoon = bookingFactory.departingSoon().buildList(2)
+
+      const today = new Date(new Date().setHours(0, 0, 0, 0))
+
+      const results = service.bookingsDepartingTodayOrLater(
+        [...bookingsDepartingToday, ...departedBookings, ...bookingsDepartingSoon],
+        today,
+      )
+
+      expect(results).toEqual([...bookingsDepartingToday, ...bookingsDepartingSoon])
+    })
+  })
+
+  describe('groupedListOfBookingsForPremisesId', () => {
     it('should return table rows of bookings', async () => {
+      const today = new Date(new Date().setHours(0, 0, 0, 0))
+
       const bookingsArrivingToday = bookingFactory.arrivingToday().buildList(1)
       const arrivedBookings = bookingFactory.arrivedToday().buildList(1)
 
@@ -100,15 +140,17 @@ describe('BookingService', () => {
         ...cancelledBookingsWithFutureArrivalDate,
         ...bookingsDepartingSoon,
       ]
+
       const premisesId = 'some-uuid'
       bookingClient.allBookingsForPremisesId.mockResolvedValue(bookings)
 
       const results = await service.groupedListOfBookingsForPremisesId(token, 'some-uuid')
 
-      expect(results.arrivingToday).toEqual(bookingsArrivingToday)
-      expect(results.departingToday).toEqual(bookingsDepartingToday)
+      expect(results.arrivingToday).toEqual(service.bookingsArrivingTodayOrLater(bookings, today))
+      expect(results.departingToday).toEqual(service.bookingsDepartingTodayOrLater(bookings, today))
       expect(results.upcomingArrivals).toEqual(bookingsArrivingSoon)
-      expect(results.upcomingDepartures).toEqual(bookingsDepartingSoon)
+
+      expect(results.upcomingDepartures).toEqual([...arrivedBookings, ...bookingsDepartingSoon])
 
       expect(bookingClient.allBookingsForPremisesId).toHaveBeenCalledWith(premisesId)
 
