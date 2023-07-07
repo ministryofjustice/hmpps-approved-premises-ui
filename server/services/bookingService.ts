@@ -1,5 +1,4 @@
-/* istanbul ignore file: The tests for this are flaky and likely to be removed soon */
-import { addDays, isSameDay, isWithinInterval } from 'date-fns'
+import { addDays, isAfter, isEqual, isWithinInterval } from 'date-fns'
 
 import type { Booking, Extension, NewBedMove, NewBooking, NewExtension } from '@approved-premises/api'
 import type { GroupedListofBookings } from '@approved-premises/ui'
@@ -42,8 +41,8 @@ export default class BookingService {
     const today = new Date(new Date().setHours(0, 0, 0, 0))
 
     return {
-      arrivingToday: this.bookingsArrivingToday(bookings, today),
-      departingToday: this.bookingsDepartingToday(bookings, today),
+      arrivingToday: this.bookingsArrivingTodayOrLater(bookings, today),
+      departingToday: this.bookingsDepartingTodayOrLater(bookings, today),
       upcomingArrivals: this.upcomingArrivals(bookings, today),
       upcomingDepartures: this.upcomingDepartures(bookings, today),
     }
@@ -76,16 +75,19 @@ export default class BookingService {
     await bookingClient.moveBooking(premisesId, bookingId, move)
   }
 
-  private bookingsArrivingToday(bookings: Array<Booking>, today: Date): Array<Booking> {
-    return this.bookingsAwaitingArrival(bookings).filter(booking =>
-      isSameDay(DateFormats.isoToDateObj(booking.arrivalDate), today),
+  bookingsArrivingTodayOrLater(bookings: Array<Booking>, today: Date): Array<Booking> {
+    return this.bookingsAwaitingArrival(bookings).filter(
+      booking =>
+        isEqual(DateFormats.isoToDateObj(booking.arrivalDate), today) ||
+        isAfter(DateFormats.isoToDateObj(booking.arrivalDate), today),
     )
   }
 
-  /* istanbul ignore next: The tests for this are flaky and likely to be removed soon */
-  private bookingsDepartingToday(bookings: Array<Booking>, today: Date): Array<Booking> {
-    return this.arrivedBookings(bookings).filter(booking =>
-      isSameDay(DateFormats.isoToDateObj(booking.departureDate), today),
+  bookingsDepartingTodayOrLater(bookings: Array<Booking>, today: Date): Array<Booking> {
+    return this.arrivedBookings(bookings).filter(
+      booking =>
+        isEqual(DateFormats.isoToDateObj(booking.departureDate), today) ||
+        isAfter(DateFormats.isoToDateObj(booking.departureDate), today),
     )
   }
 
