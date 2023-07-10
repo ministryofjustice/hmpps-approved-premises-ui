@@ -88,9 +88,12 @@ export class DateFormats {
    * into an ISO8601 date string
    * @param dateInputObj an object with date parts (i.e. `-month` `-day` `-year`), which come from a `govukDateInput`.
    * @param key the key that prefixes each item in the dateInputObj, also the name of the property which the date object will be returned in the return value.
-   * @returns an ISO8601 date string.
+   * @returns an ISO8601 date string as part of an ObjectWithDateParts.
    */
-  static dateAndTimeInputsToIsoString<K extends string | number>(dateInputObj: ObjectWithDateParts<K>, key: K) {
+  static dateAndTimeInputsToIsoString<K extends string | number>(
+    dateInputObj: ObjectWithDateParts<K>,
+    key: K,
+  ): ObjectWithDateParts<K> {
     const day = `0${dateInputObj[`${key}-day`]}`.slice(-2)
     const month = `0${dateInputObj[`${key}-month`]}`.slice(-2)
     const year = dateInputObj[`${key}-year`]
