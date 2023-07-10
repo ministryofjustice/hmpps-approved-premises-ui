@@ -1,12 +1,7 @@
 import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
-import {
-  DateFormats,
-  dateAndTimeInputsAreValidDates,
-  dateIsBlank,
-  uiDateOrDateEmptyMessage,
-} from '../../../../utils/dateUtils'
+import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
 
 import TasklistPage from '../../../tasklistPage'
 import { ApprovedPremisesApplication } from '../../../../@types/shared'
@@ -38,11 +33,15 @@ export default class EndDates implements TasklistPage {
   constructor(body: Partial<EndDatesBody>, private readonly application: ApprovedPremisesApplication) {}
 
   response() {
-    return {
-      [this.questions.sed]: uiDateOrDateEmptyMessage(this.body, 'sedDate', DateFormats.isoDateToUIDate),
-      [this.questions.led]: uiDateOrDateEmptyMessage(this.body, 'ledDate', DateFormats.isoDateToUIDate),
-      [this.questions.pss]: uiDateOrDateEmptyMessage(this.body, 'pssDate', DateFormats.isoDateToUIDate),
-    }
+    const response = {}
+
+    Object.keys(this.questions).forEach(key => {
+      response[this.questions[key]] = !dateIsBlank(this.body, key)
+        ? DateFormats.dateAndTimeInputsToUiDate(this.body, key)
+        : 'No date supplied'
+    })
+
+    return response
   }
 
   previous() {

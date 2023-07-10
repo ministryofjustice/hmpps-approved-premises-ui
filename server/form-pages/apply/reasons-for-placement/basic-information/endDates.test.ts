@@ -110,5 +110,15 @@ describe('EndDates', () => {
         'Sentence end date (SED)': 'Friday 1 December 2023',
       })
     })
+
+    it('should return a translated version of the response when the dates are blank', () => {
+      const page = new EndDates(emptyDateBody, application)
+
+      expect(page.response()).toEqual({
+        'Licence end date (LED)': 'No date supplied',
+        'Post-sentence supervision (PSS)': 'No date supplied',
+        'Sentence end date (SED)': 'No date supplied',
+      })
+    })
   })
 })
