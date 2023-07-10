@@ -23,9 +23,9 @@ export default class EndDates implements TasklistPage {
   title = 'Which of the following dates are relevant?'
 
   questions = {
-    sed: 'Sentence end date (SED)',
-    led: 'Licence end date (LED)',
-    pss: 'Post-sentence supervision (PSS)',
+    sedDate: 'Sentence end date (SED)',
+    ledDate: 'Licence end date (LED)',
+    pssDate: 'Post-sentence supervision (PSS)',
   }
 
   body: EndDatesBody
