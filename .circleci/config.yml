@@ -197,6 +197,9 @@ jobs:
       - store_artifacts:
           path: playwright-report
           destination: playwright-report
+      - store_artifacts:
+          path: test-results
+          destination: test-results
       - slack/notify:
           event: fail
           channel: << pipeline.parameters.alerts-slack-channel >>
