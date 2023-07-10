@@ -1,3 +1,5 @@
+import { subDays } from 'date-fns'
+import { DateFormats } from '../utils/dateUtils'
 import BookingService from './bookingService'
 import BookingClient from '../data/bookingClient'
 
@@ -76,37 +78,39 @@ describe('BookingService', () => {
     })
   })
 
-  describe('bookingsArrivingTodayOrLater', () => {
-    it('should return bookings arriving after today', async () => {
+  describe('bookingsArrivingTodayOrLate', () => {
+    it('should return bookings due to arrive today or earlier', async () => {
       const bookingsArrivingToday = bookingFactory.arrivingToday().buildList(1)
       const arrivedBookings = bookingFactory.arrivedToday().buildList(1)
-      const bookingsArrivingSoon = bookingFactory.arrivingSoon().buildList(1)
+      const bookingsArrivingYesterday = bookingFactory.buildList(1, {
+        arrivalDate: DateFormats.dateObjToIsoDate(subDays(new Date(), 1)),
+      })
       const cancelledBookingsWithFutureArrivalDate = bookingFactory.cancelledWithFutureArrivalDate().buildList(1)
       const today = new Date(new Date().setHours(0, 0, 0, 0))
 
-      const results = service.bookingsArrivingTodayOrLater(
+      const results = service.bookingsArrivingTodayOrLate(
         [
           ...bookingsArrivingToday,
           ...arrivedBookings,
-          ...bookingsArrivingSoon,
+          ...bookingsArrivingYesterday,
           ...cancelledBookingsWithFutureArrivalDate,
         ],
         today,
       )
 
-      expect(results).toEqual([...bookingsArrivingToday, ...bookingsArrivingSoon])
+      expect(results).toEqual([...bookingsArrivingToday, ...bookingsArrivingYesterday])
     })
   })
 
-  describe('bookingsDepartingTodayOrLater', () => {
-    it('should return bookings departing today or later', async () => {
+  describe('bookingsDepartingTodayOrLate', () => {
+    it('should return bookings due to depart today or after', async () => {
       const bookingsDepartingToday = bookingFactory.departingToday().buildList(1)
       const departedBookings = bookingFactory.departedToday().buildList(1)
       const bookingsDepartingSoon = bookingFactory.departingSoon().buildList(2)
 
       const today = new Date(new Date().setHours(0, 0, 0, 0))
 
-      const results = service.bookingsDepartingTodayOrLater(
+      const results = service.bookingsDepartingTodayOrLate(
         [...bookingsDepartingToday, ...departedBookings, ...bookingsDepartingSoon],
         today,
       )
@@ -146,8 +150,8 @@ describe('BookingService', () => {
 
       const results = await service.groupedListOfBookingsForPremisesId(token, 'some-uuid')
 
-      expect(results.arrivingToday).toEqual(service.bookingsArrivingTodayOrLater(bookings, today))
-      expect(results.departingToday).toEqual(service.bookingsDepartingTodayOrLater(bookings, today))
+      expect(results.arrivingToday).toEqual(service.bookingsArrivingTodayOrLate(bookings, today))
+      expect(results.departingToday).toEqual(service.bookingsDepartingTodayOrLate(bookings, today))
       expect(results.upcomingArrivals).toEqual(bookingsArrivingSoon)
 
       expect(results.upcomingDepartures).toEqual([...arrivedBookings, ...bookingsDepartingSoon])

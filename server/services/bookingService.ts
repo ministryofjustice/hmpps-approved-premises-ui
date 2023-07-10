@@ -1,4 +1,4 @@
-import { addDays, isAfter, isEqual, isWithinInterval } from 'date-fns'
+import { addDays, isAfter, isBefore, isEqual, isWithinInterval } from 'date-fns'
 
 import type { Booking, Extension, NewBedMove, NewBooking, NewExtension } from '@approved-premises/api'
 import type { GroupedListofBookings } from '@approved-premises/ui'
@@ -41,8 +41,8 @@ export default class BookingService {
     const today = new Date(new Date().setHours(0, 0, 0, 0))
 
     return {
-      arrivingToday: this.bookingsArrivingTodayOrLater(bookings, today),
-      departingToday: this.bookingsDepartingTodayOrLater(bookings, today),
+      arrivingToday: this.bookingsArrivingTodayOrLate(bookings, today),
+      departingToday: this.bookingsDepartingTodayOrLate(bookings, today),
       upcomingArrivals: this.upcomingArrivals(bookings, today),
       upcomingDepartures: this.upcomingDepartures(bookings, today),
     }
@@ -75,15 +75,15 @@ export default class BookingService {
     await bookingClient.moveBooking(premisesId, bookingId, move)
   }
 
-  bookingsArrivingTodayOrLater(bookings: Array<Booking>, today: Date): Array<Booking> {
+  bookingsArrivingTodayOrLate(bookings: Array<Booking>, today: Date): Array<Booking> {
     return this.bookingsAwaitingArrival(bookings).filter(
       booking =>
         isEqual(DateFormats.isoToDateObj(booking.arrivalDate), today) ||
-        isAfter(DateFormats.isoToDateObj(booking.arrivalDate), today),
+        isBefore(DateFormats.isoToDateObj(booking.arrivalDate), today),
     )
   }
 
-  bookingsDepartingTodayOrLater(bookings: Array<Booking>, today: Date): Array<Booking> {
+  bookingsDepartingTodayOrLate(bookings: Array<Booking>, today: Date): Array<Booking> {
     return this.arrivedBookings(bookings).filter(
       booking =>
         isEqual(DateFormats.isoToDateObj(booking.departureDate), today) ||
