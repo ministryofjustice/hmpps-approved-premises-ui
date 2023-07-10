@@ -168,7 +168,7 @@ export const uiDateOrDateEmptyMessage = (
   key: string,
   dateFormFunc: (date: string) => string,
 ) => {
-  if (key in object && typeof object?.[key] === 'string') return dateFormFunc(object?.[key] as string)
+  if (key in object && object[key] && typeof object[key] === 'string') return dateFormFunc(object?.[key] as string)
 
   return 'No date supplied'
 }

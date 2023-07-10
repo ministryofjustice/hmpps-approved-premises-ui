@@ -226,6 +226,14 @@ describe('uiDateOrDateEmptyMessage', () => {
       DateFormats.dateObjtoUIDate(new Date(2023, 3, 12)),
     )
   })
+
+  it('returns the message if the key is present in the object but undefined', () => {
+    const object: Record<string, string> = {
+      aDate: undefined,
+    }
+
+    expect(uiDateOrDateEmptyMessage(object, 'aDate', DateFormats.isoDateToUIDate)).toEqual('No date supplied')
+  })
 })
 
 describe('dateAndTimeInputsAreValidDates', () => {
