@@ -165,6 +165,18 @@ describe('DateFormats', () => {
     })
   })
 
+  describe('dateAndTimeInputsToUiDate', () => {
+    it('converts a date and time input object to a human readable date', () => {
+      const dateTimeInputs = DateFormats.dateObjectToDateInputs(new Date('2022-11-11T10:00:00.000Z'), 'key')
+
+      expect(DateFormats.dateAndTimeInputsToUiDate(dateTimeInputs, 'key')).toEqual('Friday 11 November 2022')
+    })
+
+    it('throws an error if an object without date inputs for the key is entered', () => {
+      expect(() => DateFormats.dateAndTimeInputsToUiDate({}, 'key')).toThrow(InvalidDateStringError)
+    })
+  })
+
   describe('differenceInDays', () => {
     it('calls the date-fns functions and returns the results as an object', () => {
       const date1 = new Date(2023, 3, 12)

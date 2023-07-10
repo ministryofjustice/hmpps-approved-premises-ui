@@ -110,6 +110,19 @@ export class DateFormats {
     return dateInputObj
   }
 
+  /**
+   * Converts input for a GDS date input https://design-system.service.gov.uk/components/date-input/
+   * into a human readable date for the user
+   * @param dateInputObj an object with date parts (i.e. `-month` `-day` `-year`), which come from a `govukDateInput`.
+   * @param key the key that prefixes each item in the dateInputObj, also the name of the property which the date object will be returned in the return value.
+   * @returns a friendly date.
+   */
+  static dateAndTimeInputsToUiDate(dateInputObj: Record<string, string>, key: string | number) {
+    const iso8601Date = DateFormats.dateAndTimeInputsToIsoString(dateInputObj, key)[key]
+
+    return DateFormats.isoDateToUIDate(iso8601Date)
+  }
+
   static dateObjectToDateInputs<K extends string>(date: Date, key: K): ObjectWithDateParts<K> {
     return {
       [`${key}-year`]: String(date.getFullYear()),
