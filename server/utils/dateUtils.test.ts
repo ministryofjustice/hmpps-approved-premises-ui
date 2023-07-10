@@ -151,6 +151,30 @@ describe('DateFormats', () => {
 
       expect(result.date.toString()).toEqual('twothousandtwentytwo-20-oo')
     })
+
+    it('returns an invalid ISO string when given all 0s as inputs', () => {
+      const obj: ObjectWithDateParts<'date'> = {
+        'date-year': '0000',
+        'date-month': '00',
+        'date-day': '00',
+      }
+
+      const result = DateFormats.dateAndTimeInputsToIsoString(obj, 'date')
+
+      expect(result.date.toString()).toEqual('0000-00-00')
+    })
+  })
+
+  describe('dateAndTimeInputsToUiDate', () => {
+    it('converts a date and time input object to a human readable date', () => {
+      const dateTimeInputs = DateFormats.dateObjectToDateInputs(new Date('2022-11-11T10:00:00.000Z'), 'key')
+
+      expect(DateFormats.dateAndTimeInputsToUiDate(dateTimeInputs, 'key')).toEqual('Friday 11 November 2022')
+    })
+
+    it('throws an error if an object without date inputs for the key is entered', () => {
+      expect(() => DateFormats.dateAndTimeInputsToUiDate({}, 'key')).toThrow(InvalidDateStringError)
+    })
   })
 
   describe('differenceInDays', () => {
@@ -202,6 +226,14 @@ describe('uiDateOrDateEmptyMessage', () => {
       DateFormats.dateObjtoUIDate(new Date(2023, 3, 12)),
     )
   })
+
+  it('returns the message if the key is present in the object but undefined', () => {
+    const object: Record<string, string> = {
+      aDate: undefined,
+    }
+
+    expect(uiDateOrDateEmptyMessage(object, 'aDate', DateFormats.isoDateToUIDate)).toEqual('No date supplied')
+  })
 })
 
 describe('dateAndTimeInputsAreValidDates', () => {
@@ -238,7 +270,7 @@ describe('dateIsBlank', () => {
       'field-year': '2022',
     }
 
-    expect(dateIsBlank(date)).toEqual(false)
+    expect(dateIsBlank(date, 'field')).toEqual(false)
   })
 
   it('returns true if the date is blank', () => {
@@ -248,7 +280,20 @@ describe('dateIsBlank', () => {
       'field-year': '',
     }
 
-    expect(dateIsBlank(date)).toEqual(true)
+    expect(dateIsBlank(date, 'field')).toEqual(true)
+  })
+
+  it('ignores irrelevant fields', () => {
+    const date: ObjectWithDateParts<'field'> & ObjectWithDateParts<'otherField'> = {
+      'field-day': '12',
+      'field-month': '1',
+      'field-year': '2022',
+      'otherField-day': undefined,
+      'otherField-month': undefined,
+      'otherField-year': undefined,
+    }
+
+    expect(dateIsBlank(date, 'field')).toEqual(false)
   })
 })
 

@@ -4,6 +4,7 @@ import { sentenceCase } from '../../../utils/utils'
 import TasklistPage from '../../tasklistPage'
 import { DateFormats, dateIsBlank } from '../../../utils/dateUtils'
 import { Page } from '../../utils/decorators'
+import { dateBodyProperties } from '../../utils/dateBodyProperties'
 
 type ForeignNationalBody =
   | ({
@@ -11,7 +12,7 @@ type ForeignNationalBody =
     } & ObjectWithDateParts<'date'>)
   | { response: 'no' }
 
-@Page({ name: 'foreign-national', bodyProperties: ['response', 'date-year', 'date-month', 'date-day', 'date'] })
+@Page({ name: 'foreign-national', bodyProperties: ['response', ...dateBodyProperties('date')] })
 export default class ForeignNational implements TasklistPage {
   name = 'foreign-national'
 
@@ -71,7 +72,7 @@ export default class ForeignNational implements TasklistPage {
       errors.response =
         'You must confirm whether you have informed the Home Office that accommodation will be required after placement'
 
-    if (this.body.response === 'yes' && dateIsBlank(this.body))
+    if (this.body.response === 'yes' && dateIsBlank(this.body, 'date'))
       errors.date = 'You must confirm the date of notification'
 
     return errors

@@ -1,10 +1,11 @@
 import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
-import { DateFormats, uiDateOrDateEmptyMessage } from '../../../../utils/dateUtils'
+import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
 
 import TasklistPage from '../../../tasklistPage'
 import { ApprovedPremisesApplication } from '../../../../@types/shared'
+import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 export type EndDatesBody = ObjectWithDateParts<'sedDate'> &
   ObjectWithDateParts<'ledDate'> &
@@ -13,54 +14,34 @@ export type EndDatesBody = ObjectWithDateParts<'sedDate'> &
 @Page({
   name: 'end-dates',
   bodyProperties: [
-    'sedDate',
-    'sedDate-year',
-    'sedDate-month',
-    'sedDate-day',
-    'ledDate',
-    'ledDate-year',
-    'ledDate-month',
-    'ledDate-day',
-    'pssDate',
-    'pssDate-year',
-    'pssDate-month',
-    'pssDate-day',
+    ...dateBodyProperties('sedDate'),
+    ...dateBodyProperties('ledDate'),
+    ...dateBodyProperties('pssDate'),
   ],
 })
 export default class EndDates implements TasklistPage {
   title = 'Which of the following dates are relevant?'
 
   questions = {
-    sed: 'Sentence end date (SED)',
-    led: 'Licence end date (LED)',
-    pss: 'Post-sentence supervision (PSS)',
+    sedDate: 'Sentence end date (SED)',
+    ledDate: 'Licence end date (LED)',
+    pssDate: 'Post-sentence supervision (PSS)',
   }
 
   body: EndDatesBody
 
-  constructor(_body: Partial<EndDatesBody>, private readonly application: ApprovedPremisesApplication) {
-    this.body = {
-      'sedDate-year': _body['sedDate-year'],
-      'sedDate-month': _body['sedDate-month'],
-      'sedDate-day': _body['sedDate-day'],
-      sedDate: DateFormats.dateAndTimeInputsToIsoString(_body as ObjectWithDateParts<'sedDate'>, 'sedDate').sedDate,
-      'ledDate-year': _body['ledDate-year'],
-      'ledDate-month': _body['ledDate-month'],
-      'ledDate-day': _body['ledDate-day'],
-      ledDate: DateFormats.dateAndTimeInputsToIsoString(_body as ObjectWithDateParts<'ledDate'>, 'ledDate').ledDate,
-      'pssDate-year': _body['pssDate-year'],
-      'pssDate-month': _body['pssDate-month'],
-      'pssDate-day': _body['pssDate-day'],
-      pssDate: DateFormats.dateAndTimeInputsToIsoString(_body as ObjectWithDateParts<'pssDate'>, 'pssDate').pssDate,
-    }
-  }
+  constructor(body: Partial<EndDatesBody>, private readonly application: ApprovedPremisesApplication) {}
 
   response() {
-    return {
-      [this.questions.sed]: uiDateOrDateEmptyMessage(this.body, 'sedDate', DateFormats.isoDateToUIDate),
-      [this.questions.led]: uiDateOrDateEmptyMessage(this.body, 'ledDate', DateFormats.isoDateToUIDate),
-      [this.questions.pss]: uiDateOrDateEmptyMessage(this.body, 'pssDate', DateFormats.isoDateToUIDate),
-    }
+    const response = {}
+
+    Object.keys(this.questions).forEach(key => {
+      response[this.questions[key]] = !dateIsBlank(this.body, key)
+        ? DateFormats.dateAndTimeInputsToUiDate(this.body, key)
+        : 'No date supplied'
+    })
+
+    return response
   }
 
   previous() {
@@ -76,6 +57,14 @@ export default class EndDates implements TasklistPage {
 
   errors() {
     const errors: TaskListErrors<this> = {}
+
+    ;['sedDate', 'ledDate', 'pssDate'].forEach(date => {
+      if (!dateIsBlank(this.body, date)) {
+        if (!dateAndTimeInputsAreValidDates(this.body, date)) {
+          errors[date] = `${this.questions[date]} must be a valid date`
+        }
+      }
+    })
 
     return errors
   }

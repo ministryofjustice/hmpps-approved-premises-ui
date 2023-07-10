@@ -88,9 +88,12 @@ export class DateFormats {
    * into an ISO8601 date string
    * @param dateInputObj an object with date parts (i.e. `-month` `-day` `-year`), which come from a `govukDateInput`.
    * @param key the key that prefixes each item in the dateInputObj, also the name of the property which the date object will be returned in the return value.
-   * @returns an ISO8601 date string.
+   * @returns an ISO8601 date string as part of an ObjectWithDateParts.
    */
-  static dateAndTimeInputsToIsoString<K extends string | number>(dateInputObj: ObjectWithDateParts<K>, key: K) {
+  static dateAndTimeInputsToIsoString<K extends string | number>(
+    dateInputObj: ObjectWithDateParts<K>,
+    key: K,
+  ): ObjectWithDateParts<K> {
     const day = `0${dateInputObj[`${key}-day`]}`.slice(-2)
     const month = `0${dateInputObj[`${key}-month`]}`.slice(-2)
     const year = dateInputObj[`${key}-year`]
@@ -108,6 +111,19 @@ export class DateFormats {
     }
 
     return dateInputObj
+  }
+
+  /**
+   * Converts input for a GDS date input https://design-system.service.gov.uk/components/date-input/
+   * into a human readable date for the user
+   * @param dateInputObj an object with date parts (i.e. `-month` `-day` `-year`), which come from a `govukDateInput`.
+   * @param key the key that prefixes each item in the dateInputObj, also the name of the property which the date object will be returned in the return value.
+   * @returns a friendly date.
+   */
+  static dateAndTimeInputsToUiDate(dateInputObj: Record<string, string>, key: string | number) {
+    const iso8601Date = DateFormats.dateAndTimeInputsToIsoString(dateInputObj, key)[key]
+
+    return DateFormats.isoDateToUIDate(iso8601Date)
   }
 
   static dateObjectToDateInputs<K extends string>(date: Date, key: K): ObjectWithDateParts<K> {
@@ -152,7 +168,7 @@ export const uiDateOrDateEmptyMessage = (
   key: string,
   dateFormFunc: (date: string) => string,
 ) => {
-  if (key in object && typeof object?.[key] === 'string') return dateFormFunc(object?.[key] as string)
+  if (key in object && object[key] && typeof object[key] === 'string') return dateFormFunc(object?.[key] as string)
 
   return 'No date supplied'
 }
@@ -174,9 +190,11 @@ export const dateAndTimeInputsAreValidDates = <K extends string | number>(
   return true
 }
 
-export const dateIsBlank = <T = ObjectWithDateParts<string | number>>(body: T): boolean => {
-  const fields = Object.keys(body).filter(key => key.match(/-[year|month|day]/))
-  return fields.every(field => !body[field])
+export const dateIsBlank = <K extends string | number>(
+  dateInputObj: Partial<ObjectWithDateParts<K>>,
+  key: K,
+): boolean => {
+  return !['year' as const, 'month' as const, 'day' as const].every(part => !!dateInputObj[`${key}-${part}`])
 }
 
 export const dateIsInThePast = (dateString: string): boolean => {

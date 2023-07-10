@@ -8,7 +8,6 @@ export default class EndDatesPage extends ApplyPage {
   }
 
   completeForm() {
-    this.completeDateInputsFromPageBody('pssDate')
     this.completeDateInputsFromPageBody('ledDate')
     this.completeDateInputsFromPageBody('sedDate')
   }

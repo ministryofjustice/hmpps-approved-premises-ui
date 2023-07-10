@@ -5,6 +5,7 @@ import TasklistPage from '../../../tasklistPage'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
+import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 type OralHearingBody = ObjectWithDateParts<'oralHearingDate'> & {
   knowOralHearingDate: YesOrNo
@@ -12,13 +13,7 @@ type OralHearingBody = ObjectWithDateParts<'oralHearingDate'> & {
 
 @Page({
   name: 'oral-hearing',
-  bodyProperties: [
-    'oralHearingDate',
-    'oralHearingDate-day',
-    'oralHearingDate-month',
-    'oralHearingDate-year',
-    'knowOralHearingDate',
-  ],
+  bodyProperties: [...dateBodyProperties('oralHearingDate'), 'knowOralHearingDate'],
 })
 export default class OralHearing implements TasklistPage {
   title = `Do you know ${this.application.person.name}’s oral hearing date?`
@@ -75,7 +70,7 @@ export default class OralHearing implements TasklistPage {
     }
 
     if (this.body.knowOralHearingDate === 'yes') {
-      if (dateIsBlank(this.body)) {
+      if (dateIsBlank(this.body, 'oralHearingDate')) {
         errors.oralHearingDate = 'You must specify the oral hearing date'
       } else if (
         !dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'oralHearingDate'>, 'oralHearingDate')

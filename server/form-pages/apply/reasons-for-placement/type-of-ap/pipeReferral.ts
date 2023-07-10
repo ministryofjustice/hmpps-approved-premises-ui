@@ -5,12 +5,13 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
+import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 type PipeReferralBody = ObjectWithDateParts<'opdPathwayDate'> & { opdPathway: YesOrNo }
 
 @Page({
   name: 'pipe-referral',
-  bodyProperties: ['opdPathway', 'opdPathwayDate', 'opdPathwayDate-year', 'opdPathwayDate-month', 'opdPathwayDate-day'],
+  bodyProperties: ['opdPathway', ...dateBodyProperties('opdPathwayDate')],
 })
 export default class PipeReferral implements TasklistPage {
   name = 'pipe-referral'
@@ -74,7 +75,7 @@ export default class PipeReferral implements TasklistPage {
     }
 
     if (this.body.opdPathway === 'yes') {
-      if (dateIsBlank(this.body)) {
+      if (dateIsBlank(this.body, 'opdPathwayDate')) {
         errors.opdPathwayDate = 'You must enter an OPD Pathway date'
       } else if (
         !dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'opdPathwayDate'>, 'opdPathwayDate')
