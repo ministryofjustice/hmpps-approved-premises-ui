@@ -15,25 +15,43 @@ describe('EndDates', () => {
     'pssDate-month': '12',
     'pssDate-day': '3',
   } as EndDatesBody
+
+  const emptyDateBody = {
+    'sedDate-day': '',
+    'sedDate-month': '',
+    'sedDate-year': '',
+    'ledDate-day': '',
+    'ledDate-month': '',
+    'ledDate-year': '',
+    'pssDate-day': '',
+    'pssDate-month': '',
+    'pssDate-year': '',
+  }
   const application = applicationFactory.build()
 
   describe('body', () => {
-    it('should set the body', () => {
+    it('should set the body when all the dates are present', () => {
       const page = new EndDates(body, application)
 
+      expect(page.body).toEqual(body)
+    })
+
+    it('should set the body when all the dates not present', () => {
+      const page = new EndDates(emptyDateBody, application)
+
       expect(page.body).toEqual({
-        sedDate: '2023-12-01',
-        'sedDate-day': '1',
-        'sedDate-month': '12',
-        'sedDate-year': '2023',
-        ledDate: '2023-12-02',
-        'ledDate-day': '2',
-        'ledDate-month': '12',
-        'ledDate-year': '2023',
-        pssDate: '2023-12-03',
-        'pssDate-day': '3',
-        'pssDate-month': '12',
-        'pssDate-year': '2023',
+        sedDate: undefined,
+        'sedDate-day': '',
+        'sedDate-month': '',
+        'sedDate-year': '',
+        ledDate: undefined,
+        'ledDate-day': '',
+        'ledDate-month': '',
+        'ledDate-year': '',
+        pssDate: undefined,
+        'pssDate-day': '',
+        'pssDate-month': '',
+        'pssDate-year': '',
       })
     })
   })

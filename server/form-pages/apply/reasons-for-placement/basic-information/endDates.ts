@@ -30,22 +30,7 @@ export default class EndDates implements TasklistPage {
 
   body: EndDatesBody
 
-  constructor(_body: Partial<EndDatesBody>, private readonly application: ApprovedPremisesApplication) {
-    this.body = {
-      'sedDate-year': _body['sedDate-year'],
-      'sedDate-month': _body['sedDate-month'],
-      'sedDate-day': _body['sedDate-day'],
-      sedDate: DateFormats.dateAndTimeInputsToIsoString(_body as ObjectWithDateParts<'sedDate'>, 'sedDate').sedDate,
-      'ledDate-year': _body['ledDate-year'],
-      'ledDate-month': _body['ledDate-month'],
-      'ledDate-day': _body['ledDate-day'],
-      ledDate: DateFormats.dateAndTimeInputsToIsoString(_body as ObjectWithDateParts<'ledDate'>, 'ledDate').ledDate,
-      'pssDate-year': _body['pssDate-year'],
-      'pssDate-month': _body['pssDate-month'],
-      'pssDate-day': _body['pssDate-day'],
-      pssDate: DateFormats.dateAndTimeInputsToIsoString(_body as ObjectWithDateParts<'pssDate'>, 'pssDate').pssDate,
-    }
-  }
+  constructor(body: Partial<EndDatesBody>, private readonly application: ApprovedPremisesApplication) {}
 
   response() {
     return {
