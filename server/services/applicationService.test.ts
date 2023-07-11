@@ -386,4 +386,16 @@ describe('ApplicationService', () => {
       expect(applicationClient.assessment).toHaveBeenCalledWith(id)
     })
   })
+
+  describe('withdraw', () => {
+    it('it calls the client with the ID and token', async () => {
+      const token = 'some-token'
+      const id = 'some-uuid'
+
+      await service.withdraw(token, id)
+
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.withdrawal).toHaveBeenCalledWith(id)
+    })
+  })
 })
