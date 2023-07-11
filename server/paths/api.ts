@@ -113,6 +113,7 @@ export default {
     submission: applyPaths.applications.submission,
     documents: applyPaths.applications.show.path('documents'),
     assessment: applyPaths.applications.show.path('assessment'),
+    withdrawal: applyPaths.applications.show.path('withdrawal'),
   },
   assessments: {
     index: assessPaths.assessments,

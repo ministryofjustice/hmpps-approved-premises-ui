@@ -64,4 +64,10 @@ export default class ApplicationClient {
       path: paths.applications.assessment({ id: applicationId }),
     })) as Assessment
   }
+
+  async withdrawal(applicationId: string): Promise<void> {
+    await this.restClient.post({
+      path: paths.applications.withdrawal({ id: applicationId }),
+    })
+  }
 }
