@@ -15,6 +15,7 @@ import { DateFormats } from '../dateUtils'
 import { isApplicableTier, tierBadge } from '../personUtils'
 
 import {
+  createWithdrawAnchorElement,
   dashboardTableRows,
   firstPageOfApplicationJourney,
   getApplicationType,
@@ -185,6 +186,7 @@ describe('utils', () => {
           {
             html: getStatus(applicationB),
           },
+          createWithdrawAnchorElement(applicationA.id),
         ],
         [
           {
@@ -204,6 +206,7 @@ describe('utils', () => {
           {
             html: getStatus(applicationB),
           },
+          createWithdrawAnchorElement(applicationB.id),
         ],
       ])
     })
@@ -243,6 +246,7 @@ describe('utils', () => {
           {
             html: getStatus(application),
           },
+          createWithdrawAnchorElement(application.id),
         ],
       ])
     })
@@ -282,6 +286,7 @@ describe('utils', () => {
           {
             html: getStatus(application),
           },
+          createWithdrawAnchorElement(application.id),
         ],
       ])
     })
