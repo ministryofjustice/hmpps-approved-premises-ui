@@ -322,4 +322,8 @@ export default abstract class Page {
   checkPhaseBanner(copy: string): void {
     cy.get('[data-cy-phase-banner="phase-banner"]').contains(copy)
   }
+
+  checkForBackButton(path: string) {
+    cy.get('.govuk-back-link').should('have.attr', 'href').and('include', path)
+  }
 }
