@@ -68,6 +68,7 @@ describe('ApplicationService', () => {
       awaitingPlacement: applicationSummaryFactory.buildList(1, { status: 'awaitingPlacement' }),
       placed: applicationSummaryFactory.buildList(1, { status: 'placed' }),
       inapplicable: applicationSummaryFactory.buildList(1, { status: 'inapplicable' }),
+      withdrawn: applicationSummaryFactory.buildList(1, { status: 'withdrawn' }),
     }
 
     it('fetches all applications', async () => {
@@ -85,6 +86,7 @@ describe('ApplicationService', () => {
           ...applications.awaitingPlacement,
           ...applications.placed,
           ...applications.inapplicable,
+          ...applications.withdrawn,
         ],
       })
 

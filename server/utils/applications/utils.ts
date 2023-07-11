@@ -52,6 +52,7 @@ const statusTags: Record<ApplicationStatus, string> = {
   awaitingPlacement: `<strong class="govuk-tag govuk-tag--blue">Awaiting Placement</strong>`,
   placed: `<strong class="govuk-tag govuk-tag--pink">Placed</strong>`,
   inapplicable: `<strong class="govuk-tag govuk-tag--red">Inapplicable</strong>`,
+  withdrawn: `<strong class="govuk-tag govuk-tag--red">Withdrawn</strong>`,
 }
 
 const getStatus = (application: ApplicationSummary): string => {
