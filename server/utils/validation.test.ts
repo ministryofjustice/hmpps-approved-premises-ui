@@ -78,6 +78,22 @@ describe('catchValidationErrorOrPropogate', () => {
     expect(response.redirect).toHaveBeenCalledWith('some/url')
   })
 
+  it('sets a generic error and redirects back to the form', () => {
+    const error = createMock<SanitisedError>({
+      data: {
+        detail: 'Some generic error',
+        'invalid-params': [],
+      },
+    })
+
+    catchValidationErrorOrPropogate(request, response, error, 'some/url')
+
+    expect(request.flash).toHaveBeenCalledWith('errorSummary', { text: 'Some generic error' })
+    expect(request.flash).toHaveBeenCalledWith('userInput', request.body)
+
+    expect(response.redirect).toHaveBeenCalledWith('some/url')
+  })
+
   it('gets errors from a ValidationError type', () => {
     const error = new ValidationError<TaskListPage>({
       data: {

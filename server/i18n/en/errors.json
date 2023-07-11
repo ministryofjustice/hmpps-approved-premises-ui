@@ -3,7 +3,8 @@
     "empty": "You must enter a CRN",
     "doesNotExist": "This CRN does not exist",
     "userPermission": "You do not have permission to access this CRN",
-    "doesNotHaveApplication": "This CRN does not have an application"
+    "doesNotHaveApplication": "This CRN does not have an application",
+    "notInCaseload": "This CRN is not in your caseload"
   },
   "data": {
     "invalid": "This data does not conform to the newest application schema"
@@ -48,6 +49,9 @@
   },
   "keyWorkerStaffCode": {
     "empty": "You must choose a keyworker"
+  },
+  "keyWorkerStaffId": {
+    "notFound": "The keyworker cannot be found"
   },
   "dateTime": {
     "empty": "You must enter a departure date and time",
