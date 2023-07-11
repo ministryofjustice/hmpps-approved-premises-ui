@@ -22,6 +22,9 @@ const paths = {
     update: applicationPath,
     checkYourAnswers: applicationPath.path('check-your-answers'),
     submission: applicationPath.path('submission'),
+    withdraw: {
+      confirm: applicationPath.path('confirmWithdrawal'),
+    },
     pages: {
       show: pagesPath,
       update: pagesPath,

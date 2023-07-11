@@ -344,4 +344,25 @@ describe('applicationsController', () => {
       })
     })
   })
+
+  describe('confirmWithdrawal', () => {
+    it('renders the template', async () => {
+      const applicationId = 'some-id'
+      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+      request.params.id = applicationId
+
+      const requestHandler = applicationsController.confirmWithdrawal()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/withdraw', {
+        pageHeading: 'Do you want to withdraw this application?',
+        applicationId,
+        errors: errorsAndUserInput.errors,
+        errorSummary: errorsAndUserInput.errorSummary,
+        ...errorsAndUserInput.userInput,
+      })
+    })
+  })
 })

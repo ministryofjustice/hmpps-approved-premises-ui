@@ -32,6 +32,9 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'SELECT_OFFENCE',
   })
   get(paths.applications.people.documents.pattern, documentsController.show(), { auditEvent: 'SHOW_DOCUMENTS' })
+  get(paths.applications.withdraw.confirm.pattern, applicationsController.confirmWithdrawal(), {
+    auditEvent: 'VIEW_CONFIRM_WITHDRAWAL_SCREEN',
+  })
 
   Object.keys(pages).forEach((taskKey: string) => {
     Object.keys(pages[taskKey]).forEach((pageKey: string) => {

@@ -127,4 +127,18 @@ export default class ApplicationsController {
       return res.render('applications/confirm', { pageHeading: 'Application confirmation' })
     }
   }
+
+  confirmWithdrawal(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+
+      return res.render('applications/withdraw', {
+        pageHeading: 'Do you want to withdraw this application?',
+        applicationId: req.params.id,
+        errors,
+        errorSummary,
+        ...userInput,
+      })
+    }
+  }
 }
