@@ -13,7 +13,10 @@ import { getResponses } from '../../utils/applications/getResponses'
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
 export default class ApplicationsController {
-  constructor(private readonly applicationService: ApplicationService, private readonly personService: PersonService) {}
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly personService: PersonService,
+  ) {}
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {

@@ -27,7 +27,10 @@ export default class ReasonForShortNotice implements TasklistPage {
 
   question: string
 
-  constructor(public readonly body: Partial<ReasonForShortNoticeBody>, readonly application: Application) {
+  constructor(
+    public readonly body: Partial<ReasonForShortNoticeBody>,
+    readonly application: Application,
+  ) {
     if (noticeTypeFromApplication(application) === 'emergency') {
       this.title = 'Emergency application'
       this.question = 'What is the reason for submitting this application less than 7 days before the AP is needed?'

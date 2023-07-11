@@ -14,7 +14,10 @@ export default class Review implements TasklistPage {
 
   question = 'Have you reviewed all of the application and documents provided?'
 
-  constructor(public body: { reviewed?: string }, private readonly assessment: Assessment) {}
+  constructor(
+    public body: { reviewed?: string },
+    private readonly assessment: Assessment,
+  ) {}
 
   static async initialize(
     body: Record<string, unknown>,

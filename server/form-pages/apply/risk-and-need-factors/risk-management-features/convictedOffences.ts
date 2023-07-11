@@ -19,7 +19,10 @@ export default class ConvictedOffences implements TasklistPage {
 
   offences = ['Arson offences', 'Sexual offences', 'Hate crimes', 'Offences against children']
 
-  constructor(public body: { response?: YesOrNo }, private readonly application: ApprovedPremisesApplication) {}
+  constructor(
+    public body: { response?: YesOrNo },
+    private readonly application: ApprovedPremisesApplication,
+  ) {}
 
   previous() {
     return 'risk-management-features'

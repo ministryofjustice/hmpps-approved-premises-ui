@@ -5,7 +5,10 @@ import { groupByAllocation } from '../utils/tasks'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 
 export default class TasksController {
-  constructor(private readonly taskService: TaskService, private readonly applicationService: ApplicationService) {}
+  constructor(
+    private readonly taskService: TaskService,
+    private readonly applicationService: ApplicationService,
+  ) {}
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {

@@ -10,7 +10,10 @@ export class PlacementApplicationReview {
 
   step: 'review' | 'decision'
 
-  constructor(private readonly request: Request, step: 'review' | 'decision') {
+  constructor(
+    private readonly request: Request,
+    step: 'review' | 'decision',
+  ) {
     this.applicationId = request.params.id
     this.body = this.request.session?.placementApplicationDecisions?.[this.applicationId] || {}
     this.step = step

@@ -7,7 +7,10 @@ import { NewBedMove } from '../../@types/shared'
 import paths from '../../paths/manage'
 
 export default class MoveBedsController {
-  constructor(private readonly bookingService: BookingService, private readonly premisesService: PremisesService) {}
+  constructor(
+    private readonly bookingService: BookingService,
+    private readonly premisesService: PremisesService,
+  ) {}
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {

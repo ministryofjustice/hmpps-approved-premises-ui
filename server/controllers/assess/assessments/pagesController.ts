@@ -21,7 +21,10 @@ import TasklistPage, { TasklistPageInterface } from '../../../form-pages/tasklis
 import { DataServices } from '../../../@types/ui'
 
 export default class PagesController {
-  constructor(private readonly assessmentService: AssessmentService, private readonly dataServices: DataServices) {}
+  constructor(
+    private readonly assessmentService: AssessmentService,
+    private readonly dataServices: DataServices,
+  ) {}
 
   show(taskName: string, pageName: string): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {

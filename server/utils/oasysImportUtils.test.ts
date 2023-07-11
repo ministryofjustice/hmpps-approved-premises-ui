@@ -34,7 +34,7 @@ describe('OASysImportUtils', () => {
 
     beforeEach(() => {
       constructor = createMock<Constructor<OasysPage>>(
-        jest.fn().mockImplementation(() => ({ body: {} } as unknown as OasysPage)),
+        jest.fn().mockImplementation(() => ({ body: {} }) as unknown as OasysPage),
       )
       getOasysSectionsMock = jest.fn()
       personService = createMock<PersonService>({

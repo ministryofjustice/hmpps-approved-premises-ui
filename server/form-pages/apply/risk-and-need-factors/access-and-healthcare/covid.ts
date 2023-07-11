@@ -34,7 +34,10 @@ export default class Covid implements TasklistPage {
     },
   }
 
-  constructor(public body: Partial<CovidBody>, private readonly application: Application) {}
+  constructor(
+    public body: Partial<CovidBody>,
+    private readonly application: Application,
+  ) {}
 
   previous() {
     const additionalNeeds = retrieveQuestionResponseFromFormArtifact(this.application, AccessNeeds, 'additionalNeeds')

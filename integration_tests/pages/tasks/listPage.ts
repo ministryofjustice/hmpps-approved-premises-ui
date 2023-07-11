@@ -7,7 +7,10 @@ import { Task } from '../../../server/@types/shared'
 import { shouldShowTableRows } from '../../helpers'
 
 export default class ListPage extends Page {
-  constructor(private readonly allocatedTasks: Array<Task>, private readonly unallocatedTasks: Array<Task>) {
+  constructor(
+    private readonly allocatedTasks: Array<Task>,
+    private readonly unallocatedTasks: Array<Task>,
+  ) {
     super('Tasks')
     this.allocatedTasks = allocatedTasks
     this.unallocatedTasks = unallocatedTasks

@@ -31,7 +31,10 @@ export default class Review implements TasklistPage {
     return page
   }
 
-  constructor(public body: Body, placementApplication: PlacementApplication) {
+  constructor(
+    public body: Body,
+    placementApplication: PlacementApplication,
+  ) {
     this.placementApplication = placementApplication
   }
 

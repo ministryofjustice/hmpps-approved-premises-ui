@@ -4,7 +4,10 @@ import Page from '../page'
 import paths from '../../../server/paths/manage'
 
 export default class NonarrivalCreatePage extends Page {
-  constructor(private readonly premisesId: string, private readonly bookingId: string) {
+  constructor(
+    private readonly premisesId: string,
+    private readonly bookingId: string,
+  ) {
     super('Record a non-arrival')
   }
 

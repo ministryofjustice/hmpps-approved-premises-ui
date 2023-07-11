@@ -3,7 +3,10 @@ import type { Request, RequestHandler, Response } from 'express'
 import { AssessmentService, UserService } from '../../../services'
 
 export default class ClarificationNotesController {
-  constructor(private readonly assessmentService: AssessmentService, private readonly userService: UserService) {}
+  constructor(
+    private readonly assessmentService: AssessmentService,
+    private readonly userService: UserService,
+  ) {}
 
   confirm(): RequestHandler {
     return async (req: Request, res: Response) => {

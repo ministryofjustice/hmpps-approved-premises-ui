@@ -11,7 +11,10 @@ export default class AssessPage extends Page {
   // Initialize this to ensure all the decorators are called for the Assess journey
   pages = Assess.pages
 
-  constructor(public readonly assessment: Assessment, title: string) {
+  constructor(
+    public readonly assessment: Assessment,
+    title: string,
+  ) {
     super(title)
     this.checkPhaseBanner('Give us your feedback')
   }

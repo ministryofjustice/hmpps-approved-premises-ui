@@ -7,7 +7,10 @@ import TasklistPage from '../../../tasklistPage'
 export default class EsapNotEligible implements TasklistPage {
   title = `${this.application.person.name} is not eligible for an Enhanced Security Approved Premises (ESAP) placement.`
 
-  constructor(readonly body: Record<string, never>, readonly application: Application) {}
+  constructor(
+    readonly body: Record<string, never>,
+    readonly application: Application,
+  ) {}
 
   response() {
     return {}

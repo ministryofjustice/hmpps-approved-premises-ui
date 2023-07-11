@@ -21,7 +21,10 @@ type PlacementDateBody = ObjectWithDateParts<'startDate'> & {
 export default class PlacementDate implements TasklistPage {
   title: string
 
-  constructor(private _body: Partial<PlacementDateBody>, public application: ApprovedPremisesApplication) {
+  constructor(
+    private _body: Partial<PlacementDateBody>,
+    public application: ApprovedPremisesApplication,
+  ) {
     const formattedReleaseDate = DateFormats.isoDateToUIDate(
       retrieveQuestionResponseFromFormArtifact(application, ReleaseDate),
     )

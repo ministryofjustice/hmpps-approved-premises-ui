@@ -30,7 +30,10 @@ export default class EndDates implements TasklistPage {
 
   body: EndDatesBody
 
-  constructor(body: Partial<EndDatesBody>, private readonly application: ApprovedPremisesApplication) {}
+  constructor(
+    body: Partial<EndDatesBody>,
+    private readonly application: ApprovedPremisesApplication,
+  ) {}
 
   response() {
     const response = {}

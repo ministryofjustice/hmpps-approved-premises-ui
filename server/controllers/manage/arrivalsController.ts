@@ -10,7 +10,10 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 import paths from '../../paths/manage'
 
 export default class ArrivalsController {
-  constructor(private readonly arrivalService: ArrivalService, private readonly premisesService: PremisesService) {}
+  constructor(
+    private readonly arrivalService: ArrivalService,
+    private readonly premisesService: PremisesService,
+  ) {}
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {

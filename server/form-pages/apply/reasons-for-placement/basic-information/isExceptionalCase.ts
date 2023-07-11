@@ -11,7 +11,10 @@ export default class IsExceptionalCase implements TasklistPage {
 
   tier = this.application?.risks?.tier?.value?.level
 
-  constructor(readonly body: { isExceptionalCase?: YesOrNo }, readonly application: Application) {}
+  constructor(
+    readonly body: { isExceptionalCase?: YesOrNo },
+    readonly application: Application,
+  ) {}
 
   response() {
     return { [this.title]: sentenceCase(this.body.isExceptionalCase) }

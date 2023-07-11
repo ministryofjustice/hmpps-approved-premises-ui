@@ -11,7 +11,10 @@ export default class ComplexCaseBoard implements TasklistPage {
 
   title = this.question
 
-  constructor(public body: { reviewRequired: YesOrNo }, private readonly application: ApprovedPremisesApplication) {}
+  constructor(
+    public body: { reviewRequired: YesOrNo },
+    private readonly application: ApprovedPremisesApplication,
+  ) {}
 
   previous() {
     return 'transgender'

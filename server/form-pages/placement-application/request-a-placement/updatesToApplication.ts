@@ -48,7 +48,10 @@ export default class UpdatesToApplication implements TasklistPage {
 
   applicationLink: string
 
-  constructor(public body: Partial<Body>, placementApplication: PlacementApplication) {
+  constructor(
+    public body: Partial<Body>,
+    placementApplication: PlacementApplication,
+  ) {
     this.applicationLink = applicationLink(placementApplication, 'View application', 'View application')
   }
 

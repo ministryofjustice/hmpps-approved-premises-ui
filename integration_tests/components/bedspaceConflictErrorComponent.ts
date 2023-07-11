@@ -5,7 +5,10 @@ import BookingShowPage from '../pages/manage/booking/show'
 import LostBedShowPage from '../pages/manage/lostBedShow'
 
 export default class BedspaceConflictErrorComponent {
-  constructor(private readonly premisesId: string, private readonly source: 'booking' | 'lost-bed') {}
+  constructor(
+    private readonly premisesId: string,
+    private readonly source: 'booking' | 'lost-bed',
+  ) {}
 
   shouldShowDateConflictErrorMessages(
     fields: Array<string>,

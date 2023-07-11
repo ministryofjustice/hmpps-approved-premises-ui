@@ -22,7 +22,10 @@ export default class AdditionalDocuments implements TasklistPage {
 
   application: ApprovedPremisesApplication
 
-  constructor(public body: AdditionalDocumentsBody, public readonly placementApplication: PlacementApplication) {}
+  constructor(
+    public body: AdditionalDocumentsBody,
+    public readonly placementApplication: PlacementApplication,
+  ) {}
 
   static async initialize(
     body: AdditionalDocumentsResponse,

@@ -95,7 +95,10 @@ export default class MatchingInformation implements TasklistPage {
 
   specialistSupportOptions = specialistSupportOptions
 
-  constructor(private _body: Partial<MatchingInformationBody>, public assessment: Assessment) {}
+  constructor(
+    private _body: Partial<MatchingInformationBody>,
+    public assessment: Assessment,
+  ) {}
 
   set body(value: MatchingInformationBody) {
     this._body = { ...value, lengthOfStay: this.lengthInDays() }

@@ -62,7 +62,10 @@ export default class AccessNeeds implements TasklistPage {
     careActAssessmentCompleted: 'Has a care act assessment been completed?',
   }
 
-  constructor(public body: Partial<AccessNeedsBody>, private readonly application: ApprovedPremisesApplication) {
+  constructor(
+    public body: Partial<AccessNeedsBody>,
+    private readonly application: ApprovedPremisesApplication,
+  ) {
     this.body.additionalNeeds = flattenCheckboxInput(body.additionalNeeds)
   }
 
