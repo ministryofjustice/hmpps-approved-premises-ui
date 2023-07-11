@@ -25,7 +25,10 @@ export default class ContingencyPlanSuitability implements TasklistPage {
     additionalComments: 'Additional comments',
   }
 
-  constructor(public body: ContingencyPlanSuitabilityBody, private readonly assessment: Assessment) {}
+  constructor(
+    public body: ContingencyPlanSuitabilityBody,
+    private readonly assessment: Assessment,
+  ) {}
 
   previous() {
     if (noticeTypeFromApplication(this.assessment.application) === 'emergency') return 'application-timeliness'

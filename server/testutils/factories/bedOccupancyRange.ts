@@ -113,7 +113,7 @@ export const bedOccupancyEntryBookingUiFactory = Factory.define<BedOccupancyBook
       type: 'booking',
       personName: faker.person.firstName(),
       bookingId: faker.string.uuid(),
-    } as BedOccupancyBookingEntryUi),
+    }) as BedOccupancyBookingEntryUi,
 )
 
 export const bedOccupancyEntryOverbookingUiFactory = Factory.define<BedOccupancyOverbookingEntryUi>(
@@ -122,7 +122,7 @@ export const bedOccupancyEntryOverbookingUiFactory = Factory.define<BedOccupancy
       ...bedOccupancyEntryUiFactory.build(),
       type: 'overbooking',
       items: [bedOccupancyEntryBookingUiFactory.build(), bedOccupancyEntryBookingUiFactory.build()],
-    } as BedOccupancyOverbookingEntryUi),
+    }) as BedOccupancyOverbookingEntryUi,
 )
 
 export const bedOccupancyEntryLostBedUiFactory = Factory.define<BedOccupancyLostBedEntryUi>(
@@ -131,7 +131,7 @@ export const bedOccupancyEntryLostBedUiFactory = Factory.define<BedOccupancyLost
       ...bedOccupancyEntryUiFactory.build(),
       type: 'lost_bed',
       lostBedId: faker.string.uuid(),
-    } as BedOccupancyLostBedEntryUi),
+    }) as BedOccupancyLostBedEntryUi,
 )
 
 export const bedOccupancyEntryOpenUiFactory = Factory.define<BedOccupancyOpenEntryUi>(
@@ -139,5 +139,5 @@ export const bedOccupancyEntryOpenUiFactory = Factory.define<BedOccupancyOpenEnt
     ({
       ...bedOccupancyEntryUiFactory.build(),
       type: 'open',
-    } as BedOccupancyOpenEntryUi),
+    }) as BedOccupancyOpenEntryUi,
 )

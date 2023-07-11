@@ -10,7 +10,10 @@ export default class Review implements TasklistPage {
 
   title = 'Check your answers'
 
-  constructor(public body: { reviewed?: string }, readonly assessment: Assessment) {}
+  constructor(
+    public body: { reviewed?: string },
+    readonly assessment: Assessment,
+  ) {}
 
   previous() {
     return 'dashboard'

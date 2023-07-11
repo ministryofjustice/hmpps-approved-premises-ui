@@ -107,8 +107,8 @@ export default class DateOfOffence implements TasklistPage {
                 <label class="govuk-label govuk-checkboxes__label" for="${id}">
                   <span class="govuk-visually-hidden">${sentenceCase(offence)}: ${date}</span></label>
                 <input class="govuk-checkboxes__input" id="${id}" name="${offence}" type="checkbox" value="${date}" ${
-        checked ? 'checked' : ''
-      }>
+                  checked ? 'checked' : ''
+                }>
             </div>`,
     )
   }

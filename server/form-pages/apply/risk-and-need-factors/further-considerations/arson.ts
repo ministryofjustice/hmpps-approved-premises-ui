@@ -36,7 +36,10 @@ export default class Arson implements TasklistPage {
     },
   }
 
-  constructor(public body: Partial<YesOrNoWithDetail<'arson'>>, private readonly application: Application) {}
+  constructor(
+    public body: Partial<YesOrNoWithDetail<'arson'>>,
+    private readonly application: Application,
+  ) {}
 
   previous() {
     return 'catering'

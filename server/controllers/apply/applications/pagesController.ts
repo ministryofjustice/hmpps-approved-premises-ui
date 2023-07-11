@@ -15,7 +15,10 @@ import { viewPath } from '../../../form-pages/utils'
 import { getPage } from '../../../utils/applications/getPage'
 
 export default class PagesController {
-  constructor(private readonly applicationService: ApplicationService, private readonly dataServices: DataServices) {}
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly dataServices: DataServices,
+  ) {}
 
   show(taskName: string, pageName: string): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {

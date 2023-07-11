@@ -11,7 +11,10 @@ import { applicationSummary } from '../../../server/utils/tasks'
 import { kebabCase } from '../../../server/utils/utils'
 
 export default class AllocationsPage extends Page {
-  constructor(private readonly application: Application, private readonly task: Task) {
+  constructor(
+    private readonly application: Application,
+    private readonly task: Task,
+  ) {
     super(`Reallocate`)
   }
 

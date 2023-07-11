@@ -56,8 +56,8 @@ export const caseNoteCheckbox = (caseNote: PrisonCaseNote, checked: boolean) => 
   <div class="govuk-checkboxes" data-module="govuk-checkboxes">
     <div class="govuk-checkboxes__item">
       <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="${caseNote.id}" id="${
-    caseNote.id
-  }" ${checked ? 'checked' : ''}>
+        caseNote.id
+      }" ${checked ? 'checked' : ''}>
       <label class="govuk-label govuk-checkboxes__label" for="${caseNote.id}">
         <span class="govuk-visually-hidden">Select case note from ${uiDateOrDateEmptyMessage(
           caseNote,
@@ -92,7 +92,10 @@ export default class CaseNotes implements TasklistPage {
 
   nomisFailed: boolean
 
-  constructor(private _body: Partial<CaseNotesBody>, private readonly application: ApprovedPremisesApplication) {}
+  constructor(
+    private _body: Partial<CaseNotesBody>,
+    private readonly application: ApprovedPremisesApplication,
+  ) {}
 
   public get body(): CaseNotesBody {
     return this._body as CaseNotesBody

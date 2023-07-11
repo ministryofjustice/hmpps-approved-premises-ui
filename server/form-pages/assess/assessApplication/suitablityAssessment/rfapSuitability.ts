@@ -25,7 +25,10 @@ export default class RfapSuitability implements TasklistPage {
       'If the person is unsuitable for a RFAP placement yet suitable for a standard placement, summarise the rationale for the decision',
   }
 
-  constructor(public body: RfapSuitabilityBody, private readonly assessment: Assessment) {}
+  constructor(
+    public body: RfapSuitabilityBody,
+    private readonly assessment: Assessment,
+  ) {}
 
   previous() {
     return 'suitability-assessment'

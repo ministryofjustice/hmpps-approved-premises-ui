@@ -20,7 +20,10 @@ export default class AttachDocuments implements TasklistPage {
 
   documents: Array<Document> | undefined
 
-  constructor(public body: AttachDocumentsBody, public readonly application: ApprovedPremisesApplication) {}
+  constructor(
+    public body: AttachDocumentsBody,
+    public readonly application: ApprovedPremisesApplication,
+  ) {}
 
   static async initialize(
     body: AttachDocumentsResponse,

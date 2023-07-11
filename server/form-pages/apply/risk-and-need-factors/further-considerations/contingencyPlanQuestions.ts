@@ -64,7 +64,10 @@ export default class ContingencyPlanQuestions implements TasklistPage {
 
   contingencyPlanPartnerNames: Array<string>
 
-  constructor(public body: ContingencyPlanQuestionsBody, private readonly application: Application) {
+  constructor(
+    public body: ContingencyPlanQuestionsBody,
+    private readonly application: Application,
+  ) {
     const contingencyPlanPartners =
       retrieveOptionalQuestionResponseFromApplicationOrAssessment(
         application,

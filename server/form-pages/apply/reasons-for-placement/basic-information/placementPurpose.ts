@@ -27,7 +27,10 @@ export default class PlacementPurpose implements TasklistPage {
 
   purposes = placementPurposes
 
-  constructor(private _body: PlacementPurposeBody, private readonly application: ApprovedPremisesApplication) {
+  constructor(
+    private _body: PlacementPurposeBody,
+    private readonly application: ApprovedPremisesApplication,
+  ) {
     this._body.placementPurposes = _body?.placementPurposes
       ? ([_body.placementPurposes].flat() as Array<PlacementPurposeT>)
       : []

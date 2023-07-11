@@ -23,7 +23,10 @@ export default class PipeReferral implements TasklistPage {
     opdPathwayDate: `When was ${this.application.person.name}'s last consultation or formulation?`,
   }
 
-  constructor(private _body: Partial<PipeReferralBody>, private readonly application: ApprovedPremisesApplication) {}
+  constructor(
+    private _body: Partial<PipeReferralBody>,
+    private readonly application: ApprovedPremisesApplication,
+  ) {}
 
   public set body(value: Partial<PipeReferralBody>) {
     this._body = {

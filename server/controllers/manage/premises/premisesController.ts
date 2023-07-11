@@ -6,7 +6,10 @@ import BookingService from '../../../services/bookingService'
 import { DateFormats } from '../../../utils/dateUtils'
 
 export default class PremisesController {
-  constructor(private readonly premisesService: PremisesService, private readonly bookingService: BookingService) {}
+  constructor(
+    private readonly premisesService: PremisesService,
+    private readonly bookingService: BookingService,
+  ) {}
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {

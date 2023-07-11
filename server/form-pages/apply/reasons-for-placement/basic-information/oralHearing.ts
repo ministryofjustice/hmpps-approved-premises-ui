@@ -18,7 +18,10 @@ type OralHearingBody = ObjectWithDateParts<'oralHearingDate'> & {
 export default class OralHearing implements TasklistPage {
   title = `Do you know ${this.application.person.name}’s oral hearing date?`
 
-  constructor(private _body: Partial<OralHearingBody>, private readonly application: ApprovedPremisesApplication) {}
+  constructor(
+    private _body: Partial<OralHearingBody>,
+    private readonly application: ApprovedPremisesApplication,
+  ) {}
 
   public set body(value: Partial<OralHearingBody>) {
     this._body = {

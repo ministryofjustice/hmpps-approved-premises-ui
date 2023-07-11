@@ -34,7 +34,10 @@ export default class PlacementDuration implements TasklistPage {
     reason: 'Why does this person require a different placement duration?',
   }
 
-  constructor(public body: Partial<PlacementDurationBody>, private readonly application: ApprovedPremisesApplication) {
+  constructor(
+    public body: Partial<PlacementDurationBody>,
+    private readonly application: ApprovedPremisesApplication,
+  ) {
     this.body.duration = this.lengthInDays()
   }
 

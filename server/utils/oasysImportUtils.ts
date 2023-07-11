@@ -93,8 +93,8 @@ export const textareas = (questions: OasysImportArrays, key: 'roshAnswers' | 'of
                     </label>
                 </h2>
                 <textarea class="govuk-textarea" id=${key}[${question.questionNumber}] name=${key}[${
-        question.questionNumber
-      }] rows="8">${escape(question?.answer)}</textarea>
+                  question.questionNumber
+                }] rows="8">${escape(question?.answer)}</textarea>
             </div>
             <hr>`
     })

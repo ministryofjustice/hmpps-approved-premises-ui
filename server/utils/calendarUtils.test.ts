@@ -216,8 +216,8 @@ describe('calendarUtils', () => {
       expect(labelForScheduleItem(bedOccupancyEntry, premisesId, bedId)).toMatchStringIgnoringWhitespace(
         `<span title="${expectedText}" class="tooltip">
           <a href="/premises/${premisesId}/beds/${bedId}/overbookings?overbooking=${encodeOverbooking(
-          bedOccupancyEntry,
-        )}" class="govuk-link govuk-link--overbooking">${expectedText}</a>
+            bedOccupancyEntry,
+          )}" class="govuk-link govuk-link--overbooking">${expectedText}</a>
         </span>`,
       )
     })
