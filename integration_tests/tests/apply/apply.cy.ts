@@ -507,5 +507,7 @@ context('Apply', () => {
     withdrawConfirmationPage.clickYes()
     withdrawConfirmationPage.clickSubmit()
 
+    // Then I should see the list page and be shown confirmation of the withdrawal
+    listPage.showsWithdrawalConfirmationMessage()
   })
 })

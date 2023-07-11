@@ -24,6 +24,7 @@ const paths = {
     submission: applicationPath.path('submission'),
     withdraw: {
       confirm: applicationPath.path('confirmWithdrawal'),
+      create: applicationPath.path('withdraw'),
     },
     pages: {
       show: pagesPath,

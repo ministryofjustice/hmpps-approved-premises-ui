@@ -35,6 +35,9 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.applications.withdraw.confirm.pattern, applicationsController.confirmWithdrawal(), {
     auditEvent: 'VIEW_CONFIRM_WITHDRAWAL_SCREEN',
   })
+  post(paths.applications.withdraw.create.pattern, applicationsController.withdraw(), {
+    auditEvent: 'WITHDRAW_APPLICATION',
+  })
 
   Object.keys(pages).forEach((taskKey: string) => {
     Object.keys(pages[taskKey]).forEach((pageKey: string) => {
