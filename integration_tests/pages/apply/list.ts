@@ -53,6 +53,14 @@ export default class ListPage extends Page {
     cy.get(`a[data-cy-id="${application.id}"]`).click()
   }
 
+  clickWithdraw() {
+    cy.get('a').contains('Withdraw').first().click()
+  }
+
+  showsWithdrawalConfirmationMessage() {
+    this.shouldShowBanner('Application withdrawn')
+  }
+
   private shouldShowApplications(applications: Array<ApprovedPremisesApplicationSummary>, status: string): void {
     applications.forEach(application => {
       cy.contains(application.person.name)

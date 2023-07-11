@@ -1,4 +1,5 @@
 import { addDays } from 'date-fns'
+import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
 import { EnterCRNPage, ListPage, SelectOffencePage, ShowPage, StartPage, TransgenderPage } from '../../pages/apply'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import {
@@ -17,6 +18,7 @@ import Page from '../../pages/page'
 import SubmissionConfirmation from '../../pages/apply/submissionConfirmation'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import { updateApplicationReleaseDate } from '../../helpers'
+import WithdrawApplicationPage from '../../pages/apply/withdrawApplicationPage'
 
 context('Apply', () => {
   beforeEach(() => {
@@ -475,5 +477,35 @@ context('Apply', () => {
 
     showPage.shouldShowPersonInformation()
     showPage.shouldShowResponses()
+  })
+
+  it('allows me to withdraw an in progress application', function test() {
+    // Given I have completed an application
+    const inProgressApplication: Application = { ...this.application, status: 'inProgress', createdByUserId: '123' }
+    cy.task('stubApplicationGet', { application: inProgressApplication })
+    cy.task('stubApplications', [inProgressApplication])
+    cy.task('stubApplicationWithdrawn', { applicationId: inProgressApplication.id })
+
+    // And I visit the list page
+    const listPage = ListPage.visit([], [inProgressApplication], [])
+
+    // When I click 'Withdraw' on an application
+    listPage.clickWithdraw()
+
+    // Then I should see the withdraw confirmation page
+    const withdrawConfirmationPage = Page.verifyOnPage(WithdrawApplicationPage)
+
+    // When I click 'Submit' without checking the radio button
+    withdrawConfirmationPage.clickSubmit()
+
+    // Then I should see an error message
+    withdrawConfirmationPage.shouldShowErrorMessagesForFields(['confirmWithdrawal'], {
+      confirmWithdrawal: 'You must confirm if you want to withdraw this application',
+    })
+
+    // When I select 'Yes' and click 'Submit'
+    withdrawConfirmationPage.clickYes()
+    withdrawConfirmationPage.clickSubmit()
+
   })
 })
