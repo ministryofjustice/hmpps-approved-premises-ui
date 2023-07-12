@@ -23,11 +23,11 @@ import {
   TaskListPage,
 } from '../pages/assess'
 import Page from '../pages/page'
-import { updateAssessmentData } from '../../server/form-pages/utils'
 import AssessPage from '../pages/assess/assessPage'
 import { assessmentSummaryFactory } from '../../server/testutils/factories'
 import RfapSuitabilityPage from '../pages/assess/rfapSuitability'
 import ContingencyPlanSuitabilityPage from '../pages/assess/contingencyPlanSuitability'
+import { getPageName, getTaskName } from '../../server/form-pages/utils'
 
 export default class AseessHelper {
   assessmentSummary: AssessmentSummary
@@ -337,7 +337,16 @@ export default class AseessHelper {
   }
 
   updateAssessmentAndStub(pageObject: AssessPage) {
-    const updatedAssessement = updateAssessmentData(pageObject.pageClass, this.assessment)
-    return cy.task('stubAssessment', updatedAssessement)
+    const updatedAssessment = this.assessment
+    const page = pageObject.pageClass
+
+    const pageName = getPageName(page.constructor)
+    const taskName = getTaskName(page.constructor)
+
+    updatedAssessment.data = updatedAssessment.data || {}
+    updatedAssessment.data[taskName] = updatedAssessment.data[taskName] || {}
+    updatedAssessment.data[taskName][pageName] = page.body
+
+    return cy.task('stubAssessment', updatedAssessment)
   }
 }

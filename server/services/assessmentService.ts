@@ -7,10 +7,12 @@ import {
 } from '@approved-premises/api'
 import type { DataServices } from '@approved-premises/ui'
 
+import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
+import CheckYourAnswers from '../form-pages/assess/checkYourAnswers/checkYourAnswersTask/checkYourAnswers'
 import { acceptanceData } from '../utils/assessments/acceptanceData'
 import type { AssessmentClient, RestClientBuilder } from '../data'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
-import { getBody, updateAssessmentData } from '../form-pages/utils'
+import { getBody } from '../form-pages/utils'
 import { ValidationError } from '../utils/errors'
 import { rejectionRationaleFromAssessmentResponses } from '../utils/assessments/utils'
 import { applicationAccepted } from '../utils/assessments/decisionUtils'
@@ -55,7 +57,7 @@ export default class AssessmentService {
       throw new ValidationError<typeof page>(errors)
     } else {
       const assessment = await this.findAssessment(request.user.token, request.params.id)
-      const updatedAssessment = updateAssessmentData(page, assessment)
+      const updatedAssessment = updateFormArtifactData(page, assessment, CheckYourAnswers)
 
       const client = this.assessmentClientFactory(request.user.token)
 

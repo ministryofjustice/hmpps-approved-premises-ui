@@ -1,7 +1,6 @@
 import type { FormArtifact, JourneyType, UiTask, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
 import type { Request } from 'express'
-import TasklistPage, { TasklistPageInterface } from '../tasklistPage'
-import { ApprovedPremisesAssessment } from '../../@types/shared'
+import { TasklistPageInterface } from '../tasklistPage'
 import { sentenceCase } from '../../utils/utils'
 
 export const applyYesOrNo = <K extends string>(key: K, body: Record<string, unknown>): YesOrNoWithDetail<K> => {
@@ -85,20 +84,6 @@ export const getTaskName = <T>(page: T) => {
   return Reflect.getMetadata('page:task', page)
 }
 
-export const updateAssessmentData = (
-  page: TasklistPage,
-  assessment: ApprovedPremisesAssessment,
-): ApprovedPremisesAssessment => {
-  const pageName = getPageName(page.constructor)
-  const taskName = getTaskName(page.constructor)
-
-  assessment.data = assessment.data || {}
-  assessment.data[taskName] = assessment.data[taskName] || {}
-  assessment.data[taskName][pageName] = page.body
-
-  return assessment
-}
-
 export function getBody(
   Page: TasklistPageInterface,
   application: FormArtifact,
@@ -137,4 +122,23 @@ export const responsesForYesNoAndCommentsSections = (
 
     return response
   }, {})
+}
+
+export const pageBodyShallowEquals = (body1: Record<string, unknown>, body2: Record<string, unknown>) => {
+  const body1Keys = Object.keys(body1)
+  const body2Keys = Object.keys(body2)
+
+  if (body1Keys.length !== body2Keys.length) {
+    return false
+  }
+
+  return body1Keys.every(key => {
+    const value1 = body1[key]
+    const value2 = body2[key]
+
+    if (Array.isArray(value1) && Array.isArray(value2)) {
+      return value1.length === value2.length && value1.every((arrayValue, index) => arrayValue === value2[index])
+    }
+    return value1 === value2
+  })
 }

@@ -151,4 +151,11 @@ export default {
         }),
       })
     ).body.requests,
+  verifyAssessmentUpdate: async (assessment: Assessment) =>
+    (
+      await getMatchingRequests({
+        method: 'PUT',
+        url: paths.assessments.show({ id: assessment.id }),
+      })
+    ).body.requests,
 }

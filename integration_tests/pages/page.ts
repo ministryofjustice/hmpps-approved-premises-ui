@@ -267,6 +267,11 @@ export default abstract class Page {
     })
   }
 
+  clearAllInputs() {
+    cy.get('input').filter(':visible').clear()
+    cy.get('textarea').clear()
+  }
+
   clearDateInputs(prefix: string): void {
     cy.get(`#${prefix}-day`).clear()
     cy.get(`#${prefix}-month`).clear()
