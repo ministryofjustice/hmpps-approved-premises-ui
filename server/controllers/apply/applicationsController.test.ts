@@ -5,7 +5,7 @@ import type { ErrorsAndUserInput, GroupedApplications } from '@approved-premises
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController, { tasklistPageHeading } from './applicationsController'
 import { ApplicationService, PersonService } from '../../services'
-import { fetchErrorsAndUserInput } from '../../utils/validation'
+import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import { activeOffenceFactory, applicationFactory, personFactory } from '../../testutils/factories'
 import Apply from '../../form-pages/apply'
 
@@ -342,6 +342,74 @@ describe('applicationsController', () => {
         pageHeading: tasklistPageHeading,
         sections: Apply.sections,
       })
+    })
+  })
+
+  describe('confirmWithdrawal', () => {
+    it('renders the template', async () => {
+      const applicationId = 'some-id'
+      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+      request.params.id = applicationId
+
+      const requestHandler = applicationsController.confirmWithdrawal()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/withdraw', {
+        pageHeading: 'Do you want to withdraw this application?',
+        applicationId,
+        errors: errorsAndUserInput.errors,
+        errorSummary: errorsAndUserInput.errorSummary,
+        ...errorsAndUserInput.userInput,
+      })
+    })
+  })
+
+  describe('withdraw', () => {
+    it('redirects to the confirmation screen with an error if there isnt any input', async () => {
+      const applicationId = 'some-id'
+
+      request.params.id = applicationId
+
+      const requestHandler = applicationsController.withdraw()
+
+      await requestHandler(request, response, next)
+
+      expect(addErrorMessageToFlash).toHaveBeenCalledWith(
+        request,
+        'You must confirm if you want to withdraw this application',
+        'confirmWithdrawal',
+      )
+      expect(response.redirect).toHaveBeenCalledWith(paths.applications.withdraw.confirm({ id: applicationId }))
+    })
+
+    it('redirects to the index screen if the user responds "no" to withdrawing the application', async () => {
+      const applicationId = 'some-id'
+
+      request.params.id = applicationId
+      request.body.confirmWithdrawal = 'no'
+
+      const requestHandler = applicationsController.withdraw()
+
+      await requestHandler(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(paths.applications.index({}))
+    })
+
+    it('calls the service method, redirects to the index screen and shows a confirmation message if the user answers yes', async () => {
+      const applicationId = 'some-id'
+
+      request.params.id = applicationId
+      request.body.confirmWithdrawal = 'yes'
+
+      const requestHandler = applicationsController.withdraw()
+
+      await requestHandler(request, response, next)
+
+      expect(applicationService.withdraw).toHaveBeenCalledWith(token, applicationId)
+      expect(response.redirect).toHaveBeenCalledWith(paths.applications.index({}))
+      expect(request.flash).toHaveBeenCalledWith('success', 'Application withdrawn')
     })
   })
 })

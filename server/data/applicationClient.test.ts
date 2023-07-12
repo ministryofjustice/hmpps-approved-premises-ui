@@ -272,4 +272,28 @@ describeClient('ApplicationClient', provider => {
       expect(result).toEqual(assessment)
     })
   })
+
+  describe('withdrawal', () => {
+    it('calls the withdrawal endpoint with the application ID', async () => {
+      const applicationId = 'applicationId'
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to withdraw an application',
+        withRequest: {
+          method: 'POST',
+          path: paths.applications.withdrawal({ id: applicationId }),
+
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      await applicationClient.withdrawal(applicationId)
+    })
+  })
 })

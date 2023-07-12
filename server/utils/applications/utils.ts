@@ -39,6 +39,7 @@ const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<Tabl
         application.arrivalDate ? DateFormats.isoDateToUIDate(application.arrivalDate, { format: 'short' }) : 'N/A',
       ),
       htmlValue(getStatus(application)),
+      createWithdrawAnchorElement(application.id),
     ]
   })
 }
@@ -71,6 +72,10 @@ const createNameAnchorElement = (name: string, applicationId: string) => {
   return htmlValue(
     `<a href=${paths.applications.show({ id: applicationId })} data-cy-id="${applicationId}">${name}</a>`,
   )
+}
+
+export const createWithdrawAnchorElement = (applicationId: string) => {
+  return htmlValue(`<a href=${paths.applications.withdraw.confirm({ id: applicationId })}>Withdraw</a>`)
 }
 
 export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>

@@ -130,4 +130,10 @@ export default class ApplicationService {
 
     return assessment
   }
+
+  async withdraw(token: string, applicationId: string) {
+    const client = this.applicationClientFactory(token)
+
+    await client.withdrawal(applicationId)
+  }
 }

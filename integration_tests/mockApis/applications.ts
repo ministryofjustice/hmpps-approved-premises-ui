@@ -7,6 +7,7 @@ import type {
 } from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from '../../wiremock'
+import paths from '../../server/paths/api'
 
 export default {
   stubApplications: (applications: Array<ApprovedPremisesApplicationSummary>): SuperAgentRequest =>
@@ -103,6 +104,17 @@ export default {
       request: {
         method: 'POST',
         url: `/applications/${args.application.id}/submission`,
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      },
+    }),
+  stubApplicationWithdrawn: (args: { applicationId: string }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: paths.applications.withdrawal({ id: args.applicationId }),
       },
       response: {
         status: 200,

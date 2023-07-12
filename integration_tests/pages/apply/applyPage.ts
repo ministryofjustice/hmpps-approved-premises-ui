@@ -50,8 +50,4 @@ export default class ApplyPage extends Page {
   selectSelectOptionFromPageBody(fieldName: string) {
     this.getSelectInputByIdAndSelectAnEntry(fieldName, this.tasklistPage.body[fieldName] as string)
   }
-
-  checkForBackButton(path: string) {
-    cy.get('.govuk-back-link').should('have.attr', 'href').and('include', path)
-  }
 }

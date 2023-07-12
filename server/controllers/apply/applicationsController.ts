@@ -3,7 +3,7 @@ import type { Request, RequestHandler, Response } from 'express'
 import TasklistService from '../../services/tasklistService'
 import ApplicationService from '../../services/applicationService'
 import { PersonService } from '../../services'
-import { fetchErrorsAndUserInput } from '../../utils/validation'
+import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import Apply from '../../form-pages/apply'
@@ -125,6 +125,39 @@ export default class ApplicationsController {
 
       await this.applicationService.submit(req.user.token, application)
       return res.render('applications/confirm', { pageHeading: 'Application confirmation' })
+    }
+  }
+
+  confirmWithdrawal(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+
+      return res.render('applications/withdraw', {
+        pageHeading: 'Do you want to withdraw this application?',
+        applicationId: req.params.id,
+        errors,
+        errorSummary,
+        ...userInput,
+      })
+    }
+  }
+
+  withdraw(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      if (!req.body.confirmWithdrawal) {
+        addErrorMessageToFlash(req, 'You must confirm if you want to withdraw this application', 'confirmWithdrawal')
+
+        return res.redirect(paths.applications.withdraw.confirm({ id: req.params.id }))
+      }
+
+      if (req.body.confirmWithdrawal === 'no') {
+        return res.redirect(paths.applications.index({}))
+      }
+
+      await this.applicationService.withdraw(req.user.token, req.params.id)
+
+      req.flash('success', 'Application withdrawn')
+      return res.redirect(paths.applications.index({}))
     }
   }
 }
