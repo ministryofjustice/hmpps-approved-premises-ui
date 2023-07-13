@@ -29,6 +29,7 @@ const managePaths = {
   room: singlePremisesPath.path('rooms/:roomId'),
   bookings: {
     move: bookingPath.path('moves'),
+    dateChange: bookingPath.path('date-changes'),
   },
 }
 
@@ -102,6 +103,7 @@ export default {
     room: managePaths.room,
     bookings: {
       move: managePaths.bookings.move,
+      dateChange: managePaths.bookings.dateChange,
     },
     calendar: managePaths.premises.show.path('calendar'),
   },

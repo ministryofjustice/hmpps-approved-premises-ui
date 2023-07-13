@@ -8,6 +8,7 @@ import type {
   NewBedMove,
   NewBooking,
   NewCancellation,
+  NewDateChange,
   NewDeparture,
   NewExtension,
   NewNonarrival,
@@ -83,6 +84,13 @@ export default class BookingClient {
     await this.restClient.post({
       path: paths.premises.bookings.move({ premisesId, bookingId }),
       data: move,
+    })
+  }
+
+  async changeDates(premisesId: string, bookingId: string, dateChange: NewDateChange): Promise<void> {
+    await this.restClient.post({
+      path: paths.premises.bookings.dateChange({ premisesId, bookingId }),
+      data: dateChange,
     })
   }
 

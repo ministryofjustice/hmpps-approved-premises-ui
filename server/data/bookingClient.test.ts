@@ -4,6 +4,7 @@ import {
   arrivalFactory,
   bookingFactory,
   cancellationFactory,
+  dateChangeFactory,
   departureFactory,
   newArrivalFactory,
   newBookingFactory,
@@ -291,6 +292,30 @@ describeClient('BookingClient', provider => {
       })
 
       await bookingClient.moveBooking('premisesId', 'bookingId', payload)
+    })
+  })
+
+  describe('changeDates', () => {
+    it('should change dates for a booking', async () => {
+      const dateChange = dateChangeFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to move a booking',
+        withRequest: {
+          method: 'POST',
+          path: paths.premises.bookings.dateChange({ premisesId: 'premisesId', bookingId: 'bookingId' }),
+          body: dateChange,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      await bookingClient.changeDates('premisesId', 'bookingId', dateChange)
     })
   })
 })

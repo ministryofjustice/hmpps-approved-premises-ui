@@ -32,6 +32,7 @@ import clarificationNoteFactory from './clarificationNote'
 import contingencyPlanPartnerFactory from './contingencyPlanPartner'
 import contingencyPlanQuestionsBodyFactory from './contingencyPlanQuestionsBody'
 import dateCapacityFactory from './dateCapacity'
+import dateChangeFactory from './dateChange'
 import departureFactory from './departure'
 import documentFactory from './document'
 import lostBedFactory from './lostBed'
@@ -102,6 +103,7 @@ export {
   clarificationNoteFactory,
   contingencyPlanPartnerFactory,
   contingencyPlanQuestionsBodyFactory,
+  dateChangeFactory,
   dateCapacityFactory,
   departureFactory,
   documentFactory,
