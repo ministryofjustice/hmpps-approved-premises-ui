@@ -922,8 +922,11 @@ export default class ApplyHelper {
 
   private submitApplication() {
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
-    tasklistPage.checkCheckboxByLabel('submit')
+    tasklistPage.clickSubmit()
 
+    tasklistPage.shouldShowMissingCheckboxErrorMessage()
+
+    tasklistPage.checkCheckboxByLabel('submit')
     tasklistPage.clickSubmit()
   }
 }

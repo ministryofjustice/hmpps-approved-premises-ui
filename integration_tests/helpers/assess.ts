@@ -330,6 +330,9 @@ export default class AseessHelper {
 
   submitAssessment(isSuitable = true) {
     const tasklistPage = Page.verifyOnPage(TaskListPage)
+    tasklistPage.clickSubmit()
+
+    tasklistPage.shouldShowMissingCheckboxErrorMessage()
 
     tasklistPage.checkCheckboxByLabel('confirmed')
     tasklistPage.clickSubmit()

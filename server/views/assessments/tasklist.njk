@@ -13,11 +13,11 @@
         {{ pageHeading }}
       </h1>
 
+      {{ showErrorSummary(errorSummary) }}
+
       <h2 class="govuk-heading-s govuk-!-margin-bottom-2" data-cy-status>Assessment {{ taskList.status }}</h2>
       <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ taskList.completeSectionCount }} of {{ (taskList.sections | length) }} sections.</p>
     </div>
-
-    {{ showErrorSummary(errorSummary) }}
 
     <form action="{{ paths.assessments.submission({id: assessment.id}) }}" method="post">
 
@@ -37,7 +37,7 @@
             {{ govukCheckboxes({
             idPrefix: "confirmation",
             name: "confirmation",
-            errorMessage: errorObject,
+            errorMessage: errors.confirmation,
             items: [
               {
                 value: "confirmed",

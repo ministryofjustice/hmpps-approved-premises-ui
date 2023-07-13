@@ -19,10 +19,11 @@
         Apply for an Approved Premises (AP) placement
       </h1>
 
+      {{ showErrorSummary(errorSummary) }}
+
       <h2 class="govuk-heading-s govuk-!-margin-bottom-2" data-cy-status>Application {{ taskList.status }}</h2>
       <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ taskList.completeSectionCount }} of {{ (taskList.sections | length) }} sections.</p>
     </div>
-    {{ showErrorSummary(errorSummary) }}
 
     <div class="govuk-grid-column-two-thirds">
       <form action="{{ paths.applications.submission({id: application.id}) }}" method="post">
@@ -42,7 +43,7 @@
             {{ govukCheckboxes({
             idPrefix: "confirmation",
             name: "confirmation",
-            errorMessage: errorObject,
+            errorMessage: errors.confirmation,
             items: [
               {
                 value: "submit",

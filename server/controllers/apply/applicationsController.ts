@@ -6,7 +6,6 @@ import { PersonService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import Apply from '../../form-pages/apply'
 import { firstPageOfApplicationJourney } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 
@@ -38,12 +37,13 @@ export default class ApplicationsController {
     return async (req: Request, res: Response) => {
       const application = await this.applicationService.findApplication(req.user.token, req.params.id)
       const taskList = new TasklistService(application)
+      const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
       if (application.status !== 'inProgress') {
         const referrer = req.headers.referer
         res.render('applications/show', { application, referrer })
       } else {
-        res.render('applications/tasklist', { application, taskList })
+        res.render('applications/tasklist', { application, taskList, errorSummary, errors })
       }
     }
   }
@@ -106,23 +106,13 @@ export default class ApplicationsController {
       application.document = getResponses(application)
 
       if (req.body?.confirmation !== 'submit') {
-        const errorMessage = 'You must confirm the information provided is complete, accurate and up to date.'
-        const errorObject = { text: errorMessage }
-
-        return res.render('applications/tasklist', {
-          application,
-          errorSummary: [
-            {
-              text: errorMessage,
-              href: '#confirmation',
-            },
-          ],
-          errorObject,
-          pageHeading: tasklistPageHeading,
-          sections: Apply.sections,
-        })
+        addErrorMessageToFlash(
+          req,
+          'You must confirm the information provided is complete, accurate and up to date.',
+          'confirmation',
+        )
+        return res.redirect(paths.applications.show({ id: application.id }))
       }
-
       await this.applicationService.submit(req.user.token, application)
       return res.render('applications/confirm', { pageHeading: 'Application confirmation' })
     }

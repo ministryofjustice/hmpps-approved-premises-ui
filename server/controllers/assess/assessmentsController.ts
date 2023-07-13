@@ -1,11 +1,11 @@
 import type { Request, RequestHandler, Response } from 'express'
 
+import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
 import { AssessmentService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 import { groupAssessmements } from '../../utils/assessments/utils'
 
-import getSections from '../../utils/assessments/getSections'
 import paths from '../../paths/assess'
 
 export const tasklistPageHeading = 'Assess an Approved Premises (AP) application'
@@ -29,6 +29,7 @@ export default class AssessmentsController {
     return async (req: Request, res: Response) => {
       const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
       const noteAwaitingResponse = assessment.status === 'awaiting_response' && !informationSetAsNotReceived(assessment)
+      const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
       if (assessment.status === 'completed') {
         const referrer = req.headers.referer
@@ -52,6 +53,8 @@ export default class AssessmentsController {
           assessment,
           pageHeading: tasklistPageHeading,
           taskList,
+          errorSummary,
+          errors,
         })
       }
     }
@@ -62,21 +65,13 @@ export default class AssessmentsController {
       const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
 
       if (req.body?.confirmation !== 'confirmed') {
-        const errorMessage = 'You must confirm the information provided is complete, accurate and up to date.'
-        const errorObject = { text: errorMessage }
+        addErrorMessageToFlash(
+          req,
+          'You must confirm the information provided is complete, accurate and up to date.',
+          'confirmation',
+        )
 
-        return res.render('assessments/show', {
-          assessment,
-          errorSummary: [
-            {
-              text: errorMessage,
-              href: '#confirmation',
-            },
-          ],
-          errorObject,
-          pageHeading: tasklistPageHeading,
-          sections: getSections(assessment),
-        })
+        return res.redirect(paths.assessments.show({ id: assessment.id }))
       }
 
       await this.assessmentService.submit(req.user.token, assessment)
