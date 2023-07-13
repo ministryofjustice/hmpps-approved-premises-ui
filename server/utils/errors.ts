@@ -25,3 +25,9 @@ export class TasklistAPIError extends Error {
     this.field = field
   }
 }
+
+export class ErrorWithData extends Error {
+  constructor(private readonly data: Record<string, unknown>) {
+    super()
+  }
+}

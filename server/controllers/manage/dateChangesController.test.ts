@@ -7,6 +7,7 @@ import { DateFormats } from '../../utils/dateUtils'
 import BookingService from '../../services/bookingService'
 import DateChangesController from './dateChangesController'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
+import { ErrorWithData } from '../../utils/errors'
 
 import { bookingFactory } from '../../testutils/factories'
 import paths from '../../paths/manage'
@@ -152,28 +153,79 @@ describe('dateChangesController', () => {
       )
     })
 
-    it('should catch the validation errors when the API returns an error', async () => {
-      const requestHandler = controller.create()
+    describe('errors', () => {
+      const errors = {
+        'newArrivalDate and newDepartureDate are checked': {
+          body: { datesToChange: ['newArrivalDate', 'newDepartureDate'] },
+          expectedErrorParams: [
+            { propertyName: `$.newArrivalDate`, errorType: 'empty' },
+            { propertyName: `$.newDepartureDate`, errorType: 'empty' },
+          ],
+        },
+        'newArrivalDate is checked': {
+          body: { datesToChange: 'newArrivalDate' },
+          expectedErrorParams: [{ propertyName: `$.newArrivalDate`, errorType: 'empty' }],
+        },
+        'newDepartureDate is checked': {
+          body: { datesToChange: 'newDepartureDate' },
+          expectedErrorParams: [{ propertyName: `$.newDepartureDate`, errorType: 'empty' }],
+        },
+      }
 
-      request = createMock<Request>(requestParams)
+      it.each(Object.keys(errors))(
+        'should catch a validation error with the correct data when %s but the dates are empty',
+        async key => {
+          const { body, expectedErrorParams } = errors[key]
+          const requestHandler = controller.create()
 
-      const err = new Error()
+          request = createMock<Request>({
+            ...requestParams,
+            body,
+          })
 
-      bookingService.changeDates.mockImplementation(() => {
-        throw err
-      })
+          await requestHandler(request, response, next)
 
-      await requestHandler(request, response, next)
+          expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+            request,
+            response,
+            new ErrorWithData({}),
+            paths.bookings.dateChanges.new({
+              bookingId: request.params.bookingId,
+              premisesId: request.params.premisesId,
+            }),
+          )
 
-      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
-        request,
-        response,
-        err,
-        paths.bookings.dateChanges.new({
-          bookingId: request.params.bookingId,
-          premisesId: request.params.premisesId,
-        }),
+          const errorData = (catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+          expect(errorData).toEqual({
+            'invalid-params': expectedErrorParams,
+          })
+        },
       )
+
+      it('should catch the validation errors when the API returns an error', async () => {
+        const requestHandler = controller.create()
+
+        request = createMock<Request>(requestParams)
+
+        const err = new Error()
+
+        bookingService.changeDates.mockImplementation(() => {
+          throw err
+        })
+
+        await requestHandler(request, response, next)
+
+        expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+          request,
+          response,
+          err,
+          paths.bookings.dateChanges.new({
+            bookingId: request.params.bookingId,
+            premisesId: request.params.premisesId,
+          }),
+        )
+      })
     })
   })
 })
