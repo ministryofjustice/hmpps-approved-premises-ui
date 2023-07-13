@@ -184,7 +184,7 @@ describe('utils', () => {
             text: 'N/A',
           },
           {
-            html: getStatus(applicationB),
+            html: getStatus(applicationA),
           },
           createWithdrawAnchorElement(applicationA.id),
         ],
