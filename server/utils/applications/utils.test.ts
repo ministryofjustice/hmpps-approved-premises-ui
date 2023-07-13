@@ -15,7 +15,7 @@ import { DateFormats } from '../dateUtils'
 import { isApplicableTier, tierBadge } from '../personUtils'
 
 import {
-  createWithdrawAnchorElement,
+  createWithdrawElement,
   dashboardTableRows,
   firstPageOfApplicationJourney,
   getApplicationType,
@@ -186,7 +186,7 @@ describe('utils', () => {
           {
             html: getStatus(applicationA),
           },
-          createWithdrawAnchorElement(applicationA.id),
+          createWithdrawElement(applicationA.id, applicationA),
         ],
         [
           {
@@ -206,7 +206,7 @@ describe('utils', () => {
           {
             html: getStatus(applicationB),
           },
-          createWithdrawAnchorElement(applicationB.id),
+          createWithdrawElement(applicationB.id, applicationB),
         ],
       ])
     })
@@ -221,6 +221,7 @@ describe('utils', () => {
         arrivalDate,
         person: { name: 'My Name' },
         risks: { tier: undefined },
+        status: 'inProgress',
       })
 
       const result = dashboardTableRows([application])
@@ -246,7 +247,7 @@ describe('utils', () => {
           {
             html: getStatus(application),
           },
-          createWithdrawAnchorElement(application.id),
+          createWithdrawElement(application.id, application),
         ],
       ])
     })
@@ -286,7 +287,7 @@ describe('utils', () => {
           {
             html: getStatus(application),
           },
-          createWithdrawAnchorElement(application.id),
+          createWithdrawElement(application.id, application),
         ],
       ])
     })
@@ -431,6 +432,23 @@ describe('utils', () => {
       })
 
       expect(getApplicationType(application)).toEqual('PIPE')
+    })
+  })
+
+  describe('createWithdrawElement', () => {
+    it('returns a link to withdraw the application if the application doesnt have a submittedAt property', () => {
+      const applicationSummary = applicationSummaryFactory.build()
+      expect(createWithdrawElement('1', applicationSummary)).toEqual({
+        html: '<a href=/applications/1/confirmWithdrawal>Withdraw</a>',
+      })
+    })
+
+    it('returns an empty string if the application has a submittedAt property', () => {
+      const applicationSummary = applicationSummaryFactory.build({ submittedAt: undefined })
+
+      expect(createWithdrawElement('1', applicationSummary)).toEqual({
+        text: '',
+      })
     })
   })
 })
