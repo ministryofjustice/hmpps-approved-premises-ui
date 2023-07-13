@@ -32,15 +32,17 @@
           {% set applicationOrAssessment = application %}
           {% include '../partials/taskListItems.njk' %}
 
-          <li>
-            <h2 class="app-task-list__section">
-              <span class="app-task-list__section-number">
-                {{ (taskList.sections | length) + 1 }}.
+          {% if taskList.status === 'complete' %}
+
+            <li>
+              <h2 class="app-task-list__section">
+                <span class="app-task-list__section-number">
+                  {{ (taskList.sections | length) + 1 }}.
             </span>
             Submit your application
           </h2>
 
-            {{ govukCheckboxes({
+              {{ govukCheckboxes({
             idPrefix: "confirmation",
             name: "confirmation",
             errorMessage: errors.confirmation,
@@ -51,14 +53,21 @@
               }
             ]
           }) }}
-          </li>
+            </li>
+
+          {% endif %}
         </ol>
 
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+        {% if taskList.status === 'complete' %}
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
-        {{ govukButton({
-          text: "Submit application"
-          }) }}
+          {{
+            govukButton({
+              text: "Submit application",
+              preventDoubleClick: true
+            })
+          }}
+        {% endif %}
       </form>
 
       {{ govukButton({

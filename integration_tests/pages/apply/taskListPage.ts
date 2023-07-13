@@ -10,4 +10,10 @@ export default class TaskListPage extends TaskList {
     cy.visit(`/applications/${application.id}`)
     return new TaskListPage()
   }
+
+  shouldNotShowSubmitComponents(): void {
+    cy.get('input[value="submit"]').should('not.exist')
+    cy.get('input[name="confirmation"]').should('not.exist')
+    cy.get('button').should('not.exist')
+  }
 }
