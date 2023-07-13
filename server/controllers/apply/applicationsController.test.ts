@@ -3,11 +3,10 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput, GroupedApplications } from '@approved-premises/ui'
 import TasklistService from '../../services/tasklistService'
-import ApplicationsController, { tasklistPageHeading } from './applicationsController'
+import ApplicationsController from './applicationsController'
 import { ApplicationService, PersonService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import { activeOffenceFactory, applicationFactory, personFactory } from '../../testutils/factories'
-import Apply from '../../form-pages/apply'
 
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
@@ -69,7 +68,13 @@ describe('applicationsController', () => {
   })
 
   describe('show', () => {
-    const application = applicationFactory.build({ person: { crn: 'some-crn' }, status: 'inProgress' })
+    beforeEach(() => {
+      ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
+        return { errors: {}, errorSummary: [] }
+      })
+    })
+
+    const application = applicationFactory.build({ person: { crn: 'some-crn' } })
     const referrer = 'http://localhost/foo/bar'
 
     beforeEach(() => {
@@ -85,6 +90,8 @@ describe('applicationsController', () => {
     })
 
     it('fetches the application from the API and renders the task list if the application is in progress', async () => {
+      application.status = 'inProgress'
+
       const requestHandler = applicationsController.show()
       const stubTaskList = jest.fn()
 
@@ -98,16 +105,19 @@ describe('applicationsController', () => {
       expect(response.render).toHaveBeenCalledWith('applications/tasklist', {
         application,
         taskList: stubTaskList,
+        errors: {},
+        errorSummary: [],
       })
 
       expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
     })
 
     it('fetches the application from the API and renders the read only view if the application is submitted', async () => {
+      application.status = 'submitted'
+
       const requestHandler = applicationsController.show()
       const stubTaskList = jest.fn()
 
-      application.status = 'submitted'
       ;(TasklistService as jest.Mock).mockImplementation(() => {
         return stubTaskList
       })
@@ -120,6 +130,39 @@ describe('applicationsController', () => {
       })
 
       expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
+    })
+
+    describe('when there is an error in the flash', () => {
+      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+
+      beforeEach(() => {
+        ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
+          return errorsAndUserInput
+        })
+      })
+
+      it('sends the errors to the template', async () => {
+        application.status = 'inProgress'
+
+        const requestHandler = applicationsController.show()
+        const stubTaskList = jest.fn()
+
+        applicationService.findApplication.mockResolvedValue(application)
+        ;(TasklistService as jest.Mock).mockImplementation(() => {
+          return stubTaskList
+        })
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('applications/tasklist', {
+          application,
+          taskList: stubTaskList,
+          errors: errorsAndUserInput.errors,
+          errorSummary: errorsAndUserInput.errorSummary,
+        })
+
+        expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
+      })
     })
   })
 
@@ -317,7 +360,7 @@ describe('applicationsController', () => {
       })
     })
 
-    it('renders the "show" view with errors if the checkbox isnt ticked ', async () => {
+    it('sets errors and redirects if the confirmation checkbox is not ticked', async () => {
       const application = applicationFactory.build()
       request.params.id = 'some-id'
       request.body.confirmation = 'some-id'
@@ -328,20 +371,12 @@ describe('applicationsController', () => {
       await requestHandler(request, response, next)
 
       expect(applicationService.findApplication).toHaveBeenCalledWith(token, request)
-      expect(response.render).toHaveBeenCalledWith('applications/tasklist', {
-        application,
-        errorObject: {
-          text: 'You must confirm the information provided is complete, accurate and up to date.',
-        },
-        errorSummary: [
-          {
-            href: '#confirmation',
-            text: 'You must confirm the information provided is complete, accurate and up to date.',
-          },
-        ],
-        pageHeading: tasklistPageHeading,
-        sections: Apply.sections,
-      })
+      expect(addErrorMessageToFlash).toHaveBeenCalledWith(
+        request,
+        'You must confirm the information provided is complete, accurate and up to date.',
+        'confirmation',
+      )
+      expect(response.redirect).toHaveBeenCalledWith(paths.applications.show({ id: application.id }))
     })
   })
 

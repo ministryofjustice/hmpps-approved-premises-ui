@@ -13,11 +13,11 @@
         {{ pageHeading }}
       </h1>
 
+      {{ showErrorSummary(errorSummary) }}
+
       <h2 class="govuk-heading-s govuk-!-margin-bottom-2" data-cy-status>Assessment {{ taskList.status }}</h2>
       <p class="govuk-body govuk-!-margin-bottom-7">You have completed {{ taskList.completeSectionCount }} of {{ (taskList.sections | length) }} sections.</p>
     </div>
-
-    {{ showErrorSummary(errorSummary) }}
 
     <form action="{{ paths.assessments.submission({id: assessment.id}) }}" method="post">
 
@@ -26,18 +26,19 @@
           {% set applicationOrAssessment = assessment %}
           {% include '../partials/taskListItems.njk' %}
 
-          <li>
-            <h2 class="app-task-list__section">
-              <span class="app-task-list__section-number">
-                {{ (taskList.sections | length) + 1 }}.
+          {% if taskList.status === 'complete' %}
+            <li>
+              <h2 class="app-task-list__section">
+                <span class="app-task-list__section-number">
+                  {{ (taskList.sections | length) + 1 }}.
             </span>
             Submit your assessment
           </h2>
 
-            {{ govukCheckboxes({
+              {{ govukCheckboxes({
             idPrefix: "confirmation",
             name: "confirmation",
-            errorMessage: errorObject,
+            errorMessage: errors.confirmation,
             items: [
               {
                 value: "confirmed",
@@ -45,14 +46,18 @@
               }
             ]
           }) }}
-          </li>
+            </li>
+          {% endif %}
         </ol>
 
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+        {% if taskList.status === 'complete' %}
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
-        {{ govukButton({
-          text: "Submit application"
+          {{ govukButton({
+          text: "Submit application",
+          preventDoubleClick: true
           }) }}
+        {% endif %}
       </form>
 
       {{ govukButton({

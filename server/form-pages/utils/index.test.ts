@@ -4,10 +4,10 @@ import 'reflect-metadata'
 
 // Use a wildcard import to allow us to use jest.spyOn on functions within this module
 import * as utils from './index'
-import TasklistPage, { TasklistPageInterface } from '../tasklistPage'
+import { TasklistPageInterface } from '../tasklistPage'
 import { ApprovedPremisesApplication } from '../../@types/shared'
 
-import { applicationFactory, assessmentFactory } from '../../testutils/factories'
+import { applicationFactory } from '../../testutils/factories'
 
 describe('utils', () => {
   describe('applyYesOrNo', () => {
@@ -183,37 +183,6 @@ describe('utils', () => {
     })
   })
 
-  describe('updateAssessmentData', () => {
-    const page = createMock<TasklistPage>({
-      body: { foo: 'bar' },
-    })
-
-    beforeEach(() => {
-      ;(utils.getPageName as jest.Mock).mockReturnValue('some-page')
-      ;(utils.getTaskName as jest.Mock).mockReturnValue('some-task')
-    })
-
-    it('returns an assessment with an updated body', () => {
-      const assessment = assessmentFactory.build()
-      assessment.data = { 'first-task': { page: { foo: 'bar' } } }
-
-      const updatedAssessment = utils.updateAssessmentData(page, assessment)
-
-      expect(updatedAssessment.data).toEqual({
-        'first-task': {
-          page: {
-            foo: 'bar',
-          },
-        },
-        'some-task': {
-          'some-page': {
-            foo: 'bar',
-          },
-        },
-      })
-    })
-  })
-
   describe('generateResponsesForYesNoAndCommentsSections ', () => {
     it('generates the responses given the sections and body', () => {
       expect(
@@ -221,6 +190,67 @@ describe('utils', () => {
       ).toEqual({
         'question copy': 'Response',
       })
+    })
+  })
+
+  describe('pageBodyShallowEquals', () => {
+    it('returns true when the two parameters are equal', () => {
+      const value1 = {
+        'some-key': 'some-value',
+        'some-key-2': ['value1', 'value2'],
+      }
+
+      const value2 = {
+        'some-key': 'some-value',
+        'some-key-2': ['value1', 'value2'],
+      }
+
+      expect(utils.pageBodyShallowEquals(value1, value2)).toEqual(true)
+      expect(utils.pageBodyShallowEquals(value2, value1)).toEqual(true)
+    })
+
+    it('returns false when the one parameter is a subset of the other', () => {
+      const value1 = {
+        'some-key': 'some-value',
+        'some-key-2': ['value1', 'value2'],
+      }
+
+      const value2 = {
+        'some-key': 'some-value',
+      }
+
+      expect(utils.pageBodyShallowEquals(value1, value2)).toEqual(false)
+      expect(utils.pageBodyShallowEquals(value2, value1)).toEqual(false)
+    })
+
+    it('returns false when one parameter contains a different array to the other', () => {
+      const value1 = {
+        'some-key': 'some-value',
+        'some-key-2': ['value1', 'value2', 'value3'],
+      }
+
+      const value2 = {
+        'some-key': 'some-value',
+        'some-key-2': ['value1', 'value2'],
+      }
+
+      expect(utils.pageBodyShallowEquals(value1, value2)).toEqual(false)
+      expect(utils.pageBodyShallowEquals(value2, value1)).toEqual(false)
+    })
+
+    it('returns false when parameters contains an inner object', () => {
+      const value1 = {
+        'some-key': 'some-value',
+        'some-key-2': { 'inner-key': 'inner-value' },
+      }
+
+      const value2 = {
+        'some-key': 'some-value',
+        'some-key-2': { 'inner-key': 'inner-value' },
+      }
+
+      expect(utils.pageBodyShallowEquals(value1, value2)).toEqual(false)
+      expect(utils.pageBodyShallowEquals(value2, value1)).toEqual(false)
     })
   })
 })

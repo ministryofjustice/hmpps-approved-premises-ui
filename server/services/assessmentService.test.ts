@@ -7,7 +7,8 @@ import AssessmentService from './assessmentService'
 import { assessmentFactory, assessmentSummaryFactory, clarificationNoteFactory } from '../testutils/factories'
 
 import { acceptanceData, placementRequestData } from '../utils/assessments/acceptanceData'
-import { getBody, updateAssessmentData } from '../form-pages/utils'
+import { getBody } from '../form-pages/utils'
+import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { DataServices, TaskListErrors } from '../@types/ui'
 import { ValidationError } from '../utils/errors'
@@ -18,6 +19,7 @@ import { getResponseForPage } from '../utils/applications/getResponseForPage'
 
 jest.mock('../data/assessmentClient.ts')
 jest.mock('../data/personClient.ts')
+jest.mock('../form-pages/utils/updateFormArtifactData')
 jest.mock('../form-pages/utils')
 jest.mock('../utils/applications/utils')
 jest.mock('../utils/applications/getResponses')
@@ -108,7 +110,7 @@ describe('AssessmentService', () => {
       let page: DeepMocked<TasklistPage>
 
       beforeEach(() => {
-        ;(updateAssessmentData as jest.Mock).mockReturnValue(assessment)
+        ;(updateFormArtifactData as jest.Mock).mockReturnValue(assessment)
 
         page = createMock<TasklistPage>({
           errors: () => {

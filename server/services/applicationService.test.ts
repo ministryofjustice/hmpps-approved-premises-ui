@@ -8,11 +8,12 @@ import type {
   UpdateApprovedPremisesApplication,
 } from '@approved-premises/api'
 
+import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
 import type TasklistPage from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
 import ApplicationService from './applicationService'
 import ApplicationClient from '../data/applicationClient'
-import { getBody, getPageName, getTaskName } from '../form-pages/utils'
+import { getBody } from '../form-pages/utils'
 
 import Apply from '../form-pages/apply'
 import {
@@ -42,6 +43,7 @@ Apply.pages['my-task'] = {
 jest.mock('../data/applicationClient.ts')
 jest.mock('../data/personClient.ts')
 jest.mock('../utils/applications/utils')
+jest.mock('../form-pages/utils/updateFormArtifactData')
 jest.mock('../form-pages/utils')
 jest.mock('../utils/applications/getApplicationData')
 
@@ -277,31 +279,30 @@ describe('ApplicationService', () => {
   })
 
   describe('save', () => {
-    const application = applicationFactory.build({ data: null })
+    const application = applicationFactory.build()
+    const applicationData = createMock<UpdateApprovedPremisesApplication>()
+
     const token = 'some-token'
     const request = createMock<Request>({
       params: { id: application.id, task: 'some-task', page: 'some-page' },
       user: { token },
-    })
-    const applicationData = createMock<UpdateApprovedPremisesApplication>()
-
-    beforeEach(() => {
-      applicationClient.find.mockResolvedValue(application)
-      ;(getApplicationUpdateData as jest.Mock).mockReturnValue(applicationData)
     })
 
     describe('when there are no validation errors', () => {
       let page: DeepMocked<TasklistPage>
 
       beforeEach(() => {
+        ;(updateFormArtifactData as jest.Mock).mockReturnValue(application)
+        ;(getApplicationUpdateData as jest.Mock).mockReturnValue(applicationData)
+
         page = createMock<TasklistPage>({
           errors: () => {
             return {} as TaskListErrors<TasklistPage>
           },
           body: { foo: 'bar' },
         })
-        ;(getPageName as jest.Mock).mockReturnValue('some-page')
-        ;(getTaskName as jest.Mock).mockReturnValue('some-task')
+
+        applicationClient.find.mockResolvedValue(application)
       })
 
       it('does not throw an error', () => {
@@ -315,22 +316,6 @@ describe('ApplicationService', () => {
 
         expect(applicationClientFactory).toHaveBeenCalledWith(token)
         expect(applicationClient.update).toHaveBeenCalledWith(application.id, applicationData)
-      })
-
-      it('updates an in-progress application', async () => {
-        application.data = { 'some-task': { 'other-page': { question: 'answer' } } }
-
-        await service.save(page, request)
-
-        expect(getApplicationUpdateData).toHaveBeenCalledWith({
-          ...application,
-          data: {
-            'some-task': {
-              'other-page': { question: 'answer' },
-              'some-page': { foo: 'bar' },
-            },
-          },
-        })
       })
     })
 

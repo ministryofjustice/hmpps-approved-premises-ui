@@ -13,10 +13,11 @@ import { overwriteApplicationDocuments } from '../../../server/utils/assessments
 import { acceptanceData } from '../../../server/utils/assessments/acceptanceData'
 
 import AssessHelper from '../../helpers/assess'
-import { ListPage, ShowPage, TaskListPage } from '../../pages/assess'
+import { ListPage, ShowPage, SuitabilityAssessmentPage, TaskListPage } from '../../pages/assess'
 import Page from '../../pages/page'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared/models/ApprovedPremisesApplication'
+import SuitabilityAssessment from '../../../server/form-pages/assess/assessApplication/suitablityAssessment/suitabilityAssessment'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -193,6 +194,74 @@ context('Assess', () => {
 
       showPage.shouldShowPersonInformation()
       showPage.shouldShowResponses()
+    })
+
+    it('invalidates the check your answers step if an answer is changed', function test() {
+      // Given there is a complete application in the database
+      cy.fixture('assessmentData.json').then(assessmentData => {
+        const assessment = assessmentFactory.build({ data: assessmentData, status: 'in_progress' })
+
+        cy.task('stubAssessment', assessment)
+
+        // And I visit the tasklist
+        TaskListPage.visit(assessment)
+
+        // And I click on a task
+        cy.get('[data-cy-task-name="suitability-assessment"]').click()
+
+        // And I change my response
+        const suitabilityAssessmentPage = new SuitabilityAssessmentPage(assessment)
+        suitabilityAssessmentPage.pageClass = new SuitabilityAssessment(
+          {
+            riskFactors: 'no',
+            riskFactorsComments: '',
+            riskManagement: 'yes',
+            riskManagementComments: '',
+            locationOfPlacement: 'no',
+            locationOfPlacementComments: '',
+            moveOnPlan: 'yes',
+            moveOnPlanComments: '',
+          },
+          assessment,
+        )
+        suitabilityAssessmentPage.completeForm()
+        suitabilityAssessmentPage.clickSubmit()
+
+        // Then the application should be updated with the Check Your Answers section removed
+        cy.task('verifyAssessmentUpdate', assessment).then((requests: Array<{ body: string }>) => {
+          expect(requests).to.have.length(1)
+          const body = JSON.parse(requests[0].body)
+
+          expect(body.data).not.to.have.keys(['check-your-answers'])
+        })
+      })
+    })
+
+    it('does not invalidate the check your answers step if an answer is reviewed and not changed', function test() {
+      // Given there is a complete application in the database
+      cy.fixture('assessmentData.json').then(assessmentData => {
+        const assessment = assessmentFactory.build({ data: assessmentData, status: 'in_progress' })
+
+        cy.task('stubAssessment', assessment)
+
+        // And I visit the tasklist
+        TaskListPage.visit(assessment)
+
+        // And I click on a task
+        cy.get('[data-cy-task-name="suitability-assessment"]').click()
+
+        // And I review a section
+        const suitabilityAssessmentPage = new SuitabilityAssessmentPage(assessment)
+        suitabilityAssessmentPage.clickSubmit()
+
+        // Then the application should be updated with the Check Your Answers section removed
+        cy.task('verifyAssessmentUpdate', assessment).then((requests: Array<{ body: string }>) => {
+          expect(requests).to.have.length(1)
+          const body = JSON.parse(requests[0].body)
+
+          expect(body.data).to.have.any.keys(['check-your-answers'])
+        })
+      })
     })
   })
 

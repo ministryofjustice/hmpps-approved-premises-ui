@@ -468,6 +468,7 @@ export default class ApplyHelper {
 
     // And the next task should be marked as not started
     tasklistPage.shouldShowTaskStatus('type-of-ap', 'Not started')
+    tasklistPage.shouldNotShowSubmitComponents()
 
     // And the risk widgets should be visible
     if (this.uiRisks) {
@@ -496,6 +497,7 @@ export default class ApplyHelper {
 
     // And the OASys import task should show as not started
     tasklistPage.shouldShowTaskStatus('oasys-import', 'Not started')
+    tasklistPage.shouldNotShowSubmitComponents()
   }
 
   completeEsapFlow() {
@@ -635,6 +637,7 @@ export default class ApplyHelper {
 
     // And the Risk Management Features task should show as not started
     tasklistPage.shouldShowTaskStatus('risk-management-features', 'Not started')
+    tasklistPage.shouldNotShowSubmitComponents()
   }
 
   completeRiskManagementSection() {
@@ -675,6 +678,7 @@ export default class ApplyHelper {
 
     // And the risk management task should show a completed status
     tasklistPage.shouldShowTaskStatus('risk-management-features', 'Completed')
+    tasklistPage.shouldNotShowSubmitComponents()
   }
 
   completePrisonInformationSection(nomisMissing = false) {
@@ -704,6 +708,7 @@ export default class ApplyHelper {
 
     // And the location factors task should show a completed status
     tasklistPage.shouldShowTaskStatus('location-factors', 'Completed')
+    tasklistPage.shouldNotShowSubmitComponents()
   }
 
   private completeAccessAndHealthcareSection() {
@@ -730,6 +735,7 @@ export default class ApplyHelper {
 
     // And the access and healthcare task should show a completed status
     tasklistPage.shouldShowTaskStatus('access-and-healthcare', 'Completed')
+    tasklistPage.shouldNotShowSubmitComponents()
   }
 
   private completeFurtherConsiderationsSection() {
@@ -817,6 +823,7 @@ export default class ApplyHelper {
 
     // And the further considerations task should show a completed status
     tasklistPage.shouldShowTaskStatus('further-considerations', 'Completed')
+    tasklistPage.shouldNotShowSubmitComponents()
   }
 
   private completeMoveOnSection() {
@@ -860,6 +867,7 @@ export default class ApplyHelper {
 
     // And the move on information task should show a completed status
     tasklistPage.shouldShowTaskStatus('move-on', 'Completed')
+    tasklistPage.shouldNotShowSubmitComponents()
   }
 
   private completeDocumentsSection() {
@@ -884,6 +892,7 @@ export default class ApplyHelper {
 
     // And the Attach Documents task should show a completed status
     tasklistPage.shouldShowTaskStatus('attach-required-documents', 'Completed')
+    tasklistPage.shouldNotShowSubmitComponents()
   }
 
   private completeCheckYourAnswersSection() {
@@ -922,8 +931,11 @@ export default class ApplyHelper {
 
   private submitApplication() {
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
-    tasklistPage.checkCheckboxByLabel('submit')
+    tasklistPage.clickSubmit()
 
+    tasklistPage.shouldShowMissingCheckboxErrorMessage()
+
+    tasklistPage.checkCheckboxByLabel('submit')
     tasklistPage.clickSubmit()
   }
 }

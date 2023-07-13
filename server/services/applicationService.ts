@@ -7,12 +7,14 @@ import type {
   Document,
 } from '@approved-premises/api'
 
+import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
 import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import type { ApplicationClient, RestClientBuilder } from '../data'
 import { ValidationError } from '../utils/errors'
 
-import { getBody, getPageName, getTaskName } from '../form-pages/utils'
+import { getBody } from '../form-pages/utils'
+import Review from '../form-pages/apply/check-your-answers/review'
 
 export default class ApplicationService {
   constructor(private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>) {}
@@ -96,16 +98,11 @@ export default class ApplicationService {
       throw new ValidationError<typeof page>(errors)
     } else {
       const application = await this.findApplication(request.user.token, request.params.id)
+      const updatedApplication = updateFormArtifactData(page, application, Review)
+
       const client = this.applicationClientFactory(request.user.token)
 
-      const pageName = getPageName(page.constructor)
-      const taskName = getTaskName(page.constructor)
-
-      application.data = application.data || {}
-      application.data[taskName] = application.data[taskName] || {}
-      application.data[taskName][pageName] = page.body
-
-      await client.update(application.id, getApplicationUpdateData(application))
+      await client.update(application.id, getApplicationUpdateData(updatedApplication))
     }
   }
 

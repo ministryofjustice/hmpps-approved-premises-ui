@@ -2,21 +2,22 @@ import type { NextFunction, Request, Response } from 'express'
 
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
+import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
-import AssessmentsController, { tasklistPageHeading } from './assessmentsController'
+import AssessmentsController from './assessmentsController'
 import { AssessmentService } from '../../services'
 
 import { assessmentFactory, assessmentSummaryFactory } from '../../testutils/factories'
 
 import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
-import getSections from '../../utils/assessments/getSections'
 import { hasRole } from '../../utils/userUtils'
-import { GroupedAssessments } from '../../@types/ui'
+import { ErrorsAndUserInput, GroupedAssessments } from '../../@types/ui'
 import { groupAssessmements } from '../../utils/assessments/utils'
 
 jest.mock('../../utils/assessments/utils')
 jest.mock('../../utils/userUtils')
+jest.mock('../../utils/validation')
 jest.mock('../../utils/assessments/informationSetAsNotReceived')
 jest.mock('../../services/tasklistService')
 
@@ -76,6 +77,9 @@ describe('assessmentsController', () => {
       ;(TasklistService as jest.Mock).mockImplementation(() => {
         return stubTaskList
       })
+      ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
+        return { errors: {}, errorSummary: [] }
+      })
     })
 
     it('fetches the assessment and renders the task list', async () => {
@@ -87,6 +91,8 @@ describe('assessmentsController', () => {
         assessment,
         pageHeading: 'Assess an Approved Premises (AP) application',
         taskList: stubTaskList,
+        errorSummary: [],
+        errors: {},
       })
 
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
@@ -139,9 +145,37 @@ describe('assessmentsController', () => {
         assessment,
         pageHeading: 'Assess an Approved Premises (AP) application',
         taskList: stubTaskList,
+        errorSummary: [],
+        errors: {},
       })
 
       expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
+    })
+
+    describe('when there is an error in the flash', () => {
+      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+
+      beforeEach(() => {
+        ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
+          return errorsAndUserInput
+        })
+      })
+
+      it('sends the errors to the template', async () => {
+        const requestHandler = assessmentsController.show()
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('assessments/tasklist', {
+          assessment,
+          pageHeading: 'Assess an Approved Premises (AP) application',
+          taskList: stubTaskList,
+          errorSummary: errorsAndUserInput.errorSummary,
+          errors: errorsAndUserInput.errors,
+        })
+
+        expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, assessment.id)
+      })
     })
   })
 
@@ -164,20 +198,12 @@ describe('assessmentsController', () => {
         await requestHandler(request, response, next)
 
         expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, request)
-        expect(response.render).toHaveBeenCalledWith('assessments/show', {
-          assessment,
-          errorObject: {
-            text: 'You must confirm the information provided is complete, accurate and up to date.',
-          },
-          errorSummary: [
-            {
-              href: '#confirmation',
-              text: 'You must confirm the information provided is complete, accurate and up to date.',
-            },
-          ],
-          pageHeading: tasklistPageHeading,
-          sections: getSections(assessment),
-        })
+        expect(addErrorMessageToFlash).toHaveBeenCalledWith(
+          request,
+          'You must confirm the information provided is complete, accurate and up to date.',
+          'confirmation',
+        )
+        expect(response.redirect).toHaveBeenCalledWith(paths.assessments.show({ id: assessment.id }))
       })
     })
 
