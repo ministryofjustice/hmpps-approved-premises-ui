@@ -1,54 +1,26 @@
 import { addDays } from 'date-fns'
 import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
-import { EnterCRNPage, ListPage, SelectOffencePage, ShowPage, StartPage, TransgenderPage } from '../../pages/apply'
+import { ListPage, SelectOffencePage, ShowPage, TransgenderPage } from '../../pages/apply'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import {
   activeOffenceFactory,
   applicationFactory,
-  personFactory,
   risksFactory,
   tierEnvelopeFactory,
 } from '../../../server/testutils/factories'
 
 import ApplyHelper from '../../helpers/apply'
-import * as ApplyPages from '../../pages/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import IsExceptionalCasePage from '../../pages/apply/isExceptionalCase'
 import NotEligiblePage from '../../pages/apply/notEligiblePage'
 import Page from '../../pages/page'
 import SubmissionConfirmation from '../../pages/apply/submissionConfirmation'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
-import { updateApplicationReleaseDate } from '../../helpers'
 import WithdrawApplicationPage from '../../pages/apply/withdrawApplicationPage'
+import { setup } from './setup'
 
 context('Apply', () => {
-  beforeEach(() => {
-    cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
-  })
-
-  beforeEach(() => {
-    // Given I am logged in
-    cy.signIn()
-
-    cy.fixture('applicationData.json').then(applicationData => {
-      const person = personFactory.build()
-      const application = applicationFactory.build({ person, status: 'inProgress' })
-      const risks = risksFactory.build({
-        crn: person.crn,
-        tier: tierEnvelopeFactory.build({ value: { level: 'A3' } }),
-      })
-      const offences = activeOffenceFactory.buildList(1)
-      application.data = updateApplicationReleaseDate(applicationData)
-      application.risks = risks
-
-      cy.wrap(person).as('person')
-      cy.wrap(offences).as('offences')
-      cy.wrap(application).as('application')
-      cy.wrap(application.data).as('applicationData')
-    })
-  })
+  beforeEach(setup)
 
   it('allows the user to select an index offence if there is more than one offence', function test() {
     // And that person has more than one offence listed under their CRN
@@ -127,55 +99,6 @@ context('Apply', () => {
     Page.verifyOnPage(NotEligiblePage)
   })
 
-  it("creates and updates an application given a person's CRN", function test() {
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
-    apply.setupApplicationStubs()
-    apply.startApplication()
-
-    // Then the API should have created the application
-    cy.task('verifyApplicationCreate').then(requests => {
-      expect(requests).to.have.length(1)
-
-      const body = JSON.parse(requests[0].body)
-      const offence = this.offences[0]
-
-      expect(body.crn).equal(this.person.crn)
-      expect(body.convictionId).equal(offence.convictionId)
-      expect(body.deliusEventNumber).equal(offence.deliusEventNumber)
-      expect(body.offenceId).equal(offence.offenceId)
-    })
-
-    // And I complete the basic information step
-    apply.completeBasicInformation()
-
-    // Then the API should have recieved the updated application
-    cy.task('verifyApplicationUpdate', this.application.id).then(requests => {
-      const firstRequestData = JSON.parse(requests[0].body).data
-      const secondRequestData = JSON.parse(requests[1].body).data
-
-      expect(firstRequestData['basic-information'].transgender.transgenderOrHasTransgenderHistory).equal('yes')
-      expect(secondRequestData['basic-information']['complex-case-board'].reviewRequired).equal('yes')
-    })
-  })
-
-  it('shows an error message if the person is not found', function test() {
-    // And the person I am about to search for is not in Delius
-    const person = personFactory.build()
-    cy.task('stubPersonNotFound', { person })
-
-    // And I have started an application
-    const startPage = StartPage.visit()
-    startPage.startApplication()
-
-    // When I enter a CRN
-    const crnPage = new EnterCRNPage()
-    crnPage.enterCrn(person.crn)
-    crnPage.clickSubmit()
-
-    // Then I should see an error message
-    crnPage.shouldShowPersonNotFoundErrorMessage(person)
-  })
-
   it('allows completion of application emergency flow', function test() {
     // And I complete the application
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
@@ -212,124 +135,6 @@ context('Apply', () => {
     apply.setupApplicationStubs(uiRisks)
     apply.startApplication()
     apply.completeEmergencyApplication()
-  })
-
-  it('allows completion of the ESAP flow', function test() {
-    // Given I have completed the basic information of a form
-    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
-
-    this.application = addResponseToFormArtifact(this.application, {
-      section: 'type-of-ap',
-      page: 'ap-type',
-      key: 'type',
-      value: 'esap',
-    })
-
-    this.application = addResponseToFormArtifact(this.application, {
-      section: 'type-of-ap',
-      page: 'managed-by-national-security-division',
-      key: 'managedByNationalSecurityDivision',
-      value: 'no',
-    })
-
-    this.application = addResponsesToFormArtifact(this.application, {
-      section: 'type-of-ap',
-      page: 'esap-exceptional-case',
-      keyValuePairs: {
-        ...DateFormats.isoDateToDateInputs('2023-07-01', 'agreementDate'),
-        agreedCaseWithCommunityHopp: 'yes',
-        communityHoppName: 'Some Manager',
-        agreementSummary: 'Some Summary Text',
-      },
-    })
-
-    apply.setupApplicationStubs(uiRisks)
-
-    // And I start the application
-    apply.startApplication()
-    apply.completeBasicInformation()
-
-    // And I complete the Esap flow
-    apply.completeEsapFlow()
-
-    // Then I should be asked if the person is managed by the National Security division
-  })
-
-  it('Tells me I am ineligible for ESAP', function test() {
-    // Given I have completed the basic information of a form
-    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
-
-    this.application = addResponseToFormArtifact(this.application, {
-      section: 'type-of-ap',
-      page: 'ap-type',
-      key: 'type',
-      value: 'esap',
-    })
-
-    this.application = addResponseToFormArtifact(this.application, {
-      section: 'type-of-ap',
-      page: 'managed-by-national-security-division',
-      key: 'managedByNationalSecurityDivision',
-      value: 'no',
-    })
-
-    this.application = addResponsesToFormArtifact(this.application, {
-      section: 'type-of-ap',
-      page: 'esap-exceptional-case',
-      keyValuePairs: {
-        agreedCaseWithCommunityHopp: 'no',
-      },
-    })
-
-    apply.setupApplicationStubs(uiRisks)
-
-    // And I start the application
-    apply.startApplication()
-    apply.completeBasicInformation()
-
-    // And I complete the Esap flow
-    apply.completeIneligibleEsapFlow()
-
-    // Then I should be told I am ineligible for an ESAP placement
-  })
-
-  it('handles missing Oasys information', function test() {
-    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
-    const oasysMissing = true
-
-    apply.setupApplicationStubs(uiRisks, oasysMissing)
-    apply.startApplication()
-    apply.completeBasicInformation({ isEmergencyApplication: false })
-    apply.completeTypeOfApSection()
-    apply.completeOasysSection(oasysMissing)
-  })
-
-  it('handles missing Nomis information', function test() {
-    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-
-    this.application = addResponsesToFormArtifact(this.application, {
-      section: 'prison-information',
-      page: 'case-notes',
-      keyValuePairs: {
-        informationFromPrison: 'yes',
-        informationFromPrisonDetail: 'Some Detail',
-        additionalConditionsDetail: 'some details',
-      },
-    })
-
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
-    const nomisMissing = true
-
-    apply.setupApplicationStubs(uiRisks, false, nomisMissing)
-    apply.startApplication()
-    apply.completeBasicInformation({ isEmergencyApplication: false })
-    apply.completeTypeOfApSection()
-    apply.completeOasysSection()
-    apply.completeRiskManagementSection()
-    apply.completePrisonInformationSection(nomisMissing)
   })
 
   it('allows completion of the form', function test() {
@@ -459,88 +264,5 @@ context('Apply', () => {
 
     // Then I should see the list page and be shown confirmation of the withdrawal
     listPage.showsWithdrawalConfirmationMessage()
-  })
-
-  it('invalidates the check your answers step if an answer is changed', function test() {
-    // Given there is a complete application in the database
-    const application = { ...this.application, status: 'inProgress' }
-    cy.task('stubApplicationGet', { application })
-
-    // And I visit the tasklist
-    ApplyPages.TaskListPage.visit(application)
-
-    // And I click on a task
-    cy.get('[data-cy-task-name="location-factors"]').click()
-
-    // And I change my response
-    this.application = addResponsesToFormArtifact(this.application, {
-      section: 'location-factors',
-      page: 'describe-location-factors',
-      keyValuePairs: {
-        ...this.application.data['location-factors']['describe-location-factors'],
-        postcodeArea: 'WS1',
-      },
-    })
-
-    const describeLocationFactorsPage = new ApplyPages.DescribeLocationFactors(this.application)
-    describeLocationFactorsPage.clearAllInputs()
-    describeLocationFactorsPage.completeForm()
-    describeLocationFactorsPage.clickSubmit()
-
-    // Then the application should be updated with the Check Your Answers section removed
-    cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
-      expect(requests).to.have.length(1)
-      const body = JSON.parse(requests[0].body)
-
-      expect(body).to.have.keys(
-        'data',
-        'arrivalDate',
-        'isPipeApplication',
-        'isWomensApplication',
-        'targetLocation',
-        'releaseType',
-        'type',
-        'isInapplicable',
-        'isEsapApplication',
-        'isEmergencyApplication',
-      )
-      expect(body.data).not.to.have.keys(['check-your-answers'])
-    })
-  })
-
-  it('does not invalidate the check your answers step if an answer is reviewed and not changed', function test() {
-    // Given there is a complete application in the database
-    const application = { ...this.application, status: 'inProgress' }
-    cy.task('stubApplicationGet', { application })
-
-    // And I visit the tasklist
-    ApplyPages.TaskListPage.visit(application)
-
-    // And I click on a task
-    cy.get('[data-cy-task-name="location-factors"]').click()
-
-    // And I review a section
-    const describeLocationFactorsPage = new ApplyPages.DescribeLocationFactors(this.application)
-    describeLocationFactorsPage.clickSubmit()
-
-    // Then the application should be updated with the Check Your Answers section removed
-    cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
-      expect(requests).to.have.length(1)
-      const body = JSON.parse(requests[0].body)
-
-      expect(body).to.have.keys(
-        'data',
-        'arrivalDate',
-        'isPipeApplication',
-        'isWomensApplication',
-        'targetLocation',
-        'releaseType',
-        'type',
-        'isInapplicable',
-        'isEsapApplication',
-        'isEmergencyApplication',
-      )
-      expect(body.data).to.have.any.keys(['check-your-answers'])
-    })
   })
 })
