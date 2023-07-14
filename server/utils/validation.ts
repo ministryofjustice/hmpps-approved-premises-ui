@@ -110,7 +110,11 @@ const extractValidationErrors = (error: SanitisedError | Error): Record<string, 
     }
   }
 
-  throw error
+  const unsantisedError = new Error(error.message)
+  unsantisedError.name = 'name' in error ? error.name : undefined
+  unsantisedError.stack = error.stack
+
+  throw unsantisedError
 }
 
 const generateErrors = (params: Array<InvalidParams>): Record<string, string> => {

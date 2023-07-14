@@ -112,8 +112,20 @@ describe('catchValidationErrorOrPropogate', () => {
   })
 
   it('throws the error if the error is not the type we expect', () => {
-    const err = new Error()
-    expect(() => catchValidationErrorOrPropogate(request, response, err, 'some/url')).toThrowError(err)
+    const err = new Error('Some unhandled error')
+    err.name = 'SomeUnhandledError'
+    err.stack = 'STACK_GOES_HERE'
+
+    const result = () => catchValidationErrorOrPropogate(request, response, err, 'some/url')
+
+    expect(result).toThrowError(err)
+    expect(result).toThrowError(
+      expect.objectContaining({
+        message: 'Some unhandled error',
+        name: 'SomeUnhandledError',
+        stack: 'STACK_GOES_HERE',
+      }),
+    )
   })
 
   it('throws an error if the property is not found in the error lookup', () => {
