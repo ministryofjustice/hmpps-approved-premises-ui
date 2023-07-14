@@ -11,8 +11,8 @@ jest.mock('./arrivalDateFromApplication')
 describe('noticeTypeFromApplication', () => {
   const application = applicationFactory.build({})
 
-  it('returns emergency if the arrival date is less than seven days away', () => {
-    const date = add(new Date(), { days: 4 })
+  it('returns emergency if the arrival date is less than 28 days away', () => {
+    const date = add(new Date(), { days: 14 })
     const arrivalDate = DateFormats.dateObjToIsoDate(date)
 
     ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(arrivalDate)

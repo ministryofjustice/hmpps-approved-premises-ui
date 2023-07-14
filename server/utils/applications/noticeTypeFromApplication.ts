@@ -13,7 +13,7 @@ export const noticeTypeFromApplication = (application: Application): Application
   const arrivalDateObj = DateFormats.isoToDateObj(arrivalDateString)
 
   switch (true) {
-    case differenceInDays(arrivalDateObj, new Date()) < 7:
+    case differenceInDays(arrivalDateObj, new Date()) <= 28:
       return 'emergency'
     case differenceInCalendarMonths(arrivalDateObj, new Date()) < 4:
       return 'short_notice'
