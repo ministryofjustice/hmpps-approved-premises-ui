@@ -236,13 +236,18 @@ context('Apply', () => {
 
   it('allows me to withdraw an in progress application', function test() {
     // Given I have completed an application
-    const inProgressApplication: Application = { ...this.application, status: 'inProgress', createdByUserId: '123' }
+    const inProgressApplication: Application = {
+      ...this.application,
+      status: 'inProgress',
+      createdByUserId: '123',
+      submittedAt: undefined,
+    }
     cy.task('stubApplicationGet', { application: inProgressApplication })
     cy.task('stubApplications', [inProgressApplication])
     cy.task('stubApplicationWithdrawn', { applicationId: inProgressApplication.id })
 
     // And I visit the list page
-    const listPage = ListPage.visit([], [inProgressApplication], [])
+    const listPage = ListPage.visit([inProgressApplication], [], [])
 
     // When I click 'Withdraw' on an application
     listPage.clickWithdraw()
