@@ -1,15 +1,14 @@
-import { addDays } from 'date-fns'
 import { applicationFactory } from '../../testutils/factories'
 import {
   shouldShowContingencyPlanPartnersPages,
   shouldShowContingencyPlanQuestionsPage,
 } from './shouldShowContingencyPlanPages'
 import { mockOptionalQuestionResponse, mockQuestionResponse } from '../../testutils/mockQuestionResponse'
-import { arrivalDateFromApplication } from './arrivalDateFromApplication'
-import { DateFormats } from '../dateUtils'
+import { noticeTypeFromApplication } from './noticeTypeFromApplication'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('./arrivalDateFromApplication')
+jest.mock('./noticeTypeFromApplication')
 
 const application = applicationFactory.build()
 
@@ -61,16 +60,21 @@ describe('shouldShowContingencyPlanQuestionsScreen', () => {
     jest.clearAllMocks()
   })
 
-  it('returns true if the application arrival date is in less than or equal to 28 days"', () => {
-    ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(DateFormats.dateObjToIsoDate(new Date()))
+  it('returns true if the application notice type is emergency"', () => {
+    ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('emergency')
 
     expect(shouldShowContingencyPlanQuestionsPage(application)).toEqual(true)
   })
 
-  it('returns true if the application arrival date is in less than 28 days"', () => {
-    const today = new Date()
-    ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(DateFormats.dateObjToIsoDate(addDays(today, 28)))
+  it('returns false if the application notice type is standard"', () => {
+    ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('standard')
 
-    expect(shouldShowContingencyPlanQuestionsPage(application)).toEqual(true)
+    expect(shouldShowContingencyPlanQuestionsPage(application)).toEqual(false)
+  })
+
+  it('returns false if the application notice type is standard"', () => {
+    ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
+
+    expect(shouldShowContingencyPlanQuestionsPage(application)).toEqual(false)
   })
 })
