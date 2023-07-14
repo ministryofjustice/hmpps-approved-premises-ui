@@ -147,14 +147,14 @@ describe('bookingUtils', () => {
               href: paths.bookings.nonArrivals.new({ premisesId, bookingId: booking.id }),
             },
             {
-              text: 'Extend placement',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
-            },
-            {
               text: 'Cancel placement',
               classes: 'govuk-button--secondary',
               href: paths.bookings.cancellations.new({ premisesId, bookingId: booking.id }),
+            },
+            {
+              text: 'Change placement dates',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.dateChanges.new({ premisesId, bookingId: booking.id }),
             },
           ],
         },
