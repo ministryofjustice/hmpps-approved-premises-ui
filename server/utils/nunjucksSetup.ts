@@ -11,6 +11,7 @@ import {
   kebabCase,
   linkTo,
   mapApiPersonRisksForUi,
+  numberToOrdinal,
   removeBlankSummaryListItems,
   sentenceCase,
 } from './utils'
@@ -196,6 +197,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addFilter('sentenceCase', sentenceCase)
   njkEnv.addFilter('kebabCase', kebabCase)
 
+  njkEnv.addGlobal('numberToOrdinal', numberToOrdinal)
   njkEnv.addGlobal('dashboardTableRows', dashboardTableRows)
   njkEnv.addGlobal('navigationItems', navigationItems)
 
