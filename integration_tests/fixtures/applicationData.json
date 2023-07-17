@@ -303,6 +303,19 @@
       "restrictionDetail": "Restrictions go here",
       "alternativeRadiusAccepted": "yes",
       "alternativeRadius": "70"
+    },
+    "preferred-aps": {
+      "preferredAp1": "1",
+      "preferredAp2": "2",
+      "preferredAp3": "3",
+      "preferredAp4": "",
+      "preferredAp5": "",
+      "selectedAps": [
+        { "text": "Ap One", "value": "1" },
+        { "text": "Ap Two", "value": "2" },
+        { "text": "Ap Three", "value": "3" },
+        { "text": "No preference", "value": "" }
+      ]
     }
   },
   "access-and-healthcare": {

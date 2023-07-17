@@ -34,6 +34,7 @@ import {
   documentFactory,
   oasysSectionsFactory,
   oasysSelectionFactory,
+  premisesFactory,
   prisonCaseNotesFactory,
 } from '../../server/testutils/factories'
 import { documentsFromApplication } from '../../server/utils/assessments/documentUtils'
@@ -92,6 +93,7 @@ export default class ApplyHelper {
     this.uiRisks = uiRisks
     this.stubPersonEndpoints()
     this.stubApplicationEndpoints()
+    this.stubPremisesEndpoint()
     if (oasysMissing) {
       this.stubOasys404()
     } else {
@@ -169,6 +171,13 @@ export default class ApplyHelper {
       ...this.pages.moveOn,
       ...this.selectedDocuments,
     ].length
+  }
+
+  private stubPremisesEndpoint() {
+    const premises1 = premisesFactory.build({ id: '1' })
+    const premises2 = premisesFactory.build({ id: '2' })
+    const premises3 = premisesFactory.build({ id: '3' })
+    cy.task('stubPremises', [premises1, premises2, premises3])
   }
 
   private stubPersonEndpoints() {
@@ -701,7 +710,12 @@ export default class ApplyHelper {
     describeLocationFactorsPage.completeForm()
     describeLocationFactorsPage.clickSubmit()
 
-    this.pages.locationFactors = [describeLocationFactorsPage]
+    const preferredApsPage = new ApplyPages.PreferredAps(this.application)
+
+    preferredApsPage.completeForm()
+    preferredApsPage.clickSubmit()
+
+    this.pages.locationFactors = [describeLocationFactorsPage, preferredApsPage]
 
     // Then I should be taken back to the task list
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
