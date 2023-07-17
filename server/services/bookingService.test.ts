@@ -3,7 +3,7 @@ import { DateFormats } from '../utils/dateUtils'
 import BookingService from './bookingService'
 import BookingClient from '../data/bookingClient'
 
-import { bookingExtensionFactory, bookingFactory, newBookingFactory } from '../testutils/factories'
+import { bookingExtensionFactory, bookingFactory, dateChangeFactory, newBookingFactory } from '../testutils/factories'
 import { Booking, NewBedMove } from '../@types/shared'
 
 jest.mock('../data/bookingClient.ts')
@@ -213,6 +213,17 @@ describe('BookingService', () => {
 
       expect(bookingClientFactory).toHaveBeenCalledWith(token)
       expect(bookingClient.moveBooking).toHaveBeenCalledWith('premisesID', 'bookingId', payload)
+    })
+  })
+
+  describe('changeDates', () => {
+    it('on success returns the arrival that has been posted', async () => {
+      const payload = dateChangeFactory.build()
+
+      await service.changeDates(token, 'premisesID', 'bookingId', payload)
+
+      expect(bookingClientFactory).toHaveBeenCalledWith(token)
+      expect(bookingClient.changeDates).toHaveBeenCalledWith('premisesID', 'bookingId', payload)
     })
   })
 })

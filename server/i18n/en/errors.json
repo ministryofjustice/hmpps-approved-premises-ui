@@ -66,7 +66,13 @@
   "newDepartureDate": {
     "empty": "You must enter a new departure date",
     "invalid": "The departure date is an invalid date",
-    "beforeExistingDepartureDate": "The new departure date must be after the Booking's current departure date"
+    "beforeExistingDepartureDate": "The new departure date must be after the Booking's current departure date",
+    "beforeBookingArrivalDate": "The departure date and time must be after the booking's arrival date",
+    "departureDateCannotBeExtendedOnArrivedBooking": "The departure date and cannot be changed after the booking has been marked as arrived"
+  },
+  "newArrivalDate": {
+    "empty": "You must enter a new arrival date",
+    "invalid": "The arrival date is an invalid date"
   },
   "startDate": {
     "empty": "You must enter a start date",

@@ -2,6 +2,7 @@ import type { Booking } from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from '../../wiremock'
 import { bedspaceConflictResponseBody, errorStub } from '../../wiremock/utils'
+import paths from '../../server/paths/api'
 
 export default {
   stubBookingCreate: (args: { premisesId: string; booking: Booking }) =>
@@ -66,6 +67,33 @@ export default {
         body: JSON.stringify(args.bookings),
       },
     }),
+  stubDateChange: (args: { premisesId: string; bookingId: string }) =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: paths.premises.bookings.dateChange({ premisesId: args.premisesId, bookingId: args.bookingId }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+      },
+    }),
+  stubDateChangeErrors: (args: { premisesId: string; bookingId: string; params: Array<string> }) =>
+    stubFor(
+      errorStub(
+        args.params,
+        paths.premises.bookings.dateChange({ premisesId: args.premisesId, bookingId: args.bookingId }),
+      ),
+    ),
+  verifyDateChange: async (args: { premisesId: string; bookingId: string }) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.premises.bookings.dateChange({ premisesId: args.premisesId, bookingId: args.bookingId }),
+      })
+    ).body.requests,
   verifyBookingCreate: async (args: { premisesId }) =>
     (await getMatchingRequests({ method: 'POST', url: `/premises/${args.premisesId}/bookings` })).body.requests,
 }

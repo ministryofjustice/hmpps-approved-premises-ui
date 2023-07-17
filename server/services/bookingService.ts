@@ -1,6 +1,6 @@
 import { addDays, isAfter, isBefore, isEqual, isWithinInterval } from 'date-fns'
 
-import type { Booking, Extension, NewBedMove, NewBooking, NewExtension } from '@approved-premises/api'
+import type { Booking, Extension, NewBedMove, NewBooking, NewDateChange, NewExtension } from '@approved-premises/api'
 import type { GroupedListofBookings } from '@approved-premises/ui'
 
 import type { RestClientBuilder } from '../data'
@@ -73,6 +73,12 @@ export default class BookingService {
     const bookingClient = this.bookingClientFactory(token)
 
     await bookingClient.moveBooking(premisesId, bookingId, move)
+  }
+
+  async changeDates(token: string, premisesId: string, bookingId: string, dateChange: NewDateChange): Promise<void> {
+    const bookingClient = this.bookingClientFactory(token)
+
+    await bookingClient.changeDates(premisesId, bookingId, dateChange)
   }
 
   bookingsArrivingTodayOrLate(bookings: Array<Booking>, today: Date): Array<Booking> {

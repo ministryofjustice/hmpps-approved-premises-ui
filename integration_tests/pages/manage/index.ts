@@ -10,6 +10,8 @@ import PremisesShowPage from './premisesShow'
 import BedsListPage from './bed/bedsList'
 import BedShowPage from './bed/bedShow'
 
+import NewDateChangePage from './booking/dateChanges/new'
+
 import BookingConfirmationPage from './booking/confirmation'
 import BookingFindPage from './booking/find'
 import BookingNewPage from './booking/new'
@@ -37,4 +39,5 @@ export {
   BedsListPage,
   BedShowPage,
   CalendarPage,
+  NewDateChangePage,
 }

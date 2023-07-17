@@ -25,6 +25,8 @@ const lostBedsPath = singlePremisesPath.path('beds/:bedId/lost-beds')
 
 const bedsPath = singlePremisesPath.path('beds')
 
+const dateChangesPath = bookingPath.path('date-changes')
+
 const paths = {
   premises: {
     index: premisesPath,
@@ -44,6 +46,10 @@ const paths = {
     show: bookingPath,
     create: newBookingPath,
     confirm: bookingPath.path('confirmation'),
+    dateChanges: {
+      new: dateChangesPath.path('new'),
+      create: dateChangesPath,
+    },
     extensions: {
       new: extensionsPath.path('new'),
       create: extensionsPath,

@@ -64,14 +64,14 @@ export const bookingActions = (booking: Booking, premisesId: string): Array<Iden
         href: paths.bookings.nonArrivals.new({ premisesId, bookingId: booking.id }),
       })
       items.push({
-        text: 'Extend placement',
-        classes: 'govuk-button--secondary',
-        href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
-      })
-      items.push({
         text: 'Cancel placement',
         classes: 'govuk-button--secondary',
         href: paths.bookings.cancellations.new({ premisesId, bookingId: booking.id }),
+      })
+      items.push({
+        text: 'Change placement dates',
+        classes: 'govuk-button--secondary',
+        href: paths.bookings.dateChanges.new({ premisesId, bookingId: booking.id }),
       })
     }
 
