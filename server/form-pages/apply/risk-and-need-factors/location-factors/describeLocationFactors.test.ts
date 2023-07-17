@@ -33,7 +33,7 @@ describe('DescribeLocationFactors', () => {
   })
 
   itShouldHavePreviousValue(new DescribeLocationFactors({}), 'dashboard')
-  itShouldHaveNextValue(new DescribeLocationFactors({}), '')
+  itShouldHaveNextValue(new DescribeLocationFactors({}), 'preferred-aps')
 
   describe('errors', () => {
     it('should ensure all required attributes are specified', () => {
