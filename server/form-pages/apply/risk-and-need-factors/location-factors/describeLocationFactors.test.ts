@@ -3,7 +3,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 
 import DescribeLocationFactors from './describeLocationFactors'
 
-describe('ConvictedOffences', () => {
+describe('DescribeLocationFactors', () => {
   describe('body', () => {
     it('should set the body and uppercase the postcode', () => {
       const page = new DescribeLocationFactors({ postcodeArea: 'e17' })
