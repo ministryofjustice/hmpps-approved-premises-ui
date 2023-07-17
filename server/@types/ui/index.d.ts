@@ -262,6 +262,9 @@ export type DataServices = Partial<{
   userService: {
     getUserById: (token: string, id: string) => Promise<User>
   }
+  premisesService: {
+    getAll: (token: string) => Promise<Array<Premises>>
+  }
 }>
 
 export type AssessmentGroupingCategory = 'status' | 'allocation'
