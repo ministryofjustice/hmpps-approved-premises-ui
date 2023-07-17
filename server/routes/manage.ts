@@ -12,6 +12,7 @@ export default function routes(controllers: Controllers, router: Router, service
   const { get, post } = actions(router, services.auditService)
 
   const {
+    dateChangesController,
     premisesController,
     bookingsController,
     bookingExtensionsController,
@@ -140,6 +141,17 @@ export default function routes(controllers: Controllers, router: Router, service
       {
         path: paths.bookings.moves.new.pattern,
         auditEvent: 'BED_MOVE_FAILURE',
+      },
+    ],
+  })
+
+  get(paths.bookings.dateChanges.new.pattern, dateChangesController.new(), { auditEvent: 'NEW_DATE_CHANGE' })
+  post(paths.bookings.dateChanges.create.pattern, dateChangesController.create(), {
+    auditEvent: 'DATE_CHANGE_SUCCESS',
+    redirectAuditEventSpecs: [
+      {
+        path: paths.bookings.dateChanges.new.pattern,
+        auditEvent: 'DATE_CHANGE_FAILURE',
       },
     ],
   })
