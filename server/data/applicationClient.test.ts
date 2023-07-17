@@ -133,7 +133,7 @@ describeClient('ApplicationClient', provider => {
         isWomensApplication: false,
         targetLocation: 'ABC123',
         releaseType: 'licence' as const,
-        type: 'CAS1',
+        type: 'CAS1' as const,
       }
 
       provider.addInteraction({
