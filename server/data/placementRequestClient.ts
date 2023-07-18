@@ -23,6 +23,12 @@ export default class PlacementRequestClient {
     >
   }
 
+  async dashboard(): Promise<Array<PlacementRequest>> {
+    return (await this.restClient.get({ path: paths.placementRequests.dashboard.pattern })) as Promise<
+      Array<PlacementRequest>
+    >
+  }
+
   async find(id: string): Promise<PlacementRequestDetail> {
     return (await this.restClient.get({
       path: paths.placementRequests.show({ id }),

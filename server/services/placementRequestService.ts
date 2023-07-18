@@ -3,6 +3,7 @@ import {
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
+  PlacementRequest,
   PlacementRequestDetail,
 } from '@approved-premises/api'
 import { RestClientBuilder } from '../data'
@@ -27,6 +28,12 @@ export default class PlacementRequestService {
     })
 
     return results
+  }
+
+  async getDashboard(token: string): Promise<Array<PlacementRequest>> {
+    const placementRequestClient = this.placementRequestClientFactory(token)
+
+    return placementRequestClient.dashboard()
   }
 
   async getPlacementRequest(token: string, id: string): Promise<PlacementRequestDetail> {
