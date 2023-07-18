@@ -158,7 +158,7 @@
     "reflect-metadata": "^0.1.13",
     "static-path": "^0.0.4",
     "superagent": "^8.0.2",
-    "typescript-json-schema": "^0.57.0",
+    "typescript-json-schema": "^0.59.0",
     "underscore": "^1.13.6",
     "url-value-parser": "^2.2.0",
     "uuid": "^9.0.0"
@@ -213,7 +213,7 @@
     "nock": "^13.2.9",
     "nodemon": "^3.0.0",
     "nyc": "^15.1.0",
-    "openapi-typescript-codegen": "^0.24.0",
+    "openapi-typescript-codegen": "^0.25.0",
     "prettier": "^3.0.0",
     "sass": "^1.55.0",
     "shellcheck": "^2.0.0",
