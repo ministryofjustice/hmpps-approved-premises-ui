@@ -1,0 +1,58 @@
+{% extends "../../partials/layout.njk" %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set mainClasses = "app-container govuk-body assessments--index" %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+      {% include "../../_messages.njk" %}
+
+      {{
+              govukTable({
+                  firstCellIsHeader: true,
+                  attributes: {
+                    'data-module': 'moj-sortable-table'
+                  },
+                  head: [
+                      {
+                          text: "Name"
+                      },
+                      {
+                          text: "CRN"
+                      },
+                      {
+                          text: "Arrival Date",
+                          attributes: {
+                            "aria-sort": "none"
+                          }
+                      },
+                      {
+                          text: "Length of stay",
+                          attributes: {
+                            "aria-sort": "none"
+                          }
+                      },
+                      {
+                          text: "Status"
+                      }
+                  ],
+                  rows: PlacementRequestUtils.tableUtils.dashboardTableRows(placementRequests)
+                })
+            }}
+
+    </div>
+  </div>
+{% endblock %}
+
+{% block extraScripts %}
+  <script type="text/javascript" nonce="{{ cspNonce }}">
+    window
+      .MOJFrontend
+      .initAll()
+  </script>
+{% endblock %}
