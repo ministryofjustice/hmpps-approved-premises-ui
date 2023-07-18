@@ -20,7 +20,9 @@
       "arrivalDate-day": "01",
       "arrivalDate-month": "8",
       "arrivalDate-year": "2023",
-      "duration": "28"
+      "duration": "5",
+      "durationDays": "5",
+      "durationWeeks": "0"
     },
     "updates-to-application": {
       "significantEvents": "yes",

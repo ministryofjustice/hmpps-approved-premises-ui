@@ -6,7 +6,7 @@ import DateOfPlacement, { Body } from './datesOfPlacement'
 describe('DateOfPlacement', () => {
   const body = {
     durationDays: '1',
-    durationWeeks: '1',
+    durationWeeks: '2',
     'arrivalDate-year': '2023',
     'arrivalDate-month': '12',
     'arrivalDate-day': '1',
@@ -17,9 +17,9 @@ describe('DateOfPlacement', () => {
       const page = new DateOfPlacement(body)
 
       expect(page.body).toEqual({
-        duration: '8',
+        duration: '15',
         durationDays: '1',
-        durationWeeks: '1',
+        durationWeeks: '2',
         'arrivalDate-year': '2023',
         'arrivalDate-month': '12',
         'arrivalDate-day': '1',
@@ -64,7 +64,7 @@ describe('DateOfPlacement', () => {
       const page = new DateOfPlacement(body)
 
       expect(page.response()).toEqual({
-        'How long should the Approved Premises placement last?': '1 week, 1 day',
+        'How long should the Approved Premises placement last?': '2 weeks, 1 day',
         'When will the person arrive?': 'Friday 1 December 2023',
       })
     })
