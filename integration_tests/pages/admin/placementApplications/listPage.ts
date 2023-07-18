@@ -18,4 +18,8 @@ export default class ListPage extends Page {
   shouldShowPlacementRequests(): void {
     shouldShowTableRows(this.placementRequests, dashboardTableRows)
   }
+
+  clickPlacementRequest(placementRequest: PlacementRequest): void {
+    cy.get(`[data-cy-placementRequestId="${placementRequest.id}"]`).click()
+  }
 }

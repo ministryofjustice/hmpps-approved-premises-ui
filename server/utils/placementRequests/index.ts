@@ -10,4 +10,4 @@ export { mapPageForSummaryList, placementApplicationQuestionsForReview } from '.
 export { applicationLink } from './applicationLink'
 export { mapTaskForSummaryList } from './mapTaskForSummaryList'
 export { adminSummary } from './adminSummary'
-export { adminActions } from './adminActions'
+export { adminIdentityBar } from './adminIdentityBar'
