@@ -20,6 +20,21 @@ export default {
         jsonBody: placementRequests,
       },
     }),
+
+  stubPlacementRequestsDashboard: (placementRequests: Array<PlacementRequest>): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: paths.placementRequests.dashboard.pattern,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: placementRequests,
+      },
+    }),
   stubPlacementRequest: (placementRequestDetail: PlacementRequestDetail): SuperAgentRequest =>
     stubFor({
       request: {

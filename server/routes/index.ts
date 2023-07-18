@@ -12,6 +12,7 @@ import matchRoutes from './match'
 import manageRoutes from './manage'
 import tasksRoutes from './tasks'
 import placementApplicationRoutes from './placementApplications'
+import adminRoutes from './admin'
 
 export default function routes(controllers: Controllers, services: Partial<Services>): Router {
   const router = Router()
@@ -28,6 +29,7 @@ export default function routes(controllers: Controllers, services: Partial<Servi
   manageRoutes(controllers, router, services)
   tasksRoutes(controllers, router, services)
   placementApplicationRoutes(controllers, router, services)
+  adminRoutes(controllers, router, services)
 
   return router
 }

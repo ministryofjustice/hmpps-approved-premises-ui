@@ -4,6 +4,7 @@ import { controllers as applyControllers } from './apply'
 import { controllers as assessControllers } from './assess'
 import { controllers as matchControllers } from './match'
 import { controllers as manageControllers } from './manage'
+import { controllers as adminControllers } from './admin'
 import TasksController from './tasksController'
 import AllocationsController from './tasks/allocationsController'
 
@@ -32,6 +33,7 @@ export const controllers = (services: Services) => {
     ...assessControllers(services),
     ...matchControllers(services),
     ...manageControllers(services),
+    ...adminControllers(services),
   }
 }
 

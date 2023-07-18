@@ -144,6 +144,7 @@ export default {
   placementRequests: {
     index: placementRequestsPath,
     show: placementRequestPath,
+    dashboard: placementRequestsPath.path('dashboard'),
     booking: placementRequestPath.path('booking'),
     bookingNotMade: placementRequestPath.path('booking-not-made'),
   },
