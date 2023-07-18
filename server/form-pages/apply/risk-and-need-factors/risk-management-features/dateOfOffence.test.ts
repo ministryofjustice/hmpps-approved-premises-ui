@@ -80,22 +80,8 @@ describe('DateOfOffence', () => {
       const result = new DateOfOffence({ arsonOffence: ['previous'] }).renderTableRow('arsonOffence')
       expect(result).toEqual([
         { text: 'Arson offence' },
-        {
-          html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <label class="govuk-label govuk-checkboxes__label" for="arsonOffence-current">
-                  <span class="govuk-visually-hidden">Arson offence: current</span></label>
-                <input class="govuk-checkboxes__input" id="arsonOffence-current" name="arsonOffence" type="checkbox" value="current" >
-            </div>`,
-        },
-        {
-          html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <label class="govuk-label govuk-checkboxes__label" for="arsonOffence-previous">
-                  <span class="govuk-visually-hidden">Arson offence: previous</span></label>
-                <input class="govuk-checkboxes__input" id="arsonOffence-previous" name="arsonOffence" type="checkbox" value="previous" checked>
-            </div>`,
-        },
+        DateOfOffence.checkbox('arsonOffence', 'current', false),
+        DateOfOffence.checkbox('arsonOffence', 'previous', true),
       ])
     })
   })
@@ -109,6 +95,34 @@ describe('DateOfOffence', () => {
         new DateOfOffence({}).renderTableRow('inPersonSexualOffence'),
         new DateOfOffence({}).renderTableRow('onlineSexualOffence'),
       ])
+    })
+  })
+
+  describe('checkbox', () => {
+    it('it renders the markup for a unselected checkbox', () => {
+      expect(DateOfOffence.checkbox('arsonOffence', 'current', false)).toEqual({
+        html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
+          <div class="govuk-checkboxes__item">
+          <input class="govuk-checkboxes__input" id="arsonOffence-current" name="arsonOffence" type="checkbox" value="current" >
+              <label class="govuk-label govuk-checkboxes__label" for="arsonOffence-current">
+                <span class="govuk-visually-hidden">Arson offence: current</span>
+              </label>
+          </div>
+        </div>`,
+      })
+    })
+
+    it('it renders the markup for a selected checkbox', () => {
+      expect(DateOfOffence.checkbox('arsonOffence', 'previous', true)).toEqual({
+        html: `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
+          <div class="govuk-checkboxes__item">
+          <input class="govuk-checkboxes__input" id="arsonOffence-previous" name="arsonOffence" type="checkbox" value="previous" checked>
+              <label class="govuk-label govuk-checkboxes__label" for="arsonOffence-previous">
+                <span class="govuk-visually-hidden">Arson offence: previous</span>
+              </label>
+          </div>
+        </div>`,
+      })
     })
   })
 })
