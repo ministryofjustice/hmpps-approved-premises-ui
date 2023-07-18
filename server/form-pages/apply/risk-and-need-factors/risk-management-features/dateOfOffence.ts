@@ -82,8 +82,8 @@ export default class DateOfOffence implements TasklistPage {
   renderTableRow(offence: string) {
     return [
       this.textValue(sentenceCase(offence)),
-      this.checkbox(offence, 'current', this.isSelected(offence, 'current')),
-      this.checkbox(offence, 'previous', this.isSelected(offence, 'previous')),
+      DateOfOffence.checkbox(offence, 'current', this.isSelected(offence, 'current')),
+      DateOfOffence.checkbox(offence, 'previous', this.isSelected(offence, 'previous')),
     ]
   }
 
@@ -91,26 +91,29 @@ export default class DateOfOffence implements TasklistPage {
     return Object.keys(offences).map(offence => this.renderTableRow(offence))
   }
 
+  static checkbox(offence: string, date: 'current' | 'previous', checked: boolean) {
+    const id = `${offence}-${date}`
+
+    return this.htmlValue(
+      `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
+          <div class="govuk-checkboxes__item">
+          <input class="govuk-checkboxes__input" id="${id}" name="${offence}" type="checkbox" value="${date}" ${
+            checked ? 'checked' : ''
+          }>
+              <label class="govuk-label govuk-checkboxes__label" for="${id}">
+                <span class="govuk-visually-hidden">${sentenceCase(offence)}: ${date}</span>
+              </label>
+          </div>
+        </div>`,
+    )
+  }
+
   private textValue(value: string) {
     return { text: value }
   }
 
-  private htmlValue(value: string) {
+  private static htmlValue(value: string) {
     return { html: value }
-  }
-
-  private checkbox(offence: string, date: 'current' | 'previous', checked: boolean) {
-    const id = `${offence}-${date}`
-    return this.htmlValue(
-      `<div class="govuk-checkboxes" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <label class="govuk-label govuk-checkboxes__label" for="${id}">
-                  <span class="govuk-visually-hidden">${sentenceCase(offence)}: ${date}</span></label>
-                <input class="govuk-checkboxes__input" id="${id}" name="${offence}" type="checkbox" value="${date}" ${
-                  checked ? 'checked' : ''
-                }>
-            </div>`,
-    )
   }
 
   private isSelected(offence: string, timePeriod: string) {
