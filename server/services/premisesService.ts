@@ -127,6 +127,10 @@ export default class PremisesService {
     return ''
   }
 
+  /**
+   * getPremisesSelectList
+   * @deprecated per ADR-0008: manipulation of view data should happen in the views
+   */
   async getPremisesSelectList(token: string): Promise<Array<{ text: string; value: string }>> {
     const premisesClient = this.premisesClientFactory(token)
     const premises = await premisesClient.all()
