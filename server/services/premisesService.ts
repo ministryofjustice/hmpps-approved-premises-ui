@@ -9,6 +9,21 @@ import getDateRangesWithNegativeBeds, { NegativeDateRange, mapApiOccupancyToUiOc
 export default class PremisesService {
   constructor(private readonly premisesClientFactory: RestClientBuilder<PremisesClient>) {}
 
+  async getAll(token: string): Promise<Array<ApprovedPremises>> {
+    const premisesClient = this.premisesClientFactory(token)
+    const premises = await premisesClient.all()
+
+    return premises.sort((a, b) => {
+      if (a.name < b.name) {
+        return -1
+      }
+      if (a.name > b.name) {
+        return 1
+      }
+      return 0
+    })
+  }
+
   async getStaffMembers(token: string, premisesId: string): Promise<Array<StaffMember>> {
     const premisesClient = this.premisesClientFactory(token)
 

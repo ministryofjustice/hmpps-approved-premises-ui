@@ -29,6 +29,30 @@ describe('PremisesService', () => {
     premisesClientFactory.mockReturnValue(premisesClient)
   })
 
+  describe('getAll', () => {
+    it('calls the all method of the premises client and returns the response', async () => {
+      const premises = premisesFactory.buildList(2)
+      premisesClient.all.mockResolvedValue(premises)
+
+      const result = await service.getAll(token)
+
+      expect(result).toEqual(premises)
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.all).toHaveBeenCalled()
+    })
+
+    it('sorts the premises returned by name', async () => {
+      const premisesA = premisesFactory.build({ name: 'A' })
+      const premisesB = premisesFactory.build({ name: 'B' })
+
+      premisesClient.all.mockResolvedValue([premisesB, premisesA])
+
+      const result = await service.getAll(token)
+
+      expect(result).toEqual([premisesA, premisesB])
+    })
+  })
+
   describe('getStaffMembers', () => {
     it('on success returns the person given their CRN', async () => {
       const staffMembers = staffMemberFactory.buildList(5)
