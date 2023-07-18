@@ -29,7 +29,7 @@ describe('tableUtils', () => {
       const placementRequest = placementRequestFactory.build()
 
       expect(nameCell(placementRequest)).toEqual({
-        html: `<a href="/placement-requests/${placementRequest.id}" data-cy-placementRequestId="${placementRequest.id}">${placementRequest.person.name}</a>`,
+        html: `<a href="/admin/placement-requests/${placementRequest.id}" data-cy-placementRequestId="${placementRequest.id}">${placementRequest.person.name}</a>`,
       })
     })
 

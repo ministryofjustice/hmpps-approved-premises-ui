@@ -1,7 +1,8 @@
 import { add } from 'date-fns'
 import { PlacementRequest, PlacementRequestTask } from '../../@types/shared'
 import { TableCell, TableRow } from '../../@types/ui'
-import paths from '../../paths/match'
+import matchPaths from '../../paths/match'
+import adminPaths from '../../paths/admin'
 import { DateFormats } from '../dateUtils'
 import { linkTo } from '../utils'
 import { crnCell, tierCell } from '../tableUtils'
@@ -68,7 +69,7 @@ export const nameCell = (item: PlacementRequestTask | PlacementRequest): TableCe
   if ('personName' in item && item.personName) {
     return {
       html: linkTo(
-        paths.placementRequests.show,
+        matchPaths.placementRequests.show,
         { id: item.id },
         { text: item.personName, attributes: { 'data-cy-placementRequestId': item.id } },
       ),
@@ -77,7 +78,7 @@ export const nameCell = (item: PlacementRequestTask | PlacementRequest): TableCe
   if ('person' in item && item.person) {
     return {
       html: linkTo(
-        paths.placementRequests.show,
+        adminPaths.admin.placementRequests.show,
         { id: item.id },
         { text: item.person.name, attributes: { 'data-cy-placementRequestId': item.id } },
       ),
