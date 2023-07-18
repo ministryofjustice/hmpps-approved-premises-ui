@@ -177,6 +177,10 @@ export const dateAndTimeInputsAreValidDates = <K extends string | number>(
   dateInputObj: ObjectWithDateParts<K>,
   key: K,
 ): boolean => {
+  const inputYear = dateInputObj?.[`${key}-year`] as string
+
+  if (inputYear && inputYear.length !== 4) return false
+
   const dateString = DateFormats.dateAndTimeInputsToIsoString(dateInputObj, key)
 
   try {
