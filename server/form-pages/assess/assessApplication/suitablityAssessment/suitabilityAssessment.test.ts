@@ -67,6 +67,22 @@ describe('SuitabilityAssessment', () => {
         ).next(),
       ).toEqual('rfap-suitability')
     })
+
+    it('returns pipe-suitability if the application needs a PIPE', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('pipe')
+      expect(
+        new SuitabilityAssessment(
+          {
+            riskFactors: 'yes',
+            riskManagement: 'yes',
+            locationOfPlacement: 'yes',
+            moveOnPlan: 'yes',
+          },
+          assessment,
+        ).next(),
+      ).toEqual('pipe-suitability')
+    })
+
     it('returns application-timeliness if the notice type is short_notice', () => {
       ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
       expect(
