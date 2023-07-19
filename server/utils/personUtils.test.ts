@@ -1,4 +1,5 @@
-import { isApplicableTier, statusTag, tierBadge } from './personUtils'
+import { fullPersonFactory, restrictedPersonFactory } from '../testutils/factories/person'
+import { isApplicableTier, isFullPerson, statusTag, tierBadge } from './personUtils'
 
 describe('personUtils', () => {
   describe('statusTag', () => {
@@ -46,6 +47,16 @@ describe('personUtils', () => {
 
     it(`returns false if the person's sex is female and has an inapplicable tier`, () => {
       expect(isApplicableTier('Female', 'D1')).toBeFalsy()
+    })
+  })
+
+  describe('isFullPerson', () => {
+    it('returns true if the person is a full person', () => {
+      expect(isFullPerson(fullPersonFactory.build())).toEqual(true)
+    })
+
+    it('returns false if the person is a restricted person', () => {
+      expect(isFullPerson(restrictedPersonFactory.build())).toEqual(false)
     })
   })
 })

@@ -1,4 +1,5 @@
 import type { PersonStatus } from '@approved-premises/ui'
+import { FullPerson, Person } from '../@types/shared'
 
 const statusTag = (status: PersonStatus): string => {
   if (status === 'InCommunity') {
@@ -25,4 +26,6 @@ const isApplicableTier = (sex: string, tier: string): boolean => {
   return applicableTiers.includes(tier)
 }
 
-export { statusTag, tierBadge, isApplicableTier }
+const isFullPerson = (person: Person): person is FullPerson => person.type === 'FullPerson'
+
+export { statusTag, tierBadge, isApplicableTier, isFullPerson }
