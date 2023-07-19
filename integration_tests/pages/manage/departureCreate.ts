@@ -1,4 +1,4 @@
-import type { Booking, Departure } from '@approved-premises/api'
+import type { Booking, Departure, FullPerson } from '@approved-premises/api'
 
 import Page from '../page'
 import paths from '../../../server/paths/manage'
@@ -18,7 +18,7 @@ export default class DepartureCreatePage extends Page {
   }
 
   public verifySummary(booking: Booking): void {
-    this.assertDefinition('Name', booking.person.name)
+    this.assertDefinition('Name', (booking.person as FullPerson).name)
     this.assertDefinition('CRN', booking.person.crn)
   }
 

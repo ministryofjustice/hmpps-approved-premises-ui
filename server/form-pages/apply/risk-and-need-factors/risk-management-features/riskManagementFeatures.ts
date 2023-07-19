@@ -3,13 +3,16 @@ import type { TaskListErrors } from '@approved-premises/ui'
 
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 @Page({ name: 'risk-management-features', bodyProperties: ['manageRiskDetails', 'additionalFeaturesDetails'] })
 export default class RiskManagementFeatures implements TasklistPage {
   title = `How will an Approved Premises (AP) placement support the management of risk?`
 
   questions = {
-    manageRiskDetails: `Describe why an AP placement is needed to manage the risk of ${this.application.person.name}`,
+    manageRiskDetails: `Describe why an AP placement is needed to manage the risk of ${nameOrPlaceholderCopy(
+      this.application.person,
+    )}`,
     additionalFeaturesDetails:
       'Provide details of any additional measures that will be necessary for the management of risk',
   }
@@ -38,7 +41,9 @@ export default class RiskManagementFeatures implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.manageRiskDetails) {
-      errors.manageRiskDetails = `You must describe why an AP placement is needed to manage the risk of ${this.application.person.name}`
+      errors.manageRiskDetails = `You must describe why an AP placement is needed to manage the risk of ${nameOrPlaceholderCopy(
+        this.application.person,
+      )}`
     }
 
     return errors

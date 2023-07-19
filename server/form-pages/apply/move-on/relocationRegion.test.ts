@@ -1,7 +1,7 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import RelocationRegion from './relocationRegion'
-import { applicationFactory, personFactory } from '../../../testutils/factories'
+import { applicationFactory, personFactory, restrictedPersonFactory } from '../../../testutils/factories'
 
 describe('RelocationRegion', () => {
   const person = personFactory.build({ name: 'John Wayne' })
@@ -15,6 +15,20 @@ describe('RelocationRegion', () => {
     it('should uppercase and set the body', () => {
       const page = new RelocationRegion({ postcodeArea: 'some code' }, application)
       expect(page.body).toEqual({ postcodeArea: 'SOME CODE' })
+    })
+  })
+
+  describe('question', () => {
+    it('returns the question with the persons name if they are a full person', () => {
+      const page = new RelocationRegion({}, application)
+
+      expect(page.question).toEqual(`Where is ${person.name} most likely to live when they move on from the AP?`)
+    })
+
+    it('returns the question without the persons name if they are a restricted person', () => {
+      const page = new RelocationRegion({}, applicationFactory.build({ person: restrictedPersonFactory.build() }))
+
+      expect(page.question).toEqual('Where is the person most likely to live when they move on from the AP?')
     })
   })
 

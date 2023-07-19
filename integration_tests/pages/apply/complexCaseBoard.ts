@@ -2,11 +2,14 @@ import { ApprovedPremisesApplication } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
+import { nameOrPlaceholderCopy } from '../../../server/utils/personUtils'
 
 export default class ComplexCaseBoardPage extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
     super(
-      `Does ${application.person.name}'s gender identity require a complex case board to review their application?`,
+      `Does ${nameOrPlaceholderCopy(
+        application.person,
+      )}'s gender identity require a complex case board to review their application?`,
       application,
       'basic-information',
       'complex-case-board',

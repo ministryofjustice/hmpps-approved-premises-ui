@@ -1,11 +1,11 @@
 import Page from '../page'
 
-import { PlacementRequestDetail } from '../../../server/@types/shared'
+import { FullPerson, PlacementRequestDetail } from '../../../server/@types/shared'
 import { assessmentSummary, documentSummary, matchingInformationSummary } from '../../../server/utils/placementRequests'
 
 export default class PlacementRequestPage extends Page {
   constructor(private readonly placementRequest: PlacementRequestDetail) {
-    super(placementRequest.person.name)
+    super((placementRequest.person as FullPerson).name)
   }
 
   shouldShowAssessmentDetails() {

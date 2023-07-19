@@ -1,5 +1,5 @@
 import { addDays } from 'date-fns'
-import { EnterCRNPage, StartPage, ListPage, SelectOffencePage, ShowPage, TransgenderPage } from '../../pages/apply'
+import { EnterCRNPage, ListPage, SelectOffencePage, ShowPage, StartPage, TransgenderPage } from '../../pages/apply'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import {
   activeOffenceFactory,

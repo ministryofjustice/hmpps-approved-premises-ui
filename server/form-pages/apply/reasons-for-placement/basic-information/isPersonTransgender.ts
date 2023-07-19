@@ -4,10 +4,11 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { sentenceCase } from '../../../../utils/utils'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 @Page({ name: 'transgender', bodyProperties: ['transgenderOrHasTransgenderHistory'] })
 export default class IsPersonTransgender implements TasklistPage {
-  question = `Is ${this.application.person.name} transgender or do they have a transgender history?`
+  question = `Is ${nameOrPlaceholderCopy(this.application.person)} transgender or do they have a transgender history?`
 
   title = this.question
 
@@ -34,7 +35,9 @@ export default class IsPersonTransgender implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.transgenderOrHasTransgenderHistory) {
-      errors.transgenderOrHasTransgenderHistory = `You must specify if ${this.application.person.name} is transgender of if they have a transgender history`
+      errors.transgenderOrHasTransgenderHistory = `You must specify if ${nameOrPlaceholderCopy(
+        this.application.person,
+      )} is transgender of if they have a transgender history`
     }
 
     return errors

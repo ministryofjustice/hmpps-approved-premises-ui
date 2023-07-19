@@ -4,6 +4,7 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { yesNoOrDontKnowResponseWithDetail } from '../../../utils'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 export const questionKeys = ['previousPlacement'] as const
 
@@ -20,7 +21,9 @@ export default class PreviousPlacements implements TasklistPage {
   }
 
   questions = {
-    previousPlacement: `Has ${this.application.person.name} ${this.questionPredicates.previousPlacement}?`,
+    previousPlacement: `Has ${nameOrPlaceholderCopy(this.application.person)} ${
+      this.questionPredicates.previousPlacement
+    }?`,
   }
 
   hints = {
@@ -55,11 +58,15 @@ export default class PreviousPlacements implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.previousPlacement) {
-      errors.previousPlacement = `You must specify if ${this.application.person.name} has ${this.questionPredicates.previousPlacement}`
+      errors.previousPlacement = `You must specify if ${nameOrPlaceholderCopy(this.application.person)} has ${
+        this.questionPredicates.previousPlacement
+      }`
     }
 
     if (this.body.previousPlacement === 'yes' && !this.body.previousPlacementDetail) {
-      errors.previousPlacementDetail = `You must specify details about if ${this.application.person.name} has ${this.questionPredicates.previousPlacement}`
+      errors.previousPlacementDetail = `You must specify details about if ${nameOrPlaceholderCopy(
+        this.application.person,
+      )} has ${this.questionPredicates.previousPlacement}`
     }
 
     return errors

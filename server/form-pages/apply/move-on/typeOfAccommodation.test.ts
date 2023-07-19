@@ -3,7 +3,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-e
 
 import TypeOfAccommodation, { accommodationType } from './typeOfAccommodation'
 
-import { applicationFactory, personFactory } from '../../../testutils/factories'
+import { applicationFactory, personFactory, restrictedPersonFactory } from '../../../testutils/factories'
 
 jest.mock('../../../utils/formUtils', () => ({
   convertKeyValuePairToRadioItems: jest
@@ -32,6 +32,21 @@ describe('TypeOfaccommodation', () => {
         accommodationType: 'other',
         otherAccommodationType: 'hotel',
       })
+    })
+  })
+
+  describe('question', () => {
+    it('it will contain the persons name if they are a full person', () => {
+      expect(new TypeOfAccommodation({}, application).question).toBe(
+        `What type of accommodation will ${person.name} have when they leave the AP?`,
+      )
+    })
+
+    it('it will not contain the persons name if they are a restricted person', () => {
+      const applicationWithRestrictedPerson = { ...application, person: restrictedPersonFactory.build() }
+      expect(new TypeOfAccommodation({}, applicationWithRestrictedPerson).question).toBe(
+        `What type of accommodation will the person have when they leave the AP?`,
+      )
     })
   })
 

@@ -2,6 +2,7 @@ import { ApprovedPremisesApplication } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
+import { nameOrPlaceholderCopy } from '../../../server/utils/personUtils'
 
 export default class CateringPage extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
@@ -13,7 +14,7 @@ export default class CateringPage extends ApplyPage {
       paths.applications.pages.show({ id: application.id, task: 'further-considerations', page: 'rfap-details' }),
     )
     cy.get('.govuk-form-group').contains(
-      `Can ${application.person.name} be placed in a self-catered Approved Premises (AP)?`,
+      `Can ${nameOrPlaceholderCopy(application.person)} be placed in a self-catered Approved Premises (AP)?`,
     )
   }
 

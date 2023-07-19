@@ -5,6 +5,7 @@ import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesApplicationSummary,
 } from '../../../server/@types/shared'
+import { nameOrPlaceholderCopy } from '../../../server/utils/personUtils'
 
 export default class ListPage extends Page {
   constructor(
@@ -63,12 +64,13 @@ export default class ListPage extends Page {
 
   private shouldShowApplications(applications: Array<ApprovedPremisesApplicationSummary>, status: string): void {
     applications.forEach(application => {
-      cy.contains(application.person.name)
+      const name = nameOrPlaceholderCopy(application.person)
+      cy.contains(name)
         .should('have.attr', 'href', paths.applications.show({ id: application.id }))
         .parent()
         .parent()
         .within(() => {
-          cy.get('th').eq(0).contains(application.person.name)
+          cy.get('th').eq(0).contains(name)
           cy.get('td').eq(0).contains(application.person.crn)
           cy.get('td').eq(1).contains(application.risks.tier.value.level)
           cy.get('td')

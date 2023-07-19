@@ -8,6 +8,7 @@ import {
   shouldShowContingencyPlanPartnersPages,
   shouldShowContingencyPlanQuestionsPage,
 } from '../../../../utils/applications/shouldShowContingencyPlanPages'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 export const questionKeys = ['additionalCircumstances'] as const
 
@@ -25,7 +26,9 @@ export default class AdditionalCircumstances implements TasklistPage {
   }
 
   questions = {
-    additionalCircumstances: `Are there are any additional circumstances that have helped ${this.application.person.name} ${this.questionPredicates.additionalCircumstances}?`,
+    additionalCircumstances: `Are there are any additional circumstances that have helped ${nameOrPlaceholderCopy(
+      this.application.person,
+    )} ${this.questionPredicates.additionalCircumstances}?`,
   }
 
   constructor(
@@ -57,7 +60,11 @@ export default class AdditionalCircumstances implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.additionalCircumstances) {
-      errors.additionalCircumstances = `You must specify if ${this.application.person.name} there are any additional circumstances that have helped them ${this.questionPredicates.additionalCircumstances}`
+      errors.additionalCircumstances = `You must specify if ${nameOrPlaceholderCopy(
+        this.application.person,
+      )} there are any additional circumstances that have helped them ${
+        this.questionPredicates.additionalCircumstances
+      }`
     }
 
     if (this.body.additionalCircumstances === 'yes' && !this.body.additionalCircumstancesDetail) {

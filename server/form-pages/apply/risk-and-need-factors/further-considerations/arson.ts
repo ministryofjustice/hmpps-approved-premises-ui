@@ -4,6 +4,7 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { yesOrNoResponseWithDetailForYes } from '../../../utils'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 export const questionKeys = ['arson'] as const
 
@@ -18,7 +19,7 @@ export default class Arson implements TasklistPage {
   }
 
   questions = {
-    arson: `Does ${this.application.person.name} ${this.questionPredicates.arson}?`,
+    arson: `Does ${nameOrPlaceholderCopy(this.application.person)} ${this.questionPredicates.arson}?`,
   }
 
   hints = {
@@ -59,11 +60,13 @@ export default class Arson implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.arson) {
-      errors.arson = `You must specify if ${this.application.person.name} poses an arson risk`
+      errors.arson = `You must specify if ${nameOrPlaceholderCopy(this.application.person)} poses an arson risk`
     }
 
     if (this.body.arson === 'yes' && !this.body.arsonDetail) {
-      errors.arsonDetail = `You must specify details if ${this.application.person.name} poses an arson risk`
+      errors.arsonDetail = `You must specify details if ${nameOrPlaceholderCopy(
+        this.application.person,
+      )} poses an arson risk`
     }
 
     return errors

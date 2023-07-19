@@ -4,6 +4,7 @@ import { sentenceCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 type EsapNationalSecurityDivisionBody = {
   managedByNationalSecurityDivision: YesOrNo
@@ -14,7 +15,7 @@ type EsapNationalSecurityDivisionBody = {
   bodyProperties: ['managedByNationalSecurityDivision'],
 })
 export default class EsapNationalSecurityDivision implements TasklistPage {
-  title = `Is ${this.application.person.name} managed by the National Security Division?`
+  title = `Is ${nameOrPlaceholderCopy(this.application.person)} managed by the National Security Division?`
 
   constructor(
     public body: Partial<EsapNationalSecurityDivisionBody>,
@@ -40,7 +41,9 @@ export default class EsapNationalSecurityDivision implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.managedByNationalSecurityDivision) {
-      errors.managedByNationalSecurityDivision = `You must state if ${this.application.person.name} is managed by the National Security Division`
+      errors.managedByNationalSecurityDivision = `You must state if ${nameOrPlaceholderCopy(
+        this.application.person,
+      )} is managed by the National Security Division`
     }
 
     return errors

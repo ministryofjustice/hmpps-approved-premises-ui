@@ -1,7 +1,7 @@
 import type {
   ApprovedPremisesApplication,
   Document,
-  Person,
+  FullPerson,
   PersonAcctAlert,
   PrisonCaseNote,
 } from '@approved-premises/api'
@@ -24,7 +24,7 @@ export default class CheckYourAnswersPage extends ApplyPage {
     )
   }
 
-  shouldShowPersonInformation(person: Person) {
+  shouldShowPersonInformation(person: FullPerson) {
     cy.get('[data-cy-section="person-details"]').within(() => {
       this.assertDefinition('Name', person.name)
       this.assertDefinition('CRN', person.crn)
