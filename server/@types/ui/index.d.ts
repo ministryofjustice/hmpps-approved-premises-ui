@@ -172,7 +172,7 @@ export interface IdentityBarMenu {
 }
 
 export interface IdentityBarMenuItem {
-  classes: string
+  classes?: string
   href: string
   text: string
 }
