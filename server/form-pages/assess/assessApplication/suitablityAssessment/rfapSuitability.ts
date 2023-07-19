@@ -9,11 +9,13 @@ import TasklistPage from '../../../tasklistPage'
 export type RfapSuitabilityBody = {
   rfapIdentifiedAsSuitable: YesOrNo
   unsuitabilityForRfapRationale: string
+  yesDetail?: string
+  noDetail?: string
 }
 
 @Page({
   name: 'rfap-suitability',
-  bodyProperties: ['rfapIdentifiedAsSuitable', 'unsuitabilityForRfapRationale'],
+  bodyProperties: ['rfapIdentifiedAsSuitable', 'unsuitabilityForRfapRationale', 'yesDetail', 'noDetail'],
 })
 export default class RfapSuitability implements TasklistPage {
   title = 'Suitability assessment'
@@ -23,6 +25,7 @@ export default class RfapSuitability implements TasklistPage {
       'Has a Recovery Focused Approved Premises (RFAP) been identified as a suitable placement?',
     unsuitabilityForRfapRationale:
       'If the person is unsuitable for a RFAP placement yet suitable for a standard placement, summarise the rationale for the decision',
+    detail: 'Provide details to support the decision',
   }
 
   constructor(
@@ -48,7 +51,13 @@ export default class RfapSuitability implements TasklistPage {
   response() {
     const response = {}
 
-    response[this.questions.rfapIdentifiedAsSuitable] = this.body.rfapIdentifiedAsSuitable
+    if (this.body.rfapIdentifiedAsSuitable === 'yes') {
+      response[this.questions.rfapIdentifiedAsSuitable] = `Yes - ${this.body.yesDetail}`
+    }
+    if (this.body.rfapIdentifiedAsSuitable === 'no') {
+      response[this.questions.rfapIdentifiedAsSuitable] = `No - ${this.body.noDetail}`
+    }
+
     response[this.questions.unsuitabilityForRfapRationale] = this.body.unsuitabilityForRfapRationale
 
     return response
@@ -56,6 +65,12 @@ export default class RfapSuitability implements TasklistPage {
 
   errors() {
     const errors: TaskListErrors<this> = {}
+
+    if (this.body.rfapIdentifiedAsSuitable === 'yes' && !this.body.yesDetail)
+      errors.yesDetail = 'You must provide details to support the decision'
+
+    if (this.body.rfapIdentifiedAsSuitable === 'no' && !this.body.noDetail)
+      errors.noDetail = 'You must provide details to support the decision'
 
     if (!this.body.rfapIdentifiedAsSuitable)
       errors.rfapIdentifiedAsSuitable =
