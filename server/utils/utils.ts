@@ -159,3 +159,6 @@ export const objectIfNotEmpty = <T>(object: Record<string, unknown> | T | undefi
   }
   return undefined
 }
+
+export const numberToOrdinal = (number: number | string): string =>
+  ['First', 'Second', 'Third', 'Fourth', 'Fifth'][Number(number)]

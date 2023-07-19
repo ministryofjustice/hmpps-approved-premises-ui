@@ -1280,6 +1280,43 @@
               "type": "string"
             }
           }
+        },
+        "preferred-aps": {
+          "type": "object",
+          "properties": {
+            "preferredAp1": {
+              "type": "string"
+            },
+            "preferredAp2": {
+              "type": "string"
+            },
+            "preferredAp3": {
+              "type": "string"
+            },
+            "preferredAp4": {
+              "type": "string"
+            },
+            "preferredAp5": {
+              "type": "string"
+            },
+            "selectedAps": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "selected": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },

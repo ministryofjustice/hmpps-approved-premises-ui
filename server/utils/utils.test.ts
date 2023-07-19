@@ -7,6 +7,7 @@ import {
   initialiseName,
   linkTo,
   mapApiPersonRisksForUi,
+  numberToOrdinal,
   objectIfNotEmpty,
   pascalCase,
   removeBlankSummaryListItems,
@@ -314,5 +315,20 @@ describe('resolvePath', () => {
     it('returns the object if it does have keys', () => {
       expect(objectIfNotEmpty({ key: 'value' })).toEqual({ key: 'value' })
     })
+  })
+})
+
+describe('numberToOrdinal', () => {
+  it('returns the ordinal for a number', () => {
+    expect(numberToOrdinal(0)).toEqual('First')
+    expect(numberToOrdinal(1)).toEqual('Second')
+    expect(numberToOrdinal(2)).toEqual('Third')
+    expect(numberToOrdinal(3)).toEqual('Fourth')
+    expect(numberToOrdinal(4)).toEqual('Fifth')
+  })
+
+  it('returns undefined if the number is >5 or <0', () => {
+    expect(numberToOrdinal(6)).toBeUndefined()
+    expect(numberToOrdinal(-1)).toBeUndefined()
   })
 })

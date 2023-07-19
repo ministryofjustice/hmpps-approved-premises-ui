@@ -3,7 +3,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 
 import DescribeLocationFactors from './describeLocationFactors'
 
-describe('ConvictedOffences', () => {
+describe('DescribeLocationFactors', () => {
   describe('body', () => {
     it('should set the body and uppercase the postcode', () => {
       const page = new DescribeLocationFactors({ postcodeArea: 'e17' })
@@ -33,7 +33,7 @@ describe('ConvictedOffences', () => {
   })
 
   itShouldHavePreviousValue(new DescribeLocationFactors({}), 'dashboard')
-  itShouldHaveNextValue(new DescribeLocationFactors({}), '')
+  itShouldHaveNextValue(new DescribeLocationFactors({}), 'preferred-aps')
 
   describe('errors', () => {
     it('should ensure all required attributes are specified', () => {

@@ -58,7 +58,7 @@ export default class DescribeLocationFactors implements TasklistPage {
   }
 
   next() {
-    return ''
+    return 'preferred-aps'
   }
 
   errors() {
