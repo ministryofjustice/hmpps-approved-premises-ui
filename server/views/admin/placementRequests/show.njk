@@ -1,0 +1,54 @@
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-width-container">
+      <div class="govuk-grid-column-full">
+        {{ mojIdentityBar(PlacementRequestUtils.adminIdentityBar(placementRequest)) }}
+      </div>
+    </div>
+    <div class="govuk-grid-row">
+      <div class="govuk-width-container">
+        <div class="govuk-grid-column-two-thirds">
+          <ul class="govuk-list govuk-!-padding-bottom-3">
+            <li>
+              <a href="{{paths.applications.show({id: placementRequest.applicationId})}}">View application</a>
+              <span class="govuk-body-s">(Completed on {{ formatDate(placementRequest.applicationDate) }})</span>
+            </li>
+            <li>
+              <a href="{{paths.assessments.show({id: placementRequest.assessmentId})}}">View assessment</a>
+              <span class="govuk-body-s">(Completed on {{ formatDate(placementRequest.assessmentDate) }})</span>
+            </li>
+          </ul>
+
+          {{
+            govukSummaryList(PlacementRequestUtils.adminSummary(placementRequest))
+          }}
+
+          {{
+            govukSummaryList(PlacementRequestUtils.matchingInformationSummary(placementRequest))
+          }}
+
+          {% if placementRequest.booking %}
+            <h2 class="govuk-heading-m">Matched Placement</h2>
+            {{
+              govukSummaryList(BookingUtils.bookingSummaryList(placementRequest.booking))
+            }}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extraScripts %}
+  <script type="text/javascript" nonce="{{ cspNonce }}">
+    new MOJFrontend.ButtonMenu({container: $('.moj-button-menu'), mq: "(min-width: 200em)", buttonText: "Actions", menuClasses: "moj-button-menu__wrapper--right"});
+  </script>
+{% endblock %}

@@ -7,6 +7,7 @@ export default {
   admin: {
     placementRequests: {
       index: placementRequestsPath,
+      show: placementRequestsPath.path(':id'),
     },
   },
 }

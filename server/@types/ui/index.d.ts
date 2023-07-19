@@ -167,12 +167,19 @@ export interface SummaryListItem {
   actions?: SummaryListActions
 }
 
+export interface IdentityBar {
+  title: {
+    html: string
+  }
+  menus: Array<IdentityBarMenu>
+}
+
 export interface IdentityBarMenu {
   items: Array<IdentityBarMenuItem>
 }
 
 export interface IdentityBarMenuItem {
-  classes: string
+  classes?: string
   href: string
   text: string
 }
