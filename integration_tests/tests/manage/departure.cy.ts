@@ -21,7 +21,7 @@ context('Departures', () => {
   it('creates a departure', () => {
     // Given I have a booking for a premises
     const premises = premisesFactory.buildList(5)
-    const booking = bookingFactory.build()
+    const booking = bookingFactory.withFullPerson().build()
 
     const departureReason = referenceDataFactory.departureReasons().build()
     const moveOnCategory = referenceDataFactory.moveOnCategories().build()

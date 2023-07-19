@@ -7,8 +7,15 @@ import {
   bookingsToTableRows,
   generateConflictBespokeError,
   manageBookingLink,
+  nameCell,
 } from './bookingUtils'
-import { bedSummaryFactory, bookingFactory, bookingSummaryFactory, personFactory } from '../testutils/factories'
+import {
+  bedSummaryFactory,
+  bookingFactory,
+  bookingSummaryFactory,
+  personFactory,
+  restrictedPersonFactory,
+} from '../testutils/factories'
 import paths from '../paths/manage'
 import assessPaths from '../paths/assess'
 import applyPaths from '../paths/apply'
@@ -55,9 +62,7 @@ describe('bookingUtils', () => {
     it('casts a group of bookings to table rows with the arrival date', () => {
       expect(bookingsToTableRows(bookings, premisesId, 'arrival')).toEqual([
         [
-          {
-            text: bookings[0].person.name,
-          },
+          nameCell(bookings[0]),
           {
             text: bookings[0].person.crn,
           },
@@ -72,9 +77,7 @@ describe('bookingUtils', () => {
           },
         ],
         [
-          {
-            text: bookings[1].person.name,
-          },
+          nameCell(bookings[1]),
           {
             text: bookings[1].person.crn,
           },
@@ -94,9 +97,7 @@ describe('bookingUtils', () => {
     it('casts a group of bookings to table rows with the departure date', () => {
       expect(bookingsToTableRows(bookings, premisesId, 'departure')).toEqual([
         [
-          {
-            text: bookings[0].person.name,
-          },
+          nameCell(bookings[0]),
           {
             text: bookings[0].person.crn,
           },
@@ -111,9 +112,7 @@ describe('bookingUtils', () => {
           },
         ],
         [
-          {
-            text: bookings[1].person.name,
-          },
+          nameCell(bookings[1]),
           {
             text: bookings[1].person.crn,
           },
@@ -129,6 +128,20 @@ describe('bookingUtils', () => {
           },
         ],
       ])
+    })
+  })
+
+  describe('nameCell', () => {
+    it('returns the persons name if they are a full person', () => {
+      const fullPerson = personFactory.build()
+      expect(nameCell(bookingFactory.build({ person: fullPerson }))).toEqual({ text: fullPerson.name })
+    })
+
+    it('returns "Limited access offender" if they are a restricted person', () => {
+      const restrictedPerson = restrictedPersonFactory.build()
+      expect(nameCell(bookingFactory.build({ person: restrictedPerson }))).toEqual({
+        text: `LAO: ${restrictedPerson.crn}`,
+      })
     })
   })
 

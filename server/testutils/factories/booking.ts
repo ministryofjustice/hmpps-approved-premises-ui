@@ -87,6 +87,12 @@ class BookingFactory extends Factory<Booking> {
       status: 'arrived',
     })
   }
+
+  withFullPerson() {
+    return this.params({
+      person: fullPersonFactory.build(),
+    })
+  }
 }
 
 export default BookingFactory.define(() => {

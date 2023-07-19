@@ -11,6 +11,7 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 import { CalendarPage, PremisesListPage, PremisesShowPage } from '../../pages/manage'
 import OverbookingPage from '../../pages/manage/overbooking'
 import { signIn } from '../signIn'
+import { fullPersonFactory } from '../../../server/testutils/factories/person'
 
 context('Premises', () => {
   beforeEach(() => {
@@ -34,10 +35,22 @@ context('Premises', () => {
   it('should show a single premises', () => {
     // Given there is a premises in the database
     const premises = premisesFactory.build()
-    const bookingsArrivingToday = bookingFactory.arrivingToday().buildList(2)
-    const bookingsLeavingToday = bookingFactory.departingToday().buildList(2)
-    const bookingsArrivingSoon = bookingFactory.arrivingSoon().buildList(5)
-    const bookingsDepartingSoon = bookingFactory.departingSoon().buildList(5)
+    const bookingsArrivingToday = bookingFactory
+      .arrivingToday()
+      .buildList(2)
+      .map(booking => ({ ...booking, person: fullPersonFactory.build() }))
+    const bookingsLeavingToday = bookingFactory
+      .departingToday()
+      .buildList(2)
+      .map(booking => ({ ...booking, person: fullPersonFactory.build() }))
+    const bookingsArrivingSoon = bookingFactory
+      .arrivingSoon()
+      .buildList(5)
+      .map(booking => ({ ...booking, person: fullPersonFactory.build() }))
+    const bookingsDepartingSoon = bookingFactory
+      .departingSoon()
+      .buildList(5)
+      .map(booking => ({ ...booking, person: fullPersonFactory.build() }))
     const bookings = [
       ...bookingsArrivingToday,
       ...bookingsLeavingToday,
