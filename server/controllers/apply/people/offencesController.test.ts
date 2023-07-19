@@ -3,11 +3,15 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import OffencesController from './offencesController'
 import PersonService from '../../../services/personService'
-import { activeOffenceFactory, personFactory } from '../../../testutils/factories'
+import { activeOffenceFactory, personFactory, restrictedPersonFactory } from '../../../testutils/factories'
+import { isFullPerson } from '../../../utils/personUtils'
+import { RestrictedPersonError } from '../../../utils/errors'
+
+jest.mock('../../../utils/personUtils')
 
 describe('OffencesController', () => {
   const token = 'SOME_TOKEN'
-
+  const crn = 'some-crn'
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
@@ -21,12 +25,14 @@ describe('OffencesController', () => {
     offencesController = new OffencesController(personService)
     request = createMock<Request>({
       user: { token },
-      params: { crn: 'some-crn' },
+      params: { crn },
     })
   })
 
   describe('selectOffence', () => {
     it('should return the a list of offences for the person', async () => {
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+
       const person = personFactory.build()
       const offences = activeOffenceFactory.buildList(5)
 
@@ -43,8 +49,22 @@ describe('OffencesController', () => {
         offences,
       })
 
-      expect(personService.findByCrn).toHaveBeenCalledWith(token, 'some-crn')
-      expect(personService.getOffences).toHaveBeenCalledWith(token, 'some-crn')
+      expect(personService.findByCrn).toHaveBeenCalledWith(token, crn)
+      expect(personService.getOffences).toHaveBeenCalledWith(token, crn)
+      expect(isFullPerson).toHaveBeenCalledWith(person)
+    })
+
+    it('should throw an error if the person is restricted', async () => {
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(false)
+
+      const restrictedPerson = restrictedPersonFactory.build()
+      personService.findByCrn.mockResolvedValue(restrictedPerson)
+
+      const requestHandler = offencesController.selectOffence()
+
+      expect(async () => requestHandler(request, response, next)).rejects.toThrowError(RestrictedPersonError)
+      expect(async () => requestHandler(request, response, next)).rejects.toThrowError(`CRN: ${crn} is restricted`)
+      expect(personService.findByCrn).toHaveBeenCalledWith(token, crn)
     })
   })
 })

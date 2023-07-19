@@ -1,6 +1,8 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { PersonService } from '../../../services'
+import { isFullPerson } from '../../../utils/personUtils'
+import { RestrictedPersonError } from '../../../utils/errors'
 
 export default class OffencesController {
   constructor(private readonly personService: PersonService) {}
@@ -9,6 +11,9 @@ export default class OffencesController {
     return async (req: Request, res: Response) => {
       const { crn } = req.params
       const person = await this.personService.findByCrn(req.user.token, crn)
+
+      if (!isFullPerson(person)) throw new RestrictedPersonError(crn)
+
       const offences = await this.personService.getOffences(req.user.token, crn)
 
       res.render('applications/people/selectOffence', {
