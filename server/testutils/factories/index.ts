@@ -24,6 +24,7 @@ import {
 } from './bedOccupancyRange'
 import { apCharacteristicPairFactory, bedSearchResultFactory, bedSearchResultsFactory } from './bedSearchResult'
 import bookingAppealTask from './bookingAppealTask'
+import bookingSummaryFactory from './bookingSummary'
 import bookingFactory from './booking'
 import bookingExtensionFactory from './bookingExtension'
 import bookingNotMadeFactory from './bookingNotMade'
@@ -84,6 +85,7 @@ export {
   bedSummaryFactory,
   bedDetailFactory,
   bedOccupancyEntryCalendarFactory,
+  bookingSummaryFactory,
   bedOccupancyEntryFactory,
   bedOccupancyEntryBookingUiFactory,
   bedOccupancyEntryLostBedUiFactory,
