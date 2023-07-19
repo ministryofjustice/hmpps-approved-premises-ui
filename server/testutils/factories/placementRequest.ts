@@ -2,7 +2,7 @@ import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import { PlacementRequest } from '../../@types/shared'
 import { DateFormats } from '../../utils/dateUtils'
-import personFactory from './person'
+import { fullPersonFactory, restrictedPersonFactory } from './person'
 import risksFactory from './risks'
 import userFactory from './user'
 import bookingSummary from './bookingSummary'
@@ -21,7 +21,7 @@ export default Factory.define<PlacementRequest>(() => {
     essentialCriteria,
     desirableCriteria,
     mentalHealthSupport: faker.datatype.boolean(),
-    person: personFactory.build(),
+    person: faker.helpers.arrayElement([fullPersonFactory.build(), restrictedPersonFactory.build()]),
     risks: risksFactory.build(),
     applicationId: faker.string.uuid(),
     assessmentId: faker.string.uuid(),

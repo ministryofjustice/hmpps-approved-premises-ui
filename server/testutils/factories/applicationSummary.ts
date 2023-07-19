@@ -4,7 +4,7 @@ import { ApprovedPremisesApplicationSummary as ApplicationSummary } from '@appro
 
 import { DateFormats } from '../../utils/dateUtils'
 import risksFactory from './risks'
-import personFactory from './person'
+import { fullPersonFactory as personFactory } from './person'
 
 export default Factory.define<ApplicationSummary>(() => ({
   id: faker.string.uuid(),

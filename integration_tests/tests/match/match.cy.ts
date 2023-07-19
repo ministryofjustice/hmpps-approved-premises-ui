@@ -196,7 +196,10 @@ context.skip('Placement Requests', () => {
 
   it('allows me to make a booking', () => {
     // Given there is a placement request waiting for me to match
-    const placementRequest = placementRequestDetailFactory.build({ status: 'notMatched' })
+    const placementRequest = placementRequestDetailFactory.build({
+      status: 'notMatched',
+      person: personFactory.build(),
+    })
     const placementRequestTask = placementRequestTaskFactory.build({
       id: placementRequest.id,
       placementRequestStatus: placementRequest.status,
@@ -255,7 +258,10 @@ context.skip('Placement Requests', () => {
 
   it('allows me to mark a placement request as unable to match', () => {
     // Given there is a placement request waiting for me to match
-    const placementRequest = placementRequestDetailFactory.build({ status: 'notMatched' })
+    const placementRequest = placementRequestDetailFactory.build({
+      status: 'notMatched',
+      person: personFactory.build(),
+    })
     const placementRequestTask = placementRequestTaskFactory.build({
       id: placementRequest.id,
       placementRequestStatus: placementRequest.status,

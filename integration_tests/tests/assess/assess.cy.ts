@@ -3,6 +3,7 @@ import {
   assessmentSummaryFactory,
   clarificationNoteFactory,
   documentFactory,
+  personFactory,
   userFactory,
 } from '../../../server/testutils/factories'
 
@@ -35,7 +36,7 @@ context('Assess', () => {
       const clarificationNote = clarificationNoteFactory.build({ response: undefined })
       const assessment = assessmentFactory.build({
         decision: undefined,
-        application: { data: applicationData },
+        application: { data: applicationData, person: personFactory.build() },
         clarificationNotes: [clarificationNote],
       })
 
@@ -177,7 +178,11 @@ context('Assess', () => {
   it('shows a read-only version of the assessment', function test() {
     // Given I have completed an assessment
     const updatedAssessment = { ...this.assessment, status: 'completed' }
-    const updatedAssessmentSummary = assessmentSummaryFactory.build({ id: this.assessment.id, status: 'completed' })
+    const updatedAssessmentSummary = assessmentSummaryFactory.build({
+      id: this.assessment.id,
+      status: 'completed',
+      person: personFactory.build(),
+    })
     cy.task('stubAssessment', updatedAssessment)
     cy.task('stubAssessments', [updatedAssessmentSummary])
 
@@ -201,6 +206,7 @@ context('Assess', () => {
     // Given there is a complete application in the database
     cy.fixture('assessmentData.json').then(assessmentData => {
       const assessment = assessmentFactory.build({ data: assessmentData, status: 'in_progress' })
+      assessment.application.person = personFactory.build()
 
       cy.task('stubAssessment', assessment)
 
@@ -242,6 +248,7 @@ context('Assess', () => {
     // Given there is a complete application in the database
     cy.fixture('assessmentData.json').then(assessmentData => {
       const assessment = assessmentFactory.build({ data: assessmentData, status: 'in_progress' })
+      assessment.application.person = personFactory.build()
 
       cy.task('stubAssessment', assessment)
       cy.task('stubAssessmentUpdate', assessment)
