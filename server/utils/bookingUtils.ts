@@ -1,5 +1,12 @@
-import type { BespokeError, IdentityBarMenu, SelectOption, SummaryListItem, TableRow } from '@approved-premises/ui'
-import type { BedSummary, Booking } from '@approved-premises/api'
+import type {
+  BespokeError,
+  IdentityBarMenu,
+  SelectOption,
+  SummaryListItem,
+  SummaryListWithCard,
+  TableRow,
+} from '@approved-premises/ui'
+import type { BedSummary, Booking, BookingSummary } from '@approved-premises/api'
 import paths from '../paths/manage'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
@@ -10,6 +17,50 @@ import { linkTo } from './utils'
 type ParsedConflictError = {
   conflictingEntityId: string
   conflictingEntityType: 'booking' | 'lost-bed'
+}
+
+export const bookingSummaryList = (booking: BookingSummary): SummaryListWithCard => {
+  return {
+    card: {
+      title: {
+        text: 'Placement information',
+      },
+    },
+    rows: [
+      {
+        key: {
+          text: 'Approved Premises',
+        },
+        value: {
+          text: booking.premisesName,
+        },
+      },
+      {
+        key: {
+          text: 'Date of match',
+        },
+        value: {
+          text: DateFormats.isoDateToUIDate(booking.createdAt),
+        },
+      },
+      {
+        key: {
+          text: 'Expected arrival date',
+        },
+        value: {
+          text: DateFormats.isoDateToUIDate(booking.arrivalDate),
+        },
+      },
+      {
+        key: {
+          text: 'Expected departure date',
+        },
+        value: {
+          text: DateFormats.isoDateToUIDate(booking.departureDate),
+        },
+      },
+    ],
+  }
 }
 
 export const manageBookingLink = (premisesId: string, booking: Booking): string => {
