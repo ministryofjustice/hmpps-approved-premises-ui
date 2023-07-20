@@ -1,4 +1,8 @@
-import { ApprovedPremisesAssessmentSummary as AssessmentSummary } from '@approved-premises/api'
+import {
+  ApprovedPremisesAssessmentSummary as AssessmentSummary,
+  FullPerson,
+  RestrictedPerson,
+} from '@approved-premises/api'
 import { TableRow } from '@approved-premises/ui'
 import { linkTo } from '../utils'
 import {
@@ -10,6 +14,7 @@ import {
 } from './dateUtils'
 import paths from '../../paths/assess'
 import { crnCell, tierCell } from '../tableUtils'
+import { isFullPerson } from '../personUtils'
 
 const getStatus = (assessment: AssessmentSummary): string => {
   if (assessment.status === 'completed') {
@@ -24,16 +29,22 @@ const getStatus = (assessment: AssessmentSummary): string => {
   return `<strong class="govuk-tag govuk-tag--grey">Not started</strong>`
 }
 
-const assessmentLink = (assessment: AssessmentSummary, linkText = '', hiddenText = ''): string => {
+const assessmentLink = (assessment: AssessmentSummary, person: FullPerson, linkText = '', hiddenText = ''): string => {
   return linkTo(
     paths.assessments.show,
     { id: assessment.id },
     {
-      text: linkText || assessment.person.name,
+      text: linkText || person.name,
       hiddenText,
       attributes: { 'data-cy-assessmentId': assessment.id, 'data-cy-applicationId': assessment.applicationId },
     },
   )
+}
+
+export const restrictedPersonCell = (person: RestrictedPerson) => {
+  return {
+    text: `LAO: ${person.crn}`,
+  }
 }
 
 const arrivalDateCell = (assessment: AssessmentSummary) => {
@@ -54,15 +65,15 @@ const statusCell = (assessment: AssessmentSummary) => {
   }
 }
 
-const linkCell = (assessment: AssessmentSummary) => {
+const linkCell = (assessment: AssessmentSummary, person: FullPerson) => {
   return {
-    html: assessmentLink(assessment),
+    html: assessmentLink(assessment, person),
   }
 }
 
-const prisonCell = (assessment: AssessmentSummary) => {
+const prisonCell = (person: FullPerson) => {
   return {
-    text: assessment.person.prisonName,
+    text: person.prisonName,
   }
 }
 
@@ -78,21 +89,34 @@ const daysSinceInfoRequestCell = (assessment: AssessmentSummary) => {
   }
 }
 
+export const emptyCell = () => ({ text: '' })
+
 const awaitingAssessmentTableRows = (assessments: Array<AssessmentSummary>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   assessments.forEach(assessment => {
-    rows.push([
-      linkCell(assessment),
-      crnCell({ crn: assessment.person.crn }),
-      tierCell({ tier: assessment.risks.tier }),
-      arrivalDateCell(assessment),
-      prisonCell(assessment),
-      daysUntilDueCell(assessment),
-      statusCell(assessment),
-    ])
+    if (isFullPerson(assessment.person)) {
+      rows.push([
+        linkCell(assessment, assessment.person),
+        crnCell({ crn: assessment.person.crn }),
+        tierCell({ tier: assessment.risks.tier }),
+        arrivalDateCell(assessment),
+        prisonCell(assessment.person),
+        daysUntilDueCell(assessment),
+        statusCell(assessment),
+      ])
+    } else {
+      rows.push([
+        restrictedPersonCell(assessment.person),
+        emptyCell(),
+        emptyCell(),
+        emptyCell(),
+        emptyCell(),
+        emptyCell(),
+        emptyCell(),
+      ])
+    }
   })
-
   return rows
 }
 
@@ -100,13 +124,17 @@ const completedTableRows = (assessments: Array<AssessmentSummary>): Array<TableR
   const rows = [] as Array<TableRow>
 
   assessments.forEach(assessment => {
-    rows.push([
-      linkCell(assessment),
-      crnCell({ crn: assessment.person.crn }),
-      tierCell({ tier: assessment.risks.tier }),
-      arrivalDateCell(assessment),
-      statusCell(assessment),
-    ])
+    if (isFullPerson(assessment.person)) {
+      rows.push([
+        linkCell(assessment, assessment.person),
+        crnCell({ crn: assessment.person.crn }),
+        tierCell({ tier: assessment.risks.tier }),
+        arrivalDateCell(assessment),
+        statusCell(assessment),
+      ])
+    } else {
+      rows.push([restrictedPersonCell(assessment.person), emptyCell(), emptyCell(), emptyCell(), emptyCell()])
+    }
   })
 
   return rows
@@ -120,15 +148,27 @@ const requestedFurtherInformationTableRows = (assessments: Array<AssessmentSumma
   }
 
   assessments.forEach(assessment => {
-    rows.push([
-      linkCell(assessment),
-      crnCell({ crn: assessment.person.crn }),
-      tierCell({ tier: assessment.risks.tier }),
-      arrivalDateCell(assessment),
-      daysSinceReceivedCell(assessment),
-      daysSinceInfoRequestCell(assessment),
-      infoRequestStatusCell,
-    ])
+    if (isFullPerson(assessment.person)) {
+      rows.push([
+        linkCell(assessment, assessment.person),
+        crnCell({ crn: assessment.person.crn }),
+        tierCell({ tier: assessment.risks.tier }),
+        arrivalDateCell(assessment),
+        daysSinceReceivedCell(assessment),
+        daysSinceInfoRequestCell(assessment),
+        infoRequestStatusCell,
+      ])
+    } else {
+      rows.push([
+        restrictedPersonCell(assessment.person),
+        emptyCell(),
+        emptyCell(),
+        emptyCell(),
+        emptyCell(),
+        emptyCell(),
+        emptyCell(),
+      ])
+    }
   })
 
   return rows

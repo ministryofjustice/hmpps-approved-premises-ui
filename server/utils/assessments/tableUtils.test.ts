@@ -1,6 +1,6 @@
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 
-import { assessmentSummaryFactory } from '../../testutils/factories'
+import { assessmentSummaryFactory, personFactory, restrictedPersonFactory } from '../../testutils/factories'
 import {
   daysSinceInfoRequest,
   daysSinceReceived,
@@ -12,8 +12,10 @@ import {
   assessmentLink,
   awaitingAssessmentTableRows,
   completedTableRows,
+  emptyCell,
   getStatus,
   requestedFurtherInformationTableRows,
+  restrictedPersonCell,
 } from './tableUtils'
 import paths from '../../paths/assess'
 import { crnCell, tierCell } from '../tableUtils'
@@ -21,6 +23,9 @@ import { crnCell, tierCell } from '../tableUtils'
 jest.mock('../applications/arrivalDateFromApplication')
 
 describe('tableUtils', () => {
+  const person = personFactory.build({ name: 'John Wayne' })
+  const restrictedPerson = restrictedPersonFactory.build()
+
   describe('getStatus', () => {
     it('returns Not started for an assessment that has not been started', () => {
       const assessment = assessmentSummaryFactory.build({ status: 'not_started' })
@@ -53,11 +58,11 @@ describe('tableUtils', () => {
     const assessment = assessmentSummaryFactory.build({
       id: '123',
       applicationId: '345',
-      person: { name: 'John Wayne' },
+      person,
     })
 
     it('returns a link to an assessment', () => {
-      expect(assessmentLink(assessment)).toMatchStringIgnoringWhitespace(`
+      expect(assessmentLink(assessment, person)).toMatchStringIgnoringWhitespace(`
         <a href="${paths.assessments.show({
           id: '123',
         })}" data-cy-assessmentId="123" data-cy-applicationId="345">John Wayne</a>
@@ -65,7 +70,7 @@ describe('tableUtils', () => {
     })
 
     it('allows custom text to be specified', () => {
-      expect(assessmentLink(assessment, 'My Text')).toMatchStringIgnoringWhitespace(`
+      expect(assessmentLink(assessment, person, 'My Text')).toMatchStringIgnoringWhitespace(`
         <a href="${paths.assessments.show({
           id: '123',
         })}" data-cy-assessmentId="123" data-cy-applicationId="345">My Text</a>
@@ -73,7 +78,7 @@ describe('tableUtils', () => {
     })
 
     it('allows custom text and hidden text to be specified', () => {
-      expect(assessmentLink(assessment, 'My Text', 'and some hidden text')).toMatchStringIgnoringWhitespace(`
+      expect(assessmentLink(assessment, person, 'My Text', 'and some hidden text')).toMatchStringIgnoringWhitespace(`
         <a href="${paths.assessments.show({
           id: '123',
         })}" data-cy-assessmentId="123" data-cy-applicationId="345">My Text <span class="govuk-visually-hidden">and some hidden text</span></a>
@@ -83,33 +88,50 @@ describe('tableUtils', () => {
 
   describe('awaitingAssessmentTableRows', () => {
     it('returns table rows for the assessments', () => {
-      const assessment = assessmentSummaryFactory.build()
+      const assessment = assessmentSummaryFactory.build({ person })
 
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       expect(awaitingAssessmentTableRows([assessment])).toEqual([
         [
-          { html: assessmentLink(assessment) },
+          { html: assessmentLink(assessment, person) },
           crnCell({ crn: assessment.person.crn }),
           tierCell({ tier: assessment.risks.tier }),
           { text: formattedArrivalDate(assessment) },
-          { text: assessment.person.prisonName },
+          { text: person.prisonName },
           { html: formatDaysUntilDueWithWarning(assessment) },
           { html: getStatus(assessment) },
+        ],
+      ])
+    })
+
+    it('returns table rows for the assessments for a RestrictedPerson', () => {
+      const assessment = assessmentSummaryFactory.build({ status: 'awaiting_response', person: restrictedPerson })
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
+
+      expect(awaitingAssessmentTableRows([assessment])).toEqual([
+        [
+          restrictedPersonCell(assessment.person),
+          emptyCell(),
+          emptyCell(),
+          emptyCell(),
+          emptyCell(),
+          emptyCell(),
+          emptyCell(),
         ],
       ])
     })
   })
 
   describe('requestedInformationTableRows', () => {
-    it('returns table rows for the assessments', () => {
-      const assessment = assessmentSummaryFactory.build({ status: 'awaiting_response' })
+    it('returns table rows for the assessments for a FullPerson', () => {
+      const assessment = assessmentSummaryFactory.build({ status: 'awaiting_response', person })
 
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       expect(requestedFurtherInformationTableRows([assessment])).toEqual([
         [
-          { html: assessmentLink(assessment) },
+          { html: assessmentLink(assessment, person) },
           crnCell({ crn: assessment.person.crn }),
           tierCell({ tier: assessment.risks.tier }),
           { text: formattedArrivalDate(assessment) },
@@ -119,22 +141,48 @@ describe('tableUtils', () => {
         ],
       ])
     })
+
+    it('returns table rows for the assessments for a RestrictedPerson', () => {
+      const assessment = assessmentSummaryFactory.build({ status: 'awaiting_response', person: restrictedPerson })
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
+
+      expect(requestedFurtherInformationTableRows([assessment])).toEqual([
+        [
+          restrictedPersonCell(assessment.person),
+          emptyCell(),
+          emptyCell(),
+          emptyCell(),
+          emptyCell(),
+          emptyCell(),
+          emptyCell(),
+        ],
+      ])
+    })
   })
 
   describe('completedTableRows', () => {
     it('returns table rows for the assessments', () => {
-      const assessment = assessmentSummaryFactory.build()
+      const assessment = assessmentSummaryFactory.build({ status: 'completed', person })
 
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       expect(completedTableRows([assessment])).toEqual([
         [
-          { html: assessmentLink(assessment) },
+          { html: assessmentLink(assessment, person) },
           crnCell({ crn: assessment.person.crn }),
           tierCell({ tier: assessment.risks.tier }),
           { text: formattedArrivalDate(assessment) },
           { html: getStatus(assessment) },
         ],
+      ])
+    })
+
+    it('returns table rows for the assessments for a RestrictedPerson', () => {
+      const assessment = assessmentSummaryFactory.build({ status: 'completed', person: restrictedPerson })
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
+
+      expect(completedTableRows([assessment])).toEqual([
+        [restrictedPersonCell(assessment.person), emptyCell(), emptyCell(), emptyCell(), emptyCell()],
       ])
     })
   })

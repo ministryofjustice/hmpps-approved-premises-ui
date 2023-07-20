@@ -29,7 +29,7 @@ describe('Short notice assessments', () => {
     cy.fixture('applicationData.json').then(applicationData => {
       const today = new Date()
 
-      let application = applicationFactory.build({ submittedAt: DateFormats.dateObjToIsoDate(today) })
+      let application = applicationFactory.withFullPerson().build({ submittedAt: DateFormats.dateObjToIsoDate(today) })
 
       application.data = applicationData
 

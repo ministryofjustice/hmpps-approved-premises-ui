@@ -24,7 +24,7 @@ import {
 } from '../pages/assess'
 import Page from '../pages/page'
 import AssessPage from '../pages/assess/assessPage'
-import { assessmentSummaryFactory } from '../../server/testutils/factories'
+import { assessmentSummaryFactory, personFactory } from '../../server/testutils/factories'
 import RfapSuitabilityPage from '../pages/assess/rfapSuitability'
 import ContingencyPlanSuitabilityPage from '../pages/assess/contingencyPlanSuitability'
 import { getPageName, getTaskName } from '../../server/form-pages/utils'
@@ -47,7 +47,7 @@ export default class AseessHelper {
     private readonly user: User,
     private readonly clarificationNote?: ClarificationNote,
   ) {
-    this.assessmentSummary = assessmentSummaryFactory.build({ id: this.assessment.id })
+    this.assessmentSummary = assessmentSummaryFactory.build({ id: this.assessment.id, person: personFactory.build() })
   }
 
   setupStubs() {
