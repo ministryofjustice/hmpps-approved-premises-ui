@@ -1,8 +1,9 @@
-import { placementRequestDetailFactory } from '../../testutils/factories'
+import { personFactory, placementRequestDetailFactory, restrictedPersonFactory } from '../../testutils/factories'
 import { adminActions, adminIdentityBar, title } from './adminIdentityBar'
 
 import managePaths from '../../paths/manage'
 import adminPaths from '../../paths/admin'
+import { nameOrPlaceholderCopy } from '../personUtils'
 
 describe('adminIdentityBar', () => {
   describe('adminActions', () => {
@@ -49,18 +50,20 @@ describe('adminIdentityBar', () => {
 
   describe('title', () => {
     it('should return HTML for the title', () => {
-      const placementRequestDetail = placementRequestDetailFactory.build()
+      const placementRequestDetail = placementRequestDetailFactory.build({ person: personFactory.build() })
 
       expect(title(placementRequestDetail)).toMatchStringIgnoringWhitespace(`
       <span class="govuk-caption-l">Placement request</span>
-      <h1 class="govuk-heading-l">${placementRequestDetail.person.name}</h1>
+      <h1 class="govuk-heading-l">${nameOrPlaceholderCopy(placementRequestDetail.person)}</h1>
       `)
     })
 
     it('should return Limited Access Offender if the person has no name', () => {
-      const placementRequestDetail = placementRequestDetailFactory.build({ person: { name: undefined } })
+      const placementRequestDetailWithRestrictedAccessOffender = placementRequestDetailFactory.build({
+        person: restrictedPersonFactory.build(),
+      })
 
-      expect(title(placementRequestDetail)).toMatchStringIgnoringWhitespace(`
+      expect(title(placementRequestDetailWithRestrictedAccessOffender)).toMatchStringIgnoringWhitespace(`
       <span class="govuk-caption-l">Placement request</span>
       <h1 class="govuk-heading-l">Limited Access Offender</h1>
       `)

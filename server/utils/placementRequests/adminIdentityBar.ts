@@ -3,6 +3,7 @@ import { IdentityBar, IdentityBarMenuItem } from '../../@types/ui'
 
 import managePaths from '../../paths/manage'
 import adminPaths from '../../paths/admin'
+import { nameOrPlaceholderCopy } from '../personUtils'
 
 export const adminIdentityBar = (placementRequest: PlacementRequestDetail): IdentityBar => ({
   title: {
@@ -48,5 +49,5 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
 
 export const title = (placementRequest: PlacementRequestDetail) => `
 <span class="govuk-caption-l">Placement request</span>
-<h1 class="govuk-heading-l">${placementRequest.person.name || 'Limited Access Offender'}</h1>
+<h1 class="govuk-heading-l">${nameOrPlaceholderCopy(placementRequest.person, 'Limited Access Offender')}</h1>
 `
