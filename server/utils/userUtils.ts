@@ -6,6 +6,7 @@ import applyPaths from '../paths/apply'
 import managePaths from '../paths/manage'
 import taskPaths from '../paths/tasks'
 import matchPaths from '../paths/match'
+import adminPaths from '../paths/admin'
 
 export const sections = {
   apply: {
@@ -44,6 +45,13 @@ export const sections = {
     shortTitle: 'Match',
     href: matchPaths.placementRequests.index({}),
   },
+  placementRequests: {
+    id: 'placementRequests',
+    title: 'Record and update placement details',
+    description: ' View applications that require matching. Record and update details of Approved Premises placements.',
+    shortTitle: 'Placement details',
+    href: adminPaths.admin.placementRequests.index({}),
+  },
 }
 
 export const hasRole = (user: UserDetails, role: UserRole): boolean => {
@@ -63,6 +71,7 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
 
   if (hasRole(user, 'workflow_manager')) {
     items.push(sections.workflow)
+    items.push(sections.placementRequests)
   }
 
   if (hasRole(user, 'matcher')) {
