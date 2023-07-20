@@ -13,6 +13,7 @@ export default {
       show: placementRequestPath,
       bookings: {
         new: bookingsPath.path('new'),
+        create: bookingsPath,
       },
     },
   },

@@ -4,12 +4,22 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import BookingsController from './bookingsController'
 
 import { PlacementRequestService, PremisesService } from '../../../services'
-import { placementRequestDetailFactory, premisesFactory } from '../../../testutils/factories'
+import {
+  newPlacementRequestBookingConfirmationFactory,
+  placementRequestDetailFactory,
+  premisesFactory,
+} from '../../../testutils/factories'
+import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
+import { ErrorsAndUserInput } from '../../../@types/ui'
+import paths from '../../../paths/admin'
+
+jest.mock('../../../utils/validation')
 
 describe('PlacementRequestsController', () => {
   const token = 'SOME_TOKEN'
+  const placementRequest = placementRequestDetailFactory.build()
 
-  const request: DeepMocked<Request> = createMock<Request>({ user: { token } })
+  const request: DeepMocked<Request> = createMock<Request>({ user: { token }, params: { id: placementRequest.id } })
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
@@ -24,16 +34,17 @@ describe('PlacementRequestsController', () => {
   })
 
   describe('new', () => {
-    it('should render the form with the premises and the placement request', async () => {
-      const placementRequest = placementRequestDetailFactory.build()
-      const premises = premisesFactory.buildList(2)
+    const premises = premisesFactory.buildList(2)
 
+    beforeEach(() => {
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
       premisesService.getAll.mockResolvedValue(premises)
+    })
+
+    it('should render the form with the premises and the placement request', async () => {
+      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: {}, errorSummary: [], userInput: {} })
 
       const requestHandler = bookingsController.new()
-
-      request.params.id = 'some-uuid'
 
       await requestHandler(request, response, next)
 
@@ -41,10 +52,83 @@ describe('PlacementRequestsController', () => {
         pageHeading: 'Create a placement',
         premises,
         placementRequest,
+        errors: {},
+        errorSummary: [],
+        errorTitle: undefined,
       })
 
       expect(premisesService.getAll).toHaveBeenCalledWith(token)
-      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, 'some-uuid')
+      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequest.id)
+    })
+
+    it('should render the form with the premises, the placement request and the errors when there is an error in the flash', async () => {
+      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+
+      const requestHandler = bookingsController.new()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/bookings/new', {
+        pageHeading: 'Create a placement',
+        premises,
+        placementRequest,
+        errors: errorsAndUserInput.errors,
+        errorSummary: errorsAndUserInput.errorSummary,
+        errorTitle: errorsAndUserInput.errorTitle,
+        ...errorsAndUserInput.userInput,
+      })
+    })
+  })
+
+  describe('create', () => {
+    const body = {
+      'arrivalDate-day': '1',
+      'arrivalDate-month': '1',
+      'arrivalDate-year': '2022',
+      'departureDate-day': '1',
+      'departureDate-month': '3',
+      'departureDate-year': '2022',
+      bedId: 'some-other-uuid',
+    }
+
+    it('successfully creates a booking', async () => {
+      const bookingConfirmation = newPlacementRequestBookingConfirmationFactory.build()
+
+      placementRequestService.createBooking.mockResolvedValue(bookingConfirmation)
+
+      const requestHandler = bookingsController.create()
+
+      request.body = body
+
+      await requestHandler(request, response, next)
+
+      expect(request.flash).toHaveBeenCalledWith('success', `Placement created for ${bookingConfirmation.premisesName}`)
+      expect(response.redirect).toHaveBeenCalledWith(paths.admin.placementRequests.show({ id: placementRequest.id }))
+      expect(placementRequestService.createBooking).toHaveBeenCalledWith(token, placementRequest.id, {
+        ...body,
+        arrivalDate: '2022-01-01',
+        departureDate: '2022-03-01',
+      })
+    })
+
+    it('should call catchValidationErrorOrPropogate if there is an error', async () => {
+      const err = new Error()
+
+      placementRequestService.createBooking.mockImplementation(() => {
+        throw err
+      })
+
+      const requestHandler = bookingsController.create()
+
+      await requestHandler(request, response, next)
+
+      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        err,
+        paths.admin.placementRequests.bookings.new({ id: placementRequest.id }),
+      )
     })
   })
 })
