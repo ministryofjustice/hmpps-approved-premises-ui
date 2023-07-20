@@ -28,13 +28,13 @@
             formPageRadios({
                 fieldset: {
                     legend: {
-                    text: page.questions.rfapIdentifiedAsSuitable,
+                    text: page.questions.pipeIdentifiedAsSuitable,
                     classes: "govuk-fieldset__legend--m"
                     }
                 },
-                fieldName: "rfapIdentifiedAsSuitable",
+                fieldName: "pipeIdentifiedAsSuitable",
                     items: [
-                  {
+                    {
                         value: "yes",
                         text: "Yes",
                         conditional: {
@@ -55,9 +55,9 @@
 
     {{
             formPageTextarea({
-                fieldName: "unsuitabilityForRfapRationale",
+                fieldName: "unsuitabilityForPipeRationale",
                 label: {
-                    text:page.questions.unsuitabilityForRfapRationale,
+                    text: page.questions.unsuitabilityForPipeRationale,
                     classes: "govuk-label--s"
                 }
             }, fetchContext())

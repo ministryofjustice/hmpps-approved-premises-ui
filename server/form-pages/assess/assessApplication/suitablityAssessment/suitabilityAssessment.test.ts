@@ -5,9 +5,11 @@ import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import SuitabilityAssessment from './suitabilityAssessment'
 import { shouldShowContingencyPlanPartnersPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 jest.mock('../../../../utils/applications/noticeTypeFromApplication')
 jest.mock('../../../../utils/applications/shouldShowContingencyPlanPages')
+jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
 
 describe('SuitabilityAssessment', () => {
   const assessment = assessmentFactory.build()
@@ -51,6 +53,36 @@ describe('SuitabilityAssessment', () => {
   })
 
   describe('next', () => {
+    it('returns rfap-suitability if the application needs an RFAP', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('yes')
+      expect(
+        new SuitabilityAssessment(
+          {
+            riskFactors: 'yes',
+            riskManagement: 'yes',
+            locationOfPlacement: 'yes',
+            moveOnPlan: 'yes',
+          },
+          assessment,
+        ).next(),
+      ).toEqual('rfap-suitability')
+    })
+
+    it('returns pipe-suitability if the application needs a PIPE', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('pipe')
+      expect(
+        new SuitabilityAssessment(
+          {
+            riskFactors: 'yes',
+            riskManagement: 'yes',
+            locationOfPlacement: 'yes',
+            moveOnPlan: 'yes',
+          },
+          assessment,
+        ).next(),
+      ).toEqual('pipe-suitability')
+    })
+
     it('returns application-timeliness if the notice type is short_notice', () => {
       ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
       expect(

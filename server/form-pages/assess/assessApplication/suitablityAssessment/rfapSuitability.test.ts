@@ -10,6 +10,7 @@ describe('RfapSuitability', () => {
   const body: RfapSuitabilityBody = {
     rfapIdentifiedAsSuitable: 'yes',
     unsuitabilityForRfapRationale: 'some reasons',
+    yesDetail: 'Some yes detail',
   }
 
   const assessment = assessmentFactory.build()
@@ -20,10 +21,7 @@ describe('RfapSuitability', () => {
   describe('body', () => {
     it('should set the body', () => {
       const page = new RfapSuitability(body, assessment)
-      expect(page.body).toEqual({
-        rfapIdentifiedAsSuitable: 'yes',
-        unsuitabilityForRfapRationale: 'some reasons',
-      })
+      expect(page.body).toEqual(body)
     })
   })
 
@@ -58,11 +56,26 @@ describe('RfapSuitability', () => {
   })
 
   describe('response', () => {
-    it('returns the response', () => {
+    it('returns the response when the asnwer is yes', () => {
       const page = new RfapSuitability(body, assessment)
 
       expect(page.response()).toEqual({
-        'Has a Recovery Focused Approved Premises (RFAP) been identified as a suitable placement?': 'yes',
+        'Has a Recovery Focused Approved Premises (RFAP) been identified as a suitable placement?':
+          'Yes - Some yes detail',
+        'If the person is unsuitable for a RFAP placement yet suitable for a standard placement, summarise the rationale for the decision':
+          'some reasons',
+      })
+    })
+
+    it('returns the response when the asnwer is no', () => {
+      const page = new RfapSuitability(
+        { ...body, rfapIdentifiedAsSuitable: 'no', noDetail: 'Some no detail' },
+        assessment,
+      )
+
+      expect(page.response()).toEqual({
+        'Has a Recovery Focused Approved Premises (RFAP) been identified as a suitable placement?':
+          'No - Some no detail',
         'If the person is unsuitable for a RFAP placement yet suitable for a standard placement, summarise the rationale for the decision':
           'some reasons',
       })

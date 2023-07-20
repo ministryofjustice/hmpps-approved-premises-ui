@@ -9,6 +9,7 @@ import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import Rfap from '../../../apply/risk-and-need-factors/further-considerations/rfap'
 import { shouldShowContingencyPlanPartnersPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
+import SelectApType from '../../../apply/reasons-for-placement/type-of-ap/apType'
 
 export type SuitabilityAssessmentSection = {
   riskFactors: string
@@ -70,6 +71,12 @@ export default class SuitabilityAssessment implements TasklistPage {
     if (needsRfap === 'yes') {
       return 'rfap-suitability'
     }
+
+    if (
+      retrieveOptionalQuestionResponseFromApplicationOrAssessment(this.assessment.application, SelectApType, 'type') ===
+      'pipe'
+    )
+      return 'pipe-suitability'
 
     if (
       noticeTypeFromApplication(this.assessment.application) === 'short_notice' ||
