@@ -30,6 +30,11 @@ export default class ShowPage extends Page {
     this.shouldContainSummaryListItems(bookingSummaryList(this.placementRequest.booking).rows)
   }
 
+  clickCreateBooking() {
+    cy.get('.moj-button-menu__toggle-button').click()
+    cy.contains('.moj-button-menu__item', 'Create placement').click()
+  }
+
   shouldShowCreateBookingOption() {
     this.buttonShouldExist('Create placement')
   }

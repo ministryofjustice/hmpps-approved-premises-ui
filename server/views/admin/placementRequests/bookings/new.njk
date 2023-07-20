@@ -1,0 +1,86 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "../../../components/formFields/form-page-input/macro.njk" import formPageInput %}
+{% from "../../../components/formFields/form-page-date-input/macro.njk" import formPageDateInput %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+		text: "Back",
+		href: paths.admin.placementRequests.show({ id: placementRequest.id })
+	}) }}
+{% endblock %}
+
+{% block content %}
+  {% include "../../../_messages.njk" %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form action="{{ paths.admin.placementRequests.bookings.create({ id: placementRequest.id }) }}" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+        <h1 class="govuk-heading-l">
+          {{ pageHeading }}
+        </h1>
+
+        {{ showErrorSummary(errorSummary) }}
+
+        {{
+          govukSelect({
+            label: {
+              classes: "govuk-fieldset__legend--m",
+              html: 'Select an Approved Premises'
+            },
+            id: "premisesId",
+            name: "premisesId",
+            items: convertObjectsToSelectOptions(premises, 'Please select', 'name', 'id', 'premisesId'),
+            errorMessage: errors.premisesId
+          })
+        }}
+
+        {{
+          formPageDateInput(
+            {
+              fieldName: "arrivalDate",
+              fieldset: {
+                legend: {
+                  classes: "govuk-fieldset__legend--m",
+                  text: "What is the expected arrival date?"
+                }
+              },
+              items: dateFieldValues('arrivalDate', errors)
+            },
+            fetchContext()
+          )
+        }}
+
+        {{
+          formPageDateInput(
+            {
+              fieldName: "departureDate",
+              fieldset: {
+                legend: {
+                  classes: "govuk-fieldset__legend--m",
+                  text: "What is the expected departure date?"
+                }
+              },
+              items: dateFieldValues('departureDate', errors)
+            },
+            fetchContext()
+          )
+        }}
+
+        {{ govukButton({
+                    name: 'submit',
+                    text: "Save and continue"
+                }) }}
+      </form>
+    </div>
+  </div>
+{% endblock %}
