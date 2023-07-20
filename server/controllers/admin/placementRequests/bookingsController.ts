@@ -3,6 +3,7 @@ import { PlacementRequestService, PremisesService } from '../../../services'
 import paths from '../../../paths/admin'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { DateFormats } from '../../../utils/dateUtils'
+import { placementDates } from '../../../utils/matchUtils'
 
 export default class PlacementRequestsController {
   constructor(
@@ -12,15 +13,26 @@ export default class PlacementRequestsController {
 
   new(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
+      const errorsAndUserInput = fetchErrorsAndUserInput(req)
+      let { userInput } = errorsAndUserInput
+      const { errors, errorSummary, errorTitle } = errorsAndUserInput
 
       const premises = await this.premisesService.getAll(req.user.token)
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
 
+      if (!Object.keys(userInput).length) {
+        const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))
+
+        userInput = {
+          ...DateFormats.isoDateToDateInputs(dates.startDate, 'arrivalDate'),
+          ...DateFormats.isoDateToDateInputs(dates.endDate, 'departureDate'),
+        }
+      }
+
       res.render('admin/placementRequests/bookings/new', {
         pageHeading: 'Create a placement',
-        premises,
         placementRequest,
+        premises,
         errors,
         errorSummary,
         errorTitle,

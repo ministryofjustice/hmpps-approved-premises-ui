@@ -12,12 +12,13 @@ import {
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { ErrorsAndUserInput } from '../../../@types/ui'
 import paths from '../../../paths/admin'
+import { DateFormats } from '../../../utils/dateUtils'
 
 jest.mock('../../../utils/validation')
 
 describe('PlacementRequestsController', () => {
   const token = 'SOME_TOKEN'
-  const placementRequest = placementRequestDetailFactory.build()
+  const placementRequest = placementRequestDetailFactory.build({ expectedArrival: '2022-01-01', duration: 14 })
 
   const request: DeepMocked<Request> = createMock<Request>({ user: { token }, params: { id: placementRequest.id } })
   const response: DeepMocked<Response> = createMock<Response>({})
@@ -55,6 +56,8 @@ describe('PlacementRequestsController', () => {
         errors: {},
         errorSummary: [],
         errorTitle: undefined,
+        ...DateFormats.isoDateToDateInputs(placementRequest.expectedArrival, 'arrivalDate'),
+        ...DateFormats.isoDateToDateInputs('2022-01-15', 'departureDate'),
       })
 
       expect(premisesService.getAll).toHaveBeenCalledWith(token)
