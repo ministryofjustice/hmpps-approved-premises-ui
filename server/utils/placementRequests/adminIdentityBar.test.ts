@@ -2,6 +2,7 @@ import { placementRequestDetailFactory } from '../../testutils/factories'
 import { adminActions, adminIdentityBar, title } from './adminIdentityBar'
 
 import managePaths from '../../paths/manage'
+import adminPaths from '../../paths/admin'
 
 describe('adminIdentityBar', () => {
   describe('adminActions', () => {
@@ -31,7 +32,7 @@ describe('adminIdentityBar', () => {
 
       expect(adminActions(placementRequestDetail)).toEqual([
         {
-          href: '#',
+          href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequestDetail.id }),
           text: 'Create placement',
         },
       ])

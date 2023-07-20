@@ -2,6 +2,7 @@ import { PlacementRequestDetail } from '../../@types/shared'
 import { IdentityBar, IdentityBarMenuItem } from '../../@types/ui'
 
 import managePaths from '../../paths/manage'
+import adminPaths from '../../paths/admin'
 
 export const adminIdentityBar = (placementRequest: PlacementRequestDetail): IdentityBar => ({
   title: {
@@ -31,7 +32,7 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
   }
   return [
     {
-      href: '#',
+      href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequest.id }),
       text: 'Create placement',
     },
   ]
