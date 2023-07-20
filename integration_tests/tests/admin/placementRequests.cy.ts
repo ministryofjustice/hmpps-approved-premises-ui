@@ -5,7 +5,7 @@ import {
   applicationFactory,
   cancellationFactory,
   placementRequestDetailFactory,
-  placementRequestFactory,
+  placementRequestWithFullPersonFactory,
   premisesFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
@@ -17,11 +17,11 @@ import { signIn } from '../signIn'
 
 context('Placement Requests', () => {
   const unmatchedPlacementRequests = [
-    placementRequestFactory.build(),
-    placementRequestFactory.build({ isParole: true }),
+    placementRequestWithFullPersonFactory.build(),
+    placementRequestWithFullPersonFactory.build({ isParole: true }),
   ]
-  const matchedPlacementRequests = placementRequestFactory.buildList(2, { status: 'matched' })
-  const unableToMatchPlacementRequests = placementRequestFactory.buildList(2, { status: 'unableToMatch' })
+  const matchedPlacementRequests = placementRequestWithFullPersonFactory.buildList(2, { status: 'matched' })
+  const unableToMatchPlacementRequests = placementRequestWithFullPersonFactory.buildList(2, { status: 'unableToMatch' })
 
   const unmatchedPlacementRequest = placementRequestDetailFactory.build({
     ...unmatchedPlacementRequests[0],

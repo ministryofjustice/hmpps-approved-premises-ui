@@ -7,7 +7,7 @@ import risksFactory from './risks'
 import userFactory from './user'
 import bookingSummary from './bookingSummary'
 
-export default Factory.define<PlacementRequest>(() => {
+export const placementRequestFactory = Factory.define<PlacementRequest>(() => {
   const essentialCriteria = faker.helpers.arrayElements(placementCriteria)
   const desirableCriteria = essentialCriteria.filter(criteria => !essentialCriteria.includes(criteria))
   return {
@@ -34,6 +34,10 @@ export default Factory.define<PlacementRequest>(() => {
     isParole: false,
     booking: bookingSummary.build({}),
   }
+})
+
+export const placementRequestWithFullPersonFactory = Factory.define<PlacementRequest>(() => {
+  return { ...placementRequestFactory.build(), person: fullPersonFactory.build() }
 })
 
 export const placementCriteria = [

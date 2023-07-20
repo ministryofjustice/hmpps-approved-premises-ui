@@ -9,6 +9,7 @@ import { crnCell, tierCell } from '../tableUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { daysToWeeksAndDays } from '../assessments/dateUtils'
 import { sortHeader } from '../sortHeader'
+import { isFullPerson } from '../personUtils'
 
 export const DIFFERENCE_IN_DAYS_BETWEEN_DUE_DATE_AND_ARRIVAL_DATE = 7
 
@@ -90,7 +91,7 @@ export const nameCell = (item: PlacementRequestTask | PlacementRequest): TableCe
       ),
     }
   }
-  if ('person' in item && item.person) {
+  if ('person' in item && item.person && isFullPerson(item.person)) {
     return {
       html: linkTo(
         adminPaths.admin.placementRequests.show,
@@ -99,6 +100,13 @@ export const nameCell = (item: PlacementRequestTask | PlacementRequest): TableCe
       ),
     }
   }
+
+  if ('person' in item && item.person && !isFullPerson(item.person)) {
+    return {
+      text: `LAO: ${item.person.crn}`,
+    }
+  }
+
   return { html: '' }
 }
 
