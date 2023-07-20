@@ -10,9 +10,16 @@ import { overwriteApplicationDocuments } from '../../../server/utils/assessments
 import { acceptanceData } from '../../../server/utils/assessments/acceptanceData'
 
 import AssessHelper from '../../helpers/assess'
-import { ListPage, ShowPage, SuitabilityAssessmentPage, TaskListPage } from '../../pages/assess'
+import {
+  ApplicationTimelinessPage,
+  ListPage,
+  ShowPage,
+  SuitabilityAssessmentPage,
+  TaskListPage,
+} from '../../pages/assess'
 import Page from '../../pages/page'
 import SuitabilityAssessment from '../../../server/form-pages/assess/assessApplication/suitablityAssessment/suitabilityAssessment'
+import ContingencyPlanSuitabilityPage from '../../pages/assess/contingencyPlanSuitability'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -237,6 +244,7 @@ context('Assess', () => {
       const assessment = assessmentFactory.build({ data: assessmentData, status: 'in_progress' })
 
       cy.task('stubAssessment', assessment)
+      cy.task('stubAssessmentUpdate', assessment)
 
       // And I visit the tasklist
       TaskListPage.visit(assessment)
@@ -247,10 +255,16 @@ context('Assess', () => {
       // And I review a section
       const suitabilityAssessmentPage = new SuitabilityAssessmentPage(assessment)
       suitabilityAssessmentPage.clickSubmit()
+      const applicationTimeliness = new ApplicationTimelinessPage(assessment)
+      applicationTimeliness.clickSubmit()
+      const contingencyPlanPage = new ContingencyPlanSuitabilityPage(assessment)
+      contingencyPlanPage.clickSubmit()
+
+      Page.verifyOnPage(TaskListPage)
 
       // Then the application should be updated with the Check Your Answers section removed
       cy.task('verifyAssessmentUpdate', assessment).then((requests: Array<{ body: string }>) => {
-        expect(requests).to.have.length(1)
+        expect(requests).to.have.length(3)
         const body = JSON.parse(requests[0].body)
 
         expect(body.data).to.have.any.keys(['check-your-answers'])

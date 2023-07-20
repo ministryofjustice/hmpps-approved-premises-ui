@@ -11,6 +11,14 @@
       "locationOfPlacementComments": "",
       "moveOnPlan": "yes",
       "moveOnPlanComments": ""
+    },
+    "application-timeliness": {
+      "agreeWithShortNoticeReason": "yes",
+      "agreeWithShortNoticeReasonComments": "some comments"
+    },
+    "contingency-plan-suitability": {
+      "contingencyPlanSufficient": "yes",
+      "additionalComments": "Some comments"
     }
   },
   "required-actions": {
