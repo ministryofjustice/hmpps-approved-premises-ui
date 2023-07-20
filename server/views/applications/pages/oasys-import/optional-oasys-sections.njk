@@ -1,5 +1,6 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% extends "../layout.njk" %}
 
@@ -64,7 +65,7 @@
 
         {% set html %}
         <p class="govuk-body">
-            We are unable to import information from OASys as the person does not have a OASys record.
+            The OASys information could not be imported
         </p>
         {% endset %}
 
@@ -74,19 +75,36 @@
             })
         }}
 
-        <p class="govuk-body">You will be asked to provide relevant information from OASys, including: </p>
+        {% set detailHtml %}
+        <p class="govuk-body">OASys information can only be imported if the assessment:</p>
 
         <ul class="govuk-list govuk-list--bullet">
-            <li>offence details</li>
+            <li>was completed in the last 6 months and has a status of ‘complete’ or 'locked incomplete'</li>
+            <li>has any status other than ‘complete’ or ‘locked incomplete’</li>
+        </ul>
+        {% endset %}
+
+        {{
+            govukDetails({
+                summaryText: "Help with OASys information",
+                html: detailHtml
+            })
+        }}
+
+        <p class="govuk-body">You will be asked to provide relevant risk information including:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li>a summary of the offence, including information about the victim</li>
             <li>RoSH summary</li>
             <li>any MAPPA or hate-based information</li>
-            <li>sections linked to RoSH</li>
-            <li>issues contributing to risks of offending and harm  (Section 2 - 13)</li>
-            <li>Risk Management Plan</li>
-            <li>Risk to self</li>
+            <li>issues contributing to risks of offending and harm  (sections 2 - 13)</li>
+            <li>the risk management plan</li>
+            <li>risk to self </li>
         </ul>
 
-        <p class="govuk-body">Any information that you provide as part of this application will not be written back to OASys.</p>
+        <p class="govuk-body">If you have started an OASys and it has not been imported you can copy and paste the information into this application. </p>
+
+        <p class="govuk-body">The information you provide will be used by Approved Premises (AP) managers to consider how an AP will help manage the person’s risk and support their needs.</p>
     {% endif %}
 
 {% endblock %}
