@@ -15,7 +15,7 @@ describe('PreferredAps', () => {
   const ap4 = premisesFactory.build({ id: '4', name: 'AP 4' })
   const ap5 = premisesFactory.build({ id: '5', name: 'AP 5' })
 
-  const aps = [ap1, ap2, ap3, ap4, ap5, { name: 'No preference', id: 'no-preference' }]
+  const allAps = [ap1, ap2, ap3, ap4, ap5]
 
   const body = {
     preferredAp1: '1',
@@ -23,11 +23,11 @@ describe('PreferredAps', () => {
     preferredAp3: '3',
     preferredAp4: '4',
     preferredAp5: '5',
-    selectedAps: aps.map(ap => ({ value: ap.id, text: ap.name })),
+    selectedAps: allAps,
   }
 
   describe('body', () => {
-    it('should set the body and uppercase the postcode', () => {
+    it('should set the body', () => {
       const page = new PreferredAps(body)
 
       expect(page.body).toEqual(body)
@@ -35,7 +35,7 @@ describe('PreferredAps', () => {
   })
 
   describe('initialize', () => {
-    const getAll = jest.fn().mockResolvedValue([{ value: '1', text: 'Premises 1' }])
+    const getAll = jest.fn().mockResolvedValue(allAps)
     const token = 'token'
 
     beforeEach(() => {
@@ -47,16 +47,16 @@ describe('PreferredAps', () => {
     it('should call the Premises service and set the list of Premises on the page class', async () => {
       const page = await PreferredAps.initialize(body, application, token, { premisesService })
 
-      expect(page.allPremises).toEqual([{ value: '1', text: 'Premises 1' }])
+      expect(page.allPremises).toEqual(allAps)
       expect(getAll).toHaveBeenCalledWith(token)
     })
 
     it('should convert the selectedAps from strings to objects containing text and value properties', async () => {
-      const page = await PreferredAps.initialize({ ...body, selectedAps: ['1'] }, application, token, {
+      const page = await PreferredAps.initialize({ preferredAp1: '1', preferredAp2: '2' }, application, token, {
         premisesService,
       })
 
-      expect(page.selectedAps).toEqual([{ value: '1', text: 'Premises 1' }])
+      expect(page.body.selectedAps).toEqual([ap1, ap2])
     })
   })
 
@@ -67,7 +67,7 @@ describe('PreferredAps', () => {
     it('returns a human readable response for the selected 5 selected APs', () => {
       const page = new PreferredAps(body)
 
-      page.allPremises = aps
+      page.allPremises = allAps
       expect(page.response()).toEqual({
         'First choice AP': 'AP 1',
         'Second choice AP': 'AP 2',
@@ -87,7 +87,7 @@ describe('PreferredAps', () => {
         preferredAp5: 'no-preference',
       })
 
-      page.allPremises = aps
+      page.allPremises = allAps
       expect(page.response()).toEqual({
         'First choice AP': 'AP 1',
         'Second choice AP': 'No preference',
