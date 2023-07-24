@@ -53,7 +53,7 @@ describe('cancellationsController', () => {
         booking,
         backLink,
         cancellationReasons,
-        pageHeading: 'Cancel this placement',
+        pageHeading: 'Confirm cancelled placement',
         errors: {},
         errorSummary: [],
       })
@@ -77,7 +77,7 @@ describe('cancellationsController', () => {
         booking,
         backLink: 'http://foo.com',
         cancellationReasons,
-        pageHeading: 'Cancel this placement',
+        pageHeading: 'Confirm cancelled placement',
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,
@@ -99,7 +99,7 @@ describe('cancellationsController', () => {
         booking,
         backLink: paths.bookings.show({ premisesId, bookingId }),
         cancellationReasons,
-        pageHeading: 'Cancel this placement',
+        pageHeading: 'Confirm cancelled placement',
         errors: {},
         errorSummary: [],
       })

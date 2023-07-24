@@ -25,7 +25,7 @@
     <div class="govuk-grid-column-two-thirds">
       <h1>{{pageHeading}}</h1>
 
-      <p>If {{ booking.person.name }} has not arrived or no longer requires this bed, cancel this placement. Cancelling this placement will make this bed available to another person. </p>
+      <p>Confirm that the Approved Premises has cancelled this placement.</p>
 
       <form action="{{ paths.bookings.cancellations.create({ premisesId: premisesId, bookingId: booking.id }) }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
@@ -76,8 +76,7 @@
             namePrefix: "date",
             fieldset: {
                 legend: {
-                    text: "What date was this placement cancelled?
-                    ",
+                    text: "When was this placement cancelled?",
                     classes: "govuk-fieldset__legend--m"
                     }
             },
@@ -120,7 +119,7 @@
           id: "reason",
           fieldset: {
               legend: {
-              text: "What is the reason for cancelling this placement?",
+              text: "Why was this placement cancelled?",
               classes: "govuk-fieldset__legend--m"
               }
           },
@@ -132,7 +131,7 @@
             name: "cancellation[notes]",
             id: "notes",
             label: {
-            text: "Additional notes"
+            text: "Provide any additional notes on why this placement was cancelled"
             }
         }) }}
 
