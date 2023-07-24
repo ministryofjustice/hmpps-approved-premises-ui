@@ -1,4 +1,4 @@
-import type { DataServices, SelectOption, TaskListErrors } from '@approved-premises/ui'
+import type { DataServices, TaskListErrors } from '@approved-premises/ui'
 import { ApprovedPremisesApplication as Application, ApprovedPremises } from '../../../../@types/shared'
 
 import { Page } from '../../../utils/decorators'
@@ -12,7 +12,7 @@ export type PreferredApsBody = {
   preferredAp3: string
   preferredAp4: string
   preferredAp5: string
-  selectedAps: Array<SelectOption>
+  selectedAps: Array<ApprovedPremises>
 }
 
 const preferredAps = new Array(5).fill('').map((_, i) => `preferredAp${i + 1}`)
@@ -24,13 +24,11 @@ const preferredAps = new Array(5).fill('').map((_, i) => `preferredAp${i + 1}`)
 export default class PreferredAps implements TasklistPage {
   title = 'Select a preferred AP'
 
-  allPremises: Array<ApprovedPremises | { name: string; id: string }> = []
+  allPremises: Array<ApprovedPremises> = []
 
   preferredApOptions = preferredAps
 
   preferredApLabels = this.preferredApOptions.map((_, i) => `${numberToOrdinal(i)} choice AP`)
-
-  selectedAps: Array<SelectOption>
 
   body: PreferredApsBody
 
@@ -44,11 +42,11 @@ export default class PreferredAps implements TasklistPage {
   ) {
     const allPremises = await premisesService.getAll(token)
 
-    const selectedAps: Array<SelectOption> = []
+    const selectedAps: Array<ApprovedPremises> = []
 
     preferredAps.forEach(id => {
       const selectedAp = allPremises.find(premises => {
-        return premises.value === body[id]
+        return premises.id === body[id]
       })
 
       if (selectedAp) {
@@ -56,9 +54,10 @@ export default class PreferredAps implements TasklistPage {
       }
     })
 
-    const page = new PreferredAps({ selectedAps, ...body })
+    body.selectedAps = selectedAps
 
-    page.selectedAps = selectedAps
+    const page = new PreferredAps(body)
+
     page.allPremises = allPremises
 
     return page
@@ -86,7 +85,7 @@ export default class PreferredAps implements TasklistPage {
     const response = {}
 
     this.preferredApOptions.forEach((key, i) => {
-      const apName = this.body.selectedAps.find(premises => premises.value === this.body[key])?.text
+      const apName = this.body.selectedAps.find(premises => premises.id === this.body[key])?.name
 
       response[this.preferredApLabels[i]] = apName ?? 'No preference'
     })
