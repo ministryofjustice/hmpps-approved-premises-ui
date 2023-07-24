@@ -40,9 +40,9 @@ export const sections = {
   },
   match: {
     id: 'match',
-    title: 'Match people to Approved Premises placements',
-    description: "Allocate cases to suitable Approved Premises based on a person's needs.",
-    shortTitle: 'Match',
+    title: 'Review placement requests',
+    description: 'Review requests for placements that have been submitted for approved applications',
+    shortTitle: 'Placement requests',
     href: matchPaths.placementRequests.index({}),
   },
   placementRequests: {

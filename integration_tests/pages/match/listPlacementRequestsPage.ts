@@ -9,7 +9,7 @@ import { shouldShowTableRows } from '../../helpers'
 
 export default class ListPage extends Page {
   constructor() {
-    super('My Cases')
+    super('Placement Applications')
     this.checkPhaseBanner('Give us your feedback')
   }
 
@@ -27,7 +27,8 @@ export default class ListPage extends Page {
   }
 
   clickPlacementApplications(): void {
-    cy.get('a').contains('Placement Applications').click()
+    // Skip while work on Match is paused
+    // cy.get('a').contains('Placement Applications').click()
   }
 
   clickUnableToMatch(): void {
