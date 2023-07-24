@@ -10,6 +10,7 @@ import {
 import { DateFormats } from '../../utils/dateUtils'
 
 import paths from '../../paths/manage'
+import { isFullPerson } from '../../utils/personUtils'
 
 export default class BookingsController {
   constructor(
@@ -38,16 +39,18 @@ export default class BookingsController {
       if (crnArr.length) {
         const person = await this.personService.findByCrn(req.user.token, crnArr[0])
 
-        return res.render(`bookings/new`, {
-          pageHeading: 'Create a placement',
-          premisesId,
-          bedId,
-          ...person,
-          errorTitle,
-          errors,
-          errorSummary,
-          ...userInput,
-        })
+        if (isFullPerson(person)) {
+          return res.render(`bookings/new`, {
+            pageHeading: 'Create a placement',
+            premisesId,
+            bedId,
+            ...person,
+            errorTitle,
+            errors,
+            errorSummary,
+            ...userInput,
+          })
+        }
       }
 
       return res.render(`bookings/find`, {

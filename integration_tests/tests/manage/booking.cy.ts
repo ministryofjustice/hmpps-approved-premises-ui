@@ -8,6 +8,7 @@ import {
   lostBedFactory,
   personFactory,
   premisesFactory,
+  restrictedPersonFactory,
 } from '../../../server/testutils/factories'
 
 import { BookingFindPage, BookingNewPage, BookingShowPage, PremisesShowPage } from '../../pages/manage'
@@ -34,9 +35,9 @@ context('Booking', () => {
     applicationId: application.id,
     assessmentId: assessment.id,
   })
+
   beforeEach(() => {
     cy.task('reset')
-
     // Given a booking is available
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
     cy.task('stubApplicationGet', { application })
@@ -46,6 +47,23 @@ context('Booking', () => {
       premisesId: premises.id,
       dateCapacities: dateCapacityFactory.buildList(5),
     })
+  })
+
+  it('should shown an error if I search for an LAO', () => {
+    // Given I am signed in as a workflow manager
+    signIn(['workflow_manager'])
+    const lao = restrictedPersonFactory.build()
+    cy.task('stubFindPerson', { person: lao })
+
+    // And I visit the first new booking page
+    const bookingNewPage = BookingFindPage.visit(premises.id, 'bedId')
+
+    // When I enter a restricted CRN into the form
+    bookingNewPage.enterCrn(lao.crn)
+    bookingNewPage.clickSubmit()
+
+    // Then I should be shown an error stating that the person is restricted
+    bookingNewPage.shouldShowRestrictedCrnMessage(lao)
   })
 
   it('should show the CRN form followed by the booking form', () => {
