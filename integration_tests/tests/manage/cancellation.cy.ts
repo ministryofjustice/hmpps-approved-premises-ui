@@ -74,5 +74,8 @@ context('Cancellation', () => {
 
     // Then I should see error messages relating to that field
     page.shouldShowErrorMessagesForFields(['date', 'reason'])
+
+    // And the back link should be populated correctly
+    page.shouldHaveCorrectBacklink()
   })
 })

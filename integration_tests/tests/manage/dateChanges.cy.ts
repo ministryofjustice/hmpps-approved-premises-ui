@@ -80,5 +80,8 @@ context('Date Changes', () => {
 
     // Then I should see errors
     dateChangePage.shouldShowErrorMessagesForFields(['newArrivalDate', 'newDepartureDate'])
+
+    // And the back link should be populated correctly
+    dateChangePage.shouldHaveCorrectBacklink()
   })
 })

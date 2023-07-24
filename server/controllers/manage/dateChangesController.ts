@@ -19,7 +19,15 @@ export default class DateChangeController {
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
       const booking = await this.bookingService.find(req.user.token, premisesId, bookingId)
-      const backLink = req.headers.referer
+      let backLink: string
+
+      if (userInput.backLink) {
+        backLink = userInput.backLink as string
+      } else if (req.headers.referer) {
+        backLink = req.headers.referer
+      } else {
+        backLink = paths.bookings.show({ premisesId, bookingId })
+      }
 
       res.render('bookings/dateChanges/new', {
         premisesId,

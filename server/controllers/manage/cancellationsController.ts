@@ -21,7 +21,15 @@ export default class CancellationsController {
 
       const booking = await this.bookingService.find(req.user.token, premisesId, bookingId)
       const cancellationReasons = await this.cancellationService.getCancellationReasons(req.user.token)
-      const backLink = req.headers.referer
+      let backLink: string
+
+      if (userInput.backLink) {
+        backLink = userInput.backLink as string
+      } else if (req.headers.referer) {
+        backLink = req.headers.referer
+      } else {
+        backLink = paths.bookings.show({ premisesId, bookingId })
+      }
 
       res.render('cancellations/new', {
         premisesId,

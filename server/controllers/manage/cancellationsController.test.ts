@@ -63,7 +63,7 @@ describe('cancellationsController', () => {
     })
 
     it('renders the form with errors and user input if an error has been sent to the flash', async () => {
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+      const errorsAndUserInput = createMock<ErrorsAndUserInput>({ userInput: { backLink: 'http://foo.com' } })
 
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
@@ -75,12 +75,33 @@ describe('cancellationsController', () => {
         premisesId,
         bookingId,
         booking,
-        backLink,
+        backLink: 'http://foo.com',
         cancellationReasons,
         pageHeading: 'Cancel this placement',
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,
+      })
+    })
+
+    it('sets a default backlink if the referrer is not present', async () => {
+      ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
+        return { errors: {}, errorSummary: [], userInput: {} }
+      })
+
+      const requestHandler = cancellationsController.new()
+
+      await requestHandler({ ...request, params: { premisesId, bookingId }, headers: {} }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('cancellations/new', {
+        premisesId,
+        bookingId,
+        booking,
+        backLink: paths.bookings.show({ premisesId, bookingId }),
+        cancellationReasons,
+        pageHeading: 'Cancel this placement',
+        errors: {},
+        errorSummary: [],
       })
     })
   })
