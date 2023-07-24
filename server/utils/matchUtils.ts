@@ -6,11 +6,12 @@ import {
 } from '../@types/shared'
 import { BedSearchParametersUi, ObjectWithDateParts, SummaryListItem } from '../@types/ui'
 import { DateFormats } from './dateUtils'
-import { linkTo, sentenceCase } from './utils'
+import { linkTo } from './utils'
 import matchPaths from '../paths/match'
 import {
   accessibilityOptions,
   offenceAndRiskOptions,
+  placementCriteria,
   placementRequirementOptions,
   specialistApTypeOptions,
   specialistSupportOptions,
@@ -50,20 +51,9 @@ export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParame
   }
 }
 
-export const translateApiCharacteristicForUi = (characteristic: string) => {
-  const result = characteristic.startsWith('is') ? characteristic.slice(2) : characteristic
-  if (['esap', 'pipe', 'iap'].includes(result)) return `${characteristic.toUpperCase()}`
-  if (result.toLocaleUpperCase() === result) return `${result}`
-  return `${sentenceCase(result)}`
-}
-
-export const mapSearchResultCharacteristicsForUi = (characteristics: Array<CharacteristicPair>) => {
-  return mapSearchParamCharacteristicsForUi(characteristics.map(characteristicPair => characteristicPair.name))
-}
-
 export const mapSearchParamCharacteristicsForUi = (characteristics: Array<string>) => {
   return `<ul class="govuk-list">${characteristics
-    .map(characteristicPair => `<li>${translateApiCharacteristicForUi(characteristicPair)}</li>`)
+    .map(characteristicPair => `<li>${placementCriteria[characteristicPair]}</li>`)
     .join('')}</ul>`
 }
 

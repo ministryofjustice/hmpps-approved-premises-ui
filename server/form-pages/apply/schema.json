@@ -1302,18 +1302,153 @@
             "selectedAps": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "text": {
-                    "type": "string"
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "service": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "addressLine1": {
+                        "type": "string"
+                      },
+                      "addressLine2": {
+                        "type": "string"
+                      },
+                      "town": {
+                        "type": "string"
+                      },
+                      "postcode": {
+                        "type": "string"
+                      },
+                      "bedCount": {
+                        "type": "number"
+                      },
+                      "availableBedsForToday": {
+                        "type": "number"
+                      },
+                      "notes": {
+                        "type": "string"
+                      },
+                      "probationRegion": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "apArea": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "identifier": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "localAuthorityArea": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "identifier": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "characteristics": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "propertyName": {
+                              "type": "string"
+                            },
+                            "serviceScope": {
+                              "enum": [
+                                "*",
+                                "approved-premises",
+                                "temporary-accommodation"
+                              ],
+                              "type": "string"
+                            },
+                            "modelScope": {
+                              "enum": [
+                                "*",
+                                "premises",
+                                "room"
+                              ],
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "status": {
+                        "enum": [
+                          "active",
+                          "archived",
+                          "pending"
+                        ],
+                        "type": "string"
+                      }
+                    }
                   },
-                  "value": {
-                    "type": "string"
+                  {
+                    "type": "object",
+                    "properties": {
+                      "apCode": {
+                        "type": "string"
+                      }
+                    }
                   },
-                  "selected": {
-                    "type": "boolean"
+                  {
+                    "type": "object",
+                    "properties": {
+                      "localAuthorityArea": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "identifier": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "apCode": {
+                        "type": "string"
+                      }
+                    }
                   }
-                }
+                ]
               }
             }
           }

@@ -20,7 +20,6 @@ import {
   groupedCheckboxes,
   groupedEssentialCriteria,
   mapSearchParamCharacteristicsForUi,
-  mapSearchResultCharacteristicsForUi,
   mapUiParamsForApi,
   matchedCharacteristics,
   matchedCharacteristicsRow,
@@ -33,7 +32,6 @@ import {
   summaryCardHeader,
   summaryCardRows,
   townRow,
-  translateApiCharacteristicForUi,
   unmatchedCharacteristics,
 } from './matchUtils'
 import {
@@ -93,27 +91,11 @@ describe('matchUtils', () => {
     })
   })
 
-  describe('translateApiCharacteristicForUi', () => {
+  describe('mapSearchParamCharacteristicsForUi', () => {
     it('it returns the search results characteristics names in a list', () => {
-      expect(mapSearchResultCharacteristicsForUi([{ name: 'some characteristic' }])).toEqual(
-        `<ul class="govuk-list"><li>Some characteristic</li></ul>`,
+      expect(mapSearchParamCharacteristicsForUi(['isPIPE'])).toEqual(
+        '<ul class="govuk-list"><li>Psychologically Informed Planned Environment (PIPE)</li></ul>',
       )
-    })
-  })
-
-  describe('mapSearchResultCharacteristicsForUi', () => {
-    it('it returns the search results characteristics names in a list', () => {
-      expect(mapSearchParamCharacteristicsForUi(['some characteristic'])).toEqual(
-        '<ul class="govuk-list"><li>Some characteristic</li></ul>',
-      )
-    })
-  })
-
-  describe('mapApiCharacteristicForUi', () => {
-    it('if the characteristic name is defined it is returned in a human readable format', () => {
-      expect(translateApiCharacteristicForUi('isESAP')).toBe('ESAP')
-      expect(translateApiCharacteristicForUi('isIAP')).toBe('IAP')
-      expect(translateApiCharacteristicForUi('isPIPE')).toBe('PIPE')
     })
   })
 
