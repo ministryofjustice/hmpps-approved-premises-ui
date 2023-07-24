@@ -6,7 +6,7 @@ export default class NewDateChange extends Page {
     public readonly premisesId: string,
     public readonly bookingId: string,
   ) {
-    super('Change placement date')
+    super('Update placement dates')
   }
 
   static visit(premisesId: string, bookingId: string): NewDateChange {

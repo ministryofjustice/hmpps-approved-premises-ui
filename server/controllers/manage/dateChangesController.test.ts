@@ -53,7 +53,7 @@ describe('dateChangesController', () => {
         bookingId,
         booking,
         backLink,
-        pageHeading: 'Change placement date',
+        pageHeading: 'Update placement dates',
         errors: {},
         errorSummary: [],
       })
@@ -75,7 +75,7 @@ describe('dateChangesController', () => {
         bookingId,
         booking,
         backLink: 'http://foo.com',
-        pageHeading: 'Change placement date',
+        pageHeading: 'Update placement dates',
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,
@@ -96,7 +96,7 @@ describe('dateChangesController', () => {
         bookingId,
         booking,
         backLink: paths.bookings.show({ premisesId, bookingId }),
-        pageHeading: 'Change placement date',
+        pageHeading: 'Update placement dates',
         errors: {},
         errorSummary: [],
       })
