@@ -30,7 +30,7 @@ export default class PlacementRequestsController {
       }
 
       res.render('admin/placementRequests/bookings/new', {
-        pageHeading: 'Create a placement',
+        pageHeading: 'Record an Approved Premises (AP) placement',
         placementRequest,
         premises,
         errors,
