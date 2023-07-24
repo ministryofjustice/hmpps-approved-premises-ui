@@ -15,8 +15,9 @@ jest.mock('../../utils/validation')
 
 describe('cancellationsController', () => {
   const token = 'SOME_TOKEN'
+  const backLink = 'http://localhost/some-path'
 
-  const request: DeepMocked<Request> = createMock<Request>({ user: { token } })
+  const request: DeepMocked<Request> = createMock<Request>({ user: { token }, headers: { referer: backLink } })
   const response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
@@ -50,6 +51,7 @@ describe('cancellationsController', () => {
         premisesId,
         bookingId,
         booking,
+        backLink,
         cancellationReasons,
         pageHeading: 'Cancel this placement',
         errors: {},
@@ -61,7 +63,7 @@ describe('cancellationsController', () => {
     })
 
     it('renders the form with errors and user input if an error has been sent to the flash', async () => {
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+      const errorsAndUserInput = createMock<ErrorsAndUserInput>({ userInput: { backLink: 'http://foo.com' } })
 
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
@@ -73,11 +75,33 @@ describe('cancellationsController', () => {
         premisesId,
         bookingId,
         booking,
+        backLink: 'http://foo.com',
         cancellationReasons,
         pageHeading: 'Cancel this placement',
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,
+      })
+    })
+
+    it('sets a default backlink if the referrer is not present', async () => {
+      ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
+        return { errors: {}, errorSummary: [], userInput: {} }
+      })
+
+      const requestHandler = cancellationsController.new()
+
+      await requestHandler({ ...request, params: { premisesId, bookingId }, headers: {} }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('cancellations/new', {
+        premisesId,
+        bookingId,
+        booking,
+        backLink: paths.bookings.show({ premisesId, bookingId }),
+        cancellationReasons,
+        pageHeading: 'Cancel this placement',
+        errors: {},
+        errorSummary: [],
       })
     })
   })
@@ -99,6 +123,7 @@ describe('cancellationsController', () => {
         'date-year': 2022,
         'date-month': 12,
         'date-day': 11,
+        backLink,
         cancellation: {
           notes: 'Some notes',
           reason: '8b2677dd-e5d4-407a-a8f8-e2035aec9227',
@@ -121,9 +146,7 @@ describe('cancellationsController', () => {
 
       expect(request.flash).toHaveBeenCalledWith('success', 'Booking cancelled')
 
-      expect(response.redirect).toHaveBeenCalledWith(
-        paths.bookings.show({ premisesId: request.params.premisesId, bookingId: request.params.bookingId }),
-      )
+      expect(response.redirect).toHaveBeenCalledWith(backLink)
     })
 
     it('should catch the validation errors when the API returns an error', async () => {

@@ -2,13 +2,16 @@ import Page from '../../../page'
 import paths from '../../../../../server/paths/manage'
 
 export default class NewDateChange extends Page {
-  constructor() {
+  constructor(
+    public readonly premisesId: string,
+    public readonly bookingId: string,
+  ) {
     super('Change placement date')
   }
 
   static visit(premisesId: string, bookingId: string): NewDateChange {
     cy.visit(paths.bookings.dateChanges.new({ premisesId, bookingId }))
-    return new NewDateChange()
+    return new NewDateChange(premisesId, bookingId)
   }
 
   completeForm(newArrivalDate: string, newDepartureDate: string): void {
@@ -30,5 +33,11 @@ export default class NewDateChange extends Page {
 
   checkDatesToChangeOption(option: 'newArrivalDate' | 'newDepartureDate'): void {
     cy.get(`input[name="datesToChange"][value="${option}"]`).click()
+  }
+
+  shouldHaveCorrectBacklink(): void {
+    cy.get('.govuk-back-link')
+      .should('have.attr', 'href')
+      .and('include', paths.bookings.show({ premisesId: this.premisesId, bookingId: this.bookingId }))
   }
 }

@@ -16,6 +16,7 @@ jest.mock('../../utils/validation')
 
 describe('dateChangesController', () => {
   const token = 'SOME_TOKEN'
+  const backLink = 'http://localhost/some-path'
 
   let request: DeepMocked<Request>
   const response: DeepMocked<Response> = createMock<Response>({})
@@ -23,7 +24,7 @@ describe('dateChangesController', () => {
 
   const premisesId = 'premisesId'
   const bookingId = 'bookingId'
-  const requestParams = { user: { token }, params: { premisesId, bookingId } }
+  const requestParams = { user: { token }, params: { premisesId, bookingId }, headers: { referer: backLink } }
 
   const booking = bookingFactory.build()
 
@@ -51,6 +52,7 @@ describe('dateChangesController', () => {
         premisesId,
         bookingId,
         booking,
+        backLink,
         pageHeading: 'Change placement date',
         errors: {},
         errorSummary: [],
@@ -60,7 +62,7 @@ describe('dateChangesController', () => {
     })
 
     it('renders the form with errors and user input if an error has been sent to the flash', async () => {
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+      const errorsAndUserInput = createMock<ErrorsAndUserInput>({ userInput: { backLink: 'http://foo.com' } })
 
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
@@ -72,11 +74,34 @@ describe('dateChangesController', () => {
         premisesId,
         bookingId,
         booking,
+        backLink: 'http://foo.com',
         pageHeading: 'Change placement date',
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,
       })
+    })
+
+    it('sets a default backlink if the referrer is not present', async () => {
+      ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
+        return { errors: {}, errorSummary: [], userInput: {} }
+      })
+
+      const requestHandler = controller.new()
+
+      await requestHandler({ ...request, headers: {} }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('bookings/dateChanges/new', {
+        premisesId,
+        bookingId,
+        booking,
+        backLink: paths.bookings.show({ premisesId, bookingId }),
+        pageHeading: 'Change placement date',
+        errors: {},
+        errorSummary: [],
+      })
+
+      expect(bookingService.find).toHaveBeenCalledWith(token, premisesId, bookingId)
     })
   })
 
@@ -135,6 +160,8 @@ describe('dateChangesController', () => {
 
       const requestHandler = controller.create()
 
+      body.backLink = backLink
+
       request = createMock<Request>({ ...requestParams, body })
 
       await requestHandler(request, response, next)
@@ -148,9 +175,7 @@ describe('dateChangesController', () => {
 
       expect(request.flash).toHaveBeenCalledWith('success', 'Booking changed successfully')
 
-      expect(response.redirect).toHaveBeenCalledWith(
-        paths.bookings.show({ premisesId: request.params.premisesId, bookingId: request.params.bookingId }),
-      )
+      expect(response.redirect).toHaveBeenCalledWith(backLink)
     })
 
     describe('errors', () => {

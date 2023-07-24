@@ -21,11 +21,21 @@ export default class CancellationsController {
 
       const booking = await this.bookingService.find(req.user.token, premisesId, bookingId)
       const cancellationReasons = await this.cancellationService.getCancellationReasons(req.user.token)
+      let backLink: string
+
+      if (userInput.backLink) {
+        backLink = userInput.backLink as string
+      } else if (req.headers.referer) {
+        backLink = req.headers.referer
+      } else {
+        backLink = paths.bookings.show({ premisesId, bookingId })
+      }
 
       res.render('cancellations/new', {
         premisesId,
         bookingId,
         booking,
+        backLink,
         cancellationReasons,
         pageHeading: 'Cancel this placement',
         errors,
@@ -49,7 +59,7 @@ export default class CancellationsController {
         await this.cancellationService.createCancellation(req.user.token, premisesId, bookingId, cancellation)
 
         req.flash('success', 'Booking cancelled')
-        res.redirect(paths.bookings.show({ premisesId, bookingId }))
+        res.redirect(req.body.backLink)
       } catch (err) {
         catchValidationErrorOrPropogate(
           req,

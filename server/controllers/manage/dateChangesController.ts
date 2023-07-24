@@ -19,11 +19,21 @@ export default class DateChangeController {
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
       const booking = await this.bookingService.find(req.user.token, premisesId, bookingId)
+      let backLink: string
+
+      if (userInput.backLink) {
+        backLink = userInput.backLink as string
+      } else if (req.headers.referer) {
+        backLink = req.headers.referer
+      } else {
+        backLink = paths.bookings.show({ premisesId, bookingId })
+      }
 
       res.render('bookings/dateChanges/new', {
         premisesId,
         bookingId,
         booking,
+        backLink,
         pageHeading: 'Change placement date',
         errors,
         errorSummary,
@@ -37,6 +47,7 @@ export default class DateChangeController {
       const { premisesId, bookingId } = req.params
 
       try {
+        const { backLink } = req.body
         const payload: NewDateChange = {}
         const emptyDates: Array<keyof NewDateChange> = []
         const datesToChange = flattenCheckboxInput(req.body.datesToChange)
@@ -61,7 +72,7 @@ export default class DateChangeController {
         await this.bookingService.changeDates(req.user.token, premisesId, bookingId, payload)
 
         req.flash('success', 'Booking changed successfully')
-        res.redirect(paths.bookings.show({ premisesId, bookingId }))
+        res.redirect(backLink)
       } catch (err) {
         catchValidationErrorOrPropogate(
           req,
