@@ -35,6 +35,16 @@ export default class ShowPage extends Page {
     cy.contains('.moj-button-menu__item', 'Create placement').click()
   }
 
+  clickAmendBooking() {
+    cy.get('.moj-button-menu__toggle-button').click()
+    cy.contains('.moj-button-menu__item', 'Amend placement').click()
+  }
+
+  clickCancelBooking() {
+    cy.get('.moj-button-menu__toggle-button').click()
+    cy.contains('.moj-button-menu__item', 'Cancel placement').click()
+  }
+
   shouldShowCreateBookingOption() {
     this.buttonShouldExist('Create placement')
   }

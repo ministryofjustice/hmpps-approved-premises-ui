@@ -13,7 +13,7 @@
 {% block beforeContent %}
   {{ govukBackLink({
 		text: "Back",
-		href: paths.bookings.show({ premisesId: premisesId, bookingId: booking.id })
+		href: backLink
 	}) }}
 {% endblock %}
 
@@ -24,6 +24,8 @@
       <form action="{{ paths.bookings.dateChanges.create({ premisesId: premisesId, bookingId: booking.id }) }}" method="post">
 
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+        <input type="hidden" name="backLink" value="{{ backLink }}"/>
+
         <h1>{{ pageHeading }}</h1>
 
         {{ govukSummaryList({

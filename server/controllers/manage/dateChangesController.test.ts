@@ -16,6 +16,7 @@ jest.mock('../../utils/validation')
 
 describe('dateChangesController', () => {
   const token = 'SOME_TOKEN'
+  const backLink = 'http://localhost/some-path'
 
   let request: DeepMocked<Request>
   const response: DeepMocked<Response> = createMock<Response>({})
@@ -23,7 +24,7 @@ describe('dateChangesController', () => {
 
   const premisesId = 'premisesId'
   const bookingId = 'bookingId'
-  const requestParams = { user: { token }, params: { premisesId, bookingId } }
+  const requestParams = { user: { token }, params: { premisesId, bookingId }, headers: { referer: backLink } }
 
   const booking = bookingFactory.build()
 
@@ -51,6 +52,7 @@ describe('dateChangesController', () => {
         premisesId,
         bookingId,
         booking,
+        backLink,
         pageHeading: 'Change placement date',
         errors: {},
         errorSummary: [],
@@ -72,6 +74,7 @@ describe('dateChangesController', () => {
         premisesId,
         bookingId,
         booking,
+        backLink,
         pageHeading: 'Change placement date',
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
@@ -135,6 +138,8 @@ describe('dateChangesController', () => {
 
       const requestHandler = controller.create()
 
+      body.backLink = backLink
+
       request = createMock<Request>({ ...requestParams, body })
 
       await requestHandler(request, response, next)
@@ -148,9 +153,7 @@ describe('dateChangesController', () => {
 
       expect(request.flash).toHaveBeenCalledWith('success', 'Booking changed successfully')
 
-      expect(response.redirect).toHaveBeenCalledWith(
-        paths.bookings.show({ premisesId: request.params.premisesId, bookingId: request.params.bookingId }),
-      )
+      expect(response.redirect).toHaveBeenCalledWith(backLink)
     })
 
     describe('errors', () => {
