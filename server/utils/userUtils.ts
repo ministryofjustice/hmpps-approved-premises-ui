@@ -41,7 +41,7 @@ export const sections = {
   match: {
     id: 'match',
     title: 'Review placement requests',
-    description: 'Review requests for placements that have been submitted for approved applications',
+    description: 'Review placements requests for applications that have been assessed as suitable',
     shortTitle: 'Placement requests',
     href: matchPaths.placementRequests.index({}),
   },

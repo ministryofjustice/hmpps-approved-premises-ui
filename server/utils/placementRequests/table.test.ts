@@ -80,9 +80,9 @@ describe('tableUtils', () => {
 
   describe('statusCell', () => {
     const statuses = {
-      notMatched: 'Not started',
+      notMatched: 'Not matched',
       unableToMatch: 'Unable to allocate',
-      matched: 'Booking allocated',
+      matched: 'Booking confirmed',
     } as Record<PlacementRequestStatus, string>
 
     it.each(Object.keys(statuses))('returns the correct status for %s', (key: PlacementRequestStatus) => {
