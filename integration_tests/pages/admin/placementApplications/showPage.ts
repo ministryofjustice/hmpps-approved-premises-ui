@@ -69,6 +69,10 @@ export default class ShowPage extends Page {
     this.buttonShouldNotExist('Cance placement')
   }
 
+  shouldShowParoleNotification() {
+    cy.get('.govuk-notification-banner').contains('This application is parole').should('exist')
+  }
+
   private buttonShouldExist(text: string) {
     cy.contains('.moj-button-menu__item', text).should('exist')
   }

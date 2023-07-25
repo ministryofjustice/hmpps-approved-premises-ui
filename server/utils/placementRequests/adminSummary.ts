@@ -27,7 +27,7 @@ export const adminSummary = (placementRequest: PlacementRequestDetail): SummaryL
       },
       {
         key: {
-          text: 'Arrival Date',
+          text: placementRequest.isParole ? 'Date of decision' : 'Arrival Date',
         },
         value: {
           text: DateFormats.isoDateToUIDate(dates.startDate),

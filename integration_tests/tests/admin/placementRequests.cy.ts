@@ -19,6 +19,7 @@ context('Placement Requests', () => {
     booking: undefined,
   })
   const placementRequestWithBooking = placementRequestDetailFactory.build({ ...placementRequests[1] })
+  const parolePlacementRequest = placementRequestDetailFactory.build({ ...parolePlacementRequests[0] })
 
   beforeEach(() => {
     cy.task('reset')
@@ -32,6 +33,7 @@ context('Placement Requests', () => {
     cy.task('stubPlacementRequestsDashboard', { placementRequests: parolePlacementRequests, isParole: true })
     cy.task('stubPlacementRequest', placementRequestWithoutBooking)
     cy.task('stubPlacementRequest', placementRequestWithBooking)
+    cy.task('stubPlacementRequest', parolePlacementRequest)
   })
 
   it('allows me to view a placement request', () => {
@@ -86,6 +88,21 @@ context('Placement Requests', () => {
 
     // And I should not see any booking information
     showPage.shouldShowBookingInformation()
+
+    // When I go back to the dashboard
+    ListPage.visit()
+
+    // And I click the parole link
+    listPage.clickParoleOption()
+
+    // And I click the parole placement request
+    listPage.clickPlacementRequest(parolePlacementRequest)
+
+    // Then I should be taken to the placement request page
+    showPage = Page.verifyOnPage(ShowPage, parolePlacementRequest)
+
+    // And I should see the parole notification banner
+    showPage.shouldShowParoleNotification()
   })
 
   it('allows me to create a booking', () => {

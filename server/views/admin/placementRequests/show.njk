@@ -1,6 +1,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% extends "../../partials/layout.njk" %}
 
@@ -18,6 +19,24 @@
     <div class="govuk-grid-row">
       <div class="govuk-width-container">
         <div class="govuk-grid-column-two-thirds">
+          {% if placementRequest.isParole %}
+            {% set html %}
+            <p class="govuk-notification-banner__heading">
+                This application is parole
+              </p>
+            <p class="govuk-body">
+                The person can be placed in an Approved Premises six weeks after the boards date of decision. The release date has been calculated as {{ formatDate(placementRequest.expectedArrival) }}.
+              </p>
+            <p class="govuk-body">
+                You can change the placement arrival date by using the ‘Amend dates’ screen. Contact the PP for further details on the release date.
+              </p>
+            {% endset %}
+
+            {{ govukNotificationBanner({
+              html: html
+            }) }}
+          {% endif %}
+
           <ul class="govuk-list govuk-!-padding-bottom-3">
             <li>
               <a href="{{paths.applications.show({id: placementRequest.applicationId})}}">View application</a>
