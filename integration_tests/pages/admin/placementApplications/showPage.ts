@@ -1,6 +1,6 @@
 import Page from '../../page'
 
-import { PlacementRequest, PlacementRequestDetail } from '../../../../server/@types/shared'
+import { ApprovedPremises, PlacementRequest, PlacementRequestDetail } from '../../../../server/@types/shared'
 import { adminSummary, matchingInformationSummary } from '../../../../server/utils/placementRequests'
 import { bookingSummaryList } from '../../../../server/utils/bookingUtils'
 
@@ -67,6 +67,20 @@ export default class ShowPage extends Page {
 
   shouldNotShowCancelBookingOption() {
     this.buttonShouldNotExist('Cance placement')
+  }
+
+  shouldShowParoleNotification() {
+    cy.get('.govuk-notification-banner').contains('This application is parole').should('exist')
+  }
+
+  shouldShowPreferredAps(premises: Array<ApprovedPremises>) {
+    const apList = premises.map(p => `<li>${p.name}</li>`)
+    this.shouldContainSummaryListItems([
+      {
+        key: { text: 'Preferred APs' },
+        value: { html: `<ol class="govuk-list govuk-list--number">${apList.join('')}</ol>` },
+      },
+    ])
   }
 
   private buttonShouldExist(text: string) {

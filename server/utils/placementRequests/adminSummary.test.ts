@@ -11,6 +11,7 @@ describe('adminSummary', () => {
     const placementRequest = placementRequestDetailFactory.build({
       expectedArrival: '2022-01-01',
       duration: 16,
+      isParole: false,
     })
 
     expect(adminSummary(placementRequest)).toEqual({
@@ -34,6 +35,61 @@ describe('adminSummary', () => {
         {
           key: {
             text: 'Arrival Date',
+          },
+          value: {
+            text: DateFormats.isoDateToUIDate('2022-01-01'),
+          },
+        },
+        {
+          key: {
+            text: 'Departure Date',
+          },
+          value: {
+            text: DateFormats.isoDateToUIDate('2022-01-17'),
+          },
+        },
+        {
+          key: {
+            text: 'Length of stay',
+          },
+          value: {
+            text: placementLength(16),
+          },
+        },
+        apTypeCell(placementRequest),
+        releaseTypeCell(placementRequest),
+      ],
+    })
+  })
+
+  it('should return a summary of a parole placement request', () => {
+    const placementRequest = placementRequestDetailFactory.build({
+      expectedArrival: '2022-01-01',
+      duration: 16,
+      isParole: true,
+    })
+
+    expect(adminSummary(placementRequest)).toEqual({
+      rows: [
+        {
+          key: {
+            text: 'CRN',
+          },
+          value: {
+            text: placementRequest.person.crn,
+          },
+        },
+        {
+          key: {
+            text: 'Tier',
+          },
+          value: {
+            text: placementRequest.risks.tier.value.level,
+          },
+        },
+        {
+          key: {
+            text: 'Date of decision',
           },
           value: {
             text: DateFormats.isoDateToUIDate('2022-01-01'),

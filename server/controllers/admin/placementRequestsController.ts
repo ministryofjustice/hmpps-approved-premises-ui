@@ -6,11 +6,13 @@ export default class PlacementRequestsController {
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const placementRequests = await this.placementRequestService.getDashboard(req.user.token)
+      const isParole = req.query.isParole === '1'
+      const placementRequests = await this.placementRequestService.getDashboard(req.user.token, isParole)
 
       res.render('admin/placementRequests/index', {
         pageHeading: 'Placement requests',
         placementRequests,
+        isParole,
       })
     }
   }

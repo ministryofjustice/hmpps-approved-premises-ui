@@ -38,8 +38,25 @@ describe('PlacementRequestsController', () => {
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
         pageHeading: 'Placement requests',
         placementRequests,
+        isParole: false,
       })
-      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token)
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, false)
+    })
+
+    it('should request parole placement requests', async () => {
+      const placementRequests = placementRequestFactory.buildList(2)
+      placementRequestService.getDashboard.mockResolvedValue(placementRequests)
+
+      const requestHandler = placementRequestsController.index()
+
+      await requestHandler({ ...request, query: { isParole: '1' } }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
+        pageHeading: 'Placement requests',
+        placementRequests,
+        isParole: true,
+      })
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true)
     })
   })
 

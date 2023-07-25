@@ -30,10 +30,10 @@ export default class PlacementRequestService {
     return results
   }
 
-  async getDashboard(token: string): Promise<Array<PlacementRequest>> {
+  async getDashboard(token: string, isParole: boolean): Promise<Array<PlacementRequest>> {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
-    return placementRequestClient.dashboard()
+    return placementRequestClient.dashboard(isParole)
   }
 
   async getPlacementRequest(token: string, id: string): Promise<PlacementRequestDetail> {

@@ -51,12 +51,12 @@ describe('placementRequestService', () => {
       const placementRequests = placementRequestFactory.buildList(4, { status: 'notMatched' })
       placementRequestClient.dashboard.mockResolvedValue(placementRequests)
 
-      const result = await service.getDashboard(token)
+      const result = await service.getDashboard(token, false)
 
       expect(result).toEqual(placementRequests)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
-      expect(placementRequestClient.dashboard).toHaveBeenCalled()
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(false)
     })
   })
 

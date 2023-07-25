@@ -2,6 +2,7 @@ import ListPage from '../../pages/admin/placementApplications/listPage'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
 
 import {
+  applicationFactory,
   cancellationFactory,
   placementRequestDetailFactory,
   placementRequestFactory,
@@ -10,14 +11,20 @@ import {
 import Page from '../../pages/page'
 import CreatePlacementPage from '../../pages/admin/placementApplications/createPlacementPage'
 import { CancellationCreatePage, NewDateChangePage } from '../../pages/manage'
+import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
+import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
 
 context('Placement Requests', () => {
   const placementRequests = placementRequestFactory.buildList(2)
+  const parolePlacementRequests = placementRequestFactory.buildList(2, { isParole: true })
   const placementRequestWithoutBooking = placementRequestDetailFactory.build({
     ...placementRequests[0],
     booking: undefined,
   })
   const placementRequestWithBooking = placementRequestDetailFactory.build({ ...placementRequests[1] })
+  const parolePlacementRequest = placementRequestDetailFactory.build({ ...parolePlacementRequests[0] })
+  const preferredAps = premisesFactory.buildList(3)
+  let application = applicationFactory.build()
 
   beforeEach(() => {
     cy.task('reset')
@@ -27,19 +34,39 @@ context('Placement Requests', () => {
     // Given I am logged in
     cy.signIn()
 
-    cy.task('stubPlacementRequestsDashboard', placementRequests)
+    application = addResponseToFormArtifact(application, {
+      section: 'location-factors',
+      page: 'preferred-aps',
+      key: 'selectedAps',
+      value: preferredAps,
+    }) as Application
+
+    placementRequestWithoutBooking.application = application
+
+    cy.task('stubPlacementRequestsDashboard', { placementRequests, isParole: false })
+    cy.task('stubPlacementRequestsDashboard', { placementRequests: parolePlacementRequests, isParole: true })
     cy.task('stubPlacementRequest', placementRequestWithoutBooking)
     cy.task('stubPlacementRequest', placementRequestWithBooking)
+    cy.task('stubPlacementRequest', parolePlacementRequest)
   })
 
   it('allows me to view a placement request', () => {
     // When I visit the tasks dashboard
-    const listPage = ListPage.visit(placementRequests)
+    const listPage = ListPage.visit()
 
     // Then I should see a list of placement requests
-    listPage.shouldShowPlacementRequests()
+    listPage.shouldShowPlacementRequests(placementRequests)
 
-    // When I choose a placement request
+    // When I click the parole link
+    listPage.clickParoleOption()
+
+    // Then I should see the parole requests listed
+    listPage.shouldShowPlacementRequests(parolePlacementRequests)
+
+    // When I click the non-parole link
+    listPage.clickNonParoleOption()
+
+    // And I choose a placement request
     listPage.clickPlacementRequest(placementRequestWithoutBooking)
 
     // Then I should be taken to the placement request page
@@ -48,6 +75,7 @@ context('Placement Requests', () => {
     // And I should see the information about the placement request
     showPage.shouldShowSummary()
     showPage.shouldShowMatchingInformationSummary()
+    showPage.shouldShowPreferredAps(preferredAps)
 
     // And I should not see any booking information
     showPage.shouldNotShowBookingInformation()
@@ -57,7 +85,7 @@ context('Placement Requests', () => {
     showPage.shouldNotShowCancelBookingOption()
 
     // When I go back to the dashboard
-    ListPage.visit(placementRequests)
+    ListPage.visit()
 
     // And I click the placement request with a booking
     listPage.clickPlacementRequest(placementRequestWithBooking)
@@ -75,6 +103,21 @@ context('Placement Requests', () => {
 
     // And I should not see any booking information
     showPage.shouldShowBookingInformation()
+
+    // When I go back to the dashboard
+    ListPage.visit()
+
+    // And I click the parole link
+    listPage.clickParoleOption()
+
+    // And I click the parole placement request
+    listPage.clickPlacementRequest(parolePlacementRequest)
+
+    // Then I should be taken to the placement request page
+    showPage = Page.verifyOnPage(ShowPage, parolePlacementRequest)
+
+    // And I should see the parole notification banner
+    showPage.shouldShowParoleNotification()
   })
 
   it('allows me to create a booking', () => {
@@ -83,7 +126,7 @@ context('Placement Requests', () => {
     cy.task('stubBookingFromPlacementRequest', placementRequestWithoutBooking)
 
     // When I visit the tasks dashboard
-    const listPage = ListPage.visit(placementRequests)
+    const listPage = ListPage.visit()
 
     // And I choose a placement request
     listPage.clickPlacementRequest(placementRequestWithoutBooking)
@@ -135,7 +178,7 @@ context('Placement Requests', () => {
     })
 
     // When I visit the tasks dashboard
-    const listPage = ListPage.visit(placementRequests)
+    const listPage = ListPage.visit()
 
     // And I choose a placement request
     listPage.clickPlacementRequest(placementRequestWithBooking)
@@ -187,7 +230,7 @@ context('Placement Requests', () => {
     cy.task('stubCancellationReferenceData')
 
     // When I visit the tasks dashboard
-    const listPage = ListPage.visit(placementRequests)
+    const listPage = ListPage.visit()
 
     // And I choose a placement request
     listPage.clickPlacementRequest(placementRequestWithBooking)

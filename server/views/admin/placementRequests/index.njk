@@ -1,5 +1,6 @@
 {% extends "../../partials/layout.njk" %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
@@ -11,6 +12,24 @@
 
       <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
       {% include "../../_messages.njk" %}
+
+      {{
+        mojSubNavigation({
+          label: 'Sub navigation',
+          items: [
+            {
+              text: 'Confirmed release date',
+              href: paths.admin.placementRequests.index({}),
+              active: (isParole === false)
+            },
+            {
+              text: 'Parole',
+              href: paths.admin.placementRequests.index({}) + "?isParole=1",
+              active: (isParole === true)
+            }
+        ]
+        })
+      }}
 
       {{
               govukTable({
@@ -26,7 +45,7 @@
                           text: "CRN"
                       },
                       {
-                          text: "Arrival Date",
+                          text: ("Date of decision" if isParole else "Arrival date"),
                           attributes: {
                             "aria-sort": "none"
                           }

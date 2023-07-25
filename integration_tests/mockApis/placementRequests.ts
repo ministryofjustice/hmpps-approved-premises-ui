@@ -21,18 +21,21 @@ export default {
       },
     }),
 
-  stubPlacementRequestsDashboard: (placementRequests: Array<PlacementRequest>): SuperAgentRequest =>
+  stubPlacementRequestsDashboard: (args: {
+    placementRequests: Array<PlacementRequest>
+    isParole: boolean
+  }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        urlPattern: paths.placementRequests.dashboard.pattern,
+        url: `${paths.placementRequests.dashboard.pattern}?isParole=${args.isParole}`,
       },
       response: {
         status: 200,
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        jsonBody: placementRequests,
+        jsonBody: args.placementRequests,
       },
     }),
   stubPlacementRequest: (placementRequestDetail: PlacementRequestDetail): SuperAgentRequest =>

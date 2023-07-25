@@ -6,20 +6,28 @@ import { shouldShowTableRows } from '../../../helpers'
 import { dashboardTableRows } from '../../../../server/utils/placementRequests/table'
 
 export default class ListPage extends Page {
-  constructor(private readonly placementRequests: Array<PlacementRequest>) {
+  constructor() {
     super('Placement requests')
   }
 
-  static visit(placementRequests: Array<PlacementRequest>): ListPage {
+  static visit(): ListPage {
     cy.visit(paths.admin.placementRequests.index({}))
-    return new ListPage(placementRequests)
+    return new ListPage()
   }
 
-  shouldShowPlacementRequests(): void {
-    shouldShowTableRows(this.placementRequests, dashboardTableRows)
+  shouldShowPlacementRequests(placementRequests: Array<PlacementRequest>): void {
+    shouldShowTableRows(placementRequests, dashboardTableRows)
   }
 
   clickPlacementRequest(placementRequest: PlacementRequest): void {
     cy.get(`[data-cy-placementRequestId="${placementRequest.id}"]`).click()
+  }
+
+  clickParoleOption(): void {
+    cy.get('a.moj-sub-navigation__link').contains('Parole').click()
+  }
+
+  clickNonParoleOption(): void {
+    cy.get('a.moj-sub-navigation__link').contains('Confirmed release date').click()
   }
 }
