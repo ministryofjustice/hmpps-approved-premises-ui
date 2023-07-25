@@ -1,13 +1,13 @@
 import { addDays, weeksToDays } from 'date-fns'
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { ApprovedPremisesApplication } from '@approved-premises/api'
-import { SessionDataError } from '../../../utils/errors'
 import { DateFormats } from '../../../utils/dateUtils'
 import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
 import { sentenceCase } from '../../../utils/utils'
 import { getDefaultPlacementDurationInDays } from '../../../utils/applications/getDefaultPlacementDurationInDays'
+import { arrivalDateFromApplication } from '../../../utils/applications/arrivalDateFromApplication'
 
 type PlacementDurationBody = {
   differentDuration: YesOrNo
@@ -24,9 +24,9 @@ type PlacementDurationBody = {
 export default class PlacementDuration implements TasklistPage {
   title = 'Placement duration and move on'
 
-  arrivalDate: Date = this.fetchArrivalDate()
+  arrivalDate: string | undefined
 
-  departureDate: Date = this.fetchDepartureDate()
+  departureDate: string | undefined
 
   questions = {
     differentDuration: 'Does this application require a different placement duration?',
@@ -39,6 +39,7 @@ export default class PlacementDuration implements TasklistPage {
     private readonly application: ApprovedPremisesApplication,
   ) {
     this.body.duration = this.lengthInDays()
+    this.initializeDates()
   }
 
   previous() {
@@ -96,33 +97,17 @@ export default class PlacementDuration implements TasklistPage {
     return undefined
   }
 
-  private fetchArrivalDate(): Date | undefined {
-    try {
-      const basicInformation = this.application.data['basic-information']
+  private initializeDates(): void {
+    const arrivalDateIso = arrivalDateFromApplication(this.application)
 
-      if (!basicInformation) throw new SessionDataError('No basic information')
+    if (arrivalDateIso) {
+      const standardPlacementDuration = getDefaultPlacementDurationInDays(this.application)
 
-      const placementDate = basicInformation['placement-date']
+      const arrivalDate = DateFormats.isoToDateObj(arrivalDateIso)
+      const departureDate = addDays(arrivalDate, standardPlacementDuration)
 
-      if (!placementDate) return undefined
-
-      if (placementDate && placementDate.startDateSameAsReleaseDate === 'yes') {
-        const releaseDate = basicInformation['release-date']
-
-        if (!releaseDate || !releaseDate?.releaseDate) return undefined
-
-        return DateFormats.isoToDateObj(releaseDate.releaseDate)
-      }
-
-      return placementDate?.startDate ? DateFormats.isoToDateObj(placementDate.startDate) : undefined
-    } catch (e) {
-      throw new SessionDataError(`Move on information placement duration error: ${e}`)
+      this.arrivalDate = DateFormats.dateObjtoUIDate(arrivalDate)
+      this.departureDate = DateFormats.dateObjtoUIDate(departureDate)
     }
-  }
-
-  private fetchDepartureDate(): Date | undefined {
-    const standardPlacementDuration = getDefaultPlacementDurationInDays(this.application)
-
-    return this.arrivalDate ? addDays(this.arrivalDate, standardPlacementDuration) : undefined
   }
 }

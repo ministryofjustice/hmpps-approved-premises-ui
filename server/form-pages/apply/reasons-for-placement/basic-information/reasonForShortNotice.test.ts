@@ -16,7 +16,7 @@ describe('ReasonForShortNotice', () => {
 
     expect(page.title).toEqual('Emergency application')
     expect(page.question).toEqual(
-      'What is the reason for submitting this application less than 7 days before the AP is needed?',
+      'What is the reason for submitting this application less than 28 days before the AP is needed?',
     )
   })
 

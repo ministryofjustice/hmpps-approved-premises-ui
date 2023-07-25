@@ -11,11 +11,13 @@
 
     <p class="govuk-body">
       <strong>Arrival date:</strong>
-      {{uiDateOrDateEmptyMessage(page,'arrivalDate', dateObjToUIDate)}}</p>
+      {{ page.arrivalDate }}
+    </p>
 
     <p class="govuk-body">
       <strong>Departure date:</strong>
-      {{uiDateOrDateEmptyMessage(page,'departureDate', dateObjToUIDate)}}</p>
+      {{ page.departureDate }}
+    </p>
   {% endif %}
 
   {{ govukDetails({
