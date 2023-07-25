@@ -30,6 +30,7 @@ export default Factory.define<PlacementRequest>(() => {
     applicationDate: DateFormats.dateObjToIsoDateTime(faker.date.soon()),
     assessmentDate: DateFormats.dateObjToIsoDateTime(faker.date.soon()),
     assessor: userFactory.build(),
+    isParole: false,
   }
 })
 
