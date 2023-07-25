@@ -1,17 +1,15 @@
-import { addDays } from 'date-fns'
 import { ApprovedPremisesApplication } from '@approved-premises/api'
-import { DateFormats } from '../../../utils/dateUtils'
 import { getDefaultPlacementDurationInDays } from '../../../utils/applications/getDefaultPlacementDurationInDays'
-import { SessionDataError } from '../../../utils/errors'
 
 import PlacementDuration from './placementDuration'
 import { applicationFactory } from '../../../testutils/factories'
 import { addResponsesToFormArtifact } from '../../../testutils/addToApplication'
+import { arrivalDateFromApplication } from '../../../utils/applications/arrivalDateFromApplication'
 
 jest.mock('../../../utils/applications/getDefaultPlacementDurationInDays')
+jest.mock('../../../utils/applications/arrivalDateFromApplication')
 
 describe('PlacementDuration', () => {
-  let data: Record<string, unknown>
   let application: ApprovedPremisesApplication
 
   beforeEach(() => {
@@ -48,101 +46,24 @@ describe('PlacementDuration', () => {
     })
   })
 
-  describe('arrivalDate', () => {
-    it('returns the placement date if the start date is not the same as the release date', () => {
-      data = {
-        'basic-information': {
-          'placement-date': {
-            startDateSameAsReleaseDate: 'no',
-            startDate: '2022-11-11',
-          },
-        },
-      }
-      application = applicationFactory.build({ data })
+  describe('initializeDates', () => {
+    it('sets the dates based on arrivalDateFromApplication', () => {
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-11-11')
+      ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValue(30)
 
       const page = new PlacementDuration({}, application)
 
-      expect(page.arrivalDate).toEqual(new Date(2022, 10, 11))
+      expect(page.arrivalDate).toEqual('Friday 11 November 2022')
+      expect(page.departureDate).toEqual('Sunday 11 December 2022')
     })
 
-    it('returns the release date if the start date is the same as the release date', () => {
-      data = {
-        'basic-information': {
-          'placement-date': {
-            startDateSameAsReleaseDate: 'yes',
-          },
-          'release-date': {
-            releaseDate: '2022-12-11',
-          },
-        },
-      }
-      application = applicationFactory.build({ data })
-
-      const page = new PlacementDuration({}, application)
-
-      expect(page.arrivalDate).toEqual(new Date(2022, 11, 11))
-    })
-
-    it('returns undefined if the release date is undefined', () => {
-      data = {
-        'basic-information': {
-          'placement-date': {
-            startDateSameAsReleaseDate: 'yes',
-          },
-          'release-date': {
-            releaseDate: undefined,
-          },
-        },
-      }
-      application = applicationFactory.build({ data })
+    it('sets the dates to undefined if the dates are not specified', () => {
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(undefined)
 
       const page = new PlacementDuration({}, application)
 
       expect(page.arrivalDate).toEqual(undefined)
-    })
-
-    it('throws an error if the "basic-information" object is not present', () => {
-      application = applicationFactory.build({ data: {} })
-
-      expect(() => new PlacementDuration({}, application)).toThrow(
-        new SessionDataError('Move on information placement duration error: Error: No basic information'),
-      )
-    })
-
-    it('returns undefined if the "placement-date" object is not present', () => {
-      application = applicationFactory.build({ data: { 'basic-information': {} } })
-
-      const page = new PlacementDuration({}, application)
-
-      expect(page.arrivalDate).toBeUndefined()
-    })
-
-    it('returns null if the start date is the same as the release date and the "release-date" object is not present', () => {
-      application = applicationFactory.build({
-        data: {
-          'basic-information': {
-            'placement-date': {
-              startDateSameAsReleaseDate: 'yes',
-            },
-          },
-        },
-      })
-
-      const page = new PlacementDuration({}, application)
-
-      expect(page.arrivalDate).toBeUndefined()
-    })
-  })
-
-  describe('departureDate', () => {
-    const releaseDate = new Date(2023, 1, 1)
-
-    it('returns the arrival date plus the default placement duration', () => {
-      ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValueOnce(12)
-
-      application = applicationFactory.withReleaseDate(DateFormats.dateObjToIsoDate(releaseDate)).build()
-
-      expect(new PlacementDuration({}, application).departureDate).toEqual(addDays(releaseDate, 12))
+      expect(page.departureDate).toEqual(undefined)
     })
   })
 
