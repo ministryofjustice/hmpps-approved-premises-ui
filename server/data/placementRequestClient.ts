@@ -9,6 +9,7 @@ import {
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
+import { createQueryString } from '../utils/utils'
 
 export default class PlacementRequestClient {
   restClient: RestClient
@@ -23,10 +24,11 @@ export default class PlacementRequestClient {
     >
   }
 
-  async dashboard(): Promise<Array<PlacementRequest>> {
-    return (await this.restClient.get({ path: paths.placementRequests.dashboard.pattern })) as Promise<
-      Array<PlacementRequest>
-    >
+  async dashboard(isParole: boolean): Promise<Array<PlacementRequest>> {
+    return (await this.restClient.get({
+      path: paths.placementRequests.dashboard.pattern,
+      query: createQueryString({ isParole }),
+    })) as Promise<Array<PlacementRequest>>
   }
 
   async find(id: string): Promise<PlacementRequestDetail> {

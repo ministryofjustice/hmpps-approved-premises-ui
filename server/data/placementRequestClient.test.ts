@@ -46,15 +46,16 @@ describeClient('placementRequestClient', provider => {
   })
 
   describe('dashboard', () => {
-    it('makes a get request to the placementRequests dashboard endpoint', async () => {
-      const placementRequests = placementRequestFactory.buildList(2)
+    const placementRequests = placementRequestFactory.buildList(2)
 
+    it('makes a get request to the placementRequests dashboard endpoint for parole requests', async () => {
       provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the placement requests dashboard view',
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
+          query: { isParole: 'true' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -65,7 +66,30 @@ describeClient('placementRequestClient', provider => {
         },
       })
 
-      const result = await placementRequestClient.dashboard()
+      const result = await placementRequestClient.dashboard(true)
+
+      expect(result).toEqual(placementRequests)
+    })
+
+    it('makes a get request to the placementRequests dashboard endpoint for non-parole requests', async () => {
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the placement requests dashboard view',
+        withRequest: {
+          method: 'GET',
+          path: paths.placementRequests.dashboard.pattern,
+          query: { isParole: 'false' },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placementRequests,
+        },
+      })
+
+      const result = await placementRequestClient.dashboard(false)
 
       expect(result).toEqual(placementRequests)
     })
