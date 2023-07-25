@@ -2,6 +2,7 @@ import ListPage from '../../pages/admin/placementApplications/listPage'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
 
 import {
+  applicationFactory,
   cancellationFactory,
   placementRequestDetailFactory,
   placementRequestFactory,
@@ -10,6 +11,8 @@ import {
 import Page from '../../pages/page'
 import CreatePlacementPage from '../../pages/admin/placementApplications/createPlacementPage'
 import { CancellationCreatePage, NewDateChangePage } from '../../pages/manage'
+import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
+import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
 
 context('Placement Requests', () => {
   const placementRequests = placementRequestFactory.buildList(2)
@@ -20,6 +23,8 @@ context('Placement Requests', () => {
   })
   const placementRequestWithBooking = placementRequestDetailFactory.build({ ...placementRequests[1] })
   const parolePlacementRequest = placementRequestDetailFactory.build({ ...parolePlacementRequests[0] })
+  const preferredAps = premisesFactory.buildList(3)
+  let application = applicationFactory.build()
 
   beforeEach(() => {
     cy.task('reset')
@@ -28,6 +33,15 @@ context('Placement Requests', () => {
 
     // Given I am logged in
     cy.signIn()
+
+    application = addResponseToFormArtifact(application, {
+      section: 'location-factors',
+      page: 'preferred-aps',
+      key: 'selectedAps',
+      value: preferredAps,
+    }) as Application
+
+    placementRequestWithoutBooking.application = application
 
     cy.task('stubPlacementRequestsDashboard', { placementRequests, isParole: false })
     cy.task('stubPlacementRequestsDashboard', { placementRequests: parolePlacementRequests, isParole: true })
@@ -61,6 +75,7 @@ context('Placement Requests', () => {
     // And I should see the information about the placement request
     showPage.shouldShowSummary()
     showPage.shouldShowMatchingInformationSummary()
+    showPage.shouldShowPreferredAps(preferredAps)
 
     // And I should not see any booking information
     showPage.shouldNotShowBookingInformation()

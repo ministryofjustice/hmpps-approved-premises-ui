@@ -1,13 +1,20 @@
-import { PlacementRequest } from '@approved-premises/api'
+import { PlacementRequest, PlacementRequestDetail } from '@approved-premises/api'
 import { SummaryListItem, SummaryListWithCard } from '@approved-premises/ui'
 import { sentenceCase } from '../utils'
 import { mapSearchParamCharacteristicsForUi } from '../matchUtils'
+import { getPreferredApsFromApplication } from './getPreferredApsFromApplication'
 
-export const matchingInformationSummary = (placementRequest: PlacementRequest): SummaryListWithCard => {
-  const rows = [
-    placementRequirementsRow(placementRequest, 'essential'),
-    placementRequirementsRow(placementRequest, 'desirable'),
-  ]
+export const matchingInformationSummary = (placementRequest: PlacementRequestDetail): SummaryListWithCard => {
+  const rows = []
+
+  const preferredAps = preferredApsRow(placementRequest)
+
+  if (preferredAps) {
+    rows.push(preferredAps)
+  }
+
+  rows.push(placementRequirementsRow(placementRequest, 'essential'))
+  rows.push(placementRequirementsRow(placementRequest, 'desirable'))
 
   if (placementRequest.notes) {
     rows.push({
@@ -28,6 +35,20 @@ export const matchingInformationSummary = (placementRequest: PlacementRequest): 
     },
     rows,
   }
+}
+
+export const preferredApsRow = (placementRequest: PlacementRequestDetail): SummaryListItem | undefined => {
+  const premises = getPreferredApsFromApplication(placementRequest)
+
+  if (premises.length) {
+    const apList = premises.map(p => `<li>${p.name}</li>`)
+    return {
+      key: { text: 'Preferred APs' },
+      value: { html: `<ol class="govuk-list govuk-list--number">${apList.join('')}</ol>` },
+    }
+  }
+
+  return undefined
 }
 
 export const placementRequirementsRow = (
