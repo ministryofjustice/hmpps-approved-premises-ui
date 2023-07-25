@@ -13,6 +13,7 @@ import { CancellationCreatePage, NewDateChangePage } from '../../pages/manage'
 
 context('Placement Requests', () => {
   const placementRequests = placementRequestFactory.buildList(2)
+  const parolePlacementRequests = placementRequestFactory.buildList(2, { isParole: true })
   const placementRequestWithoutBooking = placementRequestDetailFactory.build({
     ...placementRequests[0],
     booking: undefined,
@@ -27,19 +28,29 @@ context('Placement Requests', () => {
     // Given I am logged in
     cy.signIn()
 
-    cy.task('stubPlacementRequestsDashboard', placementRequests)
+    cy.task('stubPlacementRequestsDashboard', { placementRequests, isParole: false })
+    cy.task('stubPlacementRequestsDashboard', { placementRequests: parolePlacementRequests, isParole: true })
     cy.task('stubPlacementRequest', placementRequestWithoutBooking)
     cy.task('stubPlacementRequest', placementRequestWithBooking)
   })
 
   it('allows me to view a placement request', () => {
     // When I visit the tasks dashboard
-    const listPage = ListPage.visit(placementRequests)
+    const listPage = ListPage.visit()
 
     // Then I should see a list of placement requests
-    listPage.shouldShowPlacementRequests()
+    listPage.shouldShowPlacementRequests(placementRequests)
 
-    // When I choose a placement request
+    // When I click the parole link
+    listPage.clickParoleOption()
+
+    // Then I should see the parole requests listed
+    listPage.shouldShowPlacementRequests(parolePlacementRequests)
+
+    // When I click the non-parole link
+    listPage.clickNonParoleOption()
+
+    // And I choose a placement request
     listPage.clickPlacementRequest(placementRequestWithoutBooking)
 
     // Then I should be taken to the placement request page
@@ -57,7 +68,7 @@ context('Placement Requests', () => {
     showPage.shouldNotShowCancelBookingOption()
 
     // When I go back to the dashboard
-    ListPage.visit(placementRequests)
+    ListPage.visit()
 
     // And I click the placement request with a booking
     listPage.clickPlacementRequest(placementRequestWithBooking)
@@ -83,7 +94,7 @@ context('Placement Requests', () => {
     cy.task('stubBookingFromPlacementRequest', placementRequestWithoutBooking)
 
     // When I visit the tasks dashboard
-    const listPage = ListPage.visit(placementRequests)
+    const listPage = ListPage.visit()
 
     // And I choose a placement request
     listPage.clickPlacementRequest(placementRequestWithoutBooking)
@@ -135,7 +146,7 @@ context('Placement Requests', () => {
     })
 
     // When I visit the tasks dashboard
-    const listPage = ListPage.visit(placementRequests)
+    const listPage = ListPage.visit()
 
     // And I choose a placement request
     listPage.clickPlacementRequest(placementRequestWithBooking)
@@ -187,7 +198,7 @@ context('Placement Requests', () => {
     cy.task('stubCancellationReferenceData')
 
     // When I visit the tasks dashboard
-    const listPage = ListPage.visit(placementRequests)
+    const listPage = ListPage.visit()
 
     // And I choose a placement request
     listPage.clickPlacementRequest(placementRequestWithBooking)
