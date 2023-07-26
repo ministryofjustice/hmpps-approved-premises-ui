@@ -4,7 +4,7 @@ import Page from '../../page'
 
 export default class CreatePlacementPage extends Page {
   constructor(private readonly placementRequest: PlacementRequestDetail) {
-    super('Create a placement')
+    super('Record an Approved Premises (AP) placement')
   }
 
   dateInputsShouldBePrepopulated(): void {

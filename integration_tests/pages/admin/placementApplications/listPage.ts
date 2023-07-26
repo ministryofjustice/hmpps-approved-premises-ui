@@ -7,7 +7,7 @@ import { dashboardTableRows } from '../../../../server/utils/placementRequests/t
 
 export default class ListPage extends Page {
   constructor() {
-    super('Placement requests')
+    super('Record and update placement details')
   }
 
   static visit(): ListPage {

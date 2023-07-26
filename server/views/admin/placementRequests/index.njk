@@ -9,9 +9,13 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
+      {% include "../../_messages.njk" %}
 
       <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-      {% include "../../_messages.njk" %}
+
+      <p class="govuk-body">
+        All applications that have been assessed as suitable and require matching to an AP are listed below
+      </p>
 
       {{
         mojSubNavigation({

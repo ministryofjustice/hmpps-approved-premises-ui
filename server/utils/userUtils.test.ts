@@ -35,10 +35,10 @@ describe('userUtils', () => {
       expect(sectionsForUser(user)).toEqual([sections.apply, sections.manage])
     })
 
-    it('should return Apply and Workflow sections for a user with a workflow manager role', () => {
+    it('should return Apply, Workflow and Placement Request sections for a user with a workflow manager role', () => {
       const user = userDetailsFactory.build({ roles: ['workflow_manager'] })
 
-      expect(sectionsForUser(user)).toEqual([sections.apply, sections.workflow])
+      expect(sectionsForUser(user)).toEqual([sections.apply, sections.workflow, sections.placementRequests])
     })
 
     it('should return Apply and Match sections for a user with a matcher role', () => {
@@ -50,7 +50,7 @@ describe('userUtils', () => {
     it('should return all sections for a user with all roles', () => {
       const user = userDetailsFactory.build({ roles: ['assessor', 'manager', 'matcher', 'workflow_manager'] })
 
-      expect(sectionsForUser(user)).toEqual(Object.values(sections))
+      expect(sectionsForUser(user)).toEqual(expect.arrayContaining(Object.values(sections)))
     })
   })
 })

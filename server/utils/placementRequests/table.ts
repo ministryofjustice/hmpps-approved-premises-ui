@@ -39,9 +39,9 @@ export const dashboardTableRows = (placementRequests: Array<PlacementRequest>): 
 export const statusCell = (placementRequest: PlacementRequest): TableCell => {
   return {
     text: {
-      notMatched: 'Not started',
+      notMatched: 'Not matched',
       unableToMatch: 'Unable to allocate',
-      matched: 'Booking allocated',
+      matched: 'Booking confirmed',
     }[placementRequest.status],
   }
 }

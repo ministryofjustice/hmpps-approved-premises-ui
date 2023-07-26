@@ -5,7 +5,7 @@
 {% from "./_table.njk" import placementRequestTable %}
 {% from "./_table.njk" import placementApplicationTable %}
 
-{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set pageTitle = applicationName + " - Placement Applications"  %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
 
 {% block content %}
@@ -13,10 +13,12 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
 
-            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            <h1 class="govuk-heading-l">Placement Applications</h1>
             {% include "../../_messages.njk" %}
 
-            {{ govukTabs({
+            {{ placementApplicationTable("Placement Applications", PlacementApplicationUtils.tableUtils.tableRows(tasks.placementApplications)) }}
+
+            {# {{ govukTabs({
                 items: [
                     {
                         label: "Active cases",
@@ -47,7 +49,7 @@
                         }
                     }
                 ]
-            }) }}
+            }) }} #}
 
         </div>
     </div>

@@ -57,7 +57,7 @@
           }}
 
           {% if placementRequest.booking %}
-            <h2 class="govuk-heading-m">Matched Placement</h2>
+            <h2 class="govuk-heading-m">Booked Placement</h2>
             {{
               govukSummaryList(BookingUtils.bookingSummaryList(placementRequest.booking))
             }}

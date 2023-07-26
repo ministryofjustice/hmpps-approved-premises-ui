@@ -10,7 +10,7 @@ export default class PlacementRequestsController {
       const placementRequests = await this.placementRequestService.getDashboard(req.user.token, isParole)
 
       res.render('admin/placementRequests/index', {
-        pageHeading: 'Placement requests',
+        pageHeading: 'Record and update placement details',
         placementRequests,
         isParole,
       })

@@ -50,7 +50,7 @@ describe('PlacementRequestsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/bookings/new', {
-        pageHeading: 'Create a placement',
+        pageHeading: 'Record an Approved Premises (AP) placement',
         premises,
         placementRequest,
         errors: {},
@@ -73,7 +73,7 @@ describe('PlacementRequestsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/bookings/new', {
-        pageHeading: 'Create a placement',
+        pageHeading: 'Record an Approved Premises (AP) placement',
         premises,
         placementRequest,
         errors: errorsAndUserInput.errors,

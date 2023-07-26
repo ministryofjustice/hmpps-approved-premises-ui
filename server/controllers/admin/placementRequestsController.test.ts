@@ -36,7 +36,7 @@ describe('PlacementRequestsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
-        pageHeading: 'Placement requests',
+        pageHeading: 'Record and update placement details',
         placementRequests,
         isParole: false,
       })
@@ -52,7 +52,7 @@ describe('PlacementRequestsController', () => {
       await requestHandler({ ...request, query: { isParole: '1' } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
-        pageHeading: 'Placement requests',
+        pageHeading: 'Record and update placement details',
         placementRequests,
         isParole: true,
       })

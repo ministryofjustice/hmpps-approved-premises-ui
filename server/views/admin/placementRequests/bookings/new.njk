@@ -29,6 +29,10 @@
           {{ pageHeading }}
         </h1>
 
+        <p class="govuk-body">
+          Provide details for an AP placement that has been confirmed by the receiving AP
+        </p>
+
         {{ showErrorSummary(errorSummary) }}
 
         {{
@@ -51,7 +55,7 @@
               fieldset: {
                 legend: {
                   classes: "govuk-fieldset__legend--m",
-                  text: "What is the expected arrival date?"
+                  text: "What is the arrival date?"
                 }
               },
               items: dateFieldValues('arrivalDate', errors)
@@ -67,7 +71,7 @@
               fieldset: {
                 legend: {
                   classes: "govuk-fieldset__legend--m",
-                  text: "What is the expected departure date?"
+                  text: "What is the departure date?"
                 }
               },
               items: dateFieldValues('departureDate', errors)

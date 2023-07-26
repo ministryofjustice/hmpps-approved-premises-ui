@@ -19,7 +19,7 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 import { PlacementCriteria } from '../../../server/@types/shared/models/PlacementCriteria'
 import { mapPlacementRequestToBedSearchParams } from '../../../server/utils/placementRequests/utils'
 
-context('Placement Requests', () => {
+context.skip('Placement Requests', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')

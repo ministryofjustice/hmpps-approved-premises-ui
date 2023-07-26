@@ -34,7 +34,7 @@ export default class DateChangeController {
         bookingId,
         booking,
         backLink,
-        pageHeading: 'Change placement date',
+        pageHeading: 'Update placement dates',
         errors,
         errorSummary,
         ...userInput,

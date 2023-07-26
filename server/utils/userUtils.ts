@@ -6,6 +6,7 @@ import applyPaths from '../paths/apply'
 import managePaths from '../paths/manage'
 import taskPaths from '../paths/tasks'
 import matchPaths from '../paths/match'
+import adminPaths from '../paths/admin'
 
 export const sections = {
   apply: {
@@ -39,10 +40,17 @@ export const sections = {
   },
   match: {
     id: 'match',
-    title: 'Match people to Approved Premises placements',
-    description: "Allocate cases to suitable Approved Premises based on a person's needs.",
-    shortTitle: 'Match',
+    title: 'Review placement requests',
+    description: 'Review placements requests for applications that have been assessed as suitable',
+    shortTitle: 'Placement requests',
     href: matchPaths.placementRequests.index({}),
+  },
+  placementRequests: {
+    id: 'placementRequests',
+    title: 'Record and update placement details',
+    description: ' View applications that require matching. Record and update details of Approved Premises placements.',
+    shortTitle: 'Placement details',
+    href: adminPaths.admin.placementRequests.index({}),
   },
 }
 
@@ -63,6 +71,7 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
 
   if (hasRole(user, 'workflow_manager')) {
     items.push(sections.workflow)
+    items.push(sections.placementRequests)
   }
 
   if (hasRole(user, 'matcher')) {
