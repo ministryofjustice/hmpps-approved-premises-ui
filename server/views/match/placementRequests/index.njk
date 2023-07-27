@@ -16,6 +16,10 @@
             <h1 class="govuk-heading-l">Placement Applications</h1>
             {% include "../../_messages.njk" %}
 
+            <p class="govuk-body">
+                All additional placements applications that have been assessed as suitable, require matching to an AP, and that have been allocated to you are listed below
+            </p>
+
             {{ placementApplicationTable("Placement Applications", PlacementApplicationUtils.tableUtils.tableRows(tasks.placementApplications)) }}
 
             {# {{ govukTabs({
