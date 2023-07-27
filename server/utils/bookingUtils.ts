@@ -88,6 +88,9 @@ export const bookingsToTableRows = (
       text: DateFormats.isoDateToUIDate(type === 'arrival' ? booking.arrivalDate : booking.departureDate),
     },
     {
+      text: booking.bed?.name || 'Not allocated',
+    },
+    {
       html: manageBookingLink(premisesId, booking),
     },
   ])
