@@ -70,7 +70,7 @@ export default class ShowPage extends Page {
   }
 
   shouldShowParoleNotification() {
-    cy.get('.govuk-notification-banner').contains('This application is parole').should('exist')
+    cy.get('.govuk-notification-banner').contains('Parole board directed release').should('exist')
   }
 
   shouldShowPreferredAps(premises: Array<ApprovedPremises>) {
