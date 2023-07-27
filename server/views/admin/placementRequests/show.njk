@@ -22,14 +22,18 @@
           {% if placementRequest.isParole %}
             {% set html %}
             <p class="govuk-notification-banner__heading">
-                This application is parole
+                Parole board directed release
               </p>
             <p class="govuk-body">
-                The person can be placed in an Approved Premises six weeks after the boards date of decision. The release date has been calculated as {{ formatDate(placementRequest.expectedArrival) }}.
+                The person's arrival date has been calculated as {{ formatDate(placementRequest.expectedArrival) }}. 
+                This is 6 weeks after the parole board's date of decision.
               </p>
-            <p class="govuk-body">
-                You can change the placement arrival date by using the ‘Amend dates’ screen. Contact the PP for further details on the release date.
+            {% if placementRequest.booking %}
+              <p class="govuk-body">
+                If needed, you can <a href="{{paths.bookings.dateChanges.new({ premisesId: placementRequest.booking.premisesId, bookingId: placementRequest.booking.id })}}">change the arrival date</a> in the Approved Premises service.
               </p>
+            {% endif %}
+
             {% endset %}
 
             {{ govukNotificationBanner({
