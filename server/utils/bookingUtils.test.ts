@@ -40,11 +40,15 @@ describe('bookingUtils', () => {
         person: personFactory.build({ crn: 'ABC123' }),
         arrivalDate: '2022-01-01',
         departureDate: '2022-03-01',
+        bed: undefined,
       }),
       bookingFactory.build({
         person: personFactory.build({ crn: 'XYZ345' }),
         arrivalDate: '2022-01-02',
         departureDate: '2022-03-02',
+        bed: {
+          name: 'Bed 1',
+        },
       }),
     ]
 
@@ -61,6 +65,9 @@ describe('bookingUtils', () => {
             text: DateFormats.isoDateToUIDate(bookings[0].arrivalDate),
           },
           {
+            text: 'Not allocated',
+          },
+          {
             html: manageBookingLink(premisesId, bookings[0]),
           },
         ],
@@ -73,6 +80,9 @@ describe('bookingUtils', () => {
           },
           {
             text: DateFormats.isoDateToUIDate(bookings[1].arrivalDate),
+          },
+          {
+            text: 'Bed 1',
           },
           {
             html: manageBookingLink(premisesId, bookings[1]),
@@ -94,6 +104,9 @@ describe('bookingUtils', () => {
             text: DateFormats.isoDateToUIDate(bookings[0].departureDate),
           },
           {
+            text: 'Not allocated',
+          },
+          {
             html: manageBookingLink(premisesId, bookings[0]),
           },
         ],
@@ -104,8 +117,12 @@ describe('bookingUtils', () => {
           {
             text: bookings[1].person.crn,
           },
+
           {
             text: DateFormats.isoDateToUIDate(bookings[1].departureDate),
+          },
+          {
+            text: 'Bed 1',
           },
           {
             html: manageBookingLink(premisesId, bookings[1]),
