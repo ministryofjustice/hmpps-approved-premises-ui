@@ -1,5 +1,5 @@
 import { fullPersonFactory, restrictedPersonFactory } from '../testutils/factories/person'
-import { isApplicableTier, isFullPerson, statusTag, tierBadge } from './personUtils'
+import { isApplicableTier, isFullPerson, nameOrPlaceholderCopy, statusTag, tierBadge } from './personUtils'
 
 describe('personUtils', () => {
   describe('statusTag', () => {
@@ -57,6 +57,16 @@ describe('personUtils', () => {
 
     it('returns false if the person is a restricted person', () => {
       expect(isFullPerson(restrictedPersonFactory.build())).toEqual(false)
+    })
+  })
+
+  describe('nameOrPlaceholderCopy', () => {
+    it('returns "the person" if passed a restrictedPerson', () => {
+      expect(nameOrPlaceholderCopy(restrictedPersonFactory.build())).toEqual('the person')
+    })
+    it('returns the persons name if passed a fullPerson', () => {
+      const person = fullPersonFactory.build()
+      expect(nameOrPlaceholderCopy(person)).toEqual(person.name)
     })
   })
 })
