@@ -5,6 +5,7 @@ import type {
   ApprovedPremisesApplication,
   ApprovedPremisesAssessment as Assessment,
   Document,
+  NewWithdrawal,
 } from '@approved-premises/api'
 
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
@@ -128,9 +129,9 @@ export default class ApplicationService {
     return assessment
   }
 
-  async withdraw(token: string, applicationId: string) {
+  async withdraw(token: string, applicationId: string, body: NewWithdrawal) {
     const client = this.applicationClientFactory(token)
 
-    await client.withdrawal(applicationId)
+    await client.withdrawal(applicationId, body)
   }
 }

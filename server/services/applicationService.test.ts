@@ -6,6 +6,7 @@ import type {
   ApprovedPremisesApplicationSummary,
   SubmitApprovedPremisesApplication,
   UpdateApprovedPremisesApplication,
+  WithdrawalReason,
 } from '@approved-premises/api'
 
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
@@ -376,11 +377,15 @@ describe('ApplicationService', () => {
     it('it calls the client with the ID and token', async () => {
       const token = 'some-token'
       const id = 'some-uuid'
+      const body = {
+        reason: 'alternative_identified_placement_no_longer_required' as WithdrawalReason,
+        otherReason: 'Some other reason',
+      }
 
-      await service.withdraw(token, id)
+      await service.withdraw(token, id, body)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.withdrawal).toHaveBeenCalledWith(id)
+      expect(applicationClient.withdrawal).toHaveBeenCalledWith(id, body)
     })
   })
 })
