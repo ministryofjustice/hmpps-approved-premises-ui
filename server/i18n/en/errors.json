@@ -36,6 +36,9 @@
   "reason": {
     "empty": "You must choose a valid reason"
   },
+  "otherReason": {
+    "empty": "You must enter the other reason"
+  },
   "departureDate": {
     "empty": "You must enter a departure date",
     "invalid": "The departure date is an invalid date",

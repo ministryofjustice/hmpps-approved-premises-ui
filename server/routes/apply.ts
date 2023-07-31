@@ -12,8 +12,14 @@ import actions from './utils'
 export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
   const { pages } = Apply
   const { get, post, put } = actions(router, services.auditService)
-  const { applicationsController, pagesController, peopleController, offencesController, documentsController } =
-    controllers
+  const {
+    applicationsController,
+    pagesController,
+    peopleController,
+    offencesController,
+    documentsController,
+    withdrawalsController,
+  } = controllers
 
   get(paths.applications.start.pattern, applicationsController.start(), { auditEvent: 'START_APPLICATION' })
   get(paths.applications.index.pattern, applicationsController.index(), { auditEvent: 'LIST_APPLICATIONS' })
@@ -32,10 +38,10 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'SELECT_OFFENCE',
   })
   get(paths.applications.people.documents.pattern, documentsController.show(), { auditEvent: 'SHOW_DOCUMENTS' })
-  get(paths.applications.withdraw.confirm.pattern, applicationsController.confirmWithdrawal(), {
-    auditEvent: 'VIEW_CONFIRM_WITHDRAWAL_SCREEN',
+  get(paths.applications.withdraw.new.pattern, withdrawalsController.new(), {
+    auditEvent: 'NEW_WITHDRAWL',
   })
-  post(paths.applications.withdraw.create.pattern, applicationsController.withdraw(), {
+  post(paths.applications.withdraw.create.pattern, withdrawalsController.create(), {
     auditEvent: 'WITHDRAW_APPLICATION',
   })
 

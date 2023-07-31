@@ -439,7 +439,7 @@ describe('utils', () => {
     it('returns a link to withdraw the application if the application doesnt have a submittedAt property', () => {
       const applicationSummary = applicationSummaryFactory.build({ submittedAt: undefined })
       expect(createWithdrawElement('1', applicationSummary)).toEqual({
-        html: '<a href=/applications/1/confirmWithdrawal>Withdraw</a>',
+        html: '<a href="/applications/1/withdrawals/new">Withdraw</a>',
       })
     })
 
