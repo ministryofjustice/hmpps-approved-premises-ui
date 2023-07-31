@@ -29,6 +29,7 @@ describeClient('AssessmentClient', provider => {
           path: paths.assessments.index.pattern,
           headers: {
             authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
