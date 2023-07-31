@@ -121,6 +121,13 @@ export default {
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       },
     }),
+  verifyApplicationWithdrawn: async (args: { applicationId: string }) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.applications.withdrawal({ id: args.applicationId }),
+      })
+    ).body.requests,
   verifyApplicationCreate: async () =>
     (
       await getMatchingRequests({

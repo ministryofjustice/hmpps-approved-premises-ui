@@ -1,0 +1,11 @@
+.govuk-radios {
+  &--withdrawal-reasons {
+    .govuk-radios__divider {
+      width: 100%;
+      font-weight: bold;
+      padding-top: govuk-spacing(2);
+      padding-bottom: govuk-spacing(2);
+      text-align: left;
+    }
+  }
+}
