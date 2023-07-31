@@ -57,6 +57,7 @@ import placementApplicationsPaths from '../paths/placementApplications'
 import { radioMatrixTable } from './radioMatrixTable'
 
 import config from '../config'
+import { withdrawalRadioOptions } from './applications/withdrawalReasons'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -202,6 +203,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('numberToOrdinal', numberToOrdinal)
   njkEnv.addGlobal('dashboardTableRows', dashboardTableRows)
   njkEnv.addGlobal('navigationItems', navigationItems)
+  njkEnv.addGlobal('withdrawalRadioOptions', withdrawalRadioOptions)
 
   njkEnv.addGlobal('AssessmentUtils', AssessmentUtils)
   njkEnv.addGlobal('OASysUtils', OASysUtils)
