@@ -22,39 +22,6 @@
 
             {{ placementApplicationTable("Placement Applications", PlacementApplicationUtils.tableUtils.tableRows(tasks.placementApplications)) }}
 
-            {# {{ govukTabs({
-                items: [
-                    {
-                        label: "Active cases",
-                        id: "active-cases",
-                        panel: {
-                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(tasks.notMatched))
-                        }
-                    },
-                    {
-                        label: "Unable to match",
-                        id: "unable-to-match",
-                        panel: {
-                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(tasks.unableToMatch))
-                        }
-                    },
-                    {
-                        label: "Placement Applications",
-                        id: "placement-applications",
-                        panel: {
-                            html: placementApplicationTable("Placement Applications", PlacementApplicationUtils.tableUtils.tableRows(tasks.placementApplications))
-                        }
-                    },
-                    {
-                        label: "Completed",
-                        id: "completed",
-                        panel: {
-                            html: placementRequestTable("Placement Requests", PlacementRequestUtils.tableUtils.tableRows(tasks.matched))
-                        }
-                    }
-                ]
-            }) }} #}
-
         </div>
     </div>
 {% endblock %}

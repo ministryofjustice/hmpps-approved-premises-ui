@@ -49,6 +49,7 @@ export default {
   staticResourceCacheDuration: 20,
   flags: {
     oasysDisabled: process.env.OASYS_DISABLED || false,
+    cruDashboardDisabled: process.env.CRU_DASHBOARD_DISABLED || false,
   },
   environment: process.env.ENVIRONMENT || 'local',
   sentry: {
