@@ -180,4 +180,27 @@ describeClient('placementRequestClient', provider => {
       expect(result).toEqual(bookingNotMade)
     })
   })
+
+  describe('withdraw', () => {
+    it('makes a POST request to the withdrawal endpoint', async () => {
+      const placementRequestId = 'placement-request-id'
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to mark a placement request as withdrawn',
+        withRequest: {
+          method: 'POST',
+          path: paths.placementRequests.withdrawal.create({ id: placementRequestId }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      await placementRequestClient.withdraw(placementRequestId)
+    })
+  })
 })

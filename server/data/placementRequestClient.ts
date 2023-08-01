@@ -53,4 +53,10 @@ export default class PlacementRequestClient {
       data,
     })) as Promise<BookingNotMade>
   }
+
+  async withdraw(id: string): Promise<void> {
+    await this.restClient.post({
+      path: paths.placementRequests.withdrawal.create({ id }),
+    })
+  }
 }

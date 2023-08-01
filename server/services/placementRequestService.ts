@@ -57,4 +57,10 @@ export default class PlacementRequestService {
 
     return placementRequestClient.bookingNotMade(id, body)
   }
+
+  async withdraw(token: string, id: string) {
+    const placementRequestClient = this.placementRequestClientFactory(token)
+
+    return placementRequestClient.withdraw(id)
+  }
 }

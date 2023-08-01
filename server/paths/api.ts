@@ -147,6 +147,9 @@ export default {
     dashboard: placementRequestsPath.path('dashboard'),
     booking: placementRequestPath.path('booking'),
     bookingNotMade: placementRequestPath.path('booking-not-made'),
+    withdrawal: {
+      create: placementRequestPath.path('withdrawal'),
+    },
   },
   placementApplications: {
     update: placementApplicationPath,
