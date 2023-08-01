@@ -13,9 +13,11 @@ import {
 } from '../../testutils/factories'
 import paths from '../../paths/placementApplications'
 import { getResponses } from '../../utils/applications/getResponses'
+import config from '../../config'
 
 jest.mock('../../utils/applications/utils')
 jest.mock('../../utils/applications/getResponses')
+jest.mock('../../config')
 
 describe('PlacementRequestsController', () => {
   const token = 'SOME_TOKEN'
@@ -42,7 +44,8 @@ describe('PlacementRequestsController', () => {
   })
 
   describe('index', () => {
-    it('should render the placement requests template', async () => {
+    it('should render the placement requests template when cruDashboardDisabled is false', async () => {
+      config.flags.cruDashboardDisabled = false
       const tasks = createMock<GroupedMatchTasks>()
 
       taskService.getMatchTasks.mockResolvedValue(tasks)
@@ -52,6 +55,23 @@ describe('PlacementRequestsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/index', {
+        pageHeading: 'My Cases',
+        tasks,
+      })
+      expect(taskService.getMatchTasks).toHaveBeenCalledWith(token)
+    })
+
+    it('should render the cases template when cruDashboardDisabled is true', async () => {
+      config.flags.cruDashboardDisabled = true
+      const tasks = createMock<GroupedMatchTasks>()
+
+      taskService.getMatchTasks.mockResolvedValue(tasks)
+
+      const requestHandler = placementRequestsController.index()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('match/placementRequests/cases/index', {
         pageHeading: 'My Cases',
         tasks,
       })

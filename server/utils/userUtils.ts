@@ -7,6 +7,7 @@ import managePaths from '../paths/manage'
 import taskPaths from '../paths/tasks'
 import matchPaths from '../paths/match'
 import adminPaths from '../paths/admin'
+import config from '../config'
 
 export const sections = {
   apply: {
@@ -40,6 +41,13 @@ export const sections = {
   },
   match: {
     id: 'match',
+    title: 'Match people to Approved Premises placements',
+    description: "Allocate cases to suitable Approved Premises based on a person's needs.",
+    shortTitle: 'Match',
+    href: matchPaths.placementRequests.index({}),
+  },
+  cruDashboard: {
+    id: 'cruDashboard',
     title: 'Review placement requests',
     description: 'Review placements requests for applications that have been assessed as suitable',
     shortTitle: 'Placement requests',
@@ -71,11 +79,16 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
 
   if (hasRole(user, 'workflow_manager')) {
     items.push(sections.workflow)
-    items.push(sections.placementRequests)
+    if (!config.flags.cruDashboardDisabled) {
+      items.push(sections.placementRequests)
+      items.push(sections.cruDashboard)
+    }
   }
 
   if (hasRole(user, 'matcher')) {
-    items.push(sections.match)
+    if (config.flags.cruDashboardDisabled) {
+      items.push(sections.match)
+    }
   }
 
   return items

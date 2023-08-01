@@ -3,6 +3,7 @@ import { ApplicationService, PlacementApplicationService, PlacementRequestServic
 import paths from '../../paths/placementApplications'
 import { addErrorMessageToFlash } from '../../utils/validation'
 import { getResponses } from '../../utils/applications/getResponses'
+import config from '../../config'
 
 export default class PlacementRequestsController {
   constructor(
@@ -16,10 +17,17 @@ export default class PlacementRequestsController {
     return async (req: Request, res: Response) => {
       const tasks = await this.taskService.getMatchTasks(req.user.token)
 
-      res.render('match/placementRequests/index', {
-        pageHeading: 'My Cases',
-        tasks,
-      })
+      if (!config.flags.cruDashboardDisabled) {
+        res.render('match/placementRequests/index', {
+          pageHeading: 'My Cases',
+          tasks,
+        })
+      } else {
+        res.render('match/placementRequests/cases/index', {
+          pageHeading: 'My Cases',
+          tasks,
+        })
+      }
     }
   }
 
