@@ -76,7 +76,7 @@ const createNameAnchorElement = (name: string, applicationId: string) => {
 
 export const createWithdrawElement = (applicationId: string, application: ApplicationSummary) => {
   if (!application?.submittedAt)
-    return htmlValue(`<a href=${paths.applications.withdraw.confirm({ id: applicationId })}>Withdraw</a>`)
+    return htmlValue(`<a href="${paths.applications.withdraw.new({ id: applicationId })}">Withdraw</a>`)
 
   return textValue('')
 }

@@ -6,6 +6,7 @@ const applicationPath = applicationsPath.path(':id')
 const pagesPath = applicationPath.path('tasks/:task/pages/:page')
 const peoplePath = applicationsPath.path('people')
 const personPath = peoplePath.path(':crn')
+const withdrawalsPath = applicationPath.path('withdrawals')
 
 const paths = {
   applications: {
@@ -23,8 +24,8 @@ const paths = {
     checkYourAnswers: applicationPath.path('check-your-answers'),
     submission: applicationPath.path('submission'),
     withdraw: {
-      confirm: applicationPath.path('confirmWithdrawal'),
-      create: applicationPath.path('withdraw'),
+      new: withdrawalsPath.path('new'),
+      create: withdrawalsPath,
     },
     pages: {
       show: pagesPath,

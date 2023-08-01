@@ -4,6 +4,7 @@ import type {
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
   Document,
+  NewWithdrawal,
   SubmitApprovedPremisesApplication,
   UpdateApprovedPremisesApplication,
 } from '@approved-premises/api'
@@ -65,9 +66,10 @@ export default class ApplicationClient {
     })) as Assessment
   }
 
-  async withdrawal(applicationId: string): Promise<void> {
+  async withdrawal(applicationId: string, body: NewWithdrawal): Promise<void> {
     await this.restClient.post({
       path: paths.applications.withdrawal({ id: applicationId }),
+      data: body,
     })
   }
 }

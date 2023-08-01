@@ -1,0 +1,65 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "../../components/formFields/form-page-input/macro.njk" import formPageInput %}
+{% from "../../components/formFields/form-page-radios/macro.njk" import formPageRadios %}
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+      text: "Back",
+      href: paths.applications.index({})
+    }) }}
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form action="{{ paths.applications.withdraw.create({id: applicationId}) }}" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+        {{ showErrorSummary(errorSummary) }}
+
+        {{
+          formPageRadios(
+            {
+              fieldName: "reason",
+              classes: "govuk-radios--withdrawal-reasons",
+              fieldset: {
+                  legend: {
+                      text: "Why is this application being withdrawn?",
+                      classes: "govuk-fieldset__legend--l",
+                      isPageHeading: true
+                  }
+              },
+              hint: {
+                  html: '<p class="govuk-hint">Withdrawing an application will remove all application data and cannot be undone.</p><p class="govuk-hint">You will need to start a new application for any future placements.</p>'
+              },
+              items: withdrawalRadioOptions(
+                formPageInput({
+                  fieldName: "otherReason",
+                  label: {
+                    text: "Please specify"
+                  },
+                  classes: "govuk-input--width-10"
+                }, fetchContext())
+              )
+            },
+            fetchContext()
+          )
+        }}
+
+        {{ govukButton({
+                    name: 'submit',
+                    text: "Continue"
+                }) }}
+
+      </form>
+    </div>
+  </div>
+{% endblock %}

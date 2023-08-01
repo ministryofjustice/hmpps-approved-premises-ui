@@ -9,6 +9,7 @@ import {
 } from '../testutils/factories'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
+import { WithdrawalReason } from '../@types/shared'
 
 describeClient('ApplicationClient', provider => {
   let applicationClient: ApplicationClient
@@ -276,6 +277,7 @@ describeClient('ApplicationClient', provider => {
   describe('withdrawal', () => {
     it('calls the withdrawal endpoint with the application ID', async () => {
       const applicationId = 'applicationId'
+      const newWithdrawal = { reason: 'duplicate_application' as WithdrawalReason, otherReason: 'other reason' }
 
       provider.addInteraction({
         state: 'Server is healthy',
@@ -283,7 +285,7 @@ describeClient('ApplicationClient', provider => {
         withRequest: {
           method: 'POST',
           path: paths.applications.withdrawal({ id: applicationId }),
-
+          body: newWithdrawal,
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -293,7 +295,7 @@ describeClient('ApplicationClient', provider => {
         },
       })
 
-      await applicationClient.withdrawal(applicationId)
+      await applicationClient.withdrawal(applicationId, newWithdrawal)
     })
   })
 })

@@ -117,37 +117,4 @@ export default class ApplicationsController {
       return res.render('applications/confirm', { pageHeading: 'Application confirmation' })
     }
   }
-
-  confirmWithdrawal(): RequestHandler {
-    return async (req: Request, res: Response) => {
-      const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
-
-      return res.render('applications/withdraw', {
-        pageHeading: 'Do you want to withdraw this application?',
-        applicationId: req.params.id,
-        errors,
-        errorSummary,
-        ...userInput,
-      })
-    }
-  }
-
-  withdraw(): RequestHandler {
-    return async (req: Request, res: Response) => {
-      if (!req.body.confirmWithdrawal) {
-        addErrorMessageToFlash(req, 'You must confirm if you want to withdraw this application', 'confirmWithdrawal')
-
-        return res.redirect(paths.applications.withdraw.confirm({ id: req.params.id }))
-      }
-
-      if (req.body.confirmWithdrawal === 'no') {
-        return res.redirect(paths.applications.index({}))
-      }
-
-      await this.applicationService.withdraw(req.user.token, req.params.id)
-
-      req.flash('success', 'Application withdrawn')
-      return res.redirect(paths.applications.index({}))
-    }
-  }
 }
