@@ -1,5 +1,5 @@
-import type { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { faker } from '@faker-js/faker/locale/en_GB'
+import type { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 
 import AssessPage from './assessPage'
 

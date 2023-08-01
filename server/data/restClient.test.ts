@@ -1,7 +1,7 @@
+import { Readable } from 'stream'
 import nock from 'nock'
 import { Response } from 'express'
 import { createMock } from '@golevelup/ts-jest'
-import { Readable } from 'stream'
 import logger from '../../logger'
 
 import type { ApiConfig } from '../config'

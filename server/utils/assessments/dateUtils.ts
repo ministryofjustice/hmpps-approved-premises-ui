@@ -1,9 +1,9 @@
+import { add, differenceInDays, format } from 'date-fns'
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
   AssessmentSummary,
 } from '@approved-premises/api'
-import { add, differenceInDays, format } from 'date-fns'
 import { DateFormats } from '../dateUtils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 

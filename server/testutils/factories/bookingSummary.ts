@@ -1,8 +1,8 @@
 import { Factory } from 'fishery'
 
-import type { BookingSummary } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { addDays } from 'date-fns'
+import type { BookingSummary } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<BookingSummary>(() => ({

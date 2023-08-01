@@ -1,5 +1,5 @@
-import { SummaryListActions } from '@approved-premises/ui'
 import { createMock } from '@golevelup/ts-jest'
+import { SummaryListActions } from '@approved-premises/ui'
 import Apply from '../form-pages/apply'
 import { applicationFactory, assessmentFactory } from '../testutils/factories'
 import isAssessment from './assessments/isAssessment'

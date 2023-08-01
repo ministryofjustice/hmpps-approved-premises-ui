@@ -1,9 +1,9 @@
 /* istanbul ignore file */
 
+import path from 'path'
 import express, { Express } from 'express'
 import cookieSession from 'cookie-session'
 import createError from 'http-errors'
-import path from 'path'
 
 import routes from '../index'
 import nunjucksSetup from '../../utils/nunjucksSetup'

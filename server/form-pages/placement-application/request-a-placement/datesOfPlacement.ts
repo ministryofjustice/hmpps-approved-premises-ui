@@ -1,6 +1,6 @@
+import { weeksToDays } from 'date-fns'
 import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 
-import { weeksToDays } from 'date-fns'
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'

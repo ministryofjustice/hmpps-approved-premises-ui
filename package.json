@@ -142,6 +142,7 @@
     "govuk-frontend": "^4.6.0",
     "helmet": "^7.0.0",
     "http-errors": "^2.0.0",
+    "jest-diff": "^29.6.2",
     "jquery": "^3.6.1",
     "jsonpath": "^1.1.1",
     "jsonschema": "^1.4.1",

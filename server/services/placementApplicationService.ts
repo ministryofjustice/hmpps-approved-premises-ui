@@ -1,5 +1,5 @@
-import { DataServices } from '@approved-premises/ui'
 import type { Request } from 'express'
+import { DataServices } from '@approved-premises/ui'
 import {
   ApprovedPremisesApplication as Application,
   PlacementApplication,

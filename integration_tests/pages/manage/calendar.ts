@@ -1,5 +1,5 @@
-import { BedOccupancyRange, Premises } from '@approved-premises/api'
 import { differenceInDays } from 'date-fns'
+import { BedOccupancyRange, Premises } from '@approved-premises/api'
 import Page from '../page'
 import { DateFormats } from '../../../server/utils/dateUtils'
 

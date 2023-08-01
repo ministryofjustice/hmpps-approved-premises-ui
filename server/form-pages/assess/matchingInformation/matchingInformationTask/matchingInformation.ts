@@ -1,7 +1,7 @@
+import { weeksToDays } from 'date-fns'
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
-import { weeksToDays } from 'date-fns'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { daysToWeeksAndDays } from '../../../../utils/assessments/dateUtils'
 import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
