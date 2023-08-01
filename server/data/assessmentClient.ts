@@ -1,7 +1,7 @@
 import type {
   ApprovedPremisesAssessment as Assessment,
   AssessmentAcceptance,
-  AssessmentSummary,
+  ApprovedPremisesAssessmentSummary as AssessmentSummary,
   ClarificationNote,
   NewClarificationNote,
   UpdatedClarificationNote,

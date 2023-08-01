@@ -9,6 +9,7 @@ import {
   ArrayOfOASysRiskToSelfQuestions,
   ArrayOfOASysSupportingInformationQuestions,
   ApprovedPremisesAssessment as Assessment,
+  ApprovedPremisesAssessmentSummary as AssessmentSummary,
   AssessmentTask,
   BedOccupancyBookingEntry,
   BedOccupancyLostBedEntry,

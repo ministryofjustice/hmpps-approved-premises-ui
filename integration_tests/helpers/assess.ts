@@ -1,7 +1,7 @@
 import {
   ApprovedPremisesAssessment as Assessment,
   AssessmentStatus,
-  AssessmentSummary,
+  ApprovedPremisesAssessmentSummary as AssessmentSummary,
   ClarificationNote,
   Document,
   ApprovedPremisesUser as User,

@@ -3,7 +3,7 @@ import { SuperAgentRequest } from 'superagent'
 import type {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
-  AssessmentSummary,
+  ApprovedPremisesAssessmentSummary as AssessmentSummary,
   NewClarificationNote,
   UpdatedClarificationNote,
 } from '@approved-premises/api'
