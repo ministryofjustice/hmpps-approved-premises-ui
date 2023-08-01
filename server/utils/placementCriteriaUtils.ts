@@ -1,8 +1,8 @@
 import { PlacementCriteria } from '@approved-premises/api'
 
-const apTypes = ['isPIPE', 'isESAP']
-const specialistSupportCriteria = ['isSemiSpecialistMentalHealth', 'isRecoveryFocussed']
-const accessibilityCriteria = ['hasBrailleSignage', 'hasTactileFlooring', 'hasHearingLoop']
+const apTypes = ['isPIPE', 'isESAP'] as const
+const specialistSupportCriteria = ['isSemiSpecialistMentalHealth', 'isRecoveryFocussed'] as const
+const accessibilityCriteria = ['hasBrailleSignage', 'hasTactileFlooring', 'hasHearingLoop'] as const
 const offenceAndRiskCriteria = [
   'isSuitableForVulnerable',
   'acceptsSexOffenders',
@@ -10,7 +10,7 @@ const offenceAndRiskCriteria = [
   'acceptsNonSexualChildOffenders',
   'acceptsHateCrimeOffenders',
   'isArsonSuitable',
-]
+] as const
 const placementRequirementCriteria = [
   'isWheelchairDesignated',
   'isArsonDesignated',
@@ -20,7 +20,7 @@ const placementRequirementCriteria = [
   'isGroundFloor',
   'hasEnSuite',
   'isSuitedForSexOffenders',
-]
+] as const
 
 export type ApTypeCriteria = Extract<PlacementCriteria, (typeof apTypes)[number]>
 export type SpecialistSupportCriteria = Extract<PlacementCriteria, (typeof specialistSupportCriteria)[number]>
@@ -59,7 +59,7 @@ export const placementCriteria: Record<PlacementCriteria, string> = {
   isArsonDesignated: 'Designated arson room',
 }
 
-const filterByType = <T extends PlacementCriteriaCategory>(keys: Array<string>): Record<T, string> => {
+const filterByType = <T extends PlacementCriteriaCategory>(keys: Readonly<Array<string>>): Record<T, string> => {
   return Object.keys(placementCriteria)
     .filter(k => keys.includes(k))
     .reduce((criteria, key) => ({ ...criteria, [key]: placementCriteria[key] }), {}) as Record<T, string>

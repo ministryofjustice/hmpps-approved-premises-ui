@@ -25,7 +25,7 @@ const defaultArguments = {
   acceptsNonSexualChildOffenders: 'relevant',
   acceptsHateCrimeOffenders: 'relevant',
   isArsonSuitable: 'relevant',
-  isSuitedForSexOffenders: 'relevant',
+  isSuitedForSexOffenders: 'notRelevant',
   lengthOfStayAgreed: 'yes',
   cruInformation: 'Some info',
 } as MatchingInformationBody
@@ -131,7 +131,7 @@ describe('MatchingInformation', () => {
         'What type of AP is required?': 'Enhanced Security AP (ESAP)',
         'Accessibility needs': 'Hearing loop',
         'Designated arson room': 'Essential',
-        'Room suitable for a person with sexual offences': 'Relevant',
+        'Room suitable for a person with sexual offences': 'Not relevant',
         'Wheelchair accessible': 'Essential',
         'Single room': 'Desirable',
         'Step-free access': 'Desirable',
