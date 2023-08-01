@@ -1,5 +1,6 @@
 import { addDays, differenceInDays, getDaysInMonth, subDays } from 'date-fns'
 import { bedOccupancyEntryUiFactory, bedOccupancyRangeFactoryUi } from '../testutils/factories'
+import paths from '../paths/manage'
 
 import {
   bedRow,
@@ -135,7 +136,10 @@ describe('calendarUtils', () => {
 
       expect(bedRow(bedOccupancyRange, startDate, premisesId)).toMatchStringIgnoringWhitespace(
         `<tr class="${rowClass}" data-cy-bedId="${bedOccupancyRange.bedId}">
-        <th scope="row" class="${headerClass}">${bedOccupancyRange.bedName}</th>
+        <th scope="row" class="${headerClass}"><a href="${paths.premises.beds.show({
+          premisesId,
+          bedId: bedOccupancyRange.bedId,
+        })}" class="govuk-link">${bedOccupancyRange.bedName}</a></th>
         ${generateRowCells(bedOccupancyRange, startDate, premisesId)}</tr>`,
       )
     })
