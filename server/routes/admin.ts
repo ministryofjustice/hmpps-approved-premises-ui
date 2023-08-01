@@ -10,7 +10,11 @@ import actions from './utils'
 export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
   const { get, post } = actions(router, services.auditService)
 
-  const { adminPlacementRequestsController, placementRequestsBookingsController } = controllers
+  const {
+    adminPlacementRequestsController,
+    placementRequestsBookingsController,
+    placementRequestWithdrawalsController,
+  } = controllers
 
   get(paths.admin.placementRequests.index.pattern, adminPlacementRequestsController.index(), {
     auditEvent: 'ADMIN_LIST_PLACEMENT_REQUESTS',
@@ -32,6 +36,26 @@ export default function routes(controllers: Controllers, router: Router, service
       {
         path: paths.admin.placementRequests.show.pattern,
         auditEvent: 'ADMIN_PLACEMENT_REQUEST_CREATE_BOOKING_SUCCESS',
+      },
+    ],
+  })
+
+  get(paths.admin.placementRequests.withdrawal.new.pattern, placementRequestWithdrawalsController.new(), {
+    auditEvent: 'ADMIN_NEW_PLACEMENT_REQUEST_WITHDRAWL',
+  })
+  post(paths.admin.placementRequests.withdrawal.create.pattern, placementRequestWithdrawalsController.create(), {
+    redirectAuditEventSpecs: [
+      {
+        path: paths.admin.placementRequests.withdrawal.new.pattern,
+        auditEvent: 'ADMIN_CREATE_PLACEMENT_REQUEST_WITHDRAWL_FAILURE',
+      },
+      {
+        path: paths.admin.placementRequests.show.pattern,
+        auditEvent: 'ADMIN_CREATE_PLACEMENT_REQUEST_WITHDRAWL_CANCELLATION',
+      },
+      {
+        path: paths.admin.placementRequests.index.pattern,
+        auditEvent: 'ADMIN_CREATE_PLACEMENT_REQUEST_WITHDRAWL_SUCCESS',
       },
     ],
   })

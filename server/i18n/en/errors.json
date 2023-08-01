@@ -36,6 +36,9 @@
   "reason": {
     "empty": "You must choose a valid reason"
   },
+  "confirm": {
+    "empty": "You must confirm if you want to withdraw this placement request"
+  },
   "otherReason": {
     "empty": "You must enter the other reason"
   },
