@@ -80,7 +80,10 @@ export const bedRows = (bedOccupancyRangeList: Array<BedOccupancyRangeUi>, start
 
 export const bedRow = (bedOccupancyRange: BedOccupancyRangeUi, startDate: Date, premisesId: string) => {
   return `<tr class="${rowClass}" data-cy-bedId="${bedOccupancyRange.bedId}">
-    <th scope="row" class="${headerClass}">${bedOccupancyRange.bedName}</th>
+    <th scope="row" class="${headerClass}"><a href="${paths.premises.beds.show({
+      premisesId,
+      bedId: bedOccupancyRange.bedId,
+    })}" class="govuk-link">${bedOccupancyRange.bedName}</a></th>
     ${generateRowCells(bedOccupancyRange, startDate, premisesId)}</tr>`
 }
 

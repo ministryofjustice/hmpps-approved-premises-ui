@@ -9,6 +9,7 @@ import {
   bedOccupancyEntryOverbookingUiFactory,
   bedSummaryFactory,
 } from '../../../testutils/factories'
+import paths from '../../../paths/manage'
 
 describe('BedsController', () => {
   const token = 'SOME_TOKEN'
@@ -42,22 +43,45 @@ describe('BedsController', () => {
   })
 
   describe('show', () => {
-    it('should return the bed to the template', async () => {
-      const bed = bedDetailFactory.build()
-      const premisesId = 'premisesId'
+    const bed = bedDetailFactory.build()
+    const premisesId = 'premisesId'
+    const bedId = 'bedId'
+
+    beforeEach(() => {
       request.params.premisesId = premisesId
-      const bedId = 'bedId'
       request.params.bedId = bedId
-
       premisesService.getBed.mockResolvedValue(bed)
+    })
 
+    it('should return the bed to the template', async () => {
       const requestHandler = bedsController.show()
+
+      request.headers.referer = 'http://localhost/'
+
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('premises/beds/show', {
         bed,
         premisesId,
         pageHeading: 'Manage beds',
+        backLink: paths.premises.beds.index({ premisesId }),
+      })
+
+      expect(premisesService.getBed).toHaveBeenCalledWith(token, premisesId, bedId)
+    })
+
+    it('should return the bed to the template with a link back to the calendar', async () => {
+      const requestHandler = bedsController.show()
+
+      request.headers.referer = 'http://localhost/calendar'
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('premises/beds/show', {
+        bed,
+        premisesId,
+        pageHeading: 'Manage beds',
+        backLink: paths.premises.calendar({ premisesId }),
       })
 
       expect(premisesService.getBed).toHaveBeenCalledWith(token, premisesId, bedId)
