@@ -1,5 +1,5 @@
-import type { NewBooking } from '@approved-premises/api'
 import type { Request, RequestHandler, Response } from 'express'
+import type { NewBooking } from '@approved-premises/api'
 
 import { BookingService, PersonService, PremisesService } from '../../services'
 import {

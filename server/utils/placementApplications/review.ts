@@ -1,5 +1,5 @@
-import { PlacementApplicationDecisionEnvelope } from '@approved-premises/api'
 import type { Request } from 'express'
+import { PlacementApplicationDecisionEnvelope } from '@approved-premises/api'
 
 export class PlacementApplicationReview {
   applicationId: string

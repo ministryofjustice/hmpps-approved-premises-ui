@@ -1,5 +1,5 @@
-import { BedOccupancyEntryUi } from '@approved-premises/ui'
 import { addDays, differenceInDays, isBefore, subDays } from 'date-fns'
+import { BedOccupancyEntryUi } from '@approved-premises/ui'
 
 export const addOverbookingsToSchedule = (schedule: Array<BedOccupancyEntryUi>): Array<BedOccupancyEntryUi> => {
   const overbookings: Array<BedOccupancyEntryUi> = []

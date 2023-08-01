@@ -1,6 +1,6 @@
-import type { Person } from '@approved-premises/api'
 import { Response } from 'express'
 import { createMock } from '@golevelup/ts-jest'
+import type { Person } from '@approved-premises/api'
 
 import { SanitisedError } from '../sanitisedError'
 import PersonService, { OasysNotFoundError } from './personService'

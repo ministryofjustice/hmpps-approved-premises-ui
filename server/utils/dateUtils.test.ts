@@ -1,10 +1,9 @@
 /* eslint-disable import/no-duplicates */
 
-import type { ObjectWithDateParts } from '@approved-premises/ui'
-
 import isPast from 'date-fns/isPast'
 import differenceInDays from 'date-fns/differenceInDays'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
+import type { ObjectWithDateParts } from '@approved-premises/ui'
 
 import {
   DateFormats,

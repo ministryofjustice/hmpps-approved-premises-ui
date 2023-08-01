@@ -1,3 +1,4 @@
+import { add } from 'date-fns'
 import {
   AnyValue,
   ApprovedPremisesApplication,
@@ -9,7 +10,6 @@ import {
   ApprovedPremisesUserRole as UserRole,
 } from '@approved-premises/api'
 import { TableCell, TableRow } from '@approved-premises/ui'
-import { add } from 'date-fns'
 
 import { DateFormats } from '../../server/utils/dateUtils'
 

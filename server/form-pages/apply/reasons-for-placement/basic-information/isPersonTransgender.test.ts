@@ -1,5 +1,5 @@
-import { YesOrNo } from '@approved-premises/ui'
 import { fromPartial } from '@total-typescript/shoehorn'
+import { YesOrNo } from '@approved-premises/ui'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import IsPersonTransgender from './isPersonTransgender'

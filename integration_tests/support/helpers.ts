@@ -1,3 +1,4 @@
+import { differenceInDays } from 'date-fns'
 import {
   ApprovedPremisesApplication,
   ArrayOfOASysOffenceDetailsQuestions,
@@ -8,7 +9,6 @@ import {
   Document,
 } from '@approved-premises/api'
 import { BedOccupancyEntryUiType } from '@approved-premises/ui'
-import { differenceInDays } from 'date-fns'
 import { bedOccupancyEntryBookingUiFactory } from '../../server/testutils/factories'
 import {
   bedOccupancyEntryLostBedUiFactory,
