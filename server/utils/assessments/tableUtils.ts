@@ -1,4 +1,4 @@
-import { AssessmentSummary } from '@approved-premises/api'
+import { ApprovedPremisesAssessmentSummary as AssessmentSummary } from '@approved-premises/api'
 import { TableRow } from '@approved-premises/ui'
 import { linkTo } from '../utils'
 import {

@@ -1,7 +1,7 @@
 import { Request } from 'express'
 import {
   ApprovedPremisesAssessment as Assessment,
-  AssessmentSummary,
+  ApprovedPremisesAssessmentSummary as AssessmentSummary,
   NewClarificationNote,
   UpdatedClarificationNote,
 } from '@approved-premises/api'
