@@ -87,4 +87,24 @@ export default {
         jsonBody: bookingNotMadeFactory.build(),
       },
     }),
+  stubPlacementRequestWithdrawal: (placementRequest: PlacementRequest): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: paths.placementRequests.withdrawal.create({ id: placementRequest.id }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+      },
+    }),
+  verifyPlacementRequestWithdrawal: async (placementRequest: PlacementRequest) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.placementRequests.withdrawal.create({ id: placementRequest.id }),
+      })
+    ).body.requests,
 }

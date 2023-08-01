@@ -13,6 +13,7 @@ import CreatePlacementPage from '../../pages/admin/placementApplications/createP
 import { CancellationCreatePage, NewDateChangePage } from '../../pages/manage'
 import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
 import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
+import WithdrawConfirmPage from '../../pages/manage/withdrawConfirm'
 
 context('Placement Requests', () => {
   const placementRequests = placementRequestFactory.buildList(2)
@@ -263,6 +264,37 @@ context('Placement Requests', () => {
       expect(requestBody.date).equal(cancellation.date)
       expect(requestBody.notes).equal(cancellation.notes)
       expect(requestBody.reason).equal(cancellation.reason.id)
+    })
+  })
+
+  it('allows me to withdraw a placement request', () => {
+    cy.task('stubPlacementRequestWithdrawal', placementRequestWithoutBooking)
+
+    // When I visit the tasks dashboard
+    const listPage = ListPage.visit()
+
+    // And I choose a placement request
+    listPage.clickPlacementRequest(placementRequestWithoutBooking)
+
+    // Then I should be taken to the placement request page
+    const showPage = Page.verifyOnPage(ShowPage, placementRequestWithoutBooking)
+
+    // When I click on the withdraw button
+    showPage.clickWithdraw()
+
+    // Then I should be on the withdrawal confirmation page
+    const withdrawConfirmPage = Page.verifyOnPage(WithdrawConfirmPage)
+
+    // And I cancel my booking
+    withdrawConfirmPage.completeForm()
+    withdrawConfirmPage.clickSubmit()
+
+    // Then I should see a confirmation message
+    showPage.shouldShowBanner('Placement request withdrawn successfully')
+
+    // And a withdrawal should have been created in the API
+    cy.task('verifyPlacementRequestWithdrawal', placementRequestWithoutBooking).then(requests => {
+      expect(requests).to.have.length(1)
     })
   })
 })

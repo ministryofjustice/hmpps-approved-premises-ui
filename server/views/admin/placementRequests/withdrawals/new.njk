@@ -1,0 +1,59 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+		text: "Back",
+		href: paths.admin.placementRequests.show({ id: id })
+	}) }}
+{% endblock %}
+
+{% block content %}
+  {% include "../../../_messages.njk" %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <form action="{{ paths.admin.placementRequests.withdrawal.create({ id: id }) }}" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+        {{ showErrorSummary(errorSummary) }}
+
+        {{ govukRadios({
+          idPrefix: "confirm",
+          name: "confirm",
+          fieldset: {
+              legend: {
+                  text: pageHeading,
+                  classes: "govuk-fieldset__legend--l",
+                  isPageHeading: true
+              }
+          },
+          items: [
+              {
+              value: "yes",
+              text: "Yes"
+              },
+              {
+              value: "no",
+              text: "No"
+              }
+          ],
+          errorMessage: errors.confirm
+        }) }}
+
+        {{ govukButton({
+            name: 'submit',
+            text: "Continue"
+        }) }}
+
+      </form>
+    </div>
+  </div>
+{% endblock %}
