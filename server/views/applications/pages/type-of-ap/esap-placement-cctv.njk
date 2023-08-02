@@ -67,12 +67,14 @@
     )
   }}
 
-  <h2 class="govuk-heading-s">{{ page.questions.cctvNotes }}</h2>
-
   {{
     formPageTextarea(
       {
-        fieldName: "cctvNotes"
+        fieldName: "cctvNotes",
+        label: {
+          text: page.questions.cctvNotes,
+          classes: "govuk-label--m"
+        }
       },
       fetchContext()
     )

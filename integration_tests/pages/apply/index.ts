@@ -18,8 +18,10 @@ import DescribeLocationFactors from './describeLocationFactors'
 import EnterCRNPage from './enterCrn'
 import EndDatesPage from './endDates'
 import ExceptionDetailsPage from './ExceptionDetails'
+import EsapCCTV from './esapCCTV'
 import EsapExceptionalCase from './esapExceptionalCase'
 import EsapPlacementScreening from './esapPlacementScreening'
+import EsapRoomSearches from './esapRoomSearches'
 import EsapNotEligible from './esapNotEligible'
 import ForeignNationalPage from './foreignNational'
 import IsExceptionalCasePage from './isExceptionalCase'
@@ -81,9 +83,11 @@ export {
   EnterCRNPage,
   EndDatesPage,
   ExceptionDetailsPage,
+  EsapCCTV,
   EsapExceptionalCase,
   EsapPlacementScreening,
   EsapNotEligible,
+  EsapRoomSearches,
   ForeignNationalPage,
   IsExceptionalCasePage,
   ListPage,
