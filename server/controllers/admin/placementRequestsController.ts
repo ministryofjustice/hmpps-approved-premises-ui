@@ -1,5 +1,6 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { PlacementRequestService } from '../../services'
+import { PlacementRequestSortField } from '../../@types/shared'
 
 export default class PlacementRequestsController {
   constructor(private readonly placementRequestService: PlacementRequestService) {}
@@ -7,7 +8,14 @@ export default class PlacementRequestsController {
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       const isParole = req.query.isParole === '1'
-      const placementRequests = await this.placementRequestService.getDashboard(req.user.token, isParole)
+      const pageNumber = req.query.page ? Number(req.query.page) : undefined
+      const sortBy = req.query.sortBy as PlacementRequestSortField
+      const placementRequests = await this.placementRequestService.getDashboard(
+        req.user.token,
+        isParole,
+        pageNumber,
+        sortBy,
+      )
 
       res.render('admin/placementRequests/index', {
         pageHeading: 'Record and update placement details',

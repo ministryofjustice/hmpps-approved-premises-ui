@@ -40,7 +40,7 @@ describe('PlacementRequestsController', () => {
         placementRequests,
         isParole: false,
       })
-      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, false)
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, false, undefined, undefined)
     })
 
     it('should request parole placement requests', async () => {
@@ -56,7 +56,27 @@ describe('PlacementRequestsController', () => {
         placementRequests,
         isParole: true,
       })
-      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true)
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true, undefined, undefined)
+    })
+
+    it('should request page numbers and sort options', async () => {
+      const placementRequests = placementRequestFactory.buildList(2)
+      placementRequestService.getDashboard.mockResolvedValue(placementRequests)
+
+      const requestHandler = placementRequestsController.index()
+
+      await requestHandler(
+        { ...request, query: { isParole: '1', page: '2', sortBy: 'expectedArrival' } },
+        response,
+        next,
+      )
+
+      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
+        pageHeading: 'Record and update placement details',
+        placementRequests,
+        isParole: true,
+      })
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true, 2, 'expectedArrival')
     })
   })
 
