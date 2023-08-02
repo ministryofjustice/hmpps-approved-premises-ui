@@ -536,7 +536,25 @@ export default class ApplyHelper {
     exceptionalCase.clickSubmit()
 
     // Then I should be taken to the rest of the Esap flow
-    Page.verifyOnPage(ApplyPages.EsapPlacementScreening, this.application)
+    const esapPlacementScreeningPage = Page.verifyOnPage(ApplyPages.EsapPlacementScreening, this.application)
+
+    // When I complete the screening page
+    esapPlacementScreeningPage.completeForm()
+    esapPlacementScreeningPage.clickSubmit()
+
+    // Then I should be taken to the Room Searches page
+    const roomSearchesPage = Page.verifyOnPage(ApplyPages.EsapRoomSearches, this.application)
+
+    // And I complete the room searches page
+    roomSearchesPage.completeForm()
+    roomSearchesPage.clickSubmit()
+
+    // Then I should be taken to the CCTV page
+    const esapCCTVPage = Page.verifyOnPage(ApplyPages.EsapCCTV, this.application)
+
+    // When I complete the CCTV page
+    esapCCTVPage.completeForm()
+    esapCCTVPage.clickSubmit()
   }
 
   completeIneligibleEsapFlow() {

@@ -6,8 +6,7 @@ import TasklistPage from '../../../tasklistPage'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
-import { EsapReasons } from './esapPlacementScreening'
-import SelectApType from './apType'
+import EsapPlacementScreening, { EsapReasons } from './esapPlacementScreening'
 
 export const cctvHistory = {
   appearance: 'Changed their appearance or clothing to offend',
@@ -48,7 +47,7 @@ export default class EsapPlacementCCTV implements TasklistPage {
   previous() {
     const esapReasons = retrieveQuestionResponseFromFormArtifact(
       this.application,
-      SelectApType,
+      EsapPlacementScreening,
       'esapReasons',
     ) as Array<keyof EsapReasons>
 

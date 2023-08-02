@@ -3,6 +3,8 @@ import ApplyHelper from '../../helpers/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { mapApiPersonRisksForUi } from '../../../server/utils/utils'
 import { setup } from './setup'
+import Page from '../../pages/page'
+import TaskListPage from '../../pages/apply/taskListPage'
 
 context('Apply - ESAP', () => {
   beforeEach(setup)
@@ -37,6 +39,36 @@ context('Apply - ESAP', () => {
       },
     })
 
+    this.application = addResponsesToFormArtifact(this.application, {
+      section: 'type-of-ap',
+      page: 'esap-placement-screening',
+      keyValuePairs: {
+        esapReasons: ['secreting', 'cctv'],
+      },
+    })
+
+    this.application = addResponsesToFormArtifact(this.application, {
+      section: 'type-of-ap',
+      page: 'esap-placement-cctv',
+      keyValuePairs: {
+        cctvHistory: ['appearance', 'networks'],
+        cctvIntelligence: 'yes',
+        cctvIntelligenceDetails: 'Some Details',
+        cctvNotes: 'Some notes',
+      },
+    })
+
+    this.application = addResponsesToFormArtifact(this.application, {
+      section: 'type-of-ap',
+      page: 'esap-placement-secreting',
+      keyValuePairs: {
+        secretingHistory: ['radicalisationLiterature', 'drugs'],
+        secretingIntelligence: 'yes',
+        secretingIntelligenceDetails: 'Some Details',
+        secretingNotes: 'Some notes',
+      },
+    })
+
     apply.setupApplicationStubs(uiRisks)
 
     // And I start the application
@@ -46,7 +78,11 @@ context('Apply - ESAP', () => {
     // And I complete the Esap flow
     apply.completeEsapFlow()
 
-    // Then I should be asked if the person is managed by the National Security division
+    // Then I should be redirected to the task list
+    const tasklistPage = Page.verifyOnPage(TaskListPage)
+
+    // And the type-of-ap task should show as completed
+    tasklistPage.shouldShowTaskStatus('type-of-ap', 'Completed')
   })
 
   it('Tells me I am ineligible for ESAP', function test() {

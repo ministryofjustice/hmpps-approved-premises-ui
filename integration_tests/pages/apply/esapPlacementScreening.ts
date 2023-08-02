@@ -1,8 +1,17 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
-import Page from '../page'
+import ApplyPage from './applyPage'
 
-export default class EsapPlacementScreening extends Page {
+export default class EsapPlacementScreening extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
-    super(`Why does ${application.person.name} require an enhanced security placement?`)
+    super(
+      `Why does ${application.person.name} require an enhanced security placement?`,
+      application,
+      'type-of-ap',
+      'esap-placement-screening',
+    )
+  }
+
+  completeForm() {
+    this.checkCheckboxesFromPageBody('esapReasons')
   }
 }
