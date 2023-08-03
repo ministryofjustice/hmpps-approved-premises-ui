@@ -140,6 +140,7 @@ describe('tableUtils', () => {
         [
           nameCell(placementRequest),
           crnCell(placementRequest.person),
+          tierCell(placementRequest.risks),
           expectedArrivalDateCell(placementRequest),
           durationCell(placementRequest),
           statusCell(placementRequest),
