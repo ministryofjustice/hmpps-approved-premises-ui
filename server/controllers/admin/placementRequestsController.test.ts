@@ -8,6 +8,8 @@ import { paginatedResponseFactory, placementRequestFactory } from '../../testuti
 import placementRequestDetail from '../../testutils/factories/placementRequestDetail'
 import { PaginatedResponse } from '../../@types/ui'
 import { PlacementRequest } from '../../@types/shared'
+import paths from '../../paths/admin'
+import { createQueryString } from '../../utils/utils'
 
 jest.mock('../../utils/applications/utils')
 jest.mock('../../utils/applications/getResponses')
@@ -29,11 +31,16 @@ describe('PlacementRequestsController', () => {
   })
 
   describe('index', () => {
-    it('should render the placement requests template', async () => {
-      const paginatedResponse = paginatedResponseFactory.build({
-        data: placementRequestFactory.buildList(2),
-      }) as PaginatedResponse<PlacementRequest>
+    const paginatedResponse = paginatedResponseFactory.build({
+      data: placementRequestFactory.buildList(2),
+    }) as PaginatedResponse<PlacementRequest>
+
+    beforeEach(() => {
       placementRequestService.getDashboard.mockResolvedValue(paginatedResponse)
+    })
+
+    it('should render the placement requests template', async () => {
+      const hrefPrefix = `${paths.admin.placementRequests.index({})}?${createQueryString({ isParole: false })}&`
 
       const requestHandler = placementRequestsController.index()
 
@@ -45,15 +52,13 @@ describe('PlacementRequestsController', () => {
         isParole: false,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix,
       })
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, false, undefined, undefined)
     })
 
     it('should request parole placement requests', async () => {
-      const paginatedResponse = paginatedResponseFactory.build({
-        data: placementRequestFactory.buildList(2),
-      }) as PaginatedResponse<PlacementRequest>
-      placementRequestService.getDashboard.mockResolvedValue(paginatedResponse)
+      const hrefPrefix = `${paths.admin.placementRequests.index({})}?${createQueryString({ isParole: true })}&`
 
       const requestHandler = placementRequestsController.index()
 
@@ -65,15 +70,13 @@ describe('PlacementRequestsController', () => {
         isParole: true,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix,
       })
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true, undefined, undefined)
     })
 
     it('should request page numbers and sort options', async () => {
-      const paginatedResponse = paginatedResponseFactory.build({
-        data: placementRequestFactory.buildList(2),
-      }) as PaginatedResponse<PlacementRequest>
-      placementRequestService.getDashboard.mockResolvedValue(paginatedResponse)
+      const hrefPrefix = `${paths.admin.placementRequests.index({})}?${createQueryString({ isParole: true })}&`
 
       const requestHandler = placementRequestsController.index()
 
@@ -89,6 +92,7 @@ describe('PlacementRequestsController', () => {
         isParole: true,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix,
       })
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true, 2, 'expectedArrival')
     })
