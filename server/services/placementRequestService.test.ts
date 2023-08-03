@@ -56,7 +56,19 @@ describe('placementRequestService', () => {
       expect(result).toEqual(placementRequests)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
-      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(false)
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(false, 1, 'createdAt')
+    })
+
+    it('calls the find method on the placementRequest client with page and sort options', async () => {
+      const placementRequests = placementRequestFactory.buildList(4, { status: 'notMatched' })
+      placementRequestClient.dashboard.mockResolvedValue(placementRequests)
+
+      const result = await service.getDashboard(token, false, 2, 'duration')
+
+      expect(result).toEqual(placementRequests)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(false, 2, 'duration')
     })
   })
 

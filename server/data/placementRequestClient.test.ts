@@ -55,7 +55,7 @@ describeClient('placementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'true' },
+          query: { isParole: 'true', page: '1', sortBy: 'createdAt' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -78,7 +78,7 @@ describeClient('placementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'false' },
+          query: { isParole: 'false', page: '1', sortBy: 'createdAt' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -90,6 +90,52 @@ describeClient('placementRequestClient', provider => {
       })
 
       const result = await placementRequestClient.dashboard(false)
+
+      expect(result).toEqual(placementRequests)
+    })
+
+    it('makes a get request to the placementRequests dashboard endpoint for parole requests with a page number', async () => {
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the placement requests dashboard view',
+        withRequest: {
+          method: 'GET',
+          path: paths.placementRequests.dashboard.pattern,
+          query: { isParole: 'true', page: '2', sortBy: 'createdAt' },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placementRequests,
+        },
+      })
+
+      const result = await placementRequestClient.dashboard(true, 2)
+
+      expect(result).toEqual(placementRequests)
+    })
+
+    it('makes a get request to the placementRequests dashboard endpoint for parole requests with a sortBy option', async () => {
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the placement requests dashboard view',
+        withRequest: {
+          method: 'GET',
+          path: paths.placementRequests.dashboard.pattern,
+          query: { isParole: 'true', page: '1', sortBy: 'duration' },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placementRequests,
+        },
+      })
+
+      const result = await placementRequestClient.dashboard(true, 1, 'duration')
 
       expect(result).toEqual(placementRequests)
     })

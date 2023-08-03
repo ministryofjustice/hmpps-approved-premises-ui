@@ -5,6 +5,7 @@ import {
   NewPlacementRequestBookingConfirmation,
   PlacementRequest,
   PlacementRequestDetail,
+  PlacementRequestSortField,
 } from '@approved-premises/api'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
@@ -24,10 +25,14 @@ export default class PlacementRequestClient {
     >
   }
 
-  async dashboard(isParole: boolean): Promise<Array<PlacementRequest>> {
+  async dashboard(
+    isParole: boolean,
+    page = 1,
+    sortBy: PlacementRequestSortField = 'createdAt',
+  ): Promise<Array<PlacementRequest>> {
     return (await this.restClient.get({
       path: paths.placementRequests.dashboard.pattern,
-      query: createQueryString({ isParole }),
+      query: createQueryString({ isParole, page, sortBy }),
     })) as Promise<Array<PlacementRequest>>
   }
 

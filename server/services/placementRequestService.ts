@@ -5,6 +5,7 @@ import {
   NewPlacementRequestBookingConfirmation,
   PlacementRequest,
   PlacementRequestDetail,
+  PlacementRequestSortField,
 } from '@approved-premises/api'
 import { RestClientBuilder } from '../data'
 import PlacementRequestClient from '../data/placementRequestClient'
@@ -30,10 +31,15 @@ export default class PlacementRequestService {
     return results
   }
 
-  async getDashboard(token: string, isParole: boolean): Promise<Array<PlacementRequest>> {
+  async getDashboard(
+    token: string,
+    isParole: boolean,
+    page: number = 1,
+    sortBy: PlacementRequestSortField = 'createdAt',
+  ): Promise<Array<PlacementRequest>> {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
-    return placementRequestClient.dashboard(isParole)
+    return placementRequestClient.dashboard(isParole, page, sortBy)
   }
 
   async getPlacementRequest(token: string, id: string): Promise<PlacementRequestDetail> {
