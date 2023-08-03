@@ -30,4 +30,12 @@ export default class ListPage extends Page {
   clickNonParoleOption(): void {
     cy.get('a.moj-sub-navigation__link').contains('Confirmed release date').click()
   }
+
+  clickNext(): void {
+    cy.get('a[rel="next"]').click()
+  }
+
+  clickPageNumber(pageNumber: string): void {
+    cy.get('.govuk-pagination__link').contains(pageNumber).click()
+  }
 }

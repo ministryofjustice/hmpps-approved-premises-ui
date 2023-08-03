@@ -297,4 +297,31 @@ context('Placement Requests', () => {
       expect(requests).to.have.length(1)
     })
   })
+
+  it('supports pagination', () => {
+    cy.task('stubPlacementRequestsDashboard', { placementRequests, isParole: false, page: '2' })
+    cy.task('stubPlacementRequestsDashboard', { placementRequests, isParole: false, page: '9' })
+
+    // When I visit the tasks dashboard
+    const listPage = ListPage.visit()
+
+    // Then I should see a list of placement requests
+    listPage.shouldShowPlacementRequests(placementRequests)
+
+    // When I click next
+    listPage.clickNext()
+
+    // Then the API should have received a request for the next page
+    cy.task('verifyPlacementRequestsDashboard', { page: '2', isParole: false }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+
+    // When I click on a page number
+    listPage.clickPageNumber('9')
+
+    // Then the API should have received a request for the that page number
+    cy.task('verifyPlacementRequestsDashboard', { page: '9', isParole: false }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+  })
 })

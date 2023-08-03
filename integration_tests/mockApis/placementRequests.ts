@@ -21,23 +21,38 @@ export default {
       },
     }),
 
-  stubPlacementRequestsDashboard: (args: {
+  stubPlacementRequestsDashboard: ({
+    placementRequests,
+    isParole,
+    page = '1',
+  }: {
     placementRequests: Array<PlacementRequest>
     isParole: boolean
+    page: string
   }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        url: `${paths.placementRequests.dashboard.pattern}?isParole=${args.isParole}`,
+        url: `${paths.placementRequests.dashboard.pattern}?isParole=${isParole}&page=${page}&sortBy=createdAt`,
       },
       response: {
         status: 200,
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
+          'X-Pagination-TotalPages': '10',
+          'X-Pagination-TotalResults': '100',
+          'X-Pagination-PageSize': '10',
         },
-        jsonBody: args.placementRequests,
+        jsonBody: placementRequests,
       },
     }),
+  verifyPlacementRequestsDashboard: async ({ isParole, page = '1' }: { isParole: boolean; page: string }) =>
+    (
+      await getMatchingRequests({
+        method: 'GET',
+        url: `${paths.placementRequests.dashboard.pattern}?isParole=${isParole}&page=${page}&sortBy=createdAt`,
+      })
+    ).body.requests,
   stubPlacementRequest: (placementRequestDetail: PlacementRequestDetail): SuperAgentRequest =>
     stubFor({
       request: {
