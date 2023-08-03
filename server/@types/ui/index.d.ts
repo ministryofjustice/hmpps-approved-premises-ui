@@ -109,7 +109,9 @@ export interface HtmlItem {
   html: string
 }
 
-export type TableCell = { text: string; attributes?: HtmlAttributes; classes?: string } | { html: string }
+export type TableCell =
+  | { text: string; attributes?: HtmlAttributes; classes?: string }
+  | { html: string; attributes?: HtmlAttributes }
 
 export type TableRow = Array<TableCell>
 
@@ -414,4 +416,12 @@ export interface OasysPage extends TasklistPage {
   oasysCompleted: string
   risks: PersonRisksUI
   oasysSuccess: boolean
+}
+
+export type PaginatedResponse<T> = {
+  data: Array<T>
+  pageNumber: string
+  totalPages: string
+  totalResults: string
+  pageSize: string
 }

@@ -55,7 +55,7 @@ describeClient('placementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'true' },
+          query: { isParole: 'true', page: '1', sortBy: 'createdAt', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -63,12 +63,23 @@ describeClient('placementRequestClient', provider => {
         willRespondWith: {
           status: 200,
           body: placementRequests,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
         },
       })
 
       const result = await placementRequestClient.dashboard(true)
 
-      expect(result).toEqual(placementRequests)
+      expect(result).toEqual({
+        data: placementRequests,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
 
     it('makes a get request to the placementRequests dashboard endpoint for non-parole requests', async () => {
@@ -78,7 +89,7 @@ describeClient('placementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'false' },
+          query: { isParole: 'false', page: '1', sortBy: 'createdAt', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -86,12 +97,91 @@ describeClient('placementRequestClient', provider => {
         willRespondWith: {
           status: 200,
           body: placementRequests,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
         },
       })
 
       const result = await placementRequestClient.dashboard(false)
 
-      expect(result).toEqual(placementRequests)
+      expect(result).toEqual({
+        data: placementRequests,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
+
+    it('makes a get request to the placementRequests dashboard endpoint for parole requests with a page number', async () => {
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the placement requests dashboard view',
+        withRequest: {
+          method: 'GET',
+          path: paths.placementRequests.dashboard.pattern,
+          query: { isParole: 'true', page: '2', sortBy: 'createdAt', sortDirection: 'asc' },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placementRequests,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const result = await placementRequestClient.dashboard(true, 2)
+
+      expect(result).toEqual({
+        data: placementRequests,
+        pageNumber: '2',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
+
+    it('makes a get request to the placementRequests dashboard endpoint for parole requests with a sortBy option', async () => {
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the placement requests dashboard view',
+        withRequest: {
+          method: 'GET',
+          path: paths.placementRequests.dashboard.pattern,
+          query: { isParole: 'true', page: '1', sortBy: 'duration', sortDirection: 'desc' },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placementRequests,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const result = await placementRequestClient.dashboard(true, 1, 'duration', 'desc')
+
+      expect(result).toEqual({
+        data: placementRequests,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
   })
 

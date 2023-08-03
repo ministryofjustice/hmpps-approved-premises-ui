@@ -27,6 +27,8 @@ import { navigationItems } from './navigationItems'
 
 import { statusTag } from './personUtils'
 import { DateFormats, uiDateOrDateEmptyMessage } from './dateUtils'
+import { pagination } from './pagination'
+import { sortHeader } from './sortHeader'
 
 import * as AssessmentUtils from './assessments/utils'
 import * as OASysUtils from './assessments/oasysUtils'
@@ -204,6 +206,8 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('dashboardTableRows', dashboardTableRows)
   njkEnv.addGlobal('navigationItems', navigationItems)
   njkEnv.addGlobal('withdrawalRadioOptions', withdrawalRadioOptions)
+  njkEnv.addGlobal('pagination', pagination)
+  njkEnv.addGlobal('sortHeader', sortHeader)
 
   njkEnv.addGlobal('AssessmentUtils', AssessmentUtils)
   njkEnv.addGlobal('OASysUtils', OASysUtils)

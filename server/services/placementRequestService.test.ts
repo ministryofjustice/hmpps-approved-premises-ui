@@ -1,12 +1,14 @@
-import { PlacementRequestDetail } from '@approved-premises/api'
+import { PlacementRequest, PlacementRequestDetail } from '@approved-premises/api'
 import PlacementRequestClient from '../data/placementRequestClient'
 import {
   bookingNotMadeFactory,
   newPlacementRequestBookingConfirmationFactory,
+  paginatedResponseFactory,
   placementRequestDetailFactory,
   placementRequestFactory,
 } from '../testutils/factories'
 import PlacementRequestService from './placementRequestService'
+import { PaginatedResponse } from '../@types/ui'
 
 jest.mock('../data/placementRequestClient.ts')
 
@@ -48,15 +50,33 @@ describe('placementRequestService', () => {
 
   describe('getDashboard', () => {
     it('calls the find method on the placementRequest client', async () => {
-      const placementRequests = placementRequestFactory.buildList(4, { status: 'notMatched' })
-      placementRequestClient.dashboard.mockResolvedValue(placementRequests)
+      const response = paginatedResponseFactory.build({
+        data: placementRequestFactory.buildList(4, { status: 'notMatched' }),
+      }) as PaginatedResponse<PlacementRequest>
+
+      placementRequestClient.dashboard.mockResolvedValue(response)
 
       const result = await service.getDashboard(token, false)
 
-      expect(result).toEqual(placementRequests)
+      expect(result).toEqual(response)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
-      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(false)
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(false, 1, 'createdAt', 'asc')
+    })
+
+    it('calls the find method on the placementRequest client with page and sort options', async () => {
+      const response = paginatedResponseFactory.build({
+        data: placementRequestFactory.buildList(4, { status: 'notMatched' }),
+      }) as PaginatedResponse<PlacementRequest>
+
+      placementRequestClient.dashboard.mockResolvedValue(response)
+
+      const result = await service.getDashboard(token, false, 2, 'duration', 'desc')
+
+      expect(result).toEqual(response)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(false, 2, 'duration', 'desc')
     })
   })
 

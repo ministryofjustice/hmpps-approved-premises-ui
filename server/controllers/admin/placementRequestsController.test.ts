@@ -4,8 +4,12 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import PlacementRequestsController from './placementRequestsController'
 
 import { PlacementRequestService } from '../../services'
-import { placementRequestFactory } from '../../testutils/factories'
+import { paginatedResponseFactory, placementRequestFactory } from '../../testutils/factories'
 import placementRequestDetail from '../../testutils/factories/placementRequestDetail'
+import { PaginatedResponse } from '../../@types/ui'
+import { PlacementRequest } from '../../@types/shared'
+import paths from '../../paths/admin'
+import { createQueryString } from '../../utils/utils'
 
 jest.mock('../../utils/applications/utils')
 jest.mock('../../utils/applications/getResponses')
@@ -27,9 +31,16 @@ describe('PlacementRequestsController', () => {
   })
 
   describe('index', () => {
+    const paginatedResponse = paginatedResponseFactory.build({
+      data: placementRequestFactory.buildList(2),
+    }) as PaginatedResponse<PlacementRequest>
+
+    beforeEach(() => {
+      placementRequestService.getDashboard.mockResolvedValue(paginatedResponse)
+    })
+
     it('should render the placement requests template', async () => {
-      const placementRequests = placementRequestFactory.buildList(2)
-      placementRequestService.getDashboard.mockResolvedValue(placementRequests)
+      const hrefPrefix = `${paths.admin.placementRequests.index({})}?${createQueryString({ isParole: false })}&`
 
       const requestHandler = placementRequestsController.index()
 
@@ -37,15 +48,17 @@ describe('PlacementRequestsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
         pageHeading: 'Record and update placement details',
-        placementRequests,
+        placementRequests: paginatedResponse.data,
         isParole: false,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix,
       })
-      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, false)
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, false, undefined, undefined, undefined)
     })
 
     it('should request parole placement requests', async () => {
-      const placementRequests = placementRequestFactory.buildList(2)
-      placementRequestService.getDashboard.mockResolvedValue(placementRequests)
+      const hrefPrefix = `${paths.admin.placementRequests.index({})}?${createQueryString({ isParole: true })}&`
 
       const requestHandler = placementRequestsController.index()
 
@@ -53,10 +66,37 @@ describe('PlacementRequestsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
         pageHeading: 'Record and update placement details',
-        placementRequests,
+        placementRequests: paginatedResponse.data,
         isParole: true,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix,
       })
-      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true)
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true, undefined, undefined, undefined)
+    })
+
+    it('should request page numbers and sort options', async () => {
+      const hrefPrefix = `${paths.admin.placementRequests.index({})}?${createQueryString({ isParole: true })}&`
+
+      const requestHandler = placementRequestsController.index()
+
+      await requestHandler(
+        { ...request, query: { isParole: '1', page: '2', sortBy: 'expectedArrival', sortDirection: 'desc' } },
+        response,
+        next,
+      )
+
+      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
+        pageHeading: 'Record and update placement details',
+        placementRequests: paginatedResponse.data,
+        isParole: true,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix,
+        sortBy: 'expectedArrival',
+        sortDirection: 'desc',
+      })
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true, 2, 'expectedArrival', 'desc')
     })
   })
 
