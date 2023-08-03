@@ -26,6 +26,7 @@ export const sortHeader = (
     html: `<a href="${hrefPrefix}${createQueryString({ sortBy: targetField, sortDirection })}">${text}</a>`,
     attributes: {
       'aria-sort': ariaSort,
+      'data-cy-sort-field': targetField,
     },
   }
 }

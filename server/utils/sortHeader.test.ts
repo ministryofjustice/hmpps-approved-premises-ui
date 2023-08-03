@@ -9,6 +9,7 @@ describe('sortHeader', () => {
       html: `<a href="${hrefPrefix}${createQueryString({ sortBy: 'myField' })}">Some text</a>`,
       attributes: {
         'aria-sort': 'none',
+        'data-cy-sort-field': 'myField',
       },
     })
   })
@@ -18,6 +19,7 @@ describe('sortHeader', () => {
       html: `<a href="${hrefPrefix}${createQueryString({ sortBy: 'myField', sortDirection: 'desc' })}">Some text</a>`,
       attributes: {
         'aria-sort': 'ascending',
+        'data-cy-sort-field': 'myField',
       },
     })
   })
@@ -27,6 +29,7 @@ describe('sortHeader', () => {
       html: `<a href="${hrefPrefix}${createQueryString({ sortBy: 'myField', sortDirection: 'asc' })}">Some text</a>`,
       attributes: {
         'aria-sort': 'descending',
+        'data-cy-sort-field': 'myField',
       },
     })
   })

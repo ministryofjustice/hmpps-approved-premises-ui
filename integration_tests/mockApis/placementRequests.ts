@@ -25,15 +25,19 @@ export default {
     placementRequests,
     isParole,
     page = '1',
+    sortBy = 'createdAt',
+    sortDirection = 'asc',
   }: {
     placementRequests: Array<PlacementRequest>
     isParole: boolean
     page: string
+    sortBy: string
+    sortDirection: string
   }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        url: `${paths.placementRequests.dashboard.pattern}?isParole=${isParole}&page=${page}&sortBy=createdAt`,
+        url: `${paths.placementRequests.dashboard.pattern}?isParole=${isParole}&page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
       },
       response: {
         status: 200,
@@ -46,11 +50,21 @@ export default {
         jsonBody: placementRequests,
       },
     }),
-  verifyPlacementRequestsDashboard: async ({ isParole, page = '1' }: { isParole: boolean; page: string }) =>
+  verifyPlacementRequestsDashboard: async ({
+    isParole,
+    page = '1',
+    sortBy = 'createdAt',
+    sortDirection = 'asc',
+  }: {
+    isParole: boolean
+    page: string
+    sortBy: string
+    sortDirection: string
+  }) =>
     (
       await getMatchingRequests({
         method: 'GET',
-        url: `${paths.placementRequests.dashboard.pattern}?isParole=${isParole}&page=${page}&sortBy=createdAt`,
+        url: `${paths.placementRequests.dashboard.pattern}?isParole=${isParole}&page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
       })
     ).body.requests,
   stubPlacementRequest: (placementRequestDetail: PlacementRequestDetail): SuperAgentRequest =>

@@ -38,4 +38,12 @@ export default class ListPage extends Page {
   clickPageNumber(pageNumber: string): void {
     cy.get('.govuk-pagination__link').contains(pageNumber).click()
   }
+
+  clickSortBy(field: string): void {
+    cy.get(`th[data-cy-sort-field="${field}"] a`).click()
+  }
+
+  shouldBeSortedByField(field: string, order: string): void {
+    cy.get(`th[data-cy-sort-field="${field}"]`).should('have.attr', 'aria-sort', order)
+  }
 }

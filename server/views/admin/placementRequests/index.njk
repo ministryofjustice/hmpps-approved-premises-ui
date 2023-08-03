@@ -39,9 +39,6 @@
       {{
               govukTable({
                   firstCellIsHeader: true,
-                  attributes: {
-                    'data-module': 'moj-sortable-table'
-                  },
                   head: [
                       {
                           text: "Name"
@@ -52,18 +49,8 @@
                       {
                           text: "Tier"
                       },
-                      {
-                          text: ("Date of decision" if isParole else "Arrival date"),
-                          attributes: {
-                            "aria-sort": "none"
-                          }
-                      },
-                      {
-                          text: "Length of stay",
-                          attributes: {
-                            "aria-sort": "none"
-                          }
-                      },
+                      sortHeader(("Date of decision" if isParole else "Arrival date"), 'expectedArrival', sortBy, sortDirection, hrefPrefix),
+                      sortHeader("Length of stay", 'duration', sortBy, sortDirection, hrefPrefix),
                       {
                           text: "Status"
                       }
@@ -76,12 +63,4 @@
 
     </div>
   </div>
-{% endblock %}
-
-{% block extraScripts %}
-  <script type="text/javascript" nonce="{{ cspNonce }}">
-    window
-      .MOJFrontend
-      .initAll()
-  </script>
 {% endblock %}

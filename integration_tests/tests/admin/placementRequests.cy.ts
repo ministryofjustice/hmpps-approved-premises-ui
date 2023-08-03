@@ -324,4 +324,55 @@ context('Placement Requests', () => {
       expect(requests).to.have.length(1)
     })
   })
+
+  it('supports sorting', () => {
+    cy.task('stubPlacementRequestsDashboard', {
+      placementRequests,
+      isParole: false,
+      sortBy: 'expectedArrival',
+      sortDirection: 'asc',
+    })
+    cy.task('stubPlacementRequestsDashboard', {
+      placementRequests,
+      isParole: false,
+      sortBy: 'expectedArrival',
+      sortDirection: 'desc',
+    })
+
+    // When I visit the tasks dashboard
+    const listPage = ListPage.visit()
+
+    // Then I should see a list of placement requests
+    listPage.shouldShowPlacementRequests(placementRequests)
+
+    // When I sort by expected arrival in ascending order
+    listPage.clickSortBy('expectedArrival')
+
+    // Then the dashboard should be sorted by expected arrival
+    listPage.shouldBeSortedByField('expectedArrival', 'ascending')
+
+    // And the API should have received a request for the correct sort order
+    cy.task('verifyPlacementRequestsDashboard', {
+      isParole: false,
+      sortBy: 'expectedArrival',
+      sortDirection: 'asc',
+    }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+
+    // When I sort by expected arrival in descending order
+    listPage.clickSortBy('expectedArrival')
+
+    // Then the dashboard should be sorted by expected arrival in descending order
+    listPage.shouldBeSortedByField('expectedArrival', 'descending')
+
+    // And the API should have received a request for the correct sort order
+    cy.task('verifyPlacementRequestsDashboard', {
+      isParole: false,
+      sortBy: 'expectedArrival',
+      sortDirection: 'desc',
+    }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+  })
 })
