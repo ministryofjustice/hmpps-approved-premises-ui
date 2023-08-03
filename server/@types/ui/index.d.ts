@@ -109,7 +109,9 @@ export interface HtmlItem {
   html: string
 }
 
-export type TableCell = { text: string; attributes?: HtmlAttributes; classes?: string } | { html: string }
+export type TableCell =
+  | { text: string; attributes?: HtmlAttributes; classes?: string }
+  | { html: string; attributes?: HtmlAttributes }
 
 export type TableRow = Array<TableCell>
 
