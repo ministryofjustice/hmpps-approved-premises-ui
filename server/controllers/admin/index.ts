@@ -2,6 +2,7 @@
 
 import AdminPlacementRequestsController from './placementRequestsController'
 import PlacementRequestsBookingsController from './placementRequests/bookingsController'
+import PlacementRequestsWithdrawalsController from './placementRequests/withdrawalsController'
 
 import type { Services } from '../../services'
 
@@ -12,10 +13,12 @@ export const controllers = (services: Services) => {
     placementRequestService,
     premisesService,
   )
+  const placementRequestWithdrawalsController = new PlacementRequestsWithdrawalsController(placementRequestService)
 
   return {
     adminPlacementRequestsController,
     placementRequestsBookingsController,
+    placementRequestWithdrawalsController,
   }
 }
 

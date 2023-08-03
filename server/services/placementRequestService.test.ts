@@ -113,4 +113,17 @@ describe('placementRequestService', () => {
       expect(placementRequestClient.bookingNotMade).toHaveBeenCalledWith(id, body)
     })
   })
+
+  describe('withdraw', () => {
+    it('it should call the service', async () => {
+      placementRequestClient.withdraw.mockResolvedValue()
+
+      const id = 'some-uuid'
+
+      await service.withdraw(token, id)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.withdraw).toHaveBeenCalledWith(id)
+    })
+  })
 })

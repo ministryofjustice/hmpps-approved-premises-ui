@@ -6,6 +6,8 @@ const placementRequestPath = placementRequestsPath.path(':id')
 
 const bookingsPath = placementRequestPath.path('bookings')
 
+const withdrawalPath = placementRequestPath.path('withdrawal')
+
 export default {
   admin: {
     placementRequests: {
@@ -14,6 +16,10 @@ export default {
       bookings: {
         new: bookingsPath.path('new'),
         create: bookingsPath,
+      },
+      withdrawal: {
+        new: withdrawalPath.path('new'),
+        create: withdrawalPath,
       },
     },
   },

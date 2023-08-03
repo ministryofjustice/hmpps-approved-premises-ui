@@ -27,13 +27,17 @@ describe('adminIdentityBar', () => {
       ])
     })
 
-    it('should return actions to create a booking if there is a booking', () => {
+    it('should return actions to create a booking and withdraw a placement request if there is a booking', () => {
       const placementRequestDetail = placementRequestDetailFactory.build({ booking: undefined })
 
       expect(adminActions(placementRequestDetail)).toEqual([
         {
           href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequestDetail.id }),
           text: 'Create placement',
+        },
+        {
+          href: adminPaths.admin.placementRequests.withdrawal.new({ id: placementRequestDetail.id }),
+          text: 'Withdraw placement request',
         },
       ])
     })

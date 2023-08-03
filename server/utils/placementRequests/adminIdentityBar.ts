@@ -35,6 +35,10 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
       href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequest.id }),
       text: 'Create placement',
     },
+    {
+      href: adminPaths.admin.placementRequests.withdrawal.new({ id: placementRequest.id }),
+      text: 'Withdraw placement request',
+    },
   ]
 }
 
