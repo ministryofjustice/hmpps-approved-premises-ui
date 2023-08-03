@@ -54,7 +54,7 @@ describe('PlacementRequestsController', () => {
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix,
       })
-      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, false, undefined, undefined)
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, false, undefined, undefined, undefined)
     })
 
     it('should request parole placement requests', async () => {
@@ -72,7 +72,7 @@ describe('PlacementRequestsController', () => {
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix,
       })
-      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true, undefined, undefined)
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true, undefined, undefined, undefined)
     })
 
     it('should request page numbers and sort options', async () => {
@@ -81,7 +81,7 @@ describe('PlacementRequestsController', () => {
       const requestHandler = placementRequestsController.index()
 
       await requestHandler(
-        { ...request, query: { isParole: '1', page: '2', sortBy: 'expectedArrival' } },
+        { ...request, query: { isParole: '1', page: '2', sortBy: 'expectedArrival', sortDirection: 'desc' } },
         response,
         next,
       )
@@ -93,8 +93,10 @@ describe('PlacementRequestsController', () => {
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix,
+        sortBy: 'expectedArrival',
+        sortDirection: 'desc',
       })
-      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true, 2, 'expectedArrival')
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true, 2, 'expectedArrival', 'desc')
     })
   })
 

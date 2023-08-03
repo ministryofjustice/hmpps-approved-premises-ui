@@ -61,7 +61,7 @@ describe('placementRequestService', () => {
       expect(result).toEqual(response)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
-      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(false, 1, 'createdAt')
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(false, 1, 'createdAt', 'asc')
     })
 
     it('calls the find method on the placementRequest client with page and sort options', async () => {
@@ -71,12 +71,12 @@ describe('placementRequestService', () => {
 
       placementRequestClient.dashboard.mockResolvedValue(response)
 
-      const result = await service.getDashboard(token, false, 2, 'duration')
+      const result = await service.getDashboard(token, false, 2, 'duration', 'desc')
 
       expect(result).toEqual(response)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
-      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(false, 2, 'duration')
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(false, 2, 'duration', 'desc')
     })
   })
 

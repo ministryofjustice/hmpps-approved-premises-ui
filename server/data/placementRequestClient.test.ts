@@ -55,7 +55,7 @@ describeClient('placementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'true', page: '1', sortBy: 'createdAt' },
+          query: { isParole: 'true', page: '1', sortBy: 'createdAt', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -89,7 +89,7 @@ describeClient('placementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'false', page: '1', sortBy: 'createdAt' },
+          query: { isParole: 'false', page: '1', sortBy: 'createdAt', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -123,7 +123,7 @@ describeClient('placementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'true', page: '2', sortBy: 'createdAt' },
+          query: { isParole: 'true', page: '2', sortBy: 'createdAt', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -157,7 +157,7 @@ describeClient('placementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'true', page: '1', sortBy: 'duration' },
+          query: { isParole: 'true', page: '1', sortBy: 'duration', sortDirection: 'desc' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -173,7 +173,7 @@ describeClient('placementRequestClient', provider => {
         },
       })
 
-      const result = await placementRequestClient.dashboard(true, 1, 'duration')
+      const result = await placementRequestClient.dashboard(true, 1, 'duration', 'desc')
 
       expect(result).toEqual({
         data: placementRequests,
