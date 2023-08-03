@@ -51,6 +51,7 @@ import {
 import nonArrivalFactory from './nonArrival'
 import oasysSectionsFactory, { roshSummaryFactory } from './oasysSections'
 import oasysSelectionFactory from './oasysSelection'
+import paginatedResponseFactory from './paginatedResponse'
 import personFactory from './person'
 import placementApplicationFactory from './placementApplication'
 import placementApplicationTaskFactory from './placementApplicationTask'
@@ -122,6 +123,7 @@ export {
   nonArrivalFactory,
   oasysSectionsFactory,
   oasysSelectionFactory,
+  paginatedResponseFactory,
   personFactory,
   placementApplicationFactory,
   placementApplicationTaskFactory,

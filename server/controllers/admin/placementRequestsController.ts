@@ -10,17 +10,14 @@ export default class PlacementRequestsController {
       const isParole = req.query.isParole === '1'
       const pageNumber = req.query.page ? Number(req.query.page) : undefined
       const sortBy = req.query.sortBy as PlacementRequestSortField
-      const placementRequests = await this.placementRequestService.getDashboard(
-        req.user.token,
-        isParole,
-        pageNumber,
-        sortBy,
-      )
+      const dashboard = await this.placementRequestService.getDashboard(req.user.token, isParole, pageNumber, sortBy)
 
       res.render('admin/placementRequests/index', {
         pageHeading: 'Record and update placement details',
-        placementRequests,
+        placementRequests: dashboard.data,
         isParole,
+        pageNumber: Number(dashboard.pageNumber),
+        totalPages: Number(dashboard.totalPages),
       })
     }
   }

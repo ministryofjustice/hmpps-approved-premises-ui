@@ -1,4 +1,4 @@
-import { GroupedPlacementRequests } from '@approved-premises/ui'
+import { GroupedPlacementRequests, PaginatedResponse } from '@approved-premises/ui'
 import {
   NewBookingNotMade,
   NewPlacementRequestBooking,
@@ -36,7 +36,7 @@ export default class PlacementRequestService {
     isParole: boolean,
     page: number = 1,
     sortBy: PlacementRequestSortField = 'createdAt',
-  ): Promise<Array<PlacementRequest>> {
+  ): Promise<PaginatedResponse<PlacementRequest>> {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
     return placementRequestClient.dashboard(isParole, page, sortBy)

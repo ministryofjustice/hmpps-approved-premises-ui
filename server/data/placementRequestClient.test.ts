@@ -63,12 +63,23 @@ describeClient('placementRequestClient', provider => {
         willRespondWith: {
           status: 200,
           body: placementRequests,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
         },
       })
 
       const result = await placementRequestClient.dashboard(true)
 
-      expect(result).toEqual(placementRequests)
+      expect(result).toEqual({
+        data: placementRequests,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
 
     it('makes a get request to the placementRequests dashboard endpoint for non-parole requests', async () => {
@@ -86,12 +97,23 @@ describeClient('placementRequestClient', provider => {
         willRespondWith: {
           status: 200,
           body: placementRequests,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
         },
       })
 
       const result = await placementRequestClient.dashboard(false)
 
-      expect(result).toEqual(placementRequests)
+      expect(result).toEqual({
+        data: placementRequests,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
 
     it('makes a get request to the placementRequests dashboard endpoint for parole requests with a page number', async () => {
@@ -109,12 +131,23 @@ describeClient('placementRequestClient', provider => {
         willRespondWith: {
           status: 200,
           body: placementRequests,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
         },
       })
 
       const result = await placementRequestClient.dashboard(true, 2)
 
-      expect(result).toEqual(placementRequests)
+      expect(result).toEqual({
+        data: placementRequests,
+        pageNumber: '2',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
 
     it('makes a get request to the placementRequests dashboard endpoint for parole requests with a sortBy option', async () => {
@@ -132,12 +165,23 @@ describeClient('placementRequestClient', provider => {
         willRespondWith: {
           status: 200,
           body: placementRequests,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
         },
       })
 
       const result = await placementRequestClient.dashboard(true, 1, 'duration')
 
-      expect(result).toEqual(placementRequests)
+      expect(result).toEqual({
+        data: placementRequests,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
   })
 

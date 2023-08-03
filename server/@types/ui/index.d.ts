@@ -415,3 +415,11 @@ export interface OasysPage extends TasklistPage {
   risks: PersonRisksUI
   oasysSuccess: boolean
 }
+
+export type PaginatedResponse<T> = {
+  data: Array<T>
+  pageNumber: string
+  totalPages: string
+  totalResults: string
+  pageSize: string
+}

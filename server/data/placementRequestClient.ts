@@ -1,3 +1,5 @@
+import superagent from 'superagent'
+
 import {
   BookingNotMade,
   NewBookingNotMade,
@@ -11,6 +13,7 @@ import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
 import { createQueryString } from '../utils/utils'
+import { PaginatedResponse } from '../@types/ui'
 
 export default class PlacementRequestClient {
   restClient: RestClient
@@ -29,11 +32,20 @@ export default class PlacementRequestClient {
     isParole: boolean,
     page = 1,
     sortBy: PlacementRequestSortField = 'createdAt',
-  ): Promise<Array<PlacementRequest>> {
-    return (await this.restClient.get({
+  ): Promise<PaginatedResponse<PlacementRequest>> {
+    const response = (await this.restClient.get({
       path: paths.placementRequests.dashboard.pattern,
       query: createQueryString({ isParole, page, sortBy }),
-    })) as Promise<Array<PlacementRequest>>
+      raw: true,
+    })) as superagent.Response
+
+    return {
+      data: response.body,
+      pageNumber: page.toString(),
+      totalPages: response.headers['x-pagination-totalpages'],
+      totalResults: response.headers['x-pagination-totalresults'],
+      pageSize: response.headers['x-pagination-pagesize'],
+    }
   }
 
   async find(id: string): Promise<PlacementRequestDetail> {
