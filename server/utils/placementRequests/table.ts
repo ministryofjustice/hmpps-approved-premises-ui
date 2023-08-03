@@ -29,6 +29,7 @@ export const dashboardTableRows = (placementRequests: Array<PlacementRequest>): 
     return [
       nameCell(placementRequest),
       crnCell(placementRequest.person),
+      tierCell(placementRequest.risks),
       expectedArrivalDateCell(placementRequest),
       durationCell(placementRequest),
       statusCell(placementRequest),
