@@ -15,6 +15,12 @@
   "name": {
     "empty": "You must enter a name"
   },
+  "year": {
+    "empty": "You must choose a year"
+  },
+  "month": {
+    "empty": "You must choose a month"
+  },
   "arrivalDateTime": {
     "empty": "You must enter an arrival date and time",
     "invalid": "The arrival date or time is invalid",

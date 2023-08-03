@@ -14,6 +14,7 @@ export default function routes(controllers: Controllers, router: Router, service
     adminPlacementRequestsController,
     placementRequestsBookingsController,
     placementRequestWithdrawalsController,
+    reportsController,
   } = controllers
 
   get(paths.admin.placementRequests.index.pattern, adminPlacementRequestsController.index(), {
@@ -56,6 +57,20 @@ export default function routes(controllers: Controllers, router: Router, service
       {
         path: paths.admin.placementRequests.index.pattern,
         auditEvent: 'ADMIN_CREATE_PLACEMENT_REQUEST_WITHDRAWL_SUCCESS',
+      },
+    ],
+  })
+
+  get(paths.admin.reports.new.pattern, reportsController.new(), {
+    auditEvent: 'ADMIN_ACCESS_REPORTS_SECTION',
+  })
+
+  post(paths.admin.reports.create.pattern, reportsController.create(), {
+    auditEvent: 'ADMIN_GENERATE_LOST_BEDS_REPORT',
+    redirectAuditEventSpecs: [
+      {
+        path: paths.admin.reports.new.pattern,
+        auditEvent: 'ADMIN_GENERATE_LOST_BEDS_REPORT_ERROR',
       },
     ],
   })
