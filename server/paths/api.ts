@@ -178,4 +178,9 @@ export default {
     show: usersPath.path(':id'),
     profile: path('/profile'),
   },
+  reports: {
+    lostBeds: {
+      show: path('/reports/lost-beds'),
+    },
+  },
 }
