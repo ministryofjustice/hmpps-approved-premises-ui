@@ -40,7 +40,7 @@ describe('PlacementRequestsController', () => {
     })
 
     it('should render the placement requests template', async () => {
-      const hrefPrefix = `${paths.admin.placementRequests.index({})}?${createQueryString({ isParole: false })}&`
+      const hrefPrefix = `${paths.admin.placementRequests.index({})}?status=notMatched&`
 
       const requestHandler = placementRequestsController.index()
 
@@ -49,39 +49,51 @@ describe('PlacementRequestsController', () => {
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
         pageHeading: 'Record and update placement details',
         placementRequests: paginatedResponse.data,
-        isParole: false,
+        status: 'notMatched',
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix,
       })
-      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, false, undefined, undefined, undefined)
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
+        token,
+        'notMatched',
+        undefined,
+        undefined,
+        undefined,
+      )
     })
 
     it('should request parole placement requests', async () => {
-      const hrefPrefix = `${paths.admin.placementRequests.index({})}?${createQueryString({ isParole: true })}&`
+      const hrefPrefix = `${paths.admin.placementRequests.index({})}?${createQueryString({ status: 'notMatched' })}&`
 
       const requestHandler = placementRequestsController.index()
 
-      await requestHandler({ ...request, query: { isParole: '1' } }, response, next)
+      await requestHandler({ ...request, query: { status: 'notMatched' } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
         pageHeading: 'Record and update placement details',
         placementRequests: paginatedResponse.data,
-        isParole: true,
+        status: 'notMatched',
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix,
       })
-      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true, undefined, undefined, undefined)
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
+        token,
+        'notMatched',
+        undefined,
+        undefined,
+        undefined,
+      )
     })
 
     it('should request page numbers and sort options', async () => {
-      const hrefPrefix = `${paths.admin.placementRequests.index({})}?${createQueryString({ isParole: true })}&`
+      const hrefPrefix = `${paths.admin.placementRequests.index({})}?${createQueryString({ status: 'notMatched' })}&`
 
       const requestHandler = placementRequestsController.index()
 
       await requestHandler(
-        { ...request, query: { isParole: '1', page: '2', sortBy: 'expectedArrival', sortDirection: 'desc' } },
+        { ...request, query: { status: 'notMatched', page: '2', sortBy: 'expectedArrival', sortDirection: 'desc' } },
         response,
         next,
       )
@@ -89,14 +101,20 @@ describe('PlacementRequestsController', () => {
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
         pageHeading: 'Record and update placement details',
         placementRequests: paginatedResponse.data,
-        isParole: true,
+        status: 'notMatched',
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix,
         sortBy: 'expectedArrival',
         sortDirection: 'desc',
       })
-      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(token, true, 2, 'expectedArrival', 'desc')
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
+        token,
+        'notMatched',
+        2,
+        'expectedArrival',
+        'desc',
+      )
     })
   })
 
