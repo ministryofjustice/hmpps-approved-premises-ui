@@ -57,7 +57,7 @@
                       sortHeader(("Date of decision" if isParole else "Arrival date"), 'expectedArrival', sortBy, sortDirection, hrefPrefix),
                       sortHeader("Length of stay", 'duration', sortBy, sortDirection, hrefPrefix),
                       {
-                          text: "Status"
+                          text: "Request type"
                       }
                   ],
                   rows: PlacementRequestUtils.tableUtils.dashboardTableRows(placementRequests)

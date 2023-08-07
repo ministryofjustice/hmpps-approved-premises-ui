@@ -32,18 +32,14 @@ export const dashboardTableRows = (placementRequests: Array<PlacementRequest>): 
       tierCell(placementRequest.risks),
       expectedArrivalDateCell(placementRequest),
       durationCell(placementRequest),
-      statusCell(placementRequest),
+      requestTypeCell(placementRequest),
     ]
   })
 }
 
-export const statusCell = (placementRequest: PlacementRequest): TableCell => {
+export const requestTypeCell = (placementRequest: PlacementRequest): TableCell => {
   return {
-    text: {
-      notMatched: 'Not matched',
-      unableToMatch: 'Unable to allocate',
-      matched: 'Booking confirmed',
-    }[placementRequest.status],
+    text: placementRequest.isParole ? 'Parole' : 'Standard release',
   }
 }
 

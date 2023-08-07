@@ -7,13 +7,12 @@ import {
   expectedArrivalDateCell,
   nameCell,
   releaseTypeCell,
-  statusCell,
+  requestTypeCell,
   tableRows,
 } from './table'
 import { DateFormats } from '../dateUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { crnCell, tierCell } from '../tableUtils'
-import { PlacementRequestStatus } from '../../@types/shared'
 
 describe('tableUtils', () => {
   describe('nameCell', () => {
@@ -78,18 +77,20 @@ describe('tableUtils', () => {
     })
   })
 
-  describe('statusCell', () => {
-    const statuses = {
-      notMatched: 'Not matched',
-      unableToMatch: 'Unable to allocate',
-      matched: 'Booking confirmed',
-    } as Record<PlacementRequestStatus, string>
+  describe('requestTypeCell', () => {
+    it('returns parole if isParole is true', () => {
+      const placementRequest = placementRequestFactory.build({ isParole: true })
 
-    it.each(Object.keys(statuses))('returns the correct status for %s', (key: PlacementRequestStatus) => {
-      const placementRequest = placementRequestFactory.build({ status: key })
+      expect(requestTypeCell(placementRequest)).toEqual({
+        text: 'Parole',
+      })
+    })
 
-      expect(statusCell(placementRequest)).toEqual({
-        text: statuses[key],
+    it('returns standard if isParole is false', () => {
+      const placementRequest = placementRequestFactory.build({ isParole: false })
+
+      expect(requestTypeCell(placementRequest)).toEqual({
+        text: 'Standard release',
       })
     })
   })
@@ -143,7 +144,7 @@ describe('tableUtils', () => {
           tierCell(placementRequest.risks),
           expectedArrivalDateCell(placementRequest),
           durationCell(placementRequest),
-          statusCell(placementRequest),
+          requestTypeCell(placementRequest),
         ],
       ])
     })
