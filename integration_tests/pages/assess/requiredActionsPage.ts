@@ -1,4 +1,3 @@
-import { faker } from '@faker-js/faker/locale/en_GB'
 import type { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 
 import AssessPage from './assessPage'
@@ -8,18 +7,18 @@ import RequiredActions from '../../../server/form-pages/assess/assessApplication
 export default class RequiredActionsPage extends AssessPage {
   pageClass = new RequiredActions({
     additionalActions: 'yes',
-    additionalActionsComments: '',
+    additionalActionsComments: 'Additional actions',
     curfewsOrSignIns: 'yes',
     curfewsOrSignInsComments: '',
     concernsOfUnmanagableRisk: 'yes',
     concernsOfUnmanagableRiskComments: '',
     additionalRecommendations: 'yes',
     additionalRecommendationsComments: '',
-    nameOfAreaManager: faker.person.fullName(),
+    nameOfAreaManager: 'Frank',
     'dateOfDiscussion-day': '1',
     'dateOfDiscussion-month': '2',
     'dateOfDiscussion-year': '2022',
-    outlineOfDiscussion: '',
+    outlineOfDiscussion: 'Outline of discussion',
   })
 
   constructor(assessment: Assessment) {
@@ -28,15 +27,15 @@ export default class RequiredActionsPage extends AssessPage {
 
   completeForm() {
     this.checkRadioByNameAndValue('additionalActions', this.pageClass.body.additionalActions)
-    this.completeTextArea('additionalActionsComments', 'One')
+    this.clearAndCompleteTextInputById('additionalActionsComments', 'One')
 
     this.checkRadioByNameAndValue('curfewsOrSignIns', this.pageClass.body.curfewsOrSignIns)
     this.completeTextArea('curfewsOrSignInsComments', 'Two')
 
     this.checkRadioByNameAndValue('concernsOfUnmanagableRisk', this.pageClass.body.concernsOfUnmanagableRisk)
-    this.getTextInputByIdAndEnterDetails('nameOfAreaManager', 'Frank')
+    this.clearAndCompleteTextInputById('nameOfAreaManager', this.pageClass.body.nameOfAreaManager)
 
-    this.completeTextArea('outlineOfDiscussion', 'foo bar baz')
+    this.clearAndCompleteTextInputById('outlineOfDiscussion', this.pageClass.body.outlineOfDiscussion)
 
     this.completeTextArea('concernsOfUnmanagableRiskComments', 'Three')
     this.checkRadioByNameAndValue('additionalRecommendations', this.pageClass.body.additionalActions)
