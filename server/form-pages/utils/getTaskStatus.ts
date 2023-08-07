@@ -41,7 +41,7 @@ const getTaskStatus = (task: UiTask, applicationOrAssessment: Application | Asse
     // And the next page ID
     pageId = page.next()
 
-    if (errors.length) {
+    if (Object.keys(errors).length) {
       // Are there any errors? Then the task is incomplete
       status = 'in_progress'
       break
