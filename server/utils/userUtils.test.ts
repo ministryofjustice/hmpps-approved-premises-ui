@@ -49,6 +49,7 @@ describe('userUtils', () => {
           sections.workflow,
           sections.placementRequests,
           sections.cruDashboard,
+          sections.reports,
         ])
       })
 
@@ -68,6 +69,7 @@ describe('userUtils', () => {
           sections.workflow,
           sections.placementRequests,
           sections.cruDashboard,
+          sections.reports,
         ])
       })
     })
