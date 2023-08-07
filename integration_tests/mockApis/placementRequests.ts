@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { PlacementRequest, PlacementRequestDetail } from '@approved-premises/api'
+import type { PlacementRequest, PlacementRequestDetail, PlacementRequestStatus } from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
 import { bookingNotMadeFactory, newPlacementRequestBookingConfirmationFactory } from '../../server/testutils/factories'
@@ -23,13 +23,13 @@ export default {
 
   stubPlacementRequestsDashboard: ({
     placementRequests,
-    isParole,
+    status,
     page = '1',
-    sortBy = 'createdAt',
+    sortBy = 'created_at',
     sortDirection = 'asc',
   }: {
     placementRequests: Array<PlacementRequest>
-    isParole: boolean
+    status: PlacementRequestStatus
     page: string
     sortBy: string
     sortDirection: string
@@ -37,7 +37,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        url: `${paths.placementRequests.dashboard.pattern}?isParole=${isParole}&page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
+        url: `${paths.placementRequests.dashboard.pattern}?status=${status}&page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
       },
       response: {
         status: 200,
@@ -51,12 +51,12 @@ export default {
       },
     }),
   verifyPlacementRequestsDashboard: async ({
-    isParole,
+    status,
     page = '1',
-    sortBy = 'createdAt',
+    sortBy = 'created_at',
     sortDirection = 'asc',
   }: {
-    isParole: boolean
+    status: PlacementRequestStatus
     page: string
     sortBy: string
     sortDirection: string
@@ -64,7 +64,7 @@ export default {
     (
       await getMatchingRequests({
         method: 'GET',
-        url: `${paths.placementRequests.dashboard.pattern}?isParole=${isParole}&page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
+        url: `${paths.placementRequests.dashboard.pattern}?status=${status}&page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
       })
     ).body.requests,
   stubPlacementRequest: (placementRequestDetail: PlacementRequestDetail): SuperAgentRequest =>

@@ -23,12 +23,16 @@ export default class ListPage extends Page {
     cy.get(`[data-cy-placementRequestId="${placementRequest.id}"]`).click()
   }
 
-  clickParoleOption(): void {
-    cy.get('a.moj-sub-navigation__link').contains('Parole').click()
+  clickReadyToMatch(): void {
+    cy.get('a.moj-sub-navigation__link').contains('Ready to match').click()
   }
 
-  clickNonParoleOption(): void {
-    cy.get('a.moj-sub-navigation__link').contains('Confirmed release date').click()
+  clickMatched(): void {
+    cy.get('a.moj-sub-navigation__link').contains('Matched').click()
+  }
+
+  clickUnableToMatch(): void {
+    cy.get('a.moj-sub-navigation__link').contains('Unable to match').click()
   }
 
   clickNext(): void {
