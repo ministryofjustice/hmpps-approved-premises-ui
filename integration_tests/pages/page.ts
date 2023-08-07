@@ -338,4 +338,19 @@ export default abstract class Page {
   checkForBackButton(path: string) {
     cy.get('.govuk-back-link').should('have.attr', 'href').and('include', path)
   }
+
+  expectDownload(): void {
+    // This is a workaround for a Cypress bug to prevent it waiting
+    // indefinitely for a new page to load after clicking the download link
+    // See https://github.com/cypress-io/cypress/issues/14857
+    cy.window()
+      .document()
+      .then(doc => {
+        doc.addEventListener('click', () => {
+          setTimeout(() => {
+            doc.location?.reload()
+          }, Cypress.config('defaultCommandTimeout'))
+        })
+      })
+  }
 }
