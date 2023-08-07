@@ -32,7 +32,7 @@ export default class PlacementRequestClient {
   async dashboard(
     isParole: boolean,
     page = 1,
-    sortBy: PlacementRequestSortField = 'createdAt',
+    sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<PlacementRequest>> {
     const response = (await this.restClient.get({

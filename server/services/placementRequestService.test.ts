@@ -61,7 +61,7 @@ describe('placementRequestService', () => {
       expect(result).toEqual(response)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
-      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(false, 1, 'createdAt', 'asc')
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(false, 1, 'created_at', 'asc')
     })
 
     it('calls the find method on the placementRequest client with page and sort options', async () => {

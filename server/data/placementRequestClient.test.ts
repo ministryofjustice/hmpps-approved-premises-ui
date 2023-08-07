@@ -55,7 +55,7 @@ describeClient('placementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'true', page: '1', sortBy: 'createdAt', sortDirection: 'asc' },
+          query: { isParole: 'true', page: '1', sortBy: 'created_at', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -89,7 +89,7 @@ describeClient('placementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'false', page: '1', sortBy: 'createdAt', sortDirection: 'asc' },
+          query: { isParole: 'false', page: '1', sortBy: 'created_at', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -123,7 +123,7 @@ describeClient('placementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'true', page: '2', sortBy: 'createdAt', sortDirection: 'asc' },
+          query: { isParole: 'true', page: '2', sortBy: 'created_at', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
           },

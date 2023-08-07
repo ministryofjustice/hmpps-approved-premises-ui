@@ -36,7 +36,7 @@ export default class PlacementRequestService {
     token: string,
     isParole: boolean,
     page: number = 1,
-    sortBy: PlacementRequestSortField = 'createdAt',
+    sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<PlacementRequest>> {
     const placementRequestClient = this.placementRequestClientFactory(token)
