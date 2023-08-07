@@ -22,5 +22,9 @@ export default {
         create: withdrawalPath,
       },
     },
+    reports: {
+      new: adminPath.path('reports'),
+      create: adminPath.path('reports'),
+    },
   },
 }

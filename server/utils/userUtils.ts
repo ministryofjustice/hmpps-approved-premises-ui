@@ -60,6 +60,13 @@ export const sections = {
     shortTitle: 'Placement details',
     href: adminPaths.admin.placementRequests.index({}),
   },
+  reports: {
+    id: 'reports',
+    title: 'Download data',
+    description: 'Download data on lost beds',
+    shortTitle: 'Reports',
+    href: adminPaths.admin.reports.new({}),
+  },
 }
 
 export const hasRole = (user: UserDetails, role: UserRole): boolean => {
@@ -82,6 +89,7 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     if (!config.flags.cruDashboardDisabled) {
       items.push(sections.placementRequests)
       items.push(sections.cruDashboard)
+      items.push(sections.reports)
     }
   }
 

@@ -18,6 +18,7 @@ import TaskService from './taskService'
 import PlacementRequestService from './placementRequestService'
 import PlacementApplicationService from './placementApplicationService'
 import BedService from './bedService'
+import ReportService from './reportService'
 import config, { AuditConfig } from '../config'
 
 export const services = () => {
@@ -35,6 +36,7 @@ export const services = () => {
     placementRequestClientBuilder,
     placementApplicationClientBuilder,
     bedClientBuilder,
+    reportClientBuilder,
   } = dataAccess()
 
   const userService = new UserService(hmppsAuthClient, userClientBuilder)
@@ -53,6 +55,7 @@ export const services = () => {
   const placementRequestService = new PlacementRequestService(placementRequestClientBuilder)
   const placementApplicationService = new PlacementApplicationService(placementApplicationClientBuilder)
   const bedService = new BedService(bedClientBuilder)
+  const reportService = new ReportService(reportClientBuilder)
 
   return {
     userService,
@@ -71,6 +74,7 @@ export const services = () => {
     placementRequestService,
     placementApplicationService,
     bedService,
+    reportService,
   }
 }
 
@@ -92,4 +96,5 @@ export {
   PlacementRequestService,
   PlacementApplicationService,
   BedService,
+  ReportService,
 }

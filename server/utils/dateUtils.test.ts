@@ -11,7 +11,9 @@ import {
   dateAndTimeInputsAreValidDates,
   dateIsBlank,
   dateIsInThePast,
+  monthOptions,
   uiDateOrDateEmptyMessage,
+  yearOptions,
 } from './dateUtils'
 
 jest.mock('date-fns/isPast')
@@ -319,5 +321,42 @@ describe('dateIsInThePast', () => {
     ;(isPast as jest.Mock).mockReturnValue(false)
 
     expect(dateIsInThePast('2020-01-01')).toEqual(false)
+  })
+})
+
+describe('yearOptions', () => {
+  beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2022-01-01'))
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  it('should return years since the start year', () => {
+    expect(yearOptions(2020)).toEqual([
+      { name: '2020', value: '2020' },
+      { name: '2021', value: '2021' },
+      { name: '2022', value: '2022' },
+    ])
+  })
+})
+
+describe('monthOptions', () => {
+  it('should return each month with a numeric index', () => {
+    expect(monthOptions).toEqual([
+      { name: 'January', value: '1' },
+      { name: 'February', value: '2' },
+      { name: 'March', value: '3' },
+      { name: 'April', value: '4' },
+      { name: 'May', value: '5' },
+      { name: 'June', value: '6' },
+      { name: 'July', value: '7' },
+      { name: 'August', value: '8' },
+      { name: 'September', value: '9' },
+      { name: 'October', value: '10' },
+      { name: 'November', value: '11' },
+      { name: 'December', value: '12' },
+    ])
   })
 })

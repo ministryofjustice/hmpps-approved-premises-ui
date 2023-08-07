@@ -37,6 +37,7 @@ interface StreamRequest {
 
 interface PipeRequest {
   path?: string
+  query?: string | Record<string, string>
   headers?: Record<string, string>
   errorLogger?: (e: UnsanitisedError) => void
   passThroughHeaders?: Array<string>
@@ -127,7 +128,10 @@ export default class RestClient {
     })
   }
 
-  async pipe({ path = null, headers = {}, passThroughHeaders = [] }: PipeRequest, response: Response): Promise<void> {
+  async pipe(
+    { path = null, query = '', headers = {}, passThroughHeaders = [] }: PipeRequest,
+    response: Response,
+  ): Promise<void> {
     logger.info(`Get using user credentials: calling ${this.name}: ${path}`)
     return new Promise((resolve, reject) => {
       const stream = superagent
@@ -139,6 +143,7 @@ export default class RestClient {
           if (err) logger.info(`Retry handler found API error with ${err.code} ${err.message}`)
           return undefined // retry handler only for logging retries, not to influence retry logic
         })
+        .query(query)
         .timeout(this.timeoutConfig())
         .set({ ...this.defaultHeaders, ...headers })
 
