@@ -353,4 +353,8 @@ export default abstract class Page {
         })
       })
   }
+
+  shouldNotShowManageActions() {
+    cy.get('.moj-button-menu__toggle-button').should('not.exist')
+  }
 }

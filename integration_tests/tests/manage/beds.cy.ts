@@ -2,26 +2,25 @@ import { bedDetailFactory, bedSummaryFactory, lostBedFactory } from '../../../se
 
 import { BedShowPage, BedsListPage, BookingFindPage, LostBedCreatePage, LostBedListPage } from '../../pages/manage'
 import Page from '../../pages/page'
+import { signIn } from './signIn'
 
 context('Beds', () => {
+  const premisesId = 'premisesId'
+  const bedSummaries = bedSummaryFactory.buildList(5)
+  const bedDetail = bedDetailFactory.build({ ...bedSummaries[0] })
+
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
     cy.task('stubLostBedReferenceData')
 
-    // Given I am signed in
-    cy.signIn()
+    // Given there are beds in the database
+    cy.task('stubBeds', { premisesId, bedSummaries })
+    cy.task('stubBed', { premisesId, bedDetail })
   })
 
   it('should allow me to visit a bed from the bed list page', () => {
-    const premisesId = 'premisesId'
-
-    // And there are bed in the database
-    const bedSummaries = bedSummaryFactory.buildList(5)
-    const bedDetail = bedDetailFactory.build({ ...bedSummaries[0] })
-    cy.task('stubBeds', { premisesId, bedSummaries })
-    cy.task('stubBed', { premisesId, bedDetail })
+    // Given I am signed in as a workflow manager
+    signIn(['workflow_manager'])
 
     // When I visit the rooms page
     const bedsPage = BedsListPage.visit(premisesId)
@@ -58,18 +57,14 @@ context('Beds', () => {
   })
 
   it('should allow me to manage out of service beds from the bed list page', () => {
-    const premisesId = 'premisesId'
-
-    // And there are beds and a lost bed in the database
-    const bedSummaries = bedSummaryFactory.buildList(5)
-    const bedDetail = bedDetailFactory.build({ ...bedSummaries[0] })
-    cy.task('stubBeds', { premisesId, bedSummaries })
-    cy.task('stubBed', { premisesId, bedDetail })
-
+    // Given there is a lost bed in the database
     const lostBed = lostBedFactory.build()
     cy.task('stubLostBed', { premisesId, lostBed })
     cy.task('stubLostBedsList', { premisesId, lostBeds: [lostBed] })
     cy.task('stubLostBedUpdate', { premisesId, lostBed })
+
+    // And I am signed in as a workflow manager
+    signIn(['workflow_manager'])
 
     // When I visit the rooms page
     const bedsPage = BedsListPage.visit(premisesId)
@@ -79,5 +74,16 @@ context('Beds', () => {
 
     // Then I should see the list of out of service beds
     Page.verifyOnPage(LostBedListPage)
+  })
+
+  it('should not show managed actions when I am logged in as a manager', () => {
+    // Given I am signed in as a manager
+    signIn(['manager'])
+
+    // When I visit the bed page
+    const bedPage = BedShowPage.visit(premisesId, bedDetail)
+
+    // Then I should not see the management actions
+    bedPage.shouldNotShowManageActions()
   })
 })
