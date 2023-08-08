@@ -7,21 +7,18 @@ import {
   staffMemberFactory,
 } from '../../../server/testutils/factories'
 import { DateFormats } from '../../../server/utils/dateUtils'
+import { signIn } from '../signIn'
 
 const staff = staffMemberFactory.buildList(5, { keyWorker: true })
 
 context('Arrivals', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
+    signIn(['workflow_manager'])
   })
 
   it('creates an arrival', () => {
-    // Given I am logged in
-    cy.signIn()
-
-    // And I have a booking for a premises
+    // Given I have a booking for a premises
     const premises = premisesFactory.build()
     const bookingId = 'some-uuid'
     const arrivalDateObj = new Date(2022, 1, 11, 12, 35)
@@ -63,10 +60,7 @@ context('Arrivals', () => {
   })
 
   it('show arrival errors when the API returns an error', () => {
-    // Given I am logged in
-    cy.signIn()
-
-    // And I have a booking for a premises
+    // Given I have a booking for a premises
     const premises = premisesFactory.build()
     const bookingId = 'some-uuid'
 

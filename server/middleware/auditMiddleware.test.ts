@@ -37,7 +37,7 @@ describe('auditMiddleware', () => {
     expect(handler).toHaveBeenCalled()
   })
 
-  it('returns an audited request handler, the redirects to /authError if there is no user name', async () => {
+  it('returns an audited request handler, the redirects to /autherror if there is no user name', async () => {
     const handler = jest.fn()
     const response = createMock<Response>({ locals: { user: {} } })
     const request = createMock<Request>()
@@ -50,7 +50,7 @@ describe('auditMiddleware', () => {
     await auditedhandler(request, response, next)
 
     expect(handler).not.toHaveBeenCalled()
-    expect(response.redirect).toHaveBeenCalledWith('/authError')
+    expect(response.redirect).toHaveBeenCalledWith('/autherror')
     expect(logger.error).toHaveBeenCalledWith('User without a username is attempting to access an audited path')
   })
 

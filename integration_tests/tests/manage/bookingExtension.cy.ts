@@ -1,12 +1,14 @@
 import { bookingFactory, premisesFactory } from '../../../server/testutils/factories'
 
 import { BookingExtensionConfirmationPage, BookingExtensionCreatePage } from '../../pages/manage'
+import { signIn } from '../signIn'
 
 context('BookingExtension', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
+
+    // Given I am signed in
+    signIn(['workflow_manager'])
   })
 
   it('should show booking extension form', () => {
@@ -19,9 +21,6 @@ context('BookingExtension', () => {
     cy.task('stubBookingExtensionCreate', { premisesId: premises.id, booking })
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
     cy.task('stubSinglePremises', { premisesId: premises.id, booking })
-
-    // Given I am signed in
-    cy.signIn()
 
     // When I visit the booking extension page
     const page = BookingExtensionCreatePage.visit(premises.id, booking.id)
@@ -51,9 +50,6 @@ context('BookingExtension', () => {
 
     cy.task('stubSinglePremises', { premisesId: premises.id })
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
-
-    // Given I am signed in
-    cy.signIn()
 
     // When I visit the booking extension page
     const page = BookingExtensionCreatePage.visit(premises.id, booking.id)

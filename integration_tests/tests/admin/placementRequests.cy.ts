@@ -14,6 +14,7 @@ import { CancellationCreatePage, NewDateChangePage } from '../../pages/manage'
 import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
 import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
 import WithdrawConfirmPage from '../../pages/manage/withdrawConfirm'
+import { signIn } from '../signIn'
 
 context('Placement Requests', () => {
   const unmatchedPlacementRequests = [
@@ -38,11 +39,8 @@ context('Placement Requests', () => {
 
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
 
-    // Given I am logged in
-    cy.signIn()
+    signIn(['workflow_manager'])
 
     application = addResponseToFormArtifact(application, {
       section: 'location-factors',

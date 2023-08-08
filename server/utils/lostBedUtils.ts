@@ -1,19 +1,58 @@
 import { LostBed } from '@approved-premises/api'
-import { TableCell } from '@approved-premises/ui'
+import { TableCell, UserDetails } from '@approved-premises/ui'
 
 import paths from '../paths/manage'
 import { linkTo } from './utils'
+import { hasRole } from './userUtils'
 
-export const lostBedTableRows = (beds: Array<LostBed>, premisesId: string) => {
-  return beds.map(bed => [
-    textCell(bed.bedName),
-    textCell(bed.roomName),
-    textCell(bed.startDate),
-    textCell(bed.endDate),
-    textCell(bed.reason.name),
-    referenceNumberCell(bed.referenceNumber),
-    actionCell(bed, premisesId),
-  ])
+export const lostBedTableHeaders = (user: UserDetails) => {
+  const headers = [
+    {
+      text: 'Bed',
+    },
+    {
+      text: 'Room',
+    },
+    {
+      text: 'Out of service from',
+    },
+    {
+      text: 'Out of service until',
+    },
+    {
+      text: 'Reason',
+    },
+    {
+      text: 'Ref number',
+    },
+  ]
+
+  if (hasRole(user, 'workflow_manager')) {
+    headers.push({
+      text: 'Manage',
+    })
+  }
+
+  return headers
+}
+
+export const lostBedTableRows = (beds: Array<LostBed>, premisesId: string, user: UserDetails) => {
+  return beds.map(bed => {
+    const rows = [
+      textCell(bed.bedName),
+      textCell(bed.roomName),
+      textCell(bed.startDate),
+      textCell(bed.endDate),
+      textCell(bed.reason.name),
+      referenceNumberCell(bed.referenceNumber),
+    ]
+
+    if (hasRole(user, 'workflow_manager')) {
+      rows.push(actionCell(bed, premisesId))
+    }
+
+    return rows
+  })
 }
 
 export const textCell = (value: string): TableCell => ({ text: value })

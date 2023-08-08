@@ -20,13 +20,16 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-
-      {{ mojIdentityBar({
-         title: {
-          html: "<h1>" + pageHeading + "</h1>"
-        },
-        menus: BookingUtils.bookingActions(booking, premisesId)
-      }) }}
+      {% if UserUtils.hasRole(user, 'workflow_manager') %}
+        {{ mojIdentityBar({
+            title: {
+              html: "<h1 class='govuk-heading-l'>" + pageHeading + "</h1>"
+            },
+            menus: BookingUtils.bookingActions(booking, premisesId)
+          }) }}
+      {% else %}
+        <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+      {% endif %}
 
       <br>
       <h2>Person details</h2>

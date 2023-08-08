@@ -18,14 +18,18 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full-width">
-      {{
-        mojIdentityBar({
-          title: {
-            html: BedUtils.title(bed, pageHeading)
-          },
-          menus: [BedUtils.bedActions(bed, premisesId)]
-        })
-      }}
+      {% if UserUtils.hasRole(user, 'workflow_manager') %}
+        {{
+          mojIdentityBar({
+            title: {
+              html: BedUtils.title(bed, pageHeading)
+            },
+            menus: [BedUtils.bedActions(bed, premisesId)]
+          })
+        }}
+      {% else %}
+        {{ BedUtils.title(bed, pageHeading) | safe }}
+      {% endif %}
     </div>
   </div>
 

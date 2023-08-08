@@ -1,6 +1,7 @@
 import { BookingShowPage, NewDateChangePage } from '../../pages/manage'
 import Page from '../../pages/page'
 import { bookingFactory, premisesFactory } from '../../../server/testutils/factories'
+import { signIn } from '../signIn'
 
 context('Date Changes', () => {
   const premises = premisesFactory.build()
@@ -11,8 +12,9 @@ context('Date Changes', () => {
     cy.task('stubSignIn')
     cy.task('stubAuthUser')
 
-    // Given I am logged in
-    cy.signIn()
+    // Given I am signed in
+    signIn(['workflow_manager'])
+
     // And I have a booking for a premises
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
   })
