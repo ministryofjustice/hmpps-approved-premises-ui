@@ -32,6 +32,7 @@ describeClient('taskClient', provider => {
           path: paths.tasks.reallocatable.index.pattern,
           headers: {
             authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -63,6 +64,7 @@ describeClient('taskClient', provider => {
           path: paths.tasks.index.pattern,
           headers: {
             authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -92,6 +94,7 @@ describeClient('taskClient', provider => {
           path: paths.tasks.show({ id: applicationId, taskType }),
           headers: {
             authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
@@ -123,6 +126,7 @@ describeClient('taskClient', provider => {
           body: { userId },
           headers: {
             authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
