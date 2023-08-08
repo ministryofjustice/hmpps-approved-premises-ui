@@ -10,9 +10,7 @@ export default class PlacementRequestsController {
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       const status = (req.query.status as PlacementRequestStatus) || 'notMatched'
-      const pageNumber = req.query.page ? Number(req.query.page) : undefined
-      const sortBy = req.query.sortBy as PlacementRequestSortField
-      const sortDirection = req.query.sortDirection as SortDirection
+      const { pageNumber, sortBy, sortDirection } = this.getPaginationDetails(req)
 
       const hrefPrefix = `${paths.admin.placementRequests.index({})}${createQueryString(
         { status },
@@ -48,5 +46,47 @@ export default class PlacementRequestsController {
         placementRequest,
       })
     }
+  }
+
+  search(): TypedRequestHandler<Request, Response> {
+    return async (req: Request, res: Response) => {
+      const crn = req.query.crn as string
+      const { pageNumber, sortBy, sortDirection } = this.getPaginationDetails(req)
+
+      let hrefPrefix = paths.admin.placementRequests.search({})
+
+      if (crn) {
+        hrefPrefix += `${createQueryString({ crn }, { addQueryPrefix: true })}&`
+      } else {
+        hrefPrefix += '?'
+      }
+
+      const dashboard = await this.placementRequestService.search(
+        req.user.token,
+        crn,
+        pageNumber,
+        sortBy,
+        sortDirection,
+      )
+
+      res.render('admin/placementRequests/search', {
+        pageHeading: 'Record and update placement details',
+        placementRequests: dashboard.data,
+        crn,
+        pageNumber: Number(dashboard.pageNumber),
+        totalPages: Number(dashboard.totalPages),
+        hrefPrefix,
+        sortBy,
+        sortDirection,
+      })
+    }
+  }
+
+  private getPaginationDetails(request: Request) {
+    const pageNumber = request.query.page ? Number(request.query.page) : undefined
+    const sortBy = request.query.sortBy as PlacementRequestSortField
+    const sortDirection = request.query.sortDirection as SortDirection
+
+    return { pageNumber, sortBy, sortDirection }
   }
 }
