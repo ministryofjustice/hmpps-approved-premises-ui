@@ -8,7 +8,7 @@ import {
 
 import { LostBedCreatePage, LostBedListPage, LostBedShowPage } from '../../pages/manage'
 import Page from '../../pages/page'
-import { signIn } from './signIn'
+import { signIn } from '../signIn'
 
 context('LostBed', () => {
   beforeEach(() => {

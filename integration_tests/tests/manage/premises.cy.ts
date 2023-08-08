@@ -10,13 +10,13 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 
 import { CalendarPage, PremisesListPage, PremisesShowPage } from '../../pages/manage'
 import OverbookingPage from '../../pages/manage/overbooking'
+import { signIn } from '../signIn'
 
 context('Premises', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
-    cy.signIn()
+    // Given I am logged in
+    signIn(['workflow_manager'])
   })
 
   it('should list all premises', () => {

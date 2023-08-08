@@ -16,7 +16,7 @@ import Page from '../../pages/page'
 import BookingConfirmation from '../../pages/manage/booking/confirmation'
 import { bedFactory } from '../../../server/testutils/factories/room'
 import MoveBedPage from '../../pages/manage/bed/moveBed'
-import { signIn } from './signIn'
+import { signIn } from '../signIn'
 
 context('Booking', () => {
   const person = personFactory.build()

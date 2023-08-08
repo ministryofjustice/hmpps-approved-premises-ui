@@ -7,20 +7,19 @@ import {
 
 import { BookingShowPage, DepartureCreatePage } from '../../pages/manage'
 import Page from '../../pages/page'
+import { signIn } from '../signIn'
 
 context('Departures', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
     cy.task('stubDepartureReferenceData')
+
+    // Given I am signed in
+    signIn(['workflow_manager'])
   })
 
   it('creates a departure', () => {
-    // Given I am logged in
-    cy.signIn()
-
-    // And I have a booking for a premises
+    // Given I have a booking for a premises
     const premises = premisesFactory.buildList(5)
     const booking = bookingFactory.build()
 
@@ -60,13 +59,12 @@ context('Departures', () => {
   })
 
   it('should show errors', () => {
+    // Given I have a booking for a premises
     const premises = premisesFactory.buildList(5)
     const booking = bookingFactory.build()
 
-    // Given I am signed in
     cy.task('stubPremises', premises)
     cy.task('stubBookingGet', { premisesId: premises[0].id, booking })
-    cy.signIn()
 
     // When I visit the departure page
     const page = DepartureCreatePage.visit(premises[0].id, booking.id)

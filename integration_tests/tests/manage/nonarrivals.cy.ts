@@ -7,13 +7,16 @@ import {
 
 import { PremisesShowPage } from '../../pages/manage'
 import NonarrivalCreatePage from '../../pages/manage/nonarrivalCreate'
+import { signIn } from '../signIn'
 
 context('Nonarrivals', () => {
-  it('creates a non-arrival', () => {
+  beforeEach(() => {
     // Given I am logged in
-    cy.signIn()
+    signIn(['workflow_manager'])
+  })
 
-    // And I have a booking for a premises
+  it('creates a non-arrival', () => {
+    // Given I have a booking for a premises
     const nonArrivalReasons = referenceDataFactory.buildList(5)
     const premises = premisesFactory.build()
     const bookingId = 'some-uuid'
@@ -50,10 +53,7 @@ context('Nonarrivals', () => {
   })
 
   it('show non-arrival errors when the API returns an error', () => {
-    // Given I am logged in
-    cy.signIn()
-
-    // And I have a booking for a premises
+    // Given I have a booking for a premises
     const premises = premisesFactory.build()
     const bookingId = 'some-uuid'
 

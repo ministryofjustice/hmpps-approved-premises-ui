@@ -2,20 +2,19 @@ import { bookingFactory, cancellationFactory, premisesFactory } from '../../../s
 
 import { BookingShowPage, CancellationCreatePage } from '../../pages/manage'
 import Page from '../../pages/page'
+import { signIn } from '../signIn'
 
 context('Cancellation', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
     cy.task('stubCancellationReferenceData')
+
+    // Given I am signed in
+    signIn(['workflow_manager'])
   })
 
   it('should allow me to create a cancellation', () => {
-    // Given I am signed in
-    cy.signIn()
-
-    // And a booking is available
+    // Given a booking is available
     const premises = premisesFactory.build()
     const booking = bookingFactory.build()
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
@@ -49,10 +48,7 @@ context('Cancellation', () => {
   })
 
   it('should show errors', () => {
-    // Given I am signed in
-    cy.signIn()
-
-    // And a booking is available
+    // Given a booking is available
     const premises = premisesFactory.build()
     const booking = bookingFactory.build()
     cy.task('stubBookingGet', { premisesId: premises.id, booking })

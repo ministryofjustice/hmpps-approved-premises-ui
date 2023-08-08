@@ -2,7 +2,7 @@ import { bedDetailFactory, bedSummaryFactory, lostBedFactory } from '../../../se
 
 import { BedShowPage, BedsListPage, BookingFindPage, LostBedCreatePage, LostBedListPage } from '../../pages/manage'
 import Page from '../../pages/page'
-import { signIn } from './signIn'
+import { signIn } from '../signIn'
 
 context('Beds', () => {
   const premisesId = 'premisesId'
