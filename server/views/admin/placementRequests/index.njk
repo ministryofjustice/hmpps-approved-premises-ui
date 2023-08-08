@@ -44,22 +44,7 @@
       {{
               govukTable({
                   firstCellIsHeader: true,
-                  head: [
-                      {
-                          text: "Name"
-                      },
-                      {
-                          text: "CRN"
-                      },
-                      {
-                          text: "Tier"
-                      },
-                      sortHeader(("Date of decision" if isParole else "Arrival date"), 'expectedArrival', sortBy, sortDirection, hrefPrefix),
-                      sortHeader("Length of stay", 'duration', sortBy, sortDirection, hrefPrefix),
-                      {
-                          text: "Request type"
-                      }
-                  ],
+                  head: PlacementRequestUtils.tableUtils.dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
                   rows: PlacementRequestUtils.tableUtils.dashboardTableRows(placementRequests)
                 })
             }}

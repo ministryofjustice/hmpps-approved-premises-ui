@@ -1,11 +1,13 @@
 import { add } from 'date-fns'
-import { placementRequestFactory, placementRequestTaskFactory } from '../../testutils/factories'
+import { bookingSummaryFactory, placementRequestFactory, placementRequestTaskFactory } from '../../testutils/factories'
 import {
+  dashboardTableHeader,
   dashboardTableRows,
   dueDateCell,
   durationCell,
   expectedArrivalDateCell,
   nameCell,
+  premisesNameCell,
   releaseTypeCell,
   requestTypeCell,
   tableRows,
@@ -13,6 +15,7 @@ import {
 import { DateFormats } from '../dateUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { crnCell, tierCell } from '../tableUtils'
+import { sortHeader } from '../sortHeader'
 
 describe('tableUtils', () => {
   describe('nameCell', () => {
@@ -133,9 +136,21 @@ describe('tableUtils', () => {
     })
   })
 
+  describe('premisesNameCell', () => {
+    it('returns the premises name', () => {
+      const placementRequest = placementRequestFactory.build({
+        booking: bookingSummaryFactory.build({ premisesName: 'Premises Name' }),
+      })
+
+      expect(premisesNameCell(placementRequest)).toEqual({
+        text: 'Premises Name',
+      })
+    })
+  })
+
   describe('dashboardTableRows', () => {
-    it('returns table rows for placement requests', () => {
-      const placementRequest = placementRequestFactory.build()
+    it('returns table rows for non matched placement requests', () => {
+      const placementRequest = placementRequestFactory.build({ status: 'notMatched' })
 
       expect(dashboardTableRows([placementRequest])).toEqual([
         [
@@ -146,6 +161,67 @@ describe('tableUtils', () => {
           durationCell(placementRequest),
           requestTypeCell(placementRequest),
         ],
+      ])
+    })
+
+    it('returns table rows for matched placement requests', () => {
+      const placementRequest = placementRequestFactory.build({ status: 'matched' })
+
+      expect(dashboardTableRows([placementRequest])).toEqual([
+        [
+          nameCell(placementRequest),
+          crnCell(placementRequest.person),
+          tierCell(placementRequest.risks),
+          expectedArrivalDateCell(placementRequest),
+          premisesNameCell(placementRequest),
+          requestTypeCell(placementRequest),
+        ],
+      ])
+    })
+  })
+
+  describe('dashboardTableHeader', () => {
+    const sortBy = 'sortBy'
+    const sortDirection = 'asc'
+    const hrefPrefix = 'http://example.com'
+
+    it('returns the default header for a non-matched view', () => {
+      expect(dashboardTableHeader('notMatched', sortBy, sortDirection, hrefPrefix)).toEqual([
+        {
+          text: 'Name',
+        },
+        {
+          text: 'CRN',
+        },
+        {
+          text: 'Tier',
+        },
+        sortHeader('Arrival date', 'expectedArrival', sortBy, sortDirection, hrefPrefix),
+        sortHeader('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
+        {
+          text: 'Request type',
+        },
+      ])
+    })
+
+    it('returns the default header for a matched view', () => {
+      expect(dashboardTableHeader('matched', sortBy, sortDirection, hrefPrefix)).toEqual([
+        {
+          text: 'Name',
+        },
+        {
+          text: 'CRN',
+        },
+        {
+          text: 'Tier',
+        },
+        sortHeader('Arrival date', 'expectedArrival', sortBy, sortDirection, hrefPrefix),
+        {
+          text: 'Approved Premises',
+        },
+        {
+          text: 'Request type',
+        },
       ])
     })
   })
