@@ -43,30 +43,8 @@
           govukTable({
             caption: "Out of service",
             captionClasses: "govuk-table__caption--m",
-            head: [
-              {
-                text: "Bed"
-              },
-              {
-                text: "Room"
-              },
-              {
-                text: "Out of service from"
-              },
-              {
-                text: "Out of service until"
-              },
-              {
-                text: "Reason"
-              },
-              {
-                text: "Ref number"
-              },
-              { 
-                text: "Manage"
-              }
-            ],
-            rows: LostBedUtils.lostBedTableRows(lostBeds, premisesId)
+            head: LostBedUtils.lostBedTableHeaders(user),
+            rows: LostBedUtils.lostBedTableRows(lostBeds, premisesId, user)
           })
         }}
 

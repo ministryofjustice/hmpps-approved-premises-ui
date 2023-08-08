@@ -8,16 +8,15 @@ import {
 
 import { LostBedCreatePage, LostBedListPage, LostBedShowPage } from '../../pages/manage'
 import Page from '../../pages/page'
+import { signIn } from './signIn'
 
 context('LostBed', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
     cy.task('stubLostBedReferenceData')
 
-    // Given I am signed in
-    cy.signIn()
+    // Given I am signed in as a workflow manager
+    signIn(['workflow_manager'])
   })
 
   it('should allow me to create a lost bed', () => {
