@@ -105,7 +105,41 @@ describeClient('placementRequestClient', provider => {
         },
       })
 
-      const result = await placementRequestClient.dashboard('unableToMatch')
+      const result = await placementRequestClient.dashboard({ status: 'unableToMatch' })
+
+      expect(result).toEqual({
+        data: placementRequests,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
+
+    it('makes a get request to the placementRequests dashboard endpoint when searching by CRN', async () => {
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the placement requests dashboard view',
+        withRequest: {
+          method: 'GET',
+          path: paths.placementRequests.dashboard.pattern,
+          query: { crn: 'CRN123', page: '1', sortBy: 'created_at', sortDirection: 'asc' },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placementRequests,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const result = await placementRequestClient.dashboard({ crn: 'CRN123' })
 
       expect(result).toEqual({
         data: placementRequests,
@@ -139,7 +173,7 @@ describeClient('placementRequestClient', provider => {
         },
       })
 
-      const result = await placementRequestClient.dashboard('notMatched', 2)
+      const result = await placementRequestClient.dashboard({ status: 'notMatched' }, 2)
 
       expect(result).toEqual({
         data: placementRequests,
@@ -173,7 +207,7 @@ describeClient('placementRequestClient', provider => {
         },
       })
 
-      const result = await placementRequestClient.dashboard('notMatched', 1, 'duration', 'desc')
+      const result = await placementRequestClient.dashboard({ status: 'notMatched' }, 1, 'duration', 'desc')
 
       expect(result).toEqual({
         data: placementRequests,

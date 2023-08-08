@@ -135,4 +135,75 @@ describe('PlacementRequestsController', () => {
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, 'some-uuid')
     })
   })
+
+  describe('search', () => {
+    const paginatedResponse = paginatedResponseFactory.build({
+      data: placementRequestFactory.buildList(2),
+    }) as PaginatedResponse<PlacementRequest>
+
+    beforeEach(() => {
+      placementRequestService.search.mockResolvedValue(paginatedResponse)
+    })
+
+    it('should render the search template', async () => {
+      const hrefPrefix = `${paths.admin.placementRequests.search({})}?`
+
+      const requestHandler = placementRequestsController.search()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
+        pageHeading: 'Record and update placement details',
+        placementRequests: paginatedResponse.data,
+        crn: undefined,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix,
+      })
+
+      expect(placementRequestService.search).toHaveBeenCalledWith(token, undefined, undefined, undefined, undefined)
+    })
+
+    it('should search for placement requests by CRN', async () => {
+      const hrefPrefix = `${paths.admin.placementRequests.search({})}?${createQueryString({ crn: 'CRN123' })}&`
+
+      const requestHandler = placementRequestsController.search()
+
+      await requestHandler({ ...request, query: { crn: 'CRN123' } }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
+        pageHeading: 'Record and update placement details',
+        placementRequests: paginatedResponse.data,
+        crn: 'CRN123',
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix,
+      })
+      expect(placementRequestService.search).toHaveBeenCalledWith(token, 'CRN123', undefined, undefined, undefined)
+    })
+
+    it('should request page numbers and sort options', async () => {
+      const hrefPrefix = `${paths.admin.placementRequests.search({})}?${createQueryString({ crn: 'CRN123' })}&`
+
+      const requestHandler = placementRequestsController.search()
+
+      await requestHandler(
+        { ...request, query: { crn: 'CRN123', page: '2', sortBy: 'expectedArrival', sortDirection: 'desc' } },
+        response,
+        next,
+      )
+
+      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
+        pageHeading: 'Record and update placement details',
+        placementRequests: paginatedResponse.data,
+        crn: 'CRN123',
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix,
+        sortBy: 'expectedArrival',
+        sortDirection: 'desc',
+      })
+      expect(placementRequestService.search).toHaveBeenCalledWith(token, 'CRN123', 2, 'expectedArrival', 'desc')
+    })
+  })
 })

@@ -12,6 +12,7 @@ export default {
   admin: {
     placementRequests: {
       index: placementRequestsPath,
+      search: placementRequestsPath.path('search'),
       show: placementRequestPath,
       bookings: {
         new: bookingsPath.path('new'),

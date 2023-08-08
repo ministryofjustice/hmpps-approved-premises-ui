@@ -33,11 +33,30 @@ export default {
     page: string
     sortBy: string
     sortDirection: string
-  }): SuperAgentRequest =>
-    stubFor({
+  }): SuperAgentRequest => {
+    const queryParameters = {
+      page: {
+        equalTo: page,
+      },
+      sortBy: {
+        equalTo: sortBy,
+      },
+      sortDirection: {
+        equalTo: sortDirection,
+      },
+    } as Record<string, unknown>
+
+    if (status) {
+      queryParameters.status = {
+        equalTo: status,
+      }
+    }
+
+    return stubFor({
       request: {
         method: 'GET',
-        url: `${paths.placementRequests.dashboard.pattern}?status=${status}&page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
+        urlPathPattern: paths.placementRequests.dashboard.pattern,
+        queryParameters,
       },
       response: {
         status: 200,
@@ -49,7 +68,57 @@ export default {
         },
         jsonBody: placementRequests,
       },
-    }),
+    })
+  },
+  stubPlacementRequestsSearch: ({
+    placementRequests,
+    crn = '',
+    page = '1',
+    sortBy = 'created_at',
+    sortDirection = 'asc',
+  }: {
+    placementRequests: Array<PlacementRequest>
+    crn: string
+    page: string
+    sortBy: string
+    sortDirection: string
+  }): SuperAgentRequest => {
+    const queryParameters = {
+      page: {
+        equalTo: page,
+      },
+      sortBy: {
+        equalTo: sortBy,
+      },
+      sortDirection: {
+        equalTo: sortDirection,
+      },
+    } as Record<string, unknown>
+
+    if (crn) {
+      queryParameters.crn = {
+        equalTo: crn,
+      }
+    }
+
+    return stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: paths.placementRequests.dashboard.pattern,
+        queryParameters,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          'X-Pagination-TotalPages': '10',
+          'X-Pagination-TotalResults': '100',
+          'X-Pagination-PageSize': '10',
+        },
+        jsonBody: placementRequests,
+      },
+    })
+  },
   verifyPlacementRequestsDashboard: async ({
     status,
     page = '1',
@@ -64,7 +133,52 @@ export default {
     (
       await getMatchingRequests({
         method: 'GET',
-        url: `${paths.placementRequests.dashboard.pattern}?status=${status}&page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
+        urlPathPattern: paths.placementRequests.dashboard.pattern,
+        queryParameters: {
+          page: {
+            equalTo: page,
+          },
+          sortBy: {
+            equalTo: sortBy,
+          },
+          sortDirection: {
+            equalTo: sortDirection,
+          },
+          status: {
+            equalTo: status,
+          },
+        },
+      })
+    ).body.requests,
+  verifyPlacementRequestsSearch: async ({
+    crn,
+    page = '1',
+    sortBy = 'created_at',
+    sortDirection = 'asc',
+  }: {
+    crn: string
+    page: string
+    sortBy: string
+    sortDirection: string
+  }) =>
+    (
+      await getMatchingRequests({
+        method: 'GET',
+        urlPathPattern: paths.placementRequests.dashboard.pattern,
+        queryParameters: {
+          crn: {
+            equalTo: crn,
+          },
+          page: {
+            equalTo: page,
+          },
+          sortBy: {
+            equalTo: sortBy,
+          },
+          sortDirection: {
+            equalTo: sortDirection,
+          },
+        },
       })
     ).body.requests,
   stubPlacementRequest: (placementRequestDetail: PlacementRequestDetail): SuperAgentRequest =>

@@ -163,4 +163,29 @@ describe('restClient', () => {
       nock.cleanAll()
     })
   })
+
+  describe('getPaginatedResponse', () => {
+    it('should make a GET request', async () => {
+      fakeApprovedPremisesApi.get(`/some/path?page=1&foo=bar`).reply(
+        200,
+        { some: 'data' },
+        {
+          'X-Pagination-TotalPages': '10',
+          'X-Pagination-TotalResults': '100',
+          'X-Pagination-PageSize': '10',
+        },
+      )
+
+      const result = await restClient.getPaginatedResponse({ path: '/some/path', page: '1', query: { foo: 'bar' } })
+
+      expect(result).toEqual({
+        data: { some: 'data' },
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+      expect(nock.isDone()).toBeTruthy()
+    })
+  })
 })
