@@ -80,6 +80,38 @@ describe('placementRequestService', () => {
     })
   })
 
+  describe('search', () => {
+    it('calls the dashboard method on the placementRequest client', async () => {
+      const response = paginatedResponseFactory.build({
+        data: placementRequestFactory.buildList(4),
+      }) as PaginatedResponse<PlacementRequest>
+
+      placementRequestClient.dashboard.mockResolvedValue(response)
+
+      const result = await service.search(token, 'CRN123')
+
+      expect(result).toEqual(response)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith({ crn: 'CRN123' }, 1, 'created_at', 'asc')
+    })
+
+    it('calls the dashboard method on the placementRequest client with page and sort options', async () => {
+      const response = paginatedResponseFactory.build({
+        data: placementRequestFactory.buildList(4),
+      }) as PaginatedResponse<PlacementRequest>
+
+      placementRequestClient.dashboard.mockResolvedValue(response)
+
+      const result = await service.search(token, 'CRN123', 2, 'duration', 'desc')
+
+      expect(result).toEqual(response)
+
+      expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith({ crn: 'CRN123' }, 2, 'duration', 'desc')
+    })
+  })
+
   describe('getPlacementRequest', () => {
     it('calls the find method on the placementRequest client', async () => {
       const placementRequestDetail: PlacementRequestDetail = placementRequestDetailFactory.build()
