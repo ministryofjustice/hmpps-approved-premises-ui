@@ -42,7 +42,7 @@ export default class PlacementRequestService {
   ): Promise<PaginatedResponse<PlacementRequest>> {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
-    return placementRequestClient.dashboard(status, page, sortBy, sortDirection)
+    return placementRequestClient.dashboard({ status }, page, sortBy, sortDirection)
   }
 
   async getPlacementRequest(token: string, id: string): Promise<PlacementRequestDetail> {
