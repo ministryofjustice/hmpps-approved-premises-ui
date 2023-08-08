@@ -33,11 +33,30 @@ export default {
     page: string
     sortBy: string
     sortDirection: string
-  }): SuperAgentRequest =>
-    stubFor({
+  }): SuperAgentRequest => {
+    const queryParameters = {
+      page: {
+        equalTo: page,
+      },
+      sortBy: {
+        equalTo: sortBy,
+      },
+      sortDirection: {
+        equalTo: sortDirection,
+      },
+    } as Record<string, unknown>
+
+    if (status) {
+      queryParameters.status = {
+        equalTo: status,
+      }
+    }
+
+    return stubFor({
       request: {
         method: 'GET',
-        url: `${paths.placementRequests.dashboard.pattern}?status=${status}&page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
+        urlPathPattern: paths.placementRequests.dashboard.pattern,
+        queryParameters,
       },
       response: {
         status: 200,
@@ -49,7 +68,8 @@ export default {
         },
         jsonBody: placementRequests,
       },
-    }),
+    })
+  },
   stubPlacementRequestsSearch: ({
     placementRequests,
     crn = '',
@@ -113,7 +133,21 @@ export default {
     (
       await getMatchingRequests({
         method: 'GET',
-        url: `${paths.placementRequests.dashboard.pattern}?status=${status}&page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
+        urlPathPattern: paths.placementRequests.dashboard.pattern,
+        queryParameters: {
+          page: {
+            equalTo: page,
+          },
+          sortBy: {
+            equalTo: sortBy,
+          },
+          sortDirection: {
+            equalTo: sortDirection,
+          },
+          status: {
+            equalTo: status,
+          },
+        },
       })
     ).body.requests,
   verifyPlacementRequestsSearch: async ({
