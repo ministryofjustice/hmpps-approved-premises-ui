@@ -1,0 +1,12 @@
+.placement-request-search {
+  .moj-search {
+    @include govuk-responsive-padding(6);
+    @include govuk-responsive-margin(6, "bottom");
+
+    background-color: govuk-colour("light-grey");
+
+    &__label {
+      @extend .govuk-heading-m;
+    }
+  }
+}
