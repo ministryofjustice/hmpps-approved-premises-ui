@@ -3,6 +3,7 @@ import {
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplication,
   ApprovedPremisesAssessment,
+  ApprovedPremisesUserRole,
   ArrayOfOASysOffenceDetailsQuestions,
   ArrayOfOASysRiskManagementPlanQuestions,
   ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
@@ -424,4 +425,14 @@ export type PaginatedResponse<T> = {
   totalPages: string
   totalResults: string
   pageSize: string
+}
+
+export type RedirectAuditEventSpec = { path: string; auditEvent: string }
+
+export type MiddlewareSpec = {
+  auditEvent?: string
+  auditBodyParams?: Array<string>
+  redirectAuditEventSpecs?: Array<RedirectAuditEventSpec>
+  additionalMetadata?: Record<string, string>
+  allowedRoles?: Array<ApprovedPremisesUserRole>
 }

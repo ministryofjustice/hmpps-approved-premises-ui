@@ -2,21 +2,14 @@ import { NextFunction, Request, RequestHandler, Response } from 'express'
 import { Key, pathToRegexp } from 'path-to-regexp'
 import logger from '../../logger'
 import AuditService from '../services/auditService'
+import { MiddlewareSpec } from '../@types/ui'
 
-export type AuditEventSpec = {
-  auditEvent?: string
-  auditBodyParams?: Array<string>
-  redirectAuditEventSpecs?: Array<RedirectAuditEventSpec>
-  additionalMetadata?: Record<string, string>
-}
-
-type RedirectAuditEventSpec = { path: string; auditEvent: string }
 type RedirectAuditMatcher = { keys: Array<Key>; auditEvent: string; regExp: RegExp }
 
 export const auditMiddleware = (
   handler: RequestHandler,
   auditService: AuditService,
-  auditEventSpec?: AuditEventSpec,
+  auditEventSpec?: MiddlewareSpec,
 ) => {
   if (auditEventSpec) {
     const redirectMatchers: Array<RedirectAuditMatcher> = auditEventSpec.redirectAuditEventSpecs?.map(
@@ -54,7 +47,7 @@ const wrapHandler =
 
     if (!username) {
       logger.error('User without a username is attempting to access an audited path')
-      res.redirect('/authError')
+      res.redirect('/autherror')
       return
     }
 
