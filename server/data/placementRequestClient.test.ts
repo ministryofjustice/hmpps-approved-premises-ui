@@ -48,14 +48,14 @@ describeClient('placementRequestClient', provider => {
   describe('dashboard', () => {
     const placementRequests = placementRequestFactory.buildList(2)
 
-    it('makes a get request to the placementRequests dashboard endpoint for parole requests', async () => {
+    it('makes a get request to the placementRequests dashboard endpoint for unmatched requests', async () => {
       provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the placement requests dashboard view',
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'true', page: '1', sortBy: 'createdAt', sortDirection: 'asc' },
+          query: { status: 'notMatched', page: '1', sortBy: 'created_at', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -71,7 +71,7 @@ describeClient('placementRequestClient', provider => {
         },
       })
 
-      const result = await placementRequestClient.dashboard(true)
+      const result = await placementRequestClient.dashboard()
 
       expect(result).toEqual({
         data: placementRequests,
@@ -82,14 +82,14 @@ describeClient('placementRequestClient', provider => {
       })
     })
 
-    it('makes a get request to the placementRequests dashboard endpoint for non-parole requests', async () => {
+    it('makes a get request to the placementRequests dashboard endpoint for requests of another type', async () => {
       provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the placement requests dashboard view',
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'false', page: '1', sortBy: 'createdAt', sortDirection: 'asc' },
+          query: { status: 'unableToMatch', page: '1', sortBy: 'created_at', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -105,7 +105,7 @@ describeClient('placementRequestClient', provider => {
         },
       })
 
-      const result = await placementRequestClient.dashboard(false)
+      const result = await placementRequestClient.dashboard('unableToMatch')
 
       expect(result).toEqual({
         data: placementRequests,
@@ -116,14 +116,14 @@ describeClient('placementRequestClient', provider => {
       })
     })
 
-    it('makes a get request to the placementRequests dashboard endpoint for parole requests with a page number', async () => {
+    it('makes a get request to the placementRequests dashboard endpoint with a page number', async () => {
       provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the placement requests dashboard view',
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'true', page: '2', sortBy: 'createdAt', sortDirection: 'asc' },
+          query: { status: 'notMatched', page: '2', sortBy: 'created_at', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -139,7 +139,7 @@ describeClient('placementRequestClient', provider => {
         },
       })
 
-      const result = await placementRequestClient.dashboard(true, 2)
+      const result = await placementRequestClient.dashboard('notMatched', 2)
 
       expect(result).toEqual({
         data: placementRequests,
@@ -150,14 +150,14 @@ describeClient('placementRequestClient', provider => {
       })
     })
 
-    it('makes a get request to the placementRequests dashboard endpoint for parole requests with a sortBy option', async () => {
+    it('makes a get request to the placementRequests dashboard endpoint with a sortBy option', async () => {
       provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get the placement requests dashboard view',
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { isParole: 'true', page: '1', sortBy: 'duration', sortDirection: 'desc' },
+          query: { status: 'notMatched', page: '1', sortBy: 'duration', sortDirection: 'desc' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -173,7 +173,7 @@ describeClient('placementRequestClient', provider => {
         },
       })
 
-      const result = await placementRequestClient.dashboard(true, 1, 'duration', 'desc')
+      const result = await placementRequestClient.dashboard('notMatched', 1, 'duration', 'desc')
 
       expect(result).toEqual({
         data: placementRequests,

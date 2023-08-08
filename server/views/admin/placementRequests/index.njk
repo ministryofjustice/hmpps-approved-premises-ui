@@ -23,38 +23,28 @@
           label: 'Sub navigation',
           items: [
             {
-              text: 'Confirmed release date',
+              text: 'Ready to match',
               href: paths.admin.placementRequests.index({}),
-              active: (isParole === false)
+              active: (status === 'notMatched' or status|length === 0)
             },
             {
-              text: 'Parole',
-              href: paths.admin.placementRequests.index({}) + "?isParole=1",
-              active: (isParole === true)
+              text: 'Unable to match',
+              href: paths.admin.placementRequests.index({}) + "?status=unableToMatch",
+              active: (status === 'unableToMatch')
+            },
+            {
+              text: 'Matched',
+              href: paths.admin.placementRequests.index({}) + "?status=matched",
+              active: (status === 'matched')
             }
-        ]
+          ]
         })
       }}
 
       {{
               govukTable({
                   firstCellIsHeader: true,
-                  head: [
-                      {
-                          text: "Name"
-                      },
-                      {
-                          text: "CRN"
-                      },
-                      {
-                          text: "Tier"
-                      },
-                      sortHeader(("Date of decision" if isParole else "Arrival date"), 'expectedArrival', sortBy, sortDirection, hrefPrefix),
-                      sortHeader("Length of stay", 'duration', sortBy, sortDirection, hrefPrefix),
-                      {
-                          text: "Status"
-                      }
-                  ],
+                  head: PlacementRequestUtils.tableUtils.dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
                   rows: PlacementRequestUtils.tableUtils.dashboardTableRows(placementRequests)
                 })
             }}

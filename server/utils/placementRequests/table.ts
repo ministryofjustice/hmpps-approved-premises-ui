@@ -1,5 +1,5 @@
 import { add } from 'date-fns'
-import { PlacementRequest, PlacementRequestTask } from '../../@types/shared'
+import { PlacementRequest, PlacementRequestStatus, PlacementRequestTask, SortDirection } from '../../@types/shared'
 import { TableCell, TableRow } from '../../@types/ui'
 import matchPaths from '../../paths/match'
 import adminPaths from '../../paths/admin'
@@ -8,6 +8,7 @@ import { linkTo } from '../utils'
 import { crnCell, tierCell } from '../tableUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { daysToWeeksAndDays } from '../assessments/dateUtils'
+import { sortHeader } from '../sortHeader'
 
 export const DIFFERENCE_IN_DAYS_BETWEEN_DUE_DATE_AND_ARRIVAL_DATE = 7
 
@@ -31,19 +32,21 @@ export const dashboardTableRows = (placementRequests: Array<PlacementRequest>): 
       crnCell(placementRequest.person),
       tierCell(placementRequest.risks),
       expectedArrivalDateCell(placementRequest),
-      durationCell(placementRequest),
-      statusCell(placementRequest),
+      placementRequest.status === 'matched' ? premisesNameCell(placementRequest) : durationCell(placementRequest),
+      requestTypeCell(placementRequest),
     ]
   })
 }
 
-export const statusCell = (placementRequest: PlacementRequest): TableCell => {
+export const requestTypeCell = (placementRequest: PlacementRequest): TableCell => {
   return {
-    text: {
-      notMatched: 'Not matched',
-      unableToMatch: 'Unable to allocate',
-      matched: 'Booking confirmed',
-    }[placementRequest.status],
+    text: placementRequest.isParole ? 'Parole' : 'Standard release',
+  }
+}
+
+export const premisesNameCell = (placementRequest: PlacementRequest): TableCell => {
+  return {
+    text: placementRequest.booking?.premisesName,
   }
 }
 
@@ -92,4 +95,32 @@ export const releaseTypeCell = (task: PlacementRequestTask) => {
   return {
     text: allReleaseTypes[task.releaseType],
   }
+}
+
+export const dashboardTableHeader = (
+  status: PlacementRequestStatus,
+  sortBy: string,
+  sortDirection: SortDirection,
+  hrefPrefix: string,
+): Array<TableCell> => {
+  return [
+    {
+      text: 'Name',
+    },
+    {
+      text: 'CRN',
+    },
+    {
+      text: 'Tier',
+    },
+    sortHeader('Arrival date', 'expectedArrival', sortBy, sortDirection, hrefPrefix),
+    status === 'matched'
+      ? {
+          text: 'Approved Premises',
+        }
+      : sortHeader('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
+    {
+      text: 'Request type',
+    },
+  ]
 }

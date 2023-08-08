@@ -8,6 +8,7 @@ import {
   PlacementRequest,
   PlacementRequestDetail,
   PlacementRequestSortField,
+  PlacementRequestStatus,
   SortDirection,
 } from '@approved-premises/api'
 import config, { ApiConfig } from '../config'
@@ -30,14 +31,14 @@ export default class PlacementRequestClient {
   }
 
   async dashboard(
-    isParole: boolean,
+    status: PlacementRequestStatus = 'notMatched',
     page = 1,
-    sortBy: PlacementRequestSortField = 'createdAt',
+    sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<PlacementRequest>> {
     const response = (await this.restClient.get({
       path: paths.placementRequests.dashboard.pattern,
-      query: createQueryString({ isParole, page, sortBy, sortDirection }),
+      query: createQueryString({ status, page, sortBy, sortDirection }),
       raw: true,
     })) as superagent.Response
 

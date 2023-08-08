@@ -1,6 +1,6 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { PlacementRequestService } from '../../services'
-import { PlacementRequestSortField, SortDirection } from '../../@types/shared'
+import { PlacementRequestSortField, PlacementRequestStatus, SortDirection } from '../../@types/shared'
 import paths from '../../paths/admin'
 import { createQueryString } from '../../utils/utils'
 
@@ -9,16 +9,19 @@ export default class PlacementRequestsController {
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const isParole = req.query.isParole === '1'
+      const status = (req.query.status as PlacementRequestStatus) || 'notMatched'
       const pageNumber = req.query.page ? Number(req.query.page) : undefined
       const sortBy = req.query.sortBy as PlacementRequestSortField
       const sortDirection = req.query.sortDirection as SortDirection
 
-      const hrefPrefix = `${paths.admin.placementRequests.index({})}?${createQueryString({ isParole })}&`
+      const hrefPrefix = `${paths.admin.placementRequests.index({})}${createQueryString(
+        { status },
+        { addQueryPrefix: true },
+      )}&`
 
       const dashboard = await this.placementRequestService.getDashboard(
         req.user.token,
-        isParole,
+        status,
         pageNumber,
         sortBy,
         sortDirection,
@@ -27,7 +30,7 @@ export default class PlacementRequestsController {
       res.render('admin/placementRequests/index', {
         pageHeading: 'Record and update placement details',
         placementRequests: dashboard.data,
-        isParole,
+        status,
         pageNumber: Number(dashboard.pageNumber),
         totalPages: Number(dashboard.totalPages),
         hrefPrefix,

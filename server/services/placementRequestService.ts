@@ -6,6 +6,7 @@ import {
   PlacementRequest,
   PlacementRequestDetail,
   PlacementRequestSortField,
+  PlacementRequestStatus,
   SortDirection,
 } from '@approved-premises/api'
 import { RestClientBuilder } from '../data'
@@ -34,14 +35,14 @@ export default class PlacementRequestService {
 
   async getDashboard(
     token: string,
-    isParole: boolean,
+    status: PlacementRequestStatus,
     page: number = 1,
-    sortBy: PlacementRequestSortField = 'createdAt',
+    sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<PlacementRequest>> {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
-    return placementRequestClient.dashboard(isParole, page, sortBy, sortDirection)
+    return placementRequestClient.dashboard(status, page, sortBy, sortDirection)
   }
 
   async getPlacementRequest(token: string, id: string): Promise<PlacementRequestDetail> {

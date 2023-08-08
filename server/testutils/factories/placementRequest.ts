@@ -5,6 +5,7 @@ import { DateFormats } from '../../utils/dateUtils'
 import personFactory from './person'
 import risksFactory from './risks'
 import userFactory from './user'
+import bookingSummary from './bookingSummary'
 
 export default Factory.define<PlacementRequest>(() => {
   const essentialCriteria = faker.helpers.arrayElements(placementCriteria)
@@ -31,6 +32,7 @@ export default Factory.define<PlacementRequest>(() => {
     assessmentDate: DateFormats.dateObjToIsoDateTime(faker.date.soon()),
     assessor: userFactory.build(),
     isParole: false,
+    booking: bookingSummary.build({}),
   }
 })
 
