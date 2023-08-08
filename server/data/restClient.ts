@@ -10,6 +10,8 @@ import sanitiseError from '../sanitisedError'
 import { ApiConfig } from '../config'
 import type { UnsanitisedError } from '../sanitisedError'
 import { restClientMetricsMiddleware } from './restClientMetricsMiddleware'
+import { createQueryString } from '../utils/utils'
+import { PaginatedResponse } from '../@types/ui'
 
 interface GetRequest {
   path?: string
@@ -164,6 +166,30 @@ export default class RestClient {
 
       stream.pipe(response)
     })
+  }
+
+  async getPaginatedResponse<T>({
+    path = '',
+    page = '',
+    query = {},
+  }: {
+    path: string
+    page: string
+    query: Record<string, unknown>
+  }): Promise<PaginatedResponse<T>> {
+    const response = (await this.get({
+      path,
+      query: createQueryString({ page, ...query }),
+      raw: true,
+    })) as superagent.Response
+
+    return {
+      data: response.body,
+      pageNumber: page,
+      totalPages: response.headers['x-pagination-totalpages'],
+      totalResults: response.headers['x-pagination-totalresults'],
+      pageSize: response.headers['x-pagination-pagesize'],
+    }
   }
 
   private async postOrPut(
