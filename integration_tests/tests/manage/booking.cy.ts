@@ -16,22 +16,42 @@ import Page from '../../pages/page'
 import BookingConfirmation from '../../pages/manage/booking/confirmation'
 import { bedFactory } from '../../../server/testutils/factories/room'
 import MoveBedPage from '../../pages/manage/bed/moveBed'
+import { signIn } from './signIn'
 
 context('Booking', () => {
+  const person = personFactory.build()
+  const premises = premisesFactory.build()
+  const application = applicationFactory.build({
+    status: 'submitted',
+  })
+  const assessment = assessmentFactory.build({
+    status: 'completed',
+  })
+  const booking = bookingFactory.build({
+    person,
+    arrivalDate: '2022-06-01',
+    departureDate: '2022-06-01',
+    applicationId: application.id,
+    assessmentId: assessment.id,
+  })
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubSignIn')
-    cy.task('stubAuthUser')
-    cy.signIn()
+
+    // Given a booking is available
+    cy.task('stubBookingGet', { premisesId: premises.id, booking })
+    cy.task('stubApplicationGet', { application })
+    cy.task('stubAssessment', assessment)
+    cy.task('stubSinglePremises', premises)
+    cy.task('stubPremisesCapacity', {
+      premisesId: premises.id,
+      dateCapacities: dateCapacityFactory.buildList(5),
+    })
   })
 
   it('should show the CRN form followed by the booking form', () => {
-    const person = personFactory.build()
-    const booking = bookingFactory.build({
-      person,
-      arrivalDate: '2022-06-01',
-      departureDate: '2022-06-01',
-    })
+    // Given I am signed in as a workflow manager
+    signIn(['workflow_manager'])
+
     const firstOvercapacityPeriodStartDate = dateCapacityFactory.build({
       date: new Date(2023, 0, 1).toISOString(),
       availableBeds: -1,
@@ -52,10 +72,8 @@ context('Booking', () => {
       date: new Date(2023, 3, 1).toISOString(),
       availableBeds: -1,
     })
-    const premises = premisesFactory.build()
 
     cy.task('stubBookingCreate', { premisesId: premises.id, booking })
-    cy.task('stubBookingGet', { premisesId: premises.id, booking })
     cy.task('stubSinglePremises', { premisesId: premises.id, booking })
     cy.task('stubPremisesCapacity', {
       premisesId: premises.id,
@@ -111,10 +129,10 @@ context('Booking', () => {
   })
 
   it('should show errors for the find page and the new booking page', () => {
-    const premises = premisesFactory.build()
-    const person = personFactory.build()
+    // Given I am signed in as a workflow manager
+    signIn(['workflow_manager'])
+
     const bedId = bedFactory.build().id
-    cy.task('stubSinglePremises', premises)
 
     // Given I visit the find page
     const page = BookingFindPage.visit(premises.id, bedId)
@@ -147,8 +165,9 @@ context('Booking', () => {
   })
 
   it('should show errors when there is a booking conflict', () => {
-    const premises = premisesFactory.build()
-    const person = personFactory.build()
+    // Given I am signed in as a workflow manager
+    signIn(['workflow_manager'])
+
     const bedId = bedFactory.build().id
     const conflictingLostBed = lostBedFactory.build()
 
@@ -161,7 +180,7 @@ context('Booking', () => {
     })
     cy.task('stubLostBed', { premisesId: premises.id, lostBed: conflictingLostBed })
 
-    const booking = bookingFactory.build({
+    const conflictingBooking = bookingFactory.build({
       person,
       arrivalDate: '2022-06-01',
       departureDate: '2022-06-01',
@@ -175,7 +194,7 @@ context('Booking', () => {
 
     // And I fill in the booking form
     const bookingNewPage = new BookingNewPage(premises.id)
-    bookingNewPage.completeForm(booking)
+    bookingNewPage.completeForm(conflictingBooking)
     bookingNewPage.clickSubmit()
 
     // Then I should see an error message
@@ -183,22 +202,8 @@ context('Booking', () => {
   })
 
   it('should allow me to see a booking', () => {
-    // Given a booking is available
-    const premises = premisesFactory.build()
-    const application = applicationFactory.build({
-      status: 'submitted',
-    })
-    const assessment = assessmentFactory.build({
-      status: 'completed',
-    })
-    const booking = bookingFactory.build({
-      applicationId: application.id,
-      assessmentId: assessment.id,
-    })
-    cy.task('stubBookingGet', { premisesId: premises.id, booking })
-    cy.task('stubApplicationGet', { application })
-    cy.task('stubAssessment', assessment)
-    cy.task('stubBookingGet', { premisesId: premises.id, booking })
+    // Given I am signed in as a workflow manager
+    signIn(['workflow_manager'])
 
     // When I navigate to the booking's manage page
     const page = BookingShowPage.visit(premises.id, booking)
@@ -208,15 +213,9 @@ context('Booking', () => {
   })
 
   it('should allow me to move a booking', () => {
-    // Given a booking is in the DB
-    const premises = premisesFactory.build()
-    const booking = bookingFactory.build()
-    cy.task('stubBookingGet', { premisesId: premises.id, booking })
-    cy.task('stubSinglePremises', premises)
-    cy.task('stubPremisesCapacity', {
-      premisesId: premises.id,
-      dateCapacities: dateCapacityFactory.buildList(5),
-    })
+    // Given I am signed in as a workflow manager
+    signIn(['workflow_manager'])
+
     const bedId = 'bedId'
     const bedSummaries = bedSummaryFactory.buildList(5)
     bedSummaries[0].id = bedId
@@ -239,5 +238,16 @@ context('Booking', () => {
     // Then I should see the Premises details page with a success message
     const premisesPage = Page.verifyOnPage(PremisesShowPage, premises)
     premisesPage.shouldShowMoveConfirmation()
+  })
+
+  it('should not show the manage links for non-workflow managers', () => {
+    // Given I am signed in as a manager
+    signIn(['manager'])
+
+    // When I navigate to the booking's manage page
+    const page = BookingShowPage.visit(premises.id, booking)
+
+    // Then I should see the details for that booking
+    page.shouldNotShowManageActions()
   })
 })
