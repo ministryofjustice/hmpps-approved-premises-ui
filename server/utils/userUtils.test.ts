@@ -1,4 +1,3 @@
-import config from '../config'
 import { userDetailsFactory } from '../testutils/factories'
 import { hasRole, sections, sectionsForUser } from './userUtils'
 
@@ -36,72 +35,36 @@ describe('userUtils', () => {
       expect(sectionsForUser(user)).toEqual([sections.apply, sections.manage])
     })
 
-    describe('when cruDashboardDisabled is false', () => {
-      beforeEach(() => {
-        config.flags.cruDashboardDisabled = false
-      })
+    it('should return Apply, Workflow, Placement Request and CRU dashboard sections for a user with a workflow manager role', () => {
+      const user = userDetailsFactory.build({ roles: ['workflow_manager'] })
 
-      it('should return Apply, Workflow, Placement Request and CRU dashboard sections for a user with a workflow manager role', () => {
-        const user = userDetailsFactory.build({ roles: ['workflow_manager'] })
-
-        expect(sectionsForUser(user)).toEqual([
-          sections.apply,
-          sections.workflow,
-          sections.placementRequests,
-          sections.cruDashboard,
-          sections.reports,
-        ])
-      })
-
-      it('should return Apply sections for a user with a matcher role', () => {
-        const user = userDetailsFactory.build({ roles: ['matcher'] })
-
-        expect(sectionsForUser(user)).toEqual([sections.apply])
-      })
-
-      it('should return all except match sections for a user with all roles', () => {
-        const user = userDetailsFactory.build({ roles: ['assessor', 'manager', 'matcher', 'workflow_manager'] })
-
-        expect(sectionsForUser(user)).toEqual([
-          sections.apply,
-          sections.assess,
-          sections.manage,
-          sections.workflow,
-          sections.placementRequests,
-          sections.cruDashboard,
-          sections.reports,
-        ])
-      })
+      expect(sectionsForUser(user)).toEqual([
+        sections.apply,
+        sections.workflow,
+        sections.placementRequests,
+        sections.cruDashboard,
+        sections.reports,
+      ])
     })
 
-    describe('when cruDashboardDisabled is true', () => {
-      beforeEach(() => {
-        config.flags.cruDashboardDisabled = true
-      })
+    it('should return Apply sections for a user with a matcher role', () => {
+      const user = userDetailsFactory.build({ roles: ['matcher'] })
 
-      it('should return Apply and Workflow sections for a user with a workflow manager role', () => {
-        const user = userDetailsFactory.build({ roles: ['workflow_manager'] })
+      expect(sectionsForUser(user)).toEqual([sections.apply])
+    })
 
-        expect(sectionsForUser(user)).toEqual([sections.apply, sections.workflow])
-      })
+    it('should return all except match sections for a user with all roles', () => {
+      const user = userDetailsFactory.build({ roles: ['assessor', 'manager', 'matcher', 'workflow_manager'] })
 
-      it('should return Apply and Match sections for a user with a matcher role', () => {
-        const user = userDetailsFactory.build({ roles: ['matcher'] })
-
-        expect(sectionsForUser(user)).toEqual([sections.apply, sections.match])
-      })
-
-      it('should return all the non-CRU dashboard sections for a user with all roles', () => {
-        const user = userDetailsFactory.build({ roles: ['assessor', 'manager', 'matcher', 'workflow_manager'] })
-
-        expect(sectionsForUser(user)).toEqual([
-          sections.apply,
-          sections.assess,
-          sections.manage,
-          sections.workflow,
-          sections.match,
-        ])
-      })
+      expect(sectionsForUser(user)).toEqual([
+        sections.apply,
+        sections.assess,
+        sections.manage,
+        sections.workflow,
+        sections.placementRequests,
+        sections.cruDashboard,
+        sections.reports,
+      ])
     })
   })
 })
