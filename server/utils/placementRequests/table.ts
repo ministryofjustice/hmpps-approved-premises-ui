@@ -34,7 +34,8 @@ export const dashboardTableRows = (
       nameCell(placementRequest),
       crnCell(placementRequest.person),
       tierCell(placementRequest.risks),
-      expectedArrivalDateCell(placementRequest),
+      expectedArrivalDateCell(placementRequest, 'short'),
+      applicationDateCell(placementRequest),
       status === 'matched' ? premisesNameCell(placementRequest) : durationCell(placementRequest),
       requestTypeCell(placementRequest),
     ]
@@ -68,8 +69,15 @@ export const dueDateCell = (task: PlacementRequestTask, differenceBetweenDueDate
   }
 }
 
-export const expectedArrivalDateCell = (item: PlacementRequestTask | PlacementRequest): TableCell => ({
-  text: DateFormats.isoDateToUIDate(item.expectedArrival),
+export const expectedArrivalDateCell = (
+  item: PlacementRequestTask | PlacementRequest,
+  format: 'short' | 'long' = 'long',
+): TableCell => ({
+  text: DateFormats.isoDateToUIDate(item.expectedArrival, { format }),
+})
+
+export const applicationDateCell = (item: PlacementRequest): TableCell => ({
+  text: DateFormats.isoDateToUIDate(item.applicationDate, { format: 'short' }),
 })
 
 export const nameCell = (item: PlacementRequestTask | PlacementRequest): TableCell => {
@@ -117,6 +125,7 @@ export const dashboardTableHeader = (
       text: 'Tier',
     },
     sortHeader('Arrival date', 'expectedArrival', sortBy, sortDirection, hrefPrefix),
+    sortHeader('Application date', 'application_date', sortBy, sortDirection, hrefPrefix),
     status === 'matched'
       ? {
           text: 'Approved Premises',
