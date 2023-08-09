@@ -24,7 +24,7 @@
         govukTable({
             firstCellIsHeader: true,
             head: PlacementRequestUtils.tableUtils.dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
-            rows: PlacementRequestUtils.tableUtils.dashboardTableRows(placementRequests)
+            rows: PlacementRequestUtils.tableUtils.dashboardTableRows(placementRequests, status)
           })
       }}
 

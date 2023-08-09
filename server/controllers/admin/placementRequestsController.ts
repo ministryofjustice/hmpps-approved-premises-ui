@@ -3,6 +3,7 @@ import { PlacementRequestService } from '../../services'
 import { PlacementRequestSortField, PlacementRequestStatus, SortDirection } from '../../@types/shared'
 import paths from '../../paths/admin'
 import { createQueryString } from '../../utils/utils'
+import { PlacementRequestDashboardSearchOptions, RiskTierLevel } from '../../@types/ui'
 
 export default class PlacementRequestsController {
   constructor(private readonly placementRequestService: PlacementRequestService) {}
@@ -50,20 +51,32 @@ export default class PlacementRequestsController {
 
   search(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const crn = req.query.crn as string
+      const searchOptions = {} as PlacementRequestDashboardSearchOptions
+
+      searchOptions.crn = req.query.crn as string
+      searchOptions.tier = req.query.tier as RiskTierLevel
+      searchOptions.arrivalDateStart = req.query.arrivalDateStart as string
+      searchOptions.arrivalDateEnd = req.query.arrivalDateEnd as string
+
       const { pageNumber, sortBy, sortDirection } = this.getPaginationDetails(req)
+
+      Object.keys(searchOptions).forEach(k => {
+        if (!searchOptions[k]) {
+          delete searchOptions[k]
+        }
+      })
 
       let hrefPrefix = paths.admin.placementRequests.search({})
 
-      if (crn) {
-        hrefPrefix += `${createQueryString({ crn }, { addQueryPrefix: true })}&`
+      if (Object.keys(searchOptions).length) {
+        hrefPrefix += `${createQueryString(searchOptions, { addQueryPrefix: true })}&`
       } else {
         hrefPrefix += '?'
       }
 
       const dashboard = await this.placementRequestService.search(
         req.user.token,
-        crn,
+        searchOptions,
         pageNumber,
         sortBy,
         sortDirection,
@@ -72,7 +85,7 @@ export default class PlacementRequestsController {
       res.render('admin/placementRequests/search', {
         pageHeading: 'Record and update placement details',
         placementRequests: dashboard.data,
-        crn,
+        ...searchOptions,
         pageNumber: Number(dashboard.pageNumber),
         totalPages: Number(dashboard.totalPages),
         hrefPrefix,

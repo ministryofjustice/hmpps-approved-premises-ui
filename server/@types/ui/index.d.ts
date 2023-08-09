@@ -436,3 +436,10 @@ export type MiddlewareSpec = {
   additionalMetadata?: Record<string, string>
   allowedRoles?: Array<ApprovedPremisesUserRole>
 }
+
+export type PlacementRequestDashboardSearchOptions = {
+  crn?: string
+  tier?: RiskTierLevel
+  arrivalDateStart?: string
+  arrivalDateEnd?: string
+}

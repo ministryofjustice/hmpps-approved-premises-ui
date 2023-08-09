@@ -150,6 +150,51 @@ describeClient('placementRequestClient', provider => {
       })
     })
 
+    it('makes a get request to the placementRequests dashboard endpoint when searching by tier and start/end dates', async () => {
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the placement requests dashboard view',
+        withRequest: {
+          method: 'GET',
+          path: paths.placementRequests.dashboard.pattern,
+          query: {
+            tier: 'A1',
+            arrivalDateStart: '2020-01-01',
+            arrivalDateEnd: '2020-03-01',
+            page: '1',
+            sortBy: 'created_at',
+            sortDirection: 'asc',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placementRequests,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const result = await placementRequestClient.dashboard({
+        tier: 'A1',
+        arrivalDateStart: '2020-01-01',
+        arrivalDateEnd: '2020-03-01',
+      })
+
+      expect(result).toEqual({
+        data: placementRequests,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
+
     it('makes a get request to the placementRequests dashboard endpoint with a page number', async () => {
       provider.addInteraction({
         state: 'Server is healthy',

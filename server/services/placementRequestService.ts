@@ -1,4 +1,8 @@
-import { GroupedPlacementRequests, PaginatedResponse } from '@approved-premises/ui'
+import {
+  GroupedPlacementRequests,
+  PaginatedResponse,
+  PlacementRequestDashboardSearchOptions,
+} from '@approved-premises/ui'
 import {
   NewBookingNotMade,
   NewPlacementRequestBooking,
@@ -47,14 +51,14 @@ export default class PlacementRequestService {
 
   async search(
     token: string,
-    crn: string,
+    searchParams: PlacementRequestDashboardSearchOptions,
     page: number = 1,
     sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<PlacementRequest>> {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
-    return placementRequestClient.dashboard({ crn }, page, sortBy, sortDirection)
+    return placementRequestClient.dashboard(searchParams, page, sortBy, sortDirection)
   }
 
   async getPlacementRequest(token: string, id: string): Promise<PlacementRequestDetail> {

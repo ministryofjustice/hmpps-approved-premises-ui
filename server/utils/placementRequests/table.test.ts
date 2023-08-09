@@ -150,9 +150,9 @@ describe('tableUtils', () => {
 
   describe('dashboardTableRows', () => {
     it('returns table rows for non matched placement requests', () => {
-      const placementRequest = placementRequestFactory.build({ status: 'notMatched' })
+      const placementRequest = placementRequestFactory.build()
 
-      expect(dashboardTableRows([placementRequest])).toEqual([
+      expect(dashboardTableRows([placementRequest], 'notMatched')).toEqual([
         [
           nameCell(placementRequest),
           crnCell(placementRequest.person),
@@ -165,15 +165,30 @@ describe('tableUtils', () => {
     })
 
     it('returns table rows for matched placement requests', () => {
-      const placementRequest = placementRequestFactory.build({ status: 'matched' })
+      const placementRequest = placementRequestFactory.build()
 
-      expect(dashboardTableRows([placementRequest])).toEqual([
+      expect(dashboardTableRows([placementRequest], 'matched')).toEqual([
         [
           nameCell(placementRequest),
           crnCell(placementRequest.person),
           tierCell(placementRequest.risks),
           expectedArrivalDateCell(placementRequest),
           premisesNameCell(placementRequest),
+          requestTypeCell(placementRequest),
+        ],
+      ])
+    })
+
+    it('returns table rows when the status is undefined', () => {
+      const placementRequest = placementRequestFactory.build()
+
+      expect(dashboardTableRows([placementRequest], undefined)).toEqual([
+        [
+          nameCell(placementRequest),
+          crnCell(placementRequest.person),
+          tierCell(placementRequest.risks),
+          expectedArrivalDateCell(placementRequest),
+          durationCell(placementRequest),
           requestTypeCell(placementRequest),
         ],
       ])

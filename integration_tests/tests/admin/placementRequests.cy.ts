@@ -69,19 +69,19 @@ context('Placement Requests', () => {
     const listPage = ListPage.visit()
 
     // Then I should see a list of placement requests
-    listPage.shouldShowPlacementRequests(unmatchedPlacementRequests)
+    listPage.shouldShowPlacementRequests(unmatchedPlacementRequests, 'notMatched')
 
     // When I click the unable to match link
     listPage.clickUnableToMatch()
 
     // Then I should see the unable to match requests listed
-    listPage.shouldShowPlacementRequests(unableToMatchPlacementRequests)
+    listPage.shouldShowPlacementRequests(unableToMatchPlacementRequests, 'unableToMatch')
 
     // When I click the matched link
     listPage.clickMatched()
 
     // Then I should see the matched requests listed
-    listPage.shouldShowPlacementRequests(matchedPlacementRequests)
+    listPage.shouldShowPlacementRequests(matchedPlacementRequests, 'matched')
 
     // When I click the awaiting match link
     listPage.clickReadyToMatch()

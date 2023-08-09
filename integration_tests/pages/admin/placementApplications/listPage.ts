@@ -1,8 +1,8 @@
 import Page from '../../page'
 import paths from '../../../../server/paths/admin'
 
-import { PlacementRequest } from '../../../../server/@types/shared'
-import { shouldShowTableRows } from '../../../helpers'
+import { PlacementRequest, PlacementRequestStatus } from '../../../../server/@types/shared'
+import { tableRowsToArrays } from '../../../helpers'
 import { dashboardTableRows } from '../../../../server/utils/placementRequests/table'
 
 export default class ListPage extends Page {
@@ -15,8 +15,23 @@ export default class ListPage extends Page {
     return new ListPage()
   }
 
-  shouldShowPlacementRequests(placementRequests: Array<PlacementRequest>): void {
-    shouldShowTableRows(placementRequests, dashboardTableRows)
+  shouldShowPlacementRequests(
+    placementRequests: Array<PlacementRequest>,
+    status: PlacementRequestStatus | undefined,
+  ): void {
+    const tableRows = dashboardTableRows(placementRequests, status)
+    const rowItems = tableRowsToArrays(tableRows)
+
+    rowItems.forEach(columns => {
+      const headerCell = columns.shift()
+      cy.contains('th', headerCell)
+        .parent('tr')
+        .within(() => {
+          columns.forEach((e, i) => {
+            cy.get('td').eq(i).invoke('text').should('contain', e)
+          })
+        })
+    })
   }
 
   clickPlacementRequest(placementRequest: PlacementRequest): void {

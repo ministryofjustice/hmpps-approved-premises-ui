@@ -13,6 +13,7 @@ import {
   escape,
   flattenCheckboxInput,
   isStringOrArrayOfStrings,
+  tierSelectOptions,
   validPostcodeArea,
 } from './formUtils'
 
@@ -423,6 +424,52 @@ describe('formUtils', () => {
             text: 'someValue',
           },
         },
+      ])
+    })
+  })
+
+  describe('tierSelectOptions', () => {
+    it('returns a list of tiers as select options', () => {
+      expect(tierSelectOptions(undefined)).toEqual([
+        { text: 'Please select', value: '', selected: true },
+        { text: 'D0', value: 'D0', selected: false },
+        { text: 'D1', value: 'D1', selected: false },
+        { text: 'D2', value: 'D2', selected: false },
+        { text: 'D3', value: 'D3', selected: false },
+        { text: 'C0', value: 'C0', selected: false },
+        { text: 'C1', value: 'C1', selected: false },
+        { text: 'C2', value: 'C2', selected: false },
+        { text: 'C3', value: 'C3', selected: false },
+        { text: 'B0', value: 'B0', selected: false },
+        { text: 'B1', value: 'B1', selected: false },
+        { text: 'B2', value: 'B2', selected: false },
+        { text: 'B3', value: 'B3', selected: false },
+        { text: 'A0', value: 'A0', selected: false },
+        { text: 'A1', value: 'A1', selected: false },
+        { text: 'A2', value: 'A2', selected: false },
+        { text: 'A3', value: 'A3', selected: false },
+      ])
+    })
+
+    it('return the selected tier if specified', () => {
+      expect(tierSelectOptions('C1')).toEqual([
+        { text: 'Please select', value: '', selected: false },
+        { text: 'D0', value: 'D0', selected: false },
+        { text: 'D1', value: 'D1', selected: false },
+        { text: 'D2', value: 'D2', selected: false },
+        { text: 'D3', value: 'D3', selected: false },
+        { text: 'C0', value: 'C0', selected: false },
+        { text: 'C1', value: 'C1', selected: true },
+        { text: 'C2', value: 'C2', selected: false },
+        { text: 'C3', value: 'C3', selected: false },
+        { text: 'B0', value: 'B0', selected: false },
+        { text: 'B1', value: 'B1', selected: false },
+        { text: 'B2', value: 'B2', selected: false },
+        { text: 'B3', value: 'B3', selected: false },
+        { text: 'A0', value: 'A0', selected: false },
+        { text: 'A1', value: 'A1', selected: false },
+        { text: 'A2', value: 'A2', selected: false },
+        { text: 'A3', value: 'A3', selected: false },
       ])
     })
   })

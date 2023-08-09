@@ -1,6 +1,11 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { PlacementRequest, PlacementRequestDetail, PlacementRequestStatus } from '@approved-premises/api'
+import type {
+  PlacementRequest,
+  PlacementRequestDetail,
+  PlacementRequestStatus,
+  RiskTierLevel,
+} from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
 import { bookingNotMadeFactory, newPlacementRequestBookingConfirmationFactory } from '../../server/testutils/factories'
@@ -152,11 +157,17 @@ export default {
     ).body.requests,
   verifyPlacementRequestsSearch: async ({
     crn,
+    tier,
+    arrivalDateStart,
+    arrivalDateEnd,
     page = '1',
     sortBy = 'created_at',
     sortDirection = 'asc',
   }: {
     crn: string
+    tier: RiskTierLevel
+    arrivalDateStart: string
+    arrivalDateEnd: string
     page: string
     sortBy: string
     sortDirection: string
@@ -168,6 +179,15 @@ export default {
         queryParameters: {
           crn: {
             equalTo: crn,
+          },
+          tier: {
+            equalTo: tier,
+          },
+          arrivalDateStart: {
+            equalTo: arrivalDateStart,
+          },
+          arrivalDateEnd: {
+            equalTo: arrivalDateEnd,
           },
           page: {
             equalTo: page,

@@ -1,3 +1,4 @@
+import { PlacementRequestDashboardSearchOptions } from '../../../../server/@types/ui'
 import paths from '../../../../server/paths/admin'
 
 import ListPage from './listPage'
@@ -8,8 +9,11 @@ export default class SearchPage extends ListPage {
     return new SearchPage()
   }
 
-  searchForCrn(crn: string): void {
-    this.getTextInputByIdAndEnterDetails('crn', crn)
+  enterSearchQuery(searchOptions: PlacementRequestDashboardSearchOptions): void {
+    this.getTextInputByIdAndEnterDetails('crn', searchOptions.crn)
+    this.getSelectInputByIdAndSelectAnEntry('tier', searchOptions.tier)
+    this.getTextInputByIdAndEnterDetails('arrivalDateStart', searchOptions.arrivalDateStart)
+    this.getTextInputByIdAndEnterDetails('arrivalDateEnd', searchOptions.arrivalDateEnd)
     this.clickSubmit()
   }
 }
