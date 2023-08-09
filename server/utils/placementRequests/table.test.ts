@@ -1,6 +1,7 @@
 import { add } from 'date-fns'
 import { bookingSummaryFactory, placementRequestFactory, placementRequestTaskFactory } from '../../testutils/factories'
 import {
+  applicationDateCell,
   dashboardTableHeader,
   dashboardTableRows,
   dueDateCell,
@@ -66,6 +67,24 @@ describe('tableUtils', () => {
 
       expect(expectedArrivalDateCell(task)).toEqual({
         text: DateFormats.isoDateToUIDate('2022-01-01'),
+      })
+    })
+
+    it('returns a formatted arrival date in short format', () => {
+      const task = placementRequestTaskFactory.build({ expectedArrival: '2022-01-01' })
+
+      expect(expectedArrivalDateCell(task, 'short')).toEqual({
+        text: DateFormats.isoDateToUIDate('2022-01-01', { format: 'short' }),
+      })
+    })
+  })
+
+  describe('applicationDateCell', () => {
+    it("returns the application's created at date", () => {
+      const task = placementRequestFactory.build({ applicationDate: '2022-01-01' })
+
+      expect(applicationDateCell(task)).toEqual({
+        text: DateFormats.isoDateToUIDate('2022-01-01', { format: 'short' }),
       })
     })
   })
@@ -157,7 +176,8 @@ describe('tableUtils', () => {
           nameCell(placementRequest),
           crnCell(placementRequest.person),
           tierCell(placementRequest.risks),
-          expectedArrivalDateCell(placementRequest),
+          expectedArrivalDateCell(placementRequest, 'short'),
+          applicationDateCell(placementRequest),
           durationCell(placementRequest),
           requestTypeCell(placementRequest),
         ],
@@ -172,7 +192,8 @@ describe('tableUtils', () => {
           nameCell(placementRequest),
           crnCell(placementRequest.person),
           tierCell(placementRequest.risks),
-          expectedArrivalDateCell(placementRequest),
+          expectedArrivalDateCell(placementRequest, 'short'),
+          applicationDateCell(placementRequest),
           premisesNameCell(placementRequest),
           requestTypeCell(placementRequest),
         ],
@@ -187,7 +208,8 @@ describe('tableUtils', () => {
           nameCell(placementRequest),
           crnCell(placementRequest.person),
           tierCell(placementRequest.risks),
-          expectedArrivalDateCell(placementRequest),
+          expectedArrivalDateCell(placementRequest, 'short'),
+          applicationDateCell(placementRequest),
           durationCell(placementRequest),
           requestTypeCell(placementRequest),
         ],
@@ -212,6 +234,7 @@ describe('tableUtils', () => {
           text: 'Tier',
         },
         sortHeader('Arrival date', 'expectedArrival', sortBy, sortDirection, hrefPrefix),
+        sortHeader('Application date', 'application_date', sortBy, sortDirection, hrefPrefix),
         sortHeader('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Request type',
@@ -231,6 +254,7 @@ describe('tableUtils', () => {
           text: 'Tier',
         },
         sortHeader('Arrival date', 'expectedArrival', sortBy, sortDirection, hrefPrefix),
+        sortHeader('Application date', 'application_date', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Approved Premises',
         },
