@@ -1,12 +1,18 @@
 import SearchPage from '../../pages/admin/placementApplications/searchPage'
 
 import { placementRequestFactory } from '../../../server/testutils/factories'
+import { PlacementRequestDashboardSearchOptions } from '../../../server/@types/ui'
 
 context('Search placement Requests', () => {
   const placementRequests = placementRequestFactory.buildList(3)
   const searchResults = placementRequestFactory.buildList(2)
 
-  const crn = 'CRN123'
+  const searchQuery = {
+    crn: 'CRN123',
+    tier: 'D2',
+    arrivalDateStart: '2022-01-01',
+    arrivalDateEnd: '2022-01-03',
+  } as PlacementRequestDashboardSearchOptions
 
   beforeEach(() => {
     cy.task('reset')
@@ -17,7 +23,7 @@ context('Search placement Requests', () => {
     cy.signIn()
 
     cy.task('stubPlacementRequestsSearch', { placementRequests })
-    cy.task('stubPlacementRequestsSearch', { placementRequests: searchResults, crn })
+    cy.task('stubPlacementRequestsSearch', { placementRequests: searchResults, ...searchQuery })
   })
 
   it('allows me to search for placement requests', () => {
@@ -28,13 +34,13 @@ context('Search placement Requests', () => {
     searchPage.shouldShowPlacementRequests(placementRequests)
 
     // When I search for a CRN
-    searchPage.searchForCrn('CRN123')
+    searchPage.enterSearchQuery(searchQuery)
 
     // Then I should see the search results
     searchPage.shouldShowPlacementRequests(searchResults)
 
     // And the API should have received a request for the CRN
-    cy.task('verifyPlacementRequestsSearch', { crn: 'CRN123' }).then(requests => {
+    cy.task('verifyPlacementRequestsSearch', searchQuery).then(requests => {
       expect(requests).to.have.length(1)
     })
   })
@@ -42,14 +48,12 @@ context('Search placement Requests', () => {
   it('supports pagination', () => {
     cy.task('stubPlacementRequestsSearch', {
       placementRequests,
-      crn: 'CRN123',
-      status: 'notMatched',
+      ...searchQuery,
       page: '2',
     })
     cy.task('stubPlacementRequestsSearch', {
       placementRequests,
-      crn: 'CRN123',
-      status: 'notMatched',
+      ...searchQuery,
       page: '9',
     })
 
@@ -60,13 +64,13 @@ context('Search placement Requests', () => {
     searchPage.shouldShowPlacementRequests(placementRequests)
 
     // And I search for a CRN
-    searchPage.searchForCrn('CRN123')
+    searchPage.enterSearchQuery(searchQuery)
 
     // When I click next
     searchPage.clickNext()
 
     // Then the API should have received a request for the next page
-    cy.task('verifyPlacementRequestsSearch', { page: '2', crn: 'CRN123' }).then(requests => {
+    cy.task('verifyPlacementRequestsSearch', { page: '2', ...searchQuery }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
@@ -74,7 +78,7 @@ context('Search placement Requests', () => {
     searchPage.clickPageNumber('9')
 
     // Then the API should have received a request for the that page number
-    cy.task('verifyPlacementRequestsSearch', { page: '9', crn: 'CRN123' }).then(requests => {
+    cy.task('verifyPlacementRequestsSearch', { page: '9', ...searchQuery }).then(requests => {
       expect(requests).to.have.length(1)
     })
   })
@@ -100,7 +104,7 @@ context('Search placement Requests', () => {
     searchPage.shouldShowPlacementRequests(placementRequests)
 
     // And I search for a CRN
-    searchPage.searchForCrn('CRN123')
+    searchPage.enterSearchQuery(searchQuery)
 
     // When I sort by expected arrival in ascending order
     searchPage.clickSortBy('expectedArrival')
@@ -110,7 +114,7 @@ context('Search placement Requests', () => {
 
     // And the API should have received a request for the correct sort order
     cy.task('verifyPlacementRequestsSearch', {
-      crn: 'CRN123',
+      ...searchQuery,
       sortBy: 'expectedArrival',
       sortDirection: 'asc',
     }).then(requests => {
@@ -125,7 +129,7 @@ context('Search placement Requests', () => {
 
     // And the API should have received a request for the correct sort order
     cy.task('verifyPlacementRequestsSearch', {
-      crn: 'CRN123',
+      ...searchQuery,
       sortBy: 'expectedArrival',
       sortDirection: 'desc',
     }).then(requests => {
