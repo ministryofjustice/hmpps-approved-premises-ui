@@ -161,7 +161,7 @@ describe('PlacementRequestsController', () => {
         hrefPrefix,
       })
 
-      expect(placementRequestService.search).toHaveBeenCalledWith(token, undefined, undefined, undefined, undefined)
+      expect(placementRequestService.search).toHaveBeenCalledWith(token, {}, undefined, undefined, undefined)
     })
 
     it('should search for placement requests by CRN', async () => {
@@ -179,7 +179,83 @@ describe('PlacementRequestsController', () => {
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix,
       })
-      expect(placementRequestService.search).toHaveBeenCalledWith(token, 'CRN123', undefined, undefined, undefined)
+      expect(placementRequestService.search).toHaveBeenCalledWith(
+        token,
+        { crn: 'CRN123' },
+        undefined,
+        undefined,
+        undefined,
+      )
+    })
+
+    it('should search for placement requests by tier and dates', async () => {
+      const hrefPrefix = `${paths.admin.placementRequests.search({})}?${createQueryString({
+        tier: 'A1',
+        arrivalDateStart: '2022-01-01',
+        arrivalDateEnd: '2022-01-03',
+      })}&`
+
+      const requestHandler = placementRequestsController.search()
+
+      await requestHandler(
+        { ...request, query: { tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-03' } },
+        response,
+        next,
+      )
+
+      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
+        pageHeading: 'Record and update placement details',
+        placementRequests: paginatedResponse.data,
+        crn: undefined,
+        tier: 'A1',
+        arrivalDateStart: '2022-01-01',
+        arrivalDateEnd: '2022-01-03',
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix,
+      })
+      expect(placementRequestService.search).toHaveBeenCalledWith(
+        token,
+        { tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-03' },
+        undefined,
+        undefined,
+        undefined,
+      )
+    })
+
+    it('should remove empty queries from the search request', async () => {
+      const hrefPrefix = `${paths.admin.placementRequests.search({})}?${createQueryString({
+        tier: 'A1',
+        arrivalDateStart: '2022-01-01',
+        arrivalDateEnd: '2022-01-03',
+      })}&`
+
+      const requestHandler = placementRequestsController.search()
+
+      await requestHandler(
+        { ...request, query: { crn: '', tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-03' } },
+        response,
+        next,
+      )
+
+      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
+        pageHeading: 'Record and update placement details',
+        placementRequests: paginatedResponse.data,
+        crn: undefined,
+        tier: 'A1',
+        arrivalDateStart: '2022-01-01',
+        arrivalDateEnd: '2022-01-03',
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix,
+      })
+      expect(placementRequestService.search).toHaveBeenCalledWith(
+        token,
+        { tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-03' },
+        undefined,
+        undefined,
+        undefined,
+      )
     })
 
     it('should request page numbers and sort options', async () => {
@@ -203,7 +279,13 @@ describe('PlacementRequestsController', () => {
         sortBy: 'expectedArrival',
         sortDirection: 'desc',
       })
-      expect(placementRequestService.search).toHaveBeenCalledWith(token, 'CRN123', 2, 'expectedArrival', 'desc')
+      expect(placementRequestService.search).toHaveBeenCalledWith(
+        token,
+        { crn: 'CRN123' },
+        2,
+        'expectedArrival',
+        'desc',
+      )
     })
   })
 })

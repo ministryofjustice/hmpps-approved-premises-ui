@@ -12,7 +12,7 @@ import {
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
-import { PaginatedResponse } from '../@types/ui'
+import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '../@types/ui'
 
 export default class PlacementRequestClient {
   restClient: RestClient
@@ -28,7 +28,9 @@ export default class PlacementRequestClient {
   }
 
   async dashboard(
-    filters: { status: PlacementRequestStatus } | { crn: string } = { status: 'notMatched' },
+    filters: { status: PlacementRequestStatus } | PlacementRequestDashboardSearchOptions = {
+      status: 'notMatched',
+    },
     page = 1,
     sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
