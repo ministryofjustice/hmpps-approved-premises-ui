@@ -60,7 +60,7 @@
             govukSummaryList(PlacementRequestUtils.matchingInformationSummary(placementRequest))
           }}
 
-          {% if placementRequest.booking %}
+          {% if placementRequest.status === 'matched' %}
             <h2 class="govuk-heading-m">Booked Placement</h2>
             {{
               govukSummaryList(BookingUtils.bookingSummaryList(placementRequest.booking))
