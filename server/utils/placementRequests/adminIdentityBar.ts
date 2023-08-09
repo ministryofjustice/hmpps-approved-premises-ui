@@ -12,7 +12,7 @@ export const adminIdentityBar = (placementRequest: PlacementRequestDetail): Iden
 })
 
 export const adminActions = (placementRequest: PlacementRequestDetail): Array<IdentityBarMenuItem> => {
-  if (placementRequest.booking) {
+  if (placementRequest.status === 'matched') {
     return [
       {
         href: managePaths.bookings.dateChanges.new({

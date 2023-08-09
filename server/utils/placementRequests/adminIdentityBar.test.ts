@@ -6,8 +6,8 @@ import adminPaths from '../../paths/admin'
 
 describe('adminIdentityBar', () => {
   describe('adminActions', () => {
-    it('should return actions to amend a booking if there is a booking', () => {
-      const placementRequestDetail = placementRequestDetailFactory.build()
+    it('should return actions to amend a booking if the status is `matched`', () => {
+      const placementRequestDetail = placementRequestDetailFactory.build({ status: 'matched' })
 
       expect(adminActions(placementRequestDetail)).toEqual([
         {
@@ -27,8 +27,8 @@ describe('adminIdentityBar', () => {
       ])
     })
 
-    it('should return actions to create a booking and withdraw a placement request if there is a booking', () => {
-      const placementRequestDetail = placementRequestDetailFactory.build({ booking: undefined })
+    it('should return actions to create a booking and withdraw a placement request if the status is not `matched`', () => {
+      const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
 
       expect(adminActions(placementRequestDetail)).toEqual([
         {

@@ -5,7 +5,7 @@
 
 {% extends "../../partials/layout.njk" %}
 
-{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set pageTitle = applicationName + " - View Placement Request" %}
 
 {% block content %}
   {% include "../../_messages.njk" %}
@@ -25,7 +25,7 @@
                 Parole board directed release
               </p>
             <p class="govuk-body">
-                The person's arrival date has been calculated as {{ formatDate(placementRequest.expectedArrival) }}. 
+                The person's arrival date has been calculated as {{ formatDate(placementRequest.expectedArrival) }}.
                 This is 6 weeks after the parole board's date of decision.
               </p>
             {% if placementRequest.booking %}
@@ -60,7 +60,7 @@
             govukSummaryList(PlacementRequestUtils.matchingInformationSummary(placementRequest))
           }}
 
-          {% if placementRequest.booking %}
+          {% if placementRequest.status === 'matched' %}
             <h2 class="govuk-heading-m">Booked Placement</h2>
             {{
               govukSummaryList(BookingUtils.bookingSummaryList(placementRequest.booking))
