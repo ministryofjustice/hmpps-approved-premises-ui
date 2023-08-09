@@ -25,14 +25,17 @@ export const tableRows = (tasks: Array<PlacementRequestTask>): Array<TableRow> =
   })
 }
 
-export const dashboardTableRows = (placementRequests: Array<PlacementRequest>): Array<TableRow> => {
+export const dashboardTableRows = (
+  placementRequests: Array<PlacementRequest>,
+  status: PlacementRequestStatus | undefined,
+): Array<TableRow> => {
   return placementRequests.map((placementRequest: PlacementRequest) => {
     return [
       nameCell(placementRequest),
       crnCell(placementRequest.person),
       tierCell(placementRequest.risks),
       expectedArrivalDateCell(placementRequest),
-      placementRequest.status === 'matched' ? premisesNameCell(placementRequest) : durationCell(placementRequest),
+      status === 'matched' ? premisesNameCell(placementRequest) : durationCell(placementRequest),
       requestTypeCell(placementRequest),
     ]
   })
