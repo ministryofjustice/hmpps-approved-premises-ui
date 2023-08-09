@@ -7,7 +7,6 @@ import managePaths from '../paths/manage'
 import taskPaths from '../paths/tasks'
 import matchPaths from '../paths/match'
 import adminPaths from '../paths/admin'
-import config from '../config'
 
 export const sections = {
   apply: {
@@ -86,17 +85,9 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
 
   if (hasRole(user, 'workflow_manager')) {
     items.push(sections.workflow)
-    if (!config.flags.cruDashboardDisabled) {
-      items.push(sections.placementRequests)
-      items.push(sections.cruDashboard)
-      items.push(sections.reports)
-    }
-  }
-
-  if (hasRole(user, 'matcher')) {
-    if (config.flags.cruDashboardDisabled) {
-      items.push(sections.match)
-    }
+    items.push(sections.placementRequests)
+    items.push(sections.cruDashboard)
+    items.push(sections.reports)
   }
 
   return items
