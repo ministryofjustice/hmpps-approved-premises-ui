@@ -1,5 +1,12 @@
 import * as nunjucks from 'nunjucks'
-import type { CheckBoxItem, ErrorMessages, RadioItem, SelectOption, SummaryListItem } from '@approved-premises/ui'
+import type {
+  CheckBoxItem,
+  ErrorMessages,
+  RadioItem,
+  RiskTierLevel,
+  SelectOption,
+  SummaryListItem,
+} from '@approved-premises/ui'
 import { resolvePath, sentenceCase } from './utils'
 import postcodeAreas from '../etc/postcodeAreas.json'
 
@@ -171,4 +178,22 @@ export function isStringOrArrayOfStrings(input: unknown) {
 export const escape = (text: string): string => {
   const escapeFilter = new nunjucks.Environment().getFilter('escape')
   return escapeFilter(text).val
+}
+
+export const tierSelectOptions = (selectedOption: RiskTierLevel | undefined): Array<SelectOption> => {
+  const tiers = ['D0', 'D1', 'D2', 'D3', 'C0', 'C1', 'C2', 'C3', 'B0', 'B1', 'B2', 'B3', 'A0', 'A1', 'A2', 'A3']
+
+  const options = tiers.map(tier => ({
+    text: tier,
+    value: tier,
+    selected: tier === selectedOption,
+  }))
+
+  options.unshift({
+    text: 'Please select',
+    value: '',
+    selected: selectedOption === undefined,
+  })
+
+  return options
 }
