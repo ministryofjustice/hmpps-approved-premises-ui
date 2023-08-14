@@ -3,4 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type MigrationJobType = 'update_all_users_from_community_api' | 'fetch_offender_names_for_applications';
+export type ReferralHistoryNote = {
+    id: string;
+    createdAt: string;
+    message: string;
+};
+
