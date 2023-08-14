@@ -21,11 +21,12 @@ context('Placement Requests', () => {
     placementRequestFactory.build(),
     placementRequestFactory.build({ isParole: true }),
   ]
-  const matchedPlacementRequests = placementRequestFactory.buildList(2)
-  const unableToMatchPlacementRequests = placementRequestFactory.buildList(2)
+  const matchedPlacementRequests = placementRequestFactory.buildList(2, { status: 'matched' })
+  const unableToMatchPlacementRequests = placementRequestFactory.buildList(2, { status: 'unableToMatch' })
 
   const unmatchedPlacementRequest = placementRequestDetailFactory.build({
     ...unmatchedPlacementRequests[0],
+    status: 'notMatched',
     booking: undefined,
   })
 
