@@ -17,7 +17,14 @@ export default class BookingExtensionsController {
       const booking = await this.bookingService.find(req.user.token, premisesId, bookingId)
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
-      return res.render('bookings/extensions/new', { premisesId, booking, errors, errorSummary, ...userInput })
+      return res.render('bookings/extensions/new', {
+        pageHeading: 'Change departure date',
+        premisesId,
+        booking,
+        errors,
+        errorSummary,
+        ...userInput,
+      })
     }
   }
 
@@ -31,7 +38,7 @@ export default class BookingExtensionsController {
       }
 
       try {
-        await this.bookingService.extendBooking(req.user.token, premisesId, bookingId, bookingExtension)
+        await this.bookingService.changeDepartureDate(req.user.token, premisesId, bookingId, bookingExtension)
 
         res.redirect(
           paths.bookings.extensions.confirm({
@@ -58,7 +65,11 @@ export default class BookingExtensionsController {
       const { premisesId, bookingId } = req.params
       const booking = await this.bookingService.find(req.user.token, premisesId, bookingId)
 
-      return res.render('bookings/extensions/confirm', { premisesId, ...booking })
+      return res.render('bookings/extensions/confirm', {
+        pageHeading: 'Departure date changed',
+        premisesId,
+        ...booking,
+      })
     }
   }
 }

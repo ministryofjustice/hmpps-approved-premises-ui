@@ -190,26 +190,6 @@ describe('PremisesService', () => {
     })
   })
 
-  describe('premisesSelectList', () => {
-    it('returns the list mapped into the format required by the nunjucks macro and sorted alphabetically', async () => {
-      const premisesA = premisesFactory.build({ name: 'a' })
-      const premisesB = premisesFactory.build({ name: 'b' })
-      const premisesC = premisesFactory.build({ name: 'c' })
-      premisesClient.all.mockResolvedValue([premisesC, premisesB, premisesA])
-
-      const result = await service.getPremisesSelectList(token)
-
-      expect(result).toEqual([
-        { text: premisesA.name, value: premisesA.id },
-        { text: premisesB.name, value: premisesB.id },
-        { text: premisesC.name, value: premisesC.id },
-      ])
-
-      expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.all).toHaveBeenCalled()
-    })
-  })
-
   describe('find', () => {
     it('fetches the premises from the client', async () => {
       const premises = premisesFactory.build()

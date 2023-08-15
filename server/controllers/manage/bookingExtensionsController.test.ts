@@ -37,6 +37,7 @@ describe('bookingExtensionsController', () => {
       await requestHandler({ ...request, params: { premisesId, bookingId: booking.id } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('bookings/extensions/new', {
+        pageHeading: 'Change departure date',
         premisesId,
         booking,
         errors: {},
@@ -55,6 +56,7 @@ describe('bookingExtensionsController', () => {
       await requestHandler({ ...request, params: { premisesId, bookingId: booking.id } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('bookings/extensions/new', {
+        pageHeading: 'Change departure date',
         premisesId,
         booking,
         errors: errorsAndUserInput.errors,
@@ -69,7 +71,7 @@ describe('bookingExtensionsController', () => {
     const bookingExtension = bookingExtensionFactory.build({ bookingId: booking.id })
 
     it('given the expected form data, the posting of the booking is successful should redirect to the "confirmation" page', async () => {
-      bookingService.extendBooking.mockResolvedValue(bookingExtension)
+      bookingService.changeDepartureDate.mockResolvedValue(bookingExtension)
 
       const requestHandler = bookingExtensionsController.create()
 
@@ -85,7 +87,7 @@ describe('bookingExtensionsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(bookingService.extendBooking).toHaveBeenCalledWith(token, premisesId, bookingExtension.bookingId, {
+      expect(bookingService.changeDepartureDate).toHaveBeenCalledWith(token, premisesId, bookingExtension.bookingId, {
         ...request.body,
         newDepartureDate: '2022-02-01',
       })
@@ -99,7 +101,7 @@ describe('bookingExtensionsController', () => {
     })
 
     it('should render the page with errors when the API returns an error', async () => {
-      bookingService.extendBooking.mockResolvedValue(bookingExtension)
+      bookingService.changeDepartureDate.mockResolvedValue(bookingExtension)
       const requestHandler = bookingExtensionsController.create()
 
       request = {
@@ -109,7 +111,7 @@ describe('bookingExtensionsController', () => {
 
       const err = new Error()
 
-      bookingService.extendBooking.mockImplementation(() => {
+      bookingService.changeDepartureDate.mockImplementation(() => {
         throw err
       })
 
@@ -144,7 +146,11 @@ describe('bookingExtensionsController', () => {
       await requestHandler(request, response, next)
 
       expect(bookingService.find).toHaveBeenCalledWith(token, premisesId, booking.id)
-      expect(response.render).toHaveBeenCalledWith('bookings/extensions/confirm', { premisesId, ...booking })
+      expect(response.render).toHaveBeenCalledWith('bookings/extensions/confirm', {
+        pageHeading: 'Departure date changed',
+        premisesId,
+        ...booking,
+      })
     })
   })
 })

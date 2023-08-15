@@ -4,14 +4,14 @@ import Page from '../../../page'
 import paths from '../../../../../server/paths/manage'
 import { DateFormats } from '../../../../../server/utils/dateUtils'
 
-export default class BookingExtensionConfirmationPage extends Page {
+export default class DepartureDateChangeConfirmationPage extends Page {
   constructor() {
-    super('Booking extension complete')
+    super('Departure date changed')
   }
 
-  static visit(premisesId: string, bookingId: string): BookingExtensionConfirmationPage {
+  static visit(premisesId: string, bookingId: string): DepartureDateChangeConfirmationPage {
     cy.visit(paths.bookings.extensions.confirm({ premisesId, bookingId }))
-    return new BookingExtensionConfirmationPage()
+    return new DepartureDateChangeConfirmationPage()
   }
 
   verifyBookingIsVisible(booking: Booking): void {

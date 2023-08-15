@@ -175,7 +175,7 @@ describe('BookingService', () => {
         notes: 'Some notes',
       }
 
-      const extendedBooking = await service.extendBooking(token, 'premisesId', booking.id, newDepartureDateObj)
+      const extendedBooking = await service.changeDepartureDate(token, 'premisesId', booking.id, newDepartureDateObj)
 
       expect(extendedBooking).toEqual(booking)
       expect(bookingClientFactory).toHaveBeenCalledWith(token)

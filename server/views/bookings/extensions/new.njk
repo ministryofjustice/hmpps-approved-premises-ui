@@ -6,7 +6,7 @@
 
 {% extends "../../partials/layout.njk" %}
 
-{% set pageTitle = applicationName + " - Extend placement" %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
@@ -23,7 +23,7 @@
             <form action="{{ paths.bookings.extensions.create({ premisesId: premisesId, bookingId: booking.id }) }}" method="post">
 
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                <h1>Extend placement</h1>
+                <h1>{{pageHeading}}</h1>
 
                 {{ govukSummaryList({
                 rows: [

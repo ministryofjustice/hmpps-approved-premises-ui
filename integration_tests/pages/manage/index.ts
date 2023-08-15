@@ -16,8 +16,8 @@ import BookingConfirmationPage from './booking/confirmation'
 import BookingFindPage from './booking/find'
 import BookingNewPage from './booking/new'
 import BookingShowPage from './booking/show'
-import BookingExtensionConfirmationPage from './booking/extension/confirmation'
-import BookingExtensionCreatePage from './booking/extension/create'
+import DepartureDateChangeConfirmationPage from './booking/dateChanges/confirmation'
+import DepartureDateChangePage from './booking/dateChanges/create'
 
 import CalendarPage from './calendar'
 
@@ -34,8 +34,8 @@ export {
   BookingFindPage,
   BookingNewPage,
   BookingShowPage,
-  BookingExtensionConfirmationPage,
-  BookingExtensionCreatePage,
+  DepartureDateChangeConfirmationPage,
+  DepartureDateChangePage,
   BedsListPage,
   BedShowPage,
   CalendarPage,

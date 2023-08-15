@@ -1,14 +1,14 @@
 import Page, { PageElement } from '../../../page'
 import paths from '../../../../../server/paths/manage'
 
-export default class BookingExtensionCreatePage extends Page {
+export default class DepartureDateChangePage extends Page {
   constructor() {
-    super('Extend placement')
+    super('Change departure date')
   }
 
-  static visit(premisesId: string, bookingId: string): BookingExtensionCreatePage {
+  static visit(premisesId: string, bookingId: string): DepartureDateChangePage {
     cy.visit(paths.bookings.extensions.new({ premisesId, bookingId }))
-    return new BookingExtensionCreatePage()
+    return new DepartureDateChangePage()
   }
 
   newDepartureDay(): PageElement {
