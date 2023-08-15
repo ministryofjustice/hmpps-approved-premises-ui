@@ -15,10 +15,7 @@ export default class ListPage extends Page {
     return new ListPage()
   }
 
-  shouldShowPlacementRequests(
-    placementRequests: Array<PlacementRequest>,
-    status: PlacementRequestStatus | undefined,
-  ): void {
+  shouldShowPlacementRequests(placementRequests: Array<PlacementRequest>, status?: PlacementRequestStatus): void {
     const tableRows = dashboardTableRows(placementRequests, status)
     const rowItems = tableRowsToArrays(tableRows)
 

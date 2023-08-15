@@ -1,17 +1,24 @@
 import type { Response, SuperAgentRequest } from 'superagent'
 
-import type { BedOccupancyRange, Booking, DateCapacity, Premises, StaffMember } from '@approved-premises/api'
+import type {
+  BedOccupancyRange,
+  Booking,
+  DateCapacity,
+  Premises,
+  PremisesSummary,
+  StaffMember,
+} from '@approved-premises/api'
 
 import { stubFor } from '../../wiremock'
 import bookingStubs from './booking'
 import paths from '../../server/paths/api'
 import { createQueryString } from '../../server/utils/utils'
 
-const stubPremises = (premises: Array<Premises>) =>
+const stubPremises = (premises: Array<PremisesSummary>) =>
   stubFor({
     request: {
       method: 'GET',
-      urlPattern: '/premises',
+      urlPattern: '/premises/summary',
     },
     response: {
       status: 200,

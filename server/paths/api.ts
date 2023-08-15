@@ -11,7 +11,7 @@ const bookingPath = singlePremisesPath.path('bookings/:bookingId')
 
 const managePaths = {
   premises: {
-    index: premisesPath,
+    index: premisesPath.path('summary'),
     show: singlePremisesPath,
   },
   lostBeds: {

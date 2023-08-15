@@ -4,6 +4,7 @@ import {
   bedSummaryFactory,
   dateCapacityFactory,
   premisesFactory,
+  premisesSummaryFactory,
   roomFactory,
   staffMemberFactory,
 } from '../testutils/factories'
@@ -21,9 +22,9 @@ describeClient('PremisesClient', provider => {
   })
 
   describe('all', () => {
-    const premises = premisesFactory.buildList(5)
-
     it('should get all premises', async () => {
+      const premisesSummaries = premisesSummaryFactory.buildList(5)
+
       provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to get all premises',
@@ -32,16 +33,17 @@ describeClient('PremisesClient', provider => {
           path: paths.premises.index({}),
           headers: {
             authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
           },
         },
         willRespondWith: {
           status: 200,
-          body: premises,
+          body: premisesSummaries,
         },
       })
 
       const output = await premisesClient.all()
-      expect(output).toEqual(premises)
+      expect(output).toEqual(premisesSummaries)
     })
   })
 
