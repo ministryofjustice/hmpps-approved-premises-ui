@@ -1,9 +1,9 @@
 import { bookingFactory, premisesFactory } from '../../../server/testutils/factories'
 
-import { BookingExtensionConfirmationPage, BookingExtensionCreatePage } from '../../pages/manage'
+import { DepartureDateChangeConfirmationPage, DepartureDateChangePage } from '../../pages/manage'
 import { signIn } from '../signIn'
 
-context('BookingExtension', () => {
+context('Departure date', () => {
   beforeEach(() => {
     cy.task('reset')
 
@@ -11,7 +11,7 @@ context('BookingExtension', () => {
     signIn(['workflow_manager'])
   })
 
-  it('should show booking extension form', () => {
+  it('should show a form to change a bookings departure date', () => {
     const booking = bookingFactory.build({
       departureDate: '2022-06-03',
     })
@@ -23,14 +23,15 @@ context('BookingExtension', () => {
     cy.task('stubSinglePremises', { premisesId: premises.id, booking })
 
     // When I visit the booking extension page
-    const page = BookingExtensionCreatePage.visit(premises.id, booking.id)
+    const page = DepartureDateChangePage.visit(premises.id, booking.id)
 
     // And I fill in the extension form
     page.completeForm(newDepartureDate)
     page.clickSubmit()
 
     // Then I should be redirected to the confirmation page
-    const bookingConfirmationPage = new BookingExtensionConfirmationPage()
+    const bookingConfirmationPage = new DepartureDateChangeConfirmationPage()
+
     bookingConfirmationPage.verifyBookingIsVisible(booking)
 
     // And the extension should be created in the API
@@ -52,7 +53,7 @@ context('BookingExtension', () => {
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
 
     // When I visit the booking extension page
-    const page = BookingExtensionCreatePage.visit(premises.id, booking.id)
+    const page = DepartureDateChangePage.visit(premises.id, booking.id)
 
     // And I don't enter details into the field
     cy.task('stubBookingExtensionErrors', {

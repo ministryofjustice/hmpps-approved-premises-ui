@@ -37,6 +37,7 @@ describe('bookingExtensionsController', () => {
       await requestHandler({ ...request, params: { premisesId, bookingId: booking.id } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('bookings/extensions/new', {
+        pageHeading: 'Change departure date',
         premisesId,
         booking,
         errors: {},
@@ -55,6 +56,7 @@ describe('bookingExtensionsController', () => {
       await requestHandler({ ...request, params: { premisesId, bookingId: booking.id } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('bookings/extensions/new', {
+        pageHeading: 'Change departure date',
         premisesId,
         booking,
         errors: errorsAndUserInput.errors,
@@ -144,7 +146,11 @@ describe('bookingExtensionsController', () => {
       await requestHandler(request, response, next)
 
       expect(bookingService.find).toHaveBeenCalledWith(token, premisesId, booking.id)
-      expect(response.render).toHaveBeenCalledWith('bookings/extensions/confirm', { premisesId, ...booking })
+      expect(response.render).toHaveBeenCalledWith('bookings/extensions/confirm', {
+        pageHeading: 'Departure date changed',
+        premisesId,
+        ...booking,
+      })
     })
   })
 })

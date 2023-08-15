@@ -136,7 +136,7 @@ export const bookingActions = (booking: Booking, premisesId: string): Array<Iden
         href: paths.bookings.departures.new({ premisesId, bookingId: booking.id }),
       })
       items.push({
-        text: 'Extend placement',
+        text: 'Change departure date',
         classes: 'govuk-button--secondary',
         href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
       })
