@@ -22,6 +22,10 @@ export default {
         new: withdrawalPath.path('new'),
         create: withdrawalPath,
       },
+      unableToMatch: {
+        new: unableToMatchPath.path('new'),
+        create: unableToMatchPath,
+      },
     },
     reports: {
       new: adminPath.path('reports'),
