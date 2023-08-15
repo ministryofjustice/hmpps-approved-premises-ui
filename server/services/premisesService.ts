@@ -150,29 +150,6 @@ export default class PremisesService {
     return ''
   }
 
-  /**
-   * getPremisesSelectList
-   * @deprecated per ADR-0008: manipulation of view data should happen in the views
-   */
-  async getPremisesSelectList(token: string): Promise<Array<{ text: string; value: string }>> {
-    const premisesClient = this.premisesClientFactory(token)
-    const premises = await premisesClient.all()
-
-    return premises
-      .map(singlePremises => {
-        return { text: `${singlePremises.name}`, value: `${singlePremises.id}` }
-      })
-      .sort((a, b) => {
-        if (a.text < b.text) {
-          return -1
-        }
-        if (a.text > b.text) {
-          return 1
-        }
-        return 0
-      })
-  }
-
   async summaryListForPremises(premises: ApprovedPremises): Promise<SummaryList> {
     return {
       rows: [
