@@ -10,10 +10,9 @@ import {
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import CreatePlacementPage from '../../pages/admin/placementApplications/createPlacementPage'
-import { CancellationCreatePage, NewDateChangePage } from '../../pages/manage'
+import { CancellationCreatePage, NewDateChangePage, UnableToMatchPage, WithdrawConfirmPage } from '../../pages/manage'
 import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
 import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
-import WithdrawConfirmPage from '../../pages/manage/withdrawConfirm'
 import { signIn } from '../signIn'
 
 context('Placement Requests', () => {
@@ -320,6 +319,36 @@ context('Placement Requests', () => {
 
     // And a withdrawal should have been created in the API
     cy.task('verifyPlacementRequestWithdrawal', unmatchedPlacementRequest).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+  })
+
+  it('allows me to mark a placement request as unable to match', () => {
+    cy.task('stubPlacementRequestUnableToMatch', unmatchedPlacementRequest)
+
+    // When I visit the tasks dashboard
+    const listPage = ListPage.visit()
+
+    // And I choose a placement request
+    listPage.clickPlacementRequest(unmatchedPlacementRequest)
+
+    // Then I should be taken to the placement request page
+    const showPage = Page.verifyOnPage(ShowPage, unmatchedPlacementRequest)
+
+    // When I click on the unable to match button
+    showPage.clickUnableToMatch()
+
+    // Then I should be on the unable to match confirmation page
+    const unableToMatchConfirmationPage = Page.verifyOnPage(UnableToMatchPage)
+
+    // When I confirm I am unable to match the placement
+    unableToMatchConfirmationPage.clickSubmit()
+
+    // Then I should see a confirmation message
+    showPage.shouldShowBanner('Placement request has been marked unable to match')
+
+    // And the placement should have been marked unable to match in the API
+    cy.task('verifyPlacementRequestedMarkedUnableToMatch', unmatchedPlacementRequest).then(requests => {
       expect(requests).to.have.length(1)
     })
   })
