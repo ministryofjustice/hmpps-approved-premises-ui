@@ -68,6 +68,9 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.admin.placementRequests.unableToMatch.new.pattern, placementRequestUnableToMatchController.new(), {
     auditEvent: 'ADMIN_NEW_PLACEMENT_REQUEST_UNABLE_TO_MATCH',
   })
+  post(paths.admin.placementRequests.unableToMatch.create.pattern, placementRequestUnableToMatchController.create(), {
+    auditEvent: 'ADMIN_NEW_PLACEMENT_REQUEST_UNABLE_TO_MATCH_SUCCESS',
+  })
 
   get(paths.admin.reports.new.pattern, reportsController.new(), {
     auditEvent: 'ADMIN_ACCESS_REPORTS_SECTION',

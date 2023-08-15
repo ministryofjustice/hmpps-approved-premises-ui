@@ -3,6 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { PlacementRequestService } from '../../../services'
 
+import paths from '../../../paths/admin'
 import UnableToMatchController from './unableToMatchController'
 
 jest.mock('../../../utils/validation')
@@ -39,6 +40,26 @@ describe('unableToMatchController', () => {
         pageHeading: 'Mark as unable to match',
         id: request.params.id,
       })
+    })
+  })
+
+  describe('create', () => {
+    const prId = 'some-id'
+
+    beforeEach(() => {
+      request.params.id = prId
+    })
+
+    it('calls the service method, redirects to the index screen and shows a confirmation message', async () => {
+      request.body.confirm = 'yes'
+
+      const requestHandler = unableToMatchController.create()
+
+      await requestHandler(request, response, next)
+
+      expect(placementRequestService.bookingNotMade).toHaveBeenCalledWith(token, prId, { notes: '' })
+      expect(response.redirect).toHaveBeenCalledWith(paths.admin.placementRequests.show({ id: prId }))
+      expect(request.flash).toHaveBeenCalledWith('success', 'Placement request has been marked unable to match')
     })
   })
 })
