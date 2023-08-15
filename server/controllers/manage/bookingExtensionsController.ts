@@ -31,7 +31,7 @@ export default class BookingExtensionsController {
       }
 
       try {
-        await this.bookingService.extendBooking(req.user.token, premisesId, bookingId, bookingExtension)
+        await this.bookingService.changeDepartureDate(req.user.token, premisesId, bookingId, bookingExtension)
 
         res.redirect(
           paths.bookings.extensions.confirm({

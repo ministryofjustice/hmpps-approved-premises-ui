@@ -48,7 +48,7 @@ export default class BookingService {
     }
   }
 
-  async extendBooking(
+  async changeDepartureDate(
     token: string,
     premisesId: string,
     bookingId: string,
