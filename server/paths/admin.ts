@@ -8,6 +8,8 @@ const bookingsPath = placementRequestPath.path('bookings')
 
 const withdrawalPath = placementRequestPath.path('withdrawal')
 
+const unableToMatchPath = placementRequestPath.path('unable-to-match')
+
 export default {
   admin: {
     placementRequests: {

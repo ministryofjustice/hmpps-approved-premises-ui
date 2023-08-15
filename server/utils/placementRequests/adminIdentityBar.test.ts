@@ -39,6 +39,10 @@ describe('adminIdentityBar', () => {
           href: adminPaths.admin.placementRequests.withdrawal.new({ id: placementRequestDetail.id }),
           text: 'Withdraw placement request',
         },
+        {
+          href: adminPaths.admin.placementRequests.unableToMatch.new({ id: placementRequestDetail.id }),
+          text: 'Mark as unable to match',
+        },
       ])
     })
   })
