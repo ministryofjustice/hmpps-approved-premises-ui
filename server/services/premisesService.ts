@@ -1,5 +1,13 @@
 import type { SummaryList, TableRow } from '@approved-premises/ui'
-import type { ApprovedPremises, BedDetail, BedSummary, Premises, Room, StaffMember } from '@approved-premises/api'
+import type {
+  ApprovedPremises,
+  BedDetail,
+  BedSummary,
+  Premises,
+  PremisesSummary,
+  Room,
+  StaffMember,
+} from '@approved-premises/api'
 import type { PremisesClient, RestClientBuilder } from '../data'
 import paths from '../paths/manage'
 
@@ -9,7 +17,7 @@ import getDateRangesWithNegativeBeds, { NegativeDateRange, mapApiOccupancyToUiOc
 export default class PremisesService {
   constructor(private readonly premisesClientFactory: RestClientBuilder<PremisesClient>) {}
 
-  async getAll(token: string): Promise<Array<ApprovedPremises>> {
+  async getAll(token: string): Promise<Array<PremisesSummary>> {
     const premisesClient = this.premisesClientFactory(token)
     const premises = await premisesClient.all()
 

@@ -4,6 +4,7 @@ import type {
   BedOccupancyRange,
   BedSummary,
   DateCapacity,
+  ApprovedPremisesSummary as PremisesSummary,
   Room,
   StaffMember,
 } from '@approved-premises/api'
@@ -18,8 +19,8 @@ export default class PremisesClient {
     this.restClient = new RestClient('premisesClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async all(): Promise<Array<ApprovedPremises>> {
-    return (await this.restClient.get({ path: paths.premises.index({}) })) as Array<ApprovedPremises>
+  async all(): Promise<Array<PremisesSummary>> {
+    return (await this.restClient.get({ path: paths.premises.index({}) })) as Array<PremisesSummary>
   }
 
   async find(id: string): Promise<ApprovedPremises> {

@@ -60,6 +60,7 @@ import placementRequestFactory from './placementRequest'
 import placementRequestDetailFactory from './placementRequestDetail'
 import placementRequestTaskFactory from './placementRequestTask'
 import premisesFactory from './premises'
+import premisesSummaryFactory from './premisesSummary'
 import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
 import referenceDataFactory from './referenceData'
@@ -133,6 +134,7 @@ export {
   placementRequestDetailFactory,
   placementRequestTaskFactory,
   premisesFactory,
+  premisesSummaryFactory,
   prisonCaseNotesFactory,
   reallocationFactory,
   referenceDataFactory,
