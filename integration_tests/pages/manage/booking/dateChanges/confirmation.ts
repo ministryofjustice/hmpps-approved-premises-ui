@@ -18,14 +18,14 @@ export default class DepartureDateChangeConfirmationPage extends Page {
     cy.get('dl').within(() => {
       this.assertDefinition('Name', booking.person.name)
       this.assertDefinition('CRN', booking.person.crn)
-      this.assertDefinition('Expected arrival date', DateFormats.isoDateToUIDate(booking.arrivalDate))
-      this.assertDefinition('New expected departure date', DateFormats.isoDateToUIDate(booking.departureDate))
+      this.assertDefinition('Arrival date', DateFormats.isoDateToUIDate(booking.arrivalDate))
+      this.assertDefinition('New departure date', DateFormats.isoDateToUIDate(booking.departureDate))
     })
   }
 
   verifyNewExpectedDepartureDate(date: string): void {
     cy.get('dl').within(() => {
-      this.assertDefinition('New expected departure date', DateFormats.isoDateToUIDate(date))
+      this.assertDefinition('New departure date', DateFormats.isoDateToUIDate(date))
     })
   }
 }
