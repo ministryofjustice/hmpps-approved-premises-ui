@@ -26,6 +26,6 @@ export default class CancellationService {
 
     const reasons = await referenceDataClient.getReferenceData('cancellation-reasons')
 
-    return reasons as Array<ReferenceData>
+    return reasons.filter(r => r.isActive) as Array<ReferenceData>
   }
 }

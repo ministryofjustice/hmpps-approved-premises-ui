@@ -2,7 +2,6 @@ import { createMock } from '@golevelup/ts-jest'
 
 import type { ErrorMessages } from '@approved-premises/ui'
 import {
-  cancellationReasonRadioItems,
   convertArrayToRadioItems,
   convertKeyValuePairToCheckBoxItems,
   convertKeyValuePairToRadioItems,
@@ -122,39 +121,6 @@ describe('formUtils', () => {
           text: 'abc',
           value: '123',
           checked: true,
-        },
-        {
-          text: 'def',
-          value: '345',
-          checked: false,
-        },
-      ])
-    })
-  })
-
-  describe('cancellationReasonRadioItems', () => {
-    const objects = [
-      {
-        id: '123',
-        name: 'Booking successfully appealed',
-      },
-      {
-        id: '345',
-        name: 'def',
-      },
-    ]
-
-    it('converts objects to an array of radio items', () => {
-      const result = cancellationReasonRadioItems(objects, 'somehtml', {})
-
-      expect(result).toEqual([
-        {
-          text: 'Appealed placement approved by AP area manager (APAM)',
-          value: '123',
-          checked: false,
-          conditional: {
-            html: 'somehtml',
-          },
         },
         {
           text: 'def',
