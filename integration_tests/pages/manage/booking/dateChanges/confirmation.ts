@@ -6,7 +6,7 @@ import { DateFormats } from '../../../../../server/utils/dateUtils'
 
 export default class DepartureDateChangeConfirmationPage extends Page {
   constructor() {
-    super('Departure date changed')
+    super('Departure date updated')
   }
 
   static visit(premisesId: string, bookingId: string): DepartureDateChangeConfirmationPage {

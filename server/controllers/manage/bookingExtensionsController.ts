@@ -18,7 +18,7 @@ export default class BookingExtensionsController {
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
 
       return res.render('bookings/extensions/new', {
-        pageHeading: 'Change departure date',
+        pageHeading: 'Update departure date',
         premisesId,
         booking,
         errors,
@@ -66,7 +66,7 @@ export default class BookingExtensionsController {
       const booking = await this.bookingService.find(req.user.token, premisesId, bookingId)
 
       return res.render('bookings/extensions/confirm', {
-        pageHeading: 'Departure date changed',
+        pageHeading: 'Departure date updated',
         premisesId,
         ...booking,
       })
