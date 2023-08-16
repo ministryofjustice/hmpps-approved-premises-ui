@@ -263,11 +263,32 @@ export default {
         },
       },
     }),
+
+  stubPlacementRequestUnableToMatch: (placementRequest: PlacementRequest): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: paths.placementRequests.bookingNotMade({ id: placementRequest.id }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+      },
+    }),
   verifyPlacementRequestWithdrawal: async (placementRequest: PlacementRequest) =>
     (
       await getMatchingRequests({
         method: 'POST',
         url: paths.placementRequests.withdrawal.create({ id: placementRequest.id }),
+      })
+    ).body.requests,
+  verifyPlacementRequestedMarkedUnableToMatch: async (placementRequest: PlacementRequest) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.placementRequests.bookingNotMade({ id: placementRequest.id }),
       })
     ).body.requests,
 }

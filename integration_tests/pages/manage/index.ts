@@ -6,6 +6,8 @@ import LostBedListPage from './lostBedList'
 import LostBedShowPage from './lostBedShow'
 import PremisesListPage from './premisesList'
 import PremisesShowPage from './premisesShow'
+import WithdrawConfirmPage from './withdrawConfirm'
+import UnableToMatchPage from './unableToMatch'
 
 import BedsListPage from './bed/bedsList'
 import BedShowPage from './bed/bedShow'
@@ -40,4 +42,6 @@ export {
   BedShowPage,
   CalendarPage,
   NewDateChangePage,
+  WithdrawConfirmPage,
+  UnableToMatchPage,
 }

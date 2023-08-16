@@ -39,6 +39,10 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
       href: adminPaths.admin.placementRequests.withdrawal.new({ id: placementRequest.id }),
       text: 'Withdraw placement request',
     },
+    {
+      href: adminPaths.admin.placementRequests.unableToMatch.new({ id: placementRequest.id }),
+      text: 'Mark as unable to match',
+    },
   ]
 }
 
