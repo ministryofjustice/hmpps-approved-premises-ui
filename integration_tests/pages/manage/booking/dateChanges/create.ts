@@ -3,7 +3,7 @@ import paths from '../../../../../server/paths/manage'
 
 export default class DepartureDateChangePage extends Page {
   constructor() {
-    super('Change departure date')
+    super('Update departure date')
   }
 
   static visit(premisesId: string, bookingId: string): DepartureDateChangePage {
