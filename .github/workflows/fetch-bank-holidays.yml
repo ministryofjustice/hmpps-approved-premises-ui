@@ -2,7 +2,7 @@ name: Fetch bank holidays JSON from the gov.uk API
 
 on:
   schedule:
-    - cron: '0 14 * * *'
+    - cron: '0 0 * * *'
 
 jobs:
   update_bank_holidays:
