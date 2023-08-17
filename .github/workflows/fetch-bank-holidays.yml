@@ -1,0 +1,41 @@
+name: Fetch bank holidays JSON from the gov.uk API
+
+on:
+  schedule:
+    - cron: '55 8 * * *'
+
+jobs:
+  call_api:
+    name: Call API
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Call API
+        id: call_api
+        run: |
+          curl -o bank-holidays.json https://www.gov.uk/bank-holidays.json
+          mv bank-holidays.json ./server/data/bankHolidays/bank-holidays.json
+  create_pr:
+    name: Create Pull Request
+    needs: call_api
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Token
+        uses: tibdex/github-app-token@v1
+        id: generate-token
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+          title: 'Bank holiday updates'
+          commit-message: 'Update bank holidays'
+          body: 'This PR updates the bank holidays JSON file from the gov.uk API.'
+          delete-branch: true
+          branch-suffix: timestamp
+          branch: bh-updates
