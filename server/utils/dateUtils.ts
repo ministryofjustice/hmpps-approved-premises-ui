@@ -1,4 +1,3 @@
-/* eslint-disable */
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 
 import { differenceInDays, formatDistanceStrict, formatISO, parseISO, format, isPast, formatDuration } from 'date-fns'
@@ -38,9 +37,8 @@ export class DateFormats {
   static dateObjtoUIDate(date: Date, options: { format: 'short' | 'long' } = { format: 'long' }) {
     if (options.format === 'long') {
       return format(date, 'cccc d MMMM y')
-    } else {
-      return format(date, 'dd/LL/y')
     }
+    return format(date, 'dd/LL/y')
   }
 
   /**
@@ -148,12 +146,18 @@ export class DateFormats {
     return DateFormats.dateObjectToDateInputs(DateFormats.isoToDateObj(isoDate), key)
   }
 
-  static formatDuration(duration: DurationWithNumberOrString, format: Array<string> = ['weeks', 'days']): string {
+  static formatDuration(
+    duration: DurationWithNumberOrString,
+    durationFormat: Array<string> = ['weeks', 'days'],
+  ): string {
     const formattedDuration = {} as Duration
-    Object.keys(duration).forEach(k => (formattedDuration[k] = Number(duration[k])))
+
+    Object.keys(duration).forEach(k => {
+      formattedDuration[k] = Number(duration[k])
+    })
 
     return formatDuration(formattedDuration, {
-      format,
+      format: durationFormat,
       delimiter: ', ',
     })
   }
@@ -223,8 +227,9 @@ export const monthOptions = [
 
 export const yearOptions = (startYear: number) => getYearsSince(startYear).map(year => ({ name: year, value: year }))
 
+/* eslint-disable */
 export const getYearsSince = (startYear: number): Array<string> => {
-  let years = []
+  const years: Array<string> = []
   const thisYear = new Date().getFullYear()
   while (startYear <= thisYear) {
     years.push((startYear++).toString())
