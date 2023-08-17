@@ -2,7 +2,7 @@ name: Fetch bank holidays JSON from the gov.uk API
 
 on:
   schedule:
-    - cron: '55 8 * * *'
+    - cron: '30 10 * * *'
 
 jobs:
   call_api:
@@ -16,11 +16,6 @@ jobs:
         run: |
           curl -o bank-holidays.json https://www.gov.uk/bank-holidays.json
           mv bank-holidays.json ./server/data/bankHolidays/bank-holidays.json
-  create_pr:
-    name: Create Pull Request
-    needs: call_api
-    runs-on: ubuntu-latest
-    steps:
       - name: Generate Token
         uses: tibdex/github-app-token@v1
         id: generate-token
