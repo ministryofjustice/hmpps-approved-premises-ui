@@ -1,6 +1,7 @@
 ---
 generic-service:
   nameOverride: hmpps-approved-premises-ui
+  serviceAccountName: hmpps-approved-premises-service-account
 
   replicaCount: 4
 
