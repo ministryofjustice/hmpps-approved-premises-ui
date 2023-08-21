@@ -1,3 +1,4 @@
+import { formatISO } from 'date-fns'
 import {
   daysSinceInfoRequest,
   daysSinceReceived,
@@ -7,11 +8,19 @@ import {
   formatDaysUntilDueWithWarning,
   formattedArrivalDate,
 } from './dateUtils'
-import { DateFormats } from '../dateUtils'
+import { DateFormats, differenceInBusinessDays } from '../dateUtils'
 import { assessmentFactory, assessmentSummaryFactory } from '../../testutils/factories'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 
 jest.mock('../applications/arrivalDateFromApplication')
+jest.mock('../dateUtils', () => ({
+  differenceInBusinessDays: jest.fn().mockImplementation(() => 1),
+  DateFormats: {
+    isoToDateObj: jest.fn().mockImplementation(date => new Date(date)),
+    dateObjToIsoDate: jest.fn().mockImplementation(date => formatISO(date)),
+    dateObjToIsoDateTime: jest.fn().mockImplementation(date => formatISO(date)),
+  },
+}))
 
 describe('dateUtils', () => {
   describe('daysSinceReceived', () => {
@@ -57,9 +66,9 @@ describe('dateUtils', () => {
 
   describe('daysUntilDue', () => {
     it('returns the days until the assessment is due', () => {
-      const assessment = assessmentSummaryFactory.createdXDaysAgo(2).build()
+      const assessment = assessmentSummaryFactory.createdXDaysAgo(1).build()
 
-      expect(daysUntilDue(assessment)).toEqual(7)
+      expect(daysUntilDue(assessment)).toEqual(1)
     })
   })
 
@@ -99,6 +108,7 @@ describe('dateUtils', () => {
 
   describe('formatDaysUntilDueWithWarning', () => {
     it('returns the number of days without a warning if the due date is not soon', () => {
+      ;(differenceInBusinessDays as jest.Mock).mockReturnValue(9)
       const assessment = assessmentSummaryFactory.build({
         createdAt: DateFormats.dateObjToIsoDate(new Date()),
       })
@@ -107,7 +117,8 @@ describe('dateUtils', () => {
     })
 
     it('returns the number of days with a warning if the due date is soon', () => {
-      const assessment = assessmentSummaryFactory.createdXDaysAgo(8).build()
+      ;(differenceInBusinessDays as jest.Mock).mockReturnValue(1)
+      const assessment = assessmentSummaryFactory.createdXDaysAgo(1).build()
 
       expect(formatDaysUntilDueWithWarning(assessment)).toEqual(
         '<strong class="assessments--index__warning">1 Day<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>',
