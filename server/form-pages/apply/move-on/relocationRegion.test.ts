@@ -26,7 +26,9 @@ describe('RelocationRegion', () => {
     })
 
     it('returns the question without the persons name if they are a restricted person', () => {
-      const page = new RelocationRegion({}, applicationFactory.build({ person: restrictedPersonFactory.build() }))
+      const restrictedPersonApplication = applicationFactory.build({ person: restrictedPersonFactory.build() })
+      restrictedPersonApplication.person = restrictedPersonFactory.build()
+      const page = new RelocationRegion({}, restrictedPersonApplication)
 
       expect(page.question).toEqual('Where is the person most likely to live when they move on from the AP?')
     })

@@ -138,9 +138,10 @@ describe('bookingUtils', () => {
     })
 
     it('returns "Limited access offender" if they are a restricted person', () => {
-      const restrictedPerson = restrictedPersonFactory.build()
-      expect(nameCell(bookingFactory.build({ person: restrictedPerson }))).toEqual({
-        text: `LAO: ${restrictedPerson.crn}`,
+      const booking = bookingFactory.build()
+      booking.person = restrictedPersonFactory.build()
+      expect(nameCell(booking)).toEqual({
+        text: `LAO: ${booking.person.crn}`,
       })
     })
   })

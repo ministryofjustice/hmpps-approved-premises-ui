@@ -19,6 +19,7 @@ import {
 } from './tableUtils'
 import paths from '../../paths/assess'
 import { crnCell, tierCell } from '../tableUtils'
+import { ApprovedPremisesAssessmentSummary as AssessmentSummary } from '../../@types/shared'
 
 jest.mock('../applications/arrivalDateFromApplication')
 
@@ -88,8 +89,8 @@ describe('tableUtils', () => {
 
   describe('awaitingAssessmentTableRows', () => {
     it('returns table rows for the assessments', () => {
-      const assessment = assessmentSummaryFactory.build({ person })
-
+      const assessment = assessmentSummaryFactory.build()
+      assessment.person = person
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       expect(awaitingAssessmentTableRows([assessment])).toEqual([
@@ -106,8 +107,9 @@ describe('tableUtils', () => {
     })
 
     it('returns table rows for the assessments for a RestrictedPerson', () => {
-      const assessment = assessmentSummaryFactory.build({ status: 'awaiting_response', person: restrictedPerson })
+      const assessment = assessmentSummaryFactory.build({ status: 'awaiting_response' })
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
+      assessment.person = restrictedPerson
 
       expect(awaitingAssessmentTableRows([assessment])).toEqual([
         [
@@ -124,9 +126,14 @@ describe('tableUtils', () => {
   })
 
   describe('requestedInformationTableRows', () => {
-    it('returns table rows for the assessments for a FullPerson', () => {
-      const assessment = assessmentSummaryFactory.build({ status: 'awaiting_response', person })
+    let assessment: AssessmentSummary
+    beforeEach(() => {
+      assessment = assessmentSummaryFactory.build()
+    })
 
+    it('returns table rows for the assessments for a FullPerson', () => {
+      assessment = assessmentSummaryFactory.build({ status: 'awaiting_response' })
+      assessment.person = person
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       expect(requestedFurtherInformationTableRows([assessment])).toEqual([
@@ -143,7 +150,8 @@ describe('tableUtils', () => {
     })
 
     it('returns table rows for the assessments for a RestrictedPerson', () => {
-      const assessment = assessmentSummaryFactory.build({ status: 'awaiting_response', person: restrictedPerson })
+      assessment = assessmentSummaryFactory.build({ status: 'awaiting_response' })
+      assessment.person = restrictedPerson
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       expect(requestedFurtherInformationTableRows([assessment])).toEqual([

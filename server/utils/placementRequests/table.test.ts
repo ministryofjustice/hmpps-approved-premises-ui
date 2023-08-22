@@ -62,7 +62,8 @@ describe('tableUtils', () => {
     })
 
     it('returns the crn cell if the person is a restrictedPerson', () => {
-      const restrictedPersonTask = placementRequestFactory.build({ person: restrictedPersonFactory.build() })
+      const restrictedPersonTask = placementRequestFactory.build()
+      restrictedPersonTask.person = restrictedPersonFactory.build()
 
       expect(nameCell(restrictedPersonTask)).toEqual({
         text: `LAO: ${restrictedPersonTask.person.crn}`,
