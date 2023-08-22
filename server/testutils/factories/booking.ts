@@ -5,7 +5,7 @@ import { addDays, startOfToday } from 'date-fns'
 import type { Booking } from '@approved-premises/api'
 import arrivalFactory from './arrival'
 import departureFactory from './departure'
-import personFactory from './person'
+import { fullPersonFactory, restrictedPersonFactory } from './person'
 import { DateFormats } from '../../utils/dateUtils'
 import cancellationFactory from './cancellation'
 import { bedFactory } from './room'
@@ -87,13 +87,19 @@ class BookingFactory extends Factory<Booking> {
       status: 'arrived',
     })
   }
+
+  withFullPerson() {
+    return this.params({
+      person: fullPersonFactory.build(),
+    })
+  }
 }
 
 export default BookingFactory.define(() => {
   const arrivalDate = DateFormats.dateObjToIsoDate(faker.date.soon())
   const departureDate = DateFormats.dateObjToIsoDate(faker.date.future())
   return {
-    person: personFactory.build(),
+    person: faker.helpers.arrayElement([fullPersonFactory.build(), restrictedPersonFactory.build()]),
     arrivalDate,
     originalArrivalDate: arrivalDate,
     departureDate,

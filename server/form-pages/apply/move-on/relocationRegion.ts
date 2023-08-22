@@ -4,6 +4,7 @@ import { validPostcodeArea } from '../../../utils/formUtils'
 import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
+import { nameOrPlaceholderCopy } from '../../../utils/personUtils'
 
 @Page({ name: 'relocation-region', bodyProperties: ['postcodeArea'] })
 export default class RelocationRegion implements TasklistPage {
@@ -11,7 +12,9 @@ export default class RelocationRegion implements TasklistPage {
 
   title = 'Placement duration and move on'
 
-  question = `Where is ${this.application.person.name} most likely to live when they move on from the AP?`
+  question = `Where is ${nameOrPlaceholderCopy(
+    this.application.person,
+  )} most likely to live when they move on from the AP?`
 
   hint =
     'Please provide the postcode area only. To get the postcode from the full postcode remove the last 3 characters. For example, the postcode area for SW11 4NJ is SW11.'

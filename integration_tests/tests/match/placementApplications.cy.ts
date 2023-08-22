@@ -45,6 +45,7 @@ context('Placement Applications', () => {
         id: '123',
         createdByUserId: userId,
         assessmentDecision: 'accepted',
+        person: personFactory.build(),
       })
       cy.task('stubApplicationGet', { application: completedApplication })
       cy.task('stubApplications', [completedApplication])
@@ -116,6 +117,7 @@ context('Placement Applications', () => {
         id: '123',
         createdByUserId: userId,
         assessmentDecision: 'accepted',
+        person: personFactory.build(),
       })
       cy.task('stubApplicationGet', { application: completedApplication })
       cy.task('stubApplications', [completedApplication])
@@ -369,6 +371,7 @@ context('Placement Applications', () => {
       status: 'submitted',
       id: '123',
       assessmentDecision: 'accepted',
+      person: personFactory.build(),
     })
     cy.task('stubApplicationGet', { application })
 
@@ -386,6 +389,7 @@ context('Placement Applications', () => {
       id: '123',
       createdByUserId: userId,
       assessmentDecision: 'rejected',
+      person: personFactory.build(),
     })
     cy.task('stubApplicationGet', { application })
 
@@ -403,6 +407,7 @@ context('Placement Applications', () => {
       id: '123',
       createdByUserId: userId,
       assessmentDecision: undefined,
+      person: personFactory.build(),
     })
     cy.task('stubApplicationGet', { application })
 

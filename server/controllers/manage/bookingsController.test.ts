@@ -12,7 +12,7 @@ import {
   generateConflictErrorAndRedirect,
 } from '../../utils/validation'
 
-import { bookingFactory, newBookingFactory, personFactory } from '../../testutils/factories'
+import { bookingFactory, newBookingFactory, personFactory, restrictedPersonFactory } from '../../testutils/factories'
 import paths from '../../paths/manage'
 
 jest.mock('../../utils/validation')
@@ -69,7 +69,7 @@ describe('bookingsController', () => {
         personService.findByCrn.mockResolvedValue(person)
       })
 
-      it('it should render the new booking form', async () => {
+      it('if the CRN is not restricted it should render the new booking form', async () => {
         ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
           return { errors: {}, errorSummary: [], userInput: {}, errorTitle: '' }
         })
@@ -82,6 +82,28 @@ describe('bookingsController', () => {
           premisesId,
           pageHeading: 'Create a placement',
           ...person,
+          errors: {},
+          errorSummary: [],
+          errorTitle: '',
+        })
+        expect(personService.findByCrn).toHaveBeenCalledWith(token, person.crn)
+        expect(request.flash).toHaveBeenCalledWith('crn')
+      })
+
+      it('if the CRN is restricted it should render the CRN form with an error', async () => {
+        ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
+          return { errors: {}, errorSummary: [], userInput: {}, errorTitle: '' }
+        })
+        const restrictedPerson = restrictedPersonFactory.build()
+        personService.findByCrn.mockResolvedValue(restrictedPerson)
+
+        const requestHandler = bookingController.new()
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('bookings/find', {
+          premisesId,
+          pageHeading: 'Create a placement - find someone by CRN',
           errors: {},
           errorSummary: [],
           errorTitle: '',

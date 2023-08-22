@@ -8,7 +8,7 @@ import type { ApprovedPremisesApplication, OASysSection, ReleaseTypeOption } fro
 
 import { SentenceTypesT } from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
 import type { ApTypes } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
-import personFactory from './person'
+import { fullPersonFactory, restrictedPersonFactory } from './person'
 import risksFactory from './risks'
 import { DateFormats } from '../../utils/dateUtils'
 import { PartnerAgencyDetails } from '../../@types/ui'
@@ -100,12 +100,18 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
       },
     })
   }
+
+  withFullPerson() {
+    return this.params({
+      person: fullPersonFactory.build(),
+    })
+  }
 }
 
 export default ApplicationFactory.define(() => ({
   type: 'CAS1',
   id: faker.string.uuid(),
-  person: personFactory.build(),
+  person: faker.helpers.arrayElement([fullPersonFactory.build(), restrictedPersonFactory.build()]),
   createdByUserId: faker.string.uuid(),
   schemaVersion: faker.string.uuid(),
   createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),

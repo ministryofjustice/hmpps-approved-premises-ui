@@ -1,4 +1,4 @@
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, FullPerson } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import { summaryListSections } from '../../../server/utils/applications/summaryListUtils'
@@ -21,19 +21,18 @@ export default class ShowPage extends Page {
 
   shouldShowPersonInformation() {
     cy.get('[data-cy-section="person-details"]').within(() => {
-      this.assertDefinition('Name', this.application.person.name)
-      this.assertDefinition('CRN', this.application.person.crn)
-      this.assertDefinition(
-        'Date of Birth',
-        DateFormats.isoDateToUIDate(this.application.person.dateOfBirth, { format: 'short' }),
-      )
-      this.assertDefinition('NOMS Number', this.application.person.nomsNumber)
-      this.assertDefinition('Nationality', this.application.person.nationality)
-      this.assertDefinition('Religion or belief', this.application.person.religionOrBelief)
-      this.assertDefinition('Sex', this.application.person.sex)
+      const person = this.application.person as FullPerson
 
-      cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', this.application.person.status)
-      this.assertDefinition('Prison', this.application.person.prisonName)
+      this.assertDefinition('Name', person.name)
+      this.assertDefinition('CRN', person.crn)
+      this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
+      this.assertDefinition('NOMS Number', person.nomsNumber)
+      this.assertDefinition('Nationality', person.nationality)
+      this.assertDefinition('Religion or belief', person.religionOrBelief)
+      this.assertDefinition('Sex', person.sex)
+
+      cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', person.status)
+      this.assertDefinition('Prison', person.prisonName)
     })
   }
 

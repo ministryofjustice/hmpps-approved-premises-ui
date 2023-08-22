@@ -11,12 +11,13 @@ import type {
   ApprovedPremisesApplication as Application,
   ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
+  Person,
 } from '@approved-premises/api'
 import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-information/maleAp'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
 import Apply from '../../form-pages/apply'
-import { isApplicableTier, tierBadge } from '../personUtils'
+import { isApplicableTier, isFullPerson, tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import Assess from '../../form-pages/assess'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
@@ -26,13 +27,14 @@ import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import PlacementRequest from '../../form-pages/placement-application'
 import isAssessment from '../assessments/isAssessment'
 import getAssessmentSections from '../assessments/getSections'
+import { RestrictedPersonError } from '../errors'
 
 const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => {
     const tier = application.risks?.tier?.value?.level
 
     return [
-      createNameAnchorElement(application.person.name, application.id),
+      createNameAnchorElement(application.person, application.id),
       textValue(application.person.crn),
       htmlValue(tier == null ? '' : tierBadge(tier)),
       textValue(
@@ -68,10 +70,12 @@ const htmlValue = (value: string) => {
   return { html: value }
 }
 
-const createNameAnchorElement = (name: string, applicationId: string) => {
-  return htmlValue(
-    `<a href=${paths.applications.show({ id: applicationId })} data-cy-id="${applicationId}">${name}</a>`,
-  )
+const createNameAnchorElement = (person: Person, applicationId: string) => {
+  return isFullPerson(person)
+    ? htmlValue(
+        `<a href=${paths.applications.show({ id: applicationId })} data-cy-id="${applicationId}">${person.name}</a>`,
+      )
+    : textValue(`LAO CRN: ${person.crn}`)
 }
 
 export const createWithdrawElement = (applicationId: string, application: ApplicationSummary) => {
@@ -147,6 +151,8 @@ const isInapplicable = (application: Application): boolean => {
 }
 
 const firstPageOfApplicationJourney = (application: Application) => {
+  if (!isFullPerson(application.person)) throw new RestrictedPersonError(application.person.crn)
+
   if (isApplicableTier(application.person.sex, application.risks?.tier?.value?.level)) {
     return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'transgender' })
   }

@@ -6,6 +6,7 @@ import TasklistPage from '../../../tasklistPage'
 import { yesOrNoResponseWithDetailForNo } from '../../../utils'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import Rfap from './rfap'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 export const questionKeys = ['catering'] as const
 
@@ -19,7 +20,7 @@ export default class Catering implements TasklistPage {
   }
 
   questions = {
-    catering: `Can ${this.application.person.name} ${this.questionPredicates.catering}?`,
+    catering: `Can ${nameOrPlaceholderCopy(this.application.person)} ${this.questionPredicates.catering}?`,
   }
 
   constructor(
@@ -49,11 +50,15 @@ export default class Catering implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.catering) {
-      errors.catering = `You must specify if ${this.application.person.name} can ${this.questionPredicates.catering}`
+      errors.catering = `You must specify if ${nameOrPlaceholderCopy(this.application.person)} can ${
+        this.questionPredicates.catering
+      }`
     }
 
     if (this.body.catering === 'no' && !this.body.cateringDetail) {
-      errors.cateringDetail = `You must specify details if you have any concerns about ${this.application.person.name} catering for themselves`
+      errors.cateringDetail = `You must specify details if you have any concerns about ${nameOrPlaceholderCopy(
+        this.application.person,
+      )} catering for themselves`
     }
 
     return errors

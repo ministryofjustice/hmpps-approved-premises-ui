@@ -2,7 +2,7 @@ import { Factory } from 'fishery'
 import { PlacementRequestDetail } from '../../@types/shared'
 
 import cancellationFactory from './cancellation'
-import placementRequestFactory from './placementRequest'
+import { placementRequestFactory } from './placementRequest'
 import bookingSummaryFactory from './bookingSummary'
 import applicationFactory from './application'
 

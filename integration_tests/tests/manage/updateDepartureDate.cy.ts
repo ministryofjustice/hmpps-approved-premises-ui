@@ -1,4 +1,4 @@
-import { bookingFactory, premisesFactory } from '../../../server/testutils/factories'
+import { bookingFactory, personFactory, premisesFactory } from '../../../server/testutils/factories'
 
 import { DepartureDateChangeConfirmationPage, DepartureDateChangePage } from '../../pages/manage'
 import { signIn } from '../signIn'
@@ -14,6 +14,7 @@ context('Departure date', () => {
   it('should show a form to change a bookings departure date', () => {
     const booking = bookingFactory.build({
       departureDate: '2022-06-03',
+      person: personFactory.build(),
     })
     const newDepartureDate = '2022-07-03'
     const premises = premisesFactory.build()
@@ -50,7 +51,7 @@ context('Departure date', () => {
     })
 
     cy.task('stubSinglePremises', { premisesId: premises.id })
-    cy.task('stubBookingGet', { premisesId: premises.id, booking })
+    cy.task('stubBookingGet', { premisesId: premises.id, booking: { ...booking, person: personFactory.build() } })
 
     // When I visit the booking extension page
     const page = DepartureDateChangePage.visit(premises.id, booking.id)

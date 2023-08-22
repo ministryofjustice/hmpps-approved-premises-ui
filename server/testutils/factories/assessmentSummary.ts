@@ -3,7 +3,7 @@ import { Factory } from 'fishery'
 import { ApprovedPremisesAssessmentSummary as AssessmentSummary } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 import risksFactory from './risks'
-import personFactory from './person'
+import { fullPersonFactory, restrictedPersonFactory } from './person'
 
 class AssessmentSummaryFactory extends Factory<AssessmentSummary> {
   createdXDaysAgo(days: number) {
@@ -23,5 +23,5 @@ export default AssessmentSummaryFactory.define(() => ({
   dateOfInfoRequest: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   status: 'not_started' as const,
   risks: risksFactory.build(),
-  person: personFactory.build(),
+  person: faker.helpers.arrayElement([fullPersonFactory.build(), restrictedPersonFactory.build()]),
 }))

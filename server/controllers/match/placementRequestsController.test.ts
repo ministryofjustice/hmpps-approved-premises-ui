@@ -33,13 +33,16 @@ describe('PlacementRequestsController', () => {
   let placementRequestsController: PlacementRequestsController
 
   beforeEach(() => {
-    jest.resetAllMocks()
     placementRequestsController = new PlacementRequestsController(
       placementRequestService,
       placementApplicationService,
       taskService,
       applicationService,
     )
+  })
+
+  afterEach(() => {
+    jest.resetAllMocks()
   })
 
   describe('index', () => {

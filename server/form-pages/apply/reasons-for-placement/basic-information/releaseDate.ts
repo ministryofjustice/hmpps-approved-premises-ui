@@ -6,6 +6,7 @@ import TasklistPage from '../../../tasklistPage'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank, dateIsInThePast } from '../../../../utils/dateUtils'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 type ReleaseDateType = ObjectWithDateParts<'releaseDate'> & {
   knowReleaseDate: YesOrNo
@@ -16,7 +17,7 @@ type ReleaseDateType = ObjectWithDateParts<'releaseDate'> & {
   bodyProperties: [...dateBodyProperties('releaseDate'), 'knowReleaseDate'],
 })
 export default class ReleaseDate implements TasklistPage {
-  title = `Do you know ${this.application.person.name}’s release date?`
+  title = `Do you know ${nameOrPlaceholderCopy(this.application.person)}’s release date?`
 
   constructor(
     private _body: Partial<ReleaseDateType>,

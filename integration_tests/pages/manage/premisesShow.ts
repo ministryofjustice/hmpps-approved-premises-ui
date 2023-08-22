@@ -1,4 +1,4 @@
-import type { ApprovedPremises, Booking } from '@approved-premises/api'
+import type { ApprovedPremises, Booking, FullPerson } from '@approved-premises/api'
 
 import Page from '../page'
 import paths from '../../../server/paths/manage'
@@ -63,7 +63,7 @@ export default class PremisesShowPage extends Page {
   private tableShouldContainBookings(bookings: Array<Booking>, type: 'arrival' | 'departure') {
     bookings.forEach((item: Booking) => {
       const date = type === 'arrival' ? item.arrivalDate : item.departureDate
-      cy.contains(item.person.name)
+      cy.contains((item.person as FullPerson).name)
         .parent()
         .within(() => {
           cy.get('td').eq(0).contains(item.person.crn)
@@ -82,7 +82,7 @@ export default class PremisesShowPage extends Page {
   shouldShowCurrentResidents(currentResidents: Array<Booking>) {
     cy.get('h2').should('contain', 'Current residents')
     currentResidents.forEach((item: Booking) => {
-      cy.contains(item.person.name)
+      cy.contains((item.person as FullPerson).name)
         .parent()
         .within(() => {
           cy.get('td').eq(0).contains(item.person.crn)

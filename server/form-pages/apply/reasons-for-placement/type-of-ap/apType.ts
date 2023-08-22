@@ -4,6 +4,7 @@ import type { TaskListErrors } from '@approved-premises/ui'
 import TasklistPage from '../../../tasklistPage'
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
 import { Page } from '../../../utils/decorators'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 const apTypes = {
   standard: 'Standard AP',
@@ -16,7 +17,7 @@ export type ApType = keyof ApTypes
 
 @Page({ name: 'ap-type', bodyProperties: ['type'] })
 export default class SelectApType implements TasklistPage {
-  title = `Which type of AP does ${this.application.person.name} require?`
+  title = `Which type of AP does ${nameOrPlaceholderCopy(this.application.person)} require?`
 
   constructor(
     public body: { type?: ApType },

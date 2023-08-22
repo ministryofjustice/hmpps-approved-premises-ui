@@ -31,3 +31,12 @@ export class ErrorWithData extends Error {
     super()
   }
 }
+
+export class RestrictedPersonError extends Error {
+  type: 'RESTRICTED_PERSON'
+
+  constructor(crn: string) {
+    super(`CRN: ${crn} is restricted`)
+    this.type = 'RESTRICTED_PERSON'
+  }
+}

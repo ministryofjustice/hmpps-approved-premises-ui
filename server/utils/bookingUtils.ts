@@ -4,6 +4,7 @@ import type {
   SelectOption,
   SummaryListItem,
   SummaryListWithCard,
+  TableCell,
   TableRow,
 } from '@approved-premises/ui'
 import type { BedSummary, Booking, BookingSummary } from '@approved-premises/api'
@@ -13,6 +14,7 @@ import assessPaths from '../paths/assess'
 import { DateFormats } from './dateUtils'
 import { SanitisedError } from '../sanitisedError'
 import { linkTo } from './utils'
+import { isFullPerson } from './personUtils'
 
 type ParsedConflictError = {
   conflictingEntityId: string
@@ -78,9 +80,7 @@ export const bookingsToTableRows = (
   type: 'arrival' | 'departure',
 ): Array<TableRow> => {
   return bookings.map(booking => [
-    {
-      text: booking.person.name,
-    },
+    nameCell(booking),
     {
       text: booking.person.crn,
     },
@@ -95,6 +95,9 @@ export const bookingsToTableRows = (
     },
   ])
 }
+
+export const nameCell = (booking: Booking): TableCell =>
+  isFullPerson(booking.person) ? { text: booking.person.name } : { text: `LAO: ${booking.person.crn}` }
 
 export const bookingActions = (booking: Booking, premisesId: string): Array<IdentityBarMenu> => {
   if (booking.status === 'awaiting-arrival' || booking.status === 'arrived') {

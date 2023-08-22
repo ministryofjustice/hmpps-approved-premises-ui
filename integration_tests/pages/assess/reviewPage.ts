@@ -1,7 +1,7 @@
 import type {
   ApprovedPremisesAssessment as Assessment,
   Document,
-  Person,
+  FullPerson,
   PersonRisks,
   PrisonCaseNote,
 } from '@approved-premises/api'
@@ -21,7 +21,7 @@ export default class ReviewPage extends AssessPage {
     this.pageClass = new Review({ reviewed: 'yes' }, assessment)
   }
 
-  shouldShowPersonInformation(person: Person) {
+  shouldShowPersonInformation(person: FullPerson) {
     cy.get('[data-cy-section="person-details"]').within(() => {
       this.assertDefinition('Name', person.name)
       this.assertDefinition('CRN', person.crn)
@@ -130,7 +130,7 @@ export default class ReviewPage extends AssessPage {
   }
 
   shouldShowAnswers(assessment: Assessment) {
-    this.shouldShowPersonInformation(assessment.application.person)
+    this.shouldShowPersonInformation(assessment.application.person as FullPerson)
 
     this.shouldShowDocuments(
       assessment.application.data?.['attach-required-documents']['attach-documents'].selectedDocuments,

@@ -2,6 +2,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 
 import PipeOpdScreening from './pipeOpdScreening'
 import { applicationFactory } from '../../../../testutils/factories'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 describe('PipeOpdScreening', () => {
   const application = applicationFactory.build()
@@ -63,7 +64,9 @@ describe('PipeOpdScreening', () => {
 
       expect(page.response()).toEqual({
         [page.title]: 'Yes',
-        [`Provide any additional detail about why ${application.person.name} needs a PIPE placement.`]: 'Some Text',
+        [`Provide any additional detail about why ${nameOrPlaceholderCopy(
+          application.person,
+        )} needs a PIPE placement.`]: 'Some Text',
       })
     })
   })

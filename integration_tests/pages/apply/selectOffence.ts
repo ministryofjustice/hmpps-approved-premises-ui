@@ -1,10 +1,10 @@
-import { ActiveOffence, Person } from '@approved-premises/api'
+import { ActiveOffence, FullPerson } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import Page from '../page'
 
 export default class SelectOffencePage extends Page {
   constructor(
-    private readonly person: Person,
+    person: FullPerson,
     private readonly offences: Array<ActiveOffence>,
   ) {
     super(`Select index offence for ${person.name}`)

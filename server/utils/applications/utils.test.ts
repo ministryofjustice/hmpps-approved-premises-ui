@@ -4,7 +4,9 @@ import {
   applicationFactory,
   applicationSummaryFactory,
   assessmentFactory,
+  personFactory,
   placementApplicationFactory,
+  restrictedPersonFactory,
   tierEnvelopeFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/apply'
@@ -12,7 +14,7 @@ import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
 import PlacementRequest from '../../form-pages/placement-application'
 import { DateFormats } from '../dateUtils'
-import { isApplicableTier, tierBadge } from '../personUtils'
+import { isApplicableTier, isFullPerson, tierBadge } from '../personUtils'
 
 import {
   createWithdrawElement,
@@ -25,6 +27,7 @@ import {
   statusTags,
 } from './utils'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
+import { RestrictedPersonError } from '../errors'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../journeyTypeFromArtifact')
@@ -149,17 +152,19 @@ describe('utils', () => {
   describe('dashboardTableRows', () => {
     it('returns an array of applications as table rows', async () => {
       ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')
-      const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
 
+      const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
+      const person = personFactory.build({ name: 'A' })
       const applicationA = applicationSummaryFactory.build({
         arrivalDate: undefined,
-        person: { name: 'A' },
+        person,
         submittedAt: null,
         risks: { tier: tierEnvelopeFactory.build({ value: { level: 'A1' } }) },
       })
       const applicationB = applicationSummaryFactory.build({
         arrivalDate,
-        person: { name: 'A' },
+        person,
         risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
       })
 
@@ -171,7 +176,7 @@ describe('utils', () => {
         [
           {
             html: `<a href=${paths.applications.show({ id: applicationA.id })} data-cy-id="${applicationA.id}">${
-              applicationA.person.name
+              person.name
             }</a>`,
           },
           {
@@ -191,7 +196,7 @@ describe('utils', () => {
         [
           {
             html: `<a href=${paths.applications.show({ id: applicationB.id })} data-cy-id="${applicationB.id}">${
-              applicationB.person.name
+              person.name
             }</a>`,
           },
           {
@@ -215,11 +220,13 @@ describe('utils', () => {
   describe('dashboardTableRows when tier is undefined', () => {
     it('returns a blank tier badge', async () => {
       ;(tierBadge as jest.Mock).mockClear()
-      const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
 
+      const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
+      const person = personFactory.build({ name: 'My name' })
       const application = applicationSummaryFactory.build({
         arrivalDate,
-        person: { name: 'My Name' },
+        person,
         risks: { tier: undefined },
         status: 'inProgress',
       })
@@ -231,9 +238,9 @@ describe('utils', () => {
       expect(result).toEqual([
         [
           {
-            html: `<a href=${paths.applications.show({ id: application.id })} data-cy-id="${
-              application.id
-            }">My Name</a>`,
+            html: `<a href=${paths.applications.show({ id: application.id })} data-cy-id="${application.id}">${
+              person.name
+            }</a>`,
           },
           {
             text: application.person.crn,
@@ -256,11 +263,14 @@ describe('utils', () => {
   describe('dashboardTableRows when risks is undefined', () => {
     it('returns a blank tier badge', async () => {
       ;(tierBadge as jest.Mock).mockClear()
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+
       const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
+      const person = personFactory.build({ name: 'My name' })
 
       const application = applicationSummaryFactory.build({
         arrivalDate,
-        person: { name: 'My Name' },
+        person,
         risks: undefined,
       })
 
@@ -271,9 +281,9 @@ describe('utils', () => {
       expect(result).toEqual([
         [
           {
-            html: `<a href=${paths.applications.show({ id: application.id })} data-cy-id="${
-              application.id
-            }">My Name</a>`,
+            html: `<a href=${paths.applications.show({ id: application.id })} data-cy-id="${application.id}">${
+              person.name
+            }</a>`,
           },
           {
             text: application.person.crn,
@@ -339,7 +349,7 @@ describe('utils', () => {
   describe('firstPageOfApplicationJourney', () => {
     it('returns the sentence type page for an applicable application', () => {
       ;(isApplicableTier as jest.Mock).mockReturnValue(true)
-      const application = applicationFactory.build()
+      const application = applicationFactory.withFullPerson().build()
 
       expect(firstPageOfApplicationJourney(application)).toEqual(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'transgender' }),
@@ -348,20 +358,32 @@ describe('utils', () => {
 
     it('returns the is exceptional case page for an unapplicable application', () => {
       ;(isApplicableTier as jest.Mock).mockReturnValue(false)
-      const application = applicationFactory.build()
+      const application = applicationFactory.withFullPerson().build()
 
       expect(firstPageOfApplicationJourney(application)).toEqual(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' }),
       )
     })
 
-    it('returns the is exceptional case page for an application for a person without a tier', () => {
-      const application = applicationFactory.build()
+    it('returns the "is exceptional case" page for an application for a person without a tier', () => {
+      const application = applicationFactory.withFullPerson().build()
       application.risks = undefined
 
       expect(firstPageOfApplicationJourney(application)).toEqual(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' }),
       )
+    })
+
+    it('throws an error if the person is not a Full Person', () => {
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(false)
+
+      const restrictedPerson = restrictedPersonFactory.build()
+      const application = applicationFactory.build({ person: restrictedPerson })
+
+      expect(() => firstPageOfApplicationJourney(application)).toThrowError(
+        `CRN: ${restrictedPerson.crn} is restricted`,
+      )
+      expect(() => firstPageOfApplicationJourney(application)).toThrowError(RestrictedPersonError)
     })
   })
 

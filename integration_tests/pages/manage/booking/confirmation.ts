@@ -1,4 +1,4 @@
-import type { Booking } from '@approved-premises/api'
+import type { Booking, FullPerson } from '@approved-premises/api'
 
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
@@ -21,7 +21,7 @@ export default class BookingConfirmationPage extends Page {
 
   verifyBookingIsVisible(booking: Booking): void {
     cy.get('dl').within(() => {
-      this.assertDefinition('Name', booking.person.name)
+      this.assertDefinition('Name', (booking.person as FullPerson).name)
       this.assertDefinition('CRN', booking.person.crn)
       this.assertDefinition('Expected arrival date', DateFormats.isoDateToUIDate(booking.arrivalDate))
       this.assertDefinition('Expected departure date', DateFormats.isoDateToUIDate(booking.departureDate))

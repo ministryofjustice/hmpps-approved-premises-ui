@@ -18,6 +18,7 @@ import Page from '../../pages/page'
 import { DateFormats } from '../../../server/utils/dateUtils'
 import { PlacementCriteria } from '../../../server/@types/shared/models/PlacementCriteria'
 import { mapPlacementRequestToBedSearchParams } from '../../../server/utils/placementRequests/utils'
+import { FullPerson } from '../../../server/@types/shared'
 
 context.skip('Placement Requests', () => {
   beforeEach(() => {
@@ -196,7 +197,10 @@ context.skip('Placement Requests', () => {
 
   it('allows me to make a booking', () => {
     // Given there is a placement request waiting for me to match
-    const placementRequest = placementRequestDetailFactory.build({ status: 'notMatched' })
+    const placementRequest = placementRequestDetailFactory.build({
+      status: 'notMatched',
+      person: personFactory.build(),
+    })
     const placementRequestTask = placementRequestTaskFactory.build({
       id: placementRequest.id,
       placementRequestStatus: placementRequest.status,
@@ -222,7 +226,7 @@ context.skip('Placement Requests', () => {
     showPage.clickSearch()
 
     // And I click to book a room
-    const searchPage = new SearchPage(placementRequest.person.name)
+    const searchPage = new SearchPage((placementRequest.person as FullPerson).name)
     searchPage.clickSearchResult(bedSearchResults.results[0])
 
     // Then I should be shown the confirmation page
@@ -255,7 +259,10 @@ context.skip('Placement Requests', () => {
 
   it('allows me to mark a placement request as unable to match', () => {
     // Given there is a placement request waiting for me to match
-    const placementRequest = placementRequestDetailFactory.build({ status: 'notMatched' })
+    const placementRequest = placementRequestDetailFactory.build({
+      status: 'notMatched',
+      person: personFactory.build(),
+    })
     const placementRequestTask = placementRequestTaskFactory.build({
       id: placementRequest.id,
       placementRequestStatus: placementRequest.status,
@@ -279,7 +286,7 @@ context.skip('Placement Requests', () => {
     showPage.clickSearch()
 
     // Given I am unable to match the placement request to a bed
-    const searchPage = new SearchPage(placementRequest.person.name)
+    const searchPage = new SearchPage((placementRequest.person as FullPerson).name)
     searchPage.clickUnableToMatch()
 
     // When I complete the form and click submit

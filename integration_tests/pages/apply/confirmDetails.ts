@@ -1,10 +1,10 @@
-import type { Person } from '@approved-premises/api'
+import type { FullPerson } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import Page from '../page'
 
 export default class ConfirmDetailsPage extends Page {
-  constructor(private person: Person) {
+  constructor(private person: FullPerson) {
     super(`Confirm ${person.name}'s details`)
   }
 

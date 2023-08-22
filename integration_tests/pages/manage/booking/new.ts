@@ -1,4 +1,4 @@
-import type { Booking, LostBed, Person } from '@approved-premises/api'
+import type { Booking, FullPerson, LostBed } from '@approved-premises/api'
 import BedspaceConflictErrorComponent from '../../../components/bedspaceConflictErrorComponent'
 import Page, { PageElement } from '../../page'
 import paths from '../../../../server/paths/manage'
@@ -18,7 +18,7 @@ export default class BookingNewPage extends Page {
     return new BookingNewPage(premisesId)
   }
 
-  verifyPersonIsVisible(person: Person): void {
+  verifyPersonIsVisible(person: FullPerson): void {
     cy.get('dl').within(() => {
       this.assertDefinition('Name', person.name)
       this.assertDefinition('CRN', person.crn)

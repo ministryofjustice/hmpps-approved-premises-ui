@@ -6,7 +6,12 @@ import TasklistService from '../../services/tasklistService'
 import ApplicationsController from './applicationsController'
 import { ApplicationService, PersonService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
-import { activeOffenceFactory, applicationFactory, personFactory } from '../../testutils/factories'
+import {
+  activeOffenceFactory,
+  applicationFactory,
+  personFactory,
+  restrictedPersonFactory,
+} from '../../testutils/factories'
 
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
@@ -239,6 +244,25 @@ describe('applicationsController', () => {
           date: DateFormats.dateObjtoUIDate(new Date()),
           dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
           offenceId: offence.offenceId,
+          errors: errorsAndUserInput.errors,
+          errorSummary: errorsAndUserInput.errorSummary,
+          ...errorsAndUserInput.userInput,
+        })
+        expect(request.flash).toHaveBeenCalledWith('crn')
+      })
+
+      it('renders the form with an error if the CRN is for a restricted person', async () => {
+        const restrictedPerson = restrictedPersonFactory.build()
+        personService.findByCrn.mockResolvedValue(restrictedPerson)
+        const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+        ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+
+        const requestHandler = applicationsController.new()
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('applications/new', {
+          pageHeading: `Enter the person's CRN`,
           errors: errorsAndUserInput.errors,
           errorSummary: errorsAndUserInput.errorSummary,
           ...errorsAndUserInput.userInput,

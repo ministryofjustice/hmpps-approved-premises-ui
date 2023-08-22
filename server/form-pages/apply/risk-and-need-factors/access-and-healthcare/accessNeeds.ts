@@ -6,6 +6,7 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { yesOrNoResponseWithDetailForYes } from '../../../utils'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 export const additionalNeeds = {
   mobility: 'Mobility',
@@ -45,17 +46,21 @@ type AccessNeedsBody = {
 export default class AccessNeeds implements TasklistPage {
   title = 'Access, cultural and healthcare needs'
 
+  get nameOrPlaceholder() {
+    return nameOrPlaceholderCopy(this.application.person)
+  }
+
   questions = {
     needs: {
-      question: `Does ${this.application.person.name} have any of the following needs?`,
-      hint: `For example, if ${this.application.person.name} has a visual impairment, uses a hearing aid or has an ADHD diagnosis.`,
+      question: `Does ${this.nameOrPlaceholder} have any of the following needs?`,
+      hint: `For example, if ${this.nameOrPlaceholder} has a visual impairment, uses a hearing aid or has an ADHD diagnosis.`,
     },
     religiousOrCulturalNeeds: {
-      question: `Does ${this.application.person.name} have any religious or cultural needs?`,
+      question: `Does ${this.nameOrPlaceholder} have any religious or cultural needs?`,
       furtherDetails: `Details of religious or cultural needs`,
     },
     interpreter: {
-      question: `Does ${this.application.person.name} need an interpreter?`,
+      question: `Does ${this.nameOrPlaceholder} need an interpreter?`,
       language: 'Which language is an interpreter needed for?',
     },
     careAndSupportNeeds: { question: 'Does this person have care and support needs?', hint: 'Provide details' },
@@ -111,16 +116,16 @@ export default class AccessNeeds implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.additionalNeeds || !this.body.additionalNeeds.length) {
-      errors.additionalNeeds = `You must confirm whether ${this.application.person.name} has any additional needs`
+      errors.additionalNeeds = `You must confirm whether ${this.nameOrPlaceholder} has any additional needs`
     }
     if (!this.body.religiousOrCulturalNeeds) {
-      errors.religiousOrCulturalNeeds = `You must confirm whether ${this.application.person.name} has any religious or cultural needs`
+      errors.religiousOrCulturalNeeds = `You must confirm whether ${this.nameOrPlaceholder} has any religious or cultural needs`
     }
     if (!this.body.careAndSupportNeeds) {
-      errors.careAndSupportNeeds = `You must confirm whether ${this.application.person.name} has care and support needs`
+      errors.careAndSupportNeeds = `You must confirm whether ${this.nameOrPlaceholder} has care and support needs`
     }
     if (this.body.careAndSupportNeeds === 'yes' && !this.body.careAndSupportNeedsDetail) {
-      errors.careAndSupportNeedsDetail = `You must provide details of ${this.application.person.name}'s care and support needs`
+      errors.careAndSupportNeedsDetail = `You must provide details of ${this.nameOrPlaceholder}'s care and support needs`
     }
     if (!this.body.needsInterpreter) {
       errors.needsInterpreter = 'You must confirm the need for an interpreter'

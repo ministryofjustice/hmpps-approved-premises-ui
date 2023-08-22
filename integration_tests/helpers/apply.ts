@@ -8,6 +8,7 @@ import {
   ArrayOfOASysRiskToSelfQuestions,
   ArrayOfOASysSupportingInformationQuestions,
   Document,
+  FullPerson,
   OASysSection,
   Person,
   PersonAcctAlert,
@@ -123,7 +124,7 @@ export default class ApplyHelper {
     crnPage.clickSubmit()
 
     // And I see the person on the confirmation page
-    const confirmDetailsPage = new ApplyPages.ConfirmDetailsPage(this.person)
+    const confirmDetailsPage = new ApplyPages.ConfirmDetailsPage(this.person as FullPerson)
     confirmDetailsPage.verifyPersonIsVisible()
 
     // And I confirm the person is who I expect to see
@@ -935,7 +936,7 @@ export default class ApplyHelper {
     const checkYourAnswersPage = new ApplyPages.CheckYourAnswersPage(this.application)
 
     // And the page should be populated with my answers
-    checkYourAnswersPage.shouldShowPersonInformation(this.person)
+    checkYourAnswersPage.shouldShowPersonInformation(this.person as FullPerson)
     checkYourAnswersPage.shouldShowBasicInformationAnswers(this.pages.basicInformation)
     checkYourAnswersPage.shouldShowTypeOfApAnswers(this.pages.typeOfAp)
     checkYourAnswersPage.shouldShowRiskManagementAnswers(this.pages.riskManagement)

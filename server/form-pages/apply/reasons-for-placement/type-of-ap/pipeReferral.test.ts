@@ -1,7 +1,7 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import PipeReferral from './pipeReferral'
-import { applicationFactory, personFactory } from '../../../../testutils/factories'
+import { applicationFactory, personFactory, restrictedPersonFactory } from '../../../../testutils/factories'
 
 describe('PipeReferral', () => {
   const person = personFactory.build({ name: 'John Wayne' })
@@ -33,6 +33,26 @@ describe('PipeReferral', () => {
         'opdPathwayDate-month': '3',
         'opdPathwayDate-day': '3',
         opdPathwayDate: '2022-03-03',
+      })
+    })
+  })
+
+  describe('questions', () => {
+    it('should return the questions with the persons name if it is present on the application', () => {
+      const page = new PipeReferral({}, application)
+
+      expect(page.questions).toEqual({
+        opdPathway: 'Has John Wayne been screened into the Offender Personality Disorder Pathway (OPD)?',
+        opdPathwayDate: "When was John Wayne's last consultation or formulation?",
+      })
+    })
+
+    it('should return the questions with "the person" if the person is restricted', () => {
+      const page = new PipeReferral({}, { ...application, person: restrictedPersonFactory.build() })
+
+      expect(page.questions).toEqual({
+        opdPathway: 'Has the person been screened into the Offender Personality Disorder Pathway (OPD)?',
+        opdPathwayDate: "When was the person's last consultation or formulation?",
       })
     })
   })

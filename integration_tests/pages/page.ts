@@ -1,4 +1,4 @@
-import { Adjudication, Document, PersonAcctAlert, PrisonCaseNote } from '../../server/@types/shared'
+import { Adjudication, Document, Person, PersonAcctAlert, PrisonCaseNote } from '../../server/@types/shared'
 import { PersonRisksUI, SummaryListItem, TableCell } from '../../server/@types/ui'
 import errorLookups from '../../server/i18n/en/errors.json'
 import { DateFormats } from '../../server/utils/dateUtils'
@@ -356,5 +356,10 @@ export default abstract class Page {
 
   shouldNotShowManageActions() {
     cy.get('.moj-button-menu__toggle-button').should('not.exist')
+  }
+
+  public shouldShowRestrictedCrnMessage(person: Person): void {
+    cy.get('.govuk-error-summary').should('contain', `CRN: ${person.crn} is restricted`)
+    cy.get(`[data-cy-error-crn]`).should('contain', `CRN: ${person.crn} is restricted`)
   }
 }

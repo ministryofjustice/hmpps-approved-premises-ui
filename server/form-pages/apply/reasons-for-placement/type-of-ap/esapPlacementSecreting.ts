@@ -7,6 +7,7 @@ import { convertToTitleCase } from '../../../../utils/utils'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 import EsapPlacementScreening, { EsapReasons } from './esapPlacementScreening'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 export const secretingHistory = {
   radicalisationLiterature: 'Literature and materials supporting radicalisation ideals',
@@ -28,11 +29,13 @@ export default class EsapPlacementSecreting implements TasklistPage {
   title = 'Enhanced room searches using body worn technology'
 
   questions = {
-    secretingHistory: `Which items does ${this.application.person.name} have a history of secreting?`,
+    secretingHistory: `Which items does ${nameOrPlaceholderCopy(this.application.person)} have a history of secreting?`,
     secretingIntelligence:
       'Have partnership agencies requested the sharing of intelligence captured via body worn technology?',
     secretingIntelligenceDetails: 'Provide details',
-    secretingNotes: `Provide any supporting information about why ${this.application.person.name} requires enhanced room searches`,
+    secretingNotes: `Provide any supporting information about why ${nameOrPlaceholderCopy(
+      this.application.person,
+    )} requires enhanced room searches`,
   }
 
   constructor(
@@ -76,7 +79,9 @@ export default class EsapPlacementSecreting implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.secretingHistory || !this.body.secretingHistory.length) {
-      errors.secretingHistory = `You must specify what items ${this.application.person.name} has a history of secreting`
+      errors.secretingHistory = `You must specify what items ${nameOrPlaceholderCopy(
+        this.application.person,
+      )} has a history of secreting`
     }
 
     if (!this.body.secretingIntelligence) {

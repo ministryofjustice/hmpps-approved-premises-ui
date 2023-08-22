@@ -4,6 +4,7 @@ import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 export const offences = {
   arson: 'Arson offences',
@@ -20,7 +21,7 @@ type RawTypeOfConvictedOffenceBody = { offenceConvictions?: RawOffences }
 
 @Page({ name: 'type-of-convicted-offence', bodyProperties: ['offenceConvictions'] })
 export default class TypeOfConvictedOffence implements TasklistPage {
-  title = `What type of offending has ${this.application.person.name} been convicted of?`
+  title = `What type of offending has ${nameOrPlaceholderCopy(this.application.person)} been convicted of?`
 
   constructor(
     private _body: RawTypeOfConvictedOffenceBody,

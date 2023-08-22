@@ -1,11 +1,12 @@
 import { ApprovedPremisesApplication } from '../../../server/@types/shared'
 import paths from '../../../server/paths/apply'
+import { nameOrPlaceholderCopy } from '../../../server/utils/personUtils'
 import ApplyPage from './applyPage'
 
 export default class TypeOfApPage extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
     super(
-      `Which type of AP does ${application.person.name} require?`,
+      `Which type of AP does ${nameOrPlaceholderCopy(application.person)} require?`,
       application,
       'type-of-ap',
       'ap-type',

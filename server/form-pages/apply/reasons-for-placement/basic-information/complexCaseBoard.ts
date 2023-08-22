@@ -4,10 +4,13 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { sentenceCase } from '../../../../utils/utils'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 @Page({ name: 'complex-case-board', bodyProperties: ['reviewRequired'] })
 export default class ComplexCaseBoard implements TasklistPage {
-  question = `Does ${this.application.person.name}'s gender identity require a complex case board to review their application?`
+  question = `Does ${nameOrPlaceholderCopy(
+    this.application.person,
+  )}'s gender identity require a complex case board to review their application?`
 
   title = this.question
 
@@ -34,7 +37,9 @@ export default class ComplexCaseBoard implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.reviewRequired) {
-      errors.reviewRequired = `You must specify if ${this.application.person.name}'s gender identity requires a complex case board to review their application`
+      errors.reviewRequired = `You must specify if ${nameOrPlaceholderCopy(
+        this.application.person,
+      )}'s gender identity requires a complex case board to review their application`
     }
 
     return errors

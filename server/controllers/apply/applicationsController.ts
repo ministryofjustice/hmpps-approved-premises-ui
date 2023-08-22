@@ -8,6 +8,7 @@ import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import { firstPageOfApplicationJourney } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
+import { isFullPerson } from '../../utils/personUtils'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
@@ -57,20 +58,23 @@ export default class ApplicationsController {
       if (crnArr.length) {
         const crn = crnArr[0]
         const person = await this.personService.findByCrn(req.user.token, crn)
-        const offences = await this.personService.getOffences(req.user.token, crn)
 
-        const offenceId = offences.length === 1 ? offences[0].offenceId : null
+        if (isFullPerson(person)) {
+          const offences = await this.personService.getOffences(req.user.token, crn)
 
-        return res.render(`applications/people/confirm`, {
-          pageHeading: `Confirm ${person.name}'s details`,
-          person,
-          date: DateFormats.dateObjtoUIDate(new Date()),
-          dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
-          offenceId,
-          errors,
-          errorSummary,
-          ...userInput,
-        })
+          const offenceId = offences.length === 1 ? offences[0].offenceId : null
+
+          return res.render(`applications/people/confirm`, {
+            pageHeading: `Confirm ${person.name}'s details`,
+            person,
+            date: DateFormats.dateObjtoUIDate(new Date()),
+            dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
+            offenceId,
+            errors,
+            errorSummary,
+            ...userInput,
+          })
+        }
       }
 
       return res.render('applications/new', {

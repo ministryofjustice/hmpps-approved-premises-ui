@@ -6,6 +6,7 @@ import TasklistPage from '../../../tasklistPage'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 type PipeReferralBody = ObjectWithDateParts<'opdPathwayDate'> & { opdPathway: YesOrNo }
 
@@ -16,11 +17,15 @@ type PipeReferralBody = ObjectWithDateParts<'opdPathwayDate'> & { opdPathway: Ye
 export default class PipeReferral implements TasklistPage {
   name = 'pipe-referral'
 
-  title = `Has ${this.application.person.name} been screened into the Offender Personality Disorder Pathway (OPD)?`
+  get nameOrPlaceholderCopy() {
+    return nameOrPlaceholderCopy(this.application.person)
+  }
+
+  title = `Has ${this.nameOrPlaceholderCopy} been screened into the Offender Personality Disorder Pathway (OPD)?`
 
   questions = {
     opdPathway: this.title,
-    opdPathwayDate: `When was ${this.application.person.name}'s last consultation or formulation?`,
+    opdPathwayDate: `When was ${this.nameOrPlaceholderCopy}'s last consultation or formulation?`,
   }
 
   constructor(
@@ -74,7 +79,7 @@ export default class PipeReferral implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.opdPathway) {
-      errors.opdPathway = `You must specify if ${this.application.person.name} has been screened into the OPD pathway`
+      errors.opdPathway = `You must specify if ${this.nameOrPlaceholderCopy} has been screened into the OPD pathway`
     }
 
     if (this.body.opdPathway === 'yes') {

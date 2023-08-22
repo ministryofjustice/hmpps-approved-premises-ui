@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { NewBooking } from '@approved-premises/api'
 
-import personFactory from './person'
+import { fullPersonFactory } from './person'
 import { DateFormats } from '../../utils/dateUtils'
 
 export default Factory.define<NewBooking>(() => {
@@ -11,7 +11,7 @@ export default Factory.define<NewBooking>(() => {
   const departureDate = faker.date.future()
 
   return {
-    crn: personFactory.build().crn,
+    crn: fullPersonFactory.build().crn,
     arrivalDate: DateFormats.dateObjToIsoDate(arrivalDate),
     'arrivalDate-day': arrivalDate.getDate().toString(),
     'arrivalDate-month': arrivalDate.getMonth().toString(),

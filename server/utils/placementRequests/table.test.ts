@@ -1,5 +1,11 @@
 import { add } from 'date-fns'
-import { bookingSummaryFactory, placementRequestFactory, placementRequestTaskFactory } from '../../testutils/factories'
+import {
+  bookingSummaryFactory,
+  placementRequestFactory,
+  placementRequestTaskFactory,
+  placementRequestWithFullPersonFactory,
+  restrictedPersonFactory,
+} from '../../testutils/factories'
 import {
   applicationDateCell,
   dashboardTableHeader,
@@ -17,6 +23,7 @@ import { DateFormats } from '../dateUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { crnCell, tierCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
+import { isFullPerson } from '../personUtils'
 
 describe('tableUtils', () => {
   describe('nameCell', () => {
@@ -29,10 +36,12 @@ describe('tableUtils', () => {
     })
 
     it('returns the name of the service user and a link with a placement request', () => {
-      const placementRequest = placementRequestFactory.build()
+      const placementRequest = placementRequestWithFullPersonFactory.build()
 
       expect(nameCell(placementRequest)).toEqual({
-        html: `<a href="/admin/placement-requests/${placementRequest.id}" data-cy-placementRequestId="${placementRequest.id}">${placementRequest.person.name}</a>`,
+        html: `<a href="/admin/placement-requests/${placementRequest.id}" data-cy-placementRequestId="${
+          placementRequest.id
+        }">${isFullPerson(placementRequest.person) ? placementRequest.person.name : placementRequest.person.crn}</a>`,
       })
     })
 
@@ -49,6 +58,14 @@ describe('tableUtils', () => {
 
       expect(nameCell(task)).toEqual({
         html: '',
+      })
+    })
+
+    it('returns the crn cell if the person is a restrictedPerson', () => {
+      const restrictedPersonTask = placementRequestFactory.build({ person: restrictedPersonFactory.build() })
+
+      expect(nameCell(restrictedPersonTask)).toEqual({
+        text: `LAO: ${restrictedPersonTask.person.crn}`,
       })
     })
   })

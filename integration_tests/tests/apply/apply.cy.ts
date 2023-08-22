@@ -1,9 +1,10 @@
 import { addDays } from 'date-fns'
-import { ListPage, SelectOffencePage, ShowPage, TransgenderPage } from '../../pages/apply'
+import { EnterCRNPage, ListPage, SelectOffencePage, ShowPage, StartPage, TransgenderPage } from '../../pages/apply'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import {
   activeOffenceFactory,
   applicationFactory,
+  restrictedPersonFactory,
   risksFactory,
   tierEnvelopeFactory,
 } from '../../../server/testutils/factories'
@@ -19,6 +20,23 @@ import { setup } from './setup'
 
 context('Apply', () => {
   beforeEach(setup)
+
+  it('throws an error if the the CRN entered is an LAO', function test() {
+    const lao = restrictedPersonFactory.build()
+    cy.task('stubFindPerson', { person: lao })
+
+    // Given I visit the start page
+    const startPage = StartPage.visit()
+    startPage.startApplication()
+
+    // And I enter a CRN that is restricted
+    const crnPage = new EnterCRNPage()
+    crnPage.enterCrn(lao.crn)
+    crnPage.clickSubmit()
+
+    // Then I should see an error message telling me the CRN is restricted
+    crnPage.shouldShowRestrictedCrnMessage(lao)
+  })
 
   it('allows the user to select an index offence if there is more than one offence', function test() {
     // And that person has more than one offence listed under their CRN

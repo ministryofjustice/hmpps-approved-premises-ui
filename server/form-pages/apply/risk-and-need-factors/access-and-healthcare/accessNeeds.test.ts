@@ -3,7 +3,7 @@ import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../share
 
 import AccessNeeds, { AdditionalNeed, additionalNeeds, furtherAccessNeedsQuestionsNeeded } from './accessNeeds'
 
-import { applicationFactory, personFactory } from '../../../../testutils/factories'
+import { applicationFactory, personFactory, restrictedPersonFactory } from '../../../../testutils/factories'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 
 describe('AccessNeeds', () => {
@@ -38,6 +38,54 @@ describe('AccessNeeds', () => {
         religiousOrCulturalNeedsDetail: 'Some details',
         careAndSupportNeeds: 'yes',
         careAndSupportNeedsDetail: 'Some more details',
+      })
+    })
+  })
+
+  describe('questions', () => {
+    it('returns the questions with the persons name if it is present', () => {
+      expect(new AccessNeeds({}, application).questions).toEqual({
+        careActAssessmentCompleted: 'Has a care act assessment been completed?',
+        careAndSupportNeeds: {
+          hint: 'Provide details',
+          question: 'Does this person have care and support needs?',
+        },
+        interpreter: {
+          language: 'Which language is an interpreter needed for?',
+          question: 'Does John Wayne need an interpreter?',
+        },
+        needs: {
+          hint: 'For example, if John Wayne has a visual impairment, uses a hearing aid or has an ADHD diagnosis.',
+          question: 'Does John Wayne have any of the following needs?',
+        },
+        religiousOrCulturalNeeds: {
+          furtherDetails: 'Details of religious or cultural needs',
+          question: 'Does John Wayne have any religious or cultural needs?',
+        },
+      })
+    })
+
+    it('returns the questions with the "the person" if the applicant is a restricted person', () => {
+      const restrictedPerson = restrictedPersonFactory.build()
+
+      expect(new AccessNeeds({}, { ...application, person: restrictedPerson }).questions).toEqual({
+        careActAssessmentCompleted: 'Has a care act assessment been completed?',
+        careAndSupportNeeds: {
+          hint: 'Provide details',
+          question: 'Does this person have care and support needs?',
+        },
+        interpreter: {
+          language: 'Which language is an interpreter needed for?',
+          question: 'Does the person need an interpreter?',
+        },
+        needs: {
+          hint: 'For example, if the person has a visual impairment, uses a hearing aid or has an ADHD diagnosis.',
+          question: 'Does the person have any of the following needs?',
+        },
+        religiousOrCulturalNeeds: {
+          furtherDetails: 'Details of religious or cultural needs',
+          question: 'Does the person have any religious or cultural needs?',
+        },
       })
     })
   })

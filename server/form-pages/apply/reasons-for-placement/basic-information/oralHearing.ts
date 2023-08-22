@@ -6,6 +6,7 @@ import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../
 import { convertToTitleCase } from '../../../../utils/utils'
 import { Page } from '../../../utils/decorators'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
+import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 type OralHearingBody = ObjectWithDateParts<'oralHearingDate'> & {
   knowOralHearingDate: YesOrNo
@@ -16,7 +17,7 @@ type OralHearingBody = ObjectWithDateParts<'oralHearingDate'> & {
   bodyProperties: [...dateBodyProperties('oralHearingDate'), 'knowOralHearingDate'],
 })
 export default class OralHearing implements TasklistPage {
-  title = `Do you know ${this.application.person.name}’s oral hearing date?`
+  title = `Do you know ${nameOrPlaceholderCopy(this.application.person)}’s oral hearing date?`
 
   constructor(
     private _body: Partial<OralHearingBody>,

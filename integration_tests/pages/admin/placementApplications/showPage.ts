@@ -1,12 +1,17 @@
 import Page from '../../page'
 
-import { ApprovedPremises, PlacementRequest, PlacementRequestDetail } from '../../../../server/@types/shared'
+import {
+  ApprovedPremises,
+  FullPerson,
+  PlacementRequest,
+  PlacementRequestDetail,
+} from '../../../../server/@types/shared'
 import { adminSummary, matchingInformationSummary } from '../../../../server/utils/placementRequests'
 import { bookingSummaryList } from '../../../../server/utils/bookingUtils'
 
 export default class ShowPage extends Page {
   constructor(private readonly placementRequest: PlacementRequestDetail) {
-    super(placementRequest.person.name)
+    super((placementRequest.person as FullPerson).name)
   }
 
   shouldShowSummary(): void {
