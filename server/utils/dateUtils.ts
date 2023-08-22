@@ -1,4 +1,5 @@
 import type { ObjectWithDateParts } from '@approved-premises/ui'
+import rawBankHolidays from '../data/bankHolidays/bank-holidays.json'
 
 import { differenceInDays, formatDistanceStrict, formatISO, parseISO, format, isPast, formatDuration } from 'date-fns'
 
@@ -235,6 +236,20 @@ export const getYearsSince = (startYear: number): Array<string> => {
     years.push((startYear++).toString())
   }
   return years
+}
+
+type RawBankHolidays = {
+  'england-and-wales': {
+    division: 'england-and-wales'
+    events: Array<{
+      title: string
+      date: string
+    }>
+  }
+}
+
+export const bankHolidays = () => {
+  return (rawBankHolidays as RawBankHolidays)['england-and-wales'].events.map(event => new Date(event.date))
 }
 
 export class InvalidDateStringError extends Error {}

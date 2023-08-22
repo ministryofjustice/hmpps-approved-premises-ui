@@ -8,6 +8,7 @@ import type { ObjectWithDateParts } from '@approved-premises/ui'
 import {
   DateFormats,
   InvalidDateStringError,
+  bankHolidays,
   dateAndTimeInputsAreValidDates,
   dateIsBlank,
   dateIsInThePast,
@@ -19,6 +20,19 @@ import {
 jest.mock('date-fns/isPast')
 jest.mock('date-fns/formatDistanceStrict')
 jest.mock('date-fns/differenceInDays')
+jest.mock('../data/bankHolidays/bank-holidays.json', () => {
+  return {
+    'england-and-wales': {
+      division: 'england-and-wales',
+      events: [
+        { title: 'New Year’s Day', date: '2018-01-01', notes: '', bunting: true },
+        { title: 'Good Friday', date: '2018-03-30', notes: '', bunting: false },
+        { title: 'Easter Monday', date: '2018-04-02', notes: '', bunting: true },
+        { title: 'Early May bank holiday', date: '2018-05-07', notes: '', bunting: true },
+      ],
+    },
+  }
+})
 
 describe('DateFormats', () => {
   describe('convertIsoToDateObj', () => {
@@ -357,6 +371,16 @@ describe('monthOptions', () => {
       { name: 'October', value: '10' },
       { name: 'November', value: '11' },
       { name: 'December', value: '12' },
+    ])
+  })
+})
+describe('bankHolidays', () => {
+  it('maps the bank-holidays.json an array of dates', () => {
+    expect(bankHolidays()).toEqual([
+      new Date('2018-01-01'),
+      new Date('2018-03-30'),
+      new Date('2018-04-02'),
+      new Date('2018-05-07'),
     ])
   })
 })
