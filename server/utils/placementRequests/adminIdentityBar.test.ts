@@ -59,9 +59,8 @@ describe('adminIdentityBar', () => {
     })
 
     it('should return Limited Access Offender if the person has no name', () => {
-      const placementRequestDetailWithRestrictedAccessOffender = placementRequestDetailFactory.build({
-        person: restrictedPersonFactory.build(),
-      })
+      const placementRequestDetailWithRestrictedAccessOffender = placementRequestDetailFactory.build()
+      placementRequestDetailWithRestrictedAccessOffender.person = restrictedPersonFactory.build()
 
       expect(title(placementRequestDetailWithRestrictedAccessOffender)).toMatchStringIgnoringWhitespace(`
       <span class="govuk-caption-l">Placement request</span>
