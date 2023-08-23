@@ -16,6 +16,7 @@ export default function routes(controllers: Controllers, router: Router, service
     placementRequestWithdrawalsController,
     placementRequestUnableToMatchController,
     reportsController,
+    userManagementController,
   } = controllers
 
   get(paths.admin.placementRequests.index.pattern, adminPlacementRequestsController.index(), {
@@ -84,6 +85,10 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'ADMIN_GENERATE_LOST_BEDS_REPORT_ERROR',
       },
     ],
+  })
+
+  get(paths.admin.userManagement.index.pattern, userManagementController.index(), {
+    auditEvent: 'ADMIN_USER_MANAGEMENT_DASHBOARD',
   })
 
   return router

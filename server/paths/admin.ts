@@ -4,6 +4,8 @@ const adminPath = path('/admin')
 const placementRequestsPath = adminPath.path('placement-requests')
 const placementRequestPath = placementRequestsPath.path(':id')
 
+const userManagementPath = adminPath.path('user-mangement')
+
 const bookingsPath = placementRequestPath.path('bookings')
 
 const withdrawalPath = placementRequestPath.path('withdrawal')
@@ -32,6 +34,9 @@ export default {
     reports: {
       new: adminPath.path('reports'),
       create: adminPath.path('reports'),
+    },
+    userManagement: {
+      index: userManagementPath,
     },
   },
 }
