@@ -11,3 +11,5 @@ export const tierCell = (item: { tier?: RiskTierEnvelope }) => {
     html: tierBadge(item.tier?.value?.level),
   }
 }
+
+export const emailCell = (item: { email?: string }): TableCell => ({ text: item.email })
