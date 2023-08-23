@@ -11,12 +11,12 @@ import { assessmentFactory, assessmentSummaryFactory } from '../../testutils/fac
 
 import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
-import { hasRole } from '../../utils/userUtils'
+import { hasRole } from '../../utils/users'
 import { ErrorsAndUserInput, GroupedAssessments } from '../../@types/ui'
 import { groupAssessmements } from '../../utils/assessments/utils'
 
 jest.mock('../../utils/assessments/utils')
-jest.mock('../../utils/userUtils')
+jest.mock('../../utils/users')
 jest.mock('../../utils/validation')
 jest.mock('../../utils/assessments/informationSetAsNotReceived')
 jest.mock('../../services/tasklistService')

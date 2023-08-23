@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response } from 'express'
-import { sectionsForUser } from '../utils/userUtils'
+import { sectionsForUser } from '../utils/users'
 
 export default class DashboardController {
   index(): RequestHandler {

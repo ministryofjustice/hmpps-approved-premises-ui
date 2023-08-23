@@ -1,11 +1,11 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { ServiceSection } from '@approved-premises/ui'
-import { sectionsForUser } from '../utils/userUtils'
+import { sectionsForUser } from '../utils/users'
 
 import DashboardController from './dashboardController'
 
-jest.mock('../utils/userUtils')
+jest.mock('../utils/users')
 
 describe('DashboardController', () => {
   const request: DeepMocked<Request> = createMock<Request>({})

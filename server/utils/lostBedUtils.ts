@@ -3,7 +3,7 @@ import { TableCell, UserDetails } from '@approved-premises/ui'
 
 import paths from '../paths/manage'
 import { linkTo } from './utils'
-import { hasRole } from './userUtils'
+import { hasRole } from './users'
 
 export const lostBedTableHeaders = (user: UserDetails) => {
   const headers = [

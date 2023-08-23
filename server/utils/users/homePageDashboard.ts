@@ -1,12 +1,12 @@
 import { ApprovedPremisesUserRole as UserRole } from '@approved-premises/api'
 import { ServiceSection, UserDetails } from '@approved-premises/ui'
 
-import assessPaths from '../paths/assess'
-import applyPaths from '../paths/apply'
-import managePaths from '../paths/manage'
-import taskPaths from '../paths/tasks'
-import matchPaths from '../paths/match'
-import adminPaths from '../paths/admin'
+import assessPaths from '../../paths/assess'
+import applyPaths from '../../paths/apply'
+import managePaths from '../../paths/manage'
+import taskPaths from '../../paths/tasks'
+import matchPaths from '../../paths/match'
+import adminPaths from '../../paths/admin'
 
 export const sections = {
   apply: {

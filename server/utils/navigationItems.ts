@@ -1,6 +1,6 @@
 import { UserDetails } from '@approved-premises/ui'
 
-import { sectionsForUser } from './userUtils'
+import { sectionsForUser } from './users'
 
 export const navigationItems = (user: UserDetails, currentPath: string) => {
   const sections = sectionsForUser(user)

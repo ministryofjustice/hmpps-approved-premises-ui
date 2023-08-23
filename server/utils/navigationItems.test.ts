@@ -1,8 +1,8 @@
 import { userDetailsFactory } from '../testutils/factories'
-import { sectionsForUser } from './userUtils'
+import { sectionsForUser } from './users'
 import { navigationItems } from './navigationItems'
 
-jest.mock('./userUtils')
+jest.mock('./users')
 
 const sections = [
   {
