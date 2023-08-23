@@ -3,10 +3,17 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { PersonType } from './PersonType';
-
 export type Person = {
     crn: string;
-    type: PersonType;
+    name: string;
+    dateOfBirth: string;
+    nomsNumber?: string;
+    ethnicity?: string;
+    nationality?: string;
+    religionOrBelief?: string;
+    sex: string;
+    genderIdentity?: string;
+    status: 'InCustody' | 'InCommunity' | 'Unknown';
+    prisonName?: string;
 };
 
