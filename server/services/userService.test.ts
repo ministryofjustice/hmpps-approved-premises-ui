@@ -81,6 +81,21 @@ describe('User service', () => {
       expect(userClient.getUsers).toHaveBeenCalledWith(['applicant', 'assessor'], ['pipe'])
     })
   })
+
+  describe('updateUser', () => {
+    it('calls the client method and returns the updated user', async () => {
+      const user = userFactory.build()
+
+      userClient.updateUser.mockResolvedValue(user)
+
+      const result = await userService.updateUser(token, user)
+
+      expect(result).toEqual(user)
+
+      expect(userClient.updateUser).toHaveBeenCalledWith(user)
+    })
+  })
+
   describe('search', () => {
     it('calls the client method with the query and returns the result', async () => {
       const users = userFactory.buildList(1)

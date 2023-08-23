@@ -6,6 +6,7 @@ import { UserService } from '../../services'
 import UserManagementController from './userManagementController'
 import { qualifications, roles } from '../../utils/users'
 import { userFactory } from '../../testutils/factories'
+import paths from '../../paths/admin'
 
 describe('UserManagementController', () => {
   const token = 'SOME_TOKEN'
@@ -78,6 +79,47 @@ describe('UserManagementController', () => {
         roles,
         qualifications,
       })
+    })
+  })
+
+  describe('update', () => {
+    it('updates the user with the selected roles and qualifications', async () => {
+      const user = userFactory.build({
+        qualifications: [],
+        roles: [],
+      })
+      const updatedRoles = {
+        allocationRoles: ['excluded_from_assess_allocation'],
+        roles: ['assessor', 'matcher'],
+      }
+      const updatedUser = {
+        ...user,
+        qualifications: ['emergency'],
+        roles: [...updatedRoles.roles, ...updatedRoles.allocationRoles],
+      }
+      userService.getUserById.mockResolvedValue(user)
+      const flash = jest.fn()
+
+      const requestHandler = userManagementController.update()
+      await requestHandler(
+        {
+          ...request,
+          flash,
+          body: {
+            roles: updatedRoles.roles,
+            allocationPreferences: updatedRoles.allocationRoles,
+            qualifications: updatedUser.qualifications,
+          },
+          params: { id: user.id },
+        },
+        response,
+        next,
+      )
+
+      expect(userService.getUserById).toHaveBeenCalledWith(token, user.id)
+      expect(userService.updateUser).toHaveBeenCalledWith(token, updatedUser)
+      expect(response.redirect).toHaveBeenCalledWith(paths.admin.userManagement.show({ id: user.id }))
+      expect(flash).toHaveBeenCalledWith('success', 'User updated')
     })
   })
 })

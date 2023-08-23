@@ -57,6 +57,21 @@ const stubUsers = (args: {
   })
 }
 
+const stubUserUpdate = (args: { user: User }) =>
+  stubFor({
+    request: {
+      method: 'PUT',
+      urlPattern: paths.users.update({ id: args.user.id }),
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: args.user,
+    },
+  })
+
 const stubUserSearch = (args: { results: Array<User>; searchTerm: string }) =>
   stubFor({
     request: {
@@ -72,4 +87,12 @@ const stubUserSearch = (args: { results: Array<User>; searchTerm: string }) =>
     },
   })
 
-export default { stubFindUser, stubUsers, stubUserSearch }
+const verifyUserUpdate = async (userId: string) =>
+  (
+    await getMatchingRequests({
+      method: 'PUT',
+      urlPathPattern: paths.users.update({ id: userId }),
+    })
+  ).body.requests
+
+export default { stubFindUser, stubUsers, stubUserUpdate, stubUserSearch, verifyUserUpdate }

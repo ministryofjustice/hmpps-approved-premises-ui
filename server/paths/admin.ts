@@ -38,6 +38,7 @@ export default {
     userManagement: {
       index: userManagementPath,
       show: userManagementPath.path(':id'),
+      update: userManagementPath.path(':id'),
       search: userManagementPath.path('search'),
     },
   },

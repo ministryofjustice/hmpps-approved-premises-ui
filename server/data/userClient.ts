@@ -36,6 +36,10 @@ export default class UserClient {
     return (await this.restClient.get({ path: paths.users.index({}), query })) as Array<User>
   }
 
+  async updateUser(user: User): Promise<User> {
+    return (await this.restClient.put({ path: paths.users.update({ id: user.id }), data: user })) as User
+  }
+
   search(name: string): Promise<Array<User>> {
     return this.restClient.get({ path: paths.users.search({}), query: { name } }) as Promise<Array<User>>
   }
