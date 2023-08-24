@@ -136,7 +136,7 @@ describe('utils', () => {
         assessmentSummaryFactory.createdXDaysAgo(1).build(),
         assessmentSummaryFactory.createdXDaysAgo(2).build(),
         assessmentSummaryFactory.createdXDaysAgo(9).build(),
-        assessmentSummaryFactory.createdXDaysAgo(7).build(),
+        assessmentSummaryFactory.createdXDaysAgo(8).build(),
       ]
 
       expect(assessmentsApproachingDue(assessments)).toEqual(2)

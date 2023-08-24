@@ -1,7 +1,21 @@
-/* eslint-disable */
-import type { ObjectWithDateParts } from '@approved-premises/ui'
+import {
+  differenceInBusinessDays as differenceInBusinessDaysDateFns,
+  differenceInDays,
+  format,
+  formatDistanceStrict,
+  formatDuration,
+  formatISO,
+  isBefore,
+  isPast,
+  isValid,
+  isWeekend,
+  isWithinInterval,
+  parseISO,
+  toDate,
+} from 'date-fns'
 
-import { differenceInDays, formatDistanceStrict, formatISO, parseISO, format, isPast, formatDuration } from 'date-fns'
+import type { ObjectWithDateParts } from '@approved-premises/ui'
+import rawBankHolidays from '../data/bankHolidays/bank-holidays.json'
 
 type DifferenceInDays = { ui: string; number: number }
 
@@ -38,9 +52,8 @@ export class DateFormats {
   static dateObjtoUIDate(date: Date, options: { format: 'short' | 'long' } = { format: 'long' }) {
     if (options.format === 'long') {
       return format(date, 'cccc d MMMM y')
-    } else {
-      return format(date, 'dd/LL/y')
     }
+    return format(date, 'dd/LL/y')
   }
 
   /**
@@ -148,12 +161,18 @@ export class DateFormats {
     return DateFormats.dateObjectToDateInputs(DateFormats.isoToDateObj(isoDate), key)
   }
 
-  static formatDuration(duration: DurationWithNumberOrString, format: Array<string> = ['weeks', 'days']): string {
+  static formatDuration(
+    duration: DurationWithNumberOrString,
+    durationFormat: Array<string> = ['weeks', 'days'],
+  ): string {
     const formattedDuration = {} as Duration
-    Object.keys(duration).forEach(k => (formattedDuration[k] = Number(duration[k])))
+
+    Object.keys(duration).forEach(k => {
+      formattedDuration[k] = Number(duration[k])
+    })
 
     return formatDuration(formattedDuration, {
-      format,
+      format: durationFormat,
       delimiter: ', ',
     })
   }
@@ -223,13 +242,57 @@ export const monthOptions = [
 
 export const yearOptions = (startYear: number) => getYearsSince(startYear).map(year => ({ name: year, value: year }))
 
+/* eslint-disable */
 export const getYearsSince = (startYear: number): Array<string> => {
-  let years = []
+  const years: Array<string> = []
   const thisYear = new Date().getFullYear()
   while (startYear <= thisYear) {
     years.push((startYear++).toString())
   }
   return years
+}
+
+/**
+ * differenceInBusinessDays returns the number of business days between two dates excluding holidays.
+ * This is the same as date-fns' differenceInBusinessDays, but with the addition of a holidays parameter.
+ * We hope to be able to remove this once this PR is merged: https://github.com/date-fns/date-fns/pull/3475
+ * @param {Date} dateLeft
+ * @param {Date} dateRight
+ * @param {Array<Date>} holidays
+ * @returns {number}
+ */
+export function differenceInBusinessDays(
+  dateLeft: Date,
+  dateRight: Date,
+  holidays: Array<Date> = bankHolidays(),
+): number {
+  if (!isValid(dateLeft) || !isValid(dateRight)) return NaN
+
+  const { earlierDate, laterDate } = isBefore(dateLeft, dateRight)
+    ? { earlierDate: dateLeft, laterDate: dateRight }
+    : { earlierDate: dateRight, laterDate: dateLeft }
+
+  const holidaysLength = holidays
+    .map(holiday => toDate(holiday))
+    .filter(holiday => isWithinInterval(holiday, { start: earlierDate, end: laterDate }) && !isWeekend(holiday)).length
+
+  const differenceInBusinessDaysWithoutHolidays = differenceInBusinessDaysDateFns(dateLeft, dateRight)
+
+  return differenceInBusinessDaysWithoutHolidays - holidaysLength
+}
+
+type RawBankHolidays = {
+  'england-and-wales': {
+    division: 'england-and-wales'
+    events: Array<{
+      title: string
+      date: string
+    }>
+  }
+}
+
+export const bankHolidays = () => {
+  return (rawBankHolidays as RawBankHolidays)['england-and-wales'].events.map(event => new Date(event.date))
 }
 
 export class InvalidDateStringError extends Error {}

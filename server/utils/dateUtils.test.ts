@@ -3,14 +3,17 @@
 import isPast from 'date-fns/isPast'
 import differenceInDays from 'date-fns/differenceInDays'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
+import { subDays } from 'date-fns'
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 
 import {
   DateFormats,
   InvalidDateStringError,
+  bankHolidays,
   dateAndTimeInputsAreValidDates,
   dateIsBlank,
   dateIsInThePast,
+  differenceInBusinessDays,
   monthOptions,
   uiDateOrDateEmptyMessage,
   yearOptions,
@@ -19,6 +22,19 @@ import {
 jest.mock('date-fns/isPast')
 jest.mock('date-fns/formatDistanceStrict')
 jest.mock('date-fns/differenceInDays')
+jest.mock('../data/bankHolidays/bank-holidays.json', () => {
+  return {
+    'england-and-wales': {
+      division: 'england-and-wales',
+      events: [
+        { title: 'New Year’s Day', date: '2018-01-01', notes: '', bunting: true },
+        { title: 'Good Friday', date: '2018-03-30', notes: '', bunting: false },
+        { title: 'Easter Monday', date: '2018-04-02', notes: '', bunting: true },
+        { title: 'Early May bank holiday', date: '2018-05-07', notes: '', bunting: true },
+      ],
+    },
+  }
+})
 
 describe('DateFormats', () => {
   describe('convertIsoToDateObj', () => {
@@ -357,6 +373,66 @@ describe('monthOptions', () => {
       { name: 'October', value: '10' },
       { name: 'November', value: '11' },
       { name: 'December', value: '12' },
+    ])
+  })
+})
+
+describe('differenceInBusinessDays', () => {
+  it('should return NaN if either date is invalid', () => {
+    const date1InvalidResult = differenceInBusinessDays(new Date('invalid date'), new Date('2022-01-10'))
+    const date2InvalidResult = differenceInBusinessDays(new Date('2022-01-10'), new Date('invalid date'))
+
+    expect(date1InvalidResult).toBeNaN()
+    expect(date2InvalidResult).toBeNaN()
+  })
+
+  it('returns the number of business days between the given dates, excluding weekends and holidays', () => {
+    const holidays = [
+      new Date(2023, 7 /* Aug */, 28),
+      new Date(2023, 11 /* Dec */, 25),
+      new Date(2023, 11 /* Dec */, 26),
+    ]
+
+    expect(differenceInBusinessDays(new Date(2024, 0, 10), new Date(2023, 6, 18), holidays)).toBe(123)
+  })
+
+  it('ignores holidays the are not in the range', () => {
+    const holidays = [
+      new Date(2023, 7 /* Aug */, 28),
+      new Date(2023, 11 /* Dec */, 25),
+      new Date(2023, 11 /* Dec */, 26),
+    ]
+
+    expect(differenceInBusinessDays(new Date(2024, 0, 10), new Date(2023, 9, 18), holidays)).toBe(58)
+  })
+
+  it('ignores holidays that are at the weekend', () => {
+    const holidays = [
+      new Date(2023, 7 /* Aug */, 28),
+      new Date(2023, 11 /* Dec */, 24),
+      new Date(2023, 11 /* Dec */, 25),
+      new Date(2023, 11 /* Dec */, 26),
+    ]
+
+    expect(differenceInBusinessDays(new Date(2024, 0, 10), new Date(2023, 9, 18), holidays)).toBe(58)
+  })
+
+  it('returns the number of business days between the given dates if no holidays are provided', () => {
+    expect(differenceInBusinessDays(new Date(2024, 0, 10), new Date(2023, 6, 18))).toBe(126)
+  })
+
+  it('returns the correct number of business days if the leftDate is earlier than the rightDate', () => {
+    expect(differenceInBusinessDays(subDays(new Date(), 7), new Date())).toBe(-5)
+  })
+})
+
+describe('bankHolidays', () => {
+  it('maps the bank-holidays.json an array of dates', () => {
+    expect(bankHolidays()).toEqual([
+      new Date('2018-01-01'),
+      new Date('2018-03-30'),
+      new Date('2018-04-02'),
+      new Date('2018-05-07'),
     ])
   })
 })
