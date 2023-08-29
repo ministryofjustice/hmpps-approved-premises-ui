@@ -186,7 +186,8 @@ describe('tableUtils', () => {
     })
 
     it('returns table rows for the assessments for a RestrictedPerson', () => {
-      const assessment = assessmentSummaryFactory.build({ status: 'completed', person: restrictedPerson })
+      const assessment = assessmentSummaryFactory.build({ status: 'completed' })
+      assessment.person = restrictedPerson
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
 
       expect(completedTableRows([assessment])).toEqual([
