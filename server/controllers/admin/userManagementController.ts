@@ -11,4 +11,11 @@ export default class UserController {
       res.render('admin/users/index', { pageHeading: 'User management dashboard', users })
     }
   }
+  search(): TypedRequestHandler<Request, Response> {
+    return async (req: Request, res: Response) => {
+      const users = await this.userService.search(req.user.token, req.body.name as string)
+
+      res.render('admin/users/index', { pageHeading: 'User management dashboard', users, name: req.body.name })
+    }
+  }
 }

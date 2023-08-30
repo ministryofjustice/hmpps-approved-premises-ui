@@ -39,4 +39,21 @@ describe('UserManagementController', () => {
       })
     })
   })
+  describe('search', () => {
+    it('calls the service method with the query and renders the index template with the result', async () => {
+      const users = userFactory.buildList(1)
+      userService.search.mockResolvedValue(users)
+      const name = 'name'
+
+      const requestHandler = userManagementController.search()
+      await requestHandler({ ...request, body: { name } }, response, next)
+
+      expect(userService.search).toHaveBeenCalledWith(token, name)
+      expect(response.render).toHaveBeenCalledWith('admin/users/index', {
+        pageHeading: 'User management dashboard',
+        users,
+        name,
+      })
+    })
+  })
 })

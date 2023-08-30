@@ -37,6 +37,7 @@ export default {
     },
     userManagement: {
       index: userManagementPath,
+      search: userManagementPath.path('search'),
     },
   },
 }

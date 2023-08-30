@@ -32,4 +32,9 @@ export default class UserService {
 
     return client.getUsers(roles, qualifications)
   }
+  async search(token: string, query: string): Promise<Array<User>> {
+    const client = this.userClientFactory(token)
+
+    return client.search(query)
+  }
 }

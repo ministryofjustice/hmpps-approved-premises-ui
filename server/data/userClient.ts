@@ -35,4 +35,8 @@ export default class UserClient {
 
     return (await this.restClient.get({ path: paths.users.index({}), query })) as Array<User>
   }
+
+  search(name: string): Promise<Array<User>> {
+    return this.restClient.get({ path: paths.users.search({}), query: { name } }) as Promise<Array<User>>
+  }
 }

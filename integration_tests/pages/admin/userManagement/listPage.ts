@@ -30,4 +30,8 @@ export default class ListPage extends Page {
         })
     })
   }
+  search(userName: string): void {
+    this.getTextInputByIdAndEnterDetails('search-by-name', userName)
+    cy.get('button').contains('Search').click()
+  }
 }
