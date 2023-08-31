@@ -58,6 +58,9 @@ jobs:
       - run:
           name: Lint shell scripts
           command: npm run shellcheck
+      - run:
+          name: Type check
+          command: npm run typecheck
       - persist_to_workspace:
           root: .
           paths:
