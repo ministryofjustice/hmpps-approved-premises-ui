@@ -44,6 +44,7 @@ describe('homePageDashboard', () => {
         sections.placementRequests,
         sections.cruDashboard,
         sections.reports,
+        sections.userManagement,
       ])
     })
 
@@ -64,7 +65,14 @@ describe('homePageDashboard', () => {
         sections.placementRequests,
         sections.cruDashboard,
         sections.reports,
+        sections.userManagement,
       ])
+    })
+
+    it('should return the user management section for a user with a role admin role', () => {
+      const user = userDetailsFactory.build({ roles: ['role_admin'] })
+
+      expect(sectionsForUser(user)).toEqual([sections.apply, sections.userManagement])
     })
   })
 })
