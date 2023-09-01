@@ -4,6 +4,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { UserService } from '../../services'
 
 import UserManagementController from './userManagementController'
+import { qualifications, roles } from '../../utils/users'
 import { userFactory } from '../../testutils/factories'
 
 describe('UserManagementController', () => {
@@ -39,6 +40,7 @@ describe('UserManagementController', () => {
       })
     })
   })
+
   describe('search', () => {
     it('calls the service method with the query and renders the index template with the result', async () => {
       const users = userFactory.buildList(1)
@@ -53,6 +55,28 @@ describe('UserManagementController', () => {
         pageHeading: 'User management dashboard',
         users,
         name,
+      })
+    })
+  })
+
+  describe('edit', () => {
+    it('renders an individual user page', async () => {
+      const user = userFactory.build()
+
+      userService.getUserById.mockResolvedValue(user)
+
+      const requestHandler = userManagementController.edit()
+
+      request.params = { id: user.id }
+
+      await requestHandler(request, response, next)
+
+      expect(userService.getUserById).toHaveBeenCalledWith(token, user.id)
+      expect(response.render).toHaveBeenCalledWith('admin/users/show', {
+        pageHeading: 'Manage permissions',
+        user,
+        roles,
+        qualifications,
       })
     })
   })

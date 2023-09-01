@@ -30,6 +30,11 @@ export default class ListPage extends Page {
         })
     })
   }
+
+  clickUser(userName: string): void {
+    cy.get('a').contains(userName).click()
+  }
+
   search(userName: string): void {
     this.getTextInputByIdAndEnterDetails('search-by-name', userName)
     cy.get('button').contains('Search').click()

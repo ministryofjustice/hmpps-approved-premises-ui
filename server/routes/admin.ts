@@ -90,6 +90,9 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.admin.userManagement.index.pattern, userManagementController.index(), {
     auditEvent: 'ADMIN_USER_MANAGEMENT_DASHBOARD',
   })
+  get(paths.admin.userManagement.show.pattern, userManagementController.edit(), {
+    auditEvent: 'ADMIN_USER_PERMISSIONS_PAGE',
+  })
   post(paths.admin.userManagement.search.pattern, userManagementController.search(), {
     auditEvent: 'ADMIN_SEARCH_USERS',
   })
