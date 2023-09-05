@@ -103,5 +103,5 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.userManagement)
   }
 
-  return items
+  return Array.from(new Set(items))
 }

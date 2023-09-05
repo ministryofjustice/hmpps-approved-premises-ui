@@ -74,5 +74,18 @@ describe('homePageDashboard', () => {
 
       expect(sectionsForUser(user)).toEqual([sections.apply, sections.userManagement])
     })
+
+    it('should not return duplicates where multiple roles contain the same sections', () => {
+      const user = userDetailsFactory.build({ roles: ['role_admin', 'workflow_manager'] })
+
+      expect(sectionsForUser(user)).toEqual([
+        sections.apply,
+        sections.workflow,
+        sections.placementRequests,
+        sections.cruDashboard,
+        sections.reports,
+        sections.userManagement,
+      ])
+    })
   })
 })
