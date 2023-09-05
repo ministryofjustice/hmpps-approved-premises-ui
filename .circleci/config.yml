@@ -191,7 +191,7 @@ jobs:
             git clone https://github.com/ministryofjustice/hmpps-approved-premises-e2e.git .
       - run:
           name: Update npm
-          command: 'npm install -g npm@latest'
+          command: 'npm install -g npm@9.8.1'
       - node/install-packages
       - run:
           name: E2E Check
