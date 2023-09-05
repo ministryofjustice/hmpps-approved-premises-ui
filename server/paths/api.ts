@@ -184,5 +184,6 @@ export default {
   },
   reports: {
     lostBeds: reportsPath.path('lost-beds'),
+    applications: reportsPath.path('applications'),
   },
 }

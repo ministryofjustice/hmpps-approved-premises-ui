@@ -13,11 +13,18 @@ export default class ReportService {
     token: string,
     month: string,
     year: string,
-    reportType: 'lostBeds',
+    reportType: 'applications' | 'lostBeds',
     response: Response,
   ): Promise<void> {
     const client = this.reportClientFactory(token)
 
-    return client.getLostBedsReport(month, year, response)
+    switch (reportType) {
+      case 'lostBeds':
+        return client.getLostBedsReport(month, year, response)
+      case 'applications':
+        return client.getApplicationsReport(month, year, response)
+      default:
+        throw new Error(`Unknown report type ${reportType}`)
+    }
   }
 }

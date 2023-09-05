@@ -22,6 +22,12 @@ export default class ReportPage extends Page {
     cy.get('button').contains('Download data').click()
   }
 
+  downloadApplicationsReport(month: string, year: string): void {
+    this.checkRadioByNameAndValue('reportType', 'applications')
+    this.selectDates(month, year)
+    cy.get('button').contains('Download data').click()
+  }
+
   shouldHaveDownloadedFile(month: string, year: string): void {
     const downloadsFolder = Cypress.config('downloadsFolder')
     const downloadedFilename = `${downloadsFolder}/lost-beds-${year}-${month.padStart(2, '0')}.xlsx`

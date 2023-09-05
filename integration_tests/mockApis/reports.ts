@@ -23,4 +23,24 @@ export default {
         }),
       },
     }),
+  stubApplicationsReport: (args: { month: string; year: string }) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: `${paths.reports.applications({})}?${createQueryString({ month: args.month, year: args.year })}`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'content-disposition': `attachment; filename=${`applications-${args.year}-${args.month.padStart(
+            2,
+            '0',
+          )}.xlsx`}`,
+        },
+        base64Body: readFileSync(path.resolve(__dirname, '..', 'fixtures', 'report.xlsx'), {
+          encoding: 'base64',
+        }),
+      },
+    }),
 }

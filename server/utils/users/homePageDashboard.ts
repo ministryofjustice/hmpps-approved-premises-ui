@@ -62,7 +62,7 @@ export const sections = {
   reports: {
     id: 'reports',
     title: 'Download data',
-    description: 'Download data on lost beds',
+    description: 'Download data on lost beds and applications',
     shortTitle: 'Reports',
     href: adminPaths.admin.reports.new({}),
   },
