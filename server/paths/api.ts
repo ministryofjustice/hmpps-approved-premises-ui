@@ -51,6 +51,8 @@ const placementRequestPath = placementRequestsPath.path(':id')
 const placementApplicationsPath = path('/placement-applications')
 const placementApplicationPath = placementApplicationsPath.path(':id')
 
+const reportsPath = path('/reports')
+
 const tasksPaths = {
   index: tasksPath,
   show: taskPath,
@@ -181,8 +183,6 @@ export default {
     update: usersPath.path(':id'),
   },
   reports: {
-    lostBeds: {
-      show: path('/reports/lost-beds'),
-    },
+    lostBeds: reportsPath.path('lost-beds'),
   },
 }

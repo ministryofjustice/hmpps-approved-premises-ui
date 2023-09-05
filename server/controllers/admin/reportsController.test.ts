@@ -59,12 +59,19 @@ describe('withdrawalsController', () => {
     it('calls the service method', async () => {
       request.body.month = '12'
       request.body.year = '2023'
+      request.body.reportType = 'lostBeds'
 
       const requestHandler = reportsController.create()
 
       await requestHandler(request, response, next)
 
-      expect(reportService.getReport).toHaveBeenCalledWith(token, request.body.month, request.body.year, response)
+      expect(reportService.getReport).toHaveBeenCalledWith(
+        token,
+        request.body.month,
+        request.body.year,
+        'lostBeds',
+        response,
+      )
     })
 
     it('redirects with errors if year and month is blank', async () => {

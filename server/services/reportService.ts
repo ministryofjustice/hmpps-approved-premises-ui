@@ -9,9 +9,15 @@ export class OasysNotFoundError extends Error {}
 export default class ReportService {
   constructor(private readonly reportClientFactory: RestClientBuilder<ReportClient>) {}
 
-  async getReport(token: string, month: string, year: string, response: Response): Promise<void> {
+  async getReport(
+    token: string,
+    month: string,
+    year: string,
+    reportType: 'lostBeds',
+    response: Response,
+  ): Promise<void> {
     const client = this.reportClientFactory(token)
 
-    return client.getReport(month, year, response)
+    return client.getLostBedsReport(month, year, response)
   }
 }

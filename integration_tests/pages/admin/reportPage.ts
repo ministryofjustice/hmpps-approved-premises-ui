@@ -11,10 +11,15 @@ export default class ReportPage extends Page {
     return new ReportPage()
   }
 
-  downloadLostBedsReport(month: string, year: string): void {
+  selectDates(month: string, year: string): void {
     this.getSelectInputByIdAndSelectAnEntry('month', month)
     this.getSelectInputByIdAndSelectAnEntry('year', year)
-    cy.get('button').contains('Download lost beds data').click()
+  }
+
+  downloadLostBedsReport(month: string, year: string): void {
+    this.checkRadioByNameAndValue('reportType', 'lostBeds')
+    this.selectDates(month, year)
+    cy.get('button').contains('Download data').click()
   }
 
   shouldHaveDownloadedFile(month: string, year: string): void {

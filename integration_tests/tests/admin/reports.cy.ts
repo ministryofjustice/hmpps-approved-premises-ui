@@ -10,11 +10,11 @@ context('Reports', () => {
     cy.signIn()
   })
 
-  it('allows me to download a report', () => {
+  it('allows me to download a lost beds report', () => {
     // Given there is a report available
     const month = '8'
     const year = '2023'
-    cy.task('stubReport', { month, year })
+    cy.task('stubLostBedsReport', { month, year })
 
     // When I visit the report page
     const page = ReportPage.visit()

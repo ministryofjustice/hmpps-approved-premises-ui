@@ -6,11 +6,11 @@ import { stubFor } from '../../wiremock'
 import { createQueryString } from '../../server/utils/utils'
 
 export default {
-  stubReport: (args: { month: string; year: string }) =>
+  stubLostBedsReport: (args: { month: string; year: string }) =>
     stubFor({
       request: {
         method: 'GET',
-        url: `${paths.reports.lostBeds.show({})}?${createQueryString({ month: args.month, year: args.year })}`,
+        url: `${paths.reports.lostBeds({})}?${createQueryString({ month: args.month, year: args.year })}`,
       },
       response: {
         status: 200,
