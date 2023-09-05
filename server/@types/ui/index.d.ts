@@ -438,7 +438,7 @@ export type MiddlewareSpec = {
 }
 
 export type PlacementRequestDashboardSearchOptions = {
-  crn?: string
+  crnOrName?: string
   tier?: RiskTierLevel
   arrivalDateStart?: string
   arrivalDateEnd?: string

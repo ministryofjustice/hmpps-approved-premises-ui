@@ -77,13 +77,13 @@ export default {
   },
   stubPlacementRequestsSearch: ({
     placementRequests,
-    crn = '',
+    crnOrName = '',
     page = '1',
     sortBy = 'created_at',
     sortDirection = 'asc',
   }: {
     placementRequests: Array<PlacementRequest>
-    crn: string
+    crnOrName: string
     page: string
     sortBy: string
     sortDirection: string
@@ -100,9 +100,9 @@ export default {
       },
     } as Record<string, unknown>
 
-    if (crn) {
-      queryParameters.crn = {
-        equalTo: crn,
+    if (crnOrName) {
+      queryParameters.crnOrName = {
+        equalTo: crnOrName,
       }
     }
 
@@ -156,7 +156,7 @@ export default {
       })
     ).body.requests,
   verifyPlacementRequestsSearch: async ({
-    crn,
+    crnOrName,
     tier,
     arrivalDateStart,
     arrivalDateEnd,
@@ -164,7 +164,7 @@ export default {
     sortBy = 'created_at',
     sortDirection = 'asc',
   }: {
-    crn: string
+    crnOrName: string
     tier: RiskTierLevel
     arrivalDateStart: string
     arrivalDateEnd: string
@@ -177,8 +177,8 @@ export default {
         method: 'GET',
         urlPathPattern: paths.placementRequests.dashboard.pattern,
         queryParameters: {
-          crn: {
-            equalTo: crn,
+          crnOrName: {
+            equalTo: crnOrName,
           },
           tier: {
             equalTo: tier,

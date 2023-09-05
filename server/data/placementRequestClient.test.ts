@@ -123,7 +123,7 @@ describeClient('placementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { crn: 'CRN123', page: '1', sortBy: 'created_at', sortDirection: 'asc' },
+          query: { crnOrName: 'CRN123', page: '1', sortBy: 'created_at', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -139,7 +139,7 @@ describeClient('placementRequestClient', provider => {
         },
       })
 
-      const result = await placementRequestClient.dashboard({ crn: 'CRN123' })
+      const result = await placementRequestClient.dashboard({ crnOrName: 'CRN123' })
 
       expect(result).toEqual({
         data: placementRequests,

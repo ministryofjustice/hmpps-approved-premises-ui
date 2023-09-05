@@ -8,7 +8,7 @@ context('Search placement Requests', () => {
   const searchResults = placementRequestFactory.buildList(2)
 
   const searchQuery = {
-    crn: 'CRN123',
+    crnOrName: 'CRN123',
     tier: 'D2',
     arrivalDateStart: '2022-01-01',
     arrivalDateEnd: '2022-01-03',
