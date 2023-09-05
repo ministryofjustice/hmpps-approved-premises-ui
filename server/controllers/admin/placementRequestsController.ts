@@ -53,7 +53,7 @@ export default class PlacementRequestsController {
     return async (req: Request, res: Response) => {
       const searchOptions = {} as PlacementRequestDashboardSearchOptions
 
-      searchOptions.crn = req.query.crn as string
+      searchOptions.crnOrName = req.query.crnOrName as string
       searchOptions.tier = req.query.tier as RiskTierLevel
       searchOptions.arrivalDateStart = req.query.arrivalDateStart as string
       searchOptions.arrivalDateEnd = req.query.arrivalDateEnd as string

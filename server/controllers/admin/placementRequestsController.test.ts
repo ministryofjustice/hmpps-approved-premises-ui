@@ -155,7 +155,7 @@ describe('PlacementRequestsController', () => {
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
         pageHeading: 'Record and update placement details',
         placementRequests: paginatedResponse.data,
-        crn: undefined,
+        crnOrName: undefined,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix,
@@ -165,23 +165,23 @@ describe('PlacementRequestsController', () => {
     })
 
     it('should search for placement requests by CRN', async () => {
-      const hrefPrefix = `${paths.admin.placementRequests.search({})}?${createQueryString({ crn: 'CRN123' })}&`
+      const hrefPrefix = `${paths.admin.placementRequests.search({})}?${createQueryString({ crnOrName: 'CRN123' })}&`
 
       const requestHandler = placementRequestsController.search()
 
-      await requestHandler({ ...request, query: { crn: 'CRN123' } }, response, next)
+      await requestHandler({ ...request, query: { crnOrName: 'CRN123' } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
         pageHeading: 'Record and update placement details',
         placementRequests: paginatedResponse.data,
-        crn: 'CRN123',
+        crnOrName: 'CRN123',
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix,
       })
       expect(placementRequestService.search).toHaveBeenCalledWith(
         token,
-        { crn: 'CRN123' },
+        { crnOrName: 'CRN123' },
         undefined,
         undefined,
         undefined,
@@ -206,7 +206,7 @@ describe('PlacementRequestsController', () => {
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
         pageHeading: 'Record and update placement details',
         placementRequests: paginatedResponse.data,
-        crn: undefined,
+        crnOrName: undefined,
         tier: 'A1',
         arrivalDateStart: '2022-01-01',
         arrivalDateEnd: '2022-01-03',
@@ -233,7 +233,10 @@ describe('PlacementRequestsController', () => {
       const requestHandler = placementRequestsController.search()
 
       await requestHandler(
-        { ...request, query: { crn: '', tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-03' } },
+        {
+          ...request,
+          query: { crnOrName: '', tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-03' },
+        },
         response,
         next,
       )
@@ -241,7 +244,7 @@ describe('PlacementRequestsController', () => {
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
         pageHeading: 'Record and update placement details',
         placementRequests: paginatedResponse.data,
-        crn: undefined,
+        crnOrName: undefined,
         tier: 'A1',
         arrivalDateStart: '2022-01-01',
         arrivalDateEnd: '2022-01-03',
@@ -259,12 +262,12 @@ describe('PlacementRequestsController', () => {
     })
 
     it('should request page numbers and sort options', async () => {
-      const hrefPrefix = `${paths.admin.placementRequests.search({})}?${createQueryString({ crn: 'CRN123' })}&`
+      const hrefPrefix = `${paths.admin.placementRequests.search({})}?${createQueryString({ crnOrName: 'CRN123' })}&`
 
       const requestHandler = placementRequestsController.search()
 
       await requestHandler(
-        { ...request, query: { crn: 'CRN123', page: '2', sortBy: 'expectedArrival', sortDirection: 'desc' } },
+        { ...request, query: { crnOrName: 'CRN123', page: '2', sortBy: 'expectedArrival', sortDirection: 'desc' } },
         response,
         next,
       )
@@ -272,7 +275,7 @@ describe('PlacementRequestsController', () => {
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
         pageHeading: 'Record and update placement details',
         placementRequests: paginatedResponse.data,
-        crn: 'CRN123',
+        crnOrName: 'CRN123',
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix,
@@ -281,7 +284,7 @@ describe('PlacementRequestsController', () => {
       })
       expect(placementRequestService.search).toHaveBeenCalledWith(
         token,
-        { crn: 'CRN123' },
+        { crnOrName: 'CRN123' },
         2,
         'expectedArrival',
         'desc',

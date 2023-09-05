@@ -10,7 +10,7 @@ export default class SearchPage extends ListPage {
   }
 
   enterSearchQuery(searchOptions: PlacementRequestDashboardSearchOptions): void {
-    this.getTextInputByIdAndEnterDetails('crn', searchOptions.crn)
+    this.getTextInputByIdAndEnterDetails('crnOrName', searchOptions.crnOrName)
     this.getSelectInputByIdAndSelectAnEntry('tier', searchOptions.tier)
     this.getTextInputByIdAndEnterDetails('arrivalDateStart', searchOptions.arrivalDateStart)
     this.getTextInputByIdAndEnterDetails('arrivalDateEnd', searchOptions.arrivalDateEnd)

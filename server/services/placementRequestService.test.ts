@@ -88,12 +88,12 @@ describe('placementRequestService', () => {
 
       placementRequestClient.dashboard.mockResolvedValue(response)
 
-      const result = await service.search(token, { crn: 'CRN123' })
+      const result = await service.search(token, { crnOrName: 'CRN123' })
 
       expect(result).toEqual(response)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
-      expect(placementRequestClient.dashboard).toHaveBeenCalledWith({ crn: 'CRN123' }, 1, 'created_at', 'asc')
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith({ crnOrName: 'CRN123' }, 1, 'created_at', 'asc')
     })
 
     it('calls the dashboard method on the placementRequest client with optional search params', async () => {
@@ -104,7 +104,7 @@ describe('placementRequestService', () => {
       placementRequestClient.dashboard.mockResolvedValue(response)
 
       const result = await service.search(token, {
-        crn: 'CRN123',
+        crnOrName: 'CRN123',
         tier: 'A1',
         arrivalDateStart: '2022-01-01',
         arrivalDateEnd: '2022-01-02',
@@ -114,7 +114,7 @@ describe('placementRequestService', () => {
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
       expect(placementRequestClient.dashboard).toHaveBeenCalledWith(
-        { crn: 'CRN123', tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-02' },
+        { crnOrName: 'CRN123', tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-02' },
         1,
         'created_at',
         'asc',
@@ -128,12 +128,12 @@ describe('placementRequestService', () => {
 
       placementRequestClient.dashboard.mockResolvedValue(response)
 
-      const result = await service.search(token, { crn: 'CRN123' }, 2, 'duration', 'desc')
+      const result = await service.search(token, { crnOrName: 'CRN123' }, 2, 'duration', 'desc')
 
       expect(result).toEqual(response)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
-      expect(placementRequestClient.dashboard).toHaveBeenCalledWith({ crn: 'CRN123' }, 2, 'duration', 'desc')
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith({ crnOrName: 'CRN123' }, 2, 'duration', 'desc')
     })
   })
 
