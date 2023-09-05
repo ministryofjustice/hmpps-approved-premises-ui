@@ -5,7 +5,7 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
-import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
+import { convertKeyValuePairToCheckBoxItems, flattenCheckboxInput } from '../../../../utils/formUtils'
 import EsapPlacementScreening, { EsapReasons } from './esapPlacementScreening'
 import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
@@ -46,7 +46,9 @@ export default class EsapPlacementSecreting implements TasklistPage {
       secretingNotes: string
     }>,
     private readonly application: ApprovedPremisesApplication,
-  ) {}
+  ) {
+    this.body.secretingHistory = flattenCheckboxInput(body.secretingHistory)
+  }
 
   previous() {
     return 'esap-placement-screening'

@@ -1,5 +1,5 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
+import { convertKeyValuePairToCheckBoxItems, flattenCheckboxInput } from '../../../../utils/formUtils'
 
 import EsapPlacementScreening, { esapFactors, esapReasons } from './esapPlacementScreening'
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
@@ -7,6 +7,9 @@ import { pageDataFromApplicationOrAssessment } from '../../../utils'
 
 jest.mock('../../../../utils/formUtils')
 jest.mock('../../../utils')
+;(flattenCheckboxInput as jest.MockedFunction<typeof flattenCheckboxInput>).mockImplementation(
+  input => input as Array<string>,
+)
 
 describe('EsapPlacementScreening', () => {
   const person = personFactory.build({ name: 'John Wayne' })
