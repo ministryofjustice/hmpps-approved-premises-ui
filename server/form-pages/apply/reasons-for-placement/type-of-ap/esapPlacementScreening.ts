@@ -2,7 +2,7 @@ import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 
 import TasklistPage from '../../../tasklistPage'
-import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
+import { convertKeyValuePairToCheckBoxItems, flattenCheckboxInput } from '../../../../utils/formUtils'
 import { Page } from '../../../utils/decorators'
 import EsapExceptionalCase from './esapExceptionalCase'
 import { pageDataFromApplicationOrAssessment } from '../../../utils'
@@ -42,7 +42,10 @@ export default class EsapPlacementScreening implements TasklistPage {
   constructor(
     public body: Partial<{ esapReasons: Array<keyof EsapReasons>; esapFactors: Array<keyof EsapFactors> }>,
     private readonly application: ApprovedPremisesApplication,
-  ) {}
+  ) {
+    this.body.esapFactors = flattenCheckboxInput(body.esapFactors)
+    this.body.esapReasons = flattenCheckboxInput(body.esapReasons)
+  }
 
   previous() {
     if (Object.keys(pageDataFromApplicationOrAssessment(EsapExceptionalCase, this.application)).length) {

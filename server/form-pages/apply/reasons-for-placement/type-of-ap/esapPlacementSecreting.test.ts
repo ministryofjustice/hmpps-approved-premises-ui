@@ -1,11 +1,16 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
+import { convertKeyValuePairToCheckBoxItems, flattenCheckboxInput } from '../../../../utils/formUtils'
 
 import EsapPlacementSecreting, { secretingHistory } from './esapPlacementSecreting'
 import { applicationFactory, personFactory } from '../../../../testutils/factories'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
-jest.mock('../../../../utils/formUtils')
+jest.mock('../../../../utils/formUtils', () => {
+  return {
+    flattenCheckboxInput: jest.fn(arg => arg),
+    convertKeyValuePairToCheckBoxItems: jest.fn(),
+  }
+})
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact', () => {
   return { retrieveQuestionResponseFromFormArtifact: jest.fn(() => []) }
 })
@@ -24,6 +29,7 @@ describe('EsapPlacementSecreting', () => {
         application,
       )
 
+      expect(flattenCheckboxInput).toHaveBeenCalledWith(['radicalisationLiterature'])
       expect(page.body).toEqual({
         secretingHistory: ['radicalisationLiterature'],
         secretingIntelligence: 'yes',
