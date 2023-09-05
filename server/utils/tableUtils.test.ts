@@ -1,6 +1,6 @@
 import { placementRequestTaskFactory, taskFactory, tierEnvelopeFactory } from '../testutils/factories'
 import { tierBadge } from './personUtils'
-import { crnCell, nameCell, tierCell } from './tableUtils'
+import { crnCell, emailCell, nameCell, tierCell } from './tableUtils'
 
 describe('tableUtils', () => {
   describe('nameCell', () => {
@@ -23,6 +23,12 @@ describe('tableUtils', () => {
       const task = placementRequestTaskFactory.build({ tier })
 
       expect(tierCell(task)).toEqual({ html: tierBadge('A1') })
+    })
+  })
+
+  describe('emailCell', () => {
+    it('returns the email cell for the item', () => {
+      expect(emailCell({ email: 'test' })).toEqual({ text: 'test' })
     })
   })
 })

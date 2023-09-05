@@ -175,8 +175,10 @@ export default {
   },
   users: {
     index: usersPath,
+    search: usersPath.path('search'),
     show: usersPath.path(':id'),
     profile: path('/profile'),
+    update: usersPath.path(':id'),
   },
   reports: {
     lostBeds: {

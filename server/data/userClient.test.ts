@@ -166,4 +166,61 @@ describeClient('UserClient', provider => {
       expect(output).toEqual(users)
     })
   })
+
+  describe('updateUser', () => {
+    it('should update a user', async () => {
+      const user = userFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to update a user',
+        withRequest: {
+          method: 'PUT',
+          path: paths.users.update({ id: user.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+          body: user,
+        },
+        willRespondWith: {
+          status: 200,
+          body: user,
+        },
+      })
+
+      const output = await userClient.updateUser(user)
+      expect(output).toEqual(user)
+    })
+  })
+
+  describe('search', () => {
+    it('should search for a user', async () => {
+      const users = userFactory.buildList(1)
+      const name = 'name'
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to search for a user',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.search({}),
+          query: {
+            name,
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+        },
+      })
+
+      const output = await userClient.search(name)
+      expect(output).toEqual(users)
+    })
+  })
 })

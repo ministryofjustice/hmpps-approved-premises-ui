@@ -3,7 +3,8 @@ import {
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
 } from '@approved-premises/api'
-import { stubFor } from '../../wiremock'
+import QueryString from 'qs'
+import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
 
 const stubFindUser = (args: { user: User; id: string }) =>
@@ -56,4 +57,42 @@ const stubUsers = (args: {
   })
 }
 
-export default { stubFindUser, stubUsers }
+const stubUserUpdate = (args: { user: User }) =>
+  stubFor({
+    request: {
+      method: 'PUT',
+      urlPattern: paths.users.update({ id: args.user.id }),
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: args.user,
+    },
+  })
+
+const stubUserSearch = (args: { results: Array<User>; searchTerm: string }) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      url: `${paths.users.search({})}?${QueryString.stringify({ name: args.searchTerm })}`,
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: args.results,
+    },
+  })
+
+const verifyUserUpdate = async (userId: string) =>
+  (
+    await getMatchingRequests({
+      method: 'PUT',
+      urlPathPattern: paths.users.update({ id: userId }),
+    })
+  ).body.requests
+
+export default { stubFindUser, stubUsers, stubUserUpdate, stubUserSearch, verifyUserUpdate }

@@ -1,7 +1,7 @@
-import { userDetailsFactory } from '../testutils/factories'
-import { hasRole, sections, sectionsForUser } from './userUtils'
+import { userDetailsFactory } from '../../testutils/factories'
+import { hasRole, sections, sectionsForUser } from './homePageDashboard'
 
-describe('userUtils', () => {
+describe('homePageDashboard', () => {
   describe('hasRole', () => {
     it('returns true when the user has the role', () => {
       const user = userDetailsFactory.build({ roles: ['applicant'] })
@@ -44,6 +44,7 @@ describe('userUtils', () => {
         sections.placementRequests,
         sections.cruDashboard,
         sections.reports,
+        sections.userManagement,
       ])
     })
 
@@ -64,7 +65,14 @@ describe('userUtils', () => {
         sections.placementRequests,
         sections.cruDashboard,
         sections.reports,
+        sections.userManagement,
       ])
+    })
+
+    it('should return the user management section for a user with a role admin role', () => {
+      const user = userDetailsFactory.build({ roles: ['role_admin'] })
+
+      expect(sectionsForUser(user)).toEqual([sections.apply, sections.userManagement])
     })
   })
 })

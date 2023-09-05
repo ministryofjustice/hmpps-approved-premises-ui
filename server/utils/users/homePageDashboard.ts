@@ -1,12 +1,12 @@
 import { ApprovedPremisesUserRole as UserRole } from '@approved-premises/api'
 import { ServiceSection, UserDetails } from '@approved-premises/ui'
 
-import assessPaths from '../paths/assess'
-import applyPaths from '../paths/apply'
-import managePaths from '../paths/manage'
-import taskPaths from '../paths/tasks'
-import matchPaths from '../paths/match'
-import adminPaths from '../paths/admin'
+import assessPaths from '../../paths/assess'
+import applyPaths from '../../paths/apply'
+import managePaths from '../../paths/manage'
+import taskPaths from '../../paths/tasks'
+import matchPaths from '../../paths/match'
+import adminPaths from '../../paths/admin'
 
 export const sections = {
   apply: {
@@ -66,6 +66,14 @@ export const sections = {
     shortTitle: 'Reports',
     href: adminPaths.admin.reports.new({}),
   },
+  userManagement: {
+    id: 'userManagement',
+    title: 'Manage user roles',
+    description:
+      'Manage user roles and permissions. Stop automatic allocations for assessments, matches, and placement requests.',
+    shortTitle: 'Users',
+    href: adminPaths.admin.userManagement.index({}),
+  },
 }
 
 export const hasRole = (user: UserDetails, role: UserRole): boolean => {
@@ -88,6 +96,11 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.placementRequests)
     items.push(sections.cruDashboard)
     items.push(sections.reports)
+    items.push(sections.userManagement)
+  }
+
+  if (hasRole(user, 'role_admin')) {
+    items.push(sections.userManagement)
   }
 
   return items

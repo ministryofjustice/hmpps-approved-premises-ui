@@ -49,4 +49,16 @@ context('Dashboard', () => {
 
     dashboardPage.shouldNotShowCard('assess')
   })
+
+  it('displays the apply and user management services to users with "role_admin"', () => {
+    signInWithRoles(['role_admin'])
+
+    const dashboardPage = DashboardPage.visit()
+
+    dashboardPage.shouldShowCard('apply')
+    dashboardPage.shouldShowCard('userManagement')
+
+    dashboardPage.shouldNotShowCard('assess')
+    dashboardPage.shouldNotShowCard('manage')
+  })
 })

@@ -130,6 +130,9 @@ export type CheckBoxItem =
       text: string
       value: string
       checked?: boolean
+      hint?: {
+        text: string
+      }
     }
   | CheckBoxDivider
 

@@ -1,0 +1,85 @@
+{% extends "../../partials/layout.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList -%}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set mainClasses = "app-container govuk-body assessments--index" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+		text: "Back",
+		href: paths.admin.userManagement.index()
+	}) }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {% include "../../_messages.njk" %}
+
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            <form action="{{ paths.admin.userManagement.update({id: user.id}) }}?_method=PUT" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+                {{
+                govukSummaryList({
+                    rows: UserUtils.userSummaryListItems(user)
+                })
+            }}
+
+                {{ govukCheckboxes({
+                name: "roles",
+                fieldset: {
+                    legend: {
+                    text: "Select role access",
+                    classes: "govuk-fieldset__legend--m"
+                    }
+                },
+                hint: {
+                    text: "Select all that apply"
+                },
+                items: UserUtils.rolesToCheckboxItems(roles, user.roles)
+            }) }}
+
+                {{ govukCheckboxes({
+                name: "allocationPreferences",
+                fieldset: {
+                    legend: {
+                    text: "Stop automatic allocations",
+                    classes: "govuk-fieldset__legend--m"
+                    }
+                },
+                hint: {
+                    html: '<p class="govuk-body govuk-hint">Select all that apply</p><p class="govuk-body govuk-hint">The service automatically allocates assessments and matches according to a user’s role unless they are stopped.</p>'
+                },
+                items: UserUtils.allocationRolesToCheckboxItems(roles, user.roles)
+            }) }}
+
+                {{ govukCheckboxes({
+                name: "qualifications",
+                fieldset: {
+                    legend: {
+                    text: "Select any additional application types",
+                    classes: "govuk-fieldset__legend--m"
+                    }
+                },
+                hint: {
+                    html: '<p class="govuk-body govuk-hint">Assessors and matchers will only be allocated applications they have permission for. Standard applications will be assigned to all assessors and matchers.</p>
+                        <p class="govuk-body govuk-hint">Select all that apply</p>'
+                },
+                items: UserUtils.userQualificationsToCheckboxItems(qualifications, user.qualifications)
+            }) }}
+
+                {{
+                govukButton({
+                    text: "Save",
+                    type: "submit"
+                })
+            }}
+
+            </div>
+        </div>
+    {% endblock %}

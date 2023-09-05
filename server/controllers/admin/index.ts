@@ -4,6 +4,7 @@ import AdminPlacementRequestsController from './placementRequestsController'
 import PlacementRequestsBookingsController from './placementRequests/bookingsController'
 import PlacementRequestsWithdrawalsController from './placementRequests/withdrawalsController'
 import PlacementRequestUnableToMatchController from './placementRequests/unableToMatchController'
+import UserManagementController from './userManagementController'
 import ReportsController from './reportsController'
 
 import type { Services } from '../../services'
@@ -18,6 +19,7 @@ export const controllers = (services: Services) => {
   const placementRequestWithdrawalsController = new PlacementRequestsWithdrawalsController(placementRequestService)
   const reportsController = new ReportsController(reportService)
   const placementRequestUnableToMatchController = new PlacementRequestUnableToMatchController(placementRequestService)
+  const userManagementController = new UserManagementController(services.userService)
 
   return {
     adminPlacementRequestsController,
@@ -25,6 +27,7 @@ export const controllers = (services: Services) => {
     placementRequestWithdrawalsController,
     reportsController,
     placementRequestUnableToMatchController,
+    userManagementController,
   }
 }
 

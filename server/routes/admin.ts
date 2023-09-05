@@ -8,7 +8,7 @@ import paths from '../paths/admin'
 import actions from './utils'
 
 export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
-  const { get, post } = actions(router, services.auditService)
+  const { get, post, put } = actions(router, services.auditService)
 
   const {
     adminPlacementRequestsController,
@@ -16,6 +16,7 @@ export default function routes(controllers: Controllers, router: Router, service
     placementRequestWithdrawalsController,
     placementRequestUnableToMatchController,
     reportsController,
+    userManagementController,
   } = controllers
 
   get(paths.admin.placementRequests.index.pattern, adminPlacementRequestsController.index(), {
@@ -84,6 +85,19 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'ADMIN_GENERATE_LOST_BEDS_REPORT_ERROR',
       },
     ],
+  })
+
+  get(paths.admin.userManagement.index.pattern, userManagementController.index(), {
+    auditEvent: 'ADMIN_USER_MANAGEMENT_DASHBOARD',
+  })
+  get(paths.admin.userManagement.show.pattern, userManagementController.edit(), {
+    auditEvent: 'ADMIN_USER_PERMISSIONS_PAGE',
+  })
+  put(paths.admin.userManagement.update.pattern, userManagementController.update(), {
+    auditEvent: 'ADMIN_UPDATE_USER_PERMISSIONS_SUCCESS',
+  })
+  post(paths.admin.userManagement.search.pattern, userManagementController.search(), {
+    auditEvent: 'ADMIN_SEARCH_USERS',
   })
 
   return router
