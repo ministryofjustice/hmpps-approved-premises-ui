@@ -77,6 +77,10 @@ const getReleaseType = (
 ): ReleaseTypeOption => {
   const sentenceType = retrieveQuestionResponse(application, SentenceType, 'sentenceType')
 
+  if (sentenceType === 'nonStatutory') {
+    return 'not_applicable'
+  }
+
   if (sentenceType === 'communityOrder' || sentenceType === 'bailPlacement') {
     return 'in_community'
   }
