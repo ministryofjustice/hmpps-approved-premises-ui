@@ -3,16 +3,16 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PlacementRequestsController from './placementRequestsController'
 
-import { PlacementRequestService } from '../../services'
-import { paginatedResponseFactory, placementRequestFactory } from '../../testutils/factories'
-import placementRequestDetail from '../../testutils/factories/placementRequestDetail'
-import { PaginatedResponse } from '../../@types/ui'
-import { PlacementRequest } from '../../@types/shared'
-import paths from '../../paths/admin'
-import { createQueryString } from '../../utils/utils'
+import { PlacementRequestService } from '../../../services'
+import { paginatedResponseFactory, placementRequestFactory } from '../../../testutils/factories'
+import placementRequestDetail from '../../../testutils/factories/placementRequestDetail'
+import { PaginatedResponse } from '../../../@types/ui'
+import { PlacementRequest } from '../../../@types/shared'
+import paths from '../../../paths/admin'
+import { createQueryString } from '../../../utils/utils'
 
-jest.mock('../../utils/applications/utils')
-jest.mock('../../utils/applications/getResponses')
+jest.mock('../../../utils/applications/utils')
+jest.mock('../../../utils/applications/getResponses')
 
 describe('PlacementRequestsController', () => {
   const token = 'SOME_TOKEN'

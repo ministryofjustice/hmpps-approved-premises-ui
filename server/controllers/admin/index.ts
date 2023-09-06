@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import AdminPlacementRequestsController from './placementRequestsController'
+import AdminPlacementRequestsController from './placementRequests/placementRequestsController'
 import PlacementRequestsBookingsController from './placementRequests/bookingsController'
 import PlacementRequestsWithdrawalsController from './placementRequests/withdrawalsController'
 import PlacementRequestUnableToMatchController from './placementRequests/unableToMatchController'
