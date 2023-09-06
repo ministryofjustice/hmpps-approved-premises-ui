@@ -37,5 +37,7 @@ export default class ReportPage extends Page {
   shouldShowErrorMessages() {
     cy.get('.govuk-error-summary').should('contain', 'You must choose a month and year')
     cy.get(`[data-cy-error-date]`).should('contain', 'You must choose a month and year')
+    cy.get('.govuk-error-summary').should('contain', 'You must choose a report type')
+    cy.get(`[data-cy-error-reporttype]`).should('contain', 'You must choose a report type')
   }
 }

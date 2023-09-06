@@ -26,9 +26,22 @@ export default class ReportsController {
       try {
         const { month, year, reportType } = req.body
 
+        if ((!month || !year) && !reportType) {
+          throw new ValidationError({
+            date: 'You must choose a month and year',
+            reportType: 'You must choose a report type',
+          })
+        }
+
         if (!month || !year) {
           throw new ValidationError({
             date: 'You must choose a month and year',
+          })
+        }
+
+        if (!reportType) {
+          throw new ValidationError({
+            reportType: 'You must choose a report type',
           })
         }
 

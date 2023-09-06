@@ -74,7 +74,8 @@ describe('withdrawalsController', () => {
       )
     })
 
-    it('redirects with errors if year and month is blank', async () => {
+    it('redirects with a date error if year and month is blank', async () => {
+      request.body.reportType = 'lostBeds'
       const requestHandler = reportsController.create()
 
       await requestHandler(request, response, next)
@@ -89,6 +90,48 @@ describe('withdrawalsController', () => {
       const errorData = (catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
       expect(errorData).toEqual({
+        date: 'You must choose a month and year',
+      })
+    })
+
+    it('redirects with a reportType error if reportType is blank', async () => {
+      request.body.month = '12'
+      request.body.year = '2023'
+
+      const requestHandler = reportsController.create()
+
+      await requestHandler(request, response, next)
+
+      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new ValidationError({}),
+        paths.admin.reports.new({}),
+      )
+
+      const errorData = (catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+      expect(errorData).toEqual({
+        reportType: 'You must choose a report type',
+      })
+    })
+
+    it('redirects with reportType and date errors if both are blank', async () => {
+      const requestHandler = reportsController.create()
+
+      await requestHandler(request, response, next)
+
+      expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
+        request,
+        response,
+        new ValidationError({}),
+        paths.admin.reports.new({}),
+      )
+
+      const errorData = (catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
+
+      expect(errorData).toEqual({
+        reportType: 'You must choose a report type',
         date: 'You must choose a month and year',
       })
     })
