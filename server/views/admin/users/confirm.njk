@@ -1,0 +1,41 @@
+{% extends "../../partials/layout.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList -%}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set mainClasses = "app-container govuk-body assessments--index" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+		text: "Back",
+		href: paths.admin.userManagement.searchDelius()
+	}) }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+            {{
+                govukSummaryList({
+                    rows: UserUtils.userSummaryListItems(user)
+                })
+            }}
+            <p class="govuk-body">If you’ve entered the wrong username, go back to search for a different user.</p>
+            <div class="govuk-button-group">
+                {{
+                govukButton({
+                    text: "Continue",
+                    href: paths.admin.userManagement.edit({id: user.id})
+                })
+            }}
+
+                <a class="govuk-link" href="{{paths.admin.userManagement.new({})}}">Back to search</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

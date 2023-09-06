@@ -178,6 +178,7 @@ export default {
   users: {
     index: usersPath,
     search: usersPath.path('search'),
+    searchDelius: usersPath.path('delius'),
     show: usersPath.path(':id'),
     profile: path('/profile'),
     update: usersPath.path(':id'),

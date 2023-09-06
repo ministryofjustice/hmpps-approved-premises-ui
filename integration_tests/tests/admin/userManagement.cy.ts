@@ -1,6 +1,8 @@
 import paths from '../../../server/paths/admin'
 import { userFactory } from '../../../server/testutils/factories'
+import ConfirmUserDetailsPage from '../../pages/admin/userManagement/confirmUserDetailsPage'
 import ListPage from '../../pages/admin/userManagement/listPage'
+import SearchDeliusPage from '../../pages/admin/userManagement/searchDeliusPage'
 import ShowPage from '../../pages/admin/userManagement/showPage'
 import Page from '../../pages/page'
 
@@ -98,5 +100,37 @@ context('User management', () => {
 
     // Then the page should show the results
     page.shouldShowUsers(usersForResults)
+  })
+
+  it('enables adding a user from Delius', () => {
+    const users = userFactory.buildList(10)
+
+    cy.task('stubUsers', { users })
+    // Given I am on the list page
+    const listPage = ListPage.visit()
+
+    // When I click the add user button
+    listPage.clickAddUser()
+
+    // Then I am taken to the add user page
+    const searchDeliusPage = Page.verifyOnPage(SearchDeliusPage)
+    searchDeliusPage.checkForBackButton(paths.admin.userManagement.index({}))
+
+    // When I search for a user
+    const newUser = userFactory.build()
+    cy.task('stubDeliusUserSearch', { result: newUser, searchTerm: newUser.deliusUsername })
+    searchDeliusPage.searchForUser(newUser.deliusUsername)
+
+    // Then I should be taken to the confirm details of the new user page
+    const confirmationPage = Page.verifyOnPage(ConfirmUserDetailsPage)
+    confirmationPage.checkForBackButton(paths.admin.userManagement.searchDelius({}))
+    confirmationPage.shouldShowUserDetails(newUser)
+
+    // When I click 'continue'
+    cy.task('stubFindUser', { user: newUser, id: newUser.id })
+    confirmationPage.clickContinue()
+
+    // Then I should be taken to the user management dashboard
+    Page.verifyOnPage(ShowPage)
   })
 })

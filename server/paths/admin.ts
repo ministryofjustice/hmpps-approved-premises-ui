@@ -40,6 +40,8 @@ export default {
       edit: userManagementPath.path(':id'),
       update: userManagementPath.path(':id'),
       search: userManagementPath.path('search'),
+      searchDelius: userManagementPath.path('search/delius'),
+      new: userManagementPath.path('new'),
     },
   },
 }

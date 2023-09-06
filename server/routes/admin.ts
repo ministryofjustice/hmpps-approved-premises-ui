@@ -17,6 +17,7 @@ export default function routes(controllers: Controllers, router: Router, service
     placementRequestUnableToMatchController,
     reportsController,
     userManagementController,
+    deliusUserController,
   } = controllers
 
   get(paths.admin.placementRequests.index.pattern, adminPlacementRequestsController.index(), {
@@ -90,7 +91,13 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.admin.userManagement.index.pattern, userManagementController.index(), {
     auditEvent: 'ADMIN_USER_MANAGEMENT_DASHBOARD',
   })
+  get(paths.admin.userManagement.new.pattern, deliusUserController.new(), {
+    auditEvent: 'ADMIN_DELIUS_SEARCH_FOR_USER',
+  })
   get(paths.admin.userManagement.edit.pattern, userManagementController.edit(), {
+    auditEvent: 'ADMIN_USER_PERMISSIONS_PAGE',
+  })
+  post(paths.admin.userManagement.searchDelius.pattern, deliusUserController.search(), {
     auditEvent: 'ADMIN_USER_PERMISSIONS_PAGE',
   })
   put(paths.admin.userManagement.update.pattern, userManagementController.update(), {

@@ -109,4 +109,18 @@ describe('User service', () => {
       expect(userClient.search).toHaveBeenCalledWith(name)
     })
   })
+
+  describe('deliusSearch', () => {
+    it('calls the client method with the query and returns the result', async () => {
+      const user = userFactory.build()
+      const name = 'name'
+      userClient.searchDelius.mockResolvedValue(user)
+
+      const result = await userService.searchDelius(token, name)
+
+      expect(result).toEqual(user)
+
+      expect(userClient.searchDelius).toHaveBeenCalledWith(name)
+    })
+  })
 })

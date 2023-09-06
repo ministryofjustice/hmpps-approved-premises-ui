@@ -43,4 +43,8 @@ export default class UserClient {
   search(name: string): Promise<Array<User>> {
     return this.restClient.get({ path: paths.users.search({}), query: { name } }) as Promise<Array<User>>
   }
+
+  searchDelius(deliusUsername: string): Promise<User> {
+    return this.restClient.get({ path: paths.users.searchDelius({}), query: { name: deliusUsername } }) as Promise<User>
+  }
 }

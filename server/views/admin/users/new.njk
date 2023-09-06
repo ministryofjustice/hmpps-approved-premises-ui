@@ -1,0 +1,50 @@
+{% extends "../../partials/layout.njk" %}
+
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+
+{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set mainClasses = "app-container govuk-body assessments--index" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+		text: "Back",
+		href: paths.admin.userManagement.index({})
+	}) }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+            <form action="{{ paths.admin.userManagement.searchDelius({}) }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+                {{ govukInput({
+                                label: {
+                                    text: "Search for a person",
+                                    classes: "govuk-label--m"
+                                },
+                                id: 'search-by-delius-username',
+                                hint: {
+                                    text: "Enter the person's nDelius username"
+                                },
+                                name: "username",
+                                value: username,
+                                errorMessage: errors.username
+
+                }) }}
+
+                {{ govukButton({
+                                text: "Search",
+                                type: "submit"
+                }) }}
+
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

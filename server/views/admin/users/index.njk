@@ -18,7 +18,16 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+            <div>
+                <h1 class="govuk-heading-l govuk-grid-column-three-quarters">{{ pageHeading }}</h1>
+
+                {{ govukButton({
+                                text: "Add new user",
+                                href: paths.admin.userManagement.new({}),
+                                classes: "govuk-grid-column-one-quarter"
+                }) }}
+
+            </div>
 
             <form action="{{ paths.admin.userManagement.search({}) }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}">
