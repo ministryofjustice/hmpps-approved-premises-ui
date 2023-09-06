@@ -34,14 +34,14 @@ export const sections = {
   workflow: {
     id: 'workflow',
     title: 'Manage case allocations',
-    description: 'Re-allocate cases to be assessed or matched to manage staff workloads.',
+    description: 'Re-allocate cases to be assessed or matched to manage staff workloads',
     shortTitle: 'Workflow',
     href: taskPaths.tasks.index({}),
   },
   match: {
     id: 'match',
     title: 'Match people to Approved Premises placements',
-    description: "Allocate cases to suitable Approved Premises based on a person's needs.",
+    description: "Allocate cases to suitable Approved Premises based on a person's needs",
     shortTitle: 'Match',
     href: matchPaths.placementRequests.index({}),
   },
