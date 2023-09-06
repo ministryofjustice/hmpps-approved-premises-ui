@@ -24,7 +24,14 @@ export default class ReportsController {
   create(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       try {
-        const { month, year } = req.body
+        const { month, year, reportType } = req.body
+
+        if ((!month || !year) && !reportType) {
+          throw new ValidationError({
+            date: 'You must choose a month and year',
+            reportType: 'You must choose a report type',
+          })
+        }
 
         if (!month || !year) {
           throw new ValidationError({
@@ -32,7 +39,13 @@ export default class ReportsController {
           })
         }
 
-        return this.reportsService.getReport(req.user.token, month, year, res)
+        if (!reportType) {
+          throw new ValidationError({
+            reportType: 'You must choose a report type',
+          })
+        }
+
+        return await this.reportsService.getReport(req.user.token, month, year, reportType, res)
       } catch (err) {
         return catchValidationErrorOrPropogate(req, res, err, paths.admin.reports.new({}))
       }

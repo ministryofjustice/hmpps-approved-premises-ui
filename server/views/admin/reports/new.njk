@@ -6,6 +6,7 @@
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
@@ -20,6 +21,27 @@
 
       <form action="{{ paths.admin.reports.create() }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+        {{ govukRadios({
+              name: "reportType",
+              fieldset: {
+                  legend: {
+                      text: "Report type",
+                      classes: "govuk-fieldset__legend--m"
+                  }
+              },
+              items: [
+                  {
+                    value: "applications",
+                    text: "Applications"
+                  },
+                  {
+                    value: "lostBeds",
+                    text: "Lost beds"
+                  }
+              ],
+              errorMessage: errors.reportType
+          }) }}
 
         <div class="govuk-form-group {% if errors.date %} govuk-form-group--error {% endif %}" id="date">
           <div class="govuk-grid-row">
@@ -62,7 +84,7 @@
 
         {{ govukButton({
             name: 'submit',
-            text: "Download lost beds data"
+            text: "Download data"
         }) }}
       </form>
 

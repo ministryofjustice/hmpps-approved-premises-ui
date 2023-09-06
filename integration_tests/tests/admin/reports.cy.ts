@@ -10,11 +10,11 @@ context('Reports', () => {
     cy.signIn()
   })
 
-  it('allows me to download a report', () => {
+  it('allows me to download a lost beds report', () => {
     // Given there is a report available
     const month = '8'
     const year = '2023'
-    cy.task('stubReport', { month, year })
+    cy.task('stubLostBedsReport', { month, year })
 
     // When I visit the report page
     const page = ReportPage.visit()
@@ -27,7 +27,24 @@ context('Reports', () => {
     page.shouldHaveDownloadedFile(month, year)
   })
 
-  it(`shows errors when I don't select a date`, () => {
+  it('allows me to download an applications report', () => {
+    // Given there is a report available
+    const month = '8'
+    const year = '2023'
+    cy.task('stubApplicationsReport', { month, year })
+
+    // When I visit the report page
+    const page = ReportPage.visit()
+
+    // And I download an applications beds report
+    page.expectDownload()
+    page.downloadApplicationsReport('8', '2023')
+
+    // Then the report should be downloaded
+    page.shouldHaveDownloadedFile(month, year)
+  })
+
+  it(`shows errors when I don't select a date or report type`, () => {
     // When I visit the report page
     const page = ReportPage.visit()
 
