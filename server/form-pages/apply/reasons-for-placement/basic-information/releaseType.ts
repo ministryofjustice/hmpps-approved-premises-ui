@@ -14,7 +14,7 @@ type ReducedReleaseTypes = keyof ReducedReleaseTypeOptions
 
 type SentenceTypeResponse = Extract<SentenceTypesT, 'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life'>
 
-const { in_community: _, ...releaseTypes } = allReleaseTypes
+const { in_community: _, not_applicable: __, ...releaseTypes } = allReleaseTypes
 
 @Page({ name: 'release-type', bodyProperties: ['releaseType'] })
 export default class ReleaseType implements TasklistPage {

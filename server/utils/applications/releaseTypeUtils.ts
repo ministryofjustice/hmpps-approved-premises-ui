@@ -6,4 +6,5 @@ export const allReleaseTypes: ReleaseTypeOptions = {
   hdc: 'Home detention curfew (HDC)',
   pss: 'Post Sentence Supervision (PSS)',
   in_community: 'In Community',
+  not_applicable: 'Not Applicable',
 }
