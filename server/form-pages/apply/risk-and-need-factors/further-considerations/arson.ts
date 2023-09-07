@@ -1,10 +1,8 @@
 import type { TaskListErrors, YesOrNoWithDetail } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication as Application } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { yesOrNoResponseWithDetailForYes } from '../../../utils'
-import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 export const questionKeys = ['arson'] as const
 
@@ -19,7 +17,7 @@ export default class Arson implements TasklistPage {
   }
 
   questions = {
-    arson: `Does ${nameOrPlaceholderCopy(this.application.person)} ${this.questionPredicates.arson}?`,
+    arson: `Does the person ${this.questionPredicates.arson}?`,
   }
 
   hints = {
@@ -37,10 +35,7 @@ export default class Arson implements TasklistPage {
     },
   }
 
-  constructor(
-    public body: Partial<YesOrNoWithDetail<'arson'>>,
-    private readonly application: Application,
-  ) {}
+  constructor(public body: Partial<YesOrNoWithDetail<'arson'>>) {}
 
   previous() {
     return 'catering'
@@ -60,13 +55,11 @@ export default class Arson implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.arson) {
-      errors.arson = `You must specify if ${nameOrPlaceholderCopy(this.application.person)} poses an arson risk`
+      errors.arson = `You must specify if the person poses an arson risk`
     }
 
     if (this.body.arson === 'yes' && !this.body.arsonDetail) {
-      errors.arsonDetail = `You must specify details if ${nameOrPlaceholderCopy(
-        this.application.person,
-      )} poses an arson risk`
+      errors.arsonDetail = `You must specify details if the person poses an arson risk`
     }
 
     return errors

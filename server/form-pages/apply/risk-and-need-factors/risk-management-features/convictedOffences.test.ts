@@ -1,53 +1,49 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
-import { applicationFactory, personFactory } from '../../../../testutils/factories'
 import ConvictedOffences, { responses } from './convictedOffences'
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
 
 jest.mock('../../../../utils/formUtils')
 
 describe('ConvictedOffences', () => {
-  const person = personFactory.build({ name: 'John Wayne' })
-  const application = applicationFactory.build({ person })
-
   describe('body', () => {
     it('should set the body', () => {
-      const page = new ConvictedOffences({ response: 'yes' }, application)
+      const page = new ConvictedOffences({ response: 'yes' })
 
       expect(page.body).toEqual({ response: 'yes' })
     })
   })
 
-  itShouldHavePreviousValue(new ConvictedOffences({}, application), 'risk-management-features')
+  itShouldHavePreviousValue(new ConvictedOffences({}), 'risk-management-features')
 
   describe('if the response is yes', () => {
-    itShouldHaveNextValue(new ConvictedOffences({ response: 'yes' }, application), 'type-of-convicted-offence')
+    itShouldHaveNextValue(new ConvictedOffences({ response: 'yes' }), 'type-of-convicted-offence')
   })
 
   describe('if the response is no', () => {
-    itShouldHaveNextValue(new ConvictedOffences({ response: 'no' }, application), 'rehabilitative-interventions')
+    itShouldHaveNextValue(new ConvictedOffences({ response: 'no' }), 'rehabilitative-interventions')
   })
 
   describe('errors', () => {
     it('should return an empty object if the response is populated', () => {
-      const page = new ConvictedOffences({ response: 'no' }, application)
+      const page = new ConvictedOffences({ response: 'no' })
       expect(page.errors()).toEqual({})
     })
 
     it('should return an error if the response is not populated', () => {
-      const page = new ConvictedOffences({}, application)
+      const page = new ConvictedOffences({})
       expect(page.errors()).toEqual({
-        response: 'You must specify if John Wayne has been convicted of any of the listed offences',
+        response: 'You must specify if the person has been convicted of any of the listed offences',
       })
     })
   })
 
   describe('response', () => {
     it('should return a translated version of the response', () => {
-      const page = new ConvictedOffences({ response: 'yes' }, application)
+      const page = new ConvictedOffences({ response: 'yes' })
 
       expect(page.response()).toEqual({
-        'Has John Wayne ever been convicted of any arson offences, sexual offences, hate crimes or offences against children?':
+        'Has the person ever been convicted of any arson offences, sexual offences, hate crimes or offences against children?':
           'Yes',
       })
     })
@@ -55,7 +51,7 @@ describe('ConvictedOffences', () => {
 
   describe('items', () => {
     it('calls convertKeyValuePairToRadioItems with the correct args', () => {
-      new ConvictedOffences({ response: 'yes' }, application).items()
+      new ConvictedOffences({ response: 'yes' }).items()
       expect(convertKeyValuePairToRadioItems).toBeCalledWith(responses, 'yes')
     })
   })

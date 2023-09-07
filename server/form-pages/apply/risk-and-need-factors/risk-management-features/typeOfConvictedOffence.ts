@@ -1,10 +1,8 @@
 import type { TaskListErrors } from '@approved-premises/ui'
-import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { convertKeyValuePairToCheckBoxItems } from '../../../../utils/formUtils'
 
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
-import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 export const offences = {
   arson: 'Arson offences',
@@ -21,12 +19,9 @@ type RawTypeOfConvictedOffenceBody = { offenceConvictions?: RawOffences }
 
 @Page({ name: 'type-of-convicted-offence', bodyProperties: ['offenceConvictions'] })
 export default class TypeOfConvictedOffence implements TasklistPage {
-  title = `What type of offending has ${nameOrPlaceholderCopy(this.application.person)} been convicted of?`
+  title = `What type of offending has the person been convicted of?`
 
-  constructor(
-    private _body: RawTypeOfConvictedOffenceBody,
-    private readonly application: ApprovedPremisesApplication,
-  ) {}
+  constructor(private _body: RawTypeOfConvictedOffenceBody) {}
 
   public get body(): TypeOfConvictedOffenceBody {
     return this._body as TypeOfConvictedOffenceBody

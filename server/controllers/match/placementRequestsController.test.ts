@@ -7,7 +7,6 @@ import PlacementRequestsController from './placementRequestsController'
 import { ApplicationService, PlacementApplicationService, PlacementRequestService, TaskService } from '../../services'
 import {
   applicationFactory,
-  personFactory,
   placementApplicationFactory,
   placementRequestDetailFactory,
 } from '../../testutils/factories'
@@ -65,8 +64,7 @@ describe('PlacementRequestsController', () => {
 
   describe('show', () => {
     it('should render the show template', async () => {
-      const person = personFactory.build({ name: 'John Wayne' })
-      const placementRequestDetail = placementRequestDetailFactory.build({ person })
+      const placementRequestDetail = placementRequestDetailFactory.build()
 
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequestDetail)
 
@@ -75,7 +73,7 @@ describe('PlacementRequestsController', () => {
       await requestHandler({ ...request, params: { id: placementRequestDetail.id } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/show', {
-        pageHeading: 'Matching information for John Wayne',
+        pageHeading: 'Matching information',
         placementRequest: placementRequestDetail,
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, placementRequestDetail.id)

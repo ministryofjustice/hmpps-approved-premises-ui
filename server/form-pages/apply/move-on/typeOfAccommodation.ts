@@ -1,10 +1,8 @@
 import type { TaskListErrors } from '@approved-premises/ui'
-import { ApprovedPremisesApplication } from '../../../@types/shared'
 import { convertKeyValuePairToRadioItems } from '../../../utils/formUtils'
 import { Page } from '../../utils/decorators'
 
 import TasklistPage from '../../tasklistPage'
-import { nameOrPlaceholderCopy } from '../../../utils/personUtils'
 
 export const accommodationType = {
   ownAccommodation: 'Own accommodation',
@@ -30,16 +28,11 @@ type TypeOfAccommodationBody = {
 export default class TypeOfAccommodation implements TasklistPage {
   title = 'Placement duration and move on'
 
-  question = `What type of accommodation will ${nameOrPlaceholderCopy(
-    this.application.person,
-  )} have when they leave the AP?`
+  question = `What type of accommodation will the person have when they leave the AP?`
 
   otherQuestion = accommodationType.other
 
-  constructor(
-    public body: Partial<TypeOfAccommodationBody>,
-    private readonly application: ApprovedPremisesApplication,
-  ) {}
+  constructor(public body: Partial<TypeOfAccommodationBody>) {}
 
   previous() {
     return 'plans-in-place'

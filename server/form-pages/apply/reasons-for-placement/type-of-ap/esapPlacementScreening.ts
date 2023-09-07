@@ -6,7 +6,6 @@ import { convertKeyValuePairToCheckBoxItems, flattenCheckboxInput } from '../../
 import { Page } from '../../../utils/decorators'
 import EsapExceptionalCase from './esapExceptionalCase'
 import { pageDataFromApplicationOrAssessment } from '../../../utils'
-import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 export const esapReasons = {
   secreting:
@@ -32,7 +31,7 @@ export type EsapFactors = typeof esapFactors
 export default class EsapPlacementScreening implements TasklistPage {
   name = 'esap-placement-screening'
 
-  title = `Why does ${nameOrPlaceholderCopy(this.application.person)} require an enhanced security placement?`
+  title = `Why does the person require an enhanced security placement?`
 
   questions = {
     esapReasons: this.title,
@@ -73,9 +72,7 @@ export default class EsapPlacementScreening implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.esapReasons || !this.body.esapReasons.length) {
-      errors.esapReasons = `You must specify why ${nameOrPlaceholderCopy(
-        this.application.person,
-      )} requires an enhanced security placement`
+      errors.esapReasons = `You must specify why the person requires an enhanced security placement`
     }
 
     return errors

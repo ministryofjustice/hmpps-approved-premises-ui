@@ -3,7 +3,6 @@ import { ApplicationService, PlacementApplicationService, PlacementRequestServic
 import paths from '../../paths/placementApplications'
 import { addErrorMessageToFlash } from '../../utils/validation'
 import { getResponses } from '../../utils/applications/getResponses'
-import { nameOrPlaceholderCopy } from '../../utils/personUtils'
 
 export default class PlacementRequestsController {
   constructor(
@@ -29,7 +28,7 @@ export default class PlacementRequestsController {
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
 
       res.render('match/placementRequests/show', {
-        pageHeading: `Matching information for ${nameOrPlaceholderCopy(placementRequest.person)}`,
+        pageHeading: `Matching information`,
         placementRequest,
       })
     }

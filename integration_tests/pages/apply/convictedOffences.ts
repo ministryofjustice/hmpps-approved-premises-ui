@@ -2,12 +2,11 @@ import { ApprovedPremisesApplication } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
-import { nameOrPlaceholderCopy } from '../../../server/utils/personUtils'
 
 export default class ConvictedOffences extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
     super(
-      `Has ${nameOrPlaceholderCopy(application.person)} ever been convicted of the following offences?`,
+      `Has the person ever been convicted of the following offences?`,
       application,
       'risk-management-features',
       'convicted-offences',

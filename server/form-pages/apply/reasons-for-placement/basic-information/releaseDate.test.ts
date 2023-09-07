@@ -3,11 +3,10 @@ import { DateFormats } from '../../../../utils/dateUtils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import ReleaseDate from './releaseDate'
-import { applicationFactory, personFactory } from '../../../../testutils/factories'
+import { applicationFactory } from '../../../../testutils/factories'
 
 describe('ReleaseDate', () => {
-  const person = personFactory.build({ name: 'John Wayne' })
-  const application = applicationFactory.build({ person })
+  const application = applicationFactory.build()
 
   describe('body', () => {
     it('should set the body', () => {
@@ -29,14 +28,6 @@ describe('ReleaseDate', () => {
         'releaseDate-day': '3',
         releaseDate: '2022-03-03',
       })
-    })
-  })
-
-  describe('title', () => {
-    it('shold add the name of the person', () => {
-      const page = new ReleaseDate({}, application, 'previousPage')
-
-      expect(page.title).toEqual('Do you know John Wayne’s release date?')
     })
   })
 

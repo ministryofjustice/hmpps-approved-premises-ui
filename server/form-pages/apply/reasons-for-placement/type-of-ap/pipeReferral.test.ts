@@ -1,31 +1,16 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import PipeReferral from './pipeReferral'
-import { applicationFactory, personFactory, restrictedPersonFactory } from '../../../../testutils/factories'
 
 describe('PipeReferral', () => {
-  const person = personFactory.build({ name: 'John Wayne' })
-  const application = applicationFactory.build({ person })
-
-  describe('title', () => {
-    it('shold add the name of the person', () => {
-      const page = new PipeReferral({}, application)
-
-      expect(page.title).toEqual('Has John Wayne been screened into the Offender Personality Disorder Pathway (OPD)?')
-    })
-  })
-
   describe('body', () => {
     it('should set the body correctly', () => {
-      const page = new PipeReferral(
-        {
-          opdPathway: 'yes',
-          'opdPathwayDate-year': '2022',
-          'opdPathwayDate-month': '3',
-          'opdPathwayDate-day': '3',
-        },
-        application,
-      )
+      const page = new PipeReferral({
+        opdPathway: 'yes',
+        'opdPathwayDate-year': '2022',
+        'opdPathwayDate-month': '3',
+        'opdPathwayDate-day': '3',
+      })
 
       expect(page.body).toEqual({
         opdPathway: 'yes',
@@ -37,95 +22,60 @@ describe('PipeReferral', () => {
     })
   })
 
-  describe('questions', () => {
-    it('should return the questions with the persons name if it is present on the application', () => {
-      const page = new PipeReferral({}, application)
+  itShouldHaveNextValue(new PipeReferral({}), 'pipe-opd-screening')
 
-      expect(page.questions).toEqual({
-        opdPathway: 'Has John Wayne been screened into the Offender Personality Disorder Pathway (OPD)?',
-        opdPathwayDate: "When was John Wayne's last consultation or formulation?",
-      })
-    })
-
-    it('should return the questions with "the person" if the person is restricted', () => {
-      const page = new PipeReferral({}, { ...application, person: restrictedPersonFactory.build() })
-
-      expect(page.questions).toEqual({
-        opdPathway: 'Has the person been screened into the Offender Personality Disorder Pathway (OPD)?',
-        opdPathwayDate: "When was the person's last consultation or formulation?",
-      })
-    })
-  })
-
-  itShouldHaveNextValue(new PipeReferral({}, application), 'pipe-opd-screening')
-
-  itShouldHavePreviousValue(new PipeReferral({}, application), 'ap-type')
+  itShouldHavePreviousValue(new PipeReferral({}), 'ap-type')
 
   describe('errors', () => {
     describe('if opdPathway is yes', () => {
       it('should return an empty object if the date is specified', () => {
-        const page = new PipeReferral(
-          {
-            opdPathway: 'yes',
-            'opdPathwayDate-year': '2022',
-            'opdPathwayDate-month': '3',
-            'opdPathwayDate-day': '3',
-          },
-          application,
-        )
+        const page = new PipeReferral({
+          opdPathway: 'yes',
+          'opdPathwayDate-year': '2022',
+          'opdPathwayDate-month': '3',
+          'opdPathwayDate-day': '3',
+        })
         expect(page.errors()).toEqual({})
       })
 
       it('should return an error if  the date is not populated', () => {
-        const page = new PipeReferral(
-          {
-            opdPathway: 'yes',
-          },
-          application,
-        )
+        const page = new PipeReferral({
+          opdPathway: 'yes',
+        })
         expect(page.errors()).toEqual({ opdPathwayDate: 'You must enter an OPD Pathway date' })
       })
 
       it('should return an error if the date is invalid', () => {
-        const page = new PipeReferral(
-          {
-            opdPathway: 'yes',
-            'opdPathwayDate-year': '99',
-            'opdPathwayDate-month': '99',
-            'opdPathwayDate-day': '99',
-          },
-          application,
-        )
+        const page = new PipeReferral({
+          opdPathway: 'yes',
+          'opdPathwayDate-year': '99',
+          'opdPathwayDate-month': '99',
+          'opdPathwayDate-day': '99',
+        })
         expect(page.errors()).toEqual({ opdPathwayDate: 'The OPD Pathway date is an invalid date' })
       })
     })
 
     it('should return an empty object if opdPathway in no', () => {
-      const page = new PipeReferral(
-        {
-          opdPathway: 'no',
-        },
-        application,
-      )
+      const page = new PipeReferral({
+        opdPathway: 'no',
+      })
       expect(page.errors()).toEqual({})
     })
 
     it('should return an error if the opdPathway field is not populated', () => {
-      const page = new PipeReferral({}, application)
+      const page = new PipeReferral({})
       expect(page.errors()).toEqual({
-        opdPathway: 'You must specify if John Wayne has been screened into the OPD pathway',
+        opdPathway: 'You must specify if the person has been screened into the OPD pathway',
       })
     })
   })
 
   describe('response', () => {
     it('should return a translated version of the response when opdPathway is "no"', () => {
-      const page = new PipeReferral(
-        {
-          opdPathway: 'no',
-        },
-        application,
-      )
+      const page = new PipeReferral({
+        opdPathway: 'no',
+      })
 
       expect(page.response()).toEqual({
         [page.title]: 'No',
@@ -133,19 +83,16 @@ describe('PipeReferral', () => {
     })
 
     it('should return a translated version of the response when opdPathway is "yes"', () => {
-      const page = new PipeReferral(
-        {
-          opdPathway: 'yes',
-          'opdPathwayDate-year': '2022',
-          'opdPathwayDate-month': '11',
-          'opdPathwayDate-day': '11',
-        },
-        application,
-      )
+      const page = new PipeReferral({
+        opdPathway: 'yes',
+        'opdPathwayDate-year': '2022',
+        'opdPathwayDate-month': '11',
+        'opdPathwayDate-day': '11',
+      })
 
       expect(page.response()).toEqual({
         [page.title]: 'Yes',
-        "When was John Wayne's last consultation or formulation?": 'Friday 11 November 2022',
+        "When was the person's last consultation or formulation?": 'Friday 11 November 2022',
       })
     })
   })

@@ -1,15 +1,14 @@
 import { fromPartial } from '@total-typescript/shoehorn'
 import AccessNeedsFurtherQuestions, { AccessNeedsFurtherQuestionsBody } from './accessNeedsFurtherQuestions'
 
-import { applicationFactory, personFactory, restrictedPersonFactory } from '../../../../testutils/factories'
+import { applicationFactory } from '../../../../testutils/factories'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
 
 describe('AccessNeedsFurtherQuestions', () => {
-  const person = personFactory.build({ name: 'John Wayne' })
-  const application = applicationFactory.build({ person })
+  const application = applicationFactory.build()
 
   const expectedDeliveryDate = new Date(2023, 1, 19)
   const body: AccessNeedsFurtherQuestionsBody = {
@@ -34,48 +33,6 @@ describe('AccessNeedsFurtherQuestions', () => {
   describe('title', () => {
     it('should return the title', () => {
       expect(new AccessNeedsFurtherQuestions({}, application).title).toBe('Access, cultural and healthcare needs')
-    })
-  })
-
-  describe('questions', () => {
-    beforeEach(() => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['mobility'])
-    })
-
-    it('if the applications person is a full person', () => {
-      const page = new AccessNeedsFurtherQuestions(body, application)
-      expect(page.questions).toEqual({
-        additionalAdjustments: `Specify any additional details and adjustments required for ${person.name}'s mobility needs`,
-        childRemoved: `Will the child be removed from ${person.name}'s care at birth?`,
-        expectedDeliveryDate: 'What is their expected date of delivery?',
-        healthConditions: `Does ${person.name} have any known health conditions?`,
-        healthConditionsDetail: `Provide details`,
-        isPersonPregnant: `Is ${person.name} pregnant?`,
-        otherPregnancyConsiderations: `Are there any pregnancy related issues relevant to placement?`,
-        otherPregnancyConsiderationsDetail: `Provide details`,
-        prescribedMedication: `Does ${person.name} have any prescribed medication?`,
-        prescribedMedicationDetail: `Provide details`,
-        wheelchair: `Does ${person.name} require the use of a wheelchair?`,
-      })
-    })
-
-    it('if the applications person is a restricted person', () => {
-      const applicationWithRestrictedPerson = { ...application, person: restrictedPersonFactory.build() }
-      const page = new AccessNeedsFurtherQuestions(body, applicationWithRestrictedPerson)
-      expect(page.questions).toEqual({
-        additionalAdjustments:
-          "Specify any additional details and adjustments required for the person's mobility needs",
-        childRemoved: "Will the child be removed from the person's care at birth?",
-        expectedDeliveryDate: 'What is their expected date of delivery?',
-        healthConditions: 'Does the person have any known health conditions?',
-        healthConditionsDetail: 'Provide details',
-        isPersonPregnant: 'Is the person pregnant?',
-        otherPregnancyConsiderations: 'Are there any pregnancy related issues relevant to placement?',
-        otherPregnancyConsiderationsDetail: 'Provide details',
-        prescribedMedication: 'Does the person have any prescribed medication?',
-        prescribedMedicationDetail: 'Provide details',
-        wheelchair: 'Does the person require the use of a wheelchair?',
-      })
     })
   })
 
@@ -129,7 +86,7 @@ describe('AccessNeedsFurtherQuestions', () => {
       const page = new AccessNeedsFurtherQuestions({ ...body, healthConditions: undefined }, application)
 
       expect(page.errors()).toEqual({
-        healthConditions: `You must specify if ${person.name} has any known health conditions`,
+        healthConditions: `You must specify if the person has any known health conditions`,
       })
     })
 
@@ -141,7 +98,7 @@ describe('AccessNeedsFurtherQuestions', () => {
         application,
       )
       expect(page.errors()).toEqual({
-        healthConditionsDetail: `You must provide details of ${person.name}'s health conditions`,
+        healthConditionsDetail: `You must provide details of the person's health conditions`,
       })
     })
 
@@ -150,7 +107,7 @@ describe('AccessNeedsFurtherQuestions', () => {
 
       const page = new AccessNeedsFurtherQuestions({ ...body, isPersonPregnant: undefined }, application)
       expect(page.errors()).toEqual({
-        isPersonPregnant: `You must confirm if ${person.name} is pregnant`,
+        isPersonPregnant: `You must confirm if the person is pregnant`,
       })
     })
 
@@ -213,14 +170,14 @@ describe('AccessNeedsFurtherQuestions', () => {
       const page = new AccessNeedsFurtherQuestions(body, application)
 
       expect(page.response()).toEqual({
-        'Does John Wayne require the use of a wheelchair?': 'Yes',
-        'Does John Wayne have any known health conditions?': 'Yes - Some detail',
-        'Does John Wayne have any prescribed medication?': 'Yes - Some detail',
-        'Is John Wayne pregnant?': 'Yes',
+        'Does the person require the use of a wheelchair?': 'Yes',
+        'Does the person have any known health conditions?': 'Yes - Some detail',
+        'Does the person have any prescribed medication?': 'Yes - Some detail',
+        'Is the person pregnant?': 'Yes',
         'What is their expected date of delivery?': 'Sunday 19 February 2023',
-        "Will the child be removed from John Wayne's care at birth?": 'No',
+        "Will the child be removed from the person's care at birth?": 'No',
         'Are there any pregnancy related issues relevant to placement?': 'Yes - Some detail',
-        "Specify any additional details and adjustments required for John Wayne's pregnancy needs": 'Adjustments',
+        "Specify any additional details and adjustments required for the person's pregnancy needs": 'Adjustments',
       })
     })
 
@@ -230,10 +187,10 @@ describe('AccessNeedsFurtherQuestions', () => {
       const page = new AccessNeedsFurtherQuestions(fromPartial({ ...body, isPersonPregnant: 'no' }), application)
 
       expect(page.response()).toEqual({
-        'Does John Wayne require the use of a wheelchair?': 'Yes',
-        'Does John Wayne have any known health conditions?': 'Yes - Some detail',
-        'Does John Wayne have any prescribed medication?': 'Yes - Some detail',
-        "Specify any additional details and adjustments required for John Wayne's mobility needs": 'Adjustments',
+        'Does the person require the use of a wheelchair?': 'Yes',
+        'Does the person have any known health conditions?': 'Yes - Some detail',
+        'Does the person have any prescribed medication?': 'Yes - Some detail',
+        "Specify any additional details and adjustments required for the person's mobility needs": 'Adjustments',
       })
     })
   })

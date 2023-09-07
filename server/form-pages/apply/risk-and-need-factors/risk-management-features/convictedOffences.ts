@@ -1,11 +1,9 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
-import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
 import { lowerCase, sentenceCase } from '../../../../utils/utils'
 
 import TasklistPage from '../../../tasklistPage'
-import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 export const responses = {
   yes: 'Yes',
@@ -14,16 +12,13 @@ export const responses = {
 
 @Page({ name: 'convicted-offences', bodyProperties: ['response'] })
 export default class ConvictedOffences implements TasklistPage {
-  title = `Has ${nameOrPlaceholderCopy(this.application.person)} ever been convicted of the following offences?`
+  title = `Has the person ever been convicted of the following offences?`
 
   furtherDetails = `This includes any spent or unspent convictions over their lifetime.`
 
   offences = ['Arson offences', 'Sexual offences', 'Hate crimes', 'Offences against children']
 
-  constructor(
-    public body: { response?: YesOrNo },
-    private readonly application: ApprovedPremisesApplication,
-  ) {}
+  constructor(public body: { response?: YesOrNo }) {}
 
   previous() {
     return 'risk-management-features'
@@ -36,8 +31,7 @@ export default class ConvictedOffences implements TasklistPage {
   response() {
     const offenceList = lowerCase(`${this.offences.slice(0, -1).join(', ')} or ${this.offences.slice(-1)}`)
     return {
-      [`Has ${nameOrPlaceholderCopy(this.application.person)} ever been convicted of any ${offenceList}?`]:
-        sentenceCase(this.body.response),
+      [`Has the person ever been convicted of any ${offenceList}?`]: sentenceCase(this.body.response),
     }
   }
 
@@ -45,9 +39,7 @@ export default class ConvictedOffences implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.response) {
-      errors.response = `You must specify if ${nameOrPlaceholderCopy(
-        this.application.person,
-      )} has been convicted of any of the listed offences`
+      errors.response = `You must specify if the person has been convicted of any of the listed offences`
     }
 
     return errors

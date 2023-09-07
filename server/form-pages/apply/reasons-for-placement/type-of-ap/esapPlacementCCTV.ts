@@ -7,7 +7,6 @@ import { convertToTitleCase } from '../../../../utils/utils'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import { convertKeyValuePairToCheckBoxItems, flattenCheckboxInput } from '../../../../utils/formUtils'
 import EsapPlacementScreening, { EsapReasons } from './esapPlacementScreening'
-import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 export const cctvHistory = {
   appearance: 'Changed their appearance or clothing to offend',
@@ -29,14 +28,10 @@ export default class EsapPlacementCCTV implements TasklistPage {
   title = 'Enhanced CCTV Provision'
 
   questions = {
-    cctvHistory: `Which behaviours has ${nameOrPlaceholderCopy(
-      this.application.person,
-    )} demonstrated that require enhanced CCTV provision to monitor?`,
+    cctvHistory: `Which behaviours has the person demonstrated that require enhanced CCTV provision to monitor?`,
     cctvIntelligence: 'Have partnership agencies requested the sharing of intelligence captured via enhanced CCTV?',
     cctvIntelligenceDetails: 'Provide details',
-    cctvNotes: `Provide any supporting information about why ${nameOrPlaceholderCopy(
-      this.application.person,
-    )} requires enhanced CCTV provision`,
+    cctvNotes: `Provide any supporting information about why the person requires enhanced CCTV provision`,
   }
 
   constructor(
@@ -82,9 +77,7 @@ export default class EsapPlacementCCTV implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.cctvHistory || !this.body.cctvHistory.length) {
-      errors.cctvHistory = `You must specify which behaviours ${nameOrPlaceholderCopy(
-        this.application.person,
-      )} has demonstrated that require enhanced CCTV provision to monitor`
+      errors.cctvHistory = `You must specify which behaviours the person has demonstrated that require enhanced CCTV provision to monitor`
     }
 
     if (!this.body.cctvIntelligence) {

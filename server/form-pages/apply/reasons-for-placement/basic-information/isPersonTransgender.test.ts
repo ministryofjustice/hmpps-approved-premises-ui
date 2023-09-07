@@ -3,61 +3,46 @@ import { YesOrNo } from '@approved-premises/ui'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import IsPersonTransgender from './isPersonTransgender'
-import { applicationFactory, personFactory } from '../../../../testutils/factories'
 
 describe('IsPersonTransgender', () => {
-  const person = personFactory.build({ name: 'John Wayne' })
-  const application = applicationFactory.build({ person })
-
   const body = {
     transgenderOrHasTransgenderHistory: 'yes' as YesOrNo,
   }
 
-  describe('title', () => {
-    it("adds the person's name to the question title", () => {
-      const page = new IsPersonTransgender(body, application)
-
-      expect(page.question).toEqual('Is John Wayne transgender or do they have a transgender history?')
-    })
-  })
-
   describe('body', () => {
     it('should set the body', () => {
-      const page = new IsPersonTransgender(body, application)
+      const page = new IsPersonTransgender(body)
 
       expect(page.body).toEqual(body)
     })
   })
   describe('if the answer is yes', () => {
-    itShouldHaveNextValue(new IsPersonTransgender(body, application), 'complex-case-board')
+    itShouldHaveNextValue(new IsPersonTransgender(body), 'complex-case-board')
   })
 
   describe('if the answer is no', () => {
-    itShouldHaveNextValue(
-      new IsPersonTransgender({ transgenderOrHasTransgenderHistory: 'no' }, application),
-      'end-dates',
-    )
+    itShouldHaveNextValue(new IsPersonTransgender({ transgenderOrHasTransgenderHistory: 'no' }), 'end-dates')
   })
 
-  itShouldHavePreviousValue(new IsPersonTransgender(body, application), 'exception-details')
+  itShouldHavePreviousValue(new IsPersonTransgender(body), 'exception-details')
 
   describe('errors', () => {
     it('should return errors when yes/no questions are blank', () => {
-      const page = new IsPersonTransgender(fromPartial({}), application)
+      const page = new IsPersonTransgender(fromPartial({}))
 
       expect(page.errors()).toEqual({
         transgenderOrHasTransgenderHistory:
-          'You must specify if John Wayne is transgender of if they have a transgender history',
+          'You must specify if the person is transgender of if they have a transgender history',
       })
     })
   })
 
   describe('response', () => {
     it('Returns the full question and answer', () => {
-      const page = new IsPersonTransgender(body, application)
+      const page = new IsPersonTransgender(body)
 
       expect(page.response()).toEqual({
-        'Is John Wayne transgender or do they have a transgender history?': 'Yes',
+        'Is the person transgender or do they have a transgender history?': 'Yes',
       })
     })
   })

@@ -1,45 +1,25 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import RelocationRegion from './relocationRegion'
-import { applicationFactory, personFactory, restrictedPersonFactory } from '../../../testutils/factories'
 
 describe('RelocationRegion', () => {
-  const person = personFactory.build({ name: 'John Wayne' })
-  const application = applicationFactory.build({ person })
-
   describe('title', () => {
-    expect(new RelocationRegion({}, application).title).toBe('Placement duration and move on')
+    expect(new RelocationRegion({}).title).toBe('Placement duration and move on')
   })
 
   describe('body', () => {
     it('should uppercase and set the body', () => {
-      const page = new RelocationRegion({ postcodeArea: 'some code' }, application)
+      const page = new RelocationRegion({ postcodeArea: 'some code' })
       expect(page.body).toEqual({ postcodeArea: 'SOME CODE' })
     })
   })
 
-  describe('question', () => {
-    it('returns the question with the persons name if they are a full person', () => {
-      const page = new RelocationRegion({}, application)
-
-      expect(page.question).toEqual(`Where is ${person.name} most likely to live when they move on from the AP?`)
-    })
-
-    it('returns the question without the persons name if they are a restricted person', () => {
-      const restrictedPersonApplication = applicationFactory.build({ person: restrictedPersonFactory.build() })
-      restrictedPersonApplication.person = restrictedPersonFactory.build()
-      const page = new RelocationRegion({}, restrictedPersonApplication)
-
-      expect(page.question).toEqual('Where is the person most likely to live when they move on from the AP?')
-    })
-  })
-
-  itShouldHaveNextValue(new RelocationRegion({}, application), 'plans-in-place')
-  itShouldHavePreviousValue(new RelocationRegion({}, application), 'placement-duration')
+  itShouldHaveNextValue(new RelocationRegion({}), 'plans-in-place')
+  itShouldHavePreviousValue(new RelocationRegion({}), 'placement-duration')
 
   describe('errors', () => {
     it('returns an error if not passed any input for the postcode', () => {
-      const page = new RelocationRegion({}, application)
+      const page = new RelocationRegion({})
 
       expect(page.errors()).toEqual({
         postcodeArea: 'You must enter a postcode area',
@@ -47,7 +27,7 @@ describe('RelocationRegion', () => {
     })
 
     it('returns an error if passed an invalid postcode', () => {
-      const page = new RelocationRegion({ postcodeArea: 'foo' }, application)
+      const page = new RelocationRegion({ postcodeArea: 'foo' })
 
       expect(page.errors()).toEqual({
         postcodeArea: 'You must enter a valid postcode area',
@@ -56,10 +36,10 @@ describe('RelocationRegion', () => {
   })
 
   describe('response', () => {
-    const page = new RelocationRegion({ postcodeArea: 'XX1 1XX' }, application)
+    const page = new RelocationRegion({ postcodeArea: 'XX1 1XX' })
 
     expect(page.response()).toEqual({
-      'Where is John Wayne most likely to live when they move on from the AP?': 'XX1 1XX',
+      'Where is the person most likely to live when they move on from the AP?': 'XX1 1XX',
     })
   })
 })

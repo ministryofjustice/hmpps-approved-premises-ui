@@ -1,26 +1,19 @@
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
-import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 @Page({ name: 'risk-management-features', bodyProperties: ['manageRiskDetails', 'additionalFeaturesDetails'] })
 export default class RiskManagementFeatures implements TasklistPage {
   title = `How will an Approved Premises (AP) placement support the management of risk?`
 
   questions = {
-    manageRiskDetails: `Describe why an AP placement is needed to manage the risk of ${nameOrPlaceholderCopy(
-      this.application.person,
-    )}`,
+    manageRiskDetails: `Describe why an AP placement is needed to manage the risk of the person`,
     additionalFeaturesDetails:
       'Provide details of any additional measures that will be necessary for the management of risk',
   }
 
-  constructor(
-    public body: { manageRiskDetails?: string; additionalFeaturesDetails?: string },
-    private readonly application: ApprovedPremisesApplication,
-  ) {}
+  constructor(public body: { manageRiskDetails?: string; additionalFeaturesDetails?: string }) {}
 
   previous() {
     return 'dashboard'
@@ -41,9 +34,7 @@ export default class RiskManagementFeatures implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.manageRiskDetails) {
-      errors.manageRiskDetails = `You must describe why an AP placement is needed to manage the risk of ${nameOrPlaceholderCopy(
-        this.application.person,
-      )}`
+      errors.manageRiskDetails = 'You must describe why an AP placement is needed to manage the risk of the person'
     }
 
     return errors

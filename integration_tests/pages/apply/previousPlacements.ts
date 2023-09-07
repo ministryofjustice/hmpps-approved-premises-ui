@@ -2,7 +2,6 @@ import { ApprovedPremisesApplication } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
-import { nameOrPlaceholderCopy } from '../../../server/utils/personUtils'
 
 export default class PreviousPlacementsPage extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
@@ -17,9 +16,7 @@ export default class PreviousPlacementsPage extends ApplyPage {
         page: 'vulnerability',
       }),
     )
-    cy.get('.govuk-form-group').contains(
-      `Has ${nameOrPlaceholderCopy(application.person)} stayed or been offered a placement in an AP before?`,
-    )
+    cy.get('.govuk-form-group').contains(`Has the person stayed or been offered a placement in an AP before?`)
   }
 
   completeForm(): void {
