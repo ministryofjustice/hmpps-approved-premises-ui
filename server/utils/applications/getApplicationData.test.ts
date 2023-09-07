@@ -105,6 +105,23 @@ describe('getApplicationData', () => {
         isEsapApplication: false,
       })
     })
+
+    it('returns not_applicable for a non-statutory application', () => {
+      mockQuestionResponse({ sentenceType: 'nonStatutory', postcodeArea: targetLocation })
+
+      const application = applicationFactory.build()
+
+      expect(getApplicationSubmissionData(application)).toEqual({
+        translatedDocument: application.document,
+        isPipeApplication: false,
+        isWomensApplication: false,
+        releaseType: 'not_applicable',
+        targetLocation,
+        arrivalDate,
+        isEmergencyApplication: true,
+        isEsapApplication: false,
+      })
+    })
   })
 
   describe('getApplicationUpdateData', () => {
