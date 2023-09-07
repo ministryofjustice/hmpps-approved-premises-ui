@@ -73,7 +73,7 @@ describe('UserManagementController', () => {
       await requestHandler(request, response, next)
 
       expect(userService.getUserById).toHaveBeenCalledWith(token, user.id)
-      expect(response.render).toHaveBeenCalledWith('admin/users/show', {
+      expect(response.render).toHaveBeenCalledWith('admin/users/edit', {
         pageHeading: 'Manage permissions',
         user,
         roles,
@@ -118,7 +118,7 @@ describe('UserManagementController', () => {
 
       expect(userService.getUserById).toHaveBeenCalledWith(token, user.id)
       expect(userService.updateUser).toHaveBeenCalledWith(token, updatedUser)
-      expect(response.redirect).toHaveBeenCalledWith(paths.admin.userManagement.show({ id: user.id }))
+      expect(response.redirect).toHaveBeenCalledWith(paths.admin.userManagement.edit({ id: user.id }))
       expect(flash).toHaveBeenCalledWith('success', 'User updated')
     })
   })

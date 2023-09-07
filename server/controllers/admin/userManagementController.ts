@@ -20,7 +20,7 @@ export default class UserController {
     return async (req: Request, res: Response) => {
       const user = await this.userService.getUserById(req.user.token, req.params.id)
 
-      res.render('admin/users/show', { pageHeading: 'Manage permissions', user, roles, qualifications })
+      res.render('admin/users/edit', { pageHeading: 'Manage permissions', user, roles, qualifications })
     }
   }
 
@@ -35,7 +35,7 @@ export default class UserController {
       })
 
       req.flash('success', 'User updated')
-      res.redirect(paths.admin.userManagement.show({ id: user.id }))
+      res.redirect(paths.admin.userManagement.edit({ id: user.id }))
     }
   }
 

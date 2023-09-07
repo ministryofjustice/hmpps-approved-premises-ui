@@ -31,7 +31,7 @@ describe('tableUtils', () => {
       expect(managementDashboardTableRows(users)).toEqual([
         [
           {
-            html: linkTo(paths.admin.userManagement.show, { id: user.id }, { text: user.name }),
+            html: linkTo(paths.admin.userManagement.edit, { id: user.id }, { text: user.name }),
           },
           {
             text: user.roles.map(role => sentenceCase(role)).join(', '),

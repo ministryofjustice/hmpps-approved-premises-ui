@@ -14,7 +14,7 @@ export default class ShowPage extends Page {
   }
 
   static visit(userId: string): ShowPage {
-    cy.visit(paths.admin.userManagement.show({ id: userId }))
+    cy.visit(paths.admin.userManagement.edit({ id: userId }))
     return new ShowPage()
   }
 
