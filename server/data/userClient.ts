@@ -47,4 +47,8 @@ export default class UserClient {
   searchDelius(deliusUsername: string): Promise<User> {
     return this.restClient.get({ path: paths.users.searchDelius({}), query: { name: deliusUsername } }) as Promise<User>
   }
+
+  async delete(id: string): Promise<void> {
+    await this.restClient.delete(paths.users.delete({ id }))
+  }
 }

@@ -2,8 +2,8 @@ import type { Request, Response, TypedRequestHandler } from 'express'
 
 import { qualifications, roles } from '../../utils/users'
 import { UserService } from '../../services'
-import { flattenCheckboxInput } from '../../utils/formUtils'
 import paths from '../../paths/admin'
+import { flattenCheckboxInput } from '../../utils/formUtils'
 
 export default class UserController {
   constructor(private readonly userService: UserService) {}
@@ -44,6 +44,26 @@ export default class UserController {
       const users = await this.userService.search(req.user.token, req.body.name as string)
 
       res.render('admin/users/index', { pageHeading: 'User management dashboard', users, name: req.body.name })
+    }
+  }
+
+  confirmDelete(): TypedRequestHandler<Request, Response> {
+    return async (req: Request, res: Response) => {
+      const user = await this.userService.getUserById(req.user.token, req.params.id)
+
+      res.render('admin/users/confirmDelete', {
+        pageHeading: "Confirm user's access to AP service should be removed",
+        user,
+      })
+    }
+  }
+
+  delete(): TypedRequestHandler<Request, Response> {
+    return async (req: Request, res: Response) => {
+      await this.userService.delete(req.user.token, req.params.id)
+
+      req.flash('success', 'User deleted')
+      res.redirect(paths.admin.userManagement.index({}))
     }
   }
 }

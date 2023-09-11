@@ -58,4 +58,8 @@ export default class ShowPage extends Page {
     this.selectAllocationRoles(allocationRoles)
     this.selectUserQualifications(qualifications)
   }
+
+  clickRemoveAccess(): void {
+    cy.get('a').contains('Remove access').click()
+  }
 }

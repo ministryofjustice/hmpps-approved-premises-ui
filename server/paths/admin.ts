@@ -41,6 +41,8 @@ export default {
       update: userManagementPath.path(':id'),
       search: userManagementPath.path('search'),
       searchDelius: userManagementPath.path('search/delius'),
+      confirmDelete: userManagementPath.path(':id/confirm-delete'),
+      delete: userManagementPath.path(':id/delete'),
       new: userManagementPath.path('new'),
     },
   },

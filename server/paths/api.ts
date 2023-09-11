@@ -182,6 +182,7 @@ export default {
     show: usersPath.path(':id'),
     profile: path('/profile'),
     update: usersPath.path(':id'),
+    delete: usersPath.path(':id'),
   },
   reports: {
     lostBeds: reportsPath.path('lost-beds'),

@@ -1,5 +1,6 @@
 import paths from '../../../server/paths/admin'
 import { userFactory } from '../../../server/testutils/factories'
+import ConfirmDeletionPage from '../../pages/admin/userManagement/confirmDeletionPage'
 import ConfirmUserDetailsPage from '../../pages/admin/userManagement/confirmUserDetailsPage'
 import ListPage from '../../pages/admin/userManagement/listPage'
 import SearchDeliusPage from '../../pages/admin/userManagement/searchDeliusPage'
@@ -142,5 +143,32 @@ context('User management', () => {
 
     // Then I should be taken to the user management dashboard
     Page.verifyOnPage(ShowPage)
+  })
+
+  it('enables deleting a user', () => {
+    const users = userFactory.buildList(10)
+    const userToDelete = users[0]
+    cy.task('stubUsers', { users })
+    cy.task('stubFindUser', { user: userToDelete, id: userToDelete.id })
+
+    // Given I am on a user's permissions page
+    const permissionsPage = ShowPage.visit(userToDelete.id)
+
+    // When I click the delete user button
+    permissionsPage.clickRemoveAccess()
+
+    // Then I should be taken to the confirmation screen
+    const confirmationPage = Page.verifyOnPage(ConfirmDeletionPage)
+    confirmationPage.checkForBackButton(paths.admin.userManagement.edit({ id: userToDelete.id }))
+
+    // When I click 'Remove access'
+    cy.task('stubUserDelete', { id: userToDelete.id })
+    confirmationPage.clickSubmit()
+
+    // Then I should be redirected to the user management dashboard
+    const listPage = Page.verifyOnPage(ListPage)
+
+    // And I should see a message confirming the user has been deleted
+    listPage.shouldShowBanner('User deleted')
   })
 })

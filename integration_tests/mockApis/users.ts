@@ -116,6 +116,20 @@ const stubNotFoundDeliusUserSearch = (args: { searchTerm: string }) =>
     },
   })
 
+const stubUserDelete = (args: { id: string }) =>
+  stubFor({
+    request: {
+      method: 'DELETE',
+      urlPattern: paths.users.delete({ id: args.id }),
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+    },
+  })
+
 const verifyUserUpdate = async (userId: string) =>
   (
     await getMatchingRequests({
@@ -129,6 +143,7 @@ export default {
   stubUsers,
   stubUserUpdate,
   stubUserSearch,
+  stubUserDelete,
   stubDeliusUserSearch,
   stubNotFoundDeliusUserSearch,
   verifyUserUpdate,

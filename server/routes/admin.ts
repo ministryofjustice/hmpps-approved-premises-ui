@@ -8,7 +8,7 @@ import paths from '../paths/admin'
 import actions from './utils'
 
 export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
-  const { get, post, put } = actions(router, services.auditService)
+  const { get, post, put, delete: deleteAction } = actions(router, services.auditService)
 
   const {
     adminPlacementRequestsController,
@@ -97,6 +97,13 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.admin.userManagement.edit.pattern, userManagementController.edit(), {
     auditEvent: 'ADMIN_USER_PERMISSIONS_PAGE',
   })
+  get(paths.admin.userManagement.confirmDelete.pattern, userManagementController.confirmDelete(), {
+    auditEvent: 'ADMIN_USER_DELETION_CONFIRMATION_PAGE',
+  })
+  deleteAction(paths.admin.userManagement.delete.pattern, userManagementController.delete(), {
+    auditEvent: 'ADMIN_USER_DELETION',
+  })
+
   post(paths.admin.userManagement.searchDelius.pattern, deliusUserController.search(), {
     auditEvent: 'ADMIN_USER_PERMISSIONS_PAGE',
   })

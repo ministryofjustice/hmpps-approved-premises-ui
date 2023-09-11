@@ -253,4 +253,28 @@ describeClient('UserClient', provider => {
       expect(output).toEqual(user)
     })
   })
+
+  describe('delete', () => {
+    it('should delete a user', async () => {
+      const user = userFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to delete a user',
+        withRequest: {
+          method: 'DELETE',
+          path: paths.users.delete({ id: user.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      await userClient.delete(user.id)
+    })
+  })
 })

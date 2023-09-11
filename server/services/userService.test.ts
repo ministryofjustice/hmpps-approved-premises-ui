@@ -123,4 +123,14 @@ describe('User service', () => {
       expect(userClient.searchDelius).toHaveBeenCalledWith(name)
     })
   })
+
+  describe('delete', () => {
+    it('calls the client method', () => {
+      const user = userFactory.build()
+
+      userService.delete(token, user.id)
+
+      expect(userClient.delete).toHaveBeenCalledWith(user.id)
+    })
+  })
 })

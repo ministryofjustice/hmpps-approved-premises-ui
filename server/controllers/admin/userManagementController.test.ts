@@ -122,4 +122,36 @@ describe('UserManagementController', () => {
       expect(flash).toHaveBeenCalledWith('success', 'User updated')
     })
   })
+
+  describe('confirmDelete', () => {
+    it('calls the service method to retrieve the user and renders the deletion confirmation page', async () => {
+      const user = userFactory.build()
+      userService.getUserById.mockResolvedValue(user)
+
+      const requestHandler = userManagementController.confirmDelete()
+
+      await requestHandler({ ...request, params: { id: user.id } }, response, next)
+
+      expect(userService.getUserById).toHaveBeenCalledWith(token, user.id)
+      expect(response.render).toHaveBeenCalledWith('admin/users/confirmDelete', {
+        pageHeading: "Confirm user's access to AP service should be removed",
+        user,
+      })
+    })
+  })
+
+  describe('delete', () => {
+    it('calls the service method to retrieve the user and renders the deletion confirmation page', async () => {
+      const flashSpy = jest.fn()
+      const user = userFactory.build()
+
+      const requestHandler = userManagementController.delete()
+
+      await requestHandler({ ...request, params: { id: user.id }, flash: flashSpy }, response, next)
+
+      expect(userService.delete).toHaveBeenCalledWith(token, user.id)
+      expect(flashSpy).toHaveBeenCalledWith('success', 'User deleted')
+      expect(response.redirect).toHaveBeenCalledWith(paths.admin.userManagement.index({}))
+    })
+  })
 })

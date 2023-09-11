@@ -54,4 +54,10 @@ export default class UserService {
 
     return client.searchDelius(query)
   }
+
+  async delete(token: string, id: string): Promise<void> {
+    const client = this.userClientFactory(token)
+
+    await client.delete(id)
+  }
 }
