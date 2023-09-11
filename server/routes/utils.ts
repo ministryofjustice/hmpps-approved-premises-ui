@@ -30,5 +30,12 @@ export default function actions(router: Router, auditService: AuditService) {
           applicationAuthMiddleware(auditMiddleware(handler, auditService, middlewareSpec), middlewareSpec),
         ),
       ),
+    delete: (path: string | Array<string>, handler: RequestHandler, middlewareSpec?: MiddlewareSpec) =>
+      router.delete(
+        path,
+        asyncMiddleware(
+          applicationAuthMiddleware(auditMiddleware(handler, auditService, middlewareSpec), middlewareSpec),
+        ),
+      ),
   }
 }
