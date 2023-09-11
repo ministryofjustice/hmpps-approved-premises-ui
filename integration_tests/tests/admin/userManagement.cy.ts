@@ -116,6 +116,16 @@ context('User management', () => {
     const searchDeliusPage = Page.verifyOnPage(SearchDeliusPage)
     searchDeliusPage.checkForBackButton(paths.admin.userManagement.index({}))
 
+    // When I search for a username that doesn't exist
+    const notFoundSearchTerm = 'user not in delius'
+    cy.task('stubNotFoundDeliusUserSearch', { searchTerm: notFoundSearchTerm })
+    searchDeliusPage.searchForUser(notFoundSearchTerm)
+
+    // Then I should see an error
+    searchDeliusPage.shouldShowErrorMessagesForFields(['username'], {
+      username: 'User not found. Enter the nDelius username as appears on nDelius',
+    })
+
     // When I search for a user
     const newUser = userFactory.build()
     cy.task('stubDeliusUserSearch', { result: newUser, searchTerm: newUser.deliusUsername })

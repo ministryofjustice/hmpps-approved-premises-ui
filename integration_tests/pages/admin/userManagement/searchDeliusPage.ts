@@ -12,7 +12,7 @@ export default class SearchDeliusPage extends Page {
   }
 
   searchForUser(username: string): void {
-    this.getTextInputByIdAndEnterDetails('search-by-delius-username', username)
+    this.clearAndCompleteTextInputById('search-by-delius-username', username)
     this.clickSubmit()
   }
 }

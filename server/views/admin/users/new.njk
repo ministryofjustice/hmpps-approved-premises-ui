@@ -3,6 +3,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
@@ -21,6 +22,8 @@
             <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
             <form action="{{ paths.admin.userManagement.searchDelius({}) }}" method="post">
+                {{ showErrorSummary(errorSummary, errorTitle) }}
+
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}">
 
                 {{ govukInput({
