@@ -7,23 +7,13 @@ import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retr
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
 
 describe('Catering', () => {
-  const person = personFactory.build({ name: 'John Wayne' })
+  const person = personFactory.build({ name: 'the person' })
   const application = applicationFactory.build({ person })
 
   const body = {
     catering: 'no' as const,
     cateringDetail: 'Catering detail',
   }
-
-  describe('title', () => {
-    it("adds the person's name to the question titles", () => {
-      const page = new Catering(body, application)
-
-      expect(page.questions).toEqual({
-        catering: 'Can John Wayne be placed in a self-catered Approved Premises (AP)?',
-      })
-    })
-  })
 
   describe('body', () => {
     it('should set the body', () => {
@@ -54,7 +44,7 @@ describe('Catering', () => {
       const page = new Catering({}, application)
 
       expect(page.errors()).toEqual({
-        catering: 'You must specify if John Wayne can be placed in a self-catered Approved Premises (AP)',
+        catering: 'You must specify if the person can be placed in a self-catered Approved Premises (AP)',
       })
     })
 
@@ -62,7 +52,7 @@ describe('Catering', () => {
       const page = new Catering({ ...body, cateringDetail: '' }, application)
 
       expect(page.errors()).toEqual({
-        cateringDetail: 'You must specify details if you have any concerns about John Wayne catering for themselves',
+        cateringDetail: 'You must specify details if you have any concerns about the person catering for themselves',
       })
     })
   })
@@ -72,7 +62,7 @@ describe('Catering', () => {
       const page = new Catering(body, application)
 
       expect(page.response()).toEqual({
-        'Can John Wayne be placed in a self-catered Approved Premises (AP)?': 'No - Catering detail',
+        'Can the person be placed in a self-catered Approved Premises (AP)?': 'No - Catering detail',
       })
     })
 
@@ -80,7 +70,7 @@ describe('Catering', () => {
       const page = new Catering({ ...body, catering: 'yes' }, application)
 
       expect(page.response()).toEqual({
-        'Can John Wayne be placed in a self-catered Approved Premises (AP)?': 'Yes',
+        'Can the person be placed in a self-catered Approved Premises (AP)?': 'Yes',
       })
     })
   })

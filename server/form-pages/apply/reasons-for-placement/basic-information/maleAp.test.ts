@@ -8,16 +8,6 @@ describe('MaleAp', () => {
     shouldPersonBePlacedInMaleAp: 'yes' as const,
   }
 
-  describe('title', () => {
-    it("adds the person's name to the question titles", () => {
-      const page = new MaleAp(body)
-
-      expect(page.question).toEqual(
-        'Has the Complex Case Board determined that the person should be placed in a male AP?',
-      )
-    })
-  })
-
   describe('body', () => {
     it('should set the body', () => {
       const page = new MaleAp(body)

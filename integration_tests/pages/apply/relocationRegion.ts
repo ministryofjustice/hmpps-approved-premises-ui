@@ -2,7 +2,6 @@ import { ApprovedPremisesApplication } from '@approved-premises/api'
 import paths from '../../../server/paths/apply'
 
 import ApplyPage from './applyPage'
-import { nameOrPlaceholderCopy } from '../../../server/utils/personUtils'
 
 export default class RelocationRegionPage extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
@@ -13,9 +12,7 @@ export default class RelocationRegionPage extends ApplyPage {
       'relocation-region',
       paths.applications.pages.show({ id: application.id, task: 'move-on', page: 'placement-duration' }),
     )
-    cy.get('.govuk-form-group').contains(
-      `Where is ${nameOrPlaceholderCopy(application.person)} most likely to live when they move on from the AP?`,
-    )
+    cy.get('.govuk-form-group').contains(`Where is the person most likely to live when they move on from the AP?`)
   }
 
   completeForm() {

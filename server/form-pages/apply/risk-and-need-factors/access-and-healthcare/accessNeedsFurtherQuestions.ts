@@ -14,7 +14,6 @@ import TasklistPage from '../../../tasklistPage'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import AccessNeeds, { AdditionalNeed, additionalNeeds } from './accessNeeds'
-import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 export type AccessNeedsFurtherQuestionsBody = {
   needsWheelchair: YesOrNo
@@ -48,24 +47,18 @@ export type AccessNeedsFurtherQuestionsBody = {
 export default class AccessNeedsFurtherQuestions implements TasklistPage {
   title = 'Access, cultural and healthcare needs'
 
-  get nameOrPlaceholderCopy() {
-    return nameOrPlaceholderCopy(this.application.person)
-  }
-
   questions = {
-    wheelchair: `Does ${this.nameOrPlaceholderCopy} require the use of a wheelchair?`,
-    healthConditions: `Does ${this.nameOrPlaceholderCopy} have any known health conditions?`,
+    wheelchair: `Does the person require the use of a wheelchair?`,
+    healthConditions: `Does the person have any known health conditions?`,
     healthConditionsDetail: 'Provide details',
-    prescribedMedication: `Does ${this.nameOrPlaceholderCopy} have any prescribed medication?`,
+    prescribedMedication: `Does the person have any prescribed medication?`,
     prescribedMedicationDetail: 'Provide details',
-    isPersonPregnant: `Is ${this.nameOrPlaceholderCopy} pregnant?`,
+    isPersonPregnant: `Is the person pregnant?`,
     expectedDeliveryDate: 'What is their expected date of delivery?',
     otherPregnancyConsiderationsDetail: 'Provide details',
     otherPregnancyConsiderations: 'Are there any pregnancy related issues relevant to placement?',
-    childRemoved: `Will the child be removed from ${this.nameOrPlaceholderCopy}'s care at birth?`,
-    additionalAdjustments: `Specify any additional details and adjustments required for ${nameOrPlaceholderCopy(
-      this.application.person,
-    )}'s ${this.listOfNeeds}`,
+    childRemoved: `Will the child be removed from the person's care at birth?`,
+    additionalAdjustments: `Specify any additional details and adjustments required for the person's ${this.listOfNeeds}`,
   }
 
   yesToPregnancyHealthcareQuestion: boolean = this.answeredYesToPregnancyHealthcareQuestion()
@@ -160,24 +153,24 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
     }
 
     if (!this.body.healthConditions) {
-      errors.healthConditions = `You must specify if ${this.nameOrPlaceholderCopy} has any known health conditions`
+      errors.healthConditions = `You must specify if the person has any known health conditions`
     }
 
     if (this.body.healthConditions === 'yes' && !this.body.healthConditionsDetail) {
-      errors.healthConditionsDetail = `You must provide details of ${this.nameOrPlaceholderCopy}'s health conditions`
+      errors.healthConditionsDetail = `You must provide details of the person's health conditions`
     }
 
     if (!this.body.prescribedMedication) {
-      errors.prescribedMedication = `You must specify if ${this.nameOrPlaceholderCopy} has any prescribed medication`
+      errors.prescribedMedication = `You must specify if the person has any prescribed medication`
     }
 
     if (this.body.prescribedMedication === 'yes' && !this.body.prescribedMedicationDetail) {
-      errors.prescribedMedicationDetail = `You must provide details of ${this.nameOrPlaceholderCopy}'s prescribed medication`
+      errors.prescribedMedicationDetail = `You must provide details of the person's prescribed medication`
     }
 
     if (this.answeredYesToPregnancyHealthcareQuestion()) {
       if (!this.body.isPersonPregnant) {
-        errors.isPersonPregnant = `You must confirm if ${this.nameOrPlaceholderCopy} is pregnant`
+        errors.isPersonPregnant = `You must confirm if the person is pregnant`
       }
 
       if (this.body.isPersonPregnant === 'yes') {

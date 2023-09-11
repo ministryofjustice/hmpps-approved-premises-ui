@@ -40,7 +40,7 @@ describe('EsapPlacementCCTV', () => {
 
   describe('response', () => {
     it('should translate the response correctly', () => {
-      const person = personFactory.build({ name: 'John Wayne' })
+      const person = personFactory.build()
       const page = new EsapPlacementCCTV(
         {
           cctvHistory: ['prisonerAssualt'],
@@ -52,19 +52,19 @@ describe('EsapPlacementCCTV', () => {
       )
 
       expect(page.response()).toEqual({
-        'Which behaviours has John Wayne demonstrated that require enhanced CCTV provision to monitor?': [
+        'Which behaviours has the person demonstrated that require enhanced CCTV provision to monitor?': [
           'Physically assaulted other people in prison',
         ],
         'Have partnership agencies requested the sharing of intelligence captured via enhanced CCTV?': 'Yes',
         'Provide details': 'Some detail',
-        'Provide any supporting information about why John Wayne requires enhanced CCTV provision': 'notes',
+        'Provide any supporting information about why the person requires enhanced CCTV provision': 'notes',
       })
     })
   })
 
   describe('errors', () => {
     beforeEach(() => {
-      const person = personFactory.build({ name: 'John Wayne' })
+      const person = personFactory.build()
       application.person = person
     })
 
@@ -85,7 +85,7 @@ describe('EsapPlacementCCTV', () => {
       const page = new EsapPlacementCCTV({}, application)
       expect(page.errors()).toEqual({
         cctvHistory:
-          'You must specify which behaviours John Wayne has demonstrated that require enhanced CCTV provision to monitor',
+          'You must specify which behaviours the person has demonstrated that require enhanced CCTV provision to monitor',
         cctvIntelligence:
           'You must specify if partnership agencies requested the sharing of intelligence captured via enhanced CCTV',
       })
@@ -95,7 +95,7 @@ describe('EsapPlacementCCTV', () => {
       const page = new EsapPlacementCCTV({ cctvHistory: [], cctvIntelligence: 'no' }, application)
       expect(page.errors()).toEqual({
         cctvHistory:
-          'You must specify which behaviours John Wayne has demonstrated that require enhanced CCTV provision to monitor',
+          'You must specify which behaviours the person has demonstrated that require enhanced CCTV provision to monitor',
       })
     })
 

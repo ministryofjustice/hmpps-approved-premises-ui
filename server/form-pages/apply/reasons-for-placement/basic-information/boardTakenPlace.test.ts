@@ -8,14 +8,6 @@ describe('BoardTakenPlace', () => {
     hasBoardTakenPlace: 'yes' as const,
   }
 
-  describe('title', () => {
-    it("adds the person's name to the question titles", () => {
-      const page = new BoardTakenPlace(body)
-
-      expect(page.question).toEqual('Has the Complex Case Board taken place?')
-    })
-  })
-
   describe('body', () => {
     it('should set the body', () => {
       const page = new BoardTakenPlace(body)

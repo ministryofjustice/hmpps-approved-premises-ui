@@ -1,12 +1,10 @@
 import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
-import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 type PipeReferralBody = ObjectWithDateParts<'opdPathwayDate'> & { opdPathway: YesOrNo }
 
@@ -17,21 +15,14 @@ type PipeReferralBody = ObjectWithDateParts<'opdPathwayDate'> & { opdPathway: Ye
 export default class PipeReferral implements TasklistPage {
   name = 'pipe-referral'
 
-  get nameOrPlaceholderCopy() {
-    return nameOrPlaceholderCopy(this.application.person)
-  }
-
-  title = `Has ${this.nameOrPlaceholderCopy} been screened into the Offender Personality Disorder Pathway (OPD)?`
+  title = `Has the person been screened into the Offender Personality Disorder Pathway (OPD)?`
 
   questions = {
     opdPathway: this.title,
-    opdPathwayDate: `When was ${this.nameOrPlaceholderCopy}'s last consultation or formulation?`,
+    opdPathwayDate: `When was the person's last consultation or formulation?`,
   }
 
-  constructor(
-    private _body: Partial<PipeReferralBody>,
-    private readonly application: ApprovedPremisesApplication,
-  ) {}
+  constructor(private _body: Partial<PipeReferralBody>) {}
 
   public set body(value: Partial<PipeReferralBody>) {
     this._body = {
@@ -79,7 +70,7 @@ export default class PipeReferral implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.opdPathway) {
-      errors.opdPathway = `You must specify if ${this.nameOrPlaceholderCopy} has been screened into the OPD pathway`
+      errors.opdPathway = `You must specify if the person has been screened into the OPD pathway`
     }
 
     if (this.body.opdPathway === 'yes') {

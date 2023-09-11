@@ -2,7 +2,7 @@ import { YesOrNo } from '@approved-premises/ui'
 import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import AdditionalCircumstances from './additionalCircumstances'
-import { applicationFactory, personFactory } from '../../../../testutils/factories'
+import { applicationFactory } from '../../../../testutils/factories'
 import {
   shouldShowContingencyPlanPartnersPages,
   shouldShowContingencyPlanQuestionsPage,
@@ -11,8 +11,7 @@ import {
 jest.mock('../../../../utils/applications/shouldShowContingencyPlanPages')
 
 describe('AdditionalCircumstances', () => {
-  const person = personFactory.build({ name: 'John Wayne' })
-  const application = applicationFactory.build({ person })
+  const application = applicationFactory.build()
 
   const body = {
     additionalCircumstances: 'yes' as YesOrNo,
@@ -21,17 +20,6 @@ describe('AdditionalCircumstances', () => {
 
   beforeEach(() => {
     jest.resetAllMocks()
-  })
-
-  describe('title', () => {
-    it("adds the person's name to the question titles", () => {
-      const page = new AdditionalCircumstances(body, application)
-
-      expect(page.questions).toEqual({
-        additionalCircumstances:
-          'Are there are any additional circumstances that have helped John Wayne do well in the past?',
-      })
-    })
   })
 
   describe('body', () => {
@@ -72,7 +60,7 @@ describe('AdditionalCircumstances', () => {
 
       expect(page.errors()).toEqual({
         additionalCircumstances:
-          'You must specify if John Wayne there are any additional circumstances that have helped them do well in the past',
+          'You must specify if the person there are any additional circumstances that have helped them do well in the past',
       })
     })
 
@@ -90,7 +78,7 @@ describe('AdditionalCircumstances', () => {
       const page = new AdditionalCircumstances(body, application)
 
       expect(page.response()).toEqual({
-        'Are there are any additional circumstances that have helped John Wayne do well in the past?':
+        'Are there are any additional circumstances that have helped the person do well in the past?':
           'Yes - Additional circumstances detail',
       })
     })
@@ -99,7 +87,7 @@ describe('AdditionalCircumstances', () => {
       const page = new AdditionalCircumstances({ ...body, additionalCircumstances: 'no' }, application)
 
       expect(page.response()).toEqual({
-        'Are there are any additional circumstances that have helped John Wayne do well in the past?': 'No',
+        'Are there are any additional circumstances that have helped the person do well in the past?': 'No',
       })
     })
   })

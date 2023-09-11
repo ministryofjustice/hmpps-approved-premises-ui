@@ -1,10 +1,8 @@
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 
 import TasklistPage from '../../../tasklistPage'
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
 import { Page } from '../../../utils/decorators'
-import { nameOrPlaceholderCopy } from '../../../../utils/personUtils'
 
 const apTypes = {
   standard: 'Standard AP',
@@ -17,12 +15,9 @@ export type ApType = keyof ApTypes
 
 @Page({ name: 'ap-type', bodyProperties: ['type'] })
 export default class SelectApType implements TasklistPage {
-  title = `Which type of AP does ${nameOrPlaceholderCopy(this.application.person)} require?`
+  title = `Which type of AP does the person require?`
 
-  constructor(
-    public body: { type?: ApType },
-    private readonly application: ApprovedPremisesApplication,
-  ) {}
+  constructor(public body: { type?: ApType }) {}
 
   previous() {
     return 'dashboard'

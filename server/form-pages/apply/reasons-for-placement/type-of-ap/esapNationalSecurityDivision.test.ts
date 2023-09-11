@@ -1,61 +1,49 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-import { applicationFactory, personFactory } from '../../../../testutils/factories'
 
 import EsapNationalSecurityDivisionBody from './esapNationalSecurityDivision'
 
 describe('EsapNationalSecurityDivisionBody', () => {
-  const person = personFactory.build({ name: 'John Wayne' })
-  const application = applicationFactory.build({ person })
-
   describe('body', () => {
     it('should set the body', () => {
-      const page = new EsapNationalSecurityDivisionBody({ managedByNationalSecurityDivision: 'yes' }, application)
+      const page = new EsapNationalSecurityDivisionBody({ managedByNationalSecurityDivision: 'yes' })
 
       expect(page.body).toEqual({ managedByNationalSecurityDivision: 'yes' })
     })
   })
 
-  describe('title', () => {
-    it("should return a title with the person's name", () => {
-      const page = new EsapNationalSecurityDivisionBody({ managedByNationalSecurityDivision: 'yes' }, application)
-
-      expect(page.title).toEqual('Is John Wayne managed by the National Security Division?')
-    })
-  })
-
-  itShouldHavePreviousValue(new EsapNationalSecurityDivisionBody({}, application), 'ap-type')
+  itShouldHavePreviousValue(new EsapNationalSecurityDivisionBody({}), 'ap-type')
 
   describe('when the person is managed by the national security division', () => {
     itShouldHaveNextValue(
-      new EsapNationalSecurityDivisionBody({ managedByNationalSecurityDivision: 'yes' }, application),
+      new EsapNationalSecurityDivisionBody({ managedByNationalSecurityDivision: 'yes' }),
       'esap-placement-screening',
     )
   })
 
   describe('when the person is not managed by the national security division', () => {
     itShouldHaveNextValue(
-      new EsapNationalSecurityDivisionBody({ managedByNationalSecurityDivision: 'no' }, application),
+      new EsapNationalSecurityDivisionBody({ managedByNationalSecurityDivision: 'no' }),
       'esap-exceptional-case',
     )
   })
 
   describe('errors', () => {
     it('should return an empty object if isExceptionalCase is populated', () => {
-      const page = new EsapNationalSecurityDivisionBody({ managedByNationalSecurityDivision: 'yes' }, application)
+      const page = new EsapNationalSecurityDivisionBody({ managedByNationalSecurityDivision: 'yes' })
       expect(page.errors()).toEqual({})
     })
 
     it('should return an errors if isExceptionalCase is not populated', () => {
-      const page = new EsapNationalSecurityDivisionBody({}, application)
+      const page = new EsapNationalSecurityDivisionBody({})
       expect(page.errors()).toEqual({
-        managedByNationalSecurityDivision: 'You must state if John Wayne is managed by the National Security Division',
+        managedByNationalSecurityDivision: 'You must state if the person is managed by the National Security Division',
       })
     })
   })
 
   describe('response', () => {
     it('should return a translated version of the response', () => {
-      const page = new EsapNationalSecurityDivisionBody({ managedByNationalSecurityDivision: 'yes' }, application)
+      const page = new EsapNationalSecurityDivisionBody({ managedByNationalSecurityDivision: 'yes' })
 
       expect(page.response()).toEqual({
         [page.title]: 'Yes',
