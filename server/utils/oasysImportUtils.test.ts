@@ -260,6 +260,18 @@ describe('OASysImportUtils', () => {
 
       expect(fetchOptionalOasysSections(application)).toEqual([1, 2])
     })
+
+    it('filters out null sections', () => {
+      const application = applicationFactory.build()
+      application.data['oasys-import'] = {
+        'optional-oasys-sections': {
+          needsLinkedToReoffending: [null, null],
+          otherNeeds: [null],
+        },
+      }
+
+      expect(fetchOptionalOasysSections(application)).toEqual([])
+    })
   })
 
   describe('sortOasysImportSummaries', () => {

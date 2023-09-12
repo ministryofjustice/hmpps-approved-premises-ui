@@ -124,9 +124,9 @@ export const fetchOptionalOasysSections = (application: Application): Array<numb
 
     if (!optionalOasysSections) throw new SessionDataError('No optional OASys imports')
 
-    return [...optionalOasysSections.needsLinkedToReoffending, ...optionalOasysSections.otherNeeds].map(
-      (oasysSection: OASysSection) => oasysSection.section,
-    )
+    return [...optionalOasysSections.needsLinkedToReoffending, ...optionalOasysSections.otherNeeds]
+      .map((oasysSection: OASysSection) => oasysSection?.section)
+      .filter(section => !!section)
   } catch (e) {
     throw new SessionDataError(`Oasys supporting information error: ${e}`)
   }
