@@ -4,15 +4,28 @@ import { qualifications, roles } from '../../utils/users'
 import { UserService } from '../../services'
 import paths from '../../paths/admin'
 import { flattenCheckboxInput } from '../../utils/formUtils'
+import { SortDirection, UserSortField } from '../../@types/shared'
 
 export default class UserController {
   constructor(private readonly userService: UserService) {}
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const users = await this.userService.getUsers(req.user.token)
+      const pageNumber = req.query?.page ? Number(req.query.page) : undefined
+      const sortBy = req.query?.sortBy as UserSortField
+      const sortDirection = req.query?.sortDirection as SortDirection
 
-      res.render('admin/users/index', { pageHeading: 'User management dashboard', users })
+      const usersResponse = await this.userService.getUsers(req.user.token, [], [], pageNumber, sortBy, sortDirection)
+
+      res.render('admin/users/index', {
+        pageHeading: 'User management dashboard',
+        users: usersResponse.data,
+        pageNumber: Number(usersResponse.pageNumber),
+        totalPages: Number(usersResponse.totalPages),
+        hrefPrefix: `${paths.admin.userManagement.index({})}?`,
+        sortBy,
+        sortDirection,
+      })
     }
   }
 

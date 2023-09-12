@@ -3,6 +3,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
@@ -56,24 +57,16 @@
                             }) }}
                 </div>
             </form>
-            {{ govukTable({
-                attributes: {
-                    'data-module': 'moj-sortable-table'
-                },
-                firstCellIsHeader: true,
-                head: UserUtils.tableUtils.managementDashboardTableHeader(),
-                rows: UserUtils.tableUtils.managementDashboardTableRows(users)
-            })
+
+            {{
+                govukTable({
+                    firstCellIsHeader: true,
+                    head: UserUtils.tableUtils.managementDashboardTableHeader(sortBy, sortDirection, hrefPrefix),
+                    rows: UserUtils.tableUtils.managementDashboardTableRows(users)
+                })
             }}
 
+            {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
         </div>
     </div>
-{% endblock %}
-
-{% block extraScripts %}
-    <script type="text/javascript" nonce="{{ cspNonce }}">
-        window
-            .MOJFrontend
-            .initAll()
-    </script>
 {% endblock %}

@@ -1,9 +1,11 @@
 import {
+  SortDirection,
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
+  UserSortField,
 } from '@approved-premises/api'
-import { UserDetails } from '@approved-premises/ui'
+import { PaginatedResponse, UserDetails } from '@approved-premises/ui'
 import { RestClientBuilder, UserClient } from '../data'
 import { convertToTitleCase } from '../utils/utils'
 import type HmppsAuthClient from '../data/hmppsAuthClient'
@@ -31,10 +33,13 @@ export default class UserService {
     token: string,
     roles: Array<UserRole> = [],
     qualifications: Array<UserQualification> = [],
-  ): Promise<Array<User>> {
+    page: number = 1,
+    sortBy: UserSortField = 'name',
+    sortDirection: SortDirection = 'asc',
+  ): Promise<PaginatedResponse<User>> {
     const client = this.userClientFactory(token)
 
-    return client.getUsers(roles, qualifications)
+    return client.getUsers(roles, qualifications, page, sortBy, sortDirection)
   }
 
   async updateUser(token: string, user: User): Promise<User> {

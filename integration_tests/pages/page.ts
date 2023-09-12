@@ -362,4 +362,20 @@ export default abstract class Page {
     cy.get('.govuk-error-summary').should('contain', `CRN: ${person.crn} is restricted`)
     cy.get(`[data-cy-error-crn]`).should('contain', `CRN: ${person.crn} is restricted`)
   }
+
+  clickNext(): void {
+    cy.get('a[rel="next"]').click()
+  }
+
+  clickPageNumber(pageNumber: string): void {
+    cy.get('.govuk-pagination__link').contains(pageNumber).click()
+  }
+
+  clickSortBy(field: string): void {
+    cy.get(`th[data-cy-sort-field="${field}"] a`).click()
+  }
+
+  shouldBeSortedByField(field: string, order: string): void {
+    cy.get(`th[data-cy-sort-field="${field}"]`).should('have.attr', 'aria-sort', order)
+  }
 }

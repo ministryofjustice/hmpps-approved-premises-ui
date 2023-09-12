@@ -5,8 +5,10 @@ import { UserService } from '../../services'
 
 import UserManagementController from './userManagementController'
 import { qualifications, roles } from '../../utils/users'
-import { userFactory } from '../../testutils/factories'
+import { paginatedResponseFactory, userFactory } from '../../testutils/factories'
 import paths from '../../paths/admin'
+import { PaginatedResponse } from '../../@types/ui'
+import { ApprovedPremisesUser } from '../../@types/shared'
 
 describe('UserManagementController', () => {
   const token = 'SOME_TOKEN'
@@ -25,19 +27,53 @@ describe('UserManagementController', () => {
   })
 
   describe('index', () => {
+    const hrefPrefix = `${paths.admin.userManagement.index({})}?`
+
     it('renders the index page with all the users', async () => {
       const users = userFactory.buildList(1)
 
-      userService.getUsers.mockResolvedValue(users)
+      const paginatedResponse = paginatedResponseFactory.build({
+        data: users,
+      }) as PaginatedResponse<ApprovedPremisesUser>
+
+      userService.getUsers.mockResolvedValue(paginatedResponse)
 
       const requestHandler = userManagementController.index()
 
       await requestHandler(request, response, next)
 
-      expect(userService.getUsers).toHaveBeenCalledWith(token)
+      expect(userService.getUsers).toHaveBeenCalledWith(token, [], [], undefined, undefined, undefined)
       expect(response.render).toHaveBeenCalledWith('admin/users/index', {
         pageHeading: 'User management dashboard',
         users,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix,
+      })
+    })
+
+    it('passes sort and page parameters', async () => {
+      const users = userFactory.buildList(1)
+
+      const paginatedResponse = paginatedResponseFactory.build({
+        data: users,
+      }) as PaginatedResponse<ApprovedPremisesUser>
+
+      userService.getUsers.mockResolvedValue(paginatedResponse)
+
+      const requestHandler = userManagementController.index()
+
+      await requestHandler({ ...request, query: { page: '2', sortBy: 'name', sortDirection: 'desc' } }, response, next)
+
+      expect(userService.getUsers).toHaveBeenCalledWith(token, [], [], 2, 'name', 'desc')
+      expect(response.render).toHaveBeenCalledWith('admin/users/index', {
+        pageHeading: 'User management dashboard',
+        users,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix,
+        sortBy: 'name',
+        sortDirection: 'desc',
       })
     })
   })

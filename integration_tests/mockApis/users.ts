@@ -26,36 +26,75 @@ const stubUsers = (args: {
   users: Array<User>
   roles?: Array<UserRole>
   qualifications?: Array<UserQualification>
+  page: string
+  sortBy: string
+  sortDirection: string
 }) => {
-  let url = paths.users.index({})
-  const queries = []
+  const queryParameters = {
+    page: {
+      equalTo: args.page || '1',
+    },
+    sortBy: {
+      equalTo: args.sortBy || 'name',
+    },
+    sortDirection: {
+      equalTo: args.sortDirection || 'asc',
+    },
+  } as Record<string, unknown>
 
   if (args.roles) {
-    queries.push(`roles=${args.roles.join(',')}`)
+    queryParameters.roles = args.roles.join(',')
   }
 
   if (args.qualifications) {
-    queries.push(`qualifications=${args.qualifications.join(',')}`)
-  }
-
-  if (args.roles || args.qualifications) {
-    url += `?${queries.join('&')}`
+    queryParameters.qualifications = args.qualifications.join(',')
   }
 
   return stubFor({
     request: {
       method: 'GET',
-      url,
+      urlPathPattern: paths.users.index.pattern,
+      queryParameters,
     },
     response: {
       status: 200,
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
+        'X-Pagination-TotalPages': '10',
+        'X-Pagination-TotalResults': '100',
+        'X-Pagination-PageSize': '10',
       },
       jsonBody: args.users,
     },
   })
 }
+
+const verifyUsersRequest = async ({
+  page = '1',
+  sortBy = 'name',
+  sortDirection = 'asc',
+}: {
+  page: string
+  sortBy: string
+  sortDirection: string
+}) =>
+  (
+    await getMatchingRequests({
+      method: 'GET',
+      urlPathPattern: paths.users.index.pattern,
+      queryParameters: {
+        page: {
+          equalTo: page,
+        },
+        sortBy: {
+          equalTo: sortBy,
+        },
+        sortDirection: {
+          equalTo: sortDirection,
+        },
+      },
+    })
+  ).body.requests
 
 const stubUserUpdate = (args: { user: User }) =>
   stubFor({
@@ -147,4 +186,5 @@ export default {
   stubDeliusUserSearch,
   stubNotFoundDeliusUserSearch,
   verifyUserUpdate,
+  verifyUsersRequest,
 }
