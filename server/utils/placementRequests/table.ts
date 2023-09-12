@@ -1,4 +1,4 @@
-import { add } from 'date-fns'
+import { addDays } from 'date-fns'
 import { PlacementRequest, PlacementRequestStatus, PlacementRequestTask, SortDirection } from '../../@types/shared'
 import { TableCell, TableRow } from '../../@types/ui'
 import matchPaths from '../../paths/match'
@@ -63,10 +63,10 @@ export const dueDateCell = (task: PlacementRequestTask, differenceBetweenDueDate
   const dateAsObject = DateFormats.isoToDateObj(task.expectedArrival)
 
   return {
-    text: DateFormats.differenceInDays(
+    text: `${DateFormats.differenceInBusinessDays(
       dateAsObject,
-      add(dateAsObject, { days: differenceBetweenDueDateAndArrivalDate }),
-    ).ui,
+      addDays(dateAsObject, differenceBetweenDueDateAndArrivalDate),
+    )} days`,
   }
 }
 

@@ -137,6 +137,8 @@ describe('tableUtils', () => {
 
   describe('dueDateCell', () => {
     it('returns the difference in days between the arrival date and the due date', () => {
+      DateFormats.differenceInBusinessDays = jest.fn().mockReturnValue(7)
+
       const arrivalDate = add(new Date(), { days: 14 })
       const task = placementRequestTaskFactory.build({
         expectedArrival: DateFormats.dateObjToIsoDate(arrivalDate),
