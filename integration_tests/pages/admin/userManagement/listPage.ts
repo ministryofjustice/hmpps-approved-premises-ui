@@ -39,4 +39,8 @@ export default class ListPage extends Page {
     this.getTextInputByIdAndEnterDetails('search-by-name', userName)
     cy.get('button').contains('Search').click()
   }
+
+  clickAddUser(): void {
+    cy.get('a').contains('Add new user').click()
+  }
 }

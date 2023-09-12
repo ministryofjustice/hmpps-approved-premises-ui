@@ -167,6 +167,6 @@ export const addErrorMessageToFlash = (request: Request, message: string, field:
   request.flash('errors', {
     [field]: errorMessage(field, message),
   })
-  request.flash('errorSummary', [errorSummary('crn', message)])
+  request.flash('errorSummary', [errorSummary(field, message)])
   request.flash('userInput', request.body)
 }

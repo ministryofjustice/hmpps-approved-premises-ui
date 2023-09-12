@@ -1,10 +1,11 @@
 /* istanbul ignore file */
 
-import AdminPlacementRequestsController from './placementRequestsController'
+import AdminPlacementRequestsController from './placementRequests/placementRequestsController'
 import PlacementRequestsBookingsController from './placementRequests/bookingsController'
 import PlacementRequestsWithdrawalsController from './placementRequests/withdrawalsController'
 import PlacementRequestUnableToMatchController from './placementRequests/unableToMatchController'
 import UserManagementController from './userManagementController'
+import DeliusUserController from './deliusUserController'
 import ReportsController from './reportsController'
 
 import type { Services } from '../../services'
@@ -20,6 +21,7 @@ export const controllers = (services: Services) => {
   const reportsController = new ReportsController(reportService)
   const placementRequestUnableToMatchController = new PlacementRequestUnableToMatchController(placementRequestService)
   const userManagementController = new UserManagementController(services.userService)
+  const deliusUserController = new DeliusUserController(services.userService)
 
   return {
     adminPlacementRequestsController,
@@ -28,6 +30,7 @@ export const controllers = (services: Services) => {
     reportsController,
     placementRequestUnableToMatchController,
     userManagementController,
+    deliusUserController,
   }
 }
 
@@ -37,4 +40,5 @@ export {
   PlacementRequestUnableToMatchController,
   PlacementRequestsWithdrawalsController,
   ReportsController,
+  DeliusUserController,
 }

@@ -223,4 +223,58 @@ describeClient('UserClient', provider => {
       expect(output).toEqual(users)
     })
   })
+
+  describe('searchDelius', () => {
+    it('should search for a user in delius', async () => {
+      const user = userFactory.build()
+      const name = 'name'
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to search for a user in delius',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.searchDelius({}),
+          query: {
+            name,
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: user,
+        },
+      })
+
+      const output = await userClient.searchDelius(name)
+      expect(output).toEqual(user)
+    })
+  })
+
+  describe('delete', () => {
+    it('should delete a user', async () => {
+      const user = userFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to delete a user',
+        withRequest: {
+          method: 'DELETE',
+          path: paths.users.delete({ id: user.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      await userClient.delete(user.id)
+    })
+  })
 })

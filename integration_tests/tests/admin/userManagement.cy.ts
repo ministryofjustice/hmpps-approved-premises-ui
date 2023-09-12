@@ -1,6 +1,9 @@
 import paths from '../../../server/paths/admin'
 import { userFactory } from '../../../server/testutils/factories'
+import ConfirmDeletionPage from '../../pages/admin/userManagement/confirmDeletionPage'
+import ConfirmUserDetailsPage from '../../pages/admin/userManagement/confirmUserDetailsPage'
 import ListPage from '../../pages/admin/userManagement/listPage'
+import SearchDeliusPage from '../../pages/admin/userManagement/searchDeliusPage'
 import ShowPage from '../../pages/admin/userManagement/showPage'
 import Page from '../../pages/page'
 
@@ -98,5 +101,74 @@ context('User management', () => {
 
     // Then the page should show the results
     page.shouldShowUsers(usersForResults)
+  })
+
+  it('enables adding a user from Delius', () => {
+    const users = userFactory.buildList(10)
+
+    cy.task('stubUsers', { users })
+    // Given I am on the list page
+    const listPage = ListPage.visit()
+
+    // When I click the add user button
+    listPage.clickAddUser()
+
+    // Then I am taken to the add user page
+    const searchDeliusPage = Page.verifyOnPage(SearchDeliusPage)
+    searchDeliusPage.checkForBackButton(paths.admin.userManagement.index({}))
+
+    // When I search for a username that doesn't exist
+    const notFoundSearchTerm = 'user not in delius'
+    cy.task('stubNotFoundDeliusUserSearch', { searchTerm: notFoundSearchTerm })
+    searchDeliusPage.searchForUser(notFoundSearchTerm)
+
+    // Then I should see an error
+    searchDeliusPage.shouldShowErrorMessagesForFields(['username'], {
+      username: 'User not found. Enter the nDelius username as appears on nDelius',
+    })
+
+    // When I search for a user
+    const newUser = userFactory.build()
+    cy.task('stubDeliusUserSearch', { result: newUser, searchTerm: newUser.deliusUsername })
+    searchDeliusPage.searchForUser(newUser.deliusUsername)
+
+    // Then I should be taken to the confirm details of the new user page
+    const confirmationPage = Page.verifyOnPage(ConfirmUserDetailsPage)
+    confirmationPage.checkForBackButton(paths.admin.userManagement.searchDelius({}))
+    confirmationPage.shouldShowUserDetails(newUser)
+
+    // When I click 'continue'
+    cy.task('stubFindUser', { user: newUser, id: newUser.id })
+    confirmationPage.clickContinue()
+
+    // Then I should be taken to the user management dashboard
+    Page.verifyOnPage(ShowPage)
+  })
+
+  it('enables deleting a user', () => {
+    const users = userFactory.buildList(10)
+    const userToDelete = users[0]
+    cy.task('stubUsers', { users })
+    cy.task('stubFindUser', { user: userToDelete, id: userToDelete.id })
+
+    // Given I am on a user's permissions page
+    const permissionsPage = ShowPage.visit(userToDelete.id)
+
+    // When I click the delete user button
+    permissionsPage.clickRemoveAccess()
+
+    // Then I should be taken to the confirmation screen
+    const confirmationPage = Page.verifyOnPage(ConfirmDeletionPage)
+    confirmationPage.checkForBackButton(paths.admin.userManagement.edit({ id: userToDelete.id }))
+
+    // When I click 'Remove access'
+    cy.task('stubUserDelete', { id: userToDelete.id })
+    confirmationPage.clickSubmit()
+
+    // Then I should be redirected to the user management dashboard
+    const listPage = Page.verifyOnPage(ListPage)
+
+    // And I should see a message confirming the user has been deleted
+    listPage.shouldShowBanner('User deleted')
   })
 })

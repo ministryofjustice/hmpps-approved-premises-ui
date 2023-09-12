@@ -48,4 +48,16 @@ export default class UserService {
 
     return client.search(query)
   }
+
+  async searchDelius(token: string, query: string): Promise<User> {
+    const client = this.userClientFactory(token)
+
+    return client.searchDelius(query)
+  }
+
+  async delete(token: string, id: string): Promise<void> {
+    const client = this.userClientFactory(token)
+
+    await client.delete(id)
+  }
 }

@@ -28,7 +28,7 @@ export const managementDashboardTableRows = (users: Array<User>): Array<Array<Ta
 
 const nameCell = (user: User): TableCell => {
   return {
-    html: linkTo(paths.admin.userManagement.show, { id: user.id }, { text: user.name }),
+    html: linkTo(paths.admin.userManagement.edit, { id: user.id }, { text: user.name }),
   }
 }
 

@@ -100,6 +100,25 @@ export default class RestClient {
     return this.postOrPut('put', request)
   }
 
+  async delete(path: string): Promise<unknown> {
+    logger.info(`Delete using user credentials: calling ${this.name}: ${path}`)
+    try {
+      const result = await superagent
+        .delete(`${this.apiUrl()}${path}`)
+        .agent(this.agent)
+        .use(restClientMetricsMiddleware)
+        .auth(this.token, { type: 'bearer' })
+        .set({ ...this.defaultHeaders })
+        .timeout(this.timeoutConfig())
+
+      return result.body
+    } catch (error) {
+      const sanitisedError = sanitiseError(error)
+      logger.warn({ ...sanitisedError }, `Error calling ${this.name}, path: '${path}', verb: 'DELETE'`)
+      throw sanitisedError
+    }
+  }
+
   async stream({ path = null, headers = {} }: StreamRequest = {}): Promise<unknown> {
     logger.info(`Get using user credentials: calling ${this.name}: ${path}`)
     return new Promise((resolve, reject) => {

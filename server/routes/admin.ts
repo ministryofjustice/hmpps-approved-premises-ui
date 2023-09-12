@@ -8,7 +8,7 @@ import paths from '../paths/admin'
 import actions from './utils'
 
 export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
-  const { get, post, put } = actions(router, services.auditService)
+  const { get, post, put, delete: deleteAction } = actions(router, services.auditService)
 
   const {
     adminPlacementRequestsController,
@@ -17,6 +17,7 @@ export default function routes(controllers: Controllers, router: Router, service
     placementRequestUnableToMatchController,
     reportsController,
     userManagementController,
+    deliusUserController,
   } = controllers
 
   get(paths.admin.placementRequests.index.pattern, adminPlacementRequestsController.index(), {
@@ -90,7 +91,20 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.admin.userManagement.index.pattern, userManagementController.index(), {
     auditEvent: 'ADMIN_USER_MANAGEMENT_DASHBOARD',
   })
-  get(paths.admin.userManagement.show.pattern, userManagementController.edit(), {
+  get(paths.admin.userManagement.new.pattern, deliusUserController.new(), {
+    auditEvent: 'ADMIN_DELIUS_SEARCH_FOR_USER',
+  })
+  get(paths.admin.userManagement.edit.pattern, userManagementController.edit(), {
+    auditEvent: 'ADMIN_USER_PERMISSIONS_PAGE',
+  })
+  get(paths.admin.userManagement.confirmDelete.pattern, userManagementController.confirmDelete(), {
+    auditEvent: 'ADMIN_USER_DELETION_CONFIRMATION_PAGE',
+  })
+  deleteAction(paths.admin.userManagement.delete.pattern, userManagementController.delete(), {
+    auditEvent: 'ADMIN_USER_DELETION',
+  })
+
+  post(paths.admin.userManagement.searchDelius.pattern, deliusUserController.search(), {
     auditEvent: 'ADMIN_USER_PERMISSIONS_PAGE',
   })
   put(paths.admin.userManagement.update.pattern, userManagementController.update(), {

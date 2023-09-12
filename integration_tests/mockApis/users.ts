@@ -87,6 +87,49 @@ const stubUserSearch = (args: { results: Array<User>; searchTerm: string }) =>
     },
   })
 
+const stubDeliusUserSearch = (args: { result: User; searchTerm: string }) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      url: `${paths.users.searchDelius({})}?${QueryString.stringify({ name: args.searchTerm })}`,
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: args.result,
+    },
+  })
+
+const stubNotFoundDeliusUserSearch = (args: { searchTerm: string }) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      url: `${paths.users.searchDelius({})}?${QueryString.stringify({ name: args.searchTerm })}`,
+    },
+    response: {
+      status: 404,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+    },
+  })
+
+const stubUserDelete = (args: { id: string }) =>
+  stubFor({
+    request: {
+      method: 'DELETE',
+      urlPattern: paths.users.delete({ id: args.id }),
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+    },
+  })
+
 const verifyUserUpdate = async (userId: string) =>
   (
     await getMatchingRequests({
@@ -95,4 +138,13 @@ const verifyUserUpdate = async (userId: string) =>
     })
   ).body.requests
 
-export default { stubFindUser, stubUsers, stubUserUpdate, stubUserSearch, verifyUserUpdate }
+export default {
+  stubFindUser,
+  stubUsers,
+  stubUserUpdate,
+  stubUserSearch,
+  stubUserDelete,
+  stubDeliusUserSearch,
+  stubNotFoundDeliusUserSearch,
+  verifyUserUpdate,
+}
