@@ -46,20 +46,4 @@ export default class ListPage extends Page {
   clickUnableToMatch(): void {
     cy.get('a.moj-sub-navigation__link').contains('Unable to match').click()
   }
-
-  clickNext(): void {
-    cy.get('a[rel="next"]').click()
-  }
-
-  clickPageNumber(pageNumber: string): void {
-    cy.get('.govuk-pagination__link').contains(pageNumber).click()
-  }
-
-  clickSortBy(field: string): void {
-    cy.get(`th[data-cy-sort-field="${field}"] a`).click()
-  }
-
-  shouldBeSortedByField(field: string, order: string): void {
-    cy.get(`th[data-cy-sort-field="${field}"]`).should('have.attr', 'aria-sort', order)
-  }
 }

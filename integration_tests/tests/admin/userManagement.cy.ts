@@ -171,4 +171,104 @@ context('User management', () => {
     // And I should see a message confirming the user has been deleted
     listPage.shouldShowBanner('User deleted')
   })
+
+  it('supports pagination', () => {
+    const usersPage1 = userFactory.buildList(10)
+    const usersPage2 = userFactory.buildList(10)
+    const usersPage9 = userFactory.buildList(10)
+
+    cy.task('stubUsers', {
+      users: usersPage1,
+      page: '1',
+    })
+    cy.task('stubUsers', {
+      users: usersPage2,
+      page: '2',
+    })
+    cy.task('stubUsers', {
+      users: usersPage9,
+      page: '9',
+    })
+
+    // When I visit the tasks dashboard
+    const listPage = ListPage.visit()
+
+    // Then I should see a list of placement requests
+    listPage.shouldShowUsers(usersPage1)
+
+    // When I click next
+    listPage.clickNext()
+
+    // Then the API should have received a request for the next page
+    cy.task('verifyUsersRequest', { page: '2' }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+
+    // And the second page of users should be shown
+    listPage.shouldShowUsers(usersPage2)
+
+    // When I click on a page number
+    listPage.clickPageNumber('9')
+
+    // Then the API should have received a request for the next page
+    cy.task('verifyUsersRequest', { page: '9' }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+
+    // And the users for that page number should be shown
+    listPage.shouldShowUsers(usersPage9)
+  })
+
+  it('supports sorting', () => {
+    const users = userFactory.buildList(10)
+
+    cy.task('stubUsers', {
+      users,
+    })
+
+    cy.task('stubUsers', {
+      users,
+      sortBy: 'name',
+      sortDirection: 'asc',
+    })
+    cy.task('stubUsers', {
+      users,
+      sortBy: 'name',
+      sortDirection: 'desc',
+    })
+
+    // When I visit the tasks dashboard
+    const listPage = ListPage.visit()
+
+    // Then I should see a list of placement requests
+    listPage.shouldShowUsers(users)
+
+    // When I sort by expected arrival in ascending order
+    listPage.clickSortBy('name')
+
+    // Then the dashboard should be sorted by expected arrival
+    listPage.shouldBeSortedByField('name', 'ascending')
+
+    // And the API should have received a request for the correct sort order
+    cy.task('verifyUsersRequest', {
+      sortBy: 'name',
+      sortDirection: 'asc',
+    }).then(requests => {
+      expect(requests).to.have.length.greaterThan(0)
+    })
+
+    // When I sort by expected arrival in descending order
+    listPage.clickSortBy('name')
+
+    // Then the dashboard should be sorted by expected arrival in descending order
+    listPage.shouldBeSortedByField('name', 'descending')
+
+    // And the API should have received a request for the correct sort order
+    cy.task('verifyUsersRequest', {
+      sortBy: 'name',
+      sortDirection: 'desc',
+    }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+  })
 })
