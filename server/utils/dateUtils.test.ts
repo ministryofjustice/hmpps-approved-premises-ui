@@ -13,7 +13,6 @@ import {
   dateAndTimeInputsAreValidDates,
   dateIsBlank,
   dateIsInThePast,
-  differenceInBusinessDays,
   monthOptions,
   uiDateOrDateEmptyMessage,
   yearOptions,
@@ -210,6 +209,55 @@ describe('DateFormats', () => {
     })
   })
 
+  describe('differenceInBusinessDays', () => {
+    it('should return NaN if either date is invalid', () => {
+      const date1InvalidResult = DateFormats.differenceInBusinessDays(new Date('invalid date'), new Date('2022-01-10'))
+      const date2InvalidResult = DateFormats.differenceInBusinessDays(new Date('2022-01-10'), new Date('invalid date'))
+
+      expect(date1InvalidResult).toBeNaN()
+      expect(date2InvalidResult).toBeNaN()
+    })
+
+    it('returns the number of business days between the given dates, excluding weekends and holidays', () => {
+      const holidays = [
+        new Date(2023, 7 /* Aug */, 28),
+        new Date(2023, 11 /* Dec */, 25),
+        new Date(2023, 11 /* Dec */, 26),
+      ]
+
+      expect(DateFormats.differenceInBusinessDays(new Date(2024, 0, 10), new Date(2023, 6, 18), holidays)).toBe(123)
+    })
+
+    it('ignores holidays the are not in the range', () => {
+      const holidays = [
+        new Date(2023, 7 /* Aug */, 28),
+        new Date(2023, 11 /* Dec */, 25),
+        new Date(2023, 11 /* Dec */, 26),
+      ]
+
+      expect(DateFormats.differenceInBusinessDays(new Date(2024, 0, 10), new Date(2023, 9, 18), holidays)).toBe(58)
+    })
+
+    it('ignores holidays that are at the weekend', () => {
+      const holidays = [
+        new Date(2023, 7 /* Aug */, 28),
+        new Date(2023, 11 /* Dec */, 24),
+        new Date(2023, 11 /* Dec */, 25),
+        new Date(2023, 11 /* Dec */, 26),
+      ]
+
+      expect(DateFormats.differenceInBusinessDays(new Date(2024, 0, 10), new Date(2023, 9, 18), holidays)).toBe(58)
+    })
+
+    it('returns the number of business days between the given dates if no holidays are provided', () => {
+      expect(DateFormats.differenceInBusinessDays(new Date(2024, 0, 10), new Date(2023, 6, 18))).toBe(126)
+    })
+
+    it('returns the correct number of business days if the leftDate is earlier than the rightDate', () => {
+      expect(DateFormats.differenceInBusinessDays(subDays(new Date(), 7), new Date())).toBe(-5)
+    })
+  })
+
   describe('formatDuration', () => {
     it('formats a duration with the given unit', () => {
       expect(DateFormats.formatDuration({ days: '4', weeks: '7' })).toEqual('7 weeks, 4 days')
@@ -374,55 +422,6 @@ describe('monthOptions', () => {
       { name: 'November', value: '11' },
       { name: 'December', value: '12' },
     ])
-  })
-})
-
-describe('differenceInBusinessDays', () => {
-  it('should return NaN if either date is invalid', () => {
-    const date1InvalidResult = differenceInBusinessDays(new Date('invalid date'), new Date('2022-01-10'))
-    const date2InvalidResult = differenceInBusinessDays(new Date('2022-01-10'), new Date('invalid date'))
-
-    expect(date1InvalidResult).toBeNaN()
-    expect(date2InvalidResult).toBeNaN()
-  })
-
-  it('returns the number of business days between the given dates, excluding weekends and holidays', () => {
-    const holidays = [
-      new Date(2023, 7 /* Aug */, 28),
-      new Date(2023, 11 /* Dec */, 25),
-      new Date(2023, 11 /* Dec */, 26),
-    ]
-
-    expect(differenceInBusinessDays(new Date(2024, 0, 10), new Date(2023, 6, 18), holidays)).toBe(123)
-  })
-
-  it('ignores holidays the are not in the range', () => {
-    const holidays = [
-      new Date(2023, 7 /* Aug */, 28),
-      new Date(2023, 11 /* Dec */, 25),
-      new Date(2023, 11 /* Dec */, 26),
-    ]
-
-    expect(differenceInBusinessDays(new Date(2024, 0, 10), new Date(2023, 9, 18), holidays)).toBe(58)
-  })
-
-  it('ignores holidays that are at the weekend', () => {
-    const holidays = [
-      new Date(2023, 7 /* Aug */, 28),
-      new Date(2023, 11 /* Dec */, 24),
-      new Date(2023, 11 /* Dec */, 25),
-      new Date(2023, 11 /* Dec */, 26),
-    ]
-
-    expect(differenceInBusinessDays(new Date(2024, 0, 10), new Date(2023, 9, 18), holidays)).toBe(58)
-  })
-
-  it('returns the number of business days between the given dates if no holidays are provided', () => {
-    expect(differenceInBusinessDays(new Date(2024, 0, 10), new Date(2023, 6, 18))).toBe(126)
-  })
-
-  it('returns the correct number of business days if the leftDate is earlier than the rightDate', () => {
-    expect(differenceInBusinessDays(subDays(new Date(), 7), new Date())).toBe(-5)
   })
 })
 

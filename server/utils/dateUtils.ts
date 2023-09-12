@@ -157,6 +157,33 @@ export class DateFormats {
     return { ui: formatDistanceStrict(date1, date2, { unit: 'day' }), number: differenceInDays(date1, date2) }
   }
 
+  /**
+   * differenceInBusinessDays returns the number of business days between two dates excluding holidays.
+   * This is the same as date-fns' differenceInBusinessDays, but with the addition of a holidays parameter.
+   * We hope to be able to remove this once this PR is merged: https://github.com/date-fns/date-fns/pull/3475
+   * @param {Date} dateLeft
+   * @param {Date} dateRight
+   * @param {Array<Date>} holidays
+   * @returns {number}
+   */
+  static differenceInBusinessDays(dateLeft: Date, dateRight: Date, holidays: Array<Date> = bankHolidays()): number {
+    if (!isValid(dateLeft) || !isValid(dateRight)) return NaN
+
+    const { earlierDate, laterDate } = isBefore(dateLeft, dateRight)
+      ? { earlierDate: dateLeft, laterDate: dateRight }
+      : { earlierDate: dateRight, laterDate: dateLeft }
+
+    const holidaysLength = holidays
+      .map(holiday => toDate(holiday))
+      .filter(
+        holiday => isWithinInterval(holiday, { start: earlierDate, end: laterDate }) && !isWeekend(holiday),
+      ).length
+
+    const differenceInBusinessDaysWithoutHolidays = differenceInBusinessDaysDateFns(dateLeft, dateRight)
+
+    return differenceInBusinessDaysWithoutHolidays - holidaysLength
+  }
+
   static isoDateToDateInputs<K extends string>(isoDate: string, key: string): ObjectWithDateParts<K> {
     return DateFormats.dateObjectToDateInputs(DateFormats.isoToDateObj(isoDate), key)
   }
@@ -250,35 +277,6 @@ export const getYearsSince = (startYear: number): Array<string> => {
     years.push((startYear++).toString())
   }
   return years
-}
-
-/**
- * differenceInBusinessDays returns the number of business days between two dates excluding holidays.
- * This is the same as date-fns' differenceInBusinessDays, but with the addition of a holidays parameter.
- * We hope to be able to remove this once this PR is merged: https://github.com/date-fns/date-fns/pull/3475
- * @param {Date} dateLeft
- * @param {Date} dateRight
- * @param {Array<Date>} holidays
- * @returns {number}
- */
-export function differenceInBusinessDays(
-  dateLeft: Date,
-  dateRight: Date,
-  holidays: Array<Date> = bankHolidays(),
-): number {
-  if (!isValid(dateLeft) || !isValid(dateRight)) return NaN
-
-  const { earlierDate, laterDate } = isBefore(dateLeft, dateRight)
-    ? { earlierDate: dateLeft, laterDate: dateRight }
-    : { earlierDate: dateRight, laterDate: dateLeft }
-
-  const holidaysLength = holidays
-    .map(holiday => toDate(holiday))
-    .filter(holiday => isWithinInterval(holiday, { start: earlierDate, end: laterDate }) && !isWeekend(holiday)).length
-
-  const differenceInBusinessDaysWithoutHolidays = differenceInBusinessDaysDateFns(dateLeft, dateRight)
-
-  return differenceInBusinessDaysWithoutHolidays - holidaysLength
 }
 
 type RawBankHolidays = {
