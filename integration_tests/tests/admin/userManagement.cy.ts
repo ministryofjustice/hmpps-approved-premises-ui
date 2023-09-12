@@ -134,7 +134,7 @@ context('User management', () => {
 
     // Then I should be taken to the confirm details of the new user page
     const confirmationPage = Page.verifyOnPage(ConfirmUserDetailsPage)
-    confirmationPage.checkForBackButton(paths.admin.userManagement.searchDelius({}))
+    confirmationPage.checkForBackButton(paths.admin.userManagement.new({}))
     confirmationPage.shouldShowUserDetails(newUser)
 
     // When I click 'continue'
