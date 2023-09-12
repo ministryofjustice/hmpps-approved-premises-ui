@@ -1,13 +1,15 @@
 import type {
+  SortDirection,
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
+  UserSortField,
 } from '@approved-premises/api'
 
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
-import { createQueryString } from '../utils/utils'
+import { PaginatedResponse } from '../@types/ui'
 
 export default class UserClient {
   restClient: RestClient
@@ -24,16 +26,28 @@ export default class UserClient {
     return (await this.restClient.get({ path: paths.users.profile({}) })) as User
   }
 
-  async getUsers(roles: Array<UserRole> = [], qualifications: Array<UserQualification> = []): Promise<Array<User>> {
-    const query = createQueryString(
-      {
-        roles,
-        qualifications,
-      },
-      { arrayFormat: 'comma', encode: false },
-    )
+  async getUsers(
+    roles: Array<UserRole> = [],
+    qualifications: Array<UserQualification> = [],
+    page = 1,
+    sortBy: UserSortField = 'name',
+    sortDirection: SortDirection = 'asc',
+  ): Promise<PaginatedResponse<User>> {
+    const filters = {} as Record<string, string>
 
-    return (await this.restClient.get({ path: paths.users.index({}), query })) as Array<User>
+    if (roles.length) {
+      filters.roles = roles.join(',')
+    }
+
+    if (qualifications.length) {
+      filters.qualifications = qualifications.join(',')
+    }
+
+    return this.restClient.getPaginatedResponse({
+      path: paths.users.index({}),
+      page: page.toString(),
+      query: { ...filters, sortBy, sortDirection },
+    })
   }
 
   async updateUser(user: User): Promise<User> {

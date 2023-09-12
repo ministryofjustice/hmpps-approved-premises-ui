@@ -75,6 +75,11 @@ describeClient('UserClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.users.index({}),
+          query: {
+            page: '1',
+            sortBy: 'name',
+            sortDirection: 'asc',
+          },
           headers: {
             authorization: `Bearer ${token}`,
             'X-Service-Name': 'approved-premises',
@@ -83,11 +88,101 @@ describeClient('UserClient', provider => {
         willRespondWith: {
           status: 200,
           body: users,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
         },
       })
 
       const output = await userClient.getUsers()
-      expect(output).toEqual(users)
+
+      expect(output).toEqual({
+        data: users,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
+
+    it('should return all users when a specific page number specified', async () => {
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of users',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.index({}),
+          query: {
+            page: '2',
+            sortBy: 'name',
+            sortDirection: 'asc',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const output = await userClient.getUsers([], [], 2)
+
+      expect(output).toEqual({
+        data: users,
+        pageNumber: '2',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
+
+    it('should return all users when a specific sort direction specified', async () => {
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of users',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.index({}),
+          query: {
+            page: '1',
+            sortBy: 'name',
+            sortDirection: 'asc',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const output = await userClient.getUsers([], [], 1, 'name', 'asc')
+
+      expect(output).toEqual({
+        data: users,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
 
     it('should query by role', async () => {
@@ -99,6 +194,9 @@ describeClient('UserClient', provider => {
           path: paths.users.index({}),
           query: {
             roles: 'assessor,matcher',
+            page: '1',
+            sortBy: 'name',
+            sortDirection: 'asc',
           },
           headers: {
             authorization: `Bearer ${token}`,
@@ -108,11 +206,23 @@ describeClient('UserClient', provider => {
         willRespondWith: {
           status: 200,
           body: users,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
         },
       })
 
       const output = await userClient.getUsers(['assessor', 'matcher'])
-      expect(output).toEqual(users)
+
+      expect(output).toEqual({
+        data: users,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
 
     it('should query by qualifications', async () => {
@@ -124,6 +234,9 @@ describeClient('UserClient', provider => {
           path: paths.users.index({}),
           query: {
             qualifications: 'pipe,womens',
+            page: '1',
+            sortBy: 'name',
+            sortDirection: 'asc',
           },
           headers: {
             authorization: `Bearer ${token}`,
@@ -133,11 +246,23 @@ describeClient('UserClient', provider => {
         willRespondWith: {
           status: 200,
           body: users,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
         },
       })
 
       const output = await userClient.getUsers([], ['pipe', 'womens'])
-      expect(output).toEqual(users)
+
+      expect(output).toEqual({
+        data: users,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
 
     it('should query by qualifications and roles', async () => {
@@ -150,6 +275,9 @@ describeClient('UserClient', provider => {
           query: {
             roles: 'assessor,matcher',
             qualifications: 'pipe,womens',
+            page: '1',
+            sortBy: 'name',
+            sortDirection: 'asc',
           },
           headers: {
             authorization: `Bearer ${token}`,
@@ -159,11 +287,23 @@ describeClient('UserClient', provider => {
         willRespondWith: {
           status: 200,
           body: users,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
         },
       })
 
       const output = await userClient.getUsers(['assessor', 'matcher'], ['pipe', 'womens'])
-      expect(output).toEqual(users)
+
+      expect(output).toEqual({
+        data: users,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
   })
 

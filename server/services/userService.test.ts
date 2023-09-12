@@ -2,7 +2,9 @@ import UserService from './userService'
 import HmppsAuthClient, { User } from '../data/hmppsAuthClient'
 import { UserClient } from '../data'
 
-import { userFactory } from '../testutils/factories'
+import { paginatedResponseFactory, userFactory } from '../testutils/factories'
+import { PaginatedResponse } from '../@types/ui'
+import { ApprovedPremisesUser } from '../@types/shared'
 
 jest.mock('../data/hmppsAuthClient')
 jest.mock('../data/userClient')
@@ -70,15 +72,17 @@ describe('User service', () => {
 
   describe('getUsers', () => {
     it('returns users by role and qualification', async () => {
-      const users = userFactory.buildList(4)
+      const response = paginatedResponseFactory.build({
+        data: userFactory.buildList(4),
+      }) as PaginatedResponse<ApprovedPremisesUser>
 
-      userClient.getUsers.mockResolvedValue(users)
+      userClient.getUsers.mockResolvedValue(response)
 
-      const result = await userService.getUsers(token, ['applicant', 'assessor'], ['pipe'])
+      const result = await userService.getUsers(token, ['applicant', 'assessor'], ['pipe'], 1, 'name', 'asc')
 
-      expect(result).toEqual(users)
+      expect(result).toEqual(response)
 
-      expect(userClient.getUsers).toHaveBeenCalledWith(['applicant', 'assessor'], ['pipe'])
+      expect(userClient.getUsers).toHaveBeenCalledWith(['applicant', 'assessor'], ['pipe'], 1, 'name', 'asc')
     })
   })
 
