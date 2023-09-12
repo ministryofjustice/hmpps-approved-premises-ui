@@ -66,7 +66,7 @@ export default class EsapPlacementCCTV implements TasklistPage {
 
   response() {
     return {
-      [this.questions.cctvHistory]: this.body.cctvHistory.map(response => cctvHistory[response]),
+      [this.questions.cctvHistory]: this.body.cctvHistory.map(response => cctvHistory[response]).join(', '),
       [this.questions.cctvIntelligence]: convertToTitleCase(this.body.cctvIntelligence),
       [this.questions.cctvIntelligenceDetails]: this.body.cctvIntelligenceDetails,
       [this.questions.cctvNotes]: this.body.cctvNotes,

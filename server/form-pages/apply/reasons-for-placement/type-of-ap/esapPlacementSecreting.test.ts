@@ -71,9 +71,8 @@ describe('EsapPlacementSecreting', () => {
       )
 
       expect(page.response()).toEqual({
-        'Which items does the person have a history of secreting?': [
+        'Which items does the person have a history of secreting?':
           'Literature and materials supporting radicalisation ideals',
-        ],
         'Have partnership agencies requested the sharing of intelligence captured via body worn technology?': 'Yes',
         'Provide details': 'Some detail',
         'Provide any supporting information about why the person requires enhanced room searches': 'notes',

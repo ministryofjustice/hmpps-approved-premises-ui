@@ -63,8 +63,8 @@ export default class EsapPlacementScreening implements TasklistPage {
 
   response() {
     return {
-      [`${this.questions.esapReasons}`]: this.body.esapReasons.map(reason => esapReasons[reason]),
-      [`${this.questions.esapFactors}`]: this.body.esapFactors?.map(factor => esapFactors[factor]),
+      [this.questions.esapReasons]: this.body.esapReasons.map(reason => esapReasons[reason]).join(', '),
+      [this.questions.esapFactors]: this.body.esapFactors?.map(factor => esapFactors[factor]).join(', ') || '',
     }
   }
 

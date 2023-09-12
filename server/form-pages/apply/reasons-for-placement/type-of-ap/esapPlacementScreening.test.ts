@@ -58,14 +58,9 @@ describe('EsapPlacementScreening', () => {
       )
 
       expect(page.response()).toEqual({
-        'Why does the person require an enhanced security placement?': [
-          'History of secreting items relevant to risk and re-offending in their room - requires enhanced room search through the use of body worn technology',
-          'History of engaging in behaviours which are most effectively monitored via enhanced CCTV technology - requires enhanced CCTV provision',
-        ],
-        'Do any of the following factors also apply?': [
-          'A diagnosis of autism or neurodiverse traits',
-          'A complex personality presentation which has created challenges in the prison and where an AP PIPE is deemed unsuitable',
-        ],
+        'Do any of the following factors also apply?': `A diagnosis of autism or neurodiverse traits, A complex personality presentation which has created challenges in the prison and where an AP PIPE is deemed unsuitable`,
+        'Why does the person require an enhanced security placement?':
+          'History of secreting items relevant to risk and re-offending in their room - requires enhanced room search through the use of body worn technology, History of engaging in behaviours which are most effectively monitored via enhanced CCTV technology - requires enhanced CCTV provision',
       })
     })
 
@@ -73,10 +68,9 @@ describe('EsapPlacementScreening', () => {
       const page = new EsapPlacementScreening({ esapReasons: ['secreting', 'cctv'] }, application)
 
       expect(page.response()).toEqual({
-        'Why does the person require an enhanced security placement?': [
-          'History of secreting items relevant to risk and re-offending in their room - requires enhanced room search through the use of body worn technology',
-          'History of engaging in behaviours which are most effectively monitored via enhanced CCTV technology - requires enhanced CCTV provision',
-        ],
+        'Why does the person require an enhanced security placement?':
+          'History of secreting items relevant to risk and re-offending in their room - requires enhanced room search through the use of body worn technology, History of engaging in behaviours which are most effectively monitored via enhanced CCTV technology - requires enhanced CCTV provision',
+        'Do any of the following factors also apply?': '',
       })
     })
   })

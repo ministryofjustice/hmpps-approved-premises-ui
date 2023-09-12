@@ -67,7 +67,9 @@ export default class EsapPlacementSecreting implements TasklistPage {
 
   response() {
     return {
-      [this.questions.secretingHistory]: this.body.secretingHistory.map(response => secretingHistory[response]),
+      [this.questions.secretingHistory]: this.body.secretingHistory
+        .map(response => secretingHistory[response])
+        .join(', '),
       [this.questions.secretingIntelligence]: convertToTitleCase(this.body.secretingIntelligence),
       [this.questions.secretingIntelligenceDetails]: this.body.secretingIntelligenceDetails,
       [this.questions.secretingNotes]: this.body.secretingNotes,
