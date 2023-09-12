@@ -1,3 +1,4 @@
+import qs from 'qs'
 import { SortDirection } from '../@types/shared'
 import { TableCell } from '../@types/ui'
 import { createQueryString } from './utils'
@@ -12,6 +13,9 @@ export const sortHeader = (
   let sortDirection: SortDirection
   let ariaSort = 'none'
 
+  const [basePath, queryString] = hrefPrefix.split('?')
+  const qsArgs = qs.parse(queryString)
+
   if (targetField === currentSortField) {
     if (currentSortDirection === 'desc') {
       sortDirection = 'asc'
@@ -23,7 +27,7 @@ export const sortHeader = (
   }
 
   return {
-    html: `<a href="${hrefPrefix}${createQueryString({ sortBy: targetField, sortDirection })}">${text}</a>`,
+    html: `<a href="${basePath}?${createQueryString({ ...qsArgs, sortBy: targetField, sortDirection })}">${text}</a>`,
     attributes: {
       'aria-sort': ariaSort,
       'data-cy-sort-field': targetField,

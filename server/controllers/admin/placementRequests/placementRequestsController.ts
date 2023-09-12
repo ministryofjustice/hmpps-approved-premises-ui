@@ -1,9 +1,9 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { PlacementRequestService } from '../../../services'
-import { PlacementRequestSortField, PlacementRequestStatus, SortDirection } from '../../../@types/shared'
+import { PlacementRequestSortField, PlacementRequestStatus } from '../../../@types/shared'
 import paths from '../../../paths/admin'
-import { createQueryString } from '../../../utils/utils'
 import { PlacementRequestDashboardSearchOptions, RiskTierLevel } from '../../../@types/ui'
+import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 
 export default class PlacementRequestsController {
   constructor(private readonly placementRequestService: PlacementRequestService) {}
@@ -11,12 +11,12 @@ export default class PlacementRequestsController {
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       const status = (req.query.status as PlacementRequestStatus) || 'notMatched'
-      const { pageNumber, sortBy, sortDirection } = this.getPaginationDetails(req)
 
-      const hrefPrefix = `${paths.admin.placementRequests.index({})}${createQueryString(
+      const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<PlacementRequestSortField>(
+        req,
+        paths.admin.placementRequests.index({}),
         { status },
-        { addQueryPrefix: true },
-      )}&`
+      )
 
       const dashboard = await this.placementRequestService.getDashboard(
         req.user.token,
@@ -53,12 +53,10 @@ export default class PlacementRequestsController {
     return async (req: Request, res: Response) => {
       const searchOptions = {} as PlacementRequestDashboardSearchOptions
 
-      searchOptions.crnOrName = req.query.crnOrName as string
-      searchOptions.tier = req.query.tier as RiskTierLevel
-      searchOptions.arrivalDateStart = req.query.arrivalDateStart as string
-      searchOptions.arrivalDateEnd = req.query.arrivalDateEnd as string
-
-      const { pageNumber, sortBy, sortDirection } = this.getPaginationDetails(req)
+      searchOptions.crnOrName = req.query?.crnOrName as string
+      searchOptions.tier = req.query?.tier as RiskTierLevel
+      searchOptions.arrivalDateStart = req.query?.arrivalDateStart as string
+      searchOptions.arrivalDateEnd = req.query?.arrivalDateEnd as string
 
       Object.keys(searchOptions).forEach(k => {
         if (!searchOptions[k]) {
@@ -66,13 +64,11 @@ export default class PlacementRequestsController {
         }
       })
 
-      let hrefPrefix = paths.admin.placementRequests.search({})
-
-      if (Object.keys(searchOptions).length) {
-        hrefPrefix += `${createQueryString(searchOptions, { addQueryPrefix: true })}&`
-      } else {
-        hrefPrefix += '?'
-      }
+      const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<PlacementRequestSortField>(
+        req,
+        paths.admin.placementRequests.search({}),
+        searchOptions,
+      )
 
       const dashboard = await this.placementRequestService.search(
         req.user.token,
@@ -93,13 +89,5 @@ export default class PlacementRequestsController {
         sortDirection,
       })
     }
-  }
-
-  private getPaginationDetails(request: Request) {
-    const pageNumber = request.query.page ? Number(request.query.page) : undefined
-    const sortBy = request.query.sortBy as PlacementRequestSortField
-    const sortDirection = request.query.sortDirection as SortDirection
-
-    return { pageNumber, sortBy, sortDirection }
   }
 }
