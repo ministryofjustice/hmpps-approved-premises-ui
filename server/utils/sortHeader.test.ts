@@ -33,4 +33,15 @@ describe('sortHeader', () => {
       },
     })
   })
+
+  it('should override and replace the existing parameters in the hrefPrefix', () => {
+    const prefixWithParams = `${hrefPrefix}?sortBy=myField&sortDirection=desc`
+    expect(sortHeader('Some text', 'myField', 'myField', 'desc', prefixWithParams)).toEqual({
+      html: `<a href="${hrefPrefix}${createQueryString({ sortBy: 'myField', sortDirection: 'asc' })}">Some text</a>`,
+      attributes: {
+        'aria-sort': 'descending',
+        'data-cy-sort-field': 'myField',
+      },
+    })
+  })
 })

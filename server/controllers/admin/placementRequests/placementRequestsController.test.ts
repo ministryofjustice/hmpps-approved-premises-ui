@@ -9,10 +9,11 @@ import placementRequestDetail from '../../../testutils/factories/placementReques
 import { PaginatedResponse } from '../../../@types/ui'
 import { PlacementRequest } from '../../../@types/shared'
 import paths from '../../../paths/admin'
-import { createQueryString } from '../../../utils/utils'
+import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 
 jest.mock('../../../utils/applications/utils')
 jest.mock('../../../utils/applications/getResponses')
+jest.mock('../../../utils/getPaginationDetails')
 
 describe('PlacementRequestsController', () => {
   const token = 'SOME_TOKEN'
@@ -35,13 +36,19 @@ describe('PlacementRequestsController', () => {
       data: placementRequestFactory.buildList(2),
     }) as PaginatedResponse<PlacementRequest>
 
+    const paginationDetails = {
+      hrefPrefix: paths.admin.placementRequests.index({}),
+      pageNumber: 1,
+      sortBy: 'name',
+      sortDirection: 'desc',
+    }
+
     beforeEach(() => {
       placementRequestService.getDashboard.mockResolvedValue(paginatedResponse)
+      ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
     })
 
     it('should render the placement requests template', async () => {
-      const hrefPrefix = `${paths.admin.placementRequests.index({})}?status=notMatched&`
-
       const requestHandler = placementRequestsController.index()
 
       await requestHandler(request, response, next)
@@ -52,69 +59,52 @@ describe('PlacementRequestsController', () => {
         status: 'notMatched',
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix,
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
       })
+
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
         token,
         'notMatched',
-        undefined,
-        undefined,
-        undefined,
+        paginationDetails.pageNumber,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
       )
+
+      expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.admin.placementRequests.index({}), {
+        status: 'notMatched',
+      })
     })
 
-    it('should request parole placement requests', async () => {
-      const hrefPrefix = `${paths.admin.placementRequests.index({})}?${createQueryString({ status: 'notMatched' })}&`
-
+    it('should handle the status parameter correctly', async () => {
       const requestHandler = placementRequestsController.index()
+      const notMatchedRequest = { ...request, query: { status: 'matched' } }
 
-      await requestHandler({ ...request, query: { status: 'notMatched' } }, response, next)
+      await requestHandler(notMatchedRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
         pageHeading: 'Record and update placement details',
         placementRequests: paginatedResponse.data,
-        status: 'notMatched',
+        status: 'matched',
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix,
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
       })
+
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
         token,
-        'notMatched',
-        undefined,
-        undefined,
-        undefined,
-      )
-    })
-
-    it('should request page numbers and sort options', async () => {
-      const hrefPrefix = `${paths.admin.placementRequests.index({})}?${createQueryString({ status: 'notMatched' })}&`
-
-      const requestHandler = placementRequestsController.index()
-
-      await requestHandler(
-        { ...request, query: { status: 'notMatched', page: '2', sortBy: 'expectedArrival', sortDirection: 'desc' } },
-        response,
-        next,
+        'matched',
+        paginationDetails.pageNumber,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
       )
 
-      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
-        pageHeading: 'Record and update placement details',
-        placementRequests: paginatedResponse.data,
-        status: 'notMatched',
-        pageNumber: Number(paginatedResponse.pageNumber),
-        totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix,
-        sortBy: 'expectedArrival',
-        sortDirection: 'desc',
+      expect(getPaginationDetails).toHaveBeenCalledWith(notMatchedRequest, paths.admin.placementRequests.index({}), {
+        status: 'matched',
       })
-      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
-        token,
-        'notMatched',
-        2,
-        'expectedArrival',
-        'desc',
-      )
     })
   })
 
@@ -141,16 +131,28 @@ describe('PlacementRequestsController', () => {
       data: placementRequestFactory.buildList(2),
     }) as PaginatedResponse<PlacementRequest>
 
+    const paginationDetails = {
+      hrefPrefix: paths.admin.placementRequests.index({}),
+      pageNumber: 1,
+      sortBy: 'name',
+      sortDirection: 'desc',
+    }
+
+    const hrefPrefix = paths.admin.placementRequests.search({})
+
+    let searchRequest: Request
+
     beforeEach(() => {
       placementRequestService.search.mockResolvedValue(paginatedResponse)
+      ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
     })
 
     it('should render the search template', async () => {
-      const hrefPrefix = `${paths.admin.placementRequests.search({})}?`
-
       const requestHandler = placementRequestsController.search()
 
-      await requestHandler(request, response, next)
+      searchRequest = { ...request }
+
+      await requestHandler(searchRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
         pageHeading: 'Record and update placement details',
@@ -158,18 +160,28 @@ describe('PlacementRequestsController', () => {
         crnOrName: undefined,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix,
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
       })
 
-      expect(placementRequestService.search).toHaveBeenCalledWith(token, {}, undefined, undefined, undefined)
+      expect(placementRequestService.search).toHaveBeenCalledWith(
+        token,
+        {},
+        paginationDetails.pageNumber,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
+
+      expect(getPaginationDetails).toHaveBeenCalledWith(searchRequest, hrefPrefix, {})
     })
 
     it('should search for placement requests by CRN', async () => {
-      const hrefPrefix = `${paths.admin.placementRequests.search({})}?${createQueryString({ crnOrName: 'CRN123' })}&`
-
       const requestHandler = placementRequestsController.search()
 
-      await requestHandler({ ...request, query: { crnOrName: 'CRN123' } }, response, next)
+      searchRequest = { ...request, query: { crnOrName: 'CRN123' } }
+
+      await requestHandler(searchRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
         pageHeading: 'Record and update placement details',
@@ -177,31 +189,22 @@ describe('PlacementRequestsController', () => {
         crnOrName: 'CRN123',
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix,
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
       })
-      expect(placementRequestService.search).toHaveBeenCalledWith(
-        token,
-        { crnOrName: 'CRN123' },
-        undefined,
-        undefined,
-        undefined,
-      )
+
+      expect(getPaginationDetails).toHaveBeenCalledWith(searchRequest, hrefPrefix, { crnOrName: 'CRN123' })
     })
 
     it('should search for placement requests by tier and dates', async () => {
-      const hrefPrefix = `${paths.admin.placementRequests.search({})}?${createQueryString({
-        tier: 'A1',
-        arrivalDateStart: '2022-01-01',
-        arrivalDateEnd: '2022-01-03',
-      })}&`
-
       const requestHandler = placementRequestsController.search()
+      searchRequest = {
+        ...request,
+        query: { tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-03' },
+      }
 
-      await requestHandler(
-        { ...request, query: { tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-03' } },
-        response,
-        next,
-      )
+      await requestHandler(searchRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
         pageHeading: 'Record and update placement details',
@@ -212,34 +215,27 @@ describe('PlacementRequestsController', () => {
         arrivalDateEnd: '2022-01-03',
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix,
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
       })
-      expect(placementRequestService.search).toHaveBeenCalledWith(
-        token,
-        { tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-03' },
-        undefined,
-        undefined,
-        undefined,
-      )
+
+      expect(getPaginationDetails).toHaveBeenCalledWith(searchRequest, hrefPrefix, {
+        tier: 'A1',
+        arrivalDateStart: '2022-01-01',
+        arrivalDateEnd: '2022-01-03',
+      })
     })
 
     it('should remove empty queries from the search request', async () => {
-      const hrefPrefix = `${paths.admin.placementRequests.search({})}?${createQueryString({
-        tier: 'A1',
-        arrivalDateStart: '2022-01-01',
-        arrivalDateEnd: '2022-01-03',
-      })}&`
-
       const requestHandler = placementRequestsController.search()
 
-      await requestHandler(
-        {
-          ...request,
-          query: { crnOrName: '', tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-03' },
-        },
-        response,
-        next,
-      )
+      searchRequest = {
+        ...request,
+        query: { crnOrName: '', tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-03' },
+      }
+
+      await requestHandler(searchRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
         pageHeading: 'Record and update placement details',
@@ -250,27 +246,27 @@ describe('PlacementRequestsController', () => {
         arrivalDateEnd: '2022-01-03',
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix,
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
       })
-      expect(placementRequestService.search).toHaveBeenCalledWith(
-        token,
-        { tier: 'A1', arrivalDateStart: '2022-01-01', arrivalDateEnd: '2022-01-03' },
-        undefined,
-        undefined,
-        undefined,
-      )
+
+      expect(getPaginationDetails).toHaveBeenCalledWith(searchRequest, hrefPrefix, {
+        tier: 'A1',
+        arrivalDateStart: '2022-01-01',
+        arrivalDateEnd: '2022-01-03',
+      })
     })
 
     it('should request page numbers and sort options', async () => {
-      const hrefPrefix = `${paths.admin.placementRequests.search({})}?${createQueryString({ crnOrName: 'CRN123' })}&`
-
       const requestHandler = placementRequestsController.search()
 
-      await requestHandler(
-        { ...request, query: { crnOrName: 'CRN123', page: '2', sortBy: 'expectedArrival', sortDirection: 'desc' } },
-        response,
-        next,
-      )
+      searchRequest = {
+        ...request,
+        query: { crnOrName: 'CRN123', page: '2', sortBy: 'expectedArrival', sortDirection: 'desc' },
+      }
+
+      await requestHandler(searchRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
         pageHeading: 'Record and update placement details',
@@ -278,17 +274,14 @@ describe('PlacementRequestsController', () => {
         crnOrName: 'CRN123',
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix,
-        sortBy: 'expectedArrival',
-        sortDirection: 'desc',
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
       })
-      expect(placementRequestService.search).toHaveBeenCalledWith(
-        token,
-        { crnOrName: 'CRN123' },
-        2,
-        'expectedArrival',
-        'desc',
-      )
+
+      expect(getPaginationDetails).toHaveBeenCalledWith(searchRequest, hrefPrefix, {
+        crnOrName: 'CRN123',
+      })
     })
   })
 })
