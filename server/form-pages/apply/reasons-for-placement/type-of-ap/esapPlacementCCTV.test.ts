@@ -52,9 +52,8 @@ describe('EsapPlacementCCTV', () => {
       )
 
       expect(page.response()).toEqual({
-        'Which behaviours has the person demonstrated that require enhanced CCTV provision to monitor?': [
+        'Which behaviours has the person demonstrated that require enhanced CCTV provision to monitor?':
           'Physically assaulted other people in prison',
-        ],
         'Have partnership agencies requested the sharing of intelligence captured via enhanced CCTV?': 'Yes',
         'Provide details': 'Some detail',
         'Provide any supporting information about why the person requires enhanced CCTV provision': 'notes',
