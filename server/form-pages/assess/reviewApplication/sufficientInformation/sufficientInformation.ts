@@ -16,6 +16,8 @@ export default class SufficientInformation implements TasklistPage {
 
   title = 'Is there enough information in the application to make a decision?'
 
+  furtherInformationQuestion = 'What additional information is required?'
+
   user: User
 
   constructor(public body: { sufficientInformation?: YesOrNo; query?: string }) {}
@@ -45,6 +47,7 @@ export default class SufficientInformation implements TasklistPage {
   response() {
     return {
       [`${this.title}`]: sentenceCase(this.body.sufficientInformation),
+      [`${this.furtherInformationQuestion}`]: this.body?.query ?? '',
     }
   }
 

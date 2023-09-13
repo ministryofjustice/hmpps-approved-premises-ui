@@ -23,6 +23,11 @@ export default class InformationReceived implements TasklistPage {
 
   title = 'Have you received additional information from the probation practitioner?'
 
+  questions = {
+    date: 'When did you receive this information?',
+    details: 'Provide the additional information received from the probation practitioner',
+  }
+
   user: User
 
   constructor(private _body: Partial<InformationReceivedBody>) {}
@@ -57,9 +62,16 @@ export default class InformationReceived implements TasklistPage {
   }
 
   response() {
-    return {
+    const response = {
       [`${this.title}`]: sentenceCase(this.body.informationReceived),
     }
+
+    if (this.body.informationReceived === 'yes') {
+      response[this.questions.date] = DateFormats.isoDateToUIDate(this.body.responseReceivedOn)
+      response[this.questions.details] = this.body.response
+    }
+
+    return response
   }
 
   errors() {
