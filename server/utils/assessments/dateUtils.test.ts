@@ -1,4 +1,4 @@
-import { formatISO } from 'date-fns'
+import { addBusinessDays as addBusinessDaysDateFns, formatISO } from 'date-fns'
 import {
   daysSinceInfoRequest,
   daysSinceReceived,
@@ -20,6 +20,7 @@ jest.mock('../dateUtils', () => ({
     dateObjToIsoDateTime: jest.fn().mockImplementation(date => formatISO(date)),
     differenceInBusinessDays: jest.fn().mockReturnValue(1),
   },
+  addBusinessDays: jest.fn().mockImplementation((date, days) => addBusinessDaysDateFns(date, days)),
 }))
 
 describe('dateUtils', () => {

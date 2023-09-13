@@ -1,10 +1,10 @@
-import { add, differenceInDays, format } from 'date-fns'
+import { differenceInDays, format } from 'date-fns'
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
   AssessmentSummary,
 } from '@approved-premises/api'
-import { DateFormats } from '../dateUtils'
+import { DateFormats, addBusinessDays } from '../dateUtils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
@@ -33,7 +33,7 @@ const formatDays = (days: number): string => {
 
 const daysUntilDue = (assessment: AssessmentSummary): number => {
   const receivedDate = DateFormats.isoToDateObj(assessment.createdAt)
-  const dueDate = add(receivedDate, { days: 10 })
+  const dueDate = addBusinessDays(receivedDate, 10)
 
   return DateFormats.differenceInBusinessDays(dueDate, new Date())
 }

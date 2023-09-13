@@ -133,10 +133,10 @@ describe('utils', () => {
   describe('assessmentsApproachingDue', () => {
     it('returns the number of assessments where the due date is less than DUE_DATE_APPROACHING_WINDOW away', () => {
       const assessments = [
-        assessmentSummaryFactory.createdXDaysAgo(1).build(),
-        assessmentSummaryFactory.createdXDaysAgo(2).build(),
-        assessmentSummaryFactory.createdXDaysAgo(9).build(),
         assessmentSummaryFactory.createdXDaysAgo(8).build(),
+        assessmentSummaryFactory.createdXDaysAgo(7).build(),
+        assessmentSummaryFactory.createdXDaysAgo(10).build(),
+        assessmentSummaryFactory.createdXDaysAgo(11).build(),
       ]
 
       expect(assessmentsApproachingDue(assessments)).toEqual(2)
@@ -153,7 +153,7 @@ describe('utils', () => {
     })
 
     it('returns a badge when there are assessments approaching the due date', () => {
-      const assessments = assessmentSummaryFactory.createdXDaysAgo(9).buildList(2)
+      const assessments = assessmentSummaryFactory.createdXDaysAgo(10).buildList(2)
 
       expect(assessmentsApproachingDueBadge(assessments)).toEqual(
         '<span id="notifications" class="moj-notification-badge">2<span class="govuk-visually-hidden"> assessments approaching due date</span></span>',
