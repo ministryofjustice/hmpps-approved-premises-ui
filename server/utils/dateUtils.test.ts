@@ -9,6 +9,7 @@ import type { ObjectWithDateParts } from '@approved-premises/ui'
 import {
   DateFormats,
   InvalidDateStringError,
+  addBusinessDays,
   bankHolidays,
   dateAndTimeInputsAreValidDates,
   dateIsBlank,
@@ -298,6 +299,20 @@ describe('uiDateOrDateEmptyMessage', () => {
     }
 
     expect(uiDateOrDateEmptyMessage(object, 'aDate', DateFormats.isoDateToUIDate)).toEqual('No date supplied')
+  })
+})
+
+describe('addBusinessDays', () => {
+  it('returns the correct date if the gap doesnt include business days', () => {
+    expect(addBusinessDays(new Date(2023, 10, 13), 1)).toEqual(new Date(2023, 10, 14))
+  })
+
+  it('returns the correct date if the gap includes a weekend', () => {
+    expect(addBusinessDays(new Date(2023, 10, 13), 7)).toEqual(new Date(2023, 10, 22))
+  })
+
+  it('returns the correct date if the gap includes a weekend and a bank holiday', () => {
+    expect(addBusinessDays(new Date(2023, 10, 13), 7, [new Date(2023, 10, 13)])).toEqual(new Date(2023, 10, 23))
   })
 })
 

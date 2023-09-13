@@ -1,4 +1,6 @@
 import {
+  addBusinessDays as addBusinsessDaysWithoutBankHolidays,
+  addDays,
   differenceInBusinessDays as differenceInBusinessDaysDateFns,
   differenceInDays,
   format,
@@ -207,6 +209,19 @@ export class DateFormats {
   static timeFromDate(date: Date): string {
     return format(date, 'HH:mm')
   }
+}
+
+export const addBusinessDays = (date: Date, days: number, holidays: Array<Date> = bankHolidays()): Date => {
+  const businsessDaysToAddWithoutBankHolidays = addBusinsessDaysWithoutBankHolidays(date, days)
+
+  const numberOfHolidayDays = holidays.filter(holiday => {
+    return isWithinInterval(holiday, {
+      start: date,
+      end: businsessDaysToAddWithoutBankHolidays,
+    })
+  })
+
+  return addDays(businsessDaysToAddWithoutBankHolidays, numberOfHolidayDays.length)
 }
 
 export const uiDateOrDateEmptyMessage = (
