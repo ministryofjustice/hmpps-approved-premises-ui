@@ -1,4 +1,4 @@
-import { SortDirection, ApprovedPremisesUser as User } from '../../@types/shared'
+import { SortDirection, ApprovedPremisesUser as User, UserSortField } from '../../@types/shared'
 import { TableCell } from '../../@types/ui'
 import paths from '../../paths/admin'
 import { sortHeader } from '../sortHeader'
@@ -6,7 +6,7 @@ import { emailCell } from '../tableUtils'
 import { linkTo, sentenceCase } from '../utils'
 
 export const managementDashboardTableHeader = (
-  sortBy: string = undefined,
+  sortBy: UserSortField | undefined = undefined,
   sortDirection: SortDirection | undefined = undefined,
   hrefPrefix: string | undefined = undefined,
 ): Array<TableCell> => {
@@ -15,7 +15,7 @@ export const managementDashboardTableHeader = (
       ? {
           text: 'Name',
         }
-      : sortHeader('Name', 'name', sortBy, sortDirection, hrefPrefix),
+      : sortHeader<UserSortField>('Name', 'name', sortBy, sortDirection, hrefPrefix),
     {
       text: 'Role',
     },

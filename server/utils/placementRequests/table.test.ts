@@ -24,6 +24,7 @@ import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { crnCell, tierCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
 import { isFullPerson } from '../personUtils'
+import { PlacementRequestSortField } from '../../@types/shared'
 
 describe('tableUtils', () => {
   describe('nameCell', () => {
@@ -238,7 +239,7 @@ describe('tableUtils', () => {
   })
 
   describe('dashboardTableHeader', () => {
-    const sortBy = 'sortBy'
+    const sortBy = 'duration'
     const sortDirection = 'asc'
     const hrefPrefix = 'http://example.com'
 
@@ -253,9 +254,15 @@ describe('tableUtils', () => {
         {
           text: 'Tier',
         },
-        sortHeader('Arrival date', 'expectedArrival', sortBy, sortDirection, hrefPrefix),
-        sortHeader('Application date', 'application_date', sortBy, sortDirection, hrefPrefix),
-        sortHeader('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>('Arrival date', 'expected_arrival', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>(
+          'Application date',
+          'application_date',
+          sortBy,
+          sortDirection,
+          hrefPrefix,
+        ),
+        sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Request type',
         },
@@ -273,8 +280,14 @@ describe('tableUtils', () => {
         {
           text: 'Tier',
         },
-        sortHeader('Arrival date', 'expectedArrival', sortBy, sortDirection, hrefPrefix),
-        sortHeader('Application date', 'application_date', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>('Arrival date', 'expected_arrival', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>(
+          'Application date',
+          'application_date',
+          sortBy,
+          sortDirection,
+          hrefPrefix,
+        ),
         {
           text: 'Approved Premises',
         },

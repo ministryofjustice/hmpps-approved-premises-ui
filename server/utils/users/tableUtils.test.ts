@@ -3,6 +3,7 @@ import { managementDashboardTableHeader, managementDashboardTableRows } from './
 import paths from '../../paths/admin'
 import { linkTo, sentenceCase } from '../utils'
 import { sortHeader } from '../sortHeader'
+import { UserSortField } from '../../@types/shared'
 
 describe('tableUtils', () => {
   describe('dashboardTableHeader', () => {
@@ -23,7 +24,7 @@ describe('tableUtils', () => {
 
     it('returns the table headers with sorting if hrefPrefix is present', () => {
       expect(managementDashboardTableHeader('name', 'desc', 'http://example.com?')).toEqual([
-        sortHeader('Name', 'name', 'name', 'desc', 'http://example.com?'),
+        sortHeader<UserSortField>('Name', 'name', 'name', 'desc', 'http://example.com?'),
         {
           text: 'Role',
         },

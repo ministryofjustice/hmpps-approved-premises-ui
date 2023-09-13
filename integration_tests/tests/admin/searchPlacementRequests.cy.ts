@@ -87,13 +87,13 @@ context('Search placement Requests', () => {
     cy.task('stubPlacementRequestsSearch', {
       placementRequests,
       crn: 'CRN123',
-      sortBy: 'expectedArrival',
+      sortBy: 'expected_arrival',
       sortDirection: 'asc',
     })
     cy.task('stubPlacementRequestsSearch', {
       placementRequests,
       crn: 'CRN123',
-      sortBy: 'expectedArrival',
+      sortBy: 'expected_arrival',
       sortDirection: 'desc',
     })
 
@@ -107,30 +107,30 @@ context('Search placement Requests', () => {
     searchPage.enterSearchQuery(searchQuery)
 
     // When I sort by expected arrival in ascending order
-    searchPage.clickSortBy('expectedArrival')
+    searchPage.clickSortBy('expected_arrival')
 
     // Then the dashboard should be sorted by expected arrival
-    searchPage.shouldBeSortedByField('expectedArrival', 'ascending')
+    searchPage.shouldBeSortedByField('expected_arrival', 'ascending')
 
     // And the API should have received a request for the correct sort order
     cy.task('verifyPlacementRequestsSearch', {
       ...searchQuery,
-      sortBy: 'expectedArrival',
+      sortBy: 'expected_arrival',
       sortDirection: 'asc',
     }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
     // When I sort by expected arrival in descending order
-    searchPage.clickSortBy('expectedArrival')
+    searchPage.clickSortBy('expected_arrival')
 
     // Then the dashboard should be sorted by expected arrival in descending order
-    searchPage.shouldBeSortedByField('expectedArrival', 'descending')
+    searchPage.shouldBeSortedByField('expected_arrival', 'descending')
 
     // And the API should have received a request for the correct sort order
     cy.task('verifyPlacementRequestsSearch', {
       ...searchQuery,
-      sortBy: 'expectedArrival',
+      sortBy: 'expected_arrival',
       sortDirection: 'desc',
     }).then(requests => {
       expect(requests).to.have.length(1)

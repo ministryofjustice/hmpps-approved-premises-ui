@@ -3,10 +3,10 @@ import { SortDirection } from '../@types/shared'
 import { TableCell } from '../@types/ui'
 import { createQueryString } from './utils'
 
-export const sortHeader = (
+export const sortHeader = <T extends string>(
   text: string,
-  targetField: string,
-  currentSortField: string,
+  targetField: T,
+  currentSortField: T,
   currentSortDirection: SortDirection,
   hrefPrefix: string,
 ): TableCell => {
