@@ -392,13 +392,13 @@ context('Placement Requests', () => {
     cy.task('stubPlacementRequestsDashboard', {
       placementRequests: unmatchedPlacementRequests,
       status: 'notMatched',
-      sortBy: 'expectedArrival',
+      sortBy: 'expected_arrival',
       sortDirection: 'asc',
     })
     cy.task('stubPlacementRequestsDashboard', {
       placementRequests: unmatchedPlacementRequests,
       status: 'notMatched',
-      sortBy: 'expectedArrival',
+      sortBy: 'expected_arrival',
       sortDirection: 'desc',
     })
 
@@ -409,30 +409,30 @@ context('Placement Requests', () => {
     listPage.shouldShowPlacementRequests(unmatchedPlacementRequests)
 
     // When I sort by expected arrival in ascending order
-    listPage.clickSortBy('expectedArrival')
+    listPage.clickSortBy('expected_arrival')
 
     // Then the dashboard should be sorted by expected arrival
-    listPage.shouldBeSortedByField('expectedArrival', 'ascending')
+    listPage.shouldBeSortedByField('expected_arrival', 'ascending')
 
     // And the API should have received a request for the correct sort order
     cy.task('verifyPlacementRequestsDashboard', {
       status: 'notMatched',
-      sortBy: 'expectedArrival',
+      sortBy: 'expected_arrival',
       sortDirection: 'asc',
     }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
     // When I sort by expected arrival in descending order
-    listPage.clickSortBy('expectedArrival')
+    listPage.clickSortBy('expected_arrival')
 
     // Then the dashboard should be sorted by expected arrival in descending order
-    listPage.shouldBeSortedByField('expectedArrival', 'descending')
+    listPage.shouldBeSortedByField('expected_arrival', 'descending')
 
     // And the API should have received a request for the correct sort order
     cy.task('verifyPlacementRequestsDashboard', {
       status: 'notMatched',
-      sortBy: 'expectedArrival',
+      sortBy: 'expected_arrival',
       sortDirection: 'desc',
     }).then(requests => {
       expect(requests).to.have.length(1)

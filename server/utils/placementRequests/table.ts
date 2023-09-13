@@ -1,5 +1,11 @@
 import { addDays } from 'date-fns'
-import { PlacementRequest, PlacementRequestStatus, PlacementRequestTask, SortDirection } from '../../@types/shared'
+import {
+  PlacementRequest,
+  PlacementRequestSortField,
+  PlacementRequestStatus,
+  PlacementRequestTask,
+  SortDirection,
+} from '../../@types/shared'
 import { TableCell, TableRow } from '../../@types/ui'
 import matchPaths from '../../paths/match'
 import adminPaths from '../../paths/admin'
@@ -118,7 +124,7 @@ export const releaseTypeCell = (task: PlacementRequestTask) => {
 
 export const dashboardTableHeader = (
   status: PlacementRequestStatus,
-  sortBy: string,
+  sortBy: PlacementRequestSortField,
   sortDirection: SortDirection,
   hrefPrefix: string,
 ): Array<TableCell> => {
@@ -132,13 +138,13 @@ export const dashboardTableHeader = (
     {
       text: 'Tier',
     },
-    sortHeader('Arrival date', 'expectedArrival', sortBy, sortDirection, hrefPrefix),
-    sortHeader('Application date', 'application_date', sortBy, sortDirection, hrefPrefix),
+    sortHeader<PlacementRequestSortField>('Arrival date', 'expected_arrival', sortBy, sortDirection, hrefPrefix),
+    sortHeader<PlacementRequestSortField>('Application date', 'application_date', sortBy, sortDirection, hrefPrefix),
     status === 'matched'
       ? {
           text: 'Approved Premises',
         }
-      : sortHeader('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
+      : sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
     {
       text: 'Request type',
     },
