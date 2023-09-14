@@ -11,7 +11,7 @@
   {{ formPageTextarea({
             fieldName: 'response',
             label: {
-              text: "Provide the additional information received from the probation practitioner"
+              text: page.questions.details
             }
           }, fetchContext()) }}
 
@@ -21,7 +21,7 @@
         fieldName: "responseReceivedOn",
         fieldset: {
           legend: {
-            text: "When did you receive this information?"
+            text: page.questions.date
           }
         },
         items: dateFieldValues('responseReceivedOn', errors)

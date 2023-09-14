@@ -72,11 +72,21 @@ describe('SufficientInformation', () => {
   })
 
   describe('response', () => {
-    it('returns the response', () => {
+    it('returns the sufficientInformation response when the answer is yes and an empty string for the query', () => {
       const page = new SufficientInformation({ sufficientInformation: 'yes' })
 
       expect(page.response()).toEqual({
         'Is there enough information in the application to make a decision?': 'Yes',
+        'What additional information is required?': '',
+      })
+    })
+
+    it('returns both responses when the answer is no', () => {
+      const page = new SufficientInformation({ sufficientInformation: 'no', query: 'some query' })
+
+      expect(page.response()).toEqual({
+        'Is there enough information in the application to make a decision?': 'No',
+        'What additional information is required?': 'some query',
       })
     })
   })
