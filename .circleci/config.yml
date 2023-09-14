@@ -18,7 +18,7 @@ parameters:
 
   node-version:
     type: string
-    default: 18.16-browsers
+    default: 18.17-browsers
 
 executors:
   integration-tests:
@@ -38,7 +38,7 @@ jobs:
       - checkout
       - run:
           name: Update npm
-          command: 'sudo npm install -g npm@9.8.1'
+          command: 'sudo npm install -g npm@10.1.0'
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
@@ -191,7 +191,7 @@ jobs:
             git clone https://github.com/ministryofjustice/hmpps-approved-premises-e2e.git .
       - run:
           name: Update npm
-          command: 'npm install -g npm@9.8.1'
+          command: 'npm install -g npm@10.1.0'
       - node/install-packages
       - run:
           name: E2E Check
