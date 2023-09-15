@@ -3,7 +3,13 @@ import { TableCell } from '../../@types/ui'
 import paths from '../../paths/admin'
 import { sortHeader } from '../sortHeader'
 import { emailCell } from '../tableUtils'
-import { linkTo, sentenceCase } from '../utils'
+import { linkTo } from '../utils'
+import {
+  allocationRoleLabelDictionary,
+  filterAllocationRoles,
+  qualificationDictionary,
+  roleLabelDictionary,
+} from './roleCheckboxes'
 
 export const managementDashboardTableHeader = (
   sortBy: UserSortField | undefined = undefined,
@@ -19,6 +25,7 @@ export const managementDashboardTableHeader = (
     {
       text: 'Role',
     },
+    { text: 'Allocations' },
     {
       text: 'Email',
     },
@@ -27,7 +34,7 @@ export const managementDashboardTableHeader = (
 }
 
 export const managementDashboardTableRows = (users: Array<User>): Array<Array<TableCell>> => {
-  return users.map(user => [nameCell(user), roleCell(user), emailCell(user), regionCell(user)])
+  return users.map(user => [nameCell(user), roleCell(user), allocationCell(user), emailCell(user), regionCell(user)])
 }
 
 const nameCell = (user: User): TableCell => {
@@ -36,13 +43,28 @@ const nameCell = (user: User): TableCell => {
   }
 }
 
-const roleCell = (user: User): TableCell => {
+export const roleCell = (user: User): TableCell => {
   return {
-    text: user.roles.map(role => sentenceCase(role)).join(', '),
+    text: filterAllocationRoles(user.roles, { returnOnlyAllocationRoles: false })
+      .map(role => roleLabelDictionary[role].label)
+      .join(', '),
   }
 }
 
-const regionCell = (user: User): TableCell => {
+export const allocationCell = (user: User): TableCell => {
+  const allocations = [
+    ...filterAllocationRoles(user.roles, { returnOnlyAllocationRoles: true }).map(
+      role => allocationRoleLabelDictionary[role].label,
+    ),
+    ...user.qualifications.map(qualification => qualificationDictionary[qualification]),
+  ].join(', ')
+
+  return {
+    text: allocations.length > 0 ? allocations : 'Standard',
+  }
+}
+
+export const regionCell = (user: User): TableCell => {
   return {
     text: user.region.name,
   }

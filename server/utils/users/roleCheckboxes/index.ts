@@ -53,7 +53,7 @@ export type AllocationRole = (typeof allocationRoles)[number]
 
 export const qualifications: ReadonlyArray<UserQualification> = ['pipe', 'emergency', 'esap']
 
-const qualificationDictionary: Record<UserQualification, string> = {
+export const qualificationDictionary: Record<UserQualification, string> = {
   lao: 'LAO',
   womens: "Women's AP's",
   emergency: 'Emergency APs',
