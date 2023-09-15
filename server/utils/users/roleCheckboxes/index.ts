@@ -49,6 +49,8 @@ export const allocationRoles = [
   'excluded_from_placement_application_allocation',
 ] as const
 
+export const unusedRoles = ['applicant', 'report_viewer'] as const
+
 export type AllocationRole = (typeof allocationRoles)[number]
 
 export const qualifications: ReadonlyArray<UserQualification> = ['pipe', 'emergency', 'esap']
@@ -61,11 +63,16 @@ export const qualificationDictionary: Record<UserQualification, string> = {
   pipe: 'PIPE',
 }
 
+export const filterUnusedRoles = (allRoles: Array<UserRole>) =>
+  allRoles.filter(role => !(unusedRoles as ReadonlyArray<UserRole>).includes(role))
+
 export const filterAllocationRoles = (
   allRoles: Array<UserRole>,
   { returnOnlyAllocationRoles: includeAllocationRoles }: { returnOnlyAllocationRoles: boolean },
 ) => {
-  return allRoles.filter(role => (allocationRoles as ReadonlyArray<UserRole>).includes(role) === includeAllocationRoles)
+  return filterUnusedRoles(allRoles).filter(
+    role => (allocationRoles as ReadonlyArray<UserRole>).includes(role) === includeAllocationRoles,
+  )
 }
 
 export const roleCheckboxItem = (
