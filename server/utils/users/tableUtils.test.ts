@@ -1,8 +1,10 @@
 import { userFactory } from '../../testutils/factories'
 import {
+  allocationCell,
   managementDashboardTableHeader,
   managementDashboardTableRows,
   nameCell,
+  regionCell,
   roleCell,
 } from './tableUtils'
 import paths from '../../paths/admin'
@@ -21,6 +23,9 @@ describe('tableUtils', () => {
           text: 'Role',
         },
         {
+          text: 'Allocations',
+        },
+        {
           text: 'Email',
         },
         { text: 'Region' },
@@ -32,6 +37,9 @@ describe('tableUtils', () => {
         sortHeader<UserSortField>('Name', 'name', 'name', 'desc', 'http://example.com?'),
         {
           text: 'Role',
+        },
+        {
+          text: 'Allocations',
         },
         {
           text: 'Email',
@@ -56,6 +64,16 @@ describe('tableUtils', () => {
       ])
     })
   })
+
+  describe('nameCell', () => {
+    it('returns a cell with the persons name as a link to the edit page', () => {
+      const user = userFactory.build()
+      expect(nameCell(user)).toEqual({
+        html: linkTo(paths.admin.userManagement.edit, { id: user.id }, { text: user.name }),
+      })
+    })
+  })
+
   describe('roleCell', () => {
     it('returns a cell with the persons roles in sentence case, excluding the allocation roles', () => {
       const user = userFactory.build({
@@ -77,7 +95,7 @@ describe('tableUtils', () => {
     })
   })
 
-  describe('allocations', () => {
+  describe('allocationCell', () => {
     it('returns a cell with the persons allocations: a combination of certain roles and all qualifications in sentence case when the user has roles', () => {
       const user = userFactory.build({
         roles: [
@@ -106,6 +124,15 @@ describe('tableUtils', () => {
       })
       expect(allocationCell(user)).toEqual({
         text: 'Standard',
+      })
+    })
+  })
+
+  describe('regionCell', () => {
+    it('returns the region for the user', () => {
+      const user = userFactory.build()
+      expect(regionCell(user)).toEqual({
+        text: user.region.name,
       })
     })
   })
