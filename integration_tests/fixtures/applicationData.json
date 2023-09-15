@@ -205,7 +205,12 @@
     "date-of-offence": {
       "arsonOffence": ["current"],
       "hateCrime": ["previous"],
-      "inPersonSexualOffence": ["current", "previous"]
+      "offencesAgainstChildren": ["current", "previous"],
+      "contactSexualOffencesAgainstAdults": ["current", "previous"],
+      "nonContactSexualOffencesAgainstAdults": ["current", "previous"],
+      "contactSexualOffencesAgainstChildren": ["current", "previous"],
+      "nonContactSexualOffencesAgainstChildren": ["current", "previous"],
+      "otherSexualOffences": ["current", "previous"]
     },
     "rehabilitative-interventions": {
       "rehabilitativeInterventions": [

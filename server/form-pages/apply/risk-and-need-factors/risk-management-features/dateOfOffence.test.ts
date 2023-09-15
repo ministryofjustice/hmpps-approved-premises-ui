@@ -5,19 +5,22 @@ import DateOfOffence from './dateOfOffence'
 jest.mock('../../../../utils/formUtils')
 
 describe('DateOfOffence', () => {
+  const body = {
+    arsonOffence: 'current',
+    hateCrime: 'previous',
+    offencesAgainstChildren: ['current', 'previous'],
+    contactSexualOffencesAgainstAdults: ['current', 'previous'],
+    nonContactSexualOffencesAgainstAdults: ['current', 'previous'],
+    contactSexualOffencesAgainstChildren: ['current', 'previous'],
+    nonContactSexualOffencesAgainstChildren: ['current', 'previous'],
+    otherSexualOffences: ['current', 'previous'],
+  } as const
+
   describe('body', () => {
     it('should set the body', () => {
-      const page = new DateOfOffence({
-        arsonOffence: 'current',
-        onlineSexualOffence: ['previous', 'current'],
-        hateCrime: ['previous'],
-      })
+      const page = new DateOfOffence(body)
 
-      expect(page.body).toEqual({
-        arsonOffence: ['current'],
-        onlineSexualOffence: ['previous', 'current'],
-        hateCrime: ['previous'],
-      })
+      expect(page.body).toEqual({ ...body, arsonOffence: ['current'], hateCrime: ['previous'] })
     })
   })
 
@@ -38,17 +41,17 @@ describe('DateOfOffence', () => {
 
   describe('response', () => {
     it('should return a translated version of the response', () => {
-      const page = new DateOfOffence({
-        arsonOffence: 'current',
-        hateCrime: 'previous',
-        onlineSexualOffence: ['previous', 'current'],
-      })
+      const page = new DateOfOffence(body)
 
       expect(page.response()).toEqual({
         'Is the arson offence current or previous?': 'Current',
         'Is the hate crime current or previous?': 'Previous',
-        'Is the in person sexual offence current or previous?': 'Neither',
-        'Is the online sexual offence current or previous?': 'Current and previous',
+        'Is the contact sexual offences against adults current or previous?': 'Current and previous',
+        'Is the contact sexual offences against children current or previous?': 'Current and previous',
+        'Is the non contact sexual offences against adults current or previous?': 'Current and previous',
+        'Is the non contact sexual offences against children current or previous?': 'Current and previous',
+        'Is the offences against children current or previous?': 'Current and previous',
+        'Is the other sexual offences current or previous?': 'Current and previous',
       })
     })
   })
@@ -92,8 +95,12 @@ describe('DateOfOffence', () => {
       expect(result).toEqual([
         new DateOfOffence({}).renderTableRow('arsonOffence'),
         new DateOfOffence({}).renderTableRow('hateCrime'),
-        new DateOfOffence({}).renderTableRow('inPersonSexualOffence'),
-        new DateOfOffence({}).renderTableRow('onlineSexualOffence'),
+        new DateOfOffence({}).renderTableRow('offencesAgainstChildren'),
+        new DateOfOffence({}).renderTableRow('contactSexualOffencesAgainstAdults'),
+        new DateOfOffence({}).renderTableRow('nonContactSexualOffencesAgainstAdults'),
+        new DateOfOffence({}).renderTableRow('contactSexualOffencesAgainstChildren'),
+        new DateOfOffence({}).renderTableRow('nonContactSexualOffencesAgainstChildren'),
+        new DateOfOffence({}).renderTableRow('otherSexualOffences'),
       ])
     })
   })
