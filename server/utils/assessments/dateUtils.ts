@@ -4,8 +4,9 @@ import {
   ApprovedPremisesAssessment as Assessment,
   AssessmentSummary,
 } from '@approved-premises/api'
-import { DateFormats, addBusinessDays } from '../dateUtils'
+import { DateFormats } from '../dateUtils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
+import { daysUntilDue } from './daysUntilDue'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
@@ -29,13 +30,6 @@ const formatDays = (days: number): string => {
     return 'N/A'
   }
   return `${days} Day${days > 1 ? 's' : ''}`
-}
-
-const daysUntilDue = (assessment: AssessmentSummary): number => {
-  const receivedDate = DateFormats.isoToDateObj(assessment.createdAt)
-  const dueDate = addBusinessDays(receivedDate, 10)
-
-  return DateFormats.differenceInBusinessDays(dueDate, new Date())
 }
 
 const daysToWeeksAndDays = (days: string | number): { days: number; weeks: number } => {
