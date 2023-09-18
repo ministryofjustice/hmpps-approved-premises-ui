@@ -3,7 +3,6 @@ import {
   daysSinceInfoRequest,
   daysSinceReceived,
   daysToWeeksAndDays,
-  daysUntilDue,
   formatDays,
   formatDaysUntilDueWithWarning,
   formattedArrivalDate,
@@ -62,14 +61,6 @@ describe('dateUtils', () => {
 
     it('returns N/A if the day in undefined', () => {
       expect(formatDays(undefined)).toEqual('N/A')
-    })
-  })
-
-  describe('daysUntilDue', () => {
-    it('returns the days until the assessment is due', () => {
-      const assessment = assessmentSummaryFactory.createdXDaysAgo(1).build()
-
-      expect(daysUntilDue(assessment)).toEqual(1)
     })
   })
 
