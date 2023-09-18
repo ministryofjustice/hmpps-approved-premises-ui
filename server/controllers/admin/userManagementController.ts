@@ -41,16 +41,13 @@ export default class UserController {
 
   update(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const user = await this.userService.getUserById(req.user.token, req.params.id)
-
-      await this.userService.updateUser(req.user.token, {
-        ...user,
+      await this.userService.updateUser(req.user.token, req.params.id, {
         roles: [...flattenCheckboxInput(req.body.roles), ...flattenCheckboxInput(req.body.allocationPreferences)],
         qualifications: flattenCheckboxInput(req.body.qualifications),
       })
 
       req.flash('success', 'User updated')
-      res.redirect(paths.admin.userManagement.edit({ id: user.id }))
+      res.redirect(paths.admin.userManagement.edit({ id: req.params.id }))
     }
   }
 

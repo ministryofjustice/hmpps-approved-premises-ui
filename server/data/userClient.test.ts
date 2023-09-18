@@ -311,6 +311,8 @@ describeClient('UserClient', provider => {
     it('should update a user', async () => {
       const user = userFactory.build()
 
+      const rolesAndQualifications = { roles: user.roles, qualifications: user.qualifications }
+
       provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to update a user',
@@ -321,7 +323,7 @@ describeClient('UserClient', provider => {
             authorization: `Bearer ${token}`,
             'X-Service-Name': 'approved-premises',
           },
-          body: user,
+          body: rolesAndQualifications,
         },
         willRespondWith: {
           status: 200,
@@ -329,7 +331,7 @@ describeClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.updateUser(user)
+      const output = await userClient.updateUser(user.id, rolesAndQualifications)
       expect(output).toEqual(user)
     })
   })

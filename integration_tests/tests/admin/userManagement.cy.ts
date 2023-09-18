@@ -74,7 +74,8 @@ context('User management', () => {
       const body = JSON.parse(requests[0].body)
 
       expect(body).to.deep.equal({
-        ...updatedUser,
+        roles: updatedUser.roles,
+        qualifications: updatedRoles.qualifications,
       })
     })
 

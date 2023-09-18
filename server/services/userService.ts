@@ -3,6 +3,7 @@ import {
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
+  UserRolesAndQualifications,
   UserSortField,
 } from '@approved-premises/api'
 import { PaginatedResponse, UserDetails } from '@approved-premises/ui'
@@ -42,10 +43,10 @@ export default class UserService {
     return client.getUsers(roles, qualifications, page, sortBy, sortDirection)
   }
 
-  async updateUser(token: string, user: User): Promise<User> {
+  async updateUser(token: string, userId: string, rolesAndQualifications: UserRolesAndQualifications): Promise<User> {
     const client = this.userClientFactory(token)
 
-    return client.updateUser(user)
+    return client.updateUser(userId, rolesAndQualifications)
   }
 
   async search(token: string, query: string): Promise<Array<User>> {
