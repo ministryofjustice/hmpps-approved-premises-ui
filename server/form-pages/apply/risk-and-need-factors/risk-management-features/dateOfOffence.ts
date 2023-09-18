@@ -7,15 +7,19 @@ import TasklistPage from '../../../tasklistPage'
 const offences = {
   arsonOffence: 'Arson offence',
   hateCrime: 'Hate crime',
-  inPersonSexualOffence: 'Child sexual offence, in person',
-  onlineSexualOffence: 'Online sexual offence',
+  offencesAgainstChildren: 'Offences against children',
+  contactSexualOffencesAgainstAdults: 'Contact sexual offences against adults',
+  nonContactSexualOffencesAgainstAdults: 'Non-contact sexual offences against adults',
+  contactSexualOffencesAgainstChildren: 'Contact sexual offences against children',
+  nonContactSexualOffencesAgainstChildren: 'Non-contact sexual offences against children',
+  otherSexualOffences: 'Other sexual offence',
 } as const
 
 const offencesList = Object.keys(offences)
 
 type Offence = keyof typeof offences
 
-type Response = Array<'previous' | 'current'> | 'previous' | 'current'
+type Response = ReadonlyArray<'previous' | 'current'> | 'previous' | 'current'
 
 @Page({ name: 'date-of-offence', bodyProperties: Object.keys(offences) })
 export default class DateOfOffence implements TasklistPage {

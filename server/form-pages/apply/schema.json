@@ -991,7 +991,7 @@
                 }
               ]
             },
-            "inPersonSexualOffence": {
+            "offencesAgainstChildren": {
               "anyOf": [
                 {
                   "type": "array",
@@ -1012,7 +1012,91 @@
                 }
               ]
             },
-            "onlineSexualOffence": {
+            "contactSexualOffencesAgainstAdults": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "current",
+                      "previous"
+                    ],
+                    "type": "string"
+                  }
+                },
+                {
+                  "enum": [
+                    "current",
+                    "previous"
+                  ],
+                  "type": "string"
+                }
+              ]
+            },
+            "nonContactSexualOffencesAgainstAdults": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "current",
+                      "previous"
+                    ],
+                    "type": "string"
+                  }
+                },
+                {
+                  "enum": [
+                    "current",
+                    "previous"
+                  ],
+                  "type": "string"
+                }
+              ]
+            },
+            "contactSexualOffencesAgainstChildren": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "current",
+                      "previous"
+                    ],
+                    "type": "string"
+                  }
+                },
+                {
+                  "enum": [
+                    "current",
+                    "previous"
+                  ],
+                  "type": "string"
+                }
+              ]
+            },
+            "nonContactSexualOffencesAgainstChildren": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "current",
+                      "previous"
+                    ],
+                    "type": "string"
+                  }
+                },
+                {
+                  "enum": [
+                    "current",
+                    "previous"
+                  ],
+                  "type": "string"
+                }
+              ]
+            },
+            "otherSexualOffences": {
               "anyOf": [
                 {
                   "type": "array",
