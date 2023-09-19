@@ -49,7 +49,7 @@ context('User management', () => {
         'excluded_from_match_allocation',
         'excluded_from_placement_application_allocation',
       ] as const,
-      qualifications: ['pipe', 'emergency', 'esap'] as const,
+      qualifications: ['pipe', 'emergency', 'esap', 'lao'] as const,
     }
     showPage.completeForm({
       roles: updatedRoles.roles,
