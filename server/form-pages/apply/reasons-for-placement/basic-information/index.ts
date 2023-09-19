@@ -18,6 +18,7 @@ import PauseApplication from './pauseApplication'
 import ReferToDelius from './referToDelius'
 import NotEligible from './notEligible'
 import EndDates from './endDates'
+import ManagedByMappa from './managedByMappa'
 import { Task } from '../../../utils/decorators'
 
 @Task({
@@ -34,6 +35,7 @@ import { Task } from '../../../utils/decorators'
     ReferToDelius,
     ExceptionDetails,
     SentenceType,
+    ManagedByMappa,
     ReleaseType,
     EndDates,
     Situation,
