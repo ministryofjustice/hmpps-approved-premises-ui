@@ -9,7 +9,6 @@ declare module 'express-session' {
     returnTo: string
     nowInMinutes: number
     application: ApprovedPremisesApplication
-    previousPage: string
     user: UserDetails
     placementApplicationDecisions: Record<string, Partial<PlacementApplicationDecisionEnvelope>>
   }

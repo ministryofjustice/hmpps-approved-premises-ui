@@ -206,7 +206,6 @@ describe('ApplicationService', () => {
 
       request = createMock<Request>({
         params: { id: application.id, task: 'my-task', page: 'first' },
-        session: { previousPage: '' },
         user: { token: 'some-token' },
       })
     })
@@ -218,7 +217,7 @@ describe('ApplicationService', () => {
 
       expect(result).toBeInstanceOf(Page)
 
-      expect(Page).toHaveBeenCalledWith(request.body, application, '')
+      expect(Page).toHaveBeenCalledWith(request.body, application)
       expect(applicationClient.find).toHaveBeenCalledWith(request.params.id)
     })
 
@@ -229,7 +228,7 @@ describe('ApplicationService', () => {
 
       expect(result).toBeInstanceOf(Page)
 
-      expect(Page).toHaveBeenCalledWith(request.body, application, '')
+      expect(Page).toHaveBeenCalledWith(request.body, application)
     })
 
     it('should initialize the page with the session and the userInput if specified', async () => {
@@ -240,7 +239,7 @@ describe('ApplicationService', () => {
 
       expect(result).toBeInstanceOf(Page)
 
-      expect(Page).toHaveBeenCalledWith(userInput, application, '')
+      expect(Page).toHaveBeenCalledWith(userInput, application)
     })
 
     it('should load from the application if the body and userInput are blank', async () => {
@@ -257,7 +256,7 @@ describe('ApplicationService', () => {
 
       expect(result).toBeInstanceOf(Page)
 
-      expect(Page).toHaveBeenCalledWith({ foo: 'bar' }, applicationWithData, '')
+      expect(Page).toHaveBeenCalledWith({ foo: 'bar' }, applicationWithData)
     })
 
     it("should call a service's initialize method if it exists", async () => {
@@ -267,15 +266,6 @@ describe('ApplicationService', () => {
       await service.initializePage(OtherPage, request, dataServices)
 
       expect(OtherPage.initialize).toHaveBeenCalledWith(request.body, application, request.user.token, dataServices)
-    })
-
-    it("retrieve the 'previousPage' value from the session and call the Page object's constructor with that value", async () => {
-      ;(getBody as jest.Mock).mockReturnValue(request.body)
-
-      request.session.previousPage = 'previous-page-name'
-      await service.initializePage(Page, request, dataServices)
-
-      expect(Page).toHaveBeenCalledWith(request.body, application, 'previous-page-name')
     })
   })
 

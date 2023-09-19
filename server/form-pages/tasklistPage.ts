@@ -3,7 +3,7 @@
 import type { DataServices, FormArtifact, PageResponse, TaskListErrors } from '@approved-premises/ui'
 
 export interface TasklistPageInterface {
-  new (body: Record<string, unknown>, document?: FormArtifact, previousPage?: string): TasklistPage
+  new (body: Record<string, unknown>, document?: FormArtifact): TasklistPage
   initialize?(
     body: Record<string, unknown>,
     document: FormArtifact,

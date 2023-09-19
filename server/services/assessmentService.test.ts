@@ -70,7 +70,6 @@ describe('AssessmentService', () => {
     beforeEach(() => {
       request = createMock<Request>({
         params: { id: assessment.id, task: 'my-task', page: 'first' },
-        session: { previousPage: '' },
         user: { token: 'some-token' },
       })
     })
@@ -82,7 +81,7 @@ describe('AssessmentService', () => {
 
       expect(result).toBeInstanceOf(Page)
 
-      expect(Page).toHaveBeenCalledWith(request.body, assessment, '')
+      expect(Page).toHaveBeenCalledWith(request.body, assessment)
     })
 
     it("should call a page's initialize method if it exists", async () => {
