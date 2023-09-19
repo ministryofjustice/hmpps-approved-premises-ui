@@ -4,9 +4,10 @@ import type { ReleaseTypeOptions, TaskListErrors } from '@approved-premises/ui'
 import { SessionDataError } from '../../../../utils/errors'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import TasklistPage from '../../../tasklistPage'
-import SentenceType, { SentenceTypesT } from './sentenceType'
+import SentenceType from './sentenceType'
 import { Page } from '../../../utils/decorators'
 import { allReleaseTypes } from '../../../../utils/applications/releaseTypeUtils'
+import { SentenceTypesT } from '../../../../utils/applications/adjacentPageFromSentenceType'
 
 type SelectableReleaseType = Exclude<ReleaseTypeOption, 'in_community'>
 type ReducedReleaseTypeOptions = Pick<ReleaseTypeOptions, 'rotl' | 'licence'>

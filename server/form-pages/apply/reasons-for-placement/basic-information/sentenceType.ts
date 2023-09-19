@@ -3,18 +3,11 @@ import { ApprovedPremisesApplication as Application } from '@approved-premises/a
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-
-export const sentenceTypes = {
-  standardDeterminate: 'Standard determinate custody',
-  life: 'Life sentence',
-  ipp: 'Indeterminate Public Protection (IPP)',
-  extendedDeterminate: 'Extended determinate custody',
-  communityOrder: 'Community Order (CO) / Suspended Sentence Order (SSO)',
-  bailPlacement: 'Bail placement',
-  nonStatutory: 'Non-statutory, MAPPA case',
-} as const
-
-export type SentenceTypesT = keyof typeof sentenceTypes
+import {
+  SentenceTypesT,
+  adjacentPageFromSentenceType,
+  sentenceTypes,
+} from '../../../../utils/applications/adjacentPageFromSentenceType'
 
 @Page({ name: 'sentence-type', bodyProperties: ['sentenceType'] })
 export default class SentenceType implements TasklistPage {
@@ -34,24 +27,7 @@ export default class SentenceType implements TasklistPage {
   }
 
   next() {
-    switch (this.body.sentenceType) {
-      case 'standardDeterminate':
-        return 'release-type'
-      case 'communityOrder':
-        return 'situation'
-      case 'bailPlacement':
-        return 'situation'
-      case 'extendedDeterminate':
-        return 'release-type'
-      case 'ipp':
-        return 'release-type'
-      case 'nonStatutory':
-        return 'release-date'
-      case 'life':
-        return 'release-type'
-      default:
-        throw new Error('The release type is invalid')
-    }
+    return adjacentPageFromSentenceType(this.body.sentenceType)
   }
 
   errors() {

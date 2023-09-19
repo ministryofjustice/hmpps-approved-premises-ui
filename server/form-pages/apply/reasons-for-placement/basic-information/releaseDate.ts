@@ -6,6 +6,9 @@ import TasklistPage from '../../../tasklistPage'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank, dateIsInThePast } from '../../../../utils/dateUtils'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
+import { adjacentPageFromSentenceType } from '../../../../utils/applications/adjacentPageFromSentenceType'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import SentenceType from './sentenceType'
 
 type ReleaseDateType = ObjectWithDateParts<'releaseDate'> & {
   knowReleaseDate: YesOrNo
@@ -21,7 +24,6 @@ export default class ReleaseDate implements TasklistPage {
   constructor(
     private _body: Partial<ReleaseDateType>,
     readonly application: ApprovedPremisesApplication,
-    readonly previousPage: string,
   ) {}
 
   public set body(value: Partial<ReleaseDateType>) {
@@ -51,7 +53,8 @@ export default class ReleaseDate implements TasklistPage {
   }
 
   previous() {
-    return this.previousPage
+    const sentenceType = retrieveQuestionResponseFromFormArtifact(this.application, SentenceType)
+    return adjacentPageFromSentenceType(sentenceType)
   }
 
   response() {

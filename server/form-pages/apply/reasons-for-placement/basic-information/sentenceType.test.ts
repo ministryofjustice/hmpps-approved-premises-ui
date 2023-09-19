@@ -1,7 +1,10 @@
 import { applicationFactory } from '../../../../testutils/factories'
+import { adjacentPageFromSentenceType } from '../../../../utils/applications/adjacentPageFromSentenceType'
 import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import SentenceType from './sentenceType'
+
+jest.mock('../../../../utils/applications/adjacentPageFromSentenceType')
 
 describe('SentenceType', () => {
   const application = applicationFactory.build()
@@ -15,39 +18,15 @@ describe('SentenceType', () => {
   })
 
   describe('next', () => {
-    it('should return release-type for a standardDeterminate sentence', () => {
-      const page = new SentenceType({ sentenceType: 'standardDeterminate' }, application)
-      expect(page.next()).toEqual('release-type')
-    })
+    it('calls selectAdjacentPageFromSentenceType and returns the result', () => {
+      ;(adjacentPageFromSentenceType as jest.MockedFn<typeof adjacentPageFromSentenceType>).mockReturnValue(
+        'release-type',
+      )
 
-    it('should return situation for a communityOrder sentence', () => {
-      const page = new SentenceType({ sentenceType: 'communityOrder' }, application)
-      expect(page.next()).toEqual('situation')
-    })
+      const result = new SentenceType({ sentenceType: 'standardDeterminate' }, application).next()
 
-    it('should return situation for a bailPlacement sentence', () => {
-      const page = new SentenceType({ sentenceType: 'bailPlacement' }, application)
-      expect(page.next()).toEqual('situation')
-    })
-
-    it('should return release-type for an extendedDeterminate sentence', () => {
-      const page = new SentenceType({ sentenceType: 'extendedDeterminate' }, application)
-      expect(page.next()).toEqual('release-type')
-    })
-
-    it('should return release-type for an ipp sentence', () => {
-      const page = new SentenceType({ sentenceType: 'ipp' }, application)
-      expect(page.next()).toEqual('release-type')
-    })
-
-    it('should return release-type for a life sentence', () => {
-      const page = new SentenceType({ sentenceType: 'life' }, application)
-      expect(page.next()).toEqual('release-type')
-    })
-
-    it('should return release-date for a non-statutory / MAPPA sentence', () => {
-      const page = new SentenceType({ sentenceType: 'nonStatutory' }, application)
-      expect(page.next()).toEqual('release-date')
+      expect(result).toEqual('release-type')
+      expect(adjacentPageFromSentenceType).toHaveBeenCalledWith('standardDeterminate')
     })
   })
 
