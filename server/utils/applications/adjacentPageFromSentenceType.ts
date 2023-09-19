@@ -23,7 +23,7 @@ export const adjacentPageFromSentenceType = (sentenceType: SentenceTypesT) => {
     case 'ipp':
       return 'release-type'
     case 'nonStatutory':
-      return 'release-date'
+      return 'managed-by-mappa'
     case 'life':
       return 'release-type'
     default:

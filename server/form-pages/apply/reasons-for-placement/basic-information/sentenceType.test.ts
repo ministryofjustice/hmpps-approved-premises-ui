@@ -48,7 +48,7 @@ describe('SentenceType', () => {
     it('marks an option as selected when the sentenceType is set', () => {
       const page = new SentenceType({ sentenceType: 'life' }, application)
 
-      const selectedOptions = page.items().filter(item => item.checked)
+      const selectedOptions = page.items('conditionalHTML').filter(item => item.checked)
 
       expect(selectedOptions.length).toEqual(1)
       expect(selectedOptions[0].value).toEqual('life')
@@ -57,9 +57,23 @@ describe('SentenceType', () => {
     it('marks no options selected when the sentenceType is not set', () => {
       const page = new SentenceType({}, application)
 
-      const selectedOptions = page.items().filter(item => item.checked)
+      const selectedOptions = page.items('conditionalHTML').filter(item => item.checked)
 
       expect(selectedOptions.length).toEqual(0)
+    })
+
+    it('returns the conditional text for the nonStatutory key', () => {
+      const page = new SentenceType({}, application)
+
+      const selectedOptions = page.items('conditionalHTML')
+
+      selectedOptions.forEach(item => {
+        if (item.value !== 'nonStatutory') {
+          expect(item.conditional).toEqual({ html: '' })
+        } else {
+          expect(item.conditional).toEqual({ html: 'conditionalHTML' })
+        }
+      })
     })
   })
 

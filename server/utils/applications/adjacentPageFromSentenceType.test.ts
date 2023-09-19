@@ -26,6 +26,6 @@ describe('adjacentPageFromSentenceType', () => {
   })
 
   it('should return release-date for a non-statutory / MAPPA sentence', () => {
-    expect(adjacentPageFromSentenceType('nonStatutory')).toEqual('release-date')
+    expect(adjacentPageFromSentenceType('nonStatutory')).toEqual('managed-by-mappa')
   })
 })
