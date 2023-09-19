@@ -9,7 +9,10 @@ export const roleLabelDictionary: RoleLabelDictionary = {
     hint: 'Mark arrivals, departures, and manage placements at an AP',
   },
   matcher: { label: 'Matcher', hint: 'Match a person to a suitable AP for placement' },
-  workflow_manager: { label: 'Workflow manager', hint: 'Manage the allocation of assessments and matches to staff' },
+  workflow_manager: {
+    label: 'Workflow manager',
+    hint: 'Manage the allocation of assessments and matches to staff, and view reports',
+  },
 }
 
 export const allocationRoleLabelDictionary: AllocationRoleLabelDictionary = {
@@ -46,11 +49,13 @@ export const allocationRoles = [
   'excluded_from_placement_application_allocation',
 ] as const
 
+export const unusedRoles = ['applicant', 'report_viewer'] as const
+
 export type AllocationRole = (typeof allocationRoles)[number]
 
 export const qualifications: ReadonlyArray<UserQualification> = ['pipe', 'emergency', 'esap']
 
-const qualificationDictionary: Record<UserQualification, string> = {
+export const qualificationDictionary: Record<UserQualification, string> = {
   lao: 'LAO',
   womens: "Women's AP's",
   emergency: 'Emergency APs',
@@ -58,11 +63,16 @@ const qualificationDictionary: Record<UserQualification, string> = {
   pipe: 'PIPE',
 }
 
+export const filterUnusedRoles = (allRoles: Array<UserRole>) =>
+  allRoles.filter(role => !(unusedRoles as ReadonlyArray<UserRole>).includes(role))
+
 export const filterAllocationRoles = (
   allRoles: Array<UserRole>,
   { returnOnlyAllocationRoles: includeAllocationRoles }: { returnOnlyAllocationRoles: boolean },
 ) => {
-  return allRoles.filter(role => (allocationRoles as ReadonlyArray<UserRole>).includes(role) === includeAllocationRoles)
+  return filterUnusedRoles(allRoles).filter(
+    role => (allocationRoles as ReadonlyArray<UserRole>).includes(role) === includeAllocationRoles,
+  )
 }
 
 export const roleCheckboxItem = (

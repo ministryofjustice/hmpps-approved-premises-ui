@@ -88,15 +88,22 @@ describe('User service', () => {
 
   describe('updateUser', () => {
     it('calls the client method and returns the updated user', async () => {
-      const user = userFactory.build()
+      const userId = 'SOME_ID'
+      const user = userFactory.build({ id: userId })
 
       userClient.updateUser.mockResolvedValue(user)
 
-      const result = await userService.updateUser(token, user)
+      const result = await userService.updateUser(token, user.id, {
+        roles: user.roles,
+        qualifications: user.qualifications,
+      })
 
       expect(result).toEqual(user)
 
-      expect(userClient.updateUser).toHaveBeenCalledWith(user)
+      expect(userClient.updateUser).toHaveBeenCalledWith(userId, {
+        roles: user.roles,
+        qualifications: user.qualifications,
+      })
     })
   })
 

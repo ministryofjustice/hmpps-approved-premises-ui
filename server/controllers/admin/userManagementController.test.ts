@@ -147,8 +147,10 @@ describe('UserManagementController', () => {
         next,
       )
 
-      expect(userService.getUserById).toHaveBeenCalledWith(token, user.id)
-      expect(userService.updateUser).toHaveBeenCalledWith(token, updatedUser)
+      expect(userService.updateUser).toHaveBeenCalledWith(token, user.id, {
+        roles: [...updatedRoles.roles, ...updatedRoles.allocationRoles],
+        qualifications: updatedUser.qualifications,
+      })
       expect(response.redirect).toHaveBeenCalledWith(paths.admin.userManagement.edit({ id: user.id }))
       expect(flash).toHaveBeenCalledWith('success', 'User updated')
     })

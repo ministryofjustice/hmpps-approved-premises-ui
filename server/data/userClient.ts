@@ -3,6 +3,7 @@ import type {
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
+  UserRolesAndQualifications,
   UserSortField,
 } from '@approved-premises/api'
 
@@ -50,8 +51,11 @@ export default class UserClient {
     })
   }
 
-  async updateUser(user: User): Promise<User> {
-    return (await this.restClient.put({ path: paths.users.update({ id: user.id }), data: user })) as User
+  async updateUser(userId: string, rolesAndQualifications: UserRolesAndQualifications): Promise<User> {
+    return (await this.restClient.put({
+      path: paths.users.update({ id: userId }),
+      data: rolesAndQualifications,
+    })) as User
   }
 
   search(name: string): Promise<Array<User>> {
