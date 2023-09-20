@@ -53,10 +53,10 @@ export const unusedRoles = ['applicant', 'report_viewer'] as const
 
 export type AllocationRole = (typeof allocationRoles)[number]
 
-export const qualifications: ReadonlyArray<UserQualification> = ['pipe', 'emergency', 'esap']
+export const qualifications: ReadonlyArray<UserQualification> = ['pipe', 'emergency', 'esap', 'lao']
 
 export const qualificationDictionary: Record<UserQualification, string> = {
-  lao: 'LAO',
+  lao: 'Limited access offenders',
   womens: "Women's AP's",
   emergency: 'Emergency APs',
   esap: 'ESAP',
