@@ -2,6 +2,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "../partials/personDetails.njk" import personDetails %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% extends "../partials/layout.njk" %}
 
@@ -41,6 +42,19 @@
           </div>
         </div>
       </div>
+
+      {% if application.assessmentDecision %}
+        {% set html %}
+        <p class="govuk-body">Application was {{ application.assessmentDecision }} on {{ formatDate(application.assessmentDecisionDate) }}</p>
+        <p class="govuk-body">
+          <a href="{{paths.assessments.show({id: application.assessmentId})}}" data-cy-assessmentId="{{ application.assessmentId }}">View assessment</a>
+        </p>
+        {% endset %}
+
+        {{ govukInsetText({
+          html: html
+        }) }}
+      {% endif %}
 
       {{ personDetails(application.person) }}
 

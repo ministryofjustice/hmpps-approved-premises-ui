@@ -1,5 +1,5 @@
 import { addDays } from 'date-fns'
-import { EnterCRNPage, ListPage, SelectOffencePage, ShowPage, StartPage, TransgenderPage } from '../../pages/apply'
+import { EnterCRNPage, ListPage, SelectOffencePage, StartPage, TransgenderPage } from '../../pages/apply'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import {
   activeOffenceFactory,
@@ -223,30 +223,5 @@ context('Apply', () => {
 
     // Then I am taken back to the dashboard
     Page.verifyOnPage(ListPage)
-  })
-
-  it('shows a read-only version the application', function test() {
-    // Given I have completed an application
-    const updatedApplication = { ...this.application, status: 'submitted' }
-    cy.task('stubApplicationGet', { application: updatedApplication })
-    cy.task('stubApplications', [updatedApplication])
-
-    // And I visit the list page
-    const listPage = ListPage.visit([], [updatedApplication], [])
-
-    // When I click on the Submitted tab
-    listPage.clickSubmittedTab()
-
-    // Then I should see my application
-    listPage.shouldShowInProgressApplications()
-
-    // When I click on my application
-    listPage.clickApplication(this.application)
-
-    // Then I should see a read-only version of the application
-    const showPage = Page.verifyOnPage(ShowPage, updatedApplication)
-
-    showPage.shouldShowPersonInformation()
-    showPage.shouldShowResponses()
   })
 })

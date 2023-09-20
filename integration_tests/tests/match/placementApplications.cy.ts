@@ -40,11 +40,9 @@ context('Placement Applications', () => {
   it('allows me to complete form if the reason for placement is ROTL', () => {
     cy.fixture('rotlPlacementApplicationData.json').then(placementApplicationData => {
       // Given I have completed an application I am viewing a completed application
-      const completedApplication = applicationFactory.build({
-        status: 'submitted',
+      const completedApplication = applicationFactory.completed('accepted').build({
         id: '123',
         createdByUserId: userId,
-        assessmentDecision: 'accepted',
         person: personFactory.build(),
       })
       cy.task('stubApplicationGet', { application: completedApplication })
@@ -112,11 +110,9 @@ context('Placement Applications', () => {
   it('allows me to complete form if the reason for placement is an additional placement on an existing application', () => {
     cy.fixture('existingApplicationPlacementApplication.json').then(placementApplicationData => {
       // Given I have completed an application I am viewing a completed application
-      const completedApplication = applicationFactory.build({
-        status: 'submitted',
+      const completedApplication = applicationFactory.completed('accepted').build({
         id: '123',
         createdByUserId: userId,
-        assessmentDecision: 'accepted',
         person: personFactory.build(),
       })
       cy.task('stubApplicationGet', { application: completedApplication })
@@ -177,12 +173,10 @@ context('Placement Applications', () => {
     cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
       // Given I have completed an application I am viewing a completed application
       const person = personFactory.build()
-      let completedApplication = applicationFactory.build({
-        status: 'submitted',
+      let completedApplication = applicationFactory.completed('accepted').build({
         id: '123',
-        person,
         createdByUserId: userId,
-        assessmentDecision: 'accepted',
+        person,
       })
       completedApplication = addResponseToFormArtifact(completedApplication, {
         section: 'type-of-ap',
@@ -367,10 +361,8 @@ context('Placement Applications', () => {
 
   it('does not allow me to create a placement application if I did not create the application', () => {
     // Given there is an accepted application that I did not create
-    const application = applicationFactory.build({
-      status: 'submitted',
+    const application = applicationFactory.completed('accepted').build({
       id: '123',
-      assessmentDecision: 'accepted',
       person: personFactory.build(),
     })
     cy.task('stubApplicationGet', { application })
@@ -384,11 +376,9 @@ context('Placement Applications', () => {
 
   it('does not allow me to create a placement application if the assessment was rejected', () => {
     // Given there is an rejected application that I created
-    const application = applicationFactory.build({
-      status: 'submitted',
+    const application = applicationFactory.completed('rejected').build({
       id: '123',
       createdByUserId: userId,
-      assessmentDecision: 'rejected',
       person: personFactory.build(),
     })
     cy.task('stubApplicationGet', { application })
