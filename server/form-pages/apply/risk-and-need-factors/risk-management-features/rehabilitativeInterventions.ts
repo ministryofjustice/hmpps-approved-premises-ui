@@ -66,9 +66,7 @@ export default class RehabilitativeInterventions implements TasklistPage {
   }
 
   previous() {
-    return convictedOffenceResponseFromApplication(this.application) === 'yes'
-      ? 'convicted-offences'
-      : 'date-of-offence'
+    return convictedOffenceResponseFromApplication(this.application) === 'no' ? 'convicted-offences' : 'date-of-offence'
   }
 
   next() {

@@ -6,12 +6,12 @@ import { addDays } from 'date-fns'
 
 import type { ApprovedPremisesApplication, OASysSection, ReleaseTypeOption } from '@approved-premises/api'
 
-import { SentenceTypesT } from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
 import type { ApTypes } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import { fullPersonFactory, restrictedPersonFactory } from './person'
 import risksFactory from './risks'
 import { DateFormats } from '../../utils/dateUtils'
 import { PartnerAgencyDetails } from '../../@types/ui'
+import { SentenceTypesT } from '../../utils/applications/adjacentPageFromSentenceType'
 
 class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
   withReleaseDate(releaseDate = DateFormats.dateObjToIsoDate(faker.date.soon())) {

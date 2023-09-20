@@ -38,7 +38,7 @@ export default class PlacementApplicationService {
 
     const page = Page.initialize
       ? await Page.initialize(body, placementApplication, request.user.token, dataServices)
-      : new Page(body, placementApplication, request.session.previousPage)
+      : new Page(body, placementApplication)
 
     return page
   }

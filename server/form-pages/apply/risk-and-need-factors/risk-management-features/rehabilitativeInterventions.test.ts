@@ -44,7 +44,7 @@ describe('RehabilitativeInterventions', () => {
       })
       .build()
 
-    itShouldHavePreviousValue(new RehabilitativeInterventions(body, application), 'convicted-offences')
+    itShouldHavePreviousValue(new RehabilitativeInterventions(body, application), 'date-of-offence')
   })
 
   describe('if the user didnt answer "yes" to convictedOffences', () => {
@@ -57,7 +57,7 @@ describe('RehabilitativeInterventions', () => {
       })
       .build()
 
-    itShouldHavePreviousValue(new RehabilitativeInterventions(body, application), 'date-of-offence')
+    itShouldHavePreviousValue(new RehabilitativeInterventions(body, application), 'convicted-offences')
   })
 
   itShouldHaveNextValue(new RehabilitativeInterventions(body, application), '')

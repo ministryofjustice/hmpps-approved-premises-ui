@@ -45,7 +45,7 @@ export default class AssessmentService {
 
     const page = Page.initialize
       ? await Page.initialize(body, assessment, request.user.token, dataServices)
-      : new Page(body, assessment, request.session.previousPage)
+      : new Page(body, assessment)
 
     return page
   }

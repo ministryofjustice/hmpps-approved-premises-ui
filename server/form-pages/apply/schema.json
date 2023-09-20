@@ -158,6 +158,18 @@
             }
           }
         },
+        "managed-by-mappa": {
+          "type": "object",
+          "properties": {
+            "managedByMappa": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            }
+          }
+        },
         "release-type": {
           "type": "object",
           "properties": {

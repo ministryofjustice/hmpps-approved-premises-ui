@@ -13,16 +13,13 @@ const Page = (options: { bodyProperties: Array<string>; name: string; controller
 
       document: ApprovedPremisesApplication | ApprovedPremisesAssessment
 
-      previousPage: string
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       constructor(...args: Array<any>) {
         super(...args)
-        const [body, document, previousPage] = args
+        const [body, document] = args
 
         this.body = this.createBody(body, ...options.bodyProperties)
         this.document = document
-        this.previousPage = previousPage
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

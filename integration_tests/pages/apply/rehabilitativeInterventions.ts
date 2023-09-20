@@ -1,6 +1,7 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 
 import ApplyPage from './applyPage'
+import paths from '../../../server/paths/apply'
 
 export default class RehabilitativeInterventions extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
@@ -9,6 +10,7 @@ export default class RehabilitativeInterventions extends ApplyPage {
       application,
       'risk-management-features',
       'rehabilitative-interventions',
+      paths.applications.pages.show({ id: application.id, task: 'risk-management-features', page: 'date-of-offence' }),
     )
   }
 

@@ -87,7 +87,7 @@ export default class ApplicationService {
 
     const page = Page.initialize
       ? await Page.initialize(body, application, request.user.token, dataServices)
-      : new Page(body, application, request.session.previousPage)
+      : new Page(body, application)
 
     return page
   }

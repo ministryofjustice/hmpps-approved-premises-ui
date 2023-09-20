@@ -48,33 +48,12 @@ describe('tasklistPageDecorator', () => {
       ) {}
     }
 
-    @Page({
-      bodyProperties: ['foo', 'bar', 'baz'],
-      name: 'Some Name',
-    })
-    class ClassWithApplicationAndPreviousPage {
-      constructor(
-        readonly body: Record<string, unknown>,
-        readonly application: ApprovedPremisesApplication,
-        readonly previousPage: string,
-      ) {}
-    }
-
     const application = applicationFactory.build()
     const classWithApplication = new ClassWithApplication(
       { foo: '1', bar: '2', baz: '3', something: 'else' },
       application,
     )
 
-    const classWithApplicationAndPreviousPage = new ClassWithApplicationAndPreviousPage(
-      { foo: '1', bar: '2', baz: '3', something: 'else' },
-      application,
-      'previous',
-    )
-
     expect(classWithApplication.application).toEqual(application)
-
-    expect(classWithApplicationAndPreviousPage.application).toEqual(application)
-    expect(classWithApplicationAndPreviousPage.previousPage).toEqual('previous')
   })
 })

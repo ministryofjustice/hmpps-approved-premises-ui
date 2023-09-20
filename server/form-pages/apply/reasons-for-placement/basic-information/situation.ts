@@ -5,7 +5,8 @@ import { Page } from '../../../utils/decorators'
 import { SessionDataError } from '../../../../utils/errors'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import TasklistPage from '../../../tasklistPage'
-import SentenceType, { SentenceTypesT } from './sentenceType'
+import SentenceType from './sentenceType'
+import { SentenceTypesT } from '../../../../utils/applications/adjacentPageFromSentenceType'
 
 const situations = {
   riskManagement: 'Application for risk management/public protection',

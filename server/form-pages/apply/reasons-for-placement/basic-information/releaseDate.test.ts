@@ -1,9 +1,14 @@
 import { add, sub } from 'date-fns'
 import { DateFormats } from '../../../../utils/dateUtils'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHaveNextValue } from '../../../shared-examples'
 
 import ReleaseDate from './releaseDate'
 import { applicationFactory } from '../../../../testutils/factories'
+import { adjacentPageFromSentenceType } from '../../../../utils/applications/adjacentPageFromSentenceType'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+
+jest.mock('../../../../utils/applications/adjacentPageFromSentenceType')
+jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
 
 describe('ReleaseDate', () => {
   const application = applicationFactory.build()
@@ -18,7 +23,6 @@ describe('ReleaseDate', () => {
           'releaseDate-day': '3',
         },
         application,
-        'previousPage',
       )
 
       expect(page.body).toEqual({
@@ -32,15 +36,27 @@ describe('ReleaseDate', () => {
   })
 
   describe('when knowReleaseDate is set to yes', () => {
-    itShouldHaveNextValue(new ReleaseDate({ knowReleaseDate: 'yes' }, application, 'somePage'), 'placement-date')
+    itShouldHaveNextValue(new ReleaseDate({ knowReleaseDate: 'yes' }, application), 'placement-date')
   })
 
   describe('when knowReleaseDate is set to no', () => {
-    itShouldHaveNextValue(new ReleaseDate({ knowReleaseDate: 'no' }, application, 'somePage'), 'oral-hearing')
+    itShouldHaveNextValue(new ReleaseDate({ knowReleaseDate: 'no' }, application), 'oral-hearing')
   })
 
-  describe("previous returns the value passed into the previousPage parameter of the object's constructor", () => {
-    itShouldHavePreviousValue(new ReleaseDate({}, application, 'previousPage'), 'previousPage')
+  describe('previous', () => {
+    it('should call adjacentPageFromSentenceType with the sentenceType from the application and return the result', () => {
+      ;(
+        retrieveQuestionResponseFromFormArtifact as jest.MockedFn<typeof retrieveQuestionResponseFromFormArtifact>
+      ).mockReturnValue('standardDeterminate')
+      ;(adjacentPageFromSentenceType as jest.MockedFn<typeof adjacentPageFromSentenceType>).mockReturnValue(
+        'release-type',
+      )
+
+      const result = new ReleaseDate({ knowReleaseDate: 'yes' }, application).previous()
+
+      expect(result).toEqual('release-type')
+      expect(adjacentPageFromSentenceType).toHaveBeenCalledWith('standardDeterminate')
+    })
   })
 
   describe('errors', () => {
@@ -53,7 +69,6 @@ describe('ReleaseDate', () => {
             ...DateFormats.dateObjectToDateInputs(releaseDate, 'releaseDate'),
           },
           application,
-          'somePage',
         )
         expect(page.errors()).toEqual({})
       })
@@ -64,7 +79,6 @@ describe('ReleaseDate', () => {
             knowReleaseDate: 'yes',
           },
           application,
-          'somePage',
         )
         expect(page.errors()).toEqual({ releaseDate: 'You must specify the release date' })
       })
@@ -78,7 +92,6 @@ describe('ReleaseDate', () => {
             'releaseDate-day': '99',
           },
           application,
-          'somePage',
         )
         expect(page.errors()).toEqual({ releaseDate: 'The release date is an invalid date' })
       })
@@ -91,7 +104,6 @@ describe('ReleaseDate', () => {
             ...DateFormats.dateObjectToDateInputs(releaseDate, 'releaseDate'),
           },
           application,
-          'somePage',
         )
         expect(page.errors()).toEqual({ releaseDate: 'The release date must not be in the past' })
       })
@@ -103,13 +115,12 @@ describe('ReleaseDate', () => {
           knowReleaseDate: 'no',
         },
         application,
-        'somePage',
       )
       expect(page.errors()).toEqual({})
     })
 
     it('should return an error if the knowReleaseDate field is not populated', () => {
-      const page = new ReleaseDate({}, application, 'somePage')
+      const page = new ReleaseDate({}, application)
       expect(page.errors()).toEqual({ knowReleaseDate: 'You must specify if you know the release date' })
     })
   })
@@ -121,7 +132,6 @@ describe('ReleaseDate', () => {
           knowReleaseDate: 'no',
         },
         application,
-        'somePage',
       )
 
       expect(page.response()).toEqual({
@@ -138,7 +148,6 @@ describe('ReleaseDate', () => {
           'releaseDate-day': '11',
         },
         application,
-        'somePage',
       )
 
       expect(page.response()).toEqual({
