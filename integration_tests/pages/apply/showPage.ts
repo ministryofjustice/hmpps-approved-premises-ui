@@ -19,6 +19,18 @@ export default class ShowPage extends Page {
     cy.get('Create placement request').should('not.exist')
   }
 
+  shouldShowAssessmentDetails() {
+    cy.get('.govuk-inset-text')
+      .contains(
+        `Application was ${this.application.assessmentDecision} on ${DateFormats.isoDateToUIDate(
+          this.application.assessmentDecisionDate,
+        )}`,
+      )
+      .should('exist')
+
+    cy.get(`a[data-cy-assessmentId="${this.application.assessmentId}"]`).should('exist')
+  }
+
   shouldShowPersonInformation() {
     cy.get('[data-cy-section="person-details"]').within(() => {
       const person = this.application.person as FullPerson

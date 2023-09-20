@@ -4,7 +4,12 @@ import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import { addDays } from 'date-fns'
 
-import type { ApprovedPremisesApplication, OASysSection, ReleaseTypeOption } from '@approved-premises/api'
+import type {
+  ApprovedPremisesApplication,
+  AssessmentDecision,
+  OASysSection,
+  ReleaseTypeOption,
+} from '@approved-premises/api'
 
 import type { ApTypes } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import { fullPersonFactory, restrictedPersonFactory } from './person'
@@ -104,6 +109,15 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
   withFullPerson() {
     return this.params({
       person: fullPersonFactory.build(),
+    })
+  }
+
+  completed(assessmentDecision: AssessmentDecision) {
+    return this.params({
+      status: 'submitted',
+      assessmentDecision,
+      assessmentDecisionDate: DateFormats.dateObjToIsoDateTime(faker.date.past()),
+      assessmentId: faker.string.uuid(),
     })
   }
 }
