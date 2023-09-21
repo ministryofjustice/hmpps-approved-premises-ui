@@ -26,7 +26,6 @@ import {
   PersonAcctAlert,
   PlacementApplication,
   PlacementApplicationTask,
-  PlacementApplicationTask,
   PlacementCriteria,
   PlacementRequest,
   PlacementRequestStatus,
@@ -34,6 +33,7 @@ import {
   ReleaseTypeOption,
   RiskTier,
   RoshRisks,
+  ApprovedPremisesUser as User,
   ApprovedPremisesUserRole as UserRole,
 } from '@approved-premises/api'
 

@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 import IsExceptionalCase from './isExceptionalCase'
+import ConfirmYourDetails from './confirmYourDetails'
 import ExceptionDetails from './exceptionDetails'
 import SentenceType from './sentenceType'
 import ReleaseType from './releaseType'
@@ -26,6 +27,7 @@ import { Task } from '../../../utils/decorators'
   slug: 'basic-information',
   pages: [
     IsExceptionalCase,
+    ConfirmYourDetails,
     IsPersonTransgender,
     ComplexCaseBoard,
     BoardTakenPlace,

@@ -8,6 +8,7 @@ import CaseNotesPage from './caseNotes'
 import CateringPage from './catering'
 import CheckYourAnswersPage from './checkYourAnswersPage'
 import ComplexCaseBoard from './complexCaseBoard'
+import ConfirmYourDetailsPage from './confirmYourDetails'
 import ConfirmDetailsPage from './confirmDetails'
 import ContingencyPlanPartnersPage from './contingencyPlanPartners'
 import ContingencyPlanQuestionsPage from './contingencyPlanQuestions'
@@ -74,6 +75,7 @@ export {
   CheckYourAnswersPage,
   ComplexCaseBoard,
   ConfirmDetailsPage,
+  ConfirmYourDetailsPage,
   ContingencyPlanPartnersPage,
   ContingencyPlanQuestionsPage,
   ConvictedOffences,

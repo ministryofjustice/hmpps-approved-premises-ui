@@ -1,5 +1,4 @@
 import { addDays } from 'date-fns'
-import { EnterCRNPage, ListPage, SelectOffencePage, StartPage, TransgenderPage } from '../../pages/apply'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import {
   activeOffenceFactory,
@@ -7,10 +6,11 @@ import {
   restrictedPersonFactory,
   risksFactory,
   tierEnvelopeFactory,
+  userFactory,
 } from '../../../server/testutils/factories'
-
 import ApplyHelper from '../../helpers/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
+import { ConfirmYourDetailsPage, EnterCRNPage, ListPage, SelectOffencePage, StartPage } from '../../pages/apply'
 import IsExceptionalCasePage from '../../pages/apply/isExceptionalCase'
 import NotEligiblePage from '../../pages/apply/notEligiblePage'
 import Page from '../../pages/page'
@@ -117,8 +117,10 @@ context('Apply', () => {
 
   it('allows completion of application emergency flow', function test() {
     // And I complete the application
+    const user = userFactory.build()
+    this.application.createdByUserId = user.id
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
+    const apply = new ApplyHelper(this.application, this.person, this.offences, user)
     const tomorrow = addDays(new Date(), 1)
 
     this.application = addResponsesToFormArtifact(this.application, {
