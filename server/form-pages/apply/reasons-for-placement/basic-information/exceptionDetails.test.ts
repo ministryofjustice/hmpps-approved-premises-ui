@@ -31,7 +31,7 @@ describe('ExceptionDetails', () => {
   itShouldHavePreviousValue(new ExceptionDetails({}), 'is-exceptional-case')
 
   describe('when agreedCaseWithManager is yes', () => {
-    itShouldHaveNextValue(new ExceptionDetails({ agreedCaseWithManager: 'yes' }), 'transgender')
+    itShouldHaveNextValue(new ExceptionDetails({ agreedCaseWithManager: 'yes' }), 'confirm-your-details')
   })
 
   describe('when agreedCaseWithManager is no', () => {

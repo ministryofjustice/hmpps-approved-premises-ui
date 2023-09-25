@@ -74,7 +74,7 @@ export default class ExceptionDetails implements TasklistPage {
       return 'not-eligible'
     }
 
-    return 'transgender'
+    return 'confirm-your-details'
   }
 
   errors() {

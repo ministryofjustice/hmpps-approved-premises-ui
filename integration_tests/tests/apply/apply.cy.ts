@@ -69,8 +69,8 @@ context('Apply', () => {
       expect(body.offenceId).equal(selectedOffence.offenceId)
     })
 
-    // Then I should be on the Sentence Type page
-    Page.verifyOnPage(TransgenderPage, this.application)
+    // Then I should be on the Confirm Your Details page
+    Page.verifyOnPage(ConfirmYourDetailsPage, this.application)
   })
 
   it(`allows the user to specify if the case is exceptional if the offender's tier is not eligible`, function test() {
@@ -88,8 +88,8 @@ context('Apply', () => {
     // Then I should be able to confirm that the case is exceptional
     apply.completeExceptionalCase()
 
-    // And I should be on the Sentence Type page
-    Page.verifyOnPage(TransgenderPage, this.application)
+    // And I should be on the Confirm Your Details page
+    Page.verifyOnPage(ConfirmYourDetailsPage, this.application)
   })
 
   it('tells the user that their application is not applicable if the tier is not eligible and it is not an exceptional case', function test() {
