@@ -13,7 +13,7 @@ export default class IsPersonTransgender implements TasklistPage {
   constructor(public body: { transgenderOrHasTransgenderHistory: YesOrNo }) {}
 
   previous() {
-    return 'exception-details'
+    return 'confirm-your-details'
   }
 
   next() {

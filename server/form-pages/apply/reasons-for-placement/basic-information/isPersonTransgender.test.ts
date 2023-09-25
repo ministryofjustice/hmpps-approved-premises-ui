@@ -24,7 +24,7 @@ describe('IsPersonTransgender', () => {
     itShouldHaveNextValue(new IsPersonTransgender({ transgenderOrHasTransgenderHistory: 'no' }), 'end-dates')
   })
 
-  itShouldHavePreviousValue(new IsPersonTransgender(body), 'exception-details')
+  itShouldHavePreviousValue(new IsPersonTransgender(body), 'confirm-your-details')
 
   describe('errors', () => {
     it('should return errors when yes/no questions are blank', () => {
