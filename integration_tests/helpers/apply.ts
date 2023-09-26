@@ -423,6 +423,10 @@ export default class ApplyHelper {
     confirmYourDetails.completeForm()
     confirmYourDetails.clickSubmit()
 
+    const caseManagerInformation = new ApplyPages.CaseManagerInformationPage(this.application)
+    caseManagerInformation.completeForm()
+    caseManagerInformation.clickSubmit()
+
     const transgenderPage = new ApplyPages.TransgenderPage(this.application)
     transgenderPage.completeForm()
     transgenderPage.clickSubmit()
@@ -472,6 +476,7 @@ export default class ApplyHelper {
 
     this.pages.basicInformation = [
       confirmYourDetails,
+      caseManagerInformation,
       transgenderPage,
       complexCaseBoardPage,
       boardTakenPlacePage,

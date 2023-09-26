@@ -21,6 +21,7 @@ import NotEligible from './notEligible'
 import EndDates from './endDates'
 import ManagedByMappa from './managedByMappa'
 import { Task } from '../../../utils/decorators'
+import CaseManagerInformation from './caseManagerInformation'
 
 @Task({
   name: 'Basic Information',
@@ -28,6 +29,7 @@ import { Task } from '../../../utils/decorators'
   pages: [
     IsExceptionalCase,
     ConfirmYourDetails,
+    CaseManagerInformation,
     IsPersonTransgender,
     ComplexCaseBoard,
     BoardTakenPlace,

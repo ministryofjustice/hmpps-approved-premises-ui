@@ -4,6 +4,7 @@ import AdditionalCircumstancesPage from './additionalCircumstances'
 import ArsonPage from './arson'
 import AttachDocumentsPage from './attachDocumentsPage'
 import BoardTakenPlacePage from './boardTakenPlace'
+import CaseManagerInformationPage from './caseManagerInformation'
 import CaseNotesPage from './caseNotes'
 import CateringPage from './catering'
 import CheckYourAnswersPage from './checkYourAnswersPage'
@@ -70,6 +71,7 @@ export {
   ArsonPage,
   AttachDocumentsPage,
   BoardTakenPlacePage,
+  CaseManagerInformationPage,
   CaseNotesPage,
   CateringPage,
   CheckYourAnswersPage,
