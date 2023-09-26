@@ -32,6 +32,66 @@
             }
           }
         },
+        "confirm-your-details": {
+          "type": "object",
+          "properties": {
+            "detailsToUpdate[]": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "emailAddress",
+                  "name",
+                  "phoneNumber"
+                ],
+                "type": "string"
+              }
+            },
+            "emailAddress": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "phoneNumber": {
+              "type": "string"
+            },
+            "caseManagementResponsibility": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            },
+            "userDetailsFromDelius": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "emailAddress": {
+                  "type": "string"
+                },
+                "phoneNumber": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "case-manager-information": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "emailAddress": {
+              "type": "string"
+            },
+            "phoneNumber": {
+              "type": "string"
+            }
+          }
+        },
         "transgender": {
           "type": "object",
           "properties": {
