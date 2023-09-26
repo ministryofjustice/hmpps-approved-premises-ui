@@ -1,5 +1,5 @@
 {
-  "plugins": ["cypress", "no-only-tests"],
+  "plugins": ["cypress"],
   "env": {
     "cypress/globals": true
   },
