@@ -4,9 +4,7 @@
   {% set checkboxItems = [] %}
 
   {% for item in params.items %}
-    {% set checkboxItems = (checkboxItems.push(mergeObjects(item, {
-      checked: (item.value in (context[params.fieldName] or[]))
-    })), checkboxItems) %}
+    {% set checkboxItems = (checkboxItems.push(item), checkboxItems) %}
   {% endfor %}
 
   {{
