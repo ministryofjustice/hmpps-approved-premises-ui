@@ -35,7 +35,7 @@
         "confirm-your-details": {
           "type": "object",
           "properties": {
-            "detailsToUpdate[]": {
+            "detailsToUpdate": {
               "type": "array",
               "items": {
                 "enum": [
