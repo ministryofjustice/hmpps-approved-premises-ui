@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 import IsExceptionalCase from './isExceptionalCase'
+import ConfirmYourDetails from './confirmYourDetails'
 import ExceptionDetails from './exceptionDetails'
 import SentenceType from './sentenceType'
 import ReleaseType from './releaseType'
@@ -20,12 +21,15 @@ import NotEligible from './notEligible'
 import EndDates from './endDates'
 import ManagedByMappa from './managedByMappa'
 import { Task } from '../../../utils/decorators'
+import CaseManagerInformation from './caseManagerInformation'
 
 @Task({
   name: 'Basic Information',
   slug: 'basic-information',
   pages: [
     IsExceptionalCase,
+    ConfirmYourDetails,
+    CaseManagerInformation,
     IsPersonTransgender,
     ComplexCaseBoard,
     BoardTakenPlace,

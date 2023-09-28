@@ -1,0 +1,48 @@
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+    <h1 class="govuk-heading-l">
+
+        {{ page.title }}
+    </h1>
+
+    {{
+            formPageInput({
+            fieldName: 'name',
+            label: {
+                text: page.inputLabels.name,
+                classes: "govuk-label--m"
+                },
+            classes: "govuk-input--width-20"
+            },
+            fetchContext())
+        }}
+
+    {{
+            formPageInput({
+            fieldName: 'emailAddress',
+            label: {
+                text: page.inputLabels.emailAddress,
+                classes: "govuk-label--m"
+                },
+            classes: "govuk-input--width-20"
+            },
+            fetchContext())
+        }}
+
+    {{
+            formPageInput({
+            fieldName: 'phoneNumber',
+            label: {
+                text: page.inputLabels.phoneNumber,
+                classes: "govuk-label--m"
+                },
+            classes: "govuk-input--width-20",
+            inputmode: 'tel'
+            },
+            fetchContext())
+        }}
+
+
+{% endblock %}

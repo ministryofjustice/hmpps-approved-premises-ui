@@ -13,6 +13,7 @@ import {
   Person,
   PersonAcctAlert,
   PrisonCaseNote,
+  ApprovedPremisesUser as User,
 } from '@approved-premises/api'
 import { ContingencyPlanQuestionsBody, PartnerAgencyDetails, PersonRisksUI } from '@approved-premises/ui'
 
@@ -37,6 +38,7 @@ import {
   oasysSelectionFactory,
   premisesFactory,
   prisonCaseNotesFactory,
+  userFactory,
 } from '../../server/testutils/factories'
 import { documentsFromApplication } from '../../server/utils/assessments/documentUtils'
 import oasysStubs from '../../server/data/stubs/oasysStubs.json'
@@ -88,6 +90,7 @@ export default class ApplyHelper {
     private readonly application: Application,
     private readonly person: Person,
     private readonly offences: Array<ActiveOffence>,
+    private readonly user: User = userFactory.build(),
   ) {}
 
   setupApplicationStubs(uiRisks?: PersonRisksUI, oasysMissing = false, nomisMissing = false) {
@@ -110,6 +113,7 @@ export default class ApplyHelper {
     }
     this.stubDocumentEndpoints()
     this.stubOffences()
+    this.stubUserEndpoint()
     this.addContingencyPlanDetails()
   }
 
@@ -189,6 +193,10 @@ export default class ApplyHelper {
 
   private stubOffences() {
     cy.task('stubPersonOffences', { person: this.person, offences: this.offences })
+  }
+
+  private stubUserEndpoint() {
+    cy.task('stubFindUser', { user: this.user, id: this.application.createdByUserId })
   }
 
   private stubApplicationEndpoints() {
@@ -411,6 +419,14 @@ export default class ApplyHelper {
   }
 
   completeBasicInformation(options: { isEmergencyApplication?: boolean } = {}) {
+    const confirmYourDetails = new ApplyPages.ConfirmYourDetailsPage(this.application)
+    confirmYourDetails.completeForm()
+    confirmYourDetails.clickSubmit()
+
+    const caseManagerInformation = new ApplyPages.CaseManagerInformationPage(this.application)
+    caseManagerInformation.completeForm()
+    caseManagerInformation.clickSubmit()
+
     const transgenderPage = new ApplyPages.TransgenderPage(this.application)
     transgenderPage.completeForm()
     transgenderPage.clickSubmit()
@@ -459,6 +475,8 @@ export default class ApplyHelper {
     placementPurposePage.clickSubmit()
 
     this.pages.basicInformation = [
+      confirmYourDetails,
+      caseManagerInformation,
       transgenderPage,
       complexCaseBoardPage,
       boardTakenPlacePage,

@@ -1,4 +1,5 @@
 import * as nunjucks from 'nunjucks'
+
 import type {
   CheckBoxItem,
   ErrorMessages,
@@ -103,6 +104,19 @@ export function convertArrayToRadioItems(array: Array<string>, checkedItem: stri
       value: key,
       text: sentenceCase(key),
       checked: checkedItem === key,
+    }
+  })
+}
+
+export function convertArrayToCheckboxItems(
+  array: Array<string>,
+  conditionals: Array<string> = [],
+): Array<CheckBoxItem> {
+  return array.map((key, i) => {
+    return {
+      value: key,
+      text: sentenceCase(key),
+      conditional: { html: conditionals[i] },
     }
   })
 }

@@ -154,7 +154,11 @@ const firstPageOfApplicationJourney = (application: Application) => {
   if (!isFullPerson(application.person)) throw new RestrictedPersonError(application.person.crn)
 
   if (isApplicableTier(application.person.sex, application.risks?.tier?.value?.level)) {
-    return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'transgender' })
+    return paths.applications.pages.show({
+      id: application.id,
+      task: 'basic-information',
+      page: 'confirm-your-details',
+    })
   }
 
   return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' })

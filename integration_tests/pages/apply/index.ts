@@ -4,10 +4,12 @@ import AdditionalCircumstancesPage from './additionalCircumstances'
 import ArsonPage from './arson'
 import AttachDocumentsPage from './attachDocumentsPage'
 import BoardTakenPlacePage from './boardTakenPlace'
+import CaseManagerInformationPage from './caseManagerInformation'
 import CaseNotesPage from './caseNotes'
 import CateringPage from './catering'
 import CheckYourAnswersPage from './checkYourAnswersPage'
 import ComplexCaseBoard from './complexCaseBoard'
+import ConfirmYourDetailsPage from './confirmYourDetails'
 import ConfirmDetailsPage from './confirmDetails'
 import ContingencyPlanPartnersPage from './contingencyPlanPartners'
 import ContingencyPlanQuestionsPage from './contingencyPlanQuestions'
@@ -69,11 +71,13 @@ export {
   ArsonPage,
   AttachDocumentsPage,
   BoardTakenPlacePage,
+  CaseManagerInformationPage,
   CaseNotesPage,
   CateringPage,
   CheckYourAnswersPage,
   ComplexCaseBoard,
   ConfirmDetailsPage,
+  ConfirmYourDetailsPage,
   ContingencyPlanPartnersPage,
   ContingencyPlanQuestionsPage,
   ConvictedOffences,

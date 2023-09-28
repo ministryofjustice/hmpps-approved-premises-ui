@@ -1,7 +1,6 @@
-import { EnterCRNPage, StartPage } from '../../pages/apply'
 import { personFactory } from '../../../server/testutils/factories'
-
 import ApplyHelper from '../../helpers/apply'
+import { EnterCRNPage, StartPage } from '../../pages/apply'
 import { setup } from './setup'
 
 context('Apply - Person Search', () => {
@@ -33,8 +32,8 @@ context('Apply - Person Search', () => {
       const firstRequestData = JSON.parse(requests[0].body).data
       const secondRequestData = JSON.parse(requests[1].body).data
 
-      expect(firstRequestData['basic-information'].transgender.transgenderOrHasTransgenderHistory).equal('yes')
-      expect(secondRequestData['basic-information']['complex-case-board'].reviewRequired).equal('yes')
+      expect(firstRequestData['basic-information']['confirm-your-details'].emailAddress).equal('bob@test.com')
+      expect(secondRequestData['basic-information']['case-manager-information'].name).equal('Bob Smith')
     })
   })
 

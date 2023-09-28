@@ -352,7 +352,7 @@ describe('utils', () => {
       const application = applicationFactory.withFullPerson().build()
 
       expect(firstPageOfApplicationJourney(application)).toEqual(
-        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'transgender' }),
+        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'confirm-your-details' }),
       )
     })
 

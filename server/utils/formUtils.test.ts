@@ -2,6 +2,7 @@ import { createMock } from '@golevelup/ts-jest'
 
 import type { ErrorMessages } from '@approved-premises/ui'
 import {
+  convertArrayToCheckboxItems,
   convertArrayToRadioItems,
   convertKeyValuePairToCheckBoxItems,
   convertKeyValuePairToRadioItems,
@@ -375,6 +376,15 @@ describe('formUtils', () => {
       expect(convertArrayToRadioItems(['one', 'two'], 'two')).toEqual([
         { text: 'One', value: 'one', checked: false },
         { text: 'Two', value: 'two', checked: true },
+      ])
+    })
+  })
+
+  describe('convertArrayToCheckboxItems', () => {
+    it('returns the array as checkbox items with the value in sentence case and the correct conditional', () => {
+      expect(convertArrayToCheckboxItems(['one', 'two'], ['one', 'two'])).toEqual([
+        { text: 'One', value: 'one', conditional: { html: 'one' } },
+        { text: 'Two', value: 'two', conditional: { html: 'two' } },
       ])
     })
   })
