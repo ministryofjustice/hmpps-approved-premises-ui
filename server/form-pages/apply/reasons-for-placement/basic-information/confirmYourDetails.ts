@@ -12,7 +12,7 @@ export const updatableDetails: ReadonlyArray<UpdatableDetails> = ['name', 'email
 type UpdatableDetails = 'name' | 'emailAddress' | 'phoneNumber'
 
 export type Body = {
-  'detailsToUpdate[]'?: Array<UpdatableDetails>
+  detailsToUpdate?: Array<UpdatableDetails>
   emailAddress?: string
   name?: string
   phoneNumber?: string
@@ -27,7 +27,7 @@ export type Body = {
 @Page({
   name: 'confirm-your-details',
   bodyProperties: [
-    'detailsToUpdate[]',
+    'detailsToUpdate',
     'emailAddress',
     'name',
     'phoneNumber',
@@ -68,7 +68,7 @@ export default class ConfirmYourDetails implements TasklistPage {
     readonly body: Body,
     readonly application: Application,
   ) {
-    this.detailsToUpdate = body?.['detailsToUpdate[]'] ?? []
+    this.detailsToUpdate = body?.detailsToUpdate ?? []
   }
 
   static async initialize(
@@ -89,7 +89,7 @@ export default class ConfirmYourDetails implements TasklistPage {
   response() {
     const response: Record<string, string> = {}
 
-    const detailsToUpdate = this.body['detailsToUpdate[]']
+    const detailsToUpdate = this.body.detailsToUpdate
       .map(detail => {
         return sentenceCase(detail)
       })
@@ -127,11 +127,7 @@ export default class ConfirmYourDetails implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     updatableDetails.forEach(detail => {
-      if (
-        this.body?.['detailsToUpdate[]']?.length &&
-        this.body?.['detailsToUpdate[]'].includes(detail) &&
-        !this.body[detail]
-      ) {
+      if (this.body?.detailsToUpdate?.length && this.body?.detailsToUpdate.includes(detail) && !this.body[detail]) {
         errors[detail] = `You must enter your updated ${lowerCase(detail)}`
       }
     })
