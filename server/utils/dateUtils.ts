@@ -9,6 +9,7 @@ import {
   formatISO,
   isBefore,
   isPast,
+  isToday as isTodayDateFns,
   isValid,
   isWeekend,
   isWithinInterval,
@@ -17,6 +18,7 @@ import {
 } from 'date-fns'
 
 import type { ObjectWithDateParts } from '@approved-premises/ui'
+
 import rawBankHolidays from '../data/bankHolidays/bank-holidays.json'
 
 type DifferenceInDays = { ui: string; number: number }
@@ -265,6 +267,11 @@ export const dateIsBlank = <K extends string | number>(
 export const dateIsInThePast = (dateString: string): boolean => {
   const date = DateFormats.isoToDateObj(dateString)
   return isPast(date)
+}
+
+export const isToday = (date: string): boolean => {
+  const dateObj = DateFormats.isoToDateObj(date)
+  return isTodayDateFns(dateObj)
 }
 
 export const monthOptions = [
