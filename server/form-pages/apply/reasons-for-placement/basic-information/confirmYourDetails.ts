@@ -89,7 +89,7 @@ export default class ConfirmYourDetails implements TasklistPage {
   response() {
     const response: Record<string, string> = {}
 
-    const detailsToUpdate = this.body.detailsToUpdate
+    const detailsToUpdate = this.body?.detailsToUpdate
       .map(detail => {
         return sentenceCase(detail)
       })
@@ -98,7 +98,7 @@ export default class ConfirmYourDetails implements TasklistPage {
     response[this.questions.updateDetails.label] = detailsToUpdate
 
     updatableDetails.forEach(detail => {
-      if (this.body[detail]) {
+      if (this.body?.[detail]) {
         response[`Applicant ${lowerCase(detail)}`] = this.body[detail]
       }
     })
