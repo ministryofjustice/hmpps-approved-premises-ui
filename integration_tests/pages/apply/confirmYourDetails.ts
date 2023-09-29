@@ -15,7 +15,7 @@ export default class ConfirmYourDetails extends ApplyPage {
   }
 
   completeForm(): void {
-    this.checkCheckboxesFromPageBody('detailsToUpdate[]')
+    this.checkCheckboxesFromPageBody('detailsToUpdate', { addArrayNotationToInputName: true })
     this.completeTextInputFromPageBody('name')
     this.completeTextInputFromPageBody('emailAddress')
     this.completeTextInputFromPageBody('phoneNumber')

@@ -1,8 +1,8 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
-import Page from '../page'
-import TasklistPage from '../../../server/form-pages/tasklistPage'
 
 import Apply from '../../../server/form-pages/apply'
+import TasklistPage from '../../../server/form-pages/tasklistPage'
+import Page from '../page'
 
 export default class ApplyPage extends Page {
   tasklistPage: TasklistPage
@@ -36,9 +36,12 @@ export default class ApplyPage extends Page {
     this.getTextInputByIdAndEnterDetails(fieldName, this.tasklistPage.body[fieldName] as string)
   }
 
-  checkCheckboxesFromPageBody(fieldName: string) {
+  checkCheckboxesFromPageBody(
+    fieldName: string,
+    options: { addArrayNotationToInputName: boolean } = { addArrayNotationToInputName: false },
+  ) {
     ;(this.tasklistPage.body[fieldName] as Array<string>).forEach(need => {
-      this.checkCheckboxByNameAndValue(fieldName, need)
+      this.checkCheckboxByNameAndValue(options.addArrayNotationToInputName ? `${fieldName}[]` : fieldName, need)
     })
   }
 

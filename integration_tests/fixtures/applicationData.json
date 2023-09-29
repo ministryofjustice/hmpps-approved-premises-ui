@@ -5,7 +5,7 @@
       "name": "Bob Smith",
       "phoneNumber": "01234567890",
       "caseManagementResponsibility": "no",
-      "detailsToUpdate[]": ["phoneNumber", "emailAddress", "name"]
+      "detailsToUpdate": ["phoneNumber", "emailAddress", "name"]
     },
     "case-manager-information": {
       "emailAddress": "bob@test.com",

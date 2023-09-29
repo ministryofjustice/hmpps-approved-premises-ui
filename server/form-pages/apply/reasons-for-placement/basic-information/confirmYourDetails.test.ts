@@ -14,7 +14,7 @@ describe('ConfirmYourDetails', () => {
   const application: Readonly<Application> = applicationFactory.build()
 
   const body: Body = {
-    'detailsToUpdate[]': ['name', 'emailAddress', 'phoneNumber'],
+    detailsToUpdate: ['name', 'emailAddress', 'phoneNumber'],
     name: 'Bob',
     emailAddress: 'bob@test.com',
     phoneNumber: '0123456789',
@@ -106,7 +106,7 @@ describe('ConfirmYourDetails', () => {
     })
 
     describe.each(updatableDetails)('when %s is in the detailsToUpdate array but the field is not populated', field => {
-      const bodyWithoutField: Readonly<Partial<Body>> = { ...body, 'detailsToUpdate[]': [field], [field]: undefined }
+      const bodyWithoutField: Readonly<Partial<Body>> = { ...body, detailsToUpdate: [field], [field]: undefined }
       const page = new ConfirmYourDetails(bodyWithoutField, application)
 
       it('should return an error', () => {
