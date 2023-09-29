@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication as Application, ApprovedPremisesUser as User } from '@approved-premises/api'
+import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
 import type { DataServices, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { RestrictedPersonError } from '../../../../utils/errors'
@@ -11,17 +11,19 @@ export const updatableDetails: ReadonlyArray<UpdatableDetails> = ['name', 'email
 
 type UpdatableDetails = 'name' | 'emailAddress' | 'phoneNumber'
 
+type UserDetailsFromDelius = {
+  name?: string
+  emailAddress?: string
+  phoneNumber?: string
+}
+
 export type Body = {
   detailsToUpdate?: Array<UpdatableDetails>
   emailAddress?: string
   name?: string
   phoneNumber?: string
   caseManagementResponsibility?: YesOrNo
-  userDetailsFromDelius?: {
-    name?: string
-    emailAddress?: string
-    phoneNumber?: string
-  }
+  userDetailsFromDelius?: UserDetailsFromDelius
 }
 
 @Page({
@@ -60,7 +62,7 @@ export default class ConfirmYourDetails implements TasklistPage {
     },
   }
 
-  userDetailsFromDelius: User
+  userDetailsFromDelius: UserDetailsFromDelius
 
   detailsToUpdate: ReadonlyArray<UpdatableDetails>
 
@@ -79,9 +81,11 @@ export default class ConfirmYourDetails implements TasklistPage {
   ): Promise<ConfirmYourDetails> {
     const user = await dataServices.userService.getUserById(token, application.createdByUserId)
 
-    const page = new ConfirmYourDetails(body, application)
+    const userForUi = { name: user.name, emailAddress: user.email, phoneNumber: user.telephoneNumber }
 
-    page.userDetailsFromDelius = user
+    const page = new ConfirmYourDetails({ ...body, userDetailsFromDelius: userForUi }, application)
+
+    page.userDetailsFromDelius = userForUi
 
     return page
   }
@@ -89,18 +93,19 @@ export default class ConfirmYourDetails implements TasklistPage {
   response() {
     const response: Record<string, string> = {}
 
-    const detailsToUpdate = this.body?.detailsToUpdate
+    const detailsToUpdate = (this.body?.detailsToUpdate || [])
       .map(detail => {
         return sentenceCase(detail)
       })
       .join(', ')
 
-    response[this.questions.updateDetails.label] = detailsToUpdate
+    response[this.questions.updateDetails.label] = detailsToUpdate.length ? detailsToUpdate : 'None'
 
     updatableDetails.forEach(detail => {
-      if (this.body?.[detail]) {
-        response[`Applicant ${lowerCase(detail)}`] = this.body[detail]
-      }
+      response[`Applicant ${lowerCase(detail)}`] =
+        this.body?.[detail] && this.body?.detailsToUpdate?.includes(detail)
+          ? this.body[detail]
+          : this.body.userDetailsFromDelius?.[detail]
     })
 
     response[this.questions.caseManagementResponsibility.label] = sentenceCase(this.body.caseManagementResponsibility)

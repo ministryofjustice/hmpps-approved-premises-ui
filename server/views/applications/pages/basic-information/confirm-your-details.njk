@@ -8,6 +8,10 @@
     </h1>
     <p class="govuk-body">This information has been imported from Delius.</p>
 
+    <input type="hidden" name="userDetailsFromDelius[name]" value="{{ page.userDetailsFromDelius.name }}"/>
+    <input type="hidden" name="userDetailsFromDelius[emailAddress]" value="{{ page.userDetailsFromDelius.emailAddress }}"/>
+    <input type="hidden" name="userDetailsFromDelius[phoneNumber]" value="{{ page.userDetailsFromDelius.phoneNumber }}"/>
+
     {% set rows = ([
         {
             key: {
@@ -28,7 +32,7 @@
                 text: "Phone number"
             },
             value: {
-                text: page.userDetailsFromDelius.telephoneNumber
+                text: page.userDetailsFromDelius.phoneNumber
             }
         }
     ])
