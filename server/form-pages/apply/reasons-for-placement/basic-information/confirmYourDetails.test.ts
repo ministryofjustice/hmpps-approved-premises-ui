@@ -1,6 +1,6 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { ApprovedPremisesApplication as Application } from '../../../../@types/shared'
+import { ApprovedPremisesApplication as Application, FullPerson } from '../../../../@types/shared'
 import { UserService } from '../../../../services'
 import { applicationFactory } from '../../../../testutils/factories'
 import { RestrictedPersonError } from '../../../../utils/errors'
@@ -100,6 +100,7 @@ describe('ConfirmYourDetails', () => {
         const page = new ConfirmYourDetails({}, application)
 
         expect(() => page.previous()).toThrowError(RestrictedPersonError)
+        expect(isApplicableTier).not.toHaveBeenCalled()
       })
     })
 
@@ -109,6 +110,10 @@ describe('ConfirmYourDetails', () => {
         ;(isApplicableTier as jest.MockedFunction<typeof isApplicableTier>).mockReturnValue(true)
 
         expect(new ConfirmYourDetails(body, application).previous()).toBe('dashboard')
+        expect(isApplicableTier).toHaveBeenCalledWith(
+          (application.person as FullPerson).sex,
+          application.risks?.tier?.value?.level,
+        )
       })
 
       it('returns "exception-details" if the person is not in the applicable tier', () => {
@@ -116,6 +121,10 @@ describe('ConfirmYourDetails', () => {
         ;(isApplicableTier as jest.MockedFunction<typeof isApplicableTier>).mockReturnValue(true)
 
         expect(new ConfirmYourDetails(body, application).previous()).toBe('dashboard')
+        expect(isApplicableTier).toHaveBeenCalledWith(
+          (application.person as FullPerson).sex,
+          application.risks?.tier?.value?.level,
+        )
       })
     })
   })
