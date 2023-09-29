@@ -19,6 +19,11 @@ describe('ConfirmYourDetails', () => {
     emailAddress: 'bob@test.com',
     phoneNumber: '0123456789',
     caseManagementResponsibility: 'yes',
+    userDetailsFromDelius: {
+      name: 'Acting user from delius name',
+      emailAddress: 'Acting user from delius email address',
+      phoneNumber: 'Acting user from delius phone number',
+    },
   }
 
   beforeEach(() => {
@@ -35,25 +40,41 @@ describe('ConfirmYourDetails', () => {
 
   describe('initialize', () => {
     it('calls the userService.getUserById method and returns an instantiated ConfirmYourDetails page', async () => {
-      const actingUser = {
+      const actingUserFromDelius = {
         name: body.name,
-        emailAddress: body.emailAddress,
-        phoneNumber: body.phoneNumber,
+        email: body.emailAddress,
+        telephoneNumber: body.phoneNumber,
       }
-      const getUserByIdMock = jest.fn().mockResolvedValue(actingUser)
+
+      const deliusUserMappedForUi = {
+        name: actingUserFromDelius.name,
+        emailAddress: actingUserFromDelius.email,
+        phoneNumber: actingUserFromDelius.telephoneNumber,
+      }
+
+      const getUserByIdMock = jest.fn().mockResolvedValue(actingUserFromDelius)
 
       const userService: DeepMocked<UserService> = createMock<UserService>({
         getUserById: getUserByIdMock,
       })
 
-      const result = await ConfirmYourDetails.initialize(body, application, 'token', { userService })
+      const result = await ConfirmYourDetails.initialize({}, application, 'token', { userService })
+      const expected = new ConfirmYourDetails(
+        {
+          userDetailsFromDelius: deliusUserMappedForUi,
+        },
+        application,
+      )
+      expected.userDetailsFromDelius = {
+        name: actingUserFromDelius.name,
+        emailAddress: actingUserFromDelius.email,
+        phoneNumber: actingUserFromDelius.telephoneNumber,
+      }
 
       expect(getUserByIdMock).toHaveBeenCalledWith('token', application.createdByUserId)
 
-      expect(result).toEqual({
-        ...new ConfirmYourDetails(body, application),
-        userDetailsFromDelius: actingUser,
-      })
+      expect(result).toEqual(expected)
+      expect(result.userDetailsFromDelius).toEqual(deliusUserMappedForUi)
     })
   })
 
@@ -126,7 +147,7 @@ describe('ConfirmYourDetails', () => {
   })
 
   describe('response', () => {
-    it('should return a translated version of the response', () => {
+    it('should return a translated version of the response when all fields are present', () => {
       const page = new ConfirmYourDetails(body, application)
 
       expect(page.response()).toEqual({
@@ -134,6 +155,30 @@ describe('ConfirmYourDetails', () => {
         'Applicant name': 'Bob',
         'Applicant email address': 'bob@test.com',
         'Applicant phone number': '0123456789',
+        'Do you have case management responsibility?': 'Yes',
+      })
+    })
+
+    it('should return a translated version of the response when one of the fields is update but the others are retained', () => {
+      const page = new ConfirmYourDetails({ ...body, detailsToUpdate: ['emailAddress'] }, application)
+
+      expect(page.response()).toEqual({
+        [page.questions.updateDetails.label]: 'Email address',
+        'Applicant email address': 'bob@test.com',
+        'Do you have case management responsibility?': 'Yes',
+        'Applicant name': body.userDetailsFromDelius.name,
+        'Applicant phone number': body.userDetailsFromDelius.phoneNumber,
+      })
+    })
+
+    it('should return a translated version of the response, pulling through the user details from Delius, when only the required fields are present', () => {
+      const page = new ConfirmYourDetails({ ...body, detailsToUpdate: [] }, application)
+
+      expect(page.response()).toEqual({
+        [page.questions.updateDetails.label]: 'None',
+        'Applicant name': body.userDetailsFromDelius.name,
+        'Applicant email address': body.userDetailsFromDelius.emailAddress,
+        'Applicant phone number': body.userDetailsFromDelius.phoneNumber,
         'Do you have case management responsibility?': 'Yes',
       })
     })
