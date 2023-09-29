@@ -191,5 +191,24 @@ describe('ConfirmYourDetails', () => {
         'Do you have case management responsibility?': 'Yes',
       })
     })
+
+    it('should return an empty field if the field name is not in the detailsToUpdate[] and it is not present in Delius', () => {
+      const page = new ConfirmYourDetails(
+        {
+          ...body,
+          detailsToUpdate: [],
+          userDetailsFromDelius: { ...body.userDetailsFromDelius, phoneNumber: undefined, emailAddress: undefined },
+        },
+        application,
+      )
+
+      expect(page.response()).toEqual({
+        [page.questions.updateDetails.label]: 'None',
+        'Applicant name': body.userDetailsFromDelius.name,
+        'Applicant email address': '',
+        'Applicant phone number': '',
+        'Do you have case management responsibility?': 'Yes',
+      })
+    })
   })
 })
