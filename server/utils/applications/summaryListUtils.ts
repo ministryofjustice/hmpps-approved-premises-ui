@@ -14,6 +14,7 @@ import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { getResponseForPage } from './getResponseForPage'
 import { forPagesInTask } from './forPagesInTask'
+import { linebreaksToParagraphs } from '../utils'
 
 const summaryListSections = (applicationOrAssessment: Application | Assessment, showActions = true) =>
   reviewSections(applicationOrAssessment, taskResponsesAsSummaryListItems, showActions)
@@ -37,8 +38,8 @@ const taskResponsesAsSummaryListItems = (
     Object.keys(response).forEach(key => {
       const value =
         typeof response[key] === 'string' || response[key] instanceof String
-          ? ({ text: response[key] } as TextItem)
-          : ({ html: embeddedSummaryListItem(response[key] as Array<Record<string, unknown>>) } as HtmlItem)
+          ? { html: linebreaksToParagraphs(response[key] as string) }
+          : { html: embeddedSummaryListItem(response[key] as Array<Record<string, unknown>>) }
 
       items.push(summaryListItemForResponse(key, value, task.id, pageName, applicationOrAssessment, showActions))
     })

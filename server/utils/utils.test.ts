@@ -5,6 +5,7 @@ import {
   camelCase,
   convertToTitleCase,
   initialiseName,
+  linebreaksToParagraphs,
   linkTo,
   mapApiPersonRisksForUi,
   numberToOrdinal,
@@ -330,5 +331,26 @@ describe('numberToOrdinal', () => {
   it('returns undefined if the number is >5 or <0', () => {
     expect(numberToOrdinal(6)).toBeUndefined()
     expect(numberToOrdinal(-1)).toBeUndefined()
+  })
+})
+
+describe('linebreaksToParagraphs', () => {
+  it('returns a single paragraph', () => {
+    expect(linebreaksToParagraphs('foo')).toEqual('<p class="govuk-body">foo</p>')
+  })
+
+  it('replaces single linebreaks with a line break element', () => {
+    expect(linebreaksToParagraphs('foo\nbar')).toEqual('<p class="govuk-body">foo<br />bar</p>')
+  })
+
+  it('adds new paragraphs when there are two line breaks', () => {
+    expect(linebreaksToParagraphs('foo\n\nbar')).toEqual('<p class="govuk-body">foo</p><p class="govuk-body">bar</p>')
+  })
+
+  it('handles Windows-style linebreaks', () => {
+    expect(linebreaksToParagraphs('foo\r\nbar')).toEqual('<p class="govuk-body">foo<br />bar</p>')
+    expect(linebreaksToParagraphs('foo\r\n\r\nbar')).toEqual(
+      '<p class="govuk-body">foo</p><p class="govuk-body">bar</p>',
+    )
   })
 })

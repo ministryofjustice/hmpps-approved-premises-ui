@@ -12,6 +12,7 @@ import { documentsFromApplication } from '../assessments/documentUtils'
 import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
 import { getResponseForPage } from './getResponseForPage'
 import TasklistPage from '../../form-pages/tasklistPage'
+import { linebreaksToParagraphs } from '../utils'
 
 jest.mock('../reviewUtils')
 jest.mock('./utils')
@@ -126,7 +127,7 @@ describe('summaryListUtils', () => {
               text: 'title',
             },
             value: {
-              text: 'response',
+              html: linebreaksToParagraphs('response'),
             },
           },
         ])
@@ -165,7 +166,7 @@ describe('summaryListUtils', () => {
               text: 'title',
             },
             value: {
-              text: 'response',
+              html: linebreaksToParagraphs('response'),
             },
           },
         ])
@@ -185,7 +186,7 @@ describe('summaryListUtils', () => {
             text: 'title',
           },
           value: {
-            text: 'response',
+            html: linebreaksToParagraphs('response'),
           },
         },
       ])
