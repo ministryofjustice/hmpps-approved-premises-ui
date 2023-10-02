@@ -4,6 +4,8 @@ import isPast from 'date-fns/isPast'
 import differenceInDays from 'date-fns/differenceInDays'
 import formatDistanceStrict from 'date-fns/formatDistanceStrict'
 import { subDays } from 'date-fns'
+import isTodayDateFns from 'date-fns/isToday'
+
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 
 import {
@@ -14,12 +16,14 @@ import {
   dateAndTimeInputsAreValidDates,
   dateIsBlank,
   dateIsInThePast,
+  isToday,
   monthOptions,
   uiDateOrDateEmptyMessage,
   yearOptions,
 } from './dateUtils'
 
 jest.mock('date-fns/isPast')
+jest.mock('date-fns/isToday')
 jest.mock('date-fns/formatDistanceStrict')
 jest.mock('date-fns/differenceInDays')
 jest.mock('../data/bankHolidays/bank-holidays.json', () => {
@@ -400,6 +404,24 @@ describe('dateIsInThePast', () => {
     ;(isPast as jest.Mock).mockReturnValue(false)
 
     expect(dateIsInThePast('2020-01-01')).toEqual(false)
+  })
+})
+
+describe('isToday', () => {
+  it('returns true if the date is today', () => {
+    const dateString = '2020-01-01'
+    ;(isTodayDateFns as jest.Mock).mockReturnValue(true)
+
+    expect(isToday(dateString)).toEqual(true)
+    expect(isTodayDateFns).toHaveBeenCalledWith(DateFormats.isoToDateObj(dateString))
+  })
+
+  it('returns false if the date is not today', () => {
+    const dateString = '2020-01-01'
+    ;(isTodayDateFns as jest.Mock).mockReturnValue(false)
+
+    expect(isToday(dateString)).toEqual(false)
+    expect(isTodayDateFns).toHaveBeenCalledWith(DateFormats.isoToDateObj(dateString))
   })
 })
 
