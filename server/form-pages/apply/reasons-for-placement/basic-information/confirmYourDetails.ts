@@ -102,10 +102,13 @@ export default class ConfirmYourDetails implements TasklistPage {
     response[this.questions.updateDetails.label] = detailsToUpdate.length ? detailsToUpdate : 'None'
 
     updatableDetails.forEach(detail => {
-      response[`Applicant ${lowerCase(detail)}`] =
-        this.body?.[detail] && this.body?.detailsToUpdate?.includes(detail)
-          ? this.body[detail]
-          : this.body.userDetailsFromDelius?.[detail]
+      if (this.body?.[detail] && this.body?.detailsToUpdate?.includes(detail)) {
+        response[`Applicant ${lowerCase(detail)}`] = this.body[detail]
+      } else if (this.body.userDetailsFromDelius?.[detail]) {
+        response[`Applicant ${lowerCase(detail)}`] = this.body.userDetailsFromDelius?.[detail]
+      } else {
+        response[`Applicant ${lowerCase(detail)}`] = ''
+      }
     })
 
     response[this.questions.caseManagementResponsibility.label] = sentenceCase(this.body.caseManagementResponsibility)
