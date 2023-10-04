@@ -13,7 +13,7 @@ import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import { DateFormats } from './dateUtils'
 import { SanitisedError } from '../sanitisedError'
-import { linkTo } from './utils'
+import { linebreaksToParagraphs, linkTo } from './utils'
 import { isFullPerson } from './personUtils'
 
 type ParsedConflictError = {
@@ -205,6 +205,97 @@ export const bedsAsSelectItems = (beds: Array<BedSummary>, selectedId: string): 
     value: bed.id,
     selected: selectedId === bed.id,
   }))
+}
+
+export const bookingPersonRows = (booking: Booking): Array<SummaryListItem> => {
+  return [
+    {
+      key: {
+        text: 'Name',
+      },
+      value: nameCell(booking),
+    },
+    {
+      key: {
+        text: 'CRN',
+      },
+      value: {
+        text: booking.person.crn,
+      },
+    },
+  ]
+}
+
+export const bookingArrivalRows = (booking: Booking): Array<SummaryListItem> => {
+  const rows = []
+
+  if (booking.arrival) {
+    rows.push({
+      key: { text: 'Actual arrival date' },
+      value: { text: DateFormats.isoDateToUIDate(booking.arrival.arrivalDate) },
+    })
+
+    if (booking.arrival.notes) {
+      rows.push({
+        key: {
+          text: 'Notes',
+        },
+        value: {
+          html: linebreaksToParagraphs(booking.arrival.notes),
+        },
+      })
+    }
+  } else {
+    rows.push({
+      key: { text: 'Expected arrival date' },
+      value: { text: DateFormats.isoDateToUIDate(booking.arrivalDate) },
+    })
+  }
+
+  return rows
+}
+
+export const bookingDepartureRows = (booking: Booking): Array<SummaryListItem> => {
+  const rows = []
+
+  if (booking.departure) {
+    rows.push(
+      {
+        key: {
+          text: 'Actual departure date',
+        },
+        value: {
+          text: DateFormats.isoDateToUIDate(booking.departure.dateTime),
+        },
+      },
+      {
+        key: {
+          text: 'Reason',
+        },
+        value: {
+          text: booking.departure.reason.name,
+        },
+      },
+    )
+
+    if (booking.departure.notes) {
+      rows.push({
+        key: {
+          text: 'Notes',
+        },
+        value: {
+          html: linebreaksToParagraphs(booking.departure.notes),
+        },
+      })
+    }
+  } else {
+    rows.push({
+      key: { text: 'Expected departure date' },
+      value: { text: DateFormats.isoDateToUIDate(booking.departureDate) },
+    })
+  }
+
+  return rows
 }
 
 export const bookingShowDocumentRows = (booking: Booking): Array<SummaryListItem> => {

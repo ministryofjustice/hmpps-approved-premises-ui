@@ -2,6 +2,9 @@ import { SanitisedError } from '../sanitisedError'
 import {
   bedsAsSelectItems,
   bookingActions,
+  bookingArrivalRows,
+  bookingDepartureRows,
+  bookingPersonRows,
   bookingShowDocumentRows,
   bookingSummaryList,
   bookingsToTableRows,
@@ -10,9 +13,11 @@ import {
   nameCell,
 } from './bookingUtils'
 import {
+  arrivalFactory,
   bedSummaryFactory,
   bookingFactory,
   bookingSummaryFactory,
+  departureFactory,
   personFactory,
   restrictedPersonFactory,
 } from '../testutils/factories'
@@ -20,7 +25,7 @@ import paths from '../paths/manage'
 import assessPaths from '../paths/assess'
 import applyPaths from '../paths/apply'
 import { DateFormats } from './dateUtils'
-import { linkTo } from './utils'
+import { linebreaksToParagraphs, linkTo } from './utils'
 
 describe('bookingUtils', () => {
   const premisesId = 'e8f29a4a-dd4d-40a2-aa58-f3f60245c8fc'
@@ -412,6 +417,109 @@ describe('bookingUtils', () => {
           },
         ],
       })
+    })
+  })
+
+  describe('bookingPersonRows', () => {
+    it('returns the correct rows for a person', () => {
+      const booking = bookingFactory.build()
+
+      expect(bookingPersonRows(booking)).toEqual([
+        {
+          key: {
+            text: 'Name',
+          },
+          value: nameCell(booking),
+        },
+        {
+          key: {
+            text: 'CRN',
+          },
+          value: {
+            text: booking.person.crn,
+          },
+        },
+      ])
+    })
+  })
+
+  describe('bookingArrivalRows', () => {
+    it('returns the correct rows for a non-arrived booking', () => {
+      const booking = bookingFactory.build({ arrival: null })
+
+      expect(bookingArrivalRows(booking)).toEqual([
+        {
+          key: { text: 'Expected arrival date' },
+          value: { text: DateFormats.isoDateToUIDate(booking.arrivalDate) },
+        },
+      ])
+    })
+
+    it('returns the correct rows for an arrived booking', () => {
+      const booking = bookingFactory.build({ arrival: arrivalFactory.build() })
+
+      expect(bookingArrivalRows(booking)).toEqual([
+        {
+          key: { text: 'Actual arrival date' },
+          value: { text: DateFormats.isoDateToUIDate(booking.arrival.arrivalDate) },
+        },
+        {
+          key: {
+            text: 'Notes',
+          },
+          value: {
+            html: linebreaksToParagraphs(booking.arrival.notes),
+          },
+        },
+      ])
+    })
+  })
+
+  describe('bookingDepartureRows', () => {
+    it('returns the correct rows for a non=departed booking', () => {
+      const booking = bookingFactory.build({ departure: null })
+
+      expect(bookingDepartureRows(booking)).toEqual([
+        {
+          key: {
+            text: 'Expected departure date',
+          },
+          value: {
+            text: DateFormats.isoDateToUIDate(booking.departureDate),
+          },
+        },
+      ])
+    })
+
+    it('returns the correct rows for a departed booking', () => {
+      const booking = bookingFactory.build({ departure: departureFactory.build() })
+
+      expect(bookingDepartureRows(booking)).toEqual([
+        {
+          key: {
+            text: 'Actual departure date',
+          },
+          value: {
+            text: DateFormats.isoDateToUIDate(booking.departure.dateTime),
+          },
+        },
+        {
+          key: {
+            text: 'Reason',
+          },
+          value: {
+            text: booking.departure.reason.name,
+          },
+        },
+        {
+          key: {
+            text: 'Notes',
+          },
+          value: {
+            html: linebreaksToParagraphs(booking.departure.notes),
+          },
+        },
+      ])
     })
   })
 })

@@ -38,116 +38,41 @@
         govukSummaryList({
           classes: 'govuk-summary-list--no-border',
           attributes: {
-            'data-cy-crn': true
+            'data-cy-person-info': true
           },
-          rows: [
-            {
-              key: {
-                text: "Name"
-              },
-              value: {
-                text: booking.person.name
-              }
-            },
-            {
-              key: {
-                text: "CRN"
-              },
-              value: {
-                text: booking.person.crn
-              }
-            }
-          ]
+          rows: BookingUtils.bookingPersonRows(booking)
         })
       }}
+
       <br>
-      {% if booking.arrival | length %}
-        <h2>Arrival information</h2>
 
-        {{
-          govukSummaryList({
-            classes: 'govuk-summary-list--no-border',
-            attributes: {
-              'data-cy-arrival-information': true
-            },
-            rows: [
-              {
-                key: {
-                  text: "Expected arrival date"
-                },
-                value: {
-                  text: formatDate(booking.arrivalDate)
-                }
-              },
-              {
-                key: {
-                  text: "Arrival date"
-                },
-                value: {
-                  text: formatDate(booking.arrival.arrivalDate)
-                }
-              },
-              {
-                key: {
-                  text: "Notes"
-                },
-                value: {
-                  text: booking.arrival.notes
-                }
-              }
-            ]
-          })
-        }}
+      <h2>Arrival information</h2>
 
-      {% endif %}
+      {{
+        govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          attributes: {
+            'data-cy-arrival-information': true
+          },
+          rows: BookingUtils.bookingArrivalRows(booking)
+        })
+      }}
+
       <br>
-      {% if booking.departure | length %}
-        <h2>Departure information</h2>
 
-        {{
+      <h2>Departure information</h2>
+
+      {{
           govukSummaryList({
             classes: 'govuk-summary-list--no-border',
             attributes: {
               'data-cy-departure-information': true
             },
-            rows: [
-              {
-                key: {
-                  text: "Expected departure date"
-                },
-                value: {
-                  text: formatDate(booking.arrival.expectedDepartureDate)
-                }
-              },
-              {
-                key: {
-                  text: "Actual departure date"
-                },
-                value: {
-                  text: formatDate(booking.departure.dateTime)
-                }
-              },
-              {
-                key: {
-                  text: "Reason"
-                },
-                value: {
-                  text: booking.departure.reason.name
-                }
-              },
-              {
-                key: {
-                  text: "Notes"
-                },
-                value: {
-                  text: booking.departure.notes
-                }
-              }
-            ]
+            rows: BookingUtils.bookingDepartureRows(booking)
           })
         }}
 
-      {% endif %}
+      <br>
 
       <h2>Documents</h2>
 
