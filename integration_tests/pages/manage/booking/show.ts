@@ -2,7 +2,7 @@ import type { Booking } from '@approved-premises/api'
 
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
-import { DateFormats } from '../../../../server/utils/dateUtils'
+import { bookingArrivalRows, bookingDepartureRows, bookingPersonRows } from '../../../../server/utils/bookingUtils'
 
 export default class BookingShowPage extends Page {
   constructor() {
@@ -25,26 +25,16 @@ export default class BookingShowPage extends Page {
   }
 
   shouldShowBookingDetails(booking: Booking): void {
-    cy.get('dl[data-cy-crn]').within(() => {
-      this.assertDefinition('CRN', booking.person.crn)
+    cy.get('dl[data-cy-person-info]').within(() => {
+      this.shouldContainSummaryListItems(bookingPersonRows(booking))
     })
 
     cy.get('dl[data-cy-arrival-information]').within(() => {
-      this.assertDefinition('Expected arrival date', DateFormats.isoDateToUIDate(booking.arrival.arrivalDate))
-      this.assertDefinition('Arrival date', DateFormats.isoDateToUIDate(booking.arrival.arrivalDate))
-      this.assertDefinition('Notes', booking.arrival.notes)
+      this.shouldContainSummaryListItems(bookingArrivalRows(booking))
     })
 
     cy.get('dl[data-cy-departure-information]').within(() => {
-      this.assertDefinition('Expected departure date', DateFormats.isoDateToUIDate(booking.departure.dateTime))
-      this.assertDefinition('Actual departure date', DateFormats.isoDateToUIDate(booking.departure.dateTime))
-      this.assertDefinition('Reason', booking.departure.reason.name)
-      this.assertDefinition('Notes', booking.departure.notes)
-    })
-
-    cy.get('dl[data-cy-documents]').within(() => {
-      this.assertDefinition('Application', 'View document')
-      this.assertDefinition('Assessment', 'View document')
+      this.shouldContainSummaryListItems(bookingDepartureRows(booking))
     })
   }
 }
