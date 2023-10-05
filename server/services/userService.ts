@@ -21,7 +21,13 @@ export default class UserService {
     const user = await this.hmppsAuthClient.getActingUser(token)
     const client = this.userClientFactory(token)
     const profile = await client.getUserProfile()
-    return { ...user, id: profile.id, displayName: convertToTitleCase(user.name), roles: profile.roles }
+    return {
+      ...user,
+      id: profile.id,
+      displayName: convertToTitleCase(user.name),
+      roles: profile.roles,
+      active: profile.isActive,
+    }
   }
 
   async getUserById(token: string, id: string): Promise<User> {

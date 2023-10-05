@@ -7,5 +7,6 @@ export default Factory.define<UserDetails>(() => ({
   id: faker.string.uuid(),
   name: faker.internet.userName(),
   displayName: faker.person.fullName(),
+  active: true,
   roles: [],
 }))

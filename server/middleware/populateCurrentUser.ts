@@ -12,12 +12,18 @@ export default function populateCurrentUser(userService: UserService): RequestHa
 
         if (!user) {
           logger.info('No user available')
+          return res.redirect('/autherror')
+        }
+
+        if (!req.session.user.active) {
+          logger.error('User is inactive')
+          return res.redirect('/autherror')
         }
       }
-      next()
+      return next()
     } catch (error) {
       logger.error(error, `Failed to retrieve user for: ${res.locals.user && res.locals.user.username}`)
-      next(error)
+      return next(error)
     }
   }
 }
