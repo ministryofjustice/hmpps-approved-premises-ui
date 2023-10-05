@@ -17,6 +17,7 @@ export default Factory.define<User>(() => ({
   id: faker.string.uuid(),
   region: faker.helpers.arrayElement([{ id: faker.string.uuid(), name: faker.location.county() }]),
   service: 'ApprovedPremises',
+  isActive: true,
 }))
 
 const roleFactory = Factory.define<UserRole>(() =>

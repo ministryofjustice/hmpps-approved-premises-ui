@@ -333,6 +333,7 @@ export type UserDetails = {
   name: string
   displayName: string
   roles: Array<UserRole>
+  active: boolean
 }
 
 export type PartnerAgencyDetails = {

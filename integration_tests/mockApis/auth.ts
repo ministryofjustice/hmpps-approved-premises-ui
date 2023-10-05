@@ -139,7 +139,7 @@ const stubUser = (name: string) =>
     },
   })
 
-const stubProfile = (roles = [], userId = '70596333-63d4-4fb2-8acc-9ca55563d878') =>
+const stubProfile = (roles = [], userId = '70596333-63d4-4fb2-8acc-9ca55563d878', isActive = true) =>
   stubFor({
     request: {
       method: 'GET',
@@ -153,6 +153,7 @@ const stubProfile = (roles = [], userId = '70596333-63d4-4fb2-8acc-9ca55563d878'
       jsonBody: {
         id: userId,
         roles,
+        isActive,
       },
     },
   })
