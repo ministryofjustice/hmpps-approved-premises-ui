@@ -4,6 +4,7 @@ import type {
   BedOccupancyRange,
   BedSummary,
   DateCapacity,
+  ExtendedPremisesSummary,
   ApprovedPremisesSummary as PremisesSummary,
   Room,
   StaffMember,
@@ -59,5 +60,9 @@ export default class PremisesClient {
       path,
       query: { startDate, endDate },
     })) as Array<BedOccupancyRange>
+  }
+
+  async summary(premisesId: string): Promise<ExtendedPremisesSummary> {
+    return (await this.restClient.get({ path: paths.premises.summary({ premisesId }) })) as ExtendedPremisesSummary
   }
 }
