@@ -5,6 +5,7 @@ import {
   bedOccupancyRangeFactory,
   bedSummaryFactory,
   dateCapacityFactory,
+  extendedPremisesSummaryFactory,
   premisesFactory,
   roomFactory,
   staffMemberFactory,
@@ -202,45 +203,15 @@ describe('PremisesService', () => {
 
   describe('getPremisesDetails', () => {
     it('returns a title and a summary list for a given Premises ID', async () => {
-      const premises = premisesFactory.build({
-        name: 'Test',
-        apCode: 'ABC',
-        postcode: 'SW1A 1AA',
-        bedCount: 50,
-        availableBedsForToday: 20,
-      })
-      premisesClient.find.mockResolvedValue(premises)
+      const premises = extendedPremisesSummaryFactory.build()
+      premisesClient.summary.mockResolvedValue(premises)
 
       const result = await service.getPremisesDetails(token, premises.id)
 
-      expect(result).toEqual({
-        name: 'Test',
-        summaryList: {
-          rows: [
-            {
-              key: { text: 'Code' },
-              value: { text: 'ABC' },
-            },
-            {
-              key: { text: 'Postcode' },
-              value: { text: 'SW1A 1AA' },
-            },
-            {
-              key: { text: 'Number of Beds' },
-              value: { text: '50' },
-            },
-            {
-              key: { text: 'Available Beds' },
-              value: { text: '20' },
-            },
-          ],
-        },
-      })
-
-      expect(premisesClient.find).toHaveBeenCalledWith(premises.id)
+      expect(result).toEqual(premises)
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.find).toHaveBeenCalledWith(premises.id)
+      expect(premisesClient.summary).toHaveBeenCalledWith(premises.id)
     })
   })
 
