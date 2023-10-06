@@ -5,9 +5,10 @@ import { addOverbookingsToSchedule } from './addOverbookingsToSchedule'
 
 export type NegativeDateRange = { start?: string; end?: string }
 
-export default function getDateRangesWithNegativeBeds(premisesCapacity: Array<DateCapacity>): Array<NegativeDateRange> {
+export const overcapacityMessage = (premisesCapacity: Array<DateCapacity>): string => {
   let dateRange: NegativeDateRange = {}
-  const result: Array<NegativeDateRange> = []
+  const overcapacityDateRanges: Array<NegativeDateRange> = []
+  let message: string
 
   premisesCapacity.forEach((premisesCapacityItem, i, arr) => {
     if (premisesCapacityItem.availableBeds < 0 && !dateRange?.start) {
@@ -15,18 +16,41 @@ export default function getDateRangesWithNegativeBeds(premisesCapacity: Array<Da
     } else if (premisesCapacityItem.availableBeds < 0 && dateRange.start) {
       dateRange.end = premisesCapacityItem.date
     } else if (premisesCapacityItem.availableBeds >= 0 && dateRange.start) {
-      result.push(dateRange)
+      overcapacityDateRanges.push(dateRange)
       dateRange = {}
     }
     if (arr.length === i + 1 && dateRange.start) {
-      result.push(dateRange)
+      overcapacityDateRanges.push(dateRange)
     }
   })
 
-  return result
+  if (overcapacityDateRanges.length === 1) {
+    if (!overcapacityDateRanges[0].end) {
+      return `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity on ${DateFormats.isoDateToUIDate(
+        overcapacityDateRanges[0].start,
+      )}</h3>`
+    }
+    message = `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the period ${DateFormats.isoDateToUIDate(
+      overcapacityDateRanges[0].start,
+    )} to ${DateFormats.isoDateToUIDate(overcapacityDateRanges[0].end)}</h3>`
+  }
+
+  if (overcapacityDateRanges.length > 1) {
+    const dateRanges = overcapacityDateRanges
+      .map((range: NegativeDateRange) =>
+        !range.end
+          ? `<li>${DateFormats.isoDateToUIDate(range.start)}</li>`
+          : `<li>${DateFormats.isoDateToUIDate(range.start)} to ${DateFormats.isoDateToUIDate(range.end)}</li>`,
+      )
+      .join('')
+    message = `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the periods:</h3>
+      <ul class="govuk-list govuk-list--bullet">${dateRanges}</ul>`
+  }
+
+  return message
 }
 
-export async function mapApiOccupancyToUiOccupancy(bedOccupancyRangeList: Array<BedOccupancyRange>) {
+export const mapApiOccupancyToUiOccupancy = async (bedOccupancyRangeList: Array<BedOccupancyRange>) => {
   const mappedOccupancyList = await Promise.all(
     bedOccupancyRangeList.map(async occupancyRange => {
       const mappedEntry = await mapApiOccupancyEntryToUiOccupancyEntry(occupancyRange)
@@ -42,9 +66,9 @@ export async function mapApiOccupancyToUiOccupancy(bedOccupancyRangeList: Array<
   return occupancyListWithOverBookings
 }
 
-export async function mapApiOccupancyEntryToUiOccupancyEntry(
+export const mapApiOccupancyEntryToUiOccupancyEntry = async (
   bedOccupancyRangeList: BedOccupancyRange,
-): Promise<BedOccupancyRangeUi> {
+): Promise<BedOccupancyRangeUi> => {
   return {
     ...bedOccupancyRangeList,
     schedule: bedOccupancyRangeList.schedule.map(scheduleEntry => {
