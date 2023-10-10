@@ -2,13 +2,15 @@ import { addDays, subDays } from 'date-fns'
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import type { GroupedListofBookings, SummaryListItem } from '@approved-premises/ui'
-import { Booking } from '@approved-premises/api'
 import PremisesService from '../../../services/premisesService'
 import BookingService from '../../../services/bookingService'
 import PremisesController from './premisesController'
 
-import { bedOccupancyRangeFactoryUi, premisesFactory } from '../../../testutils/factories'
+import {
+  bedOccupancyRangeFactoryUi,
+  extendedPremisesSummaryFactory,
+  premisesFactory,
+} from '../../../testutils/factories'
 import { DateFormats } from '../../../utils/dateUtils'
 
 describe('PremisesController', () => {
@@ -43,29 +45,18 @@ describe('PremisesController', () => {
 
   describe('show', () => {
     it('should return the premises detail to the template', async () => {
-      const premises = { name: 'Some premises', summaryList: { rows: [] as Array<SummaryListItem> } }
-      const bookings = createMock<GroupedListofBookings>()
-      const currentResidents = createMock<Array<Booking>>()
-      const overcapacityMessage = 'The premises is over capacity for the period January 1st 2023 to Feburary 3rd 2023'
+      const premises = extendedPremisesSummaryFactory.build()
       premisesService.getPremisesDetails.mockResolvedValue(premises)
-      premisesService.getOvercapacityMessage.mockResolvedValue([overcapacityMessage])
-      bookingService.groupedListOfBookingsForPremisesId.mockResolvedValue(bookings)
-      bookingService.currentResidents.mockResolvedValue(currentResidents)
 
       const requestHandler = premisesController.show()
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('premises/show', {
-        premisesId,
         premises,
-        bookings,
-        currentResidents,
-        infoMessages: [overcapacityMessage],
+        bookings: premises.bookings,
       })
 
       expect(premisesService.getPremisesDetails).toHaveBeenCalledWith(token, premisesId)
-      expect(bookingService.groupedListOfBookingsForPremisesId).toHaveBeenCalledWith(token, premisesId)
-      expect(bookingService.currentResidents).toHaveBeenCalledWith(token, premisesId)
     })
   })
 
