@@ -32,7 +32,7 @@ context('Departures', () => {
       moveOnCategory,
     })
 
-    cy.task('stubPremises', premises)
+    cy.task('stubAllPremises', premises)
     cy.task('stubBookingGet', { premisesId: premises[0].id, booking })
     cy.task('stubDepartureCreate', { premisesId: premises[0].id, bookingId: booking.id, departure })
 
@@ -63,7 +63,7 @@ context('Departures', () => {
     const premises = premisesFactory.buildList(5)
     const booking = bookingFactory.build()
 
-    cy.task('stubPremises', premises)
+    cy.task('stubAllPremises', premises)
     cy.task('stubBookingGet', { premisesId: premises[0].id, booking })
 
     // When I visit the departure page

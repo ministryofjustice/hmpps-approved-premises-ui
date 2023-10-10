@@ -142,7 +142,7 @@ context('Placement Requests', () => {
 
   it('allows me to create a booking', () => {
     const premises = premisesFactory.buildList(3)
-    cy.task('stubPremises', premises)
+    cy.task('stubAllPremises', premises)
     cy.task('stubBookingFromPlacementRequest', unmatchedPlacementRequest)
 
     // When I visit the tasks dashboard
@@ -186,7 +186,7 @@ context('Placement Requests', () => {
 
   it('allows me to amend a booking', () => {
     const premises = premisesFactory.buildList(3)
-    cy.task('stubPremises', premises)
+    cy.task('stubAllPremises', premises)
     cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
     cy.task('stubDateChange', {
       premisesId: matchedPlacementRequest.booking.premisesId,
@@ -239,7 +239,7 @@ context('Placement Requests', () => {
     const premises = premisesFactory.buildList(3)
     const cancellation = cancellationFactory.build({ date: '2022-06-01' })
 
-    cy.task('stubPremises', premises)
+    cy.task('stubAllPremises', premises)
     cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
     cy.task('stubCancellationCreate', {
       premisesId: matchedPlacementRequest.booking.premisesId,

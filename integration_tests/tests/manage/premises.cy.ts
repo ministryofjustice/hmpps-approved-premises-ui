@@ -2,8 +2,9 @@ import { addDays } from 'date-fns'
 import { createOccupancyEntry } from '../../support/helpers'
 import {
   bedDetailFactory,
-  bookingFactory,
   dateCapacityFactory,
+  extendedPremisesSummaryFactory,
+  premisesBookingFactory,
   premisesFactory,
 } from '../../../server/testutils/factories'
 import { DateFormats } from '../../../server/utils/dateUtils'
@@ -23,7 +24,7 @@ context('Premises', () => {
   it('should list all premises', () => {
     // Given there are premises in the database
     const premises = premisesFactory.buildList(5)
-    cy.task('stubPremises', premises)
+    cy.task('stubAllPremises', premises)
 
     // When I visit the premises page
     const page = PremisesListPage.visit()
@@ -34,20 +35,19 @@ context('Premises', () => {
 
   it('should show a single premises', () => {
     // Given there is a premises in the database
-    const premises = premisesFactory.build()
-    const bookingsArrivingToday = bookingFactory
+    const bookingsArrivingToday = premisesBookingFactory
       .arrivingToday()
       .buildList(2)
       .map(booking => ({ ...booking, person: fullPersonFactory.build() }))
-    const bookingsLeavingToday = bookingFactory
+    const bookingsLeavingToday = premisesBookingFactory
       .departingToday()
       .buildList(2)
       .map(booking => ({ ...booking, person: fullPersonFactory.build() }))
-    const bookingsArrivingSoon = bookingFactory
+    const bookingsArrivingSoon = premisesBookingFactory
       .arrivingSoon()
       .buildList(5)
       .map(booking => ({ ...booking, person: fullPersonFactory.build() }))
-    const bookingsDepartingSoon = bookingFactory
+    const bookingsDepartingSoon = premisesBookingFactory
       .departingSoon()
       .buildList(5)
       .map(booking => ({ ...booking, person: fullPersonFactory.build() }))
@@ -67,11 +67,12 @@ context('Premises', () => {
       availableBeds: -1,
     })
 
-    cy.task('stubPremisesWithBookings', { premises, bookings })
-    cy.task('stubPremisesCapacity', {
-      premisesId: premises.id,
+    const premises = extendedPremisesSummaryFactory.build({
       dateCapacities: [overcapacityStartDate, overcapacityEndDate],
+      bookings,
     })
+
+    cy.task('stubPremisesSummary', premises)
 
     // When I visit the premises page
     const page = PremisesShowPage.visit(premises)
@@ -91,13 +92,9 @@ context('Premises', () => {
 
   it('should show the premises calendar', () => {
     // Given there is a premises in the database
-    const premises = premisesFactory.build()
+    const premises = extendedPremisesSummaryFactory.build()
 
-    cy.task('stubSinglePremises', premises)
-    cy.task('stubPremisesCapacity', {
-      premisesId: premises.id,
-      dateCapacities: [],
-    })
+    cy.task('stubPremisesSummary', premises)
 
     // And that premises has bookings for a bed
     const startDate = new Date()
@@ -155,14 +152,10 @@ context('Premises', () => {
 
   it('should show overbookings', () => {
     // Given there is a premises in the database
-    const premises = premisesFactory.build()
+    const premises = extendedPremisesSummaryFactory.build()
     const bedDetail = bedDetailFactory.build()
 
-    cy.task('stubSinglePremises', premises)
-    cy.task('stubPremisesCapacity', {
-      premisesId: premises.id,
-      dateCapacities: [],
-    })
+    cy.task('stubPremisesSummary', premises)
 
     // And that premises has bookings with overbookings for a bed
     const startDate = new Date()

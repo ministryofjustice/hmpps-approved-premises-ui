@@ -1,4 +1,9 @@
-import { bookingFactory, personFactory, premisesFactory } from '../../../server/testutils/factories'
+import {
+  bookingFactory,
+  extendedPremisesSummaryFactory,
+  personFactory,
+  premisesBookingFactory,
+} from '../../../server/testutils/factories'
 
 import { DepartureDateChangeConfirmationPage, DepartureDateChangePage } from '../../pages/manage'
 import { signIn } from '../signIn'
@@ -17,11 +22,13 @@ context('Departure date', () => {
       person: personFactory.build(),
     })
     const newDepartureDate = '2022-07-03'
-    const premises = premisesFactory.build()
+    const premises = extendedPremisesSummaryFactory.build({
+      bookings: [premisesBookingFactory.build({ departureDate: booking.departureDate, person: booking.person })],
+    })
 
     cy.task('stubBookingExtensionCreate', { premisesId: premises.id, booking })
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
-    cy.task('stubSinglePremises', { premisesId: premises.id, booking })
+    cy.task('stubPremisesSummary', premises)
 
     // When I visit the booking extension page
     const page = DepartureDateChangePage.visit(premises.id, booking.id)
@@ -45,12 +52,15 @@ context('Departure date', () => {
   })
 
   it('should show errors', () => {
-    const premises = premisesFactory.build()
     const booking = bookingFactory.build({
       departureDate: new Date(Date.UTC(2022, 5, 3, 0, 0, 0)).toISOString(),
     })
 
-    cy.task('stubSinglePremises', { premisesId: premises.id })
+    const premises = extendedPremisesSummaryFactory.build({
+      bookings: [premisesBookingFactory.build({ departureDate: booking.departureDate })],
+    })
+
+    cy.task('stubPremisesSummary', premises)
     cy.task('stubBookingGet', { premisesId: premises.id, booking: { ...booking, person: personFactory.build() } })
 
     // When I visit the booking extension page

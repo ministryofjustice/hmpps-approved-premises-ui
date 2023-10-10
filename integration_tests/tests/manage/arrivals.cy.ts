@@ -3,7 +3,7 @@ import { ArrivalCreatePage, PremisesShowPage } from '../../pages/manage'
 import {
   arrivalFactory,
   dateCapacityFactory,
-  premisesFactory,
+  extendedPremisesSummaryFactory,
   staffMemberFactory,
 } from '../../../server/testutils/factories'
 import { DateFormats } from '../../../server/utils/dateUtils'
@@ -19,7 +19,7 @@ context('Arrivals', () => {
 
   it('creates an arrival', () => {
     // Given I have a booking for a premises
-    const premises = premisesFactory.build()
+    const premises = extendedPremisesSummaryFactory.build({ dateCapacities: dateCapacityFactory.buildList(5) })
     const bookingId = 'some-uuid'
     const arrivalDateObj = new Date(2022, 1, 11, 12, 35)
     const arrival = arrivalFactory.build({
@@ -29,12 +29,8 @@ context('Arrivals', () => {
     })
 
     cy.task('stubPremisesStaff', { premisesId: premises.id, staff })
-    cy.task('stubSinglePremises', premises)
+    cy.task('stubPremisesSummary', premises)
     cy.task('stubArrivalCreate', { premisesId: premises.id, bookingId, arrival })
-    cy.task('stubPremisesCapacity', {
-      premisesId: premises.id,
-      dateCapacities: dateCapacityFactory.buildList(5),
-    })
 
     // When I mark the booking as having arrived
     const page = ArrivalCreatePage.visit(premises.id, bookingId)
@@ -61,10 +57,10 @@ context('Arrivals', () => {
 
   it('show arrival errors when the API returns an error', () => {
     // Given I have a booking for a premises
-    const premises = premisesFactory.build()
+    const premises = extendedPremisesSummaryFactory.build()
     const bookingId = 'some-uuid'
 
-    cy.task('stubSinglePremises', premises)
+    cy.task('stubPremisesSummary', premises)
     cy.task('stubPremisesStaff', { premisesId: premises.id, staff })
 
     // When I visit the arrivals page

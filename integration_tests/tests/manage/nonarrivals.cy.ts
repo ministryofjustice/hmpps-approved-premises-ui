@@ -1,7 +1,6 @@
 import {
-  dateCapacityFactory,
+  extendedPremisesSummaryFactory,
   nonArrivalFactory,
-  premisesFactory,
   referenceDataFactory,
 } from '../../../server/testutils/factories'
 
@@ -18,19 +17,16 @@ context('Nonarrivals', () => {
   it('creates a non-arrival', () => {
     // Given I have a booking for a premises
     const nonArrivalReasons = referenceDataFactory.buildList(5)
-    const premises = premisesFactory.build()
+    const premises = extendedPremisesSummaryFactory.build()
     const bookingId = 'some-uuid'
     const nonArrival = nonArrivalFactory.build({
       date: '2021-11-01',
       reason: nonArrivalReasons[1],
     })
 
-    cy.task('stubSinglePremises', premises)
+    cy.task('stubPremisesSummary', premises)
     cy.task('stubNonArrivalCreate', { premisesId: premises.id, bookingId, nonArrival })
-    cy.task('stubPremisesCapacity', {
-      premisesId: premises.id,
-      dateCapacities: dateCapacityFactory.buildList(5),
-    })
+
     cy.task('stubNonArrivalReasons', nonArrivalReasons)
 
     // When I mark the booking as having not arrived
@@ -54,10 +50,10 @@ context('Nonarrivals', () => {
 
   it('show non-arrival errors when the API returns an error', () => {
     // Given I have a booking for a premises
-    const premises = premisesFactory.build()
+    const premises = extendedPremisesSummaryFactory.build()
     const bookingId = 'some-uuid'
 
-    cy.task('stubSinglePremises', premises)
+    cy.task('stubPremisesSummary', premises)
 
     // When I visit the arrivals page
     const page = NonarrivalCreatePage.visit(premises.id, bookingId)

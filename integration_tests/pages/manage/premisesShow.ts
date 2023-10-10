@@ -1,15 +1,15 @@
-import type { ApprovedPremises, Booking, FullPerson } from '@approved-premises/api'
+import type { Booking, ExtendedPremisesSummary, FullPerson, PremisesBooking } from '@approved-premises/api'
 
 import Page from '../page'
 import paths from '../../../server/paths/manage'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 export default class PremisesShowPage extends Page {
-  constructor(private readonly premises: ApprovedPremises) {
+  constructor(private readonly premises: ExtendedPremisesSummary) {
     super(premises.name)
   }
 
-  static visit(premises: ApprovedPremises): PremisesShowPage {
+  static visit(premises: ExtendedPremisesSummary): PremisesShowPage {
     cy.visit(paths.premises.show({ premisesId: premises.id }))
     return new PremisesShowPage(premises)
   }
@@ -42,10 +42,10 @@ export default class PremisesShowPage extends Page {
   }
 
   shouldShowBookings(
-    bookingsArrivingToday: Array<Booking>,
-    bookingsLeavingToday: Array<Booking>,
-    bookingsArrivingSoon: Array<Booking>,
-    bookingsLeavingSoon: Array<Booking>,
+    bookingsArrivingToday: Array<PremisesBooking>,
+    bookingsLeavingToday: Array<PremisesBooking>,
+    bookingsArrivingSoon: Array<PremisesBooking>,
+    bookingsLeavingSoon: Array<PremisesBooking>,
   ): void {
     cy.get('a').contains('Arriving Today').click()
     this.tableShouldContainBookings(bookingsArrivingToday, 'arrival')
@@ -60,7 +60,7 @@ export default class PremisesShowPage extends Page {
     this.tableShouldContainBookings(bookingsLeavingSoon, 'departure')
   }
 
-  private tableShouldContainBookings(bookings: Array<Booking>, type: 'arrival' | 'departure') {
+  private tableShouldContainBookings(bookings: Array<PremisesBooking>, type: 'arrival' | 'departure') {
     bookings.forEach((item: Booking) => {
       const date = type === 'arrival' ? item.arrivalDate : item.departureDate
       cy.contains((item.person as FullPerson).name)
@@ -79,7 +79,7 @@ export default class PremisesShowPage extends Page {
     })
   }
 
-  shouldShowCurrentResidents(currentResidents: Array<Booking>) {
+  shouldShowCurrentResidents(currentResidents: Array<PremisesBooking>) {
     cy.get('h2').should('contain', 'Current residents')
     currentResidents.forEach((item: Booking) => {
       cy.contains((item.person as FullPerson).name)

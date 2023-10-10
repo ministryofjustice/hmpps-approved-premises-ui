@@ -25,6 +25,16 @@
     <div class="govuk-grid-column-full-width">
       {% include "../_messages.njk" %}
 
+      {% set overcapacityMessage = PremisesUtils.overcapacityMessage(premises.dateCapacities) %}
+
+      {% if overcapacityMessage | length %}
+        {{ govukNotificationBanner({
+          titleText: 'Important',
+          html: '<div class="govuk-heading-s">' + overcapacityMessage + '</div>',
+          titleId: 'info-title'
+        }) }}
+      {% endif %}
+
       {{
         mojIdentityBar({
           title: {
@@ -34,12 +44,12 @@
           items: [ {
             text: "Manage beds",
             classes: "govuk-button--secondary",
-            href: paths.premises.beds.index({premisesId: premisesId})
+            href: paths.premises.beds.index({premisesId: premises.id})
           },
            {
             text: "View calendar",
             classes: "govuk-button--secondary",
-            href: paths.premises.calendar({premisesId: premisesId})
+            href: paths.premises.calendar({premisesId: premises.id})
           }
           ]
         }]
@@ -48,7 +58,9 @@
     </div>
     <div class="govuk-grid-column-full-width">
       {{
-		    govukSummaryList(premises.summaryList)
+		    govukSummaryList(
+          PremisesUtils.summaryListForPremises(premises)
+        )
 	    }}
 
       <h2>Arrivals and Departures</h2>
@@ -60,28 +72,28 @@
               label: "Arriving Today",
               id: "arriving-today",
               panel: {
-                html: bookingTable("Arriving Today", "Arrival", BookingUtils.bookingsToTableRows(bookings.arrivingToday, premisesId, 'arrival'))
+                html: bookingTable("Arriving Today", "Arrival", BookingUtils.arrivingTodayOrLate(bookings, premises.id))
               }
             },
             {
               label: "Departing Today",
               id: "departing-today",
               panel: {
-                html: bookingTable("Departing Today", "Departure", BookingUtils.bookingsToTableRows(bookings.departingToday, premisesId, 'departure'))
+                html: bookingTable("Departing Today", "Departure", BookingUtils.departingTodayOrLate(bookings, premises.id))
               }
             },
             {
               label: "Upcoming Arrivals",
               id: "upcoming-arrivals",
               panel: {
-                html: bookingTable("Upcoming Arrivals", "Arrival", BookingUtils.bookingsToTableRows(bookings.upcomingArrivals, premisesId, 'arrival'))
+                html: bookingTable("Upcoming Arrivals", "Arrival", BookingUtils.upcomingArrivals(bookings, premises.id))
               }
             },
             {
               label: "Upcoming Departures",
               id: "upcoming-departures",
               panel: {
-                html: bookingTable("Upcoming Departures", "Departure", BookingUtils.bookingsToTableRows(bookings.upcomingDepartures, premisesId, 'departure'))
+                html: bookingTable("Upcoming Departures", "Departure", BookingUtils.upcomingDepartures(bookings, premises.id))
               }
             }
           ]
@@ -113,7 +125,7 @@
               text: "Actions"
             }
           ],
-          rows: BookingUtils.bookingsToTableRows(currentResidents, premisesId, 'departure')
+          rows: BookingUtils.arrivedBookings(bookings, premises.id)
         })
       }}
     </div>
