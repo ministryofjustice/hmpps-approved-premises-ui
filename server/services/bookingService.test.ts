@@ -1,5 +1,3 @@
-import { subDays } from 'date-fns'
-import { DateFormats } from '../utils/dateUtils'
 import BookingService from './bookingService'
 import BookingClient from '../data/bookingClient'
 
@@ -78,91 +76,6 @@ describe('BookingService', () => {
     })
   })
 
-  describe('bookingsArrivingTodayOrLate', () => {
-    it('should return bookings due to arrive today or earlier', async () => {
-      const bookingsArrivingToday = bookingFactory.arrivingToday().buildList(1)
-      const arrivedBookings = bookingFactory.arrivedToday().buildList(1)
-      const bookingsArrivingYesterday = bookingFactory.buildList(1, {
-        arrivalDate: DateFormats.dateObjToIsoDate(subDays(new Date(), 1)),
-      })
-      const cancelledBookingsWithFutureArrivalDate = bookingFactory.cancelledWithFutureArrivalDate().buildList(1)
-      const today = new Date(new Date().setHours(0, 0, 0, 0))
-
-      const results = service.bookingsArrivingTodayOrLate(
-        [
-          ...bookingsArrivingToday,
-          ...arrivedBookings,
-          ...bookingsArrivingYesterday,
-          ...cancelledBookingsWithFutureArrivalDate,
-        ],
-        today,
-      )
-
-      expect(results).toEqual([...bookingsArrivingToday, ...bookingsArrivingYesterday])
-    })
-  })
-
-  describe('bookingsDepartingTodayOrLate', () => {
-    it('should return bookings due to depart today or after', async () => {
-      const bookingsDepartingToday = bookingFactory.departingToday().buildList(1)
-      const departedBookings = bookingFactory.departedToday().buildList(1)
-      const bookingsDepartingSoon = bookingFactory.departingSoon().buildList(2)
-
-      const today = new Date(new Date().setHours(0, 0, 0, 0))
-
-      const results = service.bookingsDepartingTodayOrLate(
-        [...bookingsDepartingToday, ...departedBookings, ...bookingsDepartingSoon],
-        today,
-      )
-
-      expect(results).toEqual([...bookingsDepartingToday, ...bookingsDepartingSoon])
-    })
-  })
-
-  describe('groupedListOfBookingsForPremisesId', () => {
-    it('should return table rows of bookings', async () => {
-      const today = new Date(new Date().setHours(0, 0, 0, 0))
-
-      const bookingsArrivingToday = bookingFactory.arrivingToday().buildList(1)
-      const arrivedBookings = bookingFactory.arrivedToday().buildList(1)
-
-      const bookingsDepartingToday = bookingFactory.departingToday().buildList(1)
-      const departedBookings = bookingFactory.departedToday().buildList(1)
-
-      const bookingsArrivingSoon = bookingFactory.arrivingSoon().buildList(1)
-
-      const cancelledBookingsWithFutureArrivalDate = bookingFactory.cancelledWithFutureArrivalDate().buildList(1)
-
-      const bookingsDepartingSoon = bookingFactory.departingSoon().buildList(2)
-
-      const bookings = [
-        ...bookingsArrivingToday,
-        ...arrivedBookings,
-        ...bookingsDepartingToday,
-        ...departedBookings,
-        ...bookingsArrivingSoon,
-        ...cancelledBookingsWithFutureArrivalDate,
-        ...bookingsDepartingSoon,
-      ]
-
-      const premisesId = 'some-uuid'
-      bookingClient.allBookingsForPremisesId.mockResolvedValue(bookings)
-
-      const results = await service.groupedListOfBookingsForPremisesId(token, 'some-uuid')
-
-      expect(results.arrivingToday).toEqual(service.bookingsArrivingTodayOrLate(bookings, today))
-      expect(results.departingToday).toEqual(service.bookingsDepartingTodayOrLate(bookings, today))
-      expect(results.upcomingArrivals).toEqual(bookingsArrivingSoon)
-
-      expect(results.upcomingDepartures).toEqual([...arrivedBookings, ...bookingsDepartingSoon])
-
-      expect(bookingClient.allBookingsForPremisesId).toHaveBeenCalledWith(premisesId)
-
-      expect(bookingClientFactory).toHaveBeenCalledWith(token)
-      expect(bookingClient.allBookingsForPremisesId).toHaveBeenCalledWith(premisesId)
-    })
-  })
-
   describe('extendBooking', () => {
     it('on success returns the booking that has been extended', async () => {
       const booking = bookingExtensionFactory.build()
@@ -180,25 +93,6 @@ describe('BookingService', () => {
       expect(extendedBooking).toEqual(booking)
       expect(bookingClientFactory).toHaveBeenCalledWith(token)
       expect(bookingClient.extendBooking).toHaveBeenCalledWith('premisesId', booking.id, newDepartureDateObj)
-    })
-  })
-
-  describe('currentResidents', () => {
-    it('should return table rows of the current residents', async () => {
-      const bookingsArrivingToday = bookingFactory.arrivingToday().buildList(2)
-      const currentResidents = bookingFactory.arrived().buildList(2)
-
-      const premisesId = 'some-uuid'
-      bookingClient.allBookingsForPremisesId.mockResolvedValue([...currentResidents, ...bookingsArrivingToday])
-
-      const results = await service.currentResidents(token, 'some-uuid')
-
-      expect(results).toEqual(currentResidents)
-
-      expect(bookingClient.allBookingsForPremisesId).toHaveBeenCalledWith(premisesId)
-
-      expect(bookingClientFactory).toHaveBeenCalledWith(token)
-      expect(bookingClient.allBookingsForPremisesId).toHaveBeenCalledWith(premisesId)
     })
   })
 

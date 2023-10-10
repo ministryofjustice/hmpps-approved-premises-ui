@@ -7,14 +7,17 @@ import type {
   TableCell,
   TableRow,
 } from '@approved-premises/ui'
-import type { BedSummary, Booking, BookingSummary } from '@approved-premises/api'
+import type { BedSummary, Booking, BookingSummary, PremisesBooking } from '@approved-premises/api'
+import { addDays, isBefore, isEqual, isWithinInterval } from 'date-fns'
 import paths from '../paths/manage'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
-import { DateFormats } from './dateUtils'
+import { DateFormats, todayAtMidnight } from './dateUtils'
 import { SanitisedError } from '../sanitisedError'
 import { linebreaksToParagraphs, linkTo } from './utils'
 import { isFullPerson } from './personUtils'
+
+const UPCOMING_WINDOW_IN_DAYS = 365 * 10
 
 type ParsedConflictError = {
   conflictingEntityId: string
@@ -65,7 +68,7 @@ export const bookingSummaryList = (booking: BookingSummary): SummaryListWithCard
   }
 }
 
-export const manageBookingLink = (premisesId: string, booking: Booking): string => {
+export const manageBookingLink = (premisesId: string, booking: Booking | PremisesBooking): string => {
   return `<a href="${paths.bookings.show({ premisesId, bookingId: booking.id })}">
     Manage
     <span class="govuk-visually-hidden">
@@ -74,8 +77,70 @@ export const manageBookingLink = (premisesId: string, booking: Booking): string 
   </a>`
 }
 
+export const arrivingTodayOrLate = (bookings: Array<PremisesBooking>, premisesId: string): Array<TableRow> => {
+  const filteredBookings = bookings
+    .filter(booking => booking.status === 'awaiting-arrival')
+    .filter(
+      booking =>
+        isEqual(DateFormats.isoToDateObj(booking.arrivalDate), todayAtMidnight) ||
+        isBefore(DateFormats.isoToDateObj(booking.arrivalDate), todayAtMidnight),
+    )
+
+  return bookingsToTableRows(filteredBookings, premisesId, 'arrival')
+}
+
+export const departingTodayOrLate = (bookings: Array<PremisesBooking>, premisesId: string): Array<TableRow> => {
+  const filteredBookings = bookings
+    .filter(booking => booking.status === 'arrived')
+    .filter(
+      booking =>
+        isEqual(DateFormats.isoToDateObj(booking.departureDate), todayAtMidnight) ||
+        isBefore(DateFormats.isoToDateObj(booking.departureDate), todayAtMidnight),
+    )
+
+  return bookingsToTableRows(filteredBookings, premisesId, 'departure')
+}
+
+export const upcomingArrivals = (bookings: Array<PremisesBooking>, premisesId: string): Array<TableRow> => {
+  return bookingsToTableRows(
+    bookings.filter(
+      booking =>
+        booking.status === 'awaiting-arrival' &&
+        isWithinInterval(DateFormats.isoToDateObj(booking.arrivalDate), {
+          start: addDays(todayAtMidnight, 1),
+          end: addDays(todayAtMidnight, UPCOMING_WINDOW_IN_DAYS + 1),
+        }),
+    ),
+    premisesId,
+    'arrival',
+  )
+}
+
+export const upcomingDepartures = (bookings: Array<PremisesBooking>, premisesId: string): Array<TableRow> => {
+  return bookingsToTableRows(
+    bookings.filter(
+      booking =>
+        booking.status === 'arrived' &&
+        isWithinInterval(DateFormats.isoToDateObj(booking.departureDate), {
+          start: addDays(todayAtMidnight, 1),
+          end: addDays(todayAtMidnight, UPCOMING_WINDOW_IN_DAYS + 1),
+        }),
+    ),
+    premisesId,
+    'departure',
+  )
+}
+
+export const arrivedBookings = (bookings: Array<PremisesBooking>, premisesId: string): Array<TableRow> => {
+  return bookingsToTableRows(
+    bookings.filter(booking => booking.status === 'arrived'),
+    premisesId,
+    'departure',
+  )
+}
+
 export const bookingsToTableRows = (
-  bookings: Array<Booking>,
+  bookings: Array<PremisesBooking>,
   premisesId: string,
   type: 'arrival' | 'departure',
 ): Array<TableRow> => {
@@ -96,7 +161,7 @@ export const bookingsToTableRows = (
   ])
 }
 
-export const nameCell = (booking: Booking): TableCell =>
+export const nameCell = (booking: PremisesBooking): TableCell =>
   isFullPerson(booking.person) ? { text: booking.person.name } : { text: `LAO: ${booking.person.crn}` }
 
 export const bookingActions = (booking: Booking, premisesId: string): Array<IdentityBarMenu> => {
