@@ -62,11 +62,11 @@ const getStatus = (application: ApplicationSummary): string => {
   return statusTags[application.status]
 }
 
-const textValue = (value: string) => {
+export const textValue = (value: string) => {
   return { text: value }
 }
 
-const htmlValue = (value: string) => {
+export const htmlValue = (value: string) => {
   return { html: value }
 }
 

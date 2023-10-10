@@ -1,7 +1,8 @@
-import type { BedOccupancyRange, DateCapacity } from '@approved-premises/api'
-import { BedOccupancyRangeUi } from '@approved-premises/ui'
+import type { BedOccupancyRange, DateCapacity, ExtendedPremisesSummary } from '@approved-premises/api'
+import { BedOccupancyRangeUi, SummaryList } from '@approved-premises/ui'
 import { DateFormats } from './dateUtils'
 import { addOverbookingsToSchedule } from './addOverbookingsToSchedule'
+import { textValue } from './applications/utils'
 
 export type NegativeDateRange = { start?: string; end?: string }
 
@@ -79,4 +80,27 @@ export const mapApiOccupancyEntryToUiOccupancyEntry = async (
       }
     }),
   } as BedOccupancyRangeUi
+}
+
+export const summaryListForPremises = (premises: ExtendedPremisesSummary): SummaryList => {
+  return {
+    rows: [
+      {
+        key: textValue('Code'),
+        value: textValue(premises.apCode),
+      },
+      {
+        key: textValue('Postcode'),
+        value: textValue(premises.postcode),
+      },
+      {
+        key: textValue('Number of Beds'),
+        value: textValue(premises.bedCount.toString()),
+      },
+      {
+        key: textValue('Available Beds'),
+        value: textValue(premises.availableBedsForToday.toString()),
+      },
+    ],
+  }
 }

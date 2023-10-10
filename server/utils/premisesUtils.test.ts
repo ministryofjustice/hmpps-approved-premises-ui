@@ -1,11 +1,17 @@
 import { BedOccupancyEntryUi } from '@approved-premises/ui'
-import { bedOccupancyEntryFactory, bedOccupancyRangeFactory, dateCapacityFactory } from '../testutils/factories'
+import {
+  bedOccupancyEntryFactory,
+  bedOccupancyRangeFactory,
+  extendedPremisesSummaryFactory,
+} from '../testutils/factories'
 import {
   mapApiOccupancyEntryToUiOccupancyEntry,
   mapApiOccupancyToUiOccupancy,
   overcapacityMessage,
+  summaryListForPremises,
 } from './premisesUtils'
 import { addOverbookingsToSchedule } from './addOverbookingsToSchedule'
+import { textValue } from './applications/utils'
 
 jest.mock('./addOverbookingsToSchedule')
 
@@ -144,6 +150,38 @@ describe('premisesUtils', () => {
             length: bedOccupancyEntry.length,
             startDate: new Date(2023, 0, 2),
             type: bedOccupancyEntry.type,
+          },
+        ],
+      })
+    })
+  })
+
+  describe('summaryListForPremises', () => {
+    it('should return a summary of a premises', () => {
+      const premises = extendedPremisesSummaryFactory.build({
+        apCode: '123',
+        postcode: 'SW1A 1AA',
+        bedCount: 20,
+        availableBedsForToday: 12,
+      })
+
+      expect(summaryListForPremises(premises)).toEqual({
+        rows: [
+          {
+            key: textValue('Code'),
+            value: textValue('123'),
+          },
+          {
+            key: textValue('Postcode'),
+            value: textValue('SW1A 1AA'),
+          },
+          {
+            key: textValue('Number of Beds'),
+            value: textValue('20'),
+          },
+          {
+            key: textValue('Available Beds'),
+            value: textValue('12'),
           },
         ],
       })
