@@ -6,11 +6,7 @@ import PremisesService from '../../../services/premisesService'
 import BookingService from '../../../services/bookingService'
 import PremisesController from './premisesController'
 
-import {
-  bedOccupancyRangeFactoryUi,
-  extendedPremisesSummaryFactory,
-  premisesFactory,
-} from '../../../testutils/factories'
+import { bedOccupancyRangeFactoryUi, extendedPremisesSummaryFactory } from '../../../testutils/factories'
 import { DateFormats } from '../../../utils/dateUtils'
 
 describe('PremisesController', () => {
@@ -62,12 +58,12 @@ describe('PremisesController', () => {
 
   describe('calendar', () => {
     const occupancy = bedOccupancyRangeFactoryUi.buildList(2)
-    const premises = premisesFactory.build()
+    const premises = extendedPremisesSummaryFactory.build()
     const requestHandler = premisesController.calendar()
 
     beforeEach(() => {
       premisesService.getOccupancy.mockResolvedValue(occupancy)
-      premisesService.find.mockResolvedValue(premises)
+      premisesService.getPremisesDetails.mockResolvedValue(premises)
     })
 
     it('renders the calendar view', async () => {
