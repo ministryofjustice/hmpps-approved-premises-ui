@@ -1,7 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 import type { NewBooking } from '@approved-premises/api'
 
-import { BookingService, PersonService, PremisesService } from '../../services'
+import { BookingService, PersonService } from '../../services'
 import {
   catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
@@ -15,7 +15,6 @@ import { isFullPerson } from '../../utils/personUtils'
 export default class BookingsController {
   constructor(
     private readonly bookingService: BookingService,
-    private readonly premisesService: PremisesService,
     private readonly personService: PersonService,
   ) {}
 
@@ -112,14 +111,12 @@ export default class BookingsController {
     return async (req: Request, res: Response) => {
       const { premisesId, bookingId } = req.params
       const booking = await this.bookingService.find(req.user.token, premisesId, bookingId)
-      const overcapacityMessage = await this.premisesService.getOvercapacityMessage(req.user.token, premisesId)
 
       return res.render('bookings/confirm', {
         premisesId,
         bookingId,
         pageHeading: 'Placement confirmed',
         ...booking,
-        infoMessages: overcapacityMessage,
       })
     }
   }

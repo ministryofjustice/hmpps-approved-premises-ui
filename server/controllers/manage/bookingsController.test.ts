@@ -4,7 +4,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 
 import { SanitisedError } from '../../sanitisedError'
-import { BookingService, PersonService, PremisesService } from '../../services'
+import { BookingService, PersonService } from '../../services'
 import BookingsController from './bookingsController'
 import {
   catchValidationErrorOrPropogate,
@@ -28,9 +28,8 @@ describe('bookingsController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const bookingService = createMock<BookingService>({})
-  const premisesService = createMock<PremisesService>({})
   const personService = createMock<PersonService>({})
-  const bookingController = new BookingsController(bookingService, premisesService, personService)
+  const bookingController = new BookingsController(bookingService, personService)
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -266,8 +265,6 @@ describe('bookingsController', () => {
         arrivalDate: new Date('07/27/22').toISOString(),
         departureDate: new Date('07/28/22').toISOString(),
       })
-      const overcapacityMessage = 'The premises is over capacity for the period January 1st 2023 to Feburary 3rd 2023'
-      premisesService.getOvercapacityMessage.mockResolvedValue([overcapacityMessage])
       bookingService.find.mockResolvedValue(booking)
 
       const requestHandler = bookingController.confirm()
@@ -288,7 +285,6 @@ describe('bookingsController', () => {
         pageHeading: 'Placement confirmed',
         bookingId: booking.id,
         ...booking,
-        infoMessages: [overcapacityMessage],
       })
     })
   })
