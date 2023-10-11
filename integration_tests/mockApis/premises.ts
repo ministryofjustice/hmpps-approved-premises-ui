@@ -3,7 +3,7 @@ import type { Response, SuperAgentRequest } from 'superagent'
 import type {
   BedOccupancyRange,
   Booking,
-  DateCapacity,
+  ExtendedPremisesSummary,
   Premises,
   PremisesSummary,
   StaffMember,
@@ -14,7 +14,7 @@ import bookingStubs from './booking'
 import paths from '../../server/paths/api'
 import { createQueryString } from '../../server/utils/utils'
 
-const stubPremises = (premises: Array<PremisesSummary>) =>
+const stubAllPremises = (premises: Array<PremisesSummary>) =>
   stubFor({
     request: {
       method: 'GET',
@@ -29,11 +29,11 @@ const stubPremises = (premises: Array<PremisesSummary>) =>
     },
   })
 
-const stubSinglePremises = (premises: Premises) =>
+const stubPremisesSummary = (premises: ExtendedPremisesSummary) =>
   stubFor({
     request: {
       method: 'GET',
-      urlPattern: `/premises/${premises.id}`,
+      urlPattern: paths.premises.summary({ premisesId: premises.id }),
     },
     response: {
       status: 200,
@@ -44,34 +44,14 @@ const stubSinglePremises = (premises: Premises) =>
     },
   })
 
-const stubPremisesCapacity = (args: { premisesId: string; dateCapacities: DateCapacity }) =>
-  stubFor({
-    request: {
-      method: 'GET',
-      urlPattern: `/premises/${args.premisesId}/capacity`,
-    },
-    response: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-      jsonBody: args.dateCapacities,
-    },
-  })
-
 export default {
-  stubPremises,
-  stubSinglePremises: (premises: Premises): Promise<[Response, Response]> =>
-    Promise.all([
-      stubSinglePremises(premises),
-      bookingStubs.stubBookingsForPremisesId({ premisesId: premises.id, bookings: [] }),
-    ]),
+  stubAllPremises,
+  stubPremisesSummary,
   stubPremisesWithBookings: (args: { premises: Premises; bookings: Array<Booking> }): Promise<[Response, Response]> =>
     Promise.all([
-      stubSinglePremises(args.premises),
+      stubPremisesSummary(args.premises),
       bookingStubs.stubBookingsForPremisesId({ premisesId: args.premises.id, bookings: args.bookings }),
     ]),
-  stubPremisesCapacity,
   stubPremisesStaff: (args: { premisesId: string; staff: Array<StaffMember> }): SuperAgentRequest =>
     stubFor({
       request: {

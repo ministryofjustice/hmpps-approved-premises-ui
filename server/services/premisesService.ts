@@ -1,8 +1,9 @@
-import type { SummaryList, TableRow } from '@approved-premises/ui'
+import type { TableRow } from '@approved-premises/ui'
 import type {
   ApprovedPremises,
   BedDetail,
   BedSummary,
+  ExtendedPremisesSummary,
   Premises,
   PremisesSummary,
   Room,
@@ -11,8 +12,7 @@ import type {
 import type { PremisesClient, RestClientBuilder } from '../data'
 import paths from '../paths/manage'
 
-import { DateFormats } from '../utils/dateUtils'
-import getDateRangesWithNegativeBeds, { NegativeDateRange, mapApiOccupancyToUiOccupancy } from '../utils/premisesUtils'
+import { mapApiOccupancyToUiOccupancy } from '../utils/premisesUtils'
 
 export default class PremisesService {
   constructor(private readonly premisesClientFactory: RestClientBuilder<PremisesClient>) {}
@@ -95,23 +95,9 @@ export default class PremisesService {
     return premises
   }
 
-  async getPremisesDetails(token: string, id: string): Promise<{ name: string; summaryList: SummaryList }> {
+  async getPremisesDetails(token: string, id: string): Promise<ExtendedPremisesSummary> {
     const premisesClient = this.premisesClientFactory(token)
-    const premises = await premisesClient.find(id)
-    const summaryList = await this.summaryListForPremises(premises)
-
-    return { name: premises.name, summaryList }
-  }
-
-  async getOvercapacityMessage(token: string, premisesId: string): Promise<Array<string> | string> {
-    const premisesClient = this.premisesClientFactory(token)
-    const premisesDateCapacities = await premisesClient.capacity(premisesId)
-
-    const overcapacityDateRanges = getDateRangesWithNegativeBeds(premisesDateCapacities)
-
-    const overcapacityMessage = this.generateOvercapacityMessage(overcapacityDateRanges)
-
-    return overcapacityMessage ? [overcapacityMessage] : ''
+    return premisesClient.summary(id)
   }
 
   async getOccupancy(token: string, premisesId: string, startDate: string, endDate: string) {
@@ -120,57 +106,6 @@ export default class PremisesService {
     const occupancyForUi = await mapApiOccupancyToUiOccupancy(apiOccupancy)
 
     return occupancyForUi
-  }
-
-  private generateOvercapacityMessage(overcapacityDateRanges: Array<NegativeDateRange>) {
-    if (overcapacityDateRanges.length === 1) {
-      if (!overcapacityDateRanges[0].end) {
-        return `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity on ${DateFormats.isoDateToUIDate(
-          overcapacityDateRanges[0].start,
-        )}</h3>`
-      }
-      return `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the period ${DateFormats.isoDateToUIDate(
-        overcapacityDateRanges[0].start,
-      )} to ${DateFormats.isoDateToUIDate(overcapacityDateRanges[0].end)}</h3>`
-    }
-
-    if (overcapacityDateRanges.length > 1) {
-      const dateRanges = overcapacityDateRanges
-        .map((dateRange: NegativeDateRange) =>
-          !dateRange.end
-            ? `<li>${DateFormats.isoDateToUIDate(dateRange.start)}</li>`
-            : `<li>${DateFormats.isoDateToUIDate(dateRange.start)} to ${DateFormats.isoDateToUIDate(
-                dateRange.end,
-              )}</li>`,
-        )
-        .join('')
-      return `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the periods:</h3>
-        <ul class="govuk-list govuk-list--bullet">${dateRanges}</ul>`
-    }
-    return ''
-  }
-
-  async summaryListForPremises(premises: ApprovedPremises): Promise<SummaryList> {
-    return {
-      rows: [
-        {
-          key: this.textValue('Code'),
-          value: this.textValue(premises.apCode),
-        },
-        {
-          key: this.textValue('Postcode'),
-          value: this.textValue(premises.postcode),
-        },
-        {
-          key: this.textValue('Number of Beds'),
-          value: this.textValue(premises.bedCount.toString()),
-        },
-        {
-          key: this.textValue('Available Beds'),
-          value: this.textValue(premises.availableBedsForToday.toString()),
-        },
-      ],
-    }
   }
 
   private textValue(value: string) {

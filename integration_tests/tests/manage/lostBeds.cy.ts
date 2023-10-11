@@ -1,6 +1,6 @@
 import {
   bookingFactory,
-  dateCapacityFactory,
+  extendedPremisesSummaryFactory,
   lostBedCancellationFactory,
   lostBedFactory,
   premisesFactory,
@@ -20,8 +20,8 @@ context('LostBed', () => {
   })
 
   it('should allow me to create a lost bed', () => {
-    const premises = premisesFactory.build()
-    cy.task('stubSinglePremises', premises)
+    const premises = extendedPremisesSummaryFactory.build()
+    cy.task('stubPremisesSummary', premises)
 
     // When I navigate to the lost bed form
 
@@ -30,10 +30,6 @@ context('LostBed', () => {
       endDate: '2022-03-11',
     })
     cy.task('stubLostBedCreate', { premisesId: premises.id, lostBed })
-    cy.task('stubPremisesCapacity', {
-      premisesId: premises.id,
-      dateCapacities: dateCapacityFactory.buildList(5),
-    })
 
     const page = LostBedCreatePage.visit(premises.id, lostBed.bedId)
 
@@ -80,9 +76,9 @@ context('LostBed', () => {
   })
 
   it('should show an error when there are booking conflicts', () => {
-    const premises = premisesFactory.build()
+    const premises = extendedPremisesSummaryFactory.build()
     const conflictingBooking = bookingFactory.build()
-    cy.task('stubSinglePremises', premises)
+    cy.task('stubPremisesSummary', premises)
     cy.task('stubBookingGet', { premisesId: premises.id, booking: conflictingBooking })
 
     // When I navigate to the lost bed form
@@ -95,10 +91,6 @@ context('LostBed', () => {
       premisesId: premises.id,
       conflictingEntityId: conflictingBooking.id,
       conflictingEntityType: 'booking',
-    })
-    cy.task('stubPremisesCapacity', {
-      premisesId: premises.id,
-      dateCapacities: dateCapacityFactory.buildList(5),
     })
 
     const page = LostBedCreatePage.visit(premises.id, lostBed.bedId)

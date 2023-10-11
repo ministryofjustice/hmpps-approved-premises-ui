@@ -36,6 +36,7 @@ import dateCapacityFactory from './dateCapacity'
 import dateChangeFactory from './dateChange'
 import departureFactory from './departure'
 import documentFactory from './document'
+import extendedPremisesSummaryFactory from './extendedPremisesSummary'
 import lostBedFactory from './lostBed'
 import lostBedCancellationFactory from './lostBedCancellation'
 import newArrivalFactory from './newArrival'
@@ -72,6 +73,7 @@ import taskWrapperFactory from './taskWrapperFactory'
 import userFactory from './user'
 import userDetailsFactory from './userDetails'
 import placementApplicationDecisionEnvelopeFactory from './placementApplicationDecisionEnvelope'
+import premisesBookingFactory from './premisesBooking'
 
 export {
   acctAlertFactory,
@@ -111,6 +113,7 @@ export {
   dateCapacityFactory,
   departureFactory,
   documentFactory,
+  extendedPremisesSummaryFactory,
   lostBedFactory,
   lostBedCancellationFactory,
   newArrivalFactory,
@@ -135,6 +138,7 @@ export {
   placementRequestDetailFactory,
   placementRequestTaskFactory,
   premisesFactory,
+  premisesBookingFactory,
   premisesSummaryFactory,
   prisonCaseNotesFactory,
   reallocationFactory,

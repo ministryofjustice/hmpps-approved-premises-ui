@@ -5,9 +5,10 @@ import {
   bedSummaryFactory,
   bookingFactory,
   dateCapacityFactory,
+  extendedPremisesSummaryFactory,
   lostBedFactory,
   personFactory,
-  premisesFactory,
+  premisesBookingFactory,
   restrictedPersonFactory,
 } from '../../../server/testutils/factories'
 
@@ -21,7 +22,7 @@ import { signIn } from '../signIn'
 
 context('Booking', () => {
   const person = personFactory.build()
-  const premises = premisesFactory.build()
+  const premises = extendedPremisesSummaryFactory.build()
   const application = applicationFactory.build({
     status: 'submitted',
   })
@@ -42,11 +43,7 @@ context('Booking', () => {
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
     cy.task('stubApplicationGet', { application })
     cy.task('stubAssessment', assessment)
-    cy.task('stubSinglePremises', premises)
-    cy.task('stubPremisesCapacity', {
-      premisesId: premises.id,
-      dateCapacities: dateCapacityFactory.buildList(5),
-    })
+    cy.task('stubPremisesSummary', premises)
   })
 
   it('should shown an error if I search for an LAO', () => {
@@ -91,18 +88,24 @@ context('Booking', () => {
       availableBeds: -1,
     })
 
+    premises.bookings = [
+      premisesBookingFactory.build({
+        person,
+        arrivalDate: booking.arrivalDate,
+        departureDate: booking.departureDate,
+      }),
+    ]
+
+    premises.dateCapacities = [
+      firstOvercapacityPeriodStartDate,
+      firstOvercapacityPeriodEndDate,
+      atCapacityDate,
+      secondOvercapacityPeriodStartDate,
+      secondOvercapacityPeriodEndDate,
+    ]
+
     cy.task('stubBookingCreate', { premisesId: premises.id, booking })
-    cy.task('stubSinglePremises', { premisesId: premises.id, booking })
-    cy.task('stubPremisesCapacity', {
-      premisesId: premises.id,
-      dateCapacities: [
-        firstOvercapacityPeriodStartDate,
-        firstOvercapacityPeriodEndDate,
-        atCapacityDate,
-        secondOvercapacityPeriodStartDate,
-        secondOvercapacityPeriodEndDate,
-      ],
-    })
+    cy.task('stubPremisesSummary', premises)
     cy.task('stubFindPerson', { person })
 
     // Given I visit the first new booking page
@@ -130,11 +133,6 @@ context('Booking', () => {
     Page.verifyOnPage(BookingConfirmation)
     const bookingConfirmationPage = new BookingConfirmation()
     bookingConfirmationPage.verifyBookingIsVisible(booking)
-    // And I should see the overcapacity message
-    bookingConfirmationPage.shouldShowOvercapacityMessage(
-      { start: firstOvercapacityPeriodStartDate.date, end: firstOvercapacityPeriodEndDate.date },
-      { start: secondOvercapacityPeriodStartDate.date, end: secondOvercapacityPeriodEndDate.date },
-    )
 
     // And the booking should be created in the API
     cy.task('verifyBookingCreate', { premisesId: premises.id }).then(requests => {
@@ -189,7 +187,7 @@ context('Booking', () => {
     const bedId = bedFactory.build().id
     const conflictingLostBed = lostBedFactory.build()
 
-    cy.task('stubSinglePremises', premises)
+    cy.task('stubPremisesSummary', premises)
     cy.task('stubFindPerson', { person })
     cy.task('stubBookingCreateConflictError', {
       premisesId: premises.id,

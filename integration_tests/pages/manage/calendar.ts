@@ -1,10 +1,10 @@
 import { differenceInDays } from 'date-fns'
-import { BedOccupancyRange, Premises } from '@approved-premises/api'
+import { BedOccupancyRange, ExtendedPremisesSummary } from '@approved-premises/api'
 import Page from '../page'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 export default class Calendar extends Page {
-  constructor(premises: Premises) {
+  constructor(premises: ExtendedPremisesSummary) {
     super(premises.name)
   }
 

@@ -22,29 +22,16 @@ export default class PremisesController {
     return async (req: Request, res: Response) => {
       const premises = await this.premisesService.getPremisesDetails(req.user.token, req.params.premisesId)
 
-      const bookings = await this.bookingService.groupedListOfBookingsForPremisesId(
-        req.user.token,
-        req.params.premisesId,
-      )
-      const currentResidents = await this.bookingService.currentResidents(req.user.token, req.params.premisesId)
-      const overcapacityMessage = await this.premisesService.getOvercapacityMessage(
-        req.user.token,
-        req.params.premisesId,
-      )
-
       return res.render('premises/show', {
         premises,
-        premisesId: req.params.premisesId,
-        bookings,
-        currentResidents,
-        infoMessages: overcapacityMessage,
+        bookings: premises.bookings,
       })
     }
   }
 
   calendar(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const premises = await this.premisesService.find(req.user.token, req.params.premisesId)
+      const premises = await this.premisesService.getPremisesDetails(req.user.token, req.params.premisesId)
 
       const startDate = req.query.startDate ? DateFormats.isoToDateObj(req.query.startDate as string) : new Date()
       const endDate = addDays(startDate, 30)

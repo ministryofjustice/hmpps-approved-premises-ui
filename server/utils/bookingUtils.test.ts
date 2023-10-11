@@ -1,5 +1,7 @@
 import { SanitisedError } from '../sanitisedError'
 import {
+  arrivedBookings,
+  arrivingTodayOrLate,
   bedsAsSelectItems,
   bookingActions,
   bookingArrivalRows,
@@ -8,9 +10,12 @@ import {
   bookingShowDocumentRows,
   bookingSummaryList,
   bookingsToTableRows,
+  departingTodayOrLate,
   generateConflictBespokeError,
   manageBookingLink,
   nameCell,
+  upcomingArrivals,
+  upcomingDepartures,
 } from './bookingUtils'
 import {
   arrivalFactory,
@@ -19,6 +24,7 @@ import {
   bookingSummaryFactory,
   departureFactory,
   personFactory,
+  premisesBookingFactory,
   restrictedPersonFactory,
 } from '../testutils/factories'
 import paths from '../paths/manage'
@@ -520,6 +526,74 @@ describe('bookingUtils', () => {
           },
         },
       ])
+    })
+  })
+
+  describe('sorting bookings', () => {
+    const bookingsArrivingToday = premisesBookingFactory.arrivingToday().buildList(1)
+    const bookingsMarkedAsArrived = premisesBookingFactory.arrivedToday().buildList(1)
+
+    const bookingsDepartingToday = premisesBookingFactory.departingToday().buildList(1)
+    const departedBookings = premisesBookingFactory.departedToday().buildList(1)
+
+    const bookingsArrivingSoon = premisesBookingFactory.arrivingSoon().buildList(1)
+
+    const cancelledBookingsWithFutureArrivalDate = premisesBookingFactory.cancelledWithFutureArrivalDate().buildList(1)
+
+    const bookingsDepartingSoon = premisesBookingFactory.departingSoon().buildList(2)
+
+    const bookings = [
+      ...bookingsArrivingToday,
+      ...bookingsMarkedAsArrived,
+      ...bookingsDepartingToday,
+      ...departedBookings,
+      ...bookingsArrivingSoon,
+      ...cancelledBookingsWithFutureArrivalDate,
+      ...bookingsDepartingSoon,
+    ]
+
+    describe('arrivingTodayOrLate', () => {
+      it('returns all bookings arriving today or late', () => {
+        expect(arrivingTodayOrLate(bookings, premisesId)).toEqual(
+          bookingsToTableRows(bookingsArrivingToday, premisesId, 'arrival'),
+        )
+      })
+    })
+
+    describe('departingTodayOrLate', () => {
+      it('returns all bookings departing today or late', () => {
+        expect(departingTodayOrLate(bookings, premisesId)).toEqual(
+          bookingsToTableRows(bookingsDepartingToday, premisesId, 'departure'),
+        )
+      })
+    })
+
+    describe('upcomingArrivals', () => {
+      it('returns all upcoming arrivals', () => {
+        expect(upcomingArrivals(bookings, premisesId)).toEqual(
+          bookingsToTableRows(bookingsArrivingSoon, premisesId, 'arrival'),
+        )
+      })
+    })
+
+    describe('upcomingDepartures', () => {
+      it('returns all upcoming departures', () => {
+        expect(upcomingDepartures(bookings, premisesId)).toEqual(
+          bookingsToTableRows([...bookingsMarkedAsArrived, ...bookingsDepartingSoon], premisesId, 'departure'),
+        )
+      })
+    })
+
+    describe('arrivedBookings', () => {
+      it('returns all arrived bookings', () => {
+        expect(arrivedBookings(bookings, premisesId)).toEqual(
+          bookingsToTableRows(
+            [...bookingsMarkedAsArrived, ...bookingsDepartingToday, ...bookingsDepartingSoon],
+            premisesId,
+            'departure',
+          ),
+        )
+      })
     })
   })
 })
