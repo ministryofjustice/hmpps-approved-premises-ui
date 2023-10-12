@@ -19,7 +19,7 @@ export const statusTag = (task: TaskWithStatus): string => {
 
 export const taskLink = (task: TaskWithStatus, applicationOrAssessment: Application | Assessment): string => {
   if (task.status !== 'cannot_start') {
-    const firstPage = Object.keys(task.pages)[0]
+    const firstPage = Object.keys(applicationOrAssessment.data[task.id] || task.pages)[0]
 
     const link = isAssessment(applicationOrAssessment)
       ? assessPaths.assessments.pages.show({

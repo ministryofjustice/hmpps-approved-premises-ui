@@ -28,6 +28,28 @@ describe('taskListUtils', () => {
         )
       })
 
+      it('should return a link to the first completed question page if it exists', () => {
+        task.status = 'in_progress'
+        application.data = { 'second-task': { foo: { some: 'response' } } }
+
+        expect(taskLink(task, application)).toEqual(
+          `<a href="${applyPaths.applications.pages.show({
+            id: 'some-uuid',
+            task: 'second-task',
+            page: 'foo',
+          })}" aria-describedby="eligibility-second-task" data-cy-task-name="second-task">Second Task</a>`,
+        )
+
+        application.data = { 'second-task': { bar: { some: 'response' } } }
+        expect(taskLink(task, application)).toEqual(
+          `<a href="${applyPaths.applications.pages.show({
+            id: 'some-uuid',
+            task: 'second-task',
+            page: 'bar',
+          })}" aria-describedby="eligibility-second-task" data-cy-task-name="second-task">Second Task</a>`,
+        )
+      })
+
       it('should return the task name when the task cannot be started', () => {
         task.status = 'cannot_start'
 
