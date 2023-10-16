@@ -107,15 +107,6 @@
     "delay": 2500,
     "ext": "js,json,html,njk"
   },
-  "lint-staged": {
-    "*.{ts,js,css}": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "*.json": [
-      "prettier --write"
-    ]
-  },
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.359.0",
     "@faker-js/faker": "^8.0.0",
@@ -209,7 +200,6 @@
     "jest-junit": "^16.0.0",
     "jest-pact": "^0.11.0",
     "jsonwebtoken": "^9.0.0",
-    "lint-staged": "^14.0.0",
     "mocha-junit-reporter": "^2.1.0",
     "nock": "^13.2.9",
     "nodemon": "^3.0.0",
