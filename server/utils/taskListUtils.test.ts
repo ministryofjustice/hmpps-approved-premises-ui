@@ -55,6 +55,19 @@ describe('taskListUtils', () => {
 
         expect(taskLink(task, application)).toEqual(`Second Task`)
       })
+
+      it('should handle when data is undefined', () => {
+        task.status = 'in_progress'
+        application.data = undefined
+
+        expect(taskLink(task, application)).toEqual(
+          `<a href="${applyPaths.applications.pages.show({
+            id: 'some-uuid',
+            task: 'second-task',
+            page: 'foo',
+          })}" aria-describedby="eligibility-second-task" data-cy-task-name="second-task">Second Task</a>`,
+        )
+      })
     })
 
     describe('with an assessment', () => {
