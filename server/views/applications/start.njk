@@ -1,6 +1,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "../partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% extends "../partials/layout.njk" %}
 
@@ -27,18 +28,14 @@
 
         <p class="govuk-body">You can leave and return to your application at any time. Your progress will be saved.</p>
 
-        {{ govukButton({
-            text: "Start now",
-            isStartButton: true
-        }) }}
 
         <h2>Before you start</h2>
 
         <h3>You need:</h3>
 
         <ul>
-          <li>an up to date OASys - we'll use this to pre-fill some of your application</li>
           <li>the person's CRN </li>
+          <li>a signed and locked OASys assessment dated within the last 6 months</li>
         </ul>
 
         <h3>You need to know:</h3>
@@ -49,6 +46,18 @@
           <li>factors impacting which location, type of AP, and type of room will be suitable</li>
           <li>how you'll prepare for move on after the AP</li>
         </ul>
+
+        {{ govukWarningText({
+          html: "<p class='govuk-!-font-weight-bold'>The person's OASys record must be updated before starting an application.</p><p class='govuk-!-font-weight-bold'>If you start an application and then update the OASys record, any changes will not be imported. You will need to restart the application from the beginning for the changes to be imported.</p>",
+          iconFallbackText: "Warning"
+        }) }}
+
+
+
+        {{ govukButton({
+            text: "Start now",
+            isStartButton: true
+        }) }}
 
       </form>
     </div>
