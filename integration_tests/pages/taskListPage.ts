@@ -9,6 +9,10 @@ export default class TaskListPage extends Page {
     cy.get('.app-task-list').should('not.contain', section)
   }
 
+  shouldNotShowTask = (task: string): void => {
+    cy.get('.app-task-list__items').should('not.contain', task)
+  }
+
   shouldShowMissingCheckboxErrorMessage() {
     cy.get('.govuk-error-summary').should(
       'contain',

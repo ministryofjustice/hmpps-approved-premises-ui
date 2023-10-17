@@ -158,6 +158,9 @@ context('Assess', () => {
         // Then I should not see the MatchingInformation section
         tasklistPage.shouldNotShowSection('Information for matching')
 
+        // And I should not see the Further actions section
+        tasklistPage.shouldNotShowSection('Provide any requirements to support placement')
+
         // When I check my answers
         this.assessHelper.completeCheckYourAnswersPage()
 
