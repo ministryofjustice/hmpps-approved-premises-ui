@@ -1,4 +1,4 @@
-import { assessmentFactory } from '../../testutils/factories'
+import { applicationFactory, assessmentFactory } from '../../testutils/factories'
 import informationSetAsNotReceived from './informationSetAsNotReceived'
 
 describe('informationSetAsNotReceived', () => {
@@ -26,5 +26,11 @@ describe('informationSetAsNotReceived', () => {
     assessment.status = 'in_progress'
 
     expect(informationSetAsNotReceived(assessment)).toEqual(false)
+  })
+
+  it('returns false when the argument is an Application', () => {
+    const application = applicationFactory.build()
+
+    expect(informationSetAsNotReceived(application)).toEqual(false)
   })
 })

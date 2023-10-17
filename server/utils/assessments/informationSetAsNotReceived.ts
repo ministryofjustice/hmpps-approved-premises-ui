@@ -1,8 +1,15 @@
-import { ApprovedPremisesAssessment as Assessment } from '../../@types/shared'
+import {
+  ApprovedPremisesApplication as Application,
+  ApprovedPremisesAssessment as Assessment,
+} from '../../@types/shared'
+import isAssessment from './isAssessment'
 
-export default (assessment: Assessment): boolean => {
-  if (assessment.status === 'awaiting_response' && assessment.data) {
-    const response = assessment.data?.['sufficient-information']?.['information-received']?.informationReceived
+export default (applicationOrAssessment: Assessment | Application): boolean => {
+  if (!isAssessment(applicationOrAssessment)) return false
+
+  if (applicationOrAssessment.status === 'awaiting_response' && applicationOrAssessment.data) {
+    const response =
+      applicationOrAssessment.data?.['sufficient-information']?.['information-received']?.informationReceived
     return response === 'no'
   }
   return false
