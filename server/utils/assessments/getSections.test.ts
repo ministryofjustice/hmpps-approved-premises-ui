@@ -20,16 +20,6 @@ describe('getSections', () => {
     expect(sectionNames).toContain('AssessApplication')
   })
 
-  it('removes the assess section if informationSetAsNotReceived is true', () => {
-    ;(informationSetAsNotReceived as jest.Mock).mockReturnValue(true)
-
-    const sections = getSections(assessment)
-    const sectionNames = sections.map(s => s.name)
-
-    expect(sections.length).toEqual(Assess.sections.length - 1)
-    expect(sectionNames).not.toContain('AssessApplication')
-  })
-
   it('removes the matching information section if the application has not been accepted', () => {
     ;(informationSetAsNotReceived as jest.Mock).mockReturnValue(false)
     ;(decisionFromAssessment as jest.Mock).mockReturnValue('decision')
@@ -54,7 +44,7 @@ describe('getSections', () => {
     expect(sectionNames).toContain('MatchingInformation')
   })
 
-  it('removes the assess and matching information section if informationSetAsNotReceived is true and the application has not been accepted', () => {
+  it('removes the matching information section if informationSetAsNotReceived is true and the application has not been accepted', () => {
     ;(informationSetAsNotReceived as jest.Mock).mockReturnValue(true)
     ;(decisionFromAssessment as jest.Mock).mockReturnValue('decision')
     ;(applicationAccepted as jest.Mock).mockReturnValue(false)
@@ -62,8 +52,7 @@ describe('getSections', () => {
     const sections = getSections(assessment)
     const sectionNames = sections.map(s => s.name)
 
-    expect(sections.length).toEqual(Assess.sections.length - 2)
+    expect(sections.length).toEqual(Assess.sections.length - 1)
     expect(sectionNames).not.toContain('MatchingInformation')
-    expect(sectionNames).not.toContain('AssessApplication')
   })
 })
