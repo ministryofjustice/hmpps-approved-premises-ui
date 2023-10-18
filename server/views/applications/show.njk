@@ -1,9 +1,9 @@
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
-{% from "../partials/personDetails.njk" import personDetails %}
+{% from "./partials/_readonly-application.njk" import applicationReadonlyView %}
+{% from "./partials/_timeline.njk" import timeline %}
 
 {% extends "../partials/layout.njk" %}
 
@@ -65,19 +65,19 @@
           text: 'Application',
           href: paths.applications.show({id: application.id}) + '?tab=application',
           active: tab === 'application'
+        }, {
+          text: 'Timeline',
+          href:  paths.applications.show({id: application.id}) + '?tab=timeline',
+          active: tab === 'timeline'
         }]
       }) }}
 
-      {{ personDetails(application.person) }}
-
-      {% for section in SummaryListUtils.summaryListSections(application, false) %}
-        <h2 class="govuk-heading-l">{{ section.title }}</h2>
-        {% for task in section.tasks %}
-          {{
-            govukSummaryList(task)
-          }}
-        {% endfor %}
-      {% endfor %}
+    {% if tab === 'timeline' %}
+      {{ timeline(mapTimelineEventsForUi(timelineEvents)) }}
+    {% else %}
+      {{ applicationReadonlyView(application) }}
+    {% endif %}
+    
     </div>
   </div>
 {% endblock %}

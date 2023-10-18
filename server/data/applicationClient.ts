@@ -6,6 +6,7 @@ import type {
   Document,
   NewWithdrawal,
   SubmitApprovedPremisesApplication,
+  TimelineEvent,
   UpdateApprovedPremisesApplication,
 } from '@approved-premises/api'
 import RestClient from './restClient'
@@ -71,5 +72,11 @@ export default class ApplicationClient {
       path: paths.applications.withdrawal({ id: applicationId }),
       data: body,
     })
+  }
+
+  async timeline(applicationId: string): Promise<Array<TimelineEvent>> {
+    return (await this.restClient.get({
+      path: paths.applications.timeline({ id: applicationId }),
+    })) as Array<TimelineEvent>
   }
 }

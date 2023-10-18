@@ -6,6 +6,7 @@ import {
   applicationSummaryFactory,
   assessmentFactory,
   documentFactory,
+  timelineEventFactory,
 } from '../testutils/factories'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
@@ -296,6 +297,32 @@ describeClient('ApplicationClient', provider => {
       })
 
       await applicationClient.withdrawal(applicationId, newWithdrawal)
+    })
+  })
+
+  describe('timeline', () => {
+    it('calls the timeline endpoint with the application ID', async () => {
+      const applicationId = 'applicationId'
+      const timelineEvents = timelineEventFactory.buildList(1)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for the timeline of an application',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.timeline({ id: applicationId }),
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: timelineEvents,
+        },
+      })
+
+      await applicationClient.timeline(applicationId)
     })
   })
 })

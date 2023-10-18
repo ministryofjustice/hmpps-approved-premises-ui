@@ -42,10 +42,16 @@ export default class ApplicationsController {
 
       if (application.status !== 'inProgress') {
         const referrer = req.headers.referer
-        res.render('applications/show', { application, referrer })
-      } else {
-        res.render('applications/tasklist', { application, taskList, errorSummary, errors })
+
+        if (req.query.tab === 'timeline') {
+          const timelineEvents = await this.applicationService.timeline(req.user.token, application.id)
+
+          return res.render('applications/show', { application, timelineEvents, referrer, tab: 'timeline' })
+        }
+
+        return res.render('applications/show', { application, referrer, tab: 'application' })
       }
+      return res.render('applications/tasklist', { application, taskList, errorSummary, errors })
     }
   }
 

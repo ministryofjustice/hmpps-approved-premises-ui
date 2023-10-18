@@ -4,6 +4,7 @@ import type {
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationSummary,
   ApprovedPremisesAssessment,
+  TimelineEvent,
 } from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from '../../wiremock'
@@ -119,6 +120,18 @@ export default {
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      },
+    }),
+  stubApplicationTimeline: (args: { applicationId: string; timeline: Array<TimelineEvent> }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.applications.timeline({ id: args.applicationId }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.timeline,
       },
     }),
   verifyApplicationWithdrawn: async (args: { applicationId: string }) =>

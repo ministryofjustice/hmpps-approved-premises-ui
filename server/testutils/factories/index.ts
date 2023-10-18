@@ -70,6 +70,7 @@ import roomFactory from './room'
 import staffMemberFactory from './staffMember'
 import taskFactory from './task'
 import taskWrapperFactory from './taskWrapperFactory'
+import timelineEventFactory from './timelineEvent'
 import userFactory from './user'
 import userDetailsFactory from './userDetails'
 import placementApplicationDecisionEnvelopeFactory from './placementApplicationDecisionEnvelope'
@@ -151,6 +152,7 @@ export {
   taskFactory,
   taskWrapperFactory,
   tierEnvelopeFactory,
+  timelineEventFactory,
   userFactory,
   userDetailsFactory,
 }

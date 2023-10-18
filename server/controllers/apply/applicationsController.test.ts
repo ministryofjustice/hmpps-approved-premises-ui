@@ -11,6 +11,7 @@ import {
   applicationFactory,
   personFactory,
   restrictedPersonFactory,
+  timelineEventFactory,
 } from '../../testutils/factories'
 
 import paths from '../../paths/apply'
@@ -117,6 +118,30 @@ describe('applicationsController', () => {
       expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
     })
 
+    describe('when the tab=timeline query param is present', () => {
+      it('calls the timeline method on the application service and passes the tab: "timeline" property', async () => {
+        const timelineEvents = timelineEventFactory.buildList(1)
+        application.status = 'submitted'
+
+        const requestHandler = applicationsController.show()
+
+        applicationService.findApplication.mockResolvedValue(application)
+        applicationService.timeline.mockResolvedValue(timelineEvents)
+
+        await requestHandler({ ...request, query: { tab: 'timeline' } }, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('applications/show', {
+          application,
+          referrer,
+          tab: 'timeline',
+          timelineEvents,
+        })
+
+        expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
+        expect(applicationService.timeline).toHaveBeenCalledWith(token, application.id)
+      })
+    })
+
     it('fetches the application from the API and renders the read only view if the application is submitted', async () => {
       application.status = 'submitted'
 
@@ -132,6 +157,7 @@ describe('applicationsController', () => {
       expect(response.render).toHaveBeenCalledWith('applications/show', {
         application,
         referrer,
+        tab: 'application',
       })
 
       expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
