@@ -1,12 +1,13 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "../partials/personDetails.njk" import personDetails %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+{% from "../partials/personDetails.njk" import personDetails %}
 
 {% extends "../partials/layout.njk" %}
 
-{% set pageHeading = "View Application" %}
+{% set pageHeading = "Approved Premises application" %}
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
 
@@ -24,7 +25,8 @@
     <div class="govuk-width-container">
       <div class="moj-page-header-actions">
         <div class="moj-page-header-actions__title">
-          <h1 class="govuk-heading-xl">{{ pageHeading }}</h1>
+          <span class="govuk-caption-l">{{ pageHeading }}</span>
+          <h1 class="govuk-heading-l">{{ application.person.name }}</h1>
         </div>
         <div class="moj-page-header-actions__actions">
           <div class="moj-button-menu">
@@ -55,6 +57,16 @@
           html: html
         }) }}
       {% endif %}
+
+
+
+      {{ mojSubNavigation({
+        items: [{
+          text: 'Application',
+          href: paths.applications.show({id: application.id}) + '?tab=application',
+          active: tab === 'application'
+        }]
+      }) }}
 
       {{ personDetails(application.person) }}
 

@@ -7,7 +7,7 @@ import Page from '../page'
 
 export default class ShowPage extends Page {
   constructor(private readonly application: ApprovedPremisesApplication) {
-    super('View Application')
+    super((application.person as FullPerson).name)
   }
 
   static visit(application: ApprovedPremisesApplication) {
