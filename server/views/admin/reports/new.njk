@@ -30,16 +30,7 @@
                       classes: "govuk-fieldset__legend--m"
                   }
               },
-              items: [
-                  {
-                    value: "applications",
-                    text: "Applications"
-                  },
-                  {
-                    value: "lostBeds",
-                    text: "Lost beds"
-                  }
-              ],
+              items: ReportUtils.reportOptions,
               errorMessage: errors.reportType
           }) }}
 

@@ -1,3 +1,4 @@
+import { reportNames } from '../../../server/utils/reportUtils'
 import ReportPage from '../../pages/admin/reportPage'
 
 context('Reports', () => {
@@ -10,38 +11,23 @@ context('Reports', () => {
     cy.signIn()
   })
 
-  it('allows me to download a lost beds report', () => {
-    // Given there is a report available
-    const month = '8'
-    const year = '2023'
-    cy.task('stubLostBedsReport', { month, year })
+  it('allows me to download reports', () => {
+    Object.keys(reportNames).forEach(reportName => {
+      // Given there is a report available
+      const month = '8'
+      const year = '2023'
+      cy.task('stubReport', { month, year, reportName })
 
-    // When I visit the report page
-    const page = ReportPage.visit()
+      // When I visit the report page
+      const page = ReportPage.visit()
 
-    // And I download a lost beds report
-    page.expectDownload()
-    page.downloadLostBedsReport('8', '2023')
+      // And I download a lost beds report
+      page.expectDownload()
+      page.downloadReport('8', '2023', reportName)
 
-    // Then the report should be downloaded
-    page.shouldHaveDownloadedFile(month, year)
-  })
-
-  it('allows me to download an applications report', () => {
-    // Given there is a report available
-    const month = '8'
-    const year = '2023'
-    cy.task('stubApplicationsReport', { month, year })
-
-    // When I visit the report page
-    const page = ReportPage.visit()
-
-    // And I download an applications beds report
-    page.expectDownload()
-    page.downloadApplicationsReport('8', '2023')
-
-    // Then the report should be downloaded
-    page.shouldHaveDownloadedFile(month, year)
+      // Then the report should be downloaded
+      page.shouldHaveDownloadedFile(month, year, reportName)
+    })
   })
 
   it(`shows errors when I don't select a date or report type`, () => {

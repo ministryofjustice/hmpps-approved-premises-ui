@@ -8,3 +8,7 @@ export const reportNames = {
 } as const
 
 export type ReportType = (keyof typeof reportNames)[number]
+
+export const reportOptions = Object.keys(reportNames)
+  .sort()
+  .map(k => ({ value: k, text: reportNames[k] }))
