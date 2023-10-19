@@ -1,4 +1,5 @@
 import paths from '../../../server/paths/admin'
+import { ReportType } from '../../../server/utils/reportUtils'
 import Page from '../page'
 
 export default class ReportPage extends Page {
@@ -16,21 +17,15 @@ export default class ReportPage extends Page {
     this.getSelectInputByIdAndSelectAnEntry('year', year)
   }
 
-  downloadLostBedsReport(month: string, year: string): void {
-    this.checkRadioByNameAndValue('reportType', 'lostBeds')
+  downloadReport(month: string, year: string, reportName: ReportType): void {
+    this.checkRadioByNameAndValue('reportType', reportName)
     this.selectDates(month, year)
     cy.get('button').contains('Download data').click()
   }
 
-  downloadApplicationsReport(month: string, year: string): void {
-    this.checkRadioByNameAndValue('reportType', 'applications')
-    this.selectDates(month, year)
-    cy.get('button').contains('Download data').click()
-  }
-
-  shouldHaveDownloadedFile(month: string, year: string): void {
+  shouldHaveDownloadedFile(month: string, year: string, reportName: ReportType): void {
     const downloadsFolder = Cypress.config('downloadsFolder')
-    const downloadedFilename = `${downloadsFolder}/lost-beds-${year}-${month.padStart(2, '0')}.xlsx`
+    const downloadedFilename = `${downloadsFolder}/${reportName}-${year}-${month.padStart(2, '0')}.xlsx`
     cy.readFile(downloadedFilename, 'binary', { timeout: 300 })
   }
 

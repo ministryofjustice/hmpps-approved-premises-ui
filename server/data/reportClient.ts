@@ -5,6 +5,7 @@ import config, { ApiConfig } from '../config'
 
 import paths from '../paths/api'
 import { createQueryString } from '../utils/utils'
+import { ReportType } from '../utils/reportUtils'
 
 export default class ReportClient {
   restClient: RestClient
@@ -13,26 +14,13 @@ export default class ReportClient {
     this.restClient = new RestClient('reportClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async getApplicationsReport(month: string, year: string, response: Response): Promise<void> {
-    const filename = `applications-${year}-${month.padStart(2, '0')}.xlsx`
+  async getReport(reportName: ReportType, month: string, year: string, response: Response): Promise<void> {
+    const filename = `${reportName}-${year}-${month.padStart(2, '0')}.xlsx`
     response.set('Content-Disposition', `attachment; filename="${filename}"`)
 
     await this.restClient.pipe(
       {
-        path: paths.reports.applications({}),
-        query: createQueryString({ month, year }),
-      },
-      response,
-    )
-  }
-
-  async getLostBedsReport(month: string, year: string, response: Response): Promise<void> {
-    const filename = `lost-beds-${year}-${month.padStart(2, '0')}.xlsx`
-    response.set('Content-Disposition', `attachment; filename="${filename}"`)
-
-    await this.restClient.pipe(
-      {
-        path: paths.reports.lostBeds({}),
+        path: paths.reports({ reportName }),
         query: createQueryString({ month, year }),
       },
       response,
