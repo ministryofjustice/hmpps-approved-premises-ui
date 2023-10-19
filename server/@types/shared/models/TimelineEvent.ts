@@ -3,8 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { TimelineEventType } from './TimelineEventType';
+
 export type TimelineEvent = {
-    type?: string;
+    type?: TimelineEventType;
     id?: string;
     occurredAt?: string;
 };
