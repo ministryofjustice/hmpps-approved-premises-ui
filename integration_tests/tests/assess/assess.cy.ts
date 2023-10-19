@@ -149,14 +149,17 @@ context('Assess', () => {
         // And the sufficient information task should show a completed status
         tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
 
-        // And I should not see the AssessApplication section
-        tasklistPage.shouldNotShowSection('Assess application')
+        // And I should see the AssessApplication section
+        this.assessHelper.completeSuitabilityOfAssessmentQuestion()
 
         // When I make a decision
         this.assessHelper.completeMakeADecisionPage('otherReasons')
 
         // Then I should not see the MatchingInformation section
         tasklistPage.shouldNotShowSection('Information for matching')
+
+        // And I should not see the Further actions section
+        tasklistPage.shouldNotShowSection('Provide any requirements to support placement')
 
         // When I check my answers
         this.assessHelper.completeCheckYourAnswersPage()
