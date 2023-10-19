@@ -1,10 +1,8 @@
-import { add } from 'date-fns'
 import { taskFactory } from '../../testutils/factories'
 import {
   allocatedTableRows,
   allocationCell,
   allocationLinkCell,
-  daysUntilDue,
   daysUntilDueCell,
   formatDaysUntilDueWithWarning,
   statusBadge,
@@ -14,6 +12,8 @@ import {
 } from './table'
 import { sentenceCase } from '../utils'
 import { DateFormats } from '../dateUtils'
+
+jest.mock('../dateUtils')
 
 describe('table', () => {
   describe('allocatedTableRows', () => {
@@ -26,12 +26,7 @@ describe('table', () => {
             {
               text: task.personName,
             },
-            {
-              html: formatDaysUntilDueWithWarning(task),
-              attributes: {
-                'data-sort-value': daysUntilDue(task),
-              },
-            },
+            daysUntilDueCell(task),
             {
               text: task?.allocatedToStaffMember?.name,
             },
@@ -59,12 +54,7 @@ describe('table', () => {
             {
               text: task.personName,
             },
-            {
-              html: formatDaysUntilDueWithWarning(task),
-              attributes: {
-                'data-sort-value': daysUntilDue(task),
-              },
-            },
+            daysUntilDueCell(task),
             {
               html: statusBadge(task),
             },
@@ -80,11 +70,12 @@ describe('table', () => {
 
   describe('daysUntilDueCell', () => {
     it('returns the days until due formatted for the UI as a TableCell object', () => {
+      ;(DateFormats.differenceInBusinessDays as jest.Mock).mockReturnValue(10)
       const task = taskFactory.build()
       expect(daysUntilDueCell(task)).toEqual({
         html: formatDaysUntilDueWithWarning(task),
         attributes: {
-          'data-sort-value': daysUntilDue(task),
+          'data-sort-value': 10,
         },
       })
     })
@@ -132,33 +123,18 @@ describe('table', () => {
     })
   })
 
-  describe('daysUntilDue', () => {
-    it('returns the number of days until the task is due', () => {
-      const task = taskFactory.build({ dueDate: DateFormats.dateObjToIsoDate(add(new Date(), { days: 2 })) })
-      expect(daysUntilDue(task)).toEqual(1)
-    })
-    it('returns 0 if the task is due', () => {
-      const task = taskFactory.build({ dueDate: DateFormats.dateObjToIsoDate(new Date()) })
-      expect(daysUntilDue(task)).toEqual(0)
-    })
-  })
-
   describe('formatDaysUntilDueWithWarning', () => {
     it('returns the number of days until the task is due', () => {
-      const task = taskFactory.build({ dueDate: DateFormats.dateObjToIsoDate(add(new Date(), { days: 2 })) })
-      expect(formatDaysUntilDueWithWarning(task)).toEqual(
-        `<strong class="task--index__warning">${
-          DateFormats.differenceInDays(DateFormats.isoToDateObj(task.dueDate), new Date()).ui
-        }<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`,
-      )
+      ;(DateFormats.differenceInBusinessDays as jest.Mock).mockReturnValue(10)
+      const task = taskFactory.build()
+      expect(formatDaysUntilDueWithWarning(task)).toEqual('10 Days')
     })
 
     it('returns "overdue" if the task is overdue', () => {
-      const task = taskFactory.build({ dueDate: DateFormats.dateObjToIsoDate(add(new Date(), { days: -2 })) })
+      ;(DateFormats.differenceInBusinessDays as jest.Mock).mockReturnValue(2)
+      const task = taskFactory.build()
       expect(formatDaysUntilDueWithWarning(task)).toEqual(
-        `<strong class="task--index__warning">-${
-          DateFormats.differenceInDays(DateFormats.isoToDateObj(task.dueDate), new Date()).ui
-        }<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`,
+        `<strong class="task--index__warning">2 Days<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`,
       )
     })
   })

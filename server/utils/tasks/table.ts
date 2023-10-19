@@ -10,7 +10,7 @@ const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 const daysUntilDueCell = (task: Task): TableCell => ({
   html: formatDaysUntilDueWithWarning(task),
   attributes: {
-    'data-sort-value': daysUntilDue(task),
+    'data-sort-value': DateFormats.differenceInBusinessDays(DateFormats.isoToDateObj(task.dueDate), new Date()),
   },
 })
 
@@ -56,19 +56,16 @@ const statusBadge = (task: Task): string => {
 }
 
 const formatDaysUntilDueWithWarning = (task: Task): string => {
-  const differenceInDays = DateFormats.differenceInDays(DateFormats.isoToDateObj(task.dueDate), new Date())
+  const differenceInDays = DateFormats.differenceInBusinessDays(DateFormats.isoToDateObj(task.dueDate), new Date())
+  const formattedDifference = `${differenceInDays} Day${differenceInDays > 1 ? 's' : ''}`
 
-  if (differenceInDays.number < DUE_DATE_APPROACHING_DAYS_WINDOW) {
-    return `<strong class="task--index__warning">${differenceInDays.number < 0 ? '-' : ''}${
-      differenceInDays.ui
-    }<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`
+  if (differenceInDays < DUE_DATE_APPROACHING_DAYS_WINDOW) {
+    return `<strong class="task--index__warning">${
+      differenceInDays < 0 ? '-' : ''
+    }${formattedDifference}<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`
   }
 
-  return differenceInDays.ui
-}
-
-const daysUntilDue = (task: Task): number => {
-  return DateFormats.differenceInDays(DateFormats.isoToDateObj(task.dueDate), new Date()).number
+  return formattedDifference
 }
 
 const allocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
@@ -107,7 +104,6 @@ const unallocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
 export {
   allocatedTableRows,
   allocationLinkCell,
-  daysUntilDue,
   formatDaysUntilDueWithWarning,
   daysUntilDueCell,
   statusCell,
