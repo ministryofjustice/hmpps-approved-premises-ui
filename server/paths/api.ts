@@ -185,8 +185,5 @@ export default {
     update: usersPath.path(':id'),
     delete: usersPath.path(':id'),
   },
-  reports: {
-    lostBeds: reportsPath.path('lost-beds'),
-    applications: reportsPath.path('applications'),
-  },
+  reports: reportsPath.path(':reportName'),
 }

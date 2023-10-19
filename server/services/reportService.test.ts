@@ -3,8 +3,7 @@ import { createMock } from '@golevelup/ts-jest'
 
 import ReportClient from '../data/reportClient'
 import ReportService from './reportService'
-
-jest.mock('../data/reportClient.ts')
+import { ReportType, reportNames } from '../utils/reportUtils'
 
 describe('ReportService', () => {
   const reportClient = new ReportClient(null) as jest.Mocked<ReportClient>
@@ -20,20 +19,18 @@ describe('ReportService', () => {
   })
 
   describe('getReport', () => {
-    it('calls the getApplicationsReport client method when the reportType is "applications" pipes the report to the response', async () => {
-      const response = createMock<Response>({})
-      await service.getReport(token, '12', '2023', 'applications', response)
-
-      expect(reportClientFactory).toHaveBeenCalledWith(token)
-      expect(reportClient.getApplicationsReport).toHaveBeenCalledWith('12', '2023', response)
-    })
-
-    it('calls the getLostBedsReport client method when the reportType is "lost-beds" pipes the report to the response', async () => {
-      const response = createMock<Response>({})
-      await service.getReport(token, '12', '2023', 'lostBeds', response)
-
-      expect(reportClientFactory).toHaveBeenCalledWith(token)
-      expect(reportClient.getLostBedsReport).toHaveBeenCalledWith('12', '2023', response)
-    })
+    // We have to set up `it.each` in a slightly odd way, because Jest doesn't support `it.each` out
+    // of the box with asynchronous functions. See https://github.com/DefinitelyTyped/DefinitelyTyped/issues/34617
+    it.each<ReportType | jest.DoneCallback>(Object.keys(reportNames))(
+      'calls the getApplicationsReport client method when the reportType is "applications" pipes the report to the response',
+      (reportName: ReportType, done: jest.DoneCallback) => {
+        const response = createMock<Response>({})
+        service.getReport(token, '12', '2023', reportName, response).then(() => {
+          expect(reportClientFactory).toHaveBeenCalledWith(token)
+          expect(reportClient.getReport).toHaveBeenCalledWith(reportName, '12', '2023', response)
+        })
+        done()
+      },
+    )
   })
 })
