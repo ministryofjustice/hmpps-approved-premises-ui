@@ -1,8 +1,11 @@
 import { applicationFactory, assessmentFactory } from '../../testutils/factories'
 import informationSetAsNotReceived from './informationSetAsNotReceived'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
+
+jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
 describe('informationSetAsNotReceived', () => {
-  const assessment = assessmentFactory.build({ status: 'awaiting_response' })
+  const assessment = assessmentFactory.build()
 
   it('returns false when there is no data', () => {
     assessment.data = {}
@@ -11,21 +14,23 @@ describe('informationSetAsNotReceived', () => {
   })
 
   it('returns false when informationReceived is set to yes', () => {
-    assessment.data = { 'sufficient-information': { 'information-received': { informationReceived: 'yes' } } }
+    ;(
+      retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
+        typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+      >
+    ).mockReturnValue('yes')
 
     expect(informationSetAsNotReceived(assessment)).toEqual(false)
   })
 
   it('returns true when informationReceived is set to no', () => {
-    assessment.data = { 'sufficient-information': { 'information-received': { informationReceived: 'no' } } }
+    ;(
+      retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
+        typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+      >
+    ).mockReturnValue('no')
 
     expect(informationSetAsNotReceived(assessment)).toEqual(true)
-  })
-
-  it('returns false when the application is not pending', () => {
-    assessment.status = 'in_progress'
-
-    expect(informationSetAsNotReceived(assessment)).toEqual(false)
   })
 
   it('returns false when the argument is an Application', () => {

@@ -2,15 +2,22 @@ import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
 } from '../../@types/shared'
+import InformationReceived from '../../form-pages/assess/reviewApplication/sufficientInformation/informationReceived'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
 import isAssessment from './isAssessment'
 
 export default (applicationOrAssessment: Assessment | Application): boolean => {
   if (!isAssessment(applicationOrAssessment)) return false
 
-  if (applicationOrAssessment.status === 'awaiting_response' && applicationOrAssessment.data) {
-    const response =
-      applicationOrAssessment.data?.['sufficient-information']?.['information-received']?.informationReceived
+  if (applicationOrAssessment?.data) {
+    const response = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+      applicationOrAssessment,
+      InformationReceived,
+      'informationReceived',
+    )
+
     return response === 'no'
   }
+
   return false
 }
