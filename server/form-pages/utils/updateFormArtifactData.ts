@@ -1,8 +1,11 @@
 import { FormArtifact } from '@approved-premises/ui'
 import { getPageName, getTaskName, pageBodyShallowEquals } from '.'
-import TasklistPage from '../tasklistPage'
+import TasklistPage, { TasklistPageInterface } from '../tasklistPage'
 
-export const updateFormArtifactData = <FormArtifactClass extends FormArtifact, CheckYourAnswersPageClass>(
+export const updateFormArtifactData = <
+  FormArtifactClass extends FormArtifact,
+  CheckYourAnswersPageClass extends TasklistPageInterface['constructor'],
+>(
   page: TasklistPage,
   formArtifact: FormArtifactClass,
   checkYourAnswersPageClass: CheckYourAnswersPageClass,
