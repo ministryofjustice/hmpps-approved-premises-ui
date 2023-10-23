@@ -17,15 +17,15 @@ type RiskManagementBody = {
 export default class RiskManagementPlan implements OasysPage {
   title = 'Edit risk information'
 
-  riskManagementSummaries: RiskManagementBody['riskManagementSummaries']
+  riskManagementSummaries: RiskManagementBody['riskManagementSummaries'] = []
 
-  riskManagementAnswers: RiskManagementBody['riskManagementAnswers']
+  riskManagementAnswers: RiskManagementBody['riskManagementAnswers'] = {}
 
-  oasysCompleted: string
+  oasysCompleted: string = ''
 
-  risks: PersonRisksUI
+  risks: PersonRisksUI = {} as PersonRisksUI
 
-  oasysSuccess: boolean
+  oasysSuccess: boolean = false
 
   static sectionName = 'riskManagement'
 
@@ -53,7 +53,7 @@ export default class RiskManagementPlan implements OasysPage {
   }
 
   response() {
-    return oasysImportReponse(this.body.riskManagementAnswers, this.body.riskManagementSummaries)
+    return oasysImportReponse(this.body?.riskManagementAnswers || {}, this.body?.riskManagementSummaries || [])
   }
 
   errors() {
