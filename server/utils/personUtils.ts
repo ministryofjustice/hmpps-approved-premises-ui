@@ -28,6 +28,8 @@ const isApplicableTier = (sex: string, tier: string): boolean => {
 
 const isFullPerson = (person: Person): person is FullPerson => (person as FullPerson)?.name !== undefined
 
+const laoName = (person: FullPerson) => (person.isRestricted ? `LAO: ${person.name}` : person.name)
+
 /**
  * Returns the person's name if they are a FullPerson, otherwise returns 'the person'
  * @param {Person} person
@@ -37,4 +39,4 @@ const nameOrPlaceholderCopy = (person: Person, copyForRestrictedPerson = 'the pe
   return isFullPerson(person) ? person.name : copyForRestrictedPerson
 }
 
-export { statusTag, tierBadge, isApplicableTier, isFullPerson, nameOrPlaceholderCopy }
+export { statusTag, tierBadge, isApplicableTier, isFullPerson, nameOrPlaceholderCopy, laoName }

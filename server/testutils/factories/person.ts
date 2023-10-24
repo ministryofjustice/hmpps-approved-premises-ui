@@ -15,6 +15,7 @@ export const fullPersonFactory = Factory.define<FullPerson>(() => ({
   religionOrBelief: faker.helpers.arrayElement(['Christian', 'Muslim', 'Jewish', 'Hindu', 'Buddhist', 'Sikh', 'None']),
   prisonName: `HMP ${faker.location.street()}`,
   type: 'FullPerson',
+  isRestricted: Boolean(Math.floor(Math.random())),
 }))
 
 export const restrictedPersonFactory = Factory.define<RestrictedPerson>(() => ({
