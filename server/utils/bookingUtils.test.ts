@@ -32,11 +32,26 @@ import assessPaths from '../paths/assess'
 import applyPaths from '../paths/apply'
 import { DateFormats } from './dateUtils'
 import { linebreaksToParagraphs, linkTo } from './utils'
+import { FullPerson } from '../@types/shared'
 
 describe('bookingUtils', () => {
   const premisesId = 'e8f29a4a-dd4d-40a2-aa58-f3f60245c8fc'
 
   describe('manageBookingLink', () => {
+    it('returns a link for a booking', () => {
+      const booking = bookingFactory.build()
+
+      expect(manageBookingLink(premisesId, booking)).toMatchStringIgnoringWhitespace(`<a href="${paths.bookings.show({
+        premisesId,
+        bookingId: booking.id,
+      })}">
+      Manage
+      <span class="govuk-visually-hidden">
+        booking for ${booking.person.crn}
+      </span>
+    </a>`)
+    })
+
     it('returns a link for a booking', () => {
       const booking = bookingFactory.build()
 
@@ -153,6 +168,14 @@ describe('bookingUtils', () => {
       booking.person = restrictedPersonFactory.build()
       expect(nameCell(booking)).toEqual({
         text: `LAO: ${booking.person.crn}`,
+      })
+    })
+
+    it('returns the persons name prefixed with "LAO: " if they are a FullPerson but have the isRestricted flag', () => {
+      const booking = bookingFactory.build()
+      booking.person = personFactory.build({ isRestricted: true })
+      expect(nameCell(booking)).toEqual({
+        text: `LAO: ${(booking.person as FullPerson).name}`,
       })
     })
   })
