@@ -134,4 +134,12 @@ export default class ApplicationService {
 
     await client.withdrawal(applicationId, body)
   }
+
+  async timeline(token: string, applicationId: string) {
+    const client = this.applicationClientFactory(token)
+
+    const timeline = await client.timeline(applicationId)
+
+    return timeline
+  }
 }

@@ -1,4 +1,5 @@
 import { ApplicationStatus } from '@approved-premises/api'
+import { isAfter } from 'date-fns'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
 import {
   applicationFactory,
@@ -8,6 +9,7 @@ import {
   placementApplicationFactory,
   restrictedPersonFactory,
   tierEnvelopeFactory,
+  timelineEventFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/apply'
 import Apply from '../../form-pages/apply'
@@ -19,11 +21,13 @@ import { isApplicableTier, isFullPerson, tierBadge } from '../personUtils'
 import {
   createWithdrawElement,
   dashboardTableRows,
+  eventTypeTranslations,
   firstPageOfApplicationJourney,
   getApplicationType,
   getSections,
   getStatus,
   isInapplicable,
+  mapTimelineEventsForUi,
   statusTags,
 } from './utils'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
@@ -471,6 +475,50 @@ describe('utils', () => {
       expect(createWithdrawElement('1', applicationSummary)).toEqual({
         text: '',
       })
+    })
+  })
+
+  describe('mapTimelineEventsForUi', () => {
+    it('maps the events into the format required by the MoJ UI Timeline component', () => {
+      const timelineEvents = timelineEventFactory.buildList(1)
+      expect(mapTimelineEventsForUi(timelineEvents)).toEqual([
+        {
+          datetime: {
+            timestamp: timelineEvents[0].occurredAt,
+            date: DateFormats.isoDateTimeToUIDateTime(timelineEvents[0].occurredAt),
+          },
+          label: {
+            text: eventTypeTranslations[timelineEvents[0].type],
+          },
+        },
+      ])
+    })
+
+    it('sorts the events in ascending order', () => {
+      const timelineEvents = timelineEventFactory.buildList(3)
+
+      const actual = mapTimelineEventsForUi(timelineEvents)
+
+      expect(
+        isAfter(
+          DateFormats.isoToDateObj(actual[0].datetime.timestamp),
+          DateFormats.isoToDateObj(actual[1].datetime.timestamp),
+        ),
+      ).toEqual(true)
+
+      expect(
+        isAfter(
+          DateFormats.isoToDateObj(actual[0].datetime.timestamp),
+          DateFormats.isoToDateObj(actual[2].datetime.timestamp),
+        ),
+      ).toEqual(true)
+
+      expect(
+        isAfter(
+          DateFormats.isoToDateObj(actual[1].datetime.timestamp),
+          DateFormats.isoToDateObj(actual[2].datetime.timestamp),
+        ),
+      ).toEqual(true)
     })
   })
 })

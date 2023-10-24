@@ -6,12 +6,15 @@ import type {
   JourneyType,
   PageResponse,
   TableRow,
+  UiTimelineEvent,
 } from '@approved-premises/ui'
 import type {
   ApprovedPremisesApplication as Application,
   ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   Person,
+  TimelineEvent,
+  TimelineEventType,
 } from '@approved-premises/api'
 import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-information/maleAp'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
@@ -171,6 +174,36 @@ const getApplicationType = (application: Application): ApplicationType => {
   return 'Standard'
 }
 
+export const eventTypeTranslations: Record<TimelineEventType, string> = {
+  approved_premises_application_submitted: 'Application submitted',
+  approved_premises_application_assessed: 'Application assessed',
+  approved_premises_booking_made: 'Booking made',
+  approved_premises_person_arrived: 'Person arrived',
+  approved_premises_person_not_arrived: 'Person not arrived',
+  approved_premises_person_departed: 'Person departed',
+  approved_premises_booking_not_made: 'Booking not made',
+  approved_premises_booking_cancelled: 'Booking cancelled',
+  approved_premises_booking_changed: 'Booking changed',
+  approved_premises_application_withdrawn: 'Application withdrawn',
+  approved_premises_information_request: 'Information request',
+  cas3_person_arrived: 'CAS3 person arrived',
+  cas3_person_departed: 'CAS3 person departed',
+}
+
+const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiTimelineEvent> => {
+  return timelineEvents
+    .sort((a, b) => Number(DateFormats.isoToDateObj(b.occurredAt)) - Number(DateFormats.isoToDateObj(a.occurredAt)))
+    .map(timelineEvent => {
+      return {
+        label: { text: eventTypeTranslations[timelineEvent.type] },
+        datetime: {
+          timestamp: timelineEvent.occurredAt,
+          date: DateFormats.isoDateTimeToUIDateTime(timelineEvent.occurredAt),
+        },
+      }
+    })
+}
+
 export {
   dashboardTableRows,
   firstPageOfApplicationJourney,
@@ -178,5 +211,6 @@ export {
   getApplicationType,
   getStatus,
   isInapplicable,
+  mapTimelineEventsForUi,
   statusTags,
 }

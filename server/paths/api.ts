@@ -119,6 +119,7 @@ export default {
     documents: applyPaths.applications.show.path('documents'),
     assessment: applyPaths.applications.show.path('assessment'),
     withdrawal: applyPaths.applications.show.path('withdrawal'),
+    timeline: applyPaths.applications.show.path('timeline'),
   },
   assessments: {
     index: assessPaths.assessments,

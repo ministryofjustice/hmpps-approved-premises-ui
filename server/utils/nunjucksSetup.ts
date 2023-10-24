@@ -21,7 +21,7 @@ import {
   convertObjectsToSelectOptions,
   dateFieldValues,
 } from './formUtils'
-import { dashboardTableRows } from './applications/utils'
+import { dashboardTableRows, mapTimelineEventsForUi } from './applications/utils'
 import { navigationItems } from './navigationItems'
 
 import { statusTag } from './personUtils'
@@ -198,6 +198,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   njkEnv.addGlobal('numberToOrdinal', numberToOrdinal)
   njkEnv.addGlobal('dashboardTableRows', dashboardTableRows)
+  njkEnv.addGlobal('mapTimelineEventsForUi', mapTimelineEventsForUi)
   njkEnv.addGlobal('navigationItems', navigationItems)
   njkEnv.addGlobal('withdrawalRadioOptions', withdrawalRadioOptions)
   njkEnv.addGlobal('pagination', pagination)

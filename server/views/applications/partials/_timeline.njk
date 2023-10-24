@@ -1,0 +1,26 @@
+
+{%- from "moj/components/timeline/macro.njk" import mojTimeline -%}
+
+{% macro timeline(timelineEvents) %}
+
+<h2 class="govuk-heading-m">Application history</h2>
+  <div class="moj-timeline">
+
+    {% for event in timelineEvents %}
+      <div class="moj-timeline__item">
+
+        <div class="moj-timeline__header">
+          <h3 class="moj-timeline__title">{{event.label.text}}</h3>
+        </div>
+
+        <p class="moj-timeline__date">
+          <time datetime="{{event.datetime.timestamp}}">{{event.datetime.date}}</time>
+        </p>
+
+      </div>
+    {% endfor %}
+</div>
+
+
+
+{% endmacro %}

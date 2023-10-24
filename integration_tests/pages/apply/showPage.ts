@@ -1,13 +1,14 @@
-import type { ApprovedPremisesApplication, FullPerson } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, FullPerson, TimelineEvent } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import { summaryListSections } from '../../../server/utils/applications/summaryListUtils'
 
 import Page from '../page'
+import { eventTypeTranslations } from '../../../server/utils/applications/utils'
 
 export default class ShowPage extends Page {
   constructor(private readonly application: ApprovedPremisesApplication) {
-    super('View Application')
+    super((application.person as FullPerson).name)
   }
 
   static visit(application: ApprovedPremisesApplication) {
@@ -57,6 +58,29 @@ export default class ShowPage extends Page {
         cy.get(`[data-cy-section="${task.card.attributes['data-cy-section']}"]`).within(() => {
           cy.get('.govuk-summary-card__title').contains(task.card.title.text).should('exist')
           this.shouldContainSummaryListItems(task.rows)
+        })
+      })
+    })
+  }
+
+  clickTimelineTab() {
+    cy.get('a').contains('Timeline').click()
+  }
+
+  shouldShowTimeline(timelineEvents: Array<TimelineEvent>) {
+    const sortedTimelineEvents = timelineEvents.sort((a, b) => {
+      return new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()
+    })
+
+    cy.get('h2').contains('Application history').should('exist')
+    cy.get('.moj-timeline').within(() => {
+      cy.get('.moj-timeline__item').should('have.length', timelineEvents.length)
+
+      cy.get('.moj-timeline__item').each(($el, index) => {
+        cy.wrap($el).within(() => {
+          cy.get('.moj-timeline__header').should('contain', eventTypeTranslations[sortedTimelineEvents[index].type])
+          cy.get('time').should('have.attr', { time: sortedTimelineEvents[index].occurredAt })
+          cy.get('time').should('contain', DateFormats.isoDateTimeToUIDateTime(timelineEvents[index].occurredAt))
         })
       })
     })

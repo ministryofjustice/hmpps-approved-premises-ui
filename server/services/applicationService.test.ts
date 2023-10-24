@@ -378,4 +378,16 @@ describe('ApplicationService', () => {
       expect(applicationClient.withdrawal).toHaveBeenCalledWith(id, body)
     })
   })
+
+  describe('timeline', () => {
+    it('it calls the client with the Id and token', async () => {
+      const token = 'some-token'
+      const id = 'some-uuid'
+
+      await service.timeline(token, id)
+
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.timeline).toHaveBeenCalledWith(id)
+    })
+  })
 })

@@ -191,6 +191,8 @@ export interface IdentityBarMenuItem {
   text: string
 }
 
+export type UiTimelineEvent = { label: { text: string }; datetime: { timestamp: string; type?: 'datetime' } }
+
 export type RiskLevel = 'Low' | 'Medium' | 'High' | 'Very High'
 
 export type TierNumber = '1' | '2' | '3' | '4'
