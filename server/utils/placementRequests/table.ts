@@ -15,7 +15,7 @@ import { crnCell, tierCell } from '../tableUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { daysToWeeksAndDays } from '../assessments/dateUtils'
 import { sortHeader } from '../sortHeader'
-import { isFullPerson } from '../personUtils'
+import { isFullPerson, laoName } from '../personUtils'
 
 export const DIFFERENCE_IN_DAYS_BETWEEN_DUE_DATE_AND_ARRIVAL_DATE = 7
 
@@ -102,7 +102,7 @@ export const nameCell = (item: PlacementRequestTask | PlacementRequest): TableCe
       html: linkTo(
         adminPaths.admin.placementRequests.show,
         { id: item.id },
-        { text: item.person.name, attributes: { 'data-cy-placementRequestId': item.id } },
+        { text: laoName(item.person), attributes: { 'data-cy-placementRequestId': item.id } },
       ),
     }
   }
