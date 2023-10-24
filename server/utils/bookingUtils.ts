@@ -69,12 +69,14 @@ export const bookingSummaryList = (booking: BookingSummary): SummaryListWithCard
 }
 
 export const manageBookingLink = (premisesId: string, booking: Booking | PremisesBooking): string => {
-  return `<a href="${paths.bookings.show({ premisesId, bookingId: booking.id })}">
+  return booking.id && booking.person
+    ? `<a href="${paths.bookings.show({ premisesId, bookingId: booking.id })}">
     Manage
     <span class="govuk-visually-hidden">
       booking for ${booking.person.crn}
     </span>
   </a>`
+    : 'Unable to manage booking'
 }
 
 export const arrivingTodayOrLate = (bookings: Array<PremisesBooking>, premisesId: string): Array<TableRow> => {
