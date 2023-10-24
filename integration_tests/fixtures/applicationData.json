@@ -216,9 +216,6 @@
     "convicted-offences": {
       "response": "yes"
     },
-    "type-of-convicted-offence": {
-      "offenceConvictions": ["arson", "sexualOffence", "hateCrimes", "childNonSexualOffence"]
-    },
     "date-of-offence": {
       "arsonOffence": ["current"],
       "hateCrime": ["previous"],

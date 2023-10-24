@@ -25,7 +25,7 @@ export default class ConvictedOffences implements TasklistPage {
   }
 
   next() {
-    return this.body.response === 'yes' ? 'type-of-convicted-offence' : 'rehabilitative-interventions'
+    return this.body.response === 'yes' ? 'date-of-offence' : 'rehabilitative-interventions'
   }
 
   response() {

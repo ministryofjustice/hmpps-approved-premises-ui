@@ -61,7 +61,6 @@ import TransgenderPage from './isPersonTransgender'
 import TriggerPlanPage from './triggerPlanPage'
 import TypeOfAccommodationPage from './typeOfAccommodation'
 import TypeOfApPage from './typeOfAp'
-import TypeOfConvictedOffence from './typeOfConvictedOffence'
 import VulnerabilityPage from './vulnerability'
 
 export {
@@ -128,6 +127,5 @@ export {
   TriggerPlanPage,
   TypeOfAccommodationPage,
   TypeOfApPage,
-  TypeOfConvictedOffence,
   VulnerabilityPage,
 }
