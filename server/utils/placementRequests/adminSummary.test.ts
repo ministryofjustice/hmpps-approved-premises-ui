@@ -29,7 +29,7 @@ describe('adminSummary', () => {
             text: 'Tier',
           },
           value: {
-            text: placementRequest.risks.tier.value.level,
+            text: placementRequest.risks.tier.value?.level,
           },
         },
         {
@@ -84,7 +84,7 @@ describe('adminSummary', () => {
             text: 'Tier',
           },
           value: {
-            text: placementRequest.risks.tier.value.level,
+            text: placementRequest.risks.tier.value?.level,
           },
         },
         {

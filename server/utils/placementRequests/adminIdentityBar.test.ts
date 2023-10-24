@@ -13,15 +13,15 @@ describe('adminIdentityBar', () => {
       expect(adminActions(placementRequestDetail)).toEqual([
         {
           href: managePaths.bookings.dateChanges.new({
-            premisesId: placementRequestDetail.booking.premisesId,
-            bookingId: placementRequestDetail.booking.id,
+            premisesId: placementRequestDetail.booking?.premisesId || '',
+            bookingId: placementRequestDetail.booking?.id || '',
           }),
           text: 'Amend placement',
         },
         {
           href: managePaths.bookings.cancellations.new({
-            premisesId: placementRequestDetail.booking.premisesId,
-            bookingId: placementRequestDetail.booking.id,
+            premisesId: placementRequestDetail.booking?.premisesId || '',
+            bookingId: placementRequestDetail.booking?.id || '',
           }),
           text: 'Cancel placement',
         },

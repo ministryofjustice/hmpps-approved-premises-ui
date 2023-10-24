@@ -145,20 +145,23 @@ describe('mapApiPersonRiskForUI', () => {
       crn: risks.crn,
       flags: risks.flags.value,
       mappa: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.mappa.value.lastUpdated),
+        lastUpdated: risks?.mappa?.value?.lastUpdated
+          ? DateFormats.isoDateToUIDate(risks?.mappa?.value?.lastUpdated)
+          : '',
         level: 'CAT 2 / LEVEL 1',
       },
       roshRisks: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.roshRisks.value.lastUpdated),
-        overallRisk: risks.roshRisks.value.overallRisk,
-        riskToChildren: risks.roshRisks.value.riskToChildren,
-        riskToKnownAdult: risks.roshRisks.value.riskToKnownAdult,
-        riskToPublic: risks.roshRisks.value.riskToPublic,
-        riskToStaff: risks.roshRisks.value.riskToStaff,
+        lastUpdated:
+          risks?.roshRisks?.value?.lastUpdated && DateFormats.isoDateToUIDate(risks.roshRisks.value.lastUpdated),
+        overallRisk: risks?.roshRisks?.value?.overallRisk ?? '',
+        riskToChildren: risks?.roshRisks?.value?.riskToChildren ?? '',
+        riskToKnownAdult: risks?.roshRisks?.value?.riskToKnownAdult ?? '',
+        riskToPublic: risks?.roshRisks?.value?.riskToPublic ?? '',
+        riskToStaff: risks?.roshRisks?.value?.riskToStaff ?? '',
       },
       tier: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.tier.value.lastUpdated),
-        level: risks.tier.value.level,
+        lastUpdated: DateFormats.isoDateToUIDate(risks?.tier?.value?.lastUpdated ?? ''),
+        level: risks?.tier?.value?.level || '',
       },
     })
   })
@@ -172,15 +175,15 @@ describe('mapApiPersonRiskForUI', () => {
       crn: risks.crn,
       flags: risks.flags.value,
       mappa: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.mappa.value.lastUpdated),
+        lastUpdated: DateFormats.isoDateToUIDate(risks?.mappa?.value?.lastUpdated || ''),
         level: 'CAT 2 / LEVEL 1',
       },
       roshRisks: {
         lastUpdated: '',
       },
       tier: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.tier.value.lastUpdated),
-        level: risks.tier.value.level,
+        lastUpdated: DateFormats.isoDateToUIDate(risks?.tier?.value?.lastUpdated || ''),
+        level: risks?.tier?.value?.level,
       },
     })
   })
@@ -197,16 +200,16 @@ describe('mapApiPersonRiskForUI', () => {
         lastUpdated: '',
       },
       roshRisks: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.roshRisks.value.lastUpdated),
-        overallRisk: risks.roshRisks.value.overallRisk,
-        riskToChildren: risks.roshRisks.value.riskToChildren,
-        riskToKnownAdult: risks.roshRisks.value.riskToKnownAdult,
-        riskToPublic: risks.roshRisks.value.riskToPublic,
-        riskToStaff: risks.roshRisks.value.riskToStaff,
+        lastUpdated: DateFormats.isoDateToUIDate(risks?.roshRisks?.value?.lastUpdated || ''),
+        overallRisk: risks.roshRisks.value?.overallRisk,
+        riskToChildren: risks.roshRisks.value?.riskToChildren,
+        riskToKnownAdult: risks.roshRisks.value?.riskToKnownAdult,
+        riskToPublic: risks.roshRisks.value?.riskToPublic,
+        riskToStaff: risks.roshRisks.value?.riskToStaff,
       },
       tier: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.tier.value.lastUpdated),
-        level: risks.tier.value.level,
+        lastUpdated: DateFormats.isoDateToUIDate(risks.tier?.value?.lastUpdated || ''),
+        level: risks.tier.value?.level,
       },
     })
   })
@@ -220,16 +223,16 @@ describe('mapApiPersonRiskForUI', () => {
       crn: risks.crn,
       flags: risks.flags.value,
       mappa: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.mappa.value.lastUpdated),
+        lastUpdated: DateFormats.isoDateToUIDate(risks?.mappa?.value?.lastUpdated || ''),
         level: 'CAT 2 / LEVEL 1',
       },
       roshRisks: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.roshRisks.value.lastUpdated),
-        overallRisk: risks.roshRisks.value.overallRisk,
-        riskToChildren: risks.roshRisks.value.riskToChildren,
-        riskToKnownAdult: risks.roshRisks.value.riskToKnownAdult,
-        riskToPublic: risks.roshRisks.value.riskToPublic,
-        riskToStaff: risks.roshRisks.value.riskToStaff,
+        lastUpdated: DateFormats.isoDateToUIDate(risks?.roshRisks?.value?.lastUpdated || ''),
+        overallRisk: risks.roshRisks.value?.overallRisk,
+        riskToChildren: risks.roshRisks.value?.riskToChildren,
+        riskToKnownAdult: risks.roshRisks.value?.riskToKnownAdult,
+        riskToPublic: risks.roshRisks.value?.riskToPublic,
+        riskToStaff: risks.roshRisks.value?.riskToStaff,
       },
       tier: {
         lastUpdated: '',
@@ -246,20 +249,20 @@ describe('mapApiPersonRiskForUI', () => {
       crn: risks.crn,
       flags: null,
       mappa: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.mappa.value.lastUpdated),
+        lastUpdated: DateFormats.isoDateToUIDate(risks.mappa?.value?.lastUpdated || ''),
         level: 'CAT 2 / LEVEL 1',
       },
       roshRisks: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.roshRisks.value.lastUpdated),
-        overallRisk: risks.roshRisks.value.overallRisk,
-        riskToChildren: risks.roshRisks.value.riskToChildren,
-        riskToKnownAdult: risks.roshRisks.value.riskToKnownAdult,
-        riskToPublic: risks.roshRisks.value.riskToPublic,
-        riskToStaff: risks.roshRisks.value.riskToStaff,
+        lastUpdated: DateFormats.isoDateToUIDate(risks?.roshRisks?.value?.lastUpdated || ''),
+        overallRisk: risks.roshRisks.value?.overallRisk,
+        riskToChildren: risks.roshRisks.value?.riskToChildren,
+        riskToKnownAdult: risks.roshRisks.value?.riskToKnownAdult,
+        riskToPublic: risks.roshRisks.value?.riskToPublic,
+        riskToStaff: risks.roshRisks.value?.riskToStaff,
       },
       tier: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.tier.value.lastUpdated),
-        level: risks.tier.value.level,
+        lastUpdated: DateFormats.isoDateToUIDate(risks.tier.value?.lastUpdated || ''),
+        level: risks.tier.value?.level,
       },
     })
   })

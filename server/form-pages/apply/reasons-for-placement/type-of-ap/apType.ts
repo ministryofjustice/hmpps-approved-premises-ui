@@ -31,7 +31,7 @@ export default class SelectApType implements TasklistPage {
       return 'managed-by-national-security-division'
     }
 
-    return null
+    return ''
   }
 
   response() {

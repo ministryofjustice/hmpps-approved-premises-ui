@@ -74,7 +74,7 @@ describe('supportingInformationController', () => {
 
         expect(response.render).toBeCalledWith('assessments/pages/risk-information/oasys-information', {
           assessmentId: assessment.id,
-          dateOfImport: DateFormats.isoDateToUIDate(assessment.application.submittedAt),
+          dateOfImport: DateFormats.isoDateToUIDate(assessment.application?.submittedAt || ''),
           oasysSections: {
             roshSummary: oasysImport['rosh-summary'].roshSummaries,
             offenceDetails: oasysImport['offence-details'].offenceDetailsSummaries,
@@ -107,7 +107,7 @@ describe('supportingInformationController', () => {
         caseNotes,
         acctAlerts,
         assessmentId: assessment.id,
-        dateOfImport: DateFormats.isoDateToUIDate(assessment.application.submittedAt),
+        dateOfImport: DateFormats.isoDateToUIDate(assessment.application?.submittedAt || ''),
         pageHeading: 'Prison information',
       })
       expect(assessmentService.findAssessment).toBeCalledWith(token, request.params.id)

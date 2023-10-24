@@ -102,7 +102,7 @@ describe('table', () => {
   describe('allocationCell', () => {
     it('returns the name of the staff member the task is allocated to as a TableCell object', () => {
       const task = taskFactory.build()
-      expect(allocationCell(task)).toEqual({ text: task.allocatedToStaffMember.name })
+      expect(allocationCell(task)).toEqual({ text: task.allocatedToStaffMember?.name })
     })
   })
 

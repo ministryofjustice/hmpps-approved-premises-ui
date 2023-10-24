@@ -17,15 +17,15 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
     return [
       {
         href: managePaths.bookings.dateChanges.new({
-          premisesId: placementRequest.booking.premisesId,
-          bookingId: placementRequest.booking.id,
+          premisesId: placementRequest?.booking?.premisesId || '',
+          bookingId: placementRequest?.booking?.id || '',
         }),
         text: 'Amend placement',
       },
       {
         href: managePaths.bookings.cancellations.new({
-          premisesId: placementRequest.booking.premisesId,
-          bookingId: placementRequest.booking.id,
+          premisesId: placementRequest?.booking?.premisesId || '',
+          bookingId: placementRequest?.booking?.id || '',
         }),
         text: 'Cancel placement',
       },
