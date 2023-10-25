@@ -14,7 +14,7 @@ import {
 } from './dateUtils'
 import paths from '../../paths/assess'
 import { crnCell, tierCell } from '../tableUtils'
-import { isFullPerson } from '../personUtils'
+import { isFullPerson, laoName } from '../personUtils'
 
 const getStatus = (assessment: AssessmentSummary): string => {
   if (assessment.status === 'completed') {
@@ -34,7 +34,7 @@ const assessmentLink = (assessment: AssessmentSummary, person: FullPerson, linkT
     paths.assessments.show,
     { id: assessment.id },
     {
-      text: linkText || person.name,
+      text: linkText || laoName(person),
       hiddenText,
       attributes: { 'data-cy-assessmentId': assessment.id, 'data-cy-applicationId': assessment.applicationId },
     },

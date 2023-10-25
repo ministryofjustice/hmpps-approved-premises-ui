@@ -1,6 +1,7 @@
 import { add } from 'date-fns'
 import {
   bookingSummaryFactory,
+  personFactory,
   placementRequestFactory,
   placementRequestTaskFactory,
   placementRequestWithFullPersonFactory,
@@ -24,7 +25,7 @@ import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { crnCell, tierCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
 import { isFullPerson } from '../personUtils'
-import { PlacementRequestSortField } from '../../@types/shared'
+import { FullPerson, PlacementRequestSortField } from '../../@types/shared'
 
 describe('tableUtils', () => {
   describe('nameCell', () => {
@@ -68,6 +69,17 @@ describe('tableUtils', () => {
 
       expect(nameCell(restrictedPersonTask)).toEqual({
         text: `LAO: ${restrictedPersonTask.person.crn}`,
+      })
+    })
+
+    it('returns the persons name prefixed with "LAO: " if the person is a FullPerson and has the isRestricted flag', () => {
+      const restrictedPersonTask = placementRequestFactory.build()
+      restrictedPersonTask.person = personFactory.build({ isRestricted: true })
+
+      expect(nameCell(restrictedPersonTask)).toEqual({
+        html: `<a href="/admin/placement-requests/${restrictedPersonTask.id}" data-cy-placementRequestId="${
+          restrictedPersonTask.id
+        }">LAO: ${(restrictedPersonTask.person as FullPerson)?.name}</a>`,
       })
     })
   })

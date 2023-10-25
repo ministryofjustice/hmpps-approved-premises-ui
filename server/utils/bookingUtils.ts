@@ -15,7 +15,7 @@ import assessPaths from '../paths/assess'
 import { DateFormats, todayAtMidnight } from './dateUtils'
 import { SanitisedError } from '../sanitisedError'
 import { linebreaksToParagraphs, linkTo } from './utils'
-import { isFullPerson } from './personUtils'
+import { isFullPerson, laoName } from './personUtils'
 
 const UPCOMING_WINDOW_IN_DAYS = 365 * 10
 
@@ -162,7 +162,7 @@ export const bookingsToTableRows = (
 }
 
 export const nameCell = (booking: PremisesBooking): TableCell =>
-  isFullPerson(booking.person) ? { text: booking.person.name } : { text: `LAO: ${booking.person.crn}` }
+  isFullPerson(booking.person) ? { text: laoName(booking.person) } : { text: `LAO: ${booking.person.crn}` }
 
 export const bookingActions = (booking: Booking, premisesId: string): Array<IdentityBarMenu> => {
   if (booking.status === 'awaiting-arrival' || booking.status === 'arrived') {
