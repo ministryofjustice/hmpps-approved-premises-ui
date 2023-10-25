@@ -21,4 +21,9 @@ export default class ConfirmDetailsPage extends Page {
       this.assertDefinition('Prison', this.person.prisonName)
     })
   }
+
+  verifyRestrictedPersonMessaging() {
+    cy.get('p').contains('This person is a limited access offender (LAO).')
+    cy.get('a').contains('Guidance for managing user access to LAOs is available on EQuiP.')
+  }
 }

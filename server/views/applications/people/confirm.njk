@@ -1,6 +1,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "../../partials/personDetails.njk" import personDetails %}
 
 {% extends "../../partials/layout.njk" %}
@@ -38,6 +39,25 @@
         </p>
 
         {{ personDetails(person, false) }}
+
+
+
+
+        {%if person.isRestricted %}
+
+        {% set html %}
+          <p class='govuk-!-font-weight-bold'>This person is a limited access offender (LAO).</p>
+          <p class='govuk-!-font-weight-bold'>Central referral unit and Approved Premises staff must have access to records in order to process the application and manage the person in Approved Premises.</p>
+          <p class='govuk-!-font-weight-bold'>
+            <a href="https://equip-portal.equip.service.justice.gov.uk/CtrlWebIsapi.dll/?__id=webDiagram.show&map=0%3AFF2D8D3F16B44268B814F7F8177A16F7&dgm=0CCF9118DFAC43F697E66CE331889D60">Guidance for managing user access to LAOs is available on EQuiP.</a>
+          </p>
+        {% endset %}
+
+          {{ govukWarningText({
+          html: html, 
+          iconFallbackText: "Warning"
+          }) }}
+        {%endif%}
 
         <p>If these details are wrong, update this case in NDelius before you start.</p>
         <p>If you've entered the wrong CRN, go back to the CRN screen.</p>

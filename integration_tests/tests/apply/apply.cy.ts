@@ -3,6 +3,7 @@ import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../
 import {
   activeOffenceFactory,
   applicationFactory,
+  personFactory,
   restrictedPersonFactory,
   risksFactory,
   tierEnvelopeFactory,
@@ -10,7 +11,14 @@ import {
 } from '../../../server/testutils/factories'
 import ApplyHelper from '../../helpers/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import { ConfirmYourDetailsPage, EnterCRNPage, ListPage, SelectOffencePage, StartPage } from '../../pages/apply'
+import {
+  ConfirmDetailsPage,
+  ConfirmYourDetailsPage,
+  EnterCRNPage,
+  ListPage,
+  SelectOffencePage,
+  StartPage,
+} from '../../pages/apply'
 import IsExceptionalCasePage from '../../pages/apply/isExceptionalCase'
 import NotEligiblePage from '../../pages/apply/notEligiblePage'
 import Page from '../../pages/page'
@@ -36,6 +44,25 @@ context('Apply', () => {
 
     // Then I should see an error message telling me the CRN is restricted
     crnPage.shouldShowRestrictedCrnMessage(lao)
+  })
+
+  it('shows additional guidance if the person is restricted', function test() {
+    const restrictedPerson = personFactory.build({ isRestricted: true })
+    cy.task('stubFindPerson', { person: restrictedPerson })
+    cy.task('stubPersonOffences', { person: restrictedPerson, offences: activeOffenceFactory.buildList(1) })
+
+    // Given I visit the start page
+    const startPage = StartPage.visit()
+    startPage.startApplication()
+
+    // And I enter a CRN that is restricted
+    const crnPage = new EnterCRNPage()
+    crnPage.enterCrn(restrictedPerson.crn)
+    crnPage.clickSubmit()
+
+    // Then I should see LAO messaging on the confirmation page
+    const confirmDetailsPage = new ConfirmDetailsPage(restrictedPerson)
+    confirmDetailsPage.verifyRestrictedPersonMessaging()
   })
 
   it('allows the user to select an index offence if there is more than one offence', function test() {
