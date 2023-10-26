@@ -24,7 +24,7 @@ describe('DateOfOffence', () => {
     })
   })
 
-  itShouldHavePreviousValue(new DateOfOffence({}), 'type-of-convicted-offence')
+  itShouldHavePreviousValue(new DateOfOffence({}), 'convicted-offences')
 
   itShouldHaveNextValue(new DateOfOffence({}), 'rehabilitative-interventions')
 

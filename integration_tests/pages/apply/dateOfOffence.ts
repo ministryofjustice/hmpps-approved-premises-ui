@@ -1,10 +1,21 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 
 import ApplyPage from './applyPage'
+import paths from '../../../server/paths/apply'
 
 export default class DateOfOffence extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
-    super('Convicted offences', application, 'risk-management-features', 'date-of-offence')
+    super(
+      'Convicted offences',
+      application,
+      'risk-management-features',
+      'date-of-offence',
+      paths.applications.pages.show({
+        id: application.id,
+        task: 'risk-management-features',
+        page: 'convicted-offences',
+      }),
+    )
   }
 
   completeForm(): void {

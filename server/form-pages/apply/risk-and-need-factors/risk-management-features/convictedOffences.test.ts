@@ -17,7 +17,7 @@ describe('ConvictedOffences', () => {
   itShouldHavePreviousValue(new ConvictedOffences({}), 'risk-management-features')
 
   describe('if the response is yes', () => {
-    itShouldHaveNextValue(new ConvictedOffences({ response: 'yes' }), 'type-of-convicted-offence')
+    itShouldHaveNextValue(new ConvictedOffences({ response: 'yes' }), 'date-of-offence')
   })
 
   describe('if the response is no', () => {

@@ -45,7 +45,7 @@ export default class DateOfOffence implements TasklistPage {
   }
 
   previous() {
-    return 'type-of-convicted-offence'
+    return 'convicted-offences'
   }
 
   next() {

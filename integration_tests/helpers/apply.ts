@@ -699,10 +699,6 @@ export default class ApplyHelper {
     convictedOffencesPage.completeForm()
     convictedOffencesPage.clickSubmit()
 
-    const typeOfConvictedOffencePage = new ApplyPages.TypeOfConvictedOffence(this.application)
-    typeOfConvictedOffencePage.completeForm()
-    typeOfConvictedOffencePage.clickSubmit()
-
     const dateOfOffencePage = new ApplyPages.DateOfOffence(this.application)
     dateOfOffencePage.completeForm()
     dateOfOffencePage.clickSubmit()
@@ -714,7 +710,6 @@ export default class ApplyHelper {
     this.pages.riskManagement = [
       riskManagementFeaturesPage,
       convictedOffencesPage,
-      typeOfConvictedOffencePage,
       dateOfOffencePage,
       rehabilitativeInterventionsPage,
     ]

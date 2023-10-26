@@ -1001,23 +1001,6 @@
             }
           }
         },
-        "type-of-convicted-offence": {
-          "type": "object",
-          "properties": {
-            "offenceConvictions": {
-              "type": "array",
-              "items": {
-                "enum": [
-                  "arson",
-                  "childNonSexualOffence",
-                  "hateCrimes",
-                  "sexualOffence"
-                ],
-                "type": "string"
-              }
-            }
-          }
-        },
         "date-of-offence": {
           "type": "object",
           "properties": {
