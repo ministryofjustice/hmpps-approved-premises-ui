@@ -26,13 +26,13 @@ export default class OptionalOasysSections implements TasklistPage {
 
   needsLinkedToReoffendingHeading = 'Needs linked to reoffending'
 
-  allNeedsLinkedToReoffending: Array<OASysSection>
+  allNeedsLinkedToReoffending: Array<OASysSection> = []
 
   otherNeedsHeading = 'Needs not linked to risk of serious harm or reoffending'
 
-  allOtherNeeds: Array<OASysSection>
+  allOtherNeeds: Array<OASysSection> = []
 
-  oasysSuccess: boolean
+  oasysSuccess: boolean = false
 
   constructor(public body: Partial<Body>) {}
 
@@ -52,11 +52,20 @@ export default class OptionalOasysSections implements TasklistPage {
       )
       const allOtherNeeds = oasysSelections.filter(section => !section.linkedToHarm && !section.linkedToReOffending)
 
-      page.body.needsLinkedToReoffending = OptionalOasysSections.getSelectedNeeds(
-        body.needsLinkedToReoffending,
-        allNeedsLinkedToReoffending,
-      )
-      page.body.otherNeeds = OptionalOasysSections.getSelectedNeeds(body.otherNeeds, allOtherNeeds)
+      if (body.needsLinkedToReoffending) {
+        page.body.needsLinkedToReoffending = OptionalOasysSections.getSelectedNeeds(
+          body.needsLinkedToReoffending,
+          allNeedsLinkedToReoffending,
+        )
+      } else {
+        page.body.needsLinkedToReoffending = []
+      }
+
+      if (body.otherNeeds) {
+        page.body.otherNeeds = OptionalOasysSections.getSelectedNeeds(body.otherNeeds, allOtherNeeds)
+      } else {
+        page.body.otherNeeds = []
+      }
 
       page.allNeedsLinkedToReoffending = allNeedsLinkedToReoffending
       page.allOtherNeeds = allOtherNeeds
@@ -85,7 +94,9 @@ export default class OptionalOasysSections implements TasklistPage {
     if (isStringOrArrayOfStrings(selectedSections)) {
       const sectionIds = flattenCheckboxInput(selectedSections as string | Array<string>) || []
 
-      return sectionIds.map((need: string) => allSections.find((n: OASysSection) => need === n.section.toString()))
+      return sectionIds.map(
+        (need: string) => allSections.find((n: OASysSection) => need === n.section.toString()) as OASysSection,
+      )
     }
 
     return selectedSections as Array<OASysSection>
@@ -102,10 +113,10 @@ export default class OptionalOasysSections implements TasklistPage {
   response() {
     const response = {}
 
-    if (this.getResponseForTypeOfNeed(this.body.needsLinkedToReoffending))
+    if (this.body.needsLinkedToReoffending && this.getResponseForTypeOfNeed(this.body.needsLinkedToReoffending))
       response[this.needsLinkedToReoffendingHeading] = this.getResponseForTypeOfNeed(this.body.needsLinkedToReoffending)
 
-    if (this.getResponseForTypeOfNeed(this.body.otherNeeds))
+    if (this.body.otherNeeds && this.getResponseForTypeOfNeed(this.body.otherNeeds))
       response[this.otherNeedsHeading] = this.getResponseForTypeOfNeed(this.body.otherNeeds)
 
     return response
