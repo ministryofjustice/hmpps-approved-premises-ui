@@ -74,7 +74,7 @@ describe('assessmentSummaryList', () => {
     it('filters out any empty values', () => {
       const assessor = userFactory.build({
         name: 'Bruce Wayne',
-        telephoneNumber: null,
+        telephoneNumber: undefined,
         email: 'bruce@example.com',
       })
       const placementRequest = placementRequestFactory.build({ assessor })

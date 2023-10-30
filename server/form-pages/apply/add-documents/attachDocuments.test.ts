@@ -99,7 +99,7 @@ describe('attachDocuments', () => {
     it('should return an error if a document does not have a description', () => {
       const selectedDocuments = [
         documentFactory.build({ fileName: 'file1.pdf', description: 'Description goes here' }),
-        documentFactory.build({ fileName: 'file2.pdf', description: null }),
+        documentFactory.build({ fileName: 'file2.pdf', description: undefined }),
       ]
 
       const page = new AttachDocuments({ selectedDocuments }, application)
@@ -113,7 +113,7 @@ describe('attachDocuments', () => {
     it('should return a record with the document filename as the key and the description as the value', () => {
       const selectedDocuments = [
         documentFactory.build({ fileName: 'file1.pdf', description: 'Description goes here' }),
-        documentFactory.build({ fileName: 'file2.pdf', description: null }),
+        documentFactory.build({ fileName: 'file2.pdf', description: undefined }),
       ]
 
       const page = new AttachDocuments({ selectedDocuments }, application)
