@@ -22,6 +22,7 @@ import {
   validateOasysEntries,
 } from './oasysImportUtils'
 import oasysStubs from '../data/stubs/oasysStubs.json'
+import { PersonRisks } from '../@types/shared'
 
 describe('OASysImportUtils', () => {
   describe('getOasysSections', () => {
@@ -278,6 +279,7 @@ describe('OASysImportUtils', () => {
 
     it('filters out null sections', () => {
       const application = applicationFactory.build()
+      application.data = {}
       application.data['oasys-import'] = {
         'optional-oasys-sections': {
           needsLinkedToReoffending: [null, null],
