@@ -19,7 +19,7 @@ import { DateFormats } from './dateUtils'
 
 describe('convert to title case', () => {
   it.each([
-    [null, null, ''],
+    [null, null, ''] as unknown as Array<string>,
     ['empty string', '', ''],
     ['Lower case', 'robert', 'Robert'],
     ['Upper case', 'ROBERT', 'Robert'],
@@ -47,8 +47,8 @@ describe('camelCase', () => {
 
 describe('initialise name', () => {
   it.each([
-    [null, null, null],
-    ['Empty string', '', null],
+    [null, null, null] as unknown as Array<string>,
+    ['Empty string', '', null] as unknown as Array<string>,
     ['One word', 'robert', 'r. robert'],
     ['Two words', 'Robert James', 'R. James'],
     ['Three words', 'Robert James Smith', 'R. Smith'],
@@ -164,7 +164,7 @@ describe('mapApiPersonRiskForUI', () => {
   })
 
   it('handles the case where roshRisks is null', () => {
-    risks.roshRisks = null
+    risks.roshRisks = null as unknown as PersonRisks['roshRisks']
 
     const actual = mapApiPersonRisksForUi(risks)
 
@@ -186,7 +186,7 @@ describe('mapApiPersonRiskForUI', () => {
   })
 
   it('handles the case where mappa is null', () => {
-    risks.mappa = null
+    risks.mappa = null as unknown as PersonRisks['mappa']
 
     const actual = mapApiPersonRisksForUi(risks)
 
@@ -212,7 +212,7 @@ describe('mapApiPersonRiskForUI', () => {
   })
 
   it('handles the case where tier is null', () => {
-    risks.tier = null
+    risks.tier = null as unknown as PersonRisks['tier']
 
     const actual = mapApiPersonRisksForUi(risks)
 
@@ -238,7 +238,7 @@ describe('mapApiPersonRiskForUI', () => {
   })
 
   it('handles the case where flags is null', () => {
-    risks.flags.value = null
+    risks.flags.value = null as unknown as PersonRisks['flags']['value']
 
     const actual = mapApiPersonRisksForUi(risks)
 

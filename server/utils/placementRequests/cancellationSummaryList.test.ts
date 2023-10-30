@@ -16,7 +16,7 @@ describe('cancellationSummaryList', () => {
           cancellationRow('Approved Premises', cancellation.premisesName),
           cancellationRow('Date', cancellation.date),
           cancellationRow('Reason', cancellation.reason.name),
-          cancellationRow('Notes', cancellation.notes),
+          cancellationRow('Notes', cancellation.notes as string),
         ],
       })
     })

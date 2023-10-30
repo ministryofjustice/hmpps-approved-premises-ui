@@ -1,4 +1,5 @@
 import { createMock } from '@golevelup/ts-jest'
+import { fromPartial } from '@total-typescript/shoehorn'
 import { ApplicationService } from '../../../services'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 import { applicationFactory, placementApplicationFactory } from '../../../testutils/factories'
@@ -22,7 +23,12 @@ describe('CheckYourAnswers', () => {
 
       findApplicationMock.mockResolvedValue(application)
 
-      const page = await CheckYourAnswers.initialize(body, placementApplication, 'some-token', { applicationService })
+      const page = await CheckYourAnswers.initialize(
+        body,
+        placementApplication,
+        'some-token',
+        fromPartial({ applicationService }),
+      )
 
       expect(page).toBeInstanceOf(CheckYourAnswers)
       expect(page.application).toEqual(application)

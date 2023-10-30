@@ -1,4 +1,5 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
+import { fromPartial } from '@total-typescript/shoehorn'
 import { OasysNotFoundError } from '../../../../services/personService'
 import { ApplicationService, PersonService } from '../../../../services'
 import { applicationFactory, oasysSelectionFactory } from '../../../../testutils/factories'
@@ -40,26 +41,41 @@ describe('OptionalOasysSections', () => {
     })
 
     it('calls the getOasysSelections method on the client with a token and the persons CRN', async () => {
-      await OptionalOasysSections.initialize({}, application, 'some-token', { personService, applicationService })
+      await OptionalOasysSections.initialize(
+        {},
+        application,
+        'some-token',
+        fromPartial({ personService, applicationService }),
+      )
 
       expect(getOasysSelectionsMock).toHaveBeenCalledWith('some-token', application.person.crn)
     })
 
     it('filters the OASys sections into needs linked to reoffending and other needs not linked to reoffending or harm', async () => {
-      const page = await OptionalOasysSections.initialize({}, application, 'some-token', {
-        personService,
-        applicationService,
-      })
+      const page = await OptionalOasysSections.initialize(
+        {},
+        application,
+        'some-token',
+        fromPartial({
+          personService,
+          applicationService,
+        }),
+      )
 
       expect(page.allNeedsLinkedToReoffending).toEqual(needsLinkedToReoffending)
       expect(page.allOtherNeeds).toEqual(otherNeeds)
     })
 
     it('returns an empty array for the selected needs if the body is empty', async () => {
-      const page = await OptionalOasysSections.initialize({}, application, 'some-token', {
-        personService,
-        applicationService,
-      })
+      const page = await OptionalOasysSections.initialize(
+        {},
+        application,
+        'some-token',
+        fromPartial({
+          personService,
+          applicationService,
+        }),
+      )
 
       expect(page.body.needsLinkedToReoffending).toEqual([])
       expect(page.body.otherNeeds).toEqual([])
@@ -73,10 +89,10 @@ describe('OptionalOasysSections', () => {
         },
         application,
         'some-token',
-        {
+        fromPartial({
           personService,
           applicationService,
-        },
+        }),
       )
 
       expect(page.body.needsLinkedToReoffending).toEqual([needsLinkedToReoffending[0]])
@@ -88,10 +104,10 @@ describe('OptionalOasysSections', () => {
         { needsLinkedToReoffending: [needsLinkedToReoffending[0]], otherNeeds: [otherNeeds[0], otherNeeds[1]] },
         application,
         'some-token',
-        {
+        fromPartial({
           personService,
           applicationService,
-        },
+        }),
       )
 
       expect(page.body.needsLinkedToReoffending).toEqual([needsLinkedToReoffending[0]])
@@ -103,10 +119,15 @@ describe('OptionalOasysSections', () => {
         throw new OasysNotFoundError('')
       })
 
-      const page = await OptionalOasysSections.initialize({}, application, 'some-token', {
-        personService,
-        applicationService,
-      })
+      const page = await OptionalOasysSections.initialize(
+        {},
+        application,
+        'some-token',
+        fromPartial({
+          personService,
+          applicationService,
+        }),
+      )
 
       expect(page.oasysSuccess).toEqual(false)
       expect(page.body.needsLinkedToReoffending).toEqual([])

@@ -1,4 +1,5 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
+import { fromPartial } from '@total-typescript/shoehorn'
 import { ApplicationService, PersonService } from '../../../services'
 import { applicationFactory, documentFactory } from '../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
@@ -23,7 +24,12 @@ describe('attachDocuments', () => {
     })
 
     it('calls the getDocuments method on the client with a token and the application', async () => {
-      await AttachDocuments.initialize({}, application, 'some-token', { personService, applicationService })
+      await AttachDocuments.initialize(
+        {},
+        application,
+        'some-token',
+        fromPartial({ personService, applicationService }),
+      )
 
       expect(getDocumentsMock).toHaveBeenCalledWith('some-token', application)
     })
@@ -39,7 +45,7 @@ describe('attachDocuments', () => {
         },
         application,
         'SOME_TOKEN',
-        { applicationService, personService },
+        fromPartial({ applicationService, personService }),
       )
 
       expect(page.body).toEqual({
@@ -53,13 +59,16 @@ describe('attachDocuments', () => {
 
     it('assigns the selected documents if the selection is not an array', async () => {
       const page = await AttachDocuments.initialize(
-        { documentIds: documents[0].id, documentDescriptions: { [documents[0].id]: documents[0].description } },
+        {
+          documentIds: documents[0].id,
+          documentDescriptions: { [documents[0].id]: documents[0].description } as Record<string, string>,
+        },
         application,
         'SOME_TOKEN',
-        {
+        fromPartial({
           applicationService,
           personService,
-        },
+        }),
       )
 
       expect(page.body).toEqual({ selectedDocuments: [documents[0]] })
@@ -72,7 +81,7 @@ describe('attachDocuments', () => {
         },
         application,
         'SOME_TOKEN',
-        { applicationService, personService },
+        fromPartial({ applicationService, personService }),
       )
 
       expect(page.body).toEqual({

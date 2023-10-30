@@ -1,4 +1,5 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
+import { fromPartial } from '@total-typescript/shoehorn'
 import { PersonService } from '../../../../services'
 import { applicationFactory, oasysSectionsFactory, risksFactory } from '../../../../testutils/factories'
 import { oasysImportReponse } from '../../../../utils/oasysImportUtils'
@@ -31,13 +32,13 @@ describe('OffenceDetails', () => {
     })
 
     it('calls the getOasysSections  method on the client with a token and the persons CRN', async () => {
-      await OffenceDetails.initialize({}, application, 'some-token', { personService })
+      await OffenceDetails.initialize({}, application, 'some-token', fromPartial({ personService }))
 
       expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn, [])
     })
 
     it('adds the offenceDetailsSummaries and personRisks to the page object', async () => {
-      const page = await OffenceDetails.initialize({}, application, 'some-token', { personService })
+      const page = await OffenceDetails.initialize({}, application, 'some-token', fromPartial({ personService }))
 
       expect(page.offenceDetailsSummaries).toEqual(oasysSections.offenceDetails)
       expect(page.risks).toEqual(mapApiPersonRisksForUi(personRisks))
@@ -47,7 +48,7 @@ describe('OffenceDetails', () => {
     it('sets dateCompleted to dateStarted if dateCompleted is null', async () => {
       getOasysSectionsMock.mockResolvedValue({ ...oasysSections, dateCompleted: null })
 
-      const page = await OffenceDetails.initialize({}, application, 'some-token', { personService })
+      const page = await OffenceDetails.initialize({}, application, 'some-token', fromPartial({ personService }))
       expect(page.oasysCompleted).toEqual(oasysSections.dateStarted)
     })
 

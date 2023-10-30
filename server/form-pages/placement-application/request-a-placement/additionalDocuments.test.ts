@@ -1,4 +1,5 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
+import { fromPartial } from '@total-typescript/shoehorn'
 import { ApplicationService, PersonService } from '../../../services'
 import { applicationFactory, documentFactory, placementApplicationFactory } from '../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
@@ -24,10 +25,15 @@ describe('additionalDocuments', () => {
     })
 
     it('calls the getDocuments method on the client with a token and the application', async () => {
-      await AdditionalDocuments.initialize({}, placementApplication, 'some-token', {
-        personService,
-        applicationService,
-      })
+      await AdditionalDocuments.initialize(
+        {},
+        placementApplication,
+        'some-token',
+        fromPartial({
+          personService,
+          applicationService,
+        }),
+      )
 
       expect(getDocumentsMock).toHaveBeenCalledWith('some-token', application)
     })
@@ -43,7 +49,7 @@ describe('additionalDocuments', () => {
         },
         placementApplication,
         'SOME_TOKEN',
-        { applicationService, personService },
+        fromPartial({ applicationService, personService }),
       )
 
       expect(page.body).toEqual({
@@ -57,13 +63,16 @@ describe('additionalDocuments', () => {
 
     it('assigns the selected documents if the selection is not an array', async () => {
       const page = await AdditionalDocuments.initialize(
-        { documentIds: documents[0].id, documentDescriptions: { [documents[0].id]: documents[0].description } },
+        {
+          documentIds: documents[0].id,
+          documentDescriptions: { [documents[0].id]: documents[0].description as string },
+        },
         placementApplication,
         'SOME_TOKEN',
-        {
+        fromPartial({
           applicationService,
           personService,
-        },
+        }),
       )
 
       expect(page.body).toEqual({ selectedDocuments: [documents[0]] })
@@ -76,7 +85,7 @@ describe('additionalDocuments', () => {
         },
         placementApplication,
         'SOME_TOKEN',
-        { applicationService, personService },
+        fromPartial({ applicationService, personService }),
       )
 
       expect(page.body).toEqual({
@@ -94,7 +103,7 @@ describe('additionalDocuments', () => {
     it('should return an error if a document does not have a description', () => {
       const selectedDocuments = [
         documentFactory.build({ fileName: 'file1.pdf', description: 'Description goes here' }),
-        documentFactory.build({ fileName: 'file2.pdf', description: null }),
+        documentFactory.build({ fileName: 'file2.pdf', description: undefined }),
       ]
 
       const page = new AdditionalDocuments({ selectedDocuments }, placementApplication)
@@ -108,7 +117,7 @@ describe('additionalDocuments', () => {
     it('should return a record with the document filename as the key and the description as the value', () => {
       const selectedDocuments = [
         documentFactory.build({ fileName: 'file1.pdf', description: 'Description goes here' }),
-        documentFactory.build({ fileName: 'file2.pdf', description: null }),
+        documentFactory.build({ fileName: 'file2.pdf', description: undefined }),
       ]
 
       const page = new AdditionalDocuments({ selectedDocuments }, placementApplication)

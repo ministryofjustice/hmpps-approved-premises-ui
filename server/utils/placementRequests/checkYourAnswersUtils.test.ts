@@ -59,7 +59,7 @@ describe('checkYourAnswersUtils', () => {
   it('if the page name is "additional-documents"', () => {
     const documents = documentFactory.buildList(1)
 
-    placementApplication.data['request-a-placement'] = {
+    ;(placementApplication.data as Record<string, unknown>)['request-a-placement'] = {
       'additional-documents': {
         selectedDocuments: documents,
       },

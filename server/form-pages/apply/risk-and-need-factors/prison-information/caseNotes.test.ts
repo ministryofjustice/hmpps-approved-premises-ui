@@ -1,4 +1,5 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
+import { fromPartial } from '@total-typescript/shoehorn'
 import { SanitisedError } from '../../../../sanitisedError'
 import { ApplicationService, PersonService } from '../../../../services'
 
@@ -179,7 +180,12 @@ describe('CaseNotes', () => {
     })
 
     it('calls the getPrisonCaseNotes method on the with a token and the persons CRN', async () => {
-      const page = await CaseNotes.initialize({}, application, 'some-token', { personService, applicationService })
+      const page = await CaseNotes.initialize(
+        {},
+        application,
+        'some-token',
+        fromPartial({ personService, applicationService }),
+      )
 
       expect(page.caseNotes).toEqual(caseNotes)
 
@@ -187,7 +193,12 @@ describe('CaseNotes', () => {
     })
 
     it('calls the getAdjudications method on the with a token and the persons CRN', async () => {
-      const page = await CaseNotes.initialize({}, application, 'some-token', { personService, applicationService })
+      const page = await CaseNotes.initialize(
+        {},
+        application,
+        'some-token',
+        fromPartial({ personService, applicationService }),
+      )
 
       expect(page.caseNotes).toEqual(caseNotes)
 
@@ -195,10 +206,15 @@ describe('CaseNotes', () => {
     })
 
     it('initializes the caseNotes class with the selected case notes and adjudications', async () => {
-      const page = await CaseNotes.initialize({ caseNoteIds: [caseNotes[0].id] }, application, 'some-token', {
-        personService,
-        applicationService,
-      })
+      const page = await CaseNotes.initialize(
+        { caseNoteIds: [caseNotes[0].id] },
+        application,
+        'some-token',
+        fromPartial({
+          personService,
+          applicationService,
+        }),
+      )
 
       expect(page.body).toEqual({
         caseNoteIds: [caseNotes[0].id],
@@ -208,10 +224,15 @@ describe('CaseNotes', () => {
     })
 
     it('initializes the caseNotes class correctly when caseNoteIds is a string', async () => {
-      const page = await CaseNotes.initialize({ caseNoteIds: caseNotes[0].id }, application, 'some-token', {
-        personService,
-        applicationService,
-      })
+      const page = await CaseNotes.initialize(
+        { caseNoteIds: caseNotes[0].id },
+        application,
+        'some-token',
+        fromPartial({
+          personService,
+          applicationService,
+        }),
+      )
 
       expect(page.body).toEqual({
         caseNoteIds: [caseNotes[0].id],
@@ -221,7 +242,12 @@ describe('CaseNotes', () => {
     })
 
     it('initializes correctly when caseNoteIds is not present', async () => {
-      const page = await CaseNotes.initialize({}, application, 'some-token', { personService, applicationService })
+      const page = await CaseNotes.initialize(
+        {},
+        application,
+        'some-token',
+        fromPartial({ personService, applicationService }),
+      )
 
       expect(page.body).toEqual({
         caseNoteIds: [],
@@ -236,7 +262,12 @@ describe('CaseNotes', () => {
         throw err
       })
 
-      const page = await CaseNotes.initialize({}, application, 'some-token', { personService, applicationService })
+      const page = await CaseNotes.initialize(
+        {},
+        application,
+        'some-token',
+        fromPartial({ personService, applicationService }),
+      )
 
       expect(page.nomisFailed).toEqual(true)
     })
@@ -248,7 +279,7 @@ describe('CaseNotes', () => {
       })
 
       await expect(() =>
-        CaseNotes.initialize({}, application, 'some-token', { personService, applicationService }),
+        CaseNotes.initialize({}, application, 'some-token', fromPartial({ personService, applicationService })),
       ).rejects.toThrowError(genericError)
     })
   })

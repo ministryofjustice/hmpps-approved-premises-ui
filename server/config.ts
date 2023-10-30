@@ -7,7 +7,7 @@ const production = process.env.NODE_ENV === 'production'
 
 function get<T>(name: string, fallback: T, options = { requireInProduction: false }): T | string {
   if (process.env[name]) {
-    return process.env[name]
+    return process.env[name] as string
   }
   if (fallback !== undefined && (!production || !options.requireInProduction)) {
     return fallback
@@ -54,7 +54,7 @@ export default {
   },
   redis: {
     host: get('REDIS_HOST', 'localhost', requiredInProduction),
-    port: parseInt(process.env.REDIS_PORT, 10) || 6379,
+    port: parseInt(process.env.REDIS_PORT as string, 10) || 6379,
     password: process.env.REDIS_AUTH_TOKEN,
     tls_enabled: get('REDIS_TLS_ENABLED', 'false'),
   },

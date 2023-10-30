@@ -8,7 +8,7 @@ export interface TasklistPageInterface {
     body: Record<string, unknown>,
     document: FormArtifact,
     token: string,
-    dataServices: DataServices,
+    dataServices: Partial<DataServices>,
   ): Promise<TasklistPage>
 }
 

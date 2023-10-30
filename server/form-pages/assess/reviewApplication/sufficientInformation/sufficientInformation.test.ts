@@ -1,5 +1,6 @@
 import { createMock } from '@golevelup/ts-jest'
 
+import { fromPartial } from '@total-typescript/shoehorn'
 import { UserService } from '../../../../services'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
@@ -34,7 +35,7 @@ describe('SufficientInformation', () => {
 
       getUserByIdMock.mockResolvedValue(user)
 
-      const page = await SufficientInformation.initialize({}, assessment, 'some-token', { userService })
+      const page = await SufficientInformation.initialize({}, assessment, 'some-token', fromPartial({ userService }))
 
       expect(page).toBeInstanceOf(SufficientInformation)
       expect(page.user).toEqual(user)

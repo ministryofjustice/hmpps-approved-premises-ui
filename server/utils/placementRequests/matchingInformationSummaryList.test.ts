@@ -2,7 +2,7 @@ import { placementRequestDetailFactory, premisesFactory } from '../../testutils/
 import { mapSearchParamCharacteristicsForUi } from '../matchUtils'
 import { matchingInformationSummary, placementRequirementsRow, preferredApsRow } from './matchingInformationSummaryList'
 import { getPreferredApsFromApplication } from './getPreferredApsFromApplication'
-import { HtmlItem } from '../../@types/ui'
+import { HtmlItem, SummaryListItem } from '../../@types/ui'
 
 jest.mock('./getPreferredApsFromApplication')
 
@@ -113,7 +113,7 @@ describe('matchingInformationSummaryList', () => {
       const premises = premisesFactory.buildList(4)
       ;(getPreferredApsFromApplication as jest.Mock).mockReturnValue(premises)
 
-      const row = preferredApsRow(placementRequest)
+      const row = preferredApsRow(placementRequest) as SummaryListItem
 
       expect(row.key).toEqual({ text: 'Preferred APs' })
       expect((row.value as HtmlItem).html).toMatchStringIgnoringWhitespace(`

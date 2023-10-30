@@ -4,7 +4,7 @@ import 'reflect-metadata'
 
 // Use a wildcard import to allow us to use jest.spyOn on functions within this module
 import * as utils from './index'
-import { TasklistPageInterface } from '../tasklistPage'
+import TasklistPage, { TasklistPageInterface } from '../tasklistPage'
 import { ApprovedPremisesApplication } from '../../@types/shared'
 
 import { applicationFactory } from '../../testutils/factories'
@@ -83,15 +83,19 @@ describe('utils', () => {
 
     describe('getTask', () => {
       it('fetches metadata for a specific task and pages', () => {
-        expect(utils.getTask(Task)).toEqual({ id: 'slug', title: 'Name', pages: { 'page-1': Page1, 'page-2': Page2 } })
+        expect(utils.getTask(Task as unknown as Record<string, unknown>)).toEqual({
+          id: 'slug',
+          title: 'Name',
+          pages: { 'page-1': Page1, 'page-2': Page2 },
+        })
       })
     })
 
     describe('getSection', () => {
       it('fetches metadata for a specific section and tasks', () => {
-        expect(utils.getSection(Section)).toEqual({
+        expect(utils.getSection(Section as unknown as Record<string, unknown>)).toEqual({
           title: 'Section',
-          tasks: [utils.getTask(Task)],
+          tasks: [utils.getTask(Task as unknown as Record<string, unknown>)],
         })
       })
     })
@@ -116,7 +120,12 @@ describe('utils', () => {
           }
         })
 
-        expect(utils.getPagesForSections([Section1, Section2])).toEqual({
+        expect(
+          utils.getPagesForSections([
+            Section1 as unknown as Record<string, unknown>,
+            Section2 as unknown as Record<string, unknown>,
+          ]),
+        ).toEqual({
           foo: {
             'page-1': Page1,
             'page-2': Page2,
@@ -134,8 +143,8 @@ describe('utils', () => {
         const page1 = new Page1()
         const page2 = new Page2()
 
-        expect(utils.viewPath(page1, 'applications')).toEqual('applications/pages/task-1/page-1')
-        expect(utils.viewPath(page2, 'assessments')).toEqual('assessments/pages/task-2/page-2')
+        expect(utils.viewPath(page1 as TasklistPage, 'applications')).toEqual('applications/pages/task-1/page-1')
+        expect(utils.viewPath(page2 as TasklistPage, 'assessments')).toEqual('assessments/pages/task-2/page-2')
       })
     })
 

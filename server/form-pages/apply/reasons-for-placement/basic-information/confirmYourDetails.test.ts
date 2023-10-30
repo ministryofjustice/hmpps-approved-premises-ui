@@ -1,5 +1,6 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
+import { fromPartial } from '@total-typescript/shoehorn'
 import { ApprovedPremisesApplication as Application, FullPerson } from '../../../../@types/shared'
 import { UserService } from '../../../../services'
 import { applicationFactory } from '../../../../testutils/factories'
@@ -58,7 +59,7 @@ describe('ConfirmYourDetails', () => {
         getUserById: getUserByIdMock,
       })
 
-      const result = await ConfirmYourDetails.initialize({}, application, 'token', { userService })
+      const result = await ConfirmYourDetails.initialize({}, application, 'token', fromPartial({ userService }))
       const expected = new ConfirmYourDetails(
         {
           userDetailsFromDelius: deliusUserMappedForUi,

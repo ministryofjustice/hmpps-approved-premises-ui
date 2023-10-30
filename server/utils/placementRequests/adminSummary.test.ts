@@ -173,24 +173,27 @@ describe('adminSummary', () => {
   })
 
   describe('apTypeCell', () => {
-    it.each(Object.keys(allApTypes))('should return the correct type for AP Type %s', (apType: ApType) => {
-      const placementRequest = placementRequestDetailFactory.build({
-        type: apType,
-      })
+    it.each(Object.keys(allApTypes) as Array<ApType>)(
+      'should return the correct type for AP Type %s',
+      (apType: ApType) => {
+        const placementRequest = placementRequestDetailFactory.build({
+          type: apType,
+        })
 
-      expect(apTypeCell(placementRequest)).toEqual({
-        key: {
-          text: 'Type of AP',
-        },
-        value: {
-          text: allApTypes[apType],
-        },
-      })
-    })
+        expect(apTypeCell(placementRequest)).toEqual({
+          key: {
+            text: 'Type of AP',
+          },
+          value: {
+            text: allApTypes[apType],
+          },
+        })
+      },
+    )
   })
 
   describe('releaseTypeCell', () => {
-    it.each(Object.keys(allReleaseTypes))(
+    it.each(Object.keys(allReleaseTypes) as Array<ReleaseTypeOption>)(
       'should return the correct type for release type %s',
       (releaseType: ReleaseTypeOption) => {
         const placementRequest = placementRequestDetailFactory.build({
