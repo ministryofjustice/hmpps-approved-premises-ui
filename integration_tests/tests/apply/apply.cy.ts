@@ -1,4 +1,4 @@
-import { addDays } from 'date-fns'
+import { addDays, addMonths, subDays } from 'date-fns'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import {
   activeOffenceFactory,
@@ -180,6 +180,88 @@ context('Apply', () => {
     apply.setupApplicationStubs(uiRisks)
     apply.startApplication()
     apply.completeEmergencyApplication()
+  })
+
+  it('supports offenders already in the community', function test() {
+    const person = personFactory.build({ status: 'InCommunity' })
+
+    // A 'regular' placement date (not emergency or short notice)
+    const placementDate = addMonths(new Date(), 4)
+    // A release date in the past
+    const releaseDate = subDays(new Date(), 1)
+    this.application = addResponsesToFormArtifact(this.application, {
+      section: 'basic-information',
+      page: 'placement-date',
+      keyValuePairs: {
+        ...DateFormats.dateObjectToDateInputs(placementDate, 'startDate'),
+        startDate: DateFormats.dateObjToIsoDate(placementDate),
+        startDateSameAsReleaseDate: 'no',
+      },
+    })
+    this.application = addResponsesToFormArtifact(this.application, {
+      section: 'basic-information',
+      page: 'release-date',
+      keyValuePairs: {
+        ...DateFormats.dateObjectToDateInputs(releaseDate, 'releaseDate'),
+        releaseDate: DateFormats.dateObjToIsoDate(releaseDate),
+      },
+    })
+
+    this.applicationData = this.application.data
+
+    this.application.person = person
+
+    // And I complete the application
+    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
+    const apply = new ApplyHelper(this.application, person, this.offences)
+
+    apply.setupApplicationStubs(uiRisks)
+    apply.startApplication()
+    apply.completeApplication(false, true)
+
+    // Then the application should be submitted to the API
+    cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
+      expect(requests).to.have.length(apply.numberOfPages())
+      const body = JSON.parse(requests[requests.length - 1].body)
+
+      expect(body).to.have.keys(
+        'arrivalDate',
+        'data',
+        'isPipeApplication',
+        'isWomensApplication',
+        'targetLocation',
+        'releaseType',
+        'type',
+        'isInapplicable',
+        'isEsapApplication',
+        'isEmergencyApplication',
+      )
+
+      expect(body.data).to.deep.equal(this.applicationData)
+
+      cy.task('validateBodyAgainstApplySchema', body.data).then(result => {
+        expect(result).to.equal(true)
+      })
+    })
+
+    cy.task('verifyApplicationSubmit', this.application.id).then(requests => {
+      expect(requests).to.have.length(1)
+
+      expect(requests[0].url).to.equal(`/applications/${this.application.id}/submission`)
+
+      const body = JSON.parse(requests[0].body)
+      expect(body).to.have.keys(
+        'arrivalDate',
+        'translatedDocument',
+        'isPipeApplication',
+        'isEsapApplication',
+        'isEmergencyApplication',
+        'isWomensApplication',
+        'targetLocation',
+        'releaseType',
+        'type',
+      )
+    })
   })
 
   it('allows completion of the form', function test() {
