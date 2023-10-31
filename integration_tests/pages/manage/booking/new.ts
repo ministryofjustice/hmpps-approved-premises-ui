@@ -1,4 +1,4 @@
-import type { Booking, FullPerson, LostBed } from '@approved-premises/api'
+import type { ActiveOffence, Booking, FullPerson, LostBed } from '@approved-premises/api'
 import BedspaceConflictErrorComponent from '../../../components/bedspaceConflictErrorComponent'
 import Page, { PageElement } from '../../page'
 import paths from '../../../../server/paths/manage'
@@ -22,6 +22,12 @@ export default class BookingNewPage extends Page {
     cy.get('dl').within(() => {
       this.assertDefinition('Name', person.name)
       this.assertDefinition('CRN', person.crn)
+    })
+  }
+
+  shouldShowOffences(offences: Array<ActiveOffence>): void {
+    offences.forEach((offence: ActiveOffence) => {
+      cy.get(`input[name="eventNumber"][value="${offence.deliusEventNumber}"]`).should('exist')
     })
   }
 
@@ -65,6 +71,10 @@ export default class BookingNewPage extends Page {
     this.expectedDepartureDay().type(departureDate.getDate().toString())
     this.expectedDepartureMonth().type(`${departureDate.getMonth() + 1}`)
     this.expectedDepartureYear().type(departureDate.getFullYear().toString())
+  }
+
+  selectOffence(offence: ActiveOffence): void {
+    cy.get(`input[name="eventNumber"][value="${offence.deliusEventNumber}"]`).click()
   }
 
   shouldShowDateConflictErrorMessages(

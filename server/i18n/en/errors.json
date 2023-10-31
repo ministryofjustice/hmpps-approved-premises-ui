@@ -21,6 +21,9 @@
   "month": {
     "empty": "You must choose a month"
   },
+  "eventNumber": {
+    "empty": "You must select an index offence"
+  },
   "arrivalDateTime": {
     "empty": "You must enter an arrival date and time",
     "invalid": "The arrival date or time is invalid",
