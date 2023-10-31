@@ -37,12 +37,14 @@ export default class BookingsController {
 
       if (crnArr.length) {
         const person = await this.personService.findByCrn(req.user.token, crnArr[0])
+        const offences = await this.personService.getOffences(req.user.token, person.crn)
 
         if (isFullPerson(person)) {
           return res.render(`bookings/new`, {
             pageHeading: 'Create a placement',
             premisesId,
             bedId,
+            offences,
             ...person,
             errorTitle,
             errors,

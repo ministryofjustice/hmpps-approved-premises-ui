@@ -12,7 +12,13 @@ import {
   generateConflictErrorAndRedirect,
 } from '../../utils/validation'
 
-import { bookingFactory, newBookingFactory, personFactory, restrictedPersonFactory } from '../../testutils/factories'
+import {
+  activeOffenceFactory,
+  bookingFactory,
+  newBookingFactory,
+  personFactory,
+  restrictedPersonFactory,
+} from '../../testutils/factories'
 import paths from '../../paths/manage'
 
 jest.mock('../../utils/validation')
@@ -57,6 +63,7 @@ describe('bookingsController', () => {
   describe('new', () => {
     describe('If there is a CRN in the flash', () => {
       const person = personFactory.build()
+      const offence = activeOffenceFactory.build()
 
       beforeEach(() => {
         request = createMock<Request>({
@@ -66,6 +73,7 @@ describe('bookingsController', () => {
         })
 
         personService.findByCrn.mockResolvedValue(person)
+        personService.getOffences.mockResolvedValue([offence])
       })
 
       it('if the CRN is not restricted it should render the new booking form', async () => {
@@ -80,6 +88,7 @@ describe('bookingsController', () => {
         expect(response.render).toHaveBeenCalledWith('bookings/new', {
           premisesId,
           pageHeading: 'Create a placement',
+          offences: [offence],
           ...person,
           errors: {},
           errorSummary: [],
@@ -122,6 +131,7 @@ describe('bookingsController', () => {
         expect(response.render).toHaveBeenCalledWith('bookings/new', {
           premisesId,
           pageHeading: 'Create a placement',
+          offences: [offence],
           ...person,
           errors: errorsAndUserInput.errors,
           errorSummary: errorsAndUserInput.errorSummary,

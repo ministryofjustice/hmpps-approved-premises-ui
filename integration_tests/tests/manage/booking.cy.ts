@@ -1,4 +1,5 @@
 import {
+  activeOffenceFactory,
   applicationFactory,
   assessmentFactory,
   bedDetailFactory,
@@ -36,6 +37,7 @@ context('Booking', () => {
     applicationId: application.id,
     assessmentId: assessment.id,
   })
+  const offences = activeOffenceFactory.buildList(1)
 
   beforeEach(() => {
     cy.task('reset')
@@ -44,6 +46,7 @@ context('Booking', () => {
     cy.task('stubApplicationGet', { application })
     cy.task('stubAssessment', assessment)
     cy.task('stubPremisesSummary', premises)
+    cy.task('stubPersonOffences', { person, offences })
   })
 
   it('should shown an error if I search for an LAO', () => {
@@ -51,6 +54,7 @@ context('Booking', () => {
     signIn(['workflow_manager'])
     const lao = restrictedPersonFactory.build()
     cy.task('stubFindPerson', { person: lao })
+    cy.task('stubPersonOffences', { person: lao, offences })
 
     // And I visit the first new booking page
     const bookingNewPage = BookingFindPage.visit(premises.id, 'bedId')
@@ -141,6 +145,55 @@ context('Booking', () => {
 
       expect(requestBody.arrivalDate).equal(booking.arrivalDate)
       expect(requestBody.departureDate).equal(booking.departureDate)
+      expect(requestBody.eventNumber).equal(offences[0].deliusEventNumber)
+    })
+  })
+
+  it('should allow me to select an index offence if there is more than one', () => {
+    // Given I am signed in as a workflow manager
+    signIn(['workflow_manager'])
+
+    const multipleOffences = activeOffenceFactory.buildList(3)
+
+    cy.task('stubBookingCreate', { premisesId: premises.id, booking })
+    cy.task('stubPremisesSummary', premises)
+    cy.task('stubFindPerson', { person })
+    cy.task('stubPersonOffences', { person, offences: multipleOffences })
+
+    // Given I visit the first new booking page
+    const bookingNewPage = BookingFindPage.visit(premises.id, booking.bed.id)
+
+    // When I enter the CRN to the form
+    bookingNewPage.enterCrn(person.crn)
+    bookingNewPage.clickSubmit()
+
+    // Then I should be redirected to the second new booking page
+    Page.verifyOnPage(BookingNewPage)
+    const bookingCreatePage = new BookingNewPage(premises.id)
+    bookingCreatePage.verifyPersonIsVisible(person)
+
+    // And the index offence radio buttons should be visible
+    bookingCreatePage.shouldShowOffences(multipleOffences)
+
+    // Given I have entered a CRN and the person has been found
+    // When I fill in the booking form
+    bookingCreatePage.completeForm(booking)
+    bookingCreatePage.selectOffence(multipleOffences[1])
+    bookingCreatePage.clickSubmit()
+
+    // Then I should be redirected to the confirmation page
+    Page.verifyOnPage(BookingConfirmation)
+    const bookingConfirmationPage = new BookingConfirmation()
+    bookingConfirmationPage.verifyBookingIsVisible(booking)
+
+    // And the booking should be created in the API
+    cy.task('verifyBookingCreate', { premisesId: premises.id }).then(requests => {
+      expect(requests).to.have.length(1)
+      const requestBody = JSON.parse(requests[0].body)
+
+      expect(requestBody.arrivalDate).equal(booking.arrivalDate)
+      expect(requestBody.departureDate).equal(booking.departureDate)
+      expect(requestBody.eventNumber).equal(multipleOffences[1].deliusEventNumber)
     })
   })
 
@@ -178,6 +231,38 @@ context('Booking', () => {
 
     // Then I should see error messages relating to those fields
     page.shouldShowErrorMessagesForFields(['arrivalDate', 'departureDate'])
+  })
+
+  it('should show an error when there are multiple offences and one is not selected', () => {
+    // Given I am signed in as a workflow manager
+    signIn(['workflow_manager'])
+
+    const bedId = bedFactory.build().id
+    const multipleOffences = activeOffenceFactory.buildList(3)
+
+    cy.task('stubFindPerson', { premisesId: premises.id, person })
+    cy.task('stubPersonOffences', { person, offences: multipleOffences })
+
+    // Given I visit the find page
+    const page = BookingFindPage.visit(premises.id, bedId)
+
+    // And I enter the CRN
+    page.completeForm(person.crn)
+
+    // Given I am signed in and I have found someone to create a placement for by CRN
+    // When I visit the new booking page
+    const bookingCreatePage = new BookingNewPage(premises.id)
+
+    // And I miss the required fields
+    cy.task('stubBookingErrors', {
+      premisesId: premises.id,
+      params: ['eventNumber'],
+    })
+    bookingCreatePage.completeForm(booking)
+    bookingCreatePage.clickSubmit()
+
+    // Then I should see error messages relating to the event number
+    page.shouldShowErrorMessagesForFields(['eventNumber'])
   })
 
   it('should show errors when there is a booking conflict', () => {
