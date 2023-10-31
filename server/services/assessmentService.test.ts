@@ -1,7 +1,8 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { Request } from 'express'
-import { AssessmentAcceptance } from '@approved-premises/api'
+import { AssessmentAcceptance, UpdatedClarificationNote } from '@approved-premises/api'
 
+import { fromPartial } from '@total-typescript/shoehorn'
 import { AssessmentClient } from '../data'
 import AssessmentService from './assessmentService'
 import { assessmentFactory, assessmentSummaryFactory, clarificationNoteFactory } from '../testutils/factories'
@@ -77,7 +78,7 @@ describe('AssessmentService', () => {
     it('should return a page', async () => {
       ;(getBody as jest.Mock).mockReturnValue(request.body)
 
-      const result = await service.initializePage(Page, assessment, request, {})
+      const result = await service.initializePage(Page, assessment, request, fromPartial({}))
 
       expect(result).toBeInstanceOf(Page)
 
@@ -92,7 +93,12 @@ describe('AssessmentService', () => {
 
       await service.initializePage(TestPage, assessment, request, dataServices)
 
-      expect(TestPage.initialize).toHaveBeenCalledWith(request.body, assessment, request.user.token, dataServices)
+      expect(TestPage.initialize).toHaveBeenCalledWith(
+        request.body,
+        assessment,
+        (request.user as { token: string }).token,
+        dataServices,
+      )
     })
   })
 
@@ -210,9 +216,9 @@ describe('AssessmentService', () => {
       const token = 'token'
       const id = 'some-uuid'
       const clarificationNote = clarificationNoteFactory.build()
-      const updatedNote = {
-        response: clarificationNote.response,
-        responseReceivedOn: clarificationNote.responseReceivedOn,
+      const updatedNote: UpdatedClarificationNote = {
+        response: clarificationNote.response || '',
+        responseReceivedOn: clarificationNote.responseReceivedOn || '',
       }
 
       assessmentClient.updateClarificationNote.mockResolvedValue(clarificationNote)

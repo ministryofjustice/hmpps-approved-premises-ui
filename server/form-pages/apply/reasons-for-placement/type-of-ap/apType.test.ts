@@ -18,7 +18,7 @@ describe('ApType', () => {
   })
 
   describe('when type is set to standard', () => {
-    itShouldHaveNextValue(new ApType({ type: 'standard' }), null)
+    itShouldHaveNextValue(new ApType({ type: 'standard' }), '')
   })
 
   describe('errors', () => {

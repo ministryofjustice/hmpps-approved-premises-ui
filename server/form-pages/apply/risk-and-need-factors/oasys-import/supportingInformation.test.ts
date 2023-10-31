@@ -1,4 +1,5 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
+import { fromPartial } from '@total-typescript/shoehorn'
 import { PersonService } from '../../../../services'
 import {
   applicationFactory,
@@ -42,13 +43,13 @@ describe('SupportingInformation', () => {
         .withOptionalOasysSectionsSelected([needsLinkedToReoffending], [otherNeeds])
         .build({ risks: personRisks })
 
-      await SupportingInformation.initialize({}, application, 'some-token', { personService })
+      await SupportingInformation.initialize({}, application, 'some-token', fromPartial({ personService }))
 
       expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn, [1, 2])
     })
 
     it('adds the supportingInformationSummaries and personRisks to the page object', async () => {
-      const page = await SupportingInformation.initialize({}, application, 'some-token', { personService })
+      const page = await SupportingInformation.initialize({}, application, 'some-token', fromPartial({ personService }))
 
       expect(page.supportingInformationSummaries).toEqual(oasysSections.supportingInformation)
       expect(page.risks).toEqual(mapApiPersonRisksForUi(personRisks))
@@ -58,7 +59,7 @@ describe('SupportingInformation', () => {
     it('sets dateCompleted to dateStarted if dateCompleted is null', async () => {
       getOasysSectionsMock.mockResolvedValue({ ...oasysSections, dateCompleted: null })
 
-      const page = await SupportingInformation.initialize({}, application, 'some-token', { personService })
+      const page = await SupportingInformation.initialize({}, application, 'some-token', fromPartial({ personService }))
       expect(page.oasysCompleted).toEqual(oasysSections.dateStarted)
     })
 

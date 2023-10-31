@@ -1,4 +1,5 @@
 import { createMock } from '@golevelup/ts-jest'
+import { fromPartial } from '@total-typescript/shoehorn'
 import { assessmentFactory, documentFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
@@ -30,7 +31,7 @@ describe('Review', () => {
       const getDocumentsMock = jest.fn().mockResolvedValue(documentFactory.buildList(3))
       const applicationService = createMock<ApplicationService>({ getDocuments: getDocumentsMock })
 
-      await Review.initialize({}, assessment, token, { applicationService })
+      await Review.initialize({}, assessment, token, fromPartial({ applicationService }))
 
       expect(applicationService.getDocuments).toHaveBeenCalledWith(token, assessment.application)
     })
@@ -51,7 +52,7 @@ describe('Review', () => {
 
       const applicationService = createMock<ApplicationService>({ getDocuments: getDocumentsMock })
 
-      const page = await Review.initialize({}, assessment, token, { applicationService })
+      const page = await Review.initialize({}, assessment, token, fromPartial({ applicationService }))
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const actualDocuments = documentsFromApplication((page as any).document.application)

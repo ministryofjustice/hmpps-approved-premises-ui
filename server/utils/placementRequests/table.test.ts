@@ -48,7 +48,7 @@ describe('tableUtils', () => {
     })
 
     it('returns an empty cell if the personName is blank', () => {
-      const task = placementRequestTaskFactory.build({ personName: null })
+      const task = placementRequestTaskFactory.build({ personName: undefined })
 
       expect(nameCell(task)).toEqual({
         html: '',
@@ -56,7 +56,7 @@ describe('tableUtils', () => {
     })
 
     it('returns an empty cell if the personName is not present', () => {
-      const task = placementRequestFactory.build({ person: null })
+      const task = placementRequestFactory.build({ person: undefined })
 
       expect(nameCell(task)).toEqual({
         html: '',

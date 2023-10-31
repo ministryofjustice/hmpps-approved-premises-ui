@@ -93,7 +93,7 @@ describe('PlacementApplicationReview', () => {
 
       review.update()
 
-      expect(request.session.placementApplicationDecisions[id]).toEqual({
+      expect(request?.session?.placementApplicationDecisions?.[id] || '').toEqual({
         summaryOfChanges: 'some changes',
         decision: 'accepted',
         decisionSummary: 'a summary',

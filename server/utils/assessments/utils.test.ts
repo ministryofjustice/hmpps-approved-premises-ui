@@ -218,13 +218,17 @@ describe('utils', () => {
     it('returns the adjudications from the assessment', () => {
       const adjudications = adjudicationFactory.buildList(2)
       const assessment = assessmentFactory.build()
-      assessment.application.data['prison-information'] = { 'case-notes': { adjudications } }
+      assessment.data = {}
+      assessment.application.data['prison-information'] = {
+        'case-notes': { adjudications },
+      }
 
       expect(adjudicationsFromAssessment(assessment)).toEqual(adjudications)
     })
 
     it('returns an empty string if the case notes are empty', () => {
       const assessment = assessmentFactory.build()
+      assessment.data = {}
       assessment.application.data['prison-information'] = {}
 
       expect(adjudicationsFromAssessment(assessment)).toEqual([])
@@ -235,13 +239,17 @@ describe('utils', () => {
     it('returns the caseNotes from the assessment', () => {
       const selectedCaseNotes = prisonCaseNotesFactory.buildList(2)
       const assessment = assessmentFactory.build()
-      assessment.application.data['prison-information'] = { 'case-notes': { selectedCaseNotes } }
+      assessment.data = {}
+      assessment.application.data['prison-information'] = {
+        'case-notes': { selectedCaseNotes },
+      }
 
       expect(caseNotesFromAssessment(assessment)).toEqual(selectedCaseNotes)
     })
 
     it('returns an empty string if the case notes are empty', () => {
       const assessment = assessmentFactory.build()
+      assessment.data = {}
       assessment.application.data['prison-information'] = {}
 
       expect(caseNotesFromAssessment(assessment)).toEqual([])
@@ -252,6 +260,7 @@ describe('utils', () => {
     it('returns the acctAlerts from the assessment', () => {
       const acctAlerts = acctAlertFactory.buildList(2)
       const assessment = assessmentFactory.build()
+      assessment.data = {}
       assessment.application.data['prison-information'] = { 'case-notes': { acctAlerts } }
 
       expect(acctAlertsFromAssessment(assessment)).toEqual(acctAlerts)
@@ -260,15 +269,18 @@ describe('utils', () => {
     it('if the comments property of an ACCT alert is undefined it returns an empty string', () => {
       const acctAlert1 = acctAlertFactory.build()
       const acctAlert2 = acctAlertFactory.build({ comment: undefined })
-
       const assessment = assessmentFactory.build()
-      assessment.application.data['prison-information'] = { 'case-notes': { acctAlerts: [acctAlert1, acctAlert2] } }
+      assessment.data = {}
+      assessment.application.data['prison-information'] = {
+        'case-notes': { acctAlerts: [acctAlert1, acctAlert2] },
+      }
 
       expect(acctAlertsFromAssessment(assessment)).toEqual([acctAlert1, { ...acctAlert2, comment: '' }])
     })
 
     it('returns an empty string if the case notes are empty', () => {
       const assessment = assessmentFactory.build()
+      assessment.data = {}
       assessment.application.data['prison-information'] = {}
 
       expect(acctAlertsFromAssessment(assessment)).toEqual([])
@@ -316,7 +328,7 @@ describe('utils', () => {
             text: 'Allocated To',
           },
           value: {
-            text: assessment.allocatedToStaffMember.name,
+            text: assessment.allocatedToStaffMember?.name,
           },
         },
       ])
@@ -324,7 +336,7 @@ describe('utils', () => {
 
     it('returns the summary list when the assessment does not have a staff member allocated', () => {
       const assessment = assessmentFactory.build({
-        allocatedToStaffMember: null,
+        allocatedToStaffMember: undefined,
       })
 
       expect(allocationSummary(assessment)).toEqual([

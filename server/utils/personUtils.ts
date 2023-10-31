@@ -26,7 +26,7 @@ const isApplicableTier = (sex: string, tier: string): boolean => {
   return applicableTiers.includes(tier)
 }
 
-const isFullPerson = (person: Person): person is FullPerson => (person as FullPerson)?.name !== undefined
+const isFullPerson = (person?: Person): person is FullPerson => (person as FullPerson)?.name !== undefined
 
 const laoName = (person: FullPerson) => (person.isRestricted ? `LAO: ${person.name}` : person.name)
 

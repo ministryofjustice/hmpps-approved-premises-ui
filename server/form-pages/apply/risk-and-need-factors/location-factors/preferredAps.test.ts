@@ -1,5 +1,6 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
+import { fromPartial } from '@total-typescript/shoehorn'
 import PreferredAps from './preferredAps'
 import { PremisesService } from '../../../../services'
 import { applicationFactory, premisesFactory } from '../../../../testutils/factories'
@@ -45,16 +46,21 @@ describe('PreferredAps', () => {
     })
 
     it('should call the Premises service and set the list of Premises on the page class', async () => {
-      const page = await PreferredAps.initialize(body, application, token, { premisesService })
+      const page = await PreferredAps.initialize(body, application, token, fromPartial({ premisesService }))
 
       expect(page.allPremises).toEqual(allAps)
       expect(getAll).toHaveBeenCalledWith(token)
     })
 
     it('should convert the selectedAps from strings to objects containing text and value properties', async () => {
-      const page = await PreferredAps.initialize({ preferredAp1: '1', preferredAp2: '2' }, application, token, {
-        premisesService,
-      })
+      const page = await PreferredAps.initialize(
+        { preferredAp1: '1', preferredAp2: '2' },
+        application,
+        token,
+        fromPartial({
+          premisesService,
+        }),
+      )
 
       expect(page.body.selectedAps).toEqual([ap1, ap2])
     })

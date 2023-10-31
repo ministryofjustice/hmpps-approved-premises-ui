@@ -1,4 +1,5 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
+import { fromPartial } from '@total-typescript/shoehorn'
 import { PersonService } from '../../../../services'
 import { applicationFactory, oasysSectionsFactory, risksFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
@@ -30,13 +31,13 @@ describe('RoshSummary', () => {
     })
 
     it('calls the getOasysSections method on the client with a token and the persons CRN', async () => {
-      await RoshSummary.initialize({}, application, 'some-token', { personService })
+      await RoshSummary.initialize({}, application, 'some-token', fromPartial({ personService }))
 
       expect(getOasysSectionsMock).toHaveBeenCalledWith('some-token', application.person.crn, [])
     })
 
     it('adds the roshSummary and personRisks to the page object', async () => {
-      const page = await RoshSummary.initialize({}, application, 'some-token', { personService })
+      const page = await RoshSummary.initialize({}, application, 'some-token', fromPartial({ personService }))
 
       expect(page.roshSummaries).toEqual(oasysSections.roshSummary)
       expect(page.risks).toEqual(mapApiPersonRisksForUi(personRisks))
@@ -46,7 +47,7 @@ describe('RoshSummary', () => {
     it('sets dateCompleted to dateStarted if dateCompleted is null', async () => {
       getOasysSectionsMock.mockResolvedValue({ ...oasysSections, dateCompleted: null })
 
-      const page = await RoshSummary.initialize({}, application, 'some-token', { personService })
+      const page = await RoshSummary.initialize({}, application, 'some-token', fromPartial({ personService }))
       expect(page.oasysCompleted).toEqual(oasysSections.dateStarted)
     })
 

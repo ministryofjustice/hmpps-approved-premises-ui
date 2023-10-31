@@ -2,7 +2,7 @@ import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
 } from '@approved-premises/api'
-import { TasklistPageInterface } from '../form-pages/tasklistPage'
+import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getPageName, pageDataFromApplicationOrAssessment } from '../form-pages/utils'
 import { SessionDataError } from './errors'
 import { camelCase } from './utils'
@@ -21,7 +21,7 @@ export const retrieveQuestionResponseFromFormArtifact = (
   question?: string,
 ) => {
   const pageData = pageDataFromApplicationOrAssessment(Page as TasklistPageInterface, formArtifact)
-  const pageName = getPageName(Page)
+  const pageName = getPageName(Page as TasklistPage['constructor'])
   const q = question || camelCase(pageName)
 
   if (!pageData) {

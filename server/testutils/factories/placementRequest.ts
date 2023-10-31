@@ -27,7 +27,7 @@ export const placementRequestFactory = Factory.define<PlacementRequest>(() => {
     assessmentId: faker.string.uuid(),
     releaseType: faker.helpers.arrayElement(['licence', 'rotl', 'hdc', 'pss', 'in_community']),
     status: faker.helpers.arrayElement(['notMatched', 'unableToMatch', 'matched']),
-    assessmentDecision: faker.helpers.arrayElement(['accepted' as const, 'rejected' as const, undefined]),
+    assessmentDecision: faker.helpers.arrayElement(['accepted' as const, 'rejected' as const]),
     applicationDate: DateFormats.dateObjToIsoDateTime(faker.date.soon()),
     assessmentDate: DateFormats.dateObjToIsoDateTime(faker.date.soon()),
     assessor: userFactory.build(),

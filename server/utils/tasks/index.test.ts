@@ -43,7 +43,7 @@ describe('index', () => {
               text: 'Arrival date',
             },
             value: {
-              text: DateFormats.isoDateToUIDate(arrivalDateFromApplication(application)),
+              text: DateFormats.isoDateToUIDate(arrivalDateFromApplication(application) as string),
             },
           },
           {

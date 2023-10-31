@@ -6,6 +6,7 @@ import ClarificationNotesController from './assessments/clarificationNotesContro
 import SupportingInformationController from './supportingInformationController'
 
 import type { Services } from '../../services'
+import { DataServices } from '../../@types/ui'
 
 export const controllers = (services: Services) => {
   const { assessmentService, applicationService, userService } = services
@@ -14,7 +15,7 @@ export const controllers = (services: Services) => {
   const assessmentPagesController = new AssessmentPagesController(assessmentService, {
     applicationService,
     userService,
-  })
+  } as unknown as DataServices)
   const clarificationNotesController = new ClarificationNotesController(assessmentService, userService)
   const supportingInformationController = new SupportingInformationController(assessmentService)
 

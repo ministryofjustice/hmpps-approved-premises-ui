@@ -1,6 +1,6 @@
 import type { Request } from 'express'
 import type { FormArtifact, JourneyType, UiTask, YesOrNo, YesOrNoWithDetail } from '@approved-premises/ui'
-import { TasklistPageInterface } from '../tasklistPage'
+import TasklistPage, { TasklistPageInterface } from '../tasklistPage'
 import { sentenceCase } from '../../utils/utils'
 
 export const applyYesOrNo = <K extends string>(key: K, body: Record<string, unknown>): YesOrNoWithDetail<K> => {
@@ -22,13 +22,13 @@ export const yesNoOrDontKnowResponseWithDetail = <K extends string>(key: K, body
   return body[key] === 'iDontKnow' ? "Don't know" : yesOrNoResponseWithDetailForYes<K>(key, body)
 }
 
-export const getTask = <T>(task: T) => {
+export const getTask = <T extends Record<string, unknown>>(task: T) => {
   const taskPages = {}
   const slug = Reflect.getMetadata('task:slug', task)
   const name = Reflect.getMetadata('task:name', task)
   const pageClasses = Reflect.getMetadata('task:pages', task)
 
-  pageClasses.forEach(<PageType>(page: PageType) => {
+  pageClasses.forEach(<PageType extends Record<string, unknown>>(page: PageType) => {
     const pageName = Reflect.getMetadata('page:name', page)
     taskPages[pageName] = page
   })
@@ -40,13 +40,13 @@ export const getTask = <T>(task: T) => {
   }
 }
 
-export const getSection = <T>(section: T) => {
+export const getSection = <T extends Record<string, unknown>>(section: T) => {
   const tasks: Array<UiTask> = []
   const title = Reflect.getMetadata('section:title', section)
   const name = Reflect.getMetadata('section:name', section)
   const taskClasses = Reflect.getMetadata('section:tasks', section)
 
-  taskClasses.forEach(<PageType>(task: PageType) => {
+  taskClasses.forEach(<PageType extends Record<string, unknown>>(task: PageType) => {
     tasks.push(getTask(task))
   })
 
@@ -57,7 +57,7 @@ export const getSection = <T>(section: T) => {
   }
 }
 
-export const getPagesForSections = <T>(sections: Array<T>) => {
+export const getPagesForSections = <T extends Record<string, unknown>>(sections: Array<T>) => {
   const pages = {}
   sections.forEach(sectionClass => {
     const section = getSection(sectionClass)
@@ -69,18 +69,18 @@ export const getPagesForSections = <T>(sections: Array<T>) => {
   return pages
 }
 
-export const viewPath = <T>(page: T, journeyType: JourneyType) => {
+export const viewPath = <T extends TasklistPage>(page: T, journeyType: JourneyType) => {
   const pageName = getPageName(page.constructor)
   const taskName = getTaskName(page.constructor)
 
   return `${journeyType}/pages/${taskName}/${pageName}`
 }
 
-export const getPageName = <T>(page: T) => {
+export const getPageName = <T extends TasklistPageInterface['constructor']>(page: T) => {
   return Reflect.getMetadata('page:name', page)
 }
 
-export const getTaskName = <T>(page: T) => {
+export const getTaskName = <T extends TasklistPageInterface['constructor']>(page: T) => {
   return Reflect.getMetadata('page:task', page)
 }
 

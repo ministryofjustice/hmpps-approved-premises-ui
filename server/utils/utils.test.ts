@@ -19,7 +19,7 @@ import { DateFormats } from './dateUtils'
 
 describe('convert to title case', () => {
   it.each([
-    [null, null, ''],
+    [null, null, ''] as unknown as Array<string>,
     ['empty string', '', ''],
     ['Lower case', 'robert', 'Robert'],
     ['Upper case', 'ROBERT', 'Robert'],
@@ -47,8 +47,8 @@ describe('camelCase', () => {
 
 describe('initialise name', () => {
   it.each([
-    [null, null, null],
-    ['Empty string', '', null],
+    [null, null, null] as unknown as Array<string>,
+    ['Empty string', '', null] as unknown as Array<string>,
     ['One word', 'robert', 'r. robert'],
     ['Two words', 'Robert James', 'R. James'],
     ['Three words', 'Robert James Smith', 'R. Smith'],
@@ -145,26 +145,29 @@ describe('mapApiPersonRiskForUI', () => {
       crn: risks.crn,
       flags: risks.flags.value,
       mappa: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.mappa.value.lastUpdated),
+        lastUpdated: risks?.mappa?.value?.lastUpdated
+          ? DateFormats.isoDateToUIDate(risks?.mappa?.value?.lastUpdated)
+          : '',
         level: 'CAT 2 / LEVEL 1',
       },
       roshRisks: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.roshRisks.value.lastUpdated),
-        overallRisk: risks.roshRisks.value.overallRisk,
-        riskToChildren: risks.roshRisks.value.riskToChildren,
-        riskToKnownAdult: risks.roshRisks.value.riskToKnownAdult,
-        riskToPublic: risks.roshRisks.value.riskToPublic,
-        riskToStaff: risks.roshRisks.value.riskToStaff,
+        lastUpdated:
+          risks?.roshRisks?.value?.lastUpdated && DateFormats.isoDateToUIDate(risks.roshRisks.value.lastUpdated),
+        overallRisk: risks?.roshRisks?.value?.overallRisk ?? '',
+        riskToChildren: risks?.roshRisks?.value?.riskToChildren ?? '',
+        riskToKnownAdult: risks?.roshRisks?.value?.riskToKnownAdult ?? '',
+        riskToPublic: risks?.roshRisks?.value?.riskToPublic ?? '',
+        riskToStaff: risks?.roshRisks?.value?.riskToStaff ?? '',
       },
       tier: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.tier.value.lastUpdated),
-        level: risks.tier.value.level,
+        lastUpdated: DateFormats.isoDateToUIDate(risks?.tier?.value?.lastUpdated ?? ''),
+        level: risks?.tier?.value?.level || '',
       },
     })
   })
 
   it('handles the case where roshRisks is null', () => {
-    risks.roshRisks = null
+    risks.roshRisks = null as unknown as PersonRisks['roshRisks']
 
     const actual = mapApiPersonRisksForUi(risks)
 
@@ -172,21 +175,21 @@ describe('mapApiPersonRiskForUI', () => {
       crn: risks.crn,
       flags: risks.flags.value,
       mappa: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.mappa.value.lastUpdated),
+        lastUpdated: DateFormats.isoDateToUIDate(risks?.mappa?.value?.lastUpdated || ''),
         level: 'CAT 2 / LEVEL 1',
       },
       roshRisks: {
         lastUpdated: '',
       },
       tier: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.tier.value.lastUpdated),
-        level: risks.tier.value.level,
+        lastUpdated: DateFormats.isoDateToUIDate(risks?.tier?.value?.lastUpdated || ''),
+        level: risks?.tier?.value?.level,
       },
     })
   })
 
   it('handles the case where mappa is null', () => {
-    risks.mappa = null
+    risks.mappa = null as unknown as PersonRisks['mappa']
 
     const actual = mapApiPersonRisksForUi(risks)
 
@@ -197,22 +200,22 @@ describe('mapApiPersonRiskForUI', () => {
         lastUpdated: '',
       },
       roshRisks: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.roshRisks.value.lastUpdated),
-        overallRisk: risks.roshRisks.value.overallRisk,
-        riskToChildren: risks.roshRisks.value.riskToChildren,
-        riskToKnownAdult: risks.roshRisks.value.riskToKnownAdult,
-        riskToPublic: risks.roshRisks.value.riskToPublic,
-        riskToStaff: risks.roshRisks.value.riskToStaff,
+        lastUpdated: DateFormats.isoDateToUIDate(risks?.roshRisks?.value?.lastUpdated || ''),
+        overallRisk: risks.roshRisks.value?.overallRisk,
+        riskToChildren: risks.roshRisks.value?.riskToChildren,
+        riskToKnownAdult: risks.roshRisks.value?.riskToKnownAdult,
+        riskToPublic: risks.roshRisks.value?.riskToPublic,
+        riskToStaff: risks.roshRisks.value?.riskToStaff,
       },
       tier: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.tier.value.lastUpdated),
-        level: risks.tier.value.level,
+        lastUpdated: DateFormats.isoDateToUIDate(risks.tier?.value?.lastUpdated || ''),
+        level: risks.tier.value?.level,
       },
     })
   })
 
   it('handles the case where tier is null', () => {
-    risks.tier = null
+    risks.tier = null as unknown as PersonRisks['tier']
 
     const actual = mapApiPersonRisksForUi(risks)
 
@@ -220,16 +223,16 @@ describe('mapApiPersonRiskForUI', () => {
       crn: risks.crn,
       flags: risks.flags.value,
       mappa: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.mappa.value.lastUpdated),
+        lastUpdated: DateFormats.isoDateToUIDate(risks?.mappa?.value?.lastUpdated || ''),
         level: 'CAT 2 / LEVEL 1',
       },
       roshRisks: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.roshRisks.value.lastUpdated),
-        overallRisk: risks.roshRisks.value.overallRisk,
-        riskToChildren: risks.roshRisks.value.riskToChildren,
-        riskToKnownAdult: risks.roshRisks.value.riskToKnownAdult,
-        riskToPublic: risks.roshRisks.value.riskToPublic,
-        riskToStaff: risks.roshRisks.value.riskToStaff,
+        lastUpdated: DateFormats.isoDateToUIDate(risks?.roshRisks?.value?.lastUpdated || ''),
+        overallRisk: risks.roshRisks.value?.overallRisk,
+        riskToChildren: risks.roshRisks.value?.riskToChildren,
+        riskToKnownAdult: risks.roshRisks.value?.riskToKnownAdult,
+        riskToPublic: risks.roshRisks.value?.riskToPublic,
+        riskToStaff: risks.roshRisks.value?.riskToStaff,
       },
       tier: {
         lastUpdated: '',
@@ -238,7 +241,7 @@ describe('mapApiPersonRiskForUI', () => {
   })
 
   it('handles the case where flags is null', () => {
-    risks.flags.value = null
+    risks.flags.value = null as unknown as PersonRisks['flags']['value']
 
     const actual = mapApiPersonRisksForUi(risks)
 
@@ -246,20 +249,20 @@ describe('mapApiPersonRiskForUI', () => {
       crn: risks.crn,
       flags: null,
       mappa: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.mappa.value.lastUpdated),
+        lastUpdated: DateFormats.isoDateToUIDate(risks.mappa?.value?.lastUpdated || ''),
         level: 'CAT 2 / LEVEL 1',
       },
       roshRisks: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.roshRisks.value.lastUpdated),
-        overallRisk: risks.roshRisks.value.overallRisk,
-        riskToChildren: risks.roshRisks.value.riskToChildren,
-        riskToKnownAdult: risks.roshRisks.value.riskToKnownAdult,
-        riskToPublic: risks.roshRisks.value.riskToPublic,
-        riskToStaff: risks.roshRisks.value.riskToStaff,
+        lastUpdated: DateFormats.isoDateToUIDate(risks?.roshRisks?.value?.lastUpdated || ''),
+        overallRisk: risks.roshRisks.value?.overallRisk,
+        riskToChildren: risks.roshRisks.value?.riskToChildren,
+        riskToKnownAdult: risks.roshRisks.value?.riskToKnownAdult,
+        riskToPublic: risks.roshRisks.value?.riskToPublic,
+        riskToStaff: risks.roshRisks.value?.riskToStaff,
       },
       tier: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.tier.value.lastUpdated),
-        level: risks.tier.value.level,
+        lastUpdated: DateFormats.isoDateToUIDate(risks.tier.value?.lastUpdated || ''),
+        level: risks.tier.value?.level,
       },
     })
   })

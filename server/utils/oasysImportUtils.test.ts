@@ -1,5 +1,6 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { OasysPage } from '@approved-premises/ui'
+import { fromPartial } from '@total-typescript/shoehorn'
 import { offenceDetailsFactory } from '../testutils/factories/oasysSections'
 import PersonService, { OasysNotFoundError } from '../services/personService'
 import {
@@ -21,6 +22,7 @@ import {
   validateOasysEntries,
 } from './oasysImportUtils'
 import oasysStubs from '../data/stubs/oasysStubs.json'
+import { PersonRisks } from '../@types/shared'
 
 describe('OASysImportUtils', () => {
   describe('getOasysSections', () => {
@@ -51,16 +53,23 @@ describe('OASysImportUtils', () => {
       })
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result: any = await getOasysSections({}, application, 'some-token', { personService }, constructor, {
-        sectionName: 'offenceDetails',
-        summaryKey: 'offenceDetailsSummary',
-        answerKey: 'offenceDetailsAnswers',
-      })
+      const result: any = await getOasysSections(
+        {},
+        application,
+        'some-token',
+        fromPartial({ personService }),
+        constructor,
+        {
+          sectionName: 'offenceDetails',
+          summaryKey: 'offenceDetailsSummary',
+          answerKey: 'offenceDetailsAnswers',
+        },
+      )
 
       expect(result.oasysSuccess).toEqual(false)
       expect(result.body.offenceDetailsSummary).toEqual(sortOasysImportSummaries(oasysStubs.offenceDetails))
       expect(result.offenceDetailsSummary).toEqual(oasysStubs.offenceDetails)
-      expect(result.risks).toEqual(mapApiPersonRisksForUi(application.risks))
+      expect(result.risks).toEqual(mapApiPersonRisksForUi(application.risks as PersonRisks))
     })
 
     it('sets oasysSuccess to true along with the marshalled oasys data if there is not an OasysNotFoundError', async () => {
@@ -72,16 +81,23 @@ describe('OASysImportUtils', () => {
       getOasysSectionsMock.mockResolvedValue(oasysSections)
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const result: any = await getOasysSections({}, application, 'some-token', { personService }, constructor, {
-        sectionName: 'offenceDetails',
-        summaryKey: 'offenceDetailsSummary',
-        answerKey: 'offenceDetailsAnswers',
-      })
+      const result: any = await getOasysSections(
+        {},
+        application,
+        'some-token',
+        fromPartial({ personService }),
+        constructor,
+        {
+          sectionName: 'offenceDetails',
+          summaryKey: 'offenceDetailsSummary',
+          answerKey: 'offenceDetailsAnswers',
+        },
+      )
 
       expect(result.oasysSuccess).toEqual(true)
       expect(result.body.offenceDetailsSummary).toEqual(sortOasysImportSummaries(oasysSections.offenceDetails))
       expect(result.offenceDetailsSummary).toEqual(oasysSections.offenceDetails)
-      expect(result.risks).toEqual(mapApiPersonRisksForUi(application.risks))
+      expect(result.risks).toEqual(mapApiPersonRisksForUi(application.risks as PersonRisks))
     })
 
     it('prioritises the body over the Oasys data if the body is provided', async () => {
@@ -104,7 +120,7 @@ describe('OASysImportUtils', () => {
         { offenceDetailsAnswers: { '1': 'My Response' } },
         application,
         'some-token',
-        { personService },
+        fromPartial({ personService }),
         constructor,
         {
           sectionName: 'offenceDetails',
@@ -263,6 +279,7 @@ describe('OASysImportUtils', () => {
 
     it('filters out null sections', () => {
       const application = applicationFactory.build()
+      application.data = {}
       application.data['oasys-import'] = {
         'optional-oasys-sections': {
           needsLinkedToReoffending: [null, null],

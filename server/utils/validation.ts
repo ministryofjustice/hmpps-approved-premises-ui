@@ -66,7 +66,7 @@ export const catchAPIErrorOrPropogate = (request: Request, response: Response, e
     })
     request.flash('errorSummary', [errorSummary(error.field, error.message)])
 
-    response.redirect(request.headers.referer)
+    response.redirect(request.headers.referer || '')
   } else {
     throw error
   }
@@ -98,7 +98,7 @@ export const errorMessage = (field: string, text: string): ErrorMessage => {
 }
 
 const extractValidationErrors = (error: SanitisedError | Error): Record<string, string> | string => {
-  if ('data' in error) {
+  if ('data' in error && error.data) {
     if (Array.isArray(error.data['invalid-params']) && error.data['invalid-params'].length) {
       return generateErrors(error.data['invalid-params'])
     }
@@ -111,7 +111,7 @@ const extractValidationErrors = (error: SanitisedError | Error): Record<string, 
   }
 
   const unsantisedError = new Error(error.message)
-  unsantisedError.name = 'name' in error ? error.name : undefined
+  unsantisedError.name = 'name' in error ? error.name : ''
   unsantisedError.stack = error.stack
 
   throw unsantisedError

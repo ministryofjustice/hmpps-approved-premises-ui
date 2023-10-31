@@ -29,7 +29,7 @@ export default class PlacementApplicationService {
   async initializePage(
     Page: TasklistPageInterface,
     request: Request,
-    dataServices: DataServices,
+    dataServices: Partial<DataServices>,
     userInput?: Record<string, unknown>,
   ): Promise<TasklistPage> {
     const placementApplication = await this.getPlacementApplication(request.user.token, request.params.id)
