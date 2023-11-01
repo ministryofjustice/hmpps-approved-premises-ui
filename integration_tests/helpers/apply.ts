@@ -135,11 +135,11 @@ export default class ApplyHelper {
     confirmDetailsPage.clickSubmit()
   }
 
-  completeApplication(isExceptionalCase?: boolean) {
+  completeApplication(isExceptionalCase?: boolean, isInComunity?: boolean) {
     if (isExceptionalCase) {
       this.completeExceptionalCase()
     }
-    this.completeBasicInformation({ isEmergencyApplication: false })
+    this.completeBasicInformation({ isEmergencyApplication: false, isInComunity })
     this.completeTypeOfApSection()
     this.completeOasysSection()
     this.completeRiskManagementSection()
@@ -418,7 +418,7 @@ export default class ApplyHelper {
     exceptionDetailsPage.clickSubmit()
   }
 
-  completeBasicInformation(options: { isEmergencyApplication?: boolean } = {}) {
+  completeBasicInformation(options: { isEmergencyApplication?: boolean; isInComunity?: boolean } = {}) {
     const confirmYourDetails = new ApplyPages.ConfirmYourDetailsPage(this.application)
     confirmYourDetails.completeForm()
     confirmYourDetails.clickSubmit()
@@ -459,7 +459,7 @@ export default class ApplyHelper {
     releaseDatePage.completeForm()
     releaseDatePage.clickSubmit()
 
-    const placementStartPage = new ApplyPages.PlacementStartPage(this.application)
+    const placementStartPage = new ApplyPages.PlacementStartPage(this.application, options.isInComunity)
     placementStartPage.completeForm()
     placementStartPage.clickSubmit()
 

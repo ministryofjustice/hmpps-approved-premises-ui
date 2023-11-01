@@ -1,48 +1,124 @@
-import { add, sub } from 'date-fns'
+import { add, isFuture, sub } from 'date-fns'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 
 import PlacementDate from './placementDate'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { applicationFactory } from '../../../../testutils/factories'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
-const releaseDate = new Date().toISOString()
+const futureReleaseDate = DateFormats.dateObjToIsoDate(new Date())
+const pastReleaseDate = DateFormats.dateObjToIsoDate(sub(new Date(), { days: 5 }))
+
+jest.mock('date-fns/isFuture')
 
 jest.mock('../../../../utils/applications/noticeTypeFromApplication')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact', () => {
-  return { retrieveQuestionResponseFromFormArtifact: jest.fn(() => releaseDate) }
+  return {
+    retrieveOptionalQuestionResponseFromApplicationOrAssessment: jest.fn(() => futureReleaseDate),
+  }
 })
 
 describe('PlacementDate', () => {
   const application = applicationFactory.build()
 
   beforeEach(() => {
-    jest.clearAllMocks()
+    jest.resetAllMocks()
   })
 
-  describe('title', () => {
-    it('set the title and body correctly', () => {
-      const page = new PlacementDate(
-        {
+  describe('constructor', () => {
+    describe('when the release date is in the future', () => {
+      it('sets the title and body correctly', () => {
+        ;(
+          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          >
+        ).mockReturnValue(futureReleaseDate)
+        ;(isFuture as jest.MockedFn<typeof isFuture>).mockReturnValue(true)
+
+        const page = new PlacementDate(
+          {
+            startDateSameAsReleaseDate: 'no',
+            'startDate-year': '2020',
+            'startDate-month': '12',
+            'startDate-day': '1',
+          },
+          application,
+        )
+
+        expect(page.body).toEqual({
           startDateSameAsReleaseDate: 'no',
           'startDate-year': '2020',
           'startDate-month': '12',
           'startDate-day': '1',
-        },
-        application,
-      )
+          startDate: '2020-12-01',
+        })
 
-      expect(page.body).toEqual({
-        startDateSameAsReleaseDate: 'no',
-        'startDate-year': '2020',
-        'startDate-month': '12',
-        'startDate-day': '1',
-        startDate: '2020-12-01',
+        expect(page.title).toEqual(
+          `Is ${DateFormats.isoDateToUIDate(futureReleaseDate)} the date you want the placement to start?`,
+        )
       })
+    })
 
-      expect(page.title).toEqual(
-        `Is ${DateFormats.isoDateToUIDate(releaseDate)} the date you want the placement to start?`,
-      )
+    describe('when the release date is in the past', () => {
+      it('sets the title and body correctly', () => {
+        ;(
+          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          >
+        ).mockReturnValue(pastReleaseDate)
+        ;(isFuture as jest.MockedFn<typeof isFuture>).mockReturnValue(false)
+
+        const page = new PlacementDate(
+          {
+            startDateSameAsReleaseDate: 'no',
+            'startDate-year': '2020',
+            'startDate-month': '12',
+            'startDate-day': '1',
+          },
+          application,
+        )
+
+        expect(page.body).toEqual({
+          startDateSameAsReleaseDate: 'no',
+          'startDate-year': '2020',
+          'startDate-month': '12',
+          'startDate-day': '1',
+          startDate: '2020-12-01',
+        })
+
+        expect(page.title).toEqual('What date you want the placement to start?')
+      })
+    })
+
+    describe('when there is no release date present in the application', () => {
+      it('sets the title and body correctly', () => {
+        ;(
+          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          >
+        ).mockReturnValue(undefined)
+
+        const page = new PlacementDate(
+          {
+            startDateSameAsReleaseDate: 'no',
+            'startDate-year': '2020',
+            'startDate-month': '12',
+            'startDate-day': '1',
+          },
+          application,
+        )
+
+        expect(page.body).toEqual({
+          startDateSameAsReleaseDate: 'no',
+          'startDate-year': '2020',
+          'startDate-month': '12',
+          'startDate-day': '1',
+          startDate: '2020-12-01',
+        })
+
+        expect(page.title).toEqual('What date you want the placement to start?')
+      })
     })
   })
 
@@ -93,14 +169,65 @@ describe('PlacementDate', () => {
   itShouldHavePreviousValue(new PlacementDate({}, application), 'release-date')
 
   describe('errors', () => {
-    it('should return an empty object if the release date is the same as the start date', () => {
-      const page = new PlacementDate(
-        {
-          startDateSameAsReleaseDate: 'yes',
-        },
-        application,
-      )
-      expect(page.errors()).toEqual({})
+    describe('when the release date is in the past', () => {
+      it('should return an empty object if the placement date is populated', () => {
+        ;(
+          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          >
+        ).mockReturnValue(pastReleaseDate)
+        const page = new PlacementDate(
+          {
+            'startDate-day': '1',
+            'startDate-month': '1',
+            'startDate-year': '2030',
+          },
+          application,
+        )
+        expect(page.errors()).toEqual({})
+      })
+
+      it('should return an error if the date is not populated', () => {
+        ;(
+          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          >
+        ).mockReturnValue(pastReleaseDate)
+        const page = new PlacementDate({}, application)
+        expect(page.errors()).toEqual({
+          startDate: 'You must enter a start date',
+        })
+      })
+    })
+
+    describe('when the release date is in the future', () => {
+      it('should return an empty object if the release date is the same as the start date', () => {
+        ;(
+          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          >
+        ).mockReturnValue(futureReleaseDate)
+        const page = new PlacementDate(
+          {
+            startDateSameAsReleaseDate: 'yes',
+          },
+          application,
+        )
+        expect(page.errors()).toEqual({})
+      })
+
+      it('should return an error if the startDateSameAsReleaseDate field is not populated', () => {
+        ;(
+          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          >
+        ).mockReturnValue(futureReleaseDate)
+
+        const page = new PlacementDate({}, application)
+        expect(page.errors()).toEqual({
+          startDateSameAsReleaseDate: 'You must specify if the start date is the same as the release date',
+        })
+      })
     })
 
     describe('if the start date is not the same as the release date', () => {
@@ -151,43 +278,73 @@ describe('PlacementDate', () => {
         expect(page.errors()).toEqual({ startDate: 'The start date must not be in the past' })
       })
     })
-
-    it('should return an error if the startDateSameAsReleaseDate field is not populated', () => {
-      const page = new PlacementDate({}, application)
-      expect(page.errors()).toEqual({
-        startDateSameAsReleaseDate: 'You must specify if the start date is the same as the release date',
-      })
-    })
   })
 
   describe('response', () => {
-    it('should return a translated version of the response when the start date is the same as the release date', () => {
-      const page = new PlacementDate(
-        {
-          startDateSameAsReleaseDate: 'yes',
-        },
-        application,
-      )
+    describe('if the release date is in the future', () => {
+      it('should return a translated version of the response when the start date is the same as the release date', () => {
+        ;(
+          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          >
+        ).mockReturnValue(futureReleaseDate)
 
-      expect(page.response()).toEqual({
-        [page.title]: 'Yes',
+        const page = new PlacementDate(
+          {
+            startDateSameAsReleaseDate: 'yes',
+          },
+          application,
+        )
+
+        expect(page.response()).toEqual({
+          [page.title]: 'Yes',
+        })
+      })
+
+      it('should return a translated version of the response when the start date is not the same as the release date', () => {
+        ;(
+          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          >
+        ).mockReturnValue(futureReleaseDate)
+
+        const page = new PlacementDate(
+          {
+            startDateSameAsReleaseDate: 'no',
+            'startDate-year': '2022',
+            'startDate-month': '11',
+            'startDate-day': '11',
+          },
+          application,
+        )
+
+        expect(page.response()).toEqual({
+          [page.title]: 'No',
+          'Placement Start Date': 'Friday 11 November 2022',
+        })
       })
     })
 
-    it('should return a translated version of the response when the start date is not the same as the release date', () => {
-      const page = new PlacementDate(
-        {
-          startDateSameAsReleaseDate: 'no',
-          'startDate-year': '2022',
-          'startDate-month': '11',
-          'startDate-day': '11',
-        },
-        application,
-      )
+    describe('if the release date is in the past', () => {
+      it('should return a translated version of the placement start date', () => {
+        ;(
+          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          >
+        ).mockReturnValue(pastReleaseDate)
 
-      expect(page.response()).toEqual({
-        [page.title]: 'No',
-        'Placement Start Date': 'Friday 11 November 2022',
+        const page = new PlacementDate(
+          {
+            'startDate-year': '2022',
+            'startDate-month': '11',
+            'startDate-day': '11',
+          },
+          application,
+        )
+
+        expect(page.response()).toEqual({
+          'What date you want the placement to start?': 'Friday 11 November 2022',
+        })
       })
     })
   })

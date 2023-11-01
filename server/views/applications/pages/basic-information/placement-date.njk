@@ -4,53 +4,75 @@
 
 {% block questions %}
 
-  {% set startDateHTML %}
-  {{
-    formPageDateInput(
-      {
-        fieldName: "startDate",
-        fieldset: {
-          legend: {
-            text: "Expected arrival date"
-          }
-        },
-        hint: {
-          text: "For example, 27 3 2007"
-        },
-        items: dateFieldValues('startDate', errors)
-      },
-      fetchContext()
-    )
-  }}
-  {% endset -%}
-
-  {{
-    formPageRadios(
-      {
-        fieldName: "startDateSameAsReleaseDate",
-        fieldset: {
-          legend: {
-            text: page.title,
-            isPageHeading: true,
-            classes: "govuk-fieldset__legend--l"
-          }
-        },
-        items: [
-          {
-            value: "yes",
-            text: "Yes"
-          },
-          {
-            text: "No",
-            value: "no",
-            conditional: {
-              html: startDateHTML
+  {% if page.releaseDatePast %}
+    {{
+      formPageDateInput(
+        {
+          fieldName: "startDate",
+          fieldset: {
+            legend: {
+              text: page.title,
+              isPageHeading: true,
+              classes: "govuk-fieldset__legend--l"
             }
-          }
-        ]
-      },
-      fetchContext()
-    )
-  }}
+          },
+          hint: {
+            text: "For example, 27 3 2007"
+          },
+          items: dateFieldValues('startDate', errors)
+        },
+        fetchContext()
+      )
+    }}
+  {% else %}
+    {% set startDateHTML %}
+    {{
+        formPageDateInput(
+          {
+            fieldName: "startDate",
+            fieldset: {
+              legend: {
+                text: "Expected arrival date"
+              }
+            },
+            hint: {
+              text: "For example, 27 3 2007"
+            },
+            items: dateFieldValues('startDate', errors)
+          },
+          fetchContext()
+        )
+      }}
+    {% endset -%}
+
+    {{
+      formPageRadios(
+        {
+          fieldName: "startDateSameAsReleaseDate",
+          fieldset: {
+            legend: {
+              text: page.title,
+              isPageHeading: true,
+              classes: "govuk-fieldset__legend--l"
+            }
+          },
+          items: [
+            {
+              value: "yes",
+              text: "Yes"
+            },
+            {
+              text: "No",
+              value: "no",
+              conditional: {
+                html: startDateHTML
+              }
+            }
+          ]
+        },
+        fetchContext()
+      )
+    }}
+  {% endif %}
 
 {% endblock %}

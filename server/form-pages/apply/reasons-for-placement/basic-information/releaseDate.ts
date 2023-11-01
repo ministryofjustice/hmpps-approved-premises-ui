@@ -6,13 +6,7 @@ import TasklistPage from '../../../tasklistPage'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 import { adjacentPageFromSentenceType } from '../../../../utils/applications/adjacentPageFromSentenceType'
-import {
-  DateFormats,
-  dateAndTimeInputsAreValidDates,
-  dateIsBlank,
-  dateIsInThePast,
-  isToday,
-} from '../../../../utils/dateUtils'
+import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../../../utils/dateUtils'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import SentenceType from './sentenceType'
 
@@ -87,8 +81,6 @@ export default class ReleaseDate implements TasklistPage {
         errors.releaseDate = 'You must specify the release date'
       } else if (!dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'releaseDate'>, 'releaseDate')) {
         errors.releaseDate = 'The release date is an invalid date'
-      } else if (!isToday(this.body.releaseDate) && dateIsInThePast(this.body.releaseDate)) {
-        errors.releaseDate = 'The release date must not be in the past'
       }
     }
 
