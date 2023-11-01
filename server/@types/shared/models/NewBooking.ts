@@ -13,6 +13,5 @@ export type NewBooking = {
     serviceName: ServiceName;
     enableTurnarounds?: boolean;
     assessmentId?: string;
-    eventNumber?: string;
 };
 
