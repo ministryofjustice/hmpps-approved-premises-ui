@@ -1,4 +1,4 @@
-import { add, isFuture, sub } from 'date-fns'
+import { add, sub } from 'date-fns'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 
@@ -7,10 +7,8 @@ import { DateFormats } from '../../../../utils/dateUtils'
 import { applicationFactory } from '../../../../testutils/factories'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
-const futureReleaseDate = DateFormats.dateObjToIsoDate(new Date())
+const futureReleaseDate = DateFormats.dateObjToIsoDate(add(new Date(), { days: 5 }))
 const pastReleaseDate = DateFormats.dateObjToIsoDate(sub(new Date(), { days: 5 }))
-
-jest.mock('date-fns/isFuture')
 
 jest.mock('../../../../utils/applications/noticeTypeFromApplication')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact', () => {
@@ -27,14 +25,14 @@ describe('PlacementDate', () => {
   })
 
   describe('constructor', () => {
-    describe('when the release date is in the future', () => {
-      it('sets the title and body correctly', () => {
+    describe('when the release date is after the application is created', () => {
+      it('sets the title and body with the release date as the default start date', () => {
+        application.createdAt = DateFormats.dateObjToIsoDate(new Date())
         ;(
           retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
             typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
           >
         ).mockReturnValue(futureReleaseDate)
-        ;(isFuture as jest.MockedFn<typeof isFuture>).mockReturnValue(true)
 
         const page = new PlacementDate(
           {
@@ -60,14 +58,47 @@ describe('PlacementDate', () => {
       })
     })
 
-    describe('when the release date is in the past', () => {
-      it('sets the title and body correctly', () => {
+    describe('when the release date is the same day as the application is created', () => {
+      it('sets the title and body with the release date as the default start date', () => {
+        application.createdAt = DateFormats.dateObjToIsoDate(new Date())
+        ;(
+          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          >
+        ).mockReturnValue(application.createdAt)
+
+        const page = new PlacementDate(
+          {
+            startDateSameAsReleaseDate: 'no',
+            'startDate-year': '2020',
+            'startDate-month': '12',
+            'startDate-day': '1',
+          },
+          application,
+        )
+
+        expect(page.body).toEqual({
+          startDateSameAsReleaseDate: 'no',
+          'startDate-year': '2020',
+          'startDate-month': '12',
+          'startDate-day': '1',
+          startDate: '2020-12-01',
+        })
+
+        expect(page.title).toEqual(
+          `Is ${DateFormats.isoDateToUIDate(application.createdAt)} the date you want the placement to start?`,
+        )
+      })
+    })
+
+    describe('when the release date is before the application is created', () => {
+      it('sets the title to ask for a specific release date', () => {
+        application.createdAt = DateFormats.dateObjToIsoDate(new Date())
         ;(
           retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
             typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
           >
         ).mockReturnValue(pastReleaseDate)
-        ;(isFuture as jest.MockedFn<typeof isFuture>).mockReturnValue(false)
 
         const page = new PlacementDate(
           {
@@ -92,7 +123,7 @@ describe('PlacementDate', () => {
     })
 
     describe('when there is no release date present in the application', () => {
-      it('sets the title and body correctly', () => {
+      it('sets the title to ask for a specific release date', () => {
         ;(
           retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
             typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment

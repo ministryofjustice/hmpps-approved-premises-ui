@@ -6,6 +6,7 @@ import {
   risksFactory,
   tierEnvelopeFactory,
 } from '../../../server/testutils/factories'
+import { DateFormats } from '../../../server/utils/dateUtils'
 
 export const setup = () => {
   cy.task('reset')
@@ -17,7 +18,11 @@ export const setup = () => {
 
   cy.fixture('applicationData.json').then(applicationData => {
     const person = personFactory.build()
-    const application = applicationFactory.build({ person, status: 'inProgress' })
+    const application = applicationFactory.build({
+      person,
+      status: 'inProgress',
+      createdAt: DateFormats.dateObjToIsoDate(new Date()),
+    })
     const risks = risksFactory.build({
       crn: person.crn,
       tier: tierEnvelopeFactory.build({ value: { level: 'A3' } }),
