@@ -33,6 +33,7 @@ context('show applications', () => {
     const showPage = Page.verifyOnPage(ShowPage, updatedApplication)
 
     // And I should see the application details
+    showPage.shouldNotShowOfflineStatus()
     showPage.shouldShowPersonInformation()
     showPage.shouldShowResponses()
 
@@ -71,5 +72,26 @@ context('show applications', () => {
 
     // And I should see details of the assessment
     showPage.shouldShowAssessmentDetails()
+  })
+
+  it('should show an offline application', function test() {
+    const application = {
+      ...this.application,
+      type: 'Offline',
+      status: undefined,
+    }
+    cy.task('stubApplicationGet', { application })
+
+    // And I visit the application page
+    ShowPage.visit(application)
+
+    // Then I should see a stub application
+    const showPage = Page.verifyOnPage(ShowPage, application)
+
+    // And the application should show as offline
+    showPage.shouldShowOfflineStatus()
+
+    // And I should see the person information
+    showPage.shouldShowPersonInformation()
   })
 })
