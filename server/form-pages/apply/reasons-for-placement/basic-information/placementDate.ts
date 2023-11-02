@@ -1,10 +1,7 @@
 import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
 
-// eslint-disable-next-line import/no-duplicates
-import isFuture from 'date-fns/isFuture'
-// eslint-disable-next-line import/no-duplicates
-import isToday from 'date-fns/isToday'
+import { isAfter, isSameDay } from 'date-fns'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import TasklistPage from '../../../tasklistPage'
 import { convertToTitleCase } from '../../../../utils/utils'
@@ -35,7 +32,9 @@ export default class PlacementDate implements TasklistPage {
 
     if (releaseDate) {
       const releaseDateObj = DateFormats.isoToDateObj(releaseDate)
-      if (isToday(releaseDateObj) || isFuture(releaseDateObj)) {
+      const applicationDate = DateFormats.isoToDateObj(application.createdAt)
+
+      if (isAfter(releaseDateObj, applicationDate) || isSameDay(applicationDate, releaseDateObj)) {
         const formattedReleaseDate = DateFormats.isoDateToUIDate(releaseDate)
         this.title = `Is ${formattedReleaseDate} the date you want the placement to start?`
         this.releaseDatePast = false
