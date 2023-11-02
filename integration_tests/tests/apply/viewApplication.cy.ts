@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 import { ListPage, ShowPage } from '../../pages/apply'
 import Page from '../../pages/page'
 import { setup } from './setup'
-import { timelineEventFactory } from '../../../server/testutils/factories'
+import { restrictedPersonFactory, timelineEventFactory } from '../../../server/testutils/factories'
 
 context('show applications', () => {
   beforeEach(setup)
@@ -31,6 +31,32 @@ context('show applications', () => {
 
     // Then I should see a read-only version of the application
     const showPage = Page.verifyOnPage(ShowPage, updatedApplication)
+
+    // And I should see the application details
+    showPage.shouldNotShowOfflineStatus()
+    showPage.shouldShowPersonInformation()
+    showPage.shouldShowResponses()
+
+    // When I click on the 'Timeline' tab
+    // Then I should see timeline page
+    showPage.clickTimelineTab()
+    showPage.shouldShowTimeline(timeline)
+  })
+
+  it('shows a read-only version of the application when the offender is an LAO', function test() {
+    // Given I have completed an application
+    const timeline = timelineEventFactory.buildList(10)
+
+    const application = { ...this.application, status: 'submitted', person: restrictedPersonFactory.build() }
+    cy.task('stubApplicationGet', { application })
+    cy.task('stubApplicationTimeline', { applicationId: application.id, timeline })
+    cy.task('stubApplications', [application])
+
+    // And I visit the show page
+    ShowPage.visit(application)
+
+    // Then I should see a read-only version of the application
+    const showPage = Page.verifyOnPage(ShowPage, application)
 
     // And I should see the application details
     showPage.shouldNotShowOfflineStatus()

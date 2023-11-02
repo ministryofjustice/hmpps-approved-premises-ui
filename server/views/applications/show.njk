@@ -28,7 +28,11 @@
         <div class="moj-page-header-actions__title">
           <span class="govuk-caption-l">{{ pageHeading }}</span>
           <h1 class="govuk-heading-l">
-            {{ application.person.name }}
+            {% if application.person.name %}
+              {{ application.person.name }}
+            {% else %}
+              Limited Access Offender: {{ application.person.crn }}
+            {% endif %}
             {% if application.type == 'Offline' %}
               {{
                 govukTag({

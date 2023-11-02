@@ -1,4 +1,4 @@
-import type { ApprovedPremisesApplication, FullPerson, TimelineEvent } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, FullPerson, RestrictedPerson, TimelineEvent } from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import { summaryListSections } from '../../../server/utils/applications/summaryListUtils'
@@ -8,7 +8,12 @@ import { eventTypeTranslations } from '../../../server/utils/applications/utils'
 
 export default class ShowPage extends Page {
   constructor(private readonly application: ApprovedPremisesApplication) {
-    super((application.person as FullPerson).name)
+    const title =
+      'name' in application.person
+        ? (application.person as FullPerson).name
+        : `Limited Access Offender: ${application.person.crn}`
+
+    super(title)
   }
 
   static visit(application: ApprovedPremisesApplication) {
@@ -42,18 +47,24 @@ export default class ShowPage extends Page {
 
   shouldShowPersonInformation() {
     cy.get('[data-cy-section="person-details"]').within(() => {
-      const person = this.application.person as FullPerson
+      if ('name' in this.application.person) {
+        const person = this.application.person as FullPerson
 
-      this.assertDefinition('Name', person.name)
-      this.assertDefinition('CRN', person.crn)
-      this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
-      this.assertDefinition('NOMS Number', person.nomsNumber)
-      this.assertDefinition('Nationality', person.nationality)
-      this.assertDefinition('Religion or belief', person.religionOrBelief)
-      this.assertDefinition('Sex', person.sex)
+        this.assertDefinition('Name', person.name)
+        this.assertDefinition('CRN', person.crn)
+        this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
+        this.assertDefinition('NOMS Number', person.nomsNumber)
+        this.assertDefinition('Nationality', person.nationality)
+        this.assertDefinition('Religion or belief', person.religionOrBelief)
+        this.assertDefinition('Sex', person.sex)
 
-      cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', person.status)
-      this.assertDefinition('Prison', person.prisonName)
+        cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', person.status)
+        this.assertDefinition('Prison', person.prisonName)
+      } else {
+        const person = this.application.person as RestrictedPerson
+
+        this.assertDefinition('CRN', person.crn)
+      }
     })
   }
 
