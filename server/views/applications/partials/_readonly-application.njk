@@ -3,15 +3,17 @@
 
 {% macro applicationReadonlyView(application) %}
 
-      {{ personDetails(application.person) }}
+  {{ personDetails(application.person) }}
 
-      {% for section in SummaryListUtils.summaryListSections(application, false) %}
-        <h2 class="govuk-heading-l">{{ section.title }}</h2>
-        {% for task in section.tasks %}
-          {{
-            govukSummaryList(task)
-          }}
-        {% endfor %}
+  {% if application.type !== 'Offline' %}
+    {% for section in SummaryListUtils.summaryListSections(application, false) %}
+      <h2 class="govuk-heading-l">{{ section.title }}</h2>
+      {% for task in section.tasks %}
+        {{
+              govukSummaryList(task)
+            }}
       {% endfor %}
+    {% endfor %}
+  {% endif %}
 
 {% endmacro %}

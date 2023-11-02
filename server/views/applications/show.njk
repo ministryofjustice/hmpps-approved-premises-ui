@@ -4,6 +4,7 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "./partials/_readonly-application.njk" import applicationReadonlyView %}
 {% from "./partials/_timeline.njk" import timeline %}
+{%- from "govuk/components/tag/macro.njk" import govukTag -%}
 
 {% extends "../partials/layout.njk" %}
 
@@ -26,7 +27,17 @@
       <div class="moj-page-header-actions">
         <div class="moj-page-header-actions__title">
           <span class="govuk-caption-l">{{ pageHeading }}</span>
-          <h1 class="govuk-heading-l">{{ application.person.name }}</h1>
+          <h1 class="govuk-heading-l">
+            {{ application.person.name }}
+            {% if application.type == 'Offline' %}
+              {{
+                govukTag({
+                  text: "Offline application",
+                  classes: "govuk-tag--grey govuk-!-margin-5"
+                })
+              }}
+            {% endif %}
+          </h1>
         </div>
         <div class="moj-page-header-actions__actions">
           <div class="moj-button-menu">
@@ -58,8 +69,6 @@
         }) }}
       {% endif %}
 
-
-
       {{ mojSubNavigation({
         items: [{
           text: 'Application',
@@ -72,12 +81,12 @@
         }]
       }) }}
 
-    {% if tab === 'timeline' %}
-      {{ timeline(mapTimelineEventsForUi(timelineEvents)) }}
-    {% else %}
-      {{ applicationReadonlyView(application) }}
-    {% endif %}
-    
+      {% if tab === 'timeline' %}
+        {{ timeline(mapTimelineEventsForUi(timelineEvents)) }}
+      {% else %}
+        {{ applicationReadonlyView(application) }}
+      {% endif %}
+
     </div>
   </div>
 {% endblock %}

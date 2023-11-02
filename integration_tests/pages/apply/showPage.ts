@@ -20,6 +20,14 @@ export default class ShowPage extends Page {
     cy.get('Create placement request').should('not.exist')
   }
 
+  shouldNotShowOfflineStatus() {
+    cy.get('.govuk-tag').contains('Offline application').should('not.exist')
+  }
+
+  shouldShowOfflineStatus() {
+    cy.get('.govuk-tag').contains('Offline application').should('exist')
+  }
+
   shouldShowAssessmentDetails() {
     cy.get('.govuk-inset-text')
       .contains(
