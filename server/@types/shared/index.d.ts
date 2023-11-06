@@ -10,6 +10,7 @@ export type { ApArea } from './models/ApArea';
 export type { Application } from './models/Application';
 export type { ApplicationStatus } from './models/ApplicationStatus';
 export type { ApplicationSummary } from './models/ApplicationSummary';
+export type { ApplicationTimelineNote } from './models/ApplicationTimelineNote';
 export type { ApprovedPremises } from './models/ApprovedPremises';
 export type { ApprovedPremisesApplication } from './models/ApprovedPremisesApplication';
 export type { ApprovedPremisesApplicationSummary } from './models/ApprovedPremisesApplicationSummary';
