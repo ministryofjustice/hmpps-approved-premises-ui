@@ -23,6 +23,7 @@ import {
   applicationSummaryFactory,
   assessmentFactory,
   documentFactory,
+  placementApplicationFactory,
 } from '../testutils/factories'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
@@ -364,7 +365,7 @@ describe('ApplicationService', () => {
   })
 
   describe('withdraw', () => {
-    it('it calls the client with the ID and token', async () => {
+    it('calls the client with the ID and token', async () => {
       const token = 'some-token'
       const id = 'some-uuid'
       const body = {
@@ -380,7 +381,7 @@ describe('ApplicationService', () => {
   })
 
   describe('timeline', () => {
-    it('it calls the client with the Id and token', async () => {
+    it('calls the client with the Id and token', async () => {
       const token = 'some-token'
       const id = 'some-uuid'
 
@@ -388,6 +389,22 @@ describe('ApplicationService', () => {
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.timeline).toHaveBeenCalledWith(id)
+    })
+  })
+
+  describe('getPlacementApplications', () => {
+    it('calls the client with the id and the token and returns the result', async () => {
+      const token = 'some-token'
+      const id = 'some-uuid'
+      const placementApplications = placementApplicationFactory.buildList(1)
+      applicationClient.placementApplications.mockResolvedValue(placementApplications)
+
+      const result = await service.getPlacementApplications(token, id)
+
+      expect(result).toEqual(placementApplications)
+
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.placementApplications).toHaveBeenCalledWith(id)
     })
   })
 })

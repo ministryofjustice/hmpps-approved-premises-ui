@@ -5,6 +5,7 @@ import type {
   ApprovedPremisesAssessment as Assessment,
   Document,
   NewWithdrawal,
+  PlacementApplication,
   SubmitApprovedPremisesApplication,
   TimelineEvent,
   UpdateApprovedPremisesApplication,
@@ -78,5 +79,11 @@ export default class ApplicationClient {
     return (await this.restClient.get({
       path: paths.applications.timeline({ id: applicationId }),
     })) as Array<TimelineEvent>
+  }
+
+  async placementApplications(applicationId: string): Promise<Array<PlacementApplication>> {
+    return (await this.restClient.get({
+      path: paths.applications.placementApplications({ id: applicationId }),
+    })) as Array<PlacementApplication>
   }
 }

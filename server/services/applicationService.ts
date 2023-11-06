@@ -142,4 +142,12 @@ export default class ApplicationService {
 
     return timeline
   }
+
+  async getPlacementApplications(token: string, applicationId: string) {
+    const client = this.applicationClientFactory(token)
+
+    const placementApplications = await client.placementApplications(applicationId)
+
+    return placementApplications
+  }
 }

@@ -6,6 +6,7 @@ import {
   applicationSummaryFactory,
   assessmentFactory,
   documentFactory,
+  placementApplicationFactory,
   timelineEventFactory,
 } from '../testutils/factories'
 import paths from '../paths/api'
@@ -323,6 +324,32 @@ describeClient('ApplicationClient', provider => {
       })
 
       await applicationClient.timeline(applicationId)
+    })
+  })
+
+  describe('placementApplications', () => {
+    it('calls the placement applications endpoint with the application ID', async () => {
+      const applicationId = 'applicationId'
+      const placementApplications = placementApplicationFactory.buildList(1)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for the placement applications of an application',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.placementApplications({ id: applicationId }),
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placementApplications,
+        },
+      })
+
+      await applicationClient.placementApplications(applicationId)
     })
   })
 })

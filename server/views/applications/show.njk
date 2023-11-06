@@ -75,7 +75,7 @@
       {% if tab === 'timeline' %}
         {{ timeline(mapTimelineEventsForUi(timelineEvents)) }}
       {% elif tab === 'requestAPlacement'%}
-        {{ requestAPlacement(application, user, csrfToken) }}
+        {{ requestAPlacement(placementApplications, application, user, csrfToken) }}
       {% else %}
         {{ applicationReadonlyView(application) }}
       {% endif %}

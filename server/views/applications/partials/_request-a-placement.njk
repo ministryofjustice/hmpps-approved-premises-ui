@@ -1,6 +1,8 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
-{% macro requestAPlacement(application, user, csrfToken) %}
+{% macro requestAPlacement(placementApplications, application, user, csrfToken) %}
+
     <div class="moj-page-header-actions__actions">
         <div class="moj-button-menu">
             <div class="moj-button-menu__wrapper">
@@ -17,4 +19,23 @@
         </div>
     </div>
 
-    {%endmacro%}
+    {% set placementApplications = ApplyUtils.mapPlacementApplicationToSummaryCards(placementApplications, application) %}
+
+    {% if placementApplications.length === 0 %}
+        <div class="govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+                <span class="govuk-warning-text__assistive">Warning</span>
+                There are no placement requests for this application
+            </strong>
+        </div>
+
+    {% else %}
+
+        {% for placementApplication in placementApplications %}
+            {{govukSummaryList(placementApplication)}}
+            {%endfor%}
+
+        {% endif %}
+
+        {%endmacro%}

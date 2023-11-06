@@ -3,7 +3,10 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 import { ListPage, ShowPage } from '../../pages/apply'
 import Page from '../../pages/page'
 import { setup } from './setup'
-import { timelineEventFactory } from '../../../server/testutils/factories'
+import { timelineEventFactory, userFactory } from '../../../server/testutils/factories'
+import placementApplication from '../../../server/testutils/factories/placementApplication'
+import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
+import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
 
 context('show applications', () => {
   beforeEach(setup)
@@ -96,10 +99,20 @@ context('show applications', () => {
   })
 
   it('should show placement applications', function test() {
-    const application = { ...this.application, status: 'submitted' }
-
+    const { application, placementApplication: releaseFollowingDecisionPlacementApplication } =
+      makeReleaseFollowingDecisionPlacementApplication(this.application)
+    const rotlPlacementApplication = makeRotlPlacementApplication(application.id)
+    const additionalPlacementApplication = makeAdditionalPlacementApplication(application.id)
+    const placementApplications = [
+      releaseFollowingDecisionPlacementApplication,
+      rotlPlacementApplication,
+      additionalPlacementApplication,
+    ]
     cy.task('stubApplicationGet', { application })
-
+    cy.task('stubApplicationPlacementRequests', {
+      applicationId: application.id,
+      placementApplications,
+    })
     // Given I visit the application page
     ShowPage.visit(application)
     const showPage = Page.verifyOnPage(ShowPage, application)
@@ -108,5 +121,92 @@ context('show applications', () => {
     showPage.clickRequestAPlacementTab()
     cy.screenshot('after-1')
     // Then I should see the placement requests
+    showPage.shouldShowPlacementApplications(placementApplications, application)
   })
 })
+
+const makeReleaseFollowingDecisionPlacementApplication = (application: Application) => {
+  let updatedApplication = addResponseToFormArtifact(application, {
+    task: 'move-on',
+    page: 'placement-duration',
+    key: 'duration',
+    value: '84',
+  })
+
+  updatedApplication = {
+    ...updatedApplication,
+    status: 'submitted',
+    createdByUserId: '',
+    assessmentDecision: 'accepted',
+    assessmentDecisionDate: '2023-01-01',
+    assessmentId: 'low',
+  }
+
+  let releaseFollowingDecisionPlacementApplication = placementApplication.build({ applicationId: application.id })
+
+  releaseFollowingDecisionPlacementApplication = addResponseToFormArtifact(
+    releaseFollowingDecisionPlacementApplication,
+    {
+      task: 'request-a-placement',
+      page: 'reason-for-placement',
+      key: 'reason',
+      value: 'release_following_decision',
+    },
+  )
+
+  releaseFollowingDecisionPlacementApplication = addResponseToFormArtifact(
+    releaseFollowingDecisionPlacementApplication,
+    {
+      task: 'request-a-placement',
+      page: 'decision-to-release',
+      key: 'decisionToReleaseDate',
+      value: '2024-01-01',
+    },
+  )
+
+  return { application: updatedApplication, placementApplication: releaseFollowingDecisionPlacementApplication }
+}
+
+const makeRotlPlacementApplication = (applicationId: string) => {
+  let rotlPlacementApplication = placementApplication.build({ applicationId })
+
+  rotlPlacementApplication = addResponseToFormArtifact(rotlPlacementApplication, {
+    task: 'request-a-placement',
+    page: 'reason-for-placement',
+    key: 'reason',
+    value: 'rotl',
+  })
+  rotlPlacementApplication = addResponsesToFormArtifact(rotlPlacementApplication, {
+    task: 'request-a-placement',
+    page: 'dates-of-placement',
+    keyValuePairs: {
+      arrivalDate: '2023-01-01',
+      durationDays: '20',
+      duration: '20',
+    },
+  })
+  return rotlPlacementApplication
+}
+
+const makeAdditionalPlacementApplication = (applicationId: string) => {
+  let additionalPlacementApplication = placementApplication.build({ applicationId })
+
+  additionalPlacementApplication = addResponseToFormArtifact(additionalPlacementApplication, {
+    task: 'request-a-placement',
+    page: 'reason-for-placement',
+    key: 'reason',
+    value: 'additional_placement',
+  })
+
+  additionalPlacementApplication = addResponsesToFormArtifact(additionalPlacementApplication, {
+    task: 'request-a-placement',
+    page: 'additional-placement-details',
+    keyValuePairs: {
+      arrivalDate: '2024-05-21',
+      durationDays: '10',
+      duration: '10',
+    },
+  })
+
+  return additionalPlacementApplication
+}

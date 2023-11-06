@@ -37,6 +37,7 @@ export default class ApplicationsController {
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
       const application = await this.applicationService.findApplication(req.user.token, req.params.id)
+
       const taskList = new TasklistService(application)
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
@@ -51,7 +52,16 @@ export default class ApplicationsController {
         }
 
         if (req.query.tab === 'requestAPlacement') {
-          return res.render('applications/show', { application, referrer, tab: 'requestAPlacement' })
+          const placementApplications = await this.applicationService.getPlacementApplications(
+            req.user.token,
+            application.id,
+          )
+
+          return res.render('applications/show', {
+            ...defaultParams,
+            placementApplications,
+            tab: 'requestAPlacement',
+          })
         }
 
         return res.render('applications/show', { ...defaultParams, tab: 'application' })
