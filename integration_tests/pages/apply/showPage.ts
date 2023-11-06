@@ -75,6 +75,16 @@ export default class ShowPage extends Page {
     cy.get('a').contains('Timeline').click()
   }
 
+  clickRequestAPlacementTab() {
+    cy.get('a').contains('Request a placement').click()
+  }
+
+  clickWithdraw(placementRequestId: string) {
+    cy.get(`[data-cy-placement-application-id="${placementRequestId}"]`).within(() => {
+      cy.get('a').contains('Withdraw').click()
+    })
+  }
+
   shouldShowTimeline(timelineEvents: Array<TimelineEvent>) {
     const sortedTimelineEvents = timelineEvents.sort((a, b) => {
       return new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()

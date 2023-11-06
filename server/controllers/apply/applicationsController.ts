@@ -49,6 +49,10 @@ export default class ApplicationsController {
           return res.render('applications/show', { application, timelineEvents, referrer, tab: 'timeline' })
         }
 
+        if (req.query.tab === 'requestAPlacement') {
+          return res.render('applications/show', { application, referrer, tab: 'requestAPlacement' })
+        }
+
         return res.render('applications/show', { application, referrer, tab: 'application' })
       }
       return res.render('applications/tasklist', { application, taskList, errorSummary, errors })

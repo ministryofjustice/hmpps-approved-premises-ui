@@ -94,4 +94,19 @@ context('show applications', () => {
     // And I should see the person information
     showPage.shouldShowPersonInformation()
   })
+
+  it('should show placement applications', function test() {
+    const application = { ...this.application, status: 'submitted' }
+
+    cy.task('stubApplicationGet', { application })
+
+    // Given I visit the application page
+    ShowPage.visit(application)
+    const showPage = Page.verifyOnPage(ShowPage, application)
+
+    // When I click the 'Request a placement' tab
+    showPage.clickRequestAPlacementTab()
+    cy.screenshot('after-1')
+    // Then I should see the placement requests
+  })
 })

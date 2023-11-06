@@ -59,9 +59,16 @@ context('Placement Applications', () => {
       cy.task('stubPlacementApplicationUpdate', placementApplication)
       cy.task('stubSubmitPlacementApplication', placementApplication)
       cy.task('stubPlacementApplication', placementApplication)
+      cy.task('stubApplicationPlacementRequests', {
+        applicationId: completedApplication.id,
+        placementApplications: [placementApplication],
+      })
 
-      // When I visit the readonly application view
+      // Given I am on the readonly application view
       const showPage = ShowPage.visit(completedApplication)
+
+      // When I click the Request Placement Application tab
+      showPage.clickRequestAPlacementTab()
 
       // Then I should be able to click submit
       showPage.clickSubmit()
@@ -129,9 +136,16 @@ context('Placement Applications', () => {
       cy.task('stubPlacementApplicationUpdate', placementApplication)
       cy.task('stubSubmitPlacementApplication', placementApplication)
       cy.task('stubPlacementApplication', placementApplication)
+      cy.task('stubApplicationPlacementRequests', {
+        applicationId: completedApplication.id,
+        placementApplications: [placementApplication],
+      })
 
-      // When I visit the readonly application view
+      // Given I am on the readonly application view
       const showPage = ShowPage.visit(completedApplication)
+
+      // When I click the Request Placement Application tab
+      showPage.clickRequestAPlacementTab()
 
       // Then I should be able to click submit
       showPage.clickSubmit()
@@ -204,9 +218,16 @@ context('Placement Applications', () => {
       cy.task('stubSubmitPlacementApplication', placementApplication)
       cy.task('stubPlacementApplication', placementApplication)
       cy.task('stubApplicationDocuments', { application: completedApplication, documents })
+      cy.task('stubApplicationPlacementRequests', {
+        applicationId: completedApplication.id,
+        placementApplications: [placementApplication],
+      })
 
-      // When I visit the readonly application view
+      // Given I am on the readonly application view
       const showPage = ShowPage.visit(completedApplication)
+
+      // When I click the Request Placement Application tab
+      showPage.clickRequestAPlacementTab()
 
       // Then I should be able to click submit
       showPage.clickSubmit()
