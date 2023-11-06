@@ -154,6 +154,9 @@ PlacementRequest.pages['placement-request-page'] = {
 }
 
 describe('utils', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
   describe('dashboardTableRows', () => {
     it('returns an array of applications as table rows', async () => {
       ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')
@@ -353,6 +356,7 @@ describe('utils', () => {
 
   describe('firstPageOfApplicationJourney', () => {
     it('returns the sentence type page for an applicable application', () => {
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
       ;(isApplicableTier as jest.Mock).mockReturnValue(true)
       const application = applicationFactory.withFullPerson().build()
 
@@ -363,6 +367,8 @@ describe('utils', () => {
 
     it('returns the is exceptional case page for an unapplicable application', () => {
       ;(isApplicableTier as jest.Mock).mockReturnValue(false)
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+
       const application = applicationFactory.withFullPerson().build()
 
       expect(firstPageOfApplicationJourney(application)).toEqual(
@@ -372,6 +378,8 @@ describe('utils', () => {
 
     it('returns the "is exceptional case" page for an application for a person without a tier', () => {
       const application = applicationFactory.withFullPerson().build()
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+
       application.risks = undefined
 
       expect(firstPageOfApplicationJourney(application)).toEqual(
