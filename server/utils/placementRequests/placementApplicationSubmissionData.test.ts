@@ -16,13 +16,13 @@ describe('placementApplicationSubmissionData', () => {
     let placementApplication = placementApplicationFactory.build()
 
     placementApplication = addResponseToFormArtifact(placementApplication, {
-      section: 'request-a-placement',
+      task: 'request-a-placement',
       page: 'reason-for-placement',
       key: 'reason',
       value: 'rotl',
     }) as PlacementApplication
     placementApplication = addResponsesToFormArtifact(placementApplication, {
-      section: 'request-a-placement',
+      task: 'request-a-placement',
       page: 'dates-of-placement',
       keyValuePairs: {
         arrivalDate: '2023-01-01',
@@ -58,7 +58,7 @@ describe('mapPlacementDateForSubmission', () => {
       data: { 'request-a-placement': { 'reason-for-placement': { reason: 'rotl' } } },
     })
     placementApplication = addResponsesToFormArtifact(placementApplication, {
-      section: 'request-a-placement',
+      task: 'request-a-placement',
       page: 'dates-of-placement',
       keyValuePairs: {
         arrivalDate: '2023-01-01',

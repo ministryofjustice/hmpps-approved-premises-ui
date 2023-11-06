@@ -151,7 +151,7 @@ context('Apply', () => {
     const tomorrow = addDays(new Date(), 1)
 
     this.application = addResponsesToFormArtifact(this.application, {
-      section: 'basic-information',
+      task: 'basic-information',
       page: 'release-date',
       keyValuePairs: {
         ...DateFormats.dateObjectToDateInputs(tomorrow, 'releaseDate'),
@@ -161,14 +161,14 @@ context('Apply', () => {
     })
 
     this.application = addResponseToFormArtifact(this.application, {
-      section: 'basic-information',
+      task: 'basic-information',
       page: 'reason-for-short-notice',
       key: 'reason',
       value: 'riskEscalated',
     })
 
     this.application = addResponsesToFormArtifact(this.application, {
-      section: 'further-considerations',
+      task: 'further-considerations',
       page: 'trigger-plan',
       keyValuePairs: {
         planInPlace: 'yes',
@@ -190,7 +190,7 @@ context('Apply', () => {
     // A release date in the past
     const releaseDate = subDays(new Date(), 1)
     this.application = addResponsesToFormArtifact(this.application, {
-      section: 'basic-information',
+      task: 'basic-information',
       page: 'placement-date',
       keyValuePairs: {
         ...DateFormats.dateObjectToDateInputs(placementDate, 'startDate'),
@@ -199,7 +199,7 @@ context('Apply', () => {
       },
     })
     this.application = addResponsesToFormArtifact(this.application, {
-      section: 'basic-information',
+      task: 'basic-information',
       page: 'release-date',
       keyValuePairs: {
         ...DateFormats.dateObjectToDateInputs(releaseDate, 'releaseDate'),

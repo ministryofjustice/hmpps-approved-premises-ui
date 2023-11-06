@@ -179,7 +179,7 @@ context('Placement Applications', () => {
         person,
       })
       completedApplication = addResponseToFormArtifact(completedApplication, {
-        section: 'type-of-ap',
+        task: 'type-of-ap',
         page: 'ap-type',
         key: 'type',
         value: 'standard',

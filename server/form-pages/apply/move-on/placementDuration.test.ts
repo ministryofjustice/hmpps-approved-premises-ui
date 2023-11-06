@@ -70,7 +70,7 @@ describe('PlacementDuration', () => {
   describe('the previous and next page are correct', () => {
     beforeEach(() => {
       application = addResponsesToFormArtifact(application, {
-        section: 'basic-information',
+        task: 'basic-information',
         page: 'placement-date',
         keyValuePairs: { startDateSameAsReleaseDate: 'no', startDate: '2022-11-11' },
       }) as ApprovedPremisesApplication

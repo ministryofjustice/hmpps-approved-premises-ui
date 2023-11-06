@@ -2,12 +2,12 @@ import { FormArtifact } from '../@types/ui'
 
 export const addResponseToFormArtifact = <T extends FormArtifact>(
   formArtifact: T,
-  { section, page, key, value }: { section: string; page: string; key?: string; value?: unknown },
+  { task, page, key, value }: { task: string; page: string; key?: string; value?: unknown },
 ) => {
   formArtifact.data = {
     ...formArtifact.data,
-    [section]: {
-      ...formArtifact.data[section],
+    [task]: {
+      ...formArtifact.data[task],
       [page]: key && { [key]: value },
     },
   }
@@ -17,13 +17,13 @@ export const addResponseToFormArtifact = <T extends FormArtifact>(
 
 export const addResponsesToFormArtifact = <T extends FormArtifact>(
   formArtifact: T,
-  { section, page, keyValuePairs }: { section: string; page: string; keyValuePairs?: Record<string, unknown> },
+  { task, page, keyValuePairs }: { task: string; page: string; keyValuePairs?: Record<string, unknown> },
 ) => {
   formArtifact.data = {
     ...formArtifact.data,
-    [section]: {
-      ...formArtifact.data[section],
-      [page]: { ...formArtifact.data[section][page], ...keyValuePairs },
+    [task]: {
+      ...formArtifact.data[task],
+      [page]: { ...formArtifact.data[task][page], ...keyValuePairs },
     },
   }
 

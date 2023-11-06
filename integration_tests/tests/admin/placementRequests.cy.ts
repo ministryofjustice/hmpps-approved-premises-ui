@@ -43,7 +43,7 @@ context('Placement Requests', () => {
     signIn(['workflow_manager'])
 
     application = addResponseToFormArtifact(application, {
-      section: 'location-factors',
+      task: 'location-factors',
       page: 'preferred-aps',
       key: 'selectedAps',
       value: preferredAps,

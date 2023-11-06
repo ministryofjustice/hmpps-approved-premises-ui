@@ -15,7 +15,7 @@ describe('checkYourAnswersUtils', () => {
   const application = applicationFactory.build()
   let placementApplication = placementApplicationFactory.build()
   placementApplication = addResponseToFormArtifact(placementApplication, {
-    section: 'request-a-placement',
+    task: 'request-a-placement',
     page: 'same-ap',
     key: 'sameAp',
     value: 'Yes',

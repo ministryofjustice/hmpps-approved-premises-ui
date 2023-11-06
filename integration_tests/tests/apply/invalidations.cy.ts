@@ -18,7 +18,7 @@ context('Apply', () => {
 
     // And I change my response
     this.application = addResponsesToFormArtifact(this.application, {
-      section: 'location-factors',
+      task: 'location-factors',
       page: 'describe-location-factors',
       keyValuePairs: {
         ...this.application.data['location-factors']['describe-location-factors'],

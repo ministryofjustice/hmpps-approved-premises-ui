@@ -36,7 +36,7 @@ describe('Short notice assessments', () => {
       const tomorrow = addDays(new Date(), 1)
 
       application = addResponsesToFormArtifact(application, {
-        section: 'basic-information',
+        task: 'basic-information',
         page: 'release-date',
         keyValuePairs: {
           ...DateFormats.dateObjectToDateInputs(tomorrow, 'releaseDate'),
@@ -46,7 +46,7 @@ describe('Short notice assessments', () => {
       }) as Application
 
       application = addResponseToFormArtifact(application, {
-        section: 'basic-information',
+        task: 'basic-information',
         page: 'reason-for-short-notice',
         key: 'reason',
         value: 'riskEscalated',
