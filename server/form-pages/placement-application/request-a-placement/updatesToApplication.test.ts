@@ -1,7 +1,10 @@
 import { placementApplicationFactory } from '../../../testutils/factories'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { itShouldHaveNextValue } from '../../shared-examples'
 
 import UpdatesToApplication, { Body } from './updatesToApplication'
+
+jest.mock('../../../utils/retrieveQuestionResponseFromFormArtifact')
 
 const body: Body = {
   significantEvents: 'yes',
@@ -30,7 +33,23 @@ describe('UpdatesToApplication', () => {
   })
 
   itShouldHaveNextValue(new UpdatesToApplication({}, placementApplication), 'check-your-answers')
-  itShouldHavePreviousValue(new UpdatesToApplication({}, placementApplication), 'dates-of-placement')
+
+  describe('previous', () => {
+    const reasonsAndPreviousPages = [
+      { reason: 'rotl', previousPage: 'dates-of-placement' },
+      { reason: 'additional_placement', previousPage: 'additional-placement-details' },
+      { reason: 'release_following_decision', previousPage: 'additional-documents' },
+    ]
+
+    it.each(reasonsAndPreviousPages)('should return the correct previous page for %s', ({ reason, previousPage }) => {
+      ;(
+        retrieveQuestionResponseFromFormArtifact as jest.MockedFn<typeof retrieveQuestionResponseFromFormArtifact>
+      ).mockReturnValue(reason)
+
+      const page = new UpdatesToApplication(body, placementApplication)
+      expect(page.previous()).toBe(previousPage)
+    })
+  })
 
   describe('errors', () => {
     it('if no response is given an error is returned for each missing response', () => {
