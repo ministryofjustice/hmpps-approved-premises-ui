@@ -16,4 +16,5 @@ export default Factory.define<PlacementApplication>(() => ({
   submittedAt: DateFormats.dateObjToIsoDateTime(faker.date.recent()),
   data: {},
   document: {},
+  canBeWithdrawn: true,
 }))

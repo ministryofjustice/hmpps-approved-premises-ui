@@ -1,7 +1,3 @@
-import {
-  ApprovedPremisesApplication as Application,
-  ApprovedPremisesAssessment as Assessment,
-} from '@approved-premises/api'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getPageName, pageDataFromApplicationOrAssessment } from '../form-pages/utils'
 import { SessionDataError } from './errors'
@@ -45,7 +41,7 @@ export const retrieveQuestionResponseFromFormArtifact = (
  * @returns the response for the given page/question.
  */
 export const retrieveOptionalQuestionResponseFromApplicationOrAssessment = (
-  applicationOrAssessment: Application | Assessment,
+  applicationOrAssessment: FormArtifact,
   Page: TasklistPageInterface,
   question?: string,
 ) => {

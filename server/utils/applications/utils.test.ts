@@ -27,13 +27,19 @@ import {
   getSections,
   getStatus,
   isInapplicable,
+  lengthOfStayForUI,
+  mapPlacementApplicationToSummaryCards,
   mapTimelineEventsForUi,
   statusTags,
   unwithdrawableApplicationStatuses,
 } from './utils'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { RestrictedPersonError } from '../errors'
+import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
+import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
+import placementApplication from '../../testutils/factories/placementApplication'
 
+jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../journeyTypeFromArtifact')
 const FirstApplyPage = jest.fn()
@@ -359,7 +365,6 @@ describe('utils', () => {
       ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
       ;(isApplicableTier as jest.Mock).mockReturnValue(true)
       const application = applicationFactory.withFullPerson().build()
-
       expect(firstPageOfApplicationJourney(application)).toEqual(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'confirm-your-details' }),
       )
@@ -539,6 +544,135 @@ describe('utils', () => {
           DateFormats.isoToDateObj(actual[2].datetime.timestamp),
         ),
       ).toEqual(true)
+    })
+  })
+
+  describe('mapPlacementApplicationToSummaryCards', () => {
+    const application = applicationFactory.build()
+    const placementApplications = placementApplicationFactory.buildList(1)
+    const arrivalDate = '2023-01-01'
+    const duration = '20'
+
+    it('returns a placement application mapped to SummaryCard including an action when the placement application can be withdrawn', () => {
+      ;(
+        retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFunction<
+          typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+        >
+      ).mockReturnValue('rotl')
+      ;(
+        durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
+          typeof durationAndArrivalDateFromPlacementApplication
+        >
+      ).mockReturnValue({ expectedArrival: arrivalDate, duration })
+
+      expect(mapPlacementApplicationToSummaryCards(placementApplications, application)).toEqual([
+        {
+          card: {
+            title: { headingLevel: '3', text: DateFormats.isoDateToUIDate(placementApplications[0].createdAt) },
+            attributes: { 'data-cy-placement-application-id': placementApplications[0].id },
+            actions: {
+              items: [
+                {
+                  href: '',
+                  text: 'Withdraw',
+                },
+              ],
+            },
+          },
+          rows: [
+            {
+              key: {
+                text: 'Reason for placement request',
+              },
+              value: {
+                text: 'Release on Temporary Licence (ROTL)',
+              },
+            },
+            {
+              key: {
+                text: 'Arrival date',
+              },
+              value: {
+                text: DateFormats.isoDateToUIDate(arrivalDate),
+              },
+            },
+            {
+              key: {
+                text: 'Length of stay',
+              },
+              value: { text: lengthOfStayForUI(duration) },
+            },
+          ],
+        },
+      ])
+    })
+
+    it('returns a placement application mapped to SummaryCard including an action when the placement application can be withdrawn', () => {
+      ;(
+        retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFunction<
+          typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+        >
+      ).mockReturnValue('rotl')
+      ;(
+        durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
+          typeof durationAndArrivalDateFromPlacementApplication
+        >
+      ).mockReturnValue({ expectedArrival: arrivalDate, duration })
+      placementApplications[0].canBeWithdrawn = undefined
+
+      expect(mapPlacementApplicationToSummaryCards(placementApplications, application)).toEqual([
+        {
+          card: {
+            title: { headingLevel: '3', text: DateFormats.isoDateToUIDate(placementApplications[0].createdAt) },
+            attributes: { 'data-cy-placement-application-id': placementApplications[0].id },
+            actions: {
+              items: [],
+            },
+          },
+          rows: [
+            {
+              key: {
+                text: 'Reason for placement request',
+              },
+              value: {
+                text: 'Release on Temporary Licence (ROTL)',
+              },
+            },
+            {
+              key: {
+                text: 'Arrival date',
+              },
+              value: {
+                text: DateFormats.isoDateToUIDate(arrivalDate),
+              },
+            },
+            {
+              key: {
+                text: 'Length of stay',
+              },
+              value: { text: lengthOfStayForUI(duration) },
+            },
+          ],
+        },
+      ])
+    })
+  })
+
+  describe('lengthOfStayForUI', () => {
+    it('returns 0 days if the length of stay is "0"', () => {
+      expect(lengthOfStayForUI('0')).toEqual('0 days')
+    })
+
+    it('returns 1 day if the length of stay is "1"', () => {
+      expect(lengthOfStayForUI('1')).toEqual('1 day')
+    })
+
+    it('returns 2 days if the length of stay is "2"', () => {
+      expect(lengthOfStayForUI('2')).toEqual('2 days')
+    })
+
+    it('returns "None supplied if the length of stay is an empty string', () => {
+      expect(lengthOfStayForUI('')).toEqual('None supplied')
     })
   })
 })

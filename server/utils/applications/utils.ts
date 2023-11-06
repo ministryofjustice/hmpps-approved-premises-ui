@@ -5,6 +5,7 @@ import type {
   FormSections,
   JourneyType,
   PageResponse,
+  SummaryListWithCard,
   TableRow,
   UiTimelineEvent,
 } from '@approved-premises/ui'
@@ -13,12 +14,15 @@ import type {
   ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   Person,
+  PlacementApplication,
+  PlacementType,
   TimelineEvent,
   TimelineEventType,
 } from '@approved-premises/api'
 import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-information/maleAp'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
+import placementApplicationPaths from '../../paths/placementApplications'
 import Apply from '../../form-pages/apply'
 import { isApplicableTier, isFullPerson, tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
@@ -31,6 +35,10 @@ import PlacementRequest from '../../form-pages/placement-application'
 import isAssessment from '../assessments/isAssessment'
 import getAssessmentSections from '../assessments/getSections'
 import { RestrictedPersonError } from '../errors'
+import ReasonForPlacement, {
+  reasons as reasonsDictionary,
+} from '../../form-pages/placement-application/request-a-placement/reasonForPlacement'
+import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
 
 const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => {
@@ -211,6 +219,84 @@ const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiT
     })
 }
 
+const mapPlacementApplicationToSummaryCards = (
+  placementApplications: Array<PlacementApplication>,
+  application: Application,
+): Array<SummaryListWithCard> => {
+  return placementApplications.map(placementApplication => {
+    const reasonForPlacement = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+      placementApplication,
+      ReasonForPlacement,
+      'reason',
+    ) as PlacementType
+
+    const { expectedArrival, duration } = durationAndArrivalDateFromPlacementApplication(
+      placementApplication,
+      reasonForPlacement,
+      application,
+    )
+
+    const actionItems = []
+
+    if (placementApplication?.canBeWithdrawn) {
+      actionItems.push({
+        href: '',
+        text: 'Withdraw',
+      })
+    }
+
+    return {
+      card: {
+        title: {
+          text: DateFormats.isoDateToUIDate(placementApplication.createdAt),
+          headingLevel: '3',
+        },
+        attributes: {
+          'data-cy-placement-application-id': placementApplication.id,
+        },
+        actions: {
+          items: [
+            {
+              href: '',
+              text: 'Withdraw',
+            },
+          ],
+        },
+      },
+      rows: [
+        {
+          key: { text: 'Reason for placement request' },
+          value: { text: reasonsDictionary[reasonForPlacement] || 'None supplied' },
+        },
+        {
+          key: { text: 'Arrival date' },
+          value: {
+            text: expectedArrival ? DateFormats.isoDateToUIDate(expectedArrival) : 'None supplied',
+          },
+        },
+        {
+          key: { text: 'Length of stay' },
+          value: {
+            text: lengthOfStayForUI(duration),
+          },
+        },
+      ],
+    }
+  })
+}
+
+const lengthOfStayForUI = (duration: string) => {
+  if (duration === '') return 'None supplied'
+
+  const durationNumber = Number(duration)
+
+  if (durationNumber === 0 || durationNumber) {
+    return `${durationNumber} day${durationNumber === 1 ? '' : 's'}`
+  }
+
+  return 'None supplied'
+}
+
 export {
   dashboardTableRows,
   firstPageOfApplicationJourney,
@@ -219,5 +305,7 @@ export {
   getStatus,
   isInapplicable,
   mapTimelineEventsForUi,
+  mapPlacementApplicationToSummaryCards,
+  lengthOfStayForUI,
   statusTags,
 }

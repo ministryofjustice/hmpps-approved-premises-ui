@@ -4,7 +4,7 @@ import type { PlacementType } from '@approved-premises/api'
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
 
-const reasons: Record<PlacementType, string> = {
+export const reasons: Record<PlacementType, string> = {
   release_following_decision: 'Release directed following parole board or other hearing/decision',
   rotl: 'Release on Temporary Licence (ROTL)',
   additional_placement: 'An additional placement on an existing application',

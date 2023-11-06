@@ -72,7 +72,11 @@ export const durationAndArrivalDateFromPlacementApplication = (
         duration: placementDurationFromApplication(application),
       }
     }
+
     default:
-      throw new Error(`Unknown reason for placement: ${reasonForPlacement}`)
+      return {
+        expectedArrival: '',
+        duration: '',
+      }
   }
 }
