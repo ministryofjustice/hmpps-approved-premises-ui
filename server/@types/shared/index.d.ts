@@ -131,6 +131,7 @@ export type { NewReferralHistoryUserNote } from './models/NewReferralHistoryUser
 export type { NewRoom } from './models/NewRoom';
 export type { NewTurnaround } from './models/NewTurnaround';
 export type { NewWithdrawal } from './models/NewWithdrawal';
+export type { NomisUser } from './models/NomisUser';
 export type { Nonarrival } from './models/Nonarrival';
 export type { NonArrivalReason } from './models/NonArrivalReason';
 export type { OASysAssessmentId } from './models/OASysAssessmentId';
