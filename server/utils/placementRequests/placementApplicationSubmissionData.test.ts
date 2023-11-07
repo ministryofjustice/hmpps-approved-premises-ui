@@ -6,7 +6,10 @@ import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../testutils/addToApplication'
 import { applicationFactory, placementApplicationFactory } from '../../testutils/factories'
 import { placementDurationFromApplication } from '../assessments/placementDurationFromApplication'
-import { mapPlacementDateForSubmission, placementApplicationSubmissionData } from './placementApplicationSubmissionData'
+import {
+  durationAndArrivalDateFromPlacementApplication,
+  placementApplicationSubmissionData,
+} from './placementApplicationSubmissionData'
 
 jest.mock('../../form-pages/utils')
 jest.mock('../../utils/assessments/placementDurationFromApplication')
@@ -48,7 +51,7 @@ describe('placementApplicationSubmissionData', () => {
   })
 })
 
-describe('mapPlacementDateForSubmission', () => {
+describe('durationAndArrivalDateFromPlacementApplication', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -70,7 +73,9 @@ describe('mapPlacementDateForSubmission', () => {
       duration: '1',
     })
 
-    expect(mapPlacementDateForSubmission(placementApplication, 'rotl', applicationFactory.build())).toEqual({
+    expect(
+      durationAndArrivalDateFromPlacementApplication(placementApplication, 'rotl', applicationFactory.build()),
+    ).toEqual({
       expectedArrival: '2023-01-01',
       duration: 1,
     })
@@ -88,7 +93,11 @@ describe('mapPlacementDateForSubmission', () => {
     })
 
     expect(
-      mapPlacementDateForSubmission(placementApplication, 'additional_placement', applicationFactory.build()),
+      durationAndArrivalDateFromPlacementApplication(
+        placementApplication,
+        'additional_placement',
+        applicationFactory.build(),
+      ),
     ).toEqual({
       expectedArrival: '2023-01-01',
       duration: 1,
@@ -108,7 +117,11 @@ describe('mapPlacementDateForSubmission', () => {
     ;(placementDurationFromApplication as jest.Mock).mockReturnValue('1')
 
     expect(
-      mapPlacementDateForSubmission(placementApplication, 'release_following_decision', applicationFactory.build()),
+      durationAndArrivalDateFromPlacementApplication(
+        placementApplication,
+        'release_following_decision',
+        applicationFactory.build(),
+      ),
     ).toEqual({
       duration: '1',
       expectedArrival: '2023-02-12',

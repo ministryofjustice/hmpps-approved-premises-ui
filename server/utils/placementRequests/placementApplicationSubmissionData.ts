@@ -26,11 +26,13 @@ export const placementApplicationSubmissionData = (
     translatedDocument: placementApplication.document,
     placementType: reasonForPlacement,
     // At a later date we want to support multiple placement dates, but for now we will hard code the first one
-    placementDates: [mapPlacementDateForSubmission(placementApplication, reasonForPlacement, application)],
+    placementDates: [
+      durationAndArrivalDateFromPlacementApplication(placementApplication, reasonForPlacement, application),
+    ],
   }
 }
 
-export const mapPlacementDateForSubmission = (
+export const durationAndArrivalDateFromPlacementApplication = (
   placementApplication: PlacementApplication,
   reasonForPlacement: PlacementType,
   application: Application,
