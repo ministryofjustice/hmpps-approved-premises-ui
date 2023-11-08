@@ -91,6 +91,10 @@ export default class ShowPage extends Page {
     })
   }
 
+  verifyOnTimelineTab() {
+    cy.get('a').contains('Request a placement').should('contain', '[aria-page="current"]')
+  }
+
   shouldShowTimeline(timelineEvents: Array<TimelineEvent>) {
     const sortedTimelineEvents = timelineEvents.sort((a, b) => {
       return new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()
@@ -134,5 +138,9 @@ export default class ShowPage extends Page {
           })
       },
     )
+  }
+
+  showsWithdrawalConfirmationMessage() {
+    this.shouldShowBanner('Placement application withdrawn')
   }
 }

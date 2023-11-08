@@ -21,5 +21,9 @@ export default {
       submission: placementApplicationPath.path('submission'),
       confirm: placementApplicationPath.path('confirm'),
     },
+    withdraw: {
+      new: placementApplicationPath.path('withdrawals/new'),
+      create: placementApplicationPath.path('withdrawals/create'),
+    },
   },
 }

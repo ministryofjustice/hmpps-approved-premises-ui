@@ -240,7 +240,9 @@ const mapPlacementApplicationToSummaryCards = (
 
     if (placementApplication?.canBeWithdrawn) {
       actionItems.push({
-        href: '',
+        href: placementApplicationPaths.placementApplications.withdraw.new({
+          id: placementApplications[0].id,
+        }),
         text: 'Withdraw',
       })
     }
@@ -255,12 +257,7 @@ const mapPlacementApplicationToSummaryCards = (
           'data-cy-placement-application-id': placementApplication.id,
         },
         actions: {
-          items: [
-            {
-              href: '',
-              text: 'Withdraw',
-            },
-          ],
+          items: actionItems,
         },
       },
       rows: [

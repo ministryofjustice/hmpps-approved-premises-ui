@@ -162,6 +162,7 @@ export default {
     show: placementApplicationPath,
     submit: placementApplicationPath.path('submission'),
     submitDecision: placementApplicationPath.path('decision'),
+    withdraw: placementApplicationPath.path('withdraw'),
   },
   people: {
     risks: {

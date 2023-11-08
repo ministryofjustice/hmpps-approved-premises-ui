@@ -53,4 +53,10 @@ export default class PlacementApplicationClient {
       data: decision,
     })) as Promise<PlacementApplication>
   }
+
+  async withdraw(placementApplicationId: string): Promise<PlacementApplication> {
+    return (await this.restClient.post({
+      path: paths.placementApplications.withdraw({ id: placementApplicationId }),
+    })) as Promise<PlacementApplication>
+  }
 }

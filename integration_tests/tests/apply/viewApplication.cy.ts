@@ -1,9 +1,10 @@
 import { faker } from '@faker-js/faker/locale/en_GB'
 
 import { ListPage, ShowPage } from '../../pages/apply'
+import ConfirmationPage from '../../pages/match/placementApplicationWithdrawalConfirmationPage'
 import Page from '../../pages/page'
 import { setup } from './setup'
-import { timelineEventFactory, userFactory } from '../../../server/testutils/factories'
+import { timelineEventFactory } from '../../../server/testutils/factories'
 import placementApplication from '../../../server/testutils/factories/placementApplication'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
@@ -113,15 +114,33 @@ context('show applications', () => {
       applicationId: application.id,
       placementApplications,
     })
+    placementApplications.forEach(pa => {
+      cy.task('stubPlacementApplication', pa)
+      cy.task('stubSubmitPlacementApplicationWithdraw', pa)
+    })
+
     // Given I visit the application page
     ShowPage.visit(application)
     const showPage = Page.verifyOnPage(ShowPage, application)
 
     // When I click the 'Request a placement' tab
     showPage.clickRequestAPlacementTab()
-    cy.screenshot('after-1')
+
     // Then I should see the placement requests
     showPage.shouldShowPlacementApplications(placementApplications, application)
+
+    // Given I want to withdraw a placement application
+    // When I click 'withdraw'
+    showPage.clickWithdraw(placementApplications[0].id)
+
+    // Then I should see the confirmation page
+    const confirmationPage = Page.verifyOnPage(ConfirmationPage, application)
+
+    // And be able to confirm withdrawal
+    confirmationPage.clickConfirm()
+
+    // And I should see the confirmation message
+    showPage.showsWithdrawalConfirmationMessage()
   })
 })
 

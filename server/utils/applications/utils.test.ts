@@ -12,6 +12,7 @@ import {
   timelineEventFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/apply'
+import placementApplicationPaths from '../../paths/placementApplications'
 import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
 import PlacementRequest from '../../form-pages/placement-application'
@@ -37,7 +38,6 @@ import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { RestrictedPersonError } from '../errors'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
-import placementApplication from '../../testutils/factories/placementApplication'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -573,7 +573,9 @@ describe('utils', () => {
             actions: {
               items: [
                 {
-                  href: '',
+                  href: placementApplicationPaths.placementApplications.withdraw.new({
+                    id: placementApplications[0].id,
+                  }),
                   text: 'Withdraw',
                 },
               ],
@@ -607,7 +609,7 @@ describe('utils', () => {
       ])
     })
 
-    it('returns a placement application mapped to SummaryCard including an action when the placement application can be withdrawn', () => {
+    it('returns a placement application mapped to SummaryCard including an action when the placement application cannot be withdrawn', () => {
       ;(
         retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFunction<
           typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
