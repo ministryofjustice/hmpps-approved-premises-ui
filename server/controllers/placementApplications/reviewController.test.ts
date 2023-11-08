@@ -73,7 +73,7 @@ describe('reviewController', () => {
       expect(response.render).toHaveBeenCalledWith('placement-applications/pages/review/review', {
         pageProps: {
           pageHeading: 'Review information',
-          backLink: `${matchPaths.placementRequests.index}#placement-applications`,
+          backLink: `${matchPaths.placementRequests.index({})}#placement-applications`,
         },
         placementApplication,
         errors: {},
@@ -122,7 +122,7 @@ describe('reviewController', () => {
       expect(response.render).toHaveBeenCalledWith('placement-applications/pages/review/review', {
         pageProps: {
           pageHeading: 'Review information',
-          backLink: `${matchPaths.placementRequests.index}#placement-applications`,
+          backLink: `${matchPaths.placementRequests.index({})}#placement-applications`,
         },
         placementApplication,
         errors: errorsAndUserInput.errors,

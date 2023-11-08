@@ -28,7 +28,10 @@ export default class ReviewController {
 
       const pageProps =
         step === 'review'
-          ? { pageHeading: 'Review information', backLink: `${paths.placementRequests.index}#placement-applications` }
+          ? {
+              pageHeading: 'Review information',
+              backLink: `${paths.placementRequests.index({})}#placement-applications`,
+            }
           : {
               pageHeading: 'Make a decision',
               backLink: placementApplicationPaths.placementApplications.show({ id: review.applicationId }),
