@@ -29,6 +29,7 @@ import {
   isInapplicable,
   mapTimelineEventsForUi,
   statusTags,
+  unwithdrawableApplicationStatuses,
 } from './utils'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { RestrictedPersonError } from '../errors'
@@ -462,17 +463,28 @@ describe('utils', () => {
   })
 
   describe('createWithdrawElement', () => {
-    it('returns a link to withdraw the application if the application doesnt have a submittedAt property', () => {
-      const applicationSummary = applicationSummaryFactory.build({ submittedAt: undefined })
-      expect(createWithdrawElement('1', applicationSummary)).toEqual({
-        html: '<a href="/applications/1/withdrawals/new">Withdraw</a>',
-      })
-    })
+    const withdrawalableApplicationStatues: Array<ApplicationStatus> = [
+      'awaitingPlacement',
+      'inProgress',
+      'pending',
+      'requestedFurtherInformation',
+      'submitted',
+    ]
 
-    it('returns an empty string if the application has a submittedAt property', () => {
-      const applicationSummary = applicationSummaryFactory.build()
+    it.each(withdrawalableApplicationStatues)(
+      'returns a link to withdraw the application if the application status is %s',
+      status => {
+        const applicationSummary = applicationSummaryFactory.build({ status })
+        expect(createWithdrawElement('id', applicationSummary)).toEqual({
+          html: '<a href="/applications/id/withdrawals/new">Withdraw</a>',
+        })
+      },
+    )
 
-      expect(createWithdrawElement('1', applicationSummary)).toEqual({
+    it.each(unwithdrawableApplicationStatuses)('returns an empty string if the application status is %s', status => {
+      const applicationSummary = applicationSummaryFactory.build({ status })
+
+      expect(createWithdrawElement('id', applicationSummary)).toEqual({
         text: '',
       })
     })

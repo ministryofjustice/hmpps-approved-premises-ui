@@ -81,11 +81,17 @@ const createNameAnchorElement = (person: Person, applicationId: string) => {
     : textValue(`LAO CRN: ${person.crn}`)
 }
 
-export const createWithdrawElement = (applicationId: string, application: ApplicationSummary) => {
-  if (!application?.submittedAt)
-    return htmlValue(`<a href="${paths.applications.withdraw.new({ id: applicationId })}">Withdraw</a>`)
+export const unwithdrawableApplicationStatuses: Array<ApplicationStatus> = [
+  'placed',
+  'inapplicable',
+  'withdrawn',
+  'rejected',
+]
 
-  return textValue('')
+export const createWithdrawElement = (applicationId: string, application: ApplicationSummary) => {
+  if (unwithdrawableApplicationStatuses.includes(application.status)) return textValue('')
+
+  return htmlValue(`<a href="${paths.applications.withdraw.new({ id: applicationId })}">Withdraw</a>`)
 }
 
 export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>
