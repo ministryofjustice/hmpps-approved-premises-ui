@@ -201,18 +201,7 @@ export default abstract class Page {
 
   shouldBeAbleToDownloadDocuments(documents: Array<Document>) {
     documents.forEach(document => {
-      // This is a hack to stop `cy.click()` from waiting for a page load
-      // See: https://github.com/cypress-io/cypress/issues/14857
-      cy.window()
-        .document()
-        .then(doc => {
-          doc.addEventListener('click', () => {
-            setTimeout(() => {
-              doc.location.reload()
-            }, 300)
-          })
-          cy.get(`a[data-cy-documentId="${document.id}"]`).click()
-        })
+      cy.get(`a[data-cy-documentId="${document.id}"]`).click()
 
       const downloadsFolder = Cypress.config('downloadsFolder')
       const downloadedFilename = `${downloadsFolder}/${document.fileName}`
