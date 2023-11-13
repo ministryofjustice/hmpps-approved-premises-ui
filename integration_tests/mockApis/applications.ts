@@ -2,6 +2,7 @@ import { SuperAgentRequest } from 'superagent'
 
 import type {
   ApplicationSortField,
+  ApplicationTimelineNote,
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationSummary,
   ApprovedPremisesAssessment,
@@ -218,6 +219,21 @@ export default {
         jsonBody: args.placementApplications,
       },
     }),
+  stubApplicationNote: (args: {
+    applicationId: ApprovedPremisesApplication['id']
+    note: ApplicationTimelineNote
+  }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: paths.applications.addNote({ id: args.applicationId }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.note,
+      },
+    }),
 
   verifyApplicationWithdrawn: async (args: { applicationId: string }) =>
     (
@@ -245,6 +261,13 @@ export default {
       await getMatchingRequests({
         method: 'POST',
         url: `/applications/${applicationId}/submission`,
+      })
+    ).body.requests,
+  verifyApplicationNoteAdded: async (args: { id: string }) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.applications.addNote({ id: args.id }),
       })
     ).body.requests,
 }

@@ -1,0 +1,28 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <form action="{{ paths.applications.notes.create({ id: applicationId }) }}" method="post">
+
+                <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                <input type="hidden" name="note" value="{{ note }}"/>
+
+                {{govukInsetText({
+                    text: note
+                })}}
+
+                {{ govukButton({
+                        name: 'submit',
+                        text: "Confirm"
+                 }) }}
+            </div>
+        </div>
+    {% endblock %}

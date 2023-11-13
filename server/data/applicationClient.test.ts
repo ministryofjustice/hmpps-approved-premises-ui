@@ -6,6 +6,7 @@ import {
   applicationSummaryFactory,
   assessmentFactory,
   documentFactory,
+  noteFactory,
   placementApplicationFactory,
   timelineEventFactory,
 } from '../testutils/factories'
@@ -426,6 +427,33 @@ describeClient('ApplicationClient', provider => {
       })
 
       await applicationClient.placementApplications(applicationId)
+    })
+  })
+
+  describe('addNote', () => {
+    it('calls the notes endpoint with the note', async () => {
+      const applicationId = 'applicationId'
+      const note = noteFactory.build({ id: undefined })
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for to add a note to an application',
+        withRequest: {
+          method: 'POST',
+          path: paths.applications.addNote({ id: applicationId }),
+          body: note,
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: { ...note, id: 'some-uuid' },
+        },
+      })
+
+      await applicationClient.addNote(applicationId, note)
     })
   })
 })

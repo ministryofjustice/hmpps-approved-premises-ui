@@ -1,5 +1,6 @@
 import type {
   ApprovedPremisesApplication as Application,
+  ApplicationTimelineNote,
   FullPerson,
   PlacementApplication,
   TimelineEvent,
@@ -26,11 +27,20 @@ export default class ShowPage extends Page {
   static visit(application: Application, tab?: ApplicationShowPageTab) {
     const path = `/applications/${application.id}`
     if (tab) {
-      cy.visit(`${path}?${applicationShowPageTab(tab)}`)
+      cy.visit(applicationShowPageTab(application.id, tab))
     } else {
       cy.visit(path)
     }
+
     return new ShowPage(application)
+  }
+
+  enterNote(note: ApplicationTimelineNote) {
+    cy.get('textarea[name="note"]').type(note.note)
+  }
+
+  clickAddNote() {
+    cy.get('button').contains('Add note').click()
   }
 
   shouldNotShowCreatePlacementButton() {
@@ -157,5 +167,9 @@ export default class ShowPage extends Page {
 
   showsWithdrawalConfirmationMessage() {
     this.shouldShowBanner('Placement application withdrawn')
+  }
+
+  showsNoteAddedConfirmationMessage() {
+    this.shouldShowBanner('Note added')
   }
 }

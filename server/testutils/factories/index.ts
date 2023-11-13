@@ -50,6 +50,7 @@ import {
   newPlacementRequestBookingFactory,
 } from './newPlacementRequestBooking'
 import nonArrivalFactory from './nonArrival'
+import noteFactory from './noteFactory'
 import oasysSectionsFactory, { roshSummaryFactory } from './oasysSections'
 import oasysSelectionFactory from './oasysSelection'
 import paginatedResponseFactory from './paginatedResponse'
@@ -126,6 +127,7 @@ export {
   newLostBedFactory,
   newNonArrivalFactory,
   nonArrivalFactory,
+  noteFactory,
   oasysSectionsFactory,
   oasysSelectionFactory,
   paginatedResponseFactory,

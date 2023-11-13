@@ -23,6 +23,7 @@ import {
   applicationSummaryFactory,
   assessmentFactory,
   documentFactory,
+  noteFactory,
   paginatedResponseFactory,
   placementApplicationFactory,
 } from '../testutils/factories'
@@ -436,6 +437,25 @@ describe('ApplicationService', () => {
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.placementApplications).toHaveBeenCalledWith(id)
+    })
+  })
+
+  describe('addNote', () => {
+    it('calls the client with the id, token and note and returns the result', async () => {
+      const token = 'some-token'
+      const applicationId = 'some-uuid'
+      const noteId = 'note-id'
+      const newNote = noteFactory.build({ id: undefined })
+      const noteWithId = { ...newNote, id: noteId }
+
+      applicationClient.addNote.mockResolvedValue(noteWithId)
+
+      const result = await service.addNote(token, applicationId, newNote)
+
+      expect(result).toEqual(noteWithId)
+
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.addNote).toHaveBeenCalledWith(applicationId, newNote)
     })
   })
 })

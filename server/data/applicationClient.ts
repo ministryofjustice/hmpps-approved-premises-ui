@@ -3,6 +3,7 @@ import type {
   ApprovedPremisesApplication as Application,
   ApplicationSortField,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
+  ApplicationTimelineNote,
   ApprovedPremisesApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
   Document,
@@ -101,5 +102,12 @@ export default class ApplicationClient {
     return (await this.restClient.get({
       path: paths.applications.placementApplications({ id: applicationId }),
     })) as Array<PlacementApplication>
+  }
+
+  async addNote(applicationId: string, note: ApplicationTimelineNote): Promise<ApplicationTimelineNote> {
+    return (await this.restClient.post({
+      path: paths.applications.addNote({ id: applicationId }),
+      data: note,
+    })) as ApplicationTimelineNote
   }
 }

@@ -2,8 +2,9 @@ import type { Request } from 'express'
 import type { DataServices, GroupedApplications, PaginatedResponse } from '@approved-premises/ui'
 import type {
   ActiveOffence,
+  ApprovedPremisesApplication as Application,
   ApplicationSortField,
-  ApprovedPremisesApplication,
+  ApplicationTimelineNote,
   ApprovedPremisesApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
   Document,
@@ -23,11 +24,7 @@ import Review from '../form-pages/apply/check-your-answers/review'
 export default class ApplicationService {
   constructor(private readonly applicationClientFactory: RestClientBuilder<ApplicationClient>) {}
 
-  async createApplication(
-    token: string,
-    crn: string,
-    activeOffence: ActiveOffence,
-  ): Promise<ApprovedPremisesApplication> {
+  async createApplication(token: string, crn: string, activeOffence: ActiveOffence): Promise<Application> {
     const applicationClient = this.applicationClientFactory(token)
 
     const application = await applicationClient.create(crn, activeOffence)
@@ -35,7 +32,7 @@ export default class ApplicationService {
     return application
   }
 
-  async findApplication(token: string, id: string): Promise<ApprovedPremisesApplication> {
+  async findApplication(token: string, id: string): Promise<Application> {
     const applicationClient = this.applicationClientFactory(token)
 
     const application = await applicationClient.find(id)
@@ -82,7 +79,7 @@ export default class ApplicationService {
     return result
   }
 
-  async getDocuments(token: string, application: ApprovedPremisesApplication): Promise<Array<Document>> {
+  async getDocuments(token: string, application: Application): Promise<Array<Document>> {
     const applicationClient = this.applicationClientFactory(token)
 
     const documents = await applicationClient.documents(application)
@@ -121,13 +118,13 @@ export default class ApplicationService {
     }
   }
 
-  async submit(token: string, application: ApprovedPremisesApplication) {
+  async submit(token: string, application: Application) {
     const client = this.applicationClientFactory(token)
 
     await client.submit(application.id, getApplicationSubmissionData(application))
   }
 
-  async getApplicationFromSessionOrAPI(request: Request): Promise<ApprovedPremisesApplication> {
+  async getApplicationFromSessionOrAPI(request: Request): Promise<Application> {
     const { application } = request.session
 
     if (application && application.id === request.params.id) {
@@ -163,5 +160,13 @@ export default class ApplicationService {
     const placementApplications = await client.placementApplications(applicationId)
 
     return placementApplications
+  }
+
+  async addNote(token: Request['user']['token'], applicationId: Application['id'], note: ApplicationTimelineNote) {
+    const client = this.applicationClientFactory(token)
+
+    const addedNote = await client.addNote(applicationId, note)
+
+    return addedNote
   }
 }

@@ -32,6 +32,10 @@ const paths = {
       show: pagesPath,
       update: pagesPath,
     },
+    notes: {
+      new: applicationPath.path('notes/new'),
+      create: applicationPath.path('notes/create'),
+    },
   },
 }
 

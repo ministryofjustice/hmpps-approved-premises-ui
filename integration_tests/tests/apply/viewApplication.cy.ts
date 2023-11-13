@@ -1,14 +1,14 @@
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import { ListPage, ShowPage } from '../../pages/apply'
-import ConfirmationPage from '../../pages/match/placementApplicationWithdrawalConfirmationPage'
+import { ListPage, NotesConfirmationPage, ShowPage } from '../../pages/apply'
 import Page from '../../pages/page'
 import { setup } from './setup'
-import { timelineEventFactory } from '../../../server/testutils/factories'
+import { noteFactory, timelineEventFactory } from '../../../server/testutils/factories'
 import placementApplication from '../../../server/testutils/factories/placementApplication'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import { ApprovedPremisesApplication as Application, User } from '../../../server/@types/shared'
 import { defaultUserId } from '../../mockApis/auth'
+import PlacementApplicationWithdrawalConfirmationPage from '../../pages/match/placementApplicationWithdrawalConfirmationPage'
 
 context('show applications', () => {
   beforeEach(setup)
@@ -137,13 +137,65 @@ context('show applications', () => {
     showPage.clickWithdraw(placementApplications[0].id)
 
     // Then I should see the confirmation page
-    const confirmationPage = Page.verifyOnPage(ConfirmationPage, application)
+    const confirmationPage = Page.verifyOnPage(PlacementApplicationWithdrawalConfirmationPage, application)
 
     // And be able to confirm withdrawal
     confirmationPage.clickConfirm()
 
     // And I should see the confirmation message
     showPage.showsWithdrawalConfirmationMessage()
+  })
+
+  it('should allow me to add a note to an application', function test() {
+    const application = {
+      ...this.application,
+      status: 'submitted',
+    }
+
+    const timeline = timelineEventFactory.buildList(10)
+    const note = noteFactory.build()
+    cy.task('stubApplicationGet', { application })
+    cy.task('stubApplications', [application])
+    cy.task('stubApplicationTimeline', { applicationId: application.id, timeline })
+    cy.task('stubApplicationNote', { applicationId: application.id, note })
+
+    // Given I am on the timeline page of the application view
+    const showPage = ShowPage.visit(application, 'timeline')
+
+    // When I enter a note into the text box
+    showPage.enterNote(note)
+    showPage.clickAddNote()
+
+    const noteAsTimelineEvent = timelineEventFactory.build({
+      content: note.note,
+      createdBy: note.createdByUserId,
+      id: 'some-id',
+      occurredAt: note.createdAt,
+      type: 'application_timeline_note',
+    })
+
+    const updatedTimeline = [...timeline, noteAsTimelineEvent]
+    cy.task('stubApplicationTimeline', { applicationId: application.id, timeline: updatedTimeline })
+
+    // Then I should see a confirmation page
+    const confirmationPage = Page.verifyOnPage(NotesConfirmationPage, application)
+
+    confirmationPage.shouldShowNote(note)
+
+    // When I click 'Confirm'
+    confirmationPage.clickConfirm()
+
+    // Then I should see a flash confirming the note has been added
+    showPage.showsNoteAddedConfirmationMessage()
+    // And the API should have been called with the new note
+    cy.task('verifyApplicationNoteAdded', { id: application.id }).then(requests => {
+      expect(requests).to.have.length(1)
+
+      expect(requests[0].url).to.equal(paths.applications.addNote({ id: application.id }))
+
+      const body = JSON.parse(requests[0].body)
+      expect(body).to.have.keys('createdByUserId', 'note')
+    })
   })
 })
 
