@@ -21,7 +21,7 @@ import {
   convertObjectsToSelectOptions,
   dateFieldValues,
 } from './formUtils'
-import { dashboardTableRows, mapTimelineEventsForUi } from './applications/utils'
+import { mapTimelineEventsForUi } from './applications/utils'
 import { navigationItems } from './navigationItems'
 
 import { statusTag } from './personUtils'
@@ -29,6 +29,7 @@ import { DateFormats, monthOptions, uiDateOrDateEmptyMessage, yearOptions } from
 import { pagination } from './pagination'
 import { sortHeader } from './sortHeader'
 
+import * as ApplyUtils from './applications/utils'
 import * as AssessmentUtils from './assessments/utils'
 import * as OASysUtils from './assessments/oasysUtils'
 import * as OffenceUtils from './offenceUtils'
@@ -197,7 +198,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addFilter('kebabCase', kebabCase)
 
   njkEnv.addGlobal('numberToOrdinal', numberToOrdinal)
-  njkEnv.addGlobal('dashboardTableRows', dashboardTableRows)
   njkEnv.addGlobal('mapTimelineEventsForUi', mapTimelineEventsForUi)
   njkEnv.addGlobal('navigationItems', navigationItems)
   njkEnv.addGlobal('withdrawalRadioOptions', withdrawalRadioOptions)
@@ -206,6 +206,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('monthOptions', monthOptions)
   njkEnv.addGlobal('yearOptions', yearOptions)
 
+  njkEnv.addGlobal('ApplyUtils', ApplyUtils)
   njkEnv.addGlobal('AssessmentUtils', AssessmentUtils)
   njkEnv.addGlobal('OASysUtils', OASysUtils)
   njkEnv.addGlobal('OffenceUtils', OffenceUtils)
