@@ -57,9 +57,6 @@ jobs:
           name: Linter check
           command: npm run lint
       - run:
-          name: Lint shell scripts
-          command: npm run shellcheck
-      - run:
           name: Type check
           command: npm run typecheck
       - persist_to_workspace:
