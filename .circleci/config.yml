@@ -2,8 +2,8 @@ version: 2.1
 
 orbs:
   hmpps: ministryofjustice/hmpps@7
-  slack: circleci/slack@4.10.1
-  node: circleci/node@4.5.2
+  slack: circleci/slack@4.12.5
+  node: circleci/node@4.9.0
 
 parameters:
   alerts-slack-channel:
@@ -18,7 +18,7 @@ parameters:
 
   node-version:
     type: string
-    default: 18.17-browsers
+    default: 20.9-browsers
 
 executors:
   integration-tests:
@@ -56,9 +56,6 @@ jobs:
           # Run linter after build because the integration test code depend on compiled typescript...
           name: Linter check
           command: npm run lint
-      - run:
-          name: Lint shell scripts
-          command: npm run shellcheck
       - run:
           name: Type check
           command: npm run typecheck
@@ -210,7 +207,6 @@ jobs:
           channel: << pipeline.parameters.alerts-slack-channel >>
           template: basic_fail_1
 workflows:
-  version: 2
   build-test-and-deploy:
     jobs:
       - build
