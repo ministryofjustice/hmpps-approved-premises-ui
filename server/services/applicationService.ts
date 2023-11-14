@@ -1,8 +1,9 @@
 import type { Request } from 'express'
-import type { DataServices, GroupedApplications } from '@approved-premises/ui'
+import type { DataServices, GroupedApplications, PaginatedResponse } from '@approved-premises/ui'
 import type {
   ActiveOffence,
   ApprovedPremisesApplication,
+  ApprovedPremisesApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
   Document,
   NewWithdrawal,
@@ -38,6 +39,12 @@ export default class ApplicationService {
     const application = await applicationClient.find(id)
 
     return application
+  }
+
+  async dashboard(token: string, page: number = 1): Promise<PaginatedResponse<ApprovedPremisesApplicationSummary>> {
+    const applicationClient = this.applicationClientFactory(token)
+
+    return applicationClient.dashboard(page)
   }
 
   async getAllForLoggedInUser(token: string): Promise<GroupedApplications> {

@@ -168,7 +168,7 @@ describeClient('ApplicationClient', provider => {
 
       provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request for all applications',
+        uponReceiving: 'A request for all applications for a user',
         withRequest: {
           method: 'GET',
           path: paths.applications.index.pattern,
@@ -185,6 +185,82 @@ describeClient('ApplicationClient', provider => {
       const result = await applicationClient.all()
 
       expect(result).toEqual(previousApplications)
+    })
+  })
+
+  describe('dashboard', () => {
+    it('should get all previous applications', async () => {
+      const allApplications = applicationSummaryFactory.buildList(5)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for all applications',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.all.pattern,
+          query: { page: '1' },
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: allApplications,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const result = await applicationClient.dashboard()
+
+      expect(result).toEqual({
+        data: allApplications,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
+
+    it('should pass a page number', async () => {
+      const allApplications = applicationSummaryFactory.buildList(5)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for all applications',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.all.pattern,
+          query: { page: '2' },
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: allApplications,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const result = await applicationClient.dashboard(2)
+
+      expect(result).toEqual({
+        data: allApplications,
+        pageNumber: '2',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
   })
 

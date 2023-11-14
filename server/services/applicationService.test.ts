@@ -1,6 +1,6 @@
 import type { Request } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
-import type { DataServices, TaskListErrors } from '@approved-premises/ui'
+import type { DataServices, PaginatedResponse, TaskListErrors } from '@approved-premises/ui'
 import type {
   ApplicationStatus,
   ApprovedPremisesApplicationSummary,
@@ -23,6 +23,7 @@ import {
   applicationSummaryFactory,
   assessmentFactory,
   documentFactory,
+  paginatedResponseFactory,
   placementApplicationFactory,
 } from '../testutils/factories'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
@@ -361,6 +362,36 @@ describe('ApplicationService', () => {
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.assessment).toHaveBeenCalledWith(id)
+    })
+  })
+
+  describe('dashboard', () => {
+    const token = 'some-token'
+    const applications = applicationSummaryFactory.buildList(5)
+    const paginatedResponse = paginatedResponseFactory.build({
+      data: applications,
+    }) as PaginatedResponse<ApprovedPremisesApplicationSummary>
+
+    beforeEach(() => {
+      applicationClient.dashboard.mockResolvedValue(paginatedResponse)
+    })
+
+    it('calls the dashboard client method', async () => {
+      const result = await service.dashboard(token)
+
+      expect(result).toEqual(paginatedResponse)
+
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.dashboard).toHaveBeenCalledWith(1)
+    })
+
+    it('passes a page number', async () => {
+      const result = await service.dashboard(token, 2)
+
+      expect(result).toEqual(paginatedResponse)
+
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.dashboard).toHaveBeenCalledWith(2)
     })
   })
 
