@@ -40,7 +40,7 @@ import ReasonForPlacement, {
 } from '../../form-pages/placement-application/request-a-placement/reasonForPlacement'
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
 
-const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
+const applicationTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => {
     const tier = application.risks?.tier?.value?.level
 
@@ -295,7 +295,7 @@ const lengthOfStayForUI = (duration: string) => {
 }
 
 export {
-  dashboardTableRows,
+  applicationTableRows,
   firstPageOfApplicationJourney,
   arrivalDateFromApplication,
   getApplicationType,

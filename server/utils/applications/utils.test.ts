@@ -20,8 +20,8 @@ import { DateFormats } from '../dateUtils'
 import { isApplicableTier, isFullPerson, tierBadge } from '../personUtils'
 
 import {
+  applicationTableRows,
   createWithdrawElement,
-  dashboardTableRows,
   eventTypeTranslations,
   firstPageOfApplicationJourney,
   getApplicationType,
@@ -163,7 +163,7 @@ describe('utils', () => {
   beforeEach(() => {
     jest.resetAllMocks()
   })
-  describe('dashboardTableRows', () => {
+  describe('applicationTableRows', () => {
     it('returns an array of applications as table rows', async () => {
       ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')
       ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
@@ -182,7 +182,7 @@ describe('utils', () => {
         risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
       })
 
-      const result = dashboardTableRows([applicationA, applicationB])
+      const result = applicationTableRows([applicationA, applicationB])
 
       expect(tierBadge).toHaveBeenCalledWith('A1')
 
@@ -231,7 +231,7 @@ describe('utils', () => {
     })
   })
 
-  describe('dashboardTableRows when tier is undefined', () => {
+  describe('applicationTableRows when tier is undefined', () => {
     it('returns a blank tier badge', async () => {
       ;(tierBadge as jest.Mock).mockClear()
       ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
@@ -245,7 +245,7 @@ describe('utils', () => {
         status: 'inProgress',
       })
 
-      const result = dashboardTableRows([application])
+      const result = applicationTableRows([application])
 
       expect(tierBadge).not.toHaveBeenCalled()
 
@@ -274,7 +274,7 @@ describe('utils', () => {
     })
   })
 
-  describe('dashboardTableRows when risks is undefined', () => {
+  describe('applicationTableRows when risks is undefined', () => {
     it('returns a blank tier badge', async () => {
       ;(tierBadge as jest.Mock).mockClear()
       ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
@@ -288,7 +288,7 @@ describe('utils', () => {
         risks: undefined,
       })
 
-      const result = dashboardTableRows([application])
+      const result = applicationTableRows([application])
 
       expect(tierBadge).not.toHaveBeenCalled()
 
