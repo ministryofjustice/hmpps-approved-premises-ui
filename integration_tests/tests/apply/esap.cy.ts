@@ -15,21 +15,21 @@ context('Apply - ESAP', () => {
     const apply = new ApplyHelper(this.application, this.person, this.offences)
 
     this.application = addResponseToFormArtifact(this.application, {
-      section: 'type-of-ap',
+      task: 'type-of-ap',
       page: 'ap-type',
       key: 'type',
       value: 'esap',
     })
 
     this.application = addResponseToFormArtifact(this.application, {
-      section: 'type-of-ap',
+      task: 'type-of-ap',
       page: 'managed-by-national-security-division',
       key: 'managedByNationalSecurityDivision',
       value: 'no',
     })
 
     this.application = addResponsesToFormArtifact(this.application, {
-      section: 'type-of-ap',
+      task: 'type-of-ap',
       page: 'esap-exceptional-case',
       keyValuePairs: {
         ...DateFormats.isoDateToDateInputs('2023-07-01', 'agreementDate'),
@@ -40,7 +40,7 @@ context('Apply - ESAP', () => {
     })
 
     this.application = addResponsesToFormArtifact(this.application, {
-      section: 'type-of-ap',
+      task: 'type-of-ap',
       page: 'esap-placement-screening',
       keyValuePairs: {
         esapReasons: ['secreting', 'cctv'],
@@ -48,7 +48,7 @@ context('Apply - ESAP', () => {
     })
 
     this.application = addResponsesToFormArtifact(this.application, {
-      section: 'type-of-ap',
+      task: 'type-of-ap',
       page: 'esap-placement-cctv',
       keyValuePairs: {
         cctvHistory: ['appearance', 'networks'],
@@ -59,7 +59,7 @@ context('Apply - ESAP', () => {
     })
 
     this.application = addResponsesToFormArtifact(this.application, {
-      section: 'type-of-ap',
+      task: 'type-of-ap',
       page: 'esap-placement-secreting',
       keyValuePairs: {
         secretingHistory: ['radicalisationLiterature', 'drugs'],
@@ -91,21 +91,21 @@ context('Apply - ESAP', () => {
     const apply = new ApplyHelper(this.application, this.person, this.offences)
 
     this.application = addResponseToFormArtifact(this.application, {
-      section: 'type-of-ap',
+      task: 'type-of-ap',
       page: 'ap-type',
       key: 'type',
       value: 'esap',
     })
 
     this.application = addResponseToFormArtifact(this.application, {
-      section: 'type-of-ap',
+      task: 'type-of-ap',
       page: 'managed-by-national-security-division',
       key: 'managedByNationalSecurityDivision',
       value: 'no',
     })
 
     this.application = addResponsesToFormArtifact(this.application, {
-      section: 'type-of-ap',
+      task: 'type-of-ap',
       page: 'esap-exceptional-case',
       keyValuePairs: {
         agreedCaseWithCommunityHopp: 'no',

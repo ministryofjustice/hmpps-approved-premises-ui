@@ -6,6 +6,8 @@ import { yesOrNoResponseWithDetailForYes } from '../../utils'
 import TasklistPage from '../../tasklistPage'
 import { PlacementApplication } from '../../../@types/shared'
 import { applicationLink } from '../../../utils/placementRequests/applicationLink'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../utils/retrieveQuestionResponseFromFormArtifact'
+import ReasonForPlacement from './reasonForPlacement'
 
 export type Body = YesOrNoWithDetail<'significantEvents'> &
   YesOrNoWithDetail<'changedCirumstances'> &
@@ -48,15 +50,36 @@ export default class UpdatesToApplication implements TasklistPage {
 
   applicationLink: string
 
+  placementApplication: PlacementApplication
+
   constructor(
     public body: Partial<Body>,
     placementApplication: PlacementApplication,
   ) {
     this.applicationLink = applicationLink(placementApplication, 'View application', 'View application')
+    this.placementApplication = placementApplication
   }
 
   previous() {
-    return 'dates-of-placement'
+    const reasonForPlacement = retrieveQuestionResponseFromFormArtifact(
+      this.placementApplication,
+      ReasonForPlacement,
+      'reason',
+    )
+
+    if (reasonForPlacement === 'rotl') {
+      return 'dates-of-placement'
+    }
+
+    if (reasonForPlacement === 'additional_placement') {
+      return 'additional-placement-details'
+    }
+
+    if (reasonForPlacement === 'release_following_decision') {
+      return 'additional-documents'
+    }
+
+    throw new Error('Unknown reason for placement')
   }
 
   next() {

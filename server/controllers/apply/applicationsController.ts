@@ -37,19 +37,34 @@ export default class ApplicationsController {
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
       const application = await this.applicationService.findApplication(req.user.token, req.params.id)
+
       const taskList = new TasklistService(application)
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
       if (application.status !== 'inProgress') {
         const referrer = req.headers.referer
+        const defaultParams = { application, referrer }
 
         if (req.query.tab === 'timeline') {
           const timelineEvents = await this.applicationService.timeline(req.user.token, application.id)
 
-          return res.render('applications/show', { application, timelineEvents, referrer, tab: 'timeline' })
+          return res.render('applications/show', { ...defaultParams, timelineEvents, tab: 'timeline' })
         }
 
-        return res.render('applications/show', { application, referrer, tab: 'application' })
+        if (req.query.tab === 'requestAPlacement') {
+          const placementApplications = await this.applicationService.getPlacementApplications(
+            req.user.token,
+            application.id,
+          )
+
+          return res.render('applications/show', {
+            ...defaultParams,
+            placementApplications,
+            tab: 'requestAPlacement',
+          })
+        }
+
+        return res.render('applications/show', { ...defaultParams, tab: 'application' })
       }
       return res.render('applications/tasklist', { application, taskList, errorSummary, errors })
     }

@@ -134,6 +134,22 @@ export default {
         jsonBody: args.timeline,
       },
     }),
+  stubApplicationPlacementRequests: (args: {
+    applicationId: string
+    placementApplications: Array<TimelineEvent>
+  }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.applications.placementApplications({ id: args.applicationId }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.placementApplications,
+      },
+    }),
+
   verifyApplicationWithdrawn: async (args: { applicationId: string }) =>
     (
       await getMatchingRequests({

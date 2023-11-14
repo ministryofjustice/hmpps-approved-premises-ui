@@ -1,0 +1,39 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+		text: "Back",
+		href: paths.applications.show({ id: applicationId }) + '?tab=requestAPlacement'
+	}) }}
+{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {% include "../../_messages.njk" %}
+
+            <form action="{{ paths.placementApplications.withdraw.create({ id: placementApplicationId }) }}" method="post">
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                <input type="hidden" name="applicationId" value="{{ applicationId }}"/>
+
+                {{ showErrorSummary(errorSummary) }}
+
+                <h1>{{pageHeading}}</h1>
+
+                {{ govukButton({
+                    name: 'submit',
+                    text: "Continue"
+                }) }}
+
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -84,4 +84,10 @@ export default class PlacementApplicationService {
 
     return placementApplicationClient.decisionSubmission(placementApplicationId, decisionEnvelope)
   }
+
+  async withdraw(token: string, placementApplicationId: string) {
+    const placementApplicationClient = this.placementApplicationClientFactory(token)
+
+    return placementApplicationClient.withdraw(placementApplicationId)
+  }
 }

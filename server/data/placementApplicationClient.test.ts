@@ -153,4 +153,30 @@ describeClient('placementApplicationClient', provider => {
       expect(result).toEqual(placementApplication)
     })
   })
+
+  describe('withdraw', () => {
+    it('withdraws a placement application and returns the result', async () => {
+      const placementApplication = placementApplicationFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to withdraw a placement application',
+        withRequest: {
+          method: 'POST',
+          path: paths.placementApplications.withdraw({ id: placementApplication.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placementApplication,
+        },
+      })
+
+      const result = await placementApplicationClient.withdraw(placementApplication.id)
+
+      expect(result).toEqual(placementApplication)
+    })
+  })
 })

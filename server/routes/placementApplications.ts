@@ -14,8 +14,12 @@ export default function routes(controllers: Controllers, router: Router, service
   const { get, put, post } = actions(router, services.auditService)
   const { pages } = Match
 
-  const { placementApplicationPagesController, placementRequestController, placementApplicationReviewController } =
-    controllers
+  const {
+    placementApplicationPagesController,
+    placementRequestController,
+    placementApplicationReviewController,
+    placementApplicationWithdrawalsController,
+  } = controllers
 
   post(paths.placementApplications.create.pattern, placementRequestController.create(), {
     auditEvent: 'CREATE_PLACEMENT_APPLICATION',
@@ -73,6 +77,8 @@ export default function routes(controllers: Controllers, router: Router, service
     ],
   })
   get(paths.placementApplications.review.confirm.pattern, placementApplicationReviewController.confirm())
+  get(paths.placementApplications.withdraw.new.pattern, placementApplicationWithdrawalsController.new())
+  post(paths.placementApplications.withdraw.create.pattern, placementApplicationWithdrawalsController.create())
 
   return router
 }

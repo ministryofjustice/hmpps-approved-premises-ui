@@ -1,17 +1,23 @@
-import type { ApprovedPremisesApplication, FullPerson, TimelineEvent } from '@approved-premises/api'
+import type {
+  ApprovedPremisesApplication as Application,
+  FullPerson,
+  PlacementApplication,
+  TimelineEvent,
+} from '@approved-premises/api'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import { summaryListSections } from '../../../server/utils/applications/summaryListUtils'
 
 import Page from '../page'
-import { eventTypeTranslations } from '../../../server/utils/applications/utils'
+import { eventTypeTranslations, mapPlacementApplicationToSummaryCards } from '../../../server/utils/applications/utils'
+import { TextItem } from '../../../server/@types/ui'
 
 export default class ShowPage extends Page {
-  constructor(private readonly application: ApprovedPremisesApplication) {
+  constructor(private readonly application: Application) {
     super((application.person as FullPerson).name)
   }
 
-  static visit(application: ApprovedPremisesApplication) {
+  static visit(application: Application) {
     cy.visit(`/applications/${application.id}`)
     return new ShowPage(application)
   }
@@ -75,6 +81,20 @@ export default class ShowPage extends Page {
     cy.get('a').contains('Timeline').click()
   }
 
+  clickRequestAPlacementTab() {
+    cy.get('a').contains('Request a placement').click()
+  }
+
+  clickWithdraw(placementRequestId: string) {
+    cy.get(`[data-cy-placement-application-id="${placementRequestId}"]`).within(() => {
+      cy.get('a').contains('Withdraw').click()
+    })
+  }
+
+  verifyOnTimelineTab() {
+    cy.get('a').contains('Request a placement').should('contain', '[aria-page="current"]')
+  }
+
   shouldShowTimeline(timelineEvents: Array<TimelineEvent>) {
     const sortedTimelineEvents = timelineEvents.sort((a, b) => {
       return new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()
@@ -92,5 +112,35 @@ export default class ShowPage extends Page {
         })
       })
     })
+  }
+
+  shouldShowPlacementApplications(placementApplications: Array<PlacementApplication>, application: Application) {
+    mapPlacementApplicationToSummaryCards(placementApplications, application).forEach(
+      placementApplicationSummaryCard => {
+        cy.get(
+          `[data-cy-placement-application-id="${placementApplicationSummaryCard.card.attributes['data-cy-placement-application-id']}"]`,
+        )
+          .should('contain', placementApplicationSummaryCard.card.title.text)
+          .within(() => {
+            cy.get('.govuk-summary-list__row').should('have.length', placementApplicationSummaryCard.rows.length)
+            cy.get('.govuk-summary-list__row').each(($el, index) => {
+              cy.wrap($el).within(() => {
+                cy.get('.govuk-summary-list__key').should(
+                  'contain',
+                  (placementApplicationSummaryCard.rows[index].key as TextItem).text,
+                )
+                cy.get('.govuk-summary-list__value').should(
+                  'contain',
+                  (placementApplicationSummaryCard.rows[index].value as TextItem).text,
+                )
+              })
+            })
+          })
+      },
+    )
+  }
+
+  showsWithdrawalConfirmationMessage() {
+    this.shouldShowBanner('Placement application withdrawn')
   }
 }

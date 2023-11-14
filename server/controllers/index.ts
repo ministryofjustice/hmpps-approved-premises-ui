@@ -12,6 +12,7 @@ import type { Services } from '../services'
 import DashboardController from './dashboardController'
 import PagesController from './placementApplications/pagesController'
 import ReviewController from './placementApplications/reviewController'
+import WithdrawalsController from './placementApplications/withdrawalsController'
 
 export const controllers = (services: Services) => {
   const dashboardController = new DashboardController()
@@ -22,6 +23,7 @@ export const controllers = (services: Services) => {
     services.applicationService,
   )
   const placementApplicationReviewController = new ReviewController(services.placementApplicationService)
+  const placementApplicationWithdrawalsController = new WithdrawalsController(services.placementApplicationService)
 
   return {
     dashboardController,
@@ -29,6 +31,7 @@ export const controllers = (services: Services) => {
     allocationsController,
     placementApplicationPagesController,
     placementApplicationReviewController,
+    placementApplicationWithdrawalsController,
     ...applyControllers(services),
     ...assessControllers(services),
     ...matchControllers(services),

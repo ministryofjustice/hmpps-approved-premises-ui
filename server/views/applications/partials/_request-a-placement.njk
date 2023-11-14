@@ -1,0 +1,41 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% macro requestAPlacement(placementApplications, application, user, csrfToken) %}
+
+    <div class="moj-page-header-actions__actions">
+        <div class="moj-button-menu">
+            <div class="moj-button-menu__wrapper">
+                {% if application.createdByUserId === user.id and application.assessmentDecision === 'accepted' %}
+                    <form action="{{paths.placementApplications.create({}) }}" method="post">
+                        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                        <input type="hidden" name="applicationId" value="{{ application.id }}"/>
+                        {{ govukButton({
+                    text: "Create placement request"
+                  }) }}
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% set placementApplications = ApplyUtils.mapPlacementApplicationToSummaryCards(placementApplications, application) %}
+
+    {% if placementApplications.length === 0 %}
+        <div class="govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+                <span class="govuk-warning-text__assistive">Warning</span>
+                There are no placement requests for this application
+            </strong>
+        </div>
+
+    {% else %}
+
+        {% for placementApplication in placementApplications %}
+            {{govukSummaryList(placementApplication)}}
+            {%endfor%}
+
+        {% endif %}
+
+        {%endmacro%}

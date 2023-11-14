@@ -75,6 +75,20 @@ export default {
         jsonBody: placementApplication,
       },
     }),
+  stubSubmitPlacementApplicationWithdraw: (placementApplication: PlacementApplication): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: paths.placementApplications.withdraw({ id: placementApplication.id }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: placementApplication,
+      },
+    }),
   verifyPlacementApplicationSubmit: async (applicationId: string) =>
     (
       await getMatchingRequests({

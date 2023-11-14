@@ -22,7 +22,7 @@ context('Apply - Missing information', () => {
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
 
     this.application = addResponsesToFormArtifact(this.application, {
-      section: 'prison-information',
+      task: 'prison-information',
       page: 'case-notes',
       keyValuePairs: {
         informationFromPrison: 'yes',

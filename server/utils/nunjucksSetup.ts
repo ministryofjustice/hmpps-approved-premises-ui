@@ -208,6 +208,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   njkEnv.addGlobal('ApplyUtils', ApplyUtils)
   njkEnv.addGlobal('AssessmentUtils', AssessmentUtils)
+  njkEnv.addGlobal('ApplyUtils', ApplyUtils)
   njkEnv.addGlobal('OASysUtils', OASysUtils)
   njkEnv.addGlobal('OffenceUtils', OffenceUtils)
   njkEnv.addGlobal('AttachDocumentsUtils', AttachDocumentsUtils)

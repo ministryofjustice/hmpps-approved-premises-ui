@@ -4,6 +4,7 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "./partials/_readonly-application.njk" import applicationReadonlyView %}
 {% from "./partials/_timeline.njk" import timeline %}
+{% from "./partials/_request-a-placement.njk" import requestAPlacement %}
 {%- from "govuk/components/tag/macro.njk" import govukTag -%}
 
 {% extends "../partials/layout.njk" %}
@@ -39,22 +40,8 @@
             {% endif %}
           </h1>
         </div>
-        <div class="moj-page-header-actions__actions">
-          <div class="moj-button-menu">
-            <div class="moj-button-menu__wrapper">
-              {% if application.createdByUserId === user.id and application.assessmentDecision === 'accepted' %}
-                <form action="{{paths.placementApplications.create({}) }}" method="post">
-                  <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-                  <input type="hidden" name="applicationId" value="{{ application.id }}"/>
-                  {{ govukButton({
-                    text: "Create placement request"
-                  }) }}
-                </form>
-              {% endif %}
-            </div>
-          </div>
-        </div>
       </div>
+      {% include "../_messages.njk" %}
 
       {% if application.assessmentDecision %}
         {% set html %}
@@ -78,11 +65,18 @@
           text: 'Timeline',
           href:  paths.applications.show({id: application.id}) + '?tab=timeline',
           active: tab === 'timeline'
+        },
+        {
+          text: 'Request a placement',
+          href: paths.applications.show({id: application.id}) + '?tab=requestAPlacement',
+          active: tab === 'requestAPlacement'
         }]
       }) }}
 
       {% if tab === 'timeline' %}
         {{ timeline(mapTimelineEventsForUi(timelineEvents)) }}
+      {% elif tab === 'requestAPlacement'%}
+        {{ requestAPlacement(placementApplications, application, user, csrfToken) }}
       {% else %}
         {{ applicationReadonlyView(application) }}
       {% endif %}

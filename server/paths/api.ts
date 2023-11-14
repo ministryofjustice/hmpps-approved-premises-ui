@@ -120,6 +120,7 @@ export default {
     assessment: applyPaths.applications.show.path('assessment'),
     withdrawal: applyPaths.applications.show.path('withdrawal'),
     timeline: applyPaths.applications.show.path('timeline'),
+    placementApplications: applyPaths.applications.show.path('placement-applications'),
   },
   assessments: {
     index: assessPaths.assessments,
@@ -161,6 +162,7 @@ export default {
     show: placementApplicationPath,
     submit: placementApplicationPath.path('submission'),
     submitDecision: placementApplicationPath.path('decision'),
+    withdraw: placementApplicationPath.path('withdraw'),
   },
   people: {
     risks: {
