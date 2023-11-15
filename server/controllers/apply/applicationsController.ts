@@ -9,6 +9,7 @@ import { DateFormats } from '../../utils/dateUtils'
 import { firstPageOfApplicationJourney } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { isFullPerson } from '../../utils/personUtils'
+import { getPaginationDetails } from '../../utils/getPaginationDetails'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
@@ -23,6 +24,21 @@ export default class ApplicationsController {
       const applications = await this.applicationService.getAllForLoggedInUser(req.user.token)
 
       res.render('applications/index', { pageHeading: 'Approved Premises applications', applications })
+    }
+  }
+
+  dashboard(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { pageNumber, hrefPrefix } = getPaginationDetails(req, paths.applications.dashboard({}))
+      const result = await this.applicationService.dashboard(req.user.token, pageNumber)
+
+      res.render('applications/dashboard', {
+        pageHeading: 'Approved Premises applications',
+        applications: result.data,
+        pageNumber: Number(result.pageNumber),
+        totalPages: Number(result.totalPages),
+        hrefPrefix,
+      })
     }
   }
 
