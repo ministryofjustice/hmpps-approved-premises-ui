@@ -26,8 +26,19 @@
 
         {{ showErrorSummary(errorSummary) }}
 
-        <p><a href="{{paths.applications.show({id: placementApplication.applicationId})}}">View application</a> (Completed on) <br>
-        <a href="{{paths.assessments.show({id: placementApplication.assessmentId})}}">View assessment</a> (Completed on)</p>
+        {% if placementApplication.applicationCompletedAt %}
+            <p>
+                <a href="{{paths.applications.show({id: placementApplication.applicationId})}}">View application</a> 
+                (Completed on {{formatDateTime(placementApplication.applicationCompletedAt)}})
+            </p>
+        {% endif %}
+
+        {% if placementApplication.assessmentCompletedAt %}
+            <p>
+                <a href="{{paths.assessments.show({id: placementApplication.assessmentId})}}">View assessment</a> 
+                (Completed on {{formatDateTime(placementApplication.assessmentCompletedAt)}})
+            </p>
+        {%endif%}
 
 
         {{ govukSummaryList(PlacementRequestUtils.placementApplicationQuestionsForReview(placementApplication)) }}
