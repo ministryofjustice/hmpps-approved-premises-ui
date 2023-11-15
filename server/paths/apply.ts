@@ -12,6 +12,7 @@ const paths = {
   applications: {
     new: applicationsPath.path('new'),
     start: applicationsPath.path('start'),
+    dashboard: applicationsPath.path('dashboard'),
     people: {
       find: peoplePath.path('find'),
       selectOffence: personPath.path('select-offence'),

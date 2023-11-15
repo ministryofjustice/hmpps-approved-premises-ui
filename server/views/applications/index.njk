@@ -5,6 +5,7 @@
 {% from "moj/components/badge/macro.njk" import mojBadge %}
 {% from "./_table.njk" import applicationsTable %}
 {% extends "../partials/layout.njk" %}
+{% from "./_navigation.njk" import navigation %}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body" %}
@@ -16,6 +17,8 @@
         <div class="govuk-grid-column-full">
 
             <h1 class="govuk-heading-l">Approved Premises applications</h1>
+
+            {{ navigation('myApplications') }}
 
             {{ govukTabs({
                 items: [

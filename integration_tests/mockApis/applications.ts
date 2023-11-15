@@ -23,6 +23,49 @@ export default {
         jsonBody: applications,
       },
     }),
+  stubAllApplications: ({
+    applications,
+    page = '1',
+  }: {
+    applications: Array<ApprovedPremisesApplicationSummary>
+    page: string
+  }): SuperAgentRequest => {
+    const queryParameters = {
+      page: {
+        equalTo: page,
+      },
+    } as Record<string, unknown>
+
+    return stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: paths.applications.all.pattern,
+        queryParameters,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          'X-Pagination-TotalPages': '10',
+          'X-Pagination-TotalResults': '100',
+          'X-Pagination-PageSize': '10',
+        },
+        jsonBody: applications,
+      },
+    })
+  },
+  verifyDashboardRequest: async ({ page = '1' }: { page: string }) =>
+    (
+      await getMatchingRequests({
+        method: 'GET',
+        urlPathPattern: paths.applications.all.pattern,
+        queryParameters: {
+          page: {
+            equalTo: page,
+          },
+        },
+      })
+    ).body.requests,
   stubApplicationCreate: (args: { application: ApprovedPremisesApplication }): SuperAgentRequest =>
     stubFor({
       request: {
