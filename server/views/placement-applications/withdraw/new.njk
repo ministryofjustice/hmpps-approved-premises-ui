@@ -11,7 +11,7 @@
 {% block beforeContent %}
     {{ govukBackLink({
 		text: "Back",
-		href: paths.applications.show({ id: applicationId }) + '?tab=requestAPlacement'
+		href: ApplyUtils.applicationShowPageTab(applicationId, ApplyUtils.applicationShowPageTabs.placementRequests)
 	}) }}
 {% endblock %}
 

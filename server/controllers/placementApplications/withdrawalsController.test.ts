@@ -7,9 +7,9 @@ import { PlacementApplicationService } from '../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 
 import placementApplicationPaths from '../../paths/placementApplications'
-import applyPaths from '../../paths/apply'
 import WithdrawalsController from './withdrawalsController'
 import { placementApplicationFactory } from '../../testutils/factories'
+import { applicationShowPageTab } from '../../utils/applications/utils'
 
 jest.mock('../../utils/validation')
 
@@ -68,9 +68,7 @@ describe('withdrawalsController', () => {
       await requestHandler(request, response, next)
 
       expect(placementApplicationService.withdraw).toHaveBeenCalledWith(token, placementApplicationId)
-      expect(response.redirect).toHaveBeenCalledWith(
-        `${applyPaths.applications.show({ id: applicationId })}?tab=requestAPlacement`,
-      )
+      expect(response.redirect).toHaveBeenCalledWith(applicationShowPageTab(applicationId, 'placementRequests'))
       expect(request.flash).toHaveBeenCalledWith('success', 'Placement application withdrawn')
     })
 

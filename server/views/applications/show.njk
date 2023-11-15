@@ -58,23 +58,23 @@
       {{ mojSubNavigation({
         items: [{
           text: 'Application',
-          href: paths.applications.show({id: application.id}) + '?tab=application',
-          active: tab === 'application'
+          href: ApplyUtils.applicationShowPageTab(application.id, ApplyUtils.applicationShowPageTabs.application),
+          active: tab === ApplyUtils.applicationShowPageTabs.application
         }, {
           text: 'Timeline',
-          href:  paths.applications.show({id: application.id}) + '?tab=timeline',
-          active: tab === 'timeline'
+          href:  ApplyUtils.applicationShowPageTab(application.id, ApplyUtils.applicationShowPageTabs.timeline),
+          active: tab === ApplyUtils.applicationShowPageTabs.timeline
         },
         {
           text: 'Placement requests',
-          href: paths.applications.show({id: application.id}) + '?tab=placementRequests',
-          active: tab === 'placementRequests'
+          href: ApplyUtils.applicationShowPageTab(application.id, ApplyUtils.applicationShowPageTabs.placementRequests),
+          active: tab === ApplyUtils.applicationShowPageTabs.placementRequests
         }]
       }) }}
 
-      {% if tab === 'timeline' %}
-        {{ timeline(mapTimelineEventsForUi(timelineEvents)) }}
-      {% elif tab === 'placementRequests'%}
+      {% if tab === ApplyUtils.applicationShowPageTabs.timeline %}
+        {{ timeline(mapTimelineEventsForUi(timelineEvents), application, csrfToken) }}
+      {% elif tab === ApplyUtils.applicationShowPageTabs.placementRequests %}
         {{ requestAPlacement(placementApplications, application, user, csrfToken) }}
       {% else %}
         {{ applicationReadonlyView(application) }}

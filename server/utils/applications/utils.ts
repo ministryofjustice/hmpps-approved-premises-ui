@@ -331,6 +331,17 @@ const lengthOfStayForUI = (duration: string) => {
   return 'None supplied'
 }
 
+export const applicationShowPageTabs = {
+  application: 'application',
+  timeline: 'timeline',
+  placementRequests: 'placementRequests',
+}
+
+export type ApplicationShowPageTab = keyof typeof applicationShowPageTabs
+
+export const applicationShowPageTab = (id: Application['id'], tab: ApplicationShowPageTab) =>
+  `${paths.applications.show({ id })}?tab=${applicationShowPageTabs[tab]}`
+
 export {
   applicationTableRows,
   dashboardTableRows,

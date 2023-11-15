@@ -6,7 +6,7 @@ import { PersonService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import { firstPageOfApplicationJourney } from '../../utils/applications/utils'
+import { applicationShowPageTabs, firstPageOfApplicationJourney } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { isFullPerson } from '../../utils/personUtils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
@@ -67,13 +67,13 @@ export default class ApplicationsController {
         const referrer = req.headers.referer
         const defaultParams = { application, referrer, pageHeading: 'Approved Premises application' }
 
-        if (req.query.tab === 'timeline') {
+        if (req.query.tab === applicationShowPageTabs.timeline) {
           const timelineEvents = await this.applicationService.timeline(req.user.token, application.id)
 
           return res.render('applications/show', { ...defaultParams, timelineEvents, tab: 'timeline' })
         }
 
-        if (req.query.tab === 'placementRequests') {
+        if (req.query.tab === applicationShowPageTabs.placementRequests) {
           const placementApplications = await this.applicationService.getPlacementApplications(
             req.user.token,
             application.id,

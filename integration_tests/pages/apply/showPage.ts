@@ -10,7 +10,12 @@ import { DateFormats } from '../../../server/utils/dateUtils'
 import { summaryListSections } from '../../../server/utils/applications/summaryListUtils'
 
 import Page from '../page'
-import { eventTypeTranslations, mapPlacementApplicationToSummaryCards } from '../../../server/utils/applications/utils'
+import {
+  ApplicationShowPageTab,
+  applicationShowPageTab,
+  eventTypeTranslations,
+  mapPlacementApplicationToSummaryCards,
+} from '../../../server/utils/applications/utils'
 import { TextItem } from '../../../server/@types/ui'
 
 export default class ShowPage extends Page {
@@ -18,8 +23,13 @@ export default class ShowPage extends Page {
     super((application.person as FullPerson).name)
   }
 
-  static visit(application: Application) {
-    cy.visit(`/applications/${application.id}`)
+  static visit(application: Application, tab?: ApplicationShowPageTab) {
+    const path = `/applications/${application.id}`
+    if (tab) {
+      cy.visit(`${path}?${applicationShowPageTab(tab)}`)
+    } else {
+      cy.visit(path)
+    }
     return new ShowPage(application)
   }
 
