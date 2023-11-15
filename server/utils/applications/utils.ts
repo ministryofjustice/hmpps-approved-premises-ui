@@ -41,21 +41,31 @@ import ReasonForPlacement, {
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
 
 const applicationTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
-  return applications.map(application => {
-    const tier = application.risks?.tier?.value?.level
-
-    return [
-      createNameAnchorElement(application.person, application.id),
-      textValue(application.person.crn),
-      htmlValue(tier == null ? '' : tierBadge(tier)),
-      textValue(
-        application.arrivalDate ? DateFormats.isoDateToUIDate(application.arrivalDate, { format: 'short' }) : 'N/A',
-      ),
-      htmlValue(getStatus(application)),
-      createWithdrawElement(application.id, application),
-    ]
-  })
+  return applications.map(application => [
+    createNameAnchorElement(application.person, application.id),
+    textValue(application.person.crn),
+    htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
+    textValue(getArrivalDateorNA(application.arrivalDate)),
+    htmlValue(getStatus(application)),
+    createWithdrawElement(application.id, application),
+  ])
 }
+
+const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
+  return applications.map(application => [
+    createNameAnchorElement(application.person, application.id),
+    textValue(application.person.crn),
+    htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
+    textValue(getArrivalDateorNA(application.arrivalDate)),
+    textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
+    htmlValue(getStatus(application)),
+  ])
+}
+
+const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(tier) : '')
+
+const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
+  arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'
 
 const statusTags: Record<ApplicationStatus, string> = {
   inProgress: `<strong class="govuk-tag govuk-tag--blue">In Progress</strong>`,
@@ -296,6 +306,7 @@ const lengthOfStayForUI = (duration: string) => {
 
 export {
   applicationTableRows,
+  dashboardTableRows,
   firstPageOfApplicationJourney,
   arrivalDateFromApplication,
   getApplicationType,
