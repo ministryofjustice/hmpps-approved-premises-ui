@@ -82,7 +82,7 @@ export default class ShowPage extends Page {
   }
 
   clickRequestAPlacementTab() {
-    cy.get('a').contains('Request a placement').click()
+    cy.get('a').contains('Placement requests').click()
   }
 
   clickWithdraw(placementRequestId: string) {
@@ -92,7 +92,7 @@ export default class ShowPage extends Page {
   }
 
   verifyOnTimelineTab() {
-    cy.get('a').contains('Request a placement').should('contain', '[aria-page="current"]')
+    cy.get('a').contains('Placement').should('contain', '[aria-page="current"]')
   }
 
   shouldShowTimeline(timelineEvents: Array<TimelineEvent>) {

@@ -73,7 +73,7 @@ export default class ApplicationsController {
           return res.render('applications/show', { ...defaultParams, timelineEvents, tab: 'timeline' })
         }
 
-        if (req.query.tab === 'requestAPlacement') {
+        if (req.query.tab === 'placementRequests') {
           const placementApplications = await this.applicationService.getPlacementApplications(
             req.user.token,
             application.id,
@@ -82,7 +82,7 @@ export default class ApplicationsController {
           return res.render('applications/show', {
             ...defaultParams,
             placementApplications,
-            tab: 'requestAPlacement',
+            tab: 'placementRequests',
           })
         }
 
