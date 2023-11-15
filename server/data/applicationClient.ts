@@ -1,11 +1,14 @@
 import type {
   ActiveOffence,
   ApprovedPremisesApplication as Application,
+  ApplicationSortField,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
+  ApprovedPremisesApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
   Document,
   NewWithdrawal,
   PlacementApplication,
+  SortDirection,
   SubmitApprovedPremisesApplication,
   TimelineEvent,
   UpdateApprovedPremisesApplication,
@@ -13,6 +16,7 @@ import type {
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
+import { PaginatedResponse } from '../@types/ui'
 
 export default class ApplicationClient {
   restClient: RestClient
@@ -47,6 +51,18 @@ export default class ApplicationClient {
     return (await this.restClient.get({
       path: paths.applications.index.pattern,
     })) as Array<ApplicationSummary>
+  }
+
+  async dashboard(
+    page: number,
+    sortBy: ApplicationSortField,
+    sortDirection: SortDirection,
+  ): Promise<PaginatedResponse<ApprovedPremisesApplicationSummary>> {
+    return this.restClient.getPaginatedResponse<ApprovedPremisesApplicationSummary>({
+      path: paths.applications.all.pattern,
+      page: page.toString(),
+      query: { sortBy, sortDirection },
+    })
   }
 
   async submit(applicationId: string, submissionData: SubmitApprovedPremisesApplication): Promise<void> {

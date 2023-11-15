@@ -1,4 +1,4 @@
-import { ApplicationStatus } from '@approved-premises/api'
+import { ApplicationSortField, ApplicationStatus } from '@approved-premises/api'
 import { isAfter } from 'date-fns'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
 import {
@@ -20,7 +20,9 @@ import { DateFormats } from '../dateUtils'
 import { isApplicableTier, isFullPerson, tierBadge } from '../personUtils'
 
 import {
+  applicationTableRows,
   createWithdrawElement,
+  dashboardTableHeader,
   dashboardTableRows,
   eventTypeTranslations,
   firstPageOfApplicationJourney,
@@ -38,6 +40,7 @@ import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { RestrictedPersonError } from '../errors'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
+import { sortHeader } from '../sortHeader'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -163,13 +166,15 @@ describe('utils', () => {
   beforeEach(() => {
     jest.resetAllMocks()
   })
-  describe('dashboardTableRows', () => {
+
+  describe('applicationTableRows', () => {
+    const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
+    const person = personFactory.build({ name: 'My name' })
+
     it('returns an array of applications as table rows', async () => {
       ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')
       ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
 
-      const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
-      const person = personFactory.build({ name: 'A' })
       const applicationA = applicationSummaryFactory.build({
         arrivalDate: undefined,
         person,
@@ -182,7 +187,7 @@ describe('utils', () => {
         risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
       })
 
-      const result = dashboardTableRows([applicationA, applicationB])
+      const result = applicationTableRows([applicationA, applicationB])
 
       expect(tierBadge).toHaveBeenCalledWith('A1')
 
@@ -229,78 +234,129 @@ describe('utils', () => {
         ],
       ])
     })
+
+    describe('when tier is undefined', () => {
+      it('returns a blank tier badge', async () => {
+        ;(tierBadge as jest.Mock).mockClear()
+        ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+
+        const application = applicationSummaryFactory.build({
+          arrivalDate,
+          person,
+          risks: { tier: undefined },
+          status: 'inProgress',
+        })
+
+        const result = applicationTableRows([application])
+
+        expect(tierBadge).not.toHaveBeenCalled()
+
+        expect(result[0][2]).toEqual({
+          html: '',
+        })
+      })
+    })
+
+    describe('when risks is undefined', () => {
+      it('returns a blank tier badge', async () => {
+        ;(tierBadge as jest.Mock).mockClear()
+        ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+
+        const application = applicationSummaryFactory.build({
+          arrivalDate,
+          person,
+          risks: undefined,
+        })
+
+        const result = applicationTableRows([application])
+
+        expect(tierBadge).not.toHaveBeenCalled()
+
+        expect(result[0][2]).toEqual({
+          html: '',
+        })
+      })
+    })
   })
 
-  describe('dashboardTableRows when tier is undefined', () => {
-    it('returns a blank tier badge', async () => {
-      ;(tierBadge as jest.Mock).mockClear()
-      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+  describe('dashboardTableHeader', () => {
+    const sortBy = 'createdAt'
+    const sortDirection = 'asc'
+    const hrefPrefix = 'http://example.com'
 
-      const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
-      const person = personFactory.build({ name: 'My name' })
-      const application = applicationSummaryFactory.build({
-        arrivalDate,
-        person,
-        risks: { tier: undefined },
-        status: 'inProgress',
-      })
-
-      const result = dashboardTableRows([application])
-
-      expect(tierBadge).not.toHaveBeenCalled()
-
-      expect(result).toEqual([
-        [
-          {
-            html: `<a href=${paths.applications.show({ id: application.id })} data-cy-id="${application.id}">${
-              person.name
-            }</a>`,
-          },
-          {
-            text: application.person.crn,
-          },
-          {
-            html: '',
-          },
-          {
-            text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
-          },
-          {
-            html: getStatus(application),
-          },
-          createWithdrawElement(application.id, application),
-        ],
+    it('returns header values', () => {
+      expect(dashboardTableHeader(sortBy, sortDirection, hrefPrefix)).toEqual([
+        {
+          text: 'Name',
+        },
+        {
+          text: 'CRN',
+        },
+        sortHeader<ApplicationSortField>('Tier', 'tier', sortBy, sortDirection, hrefPrefix),
+        sortHeader<ApplicationSortField>('Arrival Date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
+        sortHeader<ApplicationSortField>('Date of application', 'createdAt', sortBy, sortDirection, hrefPrefix),
+        {
+          text: 'Status',
+        },
       ])
     })
   })
 
-  describe('dashboardTableRows when risks is undefined', () => {
-    it('returns a blank tier badge', async () => {
-      ;(tierBadge as jest.Mock).mockClear()
+  describe('dashboardTableRows', () => {
+    const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
+    const person = personFactory.build({ name: 'A' })
+
+    it('returns an array of applications as table rows', async () => {
+      ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')
       ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
 
-      const arrivalDate = DateFormats.dateObjToIsoDate(new Date(2021, 0, 3))
-      const person = personFactory.build({ name: 'My name' })
-
-      const application = applicationSummaryFactory.build({
+      const applicationA = applicationSummaryFactory.build({
+        arrivalDate: undefined,
+        person,
+        submittedAt: null,
+        risks: { tier: tierEnvelopeFactory.build({ value: { level: 'A1' } }) },
+      })
+      const applicationB = applicationSummaryFactory.build({
         arrivalDate,
         person,
-        risks: undefined,
+        risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
       })
 
-      const result = dashboardTableRows([application])
+      const result = dashboardTableRows([applicationA, applicationB])
 
-      expect(tierBadge).not.toHaveBeenCalled()
+      expect(tierBadge).toHaveBeenCalledWith('A1')
 
       expect(result).toEqual([
         [
           {
-            html: `<a href=${paths.applications.show({ id: application.id })} data-cy-id="${application.id}">${
+            html: `<a href=${paths.applications.show({ id: applicationA.id })} data-cy-id="${applicationA.id}">${
               person.name
             }</a>`,
           },
           {
-            text: application.person.crn,
+            text: applicationA.person.crn,
+          },
+          {
+            html: 'TIER_BADGE',
+          },
+          {
+            text: 'N/A',
+          },
+          {
+            text: DateFormats.isoDateToUIDate(applicationA.createdAt, { format: 'short' }),
+          },
+          {
+            html: getStatus(applicationA),
+          },
+        ],
+        [
+          {
+            html: `<a href=${paths.applications.show({ id: applicationB.id })} data-cy-id="${applicationB.id}">${
+              person.name
+            }</a>`,
+          },
+          {
+            text: applicationB.person.crn,
           },
           {
             html: '',
@@ -309,11 +365,56 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
           },
           {
-            html: getStatus(application),
+            text: DateFormats.isoDateToUIDate(applicationB.createdAt, { format: 'short' }),
           },
-          createWithdrawElement(application.id, application),
+          {
+            html: getStatus(applicationB),
+          },
         ],
       ])
+    })
+
+    describe('when tier is undefined', () => {
+      it('returns a blank tier badge', async () => {
+        ;(tierBadge as jest.Mock).mockClear()
+        ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+
+        const application = applicationSummaryFactory.build({
+          arrivalDate,
+          person,
+          risks: { tier: undefined },
+          status: 'inProgress',
+        })
+
+        const result = dashboardTableRows([application])
+
+        expect(tierBadge).not.toHaveBeenCalled()
+
+        expect(result[0][2]).toEqual({
+          html: '',
+        })
+      })
+    })
+
+    describe('when risks is undefined', () => {
+      it('returns a blank tier badge', async () => {
+        ;(tierBadge as jest.Mock).mockClear()
+        ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+
+        const application = applicationSummaryFactory.build({
+          arrivalDate,
+          person,
+          risks: undefined,
+        })
+
+        const result = dashboardTableRows([application])
+
+        expect(tierBadge).not.toHaveBeenCalled()
+
+        expect(result[0][2]).toEqual({
+          html: '',
+        })
+      })
     })
   })
 

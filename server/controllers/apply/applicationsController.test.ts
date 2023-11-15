@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import type { ErrorsAndUserInput, GroupedApplications } from '@approved-premises/ui'
+import type { ErrorsAndUserInput, GroupedApplications, PaginatedResponse } from '@approved-premises/ui'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController from './applicationsController'
 import { ApplicationService, PersonService } from '../../services'
@@ -9,6 +9,7 @@ import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/val
 import {
   activeOffenceFactory,
   applicationFactory,
+  paginatedResponseFactory,
   personFactory,
   restrictedPersonFactory,
   timelineEventFactory,
@@ -18,11 +19,14 @@ import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import { firstPageOfApplicationJourney } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
+import { ApprovedPremisesApplication } from '../../@types/shared'
+import { getPaginationDetails } from '../../utils/getPaginationDetails'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applications/utils')
 jest.mock('../../utils/applications/getResponses')
 jest.mock('../../services/tasklistService')
+jest.mock('../../utils/getPaginationDetails')
 
 describe('applicationsController', () => {
   const token = 'SOME_TOKEN'
@@ -70,6 +74,46 @@ describe('applicationsController', () => {
       expect(response.render).toHaveBeenCalledWith('applications/start', {
         pageHeading: 'Apply for an Approved Premises (AP) placement',
       })
+    })
+  })
+
+  describe('dashboard', () => {
+    it('calls the dashboard service with the page number and renders the results', async () => {
+      const paginatedResponse = paginatedResponseFactory.build({
+        data: applicationFactory.buildList(2),
+      }) as PaginatedResponse<ApprovedPremisesApplication>
+
+      const paginationDetails = {
+        hrefPrefix: paths.applications.dashboard({}),
+        pageNumber: 1,
+        sortBy: 'arrivalDate',
+        sortDirection: 'desc',
+      }
+
+      applicationService.dashboard.mockResolvedValue(paginatedResponse)
+      ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
+
+      const requestHandler = applicationsController.dashboard()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/dashboard', {
+        pageHeading: 'Approved Premises applications',
+        applications: paginatedResponse.data,
+        pageNumber: Number(paginationDetails.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
+      })
+
+      expect(applicationService.dashboard).toHaveBeenCalledWith(
+        token,
+        paginationDetails.pageNumber,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
+      expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.applications.dashboard({}))
     })
   })
 

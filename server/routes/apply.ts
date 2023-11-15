@@ -23,6 +23,9 @@ export default function routes(controllers: Controllers, router: Router, service
 
   get(paths.applications.start.pattern, applicationsController.start(), { auditEvent: 'START_APPLICATION' })
   get(paths.applications.index.pattern, applicationsController.index(), { auditEvent: 'LIST_APPLICATIONS' })
+  get(paths.applications.dashboard.pattern, applicationsController.dashboard(), {
+    auditEvent: 'LIST_APPLICATIONS_DASHBOARD',
+  })
   get(paths.applications.new.pattern, applicationsController.new(), { auditEvent: 'NEW_APPLICATION' })
   get(paths.applications.show.pattern, applicationsController.show(), { auditEvent: 'VIEW_APPLICATION' })
   post(paths.applications.create.pattern, applicationsController.create(), {

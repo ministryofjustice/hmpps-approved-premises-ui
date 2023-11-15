@@ -6,16 +6,19 @@ import type {
   JourneyType,
   PageResponse,
   SummaryListWithCard,
+  TableCell,
   TableRow,
   UiTimelineEvent,
 } from '@approved-premises/ui'
 import type {
   ApprovedPremisesApplication as Application,
+  ApplicationSortField,
   ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   Person,
   PlacementApplication,
   PlacementType,
+  SortDirection,
   TimelineEvent,
   TimelineEventType,
 } from '@approved-premises/api'
@@ -39,23 +42,55 @@ import ReasonForPlacement, {
   reasons as reasonsDictionary,
 } from '../../form-pages/placement-application/request-a-placement/reasonForPlacement'
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
+import { sortHeader } from '../sortHeader'
+
+const applicationTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
+  return applications.map(application => [
+    createNameAnchorElement(application.person, application.id),
+    textValue(application.person.crn),
+    htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
+    textValue(getArrivalDateorNA(application.arrivalDate)),
+    htmlValue(getStatus(application)),
+    createWithdrawElement(application.id, application),
+  ])
+}
+
+const dashboardTableHeader = (
+  sortBy: ApplicationSortField,
+  sortDirection: SortDirection,
+  hrefPrefix: string,
+): Array<TableCell> => {
+  return [
+    {
+      text: 'Name',
+    },
+    {
+      text: 'CRN',
+    },
+    sortHeader<ApplicationSortField>('Tier', 'tier', sortBy, sortDirection, hrefPrefix),
+    sortHeader<ApplicationSortField>('Arrival Date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
+    sortHeader<ApplicationSortField>('Date of application', 'createdAt', sortBy, sortDirection, hrefPrefix),
+    {
+      text: 'Status',
+    },
+  ]
+}
 
 const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
-  return applications.map(application => {
-    const tier = application.risks?.tier?.value?.level
-
-    return [
-      createNameAnchorElement(application.person, application.id),
-      textValue(application.person.crn),
-      htmlValue(tier == null ? '' : tierBadge(tier)),
-      textValue(
-        application.arrivalDate ? DateFormats.isoDateToUIDate(application.arrivalDate, { format: 'short' }) : 'N/A',
-      ),
-      htmlValue(getStatus(application)),
-      createWithdrawElement(application.id, application),
-    ]
-  })
+  return applications.map(application => [
+    createNameAnchorElement(application.person, application.id),
+    textValue(application.person.crn),
+    htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
+    textValue(getArrivalDateorNA(application.arrivalDate)),
+    textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
+    htmlValue(getStatus(application)),
+  ])
 }
+
+const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(tier) : '')
+
+const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
+  arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'
 
 const statusTags: Record<ApplicationStatus, string> = {
   inProgress: `<strong class="govuk-tag govuk-tag--blue">In Progress</strong>`,
@@ -295,7 +330,9 @@ const lengthOfStayForUI = (duration: string) => {
 }
 
 export {
+  applicationTableRows,
   dashboardTableRows,
+  dashboardTableHeader,
   firstPageOfApplicationJourney,
   arrivalDateFromApplication,
   getApplicationType,

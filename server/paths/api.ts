@@ -113,6 +113,7 @@ export default {
   applications: {
     show: applyPaths.applications.show,
     index: applyPaths.applications.index,
+    all: applyPaths.applications.index.path('all'),
     update: applyPaths.applications.update,
     new: applyPaths.applications.create,
     submission: applyPaths.applications.submission,

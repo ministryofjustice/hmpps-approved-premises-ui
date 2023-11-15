@@ -5,6 +5,7 @@
 {% from "moj/components/badge/macro.njk" import mojBadge %}
 {% from "./_table.njk" import applicationsTable %}
 {% extends "../partials/layout.njk" %}
+{% from "./_navigation.njk" import navigation %}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body" %}
@@ -17,27 +18,29 @@
 
             <h1 class="govuk-heading-l">Approved Premises applications</h1>
 
+            {{ navigation('myApplications') }}
+
             {{ govukTabs({
                 items: [
                     {
                         label: "In progress",
                         id: "applications",
                         panel: {
-                            html: applicationsTable("Applications", ApplyUtils.dashboardTableRows(applications.inProgress))
+                            html: applicationsTable("Applications", ApplyUtils.applicationTableRows(applications.inProgress))
                         }
                     },
                     {
                         label: "Further information requested",
                         id: "further-information-requested",
                         panel: {
-                            html: applicationsTable("Applications", ApplyUtils.dashboardTableRows(applications.requestedFurtherInformation))
+                            html: applicationsTable("Applications", ApplyUtils.applicationTableRows(applications.requestedFurtherInformation))
                         }
                     },
                     {
                         label: "Submitted",
                         id: "applications-submitted",
                         panel: {
-                            html: applicationsTable("Applications", ApplyUtils.dashboardTableRows(applications.submitted))
+                            html: applicationsTable("Applications", ApplyUtils.applicationTableRows(applications.submitted))
                         }
                     }
                 ]

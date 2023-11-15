@@ -1,9 +1,11 @@
 import { SuperAgentRequest } from 'superagent'
 
 import type {
+  ApplicationSortField,
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationSummary,
   ApprovedPremisesAssessment,
+  SortDirection,
   TimelineEvent,
 } from '@approved-premises/api'
 
@@ -23,6 +25,73 @@ export default {
         jsonBody: applications,
       },
     }),
+  stubAllApplications: ({
+    applications,
+    page = '1',
+    sortBy = 'createdAt',
+    sortDirection = 'asc',
+  }: {
+    applications: Array<ApprovedPremisesApplicationSummary>
+    page: string
+    sortBy: ApplicationSortField
+    sortDirection: SortDirection
+  }): SuperAgentRequest => {
+    const queryParameters = {
+      page: {
+        equalTo: page,
+      },
+      sortBy: {
+        equalTo: sortBy,
+      },
+      sortDirection: {
+        equalTo: sortDirection,
+      },
+    }
+
+    return stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: paths.applications.all.pattern,
+        queryParameters,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          'X-Pagination-TotalPages': '10',
+          'X-Pagination-TotalResults': '100',
+          'X-Pagination-PageSize': '10',
+        },
+        jsonBody: applications,
+      },
+    })
+  },
+  verifyDashboardRequest: async ({
+    page = '1',
+    sortBy = 'createdAt',
+    sortDirection = 'asc',
+  }: {
+    page: string
+    sortBy: ApplicationSortField
+    sortDirection: SortDirection
+  }) =>
+    (
+      await getMatchingRequests({
+        method: 'GET',
+        urlPathPattern: paths.applications.all.pattern,
+        queryParameters: {
+          page: {
+            equalTo: page,
+          },
+          sortBy: {
+            equalTo: sortBy,
+          },
+          sortDirection: {
+            equalTo: sortDirection,
+          },
+        },
+      })
+    ).body.requests,
   stubApplicationCreate: (args: { application: ApprovedPremisesApplication }): SuperAgentRequest =>
     stubFor({
       request: {
