@@ -181,6 +181,7 @@ describe('applicationsController', () => {
           referrer,
           tab: 'timeline',
           timelineEvents,
+          pageHeading: 'Approved Premises application',
         })
 
         expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
@@ -205,6 +206,7 @@ describe('applicationsController', () => {
           referrer,
           tab: 'placementRequests',
           placementApplications,
+          pageHeading: 'Approved Premises application',
         })
 
         expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
@@ -237,6 +239,7 @@ describe('applicationsController', () => {
           application,
           referrer,
           tab: 'placementRequests',
+          pageHeading: 'Approved Premises application',
           placementApplications: sortedPlacementApplications,
         })
       })
@@ -258,6 +261,7 @@ describe('applicationsController', () => {
         application,
         referrer,
         tab: 'application',
+        pageHeading: 'Approved Premises application',
       })
 
       expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)

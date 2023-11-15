@@ -65,7 +65,7 @@ export default class ApplicationsController {
 
       if (application.status !== 'inProgress') {
         const referrer = req.headers.referer
-        const defaultParams = { application, referrer }
+        const defaultParams = { application, referrer, pageHeading: 'Approved Premises application' }
 
         if (req.query.tab === 'timeline') {
           const timelineEvents = await this.applicationService.timeline(req.user.token, application.id)
