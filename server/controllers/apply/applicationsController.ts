@@ -81,7 +81,10 @@ export default class ApplicationsController {
 
           return res.render('applications/show', {
             ...defaultParams,
-            placementApplications,
+            placementApplications: placementApplications.sort(
+              (a, b) =>
+                DateFormats.isoToDateObj(b.submittedAt).getTime() - DateFormats.isoToDateObj(a.submittedAt).getTime(),
+            ),
             tab: 'placementRequests',
           })
         }
