@@ -6,16 +6,19 @@ import type {
   JourneyType,
   PageResponse,
   SummaryListWithCard,
+  TableCell,
   TableRow,
   UiTimelineEvent,
 } from '@approved-premises/ui'
 import type {
   ApprovedPremisesApplication as Application,
+  ApplicationSortField,
   ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   Person,
   PlacementApplication,
   PlacementType,
+  SortDirection,
   TimelineEvent,
   TimelineEventType,
 } from '@approved-premises/api'
@@ -39,6 +42,7 @@ import ReasonForPlacement, {
   reasons as reasonsDictionary,
 } from '../../form-pages/placement-application/request-a-placement/reasonForPlacement'
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
+import { sortHeader } from '../sortHeader'
 
 const applicationTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => [
@@ -49,6 +53,27 @@ const applicationTableRows = (applications: Array<ApplicationSummary>): Array<Ta
     htmlValue(getStatus(application)),
     createWithdrawElement(application.id, application),
   ])
+}
+
+const dashboardTableHeader = (
+  sortBy: ApplicationSortField,
+  sortDirection: SortDirection,
+  hrefPrefix: string,
+): Array<TableCell> => {
+  return [
+    {
+      text: 'Name',
+    },
+    {
+      text: 'CRN',
+    },
+    sortHeader<ApplicationSortField>('Tier', 'tier', sortBy, sortDirection, hrefPrefix),
+    sortHeader<ApplicationSortField>('Arrival Date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
+    sortHeader<ApplicationSortField>('Date of application', 'createdAt', sortBy, sortDirection, hrefPrefix),
+    {
+      text: 'Status',
+    },
+  ]
 }
 
 const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
@@ -307,6 +332,7 @@ const lengthOfStayForUI = (duration: string) => {
 export {
   applicationTableRows,
   dashboardTableRows,
+  dashboardTableHeader,
   firstPageOfApplicationJourney,
   arrivalDateFromApplication,
   getApplicationType,

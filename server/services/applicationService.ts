@@ -2,11 +2,13 @@ import type { Request } from 'express'
 import type { DataServices, GroupedApplications, PaginatedResponse } from '@approved-premises/ui'
 import type {
   ActiveOffence,
+  ApplicationSortField,
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
   Document,
   NewWithdrawal,
+  SortDirection,
 } from '@approved-premises/api'
 
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
@@ -41,10 +43,15 @@ export default class ApplicationService {
     return application
   }
 
-  async dashboard(token: string, page: number = 1): Promise<PaginatedResponse<ApprovedPremisesApplicationSummary>> {
+  async dashboard(
+    token: string,
+    page: number = 1,
+    sortBy: ApplicationSortField = 'createdAt',
+    sortDirection: SortDirection = 'asc',
+  ): Promise<PaginatedResponse<ApprovedPremisesApplicationSummary>> {
     const applicationClient = this.applicationClientFactory(token)
 
-    return applicationClient.dashboard(page)
+    return applicationClient.dashboard(page, sortBy, sortDirection)
   }
 
   async getAllForLoggedInUser(token: string): Promise<GroupedApplications> {

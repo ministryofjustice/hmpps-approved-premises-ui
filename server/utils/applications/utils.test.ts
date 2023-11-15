@@ -1,4 +1,4 @@
-import { ApplicationStatus } from '@approved-premises/api'
+import { ApplicationSortField, ApplicationStatus } from '@approved-premises/api'
 import { isAfter } from 'date-fns'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
 import {
@@ -22,6 +22,7 @@ import { isApplicableTier, isFullPerson, tierBadge } from '../personUtils'
 import {
   applicationTableRows,
   createWithdrawElement,
+  dashboardTableHeader,
   dashboardTableRows,
   eventTypeTranslations,
   firstPageOfApplicationJourney,
@@ -39,6 +40,7 @@ import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { RestrictedPersonError } from '../errors'
 import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
+import { sortHeader } from '../sortHeader'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -274,6 +276,29 @@ describe('utils', () => {
           html: '',
         })
       })
+    })
+  })
+
+  describe('dashboardTableHeader', () => {
+    const sortBy = 'createdAt'
+    const sortDirection = 'asc'
+    const hrefPrefix = 'http://example.com'
+
+    it('returns header values', () => {
+      expect(dashboardTableHeader(sortBy, sortDirection, hrefPrefix)).toEqual([
+        {
+          text: 'Name',
+        },
+        {
+          text: 'CRN',
+        },
+        sortHeader<ApplicationSortField>('Tier', 'tier', sortBy, sortDirection, hrefPrefix),
+        sortHeader<ApplicationSortField>('Arrival Date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
+        sortHeader<ApplicationSortField>('Date of application', 'createdAt', sortBy, sortDirection, hrefPrefix),
+        {
+          text: 'Status',
+        },
+      ])
     })
   })
 

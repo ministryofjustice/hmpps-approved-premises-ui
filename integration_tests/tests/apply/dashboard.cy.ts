@@ -51,4 +51,66 @@ context('All applications', () => {
     // Then I should see the applications for that page
     page3.shouldShowApplications()
   })
+
+  it('supports sorting by tier', () => {
+    shouldSortByField('tier')
+  })
+
+  it('supports sorting by createdAt', () => {
+    shouldSortByField('createdAt')
+  })
+
+  it('supports sorting by arrivalDate', () => {
+    shouldSortByField('arrivalDate')
+  })
+
+  const shouldSortByField = (field: string) => {
+    // Given I am logged in
+    cy.signIn()
+
+    // And there is a page of applications
+    const applications = applicationSummaryFactory.buildList(10)
+
+    cy.task('stubAllApplications', { applications, page: '1' })
+    cy.task('stubAllApplications', {
+      applications,
+      page: '1',
+      sortBy: field,
+      sortDirection: 'asc',
+    })
+    cy.task('stubAllApplications', {
+      applications,
+      page: '1',
+      sortBy: field,
+      sortDirection: 'desc',
+    })
+
+    // When I access the applications dashboard
+    const page = DashboardPage.visit(applications)
+
+    // Then I should see the first result
+    page.shouldShowApplications()
+
+    // When I sort by Tier
+    page.clickSortBy(field)
+
+    // Then the API should have received a request for the sort
+    cy.task('verifyDashboardRequest', { page: '1', sortBy: field, sortDirection: 'asc' }).then(requests => {
+      expect(requests).to.have.length.greaterThan(0)
+    })
+
+    // And the page should show the sorted items
+    page.shouldBeSortedByField(field, 'ascending')
+
+    // When I click the sort button again
+    page.clickSortBy(field)
+
+    // Then the API should have received a request for the sort
+    cy.task('verifyDashboardRequest', { page: '1', sortBy: field, sortDirection: 'desc' }).then(requests => {
+      expect(requests).to.have.length.greaterThan(0)
+    })
+
+    // And the page should show the sorted items
+    page.shouldBeSortedByField(field, 'descending')
+  }
 })

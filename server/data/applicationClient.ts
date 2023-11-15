@@ -1,12 +1,14 @@
 import type {
   ActiveOffence,
   ApprovedPremisesApplication as Application,
+  ApplicationSortField,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplicationSummary,
   ApprovedPremisesAssessment as Assessment,
   Document,
   NewWithdrawal,
   PlacementApplication,
+  SortDirection,
   SubmitApprovedPremisesApplication,
   TimelineEvent,
   UpdateApprovedPremisesApplication,
@@ -51,11 +53,15 @@ export default class ApplicationClient {
     })) as Array<ApplicationSummary>
   }
 
-  async dashboard(page = 1): Promise<PaginatedResponse<ApprovedPremisesApplicationSummary>> {
+  async dashboard(
+    page: number,
+    sortBy: ApplicationSortField,
+    sortDirection: SortDirection,
+  ): Promise<PaginatedResponse<ApprovedPremisesApplicationSummary>> {
     return this.restClient.getPaginatedResponse<ApprovedPremisesApplicationSummary>({
       path: paths.applications.all.pattern,
       page: page.toString(),
-      query: {},
+      query: { sortBy, sortDirection },
     })
   }
 

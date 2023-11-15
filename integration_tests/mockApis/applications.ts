@@ -1,9 +1,11 @@
 import { SuperAgentRequest } from 'superagent'
 
 import type {
+  ApplicationSortField,
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationSummary,
   ApprovedPremisesAssessment,
+  SortDirection,
   TimelineEvent,
 } from '@approved-premises/api'
 
@@ -26,15 +28,25 @@ export default {
   stubAllApplications: ({
     applications,
     page = '1',
+    sortBy = 'createdAt',
+    sortDirection = 'asc',
   }: {
     applications: Array<ApprovedPremisesApplicationSummary>
     page: string
+    sortBy: ApplicationSortField
+    sortDirection: SortDirection
   }): SuperAgentRequest => {
     const queryParameters = {
       page: {
         equalTo: page,
       },
-    } as Record<string, unknown>
+      sortBy: {
+        equalTo: sortBy,
+      },
+      sortDirection: {
+        equalTo: sortDirection,
+      },
+    }
 
     return stubFor({
       request: {
@@ -54,7 +66,15 @@ export default {
       },
     })
   },
-  verifyDashboardRequest: async ({ page = '1' }: { page: string }) =>
+  verifyDashboardRequest: async ({
+    page = '1',
+    sortBy = 'createdAt',
+    sortDirection = 'asc',
+  }: {
+    page: string
+    sortBy: ApplicationSortField
+    sortDirection: SortDirection
+  }) =>
     (
       await getMatchingRequests({
         method: 'GET',
@@ -62,6 +82,12 @@ export default {
         queryParameters: {
           page: {
             equalTo: page,
+          },
+          sortBy: {
+            equalTo: sortBy,
+          },
+          sortDirection: {
+            equalTo: sortDirection,
           },
         },
       })

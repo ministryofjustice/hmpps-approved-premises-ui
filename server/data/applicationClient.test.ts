@@ -198,7 +198,7 @@ describeClient('ApplicationClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.applications.all.pattern,
-          query: { page: '1' },
+          query: { page: '1', sortBy: 'arrivalDate', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
             'X-Service-Name': 'approved-premises',
@@ -215,7 +215,7 @@ describeClient('ApplicationClient', provider => {
         },
       })
 
-      const result = await applicationClient.dashboard()
+      const result = await applicationClient.dashboard(1, 'arrivalDate', 'asc')
 
       expect(result).toEqual({
         data: allApplications,
@@ -235,7 +235,7 @@ describeClient('ApplicationClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.applications.all.pattern,
-          query: { page: '2' },
+          query: { page: '2', sortBy: 'createdAt', sortDirection: 'desc' },
           headers: {
             authorization: `Bearer ${token}`,
             'X-Service-Name': 'approved-premises',
@@ -252,7 +252,7 @@ describeClient('ApplicationClient', provider => {
         },
       })
 
-      const result = await applicationClient.dashboard(2)
+      const result = await applicationClient.dashboard(2, 'createdAt', 'desc')
 
       expect(result).toEqual({
         data: allApplications,

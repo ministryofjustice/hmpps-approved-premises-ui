@@ -86,7 +86,7 @@ describe('applicationsController', () => {
       const paginationDetails = {
         hrefPrefix: paths.applications.dashboard({}),
         pageNumber: 1,
-        sortBy: 'name',
+        sortBy: 'arrivalDate',
         sortDirection: 'desc',
       }
 
@@ -103,9 +103,16 @@ describe('applicationsController', () => {
         pageNumber: Number(paginationDetails.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
       })
 
-      expect(applicationService.dashboard).toHaveBeenCalledWith(token, paginationDetails.pageNumber)
+      expect(applicationService.dashboard).toHaveBeenCalledWith(
+        token,
+        paginationDetails.pageNumber,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
       expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.applications.dashboard({}))
     })
   })
