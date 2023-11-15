@@ -139,7 +139,9 @@ const stubUser = (name: string) =>
     },
   })
 
-const stubProfile = (roles = [], userId = '70596333-63d4-4fb2-8acc-9ca55563d878', isActive = true) =>
+export const defaultUserId = '70596333-63d4-4fb2-8acc-9ca55563d878'
+
+const stubProfile = (roles = [], userId = defaultUserId, isActive = true) =>
   stubFor({
     request: {
       method: 'GET',

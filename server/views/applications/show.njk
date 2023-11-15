@@ -9,7 +9,6 @@
 
 {% extends "../partials/layout.njk" %}
 
-{% set pageHeading = "Approved Premises application" %}
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
 
@@ -67,15 +66,15 @@
           active: tab === 'timeline'
         },
         {
-          text: 'Request a placement',
-          href: paths.applications.show({id: application.id}) + '?tab=requestAPlacement',
-          active: tab === 'requestAPlacement'
+          text: 'Placement requests',
+          href: paths.applications.show({id: application.id}) + '?tab=placementRequests',
+          active: tab === 'placementRequests'
         }]
       }) }}
 
       {% if tab === 'timeline' %}
         {{ timeline(mapTimelineEventsForUi(timelineEvents)) }}
-      {% elif tab === 'requestAPlacement'%}
+      {% elif tab === 'placementRequests'%}
         {{ requestAPlacement(placementApplications, application, user, csrfToken) }}
       {% else %}
         {{ applicationReadonlyView(application) }}

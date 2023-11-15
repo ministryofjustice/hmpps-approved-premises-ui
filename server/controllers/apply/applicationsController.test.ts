@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput, GroupedApplications, PaginatedResponse } from '@approved-premises/ui'
+import { subDays } from 'date-fns'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController from './applicationsController'
 import { ApplicationService, PersonService } from '../../services'
@@ -21,6 +22,7 @@ import { firstPageOfApplicationJourney } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { ApprovedPremisesApplication } from '../../@types/shared'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
+import placementApplication from '../../testutils/factories/placementApplication'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applications/utils')
@@ -179,10 +181,67 @@ describe('applicationsController', () => {
           referrer,
           tab: 'timeline',
           timelineEvents,
+          pageHeading: 'Approved Premises application',
         })
 
         expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
         expect(applicationService.timeline).toHaveBeenCalledWith(token, application.id)
+      })
+    })
+
+    describe('when the tab=placementRequests query param is present', () => {
+      it('calls the getPlacementApplications method on the application service and passes the tab: "placementRequests" property', async () => {
+        const placementApplications = placementApplication.buildList(1)
+        application.status = 'submitted'
+
+        const requestHandler = applicationsController.show()
+
+        applicationService.findApplication.mockResolvedValue(application)
+        applicationService.getPlacementApplications.mockResolvedValue(placementApplications)
+
+        await requestHandler({ ...request, query: { tab: 'placementRequests' } }, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('applications/show', {
+          application,
+          referrer,
+          tab: 'placementRequests',
+          placementApplications,
+          pageHeading: 'Approved Premises application',
+        })
+
+        expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
+        expect(applicationService.getPlacementApplications).toHaveBeenCalledWith(token, application.id)
+      })
+
+      it('sorts the placement applications in descending date order', async () => {
+        const newestPlacementApp = placementApplication.build({
+          submittedAt: DateFormats.dateObjToIsoDate(subDays(new Date(), 1)),
+        })
+        const middlePlacementApp = placementApplication.build({
+          submittedAt: DateFormats.dateObjToIsoDate(subDays(new Date(), 2)),
+        })
+        const oldestPlacementApp = placementApplication.build({
+          submittedAt: DateFormats.dateObjToIsoDate(subDays(new Date(), 3)),
+        })
+        const unsortedPlacementApplications = [middlePlacementApp, oldestPlacementApp, newestPlacementApp]
+        const sortedPlacementApplications = [newestPlacementApp, middlePlacementApp, oldestPlacementApp]
+
+        application.status = 'submitted'
+
+        const requestHandler = applicationsController.show()
+
+        applicationService.findApplication.mockResolvedValue(application)
+        applicationService.getPlacementApplications.mockResolvedValue(unsortedPlacementApplications)
+
+        await requestHandler({ ...request, query: { tab: 'placementRequests' } }, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('applications/show', {
+          application,
+          referrer,
+          tab: 'placementRequests',
+          pageHeading: 'Approved Premises application',
+          placementApplications: sortedPlacementApplications,
+        })
       })
     })
 
@@ -202,6 +261,7 @@ describe('applicationsController', () => {
         application,
         referrer,
         tab: 'application',
+        pageHeading: 'Approved Premises application',
       })
 
       expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)

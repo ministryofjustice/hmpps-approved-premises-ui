@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    {% set placementApplications = ApplyUtils.mapPlacementApplicationToSummaryCards(placementApplications, application) %}
+    {% set placementApplications = ApplyUtils.mapPlacementApplicationToSummaryCards(placementApplications, application, user) %}
 
     {% if placementApplications.length === 0 %}
         <div class="govuk-warning-text">

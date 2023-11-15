@@ -7,7 +7,8 @@ import { setup } from './setup'
 import { timelineEventFactory } from '../../../server/testutils/factories'
 import placementApplication from '../../../server/testutils/factories/placementApplication'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
-import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
+import { ApprovedPremisesApplication as Application, User } from '../../../server/@types/shared'
+import { defaultUserId } from '../../mockApis/auth'
 
 context('show applications', () => {
   beforeEach(setup)
@@ -101,7 +102,7 @@ context('show applications', () => {
 
   it('should show placement applications', function test() {
     const { application, placementApplication: releaseFollowingDecisionPlacementApplication } =
-      makeReleaseFollowingDecisionPlacementApplication(this.application)
+      makeReleaseFollowingDecisionPlacementApplication(this.application, defaultUserId)
     const rotlPlacementApplication = makeRotlPlacementApplication(application.id)
     const additionalPlacementApplication = makeAdditionalPlacementApplication(application.id)
     const placementApplications = [
@@ -127,7 +128,9 @@ context('show applications', () => {
     showPage.clickRequestAPlacementTab()
 
     // Then I should see the placement requests
-    showPage.shouldShowPlacementApplications(placementApplications, application)
+    showPage.shouldShowPlacementApplications(placementApplications, application, {
+      id: defaultUserId,
+    })
 
     // Given I want to withdraw a placement application
     // When I click 'withdraw'
@@ -144,7 +147,7 @@ context('show applications', () => {
   })
 })
 
-const makeReleaseFollowingDecisionPlacementApplication = (application: Application) => {
+const makeReleaseFollowingDecisionPlacementApplication = (application: Application, userId: User['id']) => {
   let updatedApplication = addResponseToFormArtifact(application, {
     task: 'move-on',
     page: 'placement-duration',
@@ -155,13 +158,16 @@ const makeReleaseFollowingDecisionPlacementApplication = (application: Applicati
   updatedApplication = {
     ...updatedApplication,
     status: 'submitted',
-    createdByUserId: '',
+    createdByUserId: userId,
     assessmentDecision: 'accepted',
     assessmentDecisionDate: '2023-01-01',
     assessmentId: 'low',
   }
 
-  let releaseFollowingDecisionPlacementApplication = placementApplication.build({ applicationId: application.id })
+  let releaseFollowingDecisionPlacementApplication = placementApplication.build({
+    applicationId: application.id,
+    createdByUserId: userId,
+  })
 
   releaseFollowingDecisionPlacementApplication = addResponseToFormArtifact(
     releaseFollowingDecisionPlacementApplication,

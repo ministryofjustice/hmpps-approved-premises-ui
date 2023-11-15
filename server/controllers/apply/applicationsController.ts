@@ -65,7 +65,7 @@ export default class ApplicationsController {
 
       if (application.status !== 'inProgress') {
         const referrer = req.headers.referer
-        const defaultParams = { application, referrer }
+        const defaultParams = { application, referrer, pageHeading: 'Approved Premises application' }
 
         if (req.query.tab === 'timeline') {
           const timelineEvents = await this.applicationService.timeline(req.user.token, application.id)
@@ -73,7 +73,7 @@ export default class ApplicationsController {
           return res.render('applications/show', { ...defaultParams, timelineEvents, tab: 'timeline' })
         }
 
-        if (req.query.tab === 'requestAPlacement') {
+        if (req.query.tab === 'placementRequests') {
           const placementApplications = await this.applicationService.getPlacementApplications(
             req.user.token,
             application.id,
@@ -81,8 +81,11 @@ export default class ApplicationsController {
 
           return res.render('applications/show', {
             ...defaultParams,
-            placementApplications,
-            tab: 'requestAPlacement',
+            placementApplications: placementApplications.sort(
+              (a, b) =>
+                DateFormats.isoToDateObj(b.submittedAt).getTime() - DateFormats.isoToDateObj(a.submittedAt).getTime(),
+            ),
+            tab: 'placementRequests',
           })
         }
 
