@@ -4,6 +4,7 @@ import type {
   PlacementApplication,
   TimelineEvent,
 } from '@approved-premises/api'
+import { fromPartial } from '@total-typescript/shoehorn'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import { summaryListSections } from '../../../server/utils/applications/summaryListUtils'
@@ -114,8 +115,12 @@ export default class ShowPage extends Page {
     })
   }
 
-  shouldShowPlacementApplications(placementApplications: Array<PlacementApplication>, application: Application) {
-    mapPlacementApplicationToSummaryCards(placementApplications, application).forEach(
+  shouldShowPlacementApplications(
+    placementApplications: Array<PlacementApplication>,
+    application: Application,
+    user?: { id: string },
+  ) {
+    mapPlacementApplicationToSummaryCards(placementApplications, application, fromPartial(user)).forEach(
       placementApplicationSummaryCard => {
         cy.get(
           `[data-cy-placement-application-id="${placementApplicationSummaryCard.card.attributes['data-cy-placement-application-id']}"]`,

@@ -21,6 +21,7 @@ import type {
   SortDirection,
   TimelineEvent,
   TimelineEventType,
+  User,
 } from '@approved-premises/api'
 import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-information/maleAp'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
@@ -257,6 +258,7 @@ const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiT
 const mapPlacementApplicationToSummaryCards = (
   placementApplications: Array<PlacementApplication>,
   application: Application,
+  actingUser: User,
 ): Array<SummaryListWithCard> => {
   return placementApplications.map(placementApplication => {
     const reasonForPlacement = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
@@ -273,7 +275,7 @@ const mapPlacementApplicationToSummaryCards = (
 
     const actionItems = []
 
-    if (placementApplication?.canBeWithdrawn) {
+    if (placementApplication?.canBeWithdrawn && placementApplication.createdByUserId === actingUser.id) {
       actionItems.push({
         href: placementApplicationPaths.placementApplications.withdraw.new({
           id: placementApplications[0].id,
