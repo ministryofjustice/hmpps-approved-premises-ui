@@ -1,6 +1,6 @@
 import { DateFormats } from './dateUtils'
 
-import { offenceRadioButton, offenceTableRows } from './offenceUtils'
+import { offenceRadioButton, offenceTableRows, parseOffence } from './offenceUtils'
 import { escape } from './formUtils'
 
 import { activeOffenceFactory } from '../testutils/factories'
@@ -71,6 +71,20 @@ describe('offenceUtils', () => {
           },
         ],
       ])
+    })
+  })
+
+  describe('parseOffence', () => {
+    it('should parse an array of offences', () => {
+      const offences = activeOffenceFactory.buildList(2)
+
+      expect(parseOffence(JSON.stringify(offences))).toEqual(offences)
+    })
+
+    it('should return null if the offences are not valid', () => {
+      expect(parseOffence('[]')).toEqual([])
+      expect(parseOffence('[{"foo": "bar"}]')).toEqual([])
+      expect(parseOffence('invalid json')).toEqual([])
     })
   })
 })

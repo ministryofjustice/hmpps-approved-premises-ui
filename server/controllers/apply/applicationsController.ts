@@ -10,7 +10,8 @@ import { firstPageOfApplicationJourney } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { isFullPerson } from '../../utils/personUtils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
-import { ActiveOffence, ApplicationSortField } from '../../@types/shared'
+import { ApplicationSortField } from '../../@types/shared'
+import { parseOffence } from '../../utils/offenceUtils'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
@@ -133,7 +134,7 @@ export default class ApplicationsController {
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { crn } = req.body
-      const offences = JSON.parse(req.body.offences) as Array<ActiveOffence>
+      const offences = parseOffence(req.body.offences)
 
       if (offences.length > 1) {
         return res.redirect(paths.applications.people.selectOffence({ crn }))

@@ -42,4 +42,28 @@ const offenceRadioButton = (offence: ActiveOffence) => {
   `
 }
 
-export { offenceTableRows, offenceRadioButton }
+const parseOffence = (input: string): Array<ActiveOffence> => {
+  try {
+    const rawJson = [JSON.parse(input)].flatMap(x => x)
+    return rawJson.map(item => {
+      if (
+        'deliusEventNumber' in item &&
+        'deliusEventNumber' in item &&
+        'offenceDescription' in item &&
+        'offenceId' in item &&
+        'convictionId' in item &&
+        'offenceDate' in item
+      ) {
+        return item as ActiveOffence
+      }
+      throw new SyntaxError('Item is not an ActiveOffence')
+    })
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+      return []
+    }
+    throw e
+  }
+}
+
+export { offenceTableRows, offenceRadioButton, parseOffence }
