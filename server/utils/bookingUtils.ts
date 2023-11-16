@@ -84,8 +84,8 @@ export const arrivingTodayOrLate = (bookings: Array<PremisesBooking>, premisesId
     .filter(booking => booking.status === 'awaiting-arrival')
     .filter(
       booking =>
-        isEqual(DateFormats.isoToDateObj(booking.arrivalDate), todayAtMidnight) ||
-        isBefore(DateFormats.isoToDateObj(booking.arrivalDate), todayAtMidnight),
+        isEqual(DateFormats.isoToDateObj(booking.arrivalDate), todayAtMidnight()) ||
+        isBefore(DateFormats.isoToDateObj(booking.arrivalDate), todayAtMidnight()),
     )
 
   return bookingsToTableRows(filteredBookings, premisesId, 'arrival')
@@ -96,8 +96,8 @@ export const departingTodayOrLate = (bookings: Array<PremisesBooking>, premisesI
     .filter(booking => booking.status === 'arrived')
     .filter(
       booking =>
-        isEqual(DateFormats.isoToDateObj(booking.departureDate), todayAtMidnight) ||
-        isBefore(DateFormats.isoToDateObj(booking.departureDate), todayAtMidnight),
+        isEqual(DateFormats.isoToDateObj(booking.departureDate), todayAtMidnight()) ||
+        isBefore(DateFormats.isoToDateObj(booking.departureDate), todayAtMidnight()),
     )
 
   return bookingsToTableRows(filteredBookings, premisesId, 'departure')
@@ -109,8 +109,8 @@ export const upcomingArrivals = (bookings: Array<PremisesBooking>, premisesId: s
       booking =>
         booking.status === 'awaiting-arrival' &&
         isWithinInterval(DateFormats.isoToDateObj(booking.arrivalDate), {
-          start: addDays(todayAtMidnight, 1),
-          end: addDays(todayAtMidnight, UPCOMING_WINDOW_IN_DAYS + 1),
+          start: addDays(todayAtMidnight(), 1),
+          end: addDays(todayAtMidnight(), UPCOMING_WINDOW_IN_DAYS + 1),
         }),
     ),
     premisesId,
@@ -124,8 +124,8 @@ export const upcomingDepartures = (bookings: Array<PremisesBooking>, premisesId:
       booking =>
         booking.status === 'arrived' &&
         isWithinInterval(DateFormats.isoToDateObj(booking.departureDate), {
-          start: addDays(todayAtMidnight, 1),
-          end: addDays(todayAtMidnight, UPCOMING_WINDOW_IN_DAYS + 1),
+          start: addDays(todayAtMidnight(), 1),
+          end: addDays(todayAtMidnight(), UPCOMING_WINDOW_IN_DAYS + 1),
         }),
     ),
     premisesId,
