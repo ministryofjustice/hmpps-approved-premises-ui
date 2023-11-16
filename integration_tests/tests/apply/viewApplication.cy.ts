@@ -9,6 +9,7 @@ import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../
 import { ApprovedPremisesApplication as Application, User } from '../../../server/@types/shared'
 import { defaultUserId } from '../../mockApis/auth'
 import PlacementApplicationWithdrawalConfirmationPage from '../../pages/match/placementApplicationWithdrawalConfirmationPage'
+import paths from '../../../server/paths/api'
 
 context('show applications', () => {
   beforeEach(setup)
@@ -187,6 +188,10 @@ context('show applications', () => {
 
     // Then I should see a flash confirming the note has been added
     showPage.showsNoteAddedConfirmationMessage()
+
+    // And I should see the note in the timeline
+    showPage.shouldShowTimeline(updatedTimeline)
+
     // And the API should have been called with the new note
     cy.task('verifyApplicationNoteAdded', { id: application.id }).then(requests => {
       expect(requests).to.have.length(1)

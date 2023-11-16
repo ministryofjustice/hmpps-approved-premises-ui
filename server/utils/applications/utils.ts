@@ -251,6 +251,7 @@ const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiT
           timestamp: timelineEvent.occurredAt,
           date: DateFormats.isoDateTimeToUIDateTime(timelineEvent.occurredAt),
         },
+        content: timelineEvent.content,
       }
     })
 }

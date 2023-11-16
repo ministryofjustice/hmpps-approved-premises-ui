@@ -617,6 +617,7 @@ describe('utils', () => {
           label: {
             text: eventTypeTranslations[timelineEvents[0].type],
           },
+          content: timelineEvents[0].content,
         },
       ])
     })

@@ -35,8 +35,13 @@
           <time datetime="{{event.datetime.timestamp}}">{{event.datetime.date}}</time>
         </p>
 
-      </div>
-    {% endfor %}
-  </div>
+        {% if event.content %}
+          <div class="moj-timeline__description">
+            <p>{{event.content}}</p>
+          </div>
+          {%endif%}
+        </div>
+      {% endfor %}
+    </div>
 
-{% endmacro %}
+  {% endmacro %}
