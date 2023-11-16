@@ -21,7 +21,7 @@ context('Apply - Person Search', () => {
       expect(body.crn).equal(this.person.crn)
       expect(body.convictionId).equal(offence.convictionId)
       expect(body.deliusEventNumber).equal(offence.deliusEventNumber)
-      expect(body.offenceId).equal(offence.offenceId)
+      expect(body.convictionId).equal(offence.convictionId)
     })
 
     // And I complete the basic information step

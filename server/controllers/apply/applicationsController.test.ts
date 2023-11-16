@@ -304,7 +304,7 @@ describe('applicationsController', () => {
   describe('new', () => {
     describe('If there is a CRN in the flash', () => {
       const person = personFactory.build()
-      const offence = activeOffenceFactory.build()
+      const offences = activeOffenceFactory.buildList(2)
 
       beforeEach(() => {
         request = createMock<Request>({
@@ -312,7 +312,7 @@ describe('applicationsController', () => {
           flash: jest.fn().mockReturnValue([person.crn]),
         })
         personService.findByCrn.mockResolvedValue(person)
-        personService.getOffences.mockResolvedValue([offence])
+        personService.getOffences.mockResolvedValue(offences)
       })
 
       describe('if an error has not been sent to the flash', () => {
@@ -332,30 +332,12 @@ describe('applicationsController', () => {
             person,
             date: DateFormats.dateObjtoUIDate(new Date()),
             dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
-            offenceId: offence.offenceId,
+            offences: JSON.stringify(offences),
             errors: {},
             errorSummary: [],
           })
           expect(personService.findByCrn).toHaveBeenCalledWith(token, person.crn)
           expect(request.flash).toHaveBeenCalledWith('crn')
-        })
-
-        it('should not send an offence ID to the view if there are more than one offences returned', async () => {
-          const offences = activeOffenceFactory.buildList(2)
-          personService.getOffences.mockResolvedValue(offences)
-
-          const requestHandler = applicationsController.new()
-          await requestHandler(request, response, next)
-
-          expect(response.render).toHaveBeenCalledWith('applications/people/confirm', {
-            pageHeading: `Confirm ${person.name}'s details`,
-            person,
-            date: DateFormats.dateObjtoUIDate(new Date()),
-            dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
-            offenceId: null,
-            errors: {},
-            errorSummary: [],
-          })
         })
       })
 
@@ -373,7 +355,7 @@ describe('applicationsController', () => {
           person,
           date: DateFormats.dateObjtoUIDate(new Date()),
           dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
-          offenceId: offence.offenceId,
+          offences: JSON.stringify(offences),
           errors: errorsAndUserInput.errors,
           errorSummary: errorsAndUserInput.errorSummary,
           ...errorsAndUserInput.userInput,
@@ -444,16 +426,15 @@ describe('applicationsController', () => {
 
   describe('create', () => {
     const application = applicationFactory.build()
-    const offences = activeOffenceFactory.buildList(2)
+    const offences = activeOffenceFactory.buildList(1)
 
     beforeEach(() => {
       request = createMock<Request>({
         user: { token },
       })
       request.body.crn = 'some-crn'
-      request.body.offenceId = offences[0].offenceId
+      request.body.offences = JSON.stringify(offences)
 
-      personService.getOffences.mockResolvedValue(offences)
       applicationService.createApplication.mockResolvedValue(application)
     })
 
@@ -465,13 +446,18 @@ describe('applicationsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(applicationService.createApplication).toHaveBeenCalledWith('SOME_TOKEN', 'some-crn', offences[0])
+      expect(applicationService.createApplication).toHaveBeenCalledWith(
+        'SOME_TOKEN',
+        'some-crn',
+        offences[0].convictionId,
+        offences[0].deliusEventNumber,
+      )
       expect(firstPageOfApplicationJourney).toHaveBeenCalledWith(application)
       expect(response.redirect).toHaveBeenCalledWith(firstPage)
     })
 
-    it('redirects to the select offences step if an offence has not been provided', async () => {
-      request.body.offenceId = null
+    it('redirects to the select offences step if an there is more than one offence', async () => {
+      request.body.offences = JSON.stringify(activeOffenceFactory.buildList(2))
 
       const requestHandler = applicationsController.create()
 

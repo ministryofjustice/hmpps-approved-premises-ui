@@ -93,7 +93,7 @@ context('Apply', () => {
       expect(body.crn).equal(this.person.crn)
       expect(body.convictionId).equal(selectedOffence.convictionId)
       expect(body.deliusEventNumber).equal(selectedOffence.deliusEventNumber)
-      expect(body.offenceId).equal(selectedOffence.offenceId)
+      expect(body.convictionId).equal(selectedOffence.convictionId)
     })
 
     // Then I should be on the Confirm Your Details page

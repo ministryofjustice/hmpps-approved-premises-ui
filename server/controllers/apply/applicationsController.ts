@@ -10,7 +10,7 @@ import { firstPageOfApplicationJourney } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { isFullPerson } from '../../utils/personUtils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
-import { ApplicationSortField } from '../../@types/shared'
+import { ActiveOffence, ApplicationSortField } from '../../@types/shared'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
@@ -108,14 +108,12 @@ export default class ApplicationsController {
         if (isFullPerson(person)) {
           const offences = await this.personService.getOffences(req.user.token, crn)
 
-          const offenceId = offences.length === 1 ? offences[0].offenceId : null
-
           return res.render(`applications/people/confirm`, {
             pageHeading: `Confirm ${person.name}'s details`,
             person,
             date: DateFormats.dateObjtoUIDate(new Date()),
             dateOfBirth: DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }),
-            offenceId,
+            offences: JSON.stringify(offences),
             errors,
             errorSummary,
             ...userInput,
@@ -134,15 +132,21 @@ export default class ApplicationsController {
 
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { crn, offenceId } = req.body
+      const { crn } = req.body
+      const offences = JSON.parse(req.body.offences) as Array<ActiveOffence>
 
-      if (!offenceId) {
+      if (offences.length > 1) {
         return res.redirect(paths.applications.people.selectOffence({ crn }))
       }
 
-      const offences = await this.personService.getOffences(req.user.token, crn)
-      const indexOffence = offences.find(o => o.offenceId === offenceId)
-      const application = await this.applicationService.createApplication(req.user.token, crn, indexOffence)
+      const { convictionId, deliusEventNumber } = offences[0]
+
+      const application = await this.applicationService.createApplication(
+        req.user.token,
+        crn,
+        convictionId,
+        deliusEventNumber,
+      )
 
       req.session.application = application
 

@@ -1,6 +1,7 @@
 import { ActiveOffence } from '@approved-premises/api'
 import { TableRow } from '@approved-premises/ui'
 import { DateFormats } from './dateUtils'
+import { escape } from './formUtils'
 
 const offenceTableRows = (offences: Array<ActiveOffence>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
@@ -15,16 +16,10 @@ const offenceTableRows = (offences: Array<ActiveOffence>): Array<TableRow> => {
         html: offenceRadioButton(offence),
       },
       {
-        text: offence.offenceId,
-      },
-      {
         text: offence.offenceDescription,
       },
       {
         text: offenceDate,
-      },
-      {
-        text: String(offence.convictionId),
       },
     ])
   })
@@ -35,8 +30,10 @@ const offenceTableRows = (offences: Array<ActiveOffence>): Array<TableRow> => {
 const offenceRadioButton = (offence: ActiveOffence) => {
   return `
   <div class="govuk-radios__item">
-    <input class="govuk-radios__input" id="${offence.offenceId}" name="offenceId" type="radio" value="${offence.offenceId}" />
-    <label class="govuk-label govuk-radios__label" for="${offence.offenceId}">
+    <input class="govuk-radios__input" id="${offence.convictionId}" name="offences" type="radio" value="[${escape(
+      JSON.stringify(offence),
+    )}]" />
+    <label class="govuk-label govuk-radios__label" for="${offence.convictionId}">
       <span class="govuk-visually-hidden">
         Select ${offence.offenceDescription} as index offence
       </span>

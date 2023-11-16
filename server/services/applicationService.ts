@@ -1,7 +1,6 @@
 import type { Request } from 'express'
 import type { DataServices, GroupedApplications, PaginatedResponse } from '@approved-premises/ui'
 import type {
-  ActiveOffence,
   ApplicationSortField,
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationSummary,
@@ -26,11 +25,12 @@ export default class ApplicationService {
   async createApplication(
     token: string,
     crn: string,
-    activeOffence: ActiveOffence,
+    convictionId: number,
+    deliusEventNumber: string,
   ): Promise<ApprovedPremisesApplication> {
     const applicationClient = this.applicationClientFactory(token)
 
-    const application = await applicationClient.create(crn, activeOffence)
+    const application = await applicationClient.create(crn, convictionId, deliusEventNumber)
 
     return application
   }

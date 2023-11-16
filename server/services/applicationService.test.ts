@@ -109,12 +109,21 @@ describe('ApplicationService', () => {
 
       applicationClient.create.mockResolvedValue(application)
 
-      const result = await service.createApplication(token, application.person.crn, offence)
+      const result = await service.createApplication(
+        token,
+        application.person.crn,
+        offence.convictionId,
+        offence.deliusEventNumber,
+      )
 
       expect(result).toEqual(application)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.create).toHaveBeenCalledWith(application.person.crn, offence)
+      expect(applicationClient.create).toHaveBeenCalledWith(
+        application.person.crn,
+        offence.convictionId,
+        offence.deliusEventNumber,
+      )
     })
   })
 

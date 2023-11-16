@@ -41,7 +41,6 @@ describeClient('ApplicationClient', provider => {
             crn: application.person.crn,
             convictionId: offence.convictionId,
             deliusEventNumber: offence.deliusEventNumber,
-            offenceId: offence.offenceId,
             type: 'CAS1',
           },
           headers: {
@@ -54,7 +53,11 @@ describeClient('ApplicationClient', provider => {
         },
       })
 
-      const result = await applicationClient.create(application.person.crn, offence)
+      const result = await applicationClient.create(
+        application.person.crn,
+        offence.convictionId,
+        offence.deliusEventNumber,
+      )
 
       expect(result).toEqual(application)
     })
@@ -81,7 +84,6 @@ describeClient('ApplicationClient', provider => {
               crn: application.person.crn,
               convictionId: offence.convictionId,
               deliusEventNumber: offence.deliusEventNumber,
-              offenceId: offence.offenceId,
               type: 'CAS1',
             },
             headers: {
@@ -94,7 +96,11 @@ describeClient('ApplicationClient', provider => {
           },
         })
 
-        const result = await applicationClient.create(application.person.crn, offence)
+        const result = await applicationClient.create(
+          application.person.crn,
+          offence.convictionId,
+          offence.deliusEventNumber,
+        )
 
         expect(result).toEqual(application)
       })

@@ -104,6 +104,10 @@ export default abstract class Page {
     cy.get(`#${id}`).select(entry)
   }
 
+  checkRadioByNameAndId(name: string, id: string): void {
+    cy.get(`input[name="${name}"][id="${id}"]`).check()
+  }
+
   checkRadioByNameAndValue(name: string, option: string): void {
     cy.get(`input[name="${name}"][value="${option}"]`).check()
   }

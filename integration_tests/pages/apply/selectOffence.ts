@@ -12,17 +12,18 @@ export default class SelectOffencePage extends Page {
 
   shouldDisplayOffences(): void {
     this.offences.forEach((item: ActiveOffence) => {
-      cy.contains(item.offenceId)
+      cy.contains(item.offenceDescription)
+        .parent()
+        .parent()
         .parent()
         .within(() => {
-          cy.get('td').eq(2).contains(item.offenceDescription)
-          cy.get('td').eq(3).contains(DateFormats.isoDateToUIDate(item.offenceDate))
-          cy.get('td').eq(4).contains(item.convictionId)
+          cy.get('td').eq(1).contains(item.offenceDescription)
+          cy.get('td').eq(2).contains(DateFormats.isoDateToUIDate(item.offenceDate))
         })
     })
   }
 
   selectOffence(selectedOffence: ActiveOffence): void {
-    this.checkRadioByNameAndValue('offenceId', selectedOffence.offenceId)
+    this.checkRadioByNameAndId('offences', String(selectedOffence.convictionId))
   }
 }

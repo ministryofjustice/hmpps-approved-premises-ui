@@ -1,5 +1,4 @@
 import type {
-  ActiveOffence,
   ApprovedPremisesApplication as Application,
   ApplicationSortField,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
@@ -31,12 +30,10 @@ export default class ApplicationClient {
     })) as Application
   }
 
-  async create(crn: string, activeOffence: ActiveOffence): Promise<Application> {
-    const { convictionId, deliusEventNumber, offenceId } = activeOffence
-
+  async create(crn: string, convictionId: number, deliusEventNumber: string): Promise<Application> {
     return (await this.restClient.post({
       path: `${paths.applications.new.pattern}?createWithRisks=${!config.flags.oasysDisabled}`,
-      data: { crn, convictionId, deliusEventNumber, offenceId, type: 'CAS1' },
+      data: { crn, convictionId, deliusEventNumber, type: 'CAS1' },
     })) as Application
   }
 
