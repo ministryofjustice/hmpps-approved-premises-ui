@@ -5,6 +5,7 @@ import type {
   FormSections,
   JourneyType,
   PageResponse,
+  SelectOption,
   SummaryListWithCard,
   TableCell,
   TableRow,
@@ -15,6 +16,7 @@ import type {
   ApplicationSortField,
   ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
+  ApprovedPremisesApplicationStatus,
   Person,
   PlacementApplication,
   PlacementType,
@@ -343,6 +345,38 @@ export type ApplicationShowPageTab = keyof typeof applicationShowPageTabs
 export const applicationShowPageTab = (id: Application['id'], tab: ApplicationShowPageTab) =>
   `${paths.applications.show({ id })}?tab=${applicationShowPageTabs[tab]}`
 
+const applicationStatusSelectOptions = (
+  selectedOption: ApprovedPremisesApplicationStatus | undefined | null,
+): Array<SelectOption> => {
+  const statuses: Record<ApprovedPremisesApplicationStatus, string> = {
+    started: 'Application Started',
+    submitted: 'Application Submitted',
+    rejected: 'Application Rejected',
+    awaitingAssesment: 'Awaiting assessment',
+    unallocatedAssesment: 'Unallocated assessment',
+    assesmentInProgress: 'Assessment in progress',
+    awaitingPlacement: 'Awaiting placement',
+    placementAllocated: 'Placement allocated',
+    inapplicable: 'Application inapplicable',
+    withdrawn: 'Application withdrawn',
+    requestedFurtherInformation: 'Further information requested',
+  }
+
+  const options = Object.keys(statuses).map(status => ({
+    text: statuses[status],
+    value: status,
+    selected: status === selectedOption,
+  }))
+
+  options.unshift({
+    text: 'All statuses',
+    value: '',
+    selected: !selectedOption,
+  })
+
+  return options
+}
+
 export {
   applicationTableRows,
   dashboardTableRows,
@@ -356,4 +390,5 @@ export {
   mapPlacementApplicationToSummaryCards,
   lengthOfStayForUI,
   statusTags,
+  applicationStatusSelectOptions,
 }

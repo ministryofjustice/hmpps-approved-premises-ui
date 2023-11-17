@@ -21,6 +21,7 @@ import { DateFormats } from '../dateUtils'
 import { isApplicableTier, isFullPerson, tierBadge } from '../personUtils'
 
 import {
+  applicationStatusSelectOptions,
   applicationTableRows,
   createWithdrawElement,
   dashboardTableHeader,
@@ -830,6 +831,42 @@ describe('utils', () => {
 
     it('returns "None supplied if the length of stay is an empty string', () => {
       expect(lengthOfStayForUI('')).toEqual('None supplied')
+    })
+  })
+
+  describe('applicationStatusSelectOptions', () => {
+    it('should return select options for tiers with the all tiers option selected by default', () => {
+      expect(applicationStatusSelectOptions(null)).toEqual([
+        { selected: true, text: 'All statuses', value: '' },
+        { selected: false, text: 'Application Started', value: 'started' },
+        { selected: false, text: 'Application Submitted', value: 'submitted' },
+        { selected: false, text: 'Application Rejected', value: 'rejected' },
+        { selected: false, text: 'Awaiting assessment', value: 'awaitingAssesment' },
+        { selected: false, text: 'Unallocated assessment', value: 'unallocatedAssesment' },
+        { selected: false, text: 'Assessment in progress', value: 'assesmentInProgress' },
+        { selected: false, text: 'Awaiting placement', value: 'awaitingPlacement' },
+        { selected: false, text: 'Placement allocated', value: 'placementAllocated' },
+        { selected: false, text: 'Application inapplicable', value: 'inapplicable' },
+        { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
+        { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
+      ])
+    })
+
+    it('should return the selected status if provided', () => {
+      expect(applicationStatusSelectOptions('awaitingPlacement')).toEqual([
+        { selected: false, text: 'All statuses', value: '' },
+        { selected: false, text: 'Application Started', value: 'started' },
+        { selected: false, text: 'Application Submitted', value: 'submitted' },
+        { selected: false, text: 'Application Rejected', value: 'rejected' },
+        { selected: false, text: 'Awaiting assessment', value: 'awaitingAssesment' },
+        { selected: false, text: 'Unallocated assessment', value: 'unallocatedAssesment' },
+        { selected: false, text: 'Assessment in progress', value: 'assesmentInProgress' },
+        { selected: true, text: 'Awaiting placement', value: 'awaitingPlacement' },
+        { selected: false, text: 'Placement allocated', value: 'placementAllocated' },
+        { selected: false, text: 'Application inapplicable', value: 'inapplicable' },
+        { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
+        { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
+      ])
     })
   })
 })
