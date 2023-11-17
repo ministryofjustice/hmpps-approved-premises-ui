@@ -15,7 +15,7 @@ context('Applications dashboard', () => {
     cy.signIn()
 
     // And there are applications in the database
-    const inProgressApplications = applicationSummaryFactory.buildList(5, { status: 'inProgress' })
+    const inProgressApplications = applicationSummaryFactory.buildList(5, { status: 'started' })
     const submittedApplications = applicationSummaryFactory.buildList(5, { status: 'submitted' })
     const requestedFurtherInformationApplications = applicationSummaryFactory.buildList(5, {
       status: 'requestedFurtherInformation',

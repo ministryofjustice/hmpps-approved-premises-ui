@@ -27,15 +27,15 @@ export default class ListPage extends Page {
   }
 
   shouldShowInProgressApplications(): void {
-    this.shouldShowApplications(this.inProgressApplications, 'In Progress')
+    this.shouldShowApplications(this.inProgressApplications, 'Application started')
   }
 
   shouldShowFurtherInformationRequestedApplications(): void {
-    this.shouldShowApplications(this.requestedFurtherInformationApplications, 'Info Request')
+    this.shouldShowApplications(this.requestedFurtherInformationApplications, 'Further information requested')
   }
 
   shouldShowSubmittedApplications(): void {
-    this.shouldShowApplications(this.submittedApplications, 'Submitted')
+    this.shouldShowApplications(this.submittedApplications, 'Application submitted')
   }
 
   clickSubmit() {

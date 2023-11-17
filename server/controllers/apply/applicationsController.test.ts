@@ -25,7 +25,7 @@ import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 import { applicationShowPageTabs, firstPageOfApplicationJourney } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
-import { ApprovedPremisesApplication } from '../../@types/shared'
+import { ApprovedPremisesApplicationSummary } from '../../@types/shared'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
 import placementApplication from '../../testutils/factories/placementApplication'
@@ -91,7 +91,7 @@ describe('applicationsController', () => {
       const searchOptions = createMock<ApplicationDashboardSearchOptions>()
       const paginatedResponse = paginatedResponseFactory.build({
         data: applicationFactory.buildList(2),
-      }) as PaginatedResponse<ApprovedPremisesApplication>
+      }) as PaginatedResponse<ApprovedPremisesApplicationSummary>
 
       const paginationDetails = {
         hrefPrefix: paths.applications.dashboard({}),

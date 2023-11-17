@@ -69,7 +69,7 @@ export default class ApplicationService {
     await Promise.all(
       allApplications.map(async application => {
         switch (application.status) {
-          case 'inProgress':
+          case 'started':
             result.inProgress.push(application)
             break
           case 'requestedFurtherInformation':

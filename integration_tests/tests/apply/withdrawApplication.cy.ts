@@ -1,22 +1,22 @@
-import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
 import { ListPage } from '../../pages/apply'
 
 import Page from '../../pages/page'
 import WithdrawApplicationPage from '../../pages/apply/withdrawApplicationPage'
 import { setup } from './setup'
+import { applicationSummaryFactory } from '../../../server/testutils/factories'
 
 context('Withdraw Application', () => {
   beforeEach(setup)
 
   it('allows me to withdraw an in progress application', function test() {
     // Given I have completed an application
-    const inProgressApplication: Application = {
-      ...this.application,
-      status: 'inProgress',
+    const inProgressApplication = applicationSummaryFactory.build({
+      id: this.application.id,
+      status: 'started',
       createdByUserId: '123',
       submittedAt: undefined,
-    }
-    cy.task('stubApplicationGet', { application: inProgressApplication })
+    })
+    cy.task('stubApplicationGet', { application: this.application })
     cy.task('stubApplications', [inProgressApplication])
     cy.task('stubApplicationWithdrawn', { applicationId: inProgressApplication.id })
 

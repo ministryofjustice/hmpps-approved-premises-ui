@@ -14,7 +14,6 @@ import type {
 import type {
   ApprovedPremisesApplication as Application,
   ApplicationSortField,
-  ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplicationStatus,
   Person,
@@ -46,6 +45,20 @@ import ReasonForPlacement, {
 } from '../../form-pages/placement-application/request-a-placement/reasonForPlacement'
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
 import { sortHeader } from '../sortHeader'
+
+const applicationStatuses: Record<ApprovedPremisesApplicationStatus, string> = {
+  started: 'Application started',
+  submitted: 'Application submitted',
+  rejected: 'Application rejected',
+  awaitingAssesment: 'Awaiting assessment',
+  unallocatedAssesment: 'Unallocated assessment',
+  assesmentInProgress: 'Assessment in progress',
+  awaitingPlacement: 'Awaiting placement',
+  placementAllocated: 'Placement allocated',
+  inapplicable: 'Application inapplicable',
+  withdrawn: 'Application withdrawn',
+  requestedFurtherInformation: 'Further information requested',
+}
 
 const applicationTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => [
@@ -95,20 +108,31 @@ const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(ti
 const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
   arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'
 
-const statusTags: Record<ApplicationStatus, string> = {
-  inProgress: `<strong class="govuk-tag govuk-tag--blue">In Progress</strong>`,
-  requestedFurtherInformation: `<strong class="govuk-tag govuk-tag--yellow">Info Request</strong>`,
-  submitted: `<strong class="govuk-tag">Submitted</strong>`,
-  pending: `<strong class="govuk-tag govuk-tag--blue">Pending</strong>`,
-  rejected: `<strong class="govuk-tag govuk-tag--red">Rejected</strong>`,
-  awaitingPlacement: `<strong class="govuk-tag govuk-tag--blue">Awaiting Placement</strong>`,
-  placed: `<strong class="govuk-tag govuk-tag--pink">Placed</strong>`,
-  inapplicable: `<strong class="govuk-tag govuk-tag--red">Inapplicable</strong>`,
-  withdrawn: `<strong class="govuk-tag govuk-tag--red">Withdrawn</strong>`,
+const statusTags = (): Record<ApprovedPremisesApplicationStatus, string> => {
+  const colours: Record<ApprovedPremisesApplicationStatus, string> = {
+    started: 'blue',
+    submitted: '',
+    rejected: 'red',
+    awaitingAssesment: 'blue',
+    unallocatedAssesment: 'blue',
+    assesmentInProgress: 'blue',
+    awaitingPlacement: 'blue',
+    placementAllocated: 'pink',
+    inapplicable: 'red',
+    withdrawn: 'red',
+    requestedFurtherInformation: 'yellow',
+  }
+  return Object.keys(applicationStatuses).reduce(
+    (item, key) => {
+      item[key] = `<strong class="govuk-tag govuk-tag--${colours[key]}">${applicationStatuses[key]}</strong>`
+      return item
+    },
+    {} as Record<ApprovedPremisesApplicationStatus, string>,
+  )
 }
 
 const getStatus = (application: ApplicationSummary): string => {
-  return statusTags[application.status]
+  return statusTags()[application.status]
 }
 
 export const textValue = (value: string) => {
@@ -127,8 +151,8 @@ const createNameAnchorElement = (person: Person, applicationId: string) => {
     : textValue(`LAO CRN: ${person.crn}`)
 }
 
-export const unwithdrawableApplicationStatuses: Array<ApplicationStatus> = [
-  'placed',
+export const unwithdrawableApplicationStatuses: Array<ApprovedPremisesApplicationStatus> = [
+  'placementAllocated',
   'inapplicable',
   'withdrawn',
   'rejected',
@@ -348,22 +372,8 @@ export const applicationShowPageTab = (id: Application['id'], tab: ApplicationSh
 const applicationStatusSelectOptions = (
   selectedOption: ApprovedPremisesApplicationStatus | undefined | null,
 ): Array<SelectOption> => {
-  const statuses: Record<ApprovedPremisesApplicationStatus, string> = {
-    started: 'Application Started',
-    submitted: 'Application Submitted',
-    rejected: 'Application Rejected',
-    awaitingAssesment: 'Awaiting assessment',
-    unallocatedAssesment: 'Unallocated assessment',
-    assesmentInProgress: 'Assessment in progress',
-    awaitingPlacement: 'Awaiting placement',
-    placementAllocated: 'Placement allocated',
-    inapplicable: 'Application inapplicable',
-    withdrawn: 'Application withdrawn',
-    requestedFurtherInformation: 'Further information requested',
-  }
-
-  const options = Object.keys(statuses).map(status => ({
-    text: statuses[status],
+  const options = Object.keys(applicationStatuses).map(status => ({
+    text: applicationStatuses[status],
     value: status,
     selected: status === selectedOption,
   }))
@@ -378,6 +388,7 @@ const applicationStatusSelectOptions = (
 }
 
 export {
+  applicationStatuses,
   applicationTableRows,
   dashboardTableRows,
   dashboardTableHeader,
