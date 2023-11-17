@@ -64,6 +64,51 @@ context('All applications', () => {
     shouldSortByField('arrivalDate')
   })
 
+  it('supports filtering', () => {
+    // Given I am logged in
+    cy.signIn()
+
+    // And there is a page of applications
+    const applications = applicationSummaryFactory.buildList(10)
+
+    cy.task('stubAllApplications', { applications })
+    cy.task('stubAllApplications', { applications: [applications[1]], searchOptions: { crnOrName: 'foo' } })
+    cy.task('stubAllApplications', {
+      applications: [applications[2], applications[3]],
+      searchOptions: { status: 'submitted' },
+    })
+
+    // When I access the applications dashboard
+    let page = DashboardPage.visit(applications)
+
+    // Then I should see all of the applications
+    page.shouldShowApplications()
+
+    // When I search by CRN or Name
+    page.searchByCrnOrName('foo')
+
+    // Then the API should have received a request for the query
+    cy.task('verifyDashboardRequest', { page: '1', searchOptions: { crnOrName: 'foo' } }).then(requests => {
+      expect(requests).to.have.length.greaterThan(0)
+    })
+
+    // And I should see the search results that match that query
+    page = new DashboardPage([applications[1]])
+    page.shouldShowApplications()
+
+    // When I search by status
+    page.searchByStatus('submitted')
+
+    // Then the API should have received a request for the query
+    cy.task('verifyDashboardRequest', { page: '1', searchOptions: { status: 'submitted' } }).then(requests => {
+      expect(requests).to.have.length.greaterThan(0)
+    })
+
+    // And I should see the search results that match that query
+    page = new DashboardPage([applications[2], applications[3]])
+    page.shouldShowApplications()
+  })
+
   const shouldSortByField = (field: string) => {
     // Given I am logged in
     cy.signIn()

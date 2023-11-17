@@ -383,16 +383,22 @@ describe('ApplicationService', () => {
       expect(result).toEqual(paginatedResponse)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.dashboard).toHaveBeenCalledWith(1, 'createdAt', 'asc')
+      expect(applicationClient.dashboard).toHaveBeenCalledWith(1, 'createdAt', 'asc', {})
     })
 
     it('passes a page number and sort options', async () => {
-      const result = await service.dashboard(token, 2, 'arrivalDate', 'desc')
+      const result = await service.dashboard(token, 2, 'arrivalDate', 'desc', {
+        crnOrName: 'foo',
+        status: 'assesmentInProgress',
+      })
 
       expect(result).toEqual(paginatedResponse)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.dashboard).toHaveBeenCalledWith(2, 'arrivalDate', 'desc')
+      expect(applicationClient.dashboard).toHaveBeenCalledWith(2, 'arrivalDate', 'desc', {
+        crnOrName: 'foo',
+        status: 'assesmentInProgress',
+      })
     })
   })
 

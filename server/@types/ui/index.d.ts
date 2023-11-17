@@ -2,6 +2,7 @@ import {
   Application,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplication,
+  ApprovedPremisesApplicationStatus,
   ApprovedPremisesAssessment,
   ApprovedPremisesUserRole,
   ArrayOfOASysOffenceDetailsQuestions,
@@ -448,4 +449,9 @@ export type PlacementRequestDashboardSearchOptions = {
   tier?: RiskTierLevel
   arrivalDateStart?: string
   arrivalDateEnd?: string
+}
+
+export type ApplicationDashboardSearchOptions = {
+  crnOrName?: string
+  status?: ApprovedPremisesApplicationStatus
 }

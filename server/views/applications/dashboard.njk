@@ -4,6 +4,7 @@
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "moj/components/badge/macro.njk" import mojBadge %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "./_navigation.njk" import navigation %}
 
 {% extends "../partials/layout.njk" %}
@@ -20,6 +21,60 @@
       <h1 class="govuk-heading-l">Approved Premises applications</h1>
 
       {{ navigation('allApplications') }}
+
+      <div class="placement-request-search__wrapper">
+
+        <form action="{{ paths.applications.dashboard({}) }}" method="get">
+
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+              <div class="govuk-form-group">
+                <label class="placement-request-search__crn-label" for="crnOrName">
+                 Find an application
+                </label>
+
+                <div id="crn-hint" class="govuk-hint moj-crn__hint ">
+                  You can search by CRN or name
+                </div>
+
+                <input class="govuk-input moj-search__input" id="crnOrName" name="crnOrName" type="search" aria-describedby="crn-hint" value="{{ crnOrName }}">
+              </div>
+            </div>
+          </div>
+
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-quarter">
+              <h2 class="govuk-heading-m">Filters</h2>
+            </div>
+          </div>
+
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-quarter">
+              {{
+                govukSelect({
+                  label: {
+                      text: "Statuses",
+                      classes: "govuk-label--s"
+                  },
+                  id: "status",
+                  name: "status",
+                  items: ApplyUtils.applicationStatusSelectOptions(status)
+                })
+              }}
+            </div>
+            <div class="govuk-grid-column-one-quarter">
+              {{
+                govukButton({
+                  name: 'submit',
+                  text: 'Apply filters',
+                  classes: 'placement-request-search__submit'
+                })
+              }}
+            </div>
+          </div>
+
+        </form>
+      </div>
 
       {{
         govukTable({

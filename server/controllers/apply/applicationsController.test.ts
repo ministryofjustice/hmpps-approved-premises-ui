@@ -1,7 +1,12 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import type { ErrorsAndUserInput, GroupedApplications, PaginatedResponse } from '@approved-premises/ui'
+import type {
+  ApplicationDashboardSearchOptions,
+  ErrorsAndUserInput,
+  GroupedApplications,
+  PaginatedResponse,
+} from '@approved-premises/ui'
 import { subDays } from 'date-fns'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController from './applicationsController'
@@ -22,6 +27,7 @@ import { applicationShowPageTabs, firstPageOfApplicationJourney } from '../../ut
 import { getResponses } from '../../utils/applications/getResponses'
 import { ApprovedPremisesApplication } from '../../@types/shared'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
+import { getSearchOptions } from '../../utils/getSearchOptions'
 import placementApplication from '../../testutils/factories/placementApplication'
 
 jest.mock('../../utils/validation')
@@ -29,6 +35,7 @@ jest.mock('../../utils/applications/utils')
 jest.mock('../../utils/applications/getResponses')
 jest.mock('../../services/tasklistService')
 jest.mock('../../utils/getPaginationDetails')
+jest.mock('../../utils/getSearchOptions')
 
 describe('applicationsController', () => {
   const token = 'SOME_TOKEN'
@@ -81,6 +88,7 @@ describe('applicationsController', () => {
 
   describe('dashboard', () => {
     it('calls the dashboard service with the page number and renders the results', async () => {
+      const searchOptions = createMock<ApplicationDashboardSearchOptions>()
       const paginatedResponse = paginatedResponseFactory.build({
         data: applicationFactory.buildList(2),
       }) as PaginatedResponse<ApprovedPremisesApplication>
@@ -93,6 +101,7 @@ describe('applicationsController', () => {
       }
 
       applicationService.dashboard.mockResolvedValue(paginatedResponse)
+      ;(getSearchOptions as jest.Mock).mockReturnValue(searchOptions)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
       const requestHandler = applicationsController.dashboard()
@@ -107,6 +116,7 @@ describe('applicationsController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
+        ...searchOptions,
       })
 
       expect(applicationService.dashboard).toHaveBeenCalledWith(
@@ -114,8 +124,10 @@ describe('applicationsController', () => {
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
+        searchOptions,
       )
-      expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.applications.dashboard({}))
+      expect(getSearchOptions).toHaveBeenCalledWith(request, ['crnOrName', 'status'])
+      expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.applications.dashboard({}), searchOptions)
     })
   })
 

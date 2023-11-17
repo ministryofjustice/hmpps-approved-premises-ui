@@ -1,6 +1,6 @@
 import Page from '../page'
 import paths from '../../../server/paths/apply'
-import { ApprovedPremisesApplicationSummary } from '../../../server/@types/shared'
+import { ApprovedPremisesApplicationStatus, ApprovedPremisesApplicationSummary } from '../../../server/@types/shared'
 import { dashboardTableRows } from '../../../server/utils/applications/utils'
 import { shouldShowTableRows } from '../../helpers'
 
@@ -17,5 +17,15 @@ export default class DashboardPage extends Page {
 
   shouldShowApplications(): void {
     shouldShowTableRows(this.applications, dashboardTableRows)
+  }
+
+  searchByCrnOrName(crnOrName: string): void {
+    this.clearAndCompleteTextInputById('crnOrName', crnOrName)
+    this.clickSubmit()
+  }
+
+  searchByStatus(status: ApprovedPremisesApplicationStatus): void {
+    this.getSelectInputByIdAndSelectAnEntry('status', status)
+    this.clickSubmit()
   }
 }

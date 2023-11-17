@@ -1,5 +1,10 @@
 import type { Request } from 'express'
-import type { DataServices, GroupedApplications, PaginatedResponse } from '@approved-premises/ui'
+import type {
+  ApplicationDashboardSearchOptions,
+  DataServices,
+  GroupedApplications,
+  PaginatedResponse,
+} from '@approved-premises/ui'
 import type {
   ActiveOffence,
   ApprovedPremisesApplication as Application,
@@ -45,10 +50,11 @@ export default class ApplicationService {
     page: number = 1,
     sortBy: ApplicationSortField = 'createdAt',
     sortDirection: SortDirection = 'asc',
+    searchOptions: ApplicationDashboardSearchOptions = {},
   ): Promise<PaginatedResponse<ApprovedPremisesApplicationSummary>> {
     const applicationClient = this.applicationClientFactory(token)
 
-    return applicationClient.dashboard(page, sortBy, sortDirection)
+    return applicationClient.dashboard(page, sortBy, sortDirection, searchOptions)
   }
 
   async getAllForLoggedInUser(token: string): Promise<GroupedApplications> {
