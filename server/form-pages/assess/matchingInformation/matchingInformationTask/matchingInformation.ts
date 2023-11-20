@@ -35,8 +35,8 @@ export type MatchingInformationBody = {
   [Key in OffenceAndRiskCriteria | PlacementRequirementCriteria]: Key extends OffenceAndRiskCriteria
     ? OffenceAndRiskInformationRelevance
     : Key extends PlacementRequirementCriteria
-    ? PlacementRequirementPreference
-    : never
+      ? PlacementRequirementPreference
+      : never
 } & {
   apType: ApTypeCriteria | 'normal'
   accessibilityCriteria: Array<AccessibilityCriteria>

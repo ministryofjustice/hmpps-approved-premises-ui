@@ -74,9 +74,8 @@ export const validateOasysEntries = <T>(body: Partial<T>, questionKey: string, a
   Object.keys(questions).forEach(key => {
     const question = questions[key]
     if (!answers[question.questionNumber]) {
-      errors[
-        `${answerKey}[${question.questionNumber}]`
-      ] = `You must enter a response for the '${question.label}' question`
+      errors[`${answerKey}[${question.questionNumber}]`] =
+        `You must enter a response for the '${question.label}' question`
     }
   })
 
