@@ -29,7 +29,7 @@ import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basi
 import paths from '../../paths/apply'
 import placementApplicationPaths from '../../paths/placementApplications'
 import Apply from '../../form-pages/apply'
-import { isApplicableTier, isFullPerson, tierBadge } from '../personUtils'
+import { isApplicableTier, isFullPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import Assess from '../../form-pages/assess'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
@@ -62,7 +62,7 @@ const applicationStatuses: Record<ApprovedPremisesApplicationStatus, string> = {
 
 const applicationTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => [
-    createNameAnchorElement(application.person, application.id),
+    createNameAnchorElement(application.person, application),
     textValue(application.person.crn),
     htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
     textValue(getArrivalDateorNA(application.arrivalDate)),
@@ -92,9 +92,12 @@ const dashboardTableHeader = (
   ]
 }
 
-const dashboardTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
+const dashboardTableRows = (
+  applications: Array<ApplicationSummary>,
+  { linkInProgressApplications = true } = {},
+): Array<TableRow> => {
   return applications.map(application => [
-    createNameAnchorElement(application.person, application.id),
+    createNameAnchorElement(application.person, application, { linkInProgressApplications }),
     textValue(application.person.crn),
     htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
     textValue(getArrivalDateorNA(application.arrivalDate)),
@@ -143,10 +146,20 @@ export const htmlValue = (value: string) => {
   return { html: value }
 }
 
-const createNameAnchorElement = (person: Person, applicationId: string) => {
+const createNameAnchorElement = (
+  person: Person,
+  applicationSummary: ApplicationSummary,
+  { linkInProgressApplications }: { linkInProgressApplications: boolean } = { linkInProgressApplications: true },
+) => {
+  if (!linkInProgressApplications && applicationSummary.status === 'started') {
+    return textValue(nameOrPlaceholderCopy(person, `LAO: ${person.crn}`))
+  }
+
   return isFullPerson(person)
     ? htmlValue(
-        `<a href=${paths.applications.show({ id: applicationId })} data-cy-id="${applicationId}">${person.name}</a>`,
+        `<a href=${paths.applications.show({ id: applicationSummary.id })} data-cy-id="${applicationSummary.id}">${
+          person.name
+        }</a>`,
       )
     : textValue(`LAO CRN: ${person.crn}`)
 }

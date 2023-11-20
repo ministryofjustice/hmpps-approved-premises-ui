@@ -82,7 +82,7 @@
           captionClasses: "govuk-table__caption--m",
           firstCellIsHeader: true,
           head: ApplyUtils.dashboardTableHeader(sortBy, sortDirection, hrefPrefix),
-          rows: ApplyUtils.dashboardTableRows(applications)
+          rows: ApplyUtils.dashboardTableRows(applications, { linkInProgressApplications: false })
         })
       }}
 
