@@ -18,7 +18,7 @@ import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
 import PlacementRequest from '../../form-pages/placement-application'
 import { DateFormats } from '../dateUtils'
-import { isApplicableTier, isFullPerson, tierBadge } from '../personUtils'
+import { isApplicableTier, isFullPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
 
 import {
   applicationStatusSelectOptions,
@@ -417,6 +417,41 @@ describe('utils', () => {
         expect(result[0][2]).toEqual({
           html: '',
         })
+      })
+    })
+
+    describe('when linkInProgressApplications is false', () => {
+      it('returns the rows with the name cell without linking to the application', () => {
+        ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')
+        ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+        ;(nameOrPlaceholderCopy as jest.MockedFunction<typeof nameOrPlaceholderCopy>).mockReturnValue(person.name)
+
+        const application = applicationSummaryFactory.build()
+
+        const result = dashboardTableRows([application], { linkInProgressApplications: false })
+
+        expect(result).toEqual([
+          [
+            {
+              text: person.name,
+            },
+            {
+              text: application.person.crn,
+            },
+            {
+              html: 'TIER_BADGE',
+            },
+            {
+              text: DateFormats.isoDateToUIDate(application.arrivalDate, { format: 'short' }),
+            },
+            {
+              text: DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' }),
+            },
+            {
+              html: getStatus(application),
+            },
+          ],
+        ])
       })
     })
   })
