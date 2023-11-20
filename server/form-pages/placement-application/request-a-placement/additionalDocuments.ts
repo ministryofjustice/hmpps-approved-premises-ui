@@ -79,9 +79,8 @@ export default class AdditionalDocuments implements TasklistPage {
 
     this.body.selectedDocuments.forEach(document => {
       if (!document.description) {
-        errors[
-          `selectedDocuments_${document.id}`
-        ] = `You must enter a description for the document '${document.fileName}'`
+        errors[`selectedDocuments_${document.id}`] =
+          `You must enter a description for the document '${document.fileName}'`
       }
     })
 

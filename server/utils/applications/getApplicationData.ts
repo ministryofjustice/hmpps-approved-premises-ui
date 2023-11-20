@@ -22,8 +22,8 @@ import { noticeTypeFromApplication } from './noticeTypeFromApplication'
 type FirstClassFields<T> = T extends UpdateApprovedPremisesApplication
   ? Omit<UpdateApprovedPremisesApplication, 'data'>
   : T extends SubmitApprovedPremisesApplication
-  ? Omit<SubmitApprovedPremisesApplication, 'translatedDocument'>
-  : never
+    ? Omit<SubmitApprovedPremisesApplication, 'translatedDocument'>
+    : never
 
 type QuestionResponseFunction = (formArtifact: FormArtifact, Page: unknown, question?: string) => unknown
 
