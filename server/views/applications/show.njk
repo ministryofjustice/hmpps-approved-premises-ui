@@ -12,15 +12,6 @@
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
 
-{% block beforeContent %}
-  {% if referrer %}
-    {{ govukBackLink({
-      text: "Back",
-      href: referrer
-    }) }}
-  {% endif %}
-{% endblock %}
-
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-width-container">
