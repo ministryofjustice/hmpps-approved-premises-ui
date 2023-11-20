@@ -19,6 +19,7 @@ export default function routes(controllers: Controllers, router: Router, service
     offencesController,
     documentsController,
     withdrawalsController,
+    notesController,
   } = controllers
 
   get(paths.applications.start.pattern, applicationsController.start(), { auditEvent: 'START_APPLICATION' })
@@ -46,6 +47,12 @@ export default function routes(controllers: Controllers, router: Router, service
   })
   post(paths.applications.withdraw.create.pattern, withdrawalsController.create(), {
     auditEvent: 'WITHDRAW_APPLICATION',
+  })
+  post(paths.applications.notes.new.pattern, notesController.new(), {
+    auditEvent: 'CONFIRM_NEW_NOTE',
+  })
+  post(paths.applications.notes.create.pattern, notesController.create(), {
+    auditEvent: 'CREATE_NEW_NOTE',
   })
 
   Object.keys(pages).forEach((taskKey: string) => {

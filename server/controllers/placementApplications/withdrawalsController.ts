@@ -4,8 +4,8 @@ import { PlacementApplicationService } from '../../services'
 
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 
-import applyPaths from '../../paths/apply'
 import placementApplicationPaths from '../../paths/placementApplications'
+import { applicationShowPageTab } from '../../utils/applications/utils'
 
 export default class WithdrawlsController {
   constructor(private readonly placementApplicationService: PlacementApplicationService) {}
@@ -36,7 +36,7 @@ export default class WithdrawlsController {
         const { applicationId } = req.body
         req.flash('success', 'Placement application withdrawn')
 
-        return res.redirect(`${applyPaths.applications.show({ id: applicationId })}?tab=requestAPlacement`)
+        return res.redirect(applicationShowPageTab(applicationId, 'placementRequests'))
       } catch (err) {
         return catchValidationErrorOrPropogate(
           req,

@@ -1,9 +1,27 @@
-
 {%- from "moj/components/timeline/macro.njk" import mojTimeline -%}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
-{% macro timeline(timelineEvents) %}
+{% macro timeline(timelineEvents, application, csrfToken) %}
 
-<h2 class="govuk-heading-m">Application history</h2>
+  <form action="{{ paths.applications.notes.new({id: application.id}) }}" method="post">
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+    {{ govukTextarea({
+          name: "note",
+          id: "note",
+          label: {
+            text: "Add a note to the application", 
+            classes: "govuk-label--m"
+          }
+        }) }}
+
+    {{ govukButton({
+        text: "Add note"
+    }) }}
+  </form>
+
+  <h2 class="govuk-heading-m">Application history</h2>
   <div class="moj-timeline">
 
     {% for event in timelineEvents %}
@@ -17,10 +35,13 @@
           <time datetime="{{event.datetime.timestamp}}">{{event.datetime.date}}</time>
         </p>
 
-      </div>
-    {% endfor %}
-</div>
+        {% if event.content %}
+          <div class="moj-timeline__description">
+            <p>{{event.content}}</p>
+          </div>
+          {%endif%}
+        </div>
+      {% endfor %}
+    </div>
 
-
-
-{% endmacro %}
+  {% endmacro %}

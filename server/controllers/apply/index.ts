@@ -5,6 +5,7 @@ import PagesController from './applications/pagesController'
 import OffencesController from './people/offencesController'
 import DocumentsController from './people/documentsController'
 import WithdrawalsController from './applications/withdrawalsController'
+import NotesController from './applications/notesController'
 
 import type { Services } from '../../services'
 
@@ -20,6 +21,7 @@ export const controllers = (services: Services) => {
   const offencesController = new OffencesController(personService)
   const documentsController = new DocumentsController(personService)
   const withdrawalsController = new WithdrawalsController(applicationService)
+  const notesController = new NotesController(applicationService, userService)
 
   return {
     applicationsController,
@@ -27,6 +29,7 @@ export const controllers = (services: Services) => {
     offencesController,
     documentsController,
     withdrawalsController,
+    notesController,
   }
 }
 

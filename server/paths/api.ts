@@ -122,6 +122,7 @@ export default {
     withdrawal: applyPaths.applications.show.path('withdrawal'),
     timeline: applyPaths.applications.show.path('timeline'),
     placementApplications: applyPaths.applications.show.path('placement-applications'),
+    addNote: applyPaths.applications.show.path('notes'),
   },
   assessments: {
     index: assessPaths.assessments,

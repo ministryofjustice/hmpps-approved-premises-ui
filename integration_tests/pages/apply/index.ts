@@ -30,6 +30,7 @@ import IsExceptionalCasePage from './isExceptionalCase'
 import ListPage from './list'
 import MaleApPage from './maleAp'
 import NationalSecurityDivision from './nationalSecurityDivision'
+import NotesConfirmationPage from './notesConfirmation'
 import OffenceDetailsPage from './offenceDetails'
 import OptionalOasysSectionsPage from './optionalOasysSections'
 import PlacementDurationPage from './placementDuration'
@@ -96,6 +97,7 @@ export {
   ListPage,
   MaleApPage,
   NationalSecurityDivision,
+  NotesConfirmationPage,
   OffenceDetailsPage,
   OptionalOasysSectionsPage,
   PlacementDurationPage,

@@ -18,7 +18,7 @@ import {
 
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
-import { firstPageOfApplicationJourney } from '../../utils/applications/utils'
+import { applicationShowPageTabs, firstPageOfApplicationJourney } from '../../utils/applications/utils'
 import { getResponses } from '../../utils/applications/getResponses'
 import { ApprovedPremisesApplication } from '../../@types/shared'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
@@ -174,12 +174,12 @@ describe('applicationsController', () => {
         applicationService.findApplication.mockResolvedValue(application)
         applicationService.timeline.mockResolvedValue(timelineEvents)
 
-        await requestHandler({ ...request, query: { tab: 'timeline' } }, response, next)
+        await requestHandler({ ...request, query: { tab: applicationShowPageTabs.timeline } }, response, next)
 
         expect(response.render).toHaveBeenCalledWith('applications/show', {
           application,
           referrer,
-          tab: 'timeline',
+          tab: applicationShowPageTabs.timeline,
           timelineEvents,
           pageHeading: 'Approved Premises application',
         })
@@ -199,12 +199,12 @@ describe('applicationsController', () => {
         applicationService.findApplication.mockResolvedValue(application)
         applicationService.getPlacementApplications.mockResolvedValue(placementApplications)
 
-        await requestHandler({ ...request, query: { tab: 'placementRequests' } }, response, next)
+        await requestHandler({ ...request, query: { tab: applicationShowPageTabs.placementRequests } }, response, next)
 
         expect(response.render).toHaveBeenCalledWith('applications/show', {
           application,
           referrer,
-          tab: 'placementRequests',
+          tab: applicationShowPageTabs.placementRequests,
           placementApplications,
           pageHeading: 'Approved Premises application',
         })

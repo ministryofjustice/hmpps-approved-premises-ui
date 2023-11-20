@@ -18,7 +18,10 @@ export default Factory.define<TimelineEvent>(() => ({
     'approved_premises_booking_changed',
     'approved_premises_application_withdrawn',
     'approved_premises_information_request',
+    'application_timeline_note',
     'cas3_person_arrived',
     'cas3_person_departed',
   ] as const),
+  content: Math.random() < 0.5 ? faker.lorem.sentences() : undefined,
+  createdBy: faker.string.uuid(),
 }))
