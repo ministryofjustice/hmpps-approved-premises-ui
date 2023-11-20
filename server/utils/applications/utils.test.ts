@@ -1,4 +1,4 @@
-import { ApplicationSortField, ApplicationStatus } from '@approved-premises/api'
+import { ApplicationSortField, ApprovedPremisesApplicationStatus } from '@approved-premises/api'
 import { isAfter } from 'date-fns'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
 import {
@@ -21,6 +21,8 @@ import { DateFormats } from '../dateUtils'
 import { isApplicableTier, isFullPerson, tierBadge } from '../personUtils'
 
 import {
+  applicationStatusSelectOptions,
+  applicationStatuses,
   applicationTableRows,
   createWithdrawElement,
   dashboardTableHeader,
@@ -245,7 +247,7 @@ describe('utils', () => {
           arrivalDate,
           person,
           risks: { tier: undefined },
-          status: 'inProgress',
+          status: 'started',
         })
 
         const result = applicationTableRows([application])
@@ -384,7 +386,7 @@ describe('utils', () => {
           arrivalDate,
           person,
           risks: { tier: undefined },
-          status: 'inProgress',
+          status: 'started',
         })
 
         const result = dashboardTableRows([application])
@@ -419,13 +421,32 @@ describe('utils', () => {
     })
   })
 
+  describe('statusTags', () => {
+    it('should return a list of tags for each status', () => {
+      expect(statusTags()).toEqual({
+        assesmentInProgress: '<strong class="govuk-tag govuk-tag--blue">Assessment in progress</strong>',
+        awaitingAssesment: '<strong class="govuk-tag govuk-tag--blue">Awaiting assessment</strong>',
+        awaitingPlacement: '<strong class="govuk-tag govuk-tag--blue">Awaiting placement</strong>',
+        inapplicable: '<strong class="govuk-tag govuk-tag--red">Application inapplicable</strong>',
+        placementAllocated: '<strong class="govuk-tag govuk-tag--pink">Placement allocated</strong>',
+        rejected: '<strong class="govuk-tag govuk-tag--red">Application rejected</strong>',
+        requestedFurtherInformation:
+          '<strong class="govuk-tag govuk-tag--yellow">Further information requested</strong>',
+        started: '<strong class="govuk-tag govuk-tag--blue">Application started</strong>',
+        submitted: '<strong class="govuk-tag govuk-tag--">Application submitted</strong>',
+        unallocatedAssesment: '<strong class="govuk-tag govuk-tag--blue">Unallocated assessment</strong>',
+        withdrawn: '<strong class="govuk-tag govuk-tag--red">Application withdrawn</strong>',
+      })
+    })
+  })
+
   describe('getStatus', () => {
-    const statuses = Object.keys(statusTags) as Array<ApplicationStatus>
+    const statuses = Object.keys(applicationStatuses) as Array<ApprovedPremisesApplicationStatus>
 
     statuses.forEach(status => {
       it(`returns the correct tag for each an application with a status of ${status}`, () => {
-        const application = applicationFactory.build({ status })
-        expect(getStatus(application)).toEqual(statusTags[status])
+        const application = applicationSummaryFactory.build({ status })
+        expect(getStatus(application)).toEqual(statusTags()[status])
       })
     })
   })
@@ -578,12 +599,14 @@ describe('utils', () => {
   })
 
   describe('createWithdrawElement', () => {
-    const withdrawalableApplicationStatues: Array<ApplicationStatus> = [
+    const withdrawalableApplicationStatues: Array<ApprovedPremisesApplicationStatus> = [
       'awaitingPlacement',
-      'inProgress',
-      'pending',
-      'requestedFurtherInformation',
+      'started',
       'submitted',
+      'awaitingAssesment',
+      'unallocatedAssesment',
+      'requestedFurtherInformation',
+      'assesmentInProgress',
     ]
 
     it.each(withdrawalableApplicationStatues)(
@@ -830,6 +853,42 @@ describe('utils', () => {
 
     it('returns "None supplied if the length of stay is an empty string', () => {
       expect(lengthOfStayForUI('')).toEqual('None supplied')
+    })
+  })
+
+  describe('applicationStatusSelectOptions', () => {
+    it('should return select options for tiers with the all tiers option selected by default', () => {
+      expect(applicationStatusSelectOptions(null)).toEqual([
+        { selected: true, text: 'All statuses', value: '' },
+        { selected: false, text: 'Application started', value: 'started' },
+        { selected: false, text: 'Application submitted', value: 'submitted' },
+        { selected: false, text: 'Application rejected', value: 'rejected' },
+        { selected: false, text: 'Awaiting assessment', value: 'awaitingAssesment' },
+        { selected: false, text: 'Unallocated assessment', value: 'unallocatedAssesment' },
+        { selected: false, text: 'Assessment in progress', value: 'assesmentInProgress' },
+        { selected: false, text: 'Awaiting placement', value: 'awaitingPlacement' },
+        { selected: false, text: 'Placement allocated', value: 'placementAllocated' },
+        { selected: false, text: 'Application inapplicable', value: 'inapplicable' },
+        { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
+        { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
+      ])
+    })
+
+    it('should return the selected status if provided', () => {
+      expect(applicationStatusSelectOptions('awaitingPlacement')).toEqual([
+        { selected: false, text: 'All statuses', value: '' },
+        { selected: false, text: 'Application started', value: 'started' },
+        { selected: false, text: 'Application submitted', value: 'submitted' },
+        { selected: false, text: 'Application rejected', value: 'rejected' },
+        { selected: false, text: 'Awaiting assessment', value: 'awaitingAssesment' },
+        { selected: false, text: 'Unallocated assessment', value: 'unallocatedAssesment' },
+        { selected: false, text: 'Assessment in progress', value: 'assesmentInProgress' },
+        { selected: true, text: 'Awaiting placement', value: 'awaitingPlacement' },
+        { selected: false, text: 'Placement allocated', value: 'placementAllocated' },
+        { selected: false, text: 'Application inapplicable', value: 'inapplicable' },
+        { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
+        { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
+      ])
     })
   })
 })

@@ -12,6 +12,7 @@ import type {
 
 import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
+import { ApplicationDashboardSearchOptions } from '../../server/@types/ui'
 
 export default {
   stubApplications: (applications: Array<ApprovedPremisesApplicationSummary>): SuperAgentRequest =>
@@ -31,11 +32,13 @@ export default {
     page = '1',
     sortBy = 'createdAt',
     sortDirection = 'asc',
+    searchOptions = {},
   }: {
     applications: Array<ApprovedPremisesApplicationSummary>
     page: string
     sortBy: ApplicationSortField
     sortDirection: SortDirection
+    searchOptions: Partial<ApplicationDashboardSearchOptions>
   }): SuperAgentRequest => {
     const queryParameters = {
       page: {
@@ -48,6 +51,14 @@ export default {
         equalTo: sortDirection,
       },
     }
+
+    Object.keys(searchOptions).forEach(key => {
+      if (searchOptions[key]) {
+        queryParameters[key] = {
+          equalTo: searchOptions[key],
+        }
+      }
+    })
 
     return stubFor({
       request: {
@@ -71,28 +82,40 @@ export default {
     page = '1',
     sortBy = 'createdAt',
     sortDirection = 'asc',
+    searchOptions = {},
   }: {
     page: string
     sortBy: ApplicationSortField
     sortDirection: SortDirection
-  }) =>
-    (
-      await getMatchingRequests({
-        method: 'GET',
-        urlPathPattern: paths.applications.all.pattern,
-        queryParameters: {
-          page: {
-            equalTo: page,
-          },
-          sortBy: {
-            equalTo: sortBy,
-          },
-          sortDirection: {
-            equalTo: sortDirection,
-          },
-        },
-      })
-    ).body.requests,
+    searchOptions: Partial<ApplicationDashboardSearchOptions>
+  }) => {
+    const queryParameters = {
+      page: {
+        equalTo: page,
+      },
+      sortBy: {
+        equalTo: sortBy,
+      },
+      sortDirection: {
+        equalTo: sortDirection,
+      },
+    }
+    Object.keys(searchOptions).forEach(key => {
+      if (searchOptions[key]) {
+        queryParameters[key] = {
+          equalTo: searchOptions[key],
+        }
+      }
+    })
+
+    const request = await getMatchingRequests({
+      method: 'GET',
+      urlPathPattern: paths.applications.all.pattern,
+      queryParameters,
+    })
+
+    return request.body.requests
+  },
   stubApplicationCreate: (args: { application: ApprovedPremisesApplication }): SuperAgentRequest =>
     stubFor({
       request: {

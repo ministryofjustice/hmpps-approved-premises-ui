@@ -11,6 +11,8 @@ import { getResponses } from '../../utils/applications/getResponses'
 import { isFullPerson } from '../../utils/personUtils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { ApplicationSortField } from '../../@types/shared'
+import { ApplicationDashboardSearchOptions } from '../../@types/ui'
+import { getSearchOptions } from '../../utils/getSearchOptions'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
@@ -30,11 +32,20 @@ export default class ApplicationsController {
 
   dashboard(): RequestHandler {
     return async (req: Request, res: Response) => {
+      const searchOptions = getSearchOptions<ApplicationDashboardSearchOptions>(req, ['crnOrName', 'status'])
+
       const { pageNumber, hrefPrefix, sortBy, sortDirection } = getPaginationDetails<ApplicationSortField>(
         req,
         paths.applications.dashboard({}),
+        searchOptions,
       )
-      const result = await this.applicationService.dashboard(req.user.token, pageNumber, sortBy, sortDirection)
+      const result = await this.applicationService.dashboard(
+        req.user.token,
+        pageNumber,
+        sortBy,
+        sortDirection,
+        searchOptions,
+      )
 
       res.render('applications/dashboard', {
         pageHeading: 'Approved Premises applications',
@@ -44,6 +55,7 @@ export default class ApplicationsController {
         hrefPrefix,
         sortBy,
         sortDirection,
+        ...searchOptions,
       })
     }
   }

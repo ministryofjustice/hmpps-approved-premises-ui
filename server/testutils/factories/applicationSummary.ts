@@ -17,5 +17,5 @@ export default Factory.define<ApplicationSummary>(() => ({
   arrivalDate: DateFormats.dateObjToIsoDate(faker.date.soon()),
   risks: risksFactory.build(),
   createdByUserId: faker.string.uuid(),
-  status: 'inProgress',
+  status: 'started',
 }))

@@ -17,7 +17,7 @@ import type {
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
-import { PaginatedResponse } from '../@types/ui'
+import { ApplicationDashboardSearchOptions, PaginatedResponse } from '../@types/ui'
 
 export default class ApplicationClient {
   restClient: RestClient
@@ -58,11 +58,12 @@ export default class ApplicationClient {
     page: number,
     sortBy: ApplicationSortField,
     sortDirection: SortDirection,
+    searchOptions: ApplicationDashboardSearchOptions,
   ): Promise<PaginatedResponse<ApprovedPremisesApplicationSummary>> {
     return this.restClient.getPaginatedResponse<ApprovedPremisesApplicationSummary>({
       path: paths.applications.all.pattern,
       page: page.toString(),
-      query: { sortBy, sortDirection },
+      query: { ...searchOptions, sortBy, sortDirection },
     })
   }
 

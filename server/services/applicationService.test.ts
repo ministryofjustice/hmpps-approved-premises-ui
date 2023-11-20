@@ -66,13 +66,13 @@ describe('ApplicationService', () => {
     const token = 'SOME_TOKEN'
 
     const applications: Record<ApplicationStatus, Array<ApprovedPremisesApplicationSummary>> = {
-      inProgress: applicationSummaryFactory.buildList(1, { status: 'inProgress' }),
+      inProgress: applicationSummaryFactory.buildList(1, { status: 'started' }),
       requestedFurtherInformation: applicationSummaryFactory.buildList(1, { status: 'requestedFurtherInformation' }),
       submitted: applicationSummaryFactory.buildList(1, { status: 'submitted' }),
-      pending: applicationSummaryFactory.buildList(1, { status: 'pending' }),
+      pending: applicationSummaryFactory.buildList(1, { status: 'assesmentInProgress' }),
       rejected: applicationSummaryFactory.buildList(1, { status: 'rejected' }),
       awaitingPlacement: applicationSummaryFactory.buildList(1, { status: 'awaitingPlacement' }),
-      placed: applicationSummaryFactory.buildList(1, { status: 'placed' }),
+      placed: applicationSummaryFactory.buildList(1, { status: 'placementAllocated' }),
       inapplicable: applicationSummaryFactory.buildList(1, { status: 'inapplicable' }),
       withdrawn: applicationSummaryFactory.buildList(1, { status: 'withdrawn' }),
     }
@@ -383,16 +383,22 @@ describe('ApplicationService', () => {
       expect(result).toEqual(paginatedResponse)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.dashboard).toHaveBeenCalledWith(1, 'createdAt', 'asc')
+      expect(applicationClient.dashboard).toHaveBeenCalledWith(1, 'createdAt', 'asc', {})
     })
 
     it('passes a page number and sort options', async () => {
-      const result = await service.dashboard(token, 2, 'arrivalDate', 'desc')
+      const result = await service.dashboard(token, 2, 'arrivalDate', 'desc', {
+        crnOrName: 'foo',
+        status: 'assesmentInProgress',
+      })
 
       expect(result).toEqual(paginatedResponse)
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.dashboard).toHaveBeenCalledWith(2, 'arrivalDate', 'desc')
+      expect(applicationClient.dashboard).toHaveBeenCalledWith(2, 'arrivalDate', 'desc', {
+        crnOrName: 'foo',
+        status: 'assesmentInProgress',
+      })
     })
   })
 

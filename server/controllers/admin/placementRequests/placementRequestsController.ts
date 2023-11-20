@@ -2,8 +2,9 @@ import type { Request, Response, TypedRequestHandler } from 'express'
 import { PlacementRequestService } from '../../../services'
 import { PlacementRequestSortField, PlacementRequestStatus } from '../../../@types/shared'
 import paths from '../../../paths/admin'
-import { PlacementRequestDashboardSearchOptions, RiskTierLevel } from '../../../@types/ui'
+import { PlacementRequestDashboardSearchOptions } from '../../../@types/ui'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
+import { getSearchOptions } from '../../../utils/getSearchOptions'
 
 export default class PlacementRequestsController {
   constructor(private readonly placementRequestService: PlacementRequestService) {}
@@ -51,18 +52,12 @@ export default class PlacementRequestsController {
 
   search(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const searchOptions = {} as PlacementRequestDashboardSearchOptions
-
-      searchOptions.crnOrName = req.query?.crnOrName as string
-      searchOptions.tier = req.query?.tier as RiskTierLevel
-      searchOptions.arrivalDateStart = req.query?.arrivalDateStart as string
-      searchOptions.arrivalDateEnd = req.query?.arrivalDateEnd as string
-
-      Object.keys(searchOptions).forEach(k => {
-        if (!searchOptions[k]) {
-          delete searchOptions[k]
-        }
-      })
+      const searchOptions = getSearchOptions<PlacementRequestDashboardSearchOptions>(req, [
+        'crnOrName',
+        'tier',
+        'arrivalDateStart',
+        'arrivalDateEnd',
+      ])
 
       const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<PlacementRequestSortField>(
         req,
