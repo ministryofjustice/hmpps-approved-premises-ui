@@ -143,6 +143,9 @@ export default {
     reallocatable: {
       index: tasksPaths.index.path('reallocatable'),
     },
+    type: {
+      index: tasksPaths.index.path(':taskType'),
+    },
     show: tasksPaths.show,
     allocations: {
       create: tasksPaths.allocations.create,

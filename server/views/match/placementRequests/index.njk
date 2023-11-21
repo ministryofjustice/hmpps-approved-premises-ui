@@ -13,14 +13,14 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
 
-            <h1 class="govuk-heading-l">Placement Applications</h1>
+            <h1 class="govuk-heading-l">Placement Requests</h1>
             {% include "../../_messages.njk" %}
 
             <p class="govuk-body">
-                All additional placements applications that have been assessed as suitable, require matching to an AP, and have been allocated to you are listed below
+                All additional placement requests that have been assessed as suitable, require matching to an AP, and have been allocated to you are listed below
             </p>
 
-            {{ placementApplicationTable("Placement Applications", PlacementApplicationUtils.tableUtils.tableRows(tasks.placementApplications)) }}
+            {{ placementApplicationTable("Placement Requests", PlacementApplicationUtils.tableUtils.tableRows(tasks)) }}
 
         </div>
     </div>

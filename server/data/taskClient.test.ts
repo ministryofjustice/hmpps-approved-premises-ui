@@ -47,6 +47,33 @@ describeClient('taskClient', provider => {
     })
   })
 
+  describe('allByType', () => {
+    it('makes a get request to the tasks type endpoint', async () => {
+      const tasks = taskFactory.buildList(2)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: `A request to get a list of tasks of a type`,
+        withRequest: {
+          method: 'GET',
+          path: paths.tasks.type.index({ taskType: 'placement-application' }),
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: tasks,
+        },
+      })
+
+      const result = await taskClient.allByType('placement-application')
+
+      expect(result).toEqual(tasks)
+    })
+  })
+
   describe('allForUser', () => {
     it('makes a get request to the tasks endpoint', async () => {
       const tasks = [

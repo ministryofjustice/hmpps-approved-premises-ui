@@ -38,6 +38,20 @@ describe('taskService', () => {
     })
   })
 
+  describe('getTasksOfType', () => {
+    it('calls the allByType method on the task client', async () => {
+      const tasks: Array<Task> = taskFactory.buildList(2)
+      taskClient.allByType.mockResolvedValue(tasks)
+
+      const result = await service.getTasksOfType(token, 'placement-application')
+
+      expect(result).toEqual(tasks)
+
+      expect(taskClientFactory).toHaveBeenCalledWith(token)
+      expect(taskClient.allByType).toHaveBeenCalledWith('placement-application')
+    })
+  })
+
   describe('getMatchTasks', () => {
     it('calls the all method on the task client', async () => {
       const applicationTasks = placementApplicationTaskFactory.buildList(1)
