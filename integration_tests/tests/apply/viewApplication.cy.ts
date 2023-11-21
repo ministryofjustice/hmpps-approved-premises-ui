@@ -258,14 +258,17 @@ const makeRotlPlacementApplication = (applicationId: string) => {
     key: 'reason',
     value: 'rotl',
   })
-  rotlPlacementApplication = addResponsesToFormArtifact(rotlPlacementApplication, {
+  rotlPlacementApplication = addResponseToFormArtifact(rotlPlacementApplication, {
     task: 'request-a-placement',
     page: 'dates-of-placement',
-    keyValuePairs: {
-      arrivalDate: '2023-01-01',
-      durationDays: '20',
-      duration: '20',
-    },
+    key: 'datesOfPlacement',
+    value: [
+      {
+        arrivalDate: '2023-01-01',
+        durationDays: '20',
+        duration: '20',
+      },
+    ],
   })
   return rotlPlacementApplication
 }

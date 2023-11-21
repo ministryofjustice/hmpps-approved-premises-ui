@@ -5,23 +5,24 @@ import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
 
-export type Body = {
+type DateOfPlacementFromUi = {
+  durationDays: string
+  durationWeeks: string
+} & ObjectWithDateParts<'arrivalDate'>
+
+export type DateofPlacement = {
   duration: string
   durationDays: string
   durationWeeks: string
 } & ObjectWithDateParts<'arrivalDate'>
 
+export type Body = {
+  datesOfPlacement: Array<DateOfPlacementFromUi>
+}
+
 @Page({
   name: 'dates-of-placement',
-  bodyProperties: [
-    'arrivalDate',
-    'arrivalDate-day',
-    'arrivalDate-month',
-    'arrivalDate-year',
-    'duration',
-    'durationDays',
-    'durationWeeks',
-  ],
+  bodyProperties: ['datesOfPlacement'],
 })
 export default class DatesOfPlacement implements TasklistPage {
   title = 'Dates of placement'
@@ -34,22 +35,17 @@ export default class DatesOfPlacement implements TasklistPage {
   constructor(private _body: Body) {}
 
   get body() {
-    return {
-      'arrivalDate-year': this._body['arrivalDate-year'],
-      'arrivalDate-month': this._body['arrivalDate-month'],
-      'arrivalDate-day': this._body['arrivalDate-day'],
-      arrivalDate: DateFormats.dateAndTimeInputsToIsoString(
-        this._body as ObjectWithDateParts<'arrivalDate'>,
-        'arrivalDate',
-      ).arrivalDate,
-      durationDays: this._body.durationDays,
-      durationWeeks: this._body.durationWeeks,
-      duration: this.lengthInDays(),
-    }
+    return this._body as Body
   }
 
   set body(value: Body) {
-    this._body = value
+    const validatedInputs = this.validateInputs(value.datesOfPlacement)
+
+    const mappedInputs = this.mapDateInputs(validatedInputs)
+
+    this._body = {
+      datesOfPlacement: mappedInputs,
+    } as Body
   }
 
   previous() {
@@ -61,37 +57,78 @@ export default class DatesOfPlacement implements TasklistPage {
   }
 
   response() {
-    return {
-      [this.questions.arrivalDate]: DateFormats.isoDateToUIDate(this.body.arrivalDate),
-      [this.questions.duration]: DateFormats.formatDuration({
-        weeks: this.body.durationWeeks,
-        days: this.body.durationDays,
-      }),
-    }
+    const result = this.body.datesOfPlacement.map(date => {
+      return {
+        [this.questions.arrivalDate]: DateFormats.isoDateToUIDate(date.arrivalDate),
+        [this.questions.duration]: DateFormats.formatDuration({
+          weeks: date.durationWeeks,
+          days: date.durationDays,
+        }),
+      }
+    })
+
+    return { 'Dates of placement': result }
   }
 
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    if (!this.body.arrivalDate) {
-      errors.arrivalDate = "You must state the person's arrival date"
-    } else if (!dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'arrivalDate'>, 'arrivalDate')) {
-      errors.arrivalDate = 'The placement date is invalid'
+    if (this.body.datesOfPlacement.length === 0) {
+      errors[`datesOfPlacement_${this.body.datesOfPlacement.length}_arrivalDate`] =
+        'You must enter a date for the placement'
+      errors[`datesOfPlacement_${this.body.datesOfPlacement.length}_duration`] =
+        'You must enter a duration for the placement'
     }
 
-    if (!this.body.duration) errors.duration = 'You must state the duration of the placement'
+    this.body.datesOfPlacement.forEach((date, index) => {
+      if (!dateAndTimeInputsAreValidDates(date, 'arrivalDate')) {
+        errors[`datesOfPlacement_${index}_arrivalDate`] = 'You must state a valid arrival date'
+      }
+
+      if (
+        !this.lengthInDays(date.durationWeeks, date.durationDays) ||
+        this.lengthInDays(date.durationWeeks, date.durationDays) === '0'
+      ) {
+        errors[`datesOfPlacement_${index}_duration`] = 'You must state the duration of the placement'
+      }
+    })
 
     return errors
   }
 
-  private lengthInDays(): string | undefined {
-    if (this._body.durationWeeks && this._body.durationDays) {
-      const lengthOfStayWeeksInDays = weeksToDays(Number(this._body.durationWeeks))
-      const totalLengthInDays = lengthOfStayWeeksInDays + Number(this._body.durationDays)
+  private lengthInDays(durationWeeks: string, durationDays: string): string | undefined {
+    if (durationWeeks || durationDays) {
+      const lengthOfStayWeeksInDays = weeksToDays(Number(durationWeeks))
+      const totalLengthInDays = lengthOfStayWeeksInDays + Number(durationDays)
 
       return String(totalLengthInDays)
     }
 
     return undefined
+  }
+
+  private validateInputs(datesArr: Array<DateOfPlacementFromUi> | undefined) {
+    return (datesArr || []).filter(dates => {
+      const result =
+        dateAndTimeInputsAreValidDates(dates, 'arrivalDate') ||
+        Boolean(dates.durationWeeks) ||
+        Boolean(dates.durationDays)
+
+      return result
+    })
+  }
+
+  private mapDateInputs(dates: Array<DateOfPlacementFromUi>): Array<DateOfPlacementFromUi> {
+    const result = dates.map(date => {
+      return {
+        ...date,
+        duration: this.lengthInDays(date.durationWeeks, date.durationDays),
+        durationDays: date.durationDays,
+        durationWeeks: date.durationWeeks,
+        ...DateFormats.dateAndTimeInputsToIsoString(date, 'arrivalDate'),
+      }
+    })
+
+    return result
   }
 }
