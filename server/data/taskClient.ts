@@ -19,6 +19,10 @@ export default class TaskClient {
     return (await this.restClient.get({ path: paths.tasks.index.pattern })) as Promise<Array<CategorisedTask>>
   }
 
+  async allByType(taskType: string): Promise<Array<Task>> {
+    return (await this.restClient.get({ path: paths.tasks.type.index({ taskType }) })) as Promise<Array<Task>>
+  }
+
   async find(applicationId: string, taskType: string): Promise<TaskWrapper> {
     return (await this.restClient.get({
       path: paths.tasks.show({ id: applicationId, taskType }),

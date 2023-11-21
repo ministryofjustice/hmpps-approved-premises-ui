@@ -269,7 +269,7 @@ context('Placement Applications', () => {
     const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
     cy.task('stubPlacementApplication', placementApplication)
 
-    cy.task('stubTasks', placementApplicationTasks)
+    cy.task('stubTasksOfType', { type: 'placement-application', tasks: placementApplicationTasks })
 
     // When I visit the placementRequests dashboard
     const listPage = ListPage.visit()
@@ -321,7 +321,7 @@ context('Placement Applications', () => {
     const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
     cy.task('stubPlacementApplication', placementApplication)
 
-    cy.task('stubTasks', placementApplicationTasks)
+    cy.task('stubTasksOfType', { type: 'placement-application', tasks: placementApplicationTasks })
 
     // When I visit the placementRequests dashboard
     const listPage = ListPage.visit()
@@ -352,7 +352,7 @@ context('Placement Applications', () => {
     const placementApplication = placementApplicationFactory.build({ id: placementApplicationTasks[0].id, document })
     cy.task('stubPlacementApplication', placementApplication)
 
-    cy.task('stubTasks', placementApplicationTasks)
+    cy.task('stubTasksOfType', { type: 'placement-application', tasks: placementApplicationTasks })
 
     // When I visit the placementRequests dashboard
     const listPage = ListPage.visit()

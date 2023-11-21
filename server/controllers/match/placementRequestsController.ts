@@ -14,7 +14,7 @@ export default class PlacementRequestsController {
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const tasks = await this.taskService.getMatchTasks(req.user.token)
+      const tasks = await this.taskService.getTasksOfType(req.user.token, 'placement-application')
 
       res.render('match/placementRequests/index', {
         pageHeading: 'My Cases',

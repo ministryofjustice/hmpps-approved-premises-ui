@@ -13,6 +13,12 @@ export default class TaskService {
     return tasks
   }
 
+  async getTasksOfType(token: string, type: string): Promise<Array<Task>> {
+    const taskClient = this.taskClientFactory(token)
+
+    return taskClient.allByType(type)
+  }
+
   async getMatchTasks(token: string): Promise<GroupedMatchTasks> {
     const taskClient = this.taskClientFactory(token)
 

@@ -1,7 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { GroupedMatchTasks } from '@approved-premises/ui'
 import PlacementRequestsController from './placementRequestsController'
 
 import { ApplicationService, PlacementApplicationService, PlacementRequestService, TaskService } from '../../services'
@@ -9,6 +8,7 @@ import {
   applicationFactory,
   placementApplicationFactory,
   placementRequestDetailFactory,
+  taskFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/placementApplications'
 import { getResponses } from '../../utils/applications/getResponses'
@@ -46,9 +46,9 @@ describe('PlacementRequestsController', () => {
 
   describe('index', () => {
     it('should render the placement requests template', async () => {
-      const tasks = createMock<GroupedMatchTasks>()
+      const tasks = taskFactory.buildList(5)
 
-      taskService.getMatchTasks.mockResolvedValue(tasks)
+      taskService.getTasksOfType.mockResolvedValue(tasks)
 
       const requestHandler = placementRequestsController.index()
 
@@ -58,7 +58,7 @@ describe('PlacementRequestsController', () => {
         pageHeading: 'My Cases',
         tasks,
       })
-      expect(taskService.getMatchTasks).toHaveBeenCalledWith(token)
+      expect(taskService.getTasksOfType).toHaveBeenCalledWith(token, 'placement-application')
     })
   })
 

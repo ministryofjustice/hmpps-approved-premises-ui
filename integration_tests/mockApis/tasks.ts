@@ -35,6 +35,20 @@ export default {
         jsonBody: tasks,
       },
     }),
+  stubTasksOfType: (args: { tasks: Array<Task>; type: string }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: paths.tasks.type.index({ taskType: args.type }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: args.tasks,
+      },
+    }),
   stubTaskGet: (args: { task: Task; users: Array<User> }): SuperAgentRequest =>
     stubFor({
       request: {
