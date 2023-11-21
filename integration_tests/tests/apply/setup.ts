@@ -20,7 +20,7 @@ export const setup = () => {
     const person = personFactory.build()
     const application = applicationFactory.build({
       person,
-      status: 'inProgress',
+      status: 'started',
       createdAt: DateFormats.dateObjToIsoDate(new Date()),
     })
     const risks = risksFactory.build({

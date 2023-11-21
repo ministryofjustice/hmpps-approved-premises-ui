@@ -153,8 +153,8 @@ describe('applicationsController', () => {
       })
     })
 
-    it('fetches the application from the API and renders the task list if the application is in progress', async () => {
-      application.status = 'inProgress'
+    it('fetches the application from the API and renders the task list if the application is started', async () => {
+      application.status = 'started'
 
       const requestHandler = applicationsController.show()
       const stubTaskList = jest.fn()
@@ -289,7 +289,7 @@ describe('applicationsController', () => {
       })
 
       it('sends the errors to the template', async () => {
-        application.status = 'inProgress'
+        application.status = 'started'
 
         const requestHandler = applicationsController.show()
         const stubTaskList = jest.fn()

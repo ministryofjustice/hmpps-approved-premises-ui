@@ -75,7 +75,7 @@ export default class ApplicationsController {
       const taskList = new TasklistService(application)
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
-      if (application.status !== 'inProgress') {
+      if (application.status !== 'started') {
         const referrer = req.headers.referer
         const defaultParams = { application, referrer, pageHeading: 'Approved Premises application' }
 

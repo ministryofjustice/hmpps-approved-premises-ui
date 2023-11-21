@@ -7,7 +7,7 @@ context('Apply', () => {
 
   it('invalidates the check your answers step if an answer is changed', function test() {
     // Given there is a complete application in the database
-    const application = { ...this.application, status: 'inProgress' }
+    const application = { ...this.application, status: 'started' }
     cy.task('stubApplicationGet', { application })
 
     // And I visit the tasklist
@@ -54,7 +54,7 @@ context('Apply', () => {
 
   it('does not invalidate the check your answers step if an answer is reviewed and not changed', function test() {
     // Given there is a complete application in the database
-    const application = { ...this.application, status: 'inProgress' }
+    const application = { ...this.application, status: 'started' }
     cy.task('stubApplicationGet', { application })
 
     // And I visit the tasklist
