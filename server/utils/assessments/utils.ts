@@ -13,7 +13,6 @@ import { kebabCase } from '../utils'
 import { getApplicationType as getApplicationTypeFromApplication } from '../applications/utils'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { assessmentsApproachingDue, formattedArrivalDate } from './dateUtils'
-import { awaitingAssessmentTableRows, completedTableRows, requestedFurtherInformationTableRows } from './tableUtils'
 import { getResponseForPage } from '../applications/getResponseForPage'
 
 const groupAssessmements = (assessments: Array<AssessmentSummary>): GroupedAssessments => {
@@ -166,7 +165,4 @@ export {
   getReviewNavigationItems,
   groupAssessmements,
   rejectionRationaleFromAssessmentResponses,
-  awaitingAssessmentTableRows,
-  completedTableRows,
-  requestedFurtherInformationTableRows,
 }

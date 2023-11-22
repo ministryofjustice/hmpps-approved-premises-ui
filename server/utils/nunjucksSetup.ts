@@ -31,6 +31,7 @@ import { sortHeader } from './sortHeader'
 
 import * as ApplyUtils from './applications/utils'
 import * as AssessmentUtils from './assessments/utils'
+import * as AssessmentTableUtils from './assessments/tableUtils'
 import * as OASysUtils from './assessments/oasysUtils'
 import * as OffenceUtils from './offenceUtils'
 import * as AttachDocumentsUtils from './attachDocumentsUtils'
@@ -207,7 +208,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('yearOptions', yearOptions)
 
   njkEnv.addGlobal('ApplyUtils', ApplyUtils)
-  njkEnv.addGlobal('AssessmentUtils', AssessmentUtils)
+  njkEnv.addGlobal('AssessmentUtils', { ...AssessmentUtils, ...AssessmentTableUtils })
   njkEnv.addGlobal('ApplyUtils', ApplyUtils)
   njkEnv.addGlobal('OASysUtils', OASysUtils)
   njkEnv.addGlobal('OffenceUtils', OffenceUtils)

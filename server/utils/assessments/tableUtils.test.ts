@@ -10,6 +10,7 @@ import {
 } from './dateUtils'
 import {
   assessmentLink,
+  assessmentTable,
   awaitingAssessmentTableRows,
   completedTableRows,
   emptyCell,
@@ -93,6 +94,94 @@ describe('tableUtils', () => {
         id: '123',
       })}" data-cy-assessmentId="123" data-cy-applicationId="345">LAO: ${lao.name}</a>
       `)
+    })
+  })
+
+  describe('assessmentTable', () => {
+    const assessments = assessmentSummaryFactory.buildList(5)
+
+    it('returns an awaiting_assessment table', () => {
+      expect(assessmentTable('awaiting_assessment', assessments)).toEqual({
+        firstCellIsHeader: true,
+        head: [
+          {
+            text: 'Name',
+          },
+          {
+            text: 'CRN',
+          },
+          {
+            text: 'Tier',
+          },
+          {
+            text: 'Arrival date',
+          },
+          {
+            text: 'Current location',
+          },
+          {
+            text: 'Days until assessment due',
+          },
+          {
+            text: 'Status',
+          },
+        ],
+        rows: awaitingAssessmentTableRows(assessments),
+      })
+    })
+
+    it('returns an awaiting_response table', () => {
+      expect(assessmentTable('awaiting_response', assessments)).toEqual({
+        firstCellIsHeader: true,
+        head: [
+          {
+            text: 'Name',
+          },
+          {
+            text: 'CRN',
+          },
+          {
+            text: 'Tier',
+          },
+          {
+            text: 'Arrival date',
+          },
+          {
+            text: 'Current location',
+          },
+          {
+            text: 'Days until assessment due',
+          },
+          {
+            text: 'Status',
+          },
+        ],
+        rows: requestedFurtherInformationTableRows(assessments),
+      })
+    })
+
+    it('returns an completed table', () => {
+      expect(assessmentTable('completed', assessments)).toEqual({
+        firstCellIsHeader: true,
+        head: [
+          {
+            text: 'Name',
+          },
+          {
+            text: 'CRN',
+          },
+          {
+            text: 'Tier',
+          },
+          {
+            text: 'Arrival date',
+          },
+          {
+            text: 'Status',
+          },
+        ],
+        rows: completedTableRows(assessments),
+      })
     })
   })
 

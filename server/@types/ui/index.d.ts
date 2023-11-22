@@ -455,3 +455,5 @@ export type ApplicationDashboardSearchOptions = {
   crnOrName?: string
   status?: ApprovedPremisesApplicationStatus
 }
+
+export type AssessmentCurrentTab = 'awaiting_assessment' | 'awaiting_response' | 'completed'

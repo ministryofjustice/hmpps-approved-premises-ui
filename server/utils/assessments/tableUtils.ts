@@ -3,7 +3,7 @@ import {
   FullPerson,
   RestrictedPerson,
 } from '@approved-premises/api'
-import { TableRow } from '@approved-premises/ui'
+import { AssessmentCurrentTab, TableRow } from '@approved-premises/ui'
 import { linkTo } from '../utils'
 import {
   daysSinceInfoRequest,
@@ -90,6 +90,89 @@ const daysSinceInfoRequestCell = (assessment: AssessmentSummary) => {
 }
 
 export const emptyCell = () => ({ text: '' })
+
+const assessmentTable = (activeTab: AssessmentCurrentTab, assessments: Array<AssessmentSummary>) => {
+  switch (activeTab) {
+    case 'awaiting_response':
+      return {
+        firstCellIsHeader: true,
+        head: [
+          {
+            text: 'Name',
+          },
+          {
+            text: 'CRN',
+          },
+          {
+            text: 'Tier',
+          },
+          {
+            text: 'Arrival date',
+          },
+          {
+            text: 'Current location',
+          },
+          {
+            text: 'Days until assessment due',
+          },
+          {
+            text: 'Status',
+          },
+        ],
+        rows: requestedFurtherInformationTableRows(assessments),
+      }
+    case 'completed':
+      return {
+        firstCellIsHeader: true,
+        head: [
+          {
+            text: 'Name',
+          },
+          {
+            text: 'CRN',
+          },
+          {
+            text: 'Tier',
+          },
+          {
+            text: 'Arrival date',
+          },
+          {
+            text: 'Status',
+          },
+        ],
+        rows: completedTableRows(assessments),
+      }
+    default:
+      return {
+        firstCellIsHeader: true,
+        head: [
+          {
+            text: 'Name',
+          },
+          {
+            text: 'CRN',
+          },
+          {
+            text: 'Tier',
+          },
+          {
+            text: 'Arrival date',
+          },
+          {
+            text: 'Current location',
+          },
+          {
+            text: 'Days until assessment due',
+          },
+          {
+            text: 'Status',
+          },
+        ],
+        rows: awaitingAssessmentTableRows(assessments),
+      }
+  }
+}
 
 const awaitingAssessmentTableRows = (assessments: Array<AssessmentSummary>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
@@ -180,4 +263,5 @@ export {
   awaitingAssessmentTableRows,
   completedTableRows,
   requestedFurtherInformationTableRows,
+  assessmentTable,
 }
