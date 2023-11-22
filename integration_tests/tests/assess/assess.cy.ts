@@ -21,6 +21,7 @@ import {
 import Page from '../../pages/page'
 import SuitabilityAssessment from '../../../server/form-pages/assess/assessApplication/suitablityAssessment/suitabilityAssessment'
 import ContingencyPlanSuitabilityPage from '../../pages/assess/contingencyPlanSuitability'
+import { awaitingAssessmentStatuses } from '../../../server/utils/assessments/utils'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -187,7 +188,7 @@ context('Assess', () => {
       person: personFactory.build(),
     })
     cy.task('stubAssessment', updatedAssessment)
-    cy.task('stubAssessments', { assessments: [], statuses: ['in_progress', 'not_started', 'in_review'] })
+    cy.task('stubAssessments', { assessments: [], statuses: awaitingAssessmentStatuses })
     cy.task('stubAssessments', { assessments: [updatedAssessmentSummary], statuses: ['completed'] })
 
     // And I visit the list page

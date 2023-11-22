@@ -7,6 +7,7 @@ import informationSetAsNotReceived from '../../utils/assessments/informationSetA
 
 import paths from '../../paths/assess'
 import { AssessmentStatus } from '../../@types/shared'
+import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 
 export const tasklistPageHeading = 'Assess an Approved Premises (AP) application'
 
@@ -18,7 +19,7 @@ export default class AssessmentsController {
       const { activeTab } = req.query
       const statuses =
         activeTab === 'awaiting_assessment' || !activeTab
-          ? (['in_progress', 'not_started', 'in_review'] as Array<AssessmentStatus>)
+          ? awaitingAssessmentStatuses
           : ([activeTab] as Array<AssessmentStatus>)
 
       const assessments = await this.assessmentService.getAll(req.user.token, statuses)

@@ -2,6 +2,7 @@ import { ApplicationType, GroupedAssessments, SummaryListItem } from '@approved-
 
 import {
   ApprovedPremisesAssessment as Assessment,
+  AssessmentStatus,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
   PersonAcctAlert,
 } from '@approved-premises/api'
@@ -14,6 +15,8 @@ import { getApplicationType as getApplicationTypeFromApplication } from '../appl
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { assessmentsApproachingDue, formattedArrivalDate } from './dateUtils'
 import { getResponseForPage } from '../applications/getResponseForPage'
+
+const awaitingAssessmentStatuses = ['in_progress', 'not_started', 'in_review'] as Array<AssessmentStatus>
 
 const groupAssessmements = (assessments: Array<AssessmentSummary>): GroupedAssessments => {
   const result = { completed: [], requestedFurtherInformation: [], awaiting: [] } as GroupedAssessments
@@ -165,4 +168,5 @@ export {
   getReviewNavigationItems,
   groupAssessmements,
   rejectionRationaleFromAssessmentResponses,
+  awaitingAssessmentStatuses,
 }

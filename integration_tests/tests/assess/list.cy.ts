@@ -1,5 +1,6 @@
 import { assessmentSummaryFactory } from '../../../server/testutils/factories'
 import { ListPage } from '../../pages/assess'
+import { awaitingAssessmentStatuses } from '../../../server/utils/assessments/utils'
 
 context('List assessments', () => {
   beforeEach(() => {
@@ -19,7 +20,7 @@ context('List assessments', () => {
 
     cy.task('stubAssessments', {
       assessments: awaitingAssessments,
-      statuses: ['in_progress', 'not_started', 'in_review'],
+      statuses: awaitingAssessmentStatuses,
     })
     cy.task('stubAssessments', {
       assessments: awaitingResponseAssessments,

@@ -12,6 +12,7 @@ import { assessmentFactory, assessmentSummaryFactory } from '../../testutils/fac
 import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 import { ErrorsAndUserInput } from '../../@types/ui'
+import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 
 jest.mock('../../utils/assessments/utils')
 jest.mock('../../utils/users')
@@ -52,7 +53,7 @@ describe('assessmentsController', () => {
         pageHeading: 'Approved Premises applications',
         assessments,
       })
-      expect(assessmentService.getAll).toHaveBeenCalledWith(token, ['in_progress', 'not_started', 'in_review'])
+      expect(assessmentService.getAll).toHaveBeenCalledWith(token, awaitingAssessmentStatuses)
     })
 
     it('should list all the assessments with awaiting_assessment statuses', async () => {
@@ -66,7 +67,7 @@ describe('assessmentsController', () => {
         assessments,
         activeTab: 'awaiting_assessment',
       })
-      expect(assessmentService.getAll).toHaveBeenCalledWith(token, ['in_progress', 'not_started', 'in_review'])
+      expect(assessmentService.getAll).toHaveBeenCalledWith(token, awaitingAssessmentStatuses)
     })
 
     it('should list all the assessments with completed statuses', async () => {
