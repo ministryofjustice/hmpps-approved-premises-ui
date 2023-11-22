@@ -28,6 +28,7 @@ import { assessmentSummaryFactory, personFactory } from '../../server/testutils/
 import RfapSuitabilityPage from '../pages/assess/rfapSuitability'
 import ContingencyPlanSuitabilityPage from '../pages/assess/contingencyPlanSuitability'
 import { getPageName, getTaskName } from '../../server/form-pages/utils'
+import { awaitingAssessmentStatuses } from '../../server/utils/assessments/utils'
 
 export default class AseessHelper {
   assessmentSummary: AssessmentSummary
@@ -51,7 +52,10 @@ export default class AseessHelper {
   }
 
   setupStubs() {
-    cy.task('stubAssessments', [this.assessmentSummary])
+    cy.task('stubAssessments', {
+      assessments: [this.assessmentSummary],
+      statuses: awaitingAssessmentStatuses,
+    })
     cy.task('stubAssessment', this.assessment)
     cy.task('stubFindUser', { user: this.user, id: this.assessment.application.createdByUserId })
     cy.task('stubAssessmentUpdate', this.assessment)
@@ -75,7 +79,7 @@ export default class AseessHelper {
   updateAssessmentStatus(status: AssessmentStatus) {
     this.assessmentSummary.status = status
     this.assessment.status = status
-    cy.task('stubAssessments', [this.assessmentSummary])
+    cy.task('stubAssessments', { assessments: [this.assessmentSummary], statuses: [status] })
     return cy.task('stubAssessment', this.assessment)
   }
 

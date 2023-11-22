@@ -4,9 +4,10 @@ import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/val
 import TasklistService from '../../services/tasklistService'
 import { AssessmentService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
-import { groupAssessmements } from '../../utils/assessments/utils'
 
 import paths from '../../paths/assess'
+import { AssessmentStatus } from '../../@types/shared'
+import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 
 export const tasklistPageHeading = 'Assess an Approved Premises (AP) application'
 
@@ -15,12 +16,18 @@ export default class AssessmentsController {
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const assessments = await this.assessmentService.getAll(req.user.token)
+      const { activeTab } = req.query
+      const statuses =
+        activeTab === 'awaiting_assessment' || !activeTab
+          ? awaitingAssessmentStatuses
+          : ([activeTab] as Array<AssessmentStatus>)
+
+      const assessments = await this.assessmentService.getAll(req.user.token, statuses)
 
       res.render('assessments/index', {
         pageHeading: 'Approved Premises applications',
-        assessments: groupAssessmements(assessments),
-        type: req.query.type,
+        activeTab,
+        assessments,
       })
     }
   }

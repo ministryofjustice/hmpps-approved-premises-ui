@@ -1,7 +1,14 @@
-import type { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import type { ApprovedPremisesAssessment as Assessment, AssessmentSummary } from '@approved-premises/api'
 
 import Page from '../page'
 import paths from '../../../server/paths/assess'
+import { shouldShowTableRows } from '../../helpers'
+import {
+  awaitingAssessmentTableRows,
+  completedTableRows,
+  requestedFurtherInformationTableRows,
+} from '../../../server/utils/assessments/tableUtils'
+import { AssessmentCurrentTab } from '../../../server/@types/ui'
 
 export default class ListPage extends Page {
   constructor() {
@@ -23,5 +30,24 @@ export default class ListPage extends Page {
 
   clickRequestedFurtherInformation() {
     cy.get('a').contains('Requested further information').click()
+  }
+
+  shouldShowAssessments(assessments: Array<AssessmentSummary>, activeTab: AssessmentCurrentTab) {
+    let tableRowFunction
+    switch (activeTab) {
+      case 'awaiting_response':
+        tableRowFunction = requestedFurtherInformationTableRows
+        break
+      case 'awaiting_assessment':
+        tableRowFunction = awaitingAssessmentTableRows
+        break
+      case 'completed':
+        tableRowFunction = completedTableRows
+        break
+      default:
+        tableRowFunction = awaitingAssessmentTableRows
+        break
+    }
+    shouldShowTableRows(assessments, tableRowFunction)
   }
 }

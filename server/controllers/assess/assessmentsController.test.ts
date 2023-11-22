@@ -11,9 +11,8 @@ import { assessmentFactory, assessmentSummaryFactory } from '../../testutils/fac
 
 import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
-import { hasRole } from '../../utils/users'
-import { ErrorsAndUserInput, GroupedAssessments } from '../../@types/ui'
-import { groupAssessmements } from '../../utils/assessments/utils'
+import { ErrorsAndUserInput } from '../../@types/ui'
+import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 
 jest.mock('../../utils/assessments/utils')
 jest.mock('../../utils/users')
@@ -39,28 +38,64 @@ describe('assessmentsController', () => {
   })
 
   describe('index', () => {
-    it('should list all the assessments', async () => {
-      const assesments = assessmentSummaryFactory.buildList(3)
-      const groupedAssessments = {
-        completed: [],
-        requestedFurtherInformation: [],
-        awaiting: [],
-      } as GroupedAssessments
+    const assessments = assessmentSummaryFactory.buildList(3)
 
-      assessmentService.getAll.mockResolvedValue(assesments)
-      ;(groupAssessmements as jest.Mock).mockReturnValue(groupedAssessments)
-      ;(hasRole as jest.Mock).mockReturnValue(false)
+    beforeEach(() => {
+      assessmentService.getAll.mockResolvedValue(assessments)
+    })
 
+    it('should list all the assessments with awaiting_assessment statuses by default', async () => {
       const requestHandler = assessmentsController.index()
 
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('assessments/index', {
         pageHeading: 'Approved Premises applications',
-        assessments: groupedAssessments,
+        assessments,
       })
-      expect(groupAssessmements).toHaveBeenCalledWith(assesments)
-      expect(assessmentService.getAll).toHaveBeenCalled()
+      expect(assessmentService.getAll).toHaveBeenCalledWith(token, awaitingAssessmentStatuses)
+    })
+
+    it('should list all the assessments with awaiting_assessment statuses', async () => {
+      request.query.activeTab = 'awaiting_assessment'
+      const requestHandler = assessmentsController.index()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('assessments/index', {
+        pageHeading: 'Approved Premises applications',
+        assessments,
+        activeTab: 'awaiting_assessment',
+      })
+      expect(assessmentService.getAll).toHaveBeenCalledWith(token, awaitingAssessmentStatuses)
+    })
+
+    it('should list all the assessments with completed statuses', async () => {
+      request.query.activeTab = 'completed'
+      const requestHandler = assessmentsController.index()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('assessments/index', {
+        pageHeading: 'Approved Premises applications',
+        assessments,
+        activeTab: 'completed',
+      })
+      expect(assessmentService.getAll).toHaveBeenCalledWith(token, ['completed'])
+    })
+
+    it('should list all the assessments with awaiting_response statuses', async () => {
+      request.query.activeTab = 'awaiting_response'
+      const requestHandler = assessmentsController.index()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('assessments/index', {
+        pageHeading: 'Approved Premises applications',
+        assessments,
+        activeTab: 'awaiting_response',
+      })
+      expect(assessmentService.getAll).toHaveBeenCalledWith(token, ['awaiting_response'])
     })
   })
 
