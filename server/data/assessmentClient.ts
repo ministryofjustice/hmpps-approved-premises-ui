@@ -1,6 +1,7 @@
 import type {
   ApprovedPremisesAssessment as Assessment,
   AssessmentAcceptance,
+  AssessmentStatus,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
   ClarificationNote,
   NewClarificationNote,
@@ -18,8 +19,11 @@ export default class AssessmentClient {
     this.restClient = new RestClient('assessmentClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async all(): Promise<Array<AssessmentSummary>> {
-    return (await this.restClient.get({ path: paths.assessments.index.pattern })) as Array<AssessmentSummary>
+  async all(statuses: Array<AssessmentStatus>): Promise<Array<AssessmentSummary>> {
+    return (await this.restClient.get({
+      path: paths.assessments.index.pattern,
+      query: { statuses: statuses.join(',') },
+    })) as Array<AssessmentSummary>
   }
 
   async find(assessmentId: string): Promise<Assessment> {

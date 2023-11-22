@@ -27,6 +27,9 @@ describeClient('AssessmentClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.assessments.index.pattern,
+          query: {
+            statuses: 'awaiting_response,completed',
+          },
           headers: {
             authorization: `Bearer ${token}`,
             'X-Service-Name': 'approved-premises',
@@ -38,7 +41,7 @@ describeClient('AssessmentClient', provider => {
         },
       })
 
-      const result = await assessmentClient.all()
+      const result = await assessmentClient.all(['awaiting_response', 'completed'])
 
       expect(result).toEqual(assessments)
     })

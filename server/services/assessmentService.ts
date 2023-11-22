@@ -1,6 +1,7 @@
 import { Request } from 'express'
 import {
   ApprovedPremisesAssessment as Assessment,
+  AssessmentStatus,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
   NewClarificationNote,
   UpdatedClarificationNote,
@@ -21,10 +22,10 @@ import { getResponses } from '../utils/applications/getResponses'
 export default class AssessmentService {
   constructor(private readonly assessmentClientFactory: RestClientBuilder<AssessmentClient>) {}
 
-  async getAll(token: string): Promise<Array<AssessmentSummary>> {
+  async getAll(token: string, statuses: Array<AssessmentStatus>): Promise<Array<AssessmentSummary>> {
     const client = this.assessmentClientFactory(token)
 
-    return client.all()
+    return client.all(statuses)
   }
 
   async findAssessment(token: string, id: string): Promise<Assessment> {
