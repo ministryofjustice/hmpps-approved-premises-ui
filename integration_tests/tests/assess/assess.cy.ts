@@ -187,7 +187,8 @@ context('Assess', () => {
       person: personFactory.build(),
     })
     cy.task('stubAssessment', updatedAssessment)
-    cy.task('stubAssessments', [updatedAssessmentSummary])
+    cy.task('stubAssessments', { assessments: [], statuses: ['in_progress', 'not_started', 'in_review'] })
+    cy.task('stubAssessments', { assessments: [updatedAssessmentSummary], statuses: ['completed'] })
 
     // And I visit the list page
     const listPage = ListPage.visit()

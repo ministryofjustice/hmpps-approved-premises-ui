@@ -14,48 +14,32 @@
 
       <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-      {% include './_assessmentsForUser.njk' %}
+      {{
+        mojSubNavigation({
+          label: 'Sub navigation',
+          items: [
+            {
+              text: 'Applications to assess',
+              href: paths.assessments.index({}) + "?activeTab=awaiting_assessment",
+              active: (activeTab|length === 0 or activeTab == 'awaiting_assessment')
+            },
+            {
+              text: 'Requested further information',
+              href: paths.assessments.index({}) + "?activeTab=awaiting_response",
+              active: (activeTab === 'awaiting_response')
+            },
+            {
+              text: 'Completed',
+              href: paths.assessments.index({}) + "?activeTab=completed",
+              active: (activeTab === 'completed')
+            }
+          ]
+        })
+      }}
+
+      {{
+        govukTable(AssessmentUtils.assessmentTable(activeTab, assessments))
+      }}
     </div>
   </div>
-{% endblock %}
-
-{% block extraScripts %}
-  <script type="text/javascript" nonce="{{ cspNonce }}">
-    window
-      .MOJFrontend
-      .initAll()
-
-    // This is a temporary fix to ensure table sorting works correctly with row headers
-    // This can be removed once https://github.com/ministryofjustice/moj-frontend/pull/442 is merged
-    window.MOJFrontend.SortableTable.prototype.sort = function (rows, columnNumber, sortDirection) {
-      var newRows = rows.sort($.proxy(function (rowA, rowB) {
-        var tdA = $(rowA)
-          .find('td,th')
-          .eq(columnNumber);
-        var tdB = $(rowB)
-          .find('td,th')
-          .eq(columnNumber);
-        var valueA = this.getCellValue(tdA);
-        var valueB = this.getCellValue(tdB);
-        if (sortDirection === 'ascending') {
-          if (valueA < valueB) {
-            return -1;
-          }
-          if (valueA > valueB) {
-            return 1;
-          }
-          return 0;
-        } else {
-          if (valueB < valueA) {
-            return -1;
-          }
-          if (valueB > valueA) {
-            return 1;
-          }
-          return 0;
-        }
-      }, this));
-      return newRows;
-    };
-  </script>
 {% endblock %}

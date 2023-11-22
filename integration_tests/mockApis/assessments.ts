@@ -3,6 +3,7 @@ import { SuperAgentRequest } from 'superagent'
 import type {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
+  AssessmentStatus,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
   NewClarificationNote,
   UpdatedClarificationNote,
@@ -12,16 +13,24 @@ import { getMatchingRequests, stubFor } from '../../wiremock'
 import paths from '../../server/paths/api'
 
 export default {
-  stubAssessments: (assessments: Array<AssessmentSummary>): SuperAgentRequest =>
+  stubAssessments: (args: {
+    assessments: Array<AssessmentSummary>
+    statuses: Array<AssessmentStatus>
+  }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        url: paths.assessments.index({}),
+        urlPathPattern: paths.assessments.index.pattern,
+        queryParameters: {
+          statuses: {
+            equalTo: args.statuses.join(','),
+          },
+        },
       },
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: assessments,
+        jsonBody: args.assessments,
       },
     }),
   stubAssessment: (assessment: Assessment): SuperAgentRequest =>
