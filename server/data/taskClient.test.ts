@@ -57,6 +57,9 @@ describeClient('taskClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.tasks.type.index({ taskType: 'placement-application' }),
+          query: {
+            page: '1',
+          },
           headers: {
             authorization: `Bearer ${token}`,
             'X-Service-Name': 'approved-premises',
@@ -65,12 +68,23 @@ describeClient('taskClient', provider => {
         willRespondWith: {
           status: 200,
           body: tasks,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
         },
       })
 
       const result = await taskClient.allByType('placement-application')
 
-      expect(result).toEqual(tasks)
+      expect(result).toEqual({
+        data: tasks,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
   })
 

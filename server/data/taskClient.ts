@@ -1,4 +1,4 @@
-import { CategorisedTask } from '@approved-premises/ui'
+import { CategorisedTask, PaginatedResponse } from '@approved-premises/ui'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
@@ -19,8 +19,12 @@ export default class TaskClient {
     return (await this.restClient.get({ path: paths.tasks.index.pattern })) as Promise<Array<CategorisedTask>>
   }
 
-  async allByType(taskType: string): Promise<Array<Task>> {
-    return (await this.restClient.get({ path: paths.tasks.type.index({ taskType }) })) as Promise<Array<Task>>
+  async allByType(taskType: string, page = 1): Promise<PaginatedResponse<Task>> {
+    return this.restClient.getPaginatedResponse({
+      path: paths.tasks.type.index({ taskType }),
+      page: page.toString(),
+      query: {},
+    })
   }
 
   async find(applicationId: string, taskType: string): Promise<TaskWrapper> {

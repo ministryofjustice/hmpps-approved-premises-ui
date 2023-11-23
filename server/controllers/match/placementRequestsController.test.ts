@@ -6,15 +6,21 @@ import PlacementRequestsController from './placementRequestsController'
 import { ApplicationService, PlacementApplicationService, PlacementRequestService, TaskService } from '../../services'
 import {
   applicationFactory,
+  paginatedResponseFactory,
   placementApplicationFactory,
   placementRequestDetailFactory,
   taskFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/placementApplications'
+import matchpaths from '../../paths/match'
 import { getResponses } from '../../utils/applications/getResponses'
+import { PaginatedResponse } from '../../@types/ui'
+import { getPaginationDetails } from '../../utils/getPaginationDetails'
+import { Task } from '../../@types/shared'
 
 jest.mock('../../utils/applications/utils')
 jest.mock('../../utils/applications/getResponses')
+jest.mock('../../utils/getPaginationDetails')
 jest.mock('../../config')
 
 describe('PlacementRequestsController', () => {
@@ -47,8 +53,16 @@ describe('PlacementRequestsController', () => {
   describe('index', () => {
     it('should render the placement requests template', async () => {
       const tasks = taskFactory.buildList(5)
+      const paginatedResponse = paginatedResponseFactory.build({ data: tasks }) as PaginatedResponse<Task>
 
-      taskService.getTasksOfType.mockResolvedValue(tasks)
+      taskService.getTasksOfType.mockResolvedValue(paginatedResponse)
+
+      const paginationDetails = {
+        hrefPrefix: matchpaths.placementRequests.index({}),
+        pageNumber: 1,
+      }
+
+      ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
       const requestHandler = placementRequestsController.index()
 
@@ -57,8 +71,16 @@ describe('PlacementRequestsController', () => {
       expect(response.render).toHaveBeenCalledWith('match/placementRequests/index', {
         pageHeading: 'My Cases',
         tasks,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: paginationDetails.hrefPrefix,
       })
-      expect(taskService.getTasksOfType).toHaveBeenCalledWith(token, 'placement-application')
+      expect(getPaginationDetails).toHaveBeenCalledWith(request, paginationDetails.hrefPrefix)
+      expect(taskService.getTasksOfType).toHaveBeenCalledWith(
+        token,
+        'placement-application',
+        Number(paginatedResponse.pageNumber),
+      )
     })
   })
 
