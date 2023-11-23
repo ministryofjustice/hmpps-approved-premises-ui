@@ -4,6 +4,7 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "./_table.njk" import placementRequestTable %}
 {% from "./_table.njk" import placementApplicationTable %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
 
 {% set pageTitle = applicationName + " - Placement Applications"  %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
@@ -22,6 +23,7 @@
 
             {{ placementApplicationTable("Placement Requests", PlacementApplicationUtils.tableUtils.tableRows(tasks)) }}
 
+            {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
         </div>
     </div>
 {% endblock %}
