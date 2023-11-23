@@ -1,7 +1,8 @@
-import { CategorisedTask } from '@approved-premises/ui'
+import { CategorisedTask, PaginatedResponse } from '@approved-premises/ui'
 import { Task } from '../@types/shared'
 import TaskClient from '../data/taskClient'
 import {
+  paginatedResponseFactory,
   placementApplicationTaskFactory,
   placementRequestTaskFactory,
   taskFactory,
@@ -41,14 +42,15 @@ describe('taskService', () => {
   describe('getTasksOfType', () => {
     it('calls the allByType method on the task client', async () => {
       const tasks: Array<Task> = taskFactory.buildList(2)
-      taskClient.allByType.mockResolvedValue(tasks)
+      const paginatedResponse = paginatedResponseFactory.build({ data: tasks }) as PaginatedResponse<Task>
+      taskClient.allByType.mockResolvedValue(paginatedResponse)
 
-      const result = await service.getTasksOfType(token, 'placement-application')
+      const result = await service.getTasksOfType(token, 'placement-application', 1)
 
-      expect(result).toEqual(tasks)
+      expect(result).toEqual(paginatedResponse)
 
       expect(taskClientFactory).toHaveBeenCalledWith(token)
-      expect(taskClient.allByType).toHaveBeenCalledWith('placement-application')
+      expect(taskClient.allByType).toHaveBeenCalledWith('placement-application', 1)
     })
   })
 

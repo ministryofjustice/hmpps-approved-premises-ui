@@ -1,5 +1,5 @@
 import { PlacementApplicationTask, PlacementRequestTask, Reallocation, Task, TaskWrapper } from '@approved-premises/api'
-import { GroupedMatchTasks } from '@approved-premises/ui'
+import { GroupedMatchTasks, PaginatedResponse } from '@approved-premises/ui'
 import { RestClientBuilder } from '../data'
 import TaskClient from '../data/taskClient'
 
@@ -13,10 +13,10 @@ export default class TaskService {
     return tasks
   }
 
-  async getTasksOfType(token: string, type: string): Promise<Array<Task>> {
+  async getTasksOfType(token: string, type: string, page: number = 1): Promise<PaginatedResponse<Task>> {
     const taskClient = this.taskClientFactory(token)
 
-    return taskClient.allByType(type)
+    return taskClient.allByType(type, page)
   }
 
   async getMatchTasks(token: string): Promise<GroupedMatchTasks> {
