@@ -1,8 +1,10 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { ApplicationService, PlacementApplicationService, PlacementRequestService, TaskService } from '../../services'
 import paths from '../../paths/placementApplications'
+import matchpaths from '../../paths/match'
 import { addErrorMessageToFlash } from '../../utils/validation'
 import { getResponses } from '../../utils/applications/getResponses'
+import { getPaginationDetails } from '../../utils/getPaginationDetails'
 
 export default class PlacementRequestsController {
   constructor(
@@ -14,11 +16,19 @@ export default class PlacementRequestsController {
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const tasks = await this.taskService.getTasksOfType(req.user.token, 'placement-application')
+      const { pageNumber, hrefPrefix } = getPaginationDetails(req, matchpaths.placementRequests.index({}))
+      const paginatedResponse = await this.taskService.getTasksOfType(
+        req.user.token,
+        'placement-application',
+        pageNumber,
+      )
 
       res.render('match/placementRequests/index', {
         pageHeading: 'My Cases',
-        tasks,
+        hrefPrefix,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        tasks: paginatedResponse.data,
       })
     }
   }
