@@ -9,6 +9,7 @@ import type {
   AssessmentDecision,
   OASysSection,
   ReleaseTypeOption,
+  SentenceTypeOption,
 } from '@approved-premises/api'
 
 import type { ApTypes } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
@@ -16,7 +17,6 @@ import { fullPersonFactory, restrictedPersonFactory } from './person'
 import risksFactory from './risks'
 import { DateFormats } from '../../utils/dateUtils'
 import { PartnerAgencyDetails } from '../../@types/ui'
-import { SentenceTypesT } from '../../utils/applications/adjacentPageFromSentenceType'
 
 class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
   withReleaseDate(releaseDate = DateFormats.dateObjToIsoDate(faker.date.soon())) {
@@ -69,7 +69,7 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
     })
   }
 
-  withSentenceType(sentenceType: SentenceTypesT) {
+  withSentenceType(sentenceType: SentenceTypeOption) {
     return this.withPageResponse({
       task: 'basic-information',
       page: 'sentence-type',

@@ -1,4 +1,6 @@
-export const sentenceTypes = {
+import { SentenceTypeOption } from '../../@types/shared'
+
+export const sentenceTypes: Record<SentenceTypeOption, string> = {
   standardDeterminate: 'Standard determinate custody',
   life: 'Life sentence',
   ipp: 'Indeterminate Public Protection (IPP)',
@@ -6,11 +8,9 @@ export const sentenceTypes = {
   communityOrder: 'Community Order (CO) / Suspended Sentence Order (SSO)',
   bailPlacement: 'Bail placement',
   nonStatutory: 'Non-statutory, MAPPA case',
-} as const
+}
 
-export type SentenceTypesT = keyof typeof sentenceTypes
-
-export const adjacentPageFromSentenceType = (sentenceType: SentenceTypesT) => {
+export const adjacentPageFromSentenceType = (sentenceType: SentenceTypeOption) => {
   switch (sentenceType) {
     case 'standardDeterminate':
       return 'release-type'
