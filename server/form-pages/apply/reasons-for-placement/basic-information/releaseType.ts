@@ -1,4 +1,4 @@
-import type { ApprovedPremisesApplication, ReleaseTypeOption } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, ReleaseTypeOption, SentenceTypeOption } from '@approved-premises/api'
 import type { ReleaseTypeOptions, TaskListErrors } from '@approved-premises/ui'
 
 import { SessionDataError } from '../../../../utils/errors'
@@ -7,13 +7,12 @@ import TasklistPage from '../../../tasklistPage'
 import SentenceType from './sentenceType'
 import { Page } from '../../../utils/decorators'
 import { allReleaseTypes } from '../../../../utils/applications/releaseTypeUtils'
-import { SentenceTypesT } from '../../../../utils/applications/adjacentPageFromSentenceType'
 
 type SelectableReleaseType = Exclude<ReleaseTypeOption, 'in_community'>
 type ReducedReleaseTypeOptions = Pick<ReleaseTypeOptions, 'rotl' | 'licence'>
 type ReducedReleaseTypes = keyof ReducedReleaseTypeOptions
 
-type SentenceTypeResponse = Extract<SentenceTypesT, 'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life'>
+type SentenceTypeResponse = Extract<SentenceTypeOption, 'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life'>
 
 const { in_community: _, not_applicable: __, ...releaseTypes } = allReleaseTypes
 

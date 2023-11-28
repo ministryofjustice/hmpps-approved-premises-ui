@@ -1,10 +1,9 @@
 import type { TaskListErrors } from '@approved-premises/ui'
-import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
+import { ApprovedPremisesApplication as Application, SentenceTypeOption } from '@approved-premises/api'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import {
-  SentenceTypesT,
   adjacentPageFromSentenceType,
   sentenceTypes,
 } from '../../../../utils/applications/adjacentPageFromSentenceType'
@@ -14,7 +13,7 @@ export default class SentenceType implements TasklistPage {
   title = 'Which of the following best describes the sentence type the person is on?'
 
   constructor(
-    readonly body: { sentenceType?: SentenceTypesT },
+    readonly body: { sentenceType?: SentenceTypeOption },
     readonly application: Application,
   ) {}
 

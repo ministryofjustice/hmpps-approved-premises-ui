@@ -313,6 +313,7 @@ describeClient('ApplicationClient', provider => {
         isEmergencyApplication: false,
         targetLocation: 'ABC123',
         releaseType: 'licence' as const,
+        sentenceType: 'life' as const,
         type: 'CAS1',
       }
 

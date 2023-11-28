@@ -1,4 +1,4 @@
-import type { ApprovedPremisesApplication } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, SentenceTypeOption } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
 
@@ -6,7 +6,6 @@ import { SessionDataError } from '../../../../utils/errors'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import TasklistPage from '../../../tasklistPage'
 import SentenceType from './sentenceType'
-import { SentenceTypesT } from '../../../../utils/applications/adjacentPageFromSentenceType'
 
 const situations = {
   riskManagement: 'Application for risk management/public protection',
@@ -17,7 +16,7 @@ const situations = {
 
 type CommunityOrderSituations = Pick<typeof situations, 'riskManagement' | 'residencyManagement'>
 type BailPlacementSituations = Pick<typeof situations, 'bailAssessment' | 'bailSentence'>
-type SentenceTypeResponse = Extract<SentenceTypesT, 'communityOrder' | 'bailPlacement'>
+type SentenceTypeResponse = Extract<SentenceTypeOption, 'communityOrder' | 'bailPlacement'>
 
 @Page({ name: 'situation', bodyProperties: ['situation'] })
 export default class Situation implements TasklistPage {
