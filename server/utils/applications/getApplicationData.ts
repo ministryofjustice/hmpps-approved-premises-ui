@@ -1,6 +1,7 @@
 import {
   ApprovedPremisesApplication as Application,
   ReleaseTypeOption,
+  SentenceTypeOption,
   SubmitApprovedPremisesApplication,
   UpdateApprovedPremisesApplication,
 } from '@approved-premises/api'
@@ -48,7 +49,8 @@ const firstClassFields = <T>(
 ): FirstClassFields<T> => {
   const apType = retrieveQuestionResponse(application, SelectApType, 'type') as ApType
   const targetLocation = retrieveQuestionResponse(application, DescribeLocationFactors, 'postcodeArea')
-  const releaseType = getReleaseType(application, retrieveQuestionResponse)
+  const sentenceType = getSentenceType(application, retrieveQuestionResponse)
+  const releaseType = getReleaseType(application, sentenceType)
   const arrivalDate = arrivalDateFromApplication(application)
   const isEmergencyApplication = noticeTypeFromApplication(application) === 'emergency'
 
@@ -58,6 +60,7 @@ const firstClassFields = <T>(
     isEsapApplication: isEsapApplication(apType),
     targetLocation,
     releaseType,
+    sentenceType,
     arrivalDate,
     isEmergencyApplication,
   } as FirstClassFields<T>
@@ -71,12 +74,7 @@ const getSubmitFirstClassFields = (application: Application): FirstClassFields<S
   return firstClassFields(application, retrieveQuestionResponseFromFormArtifact)
 }
 
-const getReleaseType = (
-  application: Application,
-  retrieveQuestionResponse: QuestionResponseFunction,
-): ReleaseTypeOption => {
-  const sentenceType = retrieveQuestionResponse(application, SentenceType, 'sentenceType')
-
+const getReleaseType = (application: Application, sentenceType: SentenceTypeOption): ReleaseTypeOption => {
   if (sentenceType === 'nonStatutory') {
     return 'not_applicable'
   }
@@ -86,6 +84,13 @@ const getReleaseType = (
   }
 
   return retrieveOptionalQuestionResponseFromApplicationOrAssessment(application, ReleaseType, 'releaseType')
+}
+
+const getSentenceType = (
+  application: Application,
+  retrieveQuestionResponse: QuestionResponseFunction,
+): SentenceTypeOption => {
+  return retrieveQuestionResponse(application, SentenceType, 'sentenceType') as SentenceTypeOption
 }
 
 const isPipeApplication = (apType?: ApType): boolean | undefined => {

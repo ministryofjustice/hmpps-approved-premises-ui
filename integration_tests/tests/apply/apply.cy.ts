@@ -231,6 +231,7 @@ context('Apply', () => {
         'isWomensApplication',
         'targetLocation',
         'releaseType',
+        'sentenceType',
         'type',
         'isInapplicable',
         'isEsapApplication',
@@ -259,6 +260,7 @@ context('Apply', () => {
         'isWomensApplication',
         'targetLocation',
         'releaseType',
+        'sentenceType',
         'type',
       )
     })
@@ -285,6 +287,7 @@ context('Apply', () => {
         'isWomensApplication',
         'targetLocation',
         'releaseType',
+        'sentenceType',
         'type',
         'isInapplicable',
         'isEsapApplication',
@@ -312,6 +315,7 @@ context('Apply', () => {
         'isWomensApplication',
         'targetLocation',
         'releaseType',
+        'sentenceType',
         'type',
       )
     })

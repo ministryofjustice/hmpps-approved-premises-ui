@@ -1,4 +1,4 @@
-import { ReleaseTypeOption } from '@approved-premises/api'
+import { ReleaseTypeOption, SentenceTypeOption } from '@approved-premises/api'
 import { applicationFactory } from '../../testutils/factories'
 import { getApplicationSubmissionData, getApplicationUpdateData } from './getApplicationData'
 import { mockOptionalQuestionResponse, mockQuestionResponse } from '../../testutils/mockQuestionResponse'
@@ -11,13 +11,14 @@ jest.mock('./utils')
 
 describe('getApplicationData', () => {
   describe('getApplicationSubmissionData', () => {
-    const releaseType = 'license' as ReleaseTypeOption
+    const releaseType: ReleaseTypeOption = 'licence'
+    const sentenceType: SentenceTypeOption = 'standardDeterminate'
     const arrivalDate = '2023-01-01'
     const targetLocation = 'ABC 123'
 
     beforeEach(() => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(arrivalDate)
-      mockOptionalQuestionResponse({ releaseType })
+      mockOptionalQuestionResponse({ releaseType, sentenceType })
     })
 
     it('returns the correct data for a pipe application', () => {
@@ -30,6 +31,7 @@ describe('getApplicationData', () => {
         isPipeApplication: true,
         isWomensApplication: false,
         releaseType,
+        sentenceType,
         targetLocation,
         arrivalDate,
         isEmergencyApplication: true,
@@ -47,6 +49,7 @@ describe('getApplicationData', () => {
         isPipeApplication: false,
         isWomensApplication: false,
         releaseType,
+        sentenceType,
         targetLocation,
         arrivalDate,
         isEmergencyApplication: true,
@@ -65,6 +68,7 @@ describe('getApplicationData', () => {
         isPipeApplication: false,
         isWomensApplication: false,
         releaseType: undefined,
+        sentenceType,
         targetLocation: 'ABC 123',
         arrivalDate,
         isEmergencyApplication: true,
@@ -82,6 +86,7 @@ describe('getApplicationData', () => {
         isPipeApplication: false,
         isWomensApplication: false,
         releaseType: 'in_community',
+        sentenceType: 'communityOrder',
         targetLocation,
         arrivalDate,
         isEmergencyApplication: true,
@@ -99,6 +104,7 @@ describe('getApplicationData', () => {
         isPipeApplication: false,
         isWomensApplication: false,
         releaseType: 'in_community',
+        sentenceType: 'bailPlacement',
         targetLocation,
         arrivalDate,
         isEmergencyApplication: true,
@@ -116,6 +122,7 @@ describe('getApplicationData', () => {
         isPipeApplication: false,
         isWomensApplication: false,
         releaseType: 'not_applicable',
+        sentenceType: 'nonStatutory',
         targetLocation,
         arrivalDate,
         isEmergencyApplication: true,
@@ -138,6 +145,7 @@ describe('getApplicationData', () => {
         isPipeApplication: undefined,
         isWomensApplication: false,
         releaseType: undefined,
+        sentenceType: undefined,
         targetLocation: undefined,
         arrivalDate: undefined,
         isEmergencyApplication: false,
@@ -148,7 +156,12 @@ describe('getApplicationData', () => {
     it('returns all the defined attributes', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2023-01-01')
       ;(isInapplicable as jest.Mock).mockReturnValue(false)
-      mockOptionalQuestionResponse({ type: 'normal', releaseType: 'license', postcodeArea: 'ABC' })
+      mockOptionalQuestionResponse({
+        type: 'normal',
+        releaseType: 'license',
+        postcodeArea: 'ABC',
+        sentenceType: 'standardDeterminate',
+      })
 
       const application = applicationFactory.build()
 
@@ -158,6 +171,7 @@ describe('getApplicationData', () => {
         isPipeApplication: false,
         isWomensApplication: false,
         releaseType: 'license',
+        sentenceType: 'standardDeterminate',
         targetLocation: 'ABC',
         arrivalDate: '2023-01-01',
         isEmergencyApplication: true,
