@@ -63,6 +63,7 @@ import TriggerPlanPage from './triggerPlanPage'
 import TypeOfAccommodationPage from './typeOfAccommodation'
 import TypeOfApPage from './typeOfAp'
 import VulnerabilityPage from './vulnerability'
+import NoOffencePage from './noOffence'
 
 export {
   AccessNeedsFurtherQuestionsPage,
@@ -98,6 +99,7 @@ export {
   MaleApPage,
   NationalSecurityDivision,
   NotesConfirmationPage,
+  NoOffencePage,
   OffenceDetailsPage,
   OptionalOasysSectionsPage,
   PlacementDurationPage,

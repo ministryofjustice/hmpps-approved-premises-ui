@@ -119,8 +119,12 @@ export default class ApplicationsController {
 
         if (isFullPerson(person)) {
           const offences = await this.personService.getOffences(req.user.token, crn)
+          const offencesLength = offences.length
 
-          const offenceId = offences.length === 1 ? offences[0].offenceId : null
+          if (offencesLength === 0) {
+            return res.render(`applications/people/noOffence`)
+          }
+          const offenceId = offencesLength === 1 ? offences[0].offenceId : null
 
           return res.render(`applications/people/confirm`, {
             pageHeading: `Confirm ${person.name}'s details`,

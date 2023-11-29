@@ -1,0 +1,27 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1>There are no offences for this person</h1>
+
+            <p class="govuk-body">
+                To create an Approved Premises application the person needs to have an active event in Delius.
+            </p>
+            <p class="govuk-body">
+                Create or reopen an event in Delius to progress with this application.
+            </p>
+
+            <p class="govuk-body">
+                <a class="govuk-link" href="{{ paths.applications.index({}) }}">Back to dashboard</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}
