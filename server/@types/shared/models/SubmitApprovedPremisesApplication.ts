@@ -5,6 +5,7 @@
 
 import type { ReleaseTypeOption } from './ReleaseTypeOption';
 import type { SentenceTypeOption } from './SentenceTypeOption';
+import type { SituationOption } from './SituationOption';
 import type { SubmitApplication } from './SubmitApplication';
 
 export type SubmitApprovedPremisesApplication = (SubmitApplication & {
@@ -15,6 +16,7 @@ export type SubmitApprovedPremisesApplication = (SubmitApplication & {
     targetLocation: string;
     releaseType: ReleaseTypeOption;
     sentenceType: SentenceTypeOption;
+    situation?: SituationOption;
     arrivalDate?: string;
 });
 

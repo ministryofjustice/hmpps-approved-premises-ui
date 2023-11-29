@@ -193,6 +193,7 @@ export type { SeedFileType } from './models/SeedFileType';
 export type { SeedRequest } from './models/SeedRequest';
 export type { SentenceTypeOption } from './models/SentenceTypeOption';
 export type { ServiceName } from './models/ServiceName';
+export type { SituationOption } from './models/SituationOption';
 export type { SortDirection } from './models/SortDirection';
 export type { SortOrder } from './models/SortOrder';
 export type { StaffMember } from './models/StaffMember';
