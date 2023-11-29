@@ -232,6 +232,7 @@ context('Apply', () => {
         'targetLocation',
         'releaseType',
         'sentenceType',
+        'situation',
         'type',
         'isInapplicable',
         'isEsapApplication',
@@ -261,6 +262,7 @@ context('Apply', () => {
         'targetLocation',
         'releaseType',
         'sentenceType',
+        'situation',
         'type',
       )
     })
@@ -288,6 +290,7 @@ context('Apply', () => {
         'targetLocation',
         'releaseType',
         'sentenceType',
+        'situation',
         'type',
         'isInapplicable',
         'isEsapApplication',
@@ -316,6 +319,7 @@ context('Apply', () => {
         'targetLocation',
         'releaseType',
         'sentenceType',
+        'situation',
         'type',
       )
     })
