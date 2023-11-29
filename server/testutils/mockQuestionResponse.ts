@@ -11,6 +11,7 @@ export const mockQuestionResponse = ({
   releaseType = 'other',
   alternativeRadius,
   duration,
+  situation,
 }: {
   postcodeArea?: string
   type?: string
@@ -18,6 +19,7 @@ export const mockQuestionResponse = ({
   releaseType?: string
   duration?: string
   alternativeRadius?: string
+  situation?: string
 }) => {
   ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockImplementation(
     // eslint-disable-next-line consistent-return
@@ -45,6 +47,10 @@ export const mockQuestionResponse = ({
       if (question === 'duration') {
         return duration
       }
+
+      if (question === 'situation') {
+        return situation
+      }
     },
   )
 }
@@ -62,6 +68,7 @@ export const mockOptionalQuestionResponse = ({
   lengthOfStay,
   cruInformation,
   pssDate,
+  situation,
 }: {
   releaseType?: string
   duration?: string
@@ -75,6 +82,7 @@ export const mockOptionalQuestionResponse = ({
   lengthOfStay?: string
   cruInformation?: string
   pssDate?: string
+  situation?: string
 }) => {
   ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockImplementation(
     // eslint-disable-next-line consistent-return
@@ -125,6 +133,10 @@ export const mockOptionalQuestionResponse = ({
 
       if (question === 'pssDate') {
         return pssDate
+      }
+
+      if (question === 'situation') {
+        return situation
       }
     },
   )

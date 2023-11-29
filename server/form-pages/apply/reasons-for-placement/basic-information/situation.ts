@@ -1,4 +1,4 @@
-import type { ApprovedPremisesApplication, SentenceTypeOption } from '@approved-premises/api'
+import type { ApprovedPremisesApplication, SentenceTypeOption, SituationOption } from '@approved-premises/api'
 import type { TaskListErrors } from '@approved-premises/ui'
 import { Page } from '../../../utils/decorators'
 
@@ -7,12 +7,12 @@ import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retr
 import TasklistPage from '../../../tasklistPage'
 import SentenceType from './sentenceType'
 
-const situations = {
+const situations: Record<SituationOption, string> = {
   riskManagement: 'Application for risk management/public protection',
   residencyManagement: 'Specified residency requirement as part of a community based Order',
   bailAssessment: 'Bail assessment for residency requirement as part of a community order or suspended sentence order',
   bailSentence: 'Bail placement',
-} as const
+}
 
 type CommunityOrderSituations = Pick<typeof situations, 'riskManagement' | 'residencyManagement'>
 type BailPlacementSituations = Pick<typeof situations, 'bailAssessment' | 'bailSentence'>

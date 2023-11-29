@@ -32,6 +32,7 @@ describe('getApplicationData', () => {
         isWomensApplication: false,
         releaseType,
         sentenceType,
+        situation: null,
         targetLocation,
         arrivalDate,
         isEmergencyApplication: true,
@@ -50,6 +51,7 @@ describe('getApplicationData', () => {
         isWomensApplication: false,
         releaseType,
         sentenceType,
+        situation: null,
         targetLocation,
         arrivalDate,
         isEmergencyApplication: true,
@@ -69,6 +71,7 @@ describe('getApplicationData', () => {
         isWomensApplication: false,
         releaseType: undefined,
         sentenceType,
+        situation: null,
         targetLocation: 'ABC 123',
         arrivalDate,
         isEmergencyApplication: true,
@@ -77,7 +80,11 @@ describe('getApplicationData', () => {
     })
 
     it('returns in_community for a community order application', () => {
-      mockQuestionResponse({ sentenceType: 'communityOrder', postcodeArea: targetLocation })
+      mockQuestionResponse({
+        sentenceType: 'communityOrder',
+        postcodeArea: targetLocation,
+        situation: 'riskManagement',
+      })
 
       const application = applicationFactory.build()
 
@@ -87,6 +94,7 @@ describe('getApplicationData', () => {
         isWomensApplication: false,
         releaseType: 'in_community',
         sentenceType: 'communityOrder',
+        situation: 'riskManagement',
         targetLocation,
         arrivalDate,
         isEmergencyApplication: true,
@@ -95,7 +103,7 @@ describe('getApplicationData', () => {
     })
 
     it('returns in_community for a bail placement application', () => {
-      mockQuestionResponse({ sentenceType: 'bailPlacement', postcodeArea: targetLocation })
+      mockQuestionResponse({ sentenceType: 'bailPlacement', postcodeArea: targetLocation, situation: 'riskManagement' })
 
       const application = applicationFactory.build()
 
@@ -105,6 +113,7 @@ describe('getApplicationData', () => {
         isWomensApplication: false,
         releaseType: 'in_community',
         sentenceType: 'bailPlacement',
+        situation: 'riskManagement',
         targetLocation,
         arrivalDate,
         isEmergencyApplication: true,
@@ -123,6 +132,7 @@ describe('getApplicationData', () => {
         isWomensApplication: false,
         releaseType: 'not_applicable',
         sentenceType: 'nonStatutory',
+        situation: null,
         targetLocation,
         arrivalDate,
         isEmergencyApplication: true,
@@ -145,6 +155,7 @@ describe('getApplicationData', () => {
         isPipeApplication: undefined,
         isWomensApplication: false,
         releaseType: undefined,
+        situation: null,
         sentenceType: undefined,
         targetLocation: undefined,
         arrivalDate: undefined,
@@ -172,6 +183,7 @@ describe('getApplicationData', () => {
         isWomensApplication: false,
         releaseType: 'license',
         sentenceType: 'standardDeterminate',
+        situation: null,
         targetLocation: 'ABC',
         arrivalDate: '2023-01-01',
         isEmergencyApplication: true,
