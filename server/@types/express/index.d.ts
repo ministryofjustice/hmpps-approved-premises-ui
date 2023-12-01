@@ -11,6 +11,7 @@ declare module 'express-session' {
     application: ApprovedPremisesApplication
     user: UserDetails
     placementApplicationDecisions: Record<string, Partial<PlacementApplicationDecisionEnvelope>>
+    messages: Array<string>
   }
 }
 

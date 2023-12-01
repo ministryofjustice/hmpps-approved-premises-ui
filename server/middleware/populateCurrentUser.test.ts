@@ -79,7 +79,7 @@ describe('populateCurrentUser', () => {
 
     expect(userService.getActingUser).toHaveBeenCalledWith(token)
     expect(response.redirect).toHaveBeenCalledWith('/autherror')
-    expect(logger.error).toHaveBeenCalledWith('User is inactive')
+    expect(logger.error).toHaveBeenCalledWith(`User ${user.name} is inactive`)
   })
 
   it('should catch an error when an error is raised', async () => {

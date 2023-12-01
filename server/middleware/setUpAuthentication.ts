@@ -4,6 +4,7 @@ import passport from 'passport'
 import flash from 'connect-flash'
 import config from '../config'
 import auth from '../authentication/auth'
+import logger from '../../logger'
 
 const router = express.Router()
 
@@ -16,6 +17,9 @@ export default function setUpAuth(): Router {
 
   router.get('/autherror', (req, res) => {
     res.status(401)
+    if (req.session.messages) {
+      logger.error(`Authentication error: ${req.session.messages.join}`)
+    }
     return res.render('autherror', { hideNav: true })
   })
 
@@ -25,6 +29,7 @@ export default function setUpAuth(): Router {
     passport.authenticate('oauth2', {
       successReturnToOrRedirect: req.session.returnTo || '/',
       failureRedirect: '/autherror',
+      failureMessage: true,
     })(req, res, next),
   )
 

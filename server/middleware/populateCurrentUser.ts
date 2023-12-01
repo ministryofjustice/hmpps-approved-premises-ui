@@ -16,7 +16,7 @@ export default function populateCurrentUser(userService: UserService): RequestHa
         }
 
         if (!req.session.user.active) {
-          logger.error('User is inactive')
+          logger.error(`User ${req.session.user.name} is inactive`)
           return res.redirect('/autherror')
         }
       }
