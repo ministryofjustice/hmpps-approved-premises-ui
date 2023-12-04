@@ -117,7 +117,7 @@ export default class ApplyHelper {
     this.addContingencyPlanDetails()
   }
 
-  startApplication() {
+  enterCrnDetails() {
     // Given I visit the start page
     const startPage = ApplyPages.StartPage.visit()
     startPage.startApplication()
@@ -126,6 +126,10 @@ export default class ApplyHelper {
     const crnPage = new ApplyPages.EnterCRNPage()
     crnPage.enterCrn(this.person.crn)
     crnPage.clickSubmit()
+  }
+
+  startApplication() {
+    this.enterCrnDetails()
 
     // And I see the person on the confirmation page
     const confirmDetailsPage = new ApplyPages.ConfirmDetailsPage(this.person as FullPerson)

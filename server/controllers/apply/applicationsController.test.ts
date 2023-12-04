@@ -411,6 +411,17 @@ describe('applicationsController', () => {
         })
         expect(request.flash).toHaveBeenCalledWith('crn')
       })
+
+      it('calls render with the noOffence view when the person dont have any offences', async () => {
+        const offences = activeOffenceFactory.buildList(0)
+        personService.getOffences.mockResolvedValue(offences)
+
+        const requestHandler = applicationsController.new()
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('applications/people/noOffence')
+      })
     })
 
     describe('if there isnt a CRN present in the flash', () => {
@@ -480,20 +491,6 @@ describe('applicationsController', () => {
       expect(applicationService.createApplication).toHaveBeenCalledWith('SOME_TOKEN', 'some-crn', offences[0])
       expect(firstPageOfApplicationJourney).toHaveBeenCalledWith(application)
       expect(response.redirect).toHaveBeenCalledWith(firstPage)
-    })
-
-    it('redirects to the select offences step if an offence has not been provided', async () => {
-      request.body.offenceId = null
-
-      const requestHandler = applicationsController.create()
-
-      await requestHandler(request, response, next)
-
-      expect(response.redirect).toHaveBeenCalledWith(
-        paths.applications.people.selectOffence({
-          crn: request.body.crn,
-        }),
-      )
     })
 
     it('saves the application to the session', async () => {

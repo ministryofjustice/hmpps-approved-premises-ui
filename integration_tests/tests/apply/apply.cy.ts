@@ -20,6 +20,7 @@ import {
   StartPage,
 } from '../../pages/apply'
 import IsExceptionalCasePage from '../../pages/apply/isExceptionalCase'
+import NoOffencePage from '../../pages/apply/noOffence'
 import NotEligiblePage from '../../pages/apply/notEligiblePage'
 import Page from '../../pages/page'
 import SubmissionConfirmation from '../../pages/apply/submissionConfirmation'
@@ -342,5 +343,18 @@ context('Apply', () => {
 
     // Then I am taken back to the dashboard
     Page.verifyOnPage(ListPage)
+  })
+
+  it('redirects to no offence page if there are no offence', function test() {
+    // Given a person has no offences
+    const offences = activeOffenceFactory.buildList(0)
+
+    // When I enter their CRN
+    const apply = new ApplyHelper(this.application, this.person, offences)
+    apply.setupApplicationStubs()
+    apply.enterCrnDetails()
+
+    // Then I should see a screen telling me they have no offences
+    Page.verifyOnPage(NoOffencePage)
   })
 })
