@@ -1,7 +1,7 @@
 import type { Booking } from '@approved-premises/api'
 
-import { getMatchingRequests, stubFor } from '../../wiremock'
-import { bedspaceConflictResponseBody, errorStub } from '../../wiremock/utils'
+import { getMatchingRequests, stubFor } from './setup'
+import { bedspaceConflictResponseBody, errorStub } from './utils'
 import paths from '../../server/paths/api'
 
 export default {

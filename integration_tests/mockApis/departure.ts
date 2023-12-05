@@ -2,9 +2,13 @@ import type { Response, SuperAgentRequest } from 'superagent'
 
 import type { Departure } from '@approved-premises/api'
 
-import { getMatchingRequests, stubFor } from '../../wiremock'
-import { errorStub } from '../../wiremock/utils'
-import { departureReasons, destinationProviders, moveOnCategories } from '../../wiremock/referenceDataStubs'
+import { getMatchingRequests, stubFor } from './setup'
+import { errorStub } from './utils'
+import {
+  departureReasons,
+  destinationProviders,
+  moveOnCategories,
+} from '../../server/testutils/referenceData/stubs/referenceDataStubs'
 
 export default {
   stubDepartureCreate: (args: { premisesId: string; bookingId: string; departure: Departure }): SuperAgentRequest =>

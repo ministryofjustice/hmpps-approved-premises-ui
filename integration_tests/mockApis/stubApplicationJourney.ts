@@ -1,7 +1,7 @@
 import { SuperAgentRequest } from 'superagent'
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 
-import { bulkStub } from '../../wiremock'
+import { bulkStub } from './setup'
 
 const generateStubsForPage = (
   page: string,

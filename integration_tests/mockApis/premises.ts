@@ -9,7 +9,7 @@ import type {
   StaffMember,
 } from '@approved-premises/api'
 
-import { stubFor } from '../../wiremock'
+import { stubFor } from './setup'
 import bookingStubs from './booking'
 import paths from '../../server/paths/api'
 import { createQueryString } from '../../server/utils/utils'

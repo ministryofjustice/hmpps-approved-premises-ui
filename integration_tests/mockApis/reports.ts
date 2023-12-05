@@ -2,7 +2,7 @@ import { readFileSync } from 'fs'
 import path from 'path'
 
 import paths from '../../server/paths/api'
-import { stubFor } from '../../wiremock'
+import { stubFor } from './setup'
 import { createQueryString } from '../../server/utils/utils'
 import { ReportType } from '../../server/utils/reportUtils'
 

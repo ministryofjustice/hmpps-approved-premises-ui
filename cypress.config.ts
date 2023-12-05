@@ -1,5 +1,5 @@
 import { defineConfig } from 'cypress'
-import { resetStubs } from './wiremock'
+import { resetStubs } from './integration_tests/mockApis/setup'
 import auth from './integration_tests/mockApis/auth'
 import tokenVerification from './integration_tests/mockApis/tokenVerification'
 import premises from './integration_tests/mockApis/premises'

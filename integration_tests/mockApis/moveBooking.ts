@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 import { NewBedMove } from '../../server/@types/shared'
-import { stubFor } from '../../wiremock'
+import { stubFor } from './setup'
 import paths from '../../server/paths/manage'
 
 export default {

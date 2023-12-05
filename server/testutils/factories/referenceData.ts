@@ -3,12 +3,12 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { ReferenceData } from '@approved-premises/ui'
 
-import departureReasonsJson from '../../../wiremock/stubs/departure-reasons.json'
-import moveOnCategoriesJson from '../../../wiremock/stubs/move-on-categories.json'
-import destinationProvidersJson from '../../../wiremock/stubs/destination-providers.json'
-import cancellationReasonsJson from '../../../wiremock/stubs/cancellation-reasons.json'
-import lostBedReasonsJson from '../../../wiremock/stubs/lost-bed-reasons.json'
-import nonArrivalReasonsJson from '../../../wiremock/stubs/non-arrival-reasons.json'
+import departureReasonsJson from '../referenceData/stubs/departure-reasons.json'
+import moveOnCategoriesJson from '../referenceData/stubs/move-on-categories.json'
+import destinationProvidersJson from '../referenceData/stubs/destination-providers.json'
+import cancellationReasonsJson from '../referenceData/stubs/cancellation-reasons.json'
+import lostBedReasonsJson from '../referenceData/stubs/lost-bed-reasons.json'
+import nonArrivalReasonsJson from '../referenceData/stubs/non-arrival-reasons.json'
 
 class ReferenceDataFactory extends Factory<ReferenceData> {
   departureReasons() {

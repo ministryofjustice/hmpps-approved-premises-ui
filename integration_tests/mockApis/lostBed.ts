@@ -2,9 +2,9 @@ import { Response, SuperAgentRequest } from 'superagent'
 
 import type { LostBed } from '@approved-premises/api'
 
-import { getMatchingRequests, stubFor } from '../../wiremock'
-import { bedspaceConflictResponseBody, errorStub } from '../../wiremock/utils'
-import { lostBedReasons } from '../../wiremock/referenceDataStubs'
+import { getMatchingRequests, stubFor } from './setup'
+import { bedspaceConflictResponseBody, errorStub } from './utils'
+import { lostBedReasons } from '../../server/testutils/referenceData/stubs/referenceDataStubs'
 import paths from '../../server/paths/api'
 
 export default {
