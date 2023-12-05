@@ -420,7 +420,9 @@ describe('applicationsController', () => {
 
         await requestHandler(request, response, next)
 
-        expect(response.render).toHaveBeenCalledWith('applications/people/noOffence')
+        expect(response.render).toHaveBeenCalledWith('applications/people/noOffence', {
+          pageHeading: 'There are no offences for this person',
+        })
       })
     })
 
