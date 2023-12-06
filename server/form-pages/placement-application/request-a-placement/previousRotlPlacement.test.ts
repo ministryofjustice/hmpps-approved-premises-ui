@@ -1,5 +1,5 @@
 import { fromPartial } from '@total-typescript/shoehorn'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
+import { itShouldHavePreviousValue } from '../../shared-examples'
 
 import PreviousRotlPlacement, { Body } from './previousRotlPlacement'
 
@@ -31,7 +31,20 @@ describe('PreviousRotlPlacement', () => {
 
   itShouldHavePreviousValue(new PreviousRotlPlacement(body), 'reason-for-placement')
 
-  itShouldHaveNextValue(new PreviousRotlPlacement(body), 'same-ap')
+  describe('next', () => {
+    describe('if there has been a previous ROTL placementment', () => {
+      it('returns same-ap', () => {
+        const page = new PreviousRotlPlacement(body)
+        expect(page.next()).toEqual('same-ap')
+      })
+    })
+    describe('if there has not been a previous ROTL placementment', () => {
+      it('returns dates-of-placement', () => {
+        const page = new PreviousRotlPlacement({ ...body, previousRotlPlacement: 'no' })
+        expect(page.next()).toEqual('dates-of-placement')
+      })
+    })
+  })
 
   describe('errors', () => {
     it('should return an empty object if the body is provided correctly', () => {

@@ -22,13 +22,16 @@ export const placementApplicationSubmissionData = (
     ReasonForPlacement,
     'reason',
   )
+  const placementDates = durationAndArrivalDateFromPlacementApplication(
+    placementApplication,
+    reasonForPlacement,
+    application,
+  )
   return {
     translatedDocument: placementApplication.document,
     placementType: reasonForPlacement,
     // At a later date we want to support multiple placement dates, but for now we will hard code the first one
-    placementDates: [
-      durationAndArrivalDateFromPlacementApplication(placementApplication, reasonForPlacement, application),
-    ],
+    placementDates: Array.isArray(placementDates) ? placementDates : [placementDates],
   }
 }
 
@@ -39,14 +42,7 @@ export const durationAndArrivalDateFromPlacementApplication = (
 ) => {
   switch (reasonForPlacement) {
     case 'rotl': {
-      return {
-        expectedArrival: retrieveQuestionResponseFromFormArtifact(
-          placementApplication,
-          DatesOfPlacement,
-          'arrivalDate',
-        ),
-        duration: Number(retrieveQuestionResponseFromFormArtifact(placementApplication, DatesOfPlacement, 'duration')),
-      }
+      return retrieveQuestionResponseFromFormArtifact(placementApplication, DatesOfPlacement, 'datesOfPlacement')
     }
     case 'additional_placement': {
       return {

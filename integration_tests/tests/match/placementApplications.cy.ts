@@ -37,6 +37,7 @@ context('Placement Applications', () => {
   beforeEach(() => {
     cy.signIn()
   })
+
   it('allows me to complete form if the reason for placement is ROTL', () => {
     cy.fixture('rotlPlacementApplicationData.json').then(placementApplicationData => {
       // Given I have completed an application I am viewing a completed application
@@ -90,7 +91,7 @@ context('Placement Applications', () => {
 
       const datesOfPlacementPage = new DateOfPlacement()
       datesOfPlacementPage.completeForm()
-      datesOfPlacementPage.clickSubmit()
+      datesOfPlacementPage.clickSaveAndContinue()
 
       const updatesToApplication = new UpdatesToApplication()
       updatesToApplication.completeForm()

@@ -55,7 +55,7 @@ export default class PreviousRotlPlacement implements TasklistPage {
   }
 
   next() {
-    return 'same-ap'
+    return this.body.previousRotlPlacement === 'yes' ? 'same-ap' : 'dates-of-placement'
   }
 
   response() {

@@ -149,58 +149,6 @@
         "refer-to-delius": {
           "type": "object"
         },
-        "exception-details": {
-          "allOf": [
-            {
-              "type": "object",
-              "properties": {
-                "agreementDate-year": {
-                  "type": "string"
-                },
-                "agreementDate-month": {
-                  "type": "string"
-                },
-                "agreementDate-day": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "agreementDate-time": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "agreementDate": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "agreedCaseWithManager": {
-                  "enum": [
-                    "no",
-                    "yes"
-                  ],
-                  "type": "string"
-                },
-                "managerName": {
-                  "type": "string"
-                },
-                "agreementSummary": {
-                  "type": "string"
-                }
-              }
-            }
-          ]
-        },
         "sentence-type": {
           "type": "object",
           "properties": {

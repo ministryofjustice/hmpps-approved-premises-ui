@@ -2,8 +2,8 @@ import { PlacementApplication } from '../../@types/shared'
 import AdditionalPlacementDetails from '../../form-pages/placement-application/request-a-placement/additionalPlacementDetails'
 import DatesOfPlacement from '../../form-pages/placement-application/request-a-placement/datesOfPlacement'
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
-import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
-import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../testutils/addToApplication'
+import { getPageName, pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
+import { addResponseToFormArtifact } from '../../testutils/addToApplication'
 import { applicationFactory, placementApplicationFactory } from '../../testutils/factories'
 import { placementDurationFromApplication } from '../assessments/placementDurationFromApplication'
 import {
@@ -14,6 +14,27 @@ import {
 jest.mock('../../form-pages/utils')
 jest.mock('../../utils/assessments/placementDurationFromApplication')
 
+const datesOfPlacement = [
+  {
+    duration: '15',
+    durationDays: '1',
+    durationWeeks: '2',
+    'arrivalDate-year': '2023',
+    'arrivalDate-month': '12',
+    'arrivalDate-day': '1',
+    arrivalDate: '2023-12-01',
+  },
+  {
+    duration: '23',
+    durationDays: '2',
+    durationWeeks: '3',
+    'arrivalDate-year': '2024',
+    'arrivalDate-month': '1',
+    'arrivalDate-day': '2',
+    arrivalDate: '2024-01-02',
+  },
+]
+
 describe('placementApplicationSubmissionData', () => {
   it('returns the data in the correct format for submission', () => {
     let placementApplication = placementApplicationFactory.build()
@@ -23,30 +44,26 @@ describe('placementApplicationSubmissionData', () => {
       page: 'reason-for-placement',
       key: 'reason',
       value: 'rotl',
-    }) as PlacementApplication
-    placementApplication = addResponsesToFormArtifact(placementApplication, {
+    })
+    placementApplication = addResponseToFormArtifact(placementApplication, {
       task: 'request-a-placement',
       page: 'dates-of-placement',
-      keyValuePairs: {
-        arrivalDate: '2023-01-01',
-        duration: '1',
-      },
-    }) as PlacementApplication
-    ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({
-      reason: 'rotl',
-      duration: '1',
-      arrivalDate: '2023-01-01',
+      key: 'datesOfPlacement',
+      value: datesOfPlacement,
     })
+    ;(pageDataFromApplicationOrAssessment as jest.MockedFn<typeof pageDataFromApplicationOrAssessment>).mockReturnValue(
+      {
+        reason: 'rotl',
+        datesOfPlacement,
+      },
+    )
+    ;(getPageName as jest.MockedFn<typeof getPageName>).mockReturnValueOnce('reason')
+    ;(getPageName as jest.MockedFn<typeof getPageName>).mockReturnValueOnce('dates-of-placement')
 
     expect(placementApplicationSubmissionData(placementApplication, applicationFactory.build())).toEqual({
       placementType: 'rotl',
       translatedDocument: {},
-      placementDates: [
-        {
-          expectedArrival: '2023-01-01',
-          duration: 1,
-        },
-      ],
+      placementDates: datesOfPlacement,
     })
   })
 })
@@ -60,25 +77,19 @@ describe('durationAndArrivalDateFromPlacementApplication', () => {
     let placementApplication = placementApplicationFactory.build({
       data: { 'request-a-placement': { 'reason-for-placement': { reason: 'rotl' } } },
     })
-    placementApplication = addResponsesToFormArtifact(placementApplication, {
+    placementApplication = addResponseToFormArtifact(placementApplication, {
       task: 'request-a-placement',
       page: 'dates-of-placement',
-      keyValuePairs: {
-        arrivalDate: '2023-01-01',
-        duration: '1',
-      },
+      key: 'datesOfPlacement',
+      value: datesOfPlacement,
     }) as PlacementApplication
     ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({
-      arrivalDate: '2023-01-01',
-      duration: '1',
+      datesOfPlacement,
     })
 
     expect(
       durationAndArrivalDateFromPlacementApplication(placementApplication, 'rotl', applicationFactory.build()),
-    ).toEqual({
-      expectedArrival: '2023-01-01',
-      duration: 1,
-    })
+    ).toEqual([...datesOfPlacement])
     expect(pageDataFromApplicationOrAssessment).toHaveBeenCalledWith(DatesOfPlacement, placementApplication)
   })
 

@@ -12,7 +12,7 @@ export const addResponseToFormArtifact = <T extends FormArtifact>(
     },
   }
 
-  return formArtifact
+  return formArtifact as T
 }
 
 export const addResponsesToFormArtifact = <T extends FormArtifact>(
@@ -27,5 +27,5 @@ export const addResponsesToFormArtifact = <T extends FormArtifact>(
     },
   }
 
-  return formArtifact
+  return formArtifact as T
 }

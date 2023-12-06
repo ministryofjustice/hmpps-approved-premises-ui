@@ -1,6 +1,6 @@
 # Context
 
-<!-- Is there a Trello ticket you can link to? -->
+<!-- Is there a Jira ticket you can link to? -->
 <!-- Do you need to add any environment variables? -->
 <!-- Is an ADR required? An ADR should be added if this PR introduces a change to the architecture. -->
 
@@ -21,10 +21,10 @@ confirm:
 ## Pre merge checklist
 
 - [ ] Have all changes to any dependencies been deployed to both `preprod` and
-    `production` in a backwards compatible way? (This includes our API,
-    infrastructure, third-party integrations and any secrets or environment variables)
+      `production` in a backwards compatible way? (This includes our API,
+      infrastructure, third-party integrations and any secrets or environment variables)
 - [ ] Has a required data migration been included in this change or been done in
-    advance?
+      advance?
 
 ## Post merge checklist
 

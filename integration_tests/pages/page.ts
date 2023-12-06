@@ -131,6 +131,14 @@ export default abstract class Page {
     cy.get(`#${prefix}-year`).type(parsedDate.getFullYear().toString())
   }
 
+  completeDateInputsByName(prefix: string, date: string): void {
+    const parsedDate = DateFormats.isoToDateObj(date)
+
+    cy.get(`[name="${prefix}[day]"`).type(parsedDate.getDate().toString())
+    cy.get(`[name="${prefix}[month]"`).type(`${parsedDate.getMonth() + 1}`)
+    cy.get(`[name="${prefix}[year]`).type(parsedDate.getFullYear().toString())
+  }
+
   dateInputsShouldContainDate(prefix: string, date: string): void {
     const parsedDate = DateFormats.isoToDateObj(date)
     cy.get(`#${prefix}-day`).should('have.value', parsedDate.getDate().toString())
@@ -272,6 +280,12 @@ export default abstract class Page {
     cy.get(`#${prefix}-day`).clear()
     cy.get(`#${prefix}-month`).clear()
     cy.get(`#${prefix}-year`).clear()
+  }
+
+  clearDateInputsByName(prefix: string): void {
+    cy.get(`[name="${prefix}-day"]`).clear()
+    cy.get(`[name="${prefix}-month"]`).clear()
+    cy.get(`[name="${prefix}-year"]`).clear()
   }
 
   clearAndCompleteDateInputs(prefix: string, date: string): void {
