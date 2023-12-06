@@ -1,7 +1,7 @@
 import { fromPartial } from '@total-typescript/shoehorn'
 import { itShouldHaveNextValue } from '../../shared-examples'
 
-import DateOfPlacement from './datesOfPlacement'
+import DateOfPlacementPage from './datesOfPlacement'
 import { placementApplicationFactory } from '../../../testutils/factories'
 import { addResponseToFormArtifact } from '../../../testutils/addToApplication'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../utils/retrieveQuestionResponseFromFormArtifact'
@@ -36,7 +36,7 @@ describe('DateOfPlacement', () => {
 
   describe('body', () => {
     it('should set the body', () => {
-      expect(new DateOfPlacement(body, placementApplication).body).toEqual({
+      expect(new DateOfPlacementPage(body, placementApplication).body).toEqual({
         datesOfPlacement: [
           {
             duration: '15',
@@ -72,7 +72,7 @@ describe('DateOfPlacement', () => {
         })
         ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('yes')
 
-        expect(new DateOfPlacement(body, placementApplication).previous()).toEqual('same-ap')
+        expect(new DateOfPlacementPage(body, placementApplication).previous()).toEqual('same-ap')
       })
     })
 
@@ -86,21 +86,21 @@ describe('DateOfPlacement', () => {
         })
         ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('no')
 
-        expect(new DateOfPlacement(body, placementApplication).previous()).toEqual('previous-rotl-placement')
+        expect(new DateOfPlacementPage(body, placementApplication).previous()).toEqual('previous-rotl-placement')
       })
     })
   })
 
-  itShouldHaveNextValue(new DateOfPlacement(body, placementApplication), 'updates-to-application')
+  itShouldHaveNextValue(new DateOfPlacementPage(body, placementApplication), 'updates-to-application')
 
   describe('errors', () => {
     it('should return an empty object if the body is provided correctly', () => {
-      const page = new DateOfPlacement(body, placementApplication)
+      const page = new DateOfPlacementPage(body, placementApplication)
       expect(page.errors()).toEqual({})
     })
 
     it('should return errors if the first date and duration is blank', () => {
-      const page = new DateOfPlacement(fromPartial({}), placementApplication)
+      const page = new DateOfPlacementPage(fromPartial({}), placementApplication)
       expect(page.errors()).toEqual({
         datesOfPlacement_0_arrivalDate: 'You must enter a date for the placement',
         datesOfPlacement_0_duration: 'You must enter a duration for the placement',
@@ -108,7 +108,7 @@ describe('DateOfPlacement', () => {
     })
 
     it('should return an error if the first date is blank', () => {
-      const page = new DateOfPlacement(
+      const page = new DateOfPlacementPage(
         fromPartial({
           datesOfPlacement: [
             { ...body.datesOfPlacement[0], 'arrivalDate-day': '', 'arrivalDate-month': '', 'arrivalDate-year': '' },
@@ -122,7 +122,7 @@ describe('DateOfPlacement', () => {
     })
 
     it('should return an error if the first duration is blank', () => {
-      const page = new DateOfPlacement(
+      const page = new DateOfPlacementPage(
         fromPartial({ datesOfPlacement: [{ ...body.datesOfPlacement[0], durationDays: '', durationWeeks: '' }] }),
         placementApplication,
       )
@@ -132,7 +132,7 @@ describe('DateOfPlacement', () => {
     })
 
     it('should return errors if the placement date is invalid', () => {
-      const page = new DateOfPlacement(
+      const page = new DateOfPlacementPage(
         {
           datesOfPlacement: [
             {
@@ -149,7 +149,7 @@ describe('DateOfPlacement', () => {
     })
 
     it('should return errors if the duration is empty', () => {
-      const page = new DateOfPlacement(
+      const page = new DateOfPlacementPage(
         {
           datesOfPlacement: [
             {
@@ -168,7 +168,7 @@ describe('DateOfPlacement', () => {
 
   describe('response', () => {
     it('should return a translated version of the response', () => {
-      const page = new DateOfPlacement(body, placementApplication)
+      const page = new DateOfPlacementPage(body, placementApplication)
 
       expect(page.response()).toEqual({
         'Dates of placement': [

@@ -13,7 +13,7 @@ type DateOfPlacementFromUi = {
   durationWeeks: string
 } & ObjectWithDateParts<'arrivalDate'>
 
-export type DateofPlacement = {
+export type DateOfPlacement = {
   duration: string
   durationDays: string
   durationWeeks: string
