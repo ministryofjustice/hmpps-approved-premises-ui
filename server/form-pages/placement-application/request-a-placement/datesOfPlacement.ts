@@ -4,6 +4,9 @@ import type { ObjectWithDateParts, TaskListErrors } from '@approved-premises/ui'
 import TasklistPage from '../../tasklistPage'
 import { Page } from '../../utils/decorators'
 import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/dateUtils'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { PlacementApplication } from '../../../@types/shared'
+import PreviousRotlPlacement from './previousRotlPlacement'
 
 type DateOfPlacementFromUi = {
   durationDays: string
@@ -32,7 +35,10 @@ export default class DatesOfPlacement implements TasklistPage {
     duration: 'How long should the Approved Premises placement last?',
   }
 
-  constructor(private _body: Body) {}
+  constructor(
+    private _body: Body,
+    private readonly placementApplication: PlacementApplication,
+  ) {}
 
   get body() {
     return this._body as Body
@@ -49,7 +55,13 @@ export default class DatesOfPlacement implements TasklistPage {
   }
 
   previous() {
-    return 'same-ap'
+    const previousRotlPlacement = retrieveQuestionResponseFromFormArtifact(
+      this.placementApplication,
+      PreviousRotlPlacement,
+      'previousRotlPlacement',
+    )
+
+    return previousRotlPlacement === 'yes' ? 'same-ap' : 'previous-rotl-placement'
   }
 
   next() {
