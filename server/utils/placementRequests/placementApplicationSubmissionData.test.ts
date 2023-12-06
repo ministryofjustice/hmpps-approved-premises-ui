@@ -8,6 +8,7 @@ import { applicationFactory, placementApplicationFactory } from '../../testutils
 import { placementDurationFromApplication } from '../assessments/placementDurationFromApplication'
 import {
   durationAndArrivalDateFromPlacementApplication,
+  durationAndArrivalDateFromRotlPlacementApplication,
   placementApplicationSubmissionData,
 } from './placementApplicationSubmissionData'
 
@@ -32,6 +33,17 @@ const datesOfPlacement = [
     'arrivalDate-month': '1',
     'arrivalDate-day': '2',
     arrivalDate: '2024-01-02',
+  },
+]
+
+const datesOfPlacementForApi = [
+  {
+    duration: 15,
+    expectedArrival: '2023-12-01',
+  },
+  {
+    duration: 23,
+    expectedArrival: '2024-01-02',
   },
 ]
 
@@ -63,7 +75,16 @@ describe('placementApplicationSubmissionData', () => {
     expect(placementApplicationSubmissionData(placementApplication, applicationFactory.build())).toEqual({
       placementType: 'rotl',
       translatedDocument: {},
-      placementDates: datesOfPlacement,
+      placementDates: datesOfPlacementForApi,
+    })
+  })
+})
+
+describe('durationAndArrivalDateFromRotlPlacementApplication', () => {
+  it('returns a expectedArrival and duration key for each date of placement', () => {
+    expect(durationAndArrivalDateFromRotlPlacementApplication(datesOfPlacement[0])).toEqual({
+      duration: 15,
+      expectedArrival: '2023-12-01',
     })
   })
 })
@@ -89,7 +110,7 @@ describe('durationAndArrivalDateFromPlacementApplication', () => {
 
     expect(
       durationAndArrivalDateFromPlacementApplication(placementApplication, 'rotl', applicationFactory.build()),
-    ).toEqual([...datesOfPlacement])
+    ).toEqual(datesOfPlacementForApi)
     expect(pageDataFromApplicationOrAssessment).toHaveBeenCalledWith(DatesOfPlacement, placementApplication)
   })
 

@@ -7,7 +7,9 @@ import {
 } from '../../@types/shared'
 import ReasonForPlacement from '../../form-pages/placement-application/request-a-placement/reasonForPlacement'
 import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
-import DatesOfPlacement from '../../form-pages/placement-application/request-a-placement/datesOfPlacement'
+import DatesOfPlacement, {
+  DateOfPlacement,
+} from '../../form-pages/placement-application/request-a-placement/datesOfPlacement'
 import AdditionalPlacementDetails from '../../form-pages/placement-application/request-a-placement/additionalPlacementDetails'
 import { placementDurationFromApplication } from '../assessments/placementDurationFromApplication'
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
@@ -22,6 +24,7 @@ export const placementApplicationSubmissionData = (
     ReasonForPlacement,
     'reason',
   )
+
   const placementDates = durationAndArrivalDateFromPlacementApplication(
     placementApplication,
     reasonForPlacement,
@@ -30,8 +33,14 @@ export const placementApplicationSubmissionData = (
   return {
     translatedDocument: placementApplication.document,
     placementType: reasonForPlacement,
-    // At a later date we want to support multiple placement dates, but for now we will hard code the first one
     placementDates: Array.isArray(placementDates) ? placementDates : [placementDates],
+  }
+}
+
+export const durationAndArrivalDateFromRotlPlacementApplication = (dateOfPlacement: DateOfPlacement) => {
+  return {
+    expectedArrival: dateOfPlacement.arrivalDate,
+    duration: Number(dateOfPlacement.duration),
   }
 }
 
@@ -42,7 +51,9 @@ export const durationAndArrivalDateFromPlacementApplication = (
 ) => {
   switch (reasonForPlacement) {
     case 'rotl': {
-      return retrieveQuestionResponseFromFormArtifact(placementApplication, DatesOfPlacement, 'datesOfPlacement')
+      return retrieveQuestionResponseFromFormArtifact(placementApplication, DatesOfPlacement, 'datesOfPlacement').map(
+        durationAndArrivalDateFromRotlPlacementApplication,
+      )
     }
     case 'additional_placement': {
       return {
