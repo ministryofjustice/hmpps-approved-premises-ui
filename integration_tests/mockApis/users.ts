@@ -4,7 +4,7 @@ import {
   ApprovedPremisesUserRole as UserRole,
 } from '@approved-premises/api'
 import QueryString from 'qs'
-import { getMatchingRequests, stubFor } from '../../wiremock'
+import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 
 const stubFindUser = (args: { user: User; id: string }) =>

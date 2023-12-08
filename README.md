@@ -5,7 +5,7 @@ Apply for and manage approved premises
 ## Prerequisites
 
 - Docker
-- NodeJS
+- NodeJS (version specified in .node-version file)
 
 ## Setup
 
@@ -25,9 +25,7 @@ script/bootstrap
 
 ## Running the application
 
-To run the application there are two options.
-
-### 1. Using AP Tools
+### Using AP Tools
 
 In order to spin up a full stack of a working API and other [dependent services](./docker-compose.yml) we recommend using [AP Tools](https://github.com/ministryofjustice/hmpps-approved-premises-tools).
 
@@ -51,18 +49,6 @@ The service should then be available at <http://localhost:3000>
 
 [Log in credentials are documented within AP
 tools](https://github.com/ministryofjustice/hmpps-approved-premises-tools#start-server).
-
-### 2. Manually
-
-This option has the benefit of a quicker initial startup and enables us to
-develop features that aren't yet supported by the API through the use of
-Wiremock.
-
-To run the server against a fake API go to the root directory and run:
-
-```bash
-script/server
-```
 
 ## Release process
 

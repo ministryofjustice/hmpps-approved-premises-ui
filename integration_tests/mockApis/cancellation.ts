@@ -1,10 +1,10 @@
 import type { SuperAgentRequest } from 'superagent'
 import type { Cancellation } from '@approved-premises/api'
 
-import { getMatchingRequests, stubFor } from '../../wiremock'
-import { errorStub } from '../../wiremock/utils'
+import { getMatchingRequests, stubFor } from './setup'
+import { errorStub } from './utils'
 
-import { cancellationReasons } from '../../wiremock/referenceDataStubs'
+import { cancellationReasons } from '../../server/testutils/referenceData/stubs/referenceDataStubs'
 
 export default {
   stubCancellationReferenceData: (): SuperAgentRequest => stubFor(cancellationReasons),

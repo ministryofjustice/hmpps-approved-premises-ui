@@ -6,7 +6,7 @@ import type {
   PlacementRequestStatus,
   RiskTierLevel,
 } from '@approved-premises/api'
-import { getMatchingRequests, stubFor } from '../../wiremock'
+import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 import { bookingNotMadeFactory, newPlacementRequestBookingConfirmationFactory } from '../../server/testutils/factories'
 

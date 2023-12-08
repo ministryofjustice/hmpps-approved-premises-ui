@@ -1,9 +1,9 @@
 import { SuperAgentRequest } from 'superagent'
 
 import type { Reallocation, Task, User } from '@approved-premises/api'
-import { getMatchingRequests, stubFor } from '../../wiremock'
+import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
-import { errorStub } from '../../wiremock/utils'
+import { errorStub } from './utils'
 import { kebabCase } from '../../server/utils/utils'
 
 export default {

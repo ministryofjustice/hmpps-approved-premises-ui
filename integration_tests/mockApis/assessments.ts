@@ -9,7 +9,7 @@ import type {
   UpdatedClarificationNote,
 } from '@approved-premises/api'
 
-import { getMatchingRequests, stubFor } from '../../wiremock'
+import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 
 export default {

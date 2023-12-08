@@ -1,9 +1,11 @@
-import departureReasonsJson from './stubs/departure-reasons.json'
-import moveOnCategoriesJson from './stubs/move-on-categories.json'
-import destinationProvidersJson from './stubs/destination-providers.json'
-import cancellationReasonsJson from './stubs/cancellation-reasons.json'
-import lostBedReasonsJson from './stubs/lost-bed-reasons.json'
-import keyWorkersJson from './stubs/keyworkers.json'
+/* istanbul ignore file */
+
+import departureReasonsJson from './departure-reasons.json'
+import moveOnCategoriesJson from './move-on-categories.json'
+import destinationProvidersJson from './destination-providers.json'
+import cancellationReasonsJson from './cancellation-reasons.json'
+import lostBedReasonsJson from './lost-bed-reasons.json'
+import keyWorkersJson from './keyworkers.json'
 
 const departureReasons = {
   request: {

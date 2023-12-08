@@ -3,8 +3,8 @@ import { SuperAgentRequest } from 'superagent'
 import type { Nonarrival } from '@approved-premises/api'
 
 import { ReferenceData } from '@approved-premises/ui'
-import { getMatchingRequests, stubFor } from '../../wiremock'
-import { errorStub } from '../../wiremock/utils'
+import { getMatchingRequests, stubFor } from './setup'
+import { errorStub } from './utils'
 
 export default {
   stubNonArrivalCreate: (args: { premisesId: string; bookingId: string; nonArrival: Nonarrival }): SuperAgentRequest =>

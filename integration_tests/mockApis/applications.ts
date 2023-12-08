@@ -10,7 +10,7 @@ import type {
   TimelineEvent,
 } from '@approved-premises/api'
 
-import { getMatchingRequests, stubFor } from '../../wiremock'
+import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 import { ApplicationDashboardSearchOptions } from '../../server/@types/ui'
 

@@ -102,6 +102,9 @@
   },
   "referenceNumber": { "empty": "You must enter a reference number" },
   "query": { "empty": "You must enter a query" },
-  "userId": { "empty": "You must choose a user to allocate the application to" },
+  "userId": {
+    "empty": "You must choose a user to allocate the application to",
+    "lackingQualifications": "This user lacks the necessary qualifications"
+  },
   "moveBed": { "empty": "You must select a bed to move the person to" }
 }
