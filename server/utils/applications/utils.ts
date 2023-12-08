@@ -307,7 +307,7 @@ const mapPlacementApplicationToSummaryCards = (
       'reason',
     ) as PlacementType
 
-    const { expectedArrival, duration } = durationAndArrivalDateFromPlacementApplication(
+    const datesOfPlacements = durationAndArrivalDateFromPlacementApplication(
       placementApplication,
       reasonForPlacement,
       application,
@@ -342,18 +342,24 @@ const mapPlacementApplicationToSummaryCards = (
           key: { text: 'Reason for placement request' },
           value: { text: reasonsDictionary[reasonForPlacement] || 'None supplied' },
         },
-        {
-          key: { text: 'Arrival date' },
-          value: {
-            text: expectedArrival ? DateFormats.isoDateToUIDate(expectedArrival) : 'None supplied',
-          },
-        },
-        {
-          key: { text: 'Length of stay' },
-          value: {
-            text: lengthOfStayForUI(duration),
-          },
-        },
+        ...datesOfPlacements
+          .map(({ expectedArrival, duration }) => {
+            return [
+              {
+                key: { text: 'Arrival date' },
+                value: {
+                  text: expectedArrival ? DateFormats.isoDateToUIDate(expectedArrival) : 'None supplied',
+                },
+              },
+              {
+                key: { text: 'Length of stay' },
+                value: {
+                  text: lengthOfStayForUI(duration),
+                },
+              },
+            ]
+          })
+          .flat(),
       ],
     }
   })

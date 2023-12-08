@@ -268,6 +268,12 @@ const makeRotlPlacementApplication = (applicationId: string) => {
         durationDays: '20',
         duration: '20',
       },
+      {
+        arrivalDate: '2024-01-01',
+        durationDays: '10',
+        durationWeeks: '1',
+        duration: '17',
+      },
     ],
   })
   return rotlPlacementApplication
