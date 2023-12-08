@@ -67,7 +67,7 @@ context('Apply', () => {
   })
 
   it('allows the user to select an index offence if there is more than one offence', function test() {
-    // And that person has more than one offence listed under their CRN
+    // Given the person has more than one offence listed under their CRN
     const offences = activeOffenceFactory.buildList(4)
 
     const apply = new ApplyHelper(this.application, this.person, offences)
@@ -102,7 +102,7 @@ context('Apply', () => {
   })
 
   it(`allows the user to specify if the case is exceptional if the offender's tier is not eligible`, function test() {
-    // And that person does not have an eligible risk tier
+    // Given the person does not have an eligible risk tier
     const risks = risksFactory.build({
       crn: this.person.crn,
       tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
@@ -121,7 +121,7 @@ context('Apply', () => {
   })
 
   it('tells the user that their application is not applicable if the tier is not eligible and it is not an exceptional case', function test() {
-    // And that person does not have an eligible risk tier
+    // Given the person does not have an eligible risk tier
     const risks = risksFactory.build({
       crn: this.person.crn,
       tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
@@ -144,7 +144,7 @@ context('Apply', () => {
   })
 
   it('allows completion of application emergency flow', function test() {
-    // And I complete the application
+    // Given I need to complete I need a placement
     const user = userFactory.build()
     this.application.createdByUserId = user.id
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
@@ -177,9 +177,11 @@ context('Apply', () => {
         additionalConditionsDetail: 'some details',
       },
     })
-
+    // When I start the application
     apply.setupApplicationStubs(uiRisks)
     apply.startApplication()
+
+    // Then I am able to complete the Emergency application flow
     apply.completeEmergencyApplication()
   })
 
