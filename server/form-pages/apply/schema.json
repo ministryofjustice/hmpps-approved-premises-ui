@@ -20,6 +20,19 @@
     "basic-information": {
       "type": "object",
       "properties": {
+        "enter-risk-level": {
+          "type": "object",
+          "properties": {
+            "riskLevel": {
+              "enum": [
+                "highRisk",
+                "medium",
+                "veryHighRisk"
+              ],
+              "type": "string"
+            }
+          }
+        },
         "is-exceptional-case": {
           "type": "object",
           "properties": {

@@ -101,6 +101,22 @@ context('Apply', () => {
     Page.verifyOnPage(ConfirmYourDetailsPage, this.application)
   })
 
+  it(`allows the user to specify if the risk level if the person does not have a tier`, function test() {
+    // And that person does not have an eligible risk tier
+    const risks = risksFactory.build({
+      tier: undefined,
+    })
+
+    this.application.risks = risks
+
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
+    apply.setupApplicationStubs()
+    apply.startApplication()
+
+    // Then I should be able to confirm that the case is exceptional
+    apply.completeMissingTierSection()
+  })
+
   it(`allows the user to specify if the case is exceptional if the offender's tier is not eligible`, function test() {
     // Given the person does not have an eligible risk tier
     const risks = risksFactory.build({

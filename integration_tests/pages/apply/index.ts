@@ -18,6 +18,7 @@ import CovidPage from './covid'
 import DateOfOffence from './dateOfOffence'
 import DescribeLocationFactors from './describeLocationFactors'
 import EnterCRNPage from './enterCrn'
+import EnterRiskLevel from './enterRiskLevel'
 import EndDatesPage from './endDates'
 import ExceptionDetailsPage from './ExceptionDetails'
 import EsapCCTV from './esapCCTV'
@@ -86,6 +87,7 @@ export {
   DateOfOffence,
   DescribeLocationFactors,
   EnterCRNPage,
+  EnterRiskLevel,
   EndDatesPage,
   ExceptionDetailsPage,
   EsapCCTV,

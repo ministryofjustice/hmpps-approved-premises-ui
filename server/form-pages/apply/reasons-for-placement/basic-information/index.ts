@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 
+import EnterRiskLevel from './enterRiskLevel'
 import IsExceptionalCase from './isExceptionalCase'
 import ConfirmYourDetails from './confirmYourDetails'
 import ExceptionDetails from './exceptionDetails'
@@ -27,6 +28,7 @@ import CaseManagerInformation from './caseManagerInformation'
   name: 'Basic Information',
   slug: 'basic-information',
   pages: [
+    EnterRiskLevel,
     IsExceptionalCase,
     ConfirmYourDetails,
     CaseManagerInformation,
