@@ -528,22 +528,22 @@ describe('utils', () => {
       )
     })
 
-    it('returns the is exceptional case page for an unapplicable application', () => {
-      ;(isApplicableTier as jest.Mock).mockReturnValue(false)
-      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-
-      const application = applicationFactory.withFullPerson().build()
-
-      expect(firstPageOfApplicationJourney(application)).toEqual(
-        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' }),
-      )
-    })
-
-    it('returns the "is exceptional case" page for an application for a person without a tier', () => {
+    it('returns the "enter risk level" page for an application for a person without a tier', () => {
       const application = applicationFactory.withFullPerson().build()
       ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
 
       application.risks = undefined
+
+      expect(firstPageOfApplicationJourney(application)).toEqual(
+        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'enter-risk-level' }),
+      )
+    })
+
+    it('returns the is exceptional case page for an application with an unsuitable tier', () => {
+      ;(isApplicableTier as jest.Mock).mockReturnValue(false)
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+
+      const application = applicationFactory.withFullPerson().build()
 
       expect(firstPageOfApplicationJourney(application)).toEqual(
         paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' }),
