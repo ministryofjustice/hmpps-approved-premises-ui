@@ -116,7 +116,7 @@ describe('durationAndArrivalDateFromPlacementApplication', () => {
 
   it('returns the arrivalDate and duration from the additional-placement-details page if the "reason" is "additional_placement"', () => {
     const placementApplication = placementApplicationFactory.build({
-      data: { 'request-a-placement': { 'reason-for-placement': { reason: 'rotl' } } },
+      data: { 'request-a-placement': { 'reason-for-placement': { reason: 'additional_placement' } } },
     })
 
     ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({
