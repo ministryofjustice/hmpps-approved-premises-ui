@@ -359,13 +359,9 @@ const mapPlacementApplicationToSummaryCards = (
   })
 }
 
-const lengthOfStayForUI = (duration: string) => {
-  if (duration === '') return 'None supplied'
-
-  const durationNumber = Number(duration)
-
-  if (durationNumber === 0 || durationNumber) {
-    return `${durationNumber} day${durationNumber === 1 ? '' : 's'}`
+const lengthOfStayForUI = (duration: number) => {
+  if (duration === 0 || duration) {
+    return `${duration} day${duration === 1 ? '' : 's'}`
   }
 
   return 'None supplied'

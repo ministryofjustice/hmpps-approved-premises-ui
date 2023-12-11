@@ -875,19 +875,19 @@ describe('utils', () => {
 
   describe('lengthOfStayForUI', () => {
     it('returns 0 days if the length of stay is "0"', () => {
-      expect(lengthOfStayForUI('0')).toEqual('0 days')
+      expect(lengthOfStayForUI(0)).toEqual('0 days')
     })
 
     it('returns 1 day if the length of stay is "1"', () => {
-      expect(lengthOfStayForUI('1')).toEqual('1 day')
+      expect(lengthOfStayForUI(1)).toEqual('1 day')
     })
 
     it('returns 2 days if the length of stay is "2"', () => {
-      expect(lengthOfStayForUI('2')).toEqual('2 days')
+      expect(lengthOfStayForUI(2)).toEqual('2 days')
     })
 
-    it('returns "None supplied if the length of stay is an empty string', () => {
-      expect(lengthOfStayForUI('')).toEqual('None supplied')
+    it('returns "None supplied if the length of stay is null', () => {
+      expect(lengthOfStayForUI(null)).toEqual('None supplied')
     })
   })
 

@@ -5,7 +5,7 @@ import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../
 
 export const placementDurationFromApplication = (application: Application) => {
   return (
-    retrieveOptionalQuestionResponseFromApplicationOrAssessment(application, PlacementDuration, 'duration') ||
+    Number(retrieveOptionalQuestionResponseFromApplicationOrAssessment(application, PlacementDuration, 'duration')) ||
     getDefaultPlacementDurationInDays(application)
   )
 }
