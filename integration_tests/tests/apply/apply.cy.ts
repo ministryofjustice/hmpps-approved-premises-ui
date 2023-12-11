@@ -218,7 +218,7 @@ context('Apply', () => {
 
     apply.setupApplicationStubs(uiRisks)
     apply.startApplication()
-    apply.completeApplication(false, true)
+    apply.completeApplication({ isExceptionalCase: false, isInComunity: true })
 
     // Then the application should be submitted to the API
     cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
@@ -356,5 +356,21 @@ context('Apply', () => {
 
     // Then I should see a screen telling me they have no offences
     Page.verifyOnPage(NoOffencePage)
+  })
+
+  it('shows the user a message if there are no documents imported from Delius', function test() {
+    // Given I complete the documents selection of application
+    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
+
+    apply.setupApplicationStubs(uiRisks)
+
+    // And no documents uploaded to the application
+    apply.stubDocumentEndpoints([])
+    apply.startApplication()
+    apply.completeApplication({ isNoDocuments: true })
+
+    // Then should display No documents have been imported from Delius message will be displayed
+    apply.verifyNoDocumentsDisplayed()
   })
 })

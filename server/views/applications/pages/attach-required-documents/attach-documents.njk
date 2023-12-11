@@ -10,6 +10,7 @@
   
   <p>These documents are imported from NDelius. </p>
   <p>Select any additional documents that you want to include to support your application. </p>
+  <p>If the document is not listed below, upload the document to Delius and reload this page to add them to your application. </p>
 
   {% set detailsHTML %}
   <strong>All applications should include the following documents:</strong>
@@ -67,5 +68,8 @@
     ],
     rows: AttachDocumentsUtils.tableRows(page.documents, page.body.selectedDocuments, page.application, errors)
   }) }}
+  {% if page.documents.length === 0 %}
+      <p class="govuk-body">No documents have been imported from Delius</p>
+  {% endif %}
 
 {% endblock %}

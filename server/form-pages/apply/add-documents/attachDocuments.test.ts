@@ -89,6 +89,23 @@ describe('attachDocuments', () => {
       })
       expect(page.documents).toEqual(documents)
     })
+
+    it('returns no documents if documents not uploaded in the application', async () => {
+      applicationService.getDocuments.mockResolvedValue(documentFactory.buildList(0))
+      const page = await AttachDocuments.initialize(
+        {
+          selectedDocuments: [],
+        },
+        application,
+        'SOME_TOKEN',
+        fromPartial({ applicationService, personService }),
+      )
+
+      expect(page.body).toEqual({
+        selectedDocuments: [],
+      })
+      expect(page.documents).toEqual([])
+    })
   })
 
   itShouldHaveNextValue(new AttachDocuments({}, application), '')

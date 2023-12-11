@@ -139,7 +139,7 @@ export default class ApplyHelper {
     confirmDetailsPage.clickSubmit()
   }
 
-  completeApplication(isExceptionalCase?: boolean, isInComunity?: boolean) {
+  completeApplication({ isExceptionalCase = false, isInComunity = false, isNoDocuments = false } = {}) {
     if (isExceptionalCase) {
       this.completeExceptionalCase()
     }
@@ -151,9 +151,11 @@ export default class ApplyHelper {
     this.completeAccessAndHealthcareSection()
     this.completeFurtherConsiderationsSection()
     this.completeMoveOnSection()
-    this.completeDocumentsSection()
-    this.completeCheckYourAnswersSection()
-    this.submitApplication()
+    if (!isNoDocuments) {
+      this.completeDocumentsSection()
+      this.completeCheckYourAnswersSection()
+      this.submitApplication()
+    }
   }
 
   completeEmergencyApplication() {
@@ -369,10 +371,10 @@ export default class ApplyHelper {
     cy.task('stubAcctAlerts', { person: this.person, acctAlerts: this.acctAlerts })
   }
 
-  private stubDocumentEndpoints() {
+  stubDocumentEndpoints(documents?: Array<Document>) {
     // And there are documents in the database
     this.selectedDocuments = documentsFromApplication(this.application)
-    this.documents = [this.selectedDocuments, documentFactory.buildList(4)].flat()
+    this.documents = documents || [this.selectedDocuments, documentFactory.buildList(4)].flat()
 
     cy.task('stubApplicationDocuments', { application: this.application, documents: this.documents })
     this.documents.forEach(document => {
@@ -943,6 +945,18 @@ export default class ApplyHelper {
     // And the Attach Documents task should show a completed status
     tasklistPage.shouldShowTaskStatus('attach-required-documents', 'Completed')
     tasklistPage.shouldNotShowSubmitComponents()
+  }
+
+  verifyNoDocumentsDisplayed() {
+    // Given I click on the Attach Documents task
+    cy.get('[data-cy-task-name="attach-required-documents"]').click()
+    const attachDocumentsPage = new ApplyPages.AttachDocumentsPage(
+      this.documents,
+      this.selectedDocuments,
+      this.application,
+    )
+    // Then I should be able to see the no documents message
+    attachDocumentsPage.shouldDisplayNoDocuments()
   }
 
   private completeCheckYourAnswersSection() {

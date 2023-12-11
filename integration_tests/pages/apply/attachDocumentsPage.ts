@@ -40,6 +40,10 @@ export default class AttachDocumentsPage extends ApplyPage {
     })
   }
 
+  shouldDisplayNoDocuments() {
+    cy.get('p').contains('No documents have been imported from Delius')
+  }
+
   completeForm() {
     this.selectedDocuments.forEach(d => {
       const textareaSelector = `textarea[name="documentDescriptions[${d.id}]"]`
