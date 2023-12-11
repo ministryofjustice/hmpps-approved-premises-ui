@@ -160,6 +160,38 @@
       ]
     }, fetchContext()) }}
 
+    {% set socialCareInvolvementDetail %}
+    {{ formPageTextarea({
+        fieldName: "socialCareInvolvementDetail",
+        label: {
+          text: page.questions.socialCareInvolvementDetail
+        }
+    }, fetchContext()) }}
+    {% endset -%}
+
+    {{ formPageRadios({
+      fieldName: "socialCareInvolvement",
+      fieldset: {
+        legend: {
+          text: page.questions.socialCareInvolvement,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          conditional: {
+            html: socialCareInvolvementDetail
+          }
+        },
+        {
+          value: "no",
+          text: "No"
+        }
+      ]
+    }, fetchContext()) }}
+
     {% set otherPregnancyConsiderationsDetail %}
     {{ formPageTextarea({
         fieldName: "otherPregnancyConsiderationsDetail",

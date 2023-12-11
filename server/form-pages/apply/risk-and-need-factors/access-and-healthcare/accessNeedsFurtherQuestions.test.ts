@@ -21,6 +21,8 @@ describe('AccessNeedsFurtherQuestions', () => {
     ...DateFormats.dateObjectToDateInputs(expectedDeliveryDate, 'expectedDeliveryDate'),
     otherPregnancyConsiderations: 'yes',
     otherPregnancyConsiderationsDetail: 'Some detail',
+    socialCareInvolvement: 'yes',
+    socialCareInvolvementDetail: 'Some detail',
     childRemoved: 'no',
     isPersonPregnant: 'yes',
     additionalAdjustments: 'Adjustments',
@@ -52,6 +54,8 @@ describe('AccessNeedsFurtherQuestions', () => {
         'expectedDeliveryDate-day': '19',
         otherPregnancyConsiderations: 'yes',
         otherPregnancyConsiderationsDetail: 'Some detail',
+        socialCareInvolvement: 'yes',
+        socialCareInvolvementDetail: 'Some detail',
         childRemoved: 'no',
         additionalAdjustments: 'Adjustments',
       })
@@ -123,12 +127,31 @@ describe('AccessNeedsFurtherQuestions', () => {
           'expectedDeliveryDate-month': undefined,
           'expectedDeliveryDate-day': undefined,
           childRemoved: undefined,
+          socialCareInvolvement: undefined,
         },
         application,
       )
       expect(page.errors()).toEqual({
         expectedDeliveryDate: 'You must enter the expected delivery date',
         childRemoved: 'You must confirm if the child will be removed at birth',
+        socialCareInvolvement: 'You must confirm if there is social care involvement',
+      })
+    })
+
+    it('should return a socialCareInvolvementDetail error if the person is pregnant and socialCareInvolvement is yes and socialCareInvolvementDetail is blank', () => {
+      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['pregnancy'])
+
+      const page = new AccessNeedsFurtherQuestions(
+        {
+          ...body,
+          isPersonPregnant: 'yes',
+          socialCareInvolvement: 'yes',
+          socialCareInvolvementDetail: undefined,
+        },
+        application,
+      )
+      expect(page.errors()).toEqual({
+        socialCareInvolvementDetail: 'You must provide details of any social care involvement',
       })
     })
   })
@@ -174,6 +197,7 @@ describe('AccessNeedsFurtherQuestions', () => {
         'Does the person have any known health conditions?': 'Yes - Some detail',
         'Does the person have any prescribed medication?': 'Yes - Some detail',
         'Is the person pregnant?': 'Yes',
+        'Is there social care involvement?': 'Yes - Some detail',
         'What is their expected date of delivery?': 'Sunday 19 February 2023',
         "Will the child be removed from the person's care at birth?": 'No',
         'Are there any pregnancy related issues relevant to placement?': 'Yes - Some detail',

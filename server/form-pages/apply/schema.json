@@ -1712,6 +1712,27 @@
             {
               "type": "object",
               "properties": {
+                "socialCareInvolvement": {
+                  "enum": [
+                    "iDontKnow",
+                    "no",
+                    "yes"
+                  ],
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "socialCareInvolvementDetail": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
                 "otherPregnancyConsiderations": {
                   "enum": [
                     "no",

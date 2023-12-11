@@ -359,6 +359,8 @@
       "expectedDeliveryDate-year": "2023",
       "expectedDeliveryDate-month": "12",
       "expectedDeliveryDate-day": "31",
+      "socialCareInvolvement": "yes",
+      "socialCareInvolvementDetail": "Some detail",
       "otherPregnancyConsiderations": "yes",
       "otherPregnancyConsiderationsDetail": "some considerations",
       "childRemoved": "decisionPending",

@@ -23,6 +23,7 @@ export type AccessNeedsFurtherQuestionsBody = {
 } & ObjectWithDateParts<'expectedDeliveryDate'> &
   YesOrNoWithDetail<'healthConditions'> &
   YesNoOrIDKWithDetail<'prescribedMedication'> &
+  YesNoOrIDKWithDetail<'socialCareInvolvement'> &
   YesOrNoWithDetail<'otherPregnancyConsiderations'>
 
 @Page({
@@ -39,6 +40,8 @@ export type AccessNeedsFurtherQuestionsBody = {
     'expectedDeliveryDate-year',
     'expectedDeliveryDate-month',
     'expectedDeliveryDate-day',
+    'socialCareInvolvement',
+    'socialCareInvolvementDetail',
     'otherPregnancyConsiderations',
     'otherPregnancyConsiderationsDetail',
     'additionalAdjustments',
@@ -56,6 +59,8 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
     isPersonPregnant: `Is the person pregnant?`,
     expectedDeliveryDate: 'What is their expected date of delivery?',
     otherPregnancyConsiderationsDetail: 'Provide details',
+    socialCareInvolvement: 'Is there social care involvement?',
+    socialCareInvolvementDetail: 'Provide details',
     otherPregnancyConsiderations: 'Are there any pregnancy related issues relevant to placement?',
     childRemoved: `Will the child be removed from the person's care at birth?`,
     additionalAdjustments: `Specify any additional details and adjustments required for the person's ${this.listOfNeeds}`,
@@ -132,6 +137,10 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
       if (this.body.isPersonPregnant === 'yes') {
         response[this.questions.expectedDeliveryDate] = DateFormats.isoDateToUIDate(this.body.expectedDeliveryDate)
         response[this.questions.childRemoved] = sentenceCase(this.body.childRemoved)
+        response[this.questions.socialCareInvolvement] = yesNoOrDontKnowResponseWithDetail(
+          'socialCareInvolvement',
+          this.body,
+        )
       }
 
       response[this.questions.otherPregnancyConsiderations] = yesOrNoResponseWithDetailForYes(
@@ -179,6 +188,12 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
         }
         if (!this.body.childRemoved) {
           errors.childRemoved = 'You must confirm if the child will be removed at birth'
+        }
+        if (!this.body.socialCareInvolvement) {
+          errors.socialCareInvolvement = 'You must confirm if there is social care involvement'
+        }
+        if (this.body.socialCareInvolvement === 'yes' && !this.body.socialCareInvolvementDetail) {
+          errors.socialCareInvolvementDetail = 'You must provide details of any social care involvement'
         }
       }
 
