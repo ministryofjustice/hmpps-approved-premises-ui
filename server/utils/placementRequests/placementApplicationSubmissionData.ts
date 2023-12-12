@@ -15,6 +15,11 @@ import { placementDurationFromApplication } from '../assessments/placementDurati
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
 import { DateFormats } from '../dateUtils'
 
+type DatesOfStay = {
+  expectedArrival: string
+  duration: number | null
+}
+
 export const placementApplicationSubmissionData = (
   placementApplication: PlacementApplication,
   application: Application,
@@ -37,7 +42,7 @@ export const placementApplicationSubmissionData = (
   }
 }
 
-export const durationAndArrivalDateFromRotlPlacementApplication = (dateOfPlacement: DateOfPlacement) => {
+export const durationAndArrivalDateFromRotlPlacementApplication = (dateOfPlacement: DateOfPlacement): DatesOfStay => {
   return {
     expectedArrival: dateOfPlacement.arrivalDate,
     duration: Number(dateOfPlacement.duration),
@@ -48,7 +53,7 @@ export const durationAndArrivalDateFromPlacementApplication = (
   placementApplication: PlacementApplication,
   reasonForPlacement: PlacementType,
   application: Application,
-) => {
+): Array<DatesOfStay> => {
   switch (reasonForPlacement) {
     case 'rotl': {
       return retrieveQuestionResponseFromFormArtifact(placementApplication, DatesOfPlacement, 'datesOfPlacement').map(
@@ -56,16 +61,18 @@ export const durationAndArrivalDateFromPlacementApplication = (
       )
     }
     case 'additional_placement': {
-      return {
-        expectedArrival: retrieveQuestionResponseFromFormArtifact(
-          placementApplication,
-          AdditionalPlacementDetails,
-          'arrivalDate',
-        ),
-        duration: Number(
-          retrieveQuestionResponseFromFormArtifact(placementApplication, AdditionalPlacementDetails, 'duration'),
-        ),
-      }
+      return [
+        {
+          expectedArrival: retrieveQuestionResponseFromFormArtifact(
+            placementApplication,
+            AdditionalPlacementDetails,
+            'arrivalDate',
+          ),
+          duration: Number(
+            retrieveQuestionResponseFromFormArtifact(placementApplication, AdditionalPlacementDetails, 'duration'),
+          ),
+        },
+      ]
     }
     case 'release_following_decision': {
       const decisionToReleaseDate = retrieveQuestionResponseFromFormArtifact(
@@ -74,16 +81,20 @@ export const durationAndArrivalDateFromPlacementApplication = (
         'decisionToReleaseDate',
       )
 
-      return {
-        expectedArrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
-        duration: placementDurationFromApplication(application),
-      }
+      return [
+        {
+          expectedArrival: DateFormats.dateObjToIsoDate(addWeeks(DateFormats.isoToDateObj(decisionToReleaseDate), 6)),
+          duration: Number(placementDurationFromApplication(application)),
+        },
+      ]
     }
 
     default:
-      return {
-        expectedArrival: '',
-        duration: '',
-      }
+      return [
+        {
+          expectedArrival: '',
+          duration: null,
+        },
+      ]
   }
 }

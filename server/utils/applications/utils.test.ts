@@ -713,7 +713,7 @@ describe('utils', () => {
     const user = userFactory.build()
     const placementApplications = placementApplicationFactory.buildList(1, { createdByUserId: user.id })
     const arrivalDate = '2023-01-01'
-    const duration = '20'
+    const duration = 20
 
     it('returns a placement application mapped to SummaryCard including an action when the placement application can be withdrawn', () => {
       ;(
@@ -725,7 +725,7 @@ describe('utils', () => {
         durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
           typeof durationAndArrivalDateFromPlacementApplication
         >
-      ).mockReturnValue({ expectedArrival: arrivalDate, duration })
+      ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
 
       expect(mapPlacementApplicationToSummaryCards(placementApplications, application, user)).toEqual([
         {
@@ -771,6 +771,84 @@ describe('utils', () => {
       ])
     })
 
+    it('can display multiple placement dates', () => {
+      const arrivalDate1 = arrivalDate
+      const duration1 = duration
+      const arrivalDate2 = '2023-02-01'
+      const duration2 = 30
+
+      ;(
+        retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFunction<
+          typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+        >
+      ).mockReturnValue('rotl')
+      ;(
+        durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
+          typeof durationAndArrivalDateFromPlacementApplication
+        >
+      ).mockReturnValue([
+        { expectedArrival: arrivalDate1, duration: duration1 },
+        { expectedArrival: arrivalDate2, duration: duration2 },
+      ])
+
+      expect(mapPlacementApplicationToSummaryCards(placementApplications, application, user)).toEqual([
+        {
+          card: {
+            title: { headingLevel: '3', text: DateFormats.isoDateToUIDate(placementApplications[0].createdAt) },
+            attributes: { 'data-cy-placement-application-id': placementApplications[0].id },
+            actions: {
+              items: [
+                {
+                  href: placementApplicationPaths.placementApplications.withdraw.new({
+                    id: placementApplications[0].id,
+                  }),
+                  text: 'Withdraw',
+                },
+              ],
+            },
+          },
+          rows: [
+            {
+              key: {
+                text: 'Reason for placement request',
+              },
+              value: {
+                text: 'Release on Temporary Licence (ROTL)',
+              },
+            },
+            {
+              key: {
+                text: 'Arrival date',
+              },
+              value: {
+                text: DateFormats.isoDateToUIDate(arrivalDate1),
+              },
+            },
+            {
+              key: {
+                text: 'Length of stay',
+              },
+              value: { text: lengthOfStayForUI(duration1) },
+            },
+            {
+              key: {
+                text: 'Arrival date',
+              },
+              value: {
+                text: DateFormats.isoDateToUIDate(arrivalDate2),
+              },
+            },
+            {
+              key: {
+                text: 'Length of stay',
+              },
+              value: { text: lengthOfStayForUI(duration2) },
+            },
+          ],
+        },
+      ])
+    })
+
     it('doesnt include an action when the placement application doesnt have the the canBeWithdrawn boolean', () => {
       ;(
         retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFunction<
@@ -781,7 +859,7 @@ describe('utils', () => {
         durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
           typeof durationAndArrivalDateFromPlacementApplication
         >
-      ).mockReturnValue({ expectedArrival: arrivalDate, duration })
+      ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
       placementApplications[0].canBeWithdrawn = undefined
 
       expect(mapPlacementApplicationToSummaryCards(placementApplications, application, user)).toEqual([
@@ -831,7 +909,7 @@ describe('utils', () => {
         durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
           typeof durationAndArrivalDateFromPlacementApplication
         >
-      ).mockReturnValue({ expectedArrival: arrivalDate, duration })
+      ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
       placementApplications[0].canBeWithdrawn = true
       placementApplications[0].createdByUserId = 'another-user-id'
 
@@ -875,19 +953,19 @@ describe('utils', () => {
 
   describe('lengthOfStayForUI', () => {
     it('returns 0 days if the length of stay is "0"', () => {
-      expect(lengthOfStayForUI('0')).toEqual('0 days')
+      expect(lengthOfStayForUI(0)).toEqual('0 days')
     })
 
     it('returns 1 day if the length of stay is "1"', () => {
-      expect(lengthOfStayForUI('1')).toEqual('1 day')
+      expect(lengthOfStayForUI(1)).toEqual('1 day')
     })
 
     it('returns 2 days if the length of stay is "2"', () => {
-      expect(lengthOfStayForUI('2')).toEqual('2 days')
+      expect(lengthOfStayForUI(2)).toEqual('2 days')
     })
 
-    it('returns "None supplied if the length of stay is an empty string', () => {
-      expect(lengthOfStayForUI('')).toEqual('None supplied')
+    it('returns "None supplied if the length of stay is null', () => {
+      expect(lengthOfStayForUI(null)).toEqual('None supplied')
     })
   })
 

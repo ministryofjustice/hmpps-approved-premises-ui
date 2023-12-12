@@ -116,7 +116,7 @@ describe('durationAndArrivalDateFromPlacementApplication', () => {
 
   it('returns the arrivalDate and duration from the additional-placement-details page if the "reason" is "additional_placement"', () => {
     const placementApplication = placementApplicationFactory.build({
-      data: { 'request-a-placement': { 'reason-for-placement': { reason: 'rotl' } } },
+      data: { 'request-a-placement': { 'reason-for-placement': { reason: 'additional_placement' } } },
     })
 
     ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({
@@ -130,21 +130,27 @@ describe('durationAndArrivalDateFromPlacementApplication', () => {
         'additional_placement',
         applicationFactory.build(),
       ),
-    ).toEqual({
-      expectedArrival: '2023-01-01',
-      duration: 1,
-    })
+    ).toEqual([
+      {
+        expectedArrival: '2023-01-01',
+        duration: 1,
+      },
+    ])
     expect(pageDataFromApplicationOrAssessment).toHaveBeenCalledWith(AdditionalPlacementDetails, placementApplication)
   })
 
   it('calculates the release date to be decision to release date + 6 weeks and retrieves the placement duration from the application if the "reason" is "release_following_decision"', () => {
-    const placementApplication = placementApplicationFactory.build({
+    let placementApplication = placementApplicationFactory.build({
       data: { 'request-a-placement': { 'reason-for-placement': { reason: 'release_following_decision' } } },
     })
-
+    placementApplication = addResponseToFormArtifact(placementApplication, {
+      task: 'request-a-placement',
+      page: 'decision-to-release',
+      key: 'decisionToReleaseDate',
+      value: '2023-01-01',
+    })
     ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({
       decisionToReleaseDate: '2023-01-01',
-      duration: '1',
     })
     ;(placementDurationFromApplication as jest.Mock).mockReturnValue('1')
 
@@ -154,10 +160,12 @@ describe('durationAndArrivalDateFromPlacementApplication', () => {
         'release_following_decision',
         applicationFactory.build(),
       ),
-    ).toEqual({
-      duration: '1',
-      expectedArrival: '2023-02-12',
-    })
+    ).toEqual([
+      {
+        duration: 1,
+        expectedArrival: '2023-02-12',
+      },
+    ])
     expect(pageDataFromApplicationOrAssessment).toHaveBeenCalledWith(DecisionToRelease, placementApplication)
   })
 })
