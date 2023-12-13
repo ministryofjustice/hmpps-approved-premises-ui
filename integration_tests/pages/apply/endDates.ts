@@ -8,7 +8,12 @@ export default class EndDatesPage extends ApplyPage {
   }
 
   completeForm() {
-    this.completeDateInputsFromPageBody('ledDate')
+    this.checkCheckboxesFromPageBody('selectedDates', { addArrayNotationToInputName: true })
+    this.completeDateInputsFromPageBody('paroleEligbilityDate')
+    this.completeDateInputsFromPageBody('homeDetentionCurfewDate')
+    this.completeDateInputsFromPageBody('licenceExpiryDate')
+    this.completeDateInputsFromPageBody('pssStartDate')
+    this.completeDateInputsFromPageBody('pssEndDate')
     this.completeDateInputsFromPageBody('sedDate')
   }
 }

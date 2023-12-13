@@ -7,26 +7,35 @@ import TasklistPage from '../../../tasklistPage'
 import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
-export type EndDatesBody = ObjectWithDateParts<'sedDate'> &
-  ObjectWithDateParts<'ledDate'> &
-  ObjectWithDateParts<'pssDate'>
+export const relevantDatesDictionary = {
+  paroleEligbilityDate: 'Parole eligibility date',
+  homeDetentionCurfewDate: 'Home Detention Curfew (HDC) date',
+  licenceExpiryDate: 'Licence expiry date',
+  pssStartDate: 'Post sentence supervision (PSS) start date',
+  pssEndDate: 'Post sentence supervision (PSS) end date',
+  sedDate: 'Sentence expiry date',
+} as const
+
+export const relevantDateKeys = Object.keys(relevantDatesDictionary) as ReadonlyArray<RelevantDateKeys>
+
+export type RelevantDates = typeof relevantDatesDictionary
+export type RelevantDateKeys = keyof RelevantDates
+export type RelevantDateLabels = RelevantDates[RelevantDateKeys]
+
+export type EndDatesBody = { selectedDates: ReadonlyArray<RelevantDateKeys> } & ObjectWithDateParts<RelevantDateKeys>
 
 @Page({
   name: 'end-dates',
-  bodyProperties: [
-    ...dateBodyProperties('sedDate'),
-    ...dateBodyProperties('ledDate'),
-    ...dateBodyProperties('pssDate'),
-  ],
+  bodyProperties: [...relevantDateKeys.map(key => dateBodyProperties(key)).flat(), 'selectedDates'],
 })
 export default class EndDates implements TasklistPage {
   title = 'Which of the following dates are relevant?'
 
-  questions = {
-    sedDate: 'Sentence end date (SED)',
-    ledDate: 'Licence end date (LED)',
-    pssDate: 'Post-sentence supervision (PSS)',
-  }
+  hint = 'Select any dates that are relevant to this application. Select all that apply'
+
+  relevantDateKeys = relevantDateKeys
+
+  relevantDatesDictionary = relevantDatesDictionary
 
   body: EndDatesBody
 
@@ -38,8 +47,8 @@ export default class EndDates implements TasklistPage {
   response() {
     const response = {}
 
-    Object.keys(this.questions).forEach(key => {
-      response[this.questions[key]] = !dateIsBlank(this.body, key)
+    relevantDateKeys.forEach(key => {
+      response[this.relevantDatesDictionary[key]] = !dateIsBlank(this.body, key)
         ? DateFormats.dateAndTimeInputsToUiDate(this.body, key)
         : 'No date supplied'
     })
@@ -61,11 +70,13 @@ export default class EndDates implements TasklistPage {
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    ;['sedDate', 'ledDate', 'pssDate'].forEach(date => {
-      if (!dateIsBlank(this.body, date)) {
-        if (!dateAndTimeInputsAreValidDates(this.body, date)) {
-          errors[date] = `${this.questions[date]} must be a valid date`
-        }
+    relevantDateKeys.forEach(date => {
+      if (!this.body.selectedDates?.includes(date)) return
+
+      if (dateIsBlank(this.body, date)) {
+        errors[date] = `When the box is checked you must enter a ${this.relevantDatesDictionary[date]} date`
+      } else if (!dateAndTimeInputsAreValidDates(this.body, date)) {
+        errors[date] = `${this.relevantDatesDictionary[date]} must be a valid date`
       }
     })
 

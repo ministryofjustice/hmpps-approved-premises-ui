@@ -30,14 +30,38 @@
       "shouldPersonBePlacedInMaleAp": "yes"
     },
     "end-dates": {
-      "ledDate-year": "2022",
-      "ledDate-month": "11",
-      "ledDate-day": "14",
-      "ledDate": "2022-11-14",
-      "sedDate-year": "2022",
-      "sedDate-month": "11",
+      "selectedDates": [
+        "paroleEligbilityDate",
+        "homeDetentionCurfewDate",
+        "licenceExpiryDate",
+        "pssStartDate",
+        "pssEndDate",
+        "sedDate"
+      ],
+      "paroleEligbilityDate-year": "2024",
+      "paroleEligbilityDate-month": "11",
+      "paroleEligbilityDate-day": "14",
+      "paroleEligbilityDate": "2024-11-14",
+      "homeDetentionCurfewDate-year": "2024",
+      "homeDetentionCurfewDate-month": "10",
+      "homeDetentionCurfewDate-day": "14",
+      "homeDetentionCurfewDate": "2024-10-14",
+      "licenceExpiryDate-year": "2024",
+      "licenceExpiryDate-month": "09",
+      "licenceExpiryDate-day": "14",
+      "licenceExpiryDate": "2024-09-14",
+      "pssStartDate-year": "2024",
+      "pssStartDate-month": "08",
+      "pssStartDate-day": "14",
+      "pssStartDate": "2024-08-14",
+      "pssEndDate-year": "2024",
+      "pssEndDate-month": "07",
+      "pssEndDate-day": "14",
+      "pssEndDate": "2024-07-14",
+      "sedDate-year": "2024",
+      "sedDate-month": "06",
       "sedDate-day": "14",
-      "sedDate": "2022-11-14"
+      "sedDate": "2024-06-14"
     },
     "sentence-type": {
       "sentenceType": "communityOrder"

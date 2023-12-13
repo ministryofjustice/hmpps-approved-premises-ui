@@ -211,10 +211,74 @@
             {
               "type": "object",
               "properties": {
+                "selectedDates": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "homeDetentionCurfewDate",
+                      "licenceExpiryDate",
+                      "paroleEligbilityDate",
+                      "pssEndDate",
+                      "pssStartDate",
+                      "sedDate"
+                    ],
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "paroleEligbilityDate-year": {
+                  "type": "string"
+                },
+                "homeDetentionCurfewDate-year": {
+                  "type": "string"
+                },
+                "licenceExpiryDate-year": {
+                  "type": "string"
+                },
+                "pssStartDate-year": {
+                  "type": "string"
+                },
+                "pssEndDate-year": {
+                  "type": "string"
+                },
                 "sedDate-year": {
                   "type": "string"
                 },
+                "paroleEligbilityDate-month": {
+                  "type": "string"
+                },
+                "homeDetentionCurfewDate-month": {
+                  "type": "string"
+                },
+                "licenceExpiryDate-month": {
+                  "type": "string"
+                },
+                "pssStartDate-month": {
+                  "type": "string"
+                },
+                "pssEndDate-month": {
+                  "type": "string"
+                },
                 "sedDate-month": {
+                  "type": "string"
+                },
+                "paroleEligbilityDate-day": {
+                  "type": "string"
+                },
+                "homeDetentionCurfewDate-day": {
+                  "type": "string"
+                },
+                "licenceExpiryDate-day": {
+                  "type": "string"
+                },
+                "pssStartDate-day": {
+                  "type": "string"
+                },
+                "pssEndDate-day": {
                   "type": "string"
                 },
                 "sedDate-day": {
@@ -225,6 +289,21 @@
             {
               "type": "object",
               "properties": {
+                "paroleEligbilityDate-time": {
+                  "type": "string"
+                },
+                "homeDetentionCurfewDate-time": {
+                  "type": "string"
+                },
+                "licenceExpiryDate-time": {
+                  "type": "string"
+                },
+                "pssStartDate-time": {
+                  "type": "string"
+                },
+                "pssEndDate-time": {
+                  "type": "string"
+                },
                 "sedDate-time": {
                   "type": "string"
                 }
@@ -233,67 +312,22 @@
             {
               "type": "object",
               "properties": {
+                "paroleEligbilityDate": {
+                  "type": "string"
+                },
+                "homeDetentionCurfewDate": {
+                  "type": "string"
+                },
+                "licenceExpiryDate": {
+                  "type": "string"
+                },
+                "pssStartDate": {
+                  "type": "string"
+                },
+                "pssEndDate": {
+                  "type": "string"
+                },
                 "sedDate": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "ledDate-year": {
-                  "type": "string"
-                },
-                "ledDate-month": {
-                  "type": "string"
-                },
-                "ledDate-day": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "ledDate-time": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "ledDate": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "pssDate-year": {
-                  "type": "string"
-                },
-                "pssDate-month": {
-                  "type": "string"
-                },
-                "pssDate-day": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "pssDate-time": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "pssDate": {
                   "type": "string"
                 }
               }

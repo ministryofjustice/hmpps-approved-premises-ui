@@ -32,9 +32,10 @@ export const shouldShowContingencyPlanPartnersPages = (application: Application)
   )
     return true
 
-  const pssEndDate = retrieveOptionalQuestionResponseFromFormArtifact(application, EndDates, 'pssDate')
+  const pssDate = retrieveOptionalQuestionResponseFromFormArtifact(application, EndDates, 'pssDate')
+  const pssEndDate = retrieveOptionalQuestionResponseFromFormArtifact(application, EndDates, 'pssEndDate')
 
-  if (pssEndDate) return true
+  if (pssEndDate || pssDate) return true
 
   return false
 }

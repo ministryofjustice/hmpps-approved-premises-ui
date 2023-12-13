@@ -8,58 +8,42 @@
     {{ page.title }}
   </h1>
 
-  {{
-    formPageDateInput(
-      {
-        fieldName: "sedDate",
-        fieldset: {
-          legend: {
-            text: page.questions.sedDate
-          }
-        },
-        hint: {
-          text: "For example, 27 3 2024"
-        },
-        items: dateFieldValues('sedDate', errors)
-      },
-      fetchContext()
-    )
-  }}
+  {% set conditionals = [] %}
 
-  {{
-    formPageDateInput(
-      {
-        fieldName: "ledDate",
-        fieldset: {
-          legend: {
-            text: page.questions.ledDate
-          }
-        },
-        hint: {
-          text: "For example, 27 3 2024"
-        },
-        items: dateFieldValues('ledDate', errors)
-      },
-      fetchContext()
-    )
-  }}
+  {% for date in page.relevantDateKeys %}
 
-  {{
-    formPageDateInput(
-      {
-        fieldName: "pssDate",
-        fieldset: {
-          legend: {
-            text: page.questions.pssDate
-          }
-        },
-        hint: {
-          text: "For example, 27 3 2024"
-        },
-        items: dateFieldValues('pssDate', errors)
+    {% set dateInput %}
+    {{ formPageDateInput(
+            {
+              fieldName: date,
+              fieldset: {
+                legend: {
+                  classes: "govuk-fieldset__legend--m"
+                }
+              },
+              items: dateFieldValues(date, errors)
+            },
+            fetchContext()
+          )}}
+    {% endset %}
+
+    {% set conditionals = (conditionals.push(dateInput), conditionals) %}
+
+  {% endfor %}
+
+  {{ formPageCheckboxes({
+      fieldName: "selectedDates[]",
+      hint: {
+        text: page.hint
       },
-      fetchContext()
-    )
-  }}
+      fieldset: {
+        legend: {
+          text: page.title,
+          classes: "govuk-fieldset__legend--m",
+          isPageHeading: true
+        }
+      },
+      items: endDatesOptions(page.relevantDatesDictionary, conditionals)
+    }, fetchContext()) }}
 
 {% endblock %}
