@@ -1,6 +1,6 @@
 import { applicationFactory, assessmentFactory } from '../../testutils/factories'
 import informationSetAsNotReceived from './informationSetAsNotReceived'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 
@@ -15,8 +15,8 @@ describe('informationSetAsNotReceived', () => {
 
   it('returns false when informationReceived is set to yes', () => {
     ;(
-      retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
-        typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+      retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
+        typeof retrieveOptionalQuestionResponseFromFormArtifact
       >
     ).mockReturnValue('yes')
 
@@ -25,8 +25,8 @@ describe('informationSetAsNotReceived', () => {
 
   it('returns true when informationReceived is set to no', () => {
     ;(
-      retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
-        typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+      retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
+        typeof retrieveOptionalQuestionResponseFromFormArtifact
       >
     ).mockReturnValue('no')
 

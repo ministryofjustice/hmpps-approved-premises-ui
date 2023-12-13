@@ -3,7 +3,7 @@ import AccessNeedsFurtherQuestions, { AccessNeedsFurtherQuestionsBody } from './
 
 import { applicationFactory } from '../../../../testutils/factories'
 import { DateFormats } from '../../../../utils/dateUtils'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
 
@@ -29,7 +29,7 @@ describe('AccessNeedsFurtherQuestions', () => {
   }
 
   beforeEach(() => {
-    ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue([''])
+    ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue([''])
   })
 
   describe('title', () => {
@@ -76,7 +76,7 @@ describe('AccessNeedsFurtherQuestions', () => {
 
   describe('errors', () => {
     it('should return errors if there are no responses to needsWheelchair question', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue([])
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue([])
 
       const page = new AccessNeedsFurtherQuestions({ ...body, needsWheelchair: undefined }, application)
 
@@ -86,7 +86,7 @@ describe('AccessNeedsFurtherQuestions', () => {
     })
 
     it('should return errors if there is no response to the healthConditions question', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue([])
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue([])
       const page = new AccessNeedsFurtherQuestions({ ...body, healthConditions: undefined }, application)
 
       expect(page.errors()).toEqual({
@@ -95,7 +95,7 @@ describe('AccessNeedsFurtherQuestions', () => {
     })
 
     it('should return errors if the person answers "yes" to the healthConditions question but does not provide details', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue([])
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue([])
 
       const page = new AccessNeedsFurtherQuestions(
         { ...body, healthConditions: 'yes', healthConditionsDetail: undefined },
@@ -107,7 +107,7 @@ describe('AccessNeedsFurtherQuestions', () => {
     })
 
     it('should return errors if the person answered "yes" to pregancy healthcare questions but doesnt respond to pregnancy question', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['pregnancy'])
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue(['pregnancy'])
 
       const page = new AccessNeedsFurtherQuestions({ ...body, isPersonPregnant: undefined }, application)
       expect(page.errors()).toEqual({
@@ -116,7 +116,7 @@ describe('AccessNeedsFurtherQuestions', () => {
     })
 
     it('should return errors if there are no responses to expectedDeliveryDate or childRemoved question and isPersonPregnant is yes', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['pregnancy'])
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue(['pregnancy'])
 
       const page = new AccessNeedsFurtherQuestions(
         {
@@ -139,7 +139,7 @@ describe('AccessNeedsFurtherQuestions', () => {
     })
 
     it('should return a socialCareInvolvementDetail error if the person is pregnant and socialCareInvolvement is yes and socialCareInvolvementDetail is blank', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['pregnancy'])
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue(['pregnancy'])
 
       const page = new AccessNeedsFurtherQuestions(
         {
@@ -158,7 +158,7 @@ describe('AccessNeedsFurtherQuestions', () => {
 
   describe('listOfNeeds', () => {
     it('should return null when no needs are selected', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue([])
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue([])
 
       const page = new AccessNeedsFurtherQuestions(body, application)
 
@@ -166,7 +166,7 @@ describe('AccessNeedsFurtherQuestions', () => {
     })
 
     it('should return a single need when one is selected', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['mobility'])
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue(['mobility'])
 
       const page = new AccessNeedsFurtherQuestions(body, application)
 
@@ -174,7 +174,7 @@ describe('AccessNeedsFurtherQuestions', () => {
     })
 
     it('should return a list of needs', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue([
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue([
         'learningDisability',
         'neurodivergentConditions',
         'healthcare',
@@ -188,7 +188,7 @@ describe('AccessNeedsFurtherQuestions', () => {
 
   describe('response', () => {
     it('returns the correct plain english responses for the questions', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['pregnancy'])
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue(['pregnancy'])
 
       const page = new AccessNeedsFurtherQuestions(body, application)
 
@@ -206,7 +206,7 @@ describe('AccessNeedsFurtherQuestions', () => {
     })
 
     it('returns the correct plain english responses when the user responds that the person is not pregnant', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(['mobility'])
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue(['mobility'])
 
       const page = new AccessNeedsFurtherQuestions(fromPartial({ ...body, isPersonPregnant: 'no' }), application)
 

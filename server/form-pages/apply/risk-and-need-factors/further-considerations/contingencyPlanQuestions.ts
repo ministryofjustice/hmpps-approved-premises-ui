@@ -8,7 +8,7 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { ApprovedPremisesApplication as Application } from '../../../../@types/shared'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import ContingencyPlanPartners from './contingencyPlanPartners'
 
 const questions: ContingencyPlanQuestionsRecord = {
@@ -69,11 +69,8 @@ export default class ContingencyPlanQuestions implements TasklistPage {
     private readonly application: Application,
   ) {
     const contingencyPlanPartners =
-      retrieveOptionalQuestionResponseFromApplicationOrAssessment(
-        application,
-        ContingencyPlanPartners,
-        'partnerAgencyDetails',
-      ) || []
+      retrieveOptionalQuestionResponseFromFormArtifact(application, ContingencyPlanPartners, 'partnerAgencyDetails') ||
+      []
 
     const contingencyPlanPartnersNames = contingencyPlanPartners.map(
       (partner: { partnerAgencyName: string }) => partner.partnerAgencyName,

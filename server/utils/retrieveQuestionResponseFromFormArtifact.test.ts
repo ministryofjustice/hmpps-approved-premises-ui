@@ -1,7 +1,7 @@
 import { createMock } from '@golevelup/ts-jest'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import {
-  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
+  retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
 } from './retrieveQuestionResponseFromFormArtifact'
 import { applicationFactory } from '../testutils/factories'
@@ -47,12 +47,12 @@ describe('retrieveQuestionResponseFromFormArtifact', () => {
   })
 })
 
-describe('retrieveOptionalQuestionResponseFromApplicationOrAssessment', () => {
+describe('retrieveOptionalQuestionResponseFromFormArtifact', () => {
   it("returns undefined if the property doesn't exist", () => {
     const application = applicationFactory.build()
-    expect(
-      retrieveOptionalQuestionResponseFromApplicationOrAssessment(application, createMock<TasklistPageInterface>()),
-    ).toEqual(undefined)
+    expect(retrieveOptionalQuestionResponseFromFormArtifact(application, createMock<TasklistPageInterface>())).toEqual(
+      undefined,
+    )
   })
 
   it('returns the property if it does exist', () => {
@@ -62,8 +62,8 @@ describe('retrieveOptionalQuestionResponseFromApplicationOrAssessment', () => {
       },
     })
 
-    expect(
-      retrieveOptionalQuestionResponseFromApplicationOrAssessment(application, createMock<TasklistPageInterface>()),
-    ).toEqual(retrieveQuestionResponseFromFormArtifact(application, createMock<TasklistPageInterface>()))
+    expect(retrieveOptionalQuestionResponseFromFormArtifact(application, createMock<TasklistPageInterface>())).toEqual(
+      retrieveQuestionResponseFromFormArtifact(application, createMock<TasklistPageInterface>()),
+    )
   })
 })

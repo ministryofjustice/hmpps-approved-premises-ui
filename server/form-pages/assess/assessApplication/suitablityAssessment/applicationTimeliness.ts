@@ -9,7 +9,7 @@ import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import Rfap from '../../../apply/risk-and-need-factors/further-considerations/rfap'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 
@@ -42,7 +42,7 @@ export default class ApplicationTimeliness implements TasklistPage {
 
   retrieveShortNoticeApplicationDetails() {
     const applicationDate = DateFormats.isoDateToUIDate(this.assessment.application.submittedAt, { format: 'short' })
-    const lateApplicationReasonId = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+    const lateApplicationReasonId = retrieveOptionalQuestionResponseFromFormArtifact(
       this.assessment.application,
       ReasonForShortNotice,
       'reason',
@@ -56,11 +56,7 @@ export default class ApplicationTimeliness implements TasklistPage {
   }
 
   previous() {
-    const needsRfap = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
-      this.assessment.application,
-      Rfap,
-      'needARfap',
-    )
+    const needsRfap = retrieveOptionalQuestionResponseFromFormArtifact(this.assessment.application, Rfap, 'needARfap')
 
     if (needsRfap === 'yes') {
       return 'rfap-suitability'

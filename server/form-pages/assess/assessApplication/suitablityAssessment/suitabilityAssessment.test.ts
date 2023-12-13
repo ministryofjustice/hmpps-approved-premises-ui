@@ -5,7 +5,7 @@ import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import SuitabilityAssessment from './suitabilityAssessment'
 import { shouldShowContingencyPlanPartnersPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 jest.mock('../../../../utils/applications/noticeTypeFromApplication')
 jest.mock('../../../../utils/applications/shouldShowContingencyPlanPages')
@@ -54,7 +54,7 @@ describe('SuitabilityAssessment', () => {
 
   describe('next', () => {
     it('returns rfap-suitability if the application needs an RFAP', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('yes')
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('yes')
       expect(
         new SuitabilityAssessment(
           {
@@ -69,7 +69,7 @@ describe('SuitabilityAssessment', () => {
     })
 
     it('returns pipe-suitability if the application needs a PIPE', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('pipe')
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('pipe')
       expect(
         new SuitabilityAssessment(
           {

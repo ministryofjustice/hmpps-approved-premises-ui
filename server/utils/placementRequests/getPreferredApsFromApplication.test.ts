@@ -1,5 +1,5 @@
 import { placementRequestDetailFactory, premisesFactory } from '../../testutils/factories'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import { getPreferredApsFromApplication } from './getPreferredApsFromApplication'
 import PreferredAps from '../../form-pages/apply/risk-and-need-factors/location-factors/preferredAps'
 
@@ -10,11 +10,11 @@ describe('getPreferredApsFromApplication', () => {
 
   it('should return a list of preferred APs', () => {
     const preferredAps = premisesFactory.buildList(3)
-    ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(preferredAps)
+    ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue(preferredAps)
 
     expect(getPreferredApsFromApplication(placementRequestDetail)).toEqual(preferredAps)
 
-    expect(retrieveOptionalQuestionResponseFromApplicationOrAssessment).toHaveBeenCalledWith(
+    expect(retrieveOptionalQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
       placementRequestDetail.application,
       PreferredAps,
       'selectedAps',
@@ -22,11 +22,11 @@ describe('getPreferredApsFromApplication', () => {
   })
 
   it('should return an empty list if no APs are specified', () => {
-    ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(undefined)
+    ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue(undefined)
 
     expect(getPreferredApsFromApplication(placementRequestDetail)).toEqual([])
 
-    expect(retrieveOptionalQuestionResponseFromApplicationOrAssessment).toHaveBeenCalledWith(
+    expect(retrieveOptionalQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
       placementRequestDetail.application,
       PreferredAps,
       'selectedAps',

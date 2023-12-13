@@ -1,11 +1,10 @@
-import { PlacementApplication } from '../../@types/shared'
 import AdditionalPlacementDetails from '../../form-pages/placement-application/request-a-placement/additionalPlacementDetails'
 import DatesOfPlacement from '../../form-pages/placement-application/request-a-placement/datesOfPlacement'
 import DecisionToRelease from '../../form-pages/placement-application/request-a-placement/decisionToRelease'
 import { getPageName, pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
-import { addResponseToFormArtifact } from '../../testutils/addToApplication'
 import { applicationFactory, placementApplicationFactory } from '../../testutils/factories'
 import { placementDurationFromApplication } from '../assessments/placementDurationFromApplication'
+import { DateFormats } from '../dateUtils'
 import {
   durationAndArrivalDateFromPlacementApplication,
   durationAndArrivalDateFromRotlPlacementApplication,
@@ -49,20 +48,8 @@ const datesOfPlacementForApi = [
 
 describe('placementApplicationSubmissionData', () => {
   it('returns the data in the correct format for submission', () => {
-    let placementApplication = placementApplicationFactory.build()
+    const placementApplication = placementApplicationFactory.build()
 
-    placementApplication = addResponseToFormArtifact(placementApplication, {
-      task: 'request-a-placement',
-      page: 'reason-for-placement',
-      key: 'reason',
-      value: 'rotl',
-    })
-    placementApplication = addResponseToFormArtifact(placementApplication, {
-      task: 'request-a-placement',
-      page: 'dates-of-placement',
-      key: 'datesOfPlacement',
-      value: datesOfPlacement,
-    })
     ;(pageDataFromApplicationOrAssessment as jest.MockedFn<typeof pageDataFromApplicationOrAssessment>).mockReturnValue(
       {
         reason: 'rotl',
@@ -95,15 +82,9 @@ describe('durationAndArrivalDateFromPlacementApplication', () => {
   })
 
   it('returns the arrivalDate and duration from the dates-of-placement page if the "reason" is "rotl"', () => {
-    let placementApplication = placementApplicationFactory.build({
+    const placementApplication = placementApplicationFactory.build({
       data: { 'request-a-placement': { 'reason-for-placement': { reason: 'rotl' } } },
     })
-    placementApplication = addResponseToFormArtifact(placementApplication, {
-      task: 'request-a-placement',
-      page: 'dates-of-placement',
-      key: 'datesOfPlacement',
-      value: datesOfPlacement,
-    }) as PlacementApplication
     ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({
       datesOfPlacement,
     })
@@ -111,6 +92,23 @@ describe('durationAndArrivalDateFromPlacementApplication', () => {
     expect(
       durationAndArrivalDateFromPlacementApplication(placementApplication, 'rotl', applicationFactory.build()),
     ).toEqual(datesOfPlacementForApi)
+    expect(pageDataFromApplicationOrAssessment).toHaveBeenCalledWith(DatesOfPlacement, placementApplication)
+  })
+
+  it('returns the arrivalDate and duration from the legacy placement dates if the "reason" is "rotl"', () => {
+    const placementApplication = placementApplicationFactory.build({
+      data: { 'request-a-placement': { 'reason-for-placement': { reason: 'rotl' } } },
+    })
+    ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({
+      ...DateFormats.isoDateToDateInputs(datesOfPlacement[0].arrivalDate, 'arrivalDate'),
+      duration: datesOfPlacement[0].duration,
+      durationDays: datesOfPlacement[0].durationDays,
+      durationWeeks: datesOfPlacement[0].durationWeeks,
+    })
+
+    expect(
+      durationAndArrivalDateFromPlacementApplication(placementApplication, 'rotl', applicationFactory.build()),
+    ).toEqual([datesOfPlacementForApi[0]])
     expect(pageDataFromApplicationOrAssessment).toHaveBeenCalledWith(DatesOfPlacement, placementApplication)
   })
 
@@ -140,14 +138,8 @@ describe('durationAndArrivalDateFromPlacementApplication', () => {
   })
 
   it('calculates the release date to be decision to release date + 6 weeks and retrieves the placement duration from the application if the "reason" is "release_following_decision"', () => {
-    let placementApplication = placementApplicationFactory.build({
+    const placementApplication = placementApplicationFactory.build({
       data: { 'request-a-placement': { 'reason-for-placement': { reason: 'release_following_decision' } } },
-    })
-    placementApplication = addResponseToFormArtifact(placementApplication, {
-      task: 'request-a-placement',
-      page: 'decision-to-release',
-      key: 'decisionToReleaseDate',
-      value: '2023-01-01',
     })
     ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue({
       decisionToReleaseDate: '2023-01-01',

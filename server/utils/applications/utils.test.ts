@@ -41,7 +41,7 @@ import {
 } from './utils'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { RestrictedPersonError } from '../errors'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
 import { sortHeader } from '../sortHeader'
 
@@ -717,8 +717,8 @@ describe('utils', () => {
 
     it('returns a placement application mapped to SummaryCard including an action when the placement application can be withdrawn', () => {
       ;(
-        retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFunction<
-          typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+        retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFunction<
+          typeof retrieveOptionalQuestionResponseFromFormArtifact
         >
       ).mockReturnValue('rotl')
       ;(
@@ -778,8 +778,8 @@ describe('utils', () => {
       const duration2 = 30
 
       ;(
-        retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFunction<
-          typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+        retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFunction<
+          typeof retrieveOptionalQuestionResponseFromFormArtifact
         >
       ).mockReturnValue('rotl')
       ;(
@@ -851,8 +851,8 @@ describe('utils', () => {
 
     it('doesnt include an action when the placement application doesnt have the the canBeWithdrawn boolean', () => {
       ;(
-        retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFunction<
-          typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+        retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFunction<
+          typeof retrieveOptionalQuestionResponseFromFormArtifact
         >
       ).mockReturnValue('rotl')
       ;(
@@ -901,8 +901,8 @@ describe('utils', () => {
 
     it('doesnt include an action when the placement application isnt created by the acting user', () => {
       ;(
-        retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFunction<
-          typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+        retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFunction<
+          typeof retrieveOptionalQuestionResponseFromFormArtifact
         >
       ).mockReturnValue('rotl')
       ;(

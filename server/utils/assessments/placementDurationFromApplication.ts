@@ -1,11 +1,11 @@
 import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
 import PlacementDuration from '../../form-pages/apply/move-on/placementDuration'
 import { getDefaultPlacementDurationInDays } from '../applications/getDefaultPlacementDurationInDays'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 
 export const placementDurationFromApplication = (application: Application) => {
   return (
-    Number(retrieveOptionalQuestionResponseFromApplicationOrAssessment(application, PlacementDuration, 'duration')) ||
+    Number(retrieveOptionalQuestionResponseFromFormArtifact(application, PlacementDuration, 'duration')) ||
     getDefaultPlacementDurationInDays(application)
   )
 }
