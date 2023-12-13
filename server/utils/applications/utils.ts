@@ -245,15 +245,19 @@ const isInapplicable = (application: Application): boolean => {
 const firstPageOfApplicationJourney = (application: Application) => {
   if (!isFullPerson(application.person)) throw new RestrictedPersonError(application.person.crn)
 
-  if (isApplicableTier(application.person.sex, application.risks?.tier?.value?.level)) {
-    return paths.applications.pages.show({
-      id: application.id,
-      task: 'basic-information',
-      page: 'confirm-your-details',
-    })
+  if (!application?.risks?.tier?.value) {
+    return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'enter-risk-level' })
   }
 
-  return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' })
+  if (!isApplicableTier(application.person.sex, application.risks?.tier?.value?.level)) {
+    return paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' })
+  }
+
+  return paths.applications.pages.show({
+    id: application.id,
+    task: 'basic-information',
+    page: 'confirm-your-details',
+  })
 }
 
 const getApplicationType = (application: Application): ApplicationType => {

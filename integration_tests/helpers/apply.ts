@@ -412,6 +412,17 @@ export default class ApplyHelper {
     })
   }
 
+  completeMissingTierSection() {
+    const enterRiskLevelPage = new ApplyPages.EnterRiskLevel()
+    enterRiskLevelPage.completeForm('veryHighRisk')
+    enterRiskLevelPage.clickSubmit()
+
+    const isExceptionalCasePage = new ApplyPages.IsExceptionalCasePage()
+    isExceptionalCasePage.showsTierNotFoundMessage()
+    isExceptionalCasePage.completeForm('yes')
+    isExceptionalCasePage.clickSubmit()
+  }
+
   completeExceptionalCase() {
     const isExceptionalCasePage = new ApplyPages.IsExceptionalCasePage()
 

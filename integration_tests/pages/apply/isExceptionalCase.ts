@@ -6,6 +6,10 @@ export default class IsExceptionalCasePage extends Page {
     super('This application is not eligible')
   }
 
+  showsTierNotFoundMessage() {
+    cy.get('h2').should('contain', "We cannot find this person's tier")
+  }
+
   completeForm(answer: YesOrNo) {
     this.checkRadioByNameAndValue('isExceptionalCase', answer)
   }
