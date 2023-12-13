@@ -14,6 +14,7 @@ import { mapApiPersonRisksForUi, sentenceCase } from './utils'
 import {
   Constructor,
   fetchOptionalOasysSections,
+  findSummary,
   getOasysSections,
   oasysImportReponse,
   sectionCheckBoxes,
@@ -242,6 +243,16 @@ describe('OASysImportUtils', () => {
       const result = oasysImportReponse({}, [])
 
       expect(result).toEqual({})
+    })
+  })
+
+  describe('findSummary', () => {
+    it('returns a summary if one exists', () => {
+      expect(findSummary('2.1', oasysStubs.offenceDetails)).toEqual(oasysStubs.offenceDetails[0])
+    })
+
+    it('throws an error if the summary isnt found', () => {
+      expect(() => findSummary('1', [])).toThrow('No summary found for question number 1')
     })
   })
 
