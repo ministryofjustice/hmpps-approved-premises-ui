@@ -33,7 +33,7 @@ import { isApplicableTier, isFullPerson, nameOrPlaceholderCopy, tierBadge } from
 import { DateFormats } from '../dateUtils'
 import Assess from '../../form-pages/assess'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import ExceptionDetails from '../../form-pages/apply/reasons-for-placement/basic-information/exceptionDetails'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import PlacementRequest from '../../form-pages/placement-application'
@@ -209,19 +209,19 @@ export const journeyPages = (journeyType: JourneyType): FormPages => {
 }
 
 const isInapplicable = (application: Application): boolean => {
-  const isExceptionalCase = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+  const isExceptionalCase = retrieveOptionalQuestionResponseFromFormArtifact(
     application,
     IsExceptionalCase,
     'isExceptionalCase',
   )
 
-  const agreedCaseWithManager = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+  const agreedCaseWithManager = retrieveOptionalQuestionResponseFromFormArtifact(
     application,
     ExceptionDetails,
     'agreedCaseWithManager',
   )
 
-  const shouldPersonBePlacedInMaleAp = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+  const shouldPersonBePlacedInMaleAp = retrieveOptionalQuestionResponseFromFormArtifact(
     application,
     MaleAp,
     'shouldPersonBePlacedInMaleAp',
@@ -305,7 +305,7 @@ const mapPlacementApplicationToSummaryCards = (
   actingUser: User,
 ): Array<SummaryListWithCard> => {
   return placementApplications.map(placementApplication => {
-    const reasonForPlacement = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+    const reasonForPlacement = retrieveOptionalQuestionResponseFromFormArtifact(
       placementApplication,
       ReasonForPlacement,
       'reason',

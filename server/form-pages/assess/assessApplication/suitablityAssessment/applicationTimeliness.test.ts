@@ -1,7 +1,7 @@
 import { DateFormats } from '../../../../utils/dateUtils'
 import { assessmentFactory } from '../../../../testutils/factories'
 import { YesOrNo } from '../../../../@types/ui'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 import ApplicationTimeliness from './applicationTimeliness'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
@@ -69,7 +69,7 @@ describe('ApplicationTimeliness', () => {
 
   describe('previous', () => {
     it('returns rfap-suitability if the applicant requires an RFAP', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('yes')
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('yes')
 
       expect(
         new ApplicationTimeliness(
@@ -83,7 +83,7 @@ describe('ApplicationTimeliness', () => {
     })
 
     it('returns suitability-assessment if the applicant doesnt require an RFAP', () => {
-      ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue(undefined)
+      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue(undefined)
 
       expect(
         new ApplicationTimeliness(
@@ -148,7 +148,7 @@ describe('ApplicationTimeliness', () => {
   describe('retrieveShortNoticeApplicationDetails', () => {
     const applicationDate = '30/06/2023'
     ;(DateFormats.isoDateToUIDate as jest.Mock).mockReturnValue(applicationDate)
-    ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockReturnValue('onBail')
+    ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('onBail')
 
     const page = new ApplicationTimeliness(
       {

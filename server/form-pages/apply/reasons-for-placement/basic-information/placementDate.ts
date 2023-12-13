@@ -2,7 +2,7 @@ import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-pre
 import type { ApprovedPremisesApplication } from '@approved-premises/api'
 
 import { isAfter, isSameDay } from 'date-fns'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import TasklistPage from '../../../tasklistPage'
 import { convertToTitleCase } from '../../../../utils/utils'
 import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank, dateIsInThePast } from '../../../../utils/dateUtils'
@@ -28,7 +28,7 @@ export default class PlacementDate implements TasklistPage {
     private _body: Partial<PlacementDateBody>,
     public application: ApprovedPremisesApplication,
   ) {
-    const releaseDate = retrieveOptionalQuestionResponseFromApplicationOrAssessment(application, ReleaseDate)
+    const releaseDate = retrieveOptionalQuestionResponseFromFormArtifact(application, ReleaseDate)
 
     if (releaseDate) {
       const releaseDateObj = DateFormats.isoToDateObj(releaseDate)

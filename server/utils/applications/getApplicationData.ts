@@ -11,7 +11,7 @@ import SentenceType from '../../form-pages/apply/reasons-for-placement/basic-inf
 import SelectApType, { ApType } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 
 import {
-  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
+  retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
 } from '../retrieveQuestionResponseFromFormArtifact'
 import DescribeLocationFactors from '../../form-pages/apply/risk-and-need-factors/location-factors/describeLocationFactors'
@@ -71,7 +71,7 @@ const firstClassFields = <T>(
 }
 
 const getUpdateFirstClassFields = (application: Application): FirstClassFields<UpdateApprovedPremisesApplication> => {
-  return firstClassFields(application, retrieveOptionalQuestionResponseFromApplicationOrAssessment)
+  return firstClassFields(application, retrieveOptionalQuestionResponseFromFormArtifact)
 }
 
 const getSubmitFirstClassFields = (application: Application): FirstClassFields<SubmitApprovedPremisesApplication> => {
@@ -87,7 +87,7 @@ const getReleaseType = (application: Application, sentenceType: SentenceTypeOpti
     return 'in_community'
   }
 
-  return retrieveOptionalQuestionResponseFromApplicationOrAssessment(application, ReleaseType, 'releaseType')
+  return retrieveOptionalQuestionResponseFromFormArtifact(application, ReleaseType, 'releaseType')
 }
 
 const getSentenceType = (

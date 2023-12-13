@@ -1,6 +1,6 @@
 import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
 import {
-  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
+  retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
 } from '../utils/retrieveQuestionResponseFromFormArtifact'
 
@@ -84,7 +84,7 @@ export const mockOptionalQuestionResponse = ({
   pssDate?: string
   situation?: string
 }) => {
-  ;(retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.Mock).mockImplementation(
+  ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockImplementation(
     // eslint-disable-next-line consistent-return
     (_application: Application, _Page: unknown, question: string) => {
       if (question === 'alternativeRadius') {

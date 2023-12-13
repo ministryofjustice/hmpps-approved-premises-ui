@@ -12,7 +12,7 @@ import { yesNoOrDontKnowResponseWithDetail, yesOrNoResponseWithDetailForYes } fr
 
 import TasklistPage from '../../../tasklistPage'
 import { DateFormats } from '../../../../utils/dateUtils'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import AccessNeeds, { AdditionalNeed, additionalNeeds } from './accessNeeds'
 
 export type AccessNeedsFurtherQuestionsBody = {
@@ -101,7 +101,7 @@ export default class AccessNeedsFurtherQuestions implements TasklistPage {
   }
 
   public get additionalNeeds(): Array<AdditionalNeed> {
-    return retrieveOptionalQuestionResponseFromApplicationOrAssessment(this.application, AccessNeeds, 'additionalNeeds')
+    return retrieveOptionalQuestionResponseFromFormArtifact(this.application, AccessNeeds, 'additionalNeeds')
   }
 
   public get listOfNeeds(): string {

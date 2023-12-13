@@ -13,7 +13,7 @@ const contingencyPlanPartnerFactorys = contingencyPlanPartnerFactory.buildList(2
 
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact.ts', () => {
   return {
-    retrieveOptionalQuestionResponseFromApplicationOrAssessment: jest.fn(() => contingencyPlanPartnerFactorys),
+    retrieveOptionalQuestionResponseFromFormArtifact: jest.fn(() => contingencyPlanPartnerFactorys),
   }
 })
 

@@ -5,7 +5,7 @@ import { noticeTypeFromApplication } from '../../../../utils/applications/notice
 import PlacementDate from './placementDate'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { applicationFactory } from '../../../../testutils/factories'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 const futureReleaseDate = DateFormats.dateObjToIsoDate(add(new Date(), { days: 5 }))
 const pastReleaseDate = DateFormats.dateObjToIsoDate(sub(new Date(), { days: 5 }))
@@ -13,7 +13,7 @@ const pastReleaseDate = DateFormats.dateObjToIsoDate(sub(new Date(), { days: 5 }
 jest.mock('../../../../utils/applications/noticeTypeFromApplication')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact', () => {
   return {
-    retrieveOptionalQuestionResponseFromApplicationOrAssessment: jest.fn(() => futureReleaseDate),
+    retrieveOptionalQuestionResponseFromFormArtifact: jest.fn(() => futureReleaseDate),
   }
 })
 
@@ -29,8 +29,8 @@ describe('PlacementDate', () => {
       it('sets the title and body with the release date as the default start date', () => {
         application.createdAt = DateFormats.dateObjToIsoDate(new Date())
         ;(
-          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
-            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromFormArtifact
           >
         ).mockReturnValue(futureReleaseDate)
 
@@ -62,8 +62,8 @@ describe('PlacementDate', () => {
       it('sets the title and body with the release date as the default start date', () => {
         application.createdAt = DateFormats.dateObjToIsoDate(new Date())
         ;(
-          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
-            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromFormArtifact
           >
         ).mockReturnValue(application.createdAt)
 
@@ -95,8 +95,8 @@ describe('PlacementDate', () => {
       it('sets the title to ask for a specific release date', () => {
         application.createdAt = DateFormats.dateObjToIsoDate(new Date())
         ;(
-          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
-            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromFormArtifact
           >
         ).mockReturnValue(pastReleaseDate)
 
@@ -125,8 +125,8 @@ describe('PlacementDate', () => {
     describe('when there is no release date present in the application', () => {
       it('sets the title to ask for a specific release date', () => {
         ;(
-          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
-            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromFormArtifact
           >
         ).mockReturnValue(undefined)
 
@@ -203,8 +203,8 @@ describe('PlacementDate', () => {
     describe('when the release date is in the past', () => {
       it('should return an empty object if the placement date is populated', () => {
         ;(
-          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
-            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromFormArtifact
           >
         ).mockReturnValue(pastReleaseDate)
         const page = new PlacementDate(
@@ -220,8 +220,8 @@ describe('PlacementDate', () => {
 
       it('should return an error if the date is not populated', () => {
         ;(
-          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
-            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromFormArtifact
           >
         ).mockReturnValue(pastReleaseDate)
         const page = new PlacementDate({}, application)
@@ -234,8 +234,8 @@ describe('PlacementDate', () => {
     describe('when the release date is in the future', () => {
       it('should return an empty object if the release date is the same as the start date', () => {
         ;(
-          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
-            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromFormArtifact
           >
         ).mockReturnValue(futureReleaseDate)
         const page = new PlacementDate(
@@ -249,8 +249,8 @@ describe('PlacementDate', () => {
 
       it('should return an error if the startDateSameAsReleaseDate field is not populated', () => {
         ;(
-          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
-            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromFormArtifact
           >
         ).mockReturnValue(futureReleaseDate)
 
@@ -315,8 +315,8 @@ describe('PlacementDate', () => {
     describe('if the release date is in the future', () => {
       it('should return a translated version of the response when the start date is the same as the release date', () => {
         ;(
-          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
-            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromFormArtifact
           >
         ).mockReturnValue(futureReleaseDate)
 
@@ -334,8 +334,8 @@ describe('PlacementDate', () => {
 
       it('should return a translated version of the response when the start date is not the same as the release date', () => {
         ;(
-          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
-            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromFormArtifact
           >
         ).mockReturnValue(futureReleaseDate)
 
@@ -359,8 +359,8 @@ describe('PlacementDate', () => {
     describe('if the release date is in the past', () => {
       it('should return a translated version of the placement start date', () => {
         ;(
-          retrieveOptionalQuestionResponseFromApplicationOrAssessment as jest.MockedFn<
-            typeof retrieveOptionalQuestionResponseFromApplicationOrAssessment
+          retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
+            typeof retrieveOptionalQuestionResponseFromFormArtifact
           >
         ).mockReturnValue(pastReleaseDate)
 

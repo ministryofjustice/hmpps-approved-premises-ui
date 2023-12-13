@@ -3,7 +3,7 @@ import ReleaseType from '../../form-pages/apply/reasons-for-placement/basic-info
 import SentenceType from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
 import { ApprovedPremisesApplication as Application, ReleaseTypeOption } from '../../@types/shared'
 import {
-  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
+  retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
 } from '../retrieveQuestionResponseFromFormArtifact'
 import EndDates from '../../form-pages/apply/reasons-for-placement/basic-information/endDates'
@@ -32,7 +32,7 @@ export const shouldShowContingencyPlanPartnersPages = (application: Application)
   )
     return true
 
-  const pssEndDate = retrieveOptionalQuestionResponseFromApplicationOrAssessment(application, EndDates, 'pssDate')
+  const pssEndDate = retrieveOptionalQuestionResponseFromFormArtifact(application, EndDates, 'pssDate')
 
   if (pssEndDate) return true
 

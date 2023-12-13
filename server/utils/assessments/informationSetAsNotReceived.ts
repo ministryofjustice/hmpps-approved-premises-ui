@@ -3,14 +3,14 @@ import {
   ApprovedPremisesAssessment as Assessment,
 } from '../../@types/shared'
 import InformationReceived from '../../form-pages/assess/reviewApplication/sufficientInformation/informationReceived'
-import { retrieveOptionalQuestionResponseFromApplicationOrAssessment } from '../retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import isAssessment from './isAssessment'
 
 export default (applicationOrAssessment: Assessment | Application): boolean => {
   if (!isAssessment(applicationOrAssessment)) return false
 
   if (applicationOrAssessment?.data) {
-    const response = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+    const response = retrieveOptionalQuestionResponseFromFormArtifact(
       applicationOrAssessment,
       InformationReceived,
       'informationReceived',

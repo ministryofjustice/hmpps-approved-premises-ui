@@ -34,21 +34,21 @@ export const retrieveQuestionResponseFromFormArtifact = (
 }
 
 /**
- * Retrieves response for a given question from the application object or returns undefined if it does not exist.
- * @param applicationOrAssessment the application or assessment to fetch the response from.
+ * Retrieves response for a given question from the form artifact object or returns undefined if it does not exist.
+ * @param formArtifact the form artifact to fetch the response from.
  * @param Page the page to retrieve the response from.
  * @param {string} question the question that we need the response for. Defaults to the camel-cased name of the `Page`.
  * @returns the response for the given page/question.
  */
-export const retrieveOptionalQuestionResponseFromApplicationOrAssessment = (
-  applicationOrAssessment: FormArtifact,
+export const retrieveOptionalQuestionResponseFromFormArtifact = (
+  formArtifact: FormArtifact,
   Page: TasklistPageInterface,
   question?: string,
 ) => {
   let response
 
   try {
-    response = retrieveQuestionResponseFromFormArtifact(applicationOrAssessment, Page, question)
+    response = retrieveQuestionResponseFromFormArtifact(formArtifact, Page, question)
   } catch (e) {
     response = undefined
   }

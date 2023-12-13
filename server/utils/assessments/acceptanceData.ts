@@ -8,7 +8,7 @@ import {
 } from '@approved-premises/api'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import {
-  retrieveOptionalQuestionResponseFromApplicationOrAssessment,
+  retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
 } from '../retrieveQuestionResponseFromFormArtifact'
 
@@ -29,11 +29,7 @@ import { getResponses } from '../applications/getResponses'
 import { flattenCheckboxInput, isStringOrArrayOfStrings } from '../formUtils'
 
 export const acceptanceData = (assessment: Assessment): AssessmentAcceptance => {
-  const notes = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
-    assessment,
-    MatchingInformation,
-    'cruInformation',
-  )
+  const notes = retrieveOptionalQuestionResponseFromFormArtifact(assessment, MatchingInformation, 'cruInformation')
 
   return {
     document: getResponses(assessment),
@@ -51,7 +47,7 @@ export const placementDates = (assessment: Assessment): PlacementDates | null =>
   }
 
   const placementDuration =
-    retrieveOptionalQuestionResponseFromApplicationOrAssessment(assessment, MatchingInformation, 'lengthOfStay') ||
+    retrieveOptionalQuestionResponseFromFormArtifact(assessment, MatchingInformation, 'lengthOfStay') ||
     placementDurationFromApplication(assessment.application)
 
   return {
@@ -67,7 +63,7 @@ export const placementRequestData = (assessment: Assessment): PlacementRequireme
   ) as MatchingInformationBody
 
   const location = retrieveQuestionResponseFromFormArtifact(assessment.application, LocationFactors, 'postcodeArea')
-  const alternativeRadius = retrieveOptionalQuestionResponseFromApplicationOrAssessment(
+  const alternativeRadius = retrieveOptionalQuestionResponseFromFormArtifact(
     assessment.application,
     LocationFactors,
     'alternativeRadius',
