@@ -6,7 +6,10 @@ import {
   SubmitPlacementApplication,
 } from '../../@types/shared'
 import ReasonForPlacement from '../../form-pages/placement-application/request-a-placement/reasonForPlacement'
-import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
+import {
+  retrieveOptionalQuestionResponseFromFormArtifact,
+  retrieveQuestionResponseFromFormArtifact,
+} from '../retrieveQuestionResponseFromFormArtifact'
 import DatesOfPlacement, {
   DateOfPlacement,
 } from '../../form-pages/placement-application/request-a-placement/datesOfPlacement'
@@ -49,6 +52,42 @@ export const durationAndArrivalDateFromRotlPlacementApplication = (dateOfPlaceme
   }
 }
 
+export const retreivePlacementDatesFromRotlPlacementApplication = (
+  placementApplication: PlacementApplication,
+): Array<DateOfPlacement> => {
+  const datesOfPlacement = retrieveOptionalQuestionResponseFromFormArtifact(
+    placementApplication,
+    DatesOfPlacement,
+    'datesOfPlacement',
+  )
+
+  if (datesOfPlacement) {
+    return datesOfPlacement
+  }
+
+  const dateOfPlacement = {}
+
+  const legacyProperties = [
+    'arrivalDate',
+    'arrivalDate-day',
+    'arrivalDate-month',
+    'arrivalDate-year',
+    'duration',
+    'durationDays',
+    'durationWeeks',
+  ]
+
+  legacyProperties.forEach(property => {
+    dateOfPlacement[property] = retrieveQuestionResponseFromFormArtifact(
+      placementApplication,
+      DatesOfPlacement,
+      property,
+    )
+  })
+
+  return [dateOfPlacement as DateOfPlacement]
+}
+
 export const durationAndArrivalDateFromPlacementApplication = (
   placementApplication: PlacementApplication,
   reasonForPlacement: PlacementType,
@@ -56,7 +95,7 @@ export const durationAndArrivalDateFromPlacementApplication = (
 ): Array<DatesOfStay> => {
   switch (reasonForPlacement) {
     case 'rotl': {
-      return retrieveQuestionResponseFromFormArtifact(placementApplication, DatesOfPlacement, 'datesOfPlacement').map(
+      return retreivePlacementDatesFromRotlPlacementApplication(placementApplication).map(
         durationAndArrivalDateFromRotlPlacementApplication,
       )
     }
