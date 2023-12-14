@@ -36,16 +36,21 @@ export const placementApplicationQuestionsForReview = (placementApplication: Pla
 
 const placementApplicationResponsesAsSummaryListItems = (placementApplication: PlacementApplication) => {
   const listItems: Array<SummaryListItem> = []
-  ;(placementApplication.document['request-a-placement'] as Array<Record<string, string>>).forEach(questions => {
+  ;(
+    placementApplication.document['request-a-placement'] as Array<
+      Record<string, string | Array<Record<string, string>>>
+    >
+  ).forEach(questions => {
     const keys = Object.keys(questions)
     keys.forEach(key => {
       listItems.push({
         key: {
           text: key,
         },
-        value: {
-          text: questions[key],
-        },
+        value:
+          typeof questions[key] === 'string' || questions[key] instanceof String
+            ? { text: questions[key] as string }
+            : { html: embeddedSummaryListItem(questions[key] as Array<Record<string, unknown>>) },
       })
     })
   })

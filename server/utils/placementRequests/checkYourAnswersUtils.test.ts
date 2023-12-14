@@ -88,7 +88,7 @@ describe('checkYourAnswersUtils', () => {
   })
 
   describe('placementApplicationQuestionsForReview', () => {
-    it('should return the responses in the correct format', () => {
+    it('should return the responses in the correct format when the values are primitives', () => {
       const placementApp = placementApplicationFactory.build({
         document: { 'request-a-placement': [{ 'question 1': 'answer 1', 'question 2': 'answer 2' }] },
       })
@@ -102,6 +102,81 @@ describe('checkYourAnswersUtils', () => {
         rows: [
           { key: { text: 'question 1' }, value: { text: 'answer 1' } },
           { key: { text: 'question 2' }, value: { text: 'answer 2' } },
+        ],
+      }
+
+      expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
+    })
+
+    it('should return the responses in the correct format when the values contain an array', () => {
+      const placementApp = placementApplicationFactory.build({
+        document: {
+          'request-a-placement': [
+            {
+              'Dates of placement': [
+                {
+                  'How long should the Approved Premises placement last?': '2 weeks, 1 day',
+                  'When will the person arrive?': 'Friday 1 December 2023',
+                },
+                {
+                  'How long should the Approved Premises placement last?': '3 weeks, 2 days',
+                  'When will the person arrive?': 'Tuesday 2 January 2024',
+                },
+              ],
+            },
+          ],
+        },
+      })
+
+      const expected = {
+        card: {
+          title: {
+            text: 'Placement application information',
+          },
+        },
+        rows: [
+          {
+            key: { text: 'Dates of placement' },
+            value: {
+              html: `<dl class="govuk-summary-list govuk-summary-list--embedded">
+      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
+        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
+          How long should the Approved Premises placement last?
+        </dt>
+        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
+        2 weeks, 1 day
+        </dd>
+      </div>
+      
+      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
+        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
+          When will the person arrive?
+        </dt>
+        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
+        Friday 1 December 2023
+        </dd>
+      </div>
+      </dl><dl class="govuk-summary-list govuk-summary-list--embedded">
+      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
+        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
+          How long should the Approved Premises placement last?
+        </dt>
+        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
+        3 weeks, 2 days
+        </dd>
+      </div>
+      
+      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
+        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
+          When will the person arrive?
+        </dt>
+        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
+        Tuesday 2 January 2024
+        </dd>
+      </div>
+      </dl>`,
+            },
+          },
         ],
       }
 
