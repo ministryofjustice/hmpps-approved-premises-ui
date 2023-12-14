@@ -63,6 +63,12 @@ export default class AttachDocuments implements TasklistPage {
   response() {
     const response = {}
 
+    if (this.body.selectedDocuments.length === 0) {
+      return {
+        'N/A': 'No documents attached',
+      }
+    }
+
     this.body.selectedDocuments.forEach(d => {
       response[d.fileName] = d.description || 'No description'
     })
