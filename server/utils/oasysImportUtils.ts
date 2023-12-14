@@ -109,8 +109,14 @@ export const oasysImportReponse = (answers: Record<string, string>, summaries: A
   }, {}) as Record<string, string>
 }
 
-const findSummary = (questionNumber: string, summaries: Array<OASysQuestion>) => {
-  return summaries.find(i => i.questionNumber === questionNumber)
+export const findSummary = (questionNumber: string, summaries: Array<OASysQuestion>) => {
+  const summary = summaries.find(i => i.questionNumber === questionNumber)
+
+  if (!summary) {
+    throw new Error(`No summary found for question number ${questionNumber}`)
+  }
+
+  return summary
 }
 
 export const fetchOptionalOasysSections = (application: Application): Array<number> => {
