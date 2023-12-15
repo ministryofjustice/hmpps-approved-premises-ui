@@ -137,5 +137,11 @@ describe('attachDocuments', () => {
 
       expect(page.response()).toEqual({ 'file1.pdf': 'Description goes here', 'file2.pdf': 'No description' })
     })
+
+    it('should return a record with the document filename as the key and the description as the value', () => {
+      const page = new AttachDocuments({ selectedDocuments: [] }, application)
+
+      expect(page.response()).toEqual({ 'N/A': 'No documents attached' })
+    })
   })
 })
