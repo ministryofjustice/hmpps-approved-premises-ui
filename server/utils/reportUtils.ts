@@ -4,6 +4,7 @@ export const reportNames = {
   'referrals-by-ap-type': 'Referrals by AP Type',
   'referrals-by-tier': 'Referrals by Tier',
   applications: 'Applications',
+  referrals: 'Referrals',
   'lost-beds': 'Lost Beds',
 } as const
 
