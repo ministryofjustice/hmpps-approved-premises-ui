@@ -1,4 +1,11 @@
-import { PlacementApplicationTask, PlacementRequestTask, Reallocation, Task, TaskWrapper } from '@approved-premises/api'
+import {
+  PlacementApplicationTask,
+  PlacementRequestTask,
+  Reallocation,
+  SortDirection,
+  Task,
+  TaskWrapper,
+} from '@approved-premises/api'
 import { GroupedMatchTasks, PaginatedResponse } from '@approved-premises/ui'
 import { RestClientBuilder } from '../data'
 import TaskClient from '../data/taskClient'
@@ -6,10 +13,15 @@ import TaskClient from '../data/taskClient'
 export default class TaskService {
   constructor(private readonly taskClientFactory: RestClientBuilder<TaskClient>) {}
 
-  async getAllReallocatable(token: string): Promise<Array<Task>> {
+  async getAllReallocatable(
+    token: string,
+    allocatedFilter: 'allocated' | 'unallocated' = 'allocated',
+    page: number = 1,
+    sortDirection: SortDirection = 'asc',
+  ): Promise<PaginatedResponse<Task>> {
     const taskClient = this.taskClientFactory(token)
 
-    const tasks = await taskClient.allReallocatable()
+    const tasks = await taskClient.allReallocatable(allocatedFilter, page, sortDirection)
     return tasks
   }
 
@@ -53,7 +65,6 @@ export default class TaskService {
     const taskClient = this.taskClientFactory(token)
 
     const task = await taskClient.find(premisesId, taskType)
-
     return task
   }
 

@@ -8,6 +8,8 @@ import {
   statusBadge,
   statusCell,
   taskTypeCell,
+  tasksTableHeader,
+  tasksTableRows,
   unallocatedTableRows,
 } from './table'
 import { sentenceCase } from '../utils'
@@ -22,6 +24,30 @@ describe('table', () => {
         const task = taskFactory.build()
 
         expect(allocatedTableRows([task])).toEqual([
+          [
+            {
+              text: task.personName,
+            },
+            daysUntilDueCell(task),
+            {
+              text: task?.allocatedToStaffMember?.name,
+            },
+            {
+              html: statusBadge(task),
+            },
+            {
+              html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
+            },
+
+            allocationLinkCell(task, 'Reallocate'),
+          ],
+        ])
+      })
+
+      it('returns an array of allocated table rows', () => {
+        const task = taskFactory.build()
+
+        expect(tasksTableRows([task], 'allocated')).toEqual([
           [
             {
               text: task.personName,
@@ -65,6 +91,82 @@ describe('table', () => {
           ],
         ])
       })
+
+      it('returns an array of unallocated table rows', () => {
+        const task = taskFactory.build()
+
+        expect(tasksTableRows([task], 'unallocated')).toEqual([
+          [
+            {
+              text: task.personName,
+            },
+            daysUntilDueCell(task),
+            {
+              html: statusBadge(task),
+            },
+            {
+              html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
+            },
+            allocationLinkCell(task, 'Allocate'),
+          ],
+        ])
+      })
+    })
+  })
+
+  describe('unallocatedTableRows', () => {
+    it('returns an array of unallocated table headers', () => {
+      expect(tasksTableHeader('unallocated')).toEqual([
+        {
+          text: 'Person',
+        },
+        {
+          text: 'Days until due date',
+          attributes: {
+            'aria-sort': 'none',
+          },
+        },
+        {
+          text: 'Allocated to',
+        },
+        {
+          text: 'Status',
+        },
+        {
+          text: 'Task type',
+        },
+        {
+          html: '<span class="govuk-visually-hidden">Actions</span>',
+        },
+      ])
+    })
+  })
+
+  describe('allocatedTableRows', () => {
+    it('returns an array of allocated table headers', () => {
+      expect(tasksTableHeader('allocated')).toEqual([
+        {
+          text: 'Person',
+        },
+        {
+          text: 'Days until due date',
+          attributes: {
+            'aria-sort': 'none',
+          },
+        },
+        {
+          text: 'Allocated to',
+        },
+        {
+          text: 'Status',
+        },
+        {
+          text: 'Task type',
+        },
+        {
+          html: '<span class="govuk-visually-hidden">Actions</span>',
+        },
+      ])
     })
   })
 

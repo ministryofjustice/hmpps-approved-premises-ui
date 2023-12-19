@@ -11,8 +11,16 @@ export default class TaskClient {
     this.restClient = new RestClient('taskClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async allReallocatable(): Promise<Array<Task>> {
-    return (await this.restClient.get({ path: paths.tasks.reallocatable.index.pattern })) as Promise<Array<Task>>
+  async allReallocatable(
+    allocatedFilter: string,
+    page: number,
+    sortDirection: string,
+  ): Promise<PaginatedResponse<Task>> {
+    return this.restClient.getPaginatedResponse({
+      path: paths.tasks.reallocatable.index.pattern,
+      page: page.toString(),
+      query: { allocatedFilter, sortDirection },
+    })
   }
 
   async allForUser(): Promise<Array<CategorisedTask>> {

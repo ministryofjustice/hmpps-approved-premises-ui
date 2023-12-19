@@ -23,7 +23,12 @@ context('Tasks', () => {
       taskType: 'Assessment',
     })
 
-    cy.task('stubReallocatableTasks', [task])
+    cy.task('stubReallocatableTasks', {
+      tasks: [task],
+      allocatedFilter: 'allocated',
+      page: '1',
+      sortDirection: 'asc',
+    })
     cy.task('stubTaskGet', { application, task, users })
     cy.task('stubApplicationGet', { application })
 

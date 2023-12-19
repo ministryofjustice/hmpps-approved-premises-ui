@@ -1,26 +1,53 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { Reallocation, Task, User } from '@approved-premises/api'
+import type { Reallocation, SortDirection, Task, User } from '@approved-premises/api'
+import { AllocatedFilter } from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 import { errorStub } from './utils'
 import { kebabCase } from '../../server/utils/utils'
 
 export default {
-  stubReallocatableTasks: (tasks: Array<Task>): SuperAgentRequest =>
-    stubFor({
+  stubReallocatableTasks: ({
+    tasks,
+    allocatedFilter = 'allocated',
+    page = '1',
+    sortDirection = 'asc',
+  }: {
+    tasks: Array<Task>
+    page: string
+    allocatedFilter: string
+    sortDirection: SortDirection
+  }): SuperAgentRequest => {
+    const queryParameters = {
+      page: {
+        equalTo: page,
+      },
+      allocatedFilter: {
+        equalTo: allocatedFilter,
+      },
+      sortDirection: {
+        equalTo: sortDirection,
+      },
+    }
+    return stubFor({
       request: {
         method: 'GET',
-        urlPattern: paths.tasks.reallocatable.index.pattern,
+        urlPathPattern: paths.tasks.reallocatable.index.pattern,
+        queryParameters,
       },
       response: {
         status: 200,
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
+          'X-Pagination-TotalPages': '10',
+          'X-Pagination-TotalResults': '100',
+          'X-Pagination-PageSize': '10',
         },
         jsonBody: tasks,
       },
-    }),
+    })
+  },
   stubTasks: (tasks: Array<Task>): SuperAgentRequest =>
     stubFor({
       request: {
@@ -106,4 +133,19 @@ export default {
         }),
       ),
     ),
+  verifyTasksRequests: async ({ allocatedFilter, page = '1' }: { allocatedFilter: AllocatedFilter; page: string }) =>
+    (
+      await getMatchingRequests({
+        method: 'GET',
+        urlPathPattern: paths.tasks.reallocatable.index.pattern,
+        queryParameters: {
+          allocatedFilter: {
+            equalTo: allocatedFilter,
+          },
+          page: {
+            equalTo: page,
+          },
+        },
+      })
+    ).body.requests,
 }

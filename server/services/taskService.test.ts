@@ -28,11 +28,21 @@ describe('taskService', () => {
   describe('getAllReallocatable', () => {
     it('calls the all method on the task client', async () => {
       const tasks: Array<Task> = taskFactory.buildList(2)
-      taskClient.allReallocatable.mockResolvedValue(tasks)
+      const paginatedResponse = paginatedResponseFactory.build({
+        data: tasks,
+      }) as PaginatedResponse<Task>
 
-      const result = await service.getAllReallocatable(token)
+      taskClient.allReallocatable.mockResolvedValue(paginatedResponse)
 
-      expect(result).toEqual(tasks)
+      const result = await service.getAllReallocatable(token, 'allocated')
+
+      expect(result).toEqual({
+        data: tasks,
+        pageNumber: '1',
+        pageSize: '10',
+        totalPages: '10',
+        totalResults: '100',
+      })
 
       expect(taskClientFactory).toHaveBeenCalledWith(token)
       expect(taskClient.allReallocatable).toHaveBeenCalled()

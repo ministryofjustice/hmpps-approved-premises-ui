@@ -1,8 +1,10 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { convertToTitleCase, sentenceCase } from '../utils/utils'
 import { ApplicationService, TaskService } from '../services'
-import { groupByAllocation } from '../utils/tasks'
 import { fetchErrorsAndUserInput } from '../utils/validation'
+import { getPaginationDetails } from '../utils/getPaginationDetails'
+import paths from '../paths/api'
+import { AllocatedFilter } from '../@types/shared'
 
 export default class TasksController {
   constructor(
@@ -12,9 +14,26 @@ export default class TasksController {
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const tasks = await this.taskService.getAllReallocatable(req.user.token)
+      const allocatedFilter = (req.query.allocatedFilter as AllocatedFilter) || 'allocated'
+      const { pageNumber, sortDirection, hrefPrefix } = getPaginationDetails(req, paths.tasks.index({}), {
+        allocatedFilter,
+      })
+      const tasks = await this.taskService.getAllReallocatable(
+        req.user.token,
+        allocatedFilter,
+        pageNumber,
+        sortDirection,
+      )
 
-      res.render('tasks/index', { pageHeading: 'Tasks', tasks: groupByAllocation(tasks) })
+      res.render('tasks/index', {
+        pageHeading: 'Tasks',
+        tasks: tasks.data,
+        allocatedFilter,
+        pageNumber: Number(tasks.pageNumber),
+        totalPages: Number(tasks.totalPages),
+        hrefPrefix,
+        sortDirection,
+      })
     }
   }
 
