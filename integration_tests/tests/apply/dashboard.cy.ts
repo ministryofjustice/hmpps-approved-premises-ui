@@ -1,4 +1,5 @@
 import { applicationSummaryFactory } from '../../../server/testutils/factories'
+import { normaliseCrn } from '../../../server/utils/normaliseCrn'
 import DashboardPage from '../../pages/apply/dashboard'
 
 context('All applications', () => {
@@ -88,9 +89,11 @@ context('All applications', () => {
     page.searchByCrnOrName('foo')
 
     // Then the API should have received a request for the query
-    cy.task('verifyDashboardRequest', { page: '1', searchOptions: { crnOrName: 'foo' } }).then(requests => {
-      expect(requests).to.have.length.greaterThan(0)
-    })
+    cy.task('verifyDashboardRequest', { page: '1', searchOptions: { crnOrName: normaliseCrn('foo') } }).then(
+      requests => {
+        expect(requests).to.have.length.greaterThan(0)
+      },
+    )
 
     // And I should see the search results that match that query
     page = new DashboardPage([applications[1]])
