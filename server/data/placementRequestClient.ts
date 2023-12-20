@@ -13,6 +13,7 @@ import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
 import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '../@types/ui'
+import { normaliseCrn } from '../utils/normaliseCrn'
 
 export default class PlacementRequestClient {
   restClient: RestClient
@@ -35,6 +36,9 @@ export default class PlacementRequestClient {
     sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<PlacementRequest>> {
+    if ('crnOrName' in filters) {
+      filters.crnOrName = normaliseCrn(filters.crnOrName)
+    }
     return this.restClient.getPaginatedResponse<PlacementRequest>({
       path: paths.placementRequests.dashboard.pattern,
       page: page.toString(),

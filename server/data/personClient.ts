@@ -17,6 +17,7 @@ import paths from '../paths/api'
 import { createQueryString } from '../utils/utils'
 
 import oasysStubs from './stubs/oasysStubs.json'
+import { normaliseCrn } from '../utils/normaliseCrn'
 
 export default class PersonClient {
   restClient: RestClient
@@ -26,7 +27,7 @@ export default class PersonClient {
   }
 
   async search(crn: string, checkCaseload: boolean): Promise<Person> {
-    let query = { crn } as Record<string, string | boolean>
+    let query = { crn: normaliseCrn(crn) } as Record<string, string | boolean>
 
     if (checkCaseload) {
       query = { ...query, checkCaseload: true }

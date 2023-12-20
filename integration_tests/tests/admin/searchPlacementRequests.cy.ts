@@ -2,6 +2,7 @@ import SearchPage from '../../pages/admin/placementApplications/searchPage'
 
 import { placementRequestFactory } from '../../../server/testutils/factories'
 import { PlacementRequestDashboardSearchOptions } from '../../../server/@types/ui'
+import { normaliseCrn } from '../../../server/utils/normaliseCrn'
 
 context('Search placement Requests', () => {
   const placementRequests = placementRequestFactory.buildList(3)
@@ -23,7 +24,11 @@ context('Search placement Requests', () => {
     cy.signIn()
 
     cy.task('stubPlacementRequestsSearch', { placementRequests })
-    cy.task('stubPlacementRequestsSearch', { placementRequests: searchResults, ...searchQuery })
+    cy.task('stubPlacementRequestsSearch', {
+      placementRequests: searchResults,
+      ...searchQuery,
+      crnOrName: normaliseCrn(searchQuery.crnOrName),
+    })
   })
 
   it('allows me to search for placement requests', () => {

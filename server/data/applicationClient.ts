@@ -18,6 +18,7 @@ import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
 import { ApplicationDashboardSearchOptions, PaginatedResponse } from '../@types/ui'
+import { normaliseCrn } from '../utils/normaliseCrn'
 
 export default class ApplicationClient {
   restClient: RestClient
@@ -60,6 +61,7 @@ export default class ApplicationClient {
     sortDirection: SortDirection,
     searchOptions: ApplicationDashboardSearchOptions,
   ): Promise<PaginatedResponse<ApprovedPremisesApplicationSummary>> {
+    searchOptions.crnOrName = normaliseCrn(searchOptions.crnOrName)
     return this.restClient.getPaginatedResponse<ApprovedPremisesApplicationSummary>({
       path: paths.applications.all.pattern,
       page: page.toString(),

@@ -13,6 +13,7 @@ import {
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
 import { WithdrawalReason } from '../@types/shared'
+import { normaliseCrn } from '../utils/normaliseCrn'
 
 describeClient('ApplicationClient', provider => {
   let applicationClient: ApplicationClient
@@ -273,7 +274,13 @@ describeClient('ApplicationClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.applications.all.pattern,
-          query: { page: '2', sortBy: 'createdAt', sortDirection: 'desc', crnOrName: 'foo', status: 'rejected' },
+          query: {
+            page: '2',
+            sortBy: 'createdAt',
+            sortDirection: 'desc',
+            crnOrName: normaliseCrn('foo'),
+            status: 'rejected',
+          },
           headers: {
             authorization: `Bearer ${token}`,
             'X-Service-Name': 'approved-premises',
@@ -290,7 +297,10 @@ describeClient('ApplicationClient', provider => {
         },
       })
 
-      const result = await applicationClient.dashboard(2, 'createdAt', 'desc', { crnOrName: 'foo', status: 'rejected' })
+      const result = await applicationClient.dashboard(2, 'createdAt', 'desc', {
+        crnOrName: 'foo',
+        status: 'rejected',
+      })
 
       expect(result).toEqual({
         data: allApplications,

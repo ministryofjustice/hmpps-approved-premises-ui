@@ -9,6 +9,7 @@ import {
   placementRequestFactory,
 } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
+import { normaliseCrn } from '../utils/normaliseCrn'
 
 describeClient('placementRequestClient', provider => {
   let placementRequestClient: PlacementRequestClient
@@ -123,7 +124,7 @@ describeClient('placementRequestClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.placementRequests.dashboard.pattern,
-          query: { crnOrName: 'CRN123', page: '1', sortBy: 'created_at', sortDirection: 'asc' },
+          query: { crnOrName: normaliseCrn('crn123'), page: '1', sortBy: 'created_at', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
           },

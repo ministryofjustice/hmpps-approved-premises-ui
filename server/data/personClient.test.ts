@@ -16,6 +16,7 @@ import {
 import paths from '../paths/api'
 
 import describeClient from '../testutils/describeClient'
+import { normaliseCrn } from '../utils/normaliseCrn'
 
 describeClient('PersonClient', provider => {
   let personClient: PersonClient
@@ -38,7 +39,7 @@ describeClient('PersonClient', provider => {
           method: 'GET',
           path: `/people/search`,
           query: {
-            crn: 'crn',
+            crn: normaliseCrn('crn'),
           },
           headers: {
             authorization: `Bearer ${token}`,
@@ -65,7 +66,7 @@ describeClient('PersonClient', provider => {
           method: 'GET',
           path: `/people/search`,
           query: {
-            crn: 'crn',
+            crn: normaliseCrn('crn'),
             checkCaseload: 'true',
           },
           headers: {
