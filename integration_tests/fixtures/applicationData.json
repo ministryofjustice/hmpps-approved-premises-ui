@@ -29,7 +29,7 @@
     "male-ap": {
       "shouldPersonBePlacedInMaleAp": "yes"
     },
-    "end-dates": {
+    "relevant-dates": {
       "selectedDates": [
         "paroleEligbilityDate",
         "homeDetentionCurfewDate",

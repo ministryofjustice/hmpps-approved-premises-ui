@@ -1,7 +1,7 @@
 import { fromPartial } from '@total-typescript/shoehorn'
-import { endDatesOptions } from './endDatesOptions'
+import { relevantDatesOptions } from './relevantDatesOptions'
 
-describe('endDatesOptions', () => {
+describe('relevantDatesOptions', () => {
   it('should return an array of CheckBoxItems with correct properties', () => {
     const conditionals = ['<div>Conditional 1</div>', '<div>Conditional 2</div>', '<div>Conditional 3</div>']
 
@@ -23,7 +23,7 @@ describe('endDatesOptions', () => {
       },
     ]
 
-    const result = endDatesOptions(
+    const result = relevantDatesOptions(
       fromPartial({
         paroleEligbilityDate: 'Parole eligibility date',
         homeDetentionCurfewDate: 'Home Detention Curfew (HDC) date',

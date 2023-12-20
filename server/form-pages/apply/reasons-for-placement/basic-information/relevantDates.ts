@@ -18,17 +18,19 @@ export const relevantDatesDictionary = {
 
 export const relevantDateKeys = Object.keys(relevantDatesDictionary) as ReadonlyArray<RelevantDateKeys>
 
-export type RelevantDates = typeof relevantDatesDictionary
-export type RelevantDateKeys = keyof RelevantDates
-export type RelevantDateLabels = RelevantDates[RelevantDateKeys]
+export type RelevantDatesT = typeof relevantDatesDictionary
+export type RelevantDateKeys = keyof RelevantDatesT
+export type RelevantDateLabels = RelevantDatesT[RelevantDateKeys]
 
-export type EndDatesBody = { selectedDates: ReadonlyArray<RelevantDateKeys> } & ObjectWithDateParts<RelevantDateKeys>
+export type RelevantDatesBody = {
+  selectedDates: ReadonlyArray<RelevantDateKeys>
+} & ObjectWithDateParts<RelevantDateKeys>
 
 @Page({
-  name: 'end-dates',
+  name: 'relevant-dates',
   bodyProperties: [...relevantDateKeys.map(key => dateBodyProperties(key)).flat(), 'selectedDates'],
 })
-export default class EndDates implements TasklistPage {
+export default class RelevantDates implements TasklistPage {
   title = 'Which of the following dates are relevant?'
 
   hint = 'Select any dates that are relevant to this application. Select all that apply'
@@ -37,10 +39,10 @@ export default class EndDates implements TasklistPage {
 
   relevantDatesDictionary = relevantDatesDictionary
 
-  body: EndDatesBody
+  body: RelevantDatesBody
 
   constructor(
-    body: Partial<EndDatesBody>,
+    body: Partial<RelevantDatesBody>,
     private readonly application: ApprovedPremisesApplication,
   ) {}
 

@@ -1,9 +1,9 @@
 import { applicationFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
-import EndDates, { EndDatesBody, relevantDateKeys } from './endDates'
+import RelevantDates, { RelevantDatesBody, relevantDateKeys } from './relevantDates'
 
-describe('EndDates', () => {
+describe('RelevantDates', () => {
   const body = {
     homeDetentionCurfewDate: '2023-01-01',
     'homeDetentionCurfewDate-day': '01',
@@ -30,7 +30,7 @@ describe('EndDates', () => {
     'sedDate-month': '06',
     'sedDate-year': '2023',
     selectedDates: relevantDateKeys,
-  } as EndDatesBody
+  } as RelevantDatesBody
 
   const emptyDateBody = {
     homeDetentionCurfewDate: undefined as string,
@@ -62,7 +62,7 @@ describe('EndDates', () => {
 
   describe('body', () => {
     it('should set the body when all the dates are present', () => {
-      const page = new EndDates(body, application)
+      const page = new RelevantDates(body, application)
 
       expect(page.body).toEqual(body)
     })
@@ -75,12 +75,12 @@ describe('EndDates', () => {
   })
 
   describe('when the exception-details step was not completed', () => {
-    itShouldHavePreviousValue(new EndDates({}, application), 'transgender')
+    itShouldHavePreviousValue(new RelevantDates({}, application), 'transgender')
   })
 
   describe('when the exception-details step was completed', () => {
     itShouldHavePreviousValue(
-      new EndDates(
+      new RelevantDates(
         {},
         { ...application, data: { 'basic-information': { 'exception-details': { agreedCaseWithManager: 'yes' } } } },
       ),
@@ -88,16 +88,16 @@ describe('EndDates', () => {
     )
   })
 
-  itShouldHaveNextValue(new EndDates(body, application), 'sentence-type')
+  itShouldHaveNextValue(new RelevantDates(body, application), 'sentence-type')
 
   describe('errors', () => {
     it('should return an empty object if the body is provided correctly', () => {
-      const page = new EndDates(body, application)
+      const page = new RelevantDates(body, application)
       expect(page.errors()).toEqual({})
     })
 
     it('should return an error if an invalid date is entered', () => {
-      const page = new EndDates(
+      const page = new RelevantDates(
         {
           ...body,
           'sedDate-day': '32',
@@ -121,7 +121,7 @@ describe('EndDates', () => {
     })
 
     it('should return an "empty date" error if the date is empty and in selectedDates array', () => {
-      const page = new EndDates(
+      const page = new RelevantDates(
         {
           selectedDates: relevantDateKeys,
         },
@@ -141,7 +141,7 @@ describe('EndDates', () => {
 
   describe('response', () => {
     it('should return a translated version of the response', () => {
-      const page = new EndDates(body, application)
+      const page = new RelevantDates(body, application)
 
       expect(page.response()).toEqual({
         'Home Detention Curfew (HDC) date': 'Sunday 1 January 2023',
@@ -154,7 +154,7 @@ describe('EndDates', () => {
     })
 
     it('should return a translated version of the response when the dates are blank', () => {
-      const page = new EndDates({ ...emptyDateBody, selectedDates: relevantDateKeys }, application)
+      const page = new RelevantDates({ ...emptyDateBody, selectedDates: relevantDateKeys }, application)
 
       expect(page.response()).toEqual({
         'Home Detention Curfew (HDC) date': 'No date supplied',

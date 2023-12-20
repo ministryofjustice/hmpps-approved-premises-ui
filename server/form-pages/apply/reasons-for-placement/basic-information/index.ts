@@ -19,7 +19,7 @@ import MaleAp from './maleAp'
 import PauseApplication from './pauseApplication'
 import ReferToDelius from './referToDelius'
 import NotEligible from './notEligible'
-import EndDates from './endDates'
+import RelevantDates from './relevantDates'
 import ManagedByMappa from './managedByMappa'
 import { Task } from '../../../utils/decorators'
 import CaseManagerInformation from './caseManagerInformation'
@@ -43,7 +43,7 @@ import CaseManagerInformation from './caseManagerInformation'
     SentenceType,
     ManagedByMappa,
     ReleaseType,
-    EndDates,
+    RelevantDates,
     Situation,
     ReleaseDate,
     OralHearing,

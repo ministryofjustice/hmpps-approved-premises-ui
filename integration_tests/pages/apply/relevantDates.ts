@@ -2,9 +2,9 @@ import type { ApprovedPremisesApplication } from '@approved-premises/api'
 
 import ApplyPage from './applyPage'
 
-export default class EndDatesPage extends ApplyPage {
+export default class RelevantDatesPage extends ApplyPage {
   constructor(application: ApprovedPremisesApplication) {
-    super('Which of the following dates are relevant?', application, 'basic-information', 'end-dates')
+    super('Which of the following dates are relevant?', application, 'basic-information', 'relevant-dates')
   }
 
   completeForm() {

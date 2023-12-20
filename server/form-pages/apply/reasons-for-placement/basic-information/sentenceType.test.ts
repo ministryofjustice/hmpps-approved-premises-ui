@@ -30,7 +30,7 @@ describe('SentenceType', () => {
     })
   })
 
-  itShouldHavePreviousValue(new SentenceType({}, application), 'end-dates')
+  itShouldHavePreviousValue(new SentenceType({}, application), 'relevant-dates')
 
   describe('errors', () => {
     it('should return an empty object if the sentence type is populated', () => {
