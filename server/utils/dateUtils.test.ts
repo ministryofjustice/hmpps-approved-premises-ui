@@ -8,6 +8,7 @@ import isTodayDateFns from 'date-fns/isToday'
 
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 
+import { fromPartial } from '@total-typescript/shoehorn'
 import {
   DateFormats,
   InvalidDateStringError,
@@ -194,7 +195,9 @@ describe('DateFormats', () => {
     })
 
     it('throws an error if an object without date inputs for the key is entered', () => {
-      expect(() => DateFormats.dateAndTimeInputsToUiDate({}, 'key')).toThrow(InvalidDateStringError)
+      expect(() => DateFormats.dateAndTimeInputsToUiDate(fromPartial<ObjectWithDateParts<'key'>>({}), 'key')).toThrow(
+        InvalidDateStringError,
+      )
     })
   })
 
