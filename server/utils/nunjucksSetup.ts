@@ -22,6 +22,7 @@ import {
   dateFieldValues,
 } from './formUtils'
 import { mapTimelineEventsForUi } from './applications/utils'
+import { endDatesOptions } from './applications/endDatesOptions'
 import { navigationItems } from './navigationItems'
 
 import { statusTag } from './personUtils'
@@ -202,6 +203,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('mapTimelineEventsForUi', mapTimelineEventsForUi)
   njkEnv.addGlobal('navigationItems', navigationItems)
   njkEnv.addGlobal('withdrawalRadioOptions', withdrawalRadioOptions)
+  njkEnv.addGlobal('endDatesOptions', endDatesOptions)
   njkEnv.addGlobal('pagination', pagination)
   njkEnv.addGlobal('sortHeader', sortHeader)
   njkEnv.addGlobal('monthOptions', monthOptions)
