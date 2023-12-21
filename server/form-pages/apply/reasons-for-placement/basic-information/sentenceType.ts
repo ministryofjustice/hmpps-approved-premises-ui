@@ -22,7 +22,7 @@ export default class SentenceType implements TasklistPage {
   }
 
   previous() {
-    return 'end-dates'
+    return 'relevant-dates'
   }
 
   next() {

@@ -21,7 +21,7 @@ describe('IsPersonTransgender', () => {
   })
 
   describe('if the answer is no', () => {
-    itShouldHaveNextValue(new IsPersonTransgender({ transgenderOrHasTransgenderHistory: 'no' }), 'end-dates')
+    itShouldHaveNextValue(new IsPersonTransgender({ transgenderOrHasTransgenderHistory: 'no' }), 'relevant-dates')
   })
 
   itShouldHavePreviousValue(new IsPersonTransgender(body), 'confirm-your-details')

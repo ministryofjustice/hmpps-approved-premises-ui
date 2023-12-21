@@ -30,6 +30,82 @@ import { setup } from './setup'
 context('Apply', () => {
   beforeEach(setup)
 
+  it('allows completion of the form', function test() {
+    // And I complete the application
+    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
+
+    apply.setupApplicationStubs(uiRisks)
+    apply.startApplication()
+    apply.completeApplication()
+
+    // Then the application should be submitted to the API
+    cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
+      expect(requests).to.have.length(apply.numberOfPages())
+      const body = JSON.parse(requests[requests.length - 1].body)
+
+      expect(body).to.have.keys(
+        'data',
+        'arrivalDate',
+        'isPipeApplication',
+        'isWomensApplication',
+        'targetLocation',
+        'releaseType',
+        'sentenceType',
+        'situation',
+        'type',
+        'isInapplicable',
+        'isEsapApplication',
+        'isEmergencyApplication',
+      )
+      expect(body.data).to.deep.equal(this.applicationData)
+
+      cy.task('validateBodyAgainstApplySchema', body.data).then(result => {
+        expect(result).to.equal(true)
+      })
+    })
+
+    cy.task('verifyApplicationSubmit', this.application.id).then(requests => {
+      expect(requests).to.have.length(1)
+
+      expect(requests[0].url).to.equal(`/applications/${this.application.id}/submission`)
+
+      const body = JSON.parse(requests[0].body)
+      expect(body).to.have.keys(
+        'arrivalDate',
+        'translatedDocument',
+        'isPipeApplication',
+        'isEsapApplication',
+        'isEmergencyApplication',
+        'isWomensApplication',
+        'targetLocation',
+        'releaseType',
+        'sentenceType',
+        'situation',
+        'type',
+      )
+    })
+
+    // And I should be taken to the confirmation page
+    const confirmationPage = new SubmissionConfirmation()
+
+    // Given there are applications in the database
+    const applications = applicationFactory.withReleaseDate().buildList(5)
+    cy.task('stubApplications', applications)
+
+    // And there are risks in the database
+    const risks = risksFactory.buildList(5)
+    applications.forEach((stubbedApplication, i) => {
+      cy.task('stubPersonRisks', { person: stubbedApplication.person, risks: risks[i] })
+    })
+
+    // When I click 'Back to dashboard'
+    confirmationPage.clickBackToDashboard()
+
+    // Then I am taken back to the dashboard
+    Page.verifyOnPage(ListPage)
+  })
+
   it('throws an error if the the CRN entered is an LAO', function test() {
     const lao = restrictedPersonFactory.build()
     cy.task('stubFindPerson', { person: lao })
@@ -285,82 +361,6 @@ context('Apply', () => {
         'type',
       )
     })
-  })
-
-  it('allows completion of the form', function test() {
-    // And I complete the application
-    const uiRisks = mapApiPersonRisksForUi(this.application.risks)
-    const apply = new ApplyHelper(this.application, this.person, this.offences)
-
-    apply.setupApplicationStubs(uiRisks)
-    apply.startApplication()
-    apply.completeApplication()
-
-    // Then the application should be submitted to the API
-    cy.task('verifyApplicationUpdate', this.application.id).then((requests: Array<{ body: string }>) => {
-      expect(requests).to.have.length(apply.numberOfPages())
-      const body = JSON.parse(requests[requests.length - 1].body)
-
-      expect(body).to.have.keys(
-        'data',
-        'arrivalDate',
-        'isPipeApplication',
-        'isWomensApplication',
-        'targetLocation',
-        'releaseType',
-        'sentenceType',
-        'situation',
-        'type',
-        'isInapplicable',
-        'isEsapApplication',
-        'isEmergencyApplication',
-      )
-      expect(body.data).to.deep.equal(this.applicationData)
-
-      cy.task('validateBodyAgainstApplySchema', body.data).then(result => {
-        expect(result).to.equal(true)
-      })
-    })
-
-    cy.task('verifyApplicationSubmit', this.application.id).then(requests => {
-      expect(requests).to.have.length(1)
-
-      expect(requests[0].url).to.equal(`/applications/${this.application.id}/submission`)
-
-      const body = JSON.parse(requests[0].body)
-      expect(body).to.have.keys(
-        'arrivalDate',
-        'translatedDocument',
-        'isPipeApplication',
-        'isEsapApplication',
-        'isEmergencyApplication',
-        'isWomensApplication',
-        'targetLocation',
-        'releaseType',
-        'sentenceType',
-        'situation',
-        'type',
-      )
-    })
-
-    // And I should be taken to the confirmation page
-    const confirmationPage = new SubmissionConfirmation()
-
-    // Given there are applications in the database
-    const applications = applicationFactory.withReleaseDate().buildList(5)
-    cy.task('stubApplications', applications)
-
-    // And there are risks in the database
-    const risks = risksFactory.buildList(5)
-    applications.forEach((stubbedApplication, i) => {
-      cy.task('stubPersonRisks', { person: stubbedApplication.person, risks: risks[i] })
-    })
-
-    // When I click 'Back to dashboard'
-    confirmationPage.clickBackToDashboard()
-
-    // Then I am taken back to the dashboard
-    Page.verifyOnPage(ListPage)
   })
 
   it('redirects to no offence page if there are no offence', function test() {

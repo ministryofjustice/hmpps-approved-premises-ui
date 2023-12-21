@@ -1,0 +1,49 @@
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
+{% extends "../layout.njk" %}
+
+{% block questions %}
+
+  <h1 class="govuk-heading-l">
+    {{ page.title }}
+  </h1>
+
+  {% set conditionals = [] %}
+
+  {% for date in page.relevantDateKeys %}
+
+    {% set dateInput %}
+    {{ formPageDateInput(
+            {
+              fieldName: date,
+              fieldset: {
+                legend: {
+                  classes: "govuk-fieldset__legend--m"
+                }
+              },
+              items: dateFieldValues(date, errors)
+            },
+            fetchContext()
+          )}}
+    {% endset %}
+
+    {% set conditionals = (conditionals.push(dateInput), conditionals) %}
+
+  {% endfor %}
+
+  {{ formPageCheckboxes({
+      fieldName: "selectedDates[]",
+      hint: {
+        text: page.hint
+      },
+      fieldset: {
+        legend: {
+          text: page.title,
+          classes: "govuk-fieldset__legend--m",
+          isPageHeading: true
+        }
+      },
+      items: relevantDatesOptions(page.relevantDatesDictionary, conditionals)
+    }, fetchContext()) }}
+
+{% endblock %}

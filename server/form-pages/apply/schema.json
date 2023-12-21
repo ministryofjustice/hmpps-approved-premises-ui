@@ -24,11 +24,7 @@
           "type": "object",
           "properties": {
             "riskLevel": {
-              "enum": [
-                "highRisk",
-                "medium",
-                "veryHighRisk"
-              ],
+              "enum": ["highRisk", "medium", "veryHighRisk"],
               "type": "string"
             }
           }
@@ -37,10 +33,7 @@
           "type": "object",
           "properties": {
             "isExceptionalCase": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             }
           }
@@ -51,11 +44,7 @@
             "detailsToUpdate": {
               "type": "array",
               "items": {
-                "enum": [
-                  "emailAddress",
-                  "name",
-                  "phoneNumber"
-                ],
+                "enum": ["emailAddress", "name", "phoneNumber"],
                 "type": "string"
               }
             },
@@ -69,10 +58,7 @@
               "type": "string"
             },
             "caseManagementResponsibility": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "userDetailsFromDelius": {
@@ -109,10 +95,7 @@
           "type": "object",
           "properties": {
             "transgenderOrHasTransgenderHistory": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             }
           }
@@ -121,10 +104,7 @@
           "type": "object",
           "properties": {
             "reviewRequired": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             }
           }
@@ -133,10 +113,7 @@
           "type": "object",
           "properties": {
             "hasBoardTakenPlace": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             }
           }
@@ -145,10 +122,7 @@
           "type": "object",
           "properties": {
             "shouldPersonBePlacedInMaleAp": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             }
           }
@@ -183,10 +157,7 @@
           "type": "object",
           "properties": {
             "managedByMappa": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             }
           }
@@ -195,26 +166,84 @@
           "type": "object",
           "properties": {
             "releaseType": {
-              "enum": [
-                "hdc",
-                "licence",
-                "not_applicable",
-                "pss",
-                "rotl"
-              ],
+              "enum": ["hdc", "licence", "not_applicable", "pss", "rotl"],
               "type": "string"
             }
           }
         },
-        "end-dates": {
+        "relevant-dates": {
           "allOf": [
             {
               "type": "object",
               "properties": {
+                "selectedDates": {
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "homeDetentionCurfewDate",
+                      "licenceExpiryDate",
+                      "paroleEligbilityDate",
+                      "pssEndDate",
+                      "pssStartDate",
+                      "sedDate"
+                    ],
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            {
+              "type": "object",
+              "properties": {
+                "paroleEligbilityDate-year": {
+                  "type": "string"
+                },
+                "homeDetentionCurfewDate-year": {
+                  "type": "string"
+                },
+                "licenceExpiryDate-year": {
+                  "type": "string"
+                },
+                "pssStartDate-year": {
+                  "type": "string"
+                },
+                "pssEndDate-year": {
+                  "type": "string"
+                },
                 "sedDate-year": {
                   "type": "string"
                 },
+                "paroleEligbilityDate-month": {
+                  "type": "string"
+                },
+                "homeDetentionCurfewDate-month": {
+                  "type": "string"
+                },
+                "licenceExpiryDate-month": {
+                  "type": "string"
+                },
+                "pssStartDate-month": {
+                  "type": "string"
+                },
+                "pssEndDate-month": {
+                  "type": "string"
+                },
                 "sedDate-month": {
+                  "type": "string"
+                },
+                "paroleEligbilityDate-day": {
+                  "type": "string"
+                },
+                "homeDetentionCurfewDate-day": {
+                  "type": "string"
+                },
+                "licenceExpiryDate-day": {
+                  "type": "string"
+                },
+                "pssStartDate-day": {
+                  "type": "string"
+                },
+                "pssEndDate-day": {
                   "type": "string"
                 },
                 "sedDate-day": {
@@ -225,6 +254,21 @@
             {
               "type": "object",
               "properties": {
+                "paroleEligbilityDate-time": {
+                  "type": "string"
+                },
+                "homeDetentionCurfewDate-time": {
+                  "type": "string"
+                },
+                "licenceExpiryDate-time": {
+                  "type": "string"
+                },
+                "pssStartDate-time": {
+                  "type": "string"
+                },
+                "pssEndDate-time": {
+                  "type": "string"
+                },
                 "sedDate-time": {
                   "type": "string"
                 }
@@ -233,67 +277,22 @@
             {
               "type": "object",
               "properties": {
+                "paroleEligbilityDate": {
+                  "type": "string"
+                },
+                "homeDetentionCurfewDate": {
+                  "type": "string"
+                },
+                "licenceExpiryDate": {
+                  "type": "string"
+                },
+                "pssStartDate": {
+                  "type": "string"
+                },
+                "pssEndDate": {
+                  "type": "string"
+                },
                 "sedDate": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "ledDate-year": {
-                  "type": "string"
-                },
-                "ledDate-month": {
-                  "type": "string"
-                },
-                "ledDate-day": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "ledDate-time": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "ledDate": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "pssDate-year": {
-                  "type": "string"
-                },
-                "pssDate-month": {
-                  "type": "string"
-                },
-                "pssDate-day": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "pssDate-time": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "properties": {
-                "pssDate": {
                   "type": "string"
                 }
               }
@@ -304,12 +303,7 @@
           "type": "object",
           "properties": {
             "situation": {
-              "enum": [
-                "bailAssessment",
-                "bailSentence",
-                "residencyManagement",
-                "riskManagement"
-              ],
+              "enum": ["bailAssessment", "bailSentence", "residencyManagement", "riskManagement"],
               "type": "string"
             }
           }
@@ -350,10 +344,7 @@
               "type": "object",
               "properties": {
                 "knowReleaseDate": {
-                  "enum": [
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["no", "yes"],
                   "type": "string"
                 }
               }
@@ -396,10 +387,7 @@
               "type": "object",
               "properties": {
                 "knowOralHearingDate": {
-                  "enum": [
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["no", "yes"],
                   "type": "string"
                 }
               }
@@ -442,10 +430,7 @@
               "type": "object",
               "properties": {
                 "startDateSameAsReleaseDate": {
-                  "enum": [
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["no", "yes"],
                   "type": "string"
                 }
               }
@@ -519,11 +504,7 @@
           "type": "object",
           "properties": {
             "type": {
-              "enum": [
-                "esap",
-                "pipe",
-                "standard"
-              ],
+              "enum": ["esap", "pipe", "standard"],
               "type": "string"
             }
           }
@@ -532,10 +513,7 @@
           "type": "object",
           "properties": {
             "managedByNationalSecurityDivision": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             }
           }
@@ -576,10 +554,7 @@
               "type": "object",
               "properties": {
                 "agreedCaseWithCommunityHopp": {
-                  "enum": [
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["no", "yes"],
                   "type": "string"
                 },
                 "communityHoppName": {
@@ -631,10 +606,7 @@
               "type": "object",
               "properties": {
                 "opdPathway": {
-                  "enum": [
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["no", "yes"],
                   "type": "string"
                 }
               }
@@ -645,10 +617,7 @@
           "type": "object",
           "properties": {
             "pipeReferral": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "pipeReferralMoreDetail": {
@@ -662,24 +631,14 @@
             "esapReasons": {
               "type": "array",
               "items": {
-                "enum": [
-                  "cctv",
-                  "secreting"
-                ],
+                "enum": ["cctv", "secreting"],
                 "type": "string"
               }
             },
             "esapFactors": {
               "type": "array",
               "items": {
-                "enum": [
-                  "careAndSeperation",
-                  "complexPersonality",
-                  "corrupter",
-                  "neurodiverse",
-                  "nonNsd",
-                  "unlock"
-                ],
+                "enum": ["careAndSeperation", "complexPersonality", "corrupter", "neurodiverse", "nonNsd", "unlock"],
                 "type": "string"
               }
             }
@@ -704,10 +663,7 @@
               }
             },
             "secretingIntelligence": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "secretingIntelligenceDetails": {
@@ -736,10 +692,7 @@
               }
             },
             "cctvIntelligence": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "cctvIntelligenceDetails": {
@@ -954,10 +907,7 @@
           "type": "object",
           "properties": {
             "response": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             }
           }
@@ -970,18 +920,12 @@
                 {
                   "type": "array",
                   "items": {
-                    "enum": [
-                      "current",
-                      "previous"
-                    ],
+                    "enum": ["current", "previous"],
                     "type": "string"
                   }
                 },
                 {
-                  "enum": [
-                    "current",
-                    "previous"
-                  ],
+                  "enum": ["current", "previous"],
                   "type": "string"
                 }
               ]
@@ -991,18 +935,12 @@
                 {
                   "type": "array",
                   "items": {
-                    "enum": [
-                      "current",
-                      "previous"
-                    ],
+                    "enum": ["current", "previous"],
                     "type": "string"
                   }
                 },
                 {
-                  "enum": [
-                    "current",
-                    "previous"
-                  ],
+                  "enum": ["current", "previous"],
                   "type": "string"
                 }
               ]
@@ -1012,18 +950,12 @@
                 {
                   "type": "array",
                   "items": {
-                    "enum": [
-                      "current",
-                      "previous"
-                    ],
+                    "enum": ["current", "previous"],
                     "type": "string"
                   }
                 },
                 {
-                  "enum": [
-                    "current",
-                    "previous"
-                  ],
+                  "enum": ["current", "previous"],
                   "type": "string"
                 }
               ]
@@ -1033,18 +965,12 @@
                 {
                   "type": "array",
                   "items": {
-                    "enum": [
-                      "current",
-                      "previous"
-                    ],
+                    "enum": ["current", "previous"],
                     "type": "string"
                   }
                 },
                 {
-                  "enum": [
-                    "current",
-                    "previous"
-                  ],
+                  "enum": ["current", "previous"],
                   "type": "string"
                 }
               ]
@@ -1054,18 +980,12 @@
                 {
                   "type": "array",
                   "items": {
-                    "enum": [
-                      "current",
-                      "previous"
-                    ],
+                    "enum": ["current", "previous"],
                     "type": "string"
                   }
                 },
                 {
-                  "enum": [
-                    "current",
-                    "previous"
-                  ],
+                  "enum": ["current", "previous"],
                   "type": "string"
                 }
               ]
@@ -1075,18 +995,12 @@
                 {
                   "type": "array",
                   "items": {
-                    "enum": [
-                      "current",
-                      "previous"
-                    ],
+                    "enum": ["current", "previous"],
                     "type": "string"
                   }
                 },
                 {
-                  "enum": [
-                    "current",
-                    "previous"
-                  ],
+                  "enum": ["current", "previous"],
                   "type": "string"
                 }
               ]
@@ -1096,18 +1010,12 @@
                 {
                   "type": "array",
                   "items": {
-                    "enum": [
-                      "current",
-                      "previous"
-                    ],
+                    "enum": ["current", "previous"],
                     "type": "string"
                   }
                 },
                 {
-                  "enum": [
-                    "current",
-                    "previous"
-                  ],
+                  "enum": ["current", "previous"],
                   "type": "string"
                 }
               ]
@@ -1117,18 +1025,12 @@
                 {
                   "type": "array",
                   "items": {
-                    "enum": [
-                      "current",
-                      "previous"
-                    ],
+                    "enum": ["current", "previous"],
                     "type": "string"
                   }
                 },
                 {
-                  "enum": [
-                    "current",
-                    "previous"
-                  ],
+                  "enum": ["current", "previous"],
                   "type": "string"
                 }
               ]
@@ -1316,10 +1218,7 @@
               "type": "object",
               "properties": {
                 "informationFromPrison": {
-                  "enum": [
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["no", "yes"],
                   "type": "string"
                 }
               }
@@ -1349,35 +1248,18 @@
               "type": "string"
             },
             "restrictions": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "restrictionDetail": {
               "type": "string"
             },
             "alternativeRadiusAccepted": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "alternativeRadius": {
-              "enum": [
-                "100",
-                "110",
-                "120",
-                "130",
-                "140",
-                "150",
-                "60",
-                "70",
-                "80",
-                "90"
-              ],
+              "enum": ["100", "110", "120", "130", "140", "150", "60", "70", "80", "90"],
               "type": "string"
             }
           }
@@ -1491,30 +1373,18 @@
                               "type": "string"
                             },
                             "serviceScope": {
-                              "enum": [
-                                "*",
-                                "approved-premises",
-                                "temporary-accommodation"
-                              ],
+                              "enum": ["*", "approved-premises", "temporary-accommodation"],
                               "type": "string"
                             },
                             "modelScope": {
-                              "enum": [
-                                "*",
-                                "premises",
-                                "room"
-                              ],
+                              "enum": ["*", "premises", "room"],
                               "type": "string"
                             }
                           }
                         }
                       },
                       "status": {
-                        "enum": [
-                          "active",
-                          "archived",
-                          "pending"
-                        ],
+                        "enum": ["active", "archived", "pending"],
                         "type": "string"
                       }
                     }
@@ -1580,38 +1450,25 @@
               }
             },
             "careActAssessmentCompleted": {
-              "enum": [
-                "iDontKnow",
-                "no",
-                "yes"
-              ],
+              "enum": ["iDontKnow", "no", "yes"],
               "type": "string"
             },
             "needsInterpreter": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "interpreterLanguage": {
               "type": "string"
             },
             "careAndSupportNeeds": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "careAndSupportNeedsDetail": {
               "type": "string"
             },
             "religiousOrCulturalNeeds": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "religiousOrCulturalNeedsDetail": {
@@ -1625,25 +1482,15 @@
               "type": "object",
               "properties": {
                 "needsWheelchair": {
-                  "enum": [
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["no", "yes"],
                   "type": "string"
                 },
                 "isPersonPregnant": {
-                  "enum": [
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["no", "yes"],
                   "type": "string"
                 },
                 "childRemoved": {
-                  "enum": [
-                    "decisionPending",
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["decisionPending", "no", "yes"],
                   "type": "string"
                 },
                 "additionalAdjustments": {
@@ -1685,10 +1532,7 @@
               "type": "object",
               "properties": {
                 "healthConditions": {
-                  "enum": [
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["no", "yes"],
                   "type": "string"
                 }
               }
@@ -1705,11 +1549,7 @@
               "type": "object",
               "properties": {
                 "prescribedMedication": {
-                  "enum": [
-                    "iDontKnow",
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["iDontKnow", "no", "yes"],
                   "type": "string"
                 }
               }
@@ -1726,11 +1566,7 @@
               "type": "object",
               "properties": {
                 "socialCareInvolvement": {
-                  "enum": [
-                    "iDontKnow",
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["iDontKnow", "no", "yes"],
                   "type": "string"
                 }
               }
@@ -1747,10 +1583,7 @@
               "type": "object",
               "properties": {
                 "otherPregnancyConsiderations": {
-                  "enum": [
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["no", "yes"],
                   "type": "string"
                 }
               }
@@ -1769,17 +1602,11 @@
           "type": "object",
           "properties": {
             "immunosuppressed": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "boosterEligibility": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "boosterEligibilityDetail": {
@@ -1796,50 +1623,35 @@
           "type": "object",
           "properties": {
             "riskToStaff": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "riskToStaffDetail": {
               "type": "string"
             },
             "riskToOthers": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "riskToOthersDetail": {
               "type": "string"
             },
             "sharingConcerns": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "sharingConcernsDetail": {
               "type": "string"
             },
             "traumaConcerns": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "traumaConcernsDetail": {
               "type": "string"
             },
             "sharingBenefits": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "sharingBenefitsDetail": {
@@ -1851,20 +1663,14 @@
           "type": "object",
           "properties": {
             "exploitable": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "exploitableDetail": {
               "type": "string"
             },
             "exploitOthers": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "exploitOthersDetail": {
@@ -1876,11 +1682,7 @@
           "type": "object",
           "properties": {
             "previousPlacement": {
-              "enum": [
-                "iDontKnow",
-                "no",
-                "yes"
-              ],
+              "enum": ["iDontKnow", "no", "yes"],
               "type": "string"
             },
             "previousPlacementDetail": {
@@ -1892,10 +1694,7 @@
           "type": "object",
           "properties": {
             "needARfap": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             }
           }
@@ -1910,10 +1709,7 @@
               "type": "string"
             },
             "receivingTreatment": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "receivingTreatmentDetail": {
@@ -1925,10 +1721,7 @@
           "type": "object",
           "properties": {
             "catering": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "cateringDetail": {
@@ -1940,10 +1733,7 @@
           "type": "object",
           "properties": {
             "arson": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "arsonDetail": {
@@ -1955,10 +1745,7 @@
           "type": "object",
           "properties": {
             "additionalCircumstances": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "additionalCircumstancesDetail": {
@@ -2023,10 +1810,7 @@
               "type": "object",
               "properties": {
                 "planInPlace": {
-                  "enum": [
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["no", "yes"],
                   "type": "string"
                 }
               }
@@ -2035,10 +1819,7 @@
               "type": "object",
               "properties": {
                 "additionalConditions": {
-                  "enum": [
-                    "no",
-                    "yes"
-                  ],
+                  "enum": ["no", "yes"],
                   "type": "string"
                 }
               }
@@ -2062,10 +1843,7 @@
           "type": "object",
           "properties": {
             "differentDuration": {
-              "enum": [
-                "no",
-                "yes"
-              ],
+              "enum": ["no", "yes"],
               "type": "string"
             },
             "durationDays": {
@@ -2216,10 +1994,7 @@
                   },
                   "level": {
                     "description": "The level at which a Document is associated - i.e. to the Offender or to a specific Conviction",
-                    "enum": [
-                      "Conviction",
-                      "Offender"
-                    ],
+                    "enum": ["Conviction", "Offender"],
                     "type": "string"
                   },
                   "fileName": {

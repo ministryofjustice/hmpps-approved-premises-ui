@@ -137,7 +137,7 @@ export class DateFormats {
    * @param key the key that prefixes each item in the dateInputObj, also the name of the property which the date object will be returned in the return value.
    * @returns a friendly date.
    */
-  static dateAndTimeInputsToUiDate(dateInputObj: Record<string, string>, key: string | number) {
+  static dateAndTimeInputsToUiDate<K extends string | number>(dateInputObj: ObjectWithDateParts<K>, key: K) {
     const iso8601Date = DateFormats.dateAndTimeInputsToIsoString(dateInputObj, key)[key]
 
     return DateFormats.isoDateToUIDate(iso8601Date)

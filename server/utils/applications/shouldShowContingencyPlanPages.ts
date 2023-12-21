@@ -6,7 +6,7 @@ import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
 } from '../retrieveQuestionResponseFromFormArtifact'
-import EndDates from '../../form-pages/apply/reasons-for-placement/basic-information/endDates'
+import RelevantDates from '../../form-pages/apply/reasons-for-placement/basic-information/relevantDates'
 import { noticeTypeFromApplication } from './noticeTypeFromApplication'
 
 export const shouldShowContingencyPlanPartnersPages = (application: Application) => {
@@ -32,9 +32,10 @@ export const shouldShowContingencyPlanPartnersPages = (application: Application)
   )
     return true
 
-  const pssEndDate = retrieveOptionalQuestionResponseFromFormArtifact(application, EndDates, 'pssDate')
+  const pssDate = retrieveOptionalQuestionResponseFromFormArtifact(application, RelevantDates, 'pssDate')
+  const pssEndDate = retrieveOptionalQuestionResponseFromFormArtifact(application, RelevantDates, 'pssEndDate')
 
-  if (pssEndDate) return true
+  if (pssEndDate || pssDate) return true
 
   return false
 }

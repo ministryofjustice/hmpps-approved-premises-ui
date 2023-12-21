@@ -16,7 +16,7 @@ describe('MaleAp', () => {
     })
   })
 
-  itShouldHaveNextValue(new MaleAp(body), 'end-dates')
+  itShouldHaveNextValue(new MaleAp(body), 'relevant-dates')
   itShouldHavePreviousValue(new MaleAp(body), 'board-taken-place')
 
   describe('errors', () => {
