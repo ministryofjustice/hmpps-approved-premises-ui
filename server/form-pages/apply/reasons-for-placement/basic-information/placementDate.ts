@@ -5,7 +5,13 @@ import { isAfter, isSameDay } from 'date-fns'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import TasklistPage from '../../../tasklistPage'
 import { convertToTitleCase } from '../../../../utils/utils'
-import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank, dateIsInThePast } from '../../../../utils/dateUtils'
+import {
+  DateFormats,
+  dateAndTimeInputsAreValidDates,
+  dateIsBlank,
+  dateIsInThePast,
+  isToday,
+} from '../../../../utils/dateUtils'
 import { Page } from '../../../utils/decorators'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 import ReleaseDate from './releaseDate'
@@ -120,7 +126,7 @@ export default class PlacementDate implements TasklistPage {
         errors.startDate = 'You must enter a start date'
       } else if (!dateAndTimeInputsAreValidDates(this.body as ObjectWithDateParts<'startDate'>, 'startDate')) {
         errors.startDate = 'The start date is an invalid date'
-      } else if (dateIsInThePast(this.body.startDate)) {
+      } else if (!isToday(this.body.startDate) && dateIsInThePast(this.body.startDate)) {
         errors.startDate = 'The start date must not be in the past'
       }
     }
