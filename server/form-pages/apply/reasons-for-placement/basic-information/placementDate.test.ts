@@ -308,6 +308,18 @@ describe('PlacementDate', () => {
         )
         expect(page.errors()).toEqual({ startDate: 'The start date must not be in the past' })
       })
+
+      it('should not return an error if the date is today', () => {
+        const placementDate = new Date()
+        const page = new PlacementDate(
+          {
+            startDateSameAsReleaseDate: 'no',
+            ...DateFormats.dateObjectToDateInputs(placementDate, 'startDate'),
+          },
+          application,
+        )
+        expect(page.errors()).toEqual({})
+      })
     })
   })
 
