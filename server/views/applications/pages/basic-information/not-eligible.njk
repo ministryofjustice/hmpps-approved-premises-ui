@@ -6,19 +6,6 @@
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body" %}
 
-{% block beforeContent %}
-  {{
-    govukBackLink({
-      text: "Back",
-      href:  paths.applications.pages.show({
-              id: applicationId,
-              task: 'basic-information',
-              page: 'is-exceptional-case'
-          })
-    })
-  }}
-{% endblock %}
-
 {% block content %}
 
   <div class="govuk-grid-row">
