@@ -8,7 +8,7 @@ import { ApprovedPremisesApplication } from '../../../../@types/shared'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
 
 export const relevantDatesDictionary = {
-  paroleEligbilityDate: 'Parole eligibility date',
+  paroleEligibilityDate: 'Parole eligibility date',
   homeDetentionCurfewDate: 'Home Detention Curfew (HDC) date',
   licenceExpiryDate: 'Licence expiry date',
   pssStartDate: 'Post sentence supervision (PSS) start date',

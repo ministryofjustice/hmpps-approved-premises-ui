@@ -8,7 +8,7 @@ describe('relevantDatesOptions', () => {
     const expected = [
       {
         text: 'Parole eligibility date',
-        value: 'paroleEligbilityDate',
+        value: 'paroleEligibilityDate',
         conditional: { html: '<div>Conditional 1</div>' },
       },
       {
@@ -25,7 +25,7 @@ describe('relevantDatesOptions', () => {
 
     const result = relevantDatesOptions(
       fromPartial({
-        paroleEligbilityDate: 'Parole eligibility date',
+        paroleEligibilityDate: 'Parole eligibility date',
         homeDetentionCurfewDate: 'Home Detention Curfew (HDC) date',
         licenceExpiryDate: 'Licence expiry date',
       }),
