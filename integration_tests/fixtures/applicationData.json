@@ -36,7 +36,7 @@
         "licenceExpiryDate",
         "pssStartDate",
         "pssEndDate",
-        "sedDate"
+        "sentenceExpiryDate"
       ],
       "paroleEligibilityDate-year": "2024",
       "paroleEligibilityDate-month": "11",
@@ -58,10 +58,10 @@
       "pssEndDate-month": "07",
       "pssEndDate-day": "14",
       "pssEndDate": "2024-07-14",
-      "sedDate-year": "2024",
-      "sedDate-month": "06",
-      "sedDate-day": "14",
-      "sedDate": "2024-06-14"
+      "sentenceExpiryDate-year": "2024",
+      "sentenceExpiryDate-month": "06",
+      "sentenceExpiryDate-day": "14",
+      "sentenceExpiryDate": "2024-06-14"
     },
     "sentence-type": {
       "sentenceType": "communityOrder"

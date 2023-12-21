@@ -14,6 +14,6 @@ export default class RelevantDatesPage extends ApplyPage {
     this.completeDateInputsFromPageBody('licenceExpiryDate')
     this.completeDateInputsFromPageBody('pssStartDate')
     this.completeDateInputsFromPageBody('pssEndDate')
-    this.completeDateInputsFromPageBody('sedDate')
+    this.completeDateInputsFromPageBody('sentenceExpiryDate')
   }
 }
