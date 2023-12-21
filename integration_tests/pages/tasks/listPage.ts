@@ -21,8 +21,8 @@ export default class ListPage extends Page {
     return new ListPage(allocatedTasks, unallocatedTasks)
   }
 
-  shouldShowAllocatedTasks(): void {
-    shouldShowTableRows(this.allocatedTasks, allocatedTableRows)
+  shouldShowAllocatedTasks(allocatedTasks = this.allocatedTasks): void {
+    shouldShowTableRows(allocatedTasks, allocatedTableRows)
   }
 
   shouldShowUnallocatedTasks(): void {

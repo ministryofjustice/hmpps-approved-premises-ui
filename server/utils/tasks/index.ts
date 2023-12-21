@@ -5,7 +5,7 @@ import { SummaryListItem } from '../../@types/ui'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { getApplicationType } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
-import { allocatedTableRows, unallocatedTableRows } from './table'
+import { allocatedTableRows, tasksTableHeader, tasksTableRows, unallocatedTableRows } from './table'
 
 type GroupedTasks = {
   allocated: Array<Task>
@@ -59,4 +59,11 @@ const applicationSummary = (application: Application): Array<SummaryListItem> =>
   return summary
 }
 
-export { applicationSummary, allocatedTableRows, groupByAllocation, unallocatedTableRows }
+export {
+  applicationSummary,
+  allocatedTableRows,
+  groupByAllocation,
+  unallocatedTableRows,
+  tasksTableHeader,
+  tasksTableRows,
+}

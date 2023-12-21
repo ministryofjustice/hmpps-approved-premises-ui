@@ -30,6 +30,7 @@ describeClient('taskClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.tasks.reallocatable.index.pattern,
+          query: { allocatedFilter: 'allocated', page: '1', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
             'X-Service-Name': 'approved-premises',
@@ -38,12 +39,23 @@ describeClient('taskClient', provider => {
         willRespondWith: {
           status: 200,
           body: tasks,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
         },
       })
 
-      const result = await taskClient.allReallocatable()
+      const result = await taskClient.allReallocatable('allocated', 1, 'asc')
 
-      expect(result).toEqual(tasks)
+      expect(result).toEqual({
+        data: tasks,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
   })
 

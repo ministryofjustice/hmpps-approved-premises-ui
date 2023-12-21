@@ -101,8 +101,72 @@ const unallocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   return rows
 }
 
+const tasksTableRows = (tasks: Array<Task>, allocatedFilter: string): Array<TableRow> => {
+  const rows: Array<TableRow> =
+    allocatedFilter === 'allocated' ? allocatedTableRows(tasks) : unallocatedTableRows(tasks)
+
+  return rows
+}
+
+const allocatedTableHeader = () => {
+  return [
+    {
+      text: 'Person',
+    },
+    {
+      text: 'Days until due date',
+      attributes: {
+        'aria-sort': 'none',
+      },
+    },
+    {
+      text: 'Allocated to',
+    },
+    {
+      text: 'Status',
+    },
+    {
+      text: 'Task type',
+    },
+    {
+      html: '<span class="govuk-visually-hidden">Actions</span>',
+    },
+  ]
+}
+
+const unAllocatedTableHeader = () => {
+  return [
+    {
+      text: 'Person',
+    },
+    {
+      text: 'Days until due date',
+      attributes: {
+        'aria-sort': 'none',
+      },
+    },
+    {
+      text: 'Allocated to',
+    },
+    {
+      text: 'Status',
+    },
+    {
+      text: 'Task type',
+    },
+    {
+      html: '<span class="govuk-visually-hidden">Actions</span>',
+    },
+  ]
+}
+
+const tasksTableHeader = (allocatedFilter: string) => {
+  return allocatedFilter === 'allocated' ? allocatedTableHeader() : unAllocatedTableHeader()
+}
+
 export {
   allocatedTableRows,
+  tasksTableHeader,
   allocationLinkCell,
   formatDaysUntilDueWithWarning,
   daysUntilDueCell,
@@ -110,5 +174,6 @@ export {
   taskTypeCell,
   allocationCell,
   statusBadge,
+  tasksTableRows,
   unallocatedTableRows,
 }
