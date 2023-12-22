@@ -14,8 +14,8 @@ context('List assessments', () => {
     cy.signIn()
 
     // And I have some assessments
-    const awaitingAssessments = assessmentSummaryFactory.buildList(3)
-    const awaitingResponseAssessments = assessmentSummaryFactory.buildList(2)
+    const awaitingAssessments = assessmentSummaryFactory.buildList(6)
+    const awaitingResponseAssessments = assessmentSummaryFactory.buildList(6)
     const completedAssessments = assessmentSummaryFactory.buildList(6)
 
     cy.task('stubAssessments', {

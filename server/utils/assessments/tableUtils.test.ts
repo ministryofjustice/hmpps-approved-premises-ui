@@ -144,10 +144,13 @@ describe('tableUtils', () => {
             text: 'Tier',
           },
           {
+            text: 'Current location',
+          },
+          {
             text: 'Arrival date',
           },
           {
-            text: 'Current location',
+            text: 'Days since received',
           },
           {
             text: 'Days until assessment due',
@@ -239,6 +242,7 @@ describe('tableUtils', () => {
           { html: assessmentLink(assessment, person) },
           crnCell({ crn: assessment.person.crn }),
           tierCell({ tier: assessment.risks.tier }),
+          { text: person.prisonName },
           { text: formattedArrivalDate(assessment) },
           { text: formatDays(daysSinceReceived(assessment)) },
           { text: formatDays(daysSinceInfoRequest(assessment)) },
@@ -255,6 +259,7 @@ describe('tableUtils', () => {
       expect(requestedFurtherInformationTableRows([assessment])).toEqual([
         [
           restrictedPersonCell(assessment.person),
+          emptyCell(),
           emptyCell(),
           emptyCell(),
           emptyCell(),
