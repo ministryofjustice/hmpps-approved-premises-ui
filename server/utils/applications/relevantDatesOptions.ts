@@ -4,11 +4,13 @@ import { RelevantDatesT } from '../../form-pages/apply/reasons-for-placement/bas
 export const relevantDatesOptions = (
   relevantDates: RelevantDatesT,
   conditionals: Array<string>,
+  selectedDates: Array<string> = [],
 ): Array<CheckBoxItem> => {
   return Object.entries(relevantDates).map(([key, label], i) => {
     return {
       text: label,
       value: key,
+      checked: selectedDates.includes(key),
       conditional: { html: conditionals[i] },
     }
   })
