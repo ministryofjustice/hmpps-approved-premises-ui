@@ -9,16 +9,19 @@ describe('relevantDatesOptions', () => {
       {
         text: 'Parole eligibility date',
         value: 'paroleEligibilityDate',
+        checked: false,
         conditional: { html: '<div>Conditional 1</div>' },
       },
       {
         text: 'Home Detention Curfew (HDC) date',
         value: 'homeDetentionCurfewDate',
+        checked: false,
         conditional: { html: '<div>Conditional 2</div>' },
       },
       {
         text: 'Licence expiry date',
         value: 'licenceExpiryDate',
+        checked: true,
         conditional: { html: '<div>Conditional 3</div>' },
       },
     ]
@@ -30,6 +33,7 @@ describe('relevantDatesOptions', () => {
         licenceExpiryDate: 'Licence expiry date',
       }),
       conditionals,
+      ['licenceExpiryDate'],
     )
     expect(result).toEqual(expected)
   })

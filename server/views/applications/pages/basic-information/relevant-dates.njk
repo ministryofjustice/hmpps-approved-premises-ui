@@ -36,7 +36,7 @@
       hint: {
         text: page.hint
       },
-      items: relevantDatesOptions(page.relevantDatesDictionary, conditionals)
+      items: relevantDatesOptions(page.relevantDatesDictionary, conditionals, page.body.selectedDates)
     }, fetchContext()) }}
 
 {% endblock %}
