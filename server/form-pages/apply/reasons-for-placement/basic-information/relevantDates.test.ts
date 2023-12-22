@@ -13,10 +13,10 @@ describe('RelevantDates', () => {
     'licenceExpiryDate-day': '02',
     'licenceExpiryDate-month': '02',
     'licenceExpiryDate-year': '2023',
-    paroleEligbilityDate: '2023-03-03',
-    'paroleEligbilityDate-day': '03',
-    'paroleEligbilityDate-month': '03',
-    'paroleEligbilityDate-year': '2023',
+    paroleEligibilityDate: '2023-03-03',
+    'paroleEligibilityDate-day': '03',
+    'paroleEligibilityDate-month': '03',
+    'paroleEligibilityDate-year': '2023',
     pssEndDate: '2023-04-04',
     'pssEndDate-day': '04',
     'pssEndDate-month': '04',
@@ -25,10 +25,10 @@ describe('RelevantDates', () => {
     'pssStartDate-day': '05',
     'pssStartDate-month': '05',
     'pssStartDate-year': '2023',
-    sedDate: '2023-06-06',
-    'sedDate-day': '06',
-    'sedDate-month': '06',
-    'sedDate-year': '2023',
+    sentenceExpiryDate: '2023-06-06',
+    'sentenceExpiryDate-day': '06',
+    'sentenceExpiryDate-month': '06',
+    'sentenceExpiryDate-year': '2023',
     selectedDates: relevantDateKeys,
   } as RelevantDatesBody
 
@@ -41,10 +41,10 @@ describe('RelevantDates', () => {
     'licenceExpiryDate-day': '',
     'licenceExpiryDate-month': '',
     'licenceExpiryDate-year': '',
-    paroleEligbilityDate: undefined as string,
-    'paroleEligbilityDate-day': '',
-    'paroleEligbilityDate-month': '',
-    'paroleEligbilityDate-year': '',
+    paroleEligibilityDate: undefined as string,
+    'paroleEligibilityDate-day': '',
+    'paroleEligibilityDate-month': '',
+    'paroleEligibilityDate-year': '',
     pssEndDate: undefined as string,
     'pssEndDate-day': '',
     'pssEndDate-month': '',
@@ -53,10 +53,10 @@ describe('RelevantDates', () => {
     'pssStartDate-day': '',
     'pssStartDate-month': '',
     'pssStartDate-year': '',
-    sedDate: undefined as string,
-    'sedDate-day': '',
-    'sedDate-month': '',
-    'sedDate-year': '',
+    sentenceExpiryDate: undefined as string,
+    'sentenceExpiryDate-day': '',
+    'sentenceExpiryDate-month': '',
+    'sentenceExpiryDate-year': '',
   }
   const application = applicationFactory.build()
 
@@ -100,10 +100,10 @@ describe('RelevantDates', () => {
       const page = new RelevantDates(
         {
           ...body,
-          'sedDate-day': '32',
+          'sentenceExpiryDate-day': '32',
           'homeDetentionCurfewDate-day': '32',
           'licenceExpiryDate-day': '32',
-          'paroleEligbilityDate-day': '32',
+          'paroleEligibilityDate-day': '32',
           'pssEndDate-day': '32',
           'pssStartDate-day': '32',
         },
@@ -111,10 +111,10 @@ describe('RelevantDates', () => {
       )
 
       expect(page.errors()).toEqual({
-        sedDate: 'Sentence expiry date must be a valid date',
+        sentenceExpiryDate: 'Sentence expiry date must be a valid date',
         homeDetentionCurfewDate: 'Home Detention Curfew (HDC) date must be a valid date',
         licenceExpiryDate: 'Licence expiry date must be a valid date',
-        paroleEligbilityDate: 'Parole eligibility date must be a valid date',
+        paroleEligibilityDate: 'Parole eligibility date must be a valid date',
         pssEndDate: 'Post sentence supervision (PSS) end date must be a valid date',
         pssStartDate: 'Post sentence supervision (PSS) start date must be a valid date',
       })
@@ -131,10 +131,10 @@ describe('RelevantDates', () => {
       expect(page.errors()).toEqual({
         homeDetentionCurfewDate: 'When the box is checked you must enter a Home Detention Curfew (HDC) date date',
         licenceExpiryDate: 'When the box is checked you must enter a Licence expiry date date',
-        paroleEligbilityDate: 'When the box is checked you must enter a Parole eligibility date date',
+        paroleEligibilityDate: 'When the box is checked you must enter a Parole eligibility date date',
         pssEndDate: 'When the box is checked you must enter a Post sentence supervision (PSS) end date date',
         pssStartDate: 'When the box is checked you must enter a Post sentence supervision (PSS) start date date',
-        sedDate: 'When the box is checked you must enter a Sentence expiry date date',
+        sentenceExpiryDate: 'When the box is checked you must enter a Sentence expiry date date',
       })
     })
   })

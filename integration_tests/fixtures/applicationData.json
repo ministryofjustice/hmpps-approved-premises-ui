@@ -31,17 +31,17 @@
     },
     "relevant-dates": {
       "selectedDates": [
-        "paroleEligbilityDate",
+        "paroleEligibilityDate",
         "homeDetentionCurfewDate",
         "licenceExpiryDate",
         "pssStartDate",
         "pssEndDate",
-        "sedDate"
+        "sentenceExpiryDate"
       ],
-      "paroleEligbilityDate-year": "2024",
-      "paroleEligbilityDate-month": "11",
-      "paroleEligbilityDate-day": "14",
-      "paroleEligbilityDate": "2024-11-14",
+      "paroleEligibilityDate-year": "2024",
+      "paroleEligibilityDate-month": "11",
+      "paroleEligibilityDate-day": "14",
+      "paroleEligibilityDate": "2024-11-14",
       "homeDetentionCurfewDate-year": "2024",
       "homeDetentionCurfewDate-month": "10",
       "homeDetentionCurfewDate-day": "14",
@@ -58,10 +58,10 @@
       "pssEndDate-month": "07",
       "pssEndDate-day": "14",
       "pssEndDate": "2024-07-14",
-      "sedDate-year": "2024",
-      "sedDate-month": "06",
-      "sedDate-day": "14",
-      "sedDate": "2024-06-14"
+      "sentenceExpiryDate-year": "2024",
+      "sentenceExpiryDate-month": "06",
+      "sentenceExpiryDate-day": "14",
+      "sentenceExpiryDate": "2024-06-14"
     },
     "sentence-type": {
       "sentenceType": "communityOrder"

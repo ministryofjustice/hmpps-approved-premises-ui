@@ -9,11 +9,11 @@ export default class RelevantDatesPage extends ApplyPage {
 
   completeForm() {
     this.checkCheckboxesFromPageBody('selectedDates', { addArrayNotationToInputName: true })
-    this.completeDateInputsFromPageBody('paroleEligbilityDate')
+    this.completeDateInputsFromPageBody('paroleEligibilityDate')
     this.completeDateInputsFromPageBody('homeDetentionCurfewDate')
     this.completeDateInputsFromPageBody('licenceExpiryDate')
     this.completeDateInputsFromPageBody('pssStartDate')
     this.completeDateInputsFromPageBody('pssEndDate')
-    this.completeDateInputsFromPageBody('sedDate')
+    this.completeDateInputsFromPageBody('sentenceExpiryDate')
   }
 }
