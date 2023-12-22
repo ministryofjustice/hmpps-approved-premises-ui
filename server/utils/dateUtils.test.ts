@@ -1,14 +1,14 @@
 /* eslint-disable import/no-duplicates */
 
-import isPast from 'date-fns/isPast'
-import differenceInDays from 'date-fns/differenceInDays'
-import formatDistanceStrict from 'date-fns/formatDistanceStrict'
+import { isPast } from 'date-fns/isPast'
+import { differenceInDays } from 'date-fns/differenceInDays'
+import { formatDistanceStrict } from 'date-fns/formatDistanceStrict'
 import { subDays } from 'date-fns'
-import isTodayDateFns from 'date-fns/isToday'
+import { isToday as isTodayDateFns } from 'date-fns/isToday'
+import { fromPartial } from '@total-typescript/shoehorn'
 
 import type { ObjectWithDateParts } from '@approved-premises/ui'
 
-import { fromPartial } from '@total-typescript/shoehorn'
 import {
   DateFormats,
   InvalidDateStringError,

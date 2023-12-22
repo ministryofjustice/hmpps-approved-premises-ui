@@ -1,4 +1,5 @@
 import {
+  Duration,
   addBusinessDays as addBusinsessDaysWithoutBankHolidays,
   addDays,
   differenceInBusinessDays as differenceInBusinessDaysDateFns,
@@ -75,7 +76,13 @@ export class DateFormats {
    * @throws {InvalidDateStringError} If the string is not a valid ISO8601 datetime string
    */
   static isoToDateObj(date: string) {
-    const parsedDate = parseISO(date)
+    let parsedDate: Date
+
+    try {
+      parsedDate = parseISO(date)
+    } catch (err) {
+      throw new InvalidDateStringError(`Invalid Date: ${date}`)
+    }
 
     if (Number.isNaN(parsedDate.getTime())) {
       throw new InvalidDateStringError(`Invalid Date: ${date}`)
@@ -194,9 +201,9 @@ export class DateFormats {
 
   static formatDuration(
     duration: DurationWithNumberOrString,
-    durationFormat: Array<string> = ['weeks', 'days'],
+    durationFormat: Array<'weeks' | 'days'> = ['weeks', 'days'],
   ): string {
-    const formattedDuration = {} as Duration
+    const formattedDuration: Duration = {}
 
     Object.keys(duration).forEach(k => {
       formattedDuration[k] = Number(duration[k])
