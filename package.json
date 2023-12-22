@@ -171,7 +171,7 @@
     "@types/passport": "^1.0.11",
     "@types/passport-oauth2": "^1.4.11",
     "@types/superagent": "^8.0.0",
-    "@types/supertest": "^2.0.12",
+    "@types/supertest": "^6.0.0",
     "@types/underscore": "^1.11.4",
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
