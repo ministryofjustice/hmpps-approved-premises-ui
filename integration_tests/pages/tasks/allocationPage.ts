@@ -7,7 +7,7 @@ import type {
 import Page from '../page'
 import paths from '../../../server/paths/tasks'
 
-import { applicationSummary } from '../../../server/utils/tasks'
+import { taskSummary } from '../../../server/utils/tasks'
 import { kebabCase } from '../../../server/utils/utils'
 
 export default class AllocationsPage extends Page {
@@ -24,7 +24,7 @@ export default class AllocationsPage extends Page {
   }
 
   shouldShowInformationAboutTask() {
-    const summaryListItems = applicationSummary(this.application)
+    const summaryListItems = taskSummary(this.task, this.application)
 
     summaryListItems.forEach(item => {
       const key = 'text' in item.key ? item.key.text : item.key.html

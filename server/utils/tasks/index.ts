@@ -5,6 +5,7 @@ import { SummaryListItem } from '../../@types/ui'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { getApplicationType } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
+import { nameOrPlaceholderCopy } from '../personUtils'
 import { allocatedTableRows, tasksTableHeader, tasksTableRows, unallocatedTableRows } from './table'
 
 type GroupedTasks = {
@@ -26,10 +27,18 @@ const groupByAllocation = (tasks: Array<Task>) => {
   return result
 }
 
-const applicationSummary = (application: Application): Array<SummaryListItem> => {
+const taskSummary = (task: Task, application: Application): Array<SummaryListItem> => {
   const arrivalDate = arrivalDateFromApplication(application)
 
   const summary = [
+    {
+      key: {
+        text: 'Name',
+      },
+      value: {
+        text: nameOrPlaceholderCopy(application.person, `LAO: ${application.person.crn}`),
+      },
+    },
     {
       key: {
         text: 'CRN',
@@ -54,16 +63,22 @@ const applicationSummary = (application: Application): Array<SummaryListItem> =>
         text: getApplicationType(application),
       },
     },
+    {
+      key: { text: 'Currently allocated to' },
+      value: { text: task?.allocatedToStaffMember ? task.allocatedToStaffMember.name : 'Unallocated' },
+    },
   ]
 
   return summary
 }
 
 export {
-  applicationSummary,
+  taskSummary,
   allocatedTableRows,
   groupByAllocation,
   unallocatedTableRows,
   tasksTableHeader,
   tasksTableRows,
+  userTableHeader,
+  userTableRows,
 }
