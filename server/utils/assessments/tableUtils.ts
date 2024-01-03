@@ -107,11 +107,15 @@ const assessmentTable = (activeTab: AssessmentCurrentTab, assessments: Array<Ass
             text: 'Tier',
           },
           {
+            text: 'Current location',
+          },
+          {
             text: 'Arrival date',
           },
           {
-            text: 'Current location',
+            text: 'Days since received',
           },
+
           {
             text: 'Days until assessment due',
           },
@@ -236,6 +240,7 @@ const requestedFurtherInformationTableRows = (assessments: Array<AssessmentSumma
         linkCell(assessment, assessment.person),
         crnCell({ crn: assessment.person.crn }),
         tierCell({ tier: assessment.risks.tier }),
+        prisonCell(assessment.person),
         arrivalDateCell(assessment),
         daysSinceReceivedCell(assessment),
         daysSinceInfoRequestCell(assessment),
@@ -244,6 +249,7 @@ const requestedFurtherInformationTableRows = (assessments: Array<AssessmentSumma
     } else {
       rows.push([
         restrictedPersonCell(assessment.person),
+        emptyCell(),
         emptyCell(),
         emptyCell(),
         emptyCell(),
