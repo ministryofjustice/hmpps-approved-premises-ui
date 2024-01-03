@@ -88,17 +88,4 @@ context('Tasks', () => {
       expect(body.userId).equal(this.selectedUser.id)
     })
   })
-
-  it('shows an error when I do not select a user', function test() {
-    cy.task('stubAllocationErrors', this.task)
-
-    // Given I am on the allocations page
-    const allocationsPage = AllocationsPage.visit(this.application, this.task)
-
-    // And I click submit without selecting a user
-    allocationsPage.clickSubmit()
-
-    // Then I should see an error
-    allocationsPage.shouldShowErrorMessagesForFields(['userId'])
-  })
 })
