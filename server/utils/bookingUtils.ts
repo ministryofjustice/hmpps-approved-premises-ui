@@ -7,7 +7,7 @@ import type {
   TableCell,
   TableRow,
 } from '@approved-premises/ui'
-import type { BedSummary, Booking, BookingSummary, PremisesBooking } from '@approved-premises/api'
+import type { BedSummary, Booking, BookingStatus, BookingSummary, PremisesBooking } from '@approved-premises/api'
 import { addDays, isBefore, isEqual, isWithinInterval } from 'date-fns'
 import paths from '../paths/manage'
 import applyPaths from '../paths/apply'
@@ -274,6 +274,41 @@ export const bedsAsSelectItems = (beds: Array<BedSummary>, selectedId: string): 
   }))
 }
 
+const bookingStatuses: Record<BookingStatus, string> = {
+  arrived: 'Arrived',
+  'awaiting-arrival': 'Awaiting arrival',
+  'not-arrived': 'Not arrived',
+  departed: 'Departed',
+  cancelled: 'Cancelled',
+  provisional: 'Provisional',
+  confirmed: 'Confirmed',
+  closed: 'Closed',
+}
+
+const statusTags = (): Record<BookingStatus, string> => {
+  const colours: Record<BookingStatus, string> = {
+    arrived: '',
+    'awaiting-arrival': 'blue',
+    'not-arrived': 'red',
+    departed: 'pink',
+    cancelled: 'red',
+    provisional: 'yellow',
+    confirmed: 'blue',
+    closed: 'red',
+  }
+  return Object.keys(bookingStatuses).reduce(
+    (item, key) => {
+      item[key] = `<strong class="govuk-tag govuk-tag--${colours[key]}">${bookingStatuses[key]}</strong>`
+      return item
+    },
+    {} as Record<BookingStatus, string>,
+  )
+}
+
+export const bookingStatus = (booking: Booking): string => {
+  return statusTags()[booking.status]
+}
+
 export const bookingPersonRows = (booking: Booking): Array<SummaryListItem> => {
   return [
     {
@@ -288,6 +323,14 @@ export const bookingPersonRows = (booking: Booking): Array<SummaryListItem> => {
       },
       value: {
         text: booking.person.crn,
+      },
+    },
+    {
+      key: {
+        text: 'Status',
+      },
+      value: {
+        html: bookingStatus(booking),
       },
     },
   ]
@@ -417,4 +460,28 @@ export const bookingShowDocumentRows = (booking: Booking): Array<SummaryListItem
   }
 
   return rows
+}
+
+export const cancellationRows = (booking: Booking): Array<SummaryListItem> => {
+  if (booking.cancellation) {
+    return [
+      {
+        key: {
+          text: 'Cancelled on',
+        },
+        value: {
+          text: DateFormats.isoDateToUIDate(booking.cancellation.createdAt),
+        },
+      },
+      {
+        key: {
+          text: 'Reason',
+        },
+        value: {
+          text: booking.cancellation.reason.name,
+        },
+      },
+    ]
+  }
+  return []
 }
