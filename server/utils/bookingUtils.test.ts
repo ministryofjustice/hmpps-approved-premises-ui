@@ -8,6 +8,7 @@ import {
   bookingDepartureRows,
   bookingPersonRows,
   bookingShowDocumentRows,
+  bookingStatus,
   bookingSummaryList,
   bookingsToTableRows,
   cancellationRows,
@@ -34,7 +35,7 @@ import assessPaths from '../paths/assess'
 import applyPaths from '../paths/apply'
 import { DateFormats } from './dateUtils'
 import { linebreaksToParagraphs, linkTo } from './utils'
-import { FullPerson } from '../@types/shared'
+import { BookingStatus, FullPerson } from '../@types/shared'
 
 describe('bookingUtils', () => {
   const premisesId = 'e8f29a4a-dd4d-40a2-aa58-f3f60245c8fc'
@@ -451,6 +452,26 @@ describe('bookingUtils', () => {
     })
   })
 
+  describe('bookingStatus', () => {
+    const lookup: Record<BookingStatus, string> = {
+      arrived: '<strong class="govuk-tag govuk-tag--">Arrived</strong>',
+      'awaiting-arrival': '<strong class="govuk-tag govuk-tag--blue">Awaiting arrival</strong>',
+      'not-arrived': '<strong class="govuk-tag govuk-tag--red">Not arrived</strong>',
+      departed: '<strong class="govuk-tag govuk-tag--pink">Departed</strong>',
+      cancelled: '<strong class="govuk-tag govuk-tag--red">Cancelled</strong>',
+      provisional: '<strong class="govuk-tag govuk-tag--yellow">Provisional</strong>',
+      confirmed: '<strong class="govuk-tag govuk-tag--blue">Confirmed</strong>',
+      closed: '<strong class="govuk-tag govuk-tag--red">Closed</strong>',
+    }
+
+    Object.keys(lookup).forEach((status: BookingStatus) => {
+      it(`Returns the correct status for a '${status}' booking`, () => {
+        const booking = bookingFactory.build({ status })
+        expect(bookingStatus(booking)).toEqual(lookup[status])
+      })
+    })
+  })
+
   describe('bookingPersonRows', () => {
     it('returns the correct rows for a person', () => {
       const booking = bookingFactory.build()
@@ -468,6 +489,14 @@ describe('bookingUtils', () => {
           },
           value: {
             text: booking.person.crn,
+          },
+        },
+        {
+          key: {
+            text: 'Status',
+          },
+          value: {
+            html: bookingStatus(booking),
           },
         },
       ])
