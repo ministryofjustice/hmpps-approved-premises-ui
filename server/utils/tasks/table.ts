@@ -1,7 +1,8 @@
-import { Task } from '../../@types/shared'
+import { SortDirection, Task, TaskSortField } from '../../@types/shared'
 import { TableCell, TableRow } from '../../@types/ui'
 import paths from '../../paths/tasks'
 import { DateFormats } from '../dateUtils'
+import { sortHeader } from '../sortHeader'
 import { nameCell } from '../tableUtils'
 import { kebabCase, linkTo, sentenceCase } from '../utils'
 
@@ -108,17 +109,12 @@ const tasksTableRows = (tasks: Array<Task>, allocatedFilter: string): Array<Tabl
   return rows
 }
 
-const allocatedTableHeader = () => {
+const allocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirection, hrefPrefix: string) => {
   return [
     {
       text: 'Person',
     },
-    {
-      text: 'Days until due date',
-      attributes: {
-        'aria-sort': 'none',
-      },
-    },
+    sortHeader<TaskSortField>('Days until due date', 'createdAt', sortBy, sortDirection, hrefPrefix),
     {
       text: 'Allocated to',
     },
@@ -134,17 +130,12 @@ const allocatedTableHeader = () => {
   ]
 }
 
-const unAllocatedTableHeader = () => {
+const unAllocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirection, hrefPrefix: string) => {
   return [
     {
       text: 'Person',
     },
-    {
-      text: 'Days until due date',
-      attributes: {
-        'aria-sort': 'none',
-      },
-    },
+    sortHeader<TaskSortField>('Days until due date', 'createdAt', sortBy, sortDirection, hrefPrefix),
     {
       text: 'Allocated to',
     },
@@ -160,8 +151,15 @@ const unAllocatedTableHeader = () => {
   ]
 }
 
-const tasksTableHeader = (allocatedFilter: string) => {
-  return allocatedFilter === 'allocated' ? allocatedTableHeader() : unAllocatedTableHeader()
+const tasksTableHeader = (
+  allocatedFilter: string,
+  sortBy: TaskSortField,
+  sortDirection: SortDirection,
+  hrefPrefix: string,
+) => {
+  return allocatedFilter === 'allocated'
+    ? allocatedTableHeader(sortBy, sortDirection, hrefPrefix)
+    : unAllocatedTableHeader(sortBy, sortDirection, hrefPrefix)
 }
 
 export {

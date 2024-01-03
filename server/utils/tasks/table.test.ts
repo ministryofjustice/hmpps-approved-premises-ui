@@ -14,6 +14,8 @@ import {
 } from './table'
 import { sentenceCase } from '../utils'
 import { DateFormats } from '../dateUtils'
+import { sortHeader } from '../sortHeader'
+import { TaskSortField } from '../../@types/shared'
 
 jest.mock('../dateUtils')
 
@@ -115,17 +117,16 @@ describe('table', () => {
   })
 
   describe('unallocatedTableRows', () => {
+    const sortBy = 'createdAt'
+    const sortDirection = 'asc'
+    const hrefPrefix = 'http://localhost'
+
     it('returns an array of unallocated table headers', () => {
-      expect(tasksTableHeader('unallocated')).toEqual([
+      expect(tasksTableHeader('unallocated', sortBy, sortDirection, hrefPrefix)).toEqual([
         {
           text: 'Person',
         },
-        {
-          text: 'Days until due date',
-          attributes: {
-            'aria-sort': 'none',
-          },
-        },
+        sortHeader<TaskSortField>('Days until due date', 'createdAt', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Allocated to',
         },
@@ -143,17 +144,16 @@ describe('table', () => {
   })
 
   describe('allocatedTableRows', () => {
+    const sortBy = 'createdAt'
+    const sortDirection = 'asc'
+    const hrefPrefix = 'http://localhost'
+
     it('returns an array of allocated table headers', () => {
-      expect(tasksTableHeader('allocated')).toEqual([
+      expect(tasksTableHeader('allocated', sortBy, sortDirection, hrefPrefix)).toEqual([
         {
           text: 'Person',
         },
-        {
-          text: 'Days until due date',
-          attributes: {
-            'aria-sort': 'none',
-          },
-        },
+        sortHeader<TaskSortField>('Days until due date', 'createdAt', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Allocated to',
         },
