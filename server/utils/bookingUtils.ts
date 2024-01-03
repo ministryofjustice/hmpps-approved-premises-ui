@@ -418,3 +418,27 @@ export const bookingShowDocumentRows = (booking: Booking): Array<SummaryListItem
 
   return rows
 }
+
+export const cancellationRows = (booking: Booking): Array<SummaryListItem> => {
+  if (booking.cancellation) {
+    return [
+      {
+        key: {
+          text: 'Cancelled on',
+        },
+        value: {
+          text: DateFormats.isoDateToUIDate(booking.cancellation.createdAt),
+        },
+      },
+      {
+        key: {
+          text: 'Reason',
+        },
+        value: {
+          text: booking.cancellation.reason.name,
+        },
+      },
+    ]
+  }
+  return []
+}

@@ -46,6 +46,21 @@
 
       <br>
 
+      {% if booking.cancellation %}
+
+        <h2>Cancellation information</h2>
+
+        {{
+        govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          rows: BookingUtils.cancellationRows(booking)
+        })
+      }}
+
+        <br>
+
+      {% endif %}
+
       <h2>Arrival information</h2>
 
       {{

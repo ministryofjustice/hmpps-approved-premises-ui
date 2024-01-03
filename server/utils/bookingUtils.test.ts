@@ -10,6 +10,7 @@ import {
   bookingShowDocumentRows,
   bookingSummaryList,
   bookingsToTableRows,
+  cancellationRows,
   departingTodayOrLate,
   generateConflictBespokeError,
   manageBookingLink,
@@ -22,6 +23,7 @@ import {
   bedSummaryFactory,
   bookingFactory,
   bookingSummaryFactory,
+  cancellationFactory,
   departureFactory,
   personFactory,
   premisesBookingFactory,
@@ -617,6 +619,38 @@ describe('bookingUtils', () => {
           ),
         )
       })
+    })
+  })
+
+  describe('cancellationRows', () => {
+    it('returns an empty array if there is no cancellation', () => {
+      const booking = bookingFactory.build({ cancellation: null })
+
+      expect(cancellationRows(booking)).toEqual([])
+    })
+
+    it('returns an details of a cancellations', () => {
+      const cancellation = cancellationFactory.build()
+      const booking = bookingFactory.build({ cancellation })
+
+      expect(cancellationRows(booking)).toEqual([
+        {
+          key: {
+            text: 'Cancelled on',
+          },
+          value: {
+            text: DateFormats.isoDateToUIDate(cancellation.createdAt),
+          },
+        },
+        {
+          key: {
+            text: 'Reason',
+          },
+          value: {
+            text: cancellation.reason.name,
+          },
+        },
+      ])
     })
   })
 })
