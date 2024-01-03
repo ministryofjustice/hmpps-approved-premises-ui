@@ -168,14 +168,13 @@ describeClient('taskClient', provider => {
 
       const applicationId = 'some-application-id'
       const userId = 'some-user-id'
-      const taskType = 'placement-request'
 
       provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to allocate a task',
         withRequest: {
           method: 'POST',
-          path: paths.tasks.allocations.create({ id: applicationId, taskType }),
+          path: paths.tasks.allocations.create({ id: applicationId, taskType: task.taskType }),
           body: { userId },
           headers: {
             authorization: `Bearer ${token}`,
@@ -188,7 +187,7 @@ describeClient('taskClient', provider => {
         },
       })
 
-      const result = await taskClient.createAllocation(applicationId, userId, taskType)
+      const result = await taskClient.createAllocation(applicationId, userId, task.taskType)
 
       expect(result).toEqual(task)
     })

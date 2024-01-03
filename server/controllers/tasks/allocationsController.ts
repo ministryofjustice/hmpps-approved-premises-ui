@@ -3,6 +3,7 @@ import { convertToTitleCase, sentenceCase } from '../../utils/utils'
 import paths from '../../paths/tasks'
 import { TaskService } from '../../services'
 import { catchValidationErrorOrPropogate } from '../../utils/validation'
+import { Task } from '../../@types/shared'
 
 export default class AllocationsController {
   constructor(private readonly taskService: TaskService) {}
@@ -14,7 +15,7 @@ export default class AllocationsController {
           req.user.token,
           req.params.id,
           req.body.userId,
-          req.params.taskType,
+          req.params.taskType as Task['taskType'],
         )
 
         req.flash(

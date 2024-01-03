@@ -2,7 +2,7 @@ import { CategorisedTask, PaginatedResponse } from '@approved-premises/ui'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
-import { Reallocation, Task, TaskSortField, TaskWrapper } from '../@types/shared'
+import { Reallocation, Task, TaskSortField, TaskWrapper, User } from '../@types/shared'
 
 export default class TaskClient {
   restClient: RestClient
@@ -42,7 +42,7 @@ export default class TaskClient {
     })) as Promise<TaskWrapper>
   }
 
-  async createAllocation(applicationId: string, userId: string, taskType: string): Promise<Reallocation> {
+  async createAllocation(applicationId: string, userId: User['id'], taskType: Task['taskType']): Promise<Reallocation> {
     return (await this.restClient.post({
       path: paths.tasks.allocations.create({ id: applicationId, taskType }),
       data: { userId },

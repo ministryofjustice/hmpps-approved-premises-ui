@@ -6,6 +6,7 @@ import {
   Task,
   TaskSortField,
   TaskWrapper,
+  ApprovedPremisesUser as User,
 } from '@approved-premises/api'
 import { GroupedMatchTasks, PaginatedResponse } from '@approved-premises/ui'
 import { RestClientBuilder } from '../data'
@@ -73,8 +74,8 @@ export default class TaskService {
   async createAllocation(
     token: string,
     applicationId: string,
-    userId: string,
-    taskType: string,
+    userId: User['id'],
+    taskType: Task['taskType'],
   ): Promise<Reallocation> {
     const taskClient = this.taskClientFactory(token)
 
