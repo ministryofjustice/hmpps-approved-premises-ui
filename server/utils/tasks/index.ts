@@ -6,7 +6,7 @@ import { arrivalDateFromApplication } from '../applications/arrivalDateFromAppli
 import { getApplicationType } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
 import { nameOrPlaceholderCopy } from '../personUtils'
-import { allocatedTableRows, tasksTableHeader, tasksTableRows, unallocatedTableRows } from './table'
+import { allocatedTableRows, tasksTableHeader, tasksTableRows, unallocatedTableRows } from './listTable'
 
 type GroupedTasks = {
   allocated: Array<Task>

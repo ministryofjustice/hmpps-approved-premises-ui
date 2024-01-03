@@ -1,7 +1,7 @@
 import Page from '../page'
 import paths from '../../../server/paths/tasks'
 
-import { allocatedTableRows, unallocatedTableRows } from '../../../server/utils/tasks/table'
+import { allocatedTableRows, unallocatedTableRows } from '../../../server/utils/tasks/listTable'
 
 import { Task } from '../../../server/@types/shared'
 import { shouldShowTableRows } from '../../helpers'
