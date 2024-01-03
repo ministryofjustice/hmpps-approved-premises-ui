@@ -72,7 +72,7 @@ import staffMemberFactory from './staffMember'
 import taskFactory from './task'
 import taskWrapperFactory from './taskWrapperFactory'
 import timelineEventFactory from './timelineEvent'
-import userFactory from './user'
+import userFactory, { userWithWorkloadFactory } from './user'
 import userDetailsFactory from './userDetails'
 import placementApplicationDecisionEnvelopeFactory from './placementApplicationDecisionEnvelope'
 import premisesBookingFactory from './premisesBooking'
@@ -157,4 +157,5 @@ export {
   timelineEventFactory,
   userFactory,
   userDetailsFactory,
+  userWithWorkloadFactory,
 }
