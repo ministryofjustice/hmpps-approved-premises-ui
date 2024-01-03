@@ -22,12 +22,12 @@ export default class ListPage extends Page {
   }
 
   shouldShowAllocatedTasks(allocatedTasks = this.allocatedTasks): void {
-    shouldShowTableRows(allocatedTasks, allocatedTableRows)
+    shouldShowTableRows(allocatedTableRows(allocatedTasks))
   }
 
   shouldShowUnallocatedTasks(): void {
     cy.get('a').contains('Unallocated').click()
-    shouldShowTableRows(this.unallocatedTasks, unallocatedTableRows)
+    shouldShowTableRows(unallocatedTableRows(this.unallocatedTasks))
   }
 
   clickTask(task: Task) {

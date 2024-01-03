@@ -16,7 +16,7 @@ export default class DashboardPage extends Page {
   }
 
   shouldShowApplications(): void {
-    shouldShowTableRows(this.applications, dashboardTableRows)
+    shouldShowTableRows(dashboardTableRows(this.applications))
   }
 
   searchByCrnOrName(crnOrName: string): void {

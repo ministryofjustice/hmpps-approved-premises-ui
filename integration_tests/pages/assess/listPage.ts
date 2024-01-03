@@ -48,6 +48,6 @@ export default class ListPage extends Page {
         tableRowFunction = awaitingAssessmentTableRows
         break
     }
-    shouldShowTableRows(assessments, tableRowFunction)
+    shouldShowTableRows(tableRowFunction(assessments))
   }
 }
