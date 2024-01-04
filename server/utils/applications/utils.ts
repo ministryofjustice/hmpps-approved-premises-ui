@@ -58,6 +58,7 @@ const applicationStatuses: Record<ApprovedPremisesApplicationStatus, string> = {
   inapplicable: 'Application inapplicable',
   withdrawn: 'Application withdrawn',
   requestedFurtherInformation: 'Further information requested',
+  pendingPlacementRequest: 'Pending placement request',
 }
 
 const applicationTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
@@ -124,6 +125,7 @@ const statusTags = (): Record<ApprovedPremisesApplicationStatus, string> => {
     inapplicable: 'red',
     withdrawn: 'red',
     requestedFurtherInformation: 'yellow',
+    pendingPlacementRequest: 'blue',
   }
   return Object.keys(applicationStatuses).reduce(
     (item, key) => {

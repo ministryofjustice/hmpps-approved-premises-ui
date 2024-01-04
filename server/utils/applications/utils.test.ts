@@ -471,6 +471,7 @@ describe('utils', () => {
         submitted: '<strong class="govuk-tag govuk-tag--">Application submitted</strong>',
         unallocatedAssesment: '<strong class="govuk-tag govuk-tag--blue">Unallocated assessment</strong>',
         withdrawn: '<strong class="govuk-tag govuk-tag--red">Application withdrawn</strong>',
+        pendingPlacementRequest: '<strong class="govuk-tag govuk-tag--blue">Pending placement request</strong>',
       })
     })
   })
@@ -984,6 +985,7 @@ describe('utils', () => {
         { selected: false, text: 'Application inapplicable', value: 'inapplicable' },
         { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
         { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
+        { selected: false, text: 'Pending placement request', value: 'pendingPlacementRequest' },
       ])
     })
 
@@ -1001,6 +1003,7 @@ describe('utils', () => {
         { selected: false, text: 'Application inapplicable', value: 'inapplicable' },
         { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
         { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
+        { selected: false, text: 'Pending placement request', value: 'pendingPlacementRequest' },
       ])
     })
   })
