@@ -1,6 +1,6 @@
 import type { TableRow } from '@approved-premises/ui'
 import type {
-  ApprovedPremises,
+  ApprovedPremisesSummary,
   BedDetail,
   BedSummary,
   ExtendedPremisesSummary,
@@ -74,7 +74,7 @@ export default class PremisesService {
 
     return premises
       .sort((a, b) => a.name.localeCompare(b.name))
-      .map((p: ApprovedPremises) => {
+      .map((p: ApprovedPremisesSummary) => {
         return [
           this.textValue(p.name),
           this.textValue(p.apCode),
