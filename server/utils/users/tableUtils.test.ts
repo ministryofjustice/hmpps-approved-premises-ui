@@ -113,7 +113,7 @@ describe('tableUtils', () => {
         qualifications: ['emergency', 'esap', 'pipe', 'lao', 'womens'],
       })
       expect(allocationCell(user)).toEqual({
-        text: "Stop assessment allocations, Stop match allocations, Stop placement request allocations, Emergency APs, ESAP, PIPE, Limited access offenders, Women's AP's",
+        text: "Stop assessment allocations, Stop match allocations, Stop placement request allocations, Emergency APs, ESAP, PIPE, Limited access offenders, Women's APs",
       })
     })
 
