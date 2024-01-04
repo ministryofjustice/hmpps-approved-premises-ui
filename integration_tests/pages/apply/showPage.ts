@@ -79,7 +79,9 @@ export default class ShowPage extends Page {
       this.assertDefinition('Religion or belief', person.religionOrBelief)
       this.assertDefinition('Sex', person.sex)
 
-      cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', person.status)
+      cy.get(`[data-cy-status]`)
+        .should('have.attr', 'data-cy-status')
+        .and('equal', this.application.personStatusOnSubmission)
       this.assertDefinition('Prison', person.prisonName)
     })
   }

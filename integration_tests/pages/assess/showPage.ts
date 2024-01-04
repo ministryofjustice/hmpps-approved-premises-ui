@@ -6,13 +6,14 @@ import { summaryListSections } from '../../../server/utils/applications/summaryL
 import Page from '../page'
 
 export default class ShowPage extends Page {
-  constructor(private readonly asssessment: ApprovedPremisesAssessment) {
+  constructor(private readonly assessment: ApprovedPremisesAssessment) {
     super('View Assessment')
   }
 
   shouldShowPersonInformation() {
     cy.get('[data-cy-section="person-details"]').within(() => {
-      const person = this.asssessment.application.person as FullPerson
+      const { application } = this.assessment
+      const person = this.assessment.application.person as FullPerson
 
       this.assertDefinition('Name', person.name)
       this.assertDefinition('CRN', person.crn)
@@ -22,13 +23,15 @@ export default class ShowPage extends Page {
       this.assertDefinition('Religion or belief', person.religionOrBelief)
       this.assertDefinition('Sex', person.sex)
 
-      cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', person.status)
+      cy.get(`[data-cy-status]`)
+        .should('have.attr', 'data-cy-status')
+        .and('equal', application.personStatusOnSubmission)
       this.assertDefinition('Prison', person.prisonName)
     })
   }
 
   shouldShowResponses() {
-    const sections = summaryListSections(this.asssessment, false)
+    const sections = summaryListSections(this.assessment, false)
 
     sections.forEach(section => {
       cy.get('h2.govuk-heading-l').contains(section.title).should('exist')

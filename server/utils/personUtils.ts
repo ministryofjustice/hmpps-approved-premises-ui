@@ -1,12 +1,13 @@
-import type { PersonStatus } from '@approved-premises/ui'
-import { FullPerson, Person } from '../@types/shared'
+import { FullPerson, Person, PersonStatus } from '../@types/shared'
+
+const statuses: Record<PersonStatus, string> = {
+  InCommunity: 'In Community',
+  InCustody: 'In Custody',
+  Unknown: 'Unknown',
+}
 
 const statusTag = (status: PersonStatus): string => {
-  if (status === 'InCommunity') {
-    return `<strong class="govuk-tag" data-cy-status="${status}">In Community</strong>`
-  }
-
-  return `<strong class="govuk-tag" data-cy-status="${status}">In Custody</strong>`
+  return `<strong class="govuk-tag" data-cy-status="${status}">${statuses[status]}</strong>`
 }
 
 const tierBadge = (tier: string): string => {

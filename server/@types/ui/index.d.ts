@@ -236,8 +236,6 @@ export type TaskListErrors<K extends TasklistPage> = Partial<Record<keyof K['bod
 export type YesOrNo = 'yes' | 'no'
 export type YesNoOrIDK = YesOrNo | 'iDontKnow'
 
-export type PersonStatus = 'InCustody' | 'InCommunity'
-
 export interface ReferenceData {
   id: string
   name: string

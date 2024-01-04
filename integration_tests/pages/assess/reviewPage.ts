@@ -1,4 +1,5 @@
 import type {
+  ApprovedPremisesApplication,
   ApprovedPremisesAssessment as Assessment,
   Document,
   FullPerson,
@@ -21,7 +22,7 @@ export default class ReviewPage extends AssessPage {
     this.pageClass = new Review({ reviewed: 'yes' }, assessment)
   }
 
-  shouldShowPersonInformation(person: FullPerson) {
+  shouldShowPersonInformation(person: FullPerson, application: ApprovedPremisesApplication) {
     cy.get('[data-cy-section="person-details"]').within(() => {
       this.assertDefinition('Name', person.name)
       this.assertDefinition('CRN', person.crn)
@@ -30,8 +31,9 @@ export default class ReviewPage extends AssessPage {
       this.assertDefinition('Nationality', person.nationality)
       this.assertDefinition('Religion or belief', person.religionOrBelief)
       this.assertDefinition('Sex', person.sex)
-
-      cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', person.status)
+      cy.get(`[data-cy-status]`)
+        .should('have.attr', 'data-cy-status')
+        .and('equal', application.personStatusOnSubmission)
       this.assertDefinition('Prison', person.prisonName)
     })
   }
@@ -130,7 +132,7 @@ export default class ReviewPage extends AssessPage {
   }
 
   shouldShowAnswers(assessment: Assessment) {
-    this.shouldShowPersonInformation(assessment.application.person as FullPerson)
+    this.shouldShowPersonInformation(assessment.application.person as FullPerson, assessment.application)
 
     this.shouldShowDocuments(
       assessment.application.data?.['attach-required-documents']['attach-documents'].selectedDocuments,

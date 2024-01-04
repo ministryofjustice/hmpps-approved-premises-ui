@@ -5,7 +5,8 @@ import * as pathModule from 'path'
 import nunjucks from 'nunjucks'
 import express from 'express'
 
-import type { ErrorMessages, PersonStatus } from '@approved-premises/ui'
+import type { ErrorMessages } from '@approved-premises/ui'
+import { PersonStatus } from '@approved-premises/api'
 import {
   initialiseName,
   kebabCase,
