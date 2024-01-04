@@ -281,7 +281,7 @@ context('Apply', () => {
     const person = personFactory.build({ status: 'InCommunity' })
 
     // A 'regular' placement date (not emergency or short notice)
-    const placementDate = addMonths(new Date(), 4)
+    const placementDate = addMonths(new Date(), 6)
     // A release date in the past
     const releaseDate = subDays(new Date(), 1)
     this.application = addResponsesToFormArtifact(this.application, {

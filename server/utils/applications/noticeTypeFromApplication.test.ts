@@ -20,8 +20,8 @@ describe('noticeTypeFromApplication', () => {
     expect(noticeTypeFromApplication(application)).toEqual('emergency')
   })
 
-  it('returns short_notice if the arrival date is less than 4 months away', () => {
-    const date = add(new Date(), { months: 3 })
+  it('returns short_notice if the arrival date is less than 6 months away', () => {
+    const date = add(new Date(), { months: 5 })
     const arrivalDate = DateFormats.dateObjToIsoDate(date)
 
     ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(arrivalDate)
@@ -29,7 +29,7 @@ describe('noticeTypeFromApplication', () => {
     expect(noticeTypeFromApplication(application)).toEqual('short_notice')
   })
 
-  it('returns standard if the arrival date is more than 4 months away', () => {
+  it('returns standard if the arrival date is more than 6 months away', () => {
     const date = add(new Date(), { months: 6 })
     const arrivalDate = DateFormats.dateObjToIsoDate(date)
 
