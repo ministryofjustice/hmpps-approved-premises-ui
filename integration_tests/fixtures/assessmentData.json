@@ -13,8 +13,9 @@
       "moveOnPlanComments": ""
     },
     "application-timeliness": {
-      "agreeWithShortNoticeReason": "yes",
-      "agreeWithShortNoticeReasonComments": "some comments"
+      "agreeWithShortNoticeReason": "no",
+      "agreeWithShortNoticeReasonComments": "some comments",
+      "reasonForLateApplication": "onBail"
     },
     "contingency-plan-suitability": {
       "contingencyPlanSufficient": "yes",

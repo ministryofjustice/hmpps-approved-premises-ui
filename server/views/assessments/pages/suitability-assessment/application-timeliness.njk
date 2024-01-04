@@ -23,6 +23,23 @@
             })
         %}
 
+        {% set reasonForLateApplicationHtml %}
+            {{
+                formPageSelect(
+                    {
+                    fieldName: "reasonForLateApplication",
+                    label: {
+
+                            text: page.reasonForLateApplicationQuestion
+
+                    },
+                    items: convertObjectsToSelectOptions(page.reasonsForLateApplicationReasons, 'Select an option', 'text', 'value', context)
+                    },
+                    fetchContext()
+                )
+            }}
+        {% endset -%}
+
         {{
             formPageRadios({
                 hint: {
@@ -36,7 +53,10 @@
                     },
                     {
                         value: "no",
-                        text: "No"
+                        text: "No",
+                        conditional: {
+                            html: reasonForLateApplicationHtml
+                        }
                     }
                     ]
                 }, fetchContext()

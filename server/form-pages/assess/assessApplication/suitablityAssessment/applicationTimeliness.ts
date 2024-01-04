@@ -1,5 +1,6 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import ReasonForShortNotice, {
+  ShortNoticeReasons,
   shortNoticeReasons,
 } from '../../../apply/reasons-for-placement/basic-information/reasonForShortNotice'
 import { DateFormats } from '../../../../utils/dateUtils'
@@ -26,7 +27,7 @@ export type ApplicationDetails = {
 
 @Page({
   name: 'application-timeliness',
-  bodyProperties: ['agreeWithShortNoticeReason', 'agreeWithShortNoticeReasonComments'],
+  bodyProperties: ['agreeWithShortNoticeReason', 'agreeWithShortNoticeReasonComments', 'reasonForLateApplication'],
 })
 export default class ApplicationTimeliness implements TasklistPage {
   name = 'application-timeliness'
@@ -35,12 +36,20 @@ export default class ApplicationTimeliness implements TasklistPage {
 
   question = `Do you agree with the applicant's reason for submission within 4 months of expected arrival?`
 
+  reasonForLateApplicationQuestion = 'What is the reason for the late application?'
+
   applicationDetails: ApplicationDetails
+
+  reasonsForLateApplicationReasons = Object.keys(shortNoticeReasons).map(key => ({
+    text: shortNoticeReasons[key],
+    value: key,
+  }))
 
   constructor(
     public body: {
       agreeWithShortNoticeReason: YesOrNo
       agreeWithShortNoticeReasonComments?: string
+      reasonForLateApplication: ShortNoticeReasons
     },
     private readonly assessment: Assessment,
   ) {
@@ -82,7 +91,15 @@ export default class ApplicationTimeliness implements TasklistPage {
   }
 
   response() {
-    return responsesForYesNoAndCommentsSections({ agreeWithShortNoticeReason: this.question }, this.body)
+    const response = {
+      ...responsesForYesNoAndCommentsSections({ agreeWithShortNoticeReason: this.question }, this.body),
+    }
+
+    if (this.body.agreeWithShortNoticeReason === 'no') {
+      response[this.reasonForLateApplicationQuestion] = shortNoticeReasons[this.body.reasonForLateApplication]
+    }
+
+    return response
   }
 
   errors() {
@@ -91,8 +108,12 @@ export default class ApplicationTimeliness implements TasklistPage {
     if (!this.body.agreeWithShortNoticeReason)
       errors.agreeWithShortNoticeReason = `You must confirm if you agree with the applicant's reason for submission within 4 months of expected arrival`
 
-    if (this.body.agreeWithShortNoticeReason === 'no' && !this.body.agreeWithShortNoticeReasonComments) {
-      errors.agreeWithShortNoticeReasonComments = 'You must provide details to support the decision'
+    if (this.body.agreeWithShortNoticeReason === 'no') {
+      if (!this.body.agreeWithShortNoticeReasonComments)
+        errors.agreeWithShortNoticeReasonComments = 'You must provide details to support the decision'
+
+      if (!this.body.reasonForLateApplication)
+        errors.reasonForLateApplication = 'You must provide a reason for the late application'
     }
 
     return errors
