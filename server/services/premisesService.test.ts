@@ -6,6 +6,7 @@ import {
   bedSummaryFactory,
   extendedPremisesSummaryFactory,
   premisesFactory,
+  premisesSummaryFactory,
   roomFactory,
   staffMemberFactory,
 } from '../testutils/factories'
@@ -31,7 +32,7 @@ describe('PremisesService', () => {
 
   describe('getAll', () => {
     it('calls the all method of the premises client and returns the response', async () => {
-      const premises = premisesFactory.buildList(2)
+      const premises = premisesSummaryFactory.buildList(2)
       premisesClient.all.mockResolvedValue(premises)
 
       const result = await service.getAll(token)
@@ -42,8 +43,8 @@ describe('PremisesService', () => {
     })
 
     it('sorts the premises returned by name', async () => {
-      const premisesA = premisesFactory.build({ name: 'A' })
-      const premisesB = premisesFactory.build({ name: 'B' })
+      const premisesA = premisesSummaryFactory.build({ name: 'A' })
+      const premisesB = premisesSummaryFactory.build({ name: 'B' })
 
       premisesClient.all.mockResolvedValue([premisesB, premisesA])
 
@@ -125,15 +126,14 @@ describe('PremisesService', () => {
 
   describe('tableRows', () => {
     it('returns a table view of the premises', async () => {
-      const premises1 = premisesFactory.build({ name: 'XYZ' })
-      const premises2 = premisesFactory.build({ name: 'ABC' })
-      const premises3 = premisesFactory.build({ name: 'GHI' })
+      const premises1 = premisesSummaryFactory.build({ name: 'XYZ' })
+      const premises2 = premisesSummaryFactory.build({ name: 'ABC' })
+      const premises3 = premisesSummaryFactory.build({ name: 'GHI' })
 
       const premises = [premises1, premises2, premises3]
       premisesClient.all.mockResolvedValue(premises)
 
       const rows = await service.tableRows(token)
-
       expect(rows).toEqual([
         [
           {

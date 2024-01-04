@@ -13,4 +13,5 @@ export default Factory.define<ApprovedPremisesSummary>(() => ({
   bedCount: 50,
   addressLine1: faker.location.streetAddress(),
   addressLine2: faker.location.city(),
+  probationRegion: faker.location.city(),
 }))
