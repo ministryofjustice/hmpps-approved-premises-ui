@@ -12,9 +12,16 @@ import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 import Rfap from '../../../apply/risk-and-need-factors/further-considerations/rfap'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
+import { arrivalDateFromApplication } from '../../../../utils/applications/arrivalDateFromApplication'
 
 export type ApplicationTimelinessSection = {
   agreeWithShortNoticeReason: string
+}
+
+export type ApplicationDetails = {
+  applicationDate: string
+  lateApplicationReason: string
+  arrivalDate: string
 }
 
 @Page({
@@ -28,7 +35,7 @@ export default class ApplicationTimeliness implements TasklistPage {
 
   question = `Do you agree with the applicant's reason for submission within 4 months of expected arrival?`
 
-  applicationDetails: unknown
+  applicationDetails: ApplicationDetails
 
   constructor(
     public body: {
@@ -40,19 +47,24 @@ export default class ApplicationTimeliness implements TasklistPage {
     this.applicationDetails = this.retrieveShortNoticeApplicationDetails()
   }
 
-  retrieveShortNoticeApplicationDetails() {
+  retrieveShortNoticeApplicationDetails(): ApplicationDetails {
     const applicationDate = DateFormats.isoDateToUIDate(this.assessment.application.submittedAt, { format: 'short' })
     const lateApplicationReasonId = retrieveOptionalQuestionResponseFromFormArtifact(
       this.assessment.application,
       ReasonForShortNotice,
       'reason',
     )
+    const arrivalDate = arrivalDateFromApplication(this.assessment.application)
 
     const lateApplicationReason = lateApplicationReasonId
       ? shortNoticeReasons[lateApplicationReasonId]
       : 'None supplied'
 
-    return { applicationDate, lateApplicationReason }
+    return {
+      applicationDate,
+      lateApplicationReason,
+      arrivalDate: arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'None supplied',
+    }
   }
 
   previous() {

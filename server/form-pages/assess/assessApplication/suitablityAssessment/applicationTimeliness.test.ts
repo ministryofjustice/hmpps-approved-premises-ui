@@ -5,10 +5,11 @@ import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../ut
 
 import ApplicationTimeliness from './applicationTimeliness'
 import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
+import { arrivalDateFromApplication } from '../../../../utils/applications/arrivalDateFromApplication'
 
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
 jest.mock('../../../../utils/applications/noticeTypeFromApplication')
-jest.mock('../../../../utils/dateUtils')
+jest.mock('../../../../utils/applications/arrivalDateFromApplication')
 
 describe('ApplicationTimeliness', () => {
   const assessment = assessmentFactory.build()
@@ -146,9 +147,16 @@ describe('ApplicationTimeliness', () => {
   })
 
   describe('retrieveShortNoticeApplicationDetails', () => {
-    const applicationDate = '30/06/2023'
-    ;(DateFormats.isoDateToUIDate as jest.Mock).mockReturnValue(applicationDate)
-    ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('onBail')
+    const applicationDate = '2023-06-01'
+    const arrivalDate = '2024-01-04'
+    const assessmentForApplicationDetails = assessment
+    assessmentForApplicationDetails.application.submittedAt = applicationDate
+    ;(
+      retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
+        typeof retrieveOptionalQuestionResponseFromFormArtifact
+      >
+    ).mockReturnValue('onBail')
+    ;(arrivalDateFromApplication as jest.MockedFn<typeof arrivalDateFromApplication>).mockReturnValue(arrivalDate)
 
     const page = new ApplicationTimeliness(
       {
@@ -159,8 +167,9 @@ describe('ApplicationTimeliness', () => {
     )
 
     expect(page.retrieveShortNoticeApplicationDetails()).toEqual({
-      applicationDate,
+      applicationDate: DateFormats.isoDateToUIDate(applicationDate, { format: 'short' }),
       lateApplicationReason: 'The individual will be on bail',
+      arrivalDate: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
     })
   })
 })
