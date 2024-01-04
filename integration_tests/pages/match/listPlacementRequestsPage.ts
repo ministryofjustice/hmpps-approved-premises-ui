@@ -19,11 +19,11 @@ export default class ListPage extends Page {
   }
 
   shouldShowTasks(placementRequests: Array<PlacementRequestTask>): void {
-    shouldShowTableRows(placementRequests, tableUtils.tableRows)
+    shouldShowTableRows(tableUtils.tableRows(placementRequests))
   }
 
   shouldShowPlacementApplicationTasks(placementApplicationTasks: Array<PlacementApplicationTask>): void {
-    shouldShowTableRows(placementApplicationTasks, placementApplicationTableUtils.tableRows)
+    shouldShowTableRows(placementApplicationTableUtils.tableRows(placementApplicationTasks))
   }
 
   clickPlacementApplications(): void {

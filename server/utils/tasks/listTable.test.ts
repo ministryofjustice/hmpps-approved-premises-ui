@@ -11,7 +11,7 @@ import {
   tasksTableHeader,
   tasksTableRows,
   unallocatedTableRows,
-} from './table'
+} from './listTable'
 import { sentenceCase } from '../utils'
 import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'

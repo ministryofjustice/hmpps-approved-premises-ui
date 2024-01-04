@@ -2,7 +2,13 @@ import TaskListPage from '../../pages/tasks/listPage'
 import AllocationsPage from '../../pages/tasks/allocationPage'
 import Page from '../../pages/page'
 
-import { applicationFactory, reallocationFactory, taskFactory, userFactory } from '../../../server/testutils/factories'
+import {
+  applicationFactory,
+  reallocationFactory,
+  taskFactory,
+  userFactory,
+  userWithWorkloadFactory,
+} from '../../../server/testutils/factories'
 
 context('Tasks', () => {
   beforeEach(() => {
@@ -10,7 +16,7 @@ context('Tasks', () => {
     cy.task('stubSignIn')
 
     // Given there are some users in the database
-    const users = userFactory.buildList(3)
+    const users = userWithWorkloadFactory.buildList(3)
     const selectedUser = users[0]
 
     // And there is an allocated task
@@ -62,11 +68,10 @@ context('Tasks', () => {
     allocationsPage.shouldShowInformationAboutTask()
 
     // And I should see a list of staff members who can be allocated to that task
-    allocationsPage.shouldShowUsers(this.users)
+    allocationsPage.shouldShowUserTable(this.users, this.task)
 
     // When I select a new user to allocate the application to
-    allocationsPage.selectUser(this.selectedUser)
-    allocationsPage.clickSubmit()
+    allocationsPage.clickAllocateToUser(this.users[0])
 
     // Then I should be redirected to the index page
     Page.verifyOnPage(TaskListPage, [], [])
@@ -82,18 +87,5 @@ context('Tasks', () => {
 
       expect(body.userId).equal(this.selectedUser.id)
     })
-  })
-
-  it('shows an error when I do not select a user', function test() {
-    cy.task('stubAllocationErrors', this.task)
-
-    // Given I am on the allocations page
-    const allocationsPage = AllocationsPage.visit(this.application, this.task)
-
-    // And I click submit without selecting a user
-    allocationsPage.clickSubmit()
-
-    // Then I should see an error
-    allocationsPage.shouldShowErrorMessagesForFields(['userId'])
   })
 })

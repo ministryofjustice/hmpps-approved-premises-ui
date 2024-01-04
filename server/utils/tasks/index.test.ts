@@ -1,5 +1,7 @@
-import { applicationSummary, groupByAllocation } from '.'
+import { groupByAllocation, taskSummary } from '.'
+import { FullPerson } from '../../@types/shared'
 import { applicationFactory, taskFactory, userFactory } from '../../testutils/factories'
+import { fullPersonFactory } from '../../testutils/factories/person'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { getApplicationType } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
@@ -20,16 +22,25 @@ describe('index', () => {
     })
   })
 
-  describe('applicationSummary', () => {
+  describe('taskSummary', () => {
+    const task = taskFactory.build()
+    const application = applicationFactory.build({ person: fullPersonFactory.build() })
+
     describe('when the application contains an arrival date', () => {
       beforeEach(() => {
         ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-01-01')
       })
 
       it('returns the summary list when the assessment has a staff member allocated', () => {
-        const application = applicationFactory.build()
-
-        expect(applicationSummary(application)).toEqual([
+        expect(taskSummary(task, application)).toEqual([
+          {
+            key: {
+              text: 'Name',
+            },
+            value: {
+              text: (application.person as FullPerson).name,
+            },
+          },
           {
             key: {
               text: 'CRN',
@@ -54,6 +65,14 @@ describe('index', () => {
               text: getApplicationType(application),
             },
           },
+          {
+            key: {
+              text: 'Currently allocated to',
+            },
+            value: {
+              text: task.allocatedToStaffMember.name,
+            },
+          },
         ])
       })
     })
@@ -63,9 +82,15 @@ describe('index', () => {
       })
 
       it('returns the summary list when the assessment has a staff member allocated', () => {
-        const application = applicationFactory.build()
-
-        expect(applicationSummary(application)).toEqual([
+        expect(taskSummary(task, application)).toEqual([
+          {
+            key: {
+              text: 'Name',
+            },
+            value: {
+              text: (application.person as FullPerson).name,
+            },
+          },
           {
             key: {
               text: 'CRN',
@@ -88,6 +113,14 @@ describe('index', () => {
             },
             value: {
               text: getApplicationType(application),
+            },
+          },
+          {
+            key: {
+              text: 'Currently allocated to',
+            },
+            value: {
+              text: task.allocatedToStaffMember.name,
             },
           },
         ])

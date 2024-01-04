@@ -7,8 +7,9 @@ import type {
 import Page from '../page'
 import paths from '../../../server/paths/tasks'
 
-import { applicationSummary } from '../../../server/utils/tasks'
+import { taskSummary, userTableRows } from '../../../server/utils/tasks'
 import { kebabCase } from '../../../server/utils/utils'
+import { shouldShowTableRows } from '../../helpers'
 
 export default class AllocationsPage extends Page {
   constructor(
@@ -24,7 +25,7 @@ export default class AllocationsPage extends Page {
   }
 
   shouldShowInformationAboutTask() {
-    const summaryListItems = applicationSummary(this.application)
+    const summaryListItems = taskSummary(this.task, this.application)
 
     summaryListItems.forEach(item => {
       const key = 'text' in item.key ? item.key.text : item.key.html
@@ -33,15 +34,11 @@ export default class AllocationsPage extends Page {
     })
   }
 
-  shouldShowUsers(users: Array<User>) {
-    cy.get('select#userId option').should('have.length', users.length + 1)
-
-    users.forEach(u => {
-      cy.get('select#userId option').contains(u.name).should('be.visible')
-    })
+  shouldShowUserTable(users: Array<User>, task: Task) {
+    shouldShowTableRows(userTableRows(users, task, 'csrfToken' as string))
   }
 
-  selectUser(user: User) {
-    this.getSelectInputByIdAndSelectAnEntry('userId', user.id)
+  clickAllocateToUser(user: User) {
+    cy.get(`button[data-cy-userId="${user.id}"]`).click()
   }
 }

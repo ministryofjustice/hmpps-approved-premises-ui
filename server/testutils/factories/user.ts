@@ -5,9 +5,10 @@ import type {
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
+  UserWithWorkload,
 } from '@approved-premises/api'
 
-export default Factory.define<User>(() => ({
+const userFactory = Factory.define<User>(() => ({
   name: faker.person.fullName(),
   deliusUsername: faker.internet.userName(),
   email: faker.internet.email(),
@@ -18,6 +19,13 @@ export default Factory.define<User>(() => ({
   region: faker.helpers.arrayElement([{ id: faker.string.uuid(), name: faker.location.county() }]),
   service: 'ApprovedPremises',
   isActive: true,
+}))
+
+export const userWithWorkloadFactory = Factory.define<UserWithWorkload>(({ params }) => ({
+  ...userFactory.build(params),
+  numAssessmentsPending: faker.number.int({ min: 0, max: 10 }),
+  numAssessmentsCompleted7Days: faker.number.int({ min: 0, max: 15 }),
+  numAssessmentsCompleted30Days: faker.number.int({ min: 0, max: 45 }),
 }))
 
 const roleFactory = Factory.define<UserRole>(() =>
@@ -38,3 +46,5 @@ const roleFactory = Factory.define<UserRole>(() =>
 const qualificationFactory = Factory.define<UserQualification>(() =>
   faker.helpers.arrayElement(['pipe', 'emergency', 'esap', 'lao', 'womens']),
 )
+
+export default userFactory

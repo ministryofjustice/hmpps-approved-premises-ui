@@ -110,10 +110,10 @@ describe('taskService', () => {
       const applicationId = 'some-application-id'
       const userId = 'some-user-id'
 
-      await service.createAllocation(token, applicationId, userId, 'assessment')
+      await service.createAllocation(token, applicationId, userId, 'Assessment')
 
       expect(taskClientFactory).toHaveBeenCalledWith(token)
-      expect(taskClient.createAllocation).toHaveBeenCalledWith(applicationId, userId, 'assessment')
+      expect(taskClient.createAllocation).toHaveBeenCalledWith(applicationId, userId, 'Assessment')
     })
   })
 })

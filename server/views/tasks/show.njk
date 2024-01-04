@@ -1,6 +1,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
 
 {% from "../partials/showErrorSummary.njk" import showErrorSummary %}
 
@@ -15,39 +16,26 @@
 
       {{
         govukSummaryList({
-            rows: TaskUtils.applicationSummary(application)
+            rows: TaskUtils.taskSummary(task, application)
         })
       }}
 
       {{ showErrorSummary(errorSummary) }}
-
-      <form action="{{ paths.tasks.allocations.create({ id: task.id, taskType: (task.taskType | kebabCase) }) }}" method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-        {{
-          govukSelect({
-            label: {
-              html: '<h2 class="govuk-heading-m">Reallocate task</h2>'
-            },
-            hint: {
-              text: 'Select a staff member to allocate the task to'
-            },
-            id: "userId",
-            name: "userId",
-            items: convertObjectsToSelectOptions(users, 'Please select', 'name', 'id', 'userId'),
-            errorMessage: errors.userId
-          })
-        }}
-
-        {{
-          govukButton({
-          text: "Submit"
-          })
-        }}
-      </form>
     </div>
 
-  </div>
+    <div class="govuk-grid-column-full">
+      <h2 class="govuk-heading-m">Allocate task to</h2>
 
+      {{
+        govukTable({
+            firstCellIsHeader: true,
+            head: TaskUtils.userTableHeader(),
+            rows: TaskUtils.userTableRows(users, task, csrfToken)
+          })
+      }}
+
+    </div>
+  </div>
 </div>
 
 {% endblock %}

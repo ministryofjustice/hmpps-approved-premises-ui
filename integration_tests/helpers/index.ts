@@ -62,8 +62,7 @@ const uiObjectValue = (tableCell: TableCell) => {
   return ''
 }
 
-const shouldShowTableRows = <T>(items: Array<T>, tableRowFunction: (items: Array<T>) => Array<TableRow>): void => {
-  const tableRows = tableRowFunction(items)
+const shouldShowTableRows = (tableRows: Array<TableRow>): void => {
   const rowItems = tableRowsToArrays(tableRows)
 
   rowItems.forEach(columns => {

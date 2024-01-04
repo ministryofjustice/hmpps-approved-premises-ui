@@ -1,7 +1,7 @@
 import Page from '../page'
 import paths from '../../../server/paths/tasks'
 
-import { allocatedTableRows, unallocatedTableRows } from '../../../server/utils/tasks/table'
+import { allocatedTableRows, unallocatedTableRows } from '../../../server/utils/tasks/listTable'
 
 import { Task } from '../../../server/@types/shared'
 import { shouldShowTableRows } from '../../helpers'
@@ -22,12 +22,12 @@ export default class ListPage extends Page {
   }
 
   shouldShowAllocatedTasks(allocatedTasks = this.allocatedTasks): void {
-    shouldShowTableRows(allocatedTasks, allocatedTableRows)
+    shouldShowTableRows(allocatedTableRows(allocatedTasks))
   }
 
   shouldShowUnallocatedTasks(): void {
     cy.get('a').contains('Unallocated').click()
-    shouldShowTableRows(this.unallocatedTasks, unallocatedTableRows)
+    shouldShowTableRows(unallocatedTableRows(this.unallocatedTasks))
   }
 
   clickTask(task: Task) {
