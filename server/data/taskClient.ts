@@ -2,7 +2,7 @@ import { CategorisedTask, PaginatedResponse } from '@approved-premises/ui'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
-import { Reallocation, Task, TaskWrapper } from '../@types/shared'
+import { Reallocation, Task, TaskSortField, TaskWrapper } from '../@types/shared'
 
 export default class TaskClient {
   restClient: RestClient
@@ -15,11 +15,12 @@ export default class TaskClient {
     allocatedFilter: string,
     page: number,
     sortDirection: string,
+    sortBy: TaskSortField,
   ): Promise<PaginatedResponse<Task>> {
     return this.restClient.getPaginatedResponse({
       path: paths.tasks.reallocatable.index.pattern,
       page: page.toString(),
-      query: { allocatedFilter, sortDirection },
+      query: { allocatedFilter, sortDirection, sortBy },
     })
   }
 

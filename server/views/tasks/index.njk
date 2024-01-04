@@ -21,7 +21,7 @@
       {{
         govukTable({
             firstCellIsHeader: true,
-            head: TaskUtils.tasksTableHeader(allocatedFilter),
+            head: TaskUtils.tasksTableHeader(allocatedFilter, sortBy, sortDirection, hrefPrefix),
             rows: TaskUtils.tasksTableRows(tasks, allocatedFilter)
           })
       }}

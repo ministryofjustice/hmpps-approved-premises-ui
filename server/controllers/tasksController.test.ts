@@ -40,8 +40,6 @@ describe('TasksController', () => {
       const paginationDetails = {
         hrefPrefix: paths.tasks.index({}),
         pageNumber: 1,
-        sortBy: 'name',
-        sortDirection: 'desc',
       }
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
       taskService.getAllReallocatable.mockResolvedValue(paginatedResponse)
@@ -57,12 +55,13 @@ describe('TasksController', () => {
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
-        sortDirection: paginationDetails.sortDirection,
+        sortBy: 'createdAt',
+        sortDirection: 'asc',
       })
-      expect(taskService.getAllReallocatable).toHaveBeenCalledWith(token, 'allocated', 1, 'desc')
+      expect(taskService.getAllReallocatable).toHaveBeenCalledWith(token, 'allocated', 'createdAt', 'asc', 1)
     })
 
-    it('should handle request parameter correctly', async () => {
+    it('should handle request parameters correctly', async () => {
       const tasks = taskFactory.buildList(1)
       const paginatedResponse = paginatedResponseFactory.build({
         data: tasks,
@@ -90,9 +89,16 @@ describe('TasksController', () => {
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
       })
-      expect(taskService.getAllReallocatable).toHaveBeenCalledWith(token, 'unallocated', 1, 'desc')
+      expect(taskService.getAllReallocatable).toHaveBeenCalledWith(
+        token,
+        'unallocated',
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+        1,
+      )
     })
   })
 

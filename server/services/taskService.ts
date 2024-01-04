@@ -4,6 +4,7 @@ import {
   Reallocation,
   SortDirection,
   Task,
+  TaskSortField,
   TaskWrapper,
 } from '@approved-premises/api'
 import { GroupedMatchTasks, PaginatedResponse } from '@approved-premises/ui'
@@ -15,13 +16,14 @@ export default class TaskService {
 
   async getAllReallocatable(
     token: string,
-    allocatedFilter: 'allocated' | 'unallocated' = 'allocated',
+    allocatedFilter: 'allocated' | 'unallocated',
+    sortBy: TaskSortField,
+    sortDirection: SortDirection,
     page: number = 1,
-    sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<Task>> {
     const taskClient = this.taskClientFactory(token)
 
-    const tasks = await taskClient.allReallocatable(allocatedFilter, page, sortDirection)
+    const tasks = await taskClient.allReallocatable(allocatedFilter, page, sortDirection, sortBy)
     return tasks
   }
 

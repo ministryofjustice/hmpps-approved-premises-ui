@@ -4,7 +4,7 @@ import { ApplicationService, TaskService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 import { getPaginationDetails } from '../utils/getPaginationDetails'
 import paths from '../paths/api'
-import { AllocatedFilter } from '../@types/shared'
+import { AllocatedFilter, TaskSortField } from '../@types/shared'
 
 export default class TasksController {
   constructor(
@@ -15,14 +15,20 @@ export default class TasksController {
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       const allocatedFilter = (req.query.allocatedFilter as AllocatedFilter) || 'allocated'
-      const { pageNumber, sortDirection, hrefPrefix } = getPaginationDetails(req, paths.tasks.index({}), {
+      const {
+        pageNumber,
+        sortDirection = 'asc',
+        sortBy = 'createdAt',
+        hrefPrefix,
+      } = getPaginationDetails<TaskSortField>(req, paths.tasks.index({}), {
         allocatedFilter,
       })
       const tasks = await this.taskService.getAllReallocatable(
         req.user.token,
         allocatedFilter,
-        pageNumber,
+        sortBy,
         sortDirection,
+        pageNumber,
       )
 
       res.render('tasks/index', {
@@ -32,6 +38,7 @@ export default class TasksController {
         pageNumber: Number(tasks.pageNumber),
         totalPages: Number(tasks.totalPages),
         hrefPrefix,
+        sortBy,
         sortDirection,
       })
     }

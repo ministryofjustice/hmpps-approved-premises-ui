@@ -34,7 +34,7 @@ describe('taskService', () => {
 
       taskClient.allReallocatable.mockResolvedValue(paginatedResponse)
 
-      const result = await service.getAllReallocatable(token, 'allocated')
+      const result = await service.getAllReallocatable(token, 'allocated', 'createdAt', 'asc', 1)
 
       expect(result).toEqual({
         data: tasks,
@@ -45,7 +45,7 @@ describe('taskService', () => {
       })
 
       expect(taskClientFactory).toHaveBeenCalledWith(token)
-      expect(taskClient.allReallocatable).toHaveBeenCalled()
+      expect(taskClient.allReallocatable).toHaveBeenCalledWith('allocated', 1, 'asc', 'createdAt')
     })
   })
 

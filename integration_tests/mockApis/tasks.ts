@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { Reallocation, SortDirection, Task, User } from '@approved-premises/api'
+import type { Reallocation, SortDirection, Task, TaskSortField, User } from '@approved-premises/api'
 import { AllocatedFilter } from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
@@ -13,11 +13,13 @@ export default {
     allocatedFilter = 'allocated',
     page = '1',
     sortDirection = 'asc',
+    sortBy = 'createdAt',
   }: {
     tasks: Array<Task>
     page: string
     allocatedFilter: string
     sortDirection: SortDirection
+    sortBy: TaskSortField
   }): SuperAgentRequest => {
     const queryParameters = {
       page: {
@@ -28,6 +30,9 @@ export default {
       },
       sortDirection: {
         equalTo: sortDirection,
+      },
+      sortBy: {
+        equalTo: sortBy,
       },
     }
     return stubFor({
@@ -133,7 +138,17 @@ export default {
         }),
       ),
     ),
-  verifyTasksRequests: async ({ allocatedFilter, page = '1' }: { allocatedFilter: AllocatedFilter; page: string }) =>
+  verifyTasksRequests: async ({
+    allocatedFilter,
+    page = '1',
+    sortDirection = 'asc',
+    sortBy = 'createdAt',
+  }: {
+    allocatedFilter: AllocatedFilter
+    page: string
+    sortDirection: SortDirection
+    sortBy: TaskSortField
+  }) =>
     (
       await getMatchingRequests({
         method: 'GET',
@@ -144,6 +159,12 @@ export default {
           },
           page: {
             equalTo: page,
+          },
+          sortDirection: {
+            equalTo: sortDirection,
+          },
+          sortBy: {
+            equalTo: sortBy,
           },
         },
       })
