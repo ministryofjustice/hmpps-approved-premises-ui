@@ -61,9 +61,7 @@ const formatDaysUntilDueWithWarning = (task: Task): string => {
   const formattedDifference = `${differenceInDays} Day${differenceInDays > 1 ? 's' : ''}`
 
   if (differenceInDays < DUE_DATE_APPROACHING_DAYS_WINDOW) {
-    return `<strong class="task--index__warning">${
-      differenceInDays < 0 ? '-' : ''
-    }${formattedDifference}<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`
+    return `<strong class="task--index__warning">${formattedDifference}<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`
   }
 
   return formattedDifference
