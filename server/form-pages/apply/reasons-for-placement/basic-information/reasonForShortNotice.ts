@@ -16,7 +16,7 @@ export const shortNoticeReasons = {
   other: 'Other, please specify',
 }
 
-type ShortNoticeReasons = keyof typeof shortNoticeReasons
+export type ShortNoticeReasons = keyof typeof shortNoticeReasons
 type ReasonForShortNoticeBody = { reason: ShortNoticeReasons; other: string }
 
 @Page({ name: 'reason-for-short-notice', bodyProperties: ['reason', 'other'] })

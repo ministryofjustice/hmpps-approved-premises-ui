@@ -15,7 +15,7 @@ export const noticeTypeFromApplication = (application: Application): Application
   switch (true) {
     case differenceInDays(arrivalDateObj, new Date()) <= 28:
       return 'emergency'
-    case differenceInCalendarMonths(arrivalDateObj, new Date()) < 4:
+    case differenceInCalendarMonths(arrivalDateObj, new Date()) < 6:
       return 'short_notice'
     default:
       return 'standard'

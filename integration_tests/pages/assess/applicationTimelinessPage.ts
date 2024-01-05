@@ -7,8 +7,9 @@ import ApplicationTimeliness from '../../../server/form-pages/assess/assessAppli
 export default class ApplicationTimelinessPage extends AssessPage {
   pageClass = new ApplicationTimeliness(
     {
-      agreeWithShortNoticeReason: 'yes',
-      agreeWithShortNoticeReasonComments: '',
+      agreeWithShortNoticeReason: 'no',
+      agreeWithShortNoticeReasonComments: 'some reason',
+      reasonForLateApplication: 'onBail',
     },
     this.assessment,
   )
@@ -20,5 +21,6 @@ export default class ApplicationTimelinessPage extends AssessPage {
   completeForm() {
     this.checkRadioByNameAndValue('agreeWithShortNoticeReason', this.pageClass.body.agreeWithShortNoticeReason)
     this.completeTextArea('agreeWithShortNoticeReasonComments', 'One')
+    this.getSelectInputByIdAndSelectAnEntry('reasonForLateApplication', 'onBail')
   }
 }
