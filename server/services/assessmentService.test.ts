@@ -44,10 +44,10 @@ describe('AssessmentService', () => {
     it('should return all assessments', async () => {
       const assessments = assessmentSummaryFactory.buildList(5)
       assessmentClient.all.mockResolvedValue(assessments)
-      const result = await service.getAll('token', ['awaiting_response'])
+      const result = await service.getAll('token', ['awaiting_response'], 'name', 'desc')
 
       expect(result).toEqual(assessments)
-      expect(assessmentClient.all).toHaveBeenCalledWith(['awaiting_response'])
+      expect(assessmentClient.all).toHaveBeenCalledWith(['awaiting_response'], 'name', 'desc')
     })
   })
 

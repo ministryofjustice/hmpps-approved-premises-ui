@@ -1,7 +1,9 @@
 import {
+  AssessmentSortField,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
   FullPerson,
   RestrictedPerson,
+  SortDirection,
 } from '@approved-premises/api'
 import { AssessmentCurrentTab, TableRow } from '@approved-premises/ui'
 import { linkTo } from '../utils'
@@ -15,6 +17,7 @@ import {
 import paths from '../../paths/assess'
 import { crnCell, tierCell } from '../tableUtils'
 import { isFullPerson, laoName } from '../personUtils'
+import { sortHeader } from '../sortHeader'
 
 const getStatus = (assessment: AssessmentSummary): string => {
   if (assessment.status === 'completed') {
@@ -91,37 +94,32 @@ const daysSinceInfoRequestCell = (assessment: AssessmentSummary) => {
 
 export const emptyCell = () => ({ text: '' })
 
-const assessmentTable = (activeTab: AssessmentCurrentTab, assessments: Array<AssessmentSummary>) => {
+const assessmentTable = (
+  activeTab: AssessmentCurrentTab,
+  assessments: Array<AssessmentSummary>,
+  sortBy: AssessmentSortField,
+  sortDirection: SortDirection,
+  hrefPrefix: string,
+) => {
   switch (activeTab) {
     case 'awaiting_response':
       return {
         firstCellIsHeader: true,
         head: [
-          {
-            text: 'Name',
-          },
-          {
-            text: 'CRN',
-          },
+          sortHeader<AssessmentSortField>('Name', 'name', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('CRN', 'crn', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Tier',
           },
           {
             text: 'Current location',
           },
-          {
-            text: 'Arrival date',
-          },
+          sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Days since received',
           },
-
-          {
-            text: 'Days until assessment due',
-          },
-          {
-            text: 'Status',
-          },
+          sortHeader<AssessmentSortField>('Days until assessment due', 'createdAt', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
         rows: requestedFurtherInformationTableRows(assessments),
       }
@@ -129,21 +127,13 @@ const assessmentTable = (activeTab: AssessmentCurrentTab, assessments: Array<Ass
       return {
         firstCellIsHeader: true,
         head: [
-          {
-            text: 'Name',
-          },
-          {
-            text: 'CRN',
-          },
+          sortHeader<AssessmentSortField>('Name', 'name', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('CRN', 'crn', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Tier',
           },
-          {
-            text: 'Arrival date',
-          },
-          {
-            text: 'Status',
-          },
+          sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
         rows: completedTableRows(assessments),
       }
@@ -151,27 +141,17 @@ const assessmentTable = (activeTab: AssessmentCurrentTab, assessments: Array<Ass
       return {
         firstCellIsHeader: true,
         head: [
-          {
-            text: 'Name',
-          },
-          {
-            text: 'CRN',
-          },
+          sortHeader<AssessmentSortField>('Name', 'name', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('CRN', 'crn', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Tier',
           },
-          {
-            text: 'Arrival date',
-          },
+          sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Current location',
           },
-          {
-            text: 'Days until assessment due',
-          },
-          {
-            text: 'Status',
-          },
+          sortHeader<AssessmentSortField>('Days until assessment due', 'createdAt', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
         rows: awaitingAssessmentTableRows(assessments),
       }

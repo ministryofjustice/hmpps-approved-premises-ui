@@ -13,12 +13,14 @@ import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 import { ErrorsAndUserInput } from '../../@types/ui'
 import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
+import { getPaginationDetails } from '../../utils/getPaginationDetails'
 
 jest.mock('../../utils/assessments/utils')
 jest.mock('../../utils/users')
 jest.mock('../../utils/validation')
 jest.mock('../../utils/assessments/informationSetAsNotReceived')
 jest.mock('../../services/tasklistService')
+jest.mock('../../utils/getPaginationDetails')
 
 describe('assessmentsController', () => {
   const token = 'SOME_TOKEN'
@@ -39,6 +41,13 @@ describe('assessmentsController', () => {
 
   describe('index', () => {
     const assessments = assessmentSummaryFactory.buildList(3)
+    const paginationDetails = {
+      hrefPrefix: paths.assessments.index({}),
+      pageNumber: 1,
+      sortBy: 'name',
+      sortDirection: 'desc',
+    }
+    ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
     beforeEach(() => {
       assessmentService.getAll.mockResolvedValue(assessments)
@@ -52,8 +61,16 @@ describe('assessmentsController', () => {
       expect(response.render).toHaveBeenCalledWith('assessments/index', {
         pageHeading: 'Approved Premises applications',
         assessments,
+        sortBy: paginationDetails.sortBy,
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortDirection: paginationDetails.sortDirection,
       })
-      expect(assessmentService.getAll).toHaveBeenCalledWith(token, awaitingAssessmentStatuses)
+      expect(assessmentService.getAll).toHaveBeenCalledWith(
+        token,
+        awaitingAssessmentStatuses,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
     })
 
     it('should list all the assessments with awaiting_assessment statuses', async () => {
@@ -66,8 +83,16 @@ describe('assessmentsController', () => {
         pageHeading: 'Approved Premises applications',
         assessments,
         activeTab: 'awaiting_assessment',
+        sortBy: paginationDetails.sortBy,
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortDirection: paginationDetails.sortDirection,
       })
-      expect(assessmentService.getAll).toHaveBeenCalledWith(token, awaitingAssessmentStatuses)
+      expect(assessmentService.getAll).toHaveBeenCalledWith(
+        token,
+        awaitingAssessmentStatuses,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
     })
 
     it('should list all the assessments with completed statuses', async () => {
@@ -80,8 +105,16 @@ describe('assessmentsController', () => {
         pageHeading: 'Approved Premises applications',
         assessments,
         activeTab: 'completed',
+        sortBy: paginationDetails.sortBy,
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortDirection: paginationDetails.sortDirection,
       })
-      expect(assessmentService.getAll).toHaveBeenCalledWith(token, ['completed'])
+      expect(assessmentService.getAll).toHaveBeenCalledWith(
+        token,
+        ['completed'],
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
     })
 
     it('should list all the assessments with awaiting_response statuses', async () => {
@@ -94,8 +127,16 @@ describe('assessmentsController', () => {
         pageHeading: 'Approved Premises applications',
         assessments,
         activeTab: 'awaiting_response',
+        sortBy: paginationDetails.sortBy,
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortDirection: paginationDetails.sortDirection,
       })
-      expect(assessmentService.getAll).toHaveBeenCalledWith(token, ['awaiting_response'])
+      expect(assessmentService.getAll).toHaveBeenCalledWith(
+        token,
+        ['awaiting_response'],
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
     })
   })
 

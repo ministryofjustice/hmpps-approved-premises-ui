@@ -7,6 +7,7 @@ import type {
   NewClarificationNote,
   UpdatedClarificationNote,
 } from '@approved-premises/api'
+import { AssessmentSortField, SortDirection } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -19,10 +20,14 @@ export default class AssessmentClient {
     this.restClient = new RestClient('assessmentClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async all(statuses: Array<AssessmentStatus>): Promise<Array<AssessmentSummary>> {
+  async all(
+    statuses: Array<AssessmentStatus>,
+    sortBy: AssessmentSortField = 'name',
+    sortDirection: SortDirection = 'asc',
+  ): Promise<Array<AssessmentSummary>> {
     return (await this.restClient.get({
       path: paths.assessments.index.pattern,
-      query: { statuses: statuses.join(',') },
+      query: { statuses: statuses.join(','), sortBy, sortDirection },
     })) as Array<AssessmentSummary>
   }
 
