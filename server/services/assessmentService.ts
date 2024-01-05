@@ -1,9 +1,11 @@
 import { Request } from 'express'
 import {
   ApprovedPremisesAssessment as Assessment,
+  AssessmentSortField,
   AssessmentStatus,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
   NewClarificationNote,
+  SortDirection,
   UpdatedClarificationNote,
 } from '@approved-premises/api'
 import type { DataServices } from '@approved-premises/ui'
@@ -22,10 +24,15 @@ import { getResponses } from '../utils/applications/getResponses'
 export default class AssessmentService {
   constructor(private readonly assessmentClientFactory: RestClientBuilder<AssessmentClient>) {}
 
-  async getAll(token: string, statuses: Array<AssessmentStatus>): Promise<Array<AssessmentSummary>> {
+  async getAll(
+    token: string,
+    statuses: Array<AssessmentStatus>,
+    sortBy: AssessmentSortField = 'name',
+    sortDirection: SortDirection = 'asc',
+  ): Promise<Array<AssessmentSummary>> {
     const client = this.assessmentClientFactory(token)
 
-    return client.all(statuses)
+    return client.all(statuses, sortBy, sortDirection)
   }
 
   async findAssessment(token: string, id: string): Promise<Assessment> {

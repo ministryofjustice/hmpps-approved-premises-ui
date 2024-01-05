@@ -6,8 +6,9 @@ import { AssessmentService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 
 import paths from '../../paths/assess'
-import { AssessmentStatus } from '../../@types/shared'
+import { AssessmentSortField, AssessmentStatus } from '../../@types/shared'
 import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
+import { getPaginationDetails } from '../../utils/getPaginationDetails'
 
 export const tasklistPageHeading = 'Assess an Approved Premises (AP) application'
 
@@ -17,17 +18,24 @@ export default class AssessmentsController {
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { activeTab } = req.query
+      const { sortBy, sortDirection, hrefPrefix } = getPaginationDetails<AssessmentSortField>(
+        req,
+        paths.assessments.index({}),
+      )
       const statuses =
         activeTab === 'awaiting_assessment' || !activeTab
           ? awaitingAssessmentStatuses
           : ([activeTab] as Array<AssessmentStatus>)
 
-      const assessments = await this.assessmentService.getAll(req.user.token, statuses)
+      const assessments = await this.assessmentService.getAll(req.user.token, statuses, sortBy, sortDirection)
 
       res.render('assessments/index', {
         pageHeading: 'Approved Premises applications',
         activeTab,
         assessments,
+        hrefPrefix,
+        sortBy,
+        sortDirection,
       })
     }
   }

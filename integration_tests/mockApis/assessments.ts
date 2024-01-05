@@ -6,16 +6,25 @@ import type {
   AssessmentStatus,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
   NewClarificationNote,
+  SortDirection,
   UpdatedClarificationNote,
 } from '@approved-premises/api'
 
+import { AssessmentSortField } from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 
 export default {
-  stubAssessments: (args: {
+  stubAssessments: ({
+    assessments,
+    statuses,
+    sortBy = 'name',
+    sortDirection = 'asc',
+  }: {
     assessments: Array<AssessmentSummary>
     statuses: Array<AssessmentStatus>
+    sortDirection: SortDirection
+    sortBy: AssessmentSortField
   }): SuperAgentRequest =>
     stubFor({
       request: {
@@ -23,14 +32,20 @@ export default {
         urlPathPattern: paths.assessments.index.pattern,
         queryParameters: {
           statuses: {
-            equalTo: args.statuses.join(','),
+            equalTo: statuses.join(','),
+          },
+          sortBy: {
+            equalTo: sortBy,
+          },
+          sortDirection: {
+            equalTo: sortDirection,
           },
         },
       },
       response: {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        jsonBody: args.assessments,
+        jsonBody: assessments,
       },
     }),
   stubAssessment: (assessment: Assessment): SuperAgentRequest =>
@@ -165,6 +180,32 @@ export default {
       await getMatchingRequests({
         method: 'PUT',
         url: paths.assessments.show({ id: assessment.id }),
+      })
+    ).body.requests,
+  verifyAssessmentsRequests: async ({
+    statuses,
+    sortBy = 'name',
+    sortDirection = 'asc',
+  }: {
+    statuses: Array<AssessmentStatus>
+    sortDirection: SortDirection
+    sortBy: AssessmentSortField
+  }) =>
+    (
+      await getMatchingRequests({
+        method: 'GET',
+        urlPathPattern: paths.assessments.index.pattern,
+        queryParameters: {
+          statuses: {
+            equalTo: statuses.join(','),
+          },
+          sortBy: {
+            equalTo: sortBy,
+          },
+          sortDirection: {
+            equalTo: sortDirection,
+          },
+        },
       })
     ).body.requests,
 }

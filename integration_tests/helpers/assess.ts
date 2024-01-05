@@ -55,6 +55,8 @@ export default class AseessHelper {
     cy.task('stubAssessments', {
       assessments: [this.assessmentSummary],
       statuses: awaitingAssessmentStatuses,
+      sortBy: 'name',
+      sortDirection: 'asc',
     })
     cy.task('stubAssessment', this.assessment)
     cy.task('stubFindUser', { user: this.user, id: this.assessment.application.createdByUserId })

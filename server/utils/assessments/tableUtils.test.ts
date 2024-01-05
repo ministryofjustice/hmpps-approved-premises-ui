@@ -20,7 +20,8 @@ import {
 } from './tableUtils'
 import paths from '../../paths/assess'
 import { crnCell, tierCell } from '../tableUtils'
-import { ApprovedPremisesAssessmentSummary as AssessmentSummary } from '../../@types/shared'
+import { AssessmentSortField, ApprovedPremisesAssessmentSummary as AssessmentSummary } from '../../@types/shared'
+import { sortHeader } from '../sortHeader'
 
 jest.mock('../applications/arrivalDateFromApplication')
 
@@ -99,89 +100,64 @@ describe('tableUtils', () => {
 
   describe('assessmentTable', () => {
     const assessments = assessmentSummaryFactory.buildList(5)
+    const sortBy = 'name'
+    const sortDirection = 'asc'
+    const hrefPrefix = 'http://example.com'
 
     it('returns an awaiting_assessment table', () => {
-      expect(assessmentTable('awaiting_assessment', assessments)).toEqual({
+      expect(assessmentTable('awaiting_assessment', assessments, sortBy, sortDirection, hrefPrefix)).toEqual({
         firstCellIsHeader: true,
         head: [
-          {
-            text: 'Name',
-          },
-          {
-            text: 'CRN',
-          },
+          sortHeader<AssessmentSortField>('Name', 'name', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('CRN', 'crn', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Tier',
           },
-          {
-            text: 'Arrival date',
-          },
+          sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Current location',
           },
-          {
-            text: 'Days until assessment due',
-          },
-          {
-            text: 'Status',
-          },
+          sortHeader<AssessmentSortField>('Days until assessment due', 'createdAt', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
         rows: awaitingAssessmentTableRows(assessments),
       })
     })
 
     it('returns an awaiting_response table', () => {
-      expect(assessmentTable('awaiting_response', assessments)).toEqual({
+      expect(assessmentTable('awaiting_response', assessments, sortBy, sortDirection, hrefPrefix)).toEqual({
         firstCellIsHeader: true,
         head: [
-          {
-            text: 'Name',
-          },
-          {
-            text: 'CRN',
-          },
+          sortHeader<AssessmentSortField>('Name', 'name', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('CRN', 'crn', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Tier',
           },
           {
             text: 'Current location',
           },
-          {
-            text: 'Arrival date',
-          },
+          sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Days since received',
           },
-          {
-            text: 'Days until assessment due',
-          },
-          {
-            text: 'Status',
-          },
+          sortHeader<AssessmentSortField>('Days until assessment due', 'createdAt', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
         rows: requestedFurtherInformationTableRows(assessments),
       })
     })
 
     it('returns an completed table', () => {
-      expect(assessmentTable('completed', assessments)).toEqual({
+      expect(assessmentTable('completed', assessments, sortBy, sortDirection, hrefPrefix)).toEqual({
         firstCellIsHeader: true,
         head: [
-          {
-            text: 'Name',
-          },
-          {
-            text: 'CRN',
-          },
+          sortHeader<AssessmentSortField>('Name', 'name', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('CRN', 'crn', sortBy, sortDirection, hrefPrefix),
           {
             text: 'Tier',
           },
-          {
-            text: 'Arrival date',
-          },
-          {
-            text: 'Status',
-          },
+          sortHeader<AssessmentSortField>('Arrival date', 'arrivalDate', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
         rows: completedTableRows(assessments),
       })
