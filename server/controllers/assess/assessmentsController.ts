@@ -21,6 +21,7 @@ export default class AssessmentsController {
       const { sortBy, sortDirection, hrefPrefix } = getPaginationDetails<AssessmentSortField>(
         req,
         paths.assessments.index({}),
+        { activeTab },
       )
       const statuses =
         activeTab === 'awaiting_assessment' || !activeTab
