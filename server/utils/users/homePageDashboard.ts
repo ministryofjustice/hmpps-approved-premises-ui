@@ -35,7 +35,7 @@ export const sections = {
     id: 'workflow',
     title: 'Manage case allocations',
     description: 'Re-allocate cases to be assessed or matched to manage staff workloads',
-    shortTitle: 'Workflow',
+    shortTitle: 'Task allocation',
     href: taskPaths.tasks.index({}),
   },
   match: {
@@ -49,14 +49,14 @@ export const sections = {
     id: 'cruDashboard',
     title: 'Review placement requests',
     description: 'Review placements requests for applications that have been assessed as suitable',
-    shortTitle: 'Placement requests',
+    shortTitle: 'Match',
     href: matchPaths.placementRequests.index({}),
   },
   placementRequests: {
     id: 'placementRequests',
     title: 'Record and update placement details',
     description: ' View applications that require matching. Record and update details of Approved Premises placements.',
-    shortTitle: 'Placement details',
+    shortTitle: 'CRU dashboard',
     href: adminPaths.admin.placementRequests.index({}),
   },
   reports: {
