@@ -14,9 +14,9 @@ describe('userTableRows', () => {
           text: user.region.name,
         },
         qualificationCell(user),
-        allocationCell(user, 'numAssessmentsPending'),
-        allocationCell(user, 'numAssessmentsCompleted7Days'),
-        allocationCell(user, 'numAssessmentsCompleted30Days'),
+        allocationCell(user, 'numTasksPending'),
+        allocationCell(user, 'numTasksCompleted7Days'),
+        allocationCell(user, 'numTasksCompleted30Days'),
         buttonCell(user, task, 'csrfToken'),
       ],
     ])
@@ -36,13 +36,13 @@ describe('userTableHeader', () => {
         text: 'Qualification',
       },
       {
-        text: 'Assessments pending',
+        text: 'Tasks pending',
       },
       {
-        text: 'Assessments completed in previous 7 days',
+        text: 'Tasks completed in previous 7 days',
       },
       {
-        text: 'Assessments completed in previous 30 days',
+        text: 'Tasks completed in previous 30 days',
       },
       {
         text: 'Action',
