@@ -201,7 +201,7 @@
     "nock": "^13.2.9",
     "nodemon": "^3.0.0",
     "nyc": "^15.1.0",
-    "openapi-typescript-codegen": "^0.25.0",
+    "openapi-typescript-codegen": "^0.26.0",
     "prettier": "^3.0.0",
     "sass": "^1.55.0",
     "shellcheck": "^2.0.0",
