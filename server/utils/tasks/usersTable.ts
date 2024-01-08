@@ -8,9 +8,9 @@ export const userTableHeader = () => [
   { text: 'Name' },
   { text: 'Region' },
   { text: 'Qualification' },
-  { text: 'Assessments pending' },
-  { text: 'Assessments completed in previous 7 days' },
-  { text: 'Assessments completed in previous 30 days' },
+  { text: 'Tasks pending' },
+  { text: 'Tasks completed in previous 7 days' },
+  { text: 'Tasks completed in previous 30 days' },
   { text: 'Action' },
 ]
 
@@ -19,16 +19,16 @@ export const userTableRows = (users: Array<UserWithWorkload>, task: Task, csrfTo
     nameCell(user),
     regionCell(user),
     qualificationCell(user),
-    allocationCell(user, 'numAssessmentsPending'),
-    allocationCell(user, 'numAssessmentsCompleted7Days'),
-    allocationCell(user, 'numAssessmentsCompleted30Days'),
+    allocationCell(user, 'numTasksPending'),
+    allocationCell(user, 'numTasksCompleted7Days'),
+    allocationCell(user, 'numTasksCompleted30Days'),
     buttonCell(user, task, csrfToken),
   ])
 }
 
 type AllocationType = Extract<
   keyof UserWithWorkload,
-  'numAssessmentsPending' | 'numAssessmentsCompleted7Days' | 'numAssessmentsCompleted30Days'
+  'numTasksPending' | 'numTasksCompleted7Days' | 'numTasksCompleted30Days'
 >
 
 export const nameCell = (user: UserWithWorkload): TableCell => ({ text: user.name })

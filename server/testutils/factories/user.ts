@@ -23,9 +23,9 @@ const userFactory = Factory.define<User>(() => ({
 
 export const userWithWorkloadFactory = Factory.define<UserWithWorkload>(({ params }) => ({
   ...userFactory.build(params),
-  numAssessmentsPending: faker.number.int({ min: 0, max: 10 }),
-  numAssessmentsCompleted7Days: faker.number.int({ min: 0, max: 15 }),
-  numAssessmentsCompleted30Days: faker.number.int({ min: 0, max: 45 }),
+  numTasksPending: faker.number.int({ min: 0, max: 10 }),
+  numTasksCompleted7Days: faker.number.int({ min: 0, max: 15 }),
+  numTasksCompleted30Days: faker.number.int({ min: 0, max: 45 }),
 }))
 
 const roleFactory = Factory.define<UserRole>(() =>
