@@ -1,0 +1,66 @@
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+
+{% extends "../layout.njk" %}
+
+{% block questions %}
+    <h1 class="govuk-heading-l">
+        {{page.title}}</h1>
+
+    {% set yesDetail %}
+    {{ formPageTextarea({
+        fieldName: "yesDetail",
+        label: {
+          text: page.questions.detail
+        }
+    }, fetchContext()) }}
+    {% endset -%}
+
+    {% set noDetail %}
+    {{ formPageTextarea({
+        fieldName: "noDetail",
+        label: {
+          text: page.questions.detail
+        }
+    }, fetchContext()) }}
+    {% endset -%}
+
+    {{
+            formPageRadios({
+                fieldset: {
+                    legend: {
+                        text: page.questions.esapPlacementNecessary,
+                        classes: "govuk-fieldset__legend--m"
+                    }
+                },
+                fieldName: "esapPlacementNeccessary",
+                    items: [
+                  {
+                        value: "yes",
+                        text: "Yes",
+                        conditional: {
+                            html: yesDetail
+                    }
+                    },
+                    {
+                        value: "no",
+                        text: "No",
+                        conditional: {
+                            html: noDetail
+                    }
+                    }
+                    ]
+                }, fetchContext()
+            )
+        }}
+
+    {{
+            formPageTextarea({
+                fieldName: "unsuitabilityForEsapRationale",
+                label: {
+                    text:page.questions.unsuitabilityForEsapRationale,
+                    classes: "govuk-label--s"
+                }
+            }, fetchContext())
+        }}
+
+{% endblock %}

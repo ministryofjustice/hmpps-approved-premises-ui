@@ -5,6 +5,7 @@ import ApplicationTimeliness from './applicationTimeliness'
 import RfapSuitability from './rfapSuitability'
 import ContingencyPlanSuitability from './contingencyPlanSuitability'
 import PipeSuitability from './pipeSuitability'
+import EsapSuitability from './esapSuitability'
 
 @Task({
   slug: 'suitability-assessment',
@@ -13,6 +14,7 @@ import PipeSuitability from './pipeSuitability'
     SuitabilityAssessmentPage,
     RfapSuitability,
     PipeSuitability,
+    EsapSuitability,
     ApplicationTimeliness,
     ContingencyPlanSuitability,
   ],

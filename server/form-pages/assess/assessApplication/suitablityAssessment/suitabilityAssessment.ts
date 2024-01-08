@@ -71,6 +71,9 @@ export default class SuitabilityAssessment implements TasklistPage {
     if (retrieveOptionalQuestionResponseFromFormArtifact(this.assessment.application, SelectApType, 'type') === 'pipe')
       return 'pipe-suitability'
 
+    if (retrieveOptionalQuestionResponseFromFormArtifact(this.assessment.application, SelectApType, 'type') === 'esap')
+      return 'esap-suitability'
+
     if (
       noticeTypeFromApplication(this.assessment.application) === 'short_notice' ||
       noticeTypeFromApplication(this.assessment.application) === 'emergency'
