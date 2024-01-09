@@ -1,14 +1,6 @@
 {% extends "govuk/template.njk" %}
 
 {% block head %}
-  <!--[if !IE 8]><!-->
-  <link href="/assets/stylesheets/application.css?{{ version }}" rel="stylesheet"/>
-  <!--<![endif]-->
-
-  <!--[if lt IE 9]>
-  <link href="/assets/stylesheets/application-ie8.css?{{ version }}" rel="stylesheet"/>
-  <script src="/assets/js/html5shiv-3.7.3.min.js"></script>
-  <![endif]-->
 
   <script src="/assets/js/jquery.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"
@@ -16,6 +8,7 @@
           nonce="{{ cspNonce }}"
           crossorigin="anonymous"></script>
   <link href="https://code.jquery.com/ui/1.13.2/themes/ui-lightness/jquery-ui.css" rel="stylesheet" nonce="{{ cspNonce }}" crossorigin>
+  <link href="/assets/stylesheets/application.css?{{ version }}" rel="stylesheet"/>
 
 {% endblock %}
 
@@ -31,8 +24,7 @@
 {% block bodyEnd %}
   {# Run JavaScript at end of the
   <body>, to avoid blocking the initial render. #}
-  <script src="/assets/govuk/all.js"></script>
-  <script src="/assets/govukFrontendInit.js"></script>
+  <script type="module" src="/assets/govukFrontendInit.js"></script>
   <script src="/assets/moj/all.js"></script>
   {% block extraScripts %}{% endblock %}
 {% endblock %}
