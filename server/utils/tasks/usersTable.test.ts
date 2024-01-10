@@ -28,6 +28,9 @@ describe('userTableHeader', () => {
     expect(userTableHeader()).toEqual([
       {
         text: 'Name',
+        attributes: {
+          'aria-sort': 'ascending',
+        },
       },
       {
         text: 'Region',
@@ -37,12 +40,21 @@ describe('userTableHeader', () => {
       },
       {
         text: 'Tasks pending',
+        attributes: {
+          'aria-sort': 'none',
+        },
       },
       {
         text: 'Tasks completed in previous 7 days',
+        attributes: {
+          'aria-sort': 'none',
+        },
       },
       {
         text: 'Tasks completed in previous 30 days',
+        attributes: {
+          'aria-sort': 'none',
+        },
       },
       {
         text: 'Action',

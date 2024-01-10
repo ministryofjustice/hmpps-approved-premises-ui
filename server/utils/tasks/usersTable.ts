@@ -5,12 +5,32 @@ import { qualificationDictionary } from '../users'
 import { kebabCase } from '../utils'
 
 export const userTableHeader = () => [
-  { text: 'Name' },
+  {
+    text: 'Name',
+    attributes: {
+      'aria-sort': 'ascending',
+    },
+  },
   { text: 'Region' },
   { text: 'Qualification' },
-  { text: 'Tasks pending' },
-  { text: 'Tasks completed in previous 7 days' },
-  { text: 'Tasks completed in previous 30 days' },
+  {
+    text: 'Tasks pending',
+    attributes: {
+      'aria-sort': 'none',
+    },
+  },
+  {
+    text: 'Tasks completed in previous 7 days',
+    attributes: {
+      'aria-sort': 'none',
+    },
+  },
+  {
+    text: 'Tasks completed in previous 30 days',
+    attributes: {
+      'aria-sort': 'none',
+    },
+  },
   { text: 'Action' },
 ]
 

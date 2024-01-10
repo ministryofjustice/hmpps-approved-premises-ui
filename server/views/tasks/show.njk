@@ -28,6 +28,9 @@
 
       {{
         govukTable({
+            attributes: {
+              'data-module': 'moj-sortable-table'
+            },
             firstCellIsHeader: true,
             head: TaskUtils.userTableHeader(),
             rows: TaskUtils.userTableRows(users, task, csrfToken)
@@ -38,4 +41,12 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block extraScripts %}
+<script type="text/javascript" nonce="{{ cspNonce }}">
+  window
+    .MOJFrontend
+    .initAll()
+</script>
 {% endblock %}
