@@ -2,16 +2,13 @@ import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-a
 import ReleaseType from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
 import SentenceType from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
 import { ApprovedPremisesApplication as Application, ReleaseTypeOption } from '../../@types/shared'
-import {
-  retrieveOptionalQuestionResponseFromFormArtifact,
-  retrieveQuestionResponseFromFormArtifact,
-} from '../retrieveQuestionResponseFromFormArtifact'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import RelevantDates from '../../form-pages/apply/reasons-for-placement/basic-information/relevantDates'
 import { noticeTypeFromApplication } from './noticeTypeFromApplication'
 
 export const shouldShowContingencyPlanPartnersPages = (application: Application) => {
   let releaseType: ReleaseTypeOption
-  const sentenceType = retrieveQuestionResponseFromFormArtifact(application, SentenceType, 'sentenceType')
+  const sentenceType = retrieveOptionalQuestionResponseFromFormArtifact(application, SentenceType, 'sentenceType')
 
   if (
     sentenceType === 'standardDeterminate' ||
@@ -19,10 +16,10 @@ export const shouldShowContingencyPlanPartnersPages = (application: Application)
     sentenceType === 'ipp' ||
     sentenceType === 'life'
   ) {
-    releaseType = retrieveQuestionResponseFromFormArtifact(application, ReleaseType, 'releaseType')
+    releaseType = retrieveOptionalQuestionResponseFromFormArtifact(application, ReleaseType, 'releaseType')
   }
 
-  const apType = retrieveQuestionResponseFromFormArtifact(application, SelectApType, 'type')
+  const apType = retrieveOptionalQuestionResponseFromFormArtifact(application, SelectApType, 'type')
 
   if (
     sentenceType === 'communityOrder' ||
