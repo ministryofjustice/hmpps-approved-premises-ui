@@ -1,6 +1,6 @@
 {%- from "govuk/components/summary-list/macro.njk" import govukSummaryList -%}
 
-{% macro personDetails(person, showTitle = true) %}
+{% macro personDetails(person, showTitle = true, statusOnSubmission = '') %}
   {% set rows = ([
     {
       key: {
@@ -59,14 +59,18 @@
       value: {
         text: person.genderIdentity
       }
-    }, {
+    },
+
+    {
       key: {
-        text: "Status"
+        text: "Status on Submission" if statusOnSubmission else "Status"
       },
       value: {
-        html: statusTag(person.status)
+        html: statusTag(statusOnSubmission) if statusOnSubmission else statusTag(person.status)
       }
-    }, {
+    },
+
+    {
       key: {
         text: "Prison"
       },

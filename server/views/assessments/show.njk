@@ -25,7 +25,7 @@
         {{ pageHeading }}
       </h1>
 
-      {{ personDetails(assessment.application.person) }}
+      {{ personDetails(assessment.application.person, statusOnSubmission = assessment.application.personStatusOnSubmission) }}
 
       {% for section in SummaryListUtils.summaryListSections(assessment, false) %}
         <h2 class="govuk-heading-l">{{ section.title }}</h3>

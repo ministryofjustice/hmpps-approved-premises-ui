@@ -137,4 +137,5 @@ export default ApplicationFactory.define(() => ({
   isPipeApplication: faker.datatype.boolean(),
   risks: risksFactory.build(),
   status: 'started' as const,
+  personStatusOnSubmission: 'InCustody' as const,
 }))

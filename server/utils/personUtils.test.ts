@@ -12,6 +12,10 @@ describe('personUtils', () => {
     it('returns an "In Custody" tag for an InCustody status', () => {
       expect(statusTag('InCustody')).toEqual(`<strong class="govuk-tag" data-cy-status="InCustody">In Custody</strong>`)
     })
+
+    it('returns an "Unknown" tag for an Unknown status', () => {
+      expect(statusTag('Unknown')).toEqual(`<strong class="govuk-tag" data-cy-status="Unknown">Unknown</strong>`)
+    })
   })
 
   describe('tierBadge', () => {

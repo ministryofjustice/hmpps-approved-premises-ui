@@ -3,7 +3,7 @@
 
 {% macro applicationReadonlyView(application) %}
 
-  {{ personDetails(application.person) }}
+  {{ personDetails(application.person, statusOnSubmission = application.personStatusOnSubmission) }}
 
   {% if application.type !== 'Offline' %}
     {% for section in SummaryListUtils.summaryListSections(application, false) %}
