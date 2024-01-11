@@ -23,18 +23,21 @@ context('List assessments', () => {
       statuses: awaitingAssessmentStatuses,
       sortBy: 'name',
       sortDirection: 'asc',
+      page: '1',
     })
     cy.task('stubAssessments', {
       assessments: awaitingResponseAssessments,
       statuses: ['awaiting_response'],
       sortBy: 'name',
       sortDirection: 'asc',
+      page: '1',
     })
     cy.task('stubAssessments', {
       assessments: completedAssessments,
       statuses: ['completed'],
       sortBy: 'name',
       sortDirection: 'asc',
+      page: '1',
     })
 
     // And I visit the list page
@@ -68,12 +71,14 @@ context('List assessments', () => {
       statuses: awaitingAssessmentStatuses,
       sortBy: 'name',
       sortDirection: 'asc',
+      page: '1',
     })
     cy.task('stubAssessments', {
       assessments: awaitingAssessments,
       statuses: awaitingAssessmentStatuses,
       sortBy: 'name',
       sortDirection: 'desc',
+      page: '1',
     })
 
     // And I visit the list page
@@ -90,6 +95,7 @@ context('List assessments', () => {
 
     // And the API should have received a request for the correct sort order
     cy.task('verifyAssessmentsRequests', {
+      page: '1',
       statuses: awaitingAssessmentStatuses,
       sortBy: 'name',
       sortDirection: 'asc',
@@ -105,11 +111,85 @@ context('List assessments', () => {
 
     // And the API should have received a request for the correct sort order
     cy.task('verifyAssessmentsRequests', {
+      page: '1',
       statuses: awaitingAssessmentStatuses,
       sortBy: 'name',
       sortDirection: 'desc',
     }).then(requests => {
       expect(requests).to.have.length(1)
     })
+  })
+
+  it('supports pagination', () => {
+    cy.task('stubAuthUser')
+
+    // Given I am logged in
+    cy.signIn()
+
+    const awaitingAssessmentsPage1 = assessmentSummaryFactory.buildList(10)
+    const awaitingAssessmentsPage2 = assessmentSummaryFactory.buildList(10)
+    const awaitingAssessmentsPage9 = assessmentSummaryFactory.buildList(10)
+
+    cy.task('stubAssessments', {
+      assessments: awaitingAssessmentsPage1,
+      statuses: awaitingAssessmentStatuses,
+      sortBy: 'name',
+      sortDirection: 'asc',
+      page: '1',
+    })
+
+    cy.task('stubAssessments', {
+      assessments: awaitingAssessmentsPage2,
+      statuses: awaitingAssessmentStatuses,
+      sortBy: 'name',
+      sortDirection: 'asc',
+      page: '2',
+    })
+
+    cy.task('stubAssessments', {
+      assessments: awaitingAssessmentsPage9,
+      statuses: awaitingAssessmentStatuses,
+      sortBy: 'name',
+      sortDirection: 'asc',
+      page: '9',
+    })
+
+    // And I visit the list page
+    const listPage = ListPage.visit()
+
+    // Then I should see the awaiting assessments
+    listPage.shouldShowAssessments(awaitingAssessmentsPage1, 'awaiting_assessment')
+
+    // When I click next
+    listPage.clickNext()
+
+    // Then the API should have received a request for the next page
+    cy.task('verifyAssessmentsRequests', {
+      page: '2',
+      statuses: awaitingAssessmentStatuses,
+      sortBy: 'name',
+      sortDirection: 'asc',
+    }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+
+    // And I should see the assessments that are allocated
+    listPage.shouldShowAssessments(awaitingAssessmentsPage2, 'awaiting_assessment')
+
+    // When I click on a page number
+    listPage.clickPageNumber('9')
+
+    // Then the API should have received a request for the that page number
+    cy.task('verifyAssessmentsRequests', {
+      page: '9',
+      statuses: awaitingAssessmentStatuses,
+      sortBy: 'name',
+      sortDirection: 'asc',
+    }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+
+    // And I should see the assessments that are allocated
+    listPage.shouldShowAssessments(awaitingAssessmentsPage9, 'awaiting_assessment')
   })
 })

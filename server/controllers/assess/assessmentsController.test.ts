@@ -2,16 +2,17 @@ import type { NextFunction, Request, Response } from 'express'
 
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
+import { ApprovedPremisesAssessmentSummary as AssessmentSummary } from '@approved-premises/api'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
 import AssessmentsController from './assessmentsController'
 import { AssessmentService } from '../../services'
 
-import { assessmentFactory, assessmentSummaryFactory } from '../../testutils/factories'
+import { assessmentFactory, assessmentSummaryFactory, paginatedResponseFactory } from '../../testutils/factories'
 
 import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
-import { ErrorsAndUserInput } from '../../@types/ui'
+import { ErrorsAndUserInput, PaginatedResponse } from '../../@types/ui'
 import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 
@@ -48,9 +49,12 @@ describe('assessmentsController', () => {
       sortDirection: 'desc',
     }
     ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
+    const paginatedResponse = paginatedResponseFactory.build({
+      data: assessments,
+    }) as PaginatedResponse<AssessmentSummary>
 
     beforeEach(() => {
-      assessmentService.getAll.mockResolvedValue(assessments)
+      assessmentService.getAll.mockResolvedValue(paginatedResponse)
     })
 
     it('should list all the assessments with awaiting_assessment statuses by default', async () => {
@@ -61,8 +65,10 @@ describe('assessmentsController', () => {
       expect(response.render).toHaveBeenCalledWith('assessments/index', {
         pageHeading: 'Approved Premises applications',
         assessments,
-        sortBy: paginationDetails.sortBy,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
       })
       expect(assessmentService.getAll).toHaveBeenCalledWith(
@@ -70,6 +76,7 @@ describe('assessmentsController', () => {
         awaitingAssessmentStatuses,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
+        1,
       )
     })
 
@@ -83,8 +90,10 @@ describe('assessmentsController', () => {
         pageHeading: 'Approved Premises applications',
         assessments,
         activeTab: 'awaiting_assessment',
-        sortBy: paginationDetails.sortBy,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
       })
       expect(assessmentService.getAll).toHaveBeenCalledWith(
@@ -92,6 +101,7 @@ describe('assessmentsController', () => {
         awaitingAssessmentStatuses,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
+        1,
       )
     })
 
@@ -105,15 +115,18 @@ describe('assessmentsController', () => {
         pageHeading: 'Approved Premises applications',
         assessments,
         activeTab: 'completed',
-        sortBy: paginationDetails.sortBy,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
       })
       expect(assessmentService.getAll).toHaveBeenCalledWith(
         token,
-        ['completed'],
+        awaitingAssessmentStatuses,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
+        1,
       )
     })
 
@@ -127,15 +140,18 @@ describe('assessmentsController', () => {
         pageHeading: 'Approved Premises applications',
         assessments,
         activeTab: 'awaiting_response',
-        sortBy: paginationDetails.sortBy,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
       })
       expect(assessmentService.getAll).toHaveBeenCalledWith(
         token,
-        ['awaiting_response'],
+        awaitingAssessmentStatuses,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
+        1,
       )
     })
   })

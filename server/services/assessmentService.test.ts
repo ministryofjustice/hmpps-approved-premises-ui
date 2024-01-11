@@ -1,17 +1,26 @@
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { Request } from 'express'
-import { AssessmentAcceptance, UpdatedClarificationNote } from '@approved-premises/api'
+import {
+  AssessmentAcceptance,
+  ApprovedPremisesAssessmentSummary as AssessmentSummary,
+  UpdatedClarificationNote,
+} from '@approved-premises/api'
 
 import { fromPartial } from '@total-typescript/shoehorn'
 import { AssessmentClient } from '../data'
 import AssessmentService from './assessmentService'
-import { assessmentFactory, assessmentSummaryFactory, clarificationNoteFactory } from '../testutils/factories'
+import {
+  assessmentFactory,
+  assessmentSummaryFactory,
+  clarificationNoteFactory,
+  paginatedResponseFactory,
+} from '../testutils/factories'
 
 import { acceptanceData, placementRequestData } from '../utils/assessments/acceptanceData'
 import { getBody } from '../form-pages/utils'
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
 import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
-import { DataServices, TaskListErrors } from '../@types/ui'
+import { DataServices, PaginatedResponse, TaskListErrors } from '../@types/ui'
 import { ValidationError } from '../utils/errors'
 import { ApplicationOrAssessmentResponse } from '../utils/applications/utils'
 import { applicationAccepted } from '../utils/assessments/decisionUtils'
@@ -43,11 +52,21 @@ describe('AssessmentService', () => {
   describe('getAll', () => {
     it('should return all assessments', async () => {
       const assessments = assessmentSummaryFactory.buildList(5)
-      assessmentClient.all.mockResolvedValue(assessments)
-      const result = await service.getAll('token', ['awaiting_response'], 'name', 'desc')
+      const paginatedResponse = paginatedResponseFactory.build({
+        data: assessments,
+      }) as PaginatedResponse<AssessmentSummary>
 
-      expect(result).toEqual(assessments)
-      expect(assessmentClient.all).toHaveBeenCalledWith(['awaiting_response'], 'name', 'desc')
+      assessmentClient.all.mockResolvedValue(paginatedResponse)
+      const result = await service.getAll('token', ['awaiting_response'], 'name', 'desc', 1)
+
+      expect(result).toEqual({
+        data: assessments,
+        pageNumber: '1',
+        pageSize: '10',
+        totalPages: '10',
+        totalResults: '100',
+      })
+      expect(assessmentClient.all).toHaveBeenCalledWith(['awaiting_response'], 1, 'name', 'desc')
     })
   })
 
