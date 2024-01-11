@@ -29,6 +29,7 @@ describeClient('AssessmentClient', provider => {
           path: paths.assessments.index.pattern,
           query: {
             statuses: 'awaiting_response,completed',
+            page: '1',
             sortBy: 'name',
             sortDirection: 'desc',
           },
@@ -40,12 +41,23 @@ describeClient('AssessmentClient', provider => {
         willRespondWith: {
           status: 200,
           body: assessments,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
         },
       })
 
-      const result = await assessmentClient.all(['awaiting_response', 'completed'], 'name', 'desc')
+      const result = await assessmentClient.all(['awaiting_response', 'completed'], 1, 'name', 'desc')
 
-      expect(result).toEqual(assessments)
+      expect(result).toEqual({
+        data: assessments,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
   })
 

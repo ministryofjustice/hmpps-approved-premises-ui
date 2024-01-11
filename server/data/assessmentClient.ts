@@ -8,6 +8,7 @@ import type {
   UpdatedClarificationNote,
 } from '@approved-premises/api'
 import { AssessmentSortField, SortDirection } from '@approved-premises/api'
+import { PaginatedResponse } from '@approved-premises/ui'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -22,13 +23,15 @@ export default class AssessmentClient {
 
   async all(
     statuses: Array<AssessmentStatus>,
+    page: number,
     sortBy: AssessmentSortField = 'name',
     sortDirection: SortDirection = 'asc',
-  ): Promise<Array<AssessmentSummary>> {
-    return (await this.restClient.get({
+  ): Promise<PaginatedResponse<AssessmentSummary>> {
+    return this.restClient.getPaginatedResponse({
       path: paths.assessments.index.pattern,
+      page: page.toString(),
       query: { statuses: statuses.join(','), sortBy, sortDirection },
-    })) as Array<AssessmentSummary>
+    })
   }
 
   async find(assessmentId: string): Promise<Assessment> {

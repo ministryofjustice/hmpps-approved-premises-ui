@@ -20,17 +20,22 @@ export default {
     statuses,
     sortBy = 'name',
     sortDirection = 'asc',
+    page = '1',
   }: {
     assessments: Array<AssessmentSummary>
     statuses: Array<AssessmentStatus>
     sortDirection: SortDirection
     sortBy: AssessmentSortField
+    page: string
   }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
         urlPathPattern: paths.assessments.index.pattern,
         queryParameters: {
+          page: {
+            equalTo: page,
+          },
           statuses: {
             equalTo: statuses.join(','),
           },
@@ -44,7 +49,12 @@ export default {
       },
       response: {
         status: 200,
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          'X-Pagination-TotalPages': '10',
+          'X-Pagination-TotalResults': '100',
+          'X-Pagination-PageSize': '10',
+        },
         jsonBody: assessments,
       },
     }),
@@ -183,10 +193,12 @@ export default {
       })
     ).body.requests,
   verifyAssessmentsRequests: async ({
+    page = '1',
     statuses,
     sortBy = 'name',
     sortDirection = 'asc',
   }: {
+    page: string
     statuses: Array<AssessmentStatus>
     sortDirection: SortDirection
     sortBy: AssessmentSortField
@@ -196,6 +208,9 @@ export default {
         method: 'GET',
         urlPathPattern: paths.assessments.index.pattern,
         queryParameters: {
+          page: {
+            equalTo: page,
+          },
           statuses: {
             equalTo: statuses.join(','),
           },

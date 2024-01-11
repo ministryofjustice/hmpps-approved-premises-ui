@@ -10,6 +10,7 @@ import {
 } from '@approved-premises/api'
 import type { DataServices } from '@approved-premises/ui'
 
+import { PaginatedResponse } from '@approved-premises/ui'
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
 import CheckYourAnswers from '../form-pages/assess/checkYourAnswers/checkYourAnswersTask/checkYourAnswers'
 import { acceptanceData } from '../utils/assessments/acceptanceData'
@@ -29,10 +30,11 @@ export default class AssessmentService {
     statuses: Array<AssessmentStatus>,
     sortBy: AssessmentSortField = 'name',
     sortDirection: SortDirection = 'asc',
-  ): Promise<Array<AssessmentSummary>> {
+    page: number = 1,
+  ): Promise<PaginatedResponse<AssessmentSummary>> {
     const client = this.assessmentClientFactory(token)
 
-    return client.all(statuses, sortBy, sortDirection)
+    return client.all(statuses, page, sortBy, sortDirection)
   }
 
   async findAssessment(token: string, id: string): Promise<Assessment> {

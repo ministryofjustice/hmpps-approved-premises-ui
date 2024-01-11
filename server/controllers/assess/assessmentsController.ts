@@ -18,7 +18,7 @@ export default class AssessmentsController {
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { activeTab } = req.query
-      const { sortBy, sortDirection, hrefPrefix } = getPaginationDetails<AssessmentSortField>(
+      const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<AssessmentSortField>(
         req,
         paths.assessments.index({}),
         { activeTab },
@@ -28,12 +28,20 @@ export default class AssessmentsController {
           ? awaitingAssessmentStatuses
           : ([activeTab] as Array<AssessmentStatus>)
 
-      const assessments = await this.assessmentService.getAll(req.user.token, statuses, sortBy, sortDirection)
+      const assessments = await this.assessmentService.getAll(
+        req.user.token,
+        statuses,
+        sortBy,
+        sortDirection,
+        pageNumber,
+      )
 
       res.render('assessments/index', {
         pageHeading: 'Approved Premises applications',
         activeTab,
-        assessments,
+        assessments: assessments.data,
+        pageNumber: Number(assessments.pageNumber),
+        totalPages: Number(assessments.totalPages),
         hrefPrefix,
         sortBy,
         sortDirection,
