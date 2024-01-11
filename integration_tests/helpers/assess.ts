@@ -58,9 +58,9 @@ export default class AseessHelper {
       sortBy: 'name',
       sortDirection: 'asc',
     })
-    cy.task('stubAssessment', this.assessment)
+
+    cy.task('stubJourney', this.assessment)
     cy.task('stubFindUser', { user: this.user, id: this.assessment.application.createdByUserId })
-    cy.task('stubAssessmentUpdate', this.assessment)
     cy.task('stubClarificationNoteCreate', {
       assessment: this.assessment,
       clarificationNote: { query: this.clarificationNote },
