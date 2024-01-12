@@ -4,32 +4,13 @@
 
 {% block questions %}
   <h1 class="govuk-heading-l">
-    Sufficient information
+    Suitability Assessment
   </h1>
 
   {% set hintHtml %}
-  <details class="govuk-details">
-    <summary class="govuk-details__summary">
-      <span class="govuk-details__summary-text">
-                View guidance
-              </span>
-    </summary>
-    <div class="govuk-details__text">
-      <p>
-        <strong>Missing information that you need to make a decision</strong>
-      </p>
-      <p>If you are missing information that is essential to making a decision, request further information from the probation practitioner by clicking 'No'.</p>
-      <p>This information must be provided to you within 5 working days. </p>
-
-      <p>If the information is not received within 5 working days, mark the decision as 'requested information not provided by probation practitioner' when submitting your assessment. </p>
-      <p>
-        <strong>Missing information that is not required to make a decision</strong>
-      </p>
-      <p>If there is missing information that would be useful to inform a placement but is not essential to making a decision click 'Yes' and continue with the assessment.</p>
-
-      <p>Note this information in your assessment as part of the additional actions required by the probation practitioner to support a placement. These actions will then be followed up as part of pre-arrival planning.</p>
+  <div class="govuk-inset-text">
+      If there's not enough information, you'll need to request it from the probation practitioner. No progress can be made on the application until they've responded or 5 days have passed (whichever is soonest).
     </div>
-  </details>
   {% endset %}
 
   {% set notEnoughInfo %}
@@ -58,7 +39,7 @@
           },
           {
             value: "no",
-            text: "No",
+            text: "No, I need to contact the probation practitioner for more information",
             conditional: {
               html: notEnoughInfo
             }

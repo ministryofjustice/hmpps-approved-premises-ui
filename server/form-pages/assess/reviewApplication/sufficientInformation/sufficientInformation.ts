@@ -14,7 +14,7 @@ import TasklistPage from '../../../tasklistPage'
 export default class SufficientInformation implements TasklistPage {
   name = 'sufficient-information'
 
-  title = 'Is there enough information in the application to make a decision?'
+  title = 'Is there enough information in the application for you to make a decision?'
 
   furtherInformationQuestion = 'What additional information is required?'
 
