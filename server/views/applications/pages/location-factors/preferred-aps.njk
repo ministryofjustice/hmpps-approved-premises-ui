@@ -1,4 +1,5 @@
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "../../../components/formFields/form-page-select-with-optgroup/macro.njk" import formPageSelectWithOptgroup %}
 
 {% extends "../layout.njk" %}
 
@@ -9,16 +10,34 @@
   </h1>
 
   {% for preferredAp in page.preferredApOptions %}
+    <fieldset class="govuk-fieldset">
+      <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+        {{page.preferredApLabels[loop.index0]}}
+      </legend>
 
-    {{ formPageSelect({
-      fieldName: preferredAp,
-      label: {
-        text: page.preferredApLabels[loop.index0], 
-        classes: "govuk-label--m"
-      },
-      items: convertObjectsToSelectOptions(page.allPremises, 'No preference', 'name', 'id', preferredAp)
-    }, fetchContext()) }}
+      {{
+      formPageSelectWithOptgroup({
+        label: {
+          classes: "govuk-fieldset__legend--s",
+          html: "Select a premises"
+        },
+        attributes: {
+          "data-premises-with-regions": true,
+          "data-region-prompt": "No preference"
+        },
+        prompt: "No preference",
+        fieldName: preferredAp,
+        items: PremisesUtils.groupedSelectOptions(page.allPremises, fetchContext(), preferredAp)
+      })
+    }}
 
+    </fieldset>
+
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
     {%endfor%}
 
+  {% endblock %}
+
+  {% block extraScripts %}
+    <script type="text/javascript" src="/assets/js/flattenPremisesOptions.js"></script>
   {% endblock %}
