@@ -1,0 +1,20 @@
+{% from "../selectWithOptgroup.njk" import govukSelectWithOptgroup %}
+
+{% macro formPageSelectWithOptgroup(params, context) %}
+  {% set selectItems = [] %}
+
+  {% for item in params.items %}
+    {% set selectItems = (selectItems.push(mergeObjects(item, {
+      selected: context[params.fieldName] == item.value
+    })), selectItems) %}
+  {% endfor %}
+
+  {{
+      govukSelectWithOptgroup(
+        mergeObjects(
+          mergeObjects(params, { items: selectItems }),
+          { id: params.fieldName, name: params.fieldName, errorMessage: context.errors[params.fieldName] }
+        )
+      )
+  }}
+{% endmacro %}
