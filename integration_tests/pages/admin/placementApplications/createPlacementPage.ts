@@ -1,4 +1,4 @@
-import { PlacementRequestDetail } from '../../../../server/@types/shared'
+import { ApprovedPremisesSummary, PlacementRequestDetail } from '../../../../server/@types/shared'
 import { placementDates } from '../../../../server/utils/matchUtils'
 import Page from '../../page'
 
@@ -14,12 +14,13 @@ export default class CreatePlacementPage extends Page {
     this.dateInputsShouldContainDate('departureDate', dates.endDate)
   }
 
-  completeForm(startDate: string, endDate: string, premisesId: string): void {
+  completeForm(startDate: string, endDate: string, premises: ApprovedPremisesSummary): void {
     this.clearDateInputs('arrivalDate')
     this.completeDateInputs('arrivalDate', startDate)
 
     this.clearDateInputs('departureDate')
     this.completeDateInputs('departureDate', endDate)
-    this.getSelectInputByIdAndSelectAnEntry('premisesId', premisesId)
+    this.getSelectInputByIdAndSelectAnEntry('region0', premises.probationRegion)
+    this.getSelectInputByIdAndSelectAnEntry('premisesId', premises.id)
   }
 }

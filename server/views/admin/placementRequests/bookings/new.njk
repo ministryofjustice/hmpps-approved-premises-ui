@@ -5,6 +5,7 @@
 {% from "../../../partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "../../../components/formFields/form-page-input/macro.njk" import formPageInput %}
 {% from "../../../components/formFields/form-page-date-input/macro.njk" import formPageDateInput %}
+{% from "../../../components/formFields/selectWithOptgroup.njk" import govukSelectWithOptgroup %}
 
 {% extends "../../../partials/layout.njk" %}
 
@@ -36,14 +37,18 @@
         {{ showErrorSummary(errorSummary) }}
 
         {{
-          govukSelect({
+          govukSelectWithOptgroup({
             label: {
               classes: "govuk-fieldset__legend--m",
               html: 'Select an Approved Premises'
             },
+            attributes: {
+              "data-premises-with-regions": true
+            },
+            prompt: "Select a premises",
             id: "premisesId",
             name: "premisesId",
-            items: convertObjectsToSelectOptions(premises, 'Please select', 'name', 'id', 'premisesId'),
+            items: PremisesUtils.groupedSelectOptions(premises, fetchContext()),
             errorMessage: errors.premisesId
           })
         }}
@@ -87,4 +92,8 @@
       </form>
     </div>
   </div>
+{% endblock %}
+
+{% block extraScripts %}
+  <script type="text/javascript" src="/assets/js/flattenPremisesOptions.js"></script>
 {% endblock %}
