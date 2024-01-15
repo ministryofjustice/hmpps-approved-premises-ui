@@ -6,8 +6,8 @@ export default class BookingFindPage extends Page {
     super('Create a placement')
   }
 
-  static visit(premisesId: string, bedId: string): BookingFindPage {
-    cy.visit(paths.bookings.new({ premisesId, bedId }))
+  static visit(premisesId: string): BookingFindPage {
+    cy.visit(paths.bookings.new({ premisesId }))
     return new BookingFindPage()
   }
 

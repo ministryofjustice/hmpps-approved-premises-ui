@@ -12,8 +12,8 @@ export default class BookingNewPage extends Page {
     this.bedspaceConflictErrorComponent = new BedspaceConflictErrorComponent(premisesId, 'booking')
   }
 
-  static visit(premisesId: string, bedId: string): BookingNewPage {
-    cy.visit(paths.bookings.new({ premisesId, bedId }))
+  static visit(premisesId: string): BookingNewPage {
+    cy.visit(paths.bookings.new({ premisesId }))
 
     return new BookingNewPage(premisesId)
   }

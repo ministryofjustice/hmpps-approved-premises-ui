@@ -230,8 +230,8 @@ export const bookingActions = (booking: Booking, premisesId: string): Array<Iden
 export const generateConflictBespokeError = (
   err: SanitisedError,
   premisesId: string,
-  bedId: string,
   datesGrammaticalNumber: 'plural' | 'singular',
+  bedId?: string,
 ): BespokeError => {
   const { detail } = err.data as { detail: string }
   const { conflictingEntityId, conflictingEntityType } = parseConflictError(detail)
@@ -242,7 +242,7 @@ export const generateConflictBespokeError = (
       : 'This bedspace is not available for the date entered'
 
   const link =
-    conflictingEntityType === 'lost-bed'
+    conflictingEntityType === 'lost-bed' && bedId
       ? `<a href="${paths.lostBeds.show({
           premisesId,
           bedId,

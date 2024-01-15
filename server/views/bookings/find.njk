@@ -9,10 +9,10 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block beforeContent %}
-    {{ govukBackLink({
-        text: "Back",
-        href: paths.premises.beds.show({ premisesId: premisesId, bedId: bedId })
-    }) }}
+     {{ govukBackLink({
+   		text: "Back",
+   		href: paths.premises.show({ premisesId: premisesId })
+   	}) }}
 {% endblock %}
 
 {% block content %}

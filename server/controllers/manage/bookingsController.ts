@@ -2,11 +2,7 @@ import type { Request, RequestHandler, Response } from 'express'
 import type { NewBooking } from '@approved-premises/api'
 
 import { BookingService, PersonService } from '../../services'
-import {
-  catchValidationErrorOrPropogate,
-  fetchErrorsAndUserInput,
-  generateConflictErrorAndRedirect,
-} from '../../utils/validation'
+import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 import { DateFormats } from '../../utils/dateUtils'
 
 import paths from '../../paths/manage'
@@ -30,7 +26,7 @@ export default class BookingsController {
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { premisesId, bedId } = req.params
+      const { premisesId } = req.params
       const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
 
       const crnArr = req.flash('crn')
@@ -43,7 +39,6 @@ export default class BookingsController {
           return res.render(`bookings/new`, {
             pageHeading: 'Create a placement',
             premisesId,
-            bedId,
             offences,
             ...person,
             errorTitle,
@@ -56,7 +51,6 @@ export default class BookingsController {
 
       return res.render(`bookings/find`, {
         pageHeading: 'Create a placement - find someone by CRN',
-        bedId,
         premisesId,
         errors,
         errorSummary,
@@ -68,11 +62,10 @@ export default class BookingsController {
 
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { premisesId, bedId } = req.params
+      const { premisesId } = req.params
 
       const booking: NewBooking = {
         serviceName: 'approved-premises',
-        bedId,
         ...req.body,
         ...DateFormats.dateAndTimeInputsToIsoString(req.body, 'arrivalDate'),
         ...DateFormats.dateAndTimeInputsToIsoString(req.body, 'departureDate'),
@@ -89,21 +82,7 @@ export default class BookingsController {
         )
       } catch (err) {
         req.flash('crn', booking.crn)
-
-        const redirectPath = paths.bookings.new({ premisesId, bedId })
-
-        if (err.status === 409 && 'data' in err) {
-          return generateConflictErrorAndRedirect(
-            req,
-            res,
-            premisesId,
-            bedId,
-            ['arrivalDate', 'departureDate'],
-            err,
-            redirectPath,
-          )
-        }
-
+        const redirectPath = paths.bookings.new({ premisesId })
         return catchValidationErrorOrPropogate(req, res, err, redirectPath)
       }
     }

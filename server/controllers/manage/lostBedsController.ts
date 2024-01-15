@@ -60,10 +60,10 @@ export default class LostBedsController {
             req,
             res,
             premisesId,
-            bedId,
             ['startDate', 'endDate'],
             err,
             redirectPath,
+            bedId,
           )
         }
 
