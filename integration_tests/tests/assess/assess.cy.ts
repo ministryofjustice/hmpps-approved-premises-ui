@@ -97,6 +97,13 @@ context('Assess', () => {
         query: 'clarification note text',
       },
     })
+    addResponsesToFormArtifact<Assessment>(assessmentNeedingClarification, {
+      task: 'sufficient-information',
+      page: 'sufficient-information-confirm',
+      keyValuePairs: {
+        confirm: 'yes',
+      },
+    })
     assessmentNeedingClarification = addResponsesToFormArtifact<Assessment>(assessmentNeedingClarification, {
       task: 'sufficient-information',
       page: 'information-received',
@@ -164,13 +171,27 @@ context('Assess', () => {
   })
 
   it('should allow me to reject an application where I have not received the correct information', function test() {
-    let assessment = addResponseToFormArtifact<Assessment>(this.assessmentNeedingClarification, {
+    let assessment = addResponsesToFormArtifact<Assessment>(this.assessment, {
+      task: 'sufficient-information',
+      page: 'sufficient-information',
+      keyValuePairs: {
+        sufficientInformation: 'no',
+        query: 'clarification note text',
+      },
+    })
+    assessment = addResponsesToFormArtifact<Assessment>(assessment, {
+      task: 'sufficient-information',
+      page: 'sufficient-information-confirm',
+      keyValuePairs: {
+        confirm: 'yes',
+      },
+    })
+    assessment = addResponseToFormArtifact<Assessment>(assessment, {
       task: 'sufficient-information',
       page: 'information-received',
       key: 'informationReceived',
       value: 'no',
     })
-
     assessment = addResponseToFormArtifact<Assessment>(assessment, {
       task: 'make-a-decision',
       page: 'make-a-decision',

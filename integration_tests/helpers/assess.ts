@@ -29,6 +29,7 @@ import RfapSuitabilityPage from '../pages/assess/rfapSuitability'
 import ContingencyPlanSuitabilityPage from '../pages/assess/contingencyPlanSuitability'
 
 import { awaitingAssessmentStatuses } from '../../server/utils/assessments/utils'
+import SufficientInformationConfirmPage from '../pages/assess/sufficientInformationConfirmPage'
 
 export default class AseessHelper {
   assessmentSummary: AssessmentSummary
@@ -129,6 +130,11 @@ export default class AseessHelper {
 
     // And I click submit
     page.clickSubmit()
+
+    // And I confirm that I want to send the note
+    const confirmPage = new SufficientInformationConfirmPage(this.assessment, 'yes')
+    confirmPage.completeForm()
+    confirmPage.clickSubmit()
 
     // Then I should see a confirmation screen
     const confirmationScreen = Page.verifyOnPage(ClarificationNoteConfirmPage)

@@ -4,7 +4,7 @@ import AssessPage from './assessPage'
 
 export default class SufficientInformationPage extends AssessPage {
   constructor(assessment: Assessment) {
-    super('Sufficient information', assessment, 'sufficient-information', 'sufficient-information', '')
+    super('Suitability Assessment', assessment, 'sufficient-information', 'sufficient-information', '')
   }
 
   completeForm() {
