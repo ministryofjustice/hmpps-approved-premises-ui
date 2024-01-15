@@ -1,0 +1,28 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% extends "../layout.njk" %}
+
+{% block questions %}
+  <h1 class="govuk-heading-l">
+    Suitability Assessment
+  </h1>
+
+  {{ formPageRadios({
+        fieldName: "confirm",
+        fieldset: {
+          legend: {
+            html: '<h2 class="govuk-heading-m">' + page.title + '</h2>'
+          }
+        },
+        items: [
+          {
+            value: "yes",
+            text: "Yes"
+          },
+          {
+            value: "no",
+            text: "No, go back to the previous question"
+          }
+        ]
+    },fetchContext()) }}
+{% endblock %}

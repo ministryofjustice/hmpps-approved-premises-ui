@@ -15,6 +15,7 @@ export const controllers = (services: Services) => {
   const assessmentPagesController = new AssessmentPagesController(assessmentService, {
     applicationService,
     userService,
+    assessmentService,
   } as unknown as DataServices)
   const clarificationNotesController = new ClarificationNotesController(assessmentService, userService)
   const supportingInformationController = new SupportingInformationController(assessmentService)
