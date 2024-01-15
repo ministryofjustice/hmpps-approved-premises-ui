@@ -1,11 +1,7 @@
 import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import createError from 'http-errors'
 
-import {
-  ApprovedPremisesAssessment as Assessment,
-  NewClarificationNote,
-  UpdatedClarificationNote,
-} from '@approved-premises/api'
+import { ApprovedPremisesAssessment as Assessment, UpdatedClarificationNote } from '@approved-premises/api'
 import { getPage } from '../../../utils/assessments/utils'
 import { AssessmentService } from '../../../services'
 
@@ -71,28 +67,6 @@ export default class PagesController {
         } else {
           res.redirect(paths.assessments.show({ id: req.params.id }))
         }
-      }
-    }
-  }
-
-  updateSufficientInformation(taskName: string, pageName: string) {
-    return async (req: Request, res: Response) => {
-      if (req.body.sufficientInformation === 'no') {
-        const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
-        const page = await this.saveAndValidate(assessment, taskName, pageName, req, res)
-
-        if (page) {
-          await this.assessmentService.createClarificationNote(
-            req.user.token,
-            req.params.id,
-            page.body as NewClarificationNote,
-          )
-
-          res.redirect(paths.assessments.clarificationNotes.confirm({ id: req.params.id }))
-        }
-      } else {
-        const requestHandler = this.update(taskName, pageName)
-        await requestHandler(req, res)
       }
     }
   }

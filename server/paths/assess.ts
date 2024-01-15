@@ -22,9 +22,6 @@ const paths = {
       update: pagesPath,
     },
     supportingInformationPath,
-    clarificationNotes: {
-      confirm: assessmentPath.path('clarification-notes/confirmation'),
-    },
     submission,
   },
   allocations: {
