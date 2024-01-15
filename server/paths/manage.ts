@@ -5,7 +5,7 @@ const singlePremisesPath = premisesPath.path(':premisesId')
 
 const bookingsPath = singlePremisesPath.path('bookings')
 const bookingPath = bookingsPath.path(':bookingId')
-const newBookingPath = singlePremisesPath.path('beds/:bedId/bookings/new')
+const newBookingPath = singlePremisesPath.path('beds/bookings/new')
 
 const peoplePath = bookingsPath.path('people')
 

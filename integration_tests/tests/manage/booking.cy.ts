@@ -7,7 +7,6 @@ import {
   bookingFactory,
   dateCapacityFactory,
   extendedPremisesSummaryFactory,
-  lostBedFactory,
   personFactory,
   premisesBookingFactory,
   restrictedPersonFactory,
@@ -17,7 +16,6 @@ import { BookingFindPage, BookingNewPage, BookingShowPage, PremisesShowPage } fr
 import Page from '../../pages/page'
 
 import BookingConfirmation from '../../pages/manage/booking/confirmation'
-import { bedFactory } from '../../../server/testutils/factories/room'
 import MoveBedPage from '../../pages/manage/bed/moveBed'
 import { signIn } from '../signIn'
 
@@ -57,7 +55,7 @@ context('Booking', () => {
     cy.task('stubPersonOffences', { person: lao, offences })
 
     // And I visit the first new booking page
-    const bookingNewPage = BookingFindPage.visit(premises.id, 'bedId')
+    const bookingNewPage = BookingFindPage.visit(premises.id)
 
     // When I enter a restricted CRN into the form
     bookingNewPage.enterCrn(lao.crn)
@@ -113,7 +111,7 @@ context('Booking', () => {
     cy.task('stubFindPerson', { person })
 
     // Given I visit the first new booking page
-    const bookingNewPage = BookingFindPage.visit(premises.id, booking.bed.id)
+    const bookingNewPage = BookingFindPage.visit(premises.id)
 
     // When I enter the CRN to the form
     bookingNewPage.enterCrn(person.crn)
@@ -161,7 +159,7 @@ context('Booking', () => {
     cy.task('stubPersonOffences', { person, offences: multipleOffences })
 
     // Given I visit the first new booking page
-    const bookingNewPage = BookingFindPage.visit(premises.id, booking.bed.id)
+    const bookingNewPage = BookingFindPage.visit(premises.id)
 
     // When I enter the CRN to the form
     bookingNewPage.enterCrn(person.crn)
@@ -201,10 +199,8 @@ context('Booking', () => {
     // Given I am signed in as a workflow manager
     signIn(['workflow_manager'])
 
-    const bedId = bedFactory.build().id
-
     // Given I visit the find page
-    const page = BookingFindPage.visit(premises.id, bedId)
+    const page = BookingFindPage.visit(premises.id)
 
     // When I miss a required field
     cy.task('stubPersonNotFound', {
@@ -237,14 +233,13 @@ context('Booking', () => {
     // Given I am signed in as a workflow manager
     signIn(['workflow_manager'])
 
-    const bedId = bedFactory.build().id
     const multipleOffences = activeOffenceFactory.buildList(3)
 
     cy.task('stubFindPerson', { premisesId: premises.id, person })
     cy.task('stubPersonOffences', { person, offences: multipleOffences })
 
     // Given I visit the find page
-    const page = BookingFindPage.visit(premises.id, bedId)
+    const page = BookingFindPage.visit(premises.id)
 
     // And I enter the CRN
     page.completeForm(person.crn)
@@ -263,43 +258,6 @@ context('Booking', () => {
 
     // Then I should see error messages relating to the event number
     page.shouldShowErrorMessagesForFields(['eventNumber'])
-  })
-
-  it('should show errors when there is a booking conflict', () => {
-    // Given I am signed in as a workflow manager
-    signIn(['workflow_manager'])
-
-    const bedId = bedFactory.build().id
-    const conflictingLostBed = lostBedFactory.build()
-
-    cy.task('stubPremisesSummary', premises)
-    cy.task('stubFindPerson', { person })
-    cy.task('stubBookingCreateConflictError', {
-      premisesId: premises.id,
-      conflictingEntityId: conflictingLostBed.id,
-      conflictingEntityType: 'lost-bed',
-    })
-    cy.task('stubLostBed', { premisesId: premises.id, lostBed: conflictingLostBed })
-
-    const conflictingBooking = bookingFactory.build({
-      person,
-      arrivalDate: '2022-06-01',
-      departureDate: '2022-06-01',
-    })
-
-    // Given I visit the find page
-    const page = BookingFindPage.visit(premises.id, bedId)
-
-    // When I enter the CRN to the form
-    page.completeForm(person.crn)
-
-    // And I fill in the booking form
-    const bookingNewPage = new BookingNewPage(premises.id)
-    bookingNewPage.completeForm(conflictingBooking)
-    bookingNewPage.clickSubmit()
-
-    // Then I should see an error message
-    bookingNewPage.shouldShowDateConflictErrorMessages(conflictingLostBed, 'lost-bed')
   })
 
   it('should allow me to see a booking', () => {

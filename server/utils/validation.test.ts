@@ -168,7 +168,6 @@ describe('generateConflictErrorAndRedirect', () => {
     const request = createMock<Request>({ headers: { referer: 'foo/bar' } })
     const response = createMock<Response>()
     const premisesId = 'premisesId'
-    const bedId = 'bedId'
     const err = createMock<SanitisedError>()
 
     const conflictError = createMock<BespokeError>()
@@ -178,7 +177,6 @@ describe('generateConflictErrorAndRedirect', () => {
       request,
       response,
       premisesId,
-      bedId,
       ['arrivalDateTime', 'departureDate'],
       err,
       '/foo/bar',

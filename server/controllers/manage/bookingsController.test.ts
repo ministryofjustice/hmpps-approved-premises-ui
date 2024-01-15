@@ -2,15 +2,9 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
-
-import { SanitisedError } from '../../sanitisedError'
 import { BookingService, PersonService } from '../../services'
 import BookingsController from './bookingsController'
-import {
-  catchValidationErrorOrPropogate,
-  fetchErrorsAndUserInput,
-  generateConflictErrorAndRedirect,
-} from '../../utils/validation'
+import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 
 import {
   activeOffenceFactory,
@@ -161,7 +155,6 @@ describe('bookingsController', () => {
 
         expect(response.render).toHaveBeenCalledWith('bookings/find', {
           premisesId,
-          bedId,
           pageHeading: 'Create a placement - find someone by CRN',
           errors: {},
           errorSummary: [],
@@ -179,7 +172,6 @@ describe('bookingsController', () => {
 
         expect(response.render).toHaveBeenCalledWith('bookings/find', {
           premisesId,
-          bedId,
           pageHeading: 'Create a placement - find someone by CRN',
           errors: errorsAndUserInput.errors,
           errorSummary: errorsAndUserInput.errorSummary,
@@ -218,10 +210,14 @@ describe('bookingsController', () => {
 
     describe('when errors are raised', () => {
       const flashSpy = jest.fn().mockImplementation(() => ['some-crn'])
+      const newBooking = newBookingFactory.build()
+      const booking = bookingFactory.build()
+      bookingService.create.mockResolvedValue(booking)
 
       request = {
         ...request,
-        params: { premisesId, bedId },
+        params: { premisesId },
+        body: newBooking,
         flash: flashSpy,
       }
 
@@ -242,28 +238,7 @@ describe('bookingsController', () => {
           err,
           paths.bookings.new({
             premisesId,
-            bedId,
           }),
-        )
-      })
-
-      it('should call generateConflictErrorAndRedirect if the error is a 409', async () => {
-        const err = createMock<SanitisedError>({ status: 409, data: 'some data' })
-
-        bookingService.create.mockImplementation(() => {
-          throw err
-        })
-
-        await requestHandler(request, response, next)
-
-        expect(generateConflictErrorAndRedirect).toHaveBeenCalledWith(
-          request,
-          response,
-          premisesId,
-          bedId,
-          ['arrivalDate', 'departureDate'],
-          err,
-          paths.bookings.new({ premisesId, bedId }),
         )
       })
     })

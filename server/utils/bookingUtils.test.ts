@@ -274,7 +274,7 @@ describe('bookingUtils', () => {
         },
       }
 
-      expect(generateConflictBespokeError(err as SanitisedError, premisesId, bedId, 'plural')).toEqual({
+      expect(generateConflictBespokeError(err as SanitisedError, premisesId, 'plural', bedId)).toEqual({
         errorTitle: 'This bedspace is not available for the dates entered',
         errorSummary: [
           {
@@ -294,7 +294,7 @@ describe('bookingUtils', () => {
         },
       }
 
-      expect(generateConflictBespokeError(err as SanitisedError, premisesId, bedId, 'plural')).toEqual({
+      expect(generateConflictBespokeError(err as SanitisedError, premisesId, 'plural', bedId)).toEqual({
         errorTitle: 'This bedspace is not available for the dates entered',
         errorSummary: [
           {
@@ -315,7 +315,7 @@ describe('bookingUtils', () => {
         },
       }
 
-      expect(generateConflictBespokeError(err as SanitisedError, premisesId, bedId, 'singular')).toEqual({
+      expect(generateConflictBespokeError(err as SanitisedError, premisesId, 'singular', bedId)).toEqual({
         errorTitle: 'This bedspace is not available for the date entered',
         errorSummary: [
           {

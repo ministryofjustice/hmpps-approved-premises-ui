@@ -16,12 +16,12 @@ export const generateConflictErrorAndRedirect = (
   request: Request,
   response: Response,
   premisesId: string,
-  bedId: string,
   fields: Array<string>,
   error: SanitisedError,
   redirectPath: string,
+  bedId?: string,
 ) => {
-  const errorDetails = generateConflictBespokeError(error, premisesId, bedId, 'plural')
+  const errorDetails = generateConflictBespokeError(error, premisesId, 'plural', bedId)
   const errors = {} as ErrorMessages
 
   fields.forEach(f => {

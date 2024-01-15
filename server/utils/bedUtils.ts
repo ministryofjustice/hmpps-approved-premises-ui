@@ -57,11 +57,6 @@ export const bedActions = (bed: BedDetail, premisesId: string) => {
   return {
     items: [
       {
-        text: 'Create a placement',
-        classes: 'govuk-button--secondary',
-        href: paths.bookings.new({ premisesId, bedId: bed.id }),
-      },
-      {
         text: 'Mark this bed as out of service',
         classes: 'govuk-button--secondary',
         href: paths.lostBeds.new({ premisesId, bedId: bed.id }),

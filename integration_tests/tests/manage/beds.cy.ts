@@ -1,6 +1,6 @@
 import { bedDetailFactory, bedSummaryFactory, lostBedFactory } from '../../../server/testutils/factories'
 
-import { BedShowPage, BedsListPage, BookingFindPage, LostBedCreatePage, LostBedListPage } from '../../pages/manage'
+import { BedShowPage, BedsListPage, LostBedCreatePage, LostBedListPage } from '../../pages/manage'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
 
@@ -39,15 +39,6 @@ context('Beds', () => {
 
     // Then I should see the room details
     bedPage.shouldShowBedDetails(bedDetail)
-
-    // And I should be able to create a booking
-    bedPage.clickCreateBookingOption()
-
-    // Then I should be taken to the bed page
-    Page.verifyOnPage(BookingFindPage)
-
-    // Given I go back
-    cy.go('back')
 
     // When I click on the link to mark the bed out of service
     bedPage.clickLostBedsOption()
