@@ -12,6 +12,7 @@ import {
   getPage,
   getReviewNavigationItems,
   groupAssessmements,
+  keyDetails,
   rejectionRationaleFromAssessmentResponses,
 } from './utils'
 
@@ -25,6 +26,7 @@ import {
   applicationFactory,
   assessmentFactory,
   assessmentSummaryFactory,
+  personFactory,
   prisonCaseNotesFactory,
   userFactory,
 } from '../../testutils/factories'
@@ -33,6 +35,10 @@ import { arrivalDateFromApplication } from '../applications/arrivalDateFromAppli
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { getResponseForPage } from '../applications/getResponseForPage'
 import { daysUntilDue } from './daysUntilDue'
+import { nameOrPlaceholderCopy } from '../personUtils'
+import { DateFormats } from '../dateUtils'
+import { linkTo } from '../utils'
+import applyPaths from '../../paths/apply'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -383,6 +389,78 @@ describe('utils', () => {
       ;(getResponseForPage as jest.Mock).mockImplementation(() => [])
 
       expect(rejectionRationaleFromAssessmentResponses(assessment)).toEqual('')
+    })
+  })
+
+  describe('keyDetails', () => {
+    const person = personFactory.build()
+
+    it('should return key details for an assessment when an arrival date is provided', () => {
+      const application = applicationFactory.build({ arrivalDate: '2022-01-01', person })
+      const assessment = assessmentFactory.build({ application })
+
+      expect(keyDetails(assessment)).toEqual({
+        header: {
+          key: 'Name',
+          value: nameOrPlaceholderCopy(person),
+          showKey: false,
+        },
+        items: [
+          {
+            key: { text: 'CRN' },
+            value: { text: application.person.crn },
+          },
+          {
+            key: { text: 'Arrival Date' },
+            value: {
+              text: DateFormats.isoDateToUIDate(application.arrivalDate),
+            },
+          },
+          {
+            value: {
+              html: linkTo(
+                applyPaths.applications.show,
+                { id: application.id },
+                { text: 'View application (opens in new window)', attributes: { target: '_blank' } },
+              ),
+            },
+          },
+        ],
+      })
+    })
+
+    it('should return key details for an assessment when an arrival date is not provided', () => {
+      const application = applicationFactory.build({ arrivalDate: undefined, person })
+      const assessment = assessmentFactory.build({ application })
+
+      expect(keyDetails(assessment)).toEqual({
+        header: {
+          key: 'Name',
+          value: nameOrPlaceholderCopy(person),
+          showKey: false,
+        },
+        items: [
+          {
+            key: { text: 'CRN' },
+            value: { text: application.person.crn },
+          },
+          {
+            key: { text: 'Arrival Date' },
+            value: {
+              text: 'Not provided',
+            },
+          },
+          {
+            value: {
+              html: linkTo(
+                applyPaths.applications.show,
+                { id: application.id },
+                { text: 'View application (opens in new window)', attributes: { target: '_blank' } },
+              ),
+            },
+          },
+        ],
+      })
     })
   })
 })

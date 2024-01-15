@@ -1,4 +1,4 @@
-import { ApplicationType, GroupedAssessments, SummaryListItem } from '@approved-premises/ui'
+import { ApplicationType, GroupedAssessments, KeyDetailsArgs, SummaryListItem } from '@approved-premises/ui'
 
 import {
   ApprovedPremisesAssessmentStatus,
@@ -10,11 +10,14 @@ import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
 import { UnknownPageError } from '../errors'
 import Apply from '../../form-pages/apply'
-import { kebabCase } from '../utils'
+import { kebabCase, linkTo } from '../utils'
 import { getApplicationType as getApplicationTypeFromApplication } from '../applications/utils'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { assessmentsApproachingDue, formattedArrivalDate } from './dateUtils'
 import { getResponseForPage } from '../applications/getResponseForPage'
+import { nameOrPlaceholderCopy } from '../personUtils'
+import { DateFormats } from '../dateUtils'
+import applyPaths from '../../paths/apply'
 
 const awaitingAssessmentStatuses = ['in_progress', 'not_started'] as Array<ApprovedPremisesAssessmentStatus>
 
@@ -153,6 +156,39 @@ const rejectionRationaleFromAssessmentResponses = (assessment: Assessment): stri
   return response
 }
 
+const keyDetails = (assessment: Assessment): KeyDetailsArgs => {
+  return {
+    header: {
+      key: 'Name',
+      value: nameOrPlaceholderCopy(assessment.application.person),
+      showKey: false,
+    },
+    items: [
+      {
+        key: { text: 'CRN' },
+        value: { text: assessment.application.person.crn },
+      },
+      {
+        key: { text: 'Arrival Date' },
+        value: {
+          text: assessment.application.arrivalDate
+            ? DateFormats.isoDateToUIDate(assessment.application.arrivalDate)
+            : 'Not provided',
+        },
+      },
+      {
+        value: {
+          html: linkTo(
+            applyPaths.applications.show,
+            { id: assessment.application.id },
+            { text: 'View application (opens in new window)', attributes: { target: '_blank' } },
+          ),
+        },
+      },
+    ],
+  }
+}
+
 export {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
@@ -169,4 +205,5 @@ export {
   groupAssessmements,
   rejectionRationaleFromAssessmentResponses,
   awaitingAssessmentStatuses,
+  keyDetails,
 }
