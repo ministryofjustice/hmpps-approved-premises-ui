@@ -1,0 +1,30 @@
+{% macro keyDetails(args) %}
+  <section class="key-details-bar" aria-label="Key details">
+    <div class="key-details-bar__key-details govuk-width-container govuk-body">
+      <div class="prisoner-info">
+        <div class="key-details-bar__top-block">
+          {% if args.header.showKey == true %}
+            {{ args.header.key }}
+          {% else %}
+            <span class="govuk-visually-hidden">{{ args.header.key }}:</span>
+          {% endif %}
+          <span class="key-details-bar__name govuk-body-l govuk-!-margin-right-6">
+            <strong>
+              {{ args.header.value }}
+            </strong>
+          </span>
+          <div class="key-details-bar__bottom-block">
+            {% for item in args.items %}
+              <span class="govuk-body">
+                {% if item.key %}
+                  <strong>{{ item.key.html | safe if item.key.html else item.key.text }}:</strong>
+                {% endif %}
+                {{ item.value.html | safe if item.value.html else item.value.text }}
+              </span>
+              {% if not loop.last %}|{% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+  {% endmacro %}
