@@ -1,5 +1,4 @@
 import type { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
-import type { YesOrNo } from '@approved-premises/ui'
 
 import AssessPage from './assessPage'
 
@@ -8,16 +7,12 @@ import ContingencyPlanSuitability from '../../../server/form-pages/assess/assess
 export default class ContingencyPlanSuitabilityPage extends AssessPage {
   pageClass: ContingencyPlanSuitability
 
-  constructor(assessment: Assessment, sufficientAnswer: YesOrNo = 'no', detailAnswer = 'Some detail') {
-    super(assessment, 'Suitability assessment')
-    this.pageClass = new ContingencyPlanSuitability(
-      { contingencyPlanSufficient: sufficientAnswer, additionalComments: detailAnswer },
-      assessment,
-    )
+  constructor(assessment: Assessment) {
+    super('Suitability assessment', assessment, 'suitability-assessment', 'contingency-plan-suitability')
   }
 
   completeForm() {
-    this.checkRadioByNameAndValue('contingencyPlanSufficient', this.pageClass.body.contingencyPlanSufficient)
-    this.clearAndCompleteTextInputById('additionalComments', this.pageClass.body.additionalComments)
+    this.checkRadioButtonFromPageBody('contingencyPlanSufficient')
+    this.completeTextInputFromPageBody('additionalComments')
   }
 }

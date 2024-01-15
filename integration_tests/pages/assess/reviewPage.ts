@@ -12,14 +12,12 @@ import { Adjudication, PersonAcctAlert } from '../../../server/@types/shared'
 import { mapApiPersonRisksForUi, sentenceCase } from '../../../server/utils/utils'
 import AssessPage from './assessPage'
 
-import Review from '../../../server/form-pages/assess/reviewApplication/reviewApplicationAndDocuments/review'
 import RiskInformationPage from './riskInformationPage'
 import { OasysSummariesSection } from '../../../server/@types/ui'
 
 export default class ReviewPage extends AssessPage {
   constructor(assessment: Assessment) {
-    super(assessment, 'Review application')
-    this.pageClass = new Review({ reviewed: 'yes' }, assessment)
+    super('Review application', assessment, 'review-application', 'review')
   }
 
   shouldShowPersonInformation(person: FullPerson, application: ApprovedPremisesApplication) {
@@ -133,11 +131,9 @@ export default class ReviewPage extends AssessPage {
 
   shouldShowAnswers(assessment: Assessment) {
     this.shouldShowPersonInformation(assessment.application.person as FullPerson, assessment.application)
-
     this.shouldShowDocuments(
       assessment.application.data?.['attach-required-documents']['attach-documents'].selectedDocuments,
     )
-
     this.shouldShowCaseNotes(assessment.application.data?.['prison-information']['case-notes'].selectedCaseNotes)
     this.shouldShowAdjudications(assessment.application.data?.['prison-information']['case-notes'].adjudications)
     this.riskInformationPage(assessment.application.data?.['oasys-import'], assessment.application.risks)
@@ -149,6 +145,6 @@ export default class ReviewPage extends AssessPage {
   }
 
   completeForm() {
-    this.checkRadioByNameAndValue('reviewed', this.pageClass.body.reviewed as string)
+    this.checkRadioButtonFromPageBody('reviewed')
   }
 }

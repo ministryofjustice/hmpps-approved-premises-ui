@@ -1,21 +1,23 @@
-import type { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { ApprovedPremisesAssessment } from '@approved-premises/api'
 
-import TasklistPage from '../../../server/form-pages/tasklistPage'
 import Assess from '../../../server/form-pages/assess'
+import TasklistPage, { TasklistPageInterface } from '../../../server/form-pages/tasklistPage'
+import FormPage from '../formPage'
 
-import Page from '../page'
-
-export default class AssessPage extends Page {
-  pageClass: TasklistPage
-
-  // Initialize this to ensure all the decorators are called for the Assess journey
-  pages = Assess.pages
+export default class NewAssesPage extends FormPage {
+  tasklistPage: TasklistPage
 
   constructor(
-    public readonly assessment: Assessment,
     title: string,
+    assessment: ApprovedPremisesAssessment,
+    taskName: string,
+    pageName: string,
+    backLink?: string,
   ) {
-    super(title)
-    this.checkPhaseBanner('Give us your feedback')
+    super(title, backLink)
+
+    const Class = Assess.pages[taskName][pageName] as TasklistPageInterface
+
+    this.tasklistPage = new Class(assessment.data?.[taskName]?.[pageName], assessment)
   }
 }

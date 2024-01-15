@@ -4,39 +4,35 @@
   "suitability-assessment": {
     "suitability-assessment": {
       "riskFactors": "yes",
-      "riskFactorsComments": "",
+      "riskFactorsComments": "Some risk factor comments",
       "riskManagement": "yes",
-      "riskManagementComments": "",
+      "riskManagementComments": "Some risk management comments",
       "locationOfPlacement": "yes",
-      "locationOfPlacementComments": "",
+      "locationOfPlacementComments": "Some location comments",
       "moveOnPlan": "yes",
-      "moveOnPlanComments": ""
+      "moveOnPlanComments": "Some move on comments"
     },
-    "application-timeliness": {
-      "agreeWithShortNoticeReason": "no",
-      "agreeWithShortNoticeReasonComments": "some comments",
-      "reasonForLateApplication": "onBail"
-    },
-    "contingency-plan-suitability": {
-      "contingencyPlanSufficient": "yes",
-      "additionalComments": "Some comments"
+    "rfap-suitability": {
+      "rfapIdentifiedAsSuitable": "no",
+      "unsuitabilityForRfapRationale": "some comments",
+      "noDetail": "some detail"
     }
   },
   "required-actions": {
     "required-actions": {
       "additionalActions": "no",
-      "additionalActionsComments": "",
+      "additionalActionsComments": "some additional actions comments",
       "curfewsOrSignIns": "no",
-      "curfewsOrSignInsComments": "",
-      "concernsOfUnmanagableRisk": "no",
-      "concernsOfUnmanagableRiskComments": "",
+      "curfewsOrSignInsComments": "some curfew comment",
+      "concernsOfUnmanagableRisk": "yes",
+      "concernsOfUnmanagableRiskComments": "some concern comment",
       "additionalRecommendations": "no",
-      "additionalRecommendationsComments": "",
-      "nameOfAreaManager": "",
-      "dateOfDiscussion-day": "",
-      "dateOfDiscussion-month": "",
-      "dateOfDiscussion-year": "",
-      "outlineOfDiscussion": ""
+      "additionalRecommendationsComments": "some recommendation comment",
+      "nameOfAreaManager": "Frank",
+      "dateOfDiscussion-day": "15",
+      "dateOfDiscussion-month": "01",
+      "dateOfDiscussion-year": "2024",
+      "outlineOfDiscussion": "Some discussion"
     }
   },
   "make-a-decision": { "make-a-decision": { "decision": "accept" } },
@@ -45,10 +41,10 @@
       "apType": "normal",
       "accessibilityCriteria": [],
       "specialistSupportCriteria": [],
-      "lengthOfStayAgreed": "yes",
-      "lengthOfStayWeeks": "",
-      "lengthOfStayDays": "",
-      "cruInformation": "",
+      "lengthOfStayAgreed": "no",
+      "lengthOfStayWeeks": "2",
+      "lengthOfStayDays": "1",
+      "cruInformation": "Some CRU info",
       "isWheelchairDesignated": "notRelevant",
       "isSingle": "notRelevant",
       "isStepFreeDesignated": "notRelevant",

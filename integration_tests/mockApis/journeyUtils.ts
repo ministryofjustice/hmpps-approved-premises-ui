@@ -46,6 +46,10 @@ export const generateStubsForPage = (
     data[task][completePage] = form.data[task][completePage]
   })
 
+  if (page === 'information-received') {
+    form.status = 'awaiting_response'
+  }
+
   const pageResponse = cloneApplicationWithData({ form, data })
 
   const scenarioName = pageType === 'application' ? 'apply' : 'assess'

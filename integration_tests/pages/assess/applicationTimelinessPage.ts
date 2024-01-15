@@ -2,25 +2,16 @@ import type { ApprovedPremisesAssessment as Assessment } from '@approved-premise
 
 import AssessPage from './assessPage'
 
-import ApplicationTimeliness from '../../../server/form-pages/assess/assessApplication/suitablityAssessment/applicationTimeliness'
-
 export default class ApplicationTimelinessPage extends AssessPage {
-  pageClass = new ApplicationTimeliness(
-    {
-      agreeWithShortNoticeReason: 'no',
-      agreeWithShortNoticeReasonComments: 'some reason',
-      reasonForLateApplication: 'onBail',
-    },
-    this.assessment,
-  )
-
   constructor(assessment: Assessment) {
-    super(assessment, 'Application timeliness')
+    super('Application timeliness', assessment, 'suitability-assessment', 'application-timeliness', '')
   }
 
   completeForm() {
-    this.checkRadioByNameAndValue('agreeWithShortNoticeReason', this.pageClass.body.agreeWithShortNoticeReason)
-    this.completeTextArea('agreeWithShortNoticeReasonComments', 'One')
-    this.getSelectInputByIdAndSelectAnEntry('reasonForLateApplication', 'onBail')
+    this.checkRadioButtonFromPageBody('agreeWithShortNoticeReason')
+    this.completeTextInputFromPageBody('agreeWithShortNoticeReasonComments')
+    if (this.tasklistPage.body.agreeWithShortNoticeReason === 'no') {
+      this.selectSelectOptionFromPageBody('reasonForLateApplication')
+    }
   }
 }
