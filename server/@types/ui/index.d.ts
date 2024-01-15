@@ -145,6 +145,11 @@ export interface SelectOption {
   selected?: boolean
 }
 
+export interface SelectGroup {
+  label: string
+  items: Array<SelectOption>
+}
+
 export interface SummaryList {
   classes?: string
   attributes?: HtmlAttributes

@@ -3,8 +3,10 @@ import {
   bedOccupancyEntryFactory,
   bedOccupancyRangeFactory,
   extendedPremisesSummaryFactory,
+  premisesSummaryFactory,
 } from '../testutils/factories'
 import {
+  groupedSelectOptions,
   mapApiOccupancyEntryToUiOccupancyEntry,
   mapApiOccupancyToUiOccupancy,
   overcapacityMessage,
@@ -185,6 +187,50 @@ describe('premisesUtils', () => {
           },
         ],
       })
+    })
+  })
+
+  describe('groupedSelectOptions', () => {
+    const region1Premises = premisesSummaryFactory.buildList(2, { probationRegion: 'Region 1' })
+    const region2Premises = premisesSummaryFactory.buildList(2, { probationRegion: 'Region 2' })
+    const premises = [...region1Premises, ...region2Premises]
+
+    it('should group premises by region', () => {
+      expect(groupedSelectOptions(premises, { premisesId: region2Premises[1].id })).toEqual([
+        {
+          items: [
+            { selected: false, text: region1Premises[0].name, value: region1Premises[0].id },
+            { selected: false, text: region1Premises[1].name, value: region1Premises[1].id },
+          ],
+          label: 'Region 1',
+        },
+        {
+          items: [
+            { selected: false, text: region2Premises[0].name, value: region2Premises[0].id },
+            { selected: true, text: region2Premises[1].name, value: region2Premises[1].id },
+          ],
+          label: 'Region 2',
+        },
+      ])
+    })
+
+    it('should support a field name', () => {
+      expect(groupedSelectOptions(premises, { premises: region2Premises[1].id }, 'premises')).toEqual([
+        {
+          items: [
+            { selected: false, text: region1Premises[0].name, value: region1Premises[0].id },
+            { selected: false, text: region1Premises[1].name, value: region1Premises[1].id },
+          ],
+          label: 'Region 1',
+        },
+        {
+          items: [
+            { selected: false, text: region2Premises[0].name, value: region2Premises[0].id },
+            { selected: true, text: region2Premises[1].name, value: region2Premises[1].id },
+          ],
+          label: 'Region 2',
+        },
+      ])
     })
   })
 })

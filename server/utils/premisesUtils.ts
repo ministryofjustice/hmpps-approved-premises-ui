@@ -1,5 +1,10 @@
-import type { BedOccupancyRange, DateCapacity, ExtendedPremisesSummary } from '@approved-premises/api'
-import { BedOccupancyRangeUi, SummaryList } from '@approved-premises/ui'
+import type {
+  ApprovedPremisesSummary,
+  BedOccupancyRange,
+  DateCapacity,
+  ExtendedPremisesSummary,
+} from '@approved-premises/api'
+import { BedOccupancyRangeUi, SelectGroup, SummaryList } from '@approved-premises/ui'
 import { DateFormats } from './dateUtils'
 import { addOverbookingsToSchedule } from './addOverbookingsToSchedule'
 import { textValue } from './applications/utils'
@@ -103,4 +108,22 @@ export const summaryListForPremises = (premises: ExtendedPremisesSummary): Summa
       },
     ],
   }
+}
+
+export const groupedSelectOptions = (
+  premises: Array<ApprovedPremisesSummary>,
+  context: Record<string, unknown>,
+  fieldName: string = 'premisesId',
+): Array<SelectGroup> => {
+  const regions = [...new Set(premises.map(item => item.probationRegion))]
+  return regions.map(region => ({
+    label: region,
+    items: premises
+      .filter(item => item.probationRegion === region)
+      .map(item => ({
+        text: item.name,
+        value: item.id,
+        selected: context[fieldName] === item.id,
+      })),
+  }))
 }

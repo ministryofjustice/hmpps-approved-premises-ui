@@ -7,6 +7,7 @@ import {
   placementRequestDetailFactory,
   placementRequestWithFullPersonFactory,
   premisesFactory,
+  premisesSummaryFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import CreatePlacementPage from '../../pages/admin/placementApplications/createPlacementPage'
@@ -141,7 +142,7 @@ context('Placement Requests', () => {
   })
 
   it('allows me to create a booking', () => {
-    const premises = premisesFactory.buildList(3)
+    const premises = premisesSummaryFactory.buildList(3)
     cy.task('stubAllPremises', premises)
     cy.task('stubBookingFromPlacementRequest', unmatchedPlacementRequest)
 
@@ -164,7 +165,7 @@ context('Placement Requests', () => {
     createPage.dateInputsShouldBePrepopulated()
 
     // When I complete the form
-    createPage.completeForm('2022-01-01', '2022-02-01', premises[0].id)
+    createPage.completeForm('2022-01-01', '2022-02-01', premises[0])
     createPage.clickSubmit()
 
     // Then I should see a confirmation message
