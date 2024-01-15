@@ -39,6 +39,7 @@ export default class PagesController {
 
         res.render(viewPath(page, 'assessments'), {
           assessmentId: req.params.id,
+          assessment,
           errors,
           errorSummary,
           task: taskName,
