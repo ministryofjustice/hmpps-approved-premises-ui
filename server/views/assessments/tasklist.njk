@@ -3,12 +3,14 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "../partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "../components/riskWidgets/macro.njk" import widgets %}
+{% from "../components/keyDetails/macro.njk" import keyDetails %}
 
-{% extends "../partials/layout.njk" %}
+{% extends "./layouts/with-details.njk" %}
 
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-width-container">
+
       <h1 class="govuk-heading-xl">
         {{ pageHeading }}
       </h1>

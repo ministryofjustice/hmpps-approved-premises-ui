@@ -14,8 +14,9 @@
 {% from "../../components/formFields/form-page-checkboxes/macro.njk" import formPageCheckboxes %}
 {% from "../../components/formFields/form-page-textarea/macro.njk" import formPageTextarea %}
 {% from "../../components/formFields/form-page-select/macro.njk" import formPageSelect %}
+{% from "../../components/keyDetails/macro.njk" import keyDetails %}
 
-{% extends "../../partials/layout.njk" %}
+{% extends "../layouts/with-details.njk" %}
 
 {% set pageTitle = applicationName + " - " + page.title %}
 {% set mainClasses = "app-container govuk-body" %}

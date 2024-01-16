@@ -7,7 +7,7 @@ import {
   PersonAcctAlert,
   PrisonCaseNote,
 } from '../../server/@types/shared'
-import { PersonRisksUI, SummaryListItem, TableCell } from '../../server/@types/ui'
+import { KeyDetailsArgs, PersonRisksUI, SummaryListItem, TableCell } from '../../server/@types/ui'
 import errorLookups from '../../server/i18n/en/errors.json'
 import { summaryListSections } from '../../server/utils/applications/summaryListUtils'
 import { DateFormats } from '../../server/utils/dateUtils'
@@ -403,5 +403,35 @@ export default abstract class Page {
 
   shouldBeSortedByField(field: string, order: string): void {
     cy.get(`th[data-cy-sort-field="${field}"]`).should('have.attr', 'aria-sort', order)
+  }
+
+  shouldShowKeyDetails(keyDetails: KeyDetailsArgs): void {
+    if (keyDetails.header.showKey) {
+      cy.get('.key-details-bar__top-block').contains(keyDetails.header.key)
+    }
+    cy.get('.key-details-bar__name').contains(keyDetails.header.value)
+
+    keyDetails.items.forEach(item => {
+      if (item.key) {
+        if ('text' in item.key) {
+          cy.get('.key-details-bar__bottom-block').contains(item.key.text)
+        } else if ('html' in item.key) {
+          const { html } = item.key
+          cy.get('.key-details-bar__bottom-block').then($el => {
+            const { actual, expected } = parseHtml($el, html)
+            expect(actual).to.contain(expected)
+          })
+        }
+      }
+      if ('text' in item.value) {
+        cy.get('.key-details-bar__bottom-block').contains(item.value.text)
+      } else if ('html' in item.value) {
+        const { html } = item.value
+        cy.get('.key-details-bar__bottom-block').then($el => {
+          const { actual, expected } = parseHtml($el, html)
+          expect(actual).to.contain(expected)
+        })
+      }
+    })
   }
 }

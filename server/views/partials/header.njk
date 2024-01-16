@@ -45,7 +45,8 @@
 {% endif %}
 
 {% block phaseBanner %}
-  {{ govukPhaseBanner({
+  {% if not hidePhaseBanner %}
+    {{ govukPhaseBanner({
     attributes: { "data-cy-phase-banner": "phase-banner" },
     classes: "hmpps-header__container",
     tag: {
@@ -53,4 +54,5 @@
     },
     html: PhaseBannerUtils.getContent(currentUrl)
   }) }}
+  {% endif %}
 {% endblock %}

@@ -467,3 +467,15 @@ export type ApplicationDashboardSearchOptions = {
 }
 
 export type AssessmentCurrentTab = 'awaiting_assessment' | 'awaiting_response' | 'completed'
+
+export type KeyDetailsArgs = {
+  header: {
+    key: string
+    value: string
+    showKey: boolean
+  }
+  items: Array<{
+    key?: HtmlItem | TextItem
+    value: HtmlItem | TextItem
+  }>
+}

@@ -1,0 +1,10 @@
+{% from "../../components/keyDetails/macro.njk" import keyDetails %}
+{% extends "../../partials/layout.njk" %}
+
+{% set hideNav = true %}
+{% set hidePhaseBanner = true %}
+
+{% block header %}
+  {{ super() }}
+  {{ keyDetails(AssessmentUtils.keyDetails(assessment)) }}
+{% endblock %}

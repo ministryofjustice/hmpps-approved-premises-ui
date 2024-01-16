@@ -69,6 +69,7 @@ describe('pagesController', () => {
       expect(assessmentService.initializePage).toHaveBeenCalledWith(PageConstructor, assessment, request, {}, {})
       expect(response.render).toHaveBeenCalledWith('assessments/pages/some/view', {
         assessmentId: request.params.id,
+        assessment,
         task: 'some-task',
         page,
         errors: {},
@@ -91,6 +92,7 @@ describe('pagesController', () => {
 
       expect(response.render).toHaveBeenCalledWith('assessments/pages/some/view', {
         assessmentId: request.params.id,
+        assessment,
         task: 'some-task',
         page,
         errors: errorsAndUserInput.errors,
