@@ -43,7 +43,7 @@ export default class ContingencyPlanSuitability implements TasklistPage {
     const response = {}
 
     response[this.questions.contingencyPlanSufficient] = sentenceCase(this.body.contingencyPlanSufficient)
-    response[this.questions.additionalComments] = this.body.additionalComments
+    response[`${this.questions.contingencyPlanSufficient} Additional comments`] = this.body.additionalComments
 
     return response
   }

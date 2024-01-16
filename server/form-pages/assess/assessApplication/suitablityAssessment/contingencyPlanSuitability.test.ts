@@ -57,8 +57,9 @@ describe('ContingencyPlanSuitability', () => {
       const page = new ContingencyPlanSuitability(body, assessment)
 
       expect(page.response()).toEqual({
-        'Additional comments': 'some comments',
         'Is the contingency plan sufficient to manage behaviour or a failure to return out of hours?': 'Yes',
+        'Is the contingency plan sufficient to manage behaviour or a failure to return out of hours? Additional comments':
+          'some comments',
       })
     })
   })
