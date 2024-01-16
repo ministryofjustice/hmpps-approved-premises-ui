@@ -212,6 +212,12 @@ export default class AseessHelper {
 
     this.pages.assessSuitability = [suitabilityAssessmentPage, rfapSuitabilityPage]
 
+    if (!options.isShortNoticeApplication) {
+      const contingencyPlanSuitabilityPage = new ContingencyPlanSuitabilityPage(this.assessment)
+      contingencyPlanSuitabilityPage.completeForm()
+      contingencyPlanSuitabilityPage.clickSubmit()
+    }
+
     if (options.isShortNoticeApplication) {
       // Then I should be taken to the application timeliness page
       const applicationTimelinessPage = new ApplicationTimelinessPage(this.assessment)

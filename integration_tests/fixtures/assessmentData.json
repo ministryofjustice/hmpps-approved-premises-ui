@@ -14,8 +14,12 @@
     },
     "rfap-suitability": {
       "rfapIdentifiedAsSuitable": "no",
-      "unsuitabilityForRfapRationale": "some comments",
+      "unsuitabilityForRfapRationale": "Some RFAP comments",
       "noDetail": "some detail"
+    },
+    "contingency-plan-suitability": {
+      "contingencyPlanSufficient": "yes",
+      "additionalComments": "Some contingency plan comments"
     }
   },
   "required-actions": {

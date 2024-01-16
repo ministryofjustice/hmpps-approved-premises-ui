@@ -13,14 +13,14 @@ import { acceptanceData } from '../../../server/utils/assessments/acceptanceData
 
 import AssessHelper from '../../helpers/assess'
 import {
-  ApplicationTimelinessPage,
+  ContingencyPlanSuitabilityPage,
   ListPage,
+  RfapSuitabilityPage,
   ShowPage,
   SuitabilityAssessmentPage,
   TaskListPage,
 } from '../../pages/assess'
 import Page from '../../pages/page'
-import ContingencyPlanSuitabilityPage from '../../pages/assess/contingencyPlanSuitability'
 import { awaitingAssessmentStatuses } from '../../../server/utils/assessments/utils'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 
@@ -312,54 +312,46 @@ context('Assess', () => {
 
   it('does not invalidate the check your answers step if an answer is reviewed and not changed', function test() {
     // Given there is a complete application in the database
-    cy.fixture('assessmentData.json').then(assessmentData => {
-      let assessment = assessmentFactory.build({ data: assessmentData, status: 'in_progress' })
-      assessment = addResponsesToFormArtifact<Assessment>(assessment, {
-        page: 'application-timeliness',
-        task: 'suitability-assessment',
-        keyValuePairs: {
-          agreeWithShortNoticeReason: 'yes',
-          agreeWithShortNoticeReasonComments: 'comments',
-          reasonForLateApplication: 'other',
-        },
-      })
-      assessment = addResponsesToFormArtifact<Assessment>(assessment, {
-        page: 'contingency-plan-suitability',
-        task: 'suitability-assessment',
-        keyValuePairs: {
-          contingencyPlanSufficient: 'yes',
-          additionalComments: 'comments',
-        },
-      })
 
-      assessment.application.person = personFactory.build()
+    let assessment = assessmentFactory.build({ data: this.assessment.data, status: 'in_progress' })
 
-      cy.task('stubAssessment', assessment)
-      cy.task('stubAssessmentUpdate', assessment)
+    assessment = addResponsesToFormArtifact<Assessment>(this.assessment, {
+      page: 'application-timeliness',
+      task: 'suitability-assessment',
+      keyValuePairs: {
+        agreeWithShortNoticeReason: 'yes',
+        agreeWithShortNoticeReasonComments: 'comments',
+        reasonForLateApplication: 'other',
+      },
+    })
 
-      // And I visit the tasklist
-      TaskListPage.visit(assessment)
+    assessment.application.person = personFactory.build()
 
-      // And I click on a task
-      cy.get('[data-cy-task-name="suitability-assessment"]').click()
+    cy.task('stubAssessment', assessment)
+    cy.task('stubAssessmentUpdate', assessment)
 
-      // And I review a section
-      const suitabilityAssessmentPage = new SuitabilityAssessmentPage(assessment)
-      suitabilityAssessmentPage.clickSubmit()
-      const applicationTimeliness = new ApplicationTimelinessPage(assessment)
-      applicationTimeliness.clickSubmit()
-      const contingencyPlanPage = new ContingencyPlanSuitabilityPage(assessment)
-      contingencyPlanPage.clickSubmit()
+    // And I visit the tasklist
+    TaskListPage.visit(assessment)
 
-      Page.verifyOnPage(TaskListPage)
+    // And I click on a task
+    cy.get('[data-cy-task-name="suitability-assessment"]').click()
 
-      // Then the application should be updated with the Check Your Answers section removed
-      cy.task('verifyAssessmentUpdate', assessment).then((requests: Array<{ body: string }>) => {
-        expect(requests).to.have.length(3)
-        const body = JSON.parse(requests[0].body)
+    // And I review a section
+    const suitabilityAssessmentPage = new SuitabilityAssessmentPage(assessment)
+    suitabilityAssessmentPage.clickSubmit()
+    const rfapSuitabilityAssessmentPage = new RfapSuitabilityPage(assessment)
+    rfapSuitabilityAssessmentPage.clickSubmit()
+    const contingencyPlanPage = new ContingencyPlanSuitabilityPage(assessment)
+    contingencyPlanPage.clickSubmit()
 
-        expect(body.data).to.have.any.keys(['check-your-answers'])
-      })
+    Page.verifyOnPage(TaskListPage)
+
+    // Then the application should be updated with the Check Your Answers section removed
+    cy.task('verifyAssessmentUpdate', assessment).then((requests: Array<{ body: string }>) => {
+      expect(requests).to.have.length(3)
+      const body = JSON.parse(requests[0].body)
+
+      expect(body.data).to.have.any.keys(['check-your-answers'])
     })
   })
 })
