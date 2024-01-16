@@ -4,14 +4,16 @@ import Page from './page'
 export default class FormPage extends Page {
   tasklistPage: TasklistPage
 
-  constructor(title: string, backLink?: string) {
+  constructor(title: string, backLink?: string, checkPhaseBanner: boolean = true) {
     super(title)
 
     if (backLink) {
       this.checkForBackButton(backLink)
     }
 
-    this.checkPhaseBanner('Give us your feedback')
+    if (checkPhaseBanner) {
+      this.checkPhaseBanner('Give us your feedback')
+    }
   }
 
   checkRadioButtonFromPageBody(fieldName: string) {
