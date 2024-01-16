@@ -8,8 +8,6 @@ import type {
 import { fromPartial } from '@total-typescript/shoehorn'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
-import { summaryListSections } from '../../../server/utils/applications/summaryListUtils'
-
 import Page from '../page'
 import {
   ApplicationShowPageTab,
@@ -87,17 +85,7 @@ export default class ShowPage extends Page {
   }
 
   shouldShowResponses() {
-    const sections = summaryListSections(this.application, false)
-
-    sections.forEach(section => {
-      cy.get('h2.govuk-heading-l').contains(section.title).should('exist')
-      section.tasks.forEach(task => {
-        cy.get(`[data-cy-section="${task.card.attributes['data-cy-section']}"]`).within(() => {
-          cy.get('.govuk-summary-card__title').contains(task.card.title.text).should('exist')
-          this.shouldContainSummaryListItems(task.rows)
-        })
-      })
-    })
+    this.shouldShowCheckYourAnswersResponses(this.application)
   }
 
   clickTimelineTab() {

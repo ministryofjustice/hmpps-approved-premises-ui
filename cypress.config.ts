@@ -13,7 +13,7 @@ import lostBed from './integration_tests/mockApis/lostBed'
 import person from './integration_tests/mockApis/person'
 import reports from './integration_tests/mockApis/reports'
 import applications from './integration_tests/mockApis/applications'
-import { stubApplicationJourney } from './integration_tests/mockApis/stubApplicationJourney'
+import { stubJourney } from './integration_tests/mockApis/journeyUtils'
 import assessments from './integration_tests/mockApis/assessments'
 import users from './integration_tests/mockApis/users'
 import tasks from './integration_tests/mockApis/tasks'
@@ -61,7 +61,7 @@ export default defineConfig({
         ...bedSearch,
         ...moveBooking,
         ...reports,
-        stubApplicationJourney,
+        stubJourney,
       })
     },
     baseUrl: 'http://localhost:3007',

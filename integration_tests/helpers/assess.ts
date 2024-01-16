@@ -27,7 +27,7 @@ import AssessPage from '../pages/assess/assessPage'
 import { assessmentSummaryFactory, personFactory } from '../../server/testutils/factories'
 import RfapSuitabilityPage from '../pages/assess/rfapSuitability'
 import ContingencyPlanSuitabilityPage from '../pages/assess/contingencyPlanSuitability'
-import { getPageName, getTaskName } from '../../server/form-pages/utils'
+
 import { awaitingAssessmentStatuses } from '../../server/utils/assessments/utils'
 
 export default class AseessHelper {
@@ -58,9 +58,9 @@ export default class AseessHelper {
       sortBy: 'name',
       sortDirection: 'asc',
     })
-    cy.task('stubAssessment', this.assessment)
+
+    cy.task('stubJourney', this.assessment)
     cy.task('stubFindUser', { user: this.user, id: this.assessment.application.createdByUserId })
-    cy.task('stubAssessmentUpdate', this.assessment)
     cy.task('stubClarificationNoteCreate', {
       assessment: this.assessment,
       clarificationNote: { query: this.clarificationNote },
@@ -81,8 +81,7 @@ export default class AseessHelper {
   updateAssessmentStatus(status: AssessmentStatus) {
     this.assessmentSummary.status = status
     this.assessment.status = status
-    cy.task('stubAssessments', { assessments: [this.assessmentSummary], statuses: [status] })
-    return cy.task('stubAssessment', this.assessment)
+    return cy.task('stubAssessments', { assessments: [this.assessmentSummary], statuses: [status] })
   }
 
   startAssessment() {
@@ -107,27 +106,26 @@ export default class AseessHelper {
     this.submitAssessment()
   }
 
-  addClarificationNote(note: string) {
+  addClarificationNote() {
     // When I click on the 'review application' link
     cy.get('[data-cy-task-name="review-application"]').click()
 
     // Then I should be taken to the review page
     const reviewPage = new ReviewPage(this.assessment)
-
+    reviewPage.completeForm()
     reviewPage.clickSubmit()
-    this.updateAssessmentAndStub(reviewPage)
 
     // When I click on the 'sufficient-information' link
     cy.get('[data-cy-task-name="sufficient-information"]').click()
 
     // Then I should be taken to the sufficient information page
-    const page = new SufficientInformationPage(this.assessment, 'no')
+    const page = new SufficientInformationPage(this.assessment)
 
     // And I answer no to the sufficient information question
     page.completeForm()
 
     // And I add a note
-    page.addNote(note)
+    page.addNote()
 
     // And I click submit
     page.clickSubmit()
@@ -142,24 +140,14 @@ export default class AseessHelper {
     return confirmationScreen.clickBackToDashboard()
   }
 
-  updateClarificationNote(informationReceived: YesOrNo, response?: string, responseReceivedOn?: string) {
+  updateClarificationNote(informationReceived: YesOrNo) {
     const assessmentStatus = informationReceived === 'yes' ? 'in_progress' : 'awaiting_response'
     this.updateAssessmentStatus(assessmentStatus).then(() => {
-      const informationReceivedPage = Page.verifyOnPage(InformationReceivedPage, this.assessment, {
-        informationReceived,
-        response,
-        responseReceivedOn,
-      })
+      const informationReceivedPage = Page.verifyOnPage(InformationReceivedPage, this.assessment)
 
-      this.updateAssessmentAndStub(informationReceivedPage)
-        .then(() => {
-          // When I complete the form
-          informationReceivedPage.completeForm()
-          informationReceivedPage.clickSubmit()
-        })
-        .then(() => {
-          this.updateAssessmentAndStub(informationReceivedPage)
-        })
+      // When I complete the form
+      informationReceivedPage.completeForm()
+      informationReceivedPage.clickSubmit()
     })
   }
 
@@ -175,7 +163,7 @@ export default class AseessHelper {
     reviewPage.completeForm()
     reviewPage.shouldBeAbleToDownloadDocuments(this.documents)
     reviewPage.clickSubmit()
-    this.updateAssessmentAndStub(reviewPage)
+
     this.pages.reviewApplication = [reviewPage]
 
     // Then I should be taken to the task list
@@ -193,7 +181,7 @@ export default class AseessHelper {
     const page = new SufficientInformationPage(this.assessment)
     page.completeForm()
     page.clickSubmit()
-    this.updateAssessmentAndStub(page)
+
     this.pages.sufficientInformation = [page]
 
     // Then I should be taken to the task list
@@ -203,7 +191,7 @@ export default class AseessHelper {
     tasklistPage.shouldShowTaskStatus('sufficient-information', 'Completed')
   }
 
-  private completeSuitabilityOfAssessmentQuestion(options: { isShortNoticeApplication?: boolean } = {}) {
+  completeSuitabilityOfAssessmentQuestion(options: { isShortNoticeApplication?: boolean } = {}) {
     // When I click on the 'suitability-assessment' link
     cy.get('[data-cy-task-name="suitability-assessment"]').click()
 
@@ -211,13 +199,10 @@ export default class AseessHelper {
     const suitabilityAssessmentPage = new SuitabilityAssessmentPage(this.assessment)
     suitabilityAssessmentPage.completeForm()
     suitabilityAssessmentPage.clickSubmit()
-    this.updateAssessmentAndStub(suitabilityAssessmentPage)
 
     const rfapSuitabilityPage = new RfapSuitabilityPage(this.assessment)
     rfapSuitabilityPage.completeForm()
     rfapSuitabilityPage.clickSubmit()
-
-    this.updateAssessmentAndStub(rfapSuitabilityPage)
 
     this.pages.assessSuitability = [suitabilityAssessmentPage, rfapSuitabilityPage]
 
@@ -226,12 +211,10 @@ export default class AseessHelper {
       const applicationTimelinessPage = new ApplicationTimelinessPage(this.assessment)
       applicationTimelinessPage.completeForm()
       applicationTimelinessPage.clickSubmit()
-      this.updateAssessmentAndStub(applicationTimelinessPage)
 
       const contingencyPlanSuitabilityPage = new ContingencyPlanSuitabilityPage(this.assessment)
       contingencyPlanSuitabilityPage.completeForm()
       contingencyPlanSuitabilityPage.clickSubmit()
-      this.updateAssessmentAndStub(contingencyPlanSuitabilityPage)
 
       this.pages.assessSuitability = [
         ...this.pages.assessSuitability,
@@ -255,7 +238,7 @@ export default class AseessHelper {
     const page = new RequiredActionsPage(this.assessment)
     page.completeForm()
     page.clickSubmit()
-    this.updateAssessmentAndStub(page)
+
     this.pages.requiredActions = [page]
 
     // Then I should be taken to the task list
@@ -265,15 +248,15 @@ export default class AseessHelper {
     tasklistPage.shouldShowTaskStatus('required-actions', 'Completed')
   }
 
-  completeMakeADecisionPage(decision?: string) {
+  completeMakeADecisionPage() {
     // When I click on the 'make-a-decision' link
     cy.get('[data-cy-task-name="make-a-decision"]').click()
 
     // Then I should be taken to the make a decision page
-    const page = new MakeADecisionPage(this.assessment, decision)
+    const page = new MakeADecisionPage(this.assessment)
     page.completeForm()
     page.clickSubmit()
-    this.updateAssessmentAndStub(page)
+
     this.pages.makeADecision.push(page)
 
     // Then I should be taken to the task list
@@ -291,7 +274,7 @@ export default class AseessHelper {
     const page = new MatchingInformationPage(this.assessment)
     page.completeForm()
     page.clickSubmit()
-    this.updateAssessmentAndStub(page)
+
     this.pages.matchingInformation.push(page)
 
     // Then I should be taken to the task list
@@ -325,7 +308,6 @@ export default class AseessHelper {
     }
 
     page.clickSubmit()
-    this.updateAssessmentAndStub(page)
 
     // Then I should be taken to the task list
     const tasklistPage = Page.verifyOnPage(TaskListPage)
@@ -343,19 +325,5 @@ export default class AseessHelper {
     tasklistPage.checkCheckboxByLabel('confirmed')
     tasklistPage.clickSubmit()
     Page.verifyOnPage(SubmissionConfirmation, isSuitable)
-  }
-
-  updateAssessmentAndStub(pageObject: AssessPage) {
-    const updatedAssessment = this.assessment
-    const page = pageObject.pageClass
-
-    const pageName = getPageName(page.constructor)
-    const taskName = getTaskName(page.constructor)
-
-    updatedAssessment.data = updatedAssessment.data || {}
-    updatedAssessment.data[taskName] = updatedAssessment.data[taskName] || {}
-    updatedAssessment.data[taskName][pageName] = page.body
-
-    return cy.task('stubAssessment', updatedAssessment)
   }
 }

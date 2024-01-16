@@ -27,50 +27,68 @@ describe('Short notice assessments', () => {
     cy.signIn()
     // And there is a short notice application awaiting assessment
     cy.fixture('applicationData.json').then(applicationData => {
-      const today = new Date()
+      cy.fixture('assessmentData.json').then(assessmentData => {
+        const today = new Date()
 
-      let application = applicationFactory.withFullPerson().build({ submittedAt: DateFormats.dateObjToIsoDate(today) })
+        let application = applicationFactory
+          .withFullPerson()
+          .build({ submittedAt: DateFormats.dateObjToIsoDate(today) })
 
-      application.data = applicationData
+        application.data = applicationData
 
-      const tomorrow = addDays(new Date(), 1)
+        const tomorrow = addDays(new Date(), 1)
 
-      application = addResponsesToFormArtifact(application, {
-        task: 'basic-information',
-        page: 'release-date',
-        keyValuePairs: {
-          ...DateFormats.dateObjectToDateInputs(tomorrow, 'releaseDate'),
-          releaseDate: DateFormats.dateObjToIsoDate(tomorrow),
-          knowReleaseDate: 'yes',
-        },
-      }) as Application
+        application = addResponsesToFormArtifact(application, {
+          task: 'basic-information',
+          page: 'release-date',
+          keyValuePairs: {
+            ...DateFormats.dateObjectToDateInputs(tomorrow, 'releaseDate'),
+            releaseDate: DateFormats.dateObjToIsoDate(tomorrow),
+            knowReleaseDate: 'yes',
+          },
+        }) as Application
 
-      application = addResponseToFormArtifact(application, {
-        task: 'basic-information',
-        page: 'reason-for-short-notice',
-        key: 'reason',
-        value: 'riskEscalated',
-      }) as Application
+        application = addResponseToFormArtifact(application, {
+          task: 'basic-information',
+          page: 'reason-for-short-notice',
+          key: 'reason',
+          value: 'riskEscalated',
+        }) as Application
 
-      const clarificationNote = clarificationNoteFactory.build({ response: undefined })
-      const assessment = assessmentFactory.build({
-        decision: undefined,
-        clarificationNotes: [clarificationNote],
-        application,
+        const clarificationNote = clarificationNoteFactory.build({ response: undefined })
+        let assessment = assessmentFactory.build({
+          decision: undefined,
+          clarificationNotes: [clarificationNote],
+          application,
+        })
+        assessment.application.data = application.data
+        assessment.application.submittedAt = application.submittedAt
+
+        assessment.data = assessmentData
+
+        assessment = addResponsesToFormArtifact(assessment, {
+          task: 'suitability-assessment',
+          page: 'application-timeliness',
+          keyValuePairs: {
+            agreeWithShortNoticeReason: 'yes',
+            agreeWithShortNoticeReasonComments: 'Some short notice reason comments',
+          },
+        })
+        assessment = addResponsesToFormArtifact(assessment, {
+          task: 'suitability-assessment',
+          page: 'contingency-plan-suitability',
+          keyValuePairs: { contingencyPlanSufficient: 'yes', additionalComments: 'some comments' },
+        })
+
+        const documents = documentFactory.buildList(1)
+        assessment.application = overwriteApplicationDocuments(assessment.application, documents)
+        const user = userFactory.build()
+
+        const assessHelper = new AssessHelper(assessment, documents, user, clarificationNote)
+
+        cy.wrap(assessment).as('assessment')
+        cy.wrap(assessHelper).as('assessHelper')
       })
-
-      assessment.application.data = application.data
-      assessment.application.submittedAt = application.submittedAt
-
-      assessment.data = {}
-      const documents = documentFactory.buildList(1)
-      assessment.application = overwriteApplicationDocuments(assessment.application, documents)
-      const user = userFactory.build()
-
-      const assessHelper = new AssessHelper(assessment, documents, user, clarificationNote)
-
-      cy.wrap(assessment).as('assessment')
-      cy.wrap(assessHelper).as('assessHelper')
     })
   })
 

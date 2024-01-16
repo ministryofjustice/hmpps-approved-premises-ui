@@ -6,8 +6,7 @@ export default class CheckYourAnswersPage extends AssessPage {
   tasklistPage: CheckYourAnswers
 
   constructor(assessment: Assessment) {
-    super(assessment, 'Check your answers')
-    this.pageClass = new CheckYourAnswers({ reviewed: '1' }, assessment)
+    super('Check your answers', assessment, 'check-your-answers', 'check-your-answers', '')
   }
 
   shouldShowReviewAnswer(pages: Array<AssessPage>) {
@@ -46,7 +45,7 @@ export default class CheckYourAnswersPage extends AssessPage {
   private shouldShowAnswersForTask(taskName: string, pages: Array<AssessPage>) {
     cy.get(`[data-cy-section="${taskName}"]`).within(() => {
       pages.forEach(page => {
-        const responses = page.pageClass.response()
+        const responses = page.tasklistPage.response()
         Object.keys(responses).forEach(key => {
           this.assertDefinition(key, responses[key] as string)
         })

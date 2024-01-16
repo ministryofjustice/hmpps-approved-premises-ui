@@ -1,3 +1,4 @@
+import { ApprovedPremisesAssessment as Assessment } from '../../../server/@types/shared'
 import {
   assessmentFactory,
   assessmentSummaryFactory,
@@ -19,9 +20,9 @@ import {
   TaskListPage,
 } from '../../pages/assess'
 import Page from '../../pages/page'
-import SuitabilityAssessment from '../../../server/form-pages/assess/assessApplication/suitablityAssessment/suitabilityAssessment'
 import ContingencyPlanSuitabilityPage from '../../pages/assess/contingencyPlanSuitability'
 import { awaitingAssessmentStatuses } from '../../../server/utils/assessments/utils'
+import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -34,74 +35,114 @@ context('Assess', () => {
     cy.signIn()
     // And there is an application awaiting assessment
     cy.fixture('applicationData.json').then(applicationData => {
-      const clarificationNote = clarificationNoteFactory.build({ response: undefined })
-      const assessment = assessmentFactory.build({
-        decision: undefined,
-        application: { data: applicationData, person: personFactory.build() },
-        clarificationNotes: [clarificationNote],
+      cy.fixture('assessmentData.json').then(assessmentData => {
+        const clarificationNote = clarificationNoteFactory.build({ response: undefined })
+        const assessment = assessmentFactory.build({
+          decision: undefined,
+          application: { data: applicationData, person: personFactory.build() },
+          clarificationNotes: [clarificationNote],
+        })
+
+        assessment.data = assessmentData
+        const documents = documentFactory.buildList(4)
+        assessment.application = overwriteApplicationDocuments(assessment.application, documents)
+        const user = userFactory.build()
+
+        const assessmentNeedingClarification = addResponsesToFormArtifact<Assessment>(
+          { ...assessment },
+          {
+            task: 'sufficient-information',
+            page: 'sufficient-information',
+            keyValuePairs: {
+              sufficientInformation: 'no',
+              query: 'clarification note text',
+            },
+          },
+        )
+
+        cy.wrap(assessment).as('assessment')
+        cy.wrap(assessmentNeedingClarification).as('assessmentNeedingClarification')
+        cy.wrap(documents).as('documents')
+        cy.wrap(user).as('user')
+        cy.wrap(clarificationNote).as('clarificationNote')
       })
-
-      assessment.data = {}
-      const documents = documentFactory.buildList(4)
-      assessment.application = overwriteApplicationDocuments(assessment.application, documents)
-      const user = userFactory.build()
-
-      const assessHelper = new AssessHelper(assessment, documents, user, clarificationNote)
-
-      cy.wrap(assessment).as('assessment')
-      cy.wrap(assessHelper).as('assessHelper')
     })
   })
 
   it('allows me to assess an application', function test() {
-    this.assessHelper.setupStubs()
+    const assessHelper = new AssessHelper(this.assessment, this.documents, this.user, this.clarificationNote)
+    assessHelper.setupStubs()
 
     // And I start an assessment
-    this.assessHelper.startAssessment()
+    assessHelper.startAssessment()
 
     // And I complete an assessment
-    this.assessHelper.completeAssessment()
+    assessHelper.completeAssessment()
 
     // Then the API should have received the correct data
     cy.task('verifyAssessmentAcceptance', this.assessment).then(requests => {
       expect(requests).to.have.length(1)
 
       const body = JSON.parse(requests[0].body)
-      expect(body).to.deep.equal(acceptanceData(this.assessHelper.assessment))
+      expect(body).to.deep.equal(acceptanceData(this.assessment))
     })
   })
 
   it('allows me to create and update a clarification note', function test() {
-    this.assessHelper.setupStubs()
+    let assessmentNeedingClarification = addResponsesToFormArtifact<Assessment>(this.assessment, {
+      task: 'sufficient-information',
+      page: 'sufficient-information',
+      keyValuePairs: {
+        sufficientInformation: 'no',
+        query: 'clarification note text',
+      },
+    })
+    assessmentNeedingClarification = addResponsesToFormArtifact<Assessment>(assessmentNeedingClarification, {
+      task: 'sufficient-information',
+      page: 'information-received',
+      keyValuePairs: {
+        informationReceived: 'yes',
+        response: 'response text',
+        'responseReceivedOn-year': '2023',
+        'responseReceivedOn-month': '09',
+        'responseReceivedOn-day': '02',
+      },
+    })
+    const assessHelper = new AssessHelper(
+      assessmentNeedingClarification,
+      this.documents,
+      this.user,
+      this.clarificationNote,
+    )
+    assessHelper.setupStubs()
 
     // And I start an assessment
-    this.assessHelper.startAssessment()
+    assessHelper.startAssessment()
 
     // And I add a clarification note
-    const note = 'Note goes here'
-    this.assessHelper.addClarificationNote(note)
+    assessHelper.addClarificationNote()
 
-    cy.task('verifyClarificationNoteCreate', this.assessment)
+    cy.task('verifyClarificationNoteCreate', assessmentNeedingClarification)
       .then(requests => {
         // Then the API should have had a clarification note added
         expect(requests).to.have.length(1)
         const body = JSON.parse(requests[0].body)
 
-        expect(body.query).equal(note)
+        expect(body.query).equal('clarification note text')
       })
       .then(() => {
         // Given my assessment is put into an awaiting response state
-        this.assessHelper.updateAssessmentStatus('awaiting_response')
+        assessHelper.updateAssessmentStatus('awaiting_response')
       })
       .then(() => {
         // When I am redirected to the dashboard
         const listPage = Page.verifyOnPage(ListPage)
 
         // And I click on my assessment
-        listPage.clickAssessment(this.assessment)
+        listPage.clickAssessment(assessmentNeedingClarification)
 
         // And I complete the form
-        this.assessHelper.updateClarificationNote('yes', 'response text', '2023-09-02')
+        assessHelper.updateClarificationNote('yes')
 
         // Then I should be redirected to the tasklist page
         const tasklistPage = Page.verifyOnPage(TaskListPage)
@@ -110,7 +151,7 @@ context('Assess', () => {
         tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
       })
       .then(() => {
-        cy.task('verifyClarificationNoteUpdate', this.assessment)
+        cy.task('verifyClarificationNoteUpdate', assessmentNeedingClarification)
       })
       .then(requests => {
         // And the API should have had a clarification note update request
@@ -123,27 +164,38 @@ context('Assess', () => {
   })
 
   it('should allow me to reject an application where I have not received the correct information', function test() {
-    this.assessHelper.setupStubs()
+    let assessment = addResponseToFormArtifact<Assessment>(this.assessmentNeedingClarification, {
+      task: 'sufficient-information',
+      page: 'information-received',
+      key: 'informationReceived',
+      value: 'no',
+    })
+
+    assessment = addResponseToFormArtifact<Assessment>(assessment, {
+      task: 'make-a-decision',
+      page: 'make-a-decision',
+      key: 'decision',
+      value: 'otherReasons',
+    })
+    delete assessment.data['required-actions']
+    delete assessment.data['matching-information']
+    const assessHelper = new AssessHelper(assessment, this.documents, this.user, this.clarificationNote)
+
+    assessHelper.setupStubs()
 
     // Given I start an assessment
-    this.assessHelper.startAssessment()
+    assessHelper.startAssessment()
 
     // And I add a clarification note
-    this.assessHelper
-      .addClarificationNote('Note goes here')
-      .then(() => {
-        // And my assessment is put into an awaiting response state
-        this.assessHelper.updateAssessmentStatus('awaiting_response')
-      })
+    assessHelper
+      .addClarificationNote()
       .then(() => {
         const listPage = Page.verifyOnPage(ListPage)
 
         // When I click on my assessment
         listPage.clickAssessment(this.assessment)
-
         // And I respond 'no' to the 'informationReceived' question
-        this.assessHelper.updateClarificationNote('no')
-
+        assessHelper.updateClarificationNote('no')
         // Then I should be redirected to the tasklist page
         const tasklistPage = Page.verifyOnPage(TaskListPage)
 
@@ -151,10 +203,10 @@ context('Assess', () => {
         tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
 
         // And I should see the AssessApplication section
-        this.assessHelper.completeSuitabilityOfAssessmentQuestion()
+        assessHelper.completeSuitabilityOfAssessmentQuestion({ isShortNoticeApplication: false })
 
         // When I make a decision
-        this.assessHelper.completeMakeADecisionPage('otherReasons')
+        assessHelper.completeMakeADecisionPage()
 
         // Then I should not see the MatchingInformation section
         tasklistPage.shouldNotShowSection('Information for matching')
@@ -163,14 +215,14 @@ context('Assess', () => {
         tasklistPage.shouldNotShowSection('Provide any requirements to support placement')
 
         // When I check my answers
-        this.assessHelper.completeCheckYourAnswersPage()
+        assessHelper.completeCheckYourAnswersPage()
 
         // And I submit the application
-        this.assessHelper.submitAssessment(false)
+        assessHelper.submitAssessment(false)
       })
       .then(() => {
         // Then the API should have received the correct data
-        cy.task('verifyAssessmentRejection', this.assessment).then(requests => {
+        cy.task('verifyAssessmentRejection', assessment).then(requests => {
           expect(requests).to.have.length(1)
 
           const body = JSON.parse(requests[0].body)
@@ -214,6 +266,7 @@ context('Assess', () => {
       assessment.application.person = personFactory.build()
 
       cy.task('stubAssessment', assessment)
+      cy.task('stubAssessmentUpdate', assessment)
 
       // And I visit the tasklist
       TaskListPage.visit(assessment)
@@ -223,19 +276,6 @@ context('Assess', () => {
 
       // And I change my response
       const suitabilityAssessmentPage = new SuitabilityAssessmentPage(assessment)
-      suitabilityAssessmentPage.pageClass = new SuitabilityAssessment(
-        {
-          riskFactors: 'no',
-          riskFactorsComments: '',
-          riskManagement: 'yes',
-          riskManagementComments: '',
-          locationOfPlacement: 'no',
-          locationOfPlacementComments: '',
-          moveOnPlan: 'yes',
-          moveOnPlanComments: '',
-        },
-        assessment,
-      )
       suitabilityAssessmentPage.completeForm()
       suitabilityAssessmentPage.clickSubmit()
 
@@ -252,7 +292,25 @@ context('Assess', () => {
   it('does not invalidate the check your answers step if an answer is reviewed and not changed', function test() {
     // Given there is a complete application in the database
     cy.fixture('assessmentData.json').then(assessmentData => {
-      const assessment = assessmentFactory.build({ data: assessmentData, status: 'in_progress' })
+      let assessment = assessmentFactory.build({ data: assessmentData, status: 'in_progress' })
+      assessment = addResponsesToFormArtifact<Assessment>(assessment, {
+        page: 'application-timeliness',
+        task: 'suitability-assessment',
+        keyValuePairs: {
+          agreeWithShortNoticeReason: 'yes',
+          agreeWithShortNoticeReasonComments: 'comments',
+          reasonForLateApplication: 'other',
+        },
+      })
+      assessment = addResponsesToFormArtifact<Assessment>(assessment, {
+        page: 'contingency-plan-suitability',
+        task: 'suitability-assessment',
+        keyValuePairs: {
+          contingencyPlanSufficient: 'yes',
+          additionalComments: 'comments',
+        },
+      })
+
       assessment.application.person = personFactory.build()
 
       cy.task('stubAssessment', assessment)

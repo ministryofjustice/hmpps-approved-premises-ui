@@ -207,7 +207,7 @@ export default class ApplyHelper {
 
   private stubApplicationEndpoints() {
     // Given I can create an application
-    cy.task('stubApplicationJourney', this.application)
+    cy.task('stubJourney', this.application)
   }
 
   private stubOasys404() {
