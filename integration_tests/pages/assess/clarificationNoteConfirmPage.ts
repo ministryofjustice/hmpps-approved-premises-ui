@@ -4,7 +4,7 @@ import Page from '../page'
 
 export default class SufficientInformationPage extends Page {
   constructor() {
-    super('Request information from probation practitioner')
+    super('How to get further information')
   }
 
   clickBackToDashboard() {

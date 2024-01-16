@@ -9,12 +9,11 @@ import TasklistPage from '../../../tasklistPage'
 @Page({
   name: 'sufficient-information',
   bodyProperties: ['sufficientInformation', 'query'],
-  controllerActions: { update: 'updateSufficientInformation' },
 })
 export default class SufficientInformation implements TasklistPage {
   name = 'sufficient-information'
 
-  title = 'Is there enough information in the application to make a decision?'
+  title = 'Is there enough information in the application for you to make a decision?'
 
   furtherInformationQuestion = 'What additional information is required?'
 
@@ -41,7 +40,7 @@ export default class SufficientInformation implements TasklistPage {
   }
 
   next() {
-    return this.body.sufficientInformation === 'yes' ? '' : 'information-received'
+    return this.body.sufficientInformation === 'no' ? 'sufficient-information-confirm' : ''
   }
 
   response() {

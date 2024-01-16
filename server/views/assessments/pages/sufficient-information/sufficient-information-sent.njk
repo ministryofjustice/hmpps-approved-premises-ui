@@ -1,0 +1,66 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% extends "../../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+  <div class="govuk-width-container">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">
+        {{ page.title }}
+      </h1>
+
+      <div class="govuk-inset-text">
+    No progress can be made on this assessment until you've contacted the probation practitioner.
+  </div>
+
+      <ol class="govuk-list govuk-list--number">
+        <li>Contact the probation practitioner to ask them for the information.</li>
+        <li>They are given 5 days to respond.</li>
+        <li>When they've responded, or the 5 days has passed, you can submit the assessment.</li>
+      </ol>
+
+      <p>Missing information will be included in pre-arrival planning. When you submit the assessment, you can indicate if the information was not provided.</p>
+
+      {{
+      govukSummaryList({
+          rows: [
+            {
+              key: {
+                text: "Name"
+              },
+              value: {
+                text: page.user.name
+              }
+            },
+            {
+              key: {
+                text: "Email"
+              },
+              value: {
+                text: page.user.email
+              }
+            },
+            {
+              key: {
+                text: "Contact number"
+              },
+              value: {
+                html: page.user.telephoneNumber
+              }
+            }
+          ]
+      })
+    }}
+
+      {{ govukButton({
+      text: "Back to dashboard",
+      href: paths.assessments.index()
+    }) }}
+    </div>
+  </div>
+
+{% endblock %}

@@ -14,7 +14,7 @@ describe('SufficientInformation', () => {
 
   describe('title', () => {
     expect(new SufficientInformation({}).title).toBe(
-      'Is there enough information in the application to make a decision?',
+      'Is there enough information in the application for you to make a decision?',
     )
   })
 
@@ -49,7 +49,7 @@ describe('SufficientInformation', () => {
   })
 
   describe('when sufficientInformation is no', () => {
-    itShouldHaveNextValue(new SufficientInformation({ sufficientInformation: 'no' }), 'information-received')
+    itShouldHaveNextValue(new SufficientInformation({ sufficientInformation: 'no' }), 'sufficient-information-confirm')
   })
 
   itShouldHavePreviousValue(new SufficientInformation({}), 'dashboard')
@@ -77,7 +77,7 @@ describe('SufficientInformation', () => {
       const page = new SufficientInformation({ sufficientInformation: 'yes' })
 
       expect(page.response()).toEqual({
-        'Is there enough information in the application to make a decision?': 'Yes',
+        'Is there enough information in the application for you to make a decision?': 'Yes',
         'What additional information is required?': '',
       })
     })
@@ -86,7 +86,7 @@ describe('SufficientInformation', () => {
       const page = new SufficientInformation({ sufficientInformation: 'no', query: 'some query' })
 
       expect(page.response()).toEqual({
-        'Is there enough information in the application to make a decision?': 'No',
+        'Is there enough information in the application for you to make a decision?': 'No',
         'What additional information is required?': 'some query',
       })
     })

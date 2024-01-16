@@ -14,19 +14,10 @@ import { getPage } from '../utils/assessments/utils'
 export default function routes(controllers: Controllers, router: Router, services: Partial<Services>): Router {
   const { pages } = Assess
   const { get, put, post } = actions(router, services.auditService)
-  const {
-    assessmentsController,
-    assessmentPagesController,
-    clarificationNotesController,
-    supportingInformationController,
-  } = controllers
+  const { assessmentsController, assessmentPagesController, supportingInformationController } = controllers
 
   get(paths.assessments.index.pattern, assessmentsController.index(), { auditEvent: 'LIST_ASSESSMENTS' })
   get(paths.assessments.show.pattern, assessmentsController.show(), { auditEvent: 'SHOW_ASSESSMENT' })
-
-  get(paths.assessments.clarificationNotes.confirm.pattern, clarificationNotesController.confirm(), {
-    auditEvent: 'CONFIRM_ASSESSMENT_CLARIFICATION_NOTE',
-  })
 
   get(paths.assessments.supportingInformationPath.pattern, supportingInformationController.show(), {
     auditEvent: 'SHOW_SUPPORTING_INFORMATION',

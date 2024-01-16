@@ -278,6 +278,13 @@ export type DataServices = Partial<{
   premisesService: {
     getAll: (token: string) => Promise<Array<Premises>>
   }
+  assessmentService: {
+    createClarificationNote: (
+      token: string,
+      assessmentId: string,
+      clarificationNote: NewClarificationNote,
+    ) => Promise<void>
+  }
 }>
 
 export type AssessmentGroupingCategory = 'status' | 'allocation'
