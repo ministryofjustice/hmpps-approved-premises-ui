@@ -1,10 +1,10 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
-import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
 
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
+import { suitabilityAssessmentAdjacentPage } from '../../../../utils/assessments/suitabilityAssessmentAdjacentPage'
 
 export type RfapSuitabilityBody = {
   rfapIdentifiedAsSuitable: YesOrNo
@@ -18,6 +18,8 @@ export type RfapSuitabilityBody = {
   bodyProperties: ['rfapIdentifiedAsSuitable', 'unsuitabilityForRfapRationale', 'yesDetail', 'noDetail'],
 })
 export default class RfapSuitability implements TasklistPage {
+  name = 'rfap-suitability' as const
+
   title = 'Suitability assessment'
 
   questions = {
@@ -34,18 +36,11 @@ export default class RfapSuitability implements TasklistPage {
   ) {}
 
   previous() {
-    return 'suitability-assessment'
+    return suitabilityAssessmentAdjacentPage(this.assessment, this.name, { returnPreviousPage: true })
   }
 
   next() {
-    if (
-      noticeTypeFromApplication(this.assessment.application) === 'short_notice' ||
-      noticeTypeFromApplication(this.assessment.application) === 'emergency'
-    ) {
-      return 'application-timeliness'
-    }
-
-    return ''
+    return suitabilityAssessmentAdjacentPage(this.assessment, this.name)
   }
 
   response() {

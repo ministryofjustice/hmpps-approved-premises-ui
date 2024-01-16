@@ -1,11 +1,11 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
-import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
 
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { sentenceCase } from '../../../../utils/utils'
+import { suitabilityAssessmentAdjacentPage } from '../../../../utils/assessments/suitabilityAssessmentAdjacentPage'
 
 export type ContingencyPlanSuitabilityBody = {
   contingencyPlanSufficient: YesOrNo
@@ -17,6 +17,8 @@ export type ContingencyPlanSuitabilityBody = {
   bodyProperties: ['contingencyPlanSufficient', 'additionalComments'],
 })
 export default class ContingencyPlanSuitability implements TasklistPage {
+  name = 'contingency-plan-suitability' as const
+
   title = 'Suitability assessment'
 
   questions = {
@@ -31,8 +33,7 @@ export default class ContingencyPlanSuitability implements TasklistPage {
   ) {}
 
   previous() {
-    if (noticeTypeFromApplication(this.assessment.application) === 'emergency') return 'application-timeliness'
-    return 'suitability-assessment'
+    return suitabilityAssessmentAdjacentPage(this.assessment, this.name, { returnPreviousPage: true })
   }
 
   next() {

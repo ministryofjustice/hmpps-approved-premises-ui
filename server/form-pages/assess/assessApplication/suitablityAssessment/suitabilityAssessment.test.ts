@@ -1,15 +1,13 @@
 import { assessmentFactory } from '../../../../testutils/factories'
-import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 import { YesOrNo } from '../../../../@types/ui'
 import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import SuitabilityAssessment from './suitabilityAssessment'
-import { shouldShowContingencyPlanPartnersPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
-import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { suitabilityAssessmentAdjacentPage } from '../../../../utils/assessments/suitabilityAssessmentAdjacentPage'
 
-jest.mock('../../../../utils/applications/noticeTypeFromApplication')
 jest.mock('../../../../utils/applications/shouldShowContingencyPlanPages')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
+jest.mock('../../../../utils/assessments/suitabilityAssessmentAdjacentPage.ts')
 
 describe('SuitabilityAssessment', () => {
   const assessment = assessmentFactory.build()
@@ -54,7 +52,9 @@ describe('SuitabilityAssessment', () => {
 
   describe('next', () => {
     it('returns rfap-suitability if the application needs an RFAP', () => {
-      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('yes')
+      ;(suitabilityAssessmentAdjacentPage as jest.MockedFn<typeof suitabilityAssessmentAdjacentPage>).mockReturnValue(
+        'rfap-suitability',
+      )
       expect(
         new SuitabilityAssessment(
           {
@@ -69,7 +69,9 @@ describe('SuitabilityAssessment', () => {
     })
 
     it('returns pipe-suitability if the application needs a PIPE', () => {
-      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('pipe')
+      ;(suitabilityAssessmentAdjacentPage as jest.MockedFn<typeof suitabilityAssessmentAdjacentPage>).mockReturnValue(
+        'pipe-suitability',
+      )
       expect(
         new SuitabilityAssessment(
           {
@@ -83,8 +85,27 @@ describe('SuitabilityAssessment', () => {
       ).toEqual('pipe-suitability')
     })
 
+    it('returns esap-suitability if the application needs a ESAP', () => {
+      ;(suitabilityAssessmentAdjacentPage as jest.MockedFn<typeof suitabilityAssessmentAdjacentPage>).mockReturnValue(
+        'esap-suitability',
+      )
+      expect(
+        new SuitabilityAssessment(
+          {
+            riskFactors: 'yes',
+            riskManagement: 'yes',
+            locationOfPlacement: 'yes',
+            moveOnPlan: 'yes',
+          },
+          assessment,
+        ).next(),
+      ).toEqual('esap-suitability')
+    })
+
     it('returns application-timeliness if the notice type is short_notice', () => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
+      ;(suitabilityAssessmentAdjacentPage as jest.MockedFn<typeof suitabilityAssessmentAdjacentPage>).mockReturnValue(
+        'application-timeliness',
+      )
       expect(
         new SuitabilityAssessment(
           {
@@ -99,7 +120,9 @@ describe('SuitabilityAssessment', () => {
     })
 
     it('returns application-timeliness if the notice type is emergency', () => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('emergency')
+      ;(suitabilityAssessmentAdjacentPage as jest.MockedFn<typeof suitabilityAssessmentAdjacentPage>).mockReturnValue(
+        'application-timeliness',
+      )
       expect(
         new SuitabilityAssessment(
           {
@@ -113,8 +136,10 @@ describe('SuitabilityAssessment', () => {
       ).toEqual('application-timeliness')
     })
 
-    it('returns contingency-plan-suitability if shouldShowContingencyPlanPartnerPages returns true', () => {
-      ;(shouldShowContingencyPlanPartnersPages as jest.Mock).mockReturnValue(true)
+    it('returns contingency-plan-suitability if the application has a contingency plan', () => {
+      ;(suitabilityAssessmentAdjacentPage as jest.MockedFn<typeof suitabilityAssessmentAdjacentPage>).mockReturnValue(
+        'contingency-plan-suitability',
+      )
       expect(
         new SuitabilityAssessment(
           {
@@ -129,8 +154,9 @@ describe('SuitabilityAssessment', () => {
     })
 
     it('returns an empty string if the notice type is standard', () => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('standard')
-
+      ;(suitabilityAssessmentAdjacentPage as jest.MockedFn<typeof suitabilityAssessmentAdjacentPage>).mockReturnValue(
+        '',
+      )
       expect(
         new SuitabilityAssessment(
           {
@@ -209,24 +235,6 @@ describe('SuitabilityAssessment', () => {
         'Is the move on plan sufficient?': 'Yes',
         'Is the move on plan sufficient? Additional comments': 'Move on plan comments',
       })
-    })
-  })
-
-  describe('next', () => {
-    it('returns application-timeliness for a short notice application', () => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
-
-      const page = new SuitabilityAssessment(
-        {
-          riskFactors: 'yes',
-          riskManagement: 'yes',
-          locationOfPlacement: 'yes',
-          moveOnPlan: 'yes',
-        },
-        assessment,
-      )
-
-      expect(page.next()).toBe('application-timeliness')
     })
   })
 })

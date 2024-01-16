@@ -1,10 +1,11 @@
 import { assessmentFactory } from '../../../../testutils/factories'
-import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import PipeSuitability, { PipeSuitabilityBody } from './pipeSuitability'
-import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 
-jest.mock('../../../../utils/applications/noticeTypeFromApplication')
+import { suitabilityAssessmentAdjacentPage } from '../../../../utils/assessments/suitabilityAssessmentAdjacentPage'
+
+jest.mock('../../../../utils/assessments/suitabilityAssessmentAdjacentPage')
+jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
 
 describe('PipeSuitability', () => {
   const body: PipeSuitabilityBody = {
@@ -25,24 +26,23 @@ describe('PipeSuitability', () => {
     })
   })
 
-  describe('next', () => {
-    it('returns application-timeliness if the notice type is short_notice', () => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
-      expect(new PipeSuitability(body, assessment).next()).toEqual('application-timeliness')
-    })
-
-    it('returns application-timeliness if the notice type is emergency', () => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('emergency')
-      expect(new PipeSuitability(body, assessment).next()).toEqual('application-timeliness')
-    })
-
-    it('returns an empty string if the notice type is standard', () => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('standard')
-      expect(new PipeSuitability(body, assessment).next()).toEqual('')
+  describe('previous', () => {
+    it('returns the result of suitabilityAssessmentAdjacentPage', () => {
+      ;(suitabilityAssessmentAdjacentPage as jest.MockedFn<typeof suitabilityAssessmentAdjacentPage>).mockReturnValue(
+        'suitability-assessment',
+      )
+      expect(new PipeSuitability(body, assessment).previous()).toEqual('suitability-assessment')
     })
   })
 
-  itShouldHavePreviousValue(new PipeSuitability(body, assessment), 'suitability-assessment')
+  describe('next', () => {
+    it('returns the result of suitabilityAssessmentAdjacentPage', () => {
+      ;(suitabilityAssessmentAdjacentPage as jest.MockedFn<typeof suitabilityAssessmentAdjacentPage>).mockReturnValue(
+        'application-timeliness',
+      )
+      expect(new PipeSuitability(body, assessment).next()).toEqual('application-timeliness')
+    })
+  })
 
   describe('errors', () => {
     it('should have an error if there are no answers', () => {

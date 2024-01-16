@@ -1,10 +1,9 @@
 import { assessmentFactory } from '../../../../testutils/factories'
-import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import RfapSuitability, { RfapSuitabilityBody } from './rfapSuitability'
-import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
+import { suitabilityAssessmentAdjacentPage } from '../../../../utils/assessments/suitabilityAssessmentAdjacentPage'
 
-jest.mock('../../../../utils/applications/noticeTypeFromApplication')
+jest.mock('../../../../utils/assessments/suitabilityAssessmentAdjacentPage')
 
 describe('RfapSuitability', () => {
   const body: RfapSuitabilityBody = {
@@ -26,23 +25,22 @@ describe('RfapSuitability', () => {
   })
 
   describe('next', () => {
-    it('returns application-timeliness if the notice type is short_notice', () => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
+    it('returns the result of suitabilityAssessmentAdjacentPage', () => {
+      ;(suitabilityAssessmentAdjacentPage as jest.MockedFn<typeof suitabilityAssessmentAdjacentPage>).mockReturnValue(
+        'application-timeliness',
+      )
       expect(new RfapSuitability(body, assessment).next()).toEqual('application-timeliness')
-    })
-
-    it('returns application-timeliness if the notice type is emergency', () => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('emergency')
-      expect(new RfapSuitability(body, assessment).next()).toEqual('application-timeliness')
-    })
-
-    it('returns an empty string if the notice type is standard', () => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('standard')
-      expect(new RfapSuitability(body, assessment).next()).toEqual('')
     })
   })
 
-  itShouldHavePreviousValue(new RfapSuitability(body, assessment), 'suitability-assessment')
+  describe('previous', () => {
+    it('returns the result of suitabilityAssessmentAdjacentPage', () => {
+      ;(suitabilityAssessmentAdjacentPage as jest.MockedFn<typeof suitabilityAssessmentAdjacentPage>).mockReturnValue(
+        'suitability-assessment',
+      )
+      expect(new RfapSuitability(body, assessment).previous()).toEqual('suitability-assessment')
+    })
+  })
 
   describe('errors', () => {
     it('should have an error if there are no answers', () => {

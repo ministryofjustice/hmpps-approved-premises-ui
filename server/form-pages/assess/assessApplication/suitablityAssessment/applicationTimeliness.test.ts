@@ -4,12 +4,12 @@ import { YesOrNo } from '../../../../@types/ui'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
 import ApplicationTimeliness from './applicationTimeliness'
-import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 import { arrivalDateFromApplication } from '../../../../utils/applications/arrivalDateFromApplication'
 import { ShortNoticeReasons } from '../../../apply/reasons-for-placement/basic-information/reasonForShortNotice'
+import { suitabilityAssessmentAdjacentPage } from '../../../../utils/assessments/suitabilityAssessmentAdjacentPage'
 
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
-jest.mock('../../../../utils/applications/noticeTypeFromApplication')
+jest.mock('../../../../utils/assessments/suitabilityAssessmentAdjacentPage')
 jest.mock('../../../../utils/applications/arrivalDateFromApplication')
 
 const body = {
@@ -32,30 +32,20 @@ describe('ApplicationTimeliness', () => {
   })
 
   describe('next', () => {
-    it('returns an empty string if the application has a notice type other than emergency', () => {
-      expect(new ApplicationTimeliness(body, assessment).next()).toEqual('')
-    })
-
-    it('returns contingency-plan-suitability if the application ahs a notice type of emergency', () => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('emergency')
-      expect(new ApplicationTimeliness(body, assessment).next()).toEqual('contingency-plan-suitability')
+    it('returns the result of suitabilityAssessmentAdjacentPage', () => {
+      ;(suitabilityAssessmentAdjacentPage as jest.Mock).mockReturnValue('application-timeliness')
+      expect(new ApplicationTimeliness(body, assessment).next()).toEqual('application-timeliness')
     })
   })
 
   describe('previous', () => {
-    it('returns rfap-suitability if the applicant requires an RFAP', () => {
-      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('yes')
-
-      expect(new ApplicationTimeliness(body, assessment).previous()).toEqual('rfap-suitability')
-    })
-
-    it('returns suitability-assessment if the applicant doesnt require an RFAP', () => {
-      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue(undefined)
-
+    it('returns the result of suitabilityAssessmentAdjacentPage', () => {
+      ;(suitabilityAssessmentAdjacentPage as jest.MockedFn<typeof suitabilityAssessmentAdjacentPage>).mockReturnValue(
+        'suitability-assessment',
+      )
       expect(new ApplicationTimeliness(body, assessment).previous()).toEqual('suitability-assessment')
     })
   })
-
   describe('errors', () => {
     it('should have an error if there are no answers', () => {
       const page = new ApplicationTimeliness(
