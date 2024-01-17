@@ -16,7 +16,7 @@ import DateChangesController from './dateChangesController'
 import type { Services } from '../../services'
 
 export const controllers = (services: Services) => {
-  const premisesController = new PremisesController(services.premisesService, services.bookingService)
+  const premisesController = new PremisesController(services.premisesService)
   const bookingsController = new BookingsController(services.bookingService, services.personService)
   const bookingExtensionsController = new BookingExtensionsController(services.bookingService)
   const arrivalsController = new ArrivalsController(services.arrivalService, services.premisesService)

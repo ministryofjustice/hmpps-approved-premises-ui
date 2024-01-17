@@ -3,7 +3,6 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PremisesService from '../../../services/premisesService'
-import BookingService from '../../../services/bookingService'
 import PremisesController from './premisesController'
 
 import { bedOccupancyRangeFactoryUi, extendedPremisesSummaryFactory } from '../../../testutils/factories'
@@ -18,8 +17,7 @@ describe('PremisesController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const premisesService = createMock<PremisesService>({})
-  const bookingService = createMock<BookingService>({})
-  const premisesController = new PremisesController(premisesService, bookingService)
+  const premisesController = new PremisesController(premisesService)
 
   beforeEach(() => {
     request = createMock<Request>({ user: { token }, params: { premisesId } })
