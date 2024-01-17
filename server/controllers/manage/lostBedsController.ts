@@ -80,7 +80,6 @@ export default class LostBedsController {
 
       res.render('lostBeds/index', {
         lostBeds,
-        numberOfLostBeds: lostBeds.length,
         pageHeading: 'Manage out of service beds',
         premisesId,
       })
