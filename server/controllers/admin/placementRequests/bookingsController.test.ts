@@ -7,7 +7,7 @@ import { PlacementRequestService, PremisesService } from '../../../services'
 import {
   newPlacementRequestBookingConfirmationFactory,
   placementRequestDetailFactory,
-  premisesFactory,
+  premisesSummaryFactory,
 } from '../../../testutils/factories'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import { ErrorsAndUserInput } from '../../../@types/ui'
@@ -35,7 +35,7 @@ describe('PlacementRequestsController', () => {
   })
 
   describe('new', () => {
-    const premises = premisesFactory.buildList(2)
+    const premises = premisesSummaryFactory.buildList(2)
 
     beforeEach(() => {
       placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)

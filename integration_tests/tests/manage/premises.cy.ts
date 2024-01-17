@@ -6,6 +6,7 @@ import {
   extendedPremisesSummaryFactory,
   premisesBookingFactory,
   premisesFactory,
+  premisesSummaryFactory,
 } from '../../../server/testutils/factories'
 import { DateFormats } from '../../../server/utils/dateUtils'
 
@@ -21,16 +22,19 @@ context('Premises', () => {
     signIn(['workflow_manager'])
   })
 
-  it('should list all premises', () => {
-    // Given there are premises in the database
-    const premises = premisesFactory.buildList(5)
-    cy.task('stubAllPremises', premises)
+  describe('list', () => {
+    it('should list all premises', () => {
+      // Given there are premises in the database
+      const premises = premisesSummaryFactory.buildList(5)
+      cy.task('stubAllPremises', premises)
+      cy.task('stubProbationRegionsReferenceData')
 
-    // When I visit the premises page
-    const page = PremisesListPage.visit()
+      // When I visit the premises page
+      const page = PremisesListPage.visit()
 
-    // Then I should see all of the premises listed
-    page.shouldShowPremises(premises)
+      // Then I should see all of the premises listed
+      page.shouldShowPremises(premises)
+    })
   })
 
   it('should show a single premises', () => {

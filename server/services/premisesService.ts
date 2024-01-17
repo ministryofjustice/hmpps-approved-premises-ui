@@ -1,9 +1,9 @@
 import type {
+  ApprovedPremisesSummary,
   BedDetail,
   BedSummary,
   ExtendedPremisesSummary,
   Premises,
-  PremisesSummary,
   Room,
   StaffMember,
 } from '@approved-premises/api'
@@ -14,7 +14,7 @@ import { mapApiOccupancyToUiOccupancy } from '../utils/premisesUtils'
 export default class PremisesService {
   constructor(private readonly premisesClientFactory: RestClientBuilder<PremisesClient>) {}
 
-  async getAll(token: string): Promise<Array<PremisesSummary>> {
+  async getAll(token: string): Promise<Array<ApprovedPremisesSummary>> {
     const premisesClient = this.premisesClientFactory(token)
     const premises = await premisesClient.all()
 

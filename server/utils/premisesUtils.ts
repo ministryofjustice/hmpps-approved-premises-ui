@@ -3,7 +3,7 @@ import type {
   BedOccupancyRange,
   DateCapacity,
   ExtendedPremisesSummary,
-  PremisesSummary,
+  ApprovedPremisesSummary as PremisesSummary,
 } from '@approved-premises/api'
 import { BedOccupancyRangeUi, SelectGroup, SummaryList } from '@approved-premises/ui'
 import { DateFormats } from './dateUtils'
