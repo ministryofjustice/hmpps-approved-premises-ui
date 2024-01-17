@@ -2,7 +2,10 @@ import { ApprovedPremisesAssessment as Assessment } from '../../@types/shared'
 import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import Rfap from '../../form-pages/apply/risk-and-need-factors/further-considerations/rfap'
 import { noticeTypeFromApplication } from '../applications/noticeTypeFromApplication'
-import { shouldShowContingencyPlanPartnersPages } from '../applications/shouldShowContingencyPlanPages'
+import {
+  shouldShowContingencyPlanPartnersPages,
+  shouldShowContingencyPlanQuestionsPage,
+} from '../applications/shouldShowContingencyPlanPages'
 import { retrieveOptionalQuestionResponseFromFormArtifact as responseFromAssessment } from '../retrieveQuestionResponseFromFormArtifact'
 
 const suitabilityAssessmentPageNames = [
@@ -45,7 +48,9 @@ export const suitabilityAssessmentAdjacentPage = (
     },
     {
       pageName: 'contingency-plan-suitability',
-      needsAssessment: shouldShowContingencyPlanPartnersPages(assessment.application),
+      needsAssessment:
+        shouldShowContingencyPlanPartnersPages(assessment.application) ||
+        shouldShowContingencyPlanQuestionsPage(assessment.application),
     },
   ]
 
