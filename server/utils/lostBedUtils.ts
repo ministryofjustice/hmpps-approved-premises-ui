@@ -1,9 +1,11 @@
 import { LostBed } from '@approved-premises/api'
 import { TableCell, UserDetails } from '@approved-premises/ui'
 
+import { isWithinInterval } from 'date-fns'
 import paths from '../paths/manage'
 import { linkTo } from './utils'
 import { hasRole } from './users'
+import { DateFormats } from './dateUtils'
 
 export const lostBedTableHeaders = (user: UserDetails) => {
   const headers = [
@@ -60,6 +62,15 @@ export const referenceNumberCell = (value: string): TableCell => ({ text: value 
 export const actionCell = (bed: LostBed, premisesId: string): TableCell => ({
   html: bedLink(bed, premisesId),
 })
+
+export const lostBedsCountForToday = (lostBeds: Array<LostBed>): number => {
+  return lostBeds.filter(lostBed =>
+    isWithinInterval(Date.now(), {
+      start: DateFormats.isoToDateObj(lostBed.startDate),
+      end: DateFormats.isoToDateObj(lostBed.endDate),
+    }),
+  ).length
+}
 
 const bedLink = (bed: LostBed, premisesId: string): string =>
   linkTo(

@@ -208,7 +208,6 @@ describe('LostBedsController', () => {
 
       expect(response.render).toHaveBeenCalledWith('lostBeds/index', {
         lostBeds: [lostBed],
-        numberOfLostBeds: 1,
         pageHeading: 'Manage out of service beds',
         premisesId,
       })

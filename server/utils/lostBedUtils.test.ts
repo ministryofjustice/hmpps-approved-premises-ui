@@ -1,5 +1,8 @@
+import { add, sub } from 'date-fns'
 import { lostBedFactory, userDetailsFactory } from '../testutils/factories'
-import { lostBedTableHeaders, lostBedTableRows, referenceNumberCell } from './lostBedUtils'
+import { DateFormats } from './dateUtils'
+import { lostBedTableHeaders, lostBedTableRows, lostBedsCountForToday, referenceNumberCell } from './lostBedUtils'
+import { getRandomInt } from './utils'
 
 describe('lostBedUtils', () => {
   describe('referenceNumberCell', () => {
@@ -104,6 +107,33 @@ describe('lostBedUtils', () => {
       ]
       const rows = lostBedTableRows([lostBed], premisesId, user)
       expect(rows).toEqual(expectedRows)
+    })
+  })
+
+  describe('lostBedsCountForToday', () => {
+    it('returns the correct number of lost beds for today', () => {
+      const lostBedsForToday = [...Array(getRandomInt(1, 10))].map(() =>
+        lostBedFactory.build({
+          startDate: DateFormats.dateObjToIsoDate(sub(Date.now(), { days: getRandomInt(1, 10) })),
+          endDate: DateFormats.dateObjToIsoDate(add(Date.now(), { days: getRandomInt(1, 10) })),
+        }),
+      )
+      const futureLostBeds = [...Array(getRandomInt(1, 10))].map(() =>
+        lostBedFactory.build({
+          startDate: DateFormats.dateObjToIsoDate(add(Date.now(), { days: getRandomInt(1, 10) })),
+          endDate: DateFormats.dateObjToIsoDate(add(Date.now(), { days: getRandomInt(1, 10) })),
+        }),
+      )
+      const pastLostBeds = [...Array(getRandomInt(1, 10))].map(() =>
+        lostBedFactory.build({
+          startDate: DateFormats.dateObjToIsoDate(sub(Date.now(), { days: getRandomInt(1, 10) })),
+          endDate: DateFormats.dateObjToIsoDate(sub(Date.now(), { days: getRandomInt(1, 10) })),
+        }),
+      )
+
+      expect(lostBedsCountForToday([...lostBedsForToday, ...futureLostBeds, ...pastLostBeds])).toEqual(
+        lostBedsForToday.length,
+      )
     })
   })
 })
