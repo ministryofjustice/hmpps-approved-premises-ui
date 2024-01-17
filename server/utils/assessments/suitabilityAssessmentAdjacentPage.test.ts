@@ -3,7 +3,10 @@
 import { upper } from 'case'
 import { assessmentFactory } from '../../testutils/factories'
 import { noticeTypeFromApplication } from '../applications/noticeTypeFromApplication'
-import { shouldShowContingencyPlanPartnersPages } from '../applications/shouldShowContingencyPlanPages'
+import {
+  shouldShowContingencyPlanPartnersPages,
+  shouldShowContingencyPlanQuestionsPage,
+} from '../applications/shouldShowContingencyPlanPages'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import { suitabilityAssessmentAdjacentPage } from './suitabilityAssessmentAdjacentPage'
 
@@ -169,6 +172,17 @@ describe('suitabilityAssessmentAdjacentPage', () => {
             )
 
             expect(suitabilityAssessmentAdjacentPage(assessmentFactory.build(), 'application-timeliness')).toEqual('')
+          })
+        })
+        describe('emergency application', () => {
+          it(`returns an contingency-plan-suitability if the ${apType.name} suitability + application timeliness pages have been completed`, () => {
+            ;(
+              shouldShowContingencyPlanQuestionsPage as jest.MockedFn<typeof shouldShowContingencyPlanQuestionsPage>
+            ).mockReturnValue(true)
+
+            expect(suitabilityAssessmentAdjacentPage(assessmentFactory.build(), 'application-timeliness')).toEqual(
+              'contingency-plan-suitability',
+            )
           })
         })
       })
