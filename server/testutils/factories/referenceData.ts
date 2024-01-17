@@ -40,6 +40,11 @@ class ReferenceDataFactory extends Factory<ReferenceData> {
     const data = faker.helpers.arrayElement(nonArrivalReasonsJson)
     return this.params(data)
   }
+
+  probationRegions() {
+    const data = faker.helpers.arrayElement(nonArrivalReasonsJson)
+    return this.params(data)
+  }
 }
 
 export default ReferenceDataFactory.define(() => ({

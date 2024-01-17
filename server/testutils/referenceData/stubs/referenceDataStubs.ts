@@ -6,6 +6,7 @@ import destinationProvidersJson from './destination-providers.json'
 import cancellationReasonsJson from './cancellation-reasons.json'
 import lostBedReasonsJson from './lost-bed-reasons.json'
 import keyWorkersJson from './keyworkers.json'
+import probationRegionsJson from './probation-regions.json'
 
 const departureReasons = {
   request: {
@@ -91,4 +92,25 @@ const keyWorkers = {
   },
 }
 
-export { departureReasons, moveOnCategories, destinationProviders, cancellationReasons, lostBedReasons, keyWorkers }
+const probationRegions = {
+  request: {
+    method: 'GET',
+    url: '/reference-data/probation-regions',
+  },
+  response: {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8',
+    },
+    jsonBody: probationRegionsJson,
+  },
+}
+export {
+  departureReasons,
+  moveOnCategories,
+  destinationProviders,
+  cancellationReasons,
+  lostBedReasons,
+  keyWorkers,
+  probationRegions,
+}

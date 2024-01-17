@@ -2,19 +2,23 @@ import UserService from './userService'
 import HmppsAuthClient, { User } from '../data/hmppsAuthClient'
 import { UserClient } from '../data'
 
-import { paginatedResponseFactory, userFactory } from '../testutils/factories'
+import { paginatedResponseFactory, referenceDataFactory, userFactory } from '../testutils/factories'
 import { PaginatedResponse } from '../@types/ui'
 import { ApprovedPremisesUser } from '../@types/shared'
+import ReferenceDataClient from '../data/referenceDataClient'
 
 jest.mock('../data/hmppsAuthClient')
 jest.mock('../data/userClient')
+jest.mock('../data/referenceDataClient.ts')
 
 const token = 'some token'
 
 describe('User service', () => {
   const userClient: jest.Mocked<UserClient> = new UserClient(null) as jest.Mocked<UserClient>
   const userClientFactory = jest.fn()
+  const referenceDataClientFactory = jest.fn()
   const userProfile = userFactory.build({ roles: ['workflow_manager', 'assessor'] })
+  const referenceDataClient = new ReferenceDataClient(null) as jest.Mocked<ReferenceDataClient>
 
   let hmppsAuthClient: jest.Mocked<HmppsAuthClient>
   let userService: UserService
@@ -25,9 +29,10 @@ describe('User service', () => {
     hmppsAuthClient = new HmppsAuthClient(null) as jest.Mocked<HmppsAuthClient>
     userClientFactory.mockReturnValue(userClient)
 
-    userService = new UserService(hmppsAuthClient, userClientFactory)
+    userService = new UserService(hmppsAuthClient, userClientFactory, referenceDataClientFactory)
 
     userClient.getUserProfile.mockResolvedValue(userProfile)
+    referenceDataClientFactory.mockReturnValue(referenceDataClient)
   })
 
   describe('getUser', () => {
@@ -78,11 +83,11 @@ describe('User service', () => {
 
       userClient.getUsers.mockResolvedValue(response)
 
-      const result = await userService.getUsers(token, ['applicant', 'assessor'], ['pipe'], 1, 'name', 'asc')
+      const result = await userService.getUsers(token, 'test', ['applicant', 'assessor'], ['pipe'], 1, 'name', 'asc')
 
       expect(result).toEqual(response)
 
-      expect(userClient.getUsers).toHaveBeenCalledWith(['applicant', 'assessor'], ['pipe'], 1, 'name', 'asc')
+      expect(userClient.getUsers).toHaveBeenCalledWith('test', ['applicant', 'assessor'], ['pipe'], 1, 'name', 'asc')
     })
   })
 
@@ -142,6 +147,18 @@ describe('User service', () => {
       userService.delete(token, user.id)
 
       expect(userClient.delete).toHaveBeenCalledWith(user.id)
+    })
+  })
+
+  describe('reference data', () => {
+    it('should return the probation regions data needed', async () => {
+      const probationRegions = referenceDataFactory.buildList(2)
+
+      referenceDataClient.getReferenceData.mockResolvedValue(probationRegions)
+
+      const result = await userService.getProbationRegions(token)
+      expect(result).toEqual(probationRegions)
+      expect(referenceDataClient.getReferenceData).toHaveBeenCalledWith('probation-regions')
     })
   })
 })

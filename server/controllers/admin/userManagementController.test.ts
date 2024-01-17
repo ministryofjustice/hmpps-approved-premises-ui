@@ -54,6 +54,7 @@ describe('UserManagementController', () => {
 
       expect(userService.getUsers).toHaveBeenCalledWith(
         token,
+        undefined,
         [],
         [],
         paginationDetails.pageNumber,

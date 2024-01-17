@@ -6,15 +6,17 @@ import {
   UserRolesAndQualifications,
   UserSortField,
 } from '@approved-premises/api'
-import { PaginatedResponse, UserDetails } from '@approved-premises/ui'
-import { RestClientBuilder, UserClient } from '../data'
+import { PaginatedResponse, ReferenceData, UserDetails } from '@approved-premises/ui'
+import { ReferenceDataClient, RestClientBuilder, UserClient } from '../data'
 import { convertToTitleCase } from '../utils/utils'
 import type HmppsAuthClient from '../data/hmppsAuthClient'
 
+export type ProbationRegionsReferenceData = Array<ReferenceData>
 export default class UserService {
   constructor(
     private readonly hmppsAuthClient: HmppsAuthClient,
     private readonly userClientFactory: RestClientBuilder<UserClient>,
+    private readonly referenceDataClientFactory: RestClientBuilder<ReferenceDataClient>,
   ) {}
 
   async getActingUser(token: string): Promise<UserDetails> {
@@ -38,6 +40,7 @@ export default class UserService {
 
   async getUsers(
     token: string,
+    region: string = '',
     roles: Array<UserRole> = [],
     qualifications: Array<UserQualification> = [],
     page: number = 1,
@@ -45,8 +48,7 @@ export default class UserService {
     sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<User>> {
     const client = this.userClientFactory(token)
-
-    return client.getUsers(roles, qualifications, page, sortBy, sortDirection)
+    return client.getUsers(region, roles, qualifications, page, sortBy, sortDirection)
   }
 
   async updateUser(token: string, userId: string, rolesAndQualifications: UserRolesAndQualifications): Promise<User> {
@@ -71,5 +73,11 @@ export default class UserService {
     const client = this.userClientFactory(token)
 
     await client.delete(id)
+  }
+
+  async getProbationRegions(token: string): Promise<ProbationRegionsReferenceData> {
+    const referenceDataClient = this.referenceDataClientFactory(token)
+
+    return referenceDataClient.getReferenceData('probation-regions')
   }
 }

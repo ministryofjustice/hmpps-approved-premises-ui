@@ -135,7 +135,7 @@ describeClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUsers([], [], 2)
+      const output = await userClient.getUsers('', [], [], 2)
 
       expect(output).toEqual({
         data: users,
@@ -174,7 +174,7 @@ describeClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUsers([], [], 1, 'name', 'asc')
+      const output = await userClient.getUsers('', [], [], 1, 'name', 'asc')
 
       expect(output).toEqual({
         data: users,
@@ -214,7 +214,7 @@ describeClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUsers(['assessor', 'matcher'])
+      const output = await userClient.getUsers('', ['assessor', 'matcher'])
 
       expect(output).toEqual({
         data: users,
@@ -254,7 +254,7 @@ describeClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUsers([], ['pipe', 'womens'])
+      const output = await userClient.getUsers('', [], ['pipe', 'womens'])
 
       expect(output).toEqual({
         data: users,
@@ -295,7 +295,7 @@ describeClient('UserClient', provider => {
         },
       })
 
-      const output = await userClient.getUsers(['assessor', 'matcher'], ['pipe', 'womens'])
+      const output = await userClient.getUsers('', ['assessor', 'matcher'], ['pipe', 'womens'])
 
       expect(output).toEqual({
         data: users,

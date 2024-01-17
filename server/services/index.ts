@@ -39,7 +39,7 @@ export const services = () => {
     reportClientBuilder,
   } = dataAccess()
 
-  const userService = new UserService(hmppsAuthClient, userClientBuilder)
+  const userService = new UserService(hmppsAuthClient, userClientBuilder, referenceDataClientBuilder)
   const auditService = new AuditService(config.apis.audit as AuditConfig)
   const premisesService = new PremisesService(approvedPremisesClientBuilder)
   const personService = new PersonService(personClient)

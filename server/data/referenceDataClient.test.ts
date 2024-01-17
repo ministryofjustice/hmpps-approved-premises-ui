@@ -5,6 +5,7 @@ import {
   LostBedReason,
   MoveOnCategory,
   NonArrivalReason,
+  ProbationRegion,
 } from '@approved-premises/api'
 
 import ReferenceDataClient from './referenceDataClient'
@@ -28,6 +29,7 @@ describeClient('ReferenceDataClient', provider => {
       'cancellation-reasons': referenceDataFactory.cancellationReasons().buildList(5) as Array<CancellationReason>,
       'lost-bed-reasons': referenceDataFactory.lostBedReasons().buildList(5) as Array<LostBedReason>,
       'non-arrival-reasons': referenceDataFactory.nonArrivalReason().buildList(5) as Array<NonArrivalReason>,
+      'probation-regions': referenceDataFactory.probationRegions().buildList(5) as Array<ProbationRegion>,
     }
 
     Object.keys(data).forEach(key => {

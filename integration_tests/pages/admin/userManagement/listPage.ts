@@ -43,4 +43,12 @@ export default class ListPage extends Page {
   clickAddUser(): void {
     cy.get('a').contains('Add new user').click()
   }
+
+  searchBy(id: string, item: string): void {
+    this.getSelectInputByIdAndSelectAnEntry(id, item)
+  }
+
+  clickApplyFilter(): void {
+    cy.get('button').contains('Apply filters').click()
+  }
 }
