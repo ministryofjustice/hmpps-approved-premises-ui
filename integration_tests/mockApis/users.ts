@@ -8,6 +8,7 @@ import { Response } from 'superagent'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 import { probationRegions } from '../../server/testutils/referenceData/stubs/referenceDataStubs'
+import { apAreaFactory } from '../../server/testutils/factories'
 
 const stubFindUser = (args: { user: User; id: string }) =>
   stubFor({
@@ -195,6 +196,21 @@ const stubUserDelete = (args: { id: string }) =>
 
 const stubProbationRegionsReferenceData = (): Promise<Response> => stubFor(probationRegions)
 
+const stubApAreaReferenceData = (): Promise<Response> =>
+  stubFor({
+    request: {
+      method: 'GET',
+      url: '/reference-data/ap-areas',
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: apAreaFactory.buildList(10),
+    },
+  })
+
 const verifyUserUpdate = async (userId: string) =>
   (
     await getMatchingRequests({
@@ -214,5 +230,6 @@ export default {
   verifyUserUpdate,
   verifyUsersRequest,
   stubProbationRegionsReferenceData,
+  stubApAreaReferenceData,
   stubUserFilter,
 }

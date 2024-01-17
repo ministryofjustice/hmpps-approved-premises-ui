@@ -14,9 +14,9 @@ import { mapApiOccupancyToUiOccupancy } from '../utils/premisesUtils'
 export default class PremisesService {
   constructor(private readonly premisesClientFactory: RestClientBuilder<PremisesClient>) {}
 
-  async getAll(token: string): Promise<Array<ApprovedPremisesSummary>> {
+  async getAll(token: string, selectedAreaId = ''): Promise<Array<ApprovedPremisesSummary>> {
     const premisesClient = this.premisesClientFactory(token)
-    const premises = await premisesClient.all()
+    const premises = await premisesClient.all(selectedAreaId)
 
     return premises.sort((a, b) => {
       if (a.name < b.name) {

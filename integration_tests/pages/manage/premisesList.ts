@@ -28,4 +28,15 @@ export default class PremisesListPage extends Page {
         })
     })
   }
+
+  shouldNotShowPremises(premises: Array<PremisesSummary>): void {
+    premises.forEach((item: PremisesSummary) => {
+      cy.get('td').should('not.contain', item.name)
+    })
+  }
+
+  filterPremisesByRegion(region: ProbationRegion['name']): void {
+    cy.get('#region').select(region)
+    this.clickSubmit()
+  }
 }

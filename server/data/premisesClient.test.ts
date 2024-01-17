@@ -24,11 +24,12 @@ describeClient('PremisesClient', provider => {
 
   describe('all', () => {
     it('should get all premises', async () => {
+      const apAreaId = 'test'
       const premisesSummaries = premisesSummaryFactory.buildList(5)
 
       provider.addInteraction({
         state: 'Server is healthy',
-        uponReceiving: 'A request to get all premises',
+        uponReceiving: 'A request to get all premises summaries',
         withRequest: {
           method: 'GET',
           path: paths.premises.index({}),
@@ -36,6 +37,7 @@ describeClient('PremisesClient', provider => {
             authorization: `Bearer ${token}`,
             'X-Service-Name': 'approved-premises',
           },
+          query: { apAreaId },
         },
         willRespondWith: {
           status: 200,
@@ -43,7 +45,7 @@ describeClient('PremisesClient', provider => {
         },
       })
 
-      const output = await premisesClient.all()
+      const output = await premisesClient.all(apAreaId)
       expect(output).toEqual(premisesSummaries)
     })
   })

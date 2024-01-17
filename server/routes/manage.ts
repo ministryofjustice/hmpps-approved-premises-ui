@@ -27,6 +27,7 @@ export default function routes(controllers: Controllers, router: Router, service
   } = controllers
 
   get(paths.premises.index.pattern, premisesController.index(), { auditEvent: 'LIST_PREMISES' })
+  post(paths.premises.index.pattern, premisesController.index(), { auditEvent: 'FILTER_PREMISES' })
   get(paths.premises.show.pattern, premisesController.show(), { auditEvent: 'SHOW_PREMISES' })
   get(paths.premises.calendar.pattern, premisesController.calendar(), { auditEvent: 'SHOW_PREMISES_CALENDAR' })
 

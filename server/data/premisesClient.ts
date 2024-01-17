@@ -20,8 +20,12 @@ export default class PremisesClient {
     this.restClient = new RestClient('premisesClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async all(): Promise<Array<PremisesSummary>> {
-    return (await this.restClient.get({ path: paths.premises.index({}) })) as Array<PremisesSummary>
+  async all(apAreaId: string = ''): Promise<Array<PremisesSummary>> {
+    const query = apAreaId ? { apAreaId } : {}
+    return (await this.restClient.get({
+      path: paths.premises.index({}),
+      query,
+    })) as Array<PremisesSummary>
   }
 
   async find(id: string): Promise<ApprovedPremises> {

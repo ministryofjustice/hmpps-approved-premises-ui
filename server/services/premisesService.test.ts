@@ -41,6 +41,17 @@ describe('PremisesService', () => {
       expect(premisesClient.all).toHaveBeenCalled()
     })
 
+    it('supports optional region param', async () => {
+      const probationRegionId = 'test'
+      const premises = premisesSummaryFactory.buildList(1)
+
+      premisesClient.all.mockResolvedValue(premises)
+      await service.getAll(token, probationRegionId)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.all).toHaveBeenCalledWith(probationRegionId)
+    })
+
     it('sorts the premises returned by name', async () => {
       const premisesA = premisesSummaryFactory.build({ name: 'A' })
       const premisesB = premisesSummaryFactory.build({ name: 'B' })

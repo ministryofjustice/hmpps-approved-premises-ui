@@ -5,7 +5,6 @@ import {
   dateCapacityFactory,
   extendedPremisesSummaryFactory,
   premisesBookingFactory,
-  premisesFactory,
   premisesSummaryFactory,
 } from '../../../server/testutils/factories'
 import { DateFormats } from '../../../server/utils/dateUtils'
@@ -24,10 +23,9 @@ context('Premises', () => {
 
   describe('list', () => {
     it('should list all premises', () => {
-      // Given there are premises in the database
       const premises = premisesSummaryFactory.buildList(5)
       cy.task('stubAllPremises', premises)
-      cy.task('stubProbationRegionsReferenceData')
+      cy.task('stubApAreaReferenceData')
 
       // When I visit the premises page
       const page = PremisesListPage.visit()

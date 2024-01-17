@@ -2,10 +2,15 @@ import { addDays, subDays } from 'date-fns'
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import PremisesService from '../../../services/premisesService'
+import { ApAreaService, PremisesService } from '../../../services'
 import PremisesController from './premisesController'
 
-import { bedOccupancyRangeFactoryUi, extendedPremisesSummaryFactory } from '../../../testutils/factories'
+import {
+  apAreaFactory,
+  bedOccupancyRangeFactoryUi,
+  extendedPremisesSummaryFactory,
+  premisesSummaryFactory,
+} from '../../../testutils/factories'
 import { DateFormats } from '../../../utils/dateUtils'
 
 describe('PremisesController', () => {
@@ -17,7 +22,8 @@ describe('PremisesController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const premisesService = createMock<PremisesService>({})
-  const premisesController = new PremisesController(premisesService)
+  const apAreaService = createMock<ApAreaService>({})
+  const premisesController = new PremisesController(premisesService, apAreaService)
 
   beforeEach(() => {
     request = createMock<Request>({ user: { token }, params: { premisesId } })
@@ -25,20 +31,46 @@ describe('PremisesController', () => {
   })
 
   describe('index', () => {
-    it('should render the template with the premises and regions', async () => {
+    it('should render the template with the premises and areas', async () => {
       const premisesSummaries = premisesSummaryFactory.buildList(1)
 
-      const regions = probationRegionFactory.buildList(1)
+      const apAreas = apAreaFactory.buildList(1)
 
-      regionService.getRegions.mockResolvedValue(regions)
+      apAreaService.getApAreas.mockResolvedValue(apAreas)
       premisesService.getAll.mockResolvedValue(premisesSummaries)
 
       const requestHandler = premisesController.index()
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('premises/index', { premisesSummaries: [] })
+      expect(response.render).toHaveBeenCalledWith('premises/index', {
+        premisesSummaries,
+        areas: apAreas,
+        selectedArea: '',
+      })
 
-      expect(premisesService.getAll).toHaveBeenCalledWith(token)
+      expect(premisesService.getAll).toHaveBeenCalledWith(token, undefined)
+      expect(apAreaService.getApAreas).toHaveBeenCalledWith(token)
+    })
+
+    it('should call the premises service with the AP area ID if supplied', async () => {
+      const areaId = 'ap-area-id'
+      const premisesSummaries = premisesSummaryFactory.buildList(1)
+      const areas = apAreaFactory.buildList(1)
+
+      apAreaService.getApAreas.mockResolvedValue(areas)
+      premisesService.getAll.mockResolvedValue(premisesSummaries)
+
+      const requestHandler = premisesController.index()
+      await requestHandler({ ...request, body: { selectedArea: areaId } }, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('premises/index', {
+        premisesSummaries,
+        areas,
+        selectedArea: areaId,
+      })
+
+      expect(premisesService.getAll).toHaveBeenCalledWith(token, areaId)
+      expect(apAreaService.getApAreas).toHaveBeenCalledWith(token)
     })
   })
 

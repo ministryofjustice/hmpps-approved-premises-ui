@@ -1,17 +1,27 @@
 import type { Request, RequestHandler, Response } from 'express'
 import { addDays, subDays } from 'date-fns'
 
-import PremisesService from '../../../services/premisesService'
+import { ApAreaService, PremisesService } from '../../../services'
 import { DateFormats } from '../../../utils/dateUtils'
+import { ApArea } from '../../../@types/shared'
 
 export default class PremisesController {
-  constructor(private readonly premisesService: PremisesService) {}
+  constructor(
+    private readonly premisesService: PremisesService,
+    private readonly apAreaService: ApAreaService,
+  ) {}
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const premisesSummaries = await this.premisesService.getAll(req.user.token)
+      const selectedArea = req.body.selectedArea as ApArea['id'] | undefined
+      const premisesSummaries = await this.premisesService.getAll(req.user.token, selectedArea)
+      const areas = await this.apAreaService.getApAreas(req.user.token)
 
-      return res.render('premises/index', { premisesSummaries })
+      return res.render('premises/index', {
+        premisesSummaries,
+        areas,
+        selectedArea: selectedArea || '',
+      })
     }
   }
 
