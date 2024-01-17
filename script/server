@@ -13,10 +13,9 @@ cleanup() {
 }
 trap cleanup EXIT
 
-script/utils/launch-docker.sh
-
-script/utils/start-backing-services.sh
 
 echo "==> Starting the server..."
+
+script/utils/launch-docker.sh
 
 npm run start:dev

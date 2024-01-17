@@ -1,15 +1,11 @@
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
-import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
 
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
 import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
-import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
-import Rfap from '../../../apply/risk-and-need-factors/further-considerations/rfap'
-import { shouldShowContingencyPlanPartnersPages } from '../../../../utils/applications/shouldShowContingencyPlanPages'
-import SelectApType from '../../../apply/reasons-for-placement/type-of-ap/apType'
+import { suitabilityAssessmentAdjacentPage } from '../../../../utils/assessments/suitabilityAssessmentAdjacentPage'
 
 export type SuitabilityAssessmentSection = {
   riskFactors: string
@@ -32,7 +28,7 @@ export type SuitabilityAssessmentSection = {
   ],
 })
 export default class SuitabilityAssessment implements TasklistPage {
-  name = 'suitability-assessment'
+  name = 'suitability-assessment' as const
 
   title = 'Suitability assessment'
 
@@ -62,27 +58,7 @@ export default class SuitabilityAssessment implements TasklistPage {
   }
 
   next() {
-    const needsRfap = retrieveOptionalQuestionResponseFromFormArtifact(this.assessment.application, Rfap, 'needARfap')
-
-    if (needsRfap === 'yes') {
-      return 'rfap-suitability'
-    }
-
-    if (retrieveOptionalQuestionResponseFromFormArtifact(this.assessment.application, SelectApType, 'type') === 'pipe')
-      return 'pipe-suitability'
-
-    if (
-      noticeTypeFromApplication(this.assessment.application) === 'short_notice' ||
-      noticeTypeFromApplication(this.assessment.application) === 'emergency'
-    ) {
-      return 'application-timeliness'
-    }
-
-    if (shouldShowContingencyPlanPartnersPages(this.assessment.application)) {
-      return 'contingency-plan-suitability'
-    }
-
-    return ''
+    return suitabilityAssessmentAdjacentPage(this.assessment, this.name)
   }
 
   response() {

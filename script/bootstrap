@@ -13,5 +13,3 @@ echo "==> Installing application dependencies..."
 
 nodenv install --skip-existing
 npm install
-
-script/utils/start-backing-services.sh

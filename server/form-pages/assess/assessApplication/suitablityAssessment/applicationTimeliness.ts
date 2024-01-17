@@ -11,9 +11,8 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { responsesForYesNoAndCommentsSections } from '../../../utils/index'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
-import Rfap from '../../../apply/risk-and-need-factors/further-considerations/rfap'
-import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 import { arrivalDateFromApplication } from '../../../../utils/applications/arrivalDateFromApplication'
+import { suitabilityAssessmentAdjacentPage } from '../../../../utils/assessments/suitabilityAssessmentAdjacentPage'
 
 export type ApplicationTimelinessSection = {
   agreeWithShortNoticeReason: string
@@ -30,7 +29,7 @@ export type ApplicationDetails = {
   bodyProperties: ['agreeWithShortNoticeReason', 'agreeWithShortNoticeReasonComments', 'reasonForLateApplication'],
 })
 export default class ApplicationTimeliness implements TasklistPage {
-  name = 'application-timeliness'
+  name = 'application-timeliness' as const
 
   title = 'Application timeliness'
 
@@ -77,17 +76,11 @@ export default class ApplicationTimeliness implements TasklistPage {
   }
 
   previous() {
-    const needsRfap = retrieveOptionalQuestionResponseFromFormArtifact(this.assessment.application, Rfap, 'needARfap')
-
-    if (needsRfap === 'yes') {
-      return 'rfap-suitability'
-    }
-
-    return 'suitability-assessment'
+    return suitabilityAssessmentAdjacentPage(this.assessment, this.name, { returnPreviousPage: true })
   }
 
   next() {
-    return noticeTypeFromApplication(this.assessment.application) === 'emergency' ? 'contingency-plan-suitability' : ''
+    return suitabilityAssessmentAdjacentPage(this.assessment, this.name)
   }
 
   response() {

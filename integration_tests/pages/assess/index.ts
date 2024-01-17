@@ -12,6 +12,8 @@ import CheckYourAnswersPage from './checkYourAnswersPage'
 import SubmissionConfirmation from './submissionConfirmation'
 import ShowPage from './showPage'
 import ApplicationTimelinessPage from './applicationTimelinessPage'
+import RfapSuitabilityPage from './rfapSuitability'
+import ContingencyPlanSuitabilityPage from './contingencyPlanSuitability'
 
 export {
   ClarificationNoteConfirmPage,
@@ -28,4 +30,6 @@ export {
   SubmissionConfirmation,
   ShowPage,
   ApplicationTimelinessPage,
+  RfapSuitabilityPage,
+  ContingencyPlanSuitabilityPage,
 }
