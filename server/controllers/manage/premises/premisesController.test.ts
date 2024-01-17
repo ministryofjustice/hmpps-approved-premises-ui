@@ -25,15 +25,20 @@ describe('PremisesController', () => {
   })
 
   describe('index', () => {
-    it('should return the table rows to the template', async () => {
-      premisesService.tableRows.mockResolvedValue([])
+    it('should render the template with the premises and regions', async () => {
+      const premisesSummaries = premisesSummaryFactory.buildList(1)
+
+      const regions = probationRegionFactory.buildList(1)
+
+      regionService.getRegions.mockResolvedValue(regions)
+      premisesService.getAll.mockResolvedValue(premisesSummaries)
 
       const requestHandler = premisesController.index()
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('premises/index', { tableRows: [] })
+      expect(response.render).toHaveBeenCalledWith('premises/index', { premisesSummaries: [] })
 
-      expect(premisesService.tableRows).toHaveBeenCalledWith(token)
+      expect(premisesService.getAll).toHaveBeenCalledWith(token)
     })
   })
 
