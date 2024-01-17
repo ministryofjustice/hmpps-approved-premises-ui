@@ -16,6 +16,10 @@ generic-service:
     tlsSecretName: approved-premises-ui-cert # override per environment
     v1_2_enabled: true
     v0_47_enabled: false
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-connect-timeout: '120'
+      nginx.ingress.kubernetes.io/proxy-send-timeout: '120'
+      nginx.ingress.kubernetes.io/proxy-read-timeout: '120'
 
   livenessProbe:
     httpGet:
