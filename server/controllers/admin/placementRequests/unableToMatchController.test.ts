@@ -59,7 +59,7 @@ describe('unableToMatchController', () => {
 
       expect(placementRequestService.bookingNotMade).toHaveBeenCalledWith(token, prId, { notes: '' })
       expect(response.redirect).toHaveBeenCalledWith(paths.admin.placementRequests.show({ id: prId }))
-      expect(request.flash).toHaveBeenCalledWith('success', 'Placement request has been marked unable to match')
+      expect(request.flash).toHaveBeenCalledWith('success', 'Application has been marked unable to match')
     })
   })
 })
