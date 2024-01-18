@@ -58,7 +58,7 @@ describe('ApplicationTimeliness', () => {
       )
 
       expect(page.errors()).toEqual({
-        agreeWithShortNoticeReason: `You must confirm if you agree with the applicant's reason for submission within 4 months of expected arrival`,
+        agreeWithShortNoticeReason: `You must confirm if you agree with the applicant's reason for submission outside of National Standards timescales`,
       })
     })
 
@@ -98,8 +98,8 @@ describe('ApplicationTimeliness', () => {
       const page = new ApplicationTimeliness({ ...body }, assessment)
 
       expect(page.response()).toEqual({
-        "Do you agree with the applicant's reason for submission within 4 months of expected arrival?": 'No',
-        "Do you agree with the applicant's reason for submission within 4 months of expected arrival? Additional comments":
+        "Do you agree with the applicant's reason for submission outside of National Standards timescales?": 'No',
+        "Do you agree with the applicant's reason for submission outside of National Standards timescales? Additional comments":
           'some reasons',
         'What is the reason for the late application?': 'The individual will be on bail',
       })

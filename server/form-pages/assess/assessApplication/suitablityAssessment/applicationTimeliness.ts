@@ -33,7 +33,7 @@ export default class ApplicationTimeliness implements TasklistPage {
 
   title = 'Application timeliness'
 
-  question = `Do you agree with the applicant's reason for submission within 4 months of expected arrival?`
+  question = `Do you agree with the applicant's reason for submission outside of National Standards timescales?`
 
   reasonForLateApplicationQuestion = 'What is the reason for the late application?'
 
@@ -100,7 +100,7 @@ export default class ApplicationTimeliness implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.agreeWithShortNoticeReason)
-      errors.agreeWithShortNoticeReason = `You must confirm if you agree with the applicant's reason for submission within 4 months of expected arrival`
+      errors.agreeWithShortNoticeReason = `You must confirm if you agree with the applicant's reason for submission outside of National Standards timescales`
 
     if (this.body.agreeWithShortNoticeReason === 'no') {
       if (!this.body.agreeWithShortNoticeReasonComments)
