@@ -104,6 +104,17 @@ describe('ApplicationTimeliness', () => {
         'What is the reason for the late application?': 'The individual will be on bail',
       })
     })
+
+    it('can handle an undefined reason for late application (for legacy compatibility reasons)', () => {
+      const page = new ApplicationTimeliness({ ...body, reasonForLateApplication: undefined }, assessment)
+
+      expect(page.response()).toEqual({
+        "Do you agree with the applicant's reason for submission outside of National Standards timescales?": 'No',
+        "Do you agree with the applicant's reason for submission outside of National Standards timescales? Additional comments":
+          'some reasons',
+        'What is the reason for the late application?': 'No reason supplied',
+      })
+    })
   })
 
   describe('retrieveShortNoticeApplicationDetails', () => {

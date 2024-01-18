@@ -89,7 +89,8 @@ export default class ApplicationTimeliness implements TasklistPage {
     }
 
     if (this.body.agreeWithShortNoticeReason === 'no') {
-      response[this.reasonForLateApplicationQuestion] = shortNoticeReasons[this.body.reasonForLateApplication]
+      response[this.reasonForLateApplicationQuestion] =
+        shortNoticeReasons[this.body.reasonForLateApplication] || 'No reason supplied'
     }
 
     return response
