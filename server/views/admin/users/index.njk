@@ -4,69 +4,110 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
-
-{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
-
-{% block beforeContent %}
-    {{ govukBackLink({
-		text: "Back",
-		href: '/'
-	}) }}
+{% block beforeContent %}{{ govukBackLink({"text": "Back", "href": "/"}) }}
 {% endblock %}
-
 {% block content %}
-
     {% include "../../_messages.njk" %}
-    <div class="govuk-grid-row">
-
-        <h1 class="govuk-heading-l govuk-grid-column-three-quarters">{{ pageHeading }}</h1>
-
-        {{ govukButton({
-                                text: "Add new user",
-                                href: paths.admin.userManagement.new({}),
-                                classes: "govuk-grid-column-one-quarter"
-                }) }}
-
-        <div class="grid-column-full">
-            <form action="{{ paths.admin.userManagement.search({}) }}" method="post">
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <h1 class="govuk-heading-l govuk-grid-column-three-quarters">{{ pageHeading }}</h1>
+            {{ govukButton({
+                        text: "Add new user",
+                        href: paths.admin.userManagement.new({}) ,
+            classes: "govuk-grid-column-one-quarter"
+            }) }}
+        </div>
+        <form action="{{ paths.admin.userManagement.search({}) }}" method="post">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            <div class="govuk-grid-row">
                 {{ govukInput({
-                                label: {
-                                    text: "Find a user",
-                                    classes: "govuk-label--m"
-                                },
-                                id: 'search-by-name',
-                                hint: {
-                                    text: "You can search for a person's name or username"
-                                },
-                                name: "name",
-                                value: name,
-                                errorMessage: errors.name,
-                                formGroup: {
-                                    classes: "govuk-grid-column-three-quarters"
-                                }
-                    }) }}
-
+                    label: {
+                        text: "Find a user",
+                        classes: "govuk-label--m"
+                    },
+                    id: 'search-by-name',
+                    hint: {
+                        text: "You can search for a person's name or username"
+                    },
+                    name: "name",
+                    value: name,
+                    errorMessage: errors.name,
+                    formGroup: {
+                        classes: "govuk-grid-column-three-quarters"
+                    }
+                }) }}
                 <div class="govuk-grid-column-one-quarter govuk-!-margin-top-4 govuk-!-padding-left-0">
                     {{ govukButton({
-                                text: "Search",
-                                type: "submit",
-                                classes: "govuk-grid-column-one-quarter govuk-!-margin-top-9"
-                            }) }}
+                        "text": "Search",
+                        "type": "submit",
+                        "classes": "govuk-grid-column-one-quarter govuk-!-margin-top-9"
+                    }) }}
                 </div>
-            </form>
-
-            {{
-                govukTable({
-                    firstCellIsHeader: true,
-                    head: UserUtils.tableUtils.managementDashboardTableHeader(sortBy, sortDirection, hrefPrefix),
-                    rows: UserUtils.tableUtils.managementDashboardTableRows(users)
-                })
-            }}
-
-            {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
-        </div>
+            </div>
+        </form>
+        <form action="{{ paths.admin.userManagement.index({}) }}" method="get">
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-quarter">
+                    <h2 class="govuk-heading-m">Filters</h2>
+                </div>
+            </div>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-one-quarter">
+                    {{ govukSelect({
+                        label: {
+                        text: "Roles",
+                        classes: "govuk-label--s"
+                        },
+                        id: "roles",
+                        name: "roles",
+                        items: UserUtils.userRolesSelectOptions(roles)
+                    })
+                    }}
+                </div>
+                <div class="govuk-grid-column-one-quarter">
+                    {{ govukSelect({
+                        label: {
+                        text: "Regions",
+                        classes: "govuk-label--s"
+                        },
+                        classes: "govuk-input--width-20",
+                        id: "region",
+                        name: "region",
+                        items: convertObjectsToSelectOptions(regions, 'All regions', 'name', 'id', region)
+                    }) }}
+                </div>
+                <div class="govuk-grid-column-one-quarter">
+                    {{ govukSelect({
+                       label: {
+                       text: "Allocations",
+                       classes: "govuk-label--s"
+                       },
+                       id: "qualifications",
+                       name: "qualifications",
+                       items: UserUtils.userQualificationsSelectOptions(qualifications)
+                   })
+                   }}
+                </div>
+                <div class="govuk-grid-column-one-quarter">
+                    {{ govukButton({
+                        "name": "submit",
+                        "text": "Apply filters",
+                        "classes": "placement-request-search__submit"
+                    }) 
+                    }}
+                </div>
+            </div>
+        </form>
+        {{ govukTable({
+            firstCellIsHeader: true,
+            head: UserUtils.tableUtils.managementDashboardTableHeader(sortBy, sortDirection, hrefPrefix) ,
+            rows: UserUtils.tableUtils.managementDashboardTableRows(users)
+        })
+        }}
+        {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix) ) }}
     </div>
 {% endblock %}

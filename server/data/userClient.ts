@@ -28,6 +28,7 @@ export default class UserClient {
   }
 
   async getUsers(
+    region: string = '',
     roles: Array<UserRole> = [],
     qualifications: Array<UserQualification> = [],
     page = 1,
@@ -42,6 +43,10 @@ export default class UserClient {
 
     if (qualifications.length) {
       filters.qualifications = qualifications.join(',')
+    }
+
+    if (region) {
+      filters.region = region
     }
 
     return this.restClient.getPaginatedResponse({

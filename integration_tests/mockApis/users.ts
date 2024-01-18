@@ -4,8 +4,10 @@ import {
   ApprovedPremisesUserRole as UserRole,
 } from '@approved-premises/api'
 import QueryString from 'qs'
+import { Response } from 'superagent'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
+import { probationRegions } from '../../server/testutils/referenceData/stubs/referenceDataStubs'
 
 const stubFindUser = (args: { user: User; id: string }) =>
   stubFor({
@@ -126,6 +128,28 @@ const stubUserSearch = (args: { results: Array<User>; searchTerm: string }) =>
     },
   })
 
+const stubUserFilter = (args: { results: Array<User>; roles: string; qualifications: string; region: string }) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      url: `${paths.users.index({})}?${QueryString.stringify({
+        page: 1,
+        roles: args.roles,
+        qualifications: args.qualifications,
+        region: args.region,
+        sortBy: 'name',
+        sortDirection: 'asc',
+      })}`,
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: args.results,
+    },
+  })
+
 const stubDeliusUserSearch = (args: { result: User; searchTerm: string }) =>
   stubFor({
     request: {
@@ -169,6 +193,8 @@ const stubUserDelete = (args: { id: string }) =>
     },
   })
 
+const stubProbationRegionsReferenceData = (): Promise<Response> => stubFor(probationRegions)
+
 const verifyUserUpdate = async (userId: string) =>
   (
     await getMatchingRequests({
@@ -187,4 +213,6 @@ export default {
   stubNotFoundDeliusUserSearch,
   verifyUserUpdate,
   verifyUsersRequest,
+  stubProbationRegionsReferenceData,
+  stubUserFilter,
 }
