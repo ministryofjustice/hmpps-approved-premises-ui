@@ -21,7 +21,7 @@ export default class UnableToMatchController {
     return async (req: Request, res: Response) => {
       await this.placementRequestService.bookingNotMade(req.user.token, req.params.id, { notes: '' })
 
-      req.flash('success', 'Placement request has been marked unable to match')
+      req.flash('success', 'Application has been marked unable to match')
 
       res.redirect(paths.admin.placementRequests.show({ id: req.params.id }))
     }
