@@ -1,4 +1,5 @@
 import {
+  ProbationRegion,
   SortDirection,
   ApprovedPremisesUser as User,
   UserQualification,
@@ -6,12 +7,11 @@ import {
   UserRolesAndQualifications,
   UserSortField,
 } from '@approved-premises/api'
-import { PaginatedResponse, ReferenceData, UserDetails } from '@approved-premises/ui'
+import { PaginatedResponse, UserDetails } from '@approved-premises/ui'
 import { ReferenceDataClient, RestClientBuilder, UserClient } from '../data'
 import { convertToTitleCase } from '../utils/utils'
 import type HmppsAuthClient from '../data/hmppsAuthClient'
 
-export type ProbationRegionsReferenceData = Array<ReferenceData>
 export default class UserService {
   constructor(
     private readonly hmppsAuthClient: HmppsAuthClient,
@@ -75,9 +75,9 @@ export default class UserService {
     await client.delete(id)
   }
 
-  async getProbationRegions(token: string): Promise<ProbationRegionsReferenceData> {
+  async getProbationRegions(token: string): Promise<Array<ProbationRegion>> {
     const referenceDataClient = this.referenceDataClientFactory(token)
 
-    return referenceDataClient.getReferenceData('probation-regions')
+    return referenceDataClient.getProbationRegions()
   }
 }
