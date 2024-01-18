@@ -276,7 +276,7 @@ export const eventTypeTranslations: Record<TimelineEventType, string> = {
   approved_premises_person_arrived: 'Person arrived',
   approved_premises_person_not_arrived: 'Person not arrived',
   approved_premises_person_departed: 'Person departed',
-  approved_premises_booking_not_made: 'Booking not made',
+  approved_premises_booking_not_made: 'Unable to match',
   approved_premises_booking_cancelled: 'Booking cancelled',
   approved_premises_booking_changed: 'Booking changed',
   approved_premises_application_withdrawn: 'Application withdrawn',
