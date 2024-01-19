@@ -34,7 +34,7 @@ describe('adminSummary', () => {
         },
         {
           key: {
-            text: 'Arrival Date',
+            text: 'Requested Arrival Date',
           },
           value: {
             text: DateFormats.isoDateToUIDate('2022-01-01'),
@@ -42,7 +42,7 @@ describe('adminSummary', () => {
         },
         {
           key: {
-            text: 'Departure Date',
+            text: 'Requested Departure Date',
           },
           value: {
             text: DateFormats.isoDateToUIDate('2022-01-17'),
@@ -97,7 +97,7 @@ describe('adminSummary', () => {
         },
         {
           key: {
-            text: 'Departure Date',
+            text: 'Requested Departure Date',
           },
           value: {
             text: DateFormats.isoDateToUIDate('2022-01-17'),
@@ -144,7 +144,7 @@ describe('adminSummary', () => {
         },
         {
           key: {
-            text: 'Arrival Date',
+            text: 'Requested Arrival Date',
           },
           value: {
             text: DateFormats.isoDateToUIDate('2022-01-01'),
@@ -152,7 +152,7 @@ describe('adminSummary', () => {
         },
         {
           key: {
-            text: 'Departure Date',
+            text: 'Requested Departure Date',
           },
           value: {
             text: DateFormats.isoDateToUIDate('2022-01-17'),
