@@ -19,6 +19,7 @@ import PlacementRequestService from './placementRequestService'
 import PlacementApplicationService from './placementApplicationService'
 import BedService from './bedService'
 import ReportService from './reportService'
+import ApAreaService from './apAreaService'
 import config, { AuditConfig } from '../config'
 
 export const services = () => {
@@ -56,6 +57,7 @@ export const services = () => {
   const placementApplicationService = new PlacementApplicationService(placementApplicationClientBuilder)
   const bedService = new BedService(bedClientBuilder)
   const reportService = new ReportService(reportClientBuilder)
+  const apAreaService = new ApAreaService(referenceDataClientBuilder)
 
   return {
     userService,
@@ -75,6 +77,7 @@ export const services = () => {
     placementApplicationService,
     bedService,
     reportService,
+    apAreaService,
   }
 }
 
@@ -97,4 +100,5 @@ export {
   PlacementApplicationService,
   BedService,
   ReportService,
+  ApAreaService,
 }
