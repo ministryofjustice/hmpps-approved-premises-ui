@@ -11,6 +11,7 @@
     <input type="hidden" name="userDetailsFromDelius[name]" value="{{ page.userDetailsFromDelius.name }}"/>
     <input type="hidden" name="userDetailsFromDelius[emailAddress]" value="{{ page.userDetailsFromDelius.emailAddress }}"/>
     <input type="hidden" name="userDetailsFromDelius[phoneNumber]" value="{{ page.userDetailsFromDelius.phoneNumber }}"/>
+    <input type="hidden" name="userDetailsFromDelius[area]" value="{{ page.userDetailsFromDelius.area }}"/>
 
     {% set rows = ([
         {
@@ -25,7 +26,7 @@
                 text: "Email"
             },
             value: {
-                text: page.userDetailsFromDelius.email
+                text: page.userDetailsFromDelius.emailAddress
             }
         }, {
             key: {
@@ -34,18 +35,22 @@
             value: {
                 text: page.userDetailsFromDelius.phoneNumber
             }
+        }, {
+            key: {
+                text: "Area"
+            },
+            value: {
+                text: page.userDetailsFromDelius.area
+            }
         }
     ])
  %}
-
-   
 
     {{ govukSummaryList({
       rows: rows
     }) }}
 
-
- {% set nameHtml %}
+    {% set nameHtml %}
     {{
             formPageInput({
             fieldName: 'name',
@@ -89,7 +94,22 @@
         }}
     {%endset %}
 
-    {% set conditionalArray = [nameHtml, emailAddressHtml, phoneNumberHtml] %}
+    {% set areaHtml %}
+    {{
+            formPageSelect({
+            fieldName: 'area',
+            label: {
+                text: page.questions.area.label,
+                classes: "govuk-visually-hidden"
+            },
+            classes: "govuk-input--width-20",
+            items: convertObjectsToSelectOptions(areas, 'All areas', 'name', 'id', 'area', context.page)
+            },
+            fetchContext())
+        }}
+    {%endset %}
+
+    {% set conditionalArray = [nameHtml, emailAddressHtml, phoneNumberHtml, areaHtml] %}
 
     {{
         formPageCheckboxes({
@@ -125,7 +145,8 @@
             }, 
             {
                 value: 'no',
-                text: 'No'}
+                text: 'No'
+            }
             ]
         },
         fetchContext()

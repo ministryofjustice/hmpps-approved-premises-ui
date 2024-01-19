@@ -1,4 +1,5 @@
 import {
+  ApArea,
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
@@ -196,7 +197,7 @@ const stubUserDelete = (args: { id: string }) =>
 
 const stubProbationRegionsReferenceData = (): Promise<Response> => stubFor(probationRegions)
 
-const stubApAreaReferenceData = (args?: { id: string; name: string }): Promise<Response> =>
+const stubApAreaReferenceData = (args?: ApArea): Promise<Response> =>
   stubFor({
     request: {
       method: 'GET',
@@ -207,7 +208,7 @@ const stubApAreaReferenceData = (args?: { id: string; name: string }): Promise<R
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      jsonBody: args ? [args] : apAreaFactory.buildList(10),
+      jsonBody: args ? [apAreaFactory.build(args), ...apAreaFactory.buildList(10)] : apAreaFactory.buildList(10),
     },
   })
 

@@ -115,6 +115,7 @@ export default class ApplyHelper {
     this.stubOffences()
     this.stubUserEndpoint()
     this.addContingencyPlanDetails()
+    this.stubApAreasEndpoint()
   }
 
   enterCrnDetails() {
@@ -383,6 +384,10 @@ export default class ApplyHelper {
 
     // And the application exists in the database
     cy.task('stubApplicationSubmit', { application: this.application })
+  }
+
+  stubApAreasEndpoint() {
+    cy.task('stubApAreaReferenceData', { id: '5e44b880-df20-4751-938f-a14be5fe609d', name: 'Greater Manchester' })
   }
 
   private addContingencyPlanDetails() {
