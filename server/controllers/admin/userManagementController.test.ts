@@ -30,24 +30,26 @@ describe('UserManagementController', () => {
   })
 
   describe('index', () => {
-    it('renders the index page with all the users', async () => {
-      const users = userFactory.buildList(1)
+    const paginationDetails = {
+      hrefPrefix: paths.admin.userManagement.index({}),
+      pageNumber: 1,
+      sortBy: 'name',
+      sortDirection: 'desc',
+    }
 
-      const paginatedResponse = paginatedResponseFactory.build({
+    let paginatedResponse: PaginatedResponse<ApprovedPremisesUser>
+    let users: Array<ApprovedPremisesUser>
+
+    beforeEach(() => {
+      users = userFactory.buildList(1)
+      paginatedResponse = paginatedResponseFactory.build({
         data: users,
       }) as PaginatedResponse<ApprovedPremisesUser>
-
-      const paginationDetails = {
-        hrefPrefix: paths.admin.userManagement.index({}),
-        pageNumber: 1,
-        sortBy: 'name',
-        sortDirection: 'desc',
-      }
-
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
-
       userService.getUsers.mockResolvedValue(paginatedResponse)
+    })
 
+    it('renders the index page with all the users', async () => {
       const requestHandler = userManagementController.index()
 
       await requestHandler(request, response, next)
@@ -70,6 +72,119 @@ describe('UserManagementController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
+      })
+    })
+
+    it('filters users by region', async () => {
+      const requestWithQuery = { ...request, query: { region: '1234' } }
+      const requestHandler = userManagementController.index()
+
+      await requestHandler(requestWithQuery, response, next)
+
+      expect(userService.getUsers).toHaveBeenCalledWith(
+        token,
+        '1234',
+        [],
+        [],
+        paginationDetails.pageNumber,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
+
+      expect(response.render).toHaveBeenCalledWith('admin/users/index', {
+        pageHeading: 'User management dashboard',
+        users,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
+        selectedRegion: '1234',
+      })
+    })
+
+    it('filters users by role', async () => {
+      const requestWithQuery = { ...request, query: { roles: 'assessor' } }
+      const requestHandler = userManagementController.index()
+
+      await requestHandler(requestWithQuery, response, next)
+
+      expect(userService.getUsers).toHaveBeenCalledWith(
+        token,
+        undefined,
+        ['assessor'],
+        [],
+        paginationDetails.pageNumber,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
+
+      expect(response.render).toHaveBeenCalledWith('admin/users/index', {
+        pageHeading: 'User management dashboard',
+        users,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
+        selectedRole: 'assessor',
+      })
+    })
+
+    it('filters users by qualification', async () => {
+      const requestWithQuery = { ...request, query: { qualifications: 'esap' } }
+      const requestHandler = userManagementController.index()
+
+      await requestHandler(requestWithQuery, response, next)
+
+      expect(userService.getUsers).toHaveBeenCalledWith(
+        token,
+        undefined,
+        [],
+        ['esap'],
+        paginationDetails.pageNumber,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
+
+      expect(response.render).toHaveBeenCalledWith('admin/users/index', {
+        pageHeading: 'User management dashboard',
+        users,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
+        selectedQualification: 'esap',
+      })
+    })
+
+    it('applies more than one filter', async () => {
+      const requestWithRegion = { ...request, query: { qualifications: 'esap', roles: 'assessor' } }
+      const requestHandler = userManagementController.index()
+
+      await requestHandler(requestWithRegion, response, next)
+
+      expect(userService.getUsers).toHaveBeenCalledWith(
+        token,
+        undefined,
+        ['assessor'],
+        ['esap'],
+        paginationDetails.pageNumber,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
+
+      expect(response.render).toHaveBeenCalledWith('admin/users/index', {
+        pageHeading: 'User management dashboard',
+        users,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
+        selectedQualification: 'esap',
+        selectedRole: 'assessor',
       })
     })
   })

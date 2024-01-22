@@ -66,7 +66,7 @@
                             },
                             id: "roles",
                             name: "roles",
-                            items: UserUtils.userRolesSelectOptions(roles)
+                            items: UserUtils.userRolesSelectOptions(selectedRole)
                         })
                         }}
                     </div>
@@ -79,7 +79,7 @@
                             classes: "govuk-input--width-20",
                             id: "region",
                             name: "region",
-                            items: convertObjectsToSelectOptions(regions, 'All regions', 'name', 'id', region)
+                            items: convertObjectsToSelectOptions(regions, 'All regions', 'name', 'id', selectedRegion)
                         }) }}
                     </div>
                     <div class="govuk-grid-column-one-quarter">
@@ -90,7 +90,7 @@
                            },
                            id: "qualifications",
                            name: "qualifications",
-                           items: UserUtils.userQualificationsSelectOptions(qualifications)
+                           items: UserUtils.userQualificationsSelectOptions(selectedQualification)
                        })
                        }}
                     </div>
