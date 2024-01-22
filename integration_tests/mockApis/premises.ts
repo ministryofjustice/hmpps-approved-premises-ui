@@ -5,7 +5,7 @@ import type {
   Booking,
   ExtendedPremisesSummary,
   Premises,
-  PremisesSummary,
+  ApprovedPremisesSummary as PremisesSummary,
   StaffMember,
 } from '@approved-premises/api'
 

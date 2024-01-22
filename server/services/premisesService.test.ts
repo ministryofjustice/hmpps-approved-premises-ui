@@ -11,7 +11,6 @@ import {
   staffMemberFactory,
 } from '../testutils/factories'
 import { mapApiOccupancyToUiOccupancy } from '../utils/premisesUtils'
-import paths from '../paths/manage'
 
 jest.mock('../data/premisesClient')
 jest.mock('../utils/premisesUtils')
@@ -40,6 +39,17 @@ describe('PremisesService', () => {
       expect(result).toEqual(premises)
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.all).toHaveBeenCalled()
+    })
+
+    it('supports optional region param', async () => {
+      const probationRegionId = 'test'
+      const premises = premisesSummaryFactory.buildList(1)
+
+      premisesClient.all.mockResolvedValue(premises)
+      await service.getAll(token, probationRegionId)
+
+      expect(premisesClientFactory).toHaveBeenCalledWith(token)
+      expect(premisesClient.all).toHaveBeenCalledWith(probationRegionId)
     })
 
     it('sorts the premises returned by name', async () => {
@@ -121,72 +131,6 @@ describe('PremisesService', () => {
 
       expect(premisesClientFactory).toHaveBeenCalledWith(token)
       expect(premisesClient.getRoom).toHaveBeenCalledWith(premisesId, room.id)
-    })
-  })
-
-  describe('tableRows', () => {
-    it('returns a table view of the premises', async () => {
-      const premises1 = premisesSummaryFactory.build({ name: 'XYZ' })
-      const premises2 = premisesSummaryFactory.build({ name: 'ABC' })
-      const premises3 = premisesSummaryFactory.build({ name: 'GHI' })
-
-      const premises = [premises1, premises2, premises3]
-      premisesClient.all.mockResolvedValue(premises)
-
-      const rows = await service.tableRows(token)
-      expect(rows).toEqual([
-        [
-          {
-            text: premises2.name,
-          },
-          {
-            text: premises2.apCode,
-          },
-          {
-            text: premises2.bedCount.toString(),
-          },
-          {
-            html: `<a href="${paths.premises.show({
-              premisesId: premises2.id,
-            })}">View<span class="govuk-visually-hidden">about ${premises2.name}</span></a>`,
-          },
-        ],
-        [
-          {
-            text: premises3.name,
-          },
-          {
-            text: premises3.apCode,
-          },
-          {
-            text: premises3.bedCount.toString(),
-          },
-          {
-            html: `<a href="${paths.premises.show({
-              premisesId: premises3.id,
-            })}">View<span class="govuk-visually-hidden">about ${premises3.name}</span></a>`,
-          },
-        ],
-        [
-          {
-            text: premises1.name,
-          },
-          {
-            text: premises1.apCode,
-          },
-          {
-            text: premises1.bedCount.toString(),
-          },
-          {
-            html: `<a href="${paths.premises.show({
-              premisesId: premises1.id,
-            })}">View<span class="govuk-visually-hidden">about ${premises1.name}</span></a>`,
-          },
-        ],
-      ])
-
-      expect(premisesClientFactory).toHaveBeenCalledWith(token)
-      expect(premisesClient.all).toHaveBeenCalled()
     })
   })
 

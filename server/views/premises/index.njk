@@ -1,4 +1,6 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% extends "../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - Home" %}
@@ -6,10 +8,36 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full-width">
-      {% include "../_messages.njk" %}
 
       <h1 class="govuk-heading-l">List of Approved Premises</h1>
+    </div>
 
+    <form action="{{ paths.premises.index({}) }}" method="post">
+      <div class="govuk-grid-column-one-quarter">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+
+        {{ govukSelect({
+              label: {
+              text: "Areas",
+              classes: "govuk-label--s"
+              },
+              classes: "govuk-input--width-20",
+              id: "selectedArea",
+              name: "selectedArea",
+              items: convertObjectsToSelectOptions(areas, 'All areas', 'name', 'id', 'selectedArea', context)
+          }) }}
+      </div>
+
+      <div class="govuk-grid-column-one-quarter">
+        {{ govukButton({
+                  "text": "Apply filter",
+                  "type": "submit",
+                  classes: "govuk-!-margin-top-6"
+              }) }}
+      </div>
+    </form>
+
+    <div class="govuk-grid-column-full-width">
       {{
       govukTable({
         captionClasses: "govuk-table__caption--m",
@@ -28,10 +56,9 @@
             html: '<span class="govuk-visually-hidden">Actions</span>'
           }
         ],
-        rows: tableRows
+        rows: PremisesUtils.premisesTableRows(premisesSummaries)
       })
     }}
-
     </div>
   </div>
 {% endblock %}

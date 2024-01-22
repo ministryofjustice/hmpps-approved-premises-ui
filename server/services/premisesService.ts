@@ -1,25 +1,22 @@
-import type { TableRow } from '@approved-premises/ui'
 import type {
   ApprovedPremisesSummary,
   BedDetail,
   BedSummary,
   ExtendedPremisesSummary,
   Premises,
-  PremisesSummary,
   Room,
   StaffMember,
 } from '@approved-premises/api'
 import type { PremisesClient, RestClientBuilder } from '../data'
-import paths from '../paths/manage'
 
 import { mapApiOccupancyToUiOccupancy } from '../utils/premisesUtils'
 
 export default class PremisesService {
   constructor(private readonly premisesClientFactory: RestClientBuilder<PremisesClient>) {}
 
-  async getAll(token: string): Promise<Array<PremisesSummary>> {
+  async getAll(token: string, selectedAreaId = ''): Promise<Array<ApprovedPremisesSummary>> {
     const premisesClient = this.premisesClientFactory(token)
-    const premises = await premisesClient.all()
+    const premises = await premisesClient.all(selectedAreaId)
 
     return premises.sort((a, b) => {
       if (a.name < b.name) {
@@ -68,26 +65,6 @@ export default class PremisesService {
     return room
   }
 
-  async tableRows(token: string): Promise<Array<TableRow>> {
-    const premisesClient = this.premisesClientFactory(token)
-    const premises = await premisesClient.all()
-
-    return premises
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((p: ApprovedPremisesSummary) => {
-        return [
-          this.textValue(p.name),
-          this.textValue(p.apCode),
-          this.textValue(p.bedCount.toString()),
-          this.htmlValue(
-            `<a href="${paths.premises.show({ premisesId: p.id })}">View<span class="govuk-visually-hidden">about ${
-              p.name
-            }</span></a>`,
-          ),
-        ]
-      })
-  }
-
   async find(token: string, id: string): Promise<Premises> {
     const premisesClient = this.premisesClientFactory(token)
     const premises = await premisesClient.find(id)
@@ -106,13 +83,5 @@ export default class PremisesService {
     const occupancyForUi = await mapApiOccupancyToUiOccupancy(apiOccupancy)
 
     return occupancyForUi
-  }
-
-  private textValue(value: string) {
-    return { text: value }
-  }
-
-  private htmlValue(value: string) {
-    return { html: value }
   }
 }

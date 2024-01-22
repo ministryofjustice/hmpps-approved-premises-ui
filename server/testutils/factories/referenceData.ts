@@ -9,6 +9,8 @@ import destinationProvidersJson from '../referenceData/stubs/destination-provide
 import cancellationReasonsJson from '../referenceData/stubs/cancellation-reasons.json'
 import lostBedReasonsJson from '../referenceData/stubs/lost-bed-reasons.json'
 import nonArrivalReasonsJson from '../referenceData/stubs/non-arrival-reasons.json'
+import probationRegionsJson from '../referenceData/stubs/probation-regions.json'
+import { ApArea, ProbationRegion } from '../../@types/shared'
 
 class ReferenceDataFactory extends Factory<ReferenceData> {
   departureReasons() {
@@ -42,7 +44,7 @@ class ReferenceDataFactory extends Factory<ReferenceData> {
   }
 
   probationRegions() {
-    const data = faker.helpers.arrayElement(nonArrivalReasonsJson)
+    const data = faker.helpers.arrayElement(probationRegionsJson)
     return this.params(data)
   }
 }
@@ -52,4 +54,14 @@ export default ReferenceDataFactory.define(() => ({
   name: `${faker.word.adjective()} ${faker.word.adverb()} ${faker.word.noun()}`,
   serviceScope: 'approved-premises',
   isActive: true,
+}))
+
+export const probationRegionFactory = ReferenceDataFactory.define<ProbationRegion>(() =>
+  faker.helpers.arrayElement(probationRegionsJson),
+)
+
+export const apAreaFactory = Factory.define<ApArea>(() => ({
+  id: faker.string.uuid(),
+  name: faker.location.city(),
+  identifier: faker.location.countryCode(),
 }))

@@ -5,12 +5,12 @@ import {
   LostBedReason,
   MoveOnCategory,
   NonArrivalReason,
-  ProbationRegion,
 } from '@approved-premises/api'
 
 import ReferenceDataClient from './referenceDataClient'
-import { referenceDataFactory } from '../testutils/factories'
+import { probationRegionFactory, referenceDataFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
+import { apAreaFactory } from '../testutils/factories/referenceData'
 
 describeClient('ReferenceDataClient', provider => {
   let referenceDataClient: ReferenceDataClient
@@ -29,7 +29,6 @@ describeClient('ReferenceDataClient', provider => {
       'cancellation-reasons': referenceDataFactory.cancellationReasons().buildList(5) as Array<CancellationReason>,
       'lost-bed-reasons': referenceDataFactory.lostBedReasons().buildList(5) as Array<LostBedReason>,
       'non-arrival-reasons': referenceDataFactory.nonArrivalReason().buildList(5) as Array<NonArrivalReason>,
-      'probation-regions': referenceDataFactory.probationRegions().buildList(5) as Array<ProbationRegion>,
     }
 
     Object.keys(data).forEach(key => {
@@ -53,6 +52,56 @@ describeClient('ReferenceDataClient', provider => {
         const output = await referenceDataClient.getReferenceData(key)
         expect(output).toEqual(data[key])
       })
+    })
+  })
+
+  describe('getProbationRegions', () => {
+    it('should return an array of probation regions', async () => {
+      const probationRegions = probationRegionFactory.buildList(5)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: `A request to get probation regions`,
+        withRequest: {
+          method: 'GET',
+          path: `/reference-data/probation-regions`,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: probationRegions,
+        },
+      })
+
+      const output = await referenceDataClient.getProbationRegions()
+      expect(output).toEqual(probationRegions)
+    })
+  })
+
+  describe('getApAreas', () => {
+    it('should return an array of AP areas', async () => {
+      const apAreas = apAreaFactory.buildList(5)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: `A request to get AP areas`,
+        withRequest: {
+          method: 'GET',
+          path: `/reference-data/ap-areas`,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: apAreas,
+        },
+      })
+
+      const output = await referenceDataClient.getApAreas()
+      expect(output).toEqual(apAreas)
     })
   })
 })

@@ -152,13 +152,13 @@ describe('User service', () => {
 
   describe('reference data', () => {
     it('should return the probation regions data needed', async () => {
-      const probationRegions = referenceDataFactory.buildList(2)
+      const probationRegions = referenceDataFactory.probationRegions().buildList(2)
 
-      referenceDataClient.getReferenceData.mockResolvedValue(probationRegions)
+      referenceDataClient.getProbationRegions.mockResolvedValue(probationRegions)
 
       const result = await userService.getProbationRegions(token)
       expect(result).toEqual(probationRegions)
-      expect(referenceDataClient.getReferenceData).toHaveBeenCalledWith('probation-regions')
+      expect(referenceDataClient.getProbationRegions).toHaveBeenCalled()
     })
   })
 })

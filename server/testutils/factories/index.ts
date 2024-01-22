@@ -65,7 +65,7 @@ import premisesFactory from './premises'
 import premisesSummaryFactory from './premisesSummary'
 import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
-import referenceDataFactory from './referenceData'
+import referenceDataFactory, { apAreaFactory, probationRegionFactory } from './referenceData'
 import risksFactory, { tierEnvelopeFactory } from './risks'
 import roomFactory from './room'
 import staffMemberFactory from './staffMember'
@@ -81,6 +81,7 @@ export {
   acctAlertFactory,
   activeOffenceFactory,
   adjudicationFactory,
+  apAreaFactory,
   apCharacteristicPairFactory,
   applicationFactory,
   applicationSummaryFactory,
@@ -144,6 +145,7 @@ export {
   premisesBookingFactory,
   premisesSummaryFactory,
   prisonCaseNotesFactory,
+  probationRegionFactory,
   reallocationFactory,
   referenceDataFactory,
   restrictedPersonFactory,
