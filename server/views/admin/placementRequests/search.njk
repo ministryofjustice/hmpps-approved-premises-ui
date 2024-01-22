@@ -16,21 +16,21 @@
 {% block content %}
 
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full placement-request-search">
+    <div class="govuk-grid-column-full search-and-filter">
       {% include "../../_messages.njk" %}
 
       <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
       {{ navigation("search") }}
 
-      <div class="placement-request-search__wrapper">
+      <div class="search-and-filter__wrapper">
 
         <form action="{{ paths.admin.placementRequests.search({}) }}" method="get">
 
           <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
               <div class="govuk-form-group">
-                <label class="placement-request-search__crn-label" for="crnOrName">
+                <label class="search-and-filter__crn-label" for="crnOrName">
                  Find a placement
                 </label>
 
@@ -86,7 +86,7 @@
                 govukButton({
                   name: 'submit',
                   text: 'Apply filters',
-                  classes: 'placement-request-search__submit'
+                  classes: 'search-and-filter__submit'
                 })
               }}
             </div>

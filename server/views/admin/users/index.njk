@@ -11,7 +11,7 @@
 {% endblock %}
 {% block content %}
     {% include "../../_messages.njk" %}
-    <div class="govuk-width-container placement-request-search">
+    <div class="govuk-width-container search-and-filter">
         <div class="govuk-grid-row">
             <h1 class="govuk-heading-l govuk-grid-column-three-quarters">{{ pageHeading }}</h1>
             {{ govukButton({
@@ -20,7 +20,7 @@
             classes: "govuk-grid-column-one-quarter"
             }) }}
         </div>
-        <div class="placement-request-search__wrapper">
+        <div class="search-and-filter__wrapper">
             <form action="{{ paths.admin.userManagement.search({}) }}" method="post">
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}">
                 <div class="govuk-grid-row">
@@ -98,7 +98,7 @@
                         {{ govukButton({
                             "name": "submit",
                             "text": "Apply filters",
-                            "classes": "placement-request-search__submit"
+                            "classes": "search-and-filter__submit"
                         })
                         }}
                     </div>
