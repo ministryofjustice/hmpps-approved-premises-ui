@@ -14,4 +14,5 @@ export default Factory.define<ApprovedPremisesSummary>(() => ({
   addressLine1: faker.location.streetAddress(),
   addressLine2: faker.location.city(),
   probationRegion: faker.location.city(),
+  apArea: faker.location.city(),
 }))
