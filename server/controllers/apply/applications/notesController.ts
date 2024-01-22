@@ -1,7 +1,7 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { ApplicationTimelineNote } from '../../../@types/shared'
-import { ApplicationService, UserService } from '../../../services'
+import { ApplicationService } from '../../../services'
 import { applicationShowPageTab } from '../../../utils/applications/utils'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
@@ -9,10 +9,7 @@ export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placemen
 type NewApplicationTimelineNote = Omit<ApplicationTimelineNote, 'id' | 'createdAt'>
 
 export default class NotesController {
-  constructor(
-    private readonly applicationService: ApplicationService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private readonly applicationService: ApplicationService) {}
 
   new(): RequestHandler {
     return async (req: Request, res: Response) => {
@@ -27,11 +24,9 @@ export default class NotesController {
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
       const noteContent = req.body.note as string
-      const user = await this.userService.getActingUser(req.user.token)
       const applicationId = req.params.id
       const note: NewApplicationTimelineNote = {
         note: noteContent,
-        createdByUserId: user.id,
       }
 
       await this.applicationService.addNote(req.user.token, applicationId, note)
