@@ -19,11 +19,11 @@ export default class PreferredAps extends ApplyPage {
   }
 
   completeForm() {
-    this.getSelectInputByIdAndSelectAnEntry('region0', 'region1')
+    this.getSelectInputByIdAndSelectAnEntry('area0', 'area1')
     this.selectSelectOptionFromPageBody('preferredAp1')
-    this.getSelectInputByIdAndSelectAnEntry('region1', 'region2')
+    this.getSelectInputByIdAndSelectAnEntry('area1', 'area2')
     this.selectSelectOptionFromPageBody('preferredAp2')
-    this.getSelectInputByIdAndSelectAnEntry('region2', 'region3')
+    this.getSelectInputByIdAndSelectAnEntry('area2', 'area3')
     this.selectSelectOptionFromPageBody('preferredAp3')
   }
 }

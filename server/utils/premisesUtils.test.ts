@@ -193,44 +193,44 @@ describe('premisesUtils', () => {
   })
 
   describe('groupedSelectOptions', () => {
-    const region1Premises = premisesSummaryFactory.buildList(2, { probationRegion: 'Region 1' })
-    const region2Premises = premisesSummaryFactory.buildList(2, { probationRegion: 'Region 2' })
-    const premises = [...region1Premises, ...region2Premises]
+    const area1Premises = premisesSummaryFactory.buildList(2, { apArea: 'Area 1' })
+    const area2Premises = premisesSummaryFactory.buildList(2, { apArea: 'Area 2' })
+    const premises = [...area1Premises, ...area2Premises]
 
     it('should group premises by region', () => {
-      expect(groupedSelectOptions(premises, { premisesId: region2Premises[1].id })).toEqual([
+      expect(groupedSelectOptions(premises, { premisesId: area1Premises[1].id })).toEqual([
         {
           items: [
-            { selected: false, text: region1Premises[0].name, value: region1Premises[0].id },
-            { selected: false, text: region1Premises[1].name, value: region1Premises[1].id },
+            { selected: false, text: area1Premises[0].name, value: area1Premises[0].id },
+            { selected: true, text: area1Premises[1].name, value: area1Premises[1].id },
           ],
-          label: 'Region 1',
+          label: 'Area 1',
         },
         {
           items: [
-            { selected: false, text: region2Premises[0].name, value: region2Premises[0].id },
-            { selected: true, text: region2Premises[1].name, value: region2Premises[1].id },
+            { selected: false, text: area2Premises[0].name, value: area2Premises[0].id },
+            { selected: false, text: area2Premises[1].name, value: area2Premises[1].id },
           ],
-          label: 'Region 2',
+          label: 'Area 2',
         },
       ])
     })
 
     it('should support a field name', () => {
-      expect(groupedSelectOptions(premises, { premises: region2Premises[1].id }, 'premises')).toEqual([
+      expect(groupedSelectOptions(premises, { premises: area2Premises[1].id }, 'premises')).toEqual([
         {
           items: [
-            { selected: false, text: region1Premises[0].name, value: region1Premises[0].id },
-            { selected: false, text: region1Premises[1].name, value: region1Premises[1].id },
+            { selected: false, text: area1Premises[0].name, value: area1Premises[0].id },
+            { selected: false, text: area1Premises[1].name, value: area1Premises[1].id },
           ],
-          label: 'Region 1',
+          label: 'Area 1',
         },
         {
           items: [
-            { selected: false, text: region2Premises[0].name, value: region2Premises[0].id },
-            { selected: true, text: region2Premises[1].name, value: region2Premises[1].id },
+            { selected: false, text: area2Premises[0].name, value: area2Premises[0].id },
+            { selected: true, text: area2Premises[1].name, value: area2Premises[1].id },
           ],
-          label: 'Region 2',
+          label: 'Area 2',
         },
       ])
     })

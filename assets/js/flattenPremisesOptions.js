@@ -2,7 +2,7 @@ function flattenPremisesOptions(select, index) {
   var formGroup = select.parentNode
   var formElement = formGroup.parentNode
   var optgroups = select.getElementsByTagName('optgroup')
-  var selectedRegion
+  var selectedArea
 
   function hideSelect() {
     formGroup.classList.add('govuk-visually-hidden')
@@ -14,14 +14,14 @@ function flattenPremisesOptions(select, index) {
     }
   }
 
-  function getRegions() {
-    var regions = []
+  function getAreas() {
+    var areas = []
 
     for (let i = 0; i < optgroups.length; ++i) {
-      regions.push(optgroups[i].label)
+      areas.push(optgroups[i].label)
     }
 
-    return regions
+    return areas
   }
 
   function flattenOptions() {
@@ -31,14 +31,14 @@ function flattenPremisesOptions(select, index) {
       var options = optgroups[i].getElementsByTagName('option')
 
       for (let r = 0; r < options.length; ++r) {
-        options[r].dataset.region = optgroups[i].label
+        options[r].dataset.area = optgroups[i].label
         ungroupedOptions.push(options[r])
       }
     }
 
     for (let i = 0; i < ungroupedOptions.length; ++i) {
       if (ungroupedOptions[i].hasAttribute('selected')) {
-        selectedRegion = ungroupedOptions[i].dataset.region
+        selectedArea = ungroupedOptions[i].dataset.area
       }
       select.appendChild(ungroupedOptions[i])
     }
@@ -48,60 +48,61 @@ function flattenPremisesOptions(select, index) {
     }
   }
 
-  function createRegionSelect(regions) {
-    var regionFormGroup = formGroup.cloneNode(true)
-    var regionSelect = regionFormGroup.querySelector('select')
-    var regionLabel = regionFormGroup.querySelector('label')
-    var formName = 'region' + index
+  function createAreaSelect(areas) {
+    var areaFormGroup = formGroup.cloneNode(true)
+    var areaSelect = areaFormGroup.querySelector('select')
+    var areaLabel = areaFormGroup.querySelector('label')
+    var formName = 'area' + index
 
     var prompt = document.createElement('option')
-    var promptText = select.dataset.regionPrompt ? select.dataset.regionPrompt : 'Select a region'
+    var promptText = select.dataset.areaPrompt ? select.dataset.areaPrompt : 'Select a area'
 
-    regionSelect.innerHTML = ''
+    areaSelect.innerHTML = ''
     prompt.innerText = promptText
-    regionSelect.appendChild(prompt)
-    regionSelect.id = formName
-    regionSelect.name = formName
-    regionFormGroup.classList.remove('govuk-visually-hidden')
+    areaSelect.appendChild(prompt)
+    areaSelect.id = formName
+    areaSelect.name = formName
+    areaFormGroup.classList.remove('govuk-visually-hidden')
 
-    regionLabel.innerText = 'Select a Region'
-    regionLabel.setAttribute('for', formName)
+    areaLabel.innerText = 'Select an Area'
+    areaLabel.setAttribute('for', formName)
 
-    for (let i = 0; i < regions.length; ++i) {
+    for (let i = 0; i < areas.length; ++i) {
       var option = document.createElement('option')
-      option.innerText = regions[i]
-      option.selected = option.innerText === selectedRegion
-      regionSelect.appendChild(option)
+      option.innerText = areas[i]
+      option.selected = option.innerText === selectedArea
+      areaSelect.appendChild(option)
     }
 
-    formElement.insertBefore(regionFormGroup, formGroup)
+    formElement.insertBefore(areaFormGroup, formGroup)
 
-    regionSelect.addEventListener('change', function (e) {
+    areaSelect.addEventListener('change', function (e) {
       hideSelect()
-      var region = e.target.value
+      var area = e.target.value
 
       formGroup.classList.remove('govuk-visually-hidden')
 
-      var premisesWithRegion = formGroup.querySelectorAll('option[data-region="' + region + '"]')
+      var premisesWithArea = formGroup.querySelectorAll('option[data-area="' + area + '"]')
 
-      for (let i = 0; i < premisesWithRegion.length; ++i) {
-        premisesWithRegion[i].removeAttribute('hidden')
+      for (let i = 0; i < premisesWithArea.length; ++i) {
+        premisesWithArea[i].removeAttribute('hidden')
       }
     })
   }
 
-  var regions = getRegions()
+  var areas = getAreas()
+
   flattenOptions()
 
-  if (regions.length > 1) {
+  if (areas.length > 1) {
     if (select.value.length === 0) {
       hideSelect()
     }
-    createRegionSelect(regions, selectedRegion)
+    createAreaSelect(areas, selectedArea)
   }
 }
 
-var selectItems = document.querySelectorAll('[data-premises-with-regions]')
+var selectItems = document.querySelectorAll('[data-premises-with-areas]')
 
 for (let i = 0; i < selectItems.length; ++i) {
   flattenPremisesOptions(selectItems[i], i)
