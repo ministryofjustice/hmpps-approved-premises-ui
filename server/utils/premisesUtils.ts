@@ -118,11 +118,11 @@ export const groupedSelectOptions = (
   context: Record<string, unknown>,
   fieldName: string = 'premisesId',
 ): Array<SelectGroup> => {
-  const regions = [...new Set(premises.map(item => item.probationRegion))]
-  return regions.map(region => ({
-    label: region,
+  const apAreas = [...new Set(premises.map(item => item.apArea))]
+  return apAreas.map(apArea => ({
+    label: apArea,
     items: premises
-      .filter(item => item.probationRegion === region)
+      .filter(item => item.apArea === apArea)
       .map(item => ({
         text: item.name,
         value: item.id,
