@@ -2,6 +2,7 @@ import { Factory } from 'fishery'
 import { TimelineEvent } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { DateFormats } from '../../utils/dateUtils'
+import userFactory from './user'
 
 export default Factory.define<TimelineEvent>(() => ({
   id: faker.string.uuid(),
@@ -23,5 +24,5 @@ export default Factory.define<TimelineEvent>(() => ({
     'cas3_person_departed',
   ] as const),
   content: Math.random() < 0.5 ? faker.lorem.sentences() : undefined,
-  createdBy: faker.string.uuid(),
+  createdBy: userFactory.build(),
 }))

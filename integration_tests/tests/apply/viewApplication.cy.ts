@@ -169,7 +169,7 @@ context('show applications', () => {
 
     const noteAsTimelineEvent = timelineEventFactory.build({
       content: note.note,
-      createdBy: note.createdByUserId,
+      createdBy: note.createdByUser,
       id: 'some-id',
       occurredAt: note.createdAt,
       type: 'application_timeline_note',
