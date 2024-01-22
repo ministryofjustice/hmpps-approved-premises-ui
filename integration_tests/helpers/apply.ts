@@ -185,9 +185,9 @@ export default class ApplyHelper {
   }
 
   private stubPremisesEndpoint() {
-    const premises1 = premisesSummaryFactory.build({ id: '1', probationRegion: 'region1' })
-    const premises2 = premisesSummaryFactory.build({ id: '2', probationRegion: 'region2' })
-    const premises3 = premisesSummaryFactory.build({ id: '3', probationRegion: 'region3' })
+    const premises1 = premisesSummaryFactory.build({ id: '1', apArea: 'area1' })
+    const premises2 = premisesSummaryFactory.build({ id: '2', apArea: 'area2' })
+    const premises3 = premisesSummaryFactory.build({ id: '3', apArea: 'area3' })
     cy.task('stubAllPremises', [premises1, premises2, premises3])
   }
 

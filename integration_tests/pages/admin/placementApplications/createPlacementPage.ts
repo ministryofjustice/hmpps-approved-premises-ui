@@ -20,7 +20,7 @@ export default class CreatePlacementPage extends Page {
 
     this.clearDateInputs('departureDate')
     this.completeDateInputs('departureDate', endDate)
-    this.getSelectInputByIdAndSelectAnEntry('region0', premises.probationRegion)
+    this.getSelectInputByIdAndSelectAnEntry('area0', premises.apArea)
     this.getSelectInputByIdAndSelectAnEntry('premisesId', premises.id)
   }
 }
