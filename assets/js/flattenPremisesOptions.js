@@ -55,7 +55,7 @@ function flattenPremisesOptions(select, index) {
     var formName = 'area' + index
 
     var prompt = document.createElement('option')
-    var promptText = select.dataset.areaPrompt ? select.dataset.areaPrompt : 'Select a area'
+    var promptText = select.dataset.areaPrompt ? select.dataset.areaPrompt : 'Select an area'
 
     areaSelect.innerHTML = ''
     prompt.innerText = promptText
