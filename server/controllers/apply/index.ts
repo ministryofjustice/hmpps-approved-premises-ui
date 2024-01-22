@@ -21,7 +21,7 @@ export const controllers = (services: Services) => {
   const offencesController = new OffencesController(personService)
   const documentsController = new DocumentsController(personService)
   const withdrawalsController = new WithdrawalsController(applicationService)
-  const notesController = new NotesController(applicationService, userService)
+  const notesController = new NotesController(applicationService)
 
   return {
     applicationsController,

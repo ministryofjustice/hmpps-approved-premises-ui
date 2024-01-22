@@ -199,7 +199,7 @@ context('show applications', () => {
       expect(requests[0].url).to.equal(paths.applications.addNote({ id: application.id }))
 
       const body = JSON.parse(requests[0].body)
-      expect(body).to.have.keys('createdByUserId', 'note')
+      expect(body).to.have.keys('note')
     })
   })
 })
