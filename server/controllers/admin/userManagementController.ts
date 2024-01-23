@@ -39,6 +39,9 @@ export default class UserController {
         hrefPrefix,
         sortBy,
         sortDirection,
+        selectedQualification: qualification,
+        selectedRegion: region,
+        selectedRole: role,
       })
     }
   }

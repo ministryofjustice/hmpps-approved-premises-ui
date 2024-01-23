@@ -22,14 +22,14 @@
 
       {{ navigation('allApplications') }}
 
-      <div class="placement-request-search__wrapper">
+      <div class="search-and-filter__wrapper">
 
         <form action="{{ paths.applications.dashboard({}) }}" method="get">
 
           <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">
               <div class="govuk-form-group">
-                <label class="placement-request-search__crn-label" for="crnOrName">
+                <label class="search-and-filter__crn-label" for="crnOrName">
                  Find an application
                 </label>
 
@@ -67,7 +67,7 @@
                 govukButton({
                   name: 'submit',
                   text: 'Apply filters',
-                  classes: 'placement-request-search__submit'
+                  classes: 'search-and-filter__submit'
                 })
               }}
             </div>
