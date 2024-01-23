@@ -16,11 +16,11 @@ export const updatableDetails: ReadonlyArray<UpdatableDetails> = [
 
 type UpdatableDetails = 'name' | 'emailAddress' | 'phoneNumber' | 'area'
 
-type UserDetailsFromDelius = {
+export type UserDetailsFromDelius = {
   name?: string
   emailAddress?: string
   phoneNumber?: string
-  area: ApArea['name']
+  area: ApArea
 }
 
 export type Body = {
@@ -78,11 +78,35 @@ export default class ConfirmYourDetails implements TasklistPage {
 
   detailsToUpdate: ReadonlyArray<UpdatableDetails>
 
+  public get body(): Body {
+    let area
+
+    if (this._body?.area) {
+      // if there is an area in the body, return that
+      area = this._body.area
+    } else if (this._body?.detailsToUpdate?.includes('area') && !this._body.area) {
+      // if the user said they need to update their area but didn't enter anything return an empty string
+      area = ''
+    } else if (this._body.userDetailsFromDelius?.area) {
+      // if there is an area in delius return its ID
+      area = this._body.userDetailsFromDelius?.area.id
+    } else {
+      // otherwise we don't know the area
+      area = ''
+    }
+
+    return { ...this._body, area }
+  }
+
+  public set body(value) {
+    this._body = value
+  }
+
   constructor(
-    readonly body: Body,
+    private _body: Body,
     readonly application: Application,
   ) {
-    this.detailsToUpdate = body?.detailsToUpdate ?? []
+    this.detailsToUpdate = _body?.detailsToUpdate ?? []
   }
 
   static async initialize(
@@ -98,7 +122,7 @@ export default class ConfirmYourDetails implements TasklistPage {
       name: user.name,
       emailAddress: user.email,
       phoneNumber: user.telephoneNumber,
-      area: user.apArea.name,
+      area: user.apArea,
     }
 
     const page = new ConfirmYourDetails(
@@ -135,7 +159,12 @@ export default class ConfirmYourDetails implements TasklistPage {
           response[`Applicant AP area`] = this.translateAreaIdToName(this.body.area)
         }
       } else if (this.body.userDetailsFromDelius?.[detail]) {
-        response[this.responseKey(detail)] = this.body.userDetailsFromDelius?.[detail]
+        if (detail !== 'area') {
+          response[this.responseKey(detail)] = this.body.userDetailsFromDelius?.[detail]
+        }
+        if (detail === 'area') {
+          response[`Applicant AP area`] = this.translateAreaIdToName(this.body.userDetailsFromDelius?.[detail].id)
+        }
       } else {
         response[this.responseKey(detail)] = ''
       }

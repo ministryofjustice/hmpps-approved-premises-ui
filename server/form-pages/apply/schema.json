@@ -89,7 +89,18 @@
                   "type": "string"
                 },
                 "area": {
-                  "type": "string"
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "identifier": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             },
@@ -219,14 +230,8 @@
           "type": "object",
           "properties": {
             "releaseType": {
-              "enum": [
-                "hdc",
-                "licence",
-                "not_applicable",
-                "pss",
-                "rotl"
-              ],
-              "type": "string"
+              "type": "string",
+              "const": "rotl"
             }
           }
         },
