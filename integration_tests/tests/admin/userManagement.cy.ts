@@ -23,7 +23,7 @@ context('User management', () => {
     const user = users[0]
     cy.task('stubFindUser', { user, id: user.id })
     cy.task('stubUsers', { users })
-    cy.task('stubProbationRegionsReferenceData')
+    cy.task('stubApAreaReferenceData')
 
     // When I visit the list page
     const listPage = ListPage.visit()
@@ -88,7 +88,7 @@ context('User management', () => {
     const usersForResults = userFactory.buildList(10)
     const initialUsers = userFactory.buildList(10)
     cy.task('stubUsers', { users: initialUsers })
-    cy.task('stubProbationRegionsReferenceData')
+    cy.task('stubApAreaReferenceData')
 
     // When I visit the list page
     const page = ListPage.visit()
@@ -108,7 +108,7 @@ context('User management', () => {
 
   it('enables adding a user from Delius', () => {
     const users = userFactory.buildList(10)
-    cy.task('stubProbationRegionsReferenceData')
+    cy.task('stubApAreaReferenceData')
     cy.task('stubUsers', { users })
     // Given I am on the list page
     const listPage = ListPage.visit()
@@ -153,7 +153,7 @@ context('User management', () => {
     const userToDelete = users[0]
     cy.task('stubUsers', { users })
     cy.task('stubFindUser', { user: userToDelete, id: userToDelete.id })
-    cy.task('stubProbationRegionsReferenceData')
+    cy.task('stubApAreaReferenceData')
 
     // Given I am on a user's permissions page
     const permissionsPage = ShowPage.visit(userToDelete.id)
@@ -181,7 +181,7 @@ context('User management', () => {
     const usersPage2 = userFactory.buildList(10)
     const usersPage9 = userFactory.buildList(10)
 
-    cy.task('stubProbationRegionsReferenceData')
+    cy.task('stubApAreaReferenceData')
     cy.task('stubUsers', {
       users: usersPage1,
       page: '1',
@@ -241,7 +241,7 @@ context('User management', () => {
       sortBy: 'name',
       sortDirection: 'desc',
     })
-    cy.task('stubProbationRegionsReferenceData')
+    cy.task('stubApAreaReferenceData')
 
     // When I visit the tasks dashboard
     const listPage = ListPage.visit()
@@ -282,7 +282,10 @@ context('User management', () => {
     const usersForResults = userFactory.buildList(1)
     const initialUsers = userFactory.buildList(10)
     cy.task('stubUsers', { users: initialUsers })
-    cy.task('stubProbationRegionsReferenceData')
+    cy.task('stubApAreaReferenceData', {
+      id: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
+      name: 'Midlands',
+    })
 
     // When I visit the list page
     const page = ListPage.visit()
@@ -296,10 +299,10 @@ context('User management', () => {
       results: usersForResults,
       roles: 'assessor',
       qualifications: 'lao',
-      region: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
+      apAreaId: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
     })
     page.searchBy('roles', 'assessor')
-    page.searchBy('region', '0544d95a-f6bb-43f8-9be7-aae66e3bf244')
+    page.searchBy('areas', '0544d95a-f6bb-43f8-9be7-aae66e3bf244')
     page.searchBy('qualifications', 'lao')
     page.clickApplyFilter()
     // Then the page should show the results
