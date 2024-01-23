@@ -7,6 +7,7 @@ import type {
   ApprovedPremisesUserRole as UserRole,
   UserWithWorkload,
 } from '@approved-premises/api'
+import { apAreaFactory } from './referenceData'
 
 const userFactory = Factory.define<User>(() => ({
   name: faker.person.fullName(),
@@ -19,6 +20,7 @@ const userFactory = Factory.define<User>(() => ({
   region: faker.helpers.arrayElement([{ id: faker.string.uuid(), name: faker.location.county() }]),
   service: 'ApprovedPremises',
   isActive: true,
+  apArea: apAreaFactory.build(),
 }))
 
 export const userWithWorkloadFactory = Factory.define<UserWithWorkload>(({ params }) => ({
