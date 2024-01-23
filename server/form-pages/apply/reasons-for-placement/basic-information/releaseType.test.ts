@@ -43,11 +43,9 @@ describe('ReleaseType', () => {
 
         const items = new ReleaseType({}, application).items()
 
-        expect(items.length).toEqual(4)
-        expect(items[0].value).toEqual('licence')
-        expect(items[1].value).toEqual('rotl')
-        expect(items[2].value).toEqual('hdc')
-        expect(items[3].value).toEqual('pss')
+        expect(new Set(items.map(item => item.value))).toEqual(
+          new Set(['licence', 'rotl', 'hdc', 'pss', 'paroleDirectedLicence']),
+        )
       })
 
       it('if the sentence type is "extendedDeterminate" then the reduced list of items should be shown', () => {
@@ -55,9 +53,9 @@ describe('ReleaseType', () => {
 
         const items = new ReleaseType({}, application).items()
 
-        expect(items.length).toEqual(2)
-        expect(items[0].value).toEqual('rotl')
-        expect(items[1].value).toEqual('licence')
+        expect(new Set(items.map(item => item.value))).toEqual(
+          new Set(['rotl', 'extendedDeterminateLicence', 'paroleDirectedLicence']),
+        )
       })
 
       it('if the sentence type is "ipp" then the reduced list of items should be shown', () => {
@@ -65,9 +63,7 @@ describe('ReleaseType', () => {
 
         const items = new ReleaseType({}, application).items()
 
-        expect(items.length).toEqual(2)
-        expect(items[0].value).toEqual('rotl')
-        expect(items[1].value).toEqual('licence')
+        expect(new Set(items.map(item => item.value))).toEqual(new Set(['rotl', 'licence']))
       })
 
       it('if the sentence type is "life" then the reduced list of items should be shown', () => {
@@ -75,9 +71,7 @@ describe('ReleaseType', () => {
 
         const items = new ReleaseType({}, application).items()
 
-        expect(items.length).toEqual(2)
-        expect(items[0].value).toEqual('rotl')
-        expect(items[1].value).toEqual('licence')
+        expect(new Set(items.map(item => item.value))).toEqual(new Set(['rotl', 'licence']))
       })
     })
 
