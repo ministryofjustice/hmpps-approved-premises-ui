@@ -52,6 +52,7 @@
               "type": "array",
               "items": {
                 "enum": [
+                  "area",
                   "emailAddress",
                   "name",
                   "phoneNumber"
@@ -86,6 +87,29 @@
                 },
                 "phoneNumber": {
                   "type": "string"
+                },
+                "area": {
+                  "type": "string"
+                }
+              }
+            },
+            "area": {
+              "type": "string"
+            },
+            "areas": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "identifier": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
                 }
               }
             }

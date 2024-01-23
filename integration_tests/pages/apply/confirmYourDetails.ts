@@ -20,5 +20,6 @@ export default class ConfirmYourDetails extends ApplyPage {
     this.completeTextInputFromPageBody('emailAddress')
     this.completeTextInputFromPageBody('phoneNumber')
     this.checkRadioButtonFromPageBody('caseManagementResponsibility')
+    this.selectSelectOptionFromPageBody('area')
   }
 }

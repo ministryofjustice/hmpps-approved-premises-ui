@@ -1,4 +1,5 @@
 import {
+  ApArea,
   Application,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplication,
@@ -284,6 +285,9 @@ export type DataServices = Partial<{
       assessmentId: string,
       clarificationNote: NewClarificationNote,
     ) => Promise<void>
+  }
+  apAreaService: {
+    getApAreas: (token: string) => Promise<Array<ApArea>>
   }
 }>
 

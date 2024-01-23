@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
+import { ApArea, ApprovedPremisesApplication as Application } from '@approved-premises/api'
 import type { DataServices, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { RestrictedPersonError } from '../../../../utils/errors'
@@ -7,14 +7,20 @@ import { lowerCase, sentenceCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
 
-export const updatableDetails: ReadonlyArray<UpdatableDetails> = ['name', 'emailAddress', 'phoneNumber'] as const
+export const updatableDetails: ReadonlyArray<UpdatableDetails> = [
+  'name',
+  'emailAddress',
+  'phoneNumber',
+  'area',
+] as const
 
-type UpdatableDetails = 'name' | 'emailAddress' | 'phoneNumber'
+type UpdatableDetails = 'name' | 'emailAddress' | 'phoneNumber' | 'area'
 
 type UserDetailsFromDelius = {
   name?: string
   emailAddress?: string
   phoneNumber?: string
+  area: ApArea['name']
 }
 
 export type Body = {
@@ -24,6 +30,8 @@ export type Body = {
   phoneNumber?: string
   caseManagementResponsibility?: YesOrNo
   userDetailsFromDelius?: UserDetailsFromDelius
+  area?: ApArea['name']
+  areas?: Array<ApArea>
 }
 
 @Page({
@@ -35,6 +43,8 @@ export type Body = {
     'phoneNumber',
     'caseManagementResponsibility',
     'userDetailsFromDelius',
+    'area',
+    'areas',
   ],
 })
 export default class ConfirmYourDetails implements TasklistPage {
@@ -47,7 +57,6 @@ export default class ConfirmYourDetails implements TasklistPage {
       <p class="govuk-hint">This information will not be written back to Delius</p>`,
       items: updatableDetails,
     },
-
     caseManagementResponsibility: {
       label: 'Do you have case management responsibility?',
     },
@@ -59,6 +68,9 @@ export default class ConfirmYourDetails implements TasklistPage {
     },
     phoneNumber: {
       label: 'Phone number',
+    },
+    area: {
+      label: 'AP area',
     },
   }
 
@@ -80,10 +92,23 @@ export default class ConfirmYourDetails implements TasklistPage {
     dataServices: DataServices,
   ): Promise<ConfirmYourDetails> {
     const user = await dataServices.userService.getUserById(token, application.createdByUserId)
+    const areas = await dataServices.apAreaService.getApAreas(token)
 
-    const userForUi = { name: user.name, emailAddress: user.email, phoneNumber: user.telephoneNumber }
+    const userForUi = {
+      name: user.name,
+      emailAddress: user.email,
+      phoneNumber: user.telephoneNumber,
+      area: user.apArea.name,
+    }
 
-    const page = new ConfirmYourDetails({ ...body, userDetailsFromDelius: userForUi }, application)
+    const page = new ConfirmYourDetails(
+      {
+        ...body,
+        userDetailsFromDelius: userForUi,
+        areas,
+      },
+      application,
+    )
 
     page.userDetailsFromDelius = userForUi
 
@@ -103,11 +128,16 @@ export default class ConfirmYourDetails implements TasklistPage {
 
     updatableDetails.forEach(detail => {
       if (this.body?.[detail] && this.body?.detailsToUpdate?.includes(detail)) {
-        response[`Applicant ${lowerCase(detail)}`] = this.body[detail]
+        if (detail !== 'area') {
+          response[this.responseKey(detail)] = this.body[detail]
+        }
+        if (detail === 'area') {
+          response[`Applicant AP area`] = this.translateAreaIdToName(this.body.area)
+        }
       } else if (this.body.userDetailsFromDelius?.[detail]) {
-        response[`Applicant ${lowerCase(detail)}`] = this.body.userDetailsFromDelius?.[detail]
+        response[this.responseKey(detail)] = this.body.userDetailsFromDelius?.[detail]
       } else {
-        response[`Applicant ${lowerCase(detail)}`] = ''
+        response[this.responseKey(detail)] = ''
       }
     })
 
@@ -140,10 +170,28 @@ export default class ConfirmYourDetails implements TasklistPage {
       }
     })
 
+    if (!this.body.userDetailsFromDelius.area && !this.body.area) {
+      errors.area = 'You must enter your AP area'
+    }
+
     if (!this.body.caseManagementResponsibility) {
       errors.caseManagementResponsibility = 'You must enter whether you have case management responsibility'
     }
 
     return errors
+  }
+
+  private responseKey(detail: UpdatableDetails) {
+    const { label } = this.questions[detail]
+
+    if (detail !== 'area') return `Applicant ${lowerCase(label)}`
+
+    return `Applicant ${label}`
+  }
+
+  private translateAreaIdToName(areaId: ApArea['id']): ApArea['name'] {
+    return this.body.areas.find(apAreas => {
+      return apAreas.id === areaId
+    }).name
   }
 }

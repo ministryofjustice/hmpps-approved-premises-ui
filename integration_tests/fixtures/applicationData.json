@@ -4,12 +4,15 @@
       "emailAddress": "bob@test.com",
       "name": "Bob Smith",
       "phoneNumber": "01234567890",
-      "detailsToUpdate": ["phoneNumber", "emailAddress", "name"],
+      "area": "5e44b880-df20-4751-938f-a14be5fe609d",
+      "areas": [{ "id": "5e44b880-df20-4751-938f-a14be5fe609d", "name": "Greater Manchester" }],
+      "detailsToUpdate": ["phoneNumber", "emailAddress", "name", "area"],
       "caseManagementResponsibility": "no",
       "userDetailsFromDelius": {
         "name": "Frank",
         "emailAddress": "frank@test.com",
-        "phoneNumber": "01234567890"
+        "phoneNumber": "01234567890",
+        "area": "Greater Manchester"
       }
     },
     "case-manager-information": {

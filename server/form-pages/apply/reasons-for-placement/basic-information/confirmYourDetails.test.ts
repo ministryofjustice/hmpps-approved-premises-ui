@@ -2,8 +2,8 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { fromPartial } from '@total-typescript/shoehorn'
 import { ApprovedPremisesApplication as Application, FullPerson } from '../../../../@types/shared'
-import { UserService } from '../../../../services'
-import { applicationFactory } from '../../../../testutils/factories'
+import { ApAreaService, UserService } from '../../../../services'
+import { apAreaFactory, applicationFactory } from '../../../../testutils/factories'
 import { RestrictedPersonError } from '../../../../utils/errors'
 import { isApplicableTier, isFullPerson } from '../../../../utils/personUtils'
 import { lowerCase } from '../../../../utils/utils'
@@ -13,17 +13,22 @@ jest.mock('../../../../utils/personUtils')
 
 describe('ConfirmYourDetails', () => {
   const application: Readonly<Application> = applicationFactory.build()
+  const areas = apAreaFactory.buildList(2)
+  const area = areas[0]
 
   const body: Body = {
-    detailsToUpdate: ['name', 'emailAddress', 'phoneNumber'],
+    detailsToUpdate: ['name', 'emailAddress', 'phoneNumber', 'area'],
     name: 'Bob',
     emailAddress: 'bob@test.com',
     phoneNumber: '0123456789',
     caseManagementResponsibility: 'yes',
+    area: area.id,
+    areas,
     userDetailsFromDelius: {
       name: 'Acting user from delius name',
       emailAddress: 'Acting user from delius email address',
       phoneNumber: 'Acting user from delius phone number',
+      area: area.name,
     },
   }
 
@@ -40,39 +45,54 @@ describe('ConfirmYourDetails', () => {
   })
 
   describe('initialize', () => {
-    it('calls the userService.getUserById method and returns an instantiated ConfirmYourDetails page', async () => {
+    it('calls the data services and returns an instantiated ConfirmYourDetails page', async () => {
       const actingUserFromDelius = {
         name: body.name,
         email: body.emailAddress,
         telephoneNumber: body.phoneNumber,
+        apArea: area,
       }
 
       const deliusUserMappedForUi = {
         name: actingUserFromDelius.name,
         emailAddress: actingUserFromDelius.email,
         phoneNumber: actingUserFromDelius.telephoneNumber,
+        area: actingUserFromDelius.apArea.name,
       }
 
       const getUserByIdMock = jest.fn().mockResolvedValue(actingUserFromDelius)
+      const getAreasMock = jest.fn().mockResolvedValue(areas)
 
       const userService: DeepMocked<UserService> = createMock<UserService>({
         getUserById: getUserByIdMock,
       })
+      const apAreaService: DeepMocked<ApAreaService> = createMock<ApAreaService>({
+        getApAreas: getAreasMock,
+      })
 
-      const result = await ConfirmYourDetails.initialize({}, application, 'token', fromPartial({ userService }))
+      const result = await ConfirmYourDetails.initialize(
+        {},
+        application,
+        'token',
+        fromPartial({ userService, apAreaService }),
+      )
       const expected = new ConfirmYourDetails(
         {
           userDetailsFromDelius: deliusUserMappedForUi,
+          areas,
         },
         application,
       )
+
       expected.userDetailsFromDelius = {
         name: actingUserFromDelius.name,
         emailAddress: actingUserFromDelius.email,
         phoneNumber: actingUserFromDelius.telephoneNumber,
+        area: actingUserFromDelius.apArea.name,
       }
 
       expect(getUserByIdMock).toHaveBeenCalledWith('token', application.createdByUserId)
+      expect(getAreasMock).toHaveBeenCalledWith('token')
 
       expect(result).toEqual(expected)
       expect(result.userDetailsFromDelius).toEqual(deliusUserMappedForUi)
@@ -147,6 +167,25 @@ describe('ConfirmYourDetails', () => {
       })
     })
 
+    it('should return an error if there is no area ID in Delius and one is not entered in the form ', () => {
+      const page = new ConfirmYourDetails(
+        {
+          ...body,
+          area: '',
+          detailsToUpdate: [],
+          userDetailsFromDelius: {
+            ...body.userDetailsFromDelius,
+            area: '',
+          },
+        },
+        application,
+      )
+
+      expect(page.errors()).toEqual({
+        area: 'You must enter your AP area',
+      })
+    })
+
     it('should return an error if there is no response for caseManagementResponsibility', () => {
       const page = new ConfirmYourDetails({ ...body, caseManagementResponsibility: undefined }, application)
 
@@ -161,15 +200,16 @@ describe('ConfirmYourDetails', () => {
       const page = new ConfirmYourDetails(body, application)
 
       expect(page.response()).toEqual({
-        [page.questions.updateDetails.label]: ['Name', 'Email address', 'Phone number'].join(', '),
+        [page.questions.updateDetails.label]: ['Name', 'Email address', 'Phone number', 'Area'].join(', '),
         'Applicant name': 'Bob',
         'Applicant email address': 'bob@test.com',
         'Applicant phone number': '0123456789',
+        'Applicant AP area': area.name,
         'Do you have case management responsibility?': 'Yes',
       })
     })
 
-    it('should return a translated version of the response when one of the fields is update but the others are retained', () => {
+    it('should return a translated version of the response when one of the fields is updated but the others are retained', () => {
       const page = new ConfirmYourDetails({ ...body, detailsToUpdate: ['emailAddress'] }, application)
 
       expect(page.response()).toEqual({
@@ -178,6 +218,7 @@ describe('ConfirmYourDetails', () => {
         'Do you have case management responsibility?': 'Yes',
         'Applicant name': body.userDetailsFromDelius.name,
         'Applicant phone number': body.userDetailsFromDelius.phoneNumber,
+        'Applicant AP area': area.name,
       })
     })
 
@@ -189,6 +230,7 @@ describe('ConfirmYourDetails', () => {
         'Applicant name': body.userDetailsFromDelius.name,
         'Applicant email address': body.userDetailsFromDelius.emailAddress,
         'Applicant phone number': body.userDetailsFromDelius.phoneNumber,
+        'Applicant AP area': body.userDetailsFromDelius.area,
         'Do you have case management responsibility?': 'Yes',
       })
     })
@@ -198,7 +240,12 @@ describe('ConfirmYourDetails', () => {
         {
           ...body,
           detailsToUpdate: [],
-          userDetailsFromDelius: { ...body.userDetailsFromDelius, phoneNumber: undefined, emailAddress: undefined },
+          userDetailsFromDelius: {
+            ...body.userDetailsFromDelius,
+            phoneNumber: undefined,
+            emailAddress: undefined,
+            area: '',
+          },
         },
         application,
       )
@@ -208,6 +255,7 @@ describe('ConfirmYourDetails', () => {
         'Applicant name': body.userDetailsFromDelius.name,
         'Applicant email address': '',
         'Applicant phone number': '',
+        'Applicant AP area': '',
         'Do you have case management responsibility?': 'Yes',
       })
     })

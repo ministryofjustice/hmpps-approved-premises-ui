@@ -10,13 +10,14 @@ import NotesController from './applications/notesController'
 import type { Services } from '../../services'
 
 export const controllers = (services: Services) => {
-  const { applicationService, personService, premisesService, userService } = services
+  const { applicationService, personService, premisesService, userService, apAreaService } = services
   const applicationsController = new ApplicationsController(applicationService, personService)
   const pagesController = new PagesController(applicationService, {
     personService,
     applicationService,
     premisesService,
     userService,
+    apAreaService,
   })
   const offencesController = new OffencesController(personService)
   const documentsController = new DocumentsController(personService)

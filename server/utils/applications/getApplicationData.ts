@@ -20,6 +20,7 @@ import { isInapplicable } from './utils'
 import { FormArtifact } from '../../@types/ui'
 import { noticeTypeFromApplication } from './noticeTypeFromApplication'
 import Situation from '../../form-pages/apply/reasons-for-placement/basic-information/situation'
+import ConfirmYourDetails from '../../form-pages/apply/reasons-for-placement/basic-information/confirmYourDetails'
 
 type FirstClassFields<T> = T extends UpdateApprovedPremisesApplication
   ? Omit<UpdateApprovedPremisesApplication, 'data'>
@@ -56,6 +57,7 @@ const firstClassFields = <T>(
     releaseType === 'in_community' ? retrieveQuestionResponse(application, Situation, 'situation') : null
   const arrivalDate = arrivalDateFromApplication(application)
   const isEmergencyApplication = noticeTypeFromApplication(application) === 'emergency'
+  const apAreaId = retrieveQuestionResponse(application, ConfirmYourDetails, 'area')
 
   return {
     isWomensApplication: false,
@@ -67,6 +69,7 @@ const firstClassFields = <T>(
     situation,
     arrivalDate,
     isEmergencyApplication,
+    apAreaId,
   } as FirstClassFields<T>
 }
 

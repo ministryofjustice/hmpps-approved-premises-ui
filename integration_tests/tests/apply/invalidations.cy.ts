@@ -49,6 +49,7 @@ context('Apply', () => {
         'isInapplicable',
         'isEsapApplication',
         'isEmergencyApplication',
+        'apAreaId',
       )
       expect(body.data).not.to.have.keys(['check-your-answers'])
     })
@@ -87,6 +88,7 @@ context('Apply', () => {
         'isInapplicable',
         'isEsapApplication',
         'isEmergencyApplication',
+        'apAreaId',
       )
       expect(body.data).to.have.any.keys(['check-your-answers'])
     })
