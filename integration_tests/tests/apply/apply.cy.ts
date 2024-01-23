@@ -57,6 +57,7 @@ context('Apply', () => {
         'isInapplicable',
         'isEsapApplication',
         'isEmergencyApplication',
+        'apAreaId',
       )
       expect(body.data).to.deep.equal(this.applicationData)
 
@@ -83,6 +84,7 @@ context('Apply', () => {
         'sentenceType',
         'situation',
         'type',
+        'apAreaId',
       )
     })
 
@@ -332,6 +334,7 @@ context('Apply', () => {
         'isInapplicable',
         'isEsapApplication',
         'isEmergencyApplication',
+        'apAreaId',
       )
 
       expect(body.data).to.deep.equal(this.applicationData)
@@ -359,6 +362,7 @@ context('Apply', () => {
         'sentenceType',
         'situation',
         'type',
+        'apAreaId',
       )
     })
   })

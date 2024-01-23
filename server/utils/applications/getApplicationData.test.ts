@@ -10,6 +10,8 @@ jest.mock('./arrivalDateFromApplication')
 jest.mock('./utils')
 
 describe('getApplicationData', () => {
+  const apAreaId = 'test-id'
+
   describe('getApplicationSubmissionData', () => {
     const releaseType: ReleaseTypeOption = 'licence'
     const sentenceType: SentenceTypeOption = 'standardDeterminate'
@@ -18,11 +20,11 @@ describe('getApplicationData', () => {
 
     beforeEach(() => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(arrivalDate)
-      mockOptionalQuestionResponse({ releaseType, sentenceType })
+      mockOptionalQuestionResponse({ releaseType, sentenceType, apAreaId })
     })
 
     it('returns the correct data for a pipe application', () => {
-      mockQuestionResponse({ type: 'pipe', postcodeArea: targetLocation })
+      mockQuestionResponse({ type: 'pipe', postcodeArea: targetLocation, apAreaId })
 
       const application = applicationFactory.build()
 
@@ -37,11 +39,12 @@ describe('getApplicationData', () => {
         arrivalDate,
         isEmergencyApplication: true,
         isEsapApplication: false,
+        apAreaId,
       })
     })
 
     it('returns the correct data for a non-pipe application', () => {
-      mockQuestionResponse({ type: 'standard', postcodeArea: targetLocation })
+      mockQuestionResponse({ type: 'standard', postcodeArea: targetLocation, apAreaId })
 
       const application = applicationFactory.build()
 
@@ -56,12 +59,13 @@ describe('getApplicationData', () => {
         arrivalDate,
         isEmergencyApplication: true,
         isEsapApplication: false,
+        apAreaId,
       })
     })
 
     it('handles when a release type is missing', () => {
       mockOptionalQuestionResponse({ releaseType: undefined })
-      mockQuestionResponse({ postcodeArea: targetLocation })
+      mockQuestionResponse({ postcodeArea: targetLocation, apAreaId })
 
       const application = applicationFactory.build()
 
@@ -76,6 +80,7 @@ describe('getApplicationData', () => {
         arrivalDate,
         isEmergencyApplication: true,
         isEsapApplication: false,
+        apAreaId,
       })
     })
 
@@ -84,6 +89,7 @@ describe('getApplicationData', () => {
         sentenceType: 'communityOrder',
         postcodeArea: targetLocation,
         situation: 'riskManagement',
+        apAreaId,
       })
 
       const application = applicationFactory.build()
@@ -99,11 +105,17 @@ describe('getApplicationData', () => {
         arrivalDate,
         isEmergencyApplication: true,
         isEsapApplication: false,
+        apAreaId,
       })
     })
 
     it('returns in_community for a bail placement application', () => {
-      mockQuestionResponse({ sentenceType: 'bailPlacement', postcodeArea: targetLocation, situation: 'riskManagement' })
+      mockQuestionResponse({
+        sentenceType: 'bailPlacement',
+        postcodeArea: targetLocation,
+        situation: 'riskManagement',
+        apAreaId,
+      })
 
       const application = applicationFactory.build()
 
@@ -118,11 +130,12 @@ describe('getApplicationData', () => {
         arrivalDate,
         isEmergencyApplication: true,
         isEsapApplication: false,
+        apAreaId,
       })
     })
 
     it('returns not_applicable for a non-statutory application', () => {
-      mockQuestionResponse({ sentenceType: 'nonStatutory', postcodeArea: targetLocation })
+      mockQuestionResponse({ sentenceType: 'nonStatutory', postcodeArea: targetLocation, apAreaId })
 
       const application = applicationFactory.build()
 
@@ -137,6 +150,7 @@ describe('getApplicationData', () => {
         arrivalDate,
         isEmergencyApplication: true,
         isEsapApplication: false,
+        apAreaId,
       })
     })
   })
@@ -161,6 +175,7 @@ describe('getApplicationData', () => {
         arrivalDate: undefined,
         isEmergencyApplication: false,
         isEsapApplication: undefined,
+        apAreaId: undefined,
       })
     })
 
@@ -172,6 +187,7 @@ describe('getApplicationData', () => {
         releaseType: 'license',
         postcodeArea: 'ABC',
         sentenceType: 'standardDeterminate',
+        apAreaId,
       })
 
       const application = applicationFactory.build()
@@ -188,6 +204,7 @@ describe('getApplicationData', () => {
         arrivalDate: '2023-01-01',
         isEmergencyApplication: true,
         isEsapApplication: false,
+        apAreaId,
       })
     })
 
