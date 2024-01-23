@@ -1,10 +1,10 @@
 import { userFactory } from '../../testutils/factories'
 import {
   allocationCell,
+  apAreaCell,
   managementDashboardTableHeader,
   managementDashboardTableRows,
   nameCell,
-  regionCell,
   roleCell,
 } from './tableUtils'
 import paths from '../../paths/admin'
@@ -28,7 +28,7 @@ describe('tableUtils', () => {
         {
           text: 'Email',
         },
-        { text: 'Region' },
+        { text: 'AP Area' },
       ])
     })
 
@@ -44,7 +44,7 @@ describe('tableUtils', () => {
         {
           text: 'Email',
         },
-        { text: 'Region' },
+        { text: 'AP Area' },
       ])
     })
   })
@@ -59,7 +59,7 @@ describe('tableUtils', () => {
           { text: '' },
           { text: 'Standard' },
           { text: user.email },
-          { text: user.region.name },
+          { text: user.apArea.name },
         ],
       ])
     })
@@ -128,11 +128,11 @@ describe('tableUtils', () => {
     })
   })
 
-  describe('regionCell', () => {
-    it('returns the region for the user', () => {
+  describe('apAreaCell', () => {
+    it('returns the AP Area for the user', () => {
       const user = userFactory.build()
-      expect(regionCell(user)).toEqual({
-        text: user.region.name,
+      expect(apAreaCell(user)).toEqual({
+        text: user.apArea.name,
       })
     })
   })

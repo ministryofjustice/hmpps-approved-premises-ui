@@ -29,12 +29,12 @@ export const managementDashboardTableHeader = (
     {
       text: 'Email',
     },
-    { text: 'Region' },
+    { text: 'AP Area' },
   ]
 }
 
 export const managementDashboardTableRows = (users: Array<User>): Array<Array<TableCell>> => {
-  return users.map(user => [nameCell(user), roleCell(user), allocationCell(user), emailCell(user), regionCell(user)])
+  return users.map(user => [nameCell(user), roleCell(user), allocationCell(user), emailCell(user), apAreaCell(user)])
 }
 
 export const nameCell = (user: User): TableCell => {
@@ -64,8 +64,8 @@ export const allocationCell = (user: User): TableCell => {
   }
 }
 
-export const regionCell = (user: User): TableCell => {
+export const apAreaCell = (user: User): TableCell => {
   return {
-    text: user.region.name,
+    text: user.apArea.name,
   }
 }
