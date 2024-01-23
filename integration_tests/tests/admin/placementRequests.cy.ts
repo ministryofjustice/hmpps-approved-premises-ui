@@ -388,55 +388,64 @@ context('Placement Requests', () => {
       expect(requests).to.have.length(1)
     })
   })
+  ;[
+    'expected_arrival',
+    'person_name',
+    'person_risks_tier',
+    'expected_arrival',
+    'application_date',
+    'duration',
+    'request_type',
+  ].forEach(field => {
+    it(`supports sorting by ${field}`, () => {
+      cy.task('stubPlacementRequestsDashboard', {
+        placementRequests: unmatchedPlacementRequests,
+        status: 'notMatched',
+        sortBy: field,
+        sortDirection: 'asc',
+      })
+      cy.task('stubPlacementRequestsDashboard', {
+        placementRequests: unmatchedPlacementRequests,
+        status: 'notMatched',
+        sortBy: field,
+        sortDirection: 'desc',
+      })
 
-  it('supports sorting', () => {
-    cy.task('stubPlacementRequestsDashboard', {
-      placementRequests: unmatchedPlacementRequests,
-      status: 'notMatched',
-      sortBy: 'expected_arrival',
-      sortDirection: 'asc',
-    })
-    cy.task('stubPlacementRequestsDashboard', {
-      placementRequests: unmatchedPlacementRequests,
-      status: 'notMatched',
-      sortBy: 'expected_arrival',
-      sortDirection: 'desc',
-    })
+      // When I visit the tasks dashboard
+      const listPage = ListPage.visit()
 
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit()
+      // Then I should see a list of placement requests
+      listPage.shouldShowPlacementRequests(unmatchedPlacementRequests)
 
-    // Then I should see a list of placement requests
-    listPage.shouldShowPlacementRequests(unmatchedPlacementRequests)
+      // When I sort by expected arrival in ascending order
+      listPage.clickSortBy(field)
 
-    // When I sort by expected arrival in ascending order
-    listPage.clickSortBy('expected_arrival')
+      // Then the dashboard should be sorted by expected arrival
+      listPage.shouldBeSortedByField(field, 'ascending')
 
-    // Then the dashboard should be sorted by expected arrival
-    listPage.shouldBeSortedByField('expected_arrival', 'ascending')
+      // And the API should have received a request for the correct sort order
+      cy.task('verifyPlacementRequestsDashboard', {
+        status: 'notMatched',
+        sortBy: field,
+        sortDirection: 'asc',
+      }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
 
-    // And the API should have received a request for the correct sort order
-    cy.task('verifyPlacementRequestsDashboard', {
-      status: 'notMatched',
-      sortBy: 'expected_arrival',
-      sortDirection: 'asc',
-    }).then(requests => {
-      expect(requests).to.have.length(1)
-    })
+      // When I sort by expected arrival in descending order
+      listPage.clickSortBy(field)
 
-    // When I sort by expected arrival in descending order
-    listPage.clickSortBy('expected_arrival')
+      // Then the dashboard should be sorted by expected arrival in descending order
+      listPage.shouldBeSortedByField(field, 'descending')
 
-    // Then the dashboard should be sorted by expected arrival in descending order
-    listPage.shouldBeSortedByField('expected_arrival', 'descending')
-
-    // And the API should have received a request for the correct sort order
-    cy.task('verifyPlacementRequestsDashboard', {
-      status: 'notMatched',
-      sortBy: 'expected_arrival',
-      sortDirection: 'desc',
-    }).then(requests => {
-      expect(requests).to.have.length(1)
+      // And the API should have received a request for the correct sort order
+      cy.task('verifyPlacementRequestsDashboard', {
+        status: 'notMatched',
+        sortBy: field,
+        sortDirection: 'desc',
+      }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
     })
   })
 })

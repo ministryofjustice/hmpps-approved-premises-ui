@@ -257,15 +257,11 @@ describe('tableUtils', () => {
 
     it('returns the default header for a non-matched view', () => {
       expect(dashboardTableHeader('notMatched', sortBy, sortDirection, hrefPrefix)).toEqual([
-        {
-          text: 'Name',
-        },
+        sortHeader<PlacementRequestSortField>('Name', 'person_name', sortBy, sortDirection, hrefPrefix),
         {
           text: 'CRN',
         },
-        {
-          text: 'Tier',
-        },
+        sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>('Arrival date', 'expected_arrival', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>(
           'Application date',
@@ -275,23 +271,17 @@ describe('tableUtils', () => {
           hrefPrefix,
         ),
         sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
-        {
-          text: 'Request type',
-        },
+        sortHeader<PlacementRequestSortField>('Request Type', 'request_type', sortBy, sortDirection, hrefPrefix),
       ])
     })
 
     it('returns the default header for a matched view', () => {
       expect(dashboardTableHeader('matched', sortBy, sortDirection, hrefPrefix)).toEqual([
-        {
-          text: 'Name',
-        },
+        sortHeader<PlacementRequestSortField>('Name', 'person_name', sortBy, sortDirection, hrefPrefix),
         {
           text: 'CRN',
         },
-        {
-          text: 'Tier',
-        },
+        sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>('Arrival date', 'expected_arrival', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>(
           'Application date',
@@ -303,9 +293,7 @@ describe('tableUtils', () => {
         {
           text: 'Approved Premises',
         },
-        {
-          text: 'Request type',
-        },
+        sortHeader<PlacementRequestSortField>('Request Type', 'request_type', sortBy, sortDirection, hrefPrefix),
       ])
     })
   })

@@ -129,15 +129,11 @@ export const dashboardTableHeader = (
   hrefPrefix: string,
 ): Array<TableCell> => {
   return [
-    {
-      text: 'Name',
-    },
+    sortHeader<PlacementRequestSortField>('Name', 'person_name', sortBy, sortDirection, hrefPrefix),
     {
       text: 'CRN',
     },
-    {
-      text: 'Tier',
-    },
+    sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
     sortHeader<PlacementRequestSortField>('Arrival date', 'expected_arrival', sortBy, sortDirection, hrefPrefix),
     sortHeader<PlacementRequestSortField>('Application date', 'application_date', sortBy, sortDirection, hrefPrefix),
     status === 'matched'
@@ -145,8 +141,6 @@ export const dashboardTableHeader = (
           text: 'Approved Premises',
         }
       : sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
-    {
-      text: 'Request type',
-    },
+    sortHeader<PlacementRequestSortField>('Request Type', 'request_type', sortBy, sortDirection, hrefPrefix),
   ]
 }
