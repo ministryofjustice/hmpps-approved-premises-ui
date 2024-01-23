@@ -165,6 +165,7 @@ export type { PlacementCriteria } from './models/PlacementCriteria';
 export type { PlacementDates } from './models/PlacementDates';
 export type { PlacementRequest } from './models/PlacementRequest';
 export type { PlacementRequestDetail } from './models/PlacementRequestDetail';
+export type { PlacementRequestRequestType } from './models/PlacementRequestRequestType';
 export type { PlacementRequestSortField } from './models/PlacementRequestSortField';
 export type { PlacementRequestStatus } from './models/PlacementRequestStatus';
 export type { PlacementRequestTask } from './models/PlacementRequestTask';
