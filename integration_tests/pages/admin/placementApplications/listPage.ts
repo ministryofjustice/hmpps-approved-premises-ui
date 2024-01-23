@@ -1,7 +1,12 @@
 import Page from '../../page'
 import paths from '../../../../server/paths/admin'
 
-import { PlacementRequest, PlacementRequestStatus } from '../../../../server/@types/shared'
+import {
+  PlacementRequest,
+  PlacementRequestSortField,
+  PlacementRequestStatus,
+  SortOrder,
+} from '../../../../server/@types/shared'
 import { tableRowsToArrays } from '../../../helpers'
 import { dashboardTableRows } from '../../../../server/utils/placementRequests/table'
 
@@ -45,5 +50,13 @@ export default class ListPage extends Page {
 
   clickUnableToMatch(): void {
     cy.get('a.moj-sub-navigation__link').contains('Unable to match').click()
+  }
+
+  clickSortBy(field: PlacementRequestSortField): void {
+    super.clickSortBy(field)
+  }
+
+  shouldBeSortedByField(field: PlacementRequestSortField, order: SortOrder): void {
+    super.shouldBeSortedByField(field, order)
   }
 }

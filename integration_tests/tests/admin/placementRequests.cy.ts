@@ -388,15 +388,17 @@ context('Placement Requests', () => {
       expect(requests).to.have.length(1)
     })
   })
-  ;[
-    'expected_arrival',
-    'person_name',
-    'person_risks_tier',
-    'expected_arrival',
-    'application_date',
-    'duration',
-    'request_type',
-  ].forEach(field => {
+  ;(
+    [
+      'expected_arrival',
+      'person_name',
+      'person_risks_tier',
+      'expected_arrival',
+      'application_date',
+      'duration',
+      'request_type',
+    ] as const
+  ).forEach(field => {
     it(`supports sorting by ${field}`, () => {
       cy.task('stubPlacementRequestsDashboard', {
         placementRequests: unmatchedPlacementRequests,
