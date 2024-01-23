@@ -1,4 +1,6 @@
-import type { ApprovedPremisesApplication, ReleaseTypeOption, SentenceTypeOption } from '@approved-premises/api'
+import { omit, pick } from 'underscore'
+
+import type { ApprovedPremisesApplication, SentenceTypeOption } from '@approved-premises/api'
 import type { ReleaseTypeOptions, TaskListErrors } from '@approved-premises/ui'
 
 import { SessionDataError } from '../../../../utils/errors'
@@ -8,13 +10,24 @@ import SentenceType from './sentenceType'
 import { Page } from '../../../utils/decorators'
 import { allReleaseTypes } from '../../../../utils/applications/releaseTypeUtils'
 
-type SelectableReleaseType = Exclude<ReleaseTypeOption, 'in_community'>
-type ReducedReleaseTypeOptions = Pick<ReleaseTypeOptions, 'rotl' | 'licence'>
-type ReducedReleaseTypes = keyof ReducedReleaseTypeOptions
+type SelectableReleaseTypes = keyof PossibleReleaseTypeOptions
+type ExtendedDetermindateReleaseTypeOptions = Pick<
+  ReleaseTypeOptions,
+  'rotl' | 'extendedDeterminateLicence' | 'paroleDirectedLicence'
+>
+type StandardDeterminateReleaseTypeOptions = Pick<
+  ReleaseTypeOptions,
+  'licence' | 'paroleDirectedLicence' | 'rotl' | 'hdc' | 'pss'
+>
+type LifeIppReleaseTypeOptions = Pick<ReleaseTypeOptions, 'rotl' | 'licence'>
+type PossibleReleaseTypeOptions =
+  | ExtendedDetermindateReleaseTypeOptions
+  | StandardDeterminateReleaseTypeOptions
+  | LifeIppReleaseTypeOptions
 
 type SentenceTypeResponse = Extract<SentenceTypeOption, 'standardDeterminate' | 'extendedDeterminate' | 'ipp' | 'life'>
 
-const { in_community: _, not_applicable: __, ...releaseTypes } = allReleaseTypes
+const selectableReleaseTypes = omit(allReleaseTypes, 'in_community')
 
 @Page({ name: 'release-type', bodyProperties: ['releaseType'] })
 export default class ReleaseType implements TasklistPage {
@@ -22,10 +35,10 @@ export default class ReleaseType implements TasklistPage {
 
   title = 'What type of release will the application support?'
 
-  releaseTypes: ReleaseTypeOptions | ReducedReleaseTypeOptions
+  releaseTypes: PossibleReleaseTypeOptions
 
   constructor(
-    readonly body: { releaseType?: SelectableReleaseType | ReducedReleaseTypes },
+    readonly body: { releaseType?: SelectableReleaseTypes },
     readonly application: ApprovedPremisesApplication,
   ) {
     const sessionSentenceType = retrieveQuestionResponseFromFormArtifact(application, SentenceType)
@@ -33,7 +46,7 @@ export default class ReleaseType implements TasklistPage {
     this.releaseTypes = this.getReleaseTypes(sessionSentenceType)
 
     this.body = {
-      releaseType: body.releaseType as SelectableReleaseType | ReducedReleaseTypes,
+      releaseType: body.releaseType as SelectableReleaseTypes,
     }
   }
 
@@ -46,7 +59,7 @@ export default class ReleaseType implements TasklistPage {
   }
 
   response() {
-    return { [this.title]: releaseTypes[this.body.releaseType] }
+    return { [this.title]: selectableReleaseTypes[this.body.releaseType] }
   }
 
   errors() {
@@ -69,16 +82,16 @@ export default class ReleaseType implements TasklistPage {
     })
   }
 
-  getReleaseTypes(sessionReleaseType: SentenceTypeResponse): ReleaseTypeOptions | ReducedReleaseTypeOptions {
-    if (sessionReleaseType === 'standardDeterminate') {
-      return releaseTypes
+  getReleaseTypes(sessionSentenceType: SentenceTypeResponse): PossibleReleaseTypeOptions {
+    if (sessionSentenceType === 'standardDeterminate') {
+      return pick(selectableReleaseTypes, ['licence', 'paroleDirectedLicence', 'rotl', 'hdc', 'pss'])
     }
-    if (sessionReleaseType === 'extendedDeterminate' || sessionReleaseType === 'ipp' || sessionReleaseType === 'life') {
-      return {
-        rotl: 'Release on Temporary Licence (ROTL)',
-        licence: 'Licence',
-      }
+    if (sessionSentenceType === 'life' || sessionSentenceType === 'ipp') {
+      return pick(selectableReleaseTypes, ['rotl', 'licence'])
     }
-    throw new SessionDataError(`Unknown release type ${sessionReleaseType}`)
+    if (sessionSentenceType === 'extendedDeterminate') {
+      return pick(selectableReleaseTypes, ['rotl', 'extendedDeterminateLicence', 'paroleDirectedLicence'])
+    }
+    throw new SessionDataError(`Unknown sentence type ${sessionSentenceType}`)
   }
 }
