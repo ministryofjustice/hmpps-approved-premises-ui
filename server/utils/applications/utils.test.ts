@@ -677,6 +677,7 @@ describe('utils', () => {
             text: eventTypeTranslations[timelineEvents[0].type],
           },
           content: timelineEvents[0].content,
+          createdBy: timelineEvents[0].createdBy.name,
         },
       ])
     })

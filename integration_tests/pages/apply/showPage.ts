@@ -119,6 +119,12 @@ export default class ShowPage extends Page {
         cy.wrap($el).within(() => {
           cy.get('.moj-timeline__header').should('contain', eventTypeTranslations[sortedTimelineEvents[index].type])
           cy.get('time').should('have.attr', { time: sortedTimelineEvents[index].occurredAt })
+          if (timelineEvents[index].createdBy?.name) {
+            cy.get('.moj-timeline__header > .moj-timeline__byline').should(
+              'contain',
+              timelineEvents[index].createdBy.name,
+            )
+          }
           cy.get('time').should('contain', DateFormats.isoDateTimeToUIDateTime(timelineEvents[index].occurredAt))
         })
       })

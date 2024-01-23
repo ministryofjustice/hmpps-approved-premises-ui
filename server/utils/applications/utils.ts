@@ -290,7 +290,7 @@ const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiT
   return timelineEvents
     .sort((a, b) => Number(DateFormats.isoToDateObj(b.occurredAt)) - Number(DateFormats.isoToDateObj(a.occurredAt)))
     .map(timelineEvent => {
-      return {
+      const event = {
         label: { text: eventTypeTranslations[timelineEvent.type] },
         datetime: {
           timestamp: timelineEvent.occurredAt,
@@ -298,6 +298,13 @@ const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiT
         },
         content: timelineEvent.content,
       }
+      if (timelineEvent.createdBy?.name) {
+        return {
+          ...event,
+          createdBy: timelineEvent.createdBy?.name,
+        }
+      }
+      return event
     })
 }
 
