@@ -7,4 +7,6 @@ export const allReleaseTypes: ReleaseTypeOptions = {
   pss: 'Post Sentence Supervision (PSS)',
   in_community: 'In Community',
   not_applicable: 'Not Applicable',
+  extendedDeterminateLicence: 'Extended Determinate Licence',
+  paroleDirectedLicence: 'Parole Directed Licence',
 }
