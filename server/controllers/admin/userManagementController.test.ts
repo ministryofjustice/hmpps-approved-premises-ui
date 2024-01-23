@@ -1,11 +1,11 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { UserService } from '../../services'
+import { ApAreaService, UserService } from '../../services'
 
 import UserManagementController from './userManagementController'
 import { qualifications, roles } from '../../utils/users'
-import { paginatedResponseFactory, userFactory } from '../../testutils/factories'
+import { apAreaFactory, paginatedResponseFactory, userFactory } from '../../testutils/factories'
 import paths from '../../paths/admin'
 import { PaginatedResponse } from '../../@types/ui'
 import { ApprovedPremisesUser } from '../../@types/shared'
@@ -22,10 +22,12 @@ describe('UserManagementController', () => {
 
   let userManagementController: UserManagementController
   let userService: DeepMocked<UserService>
+  let apAreaService: DeepMocked<ApAreaService>
 
   beforeEach(() => {
     userService = createMock<UserService>()
-    userManagementController = new UserManagementController(userService)
+    apAreaService = createMock<ApAreaService>()
+    userManagementController = new UserManagementController(userService, apAreaService)
     jest.resetAllMocks()
   })
 
@@ -75,8 +77,29 @@ describe('UserManagementController', () => {
       })
     })
 
-    it('filters users by region', async () => {
-      const requestWithQuery = { ...request, query: { region: '1234' } }
+    it('should render the template with AP Areas based on the current user token', async () => {
+      const apAreas = apAreaFactory.buildList(1)
+
+      apAreaService.getApAreas.mockResolvedValue(apAreas)
+
+      const requestHandler = userManagementController.index()
+      await requestHandler(request, response, next)
+
+      expect(apAreaService.getApAreas).toHaveBeenCalledWith(token)
+      expect(response.render).toHaveBeenCalledWith('admin/users/index', {
+        pageHeading: 'User management dashboard',
+        users,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
+        apAreas,
+      })
+    })
+
+    it('filters users by AP area', async () => {
+      const requestWithQuery = { ...request, query: { areas: '1234' } }
       const requestHandler = userManagementController.index()
 
       await requestHandler(requestWithQuery, response, next)
@@ -99,7 +122,7 @@ describe('UserManagementController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
-        selectedRegion: '1234',
+        selectedArea: '1234',
       })
     })
 
@@ -160,10 +183,10 @@ describe('UserManagementController', () => {
     })
 
     it('applies more than one filter', async () => {
-      const requestWithRegion = { ...request, query: { qualifications: 'esap', roles: 'assessor' } }
+      const requestWithQuery = { ...request, query: { qualifications: 'esap', roles: 'assessor' } }
       const requestHandler = userManagementController.index()
 
-      await requestHandler(requestWithRegion, response, next)
+      await requestHandler(requestWithQuery, response, next)
 
       expect(userService.getUsers).toHaveBeenCalledWith(
         token,

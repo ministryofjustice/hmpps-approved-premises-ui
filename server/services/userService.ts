@@ -40,7 +40,7 @@ export default class UserService {
 
   async getUsers(
     token: string,
-    region: string = '',
+    areaId: string = '',
     roles: Array<UserRole> = [],
     qualifications: Array<UserQualification> = [],
     page: number = 1,
@@ -48,7 +48,7 @@ export default class UserService {
     sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<User>> {
     const client = this.userClientFactory(token)
-    return client.getUsers(region, roles, qualifications, page, sortBy, sortDirection)
+    return client.getUsers(areaId, roles, qualifications, page, sortBy, sortDirection)
   }
 
   async updateUser(token: string, userId: string, rolesAndQualifications: UserRolesAndQualifications): Promise<User> {

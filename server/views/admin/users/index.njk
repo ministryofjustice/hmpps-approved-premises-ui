@@ -72,13 +72,13 @@
           <div class="govuk-grid-column-one-quarter">
             {{ govukSelect({
                 label: {
-                  text: "Regions",
+                  text: "AP Areas",
                   classes: "govuk-label--s"
                 },
                 classes: "govuk-input--width-20",
-                id: "region",
-                name: "region",
-                items: convertObjectsToSelectOptions(regions, 'All regions', 'name', 'id', 'selectedRegion')
+                id: "areas",
+                name: "areas",
+                items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'selectedArea')
               }) }}
           </div>
           <div class="govuk-grid-column-one-quarter">

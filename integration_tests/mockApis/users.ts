@@ -129,7 +129,7 @@ const stubUserSearch = (args: { results: Array<User>; searchTerm: string }) =>
     },
   })
 
-const stubUserFilter = (args: { results: Array<User>; roles: string; qualifications: string; region: string }) =>
+const stubUserFilter = (args: { results: Array<User>; roles: string; qualifications: string; apAreaId: string }) =>
   stubFor({
     request: {
       method: 'GET',
@@ -137,7 +137,7 @@ const stubUserFilter = (args: { results: Array<User>; roles: string; qualificati
         page: 1,
         roles: args.roles,
         qualifications: args.qualifications,
-        region: args.region,
+        apAreaId: args.apAreaId,
         sortBy: 'name',
         sortDirection: 'asc',
       })}`,
@@ -196,7 +196,7 @@ const stubUserDelete = (args: { id: string }) =>
 
 const stubProbationRegionsReferenceData = (): Promise<Response> => stubFor(probationRegions)
 
-const stubApAreaReferenceData = (): Promise<Response> =>
+const stubApAreaReferenceData = (args?: { id: string; name: string }): Promise<Response> =>
   stubFor({
     request: {
       method: 'GET',
@@ -207,7 +207,7 @@ const stubApAreaReferenceData = (): Promise<Response> =>
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      jsonBody: apAreaFactory.buildList(10),
+      jsonBody: args ? [args] : apAreaFactory.buildList(10),
     },
   })
 

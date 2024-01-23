@@ -1,19 +1,22 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { qualifications, roles } from '../../utils/users'
-import { UserService } from '../../services'
+import { ApAreaService, UserService } from '../../services'
 import paths from '../../paths/admin'
 import { flattenCheckboxInput } from '../../utils/formUtils'
 import { UserQualification, ApprovedPremisesUserRole as UserRole, UserSortField } from '../../@types/shared'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 
 export default class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly apAreaService: ApAreaService,
+  ) {}
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       const role = req.query.roles as UserRole
       const qualification = req.query.qualifications as UserQualification
-      const region = req.query.region as string
+      const selectedArea = req.query.areas as string
 
       const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<UserSortField>(
         req,
@@ -22,25 +25,27 @@ export default class UserController {
 
       const usersResponse = await this.userService.getUsers(
         req.user.token,
-        region,
+        selectedArea,
         [role],
         [qualification],
         pageNumber,
         sortBy,
         sortDirection,
       )
-      const regions = await this.userService.getProbationRegions(req.user.token)
+
+      const apAreas = await this.apAreaService.getApAreas(req.user.token)
+
       res.render('admin/users/index', {
         pageHeading: 'User management dashboard',
         users: usersResponse.data,
-        regions,
+        apAreas,
         pageNumber: Number(usersResponse.pageNumber),
         totalPages: Number(usersResponse.totalPages),
         hrefPrefix,
         sortBy,
         sortDirection,
+        selectedArea,
         selectedQualification: qualification,
-        selectedRegion: region,
         selectedRole: role,
       })
     }
@@ -69,9 +74,9 @@ export default class UserController {
   search(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       const users = await this.userService.search(req.user.token, req.body.name as string)
-      const regions = await this.userService.getProbationRegions(req.user.token)
+      const apAreas = await this.apAreaService.getApAreas(req.user.token)
 
-      res.render('admin/users/index', { pageHeading: 'User management dashboard', users, regions, name: req.body.name })
+      res.render('admin/users/index', { pageHeading: 'User management dashboard', users, apAreas, name: req.body.name })
     }
   }
 

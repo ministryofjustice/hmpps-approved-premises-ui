@@ -11,7 +11,7 @@ import ReportsController from './reportsController'
 import type { Services } from '../../services'
 
 export const controllers = (services: Services) => {
-  const { placementRequestService, premisesService, reportService } = services
+  const { placementRequestService, premisesService, reportService, apAreaService } = services
   const adminPlacementRequestsController = new AdminPlacementRequestsController(placementRequestService)
   const placementRequestsBookingsController = new PlacementRequestsBookingsController(
     placementRequestService,
@@ -20,7 +20,7 @@ export const controllers = (services: Services) => {
   const placementRequestWithdrawalsController = new PlacementRequestsWithdrawalsController(placementRequestService)
   const reportsController = new ReportsController(reportService)
   const placementRequestUnableToMatchController = new PlacementRequestUnableToMatchController(placementRequestService)
-  const userManagementController = new UserManagementController(services.userService)
+  const userManagementController = new UserManagementController(services.userService, apAreaService)
   const deliusUserController = new DeliusUserController(services.userService)
 
   return {
