@@ -1,13 +1,7 @@
 import * as nunjucks from 'nunjucks'
 
-import type {
-  CheckBoxItem,
-  ErrorMessages,
-  RadioItem,
-  RiskTierLevel,
-  SelectOption,
-  SummaryListItem,
-} from '@approved-premises/ui'
+import type { CheckBoxItem, ErrorMessages, RadioItem, SelectOption, SummaryListItem } from '@approved-premises/ui'
+import type { RiskTierLevel } from '@approved-premises/api'
 import { resolvePath, sentenceCase } from './utils'
 import postcodeAreas from '../etc/postcodeAreas.json'
 
