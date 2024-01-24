@@ -12,7 +12,7 @@
         "name": "Frank",
         "emailAddress": "frank@test.com",
         "phoneNumber": "01234567890",
-        "area": "Greater Manchester"
+        "area": { "name": "Greater Manchester", "id": "5e44b880-df20-4751-938f-a14be5fe609d" }
       }
     },
     "case-manager-information": {

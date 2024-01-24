@@ -28,7 +28,7 @@ describe('ConfirmYourDetails', () => {
       name: 'Acting user from delius name',
       emailAddress: 'Acting user from delius email address',
       phoneNumber: 'Acting user from delius phone number',
-      area: area.name,
+      area,
     },
   }
 
@@ -41,6 +41,30 @@ describe('ConfirmYourDetails', () => {
       const page = new ConfirmYourDetails(body, application)
 
       expect(page.body).toEqual(body)
+    })
+
+    describe('if the "area" isnt present in the "body" it should use the one from Delius', () => {
+      const areaFromDelius = apAreaFactory.build()
+      const page = new ConfirmYourDetails(
+        {
+          ...body,
+          area: undefined,
+          detailsToUpdate: [],
+          userDetailsFromDelius: {
+            ...body.userDetailsFromDelius,
+            area: areaFromDelius,
+          },
+        },
+        application,
+      )
+
+      expect(page.body.area).toEqual(areaFromDelius.id)
+    })
+
+    it('should set the body with the area from the body if it is present', () => {
+      const page = new ConfirmYourDetails({ ...body, area: 'area' }, application)
+
+      expect(page.body).toEqual({ ...body, area: 'area' })
     })
   })
 
@@ -57,7 +81,7 @@ describe('ConfirmYourDetails', () => {
         name: actingUserFromDelius.name,
         emailAddress: actingUserFromDelius.email,
         phoneNumber: actingUserFromDelius.telephoneNumber,
-        area: actingUserFromDelius.apArea.name,
+        area: actingUserFromDelius.apArea,
       }
 
       const getUserByIdMock = jest.fn().mockResolvedValue(actingUserFromDelius)
@@ -88,7 +112,7 @@ describe('ConfirmYourDetails', () => {
         name: actingUserFromDelius.name,
         emailAddress: actingUserFromDelius.email,
         phoneNumber: actingUserFromDelius.telephoneNumber,
-        area: actingUserFromDelius.apArea.name,
+        area: actingUserFromDelius.apArea,
       }
 
       expect(getUserByIdMock).toHaveBeenCalledWith('token', application.createdByUserId)
@@ -175,7 +199,7 @@ describe('ConfirmYourDetails', () => {
           detailsToUpdate: [],
           userDetailsFromDelius: {
             ...body.userDetailsFromDelius,
-            area: '',
+            area: undefined,
           },
         },
         application,
@@ -230,7 +254,7 @@ describe('ConfirmYourDetails', () => {
         'Applicant name': body.userDetailsFromDelius.name,
         'Applicant email address': body.userDetailsFromDelius.emailAddress,
         'Applicant phone number': body.userDetailsFromDelius.phoneNumber,
-        'Applicant AP area': body.userDetailsFromDelius.area,
+        'Applicant AP area': body.userDetailsFromDelius.area.name,
         'Do you have case management responsibility?': 'Yes',
       })
     })
@@ -244,7 +268,7 @@ describe('ConfirmYourDetails', () => {
             ...body.userDetailsFromDelius,
             phoneNumber: undefined,
             emailAddress: undefined,
-            area: '',
+            area: undefined,
           },
         },
         application,
