@@ -3,8 +3,8 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PlacementRequestsController from './placementRequestsController'
 
-import { PlacementRequestService } from '../../../services'
-import { paginatedResponseFactory, placementRequestFactory } from '../../../testutils/factories'
+import { ApAreaService, PlacementRequestService } from '../../../services'
+import { apAreaFactory, paginatedResponseFactory, placementRequestFactory } from '../../../testutils/factories'
 import placementRequestDetail from '../../../testutils/factories/placementRequestDetail'
 import { PaginatedResponse } from '../../../@types/ui'
 import { PlacementRequest } from '../../../@types/shared'
@@ -23,12 +23,13 @@ describe('PlacementRequestsController', () => {
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
+  const apAreaService = createMock<ApAreaService>({})
 
   let placementRequestsController: PlacementRequestsController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    placementRequestsController = new PlacementRequestsController(placementRequestService)
+    placementRequestsController = new PlacementRequestsController(placementRequestService, apAreaService)
   })
 
   describe('index', () => {
@@ -49,6 +50,9 @@ describe('PlacementRequestsController', () => {
     })
 
     it('should render the placement requests template', async () => {
+      const apAreas = apAreaFactory.buildList(1)
+      apAreaService.getApAreas.mockResolvedValue(apAreas)
+
       const requestHandler = placementRequestsController.index()
 
       await requestHandler(request, response, next)
@@ -62,48 +66,65 @@ describe('PlacementRequestsController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
+        apAreas,
+        apArea: undefined,
+        requestType: undefined,
       })
 
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
         token,
-        'notMatched',
+        { apArea: undefined, requestType: undefined, status: 'notMatched' },
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
       )
+
+      expect(apAreaService.getApAreas).toHaveBeenCalledWith(token)
 
       expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.admin.placementRequests.index({}), {
         status: 'notMatched',
       })
     })
 
-    it('should handle the status parameter correctly', async () => {
+    it('should handle the parameters correctly', async () => {
+      const apAreas = apAreaFactory.buildList(1)
+      apAreaService.getApAreas.mockResolvedValue(apAreas)
+
       const requestHandler = placementRequestsController.index()
-      const notMatchedRequest = { ...request, query: { status: 'matched' } }
+
+      const apArea = 'some-ap-area-id'
+      const requestType = 'parole'
+      const status = 'notMatched'
+      const filters = { status, requestType, apArea }
+
+      const notMatchedRequest = { ...request, query: filters }
 
       await requestHandler(notMatchedRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
         pageHeading: 'Record and update placement details',
         placementRequests: paginatedResponse.data,
-        status: 'matched',
+        status,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
+        apAreas,
+        apArea,
+        requestType,
       })
 
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
         token,
-        'matched',
+        { requestType, status, apAreaId: apArea },
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
       )
 
       expect(getPaginationDetails).toHaveBeenCalledWith(notMatchedRequest, paths.admin.placementRequests.index({}), {
-        status: 'matched',
+        status: 'notMatched',
       })
     })
   })

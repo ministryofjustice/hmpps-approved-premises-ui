@@ -56,6 +56,10 @@ export default class ListPage extends Page {
     super.clickSortBy(field)
   }
 
+  clickApplyFilters(): void {
+    this.clickSubmit()
+  }
+
   shouldBeSortedByField(field: PlacementRequestSortField, order: SortOrder): void {
     super.shouldBeSortedByField(field, order)
   }

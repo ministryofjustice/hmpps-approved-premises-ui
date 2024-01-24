@@ -43,3 +43,8 @@ export const searchButton = (placementRequest: PlacementRequest) =>
 
 export const assessmentLink = (placementRequest: PlacementRequest, text: string, hiddenText: string) =>
   linkTo(assessPaths.assessments.show, { id: placementRequest.assessmentId }, { text, hiddenText })
+
+export const requestTypes = [
+  { name: 'Parole', value: 'parole' },
+  { name: 'Standard release', value: 'standardRelease' },
+]
