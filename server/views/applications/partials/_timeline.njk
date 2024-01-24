@@ -29,6 +29,9 @@
 
         <div class="moj-timeline__header">
           <h3 class="moj-timeline__title">{{event.label.text}}</h3>
+           {% if event.createdBy %}
+              <p class="moj-timeline__byline">by {{event.createdBy}}</p>
+            {%endif%}
         </div>
 
         <p class="moj-timeline__date">
