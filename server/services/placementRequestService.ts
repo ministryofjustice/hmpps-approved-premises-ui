@@ -10,11 +10,10 @@ import {
   PlacementRequest,
   PlacementRequestDetail,
   PlacementRequestSortField,
-  PlacementRequestStatus,
   SortDirection,
 } from '@approved-premises/api'
 import { RestClientBuilder } from '../data'
-import PlacementRequestClient from '../data/placementRequestClient'
+import PlacementRequestClient, { DashboardFilters } from '../data/placementRequestClient'
 
 export default class PlacementRequestService {
   constructor(private readonly placementRequestClientFactory: RestClientBuilder<PlacementRequestClient>) {}
@@ -39,14 +38,14 @@ export default class PlacementRequestService {
 
   async getDashboard(
     token: string,
-    status: PlacementRequestStatus,
+    filters: DashboardFilters,
     page: number = 1,
     sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<PlacementRequest>> {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
-    return placementRequestClient.dashboard({ status }, page, sortBy, sortDirection)
+    return placementRequestClient.dashboard(filters, page, sortBy, sortDirection)
   }
 
   async search(

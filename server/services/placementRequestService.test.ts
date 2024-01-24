@@ -1,5 +1,5 @@
 import { PlacementRequest, PlacementRequestDetail } from '@approved-premises/api'
-import PlacementRequestClient from '../data/placementRequestClient'
+import PlacementRequestClient, { DashboardFilters } from '../data/placementRequestClient'
 import {
   bookingNotMadeFactory,
   newPlacementRequestBookingConfirmationFactory,
@@ -49,6 +49,12 @@ describe('placementRequestService', () => {
   })
 
   describe('getDashboard', () => {
+    const defaultFilters: DashboardFilters = {
+      status: 'notMatched',
+      requestType: 'standardRelease',
+      apAreaId: '',
+    }
+
     it('calls the find method on the placementRequest client', async () => {
       const response = paginatedResponseFactory.build({
         data: placementRequestFactory.buildList(4, { status: 'notMatched' }),
@@ -56,12 +62,12 @@ describe('placementRequestService', () => {
 
       placementRequestClient.dashboard.mockResolvedValue(response)
 
-      const result = await service.getDashboard(token, 'notMatched')
+      const result = await service.getDashboard(token, defaultFilters)
 
       expect(result).toEqual(response)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
-      expect(placementRequestClient.dashboard).toHaveBeenCalledWith({ status: 'notMatched' }, 1, 'created_at', 'asc')
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(defaultFilters, 1, 'created_at', 'asc')
     })
 
     it('calls the find method on the placementRequest client with page and sort options', async () => {
@@ -71,12 +77,12 @@ describe('placementRequestService', () => {
 
       placementRequestClient.dashboard.mockResolvedValue(response)
 
-      const result = await service.getDashboard(token, 'notMatched', 2, 'duration', 'desc')
+      const result = await service.getDashboard(token, defaultFilters, 2, 'duration', 'desc')
 
       expect(result).toEqual(response)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
-      expect(placementRequestClient.dashboard).toHaveBeenCalledWith({ status: 'notMatched' }, 2, 'duration', 'desc')
+      expect(placementRequestClient.dashboard).toHaveBeenCalledWith(defaultFilters, 2, 'duration', 'desc')
     })
   })
 

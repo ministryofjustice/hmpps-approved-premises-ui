@@ -141,6 +141,6 @@ export const dashboardTableHeader = (
           text: 'Approved Premises',
         }
       : sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
-    sortHeader<PlacementRequestSortField>('Request Type', 'request_type', sortBy, sortDirection, hrefPrefix),
+    sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
   ]
 }

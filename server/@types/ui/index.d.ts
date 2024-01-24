@@ -19,7 +19,6 @@ import {
   BedOccupancyOpenEntry,
   BedOccupancyRange,
   Booking,
-  BookingAppealTask,
   Document,
   FlagsEnvelope,
   Mappa,
@@ -34,6 +33,7 @@ import {
   PlacementRequestTask,
   ReleaseTypeOption,
   RiskTier,
+  RiskTierLevel,
   RoshRisks,
   ApprovedPremisesUser as User,
   ApprovedPremisesUserRole as UserRole,
@@ -202,9 +202,11 @@ export type UiTimelineEvent = { label: { text: string }; datetime: { timestamp: 
 
 export type RiskLevel = 'Low' | 'Medium' | 'High' | 'Very High'
 
-export type TierNumber = '1' | '2' | '3' | '4'
-export type TierLetter = 'A' | 'B' | 'C' | 'D'
-export type RiskTierLevel = `${TierLetter}${TierNumber}`
+type GetRiskLevelLetter<T> = T extends `${infer RiskLetter}${string}` ? RiskLetter : never
+type GetRiskLevelNumber<T> = T extends `${string}${infer RiskNumber}` ? RiskNumber : never
+
+export type TierNumber = GetRiskLevelNumber<RiskTierLevel>
+export type TierLetter = GetRiskLevelLetter<RiskTierLevel>
 
 export type ApplicationType = 'Standard' | 'PIPE'
 

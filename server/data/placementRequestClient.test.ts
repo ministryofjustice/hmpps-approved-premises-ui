@@ -83,6 +83,44 @@ describeClient('placementRequestClient', provider => {
       })
     })
 
+    it('makes a get request to the placementRequests dashboard endpoint for matched requests ', async () => {
+      const apAreaId = 'area-id'
+      const requestType = 'standardRelease'
+      const status = 'matched'
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the placement requests dashboard view',
+        withRequest: {
+          method: 'GET',
+          path: paths.placementRequests.dashboard.pattern,
+          query: { page: '1', sortBy: 'created_at', sortDirection: 'asc', requestType, apAreaId, status },
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placementRequests,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
+        },
+      })
+
+      const result = await placementRequestClient.dashboard({ apAreaId, requestType, status })
+
+      expect(result).toEqual({
+        data: placementRequests,
+        pageNumber: '1',
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
+    })
+
     it('makes a get request to the placementRequests dashboard endpoint for requests of another type', async () => {
       provider.addInteraction({
         state: 'Server is healthy',

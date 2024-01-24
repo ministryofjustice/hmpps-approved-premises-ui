@@ -1,6 +1,9 @@
 {% extends "../../partials/layout.njk" %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
 {% from "./_navigation.njk" import navigation %}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
@@ -17,6 +20,51 @@
       <p class="govuk-body">
         All applications that have been assessed as suitable and require matching to an AP are listed below
       </p>
+      <div class="search-and-filter__wrapper">
+        <form action="{{ paths.admin.placementRequests.index({}) }}" method="get">
+
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-quarter">
+              <h2 class="govuk-heading-m">Filters</h2>
+            </div>
+          </div>
+
+          <div class="govuk-grid-row">
+
+            <div class="govuk-grid-column-one-quarter">
+              {{ govukSelect({
+                label: {
+                  text: "AP Area",
+                  classes: "govuk-label--s"
+                },
+                classes: "govuk-input--width-20",
+                id: "apArea",
+                name: "apArea",
+                items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'apArea', context)
+              }) }}
+            </div>
+            <div class="govuk-grid-column-one-quarter">
+              {{ govukSelect({
+                label: {
+                text: "Request type",
+                classes: "govuk-label--s"
+                },
+                id: "requestType",
+                name: "requestType",
+                items: convertObjectsToSelectOptions(PlacementRequestUtils.requestTypes, 'All request types', 'name', 'value', 'requestType', context)
+              }) }}
+            </div>
+
+            <div class="govuk-grid-column-one-quarter">
+              {{ govukButton({
+                "name": "submit",
+                "text": "Apply filters",
+                "classes": "search-and-filter__submit"
+            }) }}
+            </div>
+          </div>
+        </form>
+      </div>
 
       {{ navigation(status) }}
 

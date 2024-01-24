@@ -2,6 +2,7 @@ import ListPage from '../../pages/admin/placementApplications/listPage'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
 
 import {
+  apAreaFactory,
   applicationFactory,
   cancellationFactory,
   placementRequestDetailFactory,
@@ -38,6 +39,8 @@ context('Placement Requests', () => {
   const preferredAps = premisesFactory.buildList(3)
   let application = applicationFactory.build()
 
+  const apArea = apAreaFactory.build()
+
   beforeEach(() => {
     cy.task('reset')
 
@@ -63,6 +66,7 @@ context('Placement Requests', () => {
     cy.task('stubPlacementRequest', unmatchedPlacementRequest)
     cy.task('stubPlacementRequest', matchedPlacementRequest)
     cy.task('stubPlacementRequest', unableToMatchPlacementRequest)
+    cy.task('stubApAreaReferenceData', apArea)
   })
 
   it('allows me to view a placement request', () => {
@@ -388,15 +392,17 @@ context('Placement Requests', () => {
       expect(requests).to.have.length(1)
     })
   })
-  ;[
-    'expected_arrival',
-    'person_name',
-    'person_risks_tier',
-    'expected_arrival',
-    'application_date',
-    'duration',
-    'request_type',
-  ].forEach(field => {
+  ;(
+    [
+      'expected_arrival',
+      'person_name',
+      'person_risks_tier',
+      'expected_arrival',
+      'application_date',
+      'duration',
+      'request_type',
+    ] as const
+  ).forEach(field => {
     it(`supports sorting by ${field}`, () => {
       cy.task('stubPlacementRequestsDashboard', {
         placementRequests: unmatchedPlacementRequests,
@@ -446,6 +452,39 @@ context('Placement Requests', () => {
       }).then(requests => {
         expect(requests).to.have.length(1)
       })
+    })
+  })
+
+  it(`supports filtering`, () => {
+    cy.task('stubPlacementRequestsDashboard', {
+      placementRequests: [
+        ...unmatchedPlacementRequests,
+        ...matchedPlacementRequests,
+        ...unableToMatchPlacementRequests,
+      ],
+      status: 'notMatched',
+      sortBy: 'created_at',
+      sortDirection: 'asc',
+    })
+    cy.task('stubApAreaReferenceData', apArea)
+
+    // Given I am on the placement request dashboard
+    const listPage = ListPage.visit()
+
+    // When I filter by AP area and request type
+    listPage.getSelectInputByIdAndSelectAnEntry('apArea', apArea.name)
+    listPage.getSelectInputByIdAndSelectAnEntry('requestType', 'parole')
+    listPage.clickApplyFilters()
+
+    // Then the API should receive a request with the correct query parameters
+    cy.task('verifyPlacementRequestsDashboard', {
+      status: 'notMatched',
+    }).then(requests => {
+      expect(requests).to.have.length(2)
+      const { apAreaId, requestType } = requests[1].queryParams
+
+      expect(apAreaId.values).to.deep.equal([apArea.id])
+      expect(requestType.values).to.deep.equal(['parole'])
     })
   })
 })

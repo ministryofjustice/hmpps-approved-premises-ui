@@ -12,7 +12,7 @@ import type { Services } from '../../services'
 
 export const controllers = (services: Services) => {
   const { placementRequestService, premisesService, reportService, apAreaService } = services
-  const adminPlacementRequestsController = new AdminPlacementRequestsController(placementRequestService)
+  const adminPlacementRequestsController = new AdminPlacementRequestsController(placementRequestService, apAreaService)
   const placementRequestsBookingsController = new PlacementRequestsBookingsController(
     placementRequestService,
     premisesService,

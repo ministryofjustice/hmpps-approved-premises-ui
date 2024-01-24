@@ -6,6 +6,7 @@ import {
   Person,
   PersonAcctAlert,
   PrisonCaseNote,
+  SortOrder,
 } from '../../server/@types/shared'
 import { KeyDetailsArgs, PersonRisksUI, SummaryListItem, TableCell } from '../../server/@types/ui'
 import errorLookups from '../../server/i18n/en/errors.json'
@@ -401,7 +402,7 @@ export default abstract class Page {
     cy.get(`th[data-cy-sort-field="${field}"] a`).click()
   }
 
-  shouldBeSortedByField(field: string, order: string): void {
+  shouldBeSortedByField(field: string, order: SortOrder): void {
     cy.get(`th[data-cy-sort-field="${field}"]`).should('have.attr', 'aria-sort', order)
   }
 

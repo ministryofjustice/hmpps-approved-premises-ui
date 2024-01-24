@@ -1,10 +1,12 @@
 import {
+  ApArea,
   BookingNotMade,
   NewBookingNotMade,
   NewPlacementRequestBooking,
   NewPlacementRequestBookingConfirmation,
   PlacementRequest,
   PlacementRequestDetail,
+  PlacementRequestRequestType,
   PlacementRequestSortField,
   PlacementRequestStatus,
   SortDirection,
@@ -14,6 +16,14 @@ import RestClient from './restClient'
 import paths from '../paths/api'
 import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '../@types/ui'
 import { normaliseCrn } from '../utils/normaliseCrn'
+
+type DashboardQueryParams = DashboardFilters & PlacementRequestDashboardSearchOptions
+
+export type DashboardFilters = {
+  status?: PlacementRequestStatus
+  requestType?: PlacementRequestRequestType | ''
+  apAreaId?: ApArea['id']
+}
 
 export default class PlacementRequestClient {
   restClient: RestClient
@@ -29,20 +39,31 @@ export default class PlacementRequestClient {
   }
 
   async dashboard(
-    filters: { status: PlacementRequestStatus } | PlacementRequestDashboardSearchOptions = {
+    allParams: DashboardQueryParams = {
       status: 'notMatched',
+      requestType: '',
+      apAreaId: '',
     },
     page = 1,
     sortBy: PlacementRequestSortField = 'created_at',
     sortDirection: SortDirection = 'asc',
   ): Promise<PaginatedResponse<PlacementRequest>> {
-    if ('crnOrName' in filters) {
-      filters.crnOrName = normaliseCrn(filters.crnOrName)
+    const params: DashboardQueryParams = {}
+
+    Object.keys(allParams).forEach(key => {
+      if (allParams[key]) {
+        params[key] = allParams[key]
+      }
+    })
+
+    if ('crnOrName' in allParams) {
+      params.crnOrName = normaliseCrn(allParams.crnOrName)
     }
+
     return this.restClient.getPaginatedResponse<PlacementRequest>({
       path: paths.placementRequests.dashboard.pattern,
       page: page.toString(),
-      query: { ...filters, sortBy, sortDirection },
+      query: { ...params, sortBy, sortDirection },
     })
   }
 

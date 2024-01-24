@@ -1,8 +1,8 @@
 import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
-import type { PersonRisks, RiskEnvelopeStatus } from '@approved-premises/api'
-import { RiskLevel, RiskTierLevel, TierLetter, TierNumber } from '@approved-premises/ui'
+import type { PersonRisks, RiskEnvelopeStatus, RiskTierLevel } from '@approved-premises/api'
+import { RiskLevel, TierLetter, TierNumber } from '@approved-premises/ui'
 import { DateFormats } from '../../utils/dateUtils'
 
 const riskLevels: Array<RiskLevel> = ['Low', 'Medium', 'High', 'Very High']
@@ -50,7 +50,7 @@ const flagsFactory = Factory.define<PersonRisks['flags']>(() => {
 })
 
 const lettersFactory: () => TierLetter = () => faker.helpers.arrayElement<TierLetter>(['A', 'B', 'C', 'D'])
-const numbersFactory: () => TierNumber = () => faker.helpers.arrayElement<TierNumber>(['1', '2', '3', '4'])
+const numbersFactory: () => TierNumber = () => faker.helpers.arrayElement<TierNumber>(['1', '2', '3'])
 
 export const riskTierLevel: RiskTierLevel = `${lettersFactory()}${numbersFactory()}`
 
