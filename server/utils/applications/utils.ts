@@ -297,6 +297,7 @@ const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiT
           date: DateFormats.isoDateTimeToUIDateTime(timelineEvent.occurredAt),
         },
         content: timelineEvent.content,
+        associatedUrls: timelineEvent.associatedUrls,
       }
       if (timelineEvent.createdBy?.name) {
         return {

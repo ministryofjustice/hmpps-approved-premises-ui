@@ -25,4 +25,5 @@ export default Factory.define<TimelineEvent>(() => ({
   ] as const),
   content: Math.random() < 0.5 ? faker.lorem.sentences() : undefined,
   createdBy: userFactory.build(),
+  associatedUrls: [{ type: 'application', url: faker.internet.url() }],
 }))
