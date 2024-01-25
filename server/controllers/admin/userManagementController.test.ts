@@ -75,6 +75,11 @@ describe('UserManagementController', () => {
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
       })
+      expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.admin.userManagement.index({}), {
+        role: undefined,
+        qualification: undefined,
+        selectedArea: undefined,
+      })
     })
 
     it('should render the template with AP Areas based on the current user token', async () => {
@@ -99,7 +104,7 @@ describe('UserManagementController', () => {
     })
 
     it('filters users by AP area', async () => {
-      const requestWithQuery = { ...request, query: { areas: '1234' } }
+      const requestWithQuery = { ...request, query: { area: '1234' } }
       const requestHandler = userManagementController.index()
 
       await requestHandler(requestWithQuery, response, next)
@@ -124,10 +129,15 @@ describe('UserManagementController', () => {
         sortDirection: paginationDetails.sortDirection,
         selectedArea: '1234',
       })
+      expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.admin.userManagement.index({}), {
+        role: undefined,
+        qualification: undefined,
+        area: '1234',
+      })
     })
 
     it('filters users by role', async () => {
-      const requestWithQuery = { ...request, query: { roles: 'assessor' } }
+      const requestWithQuery = { ...request, query: { role: 'assessor' } }
       const requestHandler = userManagementController.index()
 
       await requestHandler(requestWithQuery, response, next)
@@ -151,11 +161,16 @@ describe('UserManagementController', () => {
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
         selectedRole: 'assessor',
+      })
+      expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.admin.userManagement.index({}), {
+        role: 'assessor',
+        qualification: undefined,
+        area: undefined,
       })
     })
 
     it('filters users by qualification', async () => {
-      const requestWithQuery = { ...request, query: { qualifications: 'esap' } }
+      const requestWithQuery = { ...request, query: { qualification: 'esap' } }
       const requestHandler = userManagementController.index()
 
       await requestHandler(requestWithQuery, response, next)
@@ -180,10 +195,15 @@ describe('UserManagementController', () => {
         sortDirection: paginationDetails.sortDirection,
         selectedQualification: 'esap',
       })
+      expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.admin.userManagement.index({}), {
+        role: undefined,
+        qualification: 'esap',
+        area: undefined,
+      })
     })
 
     it('applies more than one filter', async () => {
-      const requestWithQuery = { ...request, query: { qualifications: 'esap', roles: 'assessor' } }
+      const requestWithQuery = { ...request, query: { qualification: 'esap', role: 'assessor' } }
       const requestHandler = userManagementController.index()
 
       await requestHandler(requestWithQuery, response, next)
@@ -208,6 +228,11 @@ describe('UserManagementController', () => {
         sortDirection: paginationDetails.sortDirection,
         selectedQualification: 'esap',
         selectedRole: 'assessor',
+      })
+      expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.admin.userManagement.index({}), {
+        role: 'assessor',
+        qualification: 'esap',
+        area: undefined,
       })
     })
   })

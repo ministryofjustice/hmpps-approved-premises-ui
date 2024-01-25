@@ -61,34 +61,34 @@
           <div class="govuk-grid-column-one-quarter">
             {{ govukSelect({
                 label: {
-                  text: "Roles",
+                  text: "Role",
                   classes: "govuk-label--s"
                 },
-                id: "roles",
-                name: "roles",
+                id: "role",
+                name: "role",
                 items: UserUtils.userRolesSelectOptions(selectedRole)
               }) }}
           </div>
           <div class="govuk-grid-column-one-quarter">
             {{ govukSelect({
                 label: {
-                  text: "AP Areas",
+                  text: "AP Area",
                   classes: "govuk-label--s"
                 },
                 classes: "govuk-input--width-20",
-                id: "areas",
-                name: "areas",
+                id: "area",
+                name: "area",
                 items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'selectedArea')
               }) }}
           </div>
           <div class="govuk-grid-column-one-quarter">
             {{ govukSelect({
                 label: {
-                text: "Allocations",
+                text: "Allocation",
                 classes: "govuk-label--s"
                 },
-                id: "qualifications",
-                name: "qualifications",
+                id: "qualification",
+                name: "qualification",
                 items: UserUtils.userQualificationsSelectOptions(selectedQualification)
               }) }}
           </div>

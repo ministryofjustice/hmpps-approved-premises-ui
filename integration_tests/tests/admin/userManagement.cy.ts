@@ -1,3 +1,4 @@
+import { ApprovedPremisesUserRole, UserQualification } from '../../../server/@types/shared'
 import paths from '../../../server/paths/admin'
 import { userFactory } from '../../../server/testutils/factories'
 import ConfirmDeletionPage from '../../pages/admin/userManagement/confirmDeletionPage'
@@ -279,7 +280,9 @@ context('User management', () => {
   })
 
   it('allows filter for users', () => {
-    const usersForResults = userFactory.buildList(1)
+    const usersForResultsPage1 = userFactory.buildList(1)
+    const usersForResultsPage2 = userFactory.buildList(1)
+
     const initialUsers = userFactory.buildList(10)
     cy.task('stubUsers', { users: initialUsers })
     cy.task('stubApAreaReferenceData', {
@@ -295,17 +298,31 @@ context('User management', () => {
     page.shouldShowUsers(initialUsers)
 
     // When I search for a user
-    cy.task('stubUserFilter', {
-      results: usersForResults,
-      roles: 'assessor',
-      qualifications: 'lao',
+    cy.task('stubUsers', {
+      users: usersForResultsPage1,
+      roles: ['assessor'] as Array<ApprovedPremisesUserRole>,
+      qualifications: ['lao'] as Array<UserQualification>,
       apAreaId: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
     })
-    page.searchBy('roles', 'assessor')
-    page.searchBy('areas', '0544d95a-f6bb-43f8-9be7-aae66e3bf244')
-    page.searchBy('qualifications', 'lao')
+    cy.task('stubUsers', {
+      users: usersForResultsPage2,
+      roles: ['assessor'] as Array<ApprovedPremisesUserRole>,
+      qualifications: ['lao'] as Array<UserQualification>,
+      apAreaId: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
+      page: '2',
+    })
+    page.searchBy('role', 'assessor')
+    page.searchBy('area', '0544d95a-f6bb-43f8-9be7-aae66e3bf244')
+    page.searchBy('qualification', 'lao')
     page.clickApplyFilter()
+
     // Then the page should show the results
-    page.shouldShowUsers(usersForResults)
+    page.shouldShowUsers(usersForResultsPage1)
+
+    // When I click on a page number
+    page.clickPageNumber('2')
+
+    // Then the page should show the results for the second page
+    page.shouldShowUsers(usersForResultsPage2)
   })
 })

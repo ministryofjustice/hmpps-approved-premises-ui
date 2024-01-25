@@ -30,6 +30,7 @@ const stubUsers = (args: {
   users: Array<User>
   roles?: Array<UserRole>
   qualifications?: Array<UserQualification>
+  apAreaId: string
   page: string
   sortBy: string
   sortDirection: string
@@ -47,11 +48,21 @@ const stubUsers = (args: {
   } as Record<string, unknown>
 
   if (args.roles) {
-    queryParameters.roles = args.roles.join(',')
+    queryParameters.roles = {
+      equalTo: args.roles.join(','),
+    }
   }
 
   if (args.qualifications) {
-    queryParameters.qualifications = args.qualifications.join(',')
+    queryParameters.qualifications = {
+      equalTo: args.qualifications.join(','),
+    }
+  }
+
+  if (args.apAreaId) {
+    queryParameters.apAreaId = {
+      equalTo: args.apAreaId,
+    }
   }
 
   return stubFor({
@@ -120,28 +131,6 @@ const stubUserSearch = (args: { results: Array<User>; searchTerm: string }) =>
     request: {
       method: 'GET',
       url: `${paths.users.search({})}?${QueryString.stringify({ name: args.searchTerm })}`,
-    },
-    response: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-      jsonBody: args.results,
-    },
-  })
-
-const stubUserFilter = (args: { results: Array<User>; roles: string; qualifications: string; apAreaId: string }) =>
-  stubFor({
-    request: {
-      method: 'GET',
-      url: `${paths.users.index({})}?${QueryString.stringify({
-        page: 1,
-        roles: args.roles,
-        qualifications: args.qualifications,
-        apAreaId: args.apAreaId,
-        sortBy: 'name',
-        sortDirection: 'asc',
-      })}`,
     },
     response: {
       status: 200,
@@ -232,5 +221,4 @@ export default {
   verifyUsersRequest,
   stubProbationRegionsReferenceData,
   stubApAreaReferenceData,
-  stubUserFilter,
 }
