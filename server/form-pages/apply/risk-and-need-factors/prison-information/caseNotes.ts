@@ -193,6 +193,10 @@ export default class CaseNotes implements TasklistPage {
       }
     }
 
+    if (this.body.selectedCaseNotes.length > 10) {
+      errors.selectedCaseNotes = 'You can only select up to 10 prison case notes that support this application'
+    }
+
     return errors
   }
 
