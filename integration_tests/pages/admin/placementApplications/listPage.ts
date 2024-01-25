@@ -15,8 +15,9 @@ export default class ListPage extends Page {
     super('Record and update placement details')
   }
 
-  static visit(): ListPage {
-    cy.visit(paths.admin.placementRequests.index({}))
+  static visit(query?: string): ListPage {
+    const path = paths.admin.placementRequests.index({})
+    cy.visit(query ? `${path}?${query}` : path)
     return new ListPage()
   }
 
@@ -34,6 +35,10 @@ export default class ListPage extends Page {
           })
         })
     })
+  }
+
+  shouldHaveActiveTab(tabName: 'Ready to match' | 'Unable to match'): void {
+    cy.get('a.moj-sub-navigation__link').contains(tabName).should('have.attr', 'aria-current', 'page')
   }
 
   clickPlacementRequest(placementRequest: PlacementRequest): void {

@@ -21,7 +21,9 @@
         All applications that have been assessed as suitable and require matching to an AP are listed below
       </p>
       <div class="search-and-filter__wrapper">
-        <form action="{{ paths.admin.placementRequests.index({}) }}" method="get">
+        <form action="{{ paths.admin.placementRequests.index({}) }}" method="post">
+          <input type="hidden" name="status" value="{{ status }}">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
           <div class="govuk-grid-row">
             <div class="govuk-grid-column-one-quarter">
