@@ -111,25 +111,21 @@ describe('caseNoteCheckbox', () => {
     })
 
     expect(caseNoteCheckbox(caseNote, true)).toMatchStringIgnoringWhitespace(`
-    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
       <div class="govuk-checkboxes__item">
         <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="A" id="A" checked>
         <label class="govuk-label govuk-checkboxes__label" for="A">
           <span class="govuk-visually-hidden">Select case note from Friday 31 January 2020</span>
         </label>
       </div>
-     </div>
     `)
 
     expect(caseNoteCheckbox(caseNote, false)).toMatchStringIgnoringWhitespace(`
-    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-        <div class="govuk-checkboxes__item">
-          <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="A" id="A">
-          <label class="govuk-label govuk-checkboxes__label" for="A">
-            <span class="govuk-visually-hidden">Select case note from Friday 31 January 2020</span>
-          </label>
-        </div>
-    </div>
+      <div class="govuk-checkboxes__item">
+        <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="A" id="A">
+        <label class="govuk-label govuk-checkboxes__label" for="A">
+          <span class="govuk-visually-hidden">Select case note from Friday 31 January 2020</span>
+        </label>
+      </div>
     `)
   })
 })

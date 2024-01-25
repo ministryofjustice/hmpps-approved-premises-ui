@@ -53,7 +53,6 @@ export const acctAlertResponse = (acctAlert: PersonAcctAlert) => {
 
 export const caseNoteCheckbox = (caseNote: PrisonCaseNote, checked: boolean) => {
   return `
-  <div class="govuk-checkboxes" data-module="govuk-checkboxes">
     <div class="govuk-checkboxes__item">
       <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="${caseNote.id}" id="${
         caseNote.id
@@ -66,7 +65,6 @@ export const caseNoteCheckbox = (caseNote: PrisonCaseNote, checked: boolean) => 
         )}</span>
       </label>
     </div>
-  </div>
   `
 }
 

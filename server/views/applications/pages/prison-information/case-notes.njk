@@ -11,33 +11,43 @@
 {% endif %}
 
 {% set caseNotes %}
-<table class="govuk-table">
-  <caption class="govuk-table__caption govuk-table__caption--m">Prison case notes</caption>
-
-  <thead class="govuk-table__head">
-    <tr class="govuk-table__row">
-      <th scope="col" class="govuk-table__header">Select</th>
-      <th scope="col" class="govuk-table__header">Created</th>
-      <th scope="col" class="govuk-table__header">Comments</th>
-    </tr>
-  </thead>
-
-  <tbody class="govuk-table__body">
-    {% for caseNote in page.caseNotes %}
-      <tr class="govuk-table__row">
-        <td class="govuk-table__cell">{{ page.checkBoxForCaseNoteId(caseNote.id) | safe }}</td>
-        <td class="govuk-table__cell">{{ uiDateOrDateEmptyMessage(caseNote, 'createdAt', formatDate) }}</td>
-        <td class="govuk-table__cell">
-          <p>
-            <strong>Type: {{caseNote.type}}: {{caseNote.subType}}</strong>
-          </p>
-          <p>{{caseNote.note}}</p>
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
-
+  <div class="govuk-form-group{% if errors.selectedCaseNotes %} govuk-form-group--error{% endif %}">
+    <fieldset class="govuk-fieldset" {% if errors.selectedCaseNotes %}aria-describedby="case-notes-error"{% endif %}>
+      {% if errors.selectedCaseNotes %}
+        <p id="case-notes-error" class="govuk-error-message">
+          <span class="govuk-visually-hidden">Error:</span> You can only select up to 10 prison case notes that support this application
+        </p>
+      {% endif %}
+      <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+        <table class="govuk-table">
+          <caption class="govuk-table__caption govuk-table__caption--m">Prison case notes</caption>
+  
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header">Select</th>
+              <th scope="col" class="govuk-table__header">Created</th>
+              <th scope="col" class="govuk-table__header">Comments</th>
+            </tr>
+          </thead>
+    
+          <tbody class="govuk-table__body govuk-checkboxes">
+            {% for caseNote in page.caseNotes %}
+              <tr class="govuk-table__row">
+                <td class="govuk-table__cell">{{ page.checkBoxForCaseNoteId(caseNote.id) | safe }}</td>
+                <td class="govuk-table__cell">{{ uiDateOrDateEmptyMessage(caseNote, 'createdAt', formatDate) }}</td>
+                <td class="govuk-table__cell">
+                  <p>
+                    <strong>Type: {{caseNote.type}}: {{caseNote.subType}}</strong>
+                  </p>
+                  <p>{{caseNote.note}}</p>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </fieldset>
+  </div>
 {% endset %}
 
 {% block questions %}
