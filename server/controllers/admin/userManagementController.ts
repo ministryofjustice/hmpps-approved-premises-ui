@@ -14,13 +14,14 @@ export default class UserController {
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const role = req.query.roles as UserRole
-      const qualification = req.query.qualifications as UserQualification
-      const selectedArea = req.query.areas as string
+      const role = req.query.role as UserRole
+      const qualification = req.query.qualification as UserQualification
+      const selectedArea = req.query.area as string
 
       const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<UserSortField>(
         req,
         paths.admin.userManagement.index({}),
+        { role, qualification, area: selectedArea },
       )
 
       const usersResponse = await this.userService.getUsers(
