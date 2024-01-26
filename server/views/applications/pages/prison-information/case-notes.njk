@@ -12,7 +12,8 @@
 
 {% set caseNotes %}
   <div class="govuk-form-group{% if errors.selectedCaseNotes %} govuk-form-group--error{% endif %}">
-    <fieldset class="govuk-fieldset" {% if errors.selectedCaseNotes %}aria-describedby="case-notes-error"{% endif %}>
+    <fieldset class="govuk-fieldset" aria-describedby="case-notes-error">
+      <legend class="govuk-fieldset__legend govuk-fieldset__legend--m" id="prison-case-notes">Prison case notes</legend>
       {% if errors.selectedCaseNotes %}
         <p id="case-notes-error" class="govuk-error-message">
           <span class="govuk-visually-hidden">Error:</span> You can only select up to 10 prison case notes that support this application
@@ -20,8 +21,6 @@
       {% endif %}
       <div class="govuk-checkboxes" data-module="govuk-checkboxes">
         <table class="govuk-table">
-          <caption class="govuk-table__caption govuk-table__caption--m">Prison case notes</caption>
-  
           <thead class="govuk-table__head">
             <tr class="govuk-table__row">
               <th scope="col" class="govuk-table__header">Select</th>
