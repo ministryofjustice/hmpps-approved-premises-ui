@@ -2,6 +2,8 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "./_navigation.njk" import navigation %}
 
@@ -10,12 +12,41 @@
 
 {% block content %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
+  <div class="govuk-width-container">
+    <div>
 
       <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
       {% include "../_messages.njk" %}
-
+      <div class="search-and-filter__wrapper">
+        <form action="{{ paths.tasks.index({}) }}" method="get">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-quarter">
+              <h2 class="govuk-heading-m">Filters</h2>
+            </div>
+          </div>
+          <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-third">
+              {{ govukSelect({
+                      label: {
+                        text: "AP Areas",
+                        classes: "govuk-label--s"
+                      },
+                      id: "areas",
+                      name: "areas",
+                      items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'selectedArea')
+                    }) }}
+            </div>
+            <div class="govuk-grid-column-two-third">
+              {{ govukButton({
+                      "name": "submit",
+                      "text": "Apply filters",
+                      "classes": "search-and-filter__submit"
+                  }) }}
+            </div>
+          </div>
+        </form>
+      </div>
       {{ navigation(allocatedFilter) }}
 
       {{

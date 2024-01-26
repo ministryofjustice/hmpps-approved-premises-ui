@@ -402,6 +402,14 @@ export default abstract class Page {
     cy.get(`th[data-cy-sort-field="${field}"] a`).click()
   }
 
+  searchBy(id: string, item: string): void {
+    this.getSelectInputByIdAndSelectAnEntry(id, item)
+  }
+
+  clickApplyFilter(): void {
+    cy.get('button').contains('Apply filters').click()
+  }
+
   shouldBeSortedByField(field: string, order: SortOrder): void {
     cy.get(`th[data-cy-sort-field="${field}"]`).should('have.attr', 'aria-sort', order)
   }
