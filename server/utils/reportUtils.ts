@@ -3,8 +3,8 @@ export const reportNames = {
   'placement-metrics': 'Placement Metrics',
   'referrals-by-ap-type': 'Referrals by AP Type',
   'referrals-by-tier': 'Referrals by Tier',
-  applications: 'Applications',
-  referrals: 'Referrals',
+  applications: 'Combined applications and placement requests',
+  referrals: 'Applications',
   'lost-beds': 'Lost Beds',
   'placement-applications': 'Placement Requests',
 } as const
