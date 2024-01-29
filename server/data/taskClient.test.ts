@@ -30,7 +30,13 @@ describeClient('taskClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.tasks.reallocatable.index.pattern,
-          query: { allocatedFilter: 'allocated', page: '1', sortDirection: 'asc', sortBy: 'createdAt' },
+          query: {
+            allocatedFilter: 'allocated',
+            apAreaId: 'test',
+            page: '1',
+            sortDirection: 'asc',
+            sortBy: 'createdAt',
+          },
           headers: {
             authorization: `Bearer ${token}`,
             'X-Service-Name': 'approved-premises',
@@ -47,7 +53,7 @@ describeClient('taskClient', provider => {
         },
       })
 
-      const result = await taskClient.allReallocatable('allocated', 1, 'asc', 'createdAt')
+      const result = await taskClient.allReallocatable('allocated', 'test', 1, 'asc', 'createdAt')
 
       expect(result).toEqual({
         data: tasks,

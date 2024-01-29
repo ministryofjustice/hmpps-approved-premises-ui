@@ -21,10 +21,11 @@ export default class TaskService {
     sortBy: TaskSortField,
     sortDirection: SortDirection,
     page: number = 1,
+    apAreaId: string = '',
   ): Promise<PaginatedResponse<Task>> {
     const taskClient = this.taskClientFactory(token)
 
-    const tasks = await taskClient.allReallocatable(allocatedFilter, page, sortDirection, sortBy)
+    const tasks = await taskClient.allReallocatable(allocatedFilter, apAreaId, page, sortDirection, sortBy)
     return tasks
   }
 

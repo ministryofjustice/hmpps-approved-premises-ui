@@ -1,6 +1,6 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { convertToTitleCase, sentenceCase } from '../utils/utils'
-import { ApplicationService, TaskService } from '../services'
+import { ApAreaService, ApplicationService, TaskService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 import { getPaginationDetails } from '../utils/getPaginationDetails'
 import paths from '../paths/api'
@@ -10,11 +10,13 @@ export default class TasksController {
   constructor(
     private readonly taskService: TaskService,
     private readonly applicationService: ApplicationService,
+    private readonly apAreaService: ApAreaService,
   ) {}
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       const allocatedFilter = (req.query.allocatedFilter as AllocatedFilter) || 'allocated'
+      const apAreaId = req.query.areas ? req.query.areas : res.locals.user.apArea
       const {
         pageNumber,
         sortDirection = 'asc',
@@ -29,12 +31,15 @@ export default class TasksController {
         sortBy,
         sortDirection,
         pageNumber,
+        apAreaId,
       )
+      const apAreas = await this.apAreaService.getApAreas(req.user.token)
 
       res.render('tasks/index', {
         pageHeading: 'Tasks',
         tasks: tasks.data,
         allocatedFilter,
+        apAreas,
         pageNumber: Number(tasks.pageNumber),
         totalPages: Number(tasks.totalPages),
         hrefPrefix,

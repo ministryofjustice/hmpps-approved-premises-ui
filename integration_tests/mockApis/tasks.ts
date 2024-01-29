@@ -14,12 +14,14 @@ export default {
     page = '1',
     sortDirection = 'asc',
     sortBy = 'createdAt',
+    apAreaId = '',
   }: {
     tasks: Array<Task>
     page: string
     allocatedFilter: string
     sortDirection: SortDirection
     sortBy: TaskSortField
+    apAreaId: string
   }): SuperAgentRequest => {
     const queryParameters = {
       page: {
@@ -27,6 +29,9 @@ export default {
       },
       allocatedFilter: {
         equalTo: allocatedFilter,
+      },
+      apAreaId: {
+        equalTo: apAreaId,
       },
       sortDirection: {
         equalTo: sortDirection,

@@ -3,8 +3,15 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { Task } from '@approved-premises/api'
 import TasksController from './tasksController'
-import { applicationFactory, paginatedResponseFactory, taskFactory, taskWrapperFactory } from '../testutils/factories'
-import { ApplicationService, TaskService } from '../services'
+import {
+  apAreaFactory,
+  applicationFactory,
+  paginatedResponseFactory,
+  taskFactory,
+  taskWrapperFactory,
+  userDetailsFactory,
+} from '../testutils/factories'
+import { ApAreaService, ApplicationService, TaskService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 import { ErrorsAndUserInput, PaginatedResponse } from '../@types/ui'
 import paths from '../paths/api'
@@ -22,20 +29,25 @@ describe('TasksController', () => {
 
   const applicationService = createMock<ApplicationService>({})
   const taskService = createMock<TaskService>({})
+  const apAreaService: DeepMocked<ApAreaService> = createMock<ApAreaService>({})
 
   let tasksController: TasksController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    tasksController = new TasksController(taskService, applicationService)
+    tasksController = new TasksController(taskService, applicationService, apAreaService)
   })
 
   describe('index', () => {
     it('should render the tasks template', async () => {
+      const user = userDetailsFactory.build()
+      response.locals.user = { ...user, apArea: '1234' }
       const tasks = taskFactory.buildList(1)
       const paginatedResponse = paginatedResponseFactory.build({
         data: tasks,
       }) as PaginatedResponse<Task>
+      const apAreas = apAreaFactory.buildList(1)
+      apAreaService.getApAreas.mockResolvedValue(apAreas)
 
       const paginationDetails = {
         hrefPrefix: paths.tasks.index({}),
@@ -52,13 +64,14 @@ describe('TasksController', () => {
         pageHeading: 'Tasks',
         tasks,
         allocatedFilter: 'allocated',
+        apAreas,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: 'createdAt',
         sortDirection: 'asc',
       })
-      expect(taskService.getAllReallocatable).toHaveBeenCalledWith(token, 'allocated', 'createdAt', 'asc', 1)
+      expect(taskService.getAllReallocatable).toHaveBeenCalledWith(token, 'allocated', 'createdAt', 'asc', 1, '1234')
     })
 
     it('should handle request parameters correctly', async () => {
@@ -66,6 +79,8 @@ describe('TasksController', () => {
       const paginatedResponse = paginatedResponseFactory.build({
         data: tasks,
       }) as PaginatedResponse<Task>
+      const apAreas = apAreaFactory.buildList(1)
+      apAreaService.getApAreas.mockResolvedValue(apAreas)
 
       const paginationDetails = {
         hrefPrefix: paths.tasks.index({}),
@@ -79,13 +94,15 @@ describe('TasksController', () => {
 
       const requestHandler = tasksController.index()
 
-      const unallocatedRequest = { ...request, query: { allocatedFilter: 'unallocated' } }
+      const unallocatedRequest = { ...request, query: { allocatedFilter: 'unallocated', areas: '1234' } }
+
       await requestHandler(unallocatedRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
         pageHeading: 'Tasks',
         tasks,
         allocatedFilter: 'unallocated',
+        apAreas,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
@@ -98,6 +115,7 @@ describe('TasksController', () => {
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
         1,
+        '1234',
       )
     })
   })

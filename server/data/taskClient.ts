@@ -13,6 +13,7 @@ export default class TaskClient {
 
   async allReallocatable(
     allocatedFilter: string,
+    apAreaId: string,
     page: number,
     sortDirection: string,
     sortBy: TaskSortField,
@@ -20,7 +21,7 @@ export default class TaskClient {
     return this.restClient.getPaginatedResponse({
       path: paths.tasks.reallocatable.index.pattern,
       page: page.toString(),
-      query: { allocatedFilter, sortDirection, sortBy },
+      query: { allocatedFilter, apAreaId, sortDirection, sortBy },
     })
   }
 
