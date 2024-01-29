@@ -23,6 +23,9 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.admin.placementRequests.index.pattern, adminPlacementRequestsController.index(), {
     auditEvent: 'ADMIN_LIST_PLACEMENT_REQUESTS',
   })
+  post(paths.admin.placementRequests.index.pattern, adminPlacementRequestsController.index(), {
+    auditEvent: 'ADMIN_LIST_FILTER_PLACEMENT_REQUESTS',
+  })
   get(paths.admin.placementRequests.search.pattern, adminPlacementRequestsController.search(), {
     auditEvent: 'ADMIN_SEARCH_PLACEMENT_REQUESTS',
   })

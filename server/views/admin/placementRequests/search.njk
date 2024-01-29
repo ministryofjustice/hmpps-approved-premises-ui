@@ -26,6 +26,8 @@
       <div class="search-and-filter__wrapper">
 
         <form action="{{ paths.admin.placementRequests.search({}) }}" method="get">
+          <input type="hidden" name="status" value="{{ status }}">
+          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
           <div class="govuk-grid-row">
             <div class="govuk-grid-column-full">

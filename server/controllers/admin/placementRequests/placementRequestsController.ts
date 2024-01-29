@@ -1,11 +1,10 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { ApAreaService, PlacementRequestService } from '../../../services'
-import { ApArea, PlacementRequestSortField, PlacementRequestStatus } from '../../../@types/shared'
+import { PlacementRequestSortField } from '../../../@types/shared'
 import paths from '../../../paths/admin'
 import { PlacementRequestDashboardSearchOptions } from '../../../@types/ui'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../../utils/getSearchOptions'
-import { DashboardFilters } from '../../../data/placementRequestClient'
 
 export default class PlacementRequestsController {
   constructor(
@@ -15,9 +14,13 @@ export default class PlacementRequestsController {
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const status = (req.query.status as PlacementRequestStatus) || 'notMatched'
-      const apAreaId = req.query.apArea as ApArea['id'] | undefined
-      const requestType = req.query.requestType as DashboardFilters['requestType'] | undefined
+      const [apAreaId, requestType] = ['apArea', 'requestType'].map(filter =>
+        req.query[filter] ? req.query[filter] : req.body[filter],
+      )
+      let status = req.query.status ? req.query.status : req.body.status
+      if (status === undefined) {
+        status = 'notMatched'
+      }
 
       const apAreas = await this.apAreaService.getApAreas(req.user.token)
 

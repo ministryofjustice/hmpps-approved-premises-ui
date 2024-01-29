@@ -86,7 +86,7 @@ describe('PlacementRequestsController', () => {
       })
     })
 
-    it('should handle the parameters correctly', async () => {
+    it('should handle the parameters', async () => {
       const apAreas = apAreaFactory.buildList(1)
       apAreaService.getApAreas.mockResolvedValue(apAreas)
 
@@ -125,6 +125,48 @@ describe('PlacementRequestsController', () => {
 
       expect(getPaginationDetails).toHaveBeenCalledWith(notMatchedRequest, paths.admin.placementRequests.index({}), {
         status: 'notMatched',
+      })
+    })
+
+    it('should retain the status filter when there is one present in the body', async () => {
+      const apAreas = apAreaFactory.buildList(1)
+      apAreaService.getApAreas.mockResolvedValue(apAreas)
+
+      const requestHandler = placementRequestsController.index()
+
+      const apArea = 'some-ap-area-id'
+      const requestType = 'parole'
+      const status = 'unableToMatch'
+      const filters = { requestType, apArea }
+
+      const statusRequest = { ...request, query: filters, body: { status } }
+
+      await requestHandler(statusRequest, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
+        pageHeading: 'Record and update placement details',
+        placementRequests: paginatedResponse.data,
+        status,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
+        apAreas,
+        apArea,
+        requestType,
+      })
+
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
+        token,
+        { requestType, status, apAreaId: apArea },
+        paginationDetails.pageNumber,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
+
+      expect(getPaginationDetails).toHaveBeenCalledWith(statusRequest, paths.admin.placementRequests.index({}), {
+        status: 'unableToMatch',
       })
     })
   })

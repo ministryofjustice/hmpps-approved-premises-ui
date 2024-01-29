@@ -487,4 +487,29 @@ context('Placement Requests', () => {
       expect(requestType.values).to.deep.equal(['parole'])
     })
   })
+
+  it('retains the status filter when applying other filters', () => {
+    cy.task('stubPlacementRequestsDashboard', {
+      placementRequests: [
+        ...unmatchedPlacementRequests,
+        ...matchedPlacementRequests,
+        ...unableToMatchPlacementRequests,
+      ],
+      status: 'notMatched',
+      sortBy: 'created_at',
+      sortDirection: 'asc',
+    })
+    cy.task('stubApAreaReferenceData', apArea)
+
+    // Given I am on the placement request dashboard filtering by the unableToMatch status
+    const listPage = ListPage.visit('status=unableToMatch')
+
+    // When I filter by AP area and request type
+    listPage.getSelectInputByIdAndSelectAnEntry('apArea', apArea.name)
+    listPage.getSelectInputByIdAndSelectAnEntry('requestType', 'parole')
+    listPage.clickApplyFilters()
+
+    // Then the status filter should be retained
+    listPage.shouldHaveActiveTab('Unable to match')
+  })
 })
