@@ -21,7 +21,7 @@
         All applications that have been assessed as suitable and require matching to an AP are listed below
       </p>
       <div class="search-and-filter__wrapper">
-        <form action="{{ paths.admin.placementRequests.index({}) }}" method="post">
+        <form action="{{ paths.admin.placementRequests.index({}) }}" method="get">
           <input type="hidden" name="status" value="{{ status }}">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
