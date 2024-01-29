@@ -111,25 +111,21 @@ describe('caseNoteCheckbox', () => {
     })
 
     expect(caseNoteCheckbox(caseNote, true)).toMatchStringIgnoringWhitespace(`
-    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
       <div class="govuk-checkboxes__item">
         <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="A" id="A" checked>
         <label class="govuk-label govuk-checkboxes__label" for="A">
           <span class="govuk-visually-hidden">Select case note from Friday 31 January 2020</span>
         </label>
       </div>
-     </div>
     `)
 
     expect(caseNoteCheckbox(caseNote, false)).toMatchStringIgnoringWhitespace(`
-    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-        <div class="govuk-checkboxes__item">
-          <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="A" id="A">
-          <label class="govuk-label govuk-checkboxes__label" for="A">
-            <span class="govuk-visually-hidden">Select case note from Friday 31 January 2020</span>
-          </label>
-        </div>
-    </div>
+      <div class="govuk-checkboxes__item">
+        <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="A" id="A">
+        <label class="govuk-label govuk-checkboxes__label" for="A">
+          <span class="govuk-visually-hidden">Select case note from Friday 31 January 2020</span>
+        </label>
+      </div>
     `)
   })
 })
@@ -348,7 +344,7 @@ describe('CaseNotes', () => {
   })
 
   describe('errors', () => {
-    it('returns an empty object if nomisFailed is false', () => {
+    it('returns an empty object if nomisFailed is false and no form errors', () => {
       const page = new CaseNotes({}, application)
       page.nomisFailed = false
       expect(page.errors()).toEqual({})
@@ -366,6 +362,21 @@ describe('CaseNotes', () => {
       expect(page.errors()).toEqual({
         informationFromPrisonDetail: 'You must provide detail of the information you have from prison',
       })
+    })
+
+    it('returns an error if user has selected more than 10 case notes', () => {
+      const selectedCaseNotes = prisonCaseNotesFactory.buildList(11)
+      const page = new CaseNotes({ selectedCaseNotes }, application)
+
+      expect(page.errors()).toEqual({
+        selectedCaseNotes: 'You can only select up to 10 prison case notes that support this application',
+      })
+    })
+
+    it('does not return an error for selectedCaseNotes if 10 or less prison case notes are selected', () => {
+      const selectedCaseNotes = prisonCaseNotesFactory.buildList(10)
+      const page = new CaseNotes({ selectedCaseNotes }, application)
+      expect(page.errors()).toEqual({})
     })
   })
 })

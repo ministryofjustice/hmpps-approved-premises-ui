@@ -53,7 +53,6 @@ export const acctAlertResponse = (acctAlert: PersonAcctAlert) => {
 
 export const caseNoteCheckbox = (caseNote: PrisonCaseNote, checked: boolean) => {
   return `
-  <div class="govuk-checkboxes" data-module="govuk-checkboxes">
     <div class="govuk-checkboxes__item">
       <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="${caseNote.id}" id="${
         caseNote.id
@@ -66,7 +65,6 @@ export const caseNoteCheckbox = (caseNote: PrisonCaseNote, checked: boolean) => 
         )}</span>
       </label>
     </div>
-  </div>
   `
 }
 
@@ -191,6 +189,10 @@ export default class CaseNotes implements TasklistPage {
       if (this.body.informationFromPrison === 'yes' && !this.body.informationFromPrisonDetail) {
         errors.informationFromPrisonDetail = 'You must provide detail of the information you have from prison'
       }
+    }
+
+    if (this.body.selectedCaseNotes.length > 10) {
+      errors.selectedCaseNotes = 'You can only select up to 10 prison case notes that support this application'
     }
 
     return errors
