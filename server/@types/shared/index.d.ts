@@ -90,6 +90,7 @@ export type { ClarificationNote } from './models/ClarificationNote';
 export type { Confirmation } from './models/Confirmation';
 export type { DateCapacity } from './models/DateCapacity';
 export type { DateChange } from './models/DateChange';
+export type { DatePeriod } from './models/DatePeriod';
 export type { Departure } from './models/Departure';
 export type { DepartureReason } from './models/DepartureReason';
 export type { DestinationProvider } from './models/DestinationProvider';
@@ -248,4 +249,6 @@ export type { UserRolesAndQualifications } from './models/UserRolesAndQualificat
 export type { UserSortField } from './models/UserSortField';
 export type { UserWithWorkload } from './models/UserWithWorkload';
 export type { ValidationError } from './models/ValidationError';
+export type { Withdrawable } from './models/Withdrawable';
+export type { WithdrawableType } from './models/WithdrawableType';
 export type { WithdrawalReason } from './models/WithdrawalReason';
