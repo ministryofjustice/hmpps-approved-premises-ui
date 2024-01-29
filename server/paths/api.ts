@@ -123,6 +123,7 @@ export default {
     timeline: applyPaths.applications.show.path('timeline'),
     placementApplications: applyPaths.applications.show.path('placement-applications'),
     addNote: applyPaths.applications.show.path('notes'),
+    withdrawables: applyPaths.applications.show.path('withdrawables'),
   },
   assessments: {
     index: assessPaths.assessments,

@@ -7,11 +7,13 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 
 import paths from '../../../paths/apply'
 import WithdrawalsController from './withdrawalsController'
+import { withdrawableFactory } from '../../../testutils/factories'
 
 jest.mock('../../../utils/validation')
 
 describe('withdrawalsController', () => {
   const token = 'SOME_TOKEN'
+  const applicationId = 'some-id'
 
   let request: DeepMocked<Request> = createMock<Request>({ user: { token } })
   let response: DeepMocked<Response> = createMock<Response>({})
@@ -29,11 +31,86 @@ describe('withdrawalsController', () => {
   })
 
   describe('new', () => {
-    it('renders the template', async () => {
-      const applicationId = 'some-id'
+    describe('if there are withdrawables', () => {
+      describe('and a selectedWithdrawableType', () => {
+        it('redirects to the withdrawables show page', async () => {
+          const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+          ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+
+          const selectedWithdrawableType = 'booking'
+          const withdrawables = withdrawableFactory.buildList(1)
+
+          applicationService.getWithdrawables.mockResolvedValue(withdrawables)
+
+          const requestHandler = withdrawalsController.new()
+
+          await requestHandler(
+            { ...request, params: { id: applicationId }, body: { selectedWithdrawableType } },
+            response,
+            next,
+          )
+
+          expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
+          expect(response.redirect).toHaveBeenCalledWith(
+            302,
+            `${paths.applications.withdrawables.show({ id: applicationId })}?selectedWithdrawableType=${selectedWithdrawableType}`,
+          )
+        })
+      })
+
+      describe('and no selectedWithdrawableType', () => {
+        it('renders the select withdrawable view', async () => {
+          const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+          ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+
+          const withdrawables = withdrawableFactory.buildList(1)
+
+          applicationService.getWithdrawables.mockResolvedValue(withdrawables)
+
+          const requestHandler = withdrawalsController.new()
+
+          await requestHandler({ ...request, params: { id: applicationId } }, response, next)
+
+          expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
+          expect(response.render).toHaveBeenCalledWith('applications/withdrawables/new', {
+            pageHeading: 'What do you want to withdraw?',
+            id: applicationId,
+            withdrawables,
+          })
+        })
+      })
+    })
+  })
+
+  describe('if there are no withdrawables', () => {
+    it('renders the withdrawals reasons template', async () => {
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
       request.params.id = applicationId
+      applicationService.getWithdrawables.mockResolvedValue([])
+
+      const requestHandler = withdrawalsController.new()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/withdrawals/new', {
+        pageHeading: 'Do you want to withdraw this application?',
+        applicationId,
+        errors: errorsAndUserInput.errors,
+        errorSummary: errorsAndUserInput.errorSummary,
+        ...errorsAndUserInput.userInput,
+      })
+    })
+  })
+
+  describe('if the selectedWithdrawalType is application', () => {
+    it('renders the withdrawals reasons template', async () => {
+      const withdrawables = withdrawableFactory.buildList(1)
+      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+      applicationService.getWithdrawables.mockResolvedValue(withdrawables)
+      request.params.id = applicationId
+      request.body.selectedWithdrawableType = 'application'
 
       const requestHandler = withdrawalsController.new()
 
@@ -50,8 +127,6 @@ describe('withdrawalsController', () => {
   })
 
   describe('create', () => {
-    const applicationId = 'some-id'
-
     beforeEach(() => {
       request.params.id = applicationId
       request.body.reason = 'other'

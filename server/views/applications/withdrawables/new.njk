@@ -1,0 +1,37 @@
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <form action={{paths.applications.withdraw.new({id: id})}} method="post"/>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+            {{ govukRadios({
+                    name: "selectedWithdrawableType",
+                    fieldset: {
+                        legend: {
+                            text: pageHeading,
+                            classes: "govuk-fieldset__legend--l",
+                            isPageHeading: true
+                        }
+                    },
+                    items: ApplyUtils.withdrawableTypeRadioOptions(withdrawables, selectedWithdrawable)
+                }) }}
+
+            {{ govukButton({
+                    "text": "Continue"
+                }) }}
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

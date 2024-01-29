@@ -19,6 +19,7 @@ context('Withdraw Application', () => {
     cy.task('stubApplicationGet', { application: this.application })
     cy.task('stubApplications', [inProgressApplication])
     cy.task('stubApplicationWithdrawn', { applicationId: inProgressApplication.id })
+    cy.task('stubWithdrawables', { applicationId: inProgressApplication.id, withdrawables: [] })
 
     // And I visit the list page
     const listPage = ListPage.visit([inProgressApplication], [], [])

@@ -77,6 +77,7 @@ import userDetailsFactory from './userDetails'
 import placementApplicationDecisionEnvelopeFactory from './placementApplicationDecisionEnvelope'
 import premisesBookingFactory from './premisesBooking'
 import bookingPremisesSummaryFactory from './bookingPremisesSummary'
+import withdrawableFactory from './withdrawableFactory'
 
 export {
   acctAlertFactory,
@@ -162,4 +163,5 @@ export {
   userFactory,
   userDetailsFactory,
   userWithWorkloadFactory,
+  withdrawableFactory,
 }

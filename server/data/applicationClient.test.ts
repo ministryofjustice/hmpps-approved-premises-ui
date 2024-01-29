@@ -9,6 +9,7 @@ import {
   noteFactory,
   placementApplicationFactory,
   timelineEventFactory,
+  withdrawableFactory,
 } from '../testutils/factories'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
@@ -502,6 +503,32 @@ describeClient('ApplicationClient', provider => {
       })
 
       await applicationClient.addNote(applicationId, note)
+    })
+  })
+
+  describe('withdrawables', () => {
+    it('calls the withdrawables endpoint with the application ID', async () => {
+      const applicationId = 'applicationId'
+      const withdrawables = withdrawableFactory.buildList(1)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for to add a note to an application',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.withdrawables({ id: applicationId }),
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: withdrawables,
+        },
+      })
+
+      await applicationClient.withdrawables(applicationId)
     })
   })
 })

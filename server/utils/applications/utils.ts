@@ -45,6 +45,9 @@ import ReasonForPlacement, {
 } from '../../form-pages/placement-application/request-a-placement/reasonForPlacement'
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
 import { sortHeader } from '../sortHeader'
+import { linkTo } from '../utils'
+
+export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 
 const applicationStatuses: Record<ApprovedPremisesApplicationStatus, string> = {
   started: 'Application started',
@@ -176,7 +179,7 @@ export const unwithdrawableApplicationStatuses: Array<ApprovedPremisesApplicatio
 export const createWithdrawElement = (applicationId: string, application: ApplicationSummary) => {
   if (unwithdrawableApplicationStatuses.includes(application.status)) return textValue('')
 
-  return htmlValue(`<a href="${paths.applications.withdraw.new({ id: applicationId })}">Withdraw</a>`)
+  return htmlValue(linkTo(paths.applications.withdraw.new, { id: applicationId }, { text: 'Withdraw' }))
 }
 
 export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>

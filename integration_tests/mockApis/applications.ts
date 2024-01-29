@@ -8,6 +8,7 @@ import type {
   ApprovedPremisesAssessment,
   SortDirection,
   TimelineEvent,
+  Withdrawable,
 } from '@approved-premises/api'
 
 import { getMatchingRequests, stubFor } from './setup'
@@ -257,7 +258,24 @@ export default {
         jsonBody: args.note,
       },
     }),
-
+  stubWithdrawables: ({
+    applicationId,
+    withdrawables,
+  }: {
+    applicationId: string
+    withdrawables: Array<Withdrawable>
+  }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.applications.withdrawables({ id: applicationId }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: withdrawables,
+      },
+    }),
   verifyApplicationWithdrawn: async (args: { applicationId: string }) =>
     (
       await getMatchingRequests({
