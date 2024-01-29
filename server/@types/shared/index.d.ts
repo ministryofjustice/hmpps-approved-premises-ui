@@ -252,3 +252,6 @@ export type { ValidationError } from './models/ValidationError';
 export type { Withdrawable } from './models/Withdrawable';
 export type { WithdrawableType } from './models/WithdrawableType';
 export type { WithdrawalReason } from './models/WithdrawalReason';
+export type { WithdrawPlacementApplication } from './models/WithdrawPlacementApplication';
+export type { WithdrawPlacementRequest } from './models/WithdrawPlacementRequest';
+export type { WithdrawPlacementRequestReason } from './models/WithdrawPlacementRequestReason';
