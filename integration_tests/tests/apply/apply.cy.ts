@@ -377,7 +377,9 @@ context('Apply', () => {
     apply.enterCrnDetails()
 
     // Then I should see a screen telling me they have no offences
-    Page.verifyOnPage(NoOffencePage)
+    const noOffencePage = Page.verifyOnPage(NoOffencePage)
+    noOffencePage.shouldShowParagraphText('an Approved Premises application')
+    noOffencePage.confirmLinkText('dashboard')
   })
 
   it('shows the user a message if there are no documents imported from Delius', function test() {

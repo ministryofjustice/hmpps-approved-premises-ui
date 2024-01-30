@@ -122,7 +122,14 @@ export default class ApplicationsController {
           const offencesLength = offences.length
 
           if (offencesLength === 0) {
-            return res.render(`applications/people/noOffence`, { pageHeading: 'There are no offences for this person' })
+            const bodyTextParam = 'an Approved Premises application'
+            const backTextParam = 'dashboard'
+            return res.render(`applications/people/noOffence`, {
+              pageHeading: 'There are no offences for this person',
+              bodyTextParam,
+              backTextParam,
+              href: paths.applications.index({}),
+            })
           }
           const offenceId = offencesLength === 1 ? offences[0].offenceId : null
 

@@ -13,14 +13,14 @@
             <h1>There are no offences for this person</h1>
 
             <p class="govuk-body">
-                To create an Approved Premises application the person needs to have an active event in Delius.
+                To create {{ bodyTextParam }} the person needs to have an active event in Delius.
             </p>
             <p class="govuk-body">
                 Create or reopen an event in Delius to progress with this application.
             </p>
 
             <p class="govuk-body">
-                <a class="govuk-link" href="{{ paths.applications.index({}) }}">Back to dashboard</a>
+                <a class="govuk-link" href="{{ href }}">Back to {{ backTextParam }}</a>
             </p>
         </div>
     </div>

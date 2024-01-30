@@ -18,6 +18,7 @@ import Page from '../../pages/page'
 import BookingConfirmation from '../../pages/manage/booking/confirmation'
 import MoveBedPage from '../../pages/manage/bed/moveBed'
 import { signIn } from '../signIn'
+import { NoOffencePage } from '../../pages/apply'
 
 context('Booking', () => {
   const person = personFactory.build()
@@ -308,5 +309,29 @@ context('Booking', () => {
 
     // Then I should see the details for that booking
     page.shouldNotShowManageActions()
+  })
+
+  it('redirects to no offence page if there are no offence', function test() {
+    // Given I am signed in as a workflow manager
+    signIn(['workflow_manager'])
+
+    cy.task('stubBookingCreate', { premisesId: premises.id, booking })
+    cy.task('stubPremisesSummary', premises)
+    cy.task('stubFindPerson', { person })
+    // person has no offences
+    const noOffences = activeOffenceFactory.buildList(0)
+    cy.task('stubPersonOffences', { person, noOffences })
+
+    // Given I visit the first new booking page
+    const bookingNewPage = BookingFindPage.visit(premises.id)
+
+    // When I enter the CRN to the form
+    bookingNewPage.enterCrn(person.crn)
+    bookingNewPage.clickSubmit()
+
+    // Then I should see a screen telling me they have no offences
+    const noOffencePage = Page.verifyOnPage(NoOffencePage)
+    noOffencePage.shouldShowParagraphText('a placement in an Approved Premises,')
+    noOffencePage.confirmLinkText('Approved Premises')
   })
 })
