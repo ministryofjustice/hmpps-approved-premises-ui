@@ -16,7 +16,7 @@ export default class TasksController {
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       const allocatedFilter = (req.query.allocatedFilter as AllocatedFilter) || 'allocated'
-      const apAreaId = req.query.areas ? req.query.areas : res.locals.user.apArea
+      const apAreaId = req.query.areas ? req.query.areas : res.locals.user.apArea?.id
       const {
         pageNumber,
         sortDirection = 'asc',
