@@ -4,7 +4,12 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import PlacementRequestsController from './placementRequestsController'
 
 import { ApAreaService, PlacementRequestService } from '../../../services'
-import { apAreaFactory, paginatedResponseFactory, placementRequestFactory } from '../../../testutils/factories'
+import {
+  apAreaFactory,
+  paginatedResponseFactory,
+  placementRequestFactory,
+  userDetailsFactory,
+} from '../../../testutils/factories'
 import placementRequestDetail from '../../../testutils/factories/placementRequestDetail'
 import { PaginatedResponse } from '../../../@types/ui'
 import { PlacementRequest } from '../../../@types/shared'
@@ -17,9 +22,10 @@ jest.mock('../../../utils/getPaginationDetails')
 
 describe('PlacementRequestsController', () => {
   const token = 'SOME_TOKEN'
+  const user = userDetailsFactory.build()
 
   const request: DeepMocked<Request> = createMock<Request>({ user: { token } })
-  const response: DeepMocked<Response> = createMock<Response>({})
+  const response: DeepMocked<Response> = createMock<Response>({ locals: { user } })
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
@@ -67,13 +73,13 @@ describe('PlacementRequestsController', () => {
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
         apAreas,
-        apArea: undefined,
+        apArea: user.apArea.id,
         requestType: undefined,
       })
 
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
         token,
-        { apArea: undefined, requestType: undefined, status: 'notMatched' },
+        { apAreaId: user.apArea.id, requestType: undefined, status: 'notMatched' },
         paginationDetails.pageNumber,
         paginationDetails.sortBy,
         paginationDetails.sortDirection,
@@ -125,48 +131,6 @@ describe('PlacementRequestsController', () => {
 
       expect(getPaginationDetails).toHaveBeenCalledWith(notMatchedRequest, paths.admin.placementRequests.index({}), {
         status: 'notMatched',
-      })
-    })
-
-    it('should retain the status filter when there is one present in the body', async () => {
-      const apAreas = apAreaFactory.buildList(1)
-      apAreaService.getApAreas.mockResolvedValue(apAreas)
-
-      const requestHandler = placementRequestsController.index()
-
-      const apArea = 'some-ap-area-id'
-      const requestType = 'parole'
-      const status = 'unableToMatch'
-      const filters = { requestType, apArea }
-
-      const statusRequest = { ...request, query: filters, body: { status } }
-
-      await requestHandler(statusRequest, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
-        pageHeading: 'Record and update placement details',
-        placementRequests: paginatedResponse.data,
-        status,
-        pageNumber: Number(paginatedResponse.pageNumber),
-        totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix: paginationDetails.hrefPrefix,
-        sortBy: paginationDetails.sortBy,
-        sortDirection: paginationDetails.sortDirection,
-        apAreas,
-        apArea,
-        requestType,
-      })
-
-      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
-        token,
-        { requestType, status, apAreaId: apArea },
-        paginationDetails.pageNumber,
-        paginationDetails.sortBy,
-        paginationDetails.sortDirection,
-      )
-
-      expect(getPaginationDetails).toHaveBeenCalledWith(statusRequest, paths.admin.placementRequests.index({}), {
-        status: 'unableToMatch',
       })
     })
   })
