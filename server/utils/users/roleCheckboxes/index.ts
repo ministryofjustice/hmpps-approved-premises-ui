@@ -13,6 +13,10 @@ export const roleLabelDictionary: RoleLabelDictionary = {
     label: 'Workflow manager',
     hint: 'Manage the allocation of assessments and matches to staff, and view reports',
   },
+  appeals_manager: {
+    label: 'Appeals manager',
+    hint: 'Log appeals against rejected applications',
+  },
 }
 
 export const allocationRoleLabelDictionary: AllocationRoleLabelDictionary = {
@@ -41,6 +45,7 @@ export const roles: ReadonlyArray<UserRole> = [
   'excluded_from_assess_allocation',
   'excluded_from_match_allocation',
   'excluded_from_placement_application_allocation',
+  'appeals_manager',
 ]
 
 export const allocationRoles = [
