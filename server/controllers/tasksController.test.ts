@@ -108,6 +108,10 @@ describe('TasksController', () => {
         sortDirection: paginationDetails.sortDirection,
         selectedArea: '1234',
       })
+      expect(getPaginationDetails).toHaveBeenCalledWith(unallocatedRequest, paths.tasks.index({}), {
+        allocatedFilter: 'unallocated',
+        areas: '1234',
+      })
       expect(taskService.getAllReallocatable).toHaveBeenCalledWith(
         token,
         'unallocated',

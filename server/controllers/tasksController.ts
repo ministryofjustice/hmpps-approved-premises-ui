@@ -24,6 +24,7 @@ export default class TasksController {
         hrefPrefix,
       } = getPaginationDetails<TaskSortField>(req, paths.tasks.index({}), {
         allocatedFilter,
+        areas: apAreaId,
       })
       const tasks = await this.taskService.getAllReallocatable(
         req.user.token,
