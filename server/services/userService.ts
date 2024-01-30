@@ -29,6 +29,7 @@ export default class UserService {
       displayName: convertToTitleCase(user.name),
       roles: profile.roles,
       active: profile.isActive,
+      apArea: profile.apArea,
     }
   }
 

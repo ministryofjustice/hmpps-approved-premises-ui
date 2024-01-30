@@ -353,6 +353,7 @@ export type UserDetails = {
   displayName: string
   roles: Array<UserRole>
   active: boolean
+  apArea: ApArea
 }
 
 export type PartnerAgencyDetails = {
