@@ -115,6 +115,11 @@ describe('userRolesSelectOptions', () => {
         text: 'Excluded from placement application allocation',
         value: 'excluded_from_placement_application_allocation',
       },
+      {
+        selected: false,
+        text: 'Appeals manager',
+        value: 'appeals_manager',
+      },
     ])
   })
 
@@ -134,6 +139,11 @@ describe('userRolesSelectOptions', () => {
         selected: false,
         text: 'Excluded from placement application allocation',
         value: 'excluded_from_placement_application_allocation',
+      },
+      {
+        selected: false,
+        text: 'Appeals manager',
+        value: 'appeals_manager',
       },
     ])
   })
