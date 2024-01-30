@@ -20,6 +20,7 @@
       <div class="search-and-filter__wrapper">
         <form action="{{ paths.tasks.index({}) }}" method="get">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+           <input type="hidden" name="allocatedFilter" value="{{ allocatedFilter }}">
           <div class="govuk-grid-row">
             <div class="govuk-grid-column-one-quarter">
               <h2 class="govuk-heading-m">Filters</h2>

@@ -8,6 +8,8 @@ context('Tasks', () => {
     cy.task('stubSignIn')
   })
 
+  const apAreaId = '0544d95a-f6bb-43f8-9be7-aae66e3bf244'
+
   it('shows a list of tasks', () => {
     cy.task('stubAuthUser')
 
@@ -32,7 +34,7 @@ context('Tasks', () => {
     })
 
     cy.task('stubApAreaReferenceData', {
-      id: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
+      id: apAreaId,
       name: 'Midlands',
     })
 
@@ -43,6 +45,7 @@ context('Tasks', () => {
     listPage.shouldShowAllocatedTasks()
 
     // And the tasks that are unallocated
+    listPage.clickTab('Unallocated')
     listPage.shouldShowUnallocatedTasks()
   })
 
@@ -64,7 +67,7 @@ context('Tasks', () => {
     cy.task('stubReallocatableTasks', { tasks: allocatedTasksPage9, allocatedFilter: 'allocated', page: '9' })
 
     cy.task('stubApAreaReferenceData', {
-      id: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
+      id: apAreaId,
       name: 'Midlands',
     })
 
@@ -119,7 +122,7 @@ context('Tasks', () => {
     })
 
     cy.task('stubApAreaReferenceData', {
-      id: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
+      id: apAreaId,
       name: 'Midlands',
     })
 
@@ -158,7 +161,7 @@ context('Tasks', () => {
 
     cy.task('stubReallocatableTasks', { tasks: allocatedTasks, allocatedFilter: 'allocated', page: '1' })
     cy.task('stubApAreaReferenceData', {
-      id: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
+      id: apAreaId,
       name: 'Midlands',
     })
 
@@ -174,13 +177,57 @@ context('Tasks', () => {
       allocatedFilter: 'allocated',
       page: '1',
       sortDirection: 'asc',
-      apAreaId: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
+      apAreaId,
     })
 
-    listPage.searchBy('areas', '0544d95a-f6bb-43f8-9be7-aae66e3bf244')
+    listPage.searchBy('areas', apAreaId)
     listPage.clickApplyFilter()
 
     // Then the page should show the results
     listPage.shouldShowAllocatedTasks(allocatedTasksFiltered)
+  })
+
+  it('retains the unallocated filter when applying other filters', () => {
+    cy.task('stubAuthUser')
+
+    // Given I am logged in
+    cy.signIn()
+
+    const allocatedTasks = taskFactory.buildList(10)
+    const unallocatedTasks = taskFactory.buildList(10, { allocatedToStaffMember: undefined })
+    const unallocatedTasksFiltered = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
+
+    cy.task('stubReallocatableTasks', {
+      tasks: unallocatedTasks,
+      allocatedFilter: 'unallocated',
+      page: '1',
+      sortDirection: 'asc',
+    })
+    cy.task('stubApAreaReferenceData', {
+      id: apAreaId,
+      name: 'Midlands',
+    })
+
+    // Given I am on the tasks dashboard filtering by the unallocated tab
+    const listPage = ListPage.visit(allocatedTasks, unallocatedTasks, 'allocatedFilter=unallocated')
+
+    // Then I should see the tasks that are allocated
+    listPage.shouldShowUnallocatedTasks()
+
+    // When I filter by region
+    cy.task('stubReallocatableTasks', {
+      tasks: unallocatedTasksFiltered,
+      allocatedFilter: 'unallocated',
+      page: '1',
+      sortDirection: 'asc',
+      apAreaId,
+    })
+
+    listPage.searchBy('areas', apAreaId)
+    listPage.clickApplyFilter()
+
+    // Then the status filter should be retained and allocated results should be shown
+    listPage.shouldHaveActiveTab('Unallocated')
+    listPage.shouldShowUnallocatedTasks(unallocatedTasksFiltered)
   })
 })

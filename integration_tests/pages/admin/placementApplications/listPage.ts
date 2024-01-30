@@ -37,10 +37,6 @@ export default class ListPage extends Page {
     })
   }
 
-  shouldHaveActiveTab(tabName: 'Ready to match' | 'Unable to match'): void {
-    cy.get('a.moj-sub-navigation__link').contains(tabName).should('have.attr', 'aria-current', 'page')
-  }
-
   clickPlacementRequest(placementRequest: PlacementRequest): void {
     cy.get(`[data-cy-placementRequestId="${placementRequest.id}"]`).click()
   }
