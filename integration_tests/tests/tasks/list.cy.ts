@@ -180,7 +180,7 @@ context('Tasks', () => {
       apAreaId,
     })
 
-    listPage.searchBy('areas', apAreaId)
+    listPage.searchBy('area', apAreaId)
     listPage.clickApplyFilter()
 
     // Then the page should show the results
@@ -223,7 +223,7 @@ context('Tasks', () => {
       apAreaId,
     })
 
-    listPage.searchBy('areas', apAreaId)
+    listPage.searchBy('area', apAreaId)
     listPage.clickApplyFilter()
 
     // Then the status filter should be retained and allocated results should be shown
