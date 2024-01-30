@@ -13,6 +13,7 @@ import type {
   NewExtension,
   NewNonarrival,
   Nonarrival,
+  Premises,
 } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
@@ -29,8 +30,14 @@ export default class BookingClient {
     return (await this.restClient.post({ path: this.bookingsPath(premisesId), data })) as Booking
   }
 
-  async find(premisesId: string, bookingId: string): Promise<Booking> {
+  async find(premisesId: Premises['id'], bookingId: Booking['id']): Promise<Booking> {
     return (await this.restClient.get({ path: this.bookingPath(premisesId, bookingId) })) as Booking
+  }
+
+  async findWithoutPremises(bookingId: Booking['id']): Promise<Booking> {
+    return (await this.restClient.get({
+      path: paths.bookings.bookingWithoutPremisesPath({ bookingId }),
+    })) as Booking
   }
 
   async allBookingsForPremisesId(premisesId: string): Promise<Array<Booking>> {

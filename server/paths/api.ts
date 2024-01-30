@@ -30,6 +30,7 @@ const managePaths = {
   bookings: {
     move: bookingPath.path('moves'),
     dateChange: bookingPath.path('date-changes'),
+    bookingWithoutPremisesPath: path('/bookings/:bookingId'),
   },
 }
 
@@ -109,6 +110,9 @@ export default {
       dateChange: managePaths.bookings.dateChange,
     },
     calendar: managePaths.premises.show.path('calendar'),
+  },
+  bookings: {
+    bookingWithoutPremisesPath: managePaths.bookings.bookingWithoutPremisesPath,
   },
   applications: {
     show: applyPaths.applications.show,

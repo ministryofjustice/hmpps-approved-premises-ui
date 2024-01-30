@@ -11,7 +11,7 @@ import NotesController from './applications/notesController'
 import type { Services } from '../../services'
 
 export const controllers = (services: Services) => {
-  const { applicationService, personService, premisesService, userService, apAreaService } = services
+  const { applicationService, personService, premisesService, userService, apAreaService, bookingService } = services
   const applicationsController = new ApplicationsController(applicationService, personService)
   const pagesController = new PagesController(applicationService, {
     personService,
@@ -24,7 +24,7 @@ export const controllers = (services: Services) => {
   const documentsController = new DocumentsController(personService)
   const withdrawalsController = new WithdrawalsController(applicationService)
   const notesController = new NotesController(applicationService)
-  const withdrawablesController = new WithdrawablesController(applicationService)
+  const withdrawablesController = new WithdrawablesController(applicationService, bookingService)
 
   return {
     applicationsController,

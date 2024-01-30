@@ -1,8 +1,9 @@
-import { withdrawableFactory } from '../../../testutils/factories'
+import { bookingFactory, withdrawableFactory } from '../../../testutils/factories'
 import { withdrawableRadioOptions, withdrawableTypeRadioOptions } from '.'
 import { DateFormats } from '../../dateUtils'
 import { linkTo } from '../../utils'
 import matchPaths from '../../../paths/match'
+import managePaths from '../../../paths/manage'
 
 describe('withdrawableTypeRadioOptions', () => {
   const applicationRadioItem = {
@@ -71,20 +72,24 @@ describe('withdrawableTypeRadioOptions', () => {
     it('returns the withdrawables in radio input format', () => {
       const paWithdrawable = withdrawableFactory.build({ type: 'placement_application' })
       const prWithdrawable = withdrawableFactory.build({ type: 'placement_request' })
+      const booking = bookingFactory.build()
+      const bookingWithdrawable = withdrawableFactory.build({ type: 'booking', id: booking.id })
 
-      expect(withdrawableRadioOptions([paWithdrawable, prWithdrawable], paWithdrawable.id)).toEqual([
+      expect(
+        withdrawableRadioOptions([paWithdrawable, prWithdrawable, bookingWithdrawable], paWithdrawable.id, [booking]),
+      ).toEqual([
         {
           text: paWithdrawable.dates
             .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
             .join(', '),
-          checked: false,
+          checked: true,
           value: paWithdrawable.id,
         },
         {
           text: prWithdrawable.dates
             .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
             .join(', '),
-          checked: true,
+          checked: false,
           hint: {
             html: linkTo(
               matchPaths.placementRequests.show,
@@ -96,6 +101,23 @@ describe('withdrawableTypeRadioOptions', () => {
             ),
           },
           value: prWithdrawable.id,
+        },
+        {
+          checked: false,
+          hint: {
+            html: linkTo(
+              managePaths.bookings.show,
+              { bookingId: booking.id, premisesId: booking.premises.id },
+              {
+                text: 'See booking details (opens in a new tab)',
+                attributes: { 'data-cy-withdrawable-id': booking.id },
+              },
+            ),
+          },
+          text: `${booking.premises.name} - ${bookingWithdrawable.dates
+            .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+            .join(', ')}`,
+          value: bookingWithdrawable.id,
         },
       ])
     })

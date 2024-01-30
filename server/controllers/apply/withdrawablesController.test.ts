@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { NextFunction } from 'express'
-import { ApplicationService } from '../../services'
+import { ApplicationService, BookingService } from '../../services'
 import WithdrawablesController from './withdrawablesController'
 import { bookingFactory, withdrawableFactory } from '../../testutils/factories'
 import adminPaths from '../../paths/admin'
@@ -18,11 +18,12 @@ describe('withdrawablesController', () => {
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const applicationService = createMock<ApplicationService>({})
+  const bookingService = createMock<BookingService>({})
 
   let withdrawablesController: WithdrawablesController
 
   beforeEach(() => {
-    withdrawablesController = new WithdrawablesController(applicationService)
+    withdrawablesController = new WithdrawablesController(applicationService, bookingService)
     request = createMock<Request>({ user: { token } })
     response = createMock<Response>({})
     jest.clearAllMocks()

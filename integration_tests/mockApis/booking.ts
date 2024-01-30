@@ -53,6 +53,20 @@ export default {
         jsonBody: args.booking,
       },
     }),
+  stubBookingFindWithoutPremises: (booking: Booking) =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.bookings.bookingWithoutPremisesPath({ bookingId: booking.id }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: booking,
+      },
+    }),
   stubBookingsForPremisesId: (args: { premisesId: string; bookings: Array<Booking> }) =>
     stubFor({
       request: {

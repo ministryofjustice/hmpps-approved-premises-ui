@@ -1,5 +1,6 @@
 import {
   applicationSummaryFactory,
+  bookingFactory,
   placementApplicationFactory,
   placementRequestFactory,
   withdrawableFactory,
@@ -8,9 +9,13 @@ import {
 import { ListPage } from '../../pages/apply'
 import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
 import WithdrawApplicationPage from '../../pages/apply/withdrawApplicationPage'
-import { WithdrawConfirmPage as PlacementRequestWithdrawalConfirmationPage } from '../../pages/manage'
+import {
+  CancellationCreatePage,
+  WithdrawConfirmPage as PlacementRequestWithdrawalConfirmationPage,
+} from '../../pages/manage'
 import PlacementApplicationWithdrawalConfirmationPage from '../../pages/match/placementApplicationWithdrawalConfirmationPage'
 import Page from '../../pages/page'
+import { signIn } from '../signIn'
 
 context('Withdrawals', () => {
   beforeEach(() => {
@@ -18,7 +23,7 @@ context('Withdrawals', () => {
     cy.task('stubSignIn')
     cy.task('stubAuthUser')
     // Given I am logged in
-    cy.signIn()
+    signIn(['workflow_manager'])
   })
 
   it('withdraws a placement request', () => {
@@ -127,5 +132,42 @@ context('Withdrawals', () => {
 
     // Then I am taken to the confirmation page
     Page.verifyOnPage(WithdrawApplicationPage)
+  })
+
+  it('withdraws a booking', () => {
+    const application = applicationSummaryFactory.build()
+    const booking = bookingFactory.build({ applicationId: application.id })
+    const bookingWithdrawable = withdrawableFactory.build({
+      type: 'booking',
+      id: booking.id,
+    })
+
+    cy.task('stubWithdrawables', {
+      applicationId: application.id,
+      withdrawables: [bookingWithdrawable],
+    })
+    cy.task('stubApplications', [application])
+    cy.task('stubApplicationGet', { application })
+    cy.task('stubBookingFindWithoutPremises', booking)
+    cy.task('stubBookingGet', { premisesId: booking.premises.id, booking })
+    cy.task('stubCancellationReferenceData')
+
+    // And I visit the list page
+    const listPage = ListPage.visit([application], [], [])
+
+    // When I click 'Withdraw' on an application
+    listPage.clickWithdraw()
+
+    const newWithdrawalPage = new NewWithdrawalPage('What do you want to withdraw?')
+    newWithdrawalPage.selectType('booking')
+    newWithdrawalPage.clickSubmit()
+
+    const selectWithdrawablePage = new NewWithdrawalPage('Select your booking')
+    selectWithdrawablePage.veryifyLink(booking.id, 'booking')
+
+    selectWithdrawablePage.selectWithdrawable(booking.id)
+    selectWithdrawablePage.clickSubmit()
+
+    Page.verifyOnPage(CancellationCreatePage)
   })
 })

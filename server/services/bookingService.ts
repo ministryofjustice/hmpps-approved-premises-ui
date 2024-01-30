@@ -24,6 +24,14 @@ export default class BookingService {
     return booking
   }
 
+  async findWithoutPremises(token: string, bookingId: string): Promise<Booking> {
+    const bookingClient = this.bookingClientFactory(token)
+
+    const booking = await bookingClient.findWithoutPremises(bookingId)
+
+    return booking
+  }
+
   async listOfBookingsForPremisesId(token: string, premisesId: string): Promise<Array<Booking>> {
     const bookingClient = this.bookingClientFactory(token)
     const allBookings = await bookingClient.allBookingsForPremisesId(premisesId)

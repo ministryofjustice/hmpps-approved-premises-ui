@@ -99,6 +99,7 @@ class BookingFactory extends Factory<Booking> {
 export default BookingFactory.define(() => {
   const arrivalDate = DateFormats.dateObjToIsoDate(faker.date.soon())
   const departureDate = DateFormats.dateObjToIsoDate(faker.date.future())
+
   return {
     person: faker.helpers.arrayElement([fullPersonFactory.build(), restrictedPersonFactory.build()]),
     arrivalDate,

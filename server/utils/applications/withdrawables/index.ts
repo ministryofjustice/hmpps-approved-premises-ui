@@ -1,6 +1,7 @@
-import { Withdrawable } from '../../../@types/shared'
+import { Booking, Withdrawable } from '../../../@types/shared'
 import { RadioItem } from '../../../@types/ui'
 import matchPaths from '../../../paths/match'
+import managePaths from '../../../paths/manage'
 import { DateFormats } from '../../dateUtils'
 import { linkTo } from '../../utils'
 
@@ -46,6 +47,7 @@ export const withdrawableTypeRadioOptions = (
 export const withdrawableRadioOptions = (
   withdrawables: Array<Withdrawable>,
   selectedWithdrawable?: Withdrawable['id'],
+  bookings: Array<Booking> = [],
 ): Array<RadioItem> => {
   return withdrawables.map(withdrawable => {
     if (withdrawable.type === 'placement_application') {
@@ -76,6 +78,29 @@ export const withdrawableRadioOptions = (
         },
       }
     }
-    return undefined
+    if (withdrawable.type === 'booking') {
+      const booking = bookings.find(b => b.id === withdrawable.id)
+
+      if (!booking) throw new Error(`Booking not found for withdrawable: ${withdrawable.id}`)
+
+      return {
+        text: `${booking.premises.name} - ${withdrawable.dates
+          .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+          .join(', ')}`,
+        value: withdrawable.id,
+        checked: selectedWithdrawable === withdrawable.id,
+        hint: {
+          html: linkTo(
+            managePaths.bookings.show,
+            { premisesId: booking.premises.id, bookingId: booking.id },
+            {
+              text: 'See booking details (opens in a new tab)',
+              attributes: { 'data-cy-withdrawable-id': withdrawable.id },
+            },
+          ),
+        },
+      }
+    }
+    throw new Error(`Unknown withdrawable type: ${withdrawable.type}`)
   })
 }

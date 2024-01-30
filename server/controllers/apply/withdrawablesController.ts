@@ -1,7 +1,11 @@
 import type { Request, RequestHandler, Response } from 'express'
-import { ApplicationService } from '../../services'
+import { ApplicationService, BookingService } from '../../services'
 import applyPaths from '../../paths/apply'
-import { ApprovedPremisesApplication as Application } from '../../@types/shared'
+import adminPaths from '../../paths/admin'
+import placementAppPaths from '../../paths/placementApplications'
+import managePaths from '../../paths/manage'
+import { ApprovedPremisesApplication as Application, Withdrawable } from '../../@types/shared'
+import { SelectedWithdrawableType } from '../../utils/applications/withdrawables'
 
 export default class WithdrawalsController {
   constructor(

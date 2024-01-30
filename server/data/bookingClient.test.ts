@@ -86,6 +86,32 @@ describeClient('BookingClient', provider => {
     })
   })
 
+  describe('findWithoutPremises', () => {
+    it('should return the booking that has been requested', async () => {
+      const booking = bookingFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to find a booking',
+        withRequest: {
+          method: 'GET',
+          path: paths.bookings.bookingWithoutPremisesPath({ bookingId: 'bookingId' }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: booking,
+        },
+      })
+
+      const result = await bookingClient.findWithoutPremises('bookingId')
+
+      expect(result).toEqual(booking)
+    })
+  })
+
   describe('allBookingsForPremisesId', () => {
     it('should return all bookings for a given premises ID', async () => {
       const bookings = bookingFactory.buildList(5)
