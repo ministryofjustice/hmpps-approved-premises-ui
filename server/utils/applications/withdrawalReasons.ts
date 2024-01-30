@@ -1,18 +1,14 @@
 import { WithdrawalReason } from '../../@types/shared'
 import { convertKeyValuePairToRadioItems } from '../formUtils'
 
-const newApplicationToBeSubmittedReasons = ['change_in_circumstances_new_application_to_be_submitted'] as const
+const newApplicationToBeSubmittedReason = 'change_in_circumstances_new_application_to_be_submitted' as const
 const applicationProblemReasons = ['error_in_application', 'duplicate_application'] as const
 const otherReasons = ['other'] as const
 
-export type NewApplicationToBeSubmittedReasons = Extract<
-  WithdrawalReason,
-  (typeof newApplicationToBeSubmittedReasons)[number]
->
 export type ApplicationProblemReasons = Extract<WithdrawalReason, (typeof applicationProblemReasons)[number]>
 export type OtherReasons = Extract<WithdrawalReason, (typeof otherReasons)[number]>
 
-export const withdrawlReasons: Record<WithdrawalReason, string> = {
+export const withdrawlReasons = {
   change_in_circumstances_new_application_to_be_submitted: 'Change in circumstances',
   error_in_application: 'Error in application',
   duplicate_application: 'Duplicate application',
@@ -25,9 +21,9 @@ const filterByType = <T extends WithdrawalReason>(keys: Readonly<Array<string>>)
     .reduce((criteria, key) => ({ ...criteria, [key]: withdrawlReasons[key] }), {}) as Record<T, string>
 }
 
-export const newApplicationToBeSubmittedOptions = filterByType<NewApplicationToBeSubmittedReasons>(
-  newApplicationToBeSubmittedReasons,
-)
+export const newApplicationToBeSubmittedOptions = filterByType<typeof newApplicationToBeSubmittedReason>([
+  newApplicationToBeSubmittedReason,
+])
 export const applicationProblemOptions = filterByType<ApplicationProblemReasons>(applicationProblemReasons)
 export const otherOptions = filterByType<OtherReasons>(otherReasons)
 
