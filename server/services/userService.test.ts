@@ -51,6 +51,7 @@ describe('User service', () => {
 
       expect(result.id).toEqual(userProfile.id)
       expect(result.roles).toEqual(['workflow_manager', 'assessor'])
+      expect(result.apArea).toEqual(userProfile.apArea)
     })
 
     it('Propagates error', async () => {

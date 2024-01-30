@@ -39,16 +39,20 @@ describe('TasksController', () => {
   })
 
   describe('index', () => {
-    it('should render the tasks template', async () => {
-      const user = userDetailsFactory.build()
-      response.locals.user = { ...user, apArea: '1234' }
-      const tasks = taskFactory.buildList(1)
-      const paginatedResponse = paginatedResponseFactory.build({
-        data: tasks,
-      }) as PaginatedResponse<Task>
-      const apAreas = apAreaFactory.buildList(1)
-      apAreaService.getApAreas.mockResolvedValue(apAreas)
+    const apArea = apAreaFactory.build()
+    const user = userDetailsFactory.build({ apArea })
+    const tasks = taskFactory.buildList(1)
+    const paginatedResponse = paginatedResponseFactory.build({
+      data: tasks,
+    }) as PaginatedResponse<Task>
+    const apAreas = apAreaFactory.buildList(1)
 
+    beforeEach(() => {
+      response.locals.user = user
+      apAreaService.getApAreas.mockResolvedValue(apAreas)
+    })
+
+    it('should render the tasks template', async () => {
       const paginationDetails = {
         hrefPrefix: paths.tasks.index({}),
         pageNumber: 1,
@@ -70,18 +74,12 @@ describe('TasksController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: 'createdAt',
         sortDirection: 'asc',
+        selectedArea: apArea.id,
       })
-      expect(taskService.getAllReallocatable).toHaveBeenCalledWith(token, 'allocated', 'createdAt', 'asc', 1, '1234')
+      expect(taskService.getAllReallocatable).toHaveBeenCalledWith(token, 'allocated', 'createdAt', 'asc', 1, apArea.id)
     })
 
     it('should handle request parameters correctly', async () => {
-      const tasks = taskFactory.buildList(1)
-      const paginatedResponse = paginatedResponseFactory.build({
-        data: tasks,
-      }) as PaginatedResponse<Task>
-      const apAreas = apAreaFactory.buildList(1)
-      apAreaService.getApAreas.mockResolvedValue(apAreas)
-
       const paginationDetails = {
         hrefPrefix: paths.tasks.index({}),
         pageNumber: 1,
@@ -108,6 +106,7 @@ describe('TasksController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
+        selectedArea: '1234',
       })
       expect(taskService.getAllReallocatable).toHaveBeenCalledWith(
         token,

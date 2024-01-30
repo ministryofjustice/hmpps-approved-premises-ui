@@ -2,6 +2,7 @@ import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type { UserDetails } from '@approved-premises/ui'
+import { apAreaFactory } from './referenceData'
 
 export default Factory.define<UserDetails>(() => ({
   id: faker.string.uuid(),
@@ -9,4 +10,5 @@ export default Factory.define<UserDetails>(() => ({
   displayName: faker.person.fullName(),
   active: true,
   roles: [],
+  apArea: apAreaFactory.build(),
 }))

@@ -1,6 +1,6 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { ApAreaService, PlacementRequestService } from '../../../services'
-import { PlacementRequestSortField } from '../../../@types/shared'
+import { PlacementRequestRequestType, PlacementRequestSortField, PlacementRequestStatus } from '../../../@types/shared'
 import paths from '../../../paths/admin'
 import { PlacementRequestDashboardSearchOptions } from '../../../@types/ui'
 import { getPaginationDetails } from '../../../utils/getPaginationDetails'
@@ -14,13 +14,9 @@ export default class PlacementRequestsController {
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const [apAreaId, requestType] = ['apArea', 'requestType'].map(filter =>
-        req.query[filter] ? req.query[filter] : req.body[filter],
-      )
-      let status = req.query.status ? req.query.status : req.body.status
-      if (status === undefined) {
-        status = 'notMatched'
-      }
+      const status = (req.query.status ? req.query.status : 'notMatched') as PlacementRequestStatus
+      const apAreaId = req.query.apArea ? req.query.apArea : res.locals.user.apArea?.id
+      const requestType = req.query.requestType as PlacementRequestRequestType
 
       const apAreas = await this.apAreaService.getApAreas(req.user.token)
 
