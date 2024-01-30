@@ -36,6 +36,16 @@ export default class BookingsController {
         const offences = await this.personService.getOffences(req.user.token, person.crn)
 
         if (isFullPerson(person)) {
+          if (offences.length === 0) {
+            const bodyTextParam = 'a placement in an Approved Premises,'
+            const backTextParam = 'Approved Premises'
+            return res.render(`applications/people/noOffence`, {
+              pageHeading: 'There are no offences for this person',
+              bodyTextParam,
+              backTextParam,
+              href: paths.premises.show({ premisesId }),
+            })
+          }
           return res.render(`bookings/new`, {
             pageHeading: 'Create a placement',
             premisesId,

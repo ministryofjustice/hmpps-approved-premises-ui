@@ -92,6 +92,22 @@ describe('bookingsController', () => {
         expect(request.flash).toHaveBeenCalledWith('crn')
       })
 
+      it('calls render with the noOffence view when the person dont have any offences', async () => {
+        const offences = activeOffenceFactory.buildList(0)
+        personService.getOffences.mockResolvedValue(offences)
+
+        const requestHandler = bookingController.new()
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('applications/people/noOffence', {
+          pageHeading: 'There are no offences for this person',
+          bodyTextParam: 'a placement in an Approved Premises,',
+          backTextParam: 'Approved Premises',
+          href: paths.premises.show({ premisesId }),
+        })
+      })
+
       it('if the CRN is restricted it should render the CRN form with an error', async () => {
         ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
           return { errors: {}, errorSummary: [], userInput: {}, errorTitle: '' }

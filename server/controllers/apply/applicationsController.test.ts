@@ -422,6 +422,9 @@ describe('applicationsController', () => {
 
         expect(response.render).toHaveBeenCalledWith('applications/people/noOffence', {
           pageHeading: 'There are no offences for this person',
+          bodyTextParam: 'an Approved Premises application',
+          backTextParam: 'dashboard',
+          href: paths.applications.index({}),
         })
       })
     })
