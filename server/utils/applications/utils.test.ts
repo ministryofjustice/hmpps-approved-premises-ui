@@ -678,6 +678,30 @@ describe('utils', () => {
           },
           content: timelineEvents[0].content,
           createdBy: timelineEvents[0].createdBy.name,
+          associatedUrls: [
+            {
+              type: timelineEvents[0].associatedUrls[0].type,
+              url: timelineEvents[0].associatedUrls[0].url,
+            },
+          ],
+        },
+      ])
+    })
+
+    it('maps the events into the format required by the MoJ UI Timeline component without associatedUrls', () => {
+      const timelineEvents = timelineEventFactory.buildList(1, { associatedUrls: undefined })
+
+      expect(mapTimelineEventsForUi(timelineEvents)).toEqual([
+        {
+          datetime: {
+            timestamp: timelineEvents[0].occurredAt,
+            date: DateFormats.isoDateTimeToUIDateTime(timelineEvents[0].occurredAt),
+          },
+          label: {
+            text: eventTypeTranslations[timelineEvents[0].type],
+          },
+          content: timelineEvents[0].content,
+          createdBy: timelineEvents[0].createdBy.name,
         },
       ])
     })

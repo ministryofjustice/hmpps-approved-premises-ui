@@ -125,6 +125,8 @@ export default class ShowPage extends Page {
               timelineEvents[index].createdBy.name,
             )
           }
+          cy.get('.govuk-link').should('have.attr', { time: timelineEvents[index].associatedUrls[0].url })
+          cy.get('.govuk-link').should('contain', timelineEvents[index].associatedUrls[0].type)
           cy.get('time').should('contain', DateFormats.isoDateTimeToUIDateTime(timelineEvents[index].occurredAt))
         })
       })
