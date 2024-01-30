@@ -89,6 +89,7 @@ describe('PlacementRequestsController', () => {
 
       expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.admin.placementRequests.index({}), {
         status: 'notMatched',
+        apArea: user.apArea.id,
       })
     })
 
@@ -129,9 +130,11 @@ describe('PlacementRequestsController', () => {
         paginationDetails.sortDirection,
       )
 
-      expect(getPaginationDetails).toHaveBeenCalledWith(notMatchedRequest, paths.admin.placementRequests.index({}), {
-        status: 'notMatched',
-      })
+      expect(getPaginationDetails).toHaveBeenCalledWith(
+        notMatchedRequest,
+        paths.admin.placementRequests.index({}),
+        filters,
+      )
     })
   })
 

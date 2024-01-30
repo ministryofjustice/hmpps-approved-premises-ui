@@ -23,7 +23,7 @@ export default class PlacementRequestsController {
       const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<PlacementRequestSortField>(
         req,
         paths.admin.placementRequests.index({}),
-        { status },
+        { status, apArea: apAreaId, requestType },
       )
 
       const dashboard = await this.placementRequestService.getDashboard(
