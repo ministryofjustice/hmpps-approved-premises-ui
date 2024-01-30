@@ -67,7 +67,7 @@ describe('SufficientInformation', () => {
       const page = new SufficientInformation({ sufficientInformation: 'no' })
 
       expect(page.errors()).toEqual({
-        query: 'You must specify what additional information is required',
+        query: 'You must specify what additional information is needed',
       })
     })
   })
@@ -78,7 +78,7 @@ describe('SufficientInformation', () => {
 
       expect(page.response()).toEqual({
         'Is there enough information in the application for you to make a decision?': 'Yes',
-        'What additional information is required?': '',
+        'What additional information is needed?': '',
       })
     })
 
@@ -87,7 +87,7 @@ describe('SufficientInformation', () => {
 
       expect(page.response()).toEqual({
         'Is there enough information in the application for you to make a decision?': 'No',
-        'What additional information is required?': 'some query',
+        'What additional information is needed?': 'some query',
       })
     })
   })

@@ -15,7 +15,7 @@ export default class SufficientInformation implements TasklistPage {
 
   title = 'Is there enough information in the application for you to make a decision?'
 
-  furtherInformationQuestion = 'What additional information is required?'
+  furtherInformationQuestion = 'What additional information is needed?'
 
   user: User
 
@@ -58,7 +58,7 @@ export default class SufficientInformation implements TasklistPage {
         'You must confirm if there is enough information in the application to make a decision'
 
     if (this.body.sufficientInformation === 'no' && !this.body.query) {
-      errors.query = 'You must specify what additional information is required'
+      errors.query = 'You must specify what additional information is needed'
     }
 
     return errors

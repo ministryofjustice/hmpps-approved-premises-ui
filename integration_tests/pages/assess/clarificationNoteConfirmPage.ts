@@ -8,7 +8,7 @@ export default class SufficientInformationPage extends Page {
   }
 
   clickBackToDashboard() {
-    return cy.get('a').contains('Back to dashboard').click()
+    return cy.get('a').contains('Return to dashboard').click()
   }
 
   confirmUserDetails(user: User) {
