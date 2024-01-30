@@ -45,6 +45,7 @@ export default class TasksController {
         hrefPrefix,
         sortBy,
         sortDirection,
+        selectedArea: apAreaId,
       })
     }
   }

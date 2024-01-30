@@ -74,6 +74,7 @@ describe('TasksController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: 'createdAt',
         sortDirection: 'asc',
+        selectedArea: apArea.id,
       })
       expect(taskService.getAllReallocatable).toHaveBeenCalledWith(token, 'allocated', 'createdAt', 'asc', 1, apArea.id)
     })
@@ -105,6 +106,7 @@ describe('TasksController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
+        selectedArea: '1234',
       })
       expect(taskService.getAllReallocatable).toHaveBeenCalledWith(
         token,
