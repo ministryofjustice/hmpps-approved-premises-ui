@@ -64,6 +64,7 @@ export type { Booking } from './models/Booking';
 export type { BookingAppealTask } from './models/BookingAppealTask';
 export type { BookingBody } from './models/BookingBody';
 export type { BookingNotMade } from './models/BookingNotMade';
+export type { BookingPremisesSummary } from './models/BookingPremisesSummary';
 export type { BookingSearchResult } from './models/BookingSearchResult';
 export type { BookingSearchResultBedSummary } from './models/BookingSearchResultBedSummary';
 export type { BookingSearchResultBookingSummary } from './models/BookingSearchResultBookingSummary';

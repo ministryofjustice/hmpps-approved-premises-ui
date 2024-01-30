@@ -9,6 +9,7 @@ import { fullPersonFactory, restrictedPersonFactory } from './person'
 import { DateFormats } from '../../utils/dateUtils'
 import cancellationFactory from './cancellation'
 import { bedFactory } from './room'
+import bookingPremisesSummaryFactory from './bookingPremisesSummary'
 
 const today = DateFormats.dateObjToIsoDate(startOfToday())
 const soon = () =>
@@ -117,5 +118,6 @@ export default BookingFactory.define(() => {
     bed: bedFactory.build(),
     applicationId: faker.string.uuid(),
     assessmentId: faker.string.uuid(),
+    premises: bookingPremisesSummaryFactory.build(),
   }
 })
