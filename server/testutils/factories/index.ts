@@ -76,6 +76,7 @@ import userFactory, { userWithWorkloadFactory } from './user'
 import userDetailsFactory from './userDetails'
 import placementApplicationDecisionEnvelopeFactory from './placementApplicationDecisionEnvelope'
 import premisesBookingFactory from './premisesBooking'
+import bookingPremisesSummaryFactory from './bookingPremisesSummary'
 
 export {
   acctAlertFactory,
@@ -107,6 +108,7 @@ export {
   bookingAppealTask,
   bookingFactory,
   bookingExtensionFactory,
+  bookingPremisesSummaryFactory,
   bookingNotMadeFactory,
   cancellationFactory,
   clarificationNoteFactory,
