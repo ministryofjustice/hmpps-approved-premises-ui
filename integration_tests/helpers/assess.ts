@@ -242,7 +242,7 @@ export default class AseessHelper {
     tasklistPage.shouldShowTaskStatus('suitability-assessment', 'Completed')
   }
 
-  private completeRequiredActionsQuestion() {
+  completeRequiredActionsQuestion() {
     // When I click on the 'required-actions' link
     cy.get('[data-cy-task-name="required-actions"]').click()
 
