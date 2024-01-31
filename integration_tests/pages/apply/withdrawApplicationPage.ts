@@ -1,3 +1,4 @@
+import { WithdrawalReason } from '../../../server/@types/shared'
 import paths from '../../../server/paths/apply'
 
 import Page from '../page'
@@ -8,7 +9,7 @@ export default class WithdrawApplicationPage extends Page {
     this.checkForBackButton(paths.applications.index.pattern)
   }
 
-  completeForm() {
-    this.checkRadioByNameAndValue('reason', 'alternative_identified_placement_no_longer_required')
+  completeForm(withdrawalReason: WithdrawalReason) {
+    this.checkRadioByNameAndValue('reason', withdrawalReason)
   }
 }
