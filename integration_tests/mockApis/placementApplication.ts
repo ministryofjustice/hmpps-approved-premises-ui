@@ -104,4 +104,11 @@ export default {
         url: paths.placementApplications.submitDecision({ id: applicationId }),
       })
     ).body.requests,
+  verifyPlacementApplicationWithdrawn: async (applicationId: string) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.placementApplications.withdraw({ id: applicationId }),
+      })
+    ).body.requests,
 }

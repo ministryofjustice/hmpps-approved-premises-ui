@@ -47,7 +47,7 @@ describe('withdrawalsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('placement-applications/withdraw/new', {
-        pageHeading: 'Are you sure you want to withdraw this placement application?',
+        pageHeading: 'Why is this placement request being withdrawn?',
         placementApplicationId: placementApplication.id,
         applicationId,
         errors: errorsAndUserInput.errors,
@@ -62,12 +62,16 @@ describe('withdrawalsController', () => {
     it('calls the service method, redirects to the application screen and shows a confirmation message', async () => {
       request.body.applicationId = applicationId
       request.params.id = placementApplicationId
-
+      request.body.reason = 'DuplicatePlacementRequest'
       const requestHandler = withdrawalsController.create()
 
       await requestHandler(request, response, next)
 
-      expect(placementApplicationService.withdraw).toHaveBeenCalledWith(token, placementApplicationId)
+      expect(placementApplicationService.withdraw).toHaveBeenCalledWith(
+        token,
+        placementApplicationId,
+        request.body.reason,
+      )
       expect(response.redirect).toHaveBeenCalledWith(applicationShowPageTab(applicationId, 'placementRequests'))
       expect(request.flash).toHaveBeenCalledWith('success', 'Placement application withdrawn')
     })

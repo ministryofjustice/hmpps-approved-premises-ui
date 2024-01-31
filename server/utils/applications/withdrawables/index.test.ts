@@ -1,5 +1,5 @@
 import { bookingFactory, withdrawableFactory } from '../../../testutils/factories'
-import { withdrawableRadioOptions, withdrawableTypeRadioOptions } from '.'
+import { placementApplicationWithdrawalReasons, withdrawableRadioOptions, withdrawableTypeRadioOptions } from '.'
 import { DateFormats } from '../../dateUtils'
 import { linkTo } from '../../utils'
 import matchPaths from '../../../paths/match'
@@ -118,6 +118,21 @@ describe('withdrawableTypeRadioOptions', () => {
             .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
             .join(', ')}`,
           value: bookingWithdrawable.id,
+        },
+      ])
+    })
+  })
+
+  describe('placementApplicationWithdrawalReasons', () => {
+    it('returns the reasons for withdrawing a placement application', () => {
+      expect(placementApplicationWithdrawalReasons('DuplicatePlacementRequest')).toEqual([
+        { divider: 'Problem in placement request' },
+        { text: 'Duplicate placement request', value: 'DuplicatePlacementRequest', checked: true },
+        { divider: 'Placement no longer required' },
+        {
+          text: 'Alternative provision identified',
+          value: 'AlternativeProvisionIdentified',
+          checked: false,
         },
       ])
     })

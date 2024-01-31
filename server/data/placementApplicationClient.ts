@@ -6,6 +6,7 @@ import {
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
+import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 
 export default class PlacementApplicationClient {
   restClient: RestClient
@@ -54,9 +55,13 @@ export default class PlacementApplicationClient {
     })) as Promise<PlacementApplication>
   }
 
-  async withdraw(placementApplicationId: string): Promise<PlacementApplication> {
+  async withdraw(
+    placementApplicationId: string,
+    reason: WithdrawPlacementRequestReason,
+  ): Promise<PlacementApplication> {
     return (await this.restClient.post({
       path: paths.placementApplications.withdraw({ id: placementApplicationId }),
+      data: { reason },
     })) as Promise<PlacementApplication>
   }
 }

@@ -4,6 +4,7 @@ import matchPaths from '../../../paths/match'
 import managePaths from '../../../paths/manage'
 import { DateFormats } from '../../dateUtils'
 import { linkTo } from '../../utils'
+import { WithdrawPlacementRequestReason } from '../../../@types/shared/models/WithdrawPlacementRequestReason'
 
 export type SelectedWithdrawableType = 'application' | 'placementRequest' | 'booking'
 
@@ -103,4 +104,23 @@ export const withdrawableRadioOptions = (
     }
     throw new Error(`Unknown withdrawable type: ${withdrawable.type}`)
   })
+}
+
+export const placementApplicationWithdrawalReasons = (
+  selectedReason: WithdrawPlacementRequestReason,
+): Array<RadioItem | { divider: string }> => {
+  return [
+    { divider: 'Problem in placement request' },
+    {
+      text: 'Duplicate placement request',
+      value: 'DuplicatePlacementRequest',
+      checked: selectedReason === 'DuplicatePlacementRequest',
+    },
+    { divider: 'Placement no longer required' },
+    {
+      text: 'Alternative provision identified',
+      value: 'AlternativeProvisionIdentified',
+      checked: selectedReason === 'AlternativeProvisionIdentified',
+    },
+  ]
 }
