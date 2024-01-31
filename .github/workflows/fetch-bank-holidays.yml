@@ -23,7 +23,7 @@ jobs:
           curl -o bank-holidays.json https://www.gov.uk/bank-holidays.json
           mv bank-holidays.json ./server/data/bankHolidays/bank-holidays.json
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ steps.generate-token.outputs.token }}
           title: 'Bank holiday updates'
