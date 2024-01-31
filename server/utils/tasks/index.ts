@@ -37,7 +37,7 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
         text: 'Name',
       },
       value: {
-        text: nameOrPlaceholderCopy(application.person, `LAO: ${application.person.crn}`),
+        text: nameOrPlaceholderCopy(application.person, `LAO: ${application.person.crn}`, true),
       },
     },
     {

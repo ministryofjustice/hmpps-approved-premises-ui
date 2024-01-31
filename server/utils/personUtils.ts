@@ -36,8 +36,20 @@ const laoName = (person: FullPerson) => (person.isRestricted ? `LAO: ${person.na
  * @param {Person} person
  * @returns 'the person' | person.name
  */
-const nameOrPlaceholderCopy = (person: Person, copyForRestrictedPerson = 'the person'): string => {
-  return isFullPerson(person) ? person.name : copyForRestrictedPerson
+const nameOrPlaceholderCopy = (
+  person: Person,
+  copyForRestrictedPerson = 'the person',
+  showLaoLabel = false,
+): string => {
+  return isFullPerson(person) ? nameText(person, showLaoLabel) : copyForRestrictedPerson
+}
+
+const nameText = (person: FullPerson, showLaoLabel: boolean) => {
+  let { name } = person
+  if (showLaoLabel && person.isRestricted) {
+    name += ' (Limited access offender)'
+  }
+  return name
 }
 
 export { statusTag, tierBadge, isApplicableTier, isFullPerson, nameOrPlaceholderCopy, laoName }
