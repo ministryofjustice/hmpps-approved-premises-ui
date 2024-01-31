@@ -16,6 +16,7 @@ import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { daysToWeeksAndDays } from '../assessments/dateUtils'
 import { sortHeader } from '../sortHeader'
 import { isFullPerson, laoName } from '../personUtils'
+import { placementRequestStatus } from '../formUtils'
 
 export const DIFFERENCE_IN_DAYS_BETWEEN_DUE_DATE_AND_ARRIVAL_DATE = 7
 
@@ -45,8 +46,15 @@ export const dashboardTableRows = (
       applicationDateCell(placementRequest),
       status === 'matched' ? premisesNameCell(placementRequest) : durationCell(placementRequest),
       requestTypeCell(placementRequest),
+      statusCell(placementRequest),
     ]
   })
+}
+
+export const statusCell = (placementRequest: PlacementRequest): TableCell => {
+  return {
+    text: placementRequestStatus[placementRequest.status],
+  }
 }
 
 export const requestTypeCell = (placementRequest: PlacementRequest): TableCell => {
@@ -142,5 +150,8 @@ export const dashboardTableHeader = (
         }
       : sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
     sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
+    {
+      text: 'Status',
+    },
   ]
 }

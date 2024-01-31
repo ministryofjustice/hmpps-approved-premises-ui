@@ -18,6 +18,7 @@ import {
   premisesNameCell,
   releaseTypeCell,
   requestTypeCell,
+  statusCell,
   tableRows,
 } from './table'
 import { DateFormats } from '../dateUtils'
@@ -213,6 +214,7 @@ describe('tableUtils', () => {
           applicationDateCell(placementRequest),
           durationCell(placementRequest),
           requestTypeCell(placementRequest),
+          statusCell(placementRequest),
         ],
       ])
     })
@@ -229,6 +231,7 @@ describe('tableUtils', () => {
           applicationDateCell(placementRequest),
           premisesNameCell(placementRequest),
           requestTypeCell(placementRequest),
+          statusCell(placementRequest),
         ],
       ])
     })
@@ -245,6 +248,7 @@ describe('tableUtils', () => {
           applicationDateCell(placementRequest),
           durationCell(placementRequest),
           requestTypeCell(placementRequest),
+          statusCell(placementRequest),
         ],
       ])
     })
@@ -272,6 +276,9 @@ describe('tableUtils', () => {
         ),
         sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
+        {
+          text: 'Status',
+        },
       ])
     })
 
@@ -294,6 +301,9 @@ describe('tableUtils', () => {
           text: 'Approved Premises',
         },
         sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
+        {
+          text: 'Status',
+        },
       ])
     })
   })

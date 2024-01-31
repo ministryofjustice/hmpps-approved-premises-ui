@@ -467,6 +467,7 @@ export type PlacementRequestDashboardSearchOptions = {
   tier?: RiskTierLevel
   arrivalDateStart?: string
   arrivalDateEnd?: string
+  status?: PlacementRequestStatus
 }
 
 export type ApplicationDashboardSearchOptions = {

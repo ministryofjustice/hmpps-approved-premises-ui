@@ -78,12 +78,14 @@ export default {
   stubPlacementRequestsSearch: ({
     placementRequests,
     crnOrName = '',
+    status = '',
     page = '1',
     sortBy = 'created_at',
     sortDirection = 'asc',
   }: {
     placementRequests: Array<PlacementRequest>
     crnOrName: string
+    status: string
     page: string
     sortBy: string
     sortDirection: string
@@ -103,6 +105,11 @@ export default {
     if (crnOrName) {
       queryParameters.crnOrName = {
         equalTo: crnOrName,
+      }
+    }
+    if (status) {
+      queryParameters.status = {
+        equalTo: status,
       }
     }
 
@@ -160,6 +167,7 @@ export default {
     tier,
     arrivalDateStart,
     arrivalDateEnd,
+    status,
     page = '1',
     sortBy = 'created_at',
     sortDirection = 'asc',
@@ -168,6 +176,7 @@ export default {
     tier: RiskTierLevel
     arrivalDateStart: string
     arrivalDateEnd: string
+    status: string
     page: string
     sortBy: string
     sortDirection: string
@@ -182,6 +191,9 @@ export default {
           },
           tier: {
             equalTo: tier,
+          },
+          status: {
+            equalTo: status,
           },
           arrivalDateStart: {
             equalTo: arrivalDateStart,
