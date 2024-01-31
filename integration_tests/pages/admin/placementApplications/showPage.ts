@@ -69,7 +69,7 @@ export default class ShowPage extends Page {
   }
 
   shouldShowCancelBookingOption() {
-    this.buttonShouldExist('Cancel placement')
+    this.buttonShouldExist('Withdraw placement')
   }
 
   shouldNotShowCreateBookingOption() {

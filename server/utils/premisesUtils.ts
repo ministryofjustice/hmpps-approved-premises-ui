@@ -14,7 +14,7 @@ import { linkTo } from './utils'
 
 export type NegativeDateRange = { start?: string; end?: string }
 
-export const overcapacityMessage = (premisesCapacity: Array<DateCapacity>): string => {
+export const overcapacityMessage = (premisesCapacity: Array<DateCapacity> = []): string => {
   let dateRange: NegativeDateRange = {}
   const overcapacityDateRanges: Array<NegativeDateRange> = []
   let message: string

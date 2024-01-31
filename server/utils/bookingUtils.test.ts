@@ -47,7 +47,7 @@ describe('bookingUtils', () => {
       expect(manageBookingLink(premisesId, booking)).toMatchStringIgnoringWhitespace(`<a href="${paths.bookings.show({
         premisesId,
         bookingId: booking.id,
-      })}">
+      })}" data-cy-booking-id="${booking.id}">
       Manage
       <span class="govuk-visually-hidden">
         booking for ${booking.person.crn}
@@ -61,7 +61,7 @@ describe('bookingUtils', () => {
       expect(manageBookingLink(premisesId, booking)).toMatchStringIgnoringWhitespace(`<a href="${paths.bookings.show({
         premisesId,
         bookingId: booking.id,
-      })}">
+      })}" data-cy-booking-id="${booking.id}">
       Manage
       <span class="govuk-visually-hidden">
         booking for ${booking.person.crn}
@@ -216,9 +216,9 @@ describe('bookingUtils', () => {
               href: paths.bookings.nonArrivals.new({ premisesId, bookingId: booking.id }),
             },
             {
-              text: 'Cancel placement',
+              text: 'Withdraw placement',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.cancellations.new({ premisesId, bookingId: booking.id }),
+              href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
             },
             {
               text: 'Change placement dates',
@@ -252,9 +252,9 @@ describe('bookingUtils', () => {
               href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
             },
             {
-              text: 'Cancel placement',
+              text: 'Withdraw placement',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.cancellations.new({ premisesId, bookingId: booking.id }),
+              href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
             },
           ],
         },

@@ -281,7 +281,7 @@ context('Placement Requests', () => {
     const cancellationPage = Page.verifyOnPage(CancellationCreatePage, matchedPlacementRequest)
 
     // And I cancel my booking
-    cancellationPage.completeForm(cancellation)
+    cancellationPage.completeForm(cancellation, { completeFullForm: true })
     cancellationPage.clickSubmit()
 
     // Then I should see a confirmation message

@@ -7,7 +7,7 @@ export default class CancellationCreatePage extends Page {
     public readonly premisesId: string,
     public readonly bookingId: string,
   ) {
-    super('Confirm cancelled placement')
+    super('Confirm withdrawn placement')
   }
 
   static visit(premisesId: string, bookingId: string): CancellationCreatePage {
@@ -16,15 +16,16 @@ export default class CancellationCreatePage extends Page {
     return new CancellationCreatePage(premisesId, bookingId)
   }
 
-  completeForm(cancellation: Cancellation): void {
-    this.getLegend('When was this placement cancelled?')
-    this.completeDateInputs('date', cancellation.date)
+  completeForm(cancellation: Cancellation, { completeFullForm }: { completeFullForm: boolean }): void {
+    if (completeFullForm) {
+      this.getLegend('When was this placement withdrawn?')
+      this.completeDateInputs('date', cancellation.date)
+      this.getLabel('Provide any additional notes on why this placement was withdrawn')
+      this.completeTextArea('cancellation[notes]', cancellation.notes)
+    }
 
-    this.getLegend('Why was this placement cancelled?')
+    this.getLegend('Why was this placement withdrawn?')
     this.checkRadioByNameAndValue('cancellation[reason]', cancellation.reason.id)
-
-    this.getLabel('Provide any additional notes on why this placement was cancelled')
-    this.completeTextArea('cancellation[notes]', cancellation.notes)
 
     this.clickSubmit()
   }

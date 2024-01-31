@@ -70,7 +70,7 @@ export const bookingSummaryList = (booking: BookingSummary): SummaryListWithCard
 
 export const manageBookingLink = (premisesId: string, booking: Booking | PremisesBooking): string => {
   return booking.id && booking.person
-    ? `<a href="${paths.bookings.show({ premisesId, bookingId: booking.id })}">
+    ? `<a href="${paths.bookings.show({ premisesId, bookingId: booking.id })}" data-cy-booking-id="${booking.id}">
     Manage
     <span class="govuk-visually-hidden">
       booking for ${booking.person.crn}
@@ -188,9 +188,9 @@ export const bookingActions = (booking: Booking, premisesId: string): Array<Iden
         href: paths.bookings.nonArrivals.new({ premisesId, bookingId: booking.id }),
       })
       items.push({
-        text: 'Cancel placement',
+        text: 'Withdraw placement',
         classes: 'govuk-button--secondary',
-        href: paths.bookings.cancellations.new({ premisesId, bookingId: booking.id }),
+        href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
       })
       items.push({
         text: 'Change placement dates',
@@ -211,9 +211,9 @@ export const bookingActions = (booking: Booking, premisesId: string): Array<Iden
         href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
       })
       items.push({
-        text: 'Cancel placement',
+        text: 'Withdraw placement',
         classes: 'govuk-button--secondary',
-        href: paths.bookings.cancellations.new({ premisesId, bookingId: booking.id }),
+        href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
       })
     }
 

@@ -7,6 +7,7 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 import { DateFormats } from '../../utils/dateUtils'
 
 import paths from '../../paths/manage'
+import { hasRole } from '../../utils/users'
 
 export default class CancellationsController {
   constructor(
@@ -32,12 +33,13 @@ export default class CancellationsController {
       }
 
       res.render('cancellations/new', {
+        apManager: hasRole(res.locals.user, 'manager'),
         premisesId,
         bookingId,
         booking,
         backLink,
         cancellationReasons,
-        pageHeading: 'Confirm cancelled placement',
+        pageHeading: 'Confirm withdrawn placement',
         errors,
         errorSummary,
         ...userInput,
@@ -48,7 +50,15 @@ export default class CancellationsController {
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, bookingId } = req.params
-      const { date } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'date')
+
+      let date: string
+
+      try {
+        date = DateFormats.dateAndTimeInputsToIsoString(req.body, 'date').date
+        DateFormats.isoToDateObj(date)
+      } catch (err) {
+        date = DateFormats.dateObjToIsoDate(new Date())
+      }
 
       const cancellation = {
         ...req.body.cancellation,
@@ -58,8 +68,7 @@ export default class CancellationsController {
       try {
         await this.cancellationService.createCancellation(req.user.token, premisesId, bookingId, cancellation)
 
-        req.flash('success', 'Booking cancelled')
-        res.redirect(req.body.backLink)
+        res.render('cancellations/confirm', { pageHeading: 'Booking withdrawn' })
       } catch (err) {
         catchValidationErrorOrPropogate(
           req,
