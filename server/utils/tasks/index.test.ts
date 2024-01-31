@@ -67,6 +67,14 @@ describe('index', () => {
           },
           {
             key: {
+              text: 'AP Area',
+            },
+            value: {
+              text: application.apArea.name,
+            },
+          },
+          {
+            key: {
               text: 'Currently allocated to',
             },
             value: {
@@ -113,6 +121,14 @@ describe('index', () => {
             },
             value: {
               text: getApplicationType(application),
+            },
+          },
+          {
+            key: {
+              text: 'AP Area',
+            },
+            value: {
+              text: application.apArea.name,
             },
           },
           {

@@ -65,6 +65,14 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
       },
     },
     {
+      key: {
+        text: 'AP Area',
+      },
+      value: {
+        text: application.apArea?.name,
+      },
+    },
+    {
       key: { text: 'Currently allocated to' },
       value: { text: task?.allocatedToStaffMember ? task.allocatedToStaffMember.name : 'Unallocated' },
     },
