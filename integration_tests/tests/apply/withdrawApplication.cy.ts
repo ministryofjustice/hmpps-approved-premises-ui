@@ -4,6 +4,7 @@ import Page from '../../pages/page'
 import WithdrawApplicationPage from '../../pages/apply/withdrawApplicationPage'
 import { setup } from './setup'
 import { applicationSummaryFactory } from '../../../server/testutils/factories'
+import { WithdrawalReason } from '../../../server/@types/shared'
 
 context('Withdraw Application', () => {
   beforeEach(setup)
@@ -21,6 +22,8 @@ context('Withdraw Application', () => {
     cy.task('stubApplicationWithdrawn', { applicationId: inProgressApplication.id })
     cy.task('stubWithdrawables', { applicationId: inProgressApplication.id, withdrawables: [] })
 
+    const withdrawalReason: WithdrawalReason = 'change_in_circumstances_new_application_to_be_submitted'
+
     // And I visit the list page
     const listPage = ListPage.visit([inProgressApplication], [], [])
 
@@ -31,7 +34,7 @@ context('Withdraw Application', () => {
     const withdrawConfirmationPage = Page.verifyOnPage(WithdrawApplicationPage)
 
     // When I choose a reason and click submit
-    withdrawConfirmationPage.completeForm()
+    withdrawConfirmationPage.completeForm(withdrawalReason)
     withdrawConfirmationPage.clickSubmit()
 
     // Then I should see the list page and be shown confirmation of the withdrawal
@@ -43,7 +46,7 @@ context('Withdraw Application', () => {
 
       const body = JSON.parse(requests[0].body)
 
-      expect(body.reason).equal('alternative_identified_placement_no_longer_required')
+      expect(body.reason).equal(withdrawalReason)
     })
   })
 })
