@@ -16,8 +16,9 @@ export default class ListPage extends Page {
     this.unallocatedTasks = unallocatedTasks
   }
 
-  static visit(allocatedTasks: Array<Task>, unallocatedTasks: Array<Task>): ListPage {
-    cy.visit(paths.tasks.index({}))
+  static visit(allocatedTasks: Array<Task>, unallocatedTasks: Array<Task>, query?: string): ListPage {
+    const path = paths.tasks.index({})
+    cy.visit(query ? `${path}?${query}` : path)
     return new ListPage(allocatedTasks, unallocatedTasks)
   }
 
@@ -25,12 +26,15 @@ export default class ListPage extends Page {
     shouldShowTableRows(allocatedTableRows(allocatedTasks))
   }
 
-  shouldShowUnallocatedTasks(): void {
-    cy.get('a').contains('Unallocated').click()
-    shouldShowTableRows(unallocatedTableRows(this.unallocatedTasks))
+  shouldShowUnallocatedTasks(unallocatedTasks = this.unallocatedTasks): void {
+    shouldShowTableRows(unallocatedTableRows(unallocatedTasks))
   }
 
   clickTask(task: Task) {
     cy.get(`a[data-cy-taskId="${task.id}"]`).click()
+  }
+
+  clickTab(tabName: string): void {
+    cy.get('a').contains(tabName).click()
   }
 }

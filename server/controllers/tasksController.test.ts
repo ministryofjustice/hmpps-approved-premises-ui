@@ -92,7 +92,7 @@ describe('TasksController', () => {
 
       const requestHandler = tasksController.index()
 
-      const unallocatedRequest = { ...request, query: { allocatedFilter: 'unallocated', areas: '1234' } }
+      const unallocatedRequest = { ...request, query: { allocatedFilter: 'unallocated', area: '1234' } }
 
       await requestHandler(unallocatedRequest, response, next)
 

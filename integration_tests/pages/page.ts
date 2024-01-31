@@ -443,4 +443,8 @@ export default abstract class Page {
       }
     })
   }
+
+  shouldHaveActiveTab(tabName: string): void {
+    cy.get('a.moj-sub-navigation__link').contains(tabName).should('have.attr', 'aria-current', 'page')
+  }
 }
