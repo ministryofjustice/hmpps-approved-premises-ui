@@ -81,12 +81,7 @@ const unallocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   tasks.forEach(task => {
-    rows.push([
-      nameAnchorCell(task),
-      daysUntilDueCell(task),
-      statusCell(task),
-      taskTypeCell(task),
-    ])
+    rows.push([nameAnchorCell(task), daysUntilDueCell(task), statusCell(task), taskTypeCell(task)])
   })
 
   return rows
@@ -123,9 +118,6 @@ const unAllocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirect
       text: 'Person',
     },
     sortHeader<TaskSortField>('Days until due date', 'createdAt', sortBy, sortDirection, hrefPrefix),
-    {
-      text: 'Allocated to',
-    },
     {
       text: 'Status',
     },
