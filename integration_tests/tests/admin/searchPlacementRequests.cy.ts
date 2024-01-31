@@ -13,6 +13,7 @@ context('Search placement Requests', () => {
     tier: 'D2',
     arrivalDateStart: '2022-01-01',
     arrivalDateEnd: '2022-01-03',
+    status: 'notMatched',
   } as PlacementRequestDashboardSearchOptions
 
   beforeEach(() => {

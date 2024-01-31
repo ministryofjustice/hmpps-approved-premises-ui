@@ -67,8 +67,8 @@ export default class PlacementRequestsController {
         'tier',
         'arrivalDateStart',
         'arrivalDateEnd',
+        'status',
       ])
-
       const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<PlacementRequestSortField>(
         req,
         paths.admin.placementRequests.search({}),

@@ -26,7 +26,7 @@
       <div class="search-and-filter__wrapper">
 
         <form action="{{ paths.admin.placementRequests.search({}) }}" method="get">
-          <input type="hidden" name="status" value="{{ status }}">
+
           <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
           <div class="govuk-grid-row">
@@ -66,6 +66,19 @@
               }}
             </div>
             <div class="govuk-grid-column-one-quarter">
+              {{
+                govukSelect({
+                  label: {
+                      text: "Status",
+                      classes: "govuk-label--s"
+                  },
+                  id: "status",
+                  name: "status",
+                  items: FormUtils.placementRequestStatusSelectOptions(status)
+                })
+              }}
+            </div>
+            <div class="govuk-grid-column-one-quarter">
               <div class="govuk-form-group">
                 <label class="govuk-label govuk-label--s" for="arrivalDateStart">
                   Arrival date from
@@ -83,14 +96,16 @@
                 <input type="date" id="arrivalDateEnd" class="govuk-input" name="arrivalDateEnd" placeholder="Date to" value="{{ arrivalDateEnd }}"/>
               </div>
             </div>
+          </div>
+          <div class="govuk-grid-row">
             <div class="govuk-grid-column-one-quarter">
               {{
-                govukButton({
-                  name: 'submit',
-                  text: 'Apply filters',
-                  classes: 'search-and-filter__submit'
-                })
-              }}
+                          govukButton({
+                            name: 'submit',
+                            text: 'Apply filters',
+                            classes: 'search-and-filter__submit'
+                          })
+                        }}
             </div>
           </div>
 

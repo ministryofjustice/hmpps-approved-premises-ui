@@ -2,6 +2,7 @@ import * as nunjucks from 'nunjucks'
 
 import type { CheckBoxItem, ErrorMessages, RadioItem, SelectOption, SummaryListItem } from '@approved-premises/ui'
 import type { RiskTierLevel } from '@approved-premises/api'
+import { PlacementRequestStatus } from '@approved-premises/api'
 import { resolvePath, sentenceCase } from './utils'
 import postcodeAreas from '../etc/postcodeAreas.json'
 
@@ -182,6 +183,29 @@ export const tierSelectOptions = (selectedOption: RiskTierLevel | undefined): Ar
     text: 'Please select',
     value: '',
     selected: selectedOption === undefined,
+  })
+
+  return options
+}
+
+export const placementRequestStatus: Record<PlacementRequestStatus, string> = {
+  notMatched: 'Not matched',
+  unableToMatch: 'Unable to match',
+  matched: 'Matched',
+}
+export const placementRequestStatusSelectOptions = (
+  selectedOption: PlacementRequestStatus | undefined | null,
+): Array<SelectOption> => {
+  const options = Object.keys(placementRequestStatus).map(status => ({
+    text: placementRequestStatus[status],
+    value: status,
+    selected: status === selectedOption,
+  }))
+
+  options.unshift({
+    text: 'All statuses',
+    value: '',
+    selected: !selectedOption,
   })
 
   return options
