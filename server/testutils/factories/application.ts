@@ -17,6 +17,7 @@ import { fullPersonFactory, restrictedPersonFactory } from './person'
 import risksFactory from './risks'
 import { DateFormats } from '../../utils/dateUtils'
 import { PartnerAgencyDetails } from '../../@types/ui'
+import { apAreaFactory } from './referenceData'
 
 class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
   withReleaseDate(releaseDate = DateFormats.dateObjToIsoDate(faker.date.soon())) {
@@ -138,4 +139,5 @@ export default ApplicationFactory.define(() => ({
   risks: risksFactory.build(),
   status: 'started' as const,
   personStatusOnSubmission: 'InCustody' as const,
+  apArea: apAreaFactory.build(),
 }))
