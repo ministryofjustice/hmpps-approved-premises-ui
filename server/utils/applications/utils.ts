@@ -27,7 +27,6 @@ import type {
 import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-information/maleAp'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
-import placementApplicationPaths from '../../paths/placementApplications'
 import Apply from '../../form-pages/apply'
 import { isApplicableTier, isFullPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
@@ -47,7 +46,11 @@ import { durationAndArrivalDateFromPlacementApplication } from '../placementRequ
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 
-export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
+export {
+  withdrawableTypeRadioOptions,
+  withdrawableRadioOptions,
+  placementApplicationWithdrawalReasons,
+} from './withdrawables'
 
 const applicationStatuses: Record<ApprovedPremisesApplicationStatus, string> = {
   started: 'Application started',
@@ -334,8 +337,8 @@ const mapPlacementApplicationToSummaryCards = (
 
     if (placementApplication?.canBeWithdrawn && placementApplication.createdByUserId === actingUser.id) {
       actionItems.push({
-        href: placementApplicationPaths.placementApplications.withdraw.new({
-          id: placementApplications[0].id,
+        href: paths.applications.withdraw.new({
+          id: application.id,
         }),
         text: 'Withdraw',
       })

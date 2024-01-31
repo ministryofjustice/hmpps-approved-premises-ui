@@ -8,13 +8,6 @@
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body" %}
 
-{% block beforeContent %}
-    {{ govukBackLink({
-		text: "Back",
-		href: ApplyUtils.applicationShowPageTab(applicationId, ApplyUtils.applicationShowPageTabs.placementRequests)
-	}) }}
-{% endblock %}
-
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
@@ -26,10 +19,21 @@
 
                 {{ showErrorSummary(errorSummary) }}
 
-                <h1>{{pageHeading}}</h1>
+                {{ govukRadios({
+                    name: "reason",              
+                    classes: "govuk-radios--withdrawal-reasons",
+                    fieldset: {
+                        legend: {
+                            text: pageHeading,
+                            classes: "govuk-fieldset__legend--m",
+                            isPageHeading: true
+                        }
+                    },
+                    items: ApplyUtils.placementApplicationWithdrawalReasons(selectedReason)
+
+                }) }}
 
                 {{ govukButton({
-                    name: 'submit',
                     text: "Continue"
                 }) }}
 

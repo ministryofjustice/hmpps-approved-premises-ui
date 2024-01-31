@@ -13,7 +13,6 @@ import {
   userFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/apply'
-import placementApplicationPaths from '../../paths/placementApplications'
 import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
 import PlacementRequest from '../../form-pages/placement-application'
@@ -761,8 +760,8 @@ describe('utils', () => {
             actions: {
               items: [
                 {
-                  href: placementApplicationPaths.placementApplications.withdraw.new({
-                    id: placementApplications[0].id,
+                  href: paths.applications.withdraw.new({
+                    id: application.id,
                   }),
                   text: 'Withdraw',
                 },
@@ -825,8 +824,8 @@ describe('utils', () => {
             actions: {
               items: [
                 {
-                  href: placementApplicationPaths.placementApplications.withdraw.new({
-                    id: placementApplications[0].id,
+                  href: paths.applications.withdraw.new({
+                    id: application.id,
                   }),
                   text: 'Withdraw',
                 },

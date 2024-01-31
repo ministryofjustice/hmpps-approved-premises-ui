@@ -6,6 +6,8 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 
 import placementApplicationPaths from '../../paths/placementApplications'
 import { applicationShowPageTab } from '../../utils/applications/utils'
+import { WithdrawPlacementRequestReason } from '../../@types/shared/models/WithdrawPlacementRequestReason'
+import { Application } from '../../@types/shared'
 
 export default class WithdrawlsController {
   constructor(private readonly placementApplicationService: PlacementApplicationService) {}
@@ -19,7 +21,7 @@ export default class WithdrawlsController {
       )
 
       return res.render('placement-applications/withdraw/new', {
-        pageHeading: 'Are you sure you want to withdraw this placement application?',
+        pageHeading: 'Why is this placement request being withdrawn?',
         placementApplicationId: placementApplication.id,
         applicationId: placementApplication.applicationId,
         errors,
@@ -32,8 +34,13 @@ export default class WithdrawlsController {
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
       try {
-        await this.placementApplicationService.withdraw(req.user.token, req.params.id)
-        const { applicationId } = req.body
+        const { reason, applicationId } = req.body as {
+          reason: WithdrawPlacementRequestReason | undefined
+          applicationId: Application['id'] | undefined
+        }
+
+        await this.placementApplicationService.withdraw(req.user.token, req.params.id, reason)
+
         req.flash('success', 'Placement application withdrawn')
 
         return res.redirect(applicationShowPageTab(applicationId, 'placementRequests'))

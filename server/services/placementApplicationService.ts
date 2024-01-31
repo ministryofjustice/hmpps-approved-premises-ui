@@ -11,6 +11,7 @@ import TasklistPage, { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getBody, getPageName, getTaskName } from '../form-pages/utils'
 import { ValidationError } from '../utils/errors'
 import { placementApplicationSubmissionData } from '../utils/placementRequests/placementApplicationSubmissionData'
+import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 
 export default class PlacementApplicationService {
   constructor(private readonly placementApplicationClientFactory: RestClientBuilder<PlacementApplicationClient>) {}
@@ -85,9 +86,9 @@ export default class PlacementApplicationService {
     return placementApplicationClient.decisionSubmission(placementApplicationId, decisionEnvelope)
   }
 
-  async withdraw(token: string, placementApplicationId: string) {
+  async withdraw(token: string, placementApplicationId: string, reason: WithdrawPlacementRequestReason) {
     const placementApplicationClient = this.placementApplicationClientFactory(token)
 
-    return placementApplicationClient.withdraw(placementApplicationId)
+    return placementApplicationClient.withdraw(placementApplicationId, reason)
   }
 }

@@ -206,10 +206,11 @@ describe('placementApplicationService', () => {
   describe('withdraw', () => {
     it('calls the client method and returns the result', async () => {
       const placementApplication = placementApplicationFactory.build()
+      const reason = 'AlternativeProvisionIdentified'
 
       placementApplicationClient.withdraw.mockResolvedValue(placementApplication)
 
-      const result = await service.withdraw(token, placementApplication.id)
+      const result = await service.withdraw(token, placementApplication.id, reason)
 
       expect(result).toEqual(placementApplication)
     })

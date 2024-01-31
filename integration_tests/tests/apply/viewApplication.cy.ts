@@ -1,9 +1,10 @@
 import { faker } from '@faker-js/faker/locale/en_GB'
 
 import { ListPage, NotesConfirmationPage, ShowPage } from '../../pages/apply'
+import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
 import Page from '../../pages/page'
 import { setup } from './setup'
-import { noteFactory, timelineEventFactory } from '../../../server/testutils/factories'
+import { noteFactory, timelineEventFactory, withdrawableFactory } from '../../../server/testutils/factories'
 import placementApplication from '../../../server/testutils/factories/placementApplication'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import { ApprovedPremisesApplication as Application, User } from '../../../server/@types/shared'
@@ -111,11 +112,17 @@ context('show applications', () => {
       rotlPlacementApplication,
       additionalPlacementApplication,
     ]
+
+    const withdrawable = withdrawableFactory.build({
+      id: releaseFollowingDecisionPlacementApplication.id,
+      type: 'placement_application',
+    })
     cy.task('stubApplicationGet', { application })
     cy.task('stubApplicationPlacementRequests', {
       applicationId: application.id,
       placementApplications,
     })
+    cy.task('stubWithdrawables', { applicationId: application.id, withdrawables: [withdrawable] })
     placementApplications.forEach(pa => {
       cy.task('stubPlacementApplication', pa)
       cy.task('stubSubmitPlacementApplicationWithdraw', pa)
@@ -137,14 +144,40 @@ context('show applications', () => {
     // When I click 'withdraw'
     showPage.clickWithdraw(placementApplications[0].id)
 
-    // Then I should see the confirmation page
-    const confirmationPage = Page.verifyOnPage(PlacementApplicationWithdrawalConfirmationPage, application)
+    // Then I should see the withdrawable type selection page
+    const selectWithdrawableTypePage = new NewWithdrawalPage('What do you want to withdraw?')
+    // And be able to select Placement Request
+    selectWithdrawableTypePage.selectType('placementRequest')
+    selectWithdrawableTypePage.clickSubmit()
 
-    // And be able to confirm withdrawal
+    // Then I should see the withdrawable selection page
+    const selectWithdrawablePage = new NewWithdrawalPage('Select your placement')
+    // And be able to select a placement
+    selectWithdrawablePage.selectWithdrawable(withdrawable.id)
+    selectWithdrawablePage.clickSubmit()
+
+    // Then I should see the withdrawal confirmation page
+    const confirmationPage = Page.verifyOnPage(PlacementApplicationWithdrawalConfirmationPage, application)
+    // And be able to state a reason
+    const withdrawalReason = 'DuplicatePlacementRequest'
+    confirmationPage.selectReason(withdrawalReason)
     confirmationPage.clickConfirm()
 
     // And I should see the confirmation message
     showPage.showsWithdrawalConfirmationMessage()
+
+    // And the API should have been called with the withdrawal reason
+    cy.task('verifyPlacementApplicationWithdrawn', releaseFollowingDecisionPlacementApplication.id).then(requests => {
+      expect(requests).to.have.length(1)
+
+      expect(requests[0].url).to.equal(
+        paths.placementApplications.withdraw({ id: releaseFollowingDecisionPlacementApplication.id }),
+      )
+
+      const body = JSON.parse(requests[0].body)
+
+      expect(body.reason).to.equal(withdrawalReason)
+    })
   })
 
   it('should allow me to add a note to an application', function test() {

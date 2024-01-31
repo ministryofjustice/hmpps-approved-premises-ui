@@ -4,6 +4,7 @@ import paths from '../paths/api'
 import { placementApplicationDecisionEnvelopeFactory, placementApplicationFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 import { SubmitPlacementApplication } from '../@types/shared'
+import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 
 describeClient('placementApplicationClient', provider => {
   let placementApplicationClient: PlacementApplicationClient
@@ -157,6 +158,7 @@ describeClient('placementApplicationClient', provider => {
   describe('withdraw', () => {
     it('withdraws a placement application and returns the result', async () => {
       const placementApplication = placementApplicationFactory.build()
+      const reason: WithdrawPlacementRequestReason = 'AlternativeProvisionIdentified'
 
       provider.addInteraction({
         state: 'Server is healthy',
@@ -164,6 +166,7 @@ describeClient('placementApplicationClient', provider => {
         withRequest: {
           method: 'POST',
           path: paths.placementApplications.withdraw({ id: placementApplication.id }),
+          body: { reason },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -174,7 +177,7 @@ describeClient('placementApplicationClient', provider => {
         },
       })
 
-      const result = await placementApplicationClient.withdraw(placementApplication.id)
+      const result = await placementApplicationClient.withdraw(placementApplication.id, reason)
 
       expect(result).toEqual(placementApplication)
     })

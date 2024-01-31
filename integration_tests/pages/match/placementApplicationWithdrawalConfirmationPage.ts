@@ -1,8 +1,13 @@
+import { WithdrawPlacementRequestReason } from '../../../server/@types/shared/models/WithdrawPlacementRequestReason'
 import Page from '../page'
 
 export default class ConfirmationPage extends Page {
   constructor() {
-    super('Are you sure you want to withdraw this placement application?')
+    super('Why is this placement request being withdrawn?')
+  }
+
+  selectReason(withdrawalReason: WithdrawPlacementRequestReason) {
+    this.checkRadioByNameAndValue('reason', withdrawalReason)
   }
 
   clickConfirm() {
