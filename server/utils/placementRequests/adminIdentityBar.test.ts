@@ -3,6 +3,7 @@ import { adminActions, adminIdentityBar, title } from './adminIdentityBar'
 
 import managePaths from '../../paths/manage'
 import adminPaths from '../../paths/admin'
+import applyPaths from '../../paths/apply'
 import { nameOrPlaceholderCopy } from '../personUtils'
 
 describe('adminIdentityBar', () => {
@@ -37,7 +38,7 @@ describe('adminIdentityBar', () => {
           text: 'Create placement',
         },
         {
-          href: adminPaths.admin.placementRequests.withdrawal.new({ id: placementRequestDetail.id }),
+          href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),
           text: 'Withdraw placement request',
         },
         {

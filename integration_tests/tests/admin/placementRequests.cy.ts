@@ -9,21 +9,27 @@ import {
   placementRequestWithFullPersonFactory,
   premisesFactory,
   premisesSummaryFactory,
+  withdrawableFactory,
 } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import CreatePlacementPage from '../../pages/admin/placementApplications/createPlacementPage'
-import { CancellationCreatePage, NewDateChangePage, UnableToMatchPage, WithdrawConfirmPage } from '../../pages/manage'
+import { CancellationCreatePage, NewDateChangePage, UnableToMatchPage } from '../../pages/manage'
 import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
 import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared'
 import { signIn } from '../signIn'
+import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
+import paths from '../../../server/paths/api'
 
 context('Placement Requests', () => {
+  let application = applicationFactory.build()
   const unmatchedPlacementRequests = [
-    placementRequestWithFullPersonFactory.build(),
+    placementRequestWithFullPersonFactory.build({ applicationId: application.id }),
     placementRequestWithFullPersonFactory.build({ isParole: true }),
   ]
   const matchedPlacementRequests = placementRequestWithFullPersonFactory.buildList(2, { status: 'matched' })
-  const unableToMatchPlacementRequests = placementRequestWithFullPersonFactory.buildList(2, { status: 'unableToMatch' })
+  const unableToMatchPlacementRequests = placementRequestWithFullPersonFactory.buildList(2, {
+    status: 'unableToMatch',
+  })
 
   const unmatchedPlacementRequest = placementRequestDetailFactory.build({
     ...unmatchedPlacementRequests[0],
@@ -37,7 +43,6 @@ context('Placement Requests', () => {
   const unableToMatchPlacementRequest = placementRequestDetailFactory.build({ ...unableToMatchPlacementRequests[0] })
 
   const preferredAps = premisesFactory.buildList(3)
-  let application = applicationFactory.build()
 
   const apArea = apAreaFactory.build()
 
@@ -299,6 +304,12 @@ context('Placement Requests', () => {
 
   it('allows me to withdraw a placement request', () => {
     cy.task('stubPlacementRequestWithdrawal', unmatchedPlacementRequest)
+    const withdrawable = withdrawableFactory.build({ id: unmatchedPlacementRequest.id, type: 'placement_request' })
+
+    cy.task('stubWithdrawables', {
+      applicationId: application.id,
+      withdrawables: [withdrawable],
+    })
 
     // When I visit the tasks dashboard
     const listPage = ListPage.visit()
@@ -312,19 +323,19 @@ context('Placement Requests', () => {
     // When I click on the withdraw button
     showPage.clickWithdraw()
 
-    // Then I should be on the withdrawal confirmation page
-    const withdrawConfirmPage = Page.verifyOnPage(WithdrawConfirmPage)
+    withdrawPlacementRequestOrApplication(withdrawable, showPage, {
+      isPlacementRequest: true,
+    })
 
-    // And I cancel my booking
-    withdrawConfirmPage.completeForm()
-    withdrawConfirmPage.clickSubmit()
-
-    // Then I should see a confirmation message
-    showPage.shouldShowBanner('Placement request withdrawn successfully')
-
-    // And a withdrawal should have been created in the API
-    cy.task('verifyPlacementRequestWithdrawal', unmatchedPlacementRequest).then(requests => {
+    // And the API should have been called with the withdrawal reason
+    cy.task('verifyPlacementRequestWithdrawal', withdrawable).then(requests => {
       expect(requests).to.have.length(1)
+
+      expect(requests[0].url).to.equal(paths.placementRequests.withdrawal.create({ id: withdrawable.id }))
+
+      const body = JSON.parse(requests[0].body)
+
+      expect(body.reason).to.equal('DuplicatePlacementRequest')
     })
   })
 

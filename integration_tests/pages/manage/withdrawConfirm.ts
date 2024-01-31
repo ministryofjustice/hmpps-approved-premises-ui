@@ -1,3 +1,4 @@
+import { WithdrawPlacementRequestReason } from '../../../server/@types/shared/models/WithdrawPlacementRequestReason'
 import Page from '../page'
 
 export default class WithdrawConfirmPage extends Page {
@@ -5,7 +6,7 @@ export default class WithdrawConfirmPage extends Page {
     super('Are you sure you want to withdraw this placement request?')
   }
 
-  completeForm() {
-    this.checkRadioByNameAndValue('confirm', 'yes')
+  completeForm(reason: WithdrawPlacementRequestReason) {
+    this.checkRadioByNameAndValue('reason', reason)
   }
 }

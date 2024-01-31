@@ -16,6 +16,7 @@ import RestClient from './restClient'
 import paths from '../paths/api'
 import { PaginatedResponse, PlacementRequestDashboardSearchOptions } from '../@types/ui'
 import { normaliseCrn } from '../utils/normaliseCrn'
+import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 
 type DashboardQueryParams = DashboardFilters & PlacementRequestDashboardSearchOptions
 
@@ -90,9 +91,10 @@ export default class PlacementRequestClient {
     })) as Promise<BookingNotMade>
   }
 
-  async withdraw(id: string): Promise<void> {
+  async withdraw(id: string, reason: WithdrawPlacementRequestReason): Promise<void> {
     await this.restClient.post({
       path: paths.placementRequests.withdrawal.create({ id }),
+      data: { reason },
     })
   }
 }

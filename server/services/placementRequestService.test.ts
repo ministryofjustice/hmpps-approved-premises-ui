@@ -9,6 +9,7 @@ import {
 } from '../testutils/factories'
 import PlacementRequestService from './placementRequestService'
 import { PaginatedResponse } from '../@types/ui'
+import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 
 jest.mock('../data/placementRequestClient.ts')
 
@@ -201,12 +202,13 @@ describe('placementRequestService', () => {
     it('it should call the service', async () => {
       placementRequestClient.withdraw.mockResolvedValue()
 
+      const reason: WithdrawPlacementRequestReason = 'AlternativeProvisionIdentified'
       const id = 'some-uuid'
 
-      await service.withdraw(token, id)
+      await service.withdraw(token, id, reason)
 
       expect(placementRequestClientFactory).toHaveBeenCalledWith(token)
-      expect(placementRequestClient.withdraw).toHaveBeenCalledWith(id)
+      expect(placementRequestClient.withdraw).toHaveBeenCalledWith(id, reason)
     })
   })
 })

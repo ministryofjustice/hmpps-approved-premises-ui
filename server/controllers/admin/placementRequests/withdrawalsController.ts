@@ -14,11 +14,14 @@ export default class WithdrawlsController {
     return async (req: Request, res: Response) => {
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
+      const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
+
       return res.render('admin/placementRequests/withdrawals/new', {
-        pageHeading: 'Are you sure you want to withdraw this placement request?',
+        pageHeading: 'Why is this placement request being withdrawn?',
         id: req.params.id,
         errors,
         errorSummary,
+        applicationId: placementRequest.applicationId,
       })
     }
   }
@@ -26,19 +29,14 @@ export default class WithdrawlsController {
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
       try {
-        if (!req.body.confirm) {
-          throw new ErrorWithData({ 'invalid-params': [{ propertyName: `$.confirm`, errorType: 'empty' }] })
+        if (!req.body.reason) {
+          throw new ErrorWithData({ 'invalid-params': [{ propertyName: `$.reason`, errorType: 'empty' }] })
         }
 
-        if (req.body.confirm === 'yes') {
-          await this.placementRequestService.withdraw(req.user.token, req.params.id)
+        await this.placementRequestService.withdraw(req.user.token, req.params.id, req.body.reason)
 
-          req.flash('success', 'Placement request withdrawn successfully')
-          return res.redirect(paths.admin.placementRequests.index({}))
-        }
-
-        req.flash('success', 'Placement request not withdrawn')
-        return res.redirect(paths.admin.placementRequests.show({ id: req.params.id }))
+        req.flash('success', 'Placement request withdrawn successfully')
+        return res.redirect(paths.admin.placementRequests.index({}))
       } catch (err) {
         return catchValidationErrorOrPropogate(
           req,

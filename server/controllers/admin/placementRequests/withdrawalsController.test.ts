@@ -8,6 +8,7 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 import paths from '../../../paths/admin'
 import WithdrawalsController from './withdrawalsController'
 import { ErrorWithData } from '../../../utils/errors'
+import { placementRequestDetailFactory } from '../../../testutils/factories'
 
 jest.mock('../../../utils/validation')
 
@@ -34,6 +35,8 @@ describe('withdrawalsController', () => {
       const applicationId = 'some-id'
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+      const placementRequest = placementRequestDetailFactory.build({ applicationId })
+      placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
       request.params.id = applicationId
 
       const requestHandler = withdrawalsController.new()
@@ -41,11 +44,13 @@ describe('withdrawalsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/withdrawals/new', {
-        pageHeading: 'Are you sure you want to withdraw this placement request?',
+        pageHeading: 'Why is this placement request being withdrawn?',
         id: request.params.id,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
+        applicationId,
       })
+      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, applicationId)
     })
   })
 
@@ -57,13 +62,13 @@ describe('withdrawalsController', () => {
     })
 
     it('calls the service method, redirects to the index screen and shows a confirmation message', async () => {
-      request.body.confirm = 'yes'
+      request.body.reason = 'DuplicatePlacementRequest'
 
       const requestHandler = withdrawalsController.create()
 
       await requestHandler(request, response, next)
 
-      expect(placementRequestService.withdraw).toHaveBeenCalledWith(token, applicationId)
+      expect(placementRequestService.withdraw).toHaveBeenCalledWith(token, applicationId, 'DuplicatePlacementRequest')
       expect(response.redirect).toHaveBeenCalledWith(paths.admin.placementRequests.index({}))
       expect(request.flash).toHaveBeenCalledWith('success', 'Placement request withdrawn successfully')
     })
@@ -87,7 +92,7 @@ describe('withdrawalsController', () => {
       )
     })
 
-    it('redirects with errors if confirm is blank', async () => {
+    it('redirects with errors if reason is blank', async () => {
       const requestHandler = withdrawalsController.create()
 
       await requestHandler(request, response, next)
@@ -102,20 +107,8 @@ describe('withdrawalsController', () => {
       const errorData = (catchValidationErrorOrPropogate as jest.Mock).mock.lastCall[2].data
 
       expect(errorData).toEqual({
-        'invalid-params': [{ propertyName: `$.confirm`, errorType: 'empty' }],
+        'invalid-params': [{ propertyName: `$.reason`, errorType: 'empty' }],
       })
-    })
-
-    it('redirects to the placement request if confirm is no', async () => {
-      request.body.confirm = 'no'
-
-      const requestHandler = withdrawalsController.create()
-
-      await requestHandler(request, response, next)
-
-      expect(placementRequestService.withdraw).not.toHaveBeenCalled()
-      expect(response.redirect).toHaveBeenCalledWith(paths.admin.placementRequests.show({ id: request.params.id }))
-      expect(request.flash).toHaveBeenCalledWith('success', 'Placement request not withdrawn')
     })
   })
 })

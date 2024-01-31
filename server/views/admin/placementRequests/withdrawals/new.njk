@@ -21,38 +21,30 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
       <form action="{{ paths.admin.placementRequests.withdrawal.create({ id: id }) }}" method="post">
+
+        {{ showErrorSummary(errorSummary) }}
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+        <input type="hidden" name="applicationId" value="{{ applicationId }}"/>
 
         {{ showErrorSummary(errorSummary) }}
 
         {{ govukRadios({
-          idPrefix: "confirm",
-          name: "confirm",
-          fieldset: {
-              legend: {
-                  text: pageHeading,
-                  classes: "govuk-fieldset__legend--m",
-                  isPageHeading: true
-              }
-          },
-          items: [
-              {
-              value: "yes",
-              text: "Yes"
-              },
-              {
-              value: "no",
-              text: "No"
-              }
-          ],
-          errorMessage: errors.confirm
+            name: "reason",              
+            classes: "govuk-radios--withdrawal-reasons",
+            fieldset: {
+                legend: {
+                    text: pageHeading,
+                    classes: "govuk-fieldset__legend--l",
+                    isPageHeading: true
+                }
+            },
+            items: ApplyUtils.placementApplicationWithdrawalReasons(selectedReason)
+
         }) }}
 
         {{ govukButton({
-            name: 'submit',
             text: "Continue"
-        }) }}
-
+          }) }}
       </form>
     </div>
   </div>
