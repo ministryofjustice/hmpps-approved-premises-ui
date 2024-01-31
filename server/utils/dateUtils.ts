@@ -218,6 +218,10 @@ export class DateFormats {
   static timeFromDate(date: Date): string {
     return format(date, 'HH:mm')
   }
+
+  static formatDurationBetweenTwoDates(date1: string, date2: string): string {
+    return `${DateFormats.isoDateToUIDate(date1)} - ${DateFormats.isoDateToUIDate(date2)}`
+  }
 }
 
 export const addBusinessDays = (date: Date, days: number, holidays: Array<Date> = bankHolidays()): Date => {

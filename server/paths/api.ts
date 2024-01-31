@@ -30,6 +30,7 @@ const managePaths = {
   bookings: {
     move: bookingPath.path('moves'),
     dateChange: bookingPath.path('date-changes'),
+    bookingWithoutPremisesPath: path('/bookings/:bookingId'),
   },
 }
 
@@ -110,6 +111,9 @@ export default {
     },
     calendar: managePaths.premises.show.path('calendar'),
   },
+  bookings: {
+    bookingWithoutPremisesPath: managePaths.bookings.bookingWithoutPremisesPath,
+  },
   applications: {
     show: applyPaths.applications.show,
     index: applyPaths.applications.index,
@@ -123,6 +127,7 @@ export default {
     timeline: applyPaths.applications.show.path('timeline'),
     placementApplications: applyPaths.applications.show.path('placement-applications'),
     addNote: applyPaths.applications.show.path('notes'),
+    withdrawables: applyPaths.applications.show.path('withdrawables'),
   },
   assessments: {
     index: assessPaths.assessments,

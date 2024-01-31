@@ -20,6 +20,7 @@ export default function routes(controllers: Controllers, router: Router, service
     documentsController,
     withdrawalsController,
     notesController,
+    withdrawablesController,
   } = controllers
 
   get(paths.applications.start.pattern, applicationsController.start(), { auditEvent: 'START_APPLICATION' })
@@ -42,6 +43,18 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'SELECT_OFFENCE',
   })
   get(paths.applications.people.documents.pattern, documentsController.show(), { auditEvent: 'SHOW_DOCUMENTS' })
+  post(paths.applications.withdraw.new.pattern, withdrawalsController.new(), {
+    auditEvent: 'SELECT_WITHDRAWABLE_TYPE',
+  })
+  get(paths.applications.withdrawables.show.pattern, withdrawablesController.show(), {
+    auditEvent: 'SELECT_WITHDRAWABLE',
+  })
+  post(paths.applications.withdrawables.show.pattern, withdrawablesController.show(), {
+    auditEvent: 'SELECT_WITHDRAWABLE',
+  })
+  post(paths.applications.withdrawables.create.pattern, withdrawablesController.create(), {
+    auditEvent: 'VIEW_WITHDRAWABLE',
+  })
   get(paths.applications.withdraw.new.pattern, withdrawalsController.new(), {
     auditEvent: 'NEW_WITHDRAWL',
   })

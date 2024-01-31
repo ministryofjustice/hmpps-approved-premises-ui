@@ -650,7 +650,7 @@ describe('utils', () => {
       status => {
         const applicationSummary = applicationSummaryFactory.build({ status })
         expect(createWithdrawElement('id', applicationSummary)).toEqual({
-          html: '<a href="/applications/id/withdrawals/new">Withdraw</a>',
+          html: '<a href="/applications/id/withdrawals/new" >Withdraw</a>',
         })
       },
     )

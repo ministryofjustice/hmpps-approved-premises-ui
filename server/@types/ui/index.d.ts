@@ -125,6 +125,7 @@ export interface RadioItem {
   conditional?: {
     html?: string
   }
+  hint?: { text: string } | { html: string }
 }
 
 export type CheckBoxItem =

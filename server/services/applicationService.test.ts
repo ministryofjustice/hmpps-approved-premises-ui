@@ -26,6 +26,7 @@ import {
   noteFactory,
   paginatedResponseFactory,
   placementApplicationFactory,
+  withdrawableFactory,
 } from '../testutils/factories'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
@@ -52,6 +53,8 @@ jest.mock('../form-pages/utils')
 jest.mock('../utils/applications/getApplicationData')
 
 describe('ApplicationService', () => {
+  const token = 'some-token'
+  const applicationId = 'some-uuid'
   const applicationClient = new ApplicationClient(null) as jest.Mocked<ApplicationClient>
   const applicationClientFactory = jest.fn()
 
@@ -63,8 +66,6 @@ describe('ApplicationService', () => {
   })
 
   describe('getAllForLoggedInUser', () => {
-    const token = 'SOME_TOKEN'
-
     const applications: Record<ApplicationStatus, Array<ApprovedPremisesApplicationSummary>> = {
       inProgress: applicationSummaryFactory.buildList(1, { status: 'started' }),
       requestedFurtherInformation: applicationSummaryFactory.buildList(1, { status: 'requestedFurtherInformation' }),
@@ -106,8 +107,6 @@ describe('ApplicationService', () => {
       const application = applicationFactory.build()
       const offence = activeOffenceFactory.build()
 
-      const token = 'SOME_TOKEN'
-
       applicationClient.create.mockResolvedValue(application)
 
       const result = await service.createApplication(token, application.person.crn, offence)
@@ -122,7 +121,6 @@ describe('ApplicationService', () => {
   describe('findApplication', () => {
     it('calls the find method and returns an application', async () => {
       const application = applicationFactory.build()
-      const token = 'SOME_TOKEN'
 
       applicationClient.find.mockResolvedValue(application)
 
@@ -139,8 +137,6 @@ describe('ApplicationService', () => {
     it('calls the documents method and returns a list of documents', async () => {
       const application = applicationFactory.build()
       const documents = documentFactory.buildList(5)
-
-      const token = 'SOME_TOKEN'
 
       applicationClient.documents.mockResolvedValue(documents)
 
@@ -209,7 +205,7 @@ describe('ApplicationService', () => {
 
       request = createMock<Request>({
         params: { id: application.id, task: 'my-task', page: 'first' },
-        user: { token: 'some-token' },
+        user: { token },
       })
     })
 
@@ -276,7 +272,6 @@ describe('ApplicationService', () => {
     const application = applicationFactory.build()
     const applicationData = createMock<UpdateApprovedPremisesApplication>()
 
-    const token = 'some-token'
     const request = createMock<Request>({
       params: { id: application.id, task: 'some-task', page: 'some-page' },
       user: { token },
@@ -331,7 +326,6 @@ describe('ApplicationService', () => {
   })
 
   describe('submit', () => {
-    const token = 'some-token'
     const request = createMock<Request>({
       user: { token },
     })
@@ -350,7 +344,6 @@ describe('ApplicationService', () => {
   })
 
   describe('getAssessment', () => {
-    const token = 'some-token'
     const id = 'some-uuid'
     const assessment = assessmentFactory.build()
 
@@ -367,7 +360,6 @@ describe('ApplicationService', () => {
   })
 
   describe('dashboard', () => {
-    const token = 'some-token'
     const applications = applicationSummaryFactory.buildList(5)
     const paginatedResponse = paginatedResponseFactory.build({
       data: applications,
@@ -404,7 +396,6 @@ describe('ApplicationService', () => {
 
   describe('withdraw', () => {
     it('calls the client with the ID and token', async () => {
-      const token = 'some-token'
       const id = 'some-uuid'
       const body = {
         reason: 'alternative_identified_placement_no_longer_required' as WithdrawalReason,
@@ -420,7 +411,6 @@ describe('ApplicationService', () => {
 
   describe('timeline', () => {
     it('calls the client with the Id and token', async () => {
-      const token = 'some-token'
       const id = 'some-uuid'
 
       await service.timeline(token, id)
@@ -432,7 +422,6 @@ describe('ApplicationService', () => {
 
   describe('getPlacementApplications', () => {
     it('calls the client with the id and the token and returns the result', async () => {
-      const token = 'some-token'
       const id = 'some-uuid'
       const placementApplications = placementApplicationFactory.buildList(1)
       applicationClient.placementApplications.mockResolvedValue(placementApplications)
@@ -448,8 +437,6 @@ describe('ApplicationService', () => {
 
   describe('addNote', () => {
     it('calls the client with the id, token and note and returns the result', async () => {
-      const token = 'some-token'
-      const applicationId = 'some-uuid'
       const noteId = 'note-id'
       const newNote = noteFactory.build({ id: undefined })
       const noteWithId = { ...newNote, id: noteId }
@@ -462,6 +449,20 @@ describe('ApplicationService', () => {
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.addNote).toHaveBeenCalledWith(applicationId, newNote)
+    })
+  })
+
+  describe('getWithdrawables', () => {
+    it('calls the client with the ID and the token and returns the result', async () => {
+      const withdrawables = withdrawableFactory.buildList(1)
+
+      applicationClient.withdrawables.mockResolvedValue(withdrawables)
+
+      const result = await service.getWithdrawables(token, applicationId)
+
+      expect(result).toEqual(withdrawables)
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.withdrawables).toHaveBeenCalledWith(applicationId)
     })
   })
 })
