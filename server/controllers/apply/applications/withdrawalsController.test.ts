@@ -31,31 +31,29 @@ describe('withdrawalsController', () => {
   })
 
   describe('new', () => {
-    describe('if there are withdrawables', () => {
-      describe('and a selectedWithdrawableType', () => {
-        it('redirects to the withdrawables show page', async () => {
-          const errorsAndUserInput = createMock<ErrorsAndUserInput>()
-          ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+    describe('if there is a selectedWithdrawableType', () => {
+      it('redirects to the withdrawables show page', async () => {
+        const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+        ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
-          const selectedWithdrawableType = 'booking'
-          const withdrawables = withdrawableFactory.buildList(1)
+        const selectedWithdrawableType = 'booking'
+        const withdrawables = withdrawableFactory.buildList(1)
 
-          applicationService.getWithdrawables.mockResolvedValue(withdrawables)
+        applicationService.getWithdrawables.mockResolvedValue(withdrawables)
 
-          const requestHandler = withdrawalsController.new()
+        const requestHandler = withdrawalsController.new()
 
-          await requestHandler(
-            { ...request, params: { id: applicationId }, body: { selectedWithdrawableType } },
-            response,
-            next,
-          )
+        await requestHandler(
+          { ...request, params: { id: applicationId }, body: { selectedWithdrawableType } },
+          response,
+          next,
+        )
 
-          expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
-          expect(response.redirect).toHaveBeenCalledWith(
-            302,
-            `${paths.applications.withdrawables.show({ id: applicationId })}?selectedWithdrawableType=${selectedWithdrawableType}`,
-          )
-        })
+        expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
+        expect(response.redirect).toHaveBeenCalledWith(
+          302,
+          `${paths.applications.withdrawables.show({ id: applicationId })}?selectedWithdrawableType=${selectedWithdrawableType}`,
+        )
       })
 
       describe('and no selectedWithdrawableType', () => {
@@ -83,7 +81,7 @@ describe('withdrawalsController', () => {
   })
 
   describe('if there are no withdrawables', () => {
-    it('renders the withdrawals reasons template', async () => {
+    it('renders the withdrawals type template', async () => {
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
       request.params.id = applicationId
@@ -93,12 +91,10 @@ describe('withdrawalsController', () => {
 
       await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('applications/withdrawals/new', {
-        pageHeading: 'Do you want to withdraw this application?',
-        applicationId,
-        errors: errorsAndUserInput.errors,
-        errorSummary: errorsAndUserInput.errorSummary,
-        ...errorsAndUserInput.userInput,
+      expect(response.render).toHaveBeenCalledWith('applications/withdrawables/new', {
+        pageHeading: 'What do you want to withdraw?',
+        id: applicationId,
+        withdrawables: [],
       })
     })
   })
