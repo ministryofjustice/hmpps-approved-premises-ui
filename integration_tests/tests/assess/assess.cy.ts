@@ -198,7 +198,6 @@ context('Assess', () => {
       key: 'decision',
       value: 'otherReasons',
     })
-    delete assessment.data['required-actions']
     delete assessment.data['matching-information']
     const assessHelper = new AssessHelper(assessment, this.documents, this.user, this.clarificationNote)
 
@@ -226,14 +225,14 @@ context('Assess', () => {
         // And I should see the AssessApplication section
         assessHelper.completeSuitabilityOfAssessmentQuestion({ isShortNoticeApplication: false })
 
+        // And I fill out the required actions
+        assessHelper.completeRequiredActionsQuestion()
+
         // When I make a decision
         assessHelper.completeMakeADecisionPage()
 
         // Then I should not see the MatchingInformation section
         tasklistPage.shouldNotShowSection('Information for matching')
-
-        // And I should not see the Further actions section
-        tasklistPage.shouldNotShowSection('Provide any requirements to support placement')
 
         // When I check my answers
         assessHelper.completeCheckYourAnswersPage()
