@@ -112,7 +112,7 @@ describe('table', () => {
         {
           text: 'Person',
         },
-        sortHeader<TaskSortField>('Days until due date', 'createdAt', sortBy, sortDirection, hrefPrefix),
+        sortHeader<TaskSortField>('Due', 'createdAt', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Status',
         },
@@ -133,7 +133,7 @@ describe('table', () => {
         {
           text: 'Person',
         },
-        sortHeader<TaskSortField>('Days until due date', 'createdAt', sortBy, sortDirection, hrefPrefix),
+        sortHeader<TaskSortField>('Due', 'createdAt', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Allocated to',
         },
