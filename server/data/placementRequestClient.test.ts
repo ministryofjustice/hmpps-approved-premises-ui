@@ -10,6 +10,7 @@ import {
 } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 import { normaliseCrn } from '../utils/normaliseCrn'
+import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 
 describeClient('placementRequestClient', provider => {
   let placementRequestClient: PlacementRequestClient
@@ -392,7 +393,7 @@ describeClient('placementRequestClient', provider => {
   describe('withdraw', () => {
     it('makes a POST request to the withdrawal endpoint', async () => {
       const placementRequestId = 'placement-request-id'
-
+      const reason: WithdrawPlacementRequestReason = 'AlternativeProvisionIdentified'
       provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to mark a placement request as withdrawn',
@@ -402,13 +403,14 @@ describeClient('placementRequestClient', provider => {
           headers: {
             authorization: `Bearer ${token}`,
           },
+          body: { reason },
         },
         willRespondWith: {
           status: 200,
         },
       })
 
-      await placementRequestClient.withdraw(placementRequestId)
+      await placementRequestClient.withdraw(placementRequestId, reason)
     })
   })
 })

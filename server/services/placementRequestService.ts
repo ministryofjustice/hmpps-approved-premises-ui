@@ -14,6 +14,7 @@ import {
 } from '@approved-premises/api'
 import { RestClientBuilder } from '../data'
 import PlacementRequestClient, { DashboardFilters } from '../data/placementRequestClient'
+import { WithdrawPlacementRequestReason } from '../@types/shared/models/WithdrawPlacementRequestReason'
 
 export default class PlacementRequestService {
   constructor(private readonly placementRequestClientFactory: RestClientBuilder<PlacementRequestClient>) {}
@@ -82,9 +83,9 @@ export default class PlacementRequestService {
     return placementRequestClient.bookingNotMade(id, body)
   }
 
-  async withdraw(token: string, id: string) {
+  async withdraw(token: string, id: string, reason: WithdrawPlacementRequestReason) {
     const placementRequestClient = this.placementRequestClientFactory(token)
 
-    return placementRequestClient.withdraw(id)
+    return placementRequestClient.withdraw(id, reason)
   }
 }

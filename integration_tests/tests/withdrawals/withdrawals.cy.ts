@@ -9,10 +9,8 @@ import {
 import { ListPage } from '../../pages/apply'
 import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
 import WithdrawApplicationPage from '../../pages/apply/withdrawApplicationPage'
-import {
-  CancellationCreatePage,
-  WithdrawConfirmPage as PlacementRequestWithdrawalConfirmationPage,
-} from '../../pages/manage'
+import { CancellationCreatePage } from '../../pages/manage'
+import PrListPage from '../../pages/admin/placementApplications/listPage'
 import PlacementApplicationWithdrawalConfirmationPage from '../../pages/match/placementApplicationWithdrawalConfirmationPage'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
@@ -33,7 +31,6 @@ context('Withdrawals', () => {
       type: 'placement_request',
       id: placementRequest.id,
     })
-
     cy.task('stubWithdrawables', {
       applicationId: application.id,
       withdrawables: [placementRequestWithdrawable],
@@ -41,6 +38,9 @@ context('Withdrawals', () => {
     cy.task('stubApplications', [application])
     cy.task('stubApplicationGet', { application })
     cy.task('stubPlacementRequest', placementRequest)
+    cy.task('stubPlacementRequestWithdrawal', placementRequest)
+    cy.task('stubApAreaReferenceData')
+    cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'notMatched' })
 
     // Given I am on the list page
     const listPage = ListPage.visit([application], [], [])
@@ -61,8 +61,16 @@ context('Withdrawals', () => {
     selectWithdrawablePage.selectWithdrawable(placementRequest.id)
     selectWithdrawablePage.clickSubmit()
 
+    // Then I should see the withdrawal confirmation page
+    const confirmationPage = Page.verifyOnPage(PlacementApplicationWithdrawalConfirmationPage)
+
+    // And be able to state a reason
+    const withdrawalReason = 'DuplicatePlacementRequest'
+    confirmationPage.selectReason(withdrawalReason)
+    confirmationPage.clickConfirm()
+
     // Then I am taken to the confirmation page
-    Page.verifyOnPage(PlacementRequestWithdrawalConfirmationPage)
+    Page.verifyOnPage(PrListPage)
   })
 
   it('withdraws a placement application', () => {

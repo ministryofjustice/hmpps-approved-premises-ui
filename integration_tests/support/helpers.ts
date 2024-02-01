@@ -7,6 +7,7 @@ import {
   ArrayOfOASysRiskToSelfQuestions,
   ArrayOfOASysSupportingInformationQuestions,
   Document,
+  Withdrawable,
 } from '@approved-premises/api'
 import { BedOccupancyEntryUiType } from '@approved-premises/ui'
 import { bedOccupancyEntryBookingUiFactory } from '../../server/testutils/factories'
@@ -15,6 +16,11 @@ import {
   bedOccupancyEntryOpenUiFactory,
 } from '../../server/testutils/factories/bedOccupancyRange'
 import { DateFormats } from '../../server/utils/dateUtils'
+import NewWithdrawalPage from '../pages/apply/newWithdrawal'
+import PlacementApplicationWithdrawalConfirmationPage from '../pages/match/placementApplicationWithdrawalConfirmationPage'
+import ShowPagePlacementApplications from '../pages/admin/placementApplications/showPage'
+import { ShowPage as ShowPageApply } from '../pages/apply'
+import Page from '../pages/page'
 
 const documentsFromApplication = (application: ApprovedPremisesApplication): Array<Document> => {
   return application.data['attach-required-documents']['attach-documents'].selectedDocuments as Array<Document>
@@ -68,6 +74,36 @@ const createOccupancyEntry = (startDate: Date, endDate: Date, type: BedOccupancy
   })
 }
 
+const withdrawPlacementRequestOrApplication = async (
+  withdrawable: Withdrawable,
+  showPage: ShowPagePlacementApplications | ShowPageApply,
+  { isPlacementRequest }: { isPlacementRequest: boolean },
+) => {
+  // Then I should see the withdrawable type selection page
+  const selectWithdrawableTypePage = new NewWithdrawalPage('What do you want to withdraw?')
+  // And be able to select Placement Request
+  selectWithdrawableTypePage.selectType('placementRequest')
+  selectWithdrawableTypePage.clickSubmit()
+
+  // Then I should see the withdrawable selection page
+  const selectWithdrawablePage = new NewWithdrawalPage('Select your placement')
+  // And be able to select a placement
+  selectWithdrawablePage.selectWithdrawable(withdrawable.id)
+  selectWithdrawablePage.clickSubmit()
+
+  // Then I should see the withdrawal confirmation page
+  const confirmationPage = Page.verifyOnPage(PlacementApplicationWithdrawalConfirmationPage)
+  // And be able to state a reason
+  const withdrawalReason = 'DuplicatePlacementRequest'
+  confirmationPage.selectReason(withdrawalReason)
+  confirmationPage.clickConfirm()
+
+  // And I should see the confirmation message
+  showPage.shouldShowBanner(
+    isPlacementRequest ? 'Placement request withdrawn successfully' : 'Placement application withdrawn',
+  )
+}
+
 export {
   documentsFromApplication,
   roshSummariesFromApplication,
@@ -76,4 +112,5 @@ export {
   riskManagementPlanFromApplication,
   riskToSelfSummariesFromApplication,
   createOccupancyEntry,
+  withdrawPlacementRequestOrApplication,
 }

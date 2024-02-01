@@ -2,6 +2,7 @@ import { PlacementRequestDetail } from '../../@types/shared'
 import { IdentityBar, IdentityBarMenuItem } from '../../@types/ui'
 
 import managePaths from '../../paths/manage'
+import applyPaths from '../../paths/apply'
 import adminPaths from '../../paths/admin'
 import { nameOrPlaceholderCopy } from '../personUtils'
 
@@ -37,7 +38,7 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
       text: 'Create placement',
     },
     {
-      href: adminPaths.admin.placementRequests.withdrawal.new({ id: placementRequest.id }),
+      href: applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
       text: 'Withdraw placement request',
     },
     {
