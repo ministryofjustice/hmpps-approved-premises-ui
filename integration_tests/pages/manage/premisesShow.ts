@@ -106,6 +106,10 @@ export default class PremisesShowPage extends Page {
     )
   }
 
+  clickManageBooking(booking: PremisesBooking) {
+    cy.get(`[data-cy-booking-id="${booking.id}"]`).click()
+  }
+
   shouldShowMoveConfirmation() {
     this.shouldShowBanner('Bed move logged')
   }

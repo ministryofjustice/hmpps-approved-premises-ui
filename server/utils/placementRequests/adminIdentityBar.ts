@@ -24,11 +24,8 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
         text: 'Amend placement',
       },
       {
-        href: managePaths.bookings.cancellations.new({
-          premisesId: placementRequest?.booking?.premisesId || '',
-          bookingId: placementRequest?.booking?.id || '',
-        }),
-        text: 'Cancel placement',
+        href: applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
+        text: 'Withdraw placement',
       },
     ]
   }

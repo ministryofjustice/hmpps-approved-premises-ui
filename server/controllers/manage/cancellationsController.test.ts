@@ -10,6 +10,7 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 
 import { bookingFactory, cancellationFactory, referenceDataFactory } from '../../testutils/factories'
 import paths from '../../paths/manage'
+import { DateFormats } from '../../utils/dateUtils'
 
 jest.mock('../../utils/validation')
 
@@ -18,7 +19,7 @@ describe('cancellationsController', () => {
   const backLink = 'http://localhost/some-path'
 
   const request: DeepMocked<Request> = createMock<Request>({ user: { token }, headers: { referer: backLink } })
-  const response: DeepMocked<Response> = createMock<Response>({})
+  const response: DeepMocked<Response> = createMock<Response>({ locals: { user: [] } })
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const premisesId = 'premisesId'
@@ -48,12 +49,13 @@ describe('cancellationsController', () => {
       await requestHandler({ ...request, params: { premisesId, bookingId } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('cancellations/new', {
+        apManager: false,
         premisesId,
         bookingId,
         booking,
         backLink,
         cancellationReasons,
-        pageHeading: 'Confirm cancelled placement',
+        pageHeading: 'Confirm withdrawn placement',
         errors: {},
         errorSummary: [],
       })
@@ -72,12 +74,13 @@ describe('cancellationsController', () => {
       await requestHandler({ ...request, params: { premisesId, bookingId } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('cancellations/new', {
+        apManager: false,
         premisesId,
         bookingId,
         booking,
         backLink: 'http://foo.com',
         cancellationReasons,
-        pageHeading: 'Confirm cancelled placement',
+        pageHeading: 'Confirm withdrawn placement',
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
         ...errorsAndUserInput.userInput,
@@ -94,12 +97,13 @@ describe('cancellationsController', () => {
       await requestHandler({ ...request, params: { premisesId, bookingId }, headers: {} }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('cancellations/new', {
+        apManager: false,
         premisesId,
         bookingId,
         booking,
         backLink: paths.bookings.show({ premisesId, bookingId }),
         cancellationReasons,
-        pageHeading: 'Confirm cancelled placement',
+        pageHeading: 'Confirm withdrawn placement',
         errors: {},
         errorSummary: [],
       })
@@ -144,9 +148,49 @@ describe('cancellationsController', () => {
         expectedCancellation,
       )
 
-      expect(request.flash).toHaveBeenCalledWith('success', 'Booking cancelled')
+      expect(response.render).toHaveBeenCalledWith('cancellations/confirm', { pageHeading: 'Booking withdrawn' })
+    })
 
-      expect(response.redirect).toHaveBeenCalledWith(backLink)
+    it('adds todays date if one is not submitted', async () => {
+      const cancellation = cancellationFactory.build()
+
+      cancellationService.createCancellation.mockResolvedValue(cancellation)
+
+      const requestHandler = cancellationsController.create()
+
+      const reason = '8b2677dd-e5d4-407a-a8f8-e2035aec9227'
+
+      request.body = await requestHandler(
+        {
+          ...request,
+          body: {
+            backLink,
+            cancellation: {
+              reason,
+            },
+          },
+          params: {
+            bookingId,
+            premisesId,
+          },
+        },
+        response,
+        next,
+      )
+
+      const expectedCancellation = {
+        reason,
+        date: DateFormats.dateObjToIsoDate(new Date()),
+      }
+
+      expect(cancellationService.createCancellation).toHaveBeenCalledWith(
+        token,
+        premisesId,
+        bookingId,
+        expectedCancellation,
+      )
+
+      expect(response.render).toHaveBeenCalledWith('cancellations/confirm', { pageHeading: 'Booking withdrawn' })
     })
 
     it('should catch the validation errors when the API returns an error', async () => {

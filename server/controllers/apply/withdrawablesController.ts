@@ -55,7 +55,6 @@ export default class WithdrawalsController {
       const withdrawable = (await this.applicationService.getWithdrawables(req.user.token, id)).find(
         w => w.id === selectedWithdrawable,
       )
-
       if (!withdrawable) {
         return res.redirect(302, applyPaths.applications.withdraw.new({ id }))
       }
@@ -70,7 +69,7 @@ export default class WithdrawalsController {
         const booking = await this.bookingService.findWithoutPremises(req.user.token, selectedWithdrawable)
         return res.redirect(
           302,
-          managePaths.bookings.cancellations.new({ bookingId: selectedWithdrawable, premisesId: booking.premises.id }),
+          managePaths.bookings.cancellations.new({ bookingId: booking.id, premisesId: booking.premises.id }),
         )
       }
 

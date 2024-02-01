@@ -25,12 +25,8 @@
     <div class="govuk-grid-column-two-thirds">
       <h1>{{pageHeading}}</h1>
 
-      <p>Confirm that the Approved Premises has cancelled this placement.</p>
-
       <form action="{{ paths.bookings.cancellations.create({ premisesId: premisesId, bookingId: booking.id }) }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-        <input type="hidden" name="backLink" value="{{ backLink }}"/>
-
         {{ govukSummaryList({
             rows: [
                 {
@@ -71,12 +67,26 @@
 
         {{ showErrorSummary(errorSummary) }}
 
-        {{ govukDateInput({
+        {{ govukRadios({
+          name: "cancellation[reason]",
+          id: "reason",
+          fieldset: {
+              legend: {
+              text: "Why was this placement withdrawn?",
+              classes: "govuk-fieldset__legend--m"
+              }
+          },
+          errorMessage: errors.reason,
+          items: convertObjectsToRadioItems(cancellationReasons, 'name', 'id', 'cancellation[reason]')
+          }) }}
+
+        {% if apManager %}
+          {{ govukDateInput({
             id: "date",
             namePrefix: "date",
             fieldset: {
                 legend: {
-                    text: "When was this placement cancelled?",
+                    text: "When was this placement withdrawn?",
                     classes: "govuk-fieldset__legend--m"
                     }
             },
@@ -87,26 +97,14 @@
             items: dateFieldValues('date', errors)
         }) }}
 
-        {{ govukRadios({
-          name: "cancellation[reason]",
-          id: "reason",
-          fieldset: {
-              legend: {
-              text: "Why was this placement cancelled?",
-              classes: "govuk-fieldset__legend--m"
-              }
-          },
-          errorMessage: errors.reason,
-          items: convertObjectsToRadioItems(cancellationReasons, 'name', 'id', 'cancellation[reason]')
-          }) }}
-
-        {{ govukTextarea({
+          {{ govukTextarea({
             name: "cancellation[notes]",
             id: "notes",
             label: {
-            text: "Provide any additional notes on why this placement was cancelled"
+            text: "Provide any additional notes on why this placement was withdrawn"
             }
         }) }}
+        {% endif %}
 
         {{ govukButton({
             text: "Submit"

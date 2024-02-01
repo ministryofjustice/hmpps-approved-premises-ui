@@ -20,11 +20,8 @@ describe('adminIdentityBar', () => {
           text: 'Amend placement',
         },
         {
-          href: managePaths.bookings.cancellations.new({
-            premisesId: placementRequestDetail.booking?.premisesId || '',
-            bookingId: placementRequestDetail.booking?.id || '',
-          }),
-          text: 'Cancel placement',
+          href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),
+          text: 'Withdraw placement',
         },
       ])
     })
