@@ -5,11 +5,13 @@ import PlacementRequestsController from './placementRequestsController'
 
 import { ApplicationService, PlacementApplicationService, PlacementRequestService, TaskService } from '../../services'
 import {
+  apAreaFactory,
   applicationFactory,
   paginatedResponseFactory,
   placementApplicationFactory,
   placementRequestDetailFactory,
   taskFactory,
+  userDetailsFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/placementApplications'
 import matchpaths from '../../paths/match'
@@ -81,6 +83,12 @@ describe('PlacementRequestsController', () => {
         'placement-application',
         Number(paginatedResponse.pageNumber),
       )
+    })
+
+    it('should send a request with an AP Area query value of the users area by default', async () => {
+      const apArea = apAreaFactory.build()
+      const user = userDetailsFactory.build({ apArea })
+      response.locals.user = user
     })
   })
 

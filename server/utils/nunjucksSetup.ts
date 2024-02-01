@@ -147,8 +147,9 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
       textKey: string,
       valueKey: string,
       fieldName: string,
+      selectAllValue = '',
     ) {
-      return convertObjectsToSelectOptions(items, prompt, textKey, valueKey, fieldName, this.ctx)
+      return convertObjectsToSelectOptions(items, prompt, textKey, valueKey, fieldName, selectAllValue, this.ctx)
     },
   )
   njkEnv.addGlobal(

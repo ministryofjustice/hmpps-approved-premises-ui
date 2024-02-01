@@ -50,15 +50,15 @@ describe('PlacementRequestsController', () => {
       sortDirection: 'desc',
     }
 
+    const apAreas = apAreaFactory.buildList(1)
+
     beforeEach(() => {
       placementRequestService.getDashboard.mockResolvedValue(paginatedResponse)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
+      apAreaService.getApAreas.mockResolvedValue(apAreas)
     })
 
-    it('should render the placement requests template', async () => {
-      const apAreas = apAreaFactory.buildList(1)
-      apAreaService.getApAreas.mockResolvedValue(apAreas)
-
+    it('should render the placement requests template with the users AP area filtered by default', async () => {
       const requestHandler = placementRequestsController.index()
 
       await requestHandler(request, response, next)
@@ -94,9 +94,6 @@ describe('PlacementRequestsController', () => {
     })
 
     it('should handle the parameters', async () => {
-      const apAreas = apAreaFactory.buildList(1)
-      apAreaService.getApAreas.mockResolvedValue(apAreas)
-
       const requestHandler = placementRequestsController.index()
 
       const apArea = 'some-ap-area-id'
@@ -135,6 +132,37 @@ describe('PlacementRequestsController', () => {
         paths.admin.placementRequests.index({}),
         filters,
       )
+    })
+
+    it('should not send an area query in the request if the  if the query is "all"', async () => {
+      const requestHandler = placementRequestsController.index()
+
+      const apArea = 'all'
+      const filters = { apArea }
+      const requestWithQuery = { ...request, query: filters }
+
+      await requestHandler(requestWithQuery, response, next)
+
+      expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
+        token,
+        { status: 'notMatched' },
+        paginationDetails.pageNumber,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
+
+      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
+        pageHeading: 'Record and update placement details',
+        placementRequests: paginatedResponse.data,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
+        status: 'notMatched',
+        apAreas,
+        apArea,
+      })
     })
   })
 

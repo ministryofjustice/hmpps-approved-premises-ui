@@ -49,11 +49,12 @@ export const convertObjectsToSelectOptions = (
   textKey: string,
   valueKey: string,
   fieldName: string,
+  selectAllValue: string,
   context: Record<string, unknown>,
 ): Array<SelectOption> => {
   const options = [
     {
-      value: '',
+      value: selectAllValue,
       text: prompt,
       selected: !context[fieldName] || context[fieldName] === '',
     },

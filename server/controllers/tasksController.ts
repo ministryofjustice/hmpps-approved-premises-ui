@@ -17,6 +17,7 @@ export default class TasksController {
     return async (req: Request, res: Response) => {
       const allocatedFilter = (req.query.allocatedFilter as AllocatedFilter) || 'allocated'
       const apAreaId = req.query.area ? req.query.area : res.locals.user.apArea?.id
+
       const {
         pageNumber,
         sortDirection = 'asc',
@@ -26,13 +27,14 @@ export default class TasksController {
         allocatedFilter,
         areas: apAreaId,
       })
+
       const tasks = await this.taskService.getAllReallocatable(
         req.user.token,
         allocatedFilter,
         sortBy,
         sortDirection,
         pageNumber,
-        apAreaId,
+        apAreaId === 'all' ? '' : apAreaId,
       )
       const apAreas = await this.apAreaService.getApAreas(req.user.token)
 

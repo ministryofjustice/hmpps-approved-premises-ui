@@ -274,7 +274,7 @@ describe('formUtils', () => {
     ]
 
     it('converts objects to an array of select options', () => {
-      const result = convertObjectsToSelectOptions(objects, 'Select a keyworker', 'name', 'id', 'field', {})
+      const result = convertObjectsToSelectOptions(objects, 'Select a keyworker', 'name', 'id', 'field', '', {})
 
       expect(result).toEqual([
         {
@@ -296,7 +296,7 @@ describe('formUtils', () => {
     })
 
     it('marks the object that is in the context as selected', () => {
-      const result = convertObjectsToSelectOptions(objects, 'Select a keyworker', 'name', 'id', 'field', {
+      const result = convertObjectsToSelectOptions(objects, 'Select a keyworker', 'name', 'id', 'field', '', {
         field: '123',
       })
 
@@ -310,6 +310,28 @@ describe('formUtils', () => {
           text: 'abc',
           value: '123',
           selected: true,
+        },
+        {
+          text: 'def',
+          value: '345',
+          selected: false,
+        },
+      ])
+    })
+
+    it('accepts a different default value', () => {
+      const result = convertObjectsToSelectOptions(objects, 'All workers', 'name', 'id', 'field', 'all', {})
+
+      expect(result).toEqual([
+        {
+          value: 'all',
+          text: 'All workers',
+          selected: true,
+        },
+        {
+          text: 'abc',
+          value: '123',
+          selected: false,
         },
         {
           text: 'def',
