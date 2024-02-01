@@ -1,9 +1,11 @@
 import ListPage from '../../pages/admin/placementApplications/listPage'
 import ShowPage from '../../pages/admin/placementApplications/showPage'
+import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
 
 import {
   apAreaFactory,
   applicationFactory,
+  bookingFactory,
   cancellationFactory,
   placementRequestDetailFactory,
   placementRequestWithFullPersonFactory,
@@ -19,6 +21,8 @@ import { ApprovedPremisesApplication as Application } from '../../../server/@typ
 import { signIn } from '../signIn'
 import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
 import paths from '../../../server/paths/api'
+import BookingCancellationConfirmPage from '../../pages/manage/bookingCancellationConfirmation'
+import { DateFormats } from '../../../server/utils/dateUtils'
 
 context('Placement Requests', () => {
   let application = applicationFactory.build()
@@ -40,6 +44,11 @@ context('Placement Requests', () => {
   const parolePlacementRequest = unmatchedPlacementRequests[1]
 
   const matchedPlacementRequest = placementRequestDetailFactory.build({ ...matchedPlacementRequests[1] })
+  const booking = bookingFactory.build({
+    applicationId: application.id,
+    premises: { id: matchedPlacementRequest.booking.premisesId },
+    id: matchedPlacementRequest.booking.id,
+  })
   const unableToMatchPlacementRequest = placementRequestDetailFactory.build({ ...unableToMatchPlacementRequests[0] })
 
   const preferredAps = premisesFactory.buildList(3)
@@ -248,7 +257,7 @@ context('Placement Requests', () => {
   it('allows me to cancel a booking', () => {
     const premises = premisesFactory.buildList(3)
     const cancellation = cancellationFactory.build({ date: '2022-06-01' })
-
+    const withdrawable = withdrawableFactory.build({ id: matchedPlacementRequest.booking.id, type: 'booking' })
     cy.task('stubAllPremises', premises)
     cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
     cy.task('stubCancellationCreate', {
@@ -261,6 +270,11 @@ context('Placement Requests', () => {
       booking: matchedPlacementRequest.booking,
     })
     cy.task('stubCancellationReferenceData')
+    cy.task('stubWithdrawables', {
+      applicationId: matchedPlacementRequest.applicationId,
+      withdrawables: [withdrawable],
+    })
+    cy.task('stubBookingFindWithoutPremises', booking)
 
     // When I visit the tasks dashboard
     const listPage = ListPage.visit()
@@ -275,17 +289,25 @@ context('Placement Requests', () => {
     const showPage = Page.verifyOnPage(ShowPage, matchedPlacementRequest)
 
     // When I click on the create booking button
-    showPage.clickCancelBooking()
+    showPage.clickWithdrawBooking()
+
+    const withdrawableTypePage = new NewWithdrawalPage('What do you want to withdraw?')
+    withdrawableTypePage.selectType('booking')
+    withdrawableTypePage.clickSubmit()
+
+    const withdrawablePage = new NewWithdrawalPage('Select your booking')
+    withdrawablePage.selectWithdrawable(withdrawable.id)
+    withdrawablePage.clickSubmit()
 
     // Then I should be on the cancel a booking page
     const cancellationPage = Page.verifyOnPage(CancellationCreatePage, matchedPlacementRequest)
 
     // And I cancel my booking
-    cancellationPage.completeForm(cancellation, { completeFullForm: true })
-    cancellationPage.clickSubmit()
+    cancellationPage.completeForm(cancellation, { completeFullForm: false })
 
     // Then I should see a confirmation message
-    showPage.shouldShowBanner('Booking cancelled')
+    const confirmationPage = new BookingCancellationConfirmPage()
+    confirmationPage.shouldShowPanel()
 
     // And a cancellation should have been created in the API
     cy.task('verifyCancellationCreate', {
@@ -296,8 +318,7 @@ context('Placement Requests', () => {
       expect(requests).to.have.length(1)
       const requestBody = JSON.parse(requests[0].body)
 
-      expect(requestBody.date).equal(cancellation.date)
-      expect(requestBody.notes).equal(cancellation.notes)
+      expect(requestBody.date).equal(DateFormats.dateObjToIsoDate(new Date()))
       expect(requestBody.reason).equal(cancellation.reason.id)
     })
   })
