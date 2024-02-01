@@ -3,7 +3,6 @@ import { TableCell, TableRow } from '../../@types/ui'
 import paths from '../../paths/tasks'
 import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
-import { nameCell } from '../tableUtils'
 import { kebabCase, linkTo, sentenceCase } from '../utils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
@@ -27,21 +26,16 @@ const allocationCell = (task: Task): TableCell => ({
   text: task.allocatedToStaffMember?.name,
 })
 
-const allocationLinkCell = (task: Task, action: 'Allocate' | 'Reallocate'): TableCell => {
-  const hiddenText = `task for ${task.personName}`
-
-  return {
-    html: linkTo(
-      paths.tasks.show,
-      { id: task.id, taskType: kebabCase(task.taskType) },
-      {
-        text: action,
-        hiddenText,
-        attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
-      },
-    ),
-  }
-}
+const nameAnchorCell = (task: Task): TableCell => ({
+  html: linkTo(
+    paths.tasks.show,
+    { id: task.id, taskType: kebabCase(task.taskType) },
+    {
+      text: task.personName,
+      attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
+    },
+  ),
+})
 
 const statusBadge = (task: Task): string => {
   switch (task.status) {
@@ -72,12 +66,11 @@ const allocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
 
   tasks.forEach(task => {
     rows.push([
-      nameCell(task),
+      nameAnchorCell(task),
       daysUntilDueCell(task),
       allocationCell(task),
       statusCell(task),
       taskTypeCell(task),
-      allocationLinkCell(task, 'Reallocate'),
     ])
   })
 
@@ -88,13 +81,7 @@ const unallocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   tasks.forEach(task => {
-    rows.push([
-      nameCell(task),
-      daysUntilDueCell(task),
-      statusCell(task),
-      taskTypeCell(task),
-      allocationLinkCell(task, 'Allocate'),
-    ])
+    rows.push([nameAnchorCell(task), daysUntilDueCell(task), statusCell(task), taskTypeCell(task)])
   })
 
   return rows
@@ -112,7 +99,7 @@ const allocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirectio
     {
       text: 'Person',
     },
-    sortHeader<TaskSortField>('Days until due date', 'createdAt', sortBy, sortDirection, hrefPrefix),
+    sortHeader<TaskSortField>('Due', 'createdAt', sortBy, sortDirection, hrefPrefix),
     {
       text: 'Allocated to',
     },
@@ -121,9 +108,6 @@ const allocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirectio
     },
     {
       text: 'Task type',
-    },
-    {
-      html: '<span class="govuk-visually-hidden">Actions</span>',
     },
   ]
 }
@@ -133,18 +117,12 @@ const unAllocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirect
     {
       text: 'Person',
     },
-    sortHeader<TaskSortField>('Days until due date', 'createdAt', sortBy, sortDirection, hrefPrefix),
-    {
-      text: 'Allocated to',
-    },
+    sortHeader<TaskSortField>('Due', 'createdAt', sortBy, sortDirection, hrefPrefix),
     {
       text: 'Status',
     },
     {
       text: 'Task type',
-    },
-    {
-      html: '<span class="govuk-visually-hidden">Actions</span>',
     },
   ]
 }
@@ -163,7 +141,7 @@ const tasksTableHeader = (
 export {
   allocatedTableRows,
   tasksTableHeader,
-  allocationLinkCell,
+  nameAnchorCell,
   formatDaysUntilDueWithWarning,
   daysUntilDueCell,
   statusCell,

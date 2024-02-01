@@ -1,5 +1,6 @@
 import type {
   ApprovedPremisesApplication as Application,
+  FullPerson,
   Task,
   ApprovedPremisesUser as User,
 } from '@approved-premises/api'
@@ -40,5 +41,10 @@ export default class AllocationsPage extends Page {
 
   clickAllocateToUser(user: User) {
     cy.get(`button[data-cy-userId="${user.id}"]`).click()
+  }
+
+  shouldShowPersonIsLimitedAccessOffender() {
+    const person = this.application.person as FullPerson
+    cy.contains(person.name).contains('(Limited access offender)')
   }
 }

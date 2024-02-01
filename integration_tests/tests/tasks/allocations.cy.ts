@@ -4,6 +4,7 @@ import Page from '../../pages/page'
 
 import {
   applicationFactory,
+  personFactory,
   reallocationFactory,
   taskFactory,
   userFactory,
@@ -29,8 +30,23 @@ context('Tasks', () => {
       taskType: 'Assessment',
     })
 
+    const restrictedPerson = personFactory.build({ isRestricted: true })
+    const applicationForRestrictedPerson = applicationFactory.withReleaseDate().build({
+      isPipeApplication: true,
+      person: restrictedPerson,
+      isWomensApplication: false,
+    })
+
+    const taskWithRestrictedPerson = taskFactory.build({
+      allocatedToStaffMember: userFactory.build(),
+      applicationId: applicationForRestrictedPerson.id,
+      taskType: 'Assessment',
+    })
+
+    const tasks = [task, taskWithRestrictedPerson]
+
     cy.task('stubReallocatableTasks', {
-      tasks: [task],
+      tasks,
       allocatedFilter: 'allocated',
       page: '1',
       sortDirection: 'asc',
@@ -48,9 +64,12 @@ context('Tasks', () => {
     cy.signIn()
 
     cy.wrap(task).as('task')
+    cy.wrap(taskWithRestrictedPerson).as('taskWithRestrictedPerson')
+    cy.wrap(tasks).as('tasks')
     cy.wrap(users).as('users')
     cy.wrap(selectedUser).as('selectedUser')
     cy.wrap(application).as('application')
+    cy.wrap(applicationForRestrictedPerson).as('applicationForRestrictedPerson')
   })
 
   it('allows me to allocate a task', function test() {
@@ -60,7 +79,7 @@ context('Tasks', () => {
     })
 
     // When I visit the task list page
-    const taskListPage = TaskListPage.visit([this.task], [])
+    const taskListPage = TaskListPage.visit([this.tasks], [])
 
     // And I click to allocate the task
     taskListPage.clickTask(this.task)
@@ -91,5 +110,27 @@ context('Tasks', () => {
 
       expect(body.userId).equal(this.selectedUser.id)
     })
+  })
+
+  it('highlights if a person is limited access offender', function test() {
+    cy.task('stubTaskGet', {
+      application: this.applicationForRestrictedPerson,
+      task: this.taskWithRestrictedPerson,
+      users: this.users,
+    })
+    cy.task('stubApplicationGet', { application: this.applicationForRestrictedPerson })
+
+    // When I visit the task list page
+    const taskListPage = TaskListPage.visit([this.tasks], [])
+    taskListPage.clickTask(this.taskWithRestrictedPerson)
+
+    // Then I should be on the Allocations page for that task
+    const allocationsPage = Page.verifyOnPage(
+      AllocationsPage,
+      this.applicationForRestrictedPerson,
+      this.taskWithRestrictedPerson,
+    )
+
+    allocationsPage.shouldShowPersonIsLimitedAccessOffender()
   })
 })

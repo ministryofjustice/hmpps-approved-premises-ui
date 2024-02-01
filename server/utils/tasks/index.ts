@@ -37,7 +37,7 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
         text: 'Name',
       },
       value: {
-        text: nameOrPlaceholderCopy(application.person, `LAO: ${application.person.crn}`),
+        text: nameOrPlaceholderCopy(application.person, `LAO: ${application.person.crn}`, true),
       },
     },
     {
@@ -62,6 +62,14 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
       },
       value: {
         text: getApplicationType(application),
+      },
+    },
+    {
+      key: {
+        text: 'AP Area',
+      },
+      value: {
+        text: application.apArea?.name,
       },
     },
     {

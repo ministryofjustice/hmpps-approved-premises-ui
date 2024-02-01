@@ -84,7 +84,17 @@ describe('personUtils', () => {
     })
     it('returns the persons name if passed a fullPerson', () => {
       const person = fullPersonFactory.build()
-      expect(nameOrPlaceholderCopy(person)).toEqual(person.name)
+      expect(nameOrPlaceholderCopy(person)).toContain(person.name)
+    })
+
+    it('includes limited access offender text if showLaoLabel true and person is restricted to others', () => {
+      const person = fullPersonFactory.build({ isRestricted: true })
+      expect(nameOrPlaceholderCopy(person, 'the person', true)).toEqual(`${person.name} (Limited access offender)`)
+    })
+
+    it('does not include limited access offender text if showLaoLabel true and person is not restricted to others', () => {
+      const person = fullPersonFactory.build({ isRestricted: false })
+      expect(nameOrPlaceholderCopy(person, 'the person', true)).toEqual(person.name)
     })
   })
 })

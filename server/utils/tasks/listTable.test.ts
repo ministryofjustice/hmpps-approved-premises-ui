@@ -2,9 +2,9 @@ import { taskFactory } from '../../testutils/factories'
 import {
   allocatedTableRows,
   allocationCell,
-  allocationLinkCell,
   daysUntilDueCell,
   formatDaysUntilDueWithWarning,
+  nameAnchorCell,
   statusBadge,
   statusCell,
   taskTypeCell,
@@ -27,9 +27,7 @@ describe('table', () => {
 
         expect(allocatedTableRows([task])).toEqual([
           [
-            {
-              text: task.personName,
-            },
+            nameAnchorCell(task),
             daysUntilDueCell(task),
             {
               text: task?.allocatedToStaffMember?.name,
@@ -40,8 +38,6 @@ describe('table', () => {
             {
               html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
             },
-
-            allocationLinkCell(task, 'Reallocate'),
           ],
         ])
       })
@@ -51,9 +47,7 @@ describe('table', () => {
 
         expect(tasksTableRows([task], 'allocated')).toEqual([
           [
-            {
-              text: task.personName,
-            },
+            nameAnchorCell(task),
             daysUntilDueCell(task),
             {
               text: task?.allocatedToStaffMember?.name,
@@ -64,8 +58,6 @@ describe('table', () => {
             {
               html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
             },
-
-            allocationLinkCell(task, 'Reallocate'),
           ],
         ])
       })
@@ -79,9 +71,7 @@ describe('table', () => {
 
         expect(unallocatedTableRows([task])).toEqual([
           [
-            {
-              text: task.personName,
-            },
+            nameAnchorCell(task),
             daysUntilDueCell(task),
             {
               html: statusBadge(task),
@@ -89,7 +79,6 @@ describe('table', () => {
             {
               html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
             },
-            allocationLinkCell(task, 'Allocate'),
           ],
         ])
       })
@@ -99,9 +88,7 @@ describe('table', () => {
 
         expect(tasksTableRows([task], 'unallocated')).toEqual([
           [
-            {
-              text: task.personName,
-            },
+            nameAnchorCell(task),
             daysUntilDueCell(task),
             {
               html: statusBadge(task),
@@ -109,7 +96,6 @@ describe('table', () => {
             {
               html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
             },
-            allocationLinkCell(task, 'Allocate'),
           ],
         ])
       })
@@ -126,18 +112,12 @@ describe('table', () => {
         {
           text: 'Person',
         },
-        sortHeader<TaskSortField>('Days until due date', 'createdAt', sortBy, sortDirection, hrefPrefix),
-        {
-          text: 'Allocated to',
-        },
+        sortHeader<TaskSortField>('Due', 'createdAt', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Status',
         },
         {
           text: 'Task type',
-        },
-        {
-          html: '<span class="govuk-visually-hidden">Actions</span>',
         },
       ])
     })
@@ -153,7 +133,7 @@ describe('table', () => {
         {
           text: 'Person',
         },
-        sortHeader<TaskSortField>('Days until due date', 'createdAt', sortBy, sortDirection, hrefPrefix),
+        sortHeader<TaskSortField>('Due', 'createdAt', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Allocated to',
         },
@@ -162,9 +142,6 @@ describe('table', () => {
         },
         {
           text: 'Task type',
-        },
-        {
-          html: '<span class="govuk-visually-hidden">Actions</span>',
         },
       ])
     })
@@ -241,13 +218,13 @@ describe('table', () => {
     })
   })
 
-  describe('allocationLinkCell', () => {
+  describe('nameAnchorCell', () => {
     it('returns the cell when there is a person present in the task', () => {
       const task = taskFactory.build({
         taskType: 'Assessment',
       })
-      expect(allocationLinkCell(task, 'Allocate')).toEqual({
-        html: `<a href="/tasks/assessment/${task.id}" data-cy-taskId="${task.id}" data-cy-applicationId="${task.applicationId}">Allocate <span class="govuk-visually-hidden">task for ${task.personName}</span></a>`,
+      expect(nameAnchorCell(task)).toEqual({
+        html: `<a href="/tasks/assessment/${task.id}" data-cy-taskId="${task.id}" data-cy-applicationId="${task.applicationId}">${task.personName}</a>`,
       })
     })
   })
