@@ -28,7 +28,11 @@ export default class PlacementRequestsController {
 
       const dashboard = await this.placementRequestService.getDashboard(
         req.user.token,
-        { status, apAreaId, requestType },
+        {
+          status,
+          apAreaId: apAreaId === 'all' ? undefined : apAreaId,
+          requestType,
+        },
         pageNumber,
         sortBy,
         sortDirection,

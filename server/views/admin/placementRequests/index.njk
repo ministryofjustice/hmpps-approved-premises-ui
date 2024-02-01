@@ -42,7 +42,7 @@
                 classes: "govuk-input--width-20",
                 id: "apArea",
                 name: "apArea",
-                items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'apArea', context)
+                items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'apArea', 'all', context)
               }) }}
             </div>
             <div class="govuk-grid-column-one-quarter">
@@ -53,7 +53,7 @@
                 },
                 id: "requestType",
                 name: "requestType",
-                items: convertObjectsToSelectOptions(PlacementRequestUtils.requestTypes, 'All request types', 'name', 'value', 'requestType', context)
+                items: convertObjectsToSelectOptions(PlacementRequestUtils.requestTypes, 'All request types', 'name', 'value', 'requestType', '', context)
               }) }}
             </div>
 

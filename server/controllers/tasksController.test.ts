@@ -46,22 +46,20 @@ describe('TasksController', () => {
       data: tasks,
     }) as PaginatedResponse<Task>
     const apAreas = apAreaFactory.buildList(1)
+    const paginationDetails = {
+      hrefPrefix: paths.tasks.index({}),
+      pageNumber: 1,
+    }
 
     beforeEach(() => {
       response.locals.user = user
       apAreaService.getApAreas.mockResolvedValue(apAreas)
-    })
-
-    it('should render the tasks template', async () => {
-      const paginationDetails = {
-        hrefPrefix: paths.tasks.index({}),
-        pageNumber: 1,
-      }
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
       taskService.getAllReallocatable.mockResolvedValue(paginatedResponse)
+    })
 
+    it('should render the tasks template with the users ap area filtered by default', async () => {
       const requestHandler = tasksController.index()
-
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
@@ -80,14 +78,14 @@ describe('TasksController', () => {
     })
 
     it('should handle request parameters correctly', async () => {
-      const paginationDetails = {
+      const paramPaginationDetails = {
         hrefPrefix: paths.tasks.index({}),
         pageNumber: 1,
         sortBy: 'name',
         sortDirection: 'desc',
       }
 
-      ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
+      ;(getPaginationDetails as jest.Mock).mockReturnValue(paramPaginationDetails)
       taskService.getAllReallocatable.mockResolvedValue(paginatedResponse)
 
       const requestHandler = tasksController.index()
@@ -104,8 +102,8 @@ describe('TasksController', () => {
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
-        sortBy: paginationDetails.sortBy,
-        sortDirection: paginationDetails.sortDirection,
+        sortBy: paramPaginationDetails.sortBy,
+        sortDirection: paramPaginationDetails.sortDirection,
         selectedArea: '1234',
       })
       expect(getPaginationDetails).toHaveBeenCalledWith(unallocatedRequest, paths.tasks.index({}), {
@@ -115,11 +113,32 @@ describe('TasksController', () => {
       expect(taskService.getAllReallocatable).toHaveBeenCalledWith(
         token,
         'unallocated',
-        paginationDetails.sortBy,
-        paginationDetails.sortDirection,
+        paramPaginationDetails.sortBy,
+        paramPaginationDetails.sortDirection,
         1,
         '1234',
       )
+    })
+
+    it('should not send an area query if the  if the query is "all"', async () => {
+      const requestHandler = tasksController.index()
+      const requestWithQuery = { ...request, query: { area: 'all' } }
+      await requestHandler(requestWithQuery, response, next)
+
+      expect(taskService.getAllReallocatable).toHaveBeenCalledWith(token, 'allocated', 'createdAt', 'asc', 1, '')
+
+      expect(response.render).toHaveBeenCalledWith('tasks/index', {
+        pageHeading: 'Tasks',
+        tasks,
+        allocatedFilter: 'allocated',
+        apAreas,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: 'createdAt',
+        sortDirection: 'asc',
+        selectedArea: 'all',
+      })
     })
   })
 
