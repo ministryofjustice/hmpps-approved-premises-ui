@@ -22,6 +22,8 @@ import paths from '../../paths/assess'
 import { crnCell, tierCell } from '../tableUtils'
 import { AssessmentSortField, ApprovedPremisesAssessmentSummary as AssessmentSummary } from '../../@types/shared'
 import { sortHeader } from '../sortHeader'
+import { linkTo } from '../utils'
+import { laoName } from '../personUtils'
 
 jest.mock('../applications/arrivalDateFromApplication')
 
@@ -65,11 +67,16 @@ describe('tableUtils', () => {
     })
 
     it('returns a link to an assessment', () => {
-      expect(assessmentLink(assessment, person)).toMatchStringIgnoringWhitespace(`
-        <a href="${paths.assessments.show({
-          id: '123',
-        })}" data-cy-assessmentId="123" data-cy-applicationId="345">John Wayne</a>
-      `)
+      expect(assessmentLink(assessment, person)).toBe(
+        linkTo(
+          paths.assessments.show,
+          { id: assessment.id },
+          {
+            text: laoName(person),
+            attributes: { 'data-cy-assessmentId': assessment.id, 'data-cy-applicationId': assessment.applicationId },
+          },
+        ),
+      )
     })
 
     it('allows custom text to be specified', () => {

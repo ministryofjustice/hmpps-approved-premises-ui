@@ -1,7 +1,13 @@
 import { add, sub } from 'date-fns'
 import { lostBedFactory, userDetailsFactory } from '../testutils/factories'
 import { DateFormats } from './dateUtils'
-import { lostBedTableHeaders, lostBedTableRows, lostBedsCountForToday, referenceNumberCell } from './lostBedUtils'
+import {
+  actionCell,
+  lostBedTableHeaders,
+  lostBedTableRows,
+  lostBedsCountForToday,
+  referenceNumberCell,
+} from './lostBedUtils'
 import { getRandomInt } from './utils'
 
 describe('lostBedUtils', () => {
@@ -76,6 +82,7 @@ describe('lostBedUtils', () => {
 
     it('returns table rows for a workflow manager', () => {
       const user = userDetailsFactory.build({ roles: ['workflow_manager'] })
+
       const expectedRows = [
         [
           { text: lostBed.bedName },
@@ -84,9 +91,7 @@ describe('lostBedUtils', () => {
           { text: lostBed.endDate },
           { text: lostBed.reason.name },
           { text: lostBed.referenceNumber },
-          {
-            html: `<a href="/premises/${premisesId}/beds/${lostBed.bedId}/lost-beds/${lostBed.id}" data-cy-lostBedId="${lostBed.id}">Manage <span class="govuk-visually-hidden">lost bed ${lostBed.bedName}</span></a>`,
-          },
+          actionCell(lostBed, premisesId),
         ],
       ]
       const rows = lostBedTableRows([lostBed], premisesId, user)

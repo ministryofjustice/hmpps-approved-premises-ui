@@ -1,5 +1,10 @@
 import { personFactory, placementRequestFactory } from '../../testutils/factories'
 import { assessmentLink, formatReleaseType, mapPlacementRequestToBedSearchParams, searchButton } from './utils'
+import { linkTo } from '../utils'
+import paths from '../../paths/match'
+import assessPaths from '../../paths/assess'
+
+jest.mock('../utils')
 
 describe('utils', () => {
   describe('formatReleaseType', () => {
@@ -13,8 +18,12 @@ describe('utils', () => {
     it('returns a link to the search query', () => {
       const placementRequest = placementRequestFactory.build()
 
-      expect(searchButton(placementRequest)).toEqual(
-        `<a href="/placement-requests/${placementRequest.id}/beds/search" class="govuk-button">Search</a>`,
+      searchButton(placementRequest)
+
+      expect(linkTo).toHaveBeenCalledWith(
+        paths.placementRequests.beds.search,
+        { id: placementRequest.id },
+        { text: 'Search', attributes: { class: 'govuk-button' } },
       )
     })
   })
@@ -46,8 +55,12 @@ describe('utils', () => {
     it('returns a link to the assessment', () => {
       const placementRequest = placementRequestFactory.build()
 
-      expect(assessmentLink(placementRequest, 'link text', 'hidden text')).toEqual(
-        `<a href="/assessments/${placementRequest.assessmentId}" >link text <span class="govuk-visually-hidden">hidden text</span></a>`,
+      assessmentLink(placementRequest, 'link text', 'hidden text')
+
+      expect(linkTo).toHaveBeenCalledWith(
+        assessPaths.assessments.show,
+        { id: placementRequest.assessmentId },
+        { text: 'link text', hiddenText: 'hidden text' },
       )
     })
   })

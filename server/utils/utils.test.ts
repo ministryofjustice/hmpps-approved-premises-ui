@@ -300,7 +300,7 @@ describe('linkTo', () => {
   it('returns a link that will open in a new tab', () => {
     expect(
       linkTo(path('/foo'), {}, { text: 'Hello', query: { foo: 'bar' }, openInNewTab: true }),
-    ).toMatchStringIgnoringWhitespace('<a href="/foo?foo=bar">Hello</a>')
+    ).toMatchStringIgnoringWhitespace('<a href="/foo?foo=bar" target="_blank">Hello</a>')
   })
 })
 
