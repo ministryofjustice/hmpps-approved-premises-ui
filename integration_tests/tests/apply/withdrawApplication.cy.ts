@@ -1,4 +1,5 @@
 import { ListPage } from '../../pages/apply'
+import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
 
 import Page from '../../pages/page'
 import WithdrawApplicationPage from '../../pages/apply/withdrawApplicationPage'
@@ -29,6 +30,13 @@ context('Withdraw Application', () => {
 
     // When I click 'Withdraw' on an application
     listPage.clickWithdraw()
+
+    // Then I should see the withdrawal type page
+    const withdrawalTypePage = Page.verifyOnPage(NewWithdrawalPage, 'What do you want to withdraw?')
+
+    // When I select the withdrawal type and click submit
+    withdrawalTypePage.selectType('application')
+    withdrawalTypePage.clickSubmit()
 
     // Then I should see the withdraw confirmation page
     const withdrawConfirmationPage = Page.verifyOnPage(WithdrawApplicationPage)

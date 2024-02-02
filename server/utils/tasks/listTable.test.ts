@@ -12,10 +12,11 @@ import {
   tasksTableRows,
   unallocatedTableRows,
 } from './listTable'
-import { sentenceCase } from '../utils'
+import { kebabCase, linkTo, sentenceCase } from '../utils'
 import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
 import { TaskSortField } from '../../@types/shared'
+import paths from '../../paths/tasks'
 
 jest.mock('../dateUtils')
 
@@ -224,7 +225,14 @@ describe('table', () => {
         taskType: 'Assessment',
       })
       expect(nameAnchorCell(task)).toEqual({
-        html: `<a href="/tasks/assessment/${task.id}" data-cy-taskId="${task.id}" data-cy-applicationId="${task.applicationId}">${task.personName}</a>`,
+        html: linkTo(
+          paths.tasks.show,
+          { id: task.id, taskType: kebabCase(task.taskType) },
+          {
+            text: task.personName,
+            attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
+          },
+        ),
       })
     })
   })

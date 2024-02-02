@@ -10,13 +10,16 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 
 import { bookingFactory, cancellationFactory, referenceDataFactory } from '../../testutils/factories'
 import paths from '../../paths/manage'
+import applyPaths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
 
 jest.mock('../../utils/validation')
 
 describe('cancellationsController', () => {
   const token = 'SOME_TOKEN'
-  const backLink = 'http://localhost/some-path'
+  const booking = bookingFactory.build()
+  const backLink = applyPaths.applications.withdrawables.show({ id: booking.applicationId })
+  const cancellationReasons = referenceDataFactory.buildList(4)
 
   const request: DeepMocked<Request> = createMock<Request>({ user: { token }, headers: { referer: backLink } })
   const response: DeepMocked<Response> = createMock<Response>({ locals: { user: [] } })
@@ -25,15 +28,13 @@ describe('cancellationsController', () => {
   const premisesId = 'premisesId'
   const bookingId = 'bookingId'
 
-  const booking = bookingFactory.build()
-  const cancellationReasons = referenceDataFactory.buildList(4)
-
   const cancellationService = createMock<CancellationService>({})
   const bookingService = createMock<BookingService>({})
 
   const cancellationsController = new CancellationsController(cancellationService, bookingService)
 
   beforeEach(() => {
+    jest.resetAllMocks()
     bookingService.find.mockResolvedValue(booking)
     cancellationService.getCancellationReasons.mockResolvedValue(cancellationReasons)
   })
@@ -87,10 +88,13 @@ describe('cancellationsController', () => {
       })
     })
 
-    it('sets a default backlink if the referrer is not present', async () => {
+    it('sets the backlink to the withdrawables show page if there is an applicationId on the booking', async () => {
+      const bookingWithoutAnApplication = bookingFactory.build({ applicationId: undefined })
       ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
         return { errors: {}, errorSummary: [], userInput: {} }
       })
+
+      bookingService.find.mockResolvedValue(bookingWithoutAnApplication)
 
       const requestHandler = cancellationsController.new()
 
@@ -100,7 +104,7 @@ describe('cancellationsController', () => {
         apManager: false,
         premisesId,
         bookingId,
-        booking,
+        booking: bookingWithoutAnApplication,
         backLink: paths.bookings.show({ premisesId, bookingId }),
         cancellationReasons,
         pageHeading: 'Confirm withdrawn placement',

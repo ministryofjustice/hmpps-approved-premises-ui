@@ -1,3 +1,4 @@
+import paths from '../paths/match'
 import {
   apCharacteristicPairFactory,
   bedSearchParametersFactory,
@@ -42,6 +43,9 @@ import {
   specialistApTypeOptions,
   specialistSupportOptions,
 } from './placementCriteriaUtils'
+import { linkTo } from './utils'
+
+jest.mock('./utils.ts')
 
 describe('matchUtils', () => {
   beforeEach(() => {
@@ -272,12 +276,19 @@ describe('matchUtils', () => {
       const durationWeeks = '4'
       const durationDays = '1'
 
-      expect(
-        summaryCardHeader({ bedSearchResult, placementRequestId, startDate, durationDays, durationWeeks }),
-      ).toEqual(
-        `<a href="/placement-requests/${placementRequestId}/bookings/confirm?bedSearchResult=${encodeURIComponent(
-          encodeBedSearchResult(bedSearchResult),
-        )}&startDate=${startDate}&duration=29" >${bedSearchResult.premises.name} (Bed ${bedSearchResult.bed.name})</a>`,
+      summaryCardHeader({ bedSearchResult, placementRequestId, startDate, durationDays, durationWeeks })
+
+      expect(linkTo).toHaveBeenCalledWith(
+        paths.placementRequests.bookings.confirm,
+        { id: placementRequestId },
+        {
+          text: `${bedSearchResult.premises.name} (Bed ${bedSearchResult.bed.name})`,
+          query: {
+            bedSearchResult: encodeBedSearchResult(bedSearchResult),
+            startDate,
+            duration: String(Number(durationWeeks) * 7 + Number(durationDays)),
+          },
+        },
       )
     })
   })

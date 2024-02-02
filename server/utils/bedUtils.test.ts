@@ -12,6 +12,7 @@ import {
   actionCell,
   bedActions,
   bedDetails,
+  bedLink,
   bedNameCell,
   bedTableRows,
   characteristicsRow,
@@ -65,7 +66,7 @@ describe('bedUtils', () => {
   describe('actionCell', () => {
     it('returns a link to manage the room', () => {
       expect(actionCell(bed, premisesId)).toEqual({
-        html: `<a href="/premises/${premisesId}/beds/${bed.id}" data-cy-bedId="${bed.id}">Manage <span class="govuk-visually-hidden">bed ${bed.name}</span></a>`,
+        html: bedLink(bed, premisesId),
       })
     })
   })

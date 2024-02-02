@@ -16,6 +16,7 @@ import {
 import { addOverbookingsToSchedule } from './addOverbookingsToSchedule'
 import { textValue } from './applications/utils'
 import paths from '../paths/manage'
+import { linkTo } from './utils'
 
 jest.mock('./addOverbookingsToSchedule')
 
@@ -256,9 +257,11 @@ describe('premisesUtils', () => {
             text: premises2.bedCount.toString(),
           },
           {
-            html: `<a href="${paths.premises.show({
-              premisesId: premises2.id,
-            })}" >View <span class="govuk-visually-hidden">about ${premises2.name}</span></a>`,
+            html: linkTo(
+              paths.premises.show,
+              { premisesId: premises2.id },
+              { text: 'View', hiddenText: `about ${premises2.name}` },
+            ),
           },
         ],
         [
@@ -272,9 +275,11 @@ describe('premisesUtils', () => {
             text: premises3.bedCount.toString(),
           },
           {
-            html: `<a href="${paths.premises.show({
-              premisesId: premises3.id,
-            })}" >View <span class="govuk-visually-hidden">about ${premises3.name}</span></a>`,
+            html: linkTo(
+              paths.premises.show,
+              { premisesId: premises3.id },
+              { text: 'View', hiddenText: `about ${premises3.name}` },
+            ),
           },
         ],
         [
@@ -288,9 +293,11 @@ describe('premisesUtils', () => {
             text: premises1.bedCount.toString(),
           },
           {
-            html: `<a href="${paths.premises.show({
-              premisesId: premises1.id,
-            })}" >View <span class="govuk-visually-hidden">about ${premises1.name}</span></a>`,
+            html: linkTo(
+              paths.premises.show,
+              { premisesId: premises1.id },
+              { text: 'View', hiddenText: `about ${premises1.name}` },
+            ),
           },
         ],
       ])

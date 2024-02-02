@@ -19,7 +19,7 @@ export default class WithdrawlsController {
 
       const withdrawables = await this.applicationService.getWithdrawables(req.user.token, id)
 
-      if (withdrawables.length === 0 || selectedWithdrawableType === 'application') {
+      if (selectedWithdrawableType === 'application') {
         return res.render('applications/withdrawals/new', {
           pageHeading: 'Do you want to withdraw this application?',
           applicationId: req.params.id,

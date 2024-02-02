@@ -167,6 +167,10 @@ export const nameCell = (booking: PremisesBooking): TableCell =>
   isFullPerson(booking.person) ? { text: laoName(booking.person) } : { text: `LAO: ${booking.person.crn}` }
 
 export const bookingActions = (booking: Booking, premisesId: string): Array<IdentityBarMenu> => {
+  const withdrawalLink = booking?.applicationId
+    ? applyPaths.applications.withdraw.new({ id: booking?.applicationId })
+    : paths.bookings.cancellations.new({ premisesId, bookingId: booking.id })
+
   if (booking.status === 'awaiting-arrival' || booking.status === 'arrived') {
     const items = [
       {
@@ -190,7 +194,7 @@ export const bookingActions = (booking: Booking, premisesId: string): Array<Iden
       items.push({
         text: 'Withdraw placement',
         classes: 'govuk-button--secondary',
-        href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
+        href: withdrawalLink,
       })
       items.push({
         text: 'Change placement dates',
@@ -213,7 +217,7 @@ export const bookingActions = (booking: Booking, premisesId: string): Array<Iden
       items.push({
         text: 'Withdraw placement',
         classes: 'govuk-button--secondary',
-        href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
+        href: withdrawalLink,
       })
     }
 

@@ -25,27 +25,45 @@ import { DateFormats } from '../dateUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { crnCell, tierCell } from '../tableUtils'
 import { sortHeader } from '../sortHeader'
-import { isFullPerson } from '../personUtils'
+import { laoName } from '../personUtils'
 import { FullPerson, PlacementRequestSortField } from '../../@types/shared'
+import { linkTo } from '../utils'
+import matchPaths from '../../paths/match'
+import adminPaths from '../../paths/admin'
+
+jest.mock('../utils.ts')
 
 describe('tableUtils', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
+
   describe('nameCell', () => {
     it('returns the name of the service user and a link with a task', () => {
       const task = placementRequestTaskFactory.build()
 
-      expect(nameCell(task)).toEqual({
-        html: `<a href="/placement-requests/${task.id}" data-cy-placementRequestId="${task.id}">${task.personName}</a>`,
-      })
+      nameCell(task)
+
+      expect(linkTo).toHaveBeenCalledWith(
+        matchPaths.placementRequests.show,
+        { id: task.id },
+        { text: task.personName, attributes: { 'data-cy-placementRequestId': task.id } },
+      )
     })
 
     it('returns the name of the service user and a link with a placement request', () => {
       const placementRequest = placementRequestWithFullPersonFactory.build()
 
-      expect(nameCell(placementRequest)).toEqual({
-        html: `<a href="/admin/placement-requests/${placementRequest.id}" data-cy-placementRequestId="${
-          placementRequest.id
-        }">${isFullPerson(placementRequest.person) ? placementRequest.person.name : placementRequest.person.crn}</a>`,
-      })
+      nameCell(placementRequest)
+
+      expect(linkTo).toHaveBeenCalledWith(
+        adminPaths.admin.placementRequests.show,
+        { id: placementRequest.id },
+        {
+          text: laoName(placementRequest.person as FullPerson),
+          attributes: { 'data-cy-placementRequestId': placementRequest.id },
+        },
+      )
     })
 
     it('returns an empty cell if the personName is blank', () => {
@@ -77,11 +95,16 @@ describe('tableUtils', () => {
       const restrictedPersonTask = placementRequestFactory.build()
       restrictedPersonTask.person = personFactory.build({ isRestricted: true })
 
-      expect(nameCell(restrictedPersonTask)).toEqual({
-        html: `<a href="/admin/placement-requests/${restrictedPersonTask.id}" data-cy-placementRequestId="${
-          restrictedPersonTask.id
-        }">LAO: ${(restrictedPersonTask.person as FullPerson)?.name}</a>`,
-      })
+      nameCell(restrictedPersonTask)
+
+      expect(linkTo).toHaveBeenCalledWith(
+        adminPaths.admin.placementRequests.show,
+        { id: restrictedPersonTask.id },
+        {
+          text: laoName(restrictedPersonTask.person as FullPerson),
+          attributes: { 'data-cy-placementRequestId': restrictedPersonTask.id },
+        },
+      )
     })
   })
 

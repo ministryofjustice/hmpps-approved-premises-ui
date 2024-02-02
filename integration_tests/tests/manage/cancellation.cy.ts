@@ -23,7 +23,7 @@ context('Cancellation', () => {
     signIn(['workflow_manager', 'manager'])
   })
 
-  it('should allow me to create a cancellation', () => {
+  it('should allow me to create a cancellation through the withdrawal flow for bookings with an applicationId', () => {
     // Given a booking is available
     const application = applicationFactory.build()
 
@@ -80,6 +80,43 @@ context('Cancellation', () => {
     confirmationPage.shouldShowPanel()
   })
 
+  it('should allow me to create a cancellation for a booking without an applicationId', () => {
+    // Given a booking is available
+    const premises = premisesFactory.build()
+    const booking = bookingFactory.build({ applicationId: undefined })
+    cy.task('stubBookingGet', { premisesId: premises.id, booking })
+
+    // When I navigate to the booking's cancellation page
+    const cancellation = cancellationFactory.build({ date: '2022-06-01' })
+    cy.task('stubCancellationCreate', { premisesId: premises.id, bookingId: booking.id, cancellation })
+
+    const page = CancellationCreatePage.visit(premises.id, booking.id)
+
+    // Then the backlink should be populated correctly
+    page.shouldShowBacklinkToBooking()
+
+    // When I fill out the cancellation form
+    page.completeForm(cancellation, { completeFullForm: true })
+
+    // Then a cancellation should have been created in the API
+    cy.task('verifyCancellationCreate', {
+      premisesId: premises.id,
+      bookingId: booking.id,
+      cancellation,
+    }).then(requests => {
+      expect(requests).to.have.length(1)
+      const requestBody = JSON.parse(requests[0].body)
+
+      expect(requestBody.date).equal(cancellation.date)
+      expect(requestBody.notes).equal(cancellation.notes)
+      expect(requestBody.reason).equal(cancellation.reason.id)
+    })
+
+    // And I should see a confirmation message
+    const confirmationPage = new BookingCancellationConfirmPage()
+    confirmationPage.shouldShowPanel()
+  })
+
   it('should show errors', () => {
     // Given a booking is available
     const premises = premisesFactory.build()
@@ -105,6 +142,6 @@ context('Cancellation', () => {
     page.shouldShowErrorMessagesForFields(['reason'])
 
     // And the back link should be populated correctly
-    page.shouldHaveCorrectBacklink()
+    page.shouldShowBackLinkToApplicationWithdraw(booking.applicationId)
   })
 })

@@ -1,6 +1,7 @@
 import type { Cancellation } from '@approved-premises/api'
 import Page from '../page'
 import paths from '../../../server/paths/manage'
+import applyPaths from '../../../server/paths/apply'
 
 export default class CancellationCreatePage extends Page {
   constructor(
@@ -30,9 +31,15 @@ export default class CancellationCreatePage extends Page {
     this.clickSubmit()
   }
 
-  shouldHaveCorrectBacklink(): void {
+  shouldShowBacklinkToBooking(): void {
     cy.get('.govuk-back-link')
       .should('have.attr', 'href')
       .and('include', paths.bookings.show({ premisesId: this.premisesId, bookingId: this.bookingId }))
+  }
+
+  shouldShowBackLinkToApplicationWithdraw(applicationId: string): void {
+    cy.get('.govuk-back-link')
+      .should('have.attr', 'href')
+      .and('include', applyPaths.applications.withdrawables.show({ id: applicationId }))
   }
 }

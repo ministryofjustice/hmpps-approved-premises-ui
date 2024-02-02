@@ -7,6 +7,7 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 import { DateFormats } from '../../utils/dateUtils'
 
 import paths from '../../paths/manage'
+import applyPaths from '../../paths/apply'
 import { hasRole } from '../../utils/users'
 
 export default class CancellationsController {
@@ -24,10 +25,8 @@ export default class CancellationsController {
       const cancellationReasons = await this.cancellationService.getCancellationReasons(req.user.token)
       let backLink: string
 
-      if (userInput.backLink) {
-        backLink = userInput.backLink as string
-      } else if (req.headers.referer) {
-        backLink = req.headers.referer
+      if (booking?.applicationId) {
+        backLink = applyPaths.applications.withdrawables.show({ id: booking.applicationId })
       } else {
         backLink = paths.bookings.show({ premisesId, bookingId })
       }

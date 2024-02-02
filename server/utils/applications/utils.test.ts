@@ -43,6 +43,7 @@ import { RestrictedPersonError } from '../errors'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
 import { sortHeader } from '../sortHeader'
+import { linkTo } from '../utils'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -648,8 +649,9 @@ describe('utils', () => {
       'returns a link to withdraw the application if the application status is %s',
       status => {
         const applicationSummary = applicationSummaryFactory.build({ status })
+
         expect(createWithdrawElement('id', applicationSummary)).toEqual({
-          html: '<a href="/applications/id/withdrawals/new" >Withdraw</a>',
+          html: linkTo(paths.applications.withdraw.new, { id: 'id' }, { text: 'Withdraw' }),
         })
       },
     )

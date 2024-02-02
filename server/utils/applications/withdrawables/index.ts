@@ -74,6 +74,7 @@ export const withdrawableRadioOptions = (
             {
               text: 'See placement details (opens in a new tab)',
               attributes: { 'data-cy-withdrawable-id': withdrawable.id },
+              openInNewTab: true,
             },
           ),
         },
@@ -97,6 +98,7 @@ export const withdrawableRadioOptions = (
             {
               text: 'See booking details (opens in a new tab)',
               attributes: { 'data-cy-withdrawable-id': withdrawable.id },
+              openInNewTab: true,
             },
           ),
         },

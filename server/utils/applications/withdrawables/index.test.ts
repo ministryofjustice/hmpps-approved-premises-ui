@@ -97,6 +97,7 @@ describe('withdrawableTypeRadioOptions', () => {
               {
                 text: 'See placement details (opens in a new tab)',
                 attributes: { 'data-cy-withdrawable-id': prWithdrawable.id },
+                openInNewTab: true,
               },
             ),
           },
@@ -111,6 +112,7 @@ describe('withdrawableTypeRadioOptions', () => {
               {
                 text: 'See booking details (opens in a new tab)',
                 attributes: { 'data-cy-withdrawable-id': booking.id },
+                openInNewTab: true,
               },
             ),
           },

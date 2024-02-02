@@ -65,7 +65,7 @@ export const bedActions = (bed: BedDetail, premisesId: string) => {
   }
 }
 
-const bedLink = (bed: BedSummary, premisesId: string): string =>
+export const bedLink = (bed: BedSummary, premisesId: string): string =>
   linkTo(
     paths.premises.beds.show,
     { bedId: bed.id, premisesId },
