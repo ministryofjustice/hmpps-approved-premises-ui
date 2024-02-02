@@ -113,11 +113,13 @@ export const linkTo = <Pattern extends `/${string}`>(
     query = {},
     attributes = {},
     hiddenText = '',
+    openInNewTab = false,
   }: {
     text: string
     query?: Record<string, string>
     attributes?: Record<string, string>
     hiddenText?: string
+    openInNewTab?: boolean
   },
 ): string => {
   let linkBody = text
@@ -130,7 +132,7 @@ export const linkTo = <Pattern extends `/${string}`>(
     .map(a => `${a}="${attributes[a]}"`)
     .join(' ')
 
-  return `<a href="${path(params)}${createQueryString(query, { addQueryPrefix: true })}" ${attrBody}>${linkBody}</a>`
+  return `<a href="${path(params)}${createQueryString(query, { addQueryPrefix: true })}" ${attrBody} ${openInNewTab ? 'target="_blank"' : ''}>${linkBody}</a>`
 }
 
 /**
