@@ -24,7 +24,12 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
         text: 'Amend placement',
       },
       {
-        href: applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
+        href: process.env.NEW_WITHDRAWALS_FLOW_DISABLED
+          ? managePaths.bookings.cancellations.new({
+              premisesId: placementRequest?.booking?.premisesId || '',
+              bookingId: placementRequest?.booking?.id || '',
+            })
+          : applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
         text: 'Withdraw placement',
       },
     ]
@@ -35,7 +40,9 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
       text: 'Create placement',
     },
     {
-      href: applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
+      href: process.env.NEW_WITHDRAWALS_FLOW_DISABLED
+        ? adminPaths.admin.placementRequests.withdrawal.new({ id: placementRequest.id })
+        : applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
       text: 'Withdraw placement request',
     },
     {

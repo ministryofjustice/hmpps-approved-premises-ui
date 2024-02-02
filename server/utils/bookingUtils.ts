@@ -167,9 +167,10 @@ export const nameCell = (booking: PremisesBooking): TableCell =>
   isFullPerson(booking.person) ? { text: laoName(booking.person) } : { text: `LAO: ${booking.person.crn}` }
 
 export const bookingActions = (booking: Booking, premisesId: string): Array<IdentityBarMenu> => {
-  const withdrawalLink = booking?.applicationId
-    ? applyPaths.applications.withdraw.new({ id: booking?.applicationId })
-    : paths.bookings.cancellations.new({ premisesId, bookingId: booking.id })
+  const withdrawalLink =
+    !booking?.applicationId || process.env.NEW_WITHDRAWALS_FLOW_DISABLED
+      ? paths.bookings.cancellations.new({ premisesId, bookingId: booking.id })
+      : applyPaths.applications.withdraw.new({ id: booking?.applicationId })
 
   if (booking.status === 'awaiting-arrival' || booking.status === 'arrived') {
     const items = [
