@@ -13,6 +13,7 @@ import {
   userFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/apply'
+import placementApplicationPaths from '../../paths/placementApplications'
 import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
 import PlacementRequest from '../../form-pages/placement-application'
@@ -742,6 +743,17 @@ describe('utils', () => {
     const arrivalDate = '2023-01-01'
     const duration = 20
 
+    const OLD_ENV = process.env
+
+    beforeEach(() => {
+      jest.resetModules()
+      process.env = { ...OLD_ENV }
+    })
+
+    afterAll(() => {
+      process.env = OLD_ENV
+    })
+
     it('returns a placement application mapped to SummaryCard including an action when the placement application can be withdrawn', () => {
       ;(
         retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFunction<
@@ -764,6 +776,63 @@ describe('utils', () => {
                 {
                   href: paths.applications.withdraw.new({
                     id: application.id,
+                  }),
+                  text: 'Withdraw',
+                },
+              ],
+            },
+          },
+          rows: [
+            {
+              key: {
+                text: 'Reason for placement request',
+              },
+              value: {
+                text: 'Release on Temporary Licence (ROTL)',
+              },
+            },
+            {
+              key: {
+                text: 'Arrival date',
+              },
+              value: {
+                text: DateFormats.isoDateToUIDate(arrivalDate),
+              },
+            },
+            {
+              key: {
+                text: 'Length of stay',
+              },
+              value: { text: lengthOfStayForUI(duration) },
+            },
+          ],
+        },
+      ])
+    })
+
+    it('links to the old withdrawal link when NEW_WITHDRAWALS_FLOW_DISABLED is set', () => {
+      process.env.NEW_WITHDRAWALS_FLOW_DISABLED = '1'
+      ;(
+        retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFunction<
+          typeof retrieveOptionalQuestionResponseFromFormArtifact
+        >
+      ).mockReturnValue('rotl')
+      ;(
+        durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
+          typeof durationAndArrivalDateFromPlacementApplication
+        >
+      ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
+
+      expect(mapPlacementApplicationToSummaryCards(placementApplications, application, user)).toEqual([
+        {
+          card: {
+            title: { headingLevel: '3', text: DateFormats.isoDateToUIDate(placementApplications[0].createdAt) },
+            attributes: { 'data-cy-placement-application-id': placementApplications[0].id },
+            actions: {
+              items: [
+                {
+                  href: placementApplicationPaths.placementApplications.withdraw.new({
+                    id: placementApplications[0].id,
                   }),
                   text: 'Withdraw',
                 },
