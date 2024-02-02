@@ -8,6 +8,17 @@ import { nameOrPlaceholderCopy } from '../personUtils'
 
 describe('adminIdentityBar', () => {
   describe('adminActions', () => {
+    const OLD_ENV = process.env
+
+    beforeEach(() => {
+      jest.resetModules()
+      process.env = { ...OLD_ENV }
+    })
+
+    afterEach(() => {
+      process.env = OLD_ENV
+    })
+
     it('should return actions to amend a booking if the status is `matched`', () => {
       const placementRequestDetail = placementRequestDetailFactory.build({ status: 'matched' })
 
@@ -26,6 +37,29 @@ describe('adminIdentityBar', () => {
       ])
     })
 
+    it('should link directly to cancel a booking if the status is `matched` and NEW_WITHDRAWALS_FLOW_DISABLED is set', () => {
+      process.env.NEW_WITHDRAWALS_FLOW_DISABLED = '1'
+
+      const placementRequestDetail = placementRequestDetailFactory.build({ status: 'matched' })
+
+      expect(adminActions(placementRequestDetail)).toEqual([
+        {
+          href: managePaths.bookings.dateChanges.new({
+            premisesId: placementRequestDetail.booking?.premisesId || '',
+            bookingId: placementRequestDetail.booking?.id || '',
+          }),
+          text: 'Amend placement',
+        },
+        {
+          href: managePaths.bookings.cancellations.new({
+            premisesId: placementRequestDetail.booking?.premisesId || '',
+            bookingId: placementRequestDetail.booking?.id || '',
+          }),
+          text: 'Withdraw placement',
+        },
+      ])
+    })
+
     it('should return actions to create a booking and withdraw a placement request if the status is not `matched`', () => {
       const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
 
@@ -36,6 +70,26 @@ describe('adminIdentityBar', () => {
         },
         {
           href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),
+          text: 'Withdraw placement request',
+        },
+        {
+          href: adminPaths.admin.placementRequests.unableToMatch.new({ id: placementRequestDetail.id }),
+          text: 'Mark as unable to match',
+        },
+      ])
+    })
+
+    it('should link directly to withdraw the placeent request when NEW_WITHDRAWALS_FLOW_DISABLED is set', () => {
+      process.env.NEW_WITHDRAWALS_FLOW_DISABLED = '1'
+      const placementRequestDetail = placementRequestDetailFactory.build({ status: 'notMatched' })
+
+      expect(adminActions(placementRequestDetail)).toEqual([
+        {
+          href: adminPaths.admin.placementRequests.bookings.new({ id: placementRequestDetail.id }),
+          text: 'Create placement',
+        },
+        {
+          href: adminPaths.admin.placementRequests.withdrawal.new({ id: placementRequestDetail.id }),
           text: 'Withdraw placement request',
         },
         {
