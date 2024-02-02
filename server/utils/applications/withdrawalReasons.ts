@@ -3,20 +3,22 @@ import { convertKeyValuePairToRadioItems } from '../formUtils'
 
 const newApplicationToBeSubmittedReasons = ['change_in_circumstances_new_application_to_be_submitted'] as const
 const applicationProblemReasons = ['error_in_application', 'duplicate_application'] as const
-const otherReasons = ['other'] as const
+const placementNoLongerNeededReasons = ['death', 'other_accommodation_identified', 'other'] as const
 
 export type NewApplicationToBeSubmittedReasons = Extract<
   WithdrawalReason,
   (typeof newApplicationToBeSubmittedReasons)[number]
 >
 export type ApplicationProblemReasons = Extract<WithdrawalReason, (typeof applicationProblemReasons)[number]>
-export type OtherReasons = Extract<WithdrawalReason, (typeof otherReasons)[number]>
+export type OtherReasons = Extract<WithdrawalReason, (typeof placementNoLongerNeededReasons)[number]>
 
 export const withdrawlReasons: Record<WithdrawalReason, string> = {
-  change_in_circumstances_new_application_to_be_submitted: 'Change in circumstances',
-  error_in_application: 'Error in application',
-  duplicate_application: 'Duplicate application',
-  other: 'Other',
+  death: 'The person died',
+  other_accommodation_identified: 'Other accommodation has been identified',
+  other: 'The placement is not needed for another reason',
+  change_in_circumstances_new_application_to_be_submitted: 'Their circumstances changed',
+  error_in_application: 'There was an error in the application',
+  duplicate_application: 'The application was a duplicate',
 }
 
 const filterByType = <T extends WithdrawalReason>(keys: Readonly<Array<string>>): Record<T, string> => {
@@ -29,19 +31,13 @@ export const newApplicationToBeSubmittedOptions = filterByType<NewApplicationToB
   newApplicationToBeSubmittedReasons,
 )
 export const applicationProblemOptions = filterByType<ApplicationProblemReasons>(applicationProblemReasons)
-export const otherOptions = filterByType<OtherReasons>(otherReasons)
+export const placementNoLongerNeededOptions = filterByType<OtherReasons>(placementNoLongerNeededReasons)
 
-export const withdrawalRadioOptions = (conditionalValue: string) => [
-  { divider: 'New application required' },
+export const withdrawalRadioOptions = () => [
+  { divider: 'The placement is no longer needed' },
+  ...convertKeyValuePairToRadioItems(placementNoLongerNeededOptions, undefined),
+  { divider: 'A new application is needed' },
   ...convertKeyValuePairToRadioItems(newApplicationToBeSubmittedOptions, undefined),
-  { divider: 'Problems with submitted application' },
+  { divider: "There's a problem with the application" },
   ...convertKeyValuePairToRadioItems(applicationProblemOptions, undefined),
-  { divider: 'Or' },
-  {
-    text: 'Other',
-    value: 'other',
-    conditional: {
-      html: conditionalValue,
-    },
-  },
 ]

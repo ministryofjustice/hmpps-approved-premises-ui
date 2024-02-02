@@ -128,13 +128,54 @@ describe('withdrawableTypeRadioOptions', () => {
   describe('placementApplicationWithdrawalReasons', () => {
     it('returns the reasons for withdrawing a placement application', () => {
       expect(placementApplicationWithdrawalReasons('DuplicatePlacementRequest')).toEqual([
-        { divider: 'Problem in placement request' },
-        { text: 'Duplicate placement request', value: 'DuplicatePlacementRequest', checked: true },
-        { divider: 'Placement no longer required' },
         {
-          text: 'Alternative provision identified',
-          value: 'AlternativeProvisionIdentified',
+          divider: 'The placement is no longer needed',
+        },
+        {
           checked: false,
+          text: 'Another provision has been identified',
+          value: 'AlternativeProvisionIdentified',
+        },
+        {
+          checked: false,
+          text: 'Their circumstances changed',
+          value: 'CircumstancesChanged',
+        },
+        {
+          checked: false,
+          text: 'The release decision changed',
+          value: 'ReleaseDecisionChanged',
+        },
+        {
+          divider: 'The placement is unavailable',
+        },
+        {
+          checked: false,
+          text: "There's no capacity due to a lost bed",
+          value: 'NoCapacityLostBed',
+        },
+        {
+          checked: false,
+          text: "There's no capacity due to placement prioritisation",
+          value: 'NoCapcityPlacementPrioritisation',
+        },
+        {
+          checked: false,
+          text: "There's no capacity",
+          value: 'NoCapacity',
+        },
+        {
+          divider: 'Problem in placement',
+        },
+        {
+          checked: false,
+          text: 'There was an error in the request',
+          value: 'ErrorInRequest',
+        },
+        {
+          checked: true,
+          text: 'The request was a duplicate',
+          value: 'DuplicatePlacementRequest',
         },
       ])
     })

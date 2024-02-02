@@ -112,17 +112,49 @@ export const placementApplicationWithdrawalReasons = (
   selectedReason: WithdrawPlacementRequestReason,
 ): Array<RadioItem | { divider: string }> => {
   return [
-    { divider: 'Problem in placement request' },
+    { divider: 'The placement is no longer needed' },
     {
-      text: 'Duplicate placement request',
-      value: 'DuplicatePlacementRequest',
-      checked: selectedReason === 'DuplicatePlacementRequest',
-    },
-    { divider: 'Placement no longer required' },
-    {
-      text: 'Alternative provision identified',
+      text: 'Another provision has been identified',
       value: 'AlternativeProvisionIdentified',
       checked: selectedReason === 'AlternativeProvisionIdentified',
+    },
+    {
+      text: 'Their circumstances changed',
+      value: 'CircumstancesChanged',
+      checked: selectedReason === 'ChangeInCircumstances',
+    },
+    {
+      text: 'The release decision changed',
+      value: 'ReleaseDecisionChanged',
+      checked: selectedReason === 'ChangeInReleaseDecision',
+    },
+
+    { divider: 'The placement is unavailable' },
+    {
+      text: "There's no capacity due to a lost bed",
+      value: 'NoCapacityLostBed',
+      checked: selectedReason === 'NoCapacityDueToLostBed',
+    },
+    {
+      text: "There's no capacity due to placement prioritisation",
+      value: 'NoCapcityPlacementPrioritisation',
+      checked: selectedReason === 'NoCapacityDueToPlacementPrioritisation',
+    },
+    {
+      text: "There's no capacity",
+      value: 'NoCapacity',
+      checked: selectedReason === 'NoCapacity',
+    },
+    { divider: 'Problem in placement' },
+    {
+      text: 'There was an error in the request',
+      value: 'ErrorInRequest',
+      checked: selectedReason === 'ErrorInPlacementRequest',
+    },
+    {
+      text: 'The request was a duplicate',
+      value: 'DuplicatePlacementRequest',
+      checked: selectedReason === 'DuplicatePlacementRequest',
     },
   ]
 }
