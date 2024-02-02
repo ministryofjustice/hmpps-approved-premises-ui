@@ -27,6 +27,7 @@ import type {
 import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-information/maleAp'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
+import placementApplicationPaths from '../../paths/placementApplications'
 import Apply from '../../form-pages/apply'
 import { isApplicableTier, isFullPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
 import { DateFormats } from '../dateUtils'
@@ -337,9 +338,13 @@ const mapPlacementApplicationToSummaryCards = (
 
     if (placementApplication?.canBeWithdrawn && placementApplication.createdByUserId === actingUser.id) {
       actionItems.push({
-        href: paths.applications.withdraw.new({
-          id: application.id,
-        }),
+        href: process.env.NEW_WITHDRAWALS_FLOW_DISABLED
+          ? placementApplicationPaths.placementApplications.withdraw.new({
+              id: placementApplications[0].id,
+            })
+          : paths.applications.withdraw.new({
+              id: application.id,
+            }),
         text: 'Withdraw',
       })
     }
