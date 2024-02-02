@@ -40,6 +40,17 @@ import { BookingStatus, FullPerson } from '../@types/shared'
 describe('bookingUtils', () => {
   const premisesId = 'e8f29a4a-dd4d-40a2-aa58-f3f60245c8fc'
 
+  const OLD_ENV = process.env
+
+  beforeEach(() => {
+    jest.resetModules()
+    process.env = { ...OLD_ENV }
+  })
+
+  afterEach(() => {
+    process.env = OLD_ENV
+  })
+
   describe('manageBookingLink', () => {
     it('returns a link for a booking', () => {
       const booking = bookingFactory.build()
@@ -265,6 +276,38 @@ describe('bookingUtils', () => {
       const booking = bookingFactory.arrived().build({
         applicationId: undefined,
       })
+
+      expect(bookingActions(booking, premisesId)).toEqual([
+        {
+          items: [
+            {
+              text: 'Move person to a new bed',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
+            },
+            {
+              text: 'Log departure',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.departures.new({ premisesId, bookingId: booking.id }),
+            },
+            {
+              text: 'Update departure date',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
+            },
+            {
+              text: 'Withdraw placement',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.cancellations.new({ premisesId, bookingId: booking.id }),
+            },
+          ],
+        },
+      ])
+    })
+
+    it('should return link to the cancellations new page if NEW_WITHDRAWALS_FLOW_DISABLED is set', () => {
+      process.env.NEW_WITHDRAWALS_FLOW_DISABLED = '1'
+      const booking = bookingFactory.arrived().build()
 
       expect(bookingActions(booking, premisesId)).toEqual([
         {
