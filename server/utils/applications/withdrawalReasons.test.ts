@@ -1,39 +1,32 @@
-import { convertKeyValuePairToRadioItems } from '../formUtils'
 import {
   applicationProblemOptions,
   newApplicationToBeSubmittedOptions,
-  otherOptions,
-  withdrawalRadioOptions,
+  placementNoLongerNeededOptions,
 } from './withdrawalReasons'
 
 describe('withdrawlReasons', () => {
   describe('applicationProblemOptions', () => {
     it('should return the correct options', () => {
       expect(applicationProblemOptions).toEqual({
-        error_in_application: 'Error in application',
-        duplicate_application: 'Duplicate application',
+        duplicate_application: 'The application was a duplicate',
+        error_in_application: 'There was an error in the application',
       })
     })
   })
-
-  describe('otherOptions', () => {
+  describe('newApplicationToBeSubmittedOptions', () => {
     it('should return the correct options', () => {
-      expect(otherOptions).toEqual({
-        other: 'Other',
+      expect(newApplicationToBeSubmittedOptions).toEqual({
+        change_in_circumstances_new_application_to_be_submitted: 'Their circumstances changed',
       })
     })
   })
-
-  describe('withdrawalRadioOptions', () => {
+  describe('placementNoLongerNeededOptions', () => {
     it('should return the correct options', () => {
-      expect(withdrawalRadioOptions('CONDITIONAL VALUE')).toEqual([
-        { divider: 'New application required' },
-        ...convertKeyValuePairToRadioItems(newApplicationToBeSubmittedOptions, undefined),
-        { divider: 'Problems with submitted application' },
-        ...convertKeyValuePairToRadioItems(applicationProblemOptions, undefined),
-        { divider: 'Or' },
-        { text: 'Other', value: 'other', conditional: { html: 'CONDITIONAL VALUE' } },
-      ])
+      expect(placementNoLongerNeededOptions).toEqual({
+        death: 'The person died',
+        other: 'The placement is not needed for another reason',
+        other_accommodation_identified: 'Other accommodation has been identified',
+      })
     })
   })
 })

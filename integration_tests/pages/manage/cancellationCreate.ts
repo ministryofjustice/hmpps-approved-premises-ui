@@ -8,7 +8,7 @@ export default class CancellationCreatePage extends Page {
     public readonly premisesId: string,
     public readonly bookingId: string,
   ) {
-    super('Confirm withdrawn placement')
+    super('Confirm withdrawn booking')
   }
 
   static visit(premisesId: string, bookingId: string): CancellationCreatePage {
@@ -19,13 +19,13 @@ export default class CancellationCreatePage extends Page {
 
   completeForm(cancellation: Cancellation, { completeFullForm }: { completeFullForm: boolean }): void {
     if (completeFullForm) {
-      this.getLegend('When was this placement withdrawn?')
+      this.getLegend('What is the date of withdrawal?')
       this.completeDateInputs('date', cancellation.date)
-      this.getLabel('Provide any additional notes on why this placement was withdrawn')
+      this.getLabel('Provide any additional notes on why this booking is being withdrawn')
       this.completeTextArea('cancellation[notes]', cancellation.notes)
     }
 
-    this.getLegend('Why was this placement withdrawn?')
+    this.getLegend('Why is this booking being withdrawn?')
     this.checkRadioByNameAndValue('cancellation[reason]', cancellation.reason.id)
 
     this.clickSubmit()
