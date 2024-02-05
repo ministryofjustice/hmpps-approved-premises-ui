@@ -1,5 +1,6 @@
 import { WithdrawalReason } from '../../@types/shared'
 import { convertKeyValuePairToRadioItems } from '../formUtils'
+import { filterByType } from '../utils'
 
 const newApplicationToBeSubmittedReasons = ['change_in_circumstances_new_application_to_be_submitted'] as const
 const applicationProblemReasons = ['error_in_application', 'duplicate_application'] as const
@@ -21,17 +22,18 @@ export const withdrawlReasons: Record<WithdrawalReason, string> = {
   duplicate_application: 'The application was a duplicate',
 }
 
-const filterByType = <T extends WithdrawalReason>(keys: Readonly<Array<string>>): Record<T, string> => {
-  return Object.keys(withdrawlReasons)
-    .filter(k => keys.includes(k))
-    .reduce((criteria, key) => ({ ...criteria, [key]: withdrawlReasons[key] }), {}) as Record<T, string>
-}
-
 export const newApplicationToBeSubmittedOptions = filterByType<NewApplicationToBeSubmittedReasons>(
   newApplicationToBeSubmittedReasons,
+  withdrawlReasons,
 )
-export const applicationProblemOptions = filterByType<ApplicationProblemReasons>(applicationProblemReasons)
-export const placementNoLongerNeededOptions = filterByType<OtherReasons>(placementNoLongerNeededReasons)
+export const applicationProblemOptions = filterByType<ApplicationProblemReasons>(
+  applicationProblemReasons,
+  withdrawlReasons,
+)
+export const placementNoLongerNeededOptions = filterByType<OtherReasons>(
+  placementNoLongerNeededReasons,
+  withdrawlReasons,
+)
 
 export const withdrawalRadioOptions = [
   { divider: 'The placement is no longer needed' },
