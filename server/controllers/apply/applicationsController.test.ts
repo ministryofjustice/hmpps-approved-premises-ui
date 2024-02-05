@@ -153,6 +153,48 @@ describe('applicationsController', () => {
       })
     })
 
+    describe('when NEW_WITHDRAWALS_FLOW_DISABLED is truthy', () => {
+      it('returns the old withdrawals link', async () => {
+        process.env.NEW_WITHDRAWALS_FLOW_DISABLED = '1'
+
+        application.status = 'submitted'
+
+        const requestHandler = applicationsController.show()
+
+        applicationService.findApplication.mockResolvedValue(application)
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('applications/show', {
+          application,
+          referrer,
+          tab: 'application',
+          pageHeading: 'Approved Premises application',
+          withdrawalLink: paths.applications.withdraw.new({ id: application.id }),
+        })
+      })
+
+      it('returns the old withdrawals link', async () => {
+        process.env.NEW_WITHDRAWALS_FLOW_DISABLED = ''
+
+        application.status = 'submitted'
+
+        const requestHandler = applicationsController.show()
+
+        applicationService.findApplication.mockResolvedValue(application)
+
+        await requestHandler(request, response, next)
+
+        expect(response.render).toHaveBeenCalledWith('applications/show', {
+          application,
+          referrer,
+          tab: 'application',
+          pageHeading: 'Approved Premises application',
+          withdrawalLink: paths.applications.withdrawables.show({ id: application.id }),
+        })
+      })
+    })
+
     it('fetches the application from the API and renders the task list if the application is started', async () => {
       application.status = 'started'
 
@@ -274,6 +316,7 @@ describe('applicationsController', () => {
         referrer,
         tab: 'application',
         pageHeading: 'Approved Premises application',
+        withdrawalLink: paths.applications.withdrawables.show({ id: application.id }),
       })
 
       expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)

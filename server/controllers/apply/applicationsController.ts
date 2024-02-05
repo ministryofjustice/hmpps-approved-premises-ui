@@ -76,6 +76,10 @@ export default class ApplicationsController {
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
       if (application.status !== 'started') {
+        const withdrawalLink = process.env.NEW_WITHDRAWALS_FLOW_DISABLED
+          ? paths.applications.withdraw.new({ id: application.id })
+          : paths.applications.withdrawables.show({ id: application.id })
+
         const referrer = req.headers.referer
         const defaultParams = { application, referrer, pageHeading: 'Approved Premises application' }
 
@@ -101,7 +105,7 @@ export default class ApplicationsController {
           })
         }
 
-        return res.render('applications/show', { ...defaultParams, tab: 'application' })
+        return res.render('applications/show', { ...defaultParams, tab: 'application', withdrawalLink })
       }
       return res.render('applications/tasklist', { application, taskList, errorSummary, errors })
     }

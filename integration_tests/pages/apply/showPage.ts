@@ -16,6 +16,7 @@ import {
   mapPlacementApplicationToSummaryCards,
 } from '../../../server/utils/applications/utils'
 import { TextItem } from '../../../server/@types/ui'
+import paths from '../../../server/paths/apply'
 
 export default class ShowPage extends Page {
   constructor(private readonly application: Application) {
@@ -39,6 +40,18 @@ export default class ShowPage extends Page {
 
   clickAddNote() {
     cy.get('button').contains('Add note').click()
+  }
+
+  clickActions() {
+    cy.get('.moj-button-menu > .govuk-button').click()
+  }
+
+  shouldHaveWithdrawalLink() {
+    cy.get(`[data-cy-withdraw-application="${this.application.id}"]`).should(
+      'have.attr',
+      'href',
+      paths.applications.withdrawables.show({ id: this.application.id }),
+    )
   }
 
   shouldNotShowCreatePlacementButton() {

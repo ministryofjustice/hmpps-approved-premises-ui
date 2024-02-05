@@ -5,6 +5,7 @@
 {% from "./partials/_readonly-application.njk" import applicationReadonlyView %}
 {% from "./partials/_timeline.njk" import timeline %}
 {% from "./partials/_request-a-placement.njk" import requestAPlacement %}
+{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
 {%- from "govuk/components/tag/macro.njk" import govukTag -%}
 
 {% extends "../partials/layout.njk" %}
@@ -46,7 +47,14 @@
         }) }}
       {% endif %}
 
-      {{ mojSubNavigation({
+      {% set subNavClasses = "govuk-grid-column-full" %}
+
+      {% if tab === ApplyUtils.applicationShowPageTabs.application %}
+        {% set subNavClasses =  "govuk-grid-column-three-quarters govuk-!-padding-right-0" %}
+      {% endif %}
+
+      <div class="{{subNavClasses}}">
+        {{ mojSubNavigation({
         items: [{
           text: 'Application',
           href: ApplyUtils.applicationShowPageTab(application.id, ApplyUtils.applicationShowPageTabs.application),
@@ -60,17 +68,50 @@
           text: 'Placement requests',
           href: ApplyUtils.applicationShowPageTab(application.id, ApplyUtils.applicationShowPageTabs.placementRequests),
           active: tab === ApplyUtils.applicationShowPageTabs.placementRequests
-        }]
+        }
+        ]
       }) }}
+      </div>
 
-      {% if tab === ApplyUtils.applicationShowPageTabs.timeline %}
-        {{ timeline(mapTimelineEventsForUi(timelineEvents), application, csrfToken) }}
-      {% elif tab === ApplyUtils.applicationShowPageTabs.placementRequests %}
-        {{ requestAPlacement(placementApplications, application, user, csrfToken) }}
-      {% else %}
-        {{ applicationReadonlyView(application) }}
-      {% endif %}
+      {% if tab === ApplyUtils.applicationShowPageTabs.application %}
+        <div class="govuk-grid-column-one-quarter govuk-!-padding-left-0 govuk-!-padding-right-0">
 
+          {{ mojIdentityBar({
+          classes: 'govuk-!-padding-top-0 govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-0',
+          menus: [{
+            items: [
+            {
+              text: "Withdraw application",
+              href: withdrawalLink,
+              classes: "govuk-button--secondary",
+              attributes: {
+                "data-cy-withdraw-application": application.id
+              }
+            }
+          ]
+          }]
+        }) }}
+        </div>
+
+        {%endif%}
+
+        <div class="govuk-grid-column-full">
+          {% if tab === ApplyUtils.applicationShowPageTabs.timeline %}
+            {{ timeline(mapTimelineEventsForUi(timelineEvents), application, csrfToken) }}
+          {% elif tab === ApplyUtils.applicationShowPageTabs.placementRequests %}
+            {{ requestAPlacement(placementApplications, application, user, csrfToken) }}
+          {% else %}
+            {{ applicationReadonlyView(application) }}
+          {% endif %}
+        </div>
+      </div>
     </div>
-  </div>
-{% endblock %}
+  {% endblock %}
+
+  {% block extraScripts %}
+    {% if tab === ApplyUtils.applicationShowPageTabs.application %}
+      <script type="text/javascript" nonce="{{ cspNonce }}">
+        new MOJFrontend.ButtonMenu({container: $('.moj-button-menu'), mq: "(min-width: 200em)", buttonText: "Actions", menuClasses: "moj-button-menu__wrapper--right"});
+      </script>
+      {%endif%}
+    {% endblock %}

@@ -43,6 +43,9 @@ context('show applications', () => {
     showPage.shouldShowPersonInformation()
     showPage.shouldShowResponses()
 
+    showPage.clickActions()
+    showPage.shouldHaveWithdrawalLink()
+
     // When I click on the 'Timeline' tab
     // Then I should see timeline page
     showPage.clickTimelineTab()
