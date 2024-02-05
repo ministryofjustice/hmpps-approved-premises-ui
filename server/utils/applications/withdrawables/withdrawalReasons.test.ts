@@ -1,4 +1,4 @@
-import { placementApplicationWithdrawalReasons } from './withdrawlReasons'
+import { placementApplicationWithdrawalReasons } from './withdrawalReasons'
 
 describe('placementApplicationWithdrawalReasons', () => {
   it('returns the reasons for withdrawing a placement application', () => {
