@@ -47,11 +47,8 @@ import { durationAndArrivalDateFromPlacementApplication } from '../placementRequ
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 
-export {
-  withdrawableTypeRadioOptions,
-  withdrawableRadioOptions,
-  placementApplicationWithdrawalReasons,
-} from './withdrawables'
+export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
+export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawlReasons'
 
 const applicationStatuses: Record<ApprovedPremisesApplicationStatus, string> = {
   started: 'Application started',

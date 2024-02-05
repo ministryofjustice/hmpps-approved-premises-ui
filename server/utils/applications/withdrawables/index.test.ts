@@ -1,5 +1,5 @@
 import { bookingFactory, withdrawableFactory } from '../../../testutils/factories'
-import { placementApplicationWithdrawalReasons, withdrawableRadioOptions, withdrawableTypeRadioOptions } from '.'
+import { withdrawableRadioOptions, withdrawableTypeRadioOptions } from '.'
 import { DateFormats } from '../../dateUtils'
 import { linkTo } from '../../utils'
 import matchPaths from '../../../paths/match'
@@ -120,62 +120,6 @@ describe('withdrawableTypeRadioOptions', () => {
             .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
             .join(', ')}`,
           value: bookingWithdrawable.id,
-        },
-      ])
-    })
-  })
-
-  describe('placementApplicationWithdrawalReasons', () => {
-    it('returns the reasons for withdrawing a placement application', () => {
-      expect(placementApplicationWithdrawalReasons('DuplicatePlacementRequest')).toEqual([
-        {
-          divider: 'The placement is no longer needed',
-        },
-        {
-          checked: false,
-          text: 'Another provision has been identified',
-          value: 'AlternativeProvisionIdentified',
-        },
-        {
-          checked: false,
-          text: 'Their circumstances changed',
-          value: 'CircumstancesChanged',
-        },
-        {
-          checked: false,
-          text: 'The release decision changed',
-          value: 'ReleaseDecisionChanged',
-        },
-        {
-          divider: 'The placement is unavailable',
-        },
-        {
-          checked: false,
-          text: "There's no capacity due to a lost bed",
-          value: 'NoCapacityLostBed',
-        },
-        {
-          checked: false,
-          text: "There's no capacity due to placement prioritisation",
-          value: 'NoCapcityPlacementPrioritisation',
-        },
-        {
-          checked: false,
-          text: "There's no capacity",
-          value: 'NoCapacity',
-        },
-        {
-          divider: 'Problem in placement',
-        },
-        {
-          checked: false,
-          text: 'There was an error in the request',
-          value: 'ErrorInRequest',
-        },
-        {
-          checked: true,
-          text: 'The request was a duplicate',
-          value: 'DuplicatePlacementRequest',
         },
       ])
     })
