@@ -1,6 +1,7 @@
 import { WithdrawPlacementRequestReason } from '../../../@types/shared/models/WithdrawPlacementRequestReason'
 import { RadioItem } from '../../../@types/ui'
 import { convertKeyValuePairToRadioItems } from '../../formUtils'
+import { filterByType } from '../../utils'
 
 const withdrawalReasons: Record<WithdrawPlacementRequestReason, string> = {
   AlternativeProvisionIdentified: 'Another provision has been identified',
@@ -32,15 +33,12 @@ type NoCapacityReasons = Extract<WithdrawPlacementRequestReason, (typeof noCapac
 
 type ProblemInPlacementReasons = Extract<WithdrawPlacementRequestReason, (typeof problemInPlacementReasons)[number]>
 
-const filterByType = <T extends WithdrawPlacementRequestReason>(keys: Readonly<Array<string>>): Record<T, string> => {
-  return Object.keys(withdrawalReasons)
-    .filter(k => keys.includes(k))
-    .reduce((criteria, key) => ({ ...criteria, [key]: withdrawalReasons[key] }), {}) as Record<T, string>
-}
-
-const placementNoLongerNeededOptions = filterByType<PlacementNoLongerNeededReasons>(placementNoLongerNeededReasons)
-const noCapacityOptions = filterByType<NoCapacityReasons>(noCapacityReasons)
-const problemInPlacementOptions = filterByType<ProblemInPlacementReasons>(problemInPlacementReasons)
+const placementNoLongerNeededOptions = filterByType<PlacementNoLongerNeededReasons>(
+  placementNoLongerNeededReasons,
+  withdrawalReasons,
+)
+const noCapacityOptions = filterByType<NoCapacityReasons>(noCapacityReasons, withdrawalReasons)
+const problemInPlacementOptions = filterByType<ProblemInPlacementReasons>(problemInPlacementReasons, withdrawalReasons)
 
 export const placementApplicationWithdrawalReasons = (
   selectedReason: WithdrawPlacementRequestReason,

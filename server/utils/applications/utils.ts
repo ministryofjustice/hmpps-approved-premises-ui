@@ -48,7 +48,7 @@ import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
-export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawlReasons'
+export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
 
 const applicationStatuses: Record<ApprovedPremisesApplicationStatus, string> = {
   started: 'Application started',

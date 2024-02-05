@@ -180,3 +180,18 @@ export const linebreaksToParagraphs = (text: string) =>
 export const getRandomInt = (min: number, max: number): number => {
   return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + Math.ceil(min)
 }
+
+/**
+ * Filters a record with the given keys from a master list of records
+ * @param keys An array of keys to return from `lookup`
+ * @param lookup A key/value of records
+ * @returns A key/value list with the given keys in `keys`
+ */
+export const filterByType = <T extends string>(
+  keys: Readonly<Array<string>>,
+  lookup: Record<T, string>,
+): Record<T, string> => {
+  return Object.keys(lookup)
+    .filter(k => keys.includes(k))
+    .reduce((criteria, key) => ({ ...criteria, [key]: lookup[key] }), {}) as Record<T, string>
+}
