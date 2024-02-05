@@ -4,7 +4,7 @@ import { ApAreaService, ApplicationService, TaskService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 import { getPaginationDetails } from '../utils/getPaginationDetails'
 import paths from '../paths/api'
-import { AllocatedFilter, TaskSortField } from '../@types/shared'
+import { AllocatedFilter, TaskSortField, UserQualification } from '../@types/shared'
 
 export default class TasksController {
   constructor(
@@ -55,9 +55,17 @@ export default class TasksController {
 
   show(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const { task, users } = await this.taskService.find(req.user.token, req.params.id, req.params.taskType)
+      const apAreaId = (req.query.apAreaId as string) || ''
+      const qualification = req.query.qualification as UserQualification
+
+      const { task, users } = await this.taskService.find(req.user.token, req.params.id, req.params.taskType, {
+        apAreaId,
+        qualification,
+      })
       const application = await this.applicationService.findApplication(req.user.token, task.applicationId)
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
+
+      const apAreas = await this.apAreaService.getApAreas(req.user.token)
 
       res.render('tasks/show', {
         pageHeading: `Reallocate ${convertToTitleCase(sentenceCase(task.taskType))}`,
@@ -66,6 +74,9 @@ export default class TasksController {
         users,
         errors,
         errorSummary,
+        apAreas,
+        apAreaId,
+        qualification: qualification || '',
         ...userInput,
       })
     }

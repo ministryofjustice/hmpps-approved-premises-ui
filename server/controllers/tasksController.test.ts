@@ -146,15 +146,16 @@ describe('TasksController', () => {
     const task = taskFactory.build({ taskType: 'PlacementRequest' })
     const taskWrapper = taskWrapperFactory.build({ task })
     const application = applicationFactory.build()
+    const apAreas = apAreaFactory.buildList(1)
 
     beforeEach(() => {
+      apAreaService.getApAreas.mockResolvedValue(apAreas)
       taskService.find.mockResolvedValue(taskWrapper)
       applicationService.findApplication.mockResolvedValue(application)
+      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: {}, errorSummary: [], userInput: {} })
     })
 
     it('fetches the application and a list of qualified users', async () => {
-      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue({ errors: {}, errorSummary: [], userInput: {} })
-
       const requestHandler = tasksController.show()
       request.params.taskType = 'placement-request'
 
@@ -167,9 +168,14 @@ describe('TasksController', () => {
         users: taskWrapper.users,
         errors: {},
         errorSummary: [],
+        apAreas,
+        apAreaId: '',
+        qualification: '',
       })
 
-      expect(taskService.find).toHaveBeenCalledWith(request.user.token, request.params.id, request.params.taskType)
+      expect(taskService.find).toHaveBeenCalledWith(request.user.token, request.params.id, request.params.taskType, {
+        apAreaId: '',
+      })
       expect(applicationService.findApplication).toHaveBeenCalledWith(request.user.token, task.applicationId)
     })
 
@@ -187,8 +193,33 @@ describe('TasksController', () => {
         users: taskWrapper.users,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
+        apAreas,
+        apAreaId: '',
+        qualification: '',
         ...errorsAndUserInput.userInput,
       })
+    })
+
+    it('should handle params and query parameters correctly', async () => {
+      const params = { id: 'task-id', taskType: 'placement-request' }
+      const userFilters = { apAreaId: 'some-id', qualification: 'esap' }
+      const requestWithQuery = { ...request, params, query: userFilters }
+      const requestHandler = tasksController.show()
+      await requestHandler(requestWithQuery, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('tasks/show', {
+        pageHeading: `Reallocate Placement Request`,
+        application,
+        errors: {},
+        errorSummary: [],
+        task: taskWrapper.task,
+        users: taskWrapper.users,
+        apAreas,
+        apAreaId: userFilters.apAreaId,
+        qualification: userFilters.qualification,
+      })
+
+      expect(taskService.find).toHaveBeenCalledWith(request.user.token, params.id, params.taskType, userFilters)
     })
   })
 })

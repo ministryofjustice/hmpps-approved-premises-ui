@@ -7,6 +7,7 @@ import {
   nameAnchorCell,
   statusBadge,
   statusCell,
+  taskParams,
   taskTypeCell,
   tasksTableHeader,
   tasksTableRows,
@@ -233,6 +234,18 @@ describe('table', () => {
             attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
           },
         ),
+      })
+    })
+  })
+
+  describe('taskParams', () => {
+    it('returns task parameter object with task type in correct case', () => {
+      const task = taskFactory.build({ taskType: 'PlacementRequest' })
+      const result = taskParams(task)
+
+      expect(result).toEqual({
+        id: task.id,
+        taskType: 'placement-request',
       })
     })
   })

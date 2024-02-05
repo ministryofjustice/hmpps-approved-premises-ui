@@ -22,23 +22,63 @@
 
       {{ showErrorSummary(errorSummary) }}
     </div>
-
-    <div class="govuk-grid-column-full">
+  </div>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
       <h2 class="govuk-heading-m">Allocate task to</h2>
-
-      {{
-        govukTable({
-            attributes: {
-              'data-module': 'moj-sortable-table'
-            },
-            firstCellIsHeader: true,
-            head: TaskUtils.userTableHeader(),
-            rows: TaskUtils.userTableRows(users, task, csrfToken)
-          })
-      }}
-
     </div>
   </div>
+  <div class="search-and-filter__wrapper">
+    <form action="{{ paths.tasks.show(TaskUtils.taskParams(task)) }}" method="get">
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-quarter">
+          <h2 class="govuk-heading-m">Filters</h2>
+        </div>
+      </div>
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-quarter">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+          {{ govukSelect({
+                  label: {
+                    text: "Region",
+                    classes: "govuk-label--s"
+                  },
+                  id: "apAreaId",
+                  name: "apAreaId",
+                  items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'apAreaId')
+                }) }}
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+          {{ govukSelect({
+                  label: {
+                    text: "Qualifications",
+                    classes: "govuk-label--s"
+                  },
+                  id: "qualification",
+                  name: "qualification",
+                  items: UserUtils.userQualificationsSelectOptions(qualification)
+                }) }}
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+          {{ govukButton({
+                  "name": "submit",
+                  "text": "Apply filters",
+                  "classes": "search-and-filter__submit"
+              }) }}
+        </div>
+      </div>
+    </form>
+  </div>
+  {{
+    govukTable({
+      attributes: {
+        'data-module': 'moj-sortable-table'
+      },
+      firstCellIsHeader: true,
+      head: TaskUtils.userTableHeader(),
+      rows: TaskUtils.userTableRows(users, task, csrfToken)
+    })
+  }}
 </div>
 
 {% endblock %}
