@@ -55,4 +55,12 @@ export default class AppealsController {
       }
     }
   }
+
+  show(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const appeal = await this.appealService.getAppeal(req.user.token, req.params.id, req.params.appealId)
+      const application = await this.applicationService.findApplication(req.user.token, req.params.id)
+      return res.render('appeals/show', { appeal, application })
+    }
+  }
 }

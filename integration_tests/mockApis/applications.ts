@@ -278,6 +278,18 @@ export default {
         jsonBody: withdrawables,
       },
     }),
+  stubAppeals: ({ applicationId, appeal }: { applicationId: string; appeal: Appeal }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.applications.appeals.show({ id: applicationId, appealId: appeal.id }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: appeal,
+      },
+    }),
   stubAppealCreate: ({ applicationId, appeal }: { applicationId: string; appeal: Appeal }): SuperAgentRequest =>
     stubFor({
       request: {

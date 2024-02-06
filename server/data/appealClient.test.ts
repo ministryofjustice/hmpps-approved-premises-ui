@@ -1,5 +1,5 @@
 import AppealClient from './appealClient'
-import { appealFactory, newAppealFactory } from '../testutils/factories'
+import { appealFactory, applicationFactory, newAppealFactory } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
 import paths from '../paths/api'
 
@@ -35,6 +35,33 @@ describeClient('AppealClient', provider => {
       })
 
       const result = await appealsClient.create(appeal.applicationId, newAppeal)
+
+      expect(result).toEqual(appeal)
+    })
+  })
+
+  describe('find', () => {
+    it('should return an application', async () => {
+      const application = applicationFactory.build()
+      const appeal = appealFactory.build()
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for an appeal',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.appeals.show({ id: application.id, appealId: appeal.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: appeal,
+        },
+      })
+
+      const result = await appealsClient.find(application.id, appeal.id)
 
       expect(result).toEqual(appeal)
     })

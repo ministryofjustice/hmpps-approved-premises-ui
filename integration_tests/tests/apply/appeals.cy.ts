@@ -1,7 +1,8 @@
+import AppealsNewPage from '../../pages/apply/appeals/new'
 import { appealFactory, applicationFactory, newAppealFactory, personFactory } from '../../../server/testutils/factories'
 import { ShowPage } from '../../pages/apply'
-import AppealsPage from '../../pages/apply/appeal'
 import Page from '../../pages/page'
+import AppealsShowPage from '../../pages/apply/appeals/show'
 
 context('Appeals', () => {
   beforeEach(() => {
@@ -30,7 +31,7 @@ context('Appeals', () => {
     showPage.clickAppealLink()
 
     // Then I should be on the appeals page
-    const appealsPage = Page.verifyOnPage(AppealsPage, application)
+    const appealsPage = Page.verifyOnPage(AppealsNewPage, application)
 
     // When I fill in the form with the appeal details
     const newAppeal = newAppealFactory.build()
@@ -66,7 +67,7 @@ context('Appeals', () => {
     })
 
     // And I visit the appeals page
-    const appealsPage = AppealsPage.visit(application)
+    const appealsPage = AppealsNewPage.visit(application)
 
     // And I click submit
     appealsPage.clickSubmit()
@@ -79,5 +80,21 @@ context('Appeals', () => {
       'decisionDetail',
       'reviewer',
     ])
+  })
+
+  it('should show an appeal', function test() {
+    // Given I have completed an application
+    const person = personFactory.build()
+    const application = applicationFactory.build({ person, status: 'rejected' })
+    const appeal = appealFactory.build()
+
+    cy.task('stubApplicationGet', { application })
+    cy.task('stubAppeals', { applicationId: application.id, appeal })
+
+    // And I visit the Appeal page
+    const appealPage = AppealsShowPage.visit(application, appeal)
+
+    // Then I see the Appeal page
+    appealPage.shouldShowAppealDetails(appeal)
   })
 })

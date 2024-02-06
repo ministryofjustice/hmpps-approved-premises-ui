@@ -10,6 +10,12 @@ export default class AppealClient {
     this.restClient = new RestClient('applicationClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
+  async find(applicationId: string, appealId: string): Promise<Appeal> {
+    return (await this.restClient.get({
+      path: paths.applications.appeals.show({ id: applicationId, appealId }),
+    })) as Appeal
+  }
+
   async create(applicationId: string, appeal: NewAppeal): Promise<Appeal> {
     return (await this.restClient.post({
       path: paths.applications.appeals.create({ id: applicationId }),

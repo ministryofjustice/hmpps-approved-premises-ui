@@ -45,6 +45,7 @@ const paths = {
     appeals: {
       create: appealsPath,
       new: appealsPath.path('new'),
+      show: appealsPath.path(':appealId'),
     },
   },
 }

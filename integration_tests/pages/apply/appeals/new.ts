@@ -1,15 +1,15 @@
 import type { ApprovedPremisesApplication as Application, FullPerson, NewAppeal } from '@approved-premises/api'
-import Page from '../page'
-import paths from '../../../server/paths/apply'
+import Page from '../../page'
+import paths from '../../../../server/paths/apply'
 
-export default class AppealsPage extends Page {
+export default class AppealsNewPage extends Page {
   constructor(private readonly application: Application) {
     super((application.person as FullPerson).name)
   }
 
-  static visit(application: Application): AppealsPage {
+  static visit(application: Application): AppealsNewPage {
     cy.visit(paths.applications.appeals.new({ id: application.id }))
-    return new AppealsPage(application)
+    return new AppealsNewPage(application)
   }
 
   completeForm(appeal: NewAppeal): void {

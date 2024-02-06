@@ -131,6 +131,7 @@ export default {
     addNote: applyPaths.applications.show.path('notes'),
     withdrawables: applyPaths.applications.show.path('withdrawables'),
     appeals: {
+      show: appealsPath.path(':appealId'),
       create: appealsPath,
     },
   },
