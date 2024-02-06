@@ -50,6 +50,7 @@ import { linkTo } from '../utils'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
+export { applicationIdentityBar } from './applicationIdentityBar'
 
 const applicationStatuses: Record<ApprovedPremisesApplicationStatus, string> = {
   started: 'Application started',

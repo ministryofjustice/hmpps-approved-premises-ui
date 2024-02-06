@@ -16,44 +16,27 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-width-container">
-      <div class="moj-page-header-actions">
-        <div class="moj-page-header-actions__title">
-          <span class="govuk-caption-l">{{ pageHeading }}</span>
-          <h1 class="govuk-heading-l">
-            {{ application.person.name }}
-            {% if application.type == 'Offline' %}
-              {{
-                govukTag({
-                  text: "Offline application",
-                  classes: "govuk-tag--grey govuk-!-margin-5"
-                })
-              }}
-            {% endif %}
-          </h1>
-        </div>
-      </div>
-      {% include "../_messages.njk" %}
+      <div class="govuk-grid-column-full">
+        {{ mojIdentityBar(ApplyUtils.applicationIdentityBar(application, pageHeading)) }}
 
-      {% if application.assessmentDecision %}
-        {% set html %}
-        <p class="govuk-body">Application was {{ application.assessmentDecision }} on {{ formatDate(application.assessmentDecisionDate) }}</p>
-        <p class="govuk-body">
-          <a href="{{paths.assessments.show({id: application.assessmentId})}}" data-cy-assessmentId="{{ application.assessmentId }}">View assessment</a>
-        </p>
-        {% endset %}
+        {% include "../_messages.njk" %}
 
-        {{ govukInsetText({
+        {% if application.assessmentDecision %}
+          {% set html %}
+          <p class="govuk-body">Application was {{ application.assessmentDecision }} on {{ formatDate(application.assessmentDecisionDate) }}</p>
+          <p class="govuk-body">
+            <a href="{{paths.assessments.show({id: application.assessmentId})}}" data-cy-assessmentId="{{ application.assessmentId }}">View assessment</a>
+          </p>
+          {% endset %}
+
+          {{ govukInsetText({
           html: html
         }) }}
-      {% endif %}
+        {% endif %}
 
-      {% set subNavClasses = "govuk-grid-column-full" %}
+      </div>
 
-      {% if tab === ApplyUtils.applicationShowPageTabs.application %}
-        {% set subNavClasses =  "govuk-grid-column-three-quarters govuk-!-padding-right-0" %}
-      {% endif %}
-
-      <div class="{{subNavClasses}}">
+      <div class="govuk-grid-column-full">
         {{ mojSubNavigation({
         items: [{
           text: 'Application',
@@ -73,45 +56,21 @@
       }) }}
       </div>
 
-      {% if tab === ApplyUtils.applicationShowPageTabs.application %}
-        <div class="govuk-grid-column-one-quarter govuk-!-padding-left-0 govuk-!-padding-right-0">
-
-          {{ mojIdentityBar({
-          classes: 'govuk-!-padding-top-0 govuk-!-padding-bottom-0 govuk-!-margin-top-0 govuk-!-margin-bottom-0',
-          menus: [{
-            items: [
-            {
-              text: "Withdraw application",
-              href: withdrawalLink,
-              classes: "govuk-button--secondary",
-              attributes: {
-                "data-cy-withdraw-application": application.id
-              }
-            }
-          ]
-          }]
-        }) }}
-        </div>
-
-        {%endif%}
-
-        <div class="govuk-grid-column-full">
-          {% if tab === ApplyUtils.applicationShowPageTabs.timeline %}
-            {{ timeline(mapTimelineEventsForUi(timelineEvents), application, csrfToken) }}
-          {% elif tab === ApplyUtils.applicationShowPageTabs.placementRequests %}
-            {{ requestAPlacement(placementApplications, application, user, csrfToken) }}
-          {% else %}
-            {{ applicationReadonlyView(application) }}
-          {% endif %}
-        </div>
+      <div class="govuk-grid-column-full">
+        {% if tab === ApplyUtils.applicationShowPageTabs.timeline %}
+          {{ timeline(mapTimelineEventsForUi(timelineEvents), application, csrfToken) }}
+        {% elif tab === ApplyUtils.applicationShowPageTabs.placementRequests %}
+          {{ requestAPlacement(placementApplications, application, user, csrfToken) }}
+        {% else %}
+          {{ applicationReadonlyView(application) }}
+        {% endif %}
       </div>
     </div>
-  {% endblock %}
+  </div>
+{% endblock %}
 
-  {% block extraScripts %}
-    {% if tab === ApplyUtils.applicationShowPageTabs.application %}
-      <script type="text/javascript" nonce="{{ cspNonce }}">
-        new MOJFrontend.ButtonMenu({container: $('.moj-button-menu'), mq: "(min-width: 200em)", buttonText: "Actions", menuClasses: "moj-button-menu__wrapper--right"});
-      </script>
-      {%endif%}
-    {% endblock %}
+{% block extraScripts %}
+  <script type="text/javascript" nonce="{{ cspNonce }}">
+    new MOJFrontend.ButtonMenu({container: $('.application-identity-bar .moj-button-menu'), mq: "(min-width: 200em)", buttonText: "Actions", menuClasses: "moj-button-menu__wrapper--right"});
+  </script>
+{% endblock %}

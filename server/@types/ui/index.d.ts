@@ -186,6 +186,7 @@ export interface IdentityBar {
   title: {
     html: string
   }
+  classes?: string
   menus: Array<IdentityBarMenu>
 }
 

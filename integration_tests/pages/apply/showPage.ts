@@ -54,6 +54,10 @@ export default class ShowPage extends Page {
     )
   }
 
+  clickCreatePlacementButton() {
+    cy.get('button').contains('Create placement request').click()
+  }
+
   shouldNotShowCreatePlacementButton() {
     cy.get('Create placement request').should('not.exist')
   }
