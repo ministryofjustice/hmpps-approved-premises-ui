@@ -11,7 +11,7 @@ describe('userTableRows', () => {
       [
         { text: user.name },
         {
-          text: user.region.name,
+          text: user.apArea?.name,
         },
         qualificationCell(user),
         allocationCell(user, 'numTasksPending'),
@@ -33,7 +33,7 @@ describe('userTableHeader', () => {
         },
       },
       {
-        text: 'Region',
+        text: 'AP Area',
       },
       {
         text: 'Qualification',

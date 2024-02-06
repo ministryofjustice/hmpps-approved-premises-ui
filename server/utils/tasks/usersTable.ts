@@ -11,7 +11,7 @@ export const userTableHeader = () => [
       'aria-sort': 'ascending',
     },
   },
-  { text: 'Region' },
+  { text: 'AP Area' },
   { text: 'Qualification' },
   {
     text: 'Tasks pending',
@@ -37,7 +37,7 @@ export const userTableHeader = () => [
 export const userTableRows = (users: Array<UserWithWorkload>, task: Task, csrfToken: string): Array<TableRow> => {
   return users.map(user => [
     nameCell(user),
-    regionCell(user),
+    apAreaCell(user),
     qualificationCell(user),
     allocationCell(user, 'numTasksPending'),
     allocationCell(user, 'numTasksCompleted7Days'),
@@ -52,7 +52,7 @@ type AllocationType = Extract<
 >
 
 export const nameCell = (user: UserWithWorkload): TableCell => ({ text: user.name })
-export const regionCell = (user: UserWithWorkload): TableCell => ({ text: user.region.name })
+export const apAreaCell = (user: UserWithWorkload): TableCell => ({ text: user.apArea?.name })
 export const qualificationCell = (user: UserWithWorkload): TableCell => ({
   text: user.qualifications.map(qualification => qualificationDictionary[qualification]).join(', '),
 })

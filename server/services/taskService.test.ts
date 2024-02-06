@@ -1,5 +1,5 @@
 import { CategorisedTask, PaginatedResponse } from '@approved-premises/ui'
-import { Task } from '../@types/shared'
+import { Task, UserQualification } from '../@types/shared'
 import TaskClient from '../data/taskClient'
 import {
   paginatedResponseFactory,
@@ -7,6 +7,7 @@ import {
   placementRequestTaskFactory,
   taskFactory,
   taskWrapperFactory,
+  userWithWorkloadFactory,
 } from '../testutils/factories'
 import TaskService from './taskService'
 
@@ -90,18 +91,62 @@ describe('taskService', () => {
   })
 
   describe('find', () => {
-    it('calls the find method on the task client', async () => {
-      const applicationId = 'some-application-id'
+    const applicationId = 'some-application-id'
 
+    it('calls the find method on the task client', async () => {
       const taskWrapper = taskWrapperFactory.build()
       taskClient.find.mockResolvedValue(taskWrapper)
 
-      const result = await service.find(token, applicationId, 'assessment')
+      const result = await service.find(token, applicationId, 'assessment', {})
 
       expect(result).toEqual(taskWrapper)
 
       expect(taskClientFactory).toHaveBeenCalledWith(token)
       expect(taskClient.find).toHaveBeenCalledWith(applicationId, 'assessment')
+    })
+
+    it('filters users result by AP area and qualification', async () => {
+      const apArea = {
+        id: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
+        name: 'Midlands',
+      }
+
+      const qualification: UserQualification = 'womens' as const
+      const expectedUser = userWithWorkloadFactory.build({ apArea, qualifications: [qualification] })
+      const users = [...userWithWorkloadFactory.buildList(2), expectedUser]
+      const taskWrapper = taskWrapperFactory.build({ users })
+      taskClient.find.mockResolvedValue(taskWrapper)
+
+      const result = await service.find(token, applicationId, 'assessment', { apAreaId: apArea.id, qualification })
+      expect(result.users).toEqual([expectedUser])
+    })
+
+    it('filters users result by only AP Area', async () => {
+      const apArea = {
+        id: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
+        name: 'Midlands',
+      }
+
+      const expectedUser = userWithWorkloadFactory.build({ apArea })
+      const users = [...userWithWorkloadFactory.buildList(2), expectedUser]
+      const taskWrapper = taskWrapperFactory.build({ users })
+      taskClient.find.mockResolvedValue(taskWrapper)
+
+      const result = await service.find(token, applicationId, 'assessment', { apAreaId: apArea.id })
+      expect(result.users).toEqual([expectedUser])
+    })
+
+    it('filters users result by only qualification', async () => {
+      const qualification: UserQualification = 'womens' as const
+
+      const expectedUser = userWithWorkloadFactory.build({ qualifications: [qualification] })
+      const anotherUser = userWithWorkloadFactory.build({ qualifications: ['pipe'] })
+      const users = [anotherUser, expectedUser]
+      const taskWrapper = taskWrapperFactory.build({ users })
+      taskClient.find.mockResolvedValue(taskWrapper)
+
+      const result = await service.find(token, applicationId, 'assessment', { qualification })
+      expect(result.users).toEqual([expectedUser])
     })
   })
 

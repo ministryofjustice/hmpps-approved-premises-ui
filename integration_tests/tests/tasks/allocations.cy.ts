@@ -10,14 +10,20 @@ import {
   userFactory,
   userWithWorkloadFactory,
 } from '../../../server/testutils/factories'
+import { qualificationFactory } from '../../../server/testutils/factories/user'
 
 context('Tasks', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
 
+    const apArea = {
+      id: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
+      name: 'Midlands',
+    }
+    const qualifications = qualificationFactory.buildList(2)
     // Given there are some users in the database
-    const users = userWithWorkloadFactory.buildList(3)
+    const users = [...userWithWorkloadFactory.buildList(3), userWithWorkloadFactory.build({ apArea, qualifications })]
     const selectedUser = users[0]
 
     // And there is an allocated task
@@ -53,23 +59,26 @@ context('Tasks', () => {
     })
     cy.task('stubTaskGet', { application, task, users })
     cy.task('stubApplicationGet', { application })
-    cy.task('stubApAreaReferenceData', {
-      id: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
-      name: 'Midlands',
-    })
+    cy.task('stubApAreaReferenceData', apArea)
 
     // And I am logged in as a workflow manager
     const me = userFactory.build()
     cy.task('stubAuthUser', { roles: ['workflow_manager'], userId: me.id })
     cy.signIn()
 
+    // When I visit the task list page
+    const taskListPage = TaskListPage.visit(tasks, [])
+
     cy.wrap(task).as('task')
+    cy.wrap(taskListPage).as('taskListPage')
     cy.wrap(taskWithRestrictedPerson).as('taskWithRestrictedPerson')
     cy.wrap(tasks).as('tasks')
     cy.wrap(users).as('users')
     cy.wrap(selectedUser).as('selectedUser')
     cy.wrap(application).as('application')
     cy.wrap(applicationForRestrictedPerson).as('applicationForRestrictedPerson')
+    cy.wrap(apArea).as('apArea')
+    cy.wrap(qualifications).as('qualification')
   })
 
   it('allows me to allocate a task', function test() {
@@ -78,11 +87,8 @@ context('Tasks', () => {
       reallocation: reallocationFactory.build({ taskType: this.task.taskType, user: this.selectedUser }),
     })
 
-    // When I visit the task list page
-    const taskListPage = TaskListPage.visit([this.tasks], [])
-
     // And I click to allocate the task
-    taskListPage.clickTask(this.task)
+    this.taskListPage.clickTask(this.task)
 
     // Then I should be on the Allocations page for that task
     const allocationsPage = Page.verifyOnPage(AllocationsPage, this.application, this.task)
@@ -100,7 +106,7 @@ context('Tasks', () => {
     Page.verifyOnPage(TaskListPage, [], [])
 
     // And I should see a confirmation message
-    taskListPage.shouldShowBanner(`Assessment has been allocated to ${this.selectedUser.name}`)
+    this.taskListPage.shouldShowBanner(`Assessment has been allocated to ${this.selectedUser.name}`)
 
     // And the API should have received the correct data
     cy.task('verifyAllocationCreate', this.task).then(requests => {
@@ -120,9 +126,8 @@ context('Tasks', () => {
     })
     cy.task('stubApplicationGet', { application: this.applicationForRestrictedPerson })
 
-    // When I visit the task list page
-    const taskListPage = TaskListPage.visit([this.tasks], [])
-    taskListPage.clickTask(this.taskWithRestrictedPerson)
+    // When I click on a task for a restricted person
+    this.taskListPage.clickTask(this.taskWithRestrictedPerson)
 
     // Then I should be on the Allocations page for that task
     const allocationsPage = Page.verifyOnPage(
@@ -132,5 +137,47 @@ context('Tasks', () => {
     )
 
     allocationsPage.shouldShowPersonIsLimitedAccessOffender()
+  })
+
+  it('allows filters on users dashboard', function test() {
+    // And I click to view the task
+    this.taskListPage.clickTask(this.task)
+
+    // Then I should be on the Allocations page for that task
+    const allocationsPage = Page.verifyOnPage(AllocationsPage, this.application, this.task)
+
+    // And I should see a list of staff members who can be allocated to that task
+    allocationsPage.shouldShowUserTable(this.users, this.task)
+
+    // When I filter by AP Area
+    allocationsPage.searchBy('apAreaId', this.apArea.id)
+    allocationsPage.clickApplyFilter()
+
+    // Then I should be shown a list of users with that AP Area
+    let expectedUsers = this.users.filter(user => user.apArea.id === this.apArea.id)
+    allocationsPage.shouldShowUserTable(expectedUsers, this.task)
+
+    // When I filter by all areas it should clear the filter
+    allocationsPage.searchBy('apAreaId', '')
+    allocationsPage.clickApplyFilter()
+
+    // Then I should be shown a list of users for all areas
+    allocationsPage.shouldShowUserTable(this.users, this.task)
+
+    // When I filter by qualifications
+    allocationsPage.searchBy('qualification', this.qualification[0])
+    allocationsPage.clickApplyFilter()
+
+    // Then I should be shown a list of users with that qualification
+    expectedUsers = this.users.filter(user => user.qualifications?.includes(this.qualification[0]))
+    allocationsPage.shouldShowUserTable(expectedUsers, this.task)
+
+    // When I filter by both filters
+    allocationsPage.searchBy('apAreaId', this.apArea.id)
+    allocationsPage.clickApplyFilter()
+
+    // Then I should be shown a list of users with that qualification and AP AreaId
+    expectedUsers = expectedUsers.filter(user => user.apArea.id === this.apArea.id)
+    allocationsPage.shouldShowUserTable(expectedUsers, this.task)
   })
 })

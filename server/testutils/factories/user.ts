@@ -45,7 +45,7 @@ const roleFactory = Factory.define<UserRole>(() =>
   ]),
 )
 
-const qualificationFactory = Factory.define<UserQualification>(() =>
+export const qualificationFactory = Factory.define<UserQualification>(() =>
   faker.helpers.arrayElement(['pipe', 'emergency', 'esap', 'lao', 'womens']),
 )
 

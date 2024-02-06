@@ -27,14 +27,10 @@ const allocationCell = (task: Task): TableCell => ({
 })
 
 const nameAnchorCell = (task: Task): TableCell => ({
-  html: linkTo(
-    paths.tasks.show,
-    { id: task.id, taskType: kebabCase(task.taskType) },
-    {
-      text: task.personName,
-      attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
-    },
-  ),
+  html: linkTo(paths.tasks.show, taskParams(task), {
+    text: task.personName,
+    attributes: { 'data-cy-taskId': task.id, 'data-cy-applicationId': task.applicationId },
+  }),
 })
 
 const statusBadge = (task: Task): string => {
@@ -138,6 +134,8 @@ const tasksTableHeader = (
     : unAllocatedTableHeader(sortBy, sortDirection, hrefPrefix)
 }
 
+const taskParams = (task: Task) => ({ id: task.id, taskType: kebabCase(task.taskType) })
+
 export {
   allocatedTableRows,
   tasksTableHeader,
@@ -150,4 +148,5 @@ export {
   statusBadge,
   tasksTableRows,
   unallocatedTableRows,
+  taskParams,
 }

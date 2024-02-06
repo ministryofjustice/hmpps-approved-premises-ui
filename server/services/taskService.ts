@@ -7,6 +7,7 @@ import {
   TaskSortField,
   TaskWrapper,
   ApprovedPremisesUser as User,
+  UserQualification,
 } from '@approved-premises/api'
 import { GroupedMatchTasks, PaginatedResponse } from '@approved-premises/ui'
 import { RestClientBuilder } from '../data'
@@ -65,10 +66,26 @@ export default class TaskService {
     return results
   }
 
-  async find(token: string, premisesId: string, taskType: string): Promise<TaskWrapper> {
+  async find(
+    token: string,
+    premisesId: string,
+    taskType: string,
+    userFilters: { apAreaId?: string; qualification?: UserQualification },
+  ): Promise<TaskWrapper> {
     const taskClient = this.taskClientFactory(token)
 
     const task = await taskClient.find(premisesId, taskType)
+
+    const { apAreaId, qualification } = userFilters
+
+    if (apAreaId || qualification) {
+      task.users = task.users.filter(user => {
+        const includesApAreaIdIfFilter = apAreaId ? user.apArea.id === apAreaId : true
+        const includesQualificationIfFilter = qualification ? user.qualifications.includes(qualification) : true
+        return includesApAreaIdIfFilter && includesQualificationIfFilter
+      })
+    }
+
     return task
   }
 
