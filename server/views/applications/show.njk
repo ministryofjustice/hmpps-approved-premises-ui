@@ -17,7 +17,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-width-container">
       <div class="govuk-grid-column-full">
-        {{ mojIdentityBar(ApplyUtils.applicationIdentityBar(application, pageHeading)) }}
+        {{ mojIdentityBar(ApplyUtils.applicationIdentityBar(application, pageHeading, user.roles)) }}
 
         {% include "../_messages.njk" %}
 

@@ -46,6 +46,10 @@ export default class ShowPage extends Page {
     cy.get('.moj-button-menu > .govuk-button').click()
   }
 
+  clickAppealLink() {
+    cy.get(`[data-cy-appeal-application="${this.application.id}"]`).click()
+  }
+
   shouldHaveWithdrawalLink() {
     cy.get(`[data-cy-withdraw-application="${this.application.id}"]`).should(
       'have.attr',

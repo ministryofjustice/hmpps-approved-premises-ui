@@ -196,6 +196,7 @@ export interface IdentityBarMenu {
 
 export interface IdentityBarMenuItem {
   classes?: string
+  attributes?: HtmlAttributes
   href: string
   text: string
 }

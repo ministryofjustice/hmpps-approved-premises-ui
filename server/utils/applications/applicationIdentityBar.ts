@@ -1,4 +1,4 @@
-import { Application, FullPerson } from '../../@types/shared'
+import { ApprovedPremisesApplication as Application, ApprovedPremisesUserRole, FullPerson } from '../../@types/shared'
 import { IdentityBar, IdentityBarMenuItem } from '../../@types/ui'
 import paths from '../../paths/apply'
 
@@ -15,12 +15,15 @@ export const applicationTitle = (application: Application, pageHeading: string):
   return title
 }
 
-export const applicationMenuItems = (application: Application): Array<IdentityBarMenuItem> => {
+export const applicationMenuItems = (
+  application: Application,
+  userRoles: Array<ApprovedPremisesUserRole>,
+): Array<IdentityBarMenuItem> => {
   const withdrawalLink = process.env.NEW_WITHDRAWALS_FLOW_DISABLED
     ? paths.applications.withdraw.new({ id: application.id })
     : paths.applications.withdrawables.show({ id: application.id })
 
-  const items = [
+  const items: Array<IdentityBarMenuItem> = [
     {
       text: 'Withdraw application',
       href: withdrawalLink,
@@ -31,13 +34,28 @@ export const applicationMenuItems = (application: Application): Array<IdentityBa
     },
   ]
 
+  if (userRoles.includes('appeals_manager') && application.status === 'rejected') {
+    items.push({
+      text: 'Process an appeal',
+      href: paths.applications.appeals.new({ id: application.id }),
+      classes: 'govuk-button--secondary',
+      attributes: {
+        'data-cy-appeal-application': application.id,
+      },
+    })
+  }
+
   return items
 }
 
-export const applicationIdentityBar = (application: Application, pageHeading: string): IdentityBar => {
+export const applicationIdentityBar = (
+  application: Application,
+  pageHeading: string,
+  userRoles: Array<ApprovedPremisesUserRole>,
+): IdentityBar => {
   return {
     title: { html: applicationTitle(application, pageHeading) },
     classes: 'application-identity-bar',
-    menus: [{ items: applicationMenuItems(application) }],
+    menus: [{ items: applicationMenuItems(application, userRoles) }],
   }
 }

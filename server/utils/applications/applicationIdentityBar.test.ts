@@ -30,7 +30,7 @@ describe('applicationIdentityBar', () => {
     it('should return the old withdrawal link when NEW_WITHDRAWALS_FLOW_DISABLED is truthy', () => {
       process.env.NEW_WITHDRAWALS_FLOW_DISABLED = '1'
       const application = applicationFactory.build()
-      expect(applicationMenuItems(application)).toEqual([
+      expect(applicationMenuItems(application, ['applicant'])).toEqual([
         {
           text: 'Withdraw application',
           href: paths.applications.withdraw.new({ id: application.id }),
@@ -45,7 +45,57 @@ describe('applicationIdentityBar', () => {
     it('should return the new withdrawal link when NEW_WITHDRAWALS_FLOW_DISABLED is falsy', () => {
       process.env.NEW_WITHDRAWALS_FLOW_DISABLED = ''
       const application = applicationFactory.build()
-      expect(applicationMenuItems(application)).toEqual([
+      expect(applicationMenuItems(application, ['excluded_from_assess_allocation'])).toEqual([
+        {
+          text: 'Withdraw application',
+          href: paths.applications.withdrawables.show({ id: application.id }),
+          classes: 'govuk-button--secondary',
+          attributes: {
+            'data-cy-withdraw-application': application.id,
+          },
+        },
+      ])
+    })
+
+    it('should return an appeals link when userRoles includes appeals_manager and the application has been rejected', () => {
+      const application = applicationFactory.build({ status: 'rejected' })
+      expect(applicationMenuItems(application, ['appeals_manager'])).toEqual([
+        {
+          text: 'Withdraw application',
+          href: paths.applications.withdrawables.show({ id: application.id }),
+          classes: 'govuk-button--secondary',
+          attributes: {
+            'data-cy-withdraw-application': application.id,
+          },
+        },
+        {
+          text: 'Process an appeal',
+          href: paths.applications.appeals.new({ id: application.id }),
+          classes: 'govuk-button--secondary',
+          attributes: {
+            'data-cy-appeal-application': application.id,
+          },
+        },
+      ])
+    })
+
+    it('should not return an appeals link when userRoles includes appeals_manager and the application has not been rejected', () => {
+      const application = applicationFactory.build({ status: 'assesmentInProgress' })
+      expect(applicationMenuItems(application, ['appeals_manager'])).toEqual([
+        {
+          text: 'Withdraw application',
+          href: paths.applications.withdrawables.show({ id: application.id }),
+          classes: 'govuk-button--secondary',
+          attributes: {
+            'data-cy-withdraw-application': application.id,
+          },
+        },
+      ])
+    })
+
+    it('should not return an appeals link when userRoles does not include appeals_manager and the application has been rejected', () => {
+      const application = applicationFactory.build({ status: 'rejected' })
+      expect(applicationMenuItems(application, ['assessor'])).toEqual([
         {
           text: 'Withdraw application',
           href: paths.applications.withdrawables.show({ id: application.id }),
@@ -62,10 +112,10 @@ describe('applicationIdentityBar', () => {
     it('should return the identity bar', () => {
       const application = applicationFactory.build()
 
-      expect(applicationIdentityBar(application, 'title')).toEqual({
+      expect(applicationIdentityBar(application, 'title', ['appeals_manager'])).toEqual({
         title: { html: applicationTitle(application, 'title') },
         classes: 'application-identity-bar',
-        menus: [{ items: applicationMenuItems(application) }],
+        menus: [{ items: applicationMenuItems(application, ['appeals_manager']) }],
       })
     })
   })
