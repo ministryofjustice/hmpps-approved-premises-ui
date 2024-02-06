@@ -17,11 +17,11 @@ export default class PlacementRequestsController {
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
       const { pageNumber, hrefPrefix } = getPaginationDetails(req, matchpaths.placementRequests.index({}))
-      const paginatedResponse = await this.taskService.getTasksOfType(
-        req.user.token,
-        'placement-application',
-        pageNumber,
-      )
+      const paginatedResponse = await this.taskService.getAll({
+        token: req.user.token,
+        taskType: 'PlacementApplication',
+        page: pageNumber,
+      })
 
       res.render('match/placementRequests/index', {
         pageHeading: 'My Cases',

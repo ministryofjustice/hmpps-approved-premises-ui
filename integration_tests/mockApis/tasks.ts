@@ -8,9 +8,10 @@ import { errorStub } from './utils'
 import { kebabCase } from '../../server/utils/utils'
 
 export default {
-  stubReallocatableTasks: ({
+  stubGetAllTasks: ({
     tasks,
     allocatedFilter = 'allocated',
+    allocatedToUserId = '',
     page = '1',
     sortDirection = 'asc',
     sortBy = 'createdAt',
@@ -19,6 +20,7 @@ export default {
     tasks: Array<Task>
     page: string
     allocatedFilter: string
+    allocatedToUserId: string
     sortDirection: SortDirection
     sortBy: TaskSortField
     apAreaId: string
@@ -39,11 +41,14 @@ export default {
       sortBy: {
         equalTo: sortBy,
       },
+      allocatedToUserId: {
+        equalTo: allocatedToUserId,
+      },
     }
     return stubFor({
       request: {
         method: 'GET',
-        urlPathPattern: paths.tasks.reallocatable.index.pattern,
+        urlPathPattern: paths.tasks.index.pattern,
         queryParameters,
       },
       response: {
@@ -157,7 +162,7 @@ export default {
     (
       await getMatchingRequests({
         method: 'GET',
-        urlPathPattern: paths.tasks.reallocatable.index.pattern,
+        urlPathPattern: paths.tasks.index.pattern,
         queryParameters: {
           allocatedFilter: {
             equalTo: allocatedFilter,

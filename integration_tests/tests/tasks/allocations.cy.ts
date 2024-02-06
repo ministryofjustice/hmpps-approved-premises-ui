@@ -51,7 +51,7 @@ context('Task Allocation', () => {
 
     const tasks = [task, taskWithRestrictedPerson]
 
-    cy.task('stubReallocatableTasks', {
+    cy.task('stubGetAllTasks', {
       tasks,
       allocatedFilter: 'allocated',
       page: '1',

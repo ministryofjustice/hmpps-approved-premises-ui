@@ -10,6 +10,7 @@ import {
   taskWrapperFactory,
 } from '../testutils/factories'
 import describeClient from '../testutils/describeClient'
+import { TaskType } from '../@types/shared'
 
 describeClient('taskClient', provider => {
   let taskClient: TaskClient
@@ -20,22 +21,28 @@ describeClient('taskClient', provider => {
     taskClient = new TaskClient(token)
   })
 
-  describe('allReallocatable', () => {
-    it('makes a get request to the reallocatable tasks endpoint', async () => {
+  describe('getAll', () => {
+    it('makes a get request to the tasks endpoint', async () => {
       const tasks = taskFactory.buildList(2)
+
+      const apAreaId = 'ap-area-id'
+      const userId = 'user-id'
+      const taskType: TaskType = 'placement-application'
 
       provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: `A request to get a list of tasks`,
         withRequest: {
           method: 'GET',
-          path: paths.tasks.reallocatable.index.pattern,
+          path: paths.tasks.index.pattern,
           query: {
             allocatedFilter: 'allocated',
-            apAreaId: 'test',
+            apAreaId,
+            allocatedToUserId: userId,
             page: '1',
             sortDirection: 'asc',
             sortBy: 'createdAt',
+            taskType,
           },
           headers: {
             authorization: `Bearer ${token}`,
@@ -53,7 +60,15 @@ describeClient('taskClient', provider => {
         },
       })
 
-      const result = await taskClient.allReallocatable('allocated', 'test', 1, 'asc', 'createdAt')
+      const result = await taskClient.getAll({
+        allocatedFilter: 'allocated',
+        apAreaId,
+        allocatedToUserId: userId,
+        page: 1,
+        sortDirection: 'asc',
+        sortBy: 'createdAt',
+        taskType,
+      })
 
       expect(result).toEqual({
         data: tasks,

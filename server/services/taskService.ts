@@ -5,6 +5,7 @@ import {
   SortDirection,
   Task,
   TaskSortField,
+  TaskType,
   TaskWrapper,
   ApprovedPremisesUser as User,
   UserQualification,
@@ -16,24 +17,38 @@ import TaskClient from '../data/taskClient'
 export default class TaskService {
   constructor(private readonly taskClientFactory: RestClientBuilder<TaskClient>) {}
 
-  async getAllReallocatable(
-    token: string,
-    allocatedFilter: 'allocated' | 'unallocated',
-    sortBy: TaskSortField,
-    sortDirection: SortDirection,
-    page: number = 1,
-    apAreaId: string = '',
-  ): Promise<PaginatedResponse<Task>> {
+  async getAll({
+    token,
+    allocatedFilter,
+    allocatedToUserId = '',
+    sortBy,
+    sortDirection,
+    page = 1,
+    apAreaId = '',
+    taskType,
+  }: {
+    token: string
+    allocatedFilter: 'allocated' | 'unallocated'
+    allocatedToUserId?: string
+    sortBy: TaskSortField
+    sortDirection: SortDirection
+    page: number
+    apAreaId?: string
+    taskType?: TaskType
+  }): Promise<PaginatedResponse<Task>> {
     const taskClient = this.taskClientFactory(token)
 
-    const tasks = await taskClient.allReallocatable(allocatedFilter, apAreaId, page, sortDirection, sortBy)
+    const tasks = await taskClient.getAll({
+      allocatedFilter,
+      allocatedToUserId,
+      apAreaId,
+      page,
+      sortDirection,
+      sortBy,
+      taskType,
+    })
+
     return tasks
-  }
-
-  async getTasksOfType(token: string, type: string, page: number = 1): Promise<PaginatedResponse<Task>> {
-    const taskClient = this.taskClientFactory(token)
-
-    return taskClient.allByType(type, page)
   }
 
   async getMatchTasks(token: string): Promise<GroupedMatchTasks> {

@@ -2,7 +2,16 @@ import { CategorisedTask, PaginatedResponse } from '@approved-premises/ui'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
-import { Reallocation, Task, TaskSortField, TaskWrapper, User } from '../@types/shared'
+import {
+  AllocatedFilter,
+  ApArea,
+  Reallocation,
+  Task,
+  TaskSortField,
+  TaskType,
+  TaskWrapper,
+  User,
+} from '../@types/shared'
 
 export default class TaskClient {
   restClient: RestClient
@@ -11,17 +20,27 @@ export default class TaskClient {
     this.restClient = new RestClient('taskClient', config.apis.approvedPremises as ApiConfig, token)
   }
 
-  async allReallocatable(
-    allocatedFilter: string,
-    apAreaId: string,
-    page: number,
-    sortDirection: string,
-    sortBy: TaskSortField,
-  ): Promise<PaginatedResponse<Task>> {
+  async getAll({
+    allocatedFilter,
+    apAreaId,
+    allocatedToUserId,
+    page,
+    sortDirection,
+    sortBy,
+    taskType,
+  }: {
+    allocatedFilter: AllocatedFilter
+    apAreaId: ApArea['id']
+    allocatedToUserId: string
+    page: number
+    sortDirection: string
+    sortBy: TaskSortField
+    taskType?: TaskType
+  }): Promise<PaginatedResponse<Task>> {
     return this.restClient.getPaginatedResponse({
-      path: paths.tasks.reallocatable.index.pattern,
+      path: paths.tasks.index.pattern,
       page: page.toString(),
-      query: { allocatedFilter, apAreaId, sortDirection, sortBy },
+      query: { allocatedFilter, allocatedToUserId, apAreaId, sortBy, sortDirection, taskType },
     })
   }
 
