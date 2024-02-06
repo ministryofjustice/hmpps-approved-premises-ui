@@ -27,10 +27,12 @@ import PlacementRequestClient from './placementRequestClient'
 import PlacementApplicationClient from './placementApplicationClient'
 import BedClient from './bedClient'
 import ReportClient from './reportClient'
+import AppealClient from './appealClient'
 
 type RestClientBuilder<T> = (token: string) => T
 
 export const dataAccess = () => ({
+  appealClientBuilder: ((token: string) => new AppealClient(token)) as RestClientBuilder<AppealClient>,
   hmppsAuthClient: new HmppsAuthClient(new TokenStore(createRedisClient())),
   approvedPremisesClientBuilder: ((token: string) => new PremisesClient(token)) as RestClientBuilder<PremisesClient>,
   bookingClientBuilder: ((token: string) => new BookingClient(token)) as RestClientBuilder<BookingClient>,
@@ -53,6 +55,7 @@ export const dataAccess = () => ({
 export type DataAccess = ReturnType<typeof dataAccess>
 
 export {
+  AppealClient,
   BedClient,
   BookingClient,
   PremisesClient,

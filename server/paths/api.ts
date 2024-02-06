@@ -37,6 +37,8 @@ const managePaths = {
 const applicationsPath = path('/applications')
 const singleApplicationPath = applicationsPath.path(':id')
 
+const appealsPath = singleApplicationPath.path('appeals')
+
 const peoplePath = path('/people')
 const personPath = peoplePath.path(':crn')
 const oasysPath = personPath.path('oasys')
@@ -128,6 +130,9 @@ export default {
     placementApplications: applyPaths.applications.show.path('placement-applications'),
     addNote: applyPaths.applications.show.path('notes'),
     withdrawables: applyPaths.applications.show.path('withdrawables'),
+    appeals: {
+      create: appealsPath,
+    },
   },
   assessments: {
     index: assessPaths.assessments,
