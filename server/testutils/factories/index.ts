@@ -3,6 +3,7 @@
 import acctAlertFactory from './acctAlert'
 import activeOffenceFactory from './activeOffence'
 import adjudicationFactory from './adjudication'
+import appealFactory from './appealFactory'
 import applicationFactory from './application'
 import applicationSummaryFactory from './applicationSummary'
 import arrivalFactory from './arrival'
@@ -49,6 +50,7 @@ import {
   newPlacementRequestBookingConfirmationFactory,
   newPlacementRequestBookingFactory,
 } from './newPlacementRequestBooking'
+import newAppealFactory from './newAppealFactory'
 import nonArrivalFactory from './nonArrival'
 import noteFactory from './noteFactory'
 import oasysSectionsFactory, { roshSummaryFactory } from './oasysSections'
@@ -83,6 +85,7 @@ export {
   acctAlertFactory,
   activeOffenceFactory,
   adjudicationFactory,
+  appealFactory,
   apAreaFactory,
   apCharacteristicPairFactory,
   applicationFactory,
@@ -130,6 +133,7 @@ export {
   newDepartureFactory,
   newLostBedFactory,
   newNonArrivalFactory,
+  newAppealFactory,
   nonArrivalFactory,
   noteFactory,
   oasysSectionsFactory,
