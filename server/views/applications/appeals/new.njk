@@ -1,0 +1,108 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "../../components/formFields/form-page-input/macro.njk" import formPageInput %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <div class="moj-page-header-actions">
+        <div class="moj-page-header-actions__title">
+          <span class="govuk-caption-l">{{ pageHeading }}</span>
+          <h1 class="govuk-heading-l">
+            {{ application.person.name }}
+            {% if application.type == 'Offline' %}
+              {{
+                govukTag({
+                  text: "Offline application",
+                  classes: "govuk-tag--grey govuk-!-margin-5"
+                })
+              }}
+            {% endif %}
+          </h1>
+        </div>
+      </div>
+      <form action="{{ paths.applications.appeals.create({ id: applicationId }) }}" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+
+        {{ showErrorSummary(errorSummary) }}
+
+        {{ govukDateInput({
+                    id: "appealDate",
+                    namePrefix: "appealDate",
+                    fieldset: {
+                    legend: {
+                        text: "What was the date of the appeal?",
+                        classes: "govuk-fieldset__legend--s"
+                        }
+                    },
+                    hint: {
+                    text: "For example, 27 3 2007"
+                    },
+                    items: dateFieldValues('appealDate', errors),
+                    errorMessage: errors.appealDate
+                }) }}
+
+        {{ govukTextarea({
+            name: "appeal[appealDetail]",
+            id: "appealDetail",
+            value: appeal.appealDetail,
+            label: {
+            text: "What was the reason for the appeal?",
+            classes: "govuk-fieldset__legend--s"
+            },
+            errorMessage: errors.appealDetail
+        }) }}
+
+        {{ govukTextarea({
+            name: "appeal[reviewer]",
+            id: "reviewer",
+            value: appeal.reviewer,
+            label: {
+            text: "Who made the decision on the appeal?",
+            classes: "govuk-fieldset__legend--s"
+            },
+            errorMessage: errors.reviewer
+        }) }}
+
+        {{ govukRadios({
+            name: "appeal[decision]",
+            classes: "govuk-radios",
+            fieldset: {
+                legend: {
+                    text: "What was the appeal decision?",
+                    classes: "govuk-fieldset__legend--s"
+                }
+            },
+            items: ApplyUtils.appealDecisionRadioItems(appeal.decision),
+            errorMessage: errors.decision
+        }) }}
+
+        {{ govukTextarea({
+            name: "appeal[decisionDetail]",
+            id: "decisionDetail",
+            value: appeal.decisionDetail,
+            label: {
+            text: "What are the reasons for the appeal decision?",
+            classes: "govuk-fieldset__legend--s"
+            },
+            errorMessage: errors.decisionDetail
+        }) }}
+
+        {{ govukButton({
+                    name: 'submit',
+                    text: "Save appeal decision"
+                }) }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -106,5 +106,10 @@
     "empty": "You must choose a user to allocate the application to",
     "lackingQualifications": "This user lacks the necessary qualifications"
   },
-  "moveBed": { "empty": "You must select a bed to move the person to" }
+  "moveBed": { "empty": "You must select a bed to move the person to" },
+  "appealDate": { "empty": "You must enter an appeal date", "invalid": "You must enter a valid appeal date" },
+  "appealDetail": { "empty": "You must enter the reason for the appeal" },
+  "reviewer": { "empty": "You must enter who made the decision" },
+  "decision": { "empty": "You must provide the decision" },
+  "decisionDetail": { "empty": "You must enter the reasons for the appeal decision" }
 }
