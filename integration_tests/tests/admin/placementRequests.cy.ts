@@ -292,10 +292,10 @@ context('Placement Requests', () => {
     showPage.clickWithdrawBooking()
 
     const withdrawableTypePage = new NewWithdrawalPage('What do you want to withdraw?')
-    withdrawableTypePage.selectType('booking')
+    withdrawableTypePage.selectType('placement')
     withdrawableTypePage.clickSubmit()
 
-    const withdrawablePage = new NewWithdrawalPage('Select your booking')
+    const withdrawablePage = new NewWithdrawalPage('Select your placement')
     withdrawablePage.selectWithdrawable(withdrawable.id)
     withdrawablePage.clickSubmit()
 

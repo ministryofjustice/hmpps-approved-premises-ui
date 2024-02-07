@@ -5,7 +5,7 @@ import managePaths from '../../../paths/manage'
 import { DateFormats } from '../../dateUtils'
 import { linkTo } from '../../utils'
 
-export type SelectedWithdrawableType = 'application' | 'placementRequest' | 'booking'
+export type SelectedWithdrawableType = 'application' | 'placementRequest' | 'placement'
 
 export const withdrawableTypeRadioOptions = (
   withdrawables: Array<Withdrawable>,
@@ -26,11 +26,11 @@ export const withdrawableTypeRadioOptions = (
 
   if (withdrawables.find(w => w.type === 'booking')) {
     radioItems.push({
-      text: 'Booking',
-      value: 'booking',
-      checked: selectedItem === 'booking',
+      text: 'Placement',
+      value: 'placement',
+      checked: selectedItem === 'placement',
       hint: {
-        text: 'This will withdraw a booking but retain the request for placement so that the person can be matched somewhere else.',
+        text: 'This will withdraw a placement but retain the request for placement so that the person can be matched somewhere else.',
       },
     })
   }
@@ -40,7 +40,7 @@ export const withdrawableTypeRadioOptions = (
       text: 'Request for placement',
       value: 'placementRequest',
       checked: selectedItem === 'placementRequest',
-      hint: { text: 'This will withdraw a request for placement and any related bookings.' },
+      hint: { text: 'This will withdraw a request for placement and any related placements.' },
     })
 
   return radioItems
@@ -97,7 +97,7 @@ export const withdrawableRadioOptions = (
             managePaths.bookings.show,
             { premisesId: booking.premises.id, bookingId: booking.id },
             {
-              text: 'See booking details (opens in a new tab)',
+              text: 'See placement details (opens in a new tab)',
               attributes: { 'data-cy-withdrawable-id': withdrawable.id },
               openInNewTab: true,
             },

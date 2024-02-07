@@ -20,7 +20,7 @@ export default class WithdrawalsController {
 
       const withdrawables = await this.applicationService.getWithdrawables(req.user.token, id)
 
-      if (selectedWithdrawableType === 'booking') {
+      if (selectedWithdrawableType === 'placement') {
         const bookings = await Promise.all(
           withdrawables.map(async withdrawable => {
             return this.bookingService.findWithoutPremises(req.user.token, withdrawable.id)
@@ -28,7 +28,7 @@ export default class WithdrawalsController {
         )
 
         return res.render('applications/withdrawables/show', {
-          pageHeading: 'Select your booking',
+          pageHeading: 'Select your placement',
           id,
           selectedWithdrawableType,
           withdrawables,

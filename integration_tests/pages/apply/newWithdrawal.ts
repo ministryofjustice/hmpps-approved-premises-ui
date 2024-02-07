@@ -3,11 +3,11 @@ import matchPaths from '../../../server/paths/match'
 import Page from '../page'
 
 export default class SelectWithdrawableTypePage extends Page {
-  constructor(heading: 'What do you want to withdraw?' | `Select your ${'booking' | 'placement'}`) {
+  constructor(heading: 'What do you want to withdraw?' | 'Select your placement') {
     super(heading)
   }
 
-  selectType(type: 'placementRequest' | 'booking' | 'application') {
+  selectType(type: 'placementRequest' | 'placement' | 'application') {
     this.checkRadioByNameAndValue('selectedWithdrawableType', type)
   }
 

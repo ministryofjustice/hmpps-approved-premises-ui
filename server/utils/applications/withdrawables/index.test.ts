@@ -24,10 +24,10 @@ describe('withdrawableTypeRadioOptions', () => {
     },
   }
 
-  const bookingRadioItem = {
+  const placementRadioItem = {
     checked: false,
-    text: 'Booking',
-    value: 'booking',
+    text: 'Placement',
+    value: 'placement',
     hint: {
       text: 'This will withdraw a placement but retain the request for placement so that the person can be matched somewhere else.',
     },
@@ -48,22 +48,14 @@ describe('withdrawableTypeRadioOptions', () => {
   })
 
   it('should return the booking item if passed a booking Withdrawable', () => {
-    const withdrawable = withdrawableFactory.buildList(1, { type: 'booking' })
-    expect(withdrawableTypeRadioOptions(withdrawable)).toEqual([bookingRadioItem])
-  })
+    const placementWithdrawable = withdrawableFactory.build({ type: 'booking' })
 
-  it('should return the booking item if passed a booking Withdrawable', () => {
-    const bookingWithdrawable = withdrawableFactory.build({ type: 'booking' })
-    const paWithdrawable = withdrawableFactory.build({ type: 'placement_request' })
-    expect(withdrawableTypeRadioOptions([bookingWithdrawable, paWithdrawable])).toEqual([
-      bookingRadioItem,
-      placementRequestRadioItem,
-    ])
+    expect(withdrawableTypeRadioOptions([placementWithdrawable])).toEqual([placementRadioItem])
   })
 
   it('returns checked: true if an item is selected', () => {
     const withdrawable = withdrawableFactory.buildList(1, { type: 'booking' })
-    expect(withdrawableTypeRadioOptions(withdrawable, 'booking')).toEqual([{ ...bookingRadioItem, checked: true }])
+    expect(withdrawableTypeRadioOptions(withdrawable, 'placement')).toEqual([{ ...placementRadioItem, checked: true }])
   })
 
   describe('withdrawableRadioOptions', () => {
@@ -113,7 +105,7 @@ describe('withdrawableTypeRadioOptions', () => {
               managePaths.bookings.show,
               { bookingId: booking.id, premisesId: booking.premises.id },
               {
-                text: 'See booking details (opens in a new tab)',
+                text: 'See placement details (opens in a new tab)',
                 attributes: { 'data-cy-withdrawable-id': booking.id },
                 openInNewTab: true,
               },
