@@ -11,16 +11,16 @@ describe('withdrawableTypeRadioOptions', () => {
     value: 'application',
     checked: false,
     hint: {
-      text: 'This will withdraw the application, assessment, and any related placement requests and bookings.',
+      text: 'This will withdraw the application, assessment, and any related requests for placement and placements.',
     },
   }
 
   const placementRequestRadioItem = {
     checked: false,
-    text: 'Placement request',
+    text: 'Request for placement',
     value: 'placementRequest',
     hint: {
-      text: 'This will withdraw a placement request and any related bookings.',
+      text: 'This will withdraw a request for placement and any related placements.',
     },
   }
 
@@ -29,7 +29,7 @@ describe('withdrawableTypeRadioOptions', () => {
     text: 'Booking',
     value: 'booking',
     hint: {
-      text: 'This will withdraw a booking but retain the placement request so that the person can be matched somewhere else.',
+      text: 'This will withdraw a placement but retain the request for placement so that the person can be matched somewhere else.',
     },
   }
 

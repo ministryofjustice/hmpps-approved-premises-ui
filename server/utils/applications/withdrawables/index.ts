@@ -19,7 +19,7 @@ export const withdrawableTypeRadioOptions = (
       value: 'application',
       checked: selectedItem === 'application',
       hint: {
-        text: `This will withdraw the application, assessment, and any related placement requests and bookings.`,
+        text: `This will withdraw the application, assessment, and any related requests for placement and placements.`,
       },
     })
   }
@@ -30,17 +30,17 @@ export const withdrawableTypeRadioOptions = (
       value: 'booking',
       checked: selectedItem === 'booking',
       hint: {
-        text: 'This will withdraw a booking but retain the placement request so that the person can be matched somewhere else.',
+        text: 'This will withdraw a booking but retain the request for placement so that the person can be matched somewhere else.',
       },
     })
   }
 
   if (withdrawables.find(w => w.type === 'placement_application' || w.type === 'placement_request'))
     radioItems.push({
-      text: 'Placement request',
+      text: 'Request for placement',
       value: 'placementRequest',
       checked: selectedItem === 'placementRequest',
-      hint: { text: 'This will withdraw a placement request and any related bookings.' },
+      hint: { text: 'This will withdraw a request for placement and any related bookings.' },
     })
 
   return radioItems
