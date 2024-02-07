@@ -1,6 +1,7 @@
 import { SuperAgentRequest } from 'superagent'
 
 import type {
+  Appeal,
   ApplicationSortField,
   ApplicationTimelineNote,
   ApprovedPremisesApplication,
@@ -14,6 +15,7 @@ import type {
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 import { ApplicationDashboardSearchOptions } from '../../server/@types/ui'
+import { errorStub } from './utils'
 
 export default {
   stubApplications: (applications: Array<ApprovedPremisesApplicationSummary>): SuperAgentRequest =>
@@ -276,6 +278,20 @@ export default {
         jsonBody: withdrawables,
       },
     }),
+  stubAppealCreate: ({ applicationId, appeal }: { applicationId: string; appeal: Appeal }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'POST',
+        url: paths.applications.appeals.create({ id: applicationId }),
+      },
+      response: {
+        status: 201,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: appeal,
+      },
+    }),
+  stubAppealErrors: ({ applicationId, params }: { applicationId: string; params: Array<string> }) =>
+    stubFor(errorStub(params, paths.applications.appeals.create({ id: applicationId }))),
   verifyApplicationWithdrawn: async (args: { applicationId: string }) =>
     (
       await getMatchingRequests({
@@ -309,6 +325,13 @@ export default {
       await getMatchingRequests({
         method: 'POST',
         url: paths.applications.addNote({ id: args.id }),
+      })
+    ).body.requests,
+  verifyAppealCreated: async (args: { applicationId: string }) =>
+    (
+      await getMatchingRequests({
+        method: 'POST',
+        url: paths.applications.appeals.create({ id: args.applicationId }),
       })
     ).body.requests,
 }

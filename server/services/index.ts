@@ -20,10 +20,13 @@ import PlacementApplicationService from './placementApplicationService'
 import BedService from './bedService'
 import ReportService from './reportService'
 import ApAreaService from './apAreaService'
+import AppealService from './appealService'
+
 import config, { AuditConfig } from '../config'
 
 export const services = () => {
   const {
+    appealClientBuilder,
     hmppsAuthClient,
     approvedPremisesClientBuilder,
     bookingClientBuilder,
@@ -40,6 +43,7 @@ export const services = () => {
     reportClientBuilder,
   } = dataAccess()
 
+  const appealService = new AppealService(appealClientBuilder)
   const userService = new UserService(hmppsAuthClient, userClientBuilder, referenceDataClientBuilder)
   const auditService = new AuditService(config.apis.audit as AuditConfig)
   const premisesService = new PremisesService(approvedPremisesClientBuilder)
@@ -60,6 +64,7 @@ export const services = () => {
   const apAreaService = new ApAreaService(referenceDataClientBuilder)
 
   return {
+    appealService,
     userService,
     auditService,
     premisesService,
@@ -84,6 +89,7 @@ export const services = () => {
 export type Services = ReturnType<typeof services>
 
 export {
+  AppealService,
   UserService,
   PremisesService,
   PersonService,

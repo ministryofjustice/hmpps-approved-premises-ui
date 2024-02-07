@@ -14,6 +14,7 @@ export default function routes(controllers: Controllers, router: Router, service
   const { get, post, put } = actions(router, services.auditService)
   const {
     applicationsController,
+    appealsController,
     pagesController,
     peopleController,
     offencesController,
@@ -66,6 +67,12 @@ export default function routes(controllers: Controllers, router: Router, service
   })
   post(paths.applications.notes.create.pattern, notesController.create(), {
     auditEvent: 'CREATE_NEW_NOTE',
+  })
+  get(paths.applications.appeals.new.pattern, appealsController.new(), {
+    auditEvent: 'NEW_APPEAL',
+  })
+  post(paths.applications.appeals.create.pattern, appealsController.create(), {
+    auditEvent: 'CREATE_APPEAL',
   })
 
   Object.keys(pages).forEach((taskKey: string) => {

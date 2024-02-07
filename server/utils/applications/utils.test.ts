@@ -21,6 +21,7 @@ import { DateFormats } from '../dateUtils'
 import { isApplicableTier, isFullPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
 
 import {
+  appealDecisionRadioItems,
   applicationStatusSelectOptions,
   applicationStatuses,
   applicationTableRows,
@@ -1099,6 +1100,22 @@ describe('utils', () => {
         { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
         { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
         { selected: false, text: 'Pending placement request', value: 'pendingPlacementRequest' },
+      ])
+    })
+  })
+
+  describe('appealDecisionRadioItems', () => {
+    it('should return radio items when selectedOption is empty', () => {
+      expect(appealDecisionRadioItems(undefined)).toEqual([
+        { text: 'Upheld', value: 'accepted', checked: false },
+        { text: 'Rejected', value: 'rejected', checked: false },
+      ])
+    })
+
+    it('should return radio items when the the selected item checked', () => {
+      expect(appealDecisionRadioItems('accepted')).toEqual([
+        { text: 'Upheld', value: 'accepted', checked: true },
+        { text: 'Rejected', value: 'rejected', checked: false },
       ])
     })
   })

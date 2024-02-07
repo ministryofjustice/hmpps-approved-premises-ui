@@ -71,8 +71,8 @@ context('Placement Applications', () => {
       // When I click the Request Placement Application tab
       showPage.clickRequestAPlacementTab()
 
-      // Then I should be able to click submit
-      showPage.clickSubmit()
+      // Then I should be able to create a placement
+      showPage.clickCreatePlacementButton()
 
       // Given I am on the placement application form and start and application
       const placementReasonPage = ReasonForPlacementPage.visit(placementApplicationId)
@@ -148,8 +148,8 @@ context('Placement Applications', () => {
       // When I click the Request Placement Application tab
       showPage.clickRequestAPlacementTab()
 
-      // Then I should be able to click submit
-      showPage.clickSubmit()
+      // Then I should be able to create a placement
+      showPage.clickCreatePlacementButton()
 
       // Given I am on the placement application form and start and application
       const placementReasonPage = ReasonForPlacementPage.visit(placementApplicationId)
@@ -230,8 +230,8 @@ context('Placement Applications', () => {
       // When I click the Request Placement Application tab
       showPage.clickRequestAPlacementTab()
 
-      // Then I should be able to click submit
-      showPage.clickSubmit()
+      // Then I should be able to create a placement
+      showPage.clickCreatePlacementButton()
 
       // Given I am on the placement application form and start and application
       const placementReasonPage = ReasonForPlacementPage.visit(placementApplicationId)

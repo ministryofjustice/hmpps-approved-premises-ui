@@ -8,6 +8,7 @@ const peoplePath = applicationsPath.path('people')
 const personPath = peoplePath.path(':crn')
 const withdrawalsPath = applicationPath.path('withdrawals')
 const withdrawablesPath = applicationPath.path('withdrawables')
+const appealsPath = applicationPath.path('appeals')
 
 const paths = {
   applications: {
@@ -40,6 +41,10 @@ const paths = {
     notes: {
       new: applicationPath.path('notes/new'),
       create: applicationPath.path('notes/create'),
+    },
+    appeals: {
+      create: appealsPath,
+      new: appealsPath.path('new'),
     },
   },
 }

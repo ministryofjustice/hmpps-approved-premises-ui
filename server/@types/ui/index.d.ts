@@ -186,6 +186,7 @@ export interface IdentityBar {
   title: {
     html: string
   }
+  classes?: string
   menus: Array<IdentityBarMenu>
 }
 
@@ -195,6 +196,7 @@ export interface IdentityBarMenu {
 
 export interface IdentityBarMenuItem {
   classes?: string
+  attributes?: HtmlAttributes
   href: string
   text: string
 }

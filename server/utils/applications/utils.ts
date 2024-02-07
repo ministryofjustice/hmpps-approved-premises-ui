@@ -12,6 +12,7 @@ import type {
   UiTimelineEvent,
 } from '@approved-premises/ui'
 import type {
+  AppealDecision,
   ApprovedPremisesApplication as Application,
   ApplicationSortField,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
@@ -49,6 +50,7 @@ import { linkTo } from '../utils'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
+export { applicationIdentityBar } from './applicationIdentityBar'
 
 const applicationStatuses: Record<ApprovedPremisesApplicationStatus, string> = {
   started: 'Application started',
@@ -424,6 +426,19 @@ const applicationStatusSelectOptions = (
   return options
 }
 
+const appealDecisionRadioItems = (selectedOption: AppealDecision | undefined) => {
+  const appealDecisions: Record<AppealDecision, string> = {
+    accepted: 'Upheld',
+    rejected: 'Rejected',
+  }
+
+  return Object.keys(appealDecisions).map(status => ({
+    text: appealDecisions[status],
+    value: status,
+    checked: status === selectedOption,
+  }))
+}
+
 export {
   applicationStatuses,
   applicationTableRows,
@@ -439,4 +454,5 @@ export {
   lengthOfStayForUI,
   statusTags,
   applicationStatusSelectOptions,
+  appealDecisionRadioItems,
 }
