@@ -36,7 +36,7 @@ export const placementNoLongerNeededOptions = filterByType<OtherReasons>(
 )
 
 export const withdrawalRadioOptions = [
-  { divider: 'The placement is no longer needed' },
+  { divider: 'The application is no longer needed' },
   ...convertKeyValuePairToRadioItems(placementNoLongerNeededOptions, undefined),
   { divider: 'A new placement is needed' },
   ...convertKeyValuePairToRadioItems(newApplicationToBeSubmittedOptions, undefined),
