@@ -71,6 +71,9 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.applications.appeals.new.pattern, appealsController.new(), {
     auditEvent: 'NEW_APPEAL',
   })
+  get(paths.applications.appeals.show.pattern, appealsController.show(), {
+    auditEvent: 'VIEW_APPEAL',
+  })
   post(paths.applications.appeals.create.pattern, appealsController.create(), {
     auditEvent: 'CREATE_APPEAL',
   })

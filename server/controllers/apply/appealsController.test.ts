@@ -8,7 +8,7 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 import paths from '../../paths/apply'
 import { AppealDecision } from '../../@types/shared'
 import { ApplicationService } from '../../services'
-import { applicationFactory } from '../../testutils/factories'
+import { appealFactory, applicationFactory } from '../../testutils/factories'
 
 jest.mock('../../utils/validation')
 
@@ -138,6 +138,34 @@ describe('AppealsController', () => {
         err,
         paths.applications.appeals.new({ id: request.params.id }),
       )
+    })
+  })
+
+  describe('show', () => {
+    it('fetches the application from the API and renders the task list if the application is started', async () => {
+      application.status = 'started'
+      const appeal = appealFactory.build()
+
+      const req = createMock<Request>({
+        params: { id: application.id, appealId: appeal.id },
+        user: {
+          token,
+        },
+      })
+
+      applicationService.findApplication.mockResolvedValue(application)
+      appealService.getAppeal.mockResolvedValue(appeal)
+
+      const requestHandler = appealsController.show()
+      await requestHandler(req, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('appeals/show', {
+        application,
+        appeal,
+      })
+
+      expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
+      expect(appealService.getAppeal).toHaveBeenCalledWith(token, application.id, appeal.id)
     })
   })
 })

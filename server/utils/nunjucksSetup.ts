@@ -62,6 +62,7 @@ import matchPaths from '../paths/match'
 import adminPaths from '../paths/admin'
 import placementApplicationsPaths from '../paths/placementApplications'
 import { radioMatrixTable } from './radioMatrixTable'
+import * as AppealsUtils from './appealsUtils'
 
 import config from '../config'
 import { withdrawalRadioOptions } from './applications/withdrawalReasons'
@@ -233,4 +234,5 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('CalendarUtils', CalendarUtils)
   njkEnv.addGlobal('PremisesUtils', PremisesUtils)
   njkEnv.addGlobal('ReportUtils', ReportUtils)
+  njkEnv.addGlobal('AppealsUtils', AppealsUtils)
 }
