@@ -1,5 +1,5 @@
 import { bookingFactory, withdrawableFactory } from '../../../testutils/factories'
-import { withdrawableRadioOptions, withdrawableTypeRadioOptions } from '.'
+import { hintCopy, withdrawableRadioOptions, withdrawableTypeRadioOptions } from '.'
 import { DateFormats } from '../../dateUtils'
 import { linkTo } from '../../utils'
 import matchPaths from '../../../paths/match'
@@ -11,7 +11,7 @@ describe('withdrawableTypeRadioOptions', () => {
     value: 'application',
     checked: false,
     hint: {
-      text: 'This will withdraw the application, assessment, and any related requests for placement and placements.',
+      text: hintCopy.application,
     },
   }
 
@@ -20,7 +20,7 @@ describe('withdrawableTypeRadioOptions', () => {
     text: 'Request for placement',
     value: 'placementRequest',
     hint: {
-      text: 'This will withdraw a request for placement and any related placements.',
+      html: hintCopy.placementRequest,
     },
   }
 
@@ -29,7 +29,7 @@ describe('withdrawableTypeRadioOptions', () => {
     text: 'Placement',
     value: 'placement',
     hint: {
-      text: 'This will withdraw a placement but retain the request for placement so that the person can be matched somewhere else.',
+      text: hintCopy.placement,
     },
   }
 
