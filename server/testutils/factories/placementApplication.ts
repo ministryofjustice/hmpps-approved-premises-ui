@@ -17,4 +17,5 @@ export default Factory.define<PlacementApplication>(() => ({
   data: {},
   document: {},
   canBeWithdrawn: true,
+  isWithdrawn: false,
 }))
