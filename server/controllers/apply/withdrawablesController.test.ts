@@ -8,6 +8,7 @@ import adminPaths from '../../paths/admin'
 import managePaths from '../../paths/manage'
 import placementAppPaths from '../../paths/placementApplications'
 import { Withdrawable } from '../../@types/shared'
+import applyPaths from '../../paths/apply'
 
 describe('withdrawablesController', () => {
   const token = 'SOME_TOKEN'
@@ -96,6 +97,10 @@ describe('withdrawablesController', () => {
       {
         type: 'placement_application',
         path: placementAppPaths.placementApplications.withdraw.new,
+      },
+      {
+        type: 'application',
+        path: applyPaths.applications.withdraw.new,
       },
     ].forEach(w => {
       it(`redirects to the ${w.type} withdrawal page`, async () => {

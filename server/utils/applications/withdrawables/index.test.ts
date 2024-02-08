@@ -33,28 +33,29 @@ describe('withdrawableTypeRadioOptions', () => {
     },
   }
 
-  it('should return the application radio item if passed an empty array', () => {
-    expect(withdrawableTypeRadioOptions([])).toEqual([applicationRadioItem])
+  it('should return the application radio item if passed an application withdrawable', () => {
+    const applicationWithdrawable = withdrawableFactory.buildList(1, { type: 'application' })
+
+    expect(withdrawableTypeRadioOptions(applicationWithdrawable)).toEqual([applicationRadioItem])
   })
 
   it('should return the placementRequest item if passed a placement request Withdrawable', () => {
     const paWithdrawable = withdrawableFactory.buildList(1, { type: 'placement_application' })
-    expect(withdrawableTypeRadioOptions(paWithdrawable)).toEqual([applicationRadioItem, placementRequestRadioItem])
+    expect(withdrawableTypeRadioOptions(paWithdrawable)).toEqual([placementRequestRadioItem])
 
     const prWithdrawable = withdrawableFactory.buildList(1, { type: 'placement_request' })
-    expect(withdrawableTypeRadioOptions(prWithdrawable)).toEqual([applicationRadioItem, placementRequestRadioItem])
+    expect(withdrawableTypeRadioOptions(prWithdrawable)).toEqual([placementRequestRadioItem])
   })
 
   it('should return the booking item if passed a booking Withdrawable', () => {
     const withdrawable = withdrawableFactory.buildList(1, { type: 'booking' })
-    expect(withdrawableTypeRadioOptions(withdrawable)).toEqual([applicationRadioItem, bookingRadioItem])
+    expect(withdrawableTypeRadioOptions(withdrawable)).toEqual([bookingRadioItem])
   })
 
   it('should return the booking item if passed a booking Withdrawable', () => {
     const bookingWithdrawable = withdrawableFactory.build({ type: 'booking' })
     const paWithdrawable = withdrawableFactory.build({ type: 'placement_request' })
     expect(withdrawableTypeRadioOptions([bookingWithdrawable, paWithdrawable])).toEqual([
-      applicationRadioItem,
       bookingRadioItem,
       placementRequestRadioItem,
     ])
@@ -62,10 +63,7 @@ describe('withdrawableTypeRadioOptions', () => {
 
   it('returns checked: true if an item is selected', () => {
     const withdrawable = withdrawableFactory.buildList(1, { type: 'booking' })
-    expect(withdrawableTypeRadioOptions(withdrawable, 'booking')).toEqual([
-      applicationRadioItem,
-      { ...bookingRadioItem, checked: true },
-    ])
+    expect(withdrawableTypeRadioOptions(withdrawable, 'booking')).toEqual([{ ...bookingRadioItem, checked: true }])
   })
 
   describe('withdrawableRadioOptions', () => {

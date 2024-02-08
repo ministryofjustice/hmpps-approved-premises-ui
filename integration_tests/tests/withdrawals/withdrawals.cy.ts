@@ -114,13 +114,13 @@ context('Withdrawals', () => {
   it('withdraws an application', () => {
     const application = applicationSummaryFactory.build()
 
-    const placementRequestWithdrawable = withdrawableFactory.build({
-      type: 'placement_request',
+    const applicationWithdrawable = withdrawableFactory.build({
+      type: 'application',
     })
 
     cy.task('stubWithdrawables', {
       applicationId: application.id,
-      withdrawables: [placementRequestWithdrawable],
+      withdrawables: [applicationWithdrawable],
     })
     cy.task('stubApplications', [application])
     cy.task('stubApplicationGet', { application })
