@@ -1,6 +1,6 @@
 import ListPage from '../../pages/tasks/listPage'
 
-import { taskFactory } from '../../../server/testutils/factories'
+import { apAreaFactory, taskFactory } from '../../../server/testutils/factories'
 
 context('Tasks', () => {
   beforeEach(() => {
@@ -229,5 +229,68 @@ context('Tasks', () => {
     // Then the status filter should be retained and allocated results should be shown
     listPage.shouldHaveActiveTab('Unallocated')
     listPage.shouldShowUnallocatedTasks(unallocatedTasksFiltered)
+  })
+
+  it('defaults to user area but allows filter by all areas', () => {
+    // Given I have a default area
+    const apArea = apAreaFactory.build()
+    cy.task('stubAuthUser', { apArea })
+
+    // And i am signed in
+    cy.signIn()
+
+    const allocatedTasks = taskFactory.buildList(1)
+    const allocatedTasksFiltered = taskFactory.buildList(10)
+    const allocatedTasksFilteredPage2 = taskFactory.buildList(10)
+    const unallocatedTasks = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
+
+    cy.task('stubReallocatableTasks', {
+      tasks: allocatedTasks,
+      allocatedFilter: 'allocated',
+      page: '1',
+      apAreaId: apArea.id,
+    })
+
+    cy.task('stubReallocatableTasks', {
+      tasks: allocatedTasksFiltered,
+      allocatedFilter: 'allocated',
+      page: '1',
+      sortDirection: 'asc',
+      apAreaId: '',
+    })
+
+    cy.task('stubReallocatableTasks', {
+      tasks: allocatedTasksFilteredPage2,
+      allocatedFilter: 'allocated',
+      page: '2',
+      sortDirection: 'asc',
+      apAreaId: '',
+    })
+
+    cy.task('stubApAreaReferenceData', apArea)
+
+    // When I visit the tasks dashboard
+    const listPage = ListPage.visit(allocatedTasks, unallocatedTasks)
+
+    // Then I should see the tasks that are allocated to my area
+    listPage.shouldShowAllocatedTasks()
+
+    // When I filter by all regions
+    listPage.searchBy('area', 'all')
+    listPage.clickApplyFilter()
+
+    // Then the page should show the results
+    listPage.shouldShowAllocatedTasks(allocatedTasksFiltered)
+
+    // When I visit the next page
+
+    listPage.clickNext()
+
+    cy.task('verifyTasksRequests', { page: '2', allocatedFilter: 'allocated' }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+
+    // Then the page should show the results
+    listPage.shouldShowAllocatedTasks(allocatedTasksFilteredPage2)
   })
 })
