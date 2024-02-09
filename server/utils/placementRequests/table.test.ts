@@ -289,7 +289,13 @@ describe('tableUtils', () => {
           text: 'CRN',
         },
         sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
-        sortHeader<PlacementRequestSortField>('Arrival date', 'expected_arrival', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>(
+          'Requested arrival date',
+          'expected_arrival',
+          sortBy,
+          sortDirection,
+          hrefPrefix,
+        ),
         sortHeader<PlacementRequestSortField>(
           'Application date',
           'application_date',
@@ -312,7 +318,13 @@ describe('tableUtils', () => {
           text: 'CRN',
         },
         sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
-        sortHeader<PlacementRequestSortField>('Arrival date', 'expected_arrival', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>(
+          'Requested arrival date',
+          'expected_arrival',
+          sortBy,
+          sortDirection,
+          hrefPrefix,
+        ),
         sortHeader<PlacementRequestSortField>(
           'Application date',
           'application_date',
