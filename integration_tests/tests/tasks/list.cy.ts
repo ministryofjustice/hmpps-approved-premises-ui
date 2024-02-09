@@ -260,6 +260,13 @@ context('Tasks', () => {
     })
 
     cy.task('stubReallocatableTasks', {
+      tasks: allocatedTasksFiltered,
+      allocatedFilter: 'allocated',
+      sortDirection: 'desc',
+      apAreaId: '',
+    })
+
+    cy.task('stubReallocatableTasks', {
       tasks: allocatedTasksFilteredPage2,
       allocatedFilter: 'allocated',
       page: '2',
@@ -283,7 +290,6 @@ context('Tasks', () => {
     listPage.shouldShowAllocatedTasks(allocatedTasksFiltered)
 
     // When I visit the next page
-
     listPage.clickNext()
 
     cy.task('verifyTasksRequests', { page: '2', allocatedFilter: 'allocated' }).then(requests => {
@@ -292,5 +298,14 @@ context('Tasks', () => {
 
     // Then the page should show the results
     listPage.shouldShowAllocatedTasks(allocatedTasksFilteredPage2)
+
+    // When I sort by created at in ascending order
+    listPage.clickSortBy('createdAt')
+
+    // Then the dashboard should be sorted by created at
+    listPage.shouldBeSortedByField('createdAt', 'descending')
+
+    // Then the page should show the filtered results
+    listPage.shouldShowAllocatedTasks(allocatedTasksFiltered)
   })
 })
