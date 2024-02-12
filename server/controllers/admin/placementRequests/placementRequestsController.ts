@@ -39,7 +39,7 @@ export default class PlacementRequestsController {
       )
 
       res.render('admin/placementRequests/index', {
-        pageHeading: 'Record and update placement details',
+        pageHeading: 'CRU Dashboard',
         placementRequests: dashboard.data,
         status,
         apAreas,
@@ -88,7 +88,7 @@ export default class PlacementRequestsController {
       )
 
       res.render('admin/placementRequests/search', {
-        pageHeading: 'Record and update placement details',
+        pageHeading: 'CRU Dashboard',
         placementRequests: dashboard.data,
         ...searchOptions,
         pageNumber: Number(dashboard.pageNumber),

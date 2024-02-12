@@ -2,7 +2,7 @@ import ListPage from '../../pages/tasks/listPage'
 
 import { apAreaFactory, taskFactory } from '../../../server/testutils/factories'
 
-context('Tasks', () => {
+context('Task Allocation', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')

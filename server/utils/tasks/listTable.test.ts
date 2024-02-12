@@ -4,6 +4,7 @@ import {
   allocationCell,
   daysUntilDueCell,
   formatDaysUntilDueWithWarning,
+  getTaskType,
   nameAnchorCell,
   statusBadge,
   statusCell,
@@ -13,7 +14,7 @@ import {
   tasksTableRows,
   unallocatedTableRows,
 } from './listTable'
-import { kebabCase, linkTo, sentenceCase } from '../utils'
+import { kebabCase, linkTo } from '../utils'
 import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
 import { TaskSortField } from '../../@types/shared'
@@ -38,7 +39,7 @@ describe('table', () => {
               html: statusBadge(task),
             },
             {
-              html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
+              html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
             },
           ],
         ])
@@ -58,7 +59,7 @@ describe('table', () => {
               html: statusBadge(task),
             },
             {
-              html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
+              html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
             },
           ],
         ])
@@ -79,7 +80,7 @@ describe('table', () => {
               html: statusBadge(task),
             },
             {
-              html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
+              html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
             },
           ],
         ])
@@ -96,7 +97,7 @@ describe('table', () => {
               html: statusBadge(task),
             },
             {
-              html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
+              html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
             },
           ],
         ])
@@ -175,7 +176,7 @@ describe('table', () => {
     it('returns the task type formatted for the UI as a TableCell object', () => {
       const task = taskFactory.build()
       expect(taskTypeCell(task)).toEqual({
-        html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
+        html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
       })
     })
   })

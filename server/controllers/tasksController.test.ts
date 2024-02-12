@@ -63,7 +63,7 @@ describe('TasksController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
-        pageHeading: 'Tasks',
+        pageHeading: 'Task Allocation',
         tasks,
         allocatedFilter: 'allocated',
         apAreas,
@@ -95,7 +95,7 @@ describe('TasksController', () => {
       await requestHandler(unallocatedRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
-        pageHeading: 'Tasks',
+        pageHeading: 'Task Allocation',
         tasks,
         allocatedFilter: 'unallocated',
         apAreas,
@@ -128,7 +128,7 @@ describe('TasksController', () => {
       expect(taskService.getAllReallocatable).toHaveBeenCalledWith(token, 'allocated', 'createdAt', 'asc', 1, '')
 
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
-        pageHeading: 'Tasks',
+        pageHeading: 'Task Allocation',
         tasks,
         allocatedFilter: 'allocated',
         apAreas,
