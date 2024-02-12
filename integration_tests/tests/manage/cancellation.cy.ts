@@ -50,10 +50,10 @@ context('Cancellation', () => {
     bookingPage.clickWithdrawPlacement()
 
     const withdrawalTypePage = new NewWithdrawalPage('What do you want to withdraw?')
-    withdrawalTypePage.selectType('booking')
+    withdrawalTypePage.selectType('placement')
     withdrawalTypePage.clickSubmit()
 
-    const withdrawablePage = new NewWithdrawalPage('Select your booking')
+    const withdrawablePage = new NewWithdrawalPage('Select your placement')
     withdrawablePage.selectWithdrawable(booking.id)
     withdrawablePage.clickSubmit()
 

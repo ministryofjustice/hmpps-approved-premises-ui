@@ -167,12 +167,11 @@ context('Withdrawals', () => {
     listPage.clickWithdraw()
 
     const newWithdrawalPage = new NewWithdrawalPage('What do you want to withdraw?')
-    newWithdrawalPage.selectType('booking')
+    newWithdrawalPage.selectType('placement')
     newWithdrawalPage.clickSubmit()
 
-    const selectWithdrawablePage = new NewWithdrawalPage('Select your booking')
+    const selectWithdrawablePage = new NewWithdrawalPage('Select your placement')
     selectWithdrawablePage.veryifyLink(booking.id, 'booking')
-
     selectWithdrawablePage.selectWithdrawable(booking.id)
     selectWithdrawablePage.clickSubmit()
 

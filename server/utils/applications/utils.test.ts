@@ -25,7 +25,6 @@ import {
   applicationStatusSelectOptions,
   applicationStatuses,
   applicationTableRows,
-  createWithdrawElement,
   dashboardTableHeader,
   dashboardTableRows,
   eventTypeTranslations,
@@ -38,7 +37,7 @@ import {
   mapPlacementApplicationToSummaryCards,
   mapTimelineEventsForUi,
   statusTags,
-  unwithdrawableApplicationStatuses,
+  withdrawCell,
 } from './utils'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { RestrictedPersonError } from '../errors'
@@ -215,7 +214,7 @@ describe('utils', () => {
           {
             html: getStatus(applicationA),
           },
-          createWithdrawElement(applicationA.id, applicationA),
+          withdrawCell(applicationA.id),
         ],
         [
           {
@@ -235,7 +234,7 @@ describe('utils', () => {
           {
             html: getStatus(applicationB),
           },
-          createWithdrawElement(applicationB.id, applicationB),
+          withdrawCell(applicationB.id),
         ],
       ])
     })
@@ -636,33 +635,10 @@ describe('utils', () => {
     })
   })
 
-  describe('createWithdrawElement', () => {
-    const withdrawalableApplicationStatues: Array<ApprovedPremisesApplicationStatus> = [
-      'awaitingPlacement',
-      'started',
-      'submitted',
-      'awaitingAssesment',
-      'unallocatedAssesment',
-      'requestedFurtherInformation',
-      'assesmentInProgress',
-    ]
-
-    it.each(withdrawalableApplicationStatues)(
-      'returns a link to withdraw the application if the application status is %s',
-      status => {
-        const applicationSummary = applicationSummaryFactory.build({ status })
-
-        expect(createWithdrawElement('id', applicationSummary)).toEqual({
-          html: linkTo(paths.applications.withdraw.new, { id: 'id' }, { text: 'Withdraw' }),
-        })
-      },
-    )
-
-    it.each(unwithdrawableApplicationStatuses)('returns an empty string if the application status is %s', status => {
-      const applicationSummary = applicationSummaryFactory.build({ status })
-
-      expect(createWithdrawElement('id', applicationSummary)).toEqual({
-        text: '',
+  describe('withdrawCell', () => {
+    it('returns a link to withdraw the application', () => {
+      expect(withdrawCell('id')).toEqual({
+        html: linkTo(paths.applications.withdraw.new, { id: 'id' }, { text: 'Withdraw' }),
       })
     })
   })

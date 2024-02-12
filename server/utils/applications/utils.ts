@@ -74,7 +74,7 @@ const applicationTableRows = (applications: Array<ApplicationSummary>): Array<Ta
     htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
     textValue(getArrivalDateorNA(application.arrivalDate)),
     htmlValue(getStatus(application)),
-    createWithdrawElement(application.id, application),
+    withdrawCell(application.id),
   ])
 }
 
@@ -172,16 +172,7 @@ const createNameAnchorElement = (
     : textValue(`LAO CRN: ${person.crn}`)
 }
 
-export const unwithdrawableApplicationStatuses: Array<ApprovedPremisesApplicationStatus> = [
-  'placementAllocated',
-  'inapplicable',
-  'withdrawn',
-  'rejected',
-]
-
-export const createWithdrawElement = (applicationId: string, application: ApplicationSummary) => {
-  if (unwithdrawableApplicationStatuses.includes(application.status)) return textValue('')
-
+export const withdrawCell = (applicationId: string) => {
   return htmlValue(linkTo(paths.applications.withdraw.new, { id: applicationId }, { text: 'Withdraw' }))
 }
 

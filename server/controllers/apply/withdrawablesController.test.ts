@@ -58,7 +58,7 @@ describe('withdrawablesController', () => {
 
     describe('Bookings', () => {
       it(`renders the view`, async () => {
-        const selectedWithdrawableType = 'booking'
+        const selectedWithdrawableType = 'placement'
         const withdrawables = withdrawableFactory.buildList(2, { type: 'booking' })
         const bookings = bookingFactory.buildList(2).map((b, i) => {
           return { ...b, id: withdrawables[i].id }
@@ -77,7 +77,7 @@ describe('withdrawablesController', () => {
 
         expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/show', {
-          pageHeading: 'Select your booking',
+          pageHeading: 'Select your placement',
           id: applicationId,
           selectedWithdrawableType,
           withdrawables,

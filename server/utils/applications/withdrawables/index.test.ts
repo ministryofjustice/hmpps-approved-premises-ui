@@ -1,5 +1,5 @@
 import { bookingFactory, withdrawableFactory } from '../../../testutils/factories'
-import { withdrawableRadioOptions, withdrawableTypeRadioOptions } from '.'
+import { hintCopy, withdrawableRadioOptions, withdrawableTypeRadioOptions } from '.'
 import { DateFormats } from '../../dateUtils'
 import { linkTo } from '../../utils'
 import matchPaths from '../../../paths/match'
@@ -11,25 +11,25 @@ describe('withdrawableTypeRadioOptions', () => {
     value: 'application',
     checked: false,
     hint: {
-      text: 'This will withdraw the application, assessment, and any related placement requests and bookings.',
+      text: hintCopy.application,
     },
   }
 
   const placementRequestRadioItem = {
     checked: false,
-    text: 'Placement request',
+    text: 'Request for placement',
     value: 'placementRequest',
     hint: {
-      text: 'This will withdraw a placement request and any related bookings.',
+      html: hintCopy.placementRequest,
     },
   }
 
-  const bookingRadioItem = {
+  const placementRadioItem = {
     checked: false,
-    text: 'Booking',
-    value: 'booking',
+    text: 'Placement',
+    value: 'placement',
     hint: {
-      text: 'This will withdraw a booking but retain the placement request so that the person can be matched somewhere else.',
+      text: hintCopy.placement,
     },
   }
 
@@ -48,22 +48,14 @@ describe('withdrawableTypeRadioOptions', () => {
   })
 
   it('should return the booking item if passed a booking Withdrawable', () => {
-    const withdrawable = withdrawableFactory.buildList(1, { type: 'booking' })
-    expect(withdrawableTypeRadioOptions(withdrawable)).toEqual([bookingRadioItem])
-  })
+    const placementWithdrawable = withdrawableFactory.build({ type: 'booking' })
 
-  it('should return the booking item if passed a booking Withdrawable', () => {
-    const bookingWithdrawable = withdrawableFactory.build({ type: 'booking' })
-    const paWithdrawable = withdrawableFactory.build({ type: 'placement_request' })
-    expect(withdrawableTypeRadioOptions([bookingWithdrawable, paWithdrawable])).toEqual([
-      bookingRadioItem,
-      placementRequestRadioItem,
-    ])
+    expect(withdrawableTypeRadioOptions([placementWithdrawable])).toEqual([placementRadioItem])
   })
 
   it('returns checked: true if an item is selected', () => {
     const withdrawable = withdrawableFactory.buildList(1, { type: 'booking' })
-    expect(withdrawableTypeRadioOptions(withdrawable, 'booking')).toEqual([{ ...bookingRadioItem, checked: true }])
+    expect(withdrawableTypeRadioOptions(withdrawable, 'placement')).toEqual([{ ...placementRadioItem, checked: true }])
   })
 
   describe('withdrawableRadioOptions', () => {
@@ -113,7 +105,7 @@ describe('withdrawableTypeRadioOptions', () => {
               managePaths.bookings.show,
               { bookingId: booking.id, premisesId: booking.premises.id },
               {
-                text: 'See booking details (opens in a new tab)',
+                text: 'See placement details (opens in a new tab)',
                 attributes: { 'data-cy-withdrawable-id': booking.id },
                 openInNewTab: true,
               },
