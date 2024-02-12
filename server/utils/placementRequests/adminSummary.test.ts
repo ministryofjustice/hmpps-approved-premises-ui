@@ -2,6 +2,7 @@ import { ApType, ReleaseTypeOption } from '../../@types/shared'
 import { placementRequestDetailFactory } from '../../testutils/factories'
 import { allApTypes } from '../allAPTypes'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
+import { withdrawnStatusTag } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
 import { placementLength } from '../matchUtils'
 import { adminSummary, apTypeCell, releaseTypeCell } from './adminSummary'
@@ -103,6 +104,12 @@ describe('adminSummary', () => {
         },
         ...adminSummaryRows.slice(2),
       ],
+    })
+  })
+
+  it('should return a status if the placement request has been withdrawn', () => {
+    expect(adminSummary(placementRequestDetailFactory.build({ ...placementRequest, isWithdrawn: true }))).toEqual({
+      rows: [...adminSummaryRows, withdrawnStatusTag],
     })
   })
 
