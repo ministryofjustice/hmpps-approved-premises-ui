@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { Response } from 'superagent'
-import { ApprovedPremisesUserRole as UserRole } from '../../server/@types/shared'
+import { ApArea, ApprovedPremisesUserRole as UserRole } from '../../server/@types/shared'
 
 import { getMatchingRequests, stubFor } from './setup'
 import tokenVerification from './tokenVerification'
@@ -141,7 +141,7 @@ const stubUser = (name: string) =>
 
 export const defaultUserId = '70596333-63d4-4fb2-8acc-9ca55563d878'
 
-const stubProfile = (roles = [], userId = defaultUserId, isActive = true) =>
+const stubProfile = (roles = [], userId = defaultUserId, isActive = true, apArea = undefined) =>
   stubFor({
     request: {
       method: 'GET',
@@ -156,6 +156,7 @@ const stubProfile = (roles = [], userId = defaultUserId, isActive = true) =>
         id: userId,
         roles,
         isActive,
+        apArea,
       },
     },
   })
@@ -181,7 +182,11 @@ export default {
   stubSignIn: (): Promise<[Response, Response, Response, Response, Response, Response]> =>
     Promise.all([favicon(), redirect(), signOut(), manageDetails(), token(), tokenVerification.stubVerifyToken()]),
   stubAuthUser: (
-    args: { name?: string; userId?: string; roles?: Array<UserRole> } = {},
+    args: { name?: string; userId?: string; roles?: Array<UserRole>; apArea?: ApArea } = {},
   ): Promise<[Response, Response, Response]> =>
-    Promise.all([stubUser(args.name || 'john smith'), stubUserRoles(), stubProfile(args.roles || [], args.userId)]),
+    Promise.all([
+      stubUser(args.name || 'john smith'),
+      stubUserRoles(),
+      stubProfile(args.roles || [], args.userId, true, args.apArea),
+    ]),
 }
