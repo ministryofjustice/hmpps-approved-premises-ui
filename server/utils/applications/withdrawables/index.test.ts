@@ -70,11 +70,16 @@ describe('withdrawableTypeRadioOptions', () => {
     it('returns the withdrawables in radio input format', () => {
       const paWithdrawable = withdrawableFactory.build({ type: 'placement_application' })
       const prWithdrawable = withdrawableFactory.build({ type: 'placement_request' })
+      const applicationWithdrawable = withdrawableFactory.build({ type: 'application' })
       const booking = bookingFactory.build()
       const bookingWithdrawable = withdrawableFactory.build({ type: 'booking', id: booking.id })
 
       expect(
-        withdrawableRadioOptions([paWithdrawable, prWithdrawable, bookingWithdrawable], paWithdrawable.id, [booking]),
+        withdrawableRadioOptions(
+          [paWithdrawable, prWithdrawable, bookingWithdrawable, applicationWithdrawable],
+          paWithdrawable.id,
+          [booking],
+        ),
       ).toEqual([
         {
           text: paWithdrawable.dates
@@ -118,6 +123,11 @@ describe('withdrawableTypeRadioOptions', () => {
             .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
             .join(', ')}`,
           value: bookingWithdrawable.id,
+        },
+        {
+          checked: false,
+          text: 'Application',
+          value: applicationWithdrawable.id,
         },
       ])
     })
