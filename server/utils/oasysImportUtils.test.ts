@@ -353,5 +353,19 @@ describe('OASysImportUtils', () => {
         },
       ])
     })
+
+    it('can handle being passed null as a selected item', () => {
+      const needLinkedToReoffendingA = oasysSelectionFactory.needsLinkedToReoffending().build({ section: 1 })
+
+      const items = sectionCheckBoxes([needLinkedToReoffendingA], [null])
+
+      expect(items).toEqual([
+        {
+          checked: false,
+          text: `1. ${sentenceCase(needLinkedToReoffendingA.name)}`,
+          value: '1',
+        },
+      ])
+    })
   })
 })
