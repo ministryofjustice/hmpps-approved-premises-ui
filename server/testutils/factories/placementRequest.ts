@@ -33,6 +33,7 @@ export const placementRequestFactory = Factory.define<PlacementRequest>(() => {
     assessor: userFactory.build(),
     isParole: false,
     booking: bookingSummary.build({}),
+    isWithdrawn: false,
   }
 })
 
