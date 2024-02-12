@@ -187,7 +187,7 @@ export interface IdentityBar {
     html: string
   }
   classes?: string
-  menus: Array<IdentityBarMenu>
+  menus?: Array<IdentityBarMenu>
 }
 
 export interface IdentityBarMenu {

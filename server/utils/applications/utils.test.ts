@@ -38,6 +38,7 @@ import {
   mapTimelineEventsForUi,
   statusTags,
   withdrawCell,
+  withdrawnStatusTag,
 } from './utils'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { RestrictedPersonError } from '../errors'
@@ -933,13 +934,17 @@ describe('utils', () => {
           typeof durationAndArrivalDateFromPlacementApplication
         >
       ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
-      placementApplications[0].canBeWithdrawn = undefined
 
-      expect(mapPlacementApplicationToSummaryCards(placementApplications, application, user)).toEqual([
+      const withdrawnPlacementApplications = placementApplicationFactory.buildList(1)
+
+      expect(mapPlacementApplicationToSummaryCards(withdrawnPlacementApplications, application, user)).toEqual([
         {
           card: {
-            title: { headingLevel: '3', text: DateFormats.isoDateToUIDate(placementApplications[0].createdAt) },
-            attributes: { 'data-cy-placement-application-id': placementApplications[0].id },
+            title: {
+              headingLevel: '3',
+              text: DateFormats.isoDateToUIDate(withdrawnPlacementApplications[0].createdAt),
+            },
+            attributes: { 'data-cy-placement-application-id': withdrawnPlacementApplications[0].id },
             actions: {
               items: [],
             },
@@ -967,6 +972,61 @@ describe('utils', () => {
               },
               value: { text: lengthOfStayForUI(duration) },
             },
+          ],
+        },
+      ])
+    })
+
+    it('includes a withdrawn flag when the placement application is withdrawn', () => {
+      ;(
+        retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFunction<
+          typeof retrieveOptionalQuestionResponseFromFormArtifact
+        >
+      ).mockReturnValue('rotl')
+      ;(
+        durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
+          typeof durationAndArrivalDateFromPlacementApplication
+        >
+      ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
+
+      const withdrawnPlacementApplications = placementApplicationFactory.buildList(1, { isWithdrawn: true })
+
+      expect(mapPlacementApplicationToSummaryCards(withdrawnPlacementApplications, application, user)).toEqual([
+        {
+          card: {
+            title: {
+              headingLevel: '3',
+              text: DateFormats.isoDateToUIDate(withdrawnPlacementApplications[0].createdAt),
+            },
+            attributes: { 'data-cy-placement-application-id': withdrawnPlacementApplications[0].id },
+            actions: {
+              items: [],
+            },
+          },
+          rows: [
+            {
+              key: {
+                text: 'Reason for placement request',
+              },
+              value: {
+                text: 'Release on Temporary Licence (ROTL)',
+              },
+            },
+            {
+              key: {
+                text: 'Arrival date',
+              },
+              value: {
+                text: DateFormats.isoDateToUIDate(arrivalDate),
+              },
+            },
+            {
+              key: {
+                text: 'Length of stay',
+              },
+              value: { text: lengthOfStayForUI(duration) },
+            },
+            withdrawnStatusTag,
           ],
         },
       ])

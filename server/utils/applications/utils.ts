@@ -6,6 +6,7 @@ import type {
   JourneyType,
   PageResponse,
   SelectOption,
+  SummaryListItem,
   SummaryListWithCard,
   TableCell,
   TableRow,
@@ -339,6 +340,35 @@ const mapPlacementApplicationToSummaryCards = (
       })
     }
 
+    const rows: Array<SummaryListItem> = [
+      {
+        key: { text: 'Reason for placement request' },
+        value: { text: reasonsDictionary[reasonForPlacement] || 'None supplied' },
+      },
+      ...datesOfPlacements
+        .map(({ expectedArrival, duration }) => {
+          return [
+            {
+              key: { text: 'Arrival date' },
+              value: {
+                text: expectedArrival ? DateFormats.isoDateToUIDate(expectedArrival) : 'None supplied',
+              },
+            },
+            {
+              key: { text: 'Length of stay' },
+              value: {
+                text: lengthOfStayForUI(duration),
+              },
+            },
+          ]
+        })
+        .flat(),
+    ]
+
+    if (placementApplication.isWithdrawn) {
+      rows.push(withdrawnStatusTag)
+    }
+
     return {
       card: {
         title: {
@@ -352,32 +382,18 @@ const mapPlacementApplicationToSummaryCards = (
           items: actionItems,
         },
       },
-      rows: [
-        {
-          key: { text: 'Reason for placement request' },
-          value: { text: reasonsDictionary[reasonForPlacement] || 'None supplied' },
-        },
-        ...datesOfPlacements
-          .map(({ expectedArrival, duration }) => {
-            return [
-              {
-                key: { text: 'Arrival date' },
-                value: {
-                  text: expectedArrival ? DateFormats.isoDateToUIDate(expectedArrival) : 'None supplied',
-                },
-              },
-              {
-                key: { text: 'Length of stay' },
-                value: {
-                  text: lengthOfStayForUI(duration),
-                },
-              },
-            ]
-          })
-          .flat(),
-      ],
+      rows,
     }
   })
+}
+
+export const withdrawnStatusTag = {
+  key: { text: 'Status' },
+  value: {
+    html: `<strong class="govuk-tag govuk-tag--red">
+        Withdrawn
+      </strong>`,
+  },
 }
 
 const lengthOfStayForUI = (duration: number) => {
