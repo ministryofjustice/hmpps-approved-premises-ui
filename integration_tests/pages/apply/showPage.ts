@@ -114,7 +114,7 @@ export default class ShowPage extends Page {
   }
 
   clickRequestAPlacementTab() {
-    cy.get('a').contains('Placement requests').click()
+    cy.get('a').contains('Request for placement').click()
   }
 
   clickWithdraw(placementRequestId: string) {

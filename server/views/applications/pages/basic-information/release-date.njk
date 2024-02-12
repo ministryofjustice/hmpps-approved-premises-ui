@@ -22,16 +22,33 @@
       fetchContext()
     )
   }}
+  {% set html %}
+  <p>
+    Your application will be sent to the central referral unit (CRU) to match the person to a suitable AP. You will receive an email
+    when a placement has been booked.
+  </p>
+  {% endset -%}
+    {{ govukNotificationBanner({
+        html: html
+    }) }}
   {% endset -%}
 
   {% set bannerHTML %}
   {% set html %}
   <p>
-        You can still submit your application.
-      </p>
+    You can still submit your application.
+  </p>
   <p>
-        An assessor will make a decision on suitability for an Approved Premises placement.
-      </p>
+    An assessor will make a decision on suitability for an Approved Premises placement.
+  </p>
+  <p>
+    You will need to return to the AP service to request a placement when a release date is known. Once you have requested a placement,
+    the CRU will match person to a suitable AP and make booking.
+  </p>
+  <p>
+    If you have any questions, refer to the AP service guidance on the AP Sharepoint. The guidance explains who you can contact for
+    further information.
+  </p>
   {% endset %}
 
   {{ govukNotificationBanner({

@@ -19,7 +19,7 @@ export const sections = {
   assess: {
     id: 'assess',
     title: 'Assess Approved Premises applications',
-    description: 'Assess applications for Approved Premises placements.',
+    description: 'Assess applications for Approved Premises placements and review requests for placement.',
     shortTitle: 'Assess',
     href: assessPaths.assessments.index({}),
   },
@@ -33,8 +33,8 @@ export const sections = {
   },
   workflow: {
     id: 'workflow',
-    title: 'Manage case allocations',
-    description: 'Re-allocate cases to be assessed or matched to manage staff workloads',
+    title: 'Manage task allocations',
+    description: 'Re-allocate assessment and matching tasks to manage staff workloads',
     shortTitle: 'Task allocation',
     href: taskPaths.tasks.index({}),
   },
@@ -54,7 +54,7 @@ export const sections = {
   },
   placementRequests: {
     id: 'placementRequests',
-    title: 'Record and update placement details',
+    title: 'CRU Dashboard',
     description: ' View applications that require matching. Record and update details of Approved Premises placements.',
     shortTitle: 'CRU dashboard',
     href: adminPaths.admin.placementRequests.index({}),

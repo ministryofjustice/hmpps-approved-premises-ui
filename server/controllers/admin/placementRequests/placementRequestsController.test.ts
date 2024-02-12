@@ -64,7 +64,7 @@ describe('PlacementRequestsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
-        pageHeading: 'Record and update placement details',
+        pageHeading: 'CRU Dashboard',
         placementRequests: paginatedResponse.data,
         status: 'notMatched',
         pageNumber: Number(paginatedResponse.pageNumber),
@@ -106,7 +106,7 @@ describe('PlacementRequestsController', () => {
       await requestHandler(notMatchedRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
-        pageHeading: 'Record and update placement details',
+        pageHeading: 'CRU Dashboard',
         placementRequests: paginatedResponse.data,
         status,
         pageNumber: Number(paginatedResponse.pageNumber),
@@ -152,7 +152,7 @@ describe('PlacementRequestsController', () => {
       )
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/index', {
-        pageHeading: 'Record and update placement details',
+        pageHeading: 'CRU Dashboard',
         placementRequests: paginatedResponse.data,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
@@ -213,7 +213,7 @@ describe('PlacementRequestsController', () => {
       await requestHandler(searchRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
-        pageHeading: 'Record and update placement details',
+        pageHeading: 'CRU Dashboard',
         placementRequests: paginatedResponse.data,
         crnOrName: undefined,
         pageNumber: Number(paginatedResponse.pageNumber),
@@ -242,7 +242,7 @@ describe('PlacementRequestsController', () => {
       await requestHandler(searchRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
-        pageHeading: 'Record and update placement details',
+        pageHeading: 'CRU Dashboard',
         placementRequests: paginatedResponse.data,
         crnOrName: 'CRN123',
         pageNumber: Number(paginatedResponse.pageNumber),
@@ -265,7 +265,7 @@ describe('PlacementRequestsController', () => {
       await requestHandler(searchRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
-        pageHeading: 'Record and update placement details',
+        pageHeading: 'CRU Dashboard',
         placementRequests: paginatedResponse.data,
         crnOrName: undefined,
         tier: 'A1',
@@ -296,7 +296,7 @@ describe('PlacementRequestsController', () => {
       await requestHandler(searchRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
-        pageHeading: 'Record and update placement details',
+        pageHeading: 'CRU Dashboard',
         placementRequests: paginatedResponse.data,
         crnOrName: undefined,
         tier: 'A1',
@@ -327,7 +327,7 @@ describe('PlacementRequestsController', () => {
       await requestHandler(searchRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('admin/placementRequests/search', {
-        pageHeading: 'Record and update placement details',
+        pageHeading: 'CRU Dashboard',
         placementRequests: paginatedResponse.data,
         crnOrName: 'CRN123',
         pageNumber: Number(paginatedResponse.pageNumber),

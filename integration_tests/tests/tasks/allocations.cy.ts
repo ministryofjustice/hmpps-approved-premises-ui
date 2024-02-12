@@ -12,7 +12,7 @@ import {
 } from '../../../server/testutils/factories'
 import { qualificationFactory } from '../../../server/testutils/factories/user'
 
-context('Tasks', () => {
+context('Task Allocation', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')

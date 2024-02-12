@@ -11,7 +11,7 @@ export default class ListPage extends Page {
     private readonly allocatedTasks: Array<Task>,
     private readonly unallocatedTasks: Array<Task>,
   ) {
-    super('Tasks')
+    super('Task Allocation')
     this.allocatedTasks = allocatedTasks
     this.unallocatedTasks = unallocatedTasks
   }

@@ -18,8 +18,18 @@ const statusCell = (task: Task): TableCell => ({
   html: statusBadge(task),
 })
 
+const getTaskType = (taskType: string): string => {
+  if (taskType === 'PlacementRequest') {
+    return 'Match request'
+  }
+  if (taskType === 'PlacementApplication') {
+    return 'Request for placement'
+  }
+  return sentenceCase(taskType)
+}
+
 const taskTypeCell = (task: Task): TableCell => ({
-  html: `<strong class="govuk-tag">${sentenceCase(task.taskType)}</strong>`,
+  html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
 })
 
 const allocationCell = (task: Task): TableCell => ({
@@ -149,4 +159,5 @@ export {
   tasksTableRows,
   unallocatedTableRows,
   taskParams,
+  getTaskType,
 }

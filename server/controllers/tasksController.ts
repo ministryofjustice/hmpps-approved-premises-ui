@@ -39,7 +39,7 @@ export default class TasksController {
       const apAreas = await this.apAreaService.getApAreas(req.user.token)
 
       res.render('tasks/index', {
-        pageHeading: 'Tasks',
+        pageHeading: 'Task Allocation',
         tasks: tasks.data,
         allocatedFilter,
         apAreas,
