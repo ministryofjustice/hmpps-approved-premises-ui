@@ -11,16 +11,18 @@ export const withdrawableTypeRadioOptions = (
   withdrawables: Array<Withdrawable>,
   selectedItem?: SelectedWithdrawableType,
 ) => {
-  const radioItems: Array<RadioItem> = [
-    {
+  const radioItems: Array<RadioItem> = []
+
+  if (withdrawables.find(w => w.type === 'application')) {
+    radioItems.push({
       text: 'Application',
       value: 'application',
       checked: selectedItem === 'application',
       hint: {
         text: `This will withdraw the application, assessment, and any related placement requests and bookings.`,
       },
-    },
-  ]
+    })
+  }
 
   if (withdrawables.find(w => w.type === 'booking')) {
     radioItems.push({

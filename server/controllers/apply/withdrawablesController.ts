@@ -73,6 +73,10 @@ export default class WithdrawalsController {
         )
       }
 
+      if (withdrawable.type === 'application') {
+        return res.redirect(302, applyPaths.applications.withdraw.new({ id: selectedWithdrawable }))
+      }
+
       throw new Error(`Invalid withdrawable type ${withdrawable.type}`)
     }
   }
