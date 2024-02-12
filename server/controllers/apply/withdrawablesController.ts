@@ -55,8 +55,9 @@ export default class WithdrawalsController {
       const withdrawable = (await this.applicationService.getWithdrawables(req.user.token, id)).find(
         w => w.id === selectedWithdrawable,
       )
+
       if (!withdrawable) {
-        return res.redirect(302, applyPaths.applications.withdraw.new({ id }))
+        throw new Error(`No withdrawable found for ID: ${id}`)
       }
 
       if (withdrawable.type === 'placement_request') {
