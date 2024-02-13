@@ -48,25 +48,11 @@ import ReasonForPlacement, {
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
+import { applicationStatuses, getStatus } from './getStatus'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
 export { applicationIdentityBar } from './applicationIdentityBar'
-
-const applicationStatuses: Record<ApprovedPremisesApplicationStatus, string> = {
-  started: 'Application started',
-  submitted: 'Application submitted',
-  rejected: 'Application rejected',
-  awaitingAssesment: 'Awaiting assessment',
-  unallocatedAssesment: 'Unallocated assessment',
-  assesmentInProgress: 'Assessment in progress',
-  awaitingPlacement: 'Awaiting placement',
-  placementAllocated: 'Placement allocated',
-  inapplicable: 'Application inapplicable',
-  withdrawn: 'Application withdrawn',
-  requestedFurtherInformation: 'Further information requested',
-  pendingPlacementRequest: 'Pending placement request',
-}
 
 const applicationTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => [
@@ -118,34 +104,6 @@ const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(ti
 
 const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
   arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'
-
-const statusTags = (): Record<ApprovedPremisesApplicationStatus, string> => {
-  const colours: Record<ApprovedPremisesApplicationStatus, string> = {
-    started: 'blue',
-    submitted: '',
-    rejected: 'red',
-    awaitingAssesment: 'blue',
-    unallocatedAssesment: 'blue',
-    assesmentInProgress: 'blue',
-    awaitingPlacement: 'blue',
-    placementAllocated: 'pink',
-    inapplicable: 'red',
-    withdrawn: 'red',
-    requestedFurtherInformation: 'yellow',
-    pendingPlacementRequest: 'blue',
-  }
-  return Object.keys(applicationStatuses).reduce(
-    (item, key) => {
-      item[key] = `<strong class="govuk-tag govuk-tag--${colours[key]}">${applicationStatuses[key]}</strong>`
-      return item
-    },
-    {} as Record<ApprovedPremisesApplicationStatus, string>,
-  )
-}
-
-const getStatus = (application: ApplicationSummary): string => {
-  return statusTags()[application.status]
-}
 
 export const textValue = (value: string) => {
   return { text: value }
@@ -459,7 +417,6 @@ export {
   mapTimelineEventsForUi,
   mapPlacementApplicationToSummaryCards,
   lengthOfStayForUI,
-  statusTags,
   applicationStatusSelectOptions,
   appealDecisionRadioItems,
 }
