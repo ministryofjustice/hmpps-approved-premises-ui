@@ -77,28 +77,6 @@ export default {
         jsonBody: tasks,
       },
     }),
-  stubTasksOfType: (args: { tasks: Array<Task>; type: string; page: string }): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'GET',
-        urlPathPattern: paths.tasks.type.index({ taskType: args.type }),
-        queryParameters: {
-          page: {
-            equalTo: args.page || '1',
-          },
-        },
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-          'X-Pagination-TotalPages': '10',
-          'X-Pagination-TotalResults': '100',
-          'X-Pagination-PageSize': '10',
-        },
-        jsonBody: args.tasks,
-      },
-    }),
   stubTaskGet: (args: { task: Task; users: Array<User> }): SuperAgentRequest =>
     stubFor({
       request: {

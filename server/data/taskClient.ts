@@ -48,14 +48,6 @@ export default class TaskClient {
     return (await this.restClient.get({ path: paths.tasks.index.pattern })) as Promise<Array<CategorisedTask>>
   }
 
-  async allByType(taskType: string, page = 1): Promise<PaginatedResponse<Task>> {
-    return this.restClient.getPaginatedResponse({
-      path: paths.tasks.type.index({ taskType }),
-      page: page.toString(),
-      query: {},
-    })
-  }
-
   async find(applicationId: string, taskType: string): Promise<TaskWrapper> {
     return (await this.restClient.get({
       path: paths.tasks.show({ id: applicationId, taskType }),

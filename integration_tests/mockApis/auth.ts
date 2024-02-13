@@ -4,6 +4,7 @@ import { ApArea, ApprovedPremisesUserRole as UserRole } from '../../server/@type
 
 import { getMatchingRequests, stubFor } from './setup'
 import tokenVerification from './tokenVerification'
+import { apAreaFactory } from '../../server/testutils/factories'
 
 const createToken = () => {
   const payload = {
@@ -135,11 +136,19 @@ const stubUser = (name: string) =>
         username: 'USER1',
         active: true,
         name,
+        ...defaultProfile,
       },
     },
   })
 
 export const defaultUserId = '70596333-63d4-4fb2-8acc-9ca55563d878'
+
+const defaultProfile = {
+  id: defaultUserId,
+  roles: [],
+  isActive: true,
+  apArea: apAreaFactory.build(),
+}
 
 const stubProfile = (roles = [], userId = defaultUserId, isActive = true, apArea = undefined) =>
   stubFor({
@@ -153,6 +162,7 @@ const stubProfile = (roles = [], userId = defaultUserId, isActive = true, apArea
         'Content-Type': 'application/json;charset=UTF-8',
       },
       jsonBody: {
+        ...defaultProfile,
         id: userId,
         roles,
         isActive,

@@ -1,4 +1,5 @@
 import { placementApplicationTaskFactory } from '../../../server/testutils/factories'
+import { defaultUserId } from '../../mockApis/auth'
 import ListPage from '../../pages/match/listPlacementRequestsPage'
 
 describe('List placement applications', () => {
@@ -11,9 +12,24 @@ describe('List placement applications', () => {
     const page2PlacementApplications = placementApplicationTaskFactory.buildList(10)
     const page3PlacementApplications = placementApplicationTaskFactory.buildList(10)
 
-    cy.task('stubTasksOfType', { type: 'placement-application', tasks: page1PlacementApplications, page: '1' })
-    cy.task('stubTasksOfType', { type: 'placement-application', tasks: page2PlacementApplications, page: '2' })
-    cy.task('stubTasksOfType', { type: 'placement-application', tasks: page3PlacementApplications, page: '3' })
+    cy.task('stubGetAllTasks', {
+      type: 'PlacementApplication',
+      tasks: page1PlacementApplications,
+      page: '1',
+      allocatedToUserId: defaultUserId,
+    })
+    cy.task('stubGetAllTasks', {
+      type: 'PlacementApplication',
+      tasks: page2PlacementApplications,
+      page: '2',
+      allocatedToUserId: defaultUserId,
+    })
+    cy.task('stubGetAllTasks', {
+      type: 'PlacementApplication',
+      tasks: page3PlacementApplications,
+      page: '3',
+      allocatedToUserId: defaultUserId,
+    })
 
     // When I visit the placementRequests dashboard
     const listPage = ListPage.visit()

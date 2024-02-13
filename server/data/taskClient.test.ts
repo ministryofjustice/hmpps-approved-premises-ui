@@ -27,7 +27,7 @@ describeClient('taskClient', provider => {
 
       const apAreaId = 'ap-area-id'
       const userId = 'user-id'
-      const taskType: TaskType = 'placement-application'
+      const taskType: TaskType = 'PlacementRequest'
 
       provider.addInteraction({
         state: 'Server is healthy',
@@ -69,47 +69,6 @@ describeClient('taskClient', provider => {
         sortBy: 'createdAt',
         taskType,
       })
-
-      expect(result).toEqual({
-        data: tasks,
-        pageNumber: '1',
-        totalPages: '10',
-        totalResults: '100',
-        pageSize: '10',
-      })
-    })
-  })
-
-  describe('allByType', () => {
-    it('makes a get request to the tasks type endpoint', async () => {
-      const tasks = taskFactory.buildList(2)
-
-      provider.addInteraction({
-        state: 'Server is healthy',
-        uponReceiving: `A request to get a list of tasks of a type`,
-        withRequest: {
-          method: 'GET',
-          path: paths.tasks.type.index({ taskType: 'placement-application' }),
-          query: {
-            page: '1',
-          },
-          headers: {
-            authorization: `Bearer ${token}`,
-            'X-Service-Name': 'approved-premises',
-          },
-        },
-        willRespondWith: {
-          status: 200,
-          body: tasks,
-          headers: {
-            'X-Pagination-TotalPages': '10',
-            'X-Pagination-TotalResults': '100',
-            'X-Pagination-PageSize': '10',
-          },
-        },
-      })
-
-      const result = await taskClient.allByType('placement-application')
 
       expect(result).toEqual({
         data: tasks,
