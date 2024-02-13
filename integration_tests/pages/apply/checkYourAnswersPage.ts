@@ -29,7 +29,7 @@ export default class CheckYourAnswersPage extends ApplyPage {
       this.assertDefinition('Name', person.name)
       this.assertDefinition('CRN', person.crn)
       this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
-      this.assertDefinition('NOMS Number', person.nomsNumber)
+      this.assertDefinition('NOMIS Number', person.nomsNumber)
       this.assertDefinition('Nationality', person.nationality)
       this.assertDefinition('Religion or belief', person.religionOrBelief)
       this.assertDefinition('Sex', person.sex)

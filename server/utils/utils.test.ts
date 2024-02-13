@@ -87,7 +87,7 @@ describe('removeBlankSummaryListItems', () => {
       },
       {
         key: {
-          text: 'NOMS Number',
+          text: 'NOMIS Number',
         },
         value: {
           html: '<strong>Some HTML</strong>',
@@ -122,7 +122,7 @@ describe('removeBlankSummaryListItems', () => {
       },
       {
         key: {
-          text: 'NOMS Number',
+          text: 'NOMIS Number',
         },
         value: {
           html: '<strong>Some HTML</strong>',
