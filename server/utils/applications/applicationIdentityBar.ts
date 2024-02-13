@@ -1,6 +1,7 @@
 import { ApprovedPremisesApplication as Application, ApprovedPremisesUserRole, FullPerson } from '../../@types/shared'
 import { IdentityBar, IdentityBarMenuItem } from '../../@types/ui'
 import paths from '../../paths/apply'
+import { getStatus } from './getStatus'
 
 export const applicationTitle = (application: Application, pageHeading: string): string => {
   let title = `
@@ -10,6 +11,10 @@ export const applicationTitle = (application: Application, pageHeading: string):
 
   if (application.type === 'Offline') {
     title += '<strong class="govuk-tag govuk-tag--grey govuk-!-margin-5">Offline application</strong>'
+  }
+
+  if (application.status === 'withdrawn') {
+    title += getStatus(application, 'govuk-!-margin-5')
   }
 
   return title

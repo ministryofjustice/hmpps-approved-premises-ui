@@ -18,7 +18,7 @@ export const applicationStatuses: Record<Status, string> = {
   pendingPlacementRequest: 'Pending placement request',
 } as const
 
-export const statusTags = (): Record<Status, string> => {
+export const statusTags = (classes?: string): Record<Status, string> => {
   const colours: Record<Status, string> = {
     started: 'blue',
     submitted: '',
@@ -35,13 +35,14 @@ export const statusTags = (): Record<Status, string> => {
   } as const
   return Object.keys(applicationStatuses).reduce(
     (item, key) => {
-      item[key] = `<strong class="govuk-tag govuk-tag--${colours[key]}">${applicationStatuses[key]}</strong>`
+      item[key] =
+        `<strong class="govuk-tag govuk-tag--${colours[key]} ${classes?.length ? classes : ''}">${applicationStatuses[key]}</strong>`
       return item
     },
     {} as Record<Status, string>,
   )
 }
 
-export const getStatus = (application: ApplicationSummary) => {
-  return statusTags()[application.status]
+export const getStatus = (application: ApplicationSummary, classes?: string) => {
+  return statusTags(classes)[application.status]
 }

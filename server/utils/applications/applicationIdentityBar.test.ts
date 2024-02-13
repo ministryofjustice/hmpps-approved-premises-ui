@@ -14,7 +14,7 @@ describe('applicationIdentityBar', () => {
       `)
     })
 
-    it('should return the show a tag for an offline application', () => {
+    it('should show a tag for an offline application', () => {
       const person = personFactory.build()
       const application = applicationFactory.build({ person, type: 'Offline' })
 
@@ -22,6 +22,17 @@ describe('applicationIdentityBar', () => {
         <span class="govuk-caption-l">heading</span>
         <h1 class="govuk-heading-l">${person.name}</h1>
         <strong class="govuk-tag govuk-tag--grey govuk-!-margin-5">Offline application</strong>
+      `)
+    })
+
+    it('should show a tag for a withdrawn application', () => {
+      const person = personFactory.build()
+      const application = applicationFactory.build({ person, status: 'withdrawn' })
+
+      expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
+        <span class="govuk-caption-l">heading</span>
+        <h1 class="govuk-heading-l">${person.name}</h1>
+        <strong class="govuk-tag govuk-tag--red govuk-!-margin-5">Application withdrawn</strong>
       `)
     })
   })
