@@ -132,5 +132,15 @@ describe('adminIdentityBar', () => {
         menus: [{ items: adminActions(placementRequestDetail) }],
       })
     })
+
+    it('should return the bar without a menu if the placement request has been withdrawn', () => {
+      const placementRequestDetail = placementRequestDetailFactory.build({ isWithdrawn: true })
+
+      expect(adminIdentityBar(placementRequestDetail)).toEqual({
+        title: {
+          html: title(placementRequestDetail),
+        },
+      })
+    })
   })
 })

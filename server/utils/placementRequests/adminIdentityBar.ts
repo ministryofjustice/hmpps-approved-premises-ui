@@ -6,12 +6,19 @@ import applyPaths from '../../paths/apply'
 import adminPaths from '../../paths/admin'
 import { nameOrPlaceholderCopy } from '../personUtils'
 
-export const adminIdentityBar = (placementRequest: PlacementRequestDetail): IdentityBar => ({
-  title: {
-    html: title(placementRequest),
-  },
-  menus: [{ items: adminActions(placementRequest) }],
-})
+export const adminIdentityBar = (placementRequest: PlacementRequestDetail): IdentityBar => {
+  const identityBar: IdentityBar = {
+    title: {
+      html: title(placementRequest),
+    },
+  }
+
+  if (!placementRequest.isWithdrawn) {
+    identityBar.menus = [{ items: adminActions(placementRequest) }]
+  }
+
+  return identityBar
+}
 
 export const adminActions = (placementRequest: PlacementRequestDetail): Array<IdentityBarMenuItem> => {
   if (placementRequest.status === 'matched') {

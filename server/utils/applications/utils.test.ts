@@ -1,4 +1,4 @@
-import { ApplicationSortField, ApprovedPremisesApplicationStatus } from '@approved-premises/api'
+import { ApplicationSortField } from '@approved-premises/api'
 import { isAfter } from 'date-fns'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
 import {
@@ -23,7 +23,6 @@ import { isApplicableTier, isFullPerson, nameOrPlaceholderCopy, tierBadge } from
 import {
   appealDecisionRadioItems,
   applicationStatusSelectOptions,
-  applicationStatuses,
   applicationTableRows,
   dashboardTableHeader,
   dashboardTableRows,
@@ -36,8 +35,8 @@ import {
   lengthOfStayForUI,
   mapPlacementApplicationToSummaryCards,
   mapTimelineEventsForUi,
-  statusTags,
   withdrawCell,
+  withdrawnStatusTag,
 } from './utils'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { RestrictedPersonError } from '../errors'
@@ -453,37 +452,6 @@ describe('utils', () => {
             },
           ],
         ])
-      })
-    })
-  })
-
-  describe('statusTags', () => {
-    it('should return a list of tags for each status', () => {
-      expect(statusTags()).toEqual({
-        assesmentInProgress: '<strong class="govuk-tag govuk-tag--blue">Assessment in progress</strong>',
-        awaitingAssesment: '<strong class="govuk-tag govuk-tag--blue">Awaiting assessment</strong>',
-        awaitingPlacement: '<strong class="govuk-tag govuk-tag--blue">Awaiting placement</strong>',
-        inapplicable: '<strong class="govuk-tag govuk-tag--red">Application inapplicable</strong>',
-        placementAllocated: '<strong class="govuk-tag govuk-tag--pink">Placement allocated</strong>',
-        rejected: '<strong class="govuk-tag govuk-tag--red">Application rejected</strong>',
-        requestedFurtherInformation:
-          '<strong class="govuk-tag govuk-tag--yellow">Further information requested</strong>',
-        started: '<strong class="govuk-tag govuk-tag--blue">Application started</strong>',
-        submitted: '<strong class="govuk-tag govuk-tag--">Application submitted</strong>',
-        unallocatedAssesment: '<strong class="govuk-tag govuk-tag--blue">Unallocated assessment</strong>',
-        withdrawn: '<strong class="govuk-tag govuk-tag--red">Application withdrawn</strong>',
-        pendingPlacementRequest: '<strong class="govuk-tag govuk-tag--blue">Pending placement request</strong>',
-      })
-    })
-  })
-
-  describe('getStatus', () => {
-    const statuses = Object.keys(applicationStatuses) as Array<ApprovedPremisesApplicationStatus>
-
-    statuses.forEach(status => {
-      it(`returns the correct tag for each an application with a status of ${status}`, () => {
-        const application = applicationSummaryFactory.build({ status })
-        expect(getStatus(application)).toEqual(statusTags()[status])
       })
     })
   })
@@ -933,13 +901,17 @@ describe('utils', () => {
           typeof durationAndArrivalDateFromPlacementApplication
         >
       ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
-      placementApplications[0].canBeWithdrawn = undefined
 
-      expect(mapPlacementApplicationToSummaryCards(placementApplications, application, user)).toEqual([
+      const withdrawnPlacementApplications = placementApplicationFactory.buildList(1)
+
+      expect(mapPlacementApplicationToSummaryCards(withdrawnPlacementApplications, application, user)).toEqual([
         {
           card: {
-            title: { headingLevel: '3', text: DateFormats.isoDateToUIDate(placementApplications[0].createdAt) },
-            attributes: { 'data-cy-placement-application-id': placementApplications[0].id },
+            title: {
+              headingLevel: '3',
+              text: DateFormats.isoDateToUIDate(withdrawnPlacementApplications[0].createdAt),
+            },
+            attributes: { 'data-cy-placement-application-id': withdrawnPlacementApplications[0].id },
             actions: {
               items: [],
             },
@@ -967,6 +939,61 @@ describe('utils', () => {
               },
               value: { text: lengthOfStayForUI(duration) },
             },
+          ],
+        },
+      ])
+    })
+
+    it('includes a withdrawn flag when the placement application is withdrawn', () => {
+      ;(
+        retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFunction<
+          typeof retrieveOptionalQuestionResponseFromFormArtifact
+        >
+      ).mockReturnValue('rotl')
+      ;(
+        durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
+          typeof durationAndArrivalDateFromPlacementApplication
+        >
+      ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
+
+      const withdrawnPlacementApplications = placementApplicationFactory.buildList(1, { isWithdrawn: true })
+
+      expect(mapPlacementApplicationToSummaryCards(withdrawnPlacementApplications, application, user)).toEqual([
+        {
+          card: {
+            title: {
+              headingLevel: '3',
+              text: DateFormats.isoDateToUIDate(withdrawnPlacementApplications[0].createdAt),
+            },
+            attributes: { 'data-cy-placement-application-id': withdrawnPlacementApplications[0].id },
+            actions: {
+              items: [],
+            },
+          },
+          rows: [
+            {
+              key: {
+                text: 'Reason for placement request',
+              },
+              value: {
+                text: 'Release on Temporary Licence (ROTL)',
+              },
+            },
+            {
+              key: {
+                text: 'Arrival date',
+              },
+              value: {
+                text: DateFormats.isoDateToUIDate(arrivalDate),
+              },
+            },
+            {
+              key: {
+                text: 'Length of stay',
+              },
+              value: { text: lengthOfStayForUI(duration) },
+            },
+            withdrawnStatusTag,
           ],
         },
       ])

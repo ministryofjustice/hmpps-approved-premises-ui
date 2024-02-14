@@ -1,58 +1,64 @@
 import { PlacementRequestDetail } from '../../@types/shared'
-import { SummaryList } from '../../@types/ui'
+import { SummaryList, SummaryListItem } from '../../@types/ui'
 import { allApTypes } from '../allAPTypes'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
+import { withdrawnStatusTag } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
 import { placementDates, placementLength } from '../matchUtils'
 
 export const adminSummary = (placementRequest: PlacementRequestDetail): SummaryList => {
   const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))
-  return {
-    rows: [
-      {
-        key: {
-          text: 'CRN',
-        },
-        value: {
-          text: placementRequest.person.crn,
-        },
+
+  const rows: Array<SummaryListItem> = [
+    {
+      key: {
+        text: 'CRN',
       },
-      {
-        key: {
-          text: 'Tier',
-        },
-        value: {
-          text: placementRequest.risks?.tier?.value?.level || 'N/A',
-        },
+      value: {
+        text: placementRequest.person.crn,
       },
-      {
-        key: {
-          text: placementRequest.isParole ? 'Date of decision' : 'Requested Arrival Date',
-        },
-        value: {
-          text: DateFormats.isoDateToUIDate(dates.startDate),
-        },
+    },
+    {
+      key: {
+        text: 'Tier',
       },
-      {
-        key: {
-          text: 'Requested Departure Date',
-        },
-        value: {
-          text: DateFormats.isoDateToUIDate(dates.endDate),
-        },
+      value: {
+        text: placementRequest.risks?.tier?.value?.level || 'N/A',
       },
-      {
-        key: {
-          text: 'Length of stay',
-        },
-        value: {
-          text: placementLength(dates.placementLength),
-        },
+    },
+    {
+      key: {
+        text: placementRequest.isParole ? 'Date of decision' : 'Requested Arrival Date',
       },
-      apTypeCell(placementRequest),
-      releaseTypeCell(placementRequest),
-    ],
+      value: {
+        text: DateFormats.isoDateToUIDate(dates.startDate),
+      },
+    },
+    {
+      key: {
+        text: 'Requested Departure Date',
+      },
+      value: {
+        text: DateFormats.isoDateToUIDate(dates.endDate),
+      },
+    },
+    {
+      key: {
+        text: 'Length of stay',
+      },
+      value: {
+        text: placementLength(dates.placementLength),
+      },
+    },
+    apTypeCell(placementRequest),
+    releaseTypeCell(placementRequest),
+  ]
+
+  if (placementRequest.isWithdrawn) {
+    rows.push(withdrawnStatusTag)
   }
+
+  return { rows }
 }
 
 export const apTypeCell = (placementRequest: PlacementRequestDetail) => {

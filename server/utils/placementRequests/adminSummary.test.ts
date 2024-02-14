@@ -2,91 +2,74 @@ import { ApType, ReleaseTypeOption } from '../../@types/shared'
 import { placementRequestDetailFactory } from '../../testutils/factories'
 import { allApTypes } from '../allAPTypes'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
+import { withdrawnStatusTag } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
 import { placementLength } from '../matchUtils'
 import { adminSummary, apTypeCell, releaseTypeCell } from './adminSummary'
 
 describe('adminSummary', () => {
-  it('should return a summary of a placement request', () => {
-    const placementRequest = placementRequestDetailFactory.build({
-      expectedArrival: '2022-01-01',
-      duration: 16,
-      isParole: false,
-    })
+  const placementRequest = placementRequestDetailFactory.build({
+    expectedArrival: '2022-01-01',
+    duration: 16,
+    isParole: false,
+  })
 
+  const adminSummaryRows = [
+    {
+      key: {
+        text: 'CRN',
+      },
+      value: {
+        text: placementRequest.person.crn,
+      },
+    },
+    {
+      key: {
+        text: 'Tier',
+      },
+      value: {
+        text: placementRequest.risks.tier.value?.level,
+      },
+    },
+
+    {
+      key: {
+        text: 'Requested Arrival Date',
+      },
+      value: {
+        text: DateFormats.isoDateToUIDate('2022-01-01'),
+      },
+    },
+    {
+      key: {
+        text: 'Requested Departure Date',
+      },
+      value: {
+        text: DateFormats.isoDateToUIDate('2022-01-17'),
+      },
+    },
+    {
+      key: {
+        text: 'Length of stay',
+      },
+      value: {
+        text: placementLength(16),
+      },
+    },
+    apTypeCell(placementRequest),
+    releaseTypeCell(placementRequest),
+  ]
+
+  it('should return a summary of a placement request', () => {
     expect(adminSummary(placementRequest)).toEqual({
-      rows: [
-        {
-          key: {
-            text: 'CRN',
-          },
-          value: {
-            text: placementRequest.person.crn,
-          },
-        },
-        {
-          key: {
-            text: 'Tier',
-          },
-          value: {
-            text: placementRequest.risks.tier.value?.level,
-          },
-        },
-        {
-          key: {
-            text: 'Requested Arrival Date',
-          },
-          value: {
-            text: DateFormats.isoDateToUIDate('2022-01-01'),
-          },
-        },
-        {
-          key: {
-            text: 'Requested Departure Date',
-          },
-          value: {
-            text: DateFormats.isoDateToUIDate('2022-01-17'),
-          },
-        },
-        {
-          key: {
-            text: 'Length of stay',
-          },
-          value: {
-            text: placementLength(16),
-          },
-        },
-        apTypeCell(placementRequest),
-        releaseTypeCell(placementRequest),
-      ],
+      rows: adminSummaryRows,
     })
   })
 
   it('should return a summary of a parole placement request', () => {
-    const placementRequest = placementRequestDetailFactory.build({
-      expectedArrival: '2022-01-01',
-      duration: 16,
-      isParole: true,
-    })
-
-    expect(adminSummary(placementRequest)).toEqual({
+    expect(adminSummary(placementRequestDetailFactory.build({ ...placementRequest, isParole: true }))).toEqual({
       rows: [
-        {
-          key: {
-            text: 'CRN',
-          },
-          value: {
-            text: placementRequest.person.crn,
-          },
-        },
-        {
-          key: {
-            text: 'Tier',
-          },
-          value: {
-            text: placementRequest.risks.tier.value?.level,
-          },
-        },
+        ...adminSummaryRows.slice(0, 2),
         {
           key: {
             text: 'Date of decision',
@@ -95,45 +78,22 @@ describe('adminSummary', () => {
             text: DateFormats.isoDateToUIDate('2022-01-01'),
           },
         },
-        {
-          key: {
-            text: 'Requested Departure Date',
-          },
-          value: {
-            text: DateFormats.isoDateToUIDate('2022-01-17'),
-          },
-        },
-        {
-          key: {
-            text: 'Length of stay',
-          },
-          value: {
-            text: placementLength(16),
-          },
-        },
-        apTypeCell(placementRequest),
-        releaseTypeCell(placementRequest),
+        ...adminSummaryRows.slice(3),
       ],
     })
   })
 
   it('should return N/A if there is no tier', () => {
-    const placementRequest = placementRequestDetailFactory.build({
-      expectedArrival: '2022-01-01',
-      duration: 16,
-      risks: undefined,
-    })
-
-    expect(adminSummary(placementRequest)).toEqual({
+    expect(
+      adminSummary(
+        placementRequestDetailFactory.build({
+          ...placementRequest,
+          risks: undefined,
+        }),
+      ),
+    ).toEqual({
       rows: [
-        {
-          key: {
-            text: 'CRN',
-          },
-          value: {
-            text: placementRequest.person.crn,
-          },
-        },
+        ...adminSummaryRows.slice(0, 1),
         {
           key: {
             text: 'Tier',
@@ -142,33 +102,14 @@ describe('adminSummary', () => {
             text: 'N/A',
           },
         },
-        {
-          key: {
-            text: 'Requested Arrival Date',
-          },
-          value: {
-            text: DateFormats.isoDateToUIDate('2022-01-01'),
-          },
-        },
-        {
-          key: {
-            text: 'Requested Departure Date',
-          },
-          value: {
-            text: DateFormats.isoDateToUIDate('2022-01-17'),
-          },
-        },
-        {
-          key: {
-            text: 'Length of stay',
-          },
-          value: {
-            text: placementLength(16),
-          },
-        },
-        apTypeCell(placementRequest),
-        releaseTypeCell(placementRequest),
+        ...adminSummaryRows.slice(2),
       ],
+    })
+  })
+
+  it('should return a status if the placement request has been withdrawn', () => {
+    expect(adminSummary(placementRequestDetailFactory.build({ ...placementRequest, isWithdrawn: true }))).toEqual({
+      rows: [...adminSummaryRows, withdrawnStatusTag],
     })
   })
 
@@ -176,11 +117,11 @@ describe('adminSummary', () => {
     it.each(Object.keys(allApTypes) as Array<ApType>)(
       'should return the correct type for AP Type %s',
       (apType: ApType) => {
-        const placementRequest = placementRequestDetailFactory.build({
+        const placementRequestWithApType = placementRequestDetailFactory.build({
           type: apType,
         })
 
-        expect(apTypeCell(placementRequest)).toEqual({
+        expect(apTypeCell(placementRequestWithApType)).toEqual({
           key: {
             text: 'Type of AP',
           },
@@ -196,11 +137,11 @@ describe('adminSummary', () => {
     it.each(Object.keys(allReleaseTypes) as Array<ReleaseTypeOption>)(
       'should return the correct type for release type %s',
       (releaseType: ReleaseTypeOption) => {
-        const placementRequest = placementRequestDetailFactory.build({
+        const placementRequestWithReleaseType = placementRequestDetailFactory.build({
           releaseType,
         })
 
-        expect(releaseTypeCell(placementRequest)).toEqual({
+        expect(releaseTypeCell(placementRequestWithReleaseType)).toEqual({
           key: {
             text: 'Release Type',
           },
