@@ -43,6 +43,10 @@ const nameAnchorCell = (task: Task): TableCell => ({
   }),
 })
 
+const apAreaCell = (task: Task): TableCell => ({
+  text: task.apArea?.name || 'No area supplied',
+})
+
 const statusBadge = (task: Task): string => {
   switch (task.status) {
     case 'complete':
@@ -77,6 +81,7 @@ const allocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
       allocationCell(task),
       statusCell(task),
       taskTypeCell(task),
+      apAreaCell(task),
     ])
   })
 
@@ -87,7 +92,7 @@ const unallocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   tasks.forEach(task => {
-    rows.push([nameAnchorCell(task), daysUntilDueCell(task), statusCell(task), taskTypeCell(task)])
+    rows.push([nameAnchorCell(task), daysUntilDueCell(task), statusCell(task), taskTypeCell(task), apAreaCell(task)])
   })
 
   return rows
@@ -115,6 +120,9 @@ const allocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirectio
     {
       text: 'Task type',
     },
+    {
+      text: 'AP area',
+    },
   ]
 }
 
@@ -129,6 +137,9 @@ const unAllocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirect
     },
     {
       text: 'Task type',
+    },
+    {
+      text: 'AP area',
     },
   ]
 }
