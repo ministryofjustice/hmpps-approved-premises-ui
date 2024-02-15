@@ -1070,7 +1070,7 @@
                 }
               ]
             },
-            "offencesAgainstChildren": {
+            "nonSexualOffencesAgainstChildren": {
               "anyOf": [
                 {
                   "type": "array",

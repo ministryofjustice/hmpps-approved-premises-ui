@@ -7,12 +7,11 @@ import TasklistPage from '../../../tasklistPage'
 const offences = {
   arsonOffence: 'Arson offence',
   hateCrime: 'Hate crime',
-  offencesAgainstChildren: 'Offences against children',
+  nonSexualOffencesAgainstChildren: 'Non-sexual offences against children',
   contactSexualOffencesAgainstAdults: 'Contact sexual offences against adults',
   nonContactSexualOffencesAgainstAdults: 'Non-contact sexual offences against adults',
   contactSexualOffencesAgainstChildren: 'Contact sexual offences against children',
   nonContactSexualOffencesAgainstChildren: 'Non-contact sexual offences against children',
-  otherSexualOffences: 'Other sexual offence',
 } as const
 
 const offencesList = Object.keys(offences)
