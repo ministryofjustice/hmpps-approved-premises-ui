@@ -41,6 +41,9 @@ describe('table', () => {
             {
               html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
             },
+            {
+              text: task.apArea?.name || 'No area supplied',
+            },
           ],
         ])
       })
@@ -60,6 +63,9 @@ describe('table', () => {
             },
             {
               html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
+            },
+            {
+              text: task.apArea?.name || 'No area supplied',
             },
           ],
         ])
@@ -82,6 +88,7 @@ describe('table', () => {
             {
               html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
             },
+            { text: task.apArea?.name || 'No area supplied' },
           ],
         ])
       })
@@ -98,6 +105,9 @@ describe('table', () => {
             },
             {
               html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
+            },
+            {
+              text: task.apArea?.name,
             },
           ],
         ])
@@ -122,6 +132,9 @@ describe('table', () => {
         {
           text: 'Task type',
         },
+        {
+          text: 'AP area',
+        },
       ])
     })
   })
@@ -145,6 +158,9 @@ describe('table', () => {
         },
         {
           text: 'Task type',
+        },
+        {
+          text: 'AP area',
         },
       ])
     })

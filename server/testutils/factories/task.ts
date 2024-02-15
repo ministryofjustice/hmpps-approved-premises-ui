@@ -5,6 +5,7 @@ import type { Task } from '@approved-premises/api'
 import { DateFormats } from '../../utils/dateUtils'
 
 import UserFactory from './user'
+import { apAreaFactory } from './referenceData'
 
 export default Factory.define<Task>(() => ({
   id: faker.string.uuid(),
@@ -15,4 +16,5 @@ export default Factory.define<Task>(() => ({
   taskType: faker.helpers.arrayElement(['Assessment', 'PlacementRequest', 'BookingAppeal']),
   personName: faker.person.fullName(),
   crn: `C${faker.number.int({ min: 100000, max: 999999 })}`,
+  apArea: apAreaFactory.build(),
 }))
