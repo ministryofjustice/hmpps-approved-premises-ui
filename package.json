@@ -146,7 +146,7 @@
     "reflect-metadata": "^0.2.0",
     "static-path": "^0.0.4",
     "superagent": "^8.0.2",
-    "typescript-json-schema": "^0.62.0",
+    "typescript-json-schema": "^0.63.0",
     "underscore": "^1.13.6",
     "url-value-parser": "^2.2.0",
     "uuid": "^9.0.0"
