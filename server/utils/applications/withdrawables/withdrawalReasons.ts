@@ -3,7 +3,15 @@ import { RadioItem } from '../../../@types/ui'
 import { convertKeyValuePairToRadioItems } from '../../formUtils'
 import { filterByType } from '../../utils'
 
-const withdrawalReasons: Record<WithdrawPlacementRequestReason, string> = {
+type UserFacingWithdrawalReasons = Exclude<
+  WithdrawPlacementRequestReason,
+  | 'RelatedPlacementApplicationWithdrawn'
+  | 'RelatedPlacementRequestWithdrawn'
+  | 'RelatedApplicationWithdrawn'
+  | 'WithdrawnByPP'
+>
+
+const withdrawalReasons: Record<UserFacingWithdrawalReasons, string> = {
   AlternativeProvisionIdentified: 'Another provision has been identified',
   ChangeInCircumstances: 'Their circumstances changed',
   ChangeInReleaseDecision: 'The release decision changed',

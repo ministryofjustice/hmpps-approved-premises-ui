@@ -18,4 +18,5 @@ export default Factory.define<ApplicationSummary>(() => ({
   risks: risksFactory.build(),
   createdByUserId: faker.string.uuid(),
   status: 'started',
+  isWithdrawn: faker.datatype.boolean(),
 }))
