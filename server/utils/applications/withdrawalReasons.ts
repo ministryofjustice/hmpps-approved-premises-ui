@@ -13,7 +13,7 @@ export type NewApplicationToBeSubmittedReasons = Extract<
 export type ApplicationProblemReasons = Extract<WithdrawalReason, (typeof applicationProblemReasons)[number]>
 export type OtherReasons = Extract<WithdrawalReason, (typeof placementNoLongerNeededReasons)[number]>
 
-export const withdrawlReasons: Record<WithdrawalReason, string> = {
+export const withdrawalReasons: Record<WithdrawalReason, string> = {
   death: 'The person died',
   other_accommodation_identified: 'Other accommodation has been identified',
   other: 'The placement is not needed for another reason',
@@ -24,15 +24,15 @@ export const withdrawlReasons: Record<WithdrawalReason, string> = {
 
 export const newApplicationToBeSubmittedOptions = filterByType<NewApplicationToBeSubmittedReasons>(
   newApplicationToBeSubmittedReasons,
-  withdrawlReasons,
+  withdrawalReasons,
 )
 export const applicationProblemOptions = filterByType<ApplicationProblemReasons>(
   applicationProblemReasons,
-  withdrawlReasons,
+  withdrawalReasons,
 )
 export const placementNoLongerNeededOptions = filterByType<OtherReasons>(
   placementNoLongerNeededReasons,
-  withdrawlReasons,
+  withdrawalReasons,
 )
 
 export const withdrawalRadioOptions = [

@@ -9,7 +9,7 @@ import { applicationShowPageTab } from '../../utils/applications/utils'
 import { WithdrawPlacementRequestReason } from '../../@types/shared/models/WithdrawPlacementRequestReason'
 import { Application } from '../../@types/shared'
 
-export default class WithdrawlsController {
+export default class WithdrawalsController {
   constructor(private readonly placementApplicationService: PlacementApplicationService) {}
 
   new(): RequestHandler {

@@ -7,7 +7,7 @@ import { ErrorWithData } from '../../../utils/errors'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
-export default class WithdrawlsController {
+export default class WithdrawalsController {
   constructor(private readonly placementRequestService: PlacementRequestService) {}
 
   new(): RequestHandler {
