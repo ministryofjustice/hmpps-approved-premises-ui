@@ -61,60 +61,63 @@ export const withdrawableRadioOptions = (
   selectedWithdrawable?: Withdrawable['id'],
   bookings: Array<Booking> = [],
 ): Array<RadioItem> => {
-  return withdrawables.map(withdrawable => {
-    if (withdrawable.type === 'placement_application') {
-      return {
-        text: withdrawable.dates
-          .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
-          .join(', '),
-        value: withdrawable.id,
-        checked: selectedWithdrawable === withdrawable.id,
+  return withdrawables
+    .filter(withdrawable => withdrawable.type !== 'application')
+    .map(withdrawable => {
+      if (withdrawable.type === 'placement_application') {
+        return {
+          text: withdrawable.dates
+            .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+            .join(', '),
+          value: withdrawable.id,
+          checked: selectedWithdrawable === withdrawable.id,
+        }
       }
-    }
-    if (withdrawable.type === 'placement_request') {
-      return {
-        text: withdrawable.dates
-          .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
-          .join(', '),
-        value: withdrawable.id,
-        checked: selectedWithdrawable === withdrawable.id,
-        hint: {
-          html: linkTo(
-            matchPaths.placementRequests.show,
-            { id: withdrawable.id },
-            {
-              text: 'See placement details (opens in a new tab)',
-              attributes: { 'data-cy-withdrawable-id': withdrawable.id },
-              openInNewTab: true,
-            },
-          ),
-        },
+      if (withdrawable.type === 'placement_request') {
+        return {
+          text: withdrawable.dates
+            .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+            .join(', '),
+          value: withdrawable.id,
+          checked: selectedWithdrawable === withdrawable.id,
+          hint: {
+            html: linkTo(
+              matchPaths.placementRequests.show,
+              { id: withdrawable.id },
+              {
+                text: 'See placement details (opens in a new tab)',
+                attributes: { 'data-cy-withdrawable-id': withdrawable.id },
+                openInNewTab: true,
+              },
+            ),
+          },
+        }
       }
-    }
-    if (withdrawable.type === 'booking') {
-      const booking = bookings.find(b => b.id === withdrawable.id)
+      if (withdrawable.type === 'booking') {
+        const booking = bookings.find(b => b.id === withdrawable.id)
 
-      if (!booking) throw new Error(`Booking not found for withdrawable: ${withdrawable.id}`)
+        if (!booking) throw new Error(`Booking not found for withdrawable: ${withdrawable.id}`)
 
-      return {
-        text: `${booking.premises.name} - ${withdrawable.dates
-          .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
-          .join(', ')}`,
-        value: withdrawable.id,
-        checked: selectedWithdrawable === withdrawable.id,
-        hint: {
-          html: linkTo(
-            managePaths.bookings.show,
-            { premisesId: booking.premises.id, bookingId: booking.id },
-            {
-              text: 'See placement details (opens in a new tab)',
-              attributes: { 'data-cy-withdrawable-id': withdrawable.id },
-              openInNewTab: true,
-            },
-          ),
-        },
+        return {
+          text: `${booking.premises.name} - ${withdrawable.dates
+            .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+            .join(', ')}`,
+          value: withdrawable.id,
+          checked: selectedWithdrawable === withdrawable.id,
+          hint: {
+            html: linkTo(
+              managePaths.bookings.show,
+              { premisesId: booking.premises.id, bookingId: booking.id },
+              {
+                text: 'See placement details (opens in a new tab)',
+                attributes: { 'data-cy-withdrawable-id': withdrawable.id },
+                openInNewTab: true,
+              },
+            ),
+          },
+        }
       }
-    }
-    throw new Error(`Unknown withdrawable type: ${withdrawable.type}`)
-  })
+
+      throw new Error(`Unknown withdrawable type: ${withdrawable.type}`)
+    })
 }
