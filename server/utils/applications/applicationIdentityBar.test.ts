@@ -38,8 +38,7 @@ describe('applicationIdentityBar', () => {
   })
 
   describe('applicationMenuItems', () => {
-    it('should return the old withdrawal link when NEW_WITHDRAWALS_FLOW_DISABLED is truthy', () => {
-      process.env.NEW_WITHDRAWALS_FLOW_DISABLED = '1'
+    it('should return the application menu items', () => {
       const application = applicationFactory.build()
       expect(applicationMenuItems(application, ['applicant'])).toEqual([
         {
@@ -53,27 +52,12 @@ describe('applicationIdentityBar', () => {
       ])
     })
 
-    it('should return the new withdrawal link when NEW_WITHDRAWALS_FLOW_DISABLED is falsy', () => {
-      process.env.NEW_WITHDRAWALS_FLOW_DISABLED = ''
-      const application = applicationFactory.build()
-      expect(applicationMenuItems(application, ['excluded_from_assess_allocation'])).toEqual([
-        {
-          text: 'Withdraw application',
-          href: paths.applications.withdrawables.show({ id: application.id }),
-          classes: 'govuk-button--secondary',
-          attributes: {
-            'data-cy-withdraw-application': application.id,
-          },
-        },
-      ])
-    })
-
     it('should return an appeals link when userRoles includes appeals_manager and the application has been rejected', () => {
       const application = applicationFactory.build({ status: 'rejected' })
       expect(applicationMenuItems(application, ['appeals_manager'])).toEqual([
         {
           text: 'Withdraw application',
-          href: paths.applications.withdrawables.show({ id: application.id }),
+          href: paths.applications.withdraw.new({ id: application.id }),
           classes: 'govuk-button--secondary',
           attributes: {
             'data-cy-withdraw-application': application.id,
@@ -95,7 +79,7 @@ describe('applicationIdentityBar', () => {
       expect(applicationMenuItems(application, ['appeals_manager'])).toEqual([
         {
           text: 'Withdraw application',
-          href: paths.applications.withdrawables.show({ id: application.id }),
+          href: paths.applications.withdraw.new({ id: application.id }),
           classes: 'govuk-button--secondary',
           attributes: {
             'data-cy-withdraw-application': application.id,
@@ -109,7 +93,7 @@ describe('applicationIdentityBar', () => {
       expect(applicationMenuItems(application, ['assessor'])).toEqual([
         {
           text: 'Withdraw application',
-          href: paths.applications.withdrawables.show({ id: application.id }),
+          href: paths.applications.withdraw.new({ id: application.id }),
           classes: 'govuk-button--secondary',
           attributes: {
             'data-cy-withdraw-application': application.id,

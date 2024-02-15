@@ -132,16 +132,13 @@ describe('applicationsController', () => {
   })
 
   describe('show', () => {
-    beforeEach(() => {
-      ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
-        return { errors: {}, errorSummary: [] }
-      })
-    })
-
     const application = applicationFactory.build({ person: { crn: 'some-crn' } })
     const referrer = 'http://localhost/foo/bar'
 
     beforeEach(() => {
+      ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {
+        return { errors: {}, errorSummary: [] }
+      })
       request = createMock<Request>({
         params: { id: application.id },
         user: {
@@ -153,45 +150,22 @@ describe('applicationsController', () => {
       })
     })
 
-    describe('when NEW_WITHDRAWALS_FLOW_DISABLED is truthy', () => {
-      it('returns the old withdrawals link', async () => {
-        process.env.NEW_WITHDRAWALS_FLOW_DISABLED = '1'
+    it('renders the readonly view if the application has been submitted', async () => {
+      process.env.NEW_WITHDRAWALS_FLOW_DISABLED = ''
 
-        application.status = 'submitted'
+      application.status = 'submitted'
 
-        const requestHandler = applicationsController.show()
+      const requestHandler = applicationsController.show()
 
-        applicationService.findApplication.mockResolvedValue(application)
+      applicationService.findApplication.mockResolvedValue(application)
 
-        await requestHandler(request, response, next)
+      await requestHandler(request, response, next)
 
-        expect(response.render).toHaveBeenCalledWith('applications/show', {
-          application,
-          referrer,
-          tab: 'application',
-          pageHeading: 'Approved Premises application',
-          withdrawalLink: paths.applications.withdraw.new({ id: application.id }),
-        })
-      })
-
-      it('returns the old withdrawals link', async () => {
-        process.env.NEW_WITHDRAWALS_FLOW_DISABLED = ''
-
-        application.status = 'submitted'
-
-        const requestHandler = applicationsController.show()
-
-        applicationService.findApplication.mockResolvedValue(application)
-
-        await requestHandler(request, response, next)
-
-        expect(response.render).toHaveBeenCalledWith('applications/show', {
-          application,
-          referrer,
-          tab: 'application',
-          pageHeading: 'Approved Premises application',
-          withdrawalLink: paths.applications.withdrawables.show({ id: application.id }),
-        })
+      expect(response.render).toHaveBeenCalledWith('applications/show', {
+        application,
+        referrer,
+        tab: 'application',
+        pageHeading: 'Approved Premises application',
       })
     })
 
@@ -316,7 +290,6 @@ describe('applicationsController', () => {
         referrer,
         tab: 'application',
         pageHeading: 'Approved Premises application',
-        withdrawalLink: paths.applications.withdrawables.show({ id: application.id }),
       })
 
       expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
