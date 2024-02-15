@@ -228,6 +228,7 @@ const getApplicationType = (application: Application): ApplicationType => {
 export const eventTypeTranslations: Record<TimelineEventType, string> = {
   approved_premises_application_submitted: 'Application submitted',
   approved_premises_application_assessed: 'Application assessed',
+  approved_premises_assessment_appealed: 'Application appealed',
   approved_premises_booking_made: 'Booking made',
   approved_premises_person_arrived: 'Person arrived',
   approved_premises_person_not_arrived: 'Person not arrived',
