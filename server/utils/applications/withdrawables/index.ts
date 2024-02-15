@@ -115,15 +115,6 @@ export const withdrawableRadioOptions = (
         },
       }
     }
-
-    if (withdrawable.type === 'application') {
-      return {
-        text: 'Application',
-        value: withdrawable.id,
-        checked: selectedWithdrawable === withdrawable.id,
-      }
-    }
-
     throw new Error(`Unknown withdrawable type: ${withdrawable.type}`)
   })
 }
