@@ -24,14 +24,10 @@ export const applicationMenuItems = (
   application: Application,
   userRoles: Array<ApprovedPremisesUserRole>,
 ): Array<IdentityBarMenuItem> => {
-  const withdrawalLink = process.env.NEW_WITHDRAWALS_FLOW_DISABLED
-    ? paths.applications.withdraw.new({ id: application.id })
-    : paths.applications.withdrawables.show({ id: application.id })
-
   const items: Array<IdentityBarMenuItem> = [
     {
       text: 'Withdraw application',
-      href: withdrawalLink,
+      href: paths.applications.withdraw.new({ id: application.id }),
       classes: 'govuk-button--secondary',
       attributes: {
         'data-cy-withdraw-application': application.id,

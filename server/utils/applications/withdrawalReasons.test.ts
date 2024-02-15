@@ -4,7 +4,7 @@ import {
   placementNoLongerNeededOptions,
 } from './withdrawalReasons'
 
-describe('withdrawlReasons', () => {
+describe('withdrawalReasons', () => {
   describe('applicationProblemOptions', () => {
     it('should return the correct options', () => {
       expect(applicationProblemOptions).toEqual({

@@ -8,7 +8,7 @@ import { SelectedWithdrawableType } from '../../../utils/applications/withdrawab
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
-export default class WithdrawlsController {
+export default class WithdrawalsController {
   constructor(private readonly applicationService: ApplicationService) {}
 
   new(): RequestHandler {

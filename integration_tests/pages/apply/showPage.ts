@@ -54,7 +54,7 @@ export default class ShowPage extends Page {
     cy.get(`[data-cy-withdraw-application="${this.application.id}"]`).should(
       'have.attr',
       'href',
-      paths.applications.withdrawables.show({ id: this.application.id }),
+      paths.applications.withdraw.new({ id: this.application.id }),
     )
   }
 
