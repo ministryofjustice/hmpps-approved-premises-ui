@@ -32,9 +32,12 @@ describe('withdrawablesController', () => {
 
   describe('show', () => {
     describe('Placement requests and applications', () => {
-      it(`renders the view`, async () => {
+      it(`renders the view passing only the placement request and placement application withdrawables`, async () => {
         const selectedWithdrawableType = 'placementRequest'
-        const withdrawables = withdrawableFactory.buildList(1)
+        const placementRequestWithdrawable = withdrawableFactory.build({ type: 'placement_request' })
+        const placementApplicationWithdrawable = withdrawableFactory.build({ type: 'placement_application' })
+        const applicationWithdrawable = withdrawableFactory.build({ type: 'application' })
+        const withdrawables = [placementRequestWithdrawable, placementApplicationWithdrawable, applicationWithdrawable]
 
         applicationService.getWithdrawables.mockResolvedValue(withdrawables)
 
@@ -50,21 +53,21 @@ describe('withdrawablesController', () => {
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/show', {
           pageHeading: 'Select your placement',
           id: applicationId,
-          selectedWithdrawableType,
-          withdrawables,
+          withdrawables: [placementRequestWithdrawable, placementApplicationWithdrawable],
         })
       })
     })
 
     describe('Bookings', () => {
-      it(`renders the view`, async () => {
+      it(`renders the view, calling the booking service to retrieve bookings`, async () => {
         const selectedWithdrawableType = 'placement'
-        const withdrawables = withdrawableFactory.buildList(2, { type: 'booking' })
+        const placementWithdrawables = withdrawableFactory.buildList(2, { type: 'booking' })
+        const applicationWithdrawable = withdrawableFactory.build({ type: 'application' })
         const bookings = bookingFactory.buildList(2).map((b, i) => {
-          return { ...b, id: withdrawables[i].id }
+          return { ...b, id: placementWithdrawables[i].id }
         })
 
-        applicationService.getWithdrawables.mockResolvedValue(withdrawables)
+        applicationService.getWithdrawables.mockResolvedValue([applicationWithdrawable, ...placementWithdrawables])
         bookings.forEach(b => bookingService.findWithoutPremises.mockResolvedValueOnce(b))
 
         const requestHandler = withdrawablesController.show()
@@ -79,11 +82,13 @@ describe('withdrawablesController', () => {
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/show', {
           pageHeading: 'Select your placement',
           id: applicationId,
-          selectedWithdrawableType,
-          withdrawables,
+          withdrawables: placementWithdrawables,
           bookings,
         })
         expect(bookingService.findWithoutPremises).toHaveBeenCalledTimes(2)
+        expect(bookingService.findWithoutPremises).toHaveBeenCalledWith(token, placementWithdrawables[0].id)
+        expect(bookingService.findWithoutPremises).toHaveBeenCalledWith(token, placementWithdrawables[1].id)
+        expect(bookingService.findWithoutPremises).not.toHaveBeenCalledWith(token, applicationWithdrawable.id)
       })
     })
   })

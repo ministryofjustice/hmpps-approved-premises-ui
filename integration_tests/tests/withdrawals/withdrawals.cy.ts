@@ -31,9 +31,15 @@ context('Withdrawals', () => {
       type: 'placement_request',
       id: placementRequest.id,
     })
+    const placementApplicationWithdrawable = withdrawableFactory.build({
+      type: 'placement_application',
+    })
+    const placementWithdrawable = withdrawableFactory.build({
+      type: 'booking',
+    })
     cy.task('stubWithdrawables', {
       applicationId: application.id,
-      withdrawables: [placementRequestWithdrawable],
+      withdrawables: [placementRequestWithdrawable, placementApplicationWithdrawable, placementWithdrawable],
     })
     cy.task('stubApplications', [application])
     cy.task('stubApplicationGet', { application })
@@ -50,12 +56,20 @@ context('Withdrawals', () => {
 
     // Then I am asked what I want to withdraw
     const newWithdrawalPage = new NewWithdrawalPage('What do you want to withdraw?')
+
+    // And I am shown the correct withdrawables
+    newWithdrawalPage.shouldShowWithdrawableTypes(['placementRequest', 'placement'])
+    newWithdrawalPage.shouldNotShowWithdrawableTypes(['application'])
+
+    // When I select 'placementRequest'
     newWithdrawalPage.selectType('placementRequest')
     newWithdrawalPage.clickSubmit()
 
-    // And I am shown a list of placement requests that can be withdrawn
+    // Then I am shown a list of placement requests that can be withdrawn
     const selectWithdrawablePage = new NewWithdrawalPage('Select your placement')
     selectWithdrawablePage.veryifyLink(placementRequest.id, 'placement_request')
+    selectWithdrawablePage.shouldShowWithdrawables([placementRequestWithdrawable, placementApplicationWithdrawable])
+    selectWithdrawablePage.shouldNotShowWithdrawables([placementWithdrawable])
 
     // When I select a placement request
     selectWithdrawablePage.selectWithdrawable(placementRequest.id)
@@ -80,10 +94,11 @@ context('Withdrawals', () => {
       type: 'placement_application',
       id: placementApplication.id,
     })
+    const applicationWithdrawable = withdrawableFactory.build({ type: 'application' })
 
     cy.task('stubWithdrawables', {
       applicationId: application.id,
-      withdrawables: [placementApplicationWithdrawable],
+      withdrawables: [placementApplicationWithdrawable, applicationWithdrawable],
     })
     cy.task('stubApplications', [application])
     cy.task('stubApplicationGet', { application })
@@ -97,11 +112,19 @@ context('Withdrawals', () => {
 
     // Then I am asked what I want to withdraw
     const newWithdrawalPage = new NewWithdrawalPage('What do you want to withdraw?')
+
+    // And I am shown the correct withdrawables
+    newWithdrawalPage.shouldShowWithdrawableTypes(['placementRequest', 'application'])
+    newWithdrawalPage.shouldNotShowWithdrawableTypes(['placement'])
+
+    // When I select 'placementRequest'
     newWithdrawalPage.selectType('placementRequest')
     newWithdrawalPage.clickSubmit()
 
-    // And I am shown a list of placement applications that can be withdrawn
+    // Then I am shown a list of placement applications that can be withdrawn
     const selectWithdrawablePage = new NewWithdrawalPage('Select your placement')
+    selectWithdrawablePage.shouldShowWithdrawables([placementApplicationWithdrawable])
+    selectWithdrawablePage.shouldNotShowWithdrawables([applicationWithdrawable])
 
     // When I select a placement application
     selectWithdrawablePage.selectWithdrawable(placementApplication.id)
@@ -149,15 +172,19 @@ context('Withdrawals', () => {
       type: 'booking',
       id: placement.id,
     })
+    const placementApplicationWithdrawable = withdrawableFactory.build({
+      type: 'placement_application',
+    })
+    const applicationWithdrawable = withdrawableFactory.build({ type: 'application' })
 
     cy.task('stubWithdrawables', {
       applicationId: application.id,
-      withdrawables: [placementWithdrawable],
+      withdrawables: [placementWithdrawable, placementApplicationWithdrawable, applicationWithdrawable],
     })
     cy.task('stubApplications', [application])
     cy.task('stubApplicationGet', { application })
-    cy.task('stubBookingFindWithoutPremises', booking)
-    cy.task('stubBookingGet', { premisesId: booking.premises.id, booking })
+    cy.task('stubBookingFindWithoutPremises', placement)
+    cy.task('stubBookingGet', { premisesId: placement.premises.id, booking: placement })
     cy.task('stubCancellationReferenceData')
 
     // And I visit the list page
@@ -166,15 +193,27 @@ context('Withdrawals', () => {
     // When I click 'Withdraw' on an application
     listPage.clickWithdraw()
 
+    // Then I am asked what I want to withdraw
     const newWithdrawalPage = new NewWithdrawalPage('What do you want to withdraw?')
+
+    // And I should see the correct withdrawable types
+    newWithdrawalPage.shouldShowWithdrawableTypes(['placementRequest', 'placement', 'application'])
+
+    // When I select 'placement'
     newWithdrawalPage.selectType('placement')
     newWithdrawalPage.clickSubmit()
 
+    // Then I am shown a list of placements that can be withdrawn
     const selectWithdrawablePage = new NewWithdrawalPage('Select your placement')
-    selectWithdrawablePage.veryifyLink(booking.id, 'booking')
-    selectWithdrawablePage.selectWithdrawable(booking.id)
+    selectWithdrawablePage.shouldShowWithdrawables([placementWithdrawable])
+    selectWithdrawablePage.shouldNotShowWithdrawables([placementApplicationWithdrawable, applicationWithdrawable])
+    selectWithdrawablePage.veryifyLink(placement.id, 'booking')
+
+    // When I select a placement
+    selectWithdrawablePage.selectWithdrawable(placement.id)
     selectWithdrawablePage.clickSubmit()
 
+    // Then I am taken to the confirmation page
     Page.verifyOnPage(CancellationCreatePage)
   })
 })

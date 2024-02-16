@@ -113,20 +113,5 @@ describe('withdrawableTypeRadioOptions', () => {
         },
       ])
     })
-
-    it('filters out applications', () => {
-      const paWithdrawable = withdrawableFactory.build({ type: 'placement_application' })
-      const applicationWithdrawable = withdrawableFactory.build({ type: 'application' })
-
-      expect(withdrawableRadioOptions([paWithdrawable, applicationWithdrawable], paWithdrawable.id)).toEqual([
-        {
-          text: paWithdrawable.dates
-            .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
-            .join(', '),
-          checked: true,
-          value: paWithdrawable.id,
-        },
-      ])
-    })
   })
 })
