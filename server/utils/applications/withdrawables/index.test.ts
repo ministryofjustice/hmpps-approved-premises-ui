@@ -63,10 +63,10 @@ describe('withdrawableTypeRadioOptions', () => {
       const paWithdrawable = withdrawableFactory.build({ type: 'placement_application' })
       const prWithdrawable = withdrawableFactory.build({ type: 'placement_request' })
       const booking = bookingFactory.build()
-      const bookingWithdrawable = withdrawableFactory.build({ type: 'booking', id: booking.id })
+      const placementWithdrawable = withdrawableFactory.build({ type: 'booking', id: booking.id })
 
       expect(
-        withdrawableRadioOptions([paWithdrawable, prWithdrawable, bookingWithdrawable], paWithdrawable.id, [booking]),
+        withdrawableRadioOptions([paWithdrawable, prWithdrawable, placementWithdrawable], paWithdrawable.id, [booking]),
       ).toEqual([
         {
           text: paWithdrawable.dates
@@ -106,10 +106,10 @@ describe('withdrawableTypeRadioOptions', () => {
               },
             ),
           },
-          text: `${booking.premises.name} - ${bookingWithdrawable.dates
+          text: `${booking.premises.name} - ${placementWithdrawable.dates
             .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
             .join(', ')}`,
-          value: bookingWithdrawable.id,
+          value: placementWithdrawable.id,
         },
       ])
     })

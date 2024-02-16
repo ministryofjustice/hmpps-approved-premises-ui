@@ -142,17 +142,17 @@ context('Withdrawals', () => {
     Page.verifyOnPage(WithdrawApplicationPage)
   })
 
-  it('withdraws a booking', () => {
+  it('withdraws a placement', () => {
     const application = applicationSummaryFactory.build()
-    const booking = bookingFactory.build({ applicationId: application.id })
-    const bookingWithdrawable = withdrawableFactory.build({
+    const placement = bookingFactory.build({ applicationId: application.id })
+    const placementWithdrawable = withdrawableFactory.build({
       type: 'booking',
-      id: booking.id,
+      id: placement.id,
     })
 
     cy.task('stubWithdrawables', {
       applicationId: application.id,
-      withdrawables: [bookingWithdrawable],
+      withdrawables: [placementWithdrawable],
     })
     cy.task('stubApplications', [application])
     cy.task('stubApplicationGet', { application })
