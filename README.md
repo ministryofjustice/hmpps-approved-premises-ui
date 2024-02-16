@@ -64,7 +64,20 @@ head over to [our infrastructure documentation](/doc/how-to/manage-infrastructur
 
 ## E2E tests
 
-End to end tests for this project can be found [in a seperate repo](https://github.com/ministryofjustice/hmpps-approved-premises-e2e).
+Install Playwright
+
+```bash
+npm install
+npx playwright install
+```
+
+Test with and without UI
+
+```bash
+npm run test:e2e:ui
+# or
+npm run test:e2e:ci
+```
 
 ## Feature flags
 
