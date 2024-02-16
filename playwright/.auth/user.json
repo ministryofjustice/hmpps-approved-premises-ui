@@ -1,0 +1,25 @@
+{
+  "cookies": [
+    {
+      "name": "jwtSession",
+      "value": "eyJhbGciOiJSUzI1NiJ9.eyJqdGkiOiI4NDY2NTE1Yy0wMWFiLTQzMWQtYjU4Zi0zZjYxN2Q2ZmUzNDEiLCJzdWIiOiJBUFBST1ZFRFBSRU1JU0VTVEVTVFVTRVIiLCJhdXRob3JpdGllcyI6IlJPTEVfV09SS0xPQURfTUVBU1VSRU1FTlQsUk9MRV9QUk9CQVRJT04iLCJuYW1lIjoiQXBwcm92ZWQgUHJlbWlzZXMgRTJFVGVzdGVyIiwiYXV0aF9zb3VyY2UiOiJkZWxpdXMiLCJ1c2VyX2lkIjoiMjUwMDQwMzA5NyIsInBhc3NlZF9tZmEiOmZhbHNlLCJleHAiOjE3MDgxMzc4NjV9.PGMV0By8QBwxgHkfrpVvxDzl9f2WxtJXfO0IB_5lWj-1-5J8MSKC0Cuj3QX9yRMUTfeAvtZWWCERnirfGVugEyYwtZgiC9r7Dvz4N1k5FLOicrXJmIGJI0n_LhUXHDTDxYvrkrc2DZ6BMfsouM46-Ng4bs8Yccq-gUUd9h_ZDuA93rp5ICY7vN0feK20xmOotYNwRIsrwndRXIWr33wBSuiw7EKcekBGOI_yNaJr3g_2zVdZ8V3ULO0U6tRznxUAd1237zPn9P8gitu24BzZ_v62i5QXwF3ABS1FBasvSkn3MRlt19x7jgzw_RIaVts_f3PjU3d6EdxMxULVxN55Zg",
+      "domain": "sign-in-dev.hmpps.service.justice.gov.uk",
+      "path": "/auth",
+      "expires": 1708137865.698289,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "connect.sid",
+      "value": "s%3Ax6AfDsGGEE7fL4MFYABK4lKZ1YCjCOL9.62YLE2uV2aO9U%2BN7MVPTya%2BCGhgSmzLu9fM1Vm%2Fa07Q",
+      "domain": "approved-premises-dev.hmpps.service.justice.gov.uk",
+      "path": "/",
+      "expires": 1708101866.506431,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}
