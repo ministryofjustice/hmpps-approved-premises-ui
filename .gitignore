@@ -130,3 +130,9 @@ integration_tests/screenshots/
 .DS_Store
 /integration_tests/downloads
 /tmp
+
+# E2E tests
+e2e/test-results/
+e2e/playwright-report/
+e2e/playwright/
+e2e/.DS_Store

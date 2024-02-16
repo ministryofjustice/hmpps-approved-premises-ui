@@ -21,9 +21,19 @@
     "baseUrl": ".",
     "paths": {
       "@approved-premises/api": ["server/@types/shared/index.d.ts"],
-      "@approved-premises/ui": ["server/@types/ui/index.d.ts"]
+      "@approved-premises/ui": ["server/@types/ui/index.d.ts"],
+      "@approved-premises/e2e": ["e2e/types/index.d.ts"]
     }
   },
-  "exclude": ["node_modules", "assets/**/*.js", "integration_tests", "dist", "cypress.config.ts", "coverage/**"],
+  "exclude": [
+    "node_modules",
+    "assets/**/*.js",
+    "integration_tests",
+    "dist",
+    "cypress.config.ts",
+    "coverage/**",
+    "e2e/playwright/**",
+    "e2e/test-results/**"
+  ],
   "include": ["**/*.js", "**/*.ts"]
 }
