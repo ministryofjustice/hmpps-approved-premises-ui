@@ -36,6 +36,14 @@ export const withdrawableTypeRadioOptions = (
     })
   }
 
+  if (withdrawables.find(w => w.type === 'placement_application' || w.type === 'placement_request'))
+    radioItems.push({
+      text: 'Request for placement',
+      value: 'placementRequest',
+      checked: selectedItem === 'placementRequest',
+      hint: { html: hintCopy.placementRequest },
+    })
+
   if (withdrawables.find(w => w.type === 'booking')) {
     radioItems.push({
       text: 'Placement',
@@ -46,14 +54,6 @@ export const withdrawableTypeRadioOptions = (
       },
     })
   }
-
-  if (withdrawables.find(w => w.type === 'placement_application' || w.type === 'placement_request'))
-    radioItems.push({
-      text: 'Request for placement',
-      value: 'placementRequest',
-      checked: selectedItem === 'placementRequest',
-      hint: { html: hintCopy.placementRequest },
-    })
 
   return radioItems
 }
