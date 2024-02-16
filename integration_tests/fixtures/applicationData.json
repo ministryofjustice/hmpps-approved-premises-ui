@@ -246,7 +246,7 @@
     "date-of-offence": {
       "arsonOffence": ["current"],
       "hateCrime": ["previous"],
-      "offencesAgainstChildren": ["current", "previous"],
+      "nonSexualOffencesAgainstChildren": ["current", "previous"],
       "contactSexualOffencesAgainstAdults": ["current", "previous"],
       "nonContactSexualOffencesAgainstAdults": ["current", "previous"],
       "contactSexualOffencesAgainstChildren": ["current", "previous"],

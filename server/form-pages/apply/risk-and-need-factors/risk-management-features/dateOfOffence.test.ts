@@ -8,12 +8,11 @@ describe('DateOfOffence', () => {
   const body = {
     arsonOffence: 'current',
     hateCrime: 'previous',
-    offencesAgainstChildren: ['current', 'previous'],
+    nonSexualOffencesAgainstChildren: ['current', 'previous'],
     contactSexualOffencesAgainstAdults: ['current', 'previous'],
     nonContactSexualOffencesAgainstAdults: ['current', 'previous'],
     contactSexualOffencesAgainstChildren: ['current', 'previous'],
     nonContactSexualOffencesAgainstChildren: ['current', 'previous'],
-    otherSexualOffences: ['current', 'previous'],
   } as const
 
   describe('body', () => {
@@ -50,8 +49,7 @@ describe('DateOfOffence', () => {
         'Is the contact sexual offences against children current or previous?': 'Current and previous',
         'Is the non contact sexual offences against adults current or previous?': 'Current and previous',
         'Is the non contact sexual offences against children current or previous?': 'Current and previous',
-        'Is the offences against children current or previous?': 'Current and previous',
-        'Is the other sexual offences current or previous?': 'Current and previous',
+        'Is the non sexual offences against children current or previous?': 'Current and previous',
       })
     })
   })
@@ -95,12 +93,11 @@ describe('DateOfOffence', () => {
       expect(result).toEqual([
         new DateOfOffence({}).renderTableRow('arsonOffence'),
         new DateOfOffence({}).renderTableRow('hateCrime'),
-        new DateOfOffence({}).renderTableRow('offencesAgainstChildren'),
+        new DateOfOffence({}).renderTableRow('nonSexualOffencesAgainstChildren'),
         new DateOfOffence({}).renderTableRow('contactSexualOffencesAgainstAdults'),
         new DateOfOffence({}).renderTableRow('nonContactSexualOffencesAgainstAdults'),
         new DateOfOffence({}).renderTableRow('contactSexualOffencesAgainstChildren'),
         new DateOfOffence({}).renderTableRow('nonContactSexualOffencesAgainstChildren'),
-        new DateOfOffence({}).renderTableRow('otherSexualOffences'),
       ])
     })
   })
