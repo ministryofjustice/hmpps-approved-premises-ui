@@ -14,7 +14,9 @@ export const hintCopy: Record<SelectedWithdrawableType, string> = {
   <ul class="govuk-hint"><li>A match request made after an application where the date is known</li>
   <li>A request for placement mini assessment</li>
   <li>A match request made after a request for placement has been approved</li></ul>
-  <p class="govuk-hint">It will also remove any bookings to an AP that are attached to these Request for Placements.This option should be selected if the applicant is no longer requiring an AP placement on the dates recorded but still needs an AP placement now or in the future.This will cancel the selected placement and allow you to request a new placement.</p>`,
+  <p class="govuk-hint">It will also remove any placements to an AP that are attached to these Request for Placements. 
+  This option should be selected if the applicant is no longer requiring an AP placement on the dates recorded but still needs an AP placement now or in the future. 
+  This will cancel the selected placement and allow you to request a new placement.</p>`,
 }
 
 export const withdrawableTypeRadioOptions = (
