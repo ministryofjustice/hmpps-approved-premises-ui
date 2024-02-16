@@ -1174,27 +1174,6 @@
                   "type": "string"
                 }
               ]
-            },
-            "otherSexualOffences": {
-              "anyOf": [
-                {
-                  "type": "array",
-                  "items": {
-                    "enum": [
-                      "current",
-                      "previous"
-                    ],
-                    "type": "string"
-                  }
-                },
-                {
-                  "enum": [
-                    "current",
-                    "previous"
-                  ],
-                  "type": "string"
-                }
-              ]
             }
           }
         },
