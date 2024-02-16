@@ -5,6 +5,8 @@ import managePaths from '../../../paths/manage'
 import { DateFormats } from '../../dateUtils'
 import { linkTo } from '../../utils'
 
+export { sortWithdrawables } from './sortWithdrawables'
+
 export type SelectedWithdrawableType = 'application' | 'placementRequest' | 'placement'
 
 export const hintCopy: Record<SelectedWithdrawableType, string> = {
