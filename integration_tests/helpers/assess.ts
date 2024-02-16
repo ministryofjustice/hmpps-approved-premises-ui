@@ -140,7 +140,7 @@ export default class AseessHelper {
     const confirmationScreen = Page.verifyOnPage(ClarificationNoteConfirmPage)
 
     // And the PP's details should be visible
-    confirmationScreen.confirmUserDetails(this.user)
+    confirmationScreen.confirmUserDetails(this.assessment.application)
 
     // And I should be able to return to the dashboard
     return confirmationScreen.clickBackToDashboard()
