@@ -241,6 +241,9 @@ export const eventTypeTranslations: Record<TimelineEventType, string> = {
   application_timeline_note: 'Note added',
   cas3_person_arrived: 'CAS3 person arrived',
   cas3_person_departed: 'CAS3 person departed',
+  cas2_application_submitted: 'CAS2 application submitted',
+  cas2_note: 'CAS2 note added',
+  cas2_status_update: 'CAS2 status updated',
 }
 
 const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiTimelineEvent> => {
