@@ -17,10 +17,12 @@ import {
 } from '../../../server/utils/applications/utils'
 import { TextItem } from '../../../server/@types/ui'
 import paths from '../../../server/paths/apply'
+import { isFullPerson } from '../../../server/utils/personUtils'
 
 export default class ShowPage extends Page {
   constructor(private readonly application: Application) {
-    super((application.person as FullPerson).name)
+    super('Approved Premises application')
+    cy.get('h2').contains(isFullPerson(application.person) && application.person.name)
   }
 
   static visit(application: Application, tab?: ApplicationShowPageTab) {
