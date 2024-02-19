@@ -11,7 +11,6 @@ import {
   placementApplicationFactory,
   placementRequestDetailFactory,
   taskFactory,
-  userDetailsFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/placementApplications'
 import matchpaths from '../../paths/match'
@@ -27,9 +26,14 @@ jest.mock('../../config')
 
 describe('PlacementRequestsController', () => {
   const token = 'SOME_TOKEN'
+  const userId = 'user-id'
 
-  const request: DeepMocked<Request> = createMock<Request>({ user: { token } })
-  const response: DeepMocked<Response> = createMock<Response>({})
+  const request: DeepMocked<Request> = createMock<Request>({
+    user: { token },
+  })
+  const response: DeepMocked<Response> = createMock<Response>({
+    locals: { user: { apArea: apAreaFactory.build(), id: userId } },
+  })
   const next: DeepMocked<NextFunction> = createMock<NextFunction>({})
 
   const placementRequestService = createMock<PlacementRequestService>({})
@@ -57,7 +61,7 @@ describe('PlacementRequestsController', () => {
       const tasks = taskFactory.buildList(5)
       const paginatedResponse = paginatedResponseFactory.build({ data: tasks }) as PaginatedResponse<Task>
 
-      taskService.getTasksOfType.mockResolvedValue(paginatedResponse)
+      taskService.getAll.mockResolvedValue(paginatedResponse)
 
       const paginationDetails = {
         hrefPrefix: matchpaths.placementRequests.index({}),
@@ -78,17 +82,16 @@ describe('PlacementRequestsController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
       })
       expect(getPaginationDetails).toHaveBeenCalledWith(request, paginationDetails.hrefPrefix)
-      expect(taskService.getTasksOfType).toHaveBeenCalledWith(
+      expect(taskService.getAll).toHaveBeenCalledWith({
         token,
-        'placement-application',
-        Number(paginatedResponse.pageNumber),
-      )
-    })
-
-    it('should send a request with an AP Area query value of the users area by default', async () => {
-      const apArea = apAreaFactory.build()
-      const user = userDetailsFactory.build({ apArea })
-      response.locals.user = user
+        taskType: 'PlacementApplication',
+        page: 1,
+        allocatedFilter: 'allocated',
+        sortBy: 'createdAt',
+        sortDirection: 'asc',
+        allocatedToUserId: response.locals.user.id,
+        apAreaId: response.locals.user.apArea.id,
+      })
     })
   })
 

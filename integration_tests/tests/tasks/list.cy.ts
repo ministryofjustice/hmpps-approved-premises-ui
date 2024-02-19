@@ -19,14 +19,14 @@ context('Task Allocation', () => {
     const allocatedTasks = taskFactory.buildList(5)
     const unallocatedTasks = taskFactory.buildList(5, { allocatedToStaffMember: undefined })
 
-    cy.task('stubReallocatableTasks', {
+    cy.task('stubGetAllTasks', {
       tasks: allocatedTasks,
       allocatedFilter: 'allocated',
       page: '1',
       sortDirection: 'asc',
     })
 
-    cy.task('stubReallocatableTasks', {
+    cy.task('stubGetAllTasks', {
       tasks: [...unallocatedTasks],
       allocatedFilter: 'unallocated',
       page: '1',
@@ -60,11 +60,11 @@ context('Task Allocation', () => {
     const allocatedTasksPage9 = taskFactory.buildList(10)
     const unallocatedTasks = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
-    cy.task('stubReallocatableTasks', { tasks: allocatedTasksPage1, allocatedFilter: 'allocated', page: '1' })
+    cy.task('stubGetAllTasks', { tasks: allocatedTasksPage1, allocatedFilter: 'allocated', page: '1' })
 
-    cy.task('stubReallocatableTasks', { tasks: allocatedTasksPage2, allocatedFilter: 'allocated', page: '2' })
+    cy.task('stubGetAllTasks', { tasks: allocatedTasksPage2, allocatedFilter: 'allocated', page: '2' })
 
-    cy.task('stubReallocatableTasks', { tasks: allocatedTasksPage9, allocatedFilter: 'allocated', page: '9' })
+    cy.task('stubGetAllTasks', { tasks: allocatedTasksPage9, allocatedFilter: 'allocated', page: '9' })
 
     cy.task('stubApAreaReferenceData', {
       id: apAreaId,
@@ -107,14 +107,14 @@ context('Task Allocation', () => {
 
     const tasks = taskFactory.buildList(10)
 
-    cy.task('stubReallocatableTasks', {
+    cy.task('stubGetAllTasks', {
       tasks,
       allocatedFilter: 'allocated',
       page: '1',
       sortDirection: 'asc',
       sortField: 'createdAt',
     })
-    cy.task('stubReallocatableTasks', {
+    cy.task('stubGetAllTasks', {
       tasks,
       allocatedFilter: 'allocated',
       sortDirection: 'desc',
@@ -159,7 +159,7 @@ context('Task Allocation', () => {
     const allocatedTasksFiltered = taskFactory.buildList(1)
     const unallocatedTasks = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
-    cy.task('stubReallocatableTasks', { tasks: allocatedTasks, allocatedFilter: 'allocated', page: '1' })
+    cy.task('stubGetAllTasks', { tasks: allocatedTasks, allocatedFilter: 'allocated', page: '1' })
     cy.task('stubApAreaReferenceData', {
       id: apAreaId,
       name: 'Midlands',
@@ -172,7 +172,7 @@ context('Task Allocation', () => {
     listPage.shouldShowAllocatedTasks()
 
     // When I filter by region
-    cy.task('stubReallocatableTasks', {
+    cy.task('stubGetAllTasks', {
       tasks: allocatedTasksFiltered,
       allocatedFilter: 'allocated',
       page: '1',
@@ -197,7 +197,7 @@ context('Task Allocation', () => {
     const unallocatedTasks = taskFactory.buildList(10, { allocatedToStaffMember: undefined })
     const unallocatedTasksFiltered = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
-    cy.task('stubReallocatableTasks', {
+    cy.task('stubGetAllTasks', {
       tasks: unallocatedTasks,
       allocatedFilter: 'unallocated',
       page: '1',
@@ -215,7 +215,7 @@ context('Task Allocation', () => {
     listPage.shouldShowUnallocatedTasks()
 
     // When I filter by region
-    cy.task('stubReallocatableTasks', {
+    cy.task('stubGetAllTasks', {
       tasks: unallocatedTasksFiltered,
       allocatedFilter: 'unallocated',
       page: '1',
@@ -244,14 +244,14 @@ context('Task Allocation', () => {
     const allocatedTasksFilteredPage2 = taskFactory.buildList(10)
     const unallocatedTasks = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
-    cy.task('stubReallocatableTasks', {
+    cy.task('stubGetAllTasks', {
       tasks: allocatedTasks,
       allocatedFilter: 'allocated',
       page: '1',
       apAreaId: apArea.id,
     })
 
-    cy.task('stubReallocatableTasks', {
+    cy.task('stubGetAllTasks', {
       tasks: allocatedTasksFiltered,
       allocatedFilter: 'allocated',
       page: '1',
@@ -259,14 +259,14 @@ context('Task Allocation', () => {
       apAreaId: '',
     })
 
-    cy.task('stubReallocatableTasks', {
+    cy.task('stubGetAllTasks', {
       tasks: allocatedTasksFiltered,
       allocatedFilter: 'allocated',
       sortDirection: 'desc',
       apAreaId: '',
     })
 
-    cy.task('stubReallocatableTasks', {
+    cy.task('stubGetAllTasks', {
       tasks: allocatedTasksFilteredPage2,
       allocatedFilter: 'allocated',
       page: '2',

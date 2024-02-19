@@ -55,7 +55,7 @@ describe('TasksController', () => {
       response.locals.user = user
       apAreaService.getApAreas.mockResolvedValue(apAreas)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
-      taskService.getAllReallocatable.mockResolvedValue(paginatedResponse)
+      taskService.getAll.mockResolvedValue(paginatedResponse)
     })
 
     it('should render the tasks template with the users ap area filtered by default', async () => {
@@ -74,7 +74,15 @@ describe('TasksController', () => {
         sortDirection: 'asc',
         selectedArea: apArea.id,
       })
-      expect(taskService.getAllReallocatable).toHaveBeenCalledWith(token, 'allocated', 'createdAt', 'asc', 1, apArea.id)
+
+      expect(taskService.getAll).toHaveBeenCalledWith({
+        allocatedFilter: 'allocated',
+        token,
+        sortBy: 'createdAt',
+        sortDirection: 'asc',
+        page: 1,
+        apAreaId: apArea.id,
+      })
     })
 
     it('should handle request parameters correctly', async () => {
@@ -84,60 +92,78 @@ describe('TasksController', () => {
         sortBy: 'name',
         sortDirection: 'desc',
       }
+      const apAreaId = '1234'
+      const allocatedFilter = 'unallocated'
 
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paramPaginationDetails)
-      taskService.getAllReallocatable.mockResolvedValue(paginatedResponse)
+      taskService.getAll.mockResolvedValue(paginatedResponse)
 
       const requestHandler = tasksController.index()
 
-      const unallocatedRequest = { ...request, query: { allocatedFilter: 'unallocated', area: '1234' } }
+      const unallocatedRequest = { ...request, query: { allocatedFilter, area: apAreaId } }
 
       await requestHandler(unallocatedRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
         pageHeading: 'Task Allocation',
         tasks,
-        allocatedFilter: 'unallocated',
+        allocatedFilter,
         apAreas,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paramPaginationDetails.sortBy,
         sortDirection: paramPaginationDetails.sortDirection,
-        selectedArea: '1234',
+        selectedArea: apAreaId,
       })
       expect(getPaginationDetails).toHaveBeenCalledWith(unallocatedRequest, paths.tasks.index({}), {
         allocatedFilter: 'unallocated',
         area: '1234',
       })
-      expect(taskService.getAllReallocatable).toHaveBeenCalledWith(
+
+      expect(taskService.getAll).toHaveBeenCalledWith({
+        allocatedFilter,
         token,
-        'unallocated',
-        paramPaginationDetails.sortBy,
-        paramPaginationDetails.sortDirection,
-        1,
-        '1234',
-      )
+        sortBy: paramPaginationDetails.sortBy,
+        sortDirection: paramPaginationDetails.sortDirection,
+        page: paramPaginationDetails.pageNumber,
+        apAreaId,
+      })
     })
 
     it('should not send an area query if the  if the query is "all"', async () => {
+      const paramPaginationDetails = {
+        hrefPrefix: paths.tasks.index({}),
+        pageNumber: 1,
+        sortBy: 'createdAt',
+        sortDirection: 'asc',
+        allocatedFilter: 'allocated',
+      }
+
       const requestHandler = tasksController.index()
       const requestWithQuery = { ...request, query: { area: 'all' } }
       await requestHandler(requestWithQuery, response, next)
 
-      expect(taskService.getAllReallocatable).toHaveBeenCalledWith(token, 'allocated', 'createdAt', 'asc', 1, '')
-
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
         pageHeading: 'Task Allocation',
         tasks,
-        allocatedFilter: 'allocated',
+        allocatedFilter: paramPaginationDetails.allocatedFilter,
         apAreas,
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
-        sortBy: 'createdAt',
-        sortDirection: 'asc',
+        sortBy: paramPaginationDetails.sortBy,
+        sortDirection: paramPaginationDetails.sortDirection,
         selectedArea: 'all',
+      })
+
+      expect(taskService.getAll).toHaveBeenCalledWith({
+        allocatedFilter: paramPaginationDetails.allocatedFilter,
+        token,
+        sortBy: paramPaginationDetails.sortBy,
+        sortDirection: paramPaginationDetails.sortDirection,
+        page: paramPaginationDetails.pageNumber,
+        apAreaId: '',
       })
     })
   })

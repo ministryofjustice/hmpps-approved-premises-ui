@@ -26,16 +26,23 @@ describe('taskService', () => {
     taskClientFactory.mockReturnValue(taskClient)
   })
 
-  describe('getAllReallocatable', () => {
-    it('calls the all method on the task client', async () => {
+  describe('getAll', () => {
+    it('calls the getAll method on the task client', async () => {
       const tasks: Array<Task> = taskFactory.buildList(2)
       const paginatedResponse = paginatedResponseFactory.build({
         data: tasks,
       }) as PaginatedResponse<Task>
 
-      taskClient.allReallocatable.mockResolvedValue(paginatedResponse)
+      taskClient.getAll.mockResolvedValue(paginatedResponse)
 
-      const result = await service.getAllReallocatable(token, 'allocated', 'createdAt', 'asc', 1, 'testAreaId')
+      const result = await service.getAll({
+        token,
+        allocatedFilter: 'allocated',
+        sortBy: 'createdAt',
+        sortDirection: 'asc',
+        page: 1,
+        apAreaId: 'testAreaId',
+      })
 
       expect(result).toEqual({
         data: tasks,
@@ -46,22 +53,14 @@ describe('taskService', () => {
       })
 
       expect(taskClientFactory).toHaveBeenCalledWith(token)
-      expect(taskClient.allReallocatable).toHaveBeenCalledWith('allocated', 'testAreaId', 1, 'asc', 'createdAt')
-    })
-  })
-
-  describe('getTasksOfType', () => {
-    it('calls the allByType method on the task client', async () => {
-      const tasks: Array<Task> = taskFactory.buildList(2)
-      const paginatedResponse = paginatedResponseFactory.build({ data: tasks }) as PaginatedResponse<Task>
-      taskClient.allByType.mockResolvedValue(paginatedResponse)
-
-      const result = await service.getTasksOfType(token, 'placement-application', 1)
-
-      expect(result).toEqual(paginatedResponse)
-
-      expect(taskClientFactory).toHaveBeenCalledWith(token)
-      expect(taskClient.allByType).toHaveBeenCalledWith('placement-application', 1)
+      expect(taskClient.getAll).toHaveBeenCalledWith({
+        allocatedFilter: 'allocated',
+        apAreaId: 'testAreaId',
+        allocatedToUserId: '',
+        page: 1,
+        sortDirection: 'asc',
+        sortBy: 'createdAt',
+      })
     })
   })
 

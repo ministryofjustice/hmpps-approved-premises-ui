@@ -28,14 +28,15 @@ export default class TasksController {
         area: apAreaId,
       })
 
-      const tasks = await this.taskService.getAllReallocatable(
-        req.user.token,
+      const tasks = await this.taskService.getAll({
+        token: req.user.token,
         allocatedFilter,
         sortBy,
         sortDirection,
-        pageNumber,
-        apAreaId === 'all' ? '' : apAreaId,
-      )
+        page: pageNumber,
+        apAreaId: apAreaId === 'all' ? '' : apAreaId,
+      })
+
       const apAreas = await this.apAreaService.getApAreas(req.user.token)
 
       res.render('tasks/index', {
