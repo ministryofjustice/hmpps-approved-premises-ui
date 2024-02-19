@@ -111,6 +111,10 @@ export default class ShowPage extends Page {
     this.shouldShowCheckYourAnswersResponses(this.application)
   }
 
+  shouldNotShowCreatePlacementRequestButton() {
+    cy.get('button').contains('Create placement request').should('not.exist')
+  }
+
   clickTimelineTab() {
     cy.get('a').contains('Timeline').click()
   }
