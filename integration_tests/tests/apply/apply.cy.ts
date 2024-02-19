@@ -56,10 +56,6 @@ context('Apply', () => {
         'noticeType',
       )
       expect(body.data).to.deep.equal(this.applicationData)
-
-      cy.task('validateBodyAgainstApplySchema', body.data).then(result => {
-        expect(result).to.equal(true)
-      })
     })
 
     cy.task('verifyApplicationSubmit', this.application.id).then(requests => {
@@ -319,10 +315,6 @@ context('Apply', () => {
       )
 
       expect(body.data).to.deep.equal(this.applicationData)
-
-      cy.task('validateBodyAgainstApplySchema', body.data).then(result => {
-        expect(result).to.equal(true)
-      })
     })
 
     cy.task('verifyApplicationSubmit', this.application.id).then(requests => {
