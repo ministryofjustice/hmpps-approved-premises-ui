@@ -7,4 +7,5 @@ import taskFactory from './task'
 export default Factory.define<AssessmentTask>(() => ({
   ...taskFactory.build(),
   taskType: 'Assessment',
+  createdFromAppeal: false,
 }))

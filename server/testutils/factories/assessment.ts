@@ -38,4 +38,5 @@ export default AssessmentFactory.define(() => ({
   data: {},
   clarificationNotes: [],
   rejectionRationale: faker.lorem.sentence(),
+  createdFromAppeal: false,
 }))
