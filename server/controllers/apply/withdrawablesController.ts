@@ -5,7 +5,7 @@ import adminPaths from '../../paths/admin'
 import placementAppPaths from '../../paths/placementApplications'
 import managePaths from '../../paths/manage'
 import { ApprovedPremisesApplication as Application, Withdrawable } from '../../@types/shared'
-import { SelectedWithdrawableType } from '../../utils/applications/withdrawables'
+import { SelectedWithdrawableType, sortWithdrawables } from '../../utils/applications/withdrawables'
 
 export default class WithdrawalsController {
   constructor(
@@ -19,9 +19,10 @@ export default class WithdrawalsController {
       const selectedWithdrawableType = req.query?.selectedWithdrawableType as SelectedWithdrawableType | undefined
 
       const withdrawables = await this.applicationService.getWithdrawables(req.user.token, id)
+      const sortedWithdrawables = sortWithdrawables(withdrawables)
 
       if (selectedWithdrawableType === 'placement') {
-        const placementWithdrawables = withdrawables.filter(withdrawable => withdrawable.type === 'booking')
+        const placementWithdrawables = sortedWithdrawables.filter(withdrawable => withdrawable.type === 'booking')
         const bookings = await Promise.all(
           placementWithdrawables.map(async withdrawable => {
             return this.bookingService.findWithoutPremises(req.user.token, withdrawable.id)
@@ -38,7 +39,7 @@ export default class WithdrawalsController {
 
       return res.render('applications/withdrawables/show', {
         pageHeading: 'Select your placement',
-        withdrawables: withdrawables.filter(
+        withdrawables: sortedWithdrawables.filter(
           withdrawable => withdrawable.type === 'placement_request' || withdrawable.type === 'placement_application',
         ),
         id,

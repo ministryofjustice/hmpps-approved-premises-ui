@@ -5,8 +5,8 @@ import { getStatus } from './getStatus'
 
 export const applicationTitle = (application: Application, pageHeading: string): string => {
   let title = `
-    <span class="govuk-caption-l">${pageHeading}</span>
-    <h1 class="govuk-heading-l">${(application.person as FullPerson).name}</h1>
+    <h1 class="govuk-caption-l">${pageHeading}</h1>
+    <h2 class="govuk-heading-l">${(application.person as FullPerson).name}</h2>
   `
 
   if (application.type === 'Offline') {

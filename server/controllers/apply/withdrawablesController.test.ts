@@ -9,6 +9,9 @@ import managePaths from '../../paths/manage'
 import placementAppPaths from '../../paths/placementApplications'
 import { Withdrawable } from '../../@types/shared'
 import applyPaths from '../../paths/apply'
+import { sortWithdrawables } from '../../utils/applications/withdrawables'
+
+jest.mock('../../utils/applications/withdrawables')
 
 describe('withdrawablesController', () => {
   const token = 'SOME_TOKEN'
@@ -38,6 +41,7 @@ describe('withdrawablesController', () => {
         const placementApplicationWithdrawable = withdrawableFactory.build({ type: 'placement_application' })
         const applicationWithdrawable = withdrawableFactory.build({ type: 'application' })
         const withdrawables = [placementRequestWithdrawable, placementApplicationWithdrawable, applicationWithdrawable]
+        ;(sortWithdrawables as jest.MockedFunction<typeof sortWithdrawables>).mockReturnValue(withdrawables)
 
         applicationService.getWithdrawables.mockResolvedValue(withdrawables)
 
@@ -49,6 +53,7 @@ describe('withdrawablesController', () => {
           next,
         )
 
+        expect(sortWithdrawables).toHaveBeenCalledWith(withdrawables)
         expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/show', {
           pageHeading: 'Select your placement',
@@ -66,8 +71,10 @@ describe('withdrawablesController', () => {
         const bookings = bookingFactory.buildList(2).map((b, i) => {
           return { ...b, id: placementWithdrawables[i].id }
         })
+        const withdrawables = [applicationWithdrawable, ...placementWithdrawables]
 
-        applicationService.getWithdrawables.mockResolvedValue([applicationWithdrawable, ...placementWithdrawables])
+        applicationService.getWithdrawables.mockResolvedValue(withdrawables)
+        ;(sortWithdrawables as jest.MockedFunction<typeof sortWithdrawables>).mockReturnValue(withdrawables)
         bookings.forEach(b => bookingService.findWithoutPremises.mockResolvedValueOnce(b))
 
         const requestHandler = withdrawablesController.show()
@@ -77,7 +84,7 @@ describe('withdrawablesController', () => {
           response,
           next,
         )
-
+        expect(sortWithdrawables).toHaveBeenCalledWith(withdrawables)
         expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/show', {
           pageHeading: 'Select your placement',

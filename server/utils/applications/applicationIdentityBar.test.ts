@@ -9,8 +9,8 @@ describe('applicationIdentityBar', () => {
       const application = applicationFactory.build({ person })
 
       expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
-        <span class="govuk-caption-l">heading</span>
-        <h1 class="govuk-heading-l">${person.name}</h1>
+        <h1 class="govuk-caption-l">heading</h1>
+        <h2 class="govuk-heading-l">${person.name}</h2>
       `)
     })
 
@@ -19,8 +19,8 @@ describe('applicationIdentityBar', () => {
       const application = applicationFactory.build({ person, type: 'Offline' })
 
       expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
-        <span class="govuk-caption-l">heading</span>
-        <h1 class="govuk-heading-l">${person.name}</h1>
+        <h1 class="govuk-caption-l">heading</h1>
+        <h2 class="govuk-heading-l">${person.name}</h2>
         <strong class="govuk-tag govuk-tag--grey govuk-!-margin-5">Offline application</strong>
       `)
     })
@@ -30,8 +30,8 @@ describe('applicationIdentityBar', () => {
       const application = applicationFactory.build({ person, status: 'withdrawn' })
 
       expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
-        <span class="govuk-caption-l">heading</span>
-        <h1 class="govuk-heading-l">${person.name}</h1>
+        <h1 class="govuk-caption-l">heading</h1>
+        <h2 class="govuk-heading-l">${person.name}</h2>
         <strong class="govuk-tag govuk-tag--red govuk-!-margin-5">Application withdrawn</strong>
       `)
     })

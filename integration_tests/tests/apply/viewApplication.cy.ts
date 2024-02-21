@@ -3,7 +3,12 @@ import { faker } from '@faker-js/faker/locale/en_GB'
 import { ListPage, NotesConfirmationPage, ShowPage } from '../../pages/apply'
 import Page from '../../pages/page'
 import { setup } from './setup'
-import { noteFactory, timelineEventFactory, withdrawableFactory } from '../../../server/testutils/factories'
+import {
+  noteFactory,
+  placementApplicationFactory,
+  timelineEventFactory,
+  withdrawableFactory,
+} from '../../../server/testutils/factories'
 import placementApplication from '../../../server/testutils/factories/placementApplication'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import { ApprovedPremisesApplication as Application, User } from '../../../server/@types/shared'
@@ -218,6 +223,26 @@ context('show applications', () => {
       const body = JSON.parse(requests[0].body)
       expect(body).to.have.keys('note')
     })
+  })
+
+  it('should not show the "Create placement request" button if the application is withdrawn', function test() {
+    const application = {
+      ...this.application,
+      status: 'withdrawn',
+    }
+
+    cy.task('stubApplicationGet', { application })
+    cy.task('stubApplications', [application])
+    cy.task('stubApplicationPlacementRequests', {
+      applicationId: application.id,
+      placementApplications: placementApplicationFactory.buildList(1),
+    })
+
+    // Given I am on the placement requests view on the application show page
+    const showPage = ShowPage.visit(application, 'placementRequests')
+
+    // Then I should not see the "Create placement request" button
+    showPage.shouldNotShowCreatePlacementRequestButton()
   })
 })
 
