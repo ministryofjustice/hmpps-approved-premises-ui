@@ -113,5 +113,15 @@ describe('applicationIdentityBar', () => {
         menus: [{ items: applicationMenuItems(application, ['appeals_manager']) }],
       })
     })
+
+    it('should return an empty array for menus if the application has a status of withdrawn', () => {
+      const application = applicationFactory.build({ status: 'withdrawn' })
+
+      expect(applicationIdentityBar(application, 'title', ['appeals_manager'])).toEqual({
+        title: { html: applicationTitle(application, 'title') },
+        classes: 'application-identity-bar',
+        menus: [],
+      })
+    })
   })
 })

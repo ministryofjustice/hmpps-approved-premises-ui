@@ -57,6 +57,6 @@ export const applicationIdentityBar = (
   return {
     title: { html: applicationTitle(application, pageHeading) },
     classes: 'application-identity-bar',
-    menus: [{ items: applicationMenuItems(application, userRoles) }],
+    menus: application.status !== 'withdrawn' ? [{ items: applicationMenuItems(application, userRoles) }] : [],
   }
 }
