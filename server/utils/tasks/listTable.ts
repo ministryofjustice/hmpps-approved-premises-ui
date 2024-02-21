@@ -1,3 +1,4 @@
+import { isAssessmentTask, isPlacementApplicationTask, isPlacementRequestTask } from './assertions'
 import { SortDirection, Task, TaskSortField } from '../../@types/shared'
 import { TableCell, TableRow } from '../../@types/ui'
 import paths from '../../paths/tasks'
@@ -18,18 +19,26 @@ const statusCell = (task: Task): TableCell => ({
   html: statusBadge(task),
 })
 
-const getTaskType = (taskType: string): string => {
-  if (taskType === 'PlacementRequest') {
-    return 'Match request'
+const getTaskType = (task: Task): string => {
+  let taskType
+  if (isPlacementRequestTask(task)) {
+    taskType = 'Match request'
   }
-  if (taskType === 'PlacementApplication') {
-    return 'Request for placement'
+  if (isPlacementApplicationTask(task)) {
+    taskType = 'Request for placement'
   }
-  return sentenceCase(taskType)
+  if (isAssessmentTask(task)) {
+    taskType = 'Assessment'
+    if (task.createdFromAppeal) {
+      taskType += ' (Appealed)'
+    }
+  }
+
+  return taskType
 }
 
 const taskTypeCell = (task: Task): TableCell => ({
-  html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
+  html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
 })
 
 const allocationCell = (task: Task): TableCell => ({
