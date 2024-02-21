@@ -1,0 +1,10 @@
+.application--show {
+  .moj-identity-bar {
+    &__title {
+      .govuk-tag {
+        display: inline;
+        vertical-align: super;
+      }
+    }
+  }
+}
