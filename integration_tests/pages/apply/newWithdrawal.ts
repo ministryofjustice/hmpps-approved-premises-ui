@@ -1,10 +1,35 @@
 import { Withdrawable } from '../../../server/@types/shared'
 import matchPaths from '../../../server/paths/match'
+import { SelectedWithdrawableType } from '../../../server/utils/applications/withdrawables'
 import Page from '../page'
 
 export default class SelectWithdrawableTypePage extends Page {
   constructor(heading: 'What do you want to withdraw?' | 'Select your placement') {
     super(heading)
+  }
+
+  shouldShowWithdrawableTypes(types: Array<SelectedWithdrawableType>) {
+    types.forEach(type => {
+      cy.get(`input[value="${type}"]`).should('exist')
+    })
+  }
+
+  shouldNotShowWithdrawableTypes(types: Array<SelectedWithdrawableType>) {
+    types.forEach(type => {
+      cy.get(`input[value="${type}"]`).should('not.exist')
+    })
+  }
+
+  shouldShowWithdrawables(withdrawables: Array<Withdrawable>) {
+    withdrawables.forEach(withdrawable => {
+      cy.get(`input[value="${withdrawable.id}"]`).should('exist')
+    })
+  }
+
+  shouldNotShowWithdrawables(withdrawables: Array<Withdrawable>) {
+    withdrawables.forEach(type => {
+      cy.get(`input[value="${type.id}"]`).should('not.exist')
+    })
   }
 
   selectType(type: 'placementRequest' | 'placement' | 'application') {
