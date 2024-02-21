@@ -93,7 +93,7 @@ export default class AseessHelper {
     listPage.clickAssessment(this.assessment)
 
     // Then I should be taken to the task list
-    Page.verifyOnPage(TaskListPage)
+    return Page.verifyOnPage(TaskListPage, this.assessment)
   }
 
   completeAssessment(options: { isShortNoticeApplication?: boolean } = {}) {
@@ -173,7 +173,7 @@ export default class AseessHelper {
     this.pages.reviewApplication = [reviewPage]
 
     // Then I should be taken to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
 
     // And the review application task should show a completed status
     tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
@@ -191,7 +191,7 @@ export default class AseessHelper {
     this.pages.sufficientInformation = [page]
 
     // Then I should be taken to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
 
     // And the sufficient-information application task should show a completed status
     tasklistPage.shouldShowTaskStatus('sufficient-information', 'Completed')
@@ -236,7 +236,7 @@ export default class AseessHelper {
     }
 
     // Then I should be taken to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
 
     // And the suitability-assessment application task should show a completed status
     tasklistPage.shouldShowTaskStatus('suitability-assessment', 'Completed')
@@ -254,7 +254,7 @@ export default class AseessHelper {
     this.pages.requiredActions = [page]
 
     // Then I should be taken to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
 
     // And the required-actions application task should show a completed status
     tasklistPage.shouldShowTaskStatus('required-actions', 'Completed')
@@ -272,7 +272,7 @@ export default class AseessHelper {
     this.pages.makeADecision.push(page)
 
     // Then I should be taken to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
 
     // And the make-a-decision application task should show a completed status
     tasklistPage.shouldShowTaskStatus('make-a-decision', 'Completed')
@@ -290,7 +290,7 @@ export default class AseessHelper {
     this.pages.matchingInformation.push(page)
 
     // Then I should be taken to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
 
     // And the matching-information application task should show a completed status
     tasklistPage.shouldShowTaskStatus('matching-information', 'Completed')
@@ -322,14 +322,14 @@ export default class AseessHelper {
     page.clickSubmit()
 
     // Then I should be taken to the task list
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
 
     // And the check-your-answers application task should show a completed status
     tasklistPage.shouldShowTaskStatus('check-your-answers', 'Completed')
   }
 
   submitAssessment(isSuitable = true) {
-    const tasklistPage = Page.verifyOnPage(TaskListPage)
+    const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
     tasklistPage.clickSubmit()
 
     tasklistPage.shouldShowMissingCheckboxErrorMessage()

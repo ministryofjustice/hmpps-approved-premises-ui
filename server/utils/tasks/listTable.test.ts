@@ -1,4 +1,9 @@
-import { taskFactory } from '../../testutils/factories'
+import {
+  assessmentTaskFactory,
+  placementApplicationTaskFactory,
+  placementRequestTaskFactory,
+  taskFactory,
+} from '../../testutils/factories'
 import {
   allocatedTableRows,
   allocationCell,
@@ -39,7 +44,7 @@ describe('table', () => {
               html: statusBadge(task),
             },
             {
-              html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
+              html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
             },
             {
               text: task.apArea?.name || 'No area supplied',
@@ -62,7 +67,7 @@ describe('table', () => {
               html: statusBadge(task),
             },
             {
-              html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
+              html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
             },
             {
               text: task.apArea?.name || 'No area supplied',
@@ -86,7 +91,7 @@ describe('table', () => {
               html: statusBadge(task),
             },
             {
-              html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
+              html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
             },
             { text: task.apArea?.name || 'No area supplied' },
           ],
@@ -104,7 +109,7 @@ describe('table', () => {
               html: statusBadge(task),
             },
             {
-              html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
+              html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
             },
             {
               text: task.apArea?.name,
@@ -192,7 +197,7 @@ describe('table', () => {
     it('returns the task type formatted for the UI as a TableCell object', () => {
       const task = taskFactory.build()
       expect(taskTypeCell(task)).toEqual({
-        html: `<strong class="govuk-tag">${getTaskType(task.taskType)}</strong>`,
+        html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
       })
     })
   })
@@ -263,6 +268,33 @@ describe('table', () => {
       expect(result).toEqual({
         id: task.id,
         taskType: 'placement-request',
+      })
+    })
+  })
+
+  describe('getTaskType', () => {
+    ;[
+      { task: placementRequestTaskFactory.build(), expectedTaskType: 'Match request', taskType: 'Placement Request' },
+      {
+        task: placementApplicationTaskFactory.build(),
+        expectedTaskType: 'Request for placement',
+        taskType: 'Placement Application',
+      },
+      {
+        task: assessmentTaskFactory.build({ createdFromAppeal: false }),
+        expectedTaskType: 'Assessment',
+        taskType: 'Assessment',
+      },
+      {
+        task: assessmentTaskFactory.build({ createdFromAppeal: true }),
+        expectedTaskType: 'Assessment (Appealed)',
+        taskType: 'Appealed Assessment',
+      },
+    ].forEach(args => {
+      it(`should return '${args.expectedTaskType}' for a task of type '${args.taskType}'`, () => {
+        const result = getTaskType(args.task)
+
+        expect(result).toEqual(args.expectedTaskType)
       })
     })
   })

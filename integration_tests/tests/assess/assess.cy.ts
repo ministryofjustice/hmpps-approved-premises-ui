@@ -88,6 +88,19 @@ context('Assess', () => {
     })
   })
 
+  it('shows a banner when the assessment has come from an appeal', function test() {
+    // Given there is an assessment that has come from an appeal
+    const assessmentFromAppeal = { ...this.assessment, createdFromAppeal: true }
+    const assessHelper = new AssessHelper(assessmentFromAppeal, this.documents, this.user, this.clarificationNote)
+    assessHelper.setupStubs()
+
+    // And I start an assessment
+    const taskList = assessHelper.startAssessment()
+
+    // Then I should see a banner telling me that the assessment has come from an appeal
+    taskList.shouldShowAppealBanner()
+  })
+
   it('allows me to create and update a clarification note', function test() {
     let assessmentNeedingClarification = addResponsesToFormArtifact<Assessment>(this.assessment, {
       task: 'sufficient-information',
@@ -152,7 +165,7 @@ context('Assess', () => {
         assessHelper.updateClarificationNote('yes')
 
         // Then I should be redirected to the tasklist page
-        const tasklistPage = Page.verifyOnPage(TaskListPage)
+        const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
 
         // And the sufficient information task should show a completed status
         tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
@@ -217,7 +230,7 @@ context('Assess', () => {
         // And I respond 'no' to the 'informationReceived' question
         assessHelper.updateClarificationNote('no')
         // Then I should be redirected to the tasklist page
-        const tasklistPage = Page.verifyOnPage(TaskListPage)
+        const tasklistPage = Page.verifyOnPage(TaskListPage, this.assessment)
 
         // And the sufficient information task should show a completed status
         tasklistPage.shouldShowTaskStatus('review-application', 'Completed')
@@ -343,7 +356,7 @@ context('Assess', () => {
     const contingencyPlanPage = new ContingencyPlanSuitabilityPage(assessment)
     contingencyPlanPage.clickSubmit()
 
-    Page.verifyOnPage(TaskListPage)
+    Page.verifyOnPage(TaskListPage, assessment)
 
     // Then the application should be updated with the Check Your Answers section removed
     cy.task('verifyAssessmentUpdate', assessment).then((requests: Array<{ body: string }>) => {
