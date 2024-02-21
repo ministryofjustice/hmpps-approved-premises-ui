@@ -145,7 +145,6 @@ export default {
           "id": "{{request.pathSegments.[1]}}",
           "person": ${JSON.stringify(args.application.person)},
           "createdByProbationOfficerId": "${args.application.createdByUserId}",
-          "schemaVersion": "${args.application.schemaVersion}",
           "createdAt": "${args.application.createdAt}",
           "submittedAt": "${args.application.submittedAt}",
           "data": {{{jsonPath request.body '$.data'}}}

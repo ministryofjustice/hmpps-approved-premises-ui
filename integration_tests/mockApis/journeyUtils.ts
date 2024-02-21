@@ -95,7 +95,6 @@ const stubRequestBody = (form: Application | Assessment, formData: Record<string
         "id": "{{request.pathSegments.[1]}}",
         "person": ${JSON.stringify(form.person)},
         "createdByProbationOfficerId": "${form.createdByUserId}",
-        "schemaVersion": "${form.schemaVersion}",
         "createdAt": "${form.createdAt}",
         "submittedAt": "${form.submittedAt}",
         "data": "${formData}"
@@ -106,7 +105,6 @@ const stubRequestBody = (form: Application | Assessment, formData: Record<string
   return `
     {
       "id": "{{request.pathSegments.[1]}}",
-      "schemaVersion": "${form.schemaVersion}",
       "createdAt": "${form.createdAt}",
       "submittedAt": "${form.submittedAt}",
       "application": "${form.application}",

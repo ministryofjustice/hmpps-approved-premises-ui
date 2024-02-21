@@ -18,37 +18,36 @@
 
 {% block content %}
 
-  <div class="govuk-grid-row">
-    <div class="govuk-width-container govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">
-            {{ pageProps.pageHeading }}
-         </h1>
+    <div class="govuk-grid-row">
+        <div class="govuk-width-container govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">
+                {{ pageProps.pageHeading }}
+            </h1>
 
-        {{ showErrorSummary(errorSummary) }}
+            {{ showErrorSummary(errorSummary) }}
 
-        {% if placementApplication.applicationCompletedAt %}
-            <p>
-                <a href="{{paths.applications.show({id: placementApplication.applicationId})}}">View application</a> 
+            {% if placementApplication.applicationCompletedAt %}
+                <p>
+                    <a href="{{paths.applications.show({id: placementApplication.applicationId})}}">View application</a> 
                 (Completed on {{formatDateTime(placementApplication.applicationCompletedAt)}})
             </p>
-        {% endif %}
+            {% endif %}
 
-        {% if placementApplication.assessmentCompletedAt %}
-            <p>
-                <a href="{{paths.assessments.show({id: placementApplication.assessmentId})}}">View assessment</a> 
+            {% if placementApplication.assessmentCompletedAt %}
+                <p>
+                    <a href="{{paths.assessments.show({id: placementApplication.assessmentId})}}">View assessment</a> 
                 (Completed on {{formatDateTime(placementApplication.assessmentCompletedAt)}})
             </p>
-        {%endif%}
+                {%endif%}
 
+                {{ govukSummaryList(PlacementRequestUtils.placementApplicationQuestionsForReview(placementApplication)) }}
 
-        {{ govukSummaryList(PlacementRequestUtils.placementApplicationQuestionsForReview(placementApplication)) }}
+                <form action="{{ paths.placementApplications.review.update({ id: placementApplication.id }) }}" method="post">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
-        <form action="{{ paths.placementApplications.review.update({ id: placementApplication.id }) }}" method="post">
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                    {% block questions %}
 
-            {% block questions %}
-           
-            {{ formPageTextarea({
+                        {{ formPageTextarea({
                 fieldName: 'summaryOfChanges',
                 label: {
                 text: "Summarise any significant changes that have happened between the assessment and this placement request",
@@ -56,13 +55,14 @@
                 }
             }, fetchContext()) }}
 
-            {% endblock %}
+                    {% endblock %}
 
-            {{ govukButton({
+                    {{ govukButton({
                 text: "Save and continue"
             }) }}
-        </form>
-    </div>
-    </div>
+                </form>
 
-{% endblock %}
+            </div>
+        </div>
+
+    {% endblock %}
