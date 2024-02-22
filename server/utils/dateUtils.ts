@@ -219,8 +219,12 @@ export class DateFormats {
     return format(date, 'HH:mm')
   }
 
-  static formatDurationBetweenTwoDates(date1: string, date2: string): string {
-    return `${DateFormats.isoDateToUIDate(date1)} - ${DateFormats.isoDateToUIDate(date2)}`
+  static formatDurationBetweenTwoDates(
+    date1: string,
+    date2: string,
+    options: { format: 'short' | 'long' } = { format: 'long' },
+  ): string {
+    return `${DateFormats.isoDateToUIDate(date1, { format: options.format })} - ${DateFormats.isoDateToUIDate(date2, { format: options.format })}`
   }
 }
 
