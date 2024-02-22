@@ -112,7 +112,7 @@ export default class ShowPage extends Page {
   }
 
   shouldNotShowCreatePlacementRequestButton() {
-    cy.get('button').contains('Create placement request').should('not.exist')
+    cy.get('Create placement request').should('not.exist')
   }
 
   clickTimelineTab() {
