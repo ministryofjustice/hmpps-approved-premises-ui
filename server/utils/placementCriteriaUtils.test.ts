@@ -45,7 +45,6 @@ describe('placementCriteriaUtils', () => {
         'isSingle',
         'isStepFreeDesignated',
         'isCatered',
-        'isGroundFloor',
         'hasEnSuite',
         'isSuitedForSexOffenders',
         'isArsonDesignated',

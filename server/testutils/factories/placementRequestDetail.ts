@@ -27,7 +27,6 @@ export const placementCriteria = [
   'isSingle',
   'isStepFreeDesignated',
   'isCatered',
-  'isGroundFloor',
   'hasEnSuite',
   'isSuitedForSexOffenders',
   'isArsonSuitable',

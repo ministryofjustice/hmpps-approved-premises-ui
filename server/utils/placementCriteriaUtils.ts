@@ -16,7 +16,6 @@ const placementRequirementCriteria = [
   'isSingle',
   'isStepFreeDesignated',
   'isCatered',
-  'isGroundFloor',
   'hasEnSuite',
   'isSuitedForSexOffenders',
 ] as const
@@ -46,7 +45,6 @@ export const placementCriteria: Record<PlacementCriteria, string> = {
   isSingle: 'Single room',
   isStepFreeDesignated: 'Step-free access',
   isCatered: 'Catering required',
-  isGroundFloor: 'Ground floor room',
   hasEnSuite: 'En-suite bathroom',
   isSuitedForSexOffenders: 'Room suitable for a person with sexual offences',
   isArsonSuitable: 'Arson offences',
