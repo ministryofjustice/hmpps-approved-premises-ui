@@ -21,7 +21,7 @@ export default class WithdrawalsController {
       )
 
       return res.render('placement-applications/withdraw/new', {
-        pageHeading: 'Why is this placement request being withdrawn?',
+        pageHeading: 'Why is this request for placement being withdrawn?',
         placementApplicationId: placementApplication.id,
         applicationId: placementApplication.applicationId,
         errors,

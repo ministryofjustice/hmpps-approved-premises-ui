@@ -47,7 +47,7 @@ describe('withdrawalsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('placement-applications/withdraw/new', {
-        pageHeading: 'Why is this placement request being withdrawn?',
+        pageHeading: 'Why is this request for placement being withdrawn?',
         placementApplicationId: placementApplication.id,
         applicationId,
         errors: errorsAndUserInput.errors,

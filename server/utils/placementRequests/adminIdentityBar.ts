@@ -50,7 +50,7 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
       href: process.env.NEW_WITHDRAWALS_FLOW_DISABLED
         ? adminPaths.admin.placementRequests.withdrawal.new({ id: placementRequest.id })
         : applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
-      text: 'Withdraw placement request',
+      text: 'Withdraw request for placement',
     },
     {
       href: adminPaths.admin.placementRequests.unableToMatch.new({ id: placementRequest.id }),
@@ -59,7 +59,12 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
   ]
 }
 
-export const title = (placementRequest: PlacementRequestDetail) => `
-<span class="govuk-caption-l">Placement request</span>
+export const title = (placementRequest: PlacementRequestDetail) => {
+  let markup = `<span class="govuk-caption-l">Placement request</span>
 <h1 class="govuk-heading-l">${nameOrPlaceholderCopy(placementRequest.person, 'Limited Access Offender')}</h1>
 `
+  if (placementRequest.isWithdrawn) {
+    markup += `<strong class="govuk-tag govuk-tag--red govuk-!-margin-5">Request for placement withdrawn</strong>`
+  }
+  return markup
+}

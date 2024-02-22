@@ -31,8 +31,6 @@
         <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
       {% endif %}
 
-      <br>
-
       {{
         govukSummaryList({
           classes: 'govuk-summary-list--no-border',
@@ -42,8 +40,6 @@
           rows: BookingUtils.bookingPersonRows(booking)
         })
       }}
-
-      <br>
 
       {% if booking.cancellation %}
 
@@ -55,8 +51,6 @@
           rows: BookingUtils.cancellationRows(booking)
         })
       }}
-
-        <br>
 
       {% endif %}
 
@@ -72,8 +66,6 @@
         })
       }}
 
-      <br>
-
       <h2>Departure information</h2>
 
       {{
@@ -85,8 +77,6 @@
             rows: BookingUtils.bookingDepartureRows(booking)
           })
         }}
-
-      <br>
 
       <h2>Documents</h2>
 

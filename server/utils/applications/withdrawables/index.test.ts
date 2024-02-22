@@ -70,14 +70,18 @@ describe('withdrawableTypeRadioOptions', () => {
       ).toEqual([
         {
           text: paWithdrawable.dates
-            .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+            .map(datePeriod =>
+              DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
+            )
             .join(', '),
           checked: true,
           value: paWithdrawable.id,
         },
         {
           text: prWithdrawable.dates
-            .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+            .map(datePeriod =>
+              DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
+            )
             .join(', '),
           checked: false,
           hint: {

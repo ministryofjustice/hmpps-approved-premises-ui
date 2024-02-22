@@ -5,6 +5,7 @@ import managePaths from '../../paths/manage'
 import adminPaths from '../../paths/admin'
 import applyPaths from '../../paths/apply'
 import { nameOrPlaceholderCopy } from '../personUtils'
+import { fullPersonFactory } from '../../testutils/factories/person'
 
 describe('adminIdentityBar', () => {
   describe('adminActions', () => {
@@ -70,7 +71,7 @@ describe('adminIdentityBar', () => {
         },
         {
           href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),
-          text: 'Withdraw placement request',
+          text: 'Withdraw request for placement',
         },
         {
           href: adminPaths.admin.placementRequests.unableToMatch.new({ id: placementRequestDetail.id }),
@@ -90,7 +91,7 @@ describe('adminIdentityBar', () => {
         },
         {
           href: adminPaths.admin.placementRequests.withdrawal.new({ id: placementRequestDetail.id }),
-          text: 'Withdraw placement request',
+          text: 'Withdraw request for placement',
         },
         {
           href: adminPaths.admin.placementRequests.unableToMatch.new({ id: placementRequestDetail.id }),
@@ -117,6 +118,19 @@ describe('adminIdentityBar', () => {
       expect(title(placementRequestDetailWithRestrictedAccessOffender)).toMatchStringIgnoringWhitespace(`
       <span class="govuk-caption-l">Placement request</span>
       <h1 class="govuk-heading-l">Limited Access Offender</h1>
+      `)
+    })
+
+    it('should return a withdrawn tag if the request for placement has been withdrawn', () => {
+      const placementRequestDetail = placementRequestDetailFactory.build({
+        isWithdrawn: true,
+        person: fullPersonFactory.build(),
+      })
+
+      expect(title(placementRequestDetail)).toMatchStringIgnoringWhitespace(`
+<span class="govuk-caption-l">Placement request</span>
+<h1 class="govuk-heading-l">${nameOrPlaceholderCopy(placementRequestDetail.person)}</h1>
+<strong class="govuk-tag govuk-tag--red govuk-!-margin-5">Request for placement withdrawn</strong>
       `)
     })
   })

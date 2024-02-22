@@ -11,7 +11,9 @@ export type SelectedWithdrawableType = 'application' | 'placementRequest' | 'pla
 
 export const hintCopy: Record<SelectedWithdrawableType, string> = {
   application: `This will withdraw the application, the suitability assessment, any requests for placement, any matching tasks, and any placements assigned to an AP. You should only withdraw an application if your application is incorrect through circumstantial changes or error.If you choose this option you will have to make another application should you need this person to stay in an AP. This cannot be undone.`,
-  placement: `This will cancel a placement booked into a specific AP but will retain the request for placement so that the Applicant can be matched to another AP.This will mean the Applicant no longer has a space in this AP, but the request for placement will be reopened for matching into a AP space for the dates provided in the application or request for placement.If you want to request a placement for new/different dates, you should withdraw the placement request and make a new placement request. There is no guarantee that a further placement will be available.`,
+  placement: `This will cancel a placement booked into a specific AP but will retain the request for placement so that the Applicant can be matched to another AP. 
+  This will mean the Applicant no longer has a space in this AP, but the request for placement will be reopened for matching into a AP space for the dates provided in the application or request for placement. If you want to request a placement for new/different dates, you should withdraw the placement request and make a new placement request. 
+  There is no guarantee that a further placement will be available.`,
   placementRequest: `<p class="govuk-hint">This will withdraw the following Request for Placement tasks:</p>
   <ul class="govuk-hint"><li>A match request made after an application where the date is known</li>
   <li>A request for placement mini assessment</li>
@@ -69,7 +71,9 @@ export const withdrawableRadioOptions = (
     if (withdrawable.type === 'placement_application') {
       return {
         text: withdrawable.dates
-          .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+          .map(datePeriod =>
+            DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
+          )
           .join(', '),
         value: withdrawable.id,
         checked: selectedWithdrawable === withdrawable.id,
@@ -78,7 +82,9 @@ export const withdrawableRadioOptions = (
     if (withdrawable.type === 'placement_request') {
       return {
         text: withdrawable.dates
-          .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+          .map(datePeriod =>
+            DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
+          )
           .join(', '),
         value: withdrawable.id,
         checked: selectedWithdrawable === withdrawable.id,
