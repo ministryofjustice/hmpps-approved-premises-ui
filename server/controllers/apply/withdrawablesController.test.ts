@@ -9,7 +9,7 @@ import managePaths from '../../paths/manage'
 import placementAppPaths from '../../paths/placementApplications'
 import { Withdrawable } from '../../@types/shared'
 import applyPaths from '../../paths/apply'
-import { sortWithdrawables } from '../../utils/applications/withdrawables'
+import { sortAndFilterWithdrawables } from '../../utils/applications/withdrawables'
 
 jest.mock('../../utils/applications/withdrawables')
 
@@ -41,7 +41,10 @@ describe('withdrawablesController', () => {
         const placementApplicationWithdrawable = withdrawableFactory.build({ type: 'placement_application' })
         const applicationWithdrawable = withdrawableFactory.build({ type: 'application' })
         const withdrawables = [placementRequestWithdrawable, placementApplicationWithdrawable, applicationWithdrawable]
-        ;(sortWithdrawables as jest.MockedFunction<typeof sortWithdrawables>).mockReturnValue(withdrawables)
+        ;(sortAndFilterWithdrawables as jest.MockedFunction<typeof sortAndFilterWithdrawables>).mockReturnValue([
+          placementRequestWithdrawable,
+          placementApplicationWithdrawable,
+        ])
 
         applicationService.getWithdrawables.mockResolvedValue(withdrawables)
 
@@ -53,7 +56,10 @@ describe('withdrawablesController', () => {
           next,
         )
 
-        expect(sortWithdrawables).toHaveBeenCalledWith(withdrawables)
+        expect(sortAndFilterWithdrawables).toHaveBeenCalledWith(withdrawables, [
+          'placement_application',
+          'placement_request',
+        ])
         expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/show', {
           pageHeading: 'Select your placement',
@@ -74,7 +80,9 @@ describe('withdrawablesController', () => {
         const withdrawables = [applicationWithdrawable, ...placementWithdrawables]
 
         applicationService.getWithdrawables.mockResolvedValue(withdrawables)
-        ;(sortWithdrawables as jest.MockedFunction<typeof sortWithdrawables>).mockReturnValue(withdrawables)
+        ;(sortAndFilterWithdrawables as jest.MockedFunction<typeof sortAndFilterWithdrawables>).mockReturnValue(
+          placementWithdrawables,
+        )
         bookings.forEach(b => bookingService.findWithoutPremises.mockResolvedValueOnce(b))
 
         const requestHandler = withdrawablesController.show()
@@ -84,7 +92,7 @@ describe('withdrawablesController', () => {
           response,
           next,
         )
-        expect(sortWithdrawables).toHaveBeenCalledWith(withdrawables)
+        expect(sortAndFilterWithdrawables).toHaveBeenCalledWith(withdrawables, ['booking'])
         expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/show', {
           pageHeading: 'Select your placement',

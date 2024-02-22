@@ -5,7 +5,7 @@ import managePaths from '../../../paths/manage'
 import { DateFormats } from '../../dateUtils'
 import { linkTo } from '../../utils'
 
-export { sortWithdrawables } from './sortWithdrawables'
+export { sortAndFilterWithdrawables } from './sortAndFilterWithdrawables'
 
 export type SelectedWithdrawableType = 'application' | 'placementRequest' | 'placement'
 
