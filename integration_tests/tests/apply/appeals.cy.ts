@@ -51,7 +51,6 @@ context('Appeals', () => {
       expect(body.appealDetail).equal(newAppeal.appealDetail)
       expect(body.decision).equal(newAppeal.decision)
       expect(body.decisionDetail).equal(newAppeal.decisionDetail)
-      expect(body.reviewer).equal(newAppeal.reviewer)
     })
   })
 
@@ -63,7 +62,7 @@ context('Appeals', () => {
     cy.task('stubApplicationGet', { application })
     cy.task('stubAppealErrors', {
       applicationId: application.id,
-      params: ['appealDate', 'appealDetail', 'decision', 'decisionDetail', 'reviewer'],
+      params: ['appealDate', 'appealDetail', 'decision', 'decisionDetail'],
     })
 
     // And I visit the appeals page
@@ -73,13 +72,7 @@ context('Appeals', () => {
     appealsPage.clickSubmit()
 
     // Then I should see the error messages
-    appealsPage.shouldShowErrorMessagesForFields([
-      'appealDate',
-      'appealDetail',
-      'decision',
-      'decisionDetail',
-      'reviewer',
-    ])
+    appealsPage.shouldShowErrorMessagesForFields(['appealDate', 'appealDetail', 'decision', 'decisionDetail'])
   })
 
   it('should show an appeal', function test() {

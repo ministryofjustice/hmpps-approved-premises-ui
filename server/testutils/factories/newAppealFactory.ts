@@ -6,7 +6,6 @@ import { DateFormats } from '../../utils/dateUtils'
 export default Factory.define<NewAppeal>(() => ({
   appealDate: DateFormats.dateObjToIsoDate(faker.date.past()),
   appealDetail: faker.lorem.sentence(),
-  reviewer: faker.person.fullName(),
   decision: 'accepted',
   decisionDetail: faker.lorem.sentence(),
 }))

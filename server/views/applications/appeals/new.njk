@@ -63,17 +63,6 @@
             errorMessage: errors.appealDetail
         }) }}
 
-        {{ govukTextarea({
-            name: "appeal[reviewer]",
-            id: "reviewer",
-            value: appeal.reviewer,
-            label: {
-            text: "Who made the decision on the appeal?",
-            classes: "govuk-fieldset__legend--s"
-            },
-            errorMessage: errors.reviewer
-        }) }}
-
         {{ govukRadios({
             name: "appeal[decision]",
             classes: "govuk-radios",

@@ -92,7 +92,6 @@ describe('AppealsController', () => {
             'appealDate-day': 11,
             appeal: {
               appealDetail: 'detail',
-              reviewer: 'reviewer',
               decisionDetail: 'decisionDetail',
               decision,
             },
