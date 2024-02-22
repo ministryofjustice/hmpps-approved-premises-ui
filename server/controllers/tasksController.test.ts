@@ -72,7 +72,7 @@ describe('TasksController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: 'createdAt',
         sortDirection: 'asc',
-        selectedArea: apArea.id,
+        apArea: apArea.id,
       })
 
       expect(taskService.getAll).toHaveBeenCalledWith({
@@ -114,7 +114,7 @@ describe('TasksController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paramPaginationDetails.sortBy,
         sortDirection: paramPaginationDetails.sortDirection,
-        selectedArea: apAreaId,
+        apArea: apAreaId,
       })
       expect(getPaginationDetails).toHaveBeenCalledWith(unallocatedRequest, paths.tasks.index({}), {
         allocatedFilter: 'unallocated',
@@ -154,7 +154,7 @@ describe('TasksController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paramPaginationDetails.sortBy,
         sortDirection: paramPaginationDetails.sortDirection,
-        selectedArea: 'all',
+        apArea: 'all',
       })
 
       expect(taskService.getAll).toHaveBeenCalledWith({

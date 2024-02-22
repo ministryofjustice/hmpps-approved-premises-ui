@@ -6,7 +6,14 @@ import { arrivalDateFromApplication } from '../applications/arrivalDateFromAppli
 import { getApplicationType } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
 import { nameOrPlaceholderCopy } from '../personUtils'
-import { allocatedTableRows, taskParams, tasksTableHeader, tasksTableRows, unallocatedTableRows } from './listTable'
+import {
+  allocatedTableRows,
+  taskParams,
+  tasksTabItems,
+  tasksTableHeader,
+  tasksTableRows,
+  unallocatedTableRows,
+} from './listTable'
 import { userTableHeader, userTableRows } from './usersTable'
 
 type GroupedTasks = {
@@ -91,4 +98,5 @@ export {
   tasksTableRows,
   userTableHeader,
   userTableRows,
+  tasksTabItems,
 }

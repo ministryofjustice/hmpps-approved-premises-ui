@@ -35,7 +35,7 @@
                       },
                       id: "area",
                       name: "area",
-                      items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'selectedArea', 'all')
+                      items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'apArea', 'all', context)
                     }) }}
             </div>
             <div class="govuk-grid-column-two-third">
@@ -48,7 +48,7 @@
           </div>
         </form>
       </div>
-      {{ navigation(allocatedFilter) }}
+      {{ navigation(allocatedFilter, apArea) }}
 
       {{
         govukTable({
