@@ -36,22 +36,6 @@
     )
   }}
 
-  {{
-    formPageCheckboxes(
-      {
-        fieldName: "accessibilityCriteria",
-        fieldset: {
-          legend: {
-            text: page.questions.accessibilityCriteria,
-            classes: "govuk-fieldset__legend--m"
-          }
-        },
-      items: page.accessibilityCheckBoxes
-      },
-      fetchContext()
-    )
-  }}
-
   <h2 class="govuk-heading-m">Placement requirements</h2>
 
   {{placementRequirementsTable(page.placementRequirementTableHeadings, page.placementRequirements, page.placementRequirementPreferences, page.body) | safe}}

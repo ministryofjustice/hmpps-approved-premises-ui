@@ -9,7 +9,6 @@ import { DateFormats } from './dateUtils'
 import { linkTo } from './utils'
 import matchPaths from '../paths/match'
 import {
-  accessibilityOptions,
   offenceAndRiskOptions,
   placementCriteria,
   placementRequirementOptions,
@@ -26,19 +25,13 @@ type PlacementDates = {
 
 export class InvalidBedSearchDataException extends Error {}
 
-export type SearchFilterCategories =
-  | 'accessibility'
-  | 'apType'
-  | 'offenceAndRisk'
-  | 'placementRequirements'
-  | 'specialistSupport'
+export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementRequirements' | 'specialistSupport'
 
 const groupedCriteria = {
   apType: { title: 'Type of AP', options: specialistApTypeOptions },
   specialistSupport: { title: 'Specialist AP', options: specialistSupportOptions },
   placementRequirements: { title: 'Placement Requirements', options: placementRequirementOptions },
   offenceAndRisk: { title: 'Risks and offences to consider', options: offenceAndRiskOptions },
-  accessibility: { title: 'Would benefit from', options: accessibilityOptions },
 }
 
 export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParameters => {
