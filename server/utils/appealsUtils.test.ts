@@ -9,6 +9,14 @@ describe('AppealsUtils', () => {
     expect(appealSummaryListItems(appeal)).toEqual([
       {
         key: {
+          text: 'Appeal arbitrator',
+        },
+        value: {
+          text: appeal.createdByUser.name,
+        },
+      },
+      {
+        key: {
           text: 'Has this person been assessed as suitable following an appeal?',
         },
         value: {
@@ -21,14 +29,6 @@ describe('AppealsUtils', () => {
         },
         value: {
           text: DateFormats.isoDateToUIDate(appeal.appealDate),
-        },
-      },
-      {
-        key: {
-          text: 'Who handled the appeal?',
-        },
-        value: {
-          text: appeal.reviewer,
         },
       },
       {
