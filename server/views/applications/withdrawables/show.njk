@@ -1,10 +1,17 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% extends "../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+		text: "Back",
+		href: paths.applications.withdraw.new({id: id})
+	}) }}
+{% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">
