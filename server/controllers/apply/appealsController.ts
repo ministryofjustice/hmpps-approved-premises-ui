@@ -39,7 +39,6 @@ export default class AppealsController {
       const appeal: NewAppeal = {
         appealDate,
         appealDetail: body.appeal.appealDetail,
-        reviewer: body.appeal.reviewer,
         decisionDetail: body.appeal.decisionDetail,
         decision: body.appeal.decision as AppealDecision,
       }

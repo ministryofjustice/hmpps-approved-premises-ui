@@ -15,7 +15,6 @@ export default class AppealsNewPage extends Page {
   completeForm(appeal: NewAppeal): void {
     this.completeDateInputs('appealDate', appeal.appealDate)
     this.completeTextArea('appeal[appealDetail]', appeal.appealDetail)
-    this.completeTextArea('appeal[reviewer]', appeal.reviewer)
     this.checkRadioByNameAndValue('appeal[decision]', appeal.decision)
     this.completeTextArea('appeal[decisionDetail]', appeal.decisionDetail)
     this.clickSubmit()

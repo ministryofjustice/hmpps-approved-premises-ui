@@ -113,7 +113,6 @@
     "mustNotBeFuture": "The appeal date must not be in the future"
   },
   "appealDetail": { "empty": "You must enter the reason for the appeal" },
-  "reviewer": { "empty": "You must enter who made the decision" },
   "decision": { "empty": "You must provide the decision" },
   "decisionDetail": { "empty": "You must enter the reasons for the appeal decision" }
 }
