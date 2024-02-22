@@ -71,7 +71,9 @@ export const withdrawableRadioOptions = (
     if (withdrawable.type === 'placement_application') {
       return {
         text: withdrawable.dates
-          .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+          .map(datePeriod =>
+            DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
+          )
           .join(', '),
         value: withdrawable.id,
         checked: selectedWithdrawable === withdrawable.id,
@@ -80,7 +82,9 @@ export const withdrawableRadioOptions = (
     if (withdrawable.type === 'placement_request') {
       return {
         text: withdrawable.dates
-          .map(datePeriod => DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate))
+          .map(datePeriod =>
+            DateFormats.formatDurationBetweenTwoDates(datePeriod.startDate, datePeriod.endDate, { format: 'short' }),
+          )
           .join(', '),
         value: withdrawable.id,
         checked: selectedWithdrawable === withdrawable.id,
