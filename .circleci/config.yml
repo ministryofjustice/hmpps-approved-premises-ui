@@ -182,6 +182,7 @@ jobs:
   e2e_environment_test:
     docker:
       - image: mcr.microsoft.com/playwright:v1.41.2-focal
+    parallelism: 4
     circleci_ip_ranges: true # opt-in to jobs running on a restricted set of IPs
     steps:
       - run:
@@ -195,7 +196,16 @@ jobs:
       - run:
           name: E2E Check
           command: |
-            npm run test
+            SHARD="$((${CIRCLE_NODE_INDEX}+1))"
+            username="HMPPS_AUTH_USERNAME_$SHARD"
+            password="HMPPS_AUTH_PASSWORD_$SHARD"
+            email="HMPPS_AUTH_EMAIL_$SHARD"
+            name="HMPPS_AUTH_NAME_$SHARD"
+            HMPPS_AUTH_USERNAME="${!username}"
+            HMPPS_AUTH_PASSWORD="${!password}"
+            HMPPS_AUTH_EMAIL="${!email}"
+            HMPPS_AUTH_NAME="${!name}"
+            npm run test -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
       - store_artifacts:
           path: playwright-report
           destination: playwright-report
@@ -245,8 +255,6 @@ workflows:
             branches:
               only:
                 - main
-          requires:
-            - deploy_dev
       - request-preprod-approval:
           type: approval
           requires:
