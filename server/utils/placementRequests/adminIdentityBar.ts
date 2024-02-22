@@ -59,7 +59,12 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
   ]
 }
 
-export const title = (placementRequest: PlacementRequestDetail) => `
-<span class="govuk-caption-l">Placement request</span>
+export const title = (placementRequest: PlacementRequestDetail) => {
+  let markup = `<span class="govuk-caption-l">Placement request</span>
 <h1 class="govuk-heading-l">${nameOrPlaceholderCopy(placementRequest.person, 'Limited Access Offender')}</h1>
 `
+  if (placementRequest.isWithdrawn) {
+    markup += `<strong class="govuk-tag govuk-tag--red govuk-!-margin-5">Request for placement withdrawn</strong>`
+  }
+  return markup
+}
