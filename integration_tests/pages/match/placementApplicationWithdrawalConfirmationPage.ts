@@ -3,7 +3,7 @@ import Page from '../page'
 
 export default class ConfirmationPage extends Page {
   constructor() {
-    super('Why is this placement request being withdrawn?')
+    super('Why is this request for placement being withdrawn?')
   }
 
   selectReason(withdrawalReason: WithdrawPlacementRequestReason) {

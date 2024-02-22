@@ -70,7 +70,7 @@ describe('adminIdentityBar', () => {
         },
         {
           href: applyPaths.applications.withdraw.new({ id: placementRequestDetail.applicationId }),
-          text: 'Withdraw placement request',
+          text: 'Withdraw request for placement',
         },
         {
           href: adminPaths.admin.placementRequests.unableToMatch.new({ id: placementRequestDetail.id }),
@@ -90,7 +90,7 @@ describe('adminIdentityBar', () => {
         },
         {
           href: adminPaths.admin.placementRequests.withdrawal.new({ id: placementRequestDetail.id }),
-          text: 'Withdraw placement request',
+          text: 'Withdraw request for placement',
         },
         {
           href: adminPaths.admin.placementRequests.unableToMatch.new({ id: placementRequestDetail.id }),

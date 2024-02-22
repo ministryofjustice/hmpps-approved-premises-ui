@@ -52,7 +52,7 @@ export default class ShowPage extends Page {
 
   clickWithdraw() {
     cy.get('.moj-button-menu__toggle-button').click()
-    cy.contains('.moj-button-menu__item', 'Withdraw placement request').click()
+    cy.contains('.moj-button-menu__item', 'Withdraw request for placement').click()
   }
 
   clickUnableToMatch() {

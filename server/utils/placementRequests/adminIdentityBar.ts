@@ -50,7 +50,7 @@ export const adminActions = (placementRequest: PlacementRequestDetail): Array<Id
       href: process.env.NEW_WITHDRAWALS_FLOW_DISABLED
         ? adminPaths.admin.placementRequests.withdrawal.new({ id: placementRequest.id })
         : applyPaths.applications.withdraw.new({ id: placementRequest.applicationId }),
-      text: 'Withdraw placement request',
+      text: 'Withdraw request for placement',
     },
     {
       href: adminPaths.admin.placementRequests.unableToMatch.new({ id: placementRequest.id }),

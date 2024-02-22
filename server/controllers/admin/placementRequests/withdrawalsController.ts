@@ -17,7 +17,7 @@ export default class WithdrawalsController {
       const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
 
       return res.render('admin/placementRequests/withdrawals/new', {
-        pageHeading: 'Why is this placement request being withdrawn?',
+        pageHeading: 'Why is this request for placement being withdrawn?',
         id: req.params.id,
         errors,
         errorSummary,
