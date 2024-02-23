@@ -15,6 +15,7 @@ import {
   statusCell,
   taskParams,
   taskTypeCell,
+  tasksTabItems,
   tasksTableHeader,
   tasksTableRows,
   unallocatedTableRows,
@@ -296,6 +297,53 @@ describe('table', () => {
 
         expect(result).toEqual(args.expectedTaskType)
       })
+    })
+  })
+
+  describe('tasksTabItems', () => {
+    it('returns tasks tab items when active tab and area not present', () => {
+      expect(tasksTabItems()).toEqual([
+        {
+          text: 'Allocated',
+          active: true,
+          href: '/tasks?allocatedFilter=allocated',
+        },
+        {
+          text: 'Unallocated',
+          active: false,
+          href: '/tasks?allocatedFilter=unallocated',
+        },
+      ])
+    })
+
+    it('returns tasks tab items when active tab and area present', () => {
+      expect(tasksTabItems('allocated', 'areaId')).toEqual([
+        {
+          text: 'Allocated',
+          active: true,
+          href: '/tasks?allocatedFilter=allocated&area=areaId',
+        },
+        {
+          text: 'Unallocated',
+          active: false,
+          href: '/tasks?allocatedFilter=unallocated&area=areaId',
+        },
+      ])
+    })
+
+    it('returns tasks tab items when active tab unallocated and area present', () => {
+      expect(tasksTabItems('unallocated', 'areaId')).toEqual([
+        {
+          text: 'Allocated',
+          active: false,
+          href: '/tasks?allocatedFilter=allocated&area=areaId',
+        },
+        {
+          text: 'Unallocated',
+          active: true,
+          href: '/tasks?allocatedFilter=unallocated&area=areaId',
+        },
+      ])
     })
   })
 })

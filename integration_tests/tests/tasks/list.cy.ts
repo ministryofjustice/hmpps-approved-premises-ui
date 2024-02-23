@@ -187,6 +187,58 @@ context('Task Allocation', () => {
     listPage.shouldShowAllocatedTasks(allocatedTasksFiltered)
   })
 
+  it('maintains filter on tab change', () => {
+    cy.task('stubAuthUser')
+
+    // Given I am logged in
+    cy.signIn()
+
+    const allocatedTasks = taskFactory.buildList(10)
+    const allocatedTasksFiltered = taskFactory.buildList(1)
+    const unallocatedTasks = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
+
+    cy.task('stubGetAllTasks', { tasks: allocatedTasks, allocatedFilter: 'allocated', page: '1' })
+    cy.task('stubApAreaReferenceData', {
+      id: apAreaId,
+      name: 'Midlands',
+    })
+
+    // When I visit the tasks dashboard
+    const listPage = ListPage.visit(allocatedTasks, unallocatedTasks)
+
+    // Then I should see the tasks that are allocated
+    listPage.shouldShowAllocatedTasks()
+
+    // When I filter by region
+    cy.task('stubGetAllTasks', {
+      tasks: allocatedTasksFiltered,
+      allocatedFilter: 'allocated',
+      page: '1',
+      sortDirection: 'asc',
+      apAreaId,
+    })
+
+    cy.task('stubGetAllTasks', {
+      tasks: allocatedTasksFiltered,
+      allocatedFilter: 'unallocated',
+      page: '1',
+      sortDirection: 'asc',
+      apAreaId,
+    })
+
+    listPage.searchBy('area', apAreaId)
+    listPage.clickApplyFilter()
+
+    // Then the page should show the results
+    listPage.shouldShowAllocatedTasks(allocatedTasksFiltered)
+
+    // And click on unallocated tab
+    listPage.clickTab('Unallocated')
+
+    // Then the page should keep the area filter
+    listPage.shouldHaveSelectText('area', 'Midlands')
+  })
+
   it('retains the unallocated filter when applying other filters', () => {
     cy.task('stubAuthUser')
 

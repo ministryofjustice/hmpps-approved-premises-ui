@@ -1,21 +1,10 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 
-{% macro navigation(activeTab) %}
+{% macro navigation(activeTab, apArea) %}
   {{
     mojSubNavigation({
       label: 'Sub navigation',
-      items: [
-        {
-          text: 'Allocated',
-          href: paths.tasks.index({})+ "?allocatedFilter=allocated",
-          active: (activeTab === 'allocated' or activeTab|length === 0)
-        },
-        {
-          text: 'Unallocated',
-          href: paths.tasks.index({}) + "?allocatedFilter=unallocated",
-          active: (activeTab === 'unallocated')
-        }
-      ]
+      items: TaskUtils.tasksTabItems(activeTab, apArea)
     })
   }}
 {% endmacro %}

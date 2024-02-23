@@ -166,6 +166,31 @@ const tasksTableHeader = (
 
 const taskParams = (task: Task) => ({ id: task.id, taskType: kebabCase(task.taskType) })
 
+export type TabItem = {
+  text: string
+  active: boolean
+  href: string
+}
+
+const tasksTabItems = (activeTab?: string, apArea?: string): Array<TabItem> => {
+  const hrefSuffix = apArea ? `&area=${apArea}` : ''
+  const allocatedHref = `${paths.tasks.index({})}?allocatedFilter=allocated${hrefSuffix}`
+  const unallocatedHref = `${paths.tasks.index({})}?allocatedFilter=unallocated${hrefSuffix}`
+
+  return [
+    {
+      text: 'Allocated',
+      active: activeTab === 'allocated' || activeTab === undefined || activeTab?.length === 0,
+      href: allocatedHref,
+    },
+    {
+      text: 'Unallocated',
+      active: activeTab === 'unallocated',
+      href: unallocatedHref,
+    },
+  ]
+}
+
 export {
   allocatedTableRows,
   tasksTableHeader,
@@ -180,4 +205,5 @@ export {
   unallocatedTableRows,
   taskParams,
   getTaskType,
+  tasksTabItems,
 }
