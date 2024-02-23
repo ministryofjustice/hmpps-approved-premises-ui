@@ -1,8 +1,7 @@
-import { weeksToDays } from 'date-fns'
 import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
-import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { defaultMatchingInformationValues } from '../../../utils/defaultMatchingInformationValues'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { daysToWeeksAndDays } from '../../../../utils/assessments/dateUtils'
 import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
@@ -21,11 +20,10 @@ import {
   placementRequirementOptions,
   specialistSupportOptions,
 } from '../../../../utils/placementCriteriaUtils'
-import AccessNeedsFurtherQuestions from '../../../apply/risk-and-need-factors/access-and-healthcare/accessNeedsFurtherQuestions'
 
 const placementRequirements = Object.keys(placementRequirementOptions)
 const placementRequirementPreferences = ['essential' as const, 'desirable' as const, 'notRelevant' as const]
-type PlacementRequirementPreference = (typeof placementRequirementPreferences)[number]
+export type PlacementRequirementPreference = (typeof placementRequirementPreferences)[number]
 
 const offenceAndRiskInformationKeys = Object.keys(offenceAndRiskOptions)
 const offenceAndRiskInformationRelevance = ['relevant', 'notRelevant']
@@ -96,7 +94,7 @@ export default class MatchingInformation implements TasklistPage {
   ) {}
 
   set body(value: MatchingInformationBody) {
-    this._body = { ...value, isWheelchairDesignated: this.isWheelchairDesignated(), lengthOfStay: this.lengthInDays() }
+    this._body = { ...value, ...defaultMatchingInformationValues(this.body, this.assessment) }
   }
 
   get body(): MatchingInformationBody {
@@ -197,32 +195,5 @@ export default class MatchingInformation implements TasklistPage {
         checked: (this.body.specialistSupportCriteria || []).includes(k),
       }
     })
-  }
-
-  private isWheelchairDesignated(): PlacementRequirementPreference {
-    if (this.body.isWheelchairDesignated) {
-      return this.body.isWheelchairDesignated
-    }
-
-    const needsWheelchair = retrieveOptionalQuestionResponseFromFormArtifact(
-      this.assessment.application,
-      AccessNeedsFurtherQuestions,
-      'needsWheelchair',
-    )
-
-    return needsWheelchair === 'yes' ? 'essential' : 'notRelevant'
-  }
-
-  private lengthInDays(): string | undefined {
-    if (this.body.lengthOfStayAgreed === 'no') {
-      if (this.body.lengthOfStayDays && this.body.lengthOfStayWeeks) {
-        const lengthOfStayWeeksInDays = weeksToDays(Number(this.body.lengthOfStayWeeks))
-        const totalLengthInDays = lengthOfStayWeeksInDays + Number(this.body.lengthOfStayDays)
-
-        return String(totalLengthInDays)
-      }
-    }
-
-    return undefined
   }
 }
