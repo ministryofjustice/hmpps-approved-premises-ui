@@ -1,10 +1,14 @@
+import { when } from 'jest-when'
 import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
 import { assessmentFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import MatchingInformation, { MatchingInformationBody } from './matchingInformation'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import AccessNeedsFurtherQuestions from '../../../apply/risk-and-need-factors/access-and-healthcare/accessNeedsFurtherQuestions'
 
 jest.mock('../../../../utils/assessments/placementDurationFromApplication')
+jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
 
 const assessment = assessmentFactory.build()
 
@@ -38,6 +42,17 @@ describe('MatchingInformation', () => {
       const page = new MatchingInformation(defaultArguments, assessment)
 
       expect(page.body).toEqual(defaultArguments)
+    })
+
+    it('should set isWheelchairDesignated to essential if undefined but needsWheelchair is yes', () => {
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, AccessNeedsFurtherQuestions, 'needsWheelchair')
+        .mockReturnValue('yes')
+
+      const body: MatchingInformationBody = { ...defaultArguments, isWheelchairDesignated: undefined }
+
+      const page = new MatchingInformation(body, assessment)
+      expect(page.body).toEqual({ ...defaultArguments, isWheelchairDesignated: 'essential' })
     })
 
     it('should set lengthOfStay if lengthOfStayAgreed is no and the days and weeks are set', () => {
@@ -87,7 +102,6 @@ describe('MatchingInformation', () => {
 
       expect(page.errors()).toEqual({
         apType: 'You must select the type of AP required',
-        isWheelchairDesignated: 'You must specify a preference for wheelchair accessible',
         isSingle: 'You must specify a preference for single room',
         isArsonDesignated: 'You must specify a preference for designated arson room',
         isStepFreeDesignated: 'You must specify a preference for step-free access',
