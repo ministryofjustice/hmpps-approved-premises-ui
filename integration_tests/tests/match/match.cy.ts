@@ -74,7 +74,7 @@ context.skip('Placement Requests', () => {
     // Given there is a placement request waiting for me to match
     const person = personFactory.build()
 
-    const essentialCriteria = ['isPIPE', 'acceptsHateCrimeOffenders', 'isGroundFloor'] as Array<PlacementCriteria>
+    const essentialCriteria = ['isPIPE', 'acceptsHateCrimeOffenders'] as Array<PlacementCriteria>
     const desirableCriteria = ['isCatered', 'hasEnSuite'] as Array<PlacementCriteria>
 
     const placementRequest = placementRequestDetailFactory.build({
