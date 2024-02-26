@@ -1,7 +1,6 @@
 import { ApprovedPremisesAssessment as Assessment } from '../../../server/@types/shared'
 import AssessPage from './assessPage'
 import {
-  AccessibilityCriteria,
   SpecialistSupportCriteria,
   offenceAndRiskOptions,
   placementRequirementOptions,
@@ -14,9 +13,6 @@ export default class MatchingInformationPage extends AssessPage {
 
   completeForm() {
     this.checkRadioButtonFromPageBody('apType')
-    ;(this.tasklistPage.body.accessibilityCriteria as Array<AccessibilityCriteria>).forEach(requirement => {
-      this.checkCheckboxByLabel(requirement)
-    })
     ;(this.tasklistPage.body.specialistSupportCriteria as Array<SpecialistSupportCriteria>).forEach(requirement => {
       this.checkCheckboxByLabel(requirement)
     })

@@ -10,12 +10,10 @@ import { Page } from '../../../utils/decorators'
 import TasklistPage from '../../../tasklistPage'
 import { lowerCase, sentenceCase } from '../../../../utils/utils'
 import {
-  AccessibilityCriteria,
   ApTypeCriteria,
   OffenceAndRiskCriteria,
   PlacementRequirementCriteria,
   SpecialistSupportCriteria,
-  accessibilityOptions,
   apTypeOptions,
   offenceAndRiskOptions,
   placementCriteria,
@@ -39,7 +37,6 @@ export type MatchingInformationBody = {
       : never
 } & {
   apType: ApTypeCriteria | 'normal'
-  accessibilityCriteria: Array<AccessibilityCriteria>
   specialistSupportCriteria: Array<SpecialistSupportCriteria>
   cruInformation: string
   lengthOfStayAgreed: YesOrNo
@@ -52,7 +49,6 @@ export type MatchingInformationBody = {
   name: 'matching-information',
   bodyProperties: [
     'apType',
-    'accessibilityCriteria',
     'specialistSupportCriteria',
     'lengthOfStayAgreed',
     'lengthOfStayWeeks',
@@ -73,7 +69,6 @@ export default class MatchingInformation implements TasklistPage {
   questions = {
     apType: 'What type of AP is required?',
     specialistSupportCriteria: 'If this person would benefit from specialist support, select the relevant option below',
-    accessibilityCriteria: 'Would the person benefit from any of the following?',
     lengthOfStayAgreed: 'Do you agree with the suggested length of stay?',
     lengthOfStay: 'Provide recommended length of stay',
     cruInformation: 'Information for Central Referral Unit (CRU) manager (optional)',
@@ -91,8 +86,6 @@ export default class MatchingInformation implements TasklistPage {
 
   offenceAndRiskInformationRelevance = offenceAndRiskInformationRelevance
 
-  accessibilityOptions = accessibilityOptions
-
   specialistSupportOptions = specialistSupportOptions
 
   constructor(
@@ -107,7 +100,6 @@ export default class MatchingInformation implements TasklistPage {
   get body(): MatchingInformationBody {
     return {
       ...this._body,
-      accessibilityCriteria: this._body.accessibilityCriteria ? [this._body.accessibilityCriteria].flat() : [],
       specialistSupportCriteria: this._body.specialistSupportCriteria
         ? [this._body.specialistSupportCriteria].flat()
         : [],
@@ -127,8 +119,11 @@ export default class MatchingInformation implements TasklistPage {
       [this.questions.apType]: this.apTypes[this.body.apType],
     }
 
-    response['Specialist support needs'] = this.selectedOptions('specialistSupport')
-    response['Accessibility needs'] = this.selectedOptions('accessibility')
+    const selectedOptions = this.body.specialistSupportCriteria || []
+
+    response['Specialist support needs'] = selectedOptions.length
+      ? selectedOptions.map((k: string) => this.specialistSupportOptions[k]).join(', ')
+      : 'None'
 
     this.placementRequirements.forEach(placementRequirement => {
       response[`${placementCriteria[placementRequirement]}`] = `${sentenceCase(this.body[placementRequirement])}`
@@ -200,22 +195,6 @@ export default class MatchingInformation implements TasklistPage {
         checked: (this.body.specialistSupportCriteria || []).includes(k),
       }
     })
-  }
-
-  get accessibilityCheckBoxes() {
-    return Object.keys(accessibilityOptions).map((k: AccessibilityCriteria) => {
-      return {
-        value: k,
-        text: accessibilityOptions[k],
-        checked: (this.body.accessibilityCriteria || []).includes(k),
-      }
-    })
-  }
-
-  private selectedOptions(key: 'specialistSupport' | 'accessibility') {
-    const selectedOptions = this.body[`${key}Criteria`] || []
-
-    return selectedOptions.length ? selectedOptions.map((k: string) => this[`${key}Options`][k]).join(', ') : 'None'
   }
 
   private lengthInDays(): string | undefined {

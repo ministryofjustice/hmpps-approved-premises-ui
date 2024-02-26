@@ -72,7 +72,6 @@ describe('acceptanceData', () => {
     const matchingInformation = createMock<MatchingInformationBody>({
       apType: 'isESAP',
       specialistSupportCriteria: [],
-      accessibilityCriteria: [],
     })
 
     ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue(matchingInformation)
@@ -108,7 +107,6 @@ describe('acceptanceData', () => {
       const matchingInformation = createMock<MatchingInformationBody>({
         apType: 'isESAP',
         specialistSupportCriteria: [],
-        accessibilityCriteria: [],
         isWheelchairDesignated: 'essential',
         isStepFreeDesignated: 'essential',
         isCatered: 'essential',
@@ -147,20 +145,12 @@ describe('acceptanceData', () => {
         isStepFreeDesignated: 'desirable',
         isCatered: 'desirable',
         specialistSupportCriteria: ['isSemiSpecialistMentalHealth'],
-        accessibilityCriteria: ['hasHearingLoop', 'hasTactileFlooring'],
       })
 
       const result = criteriaFromMatchingInformation(matchingInformation)
 
       expect(result.desirableCriteria.sort()).toEqual(
-        [
-          'isStepFreeDesignated',
-          'isWheelchairDesignated',
-          'isCatered',
-          'isSemiSpecialistMentalHealth',
-          'hasHearingLoop',
-          'hasTactileFlooring',
-        ].sort(),
+        ['isStepFreeDesignated', 'isWheelchairDesignated', 'isCatered', 'isSemiSpecialistMentalHealth'].sort(),
       )
       expect(result.essentialCriteria).toEqual([])
     })
@@ -178,7 +168,6 @@ describe('acceptanceData', () => {
         acceptsHateCrimeOffenders: 'notRelevant',
         isSuitableForVulnerable: 'notRelevant',
         specialistSupportCriteria: [],
-        accessibilityCriteria: [],
       })
 
       expect(criteriaFromMatchingInformation(matchingInformation)).toEqual({

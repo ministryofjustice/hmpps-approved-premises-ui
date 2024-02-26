@@ -108,7 +108,6 @@ export const criteriaFromMatchingInformation = (
     : []
 
   desirableCriteria.push(...specialistSupportCriteria)
-  desirableCriteria.push(...matchingInformation.accessibilityCriteria)
 
   Object.keys(placementRequirementOptions).forEach((requirement: PlacementRequirementCriteria) => {
     if (matchingInformation[requirement] === 'essential') {

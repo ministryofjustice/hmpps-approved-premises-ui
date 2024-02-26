@@ -10,7 +10,6 @@ const assessment = assessmentFactory.build()
 
 const defaultArguments = {
   apType: 'isESAP' as const,
-  accessibilityCriteria: ['hasHearingLoop'],
   specialistSupportCriteria: ['isSemiSpecialistMentalHealth', 'isRecoveryFocussed'],
   isArsonDesignated: 'essential',
   isWheelchairDesignated: 'essential',
@@ -54,31 +53,27 @@ describe('MatchingInformation', () => {
       expect(page.body).toEqual({ ...body, lengthOfStay: '29' })
     })
 
-    it('should return accessibilityCriteria and specialistSupportCriteria as arrays if strings are provided', () => {
+    it('should return specialistSupportCriteria as arrays if strings are provided', () => {
       const page = new MatchingInformation(
         {
           ...defaultArguments,
-          accessibilityCriteria: 'hasHearingLoop',
           specialistSupportCriteria: 'isSemiSpecialistMentalHealth',
         } as unknown as MatchingInformationBody,
         assessment,
       )
 
-      expect(page.body.accessibilityCriteria).toEqual(['hasHearingLoop'])
       expect(page.body.specialistSupportCriteria).toEqual(['isSemiSpecialistMentalHealth'])
     })
 
-    it('should return empty arrays for accessibilityCriteria and specialistSupportCriteria as arrays if no data is provided', () => {
+    it('should return empty arrays for specialistSupportCriteria as arrays if no data is provided', () => {
       const page = new MatchingInformation(
         {
           ...defaultArguments,
-          accessibilityCriteria: undefined,
           specialistSupportCriteria: undefined,
         } as unknown as MatchingInformationBody,
         assessment,
       )
 
-      expect(page.body.accessibilityCriteria).toEqual([])
       expect(page.body.specialistSupportCriteria).toEqual([])
     })
   })
@@ -129,7 +124,6 @@ describe('MatchingInformation', () => {
 
       expect(page.response()).toEqual({
         'What type of AP is required?': 'Enhanced Security AP (ESAP)',
-        'Accessibility needs': 'Hearing loop',
         'Designated arson room': 'Essential',
         'Room suitable for a person with sexual offences': 'Not relevant',
         'Wheelchair accessible': 'Essential',
@@ -150,11 +144,10 @@ describe('MatchingInformation', () => {
       })
     })
 
-    it('returns none if accessiblity or specialist support needs are not selected', () => {
+    it('returns none if specialist support needs are not selected', () => {
       const page = new MatchingInformation(
         {
           ...defaultArguments,
-          accessibilityCriteria: [],
           specialistSupportCriteria: [],
         },
         assessment,
@@ -162,7 +155,6 @@ describe('MatchingInformation', () => {
 
       const response = page.response()
 
-      expect(response['Accessibility needs']).toEqual('None')
       expect(response['Specialist support needs']).toEqual('None')
     })
 
@@ -202,29 +194,6 @@ describe('MatchingInformation', () => {
           text: 'Semi-specialist mental health',
           checked: false,
         },
-      ])
-    })
-  })
-
-  describe('accessibilityCheckBoxes', () => {
-    it('returns an array of checkboxes with chosen options selected', () => {
-      const page = new MatchingInformation(
-        { ...defaultArguments, accessibilityCriteria: ['hasBrailleSignage'] },
-        assessment,
-      )
-
-      expect(page.accessibilityCheckBoxes).toEqual([
-        {
-          value: 'hasBrailleSignage',
-          text: 'Braille signage',
-          checked: true,
-        },
-        {
-          value: 'hasTactileFlooring',
-          text: 'Tactile flooring',
-          checked: false,
-        },
-        { value: 'hasHearingLoop', text: 'Hearing loop', checked: false },
       ])
     })
   })

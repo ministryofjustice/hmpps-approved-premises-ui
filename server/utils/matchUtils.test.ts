@@ -36,7 +36,6 @@ import {
   unmatchedCharacteristics,
 } from './matchUtils'
 import {
-  accessibilityOptions,
   offenceAndRiskOptions,
   placementCriteria,
   placementRequirementOptions,
@@ -191,7 +190,6 @@ describe('matchUtils', () => {
         'Specialist AP': checkBoxesForCriteria(specialistSupportOptions, []),
         'Placement Requirements': checkBoxesForCriteria(placementRequirementOptions, []),
         'Risks and offences to consider': checkBoxesForCriteria(offenceAndRiskOptions, []),
-        'Would benefit from': checkBoxesForCriteria(accessibilityOptions, []),
       })
     })
   })
