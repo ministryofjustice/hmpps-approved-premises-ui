@@ -10,7 +10,7 @@ describe('matchingInformationSummaryList', () => {
   describe('matchingInformationSummary', () => {
     it('should return a summary of the matching information', () => {
       ;(getPreferredApsFromApplication as jest.Mock).mockReturnValue([])
-      const placementRequest = placementRequestDetailFactory.build()
+      const placementRequest = placementRequestDetailFactory.build({ notes: undefined })
 
       expect(matchingInformationSummary(placementRequest)).toEqual({
         card: {
@@ -53,7 +53,7 @@ describe('matchingInformationSummaryList', () => {
 
     it('should add preferred APs if provided', () => {
       ;(getPreferredApsFromApplication as jest.Mock).mockReturnValue(premisesFactory.buildList(4))
-      const placementRequest = placementRequestDetailFactory.build({})
+      const placementRequest = placementRequestDetailFactory.build({ notes: undefined })
 
       expect(matchingInformationSummary(placementRequest)).toEqual({
         card: {

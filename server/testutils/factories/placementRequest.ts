@@ -34,6 +34,9 @@ export const placementRequestFactory = Factory.define<PlacementRequest>(() => {
     isParole: false,
     booking: bookingSummary.build({}),
     isWithdrawn: false,
+    withdrawalReason: faker.helpers.arrayElement(['DuplicatePlacementRequest', undefined]),
+    requestType: faker.helpers.arrayElement(['parole', 'standardRelease', undefined]),
+    notes: faker.helpers.arrayElement([faker.lorem.sentences(), undefined]),
   }
 })
 
