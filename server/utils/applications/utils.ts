@@ -245,6 +245,7 @@ export const eventTypeTranslations: Record<TimelineEventType, string> = {
   cas2_application_submitted: 'CAS2 application submitted',
   cas2_note: 'CAS2 note added',
   cas2_status_update: 'CAS2 status updated',
+  approved_premises_match_request_withdrawn: 'Match request withdrawn',
 }
 
 const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiTimelineEvent> => {
