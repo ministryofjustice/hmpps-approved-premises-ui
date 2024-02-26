@@ -31,7 +31,8 @@ const defaultArguments = {
   cruInformation: 'Some info',
 } as MatchingInformationBody
 
-const defaultMatchingInformationValuesReturnValue = {
+const defaultMatchingInformationValuesReturnValue: Partial<MatchingInformationBody> = {
+  isArsonDesignated: 'essential',
   isCatered: 'essential',
   isWheelchairDesignated: 'notRelevant',
   lengthOfStay: '32',
@@ -93,7 +94,6 @@ describe('MatchingInformation', () => {
       expect(page.errors()).toEqual({
         apType: 'You must select the type of AP required',
         isSingle: 'You must specify a preference for single room',
-        isArsonDesignated: 'You must specify a preference for designated arson room',
         isStepFreeDesignated: 'You must specify a preference for step-free access',
         hasEnSuite: 'You must specify a preference for en-suite bathroom',
         isSuitableForVulnerable: 'You must specify if vulnerable to exploitation is relevant',

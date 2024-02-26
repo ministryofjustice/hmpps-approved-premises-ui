@@ -8,6 +8,7 @@ import { MatchingInformationBody } from '../assess/matchingInformation/matchingI
 import { defaultMatchingInformationValues } from './defaultMatchingInformationValues'
 import AccessNeedsFurtherQuestions from '../apply/risk-and-need-factors/access-and-healthcare/accessNeedsFurtherQuestions'
 import Catering from '../apply/risk-and-need-factors/further-considerations/catering'
+import Arson from '../apply/risk-and-need-factors/further-considerations/arson'
 
 jest.mock('../../utils/retrieveQuestionResponseFromFormArtifact')
 
@@ -42,6 +43,10 @@ describe('defaultMatchingInformationValues', () => {
 
   it('returns an object with current or sensible default values for relevant fields', () => {
     when(retrieveQuestionResponseFromFormArtifact)
+      .calledWith(assessment.application, Arson, 'arson')
+      .mockReturnValue('yes')
+
+    when(retrieveQuestionResponseFromFormArtifact)
       .calledWith(assessment.application, Catering, 'catering')
       .mockReturnValue('no')
 
@@ -57,9 +62,38 @@ describe('defaultMatchingInformationValues', () => {
     }
 
     expect(defaultMatchingInformationValues(body, assessment)).toEqual({
+      isArsonDesignated: 'essential',
       isCatered: 'essential',
       isWheelchairDesignated: 'essential',
       lengthOfStay: '24',
+    })
+  })
+
+  describe('isArsonDesignated', () => {
+    it('is set to the original value if defined', () => {
+      expect(
+        defaultMatchingInformationValues({ ...bodyWithUndefinedValues, isArsonDesignated: 'desirable' }, assessment),
+      ).toEqual(expect.objectContaining({ isArsonDesignated: 'desirable' }))
+    })
+
+    it("is set to 'essential' when there's no original value and `arson` === 'yes'", () => {
+      when(retrieveQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, Arson, 'arson')
+        .mockReturnValue('yes')
+
+      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, assessment)).toEqual(
+        expect.objectContaining({ isArsonDesignated: 'essential' }),
+      )
+    })
+
+    it("is set to 'notRelevant' when there's no original value and `arson` === 'no'", () => {
+      when(retrieveQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, Arson, 'arson')
+        .mockReturnValue('no')
+
+      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, assessment)).toEqual(
+        expect.objectContaining({ isArsonDesignated: 'notRelevant' }),
+      )
     })
   })
 
