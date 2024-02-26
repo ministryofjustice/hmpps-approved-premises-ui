@@ -32,6 +32,7 @@ const defaultArguments = {
 } as MatchingInformationBody
 
 const defaultMatchingInformationValuesReturnValue = {
+  isCatered: 'essential',
   isWheelchairDesignated: 'notRelevant',
   lengthOfStay: '32',
 }
@@ -94,7 +95,6 @@ describe('MatchingInformation', () => {
         isSingle: 'You must specify a preference for single room',
         isArsonDesignated: 'You must specify a preference for designated arson room',
         isStepFreeDesignated: 'You must specify a preference for step-free access',
-        isCatered: 'You must specify a preference for catering required',
         hasEnSuite: 'You must specify a preference for en-suite bathroom',
         isSuitableForVulnerable: 'You must specify if vulnerable to exploitation is relevant',
         acceptsSexOffenders: 'You must specify if sexual offences against an adult is relevant',

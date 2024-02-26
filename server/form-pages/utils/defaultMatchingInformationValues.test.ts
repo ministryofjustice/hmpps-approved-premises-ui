@@ -1,9 +1,13 @@
 import { when } from 'jest-when'
-import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../utils/retrieveQuestionResponseFromFormArtifact'
+import {
+  retrieveOptionalQuestionResponseFromFormArtifact,
+  retrieveQuestionResponseFromFormArtifact,
+} from '../../utils/retrieveQuestionResponseFromFormArtifact'
 import { assessmentFactory } from '../../testutils/factories'
 import { MatchingInformationBody } from '../assess/matchingInformation/matchingInformationTask/matchingInformation'
 import { defaultMatchingInformationValues } from './defaultMatchingInformationValues'
 import AccessNeedsFurtherQuestions from '../apply/risk-and-need-factors/access-and-healthcare/accessNeedsFurtherQuestions'
+import Catering from '../apply/risk-and-need-factors/further-considerations/catering'
 
 jest.mock('../../utils/retrieveQuestionResponseFromFormArtifact')
 
@@ -37,6 +41,10 @@ describe('defaultMatchingInformationValues', () => {
   })
 
   it('returns an object with current or sensible default values for relevant fields', () => {
+    when(retrieveQuestionResponseFromFormArtifact)
+      .calledWith(assessment.application, Catering, 'catering')
+      .mockReturnValue('no')
+
     when(retrieveOptionalQuestionResponseFromFormArtifact)
       .calledWith(assessment.application, AccessNeedsFurtherQuestions, 'needsWheelchair')
       .mockReturnValue('yes')
@@ -49,8 +57,37 @@ describe('defaultMatchingInformationValues', () => {
     }
 
     expect(defaultMatchingInformationValues(body, assessment)).toEqual({
+      isCatered: 'essential',
       isWheelchairDesignated: 'essential',
       lengthOfStay: '24',
+    })
+  })
+
+  describe('isCatered', () => {
+    it('is set to the original value if defined', () => {
+      expect(
+        defaultMatchingInformationValues({ ...bodyWithUndefinedValues, isCatered: 'desirable' }, assessment),
+      ).toEqual(expect.objectContaining({ isCatered: 'desirable' }))
+    })
+
+    it("is set to 'essential' when there's no original value and `catering` (self-catering) === 'no'", () => {
+      when(retrieveQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, Catering, 'catering')
+        .mockReturnValue('no')
+
+      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, assessment)).toEqual(
+        expect.objectContaining({ isCatered: 'essential' }),
+      )
+    })
+
+    it("is set to 'notRelevant' when there's no original value and `catering` (self-catering) === 'yes'", () => {
+      when(retrieveQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, Catering, 'catering')
+        .mockReturnValue('yes')
+
+      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, assessment)).toEqual(
+        expect.objectContaining({ isCatered: 'notRelevant' }),
+      )
     })
   })
 
