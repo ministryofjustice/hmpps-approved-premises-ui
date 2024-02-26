@@ -4,6 +4,8 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 import paths from '../../../paths/admin'
 import { PlacementRequestService } from '../../../services'
 import { ErrorWithData } from '../../../utils/errors'
+import { DateFormats } from '../../../utils/dateUtils'
+import { placementLength } from '../../../utils/matchUtils'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
@@ -21,7 +23,8 @@ export default class WithdrawalsController {
         id: req.params.id,
         errors,
         errorSummary,
-        applicationId: placementRequest.applicationId,
+        expectedArrival: placementRequest.expectedArrival,
+        duration: placementRequest.duration,
       })
     }
   }
@@ -29,13 +32,22 @@ export default class WithdrawalsController {
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
       try {
-        if (!req.body.reason) {
+        const { reason, expectedArrival, duration } = req.body as {
+          reason: string | undefined
+          expectedArrival: string | undefined
+          duration: string
+        }
+
+        if (!reason) {
           throw new ErrorWithData({ 'invalid-params': [{ propertyName: `$.reason`, errorType: 'empty' }] })
         }
 
         await this.placementRequestService.withdraw(req.user.token, req.params.id, req.body.reason)
 
-        req.flash('success', 'Placement request withdrawn successfully')
+        req.flash(
+          'success',
+          `Placement request for ${placementLength(Number(duration))} starting on ${DateFormats.isoDateToUIDate(expectedArrival, { format: 'short' })} withdrawn successfully`,
+        )
         return res.redirect(paths.admin.placementRequests.index({}))
       } catch (err) {
         return catchValidationErrorOrPropogate(
