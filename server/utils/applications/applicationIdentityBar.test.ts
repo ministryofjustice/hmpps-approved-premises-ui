@@ -42,7 +42,7 @@ describe('applicationIdentityBar', () => {
       const application = applicationFactory.build()
       expect(applicationMenuItems(application, ['applicant'])).toEqual([
         {
-          text: 'Withdraw application',
+          text: 'Withdraw application or placement request',
           href: paths.applications.withdraw.new({ id: application.id }),
           classes: 'govuk-button--secondary',
           attributes: {
@@ -56,7 +56,7 @@ describe('applicationIdentityBar', () => {
       const application = applicationFactory.build({ status: 'rejected' })
       expect(applicationMenuItems(application, ['appeals_manager'])).toEqual([
         {
-          text: 'Withdraw application',
+          text: 'Withdraw application or placement request',
           href: paths.applications.withdraw.new({ id: application.id }),
           classes: 'govuk-button--secondary',
           attributes: {
@@ -78,7 +78,7 @@ describe('applicationIdentityBar', () => {
       const application = applicationFactory.build({ status: 'assesmentInProgress' })
       expect(applicationMenuItems(application, ['appeals_manager'])).toEqual([
         {
-          text: 'Withdraw application',
+          text: 'Withdraw application or placement request',
           href: paths.applications.withdraw.new({ id: application.id }),
           classes: 'govuk-button--secondary',
           attributes: {
@@ -92,7 +92,7 @@ describe('applicationIdentityBar', () => {
       const application = applicationFactory.build({ status: 'rejected' })
       expect(applicationMenuItems(application, ['assessor'])).toEqual([
         {
-          text: 'Withdraw application',
+          text: 'Withdraw application or placement request',
           href: paths.applications.withdraw.new({ id: application.id }),
           classes: 'govuk-button--secondary',
           attributes: {

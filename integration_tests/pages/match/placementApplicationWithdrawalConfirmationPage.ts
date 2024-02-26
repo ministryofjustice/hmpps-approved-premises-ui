@@ -11,6 +11,6 @@ export default class ConfirmationPage extends Page {
   }
 
   clickConfirm() {
-    cy.get('button').contains('Continue').click()
+    cy.get('button').contains('Withdraw').click()
   }
 }
