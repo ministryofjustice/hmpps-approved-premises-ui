@@ -35,6 +35,7 @@ export default class TasksController {
         sortDirection,
         page: pageNumber,
         apAreaId: apAreaId === 'all' ? '' : apAreaId,
+        taskTypes: ['PlacementApplication', 'Assessment'],
       })
 
       const apAreas = await this.apAreaService.getApAreas(req.user.token)

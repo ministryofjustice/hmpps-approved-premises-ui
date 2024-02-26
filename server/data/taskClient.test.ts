@@ -27,7 +27,7 @@ describeClient('taskClient', provider => {
 
       const apAreaId = 'ap-area-id'
       const userId = 'user-id'
-      const taskType: TaskType = 'PlacementRequest'
+      const taskTypes: Array<TaskType> = ['PlacementApplication', 'Assessment']
 
       provider.addInteraction({
         state: 'Server is healthy',
@@ -42,7 +42,7 @@ describeClient('taskClient', provider => {
             page: '1',
             sortDirection: 'asc',
             sortBy: 'createdAt',
-            taskType,
+            types: 'PlacementApplication,Assessment',
           },
           headers: {
             authorization: `Bearer ${token}`,
@@ -67,7 +67,7 @@ describeClient('taskClient', provider => {
         page: 1,
         sortDirection: 'asc',
         sortBy: 'createdAt',
-        taskType,
+        taskTypes,
       })
 
       expect(result).toEqual({

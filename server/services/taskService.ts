@@ -25,7 +25,7 @@ export default class TaskService {
     sortDirection,
     page = 1,
     apAreaId = '',
-    taskType,
+    taskTypes,
   }: {
     token: string
     allocatedFilter: 'allocated' | 'unallocated'
@@ -34,7 +34,7 @@ export default class TaskService {
     sortDirection: SortDirection
     page: number
     apAreaId?: string
-    taskType?: TaskType
+    taskTypes?: Array<TaskType>
   }): Promise<PaginatedResponse<Task>> {
     const taskClient = this.taskClientFactory(token)
 
@@ -45,7 +45,7 @@ export default class TaskService {
       page,
       sortDirection,
       sortBy,
-      taskType,
+      taskTypes,
     })
 
     return tasks

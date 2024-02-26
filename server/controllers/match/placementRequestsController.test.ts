@@ -84,7 +84,7 @@ describe('PlacementRequestsController', () => {
       expect(getPaginationDetails).toHaveBeenCalledWith(request, paginationDetails.hrefPrefix)
       expect(taskService.getAll).toHaveBeenCalledWith({
         token,
-        taskType: 'PlacementApplication',
+        taskTypes: ['PlacementApplication'],
         page: 1,
         allocatedFilter: 'allocated',
         sortBy: 'createdAt',
