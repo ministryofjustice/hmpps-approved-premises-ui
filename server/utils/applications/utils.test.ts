@@ -21,6 +21,7 @@ import { DateFormats } from '../dateUtils'
 import { isApplicableTier, isFullPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
 
 import {
+  actionsCell,
   appealDecisionRadioItems,
   applicationStatusSelectOptions,
   applicationTableRows,
@@ -28,6 +29,7 @@ import {
   dashboardTableRows,
   eventTypeTranslations,
   firstPageOfApplicationJourney,
+  getAction,
   getApplicationType,
   getSections,
   getStatus,
@@ -35,7 +37,6 @@ import {
   lengthOfStayForUI,
   mapPlacementApplicationToSummaryCards,
   mapTimelineEventsForUi,
-  withdrawCell,
   withdrawnStatusTag,
 } from './utils'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
@@ -43,7 +44,6 @@ import { RestrictedPersonError } from '../errors'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
 import { sortHeader } from '../sortHeader'
-import { linkTo } from '../utils'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -213,7 +213,7 @@ describe('utils', () => {
           {
             html: getStatus(applicationA),
           },
-          withdrawCell(applicationA.id),
+          actionsCell(applicationA),
         ],
         [
           {
@@ -233,7 +233,7 @@ describe('utils', () => {
           {
             html: getStatus(applicationB),
           },
-          withdrawCell(applicationB.id),
+          actionsCell(applicationB),
         ],
       ])
     })
@@ -301,6 +301,9 @@ describe('utils', () => {
         {
           text: 'Status',
         },
+        {
+          text: 'Actions',
+        },
       ])
     })
   })
@@ -351,6 +354,9 @@ describe('utils', () => {
           {
             html: getStatus(applicationA),
           },
+          {
+            html: '',
+          },
         ],
         [
           {
@@ -372,6 +378,85 @@ describe('utils', () => {
           },
           {
             html: getStatus(applicationB),
+          },
+          {
+            html: '',
+          },
+        ],
+      ])
+    })
+
+    it('returns an array of applications as table rows with actions', async () => {
+      ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+
+      const applicationA = applicationSummaryFactory.build({
+        arrivalDate: undefined,
+        person,
+        submittedAt: null,
+        risks: { tier: tierEnvelopeFactory.build({ value: { level: 'A1' } }) },
+        status: 'submitted',
+      })
+      const applicationB = applicationSummaryFactory.build({
+        arrivalDate,
+        person,
+        risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
+        status: 'awaitingPlacement',
+      })
+
+      const result = dashboardTableRows([applicationA, applicationB])
+
+      expect(tierBadge).toHaveBeenCalledWith('A1')
+
+      expect(result).toEqual([
+        [
+          {
+            html: `<a href=${paths.applications.show({ id: applicationA.id })} data-cy-id="${applicationA.id}">${
+              person.name
+            }</a>`,
+          },
+          {
+            text: applicationA.person.crn,
+          },
+          {
+            html: 'TIER_BADGE',
+          },
+          {
+            text: 'N/A',
+          },
+          {
+            text: DateFormats.isoDateToUIDate(applicationA.createdAt, { format: 'short' }),
+          },
+          {
+            html: getStatus(applicationA),
+          },
+          {
+            html: getAction(applicationA),
+          },
+        ],
+        [
+          {
+            html: `<a href=${paths.applications.show({ id: applicationB.id })} data-cy-id="${applicationB.id}">${
+              person.name
+            }</a>`,
+          },
+          {
+            text: applicationB.person.crn,
+          },
+          {
+            html: '',
+          },
+          {
+            text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
+          },
+          {
+            text: DateFormats.isoDateToUIDate(applicationB.createdAt, { format: 'short' }),
+          },
+          {
+            html: getStatus(applicationB),
+          },
+          {
+            html: getAction(applicationB),
           },
         ],
       ])
@@ -449,6 +534,9 @@ describe('utils', () => {
             },
             {
               html: getStatus(application),
+            },
+            {
+              html: getAction(application),
             },
           ],
         ])
@@ -603,10 +691,20 @@ describe('utils', () => {
     })
   })
 
-  describe('withdrawCell', () => {
+  describe('actionsCell', () => {
     it('returns a link to withdraw the application', () => {
-      expect(withdrawCell('id')).toEqual({
-        html: linkTo(paths.applications.withdraw.new, { id: 'id' }, { text: 'Withdraw' }),
+      const application = applicationFactory.build({ id: 'an-application-id' })
+
+      expect(actionsCell(application)).toEqual({
+        html: '<ul class="govuk-list"><li><a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a></li></ul>',
+      })
+    })
+
+    it('returns a link to withdraw and request for placement of the application', () => {
+      const application = applicationFactory.build({ id: 'an-application-id', status: 'awaitingPlacement' })
+
+      expect(actionsCell(application)).toEqual({
+        html: '<ul class="govuk-list"><li><a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a></li><li><a href="/placement-applications"  >Request for placement</a></li></ul>',
       })
     })
   })
