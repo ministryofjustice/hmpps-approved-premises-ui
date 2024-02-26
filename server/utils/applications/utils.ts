@@ -237,7 +237,7 @@ export const eventTypeTranslations: Record<TimelineEventType, string> = {
   approved_premises_booking_cancelled: 'Booking cancelled',
   approved_premises_booking_changed: 'Booking changed',
   approved_premises_application_withdrawn: 'Application withdrawn',
-  approved_premises_placement_application_withdrawn: 'Placement application withdrawn',
+  approved_premises_placement_application_withdrawn: 'Request for placement withdrawn',
   approved_premises_information_request: 'Information request',
   application_timeline_note: 'Note added',
   cas3_person_arrived: 'CAS3 person arrived',
@@ -245,7 +245,7 @@ export const eventTypeTranslations: Record<TimelineEventType, string> = {
   cas2_application_submitted: 'CAS2 application submitted',
   cas2_note: 'CAS2 note added',
   cas2_status_update: 'CAS2 status updated',
-  approved_premises_match_request_withdrawn: 'Match request withdrawn',
+  approved_premises_match_request_withdrawn: 'Request for placement withdrawn',
 }
 
 const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiTimelineEvent> => {
@@ -306,7 +306,7 @@ const mapPlacementApplicationToSummaryCards = (
 
     const rows: Array<SummaryListItem> = [
       {
-        key: { text: 'Reason for placement request' },
+        key: { text: 'Reason for request for placement' },
         value: { text: reasonsDictionary[reasonForPlacement] || 'None supplied' },
       },
       ...datesOfPlacements
