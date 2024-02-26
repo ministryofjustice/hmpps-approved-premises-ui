@@ -38,7 +38,7 @@ export default class CancellationsController {
         booking,
         backLink,
         cancellationReasons,
-        pageHeading: 'Confirm withdrawn booking',
+        pageHeading: 'Confirm withdrawn placement',
         errors,
         errorSummary,
         ...userInput,
