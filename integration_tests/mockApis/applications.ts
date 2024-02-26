@@ -7,6 +7,7 @@ import type {
   ApprovedPremisesApplication,
   ApprovedPremisesApplicationSummary,
   ApprovedPremisesAssessment,
+  PlacementApplication,
   SortDirection,
   TimelineEvent,
   Withdrawable,
@@ -232,12 +233,12 @@ export default {
     }),
   stubApplicationPlacementRequests: (args: {
     applicationId: string
-    placementApplications: Array<TimelineEvent>
+    placementApplications: Array<PlacementApplication>
   }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        url: paths.applications.placementApplications({ id: args.applicationId }),
+        url: `${paths.applications.placementApplications({ id: args.applicationId })}?includeInitialRequestForPlacement=${!process.env.NEW_WITHDRAWALS_FLOW_DISABLED}`,
       },
       response: {
         status: 200,
