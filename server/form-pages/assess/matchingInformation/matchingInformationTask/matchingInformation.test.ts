@@ -3,8 +3,11 @@ import { assessmentFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import MatchingInformation, { MatchingInformationBody } from './matchingInformation'
+import { defaultMatchingInformationValues } from '../../../utils/defaultMatchingInformationValues'
 
 jest.mock('../../../../utils/assessments/placementDurationFromApplication')
+jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
+jest.mock('../../../utils/defaultMatchingInformationValues')
 
 const assessment = assessmentFactory.build()
 
@@ -28,28 +31,27 @@ const defaultArguments = {
   cruInformation: 'Some info',
 } as MatchingInformationBody
 
+const defaultMatchingInformationValuesReturnValue = {
+  isWheelchairDesignated: 'notRelevant',
+  lengthOfStay: '32',
+}
+
 describe('MatchingInformation', () => {
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
+
   describe('title', () => {
     expect(new MatchingInformation(defaultArguments, assessment).title).toBe('Matching information')
   })
 
   describe('body', () => {
     it('should set the body', () => {
+      ;(defaultMatchingInformationValues as jest.Mock).mockReturnValue(defaultMatchingInformationValuesReturnValue)
+
       const page = new MatchingInformation(defaultArguments, assessment)
 
-      expect(page.body).toEqual(defaultArguments)
-    })
-
-    it('should set lengthOfStay if lengthOfStayAgreed is no and the days and weeks are set', () => {
-      const body = {
-        ...defaultArguments,
-        lengthOfStayAgreed: 'no' as const,
-        lengthOfStayDays: '1',
-        lengthOfStayWeeks: '4',
-      }
-      const page = new MatchingInformation(body, assessment)
-
-      expect(page.body).toEqual({ ...body, lengthOfStay: '29' })
+      expect(page.body).toEqual({ ...defaultArguments, ...defaultMatchingInformationValuesReturnValue })
     })
 
     it('should return specialistSupportCriteria as arrays if strings are provided', () => {
@@ -83,11 +85,12 @@ describe('MatchingInformation', () => {
 
   describe('errors', () => {
     it('should have an error if there is no answers', () => {
+      ;(defaultMatchingInformationValues as jest.Mock).mockReturnValue(defaultMatchingInformationValuesReturnValue)
+
       const page = new MatchingInformation({}, assessment)
 
       expect(page.errors()).toEqual({
         apType: 'You must select the type of AP required',
-        isWheelchairDesignated: 'You must specify a preference for wheelchair accessible',
         isSingle: 'You must specify a preference for single room',
         isArsonDesignated: 'You must specify a preference for designated arson room',
         isStepFreeDesignated: 'You must specify a preference for step-free access',
