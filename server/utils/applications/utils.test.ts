@@ -684,7 +684,10 @@ describe('utils', () => {
   describe('mapPlacementApplicationToSummaryCards', () => {
     const application = applicationFactory.build()
     const user = userFactory.build()
-    const placementApplications = placementApplicationFactory.buildList(1, { createdByUserId: user.id })
+    const placementApplications = placementApplicationFactory.buildList(1, {
+      createdByUserId: user.id,
+      type: 'Additional',
+    })
     const arrivalDate = '2023-01-01'
     const duration = 20
 
@@ -697,6 +700,69 @@ describe('utils', () => {
 
     afterAll(() => {
       process.env = OLD_ENV
+    })
+
+    it('returns a summary card for an initial placement application', () => {
+      process.env.NEW_WITHDRAWALS_FLOW_DISABLED = ''
+      ;(
+        retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFunction<
+          typeof retrieveOptionalQuestionResponseFromFormArtifact
+        >
+      ).mockReturnValue(undefined)
+      ;(
+        durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
+          typeof durationAndArrivalDateFromPlacementApplication
+        >
+      ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
+
+      const initialPlacementApplication = placementApplicationFactory.build({
+        type: 'Initial',
+        isWithdrawn: false,
+        createdByUserId: user.id,
+      })
+
+      expect(mapPlacementApplicationToSummaryCards([initialPlacementApplication], application, user)).toEqual([
+        {
+          card: {
+            title: { headingLevel: '3', text: DateFormats.isoDateToUIDate(initialPlacementApplication.createdAt) },
+            attributes: { 'data-cy-placement-application-id': initialPlacementApplication.id },
+            actions: {
+              items: [
+                {
+                  href: paths.applications.withdraw.new({
+                    id: application.id,
+                  }),
+                  text: 'Withdraw',
+                },
+              ],
+            },
+          },
+          rows: [
+            {
+              key: {
+                text: 'Reason for placement request',
+              },
+              value: {
+                text: 'Initial request for placement',
+              },
+            },
+            {
+              key: {
+                text: 'Arrival date',
+              },
+              value: {
+                text: DateFormats.isoDateToUIDate(arrivalDate),
+              },
+            },
+            {
+              key: {
+                text: 'Length of stay',
+              },
+              value: { text: lengthOfStayForUI(duration) },
+            },
+          ],
+        },
+      ])
     })
 
     it('returns a placement application mapped to SummaryCard including an action when the placement application can be withdrawn', () => {
@@ -902,7 +968,10 @@ describe('utils', () => {
         >
       ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
 
-      const withdrawnPlacementApplications = placementApplicationFactory.buildList(1)
+      const withdrawnPlacementApplications = placementApplicationFactory.buildList(1, {
+        isWithdrawn: false,
+        type: 'Additional',
+      })
 
       expect(mapPlacementApplicationToSummaryCards(withdrawnPlacementApplications, application, user)).toEqual([
         {
@@ -956,7 +1025,10 @@ describe('utils', () => {
         >
       ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
 
-      const withdrawnPlacementApplications = placementApplicationFactory.buildList(1, { isWithdrawn: true })
+      const withdrawnPlacementApplications = placementApplicationFactory.buildList(1, {
+        isWithdrawn: true,
+        type: 'Additional',
+      })
 
       expect(mapPlacementApplicationToSummaryCards(withdrawnPlacementApplications, application, user)).toEqual([
         {

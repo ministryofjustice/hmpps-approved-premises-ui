@@ -306,8 +306,13 @@ const mapPlacementApplicationToSummaryCards = (
 
     const rows: Array<SummaryListItem> = [
       {
-        key: { text: 'Reason for request for placement' },
-        value: { text: reasonsDictionary[reasonForPlacement] || 'None supplied' },
+        key: { text: 'Reason for placement request' },
+        value: {
+          text:
+            placementApplication.type === 'Initial'
+              ? 'Initial request for placement'
+              : reasonsDictionary[reasonForPlacement] || 'None supplied',
+        },
       },
       ...datesOfPlacements
         .map(({ expectedArrival, duration }) => {
