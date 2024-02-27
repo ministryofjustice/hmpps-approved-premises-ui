@@ -24,7 +24,8 @@
 
         {{ showErrorSummary(errorSummary) }}
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-        <input type="hidden" name="applicationId" value="{{ applicationId }}"/>
+        <input type="hidden" name="expectedArrival" value="{{ expectedArrival }}"/>
+        <input type="hidden" name="duration" value="{{ duration }}"/>
 
         {{ showErrorSummary(errorSummary) }}
 
@@ -43,7 +44,7 @@
         }) }}
 
         {{ govukButton({
-            text: "Continue"
+            text: "Withdraw"
           }) }}
       </form>
     </div>

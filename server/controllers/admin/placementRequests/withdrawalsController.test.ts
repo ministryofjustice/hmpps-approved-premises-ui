@@ -48,7 +48,8 @@ describe('withdrawalsController', () => {
         id: request.params.id,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
-        applicationId,
+        expectedArrival: placementRequest.expectedArrival,
+        duration: placementRequest.duration,
       })
       expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, applicationId)
     })
@@ -56,21 +57,37 @@ describe('withdrawalsController', () => {
 
   describe('create', () => {
     const applicationId = 'some-id'
+    const placementRequestDetail = placementRequestDetailFactory.build({
+      applicationId,
+      withdrawalReason: 'AlternativeProvisionIdentified',
+      duration: 22,
+      expectedArrival: '2024-01-01',
+    })
 
     beforeEach(() => {
       request.params.id = applicationId
+      request.body = {
+        duration: placementRequestDetail.duration,
+        expectedArrival: placementRequestDetail.expectedArrival,
+        reason: placementRequestDetail.withdrawalReason,
+      }
     })
 
     it('calls the service method, redirects to the index screen and shows a confirmation message', async () => {
-      request.body.reason = 'DuplicatePlacementRequest'
-
       const requestHandler = withdrawalsController.create()
 
       await requestHandler(request, response, next)
 
-      expect(placementRequestService.withdraw).toHaveBeenCalledWith(token, applicationId, 'DuplicatePlacementRequest')
+      expect(placementRequestService.withdraw).toHaveBeenCalledWith(
+        token,
+        applicationId,
+        placementRequestDetail.withdrawalReason,
+      )
       expect(response.redirect).toHaveBeenCalledWith(paths.admin.placementRequests.index({}))
-      expect(request.flash).toHaveBeenCalledWith('success', 'Placement request withdrawn successfully')
+      expect(request.flash).toHaveBeenCalledWith(
+        'success',
+        `Placement request for 3 weeks, 1 day starting on 01/01/2024 withdrawn successfully`,
+      )
     })
 
     it('redirects with errors if the API returns an error', async () => {
@@ -95,7 +112,11 @@ describe('withdrawalsController', () => {
     it('redirects with errors if reason is blank', async () => {
       const requestHandler = withdrawalsController.create()
 
-      await requestHandler(request, response, next)
+      await requestHandler(
+        { ...request, body: { ...request.body, reason: undefined }, params: { id: applicationId } },
+        response,
+        next,
+      )
 
       expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
         request,

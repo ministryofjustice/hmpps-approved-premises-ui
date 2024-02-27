@@ -26,7 +26,7 @@ export const applicationMenuItems = (
 ): Array<IdentityBarMenuItem> => {
   const items: Array<IdentityBarMenuItem> = [
     {
-      text: 'Withdraw application',
+      text: 'Withdraw application or placement request',
       href: paths.applications.withdraw.new({ id: application.id }),
       classes: 'govuk-button--secondary',
       attributes: {

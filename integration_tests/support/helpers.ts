@@ -99,9 +99,7 @@ const withdrawPlacementRequestOrApplication = async (
   confirmationPage.clickConfirm()
 
   // And I should see the confirmation message
-  showPage.shouldShowBanner(
-    isPlacementRequest ? 'Placement request withdrawn successfully' : 'Placement application withdrawn',
-  )
+  showPage.shouldShowBanner(isPlacementRequest ? 'Placement request' : 'Placement application withdrawn')
 }
 
 export {

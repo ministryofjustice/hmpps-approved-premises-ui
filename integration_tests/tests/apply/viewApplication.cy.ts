@@ -109,7 +109,7 @@ context('show applications', () => {
     showPage.shouldShowPersonInformation()
   })
 
-  it('should show placement applications', function test() {
+  it('should show placement applications and allow their withdrawal', function test() {
     const { application, placementApplication: releaseFollowingDecisionPlacementApplication } =
       makeReleaseFollowingDecisionPlacementApplication(this.application, defaultUserId)
     const rotlPlacementApplication = makeRotlPlacementApplication(application.id)
@@ -154,6 +154,8 @@ context('show applications', () => {
     withdrawPlacementRequestOrApplication(withdrawable, showPage, {
       isPlacementRequest: false,
     })
+
+    showPage.showsWithdrawalConfirmationMessage()
 
     // And the API should have been called with the withdrawal reason
     cy.task('verifyPlacementApplicationWithdrawn', releaseFollowingDecisionPlacementApplication.id).then(requests => {
