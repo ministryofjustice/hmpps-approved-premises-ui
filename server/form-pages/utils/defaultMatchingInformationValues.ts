@@ -11,6 +11,16 @@ import type {
 import AccessNeedsFurtherQuestions from '../apply/risk-and-need-factors/access-and-healthcare/accessNeedsFurtherQuestions'
 import Catering from '../apply/risk-and-need-factors/further-considerations/catering'
 import Arson from '../apply/risk-and-need-factors/further-considerations/arson'
+import RoomSharing from '../apply/risk-and-need-factors/further-considerations/roomSharing'
+import Covid from '../apply/risk-and-need-factors/access-and-healthcare/covid'
+import { TasklistPageInterface } from '../tasklistPage'
+
+export interface TaskListPageYesNoField {
+  name: string
+  page: TasklistPageInterface
+  value?: 'yes' | 'no'
+  optional?: boolean
+}
 
 const isArsonDesignated = (body: MatchingInformationBody, assessment: Assessment): PlacementRequirementPreference => {
   if (body.isArsonDesignated) {
@@ -30,6 +40,27 @@ const isCatered = (body: MatchingInformationBody, assessment: Assessment): Place
   const selfCatered = retrieveQuestionResponseFromFormArtifact(assessment.application, Catering, 'catering')
 
   return selfCatered === 'no' ? 'essential' : 'notRelevant'
+}
+
+const isSingle = (body: MatchingInformationBody, assessment: Assessment): PlacementRequirementPreference => {
+  if (body.isSingle) {
+    return body.isSingle
+  }
+
+  const fieldsToCheck: Array<TaskListPageYesNoField> = [
+    { name: 'boosterEligibility', page: Covid },
+    { name: 'immunosuppressed', page: Covid },
+    { name: 'riskToOthers', page: RoomSharing },
+    { name: 'riskToStaff', page: RoomSharing },
+    { name: 'sharingConcerns', page: RoomSharing },
+    { name: 'traumaConcerns', page: RoomSharing },
+  ]
+
+  const needsSingleRoom = fieldsToCheck.find(
+    ({ name, page }) => retrieveQuestionResponseFromFormArtifact(assessment.application, page, name) === 'yes',
+  )
+
+  return needsSingleRoom ? 'essential' : 'notRelevant'
 }
 
 const isWheelchairDesignated = (
@@ -67,6 +98,7 @@ export const defaultMatchingInformationValues = (
   return {
     isArsonDesignated: isArsonDesignated(body, assessment),
     isCatered: isCatered(body, assessment),
+    isSingle: isSingle(body, assessment),
     isWheelchairDesignated: isWheelchairDesignated(body, assessment),
     lengthOfStay: lengthOfStay(body),
   }
