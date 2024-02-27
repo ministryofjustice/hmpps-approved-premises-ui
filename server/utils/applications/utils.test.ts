@@ -1,5 +1,6 @@
-import { ApplicationSortField } from '@approved-premises/api'
+import { ApplicationSortField, TimelineEventUrlType } from '@approved-premises/api'
 import { isAfter } from 'date-fns'
+import { faker } from '@faker-js/faker'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
 import {
   applicationFactory,
@@ -37,6 +38,7 @@ import {
   lengthOfStayForUI,
   mapPlacementApplicationToSummaryCards,
   mapTimelineEventsForUi,
+  mapTimelineUrlsForUi,
   withdrawnStatusTag,
 } from './utils'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
@@ -723,12 +725,12 @@ describe('utils', () => {
           },
           content: timelineEvents[0].content,
           createdBy: timelineEvents[0].createdBy.name,
-          associatedUrls: [
+          associatedUrls: mapTimelineUrlsForUi([
             {
               type: timelineEvents[0].associatedUrls[0].type,
               url: timelineEvents[0].associatedUrls[0].url,
             },
-          ],
+          ]),
         },
       ])
     })
@@ -747,6 +749,7 @@ describe('utils', () => {
           },
           content: timelineEvents[0].content,
           createdBy: timelineEvents[0].createdBy.name,
+          associatedUrls: [],
         },
       ])
     })
@@ -776,6 +779,18 @@ describe('utils', () => {
           DateFormats.isoToDateObj(actual[2].datetime.timestamp),
         ),
       ).toEqual(true)
+    })
+  })
+
+  describe('mapTimelineUrlsForUi', () => {
+    it.each([
+      ['application', 'application'],
+      ['assessment', 'assessment'],
+      ['booking', 'booking'],
+      ['assessmentAppeal', 'appeal'],
+    ])('Translates a "%s" url type to "%s"', (urlType: TimelineEventUrlType, translation: string) => {
+      const timelineUrl = { type: urlType, url: faker.internet.url() }
+      expect(mapTimelineUrlsForUi([timelineUrl])).toEqual([{ url: timelineUrl.url, type: translation }])
     })
   })
 

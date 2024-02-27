@@ -23,7 +23,9 @@ import type {
   PlacementType,
   SortDirection,
   TimelineEvent,
+  TimelineEventAssociatedUrl,
   TimelineEventType,
+  TimelineEventUrlType,
   User,
 } from '@approved-premises/api'
 import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-information/maleAp'
@@ -288,7 +290,7 @@ const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiT
           date: DateFormats.isoDateTimeToUIDateTime(timelineEvent.occurredAt),
         },
         content: timelineEvent.content,
-        associatedUrls: timelineEvent.associatedUrls,
+        associatedUrls: timelineEvent.associatedUrls ? mapTimelineUrlsForUi(timelineEvent.associatedUrls) : [],
       }
       if (timelineEvent.createdBy?.name) {
         return {
@@ -298,6 +300,20 @@ const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiT
       }
       return event
     })
+}
+
+const mapTimelineUrlsForUi = (timelineUrls: Array<TimelineEventAssociatedUrl>) => {
+  return timelineUrls.map(item => ({ url: item.url, type: urlTypeForUi(item.type) }))
+}
+
+const urlTypeForUi = (type: TimelineEventUrlType) => {
+  const translations: Record<TimelineEventUrlType, string> = {
+    application: 'application',
+    assessment: 'assessment',
+    booking: 'booking',
+    assessmentAppeal: 'appeal',
+  }
+  return translations[type]
 }
 
 const mapPlacementApplicationToSummaryCards = (
@@ -455,6 +471,7 @@ export {
   getStatus,
   isInapplicable,
   mapTimelineEventsForUi,
+  mapTimelineUrlsForUi,
   mapPlacementApplicationToSummaryCards,
   lengthOfStayForUI,
   applicationStatusSelectOptions,
