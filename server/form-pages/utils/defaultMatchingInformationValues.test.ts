@@ -157,7 +157,7 @@ describe('defaultMatchingInformationValues', () => {
     ]
 
     it.each(yesNoFieldsToCheck)(
-      "is set to 'essential' when there's no original value and `$name` === 'yes",
+      "is set to 'essential' when there's no original value and `$name` === 'yes'",
       ({ name: testedField }) => {
         yesNoFieldsToCheck.forEach(({ name, page }) =>
           when(retrieveQuestionResponseFromFormArtifact)
@@ -256,19 +256,19 @@ describe('defaultMatchingInformationValues', () => {
   })
 
   describe('lengthOfStay', () => {
-    it('is set to `undefined` when `lengthOfStayAgreed` is `undefined`', () => {
+    it('is set to `undefined` when `lengthOfStayAgreed` is undefined', () => {
       expect(defaultMatchingInformationValues({ ...bodyWithUndefinedValues }, application)).toEqual(
         expect.objectContaining({ lengthOfStay: undefined }),
       )
     })
 
-    it('is set to `undefined` when `lengthOfStayAgreed` === "yes"', () => {
+    it("is set to `undefined` when `lengthOfStayAgreed` === 'yes'", () => {
       expect(
         defaultMatchingInformationValues({ ...bodyWithUndefinedValues, lengthOfStayAgreed: 'yes' }, application),
       ).toEqual(expect.objectContaining({ lengthOfStay: undefined }))
     })
 
-    it('is set to `undefined` when `lengthOfStayAgreed` === "no" but `lengthOfStayDays` is `undefined`', () => {
+    it("is set to `undefined` when `lengthOfStayAgreed` === 'no' but `lengthOfStayDays` is undefined", () => {
       expect(
         defaultMatchingInformationValues(
           { ...bodyWithUndefinedValues, lengthOfStayAgreed: 'no', lengthOfStayDays: undefined },
@@ -277,7 +277,7 @@ describe('defaultMatchingInformationValues', () => {
       ).toEqual(expect.objectContaining({ lengthOfStay: undefined }))
     })
 
-    it('is set to `undefined` when `lengthOfStayAgreed` === "no" and `lengthOfStayDays` is defined but `lengthOfStayWeeks` is not', () => {
+    it("is set to `undefined` when `lengthOfStayAgreed` === 'no' and `lengthOfStayDays` is defined but `lengthOfStayWeeks` is not", () => {
       expect(
         defaultMatchingInformationValues(
           { ...bodyWithUndefinedValues, lengthOfStayAgreed: 'no', lengthOfStayWeeks: undefined },
@@ -286,7 +286,7 @@ describe('defaultMatchingInformationValues', () => {
       ).toEqual(expect.objectContaining({ lengthOfStay: undefined }))
     })
 
-    it('is set to the total length of stay in days when `lengthOfStayAgreed` === "no" and both `lengthOfStayDays` and `lengthOfStayWeeks` are defined', () => {
+    it("is set to the total length of stay in days when `lengthOfStayAgreed` === 'no' and both `lengthOfStayDays` and `lengthOfStayWeeks` are defined", () => {
       expect(
         defaultMatchingInformationValues(
           { ...bodyWithUndefinedValues, lengthOfStayAgreed: 'no', lengthOfStayDays: '3', lengthOfStayWeeks: '3' },
