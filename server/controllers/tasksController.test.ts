@@ -82,6 +82,7 @@ describe('TasksController', () => {
         sortDirection: 'asc',
         page: 1,
         apAreaId: apArea.id,
+        taskTypes: ['PlacementApplication', 'Assessment'],
       })
     })
 
@@ -128,6 +129,7 @@ describe('TasksController', () => {
         sortDirection: paramPaginationDetails.sortDirection,
         page: paramPaginationDetails.pageNumber,
         apAreaId,
+        taskTypes: ['PlacementApplication', 'Assessment'],
       })
     })
 
@@ -164,6 +166,7 @@ describe('TasksController', () => {
         sortDirection: paramPaginationDetails.sortDirection,
         page: paramPaginationDetails.pageNumber,
         apAreaId: '',
+        taskTypes: ['PlacementApplication', 'Assessment'],
       })
     })
   })

@@ -20,7 +20,7 @@ export default class PlacementRequestsController {
 
       const paginatedResponse = await this.taskService.getAll({
         token: req.user.token,
-        taskType: 'PlacementApplication',
+        taskTypes: ['PlacementApplication'],
         page: pageNumber,
         allocatedFilter: 'allocated',
         sortBy: 'createdAt',

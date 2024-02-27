@@ -27,7 +27,7 @@ export default class TaskClient {
     page,
     sortDirection,
     sortBy,
-    taskType,
+    taskTypes,
   }: {
     allocatedFilter: AllocatedFilter
     apAreaId: ApArea['id']
@@ -35,12 +35,16 @@ export default class TaskClient {
     page: number
     sortDirection: string
     sortBy: TaskSortField
-    taskType?: TaskType
+    taskTypes?: Array<TaskType>
   }): Promise<PaginatedResponse<Task>> {
+    const filters = {} as Record<string, string>
+    if (taskTypes.length) {
+      filters.types = taskTypes.join(',')
+    }
     return this.restClient.getPaginatedResponse({
       path: paths.tasks.index.pattern,
       page: page.toString(),
-      query: { allocatedFilter, allocatedToUserId, apAreaId, sortBy, sortDirection, taskType },
+      query: { ...filters, allocatedFilter, allocatedToUserId, apAreaId, sortBy, sortDirection },
     })
   }
 
