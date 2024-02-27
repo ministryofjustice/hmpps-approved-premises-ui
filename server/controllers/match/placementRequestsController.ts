@@ -52,7 +52,8 @@ export default class PlacementRequestsController {
 
   create(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      const application = await this.placementApplicationService.create(req.user.token, req.body.applicationId)
+      const applicationId = req.body.applicationId || req.query.id
+      const application = await this.placementApplicationService.create(req.user.token, applicationId)
 
       return res.redirect(
         paths.placementApplications.pages.show({

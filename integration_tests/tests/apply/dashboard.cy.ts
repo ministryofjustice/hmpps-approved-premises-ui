@@ -112,6 +112,22 @@ context('All applications', () => {
     page.shouldShowApplications()
   })
 
+  it('request for placement', () => {
+    // Given I am logged in
+    cy.signIn()
+
+    // And there is a page of applications
+    const applications = applicationSummaryFactory.buildList(10, { status: 'awaitingPlacement' })
+
+    cy.task('stubAllApplications', { applications })
+
+    // When I access the applications dashboard
+    const page = DashboardPage.visit(applications)
+
+    // Then I should see all of the applications
+    page.shouldShowApplications()
+  })
+
   const shouldSortByField = (field: string) => {
     // Given I am logged in
     cy.signIn()

@@ -20,10 +20,16 @@ context('Applications dashboard', () => {
     const requestedFurtherInformationApplications = applicationSummaryFactory.buildList(5, {
       status: 'requestedFurtherInformation',
     })
+    const awaitingPlacementApplications = applicationSummaryFactory.buildList(5, { status: 'awaitingPlacement' })
 
     cy.task(
       'stubApplications',
-      [inProgressApplications, submittedApplications, requestedFurtherInformationApplications].flat(),
+      [
+        inProgressApplications,
+        submittedApplications,
+        requestedFurtherInformationApplications,
+        awaitingPlacementApplications,
+      ].flat(),
     )
 
     // When I visit the Previous Applications page

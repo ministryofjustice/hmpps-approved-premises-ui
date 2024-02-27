@@ -29,6 +29,7 @@ import type {
 import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-information/maleAp'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
 import paths from '../../paths/apply'
+
 import placementApplicationPaths from '../../paths/placementApplications'
 import Apply from '../../form-pages/apply'
 import { isApplicableTier, isFullPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
@@ -61,7 +62,7 @@ const applicationTableRows = (applications: Array<ApplicationSummary>): Array<Ta
     htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
     textValue(getArrivalDateorNA(application.arrivalDate)),
     htmlValue(getStatus(application)),
-    withdrawCell(application.id),
+    actionsCell(application),
   ])
 }
 
@@ -83,6 +84,9 @@ const dashboardTableHeader = (
     {
       text: 'Status',
     },
+    {
+      text: 'Actions',
+    },
   ]
 }
 
@@ -97,7 +101,19 @@ const dashboardTableRows = (
     textValue(getArrivalDateorNA(application.arrivalDate)),
     textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
     htmlValue(getStatus(application)),
+    htmlValue(getAction(application)),
   ])
+}
+
+export const getAction = (application: ApplicationSummary | Application) => {
+  if (application.status === 'awaitingPlacement') {
+    return linkTo(
+      placementApplicationPaths.placementApplications.create,
+      { id: application.id },
+      { text: 'Request for placement' },
+    )
+  }
+  return ''
 }
 
 const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(tier) : '')
@@ -131,8 +147,21 @@ const createNameAnchorElement = (
     : textValue(`LAO CRN: ${person.crn}`)
 }
 
-export const withdrawCell = (applicationId: string) => {
-  return htmlValue(linkTo(paths.applications.withdraw.new, { id: applicationId }, { text: 'Withdraw' }))
+export const actionsCell = (application: ApplicationSummary | Application) => {
+  const actionItems: Array<string> = []
+  const withdrawLink = linkTo(paths.applications.withdraw.new, { id: application.id }, { text: 'Withdraw' })
+  actionItems.push(withdrawLink)
+  if (application.status === 'awaitingPlacement') {
+    const requestForPlacementLink = linkTo(
+      placementApplicationPaths.placementApplications.create,
+      { id: application.id },
+      { text: 'Request for placement' },
+    )
+    actionItems.push(requestForPlacementLink)
+  }
+  const actionLinks = `<ul class="govuk-list">${actionItems.map(actionItem => `<li>${actionItem}</li>`).join('')}</ul>`
+
+  return htmlValue(actionLinks)
 }
 
 export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>
