@@ -31,7 +31,7 @@ type PlacementCriteriaCategory =
   | OffenceAndRiskCriteria
   | PlacementRequirementCriteria
 
-export const placementCriteria: Record<PlacementCriteria, string> = {
+export const placementCriteria: Record<Exclude<PlacementCriteria, 'isGroundFloor'>, string> = {
   isPIPE: 'Psychologically Informed Planned Environment (PIPE)',
   isESAP: 'Enhanced Security AP (ESAP)',
   isRecoveryFocussed: 'Recovery Focused Approved Premises (RFAP)',
