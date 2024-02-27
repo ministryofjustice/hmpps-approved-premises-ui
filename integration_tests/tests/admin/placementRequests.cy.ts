@@ -344,9 +344,7 @@ context('Placement Requests', () => {
     // When I click on the withdraw button
     showPage.clickWithdraw()
 
-    withdrawPlacementRequestOrApplication(withdrawable, showPage, {
-      isPlacementRequest: true,
-    })
+    withdrawPlacementRequestOrApplication(withdrawable, showPage)
 
     // And the API should have been called with the withdrawal reason
     cy.task('verifyPlacementRequestWithdrawal', withdrawable).then(requests => {

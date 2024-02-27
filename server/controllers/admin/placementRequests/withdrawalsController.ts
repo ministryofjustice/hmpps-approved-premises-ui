@@ -6,6 +6,7 @@ import { PlacementRequestService } from '../../../services'
 import { ErrorWithData } from '../../../utils/errors'
 import { DateFormats } from '../../../utils/dateUtils'
 import { placementLength } from '../../../utils/matchUtils'
+import { withdrawalMessage } from '../../../utils/placementRequests/utils'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
@@ -44,10 +45,7 @@ export default class WithdrawalsController {
 
         await this.placementRequestService.withdraw(req.user.token, req.params.id, req.body.reason)
 
-        req.flash(
-          'success',
-          `Placement request for ${placementLength(Number(duration))} starting on ${DateFormats.isoDateToUIDate(expectedArrival, { format: 'short' })} withdrawn successfully`,
-        )
+        req.flash('success', withdrawalMessage(Number(duration), expectedArrival))
         return res.redirect(paths.admin.placementRequests.index({}))
       } catch (err) {
         return catchValidationErrorOrPropogate(

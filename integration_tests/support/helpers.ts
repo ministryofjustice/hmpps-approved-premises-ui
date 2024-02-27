@@ -77,7 +77,6 @@ const createOccupancyEntry = (startDate: Date, endDate: Date, type: BedOccupancy
 const withdrawPlacementRequestOrApplication = async (
   withdrawable: Withdrawable,
   showPage: ShowPagePlacementApplications | ShowPageApply,
-  { isPlacementRequest }: { isPlacementRequest: boolean },
 ) => {
   // Then I should see the withdrawable type selection page
   const selectWithdrawableTypePage = new NewWithdrawalPage('What do you want to withdraw?')
@@ -99,7 +98,7 @@ const withdrawPlacementRequestOrApplication = async (
   confirmationPage.clickConfirm()
 
   // And I should see the confirmation message
-  showPage.shouldShowBanner(isPlacementRequest ? 'Placement request' : 'Placement application withdrawn')
+  showPage.shouldShowBanner('Request for placement')
 }
 
 export {

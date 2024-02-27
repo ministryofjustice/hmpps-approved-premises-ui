@@ -8,10 +8,12 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 
 import placementApplicationPaths from '../../paths/placementApplications'
 import WithdrawalsController from './withdrawalsController'
-import { placementApplicationFactory } from '../../testutils/factories'
+import { placementApplicationFactory, placementDatesFactory } from '../../testutils/factories'
 import { applicationShowPageTab } from '../../utils/applications/utils'
+import { withdrawalMessage } from '../../utils/placementRequests/utils'
 
 jest.mock('../../utils/validation')
+jest.mock('../../utils/placementRequests/utils')
 
 describe('withdrawalsController', () => {
   const token = 'SOME_TOKEN'
@@ -60,19 +62,46 @@ describe('withdrawalsController', () => {
 
   describe('create', () => {
     it('calls the service method, redirects to the application screen and shows a confirmation message', async () => {
+      const placementApplication = placementApplicationFactory.build({
+        applicationId,
+        placementDates: [placementDatesFactory.build({ duration: 22, expectedArrival: '2024-02-02' })],
+      })
+      const withdrawalMessageContent = 'some message'
       request.body.applicationId = applicationId
       request.params.id = placementApplicationId
       request.body.reason = 'DuplicatePlacementRequest'
+
+      placementApplicationService.withdraw.mockResolvedValue(placementApplication)
+      ;(withdrawalMessage as jest.MockedFn<typeof withdrawalMessage>).mockReturnValue(withdrawalMessageContent)
+
       const requestHandler = withdrawalsController.create()
 
       await requestHandler(request, response, next)
 
+      expect(withdrawalMessage).toHaveBeenCalledWith(
+        placementApplication.placementDates[0].duration,
+        placementApplication.placementDates[0].expectedArrival,
+      )
       expect(placementApplicationService.withdraw).toHaveBeenCalledWith(
         token,
         placementApplicationId,
         request.body.reason,
       )
       expect(response.redirect).toHaveBeenCalledWith(applicationShowPageTab(applicationId, 'placementRequests'))
+      expect(request.flash).toHaveBeenCalledWith('success', withdrawalMessageContent)
+    })
+
+    it('shows a fallback confirmation message if the placement application doesnt have placementDates', async () => {
+      const placementApplication = placementApplicationFactory.build({ applicationId, placementDates: [] })
+
+      request.body.applicationId = applicationId
+      request.params.id = placementApplicationId
+      request.body.reason = 'DuplicatePlacementRequest'
+
+      placementApplicationService.withdraw.mockResolvedValue(placementApplication)
+      const requestHandler = withdrawalsController.create()
+      await requestHandler(request, response, next)
+
       expect(request.flash).toHaveBeenCalledWith('success', 'Placement application withdrawn')
     })
 

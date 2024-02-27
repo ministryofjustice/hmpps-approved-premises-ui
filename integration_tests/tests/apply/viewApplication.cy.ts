@@ -151,9 +151,7 @@ context('show applications', () => {
     // When I click 'withdraw'
     showPage.clickWithdraw(placementApplications[0].id)
 
-    withdrawPlacementRequestOrApplication(withdrawable, showPage, {
-      isPlacementRequest: false,
-    })
+    withdrawPlacementRequestOrApplication(withdrawable, showPage)
 
     showPage.showsWithdrawalConfirmationMessage()
 
