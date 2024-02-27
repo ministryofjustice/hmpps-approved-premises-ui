@@ -93,7 +93,7 @@ export default class MatchingInformation implements TasklistPage {
   ) {}
 
   set body(value: MatchingInformationBody) {
-    this._body = { ...value, ...defaultMatchingInformationValues(this.body, this.assessment) }
+    this._body = { ...value, ...defaultMatchingInformationValues(this.body, this.assessment.application) }
   }
 
   get body(): MatchingInformationBody {

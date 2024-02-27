@@ -1,4 +1,4 @@
-import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
+import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { weeksToDays } from 'date-fns'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
@@ -30,27 +30,36 @@ export const sexualOffencesFields = [
   'nonContactSexualOffencesAgainstChildren',
 ]
 
-const isArsonDesignated = (body: MatchingInformationBody, assessment: Assessment): PlacementRequirementPreference => {
+const isArsonDesignated = (
+  body: MatchingInformationBody,
+  application: ApprovedPremisesApplication,
+): PlacementRequirementPreference => {
   if (body.isArsonDesignated) {
     return body.isArsonDesignated
   }
 
-  const arsonRisk = retrieveQuestionResponseFromFormArtifact(assessment.application, Arson, 'arson')
+  const arsonRisk = retrieveQuestionResponseFromFormArtifact(application, Arson, 'arson')
 
   return arsonRisk === 'yes' ? 'essential' : 'notRelevant'
 }
 
-const isCatered = (body: MatchingInformationBody, assessment: Assessment): PlacementRequirementPreference => {
+const isCatered = (
+  body: MatchingInformationBody,
+  application: ApprovedPremisesApplication,
+): PlacementRequirementPreference => {
   if (body.isCatered) {
     return body.isCatered
   }
 
-  const selfCatered = retrieveQuestionResponseFromFormArtifact(assessment.application, Catering, 'catering')
+  const selfCatered = retrieveQuestionResponseFromFormArtifact(application, Catering, 'catering')
 
   return selfCatered === 'no' ? 'essential' : 'notRelevant'
 }
 
-const isSingle = (body: MatchingInformationBody, assessment: Assessment): PlacementRequirementPreference => {
+const isSingle = (
+  body: MatchingInformationBody,
+  application: ApprovedPremisesApplication,
+): PlacementRequirementPreference => {
   if (body.isSingle) {
     return body.isSingle
   }
@@ -65,7 +74,7 @@ const isSingle = (body: MatchingInformationBody, assessment: Assessment): Placem
   ]
 
   const needsSingleRoom = fieldsToCheck.find(
-    ({ name, page }) => retrieveQuestionResponseFromFormArtifact(assessment.application, page, name) === 'yes',
+    ({ name, page }) => retrieveQuestionResponseFromFormArtifact(application, page, name) === 'yes',
   )
 
   return needsSingleRoom ? 'essential' : 'notRelevant'
@@ -73,14 +82,14 @@ const isSingle = (body: MatchingInformationBody, assessment: Assessment): Placem
 
 const isSuitedForSexOffenders = (
   body: MatchingInformationBody,
-  assessment: Assessment,
+  application: ApprovedPremisesApplication,
 ): PlacementRequirementPreference => {
   if (body.isSuitedForSexOffenders) {
     return body.isSuitedForSexOffenders
   }
 
   const hasSexualOffenceConviction = sexualOffencesFields.find(field => {
-    const response = retrieveOptionalQuestionResponseFromFormArtifact(assessment.application, DateOfOffence, field) as
+    const response = retrieveOptionalQuestionResponseFromFormArtifact(application, DateOfOffence, field) as
       | Array<string>
       | undefined
 
@@ -92,14 +101,14 @@ const isSuitedForSexOffenders = (
 
 const isWheelchairDesignated = (
   body: MatchingInformationBody,
-  assessment: Assessment,
+  application: ApprovedPremisesApplication,
 ): PlacementRequirementPreference => {
   if (body.isWheelchairDesignated) {
     return body.isWheelchairDesignated
   }
 
   const needsWheelchair = retrieveOptionalQuestionResponseFromFormArtifact(
-    assessment.application,
+    application,
     AccessNeedsFurtherQuestions,
     'needsWheelchair',
   )
@@ -120,14 +129,14 @@ const lengthOfStay = (body: MatchingInformationBody): string | undefined => {
 
 export const defaultMatchingInformationValues = (
   body: MatchingInformationBody,
-  assessment: Assessment,
+  application: ApprovedPremisesApplication,
 ): Partial<MatchingInformationBody> => {
   return {
-    isArsonDesignated: isArsonDesignated(body, assessment),
-    isCatered: isCatered(body, assessment),
-    isSingle: isSingle(body, assessment),
-    isSuitedForSexOffenders: isSuitedForSexOffenders(body, assessment),
-    isWheelchairDesignated: isWheelchairDesignated(body, assessment),
+    isArsonDesignated: isArsonDesignated(body, application),
+    isCatered: isCatered(body, application),
+    isSingle: isSingle(body, application),
+    isSuitedForSexOffenders: isSuitedForSexOffenders(body, application),
+    isWheelchairDesignated: isWheelchairDesignated(body, application),
     lengthOfStay: lengthOfStay(body),
   }
 }
