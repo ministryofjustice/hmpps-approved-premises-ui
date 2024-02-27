@@ -5,12 +5,17 @@ import {
 } from '../../utils/retrieveQuestionResponseFromFormArtifact'
 import { assessmentFactory } from '../../testutils/factories'
 import { MatchingInformationBody } from '../assess/matchingInformation/matchingInformationTask/matchingInformation'
-import { TaskListPageYesNoField, defaultMatchingInformationValues } from './defaultMatchingInformationValues'
+import {
+  TaskListPageYesNoField,
+  defaultMatchingInformationValues,
+  sexualOffencesFields,
+} from './defaultMatchingInformationValues'
 import AccessNeedsFurtherQuestions from '../apply/risk-and-need-factors/access-and-healthcare/accessNeedsFurtherQuestions'
 import Catering from '../apply/risk-and-need-factors/further-considerations/catering'
 import Arson from '../apply/risk-and-need-factors/further-considerations/arson'
 import RoomSharing from '../apply/risk-and-need-factors/further-considerations/roomSharing'
 import Covid from '../apply/risk-and-need-factors/access-and-healthcare/covid'
+import DateOfOffence from '../apply/risk-and-need-factors/risk-management-features/dateOfOffence'
 
 jest.mock('../../utils/retrieveQuestionResponseFromFormArtifact')
 
@@ -62,6 +67,12 @@ describe('defaultMatchingInformationValues', () => {
         .mockReturnValue(value || 'yes'),
     )
 
+    sexualOffencesFields.forEach(field =>
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, DateOfOffence, field)
+        .mockReturnValue(['current', 'previous']),
+    )
+
     const body: MatchingInformationBody = {
       ...bodyWithUndefinedValues,
       lengthOfStayAgreed: 'no',
@@ -73,6 +84,7 @@ describe('defaultMatchingInformationValues', () => {
       isArsonDesignated: 'essential',
       isCatered: 'essential',
       isSingle: 'essential',
+      isSuitedForSexOffenders: 'essential',
       isWheelchairDesignated: 'essential',
       lengthOfStay: '24',
     })
@@ -170,6 +182,48 @@ describe('defaultMatchingInformationValues', () => {
         when(retrieveQuestionResponseFromFormArtifact)
           .calledWith(assessment.application, page, name)
           .mockReturnValue('no'),
+      )
+
+      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, assessment)).toEqual(
+        expect.objectContaining({ isSingle: 'notRelevant' }),
+      )
+    })
+  })
+
+  describe('isSuitedForSexOffenders', () => {
+    it('is set to the original value if defined', () => {
+      expect(
+        defaultMatchingInformationValues(
+          { ...bodyWithUndefinedValues, isSuitedForSexOffenders: 'desirable' },
+          assessment,
+        ),
+      ).toEqual(expect.objectContaining({ isSuitedForSexOffenders: 'desirable' }))
+    })
+
+    const truthyValues = [['current'], ['previous'], ['current', 'previous']]
+
+    truthyValues.forEach(value => {
+      it.each(sexualOffencesFields)(
+        `is set to 'essential' when there's no original value and \`%s\` === ['${value.join("', '")}']`,
+        testedField => {
+          sexualOffencesFields.forEach(field =>
+            when(retrieveOptionalQuestionResponseFromFormArtifact)
+              .calledWith(assessment.application, DateOfOffence, field)
+              .mockReturnValue(testedField === field ? value : undefined),
+          )
+
+          expect(defaultMatchingInformationValues(bodyWithUndefinedValues, assessment)).toEqual(
+            expect.objectContaining({ isSuitedForSexOffenders: 'essential' }),
+          )
+        },
+      )
+    })
+
+    it("is set to 'notRelevant' when there's no original value and all relevant fields === undefined", () => {
+      sexualOffencesFields.forEach(field =>
+        when(retrieveOptionalQuestionResponseFromFormArtifact)
+          .calledWith(assessment.application, DateOfOffence, field)
+          .mockReturnValue(undefined),
       )
 
       expect(defaultMatchingInformationValues(bodyWithUndefinedValues, assessment)).toEqual(

@@ -35,6 +35,7 @@ const defaultMatchingInformationValuesReturnValue: Partial<MatchingInformationBo
   isArsonDesignated: 'essential',
   isCatered: 'essential',
   isSingle: 'desirable',
+  isSuitedForSexOffenders: 'desirable',
   isWheelchairDesignated: 'notRelevant',
   lengthOfStay: '32',
 }
@@ -101,7 +102,6 @@ describe('MatchingInformation', () => {
         acceptsChildSexOffenders: 'You must specify if sexual offences against children is relevant',
         acceptsNonSexualChildOffenders: 'You must specify if non sexual offences against children is relevant',
         acceptsHateCrimeOffenders: 'You must specify if hate based offences is relevant',
-        isSuitedForSexOffenders: 'You must specify a preference for room suitable for a person with sexual offences',
         isArsonSuitable: 'You must specify if arson offences is relevant',
         lengthOfStayAgreed: 'You must state if you agree with the length of the stay',
       })

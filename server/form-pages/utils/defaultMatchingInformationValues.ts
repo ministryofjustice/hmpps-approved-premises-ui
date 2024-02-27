@@ -14,6 +14,7 @@ import Arson from '../apply/risk-and-need-factors/further-considerations/arson'
 import RoomSharing from '../apply/risk-and-need-factors/further-considerations/roomSharing'
 import Covid from '../apply/risk-and-need-factors/access-and-healthcare/covid'
 import { TasklistPageInterface } from '../tasklistPage'
+import DateOfOffence from '../apply/risk-and-need-factors/risk-management-features/dateOfOffence'
 
 export interface TaskListPageYesNoField {
   name: string
@@ -21,6 +22,13 @@ export interface TaskListPageYesNoField {
   value?: 'yes' | 'no'
   optional?: boolean
 }
+
+export const sexualOffencesFields = [
+  'contactSexualOffencesAgainstAdults',
+  'nonContactSexualOffencesAgainstAdults',
+  'contactSexualOffencesAgainstChildren',
+  'nonContactSexualOffencesAgainstChildren',
+]
 
 const isArsonDesignated = (body: MatchingInformationBody, assessment: Assessment): PlacementRequirementPreference => {
   if (body.isArsonDesignated) {
@@ -63,6 +71,25 @@ const isSingle = (body: MatchingInformationBody, assessment: Assessment): Placem
   return needsSingleRoom ? 'essential' : 'notRelevant'
 }
 
+const isSuitedForSexOffenders = (
+  body: MatchingInformationBody,
+  assessment: Assessment,
+): PlacementRequirementPreference => {
+  if (body.isSuitedForSexOffenders) {
+    return body.isSuitedForSexOffenders
+  }
+
+  const hasSexualOffenceConviction = sexualOffencesFields.find(field => {
+    const response = retrieveOptionalQuestionResponseFromFormArtifact(assessment.application, DateOfOffence, field) as
+      | Array<string>
+      | undefined
+
+    return response?.find(value => ['current', 'previous'].includes(value))
+  })
+
+  return hasSexualOffenceConviction ? 'essential' : 'notRelevant'
+}
+
 const isWheelchairDesignated = (
   body: MatchingInformationBody,
   assessment: Assessment,
@@ -99,6 +126,7 @@ export const defaultMatchingInformationValues = (
     isArsonDesignated: isArsonDesignated(body, assessment),
     isCatered: isCatered(body, assessment),
     isSingle: isSingle(body, assessment),
+    isSuitedForSexOffenders: isSuitedForSexOffenders(body, assessment),
     isWheelchairDesignated: isWheelchairDesignated(body, assessment),
     lengthOfStay: lengthOfStay(body),
   }
