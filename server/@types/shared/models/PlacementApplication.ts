@@ -5,6 +5,7 @@
 import type { AnyValue } from './AnyValue';
 import type { NewPlacementApplication } from './NewPlacementApplication';
 import type { PlacementApplicationType } from './PlacementApplicationType';
+import type { PlacementDates } from './PlacementDates';
 import type { WithdrawPlacementRequestReason } from './WithdrawPlacementRequestReason';
 export type PlacementApplication = (NewPlacementApplication & {
     /**
@@ -28,5 +29,6 @@ export type PlacementApplication = (NewPlacementApplication & {
     isWithdrawn: boolean;
     withdrawalReason?: WithdrawPlacementRequestReason;
     type: PlacementApplicationType;
+    placementDates: Array<PlacementDates>;
 });
 

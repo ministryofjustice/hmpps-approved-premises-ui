@@ -2,6 +2,7 @@ import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 import { PlacementApplication } from '../../@types/shared'
 import { DateFormats } from '../../utils/dateUtils'
+import placementDates from './placementDates'
 
 export default Factory.define<PlacementApplication>(() => ({
   id: faker.string.uuid(),
@@ -34,4 +35,5 @@ export default Factory.define<PlacementApplication>(() => ({
     'RelatedPlacementApplicationWithdrawn',
     undefined,
   ]),
+  placementDates: placementDates.buildList(3),
 }))
