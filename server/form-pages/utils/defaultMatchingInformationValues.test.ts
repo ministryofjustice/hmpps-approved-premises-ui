@@ -297,7 +297,7 @@ describe('defaultMatchingInformationValues', () => {
       describe('isSuitedForSexOffenders', () => {
         truthyCurrentPreviousValues.forEach(value => {
           it.each(sexualOffencesFields)(
-            `is set to 'essential' when \`$name\` === ['${value.join("', '")}']`,
+            `is set to 'essential' when \`%s\` === ['${value.join("', '")}']`,
             testedField => {
               sexualOffencesFields.forEach(field =>
                 when(retrieveOptionalQuestionResponseFromFormArtifact)
