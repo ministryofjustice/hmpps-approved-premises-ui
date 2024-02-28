@@ -797,12 +797,14 @@ describe('utils', () => {
   describe('mapPlacementApplicationToSummaryCards', () => {
     const application = applicationFactory.build()
     const user = userFactory.build()
+    const arrivalDate = '2023-01-01'
+    const duration = 20
+
     const placementApplications = placementApplicationFactory.buildList(1, {
       createdByUserId: user.id,
       type: 'Additional',
+      placementDates: [{ expectedArrival: arrivalDate, duration }],
     })
-    const arrivalDate = '2023-01-01'
-    const duration = 20
 
     const OLD_ENV = process.env
 
@@ -822,16 +824,12 @@ describe('utils', () => {
           typeof retrieveOptionalQuestionResponseFromFormArtifact
         >
       ).mockReturnValue(undefined)
-      ;(
-        durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
-          typeof durationAndArrivalDateFromPlacementApplication
-        >
-      ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
 
       const initialPlacementApplication = placementApplicationFactory.build({
         type: 'Initial',
         isWithdrawn: false,
         createdByUserId: user.id,
+        placementDates: [{ expectedArrival: arrivalDate, duration }],
       })
 
       expect(mapPlacementApplicationToSummaryCards([initialPlacementApplication], application, user)).toEqual([
@@ -884,11 +882,6 @@ describe('utils', () => {
           typeof retrieveOptionalQuestionResponseFromFormArtifact
         >
       ).mockReturnValue('rotl')
-      ;(
-        durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
-          typeof durationAndArrivalDateFromPlacementApplication
-        >
-      ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
 
       expect(mapPlacementApplicationToSummaryCards(placementApplications, application, user)).toEqual([
         {
@@ -934,8 +927,9 @@ describe('utils', () => {
       ])
     })
 
-    it('links to the old withdrawal link when NEW_WITHDRAWALS_FLOW_DISABLED is set', () => {
-      process.env.NEW_WITHDRAWALS_FLOW_DISABLED = '1'
+    it('falls back to the dates from the application if there arent placementDates', () => {
+      const arrivalDateFromData = '2023-02-01'
+      const durationFromData = 19
       ;(
         retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFunction<
           typeof retrieveOptionalQuestionResponseFromFormArtifact
@@ -945,7 +939,70 @@ describe('utils', () => {
         durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
           typeof durationAndArrivalDateFromPlacementApplication
         >
-      ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
+      ).mockReturnValue([{ expectedArrival: arrivalDateFromData, duration: durationFromData }])
+
+      const placementApplicationsWithoutPlacementDates = placementApplicationFactory.buildList(1, {
+        placementDates: undefined,
+        type: 'Additional',
+        createdByUserId: user.id,
+      })
+
+      expect(
+        mapPlacementApplicationToSummaryCards(placementApplicationsWithoutPlacementDates, application, user),
+      ).toEqual([
+        {
+          card: {
+            title: {
+              headingLevel: '3',
+              text: DateFormats.isoDateToUIDate(placementApplicationsWithoutPlacementDates[0].createdAt),
+            },
+            attributes: { 'data-cy-placement-application-id': placementApplicationsWithoutPlacementDates[0].id },
+            actions: {
+              items: [
+                {
+                  href: paths.applications.withdraw.new({
+                    id: application.id,
+                  }),
+                  text: 'Withdraw',
+                },
+              ],
+            },
+          },
+          rows: [
+            {
+              key: {
+                text: 'Reason for placement request',
+              },
+              value: {
+                text: 'Release on Temporary Licence (ROTL)',
+              },
+            },
+            {
+              key: {
+                text: 'Arrival date',
+              },
+              value: {
+                text: DateFormats.isoDateToUIDate(arrivalDateFromData),
+              },
+            },
+            {
+              key: {
+                text: 'Length of stay',
+              },
+              value: { text: lengthOfStayForUI(durationFromData) },
+            },
+          ],
+        },
+      ])
+    })
+
+    it('links to the old withdrawal link when NEW_WITHDRAWALS_FLOW_DISABLED is set', () => {
+      process.env.NEW_WITHDRAWALS_FLOW_DISABLED = '1'
+      ;(
+        retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFunction<
+          typeof retrieveOptionalQuestionResponseFromFormArtifact
+        >
+      ).mockReturnValue('rotl')
 
       expect(mapPlacementApplicationToSummaryCards(placementApplications, application, user)).toEqual([
         {
@@ -997,25 +1054,30 @@ describe('utils', () => {
       const arrivalDate2 = '2023-02-01'
       const duration2 = 30
 
+      const placementApplicationWithMultipleDates = placementApplicationFactory.buildList(1, {
+        placementDates: [
+          { expectedArrival: arrivalDate1, duration: duration1 },
+          { expectedArrival: arrivalDate2, duration: duration2 },
+        ],
+        canBeWithdrawn: true,
+        createdByUserId: user.id,
+        type: 'Additional',
+      })
+
       ;(
         retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFunction<
           typeof retrieveOptionalQuestionResponseFromFormArtifact
         >
       ).mockReturnValue('rotl')
-      ;(
-        durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
-          typeof durationAndArrivalDateFromPlacementApplication
-        >
-      ).mockReturnValue([
-        { expectedArrival: arrivalDate1, duration: duration1 },
-        { expectedArrival: arrivalDate2, duration: duration2 },
-      ])
 
-      expect(mapPlacementApplicationToSummaryCards(placementApplications, application, user)).toEqual([
+      expect(mapPlacementApplicationToSummaryCards(placementApplicationWithMultipleDates, application, user)).toEqual([
         {
           card: {
-            title: { headingLevel: '3', text: DateFormats.isoDateToUIDate(placementApplications[0].createdAt) },
-            attributes: { 'data-cy-placement-application-id': placementApplications[0].id },
+            title: {
+              headingLevel: '3',
+              text: DateFormats.isoDateToUIDate(placementApplicationWithMultipleDates[0].createdAt),
+            },
+            attributes: { 'data-cy-placement-application-id': placementApplicationWithMultipleDates[0].id },
             actions: {
               items: [
                 {
@@ -1075,15 +1137,11 @@ describe('utils', () => {
           typeof retrieveOptionalQuestionResponseFromFormArtifact
         >
       ).mockReturnValue('rotl')
-      ;(
-        durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
-          typeof durationAndArrivalDateFromPlacementApplication
-        >
-      ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
 
       const withdrawnPlacementApplications = placementApplicationFactory.buildList(1, {
         isWithdrawn: false,
         type: 'Additional',
+        placementDates: [{ expectedArrival: arrivalDate, duration }],
       })
 
       expect(mapPlacementApplicationToSummaryCards(withdrawnPlacementApplications, application, user)).toEqual([
@@ -1132,15 +1190,11 @@ describe('utils', () => {
           typeof retrieveOptionalQuestionResponseFromFormArtifact
         >
       ).mockReturnValue('rotl')
-      ;(
-        durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
-          typeof durationAndArrivalDateFromPlacementApplication
-        >
-      ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
 
       const withdrawnPlacementApplications = placementApplicationFactory.buildList(1, {
         isWithdrawn: true,
         type: 'Additional',
+        placementDates: [{ expectedArrival: arrivalDate, duration }],
       })
 
       expect(mapPlacementApplicationToSummaryCards(withdrawnPlacementApplications, application, user)).toEqual([
@@ -1190,11 +1244,7 @@ describe('utils', () => {
           typeof retrieveOptionalQuestionResponseFromFormArtifact
         >
       ).mockReturnValue('rotl')
-      ;(
-        durationAndArrivalDateFromPlacementApplication as jest.MockedFunction<
-          typeof durationAndArrivalDateFromPlacementApplication
-        >
-      ).mockReturnValue([{ expectedArrival: arrivalDate, duration }])
+
       placementApplications[0].canBeWithdrawn = true
       placementApplications[0].createdByUserId = 'another-user-id'
 
