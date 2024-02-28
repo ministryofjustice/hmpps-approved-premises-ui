@@ -333,3 +333,13 @@ export const bankHolidays = () => {
 export const todayAtMidnight = () => new Date(new Date().setHours(0, 0, 0, 0))
 
 export class InvalidDateStringError extends Error {}
+
+export const daysToWeeksAndDays = (days: string | number): { days: number; weeks: number } => {
+  const daysAsNumber = Number(days)
+  const durationWeeks = Math.floor(daysAsNumber / 7)
+
+  return {
+    days: daysAsNumber - durationWeeks * 7,
+    weeks: durationWeeks,
+  }
+}

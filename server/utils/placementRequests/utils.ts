@@ -5,9 +5,8 @@ import { linkTo } from '../utils'
 
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
-import { daysToWeeksAndDays } from '../assessments/dateUtils'
 import { placementLength } from '../matchUtils'
-import { DateFormats } from '../dateUtils'
+import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 
 export const mapPlacementRequestToBedSearchParams = ({
   duration,

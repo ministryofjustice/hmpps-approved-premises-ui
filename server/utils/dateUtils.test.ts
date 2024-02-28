@@ -17,6 +17,7 @@ import {
   dateAndTimeInputsAreValidDates,
   dateIsBlank,
   dateIsInThePast,
+  daysToWeeksAndDays,
   isToday,
   monthOptions,
   uiDateOrDateEmptyMessage,
@@ -473,5 +474,23 @@ describe('bankHolidays', () => {
       new Date('2018-04-02'),
       new Date('2018-05-07'),
     ])
+  })
+})
+
+describe('daysToWeeksAndDays', () => {
+  it('should return zero weeks when a day length is less than 7 days', () => {
+    expect(daysToWeeksAndDays(6)).toEqual({ days: 6, weeks: 0 })
+  })
+
+  it('should return one week when a day length is 7 days', () => {
+    expect(daysToWeeksAndDays(7)).toEqual({ days: 0, weeks: 1 })
+  })
+
+  it('should return week and days for a long length', () => {
+    expect(daysToWeeksAndDays(52)).toEqual({ days: 3, weeks: 7 })
+  })
+
+  it('should convert a string value to a number', () => {
+    expect(daysToWeeksAndDays('7')).toEqual({ days: 0, weeks: 1 })
   })
 })

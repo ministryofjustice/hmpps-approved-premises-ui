@@ -5,7 +5,7 @@ import {
   CharacteristicPair,
 } from '../@types/shared'
 import { BedSearchParametersUi, ObjectWithDateParts, SummaryListItem } from '../@types/ui'
-import { DateFormats } from './dateUtils'
+import { DateFormats, daysToWeeksAndDays } from './dateUtils'
 import { linkTo } from './utils'
 import matchPaths from '../paths/match'
 import {
@@ -15,7 +15,6 @@ import {
   specialistApTypeOptions,
   specialistSupportOptions,
 } from './placementCriteriaUtils'
-import { daysToWeeksAndDays } from './assessments/dateUtils'
 
 type PlacementDates = {
   placementLength: number
