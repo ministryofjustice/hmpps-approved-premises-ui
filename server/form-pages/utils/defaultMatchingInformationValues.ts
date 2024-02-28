@@ -19,14 +19,10 @@ import DateOfOffence from '../apply/risk-and-need-factors/risk-management-featur
 import Vulnerability from '../apply/risk-and-need-factors/further-considerations/vulnerability'
 import { OffenceAndRiskCriteria, PlacementRequirementCriteria } from '../../utils/placementCriteriaUtils'
 
-interface TaskListPageField {
+export interface TaskListPageField {
   name: string
   page: TasklistPageInterface
   optional?: boolean
-}
-
-export interface TaskListPageYesNoField extends TaskListPageField {
-  value?: 'yes' | 'no'
 }
 
 const lengthOfStay = (body: MatchingInformationBody): string | undefined => {
@@ -88,6 +84,15 @@ export const defaultMatchingInformationValues = (
       [{ name: 'arson', page: Arson }],
       ['yes'],
       'essential',
+      'notRelevant',
+    ),
+    isArsonSuitable: getValue<GetValueOffenceAndRisk>(
+      body,
+      'isArsonSuitable',
+      application,
+      [{ name: 'arsonOffence', page: DateOfOffence, optional: true }],
+      ['current', 'previous'],
+      'relevant',
       'notRelevant',
     ),
     isCatered: getValue<GetValuePlacementRequirement>(

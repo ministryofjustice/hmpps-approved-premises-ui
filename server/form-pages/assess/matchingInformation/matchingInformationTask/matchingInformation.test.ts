@@ -33,6 +33,7 @@ const defaultArguments = {
 
 const defaultMatchingInformationValuesReturnValue: Partial<MatchingInformationBody> = {
   isArsonDesignated: 'essential',
+  isArsonSuitable: 'relevant',
   isCatered: 'essential',
   isSingle: 'desirable',
   isSuitableForVulnerable: 'relevant',
@@ -102,7 +103,6 @@ describe('MatchingInformation', () => {
         acceptsChildSexOffenders: 'You must specify if sexual offences against children is relevant',
         acceptsNonSexualChildOffenders: 'You must specify if non sexual offences against children is relevant',
         acceptsHateCrimeOffenders: 'You must specify if hate based offences is relevant',
-        isArsonSuitable: 'You must specify if arson offences is relevant',
         lengthOfStayAgreed: 'You must state if you agree with the length of the stay',
       })
     })
