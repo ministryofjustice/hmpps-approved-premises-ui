@@ -96,199 +96,183 @@ describe('defaultMatchingInformationValues', () => {
     })
   })
 
-  describe('isArsonDesignated', () => {
-    it('is set to the original value if defined', () => {
+  describe('values for placement requirements and offence and risk criteria', () => {
+    it('uses current values where they exist', () => {
       expect(
-        defaultMatchingInformationValues({ ...bodyWithUndefinedValues, isArsonDesignated: 'desirable' }, application),
-      ).toEqual(expect.objectContaining({ isArsonDesignated: 'desirable' }))
-    })
-
-    it("is set to 'essential' when there's no original value and `arson` === 'yes'", () => {
-      when(retrieveQuestionResponseFromFormArtifact).calledWith(application, Arson, 'arson').mockReturnValue('yes')
-
-      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-        expect.objectContaining({ isArsonDesignated: 'essential' }),
+        defaultMatchingInformationValues(
+          {
+            ...bodyWithUndefinedValues,
+            isArsonDesignated: 'desirable',
+            isCatered: 'desirable',
+            isSingle: 'desirable',
+            isSuitableForVulnerable: 'relevant',
+            isSuitedForSexOffenders: 'desirable',
+            isWheelchairDesignated: 'desirable',
+          },
+          application,
+        ),
+      ).toEqual(
+        expect.objectContaining({
+          isArsonDesignated: 'desirable',
+          isCatered: 'desirable',
+          isSingle: 'desirable',
+          isSuitableForVulnerable: 'relevant',
+          isSuitedForSexOffenders: 'desirable',
+          isWheelchairDesignated: 'desirable',
+        }),
       )
     })
 
-    it("is set to 'notRelevant' when there's no original value and `arson` === 'no'", () => {
-      when(retrieveQuestionResponseFromFormArtifact).calledWith(application, Arson, 'arson').mockReturnValue('no')
+    describe("when there's no current value for a given field", () => {
+      describe('isArsonDesignated', () => {
+        it("is set to 'essential' when `arson` === 'yes'", () => {
+          when(retrieveQuestionResponseFromFormArtifact).calledWith(application, Arson, 'arson').mockReturnValue('yes')
 
-      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-        expect.objectContaining({ isArsonDesignated: 'notRelevant' }),
-      )
-    })
-  })
+          expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+            expect.objectContaining({ isArsonDesignated: 'essential' }),
+          )
+        })
 
-  describe('isCatered', () => {
-    it('is set to the original value if defined', () => {
-      expect(
-        defaultMatchingInformationValues({ ...bodyWithUndefinedValues, isCatered: 'desirable' }, application),
-      ).toEqual(expect.objectContaining({ isCatered: 'desirable' }))
-    })
+        it("is set to 'notRelevant' when `arson` === 'no'", () => {
+          when(retrieveQuestionResponseFromFormArtifact).calledWith(application, Arson, 'arson').mockReturnValue('no')
 
-    it("is set to 'essential' when there's no original value and `catering` (self-catering) === 'no'", () => {
-      when(retrieveQuestionResponseFromFormArtifact).calledWith(application, Catering, 'catering').mockReturnValue('no')
+          expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+            expect.objectContaining({ isArsonDesignated: 'notRelevant' }),
+          )
+        })
+      })
 
-      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-        expect.objectContaining({ isCatered: 'essential' }),
-      )
-    })
-
-    it("is set to 'notRelevant' when there's no original value and `catering` (self-catering) === 'yes'", () => {
-      when(retrieveQuestionResponseFromFormArtifact)
-        .calledWith(application, Catering, 'catering')
-        .mockReturnValue('yes')
-
-      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-        expect.objectContaining({ isCatered: 'notRelevant' }),
-      )
-    })
-  })
-
-  describe('isSingle', () => {
-    it('is set to the original value if defined', () => {
-      expect(
-        defaultMatchingInformationValues({ ...bodyWithUndefinedValues, isSingle: 'desirable' }, application),
-      ).toEqual(expect.objectContaining({ isSingle: 'desirable' }))
-    })
-
-    const yesNoFieldsToCheck: Array<TaskListPageYesNoField> = [
-      { name: 'boosterEligibility', page: Covid },
-      { name: 'immunosuppressed', page: Covid },
-      { name: 'riskToOthers', page: RoomSharing },
-      { name: 'riskToStaff', page: RoomSharing },
-      { name: 'sharingConcerns', page: RoomSharing },
-      { name: 'traumaConcerns', page: RoomSharing },
-    ]
-
-    it.each(yesNoFieldsToCheck)(
-      "is set to 'essential' when there's no original value and `$name` === 'yes'",
-      ({ name: testedField }) => {
-        yesNoFieldsToCheck.forEach(({ name, page }) =>
+      describe('isCatered', () => {
+        it("is set to 'essential' when `catering` (self-catering) === 'no'", () => {
           when(retrieveQuestionResponseFromFormArtifact)
-            .calledWith(application, page, name)
-            .mockReturnValue(testedField === name ? 'yes' : 'no'),
-        )
+            .calledWith(application, Catering, 'catering')
+            .mockReturnValue('no')
 
-        expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-          expect.objectContaining({ isSingle: 'essential' }),
-        )
-      },
-    )
+          expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+            expect.objectContaining({ isCatered: 'essential' }),
+          )
+        })
 
-    it("is set to 'notRelevant' when there's no original value and all relevant fields === 'no'", () => {
-      yesNoFieldsToCheck.forEach(({ name, page }) =>
-        when(retrieveQuestionResponseFromFormArtifact).calledWith(application, page, name).mockReturnValue('no'),
-      )
+        it("is set to 'notRelevant' when `catering` (self-catering) === 'yes'", () => {
+          when(retrieveQuestionResponseFromFormArtifact)
+            .calledWith(application, Catering, 'catering')
+            .mockReturnValue('yes')
 
-      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-        expect.objectContaining({ isSingle: 'notRelevant' }),
-      )
-    })
-  })
+          expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+            expect.objectContaining({ isCatered: 'notRelevant' }),
+          )
+        })
+      })
 
-  describe('isSuitableForVulnerable', () => {
-    it('is set to the original value if defined', () => {
-      expect(
-        defaultMatchingInformationValues(
-          { ...bodyWithUndefinedValues, isSuitableForVulnerable: 'relevant' },
-          application,
-        ),
-      ).toEqual(expect.objectContaining({ isSuitableForVulnerable: 'relevant' }))
-    })
+      describe('isSingle', () => {
+        const yesNoFieldsToCheck: Array<TaskListPageYesNoField> = [
+          { name: 'boosterEligibility', page: Covid },
+          { name: 'immunosuppressed', page: Covid },
+          { name: 'riskToOthers', page: RoomSharing },
+          { name: 'riskToStaff', page: RoomSharing },
+          { name: 'sharingConcerns', page: RoomSharing },
+          { name: 'traumaConcerns', page: RoomSharing },
+        ]
 
-    it("is set to 'relevant' when there's no original value and `exploitable` === 'yes'", () => {
-      when(retrieveQuestionResponseFromFormArtifact)
-        .calledWith(application, Vulnerability, 'exploitable')
-        .mockReturnValue('yes')
-
-      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-        expect.objectContaining({ isSuitableForVulnerable: 'relevant' }),
-      )
-    })
-
-    it("is set to 'notRelevant' when there's no original value and `exploitable` === 'no'", () => {
-      when(retrieveQuestionResponseFromFormArtifact)
-        .calledWith(application, Vulnerability, 'exploitable')
-        .mockReturnValue('no')
-
-      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-        expect.objectContaining({ isSuitableForVulnerable: 'notRelevant' }),
-      )
-    })
-  })
-
-  describe('isSuitedForSexOffenders', () => {
-    it('is set to the original value if defined', () => {
-      expect(
-        defaultMatchingInformationValues(
-          { ...bodyWithUndefinedValues, isSuitedForSexOffenders: 'desirable' },
-          application,
-        ),
-      ).toEqual(expect.objectContaining({ isSuitedForSexOffenders: 'desirable' }))
-    })
-
-    const truthyValues = [['current'], ['previous'], ['current', 'previous']]
-
-    truthyValues.forEach(value => {
-      it.each(sexualOffencesFields)(
-        `is set to 'essential' when there's no original value and \`%s\` === ['${value.join("', '")}']`,
-        testedField => {
-          sexualOffencesFields.forEach(field =>
-            when(retrieveOptionalQuestionResponseFromFormArtifact)
-              .calledWith(application, DateOfOffence, field)
-              .mockReturnValue(testedField === field ? value : undefined),
+        it.each(yesNoFieldsToCheck)("is set to 'essential' when `$name` === 'yes'", ({ name: testedField }) => {
+          yesNoFieldsToCheck.forEach(({ name, page }) =>
+            when(retrieveQuestionResponseFromFormArtifact)
+              .calledWith(application, page, name)
+              .mockReturnValue(testedField === name ? 'yes' : 'no'),
           )
 
           expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-            expect.objectContaining({ isSuitedForSexOffenders: 'essential' }),
+            expect.objectContaining({ isSingle: 'essential' }),
           )
-        },
-      )
-    })
+        })
 
-    it("is set to 'notRelevant' when there's no original value and all relevant fields === undefined", () => {
-      sexualOffencesFields.forEach(field =>
-        when(retrieveOptionalQuestionResponseFromFormArtifact)
-          .calledWith(application, DateOfOffence, field)
-          .mockReturnValue(undefined),
-      )
+        it("is set to 'notRelevant' when all relevant fields === 'no'", () => {
+          yesNoFieldsToCheck.forEach(({ name, page }) =>
+            when(retrieveQuestionResponseFromFormArtifact).calledWith(application, page, name).mockReturnValue('no'),
+          )
 
-      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-        expect.objectContaining({ isSingle: 'notRelevant' }),
-      )
-    })
-  })
+          expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+            expect.objectContaining({ isSingle: 'notRelevant' }),
+          )
+        })
+      })
 
-  describe('isWheelchairDesignated', () => {
-    it('is set to the original value if defined', () => {
-      expect(
-        defaultMatchingInformationValues(
-          { ...bodyWithUndefinedValues, isWheelchairDesignated: 'desirable' },
-          application,
-        ),
-      ).toEqual(expect.objectContaining({ isWheelchairDesignated: 'desirable' }))
-    })
+      describe('isSuitableForVulnerable', () => {
+        it("is set to 'relevant' when `exploitable` === 'yes'", () => {
+          when(retrieveQuestionResponseFromFormArtifact)
+            .calledWith(application, Vulnerability, 'exploitable')
+            .mockReturnValue('yes')
 
-    it("is set to 'essential' when there's no original value and `needsWheelchair` === 'yes'", () => {
-      when(retrieveOptionalQuestionResponseFromFormArtifact)
-        .calledWith(application, AccessNeedsFurtherQuestions, 'needsWheelchair')
-        .mockReturnValue('yes')
+          expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+            expect.objectContaining({ isSuitableForVulnerable: 'relevant' }),
+          )
+        })
 
-      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-        expect.objectContaining({ isWheelchairDesignated: 'essential' }),
-      )
-    })
+        it("is set to 'notRelevant' when `exploitable` === 'no'", () => {
+          when(retrieveQuestionResponseFromFormArtifact)
+            .calledWith(application, Vulnerability, 'exploitable')
+            .mockReturnValue('no')
 
-    it("is set to 'notRelevant' when there's no original value and `needsWheelchair` === 'no'", () => {
-      when(retrieveOptionalQuestionResponseFromFormArtifact)
-        .calledWith(application, AccessNeedsFurtherQuestions, 'needsWheelchair')
-        .mockReturnValue('no')
+          expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+            expect.objectContaining({ isSuitableForVulnerable: 'notRelevant' }),
+          )
+        })
+      })
 
-      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-        expect.objectContaining({ isWheelchairDesignated: 'notRelevant' }),
-      )
+      describe('isSuitedForSexOffenders', () => {
+        const truthyValues = [['current'], ['previous'], ['current', 'previous']]
+
+        truthyValues.forEach(value => {
+          it.each(sexualOffencesFields)(
+            `is set to 'essential' when \`$name\` === ['${value.join("', '")}']`,
+            testedField => {
+              sexualOffencesFields.forEach(field =>
+                when(retrieveOptionalQuestionResponseFromFormArtifact)
+                  .calledWith(application, DateOfOffence, field)
+                  .mockReturnValue(testedField === field ? value : undefined),
+              )
+
+              expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+                expect.objectContaining({ isSuitedForSexOffenders: 'essential' }),
+              )
+            },
+          )
+        })
+
+        it("is set to 'notRelevant' when all relevant fields === undefined", () => {
+          sexualOffencesFields.forEach(field =>
+            when(retrieveOptionalQuestionResponseFromFormArtifact)
+              .calledWith(application, DateOfOffence, field)
+              .mockReturnValue(undefined),
+          )
+
+          expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+            expect.objectContaining({ isSingle: 'notRelevant' }),
+          )
+        })
+      })
+
+      describe('isWheelchairDesignated', () => {
+        it("is set to 'essential' when `needsWheelchair` === 'yes'", () => {
+          when(retrieveOptionalQuestionResponseFromFormArtifact)
+            .calledWith(application, AccessNeedsFurtherQuestions, 'needsWheelchair')
+            .mockReturnValue('yes')
+
+          expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+            expect.objectContaining({ isWheelchairDesignated: 'essential' }),
+          )
+        })
+
+        it("is set to 'notRelevant' when `needsWheelchair` === 'no'", () => {
+          when(retrieveOptionalQuestionResponseFromFormArtifact)
+            .calledWith(application, AccessNeedsFurtherQuestions, 'needsWheelchair')
+            .mockReturnValue('no')
+
+          expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+            expect.objectContaining({ isWheelchairDesignated: 'notRelevant' }),
+          )
+        })
+      })
     })
   })
 
