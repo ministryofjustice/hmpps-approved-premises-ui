@@ -26,7 +26,7 @@ export type PlacementRequirementPreference = (typeof placementRequirementPrefere
 
 const offenceAndRiskInformationKeys = Object.keys(offenceAndRiskOptions)
 const offenceAndRiskInformationRelevance = ['relevant', 'notRelevant']
-type OffenceAndRiskInformationRelevance = (typeof offenceAndRiskInformationRelevance)[number]
+export type OffenceAndRiskInformationRelevance = (typeof offenceAndRiskInformationRelevance)[number]
 
 export type MatchingInformationBody = {
   [Key in OffenceAndRiskCriteria | PlacementRequirementCriteria]: Key extends OffenceAndRiskCriteria
