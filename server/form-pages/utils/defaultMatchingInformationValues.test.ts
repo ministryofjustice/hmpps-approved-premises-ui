@@ -72,7 +72,7 @@ describe('defaultMatchingInformationValues', () => {
         .mockReturnValue(value || 'yes'),
     )
 
-    const dateOfOffenceFieldsToMock = ['arsonOffence', ...sexualOffencesFields]
+    const dateOfOffenceFieldsToMock = ['arsonOffence', 'hateCrime', ...sexualOffencesFields]
 
     dateOfOffenceFieldsToMock.forEach(field =>
       when(retrieveOptionalQuestionResponseFromFormArtifact)
@@ -88,6 +88,7 @@ describe('defaultMatchingInformationValues', () => {
     }
 
     expect(defaultMatchingInformationValues(body, application)).toEqual({
+      acceptsHateCrimeOffenders: 'relevant',
       isArsonDesignated: 'essential',
       isArsonSuitable: 'relevant',
       isCatered: 'essential',
@@ -102,6 +103,7 @@ describe('defaultMatchingInformationValues', () => {
   describe('values for placement requirements and offence and risk criteria', () => {
     it('uses current values where they exist', () => {
       const currentValues: Partial<MatchingInformationBody> = {
+        acceptsHateCrimeOffenders: 'relevant',
         isArsonDesignated: 'desirable',
         isArsonSuitable: 'relevant',
         isCatered: 'desirable',
@@ -118,6 +120,30 @@ describe('defaultMatchingInformationValues', () => {
 
     describe("when there's no current value for a given field", () => {
       const truthyCurrentPreviousValues = [['current'], ['previous'], ['current', 'previous']]
+
+      describe('acceptsHateCrimeOffenders', () => {
+        truthyCurrentPreviousValues.forEach(value => {
+          it(`is set to 'relevant' when \`hateCrime\` === ['${value.join("', '")}']`, () => {
+            when(retrieveOptionalQuestionResponseFromFormArtifact)
+              .calledWith(application, DateOfOffence, 'hateCrime')
+              .mockReturnValue(value)
+
+            expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+              expect.objectContaining({ acceptsHateCrimeOffenders: 'relevant' }),
+            )
+          })
+        })
+
+        it("is set to 'notRelevant' when `hateCrime` === undefined", () => {
+          when(retrieveOptionalQuestionResponseFromFormArtifact)
+            .calledWith(application, DateOfOffence, 'hateCrime')
+            .mockReturnValue(undefined)
+
+          expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+            expect.objectContaining({ acceptsHateCrimeOffenders: 'notRelevant' }),
+          )
+        })
+      })
 
       describe('isArsonDesignated', () => {
         it("is set to 'essential' when `arson` === 'yes'", () => {

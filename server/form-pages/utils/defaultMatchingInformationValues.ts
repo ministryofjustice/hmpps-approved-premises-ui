@@ -77,6 +77,15 @@ export const defaultMatchingInformationValues = (
   application: ApprovedPremisesApplication,
 ): Partial<MatchingInformationBody> => {
   return {
+    acceptsHateCrimeOffenders: getValue<GetValueOffenceAndRisk>(
+      body,
+      'acceptsHateCrimeOffenders',
+      application,
+      [{ name: 'hateCrime', page: DateOfOffence, optional: true }],
+      ['current', 'previous'],
+      'relevant',
+      'notRelevant',
+    ),
     isArsonDesignated: getValue<GetValuePlacementRequirement>(
       body,
       'isArsonDesignated',
