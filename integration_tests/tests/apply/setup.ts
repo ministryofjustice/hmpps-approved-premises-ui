@@ -7,11 +7,12 @@ import {
   tierEnvelopeFactory,
 } from '../../../server/testutils/factories'
 import { DateFormats } from '../../../server/utils/dateUtils'
+import { defaultUserId } from '../../mockApis/auth'
 
 export const setup = () => {
   cy.task('reset')
   cy.task('stubSignIn')
-  cy.task('stubAuthUser')
+  cy.task('stubAuthUser', { userId: defaultUserId })
 
   // Given I am logged in
   cy.signIn()
@@ -22,6 +23,7 @@ export const setup = () => {
       person,
       status: 'started',
       createdAt: DateFormats.dateObjToIsoDate(new Date()),
+      createdByUserId: defaultUserId,
     })
     const risks = risksFactory.build({
       crn: person.crn,
