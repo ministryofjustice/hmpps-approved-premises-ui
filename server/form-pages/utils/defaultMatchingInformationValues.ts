@@ -89,6 +89,15 @@ export const defaultMatchingInformationValues = (
       'relevant',
       'notRelevant',
     ),
+    acceptsNonSexualChildOffenders: getValue<GetValueOffenceAndRisk>(
+      body,
+      'acceptsNonSexualChildOffenders',
+      application,
+      [{ name: 'nonSexualOffencesAgainstChildren', page: DateOfOffence, optional: true }],
+      ['current', 'previous'],
+      'relevant',
+      'notRelevant',
+    ),
     acceptsSexOffenders: getValue<GetValueOffenceAndRisk>(
       body,
       'acceptsSexOffenders',
