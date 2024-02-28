@@ -5,7 +5,7 @@ import {
 } from '../../utils/retrieveQuestionResponseFromFormArtifact'
 import { applicationFactory } from '../../testutils/factories'
 import { MatchingInformationBody } from '../assess/matchingInformation/matchingInformationTask/matchingInformation'
-import { TaskListPageYesNoField, defaultMatchingInformationValues } from './defaultMatchingInformationValues'
+import { TaskListPageField, defaultMatchingInformationValues } from './defaultMatchingInformationValues'
 import AccessNeedsFurtherQuestions from '../apply/risk-and-need-factors/access-and-healthcare/accessNeedsFurtherQuestions'
 import Catering from '../apply/risk-and-need-factors/further-considerations/catering'
 import Arson from '../apply/risk-and-need-factors/further-considerations/arson'
@@ -53,7 +53,7 @@ describe('defaultMatchingInformationValues', () => {
   })
 
   it('returns an object with current or sensible default values for relevant fields', () => {
-    const yesNoFieldsToMock: Array<TaskListPageYesNoField> = [
+    const yesNoFieldsToMock: Array<TaskListPageField & { value?: 'yes' | 'no' }> = [
       { name: 'arson', page: Arson },
       { name: 'boosterEligibility', page: Covid },
       { name: 'catering', page: Catering, value: 'no' },
@@ -165,7 +165,7 @@ describe('defaultMatchingInformationValues', () => {
       })
 
       describe('isSingle', () => {
-        const yesNoFieldsToCheck: Array<TaskListPageYesNoField> = [
+        const fieldsToCheck: Array<TaskListPageField> = [
           { name: 'boosterEligibility', page: Covid },
           { name: 'immunosuppressed', page: Covid },
           { name: 'riskToOthers', page: RoomSharing },
@@ -174,8 +174,8 @@ describe('defaultMatchingInformationValues', () => {
           { name: 'traumaConcerns', page: RoomSharing },
         ]
 
-        it.each(yesNoFieldsToCheck)("is set to 'essential' when `$name` === 'yes'", ({ name: testedField }) => {
-          yesNoFieldsToCheck.forEach(({ name, page }) =>
+        it.each(fieldsToCheck)("is set to 'essential' when `$name` === 'yes'", ({ name: testedField }) => {
+          fieldsToCheck.forEach(({ name, page }) =>
             when(retrieveQuestionResponseFromFormArtifact)
               .calledWith(application, page, name)
               .mockReturnValue(testedField === name ? 'yes' : 'no'),
@@ -187,7 +187,7 @@ describe('defaultMatchingInformationValues', () => {
         })
 
         it("is set to 'notRelevant' when all relevant fields === 'no'", () => {
-          yesNoFieldsToCheck.forEach(({ name, page }) =>
+          fieldsToCheck.forEach(({ name, page }) =>
             when(retrieveQuestionResponseFromFormArtifact).calledWith(application, page, name).mockReturnValue('no'),
           )
 
