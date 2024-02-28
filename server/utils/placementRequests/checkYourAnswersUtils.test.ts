@@ -54,91 +54,90 @@ describe('checkYourAnswersUtils', () => {
         },
       ])
     })
-  })
 
-  it('if the page name is "additional-documents"', () => {
-    const documents = documentFactory.buildList(1)
+    it('if the page name is "additional-documents"', () => {
+      const documents = documentFactory.buildList(1)
 
-    ;(placementApplication.data as Record<string, unknown>)['request-a-placement'] = {
-      'additional-documents': {
-        selectedDocuments: documents,
-      },
-    }
-
-    expect(pageResponsesAsSummaryListItems(placementApplication, 'additional-documents', application)).toEqual([
-      {
-        key: {
-          html: `<a href="/applications/people/${application.person.crn}/documents/${documents[0].id}" data-cy-documentId="${documents[0].id}">${documents[0].fileName}</a>`,
+      ;(placementApplication.data as Record<string, unknown>)['request-a-placement'] = {
+        'additional-documents': {
+          selectedDocuments: documents,
         },
-        value: {
-          text: documents[0].description,
-        },
-
-        actions: {
-          items: [
-            {
-              href: `/placement-applications/${application.id}/tasks/request-a-placement/pages/additional-documents`,
-              text: 'Change',
-              visuallyHiddenText: documents[0].fileName,
-            },
-          ],
-        },
-      },
-    ])
-  })
-
-  describe('placementApplicationQuestionsForReview', () => {
-    it('should return the responses in the correct format when the values are primitives', () => {
-      const placementApp = placementApplicationFactory.build({
-        document: { 'request-a-placement': [{ 'question 1': 'answer 1', 'question 2': 'answer 2' }] },
-      })
-
-      const expected = {
-        card: {
-          title: {
-            text: 'Placement application information',
-          },
-        },
-        rows: [
-          { key: { text: 'question 1' }, value: { text: 'answer 1' } },
-          { key: { text: 'question 2' }, value: { text: 'answer 2' } },
-        ],
       }
 
-      expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
-    })
+      expect(pageResponsesAsSummaryListItems(placementApplication, 'additional-documents', application)).toEqual([
+        {
+          key: {
+            html: `<a href="/applications/people/${application.person.crn}/documents/${documents[0].id}" data-cy-documentId="${documents[0].id}">${documents[0].fileName}</a>`,
+          },
+          value: {
+            text: documents[0].description,
+          },
 
-    it('should return the responses in the correct format when the values contain an array', () => {
-      const placementApp = placementApplicationFactory.build({
-        document: {
-          'request-a-placement': [
-            {
-              'Dates of placement': [
-                {
-                  'How long should the Approved Premises placement last?': '2 weeks, 1 day',
-                  'When will the person arrive?': 'Friday 1 December 2023',
-                },
-                {
-                  'How long should the Approved Premises placement last?': '3 weeks, 2 days',
-                  'When will the person arrive?': 'Tuesday 2 January 2024',
-                },
-              ],
-            },
-          ],
-        },
-      })
-
-      const expected = {
-        card: {
-          title: {
-            text: 'Placement application information',
+          actions: {
+            items: [
+              {
+                href: `/placement-applications/${application.id}/tasks/request-a-placement/pages/additional-documents`,
+                text: 'Change',
+                visuallyHiddenText: documents[0].fileName,
+              },
+            ],
           },
         },
-        rows: [
-          {
-            key: { text: 'Dates of placement' },
-            value: {
-              html: `<dl class="govuk-summary-list govuk-summary-list--embedded">
+      ])
+    })
+
+    describe('placementApplicationQuestionsForReview', () => {
+      it('should return the responses in the correct format when the values are primitives', () => {
+        const placementApp = placementApplicationFactory.build({
+          document: { 'request-a-placement': [{ 'question 1': 'answer 1', 'question 2': 'answer 2' }] },
+        })
+
+        const expected = {
+          card: {
+            title: {
+              text: 'Placement application information',
+            },
+          },
+          rows: [
+            { key: { text: 'question 1' }, value: { text: 'answer 1' } },
+            { key: { text: 'question 2' }, value: { text: 'answer 2' } },
+          ],
+        }
+
+        expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
+      })
+
+      it('should return the responses in the correct format when the values contain an array', () => {
+        const placementApp = placementApplicationFactory.build({
+          document: {
+            'request-a-placement': [
+              {
+                'Dates of placement': [
+                  {
+                    'How long should the Approved Premises placement last?': '2 weeks, 1 day',
+                    'When will the person arrive?': 'Friday 1 December 2023',
+                  },
+                  {
+                    'How long should the Approved Premises placement last?': '3 weeks, 2 days',
+                    'When will the person arrive?': 'Tuesday 2 January 2024',
+                  },
+                ],
+              },
+            ],
+          },
+        })
+
+        const expected = {
+          card: {
+            title: {
+              text: 'Placement application information',
+            },
+          },
+          rows: [
+            {
+              key: { text: 'Dates of placement' },
+              value: {
+                html: `<dl class="govuk-summary-list govuk-summary-list--embedded">
       <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
         <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
           How long should the Approved Premises placement last?
@@ -175,12 +174,13 @@ describe('checkYourAnswersUtils', () => {
         </dd>
       </div>
       </dl>`,
+              },
             },
-          },
-        ],
-      }
+          ],
+        }
 
-      expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
+        expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
+      })
     })
   })
 })
