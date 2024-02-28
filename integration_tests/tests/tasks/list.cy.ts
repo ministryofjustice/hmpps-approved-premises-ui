@@ -110,15 +110,24 @@ context('Task Allocation', () => {
     cy.task('stubGetAllTasks', {
       tasks,
       allocatedFilter: 'allocated',
-      page: '1',
       sortDirection: 'asc',
-      sortField: 'createdAt',
+      sortBy: 'createdAt',
     })
+
     cy.task('stubGetAllTasks', {
       tasks,
       allocatedFilter: 'allocated',
+      page: '1',
+      sortDirection: 'asc',
+      sortBy: 'dueAt',
+    })
+
+    cy.task('stubGetAllTasks', {
+      tasks,
+      allocatedFilter: 'allocated',
+      page: '1',
       sortDirection: 'desc',
-      sortField: 'createdAt',
+      sortBy: 'dueAt',
     })
 
     cy.task('stubApAreaReferenceData', {
@@ -132,18 +141,24 @@ context('Task Allocation', () => {
     // Then I should see the tasks that are allocated
     listPage.shouldShowAllocatedTasks()
 
-    // When I sort by created at in ascending order
-    listPage.clickSortBy('createdAt')
+    // When I sort by the due date in ascending order
+    listPage.clickSortBy('dueAt')
 
-    // Then the dashboard should be sorted by created at
-    listPage.shouldBeSortedByField('createdAt', 'descending')
+    // Then the dashboard should be sorted by the due date in ascending order
+    listPage.shouldBeSortedByField('dueAt', 'ascending')
+
+    // When I sort by the due date in descending order
+    listPage.clickSortBy('dueAt')
+
+    // Then the dashboard should be sorted by the due date in ascending order
+    listPage.shouldBeSortedByField('dueAt', 'descending')
 
     // And the API should have received a request for the correct sort order
     cy.task('verifyTasksRequests', {
       allocatedFilter: 'allocated',
       page: '1',
       sortDirection: 'desc',
-      sortField: 'createdAt',
+      sortBy: 'dueAt',
     }).then(requests => {
       expect(requests).to.have.length(1)
     })
@@ -307,14 +322,6 @@ context('Task Allocation', () => {
       tasks: allocatedTasksFiltered,
       allocatedFilter: 'allocated',
       page: '1',
-      sortDirection: 'asc',
-      apAreaId: '',
-    })
-
-    cy.task('stubGetAllTasks', {
-      tasks: allocatedTasksFiltered,
-      allocatedFilter: 'allocated',
-      sortDirection: 'desc',
       apAreaId: '',
     })
 
@@ -322,7 +329,15 @@ context('Task Allocation', () => {
       tasks: allocatedTasksFilteredPage2,
       allocatedFilter: 'allocated',
       page: '2',
+      apAreaId: '',
+    })
+
+    cy.task('stubGetAllTasks', {
+      tasks: allocatedTasksFiltered,
+      allocatedFilter: 'allocated',
       sortDirection: 'asc',
+      page: '1',
+      sortBy: 'dueAt',
       apAreaId: '',
     })
 
@@ -351,11 +366,11 @@ context('Task Allocation', () => {
     // Then the page should show the results
     listPage.shouldShowAllocatedTasks(allocatedTasksFilteredPage2)
 
-    // When I sort by created at in ascending order
-    listPage.clickSortBy('createdAt')
+    // When I sort by the due date at in ascending order
+    listPage.clickSortBy('dueAt')
 
-    // Then the dashboard should be sorted by created at
-    listPage.shouldBeSortedByField('createdAt', 'descending')
+    // Then the dashboard should be sorted by the due date
+    listPage.shouldBeSortedByField('dueAt', 'ascending')
 
     // Then the page should show the filtered results
     listPage.shouldShowAllocatedTasks(allocatedTasksFiltered)
