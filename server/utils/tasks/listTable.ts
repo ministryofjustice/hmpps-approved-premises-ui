@@ -11,7 +11,7 @@ const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 const daysUntilDueCell = (task: Task): TableCell => ({
   html: formatDaysUntilDueWithWarning(task),
   attributes: {
-    'data-sort-value': DateFormats.differenceInBusinessDays(DateFormats.isoToDateObj(task.dueDate), new Date()),
+    'data-sort-value': DateFormats.differenceInBusinessDays(DateFormats.isoToDateObj(task.dueAt), new Date()),
   },
 })
 
@@ -70,7 +70,7 @@ const statusBadge = (task: Task): string => {
 }
 
 const formatDaysUntilDueWithWarning = (task: Task): string => {
-  const differenceInDays = DateFormats.differenceInBusinessDays(DateFormats.isoToDateObj(task.dueDate), new Date())
+  const differenceInDays = DateFormats.differenceInBusinessDays(DateFormats.isoToDateObj(task.dueAt), new Date())
   const formattedDifference = `${differenceInDays} Day${differenceInDays > 1 ? 's' : ''}`
 
   if (differenceInDays < DUE_DATE_APPROACHING_DAYS_WINDOW) {

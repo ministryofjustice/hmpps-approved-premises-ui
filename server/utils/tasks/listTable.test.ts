@@ -1,3 +1,4 @@
+import { when } from 'jest-when'
 import {
   assessmentTaskFactory,
   placementApplicationTaskFactory,
@@ -29,6 +30,10 @@ import paths from '../../paths/tasks'
 jest.mock('../dateUtils')
 
 describe('table', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
+
   describe('allocatedTableRows', () => {
     describe('when all the optional task properties are populated', () => {
       it('returns an array of table rows', () => {
@@ -174,8 +179,13 @@ describe('table', () => {
 
   describe('daysUntilDueCell', () => {
     it('returns the days until due formatted for the UI as a TableCell object', () => {
-      ;(DateFormats.differenceInBusinessDays as jest.Mock).mockReturnValue(10)
       const task = taskFactory.build()
+
+      ;(DateFormats.differenceInBusinessDays as jest.Mock).mockReturnValue(10)
+      when(DateFormats.differenceInBusinessDays)
+        .calledWith(DateFormats.isoToDateObj(task.dueAt), new Date())
+        .mockReturnValue(10)
+
       expect(daysUntilDueCell(task)).toEqual({
         html: formatDaysUntilDueWithWarning(task),
         attributes: {
@@ -229,14 +239,22 @@ describe('table', () => {
 
   describe('formatDaysUntilDueWithWarning', () => {
     it('returns the number of days until the task is due', () => {
-      ;(DateFormats.differenceInBusinessDays as jest.Mock).mockReturnValue(10)
       const task = taskFactory.build()
+
+      when(DateFormats.differenceInBusinessDays)
+        .calledWith(DateFormats.isoToDateObj(task.dueAt), expect.any(Date))
+        .mockReturnValue(10)
+
       expect(formatDaysUntilDueWithWarning(task)).toEqual('10 Days')
     })
 
     it('returns "overdue" if the task is overdue', () => {
-      ;(DateFormats.differenceInBusinessDays as jest.Mock).mockReturnValue(2)
       const task = taskFactory.build()
+
+      when(DateFormats.differenceInBusinessDays)
+        .calledWith(DateFormats.isoToDateObj(task.dueAt), expect.any(Date))
+        .mockReturnValue(2)
+
       expect(formatDaysUntilDueWithWarning(task)).toEqual(
         `<strong class="task--index__warning">2 Days<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`,
       )
