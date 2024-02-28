@@ -320,7 +320,7 @@ describe('defaultMatchingInformationValues', () => {
           )
 
           expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-            expect.objectContaining({ isSingle: 'notRelevant' }),
+            expect.objectContaining({ isSuitedForSexOffenders: 'notRelevant' }),
           )
         })
       })
