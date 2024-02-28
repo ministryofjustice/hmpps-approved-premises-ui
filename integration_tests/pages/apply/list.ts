@@ -38,6 +38,10 @@ export default class ListPage extends Page {
     this.shouldShowApplications(this.submittedApplications, 'Application submitted')
   }
 
+  clickRequestForPlacementLink() {
+    cy.get('a').contains('Request for placement').click()
+  }
+
   clickSubmit() {
     cy.get('.govuk-button').click()
   }

@@ -1,6 +1,7 @@
-import { applicationSummaryFactory } from '../../../server/testutils/factories'
+import { applicationSummaryFactory, placementApplicationFactory } from '../../../server/testutils/factories'
 import { normaliseCrn } from '../../../server/utils/normaliseCrn'
 import DashboardPage from '../../pages/apply/dashboard'
+import ReasonForPlacementPage from '../../pages/match/placementRequestForm/reasonForPlacement'
 
 context('All applications', () => {
   beforeEach(() => {
@@ -112,20 +113,38 @@ context('All applications', () => {
     page.shouldShowApplications()
   })
 
-  it('request for placement', () => {
-    // Given I am logged in
-    cy.signIn()
+  it('request for placement for application status awaiting placement', () => {
+    cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
+      // Given I am logged in
+      cy.signIn()
 
-    // And there is a page of applications
-    const applications = applicationSummaryFactory.buildList(10, { status: 'awaitingPlacement' })
+      // And there is a page of applications
+      const applications = applicationSummaryFactory.buildList(1, { status: 'awaitingPlacement' })
+      const applicationId = applications[0].id
+      cy.task('stubAllApplications', { applications })
 
-    cy.task('stubAllApplications', { applications })
+      // And there is a placement application in the DB
+      const placementApplicationId = '123'
+      const placementApplication = placementApplicationFactory.build({
+        id: placementApplicationId,
+        data: placementApplicationData,
+        applicationId,
+      })
+      cy.task('stubCreatePlacementApplication', placementApplication)
+      cy.task('stubPlacementApplication', placementApplication)
 
-    // When I access the applications dashboard
-    const page = DashboardPage.visit(applications)
+      // When I access the applications dashboard
+      const page = DashboardPage.visit(applications)
 
-    // Then I should see all of the applications
-    page.shouldShowApplications()
+      // Then I should see all the applications
+      page.shouldShowApplications()
+
+      // And I should be able to click on request for placement
+      page.clickRequestForPlacementLink()
+
+      // And I should be on placement request
+      ReasonForPlacementPage.visit(placementApplicationId)
+    })
   })
 
   const shouldSortByField = (field: string) => {

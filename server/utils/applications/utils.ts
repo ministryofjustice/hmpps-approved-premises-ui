@@ -111,8 +111,8 @@ export const getAction = (application: ApplicationSummary | Application) => {
   if (application.status === 'awaitingPlacement') {
     return linkTo(
       placementApplicationPaths.placementApplications.create,
-      { id: application.id },
-      { text: 'Request for placement' },
+      {},
+      { text: 'Request for placement', query: { id: application.id } },
     )
   }
   return ''
@@ -156,8 +156,8 @@ export const actionsCell = (application: ApplicationSummary | Application) => {
   if (application.status === 'awaitingPlacement') {
     const requestForPlacementLink = linkTo(
       placementApplicationPaths.placementApplications.create,
-      { id: application.id },
-      { text: 'Request for placement' },
+      {},
+      { text: 'Request for placement', query: { id: application.id } },
     )
     actionItems.push(requestForPlacementLink)
   }
