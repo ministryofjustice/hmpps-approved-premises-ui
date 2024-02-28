@@ -16,6 +16,7 @@ import Arson from '../apply/risk-and-need-factors/further-considerations/arson'
 import RoomSharing from '../apply/risk-and-need-factors/further-considerations/roomSharing'
 import Covid from '../apply/risk-and-need-factors/access-and-healthcare/covid'
 import DateOfOffence from '../apply/risk-and-need-factors/risk-management-features/dateOfOffence'
+import Vulnerability from '../apply/risk-and-need-factors/further-considerations/vulnerability'
 
 jest.mock('../../utils/retrieveQuestionResponseFromFormArtifact')
 
@@ -53,6 +54,7 @@ describe('defaultMatchingInformationValues', () => {
       { name: 'arson', page: Arson },
       { name: 'boosterEligibility', page: Covid },
       { name: 'catering', page: Catering, value: 'no' },
+      { name: 'exploitable', page: Vulnerability },
       { name: 'immunosuppressed', page: Covid },
       { name: 'needsWheelchair', page: AccessNeedsFurtherQuestions, optional: true },
       { name: 'riskToOthers', page: RoomSharing },
@@ -84,6 +86,7 @@ describe('defaultMatchingInformationValues', () => {
       isArsonDesignated: 'essential',
       isCatered: 'essential',
       isSingle: 'essential',
+      isSuitableForVulnerable: 'relevant',
       isSuitedForSexOffenders: 'essential',
       isWheelchairDesignated: 'essential',
       lengthOfStay: '24',
@@ -178,6 +181,37 @@ describe('defaultMatchingInformationValues', () => {
 
       expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
         expect.objectContaining({ isSingle: 'notRelevant' }),
+      )
+    })
+  })
+
+  describe('isSuitableForVulnerable', () => {
+    it('is set to the original value if defined', () => {
+      expect(
+        defaultMatchingInformationValues(
+          { ...bodyWithUndefinedValues, isSuitableForVulnerable: 'relevant' },
+          application,
+        ),
+      ).toEqual(expect.objectContaining({ isSuitableForVulnerable: 'relevant' }))
+    })
+
+    it("is set to 'relevant' when there's no original value and `exploitable` === 'yes'", () => {
+      when(retrieveQuestionResponseFromFormArtifact)
+        .calledWith(application, Vulnerability, 'exploitable')
+        .mockReturnValue('yes')
+
+      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+        expect.objectContaining({ isSuitableForVulnerable: 'relevant' }),
+      )
+    })
+
+    it("is set to 'notRelevant' when there's no original value and `exploitable` === 'no'", () => {
+      when(retrieveQuestionResponseFromFormArtifact)
+        .calledWith(application, Vulnerability, 'exploitable')
+        .mockReturnValue('no')
+
+      expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+        expect.objectContaining({ isSuitableForVulnerable: 'notRelevant' }),
       )
     })
   })

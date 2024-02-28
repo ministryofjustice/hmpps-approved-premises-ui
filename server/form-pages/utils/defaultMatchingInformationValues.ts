@@ -6,6 +6,7 @@ import {
 } from '../../utils/retrieveQuestionResponseFromFormArtifact'
 import type {
   MatchingInformationBody,
+  OffenceAndRiskInformationRelevance,
   PlacementRequirementPreference,
 } from '../assess/matchingInformation/matchingInformationTask/matchingInformation'
 import AccessNeedsFurtherQuestions from '../apply/risk-and-need-factors/access-and-healthcare/accessNeedsFurtherQuestions'
@@ -15,6 +16,7 @@ import RoomSharing from '../apply/risk-and-need-factors/further-considerations/r
 import Covid from '../apply/risk-and-need-factors/access-and-healthcare/covid'
 import { TasklistPageInterface } from '../tasklistPage'
 import DateOfOffence from '../apply/risk-and-need-factors/risk-management-features/dateOfOffence'
+import Vulnerability from '../apply/risk-and-need-factors/further-considerations/vulnerability'
 
 export interface TaskListPageYesNoField {
   name: string
@@ -80,6 +82,19 @@ const isSingle = (
   return needsSingleRoom ? 'essential' : 'notRelevant'
 }
 
+const isSuitableForVulnerable = (
+  body: MatchingInformationBody,
+  application: ApprovedPremisesApplication,
+): OffenceAndRiskInformationRelevance => {
+  if (body.isSuitableForVulnerable) {
+    return body.isSuitableForVulnerable
+  }
+
+  const vulnerable = retrieveQuestionResponseFromFormArtifact(application, Vulnerability, 'exploitable')
+
+  return vulnerable === 'yes' ? 'relevant' : 'notRelevant'
+}
+
 const isSuitedForSexOffenders = (
   body: MatchingInformationBody,
   application: ApprovedPremisesApplication,
@@ -135,6 +150,7 @@ export const defaultMatchingInformationValues = (
     isArsonDesignated: isArsonDesignated(body, application),
     isCatered: isCatered(body, application),
     isSingle: isSingle(body, application),
+    isSuitableForVulnerable: isSuitableForVulnerable(body, application),
     isSuitedForSexOffenders: isSuitedForSexOffenders(body, application),
     isWheelchairDesignated: isWheelchairDesignated(body, application),
     lengthOfStay: lengthOfStay(body),
