@@ -122,7 +122,7 @@ describe('table', () => {
   })
 
   describe('unallocatedTableRows', () => {
-    const sortBy = 'createdAt'
+    const sortBy = 'dueAt'
     const sortDirection = 'asc'
     const hrefPrefix = 'http://localhost'
 
@@ -131,7 +131,7 @@ describe('table', () => {
         {
           text: 'Person',
         },
-        sortHeader<TaskSortField>('Due', 'createdAt', sortBy, sortDirection, hrefPrefix),
+        sortHeader<TaskSortField>('Due', 'dueAt', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Status',
         },
@@ -146,7 +146,7 @@ describe('table', () => {
   })
 
   describe('allocatedTableRows', () => {
-    const sortBy = 'createdAt'
+    const sortBy = 'dueAt'
     const sortDirection = 'asc'
     const hrefPrefix = 'http://localhost'
 
@@ -155,7 +155,7 @@ describe('table', () => {
         {
           text: 'Person',
         },
-        sortHeader<TaskSortField>('Due', 'createdAt', sortBy, sortDirection, hrefPrefix),
+        sortHeader<TaskSortField>('Due', 'dueAt', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Allocated to',
         },

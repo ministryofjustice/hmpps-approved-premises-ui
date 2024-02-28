@@ -119,7 +119,7 @@ const allocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirectio
     {
       text: 'Person',
     },
-    sortHeader<TaskSortField>('Due', 'createdAt', sortBy, sortDirection, hrefPrefix),
+    sortHeader<TaskSortField>('Due', 'dueAt', sortBy, sortDirection, hrefPrefix),
     {
       text: 'Allocated to',
     },
@@ -140,7 +140,7 @@ const unAllocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirect
     {
       text: 'Person',
     },
-    sortHeader<TaskSortField>('Due', 'createdAt', sortBy, sortDirection, hrefPrefix),
+    sortHeader<TaskSortField>('Due', 'dueAt', sortBy, sortDirection, hrefPrefix),
     {
       text: 'Status',
     },
