@@ -17,118 +17,16 @@ import Covid from '../apply/risk-and-need-factors/access-and-healthcare/covid'
 import { TasklistPageInterface } from '../tasklistPage'
 import DateOfOffence from '../apply/risk-and-need-factors/risk-management-features/dateOfOffence'
 import Vulnerability from '../apply/risk-and-need-factors/further-considerations/vulnerability'
+import { OffenceAndRiskCriteria, PlacementRequirementCriteria } from '../../utils/placementCriteriaUtils'
 
-export interface TaskListPageYesNoField {
+interface TaskListPageField {
   name: string
   page: TasklistPageInterface
-  value?: 'yes' | 'no'
   optional?: boolean
 }
 
-export const sexualOffencesFields = [
-  'contactSexualOffencesAgainstAdults',
-  'nonContactSexualOffencesAgainstAdults',
-  'contactSexualOffencesAgainstChildren',
-  'nonContactSexualOffencesAgainstChildren',
-]
-
-const isArsonDesignated = (
-  body: MatchingInformationBody,
-  application: ApprovedPremisesApplication,
-): PlacementRequirementPreference => {
-  if (body.isArsonDesignated) {
-    return body.isArsonDesignated
-  }
-
-  const arsonRisk = retrieveQuestionResponseFromFormArtifact(application, Arson, 'arson')
-
-  return arsonRisk === 'yes' ? 'essential' : 'notRelevant'
-}
-
-const isCatered = (
-  body: MatchingInformationBody,
-  application: ApprovedPremisesApplication,
-): PlacementRequirementPreference => {
-  if (body.isCatered) {
-    return body.isCatered
-  }
-
-  const selfCatered = retrieveQuestionResponseFromFormArtifact(application, Catering, 'catering')
-
-  return selfCatered === 'no' ? 'essential' : 'notRelevant'
-}
-
-const isSingle = (
-  body: MatchingInformationBody,
-  application: ApprovedPremisesApplication,
-): PlacementRequirementPreference => {
-  if (body.isSingle) {
-    return body.isSingle
-  }
-
-  const fieldsToCheck: Array<TaskListPageYesNoField> = [
-    { name: 'boosterEligibility', page: Covid },
-    { name: 'immunosuppressed', page: Covid },
-    { name: 'riskToOthers', page: RoomSharing },
-    { name: 'riskToStaff', page: RoomSharing },
-    { name: 'sharingConcerns', page: RoomSharing },
-    { name: 'traumaConcerns', page: RoomSharing },
-  ]
-
-  const needsSingleRoom = fieldsToCheck.find(
-    ({ name, page }) => retrieveQuestionResponseFromFormArtifact(application, page, name) === 'yes',
-  )
-
-  return needsSingleRoom ? 'essential' : 'notRelevant'
-}
-
-const isSuitableForVulnerable = (
-  body: MatchingInformationBody,
-  application: ApprovedPremisesApplication,
-): OffenceAndRiskInformationRelevance => {
-  if (body.isSuitableForVulnerable) {
-    return body.isSuitableForVulnerable
-  }
-
-  const vulnerable = retrieveQuestionResponseFromFormArtifact(application, Vulnerability, 'exploitable')
-
-  return vulnerable === 'yes' ? 'relevant' : 'notRelevant'
-}
-
-const isSuitedForSexOffenders = (
-  body: MatchingInformationBody,
-  application: ApprovedPremisesApplication,
-): PlacementRequirementPreference => {
-  if (body.isSuitedForSexOffenders) {
-    return body.isSuitedForSexOffenders
-  }
-
-  const hasSexualOffenceConviction = sexualOffencesFields.find(field => {
-    const response = retrieveOptionalQuestionResponseFromFormArtifact(application, DateOfOffence, field) as
-      | Array<string>
-      | undefined
-
-    return response?.find(value => ['current', 'previous'].includes(value))
-  })
-
-  return hasSexualOffenceConviction ? 'essential' : 'notRelevant'
-}
-
-const isWheelchairDesignated = (
-  body: MatchingInformationBody,
-  application: ApprovedPremisesApplication,
-): PlacementRequirementPreference => {
-  if (body.isWheelchairDesignated) {
-    return body.isWheelchairDesignated
-  }
-
-  const needsWheelchair = retrieveOptionalQuestionResponseFromFormArtifact(
-    application,
-    AccessNeedsFurtherQuestions,
-    'needsWheelchair',
-  )
-
-  return needsWheelchair === 'yes' ? 'essential' : 'notRelevant'
+export interface TaskListPageYesNoField extends TaskListPageField {
+  value?: 'yes' | 'no'
 }
 
 const lengthOfStay = (body: MatchingInformationBody): string | undefined => {
@@ -142,17 +40,113 @@ const lengthOfStay = (body: MatchingInformationBody): string | undefined => {
   return undefined
 }
 
+type YesNoCurrentPrevious = 'yes' | 'no' | 'current' | 'previous'
+type GetValueOffenceAndRisk = { bodyField: OffenceAndRiskCriteria; returnType: OffenceAndRiskInformationRelevance }
+type GetValuePlacementRequirement = {
+  bodyField: PlacementRequirementCriteria
+  returnType: PlacementRequirementPreference
+}
+
+const getValue = <T extends GetValueOffenceAndRisk | GetValuePlacementRequirement>(
+  body: MatchingInformationBody,
+  bodyField: T['bodyField'],
+  application: ApprovedPremisesApplication,
+  fieldsToCheck: Array<TaskListPageField>,
+  lookForValues: Array<YesNoCurrentPrevious>,
+  matchedReturnValue: T['returnType'],
+  unmatchedReturnValue: T['returnType'],
+): T['returnType'] => {
+  if (body[bodyField]) {
+    return body[bodyField]
+  }
+
+  const match = fieldsToCheck.find(({ name, page, optional }) => {
+    const retrieveMethod = optional
+      ? retrieveOptionalQuestionResponseFromFormArtifact
+      : retrieveQuestionResponseFromFormArtifact
+
+    const response = retrieveMethod(application, page, name) as
+      | YesNoCurrentPrevious
+      | Array<YesNoCurrentPrevious>
+      | undefined
+
+    return [response].flat()?.find(value => lookForValues.includes(value))
+  })
+
+  return match ? matchedReturnValue : unmatchedReturnValue
+}
+
 export const defaultMatchingInformationValues = (
   body: MatchingInformationBody,
   application: ApprovedPremisesApplication,
 ): Partial<MatchingInformationBody> => {
   return {
-    isArsonDesignated: isArsonDesignated(body, application),
-    isCatered: isCatered(body, application),
-    isSingle: isSingle(body, application),
-    isSuitableForVulnerable: isSuitableForVulnerable(body, application),
-    isSuitedForSexOffenders: isSuitedForSexOffenders(body, application),
-    isWheelchairDesignated: isWheelchairDesignated(body, application),
+    isArsonDesignated: getValue<GetValuePlacementRequirement>(
+      body,
+      'isArsonDesignated',
+      application,
+      [{ name: 'arson', page: Arson }],
+      ['yes'],
+      'essential',
+      'notRelevant',
+    ),
+    isCatered: getValue<GetValuePlacementRequirement>(
+      body,
+      'isCatered',
+      application,
+      [{ name: 'catering', page: Catering }],
+      ['no'],
+      'essential',
+      'notRelevant',
+    ),
+    isSingle: getValue<GetValuePlacementRequirement>(
+      body,
+      'isSingle',
+      application,
+      [
+        { name: 'boosterEligibility', page: Covid },
+        { name: 'immunosuppressed', page: Covid },
+        { name: 'riskToOthers', page: RoomSharing },
+        { name: 'riskToStaff', page: RoomSharing },
+        { name: 'sharingConcerns', page: RoomSharing },
+        { name: 'traumaConcerns', page: RoomSharing },
+      ],
+      ['yes'],
+      'essential',
+      'notRelevant',
+    ),
+    isSuitableForVulnerable: getValue<GetValueOffenceAndRisk>(
+      body,
+      'isSuitableForVulnerable',
+      application,
+      [{ name: 'exploitable', page: Vulnerability }],
+      ['yes'],
+      'relevant',
+      'notRelevant',
+    ),
+    isSuitedForSexOffenders: getValue<GetValuePlacementRequirement>(
+      body,
+      'isSuitedForSexOffenders',
+      application,
+      [
+        { name: 'contactSexualOffencesAgainstAdults', page: DateOfOffence, optional: true },
+        { name: 'nonContactSexualOffencesAgainstAdults', page: DateOfOffence, optional: true },
+        { name: 'contactSexualOffencesAgainstChildren', page: DateOfOffence, optional: true },
+        { name: 'nonContactSexualOffencesAgainstChildren', page: DateOfOffence, optional: true },
+      ],
+      ['current', 'previous'],
+      'essential',
+      'notRelevant',
+    ),
+    isWheelchairDesignated: getValue<GetValuePlacementRequirement>(
+      body,
+      'isWheelchairDesignated',
+      application,
+      [{ name: 'needsWheelchair', page: AccessNeedsFurtherQuestions, optional: true }],
+      ['yes'],
+      'essential',
+      'notRelevant',
+    ),
     lengthOfStay: lengthOfStay(body),
   }
 }

@@ -25,7 +25,7 @@ const placementRequirementPreferences = ['essential' as const, 'desirable' as co
 export type PlacementRequirementPreference = (typeof placementRequirementPreferences)[number]
 
 const offenceAndRiskInformationKeys = Object.keys(offenceAndRiskOptions)
-const offenceAndRiskInformationRelevance = ['relevant', 'notRelevant']
+const offenceAndRiskInformationRelevance = ['relevant' as const, 'notRelevant' as const]
 export type OffenceAndRiskInformationRelevance = (typeof offenceAndRiskInformationRelevance)[number]
 
 export type MatchingInformationBody = {

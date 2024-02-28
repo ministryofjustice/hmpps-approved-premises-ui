@@ -5,11 +5,7 @@ import {
 } from '../../utils/retrieveQuestionResponseFromFormArtifact'
 import { applicationFactory } from '../../testutils/factories'
 import { MatchingInformationBody } from '../assess/matchingInformation/matchingInformationTask/matchingInformation'
-import {
-  TaskListPageYesNoField,
-  defaultMatchingInformationValues,
-  sexualOffencesFields,
-} from './defaultMatchingInformationValues'
+import { TaskListPageYesNoField, defaultMatchingInformationValues } from './defaultMatchingInformationValues'
 import AccessNeedsFurtherQuestions from '../apply/risk-and-need-factors/access-and-healthcare/accessNeedsFurtherQuestions'
 import Catering from '../apply/risk-and-need-factors/further-considerations/catering'
 import Arson from '../apply/risk-and-need-factors/further-considerations/arson'
@@ -44,6 +40,13 @@ describe('defaultMatchingInformationValues', () => {
     specialistSupportCriteria: undefined,
   }
   const application = applicationFactory.build()
+
+  const sexualOffencesFields = [
+    'contactSexualOffencesAgainstAdults',
+    'nonContactSexualOffencesAgainstAdults',
+    'contactSexualOffencesAgainstChildren',
+    'nonContactSexualOffencesAgainstChildren',
+  ]
 
   afterEach(() => {
     jest.resetAllMocks()
