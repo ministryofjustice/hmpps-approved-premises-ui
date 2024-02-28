@@ -328,11 +328,9 @@ const mapPlacementApplicationToSummaryCards = (
       'reason',
     ) as PlacementType
 
-    const datesOfPlacements = durationAndArrivalDateFromPlacementApplication(
-      placementApplication,
-      reasonForPlacement,
-      application,
-    )
+    const datesOfPlacements = placementApplication?.placementDates?.length
+      ? placementApplication?.placementDates
+      : durationAndArrivalDateFromPlacementApplication(placementApplication, reasonForPlacement, application)
 
     const actionItems = []
 
