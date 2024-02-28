@@ -8,8 +8,6 @@ import placementApplicationPaths from '../../paths/placementApplications'
 import { applicationShowPageTab } from '../../utils/applications/utils'
 import { WithdrawPlacementRequestReason } from '../../@types/shared/models/WithdrawPlacementRequestReason'
 import { Application } from '../../@types/shared'
-import { placementLength } from '../../utils/matchUtils'
-import { DateFormats } from '../../utils/dateUtils'
 import { withdrawalMessage } from '../../utils/placementRequests/utils'
 
 export default class WithdrawalsController {

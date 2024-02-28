@@ -4,8 +4,6 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 import paths from '../../../paths/admin'
 import { PlacementRequestService } from '../../../services'
 import { ErrorWithData } from '../../../utils/errors'
-import { DateFormats } from '../../../utils/dateUtils'
-import { placementLength } from '../../../utils/matchUtils'
 import { withdrawalMessage } from '../../../utils/placementRequests/utils'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'

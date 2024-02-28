@@ -6,6 +6,7 @@ import { embeddedSummaryListItem, summaryListItemForResponse } from '../applicat
 import { getPage } from '../applications/getPage'
 import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import { getResponseForPage } from '../applications/getResponseForPage'
+import { datesOfPlacementItem } from './datesOfPlacementItem'
 
 export const mapPageForSummaryList = (
   placementApplication: PlacementApplication,
