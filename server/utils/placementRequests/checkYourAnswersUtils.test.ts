@@ -2,6 +2,8 @@ import { PlacementApplication } from '../../@types/shared'
 import paths from '../../paths/placementApplications'
 import { addResponseToFormArtifact } from '../../testutils/addToApplication'
 import { applicationFactory, documentFactory, placementApplicationFactory } from '../../testutils/factories'
+import placementDates from '../../testutils/factories/placementDates'
+import { DateFormats } from '../dateUtils'
 import {
   getPageTitle,
   mapPageForSummaryList,
@@ -10,6 +12,44 @@ import {
 } from './checkYourAnswersUtils'
 
 jest.mock('../applications/forPagesInTask')
+
+const datesMarkup = `<dl class="govuk-summary-list govuk-summary-list--embedded">
+      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
+        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
+          When will the person arrive?
+        </dt>
+        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
+        ${DateFormats.dateObjtoUIDate(new Date('2023-08-01'))}
+        </dd>
+      </div>
+      
+      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
+        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
+          How long should the Approved Premises placement last?
+        </dt>
+        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
+        5 days
+        </dd>
+      </div>
+      </dl><dl class="govuk-summary-list govuk-summary-list--embedded">
+      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
+        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
+          When will the person arrive?
+        </dt>
+        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
+        ${DateFormats.dateObjtoUIDate(new Date('2024-08-01'))}
+        </dd>
+      </div>
+      
+      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
+        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
+          How long should the Approved Premises placement last?
+        </dt>
+        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
+        3 weeks, 4 days
+        </dd>
+      </div>
+      </dl>`
 
 describe('checkYourAnswersUtils', () => {
   const application = applicationFactory.build()
@@ -86,58 +126,147 @@ describe('checkYourAnswersUtils', () => {
       ])
     })
 
-    describe('placementApplicationQuestionsForReview', () => {
-      it('should return the responses in the correct format when the values are primitives', () => {
-        const placementApp = placementApplicationFactory.build({
-          document: { 'request-a-placement': [{ 'question 1': 'answer 1', 'question 2': 'answer 2' }] },
-        })
+    describe('if the page name is "dates-of-placement"', () => {
+      describe('and there are is a placementDates key on the placement application', () => {
+        it('returns the dates from the placement application', () => {
+          const placementDate1 = placementDates.build({ duration: 5, expectedArrival: '2023-08-01' })
+          const placementDate2 = placementDates.build({ duration: 25, expectedArrival: '2024-08-01' })
+          const rotlPlacementApplication = placementApplicationFactory.build({
+            placementDates: [placementDate1, placementDate2],
+            applicationId: application.id,
+          })
 
-        const expected = {
-          card: {
-            title: {
-              text: 'Placement application information',
-            },
-          },
-          rows: [
-            { key: { text: 'question 1' }, value: { text: 'answer 1' } },
-            { key: { text: 'question 2' }, value: { text: 'answer 2' } },
-          ],
-        }
+          expect(pageResponsesAsSummaryListItems(rotlPlacementApplication, 'dates-of-placement', application)).toEqual([
+            {
+              key: {
+                text: 'Dates of placement',
+              },
+              value: {
+                html: datesMarkup,
+              },
 
-        expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
-      })
-
-      it('should return the responses in the correct format when the values contain an array', () => {
-        const placementApp = placementApplicationFactory.build({
-          document: {
-            'request-a-placement': [
-              {
-                'Dates of placement': [
+              actions: {
+                items: [
                   {
-                    'How long should the Approved Premises placement last?': '2 weeks, 1 day',
-                    'When will the person arrive?': 'Friday 1 December 2023',
-                  },
-                  {
-                    'How long should the Approved Premises placement last?': '3 weeks, 2 days',
-                    'When will the person arrive?': 'Tuesday 2 January 2024',
+                    href: `/placement-applications/${rotlPlacementApplication.id}/tasks/request-a-placement/pages/dates-of-placement`,
+                    text: 'Change',
+                    visuallyHiddenText: 'Dates of placement',
                   },
                 ],
               },
-            ],
-          },
-        })
-
-        const expected = {
-          card: {
-            title: {
-              text: 'Placement application information',
             },
-          },
-          rows: [
+          ])
+        })
+      })
+
+      describe('and there are is not a placementDates key on the placement application', () => {
+        it('returns the dates from the data blob', () => {
+          const rotlPlacementApplication = placementApplicationFactory.build({
+            placementDates: undefined,
+            applicationId: application.id,
+          })
+
+          ;(rotlPlacementApplication.data as Record<string, unknown>)['request-a-placement'] = {
+            'dates-of-placement': {
+              datesOfPlacement: [
+                {
+                  arrivalDate: '2023-08-01',
+                  'arrivalDate-day': '01',
+                  'arrivalDate-month': '8',
+                  'arrivalDate-year': '2023',
+                  duration: '5',
+                  durationDays: '5',
+                  durationWeeks: '0',
+                },
+                {
+                  arrivalDate: '2024-08-02',
+                  'arrivalDate-day': '01',
+                  'arrivalDate-month': '8',
+                  'arrivalDate-year': '2024',
+                  duration: '25',
+                  durationDays: '4',
+                  durationWeeks: '3 ',
+                },
+              ],
+            },
+          }
+
+          expect(pageResponsesAsSummaryListItems(rotlPlacementApplication, 'dates-of-placement', application)).toEqual([
             {
-              key: { text: 'Dates of placement' },
+              key: {
+                text: 'Dates of placement',
+              },
               value: {
-                html: `<dl class="govuk-summary-list govuk-summary-list--embedded">
+                html: datesMarkup,
+              },
+
+              actions: {
+                items: [
+                  {
+                    href: `/placement-applications/${rotlPlacementApplication.id}/tasks/request-a-placement/pages/dates-of-placement`,
+                    text: 'Change',
+                    visuallyHiddenText: 'Dates of placement',
+                  },
+                ],
+              },
+            },
+          ])
+        })
+      })
+    })
+  })
+
+  describe('placementApplicationQuestionsForReview', () => {
+    it('should return the responses in the correct format when the values are primitives', () => {
+      const placementApp = placementApplicationFactory.build({
+        document: { 'request-a-placement': [{ 'question 1': 'answer 1', 'question 2': 'answer 2' }] },
+      })
+
+      const expected = {
+        card: {
+          title: {
+            text: 'Placement application information',
+          },
+        },
+        rows: [
+          { key: { text: 'question 1' }, value: { text: 'answer 1' } },
+          { key: { text: 'question 2' }, value: { text: 'answer 2' } },
+        ],
+      }
+
+      expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
+    })
+
+    it('should return the responses in the correct format when the values contain an array', () => {
+      const placementApp = placementApplicationFactory.build({
+        document: {
+          'request-a-placement': [
+            {
+              'Dates of placement': [
+                {
+                  'How long should the Approved Premises placement last?': '2 weeks, 1 day',
+                  'When will the person arrive?': 'Friday 1 December 2023',
+                },
+                {
+                  'How long should the Approved Premises placement last?': '3 weeks, 2 days',
+                  'When will the person arrive?': 'Tuesday 2 January 2024',
+                },
+              ],
+            },
+          ],
+        },
+      })
+      const expected = {
+        card: {
+          title: {
+            text: 'Placement application information',
+          },
+        },
+        rows: [
+          {
+            key: { text: 'Dates of placement' },
+            value: {
+              html: `<dl class="govuk-summary-list govuk-summary-list--embedded">
       <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
         <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
           How long should the Approved Premises placement last?
@@ -174,13 +303,12 @@ describe('checkYourAnswersUtils', () => {
         </dd>
       </div>
       </dl>`,
-              },
             },
-          ],
-        }
+          },
+        ],
+      }
 
-        expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
-      })
+      expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
     })
   })
 })
