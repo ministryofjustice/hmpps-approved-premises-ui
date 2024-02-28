@@ -7,6 +7,7 @@ import { DateFormats, dateAndTimeInputsAreValidDates } from '../../../utils/date
 import { retrieveQuestionResponseFromFormArtifact } from '../../../utils/retrieveQuestionResponseFromFormArtifact'
 import { PlacementApplication } from '../../../@types/shared'
 import PreviousRotlPlacement from './previousRotlPlacement'
+import { datesOfPlacementItem } from '../../../utils/placementRequests/datesOfPlacementItem'
 
 type DateOfPlacementFromUi = {
   durationDays: string
@@ -70,13 +71,7 @@ export default class DatesOfPlacement implements TasklistPage {
 
   response() {
     const result = this.body.datesOfPlacement.map(date => {
-      return {
-        [this.questions.arrivalDate]: DateFormats.isoDateToUIDate(date.arrivalDate),
-        [this.questions.duration]: DateFormats.formatDuration({
-          weeks: date.durationWeeks,
-          days: date.durationDays,
-        }),
-      }
+      return datesOfPlacementItem(Number(this.lengthInDays(date.durationWeeks, date.durationDays)), date.arrivalDate)
     })
 
     return { 'Dates of placement': result }
@@ -130,7 +125,7 @@ export default class DatesOfPlacement implements TasklistPage {
     })
   }
 
-  private mapDateInputs(dates: Array<DateOfPlacementFromUi>): Array<DateOfPlacementFromUi> {
+  private mapDateInputs(dates: Array<DateOfPlacementFromUi>): Array<DateOfPlacement> {
     const result = dates.map(date => {
       return {
         ...date,

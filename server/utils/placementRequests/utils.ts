@@ -5,7 +5,8 @@ import { linkTo } from '../utils'
 
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
-import { daysToWeeksAndDays } from '../assessments/dateUtils'
+import { placementLength } from '../matchUtils'
+import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
 
 export const mapPlacementRequestToBedSearchParams = ({
   duration,
@@ -48,3 +49,6 @@ export const requestTypes = [
   { name: 'Parole', value: 'parole' },
   { name: 'Standard release', value: 'standardRelease' },
 ]
+
+export const withdrawalMessage = (duration: number, expectedArrivalDate: string) =>
+  `Request for placement for ${placementLength(Number(duration))} starting on ${DateFormats.isoDateToUIDate(expectedArrivalDate, { format: 'short' })} withdrawn successfully`

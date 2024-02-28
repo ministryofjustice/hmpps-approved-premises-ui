@@ -6,6 +6,7 @@ import { embeddedSummaryListItem, summaryListItemForResponse } from '../applicat
 import { getPage } from '../applications/getPage'
 import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import { getResponseForPage } from '../applications/getResponseForPage'
+import { datesOfPlacementItem } from './datesOfPlacementItem'
 
 export const mapPageForSummaryList = (
   placementApplication: PlacementApplication,
@@ -64,6 +65,27 @@ export const pageResponsesAsSummaryListItems = (
 ) => {
   if (pageName === 'additional-documents') {
     return attachDocumentsSummaryListItems(placementApplication, application, 'request-a-placement', pageName, true)
+  }
+
+  if (pageName === 'dates-of-placement') {
+    if (placementApplication?.placementDates?.length) {
+      return [
+        summaryListItemForResponse(
+          'Dates of placement',
+          {
+            html: embeddedSummaryListItem(
+              placementApplication.placementDates.map(placementDate => {
+                return datesOfPlacementItem(placementDate.duration, placementDate.expectedArrival)
+              }),
+            ),
+          } as HtmlItem,
+          'request-a-placement',
+          'dates-of-placement',
+          placementApplication,
+          true,
+        ),
+      ]
+    }
   }
 
   const response = getResponseForPage(placementApplication, 'request-a-placement', pageName)

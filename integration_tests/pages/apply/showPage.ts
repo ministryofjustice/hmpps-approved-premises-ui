@@ -191,7 +191,7 @@ export default class ShowPage extends Page {
   }
 
   showsWithdrawalConfirmationMessage() {
-    this.shouldShowBanner('Placement application withdrawn')
+    this.shouldShowBanner('Request for placement')
   }
 
   showsNoteAddedConfirmationMessage() {

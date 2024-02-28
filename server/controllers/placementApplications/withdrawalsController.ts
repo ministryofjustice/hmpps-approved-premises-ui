@@ -8,6 +8,7 @@ import placementApplicationPaths from '../../paths/placementApplications'
 import { applicationShowPageTab } from '../../utils/applications/utils'
 import { WithdrawPlacementRequestReason } from '../../@types/shared/models/WithdrawPlacementRequestReason'
 import { Application } from '../../@types/shared'
+import { withdrawalMessage } from '../../utils/placementRequests/utils'
 
 export default class WithdrawalsController {
   constructor(private readonly placementApplicationService: PlacementApplicationService) {}
@@ -39,10 +40,21 @@ export default class WithdrawalsController {
           applicationId: Application['id'] | undefined
         }
 
-        await this.placementApplicationService.withdraw(req.user.token, req.params.id, reason)
+        const placementApplication = await this.placementApplicationService.withdraw(
+          req.user.token,
+          req.params.id,
+          reason,
+        )
 
-        req.flash('success', 'Placement application withdrawn')
-
+        try {
+          const placementApplicationDate = placementApplication.placementDates[0]
+          req.flash(
+            'success',
+            withdrawalMessage(placementApplicationDate.duration, placementApplicationDate.expectedArrival),
+          )
+        } catch (e) {
+          req.flash('success', 'Placement application withdrawn')
+        }
         return res.redirect(applicationShowPageTab(applicationId, 'placementRequests'))
       } catch (err) {
         return catchValidationErrorOrPropogate(

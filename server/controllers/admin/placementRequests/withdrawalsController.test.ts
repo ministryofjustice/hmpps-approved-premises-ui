@@ -9,8 +9,10 @@ import paths from '../../../paths/admin'
 import WithdrawalsController from './withdrawalsController'
 import { ErrorWithData } from '../../../utils/errors'
 import { placementRequestDetailFactory } from '../../../testutils/factories'
+import { withdrawalMessage } from '../../../utils/placementRequests/utils'
 
 jest.mock('../../../utils/validation')
+jest.mock('../../../utils/placementRequests/utils')
 
 describe('withdrawalsController', () => {
   const token = 'SOME_TOKEN'
@@ -74,8 +76,10 @@ describe('withdrawalsController', () => {
     })
 
     it('calls the service method, redirects to the index screen and shows a confirmation message', async () => {
+      const withdrawalMessageContent = 'some message'
       const requestHandler = withdrawalsController.create()
 
+      ;(withdrawalMessage as jest.MockedFn<typeof withdrawalMessage>).mockReturnValue(withdrawalMessageContent)
       await requestHandler(request, response, next)
 
       expect(placementRequestService.withdraw).toHaveBeenCalledWith(
@@ -84,9 +88,10 @@ describe('withdrawalsController', () => {
         placementRequestDetail.withdrawalReason,
       )
       expect(response.redirect).toHaveBeenCalledWith(paths.admin.placementRequests.index({}))
-      expect(request.flash).toHaveBeenCalledWith(
-        'success',
-        `Placement request for 3 weeks, 1 day starting on 01/01/2024 withdrawn successfully`,
+      expect(request.flash).toHaveBeenCalledWith('success', withdrawalMessageContent)
+      expect(withdrawalMessage).toHaveBeenCalledWith(
+        placementRequestDetail.duration,
+        placementRequestDetail.expectedArrival,
       )
     })
 

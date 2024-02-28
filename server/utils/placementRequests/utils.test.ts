@@ -1,5 +1,11 @@
 import { personFactory, placementRequestFactory } from '../../testutils/factories'
-import { assessmentLink, formatReleaseType, mapPlacementRequestToBedSearchParams, searchButton } from './utils'
+import {
+  assessmentLink,
+  formatReleaseType,
+  mapPlacementRequestToBedSearchParams,
+  searchButton,
+  withdrawalMessage,
+} from './utils'
 import { linkTo } from '../utils'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
@@ -61,6 +67,14 @@ describe('utils', () => {
         assessPaths.assessments.show,
         { id: placementRequest.assessmentId },
         { text: 'link text', hiddenText: 'hidden text' },
+      )
+    })
+  })
+
+  describe('withdrawalMessage', () => {
+    it('returns the message and inserts the duration and expected arrival date', () => {
+      expect(withdrawalMessage(15, '2021-01-01')).toEqual(
+        'Request for placement for 2 weeks, 1 day starting on 01/01/2021 withdrawn successfully',
       )
     })
   })

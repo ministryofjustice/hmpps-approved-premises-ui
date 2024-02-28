@@ -98,12 +98,15 @@ describeClient('placementApplicationClient', provider => {
 
   describe('submission', () => {
     it('submits a placement application', async () => {
-      const placementApplication = placementApplicationFactory.build()
+      const placementApplications = placementApplicationFactory.buildList(1)
+      const placementApplication = placementApplications[0]
+
       const body: SubmitPlacementApplication = {
         placementDates: [{ expectedArrival: '2021-01-01', duration: 1 }],
         placementType: 'rotl',
         translatedDocument: {},
       }
+
       provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request to submit a placement application',
@@ -117,13 +120,13 @@ describeClient('placementApplicationClient', provider => {
         },
         willRespondWith: {
           status: 200,
-          body: placementApplication,
+          body: placementApplications,
         },
       })
 
       const result = await placementApplicationClient.submission(placementApplication.id, body)
 
-      expect(result).toEqual(placementApplication)
+      expect(result).toEqual(placementApplications)
     })
   })
 

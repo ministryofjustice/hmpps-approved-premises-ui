@@ -2,8 +2,7 @@ import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { defaultMatchingInformationValues } from '../../../utils/defaultMatchingInformationValues'
-import { DateFormats } from '../../../../utils/dateUtils'
-import { daysToWeeksAndDays } from '../../../../utils/assessments/dateUtils'
+import { DateFormats, daysToWeeksAndDays } from '../../../../utils/dateUtils'
 import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
 import { Page } from '../../../utils/decorators'
 
