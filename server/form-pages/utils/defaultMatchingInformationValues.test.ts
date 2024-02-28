@@ -72,7 +72,9 @@ describe('defaultMatchingInformationValues', () => {
         .mockReturnValue(value || 'yes'),
     )
 
-    sexualOffencesFields.forEach(field =>
+    const dateOfOffenceFieldsToMock = ['arsonOffence', ...sexualOffencesFields]
+
+    dateOfOffenceFieldsToMock.forEach(field =>
       when(retrieveOptionalQuestionResponseFromFormArtifact)
         .calledWith(application, DateOfOffence, field)
         .mockReturnValue(['current', 'previous']),
@@ -87,6 +89,7 @@ describe('defaultMatchingInformationValues', () => {
 
     expect(defaultMatchingInformationValues(body, application)).toEqual({
       isArsonDesignated: 'essential',
+      isArsonSuitable: 'relevant',
       isCatered: 'essential',
       isSingle: 'essential',
       isSuitableForVulnerable: 'relevant',
@@ -98,32 +101,24 @@ describe('defaultMatchingInformationValues', () => {
 
   describe('values for placement requirements and offence and risk criteria', () => {
     it('uses current values where they exist', () => {
-      expect(
-        defaultMatchingInformationValues(
-          {
-            ...bodyWithUndefinedValues,
-            isArsonDesignated: 'desirable',
-            isCatered: 'desirable',
-            isSingle: 'desirable',
-            isSuitableForVulnerable: 'relevant',
-            isSuitedForSexOffenders: 'desirable',
-            isWheelchairDesignated: 'desirable',
-          },
-          application,
-        ),
-      ).toEqual(
-        expect.objectContaining({
-          isArsonDesignated: 'desirable',
-          isCatered: 'desirable',
-          isSingle: 'desirable',
-          isSuitableForVulnerable: 'relevant',
-          isSuitedForSexOffenders: 'desirable',
-          isWheelchairDesignated: 'desirable',
-        }),
+      const currentValues: Partial<MatchingInformationBody> = {
+        isArsonDesignated: 'desirable',
+        isArsonSuitable: 'relevant',
+        isCatered: 'desirable',
+        isSingle: 'desirable',
+        isSuitableForVulnerable: 'relevant',
+        isSuitedForSexOffenders: 'desirable',
+        isWheelchairDesignated: 'desirable',
+      }
+
+      expect(defaultMatchingInformationValues({ ...bodyWithUndefinedValues, ...currentValues }, application)).toEqual(
+        expect.objectContaining(currentValues),
       )
     })
 
     describe("when there's no current value for a given field", () => {
+      const truthyCurrentPreviousValues = [['current'], ['previous'], ['current', 'previous']]
+
       describe('isArsonDesignated', () => {
         it("is set to 'essential' when `arson` === 'yes'", () => {
           when(retrieveQuestionResponseFromFormArtifact).calledWith(application, Arson, 'arson').mockReturnValue('yes')
@@ -138,6 +133,30 @@ describe('defaultMatchingInformationValues', () => {
 
           expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
             expect.objectContaining({ isArsonDesignated: 'notRelevant' }),
+          )
+        })
+      })
+
+      describe('isArsonSuitable', () => {
+        truthyCurrentPreviousValues.forEach(value => {
+          it(`is set to 'relevant' when \`arsonOffence\` === ['${value.join("', '")}']`, () => {
+            when(retrieveOptionalQuestionResponseFromFormArtifact)
+              .calledWith(application, DateOfOffence, 'arsonOffence')
+              .mockReturnValue(value)
+
+            expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+              expect.objectContaining({ isArsonSuitable: 'relevant' }),
+            )
+          })
+        })
+
+        it("is set to 'notRelevant' when `arsonOffence` === undefined", () => {
+          when(retrieveOptionalQuestionResponseFromFormArtifact)
+            .calledWith(application, DateOfOffence, 'arsonOffence')
+            .mockReturnValue(undefined)
+
+          expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+            expect.objectContaining({ isArsonSuitable: 'notRelevant' }),
           )
         })
       })
@@ -220,9 +239,7 @@ describe('defaultMatchingInformationValues', () => {
       })
 
       describe('isSuitedForSexOffenders', () => {
-        const truthyValues = [['current'], ['previous'], ['current', 'previous']]
-
-        truthyValues.forEach(value => {
+        truthyCurrentPreviousValues.forEach(value => {
           it.each(sexualOffencesFields)(
             `is set to 'essential' when \`$name\` === ['${value.join("', '")}']`,
             testedField => {

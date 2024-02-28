@@ -86,6 +86,15 @@ export const defaultMatchingInformationValues = (
       'essential',
       'notRelevant',
     ),
+    isArsonSuitable: getValue<GetValueOffenceAndRisk>(
+      body,
+      'isArsonSuitable',
+      application,
+      [{ name: 'arsonOffence', page: DateOfOffence, optional: true }],
+      ['current', 'previous'],
+      'relevant',
+      'notRelevant',
+    ),
     isCatered: getValue<GetValuePlacementRequirement>(
       body,
       'isCatered',
