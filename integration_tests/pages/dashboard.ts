@@ -3,7 +3,7 @@ import Page from './page'
 export default class DashboardPage extends Page {
   constructor() {
     super('Approved Premises')
-    this.checkPhaseBanner('Email us')
+    this.checkPhaseBanner('email us')
   }
 
   static visit(): DashboardPage {
