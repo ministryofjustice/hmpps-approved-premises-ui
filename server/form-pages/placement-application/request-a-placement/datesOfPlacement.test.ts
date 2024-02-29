@@ -5,6 +5,7 @@ import DateOfPlacementPage from './datesOfPlacement'
 import { placementApplicationFactory } from '../../../testutils/factories'
 import { addResponseToFormArtifact } from '../../../testutils/addToApplication'
 import { retrieveQuestionResponseFromFormArtifact } from '../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { DateFormats } from '../../../utils/dateUtils'
 
 jest.mock('../../../utils/retrieveQuestionResponseFromFormArtifact')
 
@@ -174,11 +175,17 @@ describe('DateOfPlacement', () => {
         'Dates of placement': [
           {
             'How long should the Approved Premises placement last?': '2 weeks, 1 day',
-            'When will the person arrive?': 'Friday 1 December 2023',
+            'When will the person arrive?': DateFormats.dateAndTimeInputsToUiDate(
+              body.datesOfPlacement[0],
+              'arrivalDate',
+            ),
           },
           {
             'How long should the Approved Premises placement last?': '3 weeks, 2 days',
-            'When will the person arrive?': 'Tuesday 2 January 2024',
+            'When will the person arrive?': DateFormats.dateAndTimeInputsToUiDate(
+              body.datesOfPlacement[1],
+              'arrivalDate',
+            ),
           },
         ],
       })

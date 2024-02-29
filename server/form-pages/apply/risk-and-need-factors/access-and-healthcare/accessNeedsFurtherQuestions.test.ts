@@ -198,7 +198,7 @@ describe('AccessNeedsFurtherQuestions', () => {
         'Does the person have any prescribed medication?': 'Yes - Some detail',
         'Is the person pregnant?': 'Yes',
         'Is there social care involvement?': 'Yes - Some detail',
-        'What is their expected date of delivery?': 'Sunday 19 February 2023',
+        'What is their expected date of delivery?': DateFormats.dateAndTimeInputsToUiDate(body, 'expectedDeliveryDate'),
         "Will the child be removed from the person's care at birth?": 'No',
         'Are there any pregnancy related issues relevant to placement?': 'Yes - Some detail',
         "Specify any additional details and adjustments required for the person's pregnancy needs": 'Adjustments',

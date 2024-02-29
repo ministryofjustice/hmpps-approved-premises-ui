@@ -32,8 +32,8 @@ describe('caseNoteResponse', () => {
     })
 
     expect(caseNoteResponse(caseNote)).toEqual({
-      'Date created': 'Friday 31 January 2020',
-      'Date occurred': 'Wednesday 1 January 2020',
+      'Date created': DateFormats.isoDateToUIDate(caseNote.createdAt),
+      'Date occurred': DateFormats.isoDateToUIDate(caseNote.occurredAt),
       'Is the case note sensitive?': 'No',
       'Name of author': 'Dennis Ziemann',
       Note: 'a note',
@@ -75,8 +75,8 @@ describe('acctAlertResponse', () => {
     expect(acctAlertResponse(acctAlert)).toEqual({
       'Alert type': 123,
       'ACCT description': 'Some description',
-      'Date created': 'Saturday 1 January 2022',
-      'Expiry date': 'Sunday 9 January 2022',
+      'Date created': DateFormats.isoDateToUIDate(acctAlert.dateCreated),
+      'Expiry date': DateFormats.isoDateToUIDate(acctAlert.dateExpires),
     })
   })
 
@@ -90,8 +90,8 @@ describe('acctAlertResponse', () => {
 
     expect(acctAlertResponse(acctAlert)).toEqual({
       'Alert type': 123,
-      'Date created': 'Saturday 1 January 2022',
-      'Expiry date': 'Sunday 9 January 2022',
+      'Date created': DateFormats.isoDateToUIDate(acctAlert.dateCreated),
+      'Expiry date': DateFormats.isoDateToUIDate(acctAlert.dateExpires),
       'ACCT description': '',
     })
   })
@@ -114,7 +114,7 @@ describe('caseNoteCheckbox', () => {
       <div class="govuk-checkboxes__item">
         <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="A" id="A" checked>
         <label class="govuk-label govuk-checkboxes__label" for="A">
-          <span class="govuk-visually-hidden">Select case note from Friday 31 January 2020</span>
+          <span class="govuk-visually-hidden">Select case note from ${DateFormats.isoDateToUIDate(caseNote.createdAt)}</span>
         </label>
       </div>
     `)
@@ -123,7 +123,7 @@ describe('caseNoteCheckbox', () => {
       <div class="govuk-checkboxes__item">
         <input type="checkbox" class="govuk-checkboxes__input" name="caseNoteIds" value="A" id="A">
         <label class="govuk-label govuk-checkboxes__label" for="A">
-          <span class="govuk-visually-hidden">Select case note from Friday 31 January 2020</span>
+          <span class="govuk-visually-hidden">Select case note from ${DateFormats.isoDateToUIDate(caseNote.createdAt)}</span>
         </label>
       </div>
     `)

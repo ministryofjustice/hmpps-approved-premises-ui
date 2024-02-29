@@ -1,3 +1,4 @@
+import { DateFormats } from '../../../../utils/dateUtils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import InformationReceived from './informationReceived'
@@ -83,19 +84,20 @@ describe('InformationReceived', () => {
 
   describe('response', () => {
     it('returns the response', () => {
-      const page = new InformationReceived({
-        informationReceived: 'yes',
+      const body = {
+        informationReceived: 'yes' as const,
         'responseReceivedOn-year': '2022',
         'responseReceivedOn-month': '3',
         'responseReceivedOn-day': '3',
         responseReceivedOn: '2022-03-03',
         response: 'some text',
-      })
+      }
+      const page = new InformationReceived(body)
 
       expect(page.response()).toEqual({
         'Have you received additional information from the probation practitioner?': 'Yes',
         'Provide the additional information received from the probation practitioner': 'some text',
-        'When did you receive this information?': 'Thursday 3 March 2022',
+        'When did you receive this information?': DateFormats.dateAndTimeInputsToUiDate(body, 'responseReceivedOn'),
       })
     })
   })

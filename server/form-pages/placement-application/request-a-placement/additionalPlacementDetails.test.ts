@@ -2,6 +2,7 @@ import { fromPartial } from '@total-typescript/shoehorn'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import AdditionalPlacementDetails, { Body } from './additionalPlacementDetails'
+import { DateFormats } from '../../../utils/dateUtils'
 
 describe('AdditionalPlacementDetails', () => {
   const body = {
@@ -68,7 +69,7 @@ describe('AdditionalPlacementDetails', () => {
 
       expect(page.response()).toEqual({
         'How long should the Approved Premises placement last?': '5 weeks, 1 day',
-        'When will the person arrive?': 'Friday 1 December 2023',
+        'When will the person arrive?': DateFormats.dateAndTimeInputsToUiDate(body, 'arrivalDate'),
         'Why are you requesting this placement?': 'Some reason',
       })
     })

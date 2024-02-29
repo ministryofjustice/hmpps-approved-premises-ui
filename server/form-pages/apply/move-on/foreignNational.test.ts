@@ -1,3 +1,4 @@
+import { DateFormats } from '../../../utils/dateUtils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import ForeignNational from './foreignNational'
@@ -60,17 +61,17 @@ describe('ForeignNational', () => {
     })
 
     it("If the response is 'yes' the response is returned with the date", () => {
-      expect(
-        new ForeignNational({
-          response: 'yes',
-          'date-day': '22',
-          'date-month': '2',
-          'date-year': '2022',
-        }).response(),
-      ).toEqual({
+      const body = {
+        response: 'yes' as const,
+        'date-day': '22',
+        'date-month': '2',
+        'date-year': '2022',
+      }
+
+      expect(new ForeignNational(body).response()).toEqual({
         "Have you informed the Home Office 'Foreign National Returns Command' that accommodation will be required after placement?":
           'Yes',
-        'Date of notification': 'Tuesday 22 February 2022',
+        'Date of notification': DateFormats.dateAndTimeInputsToUiDate(body, 'date'),
       })
     })
   })

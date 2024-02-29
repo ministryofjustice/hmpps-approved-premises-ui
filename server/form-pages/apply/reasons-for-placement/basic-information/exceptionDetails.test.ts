@@ -1,3 +1,4 @@
+import { DateFormats } from '../../../../utils/dateUtils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import ExceptionDetails, { ExceptionDetailsBody } from './exceptionDetails'
@@ -88,7 +89,7 @@ describe('ExceptionDetails', () => {
         'Have you agreed the case with a senior manager?': 'Yes',
         'Name of senior manager': 'Mr Manager',
         'Provide a summary of the reasons why this is an exempt application': 'Some Summary',
-        'What date was this agreed?': 'Friday 1 December 2023',
+        'What date was this agreed?': DateFormats.dateAndTimeInputsToUiDate(body, 'agreementDate'),
       })
     })
   })

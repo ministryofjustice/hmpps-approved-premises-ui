@@ -181,7 +181,10 @@ describe('calendarUtils', () => {
         lostBedId: '123',
       })
 
-      const expectedText = 'Out of Service (14 days 27/06/2023 - 11/07/2023)'
+      const startDate = DateFormats.dateObjtoUIDate(lostBedOccupancyEntry.startDate, { format: 'short' })
+      const endDate = DateFormats.dateObjtoUIDate(lostBedOccupancyEntry.endDate, { format: 'short' })
+
+      const expectedText = `Out of Service (14 days ${startDate} - ${endDate})`
 
       expect(labelForScheduleItem(lostBedOccupancyEntry, premisesId, bedId)).toMatchStringIgnoringWhitespace(
         `<span title="${expectedText}" class="tooltip">
@@ -199,7 +202,7 @@ describe('calendarUtils', () => {
         endDate: DateFormats.isoToDateObj('2023-07-11'),
       })
 
-      const expectedText = 'John Wayne (14 days 27/06/2023 - 11/07/2023)'
+      const expectedText = `John Wayne (14 days ${DateFormats.dateObjtoUIDate(bedOccupancyEntry.startDate, { format: 'short' })} - ${DateFormats.dateObjtoUIDate(bedOccupancyEntry.endDate, { format: 'short' })})`
 
       expect(labelForScheduleItem(bedOccupancyEntry, premisesId, bedId)).toMatchStringIgnoringWhitespace(
         `<span title="${expectedText}" class="tooltip">
@@ -215,7 +218,7 @@ describe('calendarUtils', () => {
         endDate: DateFormats.isoToDateObj('2023-07-11'),
       })
 
-      const expectedText = 'Overbooked (14 days 27/06/2023 - 11/07/2023)'
+      const expectedText = `Overbooked (14 days ${DateFormats.dateObjtoUIDate(bedOccupancyEntry.startDate, { format: 'short' })} - ${DateFormats.dateObjtoUIDate(bedOccupancyEntry.endDate, { format: 'short' })})`
 
       expect(labelForScheduleItem(bedOccupancyEntry, premisesId, bedId)).toMatchStringIgnoringWhitespace(
         `<span title="${expectedText}" class="tooltip">

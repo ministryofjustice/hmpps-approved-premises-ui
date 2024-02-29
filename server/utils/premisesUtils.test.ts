@@ -17,6 +17,7 @@ import { addOverbookingsToSchedule } from './addOverbookingsToSchedule'
 import { textValue } from './applications/utils'
 import paths from '../paths/manage'
 import { linkTo } from './utils'
+import { DateFormats } from './dateUtils'
 
 jest.mock('./addOverbookingsToSchedule')
 
@@ -47,7 +48,7 @@ describe('premisesUtils', () => {
       const result = overcapacityMessage(dateCapacities)
 
       expect(result).toEqual(
-        '<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity on Saturday 1 January 2022</h3>',
+        `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity on ${DateFormats.isoDateToUIDate(dateCapacities[0].date)}</h3>`,
       )
     })
 
@@ -60,8 +61,10 @@ describe('premisesUtils', () => {
       ]
       const result = overcapacityMessage(dateCapacities)
 
+      const startDate = DateFormats.isoDateToUIDate(dateCapacities[0].date)
+      const endDate = DateFormats.isoDateToUIDate(dateCapacities[2].date)
       expect(result).toEqual(
-        '<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the period Saturday 1 January 2022 to Monday 3 January 2022</h3>',
+        `<h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the period ${startDate} to ${endDate}</h3>`,
       )
     })
 
@@ -80,8 +83,8 @@ describe('premisesUtils', () => {
         `
           <h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the periods:</h3>
           <ul class="govuk-list govuk-list--bullet">
-            <li>Saturday 1 January 2022 to Sunday 2 January 2022</li>
-            <li>Tuesday 4 January 2022 to Wednesday 5 January 2022</li>
+            <li>${DateFormats.isoDateToUIDate(dateCapacities[0].date)} to ${DateFormats.isoDateToUIDate(dateCapacities[1].date)}</li>
+            <li>${DateFormats.isoDateToUIDate(dateCapacities[3].date)} to${DateFormats.isoDateToUIDate(dateCapacities[4].date)}</li>
           </ul>
         `,
       )
@@ -101,8 +104,8 @@ describe('premisesUtils', () => {
         `
           <h3 class="govuk-!-margin-top-0 govuk-!-margin-bottom-2">The premises is over capacity for the periods:</h3>
           <ul class="govuk-list govuk-list--bullet">
-            <li>Saturday 1 January 2022</li>
-            <li>Tuesday 4 January 2022 to Wednesday 5 January 2022</li>
+            <li>${DateFormats.isoDateToUIDate(dateCapacities[0].date)}</li>
+            <li>${DateFormats.isoDateToUIDate(dateCapacities[2].date)} to ${DateFormats.isoDateToUIDate(dateCapacities[3].date)}</li>
           </ul>
         `,
       )

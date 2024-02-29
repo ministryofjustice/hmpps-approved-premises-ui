@@ -2,6 +2,7 @@ import { fromPartial } from '@total-typescript/shoehorn'
 import { itShouldHavePreviousValue } from '../../shared-examples'
 
 import PreviousRotlPlacement, { Body } from './previousRotlPlacement'
+import { DateFormats } from '../../../utils/dateUtils'
 
 describe('PreviousRotlPlacement', () => {
   const body = {
@@ -98,7 +99,7 @@ describe('PreviousRotlPlacement', () => {
         'Has this person previously had a placement at an Approved Premises for ROTL?': 'Yes',
         'Provide details of any other previous ROTL placements (including the location) and dates of stays.':
           'Some Summary',
-        'When was the last placement?': 'Friday 1 December 2023',
+        'When was the last placement?': DateFormats.dateAndTimeInputsToUiDate(body, 'lastPlacementDate'),
         'Which Approved Premises did the person last stay at?': 'An AP',
       })
     })

@@ -1,3 +1,4 @@
+import { DateFormats } from '../../../../utils/dateUtils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import EsapExceptionalCase, { EsapExceptionalCaseBody } from './esapExceptionalCase'
@@ -89,7 +90,7 @@ describe('EsapExceptionalCase', () => {
         [`${page.title}`]: 'Yes',
         'Name of Community HOPP': 'Mr Manager',
         'Provide a summary of the reasons why this is an exempt application': 'Some Summary',
-        'Date of agreement': 'Friday 1 December 2023',
+        'Date of agreement': DateFormats.dateAndTimeInputsToUiDate(body, 'agreementDate'),
       })
     })
   })

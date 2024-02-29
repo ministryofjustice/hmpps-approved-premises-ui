@@ -52,13 +52,15 @@ export class DateFormats {
 
   /**
    * @param date JS Date object.
-   * @returns the date in the to be shown in the UI: "Thursday, 20 December 2012".
+   * @returns the date in the to be shown in the UI.
+   * Long: "Thu 20 Dec 2012"
+   * Short: "20 Dec 2012"
    */
   static dateObjtoUIDate(date: Date, options: { format: 'short' | 'long' } = { format: 'long' }) {
     if (options.format === 'long') {
-      return format(date, 'cccc d MMMM y')
+      return format(date, 'ccc d MMM y')
     }
-    return format(date, 'dd/LL/y')
+    return format(date, 'dd MMM y')
   }
 
   /**
@@ -93,7 +95,7 @@ export class DateFormats {
 
   /**
    * @param isoDate an ISO8601 date string.
-   * @returns the date in the to be shown in the UI: "Thursday, 20 December 2012".
+   * @returns the date in the to be shown in the UI: "Thu 20 Dec 2012".
    */
   static isoDateToUIDate(isoDate: string, options: { format: 'short' | 'long' } = { format: 'long' }) {
     return DateFormats.dateObjtoUIDate(DateFormats.isoToDateObj(isoDate), options)
@@ -101,7 +103,7 @@ export class DateFormats {
 
   /**
    * @param isoDate an ISO8601 date string.
-   * @returns the date in the to be shown in the UI: "Thursday, 20 December 2012".
+   * @returns the date in the to be shown in the UI: "Thu 20 Dec 2012".
    */
   static isoDateTimeToUIDateTime(isoDate: string) {
     return format(DateFormats.isoToDateObj(isoDate), 'd MMM y, HH:mm')
