@@ -37,8 +37,6 @@ describe('withdrawalsController', () => {
       const applicationId = 'some-id'
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
-      const placementRequest = placementRequestDetailFactory.build({ applicationId })
-      placementRequestService.getPlacementRequest.mockResolvedValue(placementRequest)
       request.params.id = applicationId
 
       const requestHandler = withdrawalsController.new()
@@ -50,10 +48,7 @@ describe('withdrawalsController', () => {
         id: request.params.id,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
-        expectedArrival: placementRequest.expectedArrival,
-        duration: placementRequest.duration,
       })
-      expect(placementRequestService.getPlacementRequest).toHaveBeenCalledWith(token, applicationId)
     })
   })
 
@@ -69,8 +64,6 @@ describe('withdrawalsController', () => {
     beforeEach(() => {
       request.params.id = applicationId
       request.body = {
-        duration: placementRequestDetail.duration,
-        expectedArrival: placementRequestDetail.expectedArrival,
         reason: placementRequestDetail.withdrawalReason,
       }
     })
@@ -80,6 +73,8 @@ describe('withdrawalsController', () => {
       const requestHandler = withdrawalsController.create()
 
       ;(withdrawalMessage as jest.MockedFn<typeof withdrawalMessage>).mockReturnValue(withdrawalMessageContent)
+      placementRequestService.withdraw.mockResolvedValue(placementRequestDetail)
+
       await requestHandler(request, response, next)
 
       expect(placementRequestService.withdraw).toHaveBeenCalledWith(
