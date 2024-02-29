@@ -200,7 +200,8 @@ describe('placementRequestService', () => {
 
   describe('withdraw', () => {
     it('it should call the service', async () => {
-      placementRequestClient.withdraw.mockResolvedValue()
+      const placementRequestDetail = placementRequestDetailFactory.build()
+      placementRequestClient.withdraw.mockResolvedValue(placementRequestDetail)
 
       const reason: WithdrawPlacementRequestReason = 'AlternativeProvisionIdentified'
       const id = 'some-uuid'

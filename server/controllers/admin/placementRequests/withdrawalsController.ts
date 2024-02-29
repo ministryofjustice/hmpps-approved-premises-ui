@@ -15,15 +15,11 @@ export default class WithdrawalsController {
     return async (req: Request, res: Response) => {
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
-      const placementRequest = await this.placementRequestService.getPlacementRequest(req.user.token, req.params.id)
-
       return res.render('admin/placementRequests/withdrawals/new', {
         pageHeading: 'Why is this request for placement being withdrawn?',
         id: req.params.id,
         errors,
         errorSummary,
-        expectedArrival: placementRequest.expectedArrival,
-        duration: placementRequest.duration,
       })
     }
   }
@@ -31,7 +27,7 @@ export default class WithdrawalsController {
   create(): RequestHandler {
     return async (req: Request, res: Response) => {
       try {
-        const { reason, expectedArrival, duration } = req.body as {
+        const { reason } = req.body as {
           reason: string | undefined
           expectedArrival: string | undefined
           duration: string
@@ -41,9 +37,17 @@ export default class WithdrawalsController {
           throw new ErrorWithData({ 'invalid-params': [{ propertyName: `$.reason`, errorType: 'empty' }] })
         }
 
-        await this.placementRequestService.withdraw(req.user.token, req.params.id, req.body.reason)
+        const placementRequest = await this.placementRequestService.withdraw(
+          req.user.token,
+          req.params.id,
+          req.body.reason,
+        )
 
-        req.flash('success', withdrawalMessage(Number(duration), expectedArrival))
+        try {
+          req.flash('success', withdrawalMessage(placementRequest.duration, placementRequest.expectedArrival))
+        } catch (e) {
+          req.flash('success', 'Placement application withdrawn')
+        }
         return res.redirect(paths.admin.placementRequests.index({}))
       } catch (err) {
         return catchValidationErrorOrPropogate(
