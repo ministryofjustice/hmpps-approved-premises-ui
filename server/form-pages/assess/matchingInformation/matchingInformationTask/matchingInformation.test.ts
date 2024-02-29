@@ -36,6 +36,7 @@ const defaultMatchingInformationValuesReturnValue: Partial<MatchingInformationBo
   acceptsChildSexOffenders: 'relevant',
   acceptsHateCrimeOffenders: 'relevant',
   acceptsSexOffenders: 'relevant',
+  apType: 'isPIPE',
   isArsonDesignated: 'essential',
   isArsonSuitable: 'relevant',
   isCatered: 'essential',
@@ -100,7 +101,6 @@ describe('MatchingInformation', () => {
       const page = new MatchingInformation({}, assessment)
 
       expect(page.errors()).toEqual({
-        apType: 'You must select the type of AP required',
         isStepFreeDesignated: 'You must specify a preference for step-free access',
         hasEnSuite: 'You must specify a preference for en-suite bathroom',
         lengthOfStayAgreed: 'You must state if you agree with the length of the stay',
