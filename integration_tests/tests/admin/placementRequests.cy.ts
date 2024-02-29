@@ -22,7 +22,6 @@ import { signIn } from '../signIn'
 import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
 import paths from '../../../server/paths/api'
 import BookingCancellationConfirmPage from '../../pages/manage/bookingCancellationConfirmation'
-import { DateFormats } from '../../../server/utils/dateUtils'
 
 context('Placement Requests', () => {
   let application = applicationFactory.build()
@@ -256,7 +255,7 @@ context('Placement Requests', () => {
 
   it('allows me to cancel a booking', () => {
     const premises = premisesFactory.buildList(3)
-    const cancellation = cancellationFactory.build({ date: '2022-06-01' })
+    const cancellation = cancellationFactory.build()
     const withdrawable = withdrawableFactory.build({ id: matchedPlacementRequest.booking.id, type: 'booking' })
     cy.task('stubAllPremises', premises)
     cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
@@ -303,7 +302,7 @@ context('Placement Requests', () => {
     const cancellationPage = Page.verifyOnPage(CancellationCreatePage, matchedPlacementRequest)
 
     // And I cancel my booking
-    cancellationPage.completeForm(cancellation, { completeFullForm: false })
+    cancellationPage.completeForm(cancellation)
 
     // Then I should see a confirmation message
     const confirmationPage = new BookingCancellationConfirmPage()
@@ -318,7 +317,6 @@ context('Placement Requests', () => {
       expect(requests).to.have.length(1)
       const requestBody = JSON.parse(requests[0].body)
 
-      expect(requestBody.date).equal(DateFormats.dateObjToIsoDate(new Date()))
       expect(requestBody.reason).equal(cancellation.reason.id)
     })
   })

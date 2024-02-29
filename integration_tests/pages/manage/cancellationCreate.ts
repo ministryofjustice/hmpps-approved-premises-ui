@@ -17,14 +17,7 @@ export default class CancellationCreatePage extends Page {
     return new CancellationCreatePage(premisesId, bookingId)
   }
 
-  completeForm(cancellation: Cancellation, { completeFullForm }: { completeFullForm: boolean }): void {
-    if (completeFullForm) {
-      this.getLegend('What is the date of withdrawal?')
-      this.completeDateInputs('date', cancellation.date)
-      this.getLabel('Provide any additional notes on why this placement is being withdrawn')
-      this.completeTextArea('cancellation[notes]', cancellation.notes)
-    }
-
+  completeForm(cancellation: Cancellation): void {
     this.getLegend('Why is this placement being withdrawn?')
     this.checkRadioByNameAndValue('cancellation[reason]', cancellation.reason.id)
 
