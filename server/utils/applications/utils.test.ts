@@ -706,7 +706,7 @@ describe('utils', () => {
       const application = applicationFactory.build({ id: 'an-application-id', status: 'awaitingPlacement' })
 
       expect(actionsCell(application)).toEqual({
-        html: '<ul class="govuk-list"><li><a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a></li><li><a href="/placement-applications"  >Request for placement</a></li></ul>',
+        html: '<ul class="govuk-list"><li><a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a></li><li><a href="/placement-applications?id=an-application-id"  >Request for placement</a></li></ul>',
       })
     })
   })

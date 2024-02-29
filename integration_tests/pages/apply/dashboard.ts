@@ -19,6 +19,10 @@ export default class DashboardPage extends Page {
     shouldShowTableRows(dashboardTableRows(this.applications))
   }
 
+  clickRequestForPlacementLink() {
+    cy.get('a').contains('Request for placement').click()
+  }
+
   searchByCrnOrName(crnOrName: string): void {
     this.clearAndCompleteTextInputById('crnOrName', crnOrName)
     this.clickSubmit()

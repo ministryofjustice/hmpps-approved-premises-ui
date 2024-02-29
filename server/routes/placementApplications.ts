@@ -21,9 +21,13 @@ export default function routes(controllers: Controllers, router: Router, service
     placementApplicationWithdrawalsController,
   } = controllers
 
+  get(paths.placementApplications.create.pattern, placementRequestController.create(), {
+    auditEvent: 'CREATE_PLACEMENT_APPLICATION',
+  })
   post(paths.placementApplications.create.pattern, placementRequestController.create(), {
     auditEvent: 'CREATE_PLACEMENT_APPLICATION',
   })
+
   post(paths.placementApplications.submit.pattern, placementRequestController.submit(), {
     auditEvent: 'SUBMIT_PLACEMENT_APPLICATION',
   })

@@ -1,7 +1,8 @@
 import { ListPage, StartPage } from '../../pages/apply'
 
-import { applicationSummaryFactory } from '../../../server/testutils/factories'
+import { applicationSummaryFactory, placementApplicationFactory } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
+import ReasonForPlacementPage from '../../pages/match/placementRequestForm/reasonForPlacement'
 
 context('Applications dashboard', () => {
   beforeEach(() => {
@@ -54,5 +55,50 @@ context('Applications dashboard', () => {
     page.clickSubmit()
 
     Page.verifyOnPage(StartPage)
+  })
+
+  it('request for placement for my application status awaiting placement ', () => {
+    cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
+      // Given I am logged in
+      cy.signIn()
+
+      // And there are applications in the database
+      const inProgressApplications = applicationSummaryFactory.buildList(5, { status: 'started' })
+      const requestedFurtherInformationApplications = applicationSummaryFactory.buildList(5, {
+        status: 'requestedFurtherInformation',
+      })
+      const awaitingPlacementApplications = applicationSummaryFactory.buildList(5, { status: 'awaitingPlacement' })
+      const applicationId = awaitingPlacementApplications[0].id
+      cy.task(
+        'stubApplications',
+        [inProgressApplications, requestedFurtherInformationApplications, awaitingPlacementApplications].flat(),
+      )
+
+      // And there is a placement application in the DB
+      const placementApplicationId = '123'
+      const placementApplication = placementApplicationFactory.build({
+        id: placementApplicationId,
+        data: placementApplicationData,
+        applicationId,
+      })
+      cy.task('stubCreatePlacementApplication', placementApplication)
+      cy.task('stubPlacementApplication', placementApplication)
+
+      // When I visit the Previous Applications page
+      const page = ListPage.visit(
+        inProgressApplications,
+        awaitingPlacementApplications,
+        requestedFurtherInformationApplications,
+      )
+
+      // And I click on the submitted tab
+      page.clickSubmittedTab()
+
+      // Then I should be able to create a placement
+      page.clickRequestForPlacementLink()
+
+      // And I should be on placement request
+      ReasonForPlacementPage.visit(placementApplicationId)
+    })
   })
 })
