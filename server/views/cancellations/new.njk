@@ -80,32 +80,6 @@
           items: convertObjectsToRadioItems(cancellationReasons, 'name', 'id', 'cancellation[reason]')
           }) }}
 
-        {% if apManager %}
-          {{ govukDateInput({
-            id: "date",
-            namePrefix: "date",
-            fieldset: {
-                legend: {
-                    text: "What is the date of withdrawal?",
-                    classes: "govuk-fieldset__legend--m"
-                    }
-            },
-            hint: {
-                text: "For example, 27 3 2007"
-            },
-            errorMessage: errors.date,
-            items: dateFieldValues('date', errors)
-        }) }}
-
-          {{ govukTextarea({
-            name: "cancellation[notes]",
-            id: "notes",
-            label: {
-            text: "Provide any additional notes on why this placement is being withdrawn"
-            }
-        }) }}
-        {% endif %}
-
         {{ govukButton({
             text: "Withdraw"
         }) }}

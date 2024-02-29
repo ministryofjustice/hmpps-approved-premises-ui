@@ -36,7 +36,7 @@ context('Cancellation', () => {
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
 
     // When I navigate to the booking's cancellation page
-    const cancellation = cancellationFactory.build({ date: '2022-06-01' })
+    const cancellation = cancellationFactory.build()
     const withdrawable = withdrawableFactory.build({ id: booking.id, type: 'booking' })
     cy.task('stubCancellationCreate', { premisesId: premises.id, bookingId: booking.id, cancellation })
     cy.task('stubPremisesSummary', premises)
@@ -59,7 +59,7 @@ context('Cancellation', () => {
 
     // And I fill out the cancellation form
     const cancellationPage = new CancellationCreatePage(premises.id, booking.id)
-    cancellationPage.completeForm(cancellation, { completeFullForm: true })
+    cancellationPage.completeForm(cancellation)
 
     // Then a cancellation should have been created in the API
     cy.task('verifyCancellationCreate', {
@@ -70,8 +70,6 @@ context('Cancellation', () => {
       expect(requests).to.have.length(1)
       const requestBody = JSON.parse(requests[0].body)
 
-      expect(requestBody.date).equal(cancellation.date)
-      expect(requestBody.notes).equal(cancellation.notes)
       expect(requestBody.reason).equal(cancellation.reason.id)
     })
 
@@ -87,7 +85,7 @@ context('Cancellation', () => {
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
 
     // When I navigate to the booking's cancellation page
-    const cancellation = cancellationFactory.build({ date: '2022-06-01' })
+    const cancellation = cancellationFactory.build()
     cy.task('stubCancellationCreate', { premisesId: premises.id, bookingId: booking.id, cancellation })
 
     const page = CancellationCreatePage.visit(premises.id, booking.id)
@@ -96,7 +94,7 @@ context('Cancellation', () => {
     page.shouldShowBacklinkToBooking()
 
     // When I fill out the cancellation form
-    page.completeForm(cancellation, { completeFullForm: true })
+    page.completeForm(cancellation)
 
     // Then a cancellation should have been created in the API
     cy.task('verifyCancellationCreate', {
@@ -107,8 +105,6 @@ context('Cancellation', () => {
       expect(requests).to.have.length(1)
       const requestBody = JSON.parse(requests[0].body)
 
-      expect(requestBody.date).equal(cancellation.date)
-      expect(requestBody.notes).equal(cancellation.notes)
       expect(requestBody.reason).equal(cancellation.reason.id)
     })
 
