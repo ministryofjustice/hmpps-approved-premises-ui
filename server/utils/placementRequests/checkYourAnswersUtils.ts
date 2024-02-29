@@ -44,6 +44,22 @@ const placementApplicationResponsesAsSummaryListItems = (placementApplication: P
   ).forEach(questions => {
     const keys = Object.keys(questions)
     keys.forEach(key => {
+      if (key === 'Dates of placement' && placementApplication?.placementDates?.length) {
+        listItems.push({
+          key: {
+            text: key,
+          },
+          value: {
+            html: embeddedSummaryListItem(
+              placementApplication.placementDates.map(placementDate => {
+                return datesOfPlacementItem(placementDate.duration, placementDate.expectedArrival)
+              }),
+            ),
+          } as HtmlItem,
+        })
+        return
+      }
+
       listItems.push({
         key: {
           text: key,

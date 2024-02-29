@@ -237,8 +237,42 @@ describe('checkYourAnswersUtils', () => {
       expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
     })
 
-    it('should return the responses in the correct format when the values contain an array', () => {
+    it('should use the placementDates from the application if they exist', () => {
       const placementApp = placementApplicationFactory.build({
+        document: {
+          'request-a-placement': [
+            {
+              'Dates of placement': [],
+            },
+          ],
+        },
+        placementDates: [
+          { duration: 5, expectedArrival: '2023-08-01' },
+          { duration: 25, expectedArrival: '2024-08-01' },
+        ],
+      })
+      const expected = {
+        card: {
+          title: {
+            text: 'Placement application information',
+          },
+        },
+        rows: [
+          {
+            key: { text: 'Dates of placement' },
+            value: {
+              html: datesMarkup,
+            },
+          },
+        ],
+      }
+
+      expect(placementApplicationQuestionsForReview(placementApp)).toEqual(expected)
+    })
+
+    it('should responses from the document if placementDates dont exist', () => {
+      const placementApp = placementApplicationFactory.build({
+        placementDates: undefined,
         document: {
           'request-a-placement': [
             {
