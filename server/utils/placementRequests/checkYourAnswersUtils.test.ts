@@ -244,12 +244,12 @@ describe('checkYourAnswersUtils', () => {
             {
               'Dates of placement': [
                 {
-                  'How long should the Approved Premises placement last?': '2 weeks, 1 day',
-                  'When will the person arrive?': 'Friday 1 December 2023',
+                  'When will the person arrive?': 'Tuesday 1 August 2023',
+                  'How long should the Approved Premises placement last?': '5 days',
                 },
                 {
-                  'How long should the Approved Premises placement last?': '3 weeks, 2 days',
-                  'When will the person arrive?': 'Tuesday 2 January 2024',
+                  'When will the person arrive?': 'Thursday 1 August 2024',
+                  'How long should the Approved Premises placement last?': '3 weeks, 4 days',
                 },
               ],
             },
@@ -266,43 +266,7 @@ describe('checkYourAnswersUtils', () => {
           {
             key: { text: 'Dates of placement' },
             value: {
-              html: `<dl class="govuk-summary-list govuk-summary-list--embedded">
-      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
-        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
-          How long should the Approved Premises placement last?
-        </dt>
-        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
-        2 weeks, 1 day
-        </dd>
-      </div>
-      
-      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
-        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
-          When will the person arrive?
-        </dt>
-        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
-        Friday 1 December 2023
-        </dd>
-      </div>
-      </dl><dl class="govuk-summary-list govuk-summary-list--embedded">
-      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
-        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
-          How long should the Approved Premises placement last?
-        </dt>
-        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
-        3 weeks, 2 days
-        </dd>
-      </div>
-      
-      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
-        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
-          When will the person arrive?
-        </dt>
-        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
-        Tuesday 2 January 2024
-        </dd>
-      </div>
-      </dl>`,
+              html: datesMarkup,
             },
           },
         ],
