@@ -32,6 +32,7 @@ const defaultArguments = {
 } as MatchingInformationBody
 
 const defaultMatchingInformationValuesReturnValue: Partial<MatchingInformationBody> = {
+  acceptsNonSexualChildOffenders: 'relevant',
   acceptsChildSexOffenders: 'relevant',
   acceptsHateCrimeOffenders: 'relevant',
   acceptsSexOffenders: 'relevant',
@@ -102,7 +103,6 @@ describe('MatchingInformation', () => {
         apType: 'You must select the type of AP required',
         isStepFreeDesignated: 'You must specify a preference for step-free access',
         hasEnSuite: 'You must specify a preference for en-suite bathroom',
-        acceptsNonSexualChildOffenders: 'You must specify if non sexual offences against children is relevant',
         lengthOfStayAgreed: 'You must state if you agree with the length of the stay',
       })
     })
