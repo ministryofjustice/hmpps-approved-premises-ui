@@ -85,6 +85,7 @@ describe('defaultMatchingInformationValues', () => {
     }
 
     expect(defaultMatchingInformationValues(body, application)).toEqual({
+      acceptsChildSexOffenders: 'relevant',
       acceptsHateCrimeOffenders: 'relevant',
       acceptsSexOffenders: 'relevant',
       isArsonDesignated: 'essential',
@@ -101,6 +102,7 @@ describe('defaultMatchingInformationValues', () => {
   describe('values for placement requirements and offence and risk criteria', () => {
     it('uses current values where they exist', () => {
       const currentValues: Partial<MatchingInformationBody> = {
+        acceptsChildSexOffenders: 'relevant',
         acceptsHateCrimeOffenders: 'relevant',
         acceptsSexOffenders: 'relevant',
         isArsonDesignated: 'desirable',
@@ -119,6 +121,37 @@ describe('defaultMatchingInformationValues', () => {
 
     describe("when there's no current value for a given field", () => {
       const truthyCurrentPreviousValues = [['current'], ['previous'], ['current', 'previous']]
+
+      describe('acceptsChildSexOffenders', () => {
+        truthyCurrentPreviousValues.forEach(value => {
+          it.each(childSexualOffencesFields)(
+            `is set to 'essential' when \`%s\` === ['${value.join("', '")}']`,
+            testedField => {
+              childSexualOffencesFields.forEach(field =>
+                when(retrieveOptionalQuestionResponseFromFormArtifact)
+                  .calledWith(application, DateOfOffence, field)
+                  .mockReturnValue(testedField === field ? value : undefined),
+              )
+
+              expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+                expect.objectContaining({ acceptsChildSexOffenders: 'relevant' }),
+              )
+            },
+          )
+        })
+
+        it("is set to 'notRelevant' when all relevant fields === undefined", () => {
+          childSexualOffencesFields.forEach(field =>
+            when(retrieveOptionalQuestionResponseFromFormArtifact)
+              .calledWith(application, DateOfOffence, field)
+              .mockReturnValue(undefined),
+          )
+
+          expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+            expect.objectContaining({ acceptsChildSexOffenders: 'notRelevant' }),
+          )
+        })
+      })
 
       describe('acceptsHateCrimeOffenders', () => {
         truthyCurrentPreviousValues.forEach(value => {
@@ -320,7 +353,7 @@ describe('defaultMatchingInformationValues', () => {
           )
 
           expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-            expect.objectContaining({ isSingle: 'notRelevant' }),
+            expect.objectContaining({ isSuitedForSexOffenders: 'notRelevant' }),
           )
         })
       })

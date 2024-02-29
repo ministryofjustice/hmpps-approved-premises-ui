@@ -77,6 +77,18 @@ export const defaultMatchingInformationValues = (
   application: ApprovedPremisesApplication,
 ): Partial<MatchingInformationBody> => {
   return {
+    acceptsChildSexOffenders: getValue<GetValueOffenceAndRisk>(
+      body,
+      'acceptsChildSexOffenders',
+      application,
+      [
+        { name: 'contactSexualOffencesAgainstChildren', page: DateOfOffence, optional: true },
+        { name: 'nonContactSexualOffencesAgainstChildren', page: DateOfOffence, optional: true },
+      ],
+      ['current', 'previous'],
+      'relevant',
+      'notRelevant',
+    ),
     acceptsSexOffenders: getValue<GetValueOffenceAndRisk>(
       body,
       'acceptsSexOffenders',
