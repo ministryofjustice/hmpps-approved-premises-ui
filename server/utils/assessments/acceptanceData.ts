@@ -26,7 +26,6 @@ import {
 } from '../placementCriteriaUtils'
 import { placementDurationFromApplication } from './placementDurationFromApplication'
 import { getResponses } from '../applications/getResponses'
-import { flattenCheckboxInput, isStringOrArrayOfStrings } from '../formUtils'
 
 export const acceptanceData = (assessment: Assessment): AssessmentAcceptance => {
   const notes = retrieveOptionalQuestionResponseFromFormArtifact(assessment, MatchingInformation, 'cruInformation')
@@ -102,12 +101,6 @@ export const criteriaFromMatchingInformation = (
   if (matchingInformation.apType !== 'normal') {
     essentialCriteria.push(matchingInformation.apType)
   }
-
-  const specialistSupportCriteria = isStringOrArrayOfStrings(matchingInformation.specialistSupportCriteria)
-    ? flattenCheckboxInput(matchingInformation.specialistSupportCriteria)
-    : []
-
-  desirableCriteria.push(...specialistSupportCriteria)
 
   Object.keys(placementRequirementOptions).forEach((requirement: PlacementRequirementCriteria) => {
     if (matchingInformation[requirement] === 'essential') {

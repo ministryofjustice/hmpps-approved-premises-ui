@@ -69,10 +69,7 @@ describe('acceptanceData', () => {
   })
 
   describe('placementRequestData', () => {
-    const matchingInformation = createMock<MatchingInformationBody>({
-      apType: 'isESAP',
-      specialistSupportCriteria: [],
-    })
+    const matchingInformation = createMock<MatchingInformationBody>({ apType: 'isESAP' })
 
     ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue(matchingInformation)
 
@@ -106,7 +103,6 @@ describe('acceptanceData', () => {
     it('returns all essential criteria for essential and relevant matching information', () => {
       const matchingInformation = createMock<MatchingInformationBody>({
         apType: 'isESAP',
-        specialistSupportCriteria: [],
         isWheelchairDesignated: 'essential',
         isStepFreeDesignated: 'essential',
         isCatered: 'essential',
@@ -144,13 +140,12 @@ describe('acceptanceData', () => {
         isWheelchairDesignated: 'desirable',
         isStepFreeDesignated: 'desirable',
         isCatered: 'desirable',
-        specialistSupportCriteria: ['isSemiSpecialistMentalHealth'],
       })
 
       const result = criteriaFromMatchingInformation(matchingInformation)
 
       expect(result.desirableCriteria.sort()).toEqual(
-        ['isStepFreeDesignated', 'isWheelchairDesignated', 'isCatered', 'isSemiSpecialistMentalHealth'].sort(),
+        ['isStepFreeDesignated', 'isWheelchairDesignated', 'isCatered'].sort(),
       )
       expect(result.essentialCriteria).toEqual([])
     })
@@ -167,7 +162,6 @@ describe('acceptanceData', () => {
         isArsonSuitable: 'notRelevant',
         acceptsHateCrimeOffenders: 'notRelevant',
         isSuitableForVulnerable: 'notRelevant',
-        specialistSupportCriteria: [],
       })
 
       expect(criteriaFromMatchingInformation(matchingInformation)).toEqual({

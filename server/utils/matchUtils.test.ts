@@ -40,7 +40,6 @@ import {
   placementCriteria,
   placementRequirementOptions,
   specialistApTypeOptions,
-  specialistSupportOptions,
 } from './placementCriteriaUtils'
 import { linkTo } from './utils'
 
@@ -187,7 +186,6 @@ describe('matchUtils', () => {
     it('returns checkboxes grouped by category', () => {
       expect(groupedCheckboxes([])).toEqual({
         'Type of AP': checkBoxesForCriteria(specialistApTypeOptions, []),
-        'Specialist AP': checkBoxesForCriteria(specialistSupportOptions, []),
         'Placement Requirements': checkBoxesForCriteria(placementRequirementOptions, []),
         'Risks and offences to consider': checkBoxesForCriteria(offenceAndRiskOptions, []),
       })
@@ -207,16 +205,10 @@ describe('matchUtils', () => {
 
   describe('groupedEssentialCriteria', () => {
     it('groups criteria by their category, removing any empty criteria', () => {
-      const essentialCriteria = [
-        'isPIPE',
-        'isSemiSpecialistMentalHealth',
-        'isRecoveryFocussed',
-        'isSuitableForVulnerable',
-      ]
+      const essentialCriteria = ['isPIPE', 'isRecoveryFocussed', 'isSuitableForVulnerable']
 
       expect(groupedEssentialCriteria(essentialCriteria)).toEqual({
         'Type of AP': [placementCriteria.isPIPE],
-        'Specialist AP': [placementCriteria.isSemiSpecialistMentalHealth, placementCriteria.isRecoveryFocussed],
         'Risks and offences to consider': [placementCriteria.isSuitableForVulnerable],
       })
     })

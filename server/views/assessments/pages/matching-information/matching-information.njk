@@ -17,25 +17,6 @@
       items: convertKeyValuePairToRadioItems(page.apTypes, page.apType)
     },fetchContext()) }}
 
-  {{
-    formPageCheckboxes(
-      {
-        fieldName: "specialistSupportCriteria",
-        fieldset: {
-          legend: {
-            text: page.questions.specialistSupportCriteria,
-            classes: "govuk-fieldset__legend--m"
-          }
-        },
-        hint: {
-          html: "<p>There are only two AP with a semi-specialism in mental health nationally. Placement in one of these AP is not guaranteed.</p><p>Recovery Focused AP are currently being piloted nationally. Placement is not guaranteed.</p>"
-        },
-      items: page.specialistSupportCheckboxes
-      },
-      fetchContext()
-    )
-  }}
-
   <h2 class="govuk-heading-m">Placement requirements</h2>
 
   {{placementRequirementsTable(page.placementRequirementTableHeadings, page.placementRequirements, page.placementRequirementPreferences, page.body) | safe}}

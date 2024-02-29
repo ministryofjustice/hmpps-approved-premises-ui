@@ -13,7 +13,6 @@ import {
   placementCriteria,
   placementRequirementOptions,
   specialistApTypeOptions,
-  specialistSupportOptions,
 } from './placementCriteriaUtils'
 
 type PlacementDates = {
@@ -24,11 +23,10 @@ type PlacementDates = {
 
 export class InvalidBedSearchDataException extends Error {}
 
-export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementRequirements' | 'specialistSupport'
+export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementRequirements'
 
 const groupedCriteria = {
   apType: { title: 'Type of AP', options: specialistApTypeOptions },
-  specialistSupport: { title: 'Specialist AP', options: specialistSupportOptions },
   placementRequirements: { title: 'Placement Requirements', options: placementRequirementOptions },
   offenceAndRisk: { title: 'Risks and offences to consider', options: offenceAndRiskOptions },
 }

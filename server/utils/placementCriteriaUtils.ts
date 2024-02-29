@@ -1,7 +1,6 @@
 import { PlacementCriteria } from '@approved-premises/api'
 
 const apTypes = ['isPIPE', 'isESAP'] as const
-const specialistSupportCriteria = ['isSemiSpecialistMentalHealth', 'isRecoveryFocussed'] as const
 const offenceAndRiskCriteria = [
   'isSuitableForVulnerable',
   'acceptsSexOffenders',
@@ -21,15 +20,10 @@ const placementRequirementCriteria = [
 ] as const
 
 export type ApTypeCriteria = Extract<PlacementCriteria, (typeof apTypes)[number]>
-export type SpecialistSupportCriteria = Extract<PlacementCriteria, (typeof specialistSupportCriteria)[number]>
 export type OffenceAndRiskCriteria = Extract<PlacementCriteria, (typeof offenceAndRiskCriteria)[number]>
 export type PlacementRequirementCriteria = Extract<PlacementCriteria, (typeof placementRequirementCriteria)[number]>
 
-type PlacementCriteriaCategory =
-  | ApTypeCriteria
-  | SpecialistSupportCriteria
-  | OffenceAndRiskCriteria
-  | PlacementRequirementCriteria
+type PlacementCriteriaCategory = ApTypeCriteria | OffenceAndRiskCriteria | PlacementRequirementCriteria
 
 export const placementCriteria: Record<Exclude<PlacementCriteria, 'isGroundFloor'>, string> = {
   isPIPE: 'Psychologically Informed Planned Environment (PIPE)',
@@ -65,6 +59,5 @@ export const apTypeOptions = {
   normal: 'Standard AP',
   ...specialistApTypeOptions,
 } as Record<ApTypeCriteria & 'normal', string>
-export const specialistSupportOptions = filterByType<SpecialistSupportCriteria>(specialistSupportCriteria)
 export const offenceAndRiskOptions = filterByType<OffenceAndRiskCriteria>(offenceAndRiskCriteria)
 export const placementRequirementOptions = filterByType<PlacementRequirementCriteria>(placementRequirementCriteria)

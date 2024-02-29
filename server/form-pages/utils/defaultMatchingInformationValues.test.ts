@@ -38,7 +38,6 @@ describe('defaultMatchingInformationValues', () => {
     lengthOfStayAgreed: undefined,
     lengthOfStayDays: undefined,
     lengthOfStayWeeks: undefined,
-    specialistSupportCriteria: undefined,
   }
   const application = applicationFactory.build()
 
