@@ -50,6 +50,9 @@ context('Apply', () => {
         'isEsapApplication',
         'isEmergencyApplication',
         'apAreaId',
+        'applicantUserDetails',
+        'caseManagerIsNotApplicant',
+        'caseManagerUserDetails',
       )
       expect(body.data).not.to.have.keys(['check-your-answers'])
     })
@@ -89,6 +92,9 @@ context('Apply', () => {
         'isEsapApplication',
         'isEmergencyApplication',
         'apAreaId',
+        'applicantUserDetails',
+        'caseManagerIsNotApplicant',
+        'caseManagerUserDetails',
       )
       expect(body.data).to.have.any.keys(['check-your-answers'])
     })

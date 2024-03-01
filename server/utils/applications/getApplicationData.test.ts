@@ -4,13 +4,18 @@ import { getApplicationSubmissionData, getApplicationUpdateData } from './getApp
 import { mockOptionalQuestionResponse, mockQuestionResponse } from '../../testutils/mockQuestionResponse'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { isInapplicable } from './utils'
+import { applicationUserDetailsFactory } from '../../testutils/factories/application'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
+jest.mock('../applications/applicantAndCaseManagerDetails')
 jest.mock('./arrivalDateFromApplication')
 jest.mock('./utils')
 
 describe('getApplicationData', () => {
   const apAreaId = 'test-id'
+
+  const applicantUserDetails = applicationUserDetailsFactory.build()
+  const caseManagerUserDetails = applicationUserDetailsFactory.build()
 
   describe('getApplicationSubmissionData', () => {
     const releaseType: ReleaseTypeOption = 'licence'
@@ -20,11 +25,24 @@ describe('getApplicationData', () => {
 
     beforeEach(() => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(arrivalDate)
-      mockOptionalQuestionResponse({ releaseType, sentenceType, apAreaId })
+      mockOptionalQuestionResponse({
+        releaseType,
+        sentenceType,
+        apAreaId,
+        applicantUserDetails,
+        caseManagerUserDetails,
+        caseManagerIsNotApplicant: false,
+      })
     })
 
     it('returns the correct data for a pipe application', () => {
-      mockQuestionResponse({ type: 'pipe', postcodeArea: targetLocation, apAreaId })
+      mockQuestionResponse({
+        type: 'pipe',
+        postcodeArea: targetLocation,
+        apAreaId,
+        applicantUserDetails,
+        caseManagerIsNotApplicant: false,
+      })
 
       const application = applicationFactory.build()
 
@@ -40,11 +58,20 @@ describe('getApplicationData', () => {
         isEmergencyApplication: true,
         isEsapApplication: false,
         apAreaId,
+        applicantUserDetails,
+        caseManagerUserDetails: undefined,
+        caseManagerIsNotApplicant: false,
       })
     })
 
     it('returns the correct data for a non-pipe application', () => {
-      mockQuestionResponse({ type: 'standard', postcodeArea: targetLocation, apAreaId })
+      mockQuestionResponse({
+        type: 'standard',
+        postcodeArea: targetLocation,
+        apAreaId,
+        applicantUserDetails,
+        caseManagerIsNotApplicant: false,
+      })
 
       const application = applicationFactory.build()
 
@@ -60,12 +87,20 @@ describe('getApplicationData', () => {
         isEmergencyApplication: true,
         isEsapApplication: false,
         apAreaId,
+        applicantUserDetails,
+        caseManagerIsNotApplicant: false,
+        caseManagerUserDetails: undefined,
       })
     })
 
     it('handles when a release type is missing', () => {
-      mockOptionalQuestionResponse({ releaseType: undefined })
-      mockQuestionResponse({ postcodeArea: targetLocation, apAreaId })
+      mockOptionalQuestionResponse({ releaseType: undefined, apAreaId, applicantUserDetails })
+      mockQuestionResponse({
+        postcodeArea: targetLocation,
+        apAreaId,
+        applicantUserDetails,
+        caseManagerIsNotApplicant: false,
+      })
 
       const application = applicationFactory.build()
 
@@ -81,6 +116,9 @@ describe('getApplicationData', () => {
         isEmergencyApplication: true,
         isEsapApplication: false,
         apAreaId,
+        applicantUserDetails,
+        caseManagerIsNotApplicant: false,
+        caseManagerUserDetails: undefined,
       })
     })
 
@@ -90,6 +128,8 @@ describe('getApplicationData', () => {
         postcodeArea: targetLocation,
         situation: 'riskManagement',
         apAreaId,
+        applicantUserDetails,
+        caseManagerIsNotApplicant: false,
       })
 
       const application = applicationFactory.build()
@@ -106,6 +146,9 @@ describe('getApplicationData', () => {
         isEmergencyApplication: true,
         isEsapApplication: false,
         apAreaId,
+        applicantUserDetails,
+        caseManagerIsNotApplicant: false,
+        caseManagerUserDetails: undefined,
       })
     })
 
@@ -115,6 +158,8 @@ describe('getApplicationData', () => {
         postcodeArea: targetLocation,
         situation: 'riskManagement',
         apAreaId,
+        applicantUserDetails,
+        caseManagerIsNotApplicant: false,
       })
 
       const application = applicationFactory.build()
@@ -131,11 +176,20 @@ describe('getApplicationData', () => {
         isEmergencyApplication: true,
         isEsapApplication: false,
         apAreaId,
+        applicantUserDetails,
+        caseManagerIsNotApplicant: false,
+        caseManagerUserDetails: undefined,
       })
     })
 
     it('returns not_applicable for a non-statutory application', () => {
-      mockQuestionResponse({ sentenceType: 'nonStatutory', postcodeArea: targetLocation, apAreaId })
+      mockQuestionResponse({
+        sentenceType: 'nonStatutory',
+        postcodeArea: targetLocation,
+        apAreaId,
+        applicantUserDetails,
+        caseManagerIsNotApplicant: false,
+      })
 
       const application = applicationFactory.build()
 
@@ -151,6 +205,9 @@ describe('getApplicationData', () => {
         isEmergencyApplication: true,
         isEsapApplication: false,
         apAreaId,
+        applicantUserDetails,
+        caseManagerIsNotApplicant: false,
+        caseManagerUserDetails: undefined,
       })
     })
   })
@@ -176,6 +233,9 @@ describe('getApplicationData', () => {
         isEmergencyApplication: false,
         isEsapApplication: undefined,
         apAreaId: undefined,
+        caseManagerIsNotApplicant: undefined,
+        applicantUserDetails: undefined,
+        caseManagerUserDetails: undefined,
       })
     })
 
@@ -188,6 +248,9 @@ describe('getApplicationData', () => {
         postcodeArea: 'ABC',
         sentenceType: 'standardDeterminate',
         apAreaId,
+        caseManagerIsNotApplicant: true,
+        applicantUserDetails,
+        caseManagerUserDetails,
       })
 
       const application = applicationFactory.build()
@@ -205,6 +268,9 @@ describe('getApplicationData', () => {
         isEmergencyApplication: true,
         isEsapApplication: false,
         apAreaId,
+        caseManagerIsNotApplicant: true,
+        applicantUserDetails,
+        caseManagerUserDetails,
       })
     })
 
