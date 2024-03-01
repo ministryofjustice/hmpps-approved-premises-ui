@@ -191,24 +191,32 @@ describe('ConfirmYourDetails', () => {
       })
     })
 
-    it('should return an error if there is no area ID in Delius and one is not entered in the form ', () => {
-      const page = new ConfirmYourDetails(
-        {
-          ...body,
-          area: '',
-          detailsToUpdate: [],
-          userDetailsFromDelius: {
-            ...body.userDetailsFromDelius,
-            area: undefined,
+    it.each([
+      ['area', 'AP area'],
+      ['name', 'name'],
+      ['emailAddress', 'email address'],
+      ['phoneNumber', 'phone number'],
+    ])(
+      `should return an error if there is no %s in Delius and one is not entered in the form`,
+      (fieldName, errorCopy) => {
+        const page = new ConfirmYourDetails(
+          {
+            ...body,
+            [fieldName]: '',
+            detailsToUpdate: [],
+            userDetailsFromDelius: {
+              ...body.userDetailsFromDelius,
+              [fieldName]: undefined,
+            },
           },
-        },
-        application,
-      )
+          application,
+        )
 
-      expect(page.errors()).toEqual({
-        area: 'You must enter your AP area',
-      })
-    })
+        expect(page.errors()).toEqual({
+          [fieldName]: `You must enter your ${errorCopy}`,
+        })
+      },
+    )
 
     it('should return an error if there is no response for caseManagementResponsibility', () => {
       const page = new ConfirmYourDetails({ ...body, caseManagementResponsibility: undefined }, application)

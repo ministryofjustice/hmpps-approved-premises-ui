@@ -14,6 +14,10 @@ export const updatableDetails: ReadonlyArray<UpdatableDetails> = [
   'area',
 ] as const
 
+const updatableDetailsLabels: Record<'area', string> = {
+  area: 'AP area',
+}
+
 type UpdatableDetails = 'name' | 'emailAddress' | 'phoneNumber' | 'area'
 
 export type UserDetailsFromDelius = {
@@ -199,9 +203,12 @@ export default class ConfirmYourDetails implements TasklistPage {
       }
     })
 
-    if (!this.body.userDetailsFromDelius.area && !this.body.area) {
-      errors.area = 'You must enter your AP area'
-    }
+    updatableDetails.forEach(detail => {
+      if (!this.body.userDetailsFromDelius[detail] && !this.body[detail]) {
+        const label = updatableDetailsLabels[detail] ? updatableDetailsLabels[detail] : lowerCase(detail)
+        errors[detail] = `You must enter your ${label}`
+      }
+    })
 
     if (!this.body.caseManagementResponsibility) {
       errors.caseManagementResponsibility = 'You must enter whether you have case management responsibility'
