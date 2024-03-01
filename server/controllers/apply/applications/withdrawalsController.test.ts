@@ -3,7 +3,11 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { ApplicationService } from '../../../services'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
+import {
+  addErrorMessageToFlash,
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+} from '../../../utils/validation'
 
 import paths from '../../../paths/apply'
 import WithdrawalsController from './withdrawalsController'
@@ -204,6 +208,26 @@ describe('withdrawalsController', () => {
       })
       expect(response.redirect).toHaveBeenCalledWith(paths.applications.index({}))
       expect(request.flash).toHaveBeenCalledWith('success', 'Application withdrawn')
+    })
+
+    it('redirects to the "new" method with an error if "other" is the selected reason but no "otherReason" is supplied', async () => {
+      const requestHandler = withdrawalsController.create()
+
+      await requestHandler(
+        { ...request, params: { id: applicationId }, body: { reason: 'other', otherReason: '' } },
+        response,
+        next,
+      )
+
+      expect(applicationService.withdraw).not.toHaveBeenCalled()
+      expect(response.redirect).toHaveBeenCalledWith(
+        `${paths.applications.withdraw.new({ id: request.params.id })}?selectedWithdrawableType=application`,
+      )
+      expect(addErrorMessageToFlash).toHaveBeenCalledWith(
+        { body: { otherReason: '', reason: 'other' }, params: { id: 'some-id' }, user: { token: 'SOME_TOKEN' } },
+        'Enter a reason for withdrawing the application',
+        'otherReason',
+      )
     })
 
     it('redirects with errors if the API returns an error', async () => {

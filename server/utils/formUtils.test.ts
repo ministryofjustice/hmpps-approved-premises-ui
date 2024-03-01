@@ -259,6 +259,36 @@ describe('formUtils', () => {
         },
       ])
     })
+
+    it('should handle conditionals', () => {
+      const conditionals = {
+        foo: {
+          html: 'foo',
+        },
+        bar: {
+          html: 'bar',
+        },
+      }
+
+      expect(convertKeyValuePairToRadioItems(obj, '', conditionals)).toEqual([
+        {
+          value: 'foo',
+          text: 'Foo',
+          checked: false,
+          conditional: {
+            html: 'foo',
+          },
+        },
+        {
+          value: 'bar',
+          text: 'Bar',
+          checked: false,
+          conditional: {
+            html: 'bar',
+          },
+        },
+      ])
+    })
   })
 
   describe('convertObjectsToSelectOptions', () => {

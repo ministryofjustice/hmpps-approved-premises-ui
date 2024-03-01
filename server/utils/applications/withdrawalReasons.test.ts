@@ -1,7 +1,9 @@
+import { convertKeyValuePairToRadioItems } from '../formUtils'
 import {
   applicationProblemOptions,
   newApplicationToBeSubmittedOptions,
   placementNoLongerNeededOptions,
+  withdrawalRadioOptions,
 } from './withdrawalReasons'
 
 describe('withdrawalReasons', () => {
@@ -27,6 +29,20 @@ describe('withdrawalReasons', () => {
         other: 'The placement is not needed for another reason',
         other_accommodation_identified: 'Other accommodation has been identified',
       })
+    })
+  })
+
+  describe('withdrawalRadioOptions', () => {
+    it('should return the correct options', () => {
+      const conditional = { other: { html: 'some input' } }
+      expect(withdrawalRadioOptions(conditional)).toEqual([
+        { divider: 'The application is no longer needed' },
+        ...convertKeyValuePairToRadioItems(placementNoLongerNeededOptions, undefined, conditional),
+        { divider: 'A new application is needed' },
+        ...convertKeyValuePairToRadioItems(newApplicationToBeSubmittedOptions, undefined),
+        { divider: "There's a problem with the application" },
+        ...convertKeyValuePairToRadioItems(applicationProblemOptions, undefined),
+      ])
     })
   })
 })

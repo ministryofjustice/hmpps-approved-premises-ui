@@ -1,4 +1,5 @@
 import { WithdrawalReason } from '../../@types/shared'
+import { RadioItem } from '../../@types/ui'
 import { convertKeyValuePairToRadioItems } from '../formUtils'
 import { filterByType } from '../utils'
 
@@ -15,8 +16,8 @@ export type OtherReasons = Extract<WithdrawalReason, (typeof placementNoLongerNe
 
 export const withdrawalReasons: Record<WithdrawalReason, string> = {
   death: 'The person died',
-  other_accommodation_identified: 'Other accommodation has been identified',
   other: 'The placement is not needed for another reason',
+  other_accommodation_identified: 'Other accommodation has been identified',
   change_in_circumstances_new_application_to_be_submitted: 'Their circumstances changed',
   error_in_application: 'There was an error in the application',
   duplicate_application: 'The application was a duplicate',
@@ -35,9 +36,9 @@ export const placementNoLongerNeededOptions = filterByType<OtherReasons>(
   withdrawalReasons,
 )
 
-export const withdrawalRadioOptions = [
+export const withdrawalRadioOptions = (conditionals: Partial<Record<WithdrawalReason, RadioItem['conditional']>>) => [
   { divider: 'The application is no longer needed' },
-  ...convertKeyValuePairToRadioItems(placementNoLongerNeededOptions, undefined),
+  ...convertKeyValuePairToRadioItems(placementNoLongerNeededOptions, undefined, conditionals),
   { divider: 'A new application is needed' },
   ...convertKeyValuePairToRadioItems(newApplicationToBeSubmittedOptions, undefined),
   { divider: "There's a problem with the application" },

@@ -24,7 +24,8 @@ context('Withdraw Application', () => {
     cy.task('stubApplicationWithdrawn', { applicationId: inProgressApplication.id })
     cy.task('stubWithdrawables', { applicationId: inProgressApplication.id, withdrawables: [withdrawable] })
 
-    const withdrawalReason: WithdrawalReason = 'change_in_circumstances_new_application_to_be_submitted'
+    const withdrawalReason: WithdrawalReason = 'other'
+    const reasonDescription = 'Some reason'
 
     // And I visit the list page
     const listPage = ListPage.visit([inProgressApplication], [], [])
@@ -43,7 +44,7 @@ context('Withdraw Application', () => {
     const withdrawConfirmationPage = Page.verifyOnPage(WithdrawApplicationPage)
 
     // When I choose a reason and click submit
-    withdrawConfirmationPage.completeForm(withdrawalReason)
+    withdrawConfirmationPage.completeForm(withdrawalReason, reasonDescription)
     withdrawConfirmationPage.clickSubmit()
 
     // Then I should see the list page and be shown confirmation of the withdrawal
@@ -56,6 +57,7 @@ context('Withdraw Application', () => {
       const body = JSON.parse(requests[0].body)
 
       expect(body.reason).equal(withdrawalReason)
+      expect(body.otherReason).equal(reasonDescription)
     })
   })
 })
