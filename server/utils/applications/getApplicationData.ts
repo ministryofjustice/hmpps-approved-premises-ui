@@ -21,6 +21,7 @@ import { FormArtifact } from '../../@types/ui'
 import { noticeTypeFromApplication } from './noticeTypeFromApplication'
 import Situation from '../../form-pages/apply/reasons-for-placement/basic-information/situation'
 import ConfirmYourDetails from '../../form-pages/apply/reasons-for-placement/basic-information/confirmYourDetails'
+import { applicantAndCaseManagerDetails } from './applicantAndCaseManagerDetails'
 
 type FirstClassFields<T> = T extends UpdateApprovedPremisesApplication
   ? Omit<UpdateApprovedPremisesApplication, 'data'>
@@ -58,6 +59,8 @@ const firstClassFields = <T>(
   const arrivalDate = arrivalDateFromApplication(application)
   const isEmergencyApplication = noticeTypeFromApplication(application) === 'emergency'
   const apAreaId = retrieveQuestionResponse(application, ConfirmYourDetails, 'area')
+  const { applicantUserDetails, caseManagerUserDetails, caseManagerIsNotApplicant } =
+    applicantAndCaseManagerDetails(application)
 
   return {
     isWomensApplication: false,
@@ -70,6 +73,9 @@ const firstClassFields = <T>(
     arrivalDate,
     isEmergencyApplication,
     apAreaId,
+    applicantUserDetails,
+    caseManagerUserDetails,
+    caseManagerIsNotApplicant,
   } as FirstClassFields<T>
 }
 

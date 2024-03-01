@@ -11,6 +11,7 @@ import { getResponses } from '../applications/getResponses'
 jest.mock('../../form-pages/utils')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/arrivalDateFromApplication')
+jest.mock('../applications/applicantAndCaseManagerDetails')
 jest.mock('./placementDurationFromApplication')
 jest.mock('../applications/getResponses')
 

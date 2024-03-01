@@ -49,6 +49,7 @@ import { sortHeader } from '../sortHeader'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
+jest.mock('../applications/applicantAndCaseManagerDetails')
 jest.mock('../journeyTypeFromArtifact')
 const FirstApplyPage = jest.fn()
 const SecondApplyPage = jest.fn()

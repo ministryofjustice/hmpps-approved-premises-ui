@@ -7,6 +7,7 @@ import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionRespon
 import { noticeTypeFromApplication } from './noticeTypeFromApplication'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
+jest.mock('../applications/applicantAndCaseManagerDetails')
 jest.mock('./noticeTypeFromApplication')
 
 const application = applicationFactory.build()
