@@ -66,6 +66,35 @@ describe('withdrawalsController', () => {
           `${paths.applications.withdrawables.show({ id: applicationId })}?selectedWithdrawableType=${selectedWithdrawableType}`,
         )
       })
+
+      it('uses the selectedWithdrawableType from the query if there isnt one in the body', async () => {
+        const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+        ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+
+        const selectedWithdrawableType = 'booking'
+        const withdrawables = withdrawableFactory.buildList(1)
+
+        applicationService.getWithdrawables.mockResolvedValue(withdrawables)
+
+        const requestHandler = withdrawalsController.new()
+
+        await requestHandler(
+          {
+            ...request,
+            params: { id: applicationId },
+            body: { selectedWithdrawableType: '' },
+            query: { selectedWithdrawableType },
+          },
+          response,
+          next,
+        )
+
+        expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
+        expect(response.redirect).toHaveBeenCalledWith(
+          302,
+          `${paths.applications.withdrawables.show({ id: applicationId })}?selectedWithdrawableType=${selectedWithdrawableType}`,
+        )
+      })
     })
 
     describe('and no selectedWithdrawableType', () => {

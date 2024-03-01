@@ -15,7 +15,9 @@ export default class WithdrawalsController {
     return async (req: Request, res: Response) => {
       const { errors, errorSummary, userInput } = fetchErrorsAndUserInput(req)
       const { id } = req.params as { id: string | undefined }
-      const selectedWithdrawableType = req.body?.selectedWithdrawableType as SelectedWithdrawableType | undefined
+      const selectedWithdrawableType = (req.body?.selectedWithdrawableType || req.query?.selectedWithdrawableType) as
+        | SelectedWithdrawableType
+        | undefined
 
       const withdrawables = await this.applicationService.getWithdrawables(req.user.token, id)
 
