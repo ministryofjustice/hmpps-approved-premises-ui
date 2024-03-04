@@ -86,6 +86,7 @@ const withdrawPlacementRequestOrApplication = async (
 
   // Then I should see the withdrawable selection page
   const selectWithdrawablePage = new NewWithdrawalPage('Select your placement')
+  selectWithdrawablePage.shouldShowWithdrawableGuidance()
   // And be able to select a placement
   selectWithdrawablePage.selectWithdrawable(withdrawable.id)
   selectWithdrawablePage.clickSubmit()

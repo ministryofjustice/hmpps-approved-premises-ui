@@ -16,7 +16,7 @@ import { sentenceCase } from '../../server/utils/utils'
 
 export type PageElement = Cypress.Chainable<JQuery>
 
-const parseHtml = (actual: JQuery<HTMLElement>, expected: string) => {
+export const parseHtml = (actual: JQuery<HTMLElement>, expected: string) => {
   // Get rid of all whitespace in both the actual and expected text,
   // so we don't have to worry about small differences in whitespace
   const parser = new DOMParser()

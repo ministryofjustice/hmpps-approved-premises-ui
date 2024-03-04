@@ -1,11 +1,22 @@
 import { Withdrawable } from '../../../server/@types/shared'
 import matchPaths from '../../../server/paths/match'
 import { SelectedWithdrawableType } from '../../../server/utils/applications/withdrawables'
-import Page from '../page'
+import Page, { parseHtml } from '../page'
 
 export default class SelectWithdrawableTypePage extends Page {
   constructor(heading: 'What do you want to withdraw?' | 'Select your placement') {
     super(heading)
+  }
+
+  shouldShowWithdrawableGuidance() {
+    cy.get('.govuk-inset-text').then(insetTextElement => {
+      const { actual, expected } = parseHtml(
+        insetTextElement,
+        'Only one date can be withdrawn at a time. Please contact the CRU if you do not see a date you are expecting to be able to withdraw.',
+      )
+
+      expect(actual).to.equal(expected)
+    })
   }
 
   shouldShowWithdrawableTypes(types: Array<SelectedWithdrawableType>) {

@@ -54,6 +54,7 @@ context('Cancellation', () => {
     withdrawalTypePage.clickSubmit()
 
     const withdrawablePage = new NewWithdrawalPage('Select your placement')
+    withdrawablePage.shouldShowWithdrawableGuidance()
     withdrawablePage.selectWithdrawable(booking.id)
     withdrawablePage.clickSubmit()
 
