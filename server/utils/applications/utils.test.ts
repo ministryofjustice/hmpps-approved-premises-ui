@@ -1345,15 +1345,43 @@ describe('utils', () => {
   describe('appealDecisionRadioItems', () => {
     it('should return radio items when selectedOption is empty', () => {
       expect(appealDecisionRadioItems(undefined)).toEqual([
-        { text: 'Upheld', value: 'accepted', checked: false },
-        { text: 'Rejected', value: 'rejected', checked: false },
+        {
+          text: 'Appeal successful',
+          value: 'accepted',
+          checked: false,
+          hint: {
+            text: 'The original assessment will be overruled and a new assessment will be created and allocated to you',
+          },
+        },
+        {
+          text: 'Appeal unsuccessful',
+          value: 'rejected',
+          checked: false,
+          hint: {
+            text: 'The original assessment decision will stand and the application will remain rejected',
+          },
+        },
       ])
     })
 
     it('should return radio items when the the selected item checked', () => {
       expect(appealDecisionRadioItems('accepted')).toEqual([
-        { text: 'Upheld', value: 'accepted', checked: true },
-        { text: 'Rejected', value: 'rejected', checked: false },
+        {
+          text: 'Appeal successful',
+          value: 'accepted',
+          checked: true,
+          hint: {
+            text: 'The original assessment will be overruled and a new assessment will be created and allocated to you',
+          },
+        },
+        {
+          text: 'Appeal unsuccessful',
+          value: 'rejected',
+          checked: false,
+          hint: {
+            text: 'The original assessment decision will stand and the application will remain rejected',
+          },
+        },
       ])
     })
   })

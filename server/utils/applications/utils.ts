@@ -447,14 +447,20 @@ const applicationStatusSelectOptions = (
 
 const appealDecisionRadioItems = (selectedOption: AppealDecision | undefined) => {
   const appealDecisions: Record<AppealDecision, string> = {
-    accepted: 'Upheld',
-    rejected: 'Rejected',
+    accepted: 'Appeal successful',
+    rejected: 'Appeal unsuccessful',
   }
 
   return Object.keys(appealDecisions).map(status => ({
     text: appealDecisions[status],
     value: status,
     checked: status === selectedOption,
+    hint: {
+      text:
+        status === 'accepted'
+          ? 'The original assessment will be overruled and a new assessment will be created and allocated to you'
+          : 'The original assessment decision will stand and the application will remain rejected',
+    },
   }))
 }
 
