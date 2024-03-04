@@ -35,7 +35,7 @@ describe('User service', () => {
     referenceDataClientFactory.mockReturnValue(referenceDataClient)
   })
 
-  describe('getUser', () => {
+  describe('getActingUser', () => {
     it('Retrieves and formats user name', async () => {
       hmppsAuthClient.getActingUser.mockResolvedValue({ name: 'john smith' } as User)
 
