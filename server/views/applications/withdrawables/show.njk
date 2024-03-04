@@ -1,6 +1,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% extends "../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
@@ -16,6 +17,12 @@
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            {% set hintHtml %}
+                {{ govukInsetText({
+                    text: "Only one date can be withdrawn at a time. Please contact the CRU if you do not see a date you are expecting to be able to withdraw."
+                }) }}
+            {% endset %}
+
             <form action={{paths.applications.withdrawables.create({id: id})}} method="post"/>
             <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
@@ -28,7 +35,10 @@
                             isPageHeading: true
                         }
                     },
-                    items: ApplyUtils.withdrawableRadioOptions(withdrawables, selectedWithdrawable, bookings)
+                    items: ApplyUtils.withdrawableRadioOptions(withdrawables, selectedWithdrawable, bookings),
+                    hint: {
+                        html: hintHtml
+                    }
                 }) }}
 
             {{ govukButton({
