@@ -141,19 +141,17 @@ describe('ReleaseDate', () => {
     })
 
     it('should return a translated version of the response when the user knows the release date', () => {
-      const page = new ReleaseDate(
-        {
-          knowReleaseDate: 'yes',
-          'releaseDate-year': '2022',
-          'releaseDate-month': '11',
-          'releaseDate-day': '11',
-        },
-        application,
-      )
+      const body = {
+        knowReleaseDate: 'yes' as const,
+        'releaseDate-year': '2022',
+        'releaseDate-month': '11',
+        'releaseDate-day': '11',
+      }
+      const page = new ReleaseDate(body, application)
 
       expect(page.response()).toEqual({
         [page.title]: 'Yes',
-        'Release Date': 'Friday 11 November 2022',
+        'Release Date': DateFormats.dateAndTimeInputsToUiDate(body, 'releaseDate'),
       })
     })
   })

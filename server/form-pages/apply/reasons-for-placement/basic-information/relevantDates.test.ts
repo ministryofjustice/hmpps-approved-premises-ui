@@ -1,4 +1,5 @@
 import { applicationFactory } from '../../../../testutils/factories'
+import { DateFormats } from '../../../../utils/dateUtils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import RelevantDates, { RelevantDatesBody, relevantDateKeys } from './relevantDates'
@@ -144,12 +145,12 @@ describe('RelevantDates', () => {
       const page = new RelevantDates(body, application)
 
       expect(page.response()).toEqual({
-        'Home Detention Curfew (HDC) date': 'Sunday 1 January 2023',
-        'Licence expiry date': 'Thursday 2 February 2023',
-        'Parole eligibility date': 'Friday 3 March 2023',
-        'Post sentence supervision (PSS) end date': 'Tuesday 4 April 2023',
-        'Post sentence supervision (PSS) start date': 'Friday 5 May 2023',
-        'Sentence expiry date': 'Tuesday 6 June 2023',
+        'Home Detention Curfew (HDC) date': DateFormats.dateAndTimeInputsToUiDate(body, 'homeDetentionCurfewDate'),
+        'Licence expiry date': DateFormats.dateAndTimeInputsToUiDate(body, 'licenceExpiryDate'),
+        'Parole eligibility date': DateFormats.dateAndTimeInputsToUiDate(body, 'paroleEligibilityDate'),
+        'Post sentence supervision (PSS) end date': DateFormats.dateAndTimeInputsToUiDate(body, 'pssEndDate'),
+        'Post sentence supervision (PSS) start date': DateFormats.dateAndTimeInputsToUiDate(body, 'pssStartDate'),
+        'Sentence expiry date': DateFormats.dateAndTimeInputsToUiDate(body, 'sentenceExpiryDate'),
       })
     })
 

@@ -350,20 +350,17 @@ describe('PlacementDate', () => {
             typeof retrieveOptionalQuestionResponseFromFormArtifact
           >
         ).mockReturnValue(futureReleaseDate)
-
-        const page = new PlacementDate(
-          {
-            startDateSameAsReleaseDate: 'no',
-            'startDate-year': '2022',
-            'startDate-month': '11',
-            'startDate-day': '11',
-          },
-          application,
-        )
+        const body = {
+          startDateSameAsReleaseDate: 'no' as const,
+          'startDate-year': '2022',
+          'startDate-month': '11',
+          'startDate-day': '11',
+        }
+        const page = new PlacementDate(body, application)
 
         expect(page.response()).toEqual({
           [page.title]: 'No',
-          'Placement Start Date': 'Friday 11 November 2022',
+          'Placement Start Date': DateFormats.dateAndTimeInputsToUiDate(body, 'startDate'),
         })
       })
     })
@@ -376,17 +373,16 @@ describe('PlacementDate', () => {
           >
         ).mockReturnValue(pastReleaseDate)
 
-        const page = new PlacementDate(
-          {
-            'startDate-year': '2022',
-            'startDate-month': '11',
-            'startDate-day': '11',
-          },
-          application,
-        )
+        const body = {
+          'startDate-year': '2022',
+          'startDate-month': '11',
+          'startDate-day': '11',
+        }
+
+        const page = new PlacementDate(body, application)
 
         expect(page.response()).toEqual({
-          'What date you want the placement to start?': 'Friday 11 November 2022',
+          'What date you want the placement to start?': DateFormats.dateAndTimeInputsToUiDate(body, 'startDate'),
         })
       })
     })

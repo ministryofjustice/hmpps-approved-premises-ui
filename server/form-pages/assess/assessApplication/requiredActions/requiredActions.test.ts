@@ -1,4 +1,5 @@
 import { YesOrNo } from '../../../../@types/ui'
+import { DateFormats } from '../../../../utils/dateUtils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import RequiredActions from './requiredActions'
@@ -142,21 +143,22 @@ describe('RequiredActions', () => {
 
   describe('response', () => {
     it('returns the response', () => {
-      const page = new RequiredActions({
-        additionalActions: 'yes',
+      const body = {
+        additionalActions: 'yes' as const,
         additionalActionsComments: 'one',
-        curfewsOrSignIns: 'yes',
+        curfewsOrSignIns: 'yes' as const,
         curfewsOrSignInsComments: 'two',
-        concernsOfUnmanagableRisk: 'yes',
+        concernsOfUnmanagableRisk: 'yes' as const,
         concernsOfUnmanagableRiskComments: 'three',
         nameOfAreaManager: 'frank',
         'dateOfDiscussion-year': '2022',
         'dateOfDiscussion-month': '11',
         'dateOfDiscussion-day': '11',
         outlineOfDiscussion: 'foo bar baz',
-        additionalRecommendations: 'yes',
+        additionalRecommendations: 'yes' as const,
         additionalRecommendationsComments: 'four',
-      })
+      }
+      const page = new RequiredActions(body)
 
       expect(page.response()).toEqual({
         'Are any additional curfews or sign ins recommended?': 'Yes',
@@ -169,7 +171,7 @@ describe('RequiredActions', () => {
         'Are there concerns that the person poses a potentially unmanageable risk to staff or others?': 'Yes',
         'Are there concerns that the person poses a potentially unmanageable risk to staff or others? Additional comments':
           'three',
-        'Date of discussion': 'Friday 11 November 2022',
+        'Date of discussion': DateFormats.dateAndTimeInputsToUiDate(body, 'dateOfDiscussion'),
         'Name of area manager': 'frank',
         'Outline the discussion, including any additional measures that have been agreed.': 'foo bar baz',
       })

@@ -278,11 +278,11 @@ describe('checkYourAnswersUtils', () => {
             {
               'Dates of placement': [
                 {
-                  'When will the person arrive?': 'Tuesday 1 August 2023',
+                  'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date(2023, 7, 1)),
                   'How long should the Approved Premises placement last?': '5 days',
                 },
                 {
-                  'When will the person arrive?': 'Thursday 1 August 2024',
+                  'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date(2024, 7, 1)),
                   'How long should the Approved Premises placement last?': '3 weeks, 4 days',
                 },
               ],

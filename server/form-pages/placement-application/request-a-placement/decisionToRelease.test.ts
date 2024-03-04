@@ -2,6 +2,7 @@ import { fromPartial } from '@total-typescript/shoehorn'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../shared-examples'
 
 import DecisionToRelease, { Body } from './decisionToRelease'
+import { DateFormats } from '../../../utils/dateUtils'
 
 describe('DecisionToRelease', () => {
   const body = {
@@ -62,7 +63,7 @@ describe('DecisionToRelease', () => {
       const page = new DecisionToRelease(body)
 
       expect(page.response()).toEqual({
-        'Enter the date of decision': 'Friday 1 December 2023',
+        'Enter the date of decision': DateFormats.dateAndTimeInputsToUiDate(body, 'decisionToReleaseDate'),
         'Provide relevant information from the direction to release that will impact the placement': 'Some information',
       })
     })

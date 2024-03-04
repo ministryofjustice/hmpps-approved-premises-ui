@@ -1,10 +1,12 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { addDays } from 'date-fns'
 import { getDefaultPlacementDurationInDays } from '../../../utils/applications/getDefaultPlacementDurationInDays'
 
 import PlacementDuration from './placementDuration'
 import { applicationFactory } from '../../../testutils/factories'
 import { addResponsesToFormArtifact } from '../../../testutils/addToApplication'
 import { arrivalDateFromApplication } from '../../../utils/applications/arrivalDateFromApplication'
+import { DateFormats } from '../../../utils/dateUtils'
 
 jest.mock('../../../utils/applications/getDefaultPlacementDurationInDays')
 jest.mock('../../../utils/applications/arrivalDateFromApplication')
@@ -48,13 +50,15 @@ describe('PlacementDuration', () => {
 
   describe('initializeDates', () => {
     it('sets the dates based on arrivalDateFromApplication', () => {
-      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2022-11-11')
+      const arrivalDate = '2022-11-11'
+      ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(arrivalDate)
       ;(getDefaultPlacementDurationInDays as jest.Mock).mockReturnValue(30)
 
       const page = new PlacementDuration({}, application)
 
-      expect(page.arrivalDate).toEqual('Friday 11 November 2022')
-      expect(page.departureDate).toEqual('Sunday 11 December 2022')
+      expect(page.arrivalDate).toEqual(DateFormats.isoDateToUIDate(arrivalDate))
+      const arrivalDatePlus30Days = addDays(new Date(arrivalDate), 30)
+      expect(page.departureDate).toEqual(DateFormats.dateObjtoUIDate(arrivalDatePlus30Days))
     })
 
     it('sets the dates to undefined if the dates are not specified', () => {

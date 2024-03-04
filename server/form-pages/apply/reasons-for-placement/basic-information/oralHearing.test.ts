@@ -1,3 +1,4 @@
+import { DateFormats } from '../../../../utils/dateUtils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import OralHearing from './oralHearing'
@@ -80,16 +81,17 @@ describe('OralHearing', () => {
     })
 
     it('should return a translated version of the response when the start date is not the same as the release date', () => {
-      const page = new OralHearing({
-        knowOralHearingDate: 'yes',
+      const body = {
+        knowOralHearingDate: 'yes' as const,
         'oralHearingDate-year': '2022',
         'oralHearingDate-month': '11',
         'oralHearingDate-day': '11',
-      })
+      }
+      const page = new OralHearing(body)
 
       expect(page.response()).toEqual({
         [page.title]: 'Yes',
-        'Oral Hearing Date': 'Friday 11 November 2022',
+        'Oral Hearing Date': DateFormats.dateAndTimeInputsToUiDate(body, 'oralHearingDate'),
       })
     })
   })

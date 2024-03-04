@@ -9,6 +9,7 @@ import {
 import { linkTo } from '../utils'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
+import { DateFormats } from '../dateUtils'
 
 jest.mock('../utils')
 
@@ -73,8 +74,9 @@ describe('utils', () => {
 
   describe('withdrawalMessage', () => {
     it('returns the message and inserts the duration and expected arrival date', () => {
-      expect(withdrawalMessage(15, '2021-01-01')).toEqual(
-        'Request for placement for 2 weeks, 1 day starting on 01/01/2021 withdrawn successfully',
+      const date = '2021-01-01'
+      expect(withdrawalMessage(15, date)).toEqual(
+        `Request for placement for 2 weeks, 1 day starting on ${DateFormats.isoDateToUIDate(date, { format: 'short' })} withdrawn successfully`,
       )
     })
   })

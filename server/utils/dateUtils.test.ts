@@ -67,13 +67,13 @@ describe('DateFormats', () => {
     it('converts a ISO8601 date string to a GOV.UK formatted date', () => {
       const date = '2022-11-11T00:00:00.000Z'
 
-      expect(DateFormats.isoDateToUIDate(date)).toEqual('Friday 11 November 2022')
+      expect(DateFormats.isoDateToUIDate(date)).toEqual('Fri 11 Nov 2022')
     })
 
     it('converts a ISO8601 date string to a short format date', () => {
       const date = '2022-11-11T00:00:00.000Z'
 
-      expect(DateFormats.isoDateToUIDate(date, { format: 'short' })).toEqual('11/11/2022')
+      expect(DateFormats.isoDateToUIDate(date, { format: 'short' })).toEqual('11 Nov 2022')
     })
 
     it('raises an error if the date is not a valid ISO8601 date string', () => {
@@ -190,9 +190,10 @@ describe('DateFormats', () => {
 
   describe('dateAndTimeInputsToUiDate', () => {
     it('converts a date and time input object to a human readable date', () => {
-      const dateTimeInputs = DateFormats.dateObjectToDateInputs(new Date('2022-11-11T10:00:00.000Z'), 'key')
+      const date = new Date('2022-11-11T10:00:00.000Z')
+      const dateTimeInputs = DateFormats.dateObjectToDateInputs(date, 'key')
 
-      expect(DateFormats.dateAndTimeInputsToUiDate(dateTimeInputs, 'key')).toEqual('Friday 11 November 2022')
+      expect(DateFormats.dateAndTimeInputsToUiDate(dateTimeInputs, 'key')).toEqual(DateFormats.dateObjtoUIDate(date))
     })
 
     it('throws an error if an object without date inputs for the key is entered', () => {

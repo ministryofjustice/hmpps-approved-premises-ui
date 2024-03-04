@@ -1,3 +1,4 @@
+import { DateFormats } from '../../../../utils/dateUtils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import PipeReferral from './pipeReferral'
@@ -83,16 +84,20 @@ describe('PipeReferral', () => {
     })
 
     it('should return a translated version of the response when opdPathway is "yes"', () => {
-      const page = new PipeReferral({
-        opdPathway: 'yes',
+      const body = {
+        opdPathway: 'yes' as const,
         'opdPathwayDate-year': '2022',
         'opdPathwayDate-month': '11',
         'opdPathwayDate-day': '11',
-      })
+      }
+      const page = new PipeReferral(body)
 
       expect(page.response()).toEqual({
         [page.title]: 'Yes',
-        "When was the person's last consultation or formulation?": 'Friday 11 November 2022',
+        "When was the person's last consultation or formulation?": DateFormats.dateAndTimeInputsToUiDate(
+          body,
+          'opdPathwayDate',
+        ),
       })
     })
   })
