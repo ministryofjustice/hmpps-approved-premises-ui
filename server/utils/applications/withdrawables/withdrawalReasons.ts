@@ -1,3 +1,4 @@
+import { ApprovedPremisesUserRole } from '@approved-premises/api'
 import { WithdrawPlacementRequestReason } from '../../../@types/shared/models/WithdrawPlacementRequestReason'
 import { RadioItem } from '../../../@types/ui'
 import { convertKeyValuePairToRadioItems } from '../../formUtils'
@@ -27,18 +28,14 @@ const placementNoLongerNeededReasons = [
   'ChangeInCircumstances',
   'ChangeInReleaseDecision',
 ] as const
-
 const noCapacityReasons = ['NoCapacityDueToLostBed', 'NoCapacityDueToPlacementPrioritisation', 'NoCapacity'] as const
-
 const problemInPlacementReasons = ['ErrorInPlacementRequest', 'DuplicatePlacementRequest'] as const
 
 type PlacementNoLongerNeededReasons = Extract<
   WithdrawPlacementRequestReason,
   (typeof placementNoLongerNeededReasons)[number]
 >
-
 type NoCapacityReasons = Extract<WithdrawPlacementRequestReason, (typeof noCapacityReasons)[number]>
-
 type ProblemInPlacementReasons = Extract<WithdrawPlacementRequestReason, (typeof problemInPlacementReasons)[number]>
 
 const placementNoLongerNeededOptions = filterByType<PlacementNoLongerNeededReasons>(
@@ -48,15 +45,27 @@ const placementNoLongerNeededOptions = filterByType<PlacementNoLongerNeededReaso
 const noCapacityOptions = filterByType<NoCapacityReasons>(noCapacityReasons, withdrawalReasons)
 const problemInPlacementOptions = filterByType<ProblemInPlacementReasons>(problemInPlacementReasons, withdrawalReasons)
 
+const placementNoLongerNeededDividerAndRadioItems = [
+  { divider: 'The placement is no longer needed' },
+  ...convertKeyValuePairToRadioItems(placementNoLongerNeededOptions, undefined),
+]
+const noCapacityDividerAndRadioItems = [
+  { divider: 'The placement is unavailable (CRU use only)' },
+  ...convertKeyValuePairToRadioItems(noCapacityOptions, undefined),
+]
+const problemInPlacementDividerAndRadioItems = [
+  { divider: 'Problem in placement' },
+  ...convertKeyValuePairToRadioItems(problemInPlacementOptions, undefined),
+]
+
 export const placementApplicationWithdrawalReasons = (
-  selectedReason: WithdrawPlacementRequestReason,
+  userRoles: Array<ApprovedPremisesUserRole>,
 ): Array<RadioItem | { divider: string }> => {
-  return [
-    { divider: 'The placement is no longer needed' },
-    ...convertKeyValuePairToRadioItems(placementNoLongerNeededOptions, selectedReason),
-    { divider: 'The placement is unavailable' },
-    ...convertKeyValuePairToRadioItems(noCapacityOptions, selectedReason),
-    { divider: 'Problem in placement' },
-    ...convertKeyValuePairToRadioItems(problemInPlacementOptions, selectedReason),
-  ]
+  return userRoles.includes('workflow_manager')
+    ? [
+        placementNoLongerNeededDividerAndRadioItems,
+        noCapacityDividerAndRadioItems,
+        problemInPlacementDividerAndRadioItems,
+      ].flat()
+    : [placementNoLongerNeededDividerAndRadioItems, problemInPlacementDividerAndRadioItems].flat()
 }

@@ -1,5 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 
+import { placementApplicationWithdrawalReasons } from '../../../utils/applications/utils'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 import paths from '../../../paths/admin'
 import { PlacementRequestService } from '../../../services'
@@ -15,11 +16,14 @@ export default class WithdrawalsController {
     return async (req: Request, res: Response) => {
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
+      const withdrawalReasonsRadioItems = placementApplicationWithdrawalReasons(req.session.user.roles)
+
       return res.render('admin/placementRequests/withdrawals/new', {
         pageHeading: 'Why is this request for placement being withdrawn?',
         id: req.params.id,
         errors,
         errorSummary,
+        withdrawalReasonsRadioItems,
       })
     }
   }

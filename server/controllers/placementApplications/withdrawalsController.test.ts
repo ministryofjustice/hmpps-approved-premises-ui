@@ -9,17 +9,18 @@ import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../
 import placementApplicationPaths from '../../paths/placementApplications'
 import WithdrawalsController from './withdrawalsController'
 import { placementApplicationFactory, placementDatesFactory } from '../../testutils/factories'
-import { applicationShowPageTab } from '../../utils/applications/utils'
+import { applicationShowPageTab, placementApplicationWithdrawalReasons } from '../../utils/applications/utils'
 import { withdrawalMessage } from '../../utils/placementRequests/utils'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/placementRequests/utils')
+jest.mock('../../utils/applications/utils')
 
 describe('withdrawalsController', () => {
   const token = 'SOME_TOKEN'
 
-  let request: DeepMocked<Request> = createMock<Request>({ user: { token } })
-  let response: DeepMocked<Response> = createMock<Response>({})
+  let request: DeepMocked<Request>
+  let response: DeepMocked<Response>
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const placementApplicationService = createMock<PlacementApplicationService>({})
@@ -30,7 +31,7 @@ describe('withdrawalsController', () => {
 
   beforeEach(() => {
     withdrawalsController = new WithdrawalsController(placementApplicationService)
-    request = createMock<Request>({ user: { token } })
+    request = createMock<Request>({ session: { user: { roles: ['workflow_manager'] } }, user: { token } })
     response = createMock<Response>({})
     jest.clearAllMocks()
   })
@@ -44,6 +45,13 @@ describe('withdrawalsController', () => {
 
       placementApplicationService.getPlacementApplication.mockResolvedValue(placementApplication)
 
+      const placementApplicationWithdrawalReasonsReturnValue = 'reasons' as unknown as ReturnType<
+        typeof placementApplicationWithdrawalReasons
+      >
+      ;(
+        placementApplicationWithdrawalReasons as jest.MockedFn<typeof placementApplicationWithdrawalReasons>
+      ).mockReturnValue(placementApplicationWithdrawalReasonsReturnValue)
+
       const requestHandler = withdrawalsController.new()
 
       await requestHandler(request, response, next)
@@ -54,9 +62,11 @@ describe('withdrawalsController', () => {
         applicationId,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
+        withdrawalReasonsRadioItems: placementApplicationWithdrawalReasonsReturnValue,
         ...errorsAndUserInput.userInput,
       })
       expect(placementApplicationService.getPlacementApplication).toHaveBeenCalledWith(token, placementApplicationId)
+      expect(placementApplicationWithdrawalReasons).toHaveBeenCalledWith(request.session.user.roles)
     })
   })
 
@@ -74,6 +84,11 @@ describe('withdrawalsController', () => {
       placementApplicationService.withdraw.mockResolvedValue(placementApplication)
       ;(withdrawalMessage as jest.MockedFn<typeof withdrawalMessage>).mockReturnValue(withdrawalMessageContent)
 
+      const applicationShowPageTabReturnValue = 'some/tabbed/path'
+      ;(applicationShowPageTab as jest.MockedFn<typeof applicationShowPageTab>).mockReturnValue(
+        applicationShowPageTabReturnValue,
+      )
+
       const requestHandler = withdrawalsController.create()
 
       await requestHandler(request, response, next)
@@ -87,7 +102,8 @@ describe('withdrawalsController', () => {
         placementApplicationId,
         request.body.reason,
       )
-      expect(response.redirect).toHaveBeenCalledWith(applicationShowPageTab(applicationId, 'placementRequests'))
+      expect(response.redirect).toHaveBeenCalledWith(applicationShowPageTabReturnValue)
+      expect(applicationShowPageTab).toHaveBeenCalledWith(applicationId, 'placementRequests')
       expect(request.flash).toHaveBeenCalledWith('success', withdrawalMessageContent)
     })
 
