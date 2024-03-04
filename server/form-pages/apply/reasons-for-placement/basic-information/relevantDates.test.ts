@@ -2,7 +2,7 @@ import { applicationFactory } from '../../../../testutils/factories'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
-import RelevantDates, { RelevantDatesBody, relevantDateKeys } from './relevantDates'
+import RelevantDates, { RelevantDateKeys, RelevantDatesBody, relevantDateKeys } from './relevantDates'
 
 describe('RelevantDates', () => {
   const body = {
@@ -156,6 +156,19 @@ describe('RelevantDates', () => {
 
     it('should return a translated version of the response when the dates are blank', () => {
       const page = new RelevantDates({ ...emptyDateBody, selectedDates: relevantDateKeys }, application)
+
+      expect(page.response()).toEqual({
+        'Home Detention Curfew (HDC) date': 'No date supplied',
+        'Licence expiry date': 'No date supplied',
+        'Parole eligibility date': 'No date supplied',
+        'Post sentence supervision (PSS) end date': 'No date supplied',
+        'Post sentence supervision (PSS) start date': 'No date supplied',
+        'Sentence expiry date': 'No date supplied',
+      })
+    })
+
+    it('should ignore a date when not included in selectedDates', () => {
+      const page = new RelevantDates({ ...body, selectedDates: [] as Array<RelevantDateKeys> }, application)
 
       expect(page.response()).toEqual({
         'Home Detention Curfew (HDC) date': 'No date supplied',

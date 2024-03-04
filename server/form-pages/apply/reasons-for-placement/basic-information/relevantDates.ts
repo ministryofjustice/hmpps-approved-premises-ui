@@ -50,9 +50,10 @@ export default class RelevantDates implements TasklistPage {
     const response = {}
 
     relevantDateKeys.forEach(key => {
-      response[this.relevantDatesDictionary[key]] = !dateIsBlank(this.body, key)
-        ? DateFormats.dateAndTimeInputsToUiDate(this.body, key)
-        : 'No date supplied'
+      response[this.relevantDatesDictionary[key]] =
+        this.body.selectedDates?.includes(key) && !dateIsBlank(this.body, key)
+          ? DateFormats.dateAndTimeInputsToUiDate(this.body, key)
+          : 'No date supplied'
     })
 
     return response
