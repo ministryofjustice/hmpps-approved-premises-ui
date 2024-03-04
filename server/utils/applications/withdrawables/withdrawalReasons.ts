@@ -23,13 +23,17 @@ const withdrawalReasons: Record<UserFacingWithdrawalReasons, string> = {
   DuplicatePlacementRequest: 'The request was a duplicate',
 }
 
-const placementNoLongerNeededReasons = [
+export const placementNoLongerNeededReasons = [
   'AlternativeProvisionIdentified',
   'ChangeInCircumstances',
   'ChangeInReleaseDecision',
 ] as const
-const noCapacityReasons = ['NoCapacityDueToLostBed', 'NoCapacityDueToPlacementPrioritisation', 'NoCapacity'] as const
-const problemInPlacementReasons = ['ErrorInPlacementRequest', 'DuplicatePlacementRequest'] as const
+export const noCapacityReasons = [
+  'NoCapacityDueToLostBed',
+  'NoCapacityDueToPlacementPrioritisation',
+  'NoCapacity',
+] as const
+export const problemInPlacementReasons = ['ErrorInPlacementRequest', 'DuplicatePlacementRequest'] as const
 
 type PlacementNoLongerNeededReasons = Extract<
   WithdrawPlacementRequestReason,
