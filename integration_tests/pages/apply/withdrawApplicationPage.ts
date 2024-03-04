@@ -9,7 +9,8 @@ export default class WithdrawApplicationPage extends Page {
     this.checkForBackButton(paths.applications.index.pattern)
   }
 
-  completeForm(withdrawalReason: WithdrawalReason) {
+  completeForm<T extends WithdrawalReason>(withdrawalReason: T, otherReason: T extends 'other' ? string : never) {
     this.checkRadioByNameAndValue('reason', withdrawalReason)
+    this.getTextInputByIdAndEnterDetails('otherReason', otherReason)
   }
 }

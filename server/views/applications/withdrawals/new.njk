@@ -40,7 +40,15 @@
               hint: {
                   html: '<p class="govuk-hint">Withdrawing an application will remove all application data and cannot be undone.</p><p class="govuk-hint">You will need to start a new application for any future placements.</p>'
               },
-              items: withdrawalRadioOptions
+              items:  withdrawalRadioOptions({ 
+               'other': {html: formPageInput({
+                  fieldName: "otherReason",
+                  label: {
+                    text: "Please specify"
+                  },
+                  classes: "govuk-input--width-10"
+                }, fetchContext())}
+            })
             },
             fetchContext()
           )

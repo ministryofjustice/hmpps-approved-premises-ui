@@ -3,7 +3,11 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { ApplicationService } from '../../../services'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
+import {
+  addErrorMessageToFlash,
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+} from '../../../utils/validation'
 
 import paths from '../../../paths/apply'
 import WithdrawalsController from './withdrawalsController'
@@ -67,25 +71,54 @@ describe('withdrawalsController', () => {
         )
       })
 
-      describe('and no selectedWithdrawableType', () => {
-        it('renders the select withdrawable view', async () => {
-          const errorsAndUserInput = createMock<ErrorsAndUserInput>()
-          ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+      it('uses the selectedWithdrawableType from the query if there isnt one in the body', async () => {
+        const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+        ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
-          const withdrawables = withdrawableFactory.buildList(1)
+        const selectedWithdrawableType = 'booking'
+        const withdrawables = withdrawableFactory.buildList(1)
 
-          applicationService.getWithdrawables.mockResolvedValue(withdrawables)
+        applicationService.getWithdrawables.mockResolvedValue(withdrawables)
 
-          const requestHandler = withdrawalsController.new()
+        const requestHandler = withdrawalsController.new()
 
-          await requestHandler({ ...request, params: { id: applicationId } }, response, next)
+        await requestHandler(
+          {
+            ...request,
+            params: { id: applicationId },
+            body: { selectedWithdrawableType: '' },
+            query: { selectedWithdrawableType },
+          },
+          response,
+          next,
+        )
 
-          expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
-          expect(response.render).toHaveBeenCalledWith('applications/withdrawables/new', {
-            pageHeading: 'What do you want to withdraw?',
-            id: applicationId,
-            withdrawables,
-          })
+        expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
+        expect(response.redirect).toHaveBeenCalledWith(
+          302,
+          `${paths.applications.withdrawables.show({ id: applicationId })}?selectedWithdrawableType=${selectedWithdrawableType}`,
+        )
+      })
+    })
+
+    describe('and no selectedWithdrawableType', () => {
+      it('renders the select withdrawable view', async () => {
+        const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+        ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+
+        const withdrawables = withdrawableFactory.buildList(1)
+
+        applicationService.getWithdrawables.mockResolvedValue(withdrawables)
+
+        const requestHandler = withdrawalsController.new()
+
+        await requestHandler({ ...request, params: { id: applicationId } }, response, next)
+
+        expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
+        expect(response.render).toHaveBeenCalledWith('applications/withdrawables/new', {
+          pageHeading: 'What do you want to withdraw?',
+          id: applicationId,
+          withdrawables,
         })
       })
     })
@@ -175,6 +208,26 @@ describe('withdrawalsController', () => {
       })
       expect(response.redirect).toHaveBeenCalledWith(paths.applications.index({}))
       expect(request.flash).toHaveBeenCalledWith('success', 'Application withdrawn')
+    })
+
+    it('redirects to the "new" method with an error if "other" is the selected reason but no "otherReason" is supplied', async () => {
+      const requestHandler = withdrawalsController.create()
+
+      await requestHandler(
+        { ...request, params: { id: applicationId }, body: { reason: 'other', otherReason: '' } },
+        response,
+        next,
+      )
+
+      expect(applicationService.withdraw).not.toHaveBeenCalled()
+      expect(response.redirect).toHaveBeenCalledWith(
+        `${paths.applications.withdraw.new({ id: request.params.id })}?selectedWithdrawableType=application`,
+      )
+      expect(addErrorMessageToFlash).toHaveBeenCalledWith(
+        { body: { otherReason: '', reason: 'other' }, params: { id: 'some-id' }, user: { token: 'SOME_TOKEN' } },
+        'Enter a reason for withdrawing the application',
+        'otherReason',
+      )
     })
 
     it('redirects with errors if the API returns an error', async () => {

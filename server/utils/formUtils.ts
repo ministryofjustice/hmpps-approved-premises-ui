@@ -71,12 +71,17 @@ export const convertObjectsToSelectOptions = (
   return options
 }
 
-export function convertKeyValuePairToRadioItems<T>(object: T, checkedItem: string): Array<RadioItem> {
+export function convertKeyValuePairToRadioItems<T>(
+  object: T,
+  checkedItem: string,
+  conditionals?: Partial<Record<keyof T, RadioItem['conditional']>>,
+): Array<RadioItem> {
   return Object.keys(object).map(key => {
     return {
       value: key,
       text: object[key],
       checked: checkedItem === key,
+      conditional: conditionals ? conditionals[key] : undefined,
     }
   })
 }
