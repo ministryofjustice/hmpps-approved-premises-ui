@@ -2,7 +2,7 @@ import { applicationFactory } from '../../../../testutils/factories'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
-import RelevantDates, { RelevantDatesBody, relevantDateKeys } from './relevantDates'
+import RelevantDates, { RelevantDateKeys, RelevantDatesBody, relevantDateKeys } from './relevantDates'
 
 describe('RelevantDates', () => {
   const body = {
@@ -71,7 +71,32 @@ describe('RelevantDates', () => {
     it('should set the body when all the dates not present', () => {
       const page = new RelevantDates(emptyDateBody, application)
 
-      expect(page.body).toEqual(emptyDateBody)
+      expect(page.body).toEqual({ selectedDates: [] })
+    })
+
+    it('should remove unselected dates', () => {
+      const page = new RelevantDates(
+        {
+          homeDetentionCurfewDate: '2023-01-01',
+          'homeDetentionCurfewDate-day': '01',
+          'homeDetentionCurfewDate-month': '01',
+          'homeDetentionCurfewDate-year': '2023',
+          licenceExpiryDate: '2023-02-02',
+          'licenceExpiryDate-day': '02',
+          'licenceExpiryDate-month': '02',
+          'licenceExpiryDate-year': '2023',
+          selectedDates: ['licenceExpiryDate'],
+        },
+        application,
+      )
+
+      expect(page.body).toEqual({
+        licenceExpiryDate: '2023-02-02',
+        'licenceExpiryDate-day': '02',
+        'licenceExpiryDate-month': '02',
+        'licenceExpiryDate-year': '2023',
+        selectedDates: ['licenceExpiryDate'],
+      })
     })
   })
 
@@ -156,6 +181,19 @@ describe('RelevantDates', () => {
 
     it('should return a translated version of the response when the dates are blank', () => {
       const page = new RelevantDates({ ...emptyDateBody, selectedDates: relevantDateKeys }, application)
+
+      expect(page.response()).toEqual({
+        'Home Detention Curfew (HDC) date': 'No date supplied',
+        'Licence expiry date': 'No date supplied',
+        'Parole eligibility date': 'No date supplied',
+        'Post sentence supervision (PSS) end date': 'No date supplied',
+        'Post sentence supervision (PSS) start date': 'No date supplied',
+        'Sentence expiry date': 'No date supplied',
+      })
+    })
+
+    it('should ignore a date when not included in selectedDates', () => {
+      const page = new RelevantDates({ ...body, selectedDates: [] as Array<RelevantDateKeys> }, application)
 
       expect(page.response()).toEqual({
         'Home Detention Curfew (HDC) date': 'No date supplied',

@@ -39,20 +39,35 @@ export default class RelevantDates implements TasklistPage {
 
   relevantDatesDictionary = relevantDatesDictionary
 
-  body: RelevantDatesBody
+  _body: RelevantDatesBody
 
   constructor(
-    body: Partial<RelevantDatesBody>,
+    _body: Partial<RelevantDatesBody>,
     private readonly application: ApprovedPremisesApplication,
   ) {}
+
+  public set body(value: Partial<RelevantDatesBody>) {
+    this._body = {} as RelevantDatesBody
+    this._body.selectedDates = value.selectedDates || []
+    this._body.selectedDates.forEach((selectedDate: RelevantDateKeys) => {
+      dateBodyProperties(selectedDate).forEach(element => {
+        this._body[element] = value[element]
+      })
+    })
+  }
+
+  public get body() {
+    return this._body
+  }
 
   response() {
     const response = {}
 
     relevantDateKeys.forEach(key => {
-      response[this.relevantDatesDictionary[key]] = !dateIsBlank(this.body, key)
-        ? DateFormats.dateAndTimeInputsToUiDate(this.body, key)
-        : 'No date supplied'
+      response[this.relevantDatesDictionary[key]] =
+        this.body.selectedDates?.includes(key) && !dateIsBlank(this.body, key)
+          ? DateFormats.dateAndTimeInputsToUiDate(this._body, key)
+          : 'No date supplied'
     })
 
     return response
@@ -77,7 +92,7 @@ export default class RelevantDates implements TasklistPage {
 
       if (dateIsBlank(this.body, date)) {
         errors[date] = `When the box is checked you must enter a ${this.relevantDatesDictionary[date]} date`
-      } else if (!dateAndTimeInputsAreValidDates(this.body, date)) {
+      } else if (!dateAndTimeInputsAreValidDates(this._body, date)) {
         errors[date] = `${this.relevantDatesDictionary[date]} must be a valid date`
       }
     })
