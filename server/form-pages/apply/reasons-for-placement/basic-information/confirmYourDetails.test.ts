@@ -7,7 +7,7 @@ import { apAreaFactory, applicationFactory } from '../../../../testutils/factori
 import { RestrictedPersonError } from '../../../../utils/errors'
 import { isApplicableTier, isFullPerson } from '../../../../utils/personUtils'
 import { lowerCase } from '../../../../utils/utils'
-import ConfirmYourDetails, { Body, updatableDetails } from './confirmYourDetails'
+import ConfirmYourDetails, { Body, userDetailsKeys } from './confirmYourDetails'
 
 jest.mock('../../../../utils/personUtils')
 
@@ -180,7 +180,7 @@ describe('ConfirmYourDetails', () => {
       expect(page.errors()).toEqual({})
     })
 
-    describe.each(updatableDetails)('when %s is in the detailsToUpdate array but the field is not populated', field => {
+    describe.each(userDetailsKeys)('when %s is in the detailsToUpdate array but the field is not populated', field => {
       const bodyWithoutField: Readonly<Partial<Body>> = { ...body, detailsToUpdate: [field], [field]: undefined }
       const page = new ConfirmYourDetails(bodyWithoutField, application)
 

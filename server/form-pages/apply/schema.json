@@ -77,32 +77,41 @@
               "type": "string"
             },
             "userDetailsFromDelius": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "string"
-                },
-                "emailAddress": {
-                  "type": "string"
-                },
-                "phoneNumber": {
-                  "type": "string"
-                },
-                "area": {
+              "allOf": [
+                {
                   "type": "object",
                   "properties": {
-                    "id": {
-                      "type": "string"
-                    },
-                    "identifier": {
-                      "type": "string"
-                    },
                     "name": {
+                      "type": "string"
+                    },
+                    "emailAddress": {
+                      "type": "string"
+                    },
+                    "phoneNumber": {
                       "type": "string"
                     }
                   }
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "area": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "identifier": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
                 }
-              }
+              ]
             },
             "area": {
               "type": "string"
@@ -236,132 +245,113 @@
           }
         },
         "relevant-dates": {
-          "allOf": [
-            {
-              "type": "object",
-              "properties": {
-                "selectedDates": {
-                  "type": "array",
-                  "items": {
-                    "enum": [
-                      "homeDetentionCurfewDate",
-                      "licenceExpiryDate",
-                      "paroleEligibilityDate",
-                      "pssEndDate",
-                      "pssStartDate",
-                      "sentenceExpiryDate"
-                    ],
-                    "type": "string"
-                  }
-                }
+          "type": "object",
+          "properties": {
+            "selectedDates": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "homeDetentionCurfewDate",
+                  "licenceExpiryDate",
+                  "paroleEligibilityDate",
+                  "pssEndDate",
+                  "pssStartDate",
+                  "sentenceExpiryDate"
+                ],
+                "type": "string"
               }
             },
-            {
-              "type": "object",
-              "properties": {
-                "paroleEligibilityDate-year": {
-                  "type": "string"
-                },
-                "homeDetentionCurfewDate-year": {
-                  "type": "string"
-                },
-                "licenceExpiryDate-year": {
-                  "type": "string"
-                },
-                "pssStartDate-year": {
-                  "type": "string"
-                },
-                "pssEndDate-year": {
-                  "type": "string"
-                },
-                "sentenceExpiryDate-year": {
-                  "type": "string"
-                },
-                "paroleEligibilityDate-month": {
-                  "type": "string"
-                },
-                "homeDetentionCurfewDate-month": {
-                  "type": "string"
-                },
-                "licenceExpiryDate-month": {
-                  "type": "string"
-                },
-                "pssStartDate-month": {
-                  "type": "string"
-                },
-                "pssEndDate-month": {
-                  "type": "string"
-                },
-                "sentenceExpiryDate-month": {
-                  "type": "string"
-                },
-                "paroleEligibilityDate-day": {
-                  "type": "string"
-                },
-                "homeDetentionCurfewDate-day": {
-                  "type": "string"
-                },
-                "licenceExpiryDate-day": {
-                  "type": "string"
-                },
-                "pssStartDate-day": {
-                  "type": "string"
-                },
-                "pssEndDate-day": {
-                  "type": "string"
-                },
-                "sentenceExpiryDate-day": {
-                  "type": "string"
-                }
-              }
+            "paroleEligibilityDate-year": {
+              "type": "string"
             },
-            {
-              "type": "object",
-              "properties": {
-                "paroleEligibilityDate-time": {
-                  "type": "string"
-                },
-                "homeDetentionCurfewDate-time": {
-                  "type": "string"
-                },
-                "licenceExpiryDate-time": {
-                  "type": "string"
-                },
-                "pssStartDate-time": {
-                  "type": "string"
-                },
-                "pssEndDate-time": {
-                  "type": "string"
-                },
-                "sentenceExpiryDate-time": {
-                  "type": "string"
-                }
-              }
+            "homeDetentionCurfewDate-year": {
+              "type": "string"
             },
-            {
-              "type": "object",
-              "properties": {
-                "paroleEligibilityDate": {
-                  "type": "string"
-                },
-                "homeDetentionCurfewDate": {
-                  "type": "string"
-                },
-                "licenceExpiryDate": {
-                  "type": "string"
-                },
-                "pssStartDate": {
-                  "type": "string"
-                },
-                "pssEndDate": {
-                  "type": "string"
-                },
-                "sentenceExpiryDate": {
-                  "type": "string"
-                }
-              }
+            "licenceExpiryDate-year": {
+              "type": "string"
+            },
+            "pssStartDate-year": {
+              "type": "string"
+            },
+            "pssEndDate-year": {
+              "type": "string"
+            },
+            "sentenceExpiryDate-year": {
+              "type": "string"
+            },
+            "paroleEligibilityDate-month": {
+              "type": "string"
+            },
+            "homeDetentionCurfewDate-month": {
+              "type": "string"
+            },
+            "licenceExpiryDate-month": {
+              "type": "string"
+            },
+            "pssStartDate-month": {
+              "type": "string"
+            },
+            "pssEndDate-month": {
+              "type": "string"
+            },
+            "sentenceExpiryDate-month": {
+              "type": "string"
+            },
+            "paroleEligibilityDate-day": {
+              "type": "string"
+            },
+            "homeDetentionCurfewDate-day": {
+              "type": "string"
+            },
+            "licenceExpiryDate-day": {
+              "type": "string"
+            },
+            "pssStartDate-day": {
+              "type": "string"
+            },
+            "pssEndDate-day": {
+              "type": "string"
+            },
+            "sentenceExpiryDate-day": {
+              "type": "string"
+            },
+            "paroleEligibilityDate-time": {
+              "type": "string"
+            },
+            "homeDetentionCurfewDate-time": {
+              "type": "string"
+            },
+            "licenceExpiryDate-time": {
+              "type": "string"
+            },
+            "pssStartDate-time": {
+              "type": "string"
+            },
+            "pssEndDate-time": {
+              "type": "string"
+            },
+            "sentenceExpiryDate-time": {
+              "type": "string"
+            },
+            "paroleEligibilityDate": {
+              "type": "string"
+            },
+            "homeDetentionCurfewDate": {
+              "type": "string"
+            },
+            "licenceExpiryDate": {
+              "type": "string"
+            },
+            "pssStartDate": {
+              "type": "string"
+            },
+            "pssEndDate": {
+              "type": "string"
+            },
+            "sentenceExpiryDate": {
+              "type": "string"
             }
-          ]
+          }
         },
         "situation": {
           "type": "object",

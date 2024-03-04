@@ -1,6 +1,6 @@
 import { lowerCase } from '../../../../utils/utils'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-import CaseManagerInformation, { CaseManagerDetails, fields } from './caseManagerInformation'
+import CaseManagerInformation, { CaseManagerDetails, caseManagerKeys } from './caseManagerInformation'
 
 describe('CaseMangerInformation', () => {
   const body: CaseManagerDetails = {
@@ -22,7 +22,7 @@ describe('CaseMangerInformation', () => {
   itShouldHavePreviousValue(new CaseManagerInformation(body), 'confirm-your-details')
 
   describe('errors', () => {
-    describe.each(fields)('when the %s is not supplied', field => {
+    describe.each(caseManagerKeys)('when the %s is not supplied', field => {
       it('should return an error', () => {
         const bodyWithoutField: Partial<CaseManagerDetails> = { ...body, [field]: undefined }
         const page = new CaseManagerInformation(bodyWithoutField)
