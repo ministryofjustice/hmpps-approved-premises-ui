@@ -71,7 +71,32 @@ describe('RelevantDates', () => {
     it('should set the body when all the dates not present', () => {
       const page = new RelevantDates(emptyDateBody, application)
 
-      expect(page.body).toEqual(emptyDateBody)
+      expect(page.body).toEqual({ selectedDates: [] })
+    })
+
+    it('should remove unselected dates', () => {
+      const page = new RelevantDates(
+        {
+          homeDetentionCurfewDate: '2023-01-01',
+          'homeDetentionCurfewDate-day': '01',
+          'homeDetentionCurfewDate-month': '01',
+          'homeDetentionCurfewDate-year': '2023',
+          licenceExpiryDate: '2023-02-02',
+          'licenceExpiryDate-day': '02',
+          'licenceExpiryDate-month': '02',
+          'licenceExpiryDate-year': '2023',
+          selectedDates: ['licenceExpiryDate'],
+        },
+        application,
+      )
+
+      expect(page.body).toEqual({
+        licenceExpiryDate: '2023-02-02',
+        'licenceExpiryDate-day': '02',
+        'licenceExpiryDate-month': '02',
+        'licenceExpiryDate-year': '2023',
+        selectedDates: ['licenceExpiryDate'],
+      })
     })
   })
 
