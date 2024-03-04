@@ -13,9 +13,24 @@ export default class SufficientInformationPage extends Page {
 
   confirmUserDetails(application: ApprovedPremisesApplication) {
     cy.get('dl').within(() => {
-      this.assertDefinition('Name', application.data['basic-information']['confirm-your-details'].name)
-      this.assertDefinition('Email', application.data['basic-information']['confirm-your-details'].emailAddress)
-      this.assertDefinition('Contact number', application.data['basic-information']['confirm-your-details'].phoneNumber)
+      this.assertDefinition(
+        'Name',
+        application.caseManagerIsNotApplicant
+          ? application.caseManagerUserDetails.name
+          : application.applicantUserDetails.name,
+      )
+      this.assertDefinition(
+        'Email',
+        application.caseManagerIsNotApplicant
+          ? application.caseManagerUserDetails.email
+          : application.applicantUserDetails.email,
+      )
+      this.assertDefinition(
+        'Contact number',
+        application.caseManagerIsNotApplicant
+          ? application.caseManagerUserDetails.telephoneNumber
+          : application.applicantUserDetails.telephoneNumber,
+      )
     })
   }
 }

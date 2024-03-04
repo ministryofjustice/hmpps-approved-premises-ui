@@ -1,9 +1,18 @@
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
-import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
+import {
+  ApprovedPremisesAssessment as Assessment,
+  Cas1ApplicationUserDetails as UserDetails,
+} from '../../../../@types/shared'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
-import ConfirmYourDetails, { Body } from '../../../apply/reasons-for-placement/basic-information/confirmYourDetails'
+import ConfirmYourDetails from '../../../apply/reasons-for-placement/basic-information/confirmYourDetails'
+import {
+  userDetailsFromCaseManagerPage,
+  userDetailsFromConfirmYourDetailsPage,
+} from '../../../../utils/applications/userDetailsFromApplication'
+
+const caseManagerKeys: Array<keyof UserDetails> = ['name', 'email', 'telephoneNumber']
 
 @Page({
   name: 'sufficient-information-sent',
@@ -14,23 +23,22 @@ export default class SufficientInformationSent implements TasklistPage {
 
   title = 'How to get further information'
 
-  userName: Body['name']
+  caseManager: UserDetails = {
+    name: '',
+    email: '',
+    telephoneNumber: '',
+  }
 
-  emailAddress: Body['emailAddress']
-
-  phoneNumber: Body['phoneNumber']
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor(
     public readonly body: Record<string, unknown>,
     assessment: Assessment,
   ) {
-    this.userName =
-      retrieveOptionalQuestionResponseFromFormArtifact(assessment.application, ConfirmYourDetails, 'name') || ''
-    this.emailAddress =
-      retrieveOptionalQuestionResponseFromFormArtifact(assessment.application, ConfirmYourDetails, 'emailAddress') || ''
-    this.phoneNumber =
-      retrieveOptionalQuestionResponseFromFormArtifact(assessment.application, ConfirmYourDetails, 'phoneNumber') || ''
+    caseManagerKeys.forEach(fieldName => {
+      this.caseManager[fieldName] =
+        this.caseManagerDetailsFromApplication(assessment)?.[fieldName] ||
+        this.caseManagerDetailsFromFormData(assessment)?.[fieldName] ||
+        `No ${fieldName} for case manager supplied`
+    })
   }
 
   previous() {
@@ -47,5 +55,25 @@ export default class SufficientInformationSent implements TasklistPage {
 
   errors() {
     return {}
+  }
+
+  private caseManagerDetailsFromApplication(assessment: Assessment) {
+    return assessment.application?.caseManagerIsNotApplicant
+      ? assessment.application?.caseManagerUserDetails
+      : assessment.application?.applicantUserDetails
+  }
+
+  private caseManagerDetailsFromFormData(assessment: Assessment) {
+    const caseManagerIsNotApplicant = Boolean(
+      retrieveOptionalQuestionResponseFromFormArtifact(
+        assessment.application,
+        ConfirmYourDetails,
+        'caseManagementResponsibility',
+      ) === 'no',
+    )
+
+    return caseManagerIsNotApplicant
+      ? userDetailsFromCaseManagerPage(assessment.application)
+      : userDetailsFromConfirmYourDetailsPage(assessment.application)
   }
 }

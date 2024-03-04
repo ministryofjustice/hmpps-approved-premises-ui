@@ -1,11 +1,19 @@
+import { when } from 'jest-when'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import SufficientInformationSent from './sufficientInformationSent'
-import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
 
-import { assessmentFactory, userFactory } from '../../../../testutils/factories'
+import { assessmentFactory } from '../../../../testutils/factories'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import ConfirmYourDetails from '../../../apply/reasons-for-placement/basic-information/confirmYourDetails'
+import {
+  userDetailsFromCaseManagerPage,
+  userDetailsFromConfirmYourDetailsPage,
+} from '../../../../utils/applications/userDetailsFromApplication'
+import { applicationUserDetailsFactory } from '../../../../testutils/factories/application'
 
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
+jest.mock('../../../../utils/applications/userDetailsFromApplication')
 
 describe('SufficientInformationSent', () => {
   const assessment = assessmentFactory.build()
@@ -18,42 +26,85 @@ describe('SufficientInformationSent', () => {
     expect(new SufficientInformationSent({}, assessment).title).toBe('How to get further information')
   })
 
-  describe('body', () => {
-    it('should set the body', () => {
-      const page = new SufficientInformationSent({}, assessment)
-      expect(page.body).toEqual({})
+  describe('constructor', () => {
+    describe('if there are user details on the application', () => {
+      describe('if the applicant is the case manager', () => {
+        it('should set the case manager details with the applicants details on the page', () => {
+          const assessmentWithApplication = assessmentFactory.build({
+            application: {
+              caseManagerIsNotApplicant: false,
+            },
+          })
+
+          const page = new SufficientInformationSent({}, assessmentWithApplication)
+          expect(page.caseManager).toEqual(assessmentWithApplication.application.applicantUserDetails)
+        })
+      })
+
+      describe('if the applicant is not the case manager', () => {
+        it('should set the case manager details', () => {
+          const assessmentWithApplication = assessmentFactory.build({
+            application: {
+              caseManagerIsNotApplicant: true,
+            },
+          })
+
+          const page = new SufficientInformationSent({}, assessmentWithApplication)
+          expect(page.caseManager).toEqual(assessmentWithApplication.application.caseManagerUserDetails)
+        })
+      })
     })
-  })
 
-  describe('initialize', () => {
-    it("should get the applicant's details", () => {
-      const body = {}
-      const user = userFactory.build()
-      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock)
-        .mockReturnValueOnce(user.name)
-        .mockReturnValueOnce(user.email)
-        .mockReturnValue(user.telephoneNumber)
+    describe('if there are not user details on the application', () => {
+      const legacyAsssessmentWithoutUserDetails = assessmentFactory.build({
+        application: {
+          caseManagerIsNotApplicant: undefined,
+          caseManagerUserDetails: undefined,
+          applicantUserDetails: undefined,
+        },
+      })
 
-      const page = new SufficientInformationSent({}, assessment)
+      describe('if the applicant is the case manager', () => {
+        it('should set the case manager details on the page with details from the form data', () => {
+          const applicantDetails = applicationUserDetailsFactory.build()
 
-      expect(page.body).toEqual(body)
-      expect(page.userName).toEqual(user.name)
-      expect(page.emailAddress).toEqual(user.email)
-      expect(page.phoneNumber).toEqual(user.telephoneNumber)
-    })
-    it("should get the fall back applicant's details", () => {
-      const body = {}
-      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock)
-        .mockReturnValueOnce(undefined)
-        .mockReturnValueOnce(undefined)
-        .mockReturnValue(undefined)
+          when(retrieveOptionalQuestionResponseFromFormArtifact)
+            .calledWith(
+              legacyAsssessmentWithoutUserDetails.application,
+              ConfirmYourDetails,
+              'caseManagementResponsibility',
+            )
+            .mockReturnValue('yes')
 
-      const page = new SufficientInformationSent({}, assessment)
+          when(userDetailsFromConfirmYourDetailsPage)
+            .calledWith(legacyAsssessmentWithoutUserDetails.application)
+            .mockReturnValue(applicantDetails)
 
-      expect(page.body).toEqual(body)
-      expect(page.userName).toEqual('')
-      expect(page.emailAddress).toEqual('')
-      expect(page.phoneNumber).toEqual('')
+          const page = new SufficientInformationSent({}, legacyAsssessmentWithoutUserDetails)
+          expect(page.caseManager).toEqual(applicantDetails)
+        })
+      })
+
+      describe('if the applicant is not the case manager', () => {
+        it('should set the case manager details on the page with details from the form data', () => {
+          const caseManagerDetails = applicationUserDetailsFactory.build()
+          when(retrieveOptionalQuestionResponseFromFormArtifact)
+            .calledWith(
+              legacyAsssessmentWithoutUserDetails.application,
+              ConfirmYourDetails,
+              'caseManagementResponsibility',
+            )
+            .mockReturnValue('no')
+
+          when(userDetailsFromCaseManagerPage)
+            .calledWith(legacyAsssessmentWithoutUserDetails.application)
+            .mockReturnValue(caseManagerDetails)
+
+          const page = new SufficientInformationSent({}, legacyAsssessmentWithoutUserDetails)
+
+          expect(page.caseManager).toEqual(caseManagerDetails)
+        })
+      })
     })
   })
 
