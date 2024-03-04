@@ -13,6 +13,7 @@ import RoomSharing from '../apply/risk-and-need-factors/further-considerations/r
 import Covid from '../apply/risk-and-need-factors/access-and-healthcare/covid'
 import DateOfOffence from '../apply/risk-and-need-factors/risk-management-features/dateOfOffence'
 import Vulnerability from '../apply/risk-and-need-factors/further-considerations/vulnerability'
+import SelectApType, { ApType } from '../apply/reasons-for-placement/type-of-ap/apType'
 
 jest.mock('../../utils/retrieveQuestionResponseFromFormArtifact')
 
@@ -37,7 +38,6 @@ describe('defaultMatchingInformationValues', () => {
     lengthOfStayAgreed: undefined,
     lengthOfStayDays: undefined,
     lengthOfStayWeeks: undefined,
-    specialistSupportCriteria: undefined,
   }
   const application = applicationFactory.build()
 
@@ -82,6 +82,8 @@ describe('defaultMatchingInformationValues', () => {
         .mockReturnValue(['current', 'previous']),
     )
 
+    when(retrieveQuestionResponseFromFormArtifact).calledWith(application, SelectApType, 'type').mockReturnValue('pipe')
+
     const body: MatchingInformationBody = {
       ...bodyWithUndefinedValues,
       lengthOfStayAgreed: 'no',
@@ -94,6 +96,7 @@ describe('defaultMatchingInformationValues', () => {
       acceptsHateCrimeOffenders: 'relevant',
       acceptsNonSexualChildOffenders: 'relevant',
       acceptsSexOffenders: 'relevant',
+      apType: 'isPIPE',
       isArsonDesignated: 'essential',
       isArsonSuitable: 'relevant',
       isCatered: 'essential',
@@ -112,6 +115,7 @@ describe('defaultMatchingInformationValues', () => {
         acceptsHateCrimeOffenders: 'relevant',
         acceptsNonSexualChildOffenders: 'relevant',
         acceptsSexOffenders: 'relevant',
+        apType: 'isPIPE',
         isArsonDesignated: 'desirable',
         isArsonSuitable: 'relevant',
         isCatered: 'desirable',
@@ -237,6 +241,25 @@ describe('defaultMatchingInformationValues', () => {
             expect.objectContaining({ acceptsSexOffenders: 'notRelevant' }),
           )
         })
+      })
+
+      describe('apType', () => {
+        it.each([
+          ['normal', 'standard'],
+          ['isESAP', 'esap'],
+          ['isPIPE', 'pipe'],
+        ])(
+          "is set to '%s' when `type` === '%s'",
+          (assessValue: MatchingInformationBody['apType'], applyValue: ApType) => {
+            when(retrieveQuestionResponseFromFormArtifact)
+              .calledWith(application, SelectApType, 'type')
+              .mockReturnValue(applyValue)
+
+            expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+              expect.objectContaining({ apType: assessValue }),
+            )
+          },
+        )
       })
 
       describe('isArsonDesignated', () => {

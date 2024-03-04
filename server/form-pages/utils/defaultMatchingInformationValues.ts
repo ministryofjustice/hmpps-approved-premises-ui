@@ -18,11 +18,30 @@ import { TasklistPageInterface } from '../tasklistPage'
 import DateOfOffence from '../apply/risk-and-need-factors/risk-management-features/dateOfOffence'
 import Vulnerability from '../apply/risk-and-need-factors/further-considerations/vulnerability'
 import { OffenceAndRiskCriteria, PlacementRequirementCriteria } from '../../utils/placementCriteriaUtils'
+import SelectApType, { ApType } from '../apply/reasons-for-placement/type-of-ap/apType'
 
 export interface TaskListPageField {
   name: string
   page: TasklistPageInterface
   optional?: boolean
+}
+
+const apType = (
+  body: MatchingInformationBody,
+  application: ApprovedPremisesApplication,
+): MatchingInformationBody['apType'] => {
+  if (body.apType) {
+    return body.apType
+  }
+
+  const applyValue = retrieveQuestionResponseFromFormArtifact(application, SelectApType, 'type')
+  const applyAssessMap: Record<ApType, MatchingInformationBody['apType']> = {
+    standard: 'normal',
+    esap: 'isESAP',
+    pipe: 'isPIPE',
+  }
+
+  return applyAssessMap[applyValue]
 }
 
 const lengthOfStay = (body: MatchingInformationBody): string | undefined => {
@@ -89,6 +108,15 @@ export const defaultMatchingInformationValues = (
       'relevant',
       'notRelevant',
     ),
+    acceptsHateCrimeOffenders: getValue<GetValueOffenceAndRisk>(
+      body,
+      'acceptsHateCrimeOffenders',
+      application,
+      [{ name: 'hateCrime', page: DateOfOffence, optional: true }],
+      ['current', 'previous'],
+      'relevant',
+      'notRelevant',
+    ),
     acceptsNonSexualChildOffenders: getValue<GetValueOffenceAndRisk>(
       body,
       'acceptsNonSexualChildOffenders',
@@ -110,15 +138,7 @@ export const defaultMatchingInformationValues = (
       'relevant',
       'notRelevant',
     ),
-    acceptsHateCrimeOffenders: getValue<GetValueOffenceAndRisk>(
-      body,
-      'acceptsHateCrimeOffenders',
-      application,
-      [{ name: 'hateCrime', page: DateOfOffence, optional: true }],
-      ['current', 'previous'],
-      'relevant',
-      'notRelevant',
-    ),
+    apType: apType(body, application),
     isArsonDesignated: getValue<GetValuePlacementRequirement>(
       body,
       'isArsonDesignated',

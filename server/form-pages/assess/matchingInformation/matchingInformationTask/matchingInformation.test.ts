@@ -13,7 +13,6 @@ const assessment = assessmentFactory.build()
 
 const defaultArguments = {
   apType: 'isESAP' as const,
-  specialistSupportCriteria: ['isSemiSpecialistMentalHealth', 'isRecoveryFocussed'],
   isArsonDesignated: 'essential',
   isWheelchairDesignated: 'essential',
   isSingle: 'desirable',
@@ -36,6 +35,7 @@ const defaultMatchingInformationValuesReturnValue: Partial<MatchingInformationBo
   acceptsChildSexOffenders: 'relevant',
   acceptsHateCrimeOffenders: 'relevant',
   acceptsSexOffenders: 'relevant',
+  apType: 'isPIPE',
   isArsonDesignated: 'essential',
   isArsonSuitable: 'relevant',
   isCatered: 'essential',
@@ -63,30 +63,6 @@ describe('MatchingInformation', () => {
 
       expect(page.body).toEqual({ ...defaultArguments, ...defaultMatchingInformationValuesReturnValue })
     })
-
-    it('should return specialistSupportCriteria as arrays if strings are provided', () => {
-      const page = new MatchingInformation(
-        {
-          ...defaultArguments,
-          specialistSupportCriteria: 'isSemiSpecialistMentalHealth',
-        } as unknown as MatchingInformationBody,
-        assessment,
-      )
-
-      expect(page.body.specialistSupportCriteria).toEqual(['isSemiSpecialistMentalHealth'])
-    })
-
-    it('should return empty arrays for specialistSupportCriteria as arrays if no data is provided', () => {
-      const page = new MatchingInformation(
-        {
-          ...defaultArguments,
-          specialistSupportCriteria: undefined,
-        } as unknown as MatchingInformationBody,
-        assessment,
-      )
-
-      expect(page.body.specialistSupportCriteria).toEqual([])
-    })
   })
 
   itShouldHaveNextValue(new MatchingInformation(defaultArguments, assessment), '')
@@ -100,7 +76,6 @@ describe('MatchingInformation', () => {
       const page = new MatchingInformation({}, assessment)
 
       expect(page.errors()).toEqual({
-        apType: 'You must select the type of AP required',
         isStepFreeDesignated: 'You must specify a preference for step-free access',
         hasEnSuite: 'You must specify a preference for en-suite bathroom',
         lengthOfStayAgreed: 'You must state if you agree with the length of the stay',
@@ -138,24 +113,9 @@ describe('MatchingInformation', () => {
         'Non sexual offences against children': 'Relevant',
         'Hate based offences': 'Relevant',
         'Arson offences': 'Relevant',
-        'Specialist support needs': 'Semi-specialist mental health, Recovery Focused Approved Premises (RFAP)',
         'Do you agree with the suggested length of stay?': 'Yes',
         'Information for Central Referral Unit (CRU) manager': 'Some info',
       })
-    })
-
-    it('returns none if specialist support needs are not selected', () => {
-      const page = new MatchingInformation(
-        {
-          ...defaultArguments,
-          specialistSupportCriteria: [],
-        },
-        assessment,
-      )
-
-      const response = page.response()
-
-      expect(response['Specialist support needs']).toEqual('None')
     })
 
     it('adds the recommended length of stay if lengthOfStayAgreed is no', () => {
@@ -173,28 +133,6 @@ describe('MatchingInformation', () => {
 
       expect(response['Do you agree with the suggested length of stay?']).toEqual('No')
       expect(response['Recommended length of stay']).toEqual('5 weeks, 5 days')
-    })
-  })
-
-  describe('specialistSupportCheckboxes', () => {
-    it('returns an array of checkboxes with chosen options selected', () => {
-      const page = new MatchingInformation(
-        { ...defaultArguments, specialistSupportCriteria: ['isRecoveryFocussed'] },
-        assessment,
-      )
-
-      expect(page.specialistSupportCheckboxes).toEqual([
-        {
-          value: 'isRecoveryFocussed',
-          text: 'Recovery Focused Approved Premises (RFAP)',
-          checked: true,
-        },
-        {
-          value: 'isSemiSpecialistMentalHealth',
-          text: 'Semi-specialist mental health',
-          checked: false,
-        },
-      ])
     })
   })
 

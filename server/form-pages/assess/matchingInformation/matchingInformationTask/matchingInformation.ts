@@ -12,12 +12,10 @@ import {
   ApTypeCriteria,
   OffenceAndRiskCriteria,
   PlacementRequirementCriteria,
-  SpecialistSupportCriteria,
   apTypeOptions,
   offenceAndRiskOptions,
   placementCriteria,
   placementRequirementOptions,
-  specialistSupportOptions,
 } from '../../../../utils/placementCriteriaUtils'
 
 const placementRequirements = Object.keys(placementRequirementOptions)
@@ -36,7 +34,6 @@ export type MatchingInformationBody = {
       : never
 } & {
   apType: ApTypeCriteria | 'normal'
-  specialistSupportCriteria: Array<SpecialistSupportCriteria>
   cruInformation: string
   lengthOfStayAgreed: YesOrNo
   lengthOfStayWeeks: string
@@ -48,7 +45,6 @@ export type MatchingInformationBody = {
   name: 'matching-information',
   bodyProperties: [
     'apType',
-    'specialistSupportCriteria',
     'lengthOfStayAgreed',
     'lengthOfStayWeeks',
     'lengthOfStayDays',
@@ -67,7 +63,6 @@ export default class MatchingInformation implements TasklistPage {
 
   questions = {
     apType: 'What type of AP is required?',
-    specialistSupportCriteria: 'If this person would benefit from specialist support, select the relevant option below',
     lengthOfStayAgreed: 'Do you agree with the suggested length of stay?',
     lengthOfStay: 'Provide recommended length of stay',
     cruInformation: 'Information for Central Referral Unit (CRU) manager (optional)',
@@ -85,8 +80,6 @@ export default class MatchingInformation implements TasklistPage {
 
   offenceAndRiskInformationRelevance = offenceAndRiskInformationRelevance
 
-  specialistSupportOptions = specialistSupportOptions
-
   constructor(
     private _body: Partial<MatchingInformationBody>,
     public assessment: Assessment,
@@ -97,12 +90,7 @@ export default class MatchingInformation implements TasklistPage {
   }
 
   get body(): MatchingInformationBody {
-    return {
-      ...this._body,
-      specialistSupportCriteria: this._body.specialistSupportCriteria
-        ? [this._body.specialistSupportCriteria].flat()
-        : [],
-    } as MatchingInformationBody
+    return this._body as MatchingInformationBody
   }
 
   previous() {
@@ -117,12 +105,6 @@ export default class MatchingInformation implements TasklistPage {
     const response = {
       [this.questions.apType]: this.apTypes[this.body.apType],
     }
-
-    const selectedOptions = this.body.specialistSupportCriteria || []
-
-    response['Specialist support needs'] = selectedOptions.length
-      ? selectedOptions.map((k: string) => this.specialistSupportOptions[k]).join(', ')
-      : 'None'
 
     this.placementRequirements.forEach(placementRequirement => {
       response[`${placementCriteria[placementRequirement]}`] = `${sentenceCase(this.body[placementRequirement])}`
@@ -184,15 +166,5 @@ export default class MatchingInformation implements TasklistPage {
 
   get suggestedLengthOfStay() {
     return DateFormats.formatDuration(daysToWeeksAndDays(placementDurationFromApplication(this.assessment.application)))
-  }
-
-  get specialistSupportCheckboxes() {
-    return Object.keys(specialistSupportOptions).map((k: SpecialistSupportCriteria) => {
-      return {
-        value: k,
-        text: specialistSupportOptions[k],
-        checked: (this.body.specialistSupportCriteria || []).includes(k),
-      }
-    })
   }
 }

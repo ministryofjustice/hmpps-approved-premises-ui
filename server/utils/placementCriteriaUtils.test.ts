@@ -3,7 +3,6 @@ import {
   offenceAndRiskOptions,
   placementRequirementOptions,
   specialistApTypeOptions,
-  specialistSupportOptions,
 } from './placementCriteriaUtils'
 
 describe('placementCriteriaUtils', () => {
@@ -16,12 +15,6 @@ describe('placementCriteriaUtils', () => {
   describe('specialistApTypeOptions', () => {
     it('should return all the AP Type options without a `normal` AP type', () => {
       expect(Object.keys(specialistApTypeOptions)).toEqual(['isPIPE', 'isESAP'])
-    })
-  })
-
-  describe('specialistSupportOptions', () => {
-    it('should return all the mental health options', () => {
-      expect(Object.keys(specialistSupportOptions)).toEqual(['isRecoveryFocussed', 'isSemiSpecialistMentalHealth'])
     })
   })
 
