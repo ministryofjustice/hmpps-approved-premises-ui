@@ -8,12 +8,17 @@ import { kebabCase, linkTo, sentenceCase } from '../utils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
-const daysUntilDueCell = (task: Task): TableCell => ({
-  html: formatDaysUntilDueWithWarning(task),
-  attributes: {
-    'data-sort-value': DateFormats.differenceInBusinessDays(DateFormats.isoToDateObj(task.dueAt), new Date()),
-  },
-})
+const daysUntilDueCell = (task: Task): TableCell => {
+  const differenceInDays = DateFormats.differenceInBusinessDays(DateFormats.isoToDateObj(task.dueAt), new Date())
+  const html =
+    differenceInDays === 0 ? '<strong class="task--index__warning">Today</strong>' : formatDaysUntilDueWithWarning(task)
+  return {
+    html,
+    attributes: {
+      'data-sort-value': differenceInDays,
+    },
+  }
+}
 
 const statusCell = (task: Task): TableCell => ({
   html: statusBadge(task),
