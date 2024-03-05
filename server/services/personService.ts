@@ -9,6 +9,7 @@ import type {
   PersonAcctAlert,
   PrisonCaseNote,
 } from '@approved-premises/api'
+import { HttpError } from 'http-errors'
 import type { PersonClient, RestClientBuilder } from '../data'
 
 import { mapApiPersonRisksForUi } from '../utils/utils'
@@ -71,11 +72,12 @@ export default class PersonService {
       const oasysSections = await personClient.oasysSelections(crn)
 
       return oasysSections
-    } catch (e) {
-      if (e?.data?.status === 404) {
+    } catch (error) {
+      const knownError = error as HttpError
+      if (knownError?.data?.status === 404) {
         throw new OasysNotFoundError(`Oasys record not found for CRN: ${crn}`)
       }
-      throw e
+      throw knownError
     }
   }
 
@@ -86,11 +88,12 @@ export default class PersonService {
       const oasysSections = await personClient.oasysSections(crn, selectedSections)
 
       return oasysSections
-    } catch (e) {
-      if (e?.data?.status === 404) {
+    } catch (error) {
+      const knownError = error as HttpError
+      if (knownError?.data?.status === 404) {
         throw new OasysNotFoundError(`Oasys record not found for CRN: ${crn}`)
       }
-      throw e
+      throw knownError
     }
   }
 

@@ -49,8 +49,8 @@ export default class AppealsController {
         const successMessage = appeal.decision === 'accepted' ? 'Assessment reopened' : 'Appeal marked as rejected'
         req.flash('success', successMessage)
         res.redirect(paths.applications.show({ id: applicationId }))
-      } catch (err) {
-        catchValidationErrorOrPropogate(req, res, err, paths.applications.appeals.new({ id: applicationId }))
+      } catch (error) {
+        catchValidationErrorOrPropogate(req, res, error as Error, paths.applications.appeals.new({ id: applicationId }))
       }
     }
   }

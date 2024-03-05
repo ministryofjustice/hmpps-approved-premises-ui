@@ -9,6 +9,7 @@ import {
 } from '../../utils/validation'
 import paths from '../../paths/manage'
 import { DateFormats } from '../../utils/dateUtils'
+import { SanitisedError } from '../../sanitisedError'
 
 export default class LostBedsController {
   constructor(private readonly lostBedService: LostBedService) {}
@@ -52,22 +53,24 @@ export default class LostBedsController {
 
         req.flash('success', 'Lost bed logged')
         return res.redirect(paths.premises.show({ premisesId }))
-      } catch (err) {
+      } catch (error) {
         const redirectPath = paths.lostBeds.new({ premisesId, bedId })
 
-        if (err.status === 409 && 'data' in err) {
+        const knownError = error as SanitisedError
+
+        if (knownError.status === 409 && 'data' in knownError) {
           return generateConflictErrorAndRedirect(
             req,
             res,
             premisesId,
             ['startDate', 'endDate'],
-            err,
+            knownError,
             redirectPath,
             bedId,
           )
         }
 
-        return catchValidationErrorOrPropogate(req, res, err, redirectPath)
+        return catchValidationErrorOrPropogate(req, res, knownError, redirectPath)
       }
     }
   }
@@ -127,10 +130,10 @@ export default class LostBedsController {
         req.flash('success', 'Bed updated')
 
         return res.redirect(paths.lostBeds.index({ premisesId }))
-      } catch (err) {
+      } catch (error) {
         const redirectPath = req.headers.referer
 
-        return catchValidationErrorOrPropogate(req, res, err, redirectPath)
+        return catchValidationErrorOrPropogate(req, res, error as Error, redirectPath)
       }
     }
   }
@@ -146,8 +149,8 @@ export default class LostBedsController {
         req.flash('success', 'Bed cancelled')
 
         return res.redirect(paths.lostBeds.index({ premisesId }))
-      } catch (err) {
-        return catchValidationErrorOrPropogate(req, res, err, paths.lostBeds.show({ premisesId, bedId, id }))
+      } catch (error) {
+        return catchValidationErrorOrPropogate(req, res, error as Error, paths.lostBeds.show({ premisesId, bedId, id }))
       }
     }
   }

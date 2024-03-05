@@ -55,8 +55,13 @@ export default class ArrivalsController {
 
         req.flash('success', 'Arrival logged')
         res.redirect(paths.premises.show({ premisesId }))
-      } catch (err) {
-        catchValidationErrorOrPropogate(req, res, err, paths.bookings.arrivals.new({ bookingId, premisesId }))
+      } catch (error) {
+        catchValidationErrorOrPropogate(
+          req,
+          res,
+          error as Error,
+          paths.bookings.arrivals.new({ bookingId, premisesId }),
+        )
       }
     }
   }

@@ -71,9 +71,9 @@ export const convertObjectsToSelectOptions = (
   return options
 }
 
-export function convertKeyValuePairToRadioItems<T>(
+export function convertKeyValuePairToRadioItems<T extends object>(
   object: T,
-  checkedItem: string,
+  checkedItem?: keyof T,
   conditionals?: Partial<Record<keyof T, RadioItem['conditional']>>,
 ): Array<RadioItem> {
   return Object.keys(object).map(key => {
@@ -86,7 +86,7 @@ export function convertKeyValuePairToRadioItems<T>(
   })
 }
 
-export function convertKeyValuePairToCheckBoxItems<T>(
+export function convertKeyValuePairToCheckBoxItems<T extends object>(
   object: T,
   checkedItems: Array<string> = [],
 ): Array<CheckBoxItem> {
@@ -122,7 +122,7 @@ export function convertArrayToCheckboxItems(
   })
 }
 
-export function convertKeyValuePairsToSummaryListItems<T>(
+export function convertKeyValuePairsToSummaryListItems<T extends object>(
   values: T,
   titles: Record<string, string>,
 ): Array<SummaryListItem> {

@@ -40,7 +40,7 @@ export const withdrawalRadioOptions = (conditionals: Partial<Record<WithdrawalRe
   { divider: 'The application is no longer needed' },
   ...convertKeyValuePairToRadioItems(placementNoLongerNeededOptions, undefined, conditionals),
   { divider: 'A new application is needed' },
-  ...convertKeyValuePairToRadioItems(newApplicationToBeSubmittedOptions, undefined),
+  ...convertKeyValuePairToRadioItems(newApplicationToBeSubmittedOptions),
   { divider: "There's a problem with the application" },
-  ...convertKeyValuePairToRadioItems(applicationProblemOptions, undefined),
+  ...convertKeyValuePairToRadioItems(applicationProblemOptions),
 ]

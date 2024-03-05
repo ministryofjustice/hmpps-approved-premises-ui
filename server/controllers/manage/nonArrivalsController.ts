@@ -45,8 +45,13 @@ export default class NonArrivalsController {
 
         req.flash('success', 'Non-arrival logged')
         res.redirect(paths.premises.show({ premisesId }))
-      } catch (err) {
-        catchValidationErrorOrPropogate(req, res, err, paths.bookings.nonArrivals.new({ premisesId, bookingId }))
+      } catch (error) {
+        catchValidationErrorOrPropogate(
+          req,
+          res,
+          error as Error,
+          paths.bookings.nonArrivals.new({ premisesId, bookingId }),
+        )
       }
     }
   }

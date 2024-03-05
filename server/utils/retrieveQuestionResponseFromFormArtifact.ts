@@ -49,7 +49,7 @@ export const retrieveOptionalQuestionResponseFromFormArtifact = (
 
   try {
     response = retrieveQuestionResponseFromFormArtifact(formArtifact, Page, question)
-  } catch (e) {
+  } catch (error) {
     response = undefined
   }
 

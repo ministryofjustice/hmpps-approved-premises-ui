@@ -1,5 +1,5 @@
 import { Withdrawable } from '../../../@types/shared'
-import { DateFormats } from '../../dateUtils'
+import { DateFormats, InvalidDateStringError } from '../../dateUtils'
 
 export const sortAndFilterWithdrawables = (
   withdrawables: Array<Withdrawable>,
@@ -17,8 +17,9 @@ export const sortAndFilterWithdrawables = (
           DateFormats.isoToDateObj(a.dates[0].startDate).getTime() -
           DateFormats.isoToDateObj(b.dates[0].startDate).getTime()
         )
-      } catch (e) {
-        throw new Error(`Error sorting withdrawables: ${e.message}`)
+      } catch (error) {
+        const knownError = error as InvalidDateStringError
+        throw new Error(`Error sorting withdrawables: ${knownError.message}`)
       }
     })
 }

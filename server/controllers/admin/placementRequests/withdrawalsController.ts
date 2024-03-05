@@ -49,15 +49,15 @@ export default class WithdrawalsController {
 
         try {
           req.flash('success', withdrawalMessage(placementRequest.duration, placementRequest.expectedArrival))
-        } catch (e) {
+        } catch (error) {
           req.flash('success', 'Placement application withdrawn')
         }
         return res.redirect(paths.admin.placementRequests.index({}))
-      } catch (err) {
+      } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
           res,
-          err,
+          error as Error,
           paths.admin.placementRequests.withdrawal.new({ id: req.params.id }),
         )
       }

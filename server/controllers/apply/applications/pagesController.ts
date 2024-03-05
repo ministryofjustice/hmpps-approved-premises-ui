@@ -36,11 +36,11 @@ export default class PagesController {
           page,
           ...page.body,
         })
-      } catch (e) {
-        if (e instanceof UnknownPageError) {
+      } catch (error) {
+        if (error instanceof UnknownPageError) {
           next(createError(404, 'Not found'))
         } else {
-          catchAPIErrorOrPropogate(req, res, e)
+          catchAPIErrorOrPropogate(req, res, error as Error)
         }
       }
     }
@@ -59,11 +59,11 @@ export default class PagesController {
         } else {
           res.redirect(paths.applications.show({ id: req.params.id }))
         }
-      } catch (err) {
+      } catch (error) {
         catchValidationErrorOrPropogate(
           req,
           res,
-          err,
+          error as Error,
           paths.applications.pages.show({ id: req.params.id, task: taskName, page: pageName }),
         )
       }

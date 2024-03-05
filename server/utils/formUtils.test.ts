@@ -218,7 +218,7 @@ describe('formUtils', () => {
     }
 
     it('should convert a key value pair to radio items', () => {
-      expect(convertKeyValuePairToRadioItems(obj, '')).toEqual([
+      expect(convertKeyValuePairToRadioItems(obj)).toEqual([
         {
           value: 'foo',
           text: 'Foo',
@@ -270,7 +270,7 @@ describe('formUtils', () => {
         },
       }
 
-      expect(convertKeyValuePairToRadioItems(obj, '', conditionals)).toEqual([
+      expect(convertKeyValuePairToRadioItems(obj, undefined, conditionals)).toEqual([
         {
           value: 'foo',
           text: 'Foo',

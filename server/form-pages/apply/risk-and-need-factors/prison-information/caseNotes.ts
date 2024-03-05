@@ -2,6 +2,7 @@ import type { DataServices, PageResponse, TaskListErrors, YesOrNoWithDetail } fr
 
 import type { Adjudication, ApprovedPremisesApplication, PersonAcctAlert, PrisonCaseNote } from '@approved-premises/api'
 
+import { HttpError } from 'http-errors'
 import { yesOrNoResponseWithDetailForYes } from '../../../utils'
 import { sentenceCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
@@ -136,11 +137,12 @@ export default class CaseNotes implements TasklistPage {
 
       page.caseNotes = caseNotes
       page.nomisFailed = false
-    } catch (e) {
-      if (e?.data?.status === 404) {
+    } catch (error) {
+      const knownError = error as HttpError
+      if (knownError?.data?.status === 404) {
         page.nomisFailed = true
       } else {
-        throw e
+        throw knownError
       }
     }
 

@@ -39,9 +39,9 @@ describe('withdrawalReasons', () => {
         { divider: 'The application is no longer needed' },
         ...convertKeyValuePairToRadioItems(placementNoLongerNeededOptions, undefined, conditional),
         { divider: 'A new application is needed' },
-        ...convertKeyValuePairToRadioItems(newApplicationToBeSubmittedOptions, undefined),
+        ...convertKeyValuePairToRadioItems(newApplicationToBeSubmittedOptions),
         { divider: "There's a problem with the application" },
-        ...convertKeyValuePairToRadioItems(applicationProblemOptions, undefined),
+        ...convertKeyValuePairToRadioItems(applicationProblemOptions),
       ])
     })
   })

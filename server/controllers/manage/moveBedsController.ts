@@ -46,8 +46,8 @@ export default class MoveBedsController {
 
         req.flash('success', 'Bed move logged')
         res.redirect(paths.premises.show({ premisesId }))
-      } catch (err) {
-        catchValidationErrorOrPropogate(req, res, err, paths.bookings.moves.new({ premisesId, bookingId }))
+      } catch (error) {
+        catchValidationErrorOrPropogate(req, res, error as Error, paths.bookings.moves.new({ premisesId, bookingId }))
       }
     }
   }

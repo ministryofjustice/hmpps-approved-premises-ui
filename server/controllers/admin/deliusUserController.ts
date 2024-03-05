@@ -1,4 +1,5 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
+import { HttpError } from 'http-errors'
 import { UserService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/admin'
@@ -19,12 +20,13 @@ export default class UserController {
       try {
         const user = await this.userService.searchDelius(req.user.token, req.body.username as string)
         return res.render('admin/users/confirm', { pageHeading: 'Confirm new user', user })
-      } catch (err) {
-        if ('data' in err && err.status === 404) {
+      } catch (error) {
+        const knownError = error as HttpError | Error
+        if ('data' in knownError && knownError.status === 404) {
           addErrorMessageToFlash(req, 'User not found. Enter the nDelius username as appears on nDelius', 'username')
           return res.redirect(paths.admin.userManagement.new({}))
         }
-        throw err
+        throw knownError
       }
     }
   }

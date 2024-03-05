@@ -49,11 +49,11 @@ export default class DeparturesController {
 
         req.flash('success', 'Departure recorded')
         res.redirect(paths.bookings.show({ premisesId, bookingId }))
-      } catch (err) {
+      } catch (error) {
         catchValidationErrorOrPropogate(
           req,
           res,
-          err,
+          error as Error,
           paths.bookings.departures.new({
             premisesId,
             bookingId,

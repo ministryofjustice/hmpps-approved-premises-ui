@@ -166,8 +166,8 @@ describe('PersonService', () => {
 
       try {
         await service.getOasysSelections(token, 'crn')
-      } catch (e) {
-        expect(e).toEqual(err)
+      } catch (error) {
+        expect(error).toEqual(err)
       }
     })
 
@@ -215,8 +215,8 @@ describe('PersonService', () => {
 
       try {
         await service.getOasysSections(token, 'crn')
-      } catch (e) {
-        expect(e).toEqual(err)
+      } catch (error) {
+        expect(error).toEqual(err)
       }
     })
 

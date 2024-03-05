@@ -46,11 +46,11 @@ export default class BookingExtensionsController {
             bookingId,
           }),
         )
-      } catch (err) {
+      } catch (error) {
         catchValidationErrorOrPropogate(
           req,
           res,
-          err,
+          error as Error,
           paths.bookings.extensions.new({
             premisesId,
             bookingId,

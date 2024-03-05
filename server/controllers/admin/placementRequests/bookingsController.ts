@@ -58,11 +58,11 @@ export default class PlacementRequestsController {
 
         req.flash('success', `Placement created for ${booking.premisesName}`)
         return res.redirect(paths.admin.placementRequests.show({ id: req.params.id }))
-      } catch (err) {
+      } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
           res,
-          err,
+          error as Error,
           paths.admin.placementRequests.bookings.new({ id: req.params.id }),
         )
       }

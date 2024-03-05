@@ -43,9 +43,9 @@ expect.extend({
         message: () => `Swagger mock validator for ${pactPath} did not fail`,
         pass: true,
       }
-    } catch (err) {
+    } catch (error) {
       return {
-        message: () => err.output.toString(),
+        message: () => error.output.toString(),
         pass: false,
       }
     }

@@ -51,15 +51,15 @@ const problemInPlacementOptions = filterByType<ProblemInPlacementReasons>(proble
 
 const placementNoLongerNeededDividerAndRadioItems = [
   { divider: 'The placement is no longer needed' },
-  ...convertKeyValuePairToRadioItems(placementNoLongerNeededOptions, undefined),
+  ...convertKeyValuePairToRadioItems(placementNoLongerNeededOptions),
 ]
 const noCapacityDividerAndRadioItems = [
   { divider: 'The placement is unavailable (CRU use only)' },
-  ...convertKeyValuePairToRadioItems(noCapacityOptions, undefined),
+  ...convertKeyValuePairToRadioItems(noCapacityOptions),
 ]
 const problemInPlacementDividerAndRadioItems = [
   { divider: 'Problem in placement' },
-  ...convertKeyValuePairToRadioItems(problemInPlacementOptions, undefined),
+  ...convertKeyValuePairToRadioItems(problemInPlacementOptions),
 ]
 
 export const placementApplicationWithdrawalReasons = (
