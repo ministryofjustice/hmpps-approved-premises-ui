@@ -11,6 +11,7 @@ import {
   numberToOrdinal,
   objectIfNotEmpty,
   pascalCase,
+  pluralize,
   removeBlankSummaryListItems,
   resolvePath,
 } from './utils'
@@ -361,5 +362,15 @@ describe('linebreaksToParagraphs', () => {
     expect(linebreaksToParagraphs('foo\r\n\r\nbar')).toEqual(
       '<p class="govuk-body">foo</p><p class="govuk-body">bar</p>',
     )
+  })
+})
+
+describe('pluralize', () => {
+  it.each([
+    ['dog', 'dogs', 2],
+    ['dog', 'dog', 1],
+    ['dog', 'dogs', -2],
+  ])('pluralises %s to %s when count is %s', (noun: string, expected: string, count: number) => {
+    expect(pluralize(noun, count)).toEqual(`${count} ${expected}`)
   })
 })

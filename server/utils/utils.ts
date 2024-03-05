@@ -195,3 +195,11 @@ export const filterByType = <T extends string>(
     .filter(k => keys.includes(k))
     .reduce((criteria, key) => ({ ...criteria, [key]: lookup[key] }), {}) as Record<T, string>
 }
+
+/**
+ * A naive pluralisation function
+ * @param noun the noun to return in plural form if `count` is more than 1
+ * @param count how many of the word exist
+ * @return A sentence with the count of noun(s)
+ */
+export const pluralize = (noun: string, count: number): string => `${count} ${noun}${Math.abs(count) > 1 ? 's' : ''}`

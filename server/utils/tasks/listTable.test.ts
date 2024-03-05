@@ -178,18 +178,30 @@ describe('table', () => {
   })
 
   describe('daysUntilDueCell', () => {
-    it('returns the days until due formatted for the UI as a TableCell object', () => {
-      const task = taskFactory.build()
+    const task = taskFactory.build()
 
-      ;(DateFormats.differenceInBusinessDays as jest.Mock).mockReturnValue(10)
+    it('returns the days until due formatted for the UI as a TableCell object', () => {
       when(DateFormats.differenceInBusinessDays)
-        .calledWith(DateFormats.isoToDateObj(task.dueAt), new Date())
+        .calledWith(DateFormats.isoToDateObj(task.dueAt), expect.any(Date))
         .mockReturnValue(10)
 
       expect(daysUntilDueCell(task)).toEqual({
         html: formatDaysUntilDueWithWarning(task),
         attributes: {
           'data-sort-value': 10,
+        },
+      })
+    })
+
+    it('returns "Today" if the task is due today', () => {
+      when(DateFormats.differenceInBusinessDays)
+        .calledWith(DateFormats.isoToDateObj(task.dueAt), expect.any(Date))
+        .mockReturnValue(0)
+
+      expect(daysUntilDueCell(task)).toEqual({
+        html: '<strong class="task--index__warning">Today</strong>',
+        attributes: {
+          'data-sort-value': 0,
         },
       })
     })
@@ -248,7 +260,7 @@ describe('table', () => {
       expect(formatDaysUntilDueWithWarning(task)).toEqual('10 Days')
     })
 
-    it('returns "overdue" if the task is overdue', () => {
+    it('returns "approaching due date" if the task is nearly due', () => {
       const task = taskFactory.build()
 
       when(DateFormats.differenceInBusinessDays)
@@ -257,6 +269,18 @@ describe('table', () => {
 
       expect(formatDaysUntilDueWithWarning(task)).toEqual(
         `<strong class="task--index__warning">2 Days<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`,
+      )
+    })
+
+    it('returns "overdue" if the task is overdue', () => {
+      const task = taskFactory.build()
+
+      when(DateFormats.differenceInBusinessDays)
+        .calledWith(DateFormats.isoToDateObj(task.dueAt), expect.any(Date))
+        .mockReturnValue(-3)
+
+      expect(formatDaysUntilDueWithWarning(task)).toEqual(
+        `<strong class="task--index__warning">-3 Days<span class="govuk-visually-hidden"> (Overdue by 3 days)</span></strong>`,
       )
     })
   })
