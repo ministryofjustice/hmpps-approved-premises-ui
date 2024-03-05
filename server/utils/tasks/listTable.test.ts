@@ -260,7 +260,7 @@ describe('table', () => {
       expect(formatDaysUntilDueWithWarning(task)).toEqual('10 Days')
     })
 
-    it('returns "overdue" if the task is overdue', () => {
+    it('returns "approaching due date" if the task is nearly due', () => {
       const task = taskFactory.build()
 
       when(DateFormats.differenceInBusinessDays)
@@ -269,6 +269,18 @@ describe('table', () => {
 
       expect(formatDaysUntilDueWithWarning(task)).toEqual(
         `<strong class="task--index__warning">2 Days<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`,
+      )
+    })
+
+    it('returns "overdue" if the task is overdue', () => {
+      const task = taskFactory.build()
+
+      when(DateFormats.differenceInBusinessDays)
+        .calledWith(DateFormats.isoToDateObj(task.dueAt), expect.any(Date))
+        .mockReturnValue(-3)
+
+      expect(formatDaysUntilDueWithWarning(task)).toEqual(
+        `<strong class="task--index__warning">-3 Days<span class="govuk-visually-hidden"> (Overdue by 3 days)</span></strong>`,
       )
     })
   })

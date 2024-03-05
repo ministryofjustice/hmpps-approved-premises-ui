@@ -4,7 +4,7 @@ import { TableCell, TableRow } from '../../@types/ui'
 import paths from '../../paths/tasks'
 import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
-import { kebabCase, linkTo, sentenceCase } from '../utils'
+import { kebabCase, linkTo, pluralize, sentenceCase } from '../utils'
 
 const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
 
@@ -76,7 +76,11 @@ const statusBadge = (task: Task): string => {
 
 const formatDaysUntilDueWithWarning = (task: Task): string => {
   const differenceInDays = DateFormats.differenceInBusinessDays(DateFormats.isoToDateObj(task.dueAt), new Date())
-  const formattedDifference = `${differenceInDays} Day${differenceInDays > 1 ? 's' : ''}`
+  const formattedDifference = pluralize('Day', differenceInDays)
+
+  if (differenceInDays < 0) {
+    return `<strong class="task--index__warning">${formattedDifference}<span class="govuk-visually-hidden"> (Overdue by ${pluralize('day', Math.abs(differenceInDays))})</span></strong>`
+  }
 
   if (differenceInDays < DUE_DATE_APPROACHING_DAYS_WINDOW) {
     return `<strong class="task--index__warning">${formattedDifference}<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`
