@@ -1,4 +1,4 @@
-import { differenceInCalendarMonths, differenceInDays } from 'date-fns'
+import { differenceInDays } from 'date-fns'
 import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { DateFormats } from '../dateUtils'
@@ -13,9 +13,9 @@ export const noticeTypeFromApplication = (application: Application): Application
   const arrivalDateObj = DateFormats.isoToDateObj(arrivalDateString)
 
   switch (true) {
-    case differenceInDays(arrivalDateObj, new Date()) <= 28:
+    case differenceInDays(arrivalDateObj, new Date()) <= 7:
       return 'emergency'
-    case differenceInCalendarMonths(arrivalDateObj, new Date()) < 6:
+    case differenceInDays(arrivalDateObj, new Date()) <= 28:
       return 'short_notice'
     default:
       return 'standard'
