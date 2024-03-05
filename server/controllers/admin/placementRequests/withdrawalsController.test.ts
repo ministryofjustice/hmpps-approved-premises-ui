@@ -10,15 +10,17 @@ import WithdrawalsController from './withdrawalsController'
 import { ErrorWithData } from '../../../utils/errors'
 import { placementRequestDetailFactory } from '../../../testutils/factories'
 import { withdrawalMessage } from '../../../utils/placementRequests/utils'
+import { placementApplicationWithdrawalReasons } from '../../../utils/applications/utils'
 
 jest.mock('../../../utils/validation')
 jest.mock('../../../utils/placementRequests/utils')
+jest.mock('../../../utils/applications/utils')
 
 describe('withdrawalsController', () => {
   const token = 'SOME_TOKEN'
 
-  let request: DeepMocked<Request> = createMock<Request>({ user: { token } })
-  let response: DeepMocked<Response> = createMock<Response>({})
+  let request: DeepMocked<Request>
+  let response: DeepMocked<Response>
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const placementRequestService = createMock<PlacementRequestService>({})
@@ -27,7 +29,7 @@ describe('withdrawalsController', () => {
 
   beforeEach(() => {
     withdrawalsController = new WithdrawalsController(placementRequestService)
-    request = createMock<Request>({ user: { token } })
+    request = createMock<Request>({ session: { user: { roles: ['workflow_manager'] } }, user: { token } })
     response = createMock<Response>({})
     jest.clearAllMocks()
   })
@@ -39,6 +41,13 @@ describe('withdrawalsController', () => {
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
       request.params.id = applicationId
 
+      const placementApplicationWithdrawalReasonsReturnValue = 'reasons' as unknown as ReturnType<
+        typeof placementApplicationWithdrawalReasons
+      >
+      ;(
+        placementApplicationWithdrawalReasons as jest.MockedFn<typeof placementApplicationWithdrawalReasons>
+      ).mockReturnValue(placementApplicationWithdrawalReasonsReturnValue)
+
       const requestHandler = withdrawalsController.new()
 
       await requestHandler(request, response, next)
@@ -48,7 +57,9 @@ describe('withdrawalsController', () => {
         id: request.params.id,
         errors: errorsAndUserInput.errors,
         errorSummary: errorsAndUserInput.errorSummary,
+        withdrawalReasonsRadioItems: placementApplicationWithdrawalReasonsReturnValue,
       })
+      expect(placementApplicationWithdrawalReasons).toHaveBeenCalledWith(request.session.user.roles)
     })
   })
 

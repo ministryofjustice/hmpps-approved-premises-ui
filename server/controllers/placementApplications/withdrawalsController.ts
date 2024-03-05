@@ -5,7 +5,7 @@ import { PlacementApplicationService } from '../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
 
 import placementApplicationPaths from '../../paths/placementApplications'
-import { applicationShowPageTab } from '../../utils/applications/utils'
+import { applicationShowPageTab, placementApplicationWithdrawalReasons } from '../../utils/applications/utils'
 import { WithdrawPlacementRequestReason } from '../../@types/shared/models/WithdrawPlacementRequestReason'
 import { Application } from '../../@types/shared'
 import { withdrawalMessage } from '../../utils/placementRequests/utils'
@@ -21,12 +21,15 @@ export default class WithdrawalsController {
         req.params.id,
       )
 
+      const withdrawalReasonsRadioItems = placementApplicationWithdrawalReasons(req.session.user.roles)
+
       return res.render('placement-applications/withdraw/new', {
         pageHeading: 'Why is this request for placement being withdrawn?',
         placementApplicationId: placementApplication.id,
         applicationId: placementApplication.applicationId,
         errors,
         errorSummary,
+        withdrawalReasonsRadioItems,
         ...userInput,
       })
     }
