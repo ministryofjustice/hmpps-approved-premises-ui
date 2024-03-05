@@ -56,8 +56,9 @@ export default class ReviewController {
         return res.redirect(
           placementApplicationPaths.placementApplications.review.decision({ id: review.applicationId }),
         )
-      } catch (err) {
-        if (err.message === 'Invalid request body') {
+      } catch (error) {
+        const knownError = error as Error
+        if (knownError.message === 'Invalid request body') {
           const errorMessages = generateErrorMessages(review.errors)
           const errorSummary = generateErrorSummary(review.errors)
 
@@ -67,7 +68,7 @@ export default class ReviewController {
 
           return res.redirect(req.headers.referer)
         }
-        return catchValidationErrorOrPropogate(req, res, err, req.headers.referer)
+        return catchValidationErrorOrPropogate(req, res, knownError, req.headers.referer)
       }
     }
   }
@@ -88,8 +89,9 @@ export default class ReviewController {
         return res.redirect(
           placementApplicationPaths.placementApplications.review.confirm({ id: review.applicationId }),
         )
-      } catch (err) {
-        if (err.message === 'Invalid request body') {
+      } catch (error) {
+        const knownError = error as Error
+        if (knownError.message === 'Invalid request body') {
           const errorMessages = generateErrorMessages(review.errors)
           const errorSummary = generateErrorSummary(review.errors)
 
@@ -99,7 +101,7 @@ export default class ReviewController {
 
           return res.redirect(req.headers.referer)
         }
-        return catchAPIErrorOrPropogate(req, res, err)
+        return catchAPIErrorOrPropogate(req, res, knownError)
       }
     }
   }

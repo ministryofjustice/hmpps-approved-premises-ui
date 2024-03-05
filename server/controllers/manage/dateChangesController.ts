@@ -73,11 +73,11 @@ export default class DateChangeController {
 
         req.flash('success', 'Booking changed successfully')
         res.redirect(backLink)
-      } catch (err) {
+      } catch (error) {
         catchValidationErrorOrPropogate(
           req,
           res,
-          err,
+          error as Error,
           paths.bookings.dateChanges.new({
             bookingId,
             premisesId,

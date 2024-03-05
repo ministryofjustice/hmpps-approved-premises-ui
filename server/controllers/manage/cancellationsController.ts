@@ -55,7 +55,7 @@ export default class CancellationsController {
       try {
         date = DateFormats.dateAndTimeInputsToIsoString(req.body, 'date').date
         DateFormats.isoToDateObj(date)
-      } catch (err) {
+      } catch (error) {
         date = DateFormats.dateObjToIsoDate(new Date())
       }
 
@@ -68,11 +68,11 @@ export default class CancellationsController {
         await this.cancellationService.createCancellation(req.user.token, premisesId, bookingId, cancellation)
 
         res.render('cancellations/confirm', { pageHeading: 'Booking withdrawn' })
-      } catch (err) {
+      } catch (error) {
         catchValidationErrorOrPropogate(
           req,
           res,
-          err,
+          error as Error,
           paths.bookings.cancellations.new({
             bookingId,
             premisesId,

@@ -66,8 +66,13 @@ export default class WithdrawalsController {
 
         req.flash('success', 'Application withdrawn')
         return res.redirect(paths.applications.index({}))
-      } catch (err) {
-        return catchValidationErrorOrPropogate(req, res, err, paths.applications.withdraw.new({ id: req.params.id }))
+      } catch (error) {
+        return catchValidationErrorOrPropogate(
+          req,
+          res,
+          error as Error,
+          paths.applications.withdraw.new({ id: req.params.id }),
+        )
       }
     }
   }

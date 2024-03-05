@@ -82,7 +82,7 @@ export class DateFormats {
 
     try {
       parsedDate = parseISO(date)
-    } catch (err) {
+    } catch (error) {
       throw new InvalidDateStringError(`Invalid Date: ${date}`)
     }
 
@@ -265,8 +265,8 @@ export const dateAndTimeInputsAreValidDates = <K extends string | number>(
 
   try {
     DateFormats.isoToDateObj(dateString[key])
-  } catch (err) {
-    if (err instanceof InvalidDateStringError) {
+  } catch (error) {
+    if (error instanceof InvalidDateStringError) {
       return false
     }
   }

@@ -70,13 +70,13 @@ export default class OptionalOasysSections implements TasklistPage {
       page.allNeedsLinkedToReoffending = allNeedsLinkedToReoffending
       page.allOtherNeeds = allOtherNeeds
       page.oasysSuccess = true
-    } catch (e) {
-      if (e instanceof OasysNotFoundError) {
+    } catch (error) {
+      if (error instanceof OasysNotFoundError) {
         page.oasysSuccess = false
         page.body.needsLinkedToReoffending = []
         page.body.otherNeeds = []
       } else {
-        throw e
+        throw error
       }
     }
 

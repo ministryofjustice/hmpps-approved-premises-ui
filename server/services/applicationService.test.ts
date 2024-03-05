@@ -318,8 +318,8 @@ describe('ApplicationService', () => {
         expect.assertions(1)
         try {
           await service.save(page, request)
-        } catch (e) {
-          expect(e).toEqual(new ValidationError(errors))
+        } catch (error) {
+          expect(error).toEqual(new ValidationError(errors))
         }
       })
     })

@@ -23,11 +23,11 @@ export default class AllocationsController {
           `${convertToTitleCase(sentenceCase(reallocation.taskType))} has been allocated to ${reallocation.user.name}`,
         )
         res.redirect(paths.tasks.index({}))
-      } catch (err) {
+      } catch (error) {
         catchValidationErrorOrPropogate(
           req,
           res,
-          err,
+          error as Error,
           paths.tasks.show({ id: req.params.id, taskType: req.params.taskType }),
         )
       }

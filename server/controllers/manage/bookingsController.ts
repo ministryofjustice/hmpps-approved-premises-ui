@@ -90,10 +90,10 @@ export default class BookingsController {
             bookingId: confirmedBooking.id,
           }),
         )
-      } catch (err) {
+      } catch (error) {
         req.flash('crn', booking.crn)
         const redirectPath = paths.bookings.new({ premisesId })
-        return catchValidationErrorOrPropogate(req, res, err, redirectPath)
+        return catchValidationErrorOrPropogate(req, res, error as Error, redirectPath)
       }
     }
   }

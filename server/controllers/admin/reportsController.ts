@@ -46,8 +46,8 @@ export default class ReportsController {
         }
 
         return await this.reportsService.getReport(req.user.token, month, year, reportType, res)
-      } catch (err) {
-        return catchValidationErrorOrPropogate(req, res, err, paths.admin.reports.new({}))
+      } catch (error) {
+        return catchValidationErrorOrPropogate(req, res, error as Error, paths.admin.reports.new({}))
       }
     }
   }

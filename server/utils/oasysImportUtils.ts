@@ -38,12 +38,12 @@ export const getOasysSections = async <T extends OasysPage>(
   try {
     oasysSections = await dataServices.personService.getOasysSections(token, application.person.crn, selectedSections)
     oasysSuccess = true
-  } catch (e) {
-    if (e instanceof OasysNotFoundError) {
+  } catch (error) {
+    if (error instanceof OasysNotFoundError) {
       oasysSections = oasysStubs
       oasysSuccess = false
     } else {
-      throw e
+      throw error
     }
   }
 
@@ -132,8 +132,8 @@ export const fetchOptionalOasysSections = (application: Application): Array<numb
     return [...optionalOasysSections.needsLinkedToReoffending, ...optionalOasysSections.otherNeeds]
       .map((oasysSection: OASysSection) => oasysSection?.section)
       .filter(section => !!section)
-  } catch (e) {
-    throw new SessionDataError(`Oasys supporting information error: ${e}`)
+  } catch (error) {
+    throw new SessionDataError(`Oasys supporting information error: ${error}`)
   }
 }
 
