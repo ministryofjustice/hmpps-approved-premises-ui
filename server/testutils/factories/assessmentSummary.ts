@@ -24,4 +24,5 @@ export default AssessmentSummaryFactory.define(() => ({
   status: 'not_started' as const,
   risks: risksFactory.build(),
   person: faker.helpers.arrayElement([fullPersonFactory.build(), restrictedPersonFactory.build()]),
+  dueAt: DateFormats.dateObjToIsoDateTime(faker.date.future()),
 }))
