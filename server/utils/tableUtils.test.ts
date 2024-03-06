@@ -1,6 +1,15 @@
-import { placementRequestTaskFactory, taskFactory, tierEnvelopeFactory } from '../testutils/factories'
+import { when } from 'jest-when'
+import {
+  assessmentSummaryFactory,
+  placementRequestTaskFactory,
+  taskFactory,
+  tierEnvelopeFactory,
+} from '../testutils/factories'
 import { tierBadge } from './personUtils'
-import { crnCell, emailCell, nameCell, tierCell } from './tableUtils'
+import { crnCell, daysUntilDueCell, emailCell, nameCell, tierCell } from './tableUtils'
+import { DateFormats } from './dateUtils'
+
+jest.mock('./dateUtils')
 
 describe('tableUtils', () => {
   describe('nameCell', () => {
@@ -29,6 +38,76 @@ describe('tableUtils', () => {
   describe('emailCell', () => {
     it('returns the email cell for the item', () => {
       expect(emailCell({ email: 'test' })).toEqual({ text: 'test' })
+    })
+  })
+
+  describe.each([['task'], ['assessmentSummary']])('daysUntilDueCell works with with `%s` item types', itemType => {
+    const date = new Date()
+
+    const item = {
+      task: taskFactory.build(),
+      assessmentSummary: assessmentSummaryFactory.build(),
+    }[itemType]
+
+    beforeAll(() => {
+      jest.useFakeTimers()
+      jest.setSystemTime(date)
+    })
+
+    afterAll(() => {
+      jest.useRealTimers()
+    })
+
+    it('returns the days until due', () => {
+      when(DateFormats.differenceInBusinessDays)
+        .calledWith(DateFormats.isoToDateObj(item.dueAt), date)
+        .mockReturnValue(10)
+
+      expect(daysUntilDueCell(item, 'some-class')).toEqual({
+        html: '10 Days',
+        attributes: {
+          'data-sort-value': 10,
+        },
+      })
+    })
+
+    it('returns the days until due with a warning when the due date is approaching', () => {
+      when(DateFormats.differenceInBusinessDays)
+        .calledWith(DateFormats.isoToDateObj(item.dueAt), date)
+        .mockReturnValue(2)
+
+      expect(daysUntilDueCell(item, 'some-class')).toEqual({
+        html: `<strong class="some-class">2 Days<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`,
+        attributes: {
+          'data-sort-value': 2,
+        },
+      })
+    })
+
+    it('returns the days until due with a warning when the due date is after today', () => {
+      when(DateFormats.differenceInBusinessDays)
+        .calledWith(DateFormats.isoToDateObj(item.dueAt), date)
+        .mockReturnValue(-5)
+
+      expect(daysUntilDueCell(item, 'some-class')).toEqual({
+        html: `<strong class="some-class">-5 Days<span class="govuk-visually-hidden"> (Overdue by 5 days)</span></strong>`,
+        attributes: {
+          'data-sort-value': -5,
+        },
+      })
+    })
+
+    it('returns "today" when the task is due today', () => {
+      when(DateFormats.differenceInBusinessDays)
+        .calledWith(DateFormats.isoToDateObj(item.dueAt), date)
+        .mockReturnValue(0)
+
+      expect(daysUntilDueCell(item, 'some-class')).toEqual({
+        html: '<strong class="some-class">Today</strong>',
+        attributes: {
+          'data-sort-value': 0,
+        },
+      })
     })
   })
 })

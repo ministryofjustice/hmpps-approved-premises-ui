@@ -7,15 +7,9 @@ import {
 } from '@approved-premises/api'
 import { AssessmentCurrentTab, TableRow } from '@approved-premises/ui'
 import { linkTo } from '../utils'
-import {
-  daysSinceInfoRequest,
-  daysSinceReceived,
-  formatDays,
-  formatDaysUntilDueWithWarning,
-  formattedArrivalDate,
-} from './dateUtils'
+import { daysSinceInfoRequest, daysSinceReceived, formatDays, formattedArrivalDate } from './dateUtils'
 import paths from '../../paths/assess'
-import { crnCell, tierCell } from '../tableUtils'
+import { crnCell, daysUntilDueCell, tierCell } from '../tableUtils'
 import { isFullPerson, laoName } from '../personUtils'
 import { sortHeader } from '../sortHeader'
 
@@ -53,12 +47,6 @@ export const restrictedPersonCell = (person: RestrictedPerson) => {
 const arrivalDateCell = (assessment: AssessmentSummary) => {
   return {
     text: formattedArrivalDate(assessment),
-  }
-}
-
-const daysUntilDueCell = (assessment: AssessmentSummary) => {
-  return {
-    html: formatDaysUntilDueWithWarning(assessment),
   }
 }
 
@@ -169,7 +157,7 @@ const awaitingAssessmentTableRows = (assessments: Array<AssessmentSummary>): Arr
         tierCell({ tier: assessment.risks.tier }),
         arrivalDateCell(assessment),
         prisonCell(assessment.person),
-        daysUntilDueCell(assessment),
+        daysUntilDueCell(assessment, 'assessments--index__warning'),
         statusCell(assessment),
       ])
     } else {

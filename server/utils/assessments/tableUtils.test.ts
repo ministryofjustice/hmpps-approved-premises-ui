@@ -1,13 +1,7 @@
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 
 import { assessmentSummaryFactory, personFactory, restrictedPersonFactory } from '../../testutils/factories'
-import {
-  daysSinceInfoRequest,
-  daysSinceReceived,
-  formatDays,
-  formatDaysUntilDueWithWarning,
-  formattedArrivalDate,
-} from './dateUtils'
+import { daysSinceInfoRequest, daysSinceReceived, formatDays, formattedArrivalDate } from './dateUtils'
 import {
   assessmentLink,
   assessmentTable,
@@ -19,7 +13,7 @@ import {
   restrictedPersonCell,
 } from './tableUtils'
 import paths from '../../paths/assess'
-import { crnCell, tierCell } from '../tableUtils'
+import { crnCell, daysUntilDueCell, tierCell } from '../tableUtils'
 import { AssessmentSortField, ApprovedPremisesAssessmentSummary as AssessmentSummary } from '../../@types/shared'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
@@ -184,7 +178,7 @@ describe('tableUtils', () => {
           tierCell({ tier: assessment.risks.tier }),
           { text: formattedArrivalDate(assessment) },
           { text: person.prisonName },
-          { html: formatDaysUntilDueWithWarning(assessment) },
+          daysUntilDueCell(assessment, 'assessments--index__warning'),
           { html: getStatus(assessment) },
         ],
       ])

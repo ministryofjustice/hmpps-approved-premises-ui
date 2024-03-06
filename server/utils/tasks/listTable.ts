@@ -2,23 +2,9 @@ import { isAssessmentTask, isPlacementApplicationTask, isPlacementRequestTask } 
 import { SortDirection, Task, TaskSortField } from '../../@types/shared'
 import { TableCell, TableRow } from '../../@types/ui'
 import paths from '../../paths/tasks'
-import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
-import { kebabCase, linkTo, pluralize, sentenceCase } from '../utils'
-
-const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
-
-const daysUntilDueCell = (task: Task): TableCell => {
-  const differenceInDays = DateFormats.differenceInBusinessDays(DateFormats.isoToDateObj(task.dueAt), new Date())
-  const html =
-    differenceInDays === 0 ? '<strong class="task--index__warning">Today</strong>' : formatDaysUntilDueWithWarning(task)
-  return {
-    html,
-    attributes: {
-      'data-sort-value': differenceInDays,
-    },
-  }
-}
+import { kebabCase, linkTo, sentenceCase } from '../utils'
+import { daysUntilDueCell } from '../tableUtils'
 
 const statusCell = (task: Task): TableCell => ({
   html: statusBadge(task),
@@ -74,28 +60,13 @@ const statusBadge = (task: Task): string => {
   }
 }
 
-const formatDaysUntilDueWithWarning = (task: Task): string => {
-  const differenceInDays = DateFormats.differenceInBusinessDays(DateFormats.isoToDateObj(task.dueAt), new Date())
-  const formattedDifference = pluralize('Day', differenceInDays)
-
-  if (differenceInDays < 0) {
-    return `<strong class="task--index__warning">${formattedDifference}<span class="govuk-visually-hidden"> (Overdue by ${pluralize('day', Math.abs(differenceInDays))})</span></strong>`
-  }
-
-  if (differenceInDays < DUE_DATE_APPROACHING_DAYS_WINDOW) {
-    return `<strong class="task--index__warning">${formattedDifference}<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`
-  }
-
-  return formattedDifference
-}
-
 const allocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   const rows: Array<TableRow> = []
 
   tasks.forEach(task => {
     rows.push([
       nameAnchorCell(task),
-      daysUntilDueCell(task),
+      daysUntilDueCell(task, 'task--index__warning'),
       allocationCell(task),
       statusCell(task),
       taskTypeCell(task),
@@ -110,7 +81,13 @@ const unallocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   const rows = [] as Array<TableRow>
 
   tasks.forEach(task => {
-    rows.push([nameAnchorCell(task), daysUntilDueCell(task), statusCell(task), taskTypeCell(task), apAreaCell(task)])
+    rows.push([
+      nameAnchorCell(task),
+      daysUntilDueCell(task, 'task--index__warning'),
+      statusCell(task),
+      taskTypeCell(task),
+      apAreaCell(task),
+    ])
   })
 
   return rows
@@ -204,8 +181,6 @@ export {
   allocatedTableRows,
   tasksTableHeader,
   nameAnchorCell,
-  formatDaysUntilDueWithWarning,
-  daysUntilDueCell,
   statusCell,
   taskTypeCell,
   allocationCell,

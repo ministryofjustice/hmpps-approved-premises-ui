@@ -1,4 +1,3 @@
-import { when } from 'jest-when'
 import {
   assessmentTaskFactory,
   placementApplicationTaskFactory,
@@ -8,8 +7,6 @@ import {
 import {
   allocatedTableRows,
   allocationCell,
-  daysUntilDueCell,
-  formatDaysUntilDueWithWarning,
   getTaskType,
   nameAnchorCell,
   statusBadge,
@@ -22,12 +19,10 @@ import {
   unallocatedTableRows,
 } from './listTable'
 import { kebabCase, linkTo } from '../utils'
-import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
 import { TaskSortField } from '../../@types/shared'
 import paths from '../../paths/tasks'
-
-jest.mock('../dateUtils')
+import { daysUntilDueCell } from '../tableUtils'
 
 describe('table', () => {
   beforeEach(() => {
@@ -42,7 +37,7 @@ describe('table', () => {
         expect(allocatedTableRows([task])).toEqual([
           [
             nameAnchorCell(task),
-            daysUntilDueCell(task),
+            daysUntilDueCell(task, 'task--index__warning'),
             {
               text: task?.allocatedToStaffMember?.name,
             },
@@ -65,7 +60,7 @@ describe('table', () => {
         expect(tasksTableRows([task], 'allocated')).toEqual([
           [
             nameAnchorCell(task),
-            daysUntilDueCell(task),
+            daysUntilDueCell(task, 'task--index__warning'),
             {
               text: task?.allocatedToStaffMember?.name,
             },
@@ -92,7 +87,7 @@ describe('table', () => {
         expect(unallocatedTableRows([task])).toEqual([
           [
             nameAnchorCell(task),
-            daysUntilDueCell(task),
+            daysUntilDueCell(task, 'task--index__warning'),
             {
               html: statusBadge(task),
             },
@@ -110,7 +105,7 @@ describe('table', () => {
         expect(tasksTableRows([task], 'unallocated')).toEqual([
           [
             nameAnchorCell(task),
-            daysUntilDueCell(task),
+            daysUntilDueCell(task, 'task--index__warning'),
             {
               html: statusBadge(task),
             },
@@ -177,36 +172,6 @@ describe('table', () => {
     })
   })
 
-  describe('daysUntilDueCell', () => {
-    const task = taskFactory.build()
-
-    it('returns the days until due formatted for the UI as a TableCell object', () => {
-      when(DateFormats.differenceInBusinessDays)
-        .calledWith(DateFormats.isoToDateObj(task.dueAt), expect.any(Date))
-        .mockReturnValue(10)
-
-      expect(daysUntilDueCell(task)).toEqual({
-        html: formatDaysUntilDueWithWarning(task),
-        attributes: {
-          'data-sort-value': 10,
-        },
-      })
-    })
-
-    it('returns "Today" if the task is due today', () => {
-      when(DateFormats.differenceInBusinessDays)
-        .calledWith(DateFormats.isoToDateObj(task.dueAt), expect.any(Date))
-        .mockReturnValue(0)
-
-      expect(daysUntilDueCell(task)).toEqual({
-        html: '<strong class="task--index__warning">Today</strong>',
-        attributes: {
-          'data-sort-value': 0,
-        },
-      })
-    })
-  })
-
   describe('statusCell', () => {
     it('returns the status of the task as a TableCell object', () => {
       const task = taskFactory.build()
@@ -246,42 +211,6 @@ describe('table', () => {
     it('returns the "in_progress" status tag', () => {
       const inProgressTask = taskFactory.build({ status: 'in_progress' })
       expect(statusBadge(inProgressTask)).toEqual('<strong class="govuk-tag govuk-tag--grey">In progress</strong>')
-    })
-  })
-
-  describe('formatDaysUntilDueWithWarning', () => {
-    it('returns the number of days until the task is due', () => {
-      const task = taskFactory.build()
-
-      when(DateFormats.differenceInBusinessDays)
-        .calledWith(DateFormats.isoToDateObj(task.dueAt), expect.any(Date))
-        .mockReturnValue(10)
-
-      expect(formatDaysUntilDueWithWarning(task)).toEqual('10 Days')
-    })
-
-    it('returns "approaching due date" if the task is nearly due', () => {
-      const task = taskFactory.build()
-
-      when(DateFormats.differenceInBusinessDays)
-        .calledWith(DateFormats.isoToDateObj(task.dueAt), expect.any(Date))
-        .mockReturnValue(2)
-
-      expect(formatDaysUntilDueWithWarning(task)).toEqual(
-        `<strong class="task--index__warning">2 Days<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`,
-      )
-    })
-
-    it('returns "overdue" if the task is overdue', () => {
-      const task = taskFactory.build()
-
-      when(DateFormats.differenceInBusinessDays)
-        .calledWith(DateFormats.isoToDateObj(task.dueAt), expect.any(Date))
-        .mockReturnValue(-3)
-
-      expect(formatDaysUntilDueWithWarning(task)).toEqual(
-        `<strong class="task--index__warning">-3 Days<span class="govuk-visually-hidden"> (Overdue by 3 days)</span></strong>`,
-      )
     })
   })
 
