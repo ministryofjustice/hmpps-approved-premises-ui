@@ -1,12 +1,14 @@
 import { PlacementRequest } from '@approved-premises/api'
 import { BedSearchParametersUi } from '@approved-premises/ui'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
-import { linkTo } from '../utils'
+import { createQueryString, linkTo } from '../utils'
 
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
+import pathsAdmin from '../../paths/admin'
 import { placementLength } from '../matchUtils'
 import { DateFormats, daysToWeeksAndDays } from '../dateUtils'
+import { TabItem } from '../tasks/listTable'
 
 export const mapPlacementRequestToBedSearchParams = ({
   duration,
@@ -52,3 +54,30 @@ export const requestTypes = [
 
 export const withdrawalMessage = (duration: number, expectedArrivalDate: string) =>
   `Request for placement for ${placementLength(Number(duration))} starting on ${DateFormats.isoDateToUIDate(expectedArrivalDate, { format: 'short' })} withdrawn successfully`
+
+export const placementRequestTabItems = (activeTab?: string, apArea?: string, requestType?: string): Array<TabItem> => {
+  const hrefSuffix = createQueryString({ apArea, requestType }) || ''
+
+  return [
+    {
+      text: 'Ready to match',
+      active: activeTab === 'notMatched' || activeTab === undefined || activeTab?.length === 0,
+      href: `${pathsAdmin.admin.placementRequests.index({})}?${hrefSuffix}`,
+    },
+    {
+      text: 'Unable to match',
+      active: activeTab === 'unableToMatch',
+      href: `${pathsAdmin.admin.placementRequests.index({})}?status=unableToMatch&${hrefSuffix}`,
+    },
+    {
+      text: 'Matched',
+      active: activeTab === 'matched',
+      href: `${pathsAdmin.admin.placementRequests.index({})}?status=matched&${hrefSuffix}`,
+    },
+    {
+      text: 'Search',
+      active: activeTab === 'search',
+      href: pathsAdmin.admin.placementRequests.search({}),
+    },
+  ]
+}

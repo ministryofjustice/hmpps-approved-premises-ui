@@ -3,6 +3,7 @@ import {
   assessmentLink,
   formatReleaseType,
   mapPlacementRequestToBedSearchParams,
+  placementRequestTabItems,
   searchButton,
   withdrawalMessage,
 } from './utils'
@@ -78,6 +79,33 @@ describe('utils', () => {
       expect(withdrawalMessage(15, date)).toEqual(
         `Request for placement for 2 weeks, 1 day starting on ${DateFormats.isoDateToUIDate(date, { format: 'short' })} withdrawn successfully`,
       )
+    })
+  })
+
+  describe('placementRequestTabItems', () => {
+    it('returns placement request tab items', () => {
+      expect(placementRequestTabItems('notMatched', 'apArea', 'parole')).toEqual([
+        {
+          active: true,
+          href: '/admin/placement-requests?',
+          text: 'Ready to match',
+        },
+        {
+          active: false,
+          href: '/admin/placement-requests?status=unableToMatch&',
+          text: 'Unable to match',
+        },
+        {
+          active: false,
+          href: '/admin/placement-requests?status=matched&',
+          text: 'Matched',
+        },
+        {
+          active: false,
+          href: '/admin/placement-requests/search',
+          text: 'Search',
+        },
+      ])
     })
   })
 })
