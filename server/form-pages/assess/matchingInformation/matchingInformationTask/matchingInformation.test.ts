@@ -136,13 +136,15 @@ describe('MatchingInformation', () => {
     })
   })
 
-  describe('suggestedLengthOfStay', () => {
-    it('returns the suggested length of stay from the application', () => {
+  describe('suggestedLengthOfStaySummaryListOptions', () => {
+    it('returns the suggested length of stay from the application as summary list options', () => {
       const page = new MatchingInformation(defaultArguments, assessment)
 
       ;(placementDurationFromApplication as jest.Mock).mockReturnValueOnce(12)
 
-      expect(page.suggestedLengthOfStay).toEqual('1 week, 5 days')
+      expect(page.suggestedLengthOfStaySummaryListOptions).toEqual({
+        rows: [{ key: { text: 'Placement duration' }, value: { text: '1 week, 5 days' } }],
+      })
 
       expect(placementDurationFromApplication).toHaveBeenCalledWith(assessment.application)
     })

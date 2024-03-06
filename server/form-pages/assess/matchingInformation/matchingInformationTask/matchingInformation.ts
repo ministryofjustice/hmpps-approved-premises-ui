@@ -1,4 +1,4 @@
-import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type { SummaryList, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
 import { defaultMatchingInformationValues } from '../../../utils/defaultMatchingInformationValues'
@@ -164,7 +164,13 @@ export default class MatchingInformation implements TasklistPage {
     return errors
   }
 
-  get suggestedLengthOfStay() {
-    return DateFormats.formatDuration(daysToWeeksAndDays(placementDurationFromApplication(this.assessment.application)))
+  get suggestedLengthOfStaySummaryListOptions(): SummaryList {
+    const duration = DateFormats.formatDuration(
+      daysToWeeksAndDays(placementDurationFromApplication(this.assessment.application)),
+    )
+
+    return {
+      rows: [{ key: { text: 'Placement duration' }, value: { text: duration } }],
+    }
   }
 }
