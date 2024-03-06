@@ -12,7 +12,7 @@ export default class SelectWithdrawableTypePage extends Page {
     cy.get('.govuk-inset-text').then(insetTextElement => {
       const { actual, expected } = parseHtml(
         insetTextElement,
-        'Only one date can be withdrawn at a time. Please contact the CRU if you do not see a date you are expecting to be able to withdraw.',
+        'Withdraw one placement at a time. Contact the CRU if you do not see the placement you wish to withdraw.',
       )
 
       expect(actual).to.equal(expected)
