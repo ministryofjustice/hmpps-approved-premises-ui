@@ -17,6 +17,13 @@ import {
   placementCriteria,
   placementRequirementOptions,
 } from '../../../../utils/placementCriteriaUtils'
+import PlacementDate from '../../../apply/reasons-for-placement/basic-information/placementDate'
+import ReleaseDate from '../../../apply/reasons-for-placement/basic-information/releaseDate'
+import {
+  retrieveOptionalQuestionResponseFromFormArtifact,
+  retrieveQuestionResponseFromFormArtifact,
+} from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { placementDates } from '../../../../utils/matchUtils'
 
 const placementRequirements = Object.keys(placementRequirementOptions)
 const placementRequirementPreferences = ['essential' as const, 'desirable' as const, 'notRelevant' as const]
@@ -164,13 +171,28 @@ export default class MatchingInformation implements TasklistPage {
     return errors
   }
 
-  get suggestedLengthOfStaySummaryListOptions(): SummaryList {
-    const duration = DateFormats.formatDuration(
-      daysToWeeksAndDays(placementDurationFromApplication(this.assessment.application)),
+  get suggestedStaySummaryListOptions(): SummaryList {
+    const duration = placementDurationFromApplication(this.assessment.application)
+    const formattedDuration = DateFormats.formatDuration(daysToWeeksAndDays(duration))
+
+    const startDateSameAsReleaseDate = retrieveQuestionResponseFromFormArtifact(
+      this.assessment.application,
+      PlacementDate,
+      'startDateSameAsReleaseDate',
     )
+    const placementStartDate =
+      startDateSameAsReleaseDate === 'yes'
+        ? retrieveOptionalQuestionResponseFromFormArtifact(this.assessment.application, ReleaseDate)
+        : retrieveOptionalQuestionResponseFromFormArtifact(this.assessment.application, PlacementDate, 'startDate')
+    const placementDatesObject = placementDates(placementStartDate, duration.toString())
+    const formattedStartDate = DateFormats.isoDateToUIDate(placementDatesObject.startDate)
+    const formattedEndDate = DateFormats.isoDateToUIDate(placementDatesObject.endDate)
 
     return {
-      rows: [{ key: { text: 'Placement duration' }, value: { text: duration } }],
+      rows: [
+        { key: { text: 'Placement duration' }, value: { text: formattedDuration } },
+        { key: { text: 'Dates of placement' }, value: { text: `${formattedStartDate} - ${formattedEndDate}` } },
+      ],
     }
   }
 }
