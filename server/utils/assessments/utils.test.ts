@@ -2,8 +2,6 @@ import {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
   allocationSummary,
-  assessmentsApproachingDue,
-  assessmentsApproachingDueBadge,
   caseNotesFromAssessment,
   confirmationPageMessage,
   confirmationPageResult,
@@ -34,7 +32,6 @@ import {
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { getResponseForPage } from '../applications/getResponseForPage'
-import { daysUntilDue } from './daysUntilDue'
 import { nameOrPlaceholderCopy } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { linkTo } from '../utils'
@@ -50,7 +47,6 @@ jest.mock('./documentUtils')
 jest.mock('../applications/arrivalDateFromApplication')
 jest.mock('./decisionUtils')
 jest.mock('./getActionsForTaskId')
-jest.mock('./daysUntilDue')
 
 jest.mock('../../form-pages/assess', () => {
   return {
@@ -134,34 +130,6 @@ describe('utils', () => {
       })
 
       expect(getApplicationType(assessment)).toEqual('PIPE')
-    })
-  })
-
-  describe('assessmentsApproachingDue', () => {
-    it('returns the number of assessments where the due date is less than DUE_DATE_APPROACHING_WINDOW away', () => {
-      ;(daysUntilDue as jest.MockedFunction<typeof daysUntilDue>).mockReturnValue(2)
-
-      const assessments = assessmentSummaryFactory.buildList(2)
-
-      expect(assessmentsApproachingDue(assessments)).toEqual(2)
-    })
-  })
-
-  describe('assessmentsApproachingDueBadge', () => {
-    it('returns blank when there are no assessments approaching the due date', () => {
-      const assessments = assessmentSummaryFactory.buildList(2)
-      ;(daysUntilDue as jest.MockedFunction<typeof daysUntilDue>).mockReturnValue(20)
-
-      expect(assessmentsApproachingDueBadge(assessments)).toEqual('')
-    })
-
-    it('returns a badge when there are assessments approaching the due date', () => {
-      ;(daysUntilDue as jest.MockedFunction<typeof daysUntilDue>).mockReturnValue(2)
-      const assessments = assessmentSummaryFactory.buildList(2)
-
-      expect(assessmentsApproachingDueBadge(assessments)).toEqual(
-        '<span id="notifications" class="moj-notification-badge">2<span class="govuk-visually-hidden"> assessments approaching due date</span></span>',
-      )
     })
   })
 

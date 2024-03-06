@@ -2,13 +2,11 @@ import { differenceInDays, format } from 'date-fns'
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
-  AssessmentSummary,
+  ApprovedPremisesAssessmentSummary as AssessmentSummary,
 } from '@approved-premises/api'
 import { DateFormats } from '../dateUtils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
-import { daysUntilDue } from './daysUntilDue'
-
-const DUE_DATE_APPROACHING_DAYS_WINDOW = 3
+import { pluralize } from '../utils'
 
 const daysSinceReceived = (assessment: AssessmentSummary): number => {
   const receivedDate = DateFormats.isoToDateObj(assessment.createdAt)
@@ -29,21 +27,7 @@ const formatDays = (days: number): string => {
   if (days === undefined) {
     return 'N/A'
   }
-  return `${days} Day${days > 1 ? 's' : ''}`
-}
-
-const formatDaysUntilDueWithWarning = (assessment: AssessmentSummary): string => {
-  const days = daysUntilDue(assessment)
-  if (days < DUE_DATE_APPROACHING_DAYS_WINDOW) {
-    return `<strong class="assessments--index__warning">${formatDays(
-      days,
-    )}<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>`
-  }
-  return formatDays(days)
-}
-
-const assessmentsApproachingDue = (assessments: Array<AssessmentSummary>): number => {
-  return assessments.filter(a => daysUntilDue(a) < DUE_DATE_APPROACHING_DAYS_WINDOW).length
+  return pluralize('Day', days)
 }
 
 const formattedArrivalDate = (assessment: AssessmentSummary | Assessment): string => {
@@ -62,12 +46,4 @@ const formattedArrivalDate = (assessment: AssessmentSummary | Assessment): strin
   return format(DateFormats.isoToDateObj(arrivalDate), 'd MMM yyyy')
 }
 
-export {
-  daysSinceReceived,
-  daysSinceInfoRequest,
-  formatDays,
-  formatDaysUntilDueWithWarning,
-  assessmentsApproachingDue,
-  formattedArrivalDate,
-  daysUntilDue,
-}
+export { daysSinceReceived, daysSinceInfoRequest, formatDays, formattedArrivalDate }

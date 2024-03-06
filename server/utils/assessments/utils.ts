@@ -13,7 +13,7 @@ import Apply from '../../form-pages/apply'
 import { kebabCase, linkTo } from '../utils'
 import { getApplicationType as getApplicationTypeFromApplication } from '../applications/utils'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
-import { assessmentsApproachingDue, formattedArrivalDate } from './dateUtils'
+import { formattedArrivalDate } from './dateUtils'
 import { getResponseForPage } from '../applications/getResponseForPage'
 import { nameOrPlaceholderCopy } from '../personUtils'
 import { DateFormats } from '../dateUtils'
@@ -85,15 +85,6 @@ const allocationSummary = (assessment: Assessment): Array<SummaryListItem> => {
   }
 
   return summary
-}
-
-const assessmentsApproachingDueBadge = (assessments: Array<AssessmentSummary>): string => {
-  const dueCount = assessmentsApproachingDue(assessments)
-
-  if (dueCount === 0) {
-    return ''
-  }
-  return `<span id="notifications" class="moj-notification-badge">${dueCount}<span class="govuk-visually-hidden"> assessments approaching due date</span></span>`
 }
 
 const getPage = (taskName: string, pageName: string): TasklistPageInterface => {
@@ -193,8 +184,6 @@ export {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
   allocationSummary,
-  assessmentsApproachingDue,
-  assessmentsApproachingDueBadge,
   caseNotesFromAssessment,
   confirmationPageMessage,
   confirmationPageResult,

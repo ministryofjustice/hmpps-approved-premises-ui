@@ -1,11 +1,5 @@
 import { addBusinessDays as addBusinessDaysDateFns, formatISO } from 'date-fns'
-import {
-  daysSinceInfoRequest,
-  daysSinceReceived,
-  formatDays,
-  formatDaysUntilDueWithWarning,
-  formattedArrivalDate,
-} from './dateUtils'
+import { daysSinceInfoRequest, daysSinceReceived, formatDays, formattedArrivalDate } from './dateUtils'
 import { DateFormats } from '../dateUtils'
 import { assessmentFactory, assessmentSummaryFactory } from '../../testutils/factories'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
@@ -94,26 +88,6 @@ describe('dateUtils', () => {
         expect(formattedArrivalDate(assessment)).toEqual('Not provided')
         expect(arrivalDateFromApplication).toHaveBeenCalledWith(assessment.application)
       })
-    })
-  })
-
-  describe('formatDaysUntilDueWithWarning', () => {
-    it('returns the number of days without a warning if the due date is not soon', () => {
-      DateFormats.differenceInBusinessDays = jest.fn().mockReturnValue(9)
-      const assessment = assessmentSummaryFactory.build({
-        createdAt: DateFormats.dateObjToIsoDate(new Date()),
-      })
-
-      expect(formatDaysUntilDueWithWarning(assessment)).toEqual('9 Days')
-    })
-
-    it('returns the number of days with a warning if the due date is soon', () => {
-      DateFormats.differenceInBusinessDays = jest.fn().mockReturnValue(1)
-      const assessment = assessmentSummaryFactory.createdXDaysAgo(1).build()
-
-      expect(formatDaysUntilDueWithWarning(assessment)).toEqual(
-        '<strong class="assessments--index__warning">1 Day<span class="govuk-visually-hidden"> (Approaching due date)</span></strong>',
-      )
     })
   })
 })
