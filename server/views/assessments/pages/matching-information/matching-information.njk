@@ -27,7 +27,13 @@
 
   {{ placementRequirementsTable(page.relevantInformationTableHeadings, page.offenceAndRiskCriteria, page.offenceAndRiskInformationRelevance, page.body) | safe }}
 
-  {{ placementRequirementsTable(page.placementRequirementTableHeadings, page.placementRequirementCriteria, page.placementRequirementPreferences, page.body) | safe }}
+  {{ placementRequirementsTable([], page.prepopulatablePlacementRequirementCriteria, page.placementRequirementPreferences, page.body) | safe }}
+
+  {{ govukInsetText({
+    text: "You must enter the following requirements manually as these are not explicitly asked in the application."
+  }) }}
+
+  {{ placementRequirementsTable(page.placementRequirementTableHeadings, page.nonPrepopulatablePlacementRequirementCriteria, page.placementRequirementPreferences, page.body) | safe }}
 
   {% set lengthOfStayAgreedHint %}
   {{ govukSummaryList(page.suggestedStaySummaryListOptions) }}

@@ -11,15 +11,18 @@ export const offenceAndRiskCriteria = [
   'acceptsHateCrimeOffenders',
   'isArsonSuitable',
 ] as const
-export const placementRequirementCriteria = [
+export const prepopulatablePlacementRequirementCriteria = [
   'isWheelchairDesignated',
   'isArsonDesignated',
   'isSingle',
-  'isStepFreeDesignated',
   'isCatered',
-  'hasEnSuite',
   'isSuitedForSexOffenders',
 ] as const
+export const nonPrepopulatablePlacementRequirementCriteria = ['isStepFreeDesignated', 'hasEnSuite'] as const
+export const placementRequirementCriteria = [
+  ...prepopulatablePlacementRequirementCriteria,
+  ...nonPrepopulatablePlacementRequirementCriteria,
+]
 
 export type SpecialistApTypeCriteria = (typeof specialistApTypeCriteria)[number]
 export type ApTypeCriteria = SpecialistApTypeCriteria | 'normal'

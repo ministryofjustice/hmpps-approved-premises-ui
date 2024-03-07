@@ -15,9 +15,11 @@ import {
   OffenceAndRiskCriteria,
   PlacementRequirementCriteria,
   apTypeCriteriaLabels,
+  nonPrepopulatablePlacementRequirementCriteria,
   offenceAndRiskCriteria,
   placementCriteriaLabels,
   placementRequirementCriteria,
+  prepopulatablePlacementRequirementCriteria,
 } from '../../../../utils/placementCriteriaUtils'
 
 const placementRequirementPreferences = ['essential' as const, 'desirable' as const, 'notRelevant' as const]
@@ -71,6 +73,10 @@ export default class MatchingInformation implements TasklistPage {
   placementRequirementTableHeadings = ['Specify placement requirements', 'Essential', 'Desirable', 'Not required']
 
   placementRequirementCriteria = placementRequirementCriteria
+
+  prepopulatablePlacementRequirementCriteria = prepopulatablePlacementRequirementCriteria
+
+  nonPrepopulatablePlacementRequirementCriteria = nonPrepopulatablePlacementRequirementCriteria
 
   placementRequirementPreferences = placementRequirementPreferences
 
