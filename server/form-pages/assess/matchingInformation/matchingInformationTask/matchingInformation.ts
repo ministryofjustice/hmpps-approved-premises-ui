@@ -1,9 +1,11 @@
 import type { SummaryList, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
-import { defaultMatchingInformationValues } from '../../../utils/defaultMatchingInformationValues'
-import { DateFormats, daysToWeeksAndDays } from '../../../../utils/dateUtils'
-import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
+import {
+  defaultMatchingInformationValues,
+  suggestedStaySummaryListOptions,
+} from '../../../utils/matchingInformationUtils'
+import { DateFormats } from '../../../../utils/dateUtils'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -17,13 +19,6 @@ import {
   placementCriteria,
   placementRequirementOptions,
 } from '../../../../utils/placementCriteriaUtils'
-import PlacementDate from '../../../apply/reasons-for-placement/basic-information/placementDate'
-import ReleaseDate from '../../../apply/reasons-for-placement/basic-information/releaseDate'
-import {
-  retrieveOptionalQuestionResponseFromFormArtifact,
-  retrieveQuestionResponseFromFormArtifact,
-} from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
-import { placementDates } from '../../../../utils/matchUtils'
 
 const placementRequirements = Object.keys(placementRequirementOptions)
 const placementRequirementPreferences = ['essential' as const, 'desirable' as const, 'notRelevant' as const]
@@ -172,27 +167,6 @@ export default class MatchingInformation implements TasklistPage {
   }
 
   get suggestedStaySummaryListOptions(): SummaryList {
-    const duration = placementDurationFromApplication(this.assessment.application)
-    const formattedDuration = DateFormats.formatDuration(daysToWeeksAndDays(duration))
-
-    const startDateSameAsReleaseDate = retrieveQuestionResponseFromFormArtifact(
-      this.assessment.application,
-      PlacementDate,
-      'startDateSameAsReleaseDate',
-    )
-    const placementStartDate =
-      startDateSameAsReleaseDate === 'yes'
-        ? retrieveOptionalQuestionResponseFromFormArtifact(this.assessment.application, ReleaseDate)
-        : retrieveOptionalQuestionResponseFromFormArtifact(this.assessment.application, PlacementDate, 'startDate')
-    const placementDatesObject = placementDates(placementStartDate, duration.toString())
-    const formattedStartDate = DateFormats.isoDateToUIDate(placementDatesObject.startDate)
-    const formattedEndDate = DateFormats.isoDateToUIDate(placementDatesObject.endDate)
-
-    return {
-      rows: [
-        { key: { text: 'Placement duration' }, value: { text: formattedDuration } },
-        { key: { text: 'Dates of placement' }, value: { text: `${formattedStartDate} - ${formattedEndDate}` } },
-      ],
-    }
+    return suggestedStaySummaryListOptions(this.assessment.application)
   }
 }

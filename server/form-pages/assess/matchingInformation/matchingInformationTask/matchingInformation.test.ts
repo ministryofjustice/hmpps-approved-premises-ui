@@ -1,20 +1,15 @@
-import { when } from 'jest-when'
-import {
-  retrieveOptionalQuestionResponseFromFormArtifact,
-  retrieveQuestionResponseFromFormArtifact,
-} from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
-import ReleaseDate from '../../../apply/reasons-for-placement/basic-information/releaseDate'
-import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
 import { assessmentFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import MatchingInformation, { MatchingInformationBody } from './matchingInformation'
-import { defaultMatchingInformationValues } from '../../../utils/defaultMatchingInformationValues'
-import PlacementDate from '../../../apply/reasons-for-placement/basic-information/placementDate'
+import {
+  defaultMatchingInformationValues,
+  suggestedStaySummaryListOptions,
+} from '../../../utils/matchingInformationUtils'
 
 jest.mock('../../../../utils/assessments/placementDurationFromApplication')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
-jest.mock('../../../utils/defaultMatchingInformationValues')
+jest.mock('../../../utils/matchingInformationUtils')
 
 const assessment = assessmentFactory.build()
 
@@ -144,69 +139,19 @@ describe('MatchingInformation', () => {
   })
 
   describe('suggestedStaySummaryListOptions', () => {
-    const page = new MatchingInformation(defaultArguments, assessment)
+    it('wraps around the namesake utils method, returning its return value', () => {
+      const page = new MatchingInformation(defaultArguments, assessment)
 
-    beforeEach(() => {
-      ;(placementDurationFromApplication as jest.Mock).mockReturnValueOnce(12)
-    })
+      const utilsReturnValue = {
+        rows: [
+          { key: { text: 'Placement duration' }, value: { text: 'a formatted duration' } },
+          { key: { text: 'Dates of placement' }, value: { text: 'formatted dates of placement' } },
+        ],
+      }
+      ;(suggestedStaySummaryListOptions as jest.Mock).mockReturnValue(utilsReturnValue)
 
-    describe('when the start date is the same as the release date', () => {
-      it('returns the suggested stay from the application as summary list options, using the release date as the start date', () => {
-        when(retrieveQuestionResponseFromFormArtifact)
-          .calledWith(assessment.application, PlacementDate, 'startDateSameAsReleaseDate')
-          .mockReturnValue('yes')
-        when(retrieveOptionalQuestionResponseFromFormArtifact)
-          .calledWith(assessment.application, ReleaseDate)
-          .mockReturnValue('2024-03-07T00:00:00Z')
-
-        expect(page.suggestedStaySummaryListOptions).toEqual({
-          rows: [
-            { key: { text: 'Placement duration' }, value: { text: '1 week, 5 days' } },
-            { key: { text: 'Dates of placement' }, value: { text: 'Thu 7 Mar 2024 - Tue 19 Mar 2024' } },
-          ],
-        })
-
-        expect(placementDurationFromApplication).toHaveBeenCalledWith(assessment.application)
-        expect(retrieveQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
-          assessment.application,
-          PlacementDate,
-          'startDateSameAsReleaseDate',
-        )
-        expect(retrieveOptionalQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
-          assessment.application,
-          ReleaseDate,
-        )
-      })
-    })
-
-    describe('when the start date is not the same as the release date', () => {
-      it('returns the suggested stay from the application as summary list options, using the start date from the placement date screen', () => {
-        when(retrieveQuestionResponseFromFormArtifact)
-          .calledWith(assessment.application, PlacementDate, 'startDateSameAsReleaseDate')
-          .mockReturnValue('no')
-        when(retrieveOptionalQuestionResponseFromFormArtifact)
-          .calledWith(assessment.application, PlacementDate, 'startDate')
-          .mockReturnValue('2024-05-07T00:00:00Z')
-
-        expect(page.suggestedStaySummaryListOptions).toEqual({
-          rows: [
-            { key: { text: 'Placement duration' }, value: { text: '1 week, 5 days' } },
-            { key: { text: 'Dates of placement' }, value: { text: 'Tue 7 May 2024 - Sun 19 May 2024' } },
-          ],
-        })
-
-        expect(placementDurationFromApplication).toHaveBeenCalledWith(assessment.application)
-        expect(retrieveQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
-          assessment.application,
-          PlacementDate,
-          'startDateSameAsReleaseDate',
-        )
-        expect(retrieveOptionalQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
-          assessment.application,
-          PlacementDate,
-          'startDate',
-        )
-      })
+      expect(page.suggestedStaySummaryListOptions).toEqual(utilsReturnValue)
+      expect(suggestedStaySummaryListOptions).toHaveBeenLastCalledWith(assessment.application)
     })
   })
 })
