@@ -1,13 +1,15 @@
-import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
 import { assessmentFactory } from '../../../../testutils/factories'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 
 import MatchingInformation, { MatchingInformationBody } from './matchingInformation'
-import { defaultMatchingInformationValues } from '../../../utils/defaultMatchingInformationValues'
+import {
+  defaultMatchingInformationValues,
+  suggestedStaySummaryListOptions,
+} from '../../../utils/matchingInformationUtils'
 
 jest.mock('../../../../utils/assessments/placementDurationFromApplication')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
-jest.mock('../../../utils/defaultMatchingInformationValues')
+jest.mock('../../../utils/matchingInformationUtils')
 
 const assessment = assessmentFactory.build()
 
@@ -136,15 +138,20 @@ describe('MatchingInformation', () => {
     })
   })
 
-  describe('suggestedLengthOfStay', () => {
-    it('returns the suggested length of stay from the application', () => {
+  describe('suggestedStaySummaryListOptions', () => {
+    it('wraps around the namesake utils method, returning its return value', () => {
       const page = new MatchingInformation(defaultArguments, assessment)
 
-      ;(placementDurationFromApplication as jest.Mock).mockReturnValueOnce(12)
+      const utilsReturnValue = {
+        rows: [
+          { key: { text: 'Placement duration' }, value: { text: 'a formatted duration' } },
+          { key: { text: 'Dates of placement' }, value: { text: 'formatted dates of placement' } },
+        ],
+      }
+      ;(suggestedStaySummaryListOptions as jest.Mock).mockReturnValue(utilsReturnValue)
 
-      expect(page.suggestedLengthOfStay).toEqual('1 week, 5 days')
-
-      expect(placementDurationFromApplication).toHaveBeenCalledWith(assessment.application)
+      expect(page.suggestedStaySummaryListOptions).toEqual(utilsReturnValue)
+      expect(suggestedStaySummaryListOptions).toHaveBeenLastCalledWith(assessment.application)
     })
   })
 })

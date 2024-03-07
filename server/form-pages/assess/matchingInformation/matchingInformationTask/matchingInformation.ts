@@ -1,9 +1,11 @@
-import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
+import type { SummaryList, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { ApprovedPremisesAssessment as Assessment } from '@approved-premises/api'
-import { defaultMatchingInformationValues } from '../../../utils/defaultMatchingInformationValues'
-import { DateFormats, daysToWeeksAndDays } from '../../../../utils/dateUtils'
-import { placementDurationFromApplication } from '../../../../utils/assessments/placementDurationFromApplication'
+import {
+  defaultMatchingInformationValues,
+  suggestedStaySummaryListOptions,
+} from '../../../utils/matchingInformationUtils'
+import { DateFormats } from '../../../../utils/dateUtils'
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
@@ -164,7 +166,7 @@ export default class MatchingInformation implements TasklistPage {
     return errors
   }
 
-  get suggestedLengthOfStay() {
-    return DateFormats.formatDuration(daysToWeeksAndDays(placementDurationFromApplication(this.assessment.application)))
+  get suggestedStaySummaryListOptions(): SummaryList {
+    return suggestedStaySummaryListOptions(this.assessment.application)
   }
 }

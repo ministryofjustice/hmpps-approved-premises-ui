@@ -1,5 +1,9 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { weeksToDays } from 'date-fns'
+import { SummaryList } from '@approved-premises/ui'
+import { placementDates } from '../../utils/matchUtils'
+import { DateFormats, daysToWeeksAndDays } from '../../utils/dateUtils'
+import { placementDurationFromApplication } from '../../utils/assessments/placementDurationFromApplication'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
@@ -19,6 +23,8 @@ import DateOfOffence from '../apply/risk-and-need-factors/risk-management-featur
 import Vulnerability from '../apply/risk-and-need-factors/further-considerations/vulnerability'
 import { OffenceAndRiskCriteria, PlacementRequirementCriteria } from '../../utils/placementCriteriaUtils'
 import SelectApType, { ApType } from '../apply/reasons-for-placement/type-of-ap/apType'
+import PlacementDate from '../apply/reasons-for-placement/basic-information/placementDate'
+import ReleaseDate from '../apply/reasons-for-placement/basic-information/releaseDate'
 
 export interface TaskListPageField {
   name: string
@@ -91,7 +97,7 @@ const getValue = <T extends GetValueOffenceAndRisk | GetValuePlacementRequiremen
   return match ? matchedReturnValue : unmatchedReturnValue
 }
 
-export const defaultMatchingInformationValues = (
+const defaultMatchingInformationValues = (
   body: MatchingInformationBody,
   application: ApprovedPremisesApplication,
 ): Partial<MatchingInformationBody> => {
@@ -217,3 +223,30 @@ export const defaultMatchingInformationValues = (
     lengthOfStay: lengthOfStay(body),
   }
 }
+
+const suggestedStaySummaryListOptions = (application: ApprovedPremisesApplication): SummaryList => {
+  const duration = placementDurationFromApplication(application)
+  const formattedDuration = DateFormats.formatDuration(daysToWeeksAndDays(duration))
+
+  const startDateSameAsReleaseDate = retrieveQuestionResponseFromFormArtifact(
+    application,
+    PlacementDate,
+    'startDateSameAsReleaseDate',
+  )
+  const placementStartDate =
+    startDateSameAsReleaseDate === 'yes'
+      ? retrieveOptionalQuestionResponseFromFormArtifact(application, ReleaseDate)
+      : retrieveOptionalQuestionResponseFromFormArtifact(application, PlacementDate, 'startDate')
+  const placementDatesObject = placementDates(placementStartDate, duration.toString())
+  const formattedStartDate = DateFormats.isoDateToUIDate(placementDatesObject.startDate)
+  const formattedEndDate = DateFormats.isoDateToUIDate(placementDatesObject.endDate)
+
+  return {
+    rows: [
+      { key: { text: 'Placement duration' }, value: { text: formattedDuration } },
+      { key: { text: 'Dates of placement' }, value: { text: `${formattedStartDate} - ${formattedEndDate}` } },
+    ],
+  }
+}
+
+export { defaultMatchingInformationValues, suggestedStaySummaryListOptions }

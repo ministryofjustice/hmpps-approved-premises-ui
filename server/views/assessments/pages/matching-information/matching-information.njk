@@ -1,4 +1,5 @@
 {% extends "../layout.njk" %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList -%}
 {% from "../../../components/formFields/form-page-day-weeks-input/macro.njk" import formPageDaysAndWeeksInput %}
 
 {% block questions %}
@@ -23,6 +24,10 @@
 
   {{ placementRequirementsTable(page.relevantInformationTableHeadings, page.offenceAndRiskInformationKeys, page.offenceAndRiskInformationRelevance, page.body) | safe }}
 
+  {% set lengthOfStayAgreedHint %}
+  {{ govukSummaryList(page.suggestedStaySummaryListOptions) }}
+  {% endset %}
+
   {{
     formPageRadios({
       fieldName: "lengthOfStayAgreed",
@@ -33,7 +38,7 @@
         }
       },
       hint: {
-        text: "Recommended length of stay: " + page.suggestedLengthOfStay
+        html: lengthOfStayAgreedHint
       },
       items: [
         {
