@@ -495,6 +495,7 @@ context('Placement Requests', () => {
       sortBy: 'created_at',
       sortDirection: 'asc',
     })
+    cy.task('stubPlacementRequestsDashboard', { placementRequests: matchedPlacementRequests, status: 'matched' })
     cy.task('stubApAreaReferenceData', apArea)
 
     // Given I am on the placement request dashboard
@@ -515,6 +516,13 @@ context('Placement Requests', () => {
       expect(apAreaId.values).to.deep.equal([apArea.id])
       expect(requestType.values).to.deep.equal(['parole'])
     })
+
+    // When I click the matched link tab
+    listPage.clickMatched()
+
+    // Then the page should retain the area and request type filter
+    listPage.shouldHaveSelectText('apArea', apArea.name)
+    listPage.shouldHaveSelectText('requestType', 'Parole')
   })
 
   it('retains the status filter when applying other filters', () => {

@@ -1,31 +1,10 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 
-{% macro navigation(activeTab) %}
+{% macro navigation(activeTab, apArea, requestType) %}
   {{
     mojSubNavigation({
       label: 'Sub navigation',
-      items: [
-        {
-          text: 'Ready to match',
-          href: paths.admin.placementRequests.index({}),
-          active: (activeTab === 'notMatched' or activeTab|length === 0)
-        },
-        {
-          text: 'Unable to match',
-          href: paths.admin.placementRequests.index({}) + "?status=unableToMatch",
-          active: (activeTab === 'unableToMatch')
-        },
-        {
-          text: 'Matched',
-          href: paths.admin.placementRequests.index({}) + "?status=matched",
-          active: (activeTab === 'matched')
-        },
-        {
-          text: 'Search',
-          href: paths.admin.placementRequests.search({}),
-          active: (activeTab === 'search')
-        }
-      ]
+      items: PlacementRequestUtils.placementRequestTabItems(activeTab, apArea, requestType)
     })
   }}
 {% endmacro %}
