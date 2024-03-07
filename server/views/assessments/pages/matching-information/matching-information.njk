@@ -1,4 +1,5 @@
 {% extends "../layout.njk" %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList -%}
 {% from "../../../components/formFields/form-page-day-weeks-input/macro.njk" import formPageDaysAndWeeksInput %}
 
@@ -6,6 +7,10 @@
 
   <h1 class="govuk-heading-l">{{page.title}}</h1>
   <p>Please specify requirements for matching the person to a bed within an Approved Premises (AP).</p>
+
+  {{ govukInsetText({
+    text: "The answers on this screen are prepopulated from the application. If you (the assessor) have disagreed with the requirements set in the application during your assessment you must update these answers. Please verify all answers as placements are matched according to these."
+  }) }}
 
   {{ formPageRadios({
       fieldName: "apType",
