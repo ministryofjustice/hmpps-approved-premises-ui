@@ -43,6 +43,17 @@ export default class SelectWithdrawableTypePage extends Page {
     })
   }
 
+  shouldShowNoWithdrawablesGuidance() {
+    cy.get('.govuk-warning-text__text').then(warningText => {
+      const { actual, expected } = parseHtml(
+        warningText,
+        'Warning You are not able to withdraw the application or any associated requests for placement or placements. If you need to make a withdrawal relating to this application, contact the CRU.',
+      )
+
+      expect(actual).to.equal(expected)
+    })
+  }
+
   selectType(type: 'placementRequest' | 'placement' | 'application') {
     this.checkRadioByNameAndValue('selectedWithdrawableType', type)
   }

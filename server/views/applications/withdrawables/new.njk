@@ -1,5 +1,7 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 
 {% extends "../../partials/layout.njk" %}
 
@@ -10,12 +12,14 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+            {% if withdrawables.length %}
 
-            <form action={{paths.applications.withdraw.new({id: id})}} method="post"/>
-            <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+                <form action={{paths.applications.withdraw.new({id: id})}} method="post"/>
+                <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
-            {{ govukRadios({
+                {{ govukRadios({
                     name: "selectedWithdrawableType",
+                    hint: {text: "If you can't see the application, request for placement or placement you need to withdraw, contact the CRU"},
                     fieldset: {
                         legend: {
                             text: pageHeading,
@@ -26,9 +30,18 @@
                     items: ApplyUtils.withdrawableTypeRadioOptions(withdrawables, selectedWithdrawable)
                 }) }}
 
-            {{ govukButton({
+                {{ govukButton({
                     "text": "Continue"
                 }) }}
+
+            {% else %}
+                <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+                {{ govukWarningText({
+                    text: "You are not able to withdraw the application or any associated requests for placement or placements. If you need to make a withdrawal relating to this application, contact the CRU."
+                }) }}
+
+            {% endif %}
         </form>
 
     </div>
