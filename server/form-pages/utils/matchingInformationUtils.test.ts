@@ -500,58 +500,85 @@ describe('matchingInformationUtils', () => {
       ;(placementDurationFromApplication as jest.Mock).mockReturnValueOnce(12)
     })
 
-    describe('when the start date is the same as the release date', () => {
-      it('returns the suggested stay from the application as summary list options, using the release date as the start date', () => {
-        when(retrieveQuestionResponseFromFormArtifact)
-          .calledWith(application, PlacementDate, 'startDateSameAsReleaseDate')
-          .mockReturnValue('yes')
-        when(retrieveOptionalQuestionResponseFromFormArtifact)
-          .calledWith(application, ReleaseDate)
-          .mockReturnValue('2024-03-07T00:00:00Z')
+    describe('if the release date is known', () => {
+      describe('when the start date is the same as the release date', () => {
+        it('returns the suggested stay from the application as summary list options, using the release date as the start date', () => {
+          when(retrieveQuestionResponseFromFormArtifact)
+            .calledWith(application, ReleaseDate, 'knowReleaseDate')
+            .mockReturnValue('yes')
+          when(retrieveQuestionResponseFromFormArtifact)
+            .calledWith(application, PlacementDate, 'startDateSameAsReleaseDate')
+            .mockReturnValue('yes')
+          when(retrieveOptionalQuestionResponseFromFormArtifact)
+            .calledWith(application, ReleaseDate)
+            .mockReturnValue('2024-03-07T00:00:00Z')
 
-        expect(suggestedStaySummaryListOptions(application)).toEqual({
-          rows: [
-            { key: { text: 'Placement duration' }, value: { text: '1 week, 5 days' } },
-            { key: { text: 'Dates of placement' }, value: { text: 'Thu 7 Mar 2024 - Tue 19 Mar 2024' } },
-          ],
+          expect(suggestedStaySummaryListOptions(application)).toEqual({
+            rows: [
+              { key: { text: 'Placement duration' }, value: { text: '1 week, 5 days' } },
+              { key: { text: 'Dates of placement' }, value: { text: 'Thu 7 Mar 2024 - Tue 19 Mar 2024' } },
+            ],
+          })
+
+          expect(placementDurationFromApplication).toHaveBeenCalledWith(application)
+          expect(retrieveQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
+            application,
+            PlacementDate,
+            'startDateSameAsReleaseDate',
+          )
+          expect(retrieveOptionalQuestionResponseFromFormArtifact).toHaveBeenCalledWith(application, ReleaseDate)
         })
+      })
 
-        expect(placementDurationFromApplication).toHaveBeenCalledWith(application)
-        expect(retrieveQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
-          application,
-          PlacementDate,
-          'startDateSameAsReleaseDate',
-        )
-        expect(retrieveOptionalQuestionResponseFromFormArtifact).toHaveBeenCalledWith(application, ReleaseDate)
+      describe('when the start date is not the same as the release date', () => {
+        it('returns the suggested stay from the application as summary list options, using the start date from the placement date screen', () => {
+          when(retrieveQuestionResponseFromFormArtifact)
+            .calledWith(application, ReleaseDate, 'knowReleaseDate')
+            .mockReturnValue('yes')
+          when(retrieveQuestionResponseFromFormArtifact)
+            .calledWith(application, PlacementDate, 'startDateSameAsReleaseDate')
+            .mockReturnValue('no')
+          when(retrieveOptionalQuestionResponseFromFormArtifact)
+            .calledWith(application, PlacementDate, 'startDate')
+            .mockReturnValue('2024-05-07T00:00:00Z')
+
+          expect(suggestedStaySummaryListOptions(application)).toEqual({
+            rows: [
+              { key: { text: 'Placement duration' }, value: { text: '1 week, 5 days' } },
+              { key: { text: 'Dates of placement' }, value: { text: 'Tue 7 May 2024 - Sun 19 May 2024' } },
+            ],
+          })
+
+          expect(placementDurationFromApplication).toHaveBeenCalledWith(application)
+          expect(retrieveQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
+            application,
+            PlacementDate,
+            'startDateSameAsReleaseDate',
+          )
+          expect(retrieveOptionalQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
+            application,
+            PlacementDate,
+            'startDate',
+          )
+        })
       })
     })
 
-    describe('when the start date is not the same as the release date', () => {
-      it('returns the suggested stay from the application as summary list options, using the start date from the placement date screen', () => {
+    describe('if the release date is not  known', () => {
+      it('returns only the placement duration row', () => {
         when(retrieveQuestionResponseFromFormArtifact)
-          .calledWith(application, PlacementDate, 'startDateSameAsReleaseDate')
+          .calledWith(application, ReleaseDate, 'knowReleaseDate')
           .mockReturnValue('no')
-        when(retrieveOptionalQuestionResponseFromFormArtifact)
-          .calledWith(application, PlacementDate, 'startDate')
-          .mockReturnValue('2024-05-07T00:00:00Z')
 
         expect(suggestedStaySummaryListOptions(application)).toEqual({
-          rows: [
-            { key: { text: 'Placement duration' }, value: { text: '1 week, 5 days' } },
-            { key: { text: 'Dates of placement' }, value: { text: 'Tue 7 May 2024 - Sun 19 May 2024' } },
-          ],
+          rows: [{ key: { text: 'Placement duration' }, value: { text: '1 week, 5 days' } }],
         })
 
         expect(placementDurationFromApplication).toHaveBeenCalledWith(application)
         expect(retrieveQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
           application,
-          PlacementDate,
-          'startDateSameAsReleaseDate',
-        )
-        expect(retrieveOptionalQuestionResponseFromFormArtifact).toHaveBeenCalledWith(
-          application,
-          PlacementDate,
-          'startDate',
+          ReleaseDate,
+          'knowReleaseDate',
         )
       })
     })

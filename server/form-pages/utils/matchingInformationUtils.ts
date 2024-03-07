@@ -227,25 +227,28 @@ const defaultMatchingInformationValues = (
 const suggestedStaySummaryListOptions = (application: ApprovedPremisesApplication): SummaryList => {
   const duration = placementDurationFromApplication(application)
   const formattedDuration = DateFormats.formatDuration(daysToWeeksAndDays(duration))
+  const rows = [{ key: { text: 'Placement duration' }, value: { text: formattedDuration } }]
 
-  const startDateSameAsReleaseDate = retrieveQuestionResponseFromFormArtifact(
-    application,
-    PlacementDate,
-    'startDateSameAsReleaseDate',
-  )
-  const placementStartDate =
-    startDateSameAsReleaseDate === 'yes'
-      ? retrieveOptionalQuestionResponseFromFormArtifact(application, ReleaseDate)
-      : retrieveOptionalQuestionResponseFromFormArtifact(application, PlacementDate, 'startDate')
-  const placementDatesObject = placementDates(placementStartDate, duration.toString())
-  const formattedStartDate = DateFormats.isoDateToUIDate(placementDatesObject.startDate)
-  const formattedEndDate = DateFormats.isoDateToUIDate(placementDatesObject.endDate)
+  const knownReleaseDate = retrieveQuestionResponseFromFormArtifact(application, ReleaseDate, 'knowReleaseDate')
 
+  if (knownReleaseDate === 'yes') {
+    const startDateSameAsReleaseDate = retrieveQuestionResponseFromFormArtifact(
+      application,
+      PlacementDate,
+      'startDateSameAsReleaseDate',
+    )
+    const placementStartDate =
+      startDateSameAsReleaseDate === 'yes'
+        ? retrieveOptionalQuestionResponseFromFormArtifact(application, ReleaseDate)
+        : retrieveOptionalQuestionResponseFromFormArtifact(application, PlacementDate, 'startDate')
+
+    const placementDatesObject = placementDates(placementStartDate, duration.toString())
+    const formattedStartDate = DateFormats.isoDateToUIDate(placementDatesObject.startDate)
+    const formattedEndDate = DateFormats.isoDateToUIDate(placementDatesObject.endDate)
+    rows.push({ key: { text: 'Dates of placement' }, value: { text: `${formattedStartDate} - ${formattedEndDate}` } })
+  }
   return {
-    rows: [
-      { key: { text: 'Placement duration' }, value: { text: formattedDuration } },
-      { key: { text: 'Dates of placement' }, value: { text: `${formattedStartDate} - ${formattedEndDate}` } },
-    ],
+    rows,
   }
 }
 
