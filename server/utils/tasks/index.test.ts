@@ -5,6 +5,7 @@ import { fullPersonFactory } from '../../testutils/factories/person'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { getApplicationType } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
+import paths from '../../paths/apply'
 
 jest.mock('../applications/arrivalDateFromApplication')
 
@@ -64,6 +65,14 @@ describe('index', () => {
             value: {
               text: getApplicationType(application),
             },
+            actions: {
+              items: [
+                {
+                  href: `${paths.applications.show({ id: application.id })}?tab=timeline`,
+                  text: 'View timeline',
+                },
+              ],
+            },
           },
           {
             key: {
@@ -121,6 +130,14 @@ describe('index', () => {
             },
             value: {
               text: getApplicationType(application),
+            },
+            actions: {
+              items: [
+                {
+                  href: `${paths.applications.show({ id: application.id })}?tab=timeline`,
+                  text: 'View timeline',
+                },
+              ],
             },
           },
           {

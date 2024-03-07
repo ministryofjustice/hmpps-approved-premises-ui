@@ -47,4 +47,12 @@ export default class AllocationsPage extends Page {
     const person = this.application.person as FullPerson
     cy.contains(person.name).contains('(Limited access offender)')
   }
+
+  clickViewTimeline() {
+    cy.get('a').contains('View timeline').click()
+  }
+
+  shouldShowTimelineTab() {
+    cy.get('label').should('contain', 'Add a note to the application')
+  }
 }

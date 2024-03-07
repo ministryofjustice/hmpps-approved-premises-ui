@@ -7,6 +7,7 @@ import {
   personFactory,
   reallocationFactory,
   taskFactory,
+  timelineEventFactory,
   userFactory,
   userWithWorkloadFactory,
 } from '../../../server/testutils/factories'
@@ -179,5 +180,29 @@ context('Task Allocation', () => {
     // Then I should be shown a list of users with that qualification and AP AreaId
     expectedUsers = expectedUsers.filter(user => user.apArea.id === this.apArea.id)
     allocationsPage.shouldShowUserTable(expectedUsers, this.task)
+  })
+
+  it('allows me to view timeline for task', function test() {
+    const timeline = timelineEventFactory.buildList(10)
+    cy.task('stubTaskAllocationCreate', {
+      task: { ...this.task, applicationId: this.application.id, allocatedToStaffMember: this.selectedUser },
+      reallocation: reallocationFactory.build({ taskType: this.task.taskType, user: this.selectedUser }),
+    })
+    const updatedApplication = { ...this.application, status: 'submitted' }
+    cy.task('stubApplicationGet', { application: updatedApplication })
+    cy.task('stubApplicationTimeline', { applicationId: updatedApplication.id, timeline })
+
+    // And I click to allocate the task
+    this.taskListPage.clickTask(this.task)
+
+    // Then I should be on the Allocations page for that task
+    const allocationsPage = Page.verifyOnPage(AllocationsPage, this.application, this.task)
+
+    // And I should see some information about that task
+    allocationsPage.shouldShowInformationAboutTask()
+
+    // Then I should see timeline page
+    allocationsPage.clickViewTimeline()
+    allocationsPage.shouldShowTimelineTab()
   })
 })
