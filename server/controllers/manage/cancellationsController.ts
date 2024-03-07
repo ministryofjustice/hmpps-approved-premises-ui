@@ -26,7 +26,7 @@ export default class CancellationsController {
       let backLink: string
 
       if (booking?.applicationId) {
-        backLink = applyPaths.applications.withdrawables.show({ id: booking.applicationId })
+        backLink = `${applyPaths.applications.withdrawables.show({ id: booking.applicationId })}?selectedWithdrawableType=placement`
       } else {
         backLink = paths.bookings.show({ premisesId, bookingId })
       }
