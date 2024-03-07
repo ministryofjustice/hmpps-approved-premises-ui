@@ -24,11 +24,13 @@ export const row = (rowName: string, option: Array<string>, value: string) => {
 }
 
 export const heading = (headingNames: Array<string>) => {
-  return `<thead class="govuk-table__head">
+  return headingNames.length
+    ? `<thead class="govuk-table__head">
 <tr class="govuk-table__row">
 ${headingNames.map(title => `<th class="govuk-table__header" scope="col">${title}</th>`).join('')}
 </tr>
 </thead>`
+    : ''
 }
 
 export const radioMatrixTable = (

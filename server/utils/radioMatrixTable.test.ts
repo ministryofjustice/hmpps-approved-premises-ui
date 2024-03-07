@@ -52,6 +52,12 @@ describe('radioMatrixTable', () => {
       </tr>
       </thead>`)
     })
+
+    describe('when there are no column headings', () => {
+      it('returns an empty string', () => {
+        expect(heading([])).toEqual('')
+      })
+    })
   })
 
   describe('radioMatrixTable', () => {
