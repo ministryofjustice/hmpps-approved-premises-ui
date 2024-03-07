@@ -90,7 +90,6 @@ describe('PlacementRequestsController', () => {
         sortBy: 'createdAt',
         sortDirection: 'asc',
         allocatedToUserId: response.locals.user.id,
-        apAreaId: response.locals.user.apArea.id,
       })
     })
   })

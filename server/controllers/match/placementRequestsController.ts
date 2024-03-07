@@ -26,7 +26,6 @@ export default class PlacementRequestsController {
         sortBy: 'createdAt',
         sortDirection: 'asc',
         allocatedToUserId: res.locals?.user?.id,
-        apAreaId: res.locals.user.apArea?.id,
       })
 
       res.render('match/placementRequests/index', {
