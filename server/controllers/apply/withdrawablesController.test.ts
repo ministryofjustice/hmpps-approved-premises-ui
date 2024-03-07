@@ -20,6 +20,7 @@ describe('withdrawablesController', () => {
   let request: DeepMocked<Request> = createMock<Request>({ user: { token } })
   let response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = jest.fn()
+  const flash = jest.fn()
 
   const applicationService = createMock<ApplicationService>({})
   const bookingService = createMock<BookingService>({})
@@ -28,7 +29,7 @@ describe('withdrawablesController', () => {
 
   beforeEach(() => {
     withdrawablesController = new WithdrawablesController(applicationService, bookingService)
-    request = createMock<Request>({ user: { token } })
+    request = createMock<Request>({ user: { token }, flash })
     response = createMock<Response>({})
     jest.clearAllMocks()
   })
@@ -139,7 +140,7 @@ describe('withdrawablesController', () => {
           response,
           next,
         )
-
+        expect(request.flash).toHaveBeenCalledWith('applicationId', applicationId)
         expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
         expect(response.redirect).toHaveBeenCalledWith(302, w.path({ id: selectedWithdrawable }))
       })

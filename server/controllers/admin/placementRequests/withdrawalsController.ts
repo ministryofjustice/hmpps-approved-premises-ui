@@ -18,9 +18,12 @@ export default class WithdrawalsController {
 
       const withdrawalReasonsRadioItems = placementApplicationWithdrawalReasons(req.session.user.roles)
 
+      const applicationId = req.flash('applicationId')?.[0] || ''
+
       return res.render('admin/placementRequests/withdrawals/new', {
         pageHeading: 'Why is this request for placement being withdrawn?',
         id: req.params.id,
+        applicationId,
         errors,
         errorSummary,
         withdrawalReasonsRadioItems,

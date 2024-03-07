@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
+import { when } from 'jest-when'
 import { PlacementRequestService } from '../../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../../utils/validation'
 
@@ -22,6 +23,7 @@ describe('withdrawalsController', () => {
   let request: DeepMocked<Request>
   let response: DeepMocked<Response>
   const next: DeepMocked<NextFunction> = jest.fn()
+  const flash = jest.fn()
 
   const placementRequestService = createMock<PlacementRequestService>({})
 
@@ -29,24 +31,30 @@ describe('withdrawalsController', () => {
 
   beforeEach(() => {
     withdrawalsController = new WithdrawalsController(placementRequestService)
-    request = createMock<Request>({ session: { user: { roles: ['workflow_manager'] } }, user: { token } })
+    request = createMock<Request>({ session: { user: { roles: ['workflow_manager'] } }, user: { token }, flash })
     response = createMock<Response>({})
     jest.clearAllMocks()
   })
 
   describe('new', () => {
-    it('renders the template', async () => {
-      const applicationId = 'some-id'
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
-      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
-      request.params.id = applicationId
+    const placementApplicationId = 'some-id'
+    const errorsAndUserInput = createMock<ErrorsAndUserInput>()
+    const applicationId = 'some-other-id'
 
-      const placementApplicationWithdrawalReasonsReturnValue = 'reasons' as unknown as ReturnType<
-        typeof placementApplicationWithdrawalReasons
-      >
+    const placementApplicationWithdrawalReasonsReturnValue = 'reasons' as unknown as ReturnType<
+      typeof placementApplicationWithdrawalReasons
+    >
+
+    beforeEach(() => {
       ;(
         placementApplicationWithdrawalReasons as jest.MockedFn<typeof placementApplicationWithdrawalReasons>
       ).mockReturnValue(placementApplicationWithdrawalReasonsReturnValue)
+      request.params.id = placementApplicationId
+      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+    })
+
+    it('renders the template', async () => {
+      when(flash).calledWith('applicationId').mockReturnValue([applicationId])
 
       const requestHandler = withdrawalsController.new()
 
@@ -56,10 +64,31 @@ describe('withdrawalsController', () => {
         pageHeading: 'Why is this request for placement being withdrawn?',
         id: request.params.id,
         errors: errorsAndUserInput.errors,
+        applicationId,
         errorSummary: errorsAndUserInput.errorSummary,
         withdrawalReasonsRadioItems: placementApplicationWithdrawalReasonsReturnValue,
       })
       expect(placementApplicationWithdrawalReasons).toHaveBeenCalledWith(request.session.user.roles)
+      expect(flash).toHaveBeenCalledWith('applicationId')
+    })
+
+    it('populates the applicationID with an empty string if the flash is empty', async () => {
+      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
+
+      when(flash).calledWith('applicationId').mockReturnValue(undefined)
+
+      const requestHandler = withdrawalsController.new()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('admin/placementRequests/withdrawals/new', {
+        pageHeading: 'Why is this request for placement being withdrawn?',
+        id: request.params.id,
+        errors: errorsAndUserInput.errors,
+        applicationId: '',
+        errorSummary: errorsAndUserInput.errorSummary,
+        withdrawalReasonsRadioItems: placementApplicationWithdrawalReasonsReturnValue,
+      })
     })
   })
 
