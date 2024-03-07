@@ -3,7 +3,7 @@ import { BedSearchResult, BedSearchResults, PlacementCriteria } from '@approved-
 import Page from '../page'
 import { uiObjectValue } from '../../helpers'
 import { summaryCardRows } from '../../../server/utils/matchUtils'
-import { placementCriteria } from '../../../server/utils/placementCriteriaUtils'
+import { placementCriteriaLabels } from '../../../server/utils/placementCriteriaUtils'
 
 export default class SearchPage extends Page {
   constructor(name: string) {
@@ -12,7 +12,7 @@ export default class SearchPage extends Page {
 
   shouldShowEssentialCriteria(criteria: Array<PlacementCriteria>) {
     criteria.forEach(c => {
-      cy.get('span.moj-filter__tag').should('contain', placementCriteria[c])
+      cy.get('span.moj-filter__tag').should('contain', placementCriteriaLabels[c])
     })
   }
 

@@ -20,14 +20,14 @@
           classes: "govuk-fieldset__legend--m"
         }
       },
-      items: convertKeyValuePairToRadioItems(page.apTypes, page.apType)
+      items: convertKeyValuePairToRadioItems(page.apTypeCriteriaLabels, page.apType)
     },fetchContext()) }}
 
   <h2 class="govuk-heading-m">Placement requirements</h2>
 
-  {{ placementRequirementsTable(page.relevantInformationTableHeadings, page.offenceAndRiskInformationKeys, page.offenceAndRiskInformationRelevance, page.body) | safe }}
+  {{ placementRequirementsTable(page.relevantInformationTableHeadings, page.offenceAndRiskCriteria, page.offenceAndRiskInformationRelevance, page.body) | safe }}
 
-  {{ placementRequirementsTable(page.placementRequirementTableHeadings, page.placementRequirements, page.placementRequirementPreferences, page.body) | safe }}
+  {{ placementRequirementsTable(page.placementRequirementTableHeadings, page.placementRequirementCriteria, page.placementRequirementPreferences, page.body) | safe }}
 
   {% set lengthOfStayAgreedHint %}
   {{ govukSummaryList(page.suggestedStaySummaryListOptions) }}

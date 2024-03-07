@@ -14,28 +14,26 @@ import {
   ApTypeCriteria,
   OffenceAndRiskCriteria,
   PlacementRequirementCriteria,
-  apTypeOptions,
-  offenceAndRiskOptions,
-  placementCriteria,
-  placementRequirementOptions,
+  apTypeCriteriaLabels,
+  offenceAndRiskCriteria,
+  placementCriteriaLabels,
+  placementRequirementCriteria,
 } from '../../../../utils/placementCriteriaUtils'
 
-const placementRequirements = Object.keys(placementRequirementOptions)
 const placementRequirementPreferences = ['essential' as const, 'desirable' as const, 'notRelevant' as const]
 export type PlacementRequirementPreference = (typeof placementRequirementPreferences)[number]
 
-const offenceAndRiskInformationKeys = Object.keys(offenceAndRiskOptions)
-const offenceAndRiskInformationRelevance = ['relevant' as const, 'notRelevant' as const]
-export type OffenceAndRiskInformationRelevance = (typeof offenceAndRiskInformationRelevance)[number]
+const offenceAndRiskRelevance = ['relevant' as const, 'notRelevant' as const]
+export type OffenceAndRiskRelevance = (typeof offenceAndRiskRelevance)[number]
 
 export type MatchingInformationBody = {
   [Key in OffenceAndRiskCriteria | PlacementRequirementCriteria]: Key extends OffenceAndRiskCriteria
-    ? OffenceAndRiskInformationRelevance
+    ? OffenceAndRiskRelevance
     : Key extends PlacementRequirementCriteria
       ? PlacementRequirementPreference
       : never
 } & {
-  apType: ApTypeCriteria | 'normal'
+  apType: ApTypeCriteria
   cruInformation: string
   lengthOfStayAgreed: YesOrNo
   lengthOfStayWeeks: string
@@ -52,16 +50,14 @@ export type MatchingInformationBody = {
     'lengthOfStayDays',
     'lengthOfStay',
     'cruInformation',
-    ...placementRequirements,
-    ...offenceAndRiskInformationKeys,
+    ...placementRequirementCriteria,
+    ...offenceAndRiskCriteria,
   ],
 })
 export default class MatchingInformation implements TasklistPage {
   name = 'matching-information'
 
   title = 'Matching information'
-
-  apTypes = apTypeOptions
 
   questions = {
     apType: 'What type of AP is required?',
@@ -70,17 +66,19 @@ export default class MatchingInformation implements TasklistPage {
     cruInformation: 'Information for Central Referral Unit (CRU) manager (optional)',
   }
 
+  apTypeCriteriaLabels = apTypeCriteriaLabels
+
   placementRequirementTableHeadings = ['Specify placement requirements', 'Essential', 'Desirable', 'Not required']
 
-  placementRequirements = placementRequirements
+  placementRequirementCriteria = placementRequirementCriteria
 
   placementRequirementPreferences = placementRequirementPreferences
 
   relevantInformationTableHeadings = ['Risks and offences to consider', 'Relevant', 'Not required']
 
-  offenceAndRiskInformationKeys = offenceAndRiskInformationKeys
+  offenceAndRiskCriteria = offenceAndRiskCriteria
 
-  offenceAndRiskInformationRelevance = offenceAndRiskInformationRelevance
+  offenceAndRiskInformationRelevance = offenceAndRiskRelevance
 
   constructor(
     private _body: Partial<MatchingInformationBody>,
@@ -105,16 +103,17 @@ export default class MatchingInformation implements TasklistPage {
 
   response() {
     const response = {
-      [this.questions.apType]: this.apTypes[this.body.apType],
+      [this.questions.apType]: apTypeCriteriaLabels[this.body.apType],
     }
 
-    this.placementRequirements.forEach(placementRequirement => {
-      response[`${placementCriteria[placementRequirement]}`] = `${sentenceCase(this.body[placementRequirement])}`
+    this.placementRequirementCriteria.forEach(placementRequirementCriterion => {
+      response[`${placementCriteriaLabels[placementRequirementCriterion]}`] =
+        `${sentenceCase(this.body[placementRequirementCriterion])}`
     })
 
-    this.offenceAndRiskInformationKeys.forEach(offenceOrRiskInformation => {
-      response[`${placementCriteria[offenceOrRiskInformation]}`] = `${sentenceCase(
-        this.body[offenceOrRiskInformation],
+    this.offenceAndRiskCriteria.forEach(offenceOrRiskCriterion => {
+      response[`${placementCriteriaLabels[offenceOrRiskCriterion]}`] = `${sentenceCase(
+        this.body[offenceOrRiskCriterion],
       )}`
     })
 
@@ -139,18 +138,18 @@ export default class MatchingInformation implements TasklistPage {
 
     if (!this.body.apType) errors.apType = 'You must select the type of AP required'
 
-    this.placementRequirements.forEach(placementRequirement => {
-      if (!this.body[placementRequirement]) {
-        errors[placementRequirement] = `You must specify a preference for ${lowerCase(
-          placementCriteria[placementRequirement],
+    this.placementRequirementCriteria.forEach(placementRequirementCriterion => {
+      if (!this.body[placementRequirementCriterion]) {
+        errors[placementRequirementCriterion] = `You must specify a preference for ${lowerCase(
+          placementCriteriaLabels[placementRequirementCriterion],
         )}`
       }
     })
 
-    this.offenceAndRiskInformationKeys.forEach(offenceOrRiskInformation => {
-      if (!this.body[offenceOrRiskInformation]) {
-        errors[offenceOrRiskInformation] = `You must specify if ${lowerCase(
-          placementCriteria[offenceOrRiskInformation],
+    this.offenceAndRiskCriteria.forEach(offenceOrRiskCriterion => {
+      if (!this.body[offenceOrRiskCriterion]) {
+        errors[offenceOrRiskCriterion] = `You must specify if ${lowerCase(
+          placementCriteriaLabels[offenceOrRiskCriterion],
         )} is relevant`
       }
     })

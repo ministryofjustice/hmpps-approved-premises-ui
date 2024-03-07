@@ -36,14 +36,59 @@ import {
   unmatchedCharacteristics,
 } from './matchUtils'
 import {
-  offenceAndRiskOptions,
-  placementCriteria,
-  placementRequirementOptions,
-  specialistApTypeOptions,
+  offenceAndRiskCriteriaLabels,
+  placementCriteriaLabels,
+  placementRequirementCriteriaLabels,
+  specialistApTypeCriteriaLabels,
 } from './placementCriteriaUtils'
 import { linkTo } from './utils'
 
 jest.mock('./utils.ts')
+jest.mock('./placementCriteriaUtils', () => ({
+  specialistApTypeCriteriaLabels: {
+    isPIPE: 'Psychologically Informed Planned Environment (PIPE)',
+    isESAP: 'Enhanced Security AP (ESAP)',
+  },
+  placementRequirementCriteriaLabels: {
+    isWheelchairDesignated: 'Wheelchair accessible',
+    isSingle: 'Single room',
+    isStepFreeDesignated: 'Step-free access',
+    isCatered: 'Catering required',
+    hasEnSuite: 'En-suite bathroom',
+    isSuitedForSexOffenders: 'Room suitable for a person with sexual offences',
+    isArsonDesignated: 'Designated arson room',
+  },
+  offenceAndRiskCriteriaLabels: {
+    isSuitableForVulnerable: 'Vulnerable to exploitation',
+    acceptsSexOffenders: 'Sexual offences against an adult',
+    acceptsChildSexOffenders: 'Sexual offences against children',
+    acceptsNonSexualChildOffenders: 'Non sexual offences against children',
+    acceptsHateCrimeOffenders: 'Hate based offences',
+    isArsonSuitable: 'Arson offences',
+  },
+  placementCriteriaLabels: {
+    isPIPE: 'Psychologically Informed Planned Environment (PIPE)',
+    isESAP: 'Enhanced Security AP (ESAP)',
+    isRecoveryFocussed: 'Recovery Focused Approved Premises (RFAP)',
+    isSemiSpecialistMentalHealth: 'Semi-specialist mental health',
+    isSuitableForVulnerable: 'Vulnerable to exploitation',
+    acceptsSexOffenders: 'Sexual offences against an adult',
+    acceptsChildSexOffenders: 'Sexual offences against children',
+    acceptsNonSexualChildOffenders: 'Non sexual offences against children',
+    acceptsHateCrimeOffenders: 'Hate based offences',
+    isWheelchairDesignated: 'Wheelchair accessible',
+    isSingle: 'Single room',
+    isStepFreeDesignated: 'Step-free access',
+    isCatered: 'Catering required',
+    hasEnSuite: 'En-suite bathroom',
+    isSuitedForSexOffenders: 'Room suitable for a person with sexual offences',
+    isArsonSuitable: 'Arson offences',
+    hasBrailleSignage: 'Braille signage',
+    hasTactileFlooring: 'Tactile flooring',
+    hasHearingLoop: 'Hearing loop',
+    isArsonDesignated: 'Designated arson room',
+  },
+}))
 
 describe('matchUtils', () => {
   beforeEach(() => {
@@ -185,9 +230,9 @@ describe('matchUtils', () => {
   describe('groupedCheckboxes', () => {
     it('returns checkboxes grouped by category', () => {
       expect(groupedCheckboxes([])).toEqual({
-        'Type of AP': checkBoxesForCriteria(specialistApTypeOptions, []),
-        'Placement Requirements': checkBoxesForCriteria(placementRequirementOptions, []),
-        'Risks and offences to consider': checkBoxesForCriteria(offenceAndRiskOptions, []),
+        'Type of AP': checkBoxesForCriteria(specialistApTypeCriteriaLabels, []),
+        'Placement Requirements': checkBoxesForCriteria(placementRequirementCriteriaLabels, []),
+        'Risks and offences to consider': checkBoxesForCriteria(offenceAndRiskCriteriaLabels, []),
       })
     })
   })
@@ -208,8 +253,8 @@ describe('matchUtils', () => {
       const essentialCriteria = ['isPIPE', 'isRecoveryFocussed', 'isSuitableForVulnerable']
 
       expect(groupedEssentialCriteria(essentialCriteria)).toEqual({
-        'Type of AP': [placementCriteria.isPIPE],
-        'Risks and offences to consider': [placementCriteria.isSuitableForVulnerable],
+        'Type of AP': [placementCriteriaLabels.isPIPE],
+        'Risks and offences to consider': [placementCriteriaLabels.isSuitableForVulnerable],
       })
     })
   })

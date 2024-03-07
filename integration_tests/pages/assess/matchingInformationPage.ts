@@ -1,6 +1,6 @@
 import { ApprovedPremisesAssessment as Assessment } from '../../../server/@types/shared'
 import AssessPage from './assessPage'
-import { offenceAndRiskOptions, placementRequirementOptions } from '../../../server/utils/placementCriteriaUtils'
+import { offenceAndRiskCriteria, placementRequirementCriteria } from '../../../server/utils/placementCriteriaUtils'
 
 export default class MatchingInformationPage extends AssessPage {
   constructor(assessment: Assessment) {
@@ -10,11 +10,11 @@ export default class MatchingInformationPage extends AssessPage {
   completeForm() {
     this.checkRadioButtonFromPageBody('apType')
 
-    Object.keys(placementRequirementOptions).forEach(requirement => {
+    placementRequirementCriteria.forEach(requirement => {
       this.checkRadioButtonFromPageBody(requirement)
     })
 
-    Object.keys(offenceAndRiskOptions).forEach(offenceAndRiskInformationKey => {
+    offenceAndRiskCriteria.forEach(offenceAndRiskInformationKey => {
       this.checkRadioButtonFromPageBody(offenceAndRiskInformationKey)
     })
 

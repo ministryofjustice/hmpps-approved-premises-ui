@@ -2,7 +2,7 @@ import { cell, heading, radioMatrixTable, row } from './radioMatrixTable'
 
 jest.mock('./placementCriteriaUtils', () => {
   return {
-    placementCriteria: {
+    placementCriteriaLabels: {
       test: 'Test',
     },
   }

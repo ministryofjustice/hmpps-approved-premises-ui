@@ -10,7 +10,7 @@ import {
 } from '../../utils/retrieveQuestionResponseFromFormArtifact'
 import type {
   MatchingInformationBody,
-  OffenceAndRiskInformationRelevance,
+  OffenceAndRiskRelevance,
   PlacementRequirementPreference,
 } from '../assess/matchingInformation/matchingInformationTask/matchingInformation'
 import AccessNeedsFurtherQuestions from '../apply/risk-and-need-factors/access-and-healthcare/accessNeedsFurtherQuestions'
@@ -62,7 +62,7 @@ const lengthOfStay = (body: MatchingInformationBody): string | undefined => {
 }
 
 type YesNoCurrentPrevious = 'yes' | 'no' | 'current' | 'previous'
-type GetValueOffenceAndRisk = { bodyField: OffenceAndRiskCriteria; returnType: OffenceAndRiskInformationRelevance }
+type GetValueOffenceAndRisk = { bodyField: OffenceAndRiskCriteria; returnType: OffenceAndRiskRelevance }
 type GetValuePlacementRequirement = {
   bodyField: PlacementRequirementCriteria
   returnType: PlacementRequirementPreference
