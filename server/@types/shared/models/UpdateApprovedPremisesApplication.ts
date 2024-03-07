@@ -2,7 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Cas1ApplicationUserDetails } from './Cas1ApplicationUserDetails';
 import type { ReleaseTypeOption } from './ReleaseTypeOption';
 import type { UpdateApplication } from './UpdateApplication';
 export type UpdateApprovedPremisesApplication = (UpdateApplication & {
@@ -14,8 +13,5 @@ export type UpdateApprovedPremisesApplication = (UpdateApplication & {
     targetLocation?: string;
     releaseType?: ReleaseTypeOption;
     arrivalDate?: string;
-    applicantUserDetails?: Cas1ApplicationUserDetails;
-    caseManagerIsNotApplicant?: boolean;
-    caseManagerUserDetails?: Cas1ApplicationUserDetails;
 });
 
