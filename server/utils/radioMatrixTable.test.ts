@@ -37,7 +37,7 @@ describe('radioMatrixTable', () => {
       const options = ['foo', 'bar']
       const selectedOption = 'foo'
       expect(row(rowName, options, selectedOption)).toMatchStringIgnoringWhitespace(`<tr>
-      <th class="govuk-table__cell" scope="row">Test</td>
+      <th class="govuk-table__cell govuk-!-font-weight-regular" scope="row">Test</td>
         ${cell(rowName, options[0], true)}
         ${cell(rowName, options[1], false)}
   </tr>`)

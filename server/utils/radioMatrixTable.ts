@@ -18,7 +18,7 @@ export const cell = (requirement: string, preference: string, checked?: boolean)
 
 export const row = (rowName: string, option: Array<string>, value: string) => {
   return `<tr>
-  <th class="govuk-table__cell" scope="row">${placementCriteriaLabels[rowName]}</td>
+  <th class="govuk-table__cell govuk-!-font-weight-regular" scope="row">${placementCriteriaLabels[rowName]}</td>
     ${option.map(preference => cell(rowName, preference, value === preference)).join('')}
 </tr>`
 }
