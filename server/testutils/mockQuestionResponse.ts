@@ -1,8 +1,12 @@
-import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
+import {
+  ApprovedPremisesApplication as Application,
+  Cas1ApplicationUserDetails as UserDetails,
+} from '@approved-premises/api'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
 } from '../utils/retrieveQuestionResponseFromFormArtifact'
+import { applicantAndCaseManagerDetails } from '../utils/applications/applicantAndCaseManagerDetails'
 
 export const mockQuestionResponse = ({
   postcodeArea = 'ABC 123',
@@ -13,6 +17,9 @@ export const mockQuestionResponse = ({
   duration,
   situation,
   apAreaId,
+  applicantUserDetails,
+  caseManagerUserDetails,
+  caseManagerIsNotApplicant,
 }: {
   postcodeArea?: string
   type?: string
@@ -22,6 +29,9 @@ export const mockQuestionResponse = ({
   alternativeRadius?: string
   situation?: string
   apAreaId?: string
+  applicantUserDetails?: UserDetails
+  caseManagerUserDetails?: UserDetails
+  caseManagerIsNotApplicant?: boolean
 }) => {
   ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockImplementation(
     // eslint-disable-next-line consistent-return
@@ -57,6 +67,11 @@ export const mockQuestionResponse = ({
       if (question === 'area') return apAreaId
     },
   )
+  ;(applicantAndCaseManagerDetails as jest.MockedFn<typeof applicantAndCaseManagerDetails>).mockReturnValue({
+    applicantUserDetails,
+    caseManagerUserDetails,
+    caseManagerIsNotApplicant,
+  })
 }
 
 export const mockOptionalQuestionResponse = ({
@@ -74,6 +89,9 @@ export const mockOptionalQuestionResponse = ({
   pssDate,
   situation,
   apAreaId,
+  applicantUserDetails,
+  caseManagerUserDetails,
+  caseManagerIsNotApplicant,
 }: {
   releaseType?: string
   duration?: string
@@ -89,6 +107,9 @@ export const mockOptionalQuestionResponse = ({
   pssDate?: string
   situation?: string
   apAreaId?: string
+  applicantUserDetails?: UserDetails
+  caseManagerUserDetails?: UserDetails
+  caseManagerIsNotApplicant?: boolean
 }) => {
   ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockImplementation(
     // eslint-disable-next-line consistent-return
@@ -150,4 +171,9 @@ export const mockOptionalQuestionResponse = ({
       }
     },
   )
+  ;(applicantAndCaseManagerDetails as jest.MockedFn<typeof applicantAndCaseManagerDetails>).mockReturnValue({
+    applicantUserDetails,
+    caseManagerUserDetails,
+    caseManagerIsNotApplicant,
+  })
 }

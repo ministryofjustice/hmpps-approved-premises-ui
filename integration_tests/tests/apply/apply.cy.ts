@@ -58,6 +58,9 @@ context('Apply', () => {
         'isEsapApplication',
         'isEmergencyApplication',
         'apAreaId',
+        'applicantUserDetails',
+        'caseManagerIsNotApplicant',
+        'caseManagerUserDetails',
       )
       expect(body.data).to.deep.equal(this.applicationData)
 
@@ -85,6 +88,9 @@ context('Apply', () => {
         'situation',
         'type',
         'apAreaId',
+        'applicantUserDetails',
+        'caseManagerIsNotApplicant',
+        'caseManagerUserDetails',
       )
     })
 
@@ -335,6 +341,9 @@ context('Apply', () => {
         'isEsapApplication',
         'isEmergencyApplication',
         'apAreaId',
+        'applicantUserDetails',
+        'caseManagerIsNotApplicant',
+        'caseManagerUserDetails',
       )
 
       expect(body.data).to.deep.equal(this.applicationData)
@@ -363,6 +372,9 @@ context('Apply', () => {
         'situation',
         'type',
         'apAreaId',
+        'applicantUserDetails',
+        'caseManagerIsNotApplicant',
+        'caseManagerUserDetails',
       )
     })
   })

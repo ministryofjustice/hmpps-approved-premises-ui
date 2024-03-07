@@ -7,6 +7,7 @@ import { addDays } from 'date-fns'
 import type {
   ApprovedPremisesApplication,
   AssessmentDecision,
+  Cas1ApplicationUserDetails,
   OASysSection,
   ReleaseTypeOption,
   SentenceTypeOption,
@@ -123,6 +124,12 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
   }
 }
 
+export const applicationUserDetailsFactory = new Factory<Cas1ApplicationUserDetails>(() => ({
+  name: faker.person.fullName(),
+  email: faker.internet.email(),
+  telephoneNumber: faker.phone.number(),
+}))
+
 export default ApplicationFactory.define(() => ({
   type: 'CAS1',
   id: faker.string.uuid(),
@@ -140,4 +147,7 @@ export default ApplicationFactory.define(() => ({
   status: 'started' as const,
   personStatusOnSubmission: 'InCustody' as const,
   apArea: apAreaFactory.build(),
+  caseManagerIsNotApplicant: faker.datatype.boolean(),
+  caseManagerUserDetails: applicationUserDetailsFactory.build(),
+  applicantUserDetails: applicationUserDetailsFactory.build(),
 }))

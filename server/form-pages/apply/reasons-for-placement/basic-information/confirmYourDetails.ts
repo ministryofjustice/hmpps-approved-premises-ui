@@ -7,24 +7,25 @@ import { lowerCase, sentenceCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
 
-export const updatableDetails: ReadonlyArray<UpdatableDetails> = [
-  'name',
-  'emailAddress',
-  'phoneNumber',
-  'area',
-] as const
+const updatableDetailsLabels: Record<'area', string> = {
+  area: 'AP area',
+}
 
-type UpdatableDetails = 'name' | 'emailAddress' | 'phoneNumber' | 'area'
+export const userDetailsKeys: Array<keyof UserDetails> = ['name', 'emailAddress', 'phoneNumber', 'area']
 
-export type UserDetailsFromDelius = {
-  name?: string
-  emailAddress?: string
-  phoneNumber?: string
+export type UserDetails = {
+  name: string
+  emailAddress: string
+  phoneNumber: string
+  area: ApArea['id']
+}
+
+export type UserDetailsFromDelius = Omit<UserDetails, 'area'> & {
   area: ApArea
 }
 
 export type Body = {
-  detailsToUpdate?: Array<UpdatableDetails>
+  detailsToUpdate?: Array<keyof UserDetails>
   emailAddress?: string
   name?: string
   phoneNumber?: string
@@ -55,7 +56,7 @@ export default class ConfirmYourDetails implements TasklistPage {
       label: 'If you need to update your details, select the relevant box below',
       hint: `<p class="govuk-hint">Select all that need to be changed.</p>
       <p class="govuk-hint">This information will not be written back to Delius</p>`,
-      items: updatableDetails,
+      items: userDetailsKeys,
     },
     caseManagementResponsibility: {
       label: 'Do you have case management responsibility?',
@@ -76,7 +77,7 @@ export default class ConfirmYourDetails implements TasklistPage {
 
   userDetailsFromDelius: UserDetailsFromDelius
 
-  detailsToUpdate: ReadonlyArray<UpdatableDetails>
+  detailsToUpdate: Array<keyof UserDetails>
 
   public get body(): Body {
     let area
@@ -150,23 +151,23 @@ export default class ConfirmYourDetails implements TasklistPage {
 
     response[this.questions.updateDetails.label] = detailsToUpdate.length ? detailsToUpdate : 'None'
 
-    updatableDetails.forEach(detail => {
-      if (this.body?.[detail] && this.body?.detailsToUpdate?.includes(detail)) {
-        if (detail !== 'area') {
-          response[this.responseKey(detail)] = this.body[detail]
+    userDetailsKeys.forEach(detailKey => {
+      if (this.body?.[detailKey] && this.body?.detailsToUpdate?.includes(detailKey)) {
+        if (detailKey !== 'area') {
+          response[this.responseKey(detailKey)] = this.body[detailKey]
         }
-        if (detail === 'area') {
+        if (detailKey === 'area') {
           response[`Applicant AP area`] = this.translateAreaIdToName(this.body.area)
         }
-      } else if (this.body.userDetailsFromDelius?.[detail]) {
-        if (detail !== 'area') {
-          response[this.responseKey(detail)] = this.body.userDetailsFromDelius?.[detail]
+      } else if (this.body.userDetailsFromDelius?.[detailKey]) {
+        if (detailKey !== 'area') {
+          response[this.responseKey(detailKey)] = this.body.userDetailsFromDelius?.[detailKey]
         }
-        if (detail === 'area') {
-          response[`Applicant AP area`] = this.translateAreaIdToName(this.body.userDetailsFromDelius?.[detail].id)
+        if (detailKey === 'area') {
+          response[`Applicant AP area`] = this.translateAreaIdToName(this.body.userDetailsFromDelius?.[detailKey].id)
         }
       } else {
-        response[this.responseKey(detail)] = ''
+        response[this.responseKey(detailKey)] = ''
       }
     })
 
@@ -193,15 +194,22 @@ export default class ConfirmYourDetails implements TasklistPage {
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    updatableDetails.forEach(detail => {
-      if (this.body?.detailsToUpdate?.length && this.body?.detailsToUpdate.includes(detail) && !this.body[detail]) {
-        errors[detail] = `You must enter your updated ${lowerCase(detail)}`
+    userDetailsKeys.forEach(detailKey => {
+      if (
+        this.body?.detailsToUpdate?.length &&
+        this.body?.detailsToUpdate.includes(detailKey) &&
+        !this.body[detailKey]
+      ) {
+        errors[detailKey] = `You must enter your updated ${lowerCase(detailKey)}`
       }
     })
 
-    if (!this.body.userDetailsFromDelius.area && !this.body.area) {
-      errors.area = 'You must enter your AP area'
-    }
+    userDetailsKeys.forEach(detailKey => {
+      if (!this.body.userDetailsFromDelius[detailKey] && !this.body[detailKey]) {
+        const label = updatableDetailsLabels[detailKey] ? updatableDetailsLabels[detailKey] : lowerCase(detailKey)
+        errors[detailKey] = `You must enter your ${label}`
+      }
+    })
 
     if (!this.body.caseManagementResponsibility) {
       errors.caseManagementResponsibility = 'You must enter whether you have case management responsibility'
@@ -210,7 +218,7 @@ export default class ConfirmYourDetails implements TasklistPage {
     return errors
   }
 
-  private responseKey(detail: UpdatableDetails) {
+  private responseKey(detail: keyof UserDetails) {
     const { label } = this.questions[detail]
 
     if (detail !== 'area') return `Applicant ${lowerCase(label)}`

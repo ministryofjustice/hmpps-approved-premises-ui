@@ -7,7 +7,7 @@ import { apAreaFactory, applicationFactory } from '../../../../testutils/factori
 import { RestrictedPersonError } from '../../../../utils/errors'
 import { isApplicableTier, isFullPerson } from '../../../../utils/personUtils'
 import { lowerCase } from '../../../../utils/utils'
-import ConfirmYourDetails, { Body, updatableDetails } from './confirmYourDetails'
+import ConfirmYourDetails, { Body, userDetailsKeys } from './confirmYourDetails'
 
 jest.mock('../../../../utils/personUtils')
 
@@ -180,7 +180,7 @@ describe('ConfirmYourDetails', () => {
       expect(page.errors()).toEqual({})
     })
 
-    describe.each(updatableDetails)('when %s is in the detailsToUpdate array but the field is not populated', field => {
+    describe.each(userDetailsKeys)('when %s is in the detailsToUpdate array but the field is not populated', field => {
       const bodyWithoutField: Readonly<Partial<Body>> = { ...body, detailsToUpdate: [field], [field]: undefined }
       const page = new ConfirmYourDetails(bodyWithoutField, application)
 
@@ -191,24 +191,32 @@ describe('ConfirmYourDetails', () => {
       })
     })
 
-    it('should return an error if there is no area ID in Delius and one is not entered in the form ', () => {
-      const page = new ConfirmYourDetails(
-        {
-          ...body,
-          area: '',
-          detailsToUpdate: [],
-          userDetailsFromDelius: {
-            ...body.userDetailsFromDelius,
-            area: undefined,
+    it.each([
+      ['area', 'AP area'],
+      ['name', 'name'],
+      ['emailAddress', 'email address'],
+      ['phoneNumber', 'phone number'],
+    ])(
+      `should return an error if there is no %s in Delius and one is not entered in the form`,
+      (fieldName, errorCopy) => {
+        const page = new ConfirmYourDetails(
+          {
+            ...body,
+            [fieldName]: '',
+            detailsToUpdate: [],
+            userDetailsFromDelius: {
+              ...body.userDetailsFromDelius,
+              [fieldName]: undefined,
+            },
           },
-        },
-        application,
-      )
+          application,
+        )
 
-      expect(page.errors()).toEqual({
-        area: 'You must enter your AP area',
-      })
-    })
+        expect(page.errors()).toEqual({
+          [fieldName]: `You must enter your ${errorCopy}`,
+        })
+      },
+    )
 
     it('should return an error if there is no response for caseManagementResponsibility', () => {
       const page = new ConfirmYourDetails({ ...body, caseManagementResponsibility: undefined }, application)

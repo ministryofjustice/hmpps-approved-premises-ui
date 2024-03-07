@@ -1,5 +1,4 @@
-import type { DataServices, TaskListErrors, YesOrNo } from '@approved-premises/ui'
-import type { ApprovedPremisesAssessment as Assessment, User } from '@approved-premises/api'
+import type { TaskListErrors, YesOrNo } from '@approved-premises/ui'
 
 import { Page } from '../../../utils/decorators'
 import { sentenceCase } from '../../../../utils/utils'
@@ -17,23 +16,7 @@ export default class SufficientInformation implements TasklistPage {
 
   furtherInformationQuestion = 'What additional information is needed?'
 
-  user: User
-
   constructor(public body: { sufficientInformation?: YesOrNo; query?: string }) {}
-
-  static async initialize(
-    body: Record<string, unknown>,
-    assessment: Assessment,
-    token: string,
-    dataServices: DataServices,
-  ) {
-    const user = await dataServices.userService.getUserById(token, assessment.application.createdByUserId)
-
-    const page = new SufficientInformation(body)
-    page.user = user
-
-    return page
-  }
 
   previous() {
     return 'dashboard'

@@ -3,16 +3,13 @@ import type { TaskListErrors } from '@approved-premises/ui'
 import { lowerCase } from '../../../../utils/utils'
 import TasklistPage from '../../../tasklistPage'
 import { Page } from '../../../utils/decorators'
+import { UserDetails, userDetailsKeys } from './confirmYourDetails'
 
-export type CaseManagerDetails = {
-  name: string
-  emailAddress: string
-  phoneNumber: string
-}
+export type CaseManagerDetails = Omit<UserDetails, 'area'>
 
-export const fields: ReadonlyArray<keyof CaseManagerDetails> = ['name', 'emailAddress', 'phoneNumber']
+export const caseManagerKeys = userDetailsKeys.filter(key => key !== 'area')
 
-@Page({ name: 'case-manager-information', bodyProperties: ['name', 'emailAddress', 'phoneNumber'] })
+@Page({ name: 'case-manager-information', bodyProperties: caseManagerKeys })
 export default class CaseManagerInformation implements TasklistPage {
   title = 'Add case manager information'
 
@@ -45,7 +42,7 @@ export default class CaseManagerInformation implements TasklistPage {
   errors() {
     const errors: TaskListErrors<this> = {}
 
-    fields.forEach(field => {
+    caseManagerKeys.forEach(field => {
       if (!this.body[field]) {
         errors[field] = `You must enter the case manager's ${lowerCase(field)}`
       }
