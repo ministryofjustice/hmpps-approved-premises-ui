@@ -7,14 +7,14 @@
 
 <h1 class="govuk-heading-l"> {{page.title}} </h1>
 
-    {{ govukDetails({
-      summaryText: "What are the different types of AP?",
-      html: '<p><strong>Standard APs</strong> provide 24 hour staff support and monitoring, an overnight curfew, CCTV, room searches, rehabilitative activities, medication monitoring, and drug and alcohol testing.</p>
-            <p><strong>Psychologically Informed Planned Environment (PIPE)</strong> AP are for people who screen into the Offender Personality Disorder (OPD) pathway. PIPE staff have additional training to manage individuals and create an enhanced safe and supportive environment. </p>
-            <p><strong>Enhanced Security AP (ESAP)</strong> offer additional security measures and are intended to individuals whose risk management plan and ability to manage in the community are reliant on those measures. </p>
-            <p><strong>Recovery Focused AP (RFAP)</strong> provide concentrated support for prison leavers who have begun to address their substance misuse in custody. RFAP work closely with key recovery partners and organisations within the local community to offer people on probation the best level of support available. RFAP staff will be trained as recovery coaches and take a personalised approach to rehabilitation, including committing a minimum of 10 hours to each individual to work on a recovery plan tailored to their needs. </p>'
-    }) 
-    }}
+  {{ govukDetails({
+    summaryText: "What are the different types of AP?",
+    html: '<p><strong>Standard APs</strong> provide 24 hour staff support and monitoring, an overnight curfew, CCTV, room searches, rehabilitative activities, medication monitoring, and drug and alcohol testing.</p>
+          <p><strong>Psychologically Informed Planned Environment (PIPE)</strong> AP are for people who screen into the Offender Personality Disorder (OPD) pathway. PIPE staff have additional training to manage individuals and create an enhanced safe and supportive environment.</p>
+          <p><strong>Enhanced Security AP (ESAP)</strong> offer additional security measures and are intended to individuals whose risk management plan and ability to manage in the community are reliant on those measures.</p>
+          <p><strong>Recovery Focused AP (RFAP)</strong> provide concentrated support for prison leavers who have begun to address their substance misuse in custody. RFAP work closely with key recovery partners and organisations within the local community to offer people on probation the best level of support available. RFAP staff will be trained as recovery coaches and take a personalised approach to rehabilitation, including committing a minimum of 10 hours to each individual to work on a recovery plan tailored to their needs.</p>
+          <p><strong>Specialist Mental Health AP</strong> have additional mental health team support. They are for adult males who have a severe and enduring mental health diagnosis and require intervention from secondary services. There are two specialist mental health AP who each have their own criteria for admission.'
+  }) }}
 
   {{
     formPageRadios(
@@ -27,4 +27,3 @@
   }}
 
 {% endblock %}
-
