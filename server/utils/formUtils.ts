@@ -75,6 +75,7 @@ export function convertKeyValuePairToRadioItems<T extends object>(
   object: T,
   checkedItem?: keyof T,
   conditionals?: Partial<Record<keyof T, RadioItem['conditional']>>,
+  hints?: Partial<Record<keyof T, RadioItem['hint']>>,
 ): Array<RadioItem> {
   return Object.keys(object).map(key => {
     return {
@@ -82,6 +83,7 @@ export function convertKeyValuePairToRadioItems<T extends object>(
       text: object[key],
       checked: checkedItem === key,
       conditional: conditionals ? conditionals[key] : undefined,
+      hint: hints ? hints[key] : undefined,
     }
   })
 }
