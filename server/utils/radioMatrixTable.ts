@@ -1,4 +1,4 @@
-import { placementCriteria } from './placementCriteriaUtils'
+import { placementCriteriaLabels } from './placementCriteriaUtils'
 import { sentenceCase } from './utils'
 
 export const cell = (requirement: string, preference: string, checked?: boolean) => {
@@ -18,17 +18,19 @@ export const cell = (requirement: string, preference: string, checked?: boolean)
 
 export const row = (rowName: string, option: Array<string>, value: string) => {
   return `<tr>
-  <th class="govuk-table__cell" scope="row">${placementCriteria[rowName]}</td>
+  <th class="govuk-table__cell govuk-!-font-weight-regular" scope="row">${placementCriteriaLabels[rowName]}</td>
     ${option.map(preference => cell(rowName, preference, value === preference)).join('')}
 </tr>`
 }
 
 export const heading = (headingNames: Array<string>) => {
-  return `<thead class="govuk-table__head">
+  return headingNames.length
+    ? `<thead class="govuk-table__head">
 <tr class="govuk-table__row">
 ${headingNames.map(title => `<th class="govuk-table__header" scope="col">${title}</th>`).join('')}
 </tr>
 </thead>`
+    : ''
 }
 
 export const radioMatrixTable = (

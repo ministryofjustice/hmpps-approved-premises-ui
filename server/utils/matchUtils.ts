@@ -9,10 +9,10 @@ import { DateFormats, daysToWeeksAndDays } from './dateUtils'
 import { linkTo } from './utils'
 import matchPaths from '../paths/match'
 import {
-  offenceAndRiskOptions,
-  placementCriteria,
-  placementRequirementOptions,
-  specialistApTypeOptions,
+  offenceAndRiskCriteriaLabels,
+  placementCriteriaLabels,
+  placementRequirementCriteriaLabels,
+  specialistApTypeCriteriaLabels,
 } from './placementCriteriaUtils'
 
 type PlacementDates = {
@@ -26,9 +26,9 @@ export class InvalidBedSearchDataException extends Error {}
 export type SearchFilterCategories = 'apType' | 'offenceAndRisk' | 'placementRequirements'
 
 const groupedCriteria = {
-  apType: { title: 'Type of AP', options: specialistApTypeOptions },
-  placementRequirements: { title: 'Placement Requirements', options: placementRequirementOptions },
-  offenceAndRisk: { title: 'Risks and offences to consider', options: offenceAndRiskOptions },
+  apType: { title: 'Type of AP', options: specialistApTypeCriteriaLabels },
+  placementRequirements: { title: 'Placement Requirements', options: placementRequirementCriteriaLabels },
+  offenceAndRisk: { title: 'Risks and offences to consider', options: offenceAndRiskCriteriaLabels },
 }
 
 export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParameters => {
@@ -43,7 +43,7 @@ export const mapUiParamsForApi = (query: BedSearchParametersUi): BedSearchParame
 
 export const mapSearchParamCharacteristicsForUi = (characteristics: Array<string>) => {
   return `<ul class="govuk-list">${characteristics
-    .map(characteristicPair => `<li>${placementCriteria[characteristicPair]}</li>`)
+    .map(characteristicPair => `<li>${placementCriteriaLabels[characteristicPair]}</li>`)
     .join('')}</ul>`
 }
 

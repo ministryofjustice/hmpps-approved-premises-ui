@@ -21,8 +21,8 @@ import {
   ApTypeCriteria,
   OffenceAndRiskCriteria,
   PlacementRequirementCriteria,
-  offenceAndRiskOptions,
-  placementRequirementOptions,
+  offenceAndRiskCriteria,
+  placementRequirementCriteria,
 } from '../placementCriteriaUtils'
 import { placementDurationFromApplication } from './placementDurationFromApplication'
 import { getResponses } from '../applications/getResponses'
@@ -79,7 +79,7 @@ export const placementRequestData = (assessment: Assessment): PlacementRequireme
   }
 }
 
-export const apType = (type: ApTypeCriteria | 'normal' | 'isRecoveryFocussed'): ApType => {
+export const apType = (type: ApTypeCriteria | 'isRecoveryFocussed'): ApType => {
   switch (type) {
     case 'isPIPE':
       return 'pipe'
@@ -102,7 +102,7 @@ export const criteriaFromMatchingInformation = (
     essentialCriteria.push(matchingInformation.apType)
   }
 
-  Object.keys(placementRequirementOptions).forEach((requirement: PlacementRequirementCriteria) => {
+  placementRequirementCriteria.forEach((requirement: PlacementRequirementCriteria) => {
     if (matchingInformation[requirement] === 'essential') {
       essentialCriteria.push(requirement)
     }
@@ -112,7 +112,7 @@ export const criteriaFromMatchingInformation = (
     }
   })
 
-  Object.keys(offenceAndRiskOptions).forEach((requirement: OffenceAndRiskCriteria) => {
+  offenceAndRiskCriteria.forEach((requirement: OffenceAndRiskCriteria) => {
     if (matchingInformation[requirement] === 'relevant') {
       essentialCriteria.push(requirement)
     }
