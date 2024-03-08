@@ -4,4 +4,4 @@
 /* eslint-disable */
 export type ApType = 'normal' | 'pipe' | 'esap' | 'rfap';
 
-export type TemporaryApplyApTypeAwaitingApiChange = 'standard' | 'pipe' | 'esap';
+export type TemporaryApplyApTypeAwaitingApiChange = 'standard' | 'pipe' | 'esap' | 'mhapStJosephs' | 'mhapElliottHouse';
