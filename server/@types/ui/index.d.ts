@@ -214,7 +214,7 @@ export type TierNumber = GetRiskLevelNumber<RiskTierLevel>
 export type TierLetter = GetRiskLevelLetter<RiskTierLevel>
 
 // update this?
-export type ApplicationType = 'Standard' | 'PIPE'
+export type ApplicationType = 'Standard' | 'PIPE' | 'ESAP' | 'RFAP' | 'MHAP (Elliott House)' | 'MHAP (St Josephs)'
 
 export interface ErrorMessage {
   text: string

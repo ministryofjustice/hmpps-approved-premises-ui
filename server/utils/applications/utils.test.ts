@@ -692,10 +692,10 @@ describe('utils', () => {
     it.each<[ApplicationType, ApType]>([
       // check this is correct (showing Standard for everything except PIPE)
       ['Standard', 'normal'],
-      ['Standard', 'mhapElliottHouse'],
-      ['Standard', 'mhapStJosephs'],
-      ['Standard', 'esap'],
-      ['Standard', 'rfap'],
+      ['MHAP (Elliott House)', 'mhapElliottHouse'],
+      ['MHAP (St Josephs)', 'mhapStJosephs'],
+      ['ESAP', 'esap'],
+      ['RFAP', 'rfap'],
       ['PIPE', 'pipe'],
     ])('returns %s when the application is %s', (expectedOutput, applicationApType) => {
       const application = applicationFactory.build({
