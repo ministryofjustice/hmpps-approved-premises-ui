@@ -79,6 +79,57 @@ context('Cancellation', () => {
     confirmationPage.shouldShowPanel()
   })
 
+  it('should allow me to create a cancellation with a reason of "other" ', () => {
+    // Given a booking is available
+    const application = applicationFactory.build()
+    const booking = bookingFactory.arrivingToday().build({ applicationId: application.id })
+    const premises = extendedPremisesSummaryFactory.build({ bookings: [booking], id: booking.premises.id })
+
+    cy.task('stubBookingGet', { premisesId: premises.id, booking })
+
+    // When I navigate to the booking's cancellation page
+    const notes = 'Some notes'
+    const cancellation = cancellationFactory.build({
+      reason: { id: 'other', name: 'Other' },
+      notes,
+    })
+    const withdrawable = withdrawableFactory.build({ id: booking.id, type: 'booking' })
+    cy.task('stubCancellationCreate', { premisesId: premises.id, bookingId: booking.id, cancellation })
+    cy.task('stubPremisesSummary', premises)
+    cy.task('stubWithdrawables', { applicationId: application.id, withdrawables: [withdrawable] })
+    cy.task('stubBookingFindWithoutPremises', booking)
+
+    // And I fill out the cancellation form with a reason of "other" but without a note
+    const cancellationPage = CancellationCreatePage.visit(premises.id, booking.id)
+    cancellationPage.completeForm({ ...cancellation, notes: '' })
+
+    // Then I should see an error message
+    cancellationPage.shouldShowErrorMessagesForFields(['notes'], {
+      notes: 'Enter a reason for the cancellation',
+    })
+
+    // Given I retry completing the form
+    // When I complete the reason and notes
+    cancellationPage.completeForm(cancellation)
+
+    // Then a cancellation should not have been created in the API
+    cy.task('verifyCancellationCreate', {
+      premisesId: premises.id,
+      bookingId: booking.id,
+      cancellation,
+    }).then(requests => {
+      expect(requests).to.have.length(1)
+      const requestBody = JSON.parse(requests[0].body)
+
+      expect(requestBody.reason).equal(undefined)
+      expect(requestBody.notes).equal(notes)
+    })
+
+    // And I should see a confirmation message
+    const confirmationPage = new BookingCancellationConfirmPage()
+    confirmationPage.shouldShowPanel()
+  })
+
   it('should allow me to create a cancellation for a booking without an applicationId', () => {
     // Given a booking is available
     const premises = premisesFactory.build()

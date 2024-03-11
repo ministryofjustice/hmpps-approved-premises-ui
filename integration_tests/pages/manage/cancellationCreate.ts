@@ -21,6 +21,10 @@ export default class CancellationCreatePage extends Page {
     this.getLegend('Why is this placement being withdrawn?')
     this.checkRadioByNameAndValue('cancellation[reason]', cancellation.reason.id)
 
+    if (cancellation.reason.id === 'other' && cancellation.notes) {
+      this.completeTextArea('notes', cancellation.notes)
+    }
+
     this.clickSubmit()
   }
 

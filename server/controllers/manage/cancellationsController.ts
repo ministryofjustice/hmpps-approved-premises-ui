@@ -3,7 +3,11 @@ import type { Request, RequestHandler, Response } from 'express'
 import type { NewCancellation } from '@approved-premises/api'
 
 import { BookingService, CancellationService } from '../../services'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
+import {
+  addErrorMessageToFlash,
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+} from '../../utils/validation'
 import { DateFormats } from '../../utils/dateUtils'
 
 import paths from '../../paths/manage'
@@ -60,16 +64,26 @@ export default class CancellationsController {
       }
 
       const cancellation = {
-        ...req.body.cancellation,
         date,
+        notes: req.body?.notes,
+        reason: req.body?.cancellation?.reason,
       } as NewCancellation
+
+      if (req.body?.cancellation?.reason === 'other') {
+        if (!req.body?.notes?.trim()) {
+          addErrorMessageToFlash(req, 'Enter a reason for the cancellation', 'notes')
+
+          return res.redirect(paths.bookings.cancellations.new({ premisesId, bookingId }))
+        }
+        cancellation.reason = undefined
+      }
 
       try {
         await this.cancellationService.createCancellation(req.user.token, premisesId, bookingId, cancellation)
 
-        res.render('cancellations/confirm', { pageHeading: 'Booking withdrawn' })
+        return res.render('cancellations/confirm', { pageHeading: 'Booking withdrawn' })
       } catch (error) {
-        catchValidationErrorOrPropogate(
+        return catchValidationErrorOrPropogate(
           req,
           res,
           error as Error,

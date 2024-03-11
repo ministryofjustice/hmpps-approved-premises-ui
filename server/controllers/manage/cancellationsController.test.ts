@@ -6,7 +6,11 @@ import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import CancellationService from '../../services/cancellationService'
 import BookingService from '../../services/bookingService'
 import CancellationsController from './cancellationsController'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
+import {
+  addErrorMessageToFlash,
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+} from '../../utils/validation'
 
 import { bookingFactory, cancellationFactory, referenceDataFactory } from '../../testutils/factories'
 import paths from '../../paths/manage'
@@ -134,7 +138,6 @@ describe('cancellationsController', () => {
         'date-day': 11,
         backLink,
         cancellation: {
-          notes: 'Some notes',
           reason: '8b2677dd-e5d4-407a-a8f8-e2035aec9227',
         },
       }
@@ -165,7 +168,7 @@ describe('cancellationsController', () => {
 
       const reason = '8b2677dd-e5d4-407a-a8f8-e2035aec9227'
 
-      request.body = await requestHandler(
+      await requestHandler(
         {
           ...request,
           body: {
@@ -223,6 +226,79 @@ describe('cancellationsController', () => {
           premisesId: request.params.premisesId,
         }),
       )
+    })
+
+    describe('if the reason selected is other', () => {
+      describe('if notes are added', () => {
+        it('ensures there are notes and doesnt pass the reason to the API as it will be supplied in the notes', async () => {
+          const notes = 'some note'
+          const cancellation = cancellationFactory.build()
+
+          const requestHandler = cancellationsController.create()
+
+          request.params = {
+            bookingId,
+            premisesId,
+          }
+          cancellationService.createCancellation.mockResolvedValue(cancellation)
+
+          await requestHandler(
+            {
+              ...request,
+              body: {
+                notes,
+                cancellation: {
+                  reason: 'other',
+                },
+              },
+            },
+            response,
+            next,
+          )
+
+          expect(cancellationService.createCancellation).toHaveBeenCalledWith(token, premisesId, bookingId, {
+            reason: undefined,
+            notes,
+            date: DateFormats.dateObjToIsoDate(new Date()),
+          })
+        })
+      })
+
+      describe('if no notes are added', () => {
+        it('should render the form with an error', async () => {
+          const requestHandler = cancellationsController.create()
+
+          request.params = {
+            bookingId,
+            premisesId,
+          }
+
+          const requestWithoutNotes = {
+            ...request,
+            body: {
+              cancellation: {
+                reason: 'other',
+              },
+            },
+          }
+
+          const err = new Error()
+
+          cancellationService.createCancellation.mockImplementation(() => {
+            throw err
+          })
+
+          await requestHandler(requestWithoutNotes, response, next)
+
+          expect(response.redirect).toHaveBeenCalledWith(paths.bookings.cancellations.new({ premisesId, bookingId }))
+          expect(addErrorMessageToFlash).toHaveBeenCalledWith(
+            requestWithoutNotes,
+            'Enter a reason for the cancellation',
+            'notes',
+          )
+          expect(cancellationService.createCancellation).not.toHaveBeenCalled()
+        })
+      })
     })
   })
 })
