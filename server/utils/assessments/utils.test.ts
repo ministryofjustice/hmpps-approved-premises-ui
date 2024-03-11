@@ -6,15 +6,12 @@ import {
   confirmationPageMessage,
   confirmationPageResult,
   formattedArrivalDate,
-  getApplicationType,
   getPage,
   getReviewNavigationItems,
   groupAssessmements,
   keyDetails,
   rejectionRationaleFromAssessmentResponses,
 } from './utils'
-
-import * as applicationUtils from '../applications/utils'
 
 import Assess from '../../form-pages/assess'
 import { UnknownPageError } from '../errors'
@@ -36,6 +33,7 @@ import { nameOrPlaceholderCopy } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import { linkTo } from '../utils'
 import applyPaths from '../../paths/apply'
+import { getApplicationType } from '../applications/utils'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -109,27 +107,6 @@ describe('utils', () => {
         requestedFurtherInformation: pendingAssessments,
         awaiting: activeAssessments,
       })
-    })
-  })
-
-  describe('getApplicationType', () => {
-    it('returns standard when the application is not PIPE', () => {
-      ;(applicationUtils.getApplicationType as jest.Mock).mockReturnValue('Standard')
-      const assessment = assessmentFactory.build({
-        application: applicationFactory.build({ isPipeApplication: false }),
-      })
-
-      expect(getApplicationType(assessment)).toEqual('Standard')
-    })
-
-    it('returns PIPE when the application is PIPE', () => {
-      ;(applicationUtils.getApplicationType as jest.Mock).mockReturnValue('PIPE')
-
-      const assessment = assessmentFactory.build({
-        application: applicationFactory.build({ isPipeApplication: true }),
-      })
-
-      expect(getApplicationType(assessment)).toEqual('PIPE')
     })
   })
 
@@ -294,7 +271,7 @@ describe('utils', () => {
             text: 'Application Type',
           },
           value: {
-            text: getApplicationType(assessment),
+            text: getApplicationType(assessment.application),
           },
         },
         {
@@ -335,7 +312,7 @@ describe('utils', () => {
             text: 'Application Type',
           },
           value: {
-            text: getApplicationType(assessment),
+            text: getApplicationType(assessment.application),
           },
         },
       ])
