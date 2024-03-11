@@ -41,49 +41,18 @@ describe('applicationIdentityBar', () => {
   describe('applicationMenuItems', () => {
     const userId = 'some-id'
 
-    describe('if the user created the application', () => {
-      it('should return the option to withdraw an application', () => {
-        const application = applicationFactory.build({ createdByUserId: userId })
-        expect(applicationMenuItems(application, fromPartial({ roles: ['applicant'], id: userId }))).toEqual([
-          {
-            text: 'Withdraw application or placement request',
-            href: paths.applications.withdraw.new({ id: application.id }),
-            classes: 'govuk-button--secondary',
-            attributes: {
-              'data-cy-withdraw-application': application.id,
-            },
+    it('should return the option to withdraw an application', () => {
+      const application = applicationFactory.build({ createdByUserId: userId })
+      expect(applicationMenuItems(application, fromPartial({ roles: ['applicant'], id: userId }))).toEqual([
+        {
+          text: 'Withdraw application or placement request',
+          href: paths.applications.withdraw.new({ id: application.id }),
+          classes: 'govuk-button--secondary',
+          attributes: {
+            'data-cy-withdraw-application': application.id,
           },
-        ])
-      })
-    })
-
-    describe('if the user did not create the application', () => {
-      describe("and is not a 'workflow_manager'", () => {
-        it('should return an empty array', () => {
-          const userAId = 'user-a-id'
-          const userBId = 'user-b-id'
-          const application = applicationFactory.build({ createdByUserId: userAId })
-          expect(applicationMenuItems(application, fromPartial({ roles: ['applicant'], id: userBId }))).toEqual([])
-        })
-      })
-
-      describe("and is a 'workflow_manager'", () => {
-        it('should return the Withdraw menu item', () => {
-          const userAId = 'user-a-id'
-          const userBId = 'user-b-id'
-          const application = applicationFactory.build({ createdByUserId: userAId })
-          expect(applicationMenuItems(application, fromPartial({ roles: ['workflow_manager'], id: userBId }))).toEqual([
-            {
-              text: 'Withdraw application or placement request',
-              href: paths.applications.withdraw.new({ id: application.id }),
-              classes: 'govuk-button--secondary',
-              attributes: {
-                'data-cy-withdraw-application': application.id,
-              },
-            },
-          ])
-        })
-      })
+        },
+      ])
     })
 
     describe('if the application is withdrawn', () => {

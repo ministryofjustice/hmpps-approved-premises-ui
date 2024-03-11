@@ -40,6 +40,7 @@ export default class WithdrawalsController {
           pageHeading: 'What do you want to withdraw?',
           id,
           withdrawables,
+          referer: req.headers.referer,
         })
       }
 

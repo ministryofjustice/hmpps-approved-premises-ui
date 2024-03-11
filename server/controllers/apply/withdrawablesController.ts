@@ -50,6 +50,7 @@ export default class WithdrawalsController {
         selectedWithdrawable: Withdrawable['id'] | undefined
       }
       const { id } = req.params as { id: Application['id'] | undefined }
+      req.flash('applicationId', id)
 
       const withdrawable = (await this.applicationService.getWithdrawables(req.user.token, id)).find(
         w => w.id === selectedWithdrawable,

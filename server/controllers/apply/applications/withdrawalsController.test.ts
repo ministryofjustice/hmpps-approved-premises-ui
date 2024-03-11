@@ -59,7 +59,11 @@ describe('withdrawalsController', () => {
         const requestHandler = withdrawalsController.new()
 
         await requestHandler(
-          { ...request, params: { id: applicationId }, body: { selectedWithdrawableType } },
+          {
+            ...request,
+            params: { id: applicationId },
+            body: { selectedWithdrawableType },
+          },
           response,
           next,
         )
@@ -103,6 +107,7 @@ describe('withdrawalsController', () => {
 
     describe('and no selectedWithdrawableType', () => {
       it('renders the select withdrawable view', async () => {
+        const referer = 'some-referer'
         const errorsAndUserInput = createMock<ErrorsAndUserInput>()
         ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
@@ -112,13 +117,14 @@ describe('withdrawalsController', () => {
 
         const requestHandler = withdrawalsController.new()
 
-        await requestHandler({ ...request, params: { id: applicationId } }, response, next)
+        await requestHandler({ ...request, params: { id: applicationId }, headers: { referer } }, response, next)
 
         expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/new', {
           pageHeading: 'What do you want to withdraw?',
           id: applicationId,
           withdrawables,
+          referer,
         })
       })
     })

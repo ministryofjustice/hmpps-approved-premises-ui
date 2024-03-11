@@ -179,6 +179,29 @@ context('Withdrawals', () => {
 
     it('withdraws a placement request, showing all options for withdrawal reason excluding those relating to lack of capacity', () =>
       withdrawsAPlacementRequest(userRoles))
+
+    it('shows a warning message if there are no withdrawables', () => {
+      const application = applicationSummaryFactory.build()
+
+      cy.task('stubWithdrawables', {
+        applicationId: application.id,
+        withdrawables: [],
+      })
+      cy.task('stubApplications', [application])
+      cy.task('stubApplicationGet', { application })
+
+      // Given I am on the list page
+      const listPage = ListPage.visit([application], [], [])
+
+      // When I click 'Withdraw' on an application
+      listPage.clickWithdraw()
+
+      // Then I am asked what I want to withdraw
+      const newWithdrawalPage = new NewWithdrawalPage('What do you want to withdraw?')
+      newWithdrawalPage.checkForBackButton(paths.applications.index({}))
+
+      newWithdrawalPage.shouldShowNoWithdrawablesGuidance()
+    })
   })
 })
 

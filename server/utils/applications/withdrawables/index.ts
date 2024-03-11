@@ -10,19 +10,27 @@ export { sortAndFilterWithdrawables } from './sortAndFilterWithdrawables'
 export type SelectedWithdrawableType = 'application' | 'placementRequest' | 'placement'
 
 export const hintCopy: Record<SelectedWithdrawableType, string> = {
-  application: `This will withdraw the application, the suitability assessment, any requests for placement, any matching tasks, and any placements assigned to an AP. You should only withdraw an application if your application is incorrect through circumstantial changes or error.If you choose this option you will have to make another application should you need this person to stay in an AP. This cannot be undone.`,
-  placement: `This will cancel a placement booked into a specific AP but will retain the request for placement so that the Applicant can be matched to another AP. 
-  This will mean the Applicant no longer has a space in this AP, but the request for placement will be reopened for matching into a AP space for the dates provided in the application or request for placement. If you want to request a placement for new/different dates, you should withdraw the placement request and make a new placement request. 
-  There is no guarantee that a further placement will be available.`,
-  placementRequest: `<p class="govuk-hint">This will withdraw the following Request for Placement tasks:</p>
-  <ul class="govuk-hint"><li>A match request made after an application where the date is known</li>
-  <li>A request for placement mini assessment</li>
-  <li>A match request made after a request for placement has been approved</li></ul>
-  <p class="govuk-hint">It will also remove any placements to an AP that are attached to these Request for Placements. 
-  This option should be selected if the applicant is no longer requiring an AP placement on the dates recorded but still needs an AP placement now or in the future. 
-  This will cancel the selected placement and allow you to request a new placement.</p>`,
+  application: `<p class="govuk-hint">You should only withdraw an application if your application is incorrect through significant changes in circumstances, an error in the application or duplication.</p>
+                <p class="govuk-hint">Choose this option if you want to withdraw:</p>
+                <ul class="govuk-hint">
+                  <li>The application AND</li>
+                  <li>The suitability assessment AND</li>
+                  <li>All requests for placement made that are linked to this application AND</li>
+                  <li>All AP placements that have already been made that are linked to this application AND</li>
+                </ul>
+                <p class="govuk-hint">
+                  If you choose this option you will have to make another application should you need this
+                  person to stay in an AP. <strong>This cannot be undone.</strong>
+                </p>`,
+  placement: `<p class="govuk-hint">This will cancel a placement booked into a specific AP and return the request for placement to the CRU to enable the person to be matched to an alternative placement</p>
+  <p class="govuk-hint">There is no guarantee that a further placement will be available</p>`,
+  placementRequest: `<p class="govuk-hint">Choose this option if you want to withdraw:</p>
+  <ul class="govuk-hint">
+    <li>A placement that has been requested and not yet booked or placements that have been booked AND</li>
+    <li>You want to retain the application and suitability assessment so that you can make further requests for placement without completing a new application</li>
+  </ul>
+  <p class="govuk-hint">If you choose this option you will be able to complete a request for placement without needing to make another application should you need this person to stay in an AP</p>`,
 }
-
 export const withdrawableTypeRadioOptions = (
   withdrawables: Array<Withdrawable>,
   selectedItem?: SelectedWithdrawableType,
@@ -35,7 +43,7 @@ export const withdrawableTypeRadioOptions = (
       value: 'application',
       checked: selectedItem === 'application',
       hint: {
-        text: hintCopy.application,
+        html: hintCopy.application,
       },
     })
   }
@@ -50,11 +58,11 @@ export const withdrawableTypeRadioOptions = (
 
   if (withdrawables.find(w => w.type === 'booking')) {
     radioItems.push({
-      text: 'Placement',
+      text: 'Placement/Booking',
       value: 'placement',
       checked: selectedItem === 'placement',
       hint: {
-        text: hintCopy.placement,
+        html: hintCopy.placement,
       },
     })
   }

@@ -21,6 +21,7 @@ import PlacementApplicationWithdrawalConfirmationPage from '../pages/match/place
 import ShowPagePlacementApplications from '../pages/admin/placementApplications/showPage'
 import { ShowPage as ShowPageApply } from '../pages/apply'
 import Page from '../pages/page'
+import paths from '../../server/paths/apply'
 
 const documentsFromApplication = (application: ApprovedPremisesApplication): Array<Document> => {
   return application.data['attach-required-documents']['attach-documents'].selectedDocuments as Array<Document>
@@ -77,6 +78,7 @@ const createOccupancyEntry = (startDate: Date, endDate: Date, type: BedOccupancy
 const withdrawPlacementRequestOrApplication = async (
   withdrawable: Withdrawable,
   showPage: ShowPagePlacementApplications | ShowPageApply,
+  applicationId: string,
 ) => {
   // Then I should see the withdrawable type selection page
   const selectWithdrawableTypePage = new NewWithdrawalPage('What do you want to withdraw?')
@@ -93,6 +95,9 @@ const withdrawPlacementRequestOrApplication = async (
 
   // Then I should see the withdrawal confirmation page
   const confirmationPage = Page.verifyOnPage(PlacementApplicationWithdrawalConfirmationPage)
+  confirmationPage.checkForBackButton(
+    `${paths.applications.withdraw.new({ id: applicationId })}?selectedWithdrawableType=placementRequest`,
+  )
   // And be able to state a reason
   const withdrawalReason = 'DuplicatePlacementRequest'
   confirmationPage.selectReason(withdrawalReason)

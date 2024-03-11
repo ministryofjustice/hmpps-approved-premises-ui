@@ -23,17 +23,15 @@ export const applicationTitle = (application: Application, pageHeading: string):
 export const applicationMenuItems = (application: Application, user: UserDetails): Array<IdentityBarMenuItem> => {
   const items: Array<IdentityBarMenuItem> = []
 
-  if (application.createdByUserId === user.id || user.roles.includes('workflow_manager')) {
-    if (application.status !== 'withdrawn') {
-      items.push({
-        text: 'Withdraw application or placement request',
-        href: paths.applications.withdraw.new({ id: application.id }),
-        classes: 'govuk-button--secondary',
-        attributes: {
-          'data-cy-withdraw-application': application.id,
-        },
-      })
-    }
+  if (application.status !== 'withdrawn') {
+    items.push({
+      text: 'Withdraw application or placement request',
+      href: paths.applications.withdraw.new({ id: application.id }),
+      classes: 'govuk-button--secondary',
+      attributes: {
+        'data-cy-withdraw-application': application.id,
+      },
+    })
   }
 
   if (user.roles.includes('appeals_manager') && application.status === 'rejected') {

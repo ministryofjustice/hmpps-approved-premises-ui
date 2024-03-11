@@ -18,7 +18,8 @@ jest.mock('../../utils/validation')
 describe('cancellationsController', () => {
   const token = 'SOME_TOKEN'
   const booking = bookingFactory.build()
-  const backLink = applyPaths.applications.withdrawables.show({ id: booking.applicationId })
+  const backLink = `${applyPaths.applications.withdrawables.show({ id: booking.applicationId })}?selectedWithdrawableType=placement`
+
   const cancellationReasons = referenceDataFactory.buildList(4)
 
   const request: DeepMocked<Request> = createMock<Request>({ user: { token }, headers: { referer: backLink } })
@@ -66,7 +67,7 @@ describe('cancellationsController', () => {
     })
 
     it('renders the form with errors and user input if an error has been sent to the flash', async () => {
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>({ userInput: { backLink: 'http://foo.com' } })
+      const errorsAndUserInput = createMock<ErrorsAndUserInput>({})
 
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
@@ -79,7 +80,7 @@ describe('cancellationsController', () => {
         premisesId,
         bookingId,
         booking,
-        backLink: 'http://foo.com',
+        backLink,
         cancellationReasons,
         pageHeading: 'Confirm withdrawn placement',
         errors: errorsAndUserInput.errors,
