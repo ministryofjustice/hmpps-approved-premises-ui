@@ -261,6 +261,8 @@ const getApplicationType = (application: Application): ApplicationType => {
   switch (application.apType) {
     case 'pipe':
       return 'PIPE'
+    case 'esap':
+      return 'ESAP'
     default:
       return 'Standard'
   }

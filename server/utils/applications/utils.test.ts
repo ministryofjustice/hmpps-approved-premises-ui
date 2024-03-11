@@ -691,7 +691,7 @@ describe('utils', () => {
   describe('getApplicationType', () => {
     it.each([
       ['Standard', 'standard'],
-      ['Standard', 'esap'],
+      ['ESAP', 'esap'],
       ['PIPE', 'pipe'],
     ])(
       'returns %s when the application is %s',
