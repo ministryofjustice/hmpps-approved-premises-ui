@@ -100,6 +100,7 @@ context('Task Allocation', () => {
   })
 
   it('supports sorting', () => {
+    const sortFields = ['dueAt', 'person', 'allocatedTo']
     cy.task('stubAuthUser')
 
     // Given I am logged in
@@ -114,20 +115,22 @@ context('Task Allocation', () => {
       sortBy: 'createdAt',
     })
 
-    cy.task('stubGetAllTasks', {
-      tasks,
-      allocatedFilter: 'allocated',
-      page: '1',
-      sortDirection: 'asc',
-      sortBy: 'dueAt',
-    })
+    sortFields.forEach(sortField => {
+      cy.task('stubGetAllTasks', {
+        tasks,
+        allocatedFilter: 'allocated',
+        page: '1',
+        sortDirection: 'asc',
+        sortBy: sortField,
+      })
 
-    cy.task('stubGetAllTasks', {
-      tasks,
-      allocatedFilter: 'allocated',
-      page: '1',
-      sortDirection: 'desc',
-      sortBy: 'dueAt',
+      cy.task('stubGetAllTasks', {
+        tasks,
+        allocatedFilter: 'allocated',
+        page: '1',
+        sortDirection: 'desc',
+        sortBy: sortField,
+      })
     })
 
     cy.task('stubApAreaReferenceData', {
@@ -141,26 +144,28 @@ context('Task Allocation', () => {
     // Then I should see the tasks that are allocated
     listPage.shouldShowAllocatedTasks()
 
-    // When I sort by the due date in ascending order
-    listPage.clickSortBy('dueAt')
+    sortFields.forEach(sortField => {
+      // When I sort by the sortField in ascending order
+      listPage.clickSortBy(sortField)
 
-    // Then the dashboard should be sorted by the due date in ascending order
-    listPage.shouldBeSortedByField('dueAt', 'ascending')
+      // Then the dashboard should be sorted by the sortField in ascending order
+      listPage.shouldBeSortedByField(sortField, 'ascending')
 
-    // When I sort by the due date in descending order
-    listPage.clickSortBy('dueAt')
+      // When I sort by the sortField in descending order
+      listPage.clickSortBy(sortField)
 
-    // Then the dashboard should be sorted by the due date in ascending order
-    listPage.shouldBeSortedByField('dueAt', 'descending')
+      // Then the dashboard should be sorted by the sortField in ascending order
+      listPage.shouldBeSortedByField(sortField, 'descending')
 
-    // And the API should have received a request for the correct sort order
-    cy.task('verifyTasksRequests', {
-      allocatedFilter: 'allocated',
-      page: '1',
-      sortDirection: 'desc',
-      sortBy: 'dueAt',
-    }).then(requests => {
-      expect(requests).to.have.length(1)
+      // And the API should have received a request for the correct sort order
+      cy.task('verifyTasksRequests', {
+        allocatedFilter: 'allocated',
+        page: '1',
+        sortDirection: 'desc',
+        sortBy: sortField,
+      }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
     })
   })
 

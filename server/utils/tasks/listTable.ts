@@ -102,13 +102,9 @@ const tasksTableRows = (tasks: Array<Task>, allocatedFilter: string): Array<Tabl
 
 const allocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirection, hrefPrefix: string) => {
   return [
-    {
-      text: 'Person',
-    },
+    sortHeader<TaskSortField>('Person', 'person', sortBy, sortDirection, hrefPrefix),
     sortHeader<TaskSortField>('Due', 'dueAt', sortBy, sortDirection, hrefPrefix),
-    {
-      text: 'Allocated to',
-    },
+    sortHeader<TaskSortField>('Allocated to', 'allocatedTo', sortBy, sortDirection, hrefPrefix),
     {
       text: 'Status',
     },
@@ -123,9 +119,7 @@ const allocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirectio
 
 const unAllocatedTableHeader = (sortBy: TaskSortField, sortDirection: SortDirection, hrefPrefix: string) => {
   return [
-    {
-      text: 'Person',
-    },
+    sortHeader<TaskSortField>('Person', 'person', sortBy, sortDirection, hrefPrefix),
     sortHeader<TaskSortField>('Due', 'dueAt', sortBy, sortDirection, hrefPrefix),
     {
       text: 'Status',
