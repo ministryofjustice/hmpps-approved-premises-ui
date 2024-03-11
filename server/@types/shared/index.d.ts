@@ -239,6 +239,7 @@ export type { TemporaryAccommodationPremises } from './models/TemporaryAccommoda
 export type { TemporaryAccommodationPremisesSummary } from './models/TemporaryAccommodationPremisesSummary';
 export type { TemporaryAccommodationUser } from './models/TemporaryAccommodationUser';
 export type { TemporaryAccommodationUserRole } from './models/TemporaryAccommodationUserRole';
+export type { TemporaryApplyApTypeAwaitingApiChange } from './models/ApType';
 export type { TimelineEvent } from './models/TimelineEvent';
 export type { TimelineEventAssociatedUrl } from './models/TimelineEventAssociatedUrl';
 export type { TimelineEventType } from './models/TimelineEventType';

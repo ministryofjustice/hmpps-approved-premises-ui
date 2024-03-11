@@ -13,7 +13,7 @@ import {
 } from '../testutils/factories'
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
-import { WithdrawalReason } from '../@types/shared'
+import { TemporaryApplyApTypeAwaitingApiChange, WithdrawalReason } from '../@types/shared'
 import { normaliseCrn } from '../utils/normaliseCrn'
 
 describeClient('ApplicationClient', provider => {
@@ -135,7 +135,7 @@ describeClient('ApplicationClient', provider => {
       const application = applicationFactory.build()
       const data = {
         data: application.data,
-        isPipeApplication: true,
+        apType: 'pipe' as TemporaryApplyApTypeAwaitingApiChange,
         isWomensApplication: false,
         targetLocation: 'ABC123',
         releaseType: 'licence' as const,
@@ -318,9 +318,8 @@ describeClient('ApplicationClient', provider => {
       const application = applicationFactory.build()
       const data = {
         translatedDocument: application.document,
-        isPipeApplication: true,
+        apType: 'pipe' as TemporaryApplyApTypeAwaitingApiChange,
         isWomensApplication: false,
-        isEsapApplication: false,
         isEmergencyApplication: false,
         targetLocation: 'ABC123',
         releaseType: 'licence' as const,

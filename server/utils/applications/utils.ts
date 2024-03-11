@@ -258,10 +258,12 @@ const firstPageOfApplicationJourney = (application: Application) => {
 }
 
 const getApplicationType = (application: Application): ApplicationType => {
-  if (application.isPipeApplication) {
-    return 'PIPE'
+  switch (application.apType) {
+    case 'pipe':
+      return 'PIPE'
+    default:
+      return 'Standard'
   }
-  return 'Standard'
 }
 
 export const eventTypeTranslations: Record<TimelineEventType, string> = {

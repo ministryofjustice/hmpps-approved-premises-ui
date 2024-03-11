@@ -3,12 +3,13 @@ import {
   ReleaseTypeOption,
   SentenceTypeOption,
   SubmitApprovedPremisesApplication,
+  TemporaryApplyApTypeAwaitingApiChange,
   UpdateApprovedPremisesApplication,
 } from '@approved-premises/api'
 
 import ReleaseType from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
 import SentenceType from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
-import SelectApType, { ApType } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
+import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
@@ -50,7 +51,7 @@ const firstClassFields = <T>(
   application: Application,
   retrieveQuestionResponse: QuestionResponseFunction,
 ): FirstClassFields<T> => {
-  const apType = retrieveQuestionResponse(application, SelectApType, 'type') as ApType
+  const apType = retrieveQuestionResponse(application, SelectApType, 'type') as TemporaryApplyApTypeAwaitingApiChange
   const targetLocation = retrieveQuestionResponse(application, DescribeLocationFactors, 'postcodeArea')
   const sentenceType = getSentenceType(application, retrieveQuestionResponse)
   const releaseType = getReleaseType(application, sentenceType)
@@ -64,8 +65,7 @@ const firstClassFields = <T>(
 
   return {
     isWomensApplication: false,
-    isPipeApplication: isPipeApplication(apType),
-    isEsapApplication: isEsapApplication(apType),
+    apType,
     targetLocation,
     releaseType,
     sentenceType,
@@ -104,20 +104,4 @@ const getSentenceType = (
   retrieveQuestionResponse: QuestionResponseFunction,
 ): SentenceTypeOption => {
   return retrieveQuestionResponse(application, SentenceType, 'sentenceType') as SentenceTypeOption
-}
-
-const isPipeApplication = (apType?: ApType): boolean | undefined => {
-  if (apType === undefined) {
-    return undefined
-  }
-
-  return apType === 'pipe'
-}
-
-const isEsapApplication = (apType?: ApType): boolean | undefined => {
-  if (apType === undefined) {
-    return undefined
-  }
-
-  return apType === 'esap'
 }

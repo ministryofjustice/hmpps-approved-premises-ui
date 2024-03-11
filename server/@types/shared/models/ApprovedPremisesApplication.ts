@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { AnyValue } from './AnyValue';
 import type { ApArea } from './ApArea';
+import { TemporaryApplyApTypeAwaitingApiChange } from './ApType';
 import type { Application } from './Application';
 import type { ApprovedPremisesApplicationStatus } from './ApprovedPremisesApplicationStatus';
 import type { AssessmentDecision } from './AssessmentDecision';
@@ -12,9 +13,8 @@ import type { PersonRisks } from './PersonRisks';
 import type { PersonStatus } from './PersonStatus';
 export type ApprovedPremisesApplication = (Application & {
     isWomensApplication?: boolean;
-    isPipeApplication?: boolean;
+    apType: TemporaryApplyApTypeAwaitingApiChange;
     isEmergencyApplication?: boolean;
-    isEsapApplication?: boolean;
     arrivalDate?: string;
     risks?: PersonRisks;
     createdByUserId: string;

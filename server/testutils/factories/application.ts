@@ -11,9 +11,9 @@ import type {
   OASysSection,
   ReleaseTypeOption,
   SentenceTypeOption,
+  TemporaryApplyApTypeAwaitingApiChange,
 } from '@approved-premises/api'
 
-import type { ApTypes } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import { fullPersonFactory, restrictedPersonFactory } from './person'
 import risksFactory from './risks'
 import { DateFormats } from '../../utils/dateUtils'
@@ -53,7 +53,7 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
     })
   }
 
-  withApType(apType: keyof ApTypes) {
+  withApType(apType: TemporaryApplyApTypeAwaitingApiChange) {
     return this.withPageResponse({
       task: 'type-of-ap',
       page: 'ap-type',
@@ -142,7 +142,7 @@ export default ApplicationFactory.define(() => ({
   document: {},
   outdatedSchema: faker.datatype.boolean(),
   isWomensApplication: faker.datatype.boolean(),
-  isPipeApplication: faker.datatype.boolean(),
+  apType: faker.helpers.arrayElement(['standard', 'esap', 'pipe']) as TemporaryApplyApTypeAwaitingApiChange,
   risks: risksFactory.build(),
   status: 'started' as const,
   personStatusOnSubmission: 'InCustody' as const,
