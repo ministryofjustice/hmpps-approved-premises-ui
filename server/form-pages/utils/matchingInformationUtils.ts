@@ -1,4 +1,4 @@
-import { ApprovedPremisesApplication } from '@approved-premises/api'
+import { ApprovedPremisesApplication, TemporaryApplyApTypeAwaitingApiChange } from '@approved-premises/api'
 import { weeksToDays } from 'date-fns'
 import { SummaryList } from '@approved-premises/ui'
 import { placementDates } from '../../utils/matchUtils'
@@ -22,7 +22,7 @@ import { TasklistPageInterface } from '../tasklistPage'
 import DateOfOffence from '../apply/risk-and-need-factors/risk-management-features/dateOfOffence'
 import Vulnerability from '../apply/risk-and-need-factors/further-considerations/vulnerability'
 import { OffenceAndRiskCriteria, PlacementRequirementCriteria } from '../../utils/placementCriteriaUtils'
-import SelectApType, { ApType } from '../apply/reasons-for-placement/type-of-ap/apType'
+import SelectApType from '../apply/reasons-for-placement/type-of-ap/apType'
 import PlacementDate from '../apply/reasons-for-placement/basic-information/placementDate'
 import ReleaseDate from '../apply/reasons-for-placement/basic-information/releaseDate'
 
@@ -41,7 +41,7 @@ const apType = (
   }
 
   const applyValue = retrieveQuestionResponseFromFormArtifact(application, SelectApType, 'type')
-  const applyAssessMap: Record<ApType, MatchingInformationBody['apType']> = {
+  const applyAssessMap: Record<TemporaryApplyApTypeAwaitingApiChange, MatchingInformationBody['apType']> = {
     standard: 'normal',
     esap: 'isESAP',
     pipe: 'isPIPE',

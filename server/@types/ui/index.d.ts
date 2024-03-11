@@ -212,7 +212,7 @@ type GetRiskLevelNumber<T> = T extends `${string}${infer RiskNumber}` ? RiskNumb
 export type TierNumber = GetRiskLevelNumber<RiskTierLevel>
 export type TierLetter = GetRiskLevelLetter<RiskTierLevel>
 
-export type ApplicationType = 'Standard' | 'PIPE'
+export type ApplicationType = 'Standard' | 'PIPE' | 'ESAP'
 
 export interface ErrorMessage {
   text: string

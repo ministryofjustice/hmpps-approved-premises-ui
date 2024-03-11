@@ -1,10 +1,12 @@
 import {
   ApplicationSortField,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
+  TemporaryApplyApTypeAwaitingApiChange,
   TimelineEventUrlType,
 } from '@approved-premises/api'
 import { isAfter } from 'date-fns'
 import { faker } from '@faker-js/faker'
+import { ApplicationType } from '@approved-premises/ui'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
 import {
   applicationFactory,
@@ -687,21 +689,20 @@ describe('utils', () => {
   })
 
   describe('getApplicationType', () => {
-    it('returns standard when the application is not PIPE', () => {
-      const application = applicationFactory.build({
-        isPipeApplication: false,
-      })
+    it.each([
+      ['Standard', 'standard'],
+      ['Standard', 'esap'],
+      ['PIPE', 'pipe'],
+    ])(
+      'returns %s when the application is %s',
+      (expectedOutput: ApplicationType, applicationApType: TemporaryApplyApTypeAwaitingApiChange) => {
+        const application = applicationFactory.build({
+          apType: applicationApType,
+        })
 
-      expect(getApplicationType(application)).toEqual('Standard')
-    })
-
-    it('returns PIPE when the application is PIPE', () => {
-      const application = applicationFactory.build({
-        isPipeApplication: true,
-      })
-
-      expect(getApplicationType(application)).toEqual('PIPE')
-    })
+        expect(getApplicationType(application)).toEqual(expectedOutput)
+      },
+    )
   })
 
   describe('actionsCell', () => {

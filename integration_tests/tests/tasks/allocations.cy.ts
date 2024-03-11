@@ -28,9 +28,7 @@ context('Task Allocation', () => {
     const selectedUser = users[0]
 
     // And there is an allocated task
-    const application = applicationFactory
-      .withReleaseDate()
-      .build({ isPipeApplication: true, isWomensApplication: false })
+    const application = applicationFactory.withReleaseDate().build({ apType: 'pipe', isWomensApplication: false })
     const task = taskFactory.build({
       allocatedToStaffMember: userFactory.build(),
       applicationId: application.id,
@@ -39,7 +37,7 @@ context('Task Allocation', () => {
 
     const restrictedPerson = personFactory.build({ isRestricted: true })
     const applicationForRestrictedPerson = applicationFactory.withReleaseDate().build({
-      isPipeApplication: true,
+      apType: 'pipe',
       person: restrictedPerson,
       isWomensApplication: false,
     })

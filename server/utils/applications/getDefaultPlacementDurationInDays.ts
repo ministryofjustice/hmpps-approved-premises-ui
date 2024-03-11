@@ -1,9 +1,16 @@
-import { ApprovedPremisesApplication as Application } from '@approved-premises/api'
-import SelectApType, { ApType } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
+import {
+  ApprovedPremisesApplication as Application,
+  TemporaryApplyApTypeAwaitingApiChange,
+} from '@approved-premises/api'
+import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 
 export const getDefaultPlacementDurationInDays = (application: Application) => {
-  const apType = retrieveQuestionResponseFromFormArtifact(application, SelectApType, 'type') as ApType
+  const apType = retrieveQuestionResponseFromFormArtifact(
+    application,
+    SelectApType,
+    'type',
+  ) as TemporaryApplyApTypeAwaitingApiChange
 
   if (apType === 'standard') return 12 * 7
   if (apType === 'pipe') return 26 * 7
