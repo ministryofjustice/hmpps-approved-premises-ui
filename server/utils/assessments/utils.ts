@@ -1,4 +1,4 @@
-import { ApplicationType, GroupedAssessments, KeyDetailsArgs, SummaryListItem } from '@approved-premises/ui'
+import { GroupedAssessments, KeyDetailsArgs, SummaryListItem } from '@approved-premises/ui'
 
 import {
   ApprovedPremisesAssessmentStatus,
@@ -11,7 +11,7 @@ import Assess from '../../form-pages/assess'
 import { UnknownPageError } from '../errors'
 import Apply from '../../form-pages/apply'
 import { kebabCase, linkTo } from '../utils'
-import { getApplicationType as getApplicationTypeFromApplication } from '../applications/utils'
+import { getApplicationType } from '../applications/utils'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { formattedArrivalDate } from './dateUtils'
 import { getResponseForPage } from '../applications/getResponseForPage'
@@ -41,10 +41,6 @@ const groupAssessmements = (assessments: Array<AssessmentSummary>): GroupedAsses
   return result
 }
 
-const getApplicationType = (assessment: Assessment): ApplicationType => {
-  return getApplicationTypeFromApplication(assessment.application)
-}
-
 const allocationSummary = (assessment: Assessment): Array<SummaryListItem> => {
   const summary = [
     {
@@ -68,7 +64,7 @@ const allocationSummary = (assessment: Assessment): Array<SummaryListItem> => {
         text: 'Application Type',
       },
       value: {
-        text: getApplicationType(assessment),
+        text: getApplicationType(assessment.application),
       },
     },
   ]
@@ -188,7 +184,6 @@ export {
   confirmationPageMessage,
   confirmationPageResult,
   formattedArrivalDate,
-  getApplicationType,
   getPage,
   getReviewNavigationItems,
   groupAssessmements,
