@@ -128,9 +128,7 @@ describe('table', () => {
 
     it('returns an array of unallocated table headers', () => {
       expect(tasksTableHeader('unallocated', sortBy, sortDirection, hrefPrefix)).toEqual([
-        {
-          text: 'Person',
-        },
+        sortHeader<TaskSortField>('Person', 'person', sortBy, sortDirection, hrefPrefix),
         sortHeader<TaskSortField>('Due', 'dueAt', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Status',
@@ -152,13 +150,9 @@ describe('table', () => {
 
     it('returns an array of allocated table headers', () => {
       expect(tasksTableHeader('allocated', sortBy, sortDirection, hrefPrefix)).toEqual([
-        {
-          text: 'Person',
-        },
+        sortHeader<TaskSortField>('Person', 'person', sortBy, sortDirection, hrefPrefix),
         sortHeader<TaskSortField>('Due', 'dueAt', sortBy, sortDirection, hrefPrefix),
-        {
-          text: 'Allocated to',
-        },
+        sortHeader<TaskSortField>('Allocated to', 'allocatedTo', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Status',
         },
