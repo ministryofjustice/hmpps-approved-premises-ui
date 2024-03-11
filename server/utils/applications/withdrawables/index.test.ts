@@ -11,7 +11,7 @@ describe('withdrawableTypeRadioOptions', () => {
     value: 'application',
     checked: false,
     hint: {
-      text: hintCopy.application,
+      html: hintCopy.application,
     },
   }
 
@@ -26,10 +26,10 @@ describe('withdrawableTypeRadioOptions', () => {
 
   const placementRadioItem = {
     checked: false,
-    text: 'Placement',
+    text: 'Placement/Booking',
     value: 'placement',
     hint: {
-      text: hintCopy.placement,
+      html: hintCopy.placement,
     },
   }
 
