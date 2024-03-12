@@ -80,80 +80,33 @@ describe('assessmentsController', () => {
       )
     })
 
-    it('should list all the assessments with awaiting_assessment statuses', async () => {
-      request.query.activeTab = 'awaiting_assessment'
-      const requestHandler = assessmentsController.index()
+    it.each(['awaiting_assessment', 'completed', 'awaiting_response'])(
+      'should list all the assessments with %s statuses',
+      async status => {
+        request.query.activeTab = status
+        const requestHandler = assessmentsController.index()
 
-      await requestHandler(request, response, next)
+        await requestHandler(request, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('assessments/index', {
-        pageHeading: 'Approved Premises applications',
-        assessments,
-        activeTab: 'awaiting_assessment',
-        pageNumber: Number(paginatedResponse.pageNumber),
-        totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix: paginationDetails.hrefPrefix,
-        sortBy: paginationDetails.sortBy,
-        sortDirection: paginationDetails.sortDirection,
-      })
-      expect(assessmentService.getAll).toHaveBeenCalledWith(
-        token,
-        awaitingAssessmentStatuses,
-        paginationDetails.sortBy,
-        paginationDetails.sortDirection,
-        1,
-      )
-    })
-
-    it('should list all the assessments with completed statuses', async () => {
-      request.query.activeTab = 'completed'
-      const requestHandler = assessmentsController.index()
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('assessments/index', {
-        pageHeading: 'Approved Premises applications',
-        assessments,
-        activeTab: 'completed',
-        pageNumber: Number(paginatedResponse.pageNumber),
-        totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix: paginationDetails.hrefPrefix,
-        sortBy: paginationDetails.sortBy,
-        sortDirection: paginationDetails.sortDirection,
-      })
-      expect(assessmentService.getAll).toHaveBeenCalledWith(
-        token,
-        awaitingAssessmentStatuses,
-        paginationDetails.sortBy,
-        paginationDetails.sortDirection,
-        1,
-      )
-    })
-
-    it('should list all the assessments with awaiting_response statuses', async () => {
-      request.query.activeTab = 'awaiting_response'
-      const requestHandler = assessmentsController.index()
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('assessments/index', {
-        pageHeading: 'Approved Premises applications',
-        assessments,
-        activeTab: 'awaiting_response',
-        pageNumber: Number(paginatedResponse.pageNumber),
-        totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix: paginationDetails.hrefPrefix,
-        sortBy: paginationDetails.sortBy,
-        sortDirection: paginationDetails.sortDirection,
-      })
-      expect(assessmentService.getAll).toHaveBeenCalledWith(
-        token,
-        awaitingAssessmentStatuses,
-        paginationDetails.sortBy,
-        paginationDetails.sortDirection,
-        1,
-      )
-    })
+        expect(response.render).toHaveBeenCalledWith('assessments/index', {
+          pageHeading: 'Approved Premises applications',
+          assessments,
+          activeTab: status,
+          pageNumber: Number(paginatedResponse.pageNumber),
+          totalPages: Number(paginatedResponse.totalPages),
+          hrefPrefix: paginationDetails.hrefPrefix,
+          sortBy: paginationDetails.sortBy,
+          sortDirection: paginationDetails.sortDirection,
+        })
+        expect(assessmentService.getAll).toHaveBeenCalledWith(
+          token,
+          awaitingAssessmentStatuses,
+          paginationDetails.sortBy,
+          paginationDetails.sortDirection,
+          1,
+        )
+      },
+    )
   })
 
   describe('show', () => {
