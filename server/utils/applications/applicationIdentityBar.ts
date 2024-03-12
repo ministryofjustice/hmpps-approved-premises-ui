@@ -4,20 +4,20 @@ import paths from '../../paths/apply'
 import { getStatus } from './getStatus'
 
 export const applicationTitle = (application: Application, pageHeading: string): string => {
-  let title = `
-    <h1 class="govuk-caption-l">${pageHeading}</h1>
-    <h2 class="govuk-heading-l">${(application.person as FullPerson).name}</h2>
-  `
+  let heading = (application.person as FullPerson).name
 
   if (application.type === 'Offline') {
-    title += '<strong class="govuk-tag govuk-tag--grey govuk-!-margin-5">Offline application</strong>'
+    heading += '<strong class="govuk-tag govuk-tag--grey govuk-!-margin-5">Offline application</strong>'
   }
 
   if (application.status === 'withdrawn') {
-    title += getStatus(application, 'govuk-!-margin-5')
+    heading += getStatus(application, 'govuk-!-margin-5')
   }
 
-  return title
+  return `
+    <h1 class="govuk-caption-l">${pageHeading}</h1>
+    <h2 class="govuk-heading-l">${heading}</h2>
+  `
 }
 
 export const applicationMenuItems = (application: Application, user: UserDetails): Array<IdentityBarMenuItem> => {

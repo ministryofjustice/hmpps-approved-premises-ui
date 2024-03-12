@@ -129,8 +129,10 @@ describe('adminIdentityBar', () => {
 
       expect(title(placementRequestDetail)).toMatchStringIgnoringWhitespace(`
 <span class="govuk-caption-l">Placement request</span>
-<h1 class="govuk-heading-l">${nameOrPlaceholderCopy(placementRequestDetail.person)}</h1>
+<h1 class="govuk-heading-l">
+${nameOrPlaceholderCopy(placementRequestDetail.person)}
 <strong class="govuk-tag govuk-tag--red govuk-!-margin-5">Request for placement withdrawn</strong>
+</h1>
       `)
     })
   })
