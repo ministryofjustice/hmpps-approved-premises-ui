@@ -23,6 +23,7 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+
       <h1>{{pageHeading}}</h1>
 
       <form action="{{ paths.bookings.cancellations.create({ premisesId: premisesId, bookingId: booking.id }) }}" method="post">
@@ -67,6 +68,21 @@
 
         {{ showErrorSummary(errorSummary) }}
 
+        {% set noteConditional %}
+        {{
+          govukTextarea(
+            {
+            name: "cancellation[otherReason]",
+            id: "otherReason",
+            errorMessage: errors.otherReason,
+            label: {
+              text: "Provide more information"
+            }
+            })
+          }}
+
+        {% endset -%}
+
         {{ govukRadios({
           name: "cancellation[reason]",
           id: "reason",
@@ -77,7 +93,7 @@
               }
           },
           errorMessage: errors.reason,
-          items: convertObjectsToRadioItems(cancellationReasons, 'name', 'id', 'cancellation[reason]')
+          items: BookingUtils.cancellationReasonsRadioItems(cancellationReasons, noteConditional, fetchContext())
           }) }}
 
         {{ govukButton({

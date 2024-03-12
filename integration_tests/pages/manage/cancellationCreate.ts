@@ -1,7 +1,8 @@
-import type { Cancellation } from '@approved-premises/api'
+import type { NewCancellation } from '@approved-premises/api'
 import Page from '../page'
 import paths from '../../../server/paths/manage'
 import applyPaths from '../../../server/paths/apply'
+import { otherCancellationReasonId } from '../../../server/testutils/factories/newCancellation'
 
 export default class CancellationCreatePage extends Page {
   constructor(
@@ -17,9 +18,13 @@ export default class CancellationCreatePage extends Page {
     return new CancellationCreatePage(premisesId, bookingId)
   }
 
-  completeForm(cancellation: Cancellation): void {
+  completeForm(cancellation: NewCancellation): void {
     this.getLegend('Why is this placement being withdrawn?')
-    this.checkRadioByNameAndValue('cancellation[reason]', cancellation.reason.id)
+    this.checkRadioByNameAndValue('cancellation[reason]', cancellation.reason)
+
+    if (cancellation.reason === otherCancellationReasonId && cancellation.otherReason) {
+      this.completeTextArea('cancellation[otherReason]', cancellation.otherReason)
+    }
 
     this.clickSubmit()
   }

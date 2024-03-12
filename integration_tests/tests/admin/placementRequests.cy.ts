@@ -6,7 +6,7 @@ import {
   apAreaFactory,
   applicationFactory,
   bookingFactory,
-  cancellationFactory,
+  newCancellationFactory,
   placementRequestDetailFactory,
   placementRequestWithFullPersonFactory,
   premisesFactory,
@@ -255,7 +255,7 @@ context('Placement Requests', () => {
 
   it('allows me to cancel a booking', () => {
     const premises = premisesFactory.buildList(3)
-    const cancellation = cancellationFactory.build()
+    const cancellation = newCancellationFactory.build()
     const withdrawable = withdrawableFactory.build({ id: matchedPlacementRequest.booking.id, type: 'booking' })
     cy.task('stubAllPremises', premises)
     cy.task('stubBookingFromPlacementRequest', matchedPlacementRequest)
@@ -318,7 +318,7 @@ context('Placement Requests', () => {
       expect(requests).to.have.length(1)
       const requestBody = JSON.parse(requests[0].body)
 
-      expect(requestBody.reason).equal(cancellation.reason.id)
+      expect(requestBody.reason).equal(cancellation.reason)
     })
   })
 
