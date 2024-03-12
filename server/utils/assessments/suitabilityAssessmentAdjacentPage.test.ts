@@ -17,7 +17,7 @@ jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/shouldShowContingencyPlanPages')
 jest.mock('../applications/startDateOutsideOfNationalStandardsTimescales')
 
-const apTypes = ['rfap', 'esap', 'pipe'] as const
+const apTypes = ['rfap', 'esap', 'pipe', 'mhapStJosephs', 'mhapElliottHouse'] as const
 
 type ApType = (typeof apTypes)[number]
 
@@ -46,6 +46,17 @@ const mockApplicationOfType = (apType: ApType, assessment: ApprovedPremisesAsses
   }
 }
 
+const apTypeToPageName = (apType: ApType): SuitabilityAssessmentPageName => {
+  switch (apType) {
+    case 'mhapElliottHouse':
+      return 'mhap-suitability'
+    case 'mhapStJosephs':
+      return 'mhap-suitability'
+    default:
+      return `${apType}-suitability`
+  }
+}
+
 describe('suitabilityAssessmentAdjacentPage', () => {
   const assessment = assessmentFactory.build()
 
@@ -60,13 +71,15 @@ describe('suitabilityAssessmentAdjacentPage', () => {
       })
 
       it('should return the correct next page', () => {
-        expect(suitabilityAssessmentAdjacentPage(assessment, 'suitability-assessment')).toEqual(`${apType}-suitability`)
+        expect(suitabilityAssessmentAdjacentPage(assessment, 'suitability-assessment')).toEqual(
+          apTypeToPageName(apType),
+        )
       })
     })
   })
 
   describe.each(apTypes)('with an %s application', apType => {
-    const pageName = `${apType}-suitability` as SuitabilityAssessmentPageName
+    const pageName = apTypeToPageName(apType)
 
     describe('when the start date is outside of national timescales', () => {
       beforeEach(() => {
@@ -151,7 +164,7 @@ describe('suitabilityAssessmentAdjacentPage', () => {
             suitabilityAssessmentAdjacentPage(assessment, 'application-timeliness', {
               returnPreviousPage: true,
             }),
-          ).toEqual(`${apType}-suitability`)
+          ).toEqual(apTypeToPageName(apType))
         })
       })
     })
@@ -176,7 +189,7 @@ describe('suitabilityAssessmentAdjacentPage', () => {
             suitabilityAssessmentAdjacentPage(assessment, 'application-timeliness', {
               returnPreviousPage: true,
             }),
-          ).toEqual(`${apType}-suitability`)
+          ).toEqual(apTypeToPageName(apType))
         })
       })
     })
@@ -216,7 +229,7 @@ describe('suitabilityAssessmentAdjacentPage', () => {
             suitabilityAssessmentAdjacentPage(assessment, 'contingency-plan-suitability', {
               returnPreviousPage: true,
             }),
-          ).toEqual(`${apType}-suitability`)
+          ).toEqual(apTypeToPageName(apType))
         })
       })
     })
