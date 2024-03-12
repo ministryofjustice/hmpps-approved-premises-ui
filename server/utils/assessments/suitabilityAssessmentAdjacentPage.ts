@@ -12,6 +12,7 @@ export const suitabilityAssessmentPageNames = [
   'suitability-assessment',
   'rfap-suitability',
   'esap-suitability',
+  'mhap-suitability',
   'pipe-suitability',
   'application-timeliness',
   'contingency-plan-suitability',
@@ -39,6 +40,12 @@ export const suitabilityAssessmentAdjacentPage = (
     {
       pageName: 'pipe-suitability',
       needsAssessment: responseFromAssessment(assessment.application, SelectApType, 'type') === 'pipe',
+    },
+    {
+      pageName: 'mhap-suitability',
+      needsAssessment: ['mhapElliottHouse', 'mhapStJosephs'].includes(
+        responseFromAssessment(assessment.application, SelectApType, 'type'),
+      ),
     },
     {
       pageName: 'application-timeliness',
