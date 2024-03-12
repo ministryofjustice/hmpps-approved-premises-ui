@@ -18,5 +18,10 @@
     "id": "7f3eb6cd-b3fc-4a8d-b9ce-5959918ffbe8",
     "name": "Non-arrival",
     "isActive": true
+  },
+  {
+    "id": "73bbf24c-4274-4e9a-aeed-f8446fe581d7",
+    "name": "Other",
+    "isActive": true
   }
 ]

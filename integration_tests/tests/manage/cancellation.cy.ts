@@ -3,6 +3,7 @@ import {
   bookingFactory,
   cancellationFactory,
   extendedPremisesSummaryFactory,
+  newCancellationFactory,
   premisesBookingFactory,
   premisesFactory,
   withdrawableFactory,
@@ -36,7 +37,7 @@ context('Cancellation', () => {
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
 
     // When I navigate to the booking's cancellation page
-    const cancellation = cancellationFactory.build()
+    const cancellation = newCancellationFactory.build()
     const withdrawable = withdrawableFactory.build({ id: booking.id, type: 'booking' })
     cy.task('stubCancellationCreate', { premisesId: premises.id, bookingId: booking.id, cancellation })
     cy.task('stubPremisesSummary', premises)
@@ -71,7 +72,62 @@ context('Cancellation', () => {
       expect(requests).to.have.length(1)
       const requestBody = JSON.parse(requests[0].body)
 
-      expect(requestBody.reason).equal(cancellation.reason.id)
+      expect(requestBody.reason).equal(cancellation.reason)
+    })
+
+    // And I should see a confirmation message
+    const confirmationPage = new BookingCancellationConfirmPage()
+    confirmationPage.shouldShowPanel()
+  })
+
+  it('should allow me to create a cancellation with a reason of "other" ', () => {
+    // Given a booking is available
+    const application = applicationFactory.build()
+    const booking = bookingFactory.arrivingToday().build({ applicationId: application.id })
+    const premises = extendedPremisesSummaryFactory.build({ bookings: [booking], id: booking.premises.id })
+
+    cy.task('stubBookingGet', { premisesId: premises.id, booking })
+
+    // When I navigate to the booking's cancellation page
+    const cancellation = newCancellationFactory.withOtherReason().build({
+      otherReason: 'other reason',
+    })
+    const withdrawable = withdrawableFactory.build({ id: booking.id, type: 'booking' })
+    cy.task('stubPremisesSummary', premises)
+    cy.task('stubWithdrawables', { applicationId: application.id, withdrawables: [withdrawable] })
+    cy.task('stubBookingFindWithoutPremises', booking)
+
+    // And I fill out the cancellation form with a reason of "other" but without a note
+    cy.task('stubCancellationErrors', {
+      premisesId: premises.id,
+      bookingId: booking.id,
+      params: ['otherReason'],
+    })
+
+    const cancellationPage = CancellationCreatePage.visit(premises.id, booking.id)
+    cancellationPage.completeForm({ ...cancellation, otherReason: '' })
+
+    // Then I should see an error message
+    cancellationPage.shouldShowErrorMessagesForFields(['otherReason'], {
+      otherReason: 'You must enter the other reason',
+    })
+
+    // Given I retry completing the form
+    cy.task('stubCancellationCreate', { premisesId: premises.id, bookingId: booking.id, cancellation })
+    // When I complete the reason and notes
+    cancellationPage.completeForm(cancellation)
+
+    // Then a cancellation should have been created in the API
+    cy.task('verifyCancellationCreate', {
+      premisesId: premises.id,
+      bookingId: booking.id,
+      cancellation,
+    }).then(requests => {
+      expect(requests).to.have.length(2)
+      const requestBody = JSON.parse(requests[1].body)
+
+      expect(requestBody.reason).equal(cancellation.reason)
+      expect(requestBody.otherReason).equal(cancellation.otherReason)
     })
 
     // And I should see a confirmation message
@@ -86,7 +142,7 @@ context('Cancellation', () => {
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
 
     // When I navigate to the booking's cancellation page
-    const cancellation = cancellationFactory.build()
+    const cancellation = newCancellationFactory.build()
     cy.task('stubCancellationCreate', { premisesId: premises.id, bookingId: booking.id, cancellation })
 
     const page = CancellationCreatePage.visit(premises.id, booking.id)
@@ -106,7 +162,7 @@ context('Cancellation', () => {
       expect(requests).to.have.length(1)
       const requestBody = JSON.parse(requests[0].body)
 
-      expect(requestBody.reason).equal(cancellation.reason.id)
+      expect(requestBody.reason).equal(cancellation.reason)
     })
 
     // And I should see a confirmation message
