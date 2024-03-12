@@ -16,6 +16,7 @@ import { DateFormats, todayAtMidnight } from './dateUtils'
 import { SanitisedError } from '../sanitisedError'
 import { linebreaksToParagraphs, linkTo } from './utils'
 import { isFullPerson, laoName } from './personUtils'
+import { convertObjectsToRadioItems } from './formUtils'
 
 const UPCOMING_WINDOW_IN_DAYS = 365 * 10
 
@@ -489,4 +490,22 @@ export const cancellationRows = (booking: Booking): Array<SummaryListItem> => {
     ]
   }
   return []
+}
+
+export const cancellationReasonsRadioItems = (
+  cancellationReasons: Array<Record<string, string>>,
+  otherHtml: string,
+  context: Record<string, unknown>,
+): Array<SelectOption> => {
+  const items = convertObjectsToRadioItems(cancellationReasons, 'name', 'id', 'cancellation[reason]', context)
+
+  return items.map(item => {
+    if (item.text === 'Other') {
+      item.conditional = {
+        html: otherHtml,
+      }
+    }
+
+    return item
+  })
 }
