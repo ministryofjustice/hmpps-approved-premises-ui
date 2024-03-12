@@ -1,0 +1,11 @@
+.moj-identity-bar {
+  &__title {
+    .govuk-tag {
+      display: inline;
+      vertical-align: middle;
+    }
+    .govuk-heading-l {
+      margin-bottom: 0;
+    }
+  }
+}
