@@ -8,6 +8,7 @@ describe('reportUtils', () => {
         { value: 'applications', text: 'Combined applications and placement requests' },
         { value: 'daily-metrics', text: 'Daily Metrics' },
         { value: 'lost-beds', text: 'Lost Beds' },
+        { value: 'placement-matching-outcomes', text: 'Placement Matching Outcomes' },
         { value: 'placement-metrics', text: 'Placement Metrics' },
         { value: 'placement-applications', text: 'Placement Requests' },
         { value: 'referrals-by-ap-type', text: 'Referrals by AP Type' },
