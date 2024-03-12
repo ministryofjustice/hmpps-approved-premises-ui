@@ -13,6 +13,8 @@
     <input type="hidden" name="userDetailsFromDelius[phoneNumber]" value="{{ page.userDetailsFromDelius.phoneNumber }}"/>
     <input type="hidden" name="userDetailsFromDelius[area]" value="{{ page.userDetailsFromDelius.area }}"/>
 
+    <h2 class="govuk-heading-m">Your details</h2>
+
     {% set rows = ([
         {
             key: {
@@ -35,7 +37,18 @@
             value: {
                 text: page.userDetailsFromDelius.phoneNumber
             }
-        }, {
+        }
+    ]) %}
+
+    {{ govukSummaryList({
+      rows: rows
+    }) }}
+
+    <h2 class="govuk-heading-m">Case details</h2>
+
+    {{ govukSummaryList({
+      rows: [
+        {
             key: {
                 text: "Area"
             },
@@ -43,12 +56,8 @@
                 text: page.userDetailsFromDelius.area.name
             }
         }
-    ])
- %}
-
-    {{ govukSummaryList({
-      rows: rows
-    }) }}
+        ]
+    })}}
 
     {% set nameHtml %}
     {{
