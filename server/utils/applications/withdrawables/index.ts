@@ -16,7 +16,7 @@ export const hintCopy: Record<SelectedWithdrawableType, string> = {
                   <li>The application AND</li>
                   <li>The suitability assessment AND</li>
                   <li>All requests for placement made that are linked to this application AND</li>
-                  <li>All AP placements that have already been made that are linked to this application AND</li>
+                  <li>All AP placements that have already been made that are linked to this application</li>
                 </ul>
                 <p class="govuk-hint">
                   If you choose this option you will have to make another application should you need this
