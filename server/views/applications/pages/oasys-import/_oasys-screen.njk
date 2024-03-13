@@ -1,10 +1,17 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "../../../components/riskWidgets/macro.njk" import widgets %}
-
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% extends "../layout.njk" %}
 
 {% set columnClasses = "govuk-grid-column-full" %}
-
+{% set InsetHtml %}
+<p>This information has been imported from OASys. You must:</p>
+<ul>
+  <li>Remove any out of date information or information that is not relevant to this application.</li>
+  <li>Add in any other relevant information (please note - this does not write back to OASys).</li>
+  <li>Your application may be rejected if you do not do this.</li>
+</ul>
+{% endset -%}
 {% block questions %}
   <div class="govuk-grid-row">
     <div>
@@ -53,6 +60,9 @@
   <div class="govuk-grid-row">
     {% if oasysDisabled %}
       <div class="govuk-grid-column-full" id="{{ pageName }}">
+        {{ govukInsetText({
+            html: InsetHtml
+          }) }}
         <p>
           {{ guidance }}
         </p>
@@ -60,6 +70,9 @@
       </div>
     {% else %}
       <div class="govuk-grid-column-two-thirds" id="{{ pageName }}">
+        {{ govukInsetText({
+            html: InsetHtml
+          }) }}
         {% if page.oasysSuccess == true %}
           <h2 class="govuk-heading-m">
             {{ heading }}
