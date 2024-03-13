@@ -42,7 +42,6 @@ describe('homePageDashboard', () => {
         sections.apply,
         sections.workflow,
         sections.placementRequests,
-        sections.cruDashboard,
         sections.reports,
         sections.userManagement,
       ])
@@ -63,7 +62,6 @@ describe('homePageDashboard', () => {
         sections.manage,
         sections.workflow,
         sections.placementRequests,
-        sections.cruDashboard,
         sections.reports,
         sections.userManagement,
       ])
@@ -82,7 +80,6 @@ describe('homePageDashboard', () => {
         sections.apply,
         sections.workflow,
         sections.placementRequests,
-        sections.cruDashboard,
         sections.reports,
         sections.userManagement,
       ])

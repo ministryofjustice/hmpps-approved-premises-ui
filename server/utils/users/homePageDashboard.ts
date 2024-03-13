@@ -45,13 +45,6 @@ export const sections = {
     shortTitle: 'Match',
     href: matchPaths.placementRequests.index({}),
   },
-  cruDashboard: {
-    id: 'cruDashboard',
-    title: 'Review placement requests',
-    description: 'Review placements requests for applications that have been assessed as suitable',
-    shortTitle: 'Match',
-    href: matchPaths.placementRequests.index({}),
-  },
   placementRequests: {
     id: 'placementRequests',
     title: 'CRU Dashboard',
@@ -94,7 +87,6 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
   if (hasRole(user, 'workflow_manager')) {
     items.push(sections.workflow)
     items.push(sections.placementRequests)
-    items.push(sections.cruDashboard)
     items.push(sections.reports)
     items.push(sections.userManagement)
   }
