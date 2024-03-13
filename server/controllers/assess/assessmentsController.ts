@@ -2,50 +2,76 @@ import type { Request, RequestHandler, Response } from 'express'
 
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
-import { AssessmentService } from '../../services'
+import { AssessmentService, TaskService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 
 import paths from '../../paths/assess'
-import { AssessmentSortField, AssessmentStatus } from '../../@types/shared'
+import { AssessmentSortField, AssessmentStatus, TaskSortField } from '../../@types/shared'
 import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 
 export const tasklistPageHeading = 'Assess an Approved Premises (AP) application'
 
 export default class AssessmentsController {
-  constructor(private readonly assessmentService: AssessmentService) {}
+  constructor(
+    private readonly assessmentService: AssessmentService,
+    private readonly taskService: TaskService,
+  ) {}
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { activeTab } = req.query
-      const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<AssessmentSortField>(
-        req,
-        paths.assessments.index({}),
-        { activeTab },
-      )
+      const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<
+        AssessmentSortField & TaskSortField
+      >(req, paths.assessments.index({}), { activeTab })
+      const pageHeading = 'Approved Premises applications'
       const statuses =
         activeTab === 'awaiting_assessment' || !activeTab
           ? awaitingAssessmentStatuses
           : ([activeTab] as Array<AssessmentStatus>)
 
-      const assessments = await this.assessmentService.getAll(
-        req.user.token,
-        statuses,
-        sortBy,
-        sortDirection,
-        pageNumber,
-      )
+      if (activeTab === 'requests_for_placement') {
+        const placementApplications = await this.taskService.getAll({
+          token: req.user.token,
+          taskTypes: ['PlacementApplication'],
+          page: pageNumber,
+          allocatedFilter: 'allocated',
+          sortBy,
+          sortDirection,
+          allocatedToUserId: res.locals?.user?.id,
+        })
 
-      res.render('assessments/index', {
-        pageHeading: 'Approved Premises applications',
-        activeTab,
-        assessments: assessments.data,
-        pageNumber: Number(assessments.pageNumber),
-        totalPages: Number(assessments.totalPages),
-        hrefPrefix,
-        sortBy,
-        sortDirection,
-      })
+        res.render('assessments/index', {
+          pageHeading,
+          activeTab,
+          placementApplications: placementApplications.data,
+          pageNumber: Number(placementApplications.pageNumber),
+          totalPages: Number(placementApplications.totalPages),
+          hrefPrefix,
+          sortBy,
+          sortDirection,
+        })
+      } else {
+        const assessments = await this.assessmentService.getAll(
+          req.user.token,
+          statuses,
+          sortBy,
+          sortDirection,
+          pageNumber,
+        )
+
+        res.render('assessments/index', {
+          pageHeading,
+          activeTab,
+          assessments: assessments.data,
+          placementApplications: undefined,
+          pageNumber: Number(assessments.pageNumber),
+          totalPages: Number(assessments.totalPages),
+          hrefPrefix,
+          sortBy,
+          sortDirection,
+        })
+      }
     }
   }
 

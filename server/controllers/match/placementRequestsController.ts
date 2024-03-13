@@ -1,10 +1,8 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { ApplicationService, PlacementApplicationService, PlacementRequestService, TaskService } from '../../services'
 import paths from '../../paths/placementApplications'
-import matchpaths from '../../paths/match'
 import { addErrorMessageToFlash } from '../../utils/validation'
 import { getResponses } from '../../utils/applications/getResponses'
-import { getPaginationDetails } from '../../utils/getPaginationDetails'
 
 export default class PlacementRequestsController {
   constructor(
@@ -13,30 +11,6 @@ export default class PlacementRequestsController {
     private readonly taskService: TaskService,
     private readonly applicationService: ApplicationService,
   ) {}
-
-  index(): TypedRequestHandler<Request, Response> {
-    return async (req: Request, res: Response) => {
-      const { pageNumber, hrefPrefix } = getPaginationDetails(req, matchpaths.placementRequests.index({}))
-
-      const paginatedResponse = await this.taskService.getAll({
-        token: req.user.token,
-        taskTypes: ['PlacementApplication'],
-        page: pageNumber,
-        allocatedFilter: 'allocated',
-        sortBy: 'createdAt',
-        sortDirection: 'asc',
-        allocatedToUserId: res.locals?.user?.id,
-      })
-
-      res.render('match/placementRequests/index', {
-        pageHeading: 'My Cases',
-        hrefPrefix,
-        pageNumber: Number(paginatedResponse.pageNumber),
-        totalPages: Number(paginatedResponse.totalPages),
-        tasks: paginatedResponse.data,
-      })
-    }
-  }
 
   show(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {

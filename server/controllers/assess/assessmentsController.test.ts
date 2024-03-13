@@ -2,13 +2,18 @@ import type { NextFunction, Request, Response } from 'express'
 
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
-import { ApprovedPremisesAssessmentSummary as AssessmentSummary } from '@approved-premises/api'
+import { ApprovedPremisesAssessmentSummary as AssessmentSummary, Task } from '@approved-premises/api'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
 import AssessmentsController from './assessmentsController'
-import { AssessmentService } from '../../services'
+import { AssessmentService, TaskService } from '../../services'
 
-import { assessmentFactory, assessmentSummaryFactory, paginatedResponseFactory } from '../../testutils/factories'
+import {
+  assessmentFactory,
+  assessmentSummaryFactory,
+  paginatedResponseFactory,
+  taskFactory,
+} from '../../testutils/factories'
 
 import paths from '../../paths/assess'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
@@ -25,18 +30,20 @@ jest.mock('../../utils/getPaginationDetails')
 
 describe('assessmentsController', () => {
   const token = 'SOME_TOKEN'
+  const userId = 'SOME_ID'
 
   let request: DeepMocked<Request> = createMock<Request>({ user: { token } })
   let response: DeepMocked<Response> = createMock<Response>({})
   const next: DeepMocked<NextFunction> = jest.fn()
 
   const assessmentService = createMock<AssessmentService>({})
+  const taskService = createMock<TaskService>({})
 
   let assessmentsController: AssessmentsController
 
   beforeEach(() => {
-    assessmentsController = new AssessmentsController(assessmentService)
-    response = createMock<Response>({})
+    assessmentsController = new AssessmentsController(assessmentService, taskService)
+    response = createMock<Response>({ locals: { user: { id: userId } } })
     request = createMock<Request>({ user: { token } })
   })
 
@@ -70,6 +77,7 @@ describe('assessmentsController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
+        placementApplications: undefined,
       })
       expect(assessmentService.getAll).toHaveBeenCalledWith(
         token,
@@ -97,6 +105,7 @@ describe('assessmentsController', () => {
           hrefPrefix: paginationDetails.hrefPrefix,
           sortBy: paginationDetails.sortBy,
           sortDirection: paginationDetails.sortDirection,
+          placementApplications: undefined,
         })
         expect(assessmentService.getAll).toHaveBeenCalledWith(
           token,
@@ -107,6 +116,51 @@ describe('assessmentsController', () => {
         )
       },
     )
+
+    describe('if the activeTab is requests_for_placement', () => {
+      it('should list all the request_for_placement tasks', async () => {
+        const placementApplications = taskFactory.buildList(3, { taskType: 'PlacementApplication' })
+        const paginatedTaskResponse = paginatedResponseFactory.build({
+          data: placementApplications,
+        }) as PaginatedResponse<Task>
+
+        taskService.getAll.mockResolvedValue(paginatedTaskResponse)
+        const activeTab = 'requests_for_placement'
+        const requestHandler = assessmentsController.index()
+
+        await requestHandler(
+          {
+            ...request,
+            query: {
+              activeTab,
+            },
+          },
+          response,
+          next,
+        )
+
+        expect(response.render).toHaveBeenCalledWith('assessments/index', {
+          activeTab,
+          hrefPrefix: paginationDetails.hrefPrefix,
+          pageHeading: 'Approved Premises applications',
+          pageNumber: Number(paginatedResponse.pageNumber),
+          totalPages: Number(paginatedResponse.totalPages),
+          sortBy: paginationDetails.sortBy,
+          placementApplications,
+          sortDirection: paginationDetails.sortDirection,
+        })
+
+        expect(taskService.getAll).toHaveBeenCalledWith({
+          token,
+          taskTypes: ['PlacementApplication'],
+          allocatedFilter: 'allocated',
+          allocatedToUserId: userId,
+          page: Number(paginatedResponse.pageNumber),
+          sortBy: 'name',
+          sortDirection: 'desc',
+        })
+      })
+    })
   })
 
   describe('show', () => {

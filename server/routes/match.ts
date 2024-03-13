@@ -14,9 +14,6 @@ export default function routes(controllers: Controllers, router: Router, service
 
   const { placementRequestController, bedController, placementRequestBookingsController } = controllers
 
-  get(paths.placementRequests.index.pattern, placementRequestController.index(), {
-    auditEvent: 'LIST_PLACEMENT_REQUESTS',
-  })
   get(paths.placementRequests.show.pattern, placementRequestController.show(), { auditEvent: 'SHOW_PLACEMENT_REQUEST' })
 
   get(paths.placementRequests.bookingNotMade.confirm.pattern, placementRequestBookingsController.bookingNotMade(), {
