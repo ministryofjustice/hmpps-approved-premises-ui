@@ -7,6 +7,7 @@ export const reportNames = {
   referrals: 'Applications',
   'lost-beds': 'Lost Beds',
   'placement-applications': 'Placement Requests',
+  'placement-matching-outcomes': 'Placement Matching Outcomes',
 } as const
 
 export type ReportType = (keyof typeof reportNames)[number]
