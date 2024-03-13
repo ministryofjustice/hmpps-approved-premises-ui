@@ -15,6 +15,7 @@ import {
   unallocatedTableRows,
 } from './listTable'
 import { userTableHeader, userTableRows } from './usersTable'
+import paths from '../../paths/apply'
 
 type GroupedTasks = {
   allocated: Array<Task>
@@ -69,6 +70,14 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
       },
       value: {
         text: getApplicationType(application),
+      },
+      actions: {
+        items: [
+          {
+            href: `${paths.applications.show({ id: application.id })}?tab=timeline`,
+            text: 'View timeline',
+          },
+        ],
       },
     },
     {
