@@ -45,8 +45,8 @@ export const sections = {
     shortTitle: 'Match',
     href: matchPaths.placementRequests.index({}),
   },
-  placementRequests: {
-    id: 'placementRequests',
+  cruDashboard: {
+    id: 'cruDashboard',
     title: 'CRU Dashboard',
     description: ' View applications that require matching. Record and update details of Approved Premises placements.',
     shortTitle: 'CRU dashboard',
@@ -86,7 +86,7 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
 
   if (hasRole(user, 'workflow_manager')) {
     items.push(sections.workflow)
-    items.push(sections.placementRequests)
+    items.push(sections.cruDashboard)
     items.push(sections.reports)
     items.push(sections.userManagement)
   }

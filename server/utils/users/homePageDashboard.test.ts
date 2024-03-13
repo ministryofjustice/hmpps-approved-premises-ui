@@ -41,7 +41,7 @@ describe('homePageDashboard', () => {
       expect(sectionsForUser(user)).toEqual([
         sections.apply,
         sections.workflow,
-        sections.placementRequests,
+        sections.cruDashboard,
         sections.reports,
         sections.userManagement,
       ])
@@ -61,7 +61,7 @@ describe('homePageDashboard', () => {
         sections.assess,
         sections.manage,
         sections.workflow,
-        sections.placementRequests,
+        sections.cruDashboard,
         sections.reports,
         sections.userManagement,
       ])
@@ -79,7 +79,7 @@ describe('homePageDashboard', () => {
       expect(sectionsForUser(user)).toEqual([
         sections.apply,
         sections.workflow,
-        sections.placementRequests,
+        sections.cruDashboard,
         sections.reports,
         sections.userManagement,
       ])
