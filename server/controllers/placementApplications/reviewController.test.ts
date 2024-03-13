@@ -6,7 +6,8 @@ import { placementApplicationFactory } from '../../testutils/factories/index'
 import ReviewController from './reviewController'
 import { PlacementApplicationService } from '../../services'
 import PlacementRequest from '../../form-pages/placement-application'
-import matchPaths from '../../paths/match'
+
+import assessPaths from '../../paths/assess'
 import {
   catchAPIErrorOrPropogate,
   catchValidationErrorOrPropogate,
@@ -73,7 +74,7 @@ describe('reviewController', () => {
       expect(response.render).toHaveBeenCalledWith('placement-applications/pages/review/review', {
         pageProps: {
           pageHeading: 'Review information',
-          backLink: `${matchPaths.placementRequests.index({})}#placement-applications`,
+          backLink: `${assessPaths.assessments.index({})}?activeTab=requests_for_placement`,
         },
         placementApplication,
         errors: {},
@@ -122,7 +123,7 @@ describe('reviewController', () => {
       expect(response.render).toHaveBeenCalledWith('placement-applications/pages/review/review', {
         pageProps: {
           pageHeading: 'Review information',
-          backLink: `${matchPaths.placementRequests.index({})}#placement-applications`,
+          backLink: `${assessPaths.assessments.index({})}?activeTab=requests_for_placement`,
         },
         placementApplication,
         errors: errorsAndUserInput.errors,

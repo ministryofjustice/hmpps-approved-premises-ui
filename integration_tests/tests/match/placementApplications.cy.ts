@@ -6,7 +6,7 @@ import {
   placementApplicationFactory,
   placementApplicationTaskFactory,
 } from '../../../server/testutils/factories'
-import ListPage from '../../pages/match/listPlacementRequestsPage'
+import ListPage from '../../pages/assess/listPage'
 import ReviewApplicationPage from '../../pages/match/reviewApplicationForm/reviewApplicationPage'
 import ReviewApplicationDecisionPage from '../../pages/match/reviewApplicationForm/decisionPage'
 import { ShowPage } from '../../pages/apply'
@@ -24,14 +24,13 @@ import Page from '../../pages/page'
 import paths from '../../../server/paths/api'
 import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
 import ReviewApplicationConfirmPage from '../../pages/match/reviewApplicationForm/confirmPage'
+import { defaultUserId } from '../../mockApis/auth'
 
 context('Placement Applications', () => {
-  const userId = 'some-user-id'
-
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubAuthUser', { userId })
+    cy.task('stubAuthUser', { userId: defaultUserId })
   })
 
   beforeEach(() => {
@@ -43,7 +42,7 @@ context('Placement Applications', () => {
       // Given I have completed an application I am viewing a completed application
       const completedApplication = applicationFactory.completed('accepted').build({
         id: '123',
-        createdByUserId: userId,
+        createdByUserId: defaultUserId,
         person: personFactory.build(),
       })
       cy.task('stubApplicationGet', { application: completedApplication })
@@ -120,7 +119,7 @@ context('Placement Applications', () => {
       // Given I have completed an application I am viewing a completed application
       const completedApplication = applicationFactory.completed('accepted').build({
         id: '123',
-        createdByUserId: userId,
+        createdByUserId: defaultUserId,
         person: personFactory.build(),
       })
       cy.task('stubApplicationGet', { application: completedApplication })
@@ -190,7 +189,7 @@ context('Placement Applications', () => {
       const person = personFactory.build()
       let completedApplication = applicationFactory.completed('accepted').build({
         id: '123',
-        createdByUserId: userId,
+        createdByUserId: defaultUserId,
         person,
       })
       completedApplication = addResponseToFormArtifact(completedApplication, {
@@ -271,15 +270,17 @@ context('Placement Applications', () => {
     cy.task('stubPlacementApplication', placementApplication)
 
     cy.task('stubGetAllTasks', {
-      type: 'PlacementApplication',
+      types: ['PlacementApplication'],
       tasks: placementApplicationTasks,
-      allocatedToUserId: 'some-user-id',
+      allocatedToUserId: defaultUserId,
       allocatedFilter: 'allocated',
+      sortBy: null,
+      sortDirection: null,
     })
 
     // When I visit the placementRequests dashboard
-    const listPage = ListPage.visit()
-    listPage.clickPlacementApplications()
+    const listPage = ListPage.visit('requests_for_placement')
+    listPage.clickRequestsForPlacement()
 
     // And I click on the first name
     listPage.clickPersonName(placementApplicationTasks[0].personName)
@@ -330,13 +331,14 @@ context('Placement Applications', () => {
     cy.task('stubGetAllTasks', {
       type: 'PlacementApplication',
       tasks: placementApplicationTasks,
-      allocatedToUserId: 'some-user-id',
+      allocatedToUserId: defaultUserId,
       allocatedFilter: 'allocated',
+      sortBy: null,
+      sortDirection: null,
     })
 
     // When I visit the placementRequests dashboard
-    const listPage = ListPage.visit()
-    listPage.clickPlacementApplications()
+    const listPage = ListPage.visit('requests_for_placement')
 
     // And I click on the first name
     listPage.clickPersonName(placementApplicationTasks[0].personName)
@@ -365,13 +367,14 @@ context('Placement Applications', () => {
     cy.task('stubGetAllTasks', {
       type: 'PlacementApplication',
       tasks: placementApplicationTasks,
-      allocatedToUserId: 'some-user-id',
+      allocatedToUserId: defaultUserId,
       allocatedFilter: 'allocated',
+      sortBy: null,
+      sortDirection: null,
     })
 
     // When I visit the placementRequests dashboard
-    const listPage = ListPage.visit()
-    listPage.clickPlacementApplications()
+    const listPage = ListPage.visit('requests_for_placement')
 
     // And I click on the first name
     listPage.clickPersonName(placementApplicationTasks[0].personName)
@@ -414,7 +417,7 @@ context('Placement Applications', () => {
     // Given there is an rejected application that I created
     const application = applicationFactory.completed('rejected').build({
       id: '123',
-      createdByUserId: userId,
+      createdByUserId: defaultUserId,
       person: personFactory.build(),
     })
     cy.task('stubApplicationGet', { application })
@@ -431,7 +434,7 @@ context('Placement Applications', () => {
     const application = applicationFactory.build({
       status: 'submitted',
       id: '123',
-      createdByUserId: userId,
+      createdByUserId: defaultUserId,
       assessmentDecision: undefined,
       person: personFactory.build(),
     })
