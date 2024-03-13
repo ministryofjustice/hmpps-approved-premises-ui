@@ -1,6 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
-import type { Reallocation, SortDirection, Task, TaskSortField, User } from '@approved-premises/api'
+import type { Reallocation, SortDirection, Task, TaskSortField, TaskType, User } from '@approved-premises/api'
 import { AllocatedFilter } from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
@@ -16,6 +16,7 @@ export default {
     sortDirection = 'asc',
     sortBy = 'createdAt',
     apAreaId = '',
+    types = [],
   }: {
     tasks: Array<Task>
     page: string
@@ -24,8 +25,9 @@ export default {
     sortDirection: SortDirection
     sortBy: TaskSortField
     apAreaId: string
+    types: Array<TaskType>
   }): SuperAgentRequest => {
-    const queryParameters = {
+    const queryParameters: Record<string, unknown> = {
       page: {
         equalTo: page,
       },
@@ -35,16 +37,22 @@ export default {
       apAreaId: {
         equalTo: apAreaId,
       },
-      sortDirection: {
-        equalTo: sortDirection,
-      },
-      sortBy: {
-        equalTo: sortBy,
-      },
+
       allocatedToUserId: {
         equalTo: allocatedToUserId,
       },
     }
+
+    if (types.length) {
+      queryParameters.types = { equalTo: types.join(',') }
+    }
+    if (sortBy) {
+      queryParameters.sortBy = { equalTo: sortBy }
+    }
+    if (sortDirection) {
+      queryParameters.sortDirection = { equalTo: sortDirection }
+    }
+
     return stubFor({
       request: {
         method: 'GET',

@@ -10,7 +10,7 @@ import {
   generateErrorSummary,
 } from '../../utils/validation'
 import { PlacementApplicationReview } from '../../utils/placementApplications/review'
-import paths from '../../paths/match'
+import assessPaths from '../../paths/assess'
 import placementApplicationPaths from '../../paths/placementApplications'
 
 export default class ReviewController {
@@ -30,7 +30,7 @@ export default class ReviewController {
         step === 'review'
           ? {
               pageHeading: 'Review information',
-              backLink: `${paths.placementRequests.index({})}#placement-applications`,
+              backLink: `${assessPaths.assessments.index({})}?activeTab=requests_for_placement`,
             }
           : {
               pageHeading: 'Make a decision',
