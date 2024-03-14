@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import { Task } from '@approved-premises/api'
+import { when } from 'jest-when'
 import TasksController from './tasksController'
 import {
   apAreaFactory,
@@ -10,8 +11,9 @@ import {
   taskFactory,
   taskWrapperFactory,
   userDetailsFactory,
+  userFactory,
 } from '../testutils/factories'
-import { ApAreaService, ApplicationService, TaskService } from '../services'
+import { ApAreaService, ApplicationService, TaskService, UserService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 import { ErrorsAndUserInput, PaginatedResponse } from '../@types/ui'
 import paths from '../paths/api'
@@ -30,17 +32,19 @@ describe('TasksController', () => {
   const applicationService = createMock<ApplicationService>({})
   const taskService = createMock<TaskService>({})
   const apAreaService: DeepMocked<ApAreaService> = createMock<ApAreaService>({})
+  const userService: DeepMocked<UserService> = createMock<UserService>({})
 
   let tasksController: TasksController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    tasksController = new TasksController(taskService, applicationService, apAreaService)
+    tasksController = new TasksController(taskService, applicationService, apAreaService, userService)
   })
 
   describe('index', () => {
     const apArea = apAreaFactory.build()
     const user = userDetailsFactory.build({ apArea })
+    const users = userFactory.buildList(5)
     const tasks = taskFactory.buildList(1)
     const paginatedResponse = paginatedResponseFactory.build({
       data: tasks,
@@ -52,13 +56,18 @@ describe('TasksController', () => {
     }
 
     beforeEach(() => {
+      when(apAreaService.getApAreas).calledWith(token).mockResolvedValue(apAreas)
+      when(taskService.getAll).calledWith(expect.anything()).mockResolvedValue(paginatedResponse)
+      when(userService.getUserList).calledWith(token, ['assessor', 'matcher']).mockResolvedValue(users)
+
       response.locals.user = user
-      apAreaService.getApAreas.mockResolvedValue(apAreas)
-      ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
-      taskService.getAll.mockResolvedValue(paginatedResponse)
     })
 
     it('should render the tasks template with the users ap area filtered by default', async () => {
+      when(getPaginationDetails as jest.Mock)
+        .calledWith(request, paths.tasks.index({}), expect.anything())
+        .mockReturnValue(paginationDetails)
+
       const requestHandler = tasksController.index()
       await requestHandler(request, response, next)
 
@@ -73,6 +82,7 @@ describe('TasksController', () => {
         sortBy: 'createdAt',
         sortDirection: 'asc',
         apArea: apArea.id,
+        users,
       })
 
       expect(taskService.getAll).toHaveBeenCalledWith({
@@ -95,13 +105,18 @@ describe('TasksController', () => {
       }
       const apAreaId = '1234'
       const allocatedFilter = 'unallocated'
-
-      ;(getPaginationDetails as jest.Mock).mockReturnValue(paramPaginationDetails)
-      taskService.getAll.mockResolvedValue(paginatedResponse)
+      const allocatedToUserId = '123'
 
       const requestHandler = tasksController.index()
+      const unallocatedRequest = { ...request, query: { allocatedFilter, area: apAreaId, allocatedToUserId } }
 
-      const unallocatedRequest = { ...request, query: { allocatedFilter, area: apAreaId } }
+      when(getPaginationDetails as jest.Mock)
+        .calledWith(unallocatedRequest, paths.tasks.index({}), {
+          allocatedFilter,
+          area: apAreaId,
+          allocatedToUserId,
+        })
+        .mockReturnValue(paramPaginationDetails)
 
       await requestHandler(unallocatedRequest, response, next)
 
@@ -116,10 +131,14 @@ describe('TasksController', () => {
         sortBy: paramPaginationDetails.sortBy,
         sortDirection: paramPaginationDetails.sortDirection,
         apArea: apAreaId,
+        users,
+        allocatedToUserId,
       })
+
       expect(getPaginationDetails).toHaveBeenCalledWith(unallocatedRequest, paths.tasks.index({}), {
-        allocatedFilter: 'unallocated',
-        area: '1234',
+        allocatedFilter,
+        area: apAreaId,
+        allocatedToUserId,
       })
 
       expect(taskService.getAll).toHaveBeenCalledWith({
@@ -130,6 +149,7 @@ describe('TasksController', () => {
         page: paramPaginationDetails.pageNumber,
         apAreaId,
         taskTypes: ['PlacementApplication', 'Assessment'],
+        allocatedToUserId,
       })
     })
 
@@ -144,6 +164,14 @@ describe('TasksController', () => {
 
       const requestHandler = tasksController.index()
       const requestWithQuery = { ...request, query: { area: 'all' } }
+
+      when(getPaginationDetails as jest.Mock)
+        .calledWith(requestWithQuery, paths.tasks.index({}), {
+          allocatedFilter: 'allocated',
+          area: 'all',
+        })
+        .mockReturnValue(paramPaginationDetails)
+
       await requestHandler(requestWithQuery, response, next)
 
       expect(response.render).toHaveBeenCalledWith('tasks/index', {
@@ -157,6 +185,11 @@ describe('TasksController', () => {
         sortBy: paramPaginationDetails.sortBy,
         sortDirection: paramPaginationDetails.sortDirection,
         apArea: 'all',
+        users,
+      })
+      expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.tasks.index({}), {
+        allocatedFilter: 'allocated',
+        area: 'all',
       })
 
       expect(taskService.getAll).toHaveBeenCalledWith({

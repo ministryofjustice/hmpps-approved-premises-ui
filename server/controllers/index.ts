@@ -16,7 +16,12 @@ import WithdrawalsController from './placementApplications/withdrawalsController
 
 export const controllers = (services: Services) => {
   const dashboardController = new DashboardController()
-  const tasksController = new TasksController(services.taskService, services.applicationService, services.apAreaService)
+  const tasksController = new TasksController(
+    services.taskService,
+    services.applicationService,
+    services.apAreaService,
+    services.userService,
+  )
   const allocationsController = new AllocationsController(services.taskService)
   const placementApplicationPagesController = new PagesController(
     services.placementApplicationService,

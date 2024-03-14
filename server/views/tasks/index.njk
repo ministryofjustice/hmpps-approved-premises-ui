@@ -38,7 +38,18 @@
                       items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'apArea', 'all', context)
                     }) }}
             </div>
-            <div class="govuk-grid-column-two-third">
+            <div class="govuk-grid-column-one-third">
+              {{ govukSelect({
+                      label: {
+                        text: "Allocated user",
+                        classes: "govuk-label--s"
+                      },
+                      id: "allocatedToUserId",
+                      name: "allocatedToUserId",
+                      items: convertObjectsToSelectOptions(users, 'All users', 'name', 'id', 'allocatedToUserId', '', context)
+                    }) }}
+            </div>
+            <div class="govuk-grid-column-one-third">
               {{ govukButton({
                       "name": "submit",
                       "text": "Apply filters",

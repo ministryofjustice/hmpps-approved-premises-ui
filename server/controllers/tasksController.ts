@@ -1,6 +1,6 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
 import { convertToTitleCase, sentenceCase } from '../utils/utils'
-import { ApAreaService, ApplicationService, TaskService } from '../services'
+import { ApAreaService, ApplicationService, TaskService, UserService } from '../services'
 import { fetchErrorsAndUserInput } from '../utils/validation'
 import { getPaginationDetails } from '../utils/getPaginationDetails'
 import paths from '../paths/api'
@@ -11,12 +11,16 @@ export default class TasksController {
     private readonly taskService: TaskService,
     private readonly applicationService: ApplicationService,
     private readonly apAreaService: ApAreaService,
+    private readonly userService: UserService,
   ) {}
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
+      const users = await this.userService.getUserList(req.user.token, ['assessor', 'matcher'])
+
       const allocatedFilter = (req.query.allocatedFilter as AllocatedFilter) || 'allocated'
       const apAreaId = req.query.area ? req.query.area : res.locals.user.apArea?.id
+      const allocatedToUserId = req.query.allocatedToUserId as string
 
       const {
         pageNumber,
@@ -26,6 +30,7 @@ export default class TasksController {
       } = getPaginationDetails<TaskSortField>(req, paths.tasks.index({}), {
         allocatedFilter,
         area: apAreaId,
+        allocatedToUserId,
       })
 
       const tasks = await this.taskService.getAll({
@@ -36,6 +41,7 @@ export default class TasksController {
         page: pageNumber,
         apAreaId: apAreaId === 'all' ? '' : apAreaId,
         taskTypes: ['PlacementApplication', 'Assessment'],
+        allocatedToUserId,
       })
 
       const apAreas = await this.apAreaService.getApAreas(req.user.token)
@@ -51,6 +57,8 @@ export default class TasksController {
         sortBy,
         sortDirection,
         apArea: apAreaId,
+        users,
+        allocatedToUserId,
       })
     }
   }
