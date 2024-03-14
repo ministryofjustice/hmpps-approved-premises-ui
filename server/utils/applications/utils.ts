@@ -63,6 +63,7 @@ const applicationTableRows = (applications: Array<ApplicationSummary>): Array<Ta
     textValue(application.person.crn),
     htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
     textValue(getArrivalDateorNA(application.arrivalDate)),
+    textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
     htmlValue(getStatus(application)),
     actionsCell(application),
   ])
