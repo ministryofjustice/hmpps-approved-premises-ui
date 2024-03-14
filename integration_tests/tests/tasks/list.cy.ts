@@ -181,6 +181,10 @@ context('Task Allocation', () => {
       apiKey: 'allocatedToUserId',
       value: users[0].id,
     },
+    requiredQualification: {
+      apiKey: 'requiredQualification',
+      value: 'womens',
+    },
   }
 
   Object.keys(filterOptions).forEach(key => {

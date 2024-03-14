@@ -83,6 +83,7 @@ describe('TasksController', () => {
         sortDirection: 'asc',
         apArea: apArea.id,
         users,
+        requiredQualification: null,
       })
 
       expect(taskService.getAll).toHaveBeenCalledWith({
@@ -93,6 +94,7 @@ describe('TasksController', () => {
         page: 1,
         apAreaId: apArea.id,
         taskTypes: ['PlacementApplication', 'Assessment'],
+        requiredQualification: null,
       })
     })
 
@@ -106,15 +108,20 @@ describe('TasksController', () => {
       const apAreaId = '1234'
       const allocatedFilter = 'unallocated'
       const allocatedToUserId = '123'
+      const requiredQualification = 'womens'
 
       const requestHandler = tasksController.index()
-      const unallocatedRequest = { ...request, query: { allocatedFilter, area: apAreaId, allocatedToUserId } }
+      const unallocatedRequest = {
+        ...request,
+        query: { allocatedFilter, area: apAreaId, allocatedToUserId, requiredQualification },
+      }
 
       when(getPaginationDetails as jest.Mock)
         .calledWith(unallocatedRequest, paths.tasks.index({}), {
           allocatedFilter,
           area: apAreaId,
           allocatedToUserId,
+          requiredQualification,
         })
         .mockReturnValue(paramPaginationDetails)
 
@@ -133,12 +140,14 @@ describe('TasksController', () => {
         apArea: apAreaId,
         users,
         allocatedToUserId,
+        requiredQualification,
       })
 
       expect(getPaginationDetails).toHaveBeenCalledWith(unallocatedRequest, paths.tasks.index({}), {
         allocatedFilter,
         area: apAreaId,
         allocatedToUserId,
+        requiredQualification,
       })
 
       expect(taskService.getAll).toHaveBeenCalledWith({
@@ -150,6 +159,7 @@ describe('TasksController', () => {
         apAreaId,
         taskTypes: ['PlacementApplication', 'Assessment'],
         allocatedToUserId,
+        requiredQualification,
       })
     })
 
@@ -169,6 +179,7 @@ describe('TasksController', () => {
         .calledWith(requestWithQuery, paths.tasks.index({}), {
           allocatedFilter: 'allocated',
           area: 'all',
+          requiredQualification: null,
         })
         .mockReturnValue(paramPaginationDetails)
 
@@ -186,10 +197,12 @@ describe('TasksController', () => {
         sortDirection: paramPaginationDetails.sortDirection,
         apArea: 'all',
         users,
+        requiredQualification: null,
       })
       expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.tasks.index({}), {
         allocatedFilter: 'allocated',
         area: 'all',
+        requiredQualification: null,
       })
 
       expect(taskService.getAll).toHaveBeenCalledWith({
@@ -200,6 +213,7 @@ describe('TasksController', () => {
         page: paramPaginationDetails.pageNumber,
         apAreaId: '',
         taskTypes: ['PlacementApplication', 'Assessment'],
+        requiredQualification: null,
       })
     })
   })

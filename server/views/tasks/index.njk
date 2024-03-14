@@ -20,7 +20,7 @@
       <div class="search-and-filter__wrapper">
         <form action="{{ paths.tasks.index({}) }}" method="get">
           <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-           <input type="hidden" name="allocatedFilter" value="{{ allocatedFilter }}">
+          <input type="hidden" name="allocatedFilter" value="{{ allocatedFilter }}">
           <div class="govuk-grid-row">
             <div class="govuk-grid-column-one-quarter">
               <h2 class="govuk-heading-m">Filters</h2>
@@ -49,6 +49,19 @@
                       items: convertObjectsToSelectOptions(users, 'All users', 'name', 'id', 'allocatedToUserId', '', context)
                     }) }}
             </div>
+            <div class="govuk-grid-column-one-third">
+              {{ govukSelect({
+                      label: {
+                        text: "Required qualification",
+                        classes: "govuk-label--s"
+                      },
+                      id: "requiredQualification",
+                      name: "requiredQualification",
+                      items: TaskUtils.userQualificationsSelectOptions(requiredQualification)
+                    }) }}
+            </div>
+          </div>
+          <div class="govuk-grid-row">
             <div class="govuk-grid-column-one-third">
               {{ govukButton({
                       "name": "submit",

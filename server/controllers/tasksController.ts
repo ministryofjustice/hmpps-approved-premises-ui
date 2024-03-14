@@ -5,6 +5,7 @@ import { fetchErrorsAndUserInput } from '../utils/validation'
 import { getPaginationDetails } from '../utils/getPaginationDetails'
 import paths from '../paths/api'
 import { AllocatedFilter, TaskSortField, UserQualification } from '../@types/shared'
+import { TaskSearchQualification } from '../@types/ui'
 
 export default class TasksController {
   constructor(
@@ -21,6 +22,9 @@ export default class TasksController {
       const allocatedFilter = (req.query.allocatedFilter as AllocatedFilter) || 'allocated'
       const apAreaId = req.query.area ? req.query.area : res.locals.user.apArea?.id
       const allocatedToUserId = req.query.allocatedToUserId as string
+      const requiredQualification = req.query.requiredQualification
+        ? (req.query.requiredQualification as TaskSearchQualification)
+        : null
 
       const {
         pageNumber,
@@ -31,6 +35,7 @@ export default class TasksController {
         allocatedFilter,
         area: apAreaId,
         allocatedToUserId,
+        requiredQualification,
       })
 
       const tasks = await this.taskService.getAll({
@@ -42,6 +47,7 @@ export default class TasksController {
         apAreaId: apAreaId === 'all' ? '' : apAreaId,
         taskTypes: ['PlacementApplication', 'Assessment'],
         allocatedToUserId,
+        requiredQualification,
       })
 
       const apAreas = await this.apAreaService.getApAreas(req.user.token)
@@ -59,6 +65,7 @@ export default class TasksController {
         apArea: apAreaId,
         users,
         allocatedToUserId,
+        requiredQualification,
       })
     }
   }
