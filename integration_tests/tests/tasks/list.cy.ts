@@ -185,6 +185,11 @@ context('Task Allocation', () => {
       apiKey: 'requiredQualification',
       value: 'womens',
     },
+    crnOrName: {
+      apiKey: 'crnOrName',
+      value: 'CRN123',
+      type: 'input',
+    },
   }
 
   Object.keys(filterOptions).forEach(key => {
@@ -219,7 +224,11 @@ context('Task Allocation', () => {
         [filterOptions[key].apiKey]: filterOptions[key].value,
       })
 
-      listPage.searchBy(key, filterOptions[key].value)
+      if (filterOptions[key].type === 'input') {
+        listPage.clearAndCompleteTextInputById(key, filterOptions[key].value)
+      } else {
+        listPage.searchBy(key, filterOptions[key].value)
+      }
       listPage.clickApplyFilter()
 
       // Then the page should show the results

@@ -25,6 +25,7 @@ export default class TasksController {
       const requiredQualification = req.query.requiredQualification
         ? (req.query.requiredQualification as TaskSearchQualification)
         : null
+      const crnOrName = req.query.crnOrName as string
 
       const {
         pageNumber,
@@ -36,6 +37,7 @@ export default class TasksController {
         area: apAreaId,
         allocatedToUserId,
         requiredQualification,
+        crnOrName,
       })
 
       const tasks = await this.taskService.getAll({
@@ -48,6 +50,7 @@ export default class TasksController {
         taskTypes: ['PlacementApplication', 'Assessment'],
         allocatedToUserId,
         requiredQualification,
+        crnOrName,
       })
 
       const apAreas = await this.apAreaService.getApAreas(req.user.token)
@@ -66,6 +69,7 @@ export default class TasksController {
         users,
         allocatedToUserId,
         requiredQualification,
+        crnOrName,
       })
     }
   }

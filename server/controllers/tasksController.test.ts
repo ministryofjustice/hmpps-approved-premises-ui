@@ -109,11 +109,12 @@ describe('TasksController', () => {
       const allocatedFilter = 'unallocated'
       const allocatedToUserId = '123'
       const requiredQualification = 'womens'
+      const crnOrName = 'ABC123'
 
       const requestHandler = tasksController.index()
       const unallocatedRequest = {
         ...request,
-        query: { allocatedFilter, area: apAreaId, allocatedToUserId, requiredQualification },
+        query: { allocatedFilter, area: apAreaId, allocatedToUserId, requiredQualification, crnOrName },
       }
 
       when(getPaginationDetails as jest.Mock)
@@ -122,6 +123,7 @@ describe('TasksController', () => {
           area: apAreaId,
           allocatedToUserId,
           requiredQualification,
+          crnOrName,
         })
         .mockReturnValue(paramPaginationDetails)
 
@@ -141,6 +143,7 @@ describe('TasksController', () => {
         users,
         allocatedToUserId,
         requiredQualification,
+        crnOrName,
       })
 
       expect(getPaginationDetails).toHaveBeenCalledWith(unallocatedRequest, paths.tasks.index({}), {
@@ -148,6 +151,7 @@ describe('TasksController', () => {
         area: apAreaId,
         allocatedToUserId,
         requiredQualification,
+        crnOrName,
       })
 
       expect(taskService.getAll).toHaveBeenCalledWith({
@@ -160,6 +164,7 @@ describe('TasksController', () => {
         taskTypes: ['PlacementApplication', 'Assessment'],
         allocatedToUserId,
         requiredQualification,
+        crnOrName,
       })
     })
 

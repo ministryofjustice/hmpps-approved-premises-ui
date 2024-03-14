@@ -27,6 +27,16 @@
             </div>
           </div>
           <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+              <div class="govuk-form-group">
+                <label class="search-and-filter__crn-label--small" for="crnOrName">
+                 CRN or Name
+                </label>
+                <input class="govuk-input moj-search__input" id="crnOrName" name="crnOrName" type="search" aria-describedby="crn-hint" value="{{ crnOrName }}">
+              </div>
+            </div>
+          </div>
+          <div class="govuk-grid-row">
             <div class="govuk-grid-column-one-third">
               {{ govukSelect({
                       label: {
