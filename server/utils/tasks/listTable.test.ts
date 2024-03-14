@@ -267,7 +267,7 @@ describe('table', () => {
 
   describe('tasksTabItems', () => {
     it('returns tasks tab items when active tab and area not present', () => {
-      expect(tasksTabItems()).toEqual([
+      expect(tasksTabItems('/tasks')).toEqual([
         {
           text: 'Allocated',
           active: true,
@@ -282,7 +282,7 @@ describe('table', () => {
     })
 
     it('returns tasks tab items when active tab and area present', () => {
-      expect(tasksTabItems('allocated', 'areaId')).toEqual([
+      expect(tasksTabItems('/tasks?allocatedFilter=allocated&area=areaId', 'allocated')).toEqual([
         {
           text: 'Allocated',
           active: true,
@@ -297,7 +297,7 @@ describe('table', () => {
     })
 
     it('returns tasks tab items when active tab unallocated and area present', () => {
-      expect(tasksTabItems('unallocated', 'areaId')).toEqual([
+      expect(tasksTabItems('/tasks?allocatedFilter=allocated&area=areaId', 'unallocated')).toEqual([
         {
           text: 'Allocated',
           active: false,
@@ -307,6 +307,36 @@ describe('table', () => {
           text: 'Unallocated',
           active: true,
           href: '/tasks?allocatedFilter=unallocated&area=areaId',
+        },
+      ])
+    })
+
+    it('handles multiple arguments', () => {
+      expect(tasksTabItems('/tasks?allocatedFilter=allocated&area=areaId&foo=bar&abc=123', 'unallocated')).toEqual([
+        {
+          text: 'Allocated',
+          active: false,
+          href: '/tasks?allocatedFilter=allocated&area=areaId&foo=bar&abc=123',
+        },
+        {
+          text: 'Unallocated',
+          active: true,
+          href: '/tasks?allocatedFilter=unallocated&area=areaId&foo=bar&abc=123',
+        },
+      ])
+    })
+
+    it('Removes the allocatedToUserId from the unallocated tab', () => {
+      expect(tasksTabItems('/tasks?allocatedFilter=allocated&allocatedToUserId=123', 'unallocated')).toEqual([
+        {
+          text: 'Allocated',
+          active: false,
+          href: '/tasks?allocatedFilter=allocated&allocatedToUserId=123',
+        },
+        {
+          text: 'Unallocated',
+          active: true,
+          href: '/tasks?allocatedFilter=unallocated',
         },
       ])
     })

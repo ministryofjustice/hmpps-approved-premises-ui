@@ -152,21 +152,32 @@ export type TabItem = {
   href: string
 }
 
-const tasksTabItems = (activeTab?: string, apArea?: string): Array<TabItem> => {
-  const hrefSuffix = apArea ? `&area=${apArea}` : ''
-  const allocatedHref = `${paths.tasks.index({})}?allocatedFilter=allocated${hrefSuffix}`
-  const unallocatedHref = `${paths.tasks.index({})}?allocatedFilter=unallocated${hrefSuffix}`
+const tasksTabItems = (hrefPrefix: string, activeTab = 'allocated'): Array<TabItem> => {
+  const [path, query] = hrefPrefix.split('?')
+  const urlParams = new URLSearchParams(query)
+
+  const allocatedParams = {
+    ...Object.fromEntries(urlParams),
+    allocatedFilter: 'allocated',
+  } as Record<string, string>
+  const { allocatedToUserId: _, ...unallocatedParams } = {
+    ...Object.fromEntries(urlParams),
+    allocatedFilter: 'unallocated',
+  } as Record<string, string>
+
+  const allocatedTabHref = new URLSearchParams(allocatedParams).toString()
+  const unallocatedTabHref = new URLSearchParams(unallocatedParams).toString()
 
   return [
     {
       text: 'Allocated',
-      active: activeTab === 'allocated' || activeTab === undefined || activeTab?.length === 0,
-      href: allocatedHref,
+      active: activeTab === 'allocated',
+      href: `${path}?${allocatedTabHref}`,
     },
     {
       text: 'Unallocated',
       active: activeTab === 'unallocated',
-      href: unallocatedHref,
+      href: `${path}?${unallocatedTabHref}`,
     },
   ]
 }
