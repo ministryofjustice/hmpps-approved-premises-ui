@@ -43,6 +43,8 @@ describe('taskService', () => {
         page: 1,
         apAreaId: 'testAreaId',
         taskTypes: ['PlacementApplication', 'Assessment'],
+        requiredQualification: 'womens',
+        crnOrName: 'CRN123',
       })
 
       expect(result).toEqual({
@@ -62,6 +64,8 @@ describe('taskService', () => {
         sortDirection: 'asc',
         sortBy: 'createdAt',
         taskTypes: ['PlacementApplication', 'Assessment'],
+        requiredQualification: 'womens',
+        crnOrName: 'CRN123',
       })
     })
   })

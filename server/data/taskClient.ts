@@ -1,4 +1,4 @@
-import { CategorisedTask, PaginatedResponse } from '@approved-premises/ui'
+import { CategorisedTask, PaginatedResponse, TaskSearchQualification } from '@approved-premises/ui'
 import config, { ApiConfig } from '../config'
 import RestClient from './restClient'
 import paths from '../paths/api'
@@ -28,6 +28,8 @@ export default class TaskClient {
     sortDirection,
     sortBy,
     taskTypes,
+    requiredQualification,
+    crnOrName,
   }: {
     allocatedFilter: AllocatedFilter
     apAreaId: ApArea['id']
@@ -36,6 +38,8 @@ export default class TaskClient {
     sortDirection: string
     sortBy: TaskSortField
     taskTypes?: Array<TaskType>
+    requiredQualification?: TaskSearchQualification
+    crnOrName?: string
   }): Promise<PaginatedResponse<Task>> {
     const filters = {} as Record<string, string>
     if (taskTypes.length) {
@@ -44,7 +48,16 @@ export default class TaskClient {
     return this.restClient.getPaginatedResponse({
       path: paths.tasks.index.pattern,
       page: page.toString(),
-      query: { ...filters, allocatedFilter, allocatedToUserId, apAreaId, sortBy, sortDirection },
+      query: {
+        ...filters,
+        allocatedFilter,
+        allocatedToUserId,
+        apAreaId,
+        sortBy,
+        sortDirection,
+        requiredQualification,
+        crnOrName,
+      },
     })
   }
 
