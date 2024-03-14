@@ -14,7 +14,6 @@
 {% endset -%}
 {% block questions %}
   <div class="govuk-grid-row">
-    <div>
       {% if oasysDisabled or page.oasysSuccess == false %}
         <h1 class="govuk-heading-l">Provide risk information</h1>
       {% else %}
@@ -25,36 +24,6 @@
       {% if page.oasysSuccess == false %}
         <p class="govuk-body">This information will be used to help Approved Premises (AP) managers understand factors that may help with the person’s risk management in an AP.</p>
       {% endif %}
-    </div>
-
-    {{ mojSubNavigation({
-        label: 'Sub navigation',
-        items: [{
-          text: 'RoSH summary',
-          active: (pageName === "roshSummary"),
-          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'rosh-summary' })
-        },
-        {
-          text: 'Offence details',
-          active: (pageName === "offenceDetails"),
-          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'offence-details' })
-        },
-        {
-          text: 'Supporting information',
-          active: (pageName === "supportingInformation"),
-          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'supporting-information' })
-        },
-         {
-          text: 'Risk management plan',
-          active: (pageName === "riskManagementPlan"),
-          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'risk-management-plan' })
-        },
-        {
-          text: 'Risk to self',
-          active: (pageName === "riskToSelf"),
-          href: paths.applications.pages.show({ id: applicationId, task: 'oasys-import', page: 'risk-to-self' })
-        }]
-      }) }}
   </div>
 
   <div class="govuk-grid-row">
