@@ -65,6 +65,62 @@ describeClient('UserClient', provider => {
     })
   })
 
+  describe('getUserList', () => {
+    const users = userFactory.buildList(4)
+
+    it('should return all users without pagination', async () => {
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of all users without pagination',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.index({}),
+          query: {
+            roles: '',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+        },
+      })
+
+      const output = await userClient.getUserList()
+
+      expect(output).toEqual(users)
+    })
+
+    it('should return all users with a given role without pagination', async () => {
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get a list of all users without pagination',
+        withRequest: {
+          method: 'GET',
+          path: paths.users.index({}),
+          query: {
+            roles: 'applicant,assessor',
+          },
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: users,
+        },
+      })
+
+      const output = await userClient.getUserList(['applicant', 'assessor'])
+
+      expect(output).toEqual(users)
+    })
+  })
+
   describe('getUsers', () => {
     const users = userFactory.buildList(4)
 

@@ -39,6 +39,11 @@ export default class UserService {
     return client.getActingUser(id)
   }
 
+  async getUserList(token: string, roles: Array<UserRole> = []): Promise<Array<User>> {
+    const client = this.userClientFactory(token)
+    return client.getUserList(roles)
+  }
+
   async getUsers(
     token: string,
     areaId: string = '',
