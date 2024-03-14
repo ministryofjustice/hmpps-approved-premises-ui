@@ -3,7 +3,7 @@ import { createMock } from '@golevelup/ts-jest'
 
 import ReportClient from '../data/reportClient'
 import ReportService from './reportService'
-import { ReportType, reportNames } from '../utils/reportUtils'
+import { ReportType, reportInputLabels } from '../utils/reportUtils'
 
 describe('ReportService', () => {
   const reportClient = new ReportClient(null) as jest.Mocked<ReportClient>
@@ -21,7 +21,7 @@ describe('ReportService', () => {
   describe('getReport', () => {
     // We have to set up `it.each` in a slightly odd way, because Jest doesn't support `it.each` out
     // of the box with asynchronous functions. See https://github.com/DefinitelyTyped/DefinitelyTyped/issues/34617
-    it.each<ReportType | jest.DoneCallback>(Object.keys(reportNames))(
+    it.each<ReportType | jest.DoneCallback>(Object.keys(reportInputLabels))(
       'calls the getApplicationsReport client method when the reportType is "applications" pipes the report to the response',
       (reportName: ReportType, done: jest.DoneCallback) => {
         const response = createMock<Response>({})
