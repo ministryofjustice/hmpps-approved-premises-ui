@@ -1,3 +1,4 @@
+import { when } from 'jest-when'
 import UserService from './userService'
 import HmppsAuthClient, { User } from '../data/hmppsAuthClient'
 import { UserClient } from '../data'
@@ -73,6 +74,36 @@ describe('User service', () => {
       expect(result).toEqual(user)
 
       expect(userClient.getActingUser).toHaveBeenCalledWith(id)
+    })
+  })
+
+  describe('getUserList', () => {
+    it('returns all users', async () => {
+      const response = userFactory.buildList(4)
+
+      when(userClient.getUserList).calledWith().mockResolvedValue(response)
+
+      userClient.getUserList.mockResolvedValue(response)
+
+      const result = await userService.getUserList(token)
+
+      expect(result).toEqual(response)
+
+      expect(userClient.getUserList).toHaveBeenCalled()
+    })
+
+    it('returns all users with given roles', async () => {
+      const response = userFactory.buildList(4)
+
+      when(userClient.getUserList).calledWith().mockResolvedValue(response)
+
+      userClient.getUserList.mockResolvedValue(response)
+
+      const result = await userService.getUserList(token, ['applicant', 'assessor'])
+
+      expect(result).toEqual(response)
+
+      expect(userClient.getUserList).toHaveBeenCalledWith(['applicant', 'assessor'])
     })
   })
 

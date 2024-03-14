@@ -1,4 +1,4 @@
-import { groupByAllocation, taskSummary } from '.'
+import { groupByAllocation, taskSummary, userQualificationsSelectOptions } from '.'
 import { FullPerson } from '../../@types/shared'
 import { applicationFactory, taskFactory, userFactory } from '../../testutils/factories'
 import { fullPersonFactory } from '../../testutils/factories/person'
@@ -158,6 +158,28 @@ describe('index', () => {
           },
         ])
       })
+    })
+  })
+
+  describe('userQualificationsSelectOptions', () => {
+    it('should return select options for tiers with the all tiers option selected by default', () => {
+      expect(userQualificationsSelectOptions(null)).toEqual([
+        { selected: true, text: 'All qualifications', value: '' },
+        { selected: false, text: "Women's APs", value: 'womens' },
+        { selected: false, text: 'Emergency APs', value: 'emergency' },
+        { selected: false, text: 'ESAP', value: 'esap' },
+        { selected: false, text: 'PIPE', value: 'pipe' },
+      ])
+    })
+
+    it('should return the selected status if provided', () => {
+      expect(userQualificationsSelectOptions('womens')).toEqual([
+        { selected: false, text: 'All qualifications', value: '' },
+        { selected: true, text: "Women's APs", value: 'womens' },
+        { selected: false, text: 'Emergency APs', value: 'emergency' },
+        { selected: false, text: 'ESAP', value: 'esap' },
+        { selected: false, text: 'PIPE', value: 'pipe' },
+      ])
     })
   })
 })

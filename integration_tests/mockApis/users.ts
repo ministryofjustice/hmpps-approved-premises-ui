@@ -26,6 +26,25 @@ const stubFindUser = (args: { user: User; id: string }) =>
     },
   })
 
+const stubUserList = (args: { users: Array<User>; roles: Array<UserRole> }) => {
+  return stubFor({
+    request: {
+      method: 'GET',
+      urlPathPattern: paths.users.index.pattern,
+      queryParameters: {
+        roles: { equalTo: args.roles.join(',') },
+      },
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: args.users,
+    },
+  })
+}
+
 const stubUsers = (args: {
   users: Array<User>
   roles?: Array<UserRole>
@@ -212,6 +231,7 @@ const verifyUserUpdate = async (userId: string) =>
 export default {
   stubFindUser,
   stubUsers,
+  stubUserList,
   stubUserUpdate,
   stubUserSearch,
   stubUserDelete,

@@ -10,7 +10,7 @@ import {
   ApprovedPremisesUser as User,
   UserQualification,
 } from '@approved-premises/api'
-import { GroupedMatchTasks, PaginatedResponse } from '@approved-premises/ui'
+import { GroupedMatchTasks, PaginatedResponse, TaskSearchQualification } from '@approved-premises/ui'
 import { RestClientBuilder } from '../data'
 import TaskClient from '../data/taskClient'
 
@@ -26,6 +26,8 @@ export default class TaskService {
     page = 1,
     apAreaId = '',
     taskTypes,
+    requiredQualification,
+    crnOrName,
   }: {
     token: string
     allocatedFilter: 'allocated' | 'unallocated'
@@ -35,6 +37,8 @@ export default class TaskService {
     page: number
     apAreaId?: string
     taskTypes?: Array<TaskType>
+    requiredQualification?: TaskSearchQualification
+    crnOrName?: string
   }): Promise<PaginatedResponse<Task>> {
     const taskClient = this.taskClientFactory(token)
 
@@ -46,6 +50,8 @@ export default class TaskService {
       sortDirection,
       sortBy,
       taskTypes,
+      requiredQualification,
+      crnOrName,
     })
 
     return tasks

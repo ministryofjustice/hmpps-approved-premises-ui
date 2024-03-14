@@ -27,6 +27,12 @@ export default class UserClient {
     return (await this.restClient.get({ path: paths.users.profile({}) })) as User
   }
 
+  async getUserList(roles: Array<UserRole> = []): Promise<Array<User>> {
+    return this.restClient.get({ path: paths.users.index({}), query: { roles: roles.join(',') } }) as Promise<
+      Array<User>
+    >
+  }
+
   async getUsers(
     apAreaId: string = '',
     roles: Array<UserRole> = [],

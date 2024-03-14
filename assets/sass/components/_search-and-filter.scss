@@ -7,6 +7,10 @@
   }
 
   &__crn-label {
+    &--small {
+      @extend .govuk-heading-s;
+      @include govuk-responsive-margin(1, 'bottom');
+    }
     @extend .govuk-heading-m;
   }
 

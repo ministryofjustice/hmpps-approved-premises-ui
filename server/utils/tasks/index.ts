@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
 import { ApprovedPremisesApplication as Application, Task } from '../../@types/shared'
-import { SummaryListItem } from '../../@types/ui'
+import { SelectOption, SummaryListItem, TaskSearchQualification } from '../../@types/ui'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { getApplicationType } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
@@ -97,6 +97,31 @@ const taskSummary = (task: Task, application: Application): Array<SummaryListIte
   return summary
 }
 
+const userQualificationsSelectOptions = (
+  selectedOption: TaskSearchQualification | undefined | null,
+): Array<SelectOption> => {
+  const qualificationDictionary: Record<TaskSearchQualification, string> = {
+    womens: "Women's APs",
+    emergency: 'Emergency APs',
+    esap: 'ESAP',
+    pipe: 'PIPE',
+  }
+
+  const options = Object.keys(qualificationDictionary).map(qualification => ({
+    text: qualificationDictionary[qualification],
+    value: qualification,
+    selected: qualification === selectedOption,
+  }))
+
+  options.unshift({
+    text: 'All qualifications',
+    value: '',
+    selected: !selectedOption,
+  })
+
+  return options
+}
+
 export {
   taskSummary,
   allocatedTableRows,
@@ -108,4 +133,5 @@ export {
   userTableHeader,
   userTableRows,
   tasksTabItems,
+  userQualificationsSelectOptions,
 }

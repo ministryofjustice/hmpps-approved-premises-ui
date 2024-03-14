@@ -36,6 +36,7 @@ import {
   RiskTierLevel,
   RoshRisks,
   ApprovedPremisesUser as User,
+  UserQualification,
   ApprovedPremisesUserRole as UserRole,
 } from '@approved-premises/api'
 
@@ -490,3 +491,5 @@ export type KeyDetailsArgs = {
     value: HtmlItem | TextItem
   }>
 }
+
+export type TaskSearchQualification = Exclude<UserQualification, 'lao'>

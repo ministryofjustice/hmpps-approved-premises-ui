@@ -30,6 +30,14 @@ export default class ListPage extends Page {
     shouldShowTableRows(unallocatedTableRows(unallocatedTasks))
   }
 
+  shouldShowAllocatedToUserFilter() {
+    cy.get('select#allocatedToUserId').should('exist')
+  }
+
+  shouldNotShowAllocatedToUserFilter() {
+    cy.get('select#allocatedToUserId').should('not.exist')
+  }
+
   clickTask(task: Task) {
     cy.get(`a[data-cy-taskId="${task.id}"]`).click()
   }

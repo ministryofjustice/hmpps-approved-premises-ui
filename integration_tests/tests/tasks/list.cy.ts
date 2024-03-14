@@ -1,11 +1,14 @@
 import ListPage from '../../pages/tasks/listPage'
 
-import { apAreaFactory, taskFactory } from '../../../server/testutils/factories'
+import { apAreaFactory, taskFactory, userFactory } from '../../../server/testutils/factories'
 
 context('Task Allocation', () => {
+  const users = userFactory.buildList(5)
+
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
+    cy.task('stubUserList', { users, roles: ['assessor', 'matcher'] })
   })
 
   const apAreaId = '0544d95a-f6bb-43f8-9be7-aae66e3bf244'
@@ -44,9 +47,15 @@ context('Task Allocation', () => {
     // Then I should see the tasks that are allocated
     listPage.shouldShowAllocatedTasks()
 
+    // And I should see the allocated to user select option
+    listPage.shouldShowAllocatedToUserFilter()
+
     // And the tasks that are unallocated
     listPage.clickTab('Unallocated')
     listPage.shouldShowUnallocatedTasks()
+
+    // And I should not see the allocated to user select option
+    listPage.shouldNotShowAllocatedToUserFilter()
   })
 
   it('supports pagination', () => {
@@ -169,42 +178,68 @@ context('Task Allocation', () => {
     })
   })
 
-  it('allows filter', () => {
-    cy.task('stubAuthUser')
+  const filterOptions = {
+    area: {
+      apiKey: 'apAreaId',
+      value: apAreaId,
+    },
+    allocatedToUserId: {
+      apiKey: 'allocatedToUserId',
+      value: users[0].id,
+    },
+    requiredQualification: {
+      apiKey: 'requiredQualification',
+      value: 'womens',
+    },
+    crnOrName: {
+      apiKey: 'crnOrName',
+      value: 'CRN123',
+      type: 'input',
+    },
+  }
 
-    // Given I am logged in
-    cy.signIn()
+  Object.keys(filterOptions).forEach(key => {
+    it(`allows filter by ${key}`, () => {
+      cy.task('stubAuthUser')
 
-    const allocatedTasks = taskFactory.buildList(10)
-    const allocatedTasksFiltered = taskFactory.buildList(1)
-    const unallocatedTasks = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
+      // Given I am logged in
+      cy.signIn()
 
-    cy.task('stubGetAllTasks', { tasks: allocatedTasks, allocatedFilter: 'allocated', page: '1' })
-    cy.task('stubApAreaReferenceData', {
-      id: apAreaId,
-      name: 'Midlands',
+      const allocatedTasks = taskFactory.buildList(10)
+      const allocatedTasksFiltered = taskFactory.buildList(1)
+      const unallocatedTasks = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
+
+      cy.task('stubGetAllTasks', { tasks: allocatedTasks, allocatedFilter: 'allocated', page: '1' })
+      cy.task('stubApAreaReferenceData', {
+        id: apAreaId,
+        name: 'Midlands',
+      })
+
+      // When I visit the tasks dashboard
+      const listPage = ListPage.visit(allocatedTasks, unallocatedTasks)
+
+      // Then I should see the tasks that are allocated
+      listPage.shouldShowAllocatedTasks()
+
+      // When I filter by region
+      cy.task('stubGetAllTasks', {
+        tasks: allocatedTasksFiltered,
+        allocatedFilter: 'allocated',
+        page: '1',
+        sortDirection: 'asc',
+        [filterOptions[key].apiKey]: filterOptions[key].value,
+      })
+
+      if (filterOptions[key].type === 'input') {
+        listPage.clearAndCompleteTextInputById(key, filterOptions[key].value)
+      } else {
+        listPage.searchBy(key, filterOptions[key].value)
+      }
+      listPage.clickApplyFilter()
+
+      // Then the page should show the results
+      listPage.shouldShowAllocatedTasks(allocatedTasksFiltered)
     })
-
-    // When I visit the tasks dashboard
-    const listPage = ListPage.visit(allocatedTasks, unallocatedTasks)
-
-    // Then I should see the tasks that are allocated
-    listPage.shouldShowAllocatedTasks()
-
-    // When I filter by region
-    cy.task('stubGetAllTasks', {
-      tasks: allocatedTasksFiltered,
-      allocatedFilter: 'allocated',
-      page: '1',
-      sortDirection: 'asc',
-      apAreaId,
-    })
-
-    listPage.searchBy('area', apAreaId)
-    listPage.clickApplyFilter()
-
-    // Then the page should show the results
-    listPage.shouldShowAllocatedTasks(allocatedTasksFiltered)
   })
 
   it('maintains filter on tab change', () => {
