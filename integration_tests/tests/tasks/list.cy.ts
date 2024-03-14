@@ -47,9 +47,15 @@ context('Task Allocation', () => {
     // Then I should see the tasks that are allocated
     listPage.shouldShowAllocatedTasks()
 
+    // And I should see the allocated to user select option
+    listPage.shouldShowAllocatedToUserFilter()
+
     // And the tasks that are unallocated
     listPage.clickTab('Unallocated')
     listPage.shouldShowUnallocatedTasks()
+
+    // And I should not see the allocated to user select option
+    listPage.shouldNotShowAllocatedToUserFilter()
   })
 
   it('supports pagination', () => {

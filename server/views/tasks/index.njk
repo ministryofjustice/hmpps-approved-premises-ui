@@ -17,71 +17,8 @@
 
       <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
       {% include "../_messages.njk" %}
-      <div class="search-and-filter__wrapper">
-        <form action="{{ paths.tasks.index({}) }}" method="get">
-          <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-          <input type="hidden" name="allocatedFilter" value="{{ allocatedFilter }}">
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-quarter">
-              <h2 class="govuk-heading-m">Filters</h2>
-            </div>
-          </div>
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-full">
-              <div class="govuk-form-group">
-                <label class="search-and-filter__crn-label--small" for="crnOrName">
-                 CRN or Name
-                </label>
-                <input class="govuk-input moj-search__input" id="crnOrName" name="crnOrName" type="search" aria-describedby="crn-hint" value="{{ crnOrName }}">
-              </div>
-            </div>
-          </div>
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-third">
-              {{ govukSelect({
-                      label: {
-                        text: "AP Areas",
-                        classes: "govuk-label--s"
-                      },
-                      id: "area",
-                      name: "area",
-                      items: convertObjectsToSelectOptions(apAreas, 'All areas', 'name', 'id', 'apArea', 'all', context)
-                    }) }}
-            </div>
-            <div class="govuk-grid-column-one-third">
-              {{ govukSelect({
-                      label: {
-                        text: "Allocated user",
-                        classes: "govuk-label--s"
-                      },
-                      id: "allocatedToUserId",
-                      name: "allocatedToUserId",
-                      items: convertObjectsToSelectOptions(users, 'All users', 'name', 'id', 'allocatedToUserId', '', context)
-                    }) }}
-            </div>
-            <div class="govuk-grid-column-one-third">
-              {{ govukSelect({
-                      label: {
-                        text: "Required qualification",
-                        classes: "govuk-label--s"
-                      },
-                      id: "requiredQualification",
-                      name: "requiredQualification",
-                      items: TaskUtils.userQualificationsSelectOptions(requiredQualification)
-                    }) }}
-            </div>
-          </div>
-          <div class="govuk-grid-row">
-            <div class="govuk-grid-column-one-third">
-              {{ govukButton({
-                      "name": "submit",
-                      "text": "Apply filters",
-                      "classes": "search-and-filter__submit"
-                  }) }}
-            </div>
-          </div>
-        </form>
-      </div>
+      {% include "./_filters.njk" %}
+
       {{ navigation(allocatedFilter, apArea) }}
 
       {{
