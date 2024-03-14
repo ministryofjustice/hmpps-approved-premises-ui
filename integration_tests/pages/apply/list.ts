@@ -84,7 +84,14 @@ export default class ListPage extends Page {
                 format: 'short',
               }),
             )
-          cy.get('td').eq(3).contains(status)
+          cy.get('td')
+            .eq(3)
+            .contains(
+              DateFormats.isoDateToUIDate(application.createdAt, {
+                format: 'short',
+              }),
+            )
+          cy.get('td').eq(4).contains(status)
         })
     })
   }

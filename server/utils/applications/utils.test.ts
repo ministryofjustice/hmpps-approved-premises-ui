@@ -214,6 +214,9 @@ describe('utils', () => {
             text: 'N/A',
           },
           {
+            text: DateFormats.isoDateToUIDate(applicationA.createdAt, { format: 'short' }),
+          },
+          {
             html: getStatus(applicationA),
           },
           actionsCell(applicationA),
@@ -232,6 +235,9 @@ describe('utils', () => {
           },
           {
             text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
+          },
+          {
+            text: DateFormats.isoDateToUIDate(applicationB.createdAt, { format: 'short' }),
           },
           {
             html: getStatus(applicationB),
