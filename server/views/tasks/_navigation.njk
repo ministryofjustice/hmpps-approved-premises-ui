@@ -1,10 +1,10 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 
-{% macro navigation(activeTab, apArea) %}
+{% macro navigation(activeTab, hrefPrefix) %}
   {{
     mojSubNavigation({
       label: 'Sub navigation',
-      items: TaskUtils.tasksTabItems(activeTab, apArea)
+      items: TaskUtils.tasksTabItems(hrefPrefix, activeTab)
     })
   }}
 {% endmacro %}

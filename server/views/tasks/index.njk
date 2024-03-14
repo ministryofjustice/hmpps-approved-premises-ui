@@ -19,7 +19,7 @@
       {% include "../_messages.njk" %}
       {% include "./_filters.njk" %}
 
-      {{ navigation(allocatedFilter, apArea) }}
+      {{ navigation(allocatedFilter, hrefPrefix) }}
 
       {{
         govukTable({
