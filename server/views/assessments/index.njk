@@ -44,7 +44,7 @@
       }}
 
       {% if activeTab === 'requests_for_placement' %}
-        {{ placementApplicationTable("Placement Requests", PlacementApplicationUtils.tableUtils.tableRows(placementApplications)) }}
+        {{ govukTable(PlacementApplicationUtils.tableUtils.placementApplicationsTable(placementApplications, sortBy, sortDirection, hrefPrefix))  }}
       {% else %}
         {{govukTable(AssessmentUtils.assessmentTable(activeTab, assessments, sortBy, sortDirection, hrefPrefix, pageNumber, totalPages))}}
       {% endif %}
