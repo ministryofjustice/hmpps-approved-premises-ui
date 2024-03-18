@@ -1,10 +1,10 @@
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "../../../components/riskWidgets/macro.njk" import widgets %}
-{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% extends "../layout.njk" %}
 
 {% set columnClasses = "govuk-grid-column-full" %}
-{% set InsetHtml %}
+{% set html %}
 <p>This information has been imported from OASys. You must:</p>
 <ul>
   <li>Remove any out of date information or information that is not relevant to this application.</li>
@@ -29,9 +29,11 @@
   <div class="govuk-grid-row">
     {% if oasysDisabled %}
       <div class="govuk-grid-column-full" id="{{ pageName }}">
-        {{ govukInsetText({
-            html: InsetHtml
-          }) }}
+        {{ govukNotificationBanner({
+            titleText: 'Important',
+            html: html,
+            titleId: 'info-title'
+        }) }}
         <p>
           {{ guidance }}
         </p>
@@ -39,9 +41,11 @@
       </div>
     {% else %}
       <div class="govuk-grid-column-two-thirds" id="{{ pageName }}">
-        {{ govukInsetText({
-            html: InsetHtml
-          }) }}
+        {{ govukNotificationBanner({
+            titleText: 'Important',
+            html: html,
+            titleId: 'info-title'
+        }) }}
         {% if page.oasysSuccess == true %}
           <h2 class="govuk-heading-m">
             {{ heading }}
