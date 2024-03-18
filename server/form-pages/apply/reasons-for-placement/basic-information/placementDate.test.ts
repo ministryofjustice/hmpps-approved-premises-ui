@@ -1,16 +1,17 @@
 import { add, sub } from 'date-fns'
+import { when } from 'jest-when'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 
 import PlacementDate from './placementDate'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { applicationFactory } from '../../../../testutils/factories'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import { startDateOutsideOfNationalStandardsTimescales } from '../../../../utils/applications/startDateOutsideOfNationalStandardsTimescales'
 
 const futureReleaseDate = DateFormats.dateObjToIsoDate(add(new Date(), { days: 5 }))
 const pastReleaseDate = DateFormats.dateObjToIsoDate(sub(new Date(), { days: 5 }))
 
-jest.mock('../../../../utils/applications/noticeTypeFromApplication')
+jest.mock('../../../../utils/applications/startDateOutsideOfNationalStandardsTimescales')
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact', () => {
   return {
     retrieveOptionalQuestionResponseFromFormArtifact: jest.fn(() => futureReleaseDate),
@@ -153,32 +154,24 @@ describe('PlacementDate', () => {
     })
   })
 
-  describe('when the notice type is standard', () => {
+  describe('when the application is outside of national standards timescales', () => {
     beforeEach(() => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('standard')
+      when(startDateOutsideOfNationalStandardsTimescales).calledWith(expect.anything()).mockReturnValue(true)
+    })
+
+    itShouldHaveNextValue(new PlacementDate({}, application), 'reason-for-short-notice')
+  })
+
+  describe('when the application is not outside of national standards timescales', () => {
+    beforeEach(() => {
+      when(startDateOutsideOfNationalStandardsTimescales).calledWith(expect.anything()).mockReturnValue(false)
     })
 
     itShouldHaveNextValue(new PlacementDate({}, application), 'placement-purpose')
   })
 
-  describe('when the notice type is emergency', () => {
-    beforeEach(() => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('emergency')
-    })
-
-    itShouldHaveNextValue(new PlacementDate({}, application), 'reason-for-short-notice')
-  })
-
-  describe('when the notice type is short_notice', () => {
-    beforeEach(() => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
-    })
-
-    itShouldHaveNextValue(new PlacementDate({}, application), 'reason-for-short-notice')
-  })
-
   describe('next', () => {
-    it('should call noticeTypeFromApplication with the page body included in the application data', () => {
+    it('should call startDateOutsideOfNationalStandardsTimescales with the page body included in the application data', () => {
       const page = new PlacementDate(
         {
           startDateSameAsReleaseDate: 'no',
@@ -190,7 +183,7 @@ describe('PlacementDate', () => {
       )
       page.next()
 
-      const { mock } = noticeTypeFromApplication as jest.Mock
+      const { mock } = startDateOutsideOfNationalStandardsTimescales as jest.Mock
       const applicationData = mock.calls[0][0].data
 
       expect(applicationData['basic-information']['placement-date']).toEqual(page.body)
