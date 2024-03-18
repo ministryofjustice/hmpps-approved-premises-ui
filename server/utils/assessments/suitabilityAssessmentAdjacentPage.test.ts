@@ -1,245 +1,222 @@
 /* eslint-disable consistent-return */
 
-import { upper } from 'case'
+import { when } from 'jest-when'
 import { assessmentFactory } from '../../testutils/factories'
-import { noticeTypeFromApplication } from '../applications/noticeTypeFromApplication'
 import {
   shouldShowContingencyPlanPartnersPages,
   shouldShowContingencyPlanQuestionsPage,
 } from '../applications/shouldShowContingencyPlanPages'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
-import { suitabilityAssessmentAdjacentPage } from './suitabilityAssessmentAdjacentPage'
+import { SuitabilityAssessmentPageName, suitabilityAssessmentAdjacentPage } from './suitabilityAssessmentAdjacentPage'
+import { startDateOutsideOfNationalStandardsTimescales } from '../applications/startDateOutsideOfNationalStandardsTimescales'
+import Rfap from '../../form-pages/apply/risk-and-need-factors/further-considerations/rfap'
+import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
+import { ApprovedPremisesAssessment } from '../../@types/shared'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/shouldShowContingencyPlanPages')
-jest.mock('../applications/noticeTypeFromApplication')
+jest.mock('../applications/startDateOutsideOfNationalStandardsTimescales')
+
+const apTypes = ['rfap', 'esap', 'pipe'] as const
+
+type ApType = (typeof apTypes)[number]
+
+const mockApplicationOfType = (apType: ApType, assessment: ApprovedPremisesAssessment) => {
+  switch (apType) {
+    case 'rfap': {
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, SelectApType, 'type')
+        .mockReturnValue('')
+
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, Rfap, 'needARfap')
+        .mockReturnValue('yes')
+
+      break
+    }
+    default: {
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, Rfap, 'needARfap')
+        .mockReturnValue('')
+
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, SelectApType, 'type')
+        .mockReturnValue(apType)
+    }
+  }
+}
 
 describe('suitabilityAssessmentAdjacentPage', () => {
-  ;(
-    [
-      {
-        name: 'rfap',
-        pageName: 'rfap-suitability',
-        applicationQuestion: { name: 'needARfap', answer: 'yes' },
-      },
-      {
-        name: 'esap',
-        pageName: 'esap-suitability',
-        applicationQuestion: { name: 'type', answer: 'esap' },
-      },
-      {
-        name: 'pipe',
-        pageName: 'pipe-suitability',
-        applicationQuestion: { name: 'type', answer: 'pipe' },
-      },
-    ] as const
-  ).forEach(apType => {
-    beforeEach(() => {
-      jest.resetAllMocks()
+  const assessment = assessmentFactory.build()
+
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
+
+  describe('With the suitability-assessment page', () => {
+    describe.each(apTypes)('with an %s application', apType => {
+      beforeEach(() => {
+        mockApplicationOfType(apType, assessment)
+      })
+
+      it('should return the correct next page', () => {
+        expect(suitabilityAssessmentAdjacentPage(assessment, 'suitability-assessment')).toEqual(`${apType}-suitability`)
+      })
+    })
+  })
+
+  describe.each(apTypes)('with an %s application', apType => {
+    const pageName = `${apType}-suitability` as SuitabilityAssessmentPageName
+
+    describe('when the start date is outside of national timescales', () => {
+      beforeEach(() => {
+        mockApplicationOfType(apType, assessment)
+        when(startDateOutsideOfNationalStandardsTimescales).calledWith(assessment.application).mockReturnValue(true)
+      })
+
+      it('should return the application-timeliness page as the next page', () => {
+        expect(suitabilityAssessmentAdjacentPage(assessment, pageName)).toEqual('application-timeliness')
+      })
+
+      it('should return suitability-assessment as the previous page', () => {
+        expect(
+          suitabilityAssessmentAdjacentPage(assessment, pageName, {
+            returnPreviousPage: true,
+          }),
+        ).toEqual('suitability-assessment')
+      })
     })
 
-    describe(`${upper(apType.name)}`, () => {
-      describe('next page', () => {
-        describe(`an application that solely needs an ${apType.name}`, () => {
-          it(`returns ${apType.name}-suitability if the ${apType.name} suitability page hasnt been completed`, () => {
-            ;(
-              retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
-                typeof retrieveOptionalQuestionResponseFromFormArtifact
-              >
-            ).mockImplementation((_, __, question) => {
-              if (apType.applicationQuestion.name === question) {
-                return apType.applicationQuestion.answer
-              }
-            })
+    describe('when the start date is not outside of national timescales and the contingency plan partners page should be shown', () => {
+      beforeEach(() => {
+        when(startDateOutsideOfNationalStandardsTimescales).calledWith(assessment.application).mockReturnValue(false)
+        when(shouldShowContingencyPlanPartnersPages).calledWith(assessment.application).mockReturnValue(true)
+      })
 
-            expect(suitabilityAssessmentAdjacentPage(assessmentFactory.build(), 'suitability-assessment')).toEqual(
-              `${apType.name}-suitability`,
-            )
-          })
+      it('should return the contingency-plan-suitability page when the start date is not outside of national timescales and the contingency plan partners page should be shown', () => {
+        expect(suitabilityAssessmentAdjacentPage(assessment, pageName)).toEqual('contingency-plan-suitability')
+      })
 
-          it(`returns an empty string if the ${apType.name} suitability page has been completed`, () => {
-            ;(
-              retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
-                typeof retrieveOptionalQuestionResponseFromFormArtifact
-              >
-            ).mockReturnValue(`yes`)
+      it('should return suitability-assessment as the previous page', () => {
+        expect(
+          suitabilityAssessmentAdjacentPage(assessment, pageName, {
+            returnPreviousPage: true,
+          }),
+        ).toEqual('suitability-assessment')
+      })
+    })
 
-            expect(suitabilityAssessmentAdjacentPage(assessmentFactory.build(), apType.pageName)).toEqual('')
-          })
-        })
+    describe('when the start date is not outside of national timescales and the contingency plan questions page should be shown', () => {
+      beforeEach(() => {
+        when(startDateOutsideOfNationalStandardsTimescales).calledWith(assessment.application).mockReturnValue(false)
+        when(shouldShowContingencyPlanPartnersPages).calledWith(assessment.application).mockReturnValue(false)
+        when(shouldShowContingencyPlanQuestionsPage).calledWith(assessment.application).mockReturnValue(true)
+      })
 
-        describe(`an emergency application that needs an ${apType.name}`, () => {
-          it(`returns ${apType.name}-suitability if the ${apType.name} suitability page hasnt been completed`, () => {
-            ;(
-              retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
-                typeof retrieveOptionalQuestionResponseFromFormArtifact
-              >
-            ).mockImplementation((_, __, question) => {
-              if (apType.applicationQuestion.name === question) {
-                return apType.applicationQuestion.answer
-              }
-            })
-            ;(
-              shouldShowContingencyPlanPartnersPages as jest.MockedFn<typeof shouldShowContingencyPlanPartnersPages>
-            ).mockReturnValueOnce(true)
+      it('should return the contingency-plan-suitability page', () => {
+        expect(suitabilityAssessmentAdjacentPage(assessment, pageName)).toEqual('contingency-plan-suitability')
+      })
 
-            expect(suitabilityAssessmentAdjacentPage(assessmentFactory.build(), 'suitability-assessment')).toEqual(
-              `${apType.name}-suitability`,
-            )
-          })
+      it('should return suitability-assessment as the previous page', () => {
+        expect(
+          suitabilityAssessmentAdjacentPage(assessment, pageName, {
+            returnPreviousPage: true,
+          }),
+        ).toEqual('suitability-assessment')
+      })
+    })
+  })
 
-          it(`returns contingency-plan-suitability if the ${apType.name} suitability page has been completed`, () => {
-            ;(
-              retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
-                typeof retrieveOptionalQuestionResponseFromFormArtifact
-              >
-            ).mockImplementation((_, __, question) => {
-              if (apType.applicationQuestion.name === question) {
-                return apType.applicationQuestion.answer
-              }
+  describe('with the application-timeliness page', () => {
+    beforeEach(() => {
+      when(startDateOutsideOfNationalStandardsTimescales).calledWith(assessment.application).mockReturnValue(true)
+    })
 
-              if (question === 'agreeWithShortNoticeReason') {
-                return 'yes'
-              }
+    describe('if the contingency plan partners pages should be shown', () => {
+      beforeEach(() => {
+        when(shouldShowContingencyPlanPartnersPages).calledWith(assessment.application).mockReturnValue(true)
+      })
 
-              if (question === 'contingencyPlanSufficient') {
-                return ''
-              }
-            })
-            ;(
-              shouldShowContingencyPlanPartnersPages as jest.MockedFn<typeof shouldShowContingencyPlanPartnersPages>
-            ).mockReturnValueOnce(true)
+      it('should show the contingency-plan-suitability page', () => {
+        expect(suitabilityAssessmentAdjacentPage(assessment, 'application-timeliness')).toEqual(
+          'contingency-plan-suitability',
+        )
+      })
 
-            expect(suitabilityAssessmentAdjacentPage(assessmentFactory.build(), apType.pageName)).toEqual(
-              `contingency-plan-suitability`,
-            )
-          })
+      describe.each(apTypes)('should return the correct previous page for a %s application', apType => {
+        it('should return the correct previous page', () => {
+          mockApplicationOfType(apType, assessment)
 
-          it(`returns an empty string if the ${apType.name} suitability + contingency plan suitability pages have been completed`, () => {
-            ;(
-              retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
-                typeof retrieveOptionalQuestionResponseFromFormArtifact
-              >
-            ).mockReturnValue(`yes`)
-            ;(
-              shouldShowContingencyPlanPartnersPages as jest.MockedFn<typeof shouldShowContingencyPlanPartnersPages>
-            ).mockReturnValueOnce(true)
-
-            expect(
-              suitabilityAssessmentAdjacentPage(assessmentFactory.build(), 'contingency-plan-suitability'),
-            ).toEqual('')
-          })
-        })
-
-        describe(`a short notice application that needs an ${apType.name}`, () => {
-          it(`returns ${apType.name}-suitability if the ${apType.name} suitability page hasnt been completed`, () => {
-            ;(
-              retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
-                typeof retrieveOptionalQuestionResponseFromFormArtifact
-              >
-            ).mockImplementation((_, __, question) => {
-              if (apType.applicationQuestion.name === question) {
-                return apType.applicationQuestion.answer
-              }
-            })
-            ;(
-              shouldShowContingencyPlanPartnersPages as jest.MockedFn<typeof shouldShowContingencyPlanPartnersPages>
-            ).mockReturnValueOnce(true)
-
-            expect(suitabilityAssessmentAdjacentPage(assessmentFactory.build(), 'suitability-assessment')).toEqual(
-              `${apType.name}-suitability`,
-            )
-          })
-
-          it(`returns application-timeliness if the ${apType.name} suitability page has been completed`, () => {
-            ;(noticeTypeFromApplication as jest.MockedFn<typeof noticeTypeFromApplication>).mockReturnValueOnce(
-              `short_notice`,
-            )
-
-            expect(suitabilityAssessmentAdjacentPage(assessmentFactory.build(), apType.pageName)).toEqual(
-              `application-timeliness`,
-            )
-          })
-
-          it(`returns an empty string if the ${apType.name} suitability + application timeliness pages have been completed`, () => {
-            ;(
-              retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
-                typeof retrieveOptionalQuestionResponseFromFormArtifact
-              >
-            ).mockReturnValue(`yes`)
-            ;(noticeTypeFromApplication as jest.MockedFn<typeof noticeTypeFromApplication>).mockReturnValueOnce(
-              `short_notice`,
-            )
-
-            expect(suitabilityAssessmentAdjacentPage(assessmentFactory.build(), 'application-timeliness')).toEqual('')
-          })
-        })
-        describe('emergency application', () => {
-          it(`returns an contingency-plan-suitability if the ${apType.name} suitability + application timeliness pages have been completed`, () => {
-            ;(
-              shouldShowContingencyPlanQuestionsPage as jest.MockedFn<typeof shouldShowContingencyPlanQuestionsPage>
-            ).mockReturnValue(true)
-
-            expect(suitabilityAssessmentAdjacentPage(assessmentFactory.build(), 'application-timeliness')).toEqual(
-              'contingency-plan-suitability',
-            )
-          })
+          expect(
+            suitabilityAssessmentAdjacentPage(assessment, 'application-timeliness', {
+              returnPreviousPage: true,
+            }),
+          ).toEqual(`${apType}-suitability`)
         })
       })
     })
 
-    describe('previous page', () => {
-      describe(`${apType.pageName}`, () => {
-        it(`returns "suitability-assessment" from the ${apType.name} page`, () => {
-          ;(
-            retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
-              typeof retrieveOptionalQuestionResponseFromFormArtifact
-            >
-          ).mockImplementation((_, __, question) => {
-            if (apType.applicationQuestion.name === question) {
-              return apType.applicationQuestion.answer
-            }
-          })
+    describe('if the contingency plan questions page should be shown', () => {
+      beforeEach(() => {
+        when(shouldShowContingencyPlanPartnersPages).calledWith(assessment.application).mockReturnValue(false)
+        when(shouldShowContingencyPlanQuestionsPage).calledWith(assessment.application).mockReturnValue(true)
+      })
+
+      it('should show the contingency-plan-suitability page', () => {
+        expect(suitabilityAssessmentAdjacentPage(assessment, 'application-timeliness')).toEqual(
+          'contingency-plan-suitability',
+        )
+      })
+
+      describe.each(apTypes)('should return the correct previous page for a %s application', apType => {
+        it('should return the correct previous page', () => {
+          mockApplicationOfType(apType, assessment)
 
           expect(
-            suitabilityAssessmentAdjacentPage(assessmentFactory.build(), apType.pageName, { returnPreviousPage: true }),
-          ).toEqual('suitability-assessment')
-        })
-
-        it(`returns ${apType.name}-suitability from the application-timeliness page`, () => {
-          ;(
-            retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
-              typeof retrieveOptionalQuestionResponseFromFormArtifact
-            >
-          ).mockImplementation((_, __, question) => {
-            if (apType.applicationQuestion.name === question) {
-              return apType.applicationQuestion.answer
-            }
-          })
-          ;(noticeTypeFromApplication as jest.MockedFn<typeof noticeTypeFromApplication>).mockReturnValueOnce(
-            'short_notice',
-          )
-
-          expect(
-            suitabilityAssessmentAdjacentPage(assessmentFactory.build(), 'application-timeliness', {
+            suitabilityAssessmentAdjacentPage(assessment, 'application-timeliness', {
               returnPreviousPage: true,
             }),
-          ).toEqual(apType.pageName)
+          ).toEqual(`${apType}-suitability`)
         })
+      })
+    })
+  })
 
-        it(`returns application-timeliness from the contingency-plan-suitability page`, () => {
-          ;(noticeTypeFromApplication as jest.MockedFn<typeof noticeTypeFromApplication>).mockReturnValue(
-            'short_notice',
-          )
-          ;(
-            shouldShowContingencyPlanPartnersPages as jest.MockedFn<typeof shouldShowContingencyPlanPartnersPages>
-          ).mockReturnValueOnce(true)
+  describe('with the contingency-plan-suitability page', () => {
+    beforeEach(() => {
+      when(shouldShowContingencyPlanPartnersPages).calledWith(assessment.application).mockReturnValue(true)
+    })
+
+    it('should return an empty string', () => {
+      expect(suitabilityAssessmentAdjacentPage(assessment, 'contingency-plan-suitability')).toEqual('')
+    })
+
+    describe('when the start date is outside the national standards timescales', () => {
+      beforeEach(() => {
+        when(startDateOutsideOfNationalStandardsTimescales).calledWith(assessment.application).mockReturnValue(true)
+      })
+
+      it('should return application-timeliness as the previous page', () => {
+        expect(
+          suitabilityAssessmentAdjacentPage(assessment, 'contingency-plan-suitability', { returnPreviousPage: true }),
+        ).toEqual('application-timeliness')
+      })
+    })
+
+    describe('when the start date is not outside the national standards timescales', () => {
+      beforeEach(() => {
+        when(startDateOutsideOfNationalStandardsTimescales).calledWith(assessment.application).mockReturnValue(false)
+      })
+
+      describe.each(apTypes)('should return the correct previous page for a %s application', apType => {
+        it('should return the correct previous page', () => {
+          mockApplicationOfType(apType, assessment)
 
           expect(
-            suitabilityAssessmentAdjacentPage(assessmentFactory.build(), 'contingency-plan-suitability', {
+            suitabilityAssessmentAdjacentPage(assessment, 'contingency-plan-suitability', {
               returnPreviousPage: true,
             }),
-          ).toEqual('application-timeliness')
+          ).toEqual(`${apType}-suitability`)
         })
       })
     })

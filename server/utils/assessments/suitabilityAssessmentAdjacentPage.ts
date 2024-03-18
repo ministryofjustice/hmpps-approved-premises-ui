@@ -1,14 +1,14 @@
 import { ApprovedPremisesAssessment as Assessment } from '../../@types/shared'
 import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import Rfap from '../../form-pages/apply/risk-and-need-factors/further-considerations/rfap'
-import { noticeTypeFromApplication } from '../applications/noticeTypeFromApplication'
 import {
   shouldShowContingencyPlanPartnersPages,
   shouldShowContingencyPlanQuestionsPage,
 } from '../applications/shouldShowContingencyPlanPages'
+import { startDateOutsideOfNationalStandardsTimescales } from '../applications/startDateOutsideOfNationalStandardsTimescales'
 import { retrieveOptionalQuestionResponseFromFormArtifact as responseFromAssessment } from '../retrieveQuestionResponseFromFormArtifact'
 
-const suitabilityAssessmentPageNames = [
+export const suitabilityAssessmentPageNames = [
   'suitability-assessment',
   'rfap-suitability',
   'esap-suitability',
@@ -17,7 +17,7 @@ const suitabilityAssessmentPageNames = [
   'contingency-plan-suitability',
 ] as const
 
-type SuitabilityAssessmentPageName = (typeof suitabilityAssessmentPageNames)[number]
+export type SuitabilityAssessmentPageName = (typeof suitabilityAssessmentPageNames)[number]
 
 export const suitabilityAssessmentAdjacentPage = (
   assessment: Assessment,
@@ -42,9 +42,7 @@ export const suitabilityAssessmentAdjacentPage = (
     },
     {
       pageName: 'application-timeliness',
-      needsAssessment:
-        noticeTypeFromApplication(assessment.application) === 'short_notice' ||
-        noticeTypeFromApplication(assessment.application) === 'emergency',
+      needsAssessment: startDateOutsideOfNationalStandardsTimescales(assessment.application),
     },
     {
       pageName: 'contingency-plan-suitability',
