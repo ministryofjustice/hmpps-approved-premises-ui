@@ -78,7 +78,7 @@ const shouldShowTableRows = (tableRows: Array<TableRow>): void => {
 }
 
 const updateApplicationReleaseDate = (data: AnyValue) => {
-  const releaseDate = add(new Date(), { months: 6 })
+  const releaseDate = add(new Date(), { months: 7 })
 
   return {
     ...data,
