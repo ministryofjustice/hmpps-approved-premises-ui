@@ -5,7 +5,7 @@ import ReportClient from './reportClient'
 import paths from '../paths/api'
 
 import describeClient from '../testutils/describeClient'
-import { ReportType, reportNames } from '../utils/reportUtils'
+import { ReportType, reportInputLabels } from '../utils/reportUtils'
 
 describeClient('ReportClient', provider => {
   let client: ReportClient
@@ -17,7 +17,7 @@ describeClient('ReportClient', provider => {
   })
 
   describe('getReport', () => {
-    it.each(Object.keys(reportNames))(
+    it.each(Object.keys(reportInputLabels))(
       'should pipe the report from the API when the report name is %s',
       async (reportName: ReportType) => {
         const month = '12'

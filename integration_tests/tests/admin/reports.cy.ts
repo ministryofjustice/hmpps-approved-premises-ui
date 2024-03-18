@@ -1,4 +1,4 @@
-import { reportNames } from '../../../server/utils/reportUtils'
+import { reportInputLabels } from '../../../server/utils/reportUtils'
 import ReportPage from '../../pages/admin/reportPage'
 
 context('Reports', () => {
@@ -12,7 +12,7 @@ context('Reports', () => {
   })
 
   it('allows me to download reports', () => {
-    Object.keys(reportNames).forEach(reportName => {
+    Object.keys(reportInputLabels).forEach(reportName => {
       // Given there is a report available
       const month = '8'
       const year = '2023'
