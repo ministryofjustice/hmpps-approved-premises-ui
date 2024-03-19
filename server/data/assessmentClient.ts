@@ -1,10 +1,10 @@
 import type {
   ApprovedPremisesAssessment as Assessment,
-  AssessmentAcceptance,
   AssessmentStatus,
   ApprovedPremisesAssessmentSummary as AssessmentSummary,
   ClarificationNote,
   NewClarificationNote,
+  TemporaryAssessmentAcceptanceAwaitingApiChanges,
   UpdatedClarificationNote,
 } from '@approved-premises/api'
 import { AssessmentSortField, SortDirection } from '@approved-premises/api'
@@ -45,7 +45,7 @@ export default class AssessmentClient {
     })) as Assessment
   }
 
-  async acceptance(assessmentId: string, data: AssessmentAcceptance): Promise<void> {
+  async acceptance(assessmentId: string, data: TemporaryAssessmentAcceptanceAwaitingApiChanges): Promise<void> {
     await this.restClient.post({
       path: paths.assessments.acceptance({ id: assessmentId }),
       data,

@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { AnyValue } from './AnyValue';
 import type { PlacementDates } from './PlacementDates';
-import type { PlacementRequirements } from './PlacementRequirements';
+import type { PlacementRequirements, TemporaryPlacementRequirementsAwaitingApiChange } from './PlacementRequirements';
 export type AssessmentAcceptance = {
     document: AnyValue;
     requirements?: PlacementRequirements;
@@ -12,3 +12,9 @@ export type AssessmentAcceptance = {
     notes?: string;
 };
 
+export type TemporaryAssessmentAcceptanceAwaitingApiChanges = {
+    document: AnyValue;
+    requirements?: TemporaryPlacementRequirementsAwaitingApiChange;
+    placementDates?: PlacementDates;
+    notes?: string;
+};

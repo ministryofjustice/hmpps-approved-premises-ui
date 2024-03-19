@@ -1,10 +1,9 @@
 import {
-  ApType,
   ApprovedPremisesAssessment as Assessment,
-  AssessmentAcceptance,
-  PlacementCriteria,
   PlacementDates,
-  PlacementRequirements,
+  TemporaryApplyApTypeAwaitingApiChangeButWithNormalInsteadOfStandard,
+  TemporaryAssessmentAcceptanceAwaitingApiChanges,
+  TemporaryPlacementRequirementsAwaitingApiChange,
 } from '@approved-premises/api'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import {
@@ -21,13 +20,14 @@ import {
   ApTypeCriteria,
   OffenceAndRiskCriteria,
   PlacementRequirementCriteria,
+  UiPlacementCriteria,
   offenceAndRiskCriteria,
   placementRequirementCriteria,
 } from '../placementCriteriaUtils'
 import { placementDurationFromApplication } from './placementDurationFromApplication'
 import { getResponses } from '../applications/getResponses'
 
-export const acceptanceData = (assessment: Assessment): AssessmentAcceptance => {
+export const acceptanceData = (assessment: Assessment): TemporaryAssessmentAcceptanceAwaitingApiChanges => {
   const notes = retrieveOptionalQuestionResponseFromFormArtifact(assessment, MatchingInformation, 'cruInformation')
 
   return {
@@ -55,7 +55,7 @@ export const placementDates = (assessment: Assessment): PlacementDates | null =>
   }
 }
 
-export const placementRequestData = (assessment: Assessment): PlacementRequirements => {
+export const placementRequestData = (assessment: Assessment): TemporaryPlacementRequirementsAwaitingApiChange => {
   const matchingInformation = pageDataFromApplicationOrAssessment(
     MatchingInformation,
     assessment,
@@ -79,14 +79,21 @@ export const placementRequestData = (assessment: Assessment): PlacementRequireme
   }
 }
 
-export const apType = (type: ApTypeCriteria | 'isRecoveryFocussed'): ApType => {
+// do something with this?
+export const apType = (
+  type: ApTypeCriteria | 'isRecoveryFocussed',
+): TemporaryApplyApTypeAwaitingApiChangeButWithNormalInsteadOfStandard => {
   switch (type) {
     case 'isPIPE':
       return 'pipe'
     case 'isESAP':
       return 'esap'
-    case 'isRecoveryFocussed':
-      return 'rfap'
+    // case 'isRecoveryFocussed':
+    //   return 'rfap'
+    case 'isMHAPElliottHouse':
+      return 'mhapElliottHouse'
+    case 'isMHAPStJosephs':
+      return 'mhapStJosephs'
     default:
       return 'normal'
   }
@@ -94,9 +101,9 @@ export const apType = (type: ApTypeCriteria | 'isRecoveryFocussed'): ApType => {
 
 export const criteriaFromMatchingInformation = (
   matchingInformation: MatchingInformationBody,
-): { essentialCriteria: Array<PlacementCriteria>; desirableCriteria: Array<PlacementCriteria> } => {
-  const essentialCriteria = [] as Array<PlacementCriteria>
-  const desirableCriteria = [] as Array<PlacementCriteria>
+): { essentialCriteria: Array<UiPlacementCriteria>; desirableCriteria: Array<UiPlacementCriteria> } => {
+  const essentialCriteria = [] as Array<UiPlacementCriteria>
+  const desirableCriteria = [] as Array<UiPlacementCriteria>
 
   if (matchingInformation.apType !== 'normal') {
     essentialCriteria.push(matchingInformation.apType)

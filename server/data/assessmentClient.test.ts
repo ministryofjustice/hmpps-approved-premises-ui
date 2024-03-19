@@ -1,3 +1,4 @@
+import { TemporaryPlacementRequirementsAwaitingApiChange } from 'server/@types/shared/models/PlacementRequirements'
 import AssessmentClient from './assessmentClient'
 import {
   assessmentFactory,
@@ -119,7 +120,7 @@ describeClient('AssessmentClient', provider => {
       const assessmentId = 'some-id'
       const data = {
         document: {},
-        requirements: placementRequestFactory.build(),
+        requirements: placementRequestFactory.build() as TemporaryPlacementRequirementsAwaitingApiChange,
       }
 
       provider.addInteraction({
