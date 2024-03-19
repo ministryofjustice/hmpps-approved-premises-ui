@@ -152,8 +152,13 @@ const createNameAnchorElement = (
 
 export const actionsCell = (application: ApplicationSummary | Application) => {
   const actionItems: Array<string> = []
-  const withdrawLink = linkTo(paths.applications.withdraw.new, { id: application.id }, { text: 'Withdraw' })
-  actionItems.push(withdrawLink)
+
+  if (application.status !== 'rejected' && application.status !== 'withdrawn') {
+    const withdrawLink = linkTo(paths.applications.withdraw.new, { id: application.id }, { text: 'Withdraw' })
+
+    actionItems.push(withdrawLink)
+  }
+
   if (application.status === 'awaitingPlacement') {
     const requestForPlacementLink = linkTo(
       placementApplicationPaths.placementApplications.create,
@@ -162,7 +167,9 @@ export const actionsCell = (application: ApplicationSummary | Application) => {
     )
     actionItems.push(requestForPlacementLink)
   }
-  const actionLinks = `<ul class="govuk-list">${actionItems.map(actionItem => `<li>${actionItem}</li>`).join('')}</ul>`
+  const actionLinks = actionItems.length
+    ? `<ul class="govuk-list">${actionItems.map(actionItem => `<li>${actionItem}</li>`).join('')}</ul>`
+    : ''
 
   return htmlValue(actionLinks)
 }

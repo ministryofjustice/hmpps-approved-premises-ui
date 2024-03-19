@@ -1,4 +1,8 @@
-import { ApplicationSortField, TimelineEventUrlType } from '@approved-premises/api'
+import {
+  ApplicationSortField,
+  ApprovedPremisesApplicationStatus as ApplicationStatus,
+  TimelineEventUrlType,
+} from '@approved-premises/api'
 import { isAfter } from 'date-fns'
 import { faker } from '@faker-js/faker'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
@@ -716,6 +720,17 @@ describe('utils', () => {
         html: '<ul class="govuk-list"><li><a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a></li><li><a href="/placement-applications?id=an-application-id"  >Request for placement</a></li></ul>',
       })
     })
+
+    it.each(['rejected', 'withdrawn'])(
+      'does not return a link to withdraw the application if the status is %s',
+      (status: ApplicationStatus) => {
+        const application = applicationFactory.build({ id: 'an-application-id', status })
+
+        expect(actionsCell(application)).toEqual({
+          html: '',
+        })
+      },
+    )
   })
 
   describe('mapTimelineEventsForUi', () => {
