@@ -4,7 +4,13 @@ import { DateFormats } from '../dateUtils'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 
 export const startDateOutsideOfNationalStandardsTimescales = (application: ApprovedPremisesApplication) => {
-  const arrivalDate = DateFormats.isoToDateObj(arrivalDateFromApplication(application))
+  const arrivalDateString = arrivalDateFromApplication(application)
+
+  if (!arrivalDateString) {
+    return false
+  }
+
+  const arrivalDate = DateFormats.isoToDateObj(arrivalDateString)
   const today = new Date()
 
   return subMonths(arrivalDate, 6) < today

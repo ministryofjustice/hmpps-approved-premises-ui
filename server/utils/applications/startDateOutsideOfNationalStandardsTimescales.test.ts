@@ -1,16 +1,15 @@
 import { when } from 'jest-when'
-import { createMock } from '@golevelup/ts-jest'
 import { addDays, addMonths } from 'date-fns'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { DateFormats } from '../dateUtils'
-import { ApprovedPremisesApplication } from '../../@types/shared'
 import { startDateOutsideOfNationalStandardsTimescales } from './startDateOutsideOfNationalStandardsTimescales'
+import { applicationFactory } from '../../testutils/factories'
 
 jest.mock('./arrivalDateFromApplication')
 jest.mock('../dateUtils')
 
 describe('startDateOutsideOfNationalStandardsTimescales', () => {
-  const application = createMock<ApprovedPremisesApplication>()
+  let application = applicationFactory.build({ arrivalDate: '2023-01-01' })
   const now = new Date()
 
   beforeAll(() => {
@@ -41,6 +40,12 @@ describe('startDateOutsideOfNationalStandardsTimescales', () => {
   it('should return false with fractional dates', () => {
     const startDate = addDays(addMonths(now, 6), 3)
     when(DateFormats.isoToDateObj).calledWith(application.arrivalDate).mockReturnValue(startDate)
+
+    expect(startDateOutsideOfNationalStandardsTimescales(application)).toEqual(false)
+  })
+
+  it('should return false when there is no start date', () => {
+    application = applicationFactory.build({ arrivalDate: null })
 
     expect(startDateOutsideOfNationalStandardsTimescales(application)).toEqual(false)
   })
