@@ -13,9 +13,9 @@ import {
   isToday,
 } from '../../../../utils/dateUtils'
 import { Page } from '../../../utils/decorators'
-import { noticeTypeFromApplication } from '../../../../utils/applications/noticeTypeFromApplication'
 import ReleaseDate from './releaseDate'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
+import { startDateOutsideOfNationalStandardsTimescales } from '../../../../utils/applications/startDateOutsideOfNationalStandardsTimescales'
 
 type PlacementDateBody = ObjectWithDateParts<'startDate'> & {
   startDateSameAsReleaseDate: YesOrNo
@@ -87,11 +87,11 @@ export default class PlacementDate implements TasklistPage {
   }
 
   next() {
-    if (this.getNoticeType() === 'standard') {
-      return 'placement-purpose'
+    if (this.isOutsideOfNationalStandardsTimescales()) {
+      return 'reason-for-short-notice'
     }
 
-    return 'reason-for-short-notice'
+    return 'placement-purpose'
   }
 
   previous() {
@@ -134,8 +134,8 @@ export default class PlacementDate implements TasklistPage {
     return errors
   }
 
-  private getNoticeType() {
-    return noticeTypeFromApplication({
+  private isOutsideOfNationalStandardsTimescales() {
+    return startDateOutsideOfNationalStandardsTimescales({
       ...this.application,
       data: {
         'basic-information': {
