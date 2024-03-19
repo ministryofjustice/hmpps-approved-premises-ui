@@ -95,9 +95,9 @@ describe('PlacementPurpose', () => {
     itShouldHavePreviousValue(new PlacementPurpose({}, application), 'reason-for-short-notice')
   })
 
-  describe('when the notice type is short_notice', () => {
+  describe('when the notice type is shortNotice', () => {
     beforeEach(() => {
-      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
+      ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('shortNotice')
     })
 
     itShouldHavePreviousValue(new PlacementPurpose({}, application), 'reason-for-short-notice')

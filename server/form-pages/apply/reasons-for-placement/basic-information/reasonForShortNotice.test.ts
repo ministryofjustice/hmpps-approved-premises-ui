@@ -21,7 +21,7 @@ describe('ReasonForShortNotice', () => {
   })
 
   it('should return the correct title and question for short notice applications', () => {
-    ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
+    ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('shortNotice')
     const page = new ReasonForShortNotice({}, application)
 
     expect(page.title).toEqual('Short notice application')
