@@ -1,8 +1,8 @@
 import { PlacementCriteria } from '@approved-premises/api'
 import { filterByType } from './utils'
 
-type UiPlacementCriteria = Exclude<PlacementCriteria, 'isGroundFloor'>
-export const specialistApTypeCriteria = ['isPIPE', 'isESAP'] as const
+type UiPlacementCriteria = Exclude<PlacementCriteria, 'isGroundFloor'> | 'isMHAPStJosephs' | 'isMHAPElliottHouse'
+export const specialistApTypeCriteria = ['isPIPE', 'isESAP', 'isMHAPStJosephs', 'isMHAPElliottHouse'] as const
 export const offenceAndRiskCriteria = [
   'isSuitableForVulnerable',
   'acceptsSexOffenders',
@@ -33,6 +33,8 @@ export const placementCriteriaLabels: Record<UiPlacementCriteria, string> = {
   isPIPE: 'Psychologically Informed Planned Environment (PIPE)',
   isESAP: 'Enhanced Security AP (ESAP)',
   isRecoveryFocussed: 'Recovery Focused Approved Premises (RFAP)',
+  isMHAPStJosephs: 'Specialist Mental Health AP (St Josephs - Greater Manchester)',
+  isMHAPElliottHouse: 'Specialist Mental Health AP (Elliott House - Midlands)',
   isSemiSpecialistMentalHealth: 'Semi-specialist mental health',
   isSuitableForVulnerable: 'Vulnerable to exploitation',
   acceptsSexOffenders: 'Sexual offences against an adult',
