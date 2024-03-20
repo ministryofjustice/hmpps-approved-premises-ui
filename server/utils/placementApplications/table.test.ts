@@ -1,8 +1,10 @@
 import { placementApplicationTaskFactory } from '../../testutils/factories'
-import { nameCell, placementTypeCell, statusCell, tableRows } from './table'
+import { nameCell, placementApplicationsTable, placementTypeCell, statusCell, tableRows } from './table'
 import { crnCell, tierCell } from '../tableUtils'
 import { linkTo, sentenceCase } from '../utils'
 import paths from '../../paths/placementApplications'
+import { sortHeader } from '../sortHeader'
+import { TaskSortField } from '../../@types/shared'
 
 jest.mock('../utils')
 
@@ -13,6 +15,35 @@ describe('table', () => {
   beforeEach(() => {
     jest.mocked(linkTo).mockReturnValue(stubLink)
     jest.mocked(sentenceCase).mockReturnValue(stubSentenceCase)
+  })
+
+  describe('placementApplicationsTable', () => {
+    it('returns the correct table', () => {
+      const hrefPrefix = 'http://localhost/example?something=else'
+      const tasks = placementApplicationTaskFactory.buildList(1)
+      const sortBy = 'person'
+      const sortDirection = 'asc'
+
+      expect(placementApplicationsTable(tasks, sortBy, sortDirection, hrefPrefix)).toEqual({
+        firstCellIsHeader: true,
+        head: [
+          sortHeader<TaskSortField>('Name', 'person', sortBy, sortDirection, hrefPrefix),
+          {
+            text: 'CRN',
+          },
+          {
+            text: 'Tier',
+          },
+          {
+            text: 'Type of request',
+          },
+          {
+            text: 'Status',
+          },
+        ],
+        rows: tableRows(tasks),
+      })
+    })
   })
 
   describe('nameCell', () => {

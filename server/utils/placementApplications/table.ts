@@ -1,8 +1,36 @@
-import { PlacementApplicationTask, PlacementType } from '../../@types/shared'
+import { PlacementApplicationTask, PlacementType, SortDirection, TaskSortField } from '../../@types/shared'
 import { TableCell, TableRow } from '../../@types/ui'
 import paths from '../../paths/placementApplications'
 import { linkTo, sentenceCase } from '../utils'
 import { crnCell, tierCell } from '../tableUtils'
+import { sortHeader } from '../sortHeader'
+
+export const placementApplicationsTable = (
+  placementApplications: Array<PlacementApplicationTask>,
+  sortBy: TaskSortField,
+  sortDirection: SortDirection,
+  hrefPrefix: string,
+) => {
+  return {
+    firstCellIsHeader: true,
+    head: [
+      sortHeader<TaskSortField>('Name', 'person', sortBy, sortDirection, hrefPrefix),
+      {
+        text: 'CRN',
+      },
+      {
+        text: 'Tier',
+      },
+      {
+        text: 'Type of request',
+      },
+      {
+        text: 'Status',
+      },
+    ],
+    rows: tableRows(placementApplications),
+  }
+}
 
 const placementTypes: Record<PlacementType, string> = {
   rotl: 'ROTL',

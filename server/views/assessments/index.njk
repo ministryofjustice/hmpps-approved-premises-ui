@@ -3,7 +3,6 @@
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
 {%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
-{% from "./_placementApplicationTable.njk" import placementApplicationTable %}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body assessments--index" %}
@@ -45,7 +44,7 @@
       }}
 
       {% if activeTab === 'requests_for_placement' %}
-        {{ placementApplicationTable("Placement Requests", PlacementApplicationUtils.tableUtils.tableRows(placementApplications)) }}
+        {{ govukTable(PlacementApplicationUtils.tableUtils.placementApplicationsTable(placementApplications, sortBy, sortDirection, hrefPrefix))  }}
       {% else %}
         {{govukTable(AssessmentUtils.assessmentTable(activeTab, assessments, sortBy, sortDirection, hrefPrefix, pageNumber, totalPages))}}
       {% endif %}
