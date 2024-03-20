@@ -72,8 +72,8 @@ describe('shouldShowContingencyPlanQuestionsScreen', () => {
     expect(shouldShowContingencyPlanQuestionsPage(application)).toEqual(false)
   })
 
-  it('returns false if the application notice type is standard"', () => {
-    ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('short_notice')
+  it('returns false if the application notice type is shortNotice"', () => {
+    ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('shortNotice')
 
     expect(shouldShowContingencyPlanQuestionsPage(application)).toEqual(false)
   })

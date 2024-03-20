@@ -102,7 +102,7 @@ describe('SuitabilityAssessment', () => {
       ).toEqual('esap-suitability')
     })
 
-    it('returns application-timeliness if the notice type is short_notice', () => {
+    it('returns application-timeliness if the notice type is shortNotice', () => {
       ;(suitabilityAssessmentAdjacentPage as jest.MockedFn<typeof suitabilityAssessmentAdjacentPage>).mockReturnValue(
         'application-timeliness',
       )
