@@ -61,6 +61,7 @@ context('Apply', () => {
         'applicantUserDetails',
         'caseManagerIsNotApplicant',
         'caseManagerUserDetails',
+        'noticeType',
       )
       expect(body.data).to.deep.equal(this.applicationData)
 
@@ -91,6 +92,7 @@ context('Apply', () => {
         'applicantUserDetails',
         'caseManagerIsNotApplicant',
         'caseManagerUserDetails',
+        'noticeType',
       )
     })
 
@@ -344,6 +346,7 @@ context('Apply', () => {
         'applicantUserDetails',
         'caseManagerIsNotApplicant',
         'caseManagerUserDetails',
+        'noticeType',
       )
 
       expect(body.data).to.deep.equal(this.applicationData)
@@ -375,6 +378,7 @@ context('Apply', () => {
         'applicantUserDetails',
         'caseManagerIsNotApplicant',
         'caseManagerUserDetails',
+        'noticeType',
       )
     })
   })

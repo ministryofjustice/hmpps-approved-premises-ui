@@ -61,6 +61,7 @@ describe('getApplicationData', () => {
         applicantUserDetails,
         caseManagerUserDetails: undefined,
         caseManagerIsNotApplicant: false,
+        noticeType: 'emergency',
       })
     })
 
@@ -90,6 +91,7 @@ describe('getApplicationData', () => {
         applicantUserDetails,
         caseManagerIsNotApplicant: false,
         caseManagerUserDetails: undefined,
+        noticeType: 'emergency',
       })
     })
 
@@ -119,6 +121,7 @@ describe('getApplicationData', () => {
         applicantUserDetails,
         caseManagerIsNotApplicant: false,
         caseManagerUserDetails: undefined,
+        noticeType: 'emergency',
       })
     })
 
@@ -149,6 +152,7 @@ describe('getApplicationData', () => {
         applicantUserDetails,
         caseManagerIsNotApplicant: false,
         caseManagerUserDetails: undefined,
+        noticeType: 'emergency',
       })
     })
 
@@ -179,6 +183,7 @@ describe('getApplicationData', () => {
         applicantUserDetails,
         caseManagerIsNotApplicant: false,
         caseManagerUserDetails: undefined,
+        noticeType: 'emergency',
       })
     })
 
@@ -208,6 +213,7 @@ describe('getApplicationData', () => {
         applicantUserDetails,
         caseManagerIsNotApplicant: false,
         caseManagerUserDetails: undefined,
+        noticeType: 'emergency',
       })
     })
   })
@@ -236,6 +242,7 @@ describe('getApplicationData', () => {
         caseManagerIsNotApplicant: undefined,
         applicantUserDetails: undefined,
         caseManagerUserDetails: undefined,
+        noticeType: 'standard',
       })
     })
 
@@ -271,6 +278,7 @@ describe('getApplicationData', () => {
         caseManagerIsNotApplicant: true,
         applicantUserDetails,
         caseManagerUserDetails,
+        noticeType: 'emergency',
       })
     })
 

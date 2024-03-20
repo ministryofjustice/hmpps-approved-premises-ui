@@ -50,6 +50,7 @@ const firstClassFields = <T>(
   application: Application,
   retrieveQuestionResponse: QuestionResponseFunction,
 ): FirstClassFields<T> => {
+  const noticeType = noticeTypeFromApplication(application)
   const apType = retrieveQuestionResponse(application, SelectApType, 'type') as ApType
   const targetLocation = retrieveQuestionResponse(application, DescribeLocationFactors, 'postcodeArea')
   const sentenceType = getSentenceType(application, retrieveQuestionResponse)
@@ -57,7 +58,7 @@ const firstClassFields = <T>(
   const situation =
     releaseType === 'in_community' ? retrieveQuestionResponse(application, Situation, 'situation') : null
   const arrivalDate = arrivalDateFromApplication(application)
-  const isEmergencyApplication = noticeTypeFromApplication(application) === 'emergency'
+  const isEmergencyApplication = noticeType === 'emergency'
   const apAreaId = retrieveQuestionResponse(application, ConfirmYourDetails, 'area')
   const { applicantUserDetails, caseManagerUserDetails, caseManagerIsNotApplicant } =
     applicantAndCaseManagerDetails(application)
@@ -76,6 +77,7 @@ const firstClassFields = <T>(
     applicantUserDetails,
     caseManagerUserDetails,
     caseManagerIsNotApplicant,
+    noticeType,
   } as FirstClassFields<T>
 }
 

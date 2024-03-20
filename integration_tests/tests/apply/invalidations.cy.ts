@@ -53,6 +53,7 @@ context('Apply', () => {
         'applicantUserDetails',
         'caseManagerIsNotApplicant',
         'caseManagerUserDetails',
+        'noticeType',
       )
       expect(body.data).not.to.have.keys(['check-your-answers'])
     })
@@ -95,6 +96,7 @@ context('Apply', () => {
         'applicantUserDetails',
         'caseManagerIsNotApplicant',
         'caseManagerUserDetails',
+        'noticeType',
       )
       expect(body.data).to.have.any.keys(['check-your-answers'])
     })
