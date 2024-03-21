@@ -15,9 +15,11 @@ describe('MakeADecision', () => {
     it('should set the body', () => {
       const page = new MakeADecision({
         decision: 'accommodationNeedOnly',
+        decisionRationale: 'decisionRationale',
       })
       expect(page.body).toEqual({
         decision: 'accommodationNeedOnly',
+        decisionRationale: 'decisionRationale',
       })
     })
   })
@@ -44,6 +46,28 @@ describe('MakeADecision', () => {
         decision: 'You must select one option',
       })
     })
+    it('should have an error if the decision is rejected and a reason has not been provided', () => {
+      const page = new MakeADecision({
+        decision: 'informationNotProvided',
+      })
+
+      expect(page.errors()).toEqual({
+        decisionRationale: 'You must provide the rationale for your decision',
+      })
+    })
+  })
+
+  describe('no errors', () => {
+    it.each(['accept', 'withdrawnByPp'])(
+      'should not raise error if the decision is %s and a reason has not been provided',
+      async decision => {
+        const page = new MakeADecision({
+          decision,
+        })
+
+        expect(page.errors()).toEqual({})
+      },
+    )
   })
 
   describe('response', () => {

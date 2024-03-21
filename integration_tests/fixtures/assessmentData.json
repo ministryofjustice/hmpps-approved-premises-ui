@@ -39,7 +39,7 @@
       "outlineOfDiscussion": "Some discussion"
     }
   },
-  "make-a-decision": { "make-a-decision": { "decision": "accept" } },
+  "make-a-decision": { "make-a-decision": { "decision": "accept", "decisionRationale": "some rejected comment" } },
   "matching-information": {
     "matching-information": {
       "apType": "normal",
