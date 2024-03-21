@@ -35,40 +35,6 @@
 
   {{ placementRequirementsTable(page.placementRequirementTableHeadings, page.nonPrepopulatablePlacementRequirementCriteria, page.placementRequirementPreferences, page.body) | safe }}
 
-  {% set lengthOfStayAgreedHint %}
-  {{ govukSummaryList(page.suggestedStaySummaryListOptions) }}
-  {% endset %}
-
-  {{
-    formPageRadios({
-      fieldName: "lengthOfStayAgreed",
-      fieldset: {
-        legend: {
-          text: page.questions.lengthOfStayAgreed,
-          classes: "govuk-fieldset__legend--m"
-        }
-      },
-      hint: {
-        html: lengthOfStayAgreedHint
-      },
-      items: [
-        {
-          value: "yes",
-          text: "Yes"
-        },
-        {
-          value: "no",
-          text: "No",
-          conditional: {
-            html: formPageDaysAndWeeksInput("lengthOfStay", "govuk-label--s", fetchContext())
-          }
-        }
-      ]
-    },
-    fetchContext()
-    )
-  }}
-
   {{
     formPageTextarea(
       {

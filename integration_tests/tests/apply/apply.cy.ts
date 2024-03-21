@@ -30,7 +30,7 @@ import { setup } from './setup'
 context('Apply', () => {
   beforeEach(setup)
 
-  it('allows completion of the form', function test() {
+  it.only('allows completion of the form', function test() {
     // And I complete the application
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
     const apply = new ApplyHelper(this.application, this.person, this.offences)

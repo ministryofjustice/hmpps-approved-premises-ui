@@ -14,6 +14,7 @@ export default class TypeOfApPage extends ApplyPage {
   }
 
   completeForm() {
+    cy.pause()
     this.checkRadioButtonFromPageBody('type')
   }
 }

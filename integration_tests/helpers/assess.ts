@@ -15,6 +15,7 @@ import {
   ListPage,
   MakeADecisionPage,
   MatchingInformationPage,
+  MhapSuitabilityPage,
   RequiredActionsPage,
   ReviewPage,
   SubmissionConfirmation,
@@ -210,7 +211,13 @@ export default class AseessHelper {
     rfapSuitabilityPage.completeForm()
     rfapSuitabilityPage.clickSubmit()
 
-    this.pages.assessSuitability = [suitabilityAssessmentPage, rfapSuitabilityPage]
+    cy.pause()
+
+    const mhapSuitabilityPage = new MhapSuitabilityPage(this.assessment)
+    mhapSuitabilityPage.completeForm()
+    mhapSuitabilityPage.clickSubmit()
+
+    this.pages.assessSuitability = [suitabilityAssessmentPage, rfapSuitabilityPage, mhapSuitabilityPage]
 
     if (!options.isShortNoticeApplication) {
       const contingencyPlanSuitabilityPage = new ContingencyPlanSuitabilityPage(this.assessment)
@@ -284,6 +291,7 @@ export default class AseessHelper {
 
     // Then I should be taken to the matching information page
     const page = new MatchingInformationPage(this.assessment)
+    cy.pause()
     page.completeForm()
     page.clickSubmit()
 

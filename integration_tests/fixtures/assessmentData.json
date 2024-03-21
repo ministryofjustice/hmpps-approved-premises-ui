@@ -17,6 +17,11 @@
       "unsuitabilityForRfapRationale": "Some RFAP comments",
       "noDetail": "some detail"
     },
+    "mhap-suitability": {
+      "mhapIdentifiedAsSuitable": "no",
+      "unsuitabilityForMhapRationale": "Some RFAP comments",
+      "noDetail": "some detail"
+    },
     "contingency-plan-suitability": {
       "contingencyPlanSufficient": "yes",
       "additionalComments": "Some contingency plan comments"

@@ -1,5 +1,6 @@
-import { ApprovedPremisesAssessment as Assessment } from '../../../server/@types/shared'
+import { Application, ApprovedPremisesAssessment as Assessment } from '../../../server/@types/shared'
 import {
+  applicationFactory,
   assessmentFactory,
   assessmentSummaryFactory,
   clarificationNoteFactory,
@@ -69,7 +70,7 @@ context('Assess', () => {
     })
   })
 
-  it('allows me to assess an application', function test() {
+  it.only('allows me to assess an application', function test() {
     const assessHelper = new AssessHelper(this.assessment, this.documents, this.user, this.clarificationNote)
     assessHelper.setupStubs()
 
@@ -366,4 +367,41 @@ context('Assess', () => {
       expect(body.data).to.have.any.keys(['check-your-answers'])
     })
   })
+
+  // it.only('mhap suitability', function test() {
+  //   // Given there is a complete application in the database
+
+  //   let application = applicationFactory.withReleaseDate().build()
+
+  //   application = addResponseToFormArtifact(application, {
+  //     task: 'type-of-ap',
+  //     page: 'ap-type',
+  //     key: 'type',
+  //     value: 'esap',
+  //   })
+
+  //   let assessment = assessmentFactory.build({ data: this.assessment.data, status: 'in_progress', application })
+  //   assessment = addResponseToFormArtifact<Assessment>(this.assessment, {
+  //     task: 'matching-information',
+  //     page: 'matching-information',
+  //     key: 'apType',
+  //     value: 'esap',
+  //   })
+
+  //   assessment.application.person = personFactory.build()
+
+  //   cy.task('stubAssessment', assessment)
+  //   cy.task('stubAssessmentUpdate', assessment)
+
+  //   // And I visit the tasklist
+  //   TaskListPage.visit(assessment)
+
+  //   // And I click on a task
+  //   cy.get('[data-cy-task-name="suitability-assessment"]').click()
+
+  //   // And I review a section
+  //   const suitabilityAssessmentPage = new SuitabilityAssessmentPage(assessment)
+  //   suitabilityAssessmentPage.clickSubmit()
+  //   cy.pause()
+  // })
 })

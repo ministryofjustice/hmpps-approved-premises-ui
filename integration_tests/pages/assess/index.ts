@@ -14,6 +14,7 @@ import ShowPage from './showPage'
 import ApplicationTimelinessPage from './applicationTimelinessPage'
 import RfapSuitabilityPage from './rfapSuitability'
 import ContingencyPlanSuitabilityPage from './contingencyPlanSuitability'
+import MhapSuitabilityPage from './mhapSuitability'
 
 export {
   ClarificationNoteConfirmPage,
@@ -31,5 +32,6 @@ export {
   ShowPage,
   ApplicationTimelinessPage,
   RfapSuitabilityPage,
+  MhapSuitabilityPage,
   ContingencyPlanSuitabilityPage,
 }

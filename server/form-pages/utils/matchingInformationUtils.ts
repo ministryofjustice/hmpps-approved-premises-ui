@@ -41,15 +41,12 @@ const apType = (
   }
 
   const applyValue = retrieveQuestionResponseFromFormArtifact(application, SelectApType, 'type')
-  const applyAssessMap: Record<
-    Exclude<TemporaryApplyApTypeAwaitingApiChange, 'mhapElliottHouse' | 'mhapStJosephs'>,
-    MatchingInformationBody['apType']
-  > = {
+  const applyAssessMap: Record<TemporaryApplyApTypeAwaitingApiChange, MatchingInformationBody['apType']> = {
     standard: 'normal',
     esap: 'isESAP',
     pipe: 'isPIPE',
-    // TODO: mhapElliottHouse
-    // TODO: mhapStJosephs
+    mhapElliottHouse: 'isMHAPElliottHouse',
+    mhapStJosephs: 'isMHAPStJosephs',
   }
 
   return applyAssessMap[applyValue]
