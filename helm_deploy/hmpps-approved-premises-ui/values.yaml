@@ -70,6 +70,7 @@ generic-service:
     ark-nps-hmcts-ttp5: 194.33.197.0/25
     groups:
       - internal
+      - probation
 
 generic-prometheus-alerts:
   targetApplication: hmpps-approved-premises-ui
