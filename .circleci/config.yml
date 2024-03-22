@@ -241,6 +241,8 @@ workflows:
           name: deploy_dev
           env: 'dev'
           jira_update: true
+          pipeline_id: <<pipeline.id>>
+          pipeline_number: <<pipeline.number>>
           context: hmpps-common-vars
           filters:
             branches:
@@ -278,6 +280,8 @@ workflows:
           name: deploy_test
           env: 'test'
           jira_update: true
+          pipeline_id: <<pipeline.id>>
+          pipeline_number: <<pipeline.number>>
           context:
             - hmpps-common-vars
             - hmpps-approved-premises-ui-stage
