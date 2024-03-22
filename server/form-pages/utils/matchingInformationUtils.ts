@@ -1,6 +1,6 @@
-import { ApprovedPremisesApplication, TemporaryApplyApTypeAwaitingApiChange } from '@approved-premises/api'
+import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { weeksToDays } from 'date-fns'
-import { SummaryList } from '@approved-premises/ui'
+import { BackwardsCompatibleApplyApType, SummaryList } from '@approved-premises/ui'
 import { placementDates } from '../../utils/matchUtils'
 import { DateFormats, daysToWeeksAndDays } from '../../utils/dateUtils'
 import { placementDurationFromApplication } from '../../utils/assessments/placementDurationFromApplication'
@@ -41,10 +41,15 @@ const apType = (
   }
 
   const applyValue = retrieveQuestionResponseFromFormArtifact(application, SelectApType, 'type')
-  const applyAssessMap: Record<TemporaryApplyApTypeAwaitingApiChange, MatchingInformationBody['apType']> = {
-    standard: 'normal',
+  const applyAssessMap: Record<
+    Exclude<BackwardsCompatibleApplyApType, 'mhapElliottHouse' | 'mhapStJosephs' | 'rfap'>,
+    MatchingInformationBody['apType']
+  > = {
+    normal: 'normal',
+    standard: 'normal', // included for backwards compatibility with old schema JSON blobs
     esap: 'isESAP',
     pipe: 'isPIPE',
+    // add missing types
   }
 
   return applyAssessMap[applyValue]

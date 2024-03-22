@@ -37,7 +37,7 @@ describe('getApplicationData', () => {
 
     it('returns the correct data', () => {
       mockQuestionResponse({
-        type: 'standard',
+        type: 'normal',
         postcodeArea: targetLocation,
         apAreaId,
         applicantUserDetails,
@@ -48,7 +48,7 @@ describe('getApplicationData', () => {
 
       expect(getApplicationSubmissionData(application)).toEqual({
         translatedDocument: application.document,
-        apType: 'standard',
+        apType: 'normal',
         isWomensApplication: false,
         releaseType,
         sentenceType,
@@ -77,7 +77,7 @@ describe('getApplicationData', () => {
 
       expect(getApplicationSubmissionData(application)).toEqual({
         translatedDocument: application.document,
-        apType: 'standard',
+        apType: 'normal',
         isWomensApplication: false,
         releaseType: undefined,
         sentenceType,
@@ -107,7 +107,7 @@ describe('getApplicationData', () => {
 
       expect(getApplicationSubmissionData(application)).toEqual({
         translatedDocument: application.document,
-        apType: 'standard',
+        apType: 'normal',
         isWomensApplication: false,
         releaseType: 'in_community',
         sentenceType: 'communityOrder',
@@ -137,7 +137,7 @@ describe('getApplicationData', () => {
 
       expect(getApplicationSubmissionData(application)).toEqual({
         translatedDocument: application.document,
-        apType: 'standard',
+        apType: 'normal',
         isWomensApplication: false,
         releaseType: 'in_community',
         sentenceType: 'bailPlacement',
@@ -166,7 +166,7 @@ describe('getApplicationData', () => {
 
       expect(getApplicationSubmissionData(application)).toEqual({
         translatedDocument: application.document,
-        apType: 'standard',
+        apType: 'normal',
         isWomensApplication: false,
         releaseType: 'not_applicable',
         sentenceType: 'nonStatutory',
@@ -206,7 +206,7 @@ describe('getApplicationData', () => {
         caseManagerIsNotApplicant: undefined,
         applicantUserDetails: undefined,
         caseManagerUserDetails: undefined,
-        noticeType: 'standard',
+        noticeType: 'normal',
       })
     })
 
@@ -214,7 +214,7 @@ describe('getApplicationData', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue('2023-01-01')
       ;(isInapplicable as jest.Mock).mockReturnValue(false)
       mockOptionalQuestionResponse({
-        type: 'standard',
+        type: 'normal',
         releaseType: 'license',
         postcodeArea: 'ABC',
         sentenceType: 'standardDeterminate',
@@ -229,7 +229,7 @@ describe('getApplicationData', () => {
       expect(getApplicationUpdateData(application)).toEqual({
         data: application.data,
         isInapplicable: false,
-        apType: 'standard',
+        apType: 'normal',
         isWomensApplication: false,
         releaseType: 'license',
         sentenceType: 'standardDeterminate',

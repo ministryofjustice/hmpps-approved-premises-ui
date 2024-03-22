@@ -1,7 +1,7 @@
 import {
+  ApType,
   ApplicationSortField,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
-  TemporaryApplyApTypeAwaitingApiChange,
   TimelineEventUrlType,
 } from '@approved-premises/api'
 import { isAfter } from 'date-fns'
@@ -689,20 +689,21 @@ describe('utils', () => {
   })
 
   describe('getApplicationType', () => {
-    it.each([
-      ['Standard', 'standard'],
+    it.each<[ApplicationType, ApType]>([
+      // check this is correct (showing Standard for everything except PIPE)
+      ['Standard', 'normal'],
+      ['Standard', 'mhapElliottHouse'],
+      ['Standard', 'mhapStJosephs'],
       ['Standard', 'esap'],
+      ['Standard', 'rfap'],
       ['PIPE', 'pipe'],
-    ])(
-      'returns %s when the application is %s',
-      (expectedOutput: ApplicationType, applicationApType: TemporaryApplyApTypeAwaitingApiChange) => {
-        const application = applicationFactory.build({
-          apType: applicationApType,
-        })
+    ])('returns %s when the application is %s', (expectedOutput, applicationApType) => {
+      const application = applicationFactory.build({
+        apType: applicationApType,
+      })
 
-        expect(getApplicationType(application)).toEqual(expectedOutput)
-      },
-    )
+      expect(getApplicationType(application)).toEqual(expectedOutput)
+    })
   })
 
   describe('actionsCell', () => {

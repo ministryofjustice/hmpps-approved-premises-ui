@@ -1,5 +1,5 @@
 import { when } from 'jest-when'
-import { TemporaryApplyApTypeAwaitingApiChange } from '@approved-premises/api'
+import { BackwardsCompatibleApplyApType } from '@approved-premises/ui'
 import { placementDurationFromApplication } from '../../utils/assessments/placementDurationFromApplication'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
@@ -261,12 +261,14 @@ describe('matchingInformationUtils', () => {
 
         describe('apType', () => {
           it.each([
-            ['normal', 'standard'],
+            ['normal', 'normal'],
+            ['normal', 'standard'], // for backwards compatibility with old JSON blobs
             ['isESAP', 'esap'],
             ['isPIPE', 'pipe'],
+            // add remaining types
           ])(
             "is set to '%s' when `type` === '%s'",
-            (assessValue: MatchingInformationBody['apType'], applyValue: TemporaryApplyApTypeAwaitingApiChange) => {
+            (assessValue: MatchingInformationBody['apType'], applyValue: BackwardsCompatibleApplyApType) => {
               when(retrieveQuestionResponseFromFormArtifact)
                 .calledWith(application, SelectApType, 'type')
                 .mockReturnValue(applyValue)

@@ -17,7 +17,7 @@ describe('PlacementDuration', () => {
   beforeEach(() => {
     application = applicationFactory
       .withReleaseDate()
-      .withPageResponse({ task: 'type-of-ap', page: 'ap-type', key: 'type', value: 'standard' })
+      .withPageResponse({ task: 'type-of-ap', page: 'ap-type', key: 'type', value: 'normal' })
       .build()
   })
 
