@@ -20,7 +20,7 @@ export default class RelocationRegion implements TasklistPage {
       postcodeArea?: string
     },
   ) {
-    this.body.postcodeArea = body?.postcodeArea?.toUpperCase()
+    this.body.postcodeArea = body?.postcodeArea?.toUpperCase().trim()
   }
 
   previous() {
