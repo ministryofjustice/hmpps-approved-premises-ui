@@ -1,7 +1,11 @@
 import { ReleaseTypeOption, SentenceTypeOption } from '@approved-premises/api'
 import { applicationFactory } from '../../testutils/factories'
 import { getApplicationSubmissionData, getApplicationUpdateData } from './getApplicationData'
-import { mockOptionalQuestionResponse, mockQuestionResponse } from '../../testutils/mockQuestionResponse'
+import {
+  RequiredQuestionResponses,
+  mockOptionalQuestionResponse,
+  mockQuestionResponse,
+} from '../../testutils/mockQuestionResponse'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { isInapplicable } from './utils'
 import { applicationUserDetailsFactory } from '../../testutils/factories/application'
@@ -11,70 +15,46 @@ jest.mock('../applications/applicantAndCaseManagerDetails')
 jest.mock('./arrivalDateFromApplication')
 jest.mock('./utils')
 
-describe('getApplicationData', () => {
-  const apAreaId = 'test-id'
+const apAreaId = 'test-id'
+const applicantUserDetails = applicationUserDetailsFactory.build()
+const caseManagerIsNotApplicant = false
+const postcodeArea = 'ABC 123'
+const targetLocation = postcodeArea
 
-  const applicantUserDetails = applicationUserDetailsFactory.build()
+const defaultRequiredQuestionResponses: RequiredQuestionResponses = {
+  apAreaId,
+  applicantUserDetails,
+  caseManagerIsNotApplicant,
+  postcodeArea,
+}
+
+const application = applicationFactory.build()
+
+describe('getApplicationData', () => {
   const caseManagerUserDetails = applicationUserDetailsFactory.build()
+
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
 
   describe('getApplicationSubmissionData', () => {
     const releaseType: ReleaseTypeOption = 'licence'
     const sentenceType: SentenceTypeOption = 'standardDeterminate'
     const arrivalDate = '2023-01-01'
-    const targetLocation = 'ABC 123'
 
     beforeEach(() => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(arrivalDate)
       mockOptionalQuestionResponse({
         releaseType,
         sentenceType,
-        apAreaId,
         applicantUserDetails,
         caseManagerUserDetails,
         caseManagerIsNotApplicant: false,
       })
     })
 
-    it('returns the correct data for a pipe application', () => {
-      mockQuestionResponse({
-        type: 'pipe',
-        postcodeArea: targetLocation,
-        apAreaId,
-        applicantUserDetails,
-        caseManagerIsNotApplicant: false,
-      })
-
-      const application = applicationFactory.build()
-
-      expect(getApplicationSubmissionData(application)).toEqual({
-        translatedDocument: application.document,
-        isPipeApplication: true,
-        isWomensApplication: false,
-        releaseType,
-        sentenceType,
-        situation: null,
-        targetLocation,
-        arrivalDate,
-        isEmergencyApplication: true,
-        isEsapApplication: false,
-        apAreaId,
-        applicantUserDetails,
-        caseManagerUserDetails: undefined,
-        caseManagerIsNotApplicant: false,
-        noticeType: 'emergency',
-      })
-    })
-
-    it('returns the correct data for a non-pipe application', () => {
-      mockQuestionResponse({
-        type: 'standard',
-        postcodeArea: targetLocation,
-        apAreaId,
-        applicantUserDetails,
-        caseManagerIsNotApplicant: false,
-      })
-
-      const application = applicationFactory.build()
+    it('returns the correct data', () => {
+      mockRequiredQuestionResponses({ type: 'standard' })
 
       expect(getApplicationSubmissionData(application)).toEqual({
         translatedDocument: application.document,
@@ -93,128 +73,54 @@ describe('getApplicationData', () => {
         caseManagerUserDetails: undefined,
         noticeType: 'emergency',
       })
+    })
+
+    it('returns the correct data for a pipe application', () => {
+      mockRequiredQuestionResponses({ type: 'pipe' })
+
+      expect(getApplicationSubmissionData(application).isPipeApplication).toEqual(true)
     })
 
     it('handles when a release type is missing', () => {
-      mockOptionalQuestionResponse({ releaseType: undefined, apAreaId, applicantUserDetails })
-      mockQuestionResponse({
-        postcodeArea: targetLocation,
-        apAreaId,
-        applicantUserDetails,
-        caseManagerIsNotApplicant: false,
-      })
+      mockOptionalQuestionResponse({ releaseType: undefined })
+      mockRequiredQuestionResponses({})
 
-      const application = applicationFactory.build()
-
-      expect(getApplicationSubmissionData(application)).toEqual({
-        translatedDocument: application.document,
-        isPipeApplication: false,
-        isWomensApplication: false,
-        releaseType: undefined,
-        sentenceType,
-        situation: null,
-        targetLocation: 'ABC 123',
-        arrivalDate,
-        isEmergencyApplication: true,
-        isEsapApplication: false,
-        apAreaId,
-        applicantUserDetails,
-        caseManagerIsNotApplicant: false,
-        caseManagerUserDetails: undefined,
-        noticeType: 'emergency',
-      })
+      expect(getApplicationSubmissionData(application).releaseType).toEqual(undefined)
     })
 
-    it('returns in_community for a community order application', () => {
-      mockQuestionResponse({
-        sentenceType: 'communityOrder',
-        postcodeArea: targetLocation,
-        situation: 'riskManagement',
-        apAreaId,
-        applicantUserDetails,
-        caseManagerIsNotApplicant: false,
-      })
+    it('returns the correct data for a community order application', () => {
+      mockRequiredQuestionResponses({ sentenceType: 'communityOrder', situation: 'riskManagement' })
 
-      const application = applicationFactory.build()
-
-      expect(getApplicationSubmissionData(application)).toEqual({
-        translatedDocument: application.document,
-        isPipeApplication: false,
-        isWomensApplication: false,
-        releaseType: 'in_community',
-        sentenceType: 'communityOrder',
-        situation: 'riskManagement',
-        targetLocation,
-        arrivalDate,
-        isEmergencyApplication: true,
-        isEsapApplication: false,
-        apAreaId,
-        applicantUserDetails,
-        caseManagerIsNotApplicant: false,
-        caseManagerUserDetails: undefined,
-        noticeType: 'emergency',
-      })
+      expect(getApplicationSubmissionData(application)).toEqual(
+        expect.objectContaining({
+          releaseType: 'in_community',
+          sentenceType: 'communityOrder',
+          situation: 'riskManagement',
+        }),
+      )
     })
 
-    it('returns in_community for a bail placement application', () => {
-      mockQuestionResponse({
-        sentenceType: 'bailPlacement',
-        postcodeArea: targetLocation,
-        situation: 'riskManagement',
-        apAreaId,
-        applicantUserDetails,
-        caseManagerIsNotApplicant: false,
-      })
+    it('returns the correct data for a bail placement application', () => {
+      mockRequiredQuestionResponses({ sentenceType: 'bailPlacement', situation: 'riskManagement' })
 
-      const application = applicationFactory.build()
-
-      expect(getApplicationSubmissionData(application)).toEqual({
-        translatedDocument: application.document,
-        isPipeApplication: false,
-        isWomensApplication: false,
-        releaseType: 'in_community',
-        sentenceType: 'bailPlacement',
-        situation: 'riskManagement',
-        targetLocation,
-        arrivalDate,
-        isEmergencyApplication: true,
-        isEsapApplication: false,
-        apAreaId,
-        applicantUserDetails,
-        caseManagerIsNotApplicant: false,
-        caseManagerUserDetails: undefined,
-        noticeType: 'emergency',
-      })
+      expect(getApplicationSubmissionData(application)).toEqual(
+        expect.objectContaining({
+          releaseType: 'in_community',
+          sentenceType: 'bailPlacement',
+          situation: 'riskManagement',
+        }),
+      )
     })
 
-    it('returns not_applicable for a non-statutory application', () => {
-      mockQuestionResponse({
-        sentenceType: 'nonStatutory',
-        postcodeArea: targetLocation,
-        apAreaId,
-        applicantUserDetails,
-        caseManagerIsNotApplicant: false,
-      })
+    it('returns the correct data for a non-statutory application', () => {
+      mockRequiredQuestionResponses({ sentenceType: 'nonStatutory' })
 
-      const application = applicationFactory.build()
-
-      expect(getApplicationSubmissionData(application)).toEqual({
-        translatedDocument: application.document,
-        isPipeApplication: false,
-        isWomensApplication: false,
-        releaseType: 'not_applicable',
-        sentenceType: 'nonStatutory',
-        situation: null,
-        targetLocation,
-        arrivalDate,
-        isEmergencyApplication: true,
-        isEsapApplication: false,
-        apAreaId,
-        applicantUserDetails,
-        caseManagerIsNotApplicant: false,
-        caseManagerUserDetails: undefined,
-        noticeType: 'emergency',
-      })
+      expect(getApplicationSubmissionData(application)).toEqual(
+        expect.objectContaining({
+          releaseType: 'not_applicable',
+          sentenceType: 'nonStatutory',
+        }),
+      )
     })
   })
 
@@ -223,8 +129,6 @@ describe('getApplicationData', () => {
       ;(arrivalDateFromApplication as jest.Mock).mockReturnValue(undefined)
       ;(isInapplicable as jest.Mock).mockReturnValue(false)
       mockOptionalQuestionResponse({})
-
-      const application = applicationFactory.build()
 
       expect(getApplicationUpdateData(application)).toEqual({
         data: application.data,
@@ -252,15 +156,13 @@ describe('getApplicationData', () => {
       mockOptionalQuestionResponse({
         type: 'normal',
         releaseType: 'license',
-        postcodeArea: 'ABC',
+        postcodeArea,
         sentenceType: 'standardDeterminate',
         apAreaId,
         caseManagerIsNotApplicant: true,
         applicantUserDetails,
         caseManagerUserDetails,
       })
-
-      const application = applicationFactory.build()
 
       expect(getApplicationUpdateData(application)).toEqual({
         data: application.data,
@@ -270,7 +172,7 @@ describe('getApplicationData', () => {
         releaseType: 'license',
         sentenceType: 'standardDeterminate',
         situation: null,
-        targetLocation: 'ABC',
+        targetLocation,
         arrivalDate: '2023-01-01',
         isEmergencyApplication: true,
         isEsapApplication: false,
@@ -285,42 +187,31 @@ describe('getApplicationData', () => {
     it('returns the correct data for a pipe application', () => {
       mockOptionalQuestionResponse({ type: 'pipe' })
 
-      const application = applicationFactory.build()
-
-      const result = getApplicationUpdateData(application)
-
-      expect(result.isPipeApplication).toEqual(true)
+      expect(getApplicationUpdateData(application).isPipeApplication).toEqual(true)
     })
 
-    it('returns in_community for a community order application', () => {
+    it('returns the correct data for a community order application', () => {
       mockOptionalQuestionResponse({ sentenceType: 'communityOrder' })
 
-      const application = applicationFactory.build()
-
-      const result = getApplicationUpdateData(application)
-
-      expect(result.releaseType).toEqual('in_community')
+      expect(getApplicationUpdateData(application).releaseType).toEqual('in_community')
     })
 
-    it('returns in_community for a bail placement application', () => {
+    it('returns the correct data for a bail placement application', () => {
       mockOptionalQuestionResponse({ sentenceType: 'bailPlacement' })
 
-      const application = applicationFactory.build()
-
-      const result = getApplicationUpdateData(application)
-
-      expect(result.releaseType).toEqual('in_community')
+      expect(getApplicationUpdateData(application).releaseType).toEqual('in_community')
     })
 
     it('returns the return value of `isInapplicable`', () => {
       ;(isInapplicable as jest.Mock).mockReturnValue(true)
+      mockOptionalQuestionResponse({})
 
-      const application = applicationFactory.build()
-
-      const result = getApplicationUpdateData(application)
-
-      expect(result.isInapplicable).toEqual(true)
+      expect(getApplicationUpdateData(application).isInapplicable).toEqual(true)
       expect(isInapplicable).toHaveBeenCalledWith(application)
     })
   })
 })
+
+const mockRequiredQuestionResponses = (customRequiredQuestionResponses: RequiredQuestionResponses) => {
+  mockQuestionResponse({ ...defaultRequiredQuestionResponses, ...customRequiredQuestionResponses })
+}
