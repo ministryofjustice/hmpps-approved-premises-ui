@@ -63,13 +63,9 @@ generic-service:
       REDIS_AUTH_TOKEN: 'auth_token'
 
   allowlist:
-    ark-nps-hmcts-ttp1: 195.59.75.0/24
-    ark-nps-hmcts-ttp2: 194.33.192.0/25
-    ark-nps-hmcts-ttp3: 194.33.193.0/25
-    ark-nps-hmcts-ttp4: 194.33.196.0/25
-    ark-nps-hmcts-ttp5: 194.33.197.0/25
     groups:
       - internal
+      - probation
 
 generic-prometheus-alerts:
   targetApplication: hmpps-approved-premises-ui
