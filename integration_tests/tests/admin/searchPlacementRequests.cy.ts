@@ -37,13 +37,13 @@ context('Search placement Requests', () => {
     const searchPage = SearchPage.visit()
 
     // Then I should see a list of placement requests
-    searchPage.shouldShowPlacementRequests(placementRequests, undefined)
+    searchPage.shouldShowPlacementRequests(placementRequests)
 
     // When I search for a CRN
     searchPage.enterSearchQuery(searchQuery)
 
     // Then I should see the search results
-    searchPage.shouldShowPlacementRequests(searchResults, undefined)
+    searchPage.shouldShowPlacementRequests(searchResults)
 
     // And the API should have received a request for the CRN
     cy.task('verifyPlacementRequestsSearch', searchQuery).then(requests => {
@@ -67,7 +67,7 @@ context('Search placement Requests', () => {
     const searchPage = SearchPage.visit()
 
     // Then I should see a list of placement requests
-    searchPage.shouldShowPlacementRequests(placementRequests, undefined)
+    searchPage.shouldShowPlacementRequests(placementRequests)
 
     // And I search for a CRN
     searchPage.enterSearchQuery(searchQuery)
@@ -107,7 +107,7 @@ context('Search placement Requests', () => {
     const searchPage = SearchPage.visit()
 
     // Then I should see a list of placement requests
-    searchPage.shouldShowPlacementRequests(placementRequests, undefined)
+    searchPage.shouldShowPlacementRequests(placementRequests)
 
     // And I search for a CRN
     searchPage.enterSearchQuery(searchQuery)

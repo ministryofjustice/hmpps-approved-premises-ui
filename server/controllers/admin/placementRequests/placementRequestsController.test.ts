@@ -3,7 +3,7 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import PlacementRequestsController from './placementRequestsController'
 
-import { ApAreaService, PlacementRequestService } from '../../../services'
+import { ApAreaService, FeatureFlagService, PlacementRequestService } from '../../../services'
 import {
   apAreaFactory,
   paginatedResponseFactory,
@@ -30,12 +30,17 @@ describe('PlacementRequestsController', () => {
 
   const placementRequestService = createMock<PlacementRequestService>({})
   const apAreaService = createMock<ApAreaService>({})
+  const featureFlagService = createMock<FeatureFlagService>({})
 
   let placementRequestsController: PlacementRequestsController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    placementRequestsController = new PlacementRequestsController(placementRequestService, apAreaService)
+    placementRequestsController = new PlacementRequestsController(
+      placementRequestService,
+      apAreaService,
+      featureFlagService,
+    )
   })
 
   describe('index', () => {
@@ -56,6 +61,7 @@ describe('PlacementRequestsController', () => {
       placementRequestService.getDashboard.mockResolvedValue(paginatedResponse)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
       apAreaService.getApAreas.mockResolvedValue(apAreas)
+      featureFlagService.getBooleanFlag.mockResolvedValue(true)
     })
 
     it('should render the placement requests template with the users AP area filtered by default', async () => {
@@ -75,6 +81,7 @@ describe('PlacementRequestsController', () => {
         apAreas,
         apArea: user.apArea.id,
         requestType: undefined,
+        showRequestedAndActualArrivalDates: true,
       })
 
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
@@ -117,6 +124,7 @@ describe('PlacementRequestsController', () => {
         apAreas,
         apArea,
         requestType,
+        showRequestedAndActualArrivalDates: true,
       })
 
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
@@ -162,6 +170,7 @@ describe('PlacementRequestsController', () => {
         status: 'notMatched',
         apAreas,
         apArea,
+        showRequestedAndActualArrivalDates: true,
       })
     })
   })

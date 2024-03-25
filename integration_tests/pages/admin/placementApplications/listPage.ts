@@ -22,7 +22,7 @@ export default class ListPage extends Page {
   }
 
   shouldShowPlacementRequests(placementRequests: Array<PlacementRequest>, status?: PlacementRequestStatus): void {
-    const tableRows = dashboardTableRows(placementRequests, status)
+    const tableRows = dashboardTableRows(placementRequests, status, { showRequestedAndActualArrivalDates: true })
     const rowItems = tableRowsToArrays(tableRows)
 
     rowItems.forEach(columns => {

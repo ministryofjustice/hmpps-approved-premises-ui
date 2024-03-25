@@ -73,8 +73,8 @@
       {{
         govukTable({
             firstCellIsHeader: true,
-            head: PlacementRequestUtils.tableUtils.dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix),
-            rows: PlacementRequestUtils.tableUtils.dashboardTableRows(placementRequests, status)
+            head: PlacementRequestUtils.tableUtils.dashboardTableHeader(status, sortBy, sortDirection, hrefPrefix, showRequestedAndActualArrivalDates),
+            rows: PlacementRequestUtils.tableUtils.dashboardTableRows(placementRequests, status, { showRequestedAndActualArrivalDates: showRequestedAndActualArrivalDates })
           })
       }}
 

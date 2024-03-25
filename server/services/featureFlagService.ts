@@ -2,6 +2,8 @@ import { ClientTokenAuthentication, FliptClient } from '@flipt-io/flipt'
 import config from '../config'
 import logger from '../../logger'
 
+type FeatureFlag = 'show-both-arrival-dates'
+
 export default class FeatureFlagService {
   fliptClient: FliptClient | null
 
@@ -17,7 +19,7 @@ export default class FeatureFlagService {
     }
   }
 
-  async getBooleanFlag(flag: string): Promise<boolean> {
+  async getBooleanFlag(flag: FeatureFlag): Promise<boolean> {
     if (!config.fliptEnabled) {
       return true
     }

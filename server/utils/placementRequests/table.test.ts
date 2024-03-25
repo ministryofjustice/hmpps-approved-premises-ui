@@ -1,5 +1,6 @@
 import { add } from 'date-fns'
 import {
+  bookingFactory,
   bookingSummaryFactory,
   personFactory,
   placementRequestFactory,
@@ -8,6 +9,7 @@ import {
   restrictedPersonFactory,
 } from '../../testutils/factories'
 import {
+  actualArrivalDateCell,
   applicationDateCell,
   dashboardTableHeader,
   dashboardTableRows,
@@ -130,6 +132,24 @@ describe('tableUtils', () => {
 
       expect(expectedArrivalDateCell(task, 'short')).toEqual({
         text: DateFormats.isoDateToUIDate('2022-01-01', { format: 'short' }),
+      })
+    })
+  })
+
+  describe('actualArrivalDateCell', () => {
+    it('returns the arrival date from the booking if present', () => {
+      const booking = bookingFactory.build({ arrivalDate: '2022-01-01' })
+      const placementRequest = placementRequestFactory.build({ booking })
+
+      expect(actualArrivalDateCell(placementRequest)).toEqual({
+        text: DateFormats.isoDateToUIDate(booking.arrivalDate, { format: 'short' }),
+      })
+    })
+
+    it('returns N/A if there is no booking', () => {
+      const placementRequest = placementRequestFactory.build({ booking: null })
+      expect(actualArrivalDateCell(placementRequest)).toEqual({
+        text: 'N/A',
       })
     })
   })
@@ -275,6 +295,25 @@ describe('tableUtils', () => {
         ],
       ])
     })
+
+    it('returns both dates when showRequestedAndActualArrivalDates is true', () => {
+      const placementRequest = placementRequestFactory.build()
+
+      expect(
+        dashboardTableRows([placementRequest], 'notMatched', { showRequestedAndActualArrivalDates: true }),
+      ).toEqual([
+        [
+          nameCell(placementRequest),
+          tierCell(placementRequest.risks),
+          expectedArrivalDateCell(placementRequest, 'short'),
+          actualArrivalDateCell(placementRequest),
+          applicationDateCell(placementRequest),
+          durationCell(placementRequest),
+          requestTypeCell(placementRequest),
+          statusCell(placementRequest),
+        ],
+      ])
+    })
   })
 
   describe('dashboardTableHeader', () => {
@@ -335,6 +374,35 @@ describe('tableUtils', () => {
         {
           text: 'Approved Premises',
         },
+        sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
+        {
+          text: 'Status',
+        },
+      ])
+    })
+
+    it('returns the expected header when showRequestedAndActualArrivalDates is true', () => {
+      expect(dashboardTableHeader('notMatched', sortBy, sortDirection, hrefPrefix, true)).toEqual([
+        sortHeader<PlacementRequestSortField>('Name', 'person_name', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>(
+          'Requested arrival date',
+          'expected_arrival',
+          sortBy,
+          sortDirection,
+          hrefPrefix,
+        ),
+        {
+          text: 'Actual arrival date',
+        },
+        sortHeader<PlacementRequestSortField>(
+          'Application date',
+          'application_date',
+          sortBy,
+          sortDirection,
+          hrefPrefix,
+        ),
+        sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Status',

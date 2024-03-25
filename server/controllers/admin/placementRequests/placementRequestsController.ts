@@ -1,5 +1,5 @@
 import type { Request, Response, TypedRequestHandler } from 'express'
-import { ApAreaService, PlacementRequestService } from '../../../services'
+import { ApAreaService, FeatureFlagService, PlacementRequestService } from '../../../services'
 import { PlacementRequestRequestType, PlacementRequestSortField, PlacementRequestStatus } from '../../../@types/shared'
 import paths from '../../../paths/admin'
 import { PlacementRequestDashboardSearchOptions } from '../../../@types/ui'
@@ -10,6 +10,7 @@ export default class PlacementRequestsController {
   constructor(
     private readonly placementRequestService: PlacementRequestService,
     private readonly apAreaService: ApAreaService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   index(): TypedRequestHandler<Request, Response> {
@@ -38,6 +39,8 @@ export default class PlacementRequestsController {
         sortDirection,
       )
 
+      const showRequestedAndActualArrivalDates = await this.featureFlagService.getBooleanFlag('show-both-arrival-dates')
+
       res.render('admin/placementRequests/index', {
         pageHeading: 'CRU Dashboard',
         placementRequests: dashboard.data,
@@ -50,6 +53,7 @@ export default class PlacementRequestsController {
         hrefPrefix,
         sortBy,
         sortDirection,
+        showRequestedAndActualArrivalDates,
       })
     }
   }
