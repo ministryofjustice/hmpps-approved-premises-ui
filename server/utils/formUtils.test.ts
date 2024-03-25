@@ -289,6 +289,28 @@ describe('formUtils', () => {
         },
       ])
     })
+
+    it('should handle hints', () => {
+      const hints = {
+        foo: {
+          text: 'foo',
+        },
+        bar: {
+          html: '<p>bar</p>',
+        },
+      }
+
+      expect(convertKeyValuePairToRadioItems(obj, undefined, undefined, hints)).toEqual([
+        expect.objectContaining({
+          hint: {
+            text: 'foo',
+          },
+        }),
+        expect.objectContaining({
+          hint: { html: '<p>bar</p>' },
+        }),
+      ])
+    })
   })
 
   describe('convertObjectsToSelectOptions', () => {
