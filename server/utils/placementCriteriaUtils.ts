@@ -33,6 +33,8 @@ export const placementCriteriaLabels: Record<UiPlacementCriteria, string> = {
   isPIPE: 'Psychologically Informed Planned Environment (PIPE)',
   isESAP: 'Enhanced Security AP (ESAP)',
   isRecoveryFocussed: 'Recovery Focused Approved Premises (RFAP)',
+  isMHAPElliottHouse: 'Specialist Mental Health AP (Elliott House - Midlands)',
+  isMHAPStJosephs: 'Specialist Mental Health AP (St Josephs - Greater Manchester)',
   isSemiSpecialistMentalHealth: 'Semi-specialist mental health',
   isSuitableForVulnerable: 'Vulnerable to exploitation',
   acceptsSexOffenders: 'Sexual offences against an adult',
