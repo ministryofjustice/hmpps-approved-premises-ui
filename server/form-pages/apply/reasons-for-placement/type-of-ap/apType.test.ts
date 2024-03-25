@@ -1,7 +1,6 @@
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
 
-// eslint-disable-next-line import/no-named-as-default
 import SelectApType from './apType'
 
 jest.mock('../../../../utils/formUtils')
