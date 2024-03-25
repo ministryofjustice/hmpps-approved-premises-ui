@@ -698,9 +698,10 @@ describe('utils', () => {
       })
     })
 
-    describe('when `isPipeApplication` is `true`', () => {
+    describe('when `isEsapApplication` is undefined` and `isPipeApplication` is `true`', () => {
       it('returns "PIPE"', () => {
         const application = applicationFactory.build({
+          isEsapApplication: undefined,
           isPipeApplication: true,
         })
         expect(getApplicationType(application)).toEqual('PIPE')

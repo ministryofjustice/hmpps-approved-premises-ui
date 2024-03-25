@@ -1,3 +1,4 @@
+import { ApType } from '@approved-premises/api'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
 import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
 
@@ -8,21 +9,20 @@ jest.mock('../../../../utils/formUtils')
 describe('SelectApType', () => {
   itShouldHavePreviousValue(new SelectApType({}), 'dashboard')
 
-  describe('when type is set to pipe', () => {
-    itShouldHaveNextValue(new SelectApType({ type: 'pipe' }), 'pipe-referral')
-  })
-
-  describe('when type is set to esap', () => {
-    itShouldHaveNextValue(new SelectApType({ type: 'esap' }), 'managed-by-national-security-division')
-  })
-
-  describe('when type is set to standard', () => {
-    itShouldHaveNextValue(new SelectApType({ type: 'standard' }), '')
+  describe.each<[ApType, string]>([
+    ['normal', ''],
+    ['esap', 'managed-by-national-security-division'],
+    ['mhapElliottHouse', ''],
+    ['mhapStJosephs', ''],
+    ['pipe', 'pipe-referral'],
+    ['rfap', ''],
+  ])('when the type is set to %s', (type, nextPage) => {
+    itShouldHaveNextValue(new SelectApType({ type }), nextPage)
   })
 
   describe('errors', () => {
     it('should return an empty object if the type is populated', () => {
-      const page = new SelectApType({ type: 'standard' })
+      const page = new SelectApType({ type: 'normal' })
       expect(page.errors()).toEqual({})
     })
 

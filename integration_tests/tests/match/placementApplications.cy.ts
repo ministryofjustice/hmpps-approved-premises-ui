@@ -196,7 +196,7 @@ context('Placement Applications', () => {
         task: 'type-of-ap',
         page: 'ap-type',
         key: 'type',
-        value: 'standard',
+        value: 'normal',
       }) as Application
 
       cy.task('stubApplicationGet', { application: completedApplication })

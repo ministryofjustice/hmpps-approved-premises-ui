@@ -1,4 +1,5 @@
 import { createMock } from '@golevelup/ts-jest'
+import { ApType } from '@approved-premises/api'
 import { mockOptionalQuestionResponse, mockQuestionResponse } from '../../testutils/mockQuestionResponse'
 import { MatchingInformationBody } from '../../form-pages/assess/matchingInformation/matchingInformationTask/matchingInformation'
 import { acceptanceData, criteriaFromMatchingInformation, placementDates, placementRequestData } from './acceptanceData'
@@ -7,6 +8,7 @@ import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
 import { placementDurationFromApplication } from './placementDurationFromApplication'
 import { getResponses } from '../applications/getResponses'
+import { ApTypeCriteria } from '../placementCriteriaUtils'
 
 jest.mock('../../form-pages/utils')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -20,6 +22,9 @@ describe('acceptanceData', () => {
 
   describe('acceptanceData', () => {
     it('should return the acceptance data for the assessment', () => {
+      const matchingInformation = createMock<MatchingInformationBody>({ apType: 'normal' })
+      ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue(matchingInformation)
+
       mockOptionalQuestionResponse({ cruInformation: 'Some notes' })
       const responses = { some: 'responses' }
       ;(getResponses as jest.Mock).mockReturnValue(responses)
@@ -70,11 +75,10 @@ describe('acceptanceData', () => {
   })
 
   describe('placementRequestData', () => {
-    const matchingInformation = createMock<MatchingInformationBody>({ apType: 'isESAP' })
-
-    ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue(matchingInformation)
-
     it('converts matching data into a placement request', () => {
+      const matchingInformation = createMock<MatchingInformationBody>({ apType: 'normal' })
+      ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue(matchingInformation)
+
       mockQuestionResponse({ postcodeArea: 'ABC123', type: 'normal', duration: '12' })
       mockOptionalQuestionResponse({
         lengthOfStay: '12',
@@ -83,7 +87,7 @@ describe('acceptanceData', () => {
 
       expect(placementRequestData(assessment)).toEqual({
         gender: 'male',
-        type: 'esap',
+        type: 'normal',
         location: 'ABC123',
         radius: '100',
         essentialCriteria: criteriaFromMatchingInformation(matchingInformation).essentialCriteria,
@@ -91,12 +95,31 @@ describe('acceptanceData', () => {
       })
     })
 
-    it('returns a default radius if one is not present', () => {
-      mockOptionalQuestionResponse({ lengthOfStay: '12', alternativeRadius: undefined })
+    describe('type', () => {
+      it.each<[ApType, ApTypeCriteria]>([
+        ['pipe', 'isPIPE'],
+        ['esap', 'isESAP'],
+        ['rfap', 'isRecoveryFocussed'],
+        ['mhapElliottHouse', 'isMHAPElliottHouse'],
+        ['mhapStJosephs', 'isMHAPStJosephs'],
+        ['normal', 'normal'],
+      ])('is set to "%s" when `apType` is "%s" on the Matching Information page', (apType, apTypeCriteria) => {
+        const matchingInformation = createMock<MatchingInformationBody>({ apType: apTypeCriteria })
+        ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue(matchingInformation)
 
-      const result = placementRequestData(assessment)
+        expect(placementRequestData(assessment).type).toEqual(apType)
+      })
+    })
 
-      expect(result.radius).toEqual(50)
+    describe('radius', () => {
+      it('returns a default if `alternativeRadius` is undefined', () => {
+        const matchingInformation = createMock<MatchingInformationBody>({ apType: 'normal' })
+        ;(pageDataFromApplicationOrAssessment as jest.Mock).mockReturnValue(matchingInformation)
+
+        mockOptionalQuestionResponse({ alternativeRadius: undefined })
+
+        expect(placementRequestData(assessment).radius).toEqual(50)
+      })
     })
   })
 

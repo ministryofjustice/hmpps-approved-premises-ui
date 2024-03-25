@@ -2,7 +2,13 @@ import { PlacementCriteria } from '@approved-premises/api'
 import { filterByType } from './utils'
 
 type UiPlacementCriteria = Exclude<PlacementCriteria, 'isGroundFloor'>
-export const specialistApTypeCriteria = ['isPIPE', 'isESAP'] as const
+export const specialistApTypeCriteria = [
+  'isPIPE',
+  'isESAP',
+  'isMHAPElliottHouse',
+  'isMHAPStJosephs',
+  'isRecoveryFocussed',
+] as const
 export const offenceAndRiskCriteria = [
   'isSuitableForVulnerable',
   'acceptsSexOffenders',

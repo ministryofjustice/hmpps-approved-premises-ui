@@ -79,7 +79,7 @@ export const placementRequestData = (assessment: Assessment): PlacementRequireme
   }
 }
 
-export const apType = (type: ApTypeCriteria | 'isRecoveryFocussed'): ApType => {
+const apType = (type: ApTypeCriteria): ApType => {
   switch (type) {
     case 'isPIPE':
       return 'pipe'
@@ -87,6 +87,10 @@ export const apType = (type: ApTypeCriteria | 'isRecoveryFocussed'): ApType => {
       return 'esap'
     case 'isRecoveryFocussed':
       return 'rfap'
+    case 'isMHAPElliottHouse':
+      return 'mhapElliottHouse'
+    case 'isMHAPStJosephs':
+      return 'mhapStJosephs'
     default:
       return 'normal'
   }

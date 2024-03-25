@@ -54,11 +54,11 @@ describe('getApplicationData', () => {
     })
 
     it('returns the correct data', () => {
-      mockRequiredQuestionResponses({ type: 'standard' })
+      mockRequiredQuestionResponses({ type: 'normal' })
 
       expect(getApplicationSubmissionData(application)).toEqual({
         translatedDocument: application.document,
-        isPipeApplication: false,
+        apType: 'normal',
         isWomensApplication: false,
         releaseType,
         sentenceType,
@@ -66,19 +66,12 @@ describe('getApplicationData', () => {
         targetLocation,
         arrivalDate,
         isEmergencyApplication: true,
-        isEsapApplication: false,
         apAreaId,
         applicantUserDetails,
         caseManagerIsNotApplicant: false,
         caseManagerUserDetails: undefined,
         noticeType: 'emergency',
       })
-    })
-
-    it('returns the correct data for a pipe application', () => {
-      mockRequiredQuestionResponses({ type: 'pipe' })
-
-      expect(getApplicationSubmissionData(application).isPipeApplication).toEqual(true)
     })
 
     it('handles when a release type is missing', () => {
@@ -133,7 +126,7 @@ describe('getApplicationData', () => {
       expect(getApplicationUpdateData(application)).toEqual({
         data: application.data,
         isInapplicable: false,
-        isPipeApplication: undefined,
+        apType: undefined,
         isWomensApplication: false,
         releaseType: undefined,
         situation: null,
@@ -141,7 +134,6 @@ describe('getApplicationData', () => {
         targetLocation: undefined,
         arrivalDate: undefined,
         isEmergencyApplication: false,
-        isEsapApplication: undefined,
         apAreaId: undefined,
         caseManagerIsNotApplicant: undefined,
         applicantUserDetails: undefined,
@@ -166,8 +158,8 @@ describe('getApplicationData', () => {
 
       expect(getApplicationUpdateData(application)).toEqual({
         data: application.data,
+        apType: 'normal',
         isInapplicable: false,
-        isPipeApplication: false,
         isWomensApplication: false,
         releaseType: 'license',
         sentenceType: 'standardDeterminate',
@@ -175,19 +167,12 @@ describe('getApplicationData', () => {
         targetLocation,
         arrivalDate: '2023-01-01',
         isEmergencyApplication: true,
-        isEsapApplication: false,
         apAreaId,
         caseManagerIsNotApplicant: true,
         applicantUserDetails,
         caseManagerUserDetails,
         noticeType: 'emergency',
       })
-    })
-
-    it('returns the correct data for a pipe application', () => {
-      mockOptionalQuestionResponse({ type: 'pipe' })
-
-      expect(getApplicationUpdateData(application).isPipeApplication).toEqual(true)
     })
 
     it('returns the correct data for a community order application', () => {

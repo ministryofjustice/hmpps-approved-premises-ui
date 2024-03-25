@@ -1,6 +1,6 @@
+import { apTypeLabels } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import { ApType, ReleaseTypeOption } from '../../@types/shared'
 import { placementRequestDetailFactory } from '../../testutils/factories'
-import { allApTypes } from '../allAPTypes'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { withdrawnStatusTag } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
@@ -114,7 +114,7 @@ describe('adminSummary', () => {
   })
 
   describe('apTypeCell', () => {
-    it.each(Object.keys(allApTypes) as Array<ApType>)(
+    it.each(Object.keys(apTypeLabels) as Array<ApType>)(
       'should return the correct type for AP Type %s',
       (apType: ApType) => {
         const placementRequestWithApType = placementRequestDetailFactory.build({
@@ -126,7 +126,7 @@ describe('adminSummary', () => {
             text: 'Type of AP',
           },
           value: {
-            text: allApTypes[apType],
+            text: apTypeLabels[apType],
           },
         })
       },

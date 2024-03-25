@@ -47,7 +47,7 @@ context('Apply', () => {
       expect(body).to.have.keys(
         'data',
         'arrivalDate',
-        'isPipeApplication',
+        'apType',
         'isWomensApplication',
         'targetLocation',
         'releaseType',
@@ -55,7 +55,6 @@ context('Apply', () => {
         'situation',
         'type',
         'isInapplicable',
-        'isEsapApplication',
         'isEmergencyApplication',
         'apAreaId',
         'applicantUserDetails',
@@ -79,8 +78,7 @@ context('Apply', () => {
       expect(body).to.have.keys(
         'arrivalDate',
         'translatedDocument',
-        'isPipeApplication',
-        'isEsapApplication',
+        'apType',
         'isEmergencyApplication',
         'isWomensApplication',
         'targetLocation',
@@ -332,7 +330,7 @@ context('Apply', () => {
       expect(body).to.have.keys(
         'arrivalDate',
         'data',
-        'isPipeApplication',
+        'apType',
         'isWomensApplication',
         'targetLocation',
         'releaseType',
@@ -340,7 +338,6 @@ context('Apply', () => {
         'situation',
         'type',
         'isInapplicable',
-        'isEsapApplication',
         'isEmergencyApplication',
         'apAreaId',
         'applicantUserDetails',
@@ -365,8 +362,7 @@ context('Apply', () => {
       expect(body).to.have.keys(
         'arrivalDate',
         'translatedDocument',
-        'isPipeApplication',
-        'isEsapApplication',
+        'apType',
         'isEmergencyApplication',
         'isWomensApplication',
         'targetLocation',
