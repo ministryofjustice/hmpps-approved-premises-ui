@@ -1,6 +1,7 @@
 /* eslint-disable consistent-return */
 
 import { when } from 'jest-when'
+import { ApType, ApprovedPremisesAssessment } from '@approved-premises/api'
 import { assessmentFactory } from '../../testutils/factories'
 import {
   shouldShowContingencyPlanPartnersPages,
@@ -9,44 +10,29 @@ import {
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import { SuitabilityAssessmentPageName, suitabilityAssessmentAdjacentPage } from './suitabilityAssessmentAdjacentPage'
 import { startDateOutsideOfNationalStandardsTimescales } from '../applications/startDateOutsideOfNationalStandardsTimescales'
-import Rfap from '../../form-pages/apply/risk-and-need-factors/further-considerations/rfap'
 import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
-import { ApprovedPremisesAssessment } from '../../@types/shared'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/shouldShowContingencyPlanPages')
 jest.mock('../applications/startDateOutsideOfNationalStandardsTimescales')
 
-const apTypes = ['rfap', 'esap', 'pipe', 'mhapStJosephs', 'mhapElliottHouse'] as const
+const specialistApTypes: Array<Exclude<ApType, 'normal'>> = [
+  'rfap',
+  'esap',
+  'pipe',
+  'mhapStJosephs',
+  'mhapElliottHouse',
+]
 
-type ApType = (typeof apTypes)[number]
+type SpecialistApType = (typeof specialistApTypes)[number]
 
 const mockApplicationOfType = (apType: ApType, assessment: ApprovedPremisesAssessment) => {
-  switch (apType) {
-    case 'rfap': {
-      when(retrieveOptionalQuestionResponseFromFormArtifact)
-        .calledWith(assessment.application, SelectApType, 'type')
-        .mockReturnValue('')
-
-      when(retrieveOptionalQuestionResponseFromFormArtifact)
-        .calledWith(assessment.application, Rfap, 'needARfap')
-        .mockReturnValue('yes')
-
-      break
-    }
-    default: {
-      when(retrieveOptionalQuestionResponseFromFormArtifact)
-        .calledWith(assessment.application, Rfap, 'needARfap')
-        .mockReturnValue('')
-
-      when(retrieveOptionalQuestionResponseFromFormArtifact)
-        .calledWith(assessment.application, SelectApType, 'type')
-        .mockReturnValue(apType)
-    }
-  }
+  when(retrieveOptionalQuestionResponseFromFormArtifact)
+    .calledWith(assessment.application, SelectApType, 'type')
+    .mockReturnValue(apType)
 }
 
-const apTypeToPageName = (apType: ApType): SuitabilityAssessmentPageName => {
+const apTypeToPageName = (apType: SpecialistApType): SuitabilityAssessmentPageName => {
   switch (apType) {
     case 'mhapElliottHouse':
       return 'mhap-suitability'
@@ -65,7 +51,7 @@ describe('suitabilityAssessmentAdjacentPage', () => {
   })
 
   describe('With the suitability-assessment page', () => {
-    describe.each(apTypes)('with an %s application', apType => {
+    describe.each(specialistApTypes)('with an %s application', apType => {
       beforeEach(() => {
         mockApplicationOfType(apType, assessment)
       })
@@ -78,7 +64,7 @@ describe('suitabilityAssessmentAdjacentPage', () => {
     })
   })
 
-  describe.each(apTypes)('with an %s application', apType => {
+  describe.each(specialistApTypes)('with an %s application', apType => {
     const pageName = apTypeToPageName(apType)
 
     describe('when the start date is outside of national timescales', () => {
@@ -156,7 +142,7 @@ describe('suitabilityAssessmentAdjacentPage', () => {
         )
       })
 
-      describe.each(apTypes)('should return the correct previous page for a %s application', apType => {
+      describe.each(specialistApTypes)('should return the correct previous page for a %s application', apType => {
         it('should return the correct previous page', () => {
           mockApplicationOfType(apType, assessment)
 
@@ -181,7 +167,7 @@ describe('suitabilityAssessmentAdjacentPage', () => {
         )
       })
 
-      describe.each(apTypes)('should return the correct previous page for a %s application', apType => {
+      describe.each(specialistApTypes)('should return the correct previous page for a %s application', apType => {
         it('should return the correct previous page', () => {
           mockApplicationOfType(apType, assessment)
 
@@ -221,7 +207,7 @@ describe('suitabilityAssessmentAdjacentPage', () => {
         when(startDateOutsideOfNationalStandardsTimescales).calledWith(assessment.application).mockReturnValue(false)
       })
 
-      describe.each(apTypes)('should return the correct previous page for a %s application', apType => {
+      describe.each(specialistApTypes)('should return the correct previous page for a %s application', apType => {
         it('should return the correct previous page', () => {
           mockApplicationOfType(apType, assessment)
 

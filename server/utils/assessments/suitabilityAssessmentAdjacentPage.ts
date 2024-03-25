@@ -1,6 +1,5 @@
 import { ApprovedPremisesAssessment as Assessment } from '../../@types/shared'
 import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
-import Rfap from '../../form-pages/apply/risk-and-need-factors/further-considerations/rfap'
 import {
   shouldShowContingencyPlanPartnersPages,
   shouldShowContingencyPlanQuestionsPage,
@@ -31,7 +30,7 @@ export const suitabilityAssessmentAdjacentPage = (
   }> = [
     {
       pageName: 'rfap-suitability',
-      needsAssessment: responseFromAssessment(assessment.application, Rfap, 'needARfap') === 'yes',
+      needsAssessment: responseFromAssessment(assessment.application, SelectApType, 'type') === 'rfap',
     },
     {
       pageName: 'esap-suitability',
