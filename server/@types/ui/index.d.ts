@@ -1,5 +1,6 @@
 import {
   ApArea,
+  ApType,
   Application,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplication,
@@ -493,3 +494,5 @@ export type KeyDetailsArgs = {
 }
 
 export type TaskSearchQualification = Exclude<UserQualification, 'lao'>
+
+export type BackwardsCompatibleApplyApType = ApType | 'standard'
