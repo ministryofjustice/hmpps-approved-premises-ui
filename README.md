@@ -65,3 +65,8 @@ head over to [our infrastructure documentation](/doc/how-to/manage-infrastructur
 ## E2E tests
 
 End to end tests for this project can be found [in a seperate repo](https://github.com/ministryofjustice/hmpps-approved-premises-e2e).
+
+## Feature flags
+
+We use [Flipt](http://flipt.io) for feature flags. See https://github.com/ministryofjustice/hmpps-approved-premises-ui/blob/main/doc/how-to/add-a-feature-flag.md
+for more details
