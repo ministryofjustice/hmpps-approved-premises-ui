@@ -266,6 +266,7 @@ export default class AseessHelper {
 
     // Then I should be taken to the make a decision page
     const page = new MakeADecisionPage(this.assessment)
+    page.enterDecisionRationale()
     page.completeForm()
     page.clickSubmit()
 

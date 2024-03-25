@@ -7,7 +7,7 @@ import TasklistPage from '../../../tasklistPage'
 
 @Page({
   name: 'make-a-decision',
-  bodyProperties: ['decision'],
+  bodyProperties: ['decision', 'decisionRationale'],
 })
 export default class MakeADecision implements TasklistPage {
   name = 'make-a-decision'
@@ -43,6 +43,7 @@ export default class MakeADecision implements TasklistPage {
   constructor(
     public body: {
       decision: string
+      decisionRationale?: string
     },
   ) {}
 
@@ -65,6 +66,8 @@ export default class MakeADecision implements TasklistPage {
     const errors: TaskListErrors<this> = {}
 
     if (!this.body.decision) errors.decision = 'You must select one option'
+    if (this.body.decision && !['accept', 'withdrawnByPp'].includes(this.body.decision) && !this.body.decisionRationale)
+      errors.decisionRationale = 'You must provide the rationale for your decision'
 
     return errors
   }

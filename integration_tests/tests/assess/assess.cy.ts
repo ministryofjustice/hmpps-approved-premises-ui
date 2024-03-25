@@ -205,11 +205,13 @@ context('Assess', () => {
       key: 'informationReceived',
       value: 'no',
     })
-    assessment = addResponseToFormArtifact<Assessment>(assessment, {
+    assessment = addResponsesToFormArtifact<Assessment>(assessment, {
       task: 'make-a-decision',
       page: 'make-a-decision',
-      key: 'decision',
-      value: 'otherReasons',
+      keyValuePairs: {
+        decision: 'otherReasons',
+        decisionRationale: 'reject reason',
+      },
     })
     delete assessment.data['matching-information']
     const assessHelper = new AssessHelper(assessment, this.documents, this.user, this.clarificationNote)

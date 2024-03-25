@@ -37,4 +37,18 @@
 
       {%endcall%}
     </div>
+    {{
+        formPageTextarea(
+          {
+            fieldName: "decisionRationale",
+            type: "textarea",
+            spellcheck: false,
+            label: {
+              text: "Rationale for your decision",
+              classes: "govuk-label--m"
+            }
+          },
+          fetchContext()
+        )
+      }}
   {% endblock %}

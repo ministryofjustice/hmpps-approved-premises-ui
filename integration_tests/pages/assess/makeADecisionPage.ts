@@ -10,4 +10,8 @@ export default class MakeADecisionPage extends AssessPage {
   completeForm() {
     this.checkRadioButtonFromPageBody('decision')
   }
+
+  enterDecisionRationale() {
+    this.completeTextInputFromPageBody('decisionRationale')
+  }
 }
