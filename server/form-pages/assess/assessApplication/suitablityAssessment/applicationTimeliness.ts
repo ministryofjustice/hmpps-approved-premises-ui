@@ -64,9 +64,13 @@ export default class ApplicationTimeliness implements TasklistPage {
     )
     const arrivalDate = arrivalDateFromApplication(this.assessment.application)
 
-    const lateApplicationReason = lateApplicationReasonId
-      ? shortNoticeReasons[lateApplicationReasonId]
-      : 'None supplied'
+    let lateApplicationReason = shortNoticeReasons[lateApplicationReasonId] || 'None supplied'
+
+    if (lateApplicationReasonId === 'other') {
+      lateApplicationReason =
+        retrieveOptionalQuestionResponseFromFormArtifact(this.assessment.application, ReasonForShortNotice, 'other') ||
+        lateApplicationReason
+    }
 
     return {
       applicationDate,
