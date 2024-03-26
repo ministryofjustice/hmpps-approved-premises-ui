@@ -38,4 +38,4 @@ export const shouldShowContingencyPlanPartnersPages = (application: Application)
 }
 
 export const shouldShowContingencyPlanQuestionsPage = (application: Application) =>
-  noticeTypeFromApplication(application) === 'emergency'
+  noticeTypeFromApplication(application) === 'shortNotice' || noticeTypeFromApplication(application) === 'emergency'
