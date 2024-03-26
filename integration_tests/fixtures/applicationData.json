@@ -90,7 +90,7 @@
   },
   "type-of-ap": {
     "ap-type": {
-      "type": "normal"
+      "type": "rfap"
     }
   },
   "oasys-import": {

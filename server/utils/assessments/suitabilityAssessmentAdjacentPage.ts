@@ -1,6 +1,5 @@
 import { ApprovedPremisesAssessment as Assessment } from '../../@types/shared'
 import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
-import Rfap from '../../form-pages/apply/risk-and-need-factors/further-considerations/rfap'
 import {
   shouldShowContingencyPlanPartnersPages,
   shouldShowContingencyPlanQuestionsPage,
@@ -12,6 +11,7 @@ export const suitabilityAssessmentPageNames = [
   'suitability-assessment',
   'rfap-suitability',
   'esap-suitability',
+  'mhap-suitability',
   'pipe-suitability',
   'application-timeliness',
   'contingency-plan-suitability',
@@ -30,7 +30,7 @@ export const suitabilityAssessmentAdjacentPage = (
   }> = [
     {
       pageName: 'rfap-suitability',
-      needsAssessment: responseFromAssessment(assessment.application, Rfap, 'needARfap') === 'yes',
+      needsAssessment: responseFromAssessment(assessment.application, SelectApType, 'type') === 'rfap',
     },
     {
       pageName: 'esap-suitability',
@@ -39,6 +39,12 @@ export const suitabilityAssessmentAdjacentPage = (
     {
       pageName: 'pipe-suitability',
       needsAssessment: responseFromAssessment(assessment.application, SelectApType, 'type') === 'pipe',
+    },
+    {
+      pageName: 'mhap-suitability',
+      needsAssessment: ['mhapElliottHouse', 'mhapStJosephs'].includes(
+        responseFromAssessment(assessment.application, SelectApType, 'type'),
+      ),
     },
     {
       pageName: 'application-timeliness',
