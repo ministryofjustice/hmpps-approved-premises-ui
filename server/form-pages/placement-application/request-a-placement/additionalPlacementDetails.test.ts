@@ -68,7 +68,7 @@ describe('AdditionalPlacementDetails', () => {
       const page = new AdditionalPlacementDetails(body)
 
       expect(page.response()).toEqual({
-        'How long should the Approved Premises placement last?': '5 weeks, 1 day',
+        'How long should the Approved Premises placement last?': '1 week, 5 days',
         'When will the person arrive?': DateFormats.dateAndTimeInputsToUiDate(body, 'arrivalDate'),
         'Why are you requesting this placement?': 'Some reason',
       })
