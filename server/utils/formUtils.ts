@@ -146,7 +146,7 @@ export function convertKeyValuePairsToSummaryListItems<T extends object>(
  * @returns true if the string is valid, false otherwise.
  */
 export function validPostcodeArea(potentialPostcode: string) {
-  return postcodeAreas.includes(potentialPostcode.toUpperCase())
+  return postcodeAreas.includes(potentialPostcode.trim().toUpperCase())
 }
 
 /**
