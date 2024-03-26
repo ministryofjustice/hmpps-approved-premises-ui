@@ -1,5 +1,6 @@
 import {
   ApArea,
+  ApType,
   Application,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplication,
@@ -212,7 +213,7 @@ type GetRiskLevelNumber<T> = T extends `${string}${infer RiskNumber}` ? RiskNumb
 export type TierNumber = GetRiskLevelNumber<RiskTierLevel>
 export type TierLetter = GetRiskLevelLetter<RiskTierLevel>
 
-export type ApplicationType = 'Standard' | 'PIPE'
+export type ApplicationType = 'Standard' | 'PIPE' | 'ESAP' | 'RFAP' | 'MHAP (Elliott House)' | 'MHAP (St Josephs)'
 
 export interface ErrorMessage {
   text: string
@@ -493,3 +494,5 @@ export type KeyDetailsArgs = {
 }
 
 export type TaskSearchQualification = Exclude<UserQualification, 'lao'>
+
+export type BackwardsCompatibleApplyApType = ApType | 'standard'

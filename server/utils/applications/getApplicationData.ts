@@ -8,7 +8,7 @@ import {
 
 import ReleaseType from '../../form-pages/apply/reasons-for-placement/basic-information/releaseType'
 import SentenceType from '../../form-pages/apply/reasons-for-placement/basic-information/sentenceType'
-import SelectApType, { ApType } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
+import SelectApType from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
@@ -17,7 +17,7 @@ import {
 import DescribeLocationFactors from '../../form-pages/apply/risk-and-need-factors/location-factors/describeLocationFactors'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { isInapplicable } from './utils'
-import { FormArtifact } from '../../@types/ui'
+import { BackwardsCompatibleApplyApType, FormArtifact } from '../../@types/ui'
 import { noticeTypeFromApplication } from './noticeTypeFromApplication'
 import Situation from '../../form-pages/apply/reasons-for-placement/basic-information/situation'
 import ConfirmYourDetails from '../../form-pages/apply/reasons-for-placement/basic-information/confirmYourDetails'
@@ -51,7 +51,8 @@ const firstClassFields = <T>(
   retrieveQuestionResponse: QuestionResponseFunction,
 ): FirstClassFields<T> => {
   const noticeType = noticeTypeFromApplication(application)
-  const apType = retrieveQuestionResponse(application, SelectApType, 'type') as ApType
+  const apTypeResponse = retrieveQuestionResponse(application, SelectApType, 'type') as BackwardsCompatibleApplyApType
+  const apType = apTypeResponse === 'standard' ? 'normal' : apTypeResponse
   const targetLocation = retrieveQuestionResponse(application, DescribeLocationFactors, 'postcodeArea')
   const sentenceType = getSentenceType(application, retrieveQuestionResponse)
   const releaseType = getReleaseType(application, sentenceType)
@@ -65,8 +66,7 @@ const firstClassFields = <T>(
 
   return {
     isWomensApplication: false,
-    isPipeApplication: isPipeApplication(apType),
-    isEsapApplication: isEsapApplication(apType),
+    apType,
     targetLocation,
     releaseType,
     sentenceType,
@@ -106,20 +106,4 @@ const getSentenceType = (
   retrieveQuestionResponse: QuestionResponseFunction,
 ): SentenceTypeOption => {
   return retrieveQuestionResponse(application, SentenceType, 'sentenceType') as SentenceTypeOption
-}
-
-const isPipeApplication = (apType?: ApType): boolean | undefined => {
-  if (apType === undefined) {
-    return undefined
-  }
-
-  return apType === 'pipe'
-}
-
-const isEsapApplication = (apType?: ApType): boolean | undefined => {
-  if (apType === undefined) {
-    return undefined
-  }
-
-  return apType === 'esap'
 }

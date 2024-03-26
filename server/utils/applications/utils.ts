@@ -258,10 +258,27 @@ const firstPageOfApplicationJourney = (application: Application) => {
 }
 
 const getApplicationType = (application: Application): ApplicationType => {
+  if (application.isEsapApplication) {
+    return 'ESAP'
+  }
   if (application.isPipeApplication) {
     return 'PIPE'
   }
-  return 'Standard'
+
+  switch (application.apType) {
+    case 'esap':
+      return 'ESAP'
+    case 'mhapElliottHouse':
+      return 'MHAP (Elliott House)'
+    case 'mhapStJosephs':
+      return 'MHAP (St Josephs)'
+    case 'pipe':
+      return 'PIPE'
+    case 'rfap':
+      return 'RFAP'
+    default:
+      return 'Standard'
+  }
 }
 
 export const eventTypeTranslations: Record<TimelineEventType, string> = {

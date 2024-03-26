@@ -1,10 +1,12 @@
 import {
+  ApType,
   ApplicationSortField,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
   TimelineEventUrlType,
 } from '@approved-premises/api'
 import { isAfter } from 'date-fns'
 import { faker } from '@faker-js/faker'
+import { ApplicationType } from '@approved-premises/ui'
 import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionResponse'
 import {
   applicationFactory,
@@ -687,20 +689,41 @@ describe('utils', () => {
   })
 
   describe('getApplicationType', () => {
-    it('returns standard when the application is not PIPE', () => {
-      const application = applicationFactory.build({
-        isPipeApplication: false,
+    describe('when `isEsapApplication` is `true`', () => {
+      it('returns "ESAP"', () => {
+        const application = applicationFactory.build({
+          isEsapApplication: true,
+        })
+        expect(getApplicationType(application)).toEqual('ESAP')
       })
-
-      expect(getApplicationType(application)).toEqual('Standard')
     })
 
-    it('returns PIPE when the application is PIPE', () => {
-      const application = applicationFactory.build({
-        isPipeApplication: true,
+    describe('when `isEsapApplication` is undefined` and `isPipeApplication` is `true`', () => {
+      it('returns "PIPE"', () => {
+        const application = applicationFactory.build({
+          isEsapApplication: undefined,
+          isPipeApplication: true,
+        })
+        expect(getApplicationType(application)).toEqual('PIPE')
       })
+    })
 
-      expect(getApplicationType(application)).toEqual('PIPE')
+    describe('when `isEsapApplication` and `isPipeApplication` are undefined', () => {
+      it.each<[ApplicationType, ApType]>([
+        ['Standard', 'normal'],
+        ['ESAP', 'esap'],
+        ['MHAP (Elliott House)', 'mhapElliottHouse'],
+        ['MHAP (St Josephs)', 'mhapStJosephs'],
+        ['PIPE', 'pipe'],
+        ['RFAP', 'rfap'],
+      ])('returns "%s" when the `apType` is "%s"', (expectedOutput, applicationApType) => {
+        const application = applicationFactory.build({
+          apType: applicationApType,
+          isEsapApplication: undefined,
+          isPipeApplication: undefined,
+        })
+        expect(getApplicationType(application)).toEqual(expectedOutput)
+      })
     })
   })
 

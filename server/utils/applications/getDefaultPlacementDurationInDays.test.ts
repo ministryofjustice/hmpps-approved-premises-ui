@@ -7,21 +7,21 @@ jest.mock('../retrieveQuestionResponseFromFormArtifact.ts')
 describe('getDefaultPlacementDurationInDays', () => {
   const application = applicationFactory.build()
 
-  it('returns 12 weeks if the ap type is standard', () => {
-    ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce('standard')
-
-    expect(getDefaultPlacementDurationInDays(application)).toEqual(12 * 7)
+  it.each([
+    [12, 'normal'],
+    [12, 'standard'],
+    [12, 'mhapElliottHouse'],
+    [12, 'mhapStJosephs'],
+    [12, 'rfap'],
+    [26, 'pipe'],
+    [52, 'esap'],
+  ])('returns %s weeks when the AP type is "%s"', (weeks, apType) => {
+    ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce(apType)
+    expect(getDefaultPlacementDurationInDays(application)).toEqual(weeks * 7)
   })
 
-  it('returns 26 weeks if the ap type is standard', () => {
-    ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce('pipe')
-
-    expect(getDefaultPlacementDurationInDays(application)).toEqual(26 * 7)
-  })
-
-  it('returns 56 weeks if the ap type is standard', () => {
-    ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce('esap')
-
-    expect(getDefaultPlacementDurationInDays(application)).toEqual(52 * 7)
+  it('returns null when the AP type is anything else', () => {
+    ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockReturnValueOnce('something else')
+    expect(getDefaultPlacementDurationInDays(application)).toEqual(null)
   })
 })

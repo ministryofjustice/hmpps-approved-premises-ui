@@ -13,11 +13,10 @@ import type {
   SentenceTypeOption,
 } from '@approved-premises/api'
 
-import type { ApTypes } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import { fullPersonFactory, restrictedPersonFactory } from './person'
 import risksFactory from './risks'
 import { DateFormats } from '../../utils/dateUtils'
-import { PartnerAgencyDetails } from '../../@types/ui'
+import { BackwardsCompatibleApplyApType, PartnerAgencyDetails } from '../../@types/ui'
 import { apAreaFactory } from './referenceData'
 
 class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
@@ -53,7 +52,7 @@ class ApplicationFactory extends Factory<ApprovedPremisesApplication> {
     })
   }
 
-  withApType(apType: keyof ApTypes) {
+  withApType(apType: BackwardsCompatibleApplyApType) {
     return this.withPageResponse({
       task: 'type-of-ap',
       page: 'ap-type',
@@ -130,6 +129,17 @@ export const applicationUserDetailsFactory = new Factory<Cas1ApplicationUserDeta
   telephoneNumber: faker.phone.number(),
 }))
 
+const apTypeField = ():
+  | Pick<ApprovedPremisesApplication, 'isEsapApplication'>
+  | Pick<ApprovedPremisesApplication, 'isPipeApplication'>
+  | Pick<ApprovedPremisesApplication, 'apType'> => {
+  return faker.helpers.arrayElement([
+    { isEsapApplication: true },
+    { isPipeApplication: true },
+    { apType: faker.helpers.arrayElement(['normal', 'esap', 'mhapElliottHouse', 'mhapStJosephs', 'pipe', 'rfap']) },
+  ])
+}
+
 export default ApplicationFactory.define(() => ({
   type: 'CAS1',
   id: faker.string.uuid(),
@@ -142,7 +152,6 @@ export default ApplicationFactory.define(() => ({
   document: {},
   outdatedSchema: faker.datatype.boolean(),
   isWomensApplication: faker.datatype.boolean(),
-  isPipeApplication: faker.datatype.boolean(),
   risks: risksFactory.build(),
   status: 'started' as const,
   personStatusOnSubmission: 'InCustody' as const,
@@ -150,4 +159,5 @@ export default ApplicationFactory.define(() => ({
   caseManagerIsNotApplicant: faker.datatype.boolean(),
   caseManagerUserDetails: applicationUserDetailsFactory.build(),
   applicantUserDetails: applicationUserDetailsFactory.build(),
+  ...apTypeField(),
 }))

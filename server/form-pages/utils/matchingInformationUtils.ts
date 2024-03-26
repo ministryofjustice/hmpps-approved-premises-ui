@@ -1,6 +1,6 @@
 import { ApprovedPremisesApplication } from '@approved-premises/api'
 import { weeksToDays } from 'date-fns'
-import { SummaryList } from '@approved-premises/ui'
+import { BackwardsCompatibleApplyApType, SummaryList } from '@approved-premises/ui'
 import { placementDates } from '../../utils/matchUtils'
 import { DateFormats, daysToWeeksAndDays } from '../../utils/dateUtils'
 import { placementDurationFromApplication } from '../../utils/assessments/placementDurationFromApplication'
@@ -22,7 +22,7 @@ import { TasklistPageInterface } from '../tasklistPage'
 import DateOfOffence from '../apply/risk-and-need-factors/risk-management-features/dateOfOffence'
 import Vulnerability from '../apply/risk-and-need-factors/further-considerations/vulnerability'
 import { OffenceAndRiskCriteria, PlacementRequirementCriteria } from '../../utils/placementCriteriaUtils'
-import SelectApType, { ApType } from '../apply/reasons-for-placement/type-of-ap/apType'
+import SelectApType from '../apply/reasons-for-placement/type-of-ap/apType'
 import PlacementDate from '../apply/reasons-for-placement/basic-information/placementDate'
 import ReleaseDate from '../apply/reasons-for-placement/basic-information/releaseDate'
 
@@ -41,10 +41,14 @@ const apType = (
   }
 
   const applyValue = retrieveQuestionResponseFromFormArtifact(application, SelectApType, 'type')
-  const applyAssessMap: Record<ApType, MatchingInformationBody['apType']> = {
+  const applyAssessMap: Record<BackwardsCompatibleApplyApType, MatchingInformationBody['apType']> = {
+    normal: 'normal',
     standard: 'normal',
     esap: 'isESAP',
+    mhapElliottHouse: 'isMHAPElliottHouse',
+    mhapStJosephs: 'isMHAPStJosephs',
     pipe: 'isPIPE',
+    rfap: 'isRecoveryFocussed',
   }
 
   return applyAssessMap[applyValue]

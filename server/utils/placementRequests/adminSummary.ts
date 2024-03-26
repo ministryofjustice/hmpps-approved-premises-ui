@@ -1,6 +1,6 @@
+import { apTypeLabels } from '../../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 import { PlacementRequestDetail } from '../../@types/shared'
 import { SummaryList, SummaryListItem } from '../../@types/ui'
-import { allApTypes } from '../allAPTypes'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { withdrawnStatusTag } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
@@ -67,7 +67,7 @@ export const apTypeCell = (placementRequest: PlacementRequestDetail) => {
       text: 'Type of AP',
     },
     value: {
-      text: allApTypes[placementRequest.type],
+      text: apTypeLabels[placementRequest.type],
     },
   }
 }

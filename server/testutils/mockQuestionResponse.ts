@@ -8,6 +8,20 @@ import {
 } from '../utils/retrieveQuestionResponseFromFormArtifact'
 import { applicantAndCaseManagerDetails } from '../utils/applications/applicantAndCaseManagerDetails'
 
+export type RequiredQuestionResponses = {
+  postcodeArea?: string
+  type?: string
+  sentenceType?: string
+  releaseType?: string
+  duration?: string
+  alternativeRadius?: string
+  situation?: string
+  apAreaId?: string
+  applicantUserDetails?: UserDetails
+  caseManagerUserDetails?: UserDetails
+  caseManagerIsNotApplicant?: boolean
+}
+
 export const mockQuestionResponse = ({
   postcodeArea = 'ABC 123',
   type = 'standard',
@@ -20,19 +34,7 @@ export const mockQuestionResponse = ({
   applicantUserDetails,
   caseManagerUserDetails,
   caseManagerIsNotApplicant,
-}: {
-  postcodeArea?: string
-  type?: string
-  sentenceType?: string
-  releaseType?: string
-  duration?: string
-  alternativeRadius?: string
-  situation?: string
-  apAreaId?: string
-  applicantUserDetails?: UserDetails
-  caseManagerUserDetails?: UserDetails
-  caseManagerIsNotApplicant?: boolean
-}) => {
+}: RequiredQuestionResponses) => {
   ;(retrieveQuestionResponseFromFormArtifact as jest.Mock).mockImplementation(
     // eslint-disable-next-line consistent-return
     (_application: Application, _Page: unknown, question: string) => {

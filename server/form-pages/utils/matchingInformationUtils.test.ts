@@ -1,4 +1,5 @@
 import { when } from 'jest-when'
+import { BackwardsCompatibleApplyApType } from '@approved-premises/ui'
 import { placementDurationFromApplication } from '../../utils/assessments/placementDurationFromApplication'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
@@ -18,7 +19,7 @@ import RoomSharing from '../apply/risk-and-need-factors/further-considerations/r
 import Covid from '../apply/risk-and-need-factors/access-and-healthcare/covid'
 import DateOfOffence from '../apply/risk-and-need-factors/risk-management-features/dateOfOffence'
 import Vulnerability from '../apply/risk-and-need-factors/further-considerations/vulnerability'
-import SelectApType, { ApType } from '../apply/reasons-for-placement/type-of-ap/apType'
+import SelectApType from '../apply/reasons-for-placement/type-of-ap/apType'
 import PlacementDate from '../apply/reasons-for-placement/basic-information/placementDate'
 import ReleaseDate from '../apply/reasons-for-placement/basic-information/releaseDate'
 
@@ -259,22 +260,23 @@ describe('matchingInformationUtils', () => {
         })
 
         describe('apType', () => {
-          it.each([
+          it.each<[MatchingInformationBody['apType'], BackwardsCompatibleApplyApType]>([
+            ['normal', 'normal'],
             ['normal', 'standard'],
             ['isESAP', 'esap'],
+            ['isMHAPElliottHouse', 'mhapElliottHouse'],
+            ['isMHAPStJosephs', 'mhapStJosephs'],
             ['isPIPE', 'pipe'],
-          ])(
-            "is set to '%s' when `type` === '%s'",
-            (assessValue: MatchingInformationBody['apType'], applyValue: ApType) => {
-              when(retrieveQuestionResponseFromFormArtifact)
-                .calledWith(application, SelectApType, 'type')
-                .mockReturnValue(applyValue)
+            ['isRecoveryFocussed', 'rfap'],
+          ])("is set to '%s' when `type` === '%s'", (assessValue, applyValue) => {
+            when(retrieveQuestionResponseFromFormArtifact)
+              .calledWith(application, SelectApType, 'type')
+              .mockReturnValue(applyValue)
 
-              expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
-                expect.objectContaining({ apType: assessValue }),
-              )
-            },
-          )
+            expect(defaultMatchingInformationValues(bodyWithUndefinedValues, application)).toEqual(
+              expect.objectContaining({ apType: assessValue }),
+            )
+          })
         })
 
         describe('isArsonDesignated', () => {

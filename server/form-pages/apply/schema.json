@@ -574,8 +574,11 @@
             "type": {
               "enum": [
                 "esap",
+                "mhapElliottHouse",
+                "mhapStJosephs",
+                "normal",
                 "pipe",
-                "standard"
+                "rfap"
               ],
               "type": "string"
             }
