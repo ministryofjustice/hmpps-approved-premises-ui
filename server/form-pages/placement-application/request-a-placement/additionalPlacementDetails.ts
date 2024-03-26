@@ -68,8 +68,8 @@ export default class AdditionalPlacementDetails implements TasklistPage {
     return {
       [this.questions.arrivalDate]: DateFormats.isoDateToUIDate(this.body.arrivalDate),
       [this.questions.duration]: DateFormats.formatDuration({
-        weeks: this.body.durationDays,
-        days: this.body.durationWeeks,
+        weeks: this.body.durationWeeks,
+        days: this.body.durationDays,
       }),
       [this.questions.reason]: this.body.reason,
     }
