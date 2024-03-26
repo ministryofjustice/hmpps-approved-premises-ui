@@ -80,6 +80,8 @@ const withdrawPlacementRequestOrApplication = async (
   showPage: ShowPagePlacementApplications | ShowPageApply,
   applicationId: string,
 ) => {
+  const withdrawableName = withdrawable.type === 'booking' ? 'placement' : 'request'
+
   // Then I should see the withdrawable type selection page
   const selectWithdrawableTypePage = new NewWithdrawalPage('What do you want to withdraw?')
   // And be able to select Placement Request
@@ -87,8 +89,8 @@ const withdrawPlacementRequestOrApplication = async (
   selectWithdrawableTypePage.clickSubmit()
 
   // Then I should see the withdrawable selection page
-  const selectWithdrawablePage = new NewWithdrawalPage('Select your placement')
-  selectWithdrawablePage.shouldShowWithdrawableGuidance()
+  const selectWithdrawablePage = new NewWithdrawalPage(`Select your ${withdrawableName}`)
+  selectWithdrawablePage.shouldShowWithdrawableGuidance(withdrawableName)
   // And be able to select a placement
   selectWithdrawablePage.selectWithdrawable(withdrawable.id)
   selectWithdrawablePage.clickSubmit()

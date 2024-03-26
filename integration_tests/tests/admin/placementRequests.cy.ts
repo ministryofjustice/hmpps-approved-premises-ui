@@ -295,7 +295,7 @@ context('Placement Requests', () => {
     withdrawableTypePage.clickSubmit()
 
     const withdrawablePage = new NewWithdrawalPage('Select your placement')
-    withdrawablePage.shouldShowWithdrawableGuidance()
+    withdrawablePage.shouldShowWithdrawableGuidance('placement')
     withdrawablePage.selectWithdrawable(withdrawable.id)
     withdrawablePage.clickSubmit()
 

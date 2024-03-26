@@ -33,13 +33,15 @@ export default class WithdrawalsController {
           id,
           withdrawables: placementWithdrawables,
           bookings,
+          withdrawableType: 'placement',
         })
       }
 
       return res.render('applications/withdrawables/show', {
-        pageHeading: 'Select your placement',
+        pageHeading: 'Select your request',
         withdrawables: sortAndFilterWithdrawables(withdrawables, ['placement_application', 'placement_request']),
         id,
+        withdrawableType: 'request',
       })
     }
   }
