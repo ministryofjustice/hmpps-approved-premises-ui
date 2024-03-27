@@ -10,6 +10,7 @@ import EsapPlacementCCTV from './esapPlacementCCTV'
 import EsapNationalSecurityDivision from './esapNationalSecurityDivision'
 import EsapExceptionalCase from './esapExceptionalCase'
 import EsapNotEligible from './esapNotEligible'
+import RfapDetails from './rfapDetails'
 
 @Task({
   slug: 'type-of-ap',
@@ -24,6 +25,7 @@ import EsapNotEligible from './esapNotEligible'
     EsapPlacementScreening,
     EsapPlacementSecreting,
     EsapPlacementCCTV,
+    RfapDetails,
   ],
 })
 export default class TypeOfAp {}

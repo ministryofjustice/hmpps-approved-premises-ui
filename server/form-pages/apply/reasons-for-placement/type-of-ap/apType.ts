@@ -28,12 +28,9 @@ export default class SelectApType implements TasklistPage {
   }
 
   next() {
-    if (this.body.type === 'pipe') {
-      return 'pipe-referral'
-    }
-    if (this.body.type === 'esap') {
-      return 'managed-by-national-security-division'
-    }
+    if (this.body.type === 'pipe') return 'pipe-referral'
+    if (this.body.type === 'esap') return 'managed-by-national-security-division'
+    if (this.body.type === 'rfap') return 'rfap-details'
 
     return ''
   }

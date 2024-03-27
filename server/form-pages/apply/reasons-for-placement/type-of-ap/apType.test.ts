@@ -15,7 +15,7 @@ describe('SelectApType', () => {
     ['mhapElliottHouse', ''],
     ['mhapStJosephs', ''],
     ['pipe', 'pipe-referral'],
-    ['rfap', ''],
+    ['rfap', 'rfap-details'],
   ])('when the type is set to %s', (type, nextPage) => {
     itShouldHaveNextValue(new SelectApType({ type }), nextPage)
   })
