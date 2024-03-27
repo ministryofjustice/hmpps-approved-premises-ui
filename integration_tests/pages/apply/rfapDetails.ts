@@ -8,9 +8,9 @@ export default class RfapDetailsPage extends ApplyPage {
     super(
       'Recovery Focused Approved Premises (RFAP)',
       application,
-      'further-considerations',
+      'type-of-ap',
       'rfap-details',
-      paths.applications.pages.show({ id: application.id, task: 'further-considerations', page: 'rfap' }),
+      paths.applications.pages.show({ id: application.id, task: 'type-of-ap', page: 'ap-type' }),
     )
   }
 

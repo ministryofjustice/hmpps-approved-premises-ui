@@ -18,9 +18,9 @@ describe('RfapDetails', () => {
     })
   })
 
-  itShouldHaveNextValue(new RfapDetails({}), 'catering')
+  itShouldHaveNextValue(new RfapDetails({}), '')
 
-  itShouldHavePreviousValue(new RfapDetails({}), 'rfap')
+  itShouldHavePreviousValue(new RfapDetails({}), 'ap-type')
 
   describe('errors', () => {
     it('shows errors when the yes/no questions are blank', () => {
