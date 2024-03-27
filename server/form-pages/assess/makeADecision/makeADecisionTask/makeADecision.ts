@@ -59,7 +59,10 @@ export default class MakeADecision implements TasklistPage {
     const { decision } = this.body
     const topLevelDescription = findKey(this.responses, reason => Boolean(reason[decision]))
 
-    return { Decision: `${topLevelDescription}: ${this.responses[topLevelDescription][decision]}` }
+    return {
+      Decision: `${topLevelDescription}: ${this.responses[topLevelDescription][decision]}`,
+      'Decision rationale': this.body?.decisionRationale?.trim() || 'No rationale provided',
+    }
   }
 
   errors() {
