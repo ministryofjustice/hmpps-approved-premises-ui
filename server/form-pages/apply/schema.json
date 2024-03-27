@@ -805,6 +805,27 @@
               "type": "string"
             }
           }
+        },
+        "rfap-details": {
+          "type": "object",
+          "properties": {
+            "motivation": {
+              "type": "string"
+            },
+            "continuedRecovery": {
+              "type": "string"
+            },
+            "receivingTreatment": {
+              "enum": [
+                "no",
+                "yes"
+              ],
+              "type": "string"
+            },
+            "receivingTreatmentDetail": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -1919,39 +1940,6 @@
               "type": "string"
             },
             "previousPlacementDetail": {
-              "type": "string"
-            }
-          }
-        },
-        "rfap": {
-          "type": "object",
-          "properties": {
-            "needARfap": {
-              "enum": [
-                "no",
-                "yes"
-              ],
-              "type": "string"
-            }
-          }
-        },
-        "rfap-details": {
-          "type": "object",
-          "properties": {
-            "motivation": {
-              "type": "string"
-            },
-            "continuedRecovery": {
-              "type": "string"
-            },
-            "receivingTreatment": {
-              "enum": [
-                "no",
-                "yes"
-              ],
-              "type": "string"
-            },
-            "receivingTreatmentDetail": {
               "type": "string"
             }
           }
