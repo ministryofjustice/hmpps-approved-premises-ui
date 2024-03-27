@@ -4,15 +4,15 @@ import { SelectedWithdrawableType } from '../../../server/utils/applications/wit
 import Page, { parseHtml } from '../page'
 
 export default class SelectWithdrawableTypePage extends Page {
-  constructor(heading: 'What do you want to withdraw?' | 'Select your placement') {
+  constructor(heading: 'What do you want to withdraw?' | `Select your ${'placement' | 'request'}`) {
     super(heading)
   }
 
-  shouldShowWithdrawableGuidance() {
+  shouldShowWithdrawableGuidance(withdrawableType: 'placement' | 'request') {
     cy.get('.govuk-inset-text').then(insetTextElement => {
       const { actual, expected } = parseHtml(
         insetTextElement,
-        'Withdraw one placement at a time. Contact the CRU if you do not see the placement you wish to withdraw.',
+        `Withdraw one ${withdrawableType} at a time. Contact the CRU if you do not see the placement you wish to withdraw.`,
       )
 
       expect(actual).to.equal(expected)

@@ -18,8 +18,8 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {% set hintHtml %}
-                {{ govukInsetText({
-                    text: "Withdraw one placement at a time. Contact the CRU if you do not see the placement you wish to withdraw."
+            {{ govukInsetText({
+                    text: "Withdraw one " + withdrawableType + " at a time. Contact the CRU if you do not see the placement you wish to withdraw."
                 }) }}
             {% endset %}
 

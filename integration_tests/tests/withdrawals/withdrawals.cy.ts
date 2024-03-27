@@ -67,8 +67,9 @@ context('Withdrawals', () => {
       newWithdrawalPage.clickSubmit()
 
       // Then I am shown a list of placement applications that can be withdrawn
-      const selectWithdrawablePage = new NewWithdrawalPage('Select your placement')
-      selectWithdrawablePage.shouldShowWithdrawableGuidance()
+      const selectWithdrawablePage = new NewWithdrawalPage('Select your request')
+      selectWithdrawablePage.shouldShowWithdrawableGuidance('request')
+      cy.screenshot('after')
       selectWithdrawablePage.checkForBackButton(paths.applications.withdraw.new({ id: application.id }))
       selectWithdrawablePage.shouldShowWithdrawables([placementApplicationWithdrawable])
       selectWithdrawablePage.shouldNotShowWithdrawables([applicationWithdrawable])
@@ -152,7 +153,7 @@ context('Withdrawals', () => {
 
       // Then I am shown a list of placements that can be withdrawn
       const selectWithdrawablePage = new NewWithdrawalPage('Select your placement')
-      selectWithdrawablePage.shouldShowWithdrawableGuidance()
+      selectWithdrawablePage.shouldShowWithdrawableGuidance('placement')
       selectWithdrawablePage.checkForBackButton(paths.applications.withdraw.new({ id: application.id }))
       selectWithdrawablePage.shouldShowWithdrawables([placementWithdrawable])
       selectWithdrawablePage.shouldNotShowWithdrawables([placementApplicationWithdrawable, applicationWithdrawable])
@@ -247,8 +248,8 @@ const withdrawsAPlacementRequest = (userRoles: Array<ApprovedPremisesUserRole>) 
   newWithdrawalPage.clickSubmit()
 
   // Then I am shown a list of placement requests that can be withdrawn
-  const selectWithdrawablePage = new NewWithdrawalPage('Select your placement')
-  selectWithdrawablePage.shouldShowWithdrawableGuidance()
+  const selectWithdrawablePage = new NewWithdrawalPage('Select your request')
+  selectWithdrawablePage.shouldShowWithdrawableGuidance('request')
   selectWithdrawablePage.checkForBackButton(paths.applications.withdraw.new({ id: application.id }))
   selectWithdrawablePage.veryifyLink(placementRequest.id, 'placement_request')
   selectWithdrawablePage.shouldShowWithdrawables([placementRequestWithdrawable, placementApplicationWithdrawable])

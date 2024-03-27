@@ -63,9 +63,10 @@ describe('withdrawablesController', () => {
         ])
         expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/show', {
-          pageHeading: 'Select your placement',
+          pageHeading: 'Select your request',
           id: applicationId,
           withdrawables: [placementRequestWithdrawable, placementApplicationWithdrawable],
+          withdrawableType: 'request',
         })
       })
     })
@@ -100,6 +101,7 @@ describe('withdrawablesController', () => {
           id: applicationId,
           withdrawables: placementWithdrawables,
           bookings,
+          withdrawableType: 'placement',
         })
         expect(bookingService.findWithoutPremises).toHaveBeenCalledTimes(2)
         expect(bookingService.findWithoutPremises).toHaveBeenCalledWith(token, placementWithdrawables[0].id)
