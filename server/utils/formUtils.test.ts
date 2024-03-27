@@ -451,11 +451,24 @@ describe('formUtils', () => {
   })
 
   describe('convertArrayToRadioItems', () => {
-    it('returns the array as radio items with the value in sentence case', () => {
-      expect(convertArrayToRadioItems(['one', 'two'], 'two')).toEqual([
-        { text: 'One', value: 'one', checked: false },
-        { text: 'Two', value: 'two', checked: true },
-      ])
+    describe('when hints are passed and labels arent', () => {
+      it('returns the array as radio items with the value in sentence case', () => {
+        expect(convertArrayToRadioItems(['one', 'two'], 'two', {}, { one: { html: 'some hint' } })).toEqual([
+          { text: 'One', value: 'one', checked: false, hint: { html: 'some hint' } },
+          { text: 'Two', value: 'two', checked: true },
+        ])
+      })
+    })
+
+    describe('when labels are passed', () => {
+      it('returns the array as radio items with the value in sentence case', () => {
+        expect(
+          convertArrayToRadioItems(['one', 'two'], 'two', { one: 'The number one', two: 'The number two' }),
+        ).toEqual([
+          { text: 'The number one', value: 'one', checked: false },
+          { text: 'The number two', value: 'two', checked: true },
+        ])
+      })
     })
   })
 

@@ -101,13 +101,24 @@ export function convertKeyValuePairToCheckBoxItems<T extends object>(
   })
 }
 
-export function convertArrayToRadioItems(array: Array<string>, checkedItem: string): Array<RadioItem> {
+export function convertArrayToRadioItems<T extends string>(
+  array: Array<T> | ReadonlyArray<T>,
+  checkedItem: string,
+  labels?: Partial<Record<T, RadioItem['text']>>,
+  hints?: Partial<Record<T, RadioItem['hint']>>,
+): Array<RadioItem> {
   return array.map(key => {
-    return {
+    const radioItem: RadioItem = {
       value: key,
-      text: sentenceCase(key),
+      text: labels?.[key] ? labels[key] : sentenceCase(key),
       checked: checkedItem === key,
     }
+
+    if (hints?.[key]) {
+      radioItem.hint = hints[key]
+    }
+
+    return radioItem
   })
 }
 
