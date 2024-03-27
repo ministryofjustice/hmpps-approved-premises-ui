@@ -40,12 +40,16 @@ export default class MakeADecision implements TasklistPage {
     },
   }
 
+  decision: string
+
   constructor(
     public body: {
       decision: string
       decisionRationale?: string
     },
-  ) {}
+  ) {
+    this.decision = body.decision
+  }
 
   previous() {
     return 'dashboard'
