@@ -529,16 +529,16 @@ export default class ApplyHelper {
   completeTypeOfApSection() {
     // And I should be able to start the next task
     cy.get('[data-cy-task-name="type-of-ap"]').click()
-    Page.verifyOnPage(ApplyPages.TypeOfApPage, this.application)
+    Page.verifyOnPage(ApplyPages.ApType, this.application)
 
     // Given I am on the Type of AP Page
-    const typeOfApPage = new ApplyPages.TypeOfApPage(this.application)
+    const apTypePage = new ApplyPages.ApType(this.application)
 
     // When I complete the form and click submit
-    typeOfApPage.completeForm()
-    typeOfApPage.clickSubmit()
+    apTypePage.completeForm()
+    apTypePage.clickSubmit()
 
-    this.pages.typeOfAp = [typeOfApPage]
+    this.pages.typeOfAp = [apTypePage]
 
     // Then I should be redirected to the task list
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
@@ -553,10 +553,10 @@ export default class ApplyHelper {
   completeEsapFlow() {
     // And I should be able to start the next task
     cy.get('[data-cy-task-name="type-of-ap"]').click()
-    Page.verifyOnPage(ApplyPages.TypeOfApPage, this.application)
+    Page.verifyOnPage(ApplyPages.ApType, this.application)
 
     // Given I am on the Type of AP Page
-    const typeOfApPage = new ApplyPages.TypeOfApPage(this.application)
+    const typeOfApPage = new ApplyPages.ApType(this.application)
 
     // When I complete the form and click submit
     typeOfApPage.completeForm()
@@ -601,14 +601,14 @@ export default class ApplyHelper {
   completeIneligibleEsapFlow() {
     // And I should be able to start the next task
     cy.get('[data-cy-task-name="type-of-ap"]').click()
-    Page.verifyOnPage(ApplyPages.TypeOfApPage, this.application)
+    Page.verifyOnPage(ApplyPages.ApType, this.application)
 
     // Given I am on the Type of AP Page
-    const typeOfApPage = new ApplyPages.TypeOfApPage(this.application)
+    const apTypePage = new ApplyPages.ApType(this.application)
 
     // When I complete the form and click submit
-    typeOfApPage.completeForm()
-    typeOfApPage.clickSubmit()
+    apTypePage.completeForm()
+    apTypePage.clickSubmit()
 
     // Then I should be asked if the person is managed by the national security division
     const isManagedByNationalSecurityDivision = Page.verifyOnPage(ApplyPages.NationalSecurityDivision, this.application)
@@ -631,7 +631,7 @@ export default class ApplyHelper {
     notEligiblePage.clickSubmit()
 
     // Then I should be able to choose a different type of AP
-    Page.verifyOnPage(ApplyPages.TypeOfApPage, this.application)
+    Page.verifyOnPage(ApplyPages.ApType, this.application)
   }
 
   completeOasysSection(oasysMissing = false) {

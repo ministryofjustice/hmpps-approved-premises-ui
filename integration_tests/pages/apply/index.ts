@@ -1,6 +1,7 @@
 import AccessNeedsFurtherQuestionsPage from './accessNeedsFurtherQuestions'
 import AccessNeedsPage from './accessNeeds'
 import AdditionalCircumstancesPage from './additionalCircumstances'
+import ApType from './apType'
 import ArsonPage from './arson'
 import AttachDocumentsPage from './attachDocumentsPage'
 import BoardTakenPlacePage from './boardTakenPlace'
@@ -62,7 +63,6 @@ import TaskListPage from './taskListPage'
 import TransgenderPage from './isPersonTransgender'
 import TriggerPlanPage from './triggerPlanPage'
 import TypeOfAccommodationPage from './typeOfAccommodation'
-import TypeOfApPage from './typeOfAp'
 import VulnerabilityPage from './vulnerability'
 import NoOffencePage from './noOffence'
 
@@ -70,6 +70,7 @@ export {
   AccessNeedsFurtherQuestionsPage,
   AccessNeedsPage,
   AdditionalCircumstancesPage,
+  ApType,
   ArsonPage,
   AttachDocumentsPage,
   BoardTakenPlacePage,
@@ -132,6 +133,5 @@ export {
   TransgenderPage,
   TriggerPlanPage,
   TypeOfAccommodationPage,
-  TypeOfApPage,
   VulnerabilityPage,
 }
