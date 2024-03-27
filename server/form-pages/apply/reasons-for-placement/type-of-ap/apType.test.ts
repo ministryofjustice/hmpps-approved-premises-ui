@@ -1,8 +1,8 @@
 import { ApType } from '@approved-premises/api'
 import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
-import { convertKeyValuePairToRadioItems } from '../../../../utils/formUtils'
+import { convertArrayToRadioItems } from '../../../../utils/formUtils'
 
-import SelectApType from './apType'
+import SelectApType, { apTypeHintText, apTypeLabels, apTypes } from './apType'
 
 jest.mock('../../../../utils/formUtils')
 
@@ -37,7 +37,7 @@ describe('SelectApType', () => {
       const page = new SelectApType({})
       page.items()
 
-      expect(convertKeyValuePairToRadioItems).toHaveBeenCalled()
+      expect(convertArrayToRadioItems).toHaveBeenCalledWith(apTypes, undefined, apTypeLabels, apTypeHintText)
     })
   })
 

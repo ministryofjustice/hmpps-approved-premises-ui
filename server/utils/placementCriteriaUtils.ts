@@ -1,14 +1,19 @@
-import { PlacementCriteria } from '@approved-premises/api'
+import { ApType, PlacementCriteria } from '@approved-premises/api'
 import { filterByType } from './utils'
+import { apTypes } from '../form-pages/apply/reasons-for-placement/type-of-ap/apType'
 
 type UiPlacementCriteria = Exclude<PlacementCriteria, 'isGroundFloor'>
-export const specialistApTypeCriteria = [
-  'isPIPE',
-  'isESAP',
-  'isMHAPElliottHouse',
-  'isMHAPStJosephs',
-  'isRecoveryFocussed',
-] as const
+type SpecialistApTypeCriteria = 'isPIPE' | 'isESAP' | 'isMHAPElliottHouse' | 'isMHAPStJosephs' | 'isRecoveryFocussed'
+
+const applyApTypeToAssessApType: Record<Exclude<ApType, 'normal'>, SpecialistApTypeCriteria> = {
+  pipe: 'isPIPE',
+  esap: 'isESAP',
+  mhapElliottHouse: 'isMHAPElliottHouse',
+  mhapStJosephs: 'isMHAPStJosephs',
+  rfap: 'isRecoveryFocussed',
+}
+
+export const specialistApTypeCriteria = apTypes.map(type => applyApTypeToAssessApType[type])
 export const offenceAndRiskCriteria = [
   'isSuitableForVulnerable',
   'acceptsSexOffenders',
@@ -30,7 +35,6 @@ export const placementRequirementCriteria = [
   ...nonPrepopulatablePlacementRequirementCriteria,
 ]
 
-export type SpecialistApTypeCriteria = (typeof specialistApTypeCriteria)[number]
 export type ApTypeCriteria = SpecialistApTypeCriteria | 'normal'
 export type OffenceAndRiskCriteria = (typeof offenceAndRiskCriteria)[number]
 export type PlacementRequirementCriteria = (typeof placementRequirementCriteria)[number]
