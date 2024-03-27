@@ -18,7 +18,7 @@ generic-service:
     COMMUNITY_ACCOMMODATION_API_TIMEOUT_RESPONSE: 30000
     COMMUNITY_ACCOMMODATION_API_TIMEOUT_DEADLINE: 30000
     FLIPT_ENABLED: true
-    FLIPT_URL: 'https://feature-flags-preprod.hmpps.service.justice.gov.uk/'
+    FLIPT_URL: 'https://feature-flags-preprod.hmpps.service.justice.gov.uk'
     FLIPT_NAMESPACE: 'community-accommodation'
 
   namespace_secrets:
