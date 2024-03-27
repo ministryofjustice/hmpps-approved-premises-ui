@@ -1,0 +1,304 @@
+{
+  "basic-information": [
+    {
+      "If you need to update your details, select the relevant box below": "Phone number, Email address, Name, Area",
+      "Applicant name": "Bob Smith",
+      "Applicant email address": "bob@test.com",
+      "Applicant phone number": "01234567890",
+      "Applicant AP area": "Greater Manchester",
+      "Do you have case management responsibility?": "No"
+    },
+    {
+      "Case manager name": "Bob Smith",
+      "Case manager email": "bob@test.com",
+      "Case manager phone number": "01234567890"
+    },
+    {
+      "Is the person transgender or do they have a transgender history?": "Yes"
+    },
+    {
+      "Does the person's gender identity require a complex case board to review their application?": "Yes"
+    },
+    {
+      "Has the Complex Case Board taken place?": "Yes"
+    },
+    {
+      "Has the Complex Case Board determined that the person should be placed in a male AP?": "Yes"
+    },
+    {
+      "Parole eligibility date": "Thu 14 Nov 2024",
+      "Home Detention Curfew (HDC) date": "Mon 14 Oct 2024",
+      "Licence expiry date": "Sat 14 Sep 2024",
+      "Post sentence supervision (PSS) start date": "Wed 14 Aug 2024",
+      "Post sentence supervision (PSS) end date": "Sun 14 Jul 2024",
+      "Sentence expiry date": "Fri 14 Jun 2024"
+    },
+    {
+      "Which of the following best describes the sentence type the person is on?": "Community Order (CO) / Suspended Sentence Order (SSO)"
+    },
+    {
+      "Which of the following options best describes the situation?": "Application for risk management/public protection"
+    },
+    {
+      "Do you know the person's release date?": "Yes",
+      "Release Date": "Sun 27 Oct 2024"
+    },
+    {
+      "Is Sun 27 Oct 2024 the date you want the placement to start?": "Yes"
+    },
+    {
+      "What is the purpose of the AP placement?": "Provide drug or alcohol monitoring, Other",
+      "Other purpose for AP Placement": "Reason"
+    }
+  ],
+  "type-of-ap": [
+    {
+      "Which type of AP does the person require?": "Recovery Focused AP (RFAP)"
+    }
+  ],
+  "oasys-import": [
+    {
+      "Needs linked to reoffending": "1. Accommodation, 2. Relationships",
+      "Needs not linked to risk of serious harm or reoffending": "3. Emotional, 4. Thinking"
+    },
+    {
+      "Q1: The first RoSH question": "Some answer for the first RoSH question. With an extra comment Q1",
+      "Q2: The second RoSH question": "Some answer for the second RoSH question. With an extra comment Q2",
+      "Q3: The third RoSH question": "Some answer for the third RoSH question. With an extra comment Q3"
+    },
+    {
+      "Q1: The first offence details question": "Some answer for the first offence details question. With an extra comment Q1",
+      "Q2: The second offence details question": "Some answer for the second offence details question. With an extra comment Q2",
+      "Q3: The third offence details question": "Some answer for the third offence details question. With an extra comment Q3"
+    },
+    {
+      "Q1: The first supporting information question": "Some answer for the first supporting information question. With an extra comment Q1",
+      "Q2: The second supporting information question": "Some answer for the second supporting information question. With an extra comment Q2",
+      "Q3: The third supporting information question": "Some answer for the third supporting information question. With an extra comment Q3"
+    },
+    {
+      "Q1: The first risk management question": "Some answer for the first risk management question. With an extra comment Q1",
+      "Q2: The second risk management question": "Some answer for the second risk management question. With an extra comment Q2",
+      "Q3: The third risk management question": "Some answer for the third risk management question. With an extra comment Q3"
+    },
+    {
+      "Q1: The first risk to self question": "Some answer for the first risk to self question. With an extra comment Q1",
+      "Q2: The second risk to self question": "Some answer for the second risk to self question. With an extra comment Q2",
+      "Q3: The third risk to self question": "Some answer for the third risk to self question. With an extra comment Q3"
+    }
+  ],
+  "risk-management-features": [
+    {
+      "Describe why an AP placement is needed to manage the risk of the person": "est vero nesciunt",
+      "Provide details of any additional measures that will be necessary for the management of risk": "deleniti enim necessitatibus"
+    },
+    {
+      "Has the person ever been convicted of any arson offences, sexual offences, hate crimes or non-sexual offences against children?": "Yes"
+    },
+    {
+      "Is the arson offence current or previous?": "Current",
+      "Is the hate crime current or previous?": "Previous",
+      "Is the non sexual offences against children current or previous?": "Current and previous",
+      "Is the contact sexual offences against adults current or previous?": "Current and previous",
+      "Is the non contact sexual offences against adults current or previous?": "Current and previous",
+      "Is the contact sexual offences against children current or previous?": "Current and previous",
+      "Is the non contact sexual offences against children current or previous?": "Current and previous"
+    },
+    {
+      "Which of the rehabilitative activities will assist the person's rehabilitation in the Approved Premises (AP)?": "Accommodation, Drugs and alcohol, Children and families, Health, Education, training and employment, Finance, benefits and debt, Attitudes, thinking and behaviour, Abuse, Sex working, Other",
+      "Provide a summary of how these interventions will assist the persons rehabilitation in the AP.": "A summary of how these interventions will assist the person rehabilitation",
+      "Other intervention": "Another"
+    }
+  ],
+  "prison-information": [
+    {
+      "Selected prison case notes that support this application": [
+        {
+          "Date created": "Thu 10 Nov 2022",
+          "Date occurred": "Wed 19 Oct 2022",
+          "Is the case note sensitive?": "No",
+          "Name of author": "Denise Collins",
+          "Type": "Social Care",
+          "Subtype": "Ressettlement",
+          "Note": "Note 1"
+        },
+        {
+          "Date created": "Sun 24 Jul 2022",
+          "Date occurred": "Thu 22 Sep 2022",
+          "Is the case note sensitive?": "Yes",
+          "Name of author": "Leticia Mann",
+          "Type": "General",
+          "Subtype": "Quality Work",
+          "Note": "Note 2"
+        }
+      ],
+      "Adjudications": [
+        {
+          "Adjudication number": 69927,
+          "Report date and time": "9 Oct 2022, 00:00",
+          "Establishment": "Hawthorne",
+          "Offence description": "Nam vel nisi fugiat veniam possimus omnis.",
+          "Finding": "Not proved"
+        },
+        {
+          "Adjudication number": 39963,
+          "Report date and time": "10 Jul 2022, 00:00",
+          "Establishment": "Oklahoma City",
+          "Offence description": "Illum maxime enim explicabo soluta sequi voluptas.",
+          "Finding": "Proved"
+        },
+        {
+          "Adjudication number": 77431,
+          "Report date and time": "30 May 2022, 00:00",
+          "Establishment": "Jurupa Valley",
+          "Offence description": "Quis porro nemo voluptates doloribus atque quis provident iure.",
+          "Finding": "Proved"
+        }
+      ],
+      "ACCT Alerts": [
+        {
+          "Alert type": 47419,
+          "ACCT description": "Soluta harum harum hic maxime reprehenderit quis harum necessitatibus.",
+          "Date created": "Mon 5 Dec 2022",
+          "Expiry date": "Mon 29 May 2023"
+        },
+        {
+          "Alert type": 429,
+          "ACCT description": "Quia ex nisi deserunt voluptatibus sit ipsa.",
+          "Date created": "Sat 21 May 2022",
+          "Expiry date": "Sat 16 Dec 2023"
+        }
+      ]
+    }
+  ],
+  "location-factors": [
+    {
+      "What is the preferred postcode area for the Approved Premises (AP) placement?": "SW11",
+      "Give details of why this postcode area would benefit the person": "Some positive factors",
+      "Are there any restrictions linked to placement location?": "Yes",
+      "Provide details of any restraining orders, exclusion zones or other location based licence conditions. You must also provide an exclusion zone map in the ‘attach required documents’ screen.": "Restrictions go here",
+      "If an AP Placement is not available in the persons preferred area, would a placement further away be considered?": "Yes",
+      "Choose the maximum radius (in miles)": "70 miles"
+    },
+    {
+      "First choice AP": "No preference",
+      "Second choice AP": "No preference",
+      "Third choice AP": "No preference",
+      "Fourth choice AP": "No preference",
+      "Fifth choice AP": "No preference"
+    }
+  ],
+  "access-and-healthcare": [
+    {
+      "Does the person have any of the following needs?": "Mobility, learning disability, neurodivergent conditions, pregnancy",
+      "Does the person have any religious or cultural needs?": "Yes - sunt at minus",
+      "Does this person have care and support needs?": "Yes - some detail",
+      "Does the person need an interpreter?": "Yes",
+      "Has a care act assessment been completed?": "Yes",
+      "Which language is an interpreter needed for?": "beatae eligendi explicabo"
+    },
+    {
+      "Does the person require the use of a wheelchair?": "Yes",
+      "Does the person have any known health conditions?": "Yes - Some detail",
+      "Does the person have any prescribed medication?": "Yes - Some detail",
+      "Is the person pregnant?": "Yes",
+      "What is their expected date of delivery?": "Sun 31 Dec 2023",
+      "Will the child be removed from the person's care at birth?": "Decision pending",
+      "Is there social care involvement?": "Yes - Some detail",
+      "Are there any pregnancy related issues relevant to placement?": "Yes - some considerations",
+      "Specify any additional details and adjustments required for the person's mobility, learning disability, neurodivergent conditions or pregnancy needs": "Some detail"
+    },
+    {
+      "Is the person eligible for COVID-19 vaccination boosters?": "Yes - some details",
+      "Is the person immunosuppressed, eligible for nMAB treatment or higher risk as per the definitions in the COVID-19 guidance?": "Yes"
+    }
+  ],
+  "further-considerations": [
+    {
+      "Is there any evidence that the person may pose a risk to AP staff?": "No",
+      "Is there any evidence that the person may pose a risk to other AP residents?": "No",
+      "Do you have any concerns about the person sharing a bedroom?": "Yes - Some details here",
+      "Is there any evidence of previous trauma or significant event in the persons history which would indicate that room share may not be suitable?": "No",
+      "Is there potential for the person to benefit from a room share?": "No"
+    },
+    {
+      "Are you aware that the person is vulnerable to exploitation from others?": "No",
+      "Is there any evidence or expectation that the person may groom, radicalise or exploit others?": "Yes - Some details here"
+    },
+    {
+      "Has the person stayed or been offered a placement in an AP before?": "Yes - Some details here"
+    },
+    {
+      "Does this person need a RFAP?": "Yes"
+    },
+    {
+      "How has the person demonstrated their motivation to address their substance misuse?": "Some motivation",
+      "Is this person receiving clinical, medical and/or psychosocial treatment for their substance misuse?": "Yes - Some details here",
+      "How is the person planning to continue their recovery work whilst in the AP?": "Some work"
+    },
+    {
+      "Can the person be placed in a self-catered Approved Premises (AP)?": "No - Some details here"
+    },
+    {
+      "Does the person pose an arson risk?": "Yes - Some details here"
+    },
+    {
+      "Are there are any additional circumstances that have helped the person do well in the past?": "Yes - Some details here"
+    },
+    {
+      "Contingency plan partners": [
+        {
+          "Role in plan": "Test role 1",
+          "Phone number": "01234567891",
+          "Named contact": "Test contact 1",
+          "Partner agency name": "Test agency 1"
+        },
+        {
+          "Role in plan": "Test role 2",
+          "Phone number": "01234567892",
+          "Named contact": "Test contact 2",
+          "Partner agency name": "Test agency 2"
+        }
+      ]
+    },
+    {
+      "If the person does not return to the AP for curfew, what actions should be taken?": "Action to be taken",
+      "If the person's placement needs to be withdrawn out of hours, what actions should be taken?": "Further action to be taken",
+      "Provide any victim considerations that the AP need to be aware of when out of hours": "Considerations for victim",
+      "In the event of an out of hours placement withdrawal, provide any unsuitable addresses that the person cannot reside at": "An unsuitable address",
+      "In the event of an out of hours placement withdrawal, provide alternative suitable addresses that the person can reside at": "Some suitable addresses",
+      "In the event of a breach, provide any further information to support Out of Hours (OoH) decision making": "Breach information to assist decision making",
+      "Are there any other considerations?": "Some other considerations"
+    },
+    {
+      "Is there a trigger plan in place?": "Yes",
+      "Have additional Licence conditions been requested as an alternative to recall?": "Yes - Some details here"
+    }
+  ],
+  "move-on": [
+    {
+      "Does this application require a different placement duration?": "Yes",
+      "How many weeks will the person stay at the AP?": "6 weeks",
+      "Why does this person require a different placement duration?": "some reason"
+    },
+    {
+      "Where is the person most likely to live when they move on from the AP?": "SW11"
+    },
+    {
+      "Are move on arrangements already in place for when the person leaves the AP?": "Yes - Some detail"
+    },
+    {
+      "What type of accommodation will the person have when they leave the AP?": "Accommodation provided through Home Office section 10 for foreign national"
+    },
+    {
+      "Have you informed the Home Office 'Foreign National Returns Command' that accommodation will be required after placement?": "Yes",
+      "Date of notification": "Thu 1 Jan 2015"
+    }
+  ],
+  "attach-required-documents": [
+    {
+      "Random offender document1.pdf": "Some Description 1",
+      "national.asm": "Some Description 2"
+    }
+  ]
+}

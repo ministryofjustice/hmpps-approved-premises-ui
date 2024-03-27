@@ -15,6 +15,7 @@ import { ApprovedPremisesApplication as Application, User } from '../../../serve
 import { defaultUserId } from '../../mockApis/auth'
 import paths from '../../../server/paths/api'
 import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
+import applicationDocument from '../../fixtures/applicationDocument.json'
 
 context('show applications', () => {
   beforeEach(setup)
@@ -23,7 +24,7 @@ context('show applications', () => {
     // Given I have completed an application
     const timeline = timelineEventFactory.buildList(10)
 
-    const updatedApplication = { ...this.application, status: 'submitted' }
+    const updatedApplication = { ...this.application, status: 'submitted', document: applicationDocument }
     cy.task('stubApplicationGet', { application: updatedApplication })
     cy.task('stubApplicationTimeline', { applicationId: updatedApplication.id, timeline })
     cy.task('stubApplications', [updatedApplication])
@@ -65,6 +66,7 @@ context('show applications', () => {
       assessmentDecision: 'accepted',
       assessmentDecisionDate: '2023-01-01',
       assessmentId: faker.string.uuid(),
+      document: applicationDocument,
     }
     cy.task('stubApplicationGet', { application })
     cy.task('stubApplications', [application])
@@ -261,6 +263,7 @@ const makeReleaseFollowingDecisionPlacementApplication = (application: Applicati
     assessmentDecision: 'accepted',
     assessmentDecisionDate: '2023-01-01',
     assessmentId: 'low',
+    document: applicationDocument,
   }
 
   let releaseFollowingDecisionPlacementApplication = placementApplication.build({
