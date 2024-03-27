@@ -35,7 +35,24 @@ export const tableRows = (tasks: Array<PlacementRequestTask>): Array<TableRow> =
 export const dashboardTableRows = (
   placementRequests: Array<PlacementRequest>,
   status: PlacementRequestStatus | undefined,
+  { showRequestedAndActualArrivalDates }: { showRequestedAndActualArrivalDates: boolean } = {
+    showRequestedAndActualArrivalDates: false,
+  },
 ): Array<TableRow> => {
+  if (showRequestedAndActualArrivalDates) {
+    return placementRequests.map((placementRequest: PlacementRequest) => {
+      return [
+        nameCell(placementRequest),
+        tierCell(placementRequest.risks),
+        expectedArrivalDateCell(placementRequest, 'short'),
+        actualArrivalDateCell(placementRequest),
+        applicationDateCell(placementRequest),
+        status === 'matched' ? premisesNameCell(placementRequest) : durationCell(placementRequest),
+        requestTypeCell(placementRequest),
+        statusCell(placementRequest),
+      ]
+    })
+  }
   return placementRequests.map((placementRequest: PlacementRequest) => {
     return [
       nameCell(placementRequest),
@@ -90,6 +107,10 @@ export const expectedArrivalDateCell = (
   text: DateFormats.isoDateToUIDate(item.expectedArrival, { format }),
 })
 
+export const actualArrivalDateCell = (item: PlacementRequest): TableCell => ({
+  text: item.booking?.arrivalDate ? DateFormats.isoDateToUIDate(item.booking?.arrivalDate, { format: 'short' }) : 'N/A',
+})
+
 export const applicationDateCell = (item: PlacementRequest): TableCell => ({
   text: DateFormats.isoDateToUIDate(item.applicationDate, { format: 'short' }),
 })
@@ -134,7 +155,34 @@ export const dashboardTableHeader = (
   sortBy: PlacementRequestSortField,
   sortDirection: SortDirection,
   hrefPrefix: string,
+  showRequestedAndActualArrivalDates: boolean = false,
 ): Array<TableCell> => {
+  if (showRequestedAndActualArrivalDates) {
+    return [
+      sortHeader<PlacementRequestSortField>('Name', 'person_name', sortBy, sortDirection, hrefPrefix),
+      sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
+      sortHeader<PlacementRequestSortField>(
+        'Requested arrival date',
+        'expected_arrival',
+        sortBy,
+        sortDirection,
+        hrefPrefix,
+      ),
+      {
+        text: 'Actual arrival date',
+      },
+      sortHeader<PlacementRequestSortField>('Application date', 'application_date', sortBy, sortDirection, hrefPrefix),
+      status === 'matched'
+        ? {
+            text: 'Approved Premises',
+          }
+        : sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
+      sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
+      {
+        text: 'Status',
+      },
+    ]
+  }
   return [
     sortHeader<PlacementRequestSortField>('Name', 'person_name', sortBy, sortDirection, hrefPrefix),
     {

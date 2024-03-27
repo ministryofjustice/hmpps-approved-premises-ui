@@ -45,13 +45,13 @@ describe('FeatureFlagService', () => {
           when(mockClient.evaluation.boolean)
             .calledWith({
               namespaceKey: featureFlagService.namespaceKey,
-              flagKey: 'some-flag',
+              flagKey: 'show-both-arrival-dates',
               entityId: '',
               context: {},
             })
             .mockResolvedValue(booleanEvaluationResponse)
 
-          const response = await featureFlagService.getBooleanFlag('some-flag')
+          const response = await featureFlagService.getBooleanFlag('show-both-arrival-dates')
           expect(response).toEqual(enabled)
         },
       )
@@ -60,7 +60,7 @@ describe('FeatureFlagService', () => {
         when(mockClient.evaluation.boolean)
           .calledWith({
             namespaceKey: featureFlagService.namespaceKey,
-            flagKey: 'some-flag',
+            flagKey: 'show-both-arrival-dates',
             entityId: '',
             context: {},
           })
@@ -68,10 +68,10 @@ describe('FeatureFlagService', () => {
             throw new Error('Feature flag not found')
           })
 
-        const response = await featureFlagService.getBooleanFlag('some-flag')
+        const response = await featureFlagService.getBooleanFlag('show-both-arrival-dates')
 
         expect(response).toEqual(false)
-        expect(logger.error).toHaveBeenCalledWith('Feature flag some-flag not found, defaulting to false')
+        expect(logger.error).toHaveBeenCalledWith('Feature flag show-both-arrival-dates not found, defaulting to false')
       })
     })
   })
@@ -82,7 +82,7 @@ describe('FeatureFlagService', () => {
     })
 
     it('should return true', async () => {
-      const response = await featureFlagService.getBooleanFlag('some-flag')
+      const response = await featureFlagService.getBooleanFlag('show-both-arrival-dates')
       expect(response).toEqual(true)
     })
   })
