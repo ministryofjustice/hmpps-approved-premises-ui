@@ -71,13 +71,30 @@ describe('MakeADecision', () => {
   })
 
   describe('response', () => {
-    it('returns the response', () => {
-      const page = new MakeADecision({
-        decision: 'informationNotProvided',
-      })
+    describe('if there is no rationale provided', () => {
+      it('returns the response', () => {
+        const page = new MakeADecision({
+          decision: 'informationNotProvided',
+        })
 
-      expect(page.response()).toEqual({
-        Decision: 'Reject, insufficient information: Requested information not provided by probation practitioner',
+        expect(page.response()).toEqual({
+          Decision: 'Reject, insufficient information: Requested information not provided by probation practitioner',
+          'Decision rationale': 'No rationale provided',
+        })
+      })
+    })
+
+    describe('if there is rationale provided', () => {
+      it('returns the response', () => {
+        const page = new MakeADecision({
+          decision: 'informationNotProvided',
+          decisionRationale: 'Some rationale',
+        })
+
+        expect(page.response()).toEqual({
+          Decision: 'Reject, insufficient information: Requested information not provided by probation practitioner',
+          'Decision rationale': 'Some rationale',
+        })
       })
     })
   })
