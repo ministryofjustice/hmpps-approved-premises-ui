@@ -45,7 +45,6 @@ import ReasonForShortNoticePage from './reasonForShortNoticePage'
 import RehabilitativeInterventions from './rehabilitativeInterventions'
 import ReleaseDatePage from './releaseDate'
 import RelocationRegionPage from './relocationRegion'
-import RfapPage from './rfap'
 import RfapDetailsPage from './rfapDetails'
 import RiskManagementFeatures from './riskManagementFeatures'
 import RiskManagementPlanPage from './riskManagementPlan'
@@ -115,7 +114,6 @@ export {
   RehabilitativeInterventions,
   ReleaseDatePage,
   RelocationRegionPage,
-  RfapPage,
   RfapDetailsPage,
   RiskManagementFeatures,
   RiskManagementPlanPage,
