@@ -1,15 +1,9 @@
 import { createMock } from '@golevelup/ts-jest'
 import { applicationFactory, assessmentFactory, documentFactory } from '../../testutils/factories'
 import { forPagesInTask } from './forPagesInTask'
-import {
-  embeddedSummaryListItem,
-  reviewApplicationSections,
-  summaryListSections,
-  taskResponsesAsSummaryListItems,
-} from './summaryListUtils'
+import { embeddedSummaryListItem, summaryListSections, taskResponsesAsSummaryListItems } from './summaryListUtils'
 import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from '../assessments/documentUtils'
-import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
 import { getResponseForPage } from './getResponseForPage'
 import TasklistPage from '../../form-pages/tasklistPage'
 import { linebreaksToParagraphs } from '../utils'
@@ -237,21 +231,6 @@ describe('summaryListUtils', () => {
           },
         ])
       })
-    })
-  })
-
-  describe('reviewApplicationSections', () => {
-    it('sends a cardActionFunction to reviewSections, which passes the correct assessment ID on to `getActionsForTaskId`', () => {
-      const application = applicationFactory.build()
-
-      reviewApplicationSections(application, 'assessmentId')
-
-      const { mock } = reviewSections as jest.Mock
-      const cardActionFunction = mock.calls[2][3]
-
-      cardActionFunction('task')
-
-      expect(getActionsForTaskId).toHaveBeenCalledWith('task', 'assessmentId')
     })
   })
 })

@@ -14,6 +14,7 @@ import { acceptanceData } from '../../../server/utils/assessments/acceptanceData
 import AssessHelper from '../../helpers/assess'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import { ApprovedPremisesApplication as Application } from '../../../server/@types/shared/models/ApprovedPremisesApplication'
+import applicationDocument from '../../fixtures/applicationDocument.json'
 
 describe('Short notice assessments', () => {
   beforeEach(() => {
@@ -32,7 +33,7 @@ describe('Short notice assessments', () => {
 
         let application = applicationFactory
           .withFullPerson()
-          .build({ submittedAt: DateFormats.dateObjToIsoDate(today) })
+          .build({ submittedAt: DateFormats.dateObjToIsoDate(today), document: applicationDocument })
 
         application.data = applicationData
 

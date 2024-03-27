@@ -10,7 +10,6 @@ import placementApplicationsPaths from '../../paths/placementApplications'
 
 import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from '../assessments/documentUtils'
-import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { getResponseForPage } from './getResponseForPage'
 import { forPagesInTask } from './forPagesInTask'
@@ -78,12 +77,6 @@ const attachDocumentsSummaryListItems = (
   })
 
   return items
-}
-
-const reviewApplicationSections = (application: Application, assessmentId: string) => {
-  const cardActionFunction = (taskId: string) => getActionsForTaskId(taskId, assessmentId)
-
-  return reviewSections(application, taskResponsesAsSummaryListItems, false, cardActionFunction)
 }
 
 const embeddedSummaryListItem = (answers: Array<Record<string, unknown>>): string => {
@@ -155,4 +148,4 @@ const linkToPage = (pageName: string, taskName: string, formArtifact: FormArtifa
   }
 }
 
-export { summaryListSections, embeddedSummaryListItem, taskResponsesAsSummaryListItems, reviewApplicationSections }
+export { summaryListSections, embeddedSummaryListItem, taskResponsesAsSummaryListItems }

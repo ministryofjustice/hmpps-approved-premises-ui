@@ -23,6 +23,7 @@ import {
 import Page from '../../pages/page'
 import { awaitingAssessmentStatuses } from '../../../server/utils/assessments/utils'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
+import applicationDocument from '../../fixtures/applicationDocument.json'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -39,7 +40,7 @@ context('Assess', () => {
         const clarificationNote = clarificationNoteFactory.build({ response: undefined })
         const assessment = assessmentFactory.build({
           decision: undefined,
-          application: { data: applicationData, person: personFactory.build() },
+          application: { data: applicationData, person: personFactory.build(), document: applicationDocument },
           clarificationNotes: [clarificationNote],
         })
 
