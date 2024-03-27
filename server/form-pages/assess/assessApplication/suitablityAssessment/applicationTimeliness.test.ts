@@ -1,3 +1,4 @@
+import { when } from 'jest-when'
 import { DateFormats } from '../../../../utils/dateUtils'
 import { assessmentFactory } from '../../../../testutils/factories'
 import { YesOrNo } from '../../../../@types/ui'
@@ -5,7 +6,9 @@ import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../ut
 
 import ApplicationTimeliness from './applicationTimeliness'
 import { arrivalDateFromApplication } from '../../../../utils/applications/arrivalDateFromApplication'
-import { ShortNoticeReasons } from '../../../apply/reasons-for-placement/basic-information/reasonForShortNotice'
+import ReasonForShortNotice, {
+  ShortNoticeReasons,
+} from '../../../apply/reasons-for-placement/basic-information/reasonForShortNotice'
 import { suitabilityAssessmentAdjacentPage } from '../../../../utils/assessments/suitabilityAssessmentAdjacentPage'
 
 jest.mock('../../../../utils/retrieveQuestionResponseFromFormArtifact')
@@ -121,20 +124,60 @@ describe('ApplicationTimeliness', () => {
     const applicationDate = '2023-06-01'
     const arrivalDate = '2024-01-04'
     const assessmentForApplicationDetails = assessment
-    assessmentForApplicationDetails.application.submittedAt = applicationDate
-    ;(
-      retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFn<
-        typeof retrieveOptionalQuestionResponseFromFormArtifact
-      >
-    ).mockReturnValue('onBail')
-    ;(arrivalDateFromApplication as jest.MockedFn<typeof arrivalDateFromApplication>).mockReturnValue(arrivalDate)
 
-    const page = new ApplicationTimeliness(body, assessment)
+    beforeEach(() => {
+      assessmentForApplicationDetails.application.submittedAt = applicationDate
+      when(arrivalDateFromApplication).calledWith(assessment.application).mockReturnValue(arrivalDate)
+    })
 
-    expect(page.retrieveShortNoticeApplicationDetails()).toEqual({
-      applicationDate: DateFormats.isoDateToUIDate(applicationDate, { format: 'short' }),
-      lateApplicationReason: 'The individual will be on bail',
-      arrivalDate: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
+    it('should return the details of the application', () => {
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, ReasonForShortNotice, 'reason')
+        .mockReturnValue('onBail')
+
+      const page = new ApplicationTimeliness(body, assessment)
+
+      expect(page.retrieveShortNoticeApplicationDetails()).toEqual({
+        applicationDate: DateFormats.isoDateToUIDate(applicationDate, { format: 'short' }),
+        lateApplicationReason: 'The individual will be on bail',
+        arrivalDate: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
+      })
+    })
+
+    it('should return the other reason if the reason is other', () => {
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, ReasonForShortNotice, 'reason')
+        .mockReturnValue('other')
+
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, ReasonForShortNotice, 'other')
+        .mockReturnValue('Other reason')
+
+      const page = new ApplicationTimeliness(body, assessment)
+
+      expect(page.retrieveShortNoticeApplicationDetails()).toEqual({
+        applicationDate: DateFormats.isoDateToUIDate(applicationDate, { format: 'short' }),
+        lateApplicationReason: 'Other reason',
+        arrivalDate: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
+      })
+    })
+
+    it('should fall back to displaying the other option if the reason is other and the free text value is empty', () => {
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, ReasonForShortNotice, 'reason')
+        .mockReturnValue('other')
+
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(assessment.application, ReasonForShortNotice, 'other')
+        .mockReturnValue(undefined)
+
+      const page = new ApplicationTimeliness(body, assessment)
+
+      expect(page.retrieveShortNoticeApplicationDetails()).toEqual({
+        applicationDate: DateFormats.isoDateToUIDate(applicationDate, { format: 'short' }),
+        lateApplicationReason: 'Other, please specify',
+        arrivalDate: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
+      })
     })
   })
 })
