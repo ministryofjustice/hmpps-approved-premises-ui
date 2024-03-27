@@ -12,25 +12,32 @@ export default class SufficientInformationPage extends Page {
   }
 
   confirmUserDetails(application: ApprovedPremisesApplication) {
-    cy.get('dl').within(() => {
-      this.assertDefinition(
-        'Name',
-        application.caseManagerIsNotApplicant
-          ? application.caseManagerUserDetails.name
-          : application.applicantUserDetails.name,
-      )
-      this.assertDefinition(
-        'Email',
-        application.caseManagerIsNotApplicant
-          ? application.caseManagerUserDetails.email
-          : application.applicantUserDetails.email,
-      )
-      this.assertDefinition(
-        'Contact number',
-        application.caseManagerIsNotApplicant
-          ? application.caseManagerUserDetails.telephoneNumber
-          : application.applicantUserDetails.telephoneNumber,
-      )
-    })
+    cy.get('h2').contains(
+      application.caseManagerIsNotApplicant ? 'Applicant details' : 'Case manager and applicant details',
+    )
+
+    if (application.caseManagerIsNotApplicant) {
+      cy.get('dl')
+        .first()
+        .within(() => {
+          this.assertDefinition('Name', application.applicantUserDetails.name)
+          this.assertDefinition('Email', application.applicantUserDetails.email)
+          this.assertDefinition('Contact number', application.applicantUserDetails.telephoneNumber)
+        })
+
+      cy.get('dl')
+        .last()
+        .within(() => {
+          this.assertDefinition('Name', application.caseManagerUserDetails.name)
+          this.assertDefinition('Email', application.caseManagerUserDetails.email)
+          this.assertDefinition('Contact number', application.caseManagerUserDetails.telephoneNumber)
+        })
+    } else {
+      cy.get('dl').within(() => {
+        this.assertDefinition('Name', application.applicantUserDetails.name)
+        this.assertDefinition('Email', application.applicantUserDetails.email)
+        this.assertDefinition('Contact number', application.applicantUserDetails.telephoneNumber)
+      })
+    }
   }
 }

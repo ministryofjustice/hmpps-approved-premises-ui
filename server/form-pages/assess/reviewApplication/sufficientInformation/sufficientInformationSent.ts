@@ -5,14 +5,9 @@ import {
   ApprovedPremisesAssessment as Assessment,
   Cas1ApplicationUserDetails as UserDetails,
 } from '../../../../@types/shared'
-import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
-import ConfirmYourDetails from '../../../apply/reasons-for-placement/basic-information/confirmYourDetails'
-import {
-  userDetailsFromCaseManagerPage,
-  userDetailsFromConfirmYourDetailsPage,
-} from '../../../../utils/applications/userDetailsFromApplication'
+import { lowerCase } from '../../../../utils/utils'
 
-const caseManagerKeys: Array<keyof UserDetails> = ['name', 'email', 'telephoneNumber']
+const userDetailsKeys: Array<keyof UserDetails> = ['name', 'email', 'telephoneNumber']
 
 @Page({
   name: 'sufficient-information-sent',
@@ -23,21 +18,30 @@ export default class SufficientInformationSent implements TasklistPage {
 
   title = 'How to get further information'
 
+  caseManagerIsNotApplicant: boolean
+
   caseManager: UserDetails = {
     name: '',
     email: '',
     telephoneNumber: '',
   }
 
+  applicant: UserDetails = { name: '', email: '', telephoneNumber: '' }
+
   constructor(
     public readonly body: Record<string, unknown>,
     assessment: Assessment,
   ) {
-    caseManagerKeys.forEach(fieldName => {
+    this.caseManagerIsNotApplicant = assessment.application?.caseManagerIsNotApplicant
+
+    userDetailsKeys.forEach(fieldName => {
       this.caseManager[fieldName] =
-        this.caseManagerDetailsFromApplication(assessment)?.[fieldName] ||
-        this.caseManagerDetailsFromFormData(assessment)?.[fieldName] ||
-        `No ${fieldName} for case manager supplied`
+        assessment.application?.caseManagerUserDetails?.[fieldName] || this.fieldNotSupplied(fieldName)
+    })
+
+    userDetailsKeys.forEach(fieldName => {
+      this.applicant[fieldName] =
+        assessment.application?.applicantUserDetails?.[fieldName] || this.fieldNotSupplied(fieldName)
     })
   }
 
@@ -57,23 +61,7 @@ export default class SufficientInformationSent implements TasklistPage {
     return {}
   }
 
-  private caseManagerDetailsFromApplication(assessment: Assessment) {
-    return assessment.application?.caseManagerIsNotApplicant
-      ? assessment.application?.caseManagerUserDetails
-      : assessment.application?.applicantUserDetails
-  }
-
-  private caseManagerDetailsFromFormData(assessment: Assessment) {
-    const caseManagerIsNotApplicant = Boolean(
-      retrieveOptionalQuestionResponseFromFormArtifact(
-        assessment.application,
-        ConfirmYourDetails,
-        'caseManagementResponsibility',
-      ) === 'no',
-    )
-
-    return caseManagerIsNotApplicant
-      ? userDetailsFromCaseManagerPage(assessment.application)
-      : userDetailsFromConfirmYourDetailsPage(assessment.application)
+  private fieldNotSupplied(fieldName: string) {
+    return `No ${lowerCase(fieldName)} supplied`
   }
 }
