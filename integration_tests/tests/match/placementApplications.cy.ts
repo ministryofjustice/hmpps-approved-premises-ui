@@ -25,6 +25,7 @@ import paths from '../../../server/paths/api'
 import { addResponseToFormArtifact } from '../../../server/testutils/addToApplication'
 import ReviewApplicationConfirmPage from '../../pages/match/reviewApplicationForm/confirmPage'
 import { defaultUserId } from '../../mockApis/auth'
+import applicationDocument from '../../fixtures/applicationDocument.json'
 
 context('Placement Applications', () => {
   beforeEach(() => {
@@ -44,6 +45,7 @@ context('Placement Applications', () => {
         id: '123',
         createdByUserId: defaultUserId,
         person: personFactory.build(),
+        document: applicationDocument,
       })
       cy.task('stubApplicationGet', { application: completedApplication })
       cy.task('stubApplications', [completedApplication])
@@ -121,6 +123,7 @@ context('Placement Applications', () => {
         id: '123',
         createdByUserId: defaultUserId,
         person: personFactory.build(),
+        document: applicationDocument,
       })
       cy.task('stubApplicationGet', { application: completedApplication })
       cy.task('stubApplications', [completedApplication])
@@ -191,6 +194,7 @@ context('Placement Applications', () => {
         id: '123',
         createdByUserId: defaultUserId,
         person,
+        document: applicationDocument,
       })
       completedApplication = addResponseToFormArtifact(completedApplication, {
         task: 'type-of-ap',
@@ -403,6 +407,7 @@ context('Placement Applications', () => {
     const application = applicationFactory.completed('accepted').build({
       id: '123',
       person: personFactory.build(),
+      document: applicationDocument,
     })
     cy.task('stubApplicationGet', { application })
 
@@ -419,6 +424,7 @@ context('Placement Applications', () => {
       id: '123',
       createdByUserId: defaultUserId,
       person: personFactory.build(),
+      document: applicationDocument,
     })
     cy.task('stubApplicationGet', { application })
 
@@ -437,6 +443,7 @@ context('Placement Applications', () => {
       createdByUserId: defaultUserId,
       assessmentDecision: undefined,
       person: personFactory.build(),
+      document: applicationDocument,
     })
     cy.task('stubApplicationGet', { application })
 

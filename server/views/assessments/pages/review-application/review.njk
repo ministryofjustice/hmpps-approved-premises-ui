@@ -5,7 +5,7 @@
 {% extends "../layout.njk" %}
 
 {% set columnClasses= "govuk-grid-column-full" %}
-{% set nomsNumber = page.document.application.person.nomsNumber if page.document.application.person.nomsNumber else 
+{% set nomsNumber = page.document.application.person.nomsNumber if page.document.application.person.nomsNumber else
   "" %}
 
 {% block questions %}
@@ -115,7 +115,7 @@
     })
   }}
 
-  {% for section in SummaryListUtils.reviewApplicationSections(page.document.application, assessmentId) %}
+  {% for section in getSummaryCardsForApplication(page.document.application, assessmentId) %}
     <h2 class="govuk-heading-l" id={{section.title | kebabCase }}>{{ section.title }}</h2>
     {% for task in section.tasks %}
       {{ govukSummaryList(task) }}

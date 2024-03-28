@@ -13,6 +13,7 @@ import errorLookups from '../../server/i18n/en/errors.json'
 import { summaryListSections } from '../../server/utils/applications/summaryListUtils'
 import { DateFormats } from '../../server/utils/dateUtils'
 import { sentenceCase } from '../../server/utils/utils'
+import { SumbmittedApplicationSummaryCards } from '../../server/utils/applications/submittedApplicationSummaryCards'
 
 export type PageElement = Cypress.Chainable<JQuery>
 
@@ -230,6 +231,20 @@ export default abstract class Page {
   shouldShowCheckYourAnswersTitle(taskName: string, taskTitle: string) {
     cy.get(`[data-cy-section="${taskName}"]`).within(() => {
       cy.get('.govuk-summary-card__title').should('contain', taskTitle)
+    })
+  }
+
+  shouldShowResponseFromSubmittedApplication(application: Application) {
+    const sections = new SumbmittedApplicationSummaryCards(application).response
+
+    sections.forEach(section => {
+      cy.get('h2.govuk-heading-l').contains(section.title).should('exist')
+      section.tasks.forEach(task => {
+        cy.get(`[data-cy-section="${task.card.attributes['data-cy-section']}"]`).within(() => {
+          cy.get('.govuk-summary-card__title').contains(task.card.title.text).should('exist')
+          this.shouldContainSummaryListItems(task.rows)
+        })
+      })
     })
   }
 

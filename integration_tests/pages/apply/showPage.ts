@@ -108,7 +108,7 @@ export default class ShowPage extends Page {
   }
 
   shouldShowResponses() {
-    this.shouldShowCheckYourAnswersResponses(this.application)
+    this.shouldShowResponseFromSubmittedApplication(this.application)
   }
 
   shouldNotShowCreatePlacementRequestButton() {

@@ -6,7 +6,7 @@ import nunjucks from 'nunjucks'
 import express from 'express'
 
 import type { ErrorMessages } from '@approved-premises/ui'
-import { PersonStatus } from '@approved-premises/api'
+import { ApprovedPremisesApplication as Application, PersonStatus } from '@approved-premises/api'
 import {
   initialiseName,
   kebabCase,
@@ -30,6 +30,7 @@ import { statusTag } from './personUtils'
 import { DateFormats, monthOptions, uiDateOrDateEmptyMessage, yearOptions } from './dateUtils'
 import { pagination } from './pagination'
 import { sortHeader } from './sortHeader'
+import { SumbmittedApplicationSummaryCards } from './applications/submittedApplicationSummaryCards'
 
 import * as ApplyUtils from './applications/utils'
 import * as AssessmentUtils from './assessments/utils'
@@ -233,4 +234,10 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('PremisesUtils', PremisesUtils)
   njkEnv.addGlobal('ReportUtils', ReportUtils)
   njkEnv.addGlobal('AppealsUtils', AppealsUtils)
+
+  njkEnv.addGlobal(
+    'getSummaryCardsForApplication',
+    (application: Application, assessmentId?: string) =>
+      new SumbmittedApplicationSummaryCards(application, assessmentId).response,
+  )
 }

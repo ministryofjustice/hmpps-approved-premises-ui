@@ -3,6 +3,7 @@ import { appealFactory, applicationFactory, newAppealFactory, personFactory } fr
 import { ShowPage } from '../../pages/apply'
 import Page from '../../pages/page'
 import AppealsShowPage from '../../pages/apply/appeals/show'
+import applicationDocument from '../../fixtures/applicationDocument.json'
 
 context('Appeals', () => {
   beforeEach(() => {
@@ -17,7 +18,11 @@ context('Appeals', () => {
   it('should create an appeal', () => {
     // Given there is an application
     const person = personFactory.build()
-    const application = applicationFactory.build({ person, status: 'rejected' })
+    const application = applicationFactory.build({
+      person,
+      status: 'rejected',
+      document: applicationDocument,
+    })
     const appeal = appealFactory.build()
 
     cy.task('stubApplicationGet', { application })
