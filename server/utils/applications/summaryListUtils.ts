@@ -45,7 +45,7 @@ const taskResponsesAsSummaryListItems = (
         items.push(summaryListItemForResponse(key, value, task.id, pageName, applicationOrAssessment, showActions))
       } catch (e) {
         throw Error(
-          `Error rendering summary list. Page name: ${pageName}, response: ${response}, question: ${key}, error: ${e}`,
+          `Error rendering summary list. Page name: ${pageName}, response: ${JSON.stringify(response)}, question: ${key}, error: ${e}`,
         )
       }
     })
