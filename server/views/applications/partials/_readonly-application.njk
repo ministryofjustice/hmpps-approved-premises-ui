@@ -3,17 +3,23 @@
 
 {% macro applicationReadonlyView(application) %}
 
-  {{ personDetails(application.person, statusOnSubmission = application.personStatusOnSubmission) }}
+  {% if application.status === 'withdrawn' %}
+    {% set sections = SummaryListUtils.summaryListSections(application, false) %}
+  {%else%}
+    {% set sections = getSummaryCardsForApplication(application) %}
+  {%endif%}
 
-  {% if application.type !== 'Offline' %}
-    {% for section in getSummaryCardsForApplication(application) %}
-      <h2 class="govuk-heading-l">{{ section.title }}</h2>
-      {% for task in section.tasks %}
-        {{
+    {{ personDetails(application.person, statusOnSubmission = application.personStatusOnSubmission) }}
+
+    {% if application.type !== 'Offline' %}
+      {% for section in sections %}
+        <h2 class="govuk-heading-l">{{ section.title }}</h2>
+        {% for task in section.tasks %}
+          {{
               govukSummaryList(task)
             }}
+        {% endfor %}
       {% endfor %}
-    {% endfor %}
-  {% endif %}
+    {% endif %}
 
-{% endmacro %}
+  {% endmacro %}

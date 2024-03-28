@@ -111,6 +111,10 @@ export default class ShowPage extends Page {
     this.shouldShowResponseFromSubmittedApplication(this.application)
   }
 
+  shouldShowResponsesForUnsubmittedWithdrawnApplication() {
+    this.shouldShowCheckYourAnswersResponses(this.application)
+  }
+
   shouldNotShowCreatePlacementRequestButton() {
     cy.get('Create placement request').should('not.exist')
   }
