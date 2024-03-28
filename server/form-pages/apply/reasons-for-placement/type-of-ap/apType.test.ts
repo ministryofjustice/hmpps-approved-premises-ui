@@ -49,5 +49,13 @@ describe('SelectApType', () => {
         [page.title]: 'Psychologically Informed Planned Environment (PIPE)',
       })
     })
+
+    it('should return a translated version of the response', () => {
+      const page = new SelectApType({ type: 'standard' })
+
+      expect(page.response()).toEqual({
+        [page.title]: 'Standard AP',
+      })
+    })
   })
 })
