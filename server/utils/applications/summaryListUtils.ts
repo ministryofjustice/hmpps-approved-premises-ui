@@ -82,10 +82,11 @@ const attachDocumentsSummaryListItems = (
 const embeddedSummaryListItem = (answers: Array<Record<string, unknown>>): string => {
   let response = ''
 
-  answers.forEach(answer => {
-    response += '<dl class="govuk-summary-list govuk-summary-list--embedded">'
-    Object.keys(answer).forEach(key => {
-      response += `
+  try {
+    answers.forEach(answer => {
+      response += '<dl class="govuk-summary-list govuk-summary-list--embedded">'
+      Object.keys(answer).forEach(key => {
+        response += `
       <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
         <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
           ${key}
@@ -95,9 +96,12 @@ const embeddedSummaryListItem = (answers: Array<Record<string, unknown>>): strin
         </dd>
       </div>
       `
+      })
+      response += '</dl>'
     })
-    response += '</dl>'
-  })
+  } catch (e) {
+    throw Error(`Error rendering summary list. Answers: ${answers}, error: ${e}`)
+  }
 
   return response
 }
