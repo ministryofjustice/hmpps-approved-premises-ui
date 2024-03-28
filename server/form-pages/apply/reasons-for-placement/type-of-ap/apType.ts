@@ -1,4 +1,4 @@
-import type { TaskListErrors } from '@approved-premises/ui'
+import type { BackwardsCompatibleApplyApType, TaskListErrors } from '@approved-premises/ui'
 
 import { ApType } from '@approved-premises/api'
 import TasklistPage from '../../../tasklistPage'
@@ -21,7 +21,7 @@ export const apTypeLabels: Record<ApType, string> = {
 export default class SelectApType implements TasklistPage {
   title = `Which type of AP does the person require?`
 
-  constructor(public body: { type?: ApType }) {}
+  constructor(public body: { type?: BackwardsCompatibleApplyApType }) {}
 
   previous() {
     return 'dashboard'
@@ -39,7 +39,9 @@ export default class SelectApType implements TasklistPage {
   }
 
   response() {
-    return { [`${this.title}`]: apTypeLabels[this.body.type] }
+    const type = this.body.type === 'standard' ? 'normal' : this.body.type
+
+    return { [`${this.title}`]: apTypeLabels[type] }
   }
 
   errors() {
