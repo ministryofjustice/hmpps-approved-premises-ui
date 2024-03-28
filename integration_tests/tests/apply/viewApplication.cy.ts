@@ -58,6 +58,19 @@ context('show applications', () => {
     showPage.shouldShowTimeline(timeline)
   })
 
+  it('shows a read-only version of an unsubmitted withdrawn application', function test() {
+    // Given I have a withdrawn unsubmitted application
+    const updatedApplication = { ...this.application, status: 'withdrawn', document: undefined }
+    cy.task('stubApplicationGet', { application: updatedApplication })
+    cy.task('stubApplications', [updatedApplication])
+
+    // Then I should see a read-only version of the application
+    const showPage = ShowPage.visit(updatedApplication, 'application')
+
+    // And I should see the application details
+    showPage.shouldShowResponsesForUnsubmittedWithdrawnApplication()
+  })
+
   it('links to an assessment when an application has been assessed', function test() {
     // Given I have completed an application
     const application = {
