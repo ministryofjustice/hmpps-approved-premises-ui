@@ -32,15 +32,22 @@ const taskResponsesAsSummaryListItems = (
       )
       return
     }
+
     const response = getResponseForPage(applicationOrAssessment, task.id, pageName)
 
     Object.keys(response).forEach(key => {
-      const value =
-        typeof response[key] === 'string' || response[key] instanceof String
-          ? { html: linebreaksToParagraphs(response[key] as string) }
-          : { html: embeddedSummaryListItem(response[key] as Array<Record<string, unknown>>) }
+      try {
+        const value =
+          typeof response[key] === 'string' || response[key] instanceof String
+            ? { html: linebreaksToParagraphs(response[key] as string) }
+            : { html: embeddedSummaryListItem(response[key] as Array<Record<string, unknown>>) }
 
-      items.push(summaryListItemForResponse(key, value, task.id, pageName, applicationOrAssessment, showActions))
+        items.push(summaryListItemForResponse(key, value, task.id, pageName, applicationOrAssessment, showActions))
+      } catch (e) {
+        throw Error(
+          `Error rendering summary list. Page name: ${pageName}, response: ${response}, question: ${key}, error: ${e}`,
+        )
+      }
     })
   })
 
@@ -82,11 +89,10 @@ const attachDocumentsSummaryListItems = (
 const embeddedSummaryListItem = (answers: Array<Record<string, unknown>>): string => {
   let response = ''
 
-  try {
-    answers.forEach(answer => {
-      response += '<dl class="govuk-summary-list govuk-summary-list--embedded">'
-      Object.keys(answer).forEach(key => {
-        response += `
+  answers.forEach(answer => {
+    response += '<dl class="govuk-summary-list govuk-summary-list--embedded">'
+    Object.keys(answer).forEach(key => {
+      response += `
       <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
         <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
           ${key}
@@ -96,12 +102,9 @@ const embeddedSummaryListItem = (answers: Array<Record<string, unknown>>): strin
         </dd>
       </div>
       `
-      })
-      response += '</dl>'
     })
-  } catch (e) {
-    throw Error(`Error rendering summary list. Answers: ${answers}, error: ${e}`)
-  }
+    response += '</dl>'
+  })
 
   return response
 }
