@@ -44,11 +44,11 @@ export default class RfapDetails implements TasklistPage {
   constructor(public body: Partial<RfapDetailsBody>) {}
 
   previous() {
-    return 'rfap'
+    return 'ap-type'
   }
 
   next() {
-    return 'catering'
+    return ''
   }
 
   response() {

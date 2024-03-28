@@ -34,7 +34,7 @@ export default class PreviousPlacements implements TasklistPage {
   }
 
   next() {
-    return 'rfap'
+    return 'catering'
   }
 
   response() {
