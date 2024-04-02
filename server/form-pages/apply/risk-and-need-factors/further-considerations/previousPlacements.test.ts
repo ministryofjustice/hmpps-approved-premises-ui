@@ -17,7 +17,7 @@ describe('PreviousPlacements', () => {
     })
   })
 
-  itShouldHaveNextValue(new PreviousPlacements(body), 'rfap')
+  itShouldHaveNextValue(new PreviousPlacements(body), 'catering')
   itShouldHavePreviousValue(new PreviousPlacements(body), 'vulnerability')
 
   describe('errors', () => {

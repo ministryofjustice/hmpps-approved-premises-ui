@@ -538,7 +538,14 @@ export default class ApplyHelper {
     apTypePage.completeForm()
     apTypePage.clickSubmit()
 
-    this.pages.typeOfAp = [apTypePage]
+    // Given I am on the RFAP details page
+    const rfapDetailsPage = new ApplyPages.RfapDetailsPage(this.application)
+
+    // When I complete the form and click submit
+    rfapDetailsPage.completeForm()
+    rfapDetailsPage.clickSubmit()
+
+    this.pages.typeOfAp = [apTypePage, rfapDetailsPage]
 
     // Then I should be redirected to the task list
     const tasklistPage = Page.verifyOnPage(ApplyPages.TaskListPage)
@@ -825,15 +832,6 @@ export default class ApplyHelper {
     previousPlacementsPage.completeForm()
     previousPlacementsPage.clickSubmit()
 
-    // And I complete the RFAP pages
-    const rfapPage = new ApplyPages.RfapPage(this.application)
-    rfapPage.completeForm()
-    rfapPage.clickSubmit()
-
-    const rfapDetailsPage = new ApplyPages.RfapDetailsPage(this.application)
-    rfapDetailsPage.completeForm()
-    rfapDetailsPage.clickSubmit()
-
     // And I complete the Catering page
     const cateringPage = new ApplyPages.CateringPage(this.application)
     cateringPage.completeForm()
@@ -877,8 +875,6 @@ export default class ApplyHelper {
       roomSharingPage,
       vulnerabilityPage,
       previousPlacementsPage,
-      rfapPage,
-      rfapDetailsPage,
       cateringPage,
       arsonPage,
       additionalCircumstancesPage,

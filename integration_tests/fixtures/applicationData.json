@@ -91,6 +91,12 @@
   "type-of-ap": {
     "ap-type": {
       "type": "rfap"
+    },
+    "rfap-details": {
+      "motivation": "Some motivation",
+      "continuedRecovery": "Some work",
+      "receivingTreatment": "yes",
+      "receivingTreatmentDetail": "Some details here"
     }
   },
   "oasys-import": {
@@ -421,15 +427,6 @@
     "previous-placements": {
       "previousPlacement": "yes",
       "previousPlacementDetail": "Some details here"
-    },
-    "rfap": {
-      "needARfap": "yes"
-    },
-    "rfap-details": {
-      "motivation": "Some motivation",
-      "continuedRecovery": "Some work",
-      "receivingTreatment": "yes",
-      "receivingTreatmentDetail": "Some details here"
     },
     "catering": {
       "catering": "no",

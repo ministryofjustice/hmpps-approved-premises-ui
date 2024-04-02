@@ -14,60 +14,35 @@ context('Apply - ESAP', () => {
     const uiRisks = mapApiPersonRisksForUi(this.application.risks)
     const apply = new ApplyHelper(this.application, this.person, this.offences)
 
-    this.application = addResponseToFormArtifact(this.application, {
-      task: 'type-of-ap',
-      page: 'ap-type',
-      key: 'type',
-      value: 'esap',
-    })
-
-    this.application = addResponseToFormArtifact(this.application, {
-      task: 'type-of-ap',
-      page: 'managed-by-national-security-division',
-      key: 'managedByNationalSecurityDivision',
-      value: 'no',
-    })
-
-    this.application = addResponsesToFormArtifact(this.application, {
-      task: 'type-of-ap',
-      page: 'esap-exceptional-case',
-      keyValuePairs: {
-        ...DateFormats.isoDateToDateInputs('2023-07-01', 'agreementDate'),
+    this.application.data['type-of-ap'] = {
+      'ap-type': {
+        type: 'esap',
+      },
+      'managed-by-national-security-division': {
+        managedByNationalSecurityDivision: 'no',
+      },
+      'esap-exceptional-case': {
         agreedCaseWithCommunityHopp: 'yes',
         communityHoppName: 'Some Manager',
+        ...DateFormats.isoDateToDateInputs('2023-07-01', 'agreementDate'),
         agreementSummary: 'Some Summary Text',
       },
-    })
-
-    this.application = addResponsesToFormArtifact(this.application, {
-      task: 'type-of-ap',
-      page: 'esap-placement-screening',
-      keyValuePairs: {
+      'esap-placement-screening': {
         esapReasons: ['secreting', 'cctv'],
       },
-    })
-
-    this.application = addResponsesToFormArtifact(this.application, {
-      task: 'type-of-ap',
-      page: 'esap-placement-cctv',
-      keyValuePairs: {
+      'esap-placement-cctv': {
         cctvHistory: ['appearance', 'networks'],
         cctvIntelligence: 'yes',
         cctvIntelligenceDetails: 'Some Details',
         cctvNotes: 'Some notes',
       },
-    })
-
-    this.application = addResponsesToFormArtifact(this.application, {
-      task: 'type-of-ap',
-      page: 'esap-placement-secreting',
-      keyValuePairs: {
+      'esap-placement-secreting': {
         secretingHistory: ['radicalisationLiterature', 'drugs'],
         secretingIntelligence: 'yes',
         secretingIntelligenceDetails: 'Some Details',
         secretingNotes: 'Some notes',
       },
-    })
+    }
 
     apply.setupApplicationStubs(uiRisks)
 
