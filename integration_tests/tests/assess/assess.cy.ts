@@ -24,6 +24,7 @@ import Page from '../../pages/page'
 import { awaitingAssessmentStatuses } from '../../../server/utils/assessments/utils'
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import applicationDocument from '../../fixtures/applicationDocument.json'
+import paths from '../../../server/paths/assess'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -87,6 +88,14 @@ context('Assess', () => {
       const body = JSON.parse(requests[0].body)
       expect(body).to.deep.equal(acceptanceData(this.assessment))
     })
+  })
+
+  it('make a decision page displays selected value', function test() {
+    cy.task('stubAssessment', this.assessment)
+
+    cy.visit(paths.assessments.pages.show({ id: this.assessment.id, task: 'make-a-decision', page: 'make-a-decision' }))
+
+    cy.get(`input[name="decision"][value="accept"]`).should('be.checked')
   })
 
   it('shows a banner when the assessment has come from an appeal', function test() {

@@ -21,23 +21,28 @@
         <h2>{{sectionName}}</h2>
 
         {% for questionId, fullQuestion in subsection %}
+          {% set checked = page.decision == questionId %}
 
           <div class="govuk-radios__item">
-            <input class="govuk-radios__input" id="{{ questionId }}" name="decision" type="radio" value="{{ questionId }}">
+            {% if checked %}
+              <input class="govuk-radios__input" id="{{ questionId }}" name="decision" type="radio" value="{{ questionId }}" checked>
+            {% else %}
+              <input class="govuk-radios__input" id="{{ questionId }}" name="decision" type="radio" value="{{ questionId }}" >
+              {%endif%}
 
-            <label class="govuk-label govuk-radios__label" for="{{ questionId }}">
-              {{ fullQuestion }}
-            </label>
-          </div>
+              <label class="govuk-label govuk-radios__label" for="{{ questionId }}">
+                {{ fullQuestion }}
+              </label>
+            </div>
 
-        {% endfor %}
+          {% endfor %}
 
-        {%endfor%}
+          {%endfor%}
+        </div>
+
+        {%endcall%}
       </div>
-
-      {%endcall%}
-    </div>
-    {{
+      {{
         formPageTextarea(
           {
             fieldName: "decisionRationale",
@@ -51,4 +56,4 @@
           fetchContext()
         )
       }}
-  {% endblock %}
+    {% endblock %}
