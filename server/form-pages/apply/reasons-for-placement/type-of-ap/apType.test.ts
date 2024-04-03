@@ -36,7 +36,7 @@ describe('SelectApType', () => {
     it('it calls convertKeyValuePairToRadioItems', () => {
       const page = new SelectApType({})
       page.items()
-
+      // mock convertArrayToRadioItems return and test that `items` returns it
       expect(convertArrayToRadioItems).toHaveBeenCalledWith(apTypes, undefined, apTypeLabels, apTypeHintText)
     })
   })
