@@ -52,7 +52,7 @@ export default class SelectApType implements TasklistPage {
   }
 
   items() {
-    return convertArrayToRadioItems(apTypes, this.body.type, apTypeLabels, apTypeHintText)
+    return convertArrayToRadioItems(apTypes, this.body.type, apTypeLabels, apTypeHintText, apTypeConditionals)
   }
 }
 
@@ -89,4 +89,29 @@ export const apTypeHintText: Partial<Record<ApType, RadioItem['hint']>> = {
       <p class="govuk-body govuk-hint">While not mandatory for RFAP placement, this information aids in determining suitable alternative placements (AP).</p>
     `,
   },
+}
+
+const mhapConditional: RadioItem['conditional'] = {
+  html: `
+    <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+      <div class="govuk-notification-banner__header">
+        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+          Important
+        </h2>
+      </div>
+      <div class="govuk-notification-banner__content">
+        <div class="govuk-checkboxes__item">
+          <input type="checkbox" class="govuk-checkboxes__input" name="mhapRequirementsConfirmation" value="yes" id="mhapRequirementsConfirmation">
+          <label class="govuk-label govuk-checkboxes__label" for="mhapRequirementsConfirmation">
+            I understand that I need to complete and upload a supplementary form to nDelius
+          </label>
+        </div>
+      </div>
+    </div>
+  `,
+}
+
+export const apTypeConditionals: Partial<Record<ApType, RadioItem['conditional']>> = {
+  mhapElliottHouse: mhapConditional,
+  mhapStJosephs: mhapConditional,
 }
