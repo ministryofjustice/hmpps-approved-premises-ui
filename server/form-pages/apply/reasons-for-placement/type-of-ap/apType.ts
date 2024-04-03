@@ -1,4 +1,4 @@
-import type { BackwardsCompatibleApplyApType, TaskListErrors } from '@approved-premises/ui'
+import type { BackwardsCompatibleApplyApType, RadioItem, TaskListErrors } from '@approved-premises/ui'
 
 import { ApType } from '@approved-premises/api'
 import TasklistPage from '../../../tasklistPage'
@@ -56,7 +56,7 @@ export default class SelectApType implements TasklistPage {
   }
 }
 
-export const apTypeHintText = {
+export const apTypeHintText: Partial<Record<ApType, RadioItem['hint']>> = {
   mhapElliottHouse: {
     html: `<p class="govuk-body govuk-hint">To apply for this type of placement a person must have a confirmed diagnosis of a severe and enduring mental illness e.g. paranoid schizophrenia / bipolar affective disorder (the primary diagnosis should not be personality disorder).</p>
         <p class="govuk-body govuk-hint">You will be required to submit a <a class="govuk-link" target="_blank" href="https://justiceuk.sharepoint.com/:w:/r/sites/ApprovedPremisesCareerDevelopment/Shared%20Documents/CRU/St%20Josephs%20Referral%20form.doc?d=w0e510931be504df7be3b360bbe1b37fe&csf=1&web=1&e=XZd9u4">supplementary form (opens in a new tab)</a>. Once completed it should be uploaded as part of the 'Add documents' section of this application before submission.</p>
