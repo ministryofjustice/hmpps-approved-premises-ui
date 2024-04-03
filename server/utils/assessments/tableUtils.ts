@@ -106,7 +106,7 @@ const assessmentTable = (
           {
             text: 'Days since received',
           },
-          sortHeader<AssessmentSortField>('Days until assessment due', 'createdAt', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Days until assessment due', 'dueAt', sortBy, sortDirection, hrefPrefix),
           sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
         rows: requestedFurtherInformationTableRows(assessments),
@@ -138,7 +138,7 @@ const assessmentTable = (
           {
             text: 'Current location',
           },
-          sortHeader<AssessmentSortField>('Days until assessment due', 'createdAt', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Days until assessment due', 'dueAt', sortBy, sortDirection, hrefPrefix),
           sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
         rows: awaitingAssessmentTableRows(assessments),

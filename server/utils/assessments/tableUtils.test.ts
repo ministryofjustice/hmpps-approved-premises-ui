@@ -118,7 +118,7 @@ describe('tableUtils', () => {
           {
             text: 'Current location',
           },
-          sortHeader<AssessmentSortField>('Days until assessment due', 'createdAt', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Days until assessment due', 'dueAt', sortBy, sortDirection, hrefPrefix),
           sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
         rows: awaitingAssessmentTableRows(assessments),
@@ -141,7 +141,7 @@ describe('tableUtils', () => {
           {
             text: 'Days since received',
           },
-          sortHeader<AssessmentSortField>('Days until assessment due', 'createdAt', sortBy, sortDirection, hrefPrefix),
+          sortHeader<AssessmentSortField>('Days until assessment due', 'dueAt', sortBy, sortDirection, hrefPrefix),
           sortHeader<AssessmentSortField>('Status', 'status', sortBy, sortDirection, hrefPrefix),
         ],
         rows: requestedFurtherInformationTableRows(assessments),
