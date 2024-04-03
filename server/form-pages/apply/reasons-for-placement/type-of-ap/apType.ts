@@ -65,7 +65,7 @@ export const apTypeHintText: Partial<Record<ApType, RadioItem['hint']>> = {
   mhapStJosephs: {
     html: `<p class="govuk-body govuk-hint">To apply for this type of placement a person must:</p>
       <ul class="govuk-list govuk-list--bullet govuk-hint">
-        <li>have a confirmed diagnosis of a severe and enduring mental illness e.g paranoid schizophrenia / bipolar affective disorder</li>
+        <li>have a confirmed diagnosis of a severe and enduring mental illness e.g. paranoid schizophrenia / bipolar affective disorder</li>
         <li>be managed by the Probation Service in Greater Manchester</li>
       </ul>
       <p class="govuk-body govuk-hint">They must also:</p>
