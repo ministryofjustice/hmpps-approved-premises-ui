@@ -541,24 +541,67 @@ describe('formUtils', () => {
   })
 
   describe('convertArrayToRadioItems', () => {
-    describe('when hints are passed and labels arent', () => {
-      it('returns the array as radio items with the value in sentence case', () => {
-        expect(convertArrayToRadioItems(['one', 'two'], 'two', {}, { one: { html: 'some hint' } })).toEqual([
-          { text: 'One', value: 'one', checked: false, hint: { html: 'some hint' } },
-          { text: 'Two', value: 'two', checked: true },
-        ])
-      })
+    const array = ['foo', 'bar']
+
+    it('should convert a key value pair to radio items', () => {
+      expect(convertArrayToRadioItems(array)).toEqual([
+        {
+          value: 'foo',
+          text: 'Foo',
+          checked: false,
+        },
+        {
+          value: 'bar',
+          text: 'Bar',
+          checked: false,
+        },
+      ])
     })
 
-    describe('when labels are passed', () => {
-      it('returns the array as radio items with the value in sentence case', () => {
-        expect(
-          convertArrayToRadioItems(['one', 'two'], 'two', { one: 'The number one', two: 'The number two' }),
-        ).toEqual([
-          { text: 'The number one', value: 'one', checked: false },
-          { text: 'The number two', value: 'two', checked: true },
-        ])
-      })
+    it('should check the checked item', () => {
+      expect(convertArrayToRadioItems(array, 'foo')).toEqual([
+        expect.objectContaining({ checked: true }),
+        expect.objectContaining({ checked: false }),
+      ])
+
+      expect(convertArrayToRadioItems(array, 'bar')).toEqual([
+        expect.objectContaining({ checked: false }),
+        expect.objectContaining({ checked: true }),
+      ])
+    })
+
+    it('should handle labels', () => {
+      const labels = {
+        foo: 'Foo!',
+        bar: 'Bar!',
+      }
+
+      expect(convertArrayToRadioItems(array, undefined, labels)).toEqual([
+        expect.objectContaining({ text: 'Foo!' }),
+        expect.objectContaining({ text: 'Bar!' }),
+      ])
+    })
+
+    it('should handle hints', () => {
+      const hints = {
+        foo: {
+          text: 'foo',
+        },
+        bar: {
+          html: '<p>bar</p>',
+        },
+      }
+
+      expect(convertArrayToRadioItems(array, undefined, undefined, hints)).toEqual([
+        expect.objectContaining({
+          hint: {
+            text: 'foo',
+          },
+        }),
+        expect.objectContaining({
+          hint: { html: '<p>bar</p>' },
+        }),
+      ])
     })
   })
 
