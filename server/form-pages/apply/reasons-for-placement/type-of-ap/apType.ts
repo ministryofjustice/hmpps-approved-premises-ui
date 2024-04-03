@@ -77,17 +77,16 @@ export const apTypeHintText: Partial<Record<ApType, RadioItem['hint']>> = {
         <li>be under the care of secondary care mental health services within a custodial setting as an alternative to community mental health services</li>
       </ul>
       <p class="govuk-body govuk-hint">You will be required to submit a <a class="govuk-link" target="_blank" href="https://justiceuk.sharepoint.com/:w:/s/ApprovedPremisesCareerDevelopment/Eag6XVxypVBHhu-pBMrfvqIBTTva2uNFkKB9Tl6c6OX-jA?e=sGaEma">supplementary form (opens in a new tab)</a>. Once completed it should be uploaded as part of the 'Add documents' section of this application before submission.</p>
-      `,
+    `,
   },
   rfap: {
-    html: `
-        <p class="govuk-body govuk-hint">You'll need to provide details on whether:</p>
-        <ul class="govuk-list govuk-list--bullet govuk-hint">
-          <li>the person has resided in an incentivised substance-free living (ISFL) area in custody</li>
-          <li>the person has interacted with the DART team in custody</li>
-          <li>the person is willing to comply with the RFAP regime</li>
-        </ul>
-        <p class="govuk-body govuk-hint">While not mandatory for RFAP placement, this information aids in determining suitable alternative placements (AP).</p>
-      `,
+    html: `<p class="govuk-body govuk-hint">You'll need to provide details on whether:</p>
+      <ul class="govuk-list govuk-list--bullet govuk-hint">
+        <li>the person has resided in an incentivised substance-free living (ISFL) area in custody</li>
+        <li>the person has interacted with the DART team in custody</li>
+        <li>the person is willing to comply with the RFAP regime</li>
+      </ul>
+      <p class="govuk-body govuk-hint">While not mandatory for RFAP placement, this information aids in determining suitable alternative placements (AP).</p>
+    `,
   },
 }
