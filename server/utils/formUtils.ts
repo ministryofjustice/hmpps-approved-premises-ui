@@ -120,7 +120,7 @@ export function convertKeyValuePairToCheckBoxItems<T extends object>(
 
 export function convertArrayToRadioItems<T extends string>(
   array: Array<T> | ReadonlyArray<T>,
-  checkedItem: string,
+  checkedItem?: string,
   labels?: Partial<Record<T, RadioItem['text']>>,
   hints?: Partial<Record<T, RadioItem['hint']>>,
 ): Array<RadioItem> {
