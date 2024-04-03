@@ -603,6 +603,15 @@ describe('formUtils', () => {
         }),
       ])
     })
+
+    it('should handle conditionals', () => {
+      const conditionals = { foo: { html: 'foo' }, bar: { html: 'bar' } }
+
+      expect(convertArrayToRadioItems(array, undefined, undefined, undefined, conditionals)).toEqual([
+        expect.objectContaining({ conditional: { html: 'foo' } }),
+        expect.objectContaining({ conditional: { html: 'bar' } }),
+      ])
+    })
   })
 
   describe('convertArrayToCheckboxItems', () => {

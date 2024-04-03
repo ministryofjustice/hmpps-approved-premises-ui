@@ -123,6 +123,7 @@ export function convertArrayToRadioItems<T extends string>(
   checkedItem?: string,
   labels?: Partial<Record<T, RadioItem['text']>>,
   hints?: Partial<Record<T, RadioItem['hint']>>,
+  conditionals?: Partial<Record<T, RadioItem['conditional']>>,
 ): Array<RadioItem> {
   return array.map(key => {
     const radioItem: RadioItem = {
@@ -133,6 +134,10 @@ export function convertArrayToRadioItems<T extends string>(
 
     if (hints?.[key]) {
       radioItem.hint = hints[key]
+    }
+
+    if (conditionals?.[key]) {
+      radioItem.conditional = conditionals[key]
     }
 
     return radioItem
