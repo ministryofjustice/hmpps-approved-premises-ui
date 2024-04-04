@@ -36,7 +36,8 @@
   },
   "date": {
     "empty": "You must enter a valid departure date",
-    "invalid": "The departure date is an invalid date"
+    "invalid": "The departure date is an invalid date",
+    "afterBookingArrivalDate": "The date must be after the booking's arrival date"
   },
   "reasonId": {
     "empty": "You must choose a valid reason",
