@@ -28,6 +28,14 @@ describe('ReasonForShortNotice', () => {
     expect(page.question).toEqual('Why is this application being submitted outside of National Standards timescales?')
   })
 
+  it('should return the question for standard applications and not the title', () => {
+    ;(noticeTypeFromApplication as jest.Mock).mockReturnValue('standard')
+    const page = new ReasonForShortNotice({}, application)
+
+    expect(page.title).toBeUndefined()
+    expect(page.question).toEqual('Why is this application being submitted outside of National Standards timescales?')
+  })
+
   it('should set the body', () => {
     const page = new ReasonForShortNotice(
       {
