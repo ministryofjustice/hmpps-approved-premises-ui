@@ -17,6 +17,7 @@ import {
   ListPage,
   RfapSuitabilityPage,
   ShowPage,
+  SufficientInformationPage,
   SuitabilityAssessmentPage,
   TaskListPage,
 } from '../../pages/assess'
@@ -25,6 +26,7 @@ import { awaitingAssessmentStatuses } from '../../../server/utils/assessments/ut
 import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
 import applicationDocument from '../../fixtures/applicationDocument.json'
 import paths from '../../../server/paths/assess'
+import SufficientInformationConfirmPage from '../../pages/assess/sufficientInformationConfirmPage'
 
 context('Assess', () => {
   beforeEach(() => {
@@ -191,6 +193,94 @@ context('Assess', () => {
         expect(body.response).equal('response text')
         expect(body.responseReceivedOn).equal('2023-09-02')
       })
+  })
+
+  it('allows an infinite loop when requesting more information', function test() {
+    const assessmentNeedingClarification = {
+      ...this.assessment,
+      data: {
+        ...this.assessment.data,
+        'sufficient-information': {
+          'sufficient-information': {
+            sufficientInformation: 'no',
+            query: 'clarification note text',
+          },
+          'sufficient-information-confirm': {
+            confirm: 'yes',
+          },
+          'information-received': {
+            informationReceived: 'yes',
+            response: 'response text',
+            'responseReceivedOn-year': '2023',
+            'responseReceivedOn-month': '09',
+            'responseReceivedOn-day': '02',
+          },
+        },
+      },
+    }
+
+    const assessmentSummary = assessmentSummaryFactory.build({
+      id: assessmentNeedingClarification.id,
+      status: 'not_started',
+      person: this.assessment.application.person,
+    })
+
+    const assessHelper = new AssessHelper(
+      assessmentNeedingClarification,
+      this.documents,
+      this.user,
+      this.clarificationNote,
+    )
+
+    assessHelper.setupStubs()
+
+    // Given I start an assessment
+    assessHelper.startAssessment()
+
+    // And I add a clarification note
+    assessHelper.addClarificationNote()
+
+    cy.task('stubAssessments', {
+      assessments: [assessmentSummary],
+      statuses: ['awaiting_response'],
+      sortBy: 'name',
+      sortDirection: 'asc',
+    })
+
+    // When I visit the assessments dashboard
+    const listPage = ListPage.visit('awaiting_response')
+
+    // And I click on the assessment
+    listPage.clickAssessment(assessmentNeedingClarification)
+
+    // And I confirm I have received the information I requested
+    assessHelper.updateClarificationNote('yes')
+
+    // When I click on the 'sufficient-information' link
+    cy.get('[data-cy-task-name="sufficient-information"]').click()
+
+    // Then I should be taken to the sufficient information page
+    const sufficientInformationPage = new SufficientInformationPage(assessmentNeedingClarification)
+
+    // When I click confirm
+    sufficientInformationPage.clickSubmit()
+
+    // Then I am taken to the sufficient information confirm page
+    const updatedAssessment = addResponsesToFormArtifact(assessmentNeedingClarification, {
+      task: 'sufficient-information',
+      page: 'sufficient-information-confirm',
+      keyValuePairs: {
+        confirm: 'no',
+      },
+    })
+    cy.task('stubAssessment', updatedAssessment)
+
+    // When I answer 'no' to the question 'Are you sure that you want to request more information about this application?'
+    const sufficientInformationConfirmPage = new SufficientInformationConfirmPage(updatedAssessment)
+    sufficientInformationConfirmPage.checkRadioByNameAndValue('confirm', 'no')
+    sufficientInformationConfirmPage.clickSubmit()
+
+    // Then an infinite loop between the SufficientInformation and SufficentInformationConfirm pages happens
   })
 
   it('should allow me to reject an application where I have not received the correct information', function test() {
