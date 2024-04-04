@@ -23,7 +23,7 @@ export default class UserController {
       } catch (error) {
         const knownError = error as HttpError | Error
         if ('data' in knownError && knownError.status === 404) {
-          addErrorMessageToFlash(req, 'User not found. Enter the nDelius username as appears on nDelius', 'username')
+          addErrorMessageToFlash(req, 'User not found. Enter the NDelius username as appears on NDelius', 'username')
           return res.redirect(paths.admin.userManagement.new({}))
         }
         throw knownError

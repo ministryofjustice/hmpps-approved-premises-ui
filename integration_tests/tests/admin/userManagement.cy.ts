@@ -128,7 +128,7 @@ context('User management', () => {
 
     // Then I should see an error
     searchDeliusPage.shouldShowErrorMessagesForFields(['username'], {
-      username: 'User not found. Enter the nDelius username as appears on nDelius',
+      username: 'User not found. Enter the NDelius username as appears on NDelius',
     })
 
     // When I search for a user
