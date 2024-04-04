@@ -535,6 +535,7 @@ export default class ApplyHelper {
     const apTypePage = new ApplyPages.ApType(this.application)
 
     // When I complete the form and click submit
+    apTypePage.shouldNotShowMentalHealthAps()
     apTypePage.completeForm()
     apTypePage.clickSubmit()
 
