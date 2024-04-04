@@ -7,6 +7,11 @@ export default class MatchingInformationPage extends AssessPage {
     super('Matching information', assessment, 'matching-information', 'matching-information', '')
   }
 
+  shouldNotShowMentalHealthAps() {
+    cy.get(`input[name="apType"][value="isMHAPElliottHouse"]`).should('not.exist')
+    cy.get(`input[name="apType"][value="isMHAPStJosephs"]`).should('not.exist')
+  }
+
   completeForm() {
     this.checkRadioButtonFromPageBody('apType')
 

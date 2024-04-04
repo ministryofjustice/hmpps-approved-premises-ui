@@ -285,6 +285,7 @@ export default class AseessHelper {
 
     // Then I should be taken to the matching information page
     const page = new MatchingInformationPage(this.assessment)
+    page.shouldNotShowMentalHealthAps()
     page.completeForm()
     page.clickSubmit()
 
