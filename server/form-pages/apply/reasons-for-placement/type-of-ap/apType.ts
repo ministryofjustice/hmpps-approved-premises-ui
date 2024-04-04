@@ -6,7 +6,7 @@ import { convertArrayToRadioItems } from '../../../../utils/formUtils'
 import { Page } from '../../../utils/decorators'
 
 // The ordering of AP types is meaningful to users
-export const apTypes: ReadonlyArray<ApType> = ['normal', 'pipe', 'esap', 'rfap']
+export const apTypes: ReadonlyArray<ApType> = ['normal', 'pipe', 'esap', 'rfap', 'mhapElliottHouse', 'mhapStJosephs']
 
 export const apTypeLabels: Record<ApType, string> = {
   normal: 'Standard AP',
