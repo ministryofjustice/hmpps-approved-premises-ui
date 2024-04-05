@@ -107,6 +107,7 @@ context('show applications', () => {
     const application = {
       ...this.application,
       type: 'Offline',
+      document: undefined,
       status: undefined,
     }
     cy.task('stubApplicationGet', { application })

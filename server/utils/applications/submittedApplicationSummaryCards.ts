@@ -42,7 +42,7 @@ export class SumbmittedApplicationSummaryCards {
   }
 
   summaryCardRowsForTaskId = (taskId: string): Array<SummaryListItem> => {
-    const pages = (this.application.document[taskId] as TaskResponse) || []
+    const pages = (this.application.document?.[taskId] as TaskResponse) || []
     if (taskId === 'attach-required-documents') {
       return this.summaryCardRowsForDocuments()
     }

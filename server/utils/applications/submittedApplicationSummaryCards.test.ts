@@ -307,4 +307,25 @@ describe('SumbmittedApplicationSummaryCards', () => {
     expect(getActionsForTaskId).not.toHaveBeenCalled()
     expect(cards[0].tasks[0].card.actions).toEqual(undefined)
   })
+
+  it('should handle offline applications, returning an empty array for task rows', () => {
+    const section = createMock<FormSection>({
+      title: 'My Section',
+      tasks: [
+        createMock<UiTask>({
+          title: 'Task 1',
+          id: 'task-1',
+        }),
+      ],
+    })
+
+    const application = applicationFactory.build({ type: 'offline', document: undefined, status: undefined })
+    const cards = new SumbmittedApplicationSummaryCards(application, null, [section]).response
+
+    cards.forEach(card => {
+      card.tasks.forEach(task => {
+        expect(task.rows).toEqual([])
+      })
+    })
+  })
 })
