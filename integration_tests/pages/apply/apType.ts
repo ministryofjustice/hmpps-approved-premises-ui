@@ -13,11 +13,6 @@ export default class TypeOfApPage extends ApplyPage {
     )
   }
 
-  shouldNotShowMentalHealthAps() {
-    cy.get(`input[name="type"][value="mhapElliottHouse"]`).should('not.exist')
-    cy.get(`input[name="type"][value="mhapStJosephs"]`).should('not.exist')
-  }
-
   completeForm() {
     this.checkRadioButtonFromPageBody('type')
   }

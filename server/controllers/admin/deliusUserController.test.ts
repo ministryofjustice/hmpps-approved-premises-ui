@@ -94,7 +94,7 @@ describe('DeliusUserController', () => {
       expect(response.redirect).toHaveBeenCalledWith(paths.admin.userManagement.new({}))
       expect(addErrorMessageToFlash).toHaveBeenCalledWith(
         request,
-        'User not found. Enter the nDelius username as appears on nDelius',
+        'User not found. Enter the NDelius username as appears on NDelius',
         'username',
       )
     })
