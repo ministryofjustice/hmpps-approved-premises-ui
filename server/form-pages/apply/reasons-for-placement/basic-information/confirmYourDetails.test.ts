@@ -69,27 +69,32 @@ describe('ConfirmYourDetails', () => {
   })
 
   describe('initialize', () => {
-    it('calls the data services and returns an instantiated ConfirmYourDetails page', async () => {
-      const actingUserFromDelius = {
-        name: body.name,
-        email: body.emailAddress,
-        telephoneNumber: body.phoneNumber,
-        apArea: area,
-      }
+    const actingUserFromDelius = {
+      name: body.name,
+      email: body.emailAddress,
+      telephoneNumber: body.phoneNumber,
+      apArea: area,
+    }
 
-      const deliusUserMappedForUi = {
-        name: actingUserFromDelius.name,
-        emailAddress: actingUserFromDelius.email,
-        phoneNumber: actingUserFromDelius.telephoneNumber,
-        area: actingUserFromDelius.apArea,
-      }
+    const deliusUserMappedForUi = {
+      name: actingUserFromDelius.name,
+      emailAddress: actingUserFromDelius.email,
+      phoneNumber: actingUserFromDelius.telephoneNumber,
+      area: actingUserFromDelius.apArea,
+    }
 
-      const getUserByIdMock = jest.fn().mockResolvedValue(actingUserFromDelius)
-      const getAreasMock = jest.fn().mockResolvedValue(areas)
+    let getUserByIdMock: jest.Mock
+    let userService: DeepMocked<UserService>
 
-      const userService: DeepMocked<UserService> = createMock<UserService>({
+    beforeEach(() => {
+      getUserByIdMock = jest.fn().mockResolvedValue(actingUserFromDelius)
+      userService = createMock<UserService>({
         getUserById: getUserByIdMock,
       })
+    })
+
+    it('calls the data services and returns an instantiated ConfirmYourDetails page', async () => {
+      const getAreasMock = jest.fn().mockResolvedValue(areas)
       const apAreaService: DeepMocked<ApAreaService> = createMock<ApAreaService>({
         getApAreas: getAreasMock,
       })
@@ -117,9 +122,26 @@ describe('ConfirmYourDetails', () => {
 
       expect(getUserByIdMock).toHaveBeenCalledWith('token', application.createdByUserId)
       expect(getAreasMock).toHaveBeenCalledWith('token')
-
       expect(result).toEqual(expected)
       expect(result.userDetailsFromDelius).toEqual(deliusUserMappedForUi)
+    })
+
+    it('excludes "NAT" from the areas', async () => {
+      const areasWithNat = [...areas, apAreaFactory.build({ name: 'NAT' })]
+      const getAreasMock = jest.fn().mockResolvedValue(areasWithNat)
+      const apAreaService: DeepMocked<ApAreaService> = createMock<ApAreaService>({
+        getApAreas: getAreasMock,
+      })
+
+      const result = await ConfirmYourDetails.initialize(
+        {},
+        application,
+        'token',
+        fromPartial({ userService, apAreaService }),
+      )
+
+      expect(result.body.areas).toEqual(areas)
+      expect(result.body.areas.find(bodyArea => bodyArea.name === 'NAT')).toBeUndefined()
     })
   })
 

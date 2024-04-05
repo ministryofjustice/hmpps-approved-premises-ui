@@ -117,7 +117,7 @@ export default class ConfirmYourDetails implements TasklistPage {
     dataServices: DataServices,
   ): Promise<ConfirmYourDetails> {
     const user = await dataServices.userService.getUserById(token, application.createdByUserId)
-    const areas = await dataServices.apAreaService.getApAreas(token)
+    const areas = (await dataServices.apAreaService.getApAreas(token)).filter(area => area.name !== 'NAT')
 
     const userForUi = {
       name: user.name,
