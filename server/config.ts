@@ -106,6 +106,19 @@ export default {
       token: get('FLIPT_TOKEN', null, fliptEnabled ? requiredInProduction : null),
       namespace: get('FLIPT_NAMESPACE', null, fliptEnabled ? requiredInProduction : null),
     },
+    manageUsersApi: {
+      url: get('MANAGE_USERS_API_URL', 'http://localhost:9090/manage-users-api', requiredInProduction),
+      externalUrl: get('HMPPS_AUTH_EXTERNAL_URL', get('MANAGE_USERS_API_URL', 'http://localhost:9090/manage-users-api')),
+      timeout: {
+        response: Number(get('HMPPS_AUTH_TIMEOUT_RESPONSE', 10000)),
+        deadline: Number(get('HMPPS_AUTH_TIMEOUT_DEADLINE', 10000)),
+      },
+      agent: new AgentConfig(Number(get('HMPPS_AUTH_TIMEOUT_RESPONSE', 10000))),
+      apiClientId: get('API_CLIENT_ID', 'clientid', requiredInProduction),
+      apiClientSecret: get('API_CLIENT_SECRET', 'clientsecret', requiredInProduction),
+      systemClientId: get('SYSTEM_CLIENT_ID', 'clientid', requiredInProduction),
+      systemClientSecret: get('SYSTEM_CLIENT_SECRET', 'clientsecret', requiredInProduction),
+    },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
 }

@@ -15,6 +15,7 @@ generic-service:
     APPROVED_PREMISES_API_URL: 'https://approved-premises-api-test.hmpps.service.justice.gov.uk'
     INGRESS_URL: 'https://approved-premises-test.hmpps.service.justice.gov.uk'
     HMPPS_AUTH_URL: 'https://sign-in-dev.hmpps.service.justice.gov.uk/auth'
+    MANAGE_USERS_API_URL: 'https://sign-in-dev.hmpps.service.justice.gov.uk/manage-users-api'
     TOKEN_VERIFICATION_API_URL: 'https://token-verification-api-dev.prison.service.justice.gov.uk'
     COMMUNITY_ACCOMMODATION_API_SERVICE_NAME: approved-premises
     COMMUNITY_ACCOMMODATION_API_TIMEOUT_RESPONSE: 30000
