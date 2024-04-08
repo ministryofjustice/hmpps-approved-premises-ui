@@ -18,6 +18,7 @@ export type SubmitTemporaryAccommodationApplication = (SubmitApplication & {
     pdu?: string;
     isHistoryOfSexualOffence?: boolean;
     isConcerningSexualBehaviour?: boolean;
+    isConcerningArsonBehaviour?: boolean;
     summaryData: AnyValue;
 });
 
