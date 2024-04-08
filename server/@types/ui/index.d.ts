@@ -40,6 +40,7 @@ import {
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
 } from '@approved-premises/api'
+import { FeatureFlag } from '../../services/featureFlagService'
 
 interface TasklistPage {
   body: Record<string, unknown>
@@ -298,6 +299,7 @@ export type DataServices = Partial<{
   }
   featureFlagService: {
     getAll: () => Promise<FeatureFlags>
+    getBooleanFlag: (flag: FeatureFlag) => Promise<boolean>
   }
 }>
 

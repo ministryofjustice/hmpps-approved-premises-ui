@@ -578,7 +578,8 @@
                 "mhapStJosephs",
                 "normal",
                 "pipe",
-                "rfap"
+                "rfap",
+                "standard"
               ],
               "type": "string"
             }

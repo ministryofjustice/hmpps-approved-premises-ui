@@ -122,13 +122,7 @@ context('Assess', () => {
         query: 'clarification note text',
       },
     })
-    addResponsesToFormArtifact<Assessment>(assessmentNeedingClarification, {
-      task: 'sufficient-information',
-      page: 'sufficient-information-confirm',
-      keyValuePairs: {
-        confirm: 'yes',
-      },
-    })
+
     assessmentNeedingClarification = addResponsesToFormArtifact<Assessment>(assessmentNeedingClarification, {
       task: 'sufficient-information',
       page: 'information-received',
@@ -140,6 +134,7 @@ context('Assess', () => {
         'responseReceivedOn-day': '02',
       },
     })
+
     const assessHelper = new AssessHelper(
       assessmentNeedingClarification,
       this.documents,
@@ -152,7 +147,7 @@ context('Assess', () => {
     assessHelper.startAssessment()
 
     // And I add a clarification note
-    assessHelper.addClarificationNote()
+    assessHelper.addClarificationNote({ testConfirmationPage: false })
 
     cy.task('verifyClarificationNoteCreate', assessmentNeedingClarification)
       .then(requests => {
@@ -195,7 +190,7 @@ context('Assess', () => {
       })
   })
 
-  it('allows an infinite loop when requesting more information', function test() {
+  it('prevent an infinite loop when requesting more information', function test() {
     const assessmentNeedingClarification = {
       ...this.assessment,
       data: {
@@ -204,9 +199,6 @@ context('Assess', () => {
           'sufficient-information': {
             sufficientInformation: 'no',
             query: 'clarification note text',
-          },
-          'sufficient-information-confirm': {
-            confirm: 'yes',
           },
           'information-received': {
             informationReceived: 'yes',
@@ -238,7 +230,7 @@ context('Assess', () => {
     assessHelper.startAssessment()
 
     // And I add a clarification note
-    assessHelper.addClarificationNote()
+    assessHelper.addClarificationNote({ testConfirmationPage: false })
 
     cy.task('stubAssessments', {
       assessments: [assessmentSummary],
@@ -264,23 +256,6 @@ context('Assess', () => {
 
     // When I click confirm
     sufficientInformationPage.clickSubmit()
-
-    // Then I am taken to the sufficient information confirm page
-    const updatedAssessment = addResponsesToFormArtifact(assessmentNeedingClarification, {
-      task: 'sufficient-information',
-      page: 'sufficient-information-confirm',
-      keyValuePairs: {
-        confirm: 'no',
-      },
-    })
-    cy.task('stubAssessment', updatedAssessment)
-
-    // When I answer 'no' to the question 'Are you sure that you want to request more information about this application?'
-    const sufficientInformationConfirmPage = new SufficientInformationConfirmPage(updatedAssessment)
-    sufficientInformationConfirmPage.checkRadioByNameAndValue('confirm', 'no')
-    sufficientInformationConfirmPage.clickSubmit()
-
-    // Then an infinite loop between the SufficientInformation and SufficentInformationConfirm pages happens
   })
 
   it('should allow me to reject an application where I have not received the correct information', function test() {
@@ -294,16 +269,10 @@ context('Assess', () => {
     })
     assessment = addResponsesToFormArtifact<Assessment>(assessment, {
       task: 'sufficient-information',
-      page: 'sufficient-information-confirm',
+      page: 'information-received',
       keyValuePairs: {
         confirm: 'no',
       },
-    })
-    assessment = addResponseToFormArtifact<Assessment>(assessment, {
-      task: 'sufficient-information',
-      page: 'information-received',
-      key: 'informationReceived',
-      value: 'yes',
     })
     assessment = addResponsesToFormArtifact<Assessment>(assessment, {
       task: 'make-a-decision',
@@ -323,7 +292,7 @@ context('Assess', () => {
 
     // And I add a clarification note
     assessHelper
-      .addClarificationNote()
+      .addClarificationNote({ testConfirmationPage: false })
       .then(() => {
         const listPage = Page.verifyOnPage(ListPage)
 

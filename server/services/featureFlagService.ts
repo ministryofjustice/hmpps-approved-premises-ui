@@ -2,7 +2,7 @@ import { ClientTokenAuthentication, FliptClient } from '@flipt-io/flipt'
 import config from '../config'
 import logger from '../../logger'
 
-const featureFlags = ['show-both-arrival-dates'] as const
+const featureFlags = ['show-both-arrival-dates', 'allow-sufficient-information-request-without-confirmation'] as const
 
 export type FeatureFlag = (typeof featureFlags)[number]
 export type FeatureFlags = Record<FeatureFlag, boolean>
