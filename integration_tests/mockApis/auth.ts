@@ -124,7 +124,7 @@ const stubUser = (name: string) =>
   stubFor({
     request: {
       method: 'GET',
-      urlPattern: '/auth/api/user/me',
+      urlPattern: '/manage-users-api/users/me',
     },
     response: {
       status: 200,

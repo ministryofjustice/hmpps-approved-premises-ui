@@ -10,17 +10,17 @@ import {
 import { PaginatedResponse, UserDetails } from '@approved-premises/ui'
 import { ReferenceDataClient, RestClientBuilder, UserClient } from '../data'
 import { convertToTitleCase } from '../utils/utils'
-import type HmppsAuthClient from '../data/hmppsAuthClient'
+import type ManageUsersApiClient from '../data/manageUsersApiClient'
 
 export default class UserService {
   constructor(
-    private readonly hmppsAuthClient: HmppsAuthClient,
+    private readonly manageUsersApiClient: ManageUsersApiClient,
     private readonly userClientFactory: RestClientBuilder<UserClient>,
     private readonly referenceDataClientFactory: RestClientBuilder<ReferenceDataClient>,
   ) {}
 
   async getActingUser(token: string): Promise<UserDetails> {
-    const user = await this.hmppsAuthClient.getActingUser(token)
+    const user = await this.manageUsersApiClient.getActingUser(token)
     const client = this.userClientFactory(token)
     const profile = await client.getUserProfile()
     return {
