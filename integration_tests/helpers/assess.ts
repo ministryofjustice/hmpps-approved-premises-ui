@@ -132,7 +132,7 @@ export default class AseessHelper {
     page.clickSubmit()
 
     // And I confirm that I want to send the note
-    const confirmPage = new SufficientInformationConfirmPage(this.assessment, 'yes')
+    const confirmPage = new SufficientInformationConfirmPage(this.assessment)
     confirmPage.completeForm()
     confirmPage.clickSubmit()
 
