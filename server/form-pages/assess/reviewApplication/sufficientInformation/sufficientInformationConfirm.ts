@@ -7,6 +7,7 @@ import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
 } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+// eslint-disable-next-line import/no-cycle
 import SufficientInformation from './sufficientInformation'
 import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
 
@@ -48,7 +49,14 @@ export default class SufficientInformationConfirm implements TasklistPage {
     if (this.alreadyConfirmed()) {
       return 'information-received'
     }
-    return this.body.confirm === 'yes' ? 'sufficient-information-sent' : 'sufficient-information'
+
+    if (this.body.confirm === 'yes') return 'sufficient-information-sent'
+
+    if (this.assessment.clarificationNotes.length) {
+      return ''
+    }
+
+    return 'sufficient-information'
   }
 
   response() {

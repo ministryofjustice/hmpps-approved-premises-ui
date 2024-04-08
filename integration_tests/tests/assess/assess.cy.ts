@@ -277,10 +277,11 @@ context('Assess', () => {
 
     // When I answer 'no' to the question 'Are you sure that you want to request more information about this application?'
     const sufficientInformationConfirmPage = new SufficientInformationConfirmPage(updatedAssessment)
-    sufficientInformationConfirmPage.checkRadioByNameAndValue('confirm', 'no')
+    sufficientInformationConfirmPage.checkRadioButtonFromPageBody('confirm')
     sufficientInformationConfirmPage.clickSubmit()
 
-    // Then an infinite loop between the SufficientInformation and SufficentInformationConfirm pages happens
+    // Then I should be taken to the sufficient information page
+    Page.verifyOnPage(SufficientInformationPage, updatedAssessment)
   })
 
   it('should allow me to reject an application where I have not received the correct information', function test() {

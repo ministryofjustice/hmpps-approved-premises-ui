@@ -1,12 +1,13 @@
 import { createMock } from '@golevelup/ts-jest'
-
+import { when } from 'jest-when'
 import { fromPartial } from '@total-typescript/shoehorn'
+
 import { AssessmentService } from '../../../../services'
-import { itShouldHaveNextValue, itShouldHavePreviousValue } from '../../../shared-examples'
+import { itShouldHavePreviousValue } from '../../../shared-examples'
 
 import SufficientInformationConfirm from './sufficientInformationConfirm'
 
-import { assessmentFactory } from '../../../../testutils/factories'
+import { assessmentFactory, clarificationNoteFactory } from '../../../../testutils/factories'
 import {
   retrieveOptionalQuestionResponseFromFormArtifact,
   retrieveQuestionResponseFromFormArtifact,
@@ -101,27 +102,57 @@ describe('SufficientInformationConfirm', () => {
 
   itShouldHavePreviousValue(new SufficientInformationConfirm({}, assessment), 'sufficient-information')
 
-  describe('when the page has not already been completed', () => {
+  describe('when the page has not been completed', () => {
     beforeEach(() => {
-      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue(null)
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(assessment, SufficientInformationConfirm, 'confirm')
+        .mockReturnValue(null)
     })
 
-    itShouldHaveNextValue(
-      new SufficientInformationConfirm({ confirm: 'yes' }, assessment),
-      'sufficient-information-sent',
-    )
+    it('returns "sufficient-information-sent" when the answer is yes', () => {
+      expect(new SufficientInformationConfirm({ confirm: 'yes' }, assessment).next()).toBe(
+        'sufficient-information-sent',
+      )
+    })
 
-    itShouldHaveNextValue(new SufficientInformationConfirm({ confirm: 'no' }, assessment), 'sufficient-information')
+    it('returns "sufficient-information" when the answer is no', () => {
+      expect(new SufficientInformationConfirm({ confirm: 'no' }, assessment).next()).toBe('sufficient-information')
+    })
   })
 
   describe('when the page has already been completed', () => {
-    beforeEach(() => {
-      ;(retrieveOptionalQuestionResponseFromFormArtifact as jest.Mock).mockReturnValue('yes')
+    describe('when the response is "yes"', () => {
+      when(retrieveOptionalQuestionResponseFromFormArtifact)
+        .calledWith(assessment, SufficientInformationConfirm, 'confirm')
+        .mockReturnValue('yes')
+
+      expect(new SufficientInformationConfirm({ confirm: 'yes' }, assessment).next()).toBe('information-received')
     })
 
-    itShouldHaveNextValue(new SufficientInformationConfirm({ confirm: 'yes' }, assessment), 'information-received')
+    describe('when the response is no', () => {
+      describe('when there are clarificationNotes', () => {
+        when(retrieveOptionalQuestionResponseFromFormArtifact)
+          .calledWith(assessment, SufficientInformationConfirm, 'confirm')
+          .mockReturnValue('yes')
 
-    itShouldHaveNextValue(new SufficientInformationConfirm({ confirm: 'no' }, assessment), 'sufficient-information')
+        const assessmentWithNotes = assessmentFactory.build({
+          clarificationNotes: clarificationNoteFactory.buildList(1),
+        })
+        expect(new SufficientInformationConfirm({ confirm: 'no' }, assessmentWithNotes).next()).toBe('')
+      })
+
+      describe('when there arent clarificationNotes ', () => {
+        when(retrieveOptionalQuestionResponseFromFormArtifact)
+          .calledWith(assessment, SufficientInformationConfirm, 'confirm')
+          .mockReturnValue('yes')
+
+        const assessmentWithoutNotes = assessmentFactory.build({ clarificationNotes: [] })
+
+        expect(new SufficientInformationConfirm({ confirm: 'no' }, assessmentWithoutNotes).next()).toBe(
+          'sufficient-information',
+        )
+      })
+    })
   })
 
   describe('errors', () => {

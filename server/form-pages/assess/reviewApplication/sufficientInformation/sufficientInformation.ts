@@ -4,6 +4,10 @@ import { Page } from '../../../utils/decorators'
 import { sentenceCase } from '../../../../utils/utils'
 
 import TasklistPage from '../../../tasklistPage'
+import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
+import { retrieveOptionalQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+// eslint-disable-next-line import/no-cycle
+import SufficientInformationConfirm from './sufficientInformationConfirm'
 
 @Page({
   name: 'sufficient-information',
@@ -16,13 +20,25 @@ export default class SufficientInformation implements TasklistPage {
 
   furtherInformationQuestion = 'What additional information is needed?'
 
-  constructor(public body: { sufficientInformation?: YesOrNo; query?: string }) {}
+  constructor(
+    public body: { sufficientInformation?: YesOrNo; query?: string },
+    private assessment: Assessment,
+  ) {}
 
   previous() {
     return 'dashboard'
   }
 
   next() {
+    // In order to prevent an infinite loop when the user selects 'no' and then 'no' on 'sufficient-information-confirm'
+    if (
+      this.body.sufficientInformation === 'no' &&
+      retrieveOptionalQuestionResponseFromFormArtifact(this.assessment, SufficientInformationConfirm, 'confirm') ===
+        'no' &&
+      this.assessment?.clarificationNotes.length
+    ) {
+      delete this.assessment.data['sufficient-information']['sufficient-information-confirm']
+    }
     return this.body.sufficientInformation === 'no' ? 'sufficient-information-confirm' : ''
   }
 
