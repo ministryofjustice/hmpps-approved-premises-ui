@@ -31,11 +31,14 @@ export default class ReasonForShortNotice implements TasklistPage {
     public readonly body: Partial<ReasonForShortNoticeBody>,
     readonly application: Application,
   ) {
-    if (noticeTypeFromApplication(application) === 'emergency') {
+    const noticeType = noticeTypeFromApplication(application)
+    if (noticeType === 'emergency') {
       this.title = 'Emergency application'
       this.question = 'What was the reason for submitting this application 7 days or less before the AP is needed?'
-    } else {
+    } else if (noticeType === 'shortNotice') {
       this.title = 'Short notice application'
+      this.question = 'Why is this application being submitted outside of National Standards timescales?'
+    } else {
       this.question = 'Why is this application being submitted outside of National Standards timescales?'
     }
   }

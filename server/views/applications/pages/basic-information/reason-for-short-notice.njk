@@ -5,7 +5,9 @@
 
 {% block questions %}
 
-  <h1 class="govuk-heading-l">{{ page.title }}</h1>
+  {% if page.title %}
+    <h1 class="govuk-heading-l">{{ page.title }}</h1>
+  {% endif %}
 
   {% set conditionalHTML %}
   {{ formPageInput({
@@ -23,7 +25,8 @@
         fieldset: {
           legend: {
             text: page.question,
-            classes: "govuk-fieldset__legend--m"
+            classes: "govuk-fieldset__legend--{{ 'm' if page.title else 'l' }}",
+            isPageHeading: true
           }
         },
         hint: {
