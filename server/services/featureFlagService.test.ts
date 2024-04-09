@@ -86,4 +86,21 @@ describe('FeatureFlagService', () => {
       expect(response).toEqual(true)
     })
   })
+
+  describe('getAll', () => {
+    it('calls getBooleanFlag for each flag and returns the result as a FeatureFlags object', () => {
+      const spy = jest.fn().mockResolvedValueOnce(true).mockResolvedValueOnce(false)
+      featureFlagService.getBooleanFlag = spy
+
+      const response = featureFlagService.getAll()
+
+      expect(response).resolves.toEqual({
+        'show-both-arrival-dates': true,
+        'allow-sufficient-information-request-without-confirmation': false,
+      })
+      expect(spy).toHaveBeenCalledTimes(2)
+      expect(spy).toHaveBeenCalledWith('show-both-arrival-dates')
+      expect(spy).toHaveBeenCalledWith('allow-sufficient-information-request-without-confirmation')
+    })
+  })
 })

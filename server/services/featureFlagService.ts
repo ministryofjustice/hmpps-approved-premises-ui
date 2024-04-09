@@ -2,7 +2,10 @@ import { ClientTokenAuthentication, FliptClient } from '@flipt-io/flipt'
 import config from '../config'
 import logger from '../../logger'
 
-type FeatureFlag = 'show-both-arrival-dates'
+const featureFlags = ['show-both-arrival-dates'] as const
+
+export type FeatureFlag = (typeof featureFlags)[number]
+export type FeatureFlags = Record<FeatureFlag, boolean>
 
 export default class FeatureFlagService {
   fliptClient: FliptClient | null
@@ -40,5 +43,16 @@ export default class FeatureFlagService {
       }
       throw err
     }
+  }
+
+  async getAll(): Promise<FeatureFlags> {
+    const flags = await Promise.all(
+      featureFlags.map(async flag => {
+        const enabled = await this.getBooleanFlag(flag)
+        return [flag, enabled] as const
+      }),
+    )
+
+    return flags.reduce((prev, [flag, enabled]) => ({ ...prev, [flag]: enabled }), {} as FeatureFlags)
   }
 }
