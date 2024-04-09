@@ -51,11 +51,12 @@ export default class AssessmentService {
     dataServices: DataServices,
     userInput?: Record<string, unknown>,
   ) {
+    const featureFlags = await dataServices.featureFlagService.getAll()
     const body = getBody(Page, assessment, request, userInput)
 
     const page = Page.initialize
       ? await Page.initialize(body, assessment, request.user.token, dataServices)
-      : new Page(body, assessment)
+      : new Page(body, assessment, featureFlags)
 
     return page
   }

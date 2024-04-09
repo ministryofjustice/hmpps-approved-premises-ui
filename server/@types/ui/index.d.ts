@@ -296,6 +296,9 @@ export type DataServices = Partial<{
   apAreaService: {
     getApAreas: (token: string) => Promise<Array<ApArea>>
   }
+  featureFlagService: {
+    getAll: () => Promise<FeatureFlags>
+  }
 }>
 
 export type AssessmentGroupingCategory = 'status' | 'allocation'

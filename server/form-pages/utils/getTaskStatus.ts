@@ -5,12 +5,17 @@ import {
   ApprovedPremisesAssessment as Assessment,
 } from '@approved-premises/api'
 import { TasklistPageInterface } from '../tasklistPage'
+import { FeatureFlags } from '../../services/featureFlagService'
 
 const getPageData = (applicationOrAssessment: Application | Assessment, taskName: string, pageName: string) => {
   return applicationOrAssessment.data?.[taskName]?.[pageName]
 }
 
-const getTaskStatus = (task: UiTask, applicationOrAssessment: Application | Assessment): TaskStatus => {
+const getTaskStatus = (
+  task: UiTask,
+  applicationOrAssessment: Application | Assessment,
+  featureFlags: Partial<FeatureFlags>,
+): TaskStatus => {
   // Find the first page that has an answer
   let pageId = Object.keys(task.pages).find(
     (pageName: string) => !!getPageData(applicationOrAssessment, task.id, pageName),
@@ -34,7 +39,7 @@ const getTaskStatus = (task: UiTask, applicationOrAssessment: Application | Asse
 
     // Let's initialize this page
     const Page = task.pages[pageId] as TasklistPageInterface
-    const page = new Page(pageData, applicationOrAssessment)
+    const page = new Page(pageData, applicationOrAssessment, featureFlags)
 
     // Get the errors for this page
     const errors = page.errors()

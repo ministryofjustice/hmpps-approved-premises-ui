@@ -10,7 +10,7 @@ import { DataServices } from '../../@types/ui'
 export const controllers = (services: Services) => {
   const { assessmentService, applicationService, userService, taskService } = services
 
-  const assessmentsController = new AssessmentsController(assessmentService, taskService)
+  const assessmentsController = new AssessmentsController(assessmentService, taskService, featureFlagService)
   const assessmentPagesController = new AssessmentPagesController(assessmentService, {
     applicationService,
     userService,

@@ -100,11 +100,13 @@ export default class ApplicationService {
     userInput?: Record<string, unknown>,
   ): Promise<TasklistPage> {
     const application = await this.findApplication(request.user.token, request.params.id)
+    const featureFlags = await dataServices.featureFlagService.getAll()
+
     const body = getBody(Page, application, request, userInput)
 
     const page = Page.initialize
       ? await Page.initialize(body, application, request.user.token, dataServices)
-      : new Page(body, application)
+      : new Page(body, application, featureFlags)
 
     return page
   }

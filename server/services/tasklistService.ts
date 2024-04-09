@@ -7,13 +7,14 @@ import getSections from '../utils/assessments/getSections'
 import Apply from '../form-pages/apply'
 import isAssessment from '../utils/assessments/isAssessment'
 import getTaskStatus from '../form-pages/utils/getTaskStatus'
+import FeatureFlagService, { FeatureFlags } from './featureFlagService'
 
 export default class TasklistService {
   taskStatuses: Record<string, TaskStatus>
 
   formSections: FormSections
 
-  constructor(applicationOrAssessment: Application | Assessment) {
+  constructor(applicationOrAssessment: Application | Assessment, featureFlags: Partial<FeatureFlags>) {
     this.formSections = isAssessment(applicationOrAssessment) ? getSections(applicationOrAssessment) : Apply.sections
     this.taskStatuses = {}
 
@@ -23,12 +24,25 @@ export default class TasklistService {
         const previousTaskStatus = this.taskStatuses[previousTaskKey]
 
         if (!previousTaskStatus || previousTaskStatus === 'complete') {
-          this.taskStatuses[task.id] = getTaskStatus(task, applicationOrAssessment)
+          this.taskStatuses[task.id] = getTaskStatus(task, applicationOrAssessment, featureFlags)
         } else {
           this.taskStatuses[task.id] = 'cannot_start'
         }
       })
     })
+  }
+
+  static async initialize(
+    applicationOrAsssessment: Application | Assessment,
+    featureFlagService: FeatureFlagService,
+  ): Promise<TasklistService> {
+    const featureFlags = {
+      'allow-sufficient-information-request-without-confirmation': await featureFlagService.getBooleanFlag(
+        'allow-sufficient-information-request-without-confirmation',
+      ),
+    }
+
+    return new TasklistService(applicationOrAsssessment, featureFlags)
   }
 
   get completeSectionCount() {

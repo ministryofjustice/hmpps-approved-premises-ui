@@ -20,14 +20,16 @@ export const controllers = (services: Services) => {
     apAreaService,
     bookingService,
     appealService,
+    featureFlagService,
   } = services
-  const applicationsController = new ApplicationsController(applicationService, personService)
+  const applicationsController = new ApplicationsController(applicationService, personService, featureFlagService)
   const pagesController = new PagesController(applicationService, {
     personService,
     applicationService,
     premisesService,
     userService,
     apAreaService,
+    featureFlagService,
   })
   const offencesController = new OffencesController(personService)
   const documentsController = new DocumentsController(personService)

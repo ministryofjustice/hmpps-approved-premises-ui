@@ -6,7 +6,7 @@ import { ApprovedPremisesAssessmentSummary as AssessmentSummary, Task } from '@a
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
 import AssessmentsController from './assessmentsController'
-import { AssessmentService, TaskService } from '../../services'
+import { AssessmentService, FeatureFlagService, TaskService } from '../../services'
 
 import {
   assessmentFactory,
@@ -38,11 +38,12 @@ describe('assessmentsController', () => {
 
   const assessmentService = createMock<AssessmentService>({})
   const taskService = createMock<TaskService>({})
+  const featureFlagService = createMock<FeatureFlagService>({})
 
   let assessmentsController: AssessmentsController
 
   beforeEach(() => {
-    assessmentsController = new AssessmentsController(assessmentService, taskService)
+    assessmentsController = new AssessmentsController(assessmentService, taskService, featureFlagService)
     response = createMock<Response>({ locals: { user: { id: userId } } })
     request = createMock<Request>({ user: { token } })
   })
@@ -173,7 +174,7 @@ describe('assessmentsController', () => {
       request.headers.referer = referrer
 
       assessmentService.findAssessment.mockResolvedValue(assessment)
-      ;(TasklistService as jest.Mock).mockImplementation(() => {
+      ;(TasklistService.initialize as jest.Mock).mockImplementation(() => {
         return stubTaskList
       })
       ;(fetchErrorsAndUserInput as jest.Mock).mockImplementation(() => {

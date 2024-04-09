@@ -7,6 +7,7 @@ import {
 } from '@approved-premises/api'
 
 import { fromPartial } from '@total-typescript/shoehorn'
+import { when } from 'jest-when'
 import { AssessmentClient } from '../data'
 import AssessmentService from './assessmentService'
 import {
@@ -26,6 +27,7 @@ import { ApplicationOrAssessmentResponse } from '../utils/applications/utils'
 import { applicationAccepted } from '../utils/assessments/decisionUtils'
 import { getResponses } from '../utils/applications/getResponses'
 import { getResponseForPage } from '../utils/applications/getResponseForPage'
+import FeatureFlagService, { FeatureFlags } from './featureFlagService'
 
 jest.mock('../data/assessmentClient.ts')
 jest.mock('../data/personClient.ts')
@@ -86,9 +88,11 @@ describe('AssessmentService', () => {
     let request: DeepMocked<Request>
 
     const assessment = assessmentFactory.build()
+    const featureFlagService = createMock<FeatureFlagService>({})
     const Page = jest.fn()
-
+    const featureFlags = { 'allow-sufficient-information-request-without-confirmation': true } as FeatureFlags
     beforeEach(() => {
+      when(featureFlagService.getAll).calledWith().mockResolvedValue(featureFlags)
       request = createMock<Request>({
         params: { id: assessment.id, task: 'my-task', page: 'first' },
         user: { token: 'some-token' },
@@ -98,15 +102,15 @@ describe('AssessmentService', () => {
     it('should return a page', async () => {
       ;(getBody as jest.Mock).mockReturnValue(request.body)
 
-      const result = await service.initializePage(Page, assessment, request, fromPartial({}))
+      const result = await service.initializePage(Page, assessment, request, fromPartial({ featureFlagService }))
 
       expect(result).toBeInstanceOf(Page)
 
-      expect(Page).toHaveBeenCalledWith(request.body, assessment)
+      expect(Page).toHaveBeenCalledWith(request.body, assessment, featureFlags)
     })
 
     it("should call a page's initialize method if it exists", async () => {
-      const dataServices = createMock<DataServices>({}) as DataServices
+      const dataServices = createMock<DataServices>({ featureFlagService }) as DataServices
       ;(getBody as jest.Mock).mockReturnValue(request.body)
 
       const TestPage = { initialize: jest.fn() } as unknown as TasklistPageInterface

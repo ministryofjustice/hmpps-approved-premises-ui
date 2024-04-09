@@ -10,7 +10,7 @@ import type {
 import { subDays } from 'date-fns'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController from './applicationsController'
-import { ApplicationService, PersonService } from '../../services'
+import { ApplicationService, FeatureFlagService, PersonService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import {
   activeOffenceFactory,
@@ -46,11 +46,12 @@ describe('applicationsController', () => {
 
   const applicationService = createMock<ApplicationService>({})
   const personService = createMock<PersonService>({})
+  const featureFlagService = createMock<FeatureFlagService>({})
 
   let applicationsController: ApplicationsController
 
   beforeEach(() => {
-    applicationsController = new ApplicationsController(applicationService, personService)
+    applicationsController = new ApplicationsController(applicationService, personService, featureFlagService)
     request = createMock<Request>({ user: { token } })
     response = createMock<Response>({})
     jest.clearAllMocks()
@@ -176,9 +177,7 @@ describe('applicationsController', () => {
       const stubTaskList = jest.fn()
 
       applicationService.findApplication.mockResolvedValue(application)
-      ;(TasklistService as jest.Mock).mockImplementation(() => {
-        return stubTaskList
-      })
+      ;(TasklistService.initialize as jest.Mock).mockResolvedValue(stubTaskList)
 
       await requestHandler(request, response, next)
 
@@ -277,11 +276,8 @@ describe('applicationsController', () => {
       application.status = 'submitted'
 
       const requestHandler = applicationsController.show()
-      const stubTaskList = jest.fn()
 
-      ;(TasklistService as jest.Mock).mockImplementation(() => {
-        return stubTaskList
-      })
+      ;(TasklistService.initialize as jest.Mock).mockReturnValue(() => jest.fn())
 
       await requestHandler(request, response, next)
 
@@ -311,9 +307,7 @@ describe('applicationsController', () => {
         const stubTaskList = jest.fn()
 
         applicationService.findApplication.mockResolvedValue(application)
-        ;(TasklistService as jest.Mock).mockImplementation(() => {
-          return stubTaskList
-        })
+        ;(TasklistService.initialize as jest.Mock).mockResolvedValue(stubTaskList)
 
         await requestHandler(request, response, next)
 

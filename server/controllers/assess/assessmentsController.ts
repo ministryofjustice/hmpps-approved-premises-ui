@@ -2,7 +2,7 @@ import type { Request, RequestHandler, Response } from 'express'
 
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import TasklistService from '../../services/tasklistService'
-import { AssessmentService, TaskService } from '../../services'
+import { AssessmentService, FeatureFlagService, TaskService } from '../../services'
 import informationSetAsNotReceived from '../../utils/assessments/informationSetAsNotReceived'
 
 import paths from '../../paths/assess'
@@ -16,6 +16,7 @@ export default class AssessmentsController {
   constructor(
     private readonly assessmentService: AssessmentService,
     private readonly taskService: TaskService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   index(): RequestHandler {
@@ -97,7 +98,7 @@ export default class AssessmentsController {
           }),
         )
       } else {
-        const taskList = new TasklistService(assessment)
+        const taskList = await TasklistService.initialize(assessment, this.featureFlagService)
 
         res.render('assessments/tasklist', {
           assessment,

@@ -2,7 +2,7 @@ import type { Request, RequestHandler, Response } from 'express'
 
 import TasklistService from '../../services/tasklistService'
 import ApplicationService from '../../services/applicationService'
-import { PersonService } from '../../services'
+import { FeatureFlagService, PersonService } from '../../services'
 import { addErrorMessageToFlash, fetchErrorsAndUserInput } from '../../utils/validation'
 import paths from '../../paths/apply'
 import { DateFormats } from '../../utils/dateUtils'
@@ -20,6 +20,7 @@ export default class ApplicationsController {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly personService: PersonService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   index(): RequestHandler {
@@ -72,7 +73,7 @@ export default class ApplicationsController {
     return async (req: Request, res: Response) => {
       const application = await this.applicationService.findApplication(req.user.token, req.params.id)
 
-      const taskList = new TasklistService(application)
+      const taskList = await TasklistService.initialize(application, this.featureFlagService)
       const { errors, errorSummary } = fetchErrorsAndUserInput(req)
 
       if (application.status !== 'started') {

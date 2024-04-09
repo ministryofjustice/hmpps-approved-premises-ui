@@ -4,6 +4,7 @@ import getTaskStatus from './getTaskStatus'
 import TasklistPage from '../tasklistPage'
 
 describe('getTaskStatus', () => {
+  const featureFlags = {}
   const page1Instance = createMock<TasklistPage>()
   const page2Instance = createMock<TasklistPage>()
   const page3Instance = createMock<TasklistPage>()
@@ -29,7 +30,7 @@ describe('getTaskStatus', () => {
   it('returns not_started when there is no data for the first question in the task', () => {
     const application = applicationFactory.build({})
 
-    expect(getTaskStatus(task, application)).toEqual('not_started')
+    expect(getTaskStatus(task, application, featureFlags)).toEqual('not_started')
 
     expect(Page1).not.toHaveBeenCalled()
     expect(Page2).not.toHaveBeenCalled()
@@ -42,7 +43,7 @@ describe('getTaskStatus', () => {
     page1Instance.errors.mockReturnValue({})
     page1Instance.next.mockReturnValue('page-2')
 
-    expect(getTaskStatus(task, application)).toEqual('in_progress')
+    expect(getTaskStatus(task, application, featureFlags)).toEqual('in_progress')
 
     expect(Page1).toHaveBeenCalled()
     expect(page1Instance.errors).toHaveBeenCalled()
@@ -59,7 +60,7 @@ describe('getTaskStatus', () => {
     page1Instance.next.mockReturnValue('')
     page1Instance.errors.mockReturnValue({ some: 'errors' })
 
-    expect(getTaskStatus(task, application)).toEqual('in_progress')
+    expect(getTaskStatus(task, application, featureFlags)).toEqual('in_progress')
 
     expect(Page1).toHaveBeenCalled()
     expect(page1Instance.errors).toHaveBeenCalled()
@@ -77,7 +78,7 @@ describe('getTaskStatus', () => {
     page2Instance.errors.mockReturnValue({})
     page2Instance.next.mockReturnValue('')
 
-    expect(getTaskStatus(task, application)).toEqual('complete')
+    expect(getTaskStatus(task, application, featureFlags)).toEqual('complete')
 
     expect(Page1).toHaveBeenCalled()
     expect(page1Instance.errors).toHaveBeenCalled()
@@ -104,7 +105,7 @@ describe('getTaskStatus', () => {
     page3Instance.errors.mockReturnValue({})
     page3Instance.next.mockReturnValue('')
 
-    expect(getTaskStatus(task, application)).toEqual('complete')
+    expect(getTaskStatus(task, application, featureFlags)).toEqual('complete')
 
     expect(Page1).toHaveBeenCalled()
     expect(page1Instance.errors).toHaveBeenCalled()
@@ -130,7 +131,7 @@ describe('getTaskStatus', () => {
     page3Instance.errors.mockReturnValue({})
     page3Instance.next.mockReturnValue('')
 
-    expect(getTaskStatus(task, application)).toEqual('complete')
+    expect(getTaskStatus(task, application, featureFlags)).toEqual('complete')
 
     expect(Page1).not.toHaveBeenCalled()
     expect(page1Instance.errors).not.toHaveBeenCalled()

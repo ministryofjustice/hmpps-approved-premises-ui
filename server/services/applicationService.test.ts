@@ -9,6 +9,7 @@ import type {
   WithdrawalReason,
 } from '@approved-premises/api'
 
+import { when } from 'jest-when'
 import { updateFormArtifactData } from '../form-pages/utils/updateFormArtifactData'
 import type TasklistPage from '../form-pages/tasklistPage'
 import { ValidationError } from '../utils/errors'
@@ -30,6 +31,7 @@ import {
 } from '../testutils/factories'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
+import FeatureFlagService, { FeatureFlags } from './featureFlagService'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -196,10 +198,11 @@ describe('ApplicationService', () => {
   describe('initializePage', () => {
     let request: DeepMocked<Request>
 
-    const dataServices = createMock<DataServices>({}) as DataServices
+    const featureFlagService = createMock<FeatureFlagService>()
+    const dataServices = createMock<DataServices>({ featureFlagService }) as DataServices
     const application = applicationFactory.build()
     const Page = jest.fn()
-
+    const featureFlags = { 'allow-sufficient-information-request-without-confirmation': true } as FeatureFlags
     beforeEach(() => {
       applicationClient.find.mockResolvedValue(application)
 
@@ -207,6 +210,7 @@ describe('ApplicationService', () => {
         params: { id: application.id, task: 'my-task', page: 'first' },
         user: { token },
       })
+      when(featureFlagService.getAll).calledWith().mockResolvedValue(featureFlags)
     })
 
     it('should fetch the application from the API if it is not in the session', async () => {
@@ -216,7 +220,7 @@ describe('ApplicationService', () => {
 
       expect(result).toBeInstanceOf(Page)
 
-      expect(Page).toHaveBeenCalledWith(request.body, application)
+      expect(Page).toHaveBeenCalledWith(request.body, application, featureFlags)
       expect(applicationClient.find).toHaveBeenCalledWith(request.params.id)
     })
 
@@ -227,7 +231,7 @@ describe('ApplicationService', () => {
 
       expect(result).toBeInstanceOf(Page)
 
-      expect(Page).toHaveBeenCalledWith(request.body, application)
+      expect(Page).toHaveBeenCalledWith(request.body, application, featureFlags)
     })
 
     it('should initialize the page with the session and the userInput if specified', async () => {
@@ -238,7 +242,7 @@ describe('ApplicationService', () => {
 
       expect(result).toBeInstanceOf(Page)
 
-      expect(Page).toHaveBeenCalledWith(userInput, application)
+      expect(Page).toHaveBeenCalledWith(userInput, application, featureFlags)
     })
 
     it('should load from the application if the body and userInput are blank', async () => {
@@ -255,7 +259,7 @@ describe('ApplicationService', () => {
 
       expect(result).toBeInstanceOf(Page)
 
-      expect(Page).toHaveBeenCalledWith({ foo: 'bar' }, applicationWithData)
+      expect(Page).toHaveBeenCalledWith({ foo: 'bar' }, applicationWithData, featureFlags)
     })
 
     it("should call a service's initialize method if it exists", async () => {

@@ -1,6 +1,8 @@
+import { createMock } from '@golevelup/ts-jest'
 import { applicationFactory } from '../testutils/factories'
 import TasklistService from './tasklistService'
 import getTaskStatus from '../form-pages/utils/getTaskStatus'
+import FeatureFlagService from './featureFlagService'
 
 jest.mock('../form-pages/apply', () => {
   return {
@@ -42,17 +44,30 @@ jest.mock('../form-pages/apply', () => {
 jest.mock('../form-pages/utils/getTaskStatus')
 
 describe('tasklistService', () => {
+  const featureFlags = {}
   const application = applicationFactory.build({ id: 'some-uuid' })
+  const featureFlagService = createMock<FeatureFlagService>({})
 
   beforeEach(() => {
     jest.resetAllMocks()
+  })
+
+  describe('initialize', () => {
+    it('calls the featureFlagService and an instatiates a new TasklistService', async () => {
+      const tasklistService = await TasklistService.initialize(application, featureFlagService)
+
+      expect(featureFlagService.getBooleanFlag).toHaveBeenCalledWith(
+        'allow-sufficient-information-request-without-confirmation',
+      )
+      expect(tasklistService).toBeInstanceOf(TasklistService)
+    })
   })
 
   describe('taskStatuses', () => {
     it('returns cannot_start for any subsequent tasks when no tasks are complete', () => {
       ;(getTaskStatus as jest.Mock).mockReturnValue('not_started')
 
-      const tasklistService = new TasklistService(application)
+      const tasklistService = new TasklistService(application, featureFlags)
 
       expect(tasklistService.taskStatuses).toEqual({
         'first-task': 'not_started',
@@ -74,7 +89,7 @@ describe('tasklistService', () => {
         return undefined
       })
 
-      const tasklistService = new TasklistService(application)
+      const tasklistService = new TasklistService(application, featureFlags)
 
       expect(tasklistService.taskStatuses).toEqual({
         'first-task': 'complete',
@@ -92,7 +107,7 @@ describe('tasklistService', () => {
     it('returns zero when there are no complete sections', () => {
       ;(getTaskStatus as jest.Mock).mockReturnValue('not_started')
 
-      const tasklistService = new TasklistService(application)
+      const tasklistService = new TasklistService(application, featureFlags)
 
       expect(tasklistService.completeSectionCount).toEqual(0)
     })
@@ -102,7 +117,7 @@ describe('tasklistService', () => {
         ['first-task', 'second-task', 'third-task'].includes(t.id) ? 'complete' : 'not_started',
       )
 
-      const tasklistService = new TasklistService(application)
+      const tasklistService = new TasklistService(application, featureFlags)
 
       expect(tasklistService.completeSectionCount).toEqual(1)
     })
@@ -110,7 +125,7 @@ describe('tasklistService', () => {
     it('returns 2 when all sections are complete', () => {
       ;(getTaskStatus as jest.Mock).mockReturnValue('complete')
 
-      const tasklistService = new TasklistService(application)
+      const tasklistService = new TasklistService(application, featureFlags)
 
       expect(tasklistService.completeSectionCount).toEqual(2)
     })
@@ -120,7 +135,7 @@ describe('tasklistService', () => {
     it('returns complete when all sections are complete', () => {
       ;(getTaskStatus as jest.Mock).mockReturnValue('complete')
 
-      const tasklistService = new TasklistService(application)
+      const tasklistService = new TasklistService(application, featureFlags)
 
       expect(tasklistService.status).toEqual('complete')
     })
@@ -128,7 +143,7 @@ describe('tasklistService', () => {
     it('returns incomplete when not all sections are complete', () => {
       ;(getTaskStatus as jest.Mock).mockReturnValue('not_started')
 
-      const tasklistService = new TasklistService(application)
+      const tasklistService = new TasklistService(application, featureFlags)
 
       expect(tasklistService.status).toEqual('incomplete')
     })
@@ -138,7 +153,7 @@ describe('tasklistService', () => {
     it('returns the section data with the status of each task and the section number', () => {
       ;(getTaskStatus as jest.Mock).mockReturnValue('cannot_start')
 
-      const tasklistService = new TasklistService(application)
+      const tasklistService = new TasklistService(application, featureFlags)
 
       expect(tasklistService.sections).toEqual([
         {
