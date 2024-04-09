@@ -295,6 +295,7 @@ export const eventTypeTranslations: Record<TimelineEventType, string> = {
   approved_premises_application_withdrawn: 'Application withdrawn',
   approved_premises_placement_application_withdrawn: 'Request for placement withdrawn',
   approved_premises_information_request: 'Information request',
+  approved_premises_assessment_allocated: 'Assessment allocated',
   application_timeline_note: 'Note added',
   cas3_person_arrived: 'CAS3 person arrived',
   cas3_person_departed: 'CAS3 person departed',
