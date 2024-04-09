@@ -4,18 +4,18 @@ import { apAreaFactory, taskFactory, userFactory } from '../../../server/testuti
 
 context('Task Allocation', () => {
   const users = userFactory.buildList(5)
+  const apArea = apAreaFactory.build()
+  const additionalArea = apAreaFactory.build()
 
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
     cy.task('stubUserList', { users, roles: ['assessor', 'matcher'] })
+    cy.task('stubAuthUser', { apArea })
+    cy.task('stubApAreaReferenceData', { apArea, additionalAreas: [additionalArea] })
   })
 
-  const apAreaId = '0544d95a-f6bb-43f8-9be7-aae66e3bf244'
-
   it('shows a list of tasks', () => {
-    cy.task('stubAuthUser')
-
     // Given I am logged in
     cy.signIn()
 
@@ -27,6 +27,7 @@ context('Task Allocation', () => {
       allocatedFilter: 'allocated',
       page: '1',
       sortDirection: 'asc',
+      apAreaId: apArea.id,
     })
 
     cy.task('stubGetAllTasks', {
@@ -34,11 +35,7 @@ context('Task Allocation', () => {
       allocatedFilter: 'unallocated',
       page: '1',
       sortDirection: 'asc',
-    })
-
-    cy.task('stubApAreaReferenceData', {
-      id: apAreaId,
-      name: 'Midlands',
+      apAreaId: apArea.id,
     })
 
     // When I visit the tasks dashboard
@@ -59,8 +56,6 @@ context('Task Allocation', () => {
   })
 
   it('supports pagination', () => {
-    cy.task('stubAuthUser')
-
     // Given I am logged in
     cy.signIn()
 
@@ -69,15 +64,25 @@ context('Task Allocation', () => {
     const allocatedTasksPage9 = taskFactory.buildList(10)
     const unallocatedTasks = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
-    cy.task('stubGetAllTasks', { tasks: allocatedTasksPage1, allocatedFilter: 'allocated', page: '1' })
+    cy.task('stubGetAllTasks', {
+      tasks: allocatedTasksPage1,
+      allocatedFilter: 'allocated',
+      page: '1',
+      apAreaId: apArea.id,
+    })
 
-    cy.task('stubGetAllTasks', { tasks: allocatedTasksPage2, allocatedFilter: 'allocated', page: '2' })
+    cy.task('stubGetAllTasks', {
+      tasks: allocatedTasksPage2,
+      allocatedFilter: 'allocated',
+      page: '2',
+      apAreaId: apArea.id,
+    })
 
-    cy.task('stubGetAllTasks', { tasks: allocatedTasksPage9, allocatedFilter: 'allocated', page: '9' })
-
-    cy.task('stubApAreaReferenceData', {
-      id: apAreaId,
-      name: 'Midlands',
+    cy.task('stubGetAllTasks', {
+      tasks: allocatedTasksPage9,
+      allocatedFilter: 'allocated',
+      page: '9',
+      apAreaId: apArea.id,
     })
 
     // When I visit the tasks dashboard
@@ -110,7 +115,6 @@ context('Task Allocation', () => {
 
   it('supports sorting', () => {
     const sortFields = ['dueAt', 'person', 'allocatedTo']
-    cy.task('stubAuthUser')
 
     // Given I am logged in
     cy.signIn()
@@ -122,6 +126,7 @@ context('Task Allocation', () => {
       allocatedFilter: 'allocated',
       sortDirection: 'asc',
       sortBy: 'createdAt',
+      apAreaId: apArea.id,
     })
 
     sortFields.forEach(sortField => {
@@ -131,6 +136,7 @@ context('Task Allocation', () => {
         page: '1',
         sortDirection: 'asc',
         sortBy: sortField,
+        apAreaId: apArea.id,
       })
 
       cy.task('stubGetAllTasks', {
@@ -139,12 +145,8 @@ context('Task Allocation', () => {
         page: '1',
         sortDirection: 'desc',
         sortBy: sortField,
+        apAreaId: apArea.id,
       })
-    })
-
-    cy.task('stubApAreaReferenceData', {
-      id: apAreaId,
-      name: 'Midlands',
     })
 
     // When I visit the tasks dashboard
@@ -181,7 +183,7 @@ context('Task Allocation', () => {
   const filterOptions = {
     area: {
       apiKey: 'apAreaId',
-      value: apAreaId,
+      value: apArea.id,
     },
     allocatedToUserId: {
       apiKey: 'allocatedToUserId',
@@ -200,8 +202,6 @@ context('Task Allocation', () => {
 
   Object.keys(filterOptions).forEach(key => {
     it(`allows filter by ${key}`, () => {
-      cy.task('stubAuthUser')
-
       // Given I am logged in
       cy.signIn()
 
@@ -209,10 +209,11 @@ context('Task Allocation', () => {
       const allocatedTasksFiltered = taskFactory.buildList(1)
       const unallocatedTasks = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
-      cy.task('stubGetAllTasks', { tasks: allocatedTasks, allocatedFilter: 'allocated', page: '1' })
-      cy.task('stubApAreaReferenceData', {
-        id: apAreaId,
-        name: 'Midlands',
+      cy.task('stubGetAllTasks', {
+        tasks: allocatedTasks,
+        allocatedFilter: 'allocated',
+        page: '1',
+        apAreaId: apArea.id,
       })
 
       // When I visit the tasks dashboard
@@ -227,6 +228,8 @@ context('Task Allocation', () => {
         allocatedFilter: 'allocated',
         page: '1',
         sortDirection: 'asc',
+        apAreaId: apArea.id,
+
         [filterOptions[key].apiKey]: filterOptions[key].value,
       })
 
@@ -243,8 +246,6 @@ context('Task Allocation', () => {
   })
 
   it('maintains filter on tab change', () => {
-    cy.task('stubAuthUser')
-
     // Given I am logged in
     cy.signIn()
 
@@ -252,11 +253,7 @@ context('Task Allocation', () => {
     const allocatedTasksFiltered = taskFactory.buildList(1)
     const unallocatedTasks = taskFactory.buildList(1, { allocatedToStaffMember: undefined })
 
-    cy.task('stubGetAllTasks', { tasks: allocatedTasks, allocatedFilter: 'allocated', page: '1' })
-    cy.task('stubApAreaReferenceData', {
-      id: apAreaId,
-      name: 'Midlands',
-    })
+    cy.task('stubGetAllTasks', { tasks: allocatedTasks, allocatedFilter: 'allocated', page: '1', apAreaId: apArea.id })
 
     // When I visit the tasks dashboard
     const listPage = ListPage.visit(allocatedTasks, unallocatedTasks)
@@ -270,7 +267,7 @@ context('Task Allocation', () => {
       allocatedFilter: 'allocated',
       page: '1',
       sortDirection: 'asc',
-      apAreaId,
+      apAreaId: additionalArea.id,
     })
 
     cy.task('stubGetAllTasks', {
@@ -278,10 +275,10 @@ context('Task Allocation', () => {
       allocatedFilter: 'unallocated',
       page: '1',
       sortDirection: 'asc',
-      apAreaId,
+      apAreaId: additionalArea.id,
     })
 
-    listPage.searchBy('area', apAreaId)
+    listPage.searchBy('area', additionalArea.id)
     listPage.clickApplyFilter()
 
     // Then the page should show the results
@@ -291,12 +288,10 @@ context('Task Allocation', () => {
     listPage.clickTab('Unallocated')
 
     // Then the page should keep the area filter
-    listPage.shouldHaveSelectText('area', 'Midlands')
+    listPage.shouldHaveSelectText('area', additionalArea.name)
   })
 
   it('retains the unallocated filter when applying other filters', () => {
-    cy.task('stubAuthUser')
-
     // Given I am logged in
     cy.signIn()
 
@@ -309,10 +304,7 @@ context('Task Allocation', () => {
       allocatedFilter: 'unallocated',
       page: '1',
       sortDirection: 'asc',
-    })
-    cy.task('stubApAreaReferenceData', {
-      id: apAreaId,
-      name: 'Midlands',
+      apAreaId: apArea.id,
     })
 
     // Given I am on the tasks dashboard filtering by the unallocated tab
@@ -327,10 +319,10 @@ context('Task Allocation', () => {
       allocatedFilter: 'unallocated',
       page: '1',
       sortDirection: 'asc',
-      apAreaId,
+      apAreaId: apArea.id,
     })
 
-    listPage.searchBy('area', apAreaId)
+    listPage.searchBy('area', apArea.id)
     listPage.clickApplyFilter()
 
     // Then the status filter should be retained and allocated results should be shown
@@ -339,11 +331,7 @@ context('Task Allocation', () => {
   })
 
   it('defaults to user area but allows filter by all areas', () => {
-    // Given I have a default area
-    const apArea = apAreaFactory.build()
-    cy.task('stubAuthUser', { apArea })
-
-    // And i am signed in
+    // Given I am signed in
     cy.signIn()
 
     const allocatedTasks = taskFactory.buildList(1)
@@ -380,8 +368,6 @@ context('Task Allocation', () => {
       sortBy: 'dueAt',
       apAreaId: '',
     })
-
-    cy.task('stubApAreaReferenceData', apArea)
 
     // When I visit the tasks dashboard
     const listPage = ListPage.visit(allocatedTasks, unallocatedTasks)

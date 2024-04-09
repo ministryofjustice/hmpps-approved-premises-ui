@@ -286,8 +286,10 @@ context('User management', () => {
     const initialUsers = userFactory.buildList(10)
     cy.task('stubUsers', { users: initialUsers })
     cy.task('stubApAreaReferenceData', {
-      id: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
-      name: 'Midlands',
+      apArea: {
+        id: '0544d95a-f6bb-43f8-9be7-aae66e3bf244',
+        name: 'Midlands',
+      },
     })
 
     // When I visit the list page

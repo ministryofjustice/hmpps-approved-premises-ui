@@ -1,10 +1,12 @@
 import jwt from 'jsonwebtoken'
 import { Response } from 'superagent'
-import { ApArea, ApprovedPremisesUserRole as UserRole } from '../../server/@types/shared'
+import { faker } from '@faker-js/faker'
+
+import { ApArea, User, ApprovedPremisesUserRole as UserRole } from '../../server/@types/shared'
 
 import { getMatchingRequests, stubFor } from './setup'
 import tokenVerification from './tokenVerification'
-import { apAreaFactory } from '../../server/testutils/factories'
+import { apAreaFactory, userFactory } from '../../server/testutils/factories'
 
 const createToken = () => {
   const payload = {
@@ -120,37 +122,9 @@ const token = () =>
     },
   })
 
-const stubUser = (name: string) =>
-  stubFor({
-    request: {
-      method: 'GET',
-      urlPattern: '/auth/api/user/me',
-    },
-    response: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-      jsonBody: {
-        staffId: 231232,
-        username: 'USER1',
-        active: true,
-        name,
-        ...defaultProfile,
-      },
-    },
-  })
-
 export const defaultUserId = '70596333-63d4-4fb2-8acc-9ca55563d878'
 
-const defaultProfile = {
-  id: defaultUserId,
-  roles: [],
-  isActive: true,
-  apArea: apAreaFactory.build(),
-}
-
-const stubProfile = (roles = [], userId = defaultUserId, isActive = true, apArea = undefined) =>
+const stubProfile = (user: User) =>
   stubFor({
     request: {
       method: 'GET',
@@ -161,28 +135,7 @@ const stubProfile = (roles = [], userId = defaultUserId, isActive = true, apArea
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      jsonBody: {
-        ...defaultProfile,
-        id: userId,
-        roles,
-        isActive,
-        apArea,
-      },
-    },
-  })
-
-const stubUserRoles = () =>
-  stubFor({
-    request: {
-      method: 'GET',
-      urlPattern: '/auth/api/user/me/roles',
-    },
-    response: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-      jsonBody: [{ roleCode: 'SOME_USER_ROLE' }],
+      jsonBody: user,
     },
   })
 
@@ -193,10 +146,14 @@ export default {
     Promise.all([favicon(), redirect(), signOut(), manageDetails(), token(), tokenVerification.stubVerifyToken()]),
   stubAuthUser: (
     args: { name?: string; userId?: string; roles?: Array<UserRole>; apArea?: ApArea } = {},
-  ): Promise<[Response, Response, Response]> =>
-    Promise.all([
-      stubUser(args.name || 'john smith'),
-      stubUserRoles(),
-      stubProfile(args.roles || [], args.userId, true, args.apArea),
-    ]),
+  ): Promise<Response> =>
+    stubProfile(
+      userFactory.build({
+        name: args.name || faker.person.fullName(),
+        id: args.userId || defaultUserId,
+        roles: args.roles || [],
+        apArea: args.apArea || apAreaFactory.build(),
+        isActive: true,
+      }),
+    ),
 }

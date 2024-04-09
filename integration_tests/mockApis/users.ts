@@ -205,8 +205,22 @@ const stubUserDelete = (args: { id: string }) =>
 
 const stubProbationRegionsReferenceData = (): Promise<Response> => stubFor(probationRegions)
 
-const stubApAreaReferenceData = (args?: ApArea): Promise<Response> =>
-  stubFor({
+const stubApAreaReferenceData = (
+  {
+    apArea = null,
+    additionalAreas = [],
+  }: {
+    apArea: ApArea | null
+    additionalAreas: Array<ApArea>
+  } = { apArea: null, additionalAreas: [] },
+): Promise<Response> => {
+  const apAreas = [...additionalAreas.map(area => apAreaFactory.build(area)), ...apAreaFactory.buildList(10)]
+
+  if (apArea != null) {
+    apAreas.push(apAreaFactory.build(apArea))
+  }
+
+  return stubFor({
     request: {
       method: 'GET',
       url: '/reference-data/ap-areas',
@@ -216,9 +230,10 @@ const stubApAreaReferenceData = (args?: ApArea): Promise<Response> =>
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
       },
-      jsonBody: args ? [apAreaFactory.build(args), ...apAreaFactory.buildList(10)] : apAreaFactory.buildList(10),
+      jsonBody: apAreas,
     },
   })
+}
 
 const verifyUserUpdate = async (userId: string) =>
   (

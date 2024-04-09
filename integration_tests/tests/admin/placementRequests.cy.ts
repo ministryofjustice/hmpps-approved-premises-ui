@@ -79,7 +79,7 @@ context('Placement Requests', () => {
     cy.task('stubPlacementRequest', unmatchedPlacementRequest)
     cy.task('stubPlacementRequest', matchedPlacementRequest)
     cy.task('stubPlacementRequest', unableToMatchPlacementRequest)
-    cy.task('stubApAreaReferenceData', apArea)
+    cy.task('stubApAreaReferenceData', { apArea })
   })
 
   it('allows me to view a placement request', () => {
@@ -496,7 +496,7 @@ context('Placement Requests', () => {
       sortDirection: 'asc',
     })
     cy.task('stubPlacementRequestsDashboard', { placementRequests: matchedPlacementRequests, status: 'matched' })
-    cy.task('stubApAreaReferenceData', apArea)
+    cy.task('stubApAreaReferenceData', { apArea })
 
     // Given I am on the placement request dashboard
     const listPage = ListPage.visit()
@@ -536,7 +536,7 @@ context('Placement Requests', () => {
       sortBy: 'created_at',
       sortDirection: 'asc',
     })
-    cy.task('stubApAreaReferenceData', apArea)
+    cy.task('stubApAreaReferenceData', { apArea })
 
     // Given I am on the placement request dashboard filtering by the unableToMatch status
     const listPage = ListPage.visit('status=unableToMatch')

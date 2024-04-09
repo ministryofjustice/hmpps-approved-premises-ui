@@ -387,7 +387,9 @@ export default class ApplyHelper {
   }
 
   stubApAreasEndpoint() {
-    cy.task('stubApAreaReferenceData', { id: '5e44b880-df20-4751-938f-a14be5fe609d', name: 'Greater Manchester' })
+    cy.task('stubApAreaReferenceData', {
+      apArea: { id: '5e44b880-df20-4751-938f-a14be5fe609d', name: 'Greater Manchester' },
+    })
   }
 
   private addContingencyPlanDetails() {
