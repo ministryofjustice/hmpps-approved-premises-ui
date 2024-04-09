@@ -58,7 +58,14 @@ export const unusedRoles = ['applicant', 'report_viewer'] as const
 
 export type AllocationRole = (typeof allocationRoles)[number]
 
-export const qualifications: ReadonlyArray<UserQualification> = ['pipe', 'emergency', 'esap', 'lao']
+export const qualifications: ReadonlyArray<UserQualification> = [
+  'pipe',
+  'emergency',
+  'esap',
+  'lao',
+  'recovery_focused',
+  'mental_health_specialist',
+]
 
 export const qualificationDictionary: Record<UserQualification, string> = {
   lao: 'Limited access offenders',
@@ -66,6 +73,8 @@ export const qualificationDictionary: Record<UserQualification, string> = {
   emergency: 'Emergency APs',
   esap: 'ESAP',
   pipe: 'PIPE',
+  recovery_focused: 'Recovery-focused APs',
+  mental_health_specialist: 'Specialist Mental Health APs',
 }
 
 export const filterUnusedRoles = (allRoles: Array<UserRole>) =>
