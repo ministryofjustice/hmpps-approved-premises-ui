@@ -16,7 +16,7 @@ export default class ListPage extends Page {
   }
 
   static visit(query?: string): ListPage {
-    const path = paths.admin.placementRequests.index({})
+    const path = paths.admin.cruDashboard.index({})
     cy.visit(query ? `${path}?${query}` : path)
     return new ListPage()
   }

@@ -11,7 +11,9 @@ export default function routes(controllers: Controllers, router: Router, service
   const { get, post, put, delete: deleteAction } = actions(router, services.auditService)
 
   const {
+    redirectController,
     adminPlacementRequestsController,
+    cruDashboardController,
     placementRequestsBookingsController,
     placementRequestWithdrawalsController,
     placementRequestUnableToMatchController,
@@ -20,15 +22,26 @@ export default function routes(controllers: Controllers, router: Router, service
     deliusUserController,
   } = controllers
 
-  get(paths.admin.placementRequests.index.pattern, adminPlacementRequestsController.index(), {
+  get(paths.admin.cruDashboard.index.pattern, cruDashboardController.index(), {
     auditEvent: 'ADMIN_LIST_PLACEMENT_REQUESTS',
   })
-  post(paths.admin.placementRequests.index.pattern, adminPlacementRequestsController.index(), {
+  post(paths.admin.placementRequests.index.pattern, cruDashboardController.index(), {
     auditEvent: 'ADMIN_LIST_FILTER_PLACEMENT_REQUESTS',
   })
-  get(paths.admin.placementRequests.search.pattern, adminPlacementRequestsController.search(), {
+  get(paths.admin.cruDashboard.search.pattern, cruDashboardController.search(), {
     auditEvent: 'ADMIN_SEARCH_PLACEMENT_REQUESTS',
   })
+
+  get(paths.admin.placementRequests.index.pattern, redirectController.redirect(paths.admin.cruDashboard.index), {
+    auditEvent: 'ADMIN_LIST_PLACEMENT_REQUESTS',
+  })
+  post(paths.admin.placementRequests.index.pattern, redirectController.redirect(paths.admin.cruDashboard.index), {
+    auditEvent: 'ADMIN_LIST_FILTER_PLACEMENT_REQUESTS',
+  })
+  get(paths.admin.placementRequests.search.pattern, redirectController.redirect(paths.admin.cruDashboard.search), {
+    auditEvent: 'ADMIN_SEARCH_PLACEMENT_REQUESTS',
+  })
+
   get(paths.admin.placementRequests.show.pattern, adminPlacementRequestsController.show(), {
     auditEvent: 'ADMIN_SHOW_PLACEMENT_REQUEST',
   })

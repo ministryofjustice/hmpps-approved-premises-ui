@@ -55,7 +55,7 @@ export default class WithdrawalsController {
         } catch (error) {
           req.flash('success', 'Placement application withdrawn')
         }
-        return res.redirect(paths.admin.placementRequests.index({}))
+        return res.redirect(paths.admin.cruDashboard.index({}))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

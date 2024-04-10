@@ -50,7 +50,7 @@ export const sections = {
     title: 'CRU Dashboard',
     description: ' View applications that require matching. Record and update details of Approved Premises placements.',
     shortTitle: 'CRU dashboard',
-    href: adminPaths.admin.placementRequests.index({}),
+    href: adminPaths.admin.cruDashboard.index({}),
   },
   reports: {
     id: 'reports',

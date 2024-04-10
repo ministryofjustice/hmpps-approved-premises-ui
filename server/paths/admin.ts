@@ -12,8 +12,14 @@ const withdrawalPath = placementRequestPath.path('withdrawal')
 
 const unableToMatchPath = placementRequestPath.path('unable-to-match')
 
+const cruDashboardPath = adminPath.path('cru-dashboard')
+
 export default {
   admin: {
+    cruDashboard: {
+      index: cruDashboardPath,
+      search: cruDashboardPath.path('search'),
+    },
     placementRequests: {
       index: placementRequestsPath,
       search: placementRequestsPath.path('search'),

@@ -62,22 +62,22 @@ export const placementRequestTabItems = (activeTab?: string, apArea?: string, re
     {
       text: 'Ready to match',
       active: activeTab === 'notMatched' || activeTab === undefined || activeTab?.length === 0,
-      href: `${pathsAdmin.admin.placementRequests.index({})}?${hrefSuffix}`,
+      href: `${pathsAdmin.admin.cruDashboard.index({})}?${hrefSuffix}`,
     },
     {
       text: 'Unable to match',
       active: activeTab === 'unableToMatch',
-      href: `${pathsAdmin.admin.placementRequests.index({})}?status=unableToMatch&${hrefSuffix}`,
+      href: `${pathsAdmin.admin.cruDashboard.index({})}?status=unableToMatch&${hrefSuffix}`,
     },
     {
       text: 'Matched',
       active: activeTab === 'matched',
-      href: `${pathsAdmin.admin.placementRequests.index({})}?status=matched&${hrefSuffix}`,
+      href: `${pathsAdmin.admin.cruDashboard.index({})}?status=matched&${hrefSuffix}`,
     },
     {
       text: 'Search',
       active: activeTab === 'search',
-      href: pathsAdmin.admin.placementRequests.search({}),
+      href: pathsAdmin.admin.cruDashboard.search({}),
     },
   ]
 }

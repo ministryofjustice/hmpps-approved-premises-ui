@@ -7,6 +7,7 @@ import PlacementRequestUnableToMatchController from './placementRequests/unableT
 import UserManagementController from './userManagementController'
 import DeliusUserController from './deliusUserController'
 import ReportsController from './reportsController'
+import CruDashboardController from './cruDashboardController'
 
 import type { Services } from '../../services'
 
@@ -17,6 +18,7 @@ export const controllers = (services: Services) => {
     apAreaService,
     featureFlagService,
   )
+  const cruDashboardController = new CruDashboardController(placementRequestService, apAreaService, featureFlagService)
   const placementRequestsBookingsController = new PlacementRequestsBookingsController(
     placementRequestService,
     premisesService,
@@ -29,6 +31,7 @@ export const controllers = (services: Services) => {
 
   return {
     adminPlacementRequestsController,
+    cruDashboardController,
     placementRequestsBookingsController,
     placementRequestWithdrawalsController,
     reportsController,

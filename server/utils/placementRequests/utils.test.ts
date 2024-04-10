@@ -87,22 +87,22 @@ describe('utils', () => {
       expect(placementRequestTabItems('notMatched', 'apArea', 'parole')).toEqual([
         {
           active: true,
-          href: '/admin/placement-requests?',
+          href: '/admin/cru-dashboard?',
           text: 'Ready to match',
         },
         {
           active: false,
-          href: '/admin/placement-requests?status=unableToMatch&',
+          href: '/admin/cru-dashboard?status=unableToMatch&',
           text: 'Unable to match',
         },
         {
           active: false,
-          href: '/admin/placement-requests?status=matched&',
+          href: '/admin/cru-dashboard?status=matched&',
           text: 'Matched',
         },
         {
           active: false,
-          href: '/admin/placement-requests/search',
+          href: '/admin/cru-dashboard/search',
           text: 'Search',
         },
       ])
