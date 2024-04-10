@@ -115,6 +115,7 @@ export type { FlagsEnvelope } from './models/FlagsEnvelope';
 export type { FullPerson } from './models/FullPerson';
 export type { Gender } from './models/Gender';
 export type { InvalidParam } from './models/InvalidParam';
+export type { LatestCas2StatusUpdate } from './models/LatestCas2StatusUpdate';
 export type { LocalAuthorityArea } from './models/LocalAuthorityArea';
 export type { LostBed } from './models/LostBed';
 export type { LostBedCancellation } from './models/LostBedCancellation';
