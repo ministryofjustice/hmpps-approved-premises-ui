@@ -6,6 +6,7 @@ import { withdrawnStatusTag } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
 import { placementLength } from '../matchUtils'
 import { adminSummary, apTypeCell, releaseTypeCell } from './adminSummary'
+import paths from '../../paths/apply'
 
 describe('adminSummary', () => {
   const placementRequest = placementRequestDetailFactory.build({
@@ -127,6 +128,14 @@ describe('adminSummary', () => {
           },
           value: {
             text: apTypeLabels[apType],
+          },
+          actions: {
+            items: [
+              {
+                href: `${paths.applications.show({ id: placementRequestWithApType.applicationId })}?tab=timeline`,
+                text: 'View timeline',
+              },
+            ],
           },
         })
       },
