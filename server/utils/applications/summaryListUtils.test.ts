@@ -2,13 +2,11 @@ import { createMock } from '@golevelup/ts-jest'
 import { applicationFactory, assessmentFactory, documentFactory } from '../../testutils/factories'
 import { forPagesInTask } from './forPagesInTask'
 import { embeddedSummaryListItem, summaryListSections, taskResponsesAsSummaryListItems } from './summaryListUtils'
-import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { getResponseForPage } from './getResponseForPage'
 import TasklistPage from '../../form-pages/tasklistPage'
 import { linebreaksToParagraphs } from '../utils'
 
-jest.mock('../reviewUtils')
 jest.mock('./utils')
 jest.mock('./getResponseForPage')
 jest.mock('./forPagesInTask')
@@ -67,20 +65,20 @@ describe('summaryListUtils', () => {
   })
 
   describe('taskResponsesAsSummaryListItems', () => {
-    it('calls reviewSections with the correct arguments', () => {
+    it('calls summaryListSections with the correct arguments', () => {
       const application = applicationFactory.build()
 
       summaryListSections(application)
 
-      expect(reviewSections).toHaveBeenCalledWith(application, taskResponsesAsSummaryListItems, true)
+      expect(summaryListSections).toHaveBeenCalledWith(application, taskResponsesAsSummaryListItems, true)
     })
 
-    it('calls reviewSections with showActions if added', () => {
+    it('calls summaryListSections with showActions if added', () => {
       const application = applicationFactory.build()
 
       summaryListSections(application, false)
 
-      expect(reviewSections).toHaveBeenCalledWith(application, taskResponsesAsSummaryListItems, false)
+      expect(summaryListSections).toHaveBeenCalledWith(application, taskResponsesAsSummaryListItems, false)
     })
 
     it('returns an empty array if there isnt any responses for the task', () => {

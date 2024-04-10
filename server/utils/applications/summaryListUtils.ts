@@ -2,21 +2,48 @@ import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
 } from '@approved-premises/api'
-import { FormArtifact, HtmlItem, SummaryListItem, TextItem, UiTask } from '@approved-premises/ui'
+import { FormArtifact, HtmlItem, SummaryListActions, SummaryListItem, TextItem, UiTask } from '@approved-premises/ui'
 
 import applyPaths from '../../paths/apply'
 import assessPaths from '../../paths/assess'
 import placementApplicationsPaths from '../../paths/placementApplications'
 
-import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { getResponseForPage } from './getResponseForPage'
 import { forPagesInTask } from './forPagesInTask'
 import { linebreaksToParagraphs } from '../utils'
+import isAssessment from '../assessments/isAssessment'
+import getSections from '../assessments/getSections'
+import Apply from '../../form-pages/apply'
 
-const summaryListSections = (applicationOrAssessment: Application | Assessment, showActions = true) =>
-  reviewSections(applicationOrAssessment, taskResponsesAsSummaryListItems, showActions)
+const summaryListSections = (
+  applicationOrAssessment: Application | Assessment,
+  showActions = true,
+  cardActionFunction: (taskId: string) => SummaryListActions = undefined,
+) => {
+  const nonCheckYourAnswersSections = isAssessment(applicationOrAssessment)
+    ? getSections(applicationOrAssessment).slice(0, -1)
+    : Apply.sections.slice(0, -1)
+
+  return nonCheckYourAnswersSections.map(section => {
+    return {
+      title: section.title,
+      tasks: section.tasks.map(task => {
+        return {
+          card: {
+            title: { text: task.title, headingLevel: 2 },
+            actions: cardActionFunction ? cardActionFunction(task.id) : undefined,
+            attributes: {
+              'data-cy-section': task.id,
+            },
+          },
+          rows: taskResponsesAsSummaryListItems(task, applicationOrAssessment, showActions),
+        }
+      }),
+    }
+  })
+}
 
 const taskResponsesAsSummaryListItems = (
   task: UiTask,
