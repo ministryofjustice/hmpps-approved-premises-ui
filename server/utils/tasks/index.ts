@@ -105,6 +105,8 @@ const userQualificationsSelectOptions = (
     emergency: 'Emergency APs',
     esap: 'ESAP',
     pipe: 'PIPE',
+    recovery_focused: 'Recovery-focused APs',
+    mental_health_specialist: 'Specialist Mental Health APs',
   }
 
   const options = Object.keys(qualificationDictionary).map(qualification => ({

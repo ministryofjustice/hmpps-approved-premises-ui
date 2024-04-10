@@ -169,6 +169,8 @@ describe('index', () => {
         { selected: false, text: 'Emergency APs', value: 'emergency' },
         { selected: false, text: 'ESAP', value: 'esap' },
         { selected: false, text: 'PIPE', value: 'pipe' },
+        { selected: false, text: 'Recovery-focused APs', value: 'recovery_focused' },
+        { selected: false, text: 'Specialist Mental Health APs', value: 'mental_health_specialist' },
       ])
     })
 
@@ -179,6 +181,8 @@ describe('index', () => {
         { selected: false, text: 'Emergency APs', value: 'emergency' },
         { selected: false, text: 'ESAP', value: 'esap' },
         { selected: false, text: 'PIPE', value: 'pipe' },
+        { selected: false, text: 'Recovery-focused APs', value: 'recovery_focused' },
+        { selected: false, text: 'Specialist Mental Health APs', value: 'mental_health_specialist' },
       ])
     })
   })
