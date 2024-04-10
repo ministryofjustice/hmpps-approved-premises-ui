@@ -13,8 +13,10 @@ import DashboardController from './dashboardController'
 import PagesController from './placementApplications/pagesController'
 import ReviewController from './placementApplications/reviewController'
 import WithdrawalsController from './placementApplications/withdrawalsController'
+import RedirectController from './redirectController'
 
 export const controllers = (services: Services) => {
+  const redirectController = new RedirectController()
   const dashboardController = new DashboardController()
   const tasksController = new TasksController(
     services.taskService,
@@ -31,6 +33,7 @@ export const controllers = (services: Services) => {
   const placementApplicationWithdrawalsController = new WithdrawalsController(services.placementApplicationService)
 
   return {
+    redirectController,
     dashboardController,
     tasksController,
     allocationsController,
