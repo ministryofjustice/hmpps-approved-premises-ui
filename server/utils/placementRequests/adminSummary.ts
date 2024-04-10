@@ -5,6 +5,7 @@ import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { withdrawnStatusTag } from '../applications/utils'
 import { DateFormats } from '../dateUtils'
 import { placementDates, placementLength } from '../matchUtils'
+import paths from '../../paths/apply'
 
 export const adminSummary = (placementRequest: PlacementRequestDetail): SummaryList => {
   const dates = placementDates(placementRequest.expectedArrival, String(placementRequest.duration))
@@ -68,6 +69,14 @@ export const apTypeCell = (placementRequest: PlacementRequestDetail) => {
     },
     value: {
       text: apTypeLabels[placementRequest.type],
+    },
+    actions: {
+      items: [
+        {
+          href: `${paths.applications.show({ id: placementRequest.applicationId })}?tab=timeline`,
+          text: 'View timeline',
+        },
+      ],
     },
   }
 }
