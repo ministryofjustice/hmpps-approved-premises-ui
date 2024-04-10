@@ -831,7 +831,7 @@ describe('utils', () => {
     it.each([
       ['application', 'application'],
       ['assessment', 'assessment'],
-      ['booking', 'booking'],
+      ['booking', 'placement'],
       ['assessmentAppeal', 'appeal'],
     ])('Translates a "%s" url type to "%s"', (urlType: TimelineEventUrlType, translation: string) => {
       const timelineUrl = { type: urlType, url: faker.internet.url() }

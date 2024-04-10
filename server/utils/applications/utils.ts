@@ -337,7 +337,7 @@ const urlTypeForUi = (type: TimelineEventUrlType) => {
   const translations: Record<TimelineEventUrlType, string> = {
     application: 'application',
     assessment: 'assessment',
-    booking: 'booking',
+    booking: 'placement',
     assessmentAppeal: 'appeal',
   }
   return translations[type]
