@@ -16,11 +16,13 @@ import { linebreaksToParagraphs } from '../utils'
 import isAssessment from '../assessments/isAssessment'
 import getSections from '../assessments/getSections'
 import Apply from '../../form-pages/apply'
+import { FeatureFlags } from '../../services/featureFlagService'
 
 const summaryListSections = (
   applicationOrAssessment: Application | Assessment,
   showActions = true,
   cardActionFunction: (taskId: string) => SummaryListActions = undefined,
+  featureFlags: FeatureFlags = undefined,
 ) => {
   const nonCheckYourAnswersSections = isAssessment(applicationOrAssessment)
     ? getSections(applicationOrAssessment).slice(0, -1)
@@ -38,7 +40,7 @@ const summaryListSections = (
               'data-cy-section': task.id,
             },
           },
-          rows: taskResponsesAsSummaryListItems(task, applicationOrAssessment, showActions),
+          rows: taskResponsesAsSummaryListItems(task, applicationOrAssessment, showActions, featureFlags),
         }
       }),
     }
@@ -49,34 +51,40 @@ const taskResponsesAsSummaryListItems = (
   task: UiTask,
   applicationOrAssessment: Application | Assessment,
   showActions = true,
+  featureFlags: FeatureFlags = undefined,
 ): Array<SummaryListItem> => {
   const items: Array<SummaryListItem> = []
 
-  forPagesInTask(applicationOrAssessment, task, (_, pageName) => {
-    if (pageName === 'attach-documents') {
-      items.push(
-        ...attachDocumentsSummaryListItems(applicationOrAssessment as Application, task, pageName, showActions),
-      )
-      return
-    }
-
-    const response = getResponseForPage(applicationOrAssessment, task.id, pageName)
-
-    Object.keys(response).forEach(key => {
-      try {
-        const value =
-          typeof response[key] === 'string' || response[key] instanceof String
-            ? { html: linebreaksToParagraphs(response[key] as string) }
-            : { html: embeddedSummaryListItem(response[key] as Array<Record<string, unknown>>) }
-
-        items.push(summaryListItemForResponse(key, value, task.id, pageName, applicationOrAssessment, showActions))
-      } catch (e) {
-        throw Error(
-          `Error rendering summary list. Page name: ${pageName}, response: ${JSON.stringify(response)}, question: ${key}, error: ${e}`,
+  forPagesInTask(
+    applicationOrAssessment,
+    task,
+    (_, pageName) => {
+      if (pageName === 'attach-documents') {
+        items.push(
+          ...attachDocumentsSummaryListItems(applicationOrAssessment as Application, task, pageName, showActions),
         )
+        return
       }
-    })
-  })
+
+      const response = getResponseForPage(applicationOrAssessment, task.id, pageName, featureFlags)
+
+      Object.keys(response).forEach(key => {
+        try {
+          const value =
+            typeof response[key] === 'string' || response[key] instanceof String
+              ? { html: linebreaksToParagraphs(response[key] as string) }
+              : { html: embeddedSummaryListItem(response[key] as Array<Record<string, unknown>>) }
+
+          items.push(summaryListItemForResponse(key, value, task.id, pageName, applicationOrAssessment, showActions))
+        } catch (e) {
+          throw Error(
+            `Error rendering summary list. Page name: ${pageName}, response: ${JSON.stringify(response)}, question: ${key}, error: ${e}`,
+          )
+        }
+      })
+    },
+    featureFlags,
+  )
 
   return items
 }

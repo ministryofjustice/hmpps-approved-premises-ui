@@ -3,6 +3,7 @@ import type { ApprovedPremisesAssessment as Assessment } from '@approved-premise
 import { Page } from '../../../utils/decorators'
 
 import TasklistPage from '../../../tasklistPage'
+import { FeatureFlags } from '../../../../services/featureFlagService'
 
 @Page({ name: 'check-your-answers', bodyProperties: ['reviewed'] })
 export default class Review implements TasklistPage {
@@ -13,6 +14,7 @@ export default class Review implements TasklistPage {
   constructor(
     public body: { reviewed?: string },
     readonly assessment: Assessment,
+    readonly featureFlags: FeatureFlags,
   ) {}
 
   previous() {

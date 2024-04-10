@@ -20,6 +20,8 @@ import informationSetAsNotReceived from '../../utils/assessments/informationSetA
 import { ErrorsAndUserInput, PaginatedResponse } from '../../@types/ui'
 import { awaitingAssessmentStatuses } from '../../utils/assessments/utils'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
+import { FeatureFlags } from '../../services/featureFlagService'
+import { fromPartial } from '@total-typescript/shoehorn'
 
 jest.mock('../../utils/assessments/utils')
 jest.mock('../../utils/users')
@@ -281,11 +283,15 @@ describe('assessmentsController', () => {
 
   describe('submit', () => {
     const assessment = assessmentFactory.build()
+    const featureFlags: FeatureFlags = fromPartial({
+      'allow-sufficient-information-request-without-confirmation': true,
+    })
 
     beforeEach(() => {
       request.params.id = assessment.id
 
       assessmentService.findAssessment.mockResolvedValue(assessment)
+      featureFlagService.getAll.mockResolvedValue(fromPartial(featureFlags))
     })
 
     describe('if the "confirmation" input isnt "confirmed"', () => {
@@ -298,6 +304,7 @@ describe('assessmentsController', () => {
         await requestHandler(request, response, next)
 
         expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, request)
+        expect(featureFlagService.getAll).toHaveBeenCalled()
         expect(addErrorMessageToFlash).toHaveBeenCalledWith(
           request,
           'You must confirm the information provided is complete, accurate and up to date.',
@@ -316,6 +323,7 @@ describe('assessmentsController', () => {
 
         await requestHandler(request, response, next)
 
+        expect(featureFlagService.getAll).toHaveBeenCalled()
         expect(assessmentService.findAssessment).toHaveBeenCalledWith(token, request)
         expect(response.render).toHaveBeenCalledWith('assessments/confirm', {
           pageHeading: 'Assessment submission confirmed',

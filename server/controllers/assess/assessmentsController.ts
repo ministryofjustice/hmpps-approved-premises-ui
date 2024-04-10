@@ -114,6 +114,7 @@ export default class AssessmentsController {
   submit(): RequestHandler {
     return async (req: Request, res: Response) => {
       const assessment = await this.assessmentService.findAssessment(req.user.token, req.params.id)
+      const featureFlags = await this.featureFlagService.getAll()
 
       if (req.body?.confirmation !== 'confirmed') {
         addErrorMessageToFlash(
@@ -125,7 +126,7 @@ export default class AssessmentsController {
         return res.redirect(paths.assessments.show({ id: assessment.id }))
       }
 
-      await this.assessmentService.submit(req.user.token, assessment)
+      await this.assessmentService.submit(req.user.token, assessment, featureFlags)
 
       return res.render('assessments/confirm', {
         pageHeading: 'Assessment submission confirmed',

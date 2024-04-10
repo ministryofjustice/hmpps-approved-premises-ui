@@ -22,7 +22,7 @@
                 {{ page.title }}
             </h1>
 
-            {% for section in SummaryListUtils.summaryListSections(page.assessment) %}
+            {% for section in SummaryListUtils.summaryListSections(page.assessment, false, undefined, page.featureFlags) %}
                 {% for task in section.tasks %}
                     {{ govukSummaryList(task) }}
                 {% endfor %}
