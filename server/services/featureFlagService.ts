@@ -2,7 +2,7 @@ import { ClientTokenAuthentication, FliptClient } from '@flipt-io/flipt'
 import config from '../config'
 import logger from '../../logger'
 
-type FeatureFlag = 'show-both-arrival-dates'
+export type FeatureFlag = 'show-both-arrival-dates'
 
 export default class FeatureFlagService {
   fliptClient: FliptClient | null
