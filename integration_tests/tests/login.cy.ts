@@ -21,6 +21,7 @@ context('SignIn', () => {
   })
 
   it('User name visible in header', () => {
+    cy.task('stubAuthUser', { name: 'J. Smith' })
     cy.signIn()
     const indexPage = Page.verifyOnPage(DashboardPage)
     indexPage.headerUserName().should('contain.text', 'J. Smith')
@@ -60,7 +61,7 @@ context('SignIn', () => {
     cy.request('/').its('body').should('contain', 'Sign in')
 
     cy.task('stubVerifyToken', true)
-    cy.task('stubAuthUser', { name: 'bobby brown' })
+    cy.task('stubAuthUser', { name: 'B. BROWN' })
     cy.signIn()
 
     indexPage.headerUserName().contains('B. Brown')

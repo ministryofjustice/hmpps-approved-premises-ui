@@ -10,23 +10,20 @@ import {
 import { PaginatedResponse, UserDetails } from '@approved-premises/ui'
 import { ReferenceDataClient, RestClientBuilder, UserClient } from '../data'
 import { convertToTitleCase } from '../utils/utils'
-import type HmppsAuthClient from '../data/hmppsAuthClient'
 
 export default class UserService {
   constructor(
-    private readonly hmppsAuthClient: HmppsAuthClient,
     private readonly userClientFactory: RestClientBuilder<UserClient>,
     private readonly referenceDataClientFactory: RestClientBuilder<ReferenceDataClient>,
   ) {}
 
   async getActingUser(token: string): Promise<UserDetails> {
-    const user = await this.hmppsAuthClient.getActingUser(token)
     const client = this.userClientFactory(token)
     const profile = await client.getUserProfile()
     return {
-      ...user,
+      name: profile.deliusUsername,
       id: profile.id,
-      displayName: convertToTitleCase(user.name),
+      displayName: convertToTitleCase(profile.name),
       roles: profile.roles,
       active: profile.isActive,
       apArea: profile.apArea,

@@ -28,7 +28,6 @@ import config, { AuditConfig } from '../config'
 export const services = () => {
   const {
     appealClientBuilder,
-    hmppsAuthClient,
     approvedPremisesClientBuilder,
     bookingClientBuilder,
     referenceDataClientBuilder,
@@ -45,7 +44,7 @@ export const services = () => {
   } = dataAccess()
 
   const appealService = new AppealService(appealClientBuilder)
-  const userService = new UserService(hmppsAuthClient, userClientBuilder, referenceDataClientBuilder)
+  const userService = new UserService(userClientBuilder, referenceDataClientBuilder)
   const auditService = new AuditService(config.apis.audit as AuditConfig)
   const premisesService = new PremisesService(approvedPremisesClientBuilder)
   const personService = new PersonService(personClient)

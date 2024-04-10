@@ -55,15 +55,16 @@ context('Task Allocation', () => {
       allocatedFilter: 'allocated',
       page: '1',
       sortDirection: 'asc',
+      apAreaId: apArea.id,
     })
     cy.task('stubTaskGet', { application, task, users })
     cy.task('stubApplicationGet', { application })
-    cy.task('stubApAreaReferenceData', apArea)
+    cy.task('stubApAreaReferenceData', { apArea })
     cy.task('stubUserList', { users, roles: ['assessor', 'matcher'] })
 
     // And I am logged in as a workflow manager
-    const me = userFactory.build()
-    cy.task('stubAuthUser', { roles: ['workflow_manager'], userId: me.id })
+    const me = userFactory.build({ apArea })
+    cy.task('stubAuthUser', { roles: ['workflow_manager'], userId: me.id, apArea: me.apArea })
     cy.signIn()
 
     // When I visit the task list page

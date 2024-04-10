@@ -1,14 +1,13 @@
 import { when } from 'jest-when'
 import UserService from './userService'
-import HmppsAuthClient, { User } from '../data/hmppsAuthClient'
 import { UserClient } from '../data'
 
 import { paginatedResponseFactory, referenceDataFactory, userFactory } from '../testutils/factories'
 import { PaginatedResponse } from '../@types/ui'
 import { ApprovedPremisesUser } from '../@types/shared'
 import ReferenceDataClient from '../data/referenceDataClient'
+import { convertToTitleCase } from '../utils/utils'
 
-jest.mock('../data/hmppsAuthClient')
 jest.mock('../data/userClient')
 jest.mock('../data/referenceDataClient.ts')
 
@@ -21,44 +20,29 @@ describe('User service', () => {
   const userProfile = userFactory.build({ roles: ['workflow_manager', 'assessor'] })
   const referenceDataClient = new ReferenceDataClient(null) as jest.Mocked<ReferenceDataClient>
 
-  let hmppsAuthClient: jest.Mocked<HmppsAuthClient>
   let userService: UserService
 
   beforeEach(() => {
     jest.resetAllMocks()
 
-    hmppsAuthClient = new HmppsAuthClient(null) as jest.Mocked<HmppsAuthClient>
     userClientFactory.mockReturnValue(userClient)
 
-    userService = new UserService(hmppsAuthClient, userClientFactory, referenceDataClientFactory)
+    userService = new UserService(userClientFactory, referenceDataClientFactory)
 
     userClient.getUserProfile.mockResolvedValue(userProfile)
     referenceDataClientFactory.mockReturnValue(referenceDataClient)
   })
 
   describe('getActingUser', () => {
-    it('Retrieves and formats user name', async () => {
-      hmppsAuthClient.getActingUser.mockResolvedValue({ name: 'john smith' } as User)
-
-      const result = await userService.getActingUser(token)
-
-      expect(result.displayName).toEqual('John Smith')
-    })
-
     it('retrieves and populates information from the API', async () => {
-      hmppsAuthClient.getActingUser.mockResolvedValue({ name: 'john smith' } as User)
-
       const result = await userService.getActingUser(token)
 
+      expect(result.name).toEqual(userProfile.deliusUsername)
       expect(result.id).toEqual(userProfile.id)
-      expect(result.roles).toEqual(['workflow_manager', 'assessor'])
+      expect(result.displayName).toEqual(convertToTitleCase(userProfile.name))
+      expect(result.roles).toEqual(userProfile.roles)
+      expect(result.active).toEqual(userProfile.isActive)
       expect(result.apArea).toEqual(userProfile.apArea)
-    })
-
-    it('Propagates error', async () => {
-      hmppsAuthClient.getActingUser.mockRejectedValue(new Error('some error'))
-
-      await expect(userService.getActingUser(token)).rejects.toEqual(new Error('some error'))
     })
   })
 
