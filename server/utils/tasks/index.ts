@@ -8,6 +8,8 @@ import { DateFormats } from '../dateUtils'
 import { nameOrPlaceholderCopy } from '../personUtils'
 import {
   allocatedTableRows,
+  completedTableHeader,
+  completedTableRows,
   taskParams,
   tasksTabItems,
   tasksTableHeader,
@@ -136,4 +138,6 @@ export {
   userTableRows,
   tasksTabItems,
   userQualificationsSelectOptions,
+  completedTableHeader,
+  completedTableRows,
 }

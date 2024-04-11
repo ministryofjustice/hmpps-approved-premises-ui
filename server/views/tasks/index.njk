@@ -19,13 +19,13 @@
       {% include "../_messages.njk" %}
       {% include "./_filters.njk" %}
 
-      {{ navigation(allocatedFilter, hrefPrefix) }}
+      {{ navigation(activeTab, hrefPrefix) }}
 
       {{
         govukTable({
             firstCellIsHeader: true,
-            head: TaskUtils.tasksTableHeader(allocatedFilter, sortBy, sortDirection, hrefPrefix),
-            rows: TaskUtils.tasksTableRows(tasks, allocatedFilter)
+            head: TaskUtils.tasksTableHeader(activeTab, sortBy, sortDirection, hrefPrefix),
+            rows: TaskUtils.tasksTableRows(tasks, activeTab)
           })
       }}
 

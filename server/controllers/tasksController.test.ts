@@ -84,6 +84,7 @@ describe('TasksController', () => {
         apArea: apArea.id,
         users,
         requiredQualification: null,
+        activeTab: 'allocated',
       })
 
       expect(taskService.getAll).toHaveBeenCalledWith({
@@ -95,6 +96,7 @@ describe('TasksController', () => {
         apAreaId: apArea.id,
         taskTypes: ['PlacementApplication', 'Assessment'],
         requiredQualification: null,
+        isCompleted: false,
       })
     })
 
@@ -110,15 +112,17 @@ describe('TasksController', () => {
       const allocatedToUserId = '123'
       const requiredQualification = 'womens'
       const crnOrName = 'ABC123'
+      const activeTab = 'unallocated'
 
       const requestHandler = tasksController.index()
       const unallocatedRequest = {
         ...request,
-        query: { allocatedFilter, area: apAreaId, allocatedToUserId, requiredQualification, crnOrName },
+        query: { activeTab, allocatedFilter, area: apAreaId, allocatedToUserId, requiredQualification, crnOrName },
       }
 
       when(getPaginationDetails as jest.Mock)
         .calledWith(unallocatedRequest, paths.tasks.index({}), {
+          activeTab,
           allocatedFilter,
           area: apAreaId,
           allocatedToUserId,
@@ -144,9 +148,11 @@ describe('TasksController', () => {
         allocatedToUserId,
         requiredQualification,
         crnOrName,
+        activeTab,
       })
 
       expect(getPaginationDetails).toHaveBeenCalledWith(unallocatedRequest, paths.tasks.index({}), {
+        activeTab,
         allocatedFilter,
         area: apAreaId,
         allocatedToUserId,
@@ -165,6 +171,7 @@ describe('TasksController', () => {
         allocatedToUserId,
         requiredQualification,
         crnOrName,
+        isCompleted: false,
       })
     })
 
@@ -182,6 +189,7 @@ describe('TasksController', () => {
 
       when(getPaginationDetails as jest.Mock)
         .calledWith(requestWithQuery, paths.tasks.index({}), {
+          activeTab: 'allocated',
           allocatedFilter: 'allocated',
           area: 'all',
           requiredQualification: null,
@@ -203,8 +211,10 @@ describe('TasksController', () => {
         apArea: 'all',
         users,
         requiredQualification: null,
+        activeTab: 'allocated',
       })
       expect(getPaginationDetails).toHaveBeenCalledWith(requestWithQuery, paths.tasks.index({}), {
+        activeTab: 'allocated',
         allocatedFilter: 'allocated',
         area: 'all',
         requiredQualification: null,
@@ -219,6 +229,83 @@ describe('TasksController', () => {
         apAreaId: '',
         taskTypes: ['PlacementApplication', 'Assessment'],
         requiredQualification: null,
+        isCompleted: false,
+      })
+    })
+
+    it('should send isCompleted true for completed tab', async () => {
+      const paramPaginationDetails = {
+        hrefPrefix: paths.tasks.index({}),
+        pageNumber: 1,
+        sortBy: 'name',
+        sortDirection: 'desc',
+        activeTab: 'completed',
+      }
+      const apAreaId = '1234'
+      const allocatedFilter = 'unallocated'
+      const allocatedToUserId = '123'
+      const requiredQualification = 'womens'
+      const crnOrName = 'ABC123'
+      const activeTab = 'completed'
+
+      const requestHandler = tasksController.index()
+      const unallocatedRequest = {
+        ...request,
+        query: { activeTab, allocatedFilter, area: apAreaId, allocatedToUserId, requiredQualification, crnOrName },
+      }
+
+      when(getPaginationDetails as jest.Mock)
+        .calledWith(unallocatedRequest, paths.tasks.index({}), {
+          activeTab,
+          allocatedFilter,
+          area: apAreaId,
+          allocatedToUserId,
+          requiredQualification,
+          crnOrName,
+        })
+        .mockReturnValue(paramPaginationDetails)
+
+      await requestHandler(unallocatedRequest, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('tasks/index', {
+        pageHeading: 'Task Allocation',
+        tasks,
+        allocatedFilter,
+        apAreas,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paramPaginationDetails.sortBy,
+        sortDirection: paramPaginationDetails.sortDirection,
+        apArea: apAreaId,
+        users,
+        allocatedToUserId,
+        requiredQualification,
+        crnOrName,
+        activeTab,
+      })
+
+      expect(getPaginationDetails).toHaveBeenCalledWith(unallocatedRequest, paths.tasks.index({}), {
+        activeTab,
+        allocatedFilter,
+        area: apAreaId,
+        allocatedToUserId,
+        requiredQualification,
+        crnOrName,
+      })
+
+      expect(taskService.getAll).toHaveBeenCalledWith({
+        allocatedFilter,
+        token,
+        sortBy: paramPaginationDetails.sortBy,
+        sortDirection: paramPaginationDetails.sortDirection,
+        page: paramPaginationDetails.pageNumber,
+        apAreaId,
+        taskTypes: ['PlacementApplication', 'Assessment'],
+        allocatedToUserId,
+        requiredQualification,
+        crnOrName,
+        isCompleted: true,
       })
     })
   })

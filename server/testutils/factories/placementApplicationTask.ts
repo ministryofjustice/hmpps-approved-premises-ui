@@ -15,4 +15,5 @@ export default Factory.define<PlacementApplicationTask>(() => ({
   releaseType: 'rotl',
   placementType: 'rotl',
   placementDates: placementDatesFactory.buildList(1),
+  outcome: faker.helpers.arrayElement(['accepted', 'rejected', 'withdraw', 'withdrawn_by_pp']),
 }))

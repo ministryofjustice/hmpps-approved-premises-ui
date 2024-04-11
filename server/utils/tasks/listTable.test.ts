@@ -7,6 +7,11 @@ import {
 import {
   allocatedTableRows,
   allocationCell,
+  completedAtDateCell,
+  completedByCell,
+  completedTableRows,
+  decisionCell,
+  getDecisionOutcome,
   getTaskType,
   nameAnchorCell,
   statusBadge,
@@ -271,12 +276,17 @@ describe('table', () => {
         {
           text: 'Allocated',
           active: true,
-          href: '/tasks?allocatedFilter=allocated',
+          href: '/tasks?allocatedFilter=allocated&activeTab=allocated',
         },
         {
           text: 'Unallocated',
           active: false,
-          href: '/tasks?allocatedFilter=unallocated',
+          href: '/tasks?allocatedFilter=unallocated&activeTab=unallocated',
+        },
+        {
+          active: false,
+          href: '/tasks?allocatedFilter=allocated&activeTab=completed',
+          text: 'Completed',
         },
       ])
     })
@@ -286,12 +296,17 @@ describe('table', () => {
         {
           text: 'Allocated',
           active: true,
-          href: '/tasks?allocatedFilter=allocated&area=areaId',
+          href: '/tasks?allocatedFilter=allocated&area=areaId&activeTab=allocated',
         },
         {
           text: 'Unallocated',
           active: false,
-          href: '/tasks?allocatedFilter=unallocated&area=areaId',
+          href: '/tasks?allocatedFilter=unallocated&area=areaId&activeTab=unallocated',
+        },
+        {
+          active: false,
+          href: '/tasks?allocatedFilter=allocated&area=areaId&activeTab=completed',
+          text: 'Completed',
         },
       ])
     })
@@ -301,12 +316,37 @@ describe('table', () => {
         {
           text: 'Allocated',
           active: false,
-          href: '/tasks?allocatedFilter=allocated&area=areaId',
+          href: '/tasks?allocatedFilter=allocated&area=areaId&activeTab=allocated',
         },
         {
           text: 'Unallocated',
           active: true,
-          href: '/tasks?allocatedFilter=unallocated&area=areaId',
+          href: '/tasks?allocatedFilter=unallocated&area=areaId&activeTab=unallocated',
+        },
+        {
+          active: false,
+          href: '/tasks?allocatedFilter=allocated&area=areaId&activeTab=completed',
+          text: 'Completed',
+        },
+      ])
+    })
+
+    it('returns tasks tab items when active tab completed and area present', () => {
+      expect(tasksTabItems('/tasks?allocatedFilter=allocated&area=areaId', 'completed')).toEqual([
+        {
+          text: 'Allocated',
+          active: false,
+          href: '/tasks?allocatedFilter=allocated&area=areaId&activeTab=allocated',
+        },
+        {
+          text: 'Unallocated',
+          active: false,
+          href: '/tasks?allocatedFilter=unallocated&area=areaId&activeTab=unallocated',
+        },
+        {
+          active: true,
+          href: '/tasks?allocatedFilter=allocated&area=areaId&activeTab=completed',
+          text: 'Completed',
         },
       ])
     })
@@ -316,12 +356,17 @@ describe('table', () => {
         {
           text: 'Allocated',
           active: false,
-          href: '/tasks?allocatedFilter=allocated&area=areaId&foo=bar&abc=123',
+          href: '/tasks?allocatedFilter=allocated&area=areaId&foo=bar&abc=123&activeTab=allocated',
         },
         {
           text: 'Unallocated',
           active: true,
-          href: '/tasks?allocatedFilter=unallocated&area=areaId&foo=bar&abc=123',
+          href: '/tasks?allocatedFilter=unallocated&area=areaId&foo=bar&abc=123&activeTab=unallocated',
+        },
+        {
+          active: false,
+          href: '/tasks?allocatedFilter=allocated&area=areaId&foo=bar&abc=123&activeTab=completed',
+          text: 'Completed',
         },
       ])
     })
@@ -331,14 +376,88 @@ describe('table', () => {
         {
           text: 'Allocated',
           active: false,
-          href: '/tasks?allocatedFilter=allocated&allocatedToUserId=123',
+          href: '/tasks?allocatedFilter=allocated&allocatedToUserId=123&activeTab=allocated',
         },
         {
           text: 'Unallocated',
           active: true,
-          href: '/tasks?allocatedFilter=unallocated',
+          href: '/tasks?allocatedFilter=unallocated&activeTab=unallocated',
+        },
+        {
+          active: false,
+          href: '/tasks?allocatedFilter=allocated&allocatedToUserId=123&activeTab=completed',
+          text: 'Completed',
         },
       ])
+    })
+  })
+
+  describe('completedTableRows', () => {
+    it('returns an array of completed table rows', () => {
+      const task = taskFactory.build()
+
+      expect(completedTableRows([task])).toEqual([
+        [
+          nameAnchorCell(task),
+          completedAtDateCell(task),
+          completedByCell(task),
+          taskTypeCell(task),
+          decisionCell(task),
+        ],
+      ])
+    })
+
+    it('returns an array of completed task table rows', () => {
+      const task = taskFactory.build()
+
+      expect(tasksTableRows([task], 'completed')).toEqual([
+        [
+          nameAnchorCell(task),
+          completedAtDateCell(task),
+          completedByCell(task),
+          taskTypeCell(task),
+          decisionCell(task),
+        ],
+      ])
+    })
+  })
+
+  describe('tasksTableHeader', () => {
+    const sortBy = 'dueAt'
+    const sortDirection = 'asc'
+    const hrefPrefix = 'http://localhost'
+
+    it('returns an array of completed table headers', () => {
+      expect(tasksTableHeader('completed', sortBy, sortDirection, hrefPrefix)).toEqual([
+        sortHeader<TaskSortField>('Person', 'person', sortBy, sortDirection, hrefPrefix),
+        {
+          text: 'Completed at',
+        },
+        {
+          text: 'Completed by',
+        },
+        {
+          text: 'Decision',
+        },
+        {
+          text: 'Task type',
+        },
+      ])
+    })
+  })
+
+  describe('getDecisionOutcome', () => {
+    it('returns assessment decision outcome rejected', () => {
+      const task = assessmentTaskFactory.build({ outcome: 'rejected' })
+      expect(getDecisionOutcome(task)).toEqual('Rejected')
+    })
+    it('returns placement application decision outcome withdrawn_by_pp', () => {
+      const task = placementApplicationTaskFactory.build({ outcome: 'withdrawn_by_pp' })
+      expect(getDecisionOutcome(task)).toEqual('Withdrawn by probation practitioner')
+    })
+    it('returns placement application decision outcome withdrawn_by_pp', () => {
+      const task = placementRequestTaskFactory.build({ outcome: 'matched' })
+      expect(getDecisionOutcome(task)).toEqual('Matched')
     })
   })
 })

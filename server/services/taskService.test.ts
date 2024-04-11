@@ -66,6 +66,7 @@ describe('taskService', () => {
         taskTypes: ['PlacementApplication', 'Assessment'],
         requiredQualification: 'womens',
         crnOrName: 'CRN123',
+        isCompleted: false,
       })
     })
   })

@@ -18,4 +18,5 @@ export default Factory.define<Task>(() => ({
   personName: faker.person.fullName(),
   crn: `C${faker.number.int({ min: 100000, max: 999999 })}`,
   apArea: apAreaFactory.build(),
+  outcomeRecordedAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
 }))

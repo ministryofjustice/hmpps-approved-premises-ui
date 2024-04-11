@@ -47,6 +47,7 @@ describeClient('taskClient', provider => {
             types: 'PlacementApplication,Assessment',
             requiredQualification,
             crnOrName,
+            isCompleted: 'false',
           },
           headers: {
             authorization: `Bearer ${token}`,

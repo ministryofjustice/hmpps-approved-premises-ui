@@ -28,6 +28,7 @@ export default class TaskService {
     taskTypes,
     requiredQualification,
     crnOrName,
+    isCompleted = false,
   }: {
     token: string
     allocatedFilter: 'allocated' | 'unallocated'
@@ -39,6 +40,7 @@ export default class TaskService {
     taskTypes?: Array<TaskType>
     requiredQualification?: TaskSearchQualification
     crnOrName?: string
+    isCompleted?: boolean
   }): Promise<PaginatedResponse<Task>> {
     const taskClient = this.taskClientFactory(token)
 
@@ -52,6 +54,7 @@ export default class TaskService {
       taskTypes,
       requiredQualification,
       crnOrName,
+      isCompleted,
     })
 
     return tasks
