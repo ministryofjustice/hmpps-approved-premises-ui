@@ -18,7 +18,6 @@ import type {
   ApplicationSortField,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplicationStatus,
-  Person,
   PlacementApplication,
   PlacementType,
   SortDirection,
@@ -34,7 +33,7 @@ import paths from '../../paths/apply'
 
 import placementApplicationPaths from '../../paths/placementApplications'
 import Apply from '../../form-pages/apply'
-import { isApplicableTier, isFullPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
+import { isApplicableTier, isFullPerson } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import Assess from '../../form-pages/assess'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
@@ -52,10 +51,12 @@ import { durationAndArrivalDateFromPlacementApplication } from '../placementRequ
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 import { applicationStatuses, getStatus } from './getStatus'
+import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
 export { applicationIdentityBar } from './applicationIdentityBar'
+export { pendingPlacementRequestTableHeader, pendingPlacementRequestTableRows } from './pendingPlacementRequestTable'
 
 const applicationTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => [
@@ -119,36 +120,8 @@ export const getAction = (application: ApplicationSummary | Application) => {
   return ''
 }
 
-const getTierOrBlank = (tier: string | null | undefined) => (tier ? tierBadge(tier) : '')
-
 const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
   arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'
-
-export const textValue = (value: string) => {
-  return { text: value }
-}
-
-export const htmlValue = (value: string) => {
-  return { html: value }
-}
-
-const createNameAnchorElement = (
-  person: Person,
-  applicationSummary: ApplicationSummary,
-  { linkInProgressApplications }: { linkInProgressApplications: boolean } = { linkInProgressApplications: true },
-) => {
-  if (!linkInProgressApplications && applicationSummary.status === 'started') {
-    return textValue(nameOrPlaceholderCopy(person, `LAO: ${person.crn}`))
-  }
-
-  return isFullPerson(person)
-    ? htmlValue(
-        `<a href=${paths.applications.show({ id: applicationSummary.id })} data-cy-id="${applicationSummary.id}">${
-          person.name
-        }</a>`,
-      )
-    : textValue(`LAO CRN: ${person.crn}`)
-}
 
 export const actionsCell = (application: ApplicationSummary | Application) => {
   const actionItems: Array<string> = []

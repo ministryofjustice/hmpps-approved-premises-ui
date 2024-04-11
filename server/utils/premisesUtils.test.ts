@@ -14,7 +14,7 @@ import {
   summaryListForPremises,
 } from './premisesUtils'
 import { addOverbookingsToSchedule } from './addOverbookingsToSchedule'
-import { textValue } from './applications/utils'
+import { textValue } from './applications/helpers'
 import paths from '../paths/manage'
 import { linkTo } from './utils'
 import { DateFormats } from './dateUtils'
