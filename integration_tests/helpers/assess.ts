@@ -107,7 +107,7 @@ export default class AseessHelper {
     this.submitAssessment()
   }
 
-  addClarificationNote() {
+  addClarificationNote({ testConfirmationPage = true } = {}) {
     // When I click on the 'review application' link
     cy.get('[data-cy-task-name="review-application"]').click()
 
@@ -131,10 +131,12 @@ export default class AseessHelper {
     // And I click submit
     page.clickSubmit()
 
-    // And I confirm that I want to send the note
-    const confirmPage = new SufficientInformationConfirmPage(this.assessment, 'yes')
-    confirmPage.completeForm()
-    confirmPage.clickSubmit()
+    if (testConfirmationPage) {
+      // And I confirm that I want to send the note
+      const confirmPage = new SufficientInformationConfirmPage(this.assessment)
+      confirmPage.completeForm()
+      confirmPage.clickSubmit()
+    }
 
     // Then I should see a confirmation screen
     const confirmationScreen = Page.verifyOnPage(ClarificationNoteConfirmPage)
