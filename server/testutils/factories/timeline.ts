@@ -1,10 +1,10 @@
 import { Factory } from 'fishery'
-import { TimelineEvent } from '@approved-premises/api'
+import { ApplicationTimeline, PersonalTimeline, TimelineEvent } from '@approved-premises/api'
 import { faker } from '@faker-js/faker'
 import { DateFormats } from '../../utils/dateUtils'
 import userFactory from './user'
 
-export default Factory.define<TimelineEvent>(() => ({
+export const timelineEventFactory = Factory.define<TimelineEvent>(() => ({
   id: faker.string.uuid(),
   occurredAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
   type: faker.helpers.arrayElement([
@@ -27,3 +27,30 @@ export default Factory.define<TimelineEvent>(() => ({
   createdBy: userFactory.build(),
   associatedUrls: [{ type: 'application', url: faker.internet.url() }],
 }))
+
+export const applicationTimelineFactory = Factory.define<ApplicationTimeline>(() => ({
+  createdAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
+  id: faker.string.uuid(),
+  status: faker.helpers.arrayElement([
+    'started',
+    'submitted',
+    'rejected',
+    'awaitingAssesment',
+    'unallocatedAssesment',
+    'assesmentInProgress',
+    'awaitingPlacement',
+    'placementAllocated',
+    'inapplicable',
+    'withdrawn',
+    'requestedFurtherInformation',
+    'pendingPlacementRequest',
+  ] as const),
+  createdBy: userFactory.build(),
+  timelineEvents: timelineEventFactory.buildList(5),
+}))
+
+export const personalTimelineFactory = Factory.define<PersonalTimeline>(() => ({
+  applications: applicationTimelineFactory.buildList(2),
+}))
+
+export default timelineEventFactory

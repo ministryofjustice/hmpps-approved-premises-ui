@@ -2,6 +2,7 @@ import { Response } from 'express'
 import { createMock } from '@golevelup/ts-jest'
 import type { Person } from '@approved-premises/api'
 
+import { when } from 'jest-when'
 import { SanitisedError } from '../sanitisedError'
 import PersonService, { OasysNotFoundError } from './personService'
 import PersonClient from '../data/personClient'
@@ -12,6 +13,7 @@ import {
   oasysSectionsFactory,
   oasysSelectionFactory,
   personFactory,
+  personalTimelineFactory,
   prisonCaseNotesFactory,
   risksFactory,
 } from '../testutils/factories'
@@ -237,6 +239,20 @@ describe('PersonService', () => {
 
       expect(personClientFactory).toHaveBeenCalledWith(token)
       expect(personClient.document).toHaveBeenCalledWith('crn', 'applicationId', response)
+    })
+  })
+
+  describe('getTimeline', () => {
+    it('calls the client method and retuns the result', async () => {
+      const expected = personalTimelineFactory.build()
+      const crn = 'crn'
+      when(personClient.timeline).calledWith(crn).mockResolvedValue(expected)
+
+      const actual = await service.getTimeline(token, crn)
+
+      expect(personClientFactory).toHaveBeenCalledWith(token)
+      expect(personClient.timeline).toHaveBeenCalledWith('crn')
+      expect(actual).toEqual(expected)
     })
   })
 })

@@ -12,6 +12,7 @@ import type { Services } from '../services'
 import DashboardController from './dashboardController'
 import PagesController from './placementApplications/pagesController'
 import PeopleController from './people/peopleController'
+import TimelineController from './people/timelineController'
 import ReviewController from './placementApplications/reviewController'
 import WithdrawalsController from './placementApplications/withdrawalsController'
 import RedirectController from './redirectController'
@@ -33,6 +34,7 @@ export const controllers = (services: Services) => {
   const placementApplicationReviewController = new ReviewController(services.placementApplicationService)
   const placementApplicationWithdrawalsController = new WithdrawalsController(services.placementApplicationService)
   const peopleController = new PeopleController(services.personService)
+  const timelineController = new TimelineController(services.personService)
 
   return {
     redirectController,
@@ -43,6 +45,7 @@ export const controllers = (services: Services) => {
     placementApplicationReviewController,
     placementApplicationWithdrawalsController,
     peopleController,
+    timelineController,
     ...applyControllers(services),
     ...assessControllers(services),
     ...matchControllers(services),

@@ -8,6 +8,7 @@ import type {
   Person,
   PersonAcctAlert,
   PersonRisks,
+  PersonalTimeline,
   PrisonCaseNote,
 } from '@approved-premises/api'
 
@@ -100,5 +101,9 @@ export default class PersonClient {
       { path: paths.people.documents({ crn, documentId }), passThroughHeaders: ['content-disposition'] },
       response,
     )
+  }
+
+  async timeline(crn: string): Promise<PersonalTimeline> {
+    return (await this.restClient.get({ path: paths.people.timeline({ crn }) })) as Promise<PersonalTimeline>
   }
 }

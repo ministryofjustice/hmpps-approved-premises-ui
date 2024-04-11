@@ -20,7 +20,11 @@ export default function routes(controllers: Controllers, router: Router, service
     auditBodyParams: ['crn'],
   })
 
-  get(peoplePaths.timeline.find.pattern, timelineController.find(), { auditEvent: 'SHOW_PERSON' })
+  get(peoplePaths.timeline.find.pattern, timelineController.find(), { auditEvent: 'SEARCH_FOR_TIMELINE' })
+  post(peoplePaths.timeline.find.pattern, timelineController.show(), {
+    auditEvent: 'SHOW_PERSON_TIMELINE',
+    auditBodyParams: ['crn'],
+  })
 
   return router
 }

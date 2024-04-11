@@ -11,6 +11,7 @@ import type {
   Person,
   PersonAcctAlert,
   PersonRisks,
+  PersonalTimeline,
   PrisonCaseNote,
 } from '@approved-premises/api'
 
@@ -116,6 +117,18 @@ export default {
         status: 200,
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         jsonBody: args.offences,
+      },
+    }),
+  stubPersonalTimeline: (args: { person: Person; timeline: PersonalTimeline }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.people.timeline({ crn: args.person.crn }),
+      },
+      response: {
+        status: 200,
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+        jsonBody: args.timeline,
       },
     }),
   verifyFindPerson: async (args: { person: Person }) =>
