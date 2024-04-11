@@ -2,13 +2,15 @@ import Page from '../../page'
 import paths from '../../../../server/paths/admin'
 
 import {
+  ApprovedPremisesApplicationSummary,
   PlacementRequest,
   PlacementRequestSortField,
   PlacementRequestStatus,
   SortOrder,
 } from '../../../../server/@types/shared'
-import { tableRowsToArrays } from '../../../helpers'
+import { shouldShowTableRows, tableRowsToArrays } from '../../../helpers'
 import { dashboardTableRows } from '../../../../server/utils/placementRequests/table'
+import { pendingPlacementRequestTableRows } from '../../../../server/utils/applications/pendingPlacementRequestTable'
 
 export default class ListPage extends Page {
   constructor() {
@@ -37,8 +39,16 @@ export default class ListPage extends Page {
     })
   }
 
+  shouldShowApplications(applications: Array<ApprovedPremisesApplicationSummary>): void {
+    shouldShowTableRows(pendingPlacementRequestTableRows(applications))
+  }
+
   clickPlacementRequest(placementRequest: PlacementRequest): void {
     cy.get(`[data-cy-placementRequestId="${placementRequest.id}"]`).click()
+  }
+
+  shouldNotShowRequestTypeFilter(): void {
+    cy.get('input[name="requestType"]').should('not.exist')
   }
 
   clickReadyToMatch(): void {
