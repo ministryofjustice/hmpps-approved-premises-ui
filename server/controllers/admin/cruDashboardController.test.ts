@@ -1,17 +1,24 @@
 import type { NextFunction, Request, Response } from 'express'
 import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
+import { when } from 'jest-when'
 import CruDashboardController from './cruDashboardController'
 
-import { ApAreaService, FeatureFlagService, PlacementRequestService } from '../../services'
+import { ApAreaService, ApplicationService, FeatureFlagService, PlacementRequestService } from '../../services'
 import {
   apAreaFactory,
+  applicationSummaryFactory,
   paginatedResponseFactory,
   placementRequestFactory,
   userDetailsFactory,
 } from '../../testutils/factories'
 import { PaginatedResponse } from '../../@types/ui'
-import { PlacementRequest } from '../../@types/shared'
+import {
+  ApplicationSortField,
+  ApprovedPremisesApplicationSummary,
+  PlacementRequest,
+  SortDirection,
+} from '../../@types/shared'
 import paths from '../../paths/admin'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 
@@ -30,12 +37,18 @@ describe('CruDashboardController', () => {
   const placementRequestService = createMock<PlacementRequestService>({})
   const apAreaService = createMock<ApAreaService>({})
   const featureFlagService = createMock<FeatureFlagService>({})
+  const applicationService = createMock<ApplicationService>({})
 
   let cruDashboardController: CruDashboardController
 
   beforeEach(() => {
     jest.resetAllMocks()
-    cruDashboardController = new CruDashboardController(placementRequestService, apAreaService, featureFlagService)
+    cruDashboardController = new CruDashboardController(
+      placementRequestService,
+      apAreaService,
+      featureFlagService,
+      applicationService,
+    )
   })
 
   describe('index', () => {
@@ -150,18 +163,47 @@ describe('CruDashboardController', () => {
         paginationDetails.sortDirection,
       )
 
+      expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', expect.objectContaining({ apArea }))
+    })
+
+    it('should handle the pendingPlacement tab', async () => {
+      const requestHandler = cruDashboardController.index()
+
+      const apArea = 'some-ap-area-id'
+      const filters = { apArea, status: 'pendingPlacement' }
+      const requestWithQuery = { ...request, query: filters }
+
+      const applications = applicationSummaryFactory.buildList(2)
+      const paginatedApplications = paginatedResponseFactory.build({
+        data: applications,
+      }) as PaginatedResponse<ApprovedPremisesApplicationSummary>
+
+      when(applicationService.dashboard)
+        .calledWith(
+          token,
+          paginationDetails.pageNumber,
+          paginationDetails.sortBy as ApplicationSortField,
+          paginationDetails.sortDirection as SortDirection,
+          {
+            status: 'pendingPlacementRequest',
+            apAreaId: apArea,
+          },
+        )
+        .mockResolvedValue(paginatedApplications)
+
+      await requestHandler(requestWithQuery, response, next)
+
       expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
         pageHeading: 'CRU Dashboard',
-        placementRequests: paginatedResponse.data,
-        pageNumber: Number(paginatedResponse.pageNumber),
-        totalPages: Number(paginatedResponse.totalPages),
+        status: 'pendingPlacement',
+        applications,
+        pageNumber: Number(paginatedApplications.pageNumber),
+        totalPages: Number(paginatedApplications.totalPages),
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
-        status: 'notMatched',
         apAreas,
         apArea,
-        showRequestedAndActualArrivalDates: true,
       })
     })
   })

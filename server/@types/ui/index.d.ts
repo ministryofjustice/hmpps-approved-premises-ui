@@ -477,6 +477,7 @@ export type PlacementRequestDashboardSearchOptions = {
 export type ApplicationDashboardSearchOptions = {
   crnOrName?: string
   status?: ApprovedPremisesApplicationStatus
+  apAreaId?: string
 }
 
 export type AssessmentCurrentTab = 'awaiting_assessment' | 'awaiting_response' | 'completed'

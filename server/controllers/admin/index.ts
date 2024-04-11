@@ -12,13 +12,25 @@ import CruDashboardController from './cruDashboardController'
 import type { Services } from '../../services'
 
 export const controllers = (services: Services) => {
-  const { placementRequestService, premisesService, reportService, apAreaService, featureFlagService } = services
+  const {
+    placementRequestService,
+    premisesService,
+    reportService,
+    apAreaService,
+    featureFlagService,
+    applicationService,
+  } = services
   const adminPlacementRequestsController = new AdminPlacementRequestsController(
     placementRequestService,
     apAreaService,
     featureFlagService,
   )
-  const cruDashboardController = new CruDashboardController(placementRequestService, apAreaService, featureFlagService)
+  const cruDashboardController = new CruDashboardController(
+    placementRequestService,
+    apAreaService,
+    featureFlagService,
+    applicationService,
+  )
   const placementRequestsBookingsController = new PlacementRequestsBookingsController(
     placementRequestService,
     premisesService,
