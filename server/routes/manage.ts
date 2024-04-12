@@ -21,7 +21,7 @@ export default function routes(controllers: Controllers, router: Router, service
     departuresController,
     cancellationsController,
     lostBedsController,
-    peopleController,
+
     bedsController,
     moveBedsController,
   } = controllers
@@ -54,8 +54,6 @@ export default function routes(controllers: Controllers, router: Router, service
     allowedRoles: ['workflow_manager'],
   })
   get(paths.bookings.confirm.pattern, bookingsController.confirm(), { allowedRoles: ['workflow_manager'] })
-
-  post(paths.people.find.pattern, peopleController.find(), { auditEvent: 'FIND_PERSON', auditBodyParams: ['crn'] })
 
   get(paths.bookings.extensions.new.pattern, bookingExtensionsController.new(), {
     auditEvent: 'NEW_BOOKING_EXTENSION',
