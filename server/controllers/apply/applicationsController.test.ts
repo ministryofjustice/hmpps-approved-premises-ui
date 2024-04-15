@@ -337,7 +337,7 @@ describe('applicationsController', () => {
       beforeEach(() => {
         request = createMock<Request>({
           user: { token },
-          flash: jest.fn().mockReturnValue([person.crn]),
+          flash: jest.fn().mockReturnValueOnce([person.crn]).mockReturnValueOnce(['true']),
         })
         personService.findByCrn.mockResolvedValue(person)
         personService.getOffences.mockResolvedValue([offence])
@@ -424,6 +424,7 @@ describe('applicationsController', () => {
           errors: errorsAndUserInput.errors,
           errorSummary: errorsAndUserInput.errorSummary,
           ...errorsAndUserInput.userInput,
+          restrictedPerson: 'true',
         })
         expect(request.flash).toHaveBeenCalledWith('crn')
       })
