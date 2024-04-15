@@ -188,6 +188,7 @@ describe('mapApiPersonRiskForUI', () => {
     expect(actual).toEqual(
       expect.objectContaining({
         mappa: {
+          status: undefined,
           lastUpdated: '',
         },
       }),
