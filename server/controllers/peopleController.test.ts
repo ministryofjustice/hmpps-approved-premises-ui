@@ -5,6 +5,7 @@ import PeopleController from './peopleController'
 import PersonService from '../services/personService'
 import { personFactory } from '../testutils/factories'
 import { errorMessage, errorSummary } from '../utils/validation'
+import { RestrictedPersonError } from '../utils/errors'
 
 describe('PeopleController', () => {
   const token = 'SOME_TOKEN'
@@ -110,6 +111,28 @@ describe('PeopleController', () => {
       request.body.crn = 'SOME_CRN'
 
       expect(async () => requestHandler(request, response, next)).rejects.toThrow(err)
+    })
+
+    it('sends an error to the flash if the API returns a restricted person error', async () => {
+      const requestHandler = peopleController.find()
+
+      const err = new RestrictedPersonError('SOME_CRN')
+
+      personService.findByCrn.mockImplementation(() => {
+        throw err
+      })
+
+      request.body.crn = 'SOME_CRN'
+
+      await requestHandler(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith('some-referrer/')
+
+      expect(flashSpy).toHaveBeenCalledWith('errors', {
+        crn: errorMessage('crn', 'CRN: SOME_CRN is restricted'),
+      })
+      expect(flashSpy).toHaveBeenCalledWith('errorSummary', [errorSummary('crn', 'CRN: SOME_CRN is restricted')])
+      expect(flashSpy).toHaveBeenCalledWith('restrictedPerson', 'true')
     })
 
     it('throws the error if the error is a 403 and checkCaseload is not set', async () => {

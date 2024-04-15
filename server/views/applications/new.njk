@@ -2,6 +2,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "../partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "../components/formFields/form-page-input/macro.njk" import formPageInput %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% extends "../partials/layout.njk" %}
 
@@ -16,6 +17,16 @@
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
         {{ showErrorSummary(errorSummary) }}
+        {% if restrictedPerson === 'true' %}
+
+          {% set html %}
+          <p class='govuk-body'>You do not have access to this offender as this person is a limited access offender (LAO).</p>
+          <p class='govuk-body'>You cannot continue with the application without requesting LAO access.</p>
+          <p class='govuk-body'>Please follow the guidance in Equip to remove the restriction if this is not correct or to request access.</p>
+          {% endset %}
+
+          {{ govukNotificationBanner({ html: html }) }}
+        {% endif %}
 
         {{
           formPageInput(

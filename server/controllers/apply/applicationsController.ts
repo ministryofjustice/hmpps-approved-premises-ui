@@ -145,12 +145,13 @@ export default class ApplicationsController {
           })
         }
       }
-
+      const restrictedPerson = req.flash('restrictedPerson')[0]
       return res.render('applications/new', {
         pageHeading: "Enter the person's CRN",
         errors,
         errorSummary,
         ...userInput,
+        restrictedPerson,
       })
     }
   }
