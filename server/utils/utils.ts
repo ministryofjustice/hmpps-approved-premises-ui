@@ -95,6 +95,7 @@ export const mapApiPersonRisksForUi = (risks: PersonRisks): PersonRisksUI => {
     },
     mappa: {
       ...risks.mappa?.value,
+      status: risks.mappa?.status,
       lastUpdated: risks.mappa?.value?.lastUpdated ? DateFormats.isoDateToUIDate(risks.mappa.value.lastUpdated) : '',
     },
     tier: {

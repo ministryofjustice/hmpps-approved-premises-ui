@@ -16,7 +16,7 @@ export default Factory.define<PersonRisks>(() => ({
   tier: tierEnvelopeFactory.build(),
 }))
 
-const roshRisksFactory = Factory.define<PersonRisks['roshRisks']>(() => ({
+export const roshRisksFactory = Factory.define<PersonRisks['roshRisks']>(() => ({
   status: faker.helpers.arrayElement(riskEnvelopeStatuses),
   value: {
     overallRisk: faker.helpers.arrayElement(riskLevels),
@@ -28,12 +28,12 @@ const roshRisksFactory = Factory.define<PersonRisks['roshRisks']>(() => ({
   },
 }))
 
-const mappaFactory = Factory.define<PersonRisks['mappa']>(() => ({
+export const mappaFactory = Factory.define<PersonRisks['mappa']>(() => ({
   status: faker.helpers.arrayElement(riskEnvelopeStatuses),
   value: { level: 'CAT 2 / LEVEL 1', lastUpdated: DateFormats.dateObjToIsoDate(faker.date.past()) },
 }))
 
-const flagsFactory = Factory.define<PersonRisks['flags']>(() => {
+export const flagsFactory = Factory.define<PersonRisks['flags']>(() => {
   return {
     status: faker.helpers.arrayElement(riskEnvelopeStatuses),
     value: faker.helpers.arrayElements([
