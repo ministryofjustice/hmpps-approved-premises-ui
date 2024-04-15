@@ -1,7 +1,7 @@
 import Page from '../page'
 import paths from '../../../server/paths/tasks'
 
-import { allocatedTableRows, unallocatedTableRows } from '../../../server/utils/tasks/listTable'
+import { allocatedTableRows, completedTableRows, unallocatedTableRows } from '../../../server/utils/tasks/listTable'
 
 import { Task } from '../../../server/@types/shared'
 import { shouldShowTableRows } from '../../helpers'
@@ -28,6 +28,10 @@ export default class ListPage extends Page {
 
   shouldShowUnallocatedTasks(unallocatedTasks = this.unallocatedTasks): void {
     shouldShowTableRows(unallocatedTableRows(unallocatedTasks))
+  }
+
+  shouldShowCompletedTasks(tasks: Array<Task>): void {
+    shouldShowTableRows(completedTableRows(tasks))
   }
 
   shouldShowAllocatedToUserFilter() {

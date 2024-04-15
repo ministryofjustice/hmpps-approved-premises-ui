@@ -17,6 +17,7 @@ export default {
     sortBy = 'createdAt',
     apAreaId = '',
     types = [],
+    isCompleted = 'false',
   }: {
     tasks: Array<Task>
     page: string
@@ -26,6 +27,7 @@ export default {
     sortBy: TaskSortField
     apAreaId: string
     types: Array<TaskType>
+    isCompleted: string
   }): SuperAgentRequest => {
     const queryParameters: Record<string, unknown> = {
       page: {
@@ -40,6 +42,10 @@ export default {
 
       allocatedToUserId: {
         equalTo: allocatedToUserId,
+      },
+
+      isCompleted: {
+        equalTo: isCompleted,
       },
     }
 

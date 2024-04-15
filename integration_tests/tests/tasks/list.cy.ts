@@ -1,6 +1,6 @@
 import ListPage from '../../pages/tasks/listPage'
 
-import { apAreaFactory, taskFactory, userFactory } from '../../../server/testutils/factories'
+import { apAreaFactory, assessmentTaskFactory, taskFactory, userFactory } from '../../../server/testutils/factories'
 
 context('Task Allocation', () => {
   const users = userFactory.buildList(5)
@@ -21,6 +21,7 @@ context('Task Allocation', () => {
 
     const allocatedTasks = taskFactory.buildList(5)
     const unallocatedTasks = taskFactory.buildList(5, { allocatedToStaffMember: undefined })
+    const completedTasks = assessmentTaskFactory.buildList(5)
 
     cy.task('stubGetAllTasks', {
       tasks: allocatedTasks,
@@ -35,6 +36,15 @@ context('Task Allocation', () => {
       allocatedFilter: 'unallocated',
       page: '1',
       sortDirection: 'asc',
+      apAreaId: apArea.id,
+    })
+
+    cy.task('stubGetAllTasks', {
+      tasks: [...completedTasks],
+      allocatedFilter: 'allocated',
+      page: '1',
+      sortDirection: 'asc',
+      isCompleted: 'true',
       apAreaId: apArea.id,
     })
 
@@ -53,6 +63,10 @@ context('Task Allocation', () => {
 
     // And I should not see the allocated to user select option
     listPage.shouldNotShowAllocatedToUserFilter()
+
+    // And the tasks that are completed
+    listPage.clickTab('Completed')
+    listPage.shouldShowCompletedTasks(completedTasks)
   })
 
   it('supports pagination', () => {
@@ -308,7 +322,11 @@ context('Task Allocation', () => {
     })
 
     // Given I am on the tasks dashboard filtering by the unallocated tab
-    const listPage = ListPage.visit(allocatedTasks, unallocatedTasks, 'allocatedFilter=unallocated')
+    const listPage = ListPage.visit(
+      allocatedTasks,
+      unallocatedTasks,
+      'allocatedFilter=unallocated&activeTab=unallocated',
+    )
 
     // Then I should see the tasks that are allocated
     listPage.shouldShowUnallocatedTasks()

@@ -20,6 +20,9 @@ export default class TasksController {
       const users = await this.userService.getUserList(req.user.token, ['assessor', 'matcher'])
 
       const allocatedFilter = (req.query.allocatedFilter as AllocatedFilter) || 'allocated'
+      const activeTab = req.query.activeTab || 'allocated'
+      const isCompleted = activeTab === 'completed'
+
       const apAreaId = req.query.area ? req.query.area : res.locals.user.apArea?.id
       const allocatedToUserId = req.query.allocatedToUserId as string
       const requiredQualification = req.query.requiredQualification
@@ -33,6 +36,7 @@ export default class TasksController {
         sortBy = 'createdAt',
         hrefPrefix,
       } = getPaginationDetails<TaskSortField>(req, paths.tasks.index({}), {
+        activeTab,
         allocatedFilter,
         area: apAreaId,
         allocatedToUserId,
@@ -51,6 +55,7 @@ export default class TasksController {
         allocatedToUserId,
         requiredQualification,
         crnOrName,
+        isCompleted,
       })
 
       const apAreas = await this.apAreaService.getApAreas(req.user.token)
@@ -70,6 +75,7 @@ export default class TasksController {
         allocatedToUserId,
         requiredQualification,
         crnOrName,
+        activeTab,
       })
     }
   }

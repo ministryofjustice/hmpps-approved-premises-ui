@@ -45,6 +45,7 @@
 <div class="search-and-filter__wrapper">
   <form action="{{ paths.tasks.index({}) }}" method="get">
     <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+    <input type="hidden" name="activeTab" value="{{ activeTab }}">
     <input type="hidden" name="allocatedFilter" value="{{ allocatedFilter }}">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-one-quarter">
@@ -61,7 +62,7 @@
         </div>
       </div>
     </div>
-    {% if allocatedFilter == 'allocated' %}
+    {% if activeTab == 'allocated' or activeTab == 'completed' %}
        <div class="govuk-grid-row">
          <div class="govuk-grid-column-one-third">
             {{ apAreaFilter | safe }}
@@ -78,7 +79,7 @@
           {{ submitButton | safe }}
         </div>
       </div>
-    {% elif allocatedFilter == 'unallocated' %}
+    {% elif activeTab == 'unallocated' %}
        <div class="govuk-grid-row">
          <div class="govuk-grid-column-one-third">
             {{ apAreaFilter | safe }}

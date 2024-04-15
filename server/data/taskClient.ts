@@ -30,6 +30,7 @@ export default class TaskClient {
     taskTypes,
     requiredQualification,
     crnOrName,
+    isCompleted = false,
   }: {
     allocatedFilter: AllocatedFilter
     apAreaId: ApArea['id']
@@ -40,6 +41,7 @@ export default class TaskClient {
     taskTypes?: Array<TaskType>
     requiredQualification?: TaskSearchQualification
     crnOrName?: string
+    isCompleted?: boolean
   }): Promise<PaginatedResponse<Task>> {
     const filters = {} as Record<string, string>
     if (taskTypes.length) {
@@ -57,6 +59,7 @@ export default class TaskClient {
         sortDirection,
         requiredQualification,
         crnOrName,
+        isCompleted: isCompleted.toString(),
       },
     })
   }
