@@ -7,12 +7,10 @@ import {
   searchButton,
   withdrawalMessage,
 } from './utils'
-import { linkTo } from '../utils'
+import * as utils from '../utils'
 import paths from '../../paths/match'
 import assessPaths from '../../paths/assess'
 import { DateFormats } from '../dateUtils'
-
-jest.mock('../utils')
 
 describe('utils', () => {
   describe('formatReleaseType', () => {
@@ -24,11 +22,12 @@ describe('utils', () => {
 
   describe('searchButton', () => {
     it('returns a link to the search query', () => {
+      jest.spyOn(utils, 'linkTo')
       const placementRequest = placementRequestFactory.build()
 
       searchButton(placementRequest)
 
-      expect(linkTo).toHaveBeenCalledWith(
+      expect(utils.linkTo).toHaveBeenCalledWith(
         paths.placementRequests.beds.search,
         { id: placementRequest.id },
         { text: 'Search', attributes: { class: 'govuk-button' } },
@@ -61,11 +60,12 @@ describe('utils', () => {
 
   describe('assessmentLink', () => {
     it('returns a link to the assessment', () => {
+      jest.spyOn(utils, 'linkTo')
       const placementRequest = placementRequestFactory.build()
 
       assessmentLink(placementRequest, 'link text', 'hidden text')
 
-      expect(linkTo).toHaveBeenCalledWith(
+      expect(utils.linkTo).toHaveBeenCalledWith(
         assessPaths.assessments.show,
         { id: placementRequest.assessmentId },
         { text: 'link text', hiddenText: 'hidden text' },
@@ -86,23 +86,28 @@ describe('utils', () => {
     it('returns placement request tab items', () => {
       expect(placementRequestTabItems('notMatched', 'apArea', 'parole')).toEqual([
         {
+          active: false,
+          text: 'Pending Request for Placement',
+          href: `/admin/cru-dashboard?apArea=apArea&status=pendingPlacement`,
+        },
+        {
           active: true,
-          href: '/admin/placement-requests?',
+          href: '/admin/cru-dashboard?apArea=apArea&requestType=parole',
           text: 'Ready to match',
         },
         {
           active: false,
-          href: '/admin/placement-requests?status=unableToMatch&',
+          href: '/admin/cru-dashboard?apArea=apArea&requestType=parole&status=unableToMatch',
           text: 'Unable to match',
         },
         {
           active: false,
-          href: '/admin/placement-requests?status=matched&',
+          href: '/admin/cru-dashboard?apArea=apArea&requestType=parole&status=matched',
           text: 'Matched',
         },
         {
           active: false,
-          href: '/admin/placement-requests/search',
+          href: '/admin/cru-dashboard/search',
           text: 'Search',
         },
       ])

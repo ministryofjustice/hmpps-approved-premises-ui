@@ -19,4 +19,5 @@ export default Factory.define<ApplicationSummary>(() => ({
   createdByUserId: faker.string.uuid(),
   status: 'started',
   isWithdrawn: faker.datatype.boolean(),
+  releaseType: 'in_community',
 }))

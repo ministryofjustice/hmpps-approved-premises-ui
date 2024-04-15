@@ -122,7 +122,7 @@ describe('withdrawalsController', () => {
         applicationId,
         placementRequestDetail.withdrawalReason,
       )
-      expect(response.redirect).toHaveBeenCalledWith(paths.admin.placementRequests.index({}))
+      expect(response.redirect).toHaveBeenCalledWith(paths.admin.cruDashboard.index({}))
       expect(request.flash).toHaveBeenCalledWith('success', withdrawalMessageContent)
       expect(withdrawalMessage).toHaveBeenCalledWith(
         placementRequestDetail.duration,

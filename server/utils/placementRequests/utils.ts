@@ -56,28 +56,31 @@ export const withdrawalMessage = (duration: number, expectedArrivalDate: string)
   `Request for placement for ${placementLength(Number(duration))} starting on ${DateFormats.isoDateToUIDate(expectedArrivalDate, { format: 'short' })} withdrawn successfully`
 
 export const placementRequestTabItems = (activeTab?: string, apArea?: string, requestType?: string): Array<TabItem> => {
-  const hrefSuffix = createQueryString({ apArea, requestType }) || ''
-
   return [
+    {
+      text: 'Pending Request for Placement',
+      active: activeTab === 'pendingPlacement',
+      href: `${pathsAdmin.admin.cruDashboard.index({})}${createQueryString({ apArea, status: 'pendingPlacement' }, { addQueryPrefix: true })}`,
+    },
     {
       text: 'Ready to match',
       active: activeTab === 'notMatched' || activeTab === undefined || activeTab?.length === 0,
-      href: `${pathsAdmin.admin.placementRequests.index({})}?${hrefSuffix}`,
+      href: `${pathsAdmin.admin.cruDashboard.index({})}${createQueryString({ apArea, requestType }, { addQueryPrefix: true })}`,
     },
     {
       text: 'Unable to match',
       active: activeTab === 'unableToMatch',
-      href: `${pathsAdmin.admin.placementRequests.index({})}?status=unableToMatch&${hrefSuffix}`,
+      href: `${pathsAdmin.admin.cruDashboard.index({})}${createQueryString({ apArea, requestType, status: 'unableToMatch' }, { addQueryPrefix: true })}`,
     },
     {
       text: 'Matched',
       active: activeTab === 'matched',
-      href: `${pathsAdmin.admin.placementRequests.index({})}?status=matched&${hrefSuffix}`,
+      href: `${pathsAdmin.admin.cruDashboard.index({})}${createQueryString({ apArea, requestType, status: 'matched' }, { addQueryPrefix: true })}`,
     },
     {
       text: 'Search',
       active: activeTab === 'search',
-      href: pathsAdmin.admin.placementRequests.search({}),
+      href: pathsAdmin.admin.cruDashboard.search({}),
     },
   ]
 }

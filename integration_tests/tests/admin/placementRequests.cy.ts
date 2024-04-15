@@ -5,6 +5,7 @@ import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
 import {
   apAreaFactory,
   applicationFactory,
+  applicationSummaryFactory,
   bookingFactory,
   newCancellationFactory,
   placementRequestDetailFactory,
@@ -548,5 +549,40 @@ context('Placement Requests', () => {
 
     // Then the status filter should be retained
     listPage.shouldHaveActiveTab('Unable to match')
+  })
+
+  it('should list applications that have no placement request', () => {
+    const applications = applicationSummaryFactory.buildList(2)
+
+    cy.task('stubAllApplications', { applications, page: '1' })
+
+    // Given I am on the placement request dashboard filtering by the pendingPlacement status
+    const listPage = ListPage.visit('status=pendingPlacement')
+
+    // Then I should see a list of applications with no placement requests
+    listPage.shouldShowApplications(applications)
+
+    cy.task('verifyDashboardRequest', { status: 'pendingPlacementRequest' }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+
+    // And the Request Type filter should not be visible
+    listPage.shouldNotShowRequestTypeFilter()
+
+    // When I filter by AP area
+    const apAreaApplications = applicationSummaryFactory.buildList(2)
+    cy.task('stubAllApplications', { applications: apAreaApplications, page: '1', apAreaId: apArea.id })
+    listPage.getSelectInputByIdAndSelectAnEntry('apArea', apArea.name)
+    listPage.clickApplyFilters()
+
+    // Then I should see a list of applications with no placement requests for that area
+    listPage.shouldShowApplications(apAreaApplications)
+
+    cy.task('verifyDashboardRequest', {
+      status: 'pendingPlacementRequest',
+      searchOptions: { apAreaId: apArea.id },
+    }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
   })
 })

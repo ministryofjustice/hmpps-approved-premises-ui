@@ -150,7 +150,7 @@ export const resolvePath = (object: Record<string, unknown>, path: string) =>
 
 export const createQueryString = (
   params: Record<string, unknown> | string,
-  options: IStringifyOptions = { encode: false, indices: false },
+  options: IStringifyOptions = { encode: false, indices: false, addQueryPrefix: false },
 ): string => {
   return qs.stringify(params, options)
 }
