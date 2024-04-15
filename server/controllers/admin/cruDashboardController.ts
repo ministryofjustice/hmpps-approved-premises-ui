@@ -22,10 +22,17 @@ export default class CruDashboardController {
 
   index(): TypedRequestHandler<Request, Response> {
     return async (req: Request, res: Response) => {
-      if (req.query.status === 'pendingPlacement') {
-        return this.getPendingApplications(req, res)
-      }
-      return this.getPlacementRequests(req, res)
+      const apAreas = await this.apAreaService.getApAreas(req.user.token)
+      const viewArgs =
+        req.query.status === 'pendingPlacement'
+          ? await this.getPendingApplications(req, res)
+          : await this.getPlacementRequests(req, res)
+
+      res.render('admin/cruDashboard/index', {
+        pageHeading: 'CRU Dashboard',
+        apAreas,
+        ...viewArgs,
+      })
     }
   }
 
@@ -66,7 +73,6 @@ export default class CruDashboardController {
   }
 
   private async getPendingApplications(req: Request, res: Response) {
-    const apAreas = await this.apAreaService.getApAreas(req.user.token)
     const apAreaId = req.query.apArea ? req.query.apArea : res.locals.user.apArea?.id
 
     const { pageNumber, hrefPrefix, sortBy, sortDirection } = getPaginationDetails<ApplicationSortField>(
@@ -78,26 +84,24 @@ export default class CruDashboardController {
       apAreaId: apAreaId === 'all' ? undefined : apAreaId,
     })
 
-    res.render('admin/cruDashboard/index', {
-      pageHeading: 'CRU Dashboard',
+    return {
       status: 'pendingPlacement',
+      subheading:
+        'All applications that have been accepted but do not yet have an associated placement request are shown below',
       applications: applications.data,
       pageNumber: Number(applications.pageNumber),
       totalPages: Number(applications.totalPages),
       hrefPrefix,
       sortBy,
       sortDirection,
-      apAreas,
       apArea: apAreaId,
-    })
+    }
   }
 
   private async getPlacementRequests(req: Request, res: Response) {
     const status = (req.query.status ? req.query.status : 'notMatched') as PlacementRequestStatus
     const apAreaId = req.query.apArea ? req.query.apArea : res.locals.user.apArea?.id
     const requestType = req.query.requestType as PlacementRequestRequestType
-
-    const apAreas = await this.apAreaService.getApAreas(req.user.token)
 
     const { pageNumber, sortBy, sortDirection, hrefPrefix } = getPaginationDetails<PlacementRequestSortField>(
       req,
@@ -119,11 +123,10 @@ export default class CruDashboardController {
 
     const showRequestedAndActualArrivalDates = await this.featureFlagService.getBooleanFlag('show-both-arrival-dates')
 
-    res.render('admin/cruDashboard/index', {
-      pageHeading: 'CRU Dashboard',
+    return {
       placementRequests: dashboard.data,
+      subheading: 'All applications that have been assessed as suitable and require matching to an AP are listed below',
       status,
-      apAreas,
       apArea: apAreaId,
       requestType,
       pageNumber: Number(dashboard.pageNumber),
@@ -132,6 +135,6 @@ export default class CruDashboardController {
       sortBy,
       sortDirection,
       showRequestedAndActualArrivalDates,
-    })
+    }
   }
 }

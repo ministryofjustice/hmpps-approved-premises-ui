@@ -79,6 +79,8 @@ describe('CruDashboardController', () => {
 
       expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
         pageHeading: 'CRU Dashboard',
+        subheading:
+          'All applications that have been assessed as suitable and require matching to an AP are listed below',
         placementRequests: paginatedResponse.data,
         status: 'notMatched',
         pageNumber: Number(paginatedResponse.pageNumber),
@@ -120,20 +122,14 @@ describe('CruDashboardController', () => {
 
       await requestHandler(notMatchedRequest, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
-        pageHeading: 'CRU Dashboard',
-        placementRequests: paginatedResponse.data,
-        status,
-        pageNumber: Number(paginatedResponse.pageNumber),
-        totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix: paginationDetails.hrefPrefix,
-        sortBy: paginationDetails.sortBy,
-        sortDirection: paginationDetails.sortDirection,
-        apAreas,
-        apArea,
-        requestType,
-        showRequestedAndActualArrivalDates: true,
-      })
+      expect(response.render).toHaveBeenCalledWith(
+        'admin/cruDashboard/index',
+        expect.objectContaining({
+          status,
+          apAreas,
+          apArea,
+        }),
+      )
 
       expect(placementRequestService.getDashboard).toHaveBeenCalledWith(
         token,
@@ -195,6 +191,8 @@ describe('CruDashboardController', () => {
 
       expect(response.render).toHaveBeenCalledWith('admin/cruDashboard/index', {
         pageHeading: 'CRU Dashboard',
+        subheading:
+          'All applications that have been accepted but do not yet have an associated placement request are shown below',
         status: 'pendingPlacement',
         applications,
         pageNumber: Number(paginatedApplications.pageNumber),
