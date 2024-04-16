@@ -280,15 +280,20 @@ export const eventTypeTranslations: Record<TimelineEventType, string> = {
   approved_premises_match_request_withdrawn: 'Request for placement withdrawn',
 }
 
-const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiTimelineEvent> => {
+const mapApplicationTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiTimelineEvent> => {
   return timelineEvents
-    .sort((a, b) => Number(DateFormats.isoToDateObj(b.occurredAt)) - Number(DateFormats.isoToDateObj(a.occurredAt)))
+    .sort((a, b) => {
+      if (b?.occurredAt && a?.occurredAt) {
+        return Number(DateFormats.isoToDateObj(b.occurredAt)) - Number(DateFormats.isoToDateObj(a.occurredAt))
+      }
+      return 1
+    })
     .map(timelineEvent => {
       const event = {
         label: { text: eventTypeTranslations[timelineEvent.type] },
         datetime: {
           timestamp: timelineEvent.occurredAt,
-          date: DateFormats.isoDateTimeToUIDateTime(timelineEvent.occurredAt),
+          date: timelineEvent.occurredAt ? DateFormats.isoDateTimeToUIDateTime(timelineEvent.occurredAt) : '',
         },
         content: timelineEvent.content,
         associatedUrls: timelineEvent.associatedUrls ? mapTimelineUrlsForUi(timelineEvent.associatedUrls) : [],
@@ -475,7 +480,7 @@ export {
   getApplicationType,
   getStatus,
   isInapplicable,
-  mapTimelineEventsForUi,
+  mapApplicationTimelineEventsForUi,
   mapTimelineUrlsForUi,
   mapPlacementApplicationToSummaryCards,
   lengthOfStayForUI,

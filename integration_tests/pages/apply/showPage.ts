@@ -3,7 +3,6 @@ import type {
   ApplicationTimelineNote,
   FullPerson,
   PlacementApplication,
-  TimelineEvent,
 } from '@approved-premises/api'
 import { fromPartial } from '@total-typescript/shoehorn'
 import { DateFormats } from '../../../server/utils/dateUtils'
@@ -12,7 +11,6 @@ import Page from '../page'
 import {
   ApplicationShowPageTab,
   applicationShowPageTab,
-  eventTypeTranslations,
   mapPlacementApplicationToSummaryCards,
 } from '../../../server/utils/applications/utils'
 import { TextItem } from '../../../server/@types/ui'
@@ -135,33 +133,6 @@ export default class ShowPage extends Page {
 
   verifyOnTimelineTab() {
     cy.get('a').contains('Placement').should('contain', '[aria-page="current"]')
-  }
-
-  shouldShowTimeline(timelineEvents: Array<TimelineEvent>) {
-    const sortedTimelineEvents = timelineEvents.sort((a, b) => {
-      return new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()
-    })
-
-    cy.get('h2').contains('Application history').should('exist')
-    cy.get('.moj-timeline').within(() => {
-      cy.get('.moj-timeline__item').should('have.length', timelineEvents.length)
-
-      cy.get('.moj-timeline__item').each(($el, index) => {
-        cy.wrap($el).within(() => {
-          cy.get('.moj-timeline__header').should('contain', eventTypeTranslations[sortedTimelineEvents[index].type])
-          cy.get('time').should('have.attr', { time: sortedTimelineEvents[index].occurredAt })
-          if (timelineEvents[index].createdBy?.name) {
-            cy.get('.moj-timeline__header > .moj-timeline__byline').should(
-              'contain',
-              timelineEvents[index].createdBy.name,
-            )
-          }
-          cy.get('.govuk-link').should('have.attr', { time: timelineEvents[index].associatedUrls[0].url })
-          cy.get('.govuk-link').should('contain', timelineEvents[index].associatedUrls[0].type)
-          cy.get('time').should('contain', DateFormats.isoDateTimeToUIDateTime(timelineEvents[index].occurredAt))
-        })
-      })
-    })
   }
 
   shouldShowPlacementApplications(

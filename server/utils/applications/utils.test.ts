@@ -43,7 +43,7 @@ import {
   isInapplicable,
   lengthOfStayForUI,
   mapPlacementApplicationToSummaryCards,
-  mapTimelineEventsForUi,
+  mapApplicationTimelineEventsForUi,
   mapTimelineUrlsForUi,
   withdrawnStatusTag,
 } from './utils'
@@ -756,10 +756,10 @@ describe('utils', () => {
     )
   })
 
-  describe('mapTimelineEventsForUi', () => {
+  describe('mapApplicationTimelineEventsForUi', () => {
     it('maps the events into the format required by the MoJ UI Timeline component', () => {
       const timelineEvents = timelineEventFactory.buildList(1)
-      expect(mapTimelineEventsForUi(timelineEvents)).toEqual([
+      expect(mapApplicationTimelineEventsForUi(timelineEvents)).toEqual([
         {
           datetime: {
             timestamp: timelineEvents[0].occurredAt,
@@ -783,7 +783,7 @@ describe('utils', () => {
     it('maps the events into the format required by the MoJ UI Timeline component without associatedUrls', () => {
       const timelineEvents = timelineEventFactory.buildList(1, { associatedUrls: undefined })
 
-      expect(mapTimelineEventsForUi(timelineEvents)).toEqual([
+      expect(mapApplicationTimelineEventsForUi(timelineEvents)).toEqual([
         {
           datetime: {
             timestamp: timelineEvents[0].occurredAt,
@@ -802,7 +802,7 @@ describe('utils', () => {
     it('sorts the events in ascending order', () => {
       const timelineEvents = timelineEventFactory.buildList(3)
 
-      const actual = mapTimelineEventsForUi(timelineEvents)
+      const actual = mapApplicationTimelineEventsForUi(timelineEvents)
 
       expect(
         isAfter(
@@ -824,6 +824,28 @@ describe('utils', () => {
           DateFormats.isoToDateObj(actual[2].datetime.timestamp),
         ),
       ).toEqual(true)
+    })
+
+    it('doesnt error when there are events without "occuredAt" property', () => {
+      const timelineEventWithoutOccurredAt = timelineEventFactory.build({ occurredAt: undefined })
+      const pastTimelineEvent = timelineEventFactory.build({
+        occurredAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
+      })
+      const futureTimelineEvent = timelineEventFactory.build({
+        occurredAt: DateFormats.dateObjToIsoDateTime(faker.date.future()),
+      })
+
+      const actual = mapApplicationTimelineEventsForUi([
+        timelineEventWithoutOccurredAt,
+        pastTimelineEvent,
+        futureTimelineEvent,
+      ])
+
+      expect(actual).toEqual([
+        ...mapApplicationTimelineEventsForUi([timelineEventWithoutOccurredAt]),
+        ...mapApplicationTimelineEventsForUi([futureTimelineEvent]),
+        ...mapApplicationTimelineEventsForUi([pastTimelineEvent]),
+      ])
     })
   })
 

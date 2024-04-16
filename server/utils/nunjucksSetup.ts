@@ -22,7 +22,6 @@ import {
   convertObjectsToSelectOptions,
   dateFieldValues,
 } from './formUtils'
-import { mapTimelineEventsForUi } from './applications/utils'
 import { relevantDatesOptions } from './applications/relevantDatesOptions'
 import { navigationItems } from './navigationItems'
 
@@ -203,7 +202,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addFilter('kebabCase', kebabCase)
 
   njkEnv.addGlobal('numberToOrdinal', numberToOrdinal)
-  njkEnv.addGlobal('mapTimelineEventsForUi', mapTimelineEventsForUi)
   njkEnv.addGlobal('navigationItems', navigationItems)
   njkEnv.addGlobal('withdrawalRadioOptions', withdrawalRadioOptions)
   njkEnv.addGlobal('relevantDatesOptions', relevantDatesOptions)
