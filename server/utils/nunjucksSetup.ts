@@ -22,6 +22,7 @@ import {
   convertObjectsToSelectOptions,
   dateFieldValues,
 } from './formUtils'
+import { getStatus as applicationStatusTag } from './applications/utils'
 import { relevantDatesOptions } from './applications/relevantDatesOptions'
 import { navigationItems } from './navigationItems'
 
@@ -196,6 +197,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('oasysDisabled', config.flags.oasysDisabled)
 
   njkEnv.addFilter('mapApiPersonRisksForUi', mapApiPersonRisksForUi)
+  njkEnv.addFilter('applicationStatusTag', applicationStatusTag)
 
   njkEnv.addFilter('removeBlankSummaryListItems', removeBlankSummaryListItems)
   njkEnv.addFilter('sentenceCase', sentenceCase)

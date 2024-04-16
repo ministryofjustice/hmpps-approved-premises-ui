@@ -1,8 +1,4 @@
-import {
-  ApprovedPremisesApplication as Application,
-  ApprovedPremisesApplicationSummary as ApplicationSummary,
-  ApprovedPremisesApplicationStatus as Status,
-} from '../../@types/shared'
+import { ApprovedPremisesApplicationStatus, ApprovedPremisesApplicationStatus as Status } from '../../@types/shared'
 
 export const applicationStatuses: Record<Status, string> = {
   started: 'Application started',
@@ -44,6 +40,9 @@ export const statusTags = (classes?: string): Record<Status, string> => {
   )
 }
 
-export const getStatus = (application: ApplicationSummary | Application, classes?: string) => {
+export const getStatus = <T extends { status: ApprovedPremisesApplicationStatus }>(
+  application: T,
+  classes?: string,
+) => {
   return statusTags(classes)[application.status]
 }
