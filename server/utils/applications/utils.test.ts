@@ -11,8 +11,10 @@ import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionRespon
 import {
   applicationFactory,
   applicationSummaryFactory,
+  applicationTimelineFactory,
   assessmentFactory,
   personFactory,
+  personalTimelineFactory,
   placementApplicationFactory,
   restrictedPersonFactory,
   tierEnvelopeFactory,
@@ -42,8 +44,9 @@ import {
   getStatus,
   isInapplicable,
   lengthOfStayForUI,
-  mapPlacementApplicationToSummaryCards,
   mapApplicationTimelineEventsForUi,
+  mapPersonalTimelineForUi,
+  mapPlacementApplicationToSummaryCards,
   mapTimelineUrlsForUi,
   withdrawnStatusTag,
 } from './utils'
@@ -858,6 +861,20 @@ describe('utils', () => {
     ])('Translates a "%s" url type to "%s"', (urlType: TimelineEventUrlType, translation: string) => {
       const timelineUrl = { type: urlType, url: faker.internet.url() }
       expect(mapTimelineUrlsForUi([timelineUrl])).toEqual([{ url: timelineUrl.url, type: translation }])
+    })
+  })
+
+  describe('mapPersonTimelineForUi', () => {
+    it('maps the application timelines events for the UI', () => {
+      const applicationTimeline = applicationTimelineFactory.build()
+      const personalTimeline = personalTimelineFactory.build({ applications: [applicationTimeline] })
+
+      expect(mapPersonalTimelineForUi(personalTimeline)).toEqual([
+        {
+          ...applicationTimeline,
+          timelineEvents: mapApplicationTimelineEventsForUi(applicationTimeline.timelineEvents),
+        },
+      ])
     })
   })
 

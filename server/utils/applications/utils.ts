@@ -18,6 +18,7 @@ import type {
   ApplicationSortField,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplicationStatus,
+  PersonalTimeline,
   PlacementApplication,
   PlacementType,
   SortDirection,
@@ -312,6 +313,15 @@ const mapTimelineUrlsForUi = (timelineUrls: Array<TimelineEventAssociatedUrl>) =
   return timelineUrls.map(item => ({ url: item.url, type: urlTypeForUi(item.type) }))
 }
 
+const mapPersonalTimelineForUi = (personalTimeline: PersonalTimeline) => {
+  return personalTimeline.applications.map(applicationTimeline => {
+    return {
+      ...applicationTimeline,
+      timelineEvents: mapApplicationTimelineEventsForUi(applicationTimeline.timelineEvents),
+    }
+  })
+}
+
 const urlTypeForUi = (type: TimelineEventUrlType) => {
   const translations: Record<TimelineEventUrlType, string> = {
     application: 'application',
@@ -482,6 +492,7 @@ export {
   isInapplicable,
   mapApplicationTimelineEventsForUi,
   mapTimelineUrlsForUi,
+  mapPersonalTimelineForUi,
   mapPlacementApplicationToSummaryCards,
   lengthOfStayForUI,
   applicationStatusSelectOptions,
