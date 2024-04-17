@@ -1,10 +1,10 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import { HttpError } from 'http-errors'
 import PersonService from '../../services/personService'
 import { addErrorMessageToFlash } from '../../utils/validation'
 import { isFullPerson } from '../../utils/personUtils'
 import { RestrictedPersonError } from '../../utils/errors'
+import { crnErrorHandling } from '../../utils/people'
 
 export default class PeopleController {
   constructor(private readonly personService: PersonService) {}
@@ -22,15 +22,7 @@ export default class PeopleController {
             throw new RestrictedPersonError(person.crn)
           }
         } catch (error) {
-          const knownError = error as RestrictedPersonError | HttpError | Error
-          if ('type' in knownError && knownError.type === 'RESTRICTED_PERSON') {
-            req.flash('restrictedPerson', 'true')
-            addErrorMessageToFlash(req, knownError.message, 'crn')
-          } else if ('data' in knownError && knownError.status === 404) {
-            addErrorMessageToFlash(req, `No person with an CRN of '${crn}' was found`, 'crn')
-          } else {
-            throw knownError
-          }
+          crnErrorHandling(req, error, crn)
         }
       } else {
         addErrorMessageToFlash(req, 'You must enter a CRN', 'crn')
