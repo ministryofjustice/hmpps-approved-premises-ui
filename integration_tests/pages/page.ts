@@ -7,6 +7,7 @@ import {
   PersonAcctAlert,
   PrisonCaseNote,
   SortOrder,
+  TimelineEvent,
 } from '../../server/@types/shared'
 import { KeyDetailsArgs, PersonRisksUI, SummaryListItem, TableCell } from '../../server/@types/ui'
 import errorLookups from '../../server/i18n/en/errors.json'
@@ -14,6 +15,7 @@ import { summaryListSections } from '../../server/utils/applications/summaryList
 import { DateFormats } from '../../server/utils/dateUtils'
 import { sentenceCase } from '../../server/utils/utils'
 import { SumbmittedApplicationSummaryCards } from '../../server/utils/applications/submittedApplicationSummaryCards'
+import { eventTypeTranslations } from '../../server/utils/applications/utils'
 
 export type PageElement = Cypress.Chainable<JQuery>
 
@@ -465,5 +467,32 @@ export default abstract class Page {
 
   shouldHaveSelectText(id: string, text: string): void {
     cy.get(`#${id}`).find('option:selected').should('have.text', text)
+  }
+
+  shouldShowApplicationTimeline(timelineEvents: Array<TimelineEvent>) {
+    const sortedTimelineEvents = timelineEvents.sort((a, b) => {
+      return new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()
+    })
+
+    cy.get('h2').contains('Application history').should('exist')
+    cy.get('.moj-timeline').within(() => {
+      cy.get('.moj-timeline__item').should('have.length', timelineEvents.length)
+
+      cy.get('.moj-timeline__item').each(($el, index) => {
+        cy.wrap($el).within(() => {
+          cy.get('.moj-timeline__header').should('contain', eventTypeTranslations[sortedTimelineEvents[index].type])
+          cy.get('time').should('have.attr', { time: sortedTimelineEvents[index].occurredAt })
+          if (timelineEvents[index].createdBy?.name) {
+            cy.get('.moj-timeline__header > .moj-timeline__byline').should(
+              'contain',
+              timelineEvents[index].createdBy.name,
+            )
+          }
+          cy.get('.govuk-link').should('have.attr', { time: timelineEvents[index].associatedUrls[0].url })
+          cy.get('.govuk-link').should('contain', timelineEvents[index].associatedUrls[0].type)
+          cy.get('time').should('contain', DateFormats.isoDateTimeToUIDateTime(timelineEvents[index].occurredAt))
+        })
+      })
+    })
   }
 }

@@ -1,10 +1,10 @@
 import type { Request, RequestHandler, Response } from 'express'
 
 import { HttpError } from 'http-errors'
-import PersonService from '../services/personService'
-import { addErrorMessageToFlash } from '../utils/validation'
-import { isFullPerson } from '../utils/personUtils'
-import { RestrictedPersonError } from '../utils/errors'
+import PersonService from '../../services/personService'
+import { addErrorMessageToFlash } from '../../utils/validation'
+import { isFullPerson } from '../../utils/personUtils'
+import { RestrictedPersonError } from '../../utils/errors'
 
 export default class PeopleController {
   constructor(private readonly personService: PersonService) {}

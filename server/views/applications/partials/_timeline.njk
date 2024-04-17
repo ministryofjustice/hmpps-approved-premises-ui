@@ -1,7 +1,7 @@
 {%- from "moj/components/timeline/macro.njk" import mojTimeline -%}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-
+{% from "../../partials/_applicationTimeline.njk" import applicationTimeline %}
 {% macro timeline(timelineEvents, application, csrfToken) %}
 
   <form action="{{ paths.applications.notes.new({id: application.id}) }}" method="post">
@@ -22,40 +22,6 @@
   </form>
 
   <h2 class="govuk-heading-m">Application history</h2>
-  <div class="moj-timeline">
+  {{applicationTimeline(timelineEvents)}}</div>
 
-    {% for event in timelineEvents %}
-      <div class="moj-timeline__item">
-
-        <div class="moj-timeline__header">
-          <h3 class="moj-timeline__title">{{event.label.text}}</h3>
-          {% if event.createdBy %}
-            <p class="moj-timeline__byline">by {{event.createdBy}}</p>
-            {%endif%}
-          </div>
-
-          <p class="moj-timeline__date">
-            <time datetime="{{event.datetime.timestamp}}">{{event.datetime.date}}</time>
-          </p>
-
-          {% if event.content %}
-            <div class="moj-timeline__description">
-              <p>{{event.content}}</p>
-            </div>
-            {%endif%}
-            {% if event.associatedUrls %}
-              {% for associatedUrl in event.associatedUrls %}
-                <div class="moj-timeline__description">
-                  <ul class="govuk-list govuk-list--bullet">
-                    <li>
-                      <a class="govuk-link" href="{{associatedUrl.url}}">View {{associatedUrl.type}}</a>
-                    </li>
-                  </ul>
-                </div>
-              {% endfor %}
-              {%endif%}
-            </div>
-          {% endfor %}
-        </div>
-
-      {% endmacro %}
+{% endmacro %}

@@ -11,8 +11,10 @@ import { mockOptionalQuestionResponse } from '../../testutils/mockQuestionRespon
 import {
   applicationFactory,
   applicationSummaryFactory,
+  applicationTimelineFactory,
   assessmentFactory,
   personFactory,
+  personalTimelineFactory,
   placementApplicationFactory,
   restrictedPersonFactory,
   tierEnvelopeFactory,
@@ -42,8 +44,9 @@ import {
   getStatus,
   isInapplicable,
   lengthOfStayForUI,
+  mapApplicationTimelineEventsForUi,
+  mapPersonalTimelineForUi,
   mapPlacementApplicationToSummaryCards,
-  mapTimelineEventsForUi,
   mapTimelineUrlsForUi,
   withdrawnStatusTag,
 } from './utils'
@@ -756,10 +759,10 @@ describe('utils', () => {
     )
   })
 
-  describe('mapTimelineEventsForUi', () => {
+  describe('mapApplicationTimelineEventsForUi', () => {
     it('maps the events into the format required by the MoJ UI Timeline component', () => {
       const timelineEvents = timelineEventFactory.buildList(1)
-      expect(mapTimelineEventsForUi(timelineEvents)).toEqual([
+      expect(mapApplicationTimelineEventsForUi(timelineEvents)).toEqual([
         {
           datetime: {
             timestamp: timelineEvents[0].occurredAt,
@@ -783,7 +786,7 @@ describe('utils', () => {
     it('maps the events into the format required by the MoJ UI Timeline component without associatedUrls', () => {
       const timelineEvents = timelineEventFactory.buildList(1, { associatedUrls: undefined })
 
-      expect(mapTimelineEventsForUi(timelineEvents)).toEqual([
+      expect(mapApplicationTimelineEventsForUi(timelineEvents)).toEqual([
         {
           datetime: {
             timestamp: timelineEvents[0].occurredAt,
@@ -802,7 +805,7 @@ describe('utils', () => {
     it('sorts the events in ascending order', () => {
       const timelineEvents = timelineEventFactory.buildList(3)
 
-      const actual = mapTimelineEventsForUi(timelineEvents)
+      const actual = mapApplicationTimelineEventsForUi(timelineEvents)
 
       expect(
         isAfter(
@@ -825,6 +828,28 @@ describe('utils', () => {
         ),
       ).toEqual(true)
     })
+
+    it('doesnt error when there are events without "occuredAt" property', () => {
+      const timelineEventWithoutOccurredAt = timelineEventFactory.build({ occurredAt: undefined })
+      const pastTimelineEvent = timelineEventFactory.build({
+        occurredAt: DateFormats.dateObjToIsoDateTime(faker.date.past()),
+      })
+      const futureTimelineEvent = timelineEventFactory.build({
+        occurredAt: DateFormats.dateObjToIsoDateTime(faker.date.future()),
+      })
+
+      const actual = mapApplicationTimelineEventsForUi([
+        timelineEventWithoutOccurredAt,
+        pastTimelineEvent,
+        futureTimelineEvent,
+      ])
+
+      expect(actual).toEqual([
+        ...mapApplicationTimelineEventsForUi([timelineEventWithoutOccurredAt]),
+        ...mapApplicationTimelineEventsForUi([futureTimelineEvent]),
+        ...mapApplicationTimelineEventsForUi([pastTimelineEvent]),
+      ])
+    })
   })
 
   describe('mapTimelineUrlsForUi', () => {
@@ -836,6 +861,20 @@ describe('utils', () => {
     ])('Translates a "%s" url type to "%s"', (urlType: TimelineEventUrlType, translation: string) => {
       const timelineUrl = { type: urlType, url: faker.internet.url() }
       expect(mapTimelineUrlsForUi([timelineUrl])).toEqual([{ url: timelineUrl.url, type: translation }])
+    })
+  })
+
+  describe('mapPersonTimelineForUi', () => {
+    it('maps the application timelines events for the UI', () => {
+      const applicationTimeline = applicationTimelineFactory.build()
+      const personalTimeline = personalTimelineFactory.build({ applications: [applicationTimeline] })
+
+      expect(mapPersonalTimelineForUi(personalTimeline)).toEqual([
+        {
+          ...applicationTimeline,
+          timelineEvents: mapApplicationTimelineEventsForUi(applicationTimeline.timelineEvents),
+        },
+      ])
     })
   })
 

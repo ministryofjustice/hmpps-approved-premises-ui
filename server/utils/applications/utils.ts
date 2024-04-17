@@ -18,6 +18,7 @@ import type {
   ApplicationSortField,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplicationStatus,
+  PersonalTimeline,
   PlacementApplication,
   PlacementType,
   SortDirection,
@@ -280,15 +281,20 @@ export const eventTypeTranslations: Record<TimelineEventType, string> = {
   approved_premises_match_request_withdrawn: 'Request for placement withdrawn',
 }
 
-const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiTimelineEvent> => {
+const mapApplicationTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiTimelineEvent> => {
   return timelineEvents
-    .sort((a, b) => Number(DateFormats.isoToDateObj(b.occurredAt)) - Number(DateFormats.isoToDateObj(a.occurredAt)))
+    .sort((a, b) => {
+      if (b?.occurredAt && a?.occurredAt) {
+        return Number(DateFormats.isoToDateObj(b.occurredAt)) - Number(DateFormats.isoToDateObj(a.occurredAt))
+      }
+      return 1
+    })
     .map(timelineEvent => {
       const event = {
         label: { text: eventTypeTranslations[timelineEvent.type] },
         datetime: {
           timestamp: timelineEvent.occurredAt,
-          date: DateFormats.isoDateTimeToUIDateTime(timelineEvent.occurredAt),
+          date: timelineEvent.occurredAt ? DateFormats.isoDateTimeToUIDateTime(timelineEvent.occurredAt) : '',
         },
         content: timelineEvent.content,
         associatedUrls: timelineEvent.associatedUrls ? mapTimelineUrlsForUi(timelineEvent.associatedUrls) : [],
@@ -305,6 +311,15 @@ const mapTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>): Array<UiT
 
 const mapTimelineUrlsForUi = (timelineUrls: Array<TimelineEventAssociatedUrl>) => {
   return timelineUrls.map(item => ({ url: item.url, type: urlTypeForUi(item.type) }))
+}
+
+const mapPersonalTimelineForUi = (personalTimeline: PersonalTimeline) => {
+  return personalTimeline.applications.map(applicationTimeline => {
+    return {
+      ...applicationTimeline,
+      timelineEvents: mapApplicationTimelineEventsForUi(applicationTimeline.timelineEvents),
+    }
+  })
 }
 
 const urlTypeForUi = (type: TimelineEventUrlType) => {
@@ -475,8 +490,9 @@ export {
   getApplicationType,
   getStatus,
   isInapplicable,
-  mapTimelineEventsForUi,
+  mapApplicationTimelineEventsForUi,
   mapTimelineUrlsForUi,
+  mapPersonalTimelineForUi,
   mapPlacementApplicationToSummaryCards,
   lengthOfStayForUI,
   applicationStatusSelectOptions,

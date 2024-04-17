@@ -22,7 +22,7 @@ import {
   convertObjectsToSelectOptions,
   dateFieldValues,
 } from './formUtils'
-import { mapTimelineEventsForUi } from './applications/utils'
+import { getStatus as applicationStatusTag } from './applications/utils'
 import { relevantDatesOptions } from './applications/relevantDatesOptions'
 import { navigationItems } from './navigationItems'
 
@@ -60,6 +60,7 @@ import assessPaths from '../paths/assess'
 import tasksPaths from '../paths/tasks'
 import matchPaths from '../paths/match'
 import adminPaths from '../paths/admin'
+import peoplePaths from '../paths/people'
 import placementApplicationsPaths from '../paths/placementApplications'
 import { radioMatrixTable } from './radioMatrixTable'
 import * as AppealsUtils from './appealsUtils'
@@ -180,6 +181,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
     ...matchPaths,
     ...placementApplicationsPaths,
     ...adminPaths,
+    ...peoplePaths,
   })
 
   njkEnv.addGlobal('linkTo', linkTo)
@@ -197,13 +199,13 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('oasysDisabled', config.flags.oasysDisabled)
 
   njkEnv.addFilter('mapApiPersonRisksForUi', mapApiPersonRisksForUi)
+  njkEnv.addFilter('applicationStatusTag', applicationStatusTag)
 
   njkEnv.addFilter('removeBlankSummaryListItems', removeBlankSummaryListItems)
   njkEnv.addFilter('sentenceCase', sentenceCase)
   njkEnv.addFilter('kebabCase', kebabCase)
 
   njkEnv.addGlobal('numberToOrdinal', numberToOrdinal)
-  njkEnv.addGlobal('mapTimelineEventsForUi', mapTimelineEventsForUi)
   njkEnv.addGlobal('navigationItems', navigationItems)
   njkEnv.addGlobal('withdrawalRadioOptions', withdrawalRadioOptions)
   njkEnv.addGlobal('relevantDatesOptions', relevantDatesOptions)

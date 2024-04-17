@@ -1,0 +1,29 @@
+{% extends "../../partials/layout.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "../../partials/_applicationTimeline.njk" import applicationTimeline %}
+
+{% set pageTitle = applicationName + " - " + pageHeading  %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({
+		text: "Back",
+        href: paths.timeline.find({})
+	}) }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">Application history for {{crn}}</h2>
+            {% for application in ApplyUtils.mapPersonalTimelineForUi(timeline) %}
+                <h2 class="govuk-heading-s">Application made by: {{application.createdBy.name}}</h2>
+                <h2 class="govuk-heading-s">Status: {{application | applicationStatusTag | safe}}</h2>
+
+                {{applicationTimeline(application.timelineEvents)}}
+
+                {%endfor%}
+            </div>
+        </div>
+    {% endblock %}

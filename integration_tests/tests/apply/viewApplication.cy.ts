@@ -55,7 +55,7 @@ context('show applications', () => {
     // When I click on the 'Timeline' tab
     // Then I should see timeline page
     showPage.clickTimelineTab()
-    showPage.shouldShowTimeline(timeline)
+    showPage.shouldShowApplicationTimeline(timeline)
   })
 
   it('shows a read-only version of an unsubmitted withdrawn application', function test() {
@@ -228,7 +228,7 @@ context('show applications', () => {
     showPage.showsNoteAddedConfirmationMessage()
 
     // And I should see the note in the timeline
-    showPage.shouldShowTimeline(updatedTimeline)
+    showPage.shouldShowApplicationTimeline(updatedTimeline)
 
     // And the API should have been called with the new note
     cy.task('verifyApplicationNoteAdded', { id: application.id }).then(requests => {

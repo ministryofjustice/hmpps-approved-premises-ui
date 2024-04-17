@@ -191,6 +191,7 @@ export default {
       selection: oasysPath.path('selection'),
       sections: oasysPath.path('sections'),
     },
+    timeline: personPath.path('timeline'),
   },
   users: {
     index: usersPath,

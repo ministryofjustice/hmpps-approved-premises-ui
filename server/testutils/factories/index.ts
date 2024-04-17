@@ -73,7 +73,7 @@ import roomFactory from './room'
 import staffMemberFactory from './staffMember'
 import taskFactory from './task'
 import taskWrapperFactory from './taskWrapperFactory'
-import timelineEventFactory from './timelineEvent'
+import { applicationTimelineFactory, personalTimelineFactory, timelineEventFactory } from './timeline'
 import userFactory, { userWithWorkloadFactory } from './user'
 import userDetailsFactory from './userDetails'
 import placementApplicationDecisionEnvelopeFactory from './placementApplicationDecisionEnvelope'
@@ -90,6 +90,7 @@ export {
   apCharacteristicPairFactory,
   applicationFactory,
   applicationSummaryFactory,
+  applicationTimelineFactory,
   arrivalFactory,
   assessmentTaskFactory,
   assessmentFactory,
@@ -140,6 +141,7 @@ export {
   oasysSelectionFactory,
   paginatedResponseFactory,
   personFactory,
+  personalTimelineFactory,
   placementApplicationFactory,
   placementApplicationTaskFactory,
   placementApplicationDecisionEnvelopeFactory,

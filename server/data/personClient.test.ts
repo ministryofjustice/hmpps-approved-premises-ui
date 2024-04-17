@@ -327,4 +327,27 @@ describeClient('PersonClient', provider => {
       await personClient.document(crn, documentId, response)
     })
   })
+
+  describe('timeline', () => {
+    it('calls the API with CRN', async () => {
+      const crn = 'crn'
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get the timeline for a person',
+        withRequest: {
+          method: 'GET',
+          path: paths.people.timeline({ crn }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+        },
+      })
+
+      await personClient.timeline(crn)
+    })
+  })
 })

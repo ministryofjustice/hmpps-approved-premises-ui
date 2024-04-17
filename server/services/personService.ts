@@ -7,6 +7,7 @@ import type {
   OASysSections,
   Person,
   PersonAcctAlert,
+  PersonalTimeline,
   PrisonCaseNote,
 } from '@approved-premises/api'
 import { HttpError } from 'http-errors'
@@ -101,5 +102,11 @@ export default class PersonService {
     const personClient = this.personClientFactory(token)
 
     return personClient.document(crn, documentId, response)
+  }
+
+  async getTimeline(token: string, crn: string): Promise<PersonalTimeline> {
+    const personClient = this.personClientFactory(token)
+
+    return personClient.timeline(crn)
   }
 }
