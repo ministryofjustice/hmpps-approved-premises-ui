@@ -7,7 +7,6 @@ import { personalTimelineFactory } from '../../testutils/factories'
 
 describe('TimelineController', () => {
   const token = 'SOME_TOKEN'
-  const premisesId = 'premisesId'
   const flashSpy = jest.fn()
 
   const response: DeepMocked<Response> = createMock<Response>({})
@@ -24,10 +23,6 @@ describe('TimelineController', () => {
     request = createMock<Request>({
       user: { token },
       flash: flashSpy,
-      params: { premisesId },
-      headers: {
-        referer: 'some-referrer/',
-      },
     })
   })
 
