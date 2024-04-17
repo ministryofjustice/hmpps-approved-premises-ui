@@ -17,22 +17,20 @@
         <h1>{{ pageHeading }}</h1>
         {{ showErrorSummary(errorSummary) }}
 
-        {{
-          formPageInput(
-            {
-              label: {
+        {{ govukInput({
+            label: {
                 text: "Enter the person's CRN",
                 classes: "govuk-label--m"
               },
+              id: 'crn',
               hint: {
-                html: "<p>For example, a CRN is DO16821</p>"
+                text: "For example, a CRN is DO16821"
               },
-              classes: "govuk-input--width-10",
-              fieldName: "crn"
-            },
-            fetchContext()
-          )
-        }}
+              name: "crn",
+              value: crn,
+              errorMessage: errors.crn,
+              classes: "govuk-input--width-10"
+          }) }}
 
         {{ govukButton({
                     text: "Save and continue"
