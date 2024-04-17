@@ -26,4 +26,8 @@ export default class ConfirmDetailsPage extends Page {
     cy.get('p').contains('This person is a limited access offender (LAO).')
     cy.get('a').contains('Guidance on managing user access to LAOs is available on EQUIP.')
   }
+
+  clickSaveAndContinue() {
+    cy.get('a').contains('Save and continue').click()
+  }
 }
