@@ -20,4 +20,5 @@ export default Factory.define<ApplicationSummary>(() => ({
   status: 'started',
   isWithdrawn: faker.datatype.boolean(),
   releaseType: 'in_community',
+  hasRequestsForPlacement: faker.datatype.boolean(),
 }))
