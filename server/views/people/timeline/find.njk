@@ -12,8 +12,7 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <form action="{{ paths.timeline.find() }}" method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+      <form action="{{ paths.timeline.show({}) }}" method="get">
 
         <h1>{{ pageHeading }}</h1>
         {{ showErrorSummary(errorSummary) }}
@@ -36,7 +35,6 @@
         }}
 
         {{ govukButton({
-                    name: 'submit',
                     text: "Save and continue"
                 }) }}
       </form>

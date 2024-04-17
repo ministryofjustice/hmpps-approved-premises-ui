@@ -45,9 +45,14 @@ describe('TimelineController', () => {
 
       const requestHandler = timelineController.show()
 
-      await requestHandler({ ...request, body: { crn } }, response, next)
+      await requestHandler({ ...request, params: { crn } }, response, next)
 
       expect(personService.getTimeline).toHaveBeenCalledWith(token, crn)
+      expect(response.render).toHaveBeenCalledWith({
+        timeline,
+        crn,
+        pageHeading: `Timeline for ${crn}`,
+      })
     })
   })
 })
