@@ -160,10 +160,6 @@ export default class ApplicationsController {
     return async (req: Request, res: Response) => {
       const { crn, offenceId } = req.body
 
-      if (!offenceId) {
-        return res.redirect(paths.applications.people.selectOffence({ crn }))
-      }
-
       const offences = await this.personService.getOffences(req.user.token, crn)
       const indexOffence = offences.find(o => o.offenceId === offenceId)
       const application = await this.applicationService.createApplication(req.user.token, crn, indexOffence)

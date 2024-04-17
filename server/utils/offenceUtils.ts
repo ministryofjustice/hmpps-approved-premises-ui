@@ -15,16 +15,13 @@ const offenceTableRows = (offences: Array<ActiveOffence>): Array<TableRow> => {
         html: offenceRadioButton(offence),
       },
       {
-        text: offence.offenceId,
-      },
-      {
         text: offence.offenceDescription,
       },
       {
-        text: offenceDate,
+        text: offence.deliusEventNumber,
       },
       {
-        text: String(offence.convictionId),
+        text: offenceDate,
       },
     ])
   })

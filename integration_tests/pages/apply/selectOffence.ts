@@ -12,12 +12,12 @@ export default class SelectOffencePage extends Page {
 
   shouldDisplayOffences(): void {
     this.offences.forEach((item: ActiveOffence) => {
-      cy.contains(item.offenceId)
+      cy.contains(item.deliusEventNumber)
         .parent()
         .within(() => {
-          cy.get('td').eq(2).contains(item.offenceDescription)
+          cy.get('td').eq(1).contains(item.offenceDescription)
+          cy.get('td').eq(2).contains(item.deliusEventNumber)
           cy.get('td').eq(3).contains(DateFormats.isoDateToUIDate(item.offenceDate))
-          cy.get('td').eq(4).contains(item.convictionId)
         })
     })
   }

@@ -129,7 +129,7 @@ export default class ApplyHelper {
     crnPage.clickSubmit()
   }
 
-  startApplication() {
+  startApplication(selectedOffence: ActiveOffence = this.offences[0]) {
     this.enterCrnDetails()
 
     // And I see the person on the confirmation page
@@ -137,7 +137,29 @@ export default class ApplyHelper {
     confirmDetailsPage.verifyPersonIsVisible()
 
     // And I confirm the person is who I expect to see
-    confirmDetailsPage.clickSubmit()
+    confirmDetailsPage.clickSaveAndContinue()
+
+    // Then I should be forwarded to select an offence
+    const selectOffencePage = Page.verifyOnPage(ApplyPages.SelectOffencePage, this.person, this.offences)
+    selectOffencePage.shouldDisplayOffences()
+
+    // When I select an offence
+    selectOffencePage.selectOffence(selectedOffence)
+
+    // And I click submit
+    selectOffencePage.clickSubmit()
+
+    // Then the API should have created the application with my selected offence
+    cy.task('verifyApplicationCreate').then(requests => {
+      expect(requests).to.have.length(1)
+
+      const body = JSON.parse(requests[0].body)
+
+      expect(body.crn).equal(this.person.crn)
+      expect(body.convictionId).equal(selectedOffence.convictionId)
+      expect(body.deliusEventNumber).equal(selectedOffence.deliusEventNumber)
+      expect(body.offenceId).equal(selectedOffence.offenceId)
+    })
   }
 
   completeApplication({ isExceptionalCase = false, isInComunity = false, isNoDocuments = false } = {}) {

@@ -11,14 +11,7 @@ import {
 } from '../../../server/testutils/factories'
 import ApplyHelper from '../../helpers/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
-import {
-  ConfirmDetailsPage,
-  ConfirmYourDetailsPage,
-  EnterCRNPage,
-  ListPage,
-  SelectOffencePage,
-  StartPage,
-} from '../../pages/apply'
+import { ConfirmDetailsPage, ConfirmYourDetailsPage, EnterCRNPage, ListPage, StartPage } from '../../pages/apply'
 import IsExceptionalCasePage from '../../pages/apply/isExceptionalCase'
 import NoOffencePage from '../../pages/apply/noOffence'
 import NotEligiblePage from '../../pages/apply/notEligiblePage'
@@ -150,36 +143,15 @@ context('Apply', () => {
     confirmDetailsPage.verifyRestrictedPersonMessaging()
   })
 
-  it('allows the user to select an index offence if there is more than one offence', function test() {
+  it('creates an application with the correct index offence when there are multiple offences present', function test() {
     // Given the person has more than one offence listed under their CRN
     const offences = activeOffenceFactory.buildList(4)
 
     const apply = new ApplyHelper(this.application, this.person, offences)
     apply.setupApplicationStubs()
-    apply.startApplication()
 
-    // Then I should be forwarded to select an offence
-    const selectOffencePage = Page.verifyOnPage(SelectOffencePage, this.person, offences)
-    selectOffencePage.shouldDisplayOffences()
-
-    // When I select an offence
-    const selectedOffence = offences[0]
-    selectOffencePage.selectOffence(selectedOffence)
-
-    // And I click submit
-    selectOffencePage.clickSubmit()
-
-    // Then the API should have created the application with my selected offence
-    cy.task('verifyApplicationCreate').then(requests => {
-      expect(requests).to.have.length(1)
-
-      const body = JSON.parse(requests[0].body)
-
-      expect(body.crn).equal(this.person.crn)
-      expect(body.convictionId).equal(selectedOffence.convictionId)
-      expect(body.deliusEventNumber).equal(selectedOffence.deliusEventNumber)
-      expect(body.offenceId).equal(selectedOffence.offenceId)
-    })
+    // Then I should be able to select an offence
+    apply.startApplication(offences[2])
 
     // Then I should be on the Confirm Your Details page
     Page.verifyOnPage(ConfirmYourDetailsPage, this.application)

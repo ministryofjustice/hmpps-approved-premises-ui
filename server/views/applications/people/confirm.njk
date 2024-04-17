@@ -8,7 +8,7 @@
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 {% set mainClasses = "app-container govuk-body" %}
-{% set nomsNumber = nomsNumber if nomsNumber else 
+{% set nomsNumber = nomsNumber if nomsNumber else
   "" %}
 
 {% block beforeContent %}
@@ -21,30 +21,14 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <form action="{{ paths.applications.create() }}" method="post">
+      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+      <p class="govuk-body">
+        Taken from NDelius, <strong>{{ date }}</strong>
+      </p>
 
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-        <input type="hidden" name="name" value="{{ person.name }}"/>
-        <input type="hidden" name="crn" value="{{ person.crn }}"/>
-        <input type="hidden" name="dateOfBirth" value="{{ person.dateOfBirth }}"/>
-        <input type="hidden" name="sex" value="{{ person.sex }}"/>
-        <input type="hidden" name="nationality" value="{{ person.nationality }}"/>
-        <input type="hidden" name="religion" value="{{ person.religion }}"/>
-        <input type="hidden" name="offenceId" value="{{ offenceId }}"/>
+      {{ personDetails(person, false) }}
 
-        <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
-
-        <p>
-          Taken from NDelius, <strong>{{ date }}</strong>
-        </p>
-
-        {{ personDetails(person, false) }}
-
-
-
-
-        {%if person.isRestricted %}
-
+      {% if person.isRestricted %}
         {% set html %}
           <p class='govuk-!-font-weight-bold'>This person is a limited access offender (LAO).</p>
           <p class='govuk-!-font-weight-bold'>You can continue with the application as you have access to this record, however please verify that the level of restriction is not broader than necessary.</p>
@@ -54,24 +38,25 @@
           </p>
         {% endset %}
 
-          {{ govukWarningText({
-          html: html, 
-          iconFallbackText: "Warning"
-          }) }}
-        {%endif%}
+        {{
+          govukWarningText({
+            html: html,
+            iconFallbackText: "Warning"
+          })
+        }}
+      {% endif %}
 
-        <p>If these details are wrong, update this case in NDelius before you start.</p>
-        <p>If you've entered the wrong CRN, go back to the CRN screen.</p>
+      <p class="govuk-body">If these details are wrong, update this case in NDelius before you start.</p>
+      <p class="govuk-body">If you've entered the wrong CRN, go back to the CRN screen.</p>
 
-        {{ govukButton({
-            text: "Save and continue"
-        }) }}
+      {{ govukButton({
+          text: "Save and continue",
+          href: paths.applications.people.selectOffence({ crn: person.crn })
+      }) }}
 
-        <p>
-          <a href="{{ paths.applications.new() }}"> Back to CRN screen </a>
-        </p>
-
-      </form>
+      <p class="govuk-body">
+        <a href="{{ paths.applications.new() }}"> Back to CRN screen </a>
+      </p>
     </div>
   </div>
 {% endblock %}
