@@ -10,9 +10,10 @@ import {
 import { TableCell, TableRow } from '../../@types/ui'
 import paths from '../../paths/tasks'
 import { sortHeader } from '../sortHeader'
-import { kebabCase, linkTo, sentenceCase } from '../utils'
+import { kebabCase, linkTo } from '../utils'
 import { daysUntilDueCell } from '../tableUtils'
 import { DateFormats } from '../dateUtils'
+import { statusBadge } from './statusBadge'
 
 const statusCell = (task: Task): TableCell => ({
   html: statusBadge(task),
@@ -97,19 +98,6 @@ const nameAnchorCell = (task: Task): TableCell => ({
 const apAreaCell = (task: Task): TableCell => ({
   text: task.apArea?.name || 'No area supplied',
 })
-
-const statusBadge = (task: Task): string => {
-  switch (task.status) {
-    case 'complete':
-      return `<strong class="govuk-tag">${sentenceCase(task.status)}</strong>`
-    case 'not_started':
-      return `<strong class="govuk-tag govuk-tag--yellow">${sentenceCase(task.status)}</strong>`
-    case 'in_progress':
-      return `<strong class="govuk-tag govuk-tag--grey">${sentenceCase(task.status)}</strong>`
-    default:
-      return ''
-  }
-}
 
 const allocatedTableRows = (tasks: Array<Task>): Array<TableRow> => {
   const rows: Array<TableRow> = []
@@ -307,7 +295,6 @@ export {
   statusCell,
   taskTypeCell,
   allocationCell,
-  statusBadge,
   tasksTableRows,
   unallocatedTableRows,
   taskParams,

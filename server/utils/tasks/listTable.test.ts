@@ -14,7 +14,6 @@ import {
   getDecisionOutcome,
   getTaskType,
   nameAnchorCell,
-  statusBadge,
   statusCell,
   taskParams,
   taskTypeCell,
@@ -28,6 +27,7 @@ import { sortHeader } from '../sortHeader'
 import { TaskSortField } from '../../@types/shared'
 import paths from '../../paths/tasks'
 import { daysUntilDueCell } from '../tableUtils'
+import { statusBadge } from './statusBadge'
 
 describe('table', () => {
   beforeEach(() => {
@@ -193,23 +193,6 @@ describe('table', () => {
     it('returns the name of the staff member the task is allocated to as a TableCell object', () => {
       const task = taskFactory.build()
       expect(allocationCell(task)).toEqual({ text: task.allocatedToStaffMember?.name })
-    })
-  })
-
-  describe('statusBadge', () => {
-    it('returns the "complete" status tag', () => {
-      const completedTask = taskFactory.build({ status: 'complete' })
-      expect(statusBadge(completedTask)).toEqual('<strong class="govuk-tag">Complete</strong>')
-    })
-
-    it('returns the "not started" status tag', () => {
-      const notStartedTask = taskFactory.build({ status: 'not_started' })
-      expect(statusBadge(notStartedTask)).toEqual('<strong class="govuk-tag govuk-tag--yellow">Not started</strong>')
-    })
-
-    it('returns the "in_progress" status tag', () => {
-      const inProgressTask = taskFactory.build({ status: 'in_progress' })
-      expect(statusBadge(inProgressTask)).toEqual('<strong class="govuk-tag govuk-tag--grey">In progress</strong>')
     })
   })
 
