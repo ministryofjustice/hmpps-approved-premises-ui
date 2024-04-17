@@ -7,6 +7,11 @@
 
   {% if page.title %}
     <h1 class="govuk-heading-l">{{ page.title }}</h1>
+    {% set legendClasses = "govuk-fieldset__legend--m" %}
+    {% set pageHeading = false %}
+  {% else %}
+    {% set legendClasses = "govuk-fieldset__legend--l" %}
+    {% set pageHeading = true %}
   {% endif %}
 
   {% set conditionalHTML %}
@@ -25,8 +30,8 @@
         fieldset: {
           legend: {
             text: page.question,
-            classes: "govuk-fieldset__legend--{{ 'm' if page.title else 'l' }}",
-            isPageHeading: true
+            classes: legendClasses,
+            isPageHeading: pageHeading
           }
         },
         hint: {
