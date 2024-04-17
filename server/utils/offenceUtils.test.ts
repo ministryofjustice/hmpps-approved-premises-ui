@@ -31,34 +31,30 @@ describe('offenceUtils', () => {
           {
             html: offenceRadioButton(offences[0]),
           },
-          {
-            text: offences[0].offenceId,
-          },
+
           {
             text: offences[0].offenceDescription,
           },
           {
-            text: DateFormats.isoDateToUIDate(offences[0].offenceDate),
+            text: offences[0].deliusEventNumber,
           },
           {
-            text: String(offences[0].convictionId),
+            text: DateFormats.isoDateToUIDate(offences[0].offenceDate),
           },
         ],
         [
           {
             html: offenceRadioButton(offences[1]),
           },
-          {
-            text: offences[1].offenceId,
-          },
+
           {
             text: offences[1].offenceDescription,
           },
           {
-            text: DateFormats.isoDateToUIDate(offences[1].offenceDate),
+            text: offences[1].deliusEventNumber,
           },
           {
-            text: String(offences[1].convictionId),
+            text: DateFormats.isoDateToUIDate(offences[1].offenceDate),
           },
         ],
       ])
@@ -73,16 +69,13 @@ describe('offenceUtils', () => {
             html: offenceRadioButton(offence),
           },
           {
-            text: offence.offenceId,
-          },
-          {
             text: offence.offenceDescription,
           },
           {
-            text: 'No offence date available',
+            text: offence.deliusEventNumber,
           },
           {
-            text: String(offence.convictionId),
+            text: 'No offence date available',
           },
         ],
       ])
