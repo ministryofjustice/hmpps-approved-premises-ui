@@ -1,9 +1,9 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "../partials/showErrorSummary.njk" import showErrorSummary %}
-{% from "../components/formFields/form-page-input/macro.njk" import formPageInput %}
+{% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "../../components/formFields/form-page-input/macro.njk" import formPageInput %}
 
-{% extends "../partials/layout.njk" %}
+{% extends "../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body" %}
