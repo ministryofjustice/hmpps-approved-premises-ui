@@ -18,6 +18,7 @@ import type {
   ApplicationSortField,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   ApprovedPremisesApplicationStatus,
+  ApprovedPremisesApplicationSummary,
   PersonalTimeline,
   PlacementApplication,
   PlacementType,
@@ -111,6 +112,13 @@ const dashboardTableRows = (
 }
 
 export const getAction = (application: ApplicationSummary | Application) => {
+  if ((application as ApprovedPremisesApplicationSummary).hasRequestsForPlacement) {
+    return linkTo(
+      paths.applications.show,
+      { id: application.id },
+      { text: 'View placement request(s)', query: { tab: applicationShowPageTabs.placementRequests } },
+    )
+  }
   if (application.status === 'awaitingPlacement') {
     return linkTo(
       placementApplicationPaths.placementApplications.create,

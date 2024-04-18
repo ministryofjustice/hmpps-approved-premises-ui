@@ -339,11 +339,13 @@ describe('utils', () => {
         person,
         submittedAt: null,
         risks: { tier: tierEnvelopeFactory.build({ value: { level: 'A1' } }) },
+        hasRequestsForPlacement: false,
       })
       const applicationB = applicationSummaryFactory.build({
         arrivalDate,
         person,
         risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
+        hasRequestsForPlacement: false,
       })
 
       const result = dashboardTableRows([applicationA, applicationB])
@@ -421,8 +423,14 @@ describe('utils', () => {
         risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
         status: 'awaitingPlacement',
       })
+      const applicationC = applicationSummaryFactory.build({
+        arrivalDate,
+        person,
+        risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
+        hasRequestsForPlacement: true,
+      })
 
-      const result = dashboardTableRows([applicationA, applicationB])
+      const result = dashboardTableRows([applicationA, applicationB, applicationC])
 
       expect(tierBadge).toHaveBeenCalledWith('A1')
 
@@ -475,6 +483,31 @@ describe('utils', () => {
           },
           {
             html: getAction(applicationB),
+          },
+        ],
+        [
+          {
+            html: `<a href=${paths.applications.show({ id: applicationC.id })} data-cy-id="${applicationC.id}">${
+              person.name
+            }</a>`,
+          },
+          {
+            text: applicationC.person.crn,
+          },
+          {
+            html: '',
+          },
+          {
+            text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
+          },
+          {
+            text: DateFormats.isoDateToUIDate(applicationC.createdAt, { format: 'short' }),
+          },
+          {
+            html: getStatus(applicationC),
+          },
+          {
+            html: getAction(applicationC),
           },
         ],
       ])

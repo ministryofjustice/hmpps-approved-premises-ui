@@ -32,4 +32,12 @@ export default class DashboardPage extends Page {
     this.getSelectInputByIdAndSelectAnEntry('status', status)
     this.clickSubmit()
   }
+
+  clickViewPlacementRequestsLink() {
+    cy.get('a').contains('View placement request(s)').click()
+  }
+
+  shouldContainRequestAPlacementTab() {
+    cy.get('a').contains('Request for placement')
+  }
 }
