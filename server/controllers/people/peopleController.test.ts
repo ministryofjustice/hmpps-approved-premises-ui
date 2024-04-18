@@ -5,7 +5,7 @@ import PeopleController from './peopleController'
 import PersonService from '../../services/personService'
 import { personFactory } from '../../testutils/factories'
 import { errorMessage, errorSummary } from '../../utils/validation'
-import { RestrictedPersonError } from '../../utils/errors'
+import * as peopleUtils from '../../utils/people'
 
 describe('PeopleController', () => {
   const token = 'SOME_TOKEN'
@@ -76,63 +76,26 @@ describe('PeopleController', () => {
       expect(flashSpy).toHaveBeenCalledWith('errorSummary', [errorSummary('crn', 'You must enter a CRN')])
     })
 
-    it('sends an error to the flash if the API returns a 404', async () => {
-      const requestHandler = peopleController.find()
+    describe('if the service throws', () => {
+      it('calls crnErrorHandling ', async () => {
+        jest.spyOn(peopleUtils, 'crnErrorHandling')
+        const crn = 'SOME_CRN'
+        const requestHandler = peopleController.find()
 
-      const err = { data: {}, status: 404 }
+        const err = { data: {}, status: 404 }
 
-      personService.findByCrn.mockImplementation(() => {
-        throw err
+        personService.findByCrn.mockImplementation(() => {
+          throw err
+        })
+
+        request.body.crn = crn
+
+        await requestHandler(request, response, next)
+
+        expect(response.redirect).toHaveBeenCalledWith('some-referrer/')
+
+        expect(peopleUtils.crnErrorHandling).toHaveBeenCalledWith(request, err, crn)
       })
-
-      request.body.crn = 'SOME_CRN'
-
-      await requestHandler(request, response, next)
-
-      expect(response.redirect).toHaveBeenCalledWith('some-referrer/')
-
-      expect(flashSpy).toHaveBeenCalledWith('errors', {
-        crn: errorMessage('crn', "No person with an CRN of 'SOME_CRN' was found"),
-      })
-      expect(flashSpy).toHaveBeenCalledWith('errorSummary', [
-        errorSummary('crn', "No person with an CRN of 'SOME_CRN' was found"),
-      ])
-    })
-
-    it('throws the error if the error is of another type', async () => {
-      const requestHandler = peopleController.find()
-
-      const err = new Error()
-
-      personService.findByCrn.mockImplementation(() => {
-        throw err
-      })
-
-      request.body.crn = 'SOME_CRN'
-
-      expect(async () => requestHandler(request, response, next)).rejects.toThrow(err)
-    })
-
-    it('sends an error to the flash if the API returns a restricted person error', async () => {
-      const requestHandler = peopleController.find()
-
-      const err = new RestrictedPersonError('SOME_CRN')
-
-      personService.findByCrn.mockImplementation(() => {
-        throw err
-      })
-
-      request.body.crn = 'SOME_CRN'
-
-      await requestHandler(request, response, next)
-
-      expect(response.redirect).toHaveBeenCalledWith('some-referrer/')
-
-      expect(flashSpy).toHaveBeenCalledWith('errors', {
-        crn: errorMessage('crn', 'CRN: SOME_CRN is restricted'),
-      })
-      expect(flashSpy).toHaveBeenCalledWith('errorSummary', [errorSummary('crn', 'CRN: SOME_CRN is restricted')])
-      expect(flashSpy).toHaveBeenCalledWith('restrictedPerson', 'true')
     })
 
     it('throws the error if the error is a 403 and checkCaseload is not set', async () => {
@@ -146,7 +109,10 @@ describe('PeopleController', () => {
 
       request.body.crn = 'SOME_CRN'
 
-      expect(async () => requestHandler(request, response, next)).rejects.toMatchObject(err)
+      await requestHandler(request, response, next)
+
+      expect(peopleUtils.crnErrorHandling).toHaveBeenCalledWith(request, err, 'SOME_CRN')
+      expect(response.redirect).toHaveBeenCalledWith('some-referrer/')
     })
   })
 })

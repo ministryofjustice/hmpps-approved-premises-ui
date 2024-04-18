@@ -1,9 +1,9 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "../partials/showErrorSummary.njk" import showErrorSummary %}
-{% from "../components/formFields/form-page-input/macro.njk" import formPageInput %}
+{% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
+{% from "../../components/formFields/form-page-input/macro.njk" import formPageInput %}
 
-{% extends "../partials/layout.njk" %}
+{% extends "../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body" %}
@@ -12,31 +12,27 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <form action="{{ paths.timeline.find() }}" method="post">
-        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+      <form action="{{ paths.timeline.show({}) }}" method="get">
 
         <h1>{{ pageHeading }}</h1>
         {{ showErrorSummary(errorSummary) }}
 
-        {{
-          formPageInput(
-            {
-              label: {
+        {{ govukInput({
+            label: {
                 text: "Enter the person's CRN",
                 classes: "govuk-label--m"
               },
+              id: 'crn',
               hint: {
-                html: "<p>For example, a CRN is DO16821</p>"
+                text: "For example, a CRN is DO16821"
               },
-              classes: "govuk-input--width-10",
-              fieldName: "crn"
-            },
-            fetchContext()
-          )
-        }}
+              name: "crn",
+              value: crn,
+              errorMessage: errors.crn,
+              classes: "govuk-input--width-10"
+          }) }}
 
         {{ govukButton({
-                    name: 'submit',
                     text: "Save and continue"
                 }) }}
       </form>

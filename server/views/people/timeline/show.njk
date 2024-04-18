@@ -5,10 +5,13 @@
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body" %}
 
+{% set query = "?crn=" + crn if crn else 
+    "" %}
+
 {% block beforeContent %}
     {{ govukBackLink({
 		text: "Back",
-        href: paths.timeline.find({})
+        href: paths.timeline.find({}) + "?crn=" + crn
 	}) }}
 {% endblock %}
 
