@@ -1,6 +1,6 @@
 import { DateFormats } from './dateUtils'
 
-import { offenceRadioButton, offenceTableRows } from './offenceUtils'
+import { offenceRadioButton, offenceRadioItems, offenceTableRows } from './offenceUtils'
 
 import { activeOffenceFactory } from '../testutils/factories'
 
@@ -78,6 +78,26 @@ describe('offenceUtils', () => {
             text: 'No offence date available',
           },
         ],
+      ])
+    })
+  })
+
+  describe('offenceRadioItems', () => {
+    it('Returns radio item options', () => {
+      const offence1 = activeOffenceFactory.build()
+      const offence2 = activeOffenceFactory.build()
+
+      expect(offenceRadioItems([offence1, offence2], offence2.deliusEventNumber)).toEqual([
+        {
+          html: `${offence1.offenceDescription}<br /><span class="govuk-hint">(Delius event number: ${offence1.deliusEventNumber})</span>`,
+          value: offence1.deliusEventNumber,
+          checked: false,
+        },
+        {
+          html: `${offence2.offenceDescription}<br /><span class="govuk-hint">(Delius event number: ${offence2.deliusEventNumber})</span>`,
+          value: offence2.deliusEventNumber,
+          checked: true,
+        },
       ])
     })
   })
