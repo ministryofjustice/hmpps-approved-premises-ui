@@ -34,7 +34,7 @@
               classes: "govuk-fieldset__legend--m"
               }
           },
-          items: dateFieldValues('arrivalDateTime', errors),
+          items: dateFieldValues('arrivalDateTime', errors, true),
           errorMessage: errors.arrivalDateTime,
           hint: {
               text: "For example, 27 3 2024"
@@ -71,7 +71,7 @@
           id: "keyWorkerStaffCode",
           name: "arrival[keyWorkerStaffCode]",
           items: convertObjectsToSelectOptions(staffMembers, 'Select a keyworker', 'name', 'code', 'keyWorkerStaffCode'),
-          errorMessage: errors.keyWorkerStaffCode.empty
+          errorMessage: errors.keyWorkerStaffCode
         }) }}
 
         {{ govukTextarea({

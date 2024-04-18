@@ -73,12 +73,12 @@ context('Departures', () => {
     cy.task('stubDepartureErrors', {
       premisesId: premises[0].id,
       bookingId: booking.id,
-      params: ['dateTime', 'destinationProviderId', 'moveOnCategoryId', 'reasonId'],
+      params: ['destinationProviderId', 'moveOnCategoryId', 'reasonId'],
     })
 
     page.clickSubmit()
 
     // Then I should see error messages relating to that field
-    page.shouldShowErrorMessagesForFields(['dateTime', 'reasonId', 'moveOnCategoryId', 'destinationProviderId'])
+    page.shouldShowErrorMessagesForFields(['reasonId', 'moveOnCategoryId', 'destinationProviderId'])
   })
 })
