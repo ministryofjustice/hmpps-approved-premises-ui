@@ -20,8 +20,11 @@ export default class ArrivalCreatePage extends Page {
     const arrivalDate = new Date(Date.parse(arrival.arrivalDate))
     const expectedDeparture = new Date(Date.parse(arrival.expectedDepartureDate))
 
+    cy.get('input[name="arrivalDateTime-day"]').clear()
     cy.get('input[name="arrivalDateTime-day"]').type(String(arrivalDate.getDate()))
+    cy.get('input[name="arrivalDateTime-month"]').clear()
     cy.get('input[name="arrivalDateTime-month"]').type(String(arrivalDate.getMonth() + 1))
+    cy.get('input[name="arrivalDateTime-year"]').clear()
     cy.get('input[name="arrivalDateTime-year"]').type(String(arrivalDate.getFullYear()))
     cy.get('input[name="arrivalDateTime-time"]').type(arrival.arrivalTime)
 

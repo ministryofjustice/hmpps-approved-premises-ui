@@ -27,8 +27,11 @@ export default class DepartureCreatePage extends Page {
     const minutes = dateTime.getMinutes()
     const hours = dateTime.getHours()
 
+    cy.get('input[name="dateTime-day"]').clear()
     cy.get('input[name="dateTime-day"]').type(String(dateTime.getDate()))
+    cy.get('input[name="dateTime-month"]').clear()
     cy.get('input[name="dateTime-month"]').type(String(dateTime.getMonth() + 1))
+    cy.get('input[name="dateTime-year"]').clear()
     cy.get('input[name="dateTime-year"]').type(String(dateTime.getFullYear()))
     cy.get('input[name="dateTime-time"]').type(`${hours}:${minutes}`)
 

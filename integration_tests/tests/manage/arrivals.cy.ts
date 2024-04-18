@@ -70,11 +70,11 @@ context('Arrivals', () => {
     cy.task('stubArrivalErrors', {
       premisesId: premises.id,
       bookingId,
-      params: ['arrivalDateTime', 'expectedDepartureDate', 'keyWorkerStaffCode'],
+      params: ['expectedDepartureDate', 'keyWorkerStaffCode'],
     })
     page.submitArrivalFormWithoutFields()
 
     // Then I should see error messages relating to that field
-    page.shouldShowErrorMessagesForFields(['arrivalDateTime', 'expectedDepartureDate'])
+    page.shouldShowErrorMessagesForFields(['expectedDepartureDate', 'keyWorkerStaffCode'])
   })
 })
