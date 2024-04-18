@@ -7,6 +7,7 @@
 {% from "../partials/showErrorSummary.njk" import showErrorSummary %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% extends "../partials/layout.njk" %}
 
@@ -51,35 +52,36 @@
                 ]
                 }) }}
 
-                {% if offences | length == 1 %}
-                    <input type="hidden" name="eventNumber" value="{{ offences[0].deliusEventNumber }}"/>
-                {% else %}
-                    {{
-                        govukRadios({
-                            name: "eventNumber",
-                            id: "eventNumber",
-                            fieldset: {
-                                legend: {
-                                    text: "Select an index offence",
-                                    classes: "govuk-fieldset__legend--m"
-                                }
-                            },
-                            hint: {
-                                text: "This person has more than one index offence identified against their CRN. Select the most relevant index offence."
-                            },
-                            errorMessage: errors.eventNumber,
-                            items: convertObjectsToRadioItems(offences, 'offenceDescription', 'deliusEventNumber', 'eventNumber')
-                        })
-                    }}
-                {% endif %}
+                {{
+                    govukRadios({
+                        name: "eventNumber",
+                        id: "eventNumber",
+                        fieldset: {
+                            legend: {
+                                text: "Select an index offence",
+                                classes: "govuk-fieldset__legend--m"
+                            }
+                        },
+                        hint: {
+                            text: "Select the most relevant index offence for this person"
+                        },
+                        errorMessage: errors.eventNumber,
+                        items: OffenceUtils.offenceRadioItems(offences, eventNumber)
+                    })
+                }}
+
+                {{ govukWarningText({
+                    text: "If the required offence is not visible here, you will not be able to proceed with the booking until the offence has been added to NDelius",
+                    iconFallbackText: "Warning"
+                }) }}
 
                 {{ govukDateInput({
                     id: "arrivalDate",
                     namePrefix: "arrivalDate",
                     fieldset: {
-                    legend: {
-                        text: "What is their expected arrival date?",
-                        classes: "govuk-fieldset__legend--m"
+                        legend: {
+                            text: "What is their expected arrival date?",
+                            classes: "govuk-fieldset__legend--m"
                         }
                     },
                     hint: {

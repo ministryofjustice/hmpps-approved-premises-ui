@@ -42,4 +42,17 @@ const offenceRadioButton = (offence: ActiveOffence) => {
   `
 }
 
-export { offenceTableRows, offenceRadioButton }
+const offenceRadioItems = (
+  offences: Array<ActiveOffence>,
+  selectedOffenceNumber: ActiveOffence['offenceId'] | null | undefined,
+) => {
+  return offences.map((offence: ActiveOffence) => {
+    return {
+      html: `${offence.offenceDescription}<br /><span class="govuk-hint">(Delius event number: ${offence.deliusEventNumber})</span>`,
+      value: offence.deliusEventNumber,
+      checked: selectedOffenceNumber === offence.deliusEventNumber,
+    }
+  })
+}
+
+export { offenceTableRows, offenceRadioButton, offenceRadioItems }

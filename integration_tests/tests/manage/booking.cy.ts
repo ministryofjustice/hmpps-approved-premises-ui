@@ -127,9 +127,12 @@ context('Booking', () => {
       expect(requests).to.have.length(2)
     })
 
+    // And the index offence radio buttons should be visible
+    bookingCreatePage.shouldShowOffences(offences)
+
     // Given I have entered a CRN and the person has been found
     // When I fill in the booking form
-    bookingCreatePage.completeForm(booking)
+    bookingCreatePage.completeForm(booking, offences[0])
     bookingCreatePage.clickSubmit()
 
     // Then I should be redirected to the confirmation page
@@ -176,8 +179,7 @@ context('Booking', () => {
 
     // Given I have entered a CRN and the person has been found
     // When I fill in the booking form
-    bookingCreatePage.completeForm(booking)
-    bookingCreatePage.selectOffence(multipleOffences[1])
+    bookingCreatePage.completeForm(booking, multipleOffences[1])
     bookingCreatePage.clickSubmit()
 
     // Then I should be redirected to the confirmation page
