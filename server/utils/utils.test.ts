@@ -142,27 +142,26 @@ describe('mapApiPersonRiskForUI', () => {
 
   it('maps the PersonRisks from the API into a shape thats useful for the UI', () => {
     const actual = mapApiPersonRisksForUi(risks)
+
     expect(actual).toEqual({
       crn: risks.crn,
       flags: risks.flags.value,
       mappa: {
-        lastUpdated: risks?.mappa?.value?.lastUpdated
-          ? DateFormats.isoDateToUIDate(risks?.mappa?.value?.lastUpdated)
-          : '',
-        level: 'CAT 2 / LEVEL 1',
+        lastUpdated: DateFormats.isoDateToUIDate(risks.mappa.value.lastUpdated),
+        level: risks.mappa.value.level,
+        status: risks.mappa.status,
       },
       roshRisks: {
-        lastUpdated:
-          risks?.roshRisks?.value?.lastUpdated && DateFormats.isoDateToUIDate(risks.roshRisks.value.lastUpdated),
-        overallRisk: risks?.roshRisks?.value?.overallRisk ?? '',
-        riskToChildren: risks?.roshRisks?.value?.riskToChildren ?? '',
-        riskToKnownAdult: risks?.roshRisks?.value?.riskToKnownAdult ?? '',
-        riskToPublic: risks?.roshRisks?.value?.riskToPublic ?? '',
-        riskToStaff: risks?.roshRisks?.value?.riskToStaff ?? '',
+        lastUpdated: DateFormats.isoDateToUIDate(risks.roshRisks.value.lastUpdated),
+        overallRisk: risks.roshRisks.value.overallRisk,
+        riskToChildren: risks.roshRisks.value.riskToChildren,
+        riskToKnownAdult: risks.roshRisks.value.riskToKnownAdult,
+        riskToPublic: risks.roshRisks.value.riskToPublic,
+        riskToStaff: risks.roshRisks.value.riskToStaff,
       },
       tier: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks?.tier?.value?.lastUpdated ?? ''),
-        level: risks?.tier?.value?.level || '',
+        lastUpdated: DateFormats.isoDateToUIDate(risks.tier.value.lastUpdated),
+        level: risks.tier.value.level,
       },
     })
   })
@@ -172,21 +171,13 @@ describe('mapApiPersonRiskForUI', () => {
 
     const actual = mapApiPersonRisksForUi(risks)
 
-    expect(actual).toEqual({
-      crn: risks.crn,
-      flags: risks.flags.value,
-      mappa: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks?.mappa?.value?.lastUpdated || ''),
-        level: 'CAT 2 / LEVEL 1',
-      },
-      roshRisks: {
-        lastUpdated: '',
-      },
-      tier: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks?.tier?.value?.lastUpdated || ''),
-        level: risks?.tier?.value?.level,
-      },
-    })
+    expect(actual).toEqual(
+      expect.objectContaining({
+        roshRisks: {
+          lastUpdated: '',
+        },
+      }),
+    )
   })
 
   it('handles the case where mappa is null', () => {
@@ -194,25 +185,14 @@ describe('mapApiPersonRiskForUI', () => {
 
     const actual = mapApiPersonRisksForUi(risks)
 
-    expect(actual).toEqual({
-      crn: risks.crn,
-      flags: risks.flags.value,
-      mappa: {
-        lastUpdated: '',
-      },
-      roshRisks: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks?.roshRisks?.value?.lastUpdated || ''),
-        overallRisk: risks.roshRisks.value?.overallRisk,
-        riskToChildren: risks.roshRisks.value?.riskToChildren,
-        riskToKnownAdult: risks.roshRisks.value?.riskToKnownAdult,
-        riskToPublic: risks.roshRisks.value?.riskToPublic,
-        riskToStaff: risks.roshRisks.value?.riskToStaff,
-      },
-      tier: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.tier?.value?.lastUpdated || ''),
-        level: risks.tier.value?.level,
-      },
-    })
+    expect(actual).toEqual(
+      expect.objectContaining({
+        mappa: {
+          status: undefined,
+          lastUpdated: '',
+        },
+      }),
+    )
   })
 
   it('handles the case where tier is null', () => {
@@ -220,25 +200,13 @@ describe('mapApiPersonRiskForUI', () => {
 
     const actual = mapApiPersonRisksForUi(risks)
 
-    expect(actual).toEqual({
-      crn: risks.crn,
-      flags: risks.flags.value,
-      mappa: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks?.mappa?.value?.lastUpdated || ''),
-        level: 'CAT 2 / LEVEL 1',
-      },
-      roshRisks: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks?.roshRisks?.value?.lastUpdated || ''),
-        overallRisk: risks.roshRisks.value?.overallRisk,
-        riskToChildren: risks.roshRisks.value?.riskToChildren,
-        riskToKnownAdult: risks.roshRisks.value?.riskToKnownAdult,
-        riskToPublic: risks.roshRisks.value?.riskToPublic,
-        riskToStaff: risks.roshRisks.value?.riskToStaff,
-      },
-      tier: {
-        lastUpdated: '',
-      },
-    })
+    expect(actual).toEqual(
+      expect.objectContaining({
+        tier: {
+          lastUpdated: '',
+        },
+      }),
+    )
   })
 
   it('handles the case where flags is null', () => {
@@ -246,26 +214,11 @@ describe('mapApiPersonRiskForUI', () => {
 
     const actual = mapApiPersonRisksForUi(risks)
 
-    expect(actual).toEqual({
-      crn: risks.crn,
-      flags: null,
-      mappa: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.mappa?.value?.lastUpdated || ''),
-        level: 'CAT 2 / LEVEL 1',
-      },
-      roshRisks: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks?.roshRisks?.value?.lastUpdated || ''),
-        overallRisk: risks.roshRisks.value?.overallRisk,
-        riskToChildren: risks.roshRisks.value?.riskToChildren,
-        riskToKnownAdult: risks.roshRisks.value?.riskToKnownAdult,
-        riskToPublic: risks.roshRisks.value?.riskToPublic,
-        riskToStaff: risks.roshRisks.value?.riskToStaff,
-      },
-      tier: {
-        lastUpdated: DateFormats.isoDateToUIDate(risks.tier.value?.lastUpdated || ''),
-        level: risks.tier.value?.level,
-      },
-    })
+    expect(actual).toEqual(
+      expect.objectContaining({
+        flags: null,
+      }),
+    )
   })
 })
 

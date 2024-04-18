@@ -256,11 +256,15 @@ export interface ReferenceData {
   serviceScope: string
 }
 
+export interface MappaUi extends Mappa {
+  status?: RiskEnvelopeStatus
+}
+
 export interface PersonRisksUI {
   roshRisks: RoshRisks
   tier: RiskTier
   flags: FlagsEnvelope['value']
-  mappa: Mappa
+  mappa: MappaUi
 }
 
 export type GroupedListofBookings = {
