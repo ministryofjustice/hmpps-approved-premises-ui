@@ -1,4 +1,4 @@
-import { createMock } from '@golevelup/ts-jest'
+import { DeepMocked, createMock } from '@golevelup/ts-jest'
 
 import type { ErrorMessages } from '@approved-premises/ui'
 import {
@@ -20,18 +20,30 @@ import {
 
 describe('formUtils', () => {
   describe('dateFieldValues', () => {
+    const context = {
+      'myField-day': 12,
+      'myField-month': 11,
+      'myField-year': 2022,
+    }
+    const fieldName = 'myField'
+
+    let errors: DeepMocked<ErrorMessages>
+
+    beforeEach(() => {
+      errors = createMock<ErrorMessages>({
+        someOtherField: {
+          text: 'Some error message',
+        },
+        myField: undefined,
+      })
+    })
+
     it('returns items with an error class when errors are present for the field', () => {
-      const errors = createMock<ErrorMessages>({
+      errors = createMock<ErrorMessages>({
         myField: {
           text: 'Some error message',
         },
       })
-      const context = {
-        'myField-day': 12,
-        'myField-month': 11,
-        'myField-year': 2022,
-      }
-      const fieldName = 'myField'
 
       expect(dateFieldValues(fieldName, context, errors)).toEqual([
         {
@@ -53,19 +65,6 @@ describe('formUtils', () => {
     })
 
     it('returns items without an error class when no errors are present for the field', () => {
-      const errors = createMock<ErrorMessages>({
-        someOtherField: {
-          text: 'Some error message',
-        },
-        myField: undefined,
-      })
-      const context = {
-        'myField-day': 12,
-        'myField-month': 11,
-        'myField-year': 2022,
-      }
-      const fieldName = 'myField'
-
       expect(dateFieldValues(fieldName, context, errors)).toEqual([
         {
           classes: 'govuk-input--width-2 ',
@@ -81,6 +80,97 @@ describe('formUtils', () => {
           classes: 'govuk-input--width-4 ',
           name: 'year',
           value: context['myField-year'],
+        },
+      ])
+    })
+
+    it('returns items without an error class when no errors are present for the field', () => {
+      expect(dateFieldValues(fieldName, context, errors)).toEqual([
+        {
+          classes: 'govuk-input--width-2 ',
+          name: 'day',
+          value: context['myField-day'],
+        },
+        {
+          classes: 'govuk-input--width-2 ',
+          name: 'month',
+          value: context['myField-month'],
+        },
+        {
+          classes: 'govuk-input--width-4 ',
+          name: 'year',
+          value: context['myField-year'],
+        },
+      ])
+    })
+
+    it("returns today's date by default when defaultToToday is true and the context is empty", () => {
+      const today = new Date()
+
+      expect(dateFieldValues(fieldName, {}, errors, true)).toEqual([
+        {
+          classes: 'govuk-input--width-2 ',
+          name: 'day',
+          value: today.getDate(),
+        },
+        {
+          classes: 'govuk-input--width-2 ',
+          name: 'month',
+          value: today.getMonth() + 1,
+        },
+        {
+          classes: 'govuk-input--width-4 ',
+          name: 'year',
+          value: today.getFullYear(),
+        },
+      ])
+    })
+
+    it('returns the data from the context when defaultToToday is true and the context is present', () => {
+      expect(dateFieldValues(fieldName, context, errors, true)).toEqual([
+        {
+          classes: 'govuk-input--width-2 ',
+          name: 'day',
+          value: context['myField-day'],
+        },
+        {
+          classes: 'govuk-input--width-2 ',
+          name: 'month',
+          value: context['myField-month'],
+        },
+        {
+          classes: 'govuk-input--width-4 ',
+          name: 'year',
+          value: context['myField-year'],
+        },
+      ])
+    })
+
+    it('returns the data from the context when defaultToToday is true and a partial date is given', () => {
+      expect(
+        dateFieldValues(
+          fieldName,
+          {
+            'myField-day': 12,
+          },
+          errors,
+          true,
+        ),
+      ).toEqual([
+        {
+          classes: 'govuk-input--width-2 ',
+          name: 'day',
+          value: context['myField-day'],
+        },
+        {
+          classes: 'govuk-input--width-2 ',
+          name: 'month',
+          value: undefined,
+        },
+        {
+          classes: 'govuk-input--width-4 ',
+          name: 'year',
+          value: undefined,
         },
       ])
     })

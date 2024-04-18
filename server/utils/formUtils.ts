@@ -6,23 +6,40 @@ import { PlacementRequestStatus } from '@approved-premises/api'
 import { resolvePath, sentenceCase } from './utils'
 import postcodeAreas from '../etc/postcodeAreas.json'
 
-export const dateFieldValues = (fieldName: string, context: Record<string, unknown>, errors: ErrorMessages = {}) => {
+export const dateFieldValues = (
+  fieldName: string,
+  context: Record<string, unknown>,
+  errors: ErrorMessages = {},
+  defaultToToday = false,
+) => {
+  let day = context[`${fieldName}-day`]
+  let month = context[`${fieldName}-month`]
+  let year = context[`${fieldName}-year`]
+
+  if (defaultToToday && !day && !month && !year) {
+    const today = new Date()
+    day = day || today.getDate()
+    month = month || today.getMonth() + 1
+    year = year || today.getFullYear()
+  }
+
   const errorClass = errors[fieldName] ? 'govuk-input--error' : ''
+
   return [
     {
       classes: `govuk-input--width-2 ${errorClass}`,
       name: 'day',
-      value: context[`${fieldName}-day`],
+      value: day,
     },
     {
       classes: `govuk-input--width-2 ${errorClass}`,
       name: 'month',
-      value: context[`${fieldName}-month`],
+      value: month,
     },
     {
       classes: `govuk-input--width-4 ${errorClass}`,
       name: 'year',
-      value: context[`${fieldName}-year`],
+      value: year,
     },
   ]
 }
