@@ -7,6 +7,7 @@ import managePaths from '../../paths/manage'
 import taskPaths from '../../paths/tasks'
 import matchPaths from '../../paths/match'
 import adminPaths from '../../paths/admin'
+import peoplePaths from '../../paths/people'
 
 export const sections = {
   apply: {
@@ -66,6 +67,14 @@ export const sections = {
       'Manage user roles and permissions. Stop automatic allocations for assessments, matches, and placement requests.',
     shortTitle: 'Users',
     href: adminPaths.admin.userManagement.index({}),
+  },
+  personalTimeline: {
+    id: 'timeline',
+    title: "View a person's timeline",
+    description:
+      'View historical information about a person, including previous applications, placements, and assessments.',
+    shortTitle: 'Timeline',
+    href: peoplePaths.timeline.find({}),
   },
 }
 
