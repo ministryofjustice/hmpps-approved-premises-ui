@@ -55,7 +55,10 @@ export default class BookingNewPage extends Page {
     return cy.get('#departureDate-year')
   }
 
-  completeForm(booking: Booking): void {
+  completeForm(booking: Booking, offence?: ActiveOffence): void {
+    if (offence != null) {
+      this.selectOffence(offence)
+    }
     this.getLegend('What is their expected arrival date?')
 
     const arrivalDate = new Date(Date.parse(booking.arrivalDate))
