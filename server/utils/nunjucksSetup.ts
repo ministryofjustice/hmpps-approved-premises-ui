@@ -10,6 +10,7 @@ import { ApprovedPremisesApplication as Application, PersonStatus } from '@appro
 import {
   initialiseName,
   kebabCase,
+  linebreaksToParagraphs,
   linkTo,
   mapApiPersonRisksForUi,
   numberToOrdinal,
@@ -207,6 +208,7 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addFilter('removeBlankSummaryListItems', removeBlankSummaryListItems)
   njkEnv.addFilter('sentenceCase', sentenceCase)
   njkEnv.addFilter('kebabCase', kebabCase)
+  njkEnv.addFilter('linebreaksToParagraphs', linebreaksToParagraphs)
 
   njkEnv.addGlobal('numberToOrdinal', numberToOrdinal)
   njkEnv.addGlobal('navigationItems', navigationItems)
