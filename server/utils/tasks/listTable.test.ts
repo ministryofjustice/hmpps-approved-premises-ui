@@ -420,10 +420,10 @@ describe('table', () => {
           text: 'Completed by',
         },
         {
-          text: 'Decision',
+          text: 'Task type',
         },
         {
-          text: 'Task type',
+          text: 'Decision',
         },
       ])
     })
