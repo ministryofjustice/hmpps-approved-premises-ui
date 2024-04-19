@@ -54,6 +54,7 @@ import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 import { applicationStatuses, getStatus } from './getStatus'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
+import { escape } from '../formUtils'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
@@ -304,7 +305,7 @@ const mapApplicationTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>)
           timestamp: timelineEvent.occurredAt,
           date: timelineEvent.occurredAt ? DateFormats.isoDateTimeToUIDateTime(timelineEvent.occurredAt) : '',
         },
-        content: timelineEvent.content,
+        content: escape(timelineEvent.content),
         associatedUrls: timelineEvent.associatedUrls ? mapTimelineUrlsForUi(timelineEvent.associatedUrls) : [],
       }
       if (timelineEvent.createdBy?.name) {

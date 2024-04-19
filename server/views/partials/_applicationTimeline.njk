@@ -16,7 +16,7 @@
 
                     {% if event.content %}
                         <div class="moj-timeline__description">
-                            <p>{{event.content}}</p>
+                            {{ event.content | linebreaksToParagraphs | safe }}
                         </div>
                         {%endif%}
                         {% if event.associatedUrls %}
