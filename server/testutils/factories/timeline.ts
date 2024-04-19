@@ -3,6 +3,7 @@ import { ApplicationTimeline, PersonalTimeline, TimelineEvent } from '@approved-
 import { faker } from '@faker-js/faker'
 import { DateFormats } from '../../utils/dateUtils'
 import userFactory from './user'
+import { fullPersonFactory } from './person'
 
 export const timelineEventFactory = Factory.define<TimelineEvent>(() => ({
   id: faker.string.uuid(),
@@ -51,6 +52,7 @@ export const applicationTimelineFactory = Factory.define<ApplicationTimeline>(()
 
 export const personalTimelineFactory = Factory.define<PersonalTimeline>(() => ({
   applications: applicationTimelineFactory.buildList(2),
+  person: fullPersonFactory.build(),
 }))
 
 export default timelineEventFactory
