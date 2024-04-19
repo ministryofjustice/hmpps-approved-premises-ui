@@ -1,5 +1,6 @@
 import type { ObjectWithDateParts, TaskListErrors, YesOrNo } from '@approved-premises/ui'
 import type { User } from '@approved-premises/api'
+import { ApprovedPremisesAssessment as Assessment } from '../../../../@types/shared'
 
 import { Page } from '../../../utils/decorators'
 import { sentenceCase } from '../../../../utils/utils'
@@ -7,6 +8,8 @@ import { DateFormats, dateAndTimeInputsAreValidDates, dateIsBlank } from '../../
 
 import TasklistPage from '../../../tasklistPage'
 import { dateBodyProperties } from '../../../utils/dateBodyProperties'
+import { retrieveQuestionResponseFromFormArtifact } from '../../../../utils/retrieveQuestionResponseFromFormArtifact'
+import SufficientInformation from './sufficientInformation'
 
 type InformationReceivedBody = ObjectWithDateParts<'responseReceivedOn'> & {
   informationReceived?: YesOrNo
@@ -30,7 +33,14 @@ export default class InformationReceived implements TasklistPage {
 
   user: User
 
-  constructor(private _body: Partial<InformationReceivedBody>) {}
+  query: string
+
+  constructor(
+    private _body: Partial<InformationReceivedBody>,
+    private readonly assessment: Assessment,
+  ) {
+    this.query = retrieveQuestionResponseFromFormArtifact(assessment, SufficientInformation, 'query')
+  }
 
   public set body(value: Partial<InformationReceivedBody>) {
     this._body = {
