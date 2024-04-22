@@ -11,6 +11,7 @@ import { escape } from './formUtils'
 import { mapApiPersonRisksForUi, sentenceCase } from './utils'
 import { OasysNotFoundError } from '../services/personService'
 import oasysStubs from '../data/stubs/oasysStubs.json'
+import { logToSentry } from '../../logger'
 
 export type Constructor<T> = new (body: unknown) => T
 
@@ -104,19 +105,22 @@ export const oasysImportReponse = (answers: Record<string, string>, summaries: A
   return Object.keys(answers).reduce((prev, k) => {
     return {
       ...prev,
-      [`${k}: ${findSummary(k, summaries).label}`]: answers[k],
+      [`${k}: ${findSummaryLabel(k, summaries)}`]: answers[k],
     }
   }, {}) as Record<string, string>
 }
 
-export const findSummary = (questionNumber: string, summaries: Array<OASysQuestion>) => {
-  const summary = summaries.find(i => i.questionNumber === questionNumber)
+export const findSummaryLabel = (questionNumber: string, summaries: Array<OASysQuestion>): string => {
+  let summary: OASysQuestion | undefined = summaries.find(i => i.questionNumber === questionNumber)
 
   if (!summary) {
-    throw new Error(`No summary found for question number ${questionNumber}`)
+    logToSentry(
+      `OASys summary not found for question number: ${questionNumber}. Summaries ${JSON.stringify(summaries)}`,
+    )
+    summary = { label: '', questionNumber }
   }
 
-  return summary
+  return summary.label
 }
 
 export const fetchOptionalOasysSections = (application: Application): Array<number> => {

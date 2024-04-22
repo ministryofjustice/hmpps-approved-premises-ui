@@ -14,7 +14,7 @@ import { mapApiPersonRisksForUi, sentenceCase } from './utils'
 import {
   Constructor,
   fetchOptionalOasysSections,
-  findSummary,
+  findSummaryLabel,
   getOasysSections,
   oasysImportReponse,
   sectionCheckBoxes,
@@ -24,6 +24,9 @@ import {
 } from './oasysImportUtils'
 import oasysStubs from '../data/stubs/oasysStubs.json'
 import { PersonRisks } from '../@types/shared'
+import { logToSentry } from '../../logger'
+
+jest.mock('../../logger.ts')
 
 describe('OASysImportUtils', () => {
   describe('getOasysSections', () => {
@@ -246,13 +249,16 @@ describe('OASysImportUtils', () => {
     })
   })
 
-  describe('findSummary', () => {
+  describe('findSummaryLabel', () => {
     it('returns a summary if one exists', () => {
-      expect(findSummary('2.1', oasysStubs.offenceDetails)).toEqual(oasysStubs.offenceDetails[0])
+      expect(findSummaryLabel('2.1', oasysStubs.offenceDetails)).toBe(oasysStubs.offenceDetails[0].label)
     })
 
-    it('throws an error if the summary isnt found', () => {
-      expect(() => findSummary('1', [])).toThrow('No summary found for question number 1')
+    it('calls logToSentry and returns an empty string if a summary is not find', () => {
+      expect(findSummaryLabel('1', [{ questionNumber: '20', label: 'some label' }])).toBe('')
+      expect(logToSentry).toHaveBeenCalledWith(
+        'OASys summary not found for question number: 1. Summaries [{"questionNumber":"20","label":"some label"}]',
+      )
     })
   })
 
