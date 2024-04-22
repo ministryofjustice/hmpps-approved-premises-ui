@@ -1,12 +1,12 @@
-import { Person, PersonalTimeline } from '../../../../server/@types/shared'
+import { FullPerson, PersonalTimeline } from '../../../../server/@types/shared'
 import { getStatus } from '../../../../server/utils/applications/getStatus'
 import Page from '../../page'
 
 export class ShowPage extends Page {
   timeline: PersonalTimeline
 
-  constructor(timeline: PersonalTimeline, crn: Person['crn']) {
-    super(`Application history for ${crn}`)
+  constructor(timeline: PersonalTimeline, person: FullPerson) {
+    super(`Application history for ${person.name}`)
     this.timeline = timeline
   }
 
@@ -18,7 +18,7 @@ export class ShowPage extends Page {
         getStatus(applicationTimeline, 'govuk-tag--timeline-tag'),
       )
 
-      this.shouldShowApplicationTimeline(applicationTimeline.timelineEvents)
+      this.shouldShowApplicationTimeline(applicationTimeline.timelineEvents, index)
     })
   }
 }
