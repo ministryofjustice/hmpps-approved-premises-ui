@@ -1,12 +1,16 @@
 {% extends "../../partials/layout.njk" %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "../../partials/_applicationTimeline.njk" import applicationTimeline %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "../../partials/personDetails.njk" import personDetails %}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
 {% set mainClasses = "app-container govuk-body" %}
 
 {% set query = "?crn=" + crn if crn else 
     "" %}
+
+{% set applications = ApplyUtils.mapPersonalTimelineForUi(timeline) %}
 
 {% block beforeContent %}
     {{ govukBackLink({
@@ -19,13 +23,27 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-l">Application history for {{crn}}</h2>
-            {% for application in ApplyUtils.mapPersonalTimelineForUi(timeline) %}
-                <h2 class="govuk-heading-s">Application made by: {{application.createdBy.name}}</h2>
-                <h2 class="govuk-heading-s">Status: {{application | applicationStatusTag | safe}}</h2>
+            <h1 class="govuk-heading-l">Application history for {{timeline.person.name}}</h1>
+            {{personDetails(timeline.person, false)}}
+            <h2 class="govuk-heading-m">Total applications: {{applications | length}}</h2>
+            <hr/>
+            {% for application in applications %}
+                <h2 class="govuk-heading-m">Application {{loop.index}} of {{applications.length}}</h2>
+                {% set html%}
+                <h2 class="govuk-heading-s">Application made by: <span class="govuk-body">{{application.createdBy.name}}</span></h2>
+                <h2 class="govuk-heading-s">Application made on: <span class="govuk-body">{{formatDate(application.createdAt, {format: 'short'})}}</span></h2>
+                {%set statusAttribute = "application " + loop.index0 %}
+                <h2 class="govuk-heading-s" data-cy-status="{{statusAttribute}}"  >Status: {{ application | applicationStatusTag('govuk-tag--timeline-tag') | safe}}</h2>
+                {% endset %}
+
+                {{ govukInsetText({
+                        html: html
+                })}}
 
                 {{applicationTimeline(application.timelineEvents)}}
-
+                {% if not loop.last %}
+                    <hr/>
+                {% endif %}
                 {%endfor%}
             </div>
         </div>

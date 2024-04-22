@@ -3,6 +3,7 @@ import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesAssessment as Assessment,
   Document,
+  FullPerson,
   Person,
   PersonAcctAlert,
   PrisonCaseNote,
@@ -469,30 +470,45 @@ export default abstract class Page {
     cy.get(`#${id}`).find('option:selected').should('have.text', text)
   }
 
-  shouldShowApplicationTimeline(timelineEvents: Array<TimelineEvent>) {
+  shouldShowApplicationTimeline(timelineEvents: Array<TimelineEvent>, index: number = 0) {
     const sortedTimelineEvents = timelineEvents.sort((a, b) => {
       return new Date(b.occurredAt).getTime() - new Date(a.occurredAt).getTime()
     })
 
-    cy.get('h2').contains('Application history').should('exist')
-    cy.get('.moj-timeline').within(() => {
-      cy.get('.moj-timeline__item').should('have.length', timelineEvents.length)
+    cy.get('.moj-timeline')
+      .eq(index)
+      .within(() => {
+        cy.get('.moj-timeline__item').should('have.length', timelineEvents.length)
 
-      cy.get('.moj-timeline__item').each(($el, index) => {
-        cy.wrap($el).within(() => {
-          cy.get('.moj-timeline__header').should('contain', eventTypeTranslations[sortedTimelineEvents[index].type])
-          cy.get('time').should('have.attr', { time: sortedTimelineEvents[index].occurredAt })
-          if (timelineEvents[index].createdBy?.name) {
-            cy.get('.moj-timeline__header > .moj-timeline__byline').should(
-              'contain',
-              timelineEvents[index].createdBy.name,
-            )
-          }
-          cy.get('.govuk-link').should('have.attr', { time: timelineEvents[index].associatedUrls[0].url })
-          cy.get('.govuk-link').should('contain', timelineEvents[index].associatedUrls[0].type)
-          cy.get('time').should('contain', DateFormats.isoDateTimeToUIDateTime(timelineEvents[index].occurredAt))
+        cy.get('.moj-timeline__item').each(($el, i) => {
+          cy.wrap($el).within(() => {
+            cy.get('.moj-timeline__header').should('contain', eventTypeTranslations[sortedTimelineEvents[i].type])
+            cy.get('time').should('have.attr', { time: sortedTimelineEvents[i].occurredAt })
+            if (timelineEvents[i].createdBy?.name) {
+              cy.get('.moj-timeline__header > .moj-timeline__byline').should(
+                'contain',
+                timelineEvents[i].createdBy.name,
+              )
+            }
+            cy.get('.govuk-link').should('have.attr', { time: timelineEvents[i].associatedUrls[0].url })
+            cy.get('.govuk-link').should('contain', timelineEvents[i].associatedUrls[0].type)
+            cy.get('time').should('contain', DateFormats.isoDateTimeToUIDateTime(timelineEvents[i].occurredAt))
+          })
         })
       })
+  }
+
+  shouldShowPersonDetails(person: FullPerson): void {
+    cy.get('dl[data-cy-person-info]').within(() => {
+      this.assertDefinition('Name', person.name)
+      this.assertDefinition('CRN', person.crn)
+      this.assertDefinition('Date of Birth', DateFormats.isoDateToUIDate(person.dateOfBirth, { format: 'short' }))
+      this.assertDefinition('NOMIS Number', person.nomsNumber)
+      this.assertDefinition('Nationality', person.nationality)
+      this.assertDefinition('Religion or belief', person.religionOrBelief)
+      this.assertDefinition('Sex', person.sex)
+      cy.get(`[data-cy-status]`).should('have.attr', 'data-cy-status').and('equal', person.status)
+      this.assertDefinition('Prison', person.prisonName)
     })
   }
 }
