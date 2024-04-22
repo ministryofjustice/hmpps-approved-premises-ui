@@ -55,6 +55,7 @@ import { RestrictedPersonError } from '../errors'
 import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
 import { sortHeader } from '../sortHeader'
+import { escape } from '../formUtils'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -804,7 +805,7 @@ describe('utils', () => {
           label: {
             text: eventTypeTranslations[timelineEvents[0].type],
           },
-          content: timelineEvents[0].content,
+          content: escape(timelineEvents[0].content),
           createdBy: timelineEvents[0].createdBy.name,
           associatedUrls: mapTimelineUrlsForUi([
             {
@@ -828,7 +829,7 @@ describe('utils', () => {
           label: {
             text: eventTypeTranslations[timelineEvents[0].type],
           },
-          content: timelineEvents[0].content,
+          content: escape(timelineEvents[0].content),
           createdBy: timelineEvents[0].createdBy.name,
           associatedUrls: [],
         },
@@ -882,6 +883,14 @@ describe('utils', () => {
         ...mapApplicationTimelineEventsForUi([futureTimelineEvent]),
         ...mapApplicationTimelineEventsForUi([pastTimelineEvent]),
       ])
+    })
+
+    it('escapes any rogue HTML', () => {
+      const timelineEventWithRogueHTML = timelineEventFactory.build({ content: '<div>Hello!</div>' })
+
+      const actual = mapApplicationTimelineEventsForUi([timelineEventWithRogueHTML])
+
+      expect(actual[0].content).toEqual('&lt;div&gt;Hello!&lt;/div&gt;')
     })
   })
 

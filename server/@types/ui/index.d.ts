@@ -203,7 +203,12 @@ export interface IdentityBarMenuItem {
   text: string
 }
 
-export type UiTimelineEvent = { label: { text: string }; datetime: { timestamp: string; type?: 'datetime' } }
+export type UiTimelineEvent = {
+  label: { text: string }
+  datetime: { timestamp: string; type?: 'datetime' }
+  content: string
+  associatedUrls: Array<TimelineEventAssociatedUrl>
+}
 
 export type RiskLevel = 'Low' | 'Medium' | 'High' | 'Very High'
 

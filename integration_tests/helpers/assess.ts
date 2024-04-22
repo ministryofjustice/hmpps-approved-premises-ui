@@ -152,6 +152,8 @@ export default class AseessHelper {
     const assessmentStatus = informationReceived === 'yes' ? 'in_progress' : 'awaiting_response'
     this.updateAssessmentStatus(assessmentStatus).then(() => {
       const informationReceivedPage = Page.verifyOnPage(InformationReceivedPage, this.assessment)
+      // Then I should see the information I requested
+      informationReceivedPage.shouldShowQuery()
 
       // When I complete the form
       informationReceivedPage.completeForm()
