@@ -203,7 +203,12 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('oasysDisabled', config.flags.oasysDisabled)
 
   njkEnv.addFilter('mapApiPersonRisksForUi', mapApiPersonRisksForUi)
-  njkEnv.addFilter('applicationStatusTag', applicationStatusTag)
+  njkEnv.addFilter(
+    'applicationStatusTag',
+    function applicationStatusTagFilter(application: Application, classes: string) {
+      return applicationStatusTag(application, classes)
+    },
+  )
 
   njkEnv.addFilter('removeBlankSummaryListItems', removeBlankSummaryListItems)
   njkEnv.addFilter('sentenceCase', sentenceCase)

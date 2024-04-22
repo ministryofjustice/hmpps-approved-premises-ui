@@ -22,7 +22,7 @@
             <h1 class="govuk-heading-l">Application history for {{crn}}</h2>
             {% for application in ApplyUtils.mapPersonalTimelineForUi(timeline) %}
                 <h2 class="govuk-heading-s">Application made by: {{application.createdBy.name}}</h2>
-                <h2 class="govuk-heading-s">Status: {{application | applicationStatusTag | safe}}</h2>
+                <h2 class="govuk-heading-s">Status: {{ application | applicationStatusTag('govuk-tag--timeline-tag') | safe}}</h2>
 
                 {{applicationTimeline(application.timelineEvents)}}
 
