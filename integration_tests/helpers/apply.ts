@@ -134,7 +134,7 @@ export default class ApplyHelper {
 
     // And I see the person on the confirmation page
     const confirmDetailsPage = new ApplyPages.ConfirmDetailsPage(this.person as FullPerson)
-    confirmDetailsPage.verifyPersonIsVisible()
+    confirmDetailsPage.shouldShowPersonDetails(this.person as FullPerson)
 
     // And I confirm the person is who I expect to see
     confirmDetailsPage.clickSaveAndContinue()

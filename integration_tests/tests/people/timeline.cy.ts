@@ -15,8 +15,8 @@ context('Application timeline', () => {
   })
 
   it('shows a timeline for a CRN', () => {
-    const timeline = personalTimelineFactory.build()
-    const person = personFactory.build()
+    const person = personFactory.build({ type: 'FullPerson' })
+    const timeline = personalTimelineFactory.build({ person })
 
     cy.task('stubPersonalTimeline', { timeline, person })
     cy.visit(paths.timeline.find({}))
@@ -30,8 +30,10 @@ context('Application timeline', () => {
     findPage.clickSubmit()
 
     // Then I should be on the timeline show page
-    const timelinePage = Page.verifyOnPage(ShowPage, timeline, person.crn)
+    const timelinePage = Page.verifyOnPage(ShowPage, timeline, person)
     // And I should see the timeline for that person
     timelinePage.checkForBackButton(paths.timeline.find({}))
+    timelinePage.shouldShowTimeline()
+    timelinePage.shouldShowPersonDetails(person)
   })
 })
