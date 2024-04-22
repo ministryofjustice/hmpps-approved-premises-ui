@@ -11,9 +11,12 @@ export class ShowPage extends Page {
   }
 
   shouldShowTimeline() {
-    this.timeline.applications.forEach(applicationTimeline => {
+    this.timeline.applications.forEach((applicationTimeline, index) => {
       cy.get('h2').contains(applicationTimeline.createdBy.name)
-      cy.get('.govuk-tag').contains(getStatus(applicationTimeline))
+      cy.get(`[data-cy-status="application ${index}"]`).should(
+        'contain.html',
+        getStatus(applicationTimeline, 'govuk-tag--timeline-tag'),
+      )
 
       this.shouldShowApplicationTimeline(applicationTimeline.timelineEvents)
     })
