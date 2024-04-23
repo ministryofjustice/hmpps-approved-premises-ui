@@ -118,7 +118,7 @@ export default class ShowPage extends Page {
   }
 
   clickTimelineTab() {
-    cy.get('a').contains('Timeline').click()
+    cy.get('.moj-sub-navigation a').contains('Timeline').click()
   }
 
   clickRequestAPlacementTab() {

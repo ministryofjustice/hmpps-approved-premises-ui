@@ -8,6 +8,7 @@ import taskPaths from '../../paths/tasks'
 import matchPaths from '../../paths/match'
 import adminPaths from '../../paths/admin'
 import peoplePaths from '../../paths/people'
+import { retrieveFeatureFlag } from '../retrieveFeatureFlag'
 
 export const sections = {
   apply: {
@@ -83,6 +84,10 @@ export const hasRole = (user: UserDetails, role: UserRole): boolean => {
 
 export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
   const items = [sections.apply]
+
+  if (retrieveFeatureFlag('show-search-by-CRN-timeline-navigation')) {
+    items.push(sections.personalTimeline)
+  }
 
   if (hasRole(user, 'assessor')) {
     items.push(sections.assess)
