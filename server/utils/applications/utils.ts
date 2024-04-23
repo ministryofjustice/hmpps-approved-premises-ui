@@ -136,7 +136,7 @@ const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
 export const actionsCell = (application: ApplicationSummary | Application) => {
   const actionItems: Array<string> = []
 
-  if (application.status !== 'rejected' && application.status !== 'withdrawn') {
+  if (application.status === 'started' || application.status === 'requestedFurtherInformation') {
     const withdrawLink = linkTo(paths.applications.withdraw.new, { id: application.id }, { text: 'Withdraw' })
 
     actionItems.push(withdrawLink)

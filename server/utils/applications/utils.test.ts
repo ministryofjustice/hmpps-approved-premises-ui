@@ -2,6 +2,7 @@ import {
   ApType,
   ApplicationSortField,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
+  ApprovedPremisesApplicationStatus,
   TimelineEventUrlType,
 } from '@approved-premises/api'
 import { isAfter } from 'date-fns'
@@ -295,6 +296,45 @@ describe('utils', () => {
         expect(tierBadge).not.toHaveBeenCalled()
 
         expect(result[0][2]).toEqual({
+          html: '',
+        })
+      })
+    })
+
+    describe('withdrawal action link should be shown when application status is requestedFurtherInformation, started', () => {
+      it.each(['requestedFurtherInformation', 'started'])(
+        'should show withdrawal action link with %s statuses',
+        async status => {
+          ;(tierBadge as jest.Mock).mockClear()
+          ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+
+          const application = applicationSummaryFactory.build({
+            arrivalDate,
+            person,
+            status: status as ApprovedPremisesApplicationStatus,
+          })
+
+          const result = applicationTableRows([application])
+
+          expect(result[0][6]).toEqual({
+            html: `<ul class="govuk-list"><li><a href="/applications/${application.id}/withdrawals/new"  >Withdraw</a></li></ul>`,
+          })
+        },
+      )
+
+      it('should not show withdrawal action link with submitted status', async () => {
+        ;(tierBadge as jest.Mock).mockClear()
+        ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+
+        const application = applicationSummaryFactory.build({
+          arrivalDate,
+          person,
+          status: 'submitted',
+        })
+
+        const result = applicationTableRows([application])
+
+        expect(result[0][6]).toEqual({
           html: '',
         })
       })
@@ -777,7 +817,7 @@ describe('utils', () => {
       const application = applicationFactory.build({ id: 'an-application-id', status: 'awaitingPlacement' })
 
       expect(actionsCell(application)).toEqual({
-        html: '<ul class="govuk-list"><li><a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a></li><li><a href="/placement-applications?id=an-application-id"  >Request for placement</a></li></ul>',
+        html: '<ul class="govuk-list"><li><a href="/placement-applications?id=an-application-id"  >Request for placement</a></li></ul>',
       })
     })
 
