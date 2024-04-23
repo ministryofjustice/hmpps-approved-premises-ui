@@ -6,7 +6,11 @@ import nunjucks from 'nunjucks'
 import express from 'express'
 
 import type { ErrorMessages } from '@approved-premises/ui'
-import { ApprovedPremisesApplication as Application, PersonStatus } from '@approved-premises/api'
+import {
+  ApprovedPremisesApplication as Application,
+  ApprovedPremisesApplicationStatus as ApplicationStatus,
+  PersonStatus,
+} from '@approved-premises/api'
 import {
   initialiseName,
   kebabCase,
@@ -23,11 +27,11 @@ import {
   convertObjectsToSelectOptions,
   dateFieldValues,
 } from './formUtils'
-import { getStatus as applicationStatusTag } from './applications/utils'
 import { relevantDatesOptions } from './applications/relevantDatesOptions'
 import { navigationItems } from './navigationItems'
 
-import { statusTag } from './personUtils'
+import { StatusTagOptions } from './statusTag'
+import { ApplicationStatusTag } from './applications/statusTag'
 import { DateFormats, monthOptions, uiDateOrDateEmptyMessage, yearOptions } from './dateUtils'
 import { pagination } from './pagination'
 import { sortHeader } from './sortHeader'
@@ -203,10 +207,10 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('oasysDisabled', config.flags.oasysDisabled)
 
   njkEnv.addFilter('mapApiPersonRisksForUi', mapApiPersonRisksForUi)
-  njkEnv.addFilter(
+  njkEnv.addGlobal(
     'applicationStatusTag',
-    function applicationStatusTagFilter(application: Application, classes: string) {
-      return applicationStatusTag(application, classes)
+    function applicationStatusTag(status: ApplicationStatus, options?: StatusTagOptions) {
+      return new ApplicationStatusTag(status, options).html()
     },
   )
 

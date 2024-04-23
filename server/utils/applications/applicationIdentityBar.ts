@@ -1,7 +1,7 @@
 import { ApprovedPremisesApplication as Application, FullPerson } from '../../@types/shared'
 import { IdentityBar, IdentityBarMenuItem, UserDetails } from '../../@types/ui'
 import paths from '../../paths/apply'
-import { getStatus } from './getStatus'
+import { ApplicationStatusTag } from './statusTag'
 
 export const applicationTitle = (application: Application, pageHeading: string): string => {
   let heading = (application.person as FullPerson).name
@@ -11,7 +11,7 @@ export const applicationTitle = (application: Application, pageHeading: string):
   }
 
   if (application.status === 'withdrawn') {
-    heading += getStatus(application, 'govuk-!-margin-5')
+    heading += new ApplicationStatusTag(application.status, { addLeftMargin: true }).html()
   }
 
   return `

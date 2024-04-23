@@ -42,7 +42,6 @@ import {
   getAction,
   getApplicationType,
   getSections,
-  getStatus,
   isInapplicable,
   lengthOfStayForUI,
   mapApplicationTimelineEventsForUi,
@@ -228,7 +227,7 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(applicationA.createdAt, { format: 'short' }),
           },
           {
-            html: getStatus(applicationA),
+            html: new ApplicationStatusTag(applicationA.status).html(),
           },
           actionsCell(applicationA),
         ],
@@ -251,7 +250,7 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(applicationB.createdAt, { format: 'short' }),
           },
           {
-            html: getStatus(applicationB),
+            html: new ApplicationStatusTag(applicationB.status).html(),
           },
           actionsCell(applicationB),
         ],
@@ -413,7 +412,7 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(applicationA.createdAt, { format: 'short' }),
           },
           {
-            html: getStatus(applicationA),
+            html: new ApplicationStatusTag(applicationA.status).html(),
           },
           {
             html: '',
@@ -438,7 +437,7 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(applicationB.createdAt, { format: 'short' }),
           },
           {
-            html: getStatus(applicationB),
+            html: new ApplicationStatusTag(applicationB.status).html(),
           },
           {
             html: '',
@@ -495,7 +494,7 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(applicationA.createdAt, { format: 'short' }),
           },
           {
-            html: getStatus(applicationA),
+            html: new ApplicationStatusTag(applicationA.status).html(),
           },
           {
             html: getAction(applicationA),
@@ -520,7 +519,7 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(applicationB.createdAt, { format: 'short' }),
           },
           {
-            html: getStatus(applicationB),
+            html: new ApplicationStatusTag(applicationB.status).html(),
           },
           {
             html: getAction(applicationB),
@@ -545,7 +544,7 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(applicationC.createdAt, { format: 'short' }),
           },
           {
-            html: getStatus(applicationC),
+            html: new ApplicationStatusTag(applicationC.status).html(),
           },
           {
             html: getAction(applicationC),
@@ -625,7 +624,7 @@ describe('utils', () => {
               text: DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' }),
             },
             {
-              html: getStatus(application),
+              html: new ApplicationStatusTag(application.status).html(),
             },
             {
               html: getAction(application),

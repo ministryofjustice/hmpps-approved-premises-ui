@@ -52,9 +52,9 @@ import ReasonForPlacement, {
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
-import { applicationStatuses, getStatus } from './getStatus'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
 import { escape } from '../formUtils'
+import { ApplicationStatusTag } from './statusTag'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
@@ -68,7 +68,7 @@ const applicationTableRows = (applications: Array<ApplicationSummary>): Array<Ta
     htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
     textValue(getArrivalDateorNA(application.arrivalDate)),
     textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
-    htmlValue(getStatus(application)),
+    htmlValue(new ApplicationStatusTag(application.status).html()),
     actionsCell(application),
   ])
 }
@@ -101,15 +101,17 @@ const dashboardTableRows = (
   applications: Array<ApplicationSummary>,
   { linkInProgressApplications = true } = {},
 ): Array<TableRow> => {
-  return applications.map(application => [
-    createNameAnchorElement(application.person, application, { linkInProgressApplications }),
-    textValue(application.person.crn),
-    htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
-    textValue(getArrivalDateorNA(application.arrivalDate)),
-    textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
-    htmlValue(getStatus(application)),
-    htmlValue(getAction(application)),
-  ])
+  return applications.map(
+    (application): TableRow => [
+      createNameAnchorElement(application.person, application, { linkInProgressApplications }),
+      textValue(application.person.crn),
+      htmlValue(getTierOrBlank(application.risks?.tier?.value?.level)),
+      textValue(getArrivalDateorNA(application.arrivalDate)),
+      textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
+      htmlValue(new ApplicationStatusTag(application.status).html()),
+      htmlValue(getAction(application)),
+    ],
+  )
 }
 
 export const getAction = (application: ApplicationSummary | Application) => {
@@ -427,9 +429,7 @@ const mapPlacementApplicationToSummaryCards = (
 export const withdrawnStatusTag = {
   key: { text: 'Status' },
   value: {
-    html: `<strong class="govuk-tag govuk-tag--red">
-        Withdrawn
-      </strong>`,
+    html: new ApplicationStatusTag('withdrawn').html(),
   },
 }
 
@@ -455,8 +455,8 @@ export const applicationShowPageTab = (id: Application['id'], tab: ApplicationSh
 const applicationStatusSelectOptions = (
   selectedOption: ApprovedPremisesApplicationStatus | undefined | null,
 ): Array<SelectOption> => {
-  const options = Object.keys(applicationStatuses).map(status => ({
-    text: applicationStatuses[status],
+  const options = Object.keys(ApplicationStatusTag.statuses).map(status => ({
+    text: ApplicationStatusTag.statuses[status],
     value: status,
     selected: status === selectedOption,
   }))
@@ -490,14 +490,12 @@ const appealDecisionRadioItems = (selectedOption: AppealDecision | undefined) =>
 }
 
 export {
-  applicationStatuses,
   applicationTableRows,
   dashboardTableRows,
   dashboardTableHeader,
   firstPageOfApplicationJourney,
   arrivalDateFromApplication,
   getApplicationType,
-  getStatus,
   isInapplicable,
   mapApplicationTimelineEventsForUi,
   mapTimelineUrlsForUi,

@@ -23,7 +23,7 @@ describe('applicationIdentityBar', () => {
         <h1 class="govuk-caption-l">heading</h1>
         <h2 class="govuk-heading-l">
           ${person.name}
-          <strong class="govuk-tag govuk-tag--grey govuk-!-margin-5">Offline application</strong>
+          <strong class="govuk-tag govuk-tag--grey govuk-!-margin-5" >Offline application</strong>
         </h2>
       `)
     })
@@ -36,7 +36,7 @@ describe('applicationIdentityBar', () => {
         <h1 class="govuk-caption-l">heading</h1>
         <h2 class="govuk-heading-l">
           ${person.name}
-          <strong class="govuk-tag govuk-tag--red govuk-!-margin-5">Application withdrawn</strong>
+          <strong class="govuk-tag govuk-tag--red govuk-!-margin-5" data-cy-status="withdrawn">Application withdrawn</strong>
         </h2>
       `)
     })
