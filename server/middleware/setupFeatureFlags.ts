@@ -3,7 +3,10 @@ import { throttle } from 'underscore'
 import { Services } from '../services'
 import FeatureFlagService, { FeatureFlag } from '../services/featureFlagService'
 
-export const featureFlagsToUse: Array<FeatureFlag> = ['allow-sufficient-information-request-without-confirmation']
+export const featureFlagsToUse: Array<FeatureFlag> = [
+  'allow-sufficient-information-request-without-confirmation',
+  'show-search-by-CRN-timeline-navigation',
+]
 export const throttleTime = 15 * 1000
 
 export const setupFeatureFlags = ({ featureFlagService }: Services): Router => {

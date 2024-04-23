@@ -2,7 +2,10 @@ import { ClientTokenAuthentication, FliptClient } from '@flipt-io/flipt'
 import config from '../config'
 import logger from '../../logger'
 
-export type FeatureFlag = 'show-both-arrival-dates' | 'allow-sufficient-information-request-without-confirmation'
+export type FeatureFlag =
+  | 'show-both-arrival-dates'
+  | 'allow-sufficient-information-request-without-confirmation'
+  | 'show-search-by-CRN-timeline-navigation'
 
 export default class FeatureFlagService {
   fliptClient: FliptClient | null
