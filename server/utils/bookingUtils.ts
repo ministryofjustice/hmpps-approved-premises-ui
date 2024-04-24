@@ -17,6 +17,7 @@ import { SanitisedError } from '../sanitisedError'
 import { linebreaksToParagraphs, linkTo } from './utils'
 import { isFullPerson, laoName } from './personUtils'
 import { convertObjectsToRadioItems } from './formUtils'
+import { StatusTag, StatusTagOptions } from './statusTag'
 
 const UPCOMING_WINDOW_IN_DAYS = 365 * 10
 
@@ -280,41 +281,6 @@ export const bedsAsSelectItems = (beds: Array<BedSummary>, selectedId: string): 
   }))
 }
 
-const bookingStatuses: Record<BookingStatus, string> = {
-  arrived: 'Arrived',
-  'awaiting-arrival': 'Awaiting arrival',
-  'not-arrived': 'Not arrived',
-  departed: 'Departed',
-  cancelled: 'Cancelled',
-  provisional: 'Provisional',
-  confirmed: 'Confirmed',
-  closed: 'Closed',
-}
-
-const statusTags = (): Record<BookingStatus, string> => {
-  const colours: Record<BookingStatus, string> = {
-    arrived: '',
-    'awaiting-arrival': 'blue',
-    'not-arrived': 'red',
-    departed: 'pink',
-    cancelled: 'red',
-    provisional: 'yellow',
-    confirmed: 'blue',
-    closed: 'red',
-  }
-  return Object.keys(bookingStatuses).reduce(
-    (item, key) => {
-      item[key] = `<strong class="govuk-tag govuk-tag--${colours[key]}">${bookingStatuses[key]}</strong>`
-      return item
-    },
-    {} as Record<BookingStatus, string>,
-  )
-}
-
-export const bookingStatus = (booking: Booking): string => {
-  return statusTags()[booking.status]
-}
-
 export const bookingPersonRows = (booking: Booking): Array<SummaryListItem> => {
   return [
     {
@@ -336,7 +302,7 @@ export const bookingPersonRows = (booking: Booking): Array<SummaryListItem> => {
         text: 'Status',
       },
       value: {
-        html: bookingStatus(booking),
+        html: new BookingStatusTag(booking.status).html(),
       },
     },
   ]
@@ -508,4 +474,35 @@ export const cancellationReasonsRadioItems = (
 
     return item
   })
+}
+
+export class BookingStatusTag extends StatusTag<BookingStatus> {
+  static readonly statuses: Record<BookingStatus, string> = {
+    arrived: 'Arrived',
+    'awaiting-arrival': 'Awaiting arrival',
+    'not-arrived': 'Not arrived',
+    departed: 'Departed',
+    cancelled: 'Cancelled',
+    provisional: 'Provisional',
+    confirmed: 'Confirmed',
+    closed: 'Closed',
+  }
+
+  static readonly colours: Record<BookingStatus, string> = {
+    arrived: '',
+    'awaiting-arrival': 'blue',
+    'not-arrived': 'red',
+    departed: 'pink',
+    cancelled: 'red',
+    provisional: 'yellow',
+    confirmed: 'blue',
+    closed: 'red',
+  }
+
+  constructor(status: BookingStatus, options?: StatusTagOptions) {
+    super(status, options, {
+      statuses: BookingStatusTag.statuses,
+      colours: BookingStatusTag.colours,
+    })
+  }
 }

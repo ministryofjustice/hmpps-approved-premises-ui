@@ -1,5 +1,6 @@
 import { SanitisedError } from '../sanitisedError'
 import {
+  BookingStatusTag,
   arrivedBookings,
   arrivingTodayOrLate,
   bedsAsSelectItems,
@@ -8,7 +9,6 @@ import {
   bookingDepartureRows,
   bookingPersonRows,
   bookingShowDocumentRows,
-  bookingStatus,
   bookingSummaryList,
   bookingsToTableRows,
   cancellationReasonsRadioItems,
@@ -529,26 +529,6 @@ describe('bookingUtils', () => {
     })
   })
 
-  describe('bookingStatus', () => {
-    const lookup: Record<BookingStatus, string> = {
-      arrived: '<strong class="govuk-tag govuk-tag--">Arrived</strong>',
-      'awaiting-arrival': '<strong class="govuk-tag govuk-tag--blue">Awaiting arrival</strong>',
-      'not-arrived': '<strong class="govuk-tag govuk-tag--red">Not arrived</strong>',
-      departed: '<strong class="govuk-tag govuk-tag--pink">Departed</strong>',
-      cancelled: '<strong class="govuk-tag govuk-tag--red">Cancelled</strong>',
-      provisional: '<strong class="govuk-tag govuk-tag--yellow">Provisional</strong>',
-      confirmed: '<strong class="govuk-tag govuk-tag--blue">Confirmed</strong>',
-      closed: '<strong class="govuk-tag govuk-tag--red">Closed</strong>',
-    }
-
-    Object.keys(lookup).forEach((status: BookingStatus) => {
-      it(`Returns the correct status for a '${status}' booking`, () => {
-        const booking = bookingFactory.build({ status })
-        expect(bookingStatus(booking)).toEqual(lookup[status])
-      })
-    })
-  })
-
   describe('bookingPersonRows', () => {
     it('returns the correct rows for a person', () => {
       const booking = bookingFactory.build()
@@ -573,7 +553,7 @@ describe('bookingUtils', () => {
             text: 'Status',
           },
           value: {
-            html: bookingStatus(booking),
+            html: new BookingStatusTag(booking.status).html(),
           },
         },
       ])
@@ -790,6 +770,18 @@ describe('bookingUtils', () => {
           checked: false,
         },
       ])
+    })
+  })
+
+  describe('BookingStatusTag', () => {
+    const statuses = Object.keys(BookingStatusTag.statuses) as ReadonlyArray<BookingStatus>
+
+    statuses.forEach(status => {
+      it(`returns the correct tag for each BookingStatusTag with a status of ${status}`, () => {
+        expect(new BookingStatusTag(status as never).html()).toEqual(
+          `<strong class="govuk-tag govuk-tag--${BookingStatusTag.colours[status]} " data-cy-status="${status}" >${BookingStatusTag.statuses[status]}</strong>`,
+        )
+      })
     })
   })
 })

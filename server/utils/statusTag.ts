@@ -1,9 +1,7 @@
-import { ApprovedPremisesApplicationStatus as ApplicationStatus, TaskStatus } from '../@types/shared'
-
-type Status = ApplicationStatus | TaskStatus
+import { ApprovedPremisesApplicationStatus as ApplicationStatus, BookingStatus, TaskStatus } from '../@types/shared'
 
 export type StatusTagOptions = { addLeftMargin?: boolean; showOnOneLine?: boolean }
-
+type Status = ApplicationStatus | TaskStatus | BookingStatus
 export class StatusTag<T extends Status> {
   status: T
 
