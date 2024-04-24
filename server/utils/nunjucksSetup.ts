@@ -73,6 +73,7 @@ import * as AppealsUtils from './appealsUtils'
 
 import config from '../config'
 import { withdrawalRadioOptions } from './applications/withdrawalReasons'
+import { PersonStatusTag } from './people/personStatusTag'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -113,11 +114,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
       dev: true, // This is set to true to allow us to see the full stacktrace from errors in global functions, otherwise it gets swallowed and tricky to see in logs
     },
   )
-
-  const markAsSafe = (html: string): string => {
-    const safeFilter = njkEnv.getFilter('safe')
-    return safeFilter(html)
-  }
 
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addGlobal('dateFieldValues', dateFieldValues)
@@ -195,8 +191,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   njkEnv.addGlobal('linkTo', linkTo)
 
-  njkEnv.addGlobal('statusTag', (status: PersonStatus) => markAsSafe(statusTag(status)))
-
   njkEnv.addGlobal('mergeObjects', (obj1: Record<string, unknown>, obj2: Record<string, unknown>) => {
     return { ...obj1, ...obj2 }
   })
@@ -216,6 +210,9 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   )
   njkEnv.addGlobal('taskStatusTag', function taskStatusTag(status: TaskStatus, options?: StatusTagOptions) {
     return new TaskStatusTag(status, options).html()
+  })
+  njkEnv.addGlobal('personStatusTag', function personStatusTag(status: PersonStatus, options?: StatusTagOptions) {
+    return new PersonStatusTag(status, options).html()
   })
 
   njkEnv.addFilter('removeBlankSummaryListItems', removeBlankSummaryListItems)

@@ -17,5 +17,11 @@ describe('statusTag', () => {
         `<strong class="govuk-tag govuk-tag--bar ${cssClass} " data-cy-status="assesmentInProgress" >foo</strong>`,
       )
     })
+
+    it('doesnt add a colour if no "colours" are passed', () => {
+      expect(createTag('assesmentInProgress', statuses, undefined)).toBe(
+        `<strong class="govuk-tag " data-cy-status="assesmentInProgress" >foo</strong>`,
+      )
+    })
   })
 })

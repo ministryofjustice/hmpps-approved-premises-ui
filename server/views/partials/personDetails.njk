@@ -59,18 +59,16 @@
       value: {
         text: person.genderIdentity
       }
-    },
-
-    {
+    }, {
       key: {
-        text: "Status on Submission" if statusOnSubmission else "Status"
+        text: "Status on Submission" if statusOnSubmission else 
+          "Status"
       },
       value: {
-        html: statusTag(statusOnSubmission) if statusOnSubmission else statusTag(person.status)
+        html: personStatusTag(statusOnSubmission, 'person') if statusOnSubmission else 
+          personStatusTag(person.status, 'person')
       }
-    },
-
-    {
+    }, {
       key: {
         text: "Prison"
       },
