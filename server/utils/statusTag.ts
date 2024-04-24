@@ -5,8 +5,11 @@ import {
   TaskStatus,
 } from '../@types/shared'
 
+import type { AssessmentStatusForUi } from './assessments/statusTag'
+
 export type StatusTagOptions = { addLeftMargin?: boolean; showOnOneLine?: boolean }
-type Status = ApplicationStatus | TaskStatus | BookingStatus | PersonStatus
+
+type Status = ApplicationStatus | TaskStatus | BookingStatus | PersonStatus | AssessmentStatusForUi
 
 export class StatusTag<T extends Status> {
   status: T
