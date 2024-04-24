@@ -10,6 +10,7 @@ import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
   PersonStatus,
+  TaskStatus,
 } from '@approved-premises/api'
 import {
   initialiseName,
@@ -213,6 +214,9 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
       return new ApplicationStatusTag(status, options).html()
     },
   )
+  njkEnv.addGlobal('taskStatusTag', function taskStatusTag(status: TaskStatus, options?: StatusTagOptions) {
+    return new TaskStatusTag(status, options).html()
+  })
 
   njkEnv.addFilter('removeBlankSummaryListItems', removeBlankSummaryListItems)
   njkEnv.addFilter('sentenceCase', sentenceCase)

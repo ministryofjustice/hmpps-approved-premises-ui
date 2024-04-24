@@ -27,7 +27,7 @@ import { sortHeader } from '../sortHeader'
 import { TaskSortField } from '../../@types/shared'
 import paths from '../../paths/tasks'
 import { daysUntilDueCell } from '../tableUtils'
-import { statusBadge } from './statusBadge'
+import { TaskStatusTag } from './statusTag'
 
 describe('table', () => {
   beforeEach(() => {
@@ -47,7 +47,7 @@ describe('table', () => {
               text: task?.allocatedToStaffMember?.name,
             },
             {
-              html: statusBadge(task),
+              html: new TaskStatusTag(task.status).html(),
             },
             {
               html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
@@ -70,7 +70,7 @@ describe('table', () => {
               text: task?.allocatedToStaffMember?.name,
             },
             {
-              html: statusBadge(task),
+              html: new TaskStatusTag(task.status).html(),
             },
             {
               html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
@@ -94,7 +94,7 @@ describe('table', () => {
             nameAnchorCell(task),
             daysUntilDueCell(task, 'task--index__warning'),
             {
-              html: statusBadge(task),
+              html: new TaskStatusTag(task.status).html(),
             },
             {
               html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
@@ -112,7 +112,7 @@ describe('table', () => {
             nameAnchorCell(task),
             daysUntilDueCell(task, 'task--index__warning'),
             {
-              html: statusBadge(task),
+              html: new TaskStatusTag(task.status).html(),
             },
             {
               html: `<strong class="govuk-tag">${getTaskType(task)}</strong>`,
@@ -175,7 +175,7 @@ describe('table', () => {
     it('returns the status of the task as a TableCell object', () => {
       const task = taskFactory.build()
       expect(statusCell(task)).toEqual({
-        html: statusBadge(task),
+        html: new TaskStatusTag(task.status).html(),
       })
     })
   })
