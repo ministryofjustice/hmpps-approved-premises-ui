@@ -205,6 +205,7 @@ export type { ReferralHistorySystemNote } from './models/ReferralHistorySystemNo
 export type { ReferralHistoryUserNote } from './models/ReferralHistoryUserNote';
 export type { ReleaseTypeOption } from './models/ReleaseTypeOption';
 export type { RequestForPlacement } from './models/RequestForPlacement';
+export type { RequestForPlacementStatus } from './models/RequestForPlacementStatus';
 export type { RequestForPlacementType } from './models/RequestForPlacementType';
 export type { RestrictedPerson } from './models/RestrictedPerson';
 export type { RiskEnvelopeStatus } from './models/RiskEnvelopeStatus';
