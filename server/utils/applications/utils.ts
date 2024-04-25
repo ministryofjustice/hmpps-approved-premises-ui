@@ -135,7 +135,7 @@ export const getAction = (application: ApplicationSummary | Application) => {
 const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
   arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'
 
-export const actionsCell = (application: ApplicationSummary | Application) => {
+export const actionsCell = (application: ApplicationSummary) => {
   const actionItems: Array<string> = []
 
   if (application.status === 'started' || application.status === 'requestedFurtherInformation') {

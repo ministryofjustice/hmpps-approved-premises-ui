@@ -768,18 +768,21 @@ describe('utils', () => {
     it.each(['started', 'requestedFurtherInformation'] as const)(
       'returns a link to withdraw the application when the status is %s',
       (status: ApplicationStatus) => {
-        const application = applicationFactory.build({ id: 'an-application-id', status })
+        const applicationSummary = applicationSummaryFactory.build({ id: 'an-application-id', status })
 
-        expect(actionsCell(application)).toEqual({
+        expect(actionsCell(applicationSummary)).toEqual({
           html: '<ul class="govuk-list"><li><a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a></li></ul>',
         })
       },
     )
 
     it('returns a link to request for placement of the application', () => {
-      const application = applicationFactory.build({ id: 'an-application-id', status: 'awaitingPlacement' })
+      const applicationSummary = applicationSummaryFactory.build({
+        id: 'an-application-id',
+        status: 'awaitingPlacement',
+      })
 
-      expect(actionsCell(application)).toEqual({
+      expect(actionsCell(applicationSummary)).toEqual({
         html: '<ul class="govuk-list"><li><a href="/placement-applications?id=an-application-id"  >Request for placement</a></li></ul>',
       })
     })
@@ -787,9 +790,9 @@ describe('utils', () => {
     it.each(['rejected', 'withdrawn', 'submitted'])(
       'does not return a link to withdraw the application if the status is %s',
       (status: ApplicationStatus) => {
-        const application = applicationFactory.build({ id: 'an-application-id', status })
+        const applicationSummary = applicationSummaryFactory.build({ id: 'an-application-id', status })
 
-        expect(actionsCell(application)).toEqual({
+        expect(actionsCell(applicationSummary)).toEqual({
           html: '',
         })
       },
