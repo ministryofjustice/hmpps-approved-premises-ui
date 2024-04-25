@@ -16,8 +16,8 @@ import type {
   AppealDecision,
   ApprovedPremisesApplication as Application,
   ApplicationSortField,
+  ApprovedPremisesApplicationStatus as ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
-  ApprovedPremisesApplicationStatus,
   ApprovedPremisesApplicationSummary,
   PersonalTimeline,
   PlacementApplication,
@@ -144,7 +144,9 @@ export const actionsCell = (application: ApplicationSummary) => {
     actionItems.push(withdrawLink)
   }
 
-  if (application.status === 'awaitingPlacement') {
+  const acceptedStatuses: ReadonlyArray<ApplicationStatus> = ['awaitingPlacement', 'pendingPlacementRequest']
+
+  if (acceptedStatuses.includes(application.status) && !application.hasRequestsForPlacement) {
     const requestForPlacementLink = linkTo(
       placementApplicationPaths.placementApplications.create,
       {},
@@ -452,9 +454,7 @@ export type ApplicationShowPageTab = keyof typeof applicationShowPageTabs
 export const applicationShowPageTab = (id: Application['id'], tab: ApplicationShowPageTab) =>
   `${paths.applications.show({ id })}?tab=${applicationShowPageTabs[tab]}`
 
-const applicationStatusSelectOptions = (
-  selectedOption: ApprovedPremisesApplicationStatus | undefined | null,
-): Array<SelectOption> => {
+const applicationStatusSelectOptions = (selectedOption: ApplicationStatus | undefined | null): Array<SelectOption> => {
   const options = Object.keys(ApplicationStatusTag.statuses).map(status => ({
     text: ApplicationStatusTag.statuses[status],
     value: status,

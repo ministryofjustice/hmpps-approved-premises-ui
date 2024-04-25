@@ -776,16 +776,20 @@ describe('utils', () => {
       },
     )
 
-    it('returns a link to request for placement of the application', () => {
-      const applicationSummary = applicationSummaryFactory.build({
-        id: 'an-application-id',
-        status: 'awaitingPlacement',
-      })
+    it.each(['awaitingPlacement', 'pendingPlacementRequest'] as const)(
+      'returns a link to request for placement of the application when the status is %s and hasRequestsForPlacement is false',
+      status => {
+        const applicationSummary = applicationSummaryFactory.build({
+          id: 'an-application-id',
+          status,
+          hasRequestsForPlacement: false,
+        })
 
-      expect(actionsCell(applicationSummary)).toEqual({
-        html: '<ul class="govuk-list"><li><a href="/placement-applications?id=an-application-id"  >Request for placement</a></li></ul>',
-      })
-    })
+        expect(actionsCell(applicationSummary)).toEqual({
+          html: '<ul class="govuk-list"><li><a href="/placement-applications?id=an-application-id"  >Request for placement</a></li></ul>',
+        })
+      },
+    )
 
     it.each(['rejected', 'withdrawn', 'submitted'])(
       'does not return a link to withdraw the application if the status is %s',
