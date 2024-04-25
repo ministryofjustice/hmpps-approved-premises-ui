@@ -9,7 +9,7 @@ export default class ConfirmDetailsPage extends Page {
 
   verifyRestrictedPersonMessaging() {
     cy.get('p').contains('This person is a limited access offender (LAO).')
-    cy.get('a').contains('Guidance on managing user access to LAOs is available on EQUIP.')
+    cy.get('a').contains('Guidance on managing user access to LAOs is available on EQuiP.')
   }
 
   clickSaveAndContinue() {
