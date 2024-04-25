@@ -203,6 +203,7 @@ export type { Reallocation } from './models/Reallocation';
 export type { ReferralHistoryNote } from './models/ReferralHistoryNote';
 export type { ReferralHistorySystemNote } from './models/ReferralHistorySystemNote';
 export type { ReferralHistoryUserNote } from './models/ReferralHistoryUserNote';
+export type { ReferralRejectionReason } from './models/ReferralRejectionReason';
 export type { ReleaseTypeOption } from './models/ReleaseTypeOption';
 export type { RequestForPlacement } from './models/RequestForPlacement';
 export type { RequestForPlacementStatus } from './models/RequestForPlacementStatus';
