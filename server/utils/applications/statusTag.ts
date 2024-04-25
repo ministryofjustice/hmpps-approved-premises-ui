@@ -10,12 +10,12 @@ export class ApplicationStatusTag extends StatusTag<ApplicationStatus> {
     awaitingAssesment: 'Awaiting assessment',
     unallocatedAssesment: 'Unallocated assessment',
     assesmentInProgress: 'Assessment in progress',
-    awaitingPlacement: 'Awaiting placement',
-    placementAllocated: 'Placement allocated',
+    awaitingPlacement: APPLICATION_SUITABLE,
+    placementAllocated: APPLICATION_SUITABLE,
     inapplicable: 'Application inapplicable',
     withdrawn: 'Application withdrawn',
     requestedFurtherInformation: 'Further information requested',
-    pendingPlacementRequest: 'Pending placement request',
+    pendingPlacementRequest: APPLICATION_SUITABLE,
   }
 
   static readonly colours: Record<ApplicationStatus, string> = {

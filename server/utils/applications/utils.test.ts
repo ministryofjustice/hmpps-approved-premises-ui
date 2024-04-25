@@ -56,6 +56,7 @@ import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQue
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
 import { sortHeader } from '../sortHeader'
 import { escape } from '../formUtils'
+import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -1479,12 +1480,12 @@ describe('utils', () => {
         { selected: false, text: 'Awaiting assessment', value: 'awaitingAssesment' },
         { selected: false, text: 'Unallocated assessment', value: 'unallocatedAssesment' },
         { selected: false, text: 'Assessment in progress', value: 'assesmentInProgress' },
-        { selected: false, text: 'Awaiting placement', value: 'awaitingPlacement' },
-        { selected: false, text: 'Placement allocated', value: 'placementAllocated' },
+        { selected: false, text: APPLICATION_SUITABLE, value: 'awaitingPlacement' },
+        { selected: false, text: APPLICATION_SUITABLE, value: 'placementAllocated' },
         { selected: false, text: 'Application inapplicable', value: 'inapplicable' },
         { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
         { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
-        { selected: false, text: 'Pending placement request', value: 'pendingPlacementRequest' },
+        { selected: false, text: APPLICATION_SUITABLE, value: 'pendingPlacementRequest' },
       ])
     })
 
@@ -1497,12 +1498,12 @@ describe('utils', () => {
         { selected: false, text: 'Awaiting assessment', value: 'awaitingAssesment' },
         { selected: false, text: 'Unallocated assessment', value: 'unallocatedAssesment' },
         { selected: false, text: 'Assessment in progress', value: 'assesmentInProgress' },
-        { selected: true, text: 'Awaiting placement', value: 'awaitingPlacement' },
-        { selected: false, text: 'Placement allocated', value: 'placementAllocated' },
+        { selected: true, text: APPLICATION_SUITABLE, value: 'awaitingPlacement' },
+        { selected: false, text: APPLICATION_SUITABLE, value: 'placementAllocated' },
         { selected: false, text: 'Application inapplicable', value: 'inapplicable' },
         { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
         { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
-        { selected: false, text: 'Pending placement request', value: 'pendingPlacementRequest' },
+        { selected: false, text: APPLICATION_SUITABLE, value: 'pendingPlacementRequest' },
       ])
     })
   })
