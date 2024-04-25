@@ -1,8 +1,8 @@
-import { TaskWithStatus } from '../@types/ui'
+import { TaskStatus as TaskListStatus, TaskWithStatus } from '../@types/ui'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import { applicationFactory, assessmentFactory } from '../testutils/factories'
-import { statusTag, taskLink } from './taskListUtils'
+import { TaskListStatusTag, taskLink } from './taskListUtils'
 
 describe('taskListUtils', () => {
   const task = {
@@ -92,37 +92,16 @@ describe('taskListUtils', () => {
       })
     })
   })
+})
 
-  describe('statusTag', () => {
-    it('returns a an in progress tag when the task is in progress', () => {
-      task.status = 'in_progress'
+describe('Tasklist Statuses', () => {
+  const statuses = Object.keys(TaskListStatusTag.statuses) as ReadonlyArray<TaskListStatus>
 
-      expect(statusTag(task)).toEqual(
-        '<strong class="govuk-tag govuk-tag--blue app-task-list__tag" id="second-task-status">In progress</strong>',
-      )
-    })
-
-    it('returns an in progress tag when the task is has not been started', () => {
-      task.status = 'in_progress'
-
-      expect(statusTag(task)).toEqual(
-        '<strong class="govuk-tag govuk-tag--blue app-task-list__tag" id="second-task-status">In progress</strong>',
-      )
-    })
-
-    it('returns a not started tag when the task is has not been started', () => {
-      task.status = 'not_started'
-
-      expect(statusTag(task)).toEqual(
-        '<strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="second-task-status">Not started</strong>',
-      )
-    })
-
-    it('returns a cannot start tag when the task cannot be started', () => {
-      task.status = 'cannot_start'
-
-      expect(statusTag(task)).toEqual(
-        '<strong class="govuk-tag govuk-tag--grey app-task-list__tag" id="second-task-status">Cannot start yet</strong>',
+  statuses.forEach(status => {
+    it(`returns the correct tag for each person with a status of ${status}`, () => {
+      const id = 'id'
+      expect(new TaskListStatusTag(status, id).html()).toEqual(
+        `<strong class="govuk-tag govuk-tag--${TaskListStatusTag.colours[status]} app-task-list__tag " data-cy-status="${status}" id="${id}-status">${TaskListStatusTag.statuses[status]}</strong>`,
       )
     })
   })

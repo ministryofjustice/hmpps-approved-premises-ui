@@ -4,12 +4,12 @@ import {
   PersonStatus,
   TaskStatus,
 } from '../@types/shared'
+import { TaskStatus as TaskListStatus } from '../@types/ui'
+// eslint-disable-next-line import/no-cycle
+import { AssessmentStatusForUi } from './assessments/statusTag'
 
-import type { AssessmentStatusForUi } from './assessments/statusTag'
-
-export type StatusTagOptions = { addLeftMargin?: boolean; showOnOneLine?: boolean }
-
-type Status = ApplicationStatus | TaskStatus | BookingStatus | PersonStatus | AssessmentStatusForUi
+export type StatusTagOptions = { addLeftMargin?: boolean; showOnOneLine?: boolean; taskListTag?: boolean; id?: string }
+type Status = ApplicationStatus | TaskStatus | BookingStatus | PersonStatus | AssessmentStatusForUi | TaskListStatus
 
 export class StatusTag<T extends Status> {
   status: T
@@ -46,6 +46,7 @@ export const createTag = <T extends Status>(
   options: StatusTagOptions = {},
 ) => {
   let classes = ''
+  let id = ''
 
   if (Object.keys(colours).length) {
     classes += `govuk-tag--${colours[status]} `
@@ -57,6 +58,14 @@ export const createTag = <T extends Status>(
 
   if (options?.showOnOneLine) {
     classes += 'govuk-tag--timeline-tag '
+  }
+
+  if (options?.taskListTag) {
+    classes += 'app-task-list__tag '
+  }
+
+  if (options?.id) {
+    id = `id="${options.id}-status"`
   }
 
   return `<strong class="govuk-tag ${classes}" data-cy-status="${status}" ${id}>${statuses[status]}</strong>`

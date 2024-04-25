@@ -5,7 +5,7 @@ import * as pathModule from 'path'
 import nunjucks from 'nunjucks'
 import express from 'express'
 
-import type { ErrorMessages } from '@approved-premises/ui'
+import type { ErrorMessages, TaskStatus as TaskListStatus, UiTask } from '@approved-premises/ui'
 import {
   ApprovedPremisesApplication as Application,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
@@ -74,6 +74,7 @@ import * as AppealsUtils from './appealsUtils'
 import config from '../config'
 import { withdrawalRadioOptions } from './applications/withdrawalReasons'
 import { PersonStatusTag } from './people/personStatusTag'
+import { TaskStatusTag } from './tasks/statusTag'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -211,6 +212,12 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('taskStatusTag', function taskStatusTag(status: TaskStatus, options?: StatusTagOptions) {
     return new TaskStatusTag(status, options).html()
   })
+  njkEnv.addGlobal(
+    'taskListStatusTag',
+    function taskStatusTag(status: TaskListStatus, id: UiTask['id'], options?: StatusTagOptions) {
+      return new TasklistUtils.TaskListStatusTag(status, id, options).html()
+    },
+  )
   njkEnv.addGlobal('personStatusTag', function personStatusTag(status: PersonStatus, options?: StatusTagOptions) {
     return new PersonStatusTag(status, options).html()
   })
