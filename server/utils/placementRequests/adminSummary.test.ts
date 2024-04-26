@@ -73,7 +73,7 @@ describe('adminSummary', () => {
         ...adminSummaryRows.slice(0, 2),
         {
           key: {
-            text: 'Date of decision',
+            text: 'Estimated arrival date',
           },
           value: {
             text: DateFormats.isoDateToUIDate('2022-01-01'),
