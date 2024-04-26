@@ -126,7 +126,7 @@ export const getAction = (application: ApplicationSummary | Application) => {
     return linkTo(
       placementApplicationPaths.placementApplications.create,
       {},
-      { text: 'Request for placement', query: { id: application.id } },
+      { text: 'Create request for placement', query: { id: application.id } },
     )
   }
   return ''
@@ -148,7 +148,7 @@ export const actionsCell = (application: ApplicationSummary) => {
     link = linkTo(
       placementApplicationPaths.placementApplications.create,
       {},
-      { text: 'Request for placement', query: { id: application.id } },
+      { text: 'Create request for placement', query: { id: application.id } },
     )
   }
 

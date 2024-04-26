@@ -786,7 +786,7 @@ describe('utils', () => {
         })
 
         expect(actionsCell(applicationSummary)).toEqual({
-          html: '<a href="/placement-applications?id=an-application-id"  >Request for placement</a>',
+          html: '<a href="/placement-applications?id=an-application-id"  >Create request for placement</a>',
         })
       },
     )

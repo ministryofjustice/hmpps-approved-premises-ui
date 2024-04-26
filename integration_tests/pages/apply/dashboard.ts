@@ -20,7 +20,7 @@ export default class DashboardPage extends Page {
   }
 
   clickRequestForPlacementLink() {
-    cy.get('a').contains('Request for placement').click()
+    cy.get('a').contains('Create request for placement').click()
   }
 
   searchByCrnOrName(crnOrName: string): void {
