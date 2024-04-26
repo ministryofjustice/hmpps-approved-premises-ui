@@ -54,7 +54,7 @@ import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
 import { escape } from '../formUtils'
-import { ApplicationStatusTag } from './statusTag'
+import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
 
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
@@ -135,6 +135,12 @@ export const getAction = (application: ApplicationSummary | Application) => {
 const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
   arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'
 
+export const applicationSuitableStatuses: ReadonlyArray<ApplicationStatus> = [
+  'awaitingPlacement',
+  'pendingPlacementRequest',
+  'placementAllocated',
+]
+
 export const actionsCell = (application: ApplicationSummary) => {
   let link = ''
 
@@ -142,9 +148,7 @@ export const actionsCell = (application: ApplicationSummary) => {
     link = linkTo(paths.applications.withdraw.new, { id: application.id }, { text: 'Withdraw' })
   }
 
-  const acceptedStatuses: ReadonlyArray<ApplicationStatus> = ['awaitingPlacement', 'pendingPlacementRequest']
-
-  if (acceptedStatuses.includes(application.status) && !application.hasRequestsForPlacement) {
+  if (applicationSuitableStatuses.includes(application.status) && !application.hasRequestsForPlacement) {
     link = linkTo(
       placementApplicationPaths.placementApplications.create,
       {},
@@ -448,12 +452,23 @@ export type ApplicationShowPageTab = keyof typeof applicationShowPageTabs
 export const applicationShowPageTab = (id: Application['id'], tab: ApplicationShowPageTab) =>
   `${paths.applications.show({ id })}?tab=${applicationShowPageTabs[tab]}`
 
-const applicationStatusSelectOptions = (selectedOption: ApplicationStatus | undefined | null): Array<SelectOption> => {
-  const options = Object.keys(ApplicationStatusTag.statuses).map(status => ({
-    text: ApplicationStatusTag.statuses[status],
-    value: status,
-    selected: status === selectedOption,
-  }))
+export type ApplicationStatusForFilter = ApplicationStatus | typeof applicationSuitableStatuses
+
+const applicationStatusSelectOptions = (
+  selectedOption: ApplicationStatusForFilter | undefined | null,
+): Array<SelectOption> => {
+  const options: Array<SelectOption> = Object.keys(ApplicationStatusTag.statuses)
+    .map(status => ({
+      text: ApplicationStatusTag.statuses[status],
+      value: status,
+      selected: status === selectedOption,
+    }))
+
+  options.unshift({
+    text: APPLICATION_SUITABLE,
+    value: applicationSuitableStatuses,
+    selected: selectedOption === applicationSuitableStatuses.toString(),
+  })
 
   options.unshift({
     text: 'All statuses',

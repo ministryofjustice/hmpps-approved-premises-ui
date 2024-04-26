@@ -1,7 +1,7 @@
 import Page from '../page'
 import paths from '../../../server/paths/apply'
-import { ApprovedPremisesApplicationStatus, ApprovedPremisesApplicationSummary } from '../../../server/@types/shared'
-import { dashboardTableRows } from '../../../server/utils/applications/utils'
+import { ApprovedPremisesApplicationSummary } from '../../../server/@types/shared'
+import { ApplicationStatusForFilter, dashboardTableRows } from '../../../server/utils/applications/utils'
 import { shouldShowTableRows } from '../../helpers'
 
 export default class DashboardPage extends Page {
@@ -28,8 +28,8 @@ export default class DashboardPage extends Page {
     this.clickSubmit()
   }
 
-  searchByStatus(status: ApprovedPremisesApplicationStatus): void {
-    this.getSelectInputByIdAndSelectAnEntry('status', status)
+  searchByStatus(status: ApplicationStatusForFilter): void {
+    this.getSelectInputByIdAndSelectAnEntry('status', status.toString())
     this.clickSubmit()
   }
 

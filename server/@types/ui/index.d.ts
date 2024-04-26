@@ -145,7 +145,7 @@ export type CheckBoxDivider = { divider: string }
 
 export interface SelectOption {
   text: string
-  value: string
+  value: string | ReadonlyArray<string>
   selected?: boolean
 }
 
@@ -485,7 +485,7 @@ export type PlacementRequestDashboardSearchOptions = {
 
 export type ApplicationDashboardSearchOptions = {
   crnOrName?: string
-  status?: ApprovedPremisesApplicationStatus
+  status?: ApprovedPremisesApplicationStatus | ReadonlyArray<ApprovedPremisesApplicationStatus>
   apAreaId?: string
 }
 
