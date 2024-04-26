@@ -136,29 +136,23 @@ const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
   arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'
 
 export const actionsCell = (application: ApplicationSummary) => {
-  const actionItems: Array<string> = []
+  let link = ''
 
   if (application.status === 'started' || application.status === 'requestedFurtherInformation') {
-    const withdrawLink = linkTo(paths.applications.withdraw.new, { id: application.id }, { text: 'Withdraw' })
-
-    actionItems.push(withdrawLink)
+    link = linkTo(paths.applications.withdraw.new, { id: application.id }, { text: 'Withdraw' })
   }
 
   const acceptedStatuses: ReadonlyArray<ApplicationStatus> = ['awaitingPlacement', 'pendingPlacementRequest']
 
   if (acceptedStatuses.includes(application.status) && !application.hasRequestsForPlacement) {
-    const requestForPlacementLink = linkTo(
+    link = linkTo(
       placementApplicationPaths.placementApplications.create,
       {},
       { text: 'Request for placement', query: { id: application.id } },
     )
-    actionItems.push(requestForPlacementLink)
   }
-  const actionLinks = actionItems.length
-    ? `<ul class="govuk-list">${actionItems.map(actionItem => `<li>${actionItem}</li>`).join('')}</ul>`
-    : ''
 
-  return htmlValue(actionLinks)
+  return htmlValue(link)
 }
 
 export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>

@@ -771,7 +771,7 @@ describe('utils', () => {
         const applicationSummary = applicationSummaryFactory.build({ id: 'an-application-id', status })
 
         expect(actionsCell(applicationSummary)).toEqual({
-          html: '<ul class="govuk-list"><li><a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a></li></ul>',
+          html: '<a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a>',
         })
       },
     )
@@ -786,7 +786,7 @@ describe('utils', () => {
         })
 
         expect(actionsCell(applicationSummary)).toEqual({
-          html: '<ul class="govuk-list"><li><a href="/placement-applications?id=an-application-id"  >Request for placement</a></li></ul>',
+          html: '<a href="/placement-applications?id=an-application-id"  >Request for placement</a>',
         })
       },
     )
