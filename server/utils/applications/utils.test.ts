@@ -2,7 +2,6 @@ import {
   ApType,
   ApplicationSortField,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
-  ApprovedPremisesApplicationStatus,
   TimelineEventUrlType,
 } from '@approved-premises/api'
 import { isAfter } from 'date-fns'
@@ -296,45 +295,6 @@ describe('utils', () => {
         expect(tierBadge).not.toHaveBeenCalled()
 
         expect(result[0][2]).toEqual({
-          html: '',
-        })
-      })
-    })
-
-    describe('withdrawal action link should be shown when application status is requestedFurtherInformation, started', () => {
-      it.each(['requestedFurtherInformation', 'started'])(
-        'should show withdrawal action link with %s statuses',
-        async status => {
-          ;(tierBadge as jest.Mock).mockClear()
-          ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-
-          const application = applicationSummaryFactory.build({
-            arrivalDate,
-            person,
-            status: status as ApprovedPremisesApplicationStatus,
-          })
-
-          const result = applicationTableRows([application])
-
-          expect(result[0][6]).toEqual({
-            html: `<ul class="govuk-list"><li><a href="/applications/${application.id}/withdrawals/new"  >Withdraw</a></li></ul>`,
-          })
-        },
-      )
-
-      it('should not show withdrawal action link with submitted status', async () => {
-        ;(tierBadge as jest.Mock).mockClear()
-        ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-
-        const application = applicationSummaryFactory.build({
-          arrivalDate,
-          person,
-          status: 'submitted',
-        })
-
-        const result = applicationTableRows([application])
-
-        expect(result[0][6]).toEqual({
           html: '',
         })
       })
@@ -805,28 +765,38 @@ describe('utils', () => {
   })
 
   describe('actionsCell', () => {
-    it('returns a link to withdraw the application', () => {
-      const application = applicationFactory.build({ id: 'an-application-id' })
+    it.each(['started', 'requestedFurtherInformation'] as const)(
+      'returns a link to withdraw the application when the status is %s',
+      (status: ApplicationStatus) => {
+        const applicationSummary = applicationSummaryFactory.build({ id: 'an-application-id', status })
 
-      expect(actionsCell(application)).toEqual({
-        html: '<ul class="govuk-list"><li><a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a></li></ul>',
-      })
-    })
+        expect(actionsCell(applicationSummary)).toEqual({
+          html: '<a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a>',
+        })
+      },
+    )
 
-    it('returns a link to withdraw and request for placement of the application', () => {
-      const application = applicationFactory.build({ id: 'an-application-id', status: 'awaitingPlacement' })
+    it.each(['awaitingPlacement', 'pendingPlacementRequest'] as const)(
+      'returns a link to request for placement of the application when the status is %s and hasRequestsForPlacement is false',
+      status => {
+        const applicationSummary = applicationSummaryFactory.build({
+          id: 'an-application-id',
+          status,
+          hasRequestsForPlacement: false,
+        })
 
-      expect(actionsCell(application)).toEqual({
-        html: '<ul class="govuk-list"><li><a href="/placement-applications?id=an-application-id"  >Request for placement</a></li></ul>',
-      })
-    })
+        expect(actionsCell(applicationSummary)).toEqual({
+          html: '<a href="/placement-applications?id=an-application-id"  >Create request for placement</a>',
+        })
+      },
+    )
 
-    it.each(['rejected', 'withdrawn'])(
+    it.each(['rejected', 'withdrawn', 'submitted'])(
       'does not return a link to withdraw the application if the status is %s',
       (status: ApplicationStatus) => {
-        const application = applicationFactory.build({ id: 'an-application-id', status })
+        const applicationSummary = applicationSummaryFactory.build({ id: 'an-application-id', status })
 
-        expect(actionsCell(application)).toEqual({
+        expect(actionsCell(applicationSummary)).toEqual({
           html: '',
         })
       },

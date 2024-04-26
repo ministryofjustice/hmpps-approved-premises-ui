@@ -16,8 +16,8 @@ import type {
   AppealDecision,
   ApprovedPremisesApplication as Application,
   ApplicationSortField,
+  ApprovedPremisesApplicationStatus as ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
-  ApprovedPremisesApplicationStatus,
   ApprovedPremisesApplicationSummary,
   PersonalTimeline,
   PlacementApplication,
@@ -126,7 +126,7 @@ export const getAction = (application: ApplicationSummary | Application) => {
     return linkTo(
       placementApplicationPaths.placementApplications.create,
       {},
-      { text: 'Request for placement', query: { id: application.id } },
+      { text: 'Create request for placement', query: { id: application.id } },
     )
   }
   return ''
@@ -135,28 +135,24 @@ export const getAction = (application: ApplicationSummary | Application) => {
 const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
   arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'
 
-export const actionsCell = (application: ApplicationSummary | Application) => {
-  const actionItems: Array<string> = []
+export const actionsCell = (application: ApplicationSummary) => {
+  let link = ''
 
   if (application.status === 'started' || application.status === 'requestedFurtherInformation') {
-    const withdrawLink = linkTo(paths.applications.withdraw.new, { id: application.id }, { text: 'Withdraw' })
-
-    actionItems.push(withdrawLink)
+    link = linkTo(paths.applications.withdraw.new, { id: application.id }, { text: 'Withdraw' })
   }
 
-  if (application.status === 'awaitingPlacement') {
-    const requestForPlacementLink = linkTo(
+  const acceptedStatuses: ReadonlyArray<ApplicationStatus> = ['awaitingPlacement', 'pendingPlacementRequest']
+
+  if (acceptedStatuses.includes(application.status) && !application.hasRequestsForPlacement) {
+    link = linkTo(
       placementApplicationPaths.placementApplications.create,
       {},
-      { text: 'Request for placement', query: { id: application.id } },
+      { text: 'Create request for placement', query: { id: application.id } },
     )
-    actionItems.push(requestForPlacementLink)
   }
-  const actionLinks = actionItems.length
-    ? `<ul class="govuk-list">${actionItems.map(actionItem => `<li>${actionItem}</li>`).join('')}</ul>`
-    : ''
 
-  return htmlValue(actionLinks)
+  return htmlValue(link)
 }
 
 export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>
@@ -452,9 +448,7 @@ export type ApplicationShowPageTab = keyof typeof applicationShowPageTabs
 export const applicationShowPageTab = (id: Application['id'], tab: ApplicationShowPageTab) =>
   `${paths.applications.show({ id })}?tab=${applicationShowPageTabs[tab]}`
 
-const applicationStatusSelectOptions = (
-  selectedOption: ApprovedPremisesApplicationStatus | undefined | null,
-): Array<SelectOption> => {
+const applicationStatusSelectOptions = (selectedOption: ApplicationStatus | undefined | null): Array<SelectOption> => {
   const options = Object.keys(ApplicationStatusTag.statuses).map(status => ({
     text: ApplicationStatusTag.statuses[status],
     value: status,

@@ -63,11 +63,18 @@ context('Applications dashboard', () => {
       cy.signIn()
 
       // And there are applications in the database
-      const inProgressApplications = applicationSummaryFactory.buildList(5, { status: 'started' })
+      const inProgressApplications = applicationSummaryFactory.buildList(5, {
+        status: 'started',
+        hasRequestsForPlacement: false,
+      })
       const requestedFurtherInformationApplications = applicationSummaryFactory.buildList(5, {
         status: 'requestedFurtherInformation',
+        hasRequestsForPlacement: false,
       })
-      const awaitingPlacementApplications = applicationSummaryFactory.buildList(5, { status: 'awaitingPlacement' })
+      const awaitingPlacementApplications = applicationSummaryFactory.buildList(5, {
+        status: 'awaitingPlacement',
+        hasRequestsForPlacement: false,
+      })
       const applicationId = awaitingPlacementApplications[0].id
       cy.task(
         'stubApplications',
