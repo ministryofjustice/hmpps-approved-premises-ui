@@ -458,6 +458,8 @@ const applicationStatusSelectOptions = (
   selectedOption: ApplicationStatusForFilter | undefined | null,
 ): Array<SelectOption> => {
   const options: Array<SelectOption> = Object.keys(ApplicationStatusTag.statuses)
+    // submitted status isnt used in the API so will return no results
+    .filter(status => !applicationSuitableStatuses.includes(status as ApplicationStatus) && status !== 'submitted')
     .map(status => ({
       text: ApplicationStatusTag.statuses[status],
       value: status,
