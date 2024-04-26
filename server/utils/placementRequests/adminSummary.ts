@@ -29,7 +29,7 @@ export const adminSummary = (placementRequest: PlacementRequestDetail): SummaryL
     },
     {
       key: {
-        text: placementRequest.isParole ? 'Date of decision' : 'Requested Arrival Date',
+        text: placementRequest.isParole ? 'Estimated arrival date' : 'Requested Arrival Date',
       },
       value: {
         text: DateFormats.isoDateToUIDate(dates.startDate),
