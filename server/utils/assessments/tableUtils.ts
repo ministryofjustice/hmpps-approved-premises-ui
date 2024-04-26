@@ -12,19 +12,7 @@ import paths from '../../paths/assess'
 import { crnCell, daysUntilDueCell, tierCell } from '../tableUtils'
 import { isFullPerson, laoName } from '../personUtils'
 import { sortHeader } from '../sortHeader'
-
-const getStatus = (assessment: AssessmentSummary): string => {
-  if (assessment.status === 'completed') {
-    if (assessment.decision === 'accepted') return `<strong class="govuk-tag govuk-tag--green">Suitable</strong>`
-    if (assessment.decision === 'rejected') return `<strong class="govuk-tag govuk-tag--red">Rejected</strong>`
-  }
-
-  if (assessment.status === 'in_progress') {
-    return `<strong class="govuk-tag govuk-tag--blue">In progress</strong>`
-  }
-
-  return `<strong class="govuk-tag govuk-tag--grey">Not started</strong>`
-}
+import { AssessmentStatusTag } from './statusTag'
 
 const assessmentLink = (assessment: AssessmentSummary, person: FullPerson, linkText = '', hiddenText = ''): string => {
   return linkTo(
@@ -52,7 +40,7 @@ const arrivalDateCell = (assessment: AssessmentSummary) => {
 
 const statusCell = (assessment: AssessmentSummary) => {
   return {
-    html: getStatus(assessment),
+    html: new AssessmentStatusTag(assessment.status, assessment.decision).html(),
   }
 }
 
@@ -232,7 +220,6 @@ const requestedFurtherInformationTableRows = (assessments: Array<AssessmentSumma
 }
 
 export {
-  getStatus,
   assessmentLink,
   awaitingAssessmentTableRows,
   completedTableRows,

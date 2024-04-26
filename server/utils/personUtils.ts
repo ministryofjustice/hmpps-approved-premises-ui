@@ -1,14 +1,4 @@
-import { FullPerson, Person, PersonStatus } from '../@types/shared'
-
-const statuses: Record<PersonStatus, string> = {
-  InCommunity: 'In Community',
-  InCustody: 'In Custody',
-  Unknown: 'Unknown',
-}
-
-const statusTag = (status: PersonStatus): string => {
-  return `<strong class="govuk-tag" data-cy-status="${status}">${statuses[status]}</strong>`
-}
+import { FullPerson, Person } from '../@types/shared'
 
 const tierBadge = (tier: string): string => {
   if (!tier) return ''
@@ -52,4 +42,4 @@ const nameText = (person: FullPerson, showLaoLabel: boolean) => {
   return name
 }
 
-export { statusTag, tierBadge, isApplicableTier, isFullPerson, nameOrPlaceholderCopy, laoName }
+export { tierBadge, isApplicableTier, isFullPerson, nameOrPlaceholderCopy, laoName }

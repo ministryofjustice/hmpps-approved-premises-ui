@@ -5,8 +5,13 @@ import * as pathModule from 'path'
 import nunjucks from 'nunjucks'
 import express from 'express'
 
-import type { ErrorMessages } from '@approved-premises/ui'
-import { ApprovedPremisesApplication as Application, PersonStatus } from '@approved-premises/api'
+import type { ErrorMessages, TaskStatus as TaskListStatus, UiTask } from '@approved-premises/ui'
+import {
+  ApprovedPremisesApplication as Application,
+  ApprovedPremisesApplicationStatus as ApplicationStatus,
+  PersonStatus,
+  TaskStatus,
+} from '@approved-premises/api'
 import {
   initialiseName,
   kebabCase,
@@ -23,11 +28,11 @@ import {
   convertObjectsToSelectOptions,
   dateFieldValues,
 } from './formUtils'
-import { getStatus as applicationStatusTag } from './applications/utils'
 import { relevantDatesOptions } from './applications/relevantDatesOptions'
 import { navigationItems } from './navigationItems'
 
-import { statusTag } from './personUtils'
+import { StatusTagOptions } from './statusTag'
+import { ApplicationStatusTag } from './applications/statusTag'
 import { DateFormats, monthOptions, uiDateOrDateEmptyMessage, yearOptions } from './dateUtils'
 import { pagination } from './pagination'
 import { sortHeader } from './sortHeader'
@@ -68,6 +73,8 @@ import * as AppealsUtils from './appealsUtils'
 
 import config from '../config'
 import { withdrawalRadioOptions } from './applications/withdrawalReasons'
+import { PersonStatusTag } from './people/personStatusTag'
+import { TaskStatusTag } from './tasks/statusTag'
 
 const production = process.env.NODE_ENV === 'production'
 
@@ -108,11 +115,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
       dev: true, // This is set to true to allow us to see the full stacktrace from errors in global functions, otherwise it gets swallowed and tricky to see in logs
     },
   )
-
-  const markAsSafe = (html: string): string => {
-    const safeFilter = njkEnv.getFilter('safe')
-    return safeFilter(html)
-  }
 
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addGlobal('dateFieldValues', dateFieldValues)
@@ -190,8 +192,6 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
 
   njkEnv.addGlobal('linkTo', linkTo)
 
-  njkEnv.addGlobal('statusTag', (status: PersonStatus) => markAsSafe(statusTag(status)))
-
   njkEnv.addGlobal('mergeObjects', (obj1: Record<string, unknown>, obj2: Record<string, unknown>) => {
     return { ...obj1, ...obj2 }
   })
@@ -203,12 +203,24 @@ export default function nunjucksSetup(app: express.Express, path: pathModule.Pla
   njkEnv.addGlobal('oasysDisabled', config.flags.oasysDisabled)
 
   njkEnv.addFilter('mapApiPersonRisksForUi', mapApiPersonRisksForUi)
-  njkEnv.addFilter(
+  njkEnv.addGlobal(
     'applicationStatusTag',
-    function applicationStatusTagFilter(application: Application, classes: string) {
-      return applicationStatusTag(application, classes)
+    function applicationStatusTag(status: ApplicationStatus, options?: StatusTagOptions) {
+      return new ApplicationStatusTag(status, options).html()
     },
   )
+  njkEnv.addGlobal('taskStatusTag', function taskStatusTag(status: TaskStatus, options?: StatusTagOptions) {
+    return new TaskStatusTag(status, options).html()
+  })
+  njkEnv.addGlobal(
+    'taskListStatusTag',
+    function taskStatusTag(status: TaskListStatus, id: UiTask['id'], options?: StatusTagOptions) {
+      return new TasklistUtils.TaskListStatusTag(status, id, options).html()
+    },
+  )
+  njkEnv.addGlobal('personStatusTag', function personStatusTag(status: PersonStatus, options?: StatusTagOptions) {
+    return new PersonStatusTag(status, options).html()
+  })
 
   njkEnv.addFilter('removeBlankSummaryListItems', removeBlankSummaryListItems)
   njkEnv.addFilter('sentenceCase', sentenceCase)

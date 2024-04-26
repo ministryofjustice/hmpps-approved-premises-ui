@@ -42,7 +42,6 @@ import {
   getAction,
   getApplicationType,
   getSections,
-  getStatus,
   isInapplicable,
   lengthOfStayForUI,
   mapApplicationTimelineEventsForUi,
@@ -57,6 +56,7 @@ import { retrieveOptionalQuestionResponseFromFormArtifact } from '../retrieveQue
 import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
 import { sortHeader } from '../sortHeader'
 import { escape } from '../formUtils'
+import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
 
 jest.mock('../placementRequests/placementApplicationSubmissionData')
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
@@ -228,7 +228,7 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(applicationA.createdAt, { format: 'short' }),
           },
           {
-            html: getStatus(applicationA),
+            html: new ApplicationStatusTag(applicationA.status).html(),
           },
           actionsCell(applicationA),
         ],
@@ -251,7 +251,7 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(applicationB.createdAt, { format: 'short' }),
           },
           {
-            html: getStatus(applicationB),
+            html: new ApplicationStatusTag(applicationB.status).html(),
           },
           actionsCell(applicationB),
         ],
@@ -413,7 +413,7 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(applicationA.createdAt, { format: 'short' }),
           },
           {
-            html: getStatus(applicationA),
+            html: new ApplicationStatusTag(applicationA.status).html(),
           },
           {
             html: '',
@@ -438,7 +438,7 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(applicationB.createdAt, { format: 'short' }),
           },
           {
-            html: getStatus(applicationB),
+            html: new ApplicationStatusTag(applicationB.status).html(),
           },
           {
             html: '',
@@ -495,7 +495,7 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(applicationA.createdAt, { format: 'short' }),
           },
           {
-            html: getStatus(applicationA),
+            html: new ApplicationStatusTag(applicationA.status).html(),
           },
           {
             html: getAction(applicationA),
@@ -520,7 +520,7 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(applicationB.createdAt, { format: 'short' }),
           },
           {
-            html: getStatus(applicationB),
+            html: new ApplicationStatusTag(applicationB.status).html(),
           },
           {
             html: getAction(applicationB),
@@ -545,7 +545,7 @@ describe('utils', () => {
             text: DateFormats.isoDateToUIDate(applicationC.createdAt, { format: 'short' }),
           },
           {
-            html: getStatus(applicationC),
+            html: new ApplicationStatusTag(applicationC.status).html(),
           },
           {
             html: getAction(applicationC),
@@ -625,7 +625,7 @@ describe('utils', () => {
               text: DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' }),
             },
             {
-              html: getStatus(application),
+              html: new ApplicationStatusTag(application.status).html(),
             },
             {
               html: getAction(application),
@@ -1480,12 +1480,12 @@ describe('utils', () => {
         { selected: false, text: 'Awaiting assessment', value: 'awaitingAssesment' },
         { selected: false, text: 'Unallocated assessment', value: 'unallocatedAssesment' },
         { selected: false, text: 'Assessment in progress', value: 'assesmentInProgress' },
-        { selected: false, text: 'Awaiting placement', value: 'awaitingPlacement' },
-        { selected: false, text: 'Placement allocated', value: 'placementAllocated' },
+        { selected: false, text: APPLICATION_SUITABLE, value: 'awaitingPlacement' },
+        { selected: false, text: APPLICATION_SUITABLE, value: 'placementAllocated' },
         { selected: false, text: 'Application inapplicable', value: 'inapplicable' },
         { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
         { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
-        { selected: false, text: 'Pending placement request', value: 'pendingPlacementRequest' },
+        { selected: false, text: APPLICATION_SUITABLE, value: 'pendingPlacementRequest' },
       ])
     })
 
@@ -1498,12 +1498,12 @@ describe('utils', () => {
         { selected: false, text: 'Awaiting assessment', value: 'awaitingAssesment' },
         { selected: false, text: 'Unallocated assessment', value: 'unallocatedAssesment' },
         { selected: false, text: 'Assessment in progress', value: 'assesmentInProgress' },
-        { selected: true, text: 'Awaiting placement', value: 'awaitingPlacement' },
-        { selected: false, text: 'Placement allocated', value: 'placementAllocated' },
+        { selected: true, text: APPLICATION_SUITABLE, value: 'awaitingPlacement' },
+        { selected: false, text: APPLICATION_SUITABLE, value: 'placementAllocated' },
         { selected: false, text: 'Application inapplicable', value: 'inapplicable' },
         { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
         { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
-        { selected: false, text: 'Pending placement request', value: 'pendingPlacementRequest' },
+        { selected: false, text: APPLICATION_SUITABLE, value: 'pendingPlacementRequest' },
       ])
     })
   })

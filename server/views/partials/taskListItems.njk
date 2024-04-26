@@ -10,7 +10,7 @@
           <span class="app-task-list__task-name">
             {{ TasklistUtils.taskLink(task, applicationOrAssessment) | safe   }}
           </span>
-          {{ TasklistUtils.statusTag(task) | safe  }}
+          {{ taskListStatusTag(task.status, task.id) | safe  }}
         </li>
       {% endfor %}
     </ul>

@@ -8,7 +8,6 @@ import {
   awaitingAssessmentTableRows,
   completedTableRows,
   emptyCell,
-  getStatus,
   requestedFurtherInformationTableRows,
   restrictedPersonCell,
 } from './tableUtils'
@@ -18,40 +17,13 @@ import { AssessmentSortField, ApprovedPremisesAssessmentSummary as AssessmentSum
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 import { laoName } from '../personUtils'
+import { AssessmentStatusTag } from './statusTag'
 
 jest.mock('../applications/arrivalDateFromApplication')
 
 describe('tableUtils', () => {
   const person = personFactory.build({ name: 'John Wayne' })
   const restrictedPerson = restrictedPersonFactory.build()
-
-  describe('getStatus', () => {
-    it('returns Not started for an assessment that has not been started', () => {
-      const assessment = assessmentSummaryFactory.build({ status: 'not_started' })
-
-      expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--grey">Not started</strong>')
-    })
-
-    it('returns In Progress for an an in progress assessment', () => {
-      const assessment = assessmentSummaryFactory.build({ status: 'in_progress' })
-
-      expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--blue">In progress</strong>')
-    })
-
-    describe('completed assessments', () => {
-      it('returns "suitable" for an approved assessment assessment', () => {
-        const assessment = assessmentSummaryFactory.build({ status: 'completed', decision: 'accepted' })
-
-        expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--green">Suitable</strong>')
-      })
-
-      it('returns "rejected" for an approved assessment assessment', () => {
-        const assessment = assessmentSummaryFactory.build({ status: 'completed', decision: 'rejected' })
-
-        expect(getStatus(assessment)).toEqual('<strong class="govuk-tag govuk-tag--red">Rejected</strong>')
-      })
-    })
-  })
 
   describe('assessmentLink', () => {
     const assessment = assessmentSummaryFactory.build({
@@ -179,7 +151,7 @@ describe('tableUtils', () => {
           { text: formattedArrivalDate(assessment) },
           { text: person.prisonName },
           daysUntilDueCell(assessment, 'assessments--index__warning'),
-          { html: getStatus(assessment) },
+          { html: new AssessmentStatusTag(assessment.status, assessment.decision).html() },
         ],
       ])
     })
@@ -260,7 +232,7 @@ describe('tableUtils', () => {
           crnCell({ crn: assessment.person.crn }),
           tierCell({ tier: assessment.risks.tier }),
           { text: formattedArrivalDate(assessment) },
-          { html: getStatus(assessment) },
+          { html: new AssessmentStatusTag(assessment.status, assessment.decision).html() },
         ],
       ])
     })

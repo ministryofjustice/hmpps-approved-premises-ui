@@ -5,7 +5,7 @@
 {% extends "../layout.njk" %}
 
 {% set columnClasses= "govuk-grid-column-full" %}
-{% set nomsNumber = page.document.application.person.nomsNumber if page.document.application.person.nomsNumber else
+{% set nomsNumber = page.document.application.person.nomsNumber if page.document.application.person.nomsNumber else 
   "" %}
 
 {% block questions %}
@@ -100,7 +100,7 @@
               text: "Status on Submission"
             },
             value: {
-              html: statusTag(page.document.application.personStatusOnSubmission)
+              html: personStatusTag(page.document.application.personStatusOnSubmission)
             }
           },
           {

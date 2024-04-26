@@ -13,10 +13,11 @@ import { sortHeader } from '../sortHeader'
 import { kebabCase, linkTo } from '../utils'
 import { daysUntilDueCell } from '../tableUtils'
 import { DateFormats } from '../dateUtils'
-import { statusBadge } from './statusBadge'
+
+import { TaskStatusTag } from './statusTag'
 
 const statusCell = (task: Task): TableCell => ({
-  html: statusBadge(task),
+  html: new TaskStatusTag(task.status).html(),
 })
 
 const getTaskType = (task: Task): string => {

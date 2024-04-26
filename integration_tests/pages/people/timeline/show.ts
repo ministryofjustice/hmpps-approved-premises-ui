@@ -1,6 +1,6 @@
 import { FullPerson, PersonalTimeline } from '../../../../server/@types/shared'
-import { getStatus } from '../../../../server/utils/applications/getStatus'
 import Page from '../../page'
+import { ApplicationStatusTag } from '../../../../server/utils/applications/statusTag'
 
 export class ShowPage extends Page {
   timeline: PersonalTimeline
@@ -12,11 +12,9 @@ export class ShowPage extends Page {
 
   shouldShowTimeline() {
     this.timeline.applications.forEach((applicationTimeline, index) => {
+      const statusTag = new ApplicationStatusTag(applicationTimeline.status, { showOnOneLine: true })
       cy.get('h2').contains(applicationTimeline.createdBy.name)
-      cy.get(`[data-cy-status="application ${index}"]`).should(
-        'contain.html',
-        getStatus(applicationTimeline, 'govuk-tag--timeline-tag'),
-      )
+      cy.get(`[data-cy-status="${statusTag.status}"]`).should('contain', statusTag.uiStatus)
 
       this.shouldShowApplicationTimeline(applicationTimeline.timelineEvents, index)
     })
