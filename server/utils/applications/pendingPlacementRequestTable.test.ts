@@ -12,6 +12,7 @@ describe('pendingPlacementRequestTable', () => {
       tier: undefined,
       createdAt: undefined,
       arrivalDate: undefined,
+      releaseType: undefined,
     }
     const hrefPrefix = 'http://example.com'
 
