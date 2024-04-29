@@ -18,6 +18,8 @@ export class ApplicationStatusTag extends StatusTag<ApplicationStatus> {
     pendingPlacementRequest: APPLICATION_SUITABLE,
   }
 
+  readonly applicationSuitableStatus: 'blue' = 'blue' as const
+
   static readonly colours: Record<ApplicationStatus, string> = {
     started: 'blue',
     submitted: '',
@@ -26,7 +28,7 @@ export class ApplicationStatusTag extends StatusTag<ApplicationStatus> {
     unallocatedAssesment: 'blue',
     assesmentInProgress: 'blue',
     awaitingPlacement: 'blue',
-    placementAllocated: 'pink',
+    placementAllocated: 'blue',
     inapplicable: 'red',
     withdrawn: 'red',
     requestedFurtherInformation: 'yellow',
