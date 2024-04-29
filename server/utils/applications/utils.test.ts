@@ -30,7 +30,7 @@ import { DateFormats } from '../dateUtils'
 import { isApplicableTier, isFullPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
 
 import {
-  actionsCell,
+  actionsLink,
   appealDecisionRadioItems,
   applicationStatusSelectOptions,
   applicationSuitableStatuses,
@@ -39,7 +39,6 @@ import {
   dashboardTableRows,
   eventTypeTranslations,
   firstPageOfApplicationJourney,
-  getAction,
   getApplicationType,
   getSections,
   isInapplicable,
@@ -230,7 +229,7 @@ describe('utils', () => {
           {
             html: new ApplicationStatusTag(applicationA.status).html(),
           },
-          actionsCell(applicationA),
+          { html: actionsLink(applicationA) },
         ],
         [
           {
@@ -253,7 +252,7 @@ describe('utils', () => {
           {
             html: new ApplicationStatusTag(applicationB.status).html(),
           },
-          actionsCell(applicationB),
+          { html: actionsLink(applicationB) },
         ],
       ])
     })
@@ -459,7 +458,7 @@ describe('utils', () => {
             html: new ApplicationStatusTag(applicationA.status).html(),
           },
           {
-            html: getAction(applicationA),
+            html: actionsLink(applicationA),
           },
         ],
         [
@@ -484,7 +483,7 @@ describe('utils', () => {
             html: new ApplicationStatusTag(applicationB.status).html(),
           },
           {
-            html: getAction(applicationB),
+            html: actionsLink(applicationB),
           },
         ],
         [
@@ -509,7 +508,7 @@ describe('utils', () => {
             html: new ApplicationStatusTag(applicationC.status).html(),
           },
           {
-            html: getAction(applicationC),
+            html: actionsLink(applicationC),
           },
         ],
       ])
@@ -589,7 +588,7 @@ describe('utils', () => {
               html: new ApplicationStatusTag(application.status).html(),
             },
             {
-              html: getAction(application),
+              html: actionsLink(application),
             },
           ],
         ])
@@ -769,11 +768,14 @@ describe('utils', () => {
     it.each(['started', 'requestedFurtherInformation'] as const)(
       'returns a link to withdraw the application when the status is %s',
       (status: ApplicationStatus) => {
-        const applicationSummary = applicationSummaryFactory.build({ id: 'an-application-id', status })
-
-        expect(actionsCell(applicationSummary)).toEqual({
-          html: '<a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a>',
+        const applicationSummary = applicationSummaryFactory.build({
+          id: 'an-application-id',
+          status,
         })
+
+        expect(actionsLink(applicationSummary)).toBe(
+          '<a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a>',
+        )
       },
     )
 
@@ -786,20 +788,21 @@ describe('utils', () => {
           hasRequestsForPlacement: false,
         })
 
-        expect(actionsCell(applicationSummary)).toEqual({
-          html: '<a href="/placement-applications?id=an-application-id"  >Create request for placement</a>',
-        })
+        expect(actionsLink(applicationSummary)).toEqual(
+          '<a href="/placement-applications?id=an-application-id"  >Create request for placement</a>',
+        )
       },
     )
 
     it.each(['rejected', 'withdrawn', 'submitted'])(
       'does not return a link to withdraw the application if the status is %s',
       (status: ApplicationStatus) => {
-        const applicationSummary = applicationSummaryFactory.build({ id: 'an-application-id', status })
-
-        expect(actionsCell(applicationSummary)).toEqual({
-          html: '',
+        const applicationSummary = applicationSummaryFactory.build({
+          id: 'an-application-id',
+          status,
         })
+
+        expect(actionsLink(applicationSummary)).toBe('')
       },
     )
   })

@@ -18,7 +18,6 @@ import type {
   ApplicationSortField,
   ApprovedPremisesApplicationStatus as ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
-  ApprovedPremisesApplicationSummary,
   PersonalTimeline,
   PlacementApplication,
   PlacementType,
@@ -69,7 +68,7 @@ const applicationTableRows = (applications: Array<ApplicationSummary>): Array<Ta
     textValue(getArrivalDateorNA(application.arrivalDate)),
     textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
     htmlValue(new ApplicationStatusTag(application.status).html()),
-    actionsCell(application),
+    htmlValue(actionsLink(application)),
   ])
 }
 
@@ -109,19 +108,12 @@ const dashboardTableRows = (
       textValue(getArrivalDateorNA(application.arrivalDate)),
       textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
       htmlValue(new ApplicationStatusTag(application.status).html()),
-      htmlValue(getAction(application)),
+      htmlValue(actionsLink(application)),
     ],
   )
 }
 
 export const getAction = (application: ApplicationSummary | Application) => {
-  if ((application as ApprovedPremisesApplicationSummary).hasRequestsForPlacement) {
-    return linkTo(
-      paths.applications.show,
-      { id: application.id },
-      { text: 'View placement request(s)', query: { tab: applicationShowPageTabs.placementRequests } },
-    )
-  }
   if (application.status === 'awaitingPlacement') {
     return linkTo(
       placementApplicationPaths.placementApplications.create,
@@ -141,22 +133,28 @@ export const applicationSuitableStatuses: ReadonlyArray<ApplicationStatus> = [
   'placementAllocated',
 ]
 
-export const actionsCell = (application: ApplicationSummary) => {
-  let link = ''
+export const actionsLink = (application: ApplicationSummary) => {
+  if (application.hasRequestsForPlacement) {
+    return linkTo(
+      paths.applications.show,
+      { id: application.id },
+      { text: 'View placement request(s)', query: { tab: applicationShowPageTabs.placementRequests } },
+    )
+  }
 
   if (application.status === 'started' || application.status === 'requestedFurtherInformation') {
-    link = linkTo(paths.applications.withdraw.new, { id: application.id }, { text: 'Withdraw' })
+    return linkTo(paths.applications.withdraw.new, { id: application.id }, { text: 'Withdraw' })
   }
 
   if (applicationSuitableStatuses.includes(application.status) && !application.hasRequestsForPlacement) {
-    link = linkTo(
+    return linkTo(
       placementApplicationPaths.placementApplications.create,
       {},
       { text: 'Create request for placement', query: { id: application.id } },
     )
   }
 
-  return htmlValue(link)
+  return ''
 }
 
 export type ApplicationOrAssessmentResponse = Record<string, Array<PageResponse>>
