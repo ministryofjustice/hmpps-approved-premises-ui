@@ -17,6 +17,7 @@ context('Withdraw Application', () => {
       status: 'started',
       createdByUserId: '123',
       submittedAt: undefined,
+      hasRequestsForPlacement: false,
     })
     const withdrawable = withdrawableFactory.build({ type: 'application' })
     cy.task('stubApplicationGet', { application: this.application })
