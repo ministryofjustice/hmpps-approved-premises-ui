@@ -429,7 +429,9 @@ const mapPlacementApplicationToSummaryCards = (
 export const withdrawnStatusTag = {
   key: { text: 'Status' },
   value: {
-    html: new ApplicationStatusTag('withdrawn').html(),
+    html: `<strong class="govuk-tag govuk-tag--timeline-tag govuk-tag--red">
+        Withdrawn
+      </strong>`,
   },
 }
 
