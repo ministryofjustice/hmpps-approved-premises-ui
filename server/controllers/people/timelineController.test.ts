@@ -96,6 +96,14 @@ describe('TimelineController', () => {
       })
     })
 
+    it('trims the input', async () => {
+      const requestHandler = timelineController.show()
+
+      await requestHandler({ ...request, query: { crn: ' test ' } }, response, next)
+
+      expect(personService.getTimeline).toHaveBeenCalledWith(token, 'test')
+    })
+
     describe('when there the person service throws an error', () => {
       it('catches the error and redirects to the find page', async () => {
         const crn = 'CRN'
@@ -117,7 +125,7 @@ describe('TimelineController', () => {
       it('adds error message to flash and redirects to show', async () => {
         const requestHandler = timelineController.show()
 
-        await requestHandler({ ...request, query: { crn: undefined } }, response, next)
+        await requestHandler({ ...request, query: { crn: ' ' } }, response, next)
 
         expect(addErrorMessageToFlash).toHaveBeenCalledWith(request, 'You must enter a CRN', 'crn')
         expect(response.redirect).toHaveBeenCalledWith(paths.timeline.find({}))

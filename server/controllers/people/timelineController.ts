@@ -24,15 +24,15 @@ export default class TimelineController {
 
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const crn = req?.query.crn as string | undefined
+      const crn = req?.query?.crn as string | undefined
 
-      if (!crn) {
+      if (!crn?.trim()) {
         addErrorMessageToFlash(req, 'You must enter a CRN', 'crn')
         res.redirect(paths.timeline.find({}))
       }
 
       try {
-        const timeline = await this.personService.getTimeline(req.user.token, crn)
+        const timeline = await this.personService.getTimeline(req.user.token, crn.trim())
 
         res.render('people/timeline/show', { timeline, crn, pageHeading: `Timeline for ${crn}` })
       } catch (error) {
