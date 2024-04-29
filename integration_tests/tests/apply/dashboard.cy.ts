@@ -1,3 +1,4 @@
+import { ApprovedPremisesApplicationStatus as ApplicationStatus } from '../../../server/@types/shared'
 import { applicationSummaryFactory, placementApplicationFactory } from '../../../server/testutils/factories'
 import { normaliseCrn } from '../../../server/utils/normaliseCrn'
 import DashboardPage from '../../pages/apply/dashboard'
@@ -72,12 +73,12 @@ context('All applications', () => {
 
     // And there is a page of applications
     const applications = applicationSummaryFactory.buildList(10)
-
+    const statusFilter: ApplicationStatus = 'rejected'
     cy.task('stubAllApplications', { applications })
     cy.task('stubAllApplications', { applications: [applications[1]], searchOptions: { crnOrName: 'foo' } })
     cy.task('stubAllApplications', {
       applications: [applications[2], applications[3]],
-      searchOptions: { status: 'submitted' },
+      searchOptions: { status: statusFilter },
     })
 
     // When I access the applications dashboard
@@ -101,10 +102,10 @@ context('All applications', () => {
     page.shouldShowApplications()
 
     // When I search by status
-    page.searchByStatus('submitted')
+    page.searchByStatus(statusFilter)
 
     // Then the API should have received a request for the query
-    cy.task('verifyDashboardRequest', { page: '1', searchOptions: { status: 'submitted' } }).then(requests => {
+    cy.task('verifyDashboardRequest', { page: '1', searchOptions: { status: statusFilter } }).then(requests => {
       expect(requests).to.have.length.greaterThan(0)
     })
 
