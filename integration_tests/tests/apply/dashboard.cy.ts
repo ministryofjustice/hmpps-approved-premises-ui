@@ -1,4 +1,6 @@
+import { ApprovedPremisesApplicationStatus as ApplicationStatus } from '../../../server/@types/shared'
 import { applicationSummaryFactory, placementApplicationFactory } from '../../../server/testutils/factories'
+import { applicationSuitableStatuses } from '../../../server/utils/applications/utils'
 import { normaliseCrn } from '../../../server/utils/normaliseCrn'
 import DashboardPage from '../../pages/apply/dashboard'
 import ReasonForPlacementPage from '../../pages/match/placementRequestForm/reasonForPlacement'
@@ -72,12 +74,12 @@ context('All applications', () => {
 
     // And there is a page of applications
     const applications = applicationSummaryFactory.buildList(10)
-
+    const statusFilter: ApplicationStatus = 'rejected'
     cy.task('stubAllApplications', { applications })
     cy.task('stubAllApplications', { applications: [applications[1]], searchOptions: { crnOrName: 'foo' } })
     cy.task('stubAllApplications', {
       applications: [applications[2], applications[3]],
-      searchOptions: { status: 'submitted' },
+      searchOptions: { status: statusFilter },
     })
 
     // When I access the applications dashboard
@@ -101,16 +103,29 @@ context('All applications', () => {
     page.shouldShowApplications()
 
     // When I search by status
-    page.searchByStatus('submitted')
+    page.searchByStatus(statusFilter)
 
     // Then the API should have received a request for the query
-    cy.task('verifyDashboardRequest', { page: '1', searchOptions: { status: 'submitted' } }).then(requests => {
+    cy.task('verifyDashboardRequest', { page: '1', searchOptions: { status: statusFilter } }).then(requests => {
       expect(requests).to.have.length.greaterThan(0)
     })
 
     // And I should see the search results that match that query
     page = new DashboardPage([applications[2], applications[3]])
     page.shouldShowApplications()
+
+    // When I filter by application suitable
+    page.searchByStatus(applicationSuitableStatuses)
+
+    // then the API should have received a request for the query
+    cy.task('verifyDashboardRequest', {
+      page: '1',
+      searchOptions: { status: applicationSuitableStatuses.toString() },
+    }).then(requests => {
+      expect(requests).to.have.length(1)
+      expect(requests[0].queryParams.status.values).to.have.length(1)
+      expect(requests[0].queryParams.status.values[0]).to.eq(applicationSuitableStatuses.toString())
+    })
   })
 
   it('request for placement for application status awaiting placement', () => {
