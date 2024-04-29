@@ -4,7 +4,11 @@ import type { NewDateChange } from '@approved-premises/api'
 
 import { ErrorWithData } from '../../utils/errors'
 import { BookingService } from '../../services'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
+import {
+  addErrorMessageToFlash,
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+} from '../../utils/validation'
 import { DateFormats } from '../../utils/dateUtils'
 
 import paths from '../../paths/manage'
@@ -50,6 +54,16 @@ export default class DateChangeController {
         const payload: NewDateChange = {}
         const emptyDates: Array<keyof NewDateChange> = []
 
+        if (!datesToChange?.length) {
+          addErrorMessageToFlash(req, 'You must select a date to change', 'datesToChange')
+          return res.redirect(
+            paths.bookings.dateChanges.new({
+              bookingId,
+              premisesId,
+            }),
+          )
+        }
+
         datesToChange.forEach((itemKey: keyof NewDateChange) => {
           const date = DateFormats.dateAndTimeInputsToIsoString(req.body, itemKey)[itemKey]
           if (!date) {
@@ -70,9 +84,9 @@ export default class DateChangeController {
         await this.bookingService.changeDates(req.user.token, premisesId, bookingId, payload)
 
         req.flash('success', 'Booking changed successfully')
-        res.redirect(backLink)
+        return res.redirect(backLink)
       } catch (error) {
-        catchValidationErrorOrPropogate(
+        return catchValidationErrorOrPropogate(
           req,
           res,
           error as Error,

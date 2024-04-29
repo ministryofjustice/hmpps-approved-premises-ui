@@ -6,7 +6,11 @@ import type { ErrorsAndUserInput } from '@approved-premises/ui'
 import { DateFormats } from '../../utils/dateUtils'
 import BookingService from '../../services/bookingService'
 import DateChangesController from './dateChangesController'
-import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
+import {
+  addErrorMessageToFlash,
+  catchValidationErrorOrPropogate,
+  fetchErrorsAndUserInput,
+} from '../../utils/validation'
 import { ErrorWithData } from '../../utils/errors'
 
 import { bookingFactory } from '../../testutils/factories'
@@ -136,20 +140,14 @@ describe('dateChangesController', () => {
           newDepartureDate: '2022-01-01',
         },
       },
-      'with departure date and arrival date specified, but change flags not selected': {
-        body: {
-          datesToChange: [] as Array<undefined>,
-          ...DateFormats.isoDateToDateInputs('2022-01-01', 'newDepartureDate'),
-          ...DateFormats.isoDateToDateInputs('2022-01-01', 'newArrivalDate'),
-        },
-        expectedPayload: {},
-      },
       'with an unexpected body': {
         body: {
           datesToChange: ['someFakeDate'],
           ...DateFormats.isoDateToDateInputs('2022-01-01', 'someFakeDate'),
         },
-        expectedPayload: {},
+        expectedPayload: {
+          someFakeDate: '2022-01-01',
+        },
       },
     }
 
@@ -197,6 +195,23 @@ describe('dateChangesController', () => {
         },
       }
 
+      it('should catch a validation error when neither date is selected to updated', async () => {
+        const requestHandler = controller.create()
+
+        request = createMock<Request>({
+          ...requestParams,
+          body: { datesToChange: [] },
+        })
+
+        await requestHandler(request, response, next)
+
+        expect(addErrorMessageToFlash).toHaveBeenCalledWith(
+          request,
+          'You must select a date to change',
+          'datesToChange',
+        )
+      })
+
       it.each(Object.keys(errors))(
         'should catch a validation error with the correct data when %s but the dates are empty',
         async key => {
@@ -239,7 +254,7 @@ describe('dateChangesController', () => {
           throw err
         })
 
-        await requestHandler(request, response, next)
+        await requestHandler({ ...request, body: { datesToChange: ['newDepartureDate'] } }, response, next)
 
         expect(catchValidationErrorOrPropogate).toHaveBeenCalledWith(
           request,

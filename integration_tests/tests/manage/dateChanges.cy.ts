@@ -19,6 +19,19 @@ context('Date Changes', () => {
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
   })
 
+  it('shows an error if neither date is selected', () => {
+    // And I visit the date change page
+    const dateChangePage = NewDateChangePage.visit(premises.id, booking.id)
+
+    // And I click submit without selecting any dates
+    dateChangePage.clickSubmit()
+
+    // Then I should see an error message
+    dateChangePage.shouldShowErrorMessagesForFields(['datesToChange'], {
+      datesToChange: 'You must select a date to change',
+    })
+  })
+
   it('changes a date', () => {
     cy.task('stubDateChange', { premisesId: premises.id, bookingId: booking.id })
 
@@ -78,6 +91,8 @@ context('Date Changes', () => {
     const dateChangePage = NewDateChangePage.visit(premises.id, booking.id)
 
     // And I click submit
+    dateChangePage.checkDatesToChangeOption('newArrivalDate')
+    dateChangePage.checkDatesToChangeOption('newDepartureDate')
     dateChangePage.clickSubmit()
 
     // Then I should see errors
