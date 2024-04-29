@@ -376,7 +376,7 @@ describe('utils', () => {
             html: new ApplicationStatusTag(applicationA.status).html(),
           },
           {
-            html: '',
+            html: actionsLink(applicationA),
           },
         ],
         [
@@ -401,7 +401,7 @@ describe('utils', () => {
             html: new ApplicationStatusTag(applicationB.status).html(),
           },
           {
-            html: '',
+            html: actionsLink(applicationB),
           },
         ],
       ])
@@ -771,6 +771,7 @@ describe('utils', () => {
         const applicationSummary = applicationSummaryFactory.build({
           id: 'an-application-id',
           status,
+          hasRequestsForPlacement: false,
         })
 
         expect(actionsLink(applicationSummary)).toBe(
@@ -800,6 +801,7 @@ describe('utils', () => {
         const applicationSummary = applicationSummaryFactory.build({
           id: 'an-application-id',
           status,
+          hasRequestsForPlacement: false,
         })
 
         expect(actionsLink(applicationSummary)).toBe('')

@@ -113,17 +113,6 @@ const dashboardTableRows = (
   )
 }
 
-export const getAction = (application: ApplicationSummary | Application) => {
-  if (application.status === 'awaitingPlacement') {
-    return linkTo(
-      placementApplicationPaths.placementApplications.create,
-      {},
-      { text: 'Create request for placement', query: { id: application.id } },
-    )
-  }
-  return ''
-}
-
 const getArrivalDateorNA = (arrivalDate: string | null | undefined) =>
   arrivalDate ? DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }) : 'N/A'
 
