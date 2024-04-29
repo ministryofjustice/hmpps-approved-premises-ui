@@ -109,7 +109,7 @@ describe('dateChangesController', () => {
     const bodies = {
       'with new arrival date': {
         body: {
-          datesToChange: 'newArrivalDate',
+          datesToChange: ['newArrivalDate'],
           ...DateFormats.isoDateToDateInputs('2022-01-01', 'newArrivalDate'),
         },
         expectedPayload: {
@@ -118,7 +118,7 @@ describe('dateChangesController', () => {
       },
       'with new departure date': {
         body: {
-          datesToChange: 'newDepartureDate',
+          datesToChange: ['newDepartureDate'],
           ...DateFormats.isoDateToDateInputs('2022-01-01', 'newDepartureDate'),
         },
         expectedPayload: {
@@ -188,11 +188,11 @@ describe('dateChangesController', () => {
           ],
         },
         'newArrivalDate is checked': {
-          body: { datesToChange: 'newArrivalDate' },
+          body: { datesToChange: ['newArrivalDate'] },
           expectedErrorParams: [{ propertyName: `$.newArrivalDate`, errorType: 'empty' }],
         },
         'newDepartureDate is checked': {
-          body: { datesToChange: 'newDepartureDate' },
+          body: { datesToChange: ['newDepartureDate'] },
           expectedErrorParams: [{ propertyName: `$.newDepartureDate`, errorType: 'empty' }],
         },
       }

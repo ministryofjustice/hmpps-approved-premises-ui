@@ -2,7 +2,6 @@ import type { Request, RequestHandler, Response } from 'express'
 
 import type { NewDateChange } from '@approved-premises/api'
 
-import { flattenCheckboxInput } from '../../utils/formUtils'
 import { ErrorWithData } from '../../utils/errors'
 import { BookingService } from '../../services'
 import { catchValidationErrorOrPropogate, fetchErrorsAndUserInput } from '../../utils/validation'
@@ -47,10 +46,9 @@ export default class DateChangeController {
       const { premisesId, bookingId } = req.params
 
       try {
-        const { backLink } = req.body
+        const { backLink, datesToChange } = req.body
         const payload: NewDateChange = {}
         const emptyDates: Array<keyof NewDateChange> = []
-        const datesToChange = flattenCheckboxInput(req.body.datesToChange)
 
         datesToChange.forEach((itemKey: keyof NewDateChange) => {
           const date = DateFormats.dateAndTimeInputsToIsoString(req.body, itemKey)[itemKey]
