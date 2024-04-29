@@ -115,7 +115,7 @@
         {% endset -%}
 
         {{ govukCheckboxes({
-          name: "datesToChange",
+          name: "datesToChange[]",
           fieldset: {
             legend: {
               text: "What dates do you want to change?",
@@ -125,6 +125,7 @@
           hint: {
             text: "Select all options that are relevant to you."
           },
+          errorMessage: errors.datesToChange,
           items: [
             {
               value: "newArrivalDate",

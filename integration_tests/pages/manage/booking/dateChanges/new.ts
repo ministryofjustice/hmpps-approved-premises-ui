@@ -32,7 +32,7 @@ export default class NewDateChange extends Page {
   }
 
   checkDatesToChangeOption(option: 'newArrivalDate' | 'newDepartureDate'): void {
-    cy.get(`input[name="datesToChange"][value="${option}"]`).click()
+    cy.get(`input[name="datesToChange[]"][value="${option}"]`).click()
   }
 
   shouldHaveCorrectBacklink(): void {
