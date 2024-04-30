@@ -1343,38 +1343,38 @@ describe('utils', () => {
     it('should return select options for tiers with the all tiers option selected by default', () => {
       expect(applicationStatusSelectOptions(null)).toEqual([
         { selected: true, text: 'All statuses', value: '' },
+        { selected: false, text: 'Application inapplicable', value: 'inapplicable' },
+        { selected: false, text: 'Not submitted', value: 'started' },
+        { selected: false, text: 'Unallocated assessment', value: 'unallocatedAssesment' },
+        { selected: false, text: 'Awaiting assessment', value: 'awaitingAssesment' },
+        { selected: false, text: 'Assessment in progress', value: 'assesmentInProgress' },
+        { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
+        { selected: false, text: 'Application rejected', value: 'rejected' },
         {
           selected: false,
           text: APPLICATION_SUITABLE,
           value: applicationSuitableStatuses,
         },
-        { selected: false, text: 'Application started', value: 'started' },
-        { selected: false, text: 'Application rejected', value: 'rejected' },
-        { selected: false, text: 'Awaiting assessment', value: 'awaitingAssesment' },
-        { selected: false, text: 'Unallocated assessment', value: 'unallocatedAssesment' },
-        { selected: false, text: 'Assessment in progress', value: 'assesmentInProgress' },
-        { selected: false, text: 'Application inapplicable', value: 'inapplicable' },
         { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
-        { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
       ])
     })
 
     it('should return the selected status if provided', () => {
-      expect(applicationStatusSelectOptions('awaitingPlacement')).toEqual([
+      expect(applicationStatusSelectOptions('awaitingAssesment')).toEqual([
         { selected: false, text: 'All statuses', value: '' },
+        { selected: false, text: 'Application inapplicable', value: 'inapplicable' },
+        { selected: false, text: 'Not submitted', value: 'started' },
+        { selected: false, text: 'Unallocated assessment', value: 'unallocatedAssesment' },
+        { selected: true, text: 'Awaiting assessment', value: 'awaitingAssesment' },
+        { selected: false, text: 'Assessment in progress', value: 'assesmentInProgress' },
+        { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
+        { selected: false, text: 'Application rejected', value: 'rejected' },
         {
           selected: false,
           text: APPLICATION_SUITABLE,
           value: applicationSuitableStatuses,
         },
-        { selected: false, text: 'Application started', value: 'started' },
-        { selected: false, text: 'Application rejected', value: 'rejected' },
-        { selected: false, text: 'Awaiting assessment', value: 'awaitingAssesment' },
-        { selected: false, text: 'Unallocated assessment', value: 'unallocatedAssesment' },
-        { selected: false, text: 'Assessment in progress', value: 'assesmentInProgress' },
-        { selected: false, text: 'Application inapplicable', value: 'inapplicable' },
         { selected: false, text: 'Application withdrawn', value: 'withdrawn' },
-        { selected: false, text: 'Further information requested', value: 'requestedFurtherInformation' },
       ])
     })
   })

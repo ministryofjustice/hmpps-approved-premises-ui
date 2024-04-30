@@ -27,7 +27,7 @@ export default class ListPage extends Page {
   }
 
   shouldShowInProgressApplications(): void {
-    this.shouldShowApplications(this.inProgressApplications, 'Application started')
+    this.shouldShowApplications(this.inProgressApplications, 'Not submitted')
   }
 
   shouldShowFurtherInformationRequestedApplications(): void {
