@@ -9,6 +9,7 @@ import type {
   Document,
   NewWithdrawal,
   PlacementApplication,
+  RequestForPlacement,
   SortDirection,
   SubmitApprovedPremisesApplication,
   TimelineEvent,
@@ -107,6 +108,12 @@ export default class ApplicationClient {
       path: paths.applications.placementApplications({ id: applicationId }),
       query: { includeInitialRequestForPlacement: true.toString() },
     })) as Array<PlacementApplication>
+  }
+
+  async requestsForPlacement(applicationId: string): Promise<Array<RequestForPlacement>> {
+    return (await this.restClient.get({
+      path: paths.applications.requestsForPlacement({ id: applicationId }),
+    })) as Array<RequestForPlacement>
   }
 
   async addNote(applicationId: string, note: ApplicationTimelineNote): Promise<ApplicationTimelineNote> {

@@ -4,14 +4,13 @@ import { ListPage, NotesConfirmationPage, ShowPage } from '../../pages/apply'
 import Page from '../../pages/page'
 import { setup } from './setup'
 import {
+  applicationFactory,
   noteFactory,
   placementApplicationFactory,
+  requestForPlacementFactory,
   timelineEventFactory,
   withdrawableFactory,
 } from '../../../server/testutils/factories'
-import placementApplication from '../../../server/testutils/factories/placementApplication'
-import { addResponseToFormArtifact, addResponsesToFormArtifact } from '../../../server/testutils/addToApplication'
-import { ApprovedPremisesApplication as Application, User } from '../../../server/@types/shared'
 import { defaultUserId } from '../../mockApis/auth'
 import paths from '../../../server/paths/api'
 import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
@@ -125,59 +124,61 @@ context('show applications', () => {
     showPage.shouldShowPersonInformation()
   })
 
-  it('should show placement applications and allow their withdrawal', function test() {
-    const { application, placementApplication: releaseFollowingDecisionPlacementApplication } =
-      makeReleaseFollowingDecisionPlacementApplication(this.application, defaultUserId)
-    const rotlPlacementApplication = makeRotlPlacementApplication(application.id)
-    const additionalPlacementApplication = makeAdditionalPlacementApplication(application.id)
-    const placementApplications = [
-      releaseFollowingDecisionPlacementApplication,
-      rotlPlacementApplication,
-      additionalPlacementApplication,
-    ]
+  it('should show requests for placement and allow their withdrawal', function test() {
+    const application = applicationFactory.build({
+      ...this.application,
+      status: 'submitted',
+      createdByUserId: defaultUserId,
+    })
+    const requestsForPlacement = requestForPlacementFactory.buildList(4)
+    const withdrawableRequestForPlacement = requestForPlacementFactory.build({
+      canBeDirectlyWithdrawn: true,
+      createdByUserId: defaultUserId,
+    })
+    const placementApplication = placementApplicationFactory.build({
+      id: withdrawableRequestForPlacement.id,
+      applicationId: application.id,
+    })
 
     const withdrawable = withdrawableFactory.build({
-      id: releaseFollowingDecisionPlacementApplication.id,
+      id: withdrawableRequestForPlacement.id,
       type: 'placement_application',
     })
     cy.task('stubApplicationGet', { application })
-    cy.task('stubApplicationPlacementRequests', {
+    cy.task('stubApplicationRequestsForPlacement', {
       applicationId: application.id,
-      placementApplications,
+      requestsForPlacement: [...requestsForPlacement, withdrawableRequestForPlacement],
     })
     cy.task('stubWithdrawables', { applicationId: application.id, withdrawables: [withdrawable] })
-    placementApplications.forEach(pa => {
-      cy.task('stubPlacementApplication', pa)
-      cy.task('stubSubmitPlacementApplicationWithdraw', pa)
-    })
+
+    cy.task('stubPlacementApplication', placementApplication)
+    cy.task('stubSubmitPlacementApplicationWithdraw', placementApplication)
 
     // Given I visit the application page
-    ShowPage.visit(application)
+    ShowPage.visit(this.application)
     const showPage = Page.verifyOnPage(ShowPage, application)
 
     // When I click the 'Request a placement' tab
     showPage.clickRequestAPlacementTab()
 
     // Then I should see the placement requests
-    showPage.shouldShowPlacementApplications(placementApplications, application, {
+    showPage.shouldShowRequestsForPlacement(requestsForPlacement, application, {
       id: defaultUserId,
     })
 
     // Given I want to withdraw a placement application
     // When I click 'withdraw'
-    showPage.clickWithdraw(placementApplications[0].id)
+    showPage.clickWithdraw(withdrawableRequestForPlacement.id)
 
     withdrawPlacementRequestOrApplication(withdrawable, showPage, application.id)
 
     showPage.showsWithdrawalConfirmationMessage()
 
     // And the API should have been called with the withdrawal reason
-    cy.task('verifyPlacementApplicationWithdrawn', releaseFollowingDecisionPlacementApplication.id).then(requests => {
+    cy.task('verifyPlacementApplicationWithdrawn', withdrawableRequestForPlacement.id).then(requests => {
       expect(requests).to.have.length(1)
 
-      expect(requests[0].url).to.equal(
-        paths.placementApplications.withdraw({ id: releaseFollowingDecisionPlacementApplication.id }),
-      )
+      expect(requests[0].url).to.equal(paths.placementApplications.withdraw({ id: withdrawableRequestForPlacement.id }))
 
       const body = JSON.parse(requests[0].body)
 
@@ -249,11 +250,10 @@ context('show applications', () => {
 
     cy.task('stubApplicationGet', { application })
     cy.task('stubApplications', [application])
-    cy.task('stubApplicationPlacementRequests', {
+    cy.task('stubApplicationRequestsForPlacement', {
       applicationId: application.id,
-      placementApplications: placementApplicationFactory.buildList(1),
+      requestsForPlacement: [],
     })
-
     // Given I am on the placement requests view on the application show page
     const showPage = ShowPage.visit(application, 'placementRequests')
 
@@ -261,102 +261,3 @@ context('show applications', () => {
     showPage.shouldNotShowCreatePlacementRequestButton()
   })
 })
-
-const makeReleaseFollowingDecisionPlacementApplication = (application: Application, userId: User['id']) => {
-  let updatedApplication = addResponseToFormArtifact(application, {
-    task: 'move-on',
-    page: 'placement-duration',
-    key: 'duration',
-    value: '84',
-  })
-
-  updatedApplication = {
-    ...updatedApplication,
-    status: 'submitted',
-    createdByUserId: userId,
-    assessmentDecision: 'accepted',
-    assessmentDecisionDate: '2023-01-01',
-    assessmentId: 'low',
-    document: applicationDocument,
-  }
-
-  let releaseFollowingDecisionPlacementApplication = placementApplication.build({
-    applicationId: application.id,
-    createdByUserId: userId,
-  })
-
-  releaseFollowingDecisionPlacementApplication = addResponseToFormArtifact(
-    releaseFollowingDecisionPlacementApplication,
-    {
-      task: 'request-a-placement',
-      page: 'reason-for-placement',
-      key: 'reason',
-      value: 'release_following_decision',
-    },
-  )
-
-  releaseFollowingDecisionPlacementApplication = addResponseToFormArtifact(
-    releaseFollowingDecisionPlacementApplication,
-    {
-      task: 'request-a-placement',
-      page: 'decision-to-release',
-      key: 'decisionToReleaseDate',
-      value: '2024-01-01',
-    },
-  )
-
-  return { application: updatedApplication, placementApplication: releaseFollowingDecisionPlacementApplication }
-}
-
-const makeRotlPlacementApplication = (applicationId: string) => {
-  let rotlPlacementApplication = placementApplication.build({ applicationId })
-
-  rotlPlacementApplication = addResponseToFormArtifact(rotlPlacementApplication, {
-    task: 'request-a-placement',
-    page: 'reason-for-placement',
-    key: 'reason',
-    value: 'rotl',
-  })
-  rotlPlacementApplication = addResponseToFormArtifact(rotlPlacementApplication, {
-    task: 'request-a-placement',
-    page: 'dates-of-placement',
-    key: 'datesOfPlacement',
-    value: [
-      {
-        arrivalDate: '2023-01-01',
-        durationDays: '20',
-        duration: '20',
-      },
-      {
-        arrivalDate: '2024-01-01',
-        durationDays: '10',
-        durationWeeks: '1',
-        duration: '17',
-      },
-    ],
-  })
-  return rotlPlacementApplication
-}
-
-const makeAdditionalPlacementApplication = (applicationId: string) => {
-  let additionalPlacementApplication = placementApplication.build({ applicationId })
-
-  additionalPlacementApplication = addResponseToFormArtifact(additionalPlacementApplication, {
-    task: 'request-a-placement',
-    page: 'reason-for-placement',
-    key: 'reason',
-    value: 'additional_placement',
-  })
-
-  additionalPlacementApplication = addResponsesToFormArtifact(additionalPlacementApplication, {
-    task: 'request-a-placement',
-    page: 'additional-placement-details',
-    keyValuePairs: {
-      arrivalDate: '2024-05-21',
-      durationDays: '10',
-      duration: '10',
-    },
-  })
-
-  return additionalPlacementApplication
-}

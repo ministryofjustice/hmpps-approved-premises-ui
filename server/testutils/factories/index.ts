@@ -68,6 +68,7 @@ import premisesSummaryFactory from './premisesSummary'
 import prisonCaseNotesFactory from './prisonCaseNotes'
 import reallocationFactory from './reallocation'
 import referenceDataFactory, { apAreaFactory, probationRegionFactory } from './referenceData'
+import requestForPlacementFactory from './requestForPlacement'
 import risksFactory, { tierEnvelopeFactory } from './risks'
 import roomFactory from './room'
 import staffMemberFactory from './staffMember'
@@ -158,6 +159,7 @@ export {
   reallocationFactory,
   referenceDataFactory,
   restrictedPersonFactory,
+  requestForPlacementFactory,
   risksFactory,
   roomFactory,
   roshSummaryFactory,

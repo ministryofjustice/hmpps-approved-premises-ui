@@ -1,7 +1,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
-{% macro requestAPlacement(placementApplications, application, user, csrfToken) %}
+{% macro requestAPlacement(requestsForPlacement, application, user, csrfToken) %}
 
     <div class="moj-page-header-actions__actions">
         <div class="moj-button-menu">
@@ -19,9 +19,9 @@
         </div>
     </div>
 
-    {% set placementApplications = ApplyUtils.mapPlacementApplicationToSummaryCards(placementApplications, application, user) %}
+    {% set requestsForPlacement = PlacementRequestUtils.mapRequestsForPlacementToSummaryCards(requestsForPlacement, application, user) %}
 
-    {% if placementApplications.length === 0 %}
+    {% if requestsForPlacement.length === 0 %}
         <div class="govuk-warning-text">
             <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
             <strong class="govuk-warning-text__text">
@@ -31,9 +31,9 @@
         </div>
 
     {% else %}
+        {% for requestForPlacement in requestsForPlacement %}
 
-        {% for placementApplication in placementApplications %}
-            {{govukSummaryList(placementApplication)}}
+            {{govukSummaryList(requestForPlacement)}}
             {%endfor%}
 
         {% endif %}

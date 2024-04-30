@@ -5,6 +5,7 @@ import {
   personFactory,
   placementApplicationFactory,
   placementApplicationTaskFactory,
+  requestForPlacementFactory,
 } from '../../../server/testutils/factories'
 import ListPage from '../../pages/assess/listPage'
 import ReviewApplicationPage from '../../pages/match/reviewApplicationForm/reviewApplicationPage'
@@ -57,13 +58,16 @@ context('Placement Applications', () => {
         data: placementApplicationData,
         applicationId: completedApplication.id,
       })
+
       cy.task('stubCreatePlacementApplication', placementApplication)
       cy.task('stubPlacementApplicationUpdate', placementApplication)
       cy.task('stubSubmitPlacementApplication', placementApplication)
       cy.task('stubPlacementApplication', placementApplication)
-      cy.task('stubApplicationPlacementRequests', {
+
+      const requestForPlacement = requestForPlacementFactory.build({})
+      cy.task('stubApplicationRequestsForPlacement', {
         applicationId: completedApplication.id,
-        placementApplications: [placementApplication],
+        requestsForPlacement: [requestForPlacement],
       })
 
       // Given I am on the readonly application view
@@ -76,7 +80,7 @@ context('Placement Applications', () => {
       showPage.clickCreatePlacementButton()
 
       // Given I am on the placement application form and start and application
-      const placementReasonPage = ReasonForPlacementPage.visit(placementApplicationId)
+      const placementReasonPage = ReasonForPlacementPage.visit(placementApplication.id)
 
       // When I complete the form
       placementReasonPage.completeForm('rotl')
@@ -139,9 +143,10 @@ context('Placement Applications', () => {
       cy.task('stubPlacementApplicationUpdate', placementApplication)
       cy.task('stubSubmitPlacementApplication', placementApplication)
       cy.task('stubPlacementApplication', placementApplication)
-      cy.task('stubApplicationPlacementRequests', {
+      const requestForPlacement = requestForPlacementFactory.build({})
+      cy.task('stubApplicationRequestsForPlacement', {
         applicationId: completedApplication.id,
-        placementApplications: [placementApplication],
+        requestsForPlacement: [requestForPlacement],
       })
 
       // Given I am on the readonly application view
@@ -222,9 +227,10 @@ context('Placement Applications', () => {
       cy.task('stubSubmitPlacementApplication', placementApplication)
       cy.task('stubPlacementApplication', placementApplication)
       cy.task('stubApplicationDocuments', { application: completedApplication, documents })
-      cy.task('stubApplicationPlacementRequests', {
+      const requestForPlacement = requestForPlacementFactory.build({})
+      cy.task('stubApplicationRequestsForPlacement', {
         applicationId: completedApplication.id,
-        placementApplications: [placementApplication],
+        requestsForPlacement: [requestForPlacement],
       })
 
       // Given I am on the readonly application view

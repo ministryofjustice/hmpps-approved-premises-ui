@@ -86,14 +86,14 @@ export default class ApplicationsController {
         }
 
         if (req.query.tab === applicationShowPageTabs.placementRequests) {
-          const placementApplications = await this.applicationService.getPlacementApplications(
+          const requestsForPlacement = await this.applicationService.getRequestsForPlacement(
             req.user.token,
             application.id,
           )
 
           return res.render('applications/show', {
             ...defaultParams,
-            placementApplications: placementApplications.sort(
+            requestsForPlacement: requestsForPlacement.sort(
               (a, b) =>
                 DateFormats.isoToDateObj(b.submittedAt).getTime() - DateFormats.isoToDateObj(a.submittedAt).getTime(),
             ),

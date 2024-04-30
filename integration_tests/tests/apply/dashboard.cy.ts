@@ -1,5 +1,9 @@
 import { ApprovedPremisesApplicationStatus as ApplicationStatus } from '../../../server/@types/shared'
-import { applicationSummaryFactory, placementApplicationFactory } from '../../../server/testutils/factories'
+import {
+  applicationSummaryFactory,
+  placementApplicationFactory,
+  requestForPlacementFactory,
+} from '../../../server/testutils/factories'
 import { applicationSuitableStatuses } from '../../../server/utils/applications/utils'
 import { normaliseCrn } from '../../../server/utils/normaliseCrn'
 import DashboardPage from '../../pages/apply/dashboard'
@@ -166,44 +170,38 @@ context('All applications', () => {
   })
 
   it('navigate to request for placement tab for application with at least one request for placement', () => {
-    cy.fixture('paroleBoardPlacementApplication.json').then(placementApplicationData => {
-      // Given I am logged in
-      cy.signIn()
+    // Given I am logged in
+    cy.signIn()
 
-      // And there is a page of applications
-      const applications = applicationSummaryFactory.buildList(1, {
-        status: 'awaitingPlacement',
-        hasRequestsForPlacement: true,
-      })
-      const application = applications[0]
-      const applicationId = application.id
-      cy.task('stubAllApplications', { applications })
-      cy.task('stubApplicationGet', { application })
-
-      // And there is a placement application in the DB
-      const placementApplicationId = '123'
-      const placementApplication = placementApplicationFactory.build({
-        id: placementApplicationId,
-        data: placementApplicationData,
-        applicationId,
-      })
-      cy.task('stubApplicationPlacementRequests', {
-        applicationId,
-        placementApplications: [placementApplication],
-      })
-
-      // When I access the applications dashboard
-      const page = DashboardPage.visit(applications)
-
-      // Then I should see all the applications
-      page.shouldShowApplications()
-
-      // And I should be able to click on request for placement
-      page.clickViewPlacementRequestsLink()
-
-      // And I should be on request for placement tab
-      page.shouldContainRequestAPlacementTab()
+    // And there is a page of applications
+    const applications = applicationSummaryFactory.buildList(1, {
+      status: 'awaitingPlacement',
+      hasRequestsForPlacement: true,
     })
+    const application = applications[0]
+    const applicationId = application.id
+
+    cy.task('stubAllApplications', { applications: [application] })
+    cy.task('stubApplicationGet', { application })
+
+    // And there is a request for placement in the DB
+    const requestsForPlacement = requestForPlacementFactory.buildList(1)
+    cy.task('stubApplicationRequestsForPlacement', {
+      applicationId,
+      requestsForPlacement,
+    })
+
+    // When I access the applications dashboard
+    const page = DashboardPage.visit([application])
+
+    // Then I should see all the applications
+    page.shouldShowApplications()
+
+    // And I should be able to click on request for placement
+    page.clickViewPlacementRequestsLink()
+
+    // And I should be on request for placement tab
+    page.shouldContainRequestAPlacementTab()
   })
 
   const shouldSortByField = (field: string) => {

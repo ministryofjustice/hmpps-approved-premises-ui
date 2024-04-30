@@ -2,20 +2,17 @@ import type {
   ApprovedPremisesApplication as Application,
   ApplicationTimelineNote,
   FullPerson,
-  PlacementApplication,
+  RequestForPlacement,
 } from '@approved-premises/api'
 import { fromPartial } from '@total-typescript/shoehorn'
+
 import { DateFormats } from '../../../server/utils/dateUtils'
 
 import Page from '../page'
-import {
-  ApplicationShowPageTab,
-  applicationShowPageTab,
-  mapPlacementApplicationToSummaryCards,
-} from '../../../server/utils/applications/utils'
-import { TextItem } from '../../../server/@types/ui'
+import { ApplicationShowPageTab, applicationShowPageTab } from '../../../server/utils/applications/utils'
 import paths from '../../../server/paths/apply'
 import { isFullPerson } from '../../../server/utils/personUtils'
+import { mapRequestsForPlacementToSummaryCards } from '../../../server/utils/placementRequests/requestForPlacementSummaryCards'
 
 export default class ShowPage extends Page {
   constructor(private readonly application: Application) {
@@ -135,31 +132,20 @@ export default class ShowPage extends Page {
     cy.get('a').contains('Placement').should('contain', '[aria-page="current"]')
   }
 
-  shouldShowPlacementApplications(
-    placementApplications: Array<PlacementApplication>,
+  shouldShowRequestsForPlacement(
+    requestsForPlacement: Array<RequestForPlacement>,
     application: Application,
     user?: { id: string },
   ) {
-    mapPlacementApplicationToSummaryCards(placementApplications, application, fromPartial(user)).forEach(
-      placementApplicationSummaryCard => {
+    mapRequestsForPlacementToSummaryCards(requestsForPlacement, application, fromPartial(user)).forEach(
+      requestForPlacementSummaryCard => {
         cy.get(
-          `[data-cy-placement-application-id="${placementApplicationSummaryCard.card.attributes['data-cy-placement-application-id']}"]`,
+          `[data-cy-placement-application-id="${requestForPlacementSummaryCard.card.attributes['data-cy-placement-application-id']}"]`,
         )
-          .should('contain', placementApplicationSummaryCard.card.title.text)
+          .should('contain', requestForPlacementSummaryCard.card.title.text)
           .within(() => {
-            cy.get('.govuk-summary-list__row').should('have.length', placementApplicationSummaryCard.rows.length)
-            cy.get('.govuk-summary-list__row').each(($el, index) => {
-              cy.wrap($el).within(() => {
-                cy.get('.govuk-summary-list__key').should(
-                  'contain',
-                  (placementApplicationSummaryCard.rows[index].key as TextItem).text,
-                )
-                cy.get('.govuk-summary-list__value').should(
-                  'contain',
-                  (placementApplicationSummaryCard.rows[index].value as TextItem).text,
-                )
-              })
-            })
+            cy.get('.govuk-summary-list__row').should('have.length', requestForPlacementSummaryCard.rows.length)
+            this.shouldContainSummaryListItems(requestForPlacementSummaryCard.rows)
           })
       },
     )

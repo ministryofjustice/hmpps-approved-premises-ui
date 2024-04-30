@@ -128,6 +128,7 @@ export default {
     withdrawal: applyPaths.applications.show.path('withdrawal'),
     timeline: applyPaths.applications.show.path('timeline'),
     placementApplications: applyPaths.applications.show.path('placement-applications'),
+    requestsForPlacement: applyPaths.applications.show.path('requests-for-placement'),
     addNote: applyPaths.applications.show.path('notes'),
     withdrawables: applyPaths.applications.show.path('withdrawables'),
     appeals: {
