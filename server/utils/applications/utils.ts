@@ -446,16 +446,24 @@ export type ApplicationStatusForFilter = ApplicationStatus | typeof applicationS
 const applicationStatusSelectOptions = (
   selectedOption: ApplicationStatusForFilter | undefined | null,
 ): Array<SelectOption> => {
-  const options: Array<SelectOption> = Object.keys(ApplicationStatusTag.statuses)
-    // submitted status isnt used in the API so will return no results
-    .filter(status => !applicationSuitableStatuses.includes(status as ApplicationStatus) && status !== 'submitted')
-    .map(status => ({
-      text: ApplicationStatusTag.statuses[status],
-      value: status,
-      selected: status === selectedOption,
-    }))
+  const statusFilters: ReadonlyArray<ApplicationStatus> = [
+    'inapplicable',
+    'started',
+    'unallocatedAssesment',
+    'awaitingAssesment',
+    'assesmentInProgress',
+    'requestedFurtherInformation',
+    'rejected',
+    'withdrawn',
+  ]
 
-  options.unshift({
+  const options: Array<SelectOption> = statusFilters.map(status => ({
+    text: ApplicationStatusTag.statuses[status],
+    value: status,
+    selected: status === selectedOption,
+  }))
+
+  options.splice(7, 0, {
     text: APPLICATION_SUITABLE,
     value: applicationSuitableStatuses,
     selected: selectedOption === applicationSuitableStatuses.toString(),
