@@ -4,7 +4,7 @@ import { StatusTag, StatusTagOptions } from '../statusTag'
 export const APPLICATION_SUITABLE = 'Application suitable' as const
 export class ApplicationStatusTag extends StatusTag<ApplicationStatus> {
   static readonly statuses: Record<ApplicationStatus, string> = {
-    started: 'Application started',
+    started: 'Not submitted',
     submitted: 'Application submitted',
     rejected: 'Application rejected',
     awaitingAssesment: 'Awaiting assessment',
