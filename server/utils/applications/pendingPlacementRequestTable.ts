@@ -1,9 +1,10 @@
 import {
   ApplicationSortField,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
+  ReleaseTypeOption,
   SortDirection,
 } from '../../@types/shared'
-import { TableCell, TableRow } from '../../@types/ui'
+import { SelectOption, TableCell, TableRow } from '../../@types/ui'
 import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
 import { allReleaseTypes } from './releaseTypeUtils'
@@ -20,9 +21,7 @@ export const pendingPlacementRequestTableHeader = (
     },
     sortHeader<ApplicationSortField>('Tier', 'tier', sortBy, sortDirection, hrefPrefix),
     sortHeader<ApplicationSortField>('Date of application', 'createdAt', sortBy, sortDirection, hrefPrefix),
-    {
-      text: 'Release Type',
-    },
+    sortHeader<ApplicationSortField>('Release Type', 'releaseType', sortBy, sortDirection, hrefPrefix),
   ]
 }
 
@@ -33,4 +32,20 @@ export const pendingPlacementRequestTableRows = (applications: Array<Application
     textValue(DateFormats.isoDateToUIDate(application.createdAt, { format: 'short' })),
     textValue(application.releaseType ? allReleaseTypes[application.releaseType] : ''),
   ])
+}
+
+export const releaseTypeSelectOptions = (selectedOption: ReleaseTypeOption | undefined | null): Array<SelectOption> => {
+  const options = Object.keys(allReleaseTypes).map(releaseType => ({
+    text: allReleaseTypes[releaseType],
+    value: releaseType,
+    selected: releaseType === selectedOption,
+  }))
+
+  options.unshift({
+    text: 'All release types',
+    value: '',
+    selected: !selectedOption,
+  })
+
+  return options
 }

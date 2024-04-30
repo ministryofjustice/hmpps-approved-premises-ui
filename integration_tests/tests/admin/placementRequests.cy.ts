@@ -23,6 +23,7 @@ import { signIn } from '../signIn'
 import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
 import paths from '../../../server/paths/api'
 import BookingCancellationConfirmPage from '../../pages/manage/bookingCancellationConfirmation'
+import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeUtils'
 
 context('Placement Requests', () => {
   let application = applicationFactory.build()
@@ -571,8 +572,13 @@ context('Placement Requests', () => {
 
     // When I filter by AP area
     const apAreaApplications = applicationSummaryFactory.buildList(2)
-    cy.task('stubAllApplications', { applications: apAreaApplications, page: '1', apAreaId: apArea.id })
+    cy.task('stubAllApplications', {
+      applications: apAreaApplications,
+      page: '1',
+      searchOptions: { apAreaId: apArea.id, releaseType: 'rotl' },
+    })
     listPage.getSelectInputByIdAndSelectAnEntry('apArea', apArea.name)
+    listPage.getSelectInputByIdAndSelectAnEntry('releaseType', allReleaseTypes.rotl)
     listPage.clickApplyFilters()
 
     // Then I should see a list of applications with no placement requests for that area
@@ -580,7 +586,7 @@ context('Placement Requests', () => {
 
     cy.task('verifyDashboardRequest', {
       status: 'pendingPlacementRequest',
-      searchOptions: { apAreaId: apArea.id },
+      searchOptions: { apAreaId: apArea.id, releaseType: 'rotl' },
     }).then(requests => {
       expect(requests).to.have.length(1)
     })

@@ -2,7 +2,11 @@ import { ApplicationSortField, SortDirection } from '../../@types/shared'
 import { applicationSummaryFactory } from '../../testutils/factories'
 import { DateFormats } from '../dateUtils'
 import { sortHeader } from '../sortHeader'
-import { pendingPlacementRequestTableHeader, pendingPlacementRequestTableRows } from './pendingPlacementRequestTable'
+import {
+  pendingPlacementRequestTableHeader,
+  pendingPlacementRequestTableRows,
+  releaseTypeSelectOptions,
+} from './pendingPlacementRequestTable'
 import { allReleaseTypes } from './releaseTypeUtils'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
 
@@ -26,9 +30,7 @@ describe('pendingPlacementRequestTable', () => {
             },
             sortHeader<ApplicationSortField>('Tier', 'tier', sortField, sortDirection, hrefPrefix),
             sortHeader<ApplicationSortField>('Date of application', 'createdAt', sortField, sortDirection, hrefPrefix),
-            {
-              text: 'Release Type',
-            },
+            sortHeader<ApplicationSortField>('Release Type', 'releaseType', sortField, sortDirection, hrefPrefix),
           ])
         },
       )
@@ -52,6 +54,22 @@ describe('pendingPlacementRequestTable', () => {
           textValue(DateFormats.isoDateToUIDate(summaries[1].createdAt, { format: 'short' })),
           textValue(''),
         ],
+      ])
+    })
+  })
+
+  describe('releaseTypeSelectOptions', () => {
+    it('should return select options for release type with the all release types option selected by default', () => {
+      expect(releaseTypeSelectOptions(null)).toEqual([
+        { selected: true, text: 'All release types', value: '' },
+        { selected: false, text: 'Licence', value: 'licence' },
+        { selected: false, text: 'Release on Temporary Licence (ROTL)', value: 'rotl' },
+        { selected: false, text: 'Home detention curfew (HDC)', value: 'hdc' },
+        { selected: false, text: 'Post Sentence Supervision (PSS)', value: 'pss' },
+        { selected: false, text: 'In Community', value: 'in_community' },
+        { selected: false, text: 'Not Applicable', value: 'not_applicable' },
+        { selected: false, text: 'Licence (Extended Determinate sentence)', value: 'extendedDeterminateLicence' },
+        { selected: false, text: 'Licence (Parole directed)', value: 'paroleDirectedLicence' },
       ])
     })
   })
