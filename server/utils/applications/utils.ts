@@ -6,8 +6,6 @@ import type {
   JourneyType,
   PageResponse,
   SelectOption,
-  SummaryListItem,
-  SummaryListWithCard,
   TableCell,
   TableRow,
   UiTimelineEvent,
@@ -19,14 +17,11 @@ import type {
   ApprovedPremisesApplicationStatus as ApplicationStatus,
   ApprovedPremisesApplicationSummary as ApplicationSummary,
   PersonalTimeline,
-  PlacementApplication,
-  PlacementType,
   SortDirection,
   TimelineEvent,
   TimelineEventAssociatedUrl,
   TimelineEventType,
   TimelineEventUrlType,
-  User,
 } from '@approved-premises/api'
 import MaleAp from '../../form-pages/apply/reasons-for-placement/basic-information/maleAp'
 import IsExceptionalCase from '../../form-pages/apply/reasons-for-placement/basic-information/isExceptionalCase'
@@ -45,10 +40,6 @@ import PlacementRequest from '../../form-pages/placement-application'
 import isAssessment from '../assessments/isAssessment'
 import getAssessmentSections from '../assessments/getSections'
 import { RestrictedPersonError } from '../errors'
-import ReasonForPlacement, {
-  reasons as reasonsDictionary,
-} from '../../form-pages/placement-application/request-a-placement/reasonForPlacement'
-import { durationAndArrivalDateFromPlacementApplication } from '../placementRequests/placementApplicationSubmissionData'
 import { sortHeader } from '../sortHeader'
 import { linkTo } from '../utils'
 import { createNameAnchorElement, getTierOrBlank, htmlValue, textValue } from './helpers'
@@ -334,85 +325,6 @@ const urlTypeForUi = (type: TimelineEventUrlType) => {
   return translations[type]
 }
 
-const mapPlacementApplicationToSummaryCards = (
-  placementApplications: Array<PlacementApplication>,
-  application: Application,
-  actingUser: User,
-): Array<SummaryListWithCard> => {
-  return placementApplications.map(placementApplication => {
-    const reasonForPlacement = retrieveOptionalQuestionResponseFromFormArtifact(
-      placementApplication,
-      ReasonForPlacement,
-      'reason',
-    ) as PlacementType
-
-    const datesOfPlacements = placementApplication?.placementDates?.length
-      ? placementApplication?.placementDates
-      : durationAndArrivalDateFromPlacementApplication(placementApplication, reasonForPlacement, application)
-
-    const actionItems = []
-
-    if (placementApplication?.canBeWithdrawn && placementApplication.createdByUserId === actingUser.id) {
-      actionItems.push({
-        href: paths.applications.withdraw.new({
-          id: application.id,
-        }),
-        text: 'Withdraw',
-      })
-    }
-
-    const rows: Array<SummaryListItem> = [
-      {
-        key: { text: 'Reason for placement request' },
-        value: {
-          text:
-            placementApplication.type === 'Initial'
-              ? 'Initial request for placement'
-              : reasonsDictionary[reasonForPlacement] || 'None supplied',
-        },
-      },
-      ...datesOfPlacements
-        .map(({ expectedArrival, duration }) => {
-          return [
-            {
-              key: { text: 'Arrival date' },
-              value: {
-                text: expectedArrival ? DateFormats.isoDateToUIDate(expectedArrival) : 'None supplied',
-              },
-            },
-            {
-              key: { text: 'Length of stay' },
-              value: {
-                text: lengthOfStayForUI(duration),
-              },
-            },
-          ]
-        })
-        .flat(),
-    ]
-
-    if (placementApplication.isWithdrawn) {
-      rows.push(withdrawnStatusTag)
-    }
-
-    return {
-      card: {
-        title: {
-          text: DateFormats.isoDateToUIDate(placementApplication.createdAt),
-          headingLevel: '3',
-        },
-        attributes: {
-          'data-cy-placement-application-id': placementApplication.id,
-        },
-        actions: {
-          items: actionItems,
-        },
-      },
-      rows,
-    }
-  })
-}
-
 export const withdrawnStatusTag = {
   key: { text: 'Status' },
   value: {
@@ -508,7 +420,6 @@ export {
   mapApplicationTimelineEventsForUi,
   mapTimelineUrlsForUi,
   mapPersonalTimelineForUi,
-  mapPlacementApplicationToSummaryCards,
   lengthOfStayForUI,
   applicationStatusSelectOptions,
   appealDecisionRadioItems,
