@@ -1,5 +1,6 @@
 import { ApprovedPremisesUserRole } from '@approved-premises/api'
 import {
+  applicationFactory,
   applicationSummaryFactory,
   bookingFactory,
   placementApplicationFactory,
@@ -33,7 +34,7 @@ context('Withdrawals', () => {
       withdrawsAPlacementRequest(userRoles))
 
     it('withdraws a placement application', () => {
-      const application = applicationSummaryFactory.build()
+      const application = applicationFactory.build({ status: 'submitted' })
       const placementApplication = placementApplicationFactory.build({ applicationId: application.id })
       const placementApplicationWithdrawable = withdrawableFactory.build({
         type: 'placement_application',
@@ -45,16 +46,10 @@ context('Withdrawals', () => {
         applicationId: application.id,
         withdrawables: [placementApplicationWithdrawable, applicationWithdrawable],
       })
-      cy.task('stubApplications', [application])
-      cy.task('stubApplicationGet', { application })
       cy.task('stubPlacementApplication', placementApplication)
 
-      // Given I am on the list page
-      const listPage = ListPage.visit([application], [], [])
-
-      // When I click 'Withdraw' on an application
-      listPage.clickWithdraw()
-
+      // When I visit the Withdraw page
+      cy.visit(paths.applications.withdraw.new({ id: application.id }))
       // Then I am asked what I want to withdraw
       const newWithdrawalPage = new NewWithdrawalPage('What do you want to withdraw?')
 
@@ -69,7 +64,6 @@ context('Withdrawals', () => {
       // Then I am shown a list of placement applications that can be withdrawn
       const selectWithdrawablePage = new NewWithdrawalPage('Select your request')
       selectWithdrawablePage.shouldShowWithdrawableGuidance('request')
-      cy.screenshot('after')
       selectWithdrawablePage.checkForBackButton(paths.applications.withdraw.new({ id: application.id }))
       selectWithdrawablePage.shouldShowWithdrawables([placementApplicationWithdrawable])
       selectWithdrawablePage.shouldNotShowWithdrawables([applicationWithdrawable])
@@ -83,7 +77,10 @@ context('Withdrawals', () => {
     })
 
     it('withdraws an application', () => {
-      const application = applicationSummaryFactory.build()
+      const application = applicationSummaryFactory.build({
+        hasRequestsForPlacement: false,
+        status: 'started',
+      })
 
       const applicationWithdrawable = withdrawableFactory.build({
         type: 'application',
@@ -135,11 +132,8 @@ context('Withdrawals', () => {
       cy.task('stubBookingGet', { premisesId: placement.premises.id, booking: placement })
       cy.task('stubCancellationReferenceData')
 
-      // And I visit the list page
-      const listPage = ListPage.visit([application], [], [])
-
-      // When I click 'Withdraw' on an application
-      listPage.clickWithdraw()
+      // When I visit the Withdraw page
+      cy.visit(paths.applications.withdraw.new({ id: application.id }))
 
       // Then I am asked what I want to withdraw
       const newWithdrawalPage = new NewWithdrawalPage('What do you want to withdraw?')
@@ -182,7 +176,10 @@ context('Withdrawals', () => {
       withdrawsAPlacementRequest(userRoles))
 
     it('shows a warning message if there are no withdrawables', () => {
-      const application = applicationSummaryFactory.build()
+      const application = applicationSummaryFactory.build({
+        status: 'started',
+        hasRequestsForPlacement: false,
+      })
 
       cy.task('stubWithdrawables', {
         applicationId: application.id,
@@ -230,11 +227,8 @@ const withdrawsAPlacementRequest = (userRoles: Array<ApprovedPremisesUserRole>) 
   cy.task('stubApAreaReferenceData')
   cy.task('stubPlacementRequestsDashboard', { placementRequests: [placementRequest], status: 'notMatched' })
 
-  // Given I am on the list page
-  const listPage = ListPage.visit([application], [], [])
-
-  // When I click 'Withdraw' on an application
-  listPage.clickWithdraw()
+  // When I visit the Withdraw page
+  cy.visit(paths.applications.withdraw.new({ id: application.id }))
 
   // Then I am asked what I want to withdraw
   const newWithdrawalPage = new NewWithdrawalPage('What do you want to withdraw?')

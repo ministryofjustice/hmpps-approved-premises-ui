@@ -30,7 +30,7 @@ import { DateFormats } from '../dateUtils'
 import { isApplicableTier, isFullPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
 
 import {
-  actionsCell,
+  actionsLink,
   appealDecisionRadioItems,
   applicationStatusSelectOptions,
   applicationSuitableStatuses,
@@ -39,7 +39,6 @@ import {
   dashboardTableRows,
   eventTypeTranslations,
   firstPageOfApplicationJourney,
-  getAction,
   getApplicationType,
   getSections,
   isInapplicable,
@@ -230,7 +229,7 @@ describe('utils', () => {
           {
             html: new ApplicationStatusTag(applicationA.status).html(),
           },
-          actionsCell(applicationA),
+          { html: actionsLink(applicationA) },
         ],
         [
           {
@@ -253,7 +252,7 @@ describe('utils', () => {
           {
             html: new ApplicationStatusTag(applicationB.status).html(),
           },
-          actionsCell(applicationB),
+          { html: actionsLink(applicationB) },
         ],
       ])
     })
@@ -377,7 +376,7 @@ describe('utils', () => {
             html: new ApplicationStatusTag(applicationA.status).html(),
           },
           {
-            html: '',
+            html: actionsLink(applicationA),
           },
         ],
         [
@@ -402,114 +401,7 @@ describe('utils', () => {
             html: new ApplicationStatusTag(applicationB.status).html(),
           },
           {
-            html: '',
-          },
-        ],
-      ])
-    })
-
-    it('returns an array of applications as table rows with actions', async () => {
-      ;(tierBadge as jest.Mock).mockReturnValue('TIER_BADGE')
-      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
-
-      const applicationA = applicationSummaryFactory.build({
-        arrivalDate: undefined,
-        person,
-        submittedAt: null,
-        risks: { tier: tierEnvelopeFactory.build({ value: { level: 'A1' } }) },
-        status: 'submitted',
-      })
-      const applicationB = applicationSummaryFactory.build({
-        arrivalDate,
-        person,
-        risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
-        status: 'awaitingPlacement',
-      })
-      const applicationC = applicationSummaryFactory.build({
-        arrivalDate,
-        person,
-        risks: { tier: tierEnvelopeFactory.build({ value: { level: null } }) },
-        hasRequestsForPlacement: true,
-      })
-
-      const result = dashboardTableRows([applicationA, applicationB, applicationC])
-
-      expect(tierBadge).toHaveBeenCalledWith('A1')
-
-      expect(result).toEqual([
-        [
-          {
-            html: `<a href=${paths.applications.show({ id: applicationA.id })} data-cy-id="${applicationA.id}">${
-              person.name
-            }</a>`,
-          },
-          {
-            text: applicationA.person.crn,
-          },
-          {
-            html: 'TIER_BADGE',
-          },
-          {
-            text: 'N/A',
-          },
-          {
-            text: DateFormats.isoDateToUIDate(applicationA.createdAt, { format: 'short' }),
-          },
-          {
-            html: new ApplicationStatusTag(applicationA.status).html(),
-          },
-          {
-            html: getAction(applicationA),
-          },
-        ],
-        [
-          {
-            html: `<a href=${paths.applications.show({ id: applicationB.id })} data-cy-id="${applicationB.id}">${
-              person.name
-            }</a>`,
-          },
-          {
-            text: applicationB.person.crn,
-          },
-          {
-            html: '',
-          },
-          {
-            text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
-          },
-          {
-            text: DateFormats.isoDateToUIDate(applicationB.createdAt, { format: 'short' }),
-          },
-          {
-            html: new ApplicationStatusTag(applicationB.status).html(),
-          },
-          {
-            html: getAction(applicationB),
-          },
-        ],
-        [
-          {
-            html: `<a href=${paths.applications.show({ id: applicationC.id })} data-cy-id="${applicationC.id}">${
-              person.name
-            }</a>`,
-          },
-          {
-            text: applicationC.person.crn,
-          },
-          {
-            html: '',
-          },
-          {
-            text: DateFormats.isoDateToUIDate(arrivalDate, { format: 'short' }),
-          },
-          {
-            text: DateFormats.isoDateToUIDate(applicationC.createdAt, { format: 'short' }),
-          },
-          {
-            html: new ApplicationStatusTag(applicationC.status).html(),
-          },
-          {
-            html: getAction(applicationC),
+            html: actionsLink(applicationB),
           },
         ],
       ])
@@ -589,7 +481,7 @@ describe('utils', () => {
               html: new ApplicationStatusTag(application.status).html(),
             },
             {
-              html: getAction(application),
+              html: actionsLink(application),
             },
           ],
         ])
@@ -769,11 +661,15 @@ describe('utils', () => {
     it.each(['started', 'requestedFurtherInformation'] as const)(
       'returns a link to withdraw the application when the status is %s',
       (status: ApplicationStatus) => {
-        const applicationSummary = applicationSummaryFactory.build({ id: 'an-application-id', status })
-
-        expect(actionsCell(applicationSummary)).toEqual({
-          html: '<a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a>',
+        const applicationSummary = applicationSummaryFactory.build({
+          id: 'an-application-id',
+          status,
+          hasRequestsForPlacement: false,
         })
+
+        expect(actionsLink(applicationSummary)).toBe(
+          '<a href="/applications/an-application-id/withdrawals/new"  >Withdraw</a>',
+        )
       },
     )
 
@@ -786,20 +682,22 @@ describe('utils', () => {
           hasRequestsForPlacement: false,
         })
 
-        expect(actionsCell(applicationSummary)).toEqual({
-          html: '<a href="/placement-applications?id=an-application-id"  >Create request for placement</a>',
-        })
+        expect(actionsLink(applicationSummary)).toEqual(
+          '<a href="/placement-applications?id=an-application-id"  >Create request for placement</a>',
+        )
       },
     )
 
     it.each(['rejected', 'withdrawn', 'submitted'])(
       'does not return a link to withdraw the application if the status is %s',
       (status: ApplicationStatus) => {
-        const applicationSummary = applicationSummaryFactory.build({ id: 'an-application-id', status })
-
-        expect(actionsCell(applicationSummary)).toEqual({
-          html: '',
+        const applicationSummary = applicationSummaryFactory.build({
+          id: 'an-application-id',
+          status,
+          hasRequestsForPlacement: false,
         })
+
+        expect(actionsLink(applicationSummary)).toBe('')
       },
     )
   })
