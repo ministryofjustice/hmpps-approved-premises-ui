@@ -21,10 +21,12 @@ import {
 } from '../../@types/shared'
 import paths from '../../paths/admin'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
+import { retrieveFlag } from '../../middleware/setupFeatureFlags'
 
 jest.mock('../../utils/applications/utils')
 jest.mock('../../utils/applications/getResponses')
 jest.mock('../../utils/getPaginationDetails')
+jest.mock('../../middleware/setupFeatureFlags')
 
 describe('CruDashboardController', () => {
   const token = 'SOME_TOKEN'
@@ -69,7 +71,7 @@ describe('CruDashboardController', () => {
       placementRequestService.getDashboard.mockResolvedValue(paginatedResponse)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
       apAreaService.getApAreas.mockResolvedValue(apAreas)
-      featureFlagService.getBooleanFlag.mockResolvedValue(true)
+      when(retrieveFlag).calledWith('show-both-arrival-dates', featureFlagService).mockResolvedValue(true)
     })
 
     it('should render the placement requests template with the users AP area filtered by default', async () => {
@@ -140,6 +142,7 @@ describe('CruDashboardController', () => {
       )
 
       expect(getPaginationDetails).toHaveBeenCalledWith(notMatchedRequest, paths.admin.cruDashboard.index({}), filters)
+      expect(retrieveFlag).toHaveBeenCalledWith('show-both-arrival-dates', featureFlagService)
     })
 
     it('should not send an area query in the request if the  if the query is "all"', async () => {
