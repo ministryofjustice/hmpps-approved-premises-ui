@@ -22,8 +22,6 @@ import placementApplication from './integration_tests/mockApis/placementApplicat
 import bedSearch from './integration_tests/mockApis/beds'
 import moveBooking from './integration_tests/mockApis/moveBooking'
 
-import schemaValidator from './integration_tests/tasks/schemaValidator'
-
 export default defineConfig({
   chromeWebSecurity: false,
   fixturesFolder: 'integration_tests/fixtures',
@@ -52,7 +50,6 @@ export default defineConfig({
         ...lostBed,
         ...person,
         ...applications,
-        ...schemaValidator,
         ...assessments,
         ...users,
         ...tasks,

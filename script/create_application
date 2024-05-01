@@ -75,7 +75,6 @@ BEGIN
     \"created_by_user_id\",
     \"crn\",
     \"data\",
-    \"schema_version\",
     \"service\",
     \"noms_number\"
   )

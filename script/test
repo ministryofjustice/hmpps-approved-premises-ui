@@ -16,10 +16,6 @@ echo "==> Typechecking the code"
 
 npm run typecheck
 
-echo "==> Generating the schema"
-
-npm run generate:schema:apply
-
 echo "==> Running unit tests..."
 
 npm run test
