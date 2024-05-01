@@ -7,6 +7,7 @@ export type AssessmentRejection = {
     document: AnyValue;
     rejectionRationale: string;
     referralRejectionReasonId?: string;
+    referralRejectionReasonDetail?: string;
     isWithdrawn?: boolean;
 };
 
