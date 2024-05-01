@@ -2,6 +2,7 @@ import Page from '../../page'
 import paths from '../../../../server/paths/admin'
 
 import {
+  ApplicationSortField,
   ApprovedPremisesApplicationSummary,
   PlacementRequest,
   PlacementRequestSortField,
@@ -63,7 +64,7 @@ export default class ListPage extends Page {
     cy.get('a.moj-sub-navigation__link').contains('Unable to match').click()
   }
 
-  clickSortBy(field: PlacementRequestSortField): void {
+  clickSortBy(field: PlacementRequestSortField | ApplicationSortField): void {
     super.clickSortBy(field)
   }
 
@@ -71,7 +72,7 @@ export default class ListPage extends Page {
     this.clickSubmit()
   }
 
-  shouldBeSortedByField(field: PlacementRequestSortField, order: SortOrder): void {
+  shouldBeSortedByField(field: PlacementRequestSortField | ApplicationSortField, order: SortOrder): void {
     super.shouldBeSortedByField(field, order)
   }
 }
