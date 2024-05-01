@@ -3,9 +3,11 @@ import { Request, Response } from 'express'
 import { when } from 'jest-when'
 import { Cancelable, throttle } from 'underscore'
 import { FeatureFlagService } from '../services'
-import { featureFlagHandler, retrieveFlags, throttleTime } from './setupFeatureFlags'
+import { featureFlagHandler, retrieveFlag, retrieveFlags, throttleTime } from './setupFeatureFlags'
+import logger from '../../logger'
 
 jest.mock('underscore')
+jest.mock('../../logger')
 
 describe('populateFeatureFlags', () => {
   const featureFlagService = createMock<FeatureFlagService>({})
@@ -54,5 +56,31 @@ describe('retrieveFlags', () => {
     await retrieveFlags(featureFlagService)
 
     expect(process.env['allow-sufficient-information-request-without-confirmation']).toBe('true')
+  })
+})
+
+describe('retrieveFlag', () => {
+  const featureFlagService = createMock<FeatureFlagService>({})
+
+  it('returns false and logs error if the service errors', async () => {
+    when(featureFlagService.getBooleanFlag)
+      .calledWith('show-search-by-CRN-timeline-navigation')
+      .mockRejectedValue(new Error('oh no'))
+    const loggerSpy = jest.spyOn(logger, 'error')
+
+    expect(await retrieveFlag('show-search-by-CRN-timeline-navigation', featureFlagService)).toBe(false)
+
+    expect(loggerSpy).toHaveBeenCalledWith(
+      'Error retrieving feature flag show-search-by-CRN-timeline-navigation',
+      new Error('oh no'),
+    )
+  })
+
+  it('returns true if the request to the service resolves', async () => {
+    when(featureFlagService.getBooleanFlag).calledWith('show-search-by-CRN-timeline-navigation').mockResolvedValue(true)
+
+    const result = await retrieveFlag('show-search-by-CRN-timeline-navigation', featureFlagService)
+
+    expect(result).toBe(true)
   })
 })

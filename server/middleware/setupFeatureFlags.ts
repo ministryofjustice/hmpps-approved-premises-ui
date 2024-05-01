@@ -2,6 +2,7 @@ import { RequestHandler, Router } from 'express'
 import { throttle } from 'underscore'
 import { Services } from '../services'
 import FeatureFlagService, { FeatureFlag } from '../services/featureFlagService'
+import logger from '../../logger'
 
 export const featureFlagsToUse: Array<FeatureFlag> = [
   'allow-sufficient-information-request-without-confirmation',
@@ -32,8 +33,19 @@ export const featureFlagHandler = (featureFlagService: FeatureFlagService): Requ
 export const retrieveFlags = (featureFlagService: FeatureFlagService) => {
   return Promise.all(
     featureFlagsToUse.map(async flag => {
-      const flagBool = await featureFlagService.getBooleanFlag(flag)
+      const flagBool = await retrieveFlag(flag, featureFlagService)
       process.env[flag] = flagBool.toString()
     }),
   )
+}
+
+export const retrieveFlag = async (flag: FeatureFlag, featureFlagService: FeatureFlagService) => {
+  let flagValue = false
+  try {
+    flagValue = await featureFlagService.getBooleanFlag(flag)
+  } catch (error) {
+    logger.error(`Error retrieving feature flag ${flag}`, error)
+  }
+
+  return flagValue
 }
