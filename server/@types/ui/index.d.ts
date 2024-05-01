@@ -487,6 +487,7 @@ export type ApplicationDashboardSearchOptions = {
   crnOrName?: string
   status?: ApprovedPremisesApplicationStatus | ReadonlyArray<ApprovedPremisesApplicationStatus>
   apAreaId?: string
+  releaseType?: ReleaseTypeOption
 }
 
 export type AssessmentCurrentTab = 'awaiting_assessment' | 'awaiting_response' | 'completed'

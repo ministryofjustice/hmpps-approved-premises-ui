@@ -56,6 +56,19 @@
                     items: convertObjectsToSelectOptions(PlacementRequestUtils.requestTypes, 'All request types', 'name', 'value', 'requestType', '', context)
                   }) }}
                 </div>
+               {% endif %}
+               {% if status === "pendingPlacement" %}
+                <div class="govuk-grid-column-one-third">
+                 {{ govukSelect({
+                   label: {
+                   text: "Release type",
+                   classes: "govuk-label--s"
+                   },
+                   id: "releaseType",
+                   name: "releaseType",
+                   items: ApplyUtils.releaseTypeSelectOptions(releaseType)
+                 }) }}
+               </div>
               {% endif %}
 
               <div class="govuk-grid-column-one-third">

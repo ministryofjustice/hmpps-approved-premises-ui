@@ -58,7 +58,11 @@ import { APPLICATION_SUITABLE, ApplicationStatusTag } from './statusTag'
 export { withdrawableTypeRadioOptions, withdrawableRadioOptions } from './withdrawables'
 export { placementApplicationWithdrawalReasons } from './withdrawables/withdrawalReasons'
 export { applicationIdentityBar } from './applicationIdentityBar'
-export { pendingPlacementRequestTableHeader, pendingPlacementRequestTableRows } from './pendingPlacementRequestTable'
+export {
+  pendingPlacementRequestTableHeader,
+  pendingPlacementRequestTableRows,
+  releaseTypeSelectOptions,
+} from './pendingPlacementRequestTable'
 
 const applicationTableRows = (applications: Array<ApplicationSummary>): Array<TableRow> => {
   return applications.map(application => [
