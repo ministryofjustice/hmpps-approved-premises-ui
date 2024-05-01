@@ -25,7 +25,7 @@ export default class WithdrawalsController {
 
       const withdrawables = await this.applicationService.getWithdrawables(req.user.token, id)
 
-      if (selectedWithdrawableType === 'application' || process.env.NEW_WITHDRAWALS_FLOW_DISABLED) {
+      if (selectedWithdrawableType === 'application') {
         return res.render('applications/withdrawals/new', {
           pageHeading: 'Do you want to withdraw this application?',
           applicationId: req.params.id,

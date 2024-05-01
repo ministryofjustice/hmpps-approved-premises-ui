@@ -35,17 +35,6 @@ describe('withdrawalsController', () => {
   })
 
   describe('new', () => {
-    const OLD_ENV = process.env
-
-    beforeEach(() => {
-      jest.resetModules()
-      process.env = { ...OLD_ENV }
-    })
-
-    afterAll(() => {
-      process.env = OLD_ENV
-    })
-
     describe('if there is a selectedWithdrawableType', () => {
       it('redirects to the withdrawables show page', async () => {
         const errorsAndUserInput = createMock<ErrorsAndUserInput>()
@@ -157,30 +146,6 @@ describe('withdrawalsController', () => {
       applicationService.getWithdrawables.mockResolvedValue(withdrawables)
       request.params.id = applicationId
       request.body.selectedWithdrawableType = 'application'
-
-      const requestHandler = withdrawalsController.new()
-
-      await requestHandler(request, response, next)
-
-      expect(response.render).toHaveBeenCalledWith('applications/withdrawals/new', {
-        pageHeading: 'Do you want to withdraw this application?',
-        applicationId,
-        errors: errorsAndUserInput.errors,
-        errorSummary: errorsAndUserInput.errorSummary,
-        ...errorsAndUserInput.userInput,
-      })
-    })
-  })
-
-  describe('if NEW_WITHDRAWALS_FLOW_DISABLED is set', () => {
-    it('renders the withdrawals reasons template', async () => {
-      process.env.NEW_WITHDRAWALS_FLOW_DISABLED = '1'
-
-      const withdrawables = withdrawableFactory.buildList(1)
-      const errorsAndUserInput = createMock<ErrorsAndUserInput>()
-      ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
-      applicationService.getWithdrawables.mockResolvedValue(withdrawables)
-      request.params.id = applicationId
 
       const requestHandler = withdrawalsController.new()
 
