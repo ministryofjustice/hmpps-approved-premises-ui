@@ -197,10 +197,6 @@ jobs:
           name: Install Playwright
           command: npx playwright install
       - run:
-          name: Update npm
-          command: 'npm install -g npm@10.1.0'
-      - node/install-packages
-      - run:
           name: E2E Check
           command: |
             SHARD="$((${CIRCLE_NODE_INDEX}+1))"
