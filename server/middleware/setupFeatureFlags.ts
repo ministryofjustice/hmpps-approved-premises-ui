@@ -30,9 +30,10 @@ export const featureFlagHandler = (featureFlagService: FeatureFlagService): Requ
 }
 
 export const retrieveFlags = (featureFlagService: FeatureFlagService) => {
-  featureFlagsToUse.forEach(async flag => {
-    const flagBool = await featureFlagService.getBooleanFlag(flag)
-
-    process.env[flag] = flagBool.toString()
-  })
+  return Promise.all(
+    featureFlagsToUse.map(async flag => {
+      const flagBool = await featureFlagService.getBooleanFlag(flag)
+      process.env[flag] = flagBool.toString()
+    }),
+  )
 }
