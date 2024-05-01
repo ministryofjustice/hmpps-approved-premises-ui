@@ -8,7 +8,6 @@ import {
   ReleaseTypeOption,
 } from '../../@types/shared'
 import adminPaths from '../../paths/admin'
-import applyPaths from '../../paths/apply'
 import { PlacementRequestDashboardSearchOptions } from '../../@types/ui'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
@@ -74,12 +73,14 @@ export default class CruDashboardController {
   }
 
   private async getPendingApplications(req: Request, res: Response) {
+    const { status } = req.query
     const apAreaId = req.query.apArea ? req.query.apArea : res.locals.user.apArea?.id
     const releaseType = req.query.releaseType as ReleaseTypeOption
 
     const { pageNumber, hrefPrefix, sortBy, sortDirection } = getPaginationDetails<ApplicationSortField>(
       req,
-      applyPaths.applications.dashboard({}),
+      adminPaths.admin.cruDashboard.index({}),
+      { status, apArea: apAreaId },
     )
     const applications = await this.applicationService.dashboard(req.user.token, pageNumber, sortBy, sortDirection, {
       status: 'pendingPlacementRequest',

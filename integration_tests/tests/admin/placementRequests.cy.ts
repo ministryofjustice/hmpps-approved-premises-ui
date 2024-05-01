@@ -591,4 +591,59 @@ context('Placement Requests', () => {
       expect(requests).to.have.length(1)
     })
   })
+  ;(['tier', 'releaseType'] as const).forEach(field => {
+    it(`supports pending placement requests sorting by ${field}`, () => {
+      const applications = applicationSummaryFactory.buildList(2)
+      cy.task('stubAllApplications', { applications, page: '1' })
+      cy.task('stubAllApplications', {
+        applications,
+        sortBy: field,
+        sortDirection: 'asc',
+        searchOptions: { status: 'pendingPlacementRequest' },
+      })
+
+      cy.task('stubAllApplications', {
+        applications,
+        sortBy: field,
+        sortDirection: 'desc',
+        searchOptions: { status: 'pendingPlacementRequest' },
+      })
+
+      // Given I am on the placement request dashboard filtering by the pendingPlacement status
+      const listPage = ListPage.visit('status=pendingPlacement')
+
+      // Then I should see a list of applications with no placement requests
+      listPage.shouldShowApplications(applications)
+
+      // When I sort by expected arrival in ascending order
+      listPage.clickSortBy(field)
+
+      // Then the dashboard should be sorted by field
+      listPage.shouldBeSortedByField(field, 'ascending')
+
+      // And the API should have received a request for the correct sort order
+      cy.task('verifyDashboardRequest', {
+        status: 'pendingPlacementRequest',
+        sortBy: field,
+        sortDirection: 'asc',
+      }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
+
+      // When I sort by  descending order
+      listPage.clickSortBy(field)
+
+      // Then the dashboard should be sorted in descending order
+      listPage.shouldBeSortedByField(field, 'descending')
+
+      // And the API should have received a request for the correct sort order
+      cy.task('verifyDashboardRequest', {
+        status: 'pendingPlacementRequest',
+        sortBy: field,
+        sortDirection: 'desc',
+      }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
+    })
+  })
 })
