@@ -197,10 +197,6 @@ jobs:
           name: Install Playwright
           command: npx playwright install
       - run:
-          name: Update npm
-          command: 'npm install -g npm@10.1.0'
-      - node/install-packages
-      - run:
           name: E2E Check
           command: |
             SHARD="$((${CIRCLE_NODE_INDEX}+1))"
@@ -260,14 +256,14 @@ workflows:
             - build_docker
       - e2e_environment_test:
           context: hmpps-common-vars
+          requires:
+            - build
+      - request-preprod-approval:
+          type: approval
           filters:
             branches:
               only:
                 - main
-          requires:
-            - deploy_dev
-      - request-preprod-approval:
-          type: approval
           requires:
             - e2e_environment_test
             - deploy_dev
