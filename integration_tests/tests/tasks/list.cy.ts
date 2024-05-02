@@ -419,4 +419,87 @@ context('Task Allocation', () => {
     // Then the page should show the filtered results
     listPage.shouldShowAllocatedTasks(allocatedTasksFiltered)
   })
+  ;(['taskType', 'decision', 'completedAt'] as const).forEach(sortField => {
+    it(`supports pending placement requests sorting by ${sortField}`, () => {
+      // Given I am logged in
+      cy.signIn()
+
+      cy.task('stubGetAllTasks', {
+        tasks: [],
+        allocatedFilter: 'allocated',
+        page: '1',
+        sortDirection: 'asc',
+        apAreaId: apArea.id,
+      })
+      const completedTasks = assessmentTaskFactory.buildList(5)
+      cy.task('stubGetAllTasks', {
+        tasks: [...completedTasks],
+        allocatedFilter: 'allocated',
+        page: '1',
+        sortDirection: 'asc',
+        sortBy: 'createdAt',
+        isCompleted: 'true',
+        apAreaId: apArea.id,
+      })
+      cy.task('stubGetAllTasks', {
+        tasks: [...completedTasks],
+        allocatedFilter: 'allocated',
+        page: '1',
+        sortDirection: 'asc',
+        sortBy: sortField,
+        isCompleted: 'true',
+        apAreaId: apArea.id,
+      })
+      cy.task('stubGetAllTasks', {
+        tasks: [...completedTasks],
+        allocatedFilter: 'allocated',
+        page: '1',
+        sortDirection: 'desc',
+        sortBy: sortField,
+        isCompleted: 'true',
+        apAreaId: apArea.id,
+      })
+
+      // When I visit the tasks dashboard
+      const listPage = ListPage.visit([], [])
+
+      // And click the completed tab
+      listPage.clickTab('Completed')
+
+      // Then I should tasks that are completed
+      listPage.shouldShowCompletedTasks(completedTasks)
+
+      // When I sort by sortField in ascending order
+      listPage.clickSortBy(sortField)
+
+      // Then the tasks should be sorted by sortField
+      listPage.shouldBeSortedByField(sortField, 'ascending')
+
+      // And the API should have received a request for the correct sort order
+      cy.task('verifyTasksRequests', {
+        allocatedFilter: 'allocated',
+        page: '1',
+        sortDirection: 'asc',
+        sortBy: sortField,
+      }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
+
+      // When I sort by  descending order
+      listPage.clickSortBy(sortField)
+
+      // Then the tasks should be sorted in descending order
+      listPage.shouldBeSortedByField(sortField, 'descending')
+
+      // And the API should have received a request for the correct sort order
+      cy.task('verifyTasksRequests', {
+        allocatedFilter: 'allocated',
+        page: '1',
+        sortDirection: 'desc',
+        sortBy: sortField,
+      }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
+    })
+  })
 })
