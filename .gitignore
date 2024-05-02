@@ -132,7 +132,9 @@ integration_tests/screenshots/
 /tmp
 
 # E2E tests
-e2e/test-results/
-e2e/playwright-report/
-e2e/playwright/
+e2e/test-results/*
+e2e/playwright-report/* 
+e2e/playwright/*
+e2e/playwright/.auth
 e2e/.DS_Store
+test-results/
