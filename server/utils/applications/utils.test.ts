@@ -22,7 +22,6 @@ import {
   userFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/apply'
-import placementApplicationPaths from '../../paths/placementApplications'
 import Apply from '../../form-pages/apply'
 import Assess from '../../form-pages/assess'
 import PlacementRequest from '../../form-pages/placement-application'
@@ -841,19 +840,7 @@ describe('utils', () => {
       placementDates: [{ expectedArrival: arrivalDate, duration }],
     })
 
-    const OLD_ENV = process.env
-
-    beforeEach(() => {
-      jest.resetModules()
-      process.env = { ...OLD_ENV }
-    })
-
-    afterAll(() => {
-      process.env = OLD_ENV
-    })
-
     it('returns a summary card for an initial placement application', () => {
-      process.env.NEW_WITHDRAWALS_FLOW_DISABLED = ''
       ;(
         retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFunction<
           typeof retrieveOptionalQuestionResponseFromFormArtifact
@@ -1025,58 +1012,6 @@ describe('utils', () => {
                 text: 'Length of stay',
               },
               value: { text: lengthOfStayForUI(durationFromData) },
-            },
-          ],
-        },
-      ])
-    })
-
-    it('links to the old withdrawal link when NEW_WITHDRAWALS_FLOW_DISABLED is set', () => {
-      process.env.NEW_WITHDRAWALS_FLOW_DISABLED = '1'
-      ;(
-        retrieveOptionalQuestionResponseFromFormArtifact as jest.MockedFunction<
-          typeof retrieveOptionalQuestionResponseFromFormArtifact
-        >
-      ).mockReturnValue('rotl')
-
-      expect(mapPlacementApplicationToSummaryCards(placementApplications, application, user)).toEqual([
-        {
-          card: {
-            title: { headingLevel: '3', text: DateFormats.isoDateToUIDate(placementApplications[0].createdAt) },
-            attributes: { 'data-cy-placement-application-id': placementApplications[0].id },
-            actions: {
-              items: [
-                {
-                  href: placementApplicationPaths.placementApplications.withdraw.new({
-                    id: placementApplications[0].id,
-                  }),
-                  text: 'Withdraw',
-                },
-              ],
-            },
-          },
-          rows: [
-            {
-              key: {
-                text: 'Reason for placement request',
-              },
-              value: {
-                text: 'Release on Temporary Licence (ROTL)',
-              },
-            },
-            {
-              key: {
-                text: 'Arrival date',
-              },
-              value: {
-                text: DateFormats.isoDateToUIDate(arrivalDate),
-              },
-            },
-            {
-              key: {
-                text: 'Length of stay',
-              },
-              value: { text: lengthOfStayForUI(duration) },
             },
           ],
         },

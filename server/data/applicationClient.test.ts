@@ -454,67 +454,32 @@ describeClient('ApplicationClient', provider => {
   })
 
   describe('placementApplications', () => {
-    describe('with NEW_WITHDRAWALS_FLOW_DISABLED turned on', () => {
-      it('calls the placement applications endpoint with the application ID and includeInitialRequestForPlacement=false', async () => {
-        process.env.NEW_WITHDRAWALS_FLOW_DISABLED = '1'
+    it('calls the placement applications endpoint with the application ID and includeInitialRequestForPlacement=true', async () => {
+      const applicationId = 'applicationId'
+      const placementApplications = placementApplicationFactory.buildList(1)
 
-        const applicationId = 'applicationId'
-        const placementApplications = placementApplicationFactory.buildList(1)
-
-        provider.addInteraction({
-          state: 'Server is healthy',
-          uponReceiving: 'A request for the placement applications of an application',
-          withRequest: {
-            method: 'GET',
-            path: `${paths.applications.placementApplications({ id: applicationId })}`,
-            query: {
-              includeInitialRequestForPlacement: 'false',
-            },
-            headers: {
-              authorization: `Bearer ${token}`,
-              'X-Service-Name': 'approved-premises',
-            },
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for the placement applications of an application',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.placementApplications({ id: applicationId }),
+          query: {
+            includeInitialRequestForPlacement: 'true',
           },
-          willRespondWith: {
-            status: 200,
-            body: placementApplications,
-          },
-        })
 
-        await applicationClient.placementApplications(applicationId)
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: placementApplications,
+        },
       })
-    })
 
-    describe('with NEW_WITHDRAWALS_FLOW_DISABLED turned off', () => {
-      it('calls the placement applications endpoint with the application ID and includeInitialRequestForPlacement=true', async () => {
-        process.env.NEW_WITHDRAWALS_FLOW_DISABLED = ''
-
-        const applicationId = 'applicationId'
-        const placementApplications = placementApplicationFactory.buildList(1)
-
-        provider.addInteraction({
-          state: 'Server is healthy',
-          uponReceiving: 'A request for the placement applications of an application',
-          withRequest: {
-            method: 'GET',
-            path: paths.applications.placementApplications({ id: applicationId }),
-            query: {
-              includeInitialRequestForPlacement: 'true',
-            },
-
-            headers: {
-              authorization: `Bearer ${token}`,
-              'X-Service-Name': 'approved-premises',
-            },
-          },
-          willRespondWith: {
-            status: 200,
-            body: placementApplications,
-          },
-        })
-
-        await applicationClient.placementApplications(applicationId)
-      })
+      await applicationClient.placementApplications(applicationId)
     })
   })
 

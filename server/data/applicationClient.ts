@@ -105,7 +105,7 @@ export default class ApplicationClient {
   async placementApplications(applicationId: string): Promise<Array<PlacementApplication>> {
     return (await this.restClient.get({
       path: paths.applications.placementApplications({ id: applicationId }),
-      query: { includeInitialRequestForPlacement: String(!process.env.NEW_WITHDRAWALS_FLOW_DISABLED) },
+      query: { includeInitialRequestForPlacement: true.toString() },
     })) as Array<PlacementApplication>
   }
 

@@ -237,7 +237,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        url: `${paths.applications.placementApplications({ id: args.applicationId })}?includeInitialRequestForPlacement=${!process.env.NEW_WITHDRAWALS_FLOW_DISABLED}`,
+        url: `${paths.applications.placementApplications({ id: args.applicationId })}?includeInitialRequestForPlacement=true`,
       },
       response: {
         status: 200,

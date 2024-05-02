@@ -151,8 +151,6 @@ describe('applicationsController', () => {
     })
 
     it('renders the readonly view if the application has been submitted', async () => {
-      process.env.NEW_WITHDRAWALS_FLOW_DISABLED = ''
-
       application.status = 'submitted'
 
       const requestHandler = applicationsController.show()
