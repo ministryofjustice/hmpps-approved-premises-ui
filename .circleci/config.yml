@@ -179,7 +179,7 @@ jobs:
           channel: << pipeline.parameters.alerts-slack-channel >>
           template: basic_fail_1
 
-  e2e_environment_test:
+  e2e_environment_test_on_pr:
     docker:
       - image: mcr.microsoft.com/playwright:v1.41.2-focal
     parallelism: 4
@@ -194,8 +194,39 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: Install Playwright
-          command: npx playwright install
+          name: E2E Check
+          command: |
+            SHARD="$((${CIRCLE_NODE_INDEX}+1))"
+            username="HMPPS_AUTH_USERNAME_$SHARD"
+            password="HMPPS_AUTH_PASSWORD_$SHARD"
+            email="HMPPS_AUTH_EMAIL_$SHARD"
+            name="HMPPS_AUTH_NAME_$SHARD"
+            HMPPS_AUTH_USERNAME="${!username}"
+            HMPPS_AUTH_PASSWORD="${!password}"
+            HMPPS_AUTH_EMAIL="${!email}"
+            HMPPS_AUTH_NAME="${!name}"
+            npm run test:e2e:ci -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
+      - store_artifacts:
+          path: playwright-report
+          destination: playwright-report
+      - store_artifacts:
+          path: test-results
+          destination: test-results
+
+  e2e_environment_test_on_merge:
+    docker:
+      - image: mcr.microsoft.com/playwright:v1.41.2-focal
+    parallelism: 4
+    executor:
+      name: hmpps/node
+      tag: << pipeline.parameters.node-version >>
+    circleci_ip_ranges: true # opt-in to jobs running on a restricted set of IPs
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/app
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: E2E Check
           command: |
@@ -254,10 +285,19 @@ workflows:
           requires:
             - helm_lint
             - build_docker
-      - e2e_environment_test:
+      - e2e_environment_test_on_pr:
           context: hmpps-common-vars
           requires:
             - build
+      - e2e_environment_test_on_merge:
+          context: hmpps-common-vars
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - build
+            - deploy_dev
       - request-preprod-approval:
           type: approval
           filters:
@@ -265,7 +305,7 @@ workflows:
               only:
                 - main
           requires:
-            - e2e_environment_test
+            - e2e_environment_test_on_merge
             - deploy_dev
       - hmpps/deploy_env:
           name: deploy_preprod
