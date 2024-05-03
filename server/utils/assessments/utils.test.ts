@@ -135,17 +135,17 @@ describe('utils', () => {
     it('returns the release date copy if the decision is "releaseDate"', () => {
       ;(decisionFromAssessment as jest.Mock).mockReturnValue('accept')
 
-      expect(confirmationPageMessage(assessment)).toMatchStringIgnoringWhitespace(
-        "<p>We've notified the Probation practitioner that this application has been assessed as suitable.</p>",
-      )
+      expect(confirmationPageMessage(assessment))
+        .toMatchStringIgnoringWhitespace(`<p>We've sent you a confirmation email.</p>
+        <p>We've notified the Probation practitioner that this application has been assessed as suitable.</p>`)
     })
 
     it('returns the rejection copy if the decision isnt "accept"', () => {
       ;(decisionFromAssessment as jest.Mock).mockReturnValue('')
 
-      expect(confirmationPageMessage(assessment))
-        .toMatchStringIgnoringWhitespace(`<p>We've sent you a confirmation email.</p>
-        <p>We've notified the Probation practitioner that this application has been rejected as unsuitable for an Approved Premises.</p>`)
+      expect(confirmationPageMessage(assessment)).toMatchStringIgnoringWhitespace(
+        "<p>We've notified the Probation practitioner that this application has been rejected as unsuitable for an Approved Premises.</p>",
+      )
     })
   })
 
