@@ -109,10 +109,10 @@ const confirmationPageMessage = (assessment: Assessment) => {
   const decision = decisionFromAssessment(assessment)
 
   if (decision === 'accept') {
-    return "<p>We've notified the Probation practitioner that this application has been assessed as suitable.</p>"
+    return `<p>We've sent you a confirmation email.</p>
+            <p>We've notified the Probation practitioner that this application has been assessed as suitable.</p>`
   }
-  return `<p>We've sent you a confirmation email.</p>
-    <p>We've notified the Probation practitioner that this application has been rejected as unsuitable for an Approved Premises.</p>`
+  return "<p>We've notified the Probation practitioner that this application has been rejected as unsuitable for an Approved Premises.</p>"
 }
 
 const confirmationPageResult = (assessment: Assessment) => {
