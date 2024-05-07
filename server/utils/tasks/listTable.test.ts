@@ -413,18 +413,12 @@ describe('table', () => {
     it('returns an array of completed table headers', () => {
       expect(tasksTableHeader('completed', sortBy, sortDirection, hrefPrefix)).toEqual([
         sortHeader<TaskSortField>('Person', 'person', sortBy, sortDirection, hrefPrefix),
-        {
-          text: 'Completed at',
-        },
+        sortHeader<TaskSortField>('Completed at', 'completedAt', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Completed by',
         },
-        {
-          text: 'Task type',
-        },
-        {
-          text: 'Decision',
-        },
+        sortHeader<TaskSortField>('Task type', 'taskType', sortBy, sortDirection, hrefPrefix),
+        sortHeader<TaskSortField>('Decision', 'decision', sortBy, sortDirection, hrefPrefix),
       ])
     })
   })
