@@ -180,12 +180,10 @@ jobs:
           template: basic_fail_1
 
   e2e_environment_test_on_pr:
-    docker:
-      - image: mcr.microsoft.com/playwright:v1.41.2-focal
-    parallelism: 4
     executor:
       name: hmpps/node
       tag: << pipeline.parameters.node-version >>
+    parallelism: 4
     circleci_ip_ranges: true # opt-in to jobs running on a restricted set of IPs
     steps:
       - checkout
@@ -193,6 +191,9 @@ jobs:
           at: ~/app
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install Playwright
+          command: npx playwright install
       - run:
           name: E2E Check
           command: |
@@ -214,12 +215,10 @@ jobs:
           destination: test-results
 
   e2e_environment_test_on_merge:
-    docker:
-      - image: mcr.microsoft.com/playwright:v1.41.2-focal
-    parallelism: 4
     executor:
       name: hmpps/node
       tag: << pipeline.parameters.node-version >>
+    parallelism: 4
     circleci_ip_ranges: true # opt-in to jobs running on a restricted set of IPs
     steps:
       - checkout
@@ -227,6 +226,9 @@ jobs:
           at: ~/app
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install Playwright
+          command: npx playwright install
       - run:
           name: E2E Check
           command: |
