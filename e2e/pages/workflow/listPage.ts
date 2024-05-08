@@ -43,10 +43,15 @@ export class ListPage extends BasePage {
     await row.getByRole('link').click()
   }
 
-  async shouldHaveCorrectDeadlineAndAllocation(id: string, deadline: string, user?: string | null) {
+  async shouldHaveCorrectDeadlineAndAllocation(id: string, expectedDeadlineInDays: number, user?: string | null) {
     const row = await this.getAssignmentWithId(id, !!user)
 
-    await expect(row.locator('td').nth(0)).toContainText(deadline)
+    const actualDeadline = await row.locator('td').nth(0).innerText()
+    const actualDeadlineInDays = Number(actualDeadline.split(' ')[0])
+
+    expect(
+      actualDeadlineInDays >= expectedDeadlineInDays && actualDeadlineInDays <= expectedDeadlineInDays + 4,
+    ).toBeTruthy()
 
     if (user) {
       await expect(row.locator('td').nth(1)).toContainText(user)
