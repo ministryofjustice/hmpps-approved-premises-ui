@@ -114,7 +114,7 @@ describe('additionalDocuments', () => {
   })
 
   describe('response', () => {
-    it('should return a record with the document filename as the key and the description as the value', () => {
+    it('should return a human readable response', () => {
       const selectedDocuments = [
         documentFactory.build({ fileName: 'file1.pdf', description: 'Description goes here' }),
         documentFactory.build({ fileName: 'file2.pdf', description: undefined }),
@@ -122,7 +122,17 @@ describe('additionalDocuments', () => {
 
       const page = new AdditionalDocuments({ selectedDocuments }, placementApplication)
 
-      expect(page.response()).toEqual({ 'file1.pdf': 'Description goes here', 'file2.pdf': 'No description' })
+      expect(page.response()).toEqual({
+        'Additional documents': [{ 'file1.pdf': 'Description goes here' }, { 'file2.pdf': 'No description' }],
+      })
+    })
+
+    it('should return message if no files are attached', () => {
+      const page = new AdditionalDocuments({ selectedDocuments: [] }, placementApplication)
+
+      expect(page.response()).toEqual({
+        'Additional documents': [{ 'N/A': 'No documents attached' }],
+      })
     })
   })
 })
