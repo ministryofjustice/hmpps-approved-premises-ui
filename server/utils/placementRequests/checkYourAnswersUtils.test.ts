@@ -3,6 +3,7 @@ import paths from '../../paths/placementApplications'
 import { addResponseToFormArtifact } from '../../testutils/addToApplication'
 import { applicationFactory, documentFactory, placementApplicationFactory } from '../../testutils/factories'
 import placementDates from '../../testutils/factories/placementDates'
+import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
 import { DateFormats } from '../dateUtils'
 import {
   getPageTitle,
@@ -13,43 +14,16 @@ import {
 
 jest.mock('../applications/forPagesInTask')
 
-const datesMarkup = `<dl class="govuk-summary-list govuk-summary-list--embedded">
-      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
-        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
-          When will the person arrive?
-        </dt>
-        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
-        ${DateFormats.dateObjtoUIDate(new Date('2023-08-01'))}
-        </dd>
-      </div>
-      
-      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
-        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
-          How long should the Approved Premises placement last?
-        </dt>
-        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
-        5 days
-        </dd>
-      </div>
-      </dl><dl class="govuk-summary-list govuk-summary-list--embedded">
-      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
-        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
-          When will the person arrive?
-        </dt>
-        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
-        ${DateFormats.dateObjtoUIDate(new Date('2024-08-01'))}
-        </dd>
-      </div>
-      
-      <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
-        <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
-          How long should the Approved Premises placement last?
-        </dt>
-        <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
-        3 weeks, 4 days
-        </dd>
-      </div>
-      </dl>`
+const datesMarkup = embeddedSummaryListItem([
+  {
+    'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date('2023-08-01')),
+    'How long should the Approved Premises placement last?': '5 days',
+  },
+  {
+    'When will the person arrive?': DateFormats.dateObjtoUIDate(new Date('2024-08-01')),
+    'How long should the Approved Premises placement last?': '3 weeks, 4 days',
+  },
+])
 
 describe('checkYourAnswersUtils', () => {
   const application = applicationFactory.build()

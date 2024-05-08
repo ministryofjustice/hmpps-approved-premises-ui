@@ -2,11 +2,12 @@ import { ApprovedPremisesApplication as Application, Document, PlacementApplicat
 import { HtmlItem, SummaryListItem, TextItem } from '../../@types/ui'
 import AdditionalDocuments from '../../form-pages/placement-application/request-a-placement/additionalDocuments'
 import paths from '../../paths/placementApplications'
-import { embeddedSummaryListItem, summaryListItemForResponse } from '../applications/summaryListUtils'
+import { summaryListItemForResponse } from '../applications/summaryListUtils'
 import { getPage } from '../applications/getPage'
 import { retrieveQuestionResponseFromFormArtifact } from '../retrieveQuestionResponseFromFormArtifact'
 import { getResponseForPage } from '../applications/getResponseForPage'
 import { datesOfPlacementItem } from './datesOfPlacementItem'
+import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
 
 export const mapPageForSummaryList = (
   placementApplication: PlacementApplication,
