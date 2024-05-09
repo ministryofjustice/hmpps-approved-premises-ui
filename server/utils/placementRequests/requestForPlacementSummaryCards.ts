@@ -19,9 +19,9 @@ export class RequestForPlacementSummaryCards {
 
   private questionAndAnswerRows(): void {
     const taskName = 'request-a-placement'
-    const pageResponses = this.requestForPlacement.document[taskName]
+    const pageResponses = this.requestForPlacement?.document?.[taskName]
 
-    pageResponses.forEach((pageResponse: PageResponse) => {
+    pageResponses?.forEach((pageResponse: PageResponse) => {
       const questionsAndAnswers = Object.entries(pageResponse)
 
       questionsAndAnswers.forEach(([question, answer]) => {

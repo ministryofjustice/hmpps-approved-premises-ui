@@ -11,6 +11,36 @@ describe('RequestForPlacementSummaryCards', () => {
   const actingUserId = '123'
   const applicationId = '456'
 
+  it('allows document to be nullable', () => {
+    const requestForPlacement = requestForPlacementFactory.build({
+      document: undefined,
+    })
+
+    const actual = new RequestForPlacementSummaryCards(requestForPlacement, applicationId, actingUserId).response()
+
+    expect(actual).toEqual({
+      card: {
+        actions: {
+          items: [],
+        },
+        attributes: {
+          'data-cy-placement-application-id': requestForPlacement.id,
+        },
+        title: expect.objectContaining({}),
+      },
+      rows: [
+        {
+          key: {
+            text: 'Status',
+          },
+          value: {
+            html: new RequestForPlacementStatusTag(requestForPlacement.status).html(),
+          },
+        },
+      ],
+    })
+  })
+
   describe('if the RfP cannot be directly withdrawn', () => {
     const requestForPlacement = requestForPlacementFactory.build({
       isWithdrawn: false,
