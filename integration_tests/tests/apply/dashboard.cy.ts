@@ -65,7 +65,52 @@ context('All applications', () => {
   })
 
   it('supports sorting by createdAt', () => {
-    shouldSortByField('createdAt')
+    // Given I am logged in
+    cy.signIn()
+
+    // And there is a page of applications
+    const applications = applicationSummaryFactory.buildList(10)
+
+    cy.task('stubAllApplications', { applications, page: '1' })
+    cy.task('stubAllApplications', {
+      applications,
+      page: '1',
+      sortBy: 'createdAt',
+      sortDirection: 'asc',
+    })
+
+    // When I access the applications dashboard
+    const page = DashboardPage.visit(applications)
+
+    // Then I should see the first result
+    page.shouldShowApplications()
+
+    // Then the API should have received a request for the sort
+    cy.task('verifyDashboardRequest', { page: '1', sortBy: 'createdAt', sortDirection: 'desc' }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+
+    // When I sort by created at
+    page.clickSortBy('createdAt')
+
+    // Then the API should have received a request for the sort
+    cy.task('verifyDashboardRequest', { page: '1', sortBy: 'createdAt', sortDirection: 'desc' }).then(requests => {
+      expect(requests).to.have.length(2)
+    })
+
+    // And the page should show the sorted items
+    page.shouldBeSortedByField('createdAt', 'descending')
+
+    // When I click the sort button again
+    page.clickSortBy('createdAt')
+
+    // Then the API should have received a request for the sort
+    cy.task('verifyDashboardRequest', { page: '1', sortBy: 'createdAt', sortDirection: 'asc' }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+
+    // And the page should show the sorted items
+    page.shouldBeSortedByField('createdAt', 'ascending')
   })
 
   it('supports sorting by arrivalDate', () => {

@@ -36,7 +36,7 @@ export default {
     applications,
     page = '1',
     sortBy = 'createdAt',
-    sortDirection = 'asc',
+    sortDirection = 'desc',
     searchOptions = {},
   }: {
     applications: Array<ApprovedPremisesApplicationSummary>
@@ -86,7 +86,7 @@ export default {
   verifyDashboardRequest: async ({
     page = '1',
     sortBy = 'createdAt',
-    sortDirection = 'asc',
+    sortDirection = 'desc',
     searchOptions = {},
   }: {
     page: string

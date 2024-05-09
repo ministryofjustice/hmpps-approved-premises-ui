@@ -555,7 +555,7 @@ context('Placement Requests', () => {
   it('should list applications that have no placement request', () => {
     const applications = applicationSummaryFactory.buildList(2)
 
-    cy.task('stubAllApplications', { applications, page: '1' })
+    cy.task('stubAllApplications', { applications, page: '1', sortDirection: 'asc' })
 
     // Given I am on the placement request dashboard filtering by the pendingPlacement status
     const listPage = ListPage.visit('status=pendingPlacement')
@@ -563,7 +563,7 @@ context('Placement Requests', () => {
     // Then I should see a list of applications with no placement requests
     listPage.shouldShowApplications(applications)
 
-    cy.task('verifyDashboardRequest', { status: 'pendingPlacementRequest' }).then(requests => {
+    cy.task('verifyDashboardRequest', { status: 'pendingPlacementRequest', sortDirection: 'asc' }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
@@ -575,6 +575,7 @@ context('Placement Requests', () => {
     cy.task('stubAllApplications', {
       applications: apAreaApplications,
       page: '1',
+      sortDirection: 'asc',
       searchOptions: { apAreaId: apArea.id, releaseType: 'rotl' },
     })
     listPage.getSelectInputByIdAndSelectAnEntry('apArea', apArea.name)
@@ -586,6 +587,7 @@ context('Placement Requests', () => {
 
     cy.task('verifyDashboardRequest', {
       status: 'pendingPlacementRequest',
+      sortDirection: 'asc',
       searchOptions: { apAreaId: apArea.id, releaseType: 'rotl' },
     }).then(requests => {
       expect(requests).to.have.length(1)
@@ -594,7 +596,7 @@ context('Placement Requests', () => {
   ;(['tier', 'releaseType'] as const).forEach(field => {
     it(`supports pending placement requests sorting by ${field}`, () => {
       const applications = applicationSummaryFactory.buildList(2)
-      cy.task('stubAllApplications', { applications, page: '1' })
+      cy.task('stubAllApplications', { applications, page: '1', sortDirection: 'asc' })
       cy.task('stubAllApplications', {
         applications,
         sortBy: field,
