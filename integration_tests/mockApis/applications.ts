@@ -8,6 +8,7 @@ import type {
   ApprovedPremisesApplicationSummary,
   ApprovedPremisesAssessment,
   PlacementApplication,
+  RequestForPlacement,
   SortDirection,
   TimelineEvent,
   Withdrawable,
@@ -245,6 +246,27 @@ export default {
         jsonBody: args.placementApplications,
       },
     }),
+  stubApplicationRequestsForPlacement: ({
+    requestsForPlacement,
+    applicationId,
+  }: {
+    requestsForPlacement: Array<RequestForPlacement>
+    applicationId: ApprovedPremisesApplication['id']
+  }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        urlPathPattern: paths.applications.requestsForPlacement({ id: applicationId }),
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: requestsForPlacement,
+      },
+    }),
+
   stubApplicationNote: (args: {
     applicationId: ApprovedPremisesApplication['id']
     note: ApplicationTimelineNote

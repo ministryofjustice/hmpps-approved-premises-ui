@@ -65,10 +65,18 @@ export default class AdditionalDocuments implements TasklistPage {
   }
 
   response() {
-    const response = {}
+    const response = {
+      'Additional documents': [] as Array<Record<string, string>>,
+    }
+
+    if (this.body.selectedDocuments.length === 0) {
+      response['Additional documents'].push({
+        'N/A': 'No documents attached',
+      })
+    }
 
     this.body.selectedDocuments.forEach(d => {
-      response[d.fileName] = d.description || 'No description'
+      response['Additional documents'].push({ [d.fileName]: d.description || 'No description' })
     })
 
     return response

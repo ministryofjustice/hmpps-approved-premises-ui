@@ -9,6 +9,7 @@ import {
   documentFactory,
   noteFactory,
   placementApplicationFactory,
+  requestForPlacementFactory,
   timelineEventFactory,
   withdrawableFactory,
 } from '../testutils/factories'
@@ -480,6 +481,32 @@ describeClient('ApplicationClient', provider => {
       })
 
       await applicationClient.placementApplications(applicationId)
+    })
+  })
+
+  describe('requestsForPlacment', () => {
+    it('calls the requests for placement endpoint with the application ID', async () => {
+      const applicationId = 'applicationId'
+      const requestsForPlacement = requestForPlacementFactory.buildList(1)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request for the requests for placements of an application',
+        withRequest: {
+          method: 'GET',
+          path: paths.applications.requestsForPlacement({ id: applicationId }),
+          headers: {
+            authorization: `Bearer ${token}`,
+            'X-Service-Name': 'approved-premises',
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: requestsForPlacement,
+        },
+      })
+
+      await applicationClient.requestsForPlacement(applicationId)
     })
   })
 

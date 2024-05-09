@@ -168,6 +168,14 @@ export default class ApplicationService {
     return placementApplications
   }
 
+  async getRequestsForPlacement(token: string, applicationId: string) {
+    const client = this.applicationClientFactory(token)
+
+    const requestsForPlacement = await client.requestsForPlacement(applicationId)
+
+    return requestsForPlacement
+  }
+
   async addNote(token: Request['user']['token'], applicationId: Application['id'], note: ApplicationTimelineNote) {
     const client = this.applicationClientFactory(token)
 

@@ -2,6 +2,7 @@ import {
   ApprovedPremisesApplicationStatus as ApplicationStatus,
   BookingStatus,
   PersonStatus,
+  RequestForPlacementStatus,
   TaskStatus,
 } from '../@types/shared'
 import { TaskStatus as TaskListStatus } from '../@types/ui'
@@ -9,7 +10,14 @@ import { TaskStatus as TaskListStatus } from '../@types/ui'
 import { AssessmentStatusForUi } from './assessments/statusTag'
 
 export type StatusTagOptions = { addLeftMargin?: boolean; showOnOneLine?: boolean; taskListTag?: boolean; id?: string }
-type Status = ApplicationStatus | TaskStatus | BookingStatus | PersonStatus | AssessmentStatusForUi | TaskListStatus
+type Status =
+  | ApplicationStatus
+  | TaskStatus
+  | BookingStatus
+  | PersonStatus
+  | AssessmentStatusForUi
+  | TaskListStatus
+  | RequestForPlacementStatus
 
 export class StatusTag<T extends Status> {
   status: T

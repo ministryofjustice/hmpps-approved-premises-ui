@@ -26,6 +26,7 @@ import {
   noteFactory,
   paginatedResponseFactory,
   placementApplicationFactory,
+  requestForPlacementFactory,
   withdrawableFactory,
 } from '../testutils/factories'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
@@ -432,6 +433,22 @@ describe('ApplicationService', () => {
 
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
       expect(applicationClient.placementApplications).toHaveBeenCalledWith(id)
+    })
+  })
+
+  describe('getRequestsForPlacement', () => {
+    it('calls the client with the id and the token and returns the result', async () => {
+      const id = 'some-uuid'
+      const requestForPlacements = requestForPlacementFactory.buildList(1)
+
+      applicationClient.requestsForPlacement.mockResolvedValue(requestForPlacements)
+
+      const result = await service.getRequestsForPlacement(token, id)
+
+      expect(result).toEqual(requestForPlacements)
+
+      expect(applicationClientFactory).toHaveBeenCalledWith(token)
+      expect(applicationClient.requestsForPlacement).toHaveBeenCalledWith(id)
     })
   })
 

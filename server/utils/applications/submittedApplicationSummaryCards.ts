@@ -4,7 +4,7 @@ import Apply from '../../form-pages/apply'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { getActionsForTaskId } from '../assessments/getActionsForTaskId'
 import { linebreaksToParagraphs } from '../utils'
-import { embeddedSummaryListItem } from './summaryListUtils'
+import { embeddedSummaryListItem } from './summaryListUtils/embeddedSummaryListItem'
 
 type QuestionResponse = string | Array<Record<string, unknown>>
 

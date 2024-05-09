@@ -1,7 +1,7 @@
 import { createMock } from '@golevelup/ts-jest'
 import { applicationFactory, assessmentFactory, documentFactory } from '../../testutils/factories'
 import { forPagesInTask } from './forPagesInTask'
-import { embeddedSummaryListItem, summaryListSections, taskResponsesAsSummaryListItems } from './summaryListUtils'
+import { summaryListSections, taskResponsesAsSummaryListItems } from './summaryListUtils'
 import reviewSections from '../reviewUtils'
 import { documentsFromApplication } from '../assessments/documentUtils'
 import { getResponseForPage } from './getResponseForPage'
@@ -16,56 +16,6 @@ jest.mock('../assessments/documentUtils')
 jest.mock('../assessments/getActionsForTaskId')
 
 describe('summaryListUtils', () => {
-  describe('embeddedSummaryListItem', () => {
-    it('returns a summary list for an array of records', () => {
-      const result = embeddedSummaryListItem([
-        { foo: 'bar', bar: 'baz' },
-        { foo: 'bar', bar: 'baz' },
-      ]).replace(/\s+/g, ``)
-
-      expect(result).toEqual(
-        `
-      <dl class="govuk-summary-list govuk-summary-list--embedded">
-        <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
-          <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
-            foo
-          </dt>
-          <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
-            bar
-          </dd>
-        </div>
-        <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
-          <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
-            bar
-          </dt>
-          <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
-            baz
-          </dd>
-        </div>
-      </dl>
-
-      <dl class="govuk-summary-list govuk-summary-list--embedded">
-        <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
-          <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
-            foo
-          </dt>
-          <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
-            bar
-          </dd>
-        </div>
-        <div class="govuk-summary-list__row govuk-summary-list__row--embedded">
-          <dt class="govuk-summary-list__key govuk-summary-list__key--embedded">
-            bar
-          </dt>
-          <dd class="govuk-summary-list__value govuk-summary-list__value--embedded">
-            baz
-          </dd>
-        </div>
-      </dl>`.replace(/\s+/g, ``),
-      )
-    })
-  })
-
   describe('taskResponsesAsSummaryListItems', () => {
     it('calls reviewSections with the correct arguments', () => {
       const application = applicationFactory.build()

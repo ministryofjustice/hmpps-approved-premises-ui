@@ -17,6 +17,7 @@ import {
   applicationFactory,
   paginatedResponseFactory,
   personFactory,
+  requestForPlacementFactory,
   restrictedPersonFactory,
   timelineEventFactory,
 } from '../../testutils/factories'
@@ -28,7 +29,6 @@ import { getResponses } from '../../utils/applications/getResponses'
 import { ApprovedPremisesApplicationSummary } from '../../@types/shared'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
-import placementApplication from '../../testutils/factories/placementApplication'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/applications/utils')
@@ -217,13 +217,13 @@ describe('applicationsController', () => {
 
     describe('when the tab=placementRequests query param is present', () => {
       it('calls the getPlacementApplications method on the application service and passes the tab: "placementRequests" property', async () => {
-        const placementApplications = placementApplication.buildList(1)
+        const requestsForPlacement = requestForPlacementFactory.buildList(1)
         application.status = 'submitted'
 
         const requestHandler = applicationsController.show()
 
         applicationService.findApplication.mockResolvedValue(application)
-        applicationService.getPlacementApplications.mockResolvedValue(placementApplications)
+        applicationService.getRequestsForPlacement.mockResolvedValue(requestsForPlacement)
 
         await requestHandler({ ...request, query: { tab: applicationShowPageTabs.placementRequests } }, response, next)
 
@@ -231,33 +231,33 @@ describe('applicationsController', () => {
           application,
           referrer,
           tab: applicationShowPageTabs.placementRequests,
-          placementApplications,
+          requestsForPlacement,
           pageHeading: 'Approved Premises application',
         })
 
         expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
-        expect(applicationService.getPlacementApplications).toHaveBeenCalledWith(token, application.id)
+        expect(applicationService.getRequestsForPlacement).toHaveBeenCalledWith(token, application.id)
       })
 
       it('sorts the placement applications in descending date order', async () => {
-        const newestPlacementApp = placementApplication.build({
+        const newestRfP = requestForPlacementFactory.build({
           submittedAt: DateFormats.dateObjToIsoDate(subDays(new Date(), 1)),
         })
-        const middlePlacementApp = placementApplication.build({
+        const middleRfP = requestForPlacementFactory.build({
           submittedAt: DateFormats.dateObjToIsoDate(subDays(new Date(), 2)),
         })
-        const oldestPlacementApp = placementApplication.build({
+        const oldestRfP = requestForPlacementFactory.build({
           submittedAt: DateFormats.dateObjToIsoDate(subDays(new Date(), 3)),
         })
-        const unsortedPlacementApplications = [middlePlacementApp, oldestPlacementApp, newestPlacementApp]
-        const sortedPlacementApplications = [newestPlacementApp, middlePlacementApp, oldestPlacementApp]
+        const unsortedRfPs = [middleRfP, oldestRfP, newestRfP]
+        const sortedRfPs = [newestRfP, middleRfP, oldestRfP]
 
         application.status = 'submitted'
 
         const requestHandler = applicationsController.show()
 
         applicationService.findApplication.mockResolvedValue(application)
-        applicationService.getPlacementApplications.mockResolvedValue(unsortedPlacementApplications)
+        applicationService.getRequestsForPlacement.mockResolvedValue(unsortedRfPs)
 
         await requestHandler({ ...request, query: { tab: 'placementRequests' } }, response, next)
 
@@ -266,7 +266,7 @@ describe('applicationsController', () => {
           referrer,
           tab: 'placementRequests',
           pageHeading: 'Approved Premises application',
-          placementApplications: sortedPlacementApplications,
+          requestsForPlacement: sortedRfPs,
         })
       })
     })
