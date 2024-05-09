@@ -54,9 +54,8 @@ export class ListPage extends BasePage {
 
     const actualDeadlineInDays: number = numberOfDaysOrToday === 'Today' ? 0 : Number(numberOfDaysOrToday)
 
-    expect(
-      actualDeadlineInDays >= expectedDeadlineInDays && actualDeadlineInDays <= expectedDeadlineInDays + 4,
-    ).toBeTruthy()
+    expect(actualDeadlineInDays).toBeGreaterThanOrEqual(expectedDeadlineInDays)
+    expect(actualDeadlineInDays).toBeLessThanOrEqual(expectedDeadlineInDays + 4)
 
     if (user) {
       await expect(row.locator('td').nth(1)).toContainText(user)

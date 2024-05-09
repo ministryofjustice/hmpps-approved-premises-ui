@@ -203,7 +203,7 @@ export const assessApplication = async (
       deadlineInDays = 2
       emailBody = '2 working days'
       break
-    case applicationType === 'emergency' && new Date().getHours() < 13:
+    case applicationType === 'emergency':
       // If the application has been submitted before 1pm the deadline is today
       deadlineInDays = 0
       emailBody =
