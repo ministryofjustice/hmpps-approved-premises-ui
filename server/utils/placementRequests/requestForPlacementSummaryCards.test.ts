@@ -6,10 +6,41 @@ import { applicationFactory, requestForPlacementFactory, userFactory } from '../
 import paths from '../../paths/apply'
 import { DateFormats } from '../dateUtils'
 import { RequestForPlacementStatusTag } from './statusTag'
+import { sentenceCase } from '../utils'
 
 describe('RequestForPlacementSummaryCards', () => {
   const actingUserId = '123'
   const applicationId = '456'
+
+  it('allows document to be nullable', () => {
+    const requestForPlacement = requestForPlacementFactory.build({
+      document: undefined,
+    })
+
+    const actual = new RequestForPlacementSummaryCards(requestForPlacement, applicationId, actingUserId).response()
+
+    expect(actual).toEqual({
+      card: {
+        actions: {
+          items: [],
+        },
+        attributes: {
+          'data-cy-placement-application-id': requestForPlacement.id,
+        },
+        title: expect.objectContaining({}),
+      },
+      rows: [
+        {
+          key: {
+            text: 'Status',
+          },
+          value: {
+            html: new RequestForPlacementStatusTag(requestForPlacement.status).html(),
+          },
+        },
+      ],
+    })
+  })
 
   describe('if the RfP cannot be directly withdrawn', () => {
     const requestForPlacement = requestForPlacementFactory.build({
@@ -34,7 +65,7 @@ describe('RequestForPlacementSummaryCards', () => {
             'data-cy-placement-application-id': requestForPlacement.id,
           },
         }),
-        rows: [
+        rows: expect.arrayContaining([
           {
             key: {
               text: 'Status',
@@ -115,7 +146,7 @@ describe('RequestForPlacementSummaryCards', () => {
               text: 'No',
             },
           },
-        ],
+        ]),
       })
     })
 
@@ -153,7 +184,7 @@ describe('RequestForPlacementSummaryCards', () => {
             'data-cy-placement-application-id': requestForPlacement.id,
           },
         }),
-        rows: [
+        rows: expect.arrayContaining([
           {
             key: {
               text: 'Status',
@@ -234,7 +265,7 @@ describe('RequestForPlacementSummaryCards', () => {
               text: 'No',
             },
           },
-        ],
+        ]),
       })
     })
 
@@ -253,6 +284,23 @@ describe('RequestForPlacementSummaryCards', () => {
       ).response()
 
       expect(summaryCard.card.actions.items).toContainEqual(expectedActionItem)
+    })
+  })
+
+  describe('if the RfP has a status of request_withdrawn', () => {
+    it('adds a row for the withdrawal reason', () => {
+      const requestForPlacement = requestForPlacementFactory.build({ status: 'request_withdrawn' })
+
+      const summaryCard = new RequestForPlacementSummaryCards(
+        requestForPlacement,
+        applicationId,
+        actingUserId,
+      ).response()
+
+      expect(summaryCard.rows).toContainEqual({
+        key: { text: 'Withdrawal reason' },
+        value: { text: sentenceCase(requestForPlacement?.withdrawalReason) },
+      })
     })
   })
 })
