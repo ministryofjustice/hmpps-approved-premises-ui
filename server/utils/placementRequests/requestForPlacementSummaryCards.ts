@@ -5,6 +5,7 @@ import { DateFormats } from '../dateUtils'
 import paths from '../../paths/apply'
 import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
 import { RequestForPlacementStatusTag } from './statusTag'
+import { sentenceCase } from '../utils'
 
 export class RequestForPlacementSummaryCards {
   private rows: Array<SummaryListItem> = []
@@ -77,8 +78,18 @@ export class RequestForPlacementSummaryCards {
     }
   }
 
+  private withdrawalReason() {
+    this.rows.push({
+      key: { text: 'Withdrawal reason' },
+      value: { text: sentenceCase(this.requestForPlacement?.withdrawalReason || 'Not supplied') },
+    })
+  }
+
   response() {
     this.statusTag()
+    if (this.requestForPlacement.status === 'request_withdrawn') {
+      this.withdrawalReason()
+    }
     this.questionAndAnswerRows()
     this.withdrawAction()
 
