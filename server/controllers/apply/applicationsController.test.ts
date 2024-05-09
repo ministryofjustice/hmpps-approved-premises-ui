@@ -7,7 +7,6 @@ import type {
   GroupedApplications,
   PaginatedResponse,
 } from '@approved-premises/ui'
-import { subDays } from 'date-fns'
 import TasklistService from '../../services/tasklistService'
 import ApplicationsController from './applicationsController'
 import { ApplicationService, PersonService } from '../../services'
@@ -237,37 +236,6 @@ describe('applicationsController', () => {
 
         expect(applicationService.findApplication).toHaveBeenCalledWith(token, application.id)
         expect(applicationService.getRequestsForPlacement).toHaveBeenCalledWith(token, application.id)
-      })
-
-      it('sorts the placement applications in descending date order', async () => {
-        const newestRfP = requestForPlacementFactory.build({
-          submittedAt: DateFormats.dateObjToIsoDate(subDays(new Date(), 1)),
-        })
-        const middleRfP = requestForPlacementFactory.build({
-          submittedAt: DateFormats.dateObjToIsoDate(subDays(new Date(), 2)),
-        })
-        const oldestRfP = requestForPlacementFactory.build({
-          submittedAt: DateFormats.dateObjToIsoDate(subDays(new Date(), 3)),
-        })
-        const unsortedRfPs = [middleRfP, oldestRfP, newestRfP]
-        const sortedRfPs = [newestRfP, middleRfP, oldestRfP]
-
-        application.status = 'submitted'
-
-        const requestHandler = applicationsController.show()
-
-        applicationService.findApplication.mockResolvedValue(application)
-        applicationService.getRequestsForPlacement.mockResolvedValue(unsortedRfPs)
-
-        await requestHandler({ ...request, query: { tab: 'placementRequests' } }, response, next)
-
-        expect(response.render).toHaveBeenCalledWith('applications/show', {
-          application,
-          referrer,
-          tab: 'placementRequests',
-          pageHeading: 'Approved Premises application',
-          requestsForPlacement: sortedRfPs,
-        })
       })
     })
 
