@@ -46,8 +46,13 @@ export class ListPage extends BasePage {
   async shouldHaveCorrectDeadlineAndAllocation(id: string, expectedDeadlineInDays: number, user?: string | null) {
     const row = await this.getAssignmentWithId(id, !!user)
 
-    const actualDeadline = await row.locator('td').nth(0).innerText()
-    const actualDeadlineInDays = Number(actualDeadline.split(' ')[0])
+    // Either 'Today' or 'X days'
+    const actualDeadline: string = await row.locator('td').nth(0).innerText()
+
+    // Either 'Today' or 'X' where X is the number of days
+    const numberOfDaysOrToday: string = actualDeadline.split(' ')[0]
+
+    const actualDeadlineInDays: number = numberOfDaysOrToday === 'Today' ? 0 : Number(numberOfDaysOrToday)
 
     expect(
       actualDeadlineInDays >= expectedDeadlineInDays && actualDeadlineInDays <= expectedDeadlineInDays + 4,
