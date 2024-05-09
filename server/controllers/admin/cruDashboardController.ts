@@ -11,6 +11,7 @@ import adminPaths from '../../paths/admin'
 import { PlacementRequestDashboardSearchOptions } from '../../@types/ui'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
+import { retrieveFlag } from '../../middleware/setupFeatureFlags'
 
 export default class CruDashboardController {
   constructor(
@@ -126,7 +127,7 @@ export default class CruDashboardController {
       sortDirection,
     )
 
-    const showRequestedAndActualArrivalDates = await this.featureFlagService.getBooleanFlag('show-both-arrival-dates')
+    const showRequestedAndActualArrivalDates = await retrieveFlag('show-both-arrival-dates', this.featureFlagService)
 
     return {
       placementRequests: dashboard.data,
