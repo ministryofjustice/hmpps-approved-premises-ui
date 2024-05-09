@@ -6,7 +6,7 @@ export const assessmentShouldHaveCorrectDeadlineAndAllocatedUser = async (
   dashboard: DashboardPage,
   page: Page,
   id: string,
-  deadline: string,
+  deadline: number,
   user: string | null,
 ) => {
   await dashboard.clickWorkflow()
