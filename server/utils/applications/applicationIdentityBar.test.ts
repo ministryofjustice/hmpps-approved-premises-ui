@@ -12,6 +12,7 @@ describe('applicationIdentityBar', () => {
       expect(applicationTitle(application, 'heading')).toMatchStringIgnoringWhitespace(`
         <h1 class="govuk-caption-l">heading</h1>
         <h2 class="govuk-heading-l">${person.name}</h2>
+        <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>
       `)
     })
 
@@ -25,6 +26,7 @@ describe('applicationIdentityBar', () => {
           ${person.name}
           <strong class="govuk-tag govuk-tag--grey govuk-!-margin-5" >Offline application</strong>
         </h2>
+        <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>
       `)
     })
 
@@ -38,6 +40,7 @@ describe('applicationIdentityBar', () => {
           ${person.name}
           <strong class="govuk-tag govuk-tag--red govuk-!-margin-5" data-cy-status="withdrawn">Application withdrawn</strong>
         </h2>
+        <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>
       `)
     })
   })

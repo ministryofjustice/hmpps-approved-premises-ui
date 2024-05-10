@@ -17,6 +17,7 @@ export const applicationTitle = (application: Application, pageHeading: string):
   return `
     <h1 class="govuk-caption-l">${pageHeading}</h1>
     <h2 class="govuk-heading-l">${heading}</h2>
+    <h3 class="govuk-caption-m govuk-!-margin-top-1">CRN: ${application.person.crn}</h3>
   `
 }
 
