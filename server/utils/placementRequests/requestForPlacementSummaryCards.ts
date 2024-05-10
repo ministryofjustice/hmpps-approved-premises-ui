@@ -41,6 +41,22 @@ export class RequestForPlacementSummaryCards {
     })
   }
 
+  private placementDates(): void {
+    this.rows.push({
+      key: { text: 'Placement dates' },
+      value: {
+        html: embeddedSummaryListItem(
+          this.requestForPlacement.placementDates.map(date => {
+            return {
+              'Expected arrival': DateFormats.isoDateToUIDate(date.expectedArrival, { format: 'short' }),
+              Duration: `${date.duration} days`,
+            }
+          }),
+        ),
+      },
+    })
+  }
+
   private card(): SummaryListWithCard {
     return {
       card: {
@@ -89,6 +105,9 @@ export class RequestForPlacementSummaryCards {
     this.statusTag()
     if (this.requestForPlacement.status === 'request_withdrawn') {
       this.withdrawalReason()
+    }
+    if (this.requestForPlacement?.placementDates.length) {
+      this.placementDates()
     }
     this.questionAndAnswerRows()
     this.withdrawAction()

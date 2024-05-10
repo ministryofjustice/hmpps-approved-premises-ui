@@ -7,6 +7,7 @@ import paths from '../../paths/apply'
 import { DateFormats } from '../dateUtils'
 import { RequestForPlacementStatusTag } from './statusTag'
 import { sentenceCase } from '../utils'
+import { embeddedSummaryListItem } from '../applications/summaryListUtils/embeddedSummaryListItem'
 
 describe('RequestForPlacementSummaryCards', () => {
   const actingUserId = '123'
@@ -46,6 +47,8 @@ describe('RequestForPlacementSummaryCards', () => {
     const requestForPlacement = requestForPlacementFactory.build({
       isWithdrawn: false,
       canBeDirectlyWithdrawn: false,
+      withdrawalReason: undefined,
+      placementDates: [{ duration: 1, expectedArrival: '2024-04-24T00:00:00.000Z' }],
     })
 
     it('should generate a summary card for the request section', () => {
@@ -72,6 +75,20 @@ describe('RequestForPlacementSummaryCards', () => {
             },
             value: {
               html: new RequestForPlacementStatusTag(requestForPlacement.status).html(),
+            },
+          },
+          {
+            key: { text: 'Placement dates' },
+            value: {
+              html: embeddedSummaryListItem([
+                {
+                  'Expected arrival': DateFormats.isoDateToUIDate(
+                    requestForPlacement.placementDates[0].expectedArrival,
+                    { format: 'short' },
+                  ),
+                  Duration: `${requestForPlacement.placementDates[0].duration} days`,
+                },
+              ]),
             },
           },
           {
