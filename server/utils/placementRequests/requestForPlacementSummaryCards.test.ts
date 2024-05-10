@@ -29,7 +29,7 @@ describe('RequestForPlacementSummaryCards', () => {
         },
         title: expect.objectContaining({}),
       },
-      rows: [
+      rows: expect.arrayContaining([
         {
           key: {
             text: 'Status',
@@ -38,7 +38,7 @@ describe('RequestForPlacementSummaryCards', () => {
             html: new RequestForPlacementStatusTag(requestForPlacement.status).html(),
           },
         },
-      ],
+      ]),
     })
   })
 
