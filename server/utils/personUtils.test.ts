@@ -14,7 +14,7 @@ describe('personUtils', () => {
 
   describe('isApplicableTier', () => {
     it(`returns true if the person's sex is male and has an applicable tier`, () => {
-      expect(isApplicableTier('Male', 'A3')).toBeTruthy()
+      expect(isApplicableTier('Male', 'A1')).toBeTruthy()
     })
 
     it(`returns false if the person's sex is male and has a tier that is not applicable to males`, () => {

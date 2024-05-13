@@ -9,7 +9,7 @@ const tierBadge = (tier: string): string => {
 }
 
 const isApplicableTier = (sex: string, tier: string): boolean => {
-  const applicableTiersAll = ['A3', 'A2', 'B1', 'B3', 'B2', 'B1']
+  const applicableTiersAll = ['A1', 'A2', 'A3', 'B1', 'B2', 'B3']
   const applicableTiersWomen = ['C3']
 
   const applicableTiers = sex === 'Female' ? [applicableTiersAll, applicableTiersWomen].flat() : applicableTiersAll
