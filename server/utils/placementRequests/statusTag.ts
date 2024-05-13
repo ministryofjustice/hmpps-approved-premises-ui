@@ -10,6 +10,7 @@ export class RequestForPlacementStatusTag extends StatusTag<RequestForPlacementS
     placement_booked: 'Placement booked',
     request_rejected: 'Request rejected',
     request_submitted: 'Request submitted',
+    request_unsubmitted: 'Request unsubmitted',
     request_withdrawn: 'Request withdrawn',
   }
 
@@ -21,6 +22,7 @@ export class RequestForPlacementStatusTag extends StatusTag<RequestForPlacementS
     placement_booked: 'blue',
     request_rejected: 'red',
     request_submitted: 'yellow',
+    request_unsubmitted: 'yellow',
     request_withdrawn: 'red',
   }
 
