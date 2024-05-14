@@ -208,7 +208,8 @@
 
 							<div class="button">
 								{{ govukButton({
-									text: "Update"
+									text: "Update",
+									preventDoubleClick: true
 								}) }}
 							</div>
 						</div>
@@ -229,7 +230,8 @@
 					<p>If there are no suitable results for your search, mark this case as unable to match.</p>
 					{{ govukButton({
 						text: "Unable to match",
-						href: paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id})
+						href: paths.placementRequests.bookingNotMade.confirm({id: placementRequest.id}),
+						preventDoubleClick: true
 					}) }}
 				</div>
 			</div>

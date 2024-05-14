@@ -17,7 +17,8 @@
       {{ govukButton({
           text: "Add new user",
           href: paths.admin.userManagement.new({}) ,
-          classes: "govuk-grid-column-one-quarter"
+          classes: "govuk-grid-column-one-quarter",
+          preventDoubleClick: true
         }) }}
     </div>
     <div class="search-and-filter__wrapper">
@@ -45,7 +46,8 @@
             {{ govukButton({
                 "text": "Search",
                 "type": "submit",
-                "classes": "govuk-grid-column-one-quarter govuk-!-margin-top-9"
+                "classes": "govuk-grid-column-one-quarter govuk-!-margin-top-9",
+                "preventDoubleClick": true
               }) }}
           </div>
         </div>
@@ -96,7 +98,8 @@
             {{ govukButton({
                 "name": "submit",
                 "text": "Apply filters",
-                "classes": "search-and-filter__submit"
+                "classes": "search-and-filter__submit",
+                "preventDoubleClick": true
             }) }}
           </div>
         </div>

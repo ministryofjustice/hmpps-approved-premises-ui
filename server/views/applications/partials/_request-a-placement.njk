@@ -11,7 +11,8 @@
                         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
                         <input type="hidden" name="applicationId" value="{{ application.id }}"/>
                         {{ govukButton({
-                    text: "Create request for placement"
+                    text: "Create request for placement",
+                    preventDoubleClick: true
                   }) }}
                     </form>
                 {% endif %}

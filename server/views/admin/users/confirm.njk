@@ -30,7 +30,8 @@
                 {{
                 govukButton({
                     text: "Continue",
-                    href: paths.admin.userManagement.edit({id: user.id})
+                    href: paths.admin.userManagement.edit({id: user.id}),
+                    preventDoubleClick: true
                 })
             }}
 

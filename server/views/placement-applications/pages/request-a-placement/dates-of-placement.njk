@@ -158,7 +158,8 @@
       attributes: {
         "data-remove-input": "true"
       },
-      classes: "govuk-button govuk-button--secondary moj-add-another__remove-button"
+      classes: "govuk-button govuk-button--secondary moj-add-another__remove-button",
+      preventDoubleClick: true
     })
   }}
 {% endmacro %}
@@ -193,13 +194,15 @@
             attributes: {
               "data-add-input": "true"
             },
-            classes: "govuk-button--secondary"
+            classes: "govuk-button--secondary",
+            preventDoubleClick: true
           })
         }}
 
         {{
           govukButton({
-            text: "Save and continue"
+            text: "Save and continue",
+            preventDoubleClick: true
           })
         }}
 

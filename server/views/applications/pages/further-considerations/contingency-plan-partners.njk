@@ -62,7 +62,8 @@
       attributes: {
         "data-remove-agency": "true"
       },
-      classes: "govuk-button govuk-button--secondary moj-add-another__remove-button"
+      classes: "govuk-button govuk-button--secondary moj-add-another__remove-button",
+      preventDoubleClick: true
     })
   }}
 {% endmacro %}
@@ -107,13 +108,15 @@
             attributes: {
               "data-add-agency": "true"
             },
-            classes: "govuk-button--secondary"
+            classes: "govuk-button--secondary",
+            preventDoubleClick: true
           })
         }}
 
         {{
           govukButton({
-            text: "Save and continue"
+            text: "Save and continue",
+            preventDoubleClick: true
           })
         }}
       </form>

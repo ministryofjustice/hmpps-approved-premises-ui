@@ -29,7 +29,8 @@
                 <div class="govuk-button-group">
                     {{ govukButton({
                         name: 'submit',
-                        text: "Continue"
+                        text: "Continue",
+                        preventDoubleClick: true
                     }) }}
                     <a class="govuk-link" href="{{paths.admin.placementRequests.show({ id: id })}}">Back to placement details</a>
                 </div>

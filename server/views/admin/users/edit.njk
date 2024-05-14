@@ -77,14 +77,16 @@
                     {{
                         govukButton({
                             text: "Save",
-                            type: "submit"
+                            type: "submit",
+                            preventDoubleClick: true
                         })
                     }}
 
                     {{ govukButton({
                         text: "Remove access",
                         href: paths.admin.userManagement.confirmDelete({id: user.id}),
-                        classes: "govuk-button--warning"
+                        classes: "govuk-button--warning",
+                        preventDoubleClick: true
                     }) }}
                 </div>
             </div>

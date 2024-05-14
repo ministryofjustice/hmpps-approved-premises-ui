@@ -18,7 +18,8 @@
 
       {{ govukButton({
         text: "Return to dashboard",
-        href: paths.assessments.index({})} + "?activeTab=requests_for_placement"
+        href: paths.assessments.index({})} + "?activeTab=requests_for_placement",
+        preventDoubleClick: true
       }) }}
     </div>
   </div>

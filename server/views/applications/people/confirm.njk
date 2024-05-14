@@ -52,7 +52,8 @@
 
       {{ govukButton({
           text: "Save and continue",
-          href: paths.applications.people.selectOffence({ crn: person.crn })
+          href: paths.applications.people.selectOffence({ crn: person.crn }),
+          preventDoubleClick: true
       }) }}
 
       <p class="govuk-body">
