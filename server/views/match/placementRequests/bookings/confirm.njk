@@ -30,7 +30,8 @@
           <input type="hidden" name="bedId" value="{{ bedSearchResult.bed.id }}"/>
 
           {{ govukButton({
-            text: "Confirm and submit"
+            text: "Confirm and submit",
+            preventDoubleClick: true
           }) }}
         </form>
       </div>

@@ -25,7 +25,8 @@
 
     {{ govukButton({
           text: "Back to dashboard",
-          href: paths.assessments.index()
+          href: paths.assessments.index(),
+          preventDoubleClick: true
         }) }}
 
 {% endblock %}

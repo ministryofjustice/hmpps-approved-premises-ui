@@ -123,14 +123,16 @@
 
         {{ govukButton({
           text: "Save and continue",
-          name: "submit"
+          name: "submit",
+          preventDoubleClick: true
         }) }}
 
         {{ govukButton({
           text: "Cancel lost bed",
           name: "cancel",
           value: '1',
-          classes: "govuk-button--secondary govuk-!-margin-left-3"
+          classes: "govuk-button--secondary govuk-!-margin-left-3",
+          preventDoubleClick: true
         }) }}
 
       </form>
