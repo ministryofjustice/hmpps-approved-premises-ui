@@ -116,7 +116,6 @@
     "@ministryofjustice/frontend": "^2.0.0",
     "@playwright/test": "^1.41.2",
     "@sentry/node": "^8.0.0",
-    "@sentry/tracing": "^7.14.1",
     "@total-typescript/shoehorn": "^0.1.0",
     "agentkeepalive": "^4.2.1",
     "applicationinsights": "^2.9.5",
