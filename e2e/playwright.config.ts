@@ -7,7 +7,7 @@ export default defineConfig<TestOptions>({
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  maxFailures: 1,
+  maxFailures: process.env.CI ? 3 : 1,
   workers: 1,
   reporter: 'html',
   timeout: process.env.CI ? 5 * 60 * 1000 : 2 * 60 * 1000,
