@@ -34,11 +34,19 @@ export default class ApplicationsController {
     return async (req: Request, res: Response) => {
       const searchOptions = getSearchOptions<ApplicationDashboardSearchOptions>(req, ['crnOrName', 'status'])
 
-      const { pageNumber, hrefPrefix, sortBy, sortDirection } = getPaginationDetails<ApplicationSortField>(
+      const paginationDetails = getPaginationDetails<ApplicationSortField>(
         req,
         paths.applications.dashboard({}),
         searchOptions,
       )
+
+      const { pageNumber, hrefPrefix, sortBy } = paginationDetails
+      let { sortDirection } = paginationDetails
+
+      if (!sortBy || (sortBy === 'createdAt' && !sortDirection)) {
+        sortDirection = 'desc'
+      }
+
       const result = await this.applicationService.dashboard(
         req.user.token,
         pageNumber,

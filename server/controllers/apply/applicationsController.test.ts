@@ -128,6 +128,87 @@ describe('applicationsController', () => {
       expect(getSearchOptions).toHaveBeenCalledWith(request, ['crnOrName', 'status'])
       expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.applications.dashboard({}), searchOptions)
     })
+    it('if sort by and sort direction not provided, calls the dashboard service with the sort direction desc', async () => {
+      const searchOptions = createMock<ApplicationDashboardSearchOptions>()
+      const paginatedResponse = paginatedResponseFactory.build({
+        data: applicationFactory.buildList(2),
+      }) as PaginatedResponse<ApprovedPremisesApplicationSummary>
+
+      const paginationDetails = {
+        hrefPrefix: paths.applications.dashboard({}),
+        pageNumber: 1,
+      }
+
+      applicationService.dashboard.mockResolvedValue(paginatedResponse)
+      ;(getSearchOptions as jest.Mock).mockReturnValue(searchOptions)
+      ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
+
+      const requestHandler = applicationsController.dashboard()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/dashboard', {
+        pageHeading: 'Approved Premises applications',
+        applications: paginatedResponse.data,
+        pageNumber: Number(paginationDetails.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: undefined,
+        sortDirection: 'desc',
+        ...searchOptions,
+      })
+
+      expect(applicationService.dashboard).toHaveBeenCalledWith(
+        token,
+        paginationDetails.pageNumber,
+        undefined,
+        'desc',
+        searchOptions,
+      )
+      expect(getSearchOptions).toHaveBeenCalledWith(request, ['crnOrName', 'status'])
+      expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.applications.dashboard({}), searchOptions)
+    })
+    it('if sort by created at and sort direction not provided, calls the dashboard service with the sort direction desc', async () => {
+      const searchOptions = createMock<ApplicationDashboardSearchOptions>()
+      const paginatedResponse = paginatedResponseFactory.build({
+        data: applicationFactory.buildList(2),
+      }) as PaginatedResponse<ApprovedPremisesApplicationSummary>
+
+      const paginationDetails = {
+        hrefPrefix: paths.applications.dashboard({}),
+        pageNumber: 1,
+        sortBy: 'createdAt',
+      }
+
+      applicationService.dashboard.mockResolvedValue(paginatedResponse)
+      ;(getSearchOptions as jest.Mock).mockReturnValue(searchOptions)
+      ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
+
+      const requestHandler = applicationsController.dashboard()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('applications/dashboard', {
+        pageHeading: 'Approved Premises applications',
+        applications: paginatedResponse.data,
+        pageNumber: Number(paginationDetails.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: 'desc',
+        ...searchOptions,
+      })
+
+      expect(applicationService.dashboard).toHaveBeenCalledWith(
+        token,
+        paginationDetails.pageNumber,
+        paginationDetails.sortBy,
+        'desc',
+        searchOptions,
+      )
+      expect(getSearchOptions).toHaveBeenCalledWith(request, ['crnOrName', 'status'])
+      expect(getPaginationDetails).toHaveBeenCalledWith(request, paths.applications.dashboard({}), searchOptions)
+    })
   })
 
   describe('show', () => {
