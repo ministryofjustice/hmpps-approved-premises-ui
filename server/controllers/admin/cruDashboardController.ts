@@ -11,7 +11,6 @@ import adminPaths from '../../paths/admin'
 import { PlacementRequestDashboardSearchOptions } from '../../@types/ui'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { getSearchOptions } from '../../utils/getSearchOptions'
-import { retrieveFlag } from '../../middleware/setupFeatureFlags'
 
 export default class CruDashboardController {
   constructor(
@@ -127,8 +126,6 @@ export default class CruDashboardController {
       sortDirection,
     )
 
-    const showRequestedAndActualArrivalDates = await retrieveFlag('show-both-arrival-dates', this.featureFlagService)
-
     return {
       placementRequests: dashboard.data,
       subheading: 'All applications that have been assessed as suitable and require matching to an AP are listed below',
@@ -140,7 +137,6 @@ export default class CruDashboardController {
       hrefPrefix,
       sortBy,
       sortDirection,
-      showRequestedAndActualArrivalDates,
     }
   }
 }

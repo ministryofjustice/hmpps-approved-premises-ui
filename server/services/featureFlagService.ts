@@ -3,7 +3,6 @@ import config from '../config'
 import logger from '../../logger'
 
 export type FeatureFlag =
-  | 'show-both-arrival-dates'
   | 'allow-sufficient-information-request-without-confirmation'
   | 'show-search-by-CRN-timeline-navigation'
 
