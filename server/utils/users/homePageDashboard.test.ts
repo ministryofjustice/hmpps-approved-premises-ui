@@ -42,7 +42,6 @@ describe('homePageDashboard', () => {
         sections.apply,
         sections.workflow,
         sections.cruDashboard,
-        sections.reports,
         sections.userManagement,
       ])
     })
@@ -54,7 +53,9 @@ describe('homePageDashboard', () => {
     })
 
     it('should return all except match sections for a user with all roles', () => {
-      const user = userDetailsFactory.build({ roles: ['assessor', 'manager', 'matcher', 'workflow_manager'] })
+      const user = userDetailsFactory.build({
+        roles: ['assessor', 'manager', 'matcher', 'workflow_manager', 'report_viewer'],
+      })
 
       expect(sectionsForUser(user)).toEqual([
         sections.apply,
@@ -62,8 +63,8 @@ describe('homePageDashboard', () => {
         sections.manage,
         sections.workflow,
         sections.cruDashboard,
-        sections.reports,
         sections.userManagement,
+        sections.reports,
       ])
     })
 
@@ -80,7 +81,6 @@ describe('homePageDashboard', () => {
         sections.apply,
         sections.workflow,
         sections.cruDashboard,
-        sections.reports,
         sections.userManagement,
       ])
     })
