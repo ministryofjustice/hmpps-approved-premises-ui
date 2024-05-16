@@ -4,7 +4,7 @@ Date: 2024-05-16
 
 ## Status
 
-Tentative
+Accepted
 
 ## Context
 
@@ -21,5 +21,5 @@ We will call the features intended to replace the 'lost beds' functionality 'out
 ## Consequences
 
 - We will be able to build the new functionality without the changes polluting the existing code enabling us to iterate quickly.
-- We will have similar functionality under different names - it may not be clear to incoming developers which is the new and which is functionality being replaced
-- The terminology will be closer to what the users use aiding clarity
+- The different terminology ("lost beds" versus "out-of-service beds") should help incoming developers differentiate between the new code and the functionality which is being replaced.
+- The terminology will be closer to what the users use aiding clarity.
