@@ -17,6 +17,10 @@ export const roleLabelDictionary: RoleLabelDictionary = {
     label: 'Appeals manager',
     hint: 'Log appeals against rejected applications',
   },
+  report_viewer: {
+    label: 'Report Viewer',
+    hint: 'View and download reports',
+  },
 }
 
 export const allocationRoleLabelDictionary: AllocationRoleLabelDictionary = {
@@ -25,7 +29,7 @@ export const allocationRoleLabelDictionary: AllocationRoleLabelDictionary = {
   excluded_from_placement_application_allocation: { label: 'Stop placement request allocations' },
 }
 
-type UnusedRoles = 'applicant' | 'report_viewer'
+type UnusedRoles = 'applicant'
 
 type RolesForCheckboxes = Exclude<UserRole, AllocationRole | UnusedRoles>
 
@@ -46,6 +50,7 @@ export const roles: ReadonlyArray<UserRole> = [
   'excluded_from_match_allocation',
   'excluded_from_placement_application_allocation',
   'appeals_manager',
+  'report_viewer',
 ]
 
 export const allocationRoles = [
@@ -54,7 +59,7 @@ export const allocationRoles = [
   'excluded_from_placement_application_allocation',
 ] as const
 
-export const unusedRoles = ['applicant', 'report_viewer'] as const
+export const unusedRoles = ['applicant'] as const
 
 export type AllocationRole = (typeof allocationRoles)[number]
 
