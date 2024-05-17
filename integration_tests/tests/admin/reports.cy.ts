@@ -1,4 +1,4 @@
-import { reportInputLabels } from '../../../server/utils/reportUtils'
+import { reportInputLabels, unusedReports } from '../../../server/utils/reportUtils'
 import ReportPage from '../../pages/admin/reportPage'
 
 context('Reports', () => {
@@ -12,22 +12,26 @@ context('Reports', () => {
   })
 
   it('allows me to download reports', () => {
-    Object.keys(reportInputLabels).forEach(reportName => {
-      // Given there is a report available
-      const month = '8'
-      const year = '2023'
-      cy.task('stubReport', { month, year, reportName })
+    Object.keys(reportInputLabels)
+      .filter(reportName => {
+        return !unusedReports.includes(reportName)
+      })
+      .forEach(reportName => {
+        // Given there is a report available
+        const month = '8'
+        const year = '2023'
+        cy.task('stubReport', { month, year, reportName })
 
-      // When I visit the report page
-      const page = ReportPage.visit()
+        // When I visit the report page
+        const page = ReportPage.visit()
 
-      // And I download a lost beds report
-      page.expectDownload()
-      page.downloadReport('8', '2023', reportName)
+        // And I download a lost beds report
+        page.expectDownload()
+        page.downloadReport('8', '2023', reportName)
 
-      // Then the report should be downloaded
-      page.shouldHaveDownloadedFile(month, year, reportName)
-    })
+        // Then the report should be downloaded
+        page.shouldHaveDownloadedFile(month, year, reportName)
+      })
   })
 
   it(`shows errors when I don't select a date or report type`, () => {

@@ -21,8 +21,14 @@ export const reportInputLabels = {
 
 export type ReportType = (keyof typeof reportInputLabels)[number]
 
-export const reportOptions = Object.entries(reportInputLabels).map(([reportName, reportLabel]) => ({
-  value: reportName,
-  text: reportLabel.text,
-  hint: { text: reportLabel.hint },
-}))
+export const unusedReports = ['applications'] as Array<string>
+
+export const reportOptions = Object.entries(reportInputLabels)
+  .filter(([reportName]) => {
+    return !unusedReports.includes(reportName)
+  })
+  .map(([reportName, reportLabel]) => ({
+    value: reportName,
+    text: reportLabel.text,
+    hint: { text: reportLabel.hint },
+  }))
