@@ -1,4 +1,4 @@
-import { GroupedAssessments, KeyDetailsArgs, SummaryListItem } from '@approved-premises/ui'
+import { GroupedAssessments, KeyDetailsArgs, SummaryListItem, UserDetails } from '@approved-premises/ui'
 
 import {
   ApprovedPremisesAssessmentStatus,
@@ -10,7 +10,7 @@ import { TasklistPageInterface } from '../../form-pages/tasklistPage'
 import Assess from '../../form-pages/assess'
 import { UnknownPageError } from '../errors'
 import Apply from '../../form-pages/apply'
-import { kebabCase, linkTo } from '../utils'
+import { createQueryString, kebabCase, linkTo } from '../utils'
 import { getApplicationType } from '../applications/utils'
 import { applicationAccepted, decisionFromAssessment } from './decisionUtils'
 import { formattedArrivalDate } from './dateUtils'
@@ -18,6 +18,9 @@ import { getResponseForPage } from '../applications/getResponseForPage'
 import { nameOrPlaceholderCopy } from '../personUtils'
 import { DateFormats } from '../dateUtils'
 import applyPaths from '../../paths/apply'
+import { TabItem } from '../tasks/listTable'
+import assessPaths from '../../paths/assess'
+import { hasRole } from '../users'
 
 const awaitingAssessmentStatuses = ['in_progress', 'not_started'] as Array<ApprovedPremisesAssessmentStatus>
 
@@ -176,6 +179,37 @@ const keyDetails = (assessment: Assessment): KeyDetailsArgs => {
   }
 }
 
+const assessmentsTabItems = (user: UserDetails, activeTab?: string): Array<TabItem> => {
+  const tabItems = [
+    {
+      text: 'Applications to assess',
+      href: `${assessPaths.assessments.index({})}${createQueryString({ activeTab: 'awaiting_assessment' }, { addQueryPrefix: true })}`,
+      active: activeTab === 'awaiting_assessment' || activeTab === undefined || activeTab?.length === 0,
+    },
+    {
+      text: 'Requested further information',
+      href: `${assessPaths.assessments.index({})}${createQueryString({ activeTab: 'awaiting_response' }, { addQueryPrefix: true })}`,
+      active: activeTab === 'awaiting_response',
+    },
+    {
+      text: 'Completed',
+      href: `${assessPaths.assessments.index({})}${createQueryString({ activeTab: 'completed' }, { addQueryPrefix: true })}`,
+      active: activeTab === 'completed',
+    },
+  ]
+  const requestForPlacementTabItem = {
+    text: 'Requests for placement',
+    href: `${assessPaths.assessments.index({})}${createQueryString({ activeTab: 'requests_for_placement' }, { addQueryPrefix: true })}`,
+    active: activeTab === 'requests_for_placement',
+  }
+
+  if (hasRole(user, 'workflow_manager') || hasRole(user, 'matcher')) {
+    tabItems.splice(1, 0, requestForPlacementTabItem)
+  }
+
+  return tabItems
+}
+
 export {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
@@ -190,4 +224,5 @@ export {
   rejectionRationaleFromAssessmentResponses,
   awaitingAssessmentStatuses,
   keyDetails,
+  assessmentsTabItems,
 }

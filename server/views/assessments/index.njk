@@ -18,28 +18,7 @@
       {{
         mojSubNavigation({
           label: 'Sub navigation',
-          items: [
-            {
-              text: 'Applications to assess',
-              href: paths.assessments.index({}) + "?activeTab=awaiting_assessment",
-              active: (activeTab|length === 0 or activeTab == 'awaiting_assessment')
-            },
-            {
-              text: 'Requests for placement',
-              href: paths.assessments.index({}) + "?activeTab=requests_for_placement",
-              active: (activeTab == 'requests_for_placement')
-            },
-            {
-              text: 'Requested further information',
-              href: paths.assessments.index({}) + "?activeTab=awaiting_response",
-              active: (activeTab === 'awaiting_response')
-            },
-            {
-              text: 'Completed',
-              href: paths.assessments.index({}) + "?activeTab=completed",
-              active: (activeTab === 'completed')
-            }
-          ]
+          items: AssessmentUtils.assessmentsTabItems(user, activeTab)
         })
       }}
 

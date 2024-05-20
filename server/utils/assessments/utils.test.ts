@@ -1,7 +1,9 @@
+import { ApprovedPremisesUserRole } from '@approved-premises/api'
 import {
   acctAlertsFromAssessment,
   adjudicationsFromAssessment,
   allocationSummary,
+  assessmentsTabItems,
   caseNotesFromAssessment,
   confirmationPageMessage,
   confirmationPageResult,
@@ -23,6 +25,7 @@ import {
   assessmentSummaryFactory,
   personFactory,
   prisonCaseNotesFactory,
+  userDetailsFactory,
   userFactory,
 } from '../../testutils/factories'
 
@@ -407,5 +410,58 @@ describe('utils', () => {
         ],
       })
     })
+  })
+
+  describe('assessmentsTabItems', () => {
+    it.each([['workflow_manager'], ['matcher']])(
+      `returns the all assessment tab items for user with role %s`,
+      (role: ApprovedPremisesUserRole) => {
+        const user = userDetailsFactory.build({ roles: [role] })
+
+        expect(assessmentsTabItems(user)).toEqual([
+          {
+            active: true,
+            href: '/assessments?activeTab=awaiting_assessment',
+            text: 'Applications to assess',
+          },
+          {
+            active: false,
+            href: '/assessments?activeTab=requests_for_placement',
+            text: 'Requests for placement',
+          },
+          {
+            active: false,
+            href: '/assessments?activeTab=awaiting_response',
+            text: 'Requested further information',
+          },
+          {
+            active: false,
+            href: '/assessments?activeTab=completed',
+            text: 'Completed',
+          },
+        ])
+      },
+    )
+  })
+  it('returns the all assessment tab items except requests for placement for user with out roles workflow_manager and matcher ', () => {
+    const user = userDetailsFactory.build({ roles: ['manager'] })
+
+    expect(assessmentsTabItems(user)).toEqual([
+      {
+        active: true,
+        href: '/assessments?activeTab=awaiting_assessment',
+        text: 'Applications to assess',
+      },
+      {
+        active: false,
+        href: '/assessments?activeTab=awaiting_response',
+        text: 'Requested further information',
+      },
+      {
+        active: false,
+        href: '/assessments?activeTab=completed',
+        text: 'Completed',
+      },
+    ])
   })
 })

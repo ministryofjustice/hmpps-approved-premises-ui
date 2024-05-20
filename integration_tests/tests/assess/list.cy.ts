@@ -7,7 +7,7 @@ context('List assessments', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubAuthUser')
+    cy.task('stubAuthUser', { roles: ['workflow_manager'] })
   })
 
   it('should list assessments', () => {
