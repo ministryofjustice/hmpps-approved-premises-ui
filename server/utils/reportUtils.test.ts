@@ -19,11 +19,6 @@ describe('reportUtils', () => {
           },
         },
         {
-          value: 'applications',
-          text: 'Raw combined applications and placement requests',
-          hint: { text: '' },
-        },
-        {
           value: 'placement-matching-outcomes',
           text: 'Raw data for Placement matching outcomes',
           hint: {
