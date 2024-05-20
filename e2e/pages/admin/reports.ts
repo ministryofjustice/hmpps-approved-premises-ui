@@ -18,6 +18,11 @@ export class ReportsPage extends BasePage {
     return this.downloadReports({ month, year })
   }
 
+  async downloadRawRequestsForPlacementsReports({ month, year }: { month: string; year: string }) {
+    await this.checkRadio('Raw requests for placement')
+    return this.downloadReports({ month, year })
+  }
+
   async downloadReports({ month, year }: { month: string; year: string }) {
     await this.page.getByRole('combobox', { name: 'Month' }).selectOption({ index: Number(month) })
     await this.page.getByRole('combobox', { name: 'Year' }).selectOption({ label: year })
