@@ -251,9 +251,9 @@ describe('tableUtils', () => {
       expect(dashboardTableRows([placementRequest], 'notMatched')).toEqual([
         [
           nameCell(placementRequest),
-          crnCell(placementRequest.person),
           tierCell(placementRequest.risks),
           expectedArrivalDateCell(placementRequest, 'short'),
+          actualArrivalDateCell(placementRequest),
           applicationDateCell(placementRequest),
           durationCell(placementRequest),
           requestTypeCell(placementRequest),
@@ -268,9 +268,9 @@ describe('tableUtils', () => {
       expect(dashboardTableRows([placementRequest], 'matched')).toEqual([
         [
           nameCell(placementRequest),
-          crnCell(placementRequest.person),
           tierCell(placementRequest.risks),
           expectedArrivalDateCell(placementRequest, 'short'),
+          actualArrivalDateCell(placementRequest),
           applicationDateCell(placementRequest),
           premisesNameCell(placementRequest),
           requestTypeCell(placementRequest),
@@ -283,25 +283,6 @@ describe('tableUtils', () => {
       const placementRequest = placementRequestFactory.build()
 
       expect(dashboardTableRows([placementRequest], undefined)).toEqual([
-        [
-          nameCell(placementRequest),
-          crnCell(placementRequest.person),
-          tierCell(placementRequest.risks),
-          expectedArrivalDateCell(placementRequest, 'short'),
-          applicationDateCell(placementRequest),
-          durationCell(placementRequest),
-          requestTypeCell(placementRequest),
-          statusCell(placementRequest),
-        ],
-      ])
-    })
-
-    it('returns both dates when showRequestedAndActualArrivalDates is true', () => {
-      const placementRequest = placementRequestFactory.build()
-
-      expect(
-        dashboardTableRows([placementRequest], 'notMatched', { showRequestedAndActualArrivalDates: true }),
-      ).toEqual([
         [
           nameCell(placementRequest),
           tierCell(placementRequest.risks),
@@ -324,66 +305,6 @@ describe('tableUtils', () => {
     it('returns the default header for a non-matched view', () => {
       expect(dashboardTableHeader('notMatched', sortBy, sortDirection, hrefPrefix)).toEqual([
         sortHeader<PlacementRequestSortField>('Name', 'person_name', sortBy, sortDirection, hrefPrefix),
-        {
-          text: 'CRN',
-        },
-        sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
-        sortHeader<PlacementRequestSortField>(
-          'Requested arrival date',
-          'expected_arrival',
-          sortBy,
-          sortDirection,
-          hrefPrefix,
-        ),
-        sortHeader<PlacementRequestSortField>(
-          'Application date',
-          'application_date',
-          sortBy,
-          sortDirection,
-          hrefPrefix,
-        ),
-        sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
-        sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
-        {
-          text: 'Status',
-        },
-      ])
-    })
-
-    it('returns the default header for a matched view', () => {
-      expect(dashboardTableHeader('matched', sortBy, sortDirection, hrefPrefix)).toEqual([
-        sortHeader<PlacementRequestSortField>('Name', 'person_name', sortBy, sortDirection, hrefPrefix),
-        {
-          text: 'CRN',
-        },
-        sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
-        sortHeader<PlacementRequestSortField>(
-          'Requested arrival date',
-          'expected_arrival',
-          sortBy,
-          sortDirection,
-          hrefPrefix,
-        ),
-        sortHeader<PlacementRequestSortField>(
-          'Application date',
-          'application_date',
-          sortBy,
-          sortDirection,
-          hrefPrefix,
-        ),
-        {
-          text: 'Approved Premises',
-        },
-        sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
-        {
-          text: 'Status',
-        },
-      ])
-    })
-
-    it('returns the expected header when showRequestedAndActualArrivalDates is true', () => {
-      expect(dashboardTableHeader('notMatched', sortBy, sortDirection, hrefPrefix, true)).toEqual([
-        sortHeader<PlacementRequestSortField>('Name', 'person_name', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
         sortHeader<PlacementRequestSortField>(
           'Requested arrival date',
@@ -403,6 +324,37 @@ describe('tableUtils', () => {
           hrefPrefix,
         ),
         sortHeader<PlacementRequestSortField>('Length of stay', 'duration', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
+        {
+          text: 'Status',
+        },
+      ])
+    })
+
+    it('returns the default header for a matched view', () => {
+      expect(dashboardTableHeader('matched', sortBy, sortDirection, hrefPrefix)).toEqual([
+        sortHeader<PlacementRequestSortField>('Name', 'person_name', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>('Tier', 'person_risks_tier', sortBy, sortDirection, hrefPrefix),
+        sortHeader<PlacementRequestSortField>(
+          'Requested arrival date',
+          'expected_arrival',
+          sortBy,
+          sortDirection,
+          hrefPrefix,
+        ),
+        {
+          text: 'Actual arrival date',
+        },
+        sortHeader<PlacementRequestSortField>(
+          'Application date',
+          'application_date',
+          sortBy,
+          sortDirection,
+          hrefPrefix,
+        ),
+        {
+          text: 'Approved Premises',
+        },
         sortHeader<PlacementRequestSortField>('Request type', 'request_type', sortBy, sortDirection, hrefPrefix),
         {
           text: 'Status',

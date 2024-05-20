@@ -45,13 +45,13 @@ describe('FeatureFlagService', () => {
           when(mockClient.evaluation.boolean)
             .calledWith({
               namespaceKey: featureFlagService.namespaceKey,
-              flagKey: 'show-both-arrival-dates',
+              flagKey: 'show-search-by-CRN-timeline-navigation',
               entityId: '',
               context: {},
             })
             .mockResolvedValue(booleanEvaluationResponse)
 
-          const response = await featureFlagService.getBooleanFlag('show-both-arrival-dates')
+          const response = await featureFlagService.getBooleanFlag('show-search-by-CRN-timeline-navigation')
           expect(response).toEqual(enabled)
         },
       )
@@ -60,7 +60,7 @@ describe('FeatureFlagService', () => {
         when(mockClient.evaluation.boolean)
           .calledWith({
             namespaceKey: featureFlagService.namespaceKey,
-            flagKey: 'show-both-arrival-dates',
+            flagKey: 'show-search-by-CRN-timeline-navigation',
             entityId: '',
             context: {},
           })
@@ -68,10 +68,12 @@ describe('FeatureFlagService', () => {
             throw new Error('Feature flag not found')
           })
 
-        const response = await featureFlagService.getBooleanFlag('show-both-arrival-dates')
+        const response = await featureFlagService.getBooleanFlag('show-search-by-CRN-timeline-navigation')
 
         expect(response).toEqual(false)
-        expect(logger.error).toHaveBeenCalledWith('Feature flag show-both-arrival-dates not found, defaulting to false')
+        expect(logger.error).toHaveBeenCalledWith(
+          'Feature flag show-search-by-CRN-timeline-navigation not found, defaulting to false',
+        )
       })
     })
   })
@@ -82,7 +84,7 @@ describe('FeatureFlagService', () => {
     })
 
     it('should return true', async () => {
-      const response = await featureFlagService.getBooleanFlag('show-both-arrival-dates')
+      const response = await featureFlagService.getBooleanFlag('show-search-by-CRN-timeline-navigation')
       expect(response).toEqual(true)
     })
   })
