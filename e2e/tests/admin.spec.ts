@@ -27,9 +27,9 @@ test('download reports', async ({ page }) => {
   expect(lostBedsDownload.suggestedFilename()).toMatch(`lost-beds-${year}-${month}.xlsx`)
 
   // When I download the applications report
-  const applicationsDownload = await reportsPage.downloadApplicationsReports({ month, year })
+  const applicationsDownload = await reportsPage.downloadRawRequestsForPlacementsReports({ month, year })
   // Then the file should be downloaded with the correct suggested name
-  expect(applicationsDownload.suggestedFilename()).toMatch(`applications-${year}-${month}.xlsx`)
+  expect(applicationsDownload.suggestedFilename()).toMatch(`placement-applications-${year}-${month}.xlsx`)
 })
 
 test('manage users', async ({ page }) => {
