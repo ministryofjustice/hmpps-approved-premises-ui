@@ -32,7 +32,7 @@ context('Placement Applications', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubSignIn')
-    cy.task('stubAuthUser', { userId: defaultUserId })
+    cy.task('stubAuthUser', { userId: defaultUserId, roles: ['workflow_manager'] })
   })
 
   beforeEach(() => {
