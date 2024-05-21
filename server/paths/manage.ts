@@ -3,6 +3,10 @@ import { path } from 'static-path'
 const premisesPath = path('/premises')
 const singlePremisesPath = premisesPath.path(':premisesId')
 
+// Manage V2 paths
+const managePremisesPath = path('/manage/premises')
+const manageSinglePremisesPath = managePremisesPath.path(':premisesId')
+
 const bookingsPath = singlePremisesPath.path('bookings')
 const bookingPath = bookingsPath.path(':bookingId')
 const newBookingPath = singlePremisesPath.path('beds/bookings/new')
@@ -22,6 +26,8 @@ const departuresPath = bookingPath.path('departures')
 const movesPath = bookingPath.path('moves')
 
 const lostBedsPath = singlePremisesPath.path('beds/:bedId/lost-beds')
+
+const outOfServiceBedsPath = manageSinglePremisesPath.path('beds/:bedId/out-of-service-beds')
 
 const bedsPath = singlePremisesPath.path('beds')
 
@@ -86,6 +92,14 @@ const paths = {
     show: lostBedsPath.path(':id'),
     update: singlePremisesPath.path('lost-beds').path(':id'),
     cancel: singlePremisesPath.path('lost-beds').path(':id').path('cancellations'),
+  },
+  outOfServiceBeds: {
+    new: outOfServiceBedsPath.path('new'),
+    create: outOfServiceBedsPath,
+    index: singlePremisesPath.path('out-of-service-beds'),
+    show: outOfServiceBedsPath.path(':id'),
+    update: singlePremisesPath.path('out-of-service-beds').path(':id'),
+    cancel: singlePremisesPath.path('out-of-service-beds').path(':id').path('cancellations'),
   },
 }
 

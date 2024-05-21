@@ -13,6 +13,7 @@ import DepartureService from './departureService'
 import CancellationService from './cancellationService'
 import LostBedService from './lostBedService'
 import ApplicationService from './applicationService'
+import OutOfServiceBedService from './outOfServiceBedService'
 import AssessmentService from './assessmentService'
 import TaskService from './taskService'
 import PlacementRequestService from './placementRequestService'
@@ -32,6 +33,7 @@ export const services = () => {
     bookingClientBuilder,
     referenceDataClientBuilder,
     lostBedClientBuilder,
+    outOfServiceBedClientBuilder,
     personClient,
     applicationClientBuilder,
     assessmentClientBuilder,
@@ -54,6 +56,7 @@ export const services = () => {
   const departureService = new DepartureService(bookingClientBuilder, referenceDataClientBuilder)
   const cancellationService = new CancellationService(bookingClientBuilder, referenceDataClientBuilder)
   const lostBedService = new LostBedService(lostBedClientBuilder, referenceDataClientBuilder)
+  const outOfServiceBedService = new OutOfServiceBedService(outOfServiceBedClientBuilder)
   const applicationService = new ApplicationService(applicationClientBuilder)
   const assessmentService = new AssessmentService(assessmentClientBuilder)
   const taskService = new TaskService(taskClientBuilder)
@@ -76,6 +79,7 @@ export const services = () => {
     departureService,
     cancellationService,
     lostBedService,
+    outOfServiceBedService,
     applicationService,
     assessmentService,
     taskService,
@@ -101,6 +105,7 @@ export {
   CancellationService,
   BookingService,
   LostBedService,
+  OutOfServiceBedService,
   ApplicationService,
   AssessmentService,
   TaskService,

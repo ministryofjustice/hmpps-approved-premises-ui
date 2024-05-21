@@ -3,7 +3,13 @@ import { path } from 'static-path'
 const premisesPath = path('/premises')
 const singlePremisesPath = premisesPath.path(':premisesId')
 
+// Manage V2 paths
+const managePremisesPath = path('/manage/premises')
+const manageSinglePremisesPath = managePremisesPath.path(':premisesId')
+
 const lostBedsPath = singlePremisesPath.path('lost-beds')
+
+const outOfServiceBedsPath = manageSinglePremisesPath.path('out-of-service-beds')
 
 const bedsPath = singlePremisesPath.path('beds')
 
@@ -86,6 +92,17 @@ const clarificationNotePaths = {
 }
 
 export default {
+  manage: {
+    premises: {
+      outOfServiceBeds: {
+        create: outOfServiceBedsPath,
+        index: outOfServiceBedsPath,
+        update: outOfServiceBedsPath.path(':id'),
+        show: outOfServiceBedsPath.path(':id'),
+        cancel: outOfServiceBedsPath.path(':id/cancellations'),
+      },
+    },
+  },
   premises: {
     show: managePaths.premises.show,
     index: managePaths.premises.index,
