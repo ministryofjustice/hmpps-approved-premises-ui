@@ -48,6 +48,7 @@ export const applicationTimelineFactory = Factory.define<ApplicationTimeline>(()
   ] as const),
   createdBy: userFactory.build(),
   timelineEvents: timelineEventFactory.buildList(5),
+  isOfflineApplication: faker.datatype.boolean(),
 }))
 
 export const personalTimelineFactory = Factory.define<PersonalTimeline>(() => ({
