@@ -11,6 +11,7 @@ import {
 } from '../../../server/testutils/factories'
 import ApplyHelper from '../../helpers/apply'
 import { DateFormats } from '../../../server/utils/dateUtils'
+import * as ApplyPages from '../../pages/apply'
 import { ConfirmDetailsPage, ConfirmYourDetailsPage, EnterCRNPage, ListPage, StartPage } from '../../pages/apply'
 import IsExceptionalCasePage from '../../pages/apply/isExceptionalCase'
 import NoOffencePage from '../../pages/apply/noOffence'
@@ -101,6 +102,33 @@ context('Apply', () => {
 
     // Then I am taken back to the dashboard
     Page.verifyOnPage(ListPage)
+  })
+
+  it('If users navigates away from application when told tier not eligible, return to is exceptional case page', function test() {
+    // Given the person does not have an eligible risk tier
+    this.application.risks = risksFactory.build({
+      crn: this.person.crn,
+      tier: tierEnvelopeFactory.build({ value: { level: 'D1' } }),
+    })
+    cy.task('stubApplicationGet', { application: this.application })
+    cy.task('stubApplications', [this.application])
+
+    // And I start the application and left
+    const apply = new ApplyHelper(this.application, this.person, this.offences)
+    apply.setupApplicationStubs()
+    apply.startApplication()
+
+    // And I visit the list page
+    const listPage = ListPage.visit([this.application], [], [])
+
+    // When I click the application from list
+    listPage.clickApplication(this.application)
+
+    // And I click the basic information
+    apply.clickBasicInformation()
+
+    // Then I should see the is exceptional case page
+    Page.verifyOnPage(ApplyPages.IsExceptionalCasePage, this.application)
   })
 
   it('throws an error if the the CRN entered is an LAO', function test() {

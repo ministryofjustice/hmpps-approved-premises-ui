@@ -4,6 +4,7 @@ import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import isAssessment from './assessments/isAssessment'
 import { StatusTag, StatusTagOptions } from './statusTag'
+import { tierQualificationPage } from './applications/utils'
 
 export const taskLink = (task: TaskWithStatus, applicationOrAssessment: Application | Assessment): string => {
   if (task.status !== 'cannot_start') {
@@ -15,7 +16,8 @@ export const taskLink = (task: TaskWithStatus, applicationOrAssessment: Applicat
           task: task.id,
           page: firstPage,
         })
-      : applyPaths.applications.pages.show({
+      : (task.id === 'basic-information' && tierQualificationPage(applicationOrAssessment)) ||
+        applyPaths.applications.pages.show({
           id: applicationOrAssessment.id,
           task: task.id,
           page: firstPage,
