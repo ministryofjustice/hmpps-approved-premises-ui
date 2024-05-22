@@ -27,6 +27,7 @@ export const timelineEventFactory = Factory.define<TimelineEvent>(() => ({
   content: Math.random() < 0.5 ? faker.lorem.sentences() : undefined,
   createdBy: userFactory.build(),
   associatedUrls: [{ type: 'application', url: faker.internet.url() }],
+  triggerSource: 'user',
 }))
 
 export const applicationTimelineFactory = Factory.define<ApplicationTimeline>(() => ({

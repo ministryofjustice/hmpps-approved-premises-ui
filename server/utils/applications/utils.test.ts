@@ -796,6 +796,30 @@ describe('utils', () => {
 
       expect(actual[0].content).toEqual('&lt;div&gt;Hello!&lt;/div&gt;')
     })
+
+    it('Sets createdBy to System if triggerSource is `system`', () => {
+      const timelineEvents = timelineEventFactory.buildList(1, { triggerSource: 'system' })
+
+      expect(mapApplicationTimelineEventsForUi(timelineEvents)).toEqual([
+        {
+          datetime: {
+            timestamp: timelineEvents[0].occurredAt,
+            date: DateFormats.isoDateTimeToUIDateTime(timelineEvents[0].occurredAt),
+          },
+          label: {
+            text: eventTypeTranslations[timelineEvents[0].type],
+          },
+          content: escape(timelineEvents[0].content),
+          createdBy: 'System',
+          associatedUrls: mapTimelineUrlsForUi([
+            {
+              type: timelineEvents[0].associatedUrls[0].type,
+              url: timelineEvents[0].associatedUrls[0].url,
+            },
+          ]),
+        },
+      ])
+    })
   })
 
   describe('mapTimelineUrlsForUi', () => {
