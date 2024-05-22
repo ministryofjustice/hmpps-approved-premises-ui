@@ -6,7 +6,7 @@ export const sentenceTypes: Record<SentenceTypeOption, string> = {
   ipp: 'Indeterminate Public Protection (IPP)',
   extendedDeterminate: 'Extended determinate custody',
   communityOrder: 'Community Order (CO) / Suspended Sentence Order (SSO)',
-  bailPlacement: 'Bail placement',
+  bailPlacement: 'Bail placement / Pre-sentence application',
   nonStatutory: 'Non-statutory, MAPPA case',
 }
 
