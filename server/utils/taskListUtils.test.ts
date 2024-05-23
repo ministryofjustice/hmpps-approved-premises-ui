@@ -1,9 +1,24 @@
+import { when } from 'jest-when'
 import { TaskStatus as TaskListStatus, TaskWithStatus } from '../@types/ui'
 import applyPaths from '../paths/apply'
 import assessPaths from '../paths/assess'
 import { applicationFactory, assessmentFactory } from '../testutils/factories'
 import { TaskListStatusTag, taskLink } from './taskListUtils'
+import { isApplicableTier, isFullPerson } from './personUtils'
 
+jest.mock('./personUtils')
+
+beforeEach(() => {
+  when(isFullPerson as jest.MockedFunction<typeof isFullPerson>)
+    .calledWith(expect.anything())
+    .mockReturnValue(true)
+  when(isApplicableTier as jest.Mock)
+    .calledWith(expect.anything(), expect.anything())
+    .mockReturnValue(true)
+})
+afterEach(() => {
+  jest.resetAllMocks()
+})
 describe('taskListUtils', () => {
   const task = {
     id: 'second-task',
@@ -66,6 +81,24 @@ describe('taskListUtils', () => {
             task: 'second-task',
             page: 'foo',
           })}" aria-describedby="eligibility-second-task" data-cy-task-name="second-task">Second Task</a>`,
+        )
+      })
+
+      it('should return a link of is-exceptional-case if page is basic information and risk tier not applicable', () => {
+        const basicTask = {
+          id: 'basic-information',
+          title: 'Basic Information',
+          pages: { foo: 'bar', bar: 'baz' },
+          status: 'in_progress',
+        } as TaskWithStatus
+        ;(isApplicableTier as jest.MockedFunction<typeof isApplicableTier>).mockReturnValue(false)
+
+        expect(taskLink(basicTask, application)).toEqual(
+          `<a href="${applyPaths.applications.pages.show({
+            id: application.id,
+            task: 'basic-information',
+            page: 'is-exceptional-case',
+          })}" aria-describedby="eligibility-basic-information" data-cy-task-name="basic-information">Basic Information</a>`,
         )
       })
     })

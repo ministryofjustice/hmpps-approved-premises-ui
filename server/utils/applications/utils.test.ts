@@ -44,6 +44,7 @@ import {
   mapApplicationTimelineEventsForUi,
   mapPersonalTimelineForUi,
   mapTimelineUrlsForUi,
+  tierQualificationPage,
 } from './utils'
 import { journeyTypeFromArtifact } from '../journeyTypeFromArtifact'
 import { RestrictedPersonError } from '../errors'
@@ -922,6 +923,47 @@ describe('utils', () => {
           },
         },
       ])
+    })
+  })
+
+  describe('tierQualificationPage', () => {
+    it('returns undefined for valid tier', () => {
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+      ;(isApplicableTier as jest.Mock).mockReturnValue(true)
+      const application = applicationFactory.withFullPerson().build()
+      expect(tierQualificationPage(application)).toBe(undefined)
+    })
+
+    it('returns the "enter risk level" page for an application for a person without a tier', () => {
+      const application = applicationFactory.withFullPerson().build()
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+
+      application.risks = undefined
+
+      expect(tierQualificationPage(application)).toEqual(
+        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'enter-risk-level' }),
+      )
+    })
+
+    it('returns the is exceptional case page for an application with an unsuitable tier', () => {
+      ;(isApplicableTier as jest.Mock).mockReturnValue(false)
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(true)
+
+      const application = applicationFactory.withFullPerson().build()
+
+      expect(tierQualificationPage(application)).toEqual(
+        paths.applications.pages.show({ id: application.id, task: 'basic-information', page: 'is-exceptional-case' }),
+      )
+    })
+
+    it('throws an error if the person is not a Full Person', () => {
+      ;(isFullPerson as jest.MockedFunction<typeof isFullPerson>).mockReturnValue(false)
+
+      const restrictedPerson = restrictedPersonFactory.build()
+      const application = applicationFactory.build({ person: restrictedPerson })
+
+      expect(() => tierQualificationPage(application)).toThrowError(`CRN: ${restrictedPerson.crn} is restricted`)
+      expect(() => tierQualificationPage(application)).toThrowError(RestrictedPersonError)
     })
   })
 })

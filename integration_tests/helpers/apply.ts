@@ -995,6 +995,10 @@ export default class ApplyHelper {
     attachDocumentsPage.shouldDisplayNoDocuments()
   }
 
+  clickBasicInformation() {
+    cy.get('[data-cy-task-name="basic-information"]').click()
+  }
+
   private completeCheckYourAnswersSection() {
     // Given I click the check your answers task
     cy.get('[data-cy-task-name="check-your-answers"]').click()
