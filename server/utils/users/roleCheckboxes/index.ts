@@ -21,6 +21,14 @@ export const roleLabelDictionary: RoleLabelDictionary = {
     label: 'Report Viewer',
     hint: 'View and download reports',
   },
+  legacy_manager: {
+    label: 'Legacy manager',
+    hint: 'Manage an approved premises',
+  },
+  future_manager: {
+    label: 'Future manager',
+    hint: 'For digital team use only',
+  },
 }
 
 export const allocationRoleLabelDictionary: AllocationRoleLabelDictionary = {
@@ -51,6 +59,8 @@ export const roles: ReadonlyArray<UserRole> = [
   'excluded_from_placement_application_allocation',
   'appeals_manager',
   'report_viewer',
+  'future_manager',
+  'legacy_manager',
 ]
 
 export const allocationRoles = [

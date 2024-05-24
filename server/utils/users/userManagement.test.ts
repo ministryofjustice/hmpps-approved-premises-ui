@@ -120,6 +120,16 @@ describe('userRolesSelectOptions', () => {
         text: 'Appeals manager',
         value: 'appeals_manager',
       },
+      {
+        selected: false,
+        text: 'Legacy manager',
+        value: 'legacy_manager',
+      },
+      {
+        selected: false,
+        text: 'Future manager',
+        value: 'future_manager',
+      },
     ])
   })
 
@@ -144,6 +154,16 @@ describe('userRolesSelectOptions', () => {
         selected: false,
         text: 'Appeals manager',
         value: 'appeals_manager',
+      },
+      {
+        selected: false,
+        text: 'Legacy manager',
+        value: 'legacy_manager',
+      },
+      {
+        selected: false,
+        text: 'Future manager',
+        value: 'future_manager',
       },
     ])
   })

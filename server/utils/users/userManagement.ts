@@ -57,6 +57,8 @@ const userRoles: Record<ApprovedPremisesUserRole, string> = {
   excluded_from_match_allocation: 'Excluded from match allocation',
   excluded_from_placement_application_allocation: 'Excluded from placement application allocation',
   appeals_manager: 'Appeals manager',
+  legacy_manager: 'Legacy manager',
+  future_manager: 'Future manager',
 }
 export const userRolesSelectOptions = (
   selectedOption: ApprovedPremisesUserRole | undefined | null,
