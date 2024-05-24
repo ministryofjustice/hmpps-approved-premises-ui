@@ -2,7 +2,7 @@
 
 // Sentry.init needs to be called first before any other imports
 // eslint-disable-next-line import/order
-import { setupSentry } from './middleware/setUpSentry'
+import { initSentry, setupSentry } from './middleware/setUpSentry'
 
 import path from 'path'
 import express from 'express'
@@ -37,6 +37,7 @@ export default function createApp(controllers: Controllers, services: Services):
   app.set('trust proxy', true)
   app.set('port', process.env.PORT || 3000)
 
+  initSentry()
   setupSentry(app)
 
   // Add method-override to allow us to use PUT and DELETE methods
