@@ -301,10 +301,12 @@ const mapApplicationTimelineEventsForUi = (timelineEvents: Array<TimelineEvent>)
         content: escape(timelineEvent.content),
         associatedUrls: timelineEvent.associatedUrls ? mapTimelineUrlsForUi(timelineEvent.associatedUrls) : [],
       }
-      if (timelineEvent.createdBy?.name) {
+
+      const createdBy = timelineEvent.triggerSource === 'system' ? 'System' : timelineEvent.createdBy?.name
+      if (createdBy) {
         return {
           ...event,
-          createdBy: timelineEvent.createdBy?.name,
+          createdBy,
         }
       }
       return event
