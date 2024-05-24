@@ -15,7 +15,9 @@ type RiskToSelfBody = {
   bodyProperties: ['riskToSelfAnswers', 'riskToSelfSummaries'],
 })
 export default class RiskToSelf implements OasysPage {
-  title = 'Edit risk information'
+  title = 'Risk to self'
+
+  riskTaskStep = 5
 
   riskToSelfSummaries: RiskToSelfBody['riskToSelfSummaries']
 

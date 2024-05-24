@@ -9,7 +9,7 @@ export default class OffenceDetails extends ApplyPage {
     private readonly offenceDetailSummaries: ArrayOfOASysOffenceDetailsQuestions,
     private readonly oasysMissing: boolean,
   ) {
-    const title = oasysMissing ? 'Provide risk information' : 'Edit risk information'
+    const title = oasysMissing ? 'Provide risk information' : 'Offence details'
     super(
       title,
       application,

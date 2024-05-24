@@ -15,7 +15,9 @@ type RiskManagementBody = {
   bodyProperties: ['riskManagementAnswers', 'riskManagementSummaries'],
 })
 export default class RiskManagementPlan implements OasysPage {
-  title = 'Edit risk information'
+  title = 'Risk management plan'
+
+  riskTaskStep = 4
 
   riskManagementSummaries: RiskManagementBody['riskManagementSummaries'] = []
 

@@ -9,7 +9,7 @@ export default class SupportingInformation extends ApplyPage {
     private readonly supportingInformationSummaries: ArrayOfOASysSupportingInformationQuestions,
     private readonly oasysMissing: boolean,
   ) {
-    const title = oasysMissing ? 'Provide risk information' : 'Edit risk information'
+    const title = oasysMissing ? 'Provide risk information' : 'Supporting information'
 
     super(
       title,

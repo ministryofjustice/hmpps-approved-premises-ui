@@ -15,7 +15,9 @@ type OffenceDetailsBody = {
   bodyProperties: ['offenceDetailsAnswers', 'offenceDetailsSummaries'],
 })
 export default class OffenceDetails implements OasysPage {
-  title = 'Edit risk information'
+  title = 'Offence details'
+
+  riskTaskStep = 2
 
   offenceDetailsSummaries: OffenceDetailsBody['offenceDetailsSummaries']
 
