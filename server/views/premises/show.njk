@@ -41,22 +41,7 @@ e{% from "govuk/components/notification-banner/macro.njk" import govukNotificati
             html: "<h1>" + premises.name + "</h1>"
           },
         menus: [{
-          items: [{
-           text: 'Create a placement',
-           classes: 'govuk-button--secondary',
-           href: paths.bookings.new({ premisesId: premises.id })
-           },
-          {
-            text: "Manage beds",
-            classes: "govuk-button--secondary",
-            href: paths.premises.beds.index({premisesId: premises.id})
-          },
-           {
-            text: "View calendar",
-            classes: "govuk-button--secondary",
-            href: paths.premises.calendar({premisesId: premises.id})
-          }
-          ]
+          items: PremisesUtils.premisesActions(user, premises)
         }]
         })
       }}

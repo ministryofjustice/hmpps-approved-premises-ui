@@ -6,7 +6,7 @@ import type {
   Premises,
   ApprovedPremisesSummary as PremisesSummary,
 } from '@approved-premises/api'
-import { BedOccupancyRangeUi, SelectGroup, SummaryList } from '@approved-premises/ui'
+import { BedOccupancyRangeUi, SelectGroup, SummaryList, UserDetails } from '@approved-premises/ui'
 import { DateFormats } from '../dateUtils'
 import { addOverbookingsToSchedule } from '../addOverbookingsToSchedule'
 import { htmlValue, textValue } from '../applications/helpers'
@@ -143,4 +143,32 @@ export const premisesTableRows = (premisesSummaries: Array<PremisesSummary>) => 
         htmlValue(linkTo(paths.premises.show, { premisesId: p.id }, { text: 'View', hiddenText: `about ${p.name}` })),
       ]
     })
+}
+
+export const premisesActions = (user: UserDetails, premises: Premises) => {
+  const deprecatedManageActions = [
+    {
+      text: 'View calendar',
+      classes: 'govuk-button--secondary',
+      href: paths.premises.calendar({ premisesId: premises.id }),
+    },
+    {
+      text: 'Create a placement',
+      classes: 'govuk-button--secondary',
+      href: paths.bookings.new({ premisesId: premises.id }),
+    },
+  ]
+  const currentManageActions = [
+    {
+      text: 'Manage beds',
+      classes: 'govuk-button--secondary',
+      href: paths.premises.beds.index({ premisesId: premises.id }),
+    },
+  ]
+
+  if (user.roles.includes('manager') || user.roles.includes('workflow_manager')) {
+    return [...deprecatedManageActions, ...currentManageActions]
+  }
+
+  return currentManageActions
 }
