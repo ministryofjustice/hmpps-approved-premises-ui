@@ -2,7 +2,7 @@ import type { Booking } from '@approved-premises/api'
 
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
-import { bookingArrivalRows, bookingDepartureRows, bookingPersonRows } from '../../../../server/utils/bookingUtils'
+import { bookingArrivalRows, bookingDepartureRows, bookingPersonRows } from '../../../../server/utils/bookings'
 
 export default class BookingShowPage extends Page {
   constructor() {

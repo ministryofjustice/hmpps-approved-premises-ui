@@ -14,7 +14,7 @@ import { lostBedCancellationFactory, lostBedFactory } from '../../testutils/fact
 import paths from '../../paths/manage'
 
 jest.mock('../../utils/validation')
-jest.mock('../../utils/bookingUtils')
+jest.mock('../../utils/bookings')
 
 describe('LostBedsController', () => {
   const token = 'SOME_TOKEN'

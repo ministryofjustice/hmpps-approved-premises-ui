@@ -12,7 +12,7 @@ import {
 import errorLookups from '../i18n/en/errors.json'
 import { TasklistAPIError, ValidationError } from './errors'
 import type TaskListPage from '../form-pages/tasklistPage'
-import { generateConflictBespokeError } from './bookingUtils'
+import { generateConflictBespokeError } from './bookings'
 
 jest.mock('../i18n/en/errors.json', () => {
   return {
@@ -28,7 +28,7 @@ jest.mock('../i18n/en/errors.json', () => {
     },
   }
 })
-jest.mock('./bookingUtils')
+jest.mock('./bookings')
 
 describe('catchValidationErrorOrPropogate', () => {
   const request = createMock<Request>({})

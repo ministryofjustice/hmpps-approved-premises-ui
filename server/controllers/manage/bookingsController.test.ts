@@ -16,7 +16,7 @@ import {
 import paths from '../../paths/manage'
 
 jest.mock('../../utils/validation')
-jest.mock('../../utils/bookingUtils')
+jest.mock('../../utils/bookings')
 
 describe('bookingsController', () => {
   const token = 'SOME_TOKEN'
