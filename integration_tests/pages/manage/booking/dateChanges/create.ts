@@ -1,6 +1,6 @@
 import Page, { PageElement } from '../../../page'
 import paths from '../../../../../server/paths/manage'
-import { Booking, Premises } from '../../../../../server/@types/shared'
+import { Booking, NewDeparture, Premises } from '../../../../../server/@types/shared'
 
 export default class DepartureDateChangePage extends Page {
   constructor() {
@@ -28,7 +28,7 @@ export default class DepartureDateChangePage extends Page {
     return cy.get('#newDepartureDate-year')
   }
 
-  completeForm(newDepartureDate: string): void {
+  completeForm(newDepartureDate: NewDeparture['dateTime']): void {
     this.getLegend('What is the new departure date?')
 
     const parsedNewDepartureDate = new Date(Date.parse(newDepartureDate))
