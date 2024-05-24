@@ -1,10 +1,10 @@
-# 12. Use a new role to feature flag new Out of Service Beds functionality
+# 14. Use a new role to feature flag new Out of Service Beds functionality
 
 Date: 2024-05-16
 
 ## Status
 
-Tentative
+Accepted
 
 ## Context
 
