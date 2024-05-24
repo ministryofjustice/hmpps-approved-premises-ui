@@ -1,4 +1,9 @@
 /* istanbul ignore file */
+
+// Sentry.init needs to be called first before any other imports
+// eslint-disable-next-line import/order
+import { setupSentry } from './middleware/setUpSentry'
+
 import path from 'path'
 import express from 'express'
 import flash from 'connect-flash'
@@ -19,7 +24,6 @@ import setUpStaticResources from './middleware/setUpStaticResources'
 import setUpWebRequestParsing from './middleware/setupRequestParsing'
 import setUpWebSecurity from './middleware/setUpWebSecurity'
 import setUpWebSession from './middleware/setUpWebSession'
-import { setUpSentryErrorHandler, setUpSentryRequestHandler } from './middleware/setUpSentry'
 
 import routes from './routes'
 import type { Controllers } from './controllers'
@@ -33,7 +37,7 @@ export default function createApp(controllers: Controllers, services: Services):
   app.set('trust proxy', true)
   app.set('port', process.env.PORT || 3000)
 
-  setUpSentryRequestHandler(app)
+  setupSentry(app)
 
   // Add method-override to allow us to use PUT and DELETE methods
   app.use(methodOverride('_method'))
@@ -58,9 +62,7 @@ export default function createApp(controllers: Controllers, services: Services):
     return next()
   })
   app.use(routes(controllers, services))
-
   app.use((req, res, next) => next(createError(404, 'Not found')))
-  setUpSentryErrorHandler(app)
   app.use(errorHandler(process.env.NODE_ENV === 'production'))
 
   return app
