@@ -1,5 +1,5 @@
 import { userDetailsFactory } from '../../testutils/factories'
-import { hasRole, sections, sectionsForUser } from './homePageDashboard'
+import { hasRole, managerRoles, sections, sectionsForUser } from './homePageDashboard'
 
 describe('homePageDashboard', () => {
   describe('hasRole', () => {
@@ -29,8 +29,8 @@ describe('homePageDashboard', () => {
       expect(sectionsForUser(user)).toEqual([sections.apply, sections.assess])
     })
 
-    it('should return Apply and Manage sections for a user with a manager role', () => {
-      const user = userDetailsFactory.build({ roles: ['manager'] })
+    it.each(managerRoles)('should return Apply and Manage sections for a user with a %s role', managerRole => {
+      const user = userDetailsFactory.build({ roles: [managerRole] })
 
       expect(sectionsForUser(user)).toEqual([sections.apply, sections.manage])
     })
