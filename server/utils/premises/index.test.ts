@@ -3,23 +3,25 @@ import {
   bedOccupancyEntryFactory,
   bedOccupancyRangeFactory,
   extendedPremisesSummaryFactory,
+  premisesFactory,
   premisesSummaryFactory,
-} from '../testutils/factories'
+} from '../../testutils/factories'
 import {
   groupedSelectOptions,
   mapApiOccupancyEntryToUiOccupancyEntry,
   mapApiOccupancyToUiOccupancy,
   overcapacityMessage,
+  premisesActions,
   premisesTableRows,
   summaryListForPremises,
-} from './premisesUtils'
-import { addOverbookingsToSchedule } from './addOverbookingsToSchedule'
-import { textValue } from './applications/helpers'
-import paths from '../paths/manage'
-import { linkTo } from './utils'
-import { DateFormats } from './dateUtils'
+} from '.'
+import { addOverbookingsToSchedule } from '../addOverbookingsToSchedule'
+import { textValue } from '../applications/helpers'
+import paths from '../../paths/manage'
+import { linkTo } from '../utils'
+import { DateFormats } from '../dateUtils'
 
-jest.mock('./addOverbookingsToSchedule')
+jest.mock('../addOverbookingsToSchedule')
 
 describe('premisesUtils', () => {
   describe('overcapacityMessage', () => {

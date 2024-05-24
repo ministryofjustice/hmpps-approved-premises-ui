@@ -3,14 +3,15 @@ import type {
   BedOccupancyRange,
   DateCapacity,
   ExtendedPremisesSummary,
+  Premises,
   ApprovedPremisesSummary as PremisesSummary,
 } from '@approved-premises/api'
 import { BedOccupancyRangeUi, SelectGroup, SummaryList } from '@approved-premises/ui'
-import { DateFormats } from './dateUtils'
-import { addOverbookingsToSchedule } from './addOverbookingsToSchedule'
-import { htmlValue, textValue } from './applications/helpers'
-import paths from '../paths/manage'
-import { linkTo } from './utils'
+import { DateFormats } from '../dateUtils'
+import { addOverbookingsToSchedule } from '../addOverbookingsToSchedule'
+import { htmlValue, textValue } from '../applications/helpers'
+import paths from '../../paths/manage'
+import { linkTo } from '../utils'
 
 export type NegativeDateRange = { start?: string; end?: string }
 

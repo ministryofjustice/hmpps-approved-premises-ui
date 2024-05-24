@@ -58,7 +58,7 @@ import * as LostBedUtils from './lostBedUtils'
 import * as OutOfServiceBedUtils from './outOfServiceBedUtils'
 import * as PlacementApplicationUtils from './placementApplications'
 import * as CalendarUtils from './calendarUtils'
-import * as PremisesUtils from './premisesUtils'
+import * as PremisesUtils from './premises'
 import * as ReportUtils from './reportUtils'
 
 import managePaths from '../paths/manage'

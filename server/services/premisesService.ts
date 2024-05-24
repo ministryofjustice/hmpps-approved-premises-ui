@@ -9,7 +9,7 @@ import type {
 } from '@approved-premises/api'
 import type { PremisesClient, RestClientBuilder } from '../data'
 
-import { mapApiOccupancyToUiOccupancy } from '../utils/premisesUtils'
+import { mapApiOccupancyToUiOccupancy } from '../utils/premises'
 
 export default class PremisesService {
   constructor(private readonly premisesClientFactory: RestClientBuilder<PremisesClient>) {}

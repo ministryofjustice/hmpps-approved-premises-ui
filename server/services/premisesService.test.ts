@@ -10,10 +10,10 @@ import {
   roomFactory,
   staffMemberFactory,
 } from '../testutils/factories'
-import { mapApiOccupancyToUiOccupancy } from '../utils/premisesUtils'
+import { mapApiOccupancyToUiOccupancy } from '../utils/premises'
 
 jest.mock('../data/premisesClient')
-jest.mock('../utils/premisesUtils')
+jest.mock('../utils/premises/index')
 
 describe('PremisesService', () => {
   const premisesClient = new PremisesClient(null) as jest.Mocked<PremisesClient>
