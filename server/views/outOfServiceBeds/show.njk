@@ -80,7 +80,7 @@
 
       <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-      <form action="{{ paths.outOfServiceBeds.update({ id: outOfServiceBed.id, bedId: outOfServiceBed.bedId, premisesId: premisesId }) }}" method="post">
+      <form action="{{ paths.v2Manage.outOfServiceBeds.update({ id: outOfServiceBed.id, bedId: outOfServiceBed.bedId, premisesId: premisesId }) }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
         <input type="hidden" name="startDate" value="{{ outOfServiceBed.startDate }}"/>
         <input type="hidden" name="referenceNumber" value="{{ outOfServiceBed.referenceNumber }}"/>

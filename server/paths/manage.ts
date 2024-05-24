@@ -3,10 +3,6 @@ import { path } from 'static-path'
 const premisesPath = path('/premises')
 const singlePremisesPath = premisesPath.path(':premisesId')
 
-// Manage V2 paths
-const managePremisesPath = path('/manage/premises')
-const manageSinglePremisesPath = managePremisesPath.path(':premisesId')
-
 const bookingsPath = singlePremisesPath.path('bookings')
 const bookingPath = bookingsPath.path(':bookingId')
 const newBookingPath = singlePremisesPath.path('beds/bookings/new')
@@ -26,8 +22,6 @@ const departuresPath = bookingPath.path('departures')
 const movesPath = bookingPath.path('moves')
 
 const lostBedsPath = singlePremisesPath.path('beds/:bedId/lost-beds')
-
-const outOfServiceBedsPath = manageSinglePremisesPath.path('beds/:bedId/out-of-service-beds')
 
 const bedsPath = singlePremisesPath.path('beds')
 
@@ -93,6 +87,43 @@ const paths = {
     update: singlePremisesPath.path('lost-beds').path(':id'),
     cancel: singlePremisesPath.path('lost-beds').path(':id').path('cancellations'),
   },
+}
+
+// Manage V2 paths
+const v2PremisesPath = path('/manage/premises')
+const v2SinglePremisesPath = v2PremisesPath.path(':premisesId')
+const v2BookingsPath = v2SinglePremisesPath.path('bookings')
+const v2BookingPath = v2BookingsPath.path(':bookingId')
+const v2BedsPath = v2SinglePremisesPath.path('beds')
+const v2DateChangesPath = v2BookingPath.path('date-changes')
+const v2ExtensionsPath = v2BookingPath.path('extensions')
+const outOfServiceBedsPath = v2SinglePremisesPath.path('beds/:bedId/out-of-service-beds')
+
+const v2Manage = {
+  premises: {
+    index: v2PremisesPath,
+    show: v2SinglePremisesPath,
+    capacity: v2SinglePremisesPath.path('capacity'),
+    beds: {
+      index: v2BedsPath,
+      show: v2BedsPath.path(':bedId'),
+      overbookings: {
+        show: v2BedsPath.path(':bedId').path('overbookings'),
+      },
+    },
+  },
+  bookings: {
+    show: v2BookingsPath.path(':bookingId'),
+    dateChanges: {
+      new: v2DateChangesPath.path('new'),
+      create: v2DateChangesPath,
+    },
+    extensions: {
+      new: v2ExtensionsPath.path('new'),
+      create: v2ExtensionsPath,
+      confirm: v2ExtensionsPath.path('confirmation'),
+    },
+  },
   outOfServiceBeds: {
     new: outOfServiceBedsPath.path('new'),
     create: outOfServiceBedsPath,
@@ -103,4 +134,4 @@ const paths = {
   },
 }
 
-export default paths
+export default { ...paths, v2Manage }

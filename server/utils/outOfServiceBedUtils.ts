@@ -74,7 +74,7 @@ export const outOfServiceBedCountForToday = (outOfServiceBeds: Array<OutOfServic
 
 const bedLink = (bed: OutOfServiceBed, premisesId: Premises['id']): string =>
   linkTo(
-    paths.outOfServiceBeds.show,
+    paths.v2Manage.outOfServiceBeds.show,
     { id: bed.id, bedId: bed.bedId, premisesId },
     {
       text: 'Manage',

@@ -126,7 +126,7 @@ describe('OutOfServiceBedsController', () => {
           request,
           response,
           err,
-          paths.outOfServiceBeds.new({ premisesId: request.params.premisesId, bedId: request.params.bedId }),
+          paths.v2Manage.outOfServiceBeds.new({ premisesId: request.params.premisesId, bedId: request.params.bedId }),
         )
       })
 
@@ -144,7 +144,7 @@ describe('OutOfServiceBedsController', () => {
           premisesId,
           ['startDate', 'endDate'],
           err,
-          paths.outOfServiceBeds.new({ premisesId: request.params.premisesId, bedId: request.params.bedId }),
+          paths.v2Manage.outOfServiceBeds.new({ premisesId: request.params.premisesId, bedId: request.params.bedId }),
           outOfServiceBed.bedId,
         )
       })
@@ -223,7 +223,7 @@ describe('OutOfServiceBedsController', () => {
       )
       expect(request.flash).toHaveBeenCalledWith('success', 'Bed updated')
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.outOfServiceBeds.index({ premisesId: request.params.premisesId }),
+        paths.v2Manage.outOfServiceBeds.index({ premisesId: request.params.premisesId }),
       )
     })
 
@@ -275,7 +275,7 @@ describe('OutOfServiceBedsController', () => {
         )
         expect(request.flash).toHaveBeenCalledWith('success', 'Bed cancelled')
         expect(response.redirect).toHaveBeenCalledWith(
-          paths.outOfServiceBeds.index({ premisesId: request.params.premisesId }),
+          paths.v2Manage.outOfServiceBeds.index({ premisesId: request.params.premisesId }),
         )
       })
     })
