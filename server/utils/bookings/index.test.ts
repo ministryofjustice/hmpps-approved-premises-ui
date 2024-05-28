@@ -4,7 +4,6 @@ import {
   arrivedBookings,
   arrivingTodayOrLate,
   bedsAsSelectItems,
-  bookingActions,
   bookingArrivalRows,
   bookingDepartureRows,
   bookingPersonRows,
@@ -15,6 +14,7 @@ import {
   cancellationRows,
   departingTodayOrLate,
   generateConflictBespokeError,
+  legacyBookingActions,
   manageBookingLink,
   nameCell,
   upcomingArrivals,
@@ -195,568 +195,560 @@ describe('bookingUtils', () => {
     })
   })
 
-  describe('bookingActions', () => {
-    describe('when the user has the manager role', () => {
-      it('should return null when the booking is cancelled, departed or did not arrive', () => {
-        const cancelledBooking = bookingFactory.cancelledWithFutureArrivalDate().build()
-        const departedBooking = bookingFactory.departedToday().build()
-        const nonArrivedBooking = bookingFactory.notArrived().build()
-
-        expect(bookingActions(cancelledBooking, 'premisesId')).toEqual(null)
-        expect(bookingActions(departedBooking, 'premisesId')).toEqual(null)
-        expect(bookingActions(nonArrivedBooking, 'premisesId')).toEqual(null)
-      })
-
-      it('should return arrival, non-arrival and cancellation actions if a booking is awaiting arrival', () => {
-        const booking = bookingFactory.arrivingToday().build()
-
-        expect(bookingActions(booking, premisesId)).toEqual([
-          {
-            items: [
-              {
-                text: 'Move person to a new bed',
-                classes: 'govuk-button--secondary',
-                href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
-              },
-              {
-                text: 'Mark as arrived',
-                classes: 'govuk-button--secondary',
-                href: paths.bookings.arrivals.new({ premisesId, bookingId: booking.id }),
-              },
-              {
-                text: 'Mark as not arrived',
-                classes: 'govuk-button--secondary',
-                href: paths.bookings.nonArrivals.new({ premisesId, bookingId: booking.id }),
-              },
-              {
-                text: 'Withdraw placement',
-                classes: 'govuk-button--secondary',
-                href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
-              },
-              {
-                text: 'Change placement dates',
-                classes: 'govuk-button--secondary',
-                href: paths.bookings.dateChanges.new({ premisesId, bookingId: booking.id }),
-              },
-            ],
-          },
-        ])
-      })
-
-      it('should return a departure action if a booking is arrived', () => {
-        const booking = bookingFactory.arrived().build()
-
-        expect(bookingActions(booking, premisesId)).toEqual([
-          {
-            items: [
-              {
-                text: 'Move person to a new bed',
-                classes: 'govuk-button--secondary',
-                href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
-              },
-              {
-                text: 'Log departure',
-                classes: 'govuk-button--secondary',
-                href: paths.bookings.departures.new({ premisesId, bookingId: booking.id }),
-              },
-              {
-                text: 'Update departure date',
-                classes: 'govuk-button--secondary',
-                href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
-              },
-              {
-                text: 'Withdraw placement',
-                classes: 'govuk-button--secondary',
-                href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
-              },
-            ],
-          },
-        ])
-      })
-
-      it('should return link to the cancellations new page if the booking doesnt have an applicationId', () => {
-        const booking = bookingFactory.arrived().build({
-          applicationId: undefined,
-        })
-
-        expect(bookingActions(booking, premisesId)).toEqual([
-          {
-            items: [
-              {
-                text: 'Move person to a new bed',
-                classes: 'govuk-button--secondary',
-                href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
-              },
-              {
-                text: 'Log departure',
-                classes: 'govuk-button--secondary',
-                href: paths.bookings.departures.new({ premisesId, bookingId: booking.id }),
-              },
-              {
-                text: 'Update departure date',
-                classes: 'govuk-button--secondary',
-                href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
-              },
-              {
-                text: 'Withdraw placement',
-                classes: 'govuk-button--secondary',
-                href: paths.bookings.cancellations.new({ premisesId, bookingId: booking.id }),
-              },
-            ],
-          },
-        ])
-      })
+  describe('legacyBookingActions', () => {
+    it('should return null when the booking is cancelled, departed or did not arrive', () => {
+      const cancelledBooking = bookingFactory.cancelledWithFutureArrivalDate().build()
+      const departedBooking = bookingFactory.departedToday().build()
+      const nonArrivedBooking = bookingFactory.notArrived().build()
 
       expect(legacyBookingActions(cancelledBooking)).toEqual(null)
       expect(legacyBookingActions(departedBooking)).toEqual(null)
       expect(legacyBookingActions(nonArrivedBooking)).toEqual(null)
     })
 
-    describe('generateConflictBespokeError', () => {
-      const bookingId = 'bookingId'
-      const bedId = 'bedId'
-      const lostBedId = 'lostBedId'
+    it('should return arrival, non-arrival and cancellation actions if a booking is awaiting arrival', () => {
+      const booking = bookingFactory.arrivingToday().build()
 
-      it('generates a bespoke error when there is a conflicting booking', () => {
-        const err = {
-          data: {
-            detail: `Conflicting Booking: ${bookingId}`,
-          },
-        }
-
-        expect(generateConflictBespokeError(err as SanitisedError, premisesId, 'plural', bedId)).toEqual({
-          errorTitle: 'This bedspace is not available for the dates entered',
-          errorSummary: [
+      expect(legacyBookingActions(booking, premisesId)).toEqual([
+        {
+          items: [
             {
-              html: `They conflict with an <a href="${paths.bookings.show({
-                premisesId,
-                bookingId,
-              })}">existing booking</a>`,
+              text: 'Move person to a new bed',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
+            },
+            {
+              text: 'Mark as arrived',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.arrivals.new({ premisesId, bookingId: booking.id }),
+            },
+            {
+              text: 'Mark as not arrived',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.nonArrivals.new({ premisesId, bookingId: booking.id }),
+            },
+            {
+              text: 'Withdraw placement',
+              classes: 'govuk-button--secondary',
+              href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
+            },
+            {
+              text: 'Change placement dates',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.dateChanges.new({ premisesId, bookingId: booking.id }),
             },
           ],
-        })
-      })
+        },
+      ])
+    })
 
-      it('generates a bespoke error when there is a conflicting lost bed', () => {
-        const err = {
-          data: {
-            detail: `Conflicting Lost Bed: ${lostBedId}`,
-          },
-        }
+    it('should return a departure action if a booking is arrived', () => {
+      const booking = bookingFactory.arrived().build()
 
-        expect(generateConflictBespokeError(err as SanitisedError, premisesId, 'plural', bedId)).toEqual({
-          errorTitle: 'This bedspace is not available for the dates entered',
-          errorSummary: [
+      expect(legacyBookingActions(booking, premisesId)).toEqual([
+        {
+          items: [
             {
-              html: `They conflict with an <a href="${paths.lostBeds.show({
-                premisesId,
-                bedId,
-                id: lostBedId,
-              })}">existing lost bed</a>`,
+              text: 'Move person to a new bed',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
+            },
+            {
+              text: 'Log departure',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.departures.new({ premisesId, bookingId: booking.id }),
+            },
+            {
+              text: 'Update departure date',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
+            },
+            {
+              text: 'Withdraw placement',
+              classes: 'govuk-button--secondary',
+              href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
             },
           ],
-        })
+        },
+      ])
+    })
+
+    it('should return link to the cancellations new page if the booking doesnt have an applicationId', () => {
+      const booking = bookingFactory.arrived().build({
+        applicationId: undefined,
       })
 
-      it('generates a bespoke error for a single date', () => {
-        const err = {
-          data: {
-            detail: `Conflicting Booking: ${bookingId}`,
-          },
-        }
-
-        expect(generateConflictBespokeError(err as SanitisedError, premisesId, 'singular', bedId)).toEqual({
-          errorTitle: 'This bedspace is not available for the date entered',
-          errorSummary: [
+      expect(legacyBookingActions(booking, premisesId)).toEqual([
+        {
+          items: [
             {
-              html: `It conflicts with an <a href="${paths.bookings.show({
-                premisesId,
-                bookingId,
-              })}">existing booking</a>`,
+              text: 'Move person to a new bed',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
+            },
+            {
+              text: 'Log departure',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.departures.new({ premisesId, bookingId: booking.id }),
+            },
+            {
+              text: 'Update departure date',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
+            },
+            {
+              text: 'Withdraw placement',
+              classes: 'govuk-button--secondary',
+              href: paths.bookings.cancellations.new({ premisesId, bookingId: booking.id }),
             },
           ],
-        })
+        },
+      ])
+    })
+  })
+
+  describe('generateConflictBespokeError', () => {
+    const bookingId = 'bookingId'
+    const bedId = 'bedId'
+    const lostBedId = 'lostBedId'
+
+    it('generates a bespoke error when there is a conflicting booking', () => {
+      const err = {
+        data: {
+          detail: `Conflicting Booking: ${bookingId}`,
+        },
+      }
+
+      expect(generateConflictBespokeError(err as SanitisedError, premisesId, 'plural', bedId)).toEqual({
+        errorTitle: 'This bedspace is not available for the dates entered',
+        errorSummary: [
+          {
+            html: `They conflict with an <a href="${paths.bookings.show({
+              premisesId,
+              bookingId,
+            })}">existing booking</a>`,
+          },
+        ],
       })
     })
 
-    describe('bedsAsSelectItems', () => {
-      it('should return an array of select items', () => {
-        const beds = bedSummaryFactory.buildList(2)
+    it('generates a bespoke error when there is a conflicting lost bed', () => {
+      const err = {
+        data: {
+          detail: `Conflicting Lost Bed: ${lostBedId}`,
+        },
+      }
 
-        expect(bedsAsSelectItems(beds, beds[0].id)).toEqual([
-          { text: `Bed name: ${beds[0].name}, room name: ${beds[0].roomName}`, value: beds[0].id, selected: true },
-          { text: `Bed name: ${beds[1].name}, room name: ${beds[1].roomName}`, value: beds[1].id, selected: false },
-        ])
+      expect(generateConflictBespokeError(err as SanitisedError, premisesId, 'plural', bedId)).toEqual({
+        errorTitle: 'This bedspace is not available for the dates entered',
+        errorSummary: [
+          {
+            html: `They conflict with an <a href="${paths.lostBeds.show({
+              premisesId,
+              bedId,
+              id: lostBedId,
+            })}">existing lost bed</a>`,
+          },
+        ],
       })
     })
 
-    describe('bookingShowDocumentRows', () => {
-      it('should return an array of document rows when the application and assessment are defined', () => {
-        const booking = bookingFactory.build()
+    it('generates a bespoke error for a single date', () => {
+      const err = {
+        data: {
+          detail: `Conflicting Booking: ${bookingId}`,
+        },
+      }
 
-        expect(bookingShowDocumentRows(booking)).toEqual([
+      expect(generateConflictBespokeError(err as SanitisedError, premisesId, 'singular', bedId)).toEqual({
+        errorTitle: 'This bedspace is not available for the date entered',
+        errorSummary: [
           {
-            key: {
-              text: 'Application',
-            },
-            value: {
-              html: linkTo(
-                applyPaths.applications.show,
-                { id: booking.applicationId },
-                { text: 'View document', hiddenText: 'View application' },
-              ),
-            },
+            html: `It conflicts with an <a href="${paths.bookings.show({
+              premisesId,
+              bookingId,
+            })}">existing booking</a>`,
           },
-          {
-            key: {
-              text: 'Assessment',
-            },
-            value: {
-              html: linkTo(
-                assessPaths.assessments.show,
-                { id: booking.assessmentId },
-                { text: 'View document', hiddenText: 'View assessment' },
-              ),
-            },
-          },
-        ])
-      })
-
-      it('should return an empty array if there arent documents attached to the booking', () => {
-        const booking = bookingFactory.build({ applicationId: undefined, assessmentId: undefined })
-
-        expect(bookingShowDocumentRows(booking)).toEqual([
-          {
-            key: {
-              text: 'Application',
-            },
-            value: {
-              text: 'No application attached to booking',
-            },
-          },
-          {
-            key: {
-              text: 'Assessment',
-            },
-            value: {
-              text: 'No assessment attached to booking',
-            },
-          },
-        ])
+        ],
       })
     })
+  })
 
-    describe('bookingSummary', () => {
-      it('should return a summarylist of a BookingSummary', () => {
-        const createdAt = '2022-01-01'
-        const arrivalDate = '2022-03-01'
-        const departureDate = '2022-05-01'
+  describe('bedsAsSelectItems', () => {
+    it('should return an array of select items', () => {
+      const beds = bedSummaryFactory.buildList(2)
 
-        const bookingSummary = bookingSummaryFactory.build({
-          createdAt,
-          arrivalDate,
-          departureDate,
-        })
+      expect(bedsAsSelectItems(beds, beds[0].id)).toEqual([
+        { text: `Bed name: ${beds[0].name}, room name: ${beds[0].roomName}`, value: beds[0].id, selected: true },
+        { text: `Bed name: ${beds[1].name}, room name: ${beds[1].roomName}`, value: beds[1].id, selected: false },
+      ])
+    })
+  })
 
-        expect(bookingSummaryList(bookingSummary)).toEqual({
-          card: {
-            title: {
-              text: 'Placement information',
-            },
+  describe('bookingShowDocumentRows', () => {
+    it('should return an array of document rows when the application and assessment are defined', () => {
+      const booking = bookingFactory.build()
+
+      expect(bookingShowDocumentRows(booking)).toEqual([
+        {
+          key: {
+            text: 'Application',
           },
-          rows: [
-            {
-              key: {
-                text: 'Approved Premises',
-              },
-              value: {
-                text: bookingSummary.premisesName,
-              },
-            },
-            {
-              key: {
-                text: 'Date of match',
-              },
-              value: {
-                text: DateFormats.isoDateToUIDate(createdAt),
-              },
-            },
-            {
-              key: {
-                text: 'Expected arrival date',
-              },
-              value: {
-                text: DateFormats.isoDateToUIDate(arrivalDate),
-              },
-            },
-            {
-              key: {
-                text: 'Expected departure date',
-              },
-              value: {
-                text: DateFormats.isoDateToUIDate(departureDate),
-              },
-            },
-          ],
-        })
-      })
+          value: {
+            html: linkTo(
+              applyPaths.applications.show,
+              { id: booking.applicationId },
+              { text: 'View document', hiddenText: 'View application' },
+            ),
+          },
+        },
+        {
+          key: {
+            text: 'Assessment',
+          },
+          value: {
+            html: linkTo(
+              assessPaths.assessments.show,
+              { id: booking.assessmentId },
+              { text: 'View document', hiddenText: 'View assessment' },
+            ),
+          },
+        },
+      ])
     })
 
-    describe('bookingPersonRows', () => {
-      it('returns the correct rows for a person', () => {
-        const booking = bookingFactory.build()
+    it('should return an empty array if there arent documents attached to the booking', () => {
+      const booking = bookingFactory.build({ applicationId: undefined, assessmentId: undefined })
 
-        expect(bookingPersonRows(booking)).toEqual([
-          {
-            key: {
-              text: 'Name',
-            },
-            value: nameCell(booking),
+      expect(bookingShowDocumentRows(booking)).toEqual([
+        {
+          key: {
+            text: 'Application',
           },
-          {
-            key: {
-              text: 'CRN',
-            },
-            value: {
-              text: booking.person.crn,
-            },
+          value: {
+            text: 'No application attached to booking',
           },
-          {
-            key: {
-              text: 'Status',
-            },
-            value: {
-              html: new BookingStatusTag(booking.status).html(),
-            },
+        },
+        {
+          key: {
+            text: 'Assessment',
           },
-        ])
-      })
+          value: {
+            text: 'No assessment attached to booking',
+          },
+        },
+      ])
     })
+  })
 
-    describe('bookingArrivalRows', () => {
-      it('returns the correct rows for a non-arrived booking', () => {
-        const booking = bookingFactory.build({ arrival: null })
+  describe('bookingSummary', () => {
+    it('should return a summarylist of a BookingSummary', () => {
+      const createdAt = '2022-01-01'
+      const arrivalDate = '2022-03-01'
+      const departureDate = '2022-05-01'
 
-        expect(bookingArrivalRows(booking)).toEqual([
-          {
-            key: { text: 'Expected arrival date' },
-            value: { text: DateFormats.isoDateToUIDate(booking.arrivalDate) },
-          },
-        ])
+      const bookingSummary = bookingSummaryFactory.build({
+        createdAt,
+        arrivalDate,
+        departureDate,
       })
 
-      it('returns the correct rows for an arrived booking', () => {
-        const booking = bookingFactory.build({ arrival: arrivalFactory.build() })
-
-        expect(bookingArrivalRows(booking)).toEqual([
+      expect(bookingSummaryList(bookingSummary)).toEqual({
+        card: {
+          title: {
+            text: 'Placement information',
+          },
+        },
+        rows: [
           {
-            key: { text: 'Actual arrival date' },
-            value: { text: DateFormats.isoDateToUIDate(booking.arrival.arrivalDate) },
+            key: {
+              text: 'Approved Premises',
+            },
+            value: {
+              text: bookingSummary.premisesName,
+            },
           },
           {
             key: {
-              text: 'Notes',
+              text: 'Date of match',
             },
             value: {
-              html: linebreaksToParagraphs(booking.arrival.notes),
+              text: DateFormats.isoDateToUIDate(createdAt),
             },
           },
-        ])
-      })
-    })
-
-    describe('bookingDepartureRows', () => {
-      it('returns the correct rows for a non=departed booking', () => {
-        const booking = bookingFactory.build({ departure: null })
-
-        expect(bookingDepartureRows(booking)).toEqual([
+          {
+            key: {
+              text: 'Expected arrival date',
+            },
+            value: {
+              text: DateFormats.isoDateToUIDate(arrivalDate),
+            },
+          },
           {
             key: {
               text: 'Expected departure date',
             },
             value: {
-              text: DateFormats.isoDateToUIDate(booking.departureDate),
+              text: DateFormats.isoDateToUIDate(departureDate),
             },
           },
-        ])
-      })
-
-      it('returns the correct rows for a departed booking', () => {
-        const booking = bookingFactory.build({ departure: departureFactory.build() })
-
-        expect(bookingDepartureRows(booking)).toEqual([
-          {
-            key: {
-              text: 'Actual departure date',
-            },
-            value: {
-              text: DateFormats.isoDateToUIDate(booking.departure.dateTime),
-            },
-          },
-          {
-            key: {
-              text: 'Reason',
-            },
-            value: {
-              text: booking.departure.reason.name,
-            },
-          },
-          {
-            key: {
-              text: 'Notes',
-            },
-            value: {
-              html: linebreaksToParagraphs(booking.departure.notes),
-            },
-          },
-        ])
+        ],
       })
     })
+  })
 
-    describe('sorting bookings', () => {
-      const bookingsArrivingToday = premisesBookingFactory.arrivingToday().buildList(1)
-      const bookingsMarkedAsArrived = premisesBookingFactory.arrivedToday().buildList(1)
+  describe('bookingPersonRows', () => {
+    it('returns the correct rows for a person', () => {
+      const booking = bookingFactory.build()
 
-      const bookingsDepartingToday = premisesBookingFactory.departingToday().buildList(1)
-      const departedBookings = premisesBookingFactory.departedToday().buildList(1)
-
-      const bookingsArrivingSoon = premisesBookingFactory.arrivingSoon().buildList(1)
-
-      const cancelledBookingsWithFutureArrivalDate = premisesBookingFactory
-        .cancelledWithFutureArrivalDate()
-        .buildList(1)
-
-      const bookingsDepartingSoon = premisesBookingFactory.departingSoon().buildList(2)
-
-      const bookings = [
-        ...bookingsArrivingToday,
-        ...bookingsMarkedAsArrived,
-        ...bookingsDepartingToday,
-        ...departedBookings,
-        ...bookingsArrivingSoon,
-        ...cancelledBookingsWithFutureArrivalDate,
-        ...bookingsDepartingSoon,
-      ]
-
-      describe('arrivingTodayOrLate', () => {
-        it('returns all bookings arriving today or late', () => {
-          expect(arrivingTodayOrLate(bookings, premisesId)).toEqual(
-            bookingsToTableRows(bookingsArrivingToday, premisesId, 'arrival'),
-          )
-        })
-      })
-
-      describe('departingTodayOrLate', () => {
-        it('returns all bookings departing today or late', () => {
-          expect(departingTodayOrLate(bookings, premisesId)).toEqual(
-            bookingsToTableRows(bookingsDepartingToday, premisesId, 'departure'),
-          )
-        })
-      })
-
-      describe('upcomingArrivals', () => {
-        it('returns all upcoming arrivals', () => {
-          expect(upcomingArrivals(bookings, premisesId)).toEqual(
-            bookingsToTableRows(bookingsArrivingSoon, premisesId, 'arrival'),
-          )
-        })
-      })
-
-      describe('upcomingDepartures', () => {
-        it('returns all upcoming departures', () => {
-          expect(upcomingDepartures(bookings, premisesId)).toEqual(
-            bookingsToTableRows([...bookingsMarkedAsArrived, ...bookingsDepartingSoon], premisesId, 'departure'),
-          )
-        })
-      })
-
-      describe('arrivedBookings', () => {
-        it('returns all arrived bookings', () => {
-          expect(arrivedBookings(bookings, premisesId)).toEqual(
-            bookingsToTableRows(
-              [...bookingsMarkedAsArrived, ...bookingsDepartingToday, ...bookingsDepartingSoon],
-              premisesId,
-              'departure',
-            ),
-          )
-        })
-      })
-    })
-
-    describe('cancellationRows', () => {
-      it('returns an empty array if there is no cancellation', () => {
-        const booking = bookingFactory.build({ cancellation: null })
-
-        expect(cancellationRows(booking)).toEqual([])
-      })
-
-      it('returns an details of a cancellations', () => {
-        const cancellation = cancellationFactory.build()
-        const booking = bookingFactory.build({ cancellation })
-
-        expect(cancellationRows(booking)).toEqual([
-          {
-            key: {
-              text: 'Cancelled on',
-            },
-            value: {
-              text: DateFormats.isoDateToUIDate(cancellation.createdAt),
-            },
-          },
-          {
-            key: {
-              text: 'Reason',
-            },
-            value: {
-              text: cancellation.reason.name,
-            },
-          },
-        ])
-      })
-    })
-
-    describe('cancellationReasonRadioItems', () => {
-      const objects = [
+      expect(bookingPersonRows(booking)).toEqual([
         {
-          id: '123',
-          name: 'Other',
+          key: {
+            text: 'Name',
+          },
+          value: nameCell(booking),
         },
         {
-          id: '345',
-          name: 'foo',
+          key: {
+            text: 'CRN',
+          },
+          value: {
+            text: booking.person.crn,
+          },
         },
-      ]
-
-      it('converts objects to an array of radio items', () => {
-        const result = cancellationReasonsRadioItems(objects, 'somehtml', {})
-
-        expect(result).toEqual([
-          {
-            text: 'Other',
-            value: '123',
-            checked: false,
-            conditional: {
-              html: 'somehtml',
-            },
+        {
+          key: {
+            text: 'Status',
           },
-          {
-            text: 'foo',
-            value: '345',
-            checked: false,
+          value: {
+            html: new BookingStatusTag(booking.status).html(),
           },
-        ])
+        },
+      ])
+    })
+  })
+
+  describe('bookingArrivalRows', () => {
+    it('returns the correct rows for a non-arrived booking', () => {
+      const booking = bookingFactory.build({ arrival: null })
+
+      expect(bookingArrivalRows(booking)).toEqual([
+        {
+          key: { text: 'Expected arrival date' },
+          value: { text: DateFormats.isoDateToUIDate(booking.arrivalDate) },
+        },
+      ])
+    })
+
+    it('returns the correct rows for an arrived booking', () => {
+      const booking = bookingFactory.build({ arrival: arrivalFactory.build() })
+
+      expect(bookingArrivalRows(booking)).toEqual([
+        {
+          key: { text: 'Actual arrival date' },
+          value: { text: DateFormats.isoDateToUIDate(booking.arrival.arrivalDate) },
+        },
+        {
+          key: {
+            text: 'Notes',
+          },
+          value: {
+            html: linebreaksToParagraphs(booking.arrival.notes),
+          },
+        },
+      ])
+    })
+  })
+
+  describe('bookingDepartureRows', () => {
+    it('returns the correct rows for a non=departed booking', () => {
+      const booking = bookingFactory.build({ departure: null })
+
+      expect(bookingDepartureRows(booking)).toEqual([
+        {
+          key: {
+            text: 'Expected departure date',
+          },
+          value: {
+            text: DateFormats.isoDateToUIDate(booking.departureDate),
+          },
+        },
+      ])
+    })
+
+    it('returns the correct rows for a departed booking', () => {
+      const booking = bookingFactory.build({ departure: departureFactory.build() })
+
+      expect(bookingDepartureRows(booking)).toEqual([
+        {
+          key: {
+            text: 'Actual departure date',
+          },
+          value: {
+            text: DateFormats.isoDateToUIDate(booking.departure.dateTime),
+          },
+        },
+        {
+          key: {
+            text: 'Reason',
+          },
+          value: {
+            text: booking.departure.reason.name,
+          },
+        },
+        {
+          key: {
+            text: 'Notes',
+          },
+          value: {
+            html: linebreaksToParagraphs(booking.departure.notes),
+          },
+        },
+      ])
+    })
+  })
+
+  describe('sorting bookings', () => {
+    const bookingsArrivingToday = premisesBookingFactory.arrivingToday().buildList(1)
+    const bookingsMarkedAsArrived = premisesBookingFactory.arrivedToday().buildList(1)
+
+    const bookingsDepartingToday = premisesBookingFactory.departingToday().buildList(1)
+    const departedBookings = premisesBookingFactory.departedToday().buildList(1)
+
+    const bookingsArrivingSoon = premisesBookingFactory.arrivingSoon().buildList(1)
+
+    const cancelledBookingsWithFutureArrivalDate = premisesBookingFactory.cancelledWithFutureArrivalDate().buildList(1)
+
+    const bookingsDepartingSoon = premisesBookingFactory.departingSoon().buildList(2)
+
+    const bookings = [
+      ...bookingsArrivingToday,
+      ...bookingsMarkedAsArrived,
+      ...bookingsDepartingToday,
+      ...departedBookings,
+      ...bookingsArrivingSoon,
+      ...cancelledBookingsWithFutureArrivalDate,
+      ...bookingsDepartingSoon,
+    ]
+
+    describe('arrivingTodayOrLate', () => {
+      it('returns all bookings arriving today or late', () => {
+        expect(arrivingTodayOrLate(bookings, premisesId)).toEqual(
+          bookingsToTableRows(bookingsArrivingToday, premisesId, 'arrival'),
+        )
       })
     })
 
-    describe('BookingStatusTag', () => {
-      const statuses = Object.keys(BookingStatusTag.statuses) as ReadonlyArray<BookingStatus>
+    describe('departingTodayOrLate', () => {
+      it('returns all bookings departing today or late', () => {
+        expect(departingTodayOrLate(bookings, premisesId)).toEqual(
+          bookingsToTableRows(bookingsDepartingToday, premisesId, 'departure'),
+        )
+      })
+    })
 
-      statuses.forEach(status => {
-        it(`returns the correct tag for each BookingStatusTag with a status of ${status}`, () => {
-          expect(new BookingStatusTag(status as never).html()).toEqual(
-            `<strong class="govuk-tag govuk-tag--${BookingStatusTag.colours[status]} " data-cy-status="${status}" >${BookingStatusTag.statuses[status]}</strong>`,
-          )
-        })
+    describe('upcomingArrivals', () => {
+      it('returns all upcoming arrivals', () => {
+        expect(upcomingArrivals(bookings, premisesId)).toEqual(
+          bookingsToTableRows(bookingsArrivingSoon, premisesId, 'arrival'),
+        )
+      })
+    })
+
+    describe('upcomingDepartures', () => {
+      it('returns all upcoming departures', () => {
+        expect(upcomingDepartures(bookings, premisesId)).toEqual(
+          bookingsToTableRows([...bookingsMarkedAsArrived, ...bookingsDepartingSoon], premisesId, 'departure'),
+        )
+      })
+    })
+
+    describe('arrivedBookings', () => {
+      it('returns all arrived bookings', () => {
+        expect(arrivedBookings(bookings, premisesId)).toEqual(
+          bookingsToTableRows(
+            [...bookingsMarkedAsArrived, ...bookingsDepartingToday, ...bookingsDepartingSoon],
+            premisesId,
+            'departure',
+          ),
+        )
+      })
+    })
+  })
+
+  describe('cancellationRows', () => {
+    it('returns an empty array if there is no cancellation', () => {
+      const booking = bookingFactory.build({ cancellation: null })
+
+      expect(cancellationRows(booking)).toEqual([])
+    })
+
+    it('returns an details of a cancellations', () => {
+      const cancellation = cancellationFactory.build()
+      const booking = bookingFactory.build({ cancellation })
+
+      expect(cancellationRows(booking)).toEqual([
+        {
+          key: {
+            text: 'Cancelled on',
+          },
+          value: {
+            text: DateFormats.isoDateToUIDate(cancellation.createdAt),
+          },
+        },
+        {
+          key: {
+            text: 'Reason',
+          },
+          value: {
+            text: cancellation.reason.name,
+          },
+        },
+      ])
+    })
+  })
+
+  describe('cancellationReasonRadioItems', () => {
+    const objects = [
+      {
+        id: '123',
+        name: 'Other',
+      },
+      {
+        id: '345',
+        name: 'foo',
+      },
+    ]
+
+    it('converts objects to an array of radio items', () => {
+      const result = cancellationReasonsRadioItems(objects, 'somehtml', {})
+
+      expect(result).toEqual([
+        {
+          text: 'Other',
+          value: '123',
+          checked: false,
+          conditional: {
+            html: 'somehtml',
+          },
+        },
+        {
+          text: 'foo',
+          value: '345',
+          checked: false,
+        },
+      ])
+    })
+  })
+
+  describe('BookingStatusTag', () => {
+    const statuses = Object.keys(BookingStatusTag.statuses) as ReadonlyArray<BookingStatus>
+
+    statuses.forEach(status => {
+      it(`returns the correct tag for each BookingStatusTag with a status of ${status}`, () => {
+        expect(new BookingStatusTag(status as never).html()).toEqual(
+          `<strong class="govuk-tag govuk-tag--${BookingStatusTag.colours[status]} " data-cy-status="${status}" >${BookingStatusTag.statuses[status]}</strong>`,
+        )
       })
     })
   })

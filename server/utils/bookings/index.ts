@@ -168,7 +168,7 @@ export const bookingsToTableRows = (
 export const nameCell = (booking: PremisesBooking): TableCell =>
   isFullPerson(booking.person) ? { text: laoName(booking.person) } : { text: `LAO: ${booking.person.crn}` }
 
-export const bookingActions = (booking: Booking, premisesId: string): Array<IdentityBarMenu> => {
+export const legacyBookingActions = (booking: Booking, premisesId: string): Array<IdentityBarMenu> => {
   const withdrawalLink = !booking?.applicationId
     ? paths.bookings.cancellations.new({ premisesId, bookingId: booking.id })
     : applyPaths.applications.withdraw.new({ id: booking?.applicationId })
