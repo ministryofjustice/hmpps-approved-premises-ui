@@ -12,10 +12,11 @@ const situations: Record<SituationOption, string> = {
   residencyManagement: 'Specified residency requirement as part of a community based Order',
   bailAssessment: 'Bail assessment for residency requirement as part of a community order or suspended sentence order',
   bailSentence: 'Bail placement',
+  awaitingSentence: 'Awaiting sentence',
 }
 
 type CommunityOrderSituations = Pick<typeof situations, 'riskManagement' | 'residencyManagement'>
-type BailPlacementSituations = Pick<typeof situations, 'bailAssessment' | 'bailSentence'>
+type BailPlacementSituations = Pick<typeof situations, 'bailAssessment' | 'bailSentence' | 'awaitingSentence'>
 type SentenceTypeResponse = Extract<SentenceTypeOption, 'communityOrder' | 'bailPlacement'>
 
 @Page({ name: 'situation', bodyProperties: ['situation'] })
@@ -72,7 +73,11 @@ export default class Situation implements TasklistPage {
       return { riskManagement: situations.riskManagement, residencyManagement: situations.residencyManagement }
     }
     if (sessionSentenceType === 'bailPlacement') {
-      return { bailAssessment: situations.bailAssessment, bailSentence: situations.bailSentence }
+      return {
+        bailAssessment: situations.bailAssessment,
+        bailSentence: situations.bailSentence,
+        awaitingSentence: situations.awaitingSentence,
+      }
     }
     throw new SessionDataError(`Unknown sentence type ${sessionSentenceType}`)
   }

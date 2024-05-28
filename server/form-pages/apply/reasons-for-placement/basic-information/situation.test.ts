@@ -61,13 +61,14 @@ describe('Situation', () => {
 
         const items = new Situation({ situation: 'bailAssessment' }, application).items()
 
-        expect(items.length).toEqual(2)
+        expect(items.length).toEqual(3)
         expect(items[0]).toEqual({
           text: 'Bail assessment for residency requirement as part of a community order or suspended sentence order',
           value: 'bailAssessment',
           checked: true,
         })
         expect(items[1]).toEqual({ text: 'Bail placement', value: 'bailSentence', checked: false })
+        expect(items[2]).toEqual({ text: 'Awaiting sentence', value: 'awaitingSentence', checked: false })
       })
     })
 
