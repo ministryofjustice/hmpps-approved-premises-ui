@@ -209,23 +209,23 @@ describe('bookingUtils', () => {
     it('should return arrival, non-arrival and cancellation actions if a booking is awaiting arrival', () => {
       const booking = bookingFactory.arrivingToday().build()
 
-      expect(legacyBookingActions(booking, premisesId)).toEqual([
+      expect(legacyBookingActions(booking)).toEqual([
         {
           items: [
             {
               text: 'Move person to a new bed',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Mark as arrived',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.arrivals.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.arrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Mark as not arrived',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.nonArrivals.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Withdraw placement',
@@ -235,7 +235,7 @@ describe('bookingUtils', () => {
             {
               text: 'Change placement dates',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.dateChanges.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
           ],
         },
@@ -245,23 +245,23 @@ describe('bookingUtils', () => {
     it('should return a departure action if a booking is arrived', () => {
       const booking = bookingFactory.arrived().build()
 
-      expect(legacyBookingActions(booking, premisesId)).toEqual([
+      expect(legacyBookingActions(booking)).toEqual([
         {
           items: [
             {
               text: 'Move person to a new bed',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Log departure',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.departures.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.departures.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Update departure date',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.extensions.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Withdraw placement',
@@ -278,28 +278,28 @@ describe('bookingUtils', () => {
         applicationId: undefined,
       })
 
-      expect(legacyBookingActions(booking, premisesId)).toEqual([
+      expect(legacyBookingActions(booking)).toEqual([
         {
           items: [
             {
               text: 'Move person to a new bed',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Log departure',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.departures.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.departures.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Update departure date',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.extensions.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Withdraw placement',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.cancellations.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.cancellations.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
           ],
         },

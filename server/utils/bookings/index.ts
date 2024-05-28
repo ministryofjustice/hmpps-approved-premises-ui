@@ -6,6 +6,7 @@ import type {
   SummaryListWithCard,
   TableCell,
   TableRow,
+  UserDetails,
 } from '@approved-premises/ui'
 import type { BedSummary, Booking, BookingStatus, BookingSummary, PremisesBooking } from '@approved-premises/api'
 import { addDays, isBefore, isEqual, isWithinInterval } from 'date-fns'
@@ -168,9 +169,9 @@ export const bookingsToTableRows = (
 export const nameCell = (booking: PremisesBooking): TableCell =>
   isFullPerson(booking.person) ? { text: laoName(booking.person) } : { text: `LAO: ${booking.person.crn}` }
 
-export const legacyBookingActions = (booking: Booking, premisesId: string): Array<IdentityBarMenu> => {
+export const legacyBookingActions = (booking: Booking): Array<IdentityBarMenu> => {
   const withdrawalLink = !booking?.applicationId
-    ? paths.bookings.cancellations.new({ premisesId, bookingId: booking.id })
+    ? paths.bookings.cancellations.new({ premisesId: booking.premises.id, bookingId: booking.id })
     : applyPaths.applications.withdraw.new({ id: booking?.applicationId })
 
   if (booking.status === 'awaiting-arrival' || booking.status === 'arrived') {
@@ -178,7 +179,7 @@ export const legacyBookingActions = (booking: Booking, premisesId: string): Arra
       {
         text: 'Move person to a new bed',
         classes: 'govuk-button--secondary',
-        href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
+        href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
       },
     ]
 
@@ -186,12 +187,12 @@ export const legacyBookingActions = (booking: Booking, premisesId: string): Arra
       items.push({
         text: 'Mark as arrived',
         classes: 'govuk-button--secondary',
-        href: paths.bookings.arrivals.new({ premisesId, bookingId: booking.id }),
+        href: paths.bookings.arrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
       })
       items.push({
         text: 'Mark as not arrived',
         classes: 'govuk-button--secondary',
-        href: paths.bookings.nonArrivals.new({ premisesId, bookingId: booking.id }),
+        href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
       })
       items.push({
         text: 'Withdraw placement',
@@ -201,7 +202,7 @@ export const legacyBookingActions = (booking: Booking, premisesId: string): Arra
       items.push({
         text: 'Change placement dates',
         classes: 'govuk-button--secondary',
-        href: paths.bookings.dateChanges.new({ premisesId, bookingId: booking.id }),
+        href: paths.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
       })
     }
 
@@ -209,12 +210,12 @@ export const legacyBookingActions = (booking: Booking, premisesId: string): Arra
       items.push({
         text: 'Log departure',
         classes: 'govuk-button--secondary',
-        href: paths.bookings.departures.new({ premisesId, bookingId: booking.id }),
+        href: paths.bookings.departures.new({ premisesId: booking.premises.id, bookingId: booking.id }),
       })
       items.push({
         text: 'Update departure date',
         classes: 'govuk-button--secondary',
-        href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
+        href: paths.bookings.extensions.new({ premisesId: booking.premises.id, bookingId: booking.id }),
       })
       items.push({
         text: 'Withdraw placement',
