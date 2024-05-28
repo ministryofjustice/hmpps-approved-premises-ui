@@ -10,6 +10,7 @@ import nonArrival from './integration_tests/mockApis/nonArrival'
 import departure from './integration_tests/mockApis/departure'
 import cancellation from './integration_tests/mockApis/cancellation'
 import lostBed from './integration_tests/mockApis/lostBed'
+import outOfServiceBed from './integration_tests/mockApis/outOfServiceBed'
 import person from './integration_tests/mockApis/person'
 import reports from './integration_tests/mockApis/reports'
 import applications from './integration_tests/mockApis/applications'
@@ -48,6 +49,7 @@ export default defineConfig({
         ...departure,
         ...cancellation,
         ...lostBed,
+        ...outOfServiceBed,
         ...person,
         ...applications,
         ...assessments,

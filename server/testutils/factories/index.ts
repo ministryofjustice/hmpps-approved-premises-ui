@@ -55,6 +55,11 @@ import nonArrivalFactory from './nonArrival'
 import noteFactory from './noteFactory'
 import oasysSectionsFactory, { roshSummaryFactory } from './oasysSections'
 import oasysSelectionFactory from './oasysSelection'
+import {
+  newOutOfServiceBedFactory,
+  outOfServiceBedCancellationFactory,
+  outOfServiceBedFactory,
+} from './outOfServiceBed'
 import paginatedResponseFactory from './paginatedResponse'
 import { fullPersonFactory as personFactory, restrictedPersonFactory } from './person'
 import placementApplicationFactory from './placementApplication'
@@ -140,6 +145,9 @@ export {
   noteFactory,
   oasysSectionsFactory,
   oasysSelectionFactory,
+  outOfServiceBedFactory,
+  outOfServiceBedCancellationFactory,
+  newOutOfServiceBedFactory,
   paginatedResponseFactory,
   personFactory,
   personalTimelineFactory,

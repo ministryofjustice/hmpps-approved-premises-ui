@@ -21,7 +21,7 @@ export default function routes(controllers: Controllers, router: Router, service
     departuresController,
     cancellationsController,
     lostBedsController,
-
+    outOfServiceBedsController,
     bedsController,
     moveBedsController,
   } = controllers
@@ -157,6 +157,36 @@ export default function routes(controllers: Controllers, router: Router, service
       {
         path: paths.lostBeds.show.pattern,
         auditEvent: 'UPDATE_LOST_BED_FAILURE',
+      },
+    ],
+    allowedRoles: ['workflow_manager'],
+  })
+
+  get(paths.outOfServiceBeds.new.pattern, outOfServiceBedsController.new(), {
+    auditEvent: 'NEW_OUT_OF_SERVICE_BED',
+    allowedRoles: ['workflow_manager'],
+  })
+  post(paths.outOfServiceBeds.create.pattern, outOfServiceBedsController.create(), {
+    auditEvent: 'CREATE_OUT_OF_SERVICE_BED_SUCCESS',
+    redirectAuditEventSpecs: [
+      {
+        path: paths.outOfServiceBeds.new.pattern,
+        auditEvent: 'CREATE_OUT_OF_SERVICE_BED_FAILURE',
+      },
+    ],
+    allowedRoles: ['workflow_manager'],
+  })
+  get(paths.outOfServiceBeds.index.pattern, outOfServiceBedsController.index(), {
+    auditEvent: 'LIST_OUT_OF_SERVICE_BEDS',
+  })
+  get(paths.outOfServiceBeds.show.pattern, outOfServiceBedsController.show(), { auditEvent: 'SHOW_OUT_OF_SERVICE_BED' })
+  post(paths.outOfServiceBeds.update.pattern, outOfServiceBedsController.update(), {
+    auditEvent: 'UPDATE_OUT_OF_SERVICE_BED_SUCCESS',
+    auditBodyParams: ['cancel'],
+    redirectAuditEventSpecs: [
+      {
+        path: paths.outOfServiceBeds.show.pattern,
+        auditEvent: 'UPDATE_OUT_OF_SERVICE_BED_FAILURE',
       },
     ],
     allowedRoles: ['workflow_manager'],

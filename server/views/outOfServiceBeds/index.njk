@@ -1,0 +1,54 @@
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+
+{% extends "../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + pageHeading %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+		text: "Back",
+		href: paths.premises.beds.index({ premisesId: premisesId })
+	}) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full-width">
+      {% include "../_messages.njk" %}
+
+      <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+      {{
+        govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          rows: [            {
+              key: {
+                text: "Out of service"
+              },
+              value: {
+                text: OutOfServiceBedUtils.outOfServiceBedCountForToday(outOfServiceBeds)
+              }
+            }
+          ]
+        })
+      }}
+
+      {% if outOfServiceBeds %}
+
+        {{
+          govukTable({
+            caption: "Out of service",
+            captionClasses: "govuk-table__caption--m",
+            head: OutOfServiceBedUtils.outOfServiceBedTableHeaders(user),
+            rows: OutOfServiceBedUtils.outOfServiceBedTableRows(outOfServiceBeds, premisesId, user)
+          })
+        }}
+
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
