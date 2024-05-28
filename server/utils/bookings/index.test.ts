@@ -4,6 +4,7 @@ import {
   arrivedBookings,
   arrivingTodayOrLate,
   bedsAsSelectItems,
+  bookingActions,
   bookingArrivalRows,
   bookingDepartureRows,
   bookingPersonRows,
@@ -19,6 +20,7 @@ import {
   nameCell,
   upcomingArrivals,
   upcomingDepartures,
+  v2BookingActions,
 } from '.'
 import {
   arrivalFactory,
@@ -30,6 +32,7 @@ import {
   personFactory,
   premisesBookingFactory,
   restrictedPersonFactory,
+  userDetailsFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/manage'
 import assessPaths from '../../paths/assess'
@@ -191,6 +194,41 @@ describe('bookingUtils', () => {
       booking.person = personFactory.build({ isRestricted: true })
       expect(nameCell(booking)).toEqual({
         text: `LAO: ${(booking.person as FullPerson).name}`,
+      })
+    })
+  })
+
+  describe('bookingActions', () => {
+    describe('when the user has the "workflow_manager" role', () => {
+      it('returns the legacyBookingActions', () => {
+        const user = userDetailsFactory.build({
+          roles: ['workflow_manager'],
+        })
+        const booking = bookingFactory.build()
+
+        expect(bookingActions(user, booking)).toEqual(legacyBookingActions(booking))
+      })
+    })
+
+    describe('when the user has the "future_manager" role', () => {
+      it('returns the v2BookingActions', () => {
+        const user = userDetailsFactory.build({
+          roles: ['future_manager'],
+        })
+        const booking = bookingFactory.build()
+
+        expect(bookingActions(user, booking)).toEqual(v2BookingActions(booking))
+      })
+    })
+
+    describe('when the user has both the "legacy_manager" and "future_manager" roles', () => {
+      it('returns the v2BookingActions', () => {
+        const user = userDetailsFactory.build({
+          roles: ['legacy_manager', 'future_manager'],
+        })
+        const booking = bookingFactory.build()
+
+        expect(bookingActions(user, booking)).toEqual(v2BookingActions(booking))
       })
     })
   })

@@ -169,6 +169,12 @@ export const bookingsToTableRows = (
 export const nameCell = (booking: PremisesBooking): TableCell =>
   isFullPerson(booking.person) ? { text: laoName(booking.person) } : { text: `LAO: ${booking.person.crn}` }
 
+export const bookingActions = (user: UserDetails, booking: Booking): Array<IdentityBarMenu> => {
+  if (user.roles?.includes('future_manager')) return v2BookingActions(booking)
+  if (user.roles?.includes('workflow_manager')) return legacyBookingActions(booking)
+  return []
+}
+
 export const legacyBookingActions = (booking: Booking): Array<IdentityBarMenu> => {
   const withdrawalLink = !booking?.applicationId
     ? paths.bookings.cancellations.new({ premisesId: booking.premises.id, bookingId: booking.id })
