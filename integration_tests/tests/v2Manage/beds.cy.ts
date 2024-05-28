@@ -17,12 +17,11 @@ context('Beds', () => {
     cy.task('stubBeds', { premisesId, bedSummaries })
     cy.task('stubBed', { premisesId, bedDetail })
     cy.task('stubLostBedReferenceData')
+    // And I am signed in as a future_manager
+    signIn(['future_manager'])
   })
 
   it('should allow me to visit a bed from the bed list page', () => {
-    // Given I am signed in as a workflow manager
-    signIn(['workflow_manager'])
-
     // When I visit the rooms page
     const bedsPage = BedsListPage.visit(premisesId, { v2: true })
 
@@ -55,9 +54,6 @@ context('Beds', () => {
     cy.task('stubLostBedsList', { premisesId, lostBeds: [outOfServiceBed] })
     cy.task('stubOutOfServiceBedUpdate', { premisesId, outOfServiceBed })
 
-    // And I am signed in as a workflow manager
-    signIn(['workflow_manager'])
-
     // When I visit the rooms page
     const bedsPage = BedsListPage.visit(premisesId, { v2: true })
 
@@ -69,8 +65,8 @@ context('Beds', () => {
   })
 
   it('should not show managed actions when I am logged in as a manager', () => {
-    // Given I am signed in as a manager
-    signIn(['manager'])
+    // Given I am signed in as a future_manager
+    signIn(['future_manager'])
 
     // When I visit the bed page
     const bedPage = BedShowPage.visit(premisesId, bedDetail, { v2: true })

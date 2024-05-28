@@ -13,8 +13,8 @@ import { fullPersonFactory } from '../../../server/testutils/factories/person'
 context('Premises', () => {
   beforeEach(() => {
     cy.task('reset')
-    // Given I am logged in
-    signIn(['workflow_manager'])
+    // Given I am logged in as a future manager
+    signIn(['future_manager'])
   })
 
   describe('list', () => {

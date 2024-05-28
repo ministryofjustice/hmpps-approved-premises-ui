@@ -18,8 +18,8 @@ context('OutOfServiceBeds', () => {
   beforeEach(() => {
     cy.task('reset')
 
-    // Given I am signed in as a workflow manager
-    signIn(['workflow_manager'])
+    // Given I am signed in as a future manager
+    signIn(['future_manager'])
   })
 
   it('should allow me to create a out of service bed', () => {

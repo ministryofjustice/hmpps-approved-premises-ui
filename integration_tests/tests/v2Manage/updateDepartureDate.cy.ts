@@ -13,7 +13,7 @@ context('Departure date', () => {
     cy.task('reset')
 
     // Given I am signed in
-    signIn(['workflow_manager'])
+    signIn(['future_manager'])
   })
 
   it('should show a form to change a bookings departure date', () => {
