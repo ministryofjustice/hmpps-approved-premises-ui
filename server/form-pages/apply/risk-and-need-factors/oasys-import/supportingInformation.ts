@@ -15,7 +15,9 @@ type SupportingInformationBody = {
   bodyProperties: ['supportingInformationAnswers', 'supportingInformationSummaries'],
 })
 export default class SupportingInformation implements OasysPage {
-  title = 'Edit risk information'
+  title = 'Supporting information'
+
+  riskTaskStep = 3
 
   supportingInformationSummaries: SupportingInformationBody['supportingInformationSummaries']
 

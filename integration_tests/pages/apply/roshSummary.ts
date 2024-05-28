@@ -9,7 +9,7 @@ export default class RoshSummary extends ApplyPage {
     private readonly roshSummary: ArrayOfOASysRiskOfSeriousHarmSummaryQuestions,
     private readonly oasysMissing: boolean,
   ) {
-    const title = oasysMissing ? 'Provide risk information' : 'Edit risk information'
+    const title = oasysMissing ? 'Provide risk information' : 'RoSH summary'
 
     super(
       title,

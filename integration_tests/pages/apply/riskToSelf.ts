@@ -9,7 +9,7 @@ export default class RiskToSelf extends ApplyPage {
     private readonly riskToSelfummaries: ArrayOfOASysRiskToSelfQuestions,
     private readonly oasysMissing: boolean,
   ) {
-    const title = oasysMissing ? 'Provide risk information' : 'Edit risk information'
+    const title = oasysMissing ? 'Provide risk information' : 'Risk to self'
 
     super(
       title,

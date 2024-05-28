@@ -16,7 +16,9 @@ type RoshSummaryBody = {
   bodyProperties: ['roshAnswers', 'roshSummaries'],
 })
 export default class RoshSummary implements OasysPage {
-  title = 'Edit risk information'
+  title = 'RoSH summary'
+
+  riskTaskStep = 1
 
   roshSummaries: RoshSummaryBody['roshSummaries']
 

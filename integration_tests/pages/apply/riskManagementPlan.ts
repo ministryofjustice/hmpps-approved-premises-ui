@@ -9,7 +9,7 @@ export default class RiskManagementPlan extends ApplyPage {
     private readonly riskRiskManagementPlanSummaries: ArrayOfOASysRiskManagementPlanQuestions,
     private readonly oasysMissing: boolean,
   ) {
-    const title = oasysMissing ? 'Provide risk information' : 'Edit risk information'
+    const title = oasysMissing ? 'Provide risk information' : 'Risk management plan'
 
     super(
       title,
