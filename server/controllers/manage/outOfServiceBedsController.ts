@@ -49,7 +49,7 @@ export default class OutOfServiceBedsController {
         req.flash('success', 'Out of service bed logged')
         return res.redirect(paths.premises.show({ premisesId }))
       } catch (error) {
-        const redirectPath = paths.outOfServiceBeds.new({ premisesId, bedId })
+        const redirectPath = paths.v2Manage.outOfServiceBeds.new({ premisesId, bedId })
 
         const knownError = error as SanitisedError
 
@@ -119,14 +119,14 @@ export default class OutOfServiceBedsController {
 
           req.flash('success', 'Bed cancelled')
 
-          return res.redirect(paths.outOfServiceBeds.index({ premisesId }))
+          return res.redirect(paths.v2Manage.outOfServiceBeds.index({ premisesId }))
         }
 
         await this.outOfServiceBedService.updateOutOfServiceBed(req.user.token, id, premisesId, req.body)
 
         req.flash('success', 'Bed updated')
 
-        return res.redirect(paths.outOfServiceBeds.index({ premisesId }))
+        return res.redirect(paths.v2Manage.outOfServiceBeds.index({ premisesId }))
       } catch (error) {
         const redirectPath = req.headers.referer
 
@@ -145,13 +145,13 @@ export default class OutOfServiceBedsController {
 
         req.flash('success', 'Bed cancelled')
 
-        return res.redirect(paths.outOfServiceBeds.index({ premisesId }))
+        return res.redirect(paths.v2Manage.outOfServiceBeds.index({ premisesId }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,
           res,
           error as Error,
-          paths.outOfServiceBeds.show({ premisesId, bedId, id }),
+          paths.v2Manage.outOfServiceBeds.show({ premisesId, bedId, id }),
         )
       }
     }

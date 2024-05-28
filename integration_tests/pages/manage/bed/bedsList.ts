@@ -1,4 +1,4 @@
-import { BedDetail, BedSummary } from '../../../../server/@types/shared'
+import { BedDetail, BedSummary, Premises } from '../../../../server/@types/shared'
 
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
@@ -10,12 +10,12 @@ export default class BedsListPage extends Page {
     super('Manage beds')
   }
 
-  static visit(premisesId: string): BedsListPage {
-    cy.visit(paths.premises.beds.index({ premisesId }))
+  static visit(premisesId: Premises['id'], { v2 } = { v2: false }): BedsListPage {
+    cy.visit(v2 ? paths.v2Manage.premises.beds.index({ premisesId }) : paths.premises.beds.index({ premisesId }))
     return new BedsListPage()
   }
 
-  shouldShowBeds(beds: Array<BedSummary>, premisesId: string): void {
+  shouldShowBeds(beds: Array<BedSummary>, premisesId: Premises['id']): void {
     const rows = bedTableRows(beds, premisesId)
     this.shouldContainTableRows(rows)
   }
@@ -24,7 +24,7 @@ export default class BedsListPage extends Page {
     cy.get(`a[data-cy-bedid="${bed.id}"]`).click()
   }
 
-  clickManageLostBeds(): void {
+  clickManageOutOfServiceBeds(): void {
     cy.get('.moj-button-menu__toggle-button').click()
     cy.get('a').contains('Manage out of service beds').click()
   }

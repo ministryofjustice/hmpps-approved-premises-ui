@@ -1,6 +1,7 @@
-import { bedDetailFactory, bedSummaryFactory, lostBedFactory } from '../../../server/testutils/factories'
+import { bedDetailFactory, bedSummaryFactory, outOfServiceBedFactory } from '../../../server/testutils/factories'
 
-import { BedShowPage, BedsListPage, LostBedCreatePage, LostBedListPage } from '../../pages/manage'
+import { BedShowPage, BedsListPage } from '../../pages/manage'
+import { OutOfServiceBedCreatePage, OutOfServiceBedListPage } from '../../pages/manage/outOfServiceBeds'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
 
@@ -11,11 +12,11 @@ context('Beds', () => {
 
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubLostBedReferenceData')
 
     // Given there are beds in the database
     cy.task('stubBeds', { premisesId, bedSummaries })
     cy.task('stubBed', { premisesId, bedDetail })
+    cy.task('stubLostBedReferenceData')
   })
 
   it('should allow me to visit a bed from the bed list page', () => {
@@ -23,7 +24,7 @@ context('Beds', () => {
     signIn(['workflow_manager'])
 
     // When I visit the rooms page
-    const bedsPage = BedsListPage.visit(premisesId)
+    const bedsPage = BedsListPage.visit(premisesId, { v2: true })
 
     // Then I should see all of the rooms listed
     bedsPage.shouldShowBeds(bedSummaries, premisesId)
@@ -35,7 +36,7 @@ context('Beds', () => {
     Page.verifyOnPage(BedShowPage)
 
     // When I visit the bed page
-    const bedPage = BedShowPage.visit(premisesId, bedDetail)
+    const bedPage = BedShowPage.visit(premisesId, bedDetail, { v2: true })
 
     // Then I should see the room details
     bedPage.shouldShowBedDetails(bedDetail)
@@ -44,27 +45,27 @@ context('Beds', () => {
     bedPage.clickOutOfServiceBedOption()
 
     // Then I am taken to the mark bed out of service page
-    Page.verifyOnPage(LostBedCreatePage)
+    Page.verifyOnPage(OutOfServiceBedCreatePage)
   })
 
   it('should allow me to manage out of service beds from the bed list page', () => {
-    // Given there is a lost bed in the database
-    const lostBed = lostBedFactory.build()
-    cy.task('stubLostBed', { premisesId, lostBed })
-    cy.task('stubLostBedsList', { premisesId, lostBeds: [lostBed] })
-    cy.task('stubLostBedUpdate', { premisesId, lostBed })
+    // Given there is an out of service bed in the database
+    const outOfServiceBed = outOfServiceBedFactory.build()
+    cy.task('stubOutOfServiceBed', { premisesId, outOfServiceBed })
+    cy.task('stubLostBedsList', { premisesId, lostBeds: [outOfServiceBed] })
+    cy.task('stubOutOfServiceBedUpdate', { premisesId, outOfServiceBed })
 
     // And I am signed in as a workflow manager
     signIn(['workflow_manager'])
 
     // When I visit the rooms page
-    const bedsPage = BedsListPage.visit(premisesId)
+    const bedsPage = BedsListPage.visit(premisesId, { v2: true })
 
     // And I click on manage out of service beds
     bedsPage.clickManageOutOfServiceBeds()
 
     // Then I should see the list of out of service beds
-    Page.verifyOnPage(LostBedListPage)
+    Page.verifyOnPage(OutOfServiceBedListPage)
   })
 
   it('should not show managed actions when I am logged in as a manager', () => {
@@ -72,7 +73,7 @@ context('Beds', () => {
     signIn(['manager'])
 
     // When I visit the bed page
-    const bedPage = BedShowPage.visit(premisesId, bedDetail)
+    const bedPage = BedShowPage.visit(premisesId, bedDetail, { v2: true })
 
     // Then I should not see the management actions
     bedPage.shouldNotShowManageActions()

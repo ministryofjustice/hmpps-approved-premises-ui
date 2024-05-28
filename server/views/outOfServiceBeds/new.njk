@@ -14,7 +14,7 @@
 {% block beforeContent %}
   {{ govukBackLink({
     text: "Back",
-    href: paths.premises.beds.show({ premisesId: premisesId, bedId: bedId })
+    href: paths.v2Manage.premises.beds.show({ premisesId: premisesId, bedId: bedId })
   }) }}
 {% endblock %}
 
@@ -22,7 +22,7 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      <form action="{{ paths.outOfServiceBeds.create({ premisesId: premisesId, bedId: bedId }) }}" method="post">
+      <form action="{{ paths.v2Manage.outOfServiceBeds.create({ premisesId: premisesId, bedId: bedId }) }}" method="post">
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
         {{ showErrorSummary(errorSummary, errorTitle) }}

@@ -1,13 +1,18 @@
 import Page, { PageElement } from '../../../page'
 import paths from '../../../../../server/paths/manage'
+import { Booking, NewDeparture, Premises } from '../../../../../server/@types/shared'
 
 export default class DepartureDateChangePage extends Page {
   constructor() {
     super('Update departure date')
   }
 
-  static visit(premisesId: string, bookingId: string): DepartureDateChangePage {
-    cy.visit(paths.bookings.extensions.new({ premisesId, bookingId }))
+  static visit(premisesId: Premises['id'], bookingId: Booking['id'], { v2 } = { v2: false }): DepartureDateChangePage {
+    cy.visit(
+      v2
+        ? paths.v2Manage.bookings.extensions.new({ premisesId, bookingId })
+        : paths.bookings.extensions.new({ premisesId, bookingId }),
+    )
     return new DepartureDateChangePage()
   }
 
@@ -23,7 +28,7 @@ export default class DepartureDateChangePage extends Page {
     return cy.get('#newDepartureDate-year')
   }
 
-  completeForm(newDepartureDate: string): void {
+  completeForm(newDepartureDate: NewDeparture['dateTime']): void {
     this.getLegend('What is the new departure date?')
 
     const parsedNewDepartureDate = new Date(Date.parse(newDepartureDate))

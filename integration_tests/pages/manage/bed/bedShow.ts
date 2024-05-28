@@ -1,4 +1,4 @@
-import { BedDetail } from '../../../../server/@types/shared'
+import { BedDetail, Premises } from '../../../../server/@types/shared'
 
 import Page from '../../page'
 import paths from '../../../../server/paths/manage'
@@ -10,8 +10,12 @@ export default class BedShowPage extends Page {
     super('Manage beds')
   }
 
-  static visit(premisesId: string, bed: BedDetail): BedShowPage {
-    cy.visit(paths.premises.beds.show({ premisesId, bedId: bed.id }))
+  static visit(premisesId: Premises['id'], bed: BedDetail, { v2 } = { v2: false }): BedShowPage {
+    cy.visit(
+      v2
+        ? paths.v2Manage.premises.beds.show({ premisesId, bedId: bed.id })
+        : paths.premises.beds.show({ premisesId, bedId: bed.id }),
+    )
     return new BedShowPage()
   }
 
@@ -20,7 +24,7 @@ export default class BedShowPage extends Page {
     this.shouldContainSummaryListItems(details)
   }
 
-  clickLostBedsOption() {
+  clickOutOfServiceBedOption() {
     cy.get('.moj-button-menu__toggle-button').click()
     cy.get('a').contains('Mark this bed as out of service').click()
   }
