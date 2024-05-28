@@ -175,6 +175,23 @@ export const bookingActions = (user: UserDetails, booking: Booking): Array<Ident
   return []
 }
 
+export const v2BookingActions = (booking: Booking): Array<IdentityBarMenu> => {
+  if (booking.status === 'awaiting-arrival')
+    return [
+      {
+        items: [
+          {
+            text: 'Withdraw placement',
+            classes: 'govuk-button--secondary',
+            href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
+          },
+        ],
+      },
+    ]
+
+  return []
+}
+
 export const legacyBookingActions = (booking: Booking): Array<IdentityBarMenu> => {
   const withdrawalLink = !booking?.applicationId
     ? paths.bookings.cancellations.new({ premisesId: booking.premises.id, bookingId: booking.id })

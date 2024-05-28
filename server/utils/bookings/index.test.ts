@@ -221,14 +221,34 @@ describe('bookingUtils', () => {
       })
     })
 
-    describe('when the user has both the "legacy_manager" and "future_manager" roles', () => {
+    describe('when the user has both the "workflow_manager" and "future_manager" roles', () => {
       it('returns the v2BookingActions', () => {
         const user = userDetailsFactory.build({
-          roles: ['legacy_manager', 'future_manager'],
+          roles: ['workflow_manager', 'future_manager'],
         })
         const booking = bookingFactory.build()
 
         expect(bookingActions(user, booking)).toEqual(v2BookingActions(booking))
+      })
+    })
+  })
+
+  describe('v2BookingActions', () => {
+    describe('if the booking has a status of awaiting-arrival', () => {
+      it('returns the withdrawal link ', () => {
+        const booking = bookingFactory.arrivingSoon().build()
+
+        expect(v2BookingActions(booking)).toEqual([
+          {
+            items: [
+              {
+                text: 'Withdraw placement',
+                classes: 'govuk-button--secondary',
+                href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
+              },
+            ],
+          },
+        ])
       })
     })
   })
