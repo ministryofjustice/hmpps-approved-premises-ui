@@ -3,11 +3,15 @@ import { path } from 'static-path'
 const premisesPath = path('/premises')
 const singlePremisesPath = premisesPath.path(':premisesId')
 
+// CAS1 namespace
+
+const cas1NamespacePath = path('/cas1')
+const cas1SinglePremisesPath = cas1NamespacePath.path('premises/:premisesId')
+const lostBedsPath = cas1SinglePremisesPath.path('lost-beds')
+
 // Manage V2 paths
 const managePremisesPath = path('/manage/premises')
 const manageSinglePremisesPath = managePremisesPath.path(':premisesId')
-
-const lostBedsPath = singlePremisesPath.path('lost-beds')
 
 const outOfServiceBedsPath = manageSinglePremisesPath.path('out-of-service-beds')
 

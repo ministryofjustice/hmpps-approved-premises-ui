@@ -1,10 +1,10 @@
 import LostBedClient from './lostBedClient'
 import { lostBedCancellationFactory, lostBedFactory, newLostBedFactory } from '../testutils/factories'
 import paths from '../paths/api'
-import describeClient from '../testutils/describeClient'
+import { describeCas1NamespaceClient } from '../testutils/describeClient'
 import { NewLostBedCancellation } from '../@types/shared'
 
-describeClient('LostBedClient', provider => {
+describeCas1NamespaceClient('LostBedClient', provider => {
   let lostBedClient: LostBedClient
 
   const token = 'token-1'

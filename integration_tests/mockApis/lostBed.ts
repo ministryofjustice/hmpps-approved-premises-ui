@@ -12,7 +12,7 @@ export default {
     stubFor({
       request: {
         method: 'POST',
-        url: `/premises/${args.premisesId}/lost-beds`,
+        url: paths.premises.lostBeds.create({ premisesId: args.premisesId }),
       },
       response: {
         status: 201,
@@ -25,7 +25,7 @@ export default {
     stubFor({
       request: {
         method: 'PUT',
-        url: `/premises/${args.premisesId}/lost-beds/${args.lostBed.id}`,
+        url: paths.premises.lostBeds.update({ premisesId: args.premisesId, id: args.lostBed.id }),
       },
       response: {
         status: 201,
@@ -38,7 +38,7 @@ export default {
     stubFor({
       request: {
         method: 'PUT',
-        url: `/premises/${args.premisesId}/lost-beds/${args.lostBed.id}`,
+        url: paths.premises.lostBeds.update({ premisesId: args.premisesId, id: args.lostBed.id }),
       },
       response: {
         status: 400,
@@ -61,7 +61,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        url: `/premises/${args.premisesId}/lost-beds`,
+        url: paths.premises.lostBeds.index({ premisesId: args.premisesId }),
       },
       response: {
         status: 200,
@@ -74,7 +74,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        url: `/premises/${args.premisesId}/lost-beds/${args.lostBed.id}`,
+        url: paths.premises.lostBeds.show({ premisesId: args.premisesId, id: args.lostBed.id }),
       },
       response: {
         status: 200,
@@ -115,7 +115,7 @@ export default {
       },
     }),
   stubLostBedErrors: (args: { premisesId: string; params: Array<string> }): SuperAgentRequest =>
-    stubFor(errorStub(args.params, `/premises/${args.premisesId}/lost-beds`)),
+    stubFor(errorStub(args.params, paths.premises.lostBeds.create({ premisesId: args.premisesId }))),
 
   stubLostBedReferenceData: (): Promise<Response> => stubFor(lostBedReasons),
 
@@ -123,7 +123,7 @@ export default {
     (
       await getMatchingRequests({
         method: 'POST',
-        url: `/premises/${args.premisesId}/lost-beds`,
+        url: paths.premises.lostBeds.create({ premisesId: args.premisesId }),
       })
     ).body.requests,
 
@@ -131,7 +131,7 @@ export default {
     (
       await getMatchingRequests({
         method: 'PUT',
-        url: `/premises/${args.premisesId}/lost-beds/${args.lostBed.id}`,
+        url: paths.premises.lostBeds.update({ premisesId: args.premisesId, id: args.lostBed.id }),
       })
     ).body.requests,
 
