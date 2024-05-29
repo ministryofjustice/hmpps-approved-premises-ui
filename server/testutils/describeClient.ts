@@ -5,6 +5,18 @@ import { Pact } from '@pact-foundation/pact'
 import config from '../config'
 
 const describeClient = (consumer: string, fn: (provider: Pact) => void) => {
+  verifyClientMeetsContract(consumer, fn, { cas1Namespace: false })
+}
+
+export const describeCas1NamespaceClient = (consumer: string, fn: (provider: Pact) => void) => {
+  verifyClientMeetsContract(consumer, fn, { cas1Namespace: true })
+}
+
+const verifyClientMeetsContract = (
+  consumer: string,
+  fn: (provider: Pact) => void,
+  { cas1Namespace } = { cas1Namespace: false },
+) => {
   const provider = 'API'
   const dir = path.join(__dirname, '..', '..', 'tmp', 'pacts')
 
@@ -19,7 +31,7 @@ const describeClient = (consumer: string, fn: (provider: Pact) => void) => {
 
     it('meets the contract for the service', () => {
       const pactPath = `${dir}/${consumer}-${provider}.json`
-      expect(pactPath).toMatchOpenAPISpec()
+      expect(pactPath).toMatchOpenAPISpec({ cas1Namespace })
     })
   })
 }
