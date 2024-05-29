@@ -10,15 +10,15 @@
 
 {% block beforeContent %}
   {{ govukBackLink({
-		text: "Back",
-		href: backLink
-	}) }}
+                text: "Back",
+                href: backLink
+        }) }}
 {% endblock %}
 
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full-width">
-      {% if UserUtils.hasRole(user, 'workflow_manager') %}
+      {% if UserUtils.hasManagerRole(user) %}
         {{
           mojIdentityBar({
             title: {

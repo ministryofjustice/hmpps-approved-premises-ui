@@ -135,7 +135,7 @@ export default function routes(controllers: Controllers, router: Router, service
 
   get(paths.lostBeds.new.pattern, lostBedsController.new(), {
     auditEvent: 'NEW_LOST_BED',
-    allowedRoles: ['workflow_manager'],
+    allowedRoles: ['workflow_manager', 'manager', 'legacy_manager', 'future_manager'],
   })
   post(paths.lostBeds.create.pattern, lostBedsController.create(), {
     auditEvent: 'CREATE_LOST_BED_SUCCESS',
