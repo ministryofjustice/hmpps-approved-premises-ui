@@ -1,5 +1,5 @@
 export const reportInputLabels = {
-  referrals: {
+  applications: {
     text: 'Raw Applications',
     hint: 'A raw data extract for applications submitted within the month. Includes data up to the point of assessment completion.',
   },
@@ -7,7 +7,7 @@ export const reportInputLabels = {
     text: 'Raw requests for placement',
     hint: 'A raw data extract for request for placements created within the month. Includes application data, but does not include matching or booking data.',
   },
-  applications: { text: 'Raw combined applications and placement requests', hint: '' },
+  'applications-and-placement-requests': { text: 'Raw combined applications and placement requests', hint: '' },
   'placement-matching-outcomes': {
     text: 'Raw data for Placement matching outcomes',
     hint: 'A raw data extract to help identify placement matching outcomes. This downloads Match requests based on the Expected Arrival Date.',
@@ -21,7 +21,7 @@ export const reportInputLabels = {
 
 export type ReportType = (keyof typeof reportInputLabels)[number]
 
-export const unusedReports = ['applications'] as Array<string>
+export const unusedReports = ['applications-and-placement-requests'] as Array<string>
 
 export const reportOptions = Object.entries(reportInputLabels)
   .filter(([reportName]) => {
