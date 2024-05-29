@@ -5,7 +5,7 @@ describe('reportUtils', () => {
     it('should return a list of report options', () => {
       expect(reportOptions).toEqual([
         {
-          value: 'referrals',
+          value: 'applications',
           text: 'Raw Applications',
           hint: {
             text: 'A raw data extract for applications submitted within the month. Includes data up to the point of assessment completion.',
