@@ -30,10 +30,13 @@
             {% for application in applications %}
                 <h2 class="govuk-heading-m">Application {{loop.index}} of {{applications.length}}</h2>
                 {% set html%}
-                <h2 class="govuk-heading-s">Application made by: <span class="govuk-body">{{application.createdBy.name}}</span></h2>
+                {% if not application.isOfflineApplication %}
+                    <h2 class="govuk-heading-s">Application made by: <span class="govuk-body">{{application.createdBy.name}}</span></h2>
+                {% endif %}
                 <h2 class="govuk-heading-s">Application made on: <span class="govuk-body">{{formatDate(application.createdAt, {format: 'short'})}}</span></h2>
-
-                <h2 class="govuk-heading-s">Status: {{ applicationStatusTag(application.status, {showOnOneLine: true}) | safe}}</h2>
+                {% if not application.isOfflineApplication %}
+                    <h2 class="govuk-heading-s">Status: {{ applicationStatusTag(application.status, {showOnOneLine: true}) | safe}}</h2>
+                {% endif %}
                 {% endset %}
 
                 {{ govukInsetText({

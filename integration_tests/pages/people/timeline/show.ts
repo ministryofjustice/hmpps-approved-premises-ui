@@ -12,9 +12,11 @@ export class ShowPage extends Page {
 
   shouldShowTimeline() {
     this.timeline.applications.forEach((applicationTimeline, index) => {
-      const statusTag = new ApplicationStatusTag(applicationTimeline.status, { showOnOneLine: true })
-      cy.get('h2').contains(applicationTimeline.createdBy.name)
-      cy.get(`[data-cy-status="${statusTag.status}"]`).should('contain', statusTag.uiStatus)
+      if (!applicationTimeline.isOfflineApplication) {
+        const statusTag = new ApplicationStatusTag(applicationTimeline.status, { showOnOneLine: true })
+        cy.get('h2').contains(applicationTimeline.createdBy.name)
+        cy.get(`[data-cy-status="${statusTag.status}"]`).should('contain', statusTag.uiStatus)
+      }
 
       this.shouldShowApplicationTimeline(applicationTimeline.timelineEvents, index)
     })
