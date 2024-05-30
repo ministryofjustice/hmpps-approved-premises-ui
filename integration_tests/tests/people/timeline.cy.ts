@@ -1,5 +1,5 @@
 import paths from '../../../server/paths/people'
-import { personFactory, personalTimelineFactory } from '../../../server/testutils/factories'
+import { applicationTimelineFactory, personFactory, personalTimelineFactory } from '../../../server/testutils/factories'
 import Page from '../../pages/page'
 import { FindPage } from '../../pages/people/timeline/find'
 import { ShowPage } from '../../pages/people/timeline/show'
@@ -13,27 +13,29 @@ context('Application timeline', () => {
     // Given I am logged in
     cy.signIn()
   })
+  ;([true, false] as const).forEach(isOfflineApplication => {
+    it(`shows the timeline for a CRN if isOfflineApplication is: ${isOfflineApplication}`, () => {
+      const person = personFactory.build({ type: 'FullPerson' })
+      const applications = applicationTimelineFactory.buildList(2, { isOfflineApplication })
+      const timeline = personalTimelineFactory.build({ person, applications })
 
-  it('shows a timeline for a CRN', () => {
-    const person = personFactory.build({ type: 'FullPerson' })
-    const timeline = personalTimelineFactory.build({ person })
+      cy.task('stubPersonalTimeline', { timeline, person })
+      cy.visit(paths.timeline.find({}))
 
-    cy.task('stubPersonalTimeline', { timeline, person })
-    cy.visit(paths.timeline.find({}))
+      // Given I am on the timeline find page
+      const findPage = Page.verifyOnPage(FindPage, person)
 
-    // Given I am on the timeline find page
-    const findPage = Page.verifyOnPage(FindPage, person)
+      // When I enter a CRN
+      findPage.enterCrn()
+      // And click submit
+      findPage.clickSubmit()
 
-    // When I enter a CRN
-    findPage.enterCrn()
-    // And click submit
-    findPage.clickSubmit()
-
-    // Then I should be on the timeline show page
-    const timelinePage = Page.verifyOnPage(ShowPage, timeline, person)
-    // And I should see the timeline for that person
-    timelinePage.checkForBackButton(paths.timeline.find({}))
-    timelinePage.shouldShowTimeline()
-    timelinePage.shouldShowPersonDetails(person)
+      // Then I should be on the timeline show page
+      const timelinePage = Page.verifyOnPage(ShowPage, timeline, person)
+      // And I should see the timeline for that person
+      timelinePage.checkForBackButton(paths.timeline.find({}))
+      timelinePage.shouldShowTimeline()
+      timelinePage.shouldShowPersonDetails(person)
+    })
   })
 })
