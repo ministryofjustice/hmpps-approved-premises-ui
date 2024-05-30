@@ -30,7 +30,7 @@ export const outOfServiceBedTableHeaders = (user: UserDetails) => {
     },
   ]
 
-  if (hasRole(user, 'workflow_manager')) {
+  if (hasRole(user, 'workflow_manager') || hasRole(user, 'future_manager')) {
     headers.push({
       text: 'Manage',
     })
@@ -50,7 +50,7 @@ export const outOfServiceBedTableRows = (beds: Array<OutOfServiceBed>, premisesI
       referenceNumberCell(bed.referenceNumber),
     ]
 
-    if (hasRole(user, 'workflow_manager')) {
+    if (hasRole(user, 'workflow_manager') || hasRole(user, 'future_manager')) {
       rows.push(actionCell(bed, premisesId))
     }
 

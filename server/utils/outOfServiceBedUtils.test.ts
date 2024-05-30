@@ -9,8 +9,11 @@ import {
   referenceNumberCell,
 } from './outOfServiceBedUtils'
 import { getRandomInt } from './utils'
+import { ApprovedPremisesUserRole } from '../@types/shared'
 
 describe('outOfServiceBedUtils', () => {
+  const managerRoles: ReadonlyArray<ApprovedPremisesUserRole> = ['workflow_manager', 'future_manager'] as const
+
   describe('referenceNumberCell', () => {
     it('returns ref number', () => {
       const refNumber = '123'
@@ -22,8 +25,8 @@ describe('outOfServiceBedUtils', () => {
   })
 
   describe('outOfServiceBedTableHeaders', () => {
-    it('returns table headers for a workflow manager', () => {
-      const user = userDetailsFactory.build({ roles: ['workflow_manager'] })
+    it.each(managerRoles)('returns table headers for a %s', role => {
+      const user = userDetailsFactory.build({ roles: [role] })
 
       expect(outOfServiceBedTableHeaders(user)).toEqual([
         {
@@ -80,8 +83,8 @@ describe('outOfServiceBedUtils', () => {
     const outOfServiceBed = outOfServiceBedFactory.build()
     const premisesId = 'premisesId'
 
-    it('returns table rows for a workflow manager', () => {
-      const user = userDetailsFactory.build({ roles: ['workflow_manager'] })
+    it.each(managerRoles)('returns table rows for a %s', role => {
+      const user = userDetailsFactory.build({ roles: [role] })
 
       const expectedRows = [
         [
