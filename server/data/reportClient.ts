@@ -15,13 +15,11 @@ export default class ReportClient {
   }
 
   async getReport(reportName: ReportType, month: string, year: string, response: Response): Promise<void> {
-    const filename = `${reportName}-${year}-${month.padStart(2, '0')}.xlsx`
-    response.set('Content-Disposition', `attachment; filename="${filename}"`)
-
     await this.restClient.pipe(
       {
         path: paths.reports({ reportName }),
         query: createQueryString({ month, year }),
+        passThroughHeaders: ['content-disposition'],
       },
       response,
     )
