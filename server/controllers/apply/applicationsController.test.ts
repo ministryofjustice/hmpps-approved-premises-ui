@@ -569,6 +569,30 @@ describe('applicationsController', () => {
 
       expect(request.session.application).toEqual(application)
     })
+
+    it('sets errors and redirects if the offence not selected', async () => {
+      const firstPage = '/foo/bar'
+      ;(firstPageOfApplicationJourney as jest.Mock).mockReturnValue(firstPage)
+
+      const requestHandler = applicationsController.create()
+
+      await requestHandler(request, response, next)
+
+      expect(applicationService.createApplication).toHaveBeenCalledWith('SOME_TOKEN', 'some-crn', offences[0])
+      expect(firstPageOfApplicationJourney).toHaveBeenCalledWith(application)
+      expect(response.redirect).toHaveBeenCalledWith(firstPage)
+    })
+
+    it('add errors to flash and redirects to offence not selected', async () => {
+      request.body.offenceId = undefined
+
+      const requestHandler = applicationsController.create()
+
+      await requestHandler(request, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(paths.applications.people.selectOffence({ crn: request.body.crn }))
+      expect(addErrorMessageToFlash).toHaveBeenCalledWith(request, 'You must select the index offence', 'offenceId')
+    })
   })
 
   describe('submit', () => {

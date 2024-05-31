@@ -2,6 +2,7 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "../../partials/showErrorSummary.njk" import showErrorSummary %}
 {% extends "../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading  %}
@@ -19,6 +20,8 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
+      {{ showErrorSummary(errorSummary, errorTitle) }}
+
       <h1>{{ pageHeading}}</h1>
 
       <p class="govuk-body">
@@ -31,11 +34,11 @@
         iconFallbackText: "Warning"
       }) }}
 
-        <form action="{{ paths.applications.create() }}" method="post">
-          <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
-          <input type="hidden" name="crn" value="{{ person.crn }}"/>
+      <form action="{{ paths.applications.create() }}" method="post">
+        <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
+        <input type="hidden" name="crn" value="{{ person.crn }}"/>
 
-          {{
+        {{
             govukTable({
               firstCellIsHeader: false,
               head: [
@@ -56,12 +59,12 @@
             })
           }}
 
-          {{ govukButton({
+        {{ govukButton({
             text: "Save and continue",
             preventDoubleClick: true
         }) }}
 
-        </form>
-      </div>
+      </form>
     </div>
-  {% endblock %}
+  </div>
+{% endblock %}
