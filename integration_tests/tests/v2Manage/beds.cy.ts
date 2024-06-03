@@ -17,11 +17,12 @@ context('Beds', () => {
     cy.task('stubBeds', { premisesId, bedSummaries })
     cy.task('stubBed', { premisesId, bedDetail })
     cy.task('stubLostBedReferenceData')
-    // And I am signed in as a future_manager
-    signIn(['future_manager'])
   })
 
-  it('should allow me to visit a bed from the bed list page', () => {
+  it('should allow Future Manager to visit a bed from the bed list page and mark it out of service', () => {
+    // Given I am signed in as a future_manager
+    signIn(['future_manager'])
+
     // When I visit the rooms page
     const bedsPage = BedsListPage.visit(premisesId, { v2: true })
 
@@ -47,12 +48,15 @@ context('Beds', () => {
     Page.verifyOnPage(OutOfServiceBedCreatePage)
   })
 
-  it('should allow me to manage out of service beds from the bed list page', () => {
+  it('should allow Future Manager to manage out of service beds from the bed list page', () => {
     // Given there is an out of service bed in the database
     const outOfServiceBed = outOfServiceBedFactory.build()
     cy.task('stubOutOfServiceBed', { premisesId, outOfServiceBed })
     cy.task('stubLostBedsList', { premisesId, lostBeds: [outOfServiceBed] })
     cy.task('stubOutOfServiceBedUpdate', { premisesId, outOfServiceBed })
+
+    // Given I am signed in as a future_manager
+    signIn(['future_manager'])
 
     // When I visit the rooms page
     const bedsPage = BedsListPage.visit(premisesId, { v2: true })
@@ -62,16 +66,5 @@ context('Beds', () => {
 
     // Then I should see the list of out of service beds
     Page.verifyOnPage(OutOfServiceBedListPage)
-  })
-
-  it('should not show managed actions when I am logged in as a manager', () => {
-    // Given I am signed in as a future_manager
-    signIn(['future_manager'])
-
-    // When I visit the bed page
-    const bedPage = BedShowPage.visit(premisesId, bedDetail, { v2: true })
-
-    // Then I should not see the management actions
-    bedPage.shouldNotShowManageActions()
   })
 })

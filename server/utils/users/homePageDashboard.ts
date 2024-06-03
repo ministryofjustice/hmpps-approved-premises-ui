@@ -77,7 +77,12 @@ export const sections = {
     href: peoplePaths.timeline.find({}),
   },
 }
-export const managerRoles: ReadonlyArray<UserRole> = ['manager', 'future_manager', 'legacy_manager'] as const
+export const managerRoles: ReadonlyArray<UserRole> = [
+  'workflow_manager',
+  'manager',
+  'future_manager',
+  'legacy_manager',
+] as const
 
 export const hasRole = (user: UserDetails, role: UserRole): boolean => {
   return (user.roles || []).includes(role)
