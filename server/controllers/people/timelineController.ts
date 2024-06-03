@@ -28,16 +28,15 @@ export default class TimelineController {
 
       if (!crn?.trim()) {
         addErrorMessageToFlash(req, 'You must enter a CRN', 'crn')
-        res.redirect(paths.timeline.find({}))
+        return res.redirect(paths.timeline.find({}))
       }
 
       try {
         const timeline = await this.personService.getTimeline(req.user.token, crn.trim())
-
-        res.render('people/timeline/show', { timeline, crn, pageHeading: `Timeline for ${crn}` })
+        return res.render('people/timeline/show', { timeline, crn, pageHeading: `Timeline for ${crn}` })
       } catch (error) {
         crnErrorHandling(req, error, crn)
-        res.redirect(paths.timeline.find({}))
+        return res.redirect(paths.timeline.find({}))
       }
     }
   }
