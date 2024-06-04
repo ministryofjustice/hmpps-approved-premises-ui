@@ -1,4 +1,4 @@
-import { SanitisedError } from '../sanitisedError'
+import { SanitisedError } from '../../sanitisedError'
 import {
   BookingStatusTag,
   arrivedBookings,
@@ -15,11 +15,13 @@ import {
   cancellationRows,
   departingTodayOrLate,
   generateConflictBespokeError,
+  legacyBookingActions,
   manageBookingLink,
   nameCell,
   upcomingArrivals,
   upcomingDepartures,
-} from './bookingUtils'
+  v2BookingActions,
+} from '.'
 import {
   arrivalFactory,
   bedSummaryFactory,
@@ -30,13 +32,14 @@ import {
   personFactory,
   premisesBookingFactory,
   restrictedPersonFactory,
-} from '../testutils/factories'
-import paths from '../paths/manage'
-import assessPaths from '../paths/assess'
-import applyPaths from '../paths/apply'
-import { DateFormats } from './dateUtils'
-import { linebreaksToParagraphs, linkTo } from './utils'
-import { BookingStatus, FullPerson } from '../@types/shared'
+  userDetailsFactory,
+} from '../../testutils/factories'
+import paths from '../../paths/manage'
+import assessPaths from '../../paths/assess'
+import applyPaths from '../../paths/apply'
+import { DateFormats } from '../dateUtils'
+import { linebreaksToParagraphs, linkTo } from '../utils'
+import { BookingStatus, FullPerson } from '../../@types/shared'
 
 describe('bookingUtils', () => {
   const premisesId = 'e8f29a4a-dd4d-40a2-aa58-f3f60245c8fc'
@@ -196,36 +199,91 @@ describe('bookingUtils', () => {
   })
 
   describe('bookingActions', () => {
+    describe('when the user has the "workflow_manager" role', () => {
+      it('returns the legacyBookingActions', () => {
+        const user = userDetailsFactory.build({
+          roles: ['workflow_manager'],
+        })
+        const booking = bookingFactory.build()
+
+        expect(bookingActions(user, booking)).toEqual(legacyBookingActions(booking))
+      })
+    })
+
+    describe('when the user has the "future_manager" role', () => {
+      it('returns the v2BookingActions', () => {
+        const user = userDetailsFactory.build({
+          roles: ['future_manager'],
+        })
+        const booking = bookingFactory.build()
+
+        expect(bookingActions(user, booking)).toEqual(v2BookingActions(booking))
+      })
+    })
+
+    describe('when the user has both the "workflow_manager" and "future_manager" roles', () => {
+      it('returns the v2BookingActions', () => {
+        const user = userDetailsFactory.build({
+          roles: ['workflow_manager', 'future_manager'],
+        })
+        const booking = bookingFactory.build()
+
+        expect(bookingActions(user, booking)).toEqual(v2BookingActions(booking))
+      })
+    })
+  })
+
+  describe('v2BookingActions', () => {
+    describe('if the booking has a status of awaiting-arrival', () => {
+      it('returns the withdrawal link ', () => {
+        const booking = bookingFactory.arrivingSoon().build()
+
+        expect(v2BookingActions(booking)).toEqual([
+          {
+            items: [
+              {
+                text: 'Withdraw placement',
+                classes: 'govuk-button--secondary',
+                href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
+              },
+            ],
+          },
+        ])
+      })
+    })
+  })
+
+  describe('legacyBookingActions', () => {
     it('should return null when the booking is cancelled, departed or did not arrive', () => {
       const cancelledBooking = bookingFactory.cancelledWithFutureArrivalDate().build()
       const departedBooking = bookingFactory.departedToday().build()
       const nonArrivedBooking = bookingFactory.notArrived().build()
 
-      expect(bookingActions(cancelledBooking, 'premisesId')).toEqual(null)
-      expect(bookingActions(departedBooking, 'premisesId')).toEqual(null)
-      expect(bookingActions(nonArrivedBooking, 'premisesId')).toEqual(null)
+      expect(legacyBookingActions(cancelledBooking)).toEqual(null)
+      expect(legacyBookingActions(departedBooking)).toEqual(null)
+      expect(legacyBookingActions(nonArrivedBooking)).toEqual(null)
     })
 
     it('should return arrival, non-arrival and cancellation actions if a booking is awaiting arrival', () => {
       const booking = bookingFactory.arrivingToday().build()
 
-      expect(bookingActions(booking, premisesId)).toEqual([
+      expect(legacyBookingActions(booking)).toEqual([
         {
           items: [
             {
               text: 'Move person to a new bed',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Mark as arrived',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.arrivals.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.arrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Mark as not arrived',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.nonArrivals.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Withdraw placement',
@@ -235,7 +293,7 @@ describe('bookingUtils', () => {
             {
               text: 'Change placement dates',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.dateChanges.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
           ],
         },
@@ -245,23 +303,23 @@ describe('bookingUtils', () => {
     it('should return a departure action if a booking is arrived', () => {
       const booking = bookingFactory.arrived().build()
 
-      expect(bookingActions(booking, premisesId)).toEqual([
+      expect(legacyBookingActions(booking)).toEqual([
         {
           items: [
             {
               text: 'Move person to a new bed',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Log departure',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.departures.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.departures.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Update departure date',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.extensions.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Withdraw placement',
@@ -278,28 +336,28 @@ describe('bookingUtils', () => {
         applicationId: undefined,
       })
 
-      expect(bookingActions(booking, premisesId)).toEqual([
+      expect(legacyBookingActions(booking)).toEqual([
         {
           items: [
             {
               text: 'Move person to a new bed',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.moves.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Log departure',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.departures.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.departures.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Update departure date',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.extensions.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.extensions.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
             {
               text: 'Withdraw placement',
               classes: 'govuk-button--secondary',
-              href: paths.bookings.cancellations.new({ premisesId, bookingId: booking.id }),
+              href: paths.bookings.cancellations.new({ premisesId: booking.premises.id, bookingId: booking.id }),
             },
           ],
         },

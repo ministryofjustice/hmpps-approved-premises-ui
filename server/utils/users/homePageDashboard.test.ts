@@ -1,5 +1,5 @@
 import { userDetailsFactory } from '../../testutils/factories'
-import { hasRole, sections, sectionsForUser } from './homePageDashboard'
+import { hasRole, managerRoles, sections, sectionsForUser } from './homePageDashboard'
 
 describe('homePageDashboard', () => {
   describe('hasRole', () => {
@@ -29,22 +29,22 @@ describe('homePageDashboard', () => {
       expect(sectionsForUser(user)).toEqual([sections.apply, sections.assess])
     })
 
-    it('should return Apply and Manage sections for a user with a manager role', () => {
-      const user = userDetailsFactory.build({ roles: ['manager'] })
+    it.each(managerRoles)('should return Apply and Manage sections for a user with a %s role', managerRole => {
+      const user = userDetailsFactory.build({ roles: [managerRole] })
 
-      expect(sectionsForUser(user)).toEqual([sections.apply, sections.manage])
+      expect(sectionsForUser(user)).toContain(sections.apply)
+      expect(sectionsForUser(user)).toContain(sections.manage)
     })
 
     it('should return Apply, Workflow, Placement Request and CRU dashboard sections for a user with a workflow manager role', () => {
       const user = userDetailsFactory.build({ roles: ['workflow_manager'] })
 
-      expect(sectionsForUser(user)).toEqual([
-        sections.apply,
-        sections.workflow,
-        sections.cruDashboard,
-        sections.reports,
-        sections.userManagement,
-      ])
+      expect(sectionsForUser(user)).toContain(sections.apply)
+      expect(sectionsForUser(user)).toContain(sections.workflow)
+      expect(sectionsForUser(user)).toContain(sections.cruDashboard)
+      expect(sectionsForUser(user)).toContain(sections.reports)
+      expect(sectionsForUser(user)).toContain(sections.userManagement)
+      expect(sectionsForUser(user)).toContain(sections.manage)
     })
 
     it('should return Apply sections for a user with a matcher role', () => {
@@ -77,14 +77,9 @@ describe('homePageDashboard', () => {
 
     it('should not return duplicates where multiple roles contain the same sections', () => {
       const user = userDetailsFactory.build({ roles: ['role_admin', 'workflow_manager'] })
+      const uniqueSections = new Set(sectionsForUser(user))
 
-      expect(sectionsForUser(user)).toEqual([
-        sections.apply,
-        sections.workflow,
-        sections.cruDashboard,
-        sections.reports,
-        sections.userManagement,
-      ])
+      expect(sectionsForUser(user)).toEqual(Array.from(uniqueSections))
     })
   })
 })

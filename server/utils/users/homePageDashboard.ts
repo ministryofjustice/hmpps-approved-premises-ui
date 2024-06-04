@@ -77,6 +77,12 @@ export const sections = {
     href: peoplePaths.timeline.find({}),
   },
 }
+export const managerRoles: ReadonlyArray<UserRole> = [
+  'workflow_manager',
+  'manager',
+  'future_manager',
+  'legacy_manager',
+] as const
 
 export const hasRole = (user: UserDetails, role: UserRole): boolean => {
   return (user.roles || []).includes(role)
@@ -93,7 +99,7 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.assess)
   }
 
-  if (hasRole(user, 'manager')) {
+  if (managerRoles.some(role => hasRole(user, role))) {
     items.push(sections.manage)
   }
 

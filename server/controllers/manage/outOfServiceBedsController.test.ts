@@ -16,7 +16,7 @@ import paths from '../../paths/manage'
 import { outOfServiceBedCancellationFactory, outOfServiceBedFactory } from '../../testutils/factories'
 
 jest.mock('../../utils/validation')
-jest.mock('../../utils/bookingUtils')
+jest.mock('../../utils/bookings')
 
 describe('OutOfServiceBedsController', () => {
   const token = 'SOME_TOKEN'

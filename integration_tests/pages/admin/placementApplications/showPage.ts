@@ -7,7 +7,7 @@ import {
   PlacementRequestDetail,
 } from '../../../../server/@types/shared'
 import { adminSummary, matchingInformationSummary } from '../../../../server/utils/placementRequests'
-import { bookingSummaryList } from '../../../../server/utils/bookingUtils'
+import { bookingSummaryList } from '../../../../server/utils/bookings'
 
 export default class ShowPage extends Page {
   constructor(private readonly placementRequest: PlacementRequestDetail) {

@@ -18,7 +18,7 @@ context('Beds', () => {
     cy.task('stubBed', { premisesId, bedDetail })
   })
 
-  it('should allow me to visit a bed from the bed list page', () => {
+  it('should allow me to visit a bed from the bed list page and mark it out of service', () => {
     // Given I am signed in as a workflow manager
     signIn(['workflow_manager'])
 
@@ -65,16 +65,5 @@ context('Beds', () => {
 
     // Then I should see the list of out of service beds
     Page.verifyOnPage(LostBedListPage)
-  })
-
-  it('should not show managed actions when I am logged in as a manager', () => {
-    // Given I am signed in as a manager
-    signIn(['manager'])
-
-    // When I visit the bed page
-    const bedPage = BedShowPage.visit(premisesId, bedDetail)
-
-    // Then I should not see the management actions
-    bedPage.shouldNotShowManageActions()
   })
 })

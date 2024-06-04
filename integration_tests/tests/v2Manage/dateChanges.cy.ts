@@ -13,7 +13,7 @@ context('Date Changes', () => {
     cy.task('stubAuthUser')
 
     // Given I am signed in
-    signIn(['workflow_manager'])
+    signIn(['future_manager'])
 
     // And I have a booking for a premises
     cy.task('stubBookingGet', { premisesId: premises.id, booking })
