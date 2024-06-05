@@ -34,6 +34,7 @@ describe('acceptanceData', () => {
         requirements: placementRequestData(assessment),
         placementDates: placementDates(assessment),
         notes: 'Some notes',
+        apType: assessment.application.apType,
       })
       expect(getResponses).toHaveBeenCalledWith(assessment)
     })
