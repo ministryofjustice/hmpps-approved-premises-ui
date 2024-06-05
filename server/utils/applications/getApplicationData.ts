@@ -22,6 +22,7 @@ import { noticeTypeFromApplication } from './noticeTypeFromApplication'
 import Situation from '../../form-pages/apply/reasons-for-placement/basic-information/situation'
 import ConfirmYourDetails from '../../form-pages/apply/reasons-for-placement/basic-information/confirmYourDetails'
 import { applicantAndCaseManagerDetails } from './applicantAndCaseManagerDetails'
+import { reasonForShortNoticeDetails } from './reasonForShortNoticeDetails'
 
 type FirstClassFields<T> = T extends UpdateApprovedPremisesApplication
   ? Omit<UpdateApprovedPremisesApplication, 'data'>
@@ -63,6 +64,7 @@ const firstClassFields = <T>(
   const apAreaId = retrieveQuestionResponse(application, ConfirmYourDetails, 'area')
   const { applicantUserDetails, caseManagerUserDetails, caseManagerIsNotApplicant } =
     applicantAndCaseManagerDetails(application)
+  const { reasonForShortNotice, reasonForShortNoticeOther } = reasonForShortNoticeDetails(application)
 
   return {
     isWomensApplication: false,
@@ -78,6 +80,8 @@ const firstClassFields = <T>(
     caseManagerUserDetails,
     caseManagerIsNotApplicant,
     noticeType,
+    reasonForShortNotice,
+    reasonForShortNoticeOther,
   } as FirstClassFields<T>
 }
 
