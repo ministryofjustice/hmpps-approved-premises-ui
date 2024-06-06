@@ -264,41 +264,6 @@ describe('bookingUtils', () => {
   })
 
   describe('legacyBookingActions', () => {
-    it('should return arrival, non-arrival and cancellation actions if a booking is awaiting arrival', () => {
-      const booking = bookingFactory.arrivingToday().build()
-
-      expect(legacyBookingActions(booking)).toEqual([
-        {
-          items: [
-            {
-              text: 'Move person to a new bed',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Mark as arrived',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.arrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Mark as not arrived',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Withdraw placement',
-              classes: 'govuk-button--secondary',
-              href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
-            },
-            {
-              text: 'Change placement dates',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-          ],
-        },
-      ])
-    })
 
     it('should return a departure action if a booking is arrived', () => {
       const booking = bookingFactory.arrived().build()

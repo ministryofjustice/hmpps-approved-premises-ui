@@ -18,5 +18,27 @@ describe('bookingUtils bookingActions', () => {
       expect(bookingActions(user, departedBooking)).toEqual(null)
       expect(bookingActions(user, nonArrivedBooking)).toEqual(null)
     })
+
+    it('should return arrival, non-arrival and cancellation actions if a booking is awaiting arrival', () => {
+      const booking = bookingFactory.arrivingToday().build()
+
+      expect(bookingActions(user, booking)).toContainMenuItem({
+        text: 'Mark as arrived',
+        classes: 'govuk-button--secondary',
+        href: paths.bookings.arrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+      })
+
+      expect(bookingActions(user, booking)).toContainMenuItem({
+        text: 'Mark as not arrived',
+        classes: 'govuk-button--secondary',
+        href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+      })
+
+      expect(bookingActions(user, booking)).toContainMenuItem({
+        text: 'Withdraw placement',
+        classes: 'govuk-button--secondary',
+        href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
+      })
+    })
   })
 })
