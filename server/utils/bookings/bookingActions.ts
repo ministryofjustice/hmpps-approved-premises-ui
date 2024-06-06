@@ -71,11 +71,13 @@ export const v1BookingActions = (roles: Array<UserRole>, booking: Booking): Arra
     }
 
     if (booking.status === 'arrived') {
-      items.push({
-        text: 'Log departure',
-        classes: 'govuk-button--secondary',
-        href: paths.bookings.departures.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-      })
+      if (roles.includes('manager')) {
+        items.push({
+          text: 'Log departure',
+          classes: 'govuk-button--secondary',
+          href: paths.bookings.departures.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+        })
+      }
       items.push({
         text: 'Update departure date',
         classes: 'govuk-button--secondary',

@@ -34,6 +34,22 @@ describe('bookingUtils bookingActions', () => {
           href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
         })
       })
+
+      describe('when the booking has arrived', () => {
+        const arrivedBooking = bookingFactory.arrived().build({
+          applicationId: undefined,
+        })
+        it('does NOT include the DEPARTED action', () => {
+          expect(bookingActions(user, arrivedBooking)).not.toContainMenuItem({
+            text: 'Log departure',
+            classes: 'govuk-button--secondary',
+            href: paths.bookings.departures.new({
+              premisesId: arrivedBooking.premises.id,
+              bookingId: arrivedBooking.id,
+            }),
+          })
+        })
+      })
     })
 
     describe('when the user has the "manager" role', () => {
@@ -65,6 +81,22 @@ describe('bookingUtils bookingActions', () => {
           href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
         })
       })
+
+      describe('when the booking has arrived', () => {
+        const arrivedBooking = bookingFactory.arrived().build({
+          applicationId: undefined,
+        })
+        it('includes the DEPARTED action', () => {
+          expect(bookingActions(user, arrivedBooking)).toContainMenuItem({
+            text: 'Log departure',
+            classes: 'govuk-button--secondary',
+            href: paths.bookings.departures.new({
+              premisesId: arrivedBooking.premises.id,
+              bookingId: arrivedBooking.id,
+            }),
+          })
+        })
+      })
     })
 
     describe('when the user has the "legacy_manager" role', () => {
@@ -94,6 +126,22 @@ describe('bookingUtils bookingActions', () => {
           text: 'Mark as not arrived',
           classes: 'govuk-button--secondary',
           href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+        })
+      })
+
+      describe('when the booking has arrived', () => {
+        const arrivedBooking = bookingFactory.arrived().build({
+          applicationId: undefined,
+        })
+        it('does NOT include the DEPARTED action', () => {
+          expect(bookingActions(user, arrivedBooking)).not.toContainMenuItem({
+            text: 'Log departure',
+            classes: 'govuk-button--secondary',
+            href: paths.bookings.departures.new({
+              premisesId: arrivedBooking.premises.id,
+              bookingId: arrivedBooking.id,
+            }),
+          })
         })
       })
     })
