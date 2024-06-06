@@ -23,7 +23,7 @@ export const premisesActions = (user: UserDetails, premises: Premises) => {
     },
   ]
 
-  if (user.roles.includes('manager') || user.roles.includes('workflow_manager')) {
+  if (user.roles.includes('manager')) {
     return [...deprecatedManageActions, ...currentManageActions]
   }
 

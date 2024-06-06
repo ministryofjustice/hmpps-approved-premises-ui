@@ -8,16 +8,16 @@ describe('premisesActions', () => {
     const user = userDetails.build({ roles: ['workflow_manager'] })
     const premises = premisesFactory.build()
 
-    it('includes the VIEW CALENDAR action', () => {
-      expect(premisesActions(user, premises)).toContainManageAction({
+    it('does NOT include the VIEW CALENDAR action', () => {
+      expect(premisesActions(user, premises)).not.toContainManageAction({
         text: 'View calendar',
         classes: 'govuk-button--secondary',
         href: paths.premises.calendar({ premisesId: premises.id }),
       })
     })
 
-    it('includes the CREATE PLACEMENT action', () => {
-      expect(premisesActions(user, premises)).toContainManageAction({
+    it('does NOT include the CREATE PLACEMENT action', () => {
+      expect(premisesActions(user, premises)).not.toContainManageAction({
         text: 'Create a placement',
         classes: 'govuk-button--secondary',
         href: paths.bookings.new({ premisesId: premises.id }),
