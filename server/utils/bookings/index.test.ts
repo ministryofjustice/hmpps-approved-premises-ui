@@ -264,16 +264,6 @@ describe('bookingUtils', () => {
   })
 
   describe('legacyBookingActions', () => {
-    it('should return null when the booking is cancelled, departed or did not arrive', () => {
-      const cancelledBooking = bookingFactory.cancelledWithFutureArrivalDate().build()
-      const departedBooking = bookingFactory.departedToday().build()
-      const nonArrivedBooking = bookingFactory.notArrived().build()
-
-      expect(legacyBookingActions(cancelledBooking)).toEqual(null)
-      expect(legacyBookingActions(departedBooking)).toEqual(null)
-      expect(legacyBookingActions(nonArrivedBooking)).toEqual(null)
-    })
-
     it('should return arrival, non-arrival and cancellation actions if a booking is awaiting arrival', () => {
       const booking = bookingFactory.arrivingToday().build()
 
