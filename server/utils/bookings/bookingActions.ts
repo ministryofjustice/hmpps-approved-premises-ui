@@ -44,11 +44,13 @@ export const v1BookingActions = (roles: Array<UserRole>, booking: Booking): Arra
     ]
 
     if (booking.status === 'awaiting-arrival') {
-      items.push({
-        text: 'Mark as arrived',
-        classes: 'govuk-button--secondary',
-        href: paths.bookings.arrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-      })
+      if (roles.includes('manager')) {
+        items.push({
+          text: 'Mark as arrived',
+          classes: 'govuk-button--secondary',
+          href: paths.bookings.arrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+        })
+      }
       items.push({
         text: 'Mark as not arrived',
         classes: 'govuk-button--secondary',
