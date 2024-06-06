@@ -2,6 +2,7 @@
 /* eslint-disable-next-line import/no-extraneous-dependencies */
 import { execSync } from 'child_process'
 import path from 'path'
+import type { IdentityBarMenuItem } from '@approved-premises/ui'
 import { diffStringsUnified } from 'jest-diff'
 
 export {}
@@ -9,6 +10,7 @@ export {}
 declare global {
   namespace jest {
     interface Matchers<R> {
+      toContainMenuItem(expected: IdentityBarMenuItem): R
       toMatchStringIgnoringWhitespace(expected: string): R
       toMatchOpenAPISpec({ cas1Namespace }: { cas1Namespace: boolean }): R
     }
@@ -39,6 +41,26 @@ const apiSpecs = {
     specPath: apiSpecPaths.apiSpec,
   },
 }
+
+expect.extend({
+  toContainMenuItem(received, argument) {
+    const menuItems = received[0].items
+    const pass = this.equals(menuItems, expect.arrayContaining([expect.objectContaining(argument)]))
+
+    if (pass) {
+      return {
+        message: () =>
+          `expected ${this.utils.printReceived(menuItems)} not to contain menu item ${this.utils.printExpected(argument)}`,
+        pass: true,
+      }
+    }
+    return {
+      message: () =>
+        `expected ${this.utils.printReceived(menuItems)} to contain menu item ${this.utils.printExpected(argument)}`,
+      pass: false,
+    }
+  },
+})
 
 expect.extend({
   toMatchStringIgnoringWhitespace(received, expected) {
