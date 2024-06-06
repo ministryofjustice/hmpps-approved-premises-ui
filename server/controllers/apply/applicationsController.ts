@@ -13,6 +13,7 @@ import { getPaginationDetails } from '../../utils/getPaginationDetails'
 import { ApplicationSortField } from '../../@types/shared'
 import { ApplicationDashboardSearchOptions } from '../../@types/ui'
 import { getSearchOptions } from '../../utils/getSearchOptions'
+import { RestrictedPersonError } from '../../utils/errors'
 
 export const tasklistPageHeading = 'Apply for an Approved Premises (AP) placement'
 
@@ -165,6 +166,13 @@ export default class ApplicationsController {
     return async (req: Request, res: Response) => {
       const { crn, offenceId } = req.body
 
+      if (!offenceId) {
+        addErrorMessageToFlash(req, 'You must select the index offence', 'offenceId')
+        return res.redirect(paths.applications.people.selectOffence({ crn }))
+      }
+
+      const person = await this.personService.findByCrn(req.user.token, crn)
+      if (!isFullPerson(person)) throw new RestrictedPersonError(crn)
       const offences = await this.personService.getOffences(req.user.token, crn)
       const indexOffence = offences.find(o => o.offenceId === offenceId)
       const application = await this.applicationService.createApplication(req.user.token, crn, indexOffence)
