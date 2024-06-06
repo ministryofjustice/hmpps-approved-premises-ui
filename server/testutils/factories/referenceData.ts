@@ -10,6 +10,7 @@ import cancellationReasonsJson from '../referenceData/stubs/cancellation-reasons
 import lostBedReasonsJson from '../referenceData/stubs/lost-bed-reasons.json'
 import nonArrivalReasonsJson from '../referenceData/stubs/non-arrival-reasons.json'
 import probationRegionsJson from '../referenceData/stubs/probation-regions.json'
+import outOfServiceBedReasonsJson from '../referenceData/stubs/out-of-service-bed-reasons.json'
 import { ApArea, ProbationRegion } from '../../@types/shared'
 
 class ReferenceDataFactory extends Factory<ReferenceData> {
@@ -45,6 +46,11 @@ class ReferenceDataFactory extends Factory<ReferenceData> {
 
   probationRegions() {
     const data = faker.helpers.arrayElement(probationRegionsJson)
+    return this.params(data)
+  }
+
+  outOfServiceBedReason() {
+    const data = faker.helpers.arrayElement(outOfServiceBedReasonsJson)
     return this.params(data)
   }
 }
