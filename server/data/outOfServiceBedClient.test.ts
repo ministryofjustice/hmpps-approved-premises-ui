@@ -1,14 +1,17 @@
+import {
+  NewCas1OutOfServiceBedCancellation as NewOutOfServiceBedCancellation,
+  UpdateCas1OutOfServiceBed as UpdateOutOfServiceBed,
+} from '@approved-premises/api'
 import OutOfServiceBedClient from './outOfServiceBedClient'
 import {
   newOutOfServiceBedFactory,
   outOfServiceBedCancellationFactory,
   outOfServiceBedFactory,
 } from '../testutils/factories'
-// import paths from '../paths/api'
-// import describeClient from '../testutils/describeClient'
-import { NewOutOfServiceBedCancellation, UpdateOutOfServiceBed } from '../@types/ui'
+import { describeCas1NamespaceClient } from '../testutils/describeClient'
+import paths from '../paths/api'
 
-xdescribe('OutOfServiceBedClient', () => {
+describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
   let outOfServiceBedClient: OutOfServiceBedClient
 
   const token = 'token-1'
@@ -21,27 +24,25 @@ xdescribe('OutOfServiceBedClient', () => {
 
   describe('create', () => {
     it('should create a outOfServiceBed', async () => {
-      const outOfServiceBed = outOfServiceBedFactory.build({
-        cancellation: {},
-      })
+      const outOfServiceBed = outOfServiceBedFactory.build({})
       const newOutOfServiceBed = newOutOfServiceBedFactory.build()
 
-      // provider.addInteraction({
-      //   state: 'Server is healthy',
-      //   uponReceiving: 'A request to create a lost bed',
-      //   withRequest: {
-      //     method: 'POST',
-      //     path: paths.manage.premises.outOfServiceBeds.create({ premisesId }),
-      //     body: newOutOfServiceBed,
-      //     headers: {
-      //       authorization: `Bearer ${token}`,
-      //     },
-      //   },
-      //   willRespondWith: {
-      //     status: 200,
-      //     body: outOfServiceBed,
-      //   },
-      // })
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to create a lost bed',
+        withRequest: {
+          method: 'POST',
+          path: paths.manage.premises.outOfServiceBeds.create({ premisesId }),
+          body: newOutOfServiceBed,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: outOfServiceBed,
+        },
+      })
 
       const result = await outOfServiceBedClient.create(premisesId, newOutOfServiceBed)
 
@@ -55,21 +56,21 @@ xdescribe('OutOfServiceBedClient', () => {
         cancellation: {},
       })
 
-      // provider.addInteraction({
-      //   state: 'Server is healthy',
-      //   uponReceiving: 'A request to find a lost bed',
-      //   withRequest: {
-      //     method: 'GET',
-      //     path: paths.manage.premises.outOfServiceBeds.show({ premisesId, id: outOfServiceBed.id }),
-      //     headers: {
-      //       authorization: `Bearer ${token}`,
-      //     },
-      //   },
-      //   willRespondWith: {
-      //     status: 200,
-      //     body: outOfServiceBed,
-      //   },
-      // })
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to find a lost bed',
+        withRequest: {
+          method: 'GET',
+          path: paths.manage.premises.outOfServiceBeds.show({ premisesId, id: outOfServiceBed.id }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: outOfServiceBed,
+        },
+      })
 
       const result = await outOfServiceBedClient.find('premisesId', outOfServiceBed.id)
 
@@ -81,21 +82,21 @@ xdescribe('OutOfServiceBedClient', () => {
     it('should get all outOfServiceBeds for a premises', async () => {
       const outOfServiceBeds = outOfServiceBedFactory.buildList(2)
 
-      // provider.addInteraction({
-      //   state: 'Server is healthy',
-      //   uponReceiving: 'A request to get lost beds',
-      //   withRequest: {
-      //     method: 'GET',
-      //     path: paths.manage.premises.outOfServiceBeds.index({ premisesId }),
-      //     headers: {
-      //       authorization: `Bearer ${token}`,
-      //     },
-      //   },
-      //   willRespondWith: {
-      //     status: 200,
-      //     body: outOfServiceBeds,
-      //   },
-      // })
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get lost beds',
+        withRequest: {
+          method: 'GET',
+          path: paths.manage.premises.outOfServiceBeds.index({ premisesId }),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: outOfServiceBeds,
+        },
+      })
 
       const result = await outOfServiceBedClient.get('premisesId')
 
@@ -110,29 +111,29 @@ xdescribe('OutOfServiceBedClient', () => {
       const notes = 'note'
 
       const outOfServiceBedUpdateData: UpdateOutOfServiceBed = {
-        startDate: outOfServiceBed.startDate,
+        startDate: outOfServiceBed.outOfServiceFrom,
         endDate,
         reason: outOfServiceBed.reason.id,
         referenceNumber: outOfServiceBed.referenceNumber,
         notes,
       }
 
-      // provider.addInteraction({
-      //   state: 'Server is healthy',
-      //   uponReceiving: 'A request to update a lost bed',
-      //   withRequest: {
-      //     method: 'PUT',
-      //     path: paths.manage.premises.outOfServiceBeds.update({ premisesId, id: outOfServiceBed.id }),
-      //     body: outOfServiceBedUpdateData,
-      //     headers: {
-      //       authorization: `Bearer ${token}`,
-      //     },
-      //   },
-      //   willRespondWith: {
-      //     status: 200,
-      //     body: outOfServiceBed,
-      //   },
-      // })
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to update a lost bed',
+        withRequest: {
+          method: 'PUT',
+          path: paths.manage.premises.outOfServiceBeds.update({ premisesId, id: outOfServiceBed.id }),
+          body: outOfServiceBedUpdateData,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: outOfServiceBed,
+        },
+      })
 
       const result = await outOfServiceBedClient.update(outOfServiceBed.id, outOfServiceBedUpdateData, 'premisesId')
 
@@ -149,22 +150,22 @@ xdescribe('OutOfServiceBedClient', () => {
         notes,
       }
 
-      // provider.addInteraction({
-      //   state: 'Server is healthy',
-      //   uponReceiving: 'A request to cancel a lost bed',
-      //   withRequest: {
-      //     method: 'POST',
-      //     path: paths.manage.premises.outOfServiceBeds.cancel({ premisesId, id: outOfServiceBedCancellation.id }),
-      //     body: outOfServiceBedCancellationData,
-      //     headers: {
-      //       authorization: `Bearer ${token}`,
-      //     },
-      //   },
-      //   willRespondWith: {
-      //     status: 200,
-      //     body: outOfServiceBedCancellation,
-      //   },
-      // })
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to cancel a lost bed',
+        withRequest: {
+          method: 'POST',
+          path: paths.manage.premises.outOfServiceBeds.cancel({ premisesId, id: outOfServiceBedCancellation.id }),
+          body: outOfServiceBedCancellationData,
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: outOfServiceBedCancellation,
+        },
+      })
 
       const result = await outOfServiceBedClient.cancel(
         outOfServiceBedCancellation.id,

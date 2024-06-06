@@ -11,10 +11,10 @@ const lostBedsPath = cas1SinglePremisesPath.path('lost-beds')
 const reportsPath = cas1NamespacePath.path('reports')
 
 // Manage V2 paths
-const managePremisesPath = path('/manage/premises')
-const manageSinglePremisesPath = managePremisesPath.path(':premisesId')
+const v2ManagePremisesPath = cas1NamespacePath.path('/premises')
+const v2ManageSinglePremisesPath = v2ManagePremisesPath.path(':premisesId')
 
-const outOfServiceBedsPath = manageSinglePremisesPath.path('out-of-service-beds')
+const outOfServiceBedsPath = v2ManageSinglePremisesPath.path('out-of-service-beds')
 
 const bedsPath = singlePremisesPath.path('beds')
 
