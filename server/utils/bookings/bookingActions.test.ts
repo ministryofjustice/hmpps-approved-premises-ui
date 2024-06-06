@@ -50,5 +50,17 @@ describe('bookingUtils bookingActions', () => {
         href: paths.bookings.departures.new({ premisesId: booking.premises.id, bookingId: booking.id }),
       })
     })
+
+    it('should return link to the cancellations new page if the booking doesnt have an applicationId', () => {
+      const booking = bookingFactory.arrived().build({
+        applicationId: undefined,
+      })
+
+      expect(bookingActions(user, booking)).toContainMenuItem({
+        text: 'Withdraw placement',
+        classes: 'govuk-button--secondary',
+        href: paths.bookings.cancellations.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+      })
+    })
   })
 })
