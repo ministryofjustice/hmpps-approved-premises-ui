@@ -1,13 +1,13 @@
 import type { IdentityBarMenu, UserDetails } from '@approved-premises/ui'
 
-import type { Booking } from '@approved-premises/api'
+import type { Booking, ApprovedPremisesUserRole as UserRole } from '@approved-premises/api'
 import paths from '../../paths/manage'
 import applyPaths from '../../paths/apply'
 
 export const bookingActions = (user: UserDetails, booking: Booking): Array<IdentityBarMenu> => {
-  if (user.roles?.includes('workflow_manager')) return v1BookingActions(booking)
-  if (user.roles?.includes('manager')) return v1BookingActions(booking)
-  if (user.roles?.includes('legacy_manager')) return v1BookingActions(booking)
+  if (user.roles?.includes('workflow_manager')) return v1BookingActions(user.roles, booking)
+  if (user.roles?.includes('manager')) return v1BookingActions(user.roles, booking)
+  if (user.roles?.includes('legacy_manager')) return v1BookingActions(user.roles, booking)
   if (user.roles?.includes('future_manager')) return v2BookingActions(booking)
   return []
 }
@@ -29,7 +29,7 @@ export const v2BookingActions = (booking: Booking): Array<IdentityBarMenu> => {
   return []
 }
 
-export const v1BookingActions = (booking: Booking): Array<IdentityBarMenu> => {
+export const v1BookingActions = (roles: Array<UserRole>, booking: Booking): Array<IdentityBarMenu> => {
   const withdrawalLink = !booking?.applicationId
     ? paths.bookings.cancellations.new({ premisesId: booking.premises.id, bookingId: booking.id })
     : applyPaths.applications.withdraw.new({ id: booking?.applicationId })
@@ -54,11 +54,13 @@ export const v1BookingActions = (booking: Booking): Array<IdentityBarMenu> => {
         classes: 'govuk-button--secondary',
         href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
       })
-      items.push({
-        text: 'Withdraw placement',
-        classes: 'govuk-button--secondary',
-        href: withdrawalLink,
-      })
+      if (roles.includes('workflow_manager')) {
+        items.push({
+          text: 'Withdraw placement',
+          classes: 'govuk-button--secondary',
+          href: withdrawalLink,
+        })
+      }
       items.push({
         text: 'Change placement dates',
         classes: 'govuk-button--secondary',
@@ -77,11 +79,13 @@ export const v1BookingActions = (booking: Booking): Array<IdentityBarMenu> => {
         classes: 'govuk-button--secondary',
         href: paths.bookings.extensions.new({ premisesId: booking.premises.id, bookingId: booking.id }),
       })
-      items.push({
-        text: 'Withdraw placement',
-        classes: 'govuk-button--secondary',
-        href: withdrawalLink,
-      })
+      if (roles.includes('workflow_manager')) {
+        items.push({
+          text: 'Withdraw placement',
+          classes: 'govuk-button--secondary',
+          href: withdrawalLink,
+        })
+      }
     }
 
     return [
