@@ -35,6 +35,14 @@ describe('bookingUtils bookingActions', () => {
         })
       })
 
+      it('does NOT include the MOVE PERSON action', () => {
+        expect(bookingActions(user, booking)).not.toContainMenuItem({
+          text: 'Move person to a new bed',
+          classes: 'govuk-button--secondary',
+          href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+        })
+      })
+
       describe('when the booking has arrived', () => {
         const arrivedBooking = bookingFactory.arrived().build({
           applicationId: undefined,
@@ -82,6 +90,14 @@ describe('bookingUtils bookingActions', () => {
         })
       })
 
+      it('includes the MOVE PERSON action', () => {
+        expect(bookingActions(user, booking)).toContainMenuItem({
+          text: 'Move person to a new bed',
+          classes: 'govuk-button--secondary',
+          href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+        })
+      })
+
       describe('when the booking has arrived', () => {
         const arrivedBooking = bookingFactory.arrived().build({
           applicationId: undefined,
@@ -126,6 +142,14 @@ describe('bookingUtils bookingActions', () => {
           text: 'Mark as not arrived',
           classes: 'govuk-button--secondary',
           href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+        })
+      })
+
+      it('includes the MOVE PERSON action', () => {
+        expect(bookingActions(user, booking)).toContainMenuItem({
+          text: 'Move person to a new bed',
+          classes: 'govuk-button--secondary',
+          href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
         })
       })
 

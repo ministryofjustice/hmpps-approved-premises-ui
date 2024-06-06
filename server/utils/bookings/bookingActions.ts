@@ -35,13 +35,15 @@ export const v1BookingActions = (roles: Array<UserRole>, booking: Booking): Arra
     : applyPaths.applications.withdraw.new({ id: booking?.applicationId })
 
   if (booking.status === 'awaiting-arrival' || booking.status === 'arrived') {
-    const items = [
-      {
+    const items = []
+
+    if (roles.includes('manager') || roles.includes('legacy_manager')) {
+      items.push({
         text: 'Move person to a new bed',
         classes: 'govuk-button--secondary',
         href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-      },
-    ]
+      })
+    }
 
     if (booking.status === 'awaiting-arrival') {
       if (roles.includes('manager')) {
