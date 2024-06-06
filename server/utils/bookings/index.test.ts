@@ -225,11 +225,6 @@ describe('bookingUtils', () => {
     })
   })
 
-  describe('legacyBookingActions', () => {
-
-
-  })
-
   describe('generateConflictBespokeError', () => {
     const bookingId = 'bookingId'
     const bedId = 'bedId'
