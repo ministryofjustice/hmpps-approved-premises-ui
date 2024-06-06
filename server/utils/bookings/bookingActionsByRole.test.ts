@@ -193,5 +193,37 @@ describe('bookingUtils bookingActions by role', () => {
         })
       })
     })
+
+    describe('when the user has the "future_manager" role', () => {
+      const user = userDetailsFactory.build({
+        roles: ['future_manager'],
+      })
+
+      describe('when booking has NOT arrived', () => {
+        const booking = bookingFactory.build()
+
+        it('includes the WITHDRAW action', () => {
+          expect(bookingActions(user, booking)).toContainMenuItem({
+            text: 'Withdraw placement',
+            classes: 'govuk-button--secondary',
+            href: applyPaths.applications.withdraw.new({ id: booking?.applicationId }),
+          })
+        })
+
+        it('includes only this one action', () => {
+          expect(bookingActions(user, booking)[0].items.length).toEqual(1)
+        })
+      })
+
+      describe('when booking HAS arrived', () => {
+        const arrivedBooking = bookingFactory.arrived().build({
+          applicationId: undefined,
+        })
+
+        it('contains no actions at all', () => {
+          expect(bookingActions(user, arrivedBooking)).toEqual([])
+        })
+      })
+    })
   })
 })

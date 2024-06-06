@@ -18,7 +18,6 @@ import {
   nameCell,
   upcomingArrivals,
   upcomingDepartures,
-  v2BookingActions,
 } from '.'
 import {
   arrivalFactory,
@@ -191,36 +190,6 @@ describe('bookingUtils', () => {
       booking.person = personFactory.build({ isRestricted: true })
       expect(nameCell(booking)).toEqual({
         text: `LAO: ${(booking.person as FullPerson).name}`,
-      })
-    })
-  })
-
-  describe('v2BookingActions', () => {
-    describe('if the booking has a status of awaiting-arrival', () => {
-      describe('if applicationId is defined', () => {
-        it('returns the withdrawal link ', () => {
-          const booking = bookingFactory.arrivingSoon().build({ applicationId: 'someID' })
-
-          expect(v2BookingActions(booking)).toEqual([
-            {
-              items: [
-                {
-                  text: 'Withdraw placement',
-                  classes: 'govuk-button--secondary',
-                  href: applyPaths.applications.withdraw.new({ id: 'someID' }),
-                },
-              ],
-            },
-          ])
-        })
-      })
-
-      describe('if applicationId is undefined', () => {
-        it('returns an empty array ', () => {
-          const booking = bookingFactory.arrivingSoon().build({ applicationId: undefined })
-
-          expect(v2BookingActions(booking)).toEqual([])
-        })
       })
     })
   })
