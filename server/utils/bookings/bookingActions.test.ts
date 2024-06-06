@@ -40,5 +40,15 @@ describe('bookingUtils bookingActions', () => {
         href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
       })
     })
+
+    it('should return a departure action if a booking is arrived', () => {
+      const booking = bookingFactory.arrived().build()
+
+      expect(bookingActions(user, booking)).toContainMenuItem({
+        text: 'Log departure',
+        classes: 'govuk-button--secondary',
+        href: paths.bookings.departures.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+      })
+    })
   })
 })

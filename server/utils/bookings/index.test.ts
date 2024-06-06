@@ -265,37 +265,6 @@ describe('bookingUtils', () => {
 
   describe('legacyBookingActions', () => {
 
-    it('should return a departure action if a booking is arrived', () => {
-      const booking = bookingFactory.arrived().build()
-
-      expect(legacyBookingActions(booking)).toEqual([
-        {
-          items: [
-            {
-              text: 'Move person to a new bed',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Log departure',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.departures.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Update departure date',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.extensions.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Withdraw placement',
-              classes: 'govuk-button--secondary',
-              href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
-            },
-          ],
-        },
-      ])
-    })
-
     it('should return link to the cancellations new page if the booking doesnt have an applicationId', () => {
       const booking = bookingFactory.arrived().build({
         applicationId: undefined,
