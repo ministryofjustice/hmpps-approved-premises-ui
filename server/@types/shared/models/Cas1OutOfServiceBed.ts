@@ -2,21 +2,25 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Cas1OutOfServiceBedCancellation } from './Cas1OutOfServiceBedCancellation';
-import type { Cas1OutOfServiceBedReason } from './Cas1OutOfServiceBedReason';
-import type { Cas1OutOfServiceBedStatus } from './Cas1OutOfServiceBedStatus';
+import type { Cas1OutOfServiceBedCancellation } from './Cas1OutOfServiceBedCancellation'
+import type { Cas1OutOfServiceBedReason } from './Cas1OutOfServiceBedReason'
+import type { Cas1OutOfServiceBedStatus } from './Cas1OutOfServiceBedStatus'
+import type { NamedId } from './NamedId'
+import type { Temporality } from './Temporality'
 export type Cas1OutOfServiceBed = {
-    id: string;
-    createdAt: string;
-    startDate: string;
-    endDate: string;
-    bedId: string;
-    bedName: string;
-    roomName: string;
-    reason: Cas1OutOfServiceBedReason;
-    referenceNumber?: string;
-    notes?: string;
-    status: Cas1OutOfServiceBedStatus;
-    cancellation?: Cas1OutOfServiceBedCancellation | null;
-};
-
+  id: string
+  createdAt: string
+  outOfServiceFrom: string
+  outOfServiceTo: string
+  bed: NamedId
+  room: NamedId
+  premises: NamedId
+  apArea: NamedId
+  reason: Cas1OutOfServiceBedReason
+  referenceNumber?: string
+  notes?: string
+  daysLostCount: number
+  temporality: Temporality
+  status: Cas1OutOfServiceBedStatus
+  cancellation?: Cas1OutOfServiceBedCancellation | null
+}
