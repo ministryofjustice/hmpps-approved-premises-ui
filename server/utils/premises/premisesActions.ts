@@ -3,19 +3,7 @@ import { UserDetails } from '@approved-premises/ui'
 import paths from '../../paths/manage'
 
 export const premisesActions = (user: UserDetails, premises: Premises) => {
-  const deprecatedManageActions = [
-    {
-      text: 'View calendar',
-      classes: 'govuk-button--secondary',
-      href: paths.premises.calendar({ premisesId: premises.id }),
-    },
-    {
-      text: 'Create a placement',
-      classes: 'govuk-button--secondary',
-      href: paths.bookings.new({ premisesId: premises.id }),
-    },
-  ]
-  const currentManageActions = [
+  const actions = [
     {
       text: 'Manage beds',
       classes: 'govuk-button--secondary',
@@ -23,9 +11,13 @@ export const premisesActions = (user: UserDetails, premises: Premises) => {
     },
   ]
 
-  if (user.roles.includes('manager')) {
-    return [...deprecatedManageActions, ...currentManageActions]
+  if (user.roles?.includes('workflow_manager')) {
+    actions.push({
+      text: 'Create a placement',
+      classes: 'govuk-button--secondary',
+      href: paths.bookings.new({ premisesId: premises.id }),
+    })
   }
 
-  return currentManageActions
+  return actions
 }

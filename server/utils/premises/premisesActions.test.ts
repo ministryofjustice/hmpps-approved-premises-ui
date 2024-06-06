@@ -16,8 +16,8 @@ describe('premisesActions', () => {
       })
     })
 
-    it('does NOT include the CREATE PLACEMENT action', () => {
-      expect(premisesActions(user, premises)).not.toContainManageAction({
+    it('includes the CREATE PLACEMENT action', () => {
+      expect(premisesActions(user, premises)).toContainManageAction({
         text: 'Create a placement',
         classes: 'govuk-button--secondary',
         href: paths.bookings.new({ premisesId: premises.id }),
