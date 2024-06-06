@@ -50,12 +50,12 @@ export const v1BookingActions = (roles: Array<UserRole>, booking: Booking): Arra
           classes: 'govuk-button--secondary',
           href: paths.bookings.arrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
         })
+        items.push({
+          text: 'Mark as not arrived',
+          classes: 'govuk-button--secondary',
+          href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+        })
       }
-      items.push({
-        text: 'Mark as not arrived',
-        classes: 'govuk-button--secondary',
-        href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-      })
       if (roles.includes('workflow_manager')) {
         items.push({
           text: 'Withdraw placement',

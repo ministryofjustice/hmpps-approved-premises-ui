@@ -26,6 +26,14 @@ describe('bookingUtils bookingActions', () => {
           href: paths.bookings.arrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
         })
       })
+
+      it('does NOT include the NOT_ARRIVED action', () => {
+        expect(bookingActions(user, booking)).not.toContainMenuItem({
+          text: 'Mark as not arrived',
+          classes: 'govuk-button--secondary',
+          href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+        })
+      })
     })
 
     describe('when the user has the "manager" role', () => {
@@ -49,6 +57,14 @@ describe('bookingUtils bookingActions', () => {
           href: paths.bookings.arrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
         })
       })
+
+      it('includes the NOT_ARRIVED action', () => {
+        expect(bookingActions(user, booking)).toContainMenuItem({
+          text: 'Mark as not arrived',
+          classes: 'govuk-button--secondary',
+          href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+        })
+      })
     })
 
     describe('when the user has the "legacy_manager" role', () => {
@@ -70,6 +86,14 @@ describe('bookingUtils bookingActions', () => {
           text: 'Mark as arrived',
           classes: 'govuk-button--secondary',
           href: paths.bookings.arrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+        })
+      })
+
+      it('does NOT include the NOT_ARRIVED action', () => {
+        expect(bookingActions(user, booking)).not.toContainMenuItem({
+          text: 'Mark as not arrived',
+          classes: 'govuk-button--secondary',
+          href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
         })
       })
     })
