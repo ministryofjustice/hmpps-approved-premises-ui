@@ -19,5 +19,13 @@ export const premisesActions = (user: UserDetails, premises: Premises) => {
     })
   }
 
+  if (user.roles?.includes('manager')) {
+    actions.push({
+      text: 'View calendar',
+      classes: 'govuk-button--secondary',
+      href: paths.premises.calendar({ premisesId: premises.id }),
+    })
+  }
+
   return actions
 }

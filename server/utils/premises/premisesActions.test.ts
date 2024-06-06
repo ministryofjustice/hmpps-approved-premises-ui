@@ -62,6 +62,35 @@ describe('premisesActions', () => {
     })
   })
 
+  describe('for users with the role "manager"', () => {
+    const user = userDetails.build({ roles: ['manager'] })
+    const premises = premisesFactory.build()
+
+    it('does include the MANAGE BEDS action', () => {
+      expect(premisesActions(user, premises)).toContainManageAction({
+        text: 'Manage beds',
+        classes: 'govuk-button--secondary',
+        href: paths.premises.beds.index({ premisesId: premises.id }),
+      })
+    })
+
+    it('includes the VIEW CALENDAR action', () => {
+      expect(premisesActions(user, premises)).toContainManageAction({
+        text: 'View calendar',
+        classes: 'govuk-button--secondary',
+        href: paths.premises.calendar({ premisesId: premises.id }),
+      })
+    })
+
+    it('does NOT include the CREATE PLACEMENT action', () => {
+      expect(premisesActions(user, premises)).not.toContainManageAction({
+        text: 'Create a placement',
+        classes: 'govuk-button--secondary',
+        href: paths.bookings.new({ premisesId: premises.id }),
+      })
+    })
+  })
+
   describe('for users with the role "future_manager"', () => {
     const user = userDetails.build({ roles: ['future_manager'] })
     const premises = premisesFactory.build()
