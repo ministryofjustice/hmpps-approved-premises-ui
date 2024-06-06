@@ -6,7 +6,6 @@ import {
   outOfServiceBedCancellationFactory,
   outOfServiceBedFactory,
 } from '../testutils/factories'
-import { LostBed, NewLostBed, NewLostBedCancellation } from '../@types/shared'
 
 jest.mock('../data/outOfServiceBedClient.ts')
 jest.mock('../data/referenceDataClient.ts')
@@ -27,8 +26,8 @@ describe('OutOfServiceBedService', () => {
 
   describe('createOutOfServiceBed', () => {
     it('on success returns the outOfServiceBed that has been posted', async () => {
-      const outOfServiceBed: LostBed = outOfServiceBedFactory.build()
-      const newOutOfServiceBed: NewLostBed = newOutOfServiceBedFactory.build()
+      const outOfServiceBed = outOfServiceBedFactory.build()
+      const newOutOfServiceBed = newOutOfServiceBedFactory.build()
 
       const token = 'SOME_TOKEN'
       outOfServiceBedClient.create.mockResolvedValue(outOfServiceBed)
@@ -43,7 +42,7 @@ describe('OutOfServiceBedService', () => {
 
   describe('getOutOfServiceBed', () => {
     it('on success returns the outOfServiceBed that has been posted', async () => {
-      const outOfServiceBed: LostBed = outOfServiceBedFactory.build()
+      const outOfServiceBed = outOfServiceBedFactory.build()
 
       const token = 'SOME_TOKEN'
       outOfServiceBedClient.find.mockResolvedValue(outOfServiceBed)
@@ -58,7 +57,7 @@ describe('OutOfServiceBedService', () => {
 
   describe('getOutOfServiceBeds', () => {
     it('on success returns the outOfServiceBeds for a premises', async () => {
-      const expectedOutOfServiceBeds: Array<LostBed> = outOfServiceBedFactory.buildList(2)
+      const expectedOutOfServiceBeds = outOfServiceBedFactory.buildList(2)
 
       const token = 'SOME_TOKEN'
       outOfServiceBedClient.get.mockResolvedValue(expectedOutOfServiceBeds)
@@ -73,7 +72,7 @@ describe('OutOfServiceBedService', () => {
 
   describe('updateOutOfServiceBed', () => {
     it('updates and returns the specified outOfService bed', async () => {
-      const outOfServiceBed: LostBed = outOfServiceBedFactory.build()
+      const outOfServiceBed = outOfServiceBedFactory.build()
       const endDate = '2022-09-22'
       const notes = 'note'
 
@@ -81,7 +80,7 @@ describe('OutOfServiceBedService', () => {
       outOfServiceBedClient.update.mockResolvedValue(outOfServiceBed)
 
       const outOfServiceBedUpdateData = {
-        startDate: outOfServiceBed.startDate,
+        startDate: outOfServiceBed.outOfServiceFrom,
         endDate,
         reason: outOfServiceBed.reason.id,
         referenceNumber: outOfServiceBed.referenceNumber,
@@ -108,7 +107,7 @@ describe('OutOfServiceBedService', () => {
   describe('cancelOutOfServiceBed', () => {
     it('cancels and returns the cancelled outOfService bed', async () => {
       const outOfServiceBedId = 'outOfServiceBedId'
-      const newOutOfServiceBedCancellation: NewLostBedCancellation = {
+      const newOutOfServiceBedCancellation = {
         notes: 'some notes',
       }
       const outOfServiceBedCancellation = outOfServiceBedCancellationFactory.build()

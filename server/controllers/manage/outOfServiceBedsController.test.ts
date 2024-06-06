@@ -39,7 +39,7 @@ describe('OutOfServiceBedsController', () => {
       headers: { referer: referrer },
       params: {
         premisesId,
-        bedId: outOfServiceBed.bedId,
+        bedId: outOfServiceBed.bed.id,
       },
     })
   })
@@ -87,16 +87,16 @@ describe('OutOfServiceBedsController', () => {
 
       request.params = {
         ...request.params,
-        bedId: outOfServiceBed.bedId,
+        bedId: outOfServiceBed.bed.id,
       }
 
       request.body = {
-        'startDate-year': 2022,
-        'startDate-month': 8,
-        'startDate-day': 22,
-        'endDate-year': 2022,
-        'endDate-month': 9,
-        'endDate-day': 22,
+        'outOfServiceFrom-year': 2022,
+        'outOfServiceFrom-month': 8,
+        'outOfServiceFrom-day': 22,
+        'outOfServiceTo-year': 2022,
+        'outOfServiceTo-month': 9,
+        'outOfServiceTo-day': 22,
         outOfServiceBed,
       }
 
@@ -104,8 +104,8 @@ describe('OutOfServiceBedsController', () => {
 
       expect(outOfServiceBedService.createOutOfServiceBed).toHaveBeenCalledWith(token, premisesId, {
         ...outOfServiceBed,
-        startDate: '2022-08-22',
-        endDate: '2022-09-22',
+        outOfServiceFrom: '2022-08-22',
+        outOfServiceTo: '2022-09-22',
         bedId: request.params.bedId,
       })
       expect(request.flash).toHaveBeenCalledWith('success', 'Out of service bed logged')
@@ -142,10 +142,10 @@ describe('OutOfServiceBedsController', () => {
           { ...request },
           { ...response },
           premisesId,
-          ['startDate', 'endDate'],
+          ['outOfServiceFrom', 'outOfServiceTo'],
           err,
           paths.v2Manage.outOfServiceBeds.new({ premisesId: request.params.premisesId, bedId: request.params.bedId }),
-          outOfServiceBed.bedId,
+          outOfServiceBed.bed.id,
         )
       })
     })
@@ -163,7 +163,7 @@ describe('OutOfServiceBedsController', () => {
 
       request.params = {
         ...request.params,
-        bedId: outOfServiceBed.bedId,
+        bedId: outOfServiceBed.bed.id,
       }
 
       await requestHandler(request, response, next)
@@ -199,15 +199,15 @@ describe('OutOfServiceBedsController', () => {
 
       request.params = {
         premisesId,
-        id: outOfServiceBed.id,
+        id: outOfServiceBed.bed.id,
       }
 
       request.body = {
-        'endDate-year': 2022,
-        'endDate-month': 9,
-        'endDate-day': 22,
+        'outOfServiceTo-year': 2022,
+        'outOfServiceTo-month': 9,
+        'outOfServiceTo-day': 22,
         notes: 'a note',
-        startDate: outOfServiceBed.startDate,
+        outOfServiceFrom: outOfServiceBed.outOfServiceFrom,
         reason: outOfServiceBed.reason.id,
         referenceNumber: outOfServiceBed.referenceNumber,
         submit: '',
@@ -217,7 +217,7 @@ describe('OutOfServiceBedsController', () => {
 
       expect(outOfServiceBedService.updateOutOfServiceBed).toHaveBeenCalledWith(
         request.user.token,
-        outOfServiceBed.id,
+        outOfServiceBed.bed.id,
         request.params.premisesId,
         request.body,
       )

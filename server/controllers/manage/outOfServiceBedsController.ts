@@ -33,14 +33,14 @@ export default class OutOfServiceBedsController {
     return async (req: Request, res: Response) => {
       const { premisesId, bedId } = req.params
 
-      const { startDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'startDate')
-      const { endDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'endDate')
+      const { outOfServiceFrom } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'outOfServiceFrom')
+      const { outOfServiceTo } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'outOfServiceTo')
 
       const outOfServiceBed = {
         ...req.body.outOfServiceBed,
         bedId,
-        startDate,
-        endDate,
+        outOfServiceFrom,
+        outOfServiceTo,
       }
 
       try {
@@ -58,7 +58,7 @@ export default class OutOfServiceBedsController {
             req,
             res,
             premisesId,
-            ['startDate', 'endDate'],
+            ['outOfServiceFrom', 'outOfServiceTo'],
             knownError,
             redirectPath,
             bedId,
@@ -108,8 +108,8 @@ export default class OutOfServiceBedsController {
     return async (req: Request, res: Response) => {
       const { premisesId, id } = req.params
 
-      const { endDate } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'endDate')
-      req.body.endDate = endDate
+      const { outOfServiceTo } = DateFormats.dateAndTimeInputsToIsoString(req.body, 'outOfServiceTo')
+      req.body.outOfServiceTo = outOfServiceTo
 
       try {
         if (req.body.cancel === '1') {

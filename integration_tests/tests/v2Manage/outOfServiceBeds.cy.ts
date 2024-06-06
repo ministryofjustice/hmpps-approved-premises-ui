@@ -29,12 +29,12 @@ context('OutOfServiceBeds', () => {
     // When I navigate to the out of service bed form
 
     const outOfServiceBed = outOfServiceBedFactory.build({
-      startDate: '2022-02-11',
-      endDate: '2022-03-11',
+      outOfServiceFrom: '2022-02-11',
+      outOfServiceTo: '2022-03-11',
     })
     cy.task('stubOutOfServiceBedCreate', { premisesId: premises.id, outOfServiceBed })
 
-    const page = OutOfServiceBedCreatePage.visit(premises.id, outOfServiceBed.bedId)
+    const page = OutOfServiceBedCreatePage.visit(premises.id, outOfServiceBed.bed.id)
 
     // And I fill out the form
     page.completeForm(outOfServiceBed)
@@ -48,8 +48,8 @@ context('OutOfServiceBeds', () => {
       expect(requests).to.have.length(1)
       const requestBody = JSON.parse(requests[0].body)
 
-      expect(requestBody.startDate).equal(outOfServiceBed.startDate)
-      expect(requestBody.endDate).equal(outOfServiceBed.endDate)
+      expect(requestBody.outOfServiceFrom).equal(outOfServiceBed.outOfServiceFrom)
+      expect(requestBody.outOfServiceTo).equal(outOfServiceBed.outOfServiceTo)
       expect(requestBody.notes).equal(outOfServiceBed.notes)
       expect(requestBody.referenceNumber).equal(outOfServiceBed.referenceNumber)
     })
@@ -68,13 +68,13 @@ context('OutOfServiceBeds', () => {
     // And I miss required fields
     cy.task('stubOutOfServiceBedErrors', {
       premisesId: premises.id,
-      params: ['startDate', 'endDate', 'referenceNumber'],
+      params: ['outOfServiceFrom', 'outOfServiceTo', 'referenceNumber'],
     })
 
     page.clickSubmit()
 
     // Then I should see error messages relating to that field
-    page.shouldShowErrorMessagesForFields(['startDate', 'endDate', 'referenceNumber'])
+    page.shouldShowErrorMessagesForFields(['outOfServiceFrom', 'outOfServiceTo', 'referenceNumber'])
   })
 
   it('should show an error when there are booking conflicts', () => {
@@ -86,8 +86,8 @@ context('OutOfServiceBeds', () => {
     // When I navigate to the out of service bed form
 
     const outOfServiceBed = outOfServiceBedFactory.build({
-      startDate: '2022-02-11',
-      endDate: '2022-03-11',
+      outOfServiceFrom: '2022-02-11',
+      outOfServiceTo: '2022-03-11',
     })
     cy.task('stubOutOfServiceBedConflictError', {
       premisesId: premises.id,
@@ -95,7 +95,7 @@ context('OutOfServiceBeds', () => {
       conflictingEntityType: 'booking',
     })
 
-    const page = OutOfServiceBedCreatePage.visit(premises.id, outOfServiceBed.bedId)
+    const page = OutOfServiceBedCreatePage.visit(premises.id, outOfServiceBed.bed.id)
 
     // And I fill out the form
     page.completeForm(outOfServiceBed)
@@ -143,9 +143,9 @@ context('OutOfServiceBeds', () => {
       outOfServiceBedShowPage.shouldShowOutOfServiceBedDetail()
 
       // // When I fill in the form and submit
-      const newEndDate = '2023-10-12'
+      const newOutOfServiceTo = '2023-10-12'
       const newNote = 'example'
-      outOfServiceBedShowPage.completeForm(newEndDate, newNote)
+      outOfServiceBedShowPage.completeForm(newOutOfServiceTo, newNote)
       outOfServiceBedShowPage.clickSubmit()
 
       // // Then I am taken back to the list of out of service beds
@@ -159,8 +159,8 @@ context('OutOfServiceBeds', () => {
         expect(requests).to.have.length(1)
         const requestBody = JSON.parse(requests[0].body)
 
-        expect(requestBody.startDate).equal(outOfServiceBed.startDate)
-        expect(requestBody.endDate).equal(newEndDate)
+        expect(requestBody.outOfServiceFrom).equal(outOfServiceBed.outOfServiceFrom)
+        expect(requestBody.outOfServiceTo).equal(newOutOfServiceTo)
         expect(requestBody.notes).equal(newNote)
         expect(requestBody.referenceNumber).equal(outOfServiceBed.referenceNumber)
       })
@@ -197,7 +197,7 @@ context('OutOfServiceBeds', () => {
       outOfServiceBedShowPage.clickSubmit()
 
       // Then I should see an error message
-      outOfServiceBedShowPage.shouldShowErrorMessagesForFields(['endDate'])
+      outOfServiceBedShowPage.shouldShowErrorMessagesForFields(['outOfServiceTo'])
     })
 
     it('should allow me to cancel a out of service bed', () => {

@@ -1,9 +1,8 @@
-import type { Booking, Premises } from '@approved-premises/api'
+import type { Booking, Cas1OutOfServiceBed as OutOfServiceBed, Premises } from '@approved-premises/api'
 import paths from '../../../../server/paths/manage'
 
 import Page from '../../page'
 import BedspaceConflictErrorComponent from '../../../components/bedspaceConflictErrorComponent'
-import { OutOfServiceBed } from '../../../../server/@types/ui'
 
 export class OutOfServiceBedCreatePage extends Page {
   private readonly bedspaceConflictErrorComponent: BedspaceConflictErrorComponent
@@ -20,20 +19,24 @@ export class OutOfServiceBedCreatePage extends Page {
   }
 
   public completeForm(outOfServiceBed: OutOfServiceBed): void {
-    const startDate = new Date(Date.parse(outOfServiceBed.startDate))
-    const endDate = new Date(Date.parse(outOfServiceBed.endDate))
+    const outOfServiceFrom = new Date(Date.parse(outOfServiceBed.outOfServiceFrom))
+    const outOfServiceTo = new Date(Date.parse(outOfServiceBed.outOfServiceTo))
 
-    cy.get('input[name="startDate-day"]').type(String(startDate.getDate()))
-    cy.get('input[name="startDate-month"]').type(String(startDate.getMonth() + 1))
-    cy.get('input[name="startDate-year"]').type(String(startDate.getFullYear()))
+    cy.get('input[name="outOfServiceFrom-day"]').type(String(outOfServiceFrom.getDate()))
+    cy.get('input[name="outOfServiceFrom-month"]').type(String(outOfServiceFrom.getMonth() + 1))
+    cy.get('input[name="outOfServiceFrom-year"]').type(String(outOfServiceFrom.getFullYear()))
 
-    cy.get('input[name="endDate-day"]').type(String(endDate.getDate()))
-    cy.get('input[name="endDate-month"]').type(String(endDate.getMonth() + 1))
-    cy.get('input[name="endDate-year"]').type(String(endDate.getFullYear()))
+    cy.get('input[name="outOfServiceTo-day"]').type(String(outOfServiceTo.getDate()))
+    cy.get('input[name="outOfServiceTo-month"]').type(String(outOfServiceTo.getMonth() + 1))
+    cy.get('input[name="outOfServiceTo-year"]').type(String(outOfServiceTo.getFullYear()))
 
-    cy.get('input[name="outOfServiceBed[referenceNumber]"]').type(outOfServiceBed.referenceNumber)
+    if (outOfServiceBed.referenceNumber) {
+      cy.get('input[name="outOfServiceBed[referenceNumber]"]').type(outOfServiceBed.referenceNumber)
+    }
 
-    cy.get('[name="outOfServiceBed[notes]"]').type(outOfServiceBed.notes)
+    if (outOfServiceBed.notes) {
+      cy.get('[name="outOfServiceBed[notes]"]').type(outOfServiceBed.notes)
+    }
   }
 
   public clickSubmit(): void {
@@ -45,7 +48,7 @@ export class OutOfServiceBedCreatePage extends Page {
     conflictingEntityType: 'booking' | 'lost-bed',
   ): void {
     this.bedspaceConflictErrorComponent.shouldShowDateConflictErrorMessages(
-      ['startDate', 'endDate'],
+      ['outOfServiceFrom', 'outOfServiceTo'],
       conflictingEntity,
       conflictingEntityType,
     )

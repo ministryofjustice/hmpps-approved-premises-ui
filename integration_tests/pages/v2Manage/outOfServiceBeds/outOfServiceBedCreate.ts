@@ -1,9 +1,8 @@
-import type { Booking, Premises } from '@approved-premises/api'
+import type { Booking, Cas1OutOfServiceBed as OutOfServiceBed, Premises } from '@approved-premises/api'
 import paths from '../../../../server/paths/manage'
 
 import Page from '../../page'
 import BedspaceConflictErrorComponent from '../../../components/bedspaceConflictErrorComponent'
-import { OutOfServiceBed } from '../../../../server/@types/ui'
 
 export class OutOfServiceBedCreatePage extends Page {
   private readonly bedspaceConflictErrorComponent: BedspaceConflictErrorComponent
@@ -20,8 +19,8 @@ export class OutOfServiceBedCreatePage extends Page {
   }
 
   public completeForm(outOfServiceBed: OutOfServiceBed): void {
-    const startDate = new Date(Date.parse(outOfServiceBed.startDate))
-    const endDate = new Date(Date.parse(outOfServiceBed.endDate))
+    const startDate = new Date(Date.parse(outOfServiceBed.outOfServiceFrom))
+    const endDate = new Date(Date.parse(outOfServiceBed.outOfServiceTo))
 
     cy.get('input[name="startDate-day"]').type(String(startDate.getDate()))
     cy.get('input[name="startDate-month"]').type(String(startDate.getMonth() + 1))
@@ -45,7 +44,7 @@ export class OutOfServiceBedCreatePage extends Page {
     conflictingEntityType: 'booking' | 'lost-bed',
   ): void {
     this.bedspaceConflictErrorComponent.shouldShowDateConflictErrorMessages(
-      ['startDate', 'endDate'],
+      ['outOfServiceFrom', 'outOfServiceTo'],
       conflictingEntity,
       conflictingEntityType,
     )

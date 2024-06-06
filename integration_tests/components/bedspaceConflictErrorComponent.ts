@@ -1,4 +1,4 @@
-import type { Booking, LostBed } from '@approved-premises/api'
+import type { Booking, Cas1OutOfServiceBed, LostBed } from '@approved-premises/api'
 import errorLookups from '../../server/i18n/en/errors.json'
 import Page from '../pages/page'
 import BookingShowPage from '../pages/manage/booking/show'
@@ -12,7 +12,7 @@ export default class BedspaceConflictErrorComponent {
 
   shouldShowDateConflictErrorMessages(
     fields: Array<string>,
-    conflictingEntity: Booking | LostBed,
+    conflictingEntity: Booking | LostBed | Cas1OutOfServiceBed,
     conflictingEntityType: 'booking' | 'lost-bed',
   ): void {
     fields.forEach(field => {

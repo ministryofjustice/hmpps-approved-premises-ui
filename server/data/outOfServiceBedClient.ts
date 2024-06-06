@@ -1,16 +1,16 @@
 /* istanbul ignore file */
 
+import {
+  NewCas1OutOfServiceBed as NewOutOfServiceBed,
+  NewCas1OutOfServiceBedCancellation as NewOutOfServiceBedCancellation,
+  Cas1OutOfServiceBed as OutOfServiceBed,
+  Cas1OutOfServiceBedCancellation as OutOfServiceBedCancellation,
+  Premises,
+  UpdateCas1OutOfServiceBed as UpdateOutOfServiceBed,
+} from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
-import {
-  NewOutOfServiceBed,
-  NewOutOfServiceBedCancellation,
-  OutOfServiceBed,
-  OutOfServiceBedCancellation,
-  UpdateOutOfServiceBed,
-} from '../@types/ui'
-import { Premises } from '../@types/shared'
 
 export default class OutOfServiceBedClient {
   restClient: RestClient
