@@ -87,6 +87,7 @@ export type { Cas1OutOfServiceBed } from './models/Cas1OutOfServiceBed';
 export type { Cas1OutOfServiceBedCancellation } from './models/Cas1OutOfServiceBedCancellation';
 export type { Cas1OutOfServiceBedReason } from './models/Cas1OutOfServiceBedReason';
 export type { Cas1OutOfServiceBedStatus } from './models/Cas1OutOfServiceBedStatus';
+export type { Cas1ReportName } from './models/Cas1ReportName';
 export type { Cas2Application } from './models/Cas2Application';
 export type { Cas2ApplicationNote } from './models/Cas2ApplicationNote';
 export type { Cas2ApplicationStatus } from './models/Cas2ApplicationStatus';
