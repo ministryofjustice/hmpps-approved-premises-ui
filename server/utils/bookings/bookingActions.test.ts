@@ -43,6 +43,14 @@ describe('bookingUtils bookingActions', () => {
         })
       })
 
+      it('does NOT include the CHANGE DATES action', () => {
+        expect(bookingActions(user, booking)).not.toContainMenuItem({
+          text: 'Change placement dates',
+          classes: 'govuk-button--secondary',
+          href: paths.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+        })
+      })
+
       describe('when the booking has arrived', () => {
         const arrivedBooking = bookingFactory.arrived().build({
           applicationId: undefined,
@@ -98,6 +106,14 @@ describe('bookingUtils bookingActions', () => {
         })
       })
 
+      it('includes the CHANGE DATES action', () => {
+        expect(bookingActions(user, booking)).toContainMenuItem({
+          text: 'Change placement dates',
+          classes: 'govuk-button--secondary',
+          href: paths.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+        })
+      })
+
       describe('when the booking has arrived', () => {
         const arrivedBooking = bookingFactory.arrived().build({
           applicationId: undefined,
@@ -150,6 +166,14 @@ describe('bookingUtils bookingActions', () => {
           text: 'Move person to a new bed',
           classes: 'govuk-button--secondary',
           href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+        })
+      })
+
+      it('includes the CHANGE DATES action', () => {
+        expect(bookingActions(user, booking)).toContainMenuItem({
+          text: 'Change placement dates',
+          classes: 'govuk-button--secondary',
+          href: paths.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
         })
       })
 

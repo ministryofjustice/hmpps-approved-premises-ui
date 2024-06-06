@@ -65,11 +65,14 @@ export const v1BookingActions = (roles: Array<UserRole>, booking: Booking): Arra
           href: withdrawalLink,
         })
       }
-      items.push({
-        text: 'Change placement dates',
-        classes: 'govuk-button--secondary',
-        href: paths.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-      })
+
+      if (roles.includes('manager') || roles.includes('legacy_manager')) {
+        items.push({
+          text: 'Change placement dates',
+          classes: 'govuk-button--secondary',
+          href: paths.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+        })
+      }
     }
 
     if (booking.status === 'arrived') {
