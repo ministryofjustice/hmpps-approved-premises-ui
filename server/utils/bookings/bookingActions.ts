@@ -1,0 +1,95 @@
+import type { IdentityBarMenu, UserDetails } from '@approved-premises/ui'
+
+import type { Booking } from '@approved-premises/api'
+import paths from '../../paths/manage'
+import applyPaths from '../../paths/apply'
+
+export const bookingActions = (user: UserDetails, booking: Booking): Array<IdentityBarMenu> => {
+  if (user.roles?.includes('workflow_manager')) return v1BookingActions(booking)
+  if (user.roles?.includes('manager')) return v1BookingActions(booking)
+  if (user.roles?.includes('legacy_manager')) return v1BookingActions(booking)
+  if (user.roles?.includes('future_manager')) return v2BookingActions(booking)
+  return []
+}
+
+export const v2BookingActions = (booking: Booking): Array<IdentityBarMenu> => {
+  if (booking.status === 'awaiting-arrival')
+    return [
+      {
+        items: [
+          {
+            text: 'Withdraw placement',
+            classes: 'govuk-button--secondary',
+            href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
+          },
+        ],
+      },
+    ]
+
+  return []
+}
+
+export const v1BookingActions = (booking: Booking): Array<IdentityBarMenu> => {
+  const withdrawalLink = !booking?.applicationId
+    ? paths.bookings.cancellations.new({ premisesId: booking.premises.id, bookingId: booking.id })
+    : applyPaths.applications.withdraw.new({ id: booking?.applicationId })
+
+  if (booking.status === 'awaiting-arrival' || booking.status === 'arrived') {
+    const items = [
+      {
+        text: 'Move person to a new bed',
+        classes: 'govuk-button--secondary',
+        href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+      },
+    ]
+
+    if (booking.status === 'awaiting-arrival') {
+      items.push({
+        text: 'Mark as arrived',
+        classes: 'govuk-button--secondary',
+        href: paths.bookings.arrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+      })
+      items.push({
+        text: 'Mark as not arrived',
+        classes: 'govuk-button--secondary',
+        href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+      })
+      items.push({
+        text: 'Withdraw placement',
+        classes: 'govuk-button--secondary',
+        href: withdrawalLink,
+      })
+      items.push({
+        text: 'Change placement dates',
+        classes: 'govuk-button--secondary',
+        href: paths.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+      })
+    }
+
+    if (booking.status === 'arrived') {
+      items.push({
+        text: 'Log departure',
+        classes: 'govuk-button--secondary',
+        href: paths.bookings.departures.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+      })
+      items.push({
+        text: 'Update departure date',
+        classes: 'govuk-button--secondary',
+        href: paths.bookings.extensions.new({ premisesId: booking.premises.id, bookingId: booking.id }),
+      })
+      items.push({
+        text: 'Withdraw placement',
+        classes: 'govuk-button--secondary',
+        href: withdrawalLink,
+      })
+    }
+
+    return [
+      {
+        items,
+      },
+    ]
+  }
+
+  return null
+}
