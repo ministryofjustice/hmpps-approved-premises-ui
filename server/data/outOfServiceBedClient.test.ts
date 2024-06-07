@@ -104,6 +104,32 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
     })
   })
 
+  describe('get', () => {
+    it('should get all outOfServiceBeds', async () => {
+      const outOfServiceBeds = outOfServiceBedFactory.buildList(2)
+
+      provider.addInteraction({
+        state: 'Server is healthy',
+        uponReceiving: 'A request to get out of service beds',
+        withRequest: {
+          method: 'GET',
+          path: paths.manage.outOfServiceBeds.index({}),
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        },
+        willRespondWith: {
+          status: 200,
+          body: outOfServiceBeds,
+        },
+      })
+
+      const result = await outOfServiceBedClient.get()
+
+      expect(result).toEqual(outOfServiceBeds)
+    })
+  })
+
   describe('update', () => {
     it('updates a lost bed', async () => {
       const outOfServiceBed = outOfServiceBedFactory.build()

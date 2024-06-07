@@ -105,6 +105,9 @@ export default {
         cancel: outOfServiceBedsPath.path(':id/cancellations'),
       },
     },
+    outOfServiceBeds: {
+      index: cas1NamespacePath.path('out-of-service-beds'),
+    },
   },
   premises: {
     show: managePaths.premises.show,
