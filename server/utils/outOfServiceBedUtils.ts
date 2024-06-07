@@ -8,6 +8,24 @@ import { hasRole } from './users'
 import { DateFormats } from './dateUtils'
 import { textValue } from './applications/helpers'
 
+export const allOutOfServiceBedsTableRows = (beds: Array<OutOfServiceBed>) => {
+  return beds.map(bed => {
+    const rows = [
+      textValue(bed.premises.name),
+      textValue(bed.room.name),
+      textValue(bed.bed.name),
+      textValue(DateFormats.isoDateToUIDate(bed.outOfServiceFrom, { format: 'short' })),
+      textValue(DateFormats.isoDateToUIDate(bed.outOfServiceTo, { format: 'short' })),
+      textValue(bed.reason.name),
+      referenceNumberCell(bed.referenceNumber),
+      textValue(bed.daysLostCount.toString()),
+      actionCell(bed, bed.premises.id),
+    ]
+
+    return rows
+  })
+}
+
 export const outOfServiceBedTableHeaders = (user: UserDetails) => {
   const headers = [
     {
@@ -77,8 +95,8 @@ const bedLink = (bed: OutOfServiceBed, premisesId: Premises['id']): string =>
     paths.v2Manage.outOfServiceBeds.show,
     { id: bed.id, bedId: bed.bed.id, premisesId },
     {
-      text: 'Manage',
+      text: 'View',
       hiddenText: `Out of service bed ${bed.bed.name}`,
-      attributes: { 'data-cy-bedId': bed.id },
+      attributes: { 'data-cy-bedId': bed.bed.id },
     },
   )
