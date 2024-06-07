@@ -191,6 +191,21 @@ describe('OutOfServiceBedsController', () => {
     })
   })
 
+  describe('index', () => {
+    it('shows a list of all outOfService beds', async () => {
+      outOfServiceBedService.getAllOutOfServiceBeds.mockResolvedValue([outOfServiceBed])
+      const requestHandler = outOfServiceBedController.index()
+
+      await requestHandler(request, response, next)
+
+      expect(response.render).toHaveBeenCalledWith('outOfServiceBeds/index', {
+        outOfServiceBeds: [outOfServiceBed],
+        pageHeading: 'View out of service beds',
+      })
+      expect(outOfServiceBedService.getAllOutOfServiceBeds).toHaveBeenCalledWith(token)
+    })
+  })
+
   describe('update', () => {
     it('updates a outOfService bed and redirects to the outOfService beds index page', async () => {
       outOfServiceBedService.updateOutOfServiceBed.mockResolvedValue(outOfServiceBed)

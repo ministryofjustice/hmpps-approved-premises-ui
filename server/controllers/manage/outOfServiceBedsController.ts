@@ -87,6 +87,17 @@ export default class OutOfServiceBedsController {
     }
   }
 
+  index(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const outOfServiceBeds = await this.outOfServiceBedService.getAllOutOfServiceBeds(req.user.token)
+
+      return res.render('outOfServiceBeds/index', {
+        pageHeading: 'View out of service beds',
+        outOfServiceBeds,
+      })
+    }
+  }
+
   show(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { premisesId, id } = req.params
