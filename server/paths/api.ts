@@ -8,6 +8,7 @@ const singlePremisesPath = premisesPath.path(':premisesId')
 const cas1NamespacePath = path('/cas1')
 const cas1SinglePremisesPath = cas1NamespacePath.path('premises/:premisesId')
 const lostBedsPath = cas1SinglePremisesPath.path('lost-beds')
+const reportsPath = cas1NamespacePath.path('reports')
 
 // Manage V2 paths
 const managePremisesPath = path('/manage/premises')
@@ -63,8 +64,6 @@ const placementRequestPath = placementRequestsPath.path(':id')
 
 const placementApplicationsPath = path('/placement-applications')
 const placementApplicationPath = placementApplicationsPath.path(':id')
-
-const reportsPath = path('/reports')
 
 const tasksPaths = {
   index: tasksPath,

@@ -25,7 +25,8 @@ const apiSpecs = {
     url: 'https://raw.githubusercontent.com/ministryofjustice/hmpps-approved-premises-api/main/src/main/resources/static/codegen/built-cas1-api-spec.yml',
     command: (openAPIUrl: string) => `if [ ! -f ${apiSpecPaths.cas1Spec} ]; then
     curl -s "${openAPIUrl}" |
-    sed -E 's@/premises@/cas1/premises@g' > ${apiSpecPaths.cas1Spec}
+    sed -E 's@/premises@/cas1/premises@g' |
+    sed -E 's@/reports@/cas1/reports@g' > ${apiSpecPaths.cas1Spec}
   fi`,
     specPath: apiSpecPaths.cas1Spec,
   },
