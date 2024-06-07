@@ -1,4 +1,5 @@
 import { ReleaseTypeOption, SentenceTypeOption } from '@approved-premises/api'
+import { when } from 'jest-when'
 import { applicationFactory } from '../../testutils/factories'
 import { getApplicationSubmissionData, getApplicationUpdateData } from './getApplicationData'
 import {
@@ -8,12 +9,14 @@ import {
 } from '../../testutils/mockQuestionResponse'
 import { arrivalDateFromApplication } from './arrivalDateFromApplication'
 import { isInapplicable } from './utils'
+import { reasonForShortNoticeDetails } from './reasonForShortNoticeDetails'
 import { applicationUserDetailsFactory } from '../../testutils/factories/application'
 
 jest.mock('../retrieveQuestionResponseFromFormArtifact')
 jest.mock('../applications/applicantAndCaseManagerDetails')
 jest.mock('./arrivalDateFromApplication')
 jest.mock('./utils')
+jest.mock('./reasonForShortNoticeDetails')
 
 const apAreaId = 'test-id'
 const applicantUserDetails = applicationUserDetailsFactory.build()
@@ -35,6 +38,13 @@ describe('getApplicationData', () => {
 
   afterEach(() => {
     jest.resetAllMocks()
+  })
+
+  beforeEach(() => {
+    when(reasonForShortNoticeDetails).calledWith(application).mockReturnValue({
+      reasonForShortNotice: undefined,
+      reasonForShortNoticeOther: undefined,
+    })
   })
 
   describe('getApplicationSubmissionData', () => {
@@ -112,6 +122,19 @@ describe('getApplicationData', () => {
         expect.objectContaining({
           releaseType: 'not_applicable',
           sentenceType: 'nonStatutory',
+        }),
+      )
+    })
+
+    it('returns the correct data for a reason for short notice application', () => {
+      when(reasonForShortNoticeDetails).calledWith(application).mockReturnValue({
+        reasonForShortNotice: 'other',
+        reasonForShortNoticeOther: 'test',
+      })
+      expect(getApplicationSubmissionData(application)).toEqual(
+        expect.objectContaining({
+          reasonForShortNotice: 'other',
+          reasonForShortNoticeOther: 'test',
         }),
       )
     })
@@ -193,6 +216,20 @@ describe('getApplicationData', () => {
 
       expect(getApplicationUpdateData(application).isInapplicable).toEqual(true)
       expect(isInapplicable).toHaveBeenCalledWith(application)
+    })
+
+    it('returns the correct data for a reason for short notice application', () => {
+      mockOptionalQuestionResponse({})
+      when(reasonForShortNoticeDetails).calledWith(application).mockReturnValue({
+        reasonForShortNotice: 'other',
+        reasonForShortNoticeOther: 'test',
+      })
+      expect(getApplicationUpdateData(application)).toEqual(
+        expect.objectContaining({
+          reasonForShortNotice: 'other',
+          reasonForShortNoticeOther: 'test',
+        }),
+      )
     })
   })
 })

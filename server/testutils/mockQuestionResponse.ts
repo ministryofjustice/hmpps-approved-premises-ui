@@ -20,9 +20,13 @@ export type RequiredQuestionResponses = {
   applicantUserDetails?: UserDetails
   caseManagerUserDetails?: UserDetails
   caseManagerIsNotApplicant?: boolean
+  reason?: string
+  other?: string
 }
 
 export const mockQuestionResponse = ({
+  reason = 'other',
+  other = 'test',
   postcodeArea = 'ABC 123',
   type = 'standard',
   sentenceType = 'standardDeterminate',
@@ -67,6 +71,8 @@ export const mockQuestionResponse = ({
       }
 
       if (question === 'area') return apAreaId
+      if (question === 'reason') return reason
+      if (question === 'other') return other
     },
   )
   ;(applicantAndCaseManagerDetails as jest.MockedFn<typeof applicantAndCaseManagerDetails>).mockReturnValue({
