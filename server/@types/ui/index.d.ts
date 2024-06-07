@@ -22,11 +22,7 @@ import {
   Booking,
   Document,
   FlagsEnvelope,
-  LostBed,
-  LostBedCancellation,
   Mappa,
-  NewLostBed,
-  NewLostBedCancellation,
   OASysSection,
   Person,
   PersonAcctAlert,
@@ -40,7 +36,6 @@ import {
   RiskTier,
   RiskTierLevel,
   RoshRisks,
-  UpdateLostBed,
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
@@ -512,9 +507,3 @@ export type KeyDetailsArgs = {
 export type TaskSearchQualification = Exclude<UserQualification, 'lao'>
 
 export type BackwardsCompatibleApplyApType = ApType | 'standard'
-
-export type OutOfServiceBed = LostBed
-export type NewOutOfServiceBed = NewLostBed
-export type NewOutOfServiceBedCancellation = NewLostBedCancellation
-export type OutOfServiceBedCancellation = LostBedCancellation
-export type UpdateOutOfServiceBed = UpdateLostBed
