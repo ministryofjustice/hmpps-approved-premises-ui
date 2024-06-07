@@ -4,7 +4,7 @@ const adminPath = path('/admin')
 const placementRequestsPath = adminPath.path('placement-requests')
 const placementRequestPath = placementRequestsPath.path(':id')
 
-const userManagementPath = adminPath.path('user-mangement')
+const userManagementPath = adminPath.path('user-management')
 
 const bookingsPath = placementRequestPath.path('bookings')
 
