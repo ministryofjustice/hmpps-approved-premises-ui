@@ -181,7 +181,12 @@ context('OutOfServiceBeds', () => {
       cy.task('stubUpdateOutOfServiceBedErrors', {
         outOfServiceBed,
         premisesId,
-        params: ['endDate'],
+        params: [
+          {
+            propertyName: `$.outOfServiceTo`,
+            errorType: 'empty',
+          },
+        ],
       })
 
       // When I visit the out of service bed show page

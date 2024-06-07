@@ -33,7 +33,7 @@ export default {
       },
     }),
 
-  stubUpdateOutOfServiceBedErrors: ({ outOfServiceBed, premisesId }): SuperAgentRequest =>
+  stubUpdateOutOfServiceBedErrors: ({ outOfServiceBed, premisesId, params }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'PUT',
@@ -46,12 +46,7 @@ export default {
           type: 'https://example.net/validation-error',
           title: 'Invalid request parameters',
           code: 400,
-          'invalid-params': [
-            {
-              propertyName: `$.endDate`,
-              errorType: 'empty',
-            },
-          ],
+          'invalid-params': params,
         },
       },
     }),
