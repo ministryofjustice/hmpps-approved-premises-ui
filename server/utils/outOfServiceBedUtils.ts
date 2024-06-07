@@ -1,5 +1,5 @@
-import { Premises } from '@approved-premises/api'
-import { OutOfServiceBed, TableCell, UserDetails } from '@approved-premises/ui'
+import { Cas1OutOfServiceBed as OutOfServiceBed, Premises } from '@approved-premises/api'
+import { TableCell, UserDetails } from '@approved-premises/ui'
 
 import { isWithinInterval } from 'date-fns'
 import paths from '../paths/manage'
@@ -42,10 +42,10 @@ export const outOfServiceBedTableHeaders = (user: UserDetails) => {
 export const outOfServiceBedTableRows = (beds: Array<OutOfServiceBed>, premisesId: string, user: UserDetails) => {
   return beds.map(bed => {
     const rows = [
-      textValue(bed.bedName),
-      textValue(bed.roomName),
-      textValue(bed.startDate),
-      textValue(bed.endDate),
+      textValue(bed.bed.name),
+      textValue(bed.room.name),
+      textValue(bed.outOfServiceFrom),
+      textValue(bed.outOfServiceTo),
       textValue(bed.reason.name),
       referenceNumberCell(bed.referenceNumber),
     ]
@@ -66,8 +66,8 @@ export const actionCell = (bed: OutOfServiceBed, premisesId: Premises['id']): Ta
 export const outOfServiceBedCountForToday = (outOfServiceBeds: Array<OutOfServiceBed>): number => {
   return outOfServiceBeds.filter(outOfServiceBed =>
     isWithinInterval(Date.now(), {
-      start: DateFormats.isoToDateObj(outOfServiceBed.startDate),
-      end: DateFormats.isoToDateObj(outOfServiceBed.endDate),
+      start: DateFormats.isoToDateObj(outOfServiceBed.outOfServiceFrom),
+      end: DateFormats.isoToDateObj(outOfServiceBed.outOfServiceTo),
     }),
   ).length
 }
@@ -75,10 +75,10 @@ export const outOfServiceBedCountForToday = (outOfServiceBeds: Array<OutOfServic
 const bedLink = (bed: OutOfServiceBed, premisesId: Premises['id']): string =>
   linkTo(
     paths.v2Manage.outOfServiceBeds.show,
-    { id: bed.id, bedId: bed.bedId, premisesId },
+    { id: bed.id, bedId: bed.bed.id, premisesId },
     {
       text: 'Manage',
-      hiddenText: `Out of service bed ${bed.bedName}`,
+      hiddenText: `Out of service bed ${bed.bed.name}`,
       attributes: { 'data-cy-bedId': bed.id },
     },
   )

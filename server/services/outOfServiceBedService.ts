@@ -1,10 +1,10 @@
 import type {
-  NewOutOfServiceBed,
-  NewOutOfServiceBedCancellation,
-  OutOfServiceBed,
-  OutOfServiceBedCancellation,
-  UpdateOutOfServiceBed,
-} from '@approved-premises/ui'
+  NewCas1OutOfServiceBed as NewOutOfServiceBed,
+  NewCas1OutOfServiceBedCancellation as NewOutOfServiceBedCancellation,
+  Cas1OutOfServiceBed as OutOfServiceBed,
+  Cas1OutOfServiceBedCancellation as OutOfServiceBedCancellation,
+  UpdateCas1OutOfServiceBed as UpdateOutOfServiceBed,
+} from '@approved-premises/api'
 import type { OutOfServiceBedClient, RestClientBuilder } from '../data'
 import { Premises } from '../@types/shared'
 
