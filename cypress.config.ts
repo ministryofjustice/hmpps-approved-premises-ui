@@ -67,5 +67,7 @@ export default defineConfig({
     excludeSpecPattern: '**/!(*.cy).ts',
     specPattern: 'integration_tests/tests/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'integration_tests/support/index.ts',
+    viewportHeight: 800,
+    viewportWidth: 1020,
   },
 })
