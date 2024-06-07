@@ -1,3 +1,4 @@
+import DashboardPage from '../../pages/dashboard'
 import {
   bookingFactory,
   extendedPremisesSummaryFactory,
@@ -13,6 +14,7 @@ import {
 } from '../../pages/manage/outOfServiceBeds'
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
+import { OutOfServiceBedIndexPage } from '../../pages/v2Manage/outOfServiceBeds'
 
 context('OutOfServiceBeds', () => {
   beforeEach(() => {
@@ -126,7 +128,7 @@ context('OutOfServiceBeds', () => {
       // And there is a out of service bed in the database
       const outOfServiceBed = outOfServiceBedFactory.build()
       cy.task('stubOutOfServiceBed', { premisesId, outOfServiceBed })
-      cy.task('stubOutOfServiceBedsList', { premisesId, outOfServiceBeds: [outOfServiceBed] })
+      cy.task('stubOutOfServiceBedsListForAPremises', { premisesId, outOfServiceBeds: [outOfServiceBed] })
       cy.task('stubOutOfServiceBedUpdate', { premisesId, outOfServiceBed })
 
       // When I visit the out of service bed index page
@@ -175,7 +177,7 @@ context('OutOfServiceBeds', () => {
       // And there is a out of service bed in the database
       const outOfServiceBed = outOfServiceBedFactory.build()
       cy.task('stubOutOfServiceBed', { premisesId, outOfServiceBed })
-      cy.task('stubOutOfServiceBedsList', { premisesId, outOfServiceBeds: [outOfServiceBed] })
+      cy.task('stubOutOfServiceBedsListForAPremises', { premisesId, outOfServiceBeds: [outOfServiceBed] })
 
       // And I miss required fields
       cy.task('stubUpdateOutOfServiceBedErrors', {
@@ -231,5 +233,23 @@ context('OutOfServiceBeds', () => {
       const listPage = Page.verifyOnPage(OutOfServiceBedListPage)
       listPage.shouldShowBanner('Bed cancelled')
     })
+  })
+
+  it('allows me to view all out of service beds', () => {
+    const outOfServiceBeds = outOfServiceBedFactory.buildList(5)
+    cy.task('stubOutOfServiceBedsList', { outOfServiceBeds })
+
+    // Given I am on the dashboard
+    const dashboardPage = DashboardPage.visit()
+
+    // When I click the 'Out of service beds' tile
+    dashboardPage.shouldShowCard('outOfServiceBeds')
+    cy.get('a').contains('View out of service beds').click()
+
+    // Then I should be taken to the out of service beds index page
+    const page = Page.verifyOnPage(OutOfServiceBedIndexPage)
+
+    // And I should see a list of currently out of service beds
+    page.shouldShowOutOfServiceBeds(outOfServiceBeds)
   })
 })

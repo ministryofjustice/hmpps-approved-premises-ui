@@ -64,6 +64,19 @@ export default {
       },
     }),
 
+  stubOutOfServiceBedsList: ({ outOfServiceBeds }): SuperAgentRequest =>
+    stubFor({
+      request: {
+        method: 'GET',
+        url: paths.manage.outOfServiceBeds.index({}),
+      },
+      response: {
+        status: 200,
+        headers,
+        jsonBody: outOfServiceBeds,
+      },
+    }),
+
   stubOutOfServiceBed: ({ premisesId, outOfServiceBed }): SuperAgentRequest =>
     stubFor({
       request: {
