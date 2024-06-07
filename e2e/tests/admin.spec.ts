@@ -24,12 +24,12 @@ test('download reports', async ({ page }) => {
   // When I download the lost beds report
   const lostBedsDownload = await reportsPage.downloadLostBedsReports({ month, year })
   // Then the file should be downloaded with the correct suggested name
-  expect(lostBedsDownload.suggestedFilename()).toMatch(`lost-beds-${year}-${month}.xlsx`)
+  expect(lostBedsDownload.suggestedFilename()).toMatch(`lost-beds-${year}-${month}-[0-9_]*.xlsx`)
 
   // When I download the applications report
   const applicationsDownload = await reportsPage.downloadRawRequestsForPlacementsReports({ month, year })
   // Then the file should be downloaded with the correct suggested name
-  expect(applicationsDownload.suggestedFilename()).toMatch(`placement-applications-${year}-${month}.xlsx`)
+  expect(applicationsDownload.suggestedFilename()).toMatch(`placement-applications-${year}-${month}-[0-9_]*.xlsx`)
 })
 
 test('manage users', async ({ page }) => {

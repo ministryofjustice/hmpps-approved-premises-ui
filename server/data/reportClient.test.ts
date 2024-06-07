@@ -4,10 +4,10 @@ import { createMock } from '@golevelup/ts-jest'
 import ReportClient from './reportClient'
 import paths from '../paths/api'
 
-import describeClient from '../testutils/describeClient'
+import { describeCas1NamespaceClient } from '../testutils/describeClient'
 import { ReportType, reportInputLabels } from '../utils/reportUtils'
 
-describeClient('ReportClient', provider => {
+describeCas1NamespaceClient('ReportClient', provider => {
   let client: ReportClient
 
   const token = 'token-1'
@@ -42,11 +42,6 @@ describeClient('ReportClient', provider => {
         })
 
         await client.getReport(reportName, month, year, response)
-
-        expect(response.set).toHaveBeenCalledWith(
-          'Content-Disposition',
-          `attachment; filename="${reportName}-2023-12.xlsx"`,
-        )
       },
     )
   })
