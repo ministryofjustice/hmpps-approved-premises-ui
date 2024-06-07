@@ -74,6 +74,7 @@ context('Assess', () => {
   it('allows me to assess an application', function test() {
     const assessHelper = new AssessHelper(this.assessment, this.documents, this.user, this.clarificationNote)
     assessHelper.setupStubs()
+    this.assessment.application.apType = 'normal'
 
     // And I start an assessment
     assessHelper.startAssessment()

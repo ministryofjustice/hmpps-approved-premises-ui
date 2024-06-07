@@ -35,6 +35,7 @@ export const acceptanceData = (assessment: Assessment): AssessmentAcceptance => 
     requirements: placementRequestData(assessment),
     placementDates: placementDates(assessment),
     notes,
+    apType: assessment.application.apType,
   }
 }
 

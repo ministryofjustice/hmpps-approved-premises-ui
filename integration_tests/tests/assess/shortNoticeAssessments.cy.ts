@@ -83,6 +83,7 @@ describe('Short notice assessments', () => {
 
         const documents = documentFactory.buildList(1)
         assessment.application = overwriteApplicationDocuments(assessment.application, documents)
+        assessment.application.apType = 'normal'
         const user = userFactory.build()
 
         const assessHelper = new AssessHelper(assessment, documents, user, clarificationNote)
