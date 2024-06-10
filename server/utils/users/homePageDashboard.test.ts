@@ -75,6 +75,12 @@ describe('homePageDashboard', () => {
       expect(sectionsForUser(user)).toEqual([sections.apply, sections.userManagement])
     })
 
+    it('should return the out of service beds section for a user with a future manager role', () => {
+      const user = userDetailsFactory.build({ roles: ['future_manager'] })
+
+      expect(sectionsForUser(user)).toEqual(expect.arrayContaining([sections.outOfServiceBeds]))
+    })
+
     it('should not return duplicates where multiple roles contain the same sections', () => {
       const user = userDetailsFactory.build({ roles: ['role_admin', 'workflow_manager'] })
       const uniqueSections = new Set(sectionsForUser(user))
