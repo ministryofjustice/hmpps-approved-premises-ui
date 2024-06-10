@@ -176,7 +176,7 @@ export const bookingActions = (user: UserDetails, booking: Booking): Array<Ident
 }
 
 export const v2BookingActions = (booking: Booking): Array<IdentityBarMenu> => {
-  if (booking.status === 'awaiting-arrival')
+  if (booking.status === 'awaiting-arrival' && booking?.applicationId)
     return [
       {
         items: [

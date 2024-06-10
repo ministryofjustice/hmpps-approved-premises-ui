@@ -235,20 +235,30 @@ describe('bookingUtils', () => {
 
   describe('v2BookingActions', () => {
     describe('if the booking has a status of awaiting-arrival', () => {
-      it('returns the withdrawal link ', () => {
-        const booking = bookingFactory.arrivingSoon().build()
+      describe('if applicationId is defined', () => {
+        it('returns the withdrawal link ', () => {
+          const booking = bookingFactory.arrivingSoon().build({ applicationId: 'someID' })
 
-        expect(v2BookingActions(booking)).toEqual([
-          {
-            items: [
-              {
-                text: 'Withdraw placement',
-                classes: 'govuk-button--secondary',
-                href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
-              },
-            ],
-          },
-        ])
+          expect(v2BookingActions(booking)).toEqual([
+            {
+              items: [
+                {
+                  text: 'Withdraw placement',
+                  classes: 'govuk-button--secondary',
+                  href: applyPaths.applications.withdraw.new({ id: 'someID' }),
+                },
+              ],
+            },
+          ])
+        })
+      })
+
+      describe('if applicationId is undefined', () => {
+        it('returns an empty array ', () => {
+          const booking = bookingFactory.arrivingSoon().build({ applicationId: undefined })
+
+          expect(v2BookingActions(booking)).toEqual([])
+        })
       })
     })
   })
