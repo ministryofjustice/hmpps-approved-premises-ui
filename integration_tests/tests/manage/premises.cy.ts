@@ -17,12 +17,13 @@ import { fullPersonFactory } from '../../../server/testutils/factories/person'
 context('Premises', () => {
   beforeEach(() => {
     cy.task('reset')
-    // Given I am logged in
-    signIn(['workflow_manager'])
   })
 
   describe('list', () => {
     it('should list all premises', () => {
+      // Given I am logged in as legacy manager
+      signIn(['legacy_manager'])
+
       const premises = premisesSummaryFactory.buildList(5)
       cy.task('stubAllPremises', premises)
       cy.task('stubApAreaReferenceData')
@@ -36,6 +37,9 @@ context('Premises', () => {
   })
 
   it('should show a single premises', () => {
+    // Given I am logged in as legacy manager
+    signIn(['legacy_manager'])
+
     // Given there is a premises in the database
     const bookingsArrivingToday = premisesBookingFactory
       .arrivingToday()
@@ -93,6 +97,9 @@ context('Premises', () => {
   })
 
   it('should show the premises calendar', () => {
+    // Given I am logged in as manager
+    signIn(['manager'])
+
     // Given there is a premises in the database
     const premises = extendedPremisesSummaryFactory.build()
 
@@ -153,6 +160,9 @@ context('Premises', () => {
   })
 
   it('should show overbookings', () => {
+    // Given I am logged in as manager
+    signIn(['manager'])
+
     // Given there is a premises in the database
     const premises = extendedPremisesSummaryFactory.build()
     const bedDetail = bedDetailFactory.build()
