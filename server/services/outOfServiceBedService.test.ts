@@ -1,4 +1,5 @@
 import { Cas1OutOfServiceBed as OutOfServiceBed } from '@approved-premises/api'
+import { PaginatedResponse } from '@approved-premises/ui'
 import OutOfServiceBedService from './outOfServiceBedService'
 import OutOfServiceBedClient from '../data/outOfServiceBedClient'
 
@@ -6,6 +7,7 @@ import {
   newOutOfServiceBedFactory,
   outOfServiceBedCancellationFactory,
   outOfServiceBedFactory,
+  paginatedResponseFactory,
 } from '../testutils/factories'
 
 jest.mock('../data/outOfServiceBedClient.ts')
@@ -72,17 +74,19 @@ describe('OutOfServiceBedService', () => {
   })
 
   describe('getAllOutOfServiceBeds', () => {
-    it('on success returns all outOfServiceBeds', async () => {
-      const expectedOutOfServiceBeds: Array<OutOfServiceBed> = outOfServiceBedFactory.buildList(2)
-
+    it('calls the get method on the outOfServiceBedClient with a page', async () => {
       const token = 'SOME_TOKEN'
-      outOfServiceBedClient.get.mockResolvedValue(expectedOutOfServiceBeds)
 
-      const outOfServiceBeds = await service.getAllOutOfServiceBeds(token)
+      const response = paginatedResponseFactory.build({
+        data: outOfServiceBedFactory.buildList(1),
+      }) as PaginatedResponse<OutOfServiceBed>
+      outOfServiceBedClient.get.mockResolvedValue(response)
 
-      expect(outOfServiceBeds).toEqual(expectedOutOfServiceBeds)
+      const outOfServiceBeds = await service.getAllOutOfServiceBeds(token, 3)
+
+      expect(outOfServiceBeds).toEqual(response)
       expect(OutOfServiceBedClientFactory).toHaveBeenCalledWith(token)
-      expect(outOfServiceBedClient.get).toHaveBeenCalled()
+      expect(outOfServiceBedClient.get).toHaveBeenCalledWith(3)
     })
   })
 

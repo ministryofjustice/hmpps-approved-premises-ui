@@ -105,8 +105,10 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
   })
 
   describe('get', () => {
-    it('should get all outOfServiceBeds', async () => {
+    it('makes a request to the outOfServiceBeds endpoint with a page number', async () => {
       const outOfServiceBeds = outOfServiceBedFactory.buildList(2)
+
+      const pageNumber = 3
 
       provider.addInteraction({
         state: 'Server is healthy',
@@ -114,6 +116,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.manage.outOfServiceBeds.index({}),
+          query: { page: pageNumber.toString() },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -121,12 +124,23 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         willRespondWith: {
           status: 200,
           body: outOfServiceBeds,
+          headers: {
+            'X-Pagination-TotalPages': '10',
+            'X-Pagination-TotalResults': '100',
+            'X-Pagination-PageSize': '10',
+          },
         },
       })
 
-      const result = await outOfServiceBedClient.get()
+      const result = await outOfServiceBedClient.get(pageNumber)
 
-      expect(result).toEqual(outOfServiceBeds)
+      expect(result).toEqual({
+        data: outOfServiceBeds,
+        pageNumber: pageNumber.toString(),
+        totalPages: '10',
+        totalResults: '100',
+        pageSize: '10',
+      })
     })
   })
 

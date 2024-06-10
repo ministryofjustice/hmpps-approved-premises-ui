@@ -5,6 +5,7 @@ import type {
   Cas1OutOfServiceBedCancellation as OutOfServiceBedCancellation,
   UpdateCas1OutOfServiceBed as UpdateOutOfServiceBed,
 } from '@approved-premises/api'
+import { PaginatedResponse } from '@approved-premises/ui'
 import type { OutOfServiceBedClient, RestClientBuilder } from '../data'
 import { Premises } from '../@types/shared'
 
@@ -55,9 +56,9 @@ export default class OutOfServiceBedService {
     return outOfServiceBeds
   }
 
-  async getAllOutOfServiceBeds(token: string): Promise<Array<OutOfServiceBed>> {
+  async getAllOutOfServiceBeds(token: string, page = 1): Promise<PaginatedResponse<OutOfServiceBed>> {
     const outOfServiceBedClient = this.outOfServiceBedClientFactory(token)
-    const outOfServiceBeds = await outOfServiceBedClient.get()
+    const outOfServiceBeds = await outOfServiceBedClient.get(page)
 
     return outOfServiceBeds
   }
