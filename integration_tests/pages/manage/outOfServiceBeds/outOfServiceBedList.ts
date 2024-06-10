@@ -15,7 +15,7 @@ export class OutOfServiceBedListPage extends Page {
 
   shouldShowOutOfServiceBeds(outOfServiceBeds: Array<OutOfServiceBed>): void {
     outOfServiceBeds.forEach((item: OutOfServiceBed) => {
-      cy.get(`[data-cy-bedId="${item.id}"]`)
+      cy.get(`[data-cy-bedId="${item.bed.id}"]`)
         .parent()
         .parent()
         .within(() => {
@@ -32,11 +32,11 @@ export class OutOfServiceBedListPage extends Page {
   }
 
   clickManageBed(outOfServiceBed): void {
-    cy.get(`[data-cy-bedId="${outOfServiceBed.id}"]`)
+    cy.get(`[data-cy-bedId="${outOfServiceBed.bed.id}"]`)
       .parent()
       .parent()
       .within(() => {
-        cy.get('td').eq(6).contains('Manage').click()
+        cy.get('td').eq(6).contains('View').click()
       })
   }
 }
