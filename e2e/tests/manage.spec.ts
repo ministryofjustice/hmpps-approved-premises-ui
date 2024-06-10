@@ -17,6 +17,7 @@ import { ArrivalFormPage } from '../pages/manage/arrivalFormPage'
 import { ChangePlacementDatesPage } from '../pages/manage/changePlacementDates'
 import { MoveBedPage } from '../pages/manage/moveBedPage'
 import { ChangeDepartureDatePage } from '../pages/manage/changeDepartureDate'
+import { OutOfServiceBedsPage } from '../pages/manage/outOfServiceBedsPage'
 
 const premisesName = 'Test AP 10'
 const apArea = 'South West & South Central'
@@ -244,4 +245,15 @@ test('Move a booking', async ({ page, person }) => {
 
   // Then I should see the placement page with a banner confirming the bed move was logged
   await placementPage.showsBedMoveLoggedMessage()
+})
+
+test('View all out of service beds', async ({ page }) => {
+  // Given I am on the dashboard page
+  const dashboard = await visitDashboard(page)
+
+  // And I click the 'View out of service beds' tile
+  dashboard.clickOutOfServiceBeds()
+
+  // Then I am taken to the out of service beds page
+  await OutOfServiceBedsPage.initialize(page, 'View out of service beds')
 })
