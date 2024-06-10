@@ -3,6 +3,7 @@ import { outOfServiceBedFactory, userDetailsFactory } from '../testutils/factori
 import { DateFormats } from './dateUtils'
 import {
   actionCell,
+  allOutOfServiceBedsTableRows,
   outOfServiceBedCountForToday,
   outOfServiceBedTableHeaders,
   outOfServiceBedTableRows,
@@ -13,6 +14,28 @@ import { ApprovedPremisesUserRole } from '../@types/shared'
 
 describe('outOfServiceBedUtils', () => {
   const managerRoles: ReadonlyArray<ApprovedPremisesUserRole> = ['workflow_manager', 'future_manager'] as const
+
+  describe('allOutOfServiceBedsTableRows', () => {
+    const outOfServiceBed = outOfServiceBedFactory.build()
+
+    it('returns table rows', () => {
+      const expectedRows = [
+        [
+          { text: outOfServiceBed.premises.name },
+          { text: outOfServiceBed.room.name },
+          { text: outOfServiceBed.bed.name },
+          { text: DateFormats.isoDateToUIDate(outOfServiceBed.outOfServiceFrom, { format: 'short' }) },
+          { text: DateFormats.isoDateToUIDate(outOfServiceBed.outOfServiceTo, { format: 'short' }) },
+          { text: outOfServiceBed.reason.name },
+          { text: outOfServiceBed.referenceNumber || 'Not provided' },
+          { text: outOfServiceBed.daysLostCount.toString() },
+          actionCell(outOfServiceBed, outOfServiceBed.premises.id),
+        ],
+      ]
+      const rows = allOutOfServiceBedsTableRows([outOfServiceBed])
+      expect(rows).toEqual(expectedRows)
+    })
+  })
 
   describe('referenceNumberCell', () => {
     it('returns ref number', () => {
@@ -93,7 +116,7 @@ describe('outOfServiceBedUtils', () => {
           { text: outOfServiceBed.outOfServiceFrom },
           { text: outOfServiceBed.outOfServiceTo },
           { text: outOfServiceBed.reason.name },
-          { text: outOfServiceBed.referenceNumber },
+          { text: outOfServiceBed.referenceNumber || 'Not provided' },
           actionCell(outOfServiceBed, premisesId),
         ],
       ]
@@ -110,7 +133,7 @@ describe('outOfServiceBedUtils', () => {
           { text: outOfServiceBed.outOfServiceFrom },
           { text: outOfServiceBed.outOfServiceTo },
           { text: outOfServiceBed.reason.name },
-          { text: outOfServiceBed.referenceNumber },
+          { text: outOfServiceBed.referenceNumber || 'Not provided' },
         ],
       ]
       const rows = outOfServiceBedTableRows([outOfServiceBed], premisesId, user)

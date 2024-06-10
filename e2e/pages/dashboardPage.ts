@@ -32,4 +32,8 @@ export class DashboardPage extends BasePage {
   async clickUserMangement() {
     await this.page.getByRole('link', { name: 'Manage user roles' }).click()
   }
+
+  async clickOutOfServiceBeds() {
+    await this.page.getByRole('link', { name: 'View out of service beds' }).click()
+  }
 }

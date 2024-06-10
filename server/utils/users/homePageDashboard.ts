@@ -76,6 +76,13 @@ export const sections = {
     shortTitle: 'Timeline',
     href: peoplePaths.timeline.find({}),
   },
+  outOfServiceBeds: {
+    id: 'outOfServiceBeds',
+    title: 'View out of service beds',
+    description: 'View all currently out of service beds, across all Approved Premises.',
+    shortTitle: 'Out of service beds',
+    href: managePaths.v2Manage.outOfServiceBeds.index({}),
+  },
 }
 export const managerRoles: ReadonlyArray<UserRole> = [
   'workflow_manager',
@@ -116,6 +123,10 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
 
   if (hasRole(user, 'role_admin')) {
     items.push(sections.userManagement)
+  }
+
+  if (hasRole(user, 'future_manager')) {
+    items.push(sections.outOfServiceBeds)
   }
 
   return Array.from(new Set(items))

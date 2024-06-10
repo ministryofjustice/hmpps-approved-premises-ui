@@ -48,9 +48,16 @@ export default class OutOfServiceBedService {
     return updatedOutOfServiceBed
   }
 
-  async getOutOfServiceBeds(token: string, premisesId: Premises['id']): Promise<Array<OutOfServiceBed>> {
+  async getOutOfServiceBedsForAPremises(token: string, premisesId: Premises['id']): Promise<Array<OutOfServiceBed>> {
     const outOfServiceBedClient = this.outOfServiceBedClientFactory(token)
-    const outOfServiceBeds = await outOfServiceBedClient.get(premisesId)
+    const outOfServiceBeds = await outOfServiceBedClient.getAllByPremises(premisesId)
+
+    return outOfServiceBeds
+  }
+
+  async getAllOutOfServiceBeds(token: string): Promise<Array<OutOfServiceBed>> {
+    const outOfServiceBedClient = this.outOfServiceBedClientFactory(token)
+    const outOfServiceBeds = await outOfServiceBedClient.get()
 
     return outOfServiceBeds
   }

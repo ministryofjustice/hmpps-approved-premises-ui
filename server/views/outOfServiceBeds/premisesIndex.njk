@@ -11,45 +11,40 @@
 {% block beforeContent %}
   {{ govukBackLink({
 		text: "Back",
-		href: '/'
+		href: paths.v2Manage.premises.beds.index({ premisesId: premisesId })
 	}) }}
 {% endblock %}
-
-{% set tableHeadings = [
-  {
-    text: 'Premises'
-  }, {
-    text: 'Room'
-  }, {
-    text: 'Bed'
-  }, {
-    text: 'Out of service from'
-  }, {
-    text: 'Out of service until'
-  }, {
-    text: 'Reason'
-  }, {
-    text: 'Ref number'
-  }, {
-    text: 'Days lost'
-  }, {
-    text: 'Action'
-  }
-] %}
 
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full-width">
+      {% include "../_messages.njk" %}
+
       <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+      {{
+        govukSummaryList({
+          classes: 'govuk-summary-list--no-border',
+          rows: [            {
+              key: {
+                text: "Out of service"
+              },
+              value: {
+                text: OutOfServiceBedUtils.outOfServiceBedCountForToday(outOfServiceBeds)
+              }
+            }
+          ]
+        })
+      }}
 
       {% if outOfServiceBeds %}
 
         {{
           govukTable({
-            caption: "Out of service beds",
+            caption: "Out of service",
             captionClasses: "govuk-table__caption--m",
-            head: tableHeadings,
-            rows: OutOfServiceBedUtils.allOutOfServiceBedsTableRows(outOfServiceBeds)
+            head: OutOfServiceBedUtils.outOfServiceBedTableHeaders(user),
+            rows: OutOfServiceBedUtils.outOfServiceBedTableRows(outOfServiceBeds, premisesId, user)
           })
         }}
 

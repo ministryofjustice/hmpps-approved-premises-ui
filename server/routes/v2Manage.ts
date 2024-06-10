@@ -105,8 +105,8 @@ export default function routes(controllers: Controllers, router: Router, service
     ],
     allowedRoles: ['future_manager'],
   })
-  get(paths.v2Manage.outOfServiceBeds.index.pattern, outOfServiceBedsController.index(), {
-    auditEvent: 'LIST_OUT_OF_SERVICE_BEDS',
+  get(paths.v2Manage.outOfServiceBeds.premisesIndex.pattern, outOfServiceBedsController.premisesIndex(), {
+    auditEvent: 'LIST_OUT_OF_SERVICE_BEDS_FOR_A_PREMISES',
     allowedRoles: ['future_manager'],
   })
   get(paths.v2Manage.outOfServiceBeds.show.pattern, outOfServiceBedsController.show(), {
@@ -122,6 +122,10 @@ export default function routes(controllers: Controllers, router: Router, service
         auditEvent: 'UPDATE_OUT_OF_SERVICE_BED_FAILURE',
       },
     ],
+    allowedRoles: ['future_manager'],
+  })
+  get(paths.v2Manage.outOfServiceBeds.index.pattern, outOfServiceBedsController.index(), {
+    auditEvent: 'LIST_ALL_OUT_OF_SERVICE_BEDS',
     allowedRoles: ['future_manager'],
   })
 

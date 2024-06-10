@@ -90,7 +90,8 @@ const paths = {
 }
 
 // Manage V2 paths
-const v2PremisesPath = path('/manage/premises')
+const v2ManagePath = path('/manage')
+const v2PremisesPath = v2ManagePath.path('/premises')
 const v2SinglePremisesPath = v2PremisesPath.path(':premisesId')
 const v2BookingsPath = v2SinglePremisesPath.path('bookings')
 const v2BookingPath = v2BookingsPath.path(':bookingId')
@@ -98,6 +99,7 @@ const v2BedsPath = v2SinglePremisesPath.path('beds')
 const v2DateChangesPath = v2BookingPath.path('date-changes')
 const v2ExtensionsPath = v2BookingPath.path('extensions')
 const outOfServiceBedsPath = v2SinglePremisesPath.path('beds/:bedId/out-of-service-beds')
+const outOfServiceBedsIndexPath = v2ManagePath.path('/out-of-service-beds')
 
 const v2Manage = {
   premises: {
@@ -127,7 +129,8 @@ const v2Manage = {
   outOfServiceBeds: {
     new: outOfServiceBedsPath.path('new'),
     create: outOfServiceBedsPath,
-    index: singlePremisesPath.path('out-of-service-beds'),
+    premisesIndex: singlePremisesPath.path('out-of-service-beds'),
+    index: outOfServiceBedsIndexPath,
     show: outOfServiceBedsPath.path(':id'),
     update: singlePremisesPath.path('out-of-service-beds').path(':id'),
     cancel: singlePremisesPath.path('out-of-service-beds').path(':id').path('cancellations'),

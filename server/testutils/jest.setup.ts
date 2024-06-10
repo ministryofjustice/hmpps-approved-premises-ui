@@ -26,6 +26,7 @@ const apiSpecs = {
     command: (openAPIUrl: string) => `if [ ! -f ${apiSpecPaths.cas1Spec} ]; then
     curl -s "${openAPIUrl}" |
     sed -E 's@/premises@/cas1/premises@g' |
+    sed -E 's@ /out-of-service-beds@ /cas1/out-of-service-beds@g' |
     sed -E 's@/reports@/cas1/reports@g' > ${apiSpecPaths.cas1Spec}
   fi`,
     specPath: apiSpecPaths.cas1Spec,

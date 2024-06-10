@@ -34,9 +34,15 @@ export default class OutOfServiceBedClient {
     })) as OutOfServiceBed
   }
 
-  async get(premisesId: Premises['id']): Promise<Array<OutOfServiceBed>> {
+  async getAllByPremises(premisesId: Premises['id']): Promise<Array<OutOfServiceBed>> {
     return (await this.restClient.get({
-      path: paths.manage.premises.outOfServiceBeds.index({ premisesId }),
+      path: paths.manage.premises.outOfServiceBeds.premisesIndex({ premisesId }),
+    })) as Array<OutOfServiceBed>
+  }
+
+  async get(): Promise<Array<OutOfServiceBed>> {
+    return (await this.restClient.get({
+      path: paths.manage.outOfServiceBeds.index({}),
     })) as Array<OutOfServiceBed>
   }
 

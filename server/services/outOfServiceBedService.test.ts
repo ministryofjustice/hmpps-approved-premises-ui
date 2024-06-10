@@ -1,3 +1,4 @@
+import { Cas1OutOfServiceBed as OutOfServiceBed } from '@approved-premises/api'
 import OutOfServiceBedService from './outOfServiceBedService'
 import OutOfServiceBedClient from '../data/outOfServiceBedClient'
 
@@ -55,18 +56,33 @@ describe('OutOfServiceBedService', () => {
     })
   })
 
-  describe('getOutOfServiceBeds', () => {
+  describe('getOutOfServiceBedsForAPremises', () => {
     it('on success returns the outOfServiceBeds for a premises', async () => {
       const expectedOutOfServiceBeds = outOfServiceBedFactory.buildList(2)
 
       const token = 'SOME_TOKEN'
-      outOfServiceBedClient.get.mockResolvedValue(expectedOutOfServiceBeds)
+      outOfServiceBedClient.getAllByPremises.mockResolvedValue(expectedOutOfServiceBeds)
 
-      const outOfServiceBeds = await service.getOutOfServiceBeds(token, premisesId)
+      const outOfServiceBeds = await service.getOutOfServiceBedsForAPremises(token, premisesId)
 
       expect(outOfServiceBeds).toEqual(expectedOutOfServiceBeds)
       expect(OutOfServiceBedClientFactory).toHaveBeenCalledWith(token)
-      expect(outOfServiceBedClient.get).toHaveBeenCalledWith(premisesId)
+      expect(outOfServiceBedClient.getAllByPremises).toHaveBeenCalledWith(premisesId)
+    })
+  })
+
+  describe('getAllOutOfServiceBeds', () => {
+    it('on success returns all outOfServiceBeds', async () => {
+      const expectedOutOfServiceBeds: Array<OutOfServiceBed> = outOfServiceBedFactory.buildList(2)
+
+      const token = 'SOME_TOKEN'
+      outOfServiceBedClient.get.mockResolvedValue(expectedOutOfServiceBeds)
+
+      const outOfServiceBeds = await service.getAllOutOfServiceBeds(token)
+
+      expect(outOfServiceBeds).toEqual(expectedOutOfServiceBeds)
+      expect(OutOfServiceBedClientFactory).toHaveBeenCalledWith(token)
+      expect(outOfServiceBedClient.get).toHaveBeenCalled()
     })
   })
 
