@@ -80,7 +80,7 @@ describe('outOfServiceBedUtils', () => {
   })
 
   describe('outOfServiceBedTableRows', () => {
-    const outOfServiceBed = outOfServiceBedFactory.build()
+    const outOfServiceBed = outOfServiceBedFactory.build({ referenceNumber: '123' })
     const premisesId = 'premisesId'
 
     it.each(managerRoles)('returns table rows for a %s', role => {
