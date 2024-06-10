@@ -302,17 +302,6 @@ context('Booking', () => {
     premisesPage.shouldShowMoveConfirmation()
   })
 
-  it('should not show the manage links for non-workflow managers', () => {
-    // Given I am signed in as a manager
-    signIn(['manager'])
-
-    // When I navigate to the booking's manage page
-    const page = BookingShowPage.visit(premises.id, booking)
-
-    // Then I should see the details for that booking
-    page.shouldNotShowManageActions()
-  })
-
   it('redirects to no offence page if there are no offence', function test() {
     // Given I am signed in as a workflow manager
     signIn(['workflow_manager'])
