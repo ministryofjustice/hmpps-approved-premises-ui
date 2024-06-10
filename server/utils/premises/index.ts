@@ -9,8 +9,11 @@ import { BedOccupancyRangeUi, SelectGroup, SummaryList } from '@approved-premise
 import { DateFormats } from '../dateUtils'
 import { addOverbookingsToSchedule } from '../addOverbookingsToSchedule'
 import { htmlValue, textValue } from '../applications/helpers'
+import { premisesActions } from './premisesActions'
 import paths from '../../paths/manage'
 import { linkTo } from '../utils'
+
+export { premisesActions }
 
 export type NegativeDateRange = { start?: string; end?: string }
 

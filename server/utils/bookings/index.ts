@@ -17,6 +17,7 @@ import { linebreaksToParagraphs, linkTo } from '../utils'
 import { isFullPerson, laoName } from '../personUtils'
 import { convertObjectsToRadioItems } from '../formUtils'
 import { StatusTag, StatusTagOptions } from '../statusTag'
+import { bookingActions, v1BookingActions, v2BookingActions } from './bookingActions'
 
 const UPCOMING_WINDOW_IN_DAYS = 365 * 10
 
@@ -24,6 +25,8 @@ type ParsedConflictError = {
   conflictingEntityId: string
   conflictingEntityType: 'booking' | 'lost-bed'
 }
+
+export { bookingActions, v1BookingActions, v2BookingActions }
 
 export const bookingSummaryList = (booking: BookingSummary): SummaryListWithCard => {
   return {
