@@ -275,8 +275,8 @@ context('Booking', () => {
   })
 
   it('should allow me to move a booking', () => {
-    // Given I am signed in as a workflow manager
-    signIn(['workflow_manager'])
+    // Given I am signed in as a legacy manager
+    signIn(['legacy_manager'])
 
     const bedId = 'bedId'
     const bedSummaries = bedSummaryFactory.buildList(5)
