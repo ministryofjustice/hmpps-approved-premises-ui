@@ -51,11 +51,11 @@ export default {
       },
     }),
 
-  stubOutOfServiceBedsList: ({ premisesId, outOfServiceBeds }): SuperAgentRequest =>
+  stubOutOfServiceBedsListForAPremises: ({ premisesId, outOfServiceBeds }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        url: paths.manage.premises.outOfServiceBeds.index({ premisesId }),
+        url: paths.manage.premises.outOfServiceBeds.premisesIndex({ premisesId }),
       },
       response: {
         status: 200,
@@ -103,7 +103,7 @@ export default {
       },
     }),
   stubOutOfServiceBedErrors: ({ premisesId, params }): SuperAgentRequest =>
-    stubFor(errorStub(params, paths.manage.premises.outOfServiceBeds.index({ premisesId }))),
+    stubFor(errorStub(params, paths.manage.premises.outOfServiceBeds.premisesIndex({ premisesId }))),
 
   verifyOutOfServiceBedCreate: async ({ premisesId }) =>
     (

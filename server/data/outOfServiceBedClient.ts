@@ -36,7 +36,7 @@ export default class OutOfServiceBedClient {
 
   async get(premisesId: Premises['id']): Promise<Array<OutOfServiceBed>> {
     return (await this.restClient.get({
-      path: paths.manage.premises.outOfServiceBeds.index({ premisesId }),
+      path: paths.manage.premises.outOfServiceBeds.premisesIndex({ premisesId }),
     })) as Array<OutOfServiceBed>
   }
 

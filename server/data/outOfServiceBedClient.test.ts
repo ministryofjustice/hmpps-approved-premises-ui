@@ -78,7 +78,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
     })
   })
 
-  describe('get', () => {
+  describe('getAllByPremises', () => {
     it('should get all outOfServiceBeds for a premises', async () => {
       const outOfServiceBeds = outOfServiceBedFactory.buildList(2)
 
@@ -87,7 +87,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         uponReceiving: 'A request to get lost beds',
         withRequest: {
           method: 'GET',
-          path: paths.manage.premises.outOfServiceBeds.index({ premisesId }),
+          path: paths.manage.premises.outOfServiceBeds.premisesIndex({ premisesId }),
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -98,7 +98,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         },
       })
 
-      const result = await outOfServiceBedClient.get('premisesId')
+      const result = await outOfServiceBedClient.getAllByPremises('premisesId')
 
       expect(result).toEqual(outOfServiceBeds)
     })

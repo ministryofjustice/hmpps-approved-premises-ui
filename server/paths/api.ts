@@ -99,7 +99,7 @@ export default {
     premises: {
       outOfServiceBeds: {
         create: outOfServiceBedsPath,
-        index: outOfServiceBedsPath,
+        premisesIndex: outOfServiceBedsPath,
         update: outOfServiceBedsPath.path(':id'),
         show: outOfServiceBedsPath.path(':id'),
         cancel: outOfServiceBedsPath.path(':id/cancellations'),

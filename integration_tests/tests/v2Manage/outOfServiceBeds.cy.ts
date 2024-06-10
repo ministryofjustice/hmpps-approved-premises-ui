@@ -207,7 +207,7 @@ context('OutOfServiceBeds', () => {
       const outOfServiceBed = outOfServiceBedFactory.build()
       const outOfServiceBedCancellation = outOfServiceBedCancellationFactory.build()
       cy.task('stubOutOfServiceBed', { premisesId, outOfServiceBed })
-      cy.task('stubOutOfServiceBedsList', { premisesId, outOfServiceBeds: [outOfServiceBed] })
+      cy.task('stubOutOfServiceBedsListForAPremises', { premisesId, outOfServiceBeds: [outOfServiceBed] })
       cy.task('stubCancelOutOfServiceBed', {
         premisesId,
         outOfServiceBedId: outOfServiceBed.id,

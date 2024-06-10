@@ -175,19 +175,19 @@ describe('OutOfServiceBedsController', () => {
     })
   })
 
-  describe('index', () => {
-    it('shows a list of outOfService beds', async () => {
-      outOfServiceBedService.getOutOfServiceBeds.mockResolvedValue([outOfServiceBed])
-      const requestHandler = outOfServiceBedController.index()
+  describe('premisesIndex', () => {
+    it('shows a list of outOfService beds for a premises', async () => {
+      outOfServiceBedService.getOutOfServiceBedsForAPremises.mockResolvedValue([outOfServiceBed])
+      const requestHandler = outOfServiceBedController.premisesIndex()
 
       await requestHandler({ ...request, params: { premisesId } }, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('outOfServiceBeds/index', {
+      expect(response.render).toHaveBeenCalledWith('outOfServiceBeds/premisesIndex', {
         outOfServiceBeds: [outOfServiceBed],
         pageHeading: 'Manage out of service beds',
         premisesId,
       })
-      expect(outOfServiceBedService.getOutOfServiceBeds).toHaveBeenCalledWith(token, premisesId)
+      expect(outOfServiceBedService.getOutOfServiceBedsForAPremises).toHaveBeenCalledWith(token, premisesId)
     })
   })
 
@@ -223,7 +223,7 @@ describe('OutOfServiceBedsController', () => {
       )
       expect(request.flash).toHaveBeenCalledWith('success', 'Bed updated')
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.v2Manage.outOfServiceBeds.index({ premisesId: request.params.premisesId }),
+        paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: request.params.premisesId }),
       )
     })
 
@@ -275,7 +275,7 @@ describe('OutOfServiceBedsController', () => {
         )
         expect(request.flash).toHaveBeenCalledWith('success', 'Bed cancelled')
         expect(response.redirect).toHaveBeenCalledWith(
-          paths.v2Manage.outOfServiceBeds.index({ premisesId: request.params.premisesId }),
+          paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: request.params.premisesId }),
         )
       })
     })
