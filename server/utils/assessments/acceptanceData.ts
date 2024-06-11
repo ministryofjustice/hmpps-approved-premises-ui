@@ -35,7 +35,7 @@ export const acceptanceData = (assessment: Assessment): AssessmentAcceptance => 
     requirements: placementRequestData(assessment),
     placementDates: placementDates(assessment),
     notes,
-    apType: assessment.application.apType,
+    apType: apTypeFromAssessment(assessment),
   }
 }
 
@@ -54,6 +54,11 @@ export const placementDates = (assessment: Assessment): PlacementDates | null =>
     expectedArrival: arrivalDate,
     duration: Number(placementDuration),
   }
+}
+
+export const apTypeFromAssessment = (assessment: Assessment): ApType => {
+  const assessApType = retrieveQuestionResponseFromFormArtifact(assessment, MatchingInformation, 'apType')
+  return apType(assessApType)
 }
 
 export const placementRequestData = (assessment: Assessment): PlacementRequirements => {

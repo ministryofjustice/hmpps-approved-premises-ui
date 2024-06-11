@@ -2,7 +2,13 @@ import { createMock } from '@golevelup/ts-jest'
 import { ApType } from '@approved-premises/api'
 import { mockOptionalQuestionResponse, mockQuestionResponse } from '../../testutils/mockQuestionResponse'
 import { MatchingInformationBody } from '../../form-pages/assess/matchingInformation/matchingInformationTask/matchingInformation'
-import { acceptanceData, criteriaFromMatchingInformation, placementDates, placementRequestData } from './acceptanceData'
+import {
+  acceptanceData,
+  apTypeFromAssessment,
+  criteriaFromMatchingInformation,
+  placementDates,
+  placementRequestData,
+} from './acceptanceData'
 import { assessmentFactory } from '../../testutils/factories'
 import { pageDataFromApplicationOrAssessment } from '../../form-pages/utils'
 import { arrivalDateFromApplication } from '../applications/arrivalDateFromApplication'
@@ -34,7 +40,7 @@ describe('acceptanceData', () => {
         requirements: placementRequestData(assessment),
         placementDates: placementDates(assessment),
         notes: 'Some notes',
-        apType: assessment.application.apType,
+        apType: apTypeFromAssessment(assessment),
       })
       expect(getResponses).toHaveBeenCalledWith(assessment)
     })
