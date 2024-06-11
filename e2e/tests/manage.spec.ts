@@ -120,8 +120,8 @@ test('Mark a booking as cancelled', async ({ page, user }) => {
 })
 
 test('Change placement dates', async ({ page, person, user }) => {
-  // Given I have the 'legacy_manager' role
-  await setRoles(page, user.name, ['legacy_manager'])
+  // Given I have the 'Legacy manager' role
+  await setRoles(page, user.name, ['Legacy manager'])
 
   // And there is a placement for today
   await manuallyBookPlacement({ page, person })
@@ -145,8 +145,8 @@ test('Change placement dates', async ({ page, person, user }) => {
 })
 
 test('Mark a bed as lost', async ({ page, user }) => {
-  // Given I have the 'legacy_manager' role
-  await setRoles(page, user.name, ['legacy_manager'])
+  // Given I have the 'Legacy manager' role
+  await setRoles(page, user.name, ['Legacy manager'])
   // And I am on the list of premises page
   const dashboard = await visitDashboard(page)
   await dashboard.clickManage()
@@ -177,8 +177,8 @@ test('Mark a bed as lost', async ({ page, user }) => {
 })
 
 test('Mark a booking as arrived and extend it', async ({ page, person, user }) => {
-  // Given I have the 'legacy_manager' role
-  await setRoles(page, user.name, ['legacy_manager'])
+  // Given I have the 'Legacy manager' role
+  await setRoles(page, user.name, ['Legacy manager'])
   // And there is a placement for today
   // And I am on the premises's page
   await manuallyBookPlacement({ page, person })
@@ -210,8 +210,8 @@ test('Mark a booking as arrived and extend it', async ({ page, person, user }) =
 })
 
 test('Mark a booking as not arrived', async ({ page, person, user }) => {
-  // Given I have the 'legacy_manager' role
-  await setRoles(page, user.name, ['legacy_manager'])
+  // Given I have the 'Legacy manager' role
+  await setRoles(page, user.name, ['Legacy manager'])
   // And there is a placement for today
   // And I am on the premises's page
   await manuallyBookPlacement({ page, person })
@@ -236,8 +236,8 @@ test('Mark a booking as not arrived', async ({ page, person, user }) => {
 })
 
 test('Move a booking', async ({ page, person, user }) => {
-  // Given I have the 'legacy_manager' role
-  await setRoles(page, user.name, ['legacy_manager'])
+  // Given I have the 'Legacy manager' role
+  await setRoles(page, user.name, ['Legacy manager'])
   // And there is a placement for today
   // And I am on the premises's page
   await manuallyBookPlacement({ page, person })
@@ -262,8 +262,8 @@ test('Move a booking', async ({ page, person, user }) => {
 })
 
 test('View all out of service beds', async ({ page, user }) => {
-  // Given I have the 'future_manager' role
-  await setRoles(page, user.name, ['future_manager'])
+  // Given I have the 'Future manager' role
+  await setRoles(page, user.name, ['Future manager'])
   // And I am on the dashboard page
   const dashboard = await visitDashboard(page)
 
