@@ -60,6 +60,11 @@ export class EditUser extends BasePage {
   async uncheckSelectedQualifications() {
     await this.uncheckAllCheckboxesInGroup('Select any additional application types')
   }
+
+  async uncheckSelectedRoles() {
+    await this.uncheckAllCheckboxesInGroup('Select role access')
+  }
+
   async assertCheckboxesAreSelected(labels: ReadonlyArray<Role>) {
     labels.forEach(async label => {
       expect(await this.page.getByLabel(label).isChecked()).toBeTruthy()

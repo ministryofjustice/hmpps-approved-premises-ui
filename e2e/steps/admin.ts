@@ -18,6 +18,8 @@ export const setRoles = async (page: Page, username: TestOptions['user']['name']
 
   await usersPage.uncheckSelectedQualifications()
 
+  await usersPage.uncheckSelectedRoles()
+
   await usersPage.checkCheckBoxes(roles)
 
   await usersPage.clickSave()
