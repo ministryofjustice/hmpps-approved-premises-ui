@@ -3,6 +3,8 @@ import { DeepMocked, createMock } from '@golevelup/ts-jest'
 import { when } from 'jest-when'
 
 import type { ErrorsAndUserInput } from '@approved-premises/ui'
+import { PaginatedResponse } from '@approved-premises/ui'
+import { Cas1OutOfServiceBed as OutOfServiceBed } from '@approved-premises/api'
 import { SanitisedError } from '../../sanitisedError'
 import OutOfServiceBedService from '../../services/outOfServiceBedService'
 import OutOfServiceBedsController from './outOfServiceBedsController'
@@ -13,7 +15,11 @@ import {
 } from '../../utils/validation'
 
 import paths from '../../paths/manage'
-import { outOfServiceBedCancellationFactory, outOfServiceBedFactory } from '../../testutils/factories'
+import {
+  outOfServiceBedCancellationFactory,
+  outOfServiceBedFactory,
+  paginatedResponseFactory,
+} from '../../testutils/factories'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/bookings')
@@ -192,17 +198,24 @@ describe('OutOfServiceBedsController', () => {
   })
 
   describe('index', () => {
-    it('shows a list of all outOfService beds', async () => {
-      outOfServiceBedService.getAllOutOfServiceBeds.mockResolvedValue([outOfServiceBed])
+    it('requests a list of outOfService beds with a page number, and renders the template', async () => {
+      const paginatedResponse = paginatedResponseFactory.build({
+        data: outOfServiceBedFactory.buildList(2),
+      }) as PaginatedResponse<OutOfServiceBed>
+      outOfServiceBedService.getAllOutOfServiceBeds.mockResolvedValue(paginatedResponse)
+
       const requestHandler = outOfServiceBedController.index()
 
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith('outOfServiceBeds/index', {
-        outOfServiceBeds: [outOfServiceBed],
+        outOfServiceBeds: paginatedResponse.data,
         pageHeading: 'View out of service beds',
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
+        hrefPrefix: '/manage/out-of-service-beds?',
       })
-      expect(outOfServiceBedService.getAllOutOfServiceBeds).toHaveBeenCalledWith(token)
+      expect(outOfServiceBedService.getAllOutOfServiceBeds).toHaveBeenCalledWith(token, undefined)
     })
   })
 

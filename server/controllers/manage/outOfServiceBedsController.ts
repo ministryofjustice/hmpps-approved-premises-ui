@@ -89,11 +89,16 @@ export default class OutOfServiceBedsController {
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const outOfServiceBeds = await this.outOfServiceBedService.getAllOutOfServiceBeds(req.user.token)
+      const pageNumber = req.query.page ? Number(req.query.page) : undefined
+
+      const outOfServiceBeds = await this.outOfServiceBedService.getAllOutOfServiceBeds(req.user.token, pageNumber)
 
       return res.render('outOfServiceBeds/index', {
         pageHeading: 'View out of service beds',
-        outOfServiceBeds,
+        outOfServiceBeds: outOfServiceBeds.data,
+        pageNumber: Number(outOfServiceBeds.pageNumber),
+        totalPages: Number(outOfServiceBeds.totalPages),
+        hrefPrefix: `${paths.v2Manage.outOfServiceBeds.index({})}?`,
       })
     }
   }
