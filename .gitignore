@@ -138,3 +138,5 @@ e2e/playwright/*
 e2e/playwright/.auth
 e2e/.DS_Store
 test-results/
+playwright/.auth
+playwright-report
