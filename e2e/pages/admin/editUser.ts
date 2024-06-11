@@ -44,9 +44,9 @@ export class EditUser extends BasePage {
     this.page.getByRole('definition', { name: username })
   }
 
-  async uncheckSelectedQualifications() {
-    const qualifactionsSection = this.page.getByRole('group', { name: 'Select any additional' })
-    const selectedCheckboxes = await qualifactionsSection.getByRole('checkbox', { checked: true }).all()
+  async uncheckAllCheckboxesInGroup(label: 'Select any additional application types' | 'Select role access') {
+    const section = this.page.getByRole('group', { name: label })
+    const selectedCheckboxes = await section.getByRole('checkbox', { checked: true }).all()
 
     const promises = [] as Array<Promise<void>>
 
@@ -57,6 +57,9 @@ export class EditUser extends BasePage {
     await Promise.all(promises)
   }
 
+  async uncheckSelectedQualifications() {
+    await this.uncheckAllCheckboxesInGroup('Select any additional application types')
+  }
   async assertCheckboxesAreSelected(labels: ReadonlyArray<Role>) {
     labels.forEach(async label => {
       expect(await this.page.getByLabel(label).isChecked()).toBeTruthy()
