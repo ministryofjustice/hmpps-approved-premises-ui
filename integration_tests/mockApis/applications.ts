@@ -11,9 +11,8 @@ import type {
   RequestForPlacement,
   SortDirection,
   TimelineEvent,
-  Withdrawable,
 } from '@approved-premises/api'
-
+import { Withdrawables } from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from './setup'
 import paths from '../../server/paths/api'
 import { ApplicationDashboardSearchOptions } from '../../server/@types/ui'
@@ -282,17 +281,18 @@ export default {
         jsonBody: args.note,
       },
     }),
-  stubWithdrawables: ({
+
+  stubWithdrawablesWithNotes: ({
     applicationId,
     withdrawables,
   }: {
     applicationId: string
-    withdrawables: Array<Withdrawable>
+    withdrawables: Withdrawables
   }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        url: paths.applications.withdrawables({ id: applicationId }),
+        url: paths.applications.withdrawablesWithNotes({ id: applicationId }),
       },
       response: {
         status: 200,

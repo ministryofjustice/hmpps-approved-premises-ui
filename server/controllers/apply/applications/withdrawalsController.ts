@@ -23,7 +23,7 @@ export default class WithdrawalsController {
         | SelectedWithdrawableType
         | undefined
 
-      const withdrawables = await this.applicationService.getWithdrawables(req.user.token, id)
+      const withdrawables = await this.applicationService.getWithdrawablesWithNotes(req.user.token, id)
 
       if (selectedWithdrawableType === 'application') {
         return res.render('applications/withdrawals/new', {
@@ -39,8 +39,9 @@ export default class WithdrawalsController {
         return res.render('applications/withdrawables/new', {
           pageHeading: 'What do you want to withdraw?',
           id,
-          withdrawables,
+          withdrawables: withdrawables.withdrawables,
           referer: req.headers.referer,
+          notes: withdrawables.notes,
         })
       }
 

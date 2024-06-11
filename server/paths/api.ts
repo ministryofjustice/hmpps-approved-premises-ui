@@ -154,6 +154,7 @@ export default {
     requestsForPlacement: applyPaths.applications.show.path('requests-for-placement'),
     addNote: applyPaths.applications.show.path('notes'),
     withdrawables: applyPaths.applications.show.path('withdrawables'),
+    withdrawablesWithNotes: applyPaths.applications.show.path('withdrawablesWithNotes'),
     appeals: {
       show: appealsPath.path(':appealId'),
       create: appealsPath,

@@ -6,6 +6,7 @@ import WithdrawApplicationPage from '../../pages/apply/withdrawApplicationPage'
 import { setup } from './setup'
 import { applicationSummaryFactory, withdrawableFactory } from '../../../server/testutils/factories'
 import { WithdrawalReason } from '../../../server/@types/shared'
+import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
 
 context('Withdraw Application', () => {
   beforeEach(setup)
@@ -23,7 +24,9 @@ context('Withdraw Application', () => {
     cy.task('stubApplicationGet', { application: this.application })
     cy.task('stubApplications', [inProgressApplication])
     cy.task('stubApplicationWithdrawn', { applicationId: inProgressApplication.id })
-    cy.task('stubWithdrawables', { applicationId: inProgressApplication.id, withdrawables: [withdrawable] })
+    const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
+
+    cy.task('stubWithdrawablesWithNotes', { applicationId: inProgressApplication.id, withdrawables })
 
     const withdrawalReason: WithdrawalReason = 'other'
     const reasonDescription = 'Some reason'

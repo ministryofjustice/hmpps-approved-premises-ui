@@ -184,10 +184,10 @@ export default class ApplicationService {
     return addedNote
   }
 
-  async getWithdrawables(token: Request['user']['token'], applicationId: Application['id']) {
+  async getWithdrawablesWithNotes(token: Request['user']['token'], applicationId: Application['id']) {
     const client = this.applicationClientFactory(token)
 
-    const withdrawables = await client.withdrawables(applicationId)
+    const withdrawables = await client.withdrawablesWithNotes(applicationId)
 
     return withdrawables
   }
