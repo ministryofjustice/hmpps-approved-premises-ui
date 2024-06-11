@@ -92,7 +92,9 @@ const manuallyBookPlacement = async ({
   await confirmationPage.shouldShowPlacementSuccessMessage()
 }
 
-test('Manually book a bed', async ({ page, person }) => {
+test('Manually book a bed', async ({ page, person, user }) => {
+  await setRoles(page, user.name, ['Workflow manager'])
+
   await manuallyBookPlacement({ page, person, filterPremisesPage: true })
 })
 

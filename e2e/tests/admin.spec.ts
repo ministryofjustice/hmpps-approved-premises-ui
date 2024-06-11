@@ -7,8 +7,10 @@ import { AddUser } from '../pages/admin/addUser'
 import { EditUser, roles } from '../pages/admin/editUser'
 import { NewUserConfirmationPage } from '../pages/admin/newUserConfirmationPage'
 import { DeleteUserConfirmationPage } from '../pages/admin/deleteUserConfirmationPage'
+import { setRoles } from '../steps/admin'
 
-test('download reports', async ({ page }) => {
+test('download reports', async ({ page, user }) => {
+  setRoles(page, user.name, ['Report viewer'])
   // Given I visit the dashboard
   const dashboard = await visitDashboard(page)
 

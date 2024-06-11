@@ -11,7 +11,7 @@ test('Apply, assess, match and book an application for an Approved Premises with
   person,
   oasysSections,
 }) => {
-  await setRoles(page, user.name, [])
+  await setRoles(page, user.name, ['Assessor', 'Workflow manager'])
 
   const id = await createApplication({ page, person, oasysSections, applicationType: 'standard' }, false)
   await assessApplication({ page, user, person }, id)

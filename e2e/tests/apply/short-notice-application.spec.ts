@@ -11,7 +11,7 @@ test('Apply, assess, match and book an short notice application for an Approved 
   oasysSections,
   emergencyApplicationUser,
 }) => {
-  await setRoles(page, user.name, ['Emergency APs'])
+  await setRoles(page, user.name, ['Emergency APs', 'Assessor'])
   const id = await createApplication({ page, person, oasysSections, applicationType: 'shortNotice' }, true, true)
   await assessApplication({ page, user, person }, id, {
     applicationType: 'shortNotice',
