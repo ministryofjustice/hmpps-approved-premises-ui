@@ -97,8 +97,8 @@ test('Manually book a bed', async ({ page, person }) => {
 })
 
 test('Mark a booking as cancelled', async ({ page, user }) => {
-  // Given I have the 'legacy_manager' & 'workflow_manager' role
-  await setRoles(page, user.name, ['legacy_manager', 'workflow_manager'])
+  // Given I have the 'workflow_manager' role
+  await setRoles(page, user.name, ['Workflow manager', 'Legacy manager', 'Manage an Approved Premises (AP)'])
   // And there is a placement for today
   // await manuallyBookPlacement(page)
   await navigateToTodaysBooking(page)
