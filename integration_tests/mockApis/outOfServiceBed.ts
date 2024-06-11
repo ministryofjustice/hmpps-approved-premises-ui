@@ -64,15 +64,20 @@ export default {
       },
     }),
 
-  stubOutOfServiceBedsList: ({ outOfServiceBeds }): SuperAgentRequest =>
+  stubOutOfServiceBedsList: ({ outOfServiceBeds, page = 1 }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        url: paths.manage.outOfServiceBeds.index({}),
+        url: `${paths.manage.outOfServiceBeds.index.pattern}?page=${page}`,
       },
       response: {
         status: 200,
-        headers,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          'X-Pagination-TotalPages': '10',
+          'X-Pagination-TotalResults': '100',
+          'X-Pagination-PageSize': '10',
+        },
         jsonBody: outOfServiceBeds,
       },
     }),
@@ -139,6 +144,18 @@ export default {
       await getMatchingRequests({
         method: 'POST',
         url: paths.manage.premises.outOfServiceBeds.cancel({ premisesId, id: outOfServiceBedId }),
+      })
+    ).body.requests,
+  verifyOutOfServiceBedsDashboard: async ({ page = '1' }: { page: string }) =>
+    (
+      await getMatchingRequests({
+        method: 'GET',
+        urlPathPattern: paths.manage.outOfServiceBeds.index({}),
+        queryParameters: {
+          page: {
+            equalTo: page,
+          },
+        },
       })
     ).body.requests,
 }
