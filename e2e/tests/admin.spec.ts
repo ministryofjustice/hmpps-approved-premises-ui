@@ -32,9 +32,7 @@ test('download reports', async ({ page }) => {
   expect(applicationsDownload.suggestedFilename()).toMatch(/placement-applications-2023-01-[0-9_]*.xlsx/)
 })
 
-test('manage users', async ({ page }) => {
-  const userToDeleteAndAdd = 'JOSEPHHOLLINSHEAD'
-
+test('manage users', async ({ page, userToAddAndDelete }) => {
   // Given I visit the dashboard
   const dashboard = await visitDashboard(page)
 
@@ -51,7 +49,7 @@ test('manage users', async ({ page }) => {
   const addUserPage = await AddUser.initialize(page)
 
   // When I search for a user
-  await addUserPage.search(userToDeleteAndAdd)
+  await addUserPage.search(userToAddAndDelete.name)
 
   // Then I should be taken to the confirmation page
   const newUserConfirmationPage = await NewUserConfirmationPage.initialize(page)

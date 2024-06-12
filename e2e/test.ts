@@ -18,6 +18,7 @@ export const test = base.extend<TestOptions>({
     },
     { option: true },
   ],
+  userToAddAndDelete: [{ name: process.env.E2E_DELIUS_USERNAME_TO_ADD_AND_DELETE as string }, { option: true }],
   oasysSections: [['3. Accommodation', '13. Health', '4. Education, training and employment'], { option: true }],
   emergencyApplicationUser: ['AP_USER TEST_1', { option: true }],
 })

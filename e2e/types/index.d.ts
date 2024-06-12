@@ -14,6 +14,9 @@ declare module '@approved-premises/e2e' {
       password: string
       email?: string
     }
+    userToAddAndDelete: {
+      name: string
+    }
     indexOffenceRequired: boolean
     oasysSections: Array<string>
     emergencyApplicationUser?: string
