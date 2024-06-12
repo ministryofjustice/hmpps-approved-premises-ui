@@ -116,7 +116,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.manage.outOfServiceBeds.index({}),
-          query: { page: pageNumber.toString() },
+          query: { page: pageNumber.toString(), sortBy: 'roomName', sortDirection: 'asc' },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -132,7 +132,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         },
       })
 
-      const result = await outOfServiceBedClient.get(pageNumber)
+      const result = await outOfServiceBedClient.get('roomName', 'asc', pageNumber)
 
       expect(result).toEqual({
         data: outOfServiceBeds,

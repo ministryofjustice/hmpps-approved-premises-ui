@@ -1,19 +1,19 @@
 /* istanbul ignore file */
 
-import superagent from 'superagent'
 import {
   NewCas1OutOfServiceBed as NewOutOfServiceBed,
   NewCas1OutOfServiceBedCancellation as NewOutOfServiceBedCancellation,
   Cas1OutOfServiceBed as OutOfServiceBed,
   Cas1OutOfServiceBedCancellation as OutOfServiceBedCancellation,
+  Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
   Premises,
+  SortDirection,
   UpdateCas1OutOfServiceBed as UpdateOutOfServiceBed,
 } from '@approved-premises/api'
 import { PaginatedResponse } from '@approved-premises/ui'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
-import { createQueryString } from '../utils/utils'
 
 export default class OutOfServiceBedClient {
   restClient: RestClient
@@ -43,20 +43,16 @@ export default class OutOfServiceBedClient {
     })) as Array<OutOfServiceBed>
   }
 
-  async get(page = 1): Promise<PaginatedResponse<OutOfServiceBed>> {
-    const response = (await this.restClient.get({
-      path: paths.manage.outOfServiceBeds.index({}),
-      query: createQueryString({ page }),
-      raw: true,
-    })) as superagent.Response
-
-    return {
-      data: response.body,
-      pageNumber: page.toString(),
-      totalPages: response.headers['x-pagination-totalpages'],
-      totalResults: response.headers['x-pagination-totalresults'],
-      pageSize: response.headers['x-pagination-pagesize'],
-    }
+  async get(
+    sortBy: OutOfServiceBedSortField,
+    sortDirection: SortDirection,
+    page = 1,
+  ): Promise<PaginatedResponse<OutOfServiceBed>> {
+    return this.restClient.getPaginatedResponse<OutOfServiceBed>({
+      path: paths.manage.outOfServiceBeds.index.pattern,
+      page: page.toString(),
+      query: { sortBy, sortDirection },
+    })
   }
 
   async update(
