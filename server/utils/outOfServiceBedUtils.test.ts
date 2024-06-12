@@ -3,6 +3,7 @@ import { outOfServiceBedFactory, userDetailsFactory } from '../testutils/factori
 import { DateFormats } from './dateUtils'
 import {
   actionCell,
+  allOutOfServiceBedsTableHeaders,
   allOutOfServiceBedsTableRows,
   outOfServiceBedCountForToday,
   outOfServiceBedTableHeaders,
@@ -10,10 +11,35 @@ import {
   referenceNumberCell,
 } from './outOfServiceBedUtils'
 import { getRandomInt } from './utils'
-import { ApprovedPremisesUserRole } from '../@types/shared'
+import { ApprovedPremisesUserRole, Cas1OutOfServiceBedSortField as OutOfServiceBedSortField } from '../@types/shared'
+import { sortHeader } from './sortHeader'
 
 describe('outOfServiceBedUtils', () => {
   const managerRoles: ReadonlyArray<ApprovedPremisesUserRole> = ['workflow_manager', 'future_manager'] as const
+
+  describe('allOutOfServiceBedsTableHeaders', () => {
+    it('returns the table headers', () => {
+      const sortBy = 'bedName'
+      const sortDirection = 'asc'
+      const hrefPrefix = 'http://example.com'
+
+      expect(allOutOfServiceBedsTableHeaders(sortBy, sortDirection, hrefPrefix)).toEqual([
+        sortHeader<OutOfServiceBedSortField>('Premises', 'premisesName', sortBy, sortDirection, hrefPrefix),
+        sortHeader<OutOfServiceBedSortField>('Room', 'roomName', sortBy, sortDirection, hrefPrefix),
+        sortHeader<OutOfServiceBedSortField>('Bed', 'bedName', sortBy, sortDirection, hrefPrefix),
+        sortHeader<OutOfServiceBedSortField>('Start date', 'outOfServiceFrom', sortBy, sortDirection, hrefPrefix),
+        sortHeader<OutOfServiceBedSortField>('End date', 'outOfServiceTo', sortBy, sortDirection, hrefPrefix),
+        sortHeader<OutOfServiceBedSortField>('Reason', 'reason', sortBy, sortDirection, hrefPrefix),
+        {
+          text: 'Ref number',
+        },
+        sortHeader<OutOfServiceBedSortField>('Days lost', 'daysLost', sortBy, sortDirection, hrefPrefix),
+        {
+          text: 'Actions',
+        },
+      ])
+    })
+  })
 
   describe('allOutOfServiceBedsTableRows', () => {
     const outOfServiceBed = outOfServiceBedFactory.build()
