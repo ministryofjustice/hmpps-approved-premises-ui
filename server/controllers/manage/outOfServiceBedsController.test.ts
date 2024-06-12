@@ -20,9 +20,11 @@ import {
   outOfServiceBedFactory,
   paginatedResponseFactory,
 } from '../../testutils/factories'
+import { getPaginationDetails } from '../../utils/getPaginationDetails'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/bookings')
+jest.mock('../../utils/getPaginationDetails')
 
 describe('OutOfServiceBedsController', () => {
   const token = 'SOME_TOKEN'
@@ -202,7 +204,15 @@ describe('OutOfServiceBedsController', () => {
       const paginatedResponse = paginatedResponseFactory.build({
         data: outOfServiceBedFactory.buildList(2),
       }) as PaginatedResponse<OutOfServiceBed>
+      const paginationDetails = {
+        hrefPrefix: paths.v2Manage.outOfServiceBeds.index({}),
+        pageNumber: 1,
+        sortBy: 'roomName',
+        sortDirection: 'desc',
+      }
+
       outOfServiceBedService.getAllOutOfServiceBeds.mockResolvedValue(paginatedResponse)
+      ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
       const requestHandler = outOfServiceBedController.index()
 
@@ -213,9 +223,16 @@ describe('OutOfServiceBedsController', () => {
         pageHeading: 'View out of service beds',
         pageNumber: Number(paginatedResponse.pageNumber),
         totalPages: Number(paginatedResponse.totalPages),
-        hrefPrefix: '/manage/out-of-service-beds?',
+        hrefPrefix: paginationDetails.hrefPrefix,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
       })
-      expect(outOfServiceBedService.getAllOutOfServiceBeds).toHaveBeenCalledWith(token, undefined)
+      expect(outOfServiceBedService.getAllOutOfServiceBeds).toHaveBeenCalledWith(
+        token,
+        paginationDetails.pageNumber,
+        paginationDetails.sortBy,
+        paginationDetails.sortDirection,
+      )
     })
   })
 
