@@ -278,5 +278,80 @@ context('OutOfServiceBeds', () => {
         expect(requests).to.have.length(1)
       })
     })
+
+    it('supports sorting by premisesName', () => {
+      shouldSortByField('premisesName')
+    })
+
+    it('supports sorting by roomName', () => {
+      shouldSortByField('roomName')
+    })
+
+    it('supports sorting by bedName', () => {
+      shouldSortByField('bedName')
+    })
+
+    it('supports sorting by outOfServiceFrom', () => {
+      shouldSortByField('outOfServiceFrom')
+    })
+
+    it('supports sorting by outOfServiceTo', () => {
+      shouldSortByField('outOfServiceTo')
+    })
+
+    it('supports sorting by reason', () => {
+      shouldSortByField('reason')
+    })
+
+    it('supports sorting by daysLost', () => {
+      shouldSortByField('daysLost')
+    })
   })
+
+  const shouldSortByField = (field: string) => {
+    // And there is a page of out of service beds
+    const outOfServiceBeds = outOfServiceBedFactory.buildList(10)
+
+    cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 1 })
+    cy.task('stubOutOfServiceBedsList', {
+      outOfServiceBeds,
+      page: '1',
+      sortBy: field,
+      sortDirection: 'asc',
+    })
+    cy.task('stubOutOfServiceBedsList', {
+      outOfServiceBeds,
+      page: '1',
+      sortBy: field,
+      sortDirection: 'desc',
+    })
+
+    // When I access the out of service beds dashboard
+    const page = OutOfServiceBedIndexPage.visit()
+
+    // Then I should see the first result
+    page.shouldShowOutOfServiceBeds(outOfServiceBeds)
+
+    // When I click the column to sort by
+    page.clickSortBy(field)
+
+    // Then the API should have received a request for the sort
+    cy.task('verifyOutOfServiceBedsDashboard', { page: '1', sortBy: field, sortDirection: 'asc' }).then(requests => {
+      expect(requests).to.have.length(field === 'outOfServiceFrom' ? 2 : 1)
+    })
+
+    // And the page should show the sorted items
+    page.shouldBeSortedByField(field, 'ascending')
+
+    // When I click the sort button again
+    page.clickSortBy(field)
+
+    // Then the API should have received a request for the sort
+    cy.task('verifyOutOfServiceBedsDashboard', { page: '1', sortBy: field, sortDirection: 'desc' }).then(requests => {
+      expect(requests).to.have.length(1)
+    })
+
+    // And the page should show the sorted items
+    page.shouldBeSortedByField(field, 'descending')
+  }
 })
