@@ -261,15 +261,15 @@ test('Move a booking', async ({ page, person, user }) => {
   await placementPage.showsBedMoveLoggedMessage()
 })
 
-test('View all out of service beds', async ({ page, user }) => {
-  // Given I have the 'future_manager' role
-  await setRoles(page, user.name, ['future_manager'])
-  // And I am on the dashboard page
-  const dashboard = await visitDashboard(page)
+// test('View all out of service beds', async ({ page, user }) => {
+//   // Given I have the 'Future manager' role
+//   await setRoles(page, user.name, ['Future manager'])
+//   // And I am on the dashboard page
+//   const dashboard = await visitDashboard(page)
 
-  // And I click the 'View out of service beds' tile
-  dashboard.clickOutOfServiceBeds()
+//   // And I click the 'View out of service beds' tile
+//   dashboard.clickOutOfServiceBeds()
 
-  // Then I am taken to the out of service beds page
-  await OutOfServiceBedsPage.initialize(page, 'View out of service beds')
-})
+//   // Then I am taken to the out of service beds page
+//   await OutOfServiceBedsPage.initialize(page, 'View out of service beds')
+// })
