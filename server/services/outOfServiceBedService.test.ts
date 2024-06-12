@@ -74,7 +74,7 @@ describe('OutOfServiceBedService', () => {
   })
 
   describe('getAllOutOfServiceBeds', () => {
-    it('calls the get method on the outOfServiceBedClient with a page', async () => {
+    it('calls the get method on the outOfServiceBedClient with a page and sort options', async () => {
       const token = 'SOME_TOKEN'
 
       const response = paginatedResponseFactory.build({
@@ -86,7 +86,7 @@ describe('OutOfServiceBedService', () => {
 
       expect(outOfServiceBeds).toEqual(response)
       expect(OutOfServiceBedClientFactory).toHaveBeenCalledWith(token)
-      expect(outOfServiceBedClient.get).toHaveBeenCalledWith(3)
+      expect(outOfServiceBedClient.get).toHaveBeenCalledWith('outOfServiceFrom', 'asc', 3)
     })
   })
 
