@@ -61,7 +61,7 @@ test('manage users', async ({ page, userToAddAndDelete }) => {
   const editUserPage = await EditUser.initialize(page)
 
   // When I select all the checkboxes
-  await editUserPage.checkCheckBoxes(roles)
+  await editUserPage.checkUncheckedCheckboxes(roles)
   await editUserPage.assertCheckboxesAreSelected(roles)
 
   // And I click 'Save'
