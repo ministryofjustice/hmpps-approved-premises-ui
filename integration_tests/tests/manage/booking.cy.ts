@@ -275,8 +275,8 @@ context('Booking', () => {
   })
 
   it('should allow me to move a booking', () => {
-    // Given I am signed in as a workflow manager
-    signIn(['workflow_manager'])
+    // Given I am signed in as a legacy manager
+    signIn(['legacy_manager'])
 
     const bedId = 'bedId'
     const bedSummaries = bedSummaryFactory.buildList(5)
@@ -300,17 +300,6 @@ context('Booking', () => {
     // Then I should see the Premises details page with a success message
     const premisesPage = Page.verifyOnPage(PremisesShowPage, premises)
     premisesPage.shouldShowMoveConfirmation()
-  })
-
-  it('should not show the manage links for non-workflow managers', () => {
-    // Given I am signed in as a manager
-    signIn(['manager'])
-
-    // When I navigate to the booking's manage page
-    const page = BookingShowPage.visit(premises.id, booking)
-
-    // Then I should see the details for that booking
-    page.shouldNotShowManageActions()
   })
 
   it('redirects to no offence page if there are no offence', function test() {

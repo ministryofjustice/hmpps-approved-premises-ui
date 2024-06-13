@@ -4,7 +4,6 @@ import {
   arrivedBookings,
   arrivingTodayOrLate,
   bedsAsSelectItems,
-  bookingActions,
   bookingArrivalRows,
   bookingDepartureRows,
   bookingPersonRows,
@@ -15,12 +14,10 @@ import {
   cancellationRows,
   departingTodayOrLate,
   generateConflictBespokeError,
-  legacyBookingActions,
   manageBookingLink,
   nameCell,
   upcomingArrivals,
   upcomingDepartures,
-  v2BookingActions,
 } from '.'
 import {
   arrivalFactory,
@@ -32,7 +29,6 @@ import {
   personFactory,
   premisesBookingFactory,
   restrictedPersonFactory,
-  userDetailsFactory,
 } from '../../testutils/factories'
 import paths from '../../paths/manage'
 import assessPaths from '../../paths/assess'
@@ -195,183 +191,6 @@ describe('bookingUtils', () => {
       expect(nameCell(booking)).toEqual({
         text: `LAO: ${(booking.person as FullPerson).name}`,
       })
-    })
-  })
-
-  describe('bookingActions', () => {
-    describe('when the user has the "workflow_manager" role', () => {
-      it('returns the legacyBookingActions', () => {
-        const user = userDetailsFactory.build({
-          roles: ['workflow_manager'],
-        })
-        const booking = bookingFactory.build()
-
-        expect(bookingActions(user, booking)).toEqual(legacyBookingActions(booking))
-      })
-    })
-
-    describe('when the user has the "future_manager" role', () => {
-      it('returns the v2BookingActions', () => {
-        const user = userDetailsFactory.build({
-          roles: ['future_manager'],
-        })
-        const booking = bookingFactory.build()
-
-        expect(bookingActions(user, booking)).toEqual(v2BookingActions(booking))
-      })
-    })
-
-    describe('when the user has both the "workflow_manager" and "future_manager" roles', () => {
-      it('returns the v2BookingActions', () => {
-        const user = userDetailsFactory.build({
-          roles: ['workflow_manager', 'future_manager'],
-        })
-        const booking = bookingFactory.build()
-
-        expect(bookingActions(user, booking)).toEqual(v2BookingActions(booking))
-      })
-    })
-  })
-
-  describe('v2BookingActions', () => {
-    describe('if the booking has a status of awaiting-arrival', () => {
-      describe('if applicationId is defined', () => {
-        it('returns the withdrawal link ', () => {
-          const booking = bookingFactory.arrivingSoon().build({ applicationId: 'someID' })
-
-          expect(v2BookingActions(booking)).toEqual([
-            {
-              items: [
-                {
-                  text: 'Withdraw placement',
-                  classes: 'govuk-button--secondary',
-                  href: applyPaths.applications.withdraw.new({ id: 'someID' }),
-                },
-              ],
-            },
-          ])
-        })
-      })
-
-      describe('if applicationId is undefined', () => {
-        it('returns an empty array ', () => {
-          const booking = bookingFactory.arrivingSoon().build({ applicationId: undefined })
-
-          expect(v2BookingActions(booking)).toEqual([])
-        })
-      })
-    })
-  })
-
-  describe('legacyBookingActions', () => {
-    it('should return null when the booking is cancelled, departed or did not arrive', () => {
-      const cancelledBooking = bookingFactory.cancelledWithFutureArrivalDate().build()
-      const departedBooking = bookingFactory.departedToday().build()
-      const nonArrivedBooking = bookingFactory.notArrived().build()
-
-      expect(legacyBookingActions(cancelledBooking)).toEqual(null)
-      expect(legacyBookingActions(departedBooking)).toEqual(null)
-      expect(legacyBookingActions(nonArrivedBooking)).toEqual(null)
-    })
-
-    it('should return arrival, non-arrival and cancellation actions if a booking is awaiting arrival', () => {
-      const booking = bookingFactory.arrivingToday().build()
-
-      expect(legacyBookingActions(booking)).toEqual([
-        {
-          items: [
-            {
-              text: 'Move person to a new bed',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Mark as arrived',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.arrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Mark as not arrived',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.nonArrivals.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Withdraw placement',
-              classes: 'govuk-button--secondary',
-              href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
-            },
-            {
-              text: 'Change placement dates',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.dateChanges.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-          ],
-        },
-      ])
-    })
-
-    it('should return a departure action if a booking is arrived', () => {
-      const booking = bookingFactory.arrived().build()
-
-      expect(legacyBookingActions(booking)).toEqual([
-        {
-          items: [
-            {
-              text: 'Move person to a new bed',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Log departure',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.departures.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Update departure date',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.extensions.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Withdraw placement',
-              classes: 'govuk-button--secondary',
-              href: applyPaths.applications.withdraw.new({ id: booking.applicationId }),
-            },
-          ],
-        },
-      ])
-    })
-
-    it('should return link to the cancellations new page if the booking doesnt have an applicationId', () => {
-      const booking = bookingFactory.arrived().build({
-        applicationId: undefined,
-      })
-
-      expect(legacyBookingActions(booking)).toEqual([
-        {
-          items: [
-            {
-              text: 'Move person to a new bed',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.moves.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Log departure',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.departures.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Update departure date',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.extensions.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-            {
-              text: 'Withdraw placement',
-              classes: 'govuk-button--secondary',
-              href: paths.bookings.cancellations.new({ premisesId: booking.premises.id, bookingId: booking.id }),
-            },
-          ],
-        },
-      ])
     })
   })
 
