@@ -17,6 +17,7 @@ import PlacementApplicationWithdrawalConfirmationPage from '../../pages/match/pl
 import Page from '../../pages/page'
 import { signIn } from '../signIn'
 import paths from '../../../server/paths/apply'
+import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
 
 context('Withdrawals', () => {
   describe('as a CRU user', () => {
@@ -41,10 +42,13 @@ context('Withdrawals', () => {
         id: placementApplication.id,
       })
       const applicationWithdrawable = withdrawableFactory.build({ type: 'application' })
-
-      cy.task('stubWithdrawables', {
-        applicationId: application.id,
+      const withdrawables = withdrawablesFactory.build({
         withdrawables: [placementApplicationWithdrawable, applicationWithdrawable],
+      })
+
+      cy.task('stubWithdrawablesWithNotes', {
+        applicationId: application.id,
+        withdrawables,
       })
       cy.task('stubPlacementApplication', placementApplication)
 
@@ -85,10 +89,11 @@ context('Withdrawals', () => {
       const applicationWithdrawable = withdrawableFactory.build({
         type: 'application',
       })
+      const withdrawables = withdrawablesFactory.build({ withdrawables: [applicationWithdrawable] })
 
-      cy.task('stubWithdrawables', {
+      cy.task('stubWithdrawablesWithNotes', {
         applicationId: application.id,
-        withdrawables: [applicationWithdrawable],
+        withdrawables,
       })
       cy.task('stubApplications', [application])
       cy.task('stubApplicationGet', { application })
@@ -121,10 +126,13 @@ context('Withdrawals', () => {
         type: 'placement_application',
       })
       const applicationWithdrawable = withdrawableFactory.build({ type: 'application' })
-
-      cy.task('stubWithdrawables', {
-        applicationId: application.id,
+      const withdrawables = withdrawablesFactory.build({
         withdrawables: [placementWithdrawable, placementApplicationWithdrawable, applicationWithdrawable],
+      })
+
+      cy.task('stubWithdrawablesWithNotes', {
+        applicationId: application.id,
+        withdrawables,
       })
       cy.task('stubApplications', [application])
       cy.task('stubApplicationGet', { application })
@@ -181,7 +189,7 @@ context('Withdrawals', () => {
         hasRequestsForPlacement: false,
       })
 
-      cy.task('stubWithdrawables', {
+      cy.task('stubWithdrawablesWithNotes', {
         applicationId: application.id,
         withdrawables: [],
       })
@@ -216,9 +224,12 @@ const withdrawsAPlacementRequest = (userRoles: Array<ApprovedPremisesUserRole>) 
   const placementWithdrawable = withdrawableFactory.build({
     type: 'booking',
   })
-  cy.task('stubWithdrawables', {
-    applicationId: application.id,
+  const withdrawables = withdrawablesFactory.build({
     withdrawables: [placementRequestWithdrawable, placementApplicationWithdrawable, placementWithdrawable],
+  })
+  cy.task('stubWithdrawablesWithNotes', {
+    applicationId: application.id,
+    withdrawables,
   })
   cy.task('stubApplications', [application])
   cy.task('stubApplicationGet', { application })

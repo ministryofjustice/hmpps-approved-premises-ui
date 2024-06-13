@@ -14,7 +14,7 @@ import type {
   SubmitApprovedPremisesApplication,
   TimelineEvent,
   UpdateApprovedPremisesApplication,
-  Withdrawable,
+  Withdrawables,
 } from '@approved-premises/api'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
@@ -123,9 +123,9 @@ export default class ApplicationClient {
     })) as ApplicationTimelineNote
   }
 
-  async withdrawables(applicationId: string): Promise<Array<Withdrawable>> {
+  async withdrawablesWithNotes(applicationId: string): Promise<Withdrawables> {
     return (await this.restClient.get({
-      path: paths.applications.withdrawables({ id: applicationId }),
-    })) as Array<Withdrawable>
+      path: paths.applications.withdrawablesWithNotes({ id: applicationId }),
+    })) as Withdrawables
   }
 }

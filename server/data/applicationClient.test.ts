@@ -16,6 +16,7 @@ import {
 import paths from '../paths/api'
 import describeClient from '../testutils/describeClient'
 import { normaliseCrn } from '../utils/normaliseCrn'
+import withdrawablesFactory from '../testutils/factories/withdrawablesFactory'
 
 describeClient('ApplicationClient', provider => {
   let applicationClient: ApplicationClient
@@ -538,16 +539,17 @@ describeClient('ApplicationClient', provider => {
   })
 
   describe('withdrawables', () => {
-    it('calls the withdrawables endpoint with the application ID', async () => {
+    it('calls the withdrawables with notes endpoint with the application ID', async () => {
       const applicationId = 'applicationId'
-      const withdrawables = withdrawableFactory.buildList(1)
+      const withdrawable = withdrawableFactory.buildList(1)
+      const withdrawables = withdrawablesFactory.build({ withdrawables: withdrawable })
 
       provider.addInteraction({
         state: 'Server is healthy',
         uponReceiving: 'A request for to add a note to an application',
         withRequest: {
           method: 'GET',
-          path: paths.applications.withdrawables({ id: applicationId }),
+          path: paths.applications.withdrawablesWithNotes({ id: applicationId }),
           headers: {
             authorization: `Bearer ${token}`,
             'X-Service-Name': 'approved-premises',
@@ -559,7 +561,7 @@ describeClient('ApplicationClient', provider => {
         },
       })
 
-      await applicationClient.withdrawables(applicationId)
+      await applicationClient.withdrawablesWithNotes(applicationId)
     })
   })
 })

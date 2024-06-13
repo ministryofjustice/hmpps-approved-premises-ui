@@ -24,6 +24,7 @@ import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
 import paths from '../../../server/paths/api'
 import BookingCancellationConfirmPage from '../../pages/manage/bookingCancellationConfirmation'
 import { allReleaseTypes } from '../../../server/utils/applications/releaseTypeUtils'
+import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
 
 context('Placement Requests', () => {
   let application = applicationFactory.build()
@@ -271,9 +272,11 @@ context('Placement Requests', () => {
       booking: matchedPlacementRequest.booking,
     })
     cy.task('stubCancellationReferenceData')
-    cy.task('stubWithdrawables', {
+    const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
+
+    cy.task('stubWithdrawablesWithNotes', {
       applicationId: matchedPlacementRequest.applicationId,
-      withdrawables: [withdrawable],
+      withdrawables,
     })
     cy.task('stubBookingFindWithoutPremises', booking)
 
@@ -327,10 +330,15 @@ context('Placement Requests', () => {
   it('allows me to withdraw a placement request', () => {
     cy.task('stubPlacementRequestWithdrawal', unmatchedPlacementRequest)
     const withdrawable = withdrawableFactory.build({ id: unmatchedPlacementRequest.id, type: 'placement_request' })
+    const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
 
-    cy.task('stubWithdrawables', {
+    cy.task('stubWithdrawablesWithNotes', {
+      applicationId: matchedPlacementRequest.applicationId,
+      withdrawables,
+    })
+    cy.task('stubWithdrawablesWithNotes', {
       applicationId: application.id,
-      withdrawables: [withdrawable],
+      withdrawables,
     })
 
     // When I visit the tasks dashboard

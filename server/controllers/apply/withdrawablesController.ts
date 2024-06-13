@@ -18,10 +18,10 @@ export default class WithdrawalsController {
       const { id } = req.params as { id: Application['id'] | undefined }
       const selectedWithdrawableType = req.query?.selectedWithdrawableType as SelectedWithdrawableType | undefined
 
-      const withdrawables = await this.applicationService.getWithdrawables(req.user.token, id)
+      const withdrawables = await this.applicationService.getWithdrawablesWithNotes(req.user.token, id)
 
       if (selectedWithdrawableType === 'placement') {
-        const placementWithdrawables = sortAndFilterWithdrawables(withdrawables, ['booking'])
+        const placementWithdrawables = sortAndFilterWithdrawables(withdrawables.withdrawables, ['booking'])
         const bookings = await Promise.all(
           placementWithdrawables.map(async withdrawable => {
             return this.bookingService.findWithoutPremises(req.user.token, withdrawable.id)
@@ -34,14 +34,19 @@ export default class WithdrawalsController {
           withdrawables: placementWithdrawables,
           bookings,
           withdrawableType: 'placement',
+          notes: withdrawables.notes,
         })
       }
 
       return res.render('applications/withdrawables/show', {
         pageHeading: 'Select your request',
-        withdrawables: sortAndFilterWithdrawables(withdrawables, ['placement_application', 'placement_request']),
+        withdrawables: sortAndFilterWithdrawables(withdrawables.withdrawables, [
+          'placement_application',
+          'placement_request',
+        ]),
         id,
         withdrawableType: 'request',
+        notes: withdrawables.notes,
       })
     }
   }
@@ -54,9 +59,9 @@ export default class WithdrawalsController {
       const { id } = req.params as { id: Application['id'] | undefined }
       req.flash('applicationId', id)
 
-      const withdrawable = (await this.applicationService.getWithdrawables(req.user.token, id)).find(
-        w => w.id === selectedWithdrawable,
-      )
+      const withdrawable = (
+        await this.applicationService.getWithdrawablesWithNotes(req.user.token, id)
+      ).withdrawables.find(w => w.id === selectedWithdrawable)
       if (!withdrawable) {
         return res.redirect(302, applyPaths.applications.withdraw.new({ id }))
       }

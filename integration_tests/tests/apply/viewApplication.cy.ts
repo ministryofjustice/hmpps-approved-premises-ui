@@ -15,6 +15,7 @@ import { defaultUserId } from '../../mockApis/auth'
 import paths from '../../../server/paths/api'
 import { withdrawPlacementRequestOrApplication } from '../../support/helpers'
 import applicationDocument from '../../fixtures/applicationDocument.json'
+import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
 
 context('show applications', () => {
   beforeEach(setup)
@@ -149,8 +150,12 @@ context('show applications', () => {
       applicationId: application.id,
       requestsForPlacement: [...requestsForPlacement, withdrawableRequestForPlacement],
     })
-    cy.task('stubWithdrawables', { applicationId: application.id, withdrawables: [withdrawable] })
+    const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
 
+    cy.task('stubWithdrawablesWithNotes', {
+      applicationId: application.id,
+      withdrawables,
+    })
     cy.task('stubPlacementApplication', placementApplication)
     cy.task('stubSubmitPlacementApplicationWithdraw', placementApplication)
 

@@ -19,6 +19,13 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             {% if withdrawables.length %}
+                {% if notes | length > 0 %}
+                    <ul class="govuk-list govuk-list--bullet">
+                        {% for note in notes %}
+                            <li>{{note}}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
 
                 <form action={{paths.applications.withdraw.new({id: id})}} method="post"/>
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>

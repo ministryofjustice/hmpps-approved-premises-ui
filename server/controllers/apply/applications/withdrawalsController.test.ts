@@ -12,6 +12,7 @@ import {
 import paths from '../../../paths/apply'
 import WithdrawalsController from './withdrawalsController'
 import { withdrawableFactory } from '../../../testutils/factories'
+import withdrawablesFactory from '../../../testutils/factories/withdrawablesFactory'
 
 jest.mock('../../../utils/validation')
 
@@ -41,9 +42,9 @@ describe('withdrawalsController', () => {
         ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
         const selectedWithdrawableType = 'booking'
-        const withdrawables = withdrawableFactory.buildList(1)
-
-        applicationService.getWithdrawables.mockResolvedValue(withdrawables)
+        const withdrawable = withdrawableFactory.buildList(1)
+        const withdrawables = withdrawablesFactory.build({ withdrawables: withdrawable })
+        applicationService.getWithdrawablesWithNotes.mockResolvedValue(withdrawables)
 
         const requestHandler = withdrawalsController.new()
 
@@ -57,7 +58,7 @@ describe('withdrawalsController', () => {
           next,
         )
 
-        expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
+        expect(applicationService.getWithdrawablesWithNotes).toHaveBeenCalledWith(token, applicationId)
         expect(response.redirect).toHaveBeenCalledWith(
           302,
           `${paths.applications.withdrawables.show({ id: applicationId })}?selectedWithdrawableType=${selectedWithdrawableType}`,
@@ -69,9 +70,10 @@ describe('withdrawalsController', () => {
         ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
         const selectedWithdrawableType = 'booking'
-        const withdrawables = withdrawableFactory.buildList(1)
+        const withdrawable = withdrawableFactory.buildList(1)
+        const withdrawables = withdrawablesFactory.build({ withdrawables: withdrawable })
 
-        applicationService.getWithdrawables.mockResolvedValue(withdrawables)
+        applicationService.getWithdrawablesWithNotes.mockResolvedValue(withdrawables)
 
         const requestHandler = withdrawalsController.new()
 
@@ -86,7 +88,7 @@ describe('withdrawalsController', () => {
           next,
         )
 
-        expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
+        expect(applicationService.getWithdrawablesWithNotes).toHaveBeenCalledWith(token, applicationId)
         expect(response.redirect).toHaveBeenCalledWith(
           302,
           `${paths.applications.withdrawables.show({ id: applicationId })}?selectedWithdrawableType=${selectedWithdrawableType}`,
@@ -100,20 +102,22 @@ describe('withdrawalsController', () => {
         const errorsAndUserInput = createMock<ErrorsAndUserInput>()
         ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
 
-        const withdrawables = withdrawableFactory.buildList(1)
+        const withdrawable = withdrawableFactory.buildList(1)
+        const withdrawables = withdrawablesFactory.build({ withdrawables: withdrawable })
 
-        applicationService.getWithdrawables.mockResolvedValue(withdrawables)
+        applicationService.getWithdrawablesWithNotes.mockResolvedValue(withdrawables)
 
         const requestHandler = withdrawalsController.new()
 
         await requestHandler({ ...request, params: { id: applicationId }, headers: { referer } }, response, next)
 
-        expect(applicationService.getWithdrawables).toHaveBeenCalledWith(token, applicationId)
+        expect(applicationService.getWithdrawablesWithNotes).toHaveBeenCalledWith(token, applicationId)
         expect(response.render).toHaveBeenCalledWith('applications/withdrawables/new', {
           pageHeading: 'What do you want to withdraw?',
           id: applicationId,
-          withdrawables,
+          withdrawables: withdrawables.withdrawables,
           referer,
+          notes: withdrawables.notes,
         })
       })
     })
@@ -124,7 +128,8 @@ describe('withdrawalsController', () => {
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
       request.params.id = applicationId
-      applicationService.getWithdrawables.mockResolvedValue([])
+      const withdrawables = withdrawablesFactory.build({ withdrawables: [] })
+      applicationService.getWithdrawablesWithNotes.mockResolvedValue(withdrawables)
 
       const requestHandler = withdrawalsController.new()
 
@@ -134,16 +139,18 @@ describe('withdrawalsController', () => {
         pageHeading: 'What do you want to withdraw?',
         id: applicationId,
         withdrawables: [],
+        notes: withdrawables.notes,
       })
     })
   })
 
   describe('if the selectedWithdrawalType is application', () => {
     it('renders the withdrawals reasons template', async () => {
-      const withdrawables = withdrawableFactory.buildList(1)
+      const withdrawable = withdrawableFactory.buildList(1)
+      const withdrawables = withdrawablesFactory.build({ withdrawables: withdrawable })
       const errorsAndUserInput = createMock<ErrorsAndUserInput>()
       ;(fetchErrorsAndUserInput as jest.Mock).mockReturnValue(errorsAndUserInput)
-      applicationService.getWithdrawables.mockResolvedValue(withdrawables)
+      applicationService.getWithdrawablesWithNotes.mockResolvedValue(withdrawables)
       request.params.id = applicationId
       request.body.selectedWithdrawableType = 'application'
 

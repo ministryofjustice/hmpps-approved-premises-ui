@@ -14,6 +14,7 @@ import { BookingShowPage, CancellationCreatePage, PremisesShowPage } from '../..
 import NewWithdrawalPage from '../../pages/apply/newWithdrawal'
 import { signIn } from '../signIn'
 import BookingCancellationConfirmPage from '../../pages/manage/bookingCancellationConfirmation'
+import withdrawablesFactory from '../../../server/testutils/factories/withdrawablesFactory'
 
 context('Cancellation', () => {
   beforeEach(() => {
@@ -41,7 +42,9 @@ context('Cancellation', () => {
     const withdrawable = withdrawableFactory.build({ id: booking.id, type: 'booking' })
     cy.task('stubCancellationCreate', { premisesId: premises.id, bookingId: booking.id, cancellation })
     cy.task('stubPremisesSummary', premises)
-    cy.task('stubWithdrawables', { applicationId: application.id, withdrawables: [withdrawable] })
+    const withdrawables = withdrawablesFactory.build({ withdrawables: [withdrawable] })
+
+    cy.task('stubWithdrawablesWithNotes', { applicationId: application.id, withdrawables })
     cy.task('stubBookingFindWithoutPremises', booking)
 
     const premisesShowPage = PremisesShowPage.visit(premises)
@@ -94,7 +97,7 @@ context('Cancellation', () => {
     })
     const withdrawable = withdrawableFactory.build({ id: booking.id, type: 'booking' })
     cy.task('stubPremisesSummary', premises)
-    cy.task('stubWithdrawables', { applicationId: application.id, withdrawables: [withdrawable] })
+    cy.task('stubWithdrawablesWithNotes', { applicationId: application.id, withdrawables: [withdrawable] })
     cy.task('stubBookingFindWithoutPremises', booking)
 
     // And I fill out the cancellation form with a reason of "other" but without a note

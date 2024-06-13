@@ -24,6 +24,13 @@
         <input type="hidden" name="_csrf" value="{{ csrfToken }}"/>
 
         {{ showErrorSummary(errorSummary) }}
+        {% if notes | length > 0 %}
+          <ul class="govuk-list govuk-list--bullet">
+            {% for note in notes %}
+              <li>{{note}}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
 
         {{
           formPageRadios(

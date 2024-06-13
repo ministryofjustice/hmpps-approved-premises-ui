@@ -31,6 +31,7 @@ import {
 } from '../testutils/factories'
 import { TasklistPageInterface } from '../form-pages/tasklistPage'
 import { getApplicationSubmissionData, getApplicationUpdateData } from '../utils/applications/getApplicationData'
+import withdrawablesFactory from '../testutils/factories/withdrawablesFactory'
 
 const FirstPage = jest.fn()
 const SecondPage = jest.fn()
@@ -469,17 +470,17 @@ describe('ApplicationService', () => {
     })
   })
 
-  describe('getWithdrawables', () => {
+  describe('getWithdrawablesWithNotes', () => {
     it('calls the client with the ID and the token and returns the result', async () => {
-      const withdrawables = withdrawableFactory.buildList(1)
+      const withdrawable = withdrawableFactory.buildList(1)
+      const withdrawables = withdrawablesFactory.build({ withdrawables: withdrawable })
+      applicationClient.withdrawablesWithNotes.mockResolvedValue(withdrawables)
 
-      applicationClient.withdrawables.mockResolvedValue(withdrawables)
-
-      const result = await service.getWithdrawables(token, applicationId)
+      const result = await service.getWithdrawablesWithNotes(token, applicationId)
 
       expect(result).toEqual(withdrawables)
       expect(applicationClientFactory).toHaveBeenCalledWith(token)
-      expect(applicationClient.withdrawables).toHaveBeenCalledWith(applicationId)
+      expect(applicationClient.withdrawablesWithNotes).toHaveBeenCalledWith(applicationId)
     })
   })
 })
