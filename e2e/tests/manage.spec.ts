@@ -94,10 +94,11 @@ test('Manually book a bed', async ({ page, person }) => {
   await manuallyBookPlacement({ page, person, filterPremisesPage: true })
 })
 
-test('Mark a booking as cancelled', async ({ page }) => {
-  // Given I have the 'Workflow manager', 'Legacy manager' and 'Manager' role
-
+// Given I have the 'Workflow manager', 'Legacy manager' and 'Manager' role
+test('Mark a booking as cancelled', async ({ page, person }) => {
   // And there is a placement for today
+  await manuallyBookPlacement({ page, person, filterPremisesPage: true })
+
   // await manuallyBookPlacement(page)
   await navigateToTodaysBooking(page)
   // And I am on the placement's page
