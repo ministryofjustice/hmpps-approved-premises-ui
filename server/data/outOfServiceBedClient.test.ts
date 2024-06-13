@@ -105,10 +105,14 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
   })
 
   describe('get', () => {
-    it('makes a request to the outOfServiceBeds endpoint with a page number', async () => {
+    it('makes a request to the outOfServiceBeds endpoint with a page number, sort and filter options', async () => {
       const outOfServiceBeds = outOfServiceBedFactory.buildList(2)
 
       const pageNumber = 3
+      const sortBy = 'roomName'
+      const sortDirection = 'asc'
+      const temporality = 'future'
+      const apAreaId = '123'
 
       provider.addInteraction({
         state: 'Server is healthy',
@@ -116,7 +120,7 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         withRequest: {
           method: 'GET',
           path: paths.manage.outOfServiceBeds.index({}),
-          query: { page: pageNumber.toString(), sortBy: 'roomName', sortDirection: 'asc' },
+          query: { page: pageNumber.toString(), sortBy, sortDirection, temporality, apAreaId },
           headers: {
             authorization: `Bearer ${token}`,
           },
@@ -132,7 +136,13 @@ describeCas1NamespaceClient('OutOfServiceBedClient', provider => {
         },
       })
 
-      const result = await outOfServiceBedClient.get('roomName', 'asc', pageNumber)
+      const result = await outOfServiceBedClient.get({
+        page: pageNumber,
+        sortBy,
+        sortDirection,
+        temporality,
+        apAreaId,
+      })
 
       expect(result).toEqual({
         data: outOfServiceBeds,
