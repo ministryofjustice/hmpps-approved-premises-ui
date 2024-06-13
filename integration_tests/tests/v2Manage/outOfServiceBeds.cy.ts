@@ -235,21 +235,48 @@ context('OutOfServiceBeds', () => {
     })
   })
 
-  it('allows me to view all out of service beds', () => {
-    const outOfServiceBeds = outOfServiceBedFactory.buildList(5)
-    cy.task('stubOutOfServiceBedsList', { outOfServiceBeds })
+  describe('list of all OOS beds', () => {
+    const outOfServiceBeds = outOfServiceBedFactory.buildList(10)
 
-    // Given I am on the dashboard
-    const dashboardPage = DashboardPage.visit()
+    it('allows me to view all out of service beds', () => {
+      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 1 })
+      // Given I am on the dashboard
+      const dashboardPage = DashboardPage.visit()
 
-    // When I click the 'Out of service beds' tile
-    dashboardPage.shouldShowCard('outOfServiceBeds')
-    cy.get('a').contains('View out of service beds').click()
+      // When I click the 'Out of service beds' tile
+      dashboardPage.shouldShowCard('outOfServiceBeds')
+      cy.get('a').contains('View out of service beds').click()
 
-    // Then I should be taken to the out of service beds index page
-    const page = Page.verifyOnPage(OutOfServiceBedIndexPage)
+      // Then I should be taken to the out of service beds index page
+      const page = Page.verifyOnPage(OutOfServiceBedIndexPage)
 
-    // And I should see a list of currently out of service beds
-    page.shouldShowOutOfServiceBeds(outOfServiceBeds)
+      // And I should see a list of currently out of service beds
+      page.shouldShowOutOfServiceBeds(outOfServiceBeds)
+    })
+
+    it('supports pagination', () => {
+      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: '1' })
+      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: '2' })
+      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: '9' })
+
+      // When I visit the OOS beds index page
+      const page = OutOfServiceBedIndexPage.visit()
+
+      // And I click next
+      page.clickNext()
+
+      // Then the API should have received a request for the next page
+      cy.task('verifyOutOfServiceBedsDashboard', { page: '2' }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
+
+      // When I click on a page number
+      page.clickPageNumber('9')
+
+      // Then the API should have received a request for the that page number
+      cy.task('verifyOutOfServiceBedsDashboard', { page: '9' }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
+    })
   })
 })
