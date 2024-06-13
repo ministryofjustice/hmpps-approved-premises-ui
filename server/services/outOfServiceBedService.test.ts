@@ -74,19 +74,56 @@ describe('OutOfServiceBedService', () => {
   })
 
   describe('getAllOutOfServiceBeds', () => {
-    it('calls the get method on the outOfServiceBedClient with a page and sort options', async () => {
-      const token = 'SOME_TOKEN'
+    const token = 'SOME_TOKEN'
+
+    it('calls the get method on the outOfServiceBedClient with a page and sort and filter options', async () => {
+      const pageNumber = 3
+      const sortBy = 'roomName'
+      const sortDirection = 'asc'
+      const temporality = 'future'
+      const apAreaId = '123'
 
       const response = paginatedResponseFactory.build({
         data: outOfServiceBedFactory.buildList(1),
       }) as PaginatedResponse<OutOfServiceBed>
       outOfServiceBedClient.get.mockResolvedValue(response)
 
-      const outOfServiceBeds = await service.getAllOutOfServiceBeds(token, 3)
+      const outOfServiceBeds = await service.getAllOutOfServiceBeds({
+        token,
+        page: pageNumber,
+        sortBy,
+        sortDirection,
+        temporality,
+        apAreaId,
+        premisesId,
+      })
 
       expect(outOfServiceBeds).toEqual(response)
       expect(OutOfServiceBedClientFactory).toHaveBeenCalledWith(token)
-      expect(outOfServiceBedClient.get).toHaveBeenCalledWith('outOfServiceFrom', 'asc', 3)
+      expect(outOfServiceBedClient.get).toHaveBeenCalledWith({
+        page: pageNumber,
+        sortBy,
+        sortDirection,
+        temporality,
+        apAreaId,
+        premisesId,
+      })
+    })
+
+    it('defaults to filtering for current items only with no area or premises filter, sorted by "from date" ascending', async () => {
+      const response = paginatedResponseFactory.build({
+        data: outOfServiceBedFactory.buildList(1),
+      }) as PaginatedResponse<OutOfServiceBed>
+      outOfServiceBedClient.get.mockResolvedValue(response)
+
+      await service.getAllOutOfServiceBeds({ token })
+
+      expect(outOfServiceBedClient.get).toHaveBeenCalledWith({
+        page: 1,
+        sortBy: 'outOfServiceFrom',
+        sortDirection: 'asc',
+        temporality: 'current',
+      })
     })
   })
 
