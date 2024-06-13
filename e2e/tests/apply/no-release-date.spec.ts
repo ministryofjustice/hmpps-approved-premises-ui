@@ -3,7 +3,6 @@ import { createApplication } from '../../steps/apply'
 import { assessApplication } from '../../steps/assess'
 
 import { startAndCreatePlacementApplication, withdrawPlacementApplication } from '../../steps/placementApplication'
-import { setRoles } from '../../steps/admin'
 
 test('Apply, assess, match and book an application for an Approved Premises without a release date', async ({
   page,
@@ -11,8 +10,6 @@ test('Apply, assess, match and book an application for an Approved Premises with
   person,
   oasysSections,
 }) => {
-  await setRoles(page, user.name, [])
-
   const id = await createApplication({ page, person, oasysSections, applicationType: 'standard' }, false)
   await assessApplication({ page, user, person }, id)
   await startAndCreatePlacementApplication({ page }, id)
