@@ -1,6 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 
-import { Cas1OutOfServiceBedSortField as OutOfServiceBedSortField } from '@approved-premises/api'
+import { Cas1OutOfServiceBedSortField as OutOfServiceBedSortField, Temporality } from '@approved-premises/api'
 import {
   catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
@@ -91,17 +91,36 @@ export default class OutOfServiceBedsController {
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
+      const { temporality } = req.params as { temporality: Temporality }
+
+      if (!['current', 'future', 'historic'].includes(temporality)) {
+        return res.redirect(paths.v2Manage.outOfServiceBeds.index({ temporality: 'current' }))
+      }
+
+      const { premisesId, apAreaId } = req.query as {
+        premisesId: string
+        apAreaId: string
+      }
+
       const { pageNumber, hrefPrefix, sortBy, sortDirection } = getPaginationDetails<OutOfServiceBedSortField>(
         req,
-        paths.v2Manage.outOfServiceBeds.index({}),
+        paths.v2Manage.outOfServiceBeds.index({ temporality }),
+        {
+          temporality,
+          premisesId,
+          apAreaId,
+        },
       )
 
-      const outOfServiceBeds = await this.outOfServiceBedService.getAllOutOfServiceBeds(
-        req.user.token,
-        pageNumber,
+      const outOfServiceBeds = await this.outOfServiceBedService.getAllOutOfServiceBeds({
+        token: req.user.token,
+        page: pageNumber,
         sortBy,
         sortDirection,
-      )
+        temporality,
+        premisesId,
+        apAreaId,
+      })
 
       return res.render('outOfServiceBeds/index', {
         pageHeading: 'View out of service beds',
@@ -111,6 +130,9 @@ export default class OutOfServiceBedsController {
         hrefPrefix,
         sortBy,
         sortDirection,
+        temporality,
+        premisesId,
+        apAreaId,
       })
     }
   }
