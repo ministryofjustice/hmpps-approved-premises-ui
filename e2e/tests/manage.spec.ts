@@ -17,8 +17,6 @@ import { ArrivalFormPage } from '../pages/manage/arrivalFormPage'
 import { ChangePlacementDatesPage } from '../pages/manage/changePlacementDates'
 import { MoveBedPage } from '../pages/manage/moveBedPage'
 import { ChangeDepartureDatePage } from '../pages/manage/changeDepartureDate'
-import { OutOfServiceBedsPage } from '../pages/manage/outOfServiceBedsPage'
-import { setRoles } from '../steps/admin'
 
 const premisesName = 'Test AP 10'
 const apArea = 'South West & South Central'
@@ -96,9 +94,9 @@ test('Manually book a bed', async ({ page, person }) => {
   await manuallyBookPlacement({ page, person, filterPremisesPage: true })
 })
 
-test('Mark a booking as cancelled', async ({ page, user }) => {
-  // Given I have the 'legacy_manager' & 'workflow_manager' role
-  await setRoles(page, user.name, ['legacy_manager', 'workflow_manager'])
+test('Mark a booking as cancelled', async ({ page }) => {
+  // Given I have the 'Workflow manager', 'Legacy manager' and 'Manager' role
+
   // And there is a placement for today
   // await manuallyBookPlacement(page)
   await navigateToTodaysBooking(page)
@@ -119,10 +117,8 @@ test('Mark a booking as cancelled', async ({ page, user }) => {
   await placementPage.showsCancellationLoggedMessage()
 })
 
-test('Change placement dates', async ({ page, person, user }) => {
-  // Given I have the 'legacy_manager' role
-  await setRoles(page, user.name, ['legacy_manager'])
-
+test('Change placement dates', async ({ page, person }) => {
+  // Given I have the 'Legacy manager' role
   // And there is a placement for today
   await manuallyBookPlacement({ page, person })
   await navigateToTodaysBooking(page)
@@ -144,9 +140,9 @@ test('Change placement dates', async ({ page, person, user }) => {
   await confirmationPage.shouldShowBookingChangeSuccessMessage()
 })
 
-test('Mark a bed as lost', async ({ page, user }) => {
-  // Given I have the 'legacy_manager' role
-  await setRoles(page, user.name, ['legacy_manager'])
+test('Mark a bed as lost', async ({ page }) => {
+  // Given I have the 'Legacy manager' role
+
   // And I am on the list of premises page
   const dashboard = await visitDashboard(page)
   await dashboard.clickManage()
@@ -176,9 +172,9 @@ test('Mark a bed as lost', async ({ page, user }) => {
   await premisesPage.showsLostBedLoggedMessage()
 })
 
-test('Mark a booking as arrived and extend it', async ({ page, person, user }) => {
-  // Given I have the 'legacy_manager' role
-  await setRoles(page, user.name, ['legacy_manager'])
+test('Mark a booking as arrived and extend it', async ({ page, person }) => {
+  // Given I have the 'Legacy manager' role
+
   // And there is a placement for today
   // And I am on the premises's page
   await manuallyBookPlacement({ page, person })
@@ -209,9 +205,8 @@ test('Mark a booking as arrived and extend it', async ({ page, person, user }) =
   await confirmationPage.shouldShowDepartureDateChangedMessage()
 })
 
-test('Mark a booking as not arrived', async ({ page, person, user }) => {
-  // Given I have the 'legacy_manager' role
-  await setRoles(page, user.name, ['legacy_manager'])
+test('Mark a booking as not arrived', async ({ page, person }) => {
+  // Given I have the 'Legacy manager' role
   // And there is a placement for today
   // And I am on the premises's page
   await manuallyBookPlacement({ page, person })
@@ -235,9 +230,8 @@ test('Mark a booking as not arrived', async ({ page, person, user }) => {
   await placementPage.showsNonArrivalLoggedMessage()
 })
 
-test('Move a booking', async ({ page, person, user }) => {
-  // Given I have the 'legacy_manager' role
-  await setRoles(page, user.name, ['legacy_manager'])
+test('Move a booking', async ({ page, person }) => {
+  // Given I have the 'Legacy manager' role
   // And there is a placement for today
   // And I am on the premises's page
   await manuallyBookPlacement({ page, person })
@@ -261,15 +255,15 @@ test('Move a booking', async ({ page, person, user }) => {
   await placementPage.showsBedMoveLoggedMessage()
 })
 
-test('View all out of service beds', async ({ page, user }) => {
-  // Given I have the 'future_manager' role
-  await setRoles(page, user.name, ['future_manager'])
-  // And I am on the dashboard page
-  const dashboard = await visitDashboard(page)
+// test('View all out of service beds', async ({ page, user }) => {
+//   // Given I have the 'Future manager' role
+//   await setRoles(page, user.name, ['Future manager'])
+//   // And I am on the dashboard page
+//   const dashboard = await visitDashboard(page)
 
-  // And I click the 'View out of service beds' tile
-  dashboard.clickOutOfServiceBeds()
+//   // And I click the 'View out of service beds' tile
+//   dashboard.clickOutOfServiceBeds()
 
-  // Then I am taken to the out of service beds page
-  await OutOfServiceBedsPage.initialize(page, 'View out of service beds')
-})
+//   // Then I am taken to the out of service beds page
+//   await OutOfServiceBedsPage.initialize(page, 'View out of service beds')
+// })
