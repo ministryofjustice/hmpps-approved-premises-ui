@@ -291,6 +291,10 @@ workflows:
           context: hmpps-common-vars
           requires:
             - build
+          filters:
+            branches:
+              ignore:
+                - main
       - e2e_environment_test_on_merge:
           context: hmpps-common-vars
           filters:
