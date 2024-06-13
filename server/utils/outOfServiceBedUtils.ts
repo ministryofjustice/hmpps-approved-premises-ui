@@ -1,4 +1,9 @@
-import { Cas1OutOfServiceBed as OutOfServiceBed, Premises } from '@approved-premises/api'
+import {
+  Cas1OutOfServiceBed as OutOfServiceBed,
+  Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
+  Premises,
+  SortDirection,
+} from '@approved-premises/api'
 import { TableCell, UserDetails } from '@approved-premises/ui'
 
 import { isWithinInterval } from 'date-fns'
@@ -7,6 +12,29 @@ import { linkTo } from './utils'
 import { hasRole } from './users'
 import { DateFormats } from './dateUtils'
 import { textValue } from './applications/helpers'
+import { sortHeader } from './sortHeader'
+
+export const allOutOfServiceBedsTableHeaders = (
+  sortBy: OutOfServiceBedSortField,
+  sortDirection: SortDirection,
+  hrefPrefix: string,
+): Array<TableCell> => {
+  return [
+    sortHeader<OutOfServiceBedSortField>('Premises', 'premisesName', sortBy, sortDirection, hrefPrefix),
+    sortHeader<OutOfServiceBedSortField>('Room', 'roomName', sortBy, sortDirection, hrefPrefix),
+    sortHeader<OutOfServiceBedSortField>('Bed', 'bedName', sortBy, sortDirection, hrefPrefix),
+    sortHeader<OutOfServiceBedSortField>('Start date', 'outOfServiceFrom', sortBy, sortDirection, hrefPrefix),
+    sortHeader<OutOfServiceBedSortField>('End date', 'outOfServiceTo', sortBy, sortDirection, hrefPrefix),
+    sortHeader<OutOfServiceBedSortField>('Reason', 'reason', sortBy, sortDirection, hrefPrefix),
+    {
+      text: 'Ref number',
+    },
+    sortHeader<OutOfServiceBedSortField>('Days lost', 'daysLost', sortBy, sortDirection, hrefPrefix),
+    {
+      text: 'Actions',
+    },
+  ]
+}
 
 export const allOutOfServiceBedsTableRows = (beds: Array<OutOfServiceBed>) => {
   return beds.map(bed => {

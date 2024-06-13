@@ -1,5 +1,6 @@
 import type { Request, RequestHandler, Response } from 'express'
 
+import { Cas1OutOfServiceBedSortField as OutOfServiceBedSortField } from '@approved-premises/api'
 import {
   catchValidationErrorOrPropogate,
   fetchErrorsAndUserInput,
@@ -9,6 +10,7 @@ import paths from '../../paths/manage'
 import { DateFormats } from '../../utils/dateUtils'
 import { SanitisedError } from '../../sanitisedError'
 import OutOfServiceBedService from '../../services/outOfServiceBedService'
+import { getPaginationDetails } from '../../utils/getPaginationDetails'
 
 export default class OutOfServiceBedsController {
   constructor(private readonly outOfServiceBedService: OutOfServiceBedService) {}
@@ -89,16 +91,26 @@ export default class OutOfServiceBedsController {
 
   index(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const pageNumber = req.query.page ? Number(req.query.page) : undefined
+      const { pageNumber, hrefPrefix, sortBy, sortDirection } = getPaginationDetails<OutOfServiceBedSortField>(
+        req,
+        paths.v2Manage.outOfServiceBeds.index({}),
+      )
 
-      const outOfServiceBeds = await this.outOfServiceBedService.getAllOutOfServiceBeds(req.user.token, pageNumber)
+      const outOfServiceBeds = await this.outOfServiceBedService.getAllOutOfServiceBeds(
+        req.user.token,
+        pageNumber,
+        sortBy,
+        sortDirection,
+      )
 
       return res.render('outOfServiceBeds/index', {
         pageHeading: 'View out of service beds',
         outOfServiceBeds: outOfServiceBeds.data,
         pageNumber: Number(outOfServiceBeds.pageNumber),
         totalPages: Number(outOfServiceBeds.totalPages),
-        hrefPrefix: `${paths.v2Manage.outOfServiceBeds.index({})}?`,
+        hrefPrefix,
+        sortBy,
+        sortDirection,
       })
     }
   }

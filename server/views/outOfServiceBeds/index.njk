@@ -16,28 +16,6 @@
 	}) }}
 {% endblock %}
 
-{% set tableHeadings = [
-  {
-    text: 'Premises'
-  }, {
-    text: 'Room'
-  }, {
-    text: 'Bed'
-  }, {
-    text: 'Out of service from'
-  }, {
-    text: 'Out of service until'
-  }, {
-    text: 'Reason'
-  }, {
-    text: 'Ref number'
-  }, {
-    text: 'Days lost'
-  }, {
-    text: 'Action'
-  }
-] %}
-
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full-width">
@@ -49,7 +27,7 @@
           govukTable({
             caption: "Out of service beds",
             captionClasses: "govuk-table__caption--m",
-            head: tableHeadings,
+            head: OutOfServiceBedUtils.allOutOfServiceBedsTableHeaders(sortBy, sortDirection, hrefPrefix),
             rows: OutOfServiceBedUtils.allOutOfServiceBedsTableRows(outOfServiceBeds)
           })
         }}

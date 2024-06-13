@@ -1,5 +1,6 @@
 import { SuperAgentRequest } from 'superagent'
 
+import { Cas1OutOfServiceBedSortField as OutOfServiceBedSortField, SortDirection } from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from './setup'
 import { bedspaceConflictResponseBody, errorStub } from './utils'
 import paths from '../../server/paths/api'
@@ -64,11 +65,16 @@ export default {
       },
     }),
 
-  stubOutOfServiceBedsList: ({ outOfServiceBeds, page = 1 }): SuperAgentRequest =>
+  stubOutOfServiceBedsList: ({
+    outOfServiceBeds,
+    page = 1,
+    sortBy = 'outOfServiceFrom',
+    sortDirection = 'asc',
+  }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        url: `${paths.manage.outOfServiceBeds.index.pattern}?page=${page}`,
+        url: `${paths.manage.outOfServiceBeds.index.pattern}?page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
       },
       response: {
         status: 200,
@@ -146,7 +152,15 @@ export default {
         url: paths.manage.premises.outOfServiceBeds.cancel({ premisesId, id: outOfServiceBedId }),
       })
     ).body.requests,
-  verifyOutOfServiceBedsDashboard: async ({ page = '1' }: { page: string }) =>
+  verifyOutOfServiceBedsDashboard: async ({
+    page = '1',
+    sortBy = 'outOfServiceFrom',
+    sortDirection = 'asc',
+  }: {
+    page: string
+    sortBy: OutOfServiceBedSortField
+    sortDirection: SortDirection
+  }) =>
     (
       await getMatchingRequests({
         method: 'GET',
@@ -154,6 +168,12 @@ export default {
         queryParameters: {
           page: {
             equalTo: page,
+          },
+          sortBy: {
+            equalTo: sortBy,
+          },
+          sortDirection: {
+            equalTo: sortDirection,
           },
         },
       })
