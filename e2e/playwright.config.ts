@@ -71,4 +71,5 @@ export default defineConfig<TestOptions>({
       dependencies: ['setupLocal'],
     },
   ],
+  testIgnore: ['./utils/*.ts'],
 })
