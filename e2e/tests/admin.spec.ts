@@ -9,8 +9,11 @@ import { NewUserConfirmationPage } from '../pages/admin/newUserConfirmationPage'
 import { DeleteUserConfirmationPage } from '../pages/admin/deleteUserConfirmationPage'
 import { signIn } from '../steps/signIn'
 
-test('download reports', async ({ page }) => {
-  // Given I visit the dashboard
+test('download reports', async ({ page, reportViewer }) => {
+  // Given I am signed in as a report viewer
+  await signIn(page, reportViewer)
+
+  // And I visit the dashboard
   const dashboard = await visitDashboard(page)
 
   // When I click the download reports link

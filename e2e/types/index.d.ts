@@ -23,6 +23,7 @@ declare module '@approved-premises/e2e' {
     }
     futureManager: UserLoginDetails
     administrator: UserLoginDetails
+    reportViewer: UserLoginDetails
     indexOffenceRequired: boolean
     oasysSections: Array<string>
     emergencyApplicationUser?: string

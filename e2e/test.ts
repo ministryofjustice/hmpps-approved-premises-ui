@@ -27,6 +27,10 @@ export const test = base.extend<TestOptions>({
     { username: process.env.CAS1_E2E_ADMINISTRATOR_USERNAME, password: process.env.CAS1_E2E_ADMINISTRATOR_PASSWORD },
     { option: true },
   ],
+  reportViewer: [
+    { username: process.env.CAS1_E2E_REPORT_VIEWER_USERNAME, password: process.env.CAS1_E2E_REPORT_VIEWER_PASSWORD },
+    { option: true },
+  ],
   oasysSections: [['3. Accommodation', '13. Health', '4. Education, training and employment'], { option: true }],
   emergencyApplicationUser: [process.env.CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO, { option: true }],
 })
