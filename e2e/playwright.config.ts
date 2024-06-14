@@ -25,7 +25,6 @@ export default defineConfig<TestOptions>({
       name: 'dev',
       use: {
         ...devices['Desktop Chrome'],
-        storageState: 'playwright/.auth/user.json',
         baseURL: 'https://approved-premises-dev.hmpps.service.justice.gov.uk',
       },
       dependencies: ['setupDev'],
@@ -46,7 +45,6 @@ export default defineConfig<TestOptions>({
       name: 'local',
       use: {
         ...devices['Desktop Chrome'],
-        storageState: 'playwright/.auth/user.json',
         baseURL: 'http://localhost:3000',
         person: {
           name: 'Aadland Bertrand',
