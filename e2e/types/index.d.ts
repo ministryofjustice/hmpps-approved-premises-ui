@@ -3,6 +3,10 @@ declare module '@approved-premises/e2e' {
 
   export type ApplicationType = 'standard' | 'emergency' | 'shortNotice'
 
+  type UserLoginDetails = {
+    username: string
+    password: string
+  }
   export type TestOptions = {
     person: {
       crn: string
