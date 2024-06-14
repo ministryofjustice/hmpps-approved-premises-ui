@@ -17,6 +17,8 @@ import { ArrivalFormPage } from '../pages/manage/arrivalFormPage'
 import { ChangePlacementDatesPage } from '../pages/manage/changePlacementDates'
 import { MoveBedPage } from '../pages/manage/moveBedPage'
 import { ChangeDepartureDatePage } from '../pages/manage/changeDepartureDate'
+import { signIn } from '../steps/signIn'
+import { OutOfServiceBedsPage } from '../pages/manage/outOfServiceBedsPage'
 
 const premisesName = 'Test AP 10'
 const apArea = 'South West & South Central'
@@ -256,15 +258,16 @@ test('Move a booking', async ({ page, person }) => {
   await placementPage.showsBedMoveLoggedMessage()
 })
 
-// test('View all out of service beds', async ({ page, user }) => {
-//   // Given I have the 'Future manager' role
-//   await setRoles(page, user.name, ['Future manager'])
-//   // And I am on the dashboard page
-//   const dashboard = await visitDashboard(page)
+test('View all out of service beds', async ({ page, futureManager }) => {
+  // Given I am signed in as a future manager
+  await signIn(page, futureManager)
 
-//   // And I click the 'View out of service beds' tile
-//   dashboard.clickOutOfServiceBeds()
+  // And I am on the dashboard page
+  const dashboard = await visitDashboard(page)
 
-//   // Then I am taken to the out of service beds page
-//   await OutOfServiceBedsPage.initialize(page, 'View out of service beds')
-// })
+  // And I click the 'View out of service beds' tile
+  dashboard.clickOutOfServiceBeds()
+
+  // Then I am taken to the out of service beds page
+  await OutOfServiceBedsPage.initialize(page, 'View out of service beds')
+})
