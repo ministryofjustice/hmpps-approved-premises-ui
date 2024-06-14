@@ -97,6 +97,21 @@ test('manage users', async ({ page, userToAddAndDelete }) => {
 
   // Then I should see the 'User deleted' banner
   await userListPage.shouldShowUserDeletedBanner()
+})
+
+test.fixme('Search shows deleted user', async ({ page }) => {
+  // The following behaviour only exists in CI
+  // Locally users are hard deleted. Once they are deleted they cannot be found via search as they are removed from the DB and only reseeded when the local API is restarted
+  // In deployed envs the user is soft deleted and can be found via search
+
+  // Given I visit the dashboard
+  const dashboard = await visitDashboard(page)
+
+  // And I click the manage users link
+  await dashboard.clickUserMangement()
+
+  // Then I should be taken to user list page
+  const userListPage = await UserList.initialize(page)
 
   // Given a user is not visisble in the list
   const userToSearchFor = 'AutomatedTestUser'
@@ -112,5 +127,6 @@ test('manage users', async ({ page, userToAddAndDelete }) => {
   await userListPage.clickEditUser(userToSearchFor)
 
   // Then I should be taken to the Edit User page
+  const editUserPage = await EditUser.initialize(page)
   await editUserPage.shouldShowUserName(userToSearchFor)
 })
