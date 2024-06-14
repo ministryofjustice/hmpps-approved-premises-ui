@@ -113,7 +113,6 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
   if (hasRole(user, 'workflow_manager')) {
     items.push(sections.workflow)
     items.push(sections.cruDashboard)
-    items.push(sections.reports)
     items.push(sections.userManagement)
   }
 

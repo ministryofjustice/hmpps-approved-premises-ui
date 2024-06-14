@@ -42,7 +42,6 @@ describe('homePageDashboard', () => {
       expect(sectionsForUser(user)).toContain(sections.apply)
       expect(sectionsForUser(user)).toContain(sections.workflow)
       expect(sectionsForUser(user)).toContain(sections.cruDashboard)
-      expect(sectionsForUser(user)).toContain(sections.reports)
       expect(sectionsForUser(user)).toContain(sections.userManagement)
       expect(sectionsForUser(user)).toContain(sections.manage)
     })
@@ -64,8 +63,8 @@ describe('homePageDashboard', () => {
         sections.manage,
         sections.workflow,
         sections.cruDashboard,
-        sections.reports,
         sections.userManagement,
+        sections.reports,
       ])
     })
 
