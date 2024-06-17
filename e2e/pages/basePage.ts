@@ -46,6 +46,14 @@ export class BasePage {
     await Promise.all(promises)
   }
 
+  async checkUncheckedCheckboxes(labels: Array<string> | ReadonlyArray<string>) {
+    labels.forEach(async label => {
+      if (!(await this.page.getByRole('checkbox', { name: label }).isChecked())) {
+        await this.page.getByRole('checkbox', { name: label }).dispatchEvent('click')
+      }
+    })
+  }
+
   async fillDateField({ year, month, day }: { year: string; month: string; day: string }) {
     await this.page.getByLabel('Day', { exact: true }).first().fill(day)
     await this.page.getByLabel('Month', { exact: true }).first().fill(month)

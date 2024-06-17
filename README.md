@@ -79,6 +79,18 @@ npm run test:e2e:ui
 npm run test:e2e:ci
 ```
 
+### Suggest environment variable values:
+
+#### Local testing
+
+E2E_DELIUS_USERNAME_TO_ADD_AND_DELETE=BERNARD.BEAKS
+E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO="JIM SNOW"
+
+### CI testing
+
+E2E_DELIUS_USERNAME_TO_ADD_AND_DELETE=JOSEPHHOLLINSHEAD
+E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO="AP_USER TEST_1"
+
 ## Feature flags
 
 We use [Flipt](http://flipt.io) for feature flags. See https://github.com/ministryofjustice/hmpps-approved-premises-ui/blob/main/doc/how-to/add-a-feature-flag.md

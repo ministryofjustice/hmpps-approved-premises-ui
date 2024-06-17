@@ -32,9 +32,7 @@ test('download reports', async ({ page }) => {
   expect(applicationsDownload.suggestedFilename()).toMatch(/placement-applications-2023-01-[0-9_]*.xlsx/)
 })
 
-test('manage users', async ({ page }) => {
-  const userToDeleteAndAdd = 'JOSEPHHOLLINSHEAD'
-
+test('manage users', async ({ page, userToAddAndDelete }) => {
   // Given I visit the dashboard
   const dashboard = await visitDashboard(page)
 
@@ -51,7 +49,7 @@ test('manage users', async ({ page }) => {
   const addUserPage = await AddUser.initialize(page)
 
   // When I search for a user
-  await addUserPage.search(userToDeleteAndAdd)
+  await addUserPage.search(userToAddAndDelete.name)
 
   // Then I should be taken to the confirmation page
   const newUserConfirmationPage = await NewUserConfirmationPage.initialize(page)
@@ -63,7 +61,7 @@ test('manage users', async ({ page }) => {
   const editUserPage = await EditUser.initialize(page)
 
   // When I select all the checkboxes
-  await editUserPage.checkCheckBoxes(roles)
+  await editUserPage.checkUncheckedCheckboxes(roles)
   await editUserPage.assertCheckboxesAreSelected(roles)
 
   // And I click 'Save'
@@ -99,6 +97,21 @@ test('manage users', async ({ page }) => {
 
   // Then I should see the 'User deleted' banner
   await userListPage.shouldShowUserDeletedBanner()
+})
+
+test.fixme('Search shows deleted user', async ({ page }) => {
+  // The following behaviour only exists in CI
+  // Locally users are hard deleted. Once they are deleted they cannot be found via search as they are removed from the DB and only reseeded when the local API is restarted
+  // In deployed envs the user is soft deleted and can be found via search
+
+  // Given I visit the dashboard
+  const dashboard = await visitDashboard(page)
+
+  // And I click the manage users link
+  await dashboard.clickUserMangement()
+
+  // Then I should be taken to user list page
+  const userListPage = await UserList.initialize(page)
 
   // Given a user is not visisble in the list
   const userToSearchFor = 'AutomatedTestUser'
@@ -114,5 +127,6 @@ test('manage users', async ({ page }) => {
   await userListPage.clickEditUser(userToSearchFor)
 
   // Then I should be taken to the Edit User page
+  const editUserPage = await EditUser.initialize(page)
   await editUserPage.shouldShowUserName(userToSearchFor)
 })

@@ -4,11 +4,11 @@ import { TestOptions } from '@approved-premises/e2e'
 
 export default defineConfig<TestOptions>({
   testDir: './',
-  fullyParallel: false,
+  fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   maxFailures: process.env.CI ? 3 : 1,
-  workers: 1,
+  workers: 2,
   reporter: 'html',
   timeout: process.env.CI ? 5 * 60 * 1000 : 2 * 60 * 1000,
   use: {
@@ -71,4 +71,5 @@ export default defineConfig<TestOptions>({
       dependencies: ['setupLocal'],
     },
   ],
+  testIgnore: ['./utils/*.ts'],
 })
