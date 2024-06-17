@@ -20,6 +20,8 @@ import { ChangeDepartureDatePage } from '../pages/manage/changeDepartureDate'
 import { signIn } from '../steps/signIn'
 import { OutOfServiceBedsPage } from '../pages/manage/outOfServiceBedsPage'
 
+test.describe.configure({ mode: 'parallel' })
+
 const premisesName = 'Test AP 10'
 const apArea = 'South West & South Central'
 

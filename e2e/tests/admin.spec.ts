@@ -9,6 +9,8 @@ import { NewUserConfirmationPage } from '../pages/admin/newUserConfirmationPage'
 import { DeleteUserConfirmationPage } from '../pages/admin/deleteUserConfirmationPage'
 import { signIn } from '../steps/signIn'
 
+test.describe.configure({ mode: 'parallel' })
+
 test('download reports', async ({ page, reportViewer }) => {
   // Given I am signed in as a report viewer
   await signIn(page, reportViewer)
