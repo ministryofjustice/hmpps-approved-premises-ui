@@ -34,12 +34,6 @@ export default defineConfig<TestOptions>({
       testMatch: /.*\.setup\.ts/,
       use: {
         baseURL: 'http://localhost:3000',
-        user: {
-          name: 'JIM SNOW',
-          username: 'jimsnowldap',
-          password: 'secret',
-          email: 'jim.snow@example.digital.justice.gov.uk',
-        },
       },
     },
     {
@@ -50,12 +44,6 @@ export default defineConfig<TestOptions>({
         person: {
           name: 'Aadland Bertrand',
           crn: 'X320741',
-        },
-        user: {
-          name: 'JIM SNOW',
-          username: 'jimsnowldap',
-          password: 'secret',
-          email: 'jim.snow@example.digital.justice.gov.uk',
         },
         indexOffenceRequired: true,
         oasysSections: [
