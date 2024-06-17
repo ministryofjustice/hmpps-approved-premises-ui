@@ -67,6 +67,7 @@ generic-service:
     groups:
       - internal
       - probation
+    palo-alto-prisma-access-egress: '128.77.75.64/26'
 
 generic-prometheus-alerts:
   targetApplication: hmpps-approved-premises-ui
