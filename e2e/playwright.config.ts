@@ -38,6 +38,7 @@ export default defineConfig<TestOptions>({
           name: 'JIM SNOW',
           username: 'jimsnowldap',
           password: 'secret',
+          email: 'jim.snow@example.digital.justice.gov.uk',
         },
       },
     },
@@ -54,6 +55,7 @@ export default defineConfig<TestOptions>({
           name: 'JIM SNOW',
           username: 'jimsnowldap',
           password: 'secret',
+          email: 'jim.snow@example.digital.justice.gov.uk',
         },
         indexOffenceRequired: true,
         oasysSections: [
