@@ -26,6 +26,7 @@ declare module '@approved-premises/e2e' {
     administrator: UserLoginDetails
     reportViewer: UserLoginDetails
     assessor: UserFullDetails
+    userWithoutRoles: UserLoginDetails
     indexOffenceRequired: boolean
     oasysSections: Array<string>
     emergencyApplicationUser?: string

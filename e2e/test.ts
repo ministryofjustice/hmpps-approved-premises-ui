@@ -40,6 +40,13 @@ export const test = base.extend<TestOptions>({
     },
     { option: true },
   ],
+  userWithoutRoles: [
+    {
+      username: process.env.CAS1_E2E_USER_WITHOUT_ROLES_USERNAME,
+      password: process.env.CAS1_E2E_USER_WITHOUT_ROLES_PASSWORD,
+    },
+    { option: true },
+  ],
   oasysSections: [['3. Accommodation', '13. Health', '4. Education, training and employment'], { option: true }],
   emergencyApplicationUser: [process.env.CAS1_E2E_EMERGENCY_ASSESSOR_NAME_TO_ALLOCATE_TO, { option: true }],
 })
