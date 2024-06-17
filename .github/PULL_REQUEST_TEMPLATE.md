@@ -6,6 +6,8 @@
 
 # Changes in this PR
 
+- [] I have run the E2E tests locally and they passed
+
 ## Screenshots of UI changes
 
 ### Before
