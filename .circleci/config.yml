@@ -198,14 +198,6 @@ jobs:
           name: E2E Check
           command: |
             SHARD="$((${CIRCLE_NODE_INDEX}+1))"
-            username="HMPPS_AUTH_USERNAME_$SHARD"
-            password="HMPPS_AUTH_PASSWORD_$SHARD"
-            email="HMPPS_AUTH_EMAIL_$SHARD"
-            name="HMPPS_AUTH_NAME_$SHARD"
-            HMPPS_AUTH_USERNAME="${!username}"
-            HMPPS_AUTH_PASSWORD="${!password}"
-            HMPPS_AUTH_EMAIL="${!email}"
-            HMPPS_AUTH_NAME="${!name}"
             npm run test:e2e:ci -- --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
       - store_artifacts:
           path: playwright-report
