@@ -7,23 +7,25 @@ declare module '@approved-premises/e2e' {
     username: string
     password: string
   }
+
+  type UserFullDetails = UserLoginDetails & {
+    name: string
+    email: string
+  }
+
   export type TestOptions = {
     person: {
       crn: string
       name: string
     }
-    user: {
-      name: string
-      username: string
-      password: string
-      email?: string
-    }
     userToAddAndDelete: {
       name: string
     }
+    user: UserFullDetails
     futureManager: UserLoginDetails
     administrator: UserLoginDetails
     reportViewer: UserLoginDetails
+    assessor: UserFullDetails
     indexOffenceRequired: boolean
     oasysSections: Array<string>
     emergencyApplicationUser?: string
