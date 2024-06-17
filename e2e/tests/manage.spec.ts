@@ -92,12 +92,17 @@ const manuallyBookPlacement = async ({
   await confirmationPage.shouldShowPlacementSuccessMessage()
 }
 
-test('Manually book a bed', async ({ page, person }) => {
+test('Manually book a bed', async ({ page, person, legacyManager }) => {
+  // Given I am signed in as a legacy manager
+  await signIn(page, legacyManager)
+
   await manuallyBookPlacement({ page, person, filterPremisesPage: true })
 })
 
-// Given I have the 'Workflow manager', 'Legacy manager' and 'Manager' role
-test('Mark a booking as cancelled', async ({ page, person }) => {
+test('Mark a booking as cancelled', async ({ page, legacyManager, person }) => {
+  // Given I am signed in as a legacy manager
+  await signIn(page, legacyManager)
+
   // And there is a placement for today
   await manuallyBookPlacement({ page, person, filterPremisesPage: true })
 
@@ -120,8 +125,10 @@ test('Mark a booking as cancelled', async ({ page, person }) => {
   await placementPage.showsCancellationLoggedMessage()
 })
 
-test('Change placement dates', async ({ page, person }) => {
-  // Given I have the 'Legacy manager' role
+test('Change placement dates', async ({ page, person, legacyManager }) => {
+  // Given I am signed in as a legacy manager
+  await signIn(page, legacyManager)
+
   // And there is a placement for today
   await manuallyBookPlacement({ page, person })
   await navigateToTodaysBooking(page)
@@ -143,8 +150,9 @@ test('Change placement dates', async ({ page, person }) => {
   await confirmationPage.shouldShowBookingChangeSuccessMessage()
 })
 
-test('Mark a bed as lost', async ({ page }) => {
-  // Given I have the 'Legacy manager' role
+test('Mark a bed as lost', async ({ page, legacyManager }) => {
+  // Given I am signed in as a legacy manager
+  await signIn(page, legacyManager)
 
   // And I am on the list of premises page
   const dashboard = await visitDashboard(page)
@@ -175,8 +183,9 @@ test('Mark a bed as lost', async ({ page }) => {
   await premisesPage.showsLostBedLoggedMessage()
 })
 
-test('Mark a booking as arrived and extend it', async ({ page, person }) => {
-  // Given I have the 'Legacy manager' role
+test('Mark a booking as arrived and extend it', async ({ page, person, legacyManager }) => {
+  // Given I am signed in as a legacy manager
+  await signIn(page, legacyManager)
 
   // And there is a placement for today
   // And I am on the premises's page
@@ -208,8 +217,9 @@ test('Mark a booking as arrived and extend it', async ({ page, person }) => {
   await confirmationPage.shouldShowDepartureDateChangedMessage()
 })
 
-test('Mark a booking as not arrived', async ({ page, person }) => {
-  // Given I have the 'Legacy manager' role
+test('Mark a booking as not arrived', async ({ page, person, legacyManager }) => {
+  // Given I am signed in as a legacy manager
+  await signIn(page, legacyManager)
   // And there is a placement for today
   // And I am on the premises's page
   await manuallyBookPlacement({ page, person })
@@ -233,8 +243,9 @@ test('Mark a booking as not arrived', async ({ page, person }) => {
   await placementPage.showsNonArrivalLoggedMessage()
 })
 
-test('Move a booking', async ({ page, person }) => {
-  // Given I have the 'Legacy manager' role
+test('Move a booking', async ({ page, person, legacyManager }) => {
+  // Given I am signed in as a legacy manager
+  await signIn(page, legacyManager)
   // And there is a placement for today
   // And I am on the premises's page
   await manuallyBookPlacement({ page, person })

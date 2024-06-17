@@ -23,6 +23,10 @@ export const test = base.extend<TestOptions>({
     { username: process.env.CAS1_E2E_FUTURE_MANAGER_USERNAME, password: process.env.CAS1_E2E_FUTURE_MANAGER_PASSWORD },
     { option: true },
   ],
+  legacyManager: [
+    { username: process.env.CAS1_E2E_LEGACY_MANAGER_USERNAME, password: process.env.CAS1_E2E_LEGACY_MANAGER_PASSWORD },
+    { option: true },
+  ],
   administrator: [
     { username: process.env.CAS1_E2E_ADMINISTRATOR_USERNAME, password: process.env.CAS1_E2E_ADMINISTRATOR_PASSWORD },
     { option: true },
