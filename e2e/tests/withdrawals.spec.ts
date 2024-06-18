@@ -1,5 +1,3 @@
-import { Page } from '@playwright/test'
-import { TestOptions } from '@approved-premises/e2e'
 import { test } from '../test'
 import {
   enterAndConfirmCrn,
@@ -11,14 +9,11 @@ import {
 import { ListPage } from '../pages/apply'
 
 import { ShowPage } from '../pages/apply/showPage'
+import { signIn } from '../steps/signIn'
 
-test('Withdraw an application before submission', async ({
-  page,
-  person,
-}: {
-  page: Page
-  person: TestOptions['person']
-}) => {
+test('Withdraw an application before submission', async ({ page, person, userWithoutRoles }) => {
+  await signIn(page, userWithoutRoles)
+
   const dashboard = await visitDashboard(page)
 
   await startAnApplication(dashboard, page)

@@ -7,9 +7,13 @@ import { AddUser } from '../pages/admin/addUser'
 import { EditUser, roles } from '../pages/admin/editUser'
 import { NewUserConfirmationPage } from '../pages/admin/newUserConfirmationPage'
 import { DeleteUserConfirmationPage } from '../pages/admin/deleteUserConfirmationPage'
+import { signIn } from '../steps/signIn'
 
-test('download reports', async ({ page }) => {
-  // Given I visit the dashboard
+test('download reports', async ({ page, reportViewer }) => {
+  // Given I am signed in as a report viewer
+  await signIn(page, reportViewer)
+
+  // And I visit the dashboard
   const dashboard = await visitDashboard(page)
 
   // When I click the download reports link
@@ -32,8 +36,11 @@ test('download reports', async ({ page }) => {
   expect(applicationsDownload.suggestedFilename()).toMatch(/placement-applications-2023-01-[0-9_]*.xlsx/)
 })
 
-test('manage users', async ({ page, userToAddAndDelete }) => {
-  // Given I visit the dashboard
+test('manage users', async ({ page, userToAddAndDelete, administrator }) => {
+  // Given I am signed in as an administrator
+  await signIn(page, administrator)
+
+  // and I visit the dashboard
   const dashboard = await visitDashboard(page)
 
   // When I click the manage users link

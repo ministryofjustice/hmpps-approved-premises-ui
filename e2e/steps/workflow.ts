@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test'
+import { TestOptions } from '@approved-premises/e2e'
 import { DashboardPage } from '../pages/dashboardPage'
 import { AssessmentPage, ListPage, PlacementRequestPage } from '../pages/workflow'
 
@@ -17,7 +18,7 @@ export const assessmentShouldHaveCorrectDeadlineAndAllocatedUser = async (
 export const assignAssessmentToMe = async (
   dashboard: DashboardPage,
   page: Page,
-  userName: string,
+  userName: TestOptions['assessor']['username'],
   id: string,
   isAllocated?: boolean,
 ) => {

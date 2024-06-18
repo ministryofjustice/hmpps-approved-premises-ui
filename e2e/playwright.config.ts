@@ -25,7 +25,6 @@ export default defineConfig<TestOptions>({
       name: 'dev',
       use: {
         ...devices['Desktop Chrome'],
-        storageState: 'playwright/.auth/user.json',
         baseURL: 'https://approved-premises-dev.hmpps.service.justice.gov.uk',
       },
       dependencies: ['setupDev'],
@@ -35,27 +34,16 @@ export default defineConfig<TestOptions>({
       testMatch: /.*\.setup\.ts/,
       use: {
         baseURL: 'http://localhost:3000',
-        user: {
-          name: 'JIM SNOW',
-          username: 'jimsnowldap',
-          password: 'secret',
-        },
       },
     },
     {
       name: 'local',
       use: {
         ...devices['Desktop Chrome'],
-        storageState: 'playwright/.auth/user.json',
         baseURL: 'http://localhost:3000',
         person: {
           name: 'Aadland Bertrand',
           crn: 'X320741',
-        },
-        user: {
-          name: 'JIM SNOW',
-          username: 'jimsnowldap',
-          password: 'secret',
         },
         indexOffenceRequired: true,
         oasysSections: [
@@ -71,5 +59,5 @@ export default defineConfig<TestOptions>({
       dependencies: ['setupLocal'],
     },
   ],
-  testIgnore: ['./utils/*.ts'],
+  testIgnore: ['/utils/*.ts'],
 })

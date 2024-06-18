@@ -33,7 +33,8 @@
     "cypress.config.ts",
     "coverage/**",
     "e2e/playwright/**",
-    "e2e/test-results/**"
+    "e2e/test-results/**",
+    "playwright-report"
   ],
   "include": ["**/*.js", "**/*.ts"]
 }
