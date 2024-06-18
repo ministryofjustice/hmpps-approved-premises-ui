@@ -5,6 +5,8 @@ import {
   bedDetailFactory,
   bedSummaryFactory,
   bookingFactory,
+  cancellationFactory,
+  cancellationReasonFactory,
   dateCapacityFactory,
   extendedPremisesSummaryFactory,
   personFactory,
@@ -29,12 +31,15 @@ context('Booking', () => {
   const assessment = assessmentFactory.build({
     status: 'completed',
   })
+  const cancellationReason = cancellationReasonFactory.build({ name: 'Other' })
+  const cancellation = cancellationFactory.build({ reason: cancellationReason, otherReason: 'otherReason' })
   const booking = bookingFactory.build({
     person,
     arrivalDate: '2022-06-01',
     departureDate: '2022-06-01',
     applicationId: application.id,
     assessmentId: assessment.id,
+    cancellations: [cancellation],
   })
   const offences = activeOffenceFactory.buildList(1)
 
@@ -266,6 +271,8 @@ context('Booking', () => {
   it('should allow me to see a booking', () => {
     // Given I am signed in as a workflow manager
     signIn(['workflow_manager'])
+
+    cy.task('stubBookingGet', { premisesId: premises.id, booking })
 
     // When I navigate to the booking's manage page
     const page = BookingShowPage.visit(premises.id, booking)

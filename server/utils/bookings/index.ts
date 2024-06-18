@@ -386,7 +386,10 @@ export const cancellationRows = (booking: Booking): Array<SummaryListItem> => {
           text: 'Reason',
         },
         value: {
-          text: booking.cancellation.reason.name,
+          text:
+            booking.cancellation.reason.name === 'Other'
+              ? `${booking.cancellation.reason.name} - ${booking.cancellation.otherReason}`
+              : booking.cancellation.reason.name,
         },
       },
     ]
