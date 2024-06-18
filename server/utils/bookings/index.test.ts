@@ -25,6 +25,7 @@ import {
   bookingFactory,
   bookingSummaryFactory,
   cancellationFactory,
+  cancellationReasonFactory,
   departureFactory,
   personFactory,
   premisesBookingFactory,
@@ -571,7 +572,8 @@ describe('bookingUtils', () => {
     })
 
     it('returns an details of a cancellations', () => {
-      const cancellation = cancellationFactory.build()
+      const cancellationReason = cancellationReasonFactory.build({ name: 'Recall' })
+      const cancellation = cancellationFactory.build({ reason: cancellationReason })
       const booking = bookingFactory.build({ cancellation })
 
       expect(cancellationRows(booking)).toEqual([
@@ -589,6 +591,31 @@ describe('bookingUtils', () => {
           },
           value: {
             text: cancellation.reason.name,
+          },
+        },
+      ])
+    })
+
+    it('returns an details of a cancellations for other reason', () => {
+      const cancellationReason = cancellationReasonFactory.build({ name: 'Other' })
+      const cancellation = cancellationFactory.build({ reason: cancellationReason })
+      const booking = bookingFactory.build({ cancellation })
+
+      expect(cancellationRows(booking)).toEqual([
+        {
+          key: {
+            text: 'Cancelled on',
+          },
+          value: {
+            text: DateFormats.isoDateToUIDate(cancellation.createdAt),
+          },
+        },
+        {
+          key: {
+            text: 'Reason',
+          },
+          value: {
+            text: `${booking.cancellation.reason.name} - ${booking.cancellation.otherReason}`,
           },
         },
       ])
