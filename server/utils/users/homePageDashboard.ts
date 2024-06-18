@@ -81,7 +81,7 @@ export const sections = {
     title: 'View out of service beds',
     description: 'View all currently out of service beds, across all Approved Premises.',
     shortTitle: 'Out of service beds',
-    href: managePaths.v2Manage.outOfServiceBeds.index({}),
+    href: managePaths.v2Manage.outOfServiceBeds.index({ temporality: 'current' }),
   },
 }
 export const managerRoles: ReadonlyArray<UserRole> = [
