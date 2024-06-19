@@ -72,4 +72,21 @@ export class EditUser extends BasePage {
       expect(await this.page.getByLabel(label).isChecked()).toBeFalsy()
     })
   }
+
+  async applyRoles(labels: ReadonlyArray<Role>) {
+    this.checkUncheckedCheckboxes(labels)
+  }
+
+  async deselectAllRoles(labels: ReadonlyArray<Role>) {
+    await this.checkCheckBoxes(labels)
+    await this.assertCheckboxesAreUnselected(labels)
+  }
+
+  async shouldHaveAllRolesAssigned(labels: ReadonlyArray<Role>) {
+    this.assertCheckboxesAreSelected(labels)
+  }
+
+  async shouldHaveNoRolesAssigned(labels: ReadonlyArray<Role>) {
+    await this.assertCheckboxesAreUnselected(labels)
+  }
 }

@@ -67,9 +67,8 @@ test('manage users', async ({ page, userToAddAndDelete, administrator }) => {
   // Then I should be taken to the Edit User page
   const editUserPage = await EditUser.initialize(page)
 
-  // When I select all the checkboxes
-  await editUserPage.checkUncheckedCheckboxes(roles)
-  await editUserPage.assertCheckboxesAreSelected(roles)
+  // When I assign all the roles to the users
+  await editUserPage.applyRoles(roles)
 
   // And I click 'Save'
   await editUserPage.clickSave()
@@ -77,12 +76,11 @@ test('manage users', async ({ page, userToAddAndDelete, administrator }) => {
   // Then I should see the 'User updated' banner
   await editUserPage.shouldShowUserUpdatedBanner()
 
-  // And all the checkboxes should be selected
-  await editUserPage.assertCheckboxesAreSelected(roles)
+  // Then I see that the user has all the roles assigned
+  await editUserPage.shouldHaveAllRolesAssigned(roles)
 
-  // When I unselect all the checkboxes
-  await editUserPage.checkCheckBoxes(roles)
-  await editUserPage.assertCheckboxesAreUnselected(roles)
+  // When I remove all the user's roles
+  await editUserPage.deselectAllRoles(roles)
 
   // And I click 'Save'
   await editUserPage.clickSave()
@@ -90,8 +88,8 @@ test('manage users', async ({ page, userToAddAndDelete, administrator }) => {
   // Then I should see the 'User updated' banner
   await editUserPage.shouldShowUserUpdatedBanner()
 
-  // And all the checkboxes should be selected
-  await editUserPage.assertCheckboxesAreUnselected(roles)
+  // And the user should have no roles assigned
+  await editUserPage.shouldHaveNoRolesAssigned(roles)
 
   // When I click 'Remove access'
   await editUserPage.clickRemoveAccess()
