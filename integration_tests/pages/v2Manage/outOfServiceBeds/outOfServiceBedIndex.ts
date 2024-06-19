@@ -14,6 +14,10 @@ export class OutOfServiceBedIndexPage extends Page {
     return new OutOfServiceBedIndexPage()
   }
 
+  clickTab(temporality: string): void {
+    cy.get('a').contains(temporality).click()
+  }
+
   shouldShowOutOfServiceBeds(outOfServiceBeds: Array<OutOfServiceBed>): void {
     outOfServiceBeds.forEach((item: OutOfServiceBed) => {
       cy.get(`[data-cy-bedId="${item.bed.id}"]`)

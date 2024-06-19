@@ -236,7 +236,7 @@ context('OutOfServiceBeds', () => {
   })
 
   describe('list of all OOS beds', () => {
-    const outOfServiceBeds = outOfServiceBedFactory.buildList(10)
+    const outOfServiceBeds = outOfServiceBedFactory.buildList(3)
 
     it('allows me to view all out of service beds', () => {
       cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 1 })
@@ -260,7 +260,7 @@ context('OutOfServiceBeds', () => {
       cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: '9' })
 
       // When I visit the OOS beds index page
-      const page = OutOfServiceBedIndexPage.visit()
+      const page = OutOfServiceBedIndexPage.visit('current')
 
       // And I click next
       page.clickNext()
@@ -277,6 +277,42 @@ context('OutOfServiceBeds', () => {
       cy.task('verifyOutOfServiceBedsDashboard', { page: '9' }).then(requests => {
         expect(requests).to.have.length(1)
       })
+    })
+
+    it('allows me to filter by temporality', () => {
+      const futureBeds = outOfServiceBedFactory.buildList(3)
+      const historicBeds = outOfServiceBedFactory.buildList(3)
+
+      cy.task('stubOutOfServiceBedsList', {
+        outOfServiceBeds,
+        page: '1',
+        temporality: 'current',
+      })
+      cy.task('stubOutOfServiceBedsList', {
+        outOfServiceBeds: futureBeds,
+        page: '1',
+        temporality: 'future',
+      })
+      cy.task('stubOutOfServiceBedsList', {
+        outOfServiceBeds: historicBeds,
+        page: '1',
+        temporality: 'historic',
+      })
+
+      // Given I'm on the out of service beds index page
+      const page = OutOfServiceBedIndexPage.visit('current')
+
+      // When I click the 'future' tab
+      page.clickTab('Future')
+
+      // Then I see a list of future out of service beds
+      page.shouldShowOutOfServiceBeds(futureBeds)
+
+      // And when I click the 'historic' tab
+      page.clickTab('Historic')
+
+      // Then I see a list of historic out of service beds
+      page.shouldShowOutOfServiceBeds(historicBeds)
     })
 
     it('supports sorting by premisesName', () => {
@@ -310,7 +346,7 @@ context('OutOfServiceBeds', () => {
 
   const shouldSortByField = (field: string) => {
     // And there is a page of out of service beds
-    const outOfServiceBeds = outOfServiceBedFactory.buildList(10)
+    const outOfServiceBeds = outOfServiceBedFactory.buildList(5)
 
     cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 1 })
     cy.task('stubOutOfServiceBedsList', {
@@ -318,16 +354,18 @@ context('OutOfServiceBeds', () => {
       page: '1',
       sortBy: field,
       sortDirection: 'asc',
+      temporality: 'current',
     })
     cy.task('stubOutOfServiceBedsList', {
       outOfServiceBeds,
       page: '1',
       sortBy: field,
       sortDirection: 'desc',
+      temporality: 'current',
     })
 
     // When I access the out of service beds dashboard
-    const page = OutOfServiceBedIndexPage.visit()
+    const page = OutOfServiceBedIndexPage.visit('current')
 
     // Then I should see the first result
     page.shouldShowOutOfServiceBeds(outOfServiceBeds)
