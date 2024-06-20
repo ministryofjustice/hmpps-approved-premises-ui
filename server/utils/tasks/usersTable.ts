@@ -66,6 +66,6 @@ export const buttonCell = (user: UserWithWorkload, task: Task, csrfToken: string
   })}" method="post">
   <input type="hidden" name="userId" value="${user.id}" />
   <input type="hidden" name="_csrf" value="${csrfToken}" />
-   <button class="govuk-button govuk-button--secondary" data-prevent-double-click="true" type="submit" data-cy-userId="${user.id}">Allocate</button>
+   <button class="govuk-button govuk-button--secondary" data-prevent-double-click="true" name="submit" type="submit" data-cy-userId="${user.id}" data-module="govuk-button">Allocate</button>
   </form>`,
 })
