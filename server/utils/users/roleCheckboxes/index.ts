@@ -17,6 +17,10 @@ export const roleLabelDictionary: RoleLabelDictionary = {
     label: 'Appeals manager',
     hint: 'Log appeals against rejected applications',
   },
+  cru_member: {
+    label: 'CRU member',
+    hint: 'Manage out of service beds across all premises and areas',
+  },
   report_viewer: {
     label: 'Report Viewer',
     hint: 'View and download reports',
@@ -54,6 +58,7 @@ export const roles: ReadonlyArray<UserRole> = [
   'manager',
   'matcher',
   'workflow_manager',
+  'cru_member',
   'excluded_from_assess_allocation',
   'excluded_from_match_allocation',
   'excluded_from_placement_application_allocation',

@@ -19,6 +19,10 @@ export const test = base.extend<TestOptions>({
     { option: true },
   ],
   userToAddAndDelete: [{ name: process.env.CAS1_E2E_DELIUS_USERNAME_TO_ADD_AND_DELETE as string }, { option: true }],
+  cruMember: [
+    { username: process.env.CAS1_E2E_CRU_MEMBER_USERNAME, password: process.env.CAS1_E2E_CRU_MEMBER_PASSWORD },
+    { option: true },
+  ],
   futureManager: [
     { username: process.env.CAS1_E2E_FUTURE_MANAGER_USERNAME, password: process.env.CAS1_E2E_FUTURE_MANAGER_PASSWORD },
     { option: true },
