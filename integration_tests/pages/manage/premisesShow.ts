@@ -21,6 +21,10 @@ export default class PremisesShowPage extends Page {
     cy.get('a').contains('View calendar').click()
   }
 
+  shouldShowAPArea(apArea: string): void {
+    cy.get('span').should('contain', apArea)
+  }
+
   shouldShowPremisesDetail(): void {
     cy.get('.govuk-summary-list__key')
       .contains('Code')
