@@ -26,7 +26,7 @@ export default class BedShowPage extends Page {
 
   clickOutOfServiceBedOption() {
     cy.get('.moj-button-menu__toggle-button').click()
-    cy.get('a').contains('Mark this bed as out of service').click()
+    cy.get('a').contains('Create out of service bed record').click()
   }
 
   clickCreateBookingOption() {

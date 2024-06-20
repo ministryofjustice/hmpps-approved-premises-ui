@@ -57,7 +57,7 @@ export const bedActions = (bed: BedDetail, premisesId: string) => {
   return {
     items: [
       {
-        text: 'Mark this bed as out of service',
+        text: 'Create out of service bed record',
         classes: 'govuk-button--secondary',
         href: paths.lostBeds.new({ premisesId, bedId: bed.id }),
       },
