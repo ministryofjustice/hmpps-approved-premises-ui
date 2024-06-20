@@ -271,9 +271,9 @@ test('Move a booking', async ({ page, person, legacyManager }) => {
   await placementPage.showsBedMoveLoggedMessage()
 })
 
-test('View all out of service beds', async ({ page, futureManager }) => {
-  // Given I am signed in as a future manager
-  await signIn(page, futureManager)
+test('View all out of service beds', async ({ page, cruMember }) => {
+  // Given I am signed in as a CRU Member
+  await signIn(page, cruMember)
 
   // And I am on the dashboard page
   const dashboard = await visitDashboard(page)

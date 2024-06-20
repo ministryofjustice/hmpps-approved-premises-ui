@@ -19,14 +19,14 @@ import { OutOfServiceBedIndexPage } from '../../pages/v2Manage/outOfServiceBeds'
 context('OutOfServiceBeds', () => {
   beforeEach(() => {
     cy.task('reset')
-
-    // Given I am signed in as a future manager
-    signIn(['future_manager'])
   })
 
   it('should allow me to create a out of service bed', () => {
     const premises = extendedPremisesSummaryFactory.build()
     cy.task('stubPremisesSummary', premises)
+
+    // Given I am signed in as a future manager
+    signIn(['future_manager'])
 
     // When I navigate to the out of service bed form
 
@@ -61,6 +61,9 @@ context('OutOfServiceBeds', () => {
   })
 
   it('should show errors', () => {
+    // Given I am signed in as a future manager
+    signIn(['future_manager'])
+
     // And a out of service bed is available
     const premises = premisesFactory.build()
 
@@ -80,6 +83,9 @@ context('OutOfServiceBeds', () => {
   })
 
   it('should show an error when there are booking conflicts', () => {
+    // Given I am signed in as a future manager
+    signIn(['future_manager'])
+
     const premises = extendedPremisesSummaryFactory.build()
     const conflictingBooking = bookingFactory.build()
     cy.task('stubPremisesSummary', premises)
@@ -108,6 +114,9 @@ context('OutOfServiceBeds', () => {
   })
 
   it('should show a out of service bed', () => {
+    // Given I am signed in as a future manager
+    signIn(['future_manager'])
+
     // And I have created a out of service bed
     const premises = premisesFactory.build()
     const outOfServiceBed = outOfServiceBedFactory.build()
@@ -122,6 +131,12 @@ context('OutOfServiceBeds', () => {
   })
 
   describe('managing out of service beds', () => {
+    beforeEach(() => {
+      cy.task('reset')
+      // Given I am signed in as a future manager
+      signIn(['future_manager'])
+    })
+
     it('should allow me to update an out of service bed', () => {
       const premisesId = 'premisesId'
 
@@ -235,8 +250,14 @@ context('OutOfServiceBeds', () => {
     })
   })
 
-  describe('list of all OOS beds', () => {
-    const outOfServiceBeds = outOfServiceBedFactory.buildList(3)
+  describe('CRU Member lists all OOS beds', () => {
+    beforeEach(() => {
+      cy.task('reset')
+      // Given I am signed in as a CRU Member
+      signIn(['cru_member'])
+    })
+
+    const outOfServiceBeds = outOfServiceBedFactory.buildList(10)
 
     it('allows me to view all out of service beds', () => {
       cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 1 })
