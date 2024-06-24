@@ -207,6 +207,7 @@ export type { PrisonCaseNote } from './models/PrisonCaseNote';
 export type { ProbationDeliveryUnit } from './models/ProbationDeliveryUnit';
 export type { ProbationRegion } from './models/ProbationRegion';
 export type { Problem } from './models/Problem';
+export type { ProfileResponse } from './models/ProfileResponse';
 export type { PropertyStatus } from './models/PropertyStatus';
 export type { Reallocation } from './models/Reallocation';
 export type { ReferralHistoryNote } from './models/ReferralHistoryNote';
