@@ -34,7 +34,7 @@ context('Beds', () => {
     // Then I should be taken to the bed page
     Page.verifyOnPage(BedShowPage)
 
-    // When I visit the bed page
+    // Give I'm on the bed page
     const bedPage = BedShowPage.visit(premisesId, bedDetail)
 
     // Then I should see the room details
