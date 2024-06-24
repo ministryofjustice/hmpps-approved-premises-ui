@@ -21,6 +21,7 @@ import {
   paginatedResponseFactory,
 } from '../../testutils/factories'
 import { getPaginationDetails } from '../../utils/getPaginationDetails'
+import { createQueryString } from '../../utils/utils'
 
 jest.mock('../../utils/validation')
 jest.mock('../../utils/bookings')
@@ -200,12 +201,15 @@ describe('OutOfServiceBedsController', () => {
   })
 
   describe('index', () => {
-    it('requests a list of outOfService beds with a page number, and renders the template', async () => {
+    it('requests a list of outOfService beds with a page number, sort and filter options, and renders the template', async () => {
+      const temporality = 'future'
+      const apAreaId = 'abc'
+
       const paginatedResponse = paginatedResponseFactory.build({
-        data: outOfServiceBedFactory.buildList(2),
+        data: outOfServiceBedFactory.buildList(1),
       }) as PaginatedResponse<OutOfServiceBed>
       const paginationDetails = {
-        hrefPrefix: paths.v2Manage.outOfServiceBeds.index({}),
+        hrefPrefix: `${paths.v2Manage.outOfServiceBeds.index.pattern}?${createQueryString({ temporality, apAreaId, premisesId })}`,
         pageNumber: 1,
         sortBy: 'roomName',
         sortDirection: 'desc',
@@ -214,9 +218,11 @@ describe('OutOfServiceBedsController', () => {
       outOfServiceBedService.getAllOutOfServiceBeds.mockResolvedValue(paginatedResponse)
       ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
 
+      const indexRequest = { ...request, query: { premisesId, apAreaId }, params: { temporality } }
+
       const requestHandler = outOfServiceBedController.index()
 
-      await requestHandler(request, response, next)
+      await requestHandler(indexRequest, response, next)
 
       expect(response.render).toHaveBeenCalledWith('outOfServiceBeds/index', {
         outOfServiceBeds: paginatedResponse.data,
@@ -226,13 +232,29 @@ describe('OutOfServiceBedsController', () => {
         hrefPrefix: paginationDetails.hrefPrefix,
         sortBy: paginationDetails.sortBy,
         sortDirection: paginationDetails.sortDirection,
+        temporality,
+        apAreaId,
+        premisesId,
       })
-      expect(outOfServiceBedService.getAllOutOfServiceBeds).toHaveBeenCalledWith(
+      expect(outOfServiceBedService.getAllOutOfServiceBeds).toHaveBeenCalledWith({
         token,
-        paginationDetails.pageNumber,
-        paginationDetails.sortBy,
-        paginationDetails.sortDirection,
-      )
+        page: paginationDetails.pageNumber,
+        sortBy: paginationDetails.sortBy,
+        sortDirection: paginationDetails.sortDirection,
+        temporality,
+        apAreaId,
+        premisesId,
+      })
+    })
+
+    it('redirects to the current temporality if a stray temporal URL parameter is entered', async () => {
+      const indexRequest = { ...request, params: { temporality: '123' } }
+
+      const requestHandler = outOfServiceBedController.index()
+
+      await requestHandler(indexRequest, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(paths.v2Manage.outOfServiceBeds.index({ temporality: 'current' }))
     })
   })
 

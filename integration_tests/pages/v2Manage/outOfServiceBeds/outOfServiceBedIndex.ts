@@ -1,4 +1,4 @@
-import { Cas1OutOfServiceBed as OutOfServiceBed } from '@approved-premises/api'
+import { Cas1OutOfServiceBed as OutOfServiceBed, Temporality } from '@approved-premises/api'
 import paths from '../../../../server/paths/manage'
 
 import Page from '../../page'
@@ -9,9 +9,13 @@ export class OutOfServiceBedIndexPage extends Page {
     super('View out of service beds')
   }
 
-  static visit(): OutOfServiceBedIndexPage {
-    cy.visit(paths.v2Manage.outOfServiceBeds.index({}))
+  static visit(temporality: Temporality): OutOfServiceBedIndexPage {
+    cy.visit(paths.v2Manage.outOfServiceBeds.index({ temporality }))
     return new OutOfServiceBedIndexPage()
+  }
+
+  clickTab(temporality: string): void {
+    cy.get('a').contains(temporality).click()
   }
 
   shouldShowOutOfServiceBeds(outOfServiceBeds: Array<OutOfServiceBed>): void {

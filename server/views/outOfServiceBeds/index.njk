@@ -4,6 +4,7 @@
 {% from "govuk/components/pagination/macro.njk" import govukPagination %}
 
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 
 {% extends "../partials/layout.njk" %}
 
@@ -20,6 +21,25 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full-width">
       <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+      {{
+        mojSubNavigation({
+          label: 'Sub navigation',
+          items: [{
+              text: 'Current',
+              href: paths.v2Manage.outOfServiceBeds.index({temporality: 'current'}),
+              active: temporality === 'current'
+            }, {
+              text: 'Future',
+              href: paths.v2Manage.outOfServiceBeds.index({temporality: 'future'}),
+              active: temporality === 'future'
+            }, {
+              text: 'Historic',
+              href: paths.v2Manage.outOfServiceBeds.index({temporality: 'historic'}),
+              active: temporality === 'historic'
+          }]
+        })
+      }}
 
       {% if outOfServiceBeds %}
 

@@ -130,7 +130,7 @@ const v2Manage = {
     new: outOfServiceBedsPath.path('new'),
     create: outOfServiceBedsPath,
     premisesIndex: singlePremisesPath.path('out-of-service-beds'),
-    index: outOfServiceBedsIndexPath,
+    index: outOfServiceBedsIndexPath.path(':temporality'),
     show: outOfServiceBedsPath.path(':id'),
     update: singlePremisesPath.path('out-of-service-beds').path(':id'),
     cancel: singlePremisesPath.path('out-of-service-beds').path(':id').path('cancellations'),

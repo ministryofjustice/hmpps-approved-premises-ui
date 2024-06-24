@@ -70,11 +70,12 @@ export default {
     page = 1,
     sortBy = 'outOfServiceFrom',
     sortDirection = 'asc',
+    temporality = 'current',
   }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        url: `${paths.manage.outOfServiceBeds.index.pattern}?page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}`,
+        url: `${paths.manage.outOfServiceBeds.index.pattern}?page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}&temporality=${temporality}`,
       },
       response: {
         status: 200,

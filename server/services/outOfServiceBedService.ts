@@ -5,6 +5,7 @@ import type {
   Cas1OutOfServiceBedCancellation as OutOfServiceBedCancellation,
   Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
   SortDirection,
+  Temporality,
   UpdateCas1OutOfServiceBed as UpdateOutOfServiceBed,
 } from '@approved-premises/api'
 import { PaginatedResponse } from '@approved-premises/ui'
@@ -58,14 +59,32 @@ export default class OutOfServiceBedService {
     return outOfServiceBeds
   }
 
-  async getAllOutOfServiceBeds(
-    token: string,
+  async getAllOutOfServiceBeds({
+    token,
     page = 1,
-    sortBy: OutOfServiceBedSortField = 'outOfServiceFrom',
-    sortDirection: SortDirection = 'asc',
-  ): Promise<PaginatedResponse<OutOfServiceBed>> {
+    sortBy = 'outOfServiceFrom',
+    sortDirection = 'asc',
+    temporality = 'current',
+    premisesId,
+    apAreaId,
+  }: {
+    token: string
+    page?: number
+    sortBy?: OutOfServiceBedSortField
+    sortDirection?: SortDirection
+    temporality?: Temporality
+    premisesId?: string
+    apAreaId?: string
+  }): Promise<PaginatedResponse<OutOfServiceBed>> {
     const outOfServiceBedClient = this.outOfServiceBedClientFactory(token)
-    const outOfServiceBeds = await outOfServiceBedClient.get(sortBy, sortDirection, page)
+    const outOfServiceBeds = await outOfServiceBedClient.get({
+      sortBy,
+      sortDirection,
+      page,
+      temporality,
+      premisesId,
+      apAreaId,
+    })
 
     return outOfServiceBeds
   }

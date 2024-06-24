@@ -8,9 +8,12 @@ import {
   Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
   Premises,
   SortDirection,
+  Temporality,
   UpdateCas1OutOfServiceBed as UpdateOutOfServiceBed,
 } from '@approved-premises/api'
 import { PaginatedResponse } from '@approved-premises/ui'
+import superagent from 'superagent'
+import { createQueryString } from '../utils/utils'
 import RestClient from './restClient'
 import config, { ApiConfig } from '../config'
 import paths from '../paths/api'
@@ -43,16 +46,34 @@ export default class OutOfServiceBedClient {
     })) as Array<OutOfServiceBed>
   }
 
-  async get(
-    sortBy: OutOfServiceBedSortField,
-    sortDirection: SortDirection,
-    page = 1,
-  ): Promise<PaginatedResponse<OutOfServiceBed>> {
-    return this.restClient.getPaginatedResponse<OutOfServiceBed>({
-      path: paths.manage.outOfServiceBeds.index.pattern,
-      page: page.toString(),
-      query: { sortBy, sortDirection },
-    })
+  async get({
+    page,
+    sortBy,
+    sortDirection,
+    temporality,
+    premisesId,
+    apAreaId,
+  }: {
+    page: number
+    sortBy: OutOfServiceBedSortField
+    sortDirection: SortDirection
+    temporality: Temporality
+    premisesId?: string
+    apAreaId?: string
+  }): Promise<PaginatedResponse<OutOfServiceBed>> {
+    const response = (await this.restClient.get({
+      path: paths.manage.outOfServiceBeds.index({}),
+      query: createQueryString({ page, sortBy, sortDirection, temporality, premisesId, apAreaId }),
+      raw: true,
+    })) as superagent.Response
+
+    return {
+      data: response.body,
+      pageNumber: page.toString(),
+      totalPages: response.headers['x-pagination-totalpages'],
+      totalResults: response.headers['x-pagination-totalresults'],
+      pageSize: response.headers['x-pagination-pagesize'],
+    }
   }
 
   async update(
