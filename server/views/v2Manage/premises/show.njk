@@ -1,0 +1,131 @@
+e{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+{% from "../../bookings/_table.njk" import bookingTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+
+{% extends "../../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - " + premises.name %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+		text: "Back",
+		href: paths.premises.index()
+	}) }}
+{% endblock %}
+
+{%set titleHtml = '<span class="govuk-caption-xl">' + apArea.name + '</span><h1>' + premises.name + '</h1>'%}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full-width">
+      {% include "../../_messages.njk" %}
+
+      {% set overcapacityMessage = PremisesUtils.overcapacityMessage(premises.dateCapacities) %}
+
+      {% if overcapacityMessage | length %}
+        {{ govukNotificationBanner({
+          titleText: 'Important',
+          html: '<div class="govuk-heading-s">' + overcapacityMessage + '</div>',
+          titleId: 'info-title'
+        }) }}
+      {% endif %}
+
+      {{
+        mojIdentityBar({
+          title: {
+            html: titleHtml
+          },
+        menus: [{
+          items: PremisesUtils.premisesActions(user, premises)
+        }]
+        })
+      }}
+    </div>
+    <div class="govuk-grid-column-full-width">
+      {{
+		    govukSummaryList(
+          PremisesUtils.summaryListForPremises(premises)
+        )
+	    }}
+
+      <h2>Arrivals and Departures</h2>
+
+      {{
+        govukTabs({
+          items: [
+            {
+              label: "Arriving Today",
+              id: "arriving-today",
+              panel: {
+                html: bookingTable("Arriving Today", "Arrival", BookingUtils.arrivingTodayOrLate(bookings, premises.id))
+              }
+            },
+            {
+              label: "Departing Today",
+              id: "departing-today",
+              panel: {
+                html: bookingTable("Departing Today", "Departure", BookingUtils.departingTodayOrLate(bookings, premises.id))
+              }
+            },
+            {
+              label: "Upcoming Arrivals",
+              id: "upcoming-arrivals",
+              panel: {
+                html: bookingTable("Upcoming Arrivals", "Arrival", BookingUtils.upcomingArrivals(bookings, premises.id))
+              }
+            },
+            {
+              label: "Upcoming Departures",
+              id: "upcoming-departures",
+              panel: {
+                html: bookingTable("Upcoming Departures", "Departure", BookingUtils.upcomingDepartures(bookings, premises.id))
+              }
+            }
+          ]
+        })
+      }}
+
+      <h2>Current residents</h2>
+
+      {{
+        govukTable({
+          id:"current-residents",
+          caption: "Current residents",
+          captionClasses: "govuk-visually-hidden",
+          firstCellIsHeader: true,
+          head: [
+            {
+              text: "Resident Name"
+            },
+            {
+              text: "CRN"
+            },
+            {
+              text: "Expected Departure Date"
+            },
+            {
+              text: "Bed name"
+            },
+            {
+              text: "Actions"
+            }
+          ],
+          rows: BookingUtils.arrivedBookings(bookings, premises.id)
+        })
+      }}
+    </div>
+  </div>
+{% endblock %}
+
+{% block extraScripts %}
+  <script type="text/javascript" nonce="{{ cspNonce }}">
+    new MOJFrontend.ButtonMenu({container: $('.moj-button-menu'), mq: "(min-width: 200em)", buttonText: "Actions", menuClasses: "moj-button-menu__wrapper--right"});
+  </script>
+{% endblock %}
