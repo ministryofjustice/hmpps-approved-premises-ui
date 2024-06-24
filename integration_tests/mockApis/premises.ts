@@ -44,9 +44,25 @@ const stubPremisesSummary = (premises: ExtendedPremisesSummary) =>
     },
   })
 
+const stubSinglePremises = (premises: Premises) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: `/premises/${premises.id}`,
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: premises,
+    },
+  })
+
 export default {
   stubAllPremises,
   stubPremisesSummary,
+  stubSinglePremises,
   stubPremisesWithBookings: (args: { premises: Premises; bookings: Array<Booking> }): Promise<[Response, Response]> =>
     Promise.all([
       stubPremisesSummary(args.premises),

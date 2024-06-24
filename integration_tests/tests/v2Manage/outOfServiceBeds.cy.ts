@@ -24,12 +24,13 @@ context('OutOfServiceBeds', () => {
   it('should allow me to create a out of service bed', () => {
     const premises = extendedPremisesSummaryFactory.build()
     cy.task('stubPremisesSummary', premises)
+    const fullPremises = premisesFactory.build({ id: premises.id })
+    cy.task('stubSinglePremises', fullPremises)
 
     // Given I am signed in as a future manager
     signIn(['future_manager'])
 
     // When I navigate to the out of service bed form
-
     const outOfServiceBed = outOfServiceBedFactory.build({
       outOfServiceFrom: '2022-02-11',
       outOfServiceTo: '2022-03-11',
