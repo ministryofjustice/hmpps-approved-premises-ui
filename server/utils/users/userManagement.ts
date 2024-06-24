@@ -50,6 +50,7 @@ const userRoles: Record<ApprovedPremisesUserRole, string> = {
   matcher: 'Matcher',
   manager: 'Manager',
   workflow_manager: 'Workflow manager',
+  cru_member: 'CRU member',
   applicant: 'Applicant',
   role_admin: 'Role admin',
   report_viewer: 'Report viewer',

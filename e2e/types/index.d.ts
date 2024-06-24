@@ -24,6 +24,7 @@ declare module '@approved-premises/e2e' {
     user: UserFullDetails
     futureManager: UserLoginDetails
     legacyManager: UserLoginDetails
+    cruMember: UserLoginDetails
     administrator: UserLoginDetails
     reportViewer: UserLoginDetails
     assessor: UserFullDetails

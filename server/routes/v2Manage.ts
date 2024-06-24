@@ -126,7 +126,7 @@ export default function routes(controllers: Controllers, router: Router, service
   })
   get(paths.v2Manage.outOfServiceBeds.index.pattern, outOfServiceBedsController.index(), {
     auditEvent: 'LIST_ALL_OUT_OF_SERVICE_BEDS',
-    allowedRoles: ['future_manager'],
+    allowedRoles: ['cru_member'],
   })
 
   return router

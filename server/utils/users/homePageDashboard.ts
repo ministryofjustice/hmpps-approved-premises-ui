@@ -124,7 +124,7 @@ export const sectionsForUser = (user: UserDetails): Array<ServiceSection> => {
     items.push(sections.userManagement)
   }
 
-  if (hasRole(user, 'future_manager')) {
+  if (hasRole(user, 'cru_member')) {
     items.push(sections.outOfServiceBeds)
   }
 
