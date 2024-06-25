@@ -8,6 +8,14 @@ describe('premisesActions', () => {
     const user = userDetails.build({ roles: ['workflow_manager'] })
     const premises = premisesFactory.build()
 
+    it('does NOT include the v2 OUT OF SERVICE BEDS action', () => {
+      expect(premisesActions(user, premises)).not.toContainManageAction({
+        text: 'Manage out of service bed records',
+        classes: 'govuk-button--secondary',
+        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id }),
+      })
+    })
+
     it('does NOT include the VIEW CALENDAR action', () => {
       expect(premisesActions(user, premises)).not.toContainManageAction({
         text: 'View calendar',
@@ -37,6 +45,14 @@ describe('premisesActions', () => {
     const user = userDetails.build({ roles: ['legacy_manager'] })
     const premises = premisesFactory.build()
 
+    it('does NOT include the v2 OUT OF SERVICE BEDS action', () => {
+      expect(premisesActions(user, premises)).not.toContainManageAction({
+        text: 'Manage out of service bed records',
+        classes: 'govuk-button--secondary',
+        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id }),
+      })
+    })
+
     it('includes the MANAGE BEDS action', () => {
       expect(premisesActions(user, premises)).toContainManageAction({
         text: 'Manage beds',
@@ -65,6 +81,14 @@ describe('premisesActions', () => {
   describe('for users with the role "manager"', () => {
     const user = userDetails.build({ roles: ['manager'] })
     const premises = premisesFactory.build()
+
+    it('does NOT include the v2 OUT OF SERVICE BEDS action', () => {
+      expect(premisesActions(user, premises)).not.toContainManageAction({
+        text: 'Manage out of service bed records',
+        classes: 'govuk-button--secondary',
+        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id }),
+      })
+    })
 
     it('does include the MANAGE BEDS action', () => {
       expect(premisesActions(user, premises)).toContainManageAction({
@@ -118,24 +142,33 @@ describe('premisesActions', () => {
         href: paths.bookings.new({ premisesId: premises.id }),
       })
     })
+
+    it('includes the "v2 out of service beds" action', () => {
+      expect(premisesActions(user, premises)).toContainManageAction({
+        text: 'Manage out of service bed records',
+        classes: 'govuk-button--secondary',
+        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id }),
+      })
+    })
   })
 
   describe('for users with no role', () => {
     const user = userDetails.build({ roles: [] })
     const premises = premisesFactory.build()
 
+    it('does NOT include the v2 OUT OF SERVICE BEDS action', () => {
+      expect(premisesActions(user, premises)).not.toContainManageAction({
+        text: 'Manage out of service bed records',
+        classes: 'govuk-button--secondary',
+        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id }),
+      })
+    })
+
     it('includes the "manage beds" action', () => {
       expect(premisesActions(user, premises)).toContainManageAction({
         text: 'Manage beds',
         classes: 'govuk-button--secondary',
         href: paths.premises.beds.index({ premisesId: premises.id }),
-      })
-    })
-    it('includes the "out of service beds" action', () => {
-      expect(premisesActions(user, premises)).toContainManageAction({
-        text: 'Manage out of service bed records',
-        classes: 'govuk-button--secondary',
-        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id }),
       })
     })
   })
