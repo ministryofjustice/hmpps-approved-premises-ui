@@ -20,6 +20,6 @@ export class BedPage extends BasePage {
 
   async clickMarkBedAsOutOfService() {
     await this.clickActions()
-    await this.page.getByRole('menuitem', { name: 'Mark this bed as out of service' }).click()
+    await this.page.getByRole('menuitem', { name: 'Create out of service bed record' }).click()
   }
 }
