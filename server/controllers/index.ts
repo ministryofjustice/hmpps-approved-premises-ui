@@ -5,6 +5,7 @@ import { controllers as assessControllers } from './assess'
 import { controllers as matchControllers } from './match'
 import { controllers as manageControllers } from './manage'
 import { controllers as adminControllers } from './admin'
+import { controllers as v2ManageControllers } from './v2Manage'
 import TasksController from './tasksController'
 import AllocationsController from './tasks/allocationsController'
 
@@ -51,6 +52,7 @@ export const controllers = (services: Services) => {
     ...matchControllers(services),
     ...manageControllers(services),
     ...adminControllers(services),
+    ...v2ManageControllers(services),
   }
 }
 

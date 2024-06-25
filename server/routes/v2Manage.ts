@@ -18,6 +18,7 @@ export default function routes(controllers: Controllers, router: Router, service
     bookingExtensionsController,
     outOfServiceBedsController,
     bedsController,
+    v2PremisesController,
   } = controllers
 
   // Premises
@@ -29,7 +30,7 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'FILTER_PREMISES',
     allowedRoles: ['future_manager'],
   })
-  get(paths.v2Manage.premises.show.pattern, premisesController.show(), {
+  get(paths.v2Manage.premises.show.pattern, v2PremisesController.show(), {
     auditEvent: 'SHOW_PREMISES',
     allowedRoles: ['future_manager'],
   })

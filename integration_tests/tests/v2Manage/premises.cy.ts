@@ -2,6 +2,7 @@ import {
   dateCapacityFactory,
   extendedPremisesSummaryFactory,
   premisesBookingFactory,
+  premisesFactory,
   premisesSummaryFactory,
 } from '../../../server/testutils/factories'
 
@@ -65,17 +66,24 @@ context('Premises', () => {
       availableBeds: -1,
     })
 
+    const premisesId = '123'
+
     const premises = extendedPremisesSummaryFactory.build({
       dateCapacities: [overcapacityStartDate, overcapacityEndDate],
       bookings,
+      id: premisesId,
     })
 
+    const fullPremises = premisesFactory.build({ id: premisesId })
+
     cy.task('stubPremisesSummary', premises)
+    cy.task('stubSinglePremises', fullPremises)
 
     // When I visit the premises page
     const page = PremisesShowPage.visit(premises, { v2: true })
 
     // Then I should see the premises details shown
+    page.shouldShowAPArea(fullPremises.apArea.name)
     page.shouldShowPremisesDetail()
 
     // And I should see all the bookings for that premises listed

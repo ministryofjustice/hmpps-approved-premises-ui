@@ -119,4 +119,24 @@ describe('premisesActions', () => {
       })
     })
   })
+
+  describe('for users with no role', () => {
+    const user = userDetails.build({ roles: [] })
+    const premises = premisesFactory.build()
+
+    it('includes the "manage beds" action', () => {
+      expect(premisesActions(user, premises)).toContainManageAction({
+        text: 'Manage beds',
+        classes: 'govuk-button--secondary',
+        href: paths.premises.beds.index({ premisesId: premises.id }),
+      })
+    })
+    it('includes the "out of service beds" action', () => {
+      expect(premisesActions(user, premises)).toContainManageAction({
+        text: 'Manage out of service bed records',
+        classes: 'govuk-button--secondary',
+        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id }),
+      })
+    })
+  })
 })
