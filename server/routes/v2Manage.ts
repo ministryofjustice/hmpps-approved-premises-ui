@@ -19,6 +19,7 @@ export default function routes(controllers: Controllers, router: Router, service
     outOfServiceBedsController,
     bedsController,
     v2PremisesController,
+    v2BedsController,
   } = controllers
 
   // Premises
@@ -40,7 +41,7 @@ export default function routes(controllers: Controllers, router: Router, service
     auditEvent: 'LIST_BEDS',
     allowedRoles: ['future_manager'],
   })
-  get(paths.v2Manage.premises.beds.show.pattern, bedsController.show(), {
+  get(paths.v2Manage.premises.beds.show.pattern, v2BedsController.show(), {
     auditEvent: 'SHOW_BED',
     allowedRoles: ['future_manager'],
   })

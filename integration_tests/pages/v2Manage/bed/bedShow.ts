@@ -7,19 +7,21 @@ import { bedDetails } from '../../../../server/utils/bedUtils'
 
 export default class BedShowPage extends Page {
   constructor() {
-    super('Manage beds')
+    super('View bed information')
   }
 
-  static visit(premisesId: Premises['id'], bed: BedDetail, { v2 } = { v2: false }): BedShowPage {
-    cy.visit(
-      v2
-        ? paths.v2Manage.premises.beds.show({ premisesId, bedId: bed.id })
-        : paths.premises.beds.show({ premisesId, bedId: bed.id }),
-    )
+  static visit(premisesId: Premises['id'], bed: BedDetail): BedShowPage {
+    cy.visit(paths.v2Manage.premises.beds.show({ premisesId, bedId: bed.id }))
     return new BedShowPage()
   }
 
+  shouldShowPremisesName(premisesName: string): void {
+    cy.get('span').contains(premisesName)
+  }
+
   shouldShowBedDetails(bed: BedDetail): void {
+    cy.get('h1').contains(bed.roomName)
+    cy.get('h1').contains(bed.name)
     const details = bedDetails(bed)
     this.shouldContainSummaryListItems(details)
   }
