@@ -20,6 +20,8 @@ const bedsPath = singlePremisesPath.path('beds')
 
 const bookingPath = singlePremisesPath.path('bookings/:bookingId')
 
+const profilePath = path('/profile')
+
 const managePaths = {
   premises: {
     index: premisesPath.path('summary'),
@@ -223,9 +225,10 @@ export default {
     search: usersPath.path('search'),
     searchDelius: usersPath.path('delius'),
     show: usersPath.path(':id'),
-    profile: path('/profile'),
+    profile: profilePath,
     update: usersPath.path(':id'),
     delete: usersPath.path(':id'),
+    v2profile: profilePath.path('/v2'),
   },
   reports: reportsPath.path(':reportName'),
 }

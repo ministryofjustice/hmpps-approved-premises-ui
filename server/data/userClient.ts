@@ -1,4 +1,5 @@
 import type {
+  ProfileResponse,
   SortDirection,
   ApprovedPremisesUser as User,
   UserQualification,
@@ -23,8 +24,8 @@ export default class UserClient {
     return (await this.restClient.get({ path: paths.users.show({ id }) })) as User
   }
 
-  async getUserProfile(): Promise<User> {
-    return (await this.restClient.get({ path: paths.users.profile({}) })) as User
+  async getUserProfile(): Promise<ProfileResponse> {
+    return (await this.restClient.get({ path: paths.users.v2profile({}) })) as ProfileResponse
   }
 
   async getUserList(roles: Array<UserRole> = []): Promise<Array<User>> {

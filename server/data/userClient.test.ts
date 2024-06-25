@@ -48,7 +48,7 @@ describeClient('UserClient', provider => {
         uponReceiving: 'A request to get a user profile',
         withRequest: {
           method: 'GET',
-          path: paths.users.profile({}),
+          path: paths.users.v2profile({}),
           headers: {
             authorization: `Bearer ${token}`,
             'X-Service-Name': 'approved-premises',

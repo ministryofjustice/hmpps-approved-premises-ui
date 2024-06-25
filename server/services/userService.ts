@@ -11,6 +11,8 @@ import { PaginatedResponse, UserDetails } from '@approved-premises/ui'
 import { ReferenceDataClient, RestClientBuilder, UserClient } from '../data'
 import { convertToTitleCase } from '../utils/utils'
 
+export class DeliusAccountMissingStaffDetailsError extends Error {}
+
 export default class UserService {
   constructor(
     private readonly userClientFactory: RestClientBuilder<UserClient>,
@@ -20,13 +22,17 @@ export default class UserService {
   async getActingUser(token: string): Promise<UserDetails> {
     const client = this.userClientFactory(token)
     const profile = await client.getUserProfile()
+    if (profile.loadError === 'staff_record_not_found') {
+      throw new DeliusAccountMissingStaffDetailsError('Delius account missing staff details')
+    }
+    const user = profile.user as User
     return {
-      name: profile.deliusUsername,
-      id: profile.id,
-      displayName: convertToTitleCase(profile.name),
-      roles: profile.roles,
-      active: profile.isActive,
-      apArea: profile.apArea,
+      name: user.deliusUsername,
+      id: user.id,
+      displayName: convertToTitleCase(user.name),
+      roles: user.roles,
+      active: user.isActive,
+      apArea: user.apArea,
     }
   }
 

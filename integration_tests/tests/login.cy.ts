@@ -2,6 +2,9 @@ import DashboardPage from '../pages/dashboard'
 import AuthSignInPage from '../pages/authSignIn'
 import Page from '../pages/page'
 import AuthManageDetailsPage from '../pages/authManageDetails'
+import { userProfileFactory } from '../../server/testutils/factories/user'
+import { userFactory } from '../../server/testutils/factories'
+import DeliusMissingStaffDetails from '../pages/deliusMissingStaffDetails'
 
 context('SignIn', () => {
   beforeEach(() => {
@@ -65,5 +68,12 @@ context('SignIn', () => {
     cy.signIn()
 
     indexPage.headerUserName().contains('B. Brown')
+  })
+
+  it('Delius account missing staff details user directed to DeliusMissingStaffDetails', () => {
+    const profile = userProfileFactory.build({ user: userFactory.build(), loadError: 'staff_record_not_found' })
+    cy.task('stubAuthUser', { name: 'J. Smith', profile })
+    cy.signIn()
+    Page.verifyOnPage(DeliusMissingStaffDetails)
   })
 })
