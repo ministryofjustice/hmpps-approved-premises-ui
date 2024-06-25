@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express'
 import logger from '../../logger'
-import UserService from '../services/userService'
+import UserService, { DeliusAccountMissingStaffDetailsError } from '../services/userService'
 
 export default function populateCurrentUser(userService: UserService): RequestHandler {
   return async (req, res, next) => {
@@ -22,6 +22,10 @@ export default function populateCurrentUser(userService: UserService): RequestHa
       }
       return next()
     } catch (error) {
+      if (error instanceof DeliusAccountMissingStaffDetailsError) {
+        logger.error('Delius account missing staff details')
+        return res.redirect('/deliusMissingStaffDetails')
+      }
       logger.error(error, `Failed to retrieve user for: ${res.locals.user && res.locals.user.username}`)
       return next(error)
     }

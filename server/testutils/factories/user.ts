@@ -2,6 +2,7 @@ import { Factory } from 'fishery'
 import { faker } from '@faker-js/faker/locale/en_GB'
 
 import type {
+  ProfileResponse,
   ApprovedPremisesUser as User,
   UserQualification,
   ApprovedPremisesUserRole as UserRole,
@@ -28,6 +29,11 @@ export const userWithWorkloadFactory = Factory.define<UserWithWorkload>(({ param
   numTasksPending: faker.number.int({ min: 0, max: 10 }),
   numTasksCompleted7Days: faker.number.int({ min: 0, max: 15 }),
   numTasksCompleted30Days: faker.number.int({ min: 0, max: 45 }),
+}))
+
+export const userProfileFactory = Factory.define<ProfileResponse>(() => ({
+  deliusUsername: faker.internet.userName(),
+  user: userFactory.build(),
 }))
 
 const roleFactory = Factory.define<UserRole>(() =>
