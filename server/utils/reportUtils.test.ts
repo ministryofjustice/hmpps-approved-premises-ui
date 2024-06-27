@@ -39,6 +39,20 @@ describe('reportUtils', () => {
             text: 'Counts of key actions across the service grouped by day.',
           },
         },
+        {
+          value: 'applicationsV2',
+          text: 'Raw Applications for Performance Hub',
+          hint: {
+            text: 'A raw data extract for applications submitted or withdrawn within the month. Does not include any PII.',
+          },
+        },
+        {
+          value: 'requestsForPlacement',
+          text: 'Raw Requests for Placement for Performance Hub',
+          hint: {
+            text: 'A raw data extract for requests for placements created or withdrawn within the month. Does not include any PII.',
+          },
+        },
       ])
     })
   })

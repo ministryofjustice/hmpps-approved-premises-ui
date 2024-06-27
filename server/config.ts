@@ -48,7 +48,6 @@ export default {
   fliptEnabled,
   flags: {
     oasysDisabled: process.env.OASYS_DISABLED || false,
-    providePerformanceHubReports: get('PROVIDE_PERFORMANCE_HUB_REPORTS', false),
   },
   environment: process.env.ENVIRONMENT || 'local',
   sentry: {
