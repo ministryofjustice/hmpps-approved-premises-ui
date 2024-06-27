@@ -266,6 +266,103 @@ describe('dateChangesController', () => {
           }),
         )
       })
+
+      it('should catch the validation errors when new departure date is selected to change and not changed', async () => {
+        const previousBooking = bookingFactory.build({ departureDate: '2022-01-01' })
+        bookingService.find.mockResolvedValue(previousBooking)
+        const requestHandler = controller.create()
+
+        request = createMock<Request>(requestParams)
+
+        await requestHandler(
+          {
+            ...request,
+            body: {
+              datesToChange: ['newDepartureDate'],
+              ...DateFormats.isoDateToDateInputs('2022-01-01', 'newDepartureDate'),
+            },
+          },
+          response,
+          next,
+        )
+
+        expect(addErrorMessageToFlash).toHaveBeenCalledWith(
+          request,
+          'You must change the selected dates to submit',
+          'datesToChange',
+        )
+        expect(response.redirect).toHaveBeenCalledWith(
+          paths.bookings.dateChanges.new({
+            bookingId,
+            premisesId,
+          }),
+        )
+      })
+
+      it('should catch the validation errors when new arrival date is selected to change and not changed', async () => {
+        const previousBooking = bookingFactory.build({ arrivalDate: '2022-01-01' })
+        bookingService.find.mockResolvedValue(previousBooking)
+        const requestHandler = controller.create()
+
+        request = createMock<Request>(requestParams)
+
+        await requestHandler(
+          {
+            ...request,
+            body: {
+              datesToChange: ['newArrivalDate'],
+              ...DateFormats.isoDateToDateInputs('2022-01-01', 'newArrivalDate'),
+            },
+          },
+          response,
+          next,
+        )
+
+        expect(addErrorMessageToFlash).toHaveBeenCalledWith(
+          request,
+          'You must change the selected dates to submit',
+          'datesToChange',
+        )
+        expect(response.redirect).toHaveBeenCalledWith(
+          paths.bookings.dateChanges.new({
+            bookingId,
+            premisesId,
+          }),
+        )
+      })
+
+      it('should catch the validation errors when new arrival date and departure dates are selected to change and not changed', async () => {
+        const previousBooking = bookingFactory.build({ arrivalDate: '2022-01-01', departureDate: '2022-01-02' })
+        bookingService.find.mockResolvedValue(previousBooking)
+        const requestHandler = controller.create()
+
+        request = createMock<Request>(requestParams)
+
+        await requestHandler(
+          {
+            ...request,
+            body: {
+              datesToChange: ['newArrivalDate', 'newDepartureDate'],
+              ...DateFormats.isoDateToDateInputs('2022-01-01', 'newArrivalDate'),
+              ...DateFormats.isoDateToDateInputs('2022-01-02', 'newDepartureDate'),
+            },
+          },
+          response,
+          next,
+        )
+
+        expect(addErrorMessageToFlash).toHaveBeenCalledWith(
+          request,
+          'You must change the selected dates to submit',
+          'datesToChange',
+        )
+        expect(response.redirect).toHaveBeenCalledWith(
+          paths.bookings.dateChanges.new({
+            bookingId,
+            premisesId,
+          }),
+        )
+      })
     })
   })
 })
