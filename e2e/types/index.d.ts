@@ -18,6 +18,9 @@ declare module '@approved-premises/e2e' {
       crn: string
       name: string
     }
+    personForAdHocBooking: {
+      crn: string
+    }
     userToAddAndDelete: {
       name: string
     }

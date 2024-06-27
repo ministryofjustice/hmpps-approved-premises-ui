@@ -27,6 +27,10 @@ export class PremisesPage extends BasePage {
     await table.getByRole('link', { name: 'Manage' }).first().click()
   }
 
+  async clickGivenBooking(bookingId: string) {
+    await this.page.locator(`[data-cy-booking-id="${bookingId}"]`).first().click()
+  }
+
   async clickManageCurrentResident() {
     const table = this.page.getByRole('table', { name: 'Current residents' })
     await table.getByRole('link', { name: 'Manage' }).first().click()

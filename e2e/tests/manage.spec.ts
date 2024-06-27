@@ -51,6 +51,14 @@ const navigateToTodaysBooking = async (page: Page) => {
   await premisesPage.clickManageTodaysArrival()
 }
 
+const navigateToGivenBooking = async (page: Page, bookingId: string) => {
+  await navigateToPremisesPage(page)
+
+  const premisesPage = await PremisesPage.initialize(page, premisesName)
+
+  await premisesPage.clickGivenBooking(bookingId)
+}
+
 const navigateToCurrentResident = async (page: Page) => {
   await navigateToPremisesPage(page)
 
@@ -65,9 +73,14 @@ const manuallyBookPlacement = async ({
   filterPremisesPage,
 }: {
   page: Page
-  person: TestOptions['person']
+  person: TestOptions['personForAdHocBooking']
   filterPremisesPage?: boolean
 }) => {
+  const bookingId = () => {
+    const url = page.url()
+    return url.match(/bookings\/(.+)\/confirmation/)[1]
+  }
+
   await navigateToPremisesPage(page, { filterPremisesPage })
 
   // Then I should see the premises view page
@@ -92,6 +105,8 @@ const manuallyBookPlacement = async ({
   // Then I should be taken to the confirmation page
   const confirmationPage = new ConfirmationPage(page)
   await confirmationPage.shouldShowPlacementSuccessMessage()
+
+  return bookingId()
 }
 
 test('Manually book a bed', async ({ page, person, legacyManager }) => {
@@ -101,15 +116,14 @@ test('Manually book a bed', async ({ page, person, legacyManager }) => {
   await manuallyBookPlacement({ page, person, filterPremisesPage: true })
 })
 
-test('Mark a booking as cancelled', async ({ page, legacyManager, person }) => {
+test('Mark a booking as cancelled', async ({ page, legacyManager, personForAdHocBooking }) => {
   // Given I am signed in as a legacy manager
   await signIn(page, legacyManager)
 
   // And there is a placement for today
-  await manuallyBookPlacement({ page, person, filterPremisesPage: true })
+  const bookingId = await manuallyBookPlacement({ page, person: personForAdHocBooking, filterPremisesPage: true })
 
-  // await manuallyBookPlacement(page)
-  await navigateToTodaysBooking(page)
+  await navigateToGivenBooking(page, bookingId)
   // And I am on the placement's page
   const placementPage = await PlacementPage.initialize(page, 'Placement details')
 

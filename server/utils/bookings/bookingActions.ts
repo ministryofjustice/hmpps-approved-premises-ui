@@ -15,11 +15,23 @@ export const bookingActions = (user: UserDetails, booking: Booking): Array<Ident
 class MenuItems {
   constructor(public booking: Booking) {}
 
-  withdrawalLink = () => {
-    if (!this.booking?.applicationId) {
-      return paths.bookings.cancellations.new({ premisesId: this.booking.premises.id, bookingId: this.booking.id })
-    }
+  bookingCancellationPath = () => {
+    return paths.bookings.cancellations.new({ premisesId: this.booking.premises.id, bookingId: this.booking.id })
+  }
+
+  applicationWithdrawalPath = () => {
     return applyPaths.applications.withdraw.new({ id: this.booking?.applicationId })
+  }
+
+  bookingHasNoApplicationAssociatedByBothCrnAndEventNumber = () => {
+    return !this.booking?.applicationId
+  }
+
+  withdrawalLink = () => {
+    if (this.bookingHasNoApplicationAssociatedByBothCrnAndEventNumber()) {
+      return this.bookingCancellationPath()
+    }
+    return this.applicationWithdrawalPath()
   }
 
   items = {
