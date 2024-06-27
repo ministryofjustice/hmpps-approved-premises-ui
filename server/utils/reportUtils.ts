@@ -1,5 +1,3 @@
-import config from '../config'
-
 export const reportInputLabels = {
   applications: {
     text: 'Raw Applications',
@@ -30,10 +28,7 @@ export const reportInputLabels = {
 
 export type ReportType = (keyof typeof reportInputLabels)[number]
 
-export const unusedReports =
-  config.flags.providePerformanceHubReports === 'true'
-    ? ([] as Array<string>)
-    : ['applicationsV2', 'requestsForPlacement']
+export const unusedReports = [] as Array<string>
 
 export const reportOptions = Object.entries(reportInputLabels)
   .filter(([reportName]) => {
