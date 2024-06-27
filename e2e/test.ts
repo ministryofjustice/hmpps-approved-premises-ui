@@ -9,6 +9,7 @@ export const test = base.extend<TestOptions>({
     },
     { option: true },
   ],
+  personForAdHocBooking: [{ crn: process.env.CAS1_E2E_PERSON_FOR_ADHOC_BOOKING_CRN }, { option: true }],
   user: [
     {
       name: (process.env.HMPPS_AUTH_NAME || 'Approved Premises E2ETester') as string,
