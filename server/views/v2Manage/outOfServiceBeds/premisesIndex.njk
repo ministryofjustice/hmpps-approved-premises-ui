@@ -3,6 +3,7 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
 
 {% extends "../../partials/layout.njk" %}
 
@@ -27,13 +28,32 @@
           classes: 'govuk-summary-list--no-border',
           rows: [            {
               key: {
-                text: "Out of service"
+                text: "Current out of service beds"
               },
               value: {
                 text: OutOfServiceBedUtils.outOfServiceBedCountForToday(outOfServiceBeds)
               }
             }
           ]
+        })
+      }}
+
+      {{
+        mojSubNavigation({
+          label: 'Sub navigation',
+          items: [{
+              text: 'Current',
+              href: paths.v2Manage.outOfServiceBeds.premisesIndex({premisesId: premisesId, temporality: 'current'}),
+              active: temporality === 'current'
+            }, {
+              text: 'Future',
+              href: paths.v2Manage.outOfServiceBeds.premisesIndex({premisesId: premisesId, temporality: 'future'}),
+              active: temporality === 'future'
+            }, {
+              text: 'Historic',
+              href: paths.v2Manage.outOfServiceBeds.premisesIndex({premisesId: premisesId, temporality: 'historic'}),
+              active: temporality === 'historic'
+          }]
         })
       }}
 
@@ -47,6 +67,10 @@
             rows: OutOfServiceBedUtils.outOfServiceBedTableRows(outOfServiceBeds, premisesId, user)
           })
         }}
+
+        {% if temporality === 'past' %}
+          {{ govukPagination(pagination(pageNumber, totalPages, hrefPrefix)) }}
+        {% endif %}
 
       {% endif %}
     </div>
