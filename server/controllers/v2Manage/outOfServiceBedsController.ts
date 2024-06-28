@@ -74,17 +74,37 @@ export default class OutOfServiceBedsController {
 
   premisesIndex(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { premisesId } = req.params
+      const { temporality, premisesId } = req.params as { temporality: Temporality; premisesId: string }
 
-      const outOfServiceBeds = await this.outOfServiceBedService.getOutOfServiceBedsForAPremises(
-        req.user.token,
-        premisesId,
+      if (!['current', 'future', 'historic'].includes(temporality)) {
+        return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
+      }
+
+      const { pageNumber, hrefPrefix } = getPaginationDetails<OutOfServiceBedSortField>(
+        req,
+        paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality }),
+        {
+          temporality,
+          premisesId,
+        },
       )
 
-      return res.render('outOfServiceBeds/premisesIndex', {
-        outOfServiceBeds,
+      const outOfServiceBeds = await this.outOfServiceBedService.getAllOutOfServiceBeds({
+        token: req.user.token,
+        premisesId,
+        temporality,
+        page: pageNumber,
+        perPage: 50,
+      })
+
+      return res.render('v2Manage/outOfServiceBeds/premisesIndex', {
+        outOfServiceBeds: outOfServiceBeds.data,
         pageHeading: 'Manage out of service beds',
         premisesId,
+        temporality,
+        pageNumber: Number(outOfServiceBeds.pageNumber),
+        totalPages: Number(outOfServiceBeds.totalPages),
+        hrefPrefix,
       })
     }
   }

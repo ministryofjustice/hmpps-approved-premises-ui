@@ -185,18 +185,53 @@ describe('OutOfServiceBedsController', () => {
   })
 
   describe('premisesIndex', () => {
-    it('shows a list of outOfService beds for a premises', async () => {
-      outOfServiceBedService.getOutOfServiceBedsForAPremises.mockResolvedValue([outOfServiceBed])
-      const requestHandler = outOfServiceBedController.premisesIndex()
+    it('requests a paginated list of outOfService beds for a premises and renders the template', async () => {
+      const temporality = 'current'
 
-      await requestHandler({ ...request, params: { premisesId } }, response, next)
+      const paginatedResponse = paginatedResponseFactory.build({
+        data: outOfServiceBedFactory.buildList(1),
+      }) as PaginatedResponse<OutOfServiceBed>
+      const paginationDetails = {
+        hrefPrefix: `${paths.v2Manage.outOfServiceBeds.premisesIndex.pattern}?${createQueryString({ temporality, premisesId })}`,
+        pageNumber: 1,
+      }
+
+      outOfServiceBedService.getAllOutOfServiceBeds.mockResolvedValue(paginatedResponse)
+      ;(getPaginationDetails as jest.Mock).mockReturnValue(paginationDetails)
+
+      const req = { ...request, query: { premisesId }, params: { temporality } }
+
+      const requestHandler = outOfServiceBedController.premisesIndex()
+      await requestHandler({ ...req, params: { premisesId, temporality } }, response, next)
 
       expect(response.render).toHaveBeenCalledWith('v2Manage/outOfServiceBeds/premisesIndex', {
-        outOfServiceBeds: [outOfServiceBed],
+        outOfServiceBeds: paginatedResponse.data,
         pageHeading: 'Manage out of service beds',
         premisesId,
+        hrefPrefix: paginationDetails.hrefPrefix,
+        temporality,
+        pageNumber: Number(paginatedResponse.pageNumber),
+        totalPages: Number(paginatedResponse.totalPages),
       })
-      expect(outOfServiceBedService.getOutOfServiceBedsForAPremises).toHaveBeenCalledWith(token, premisesId)
+      expect(outOfServiceBedService.getAllOutOfServiceBeds).toHaveBeenCalledWith({
+        token,
+        page: paginationDetails.pageNumber,
+        temporality,
+        premisesId,
+        perPage: 50,
+      })
+    })
+
+    it('redirects to the current temporality if a stray temporal URL parameter is entered', async () => {
+      const indexRequest = { ...request, params: { premisesId, temporality: 'abc' } }
+
+      const requestHandler = outOfServiceBedController.premisesIndex()
+
+      await requestHandler(indexRequest, response, next)
+
+      expect(response.redirect).toHaveBeenCalledWith(
+        paths.v2Manage.outOfServiceBeds.premisesIndex({ temporality: 'current', premisesId }),
+      )
     })
   })
 
@@ -290,7 +325,10 @@ describe('OutOfServiceBedsController', () => {
       )
       expect(request.flash).toHaveBeenCalledWith('success', 'Bed updated')
       expect(response.redirect).toHaveBeenCalledWith(
-        paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: request.params.premisesId }),
+        paths.v2Manage.outOfServiceBeds.premisesIndex({
+          premisesId: request.params.premisesId,
+          temporality: 'current',
+        }),
       )
     })
 
@@ -342,7 +380,10 @@ describe('OutOfServiceBedsController', () => {
         )
         expect(request.flash).toHaveBeenCalledWith('success', 'Bed cancelled')
         expect(response.redirect).toHaveBeenCalledWith(
-          paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: request.params.premisesId }),
+          paths.v2Manage.outOfServiceBeds.premisesIndex({
+            premisesId: request.params.premisesId,
+            temporality: 'current',
+          }),
         )
       })
     })
