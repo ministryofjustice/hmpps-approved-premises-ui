@@ -11,7 +11,7 @@ export const roleLabelDictionary: RoleLabelDictionary = {
   matcher: { label: 'Matcher', hint: 'Match a person to a suitable AP for placement' },
   workflow_manager: {
     label: 'Workflow manager',
-    hint: 'Manage the allocation of assessments and matches to staff, and view reports',
+    hint: 'Manage the allocation of assessments and matches to staff',
   },
   appeals_manager: {
     label: 'Appeals manager',
