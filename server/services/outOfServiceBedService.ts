@@ -62,11 +62,12 @@ export default class OutOfServiceBedService {
   async getAllOutOfServiceBeds({
     token,
     page = 1,
-    sortBy = 'startDate',
-    sortDirection = 'asc',
     temporality = 'current',
+    sortBy,
+    sortDirection,
     premisesId,
     apAreaId,
+    perPage = 10,
   }: {
     token: string
     page?: number
@@ -75,6 +76,7 @@ export default class OutOfServiceBedService {
     temporality?: Temporality
     premisesId?: string
     apAreaId?: string
+    perPage?: number
   }): Promise<PaginatedResponse<OutOfServiceBed>> {
     const outOfServiceBedClient = this.outOfServiceBedClientFactory(token)
     const outOfServiceBeds = await outOfServiceBedClient.get({
@@ -84,6 +86,7 @@ export default class OutOfServiceBedService {
       temporality,
       premisesId,
       apAreaId,
+      perPage,
     })
 
     return outOfServiceBeds

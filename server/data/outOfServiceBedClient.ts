@@ -53,17 +53,19 @@ export default class OutOfServiceBedClient {
     temporality,
     premisesId,
     apAreaId,
+    perPage,
   }: {
     page: number
-    sortBy: OutOfServiceBedSortField
-    sortDirection: SortDirection
     temporality: Temporality
+    sortBy?: OutOfServiceBedSortField
+    sortDirection?: SortDirection
     premisesId?: string
     apAreaId?: string
+    perPage?: number
   }): Promise<PaginatedResponse<OutOfServiceBed>> {
     const response = (await this.restClient.get({
       path: paths.manage.outOfServiceBeds.index({}),
-      query: createQueryString({ page, sortBy, sortDirection, temporality, premisesId, apAreaId }),
+      query: createQueryString({ page, sortBy, sortDirection, temporality, premisesId, apAreaId, perPage }),
       raw: true,
     })) as superagent.Response
 

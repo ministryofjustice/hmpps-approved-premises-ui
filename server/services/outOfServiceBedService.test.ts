@@ -76,8 +76,9 @@ describe('OutOfServiceBedService', () => {
   describe('getAllOutOfServiceBeds', () => {
     const token = 'SOME_TOKEN'
 
-    it('calls the get method on the outOfServiceBedClient with a page and sort and filter options', async () => {
+    it('calls the get method on the outOfServiceBedClient with a page, perPage, sort and filter options', async () => {
       const pageNumber = 3
+      const perPage = 20
       const sortBy = 'roomName'
       const sortDirection = 'asc'
       const temporality = 'future'
@@ -96,6 +97,7 @@ describe('OutOfServiceBedService', () => {
         temporality,
         apAreaId,
         premisesId,
+        perPage,
       })
 
       expect(outOfServiceBeds).toEqual(response)
@@ -107,10 +109,11 @@ describe('OutOfServiceBedService', () => {
         temporality,
         apAreaId,
         premisesId,
+        perPage,
       })
     })
 
-    it('defaults to filtering for current items only with no area or premises filter, sorted by "from date" ascending', async () => {
+    it('uses default values for page, temporality and perPage', async () => {
       const response = paginatedResponseFactory.build({
         data: outOfServiceBedFactory.buildList(1),
       }) as PaginatedResponse<OutOfServiceBed>
@@ -120,9 +123,8 @@ describe('OutOfServiceBedService', () => {
 
       expect(outOfServiceBedClient.get).toHaveBeenCalledWith({
         page: 1,
-        sortBy: 'startDate',
-        sortDirection: 'asc',
         temporality: 'current',
+        perPage: 10,
       })
     })
   })
