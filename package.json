@@ -150,7 +150,7 @@
     "nunjucks": "^3.2.4",
     "passport": "^0.7.0",
     "passport-oauth2": "^1.6.1",
-    "path-to-regexp": "^6.2.1",
+    "path-to-regexp": "^7.0.0",
     "prom-client": "^15.0.0",
     "qs": "^6.11.0",
     "redis": "^4.3.1",
