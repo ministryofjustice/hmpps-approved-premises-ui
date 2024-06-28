@@ -109,13 +109,15 @@ export const actionCell = (bed: OutOfServiceBed, premisesId: Premises['id']): Ta
   html: bedLink(bed, premisesId),
 })
 
-export const outOfServiceBedCountForToday = (outOfServiceBeds: Array<OutOfServiceBed>): number => {
-  return outOfServiceBeds.filter(outOfServiceBed =>
+export const outOfServiceBedCountForToday = (outOfServiceBeds: Array<OutOfServiceBed>): string => {
+  const count = outOfServiceBeds.filter(outOfServiceBed =>
     isWithinInterval(Date.now(), {
       start: DateFormats.isoToDateObj(outOfServiceBed.startDate),
       end: DateFormats.isoToDateObj(outOfServiceBed.endDate),
     }),
   ).length
+
+  return count === 1 ? '1 bed' : `${count} beds`
 }
 
 const bedLink = (bed: OutOfServiceBed, premisesId: Premises['id']): string =>
