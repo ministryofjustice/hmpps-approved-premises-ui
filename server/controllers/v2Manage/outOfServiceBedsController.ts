@@ -172,14 +172,14 @@ export default class OutOfServiceBedsController {
 
           req.flash('success', 'Bed cancelled')
 
-          return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId }))
+          return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
         }
 
         await this.outOfServiceBedService.updateOutOfServiceBed(req.user.token, id, premisesId, req.body)
 
         req.flash('success', 'Bed updated')
 
-        return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId }))
+        return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
       } catch (error) {
         const redirectPath = req.headers.referer
 
@@ -198,7 +198,7 @@ export default class OutOfServiceBedsController {
 
         req.flash('success', 'Bed cancelled')
 
-        return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId }))
+        return res.redirect(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
       } catch (error) {
         return catchValidationErrorOrPropogate(
           req,

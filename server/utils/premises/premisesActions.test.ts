@@ -12,7 +12,7 @@ describe('premisesActions', () => {
       expect(premisesActions(user, premises)).not.toContainManageAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',
-        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id }),
+        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
       })
     })
 
@@ -49,7 +49,7 @@ describe('premisesActions', () => {
       expect(premisesActions(user, premises)).not.toContainManageAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',
-        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id }),
+        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
       })
     })
 
@@ -86,7 +86,7 @@ describe('premisesActions', () => {
       expect(premisesActions(user, premises)).not.toContainManageAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',
-        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id }),
+        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
       })
     })
 
@@ -147,7 +147,7 @@ describe('premisesActions', () => {
       expect(premisesActions(user, premises)).toContainManageAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',
-        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id }),
+        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
       })
     })
   })
@@ -160,7 +160,7 @@ describe('premisesActions', () => {
       expect(premisesActions(user, premises)).not.toContainManageAction({
         text: 'Manage out of service bed records',
         classes: 'govuk-button--secondary',
-        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id }),
+        href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
       })
     })
 

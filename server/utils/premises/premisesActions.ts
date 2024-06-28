@@ -15,7 +15,7 @@ export const premisesActions = (user: UserDetails, premises: Premises) => {
     actions.push({
       text: 'Manage out of service bed records',
       classes: 'govuk-button--secondary',
-      href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id }),
+      href: paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId: premises.id, temporality: 'current' }),
     })
   }
 
