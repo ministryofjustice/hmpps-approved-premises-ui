@@ -16,10 +16,10 @@ export default function routes(controllers: Controllers, router: Router, service
     premisesController,
     bookingsController,
     bookingExtensionsController,
-    outOfServiceBedsController,
     bedsController,
     v2PremisesController,
     v2BedsController,
+    v2OutOfServiceBedsController,
   } = controllers
 
   // Premises
@@ -93,11 +93,11 @@ export default function routes(controllers: Controllers, router: Router, service
   get(paths.v2Manage.bookings.extensions.confirm.pattern, bookingExtensionsController.confirm())
 
   // Out of service beds
-  get(paths.v2Manage.outOfServiceBeds.new.pattern, outOfServiceBedsController.new(), {
+  get(paths.v2Manage.outOfServiceBeds.new.pattern, v2OutOfServiceBedsController.new(), {
     auditEvent: 'NEW_OUT_OF_SERVICE_BED',
     allowedRoles: ['future_manager'],
   })
-  post(paths.v2Manage.outOfServiceBeds.create.pattern, outOfServiceBedsController.create(), {
+  post(paths.v2Manage.outOfServiceBeds.create.pattern, v2OutOfServiceBedsController.create(), {
     auditEvent: 'CREATE_OUT_OF_SERVICE_BED_SUCCESS',
     redirectAuditEventSpecs: [
       {
@@ -107,15 +107,15 @@ export default function routes(controllers: Controllers, router: Router, service
     ],
     allowedRoles: ['future_manager'],
   })
-  get(paths.v2Manage.outOfServiceBeds.premisesIndex.pattern, outOfServiceBedsController.premisesIndex(), {
+  get(paths.v2Manage.outOfServiceBeds.premisesIndex.pattern, v2OutOfServiceBedsController.premisesIndex(), {
     auditEvent: 'LIST_OUT_OF_SERVICE_BEDS_FOR_A_PREMISES',
     allowedRoles: ['future_manager'],
   })
-  get(paths.v2Manage.outOfServiceBeds.show.pattern, outOfServiceBedsController.show(), {
+  get(paths.v2Manage.outOfServiceBeds.show.pattern, v2OutOfServiceBedsController.show(), {
     auditEvent: 'SHOW_OUT_OF_SERVICE_BED',
     allowedRoles: ['future_manager'],
   })
-  post(paths.v2Manage.outOfServiceBeds.update.pattern, outOfServiceBedsController.update(), {
+  post(paths.v2Manage.outOfServiceBeds.update.pattern, v2OutOfServiceBedsController.update(), {
     auditEvent: 'UPDATE_OUT_OF_SERVICE_BED_SUCCESS',
     auditBodyParams: ['cancel'],
     redirectAuditEventSpecs: [
@@ -126,7 +126,7 @@ export default function routes(controllers: Controllers, router: Router, service
     ],
     allowedRoles: ['future_manager'],
   })
-  get(paths.v2Manage.outOfServiceBeds.index.pattern, outOfServiceBedsController.index(), {
+  get(paths.v2Manage.outOfServiceBeds.index.pattern, v2OutOfServiceBedsController.index(), {
     auditEvent: 'LIST_ALL_OUT_OF_SERVICE_BEDS',
     allowedRoles: ['cru_member'],
   })

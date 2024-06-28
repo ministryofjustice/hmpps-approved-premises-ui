@@ -20,7 +20,7 @@ export default class OutOfServiceBedsController {
       const { premisesId, bedId } = req.params
       const { errors, errorSummary, userInput, errorTitle } = fetchErrorsAndUserInput(req)
 
-      return res.render('outOfServiceBeds/new', {
+      return res.render('v2Manage/outOfServiceBeds/new', {
         premisesId,
         bedId,
         errors,
@@ -122,7 +122,7 @@ export default class OutOfServiceBedsController {
         apAreaId,
       })
 
-      return res.render('outOfServiceBeds/index', {
+      return res.render('v2Manage/outOfServiceBeds/index', {
         pageHeading: 'View out of service beds',
         outOfServiceBeds: outOfServiceBeds.data,
         pageNumber: Number(outOfServiceBeds.pageNumber),
@@ -146,7 +146,7 @@ export default class OutOfServiceBedsController {
 
       const outOfServiceBed = await this.outOfServiceBedService.getOutOfServiceBed(req.user.token, premisesId, id)
 
-      return res.render('outOfServiceBeds/show', {
+      return res.render('v2Manage/outOfServiceBeds/show', {
         errors,
         errorSummary,
         outOfServiceBed,

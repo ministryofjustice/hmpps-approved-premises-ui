@@ -64,7 +64,7 @@ describe('OutOfServiceBedsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
-        'outOfServiceBeds/new',
+        'v2Manage/outOfServiceBeds/new',
         expect.objectContaining({ premisesId, bedId: request.params.bedId }),
       )
     })
@@ -79,7 +79,7 @@ describe('OutOfServiceBedsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
-        'outOfServiceBeds/new',
+        'v2Manage/outOfServiceBeds/new',
         expect.objectContaining({
           errors: errorsAndUserInput.errors,
           errorSummary: errorsAndUserInput.errorSummary,
@@ -178,7 +178,7 @@ describe('OutOfServiceBedsController', () => {
       await requestHandler(request, response, next)
 
       expect(response.render).toHaveBeenCalledWith(
-        'outOfServiceBeds/show',
+        'v2Manage/outOfServiceBeds/show',
         expect.objectContaining({ outOfServiceBed }),
       )
     })
@@ -191,7 +191,7 @@ describe('OutOfServiceBedsController', () => {
 
       await requestHandler({ ...request, params: { premisesId } }, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('outOfServiceBeds/premisesIndex', {
+      expect(response.render).toHaveBeenCalledWith('v2Manage/outOfServiceBeds/premisesIndex', {
         outOfServiceBeds: [outOfServiceBed],
         pageHeading: 'Manage out of service beds',
         premisesId,
@@ -224,7 +224,7 @@ describe('OutOfServiceBedsController', () => {
 
       await requestHandler(indexRequest, response, next)
 
-      expect(response.render).toHaveBeenCalledWith('outOfServiceBeds/index', {
+      expect(response.render).toHaveBeenCalledWith('v2Manage/outOfServiceBeds/index', {
         outOfServiceBeds: paginatedResponse.data,
         pageHeading: 'View out of service beds',
         pageNumber: Number(paginatedResponse.pageNumber),
