@@ -55,9 +55,9 @@ export default class OutOfServiceBedClient {
     apAreaId,
   }: {
     page: number
-    sortBy: OutOfServiceBedSortField
-    sortDirection: SortDirection
     temporality: Temporality
+    sortBy?: OutOfServiceBedSortField
+    sortDirection?: SortDirection
     premisesId?: string
     apAreaId?: string
   }): Promise<PaginatedResponse<OutOfServiceBed>> {

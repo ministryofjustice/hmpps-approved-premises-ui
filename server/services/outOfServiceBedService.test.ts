@@ -110,7 +110,7 @@ describe('OutOfServiceBedService', () => {
       })
     })
 
-    it('defaults to filtering for current items only with no area or premises filter, sorted by "from date" ascending', async () => {
+    it('defaults to filtering for page 1 current items', async () => {
       const response = paginatedResponseFactory.build({
         data: outOfServiceBedFactory.buildList(1),
       }) as PaginatedResponse<OutOfServiceBed>
@@ -120,8 +120,6 @@ describe('OutOfServiceBedService', () => {
 
       expect(outOfServiceBedClient.get).toHaveBeenCalledWith({
         page: 1,
-        sortBy: 'outOfServiceFrom',
-        sortDirection: 'asc',
         temporality: 'current',
       })
     })
