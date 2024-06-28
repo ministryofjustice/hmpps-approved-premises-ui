@@ -9,7 +9,7 @@ export class OutOfServiceBedListPage extends Page {
   }
 
   static visit(premisesId: Premises['id']): OutOfServiceBedListPage {
-    cy.visit(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId }))
+    cy.visit(paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality: 'current' }))
     return new OutOfServiceBedListPage()
   }
 

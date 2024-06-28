@@ -1,6 +1,10 @@
 import { SuperAgentRequest } from 'superagent'
 
-import { Cas1OutOfServiceBedSortField as OutOfServiceBedSortField, SortDirection } from '@approved-premises/api'
+import {
+  Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
+  SortDirection,
+  Temporality,
+} from '@approved-premises/api'
 import { getMatchingRequests, stubFor } from './setup'
 import { bedspaceConflictResponseBody, errorStub } from './utils'
 import paths from '../../server/paths/api'
@@ -52,15 +56,25 @@ export default {
       },
     }),
 
-  stubOutOfServiceBedsListForAPremises: ({ premisesId, outOfServiceBeds }): SuperAgentRequest =>
+  stubOutOfServiceBedsListForAPremises: ({
+    premisesId,
+    outOfServiceBeds,
+    page = 1,
+    temporality = 'current',
+  }): SuperAgentRequest =>
     stubFor({
       request: {
         method: 'GET',
-        url: paths.manage.premises.outOfServiceBeds.premisesIndex({ premisesId }),
+        url: `${paths.manage.outOfServiceBeds.index.pattern}?premisedId=${premisesId}&page=${page}&temporality=${temporality}`,
       },
       response: {
         status: 200,
-        headers,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          'X-Pagination-TotalPages': '10',
+          'X-Pagination-TotalResults': '100',
+          'X-Pagination-PageSize': '10',
+        },
         jsonBody: outOfServiceBeds,
       },
     }),
@@ -157,10 +171,12 @@ export default {
     page = '1',
     sortBy = 'outOfServiceFrom',
     sortDirection = 'asc',
+    temporality = 'current',
   }: {
     page: string
     sortBy: OutOfServiceBedSortField
     sortDirection: SortDirection
+    temporality: Temporality
   }) =>
     (
       await getMatchingRequests({
@@ -175,6 +191,35 @@ export default {
           },
           sortDirection: {
             equalTo: sortDirection,
+          },
+          temporality: {
+            equalTo: temporality,
+          },
+        },
+      })
+    ).body.requests,
+  verifyOutOfServiceBedsPremisesDashboard: async ({
+    page = '1',
+    premisesId,
+    temporality = 'current',
+  }: {
+    page: string
+    premisesId: string
+    temporality: Temporality
+  }) =>
+    (
+      await getMatchingRequests({
+        method: 'GET',
+        urlPathPattern: paths.manage.outOfServiceBeds.index({}),
+        queryParameters: {
+          page: {
+            equalTo: page,
+          },
+          premisesId: {
+            equalTo: premisesId,
+          },
+          temporality: {
+            equalTo: temporality,
           },
         },
       })

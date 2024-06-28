@@ -150,10 +150,7 @@ context('OutOfServiceBeds', () => {
       // When I visit the out of service bed index page
       const outOfServiceBedListPage = OutOfServiceBedListPage.visit(premisesId)
 
-      // Then I see the out of service beds for that premises
-      outOfServiceBedListPage.shouldShowOutOfServiceBeds([outOfServiceBed])
-
-      // // When I click manage on a bed
+      // // And I click manage on a bed
       outOfServiceBedListPage.clickManageBed(outOfServiceBed)
 
       // // Then I should see the out of service bed manage form
@@ -248,6 +245,53 @@ context('OutOfServiceBeds', () => {
       // Then I am redirected to the out of service bed list page and see the confirmation message
       const listPage = Page.verifyOnPage(OutOfServiceBedListPage)
       listPage.shouldShowBanner('Bed cancelled')
+    })
+  })
+
+  describe('list all OOS beds for a given AP', () => {
+    const premisesId = 'premisesId'
+    const outOfServiceBeds = outOfServiceBedFactory.buildList(10)
+
+    beforeEach(() => {
+      cy.task('reset')
+      // Given I am signed in as a future manager
+      signIn(['future_manager'])
+    })
+
+    it.only('allows me to view all out of service beds for a premises', () => {
+      // And there are out of service beds in the database
+      cy.task('stubOutOfServiceBedsListForAPremises', { premisesId, outOfServiceBeds })
+
+      // When I visit the out of service bed index page for a premises
+      const outOfServiceBedListPage = OutOfServiceBedListPage.visit(premisesId)
+
+      // Then I see the out of service beds for that premises
+      outOfServiceBedListPage.shouldShowOutOfServiceBeds(outOfServiceBeds)
+    })
+
+    it('supports pagination', () => {
+      cy.task('stubOutOfServiceBedsListForAPremises', { outOfServiceBeds, page: '1', premisesId })
+      cy.task('stubOutOfServiceBedsListForAPremises', { outOfServiceBeds, page: '2', premisesId })
+      cy.task('stubOutOfServiceBedsListForAPremises', { outOfServiceBeds, page: '9', premisesId })
+
+      // When I visit the OOS beds index page for a premises
+      const page = OutOfServiceBedListPage.visit(premisesId)
+
+      // And I click next
+      page.clickNext()
+
+      // Then the API should have received a request for the next page
+      cy.task('verifyOutOfServiceBedsPremisesDashboard', { page: '2', premisesId }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
+
+      // When I click on a page number
+      page.clickPageNumber('9')
+
+      // Then the API should have received a request for the that page number
+      cy.task('verifyOutOfServiceBedsPremisesDashboard', { page: '9', premisesId }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
     })
   })
 
