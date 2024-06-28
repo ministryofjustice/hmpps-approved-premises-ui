@@ -4,7 +4,7 @@
 
 {%- from "moj/components/identity-bar/macro.njk" import mojIdentityBar -%}
 
-{% extends "../partials/layout.njk" %}
+{% extends "../../partials/layout.njk" %}
 
 {% set pageTitle = applicationName + " - " + pageHeading %}
 
@@ -18,7 +18,7 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full-width">
-      {% include "../_messages.njk" %}
+      {% include "../../_messages.njk" %}
 
       <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
