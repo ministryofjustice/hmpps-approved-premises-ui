@@ -66,6 +66,9 @@ export default class UserController {
         roles: [...flattenCheckboxInput(req.body.roles), ...flattenCheckboxInput(req.body.allocationPreferences)],
         qualifications: flattenCheckboxInput(req.body.qualifications),
       })
+      const user = await this.userService.getActingUser(res.locals.user.token)
+      req.session.user = user
+      res.locals.user = { ...user, ...res.locals.user }
 
       req.flash('success', 'User updated')
       res.redirect(paths.admin.userManagement.edit({ id: req.params.id }))
