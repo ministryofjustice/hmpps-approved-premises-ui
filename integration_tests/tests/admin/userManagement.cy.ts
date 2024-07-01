@@ -22,9 +22,11 @@ context('User management', () => {
     // Given there are users in the DB
     const users = userFactory.buildList(10, { roles: ['assessor'] })
     const user = users[0]
+    const roles = ['manager', 'matcher', 'workflow_manager']
     cy.task('stubFindUser', { user, id: user.id })
     cy.task('stubUsers', { users })
     cy.task('stubApAreaReferenceData')
+    cy.task('stubAuthUser', { roles })
 
     // When I visit the list page
     const listPage = ListPage.visit()
@@ -83,6 +85,12 @@ context('User management', () => {
 
     // And I should see a message confirming the details have been updated
     showPage.shouldShowBanner('User updated')
+
+    // And I should see updated user roles
+    const revisitedListPage = ListPage.visit()
+    revisitedListPage.shouldShowUsers(users)
+    revisitedListPage.clickUser(user.name)
+    showPage.shouldHaveCriteriaSelected(roles)
   })
 
   it('allows searching for users', () => {

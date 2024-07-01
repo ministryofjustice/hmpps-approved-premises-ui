@@ -62,4 +62,10 @@ export default class ShowPage extends Page {
   clickRemoveAccess(): void {
     cy.get('a').contains('Remove access').click()
   }
+
+  shouldHaveCriteriaSelected(roles: Array<string>): void {
+    roles.forEach(role => {
+      cy.get(`input[name="roles"][value="${role}"]`).should('be.checked')
+    })
+  }
 }
