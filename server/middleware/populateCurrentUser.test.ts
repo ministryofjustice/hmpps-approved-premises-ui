@@ -5,6 +5,7 @@ import { UserService } from '../services'
 import populateCurrentUser from './populateCurrentUser'
 import { userDetailsFactory } from '../testutils/factories'
 import logger from '../../logger'
+import { DeliusAccountMissingStaffDetailsError } from '../services/userService'
 
 jest.mock('../../logger')
 
@@ -105,5 +106,20 @@ describe('populateCurrentUser', () => {
     await middleware(request, response, next)
 
     expect(next).toHaveBeenCalled()
+  })
+
+  it('it throws an DeliusAccountMissingStaffDetailsError', async () => {
+    const err = new DeliusAccountMissingStaffDetailsError()
+
+    ;(userService.getActingUser as jest.Mock).mockImplementation(() => {
+      throw err
+    })
+
+    const middleware = populateCurrentUser(userService)
+
+    await middleware(request, response, next)
+
+    expect(response.redirect).toHaveBeenCalledWith('/deliusMissingStaffDetails')
+    expect(logger.error).toHaveBeenCalledWith('Delius account missing staff details')
   })
 })
