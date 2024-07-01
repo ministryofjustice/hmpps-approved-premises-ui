@@ -1,6 +1,7 @@
 import { SuperAgentRequest } from 'superagent'
 
 import {
+  Cas1OutOfServiceBed as OutOfServiceBed,
   Cas1OutOfServiceBedSortField as OutOfServiceBedSortField,
   SortDirection,
   Temporality,
@@ -56,40 +57,48 @@ export default {
       },
     }),
 
-  stubOutOfServiceBedsListForAPremises: ({
-    premisesId,
-    outOfServiceBeds,
-    page = 1,
-    temporality = 'current',
-  }): SuperAgentRequest =>
-    stubFor({
-      request: {
-        method: 'GET',
-        url: `${paths.manage.outOfServiceBeds.index.pattern}?premisedId=${premisesId}&page=${page}&temporality=${temporality}`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-          'X-Pagination-TotalPages': '10',
-          'X-Pagination-TotalResults': '100',
-          'X-Pagination-PageSize': '10',
-        },
-        jsonBody: outOfServiceBeds,
-      },
-    }),
-
   stubOutOfServiceBedsList: ({
     outOfServiceBeds,
+    premisesId,
     page = 1,
-    sortBy = 'outOfServiceFrom',
-    sortDirection = 'asc',
+    sortBy,
+    sortDirection,
     temporality = 'current',
-  }): SuperAgentRequest =>
-    stubFor({
+  }: {
+    outOfServiceBeds: Array<OutOfServiceBed>
+    premisesId?: string
+    page: number
+    temporality?: string
+    sortBy?: OutOfServiceBedSortField
+    sortDirection?: SortDirection
+  }): SuperAgentRequest => {
+    const queryParameters = {
+      page: {
+        equalTo: page.toString(),
+      },
+
+      temporality: {
+        equalTo: temporality,
+      },
+    } as Record<string, unknown>
+
+    if (premisesId) {
+      queryParameters.premisesId = { equalTo: premisesId }
+    }
+
+    if (sortBy) {
+      queryParameters.sortBy = { equalTo: sortBy }
+    }
+
+    if (sortDirection) {
+      queryParameters.sortDirection = { equalTo: sortDirection }
+    }
+
+    return stubFor({
       request: {
         method: 'GET',
-        url: `${paths.manage.outOfServiceBeds.index.pattern}?page=${page}&sortBy=${sortBy}&sortDirection=${sortDirection}&temporality=${temporality}`,
+        urlPathPattern: paths.manage.outOfServiceBeds.index.pattern,
+        queryParameters,
       },
       response: {
         status: 200,
@@ -101,7 +110,8 @@ export default {
         },
         jsonBody: outOfServiceBeds,
       },
-    }),
+    })
+  },
 
   stubOutOfServiceBed: ({ premisesId, outOfServiceBed }): SuperAgentRequest =>
     stubFor({
@@ -168,60 +178,43 @@ export default {
       })
     ).body.requests,
   verifyOutOfServiceBedsDashboard: async ({
-    page = '1',
-    sortBy = 'outOfServiceFrom',
-    sortDirection = 'asc',
+    page = 1,
+    sortBy,
+    sortDirection,
     temporality = 'current',
+    premisesId,
   }: {
-    page: string
+    page: number
     sortBy: OutOfServiceBedSortField
     sortDirection: SortDirection
     temporality: Temporality
-  }) =>
-    (
-      await getMatchingRequests({
-        method: 'GET',
-        urlPathPattern: paths.manage.outOfServiceBeds.index({}),
-        queryParameters: {
-          page: {
-            equalTo: page,
-          },
-          sortBy: {
-            equalTo: sortBy,
-          },
-          sortDirection: {
-            equalTo: sortDirection,
-          },
-          temporality: {
-            equalTo: temporality,
-          },
-        },
-      })
-    ).body.requests,
-  verifyOutOfServiceBedsPremisesDashboard: async ({
-    page = '1',
-    premisesId,
-    temporality = 'current',
-  }: {
-    page: string
     premisesId: string
-    temporality: Temporality
-  }) =>
-    (
-      await getMatchingRequests({
-        method: 'GET',
-        urlPathPattern: paths.manage.outOfServiceBeds.index({}),
-        queryParameters: {
-          page: {
-            equalTo: page,
-          },
-          premisesId: {
-            equalTo: premisesId,
-          },
-          temporality: {
-            equalTo: temporality,
-          },
-        },
-      })
-    ).body.requests,
+  }) => {
+    const queryParameters = {
+      page: {
+        equalTo: page.toString(),
+      },
+      temporality: {
+        equalTo: temporality,
+      },
+    } as Record<string, unknown>
+
+    if (premisesId) {
+      queryParameters.premisesId = { equalTo: premisesId }
+    }
+    if (sortBy) {
+      queryParameters.sortBy = { equalTo: sortBy }
+    }
+    if (sortDirection) {
+      queryParameters.sortDirection = { equalTo: sortDirection }
+    }
+
+    const requests = await getMatchingRequests({
+      method: 'GET',
+      urlPathPattern: paths.manage.outOfServiceBeds.index.pattern,
+      queryParameters,
+    })
+
+    return requests.body.requests
+  },
 }

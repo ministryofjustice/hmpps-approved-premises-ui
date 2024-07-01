@@ -82,7 +82,7 @@ export default class OutOfServiceBedsController {
 
       const { pageNumber, hrefPrefix } = getPaginationDetails<OutOfServiceBedSortField>(
         req,
-        paths.v2Manage.outOfServiceBeds.index({ temporality }),
+        paths.v2Manage.outOfServiceBeds.premisesIndex({ premisesId, temporality }),
         {
           temporality,
           premisesId,
