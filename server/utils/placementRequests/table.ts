@@ -14,7 +14,7 @@ import { linkTo } from '../utils'
 import { crnCell, tierCell } from '../tableUtils'
 import { allReleaseTypes } from '../applications/releaseTypeUtils'
 import { sortHeader } from '../sortHeader'
-import { isFullPerson, laoName } from '../personUtils'
+import { isFullPerson, isUnknownPerson, laoName } from '../personUtils'
 import { placementRequestStatus } from '../formUtils'
 
 export const DIFFERENCE_IN_DAYS_BETWEEN_DUE_DATE_AND_ARRIVAL_DATE = 7
@@ -120,7 +120,7 @@ export const nameCell = (item: PlacementRequestTask | PlacementRequest): TableCe
 
   if ('person' in item && item.person && !isFullPerson(item.person)) {
     return {
-      text: `LAO: ${item.person.crn}`,
+      text: isUnknownPerson(item.person) ? 'LAO: Not Found' : `LAO: ${item.person.crn}`,
     }
   }
 

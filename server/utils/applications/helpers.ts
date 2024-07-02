@@ -1,5 +1,5 @@
 import { ApprovedPremisesApplicationSummary as ApplicationSummary, Person } from '../../@types/shared'
-import { isFullPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
+import { isFullPerson, isUnknownPerson, nameOrPlaceholderCopy, tierBadge } from '../personUtils'
 import paths from '../../paths/apply'
 
 export const createNameAnchorElement = (
@@ -8,7 +8,7 @@ export const createNameAnchorElement = (
   { linkInProgressApplications }: { linkInProgressApplications: boolean } = { linkInProgressApplications: true },
 ) => {
   if (!linkInProgressApplications && applicationSummary.status === 'started') {
-    return textValue(nameOrPlaceholderCopy(person, `LAO: ${person.crn}`))
+    return textValue(nameOrPlaceholderCopy(person, isUnknownPerson(person) ? 'LAO: Not Found' : `LAO: ${person.crn}`))
   }
 
   return isFullPerson(person)
@@ -17,7 +17,7 @@ export const createNameAnchorElement = (
           person.name
         }</a>`,
       )
-    : textValue(`LAO CRN: ${person.crn}`)
+    : textValue(isUnknownPerson(person) ? 'LAO CRN: Not Found' : `LAO CRN: ${person.crn}`)
 }
 
 export const textValue = (value: string) => {

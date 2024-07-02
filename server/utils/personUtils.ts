@@ -19,6 +19,8 @@ const isApplicableTier = (sex: string, tier: string): boolean => {
 
 const isFullPerson = (person?: Person): person is FullPerson => (person as FullPerson)?.name !== undefined
 
+const isUnknownPerson = (person?: Person): boolean => person?.type === 'UnknownPerson'
+
 const laoName = (person: FullPerson) => (person.isRestricted ? `LAO: ${person.name}` : person.name)
 
 /**
@@ -42,4 +44,4 @@ const nameText = (person: FullPerson, showLaoLabel: boolean) => {
   return name
 }
 
-export { tierBadge, isApplicableTier, isFullPerson, nameOrPlaceholderCopy, laoName }
+export { tierBadge, isApplicableTier, isFullPerson, nameOrPlaceholderCopy, laoName, isUnknownPerson }

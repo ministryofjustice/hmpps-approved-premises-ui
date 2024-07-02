@@ -108,6 +108,15 @@ describe('tableUtils', () => {
         },
       )
     })
+
+    it('returns the crn cell if the person is a unknown person', () => {
+      const unknownPersonTask = placementRequestFactory.build()
+      unknownPersonTask.person = restrictedPersonFactory.build({ type: 'UnknownPerson' })
+
+      expect(nameCell(unknownPersonTask)).toEqual({
+        text: `LAO: Not Found`,
+      })
+    })
   })
 
   describe('expectedArrivalDateCell', () => {
