@@ -119,7 +119,7 @@ describe('OutOfServiceBedsController', () => {
         endDate: '2022-09-22',
         bedId: request.params.bedId,
       })
-      expect(request.flash).toHaveBeenCalledWith('success', 'Out of service bed logged')
+      expect(request.flash).toHaveBeenCalledWith('success', 'The out of service bed has been recorded')
       expect(response.redirect).toHaveBeenCalledWith(paths.premises.show({ premisesId: request.params.premisesId }))
     })
 

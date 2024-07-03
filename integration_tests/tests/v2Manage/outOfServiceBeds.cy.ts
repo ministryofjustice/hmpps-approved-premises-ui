@@ -59,7 +59,7 @@ context('OutOfServiceBeds', () => {
     })
 
     // And I should be navigated to the premises detail page and see the confirmation message
-    page.shouldShowBanner('Out of service bed logged')
+    page.shouldShowBanner('The out of service bed has been recorded')
   })
 
   it('should show errors', () => {

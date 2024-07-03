@@ -54,7 +54,7 @@ export default class OutOfServiceBedsController {
       try {
         await this.outOfServiceBedService.createOutOfServiceBed(req.user.token, premisesId, outOfServiceBed)
 
-        req.flash('success', 'Out of service bed logged')
+        req.flash('success', 'The out of service bed has been recorded')
         return res.redirect(paths.premises.show({ premisesId }))
       } catch (error) {
         const redirectPath = paths.v2Manage.outOfServiceBeds.new({ premisesId, bedId })
