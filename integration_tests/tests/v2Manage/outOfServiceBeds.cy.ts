@@ -144,16 +144,17 @@ context('OutOfServiceBeds', () => {
       // And there is a out of service bed in the database
       const outOfServiceBed = outOfServiceBedFactory.build()
       cy.task('stubOutOfServiceBed', { premisesId, outOfServiceBed })
-      cy.task('stubOutOfServiceBedsListForAPremises', { premisesId, outOfServiceBeds: [outOfServiceBed] })
+      cy.task('stubOutOfServiceBedsList', {
+        premisesId,
+        outOfServiceBeds: [outOfServiceBed],
+        perPage: 50,
+      })
       cy.task('stubOutOfServiceBedUpdate', { premisesId, outOfServiceBed })
 
       // When I visit the out of service bed index page
-      const outOfServiceBedListPage = OutOfServiceBedListPage.visit(premisesId)
+      const outOfServiceBedListPage = OutOfServiceBedListPage.visit(premisesId, 'current')
 
-      // Then I see the out of service beds for that premises
-      outOfServiceBedListPage.shouldShowOutOfServiceBeds([outOfServiceBed])
-
-      // // When I click manage on a bed
+      // // And I click manage on a bed
       outOfServiceBedListPage.clickManageBed(outOfServiceBed)
 
       // // Then I should see the out of service bed manage form
@@ -193,7 +194,7 @@ context('OutOfServiceBeds', () => {
       // And there is a out of service bed in the database
       const outOfServiceBed = outOfServiceBedFactory.build()
       cy.task('stubOutOfServiceBed', { premisesId, outOfServiceBed })
-      cy.task('stubOutOfServiceBedsListForAPremises', { premisesId, outOfServiceBeds: [outOfServiceBed] })
+      cy.task('stubOutOfServiceBedsList', { premisesId, outOfServiceBeds: [outOfServiceBed] })
 
       // And I miss required fields
       cy.task('stubUpdateOutOfServiceBedErrors', {
@@ -225,7 +226,7 @@ context('OutOfServiceBeds', () => {
       const outOfServiceBed = outOfServiceBedFactory.build()
       const outOfServiceBedCancellation = outOfServiceBedCancellationFactory.build()
       cy.task('stubOutOfServiceBed', { premisesId, outOfServiceBed })
-      cy.task('stubOutOfServiceBedsListForAPremises', { premisesId, outOfServiceBeds: [outOfServiceBed] })
+      cy.task('stubOutOfServiceBedsList', { premisesId, outOfServiceBeds: [outOfServiceBed], perPage: 50 })
       cy.task('stubCancelOutOfServiceBed', {
         premisesId,
         outOfServiceBedId: outOfServiceBed.id,
@@ -248,6 +249,53 @@ context('OutOfServiceBeds', () => {
       // Then I am redirected to the out of service bed list page and see the confirmation message
       const listPage = Page.verifyOnPage(OutOfServiceBedListPage)
       listPage.shouldShowBanner('Bed cancelled')
+    })
+  })
+
+  describe('list all OOS beds for a given AP', () => {
+    const premisesId = 'abc123'
+    const outOfServiceBeds = outOfServiceBedFactory.buildList(10)
+
+    beforeEach(() => {
+      cy.task('reset')
+      // Given I am signed in as a future manager
+      signIn(['future_manager'])
+    })
+
+    it('allows me to view all out of service beds for a premises', () => {
+      // And there are out of service beds in the database
+      cy.task('stubOutOfServiceBedsList', { premisesId, outOfServiceBeds, page: 1, perPage: 50 })
+
+      // When I visit the out of service bed index page for a premises
+      const outOfServiceBedListPage = OutOfServiceBedListPage.visit(premisesId, 'current')
+
+      // Then I see the out of service beds for that premises
+      outOfServiceBedListPage.shouldShowOutOfServiceBeds(outOfServiceBeds)
+    })
+
+    it('supports pagination', () => {
+      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 1, premisesId, perPage: 50 })
+      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 2, premisesId, perPage: 50 })
+      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 9, premisesId, perPage: 50 })
+
+      // When I visit the OOS beds index page for a premises
+      const page = OutOfServiceBedListPage.visit(premisesId, 'current')
+
+      // And I click next
+      page.clickNext()
+
+      // Then the API should have received a request for the next page
+      cy.task('verifyOutOfServiceBedsDashboard', { page: 2, premisesId, perPage: 50 }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
+
+      // When I click on a page number
+      page.clickPageNumber('9')
+
+      // Then the API should have received a request for the that page number
+      cy.task('verifyOutOfServiceBedsDashboard', { page: 9, premisesId, perPage: 50 }).then(requests => {
+        expect(requests).to.have.length(1)
+      })
     })
   })
 
@@ -277,9 +325,9 @@ context('OutOfServiceBeds', () => {
     })
 
     it('supports pagination', () => {
-      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: '1' })
-      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: '2' })
-      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: '9' })
+      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 1 })
+      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 2 })
+      cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 9 })
 
       // When I visit the OOS beds index page
       const page = OutOfServiceBedIndexPage.visit('current')
@@ -288,7 +336,7 @@ context('OutOfServiceBeds', () => {
       page.clickNext()
 
       // Then the API should have received a request for the next page
-      cy.task('verifyOutOfServiceBedsDashboard', { page: '2' }).then(requests => {
+      cy.task('verifyOutOfServiceBedsDashboard', { page: 2, temporality: 'current' }).then(requests => {
         expect(requests).to.have.length(1)
       })
 
@@ -296,7 +344,7 @@ context('OutOfServiceBeds', () => {
       page.clickPageNumber('9')
 
       // Then the API should have received a request for the that page number
-      cy.task('verifyOutOfServiceBedsDashboard', { page: '9' }).then(requests => {
+      cy.task('verifyOutOfServiceBedsDashboard', { page: 9, temporality: 'current' }).then(requests => {
         expect(requests).to.have.length(1)
       })
     })
@@ -307,17 +355,17 @@ context('OutOfServiceBeds', () => {
 
       cy.task('stubOutOfServiceBedsList', {
         outOfServiceBeds,
-        page: '1',
+        page: 1,
         temporality: 'current',
       })
       cy.task('stubOutOfServiceBedsList', {
         outOfServiceBeds: futureBeds,
-        page: '1',
+        page: 1,
         temporality: 'future',
       })
       cy.task('stubOutOfServiceBedsList', {
         outOfServiceBeds: historicBeds,
-        page: '1',
+        page: 1,
         temporality: 'historic',
       })
 
@@ -373,14 +421,14 @@ context('OutOfServiceBeds', () => {
     cy.task('stubOutOfServiceBedsList', { outOfServiceBeds, page: 1 })
     cy.task('stubOutOfServiceBedsList', {
       outOfServiceBeds,
-      page: '1',
+      page: 1,
       sortBy: field,
       sortDirection: 'asc',
       temporality: 'current',
     })
     cy.task('stubOutOfServiceBedsList', {
       outOfServiceBeds,
-      page: '1',
+      page: 1,
       sortBy: field,
       sortDirection: 'desc',
       temporality: 'current',
@@ -396,8 +444,12 @@ context('OutOfServiceBeds', () => {
     page.clickSortBy(field)
 
     // Then the API should have received a request for the sort
-    cy.task('verifyOutOfServiceBedsDashboard', { page: '1', sortBy: field, sortDirection: 'asc' }).then(requests => {
-      expect(requests).to.have.length(field === 'startDate' ? 2 : 1)
+    cy.task('verifyOutOfServiceBedsDashboard', {
+      page: 1,
+      sortBy: field,
+      temporality: 'current',
+    }).then(requests => {
+      expect(requests).to.have.length(1)
     })
 
     // And the page should show the sorted items
@@ -407,7 +459,12 @@ context('OutOfServiceBeds', () => {
     page.clickSortBy(field)
 
     // Then the API should have received a request for the sort
-    cy.task('verifyOutOfServiceBedsDashboard', { page: '1', sortBy: field, sortDirection: 'desc' }).then(requests => {
+    cy.task('verifyOutOfServiceBedsDashboard', {
+      page: 1,
+      sortBy: field,
+      sortDirection: 'desc',
+      temporality: 'current',
+    }).then(requests => {
       expect(requests).to.have.length(1)
     })
 
