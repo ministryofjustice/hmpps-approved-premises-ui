@@ -72,16 +72,16 @@ context('OutOfServiceBeds', () => {
     // When I navigate to the out of service bed form
     const page = OutOfServiceBedCreatePage.visit(premises.id, 'bedId')
 
-    // And I miss required fields
+    // And I have errors on validated fields
     cy.task('stubOutOfServiceBedErrors', {
       premisesId: premises.id,
-      params: ['startDate', 'endDate'],
+      params: ['startDate', 'endDate', 'reason', 'notes'],
     })
 
     page.clickSubmit()
 
     // Then I should see error messages relating to that field
-    page.shouldShowErrorMessagesForFields(['startDate', 'endDate'])
+    page.shouldShowErrorMessagesForFields(['startDate', 'endDate', 'reason', 'notes'])
   })
 
   it('should show an error when there are booking conflicts', () => {
