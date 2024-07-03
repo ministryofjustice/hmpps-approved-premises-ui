@@ -75,13 +75,13 @@ context('OutOfServiceBeds', () => {
     // And I miss required fields
     cy.task('stubOutOfServiceBedErrors', {
       premisesId: premises.id,
-      params: ['startDate', 'endDate', 'referenceNumber'],
+      params: ['startDate', 'endDate'],
     })
 
     page.clickSubmit()
 
     // Then I should see error messages relating to that field
-    page.shouldShowErrorMessagesForFields(['startDate', 'endDate', 'referenceNumber'])
+    page.shouldShowErrorMessagesForFields(['startDate', 'endDate'])
   })
 
   it('should show an error when there are booking conflicts', () => {
